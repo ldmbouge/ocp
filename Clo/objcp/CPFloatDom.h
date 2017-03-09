@@ -32,7 +32,7 @@
 -(ORFloat) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORFloat) domwidth;
+-(ORLDouble) domwidth;
 -(TRFloatInterval) domain;
 -(ORBool) member:(ORFloat)v;
 -(id) copy;

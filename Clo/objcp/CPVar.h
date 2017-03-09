@@ -170,7 +170,7 @@ enum CPVarClass {
 -(ORInterval) bounds;
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
--(ORFloat) domwidth;
+-(ORLDouble) domwidth;
 -(void) bind:(ORFloat) val;
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;

@@ -141,6 +141,7 @@
     return [NSString stringWithFormat:@"<%@ != %f>",_x,_c];
 }
 @end
+
 @implementation CPFloatLT
 -(id) init:(CPFloatVarI*)x lt:(CPFloatVarI*)y
 {
@@ -213,14 +214,18 @@
 -(void) propagate
 {
     if([_x bound]){
-        ORFloat pmin = fp_previous_float([_x min]);
-        [_y updateMax:pmin];
-        assignTRInt(&_active, NO, _trail);
+        if([_y max] > [_x max]){
+            ORFloat pmin = fp_previous_float([_x min]);
+            [_y updateMax:pmin];
+            assignTRInt(&_active, NO, _trail);
+        }
         return;
     }else if ([_y bound]){
-        ORFloat nmin = fp_next_float([_y min]);
-        [_x updateMin:nmin];
-        assignTRInt(&_active, NO, _trail);
+        if([_y min] < [_x min]){
+            ORFloat nmin = fp_next_float([_y min]);
+            [_x updateMin:nmin];
+            assignTRInt(&_active, NO, _trail);
+        }
         return;
     }
     if([_x isIntersectingWith:_y]){
@@ -236,7 +241,121 @@
         if([_x canPrecede:_y])
             failNow();
     }
-    
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound];
+}
+-(NSString*)description
+{
+    return [NSString stringWithFormat:@"<%@ >= %@>",_x,_y];
+}
+@end
+
+
+@implementation CPFloatLEQ
+-(id) init:(CPFloatVarI*)x leq:(CPFloatVarI*)y
+{
+    self = [super initCPCoreConstraint: [x engine]];
+    _x = x;
+    _y = y;
+    return self;
+}
+-(void) post
+{
+    [self propagate];
+    [_y whenChangeBoundsPropagate:self];
+    [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+    if([_x bound]){
+        ORFloat nmin = fp_next_float([_x min]);
+        [_y updateMin:nmin];
+        assignTRInt(&_active, NO, _trail);
+        return;
+    }else if ([_y bound]){
+        ORFloat pmin = fp_previous_float([_y min]);
+        [_x updateMax:pmin];
+        assignTRInt(&_active, NO, _trail);
+        return;
+    }
+    if([_x isIntersectingWith:_y]){
+        if([_x min] >= [_y min]){
+            ORFloat nmin = fp_next_float([_x min]);
+            [_y updateMin:nmin];
+        }
+        if([_x max] >= [_y max]){
+            ORFloat pmax = fp_previous_float([_y max]);
+            [_x updateMax:pmax];
+        }
+    }else{
+        if([_x canFollow:_y])
+            failNow();
+    }
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound];
+}
+-(NSString*)description
+{
+    return [NSString stringWithFormat:@"<%@ <= %@>",_x,_y];
+}
+@end
+
+@implementation CPFloatGEQ
+-(id) init:(CPFloatVarI*)x geq:(CPFloatVarI*)y
+{
+    self = [super initCPCoreConstraint: [x engine]];
+    _x = x;
+    _y = y;
+    return self;
+}
+-(void) post
+{
+    [self propagate];
+    [_y whenChangeBoundsPropagate:self];
+    [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+    if([_x bound]){
+        if([_y max] > [_x max]){
+            ORFloat pmin = fp_previous_float([_x min]);
+            [_y updateMax:pmin];
+            assignTRInt(&_active, NO, _trail);
+        }
+        return;
+    }else if ([_y bound]){
+        if([_y min] < [_x min]){
+            ORFloat nmin = fp_next_float([_y min]);
+            [_x updateMin:nmin];
+            assignTRInt(&_active, NO, _trail);
+        }
+        return;
+    }
+    if([_x isIntersectingWith:_y]){
+        if([_x min] <= [_y min]){
+            ORFloat pmin = fp_next_float([_y min]);
+            [_x updateMin:pmin];
+        }
+        if([_x max] <= [_y max]){
+            ORFloat nmax = fp_previous_float([_x max]);
+            [_y updateMax:nmax];
+        }
+    }else{
+        if([_x canPrecede:_y])
+            failNow();
+    }
 }
 -(NSSet*)allVars
 {
@@ -257,6 +376,7 @@
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
     self = [super initCPCoreConstraint: [x engine]];
+    printf("%16.16e\n",fp_next_float(0));
     _z = z;
     _x = x;
     _y = y;
@@ -287,7 +407,7 @@
         inter = intersection(changed, z, zTemp);
         z = inter.result;
         changed |= inter.changed;
-        //FIX ME
+        
         xTemp = x;
         yTemp = y;
         fpi_add_invsub_boundsf(precision, arrondi, &xTemp, &yTemp, &z);

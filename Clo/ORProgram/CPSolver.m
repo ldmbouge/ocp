@@ -1134,7 +1134,6 @@
        }
       orderedByFloat: ^ORFloat(ORInt i) {
          id<CPFloatVar> v = _gamma[getId(x[i])];
-         NSLog(@"%@   =   %20.20e  %d",v,[v domwidth],(ORInt)[v domwidth]);
          return -[v domwidth];
       }
       do: ^(ORInt i){
@@ -1144,6 +1143,7 @@
 }
 -(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
+   //check used[]
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
           id<CPFloatVar> v = _gamma[getId(x[i])];
@@ -1151,11 +1151,18 @@
        }
       orderedByFloat: ^ORFloat(ORInt i) {
          id<CPFloatVar> v = _gamma[getId(x[i])];
-         NSLog(@"%@   =   %20.20e  %d",v,[v domwidth],(ORInt)[v domwidth]);
-         return -[v domwidth];
+         return (ORFloat)-[v domwidth];
       }
       do: ^(ORInt i){
-         [self float5WaySplitOnce:_gamma[getId(x[i])]];
+         NSLog(@"---------------------------");
+         for(ORInt j = [x low]; j <= [x up]; j++){
+            id<CPFloatVar> v2 = _gamma[getId(x[j])];
+            NSLog(@"%@ sizeBound : %20.20Lf",v2, [v2 domwidth]);
+         }
+         NSLog(@"---------------------------");
+         NSLog(@"Selected Variable : %@",_gamma[getId(x[i])]);
+         NSLog(@"---------------------------");
+         [self float5WaySplitOnce3:_gamma[getId(x[i])]];
       }];
 }
 -(void) floatSplitArray: (id<ORFloatVarArray>) x
@@ -1235,8 +1242,89 @@
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
-
 }
+
+
+-(void) float5WaySplitOnce3: (id<CPFloatVar>) xi
+{
+   float_interval interval[6];
+   ORFloat theMax = xi.max;
+   ORFloat theMin = xi.min;
+   ORBool minIsInfinity = (theMin == -INFINITY) ;
+   ORBool maxIsInfinity = (theMax == INFINITY) ;
+   ORFloat minValue = minIsInfinity ? -maxnormalf() : theMin;
+   ORFloat maxValue = maxIsInfinity ? maxnormalf() : theMax;
+   ORBool only2float = (fp_next_float(theMin) == theMax);
+   ORBool only3float = (fp_next_float(theMin) == fp_previous_float(theMax));
+   interval[0].inf = interval[0].sup = theMax;
+   ORInt length = 1;
+   if(!(only2float || only3float)){
+      //au moins 4 floatants
+      ORFloat mid = minValue/2 + maxValue/2;
+      ORFloat midInf = -0.0f;
+      ORFloat midSup = +0.0f;
+      if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
+         midInf = fp_nextafterf(mid,-INFINITY);
+         midSup = mid;
+      }
+      ORFloat midSupNext = nextafterf(midSup,+INFINITY);
+      ORFloat supPrev = nextafterf(theMax,-INFINITY);
+      ORFloat midInfPrev = nextafterf(midInf,-INFINITY);
+      ORFloat infNext = nextafterf(theMin,+INFINITY);
+      
+      interval[1].inf = interval[1].sup = midSup;
+      interval[2].inf = interval[2].sup = midInf;
+      interval[3].inf = interval[3].sup = theMin;
+      length+=3;
+      if(midSupNext != supPrev){
+         interval[length].inf = midSupNext;
+         interval[length].sup = supPrev;
+         length++;
+      }
+      if(midInfPrev != infNext){
+         interval[length].sup = midInfPrev;
+         interval[length].inf = infNext;
+         length++;
+      }
+   }else if(only2float){
+      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
+         interval[1].inf = interval[1].sup = +0.0f;
+         interval[2].inf = interval[2].sup = -0.0f;
+         length += 2;
+      }
+      interval[length].inf = interval[length].sup = theMin;
+      length++;
+   }else{
+      //forcement 3 floattants
+      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
+         interval[1].inf = interval[1].sup = +0.0f;
+         interval[2].inf = interval[2].sup = -0.0f;
+         length += 2;
+      }else{
+         ORFloat mid = nextafterf(theMin,+INFINITY);
+         interval[1].inf = interval[1].sup = mid;
+         length++;
+
+      }
+      interval[length].inf = interval[length].sup = theMin;
+      length++;
+   }
+   float_interval* ip = interval;
+   length--;
+    NSLog(@"%@ \n",xi);
+    unsigned int * pinf;
+    unsigned int * psup;
+    for(int i = length; i >= 0;i--){
+    pinf = (unsigned int *)&(ip[i].inf);
+    psup = (unsigned int *)&(ip[i].sup);
+    printf("ip[%d] = [%18.18e,%18.18e] Hexa [%4X,%4X]\n",i,ip[i].inf,ip[i].sup,*pinf,*psup);
+    }
+    printf("\n\n\n\n");
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+         [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   }];
+}
+
 -(void) float5WaySplit: (id<CPFloatVar>) xi
 {
    while (![xi bound]) {

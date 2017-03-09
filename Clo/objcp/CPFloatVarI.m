@@ -361,7 +361,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom bound];
 }
--(ORFloat) domwidth
+-(ORLDouble) domwidth
 {
     return [_dom domwidth];
 }
@@ -605,7 +605,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_theVar bound];
 }
--(ORFloat) domwidth
+-(ORLDouble) domwidth
 {
     ORBounds b = [_theVar bounds];
     return b.max - b.min;

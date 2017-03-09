@@ -75,11 +75,12 @@ int main(int argc, const char * argv[]) {
         float v = 156.25f;
         id<ORExpr> fc = [ORFactory float:mdl value:v];
         [mdl add:[squaredArea gt:[fc plus:@(1e-5f)]]]; /* */
-        NSLog(@"model %@",mdl);
+       // NSLog(@"model %@",mdl);
         id<CPProgram> p = [ORFactory createCPProgram:mdl];
         [p solve:^{
-            NSLog(@"hello");
+         //   NSLog(@"hello");
           //  [p floatSplitArray:vars];
+           // [p dynamicFloatSplitArray:vars];
             [p floatSplitArrayOrderedByDomSize: vars];
             NSLog(@"Solver: %@",p);
             NSLog(@"a : %@ (%s)",[p concretize:a],[p bound:a] ? "YES" : "NO");

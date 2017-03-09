@@ -87,6 +87,28 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
 -(ORUInt)nbUVars;
 @end
 
+
+@interface CPFloatLEQ : CPCoreConstraint {
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)x leq:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatGEQ : CPCoreConstraint {
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)x geq:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
 @interface CPFloatTernaryAdd : CPCoreConstraint { // z = x + y
     CPFloatVarI* _z;
     CPFloatVarI* _x;

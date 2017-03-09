@@ -8,6 +8,7 @@
 #import <ORProgram/ORProgram.h>
 
 
+
 extern float check_solution(float a, float b, float c, float c_aire);
 
 int main(int argc, const char * argv[]) {
@@ -21,23 +22,12 @@ int main(int argc, const char * argv[]) {
         id<ORFloatVar> c = [ORFactory floatVar:mdl domain:rc];
         id<ORFloatVar> squaredArea = [ORFactory floatVar:mdl];
         
-        //id<ORFloatVarArray> vars = [mdl floatVars];
-        id<ORFloatVarArray> vars = [ORFactory floatVarArray:mdl range:RANGE(mdl, 0, 2)];
-        vars[0] = a;
-        vars[1] = b;
-        vars[2] = c;
+        id<ORFloatVarArray> vars = [mdl floatVars];
         
-        
-      /*   [mdl add:[a eq:@(5.798607349395751953e+00)]];
-        [mdl add:[b eq:@(3.982201576232910156e+00)]];
-        [mdl add:[c eq:@(1.816406250000000000e+00)]];
-        //*/
         // a > 0 & b > 0 & c > 0
-       ///*
         [mdl add:[a gt:@(0.f)]];
         [mdl add:[b gt:@(0.f)]];
         [mdl add:[c gt:@(0.f)]];
-/**/
        
        //a + b > c & b + c > a & a + c > b
        ///*
@@ -51,7 +41,7 @@ int main(int argc, const char * argv[]) {
         [mdl add:[b gt:c]];
         /**/
         
-        //squared_area = (((a+(b+c))*(c-(a-b))*(c+(a-b))*(a+(b-c)))//*16.0f)
+        //squared_area = (((a+(b+c))*(c-(a-b))*(c+(a-b))*(a+(b-c)))/16.0f)
         [mdl add:[squaredArea eq:[[
                                     [[
                                       [a plus:[b plus:c]]
@@ -64,19 +54,20 @@ int main(int argc, const char * argv[]) {
        [mdl add:[squaredArea lt:@(1e-5f)]]; /* */
         NSLog(@"model %@",mdl);
         id<CPProgram> p = [ORFactory createCPProgram:mdl];
+        static int nbSolutions = 0;
+        int max = 2;
         [p solveAll:^{
-            NSLog(@"hello");
             [p floatSplitArrayOrderedByDomSize: vars];
-            //[p floatSplitArray:vars];
             NSLog(@"Solver: %@",p);
              NSLog(@"a : %@ (%s)",[p concretize:a],[p bound:a] ? "YES" : "NO");
             NSLog(@"b : %@ (%s)",[p concretize:b],[p bound:b] ? "YES" : "NO");
             NSLog(@"c : %@ (%s)",[p concretize:c],[p bound:c] ? "YES" : "NO");
             NSLog(@"squaredArea : %@ (%s)",[p concretize:squaredArea],[p bound:squaredArea] ? "YES" : "NO");
-           /*
-            printf("\nObjective CP \n\na = %16.16e [%4X]\nb = %16.16e [%4X]\nc = %16.16e [%4X]\nsquared_area = %16.16e [%4X]n\n\n", aa, *aptr, bb, *bptr,cc, *cptr, sq, *sqptr);
-            */
-            check_solution([p floatValue:a],[p floatValue:b], [p floatValue:c], [p floatValue:squaredArea]);
+            if(nbSolutions >= max){
+                exit(1);
+            }
+            nbSolutions++;
+          check_solution([p floatValue:a],[p floatValue:b], [p floatValue:c], [p floatValue:squaredArea]);
         }];
         NSLog(@"Solver: %@",p);;
         

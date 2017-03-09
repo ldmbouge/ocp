@@ -162,7 +162,7 @@
     ORIReady();
     return createORI2(_min._val, _max._val);
 }
--(ORDouble) domwidth
+-(ORLDouble) domwidth
 {
     ORIReady();
     return ORIWidth(createORI2(_min._val, _max._val));

@@ -39,12 +39,18 @@
 -(NSString*) description
 {
     if([self bound]){
+        unsigned int *inf;
+        inf = (unsigned int *)&(_domain._low);
         NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-        [buf appendFormat:@"%20.20e",_domain._low ];
+        [buf appendFormat:@"%20.20e [%4X]",_domain._low,*inf ];
         return buf;
     }
+    unsigned int *inf;
+    unsigned int *sup;
+    inf = (unsigned int *)&(_domain._low);
+    sup = (unsigned int *)&(_domain._up);
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"(%20.20e,%20.20e)",_domain._low,_domain._up];
+    [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",_domain._low,_domain._up,*inf,*sup];
     return buf;
 }
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
@@ -113,9 +119,9 @@
     ORIReady();
     return createORI2(_domain._low, _domain._up);
 }
--(ORFloat) domwidth
+-(ORLDouble) domwidth
 {
-    return  -(_domain._low - _domain._up);
+    return  _domain._up - _domain._low;
 }
 -(TRFloatInterval) domain
 {

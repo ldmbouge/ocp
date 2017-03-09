@@ -74,7 +74,7 @@
 -(ORFloat) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORFloat) domwidth;
+-(ORLDouble) domwidth;
 -(TRFloatInterval) domain;
 -(ORBool) member:(ORFloat)v;
 -(NSString*)description;
@@ -95,7 +95,7 @@
 -(ORDouble) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORDouble) domwidth;
+-(ORLDouble) domwidth;
 -(ORBool) member:(ORDouble)v;
 -(NSString*)description;
 -(id) copy;
