@@ -731,7 +731,9 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
 }
 @end
 
-@implementation CPBasicNotEqual
+@implementation CPBasicNotEqual {
+   id<CPClosureList> hdl1,hdl2;
+}
 -(id) initCPBasicNotEqual:(id<CPIntVar>) x and: (id<ORIntVar>) y
 {
    self = [super initCPCoreConstraint:[x engine]];
@@ -750,14 +752,18 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
    else if (bound(_y))
       [_x remove:minDom(_y)];
    else {
-      [_x whenBindDo:^void{
-         if (!_active._val) return;
-         assignTRInt(&_active, NO, _trail);
+      hdl1 = [_x whenBindDo:^void{
+//         if (!_active._val) return;
+//         assignTRInt(&_active, NO, _trail);
+         retract(hdl1);
+         retract(hdl2);
          removeDom(_y,minDom(_x));
       } priority:HIGHEST_PRIO onBehalf:self];
-      [_y whenBindDo:^void {
-         if (!_active._val) return;
-         assignTRInt(&_active, NO, _trail);
+      hdl2 = [_y whenBindDo:^void {
+//         if (!_active._val) return;
+//         assignTRInt(&_active, NO, _trail);
+         retract(hdl1);
+         retract(hdl2);
          removeDom(_x,minDom(_y));
       } priority:HIGHEST_PRIO onBehalf:self];
    }

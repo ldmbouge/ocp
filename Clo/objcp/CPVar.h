@@ -81,8 +81,8 @@ enum CPVarClass {
 @protocol CPIntVarSubscriber <CPNumVarSubscriber>
 
 // AC3 Closure Event
--(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
--(void) whenBindDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+-(id<CPClosureList>) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(id<CPClosureList>) whenBindDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 
 // AC3 Constraint Event
 -(id<CPClosureList>) whenBindPropagate: (id<CPConstraint>) c priority: (ORInt) p;

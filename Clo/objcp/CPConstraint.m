@@ -444,11 +444,15 @@
 }
 +(id<ORConstraint>) notEqual:(id<CPIntVar>)x to:(id<CPIntVar>)y plus:(int)c
 {
-   id<ORConstraint> o = [[CPNotEqual alloc] initCPNotEqual:x and:y and:c];
-   [[x tracker] trackMutable:o];
-   return o;
+   if (c==0)
+      return [self notEqual:x to:y];
+   else {
+      id<ORConstraint> o = [[CPNotEqual alloc] initCPNotEqual:x and:y and:c];
+      [[x tracker] trackMutable:o];
+      return o;
+   }
 }
-+(id<ORConstraint>) notEqual:(id<CPIntVar>)x to:(id<CPIntVar>)y 
++(id<ORConstraint>) notEqual:(id<CPIntVar>)x to:(id<CPIntVar>)y
 {
    id<ORConstraint> o = [[CPBasicNotEqual alloc] initCPBasicNotEqual:x and:y];
    [[x tracker] trackMutable:o];

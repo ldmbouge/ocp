@@ -23,12 +23,12 @@
 
 @protocol CPRealVarSubscriber <NSObject>
 // AC3 Closure Event
--(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(id<CPClosureList>) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 
--(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPClosureList>) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeBoundsDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMinDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMaxDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;

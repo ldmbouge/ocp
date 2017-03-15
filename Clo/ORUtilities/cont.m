@@ -27,13 +27,26 @@ typedef struct  {
 
 // [ldm] The routine is meant to operate over 32-bit words (4-bytes at a time) or 64-bit wide 
 // datum. dest / src must be increased by the data item size.
-static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,register size_t len)
+/*
+ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,register size_t len)
 {
    while (len) {
       *dest++ = *src++;
       len -= sizeof(ORUInt);
    }
 }
+*/
+
+static inline
+void fastmemcpy(register void* dest,register void* from,register size_t size)
+{
+   asm("cld \n"
+       "rep movsd"
+       :
+       : "D"(dest) , "S"(from), "c" (size / 4)
+       );
+}
+
 
 @implementation NSCont {
 @private

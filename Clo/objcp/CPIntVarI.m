@@ -361,9 +361,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 
 
--(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+-(id<CPClosureList>) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenBindDo not defined"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenBindDo not defined"];
+   return nil;
 }
 -(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
@@ -408,9 +409,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method createTriggers not defined"];
 }
 
--(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPClosureList>) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
-   [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c];
+   return [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
 -(void) whenChangeDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -606,8 +607,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 // AC3 Closure Events
 
--(void)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(<CPClosureList>)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
+   return nil;
 }
 -(void)whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
@@ -959,9 +961,9 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 
 // AC3 Closure Events
 
--(void)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+-(id<CPClosureList>)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
-   hookupEvent(_fdm, _net._bindEvt, todo, c, p);
+   return hookupEvent(_fdm, _net._bindEvt, todo, c, p);
 }
 -(void)whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
