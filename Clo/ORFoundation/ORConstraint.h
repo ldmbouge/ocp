@@ -700,6 +700,11 @@ enum ORGroupType {
 -(id<ORIntVar>) right;
 @end
 
+@protocol ORBitChannel<ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORIntVar>) right;
+@end
+
 @protocol  ORBitZeroExtend <ORConstraint>
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;

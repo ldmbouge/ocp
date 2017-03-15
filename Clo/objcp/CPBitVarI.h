@@ -69,12 +69,6 @@
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 -(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//=======
-//-(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ORClosure) todo;
-//-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//>>>>>>> master
 
 // notification
 
@@ -134,8 +128,6 @@
 // Class methods
 +(CPBitVarI*)   initCPBitVar: (id<CPEngine>)cp low:(int)low up:(int)up len:(ORUInt)len;
 +(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)cp withLow:(ORUInt *)low andUp:(ORUInt *)up andLen:(ORUInt)len;
-
-
 @end
 
 @interface CPBitVarConstantView : CPBitVarI
