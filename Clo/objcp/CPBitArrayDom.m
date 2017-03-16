@@ -637,7 +637,7 @@
     return outarray;
 }
 
-#define INTERPRETATION(t) ((((ORULong)(t)[0]._val)<<BITSPERWORD) | (t)[1]._val)
+#define INTERPRETATION(t) ((((ORULong)(t)[1]._val)<<BITSPERWORD) | (t)[0]._val)
 
 -(ORStatus)updateMin:(ORULong)newMin for:(id<CPBitVarNotifier>)x
 {
@@ -995,6 +995,7 @@
 
    isChanged = alloca(sizeof(ORUInt)*_wordLength);
    
+   
    for(int i=0;i<_wordLength;i++){
 //      isChanged[i]  = (_up[i]._val & ~newUp[i]);
 //      isChanged[i] |= (~_low[i]._val & newLow[i]);
@@ -1004,6 +1005,13 @@
       assignTRUInt(&_up[i], newUp[i], _trail);
       lmod |= _low[i]._val != newLow[i];
       assignTRUInt(&_low[i], newLow[i], _trail);
+      
+      
+      //Check consistency
+      if((~_up[i]._val) & newLow[i])
+         failNow();
+      if(_low[i]._val & ~newUp[i])
+         failNow();
    }
    [self updateFreeBitCount];
    
