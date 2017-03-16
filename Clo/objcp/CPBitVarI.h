@@ -29,15 +29,13 @@
 
 
 @interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
-//=======
-//
-//@interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber> {
-//>>>>>>> master
 @private
 @protected
     CPEngineI*                       _engine;
     id<ORTrail>                       _trail;
+@public
     CPBitArrayDom*                      _dom;
+@protected
     CPTriggerMap*                  _triggers;
     CPBitVarMultiCast*                 _recv;
     enum CPVarClass                      _vc;
@@ -60,11 +58,6 @@
 
 // subscription
 -(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt) idx do:(ORClosure) todo;
--(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(ORUInt)p do:(ORClosure) todo;
--(void) whenBitFixedAt:(ORUInt)i propagate:(CPCoreConstraint*) c;
-//-(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt)p do:(ConstraintIntCallBack)todo;
-
-//-(void) whenChangeDo:(CPCoreConstraint*) c;
 -(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
@@ -76,8 +69,6 @@
 -(ORStatus) changeMinEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtEvt:(ORUInt)dsz at:(ORUInt)idx sender:(CPBitArrayDom*)sender;
-//-(ORStatus) bitFixedAtEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
 -(ORStatus) bindEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
 // access
 -(ORInt) bitLength;
@@ -130,6 +121,18 @@
 +(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)cp withLow:(ORUInt *)low andUp:(ORUInt *)up andLen:(ORUInt)len;
 @end
 
+
+
+static inline ULRep getULVarRep(CPBitVarI* bv)
+{
+   return getULDomRep(bv->_dom);
+}
+
+static inline ORUInt getVarWordLength(CPBitVarI* bv)
+{
+   return bv->_dom->_wordLength;
+}
+
 @interface CPBitVarConstantView : CPBitVarI
 
 @end
@@ -148,9 +151,6 @@
 -(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) loseValEvt:(ORUInt)val sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
-//-(ORStatus) bitFixedAtEvt:(ORUInt) i sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtEvt:(ORUInt)dsz at:(ORUInt) i sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtIEvt:(ORUInt)dsz at:(ORUInt)i sender:(CPBitArrayDom *)sender;
 @end
 
 
