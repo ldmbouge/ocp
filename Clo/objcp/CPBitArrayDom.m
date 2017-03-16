@@ -880,7 +880,10 @@
 {
    ORUInt umod = false;
    ORUInt lmod = false;
+//   ORUInt level = [(CPLearningEngineI*)_engine getLevel];
+   
    ORUInt* isChanged = alloca(sizeof(ORUInt)*_wordLength);
+
    for(int i=0;i<_wordLength;i++){
       isChanged[i]  = (_up[i]._val ^ newUp[i]);
       isChanged[i] |= (_low[i]._val ^ newLow[i]);
@@ -888,6 +891,13 @@
       assignTRUInt(&_up[i], newUp[i], _trail);
       lmod |= _low[i]._val != newLow[i];
       assignTRUInt(&_low[i], newLow[i], _trail);
+      
+      
+      //Check consistency
+      if((~_up[i]._val) & newLow[i])
+         failNow();
+      if(_low[i]._val & ~newUp[i])
+         failNow();
    }
    [self updateFreeBitCount];
    if (umod || lmod){
