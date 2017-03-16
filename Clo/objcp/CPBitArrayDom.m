@@ -696,8 +696,8 @@
     // be sure that this specific bit can never be set to 1.   
     ORULong atLeast = low;
     newMax64 = TOULONG(_max);
-    mask = 0x8000000000000000;
     bit = [self getLength] - 1;
+    mask = 1UL << bit;
     while(atLeast <= min && mask) {
         const bool isFreeBit = [self isFree:bit];
         if (isFreeBit) {

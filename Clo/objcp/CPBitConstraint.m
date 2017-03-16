@@ -4996,8 +4996,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(void) propagateIntToBit
 {
+   [_x updateMax:(ORULong)[_xc max]];  // Better to update the max *first* 
    [_x updateMin:(ORULong)[_xc min]];
-   [_x updateMax:(ORULong)[_xc max]];
 }
 -(void) propagateBitToInt
 {
