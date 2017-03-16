@@ -379,10 +379,8 @@ return self;
 {
    return (id<CPBVConstraint>)_implications[i];
 }
-
--(ORBool) isFree:(ORUInt)pos{
-//   ORBool temp = [_dom isFree:pos];
-//   return temp;
+-(ORBool) isFree:(ORUInt)pos
+{
    return [_dom isFree:pos];
 }
 -(ORBool) bitAt:(ORUInt)pos
