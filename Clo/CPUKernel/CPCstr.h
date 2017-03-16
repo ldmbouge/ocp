@@ -18,6 +18,7 @@
 -(void)        setGroup:(id<CPGroup>) g;
 -(id<CPGroup>) group;
 -(void) post;
+-(void) toCheck;
 @end
 
 

@@ -48,6 +48,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 +(id<CPBVConstraint>) bitDivide:(id<CPBitVar>)x dividedby:(id<CPBitVar>) y equals:(id<CPBitVar>)q rem:(id<CPBitVar>) r;
 +(id<CPBVConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
 +(id<CPBVConstraint>) bitCount:(id<CPBitVar>)x count:(id<CPIntVar>)y;
++(id<CPBVConstraint>) bitChannel:(id<CPBitVar>)x channel:(id<CPIntVar>)y;
 +(id<CPBVConstraint>) bitZeroExtend:(id<CPBitVar>)x extendTo:(id<CPBitVar>)y;
 +(id<CPBVConstraint>) bitSignExtend:(id<CPBitVar>)x extendTo:(id<CPBitVar>)y;
 +(id<CPBVConstraint>) bitExtract:(id<CPBitVar>)x from:(ORUInt)lsb to:(ORUInt)msb eq:(id<CPBitVar>)y;
@@ -360,9 +361,20 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state;
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment;
-
 -(void) post;
 -(void) propagate;
+@end
+
+@interface CPBitChannel : CPCoreConstraint<CPBVConstraint>
+-(id) init: (CPBitVarI*) x channel: (CPIntVarI*) p ;
+-(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state;
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment;
+-(void) post;
+-(void) propagateIntToBit;
+-(void) propagateBitToInt;
 @end
 
 @interface CPBitZeroExtend : CPCoreConstraint<CPBVConstraint> 

@@ -472,19 +472,6 @@ return self;
 
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
-//<<<<<<< HEAD
-   
-//   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
-//   if (s==ORFailure) return s;
-
-//   id<CPEventNode> mList[8];
-//   ORUInt k = 0;
-//   mList[k] = _net._boundsEvt[0]._val;
-//   k += mList[k] != NULL;
-//   mList[k] = _net._minEvt[0]._val;
-//   k += mList[k] != NULL;
-//   mList[k] = _net._maxEvt[0]._val;
-//=======
    id<CPClosureList> mList[7];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0];
@@ -500,9 +487,7 @@ return self;
    mList[k] = _net._bitFixedEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
-   
-   [_engine scheduleClosures:mList];
-   
+   scheduleClosures(_engine, mList);
     if (_triggers)
         [_triggers bindEvt:_engine];
    return ORSuspend;
@@ -510,56 +495,38 @@ return self;
 
 -(ORStatus) changeMinEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
-//<<<<<<< HEAD
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-
-//   id<CPEventNode> mList[8];
-//   ORUInt k = 0;
-//   mList[k] = _net._boundsEvt[0]._val;
-//   k += mList[k] != NULL;
-//   mList[k] = _net._minEvt[0]._val;
-//=======
    id<CPClosureList> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
    mList[k] = _net._minEvt[0];
-//>>>>>>> master
+   k += mList[k] != NULL;
+   mList[k] = _net._domEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
-//   [_engine scheduleClosures:mList];
    scheduleClosures(_engine, mList);
-   
    if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
    return ORSuspend;
 }
 -(ORStatus) changeMaxEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
-//<<<<<<< HEAD
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-
-//   id<CPEventNode> mList[8];
-//   ORUInt k = 0;
-//   mList[k] = _net._boundsEvt[0]._val;
-//   k += mList[k] != NULL;
-//   mList[k] = _net._maxEvt[0]._val;
-//=======
    id<CPClosureList> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
    mList[k] = _net._maxEvt[0];
-//>>>>>>> master
+   k += mList[k] != NULL;
+   mList[k] = _net._domEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
-//   [_engine scheduleClosures:mList];
    scheduleClosures(_engine, mList);
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
-   
    return ORSuspend;
 }
 
@@ -567,18 +534,14 @@ return self;
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-
-//   [_dom updateFreeBitCount];
-    //Empty implementation
-//<<<<<<< HEAD
    id<CPClosureList> mList[5];
    ORUInt k = 0;
    mList[k] = _net._bitFixedEvt[0];
    k += mList[k] != NULL;
+   mList[k] = _net._domEvt[0];
+   k += mList[k] != NULL;
    mList[k] = NULL;
-//   [_engine scheduleClosures:mList];
    scheduleClosures(_engine, mList);
-   
    return ORSuspend;
 }
 
@@ -593,9 +556,7 @@ return self;
    mList[k] = _net._bitFixedAtIEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
-//   [_engine scheduleAC3:mList];
    scheduleClosures(_engine, mList);
-   
    return ORSuspend;
 }
 
@@ -611,25 +572,12 @@ return self;
    mList[k] = _net._bitFixedAtEvt[idx][0];
    k += mList[k] != NULL;
    mList[k] = NULL;
-//   [_engine scheduleAC3:mList];
    scheduleClosures(_engine, mList);
-   
    return ORSuspend;
 }
 
 
-//-(ORStatus) updateMin: (uint64) newMin
-////=======
-//   id<CPClosureList> mList[5];
-//   ORUInt k = 0;
-//   mList[k] = _net._bitFixedEvt;
-//   k += mList[k] != NULL;
-//   mList[k] = NULL;
-//   [_engine scheduleClosures:mList];
-//}
-
 -(ORStatus) updateMin: (ORULong) newMin
-//>>>>>>> master
 {
     return [_dom updateMin:newMin for:self];
 }
@@ -659,41 +607,31 @@ return self;
 -(void) setLow:(unsigned int *)newLow for:(CPCoreConstraint*) constraint
 {
    TRUInt* oldLow = [_dom getLow];
-   ORUInt changedLow;
-   
-   for (int i=0; i<[_dom getWordLength]; i++) {
-      changedLow = oldLow[i]._val ^ newLow[i];
-      for(int j=0;j<BITSPERWORD; j++){
-         if (changedLow & 0x1) {
-//            if([_engine isKindOfClass:[CPLearningEngineI class]])
-              // assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
-//               _levels[i*BITSPERWORD+j] = [(CPLearningEngineI*)_engine getLevel];
-//            _implications[i*BITSPERWORD+j] = constraint;
+   if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
+      for (int i=0; i<[_dom getWordLength]; i++) {
+         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
+         for(int j=0;j<BITSPERWORD; j++){
+            if (changedLow & 0x1)
                assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-
+            changedLow >>= 1;
          }
-         changedLow >>= 1;
       }
    }
    [_dom setLow: newLow for:self];
-
 }
 
 -(void) setUp:(unsigned int *)newUp for:(CPCoreConstraint*) constraint
 {
    TRUInt* oldUp = [_dom getUp];
-   ORUInt changedUp;
-   
-   for (int i=0; i<[_dom getWordLength]; i++) {
-      changedUp = oldUp[i]._val ^ newUp[i];
-      for(int j=0;j<BITSPERWORD; j++){
-         if (changedUp & 0x1) {
-//            if([_engine isKindOfClass:[CPLearningEngineI class]])
-               //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
-            //_implications[i*BITSPERWORD+j] = constraint;
+   if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
+      for (int i=0; i<[_dom getWordLength]; i++) {
+         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
+         for(int j=0;j<BITSPERWORD; j++){
+            if (changedUp & 0x1) {
                assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
+            }
+            changedUp >>= 1;
          }
-         changedUp >>= 1;
       }
    }
    [_dom setUp: newUp for:self];
@@ -703,47 +641,30 @@ return self;
 {
    TRUInt* oldUp = [_dom getUp];
    TRUInt* oldLow = [_dom getLow];
-   ORUInt changedUp;
-   ORUInt changedLow;
-   ORUInt mask;
    ORUInt bitLength = [self bitLength];
    ORUInt wordLength = [self getWordLength];
-   
-   mask = CP_UMASK >> (BITSPERWORD-(bitLength%BITSPERWORD));
+   ORUInt mask = CP_UMASK >> (BITSPERWORD-(bitLength%BITSPERWORD));
    
    newUp[wordLength-1] &= mask;
    newLow[wordLength-1] &= mask;
    
-   for (int i=0; i<wordLength; i++) {
-      changedUp = oldUp[i]._val ^ newUp[i];
-      changedLow = oldLow[i]._val ^ newLow[i];
-      mask = 0x1;
-      for(int j=0;j<BITSPERWORD; j++){
-         if ((i*BITSPERWORD)+j >=bitLength) {
-            break;
-         }
-         if ((changedUp & mask) || (changedLow & mask)) {
-//            NSLog(@"Update of bit %u by %@", j, constraint);
-            if([_engine conformsToProtocol:@protocol(CPLEngine)]){
-               //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
-               //_implications[i*BITSPERWORD+j] = constraint;
+   if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
+      for (int i=0; i<wordLength; i++) {
+         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
+         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
+         mask = 0x1;
+         for(int j=0;j<BITSPERWORD; j++){
+            if ((i*BITSPERWORD)+j >=bitLength)
+               break;
+            if ((changedUp & mask) || (changedLow & mask))
                assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-//               NSLog(@"Updating %@[%d] for %@ \@ %ld",self, i*BITSPERWORD+j,constraint,[_engine getLevel]);
-            }
-            
+            mask <<= 1;
          }
-         mask <<= 1;
       }
    }
-//   NSLog(@"done.");
    [_dom setUp: newUp andLow:newLow for:self];
-//   if(changedUp | changedLow)
-//      NSLog(@"%lx=%@ updated by %@",self,self,constraint);
-   
 }
 //end of setup and setlow for nogoods
-
-
 
 -(TRUInt*) getLow
 {

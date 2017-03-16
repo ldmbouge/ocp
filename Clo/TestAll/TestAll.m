@@ -112,7 +112,7 @@
       id<ORBitVar> z = [ORFactory bitVar:m withLength:32];
       [m add: [ORFactory bit:x bnot:y]];
       [m add: [ORFactory bit:y eq:z]];
-      id<CPProgram,CPBV> cp = [ORFactory createCPProgram:m];
+      id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
       [cp solveAll:^{
          [cp labelBits:x withValue:17];
          NSLog(@"x = %@",[cp stringValue:x]);
@@ -122,4 +122,45 @@
    }
 }
 
+-(void) testChannel1 {
+   @autoreleasepool {
+      id<ORModel>  m = [ORFactory createModel];
+      id<ORBitVar> x = [ORFactory bitVar:m withLength:32];
+      id<ORBitVar> y = [ORFactory bitVar:m withLength:32];
+      ORUInt low = 0,up = 65535;
+      id<ORBitVar> c = [ORFactory bitVar:m low:&low up:&up bitLength:32];
+      id<ORIntVar> yn = [ORFactory intVar:m domain:RANGE(m, 0, 65535)];
+      [m add: [ORFactory bit:x eq:y]];
+      [m add: [ORFactory bit:y eq:c]];
+      [m add: [ORFactory bit:y channel:yn]];
+      id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+      [cp solveAll:^{
+         [cp labelBits:x withValue:17];
+         NSLog(@"x  = %@",[cp stringValue:x]);
+         NSLog(@"y  = %@",[cp stringValue:y]);
+         NSLog(@"yn = %d",[cp intValue:yn]);
+      }];
+   }
+}
+
+-(void) testChannel2 {
+   @autoreleasepool {
+      id<ORModel>  m = [ORFactory createModel];
+      id<ORBitVar> x = [ORFactory bitVar:m withLength:32];
+      id<ORBitVar> y = [ORFactory bitVar:m withLength:32];
+      ORUInt low = 0,up = 65535;
+      id<ORBitVar> c = [ORFactory bitVar:m low:&low up:&up bitLength:32];
+      id<ORIntVar> yn = [ORFactory intVar:m domain:RANGE(m, 0, 65535)];
+      [m add: [ORFactory bit:x eq:y]];
+      [m add: [ORFactory bit:y eq:c]];
+      [m add: [ORFactory bit:y channel:yn]];
+      id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+      [cp solveAll:^{
+         [cp label:yn with:15];
+         NSLog(@"x  = %@",[cp stringValue:x]);
+         NSLog(@"y  = %@",[cp stringValue:y]);
+         NSLog(@"yn = %d",[cp intValue:yn]);
+      }];
+   }
+}
 @end

@@ -74,7 +74,10 @@
 {
    return _group;
 }
-
+-(void) toCheck
+{
+   _todo = CPTocheck;
+}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitConstraint:self];

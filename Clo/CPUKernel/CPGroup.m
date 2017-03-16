@@ -42,6 +42,31 @@
    free(_inGroup);
    [super dealloc];
 }
+-(id<ORTrail>) trail
+{
+   return [_engine trail];
+}
+-(id) trackMutable: (id) obj
+{
+   return [_engine trackMutable:obj];
+}
+-(id) trackImmutable: (id) obj
+{
+   return [_engine trackImmutable:obj];
+}
+-(id) trackVariable: (id) obj
+{
+   return [_engine trackVariable:obj];
+}
+-(id) trackObjective:(id) obj
+{
+   return [_engine trackObjective:obj];
+}
+-(id) trackConstraintInGroup:(id) cg
+{
+   return [_engine trackConstraintInGroup:cg];
+}
+
 -(void)add:(id<CPConstraint>)p
 {
    [p setGroup:self];
@@ -63,11 +88,11 @@
 }
 -(void)setGroup:(id<CPGroup>)g
 {
-   assert(0);
+   [super setGroup:g];
 }
 -(id<CPGroup>)group
 {
-   return nil;
+   return [super group];
 }
 -(void) post
 {
@@ -85,6 +110,10 @@
 -(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
 {
     [_closureQueue[HIGHEST_PRIO] enQueue: cb cstr: c];
+}
+-(void)incNbPropagation:(ORUInt)add
+{
+   [_engine incNbPropagation:add];
 }
 
 typedef id (*SELPROTO)(id,SEL,...);
@@ -204,6 +233,10 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
    free(_scanMap);
    free(_inGroup);
    [super dealloc];
+}
+-(id<ORTrail>) trail
+{
+   return [_engine trail];
 }
 -(void)add:(id<CPConstraint>)p
 {

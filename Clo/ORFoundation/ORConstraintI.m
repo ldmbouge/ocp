@@ -5059,7 +5059,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_p, nil] autorelease];
 }
-
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -5069,6 +5068,41 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(ORVisitor*)v
 {
    [v visitBitCount:self];
+}
+@end
+
+@implementation ORBitChannel {
+   id<ORBitVar>  _x;
+   id<ORIntVar> _xc;
+}
+-(ORBitChannel*)init: (id<ORBitVar>) x channel:(id<ORIntVar>)xc
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _xc = xc;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _xc;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_xc, nil] autorelease];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (Natural( %@ ) = %@ )",[self class],self,_x,_xc];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitChannel:self];
 }
 @end
 

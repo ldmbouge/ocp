@@ -20,6 +20,7 @@
 -(void)  add:(id<CPConstraint>)p;
 -(void)  assignIdToConstraint:(id<ORConstraint>)c;
 -(void)  scheduleClosure:(id<CPClosureList>)evt;
+-(id<ORTrail>) trail;
 @end
 
 @interface CPGroup : CPCoreConstraint<CPGroup>

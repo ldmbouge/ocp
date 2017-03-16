@@ -1021,6 +1021,12 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [[x engine] trackMutable:o];
    return o;
 }
++(id<CPBVConstraint>) bitChannel:(id<CPBitVar>)x channel:(id<CPIntVar>)y
+{
+   id<CPBVConstraint> o = [[CPBitChannel alloc] init:(CPBitVarI*)x channel:(CPIntVarI*)y];
+   [[x engine] trackMutable:o];
+   return o;
+}
 +(id<CPBVConstraint>) bitZeroExtend:(id<CPBitVar>)x extendTo:(id<CPBitVar>)y
 {
    id<CPBVConstraint> o = [[CPBitZeroExtend alloc] initCPBitZeroExtend:(CPBitVarI*)x extendTo:(CPBitVarI*)y];
@@ -2776,7 +2782,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       ORUInt places = pLow->_val;
 //      [engine addInternal:[[CPBitShiftL alloc] initCPBitShiftL:_x shiftLBy:places equals:_y]];
       unsigned int wordLength = [_x getWordLength];
-      //ORUInt bitLength = [_x bitLength];
+      ORUInt bitLength = [_x bitLength];
       
       TRUInt* xLow;
       TRUInt* xUp;
@@ -2798,6 +2804,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 //            NSLog(@"x=%@\n",_x);
 //            NSLog(@"y=        %@\n",_y);
 //
+
       
       for(int i=0;i<wordLength;i++){
          if ((int)(i-(((int)places)/BITSPERWORD)) >= 0) {
@@ -4857,7 +4864,6 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [string appendString:@" with "];
    [string appendString:[NSString stringWithFormat:@"%@ ",_x]];
    [string appendString:[NSString stringWithFormat:@"and %@",_p]];
-   
    return string;
 }
 
@@ -4965,6 +4971,65 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    //set _x and _p to new values
    [_x setUp:up andLow:low for:self];
    
+}
+@end
+
+@implementation CPBitChannel {
+   CPBitVarI*  _x;
+   CPIntVarI* _xc;
+}
+-(id) init: (CPBitVarI*) x channel: (CPIntVarI*) p
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _xc = p;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* string = [NSMutableString stringWithString:[super description]];
+   [string appendString:@" with "];
+   [string appendString:[NSString stringWithFormat:@"%@ ",_x]];
+   [string appendString:[NSString stringWithFormat:@" channel %@",_xc]];
+   return string;
+}
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment
+{
+   return NULL;
+}
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state
+{
+   return NULL;
+}
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment
+{
+   return NULL;
+}
+-(void) post
+{
+   [self propagate];
+   if (![_x bound])
+      [_x whenChangeDo:^{
+         [self propagateBitToInt];
+      } priority:HIGHEST_PRIO onBehalf:self];
+   if (![_xc bound])
+      [_xc whenChangeDo:^{
+         [self propagateIntToBit];
+      } onBehalf:self];
+   [self propagate];
+}
+-(void) propagateIntToBit
+{
+   [_x updateMax:(ORULong)[_xc max]];  // Better to update the max *first* 
+   [_x updateMin:(ORULong)[_xc min]];
+}
+-(void) propagateBitToInt
+{
+   [_xc updateMin:(ORInt)[_x min] andMax:(ORInt)[_x max]];
 }
 @end
 

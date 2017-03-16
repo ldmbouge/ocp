@@ -43,13 +43,13 @@
 @class CPCoreConstraint;
 
 @protocol CPBitVarSubscriber <NSObject>
--(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ORClosure) todo;
+-(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt) idx do:(ORClosure) todo;
+-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(ORUInt)p do:(ORClosure) todo;
+-(void) whenBitFixedAt:(ORUInt)i propagate:(CPCoreConstraint*) c;
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//=======
-//-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//>>>>>>> master
+-(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
+-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 @end
 
 @class CPBitVarI;

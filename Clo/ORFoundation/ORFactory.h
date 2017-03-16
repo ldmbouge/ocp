@@ -310,6 +310,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) bit:(id<ORBitVar>)x dividedby:(id<ORBitVar>)y eq:(id<ORBitVar>)q rem:(id<ORBitVar>)r;
 +(id<ORConstraint>) bit:(id<ORBitVar>)w trueIf:(id<ORBitVar>)x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x count:(id<ORIntVar>)p;
++(id<ORConstraint>) bit:(id<ORBitVar>)x channel:(id<ORIntVar>)xc;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x zeroExtendTo:(id<ORBitVar>)p;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x signExtendTo:(id<ORBitVar>)p;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x from:(ORUInt)lsb to:(ORUInt)msb eq:(id<ORBitVar>)p;
