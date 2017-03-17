@@ -1222,11 +1222,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state
 {
-   return nil;
+   return NULL;
 }
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment
 {
-   return nil;
+   return NULL;
 }
 -(void) post
 {
