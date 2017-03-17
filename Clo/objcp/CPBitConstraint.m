@@ -327,11 +327,11 @@ void analyzeConflictUIP(id<CPLEngine> engine, CPBitAssignment* conflict, id<CPBV
       if(![temp->var isFree:temp->index])
       {
 //         //If bit set by choice... this IS the UIP
-         if([temp->var getImplicationForBit:temp->index] == 0){
-            conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
-            more=false;
-            continue;
-         }
+//         if([temp->var getImplicationForBit:temp->index] == 0){
+//            conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
+////            more=false;
+//            continue;
+//         }
          c = [(CPBitVarI*)temp->var getImplicationForBit:temp->index];
          //but bit might not be set yet if it was in the constraint that generated the conflict!
          if(c==NULL){
@@ -339,7 +339,7 @@ void analyzeConflictUIP(id<CPLEngine> engine, CPBitAssignment* conflict, id<CPBV
             
             if (([temp->var getLevelBitWasSet:temp->index] != -1) || [temp->var isFree:temp->index])
                conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
-            more=false;
+//            more=false;
             continue;
          }
          
@@ -421,8 +421,8 @@ void analyzeConflictUIP(id<CPLEngine> engine, CPBitAssignment* conflict, id<CPBV
          conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
    }
    
-   if(numConflictVars == 1)
-      NSLog(@"New constraint with one variable");
+//   if(numConflictVars == 1)
+//      NSLog(@"New constraint with one variable");
 
    if (numConflictVars > 0) {
       //      NSLog(@"Adding constraint to constraint store\n");

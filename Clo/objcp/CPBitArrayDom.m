@@ -735,6 +735,8 @@
 {
    // [LDM]. This is buggy  Some bits might already be set in low/up and *incompatible* with the
    // mass setting done here. In this case it should *FAIL*.
+   
+   
    if ((val < [self min]) || (val > [self max]))
       failNow();
    if ((_freebits._val == 0) && (val == [self min])) return ORSuccess;
