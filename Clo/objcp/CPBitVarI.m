@@ -610,7 +610,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
     return [_dom bind:val for:self];
 }
 
--(ORStatus)bind:(ORUInt*)val{
+-(ORStatus)bind:(ORUInt*)val
+{
     return [_dom bindToPat:val for:self];
 }
 -(ORStatus) remove:(ORUInt*) val

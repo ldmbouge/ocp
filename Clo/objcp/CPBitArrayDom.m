@@ -24,6 +24,25 @@
 
 @implementation CPBitArrayDom
 
+static inline ORULong BAMin(CPBitArrayDom* dom)
+{
+   return dom->_min[0]._val | ((ORULong)dom->_min[1]._val << 32);
+}
+static inline ORULong BAMax(CPBitArrayDom* dom)
+{
+   return dom->_max[0]._val | ((ORULong)dom->_max[1]._val << 32);
+}
+/*
+static inline ORULong BALow(CPBitArrayDom* dom)
+{
+   return dom->_low[0]._val | ((ORULong)dom->_low[1]._val << 32);
+}
+static inline ORULong BAUp(CPBitArrayDom* dom)
+{
+   return dom->_up[0]._val | ((ORULong)dom->_up[1]._val << 32);
+}
+*/
+
 -(CPBitArrayDom*)      initWithLength: (int) len withEngine:(id<CPEngine>)engine withTrail:(id<ORTrail>) tr
 {
    self = [super init];
@@ -260,6 +279,17 @@
       return false;
 }
 
+static inline void updateFreeBitCount(CPBitArrayDom* dom)
+{
+   ORUInt freeBits = 0;
+   for (int i=0; i < dom->_wordLength; i++) {
+      ORUInt boundBits = (dom->_low[i]._val ^ dom->_up[i]._val);
+      freeBits += __builtin_popcount(boundBits);
+   }
+   assignTRUInt(&(dom->_freebits), freeBits, dom->_trail);
+}
+
+
 -(ORStatus) setBit:(ORUInt)idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
 {
    if (BITFREE(idx)) {
@@ -278,7 +308,7 @@
       }
    }
 
-   [self updateFreeBitCount];
+   updateFreeBitCount(self);
    if([_engine conformsToProtocol:@protocol(CPLEngine)]){
       ORUInt level = [(id<CPLEngine>)_engine getLevel];
       assignTRUInt(&(_levels[idx]),level, _trail);
@@ -293,7 +323,7 @@
 -(ORUInt) lsFreeBit
 {
    int j;
-   //[self updateFreeBitCount];
+   //updateFreeBitCount(self);
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
@@ -310,7 +340,7 @@
 {
    ORUInt freeBits;
    int j;
-   //[self updateFreeBitCount];
+   //updateFreeBitCount(self);
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
@@ -344,7 +374,7 @@
 
 -(ORUInt) randomFreeBit
 {
-   //[self updateFreeBitCount];
+   //updateFreeBitCount(self);
 #if defined(__linux__)
    int r = random() % _freebits._val;
 #else
@@ -396,15 +426,6 @@
    return lsBitPos+(numConsecutiveUnboundBits/2);
 }
 
--(void) updateFreeBitCount
-{
-   ORUInt freeBits = 0;
-   for (int i=0; i<_wordLength; i++) {
-      ORUInt boundBits = (_low[i]._val ^ _up[i]._val);
-      freeBits += __builtin_popcount(boundBits);
-   }
-   assignTRUInt(&(_freebits), freeBits, _trail);
-}
 -(ORBool) member:(ORUInt*) val
 {
    bool isMember = true;
@@ -415,19 +436,6 @@
       if ((~val[i] & _low[i]._val)!=0)
          isMember = false;
    }
-   /*
-   for(int i=0;i<[_remValues count];i++)
-   {
-      wasRemoved = true;
-      for (int j=0; j<_wordLength; j++) {
-         if (((ORUInt*)[[_remValues objectAtIndex:i] pointerValue])[j] != val[j]) {
-            wasRemoved = false;
-            break;
-         }
-      }
-      if (wasRemoved)
-         return false;
-   }*/
    return isMember;
 }
 
@@ -727,10 +735,21 @@
 {
    // [LDM]. This is buggy  Some bits might already be set in low/up and *incompatible* with the
    // mass setting done here. In this case it should *FAIL*.
-   if ((val < [self min]) || (val > [self max]))
+   assert(_wordLength <= 2);
+   if ((val < BAMin(self)) || (val > BAMax(self)))
       failNow();
-   if ((_freebits._val == 0) && (val == [self min])) return ORSuccess;
+   if ((_freebits._val == 0) && (val == BAMin(self))) return ORSuspend;
    ORUInt* pc = (ORUInt*)&val;
+   ORUInt boundAt0w0 = ~(_low[0]._val ^ _up[0]._val) & ~_low[0]._val;
+   ORUInt boundAt1w0 = ~(_low[0]._val ^ _up[0]._val) & _up[0]._val;
+   ORBool W0Ok = ((pc[0] & boundAt0w0) == boundAt0w0) && ((pc[0] & boundAt1w0) == boundAt1w0);
+   if (!W0Ok) return ORFailure;
+   if (_wordLength >= 2) {
+      ORUInt boundAt0w1 = ~(_low[1]._val ^ _up[1]._val) & ~_low[1]._val;
+      ORUInt boundAt1w1 = ~(_low[1]._val ^ _up[1]._val) & _up[1]._val;
+      ORBool W1Ok = ((pc[1] & boundAt0w1) == boundAt0w1) && ((pc[1] & boundAt1w1) == boundAt1w1);
+      if (!W1Ok) return ORFailure;
+   }
    //Deal with arrays < 64 bits long
    assignTRUInt(&_min[1], pc[1], _trail);
    assignTRUInt(&_max[1], pc[1], _trail);
@@ -763,7 +782,7 @@
 
    assignTRUInt(&_freebits, 0, _trail);
    [x bindEvt:1 sender:self];
-   [self updateFreeBitCount];
+   updateFreeBitCount(self);
    return ORSuspend;   
 }
 
@@ -802,7 +821,7 @@
       lmod |= _low[i]._val != newLow[i];
       assignTRUInt(&_low[i], newLow[i], _trail);
    }
-    [self updateFreeBitCount];
+   updateFreeBitCount(self);
    if (lmod){
        [x bitFixedEvt:_freebits._val sender:self];
 
@@ -839,7 +858,7 @@
       umod |= _up[i]._val != newUp[i];
       assignTRUInt(&_up[i], newUp[i], _trail);
    }
-   [self updateFreeBitCount];
+   updateFreeBitCount(self);
    
    if (umod){
       [x bitFixedEvt:_freebits._val sender:self];
@@ -887,7 +906,7 @@
       if(_low[i]._val & ~newUp[i])
          failNow();
    }
-   [self updateFreeBitCount];
+   updateFreeBitCount(self);
    if (umod || lmod){
       [x bitFixedEvt:_freebits._val sender:self];
       ORULong upInterpretation = TOULONG(_up);

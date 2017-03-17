@@ -1137,10 +1137,26 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 @end
 
+@implementation CPBitCoreConstraint
+-(id)initCPBitCoreConstraint:(id<CPEngine>)engine
+{
+   self = [super initCPCoreConstraint: engine];
+   return self;
+}
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*)assignment
+{
+   return nil;
+}
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment
+{
+   return nil;
+}
+@end
+
 @implementation CPBitEqualAt
 -(id)init:(CPBitVarI*)x at:(ORInt)bit to:(ORInt)v
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _at = bit;
    _c = v;
@@ -1179,7 +1195,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 @implementation CPBitEqualc
 -(id) initCPBitEqualc: (CPBitVarI*) x and: (ORInt) c
 {
-   self = [super initCPCoreConstraint: [x engine]];
+   self = [super initCPBitCoreConstraint: [x engine]];
    _x = x;
    _c = c;
    return self;
@@ -1246,7 +1262,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitEqual:(CPBitVarI*) x and:(CPBitVarI*) y
 {
-   self = [super initCPCoreConstraint: [x engine]];
+   self = [super initCPBitCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _state = malloc(sizeof(ORUInt*)*4);
@@ -1394,7 +1410,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitNOT: (CPBitVarI*) x equals:(CPBitVarI*) y
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _state = malloc(sizeof(ORUInt*)*4);
@@ -1587,7 +1603,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitAND
 -(id) initCPBitAND:(CPBitVarI*)x band:(CPBitVarI*)y equals:(CPBitVarI*)z{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -1843,7 +1859,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitOR
 -(id) initCPBitOR:(CPBitVarI*)x bor:(CPBitVarI*)y equals:(CPBitVarI*)z{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -2091,7 +2107,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitXOR
 -(id) initCPBitXOR:(CPBitVarI*)x bxor:(CPBitVarI*)y equals:(CPBitVarI*)z{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -2358,7 +2374,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 @implementation CPBitIF
 // TODO: Update propagate to learn nogoods and work with backjumping controller
 -(id) initCPBitIF: (CPBitVarI*) w equalsOneIf:(CPBitVarI*) x equals: (CPBitVarI*) y andZeroIfXEquals: (CPBitVarI*) z {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _w = w;
    _x = x;
    _y = y;
@@ -2508,7 +2524,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitShiftL
 -(id) initCPBitShiftL:(CPBitVarI*)x shiftLBy:(int)places equals:(CPBitVarI*)y{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _places = places;
@@ -2723,7 +2739,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitShiftLBV
 -(id) initCPBitShiftLBV:(CPBitVarI*)x shiftLBy:(CPBitVarI*)places equals:(CPBitVarI*)y{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _places = places;
@@ -2772,22 +2788,13 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 #ifdef BIT_DEBUG
    NSLog(@"Bit Shift Left (by Bit Vector) Constraint propagated.");
 #endif
-   
-   
-   
-//   if(_placesBound._val != 0)
-//      return;
    if([_places bound])
    {
-//      CPEngineI* engine = [_x engine];
       TRUInt* pLow;
-      
-//      assignTRUInt(&_placesBound, 1, [engine trail]);
       pLow = [_places getLow];
       ORUInt places = pLow->_val;
-//      [engine addInternal:[[CPBitShiftL alloc] initCPBitShiftL:_x shiftLBy:places equals:_y]];
       unsigned int wordLength = [_x getWordLength];
-      ORUInt bitLength = [_x bitLength];
+      //ORUInt bitLength = [_x bitLength];
       
       TRUInt* xLow;
       TRUInt* xUp;
@@ -2872,7 +2879,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitShiftR
 -(id) initCPBitShiftR:(CPBitVarI*)x shiftRBy:(int)places equals:(CPBitVarI*)y{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _places = places;
@@ -3072,7 +3079,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitShiftRBV
 -(id) initCPBitShiftRBV:(CPBitVarI*)x shiftRBy:(CPBitVarI*)places equals:(CPBitVarI*)y{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _places = places;
@@ -3138,7 +3145,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitShiftRA
 -(id) initCPBitShiftRA:(CPBitVarI*)x shiftRBy:(int)places equals:(CPBitVarI*)y{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _state = malloc(sizeof(ORUInt*)*4);
@@ -3361,7 +3368,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitShiftRABV
 -(id) initCPBitShiftRABV:(CPBitVarI*)x shiftRBy:(CPBitVarI*)places equals:(CPBitVarI*)y{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _places = places;
@@ -3430,7 +3437,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitRotateL
 -(id) initCPBitRotateL:(CPBitVarI*)x rotateLBy:(int)places equals:(CPBitVarI*)y{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _places = places;
@@ -3642,7 +3649,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(id) initCPBitAdd:(id<CPBitVar>)x plus:(id<CPBitVar>)y equals:(id<CPBitVar>)z withCarryIn:(id<CPBitVar>)cin andCarryOut:(id<CPBitVar>)cout
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = (CPBitVarI*)x;
    _y = (CPBitVarI*)y;
    _z = (CPBitVarI*)z;
@@ -4857,7 +4864,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(id) initCPBitCount:(CPBitVarI*) x count:(CPIntVarI*) p
 {
-   self = [super initCPCoreConstraint: [x engine]];
+   self = [super initCPBitCoreConstraint: [x engine]];
    _x = x;
    _p = p;
    _state =  malloc(sizeof(ORUInt*)*2);
@@ -4985,7 +4992,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(id) init: (CPBitVarI*) x channel: (CPIntVarI*) p
 {
-   self = [super initCPCoreConstraint: [x engine]];
+   self = [super initCPBitCoreConstraint: [x engine]];
    _x = x;
    _xc = p;
    return self;
@@ -5046,7 +5053,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(id) initCPBitZeroExtend:(CPBitVarI*) x extendTo:(CPBitVarI *)y
 {
-   self = [super initCPCoreConstraint: [x engine]];
+   self = [super initCPBitCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _state = malloc(sizeof(ORUInt*)*4);
@@ -5257,7 +5264,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(id) initCPBitSignExtend:(CPBitVarI*) x extendTo:(CPBitVarI *)y
 {
-   self = [super initCPCoreConstraint: [x engine]];
+   self = [super initCPBitCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _state = malloc(sizeof(ORUInt*)*4);
@@ -5580,7 +5587,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(id) initCPBitExtract:(CPBitVarI*) x from:(ORUInt)lsb to:(ORUInt)msb eq:(CPBitVarI*)y
 {
-   self = [super initCPCoreConstraint: [x engine]];
+   self = [super initCPBitCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _lsb = lsb;
@@ -5832,7 +5839,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 @implementation CPBitConcat
 -(id) initCPBitConcat:(CPBitVarI*) x concat:(CPBitVarI *)y eq:(CPBitVarI *)z
 {
-   self = [super initCPCoreConstraint: [x engine]];
+   self = [super initCPBitCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -6147,7 +6154,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitLT
 -(id) initCPBitLT:(CPBitVarI *)x LT:(CPBitVarI *)y eval:(CPBitVarI *)z{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -7003,7 +7010,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitLE
 -(id) initCPBitLE:(CPBitVarI *)x LE:(CPBitVarI *)y eval:(CPBitVarI *)z{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -7551,7 +7558,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitSLE
 -(id) initCPBitSLE:(CPBitVarI *)x SLE:(CPBitVarI *)y eval:(CPBitVarI *)z{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -8095,7 +8102,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 @implementation CPBitSLT
 -(id) initCPBitSLT:(CPBitVarI *)x SLT:(CPBitVarI *)y eval:(CPBitVarI *)z
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -8125,7 +8132,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    ants->numAntecedents = 0;
    ants->antecedents = vars;
    
-   ORInt index = assignment->index;
+   //ORInt index = assignment->index;
    
    ORUInt* different = alloca(sizeof(ORUInt)*wordLength);
    ORInt diffIndex =0;
@@ -8229,7 +8236,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [_y getUp:&yUp andLow:&yLow];
    [_z getUp:&zUp andLow:&zLow];
    
-   ORInt index = assignment->index;
+   //ORInt index = assignment->index;
    
    ORUInt* different = alloca(sizeof(ORUInt)*wordLength);
    ORInt diffIndex =0;
@@ -8652,7 +8659,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitITE
 -(id) initCPBitITE:(CPBitVarI *)i then:(CPBitVarI *)t else:(CPBitVarI *)e result:(CPBitVarI*)r{
-   self = [super initCPCoreConstraint:[i engine]];
+   self = [super initCPBitCoreConstraint:[i engine]];
    _i = i;
    _t = t;
    _e = e;
@@ -9120,7 +9127,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPBitLogicalEqual
 -(id) initCPBitLogicalEqual:(CPBitVarI *)x EQ:(CPBitVarI *)y eval:(CPBitVarI *)z{
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -9508,7 +9515,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitLogicalAnd:(id<CPBitVarArray>) x eval:(CPBitVarI *)r
 {
-   self = [super initCPCoreConstraint: [x[0] engine]];
+   self = [super initCPBitCoreConstraint: [x[0] engine]];
    _x = x;
    _r = r;
    _state = malloc(sizeof(ORUInt*)*([_x count]+1)*2);
@@ -9581,7 +9588,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          for (int i = 0;i<numOperands;i++){
             if (([_x at:i] != assignment->var) && ISFALSE(state[i*2][0], state[i*2+1][0]) & 0x1){
                vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-               vars[ants->numAntecedents]->var = [_x at:i];
+               vars[ants->numAntecedents]->var = (id) [_x at:i];
                vars[ants->numAntecedents]->index = 0;
                vars[ants->numAntecedents]->value = !(((ISTRUE(state[i*2][0], state[i*2+1][0]) & 0x1)) == 0);
                ants->numAntecedents++;
@@ -9923,7 +9930,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitLogicalOr:(id<CPBitVarArray>) x eval:(CPBitVarI *)r
 {
-   self = [super initCPCoreConstraint: [x[0] engine]];
+   self = [super initCPBitCoreConstraint: [x[0] engine]];
    _x = x;
    _r = r;
    _state = malloc(sizeof(ORUInt*)*([_x count]+1)*2);
@@ -10071,7 +10078,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 @implementation CPBitConflict
 -(id) initCPBitConflict:(CPBitAntecedents*)a
 {
-   self = [super initCPCoreConstraint: [a->antecedents[0]->var engine]];
+   self = [super initCPBitCoreConstraint: [a->antecedents[0]->var engine]];
    _assignments = a;
    _state = malloc(sizeof(ORUInt*)*(_assignments->numAntecedents)*2);
    return self;
@@ -10335,7 +10342,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitORb:(CPBitVarI*)x bor:(CPBitVarI*)y eval:(CPBitVarI*)r
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _r = r;
@@ -10498,7 +10505,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitNotb:(CPBitVarI*)x eval:(CPBitVarI*)r
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _r = r;
    _state = malloc(sizeof(ORUInt*)*4);
@@ -10619,7 +10626,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitEqualb:(CPBitVarI*)x equals:(CPBitVarI*)y eval:(CPBitVarI*)r
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _r = r;
@@ -11009,7 +11016,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 //
 //-(id) initCPBitInc:(CPBitVarI*)x equals:(CPBitVarI*)y
 //{
-//   self = [super initCPCoreConstraint:[x engine]];
+//   self = [super initCPBitCoreConstraint:[x engine]];
 //   _x = x;
 //   _y = y;
 //   _z = z;
@@ -11099,7 +11106,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(id) initCPBitSum:(id<CPBitVar>)x plus:(id<CPBitVar>)y equals:(id<CPBitVar>)z withCarryIn:(id<CPBitVar>)cin andCarryOut:(id<CPBitVar>)cout
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = (CPBitVarI*)x;
    _y = (CPBitVarI*)y;
    _z = (CPBitVarI*)z;
@@ -11183,13 +11190,14 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    return NULL;
 }
-
 @end
+
+
 @implementation CPBitNegative
 
 -(id) initCPBitNegative:(CPBitVarI*)x equals:(CPBitVarI*)y
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _state = malloc(sizeof(ORUInt*)*4);
@@ -11265,7 +11273,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitSubtract:(CPBitVarI*)x minus:(CPBitVarI*)y equals:(CPBitVarI*)z
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -11356,7 +11364,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitDivide:(CPBitVarI*)x dividedby:(CPBitVarI*)y equals:(CPBitVarI*)q rem:(CPBitVarI*)r
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _q = q;
@@ -11446,7 +11454,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(id) initCPBitMultiply:(CPBitVarI*)x times:(CPBitVarI*)y equals:(CPBitVarI*)z
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _opx = x;
    _opy = y;
    _z = z;
@@ -11830,7 +11838,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(id) initCPBitDistinct:(CPBitVarI*)x distinctFrom:(CPBitVarI*)y eval:(CPBitVarI*) z
 {
-   self = [super initCPCoreConstraint:[x engine]];
+   self = [super initCPBitCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;

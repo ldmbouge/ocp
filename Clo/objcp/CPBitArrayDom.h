@@ -51,7 +51,6 @@ typedef struct ULRep ULRep;
 -(ORUInt)               getSize;
 -(ORInt)                domsize;
 -(ORULong)              numPatterns;
--(void)                 updateFreeBitCount;
 -(ORBounds)             bounds;
 -(ORBool)               bound;
 -(ORULong)               min;
