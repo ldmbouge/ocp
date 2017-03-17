@@ -19,7 +19,7 @@
    self = [super init];
    _todo = CPTocheck;
    _priority = HIGHEST_PRIO;
-   _propagate = [self methodForSelector:@selector(propagate)];
+   _propagate = (SELPROTO)[self methodForSelector:@selector(propagate)];
    _trail = [[m trail] retain];
    _active  = makeTRInt(_trail,true);
    _group = nil;

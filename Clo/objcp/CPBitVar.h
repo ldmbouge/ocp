@@ -44,8 +44,6 @@
 
 @protocol CPBitVarSubscriber <NSObject>
 -(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt) idx do:(ORClosure) todo;
--(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(ORUInt)p do:(ORClosure) todo;
--(void) whenBitFixedAt:(ORUInt)i propagate:(CPCoreConstraint*) c;
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 -(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
@@ -62,8 +60,6 @@
 -(ORBool) tracksLoseEvt:(CPBitArrayDom*)sender;
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtEvt:(ORUInt) dsz at:(ORUInt)idx sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMinEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMaxEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 @end

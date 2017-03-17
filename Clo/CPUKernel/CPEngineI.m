@@ -493,8 +493,6 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
    ValueClosureQueueEnqueue(_valueClosureQueue, evt);
 }
 
-typedef id (*SELPROTO)(id,SEL,...);
-
 static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
 {
     *last = cb.cstr;   // [pvh] This is for wdeg: need to know the last constraint that has failed
@@ -508,7 +506,8 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
             return ORSkip;
         else {
             cstr->_todo = CPChecked;
-            ((SELPROTO)cstr->_propagate)(cstr,@selector(propagate));
+            cstr->_propagate(cstr,@selector(propagate));
+           //[cstr propagate];
         }
     }
     return ORSuspend;

@@ -2268,17 +2268,23 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    NSLog(@"Bit XOR Constraint propagated.");
 #endif
    
-   unsigned int wordLength = [_x getWordLength];
-   TRUInt* xLow;
-   TRUInt* xUp;
-   TRUInt* yLow;
-   TRUInt* yUp;
-   TRUInt* zLow;
-   TRUInt* zUp;
+   unsigned int wordLength = getVarWordLength(_x);
+//   TRUInt* xLow;
+//   TRUInt* xUp;
+//   TRUInt* yLow;
+//   TRUInt* yUp;
+//   TRUInt* zLow;
+//   TRUInt* zUp;
+   ULRep xr = getULVarRep(_x);
+   ULRep yr = getULVarRep(_y);
+   ULRep zr = getULVarRep(_z);
+   TRUInt *xLow = xr._low, *xUp = xr._up;
+   TRUInt *yLow = yr._low, *yUp = yr._up;
+   TRUInt *zLow = zr._low, *zUp = zr._up;
    
-   [_x getUp:&xUp andLow:&xLow];
-   [_y getUp:&yUp andLow:&yLow];
-   [_z getUp:&zUp andLow:&zLow];
+//   [_x getUp:&xUp andLow:&xLow];
+//   [_y getUp:&yUp andLow:&yLow];
+//   [_z getUp:&zUp andLow:&zLow];
    
    unsigned int* newXUp = alloca(sizeof(unsigned int)*wordLength);
    unsigned int* newXLow  = alloca(sizeof(unsigned int)*wordLength);
@@ -2295,7 +2301,6 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 #endif
    
    for(int i=0;i<wordLength;i++){
-      
       
       // x_k=0 & y_k=0 => z_k=0
       // x_k=1 & y_k=1 => z_k=0
@@ -4905,7 +4910,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    NSLog(@"Bit Count Constraint propagated.");
 #endif
    
-   unsigned int wordLength = [_x getWordLength];
+   unsigned int wordLength = getVarWordLength(_x);//  [_x getWordLength];
    
    TRUInt* xLow;
    TRUInt* xUp;

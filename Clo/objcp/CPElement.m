@@ -635,10 +635,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _la = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
    _ua = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
    _I = NULL;
-   _svx0 = NULL;
-   _svx1 = NULL;
-   _svy0 = NULL;
-   _svy1 = NULL;
    return self;
 }
 -(void) dealloc
@@ -683,10 +679,10 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_la setValue:la];
    [_ua setValue:ua];
    _I = [ORFactory trailableIntArray:engine range:RANGE([_x engine],[_la value],[_ua value]) value:0];
-   _svx0 = [ORFactory trailableIntArray:engine range:RANGE([_x engine], 0, xwl*WORD_BIT-1) value:0];
-   _svx1 = [ORFactory trailableIntArray:engine range:RANGE([_x engine], 0, xwl*WORD_BIT-1) value:0];
-   _svy0 = [ORFactory trailableIntArray:engine range:RANGE([_y engine], 0, [_y getWordLength]*WORD_BIT-1) value:0];
-   _svy1 = [ORFactory trailableIntArray:engine range:RANGE([_y engine], 0, [_y getWordLength]*WORD_BIT-1) value:0];
+   _svx0 = makeTRIntArray(_trail, xwl*WORD_BIT-1, 0);
+   _svx1 = makeTRIntArray(_trail, xwl*WORD_BIT-1, 0);
+   _svy0 = makeTRIntArray(_trail, [_y getWordLength]*WORD_BIT-1, 0);
+   _svy1 = makeTRIntArray(_trail, [_y getWordLength]*WORD_BIT-1, 0);
    
    CPBitVarI* elmt;
    unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
@@ -703,30 +699,28 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          TRUInt* yLow;
          [_y getUp:&yUp andLow:&yLow];
          yfixed = ~(yLow[0]._val^yUp[0]._val);
-         bothfixed = yfixed&elmtfixed;
+         bothfixed = yfixed & elmtfixed;
          yeldif = yLow[0]._val^zLow[0]._val;
-         notcomp = bothfixed&yeldif;
+         notcomp = bothfixed & yeldif;
          if (notcomp)
             continue;
-         for (int b=[_svx0 low]; b<=[_svx0 up]; b++) {
+         for (int b=0; b < _svx0._nb; b++) {
             if ([xdom isFree:b]) {
                bool isOne = (k) & (1<<(b));
-               [_svx0[b] setValue:[_svx0[b] value]+!isOne];
-               [_svx1[b] setValue:[_svx1[b] value]+isOne];
+               assignTRIntArray(_svx0, b, _svx0._entries[b]._val + !isOne, _trail);
+               assignTRIntArray(_svx1, b, _svx1._entries[b]._val + isOne, _trail);
             }
          }
-         for (int b=[_svy0 low]; b<=[_svy0 up]; b++) {
+         for (int b=0; b < _svy0._nb; b++) {
             if ([ydom isFree:b]) {
                if (![[elmt domain] isFree:b]) {
                   bool isOne = [[elmt domain] getBit:b];
-                  [_svy0[b] setValue:[_svy0[b] value]+!isOne];
-                  [_svy1[b] setValue:[_svy1[b] value]+isOne];
+                  assignTRIntArray(_svy0, b, _svy0._entries[b]._val + !isOne, _trail);
+                  assignTRIntArray(_svy1, b, _svy1._entries[b]._val + isOne, _trail);
                }
                else {
-                  [_svy0[b] incr];
-                  [_svy1[b] incr];
-                  //                        [_svy0[b] setValue:[_svy0[b] value]+1];
-                  //                        [_svy1[b] setValue:[_svy1[b] value]+1];
+                  assignTRIntArray(_svy0, b, _svy0._entries[b]._val + 1, _trail);
+                  assignTRIntArray(_svy1, b, _svy1._entries[b]._val + 1, _trail);
                }
             }
          }
@@ -747,30 +741,24 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    else if (![_cI value])
       failNow();
    
-   for (int b=[_svx0 low];b<=[_svx0 up];b++) {
+   for (int b=0   ;b < _svx0._nb;b++) {
       if ([xdom isFree:b]) {
-         if (![_svx0[b] value]) { // support for 0 for free bit b is 0
+         if (!_svx0._entries[b]._val) { // support for 0 for free bit b is 0
             [xdom setBit:b to:TRUE for:_x];
          }
-         else if (![_svx1[b] value]) { // support for 1 for free bit b is 0
+         else if (!_svx1._entries[b]._val) { // support for 1 for free bit b is 0
             [xdom setBit:b to:FALSE for:_x];
          }
       }
    }
-   for (int b=[_svy0 low];b<=[_svy0 up];b++) {
+   for (int b=0;b < _svy0._nb;b++) {
       if ([ydom isFree:b]) {
-         if (![_svy0[b] value]) {
+         if (!_svy0._entries[b]._val) {
             [ydom setBit:b to:TRUE for:_y];
          }
-         else if (![_svy1[b] value]) {
+         else if (!_svy1._entries[b]._val) {
             [ydom setBit:b to:FALSE for:_y];
          }
-         //            if ([_svy0[b] value] == [_cI value]) {
-         //                [ydom setBit:b to:FALSE for:_y];
-         //            }
-         //            else if ([_svy1[b] value] == [_cI value]) {
-         //                [ydom setBit:b to:TRUE for:_y];
-         //            }
       }
    }
    
@@ -780,33 +768,19 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    ua = min([_ua value], xUp[0]._val);
    [_ua setValue:ua];
 
-   // LDM: THOSE ARE STILL MALLOC CALLS. Twice as Many!
-   // LDM: I changed them
-   //ORUInt* newxlow = malloc(sizeof(ORUInt));
-   //ORUInt* newxup = malloc(sizeof(ORUInt));
    [_x getUp:&xUp andLow:&xLow];
-   //newxlow[0] = xLow[0]._val;
-   //newxup[0] = xUp[0]._val;
-   //_xold = (CPBitVarI*)[CPFactory bitVar:engine withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
-   
-   //    _xold2 = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:la up:ua];
    ORUInt xWordLength = [_x getWordLength];
    ORUInt* newXLow = alloca(sizeof(ORUInt)*xWordLength);
    ORUInt* newXUp = alloca(sizeof(ORUInt)*xWordLength);
-   for(int i=0;i<xWordLength;i++)
-   {
+   for(int i=0;i<xWordLength;i++) {
       newXLow[i] = xLow[i]._val;
       newXUp[i] = xUp[i]._val;
    }
-   
    _xold2 = [[CPBitArrayDom alloc] initWithBitPat:WORD_BIT withLow:newXLow andUp:newXUp andEngine:engine andTrail:[engine trail]];
-   
-   if (![_x bound]) {
+   if (![_x bound])
       [_x whenChangePropagate:self];
-   }
-   if (![_y bound]) {
+   if (![_y bound])
       [_y whenChangePropagate:self];
-   }
    for(ORInt k=[_la value];k<=[_ua value];k++) {
       if (_I[k] && ![_z[k] bound])
          [_z[k] whenChangePropagate:self];
@@ -832,9 +806,10 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    
    TRUInt* eUp;
    TRUInt* eLow;
-   TRUInt* yUp;
-   TRUInt* yLow;
-   [_y getUp:&yUp andLow:&yLow];
+   ULRep yrep = getULVarRep(_y);
+   TRUInt* yUp = yrep._up;
+   TRUInt* yLow = yrep._low;
+   //[_y getUp:&yUp andLow:&yLow];
    // plenty of room for optimization here
    for(ORUInt k=[_la value];k<=[_ua value];k++) {
       if ([_I[k] value]) {
@@ -845,7 +820,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          bothfixed = yfixed&elmtfixed;
          yeldif = yLow[0]._val^eLow[0]._val;
          notcomp = bothfixed&yeldif;
-         //            inXDom = [_x member:temp];
          inXDom = [_x member:&k];
          if (!inXDom||notcomp) {
             [_I[k] setValue:0];
@@ -859,40 +833,33 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
                }
                return;
             }
-            for (int b=[_svy0 low];b<=[_svy0 up];b++) {
+            for (int b=0;b < _svy0._nb;b++) {
                if (![[elmt domain] isFree:b]) {
                   bool bit = [[elmt domain] getBit:b];
                   if (bit) {
-                     if ([_svy1[b] value])
-                        [_svy1[b] setValue:[_svy1[b] value]-1];
+                     if (_svy1._entries[b]._val)
+                        assignTRIntArray(_svy1, b, _svy1._entries[b]._val - 1, _trail);
                   }
                   else  {
-                     if ([_svy0[b] value])
-                        [_svy0[b] setValue:[_svy0[b] value]-1];
+                     if (_svy0._entries[b]._val)
+                        assignTRIntArray(_svy0, b, _svy0._entries[b]._val - 1, _trail);
                   }
                }
                else {
-                  if ([_svy1[b] value])
-                     [_svy1[b] setValue:[_svy1[b] value]-1];
-                  if ([_svy0[b] value])
-                     [_svy0[b] setValue:[_svy0[b] value]-1];
+                  if (_svy1._entries[b]._val)
+                     assignTRIntArray(_svy1, b, _svy1._entries[b]._val - 1, _trail);
+                  if (_svy0._entries[b]._val)
+                     assignTRIntArray(_svy0, b, _svy0._entries[b]._val - 1, _trail);
                }
             }
             // update svx0, svx1
-            for (int b=[_svx0 low];b<=[_svx0 up];b++) {
-               //                    if ([[_xold domain] isFree:b]) { // do we really need xold here?
-               //                        bool isOne = (k)&(1<<(b));
-               //                        if ([_svx0[b] value])
-               //                            [_svx0[b] setValue:[_svx0[b] value]-!isOne];
-               //                        if ([_svx1[b] value])
-               //                            [_svx1[b] setValue:[_svx1[b] value]-isOne];
-               //                    }
+            for (int b=0;b < _svx0._nb;b++) {
                if ([_xold2 isFree:b]) { // do we really need xold here?
                   bool isOne = (k)&(1<<(b));
-                  if ([_svx0[b] value])
-                     [_svx0[b] setValue:[_svx0[b] value]-!isOne];
-                  if ([_svx1[b] value])
-                     [_svx1[b] setValue:[_svx1[b] value]-isOne];
+                  if (_svx0._entries[b]._val)
+                     assignTRIntArray(_svx0, b, _svx0._entries[b]._val - !isOne, _trail);
+                  if (_svx1._entries[b]._val)
+                     assignTRIntArray(_svx1, b, _svx1._entries[b]._val - isOne, _trail);
                }
             }
             
@@ -900,30 +867,24 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       }
    }
    
-   for (int b=[_svx0 low];b<=[_svx0 up];b++) {
+   for (int b=0;b < _svx0._nb;b++) {
       if ([[_x domain] isFree:b]) {
-         if (![_svx0[b] value]) { // support for 0 for free bit b is 0
+         if (!_svx0._entries[b]._val) { // support for 0 for free bit b is 0
             [[_x domain] setBit:b to:TRUE for:_x];
          }
-         else if (![_svx1[b] value]) { // support for 1 for free bit b is 0
+         else if (!_svx1._entries[b]._val) { // support for 1 for free bit b is 0
             [[_x domain] setBit:b to:FALSE for:_x];
          }
       }
    }
-   for (int b=[_svy0 low];b<=[_svy0 up];b++) {
+   for (int b=0;b < _svy0._nb;b++) {
       if ([[_y domain] isFree:b]) {
-         if (![_svy0[b] value]) {
+         if (!_svy0._entries[b]._val) {
             [[_y domain] setBit:b to:TRUE for:_y];
          }
-         else if (![_svy1[b] value]) {
+         else if (!_svy1._entries[b]._val) {
             [[_y domain] setBit:b to:FALSE for:_y];
          }
-         //            if ([_svy0[b] value] == [_cI value]) {
-         //                [[_y domain] setBit:b to:FALSE for:_y];
-         //            }
-         //            else if ([_svy1[b] value] == [_cI value]) {
-         //                [[_y domain] setBit:b to:TRUE for:_y];
-         //            }
       }
    }
    
@@ -942,17 +903,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       newXUp[i] = xUp[i]._val;
       newXLow[i] = xLow[i]._val;
    }
-      
-   //[_xold setUp:newXUp andLow:newXLow];
-   
-   //    ORUInt* newxlow = malloc(sizeof(ORUInt));
-   //    ORUInt* newxup = malloc(sizeof(ORUInt));
-   //    newxlow[0] = [_x getLow][0]._val;
-   //    newxup[0] = [_x getUp][0]._val;
-   //    [_xold2 setUp:newxup andLow:newxlow for:nil];
-   
    [_xold2 setUp:newXUp andLow:newXLow for:NULL];
-   
 }
 
 -(void)doACEqual:(ORUInt)k
@@ -991,11 +942,9 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    }
    
    if ([_y bound]) {
-      //        [elmt bind:[[_y domain] lowArray]];
       [elmt setUp:newYUp andLow:newYLow];
    }
    else if ([elmt bound]) {
-      //        [_y bind:[[elmt domain] lowArray]];
       [_y setUp:newEUp andLow:newELow];
    }
    else {
