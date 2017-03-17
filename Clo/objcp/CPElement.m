@@ -632,8 +632,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _z = z;
    //_xold = NULL;
    _cI = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
-   _la = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
-   _ua = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
+   _la = makeTRInt(_trail, 0);
+   _ua = makeTRInt(_trail, 0);
    _I = NULL;
    return self;
 }
@@ -676,9 +676,9 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    if (la>ua || la>[_z up])
       failNow();
    
-   [_la setValue:la];
-   [_ua setValue:ua];
-   _I = [ORFactory trailableIntArray:engine range:RANGE([_x engine],[_la value],[_ua value]) value:0];
+   assignTRInt(&_la, la, _trail);
+   assignTRInt(&_ua, ua, _trail);
+   _I = [ORFactory trailableIntArray:engine range:RANGE([_x engine],la,ua) value:0];
    _svx0 = makeTRIntArray(_trail, xwl*WORD_BIT-1, 0);
    _svx1 = makeTRIntArray(_trail, xwl*WORD_BIT-1, 0);
    _svy0 = makeTRIntArray(_trail, [_y getWordLength]*WORD_BIT-1, 0);
@@ -687,7 +687,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    CPBitVarI* elmt;
    unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
    
-   for(ORUInt k=[_la value];k<=[_ua value];k++) {
+   for(ORUInt k=_la._val;k <= _ua._val;k++) {
       if ([_x member:&k]) {
          // check if z[k]=y is valid assignment
          elmt = (CPBitVarI*)[_z at:k];
@@ -731,7 +731,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    }
    
    if ([_cI value]==1) {
-      for(ORInt k=[_la value];k<=[_ua value];k++) {
+      for(ORInt k=_la._val;k <= _ua._val;k++) {
          if ([_I[k] value]) {
             [self doACEqual:k];
             break;
@@ -762,11 +762,10 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       }
    }
    
-   
-   la = max([_la value], xLow[0]._val);
-   [_la setValue:la];
-   ua = min([_ua value], xUp[0]._val);
-   [_ua setValue:ua];
+   la = max(_la._val, xLow[0]._val);
+   assignTRInt(&_la, la, _trail);
+   ua = min(_ua._val, xUp[0]._val);
+   assignTRInt(&_ua, ua, _trail);
 
    [_x getUp:&xUp andLow:&xLow];
    ORUInt xWordLength = [_x getWordLength];
@@ -781,7 +780,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       [_x whenChangePropagate:self];
    if (![_y bound])
       [_y whenChangePropagate:self];
-   for(ORInt k=[_la value];k<=[_ua value];k++) {
+   for(ORInt k=_la._val;k <= _ua._val;k++) {
       if (_I[k] && ![_z[k] bound])
          [_z[k] whenChangePropagate:self];
    }   
@@ -790,7 +789,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 {
    
    if ([_cI value]==1) {
-      for(ORInt k=[_la value];k<=[_ua value];k++) {
+      for(ORInt k=_la._val;k <= _ua._val;k++) {
          if ([_I[k] value]) {
             [self doACEqual:k];
             break;
@@ -811,7 +810,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    TRUInt* yLow = yrep._low;
    //[_y getUp:&yUp andLow:&yLow];
    // plenty of room for optimization here
-   for(ORUInt k=[_la value];k<=[_ua value];k++) {
+   for(ORUInt k=_la._val;k <= _ua._val;k++) {
       if ([_I[k] value]) {
          elmt = (CPBitVarI*)[_z at:k];
          [elmt getUp:&eUp andLow:&eLow];
@@ -825,7 +824,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
             [_I[k] setValue:0];
             [_cI setValue:[_cI value]-1];
             if ([_cI value]==1) {
-               for(ORInt k=[_la value];k<=[_ua value];k++) {
+               for(ORInt k= _la._val;k <= _ua._val;k++) {
                   if ([_I[k] value]) {
                      [self doACEqual:k];
                      break;
@@ -834,8 +833,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
                return;
             }
             for (int b=0;b < _svy0._nb;b++) {
-               if (![[elmt domain] isFree:b]) {
-                  bool bit = [[elmt domain] getBit:b];
+               if (!DomBitFree(elmt->_dom, b)) {
+                  bool bit = DomBitGet(elmt->_dom, b);
                   if (bit) {
                      if (_svy1._entries[b]._val)
                         assignTRIntArray(_svy1, b, _svy1._entries[b]._val - 1, _trail);
@@ -854,7 +853,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
             }
             // update svx0, svx1
             for (int b=0;b < _svx0._nb;b++) {
-               if ([_xold2 isFree:b]) { // do we really need xold here?
+               if (DomBitFree(_xold2, b)) {
                   bool isOne = (k)&(1<<(b));
                   if (_svx0._entries[b]._val)
                      assignTRIntArray(_svx0, b, _svx0._entries[b]._val - !isOne, _trail);
@@ -892,10 +891,10 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    TRUInt* xUp;
    TRUInt* xLow;
    [_x getUp:&xUp andLow:&xLow];
-   ORInt la = max([_la value], xLow[0]._val);
-   [_la setValue:la];
-   ORInt ua = min([_ua value], xUp[0]._val);
-   [_ua setValue:ua];
+   ORInt la = max(_la._val, xLow[0]._val);
+   assignTRInt(&_la, la, _trail);
+   ORInt ua = min(_ua._val, xUp[0]._val);
+   assignTRInt(&_ua, ua, _trail);
    ORUInt wordLength = [_x getWordLength];
    ORUInt* newXLow = alloca(sizeof(ORUInt)*wordLength);
    ORUInt* newXUp = alloca(sizeof(ORUInt)*wordLength);
@@ -927,7 +926,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    finalidx[0] = k;
    [_x setUp:finalidx andLow:finalidx]; // bind still doesn't work
    //    [_x bind:finalidx];
-   [_la setValue:k]; [_ua setValue:k];
+   assignTRInt(&_la, k, _trail);
+   assignTRInt(&_ua, k, _trail);
    ORUInt wordLength = [_y getWordLength];
    ORUInt* newYUp = alloca(sizeof(ORUInt)*wordLength);
    ORUInt* newYLow = alloca(sizeof(ORUInt)*wordLength);
@@ -959,8 +959,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       //        }
       unsigned int* up = alloca(sizeof(unsigned int));
       unsigned int* low = alloca(sizeof(unsigned int));
-      up[0] = yUp[0]._val&eUp[0]._val;
-      low[0] = yLow[0]._val|eLow[0]._val;
+      up[0]  = yUp[0]._val  & eUp[0]._val;
+      low[0] = yLow[0]._val | eLow[0]._val;
       [_y setUp:up andLow:low];
       [elmt setUp:up andLow:low];
    }

@@ -115,9 +115,11 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 //****************************************************
 @implementation CPBitVarI {
+   ORBool       _learningOn;
 @public
    CPBitEventNetwork   _net;
    TRId*      _implications;
+   
 }
 -(CPBitVarI*) initCPBitVarCore:(CPEngineI*)engine low: (unsigned int*) low up: (unsigned int*)up length:(int)len
 {
@@ -129,11 +131,17 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    setUpNetwork(&_net, _trail,*low,*up,len);
    _triggers = nil;
    _dom = [[CPBitArrayDom alloc] initWithLength:len withEngine:_engine withTrail:_trail];
-   _levels = malloc(sizeof(TRUInt)*len);
-   _implications = malloc(sizeof(TRId)*len);
-   for (int i=0; i<len; i++) {
-      _levels[i] = makeTRUInt(_trail, -1);
-      _implications[i] = makeTRId(_trail, 0);
+   _learningOn = [_engine conformsToProtocol:@protocol(CPLEngine)];
+   if (_learningOn) {
+      _levels = malloc(sizeof(TRUInt)*len);
+      _implications = malloc(sizeof(TRId)*len);
+      for (int i=0; i<len; i++) {
+         _levels[i] = makeTRUInt(_trail, -1);
+         _implications[i] = makeTRId(_trail, 0);
+      }
+   } else {
+      _levels = nil;
+      _implications = nil;
    }
    _vc = CPVCBare;
    _recv = nil;
@@ -333,17 +341,21 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    return[_dom getBit:index];
 }
 
--(ORUInt) getLevelBitWasSet:(ORUInt)bit{
+-(ORUInt) getLevelBitWasSet:(ORUInt)bit
+{
    return [_dom getLevelForBit:bit];
-//   return _levels[bit]._val;
 }
 -(void) bit:(ORUInt)i setAtLevel:(ORUInt)l
 {
-   assignTRUInt(&_levels[i], l, _trail);
+   if (_learningOn)
+      assignTRUInt(&_levels[i], l, _trail);
 }
 -(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i
 {
-   return (id<CPBVConstraint>)_implications[i];
+   if (_learningOn)
+      return (id<CPBVConstraint>)_implications[i];
+   else
+      return nil;
 }
 -(ORBool) isFree:(ORUInt)pos
 {
@@ -530,7 +542,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 -(void) setLow:(unsigned int *)newLow for:(CPCoreConstraint*) constraint
 {
    TRUInt* oldLow = [_dom getLow];
-   if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
+   if(_learningOn) {
       for (int i=0; i<[_dom getWordLength]; i++) {
          ORUInt changedLow = oldLow[i]._val ^ newLow[i];
          for(int j=0;j<BITSPERWORD; j++){
@@ -546,7 +558,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 -(void) setUp:(unsigned int *)newUp for:(CPCoreConstraint*) constraint
 {
    TRUInt* oldUp = [_dom getUp];
-   if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
+   if(_learningOn) {
       for (int i=0; i<[_dom getWordLength]; i++) {
          ORUInt changedUp = oldUp[i]._val ^ newUp[i];
          for(int j=0;j<BITSPERWORD; j++){
@@ -571,7 +583,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    newUp[wordLength-1]  &= mask;
    newLow[wordLength-1] &= mask;
    
-   if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
+   if(_learningOn) {
       for (int i=0; i<wordLength; i++) {
          ORUInt changedUp = oldUp[i]._val ^ newUp[i];
          ORUInt changedLow = oldLow[i]._val ^ newLow[i];
@@ -628,22 +640,27 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(CPBitVarI*) initCPExplicitBitVarPat: (CPEngineI*)engine withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
 {
-    self = [super init];
-    _engine  = engine;
-    [_engine trackVariable: self];
+   self = [super init];
+   _engine  = engine;
+   [_engine trackVariable: self];
    _trail = [engine trail];
-    setUpNetwork(&_net, _trail, *low, *up,len);
-    _triggers = nil;
-   _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andEngine:_engine andTrail:_trail];
-    [_dom setEngine:engine];
-   _levels = malloc(sizeof(TRUInt)*len);
-   _implications = malloc(sizeof(TRId)*len);
-   for (int i=0; i<len; i++) {
-      _levels[i] = makeTRUInt(_trail, 0);
-      _implications[i] = makeTRId(_trail, 0);
+   setUpNetwork(&_net, _trail, *low, *up,len);
+   _triggers = nil;
+   _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andEngine:engine andTrail:_trail];
+   _learningOn = [_engine conformsToProtocol:@protocol(CPLEngine)];
+   if (_learningOn) {
+      _levels = malloc(sizeof(TRUInt)*len);
+      _implications = malloc(sizeof(TRId)*len);
+      for (int i=0; i<len; i++) {
+         _levels[i] = makeTRUInt(_trail, 0);
+         _implications[i] = makeTRId(_trail, 0);
+      }
+   } else {
+      _levels = nil;
+      _implications = nil;
    }
-    _recv = nil;
-    return self;
+   _recv = nil;
+   return self;
 }
 
 // ------------------------------------------------------------------------
