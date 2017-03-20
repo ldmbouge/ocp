@@ -20,6 +20,17 @@
 @class CPRealParamI;
 @protocol CPRealVarArray;
 
+@interface CPRealMultBC : CPCoreConstraint { // z == x * y
+    CPRealVarI* _x;
+    CPRealVarI* _y;
+    CPRealVarI* _z;
+}
+-(id)initCPRealMultBC: (id)x mul: (id)y equal: (id)z;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRealSquareBC : CPCoreConstraint { // z == x^2
    CPRealVarI* _x;
    CPRealVarI* _z;

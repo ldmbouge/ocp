@@ -679,6 +679,29 @@
       _gamma[cstr.getId] = concrete;
    }
 }
+-(void) visitRealMult: (id<ORMult>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPRealVar> res = [self concreteVar:[cstr res]];
+        
+        id<CPRealVar> left  = nil;
+        id<CPVar> leftCPVar = [self concreteVar:[cstr left]];
+        if ([leftCPVar conformsToProtocol:@protocol(CPIntVar)])
+            left = [CPFactory realVar:_engine castFrom:(id)leftCPVar];
+        else left = (id)leftCPVar;
+
+        id<CPRealVar> right  = nil;
+        id<CPVar> rightCPVar = [self concreteVar:[cstr right]];
+        if ([rightCPVar conformsToProtocol:@protocol(CPIntVar)])
+            left = [CPFactory realVar:_engine castFrom:(id)rightCPVar];
+        else right = (id)rightCPVar;
+
+        ORCLevel annotation = [_notes levelFor:cstr];
+        id<CPConstraint> concrete = [CPFactory realMult: left mul: right equal: res annotation: annotation];
+        [_engine add:concrete];
+        _gamma[cstr.getId] = concrete;
+    }
+}
 -(void) visitMod: (id<ORMod>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

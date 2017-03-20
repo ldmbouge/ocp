@@ -124,6 +124,9 @@
 -(id<ORVar>) right;
 @end
 
+@interface ORRealMult : ORMult
+@end
+
 @interface ORSquare : ORConstraintI<ORSquare>
 -(ORSquare*)init:(id<ORVar>)z square:(id<ORVar>)x;
 -(id<ORVar>)res;
