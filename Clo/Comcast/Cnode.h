@@ -11,8 +11,8 @@
 @interface Cnode : NSObject
 
 @property int cnodeId;
-@property int cnodeMemory; // in GB?
-@property NSString* cnodeBandwidth; // in Mb/s?
+@property int cnodeMemory; // in MB
+@property NSString* cnodeBandwidth; // in MB/s
 
 - (id) initWithId: (int) cnodeId
          cnodeMemory: (int) cnodeMemory

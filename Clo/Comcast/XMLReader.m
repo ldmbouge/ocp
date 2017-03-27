@@ -16,6 +16,10 @@
 @property NSXMLParser *parser;
 @property NSString *element;
 
+// model properties
+@property int vMax;
+@property int maxConn;
+
 // cnode properties
 @property int currentCnodeId;
 @property int currentCnodeMemory;

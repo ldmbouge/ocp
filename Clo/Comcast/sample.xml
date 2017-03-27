@@ -1,5 +1,7 @@
 <document>
-	<cnode>
+    <vMax>3</vMax>
+    <maxConn>2</maxConn>
+    <cnode>
 		<id>1</id>
 		<cnodeMemory>128</cnodeMemory> 
 		<cnodeBandwidth>value2</cnodeBandwidth>
