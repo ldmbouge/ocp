@@ -1401,6 +1401,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) realMult:(id<ORTracker>)model x:(id<ORRealVar>)x y:(id<ORRealVar>)y equal:(id<ORRealVar>)res
+{
+    id<ORConstraint> o = [[ORRealMult alloc] initORMult: res eq: x times: y];
+    [model trackObject:o];
+    return o;
+}
 +(id<ORConstraint>) realSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  eq: (ORDouble) c
 {
    id<ORConstraint> o = [[ORRealLinearEq alloc] initRealLinearEq: x coef: coef cst: c];

@@ -76,8 +76,8 @@ int main(int argc, const char * argv[])
     id<ORIntArray> Fmem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     id<ORIntArray> Fbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     
-    id<ORIntArray> Smem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 3 + 1; }];
-    id<ORIntArray> Sbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 3 + 1; }];
+    id<ORDoubleArray> Smem = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
+    id<ORDoubleArray> Sbw = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
 
     // Variables
     id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
@@ -89,10 +89,11 @@ int main(int argc, const char * argv[])
     
     id<ORIntVarArray>  s = [ORFactory intVarArray: model range: RANGE(model, 0, Vmax) domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
     
-    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 200)];
-    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 100)];
+    id<ORRealVarArray> u_mem = [ORFactory realVarArray: model range: vm low: 0 up:189];//realVarArray: model range: vm domain: RANGE(model, 0, 189)];
+    id<ORRealVarArray> u_bw = [ORFactory realVarArray: model range: vm low: 0 up:50];//intVarArray: model range: vm domain: RANGE(model, 0, 50)];
     
     [model minimize: Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]])];
+    //[model add: [Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]]) leq: @(457)]];
     
     // Demand Constraints
     for(ORInt j = [apps low]; j <= [apps up]; j++) {
@@ -100,12 +101,12 @@ int main(int argc, const char * argv[])
     }
     
     // App Symmetry breaking
-//    for(ORInt j = [apps low]; j <= [apps up]; j++) {
-//        id<ORIntRange> r = [omega at: j];
-//        for(ORInt i = [r low]; i < [r up]; i++) {
-//            [model add: [[[a at: i] leq: @(0)] imply: [[a at: i+1] leq: @(0)]]];
-//        }
-//    }
+    for(ORInt j = [apps low]; j <= [apps up]; j++) {
+        id<ORIntRange> r = [omega at: j];
+        for(ORInt i = [r low]; i < [r up]; i++) {
+            [model add: [[[a at: i] leq: @(0)] imply: [[a at: i+1] leq: @(0)]]];
+        }
+    }
     
     // Connection Constraints
     for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
@@ -141,9 +142,9 @@ int main(int argc, const char * argv[])
     }
     
     // VM symmetry breaking
-//    for(ORInt i = [vm low]; i < [vm up]; i++) {
-//        [model add: [[[vc at: i] eq: @(0)] imply: [[vc at: i+1] eq: @(0)]]];
-//    }
+    for(ORInt i = [vm low]; i < [vm up]; i++) {
+        [model add: [[[vc at: i] eq: @(0)] imply: [[vc at: i+1] eq: @(0)]]];
+    }
     
     // Security Constraints
     for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
@@ -164,7 +165,7 @@ int main(int argc, const char * argv[])
                      ]]];
     }
     
-    // Bandwidth usage:
+//    // Bandwidth usage:
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_bw at: i] geq:
                      [[Sum(model, j, apps, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
@@ -172,7 +173,6 @@ int main(int argc, const char * argv[])
                      ]]];
     }
 
-    
     // Function to write solution.
     // Print solution
     void(^writeOut)(id<ORSolution>) = ^(id<ORSolution> best){
@@ -203,24 +203,23 @@ int main(int argc, const char * argv[])
     
     ORTimeval now = [ORRuntimeMonitor now];
     
-    id<ORModel> lm = [ORFactory linearizeModel: model];
-    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-    [r start];
-    id<ORSolution> best = [r bestSolution];
-    writeOut(best);
+//    id<ORModel> lm = [ORFactory linearizeModel: model];
+//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+//    [r start];
+//    id<ORSolution> best = [r bestSolution];
+//    writeOut(best);
 
-//    id<ORRunnable> r = [ORFactory CPDualRunnable: model solve:^(id<CPCommonProgram> cp) {
+//    id<ORRunnable> r = [ORFactory CPRunnable: model solve:^(id<CPCommonProgram> cp) {
+//        [cp labelArray: u_bw];
+//        [cp labelArray: u_mem];
 //        id<ORIntVarArray> conn_flat = [conn flatten];
 //        id<ORIntVarArray> vm_conn_flat = [vm_conn flatten];
-//
 //        [cp labelArray: a];
 //        [cp labelArray: v];
 //        [cp labelArray: vc];
 //        [cp labelArray: s];
 //        [cp labelArray: vm_conn_flat];
 //        [cp labelArray: conn_flat];
-//        [cp labelArray: u_bw];
-//        [cp labelArray: u_mem];
 //        
 //        id<ORSolution> sol = [cp captureSolution];
 //        NSLog(@"Found Solution: %i", [[sol objectiveValue] intValue]);
@@ -229,23 +228,18 @@ int main(int argc, const char * argv[])
 //    id<ORSolution> best = [r bestSolution];
     
     
-    
-//    id<CPProgram> cp = [ORFactory createCPProgram: model];
-//    //NSLog(@"Model %@",model);
-//    id<CPHeuristic> h = [cp createDDeg];
-//    [cp solve:^{
-//        [cp labelHeuristic:h];
-//        id<ORSolution> s = [cp captureSolution];
-//        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
-//        writeOut(s);
-//    }];
-//    id<ORSolution> best = [[cp solutionPool] best];
-//
-//    
-//    for(ORInt i = [vm low]; i <= [vm up]; i++) {
-//        NSLog(@"vm %i vc: %i mem: %i", i, [best intValue: [vc at: i]], [best intValue: [u_mem at: i]]);
-//    }
-    
+    // 457 optimal objective
+    id<CPProgram> cp = [ORFactory createCPProgram: model];
+    //NSLog(@"Model %@",model);
+    id<CPHeuristic> h = [cp createFF];
+    [cp solve:^{
+        [cp labelHeuristic:h];
+        id<ORSolution> s = [cp captureSolution];
+        NSLog(@"Found Solution: %f", [[s objectiveValue] doubleValue]);
+        writeOut(s);
+    }];
+    id<ORSolution> best = [[cp solutionPool] best];
+
     //NSLog(@"Number of solutions found: %li", [[cp solutionPool] count]);
    ORTimeval el = [ORRuntimeMonitor elapsedSince:now];
     NSLog(@"#best objective: %i",[[best objectiveValue] intValue]);

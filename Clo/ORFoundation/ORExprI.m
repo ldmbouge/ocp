@@ -1526,13 +1526,19 @@
 }
 -(ORInt) min 
 {
-   assert([self isConstant]);
-   return [_left min] == [_right min];
+    // Chnaged Dan
+   //assert([self isConstant]);
+    if([self isConstant])
+        return [_left min] == [_right min];
+    return 0;
 }
 -(ORInt) max 
 {
-   assert([self isConstant]);
-   return [_left max] == [_right max];
+    // Chnaged Dan
+   //assert([self isConstant]);
+    if([self isConstant])
+        return [_left max] == [_right max];
+    return 1;
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -1667,13 +1673,19 @@
 }
 -(ORInt) min
 {
-   assert([self isConstant]);
-   return [_left min] >= [_right min];
+   // Changed by Dan
+   //assert([self isConstant]);
+   if([self isConstant])
+      return [_left min] >= [_right min];
+   return 0;
 }
 -(ORInt) max
 {
-   assert([self isConstant]);
-   return [_left max] >= [_right max];
+   // Changed by Dan
+   //assert([self isConstant]);
+   if([self isConstant])
+      return [_left max] >= [_right max];
+   return 1;
 }
 -(void) visit: (ORVisitor*) visitor
 {
