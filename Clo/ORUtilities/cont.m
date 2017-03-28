@@ -47,6 +47,7 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    char* _data;
    int _used;
    ORInt field;  // a stored property
+   ORBool admin; // a stored property
    id  fieldId;
    ORInt _cnt;   
 }
@@ -83,7 +84,10 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    _longjmp(_target,(long)self); // dot not save signal mask --> overhead   
 #endif
 }
-
+//<<<<<<< HEAD:Clo/ORFoundation/cont.m
+//=======
+//
+//>>>>>>> master:Clo/ORUtilities/cont.m
 -(void)callInvisible
 {
 #if defined(__x86_64__)
@@ -95,8 +99,11 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    _longjmp(_target,(long)self); // dot not save signal mask --> overhead
 #endif
 }
-
-+(NSCont*)takeContinuation 
+//<<<<<<< HEAD:Clo/ORFoundation/cont.m
+//=======
+//
+//>>>>>>> master:Clo/ORUtilities/cont.m
++(NSCont*)takeContinuation
 {
    NSCont* k = [NSCont new];
 #if defined(__x86_64__)
@@ -170,11 +177,12 @@ inline static void freePool()
          k = (k+1) % pool->sz;
          nb++;
       }
+      ORUInt nbCont = pool->nbCont;
       pool->low = pool->high = 0;
       free(pool->pool);
       free(pool);
       freePool(pool);
-      NSLog(@"released %d continuations out of %d...",nb,pool->nbCont);
+      NSLog(@"released %d continuations out of %d...",nb,nbCont);
    }
 }
 
@@ -206,7 +214,8 @@ inline static void freePool()
    }   
    rv->_used   = 0;
    rv->_start  = 0;
-   rv->_cnt = 1;
+   rv->_cnt    = 1;
+   rv->admin   = NO;
    return rv;
 }
 
@@ -252,6 +261,7 @@ void letgo(NSCont* c)
 
 
 @synthesize field;
+@synthesize admin;
 @synthesize fieldId;
 
 @end

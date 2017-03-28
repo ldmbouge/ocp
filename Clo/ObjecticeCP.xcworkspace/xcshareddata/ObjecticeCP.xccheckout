@@ -5,20 +5,42 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
+<!--<<<<<<< HEAD-->
+<!--	<string>D398814F-273B-4CA5-B491-1192D6B77341</string>-->
+<!--=======-->
 	<string>64A93361-EF48-4660-B02C-F0B36C131679</string>
+<!-->>>>>>> master-->
 	<key>IDESourceControlProjectName</key>
 	<string>ObjecticeCP</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+<!--<<<<<<< HEAD-->
+<!--		<key>F1C25CD2-C698-4734-9CB4-B93B0768FA4F</key>-->
+<!--		<string>ssh://ash.engr.uconn.edu/objcp-public.git</string>-->
+<!--=======-->
 		<key>B0408365-0382-42AF-BFF3-1FB3204D0F89</key>
 		<string>git+ssh://forge.nicta.com.au//var/lib/gforge/chroot/scmrepos/git/objectivecpdev/objectivecpdev.git</string>
 		<key>D2D8EB46BA5C8E354237CFF9B3605891E8A5CEEE</key>
 		<string>git+ssh://forge.nicta.com.au//var/lib/gforge/chroot/scmrepos/git/objectivecpdev/objectivecpdev.git</string>
+<!-->>>>>>> master-->
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Clo/ObjecticeCP.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+<!--<<<<<<< HEAD-->
+<!--		<key>204A65AC-57EA-440F-91EB-ABA46844F267</key>-->
+<!--		<string>../SHA1/SHA1</string>-->
+<!--		<key>F1C25CD2-C698-4734-9CB4-B93B0768FA4F</key>-->
+<!--		<string>../..</string>-->
+<!--	</dict>-->
+<!--	<key>IDESourceControlProjectURL</key>-->
+<!--	<string>ssh://ash.engr.uconn.edu/objcp-public.git</string>-->
+<!--	<key>IDESourceControlProjectVersion</key>-->
+<!--	<integer>110</integer>-->
+<!--	<key>IDESourceControlProjectWCCIdentifier</key>-->
+<!--	<string>F1C25CD2-C698-4734-9CB4-B93B0768FA4F</string>-->
+<!--=======-->
 		<key>3CA110B7-9684-468F-A9D0-BA12707EEB6C</key>
 		<string>../LSprogressive</string>
 		<key>7260A511-154F-4039-8D95-9DDCE33937E1</key>
@@ -38,13 +60,18 @@
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
 	<string>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</string>
+<!-->>>>>>> master-->
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
+<!--<<<<<<< HEAD-->
+<!--			<string>F1C25CD2-C698-4734-9CB4-B93B0768FA4F</string>-->
+<!--=======-->
 			<string>7260A511-154F-4039-8D95-9DDCE33937E1</string>
+<!-->>>>>>> master-->
 			<key>IDESourceControlWCCName</key>
 			<string>LSprog</string>
 		</dict>
@@ -52,6 +79,11 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
+<!--<<<<<<< HEAD-->
+<!--			<string>204A65AC-57EA-440F-91EB-ABA46844F267</string>-->
+<!--			<key>IDESourceControlWCCName</key>-->
+<!--			<string>SHA1</string>-->
+<!--=======-->
 			<string>3CA110B7-9684-468F-A9D0-BA12707EEB6C</string>
 			<key>IDESourceControlWCCName</key>
 			<string>LSprogressive</string>
@@ -82,6 +114,7 @@
 			<string>B0408365-0382-42AF-BFF3-1FB3204D0F89</string>
 			<key>IDESourceControlWCCName</key>
 			<string>objectivecpdev</string>
+<!-->>>>>>> master-->
 		</dict>
 	</array>
 </dict>

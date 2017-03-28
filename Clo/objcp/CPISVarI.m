@@ -101,6 +101,11 @@ static void deallocNetwork(CPISVNetwork* net)
 {
    return _isb._val;
 }
+-(ORInt) domsize
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"domsize not supported on int set var"];
+   return 0;
+}
 -(id<IntEnumerator>)required
 {
    return [_req enumerator];

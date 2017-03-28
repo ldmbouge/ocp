@@ -352,6 +352,10 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     return [_dom domwidth];
 }
+-(ORInt) domsize
+{
+    return (ORInt)[_dom domwidth];
+}
 @end
 
 @implementation CPLDoubleViewOnIntVarI
@@ -607,5 +611,9 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     ORBounds b = [_theVar bounds];
     return b.max - b.min;
+}
+-(ORInt) domsize
+{
+    return (ORInt)[self domwidth];
 }
 @end

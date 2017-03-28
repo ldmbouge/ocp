@@ -174,6 +174,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _recv = nil;
    return self;
 }
+-(ORBool)vertical
+{
+   return NO;
+}
+
 -(id<ORTracker>) tracker
 {
    return _fdm;
@@ -240,6 +245,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORInt) domsize
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method domsize  not defined"];
+   return 0;
+}
+-(ORInt) regret
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method regret  not defined"];
    return 0;
 }
 -(ORBounds) bounds
@@ -550,6 +560,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return 1;
 }
+-(ORInt) regret
+{
+   return 0;
+}
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to
 {
    return (_value >= from && _value <= to);
@@ -721,7 +735,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void)dealloc
 {
-    //NSLog(@"CIVar::dealloc %d\n",_name);
+    //NSLog(@"CPIntVarI::dealloc %d\n",_name);
     if (_recv != nil)
         [_recv release];
     [_dom release];     
@@ -824,6 +838,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORInt)domsize
 {
     return [_dom domsize];
+}
+-(ORInt) regret
+{
+   return [_dom regret];
 }
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to
 {
@@ -1440,6 +1458,16 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    return [_x domsize];
 }
+-(ORInt) regret
+{
+   if (_a >= 0) {
+      return _a * [_x regret];
+   } else {
+      int theMax = [_x max];
+      int prev   = [[_x domain] findMax:theMax-1];
+      return - (theMax - prev) * _a;
+   }
+}
 -(ORRange)around:(ORInt)v
 {
    ORRange a = [_x around: (v - _b) / _a];
@@ -1659,6 +1687,12 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    return [_x domsize];
 }
+-(ORInt) regret
+{
+   int theMax = [_x max];
+   int prev = [[_x domain] findMax:theMax-1];
+   return theMax - prev;
+}
 -(ORRange)around:(ORInt)v
 {
    ORRange a = [_x around:-v];
@@ -1811,7 +1845,13 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
       else return 1;
    }
 }
-
+-(ORInt) regret
+{
+   if (bound(_secondary))
+      return 0;
+   else
+      return 1;
+}
 -(ORRange)around:(ORInt)v
 {
    return (ORRange){0,1};
@@ -2105,13 +2145,14 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 -(ORBool) tracksLoseEvt
 {
    return _tracksLoseEvt;
-   if (_tracksLoseEvt)
+/*   if (_tracksLoseEvt)
       return true;
    else {
       for(ORUInt k=0;k<_nb && !_tracksLoseEvt;k++)
 	 _tracksLoseEvt |= [_tab[k] tracksLoseEvt];
       return _tracksLoseEvt;
    }
+ */
 }
 void bindEvt(CPMultiCast* x,id<CPDom> sender)
 {
@@ -2228,19 +2269,21 @@ void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender)
    }
    assignTRInt(&_b,_a._val, [[_ref engine] trail]);
 }
+typedef id (*SELPROTO)(id,SEL,...);
+
 void literalDomEvt(CPLiterals* x,id<CPDom> sender)
 {
    SEL dSEL = @selector(domEvt:);
    for(ORInt i=x->_a._val;i < x->_b._val;i++)
       if (x->_pos[i])
-         x->_domEvtIMP(x->_pos[i],dSEL,sender);
+         ((SELPROTO)x->_domEvtIMP)(x->_pos[i],dSEL,sender);
 }
 -(void) domEvt:(id<CPDom>)sender
 {
    SEL dSEL = @selector(domEvt:);
    for(ORInt i=_a._val;i <_b._val;i++) {
       if (_pos[i])
-         _domEvtIMP(_pos[i],dSEL,sender);
+         ((SELPROTO)_domEvtIMP)(_pos[i],dSEL,sender);
 //      [_pos[i] domEvt:sender];
    }
 }

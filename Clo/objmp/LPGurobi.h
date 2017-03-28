@@ -27,6 +27,8 @@
 -(void) addColumn: (LPColumnI*) col;
 -(void) close;
 -(OROutcome) solve;
+-(OROutcome) solveFrom:(id)basis;
+
 
 -(OROutcome) status;
 -(ORDouble) value: (LPVariableI*) var;

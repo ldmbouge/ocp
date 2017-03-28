@@ -1148,6 +1148,125 @@
 @end
 
 
+@implementation CPSumBoolNEq {
+   TRInt _nbOne;
+   TRInt _nbZero;
+}
+-(id) initCPSumBool:(id<CPIntVarArray>)xa neq:(ORInt)c
+{
+   id<CPEngine> engine = [[xa at: [xa low]] engine];
+   self = [super initCPCoreConstraint:engine];
+   _xa = xa;
+   _nb = [xa count];
+   _x  = malloc(sizeof(CPIntVar*)*_nb);
+   ORInt low = [xa low];
+   ORInt up = [xa up];
+   ORInt i = 0;
+   for(ORInt k=low;k <= up;k++)
+      _x[i++] = (CPIntVar*) [xa at:k];
+   _c = c;
+   return self;
+}
+-(void) dealloc
+{
+   free(_x);
+   [super dealloc];
+}
+-(void) post
+{
+   int nbTrue = 0;
+   int nbPos  = 0;
+   for(ORInt i=0;i<_nb;i++) {
+      nbTrue += minDom(_x[i])==1;
+      nbPos  += !bound(_x[i]);
+   }
+   if (nbTrue == _c && nbPos == 0) // #true == _c -> fail
+      failNow();
+   if (nbTrue > _c)              // Trivially true since #true is already > _c
+      return;
+   if (nbTrue + nbPos < _c)      // #true + #free < _c. We cannot possibly be == _c => trivially true.
+      return;
+   if (nbTrue + nbPos == _c && nbPos == 1) { // we could become equal to _c and there is only one way, so make that var == 0
+      for(ORInt i=0;i<_nb;++i)
+         if (!bound(_x[i]))
+            [_x[i] bind:NO];
+      return ;
+   }
+   if (nbTrue == _c && nbPos == 1) {  // we are already exactly equal to _c and only one is still possible. It *CANNOT* be 0 or _nbTrue will be == _c for good.
+      for(ORInt i=0;i<_nb;++i)
+         if (!bound(_x[i]))
+            [_x[i] bind:YES];
+      return ;
+   }
+   _nbOne  = makeTRInt(_trail, nbTrue);
+   _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
+   for(ORInt k=0;k < _nb;k++) {
+      if (bound(_x[k])) continue;
+      [_x[k] whenBindDo:^{ [self propagateIdx:k];} onBehalf:self];
+   }
+}
+-(void)propagateIdx:(ORInt)k
+{
+   ORInt nb1 = 0;
+   if (minDom(_x[k]))   // ONE more TRUE
+      assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
+   else
+      assignTRInt(&_nbZero,_nbZero._val + 1,_trail);
+   
+   const ORInt nbPos = (ORInt)_nb - _nbOne._val - _nbZero._val;
+   if (_nbOne._val == _c && nbPos == 0)
+      failNow();
+   if (_nbOne._val > _c) {
+      assignTRInt(&_active,NO,_trail);
+      return;
+   }
+   if (_nbOne._val + nbPos < _c) {
+      assignTRInt(&_active,NO,_trail);
+      return;
+   }
+   if (_nbOne._val + nbPos == _c && nbPos == 1) { // we could become equal to _c and there is only one way, so make that var == 0
+      for(ORInt i=0;i<_nb;i++) {
+         nb1 += ([_x[i] min]==YES);   // already a ONE
+         if (!bound(_x[i]))
+            [_x[i] bind:FALSE];
+      }
+      if (nb1 == _c)
+         failNow();                     // too many ONES!
+      else
+         assignTRInt(&_active,NO,_trail);
+   }
+   if (_nbOne._val == _c && nbPos == 1) {  // we are already exactly equal to _c and only one is still possible. It *CANNOT* be 0 or _nbTrue will be == _c for good.
+      for(ORInt i=0;i<_nb;++i)
+         if (!bound(_x[i]))
+            [_x[i] bind:TRUE];
+      return ;
+   }
+  
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:_nb] autorelease];
+   for(ORInt k = 0;k < _nb;k++)
+      [rv addObject:_x[k]];
+   return rv;
+}
+-(ORUInt)nbUVars
+{
+   ORUInt nb=0;
+   for(ORUInt k=0;k<_nb;k++)
+      nb += ![_x[k] bound];
+   return nb;
+}
+-(NSString*)description
+{
+   const char* act = _active._val ? "" : "DEACTIVATED-";
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%sCPSumBool:%02d (%@ ≠ %d)>",act,_name,_xa,_c];
+   return buf;
+}
+
+@end
+
 @implementation CPReifySumBoolEq { // full reification: b <=> sum(i in S) x_i = c
    CPIntVar**  _x;
    ORInt      _nb;

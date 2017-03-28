@@ -15,9 +15,10 @@
 @class ORVisitor;
 
 @protocol ORObject <NSObject>
--(ORInt) getId;
+-(ORUInt) getId;
 -(void)setId:(ORUInt)name;
 -(void) visit: (ORVisitor*) visitor;
+-(ORBool)vertical;
 @end;
 
 
@@ -32,6 +33,7 @@
 -(void) setId:(ORUInt)name;
 -(ORUInt) getId;
 -(id) takeSnapshot: (ORInt) id;
+-(ORBool)vertical;
 @end
 
 static inline ORUInt getId(const ORObject* ptr) { return ptr->_name;}

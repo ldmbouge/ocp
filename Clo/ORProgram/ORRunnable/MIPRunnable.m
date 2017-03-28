@@ -7,7 +7,7 @@
 //
 
 #import "MIPRunnable.h"
-#import "MIPSolverI.h"
+#import <objmp/MIPSolverI.h>
 #import "ORProgramFactory.h"
 #import <ORProgram/ORSolution.h>
 #import <ORScheduler/ORScheduler.h>
@@ -62,15 +62,18 @@
     }
     return _sig;
 }
--(void) injectColumn: (id<ORDoubleArray>) col
+-(void) addCuts: (id<ORConstraintSet>) cuts
 {
+    [cuts enumerateWith:^(id<ORConstraint> c) {
+        [_model add: c];
+    }];
+    [_program release];
+    _program = [ORFactory createMIPProgram: _model];
 }
 
 -(void) run
 {
-   if (_startBlock)
-      _startBlock();
-   
+   [self doStart];
    NSLog(@"Running MIP runnable(%p)...", _program);
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [[[_program solver] boundInformer] wheneverNotifiedDo: ^(ORDouble bnd) { [self notifyUpperBound: (ORInt)bnd]; }];

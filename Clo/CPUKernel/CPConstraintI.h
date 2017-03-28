@@ -10,16 +10,19 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPUKernel.h>
-#import <ORFoundation/ORObject.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPCstr.h>
 
 @class CPEngineI;
+@protocol CPGroup;
+
+typedef id (*SELPROTO)(id,SEL,...);
 
 @interface CPCoreConstraint : ORObject<CPConstraint> {
 @public
    CPTodo            _todo;
    ORInt         _priority;
-   IMP          _propagate;
+   SELPROTO     _propagate;
    id<ORTrail>      _trail;
    TRInt           _active;
    id<CPGroup>      _group;
@@ -32,4 +35,5 @@
 -(ORUInt) nbVars;
 -(void)setGroup:(id<CPGroup>)g;
 -(id<CPGroup>)group;
+-(void) toCheck;
 @end

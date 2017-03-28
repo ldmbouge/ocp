@@ -217,6 +217,11 @@
     //[model maximize: [self variables: model] coef: [self coefficients: model]];
     assert(NO);
 }
+-(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
+{
+    assert(NO);
+    return nil;
+}
 -(void) visit :(id<ORFloatLinear>) right
 {
     switch(_type)
@@ -336,6 +341,9 @@
 {
     return [_float postDISJ:model];
 }
-
+-(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
+{
+    return [_float postIMPLY:model];
+}
 @end
 

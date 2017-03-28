@@ -173,7 +173,10 @@ typedef struct  {
    }
    return self;
 }
-
+-(ORBool)vertical
+{
+   return YES;
+}
 -(id) takeSnapshot: (ORInt) id
 {
    return [[CPTaskVarSnapshot alloc] initCPTaskVarSnapshot: self name: id];
@@ -570,7 +573,10 @@ typedef struct  {
    }
    return self;
 }
-
+-(ORBool)vertical
+{
+   return YES;
+}
 -(ORInt) est
 {
    return [_task est];

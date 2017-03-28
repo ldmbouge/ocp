@@ -16,6 +16,8 @@
 @class CPIntVar;
 @class CPEngine;
 @class CPBitDom;
+@class CPBitVarI;
+@class CPBitArrayDom;
 
 @interface CPElementCstBC : CPCoreConstraint { // y == c[x]
 @private
@@ -72,3 +74,35 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+@interface CPElementBitVarBC : CPCoreConstraint { // y == z[x]
+@private
+   CPBitVarI*        _x;
+   CPBitVarI*        _y;
+   id<ORIdArray> _z;
+}
+-(id) initCPElementBC: (id) x indexVarArray:(id<ORIdArray>) c equal:(id)y;
+-(void) dealloc;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPElementBitVarAC : CPCoreConstraint {
+   CPBitVarI*        _x;
+   CPBitVarI*        _y;
+   id<ORIdArray> _z;
+   CPBitArrayDom* _xold2;
+   TRInt             _la;  // lowest index in array (_z)
+   TRInt             _ua; // upper index of _z
+   id<ORTrailableIntArray> _I; // _I[i] tells us if _y = _z[i] is a possible assignment
+   TRIntArray _svx0,_svx1;
+   TRIntArray _svy0,_svy1;
+   id<ORTrailableInt> _cI;        // cardinality of _I
+}
+-(id)initCPElementAC: (id) x indexVarArray:(id<ORIdArray>)y equal:(id)z;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+

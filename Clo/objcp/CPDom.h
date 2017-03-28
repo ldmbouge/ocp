@@ -29,6 +29,7 @@
 -(ORBool) bound;
 -(ORBounds) bounds;
 -(ORInt) domsize;
+-(ORInt) regret;
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to;
 -(ORBool) get:(ORInt)b;
 -(ORBool) member:(ORInt)v;
@@ -75,6 +76,9 @@
 -(ORBool) bound;
 -(ORInterval) bounds;
 -(ORLDouble) domwidth;
+-(ORUInt) cardinality;
+-(ORFloat) density;
+-(ORFloat) magnitude;
 -(TRFloatInterval) domain;
 -(ORBool) member:(ORFloat)v;
 -(NSString*)description;

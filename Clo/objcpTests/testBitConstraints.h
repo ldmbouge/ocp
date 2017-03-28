@@ -26,4 +26,6 @@
 #import <XCTest/XCTest.h>
 
 @interface testBitConstraints : XCTestCase
+
 @end
+

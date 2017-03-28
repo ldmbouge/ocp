@@ -13,16 +13,16 @@
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORConstraint.h>
+//#import <ORFoundation/ORConstraint.h>
+
+@protocol ORASolver;
 
 PORTABLE_BEGIN
 
 @protocol ORVar <ORObject>
--(ORInt) getId;
 @end
 
 @protocol ORExprVar <ORVar,ORRelation>
--(ORInt) getId;
 @end
 
 @protocol ORIntVar <ORExprVar>
@@ -40,7 +40,20 @@ PORTABLE_BEGIN
 @protocol ORBitVar <ORExprVar>
 -(ORUInt*)low;
 -(ORUInt*)up;
--(ORUInt)bitLength;
+
+//-(ORBounds) bounds;
+-(ORUInt) bitLength;
+//-(ORInt)  domsize;
+//-(ORULong) numPatterns;
+//-(ORULong) maxRank;
+//-(ORULong) getRank:(ORUInt*)r;
+//-(ORUInt*) atRank:(ORULong) r;
+//-(ORStatus) bind:(unsigned int*)val;
+//-(BOOL) member: (unsigned int*) v;
+//-(bool) isFree:(ORUInt)pos;
+//-(ORUInt) lsFreeBit;
+//-(ORUInt) msFreeBit;
+
 -(NSString*)stringValue;
 @end
 
@@ -52,14 +65,12 @@ PORTABLE_BEGIN
 -(ORDouble) up;
 @end
 
-
 @protocol ORFloatVar <ORExprVar>
 -(id<ORFloatRange>) domain;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 @end
-
 
 @protocol ORDoubleVar <ORExprVar>
 -(id<ORDoubleRange>) domain;
@@ -68,7 +79,6 @@ PORTABLE_BEGIN
 -(ORDouble) up;
 @end
 
-
 @protocol ORLDoubleVar <ORExprVar>
 -(id<ORLDoubleRange>) domain;
 -(ORBool) hasBounds;
@@ -76,29 +86,27 @@ PORTABLE_BEGIN
 -(ORLDouble) up;
 @end
 
-
-
 @protocol ORExprArray<ORIdArray>
 -(id<ORExpr>) at: (ORInt) value;
 -(void) set: (id<ORExpr>) x at: (ORInt) value;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id<ORExpr>) objectAtIndexedSubscript: (ORInt) key;
--(void) setObject: (id<ORExpr>) newValue atIndexedSubscript: (ORInt) idx;
+-(id<ORExpr>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORExpr>) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
 @protocol ORVarArray <ORExprArray>
 -(id<ORVar>) at: (ORInt) value;
 -(void) set: (id<ORVar>) x at: (ORInt) value;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id<ORVar>) objectAtIndexedSubscript: (ORInt) key;
--(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (ORInt) idx;
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
 @protocol ORIntVarArray <ORVarArray>
 -(id<ORIntVar>) at: (ORInt) value;
 -(void) set: (id<ORIntVar>) x at: (ORInt) value;
--(id<ORIntVar>) objectAtIndexedSubscript: (ORInt) key;
--(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (ORInt) idx;
+-(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 
@@ -115,6 +123,14 @@ PORTABLE_BEGIN
 -(void) set: (id<ORRealVar>) x at: (ORInt) value;
 -(id<ORRealVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORRealVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
+@protocol ORBitVarArray <ORVarArray>
+-(id<ORBitVar>) at: (ORInt) value;
+-(void) set: (id<ORBitVar>) x at: (ORInt) value;
+-(id<ORBitVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORBitVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 
@@ -156,6 +172,7 @@ typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROu
 -(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
 -(void) updateBounds:(id<ORVar>)x lower:(ORDouble)low  upper:(ORDouble)up;
 -(OROutcome) solve;
+-(OROutcome) solveFrom:(id)basis;
 -(void) close;
 -(double)reducedCost:(id<ORVar>)x;
 -(ORBool)triviallyRoundable:(id<ORVar>)x;

@@ -66,6 +66,7 @@
    _onStartup = nil;
    _doneSearching = NO;
    _sowct = [ORRuntimeMonitor wctime];
+   _nbf = _nbc = 0;
    return self;
 }
 -(void)dealloc
@@ -127,11 +128,17 @@
 }
 -(ORInt) nbFailures
 {
-  return [[self worker] nbFailures];
+   if (_nbDone == _nbWorkers)
+      return _nbf;
+   else
+      return [[self worker] nbFailures];
 }
 -(ORInt) nbChoices
 {
-   return [[self worker] nbChoices];
+   if (_nbDone == _nbWorkers)
+      return _nbc;
+   else
+      return [[self worker] nbChoices];
 }
 -(id<CPEngine>) engine
 {
@@ -258,6 +265,10 @@
 {
    return [[self worker] gamma];
 }
+-(void) atomic:(ORClosure)body
+{
+   [[self worker] atomic:body];
+}
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
@@ -300,10 +311,49 @@
    [[self worker] nestedSolveAll: body];
 }
 // ********
-
+-(void)          maxwidthSearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] maxwidthSearch:x];
+}
+-(void)          minWidthSearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] minWidthSearch:x];
+}
+-(void)          maxCardinalitySearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] maxCardinalitySearch:x];
+}
+-(void)          minCardinalitySearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] minCardinalitySearch:x];
+}
+-(void)          maxDensitySearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] maxDensitySearch:x];
+}
+-(void)          minDensitySearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] minDensitySearch:x];
+}
+-(void)          maxMagnitudeSearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] maxMagnitudeSearch:x];
+}
+-(void)          minMagnitudeSearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] minMagnitudeSearch:x];
+}
+-(void)          alternateMagnitudeSearch: (id<ORFloatVarArray>) x
+{
+    [[self worker] alternateMagnitudeSearch:x];
+}
 -(void) splitArray: (id<ORIntVarArray>) x
 {
    [[self worker] splitArray:x];
+}
+-(void) split: (id<ORIntVar>)x
+{
+   [[self worker] split:x];
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -328,6 +378,14 @@
 -(void) label: (id<ORIntVar>) mx
 {
    [[self worker] label: mx];
+}
+-(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
+{
+   [(id<CPBV>)[self worker] labelBV:var at:i with:val];
+}
+-(void) labelUpFromLSB:(id<ORBitVar>) x
+{
+   [(id<CPBV>)[self worker] labelUpFromLSB:x];
 }
 -(void) select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body
 {
@@ -392,6 +450,10 @@
 -(void) floatSplitArray:(id<ORFloatVarArray>)x
 {
     [[self worker] floatSplitArray:x];
+}
+-(void) floatSplitArrayOrderedByDomSize:(id<ORFloatVarArray>)x
+{
+    [[self worker] floatSplitArrayOrderedByDomSize:x];
 }
 -(void) floatLthen:(id<ORFloatVar>)var with:(ORFloat)val
 {
@@ -462,6 +524,10 @@
 {
    return [[self worker] domsize:x];
 }
+-(ORInt) regret: (id<ORIntVar>) x
+{
+   return [[self worker] regret:x];
+}
 -(ORDouble) domwidth:(id<ORRealVar>)x
 {
    return [[self worker] domwidth:x];
@@ -477,6 +543,19 @@
 -(void) assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
    return [[self worker] assignRelaxationValue:  f to:  x];
+}
+-(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x
+{
+   id<CPBV> ptr = (id<CPBV>)[self worker];
+   return [ptr memberBit:k value:v in:x];
+}
+-(ORBool) bitAt:(ORUInt)pos in:(id<ORBitVar>)x
+{
+   return [(id<CPBV>)[self worker] bitAt:pos in:x];
+}
+-(ORBool)boundBit:(ORInt)k in:(id<ORBitVar>)x
+{
+   return [(id<CPBV>)[self worker] boundBit:k in:x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
@@ -497,6 +576,10 @@
 -(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x
 {
    return [[self worker] smallestDom:x];
+}
+-(NSString*)stringValue:(id<ORBitVar>)x
+{
+   return [(id<CPBV>)[self worker] stringValue: x];
 }
 -(NSSet*)constraints:(id<ORVar>)x
 {
@@ -589,8 +672,6 @@
 {
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
-   if (_onSol)
-      [me onSolution: _onSol];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested
@@ -649,6 +730,8 @@
    NSNumber* allSols  = [input objectAtIndex:2];
    [NSThread setThreadPriority:1.0];
    [NSThread setThreadID:myID];
+   if (_onSol)
+      [_workers[myID] onSolution: _onSol];
    _doneSearching = NO;
    [self doOnStartup];
    [[_workers[myID] explorer] search: ^() {
@@ -691,7 +774,7 @@
       //ORLong took = 0;
       ORTimeval before = [ORRuntimeMonitor now];
       ORLong sleeping = 0;
-      while ((cpRoot = [_queue deQueue]) !=nil) {
+      while (!_doneSearching && (cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
             ORTimeval sleepy = [ORRuntimeMonitor elapsedSince:before];
             sleeping += sleepy.tv_sec* 1000 + sleepy.tv_usec / 1000;
@@ -705,7 +788,10 @@
    }];
    // Final tear down. The worker is done with the model.
    NSLog(@"Worker[%d] = %@",myID,_workers[myID]);
-   [_workers[myID] release];
+   // [LDM]. Solvers are auto-released. We should never manually deallocate them.
+   //[_workers[myID] release];
+   _nbf += [_workers[myID] nbFailures];
+   _nbc += [_workers[myID] nbChoices];
    _workers[myID] = nil;
    [mySearch release];
    [ORFactory shutdown];

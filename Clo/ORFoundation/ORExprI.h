@@ -15,7 +15,7 @@
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORData.h>
 #import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORConstraint.h>
+//#import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
 
 @interface ORExprI: ORObject<ORExpr,NSCoding>

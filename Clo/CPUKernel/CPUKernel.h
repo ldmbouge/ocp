@@ -9,10 +9,15 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPClosureEvent.h>
+#import <CPUKernel/CPLEngine.h>
+#import <CPUKernel/CPCstr.h>
+#import <CPUKernel/CPGroup.h>
+#import <CPUKernel/CPConstraintI.h>
 
 /*
  
@@ -23,25 +28,16 @@
  
 */
 
-typedef enum {
-   CPChecked,
-   CPTocheck,
-   CPOff
-} CPTodo;
+struct _CPBitAssignment;
+typedef struct _CPBitAssignment CPBitAssignment;
 
-@protocol CPGroup;
+struct _CPBitAntecedents;
+typedef struct _CPBitAntecedents CPBitAntecedents;
 
-@protocol CPConstraint <ORConstraint>
--(ORUInt)      getId;
--(void)        setGroup:(id<CPGroup>) g;
--(id<CPGroup>) group;
--(void) post;
-@end
-
-@protocol CPGroup <CPConstraint>
--(void)  add:(id<CPConstraint>)p;
--(void)  assignIdToConstraint:(id<ORConstraint>)c;
--(void)  scheduleClosure:(id<CPClosureList>)evt;
+@protocol CPBVConstraint <CPConstraint>
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*)assignment;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment;
+//-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment withState:(ORUInt**)state;
 @end
 
 @protocol CPValueEvent<NSObject>
@@ -57,9 +53,7 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,OR
 
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
-+(id<CPGroup>) group:(id<CPEngine>)engine;
-+(id<CPGroup>) bergeGroup:(id<CPEngine>)engine;
-@end
-
-#import <CPUKernel/CPConstraintI.h>
-
++(id<CPEngine>) learningEngine: (id<ORTrail>)trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr;
++(id<CPGroup>)group:(id<CPEngine>)engine;
++(id<CPGroup>)bergeGroup:(id<CPEngine>)engine;
+@end;

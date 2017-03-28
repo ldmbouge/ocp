@@ -17,7 +17,6 @@ typedef struct timeval ORTimeval;
 
 @protocol ORExpr;
 @protocol ORIntRange;
-@protocol ORASolver;
 @protocol ORIntSet;
 @class ORVisitor;
 
@@ -104,13 +103,6 @@ typedef struct timeval ORTimeval;
 -(ORDouble) value: (id<ORGamma>) solver;
 -(ORDouble) doubleValue: (id<ORGamma>) solver;
 -(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
-@end
-
-@protocol ORTrailableInt <ORObject>
--(ORInt) value;
--(ORInt) setValue: (ORInt) value;
--(ORInt)  incr;  // post-incr returned
--(ORInt)  decr;  // post-decr returned
 @end
 
 @interface ORRuntimeMonitor : NSObject

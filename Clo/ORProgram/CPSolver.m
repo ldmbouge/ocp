@@ -10,8 +10,14 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORConcurrency.h>
+#import <ORFoundation/ORFoundation.h>
+/*
 #import <ORFoundation/ORExplorer.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORController.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORBackjumpingDFSController.h>
+*/
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORFlatten.h>
 #import <ORProgram/ORProgram.h>
@@ -19,15 +25,19 @@
 
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
-#import <objcp/CPBitVar.h>
 #import <objcp/CPIntVarI.h>
-#import <objcp/CPFloatVarI.h>
+#import <objcp/CPBitVar.h>
+#import <objcp/CPBitVarI.h>
 
 #if defined(__linux__)
 #import <values.h>
 #endif
 
-#include <fpi.h>
+#include "fpi.h"
+#if __clang_major__<=3 && __clang_minor__<=6
+#define _Nonnull
+#endif
+
 // [pvh: this is from a long time ago]
 //
 // 1. Look at IncModel to implement the incremental addition of constraints
@@ -208,7 +218,7 @@
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",
-               [_engine nbVars],[_engine nbConstraints],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
+               [_engine nbVars],[_engine nbConstraints],[self nbChoices],[self nbFailures],[_engine nbPropagation]];
 }
 -(id<ORIdxIntInformer>) retLabel
 {
@@ -252,7 +262,7 @@
 }
 -(ORInt) nbFailures
 {
-   return [_search nbFailures];
+   return [_engine nbFailures];
 }
 -(ORInt) nbChoices
 {
@@ -290,19 +300,18 @@
          [_search fail];
       if (![_hSet empty]) {
          @autoreleasepool {
-            NSMutableArray* mvar = [[NSMutableArray alloc] initWithCapacity: [[_model variables] count]];
-            NSIndexSet* iset = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-               return [obj conformsToProtocol: @protocol(ORIntVar)];
-            }];
-            [[_model variables] enumerateObjectsAtIndexes: iset options: NSEnumerationReverse usingBlock: ^(id obj, NSUInteger idx, BOOL* stop) {
-               [mvar addObject: obj];
-            }];
-            NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
+	    NSArray* svar = [_model variables];	   
+            NSMutableArray* mvar = [[NSMutableArray alloc] initWithCapacity: svar.count];
+	    for(id<ORVar> x in svar) {
+	      if ([x conformsToProtocol: @protocol(ORIntVar)] || [x conformsToProtocol:@protocol(ORBitVar)])
+		[mvar addObject:x];
+	    }
+            NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity: mvar.count];
             for(id<ORVar> v in mvar)
                [cvar addObject:_gamma[v.getId]];
             tryfail(^ORStatus{
                [_hSet applyToAll:^(id<CPHeuristic> h) {
-                  [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+		   [h initHeuristic:mvar concrete:cvar oneSol:_oneSol tracker:self];
                }];
                [cvar release];
                [mvar release];
@@ -369,21 +378,21 @@
 }
 -(void) doOnStartup
 {
-   [_doOnStartupArray enumerateObjectsUsingBlock:^(ORClosure  _Nonnull block, NSUInteger idx, BOOL * _Nonnull stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnStartupArray) {
+    block();
+  }
 }
 -(void) doOnSolution
 {
-   [_doOnSolArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnSolArray) {
+    block();
+  }
 }
 -(void) doOnExit
 {
-   [_doOnExitArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnExitArray) {
+    block();
+  }
 }
 -(void) solve: (ORClosure) search
 {
@@ -501,6 +510,13 @@
    [_search tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
 }
 
+-(void) atomic:(ORClosure)body
+{
+   ORStatus status = [_engine atomic:body];
+   if (status == ORFailure) {
+      [_search fail];
+   }
+}
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
    [_search limitTime: maxTime in: cl];
@@ -641,6 +657,22 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
 }
+-(void) labelBitsImpl:(id<ORBitVar>)x withValue:(ORInt) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBitsImpl not implemented"];
+}
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var with:(ORUInt)val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
+}
+-(void) diffBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method diffBVImpl not implemented"];
+}
+-(void) diffBVImpl:(id<CPBitVar,CPBitVarNotifier>)var with:(ORUInt)val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method diffBVImpl not implemented"];
+}
 -(ORInt) maxBound:(id<ORIdArray>) x
 {
    ORInt low = [x low];
@@ -655,11 +687,15 @@
    }
    return M;
 }
+
 -(ORBool) ground
 {
+   ORBool holdsVertical = [_engine holdsVertical];
+   if (holdsVertical)
+      return YES;
    NSMutableArray* av = [_engine variables];
    for(id<CPVar> xi in av) {
-      if (![xi bound])
+      if (![xi bound] && [xi degree] > 0)
          return NO;
    }
    return YES;
@@ -690,88 +726,208 @@
    else return nil;
 }
 
--(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
+-(void) labelBit:(int)i ofVar:(id<ORBitVar>)x
+//>>>>>>> master
 {
    [_search try: ^() { [self labelBV:x at:i with:false];}
             alt: ^() { [self labelBV:x at:i with:true];}];
 }
--(void) labelUpFromLSB:(id<CPBitVar>) x
+-(void) labelBits:(id<ORBitVar>)x withValue:(ORInt) v
 {
-   int i;
-   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
+   [self labelBitsImpl:_gamma[x.getId] withValue:v];
+}
+
+
+-(void) labelUpFromLSB:(id<ORBitVar>) x
+{
+   int i=-1;
+   id<CPBitVar> bv = _gamma[x.getId];
+
+   __block long long int domainBefore;
+   __block long long int domainAfter;
+   __block long long int domainDiff;
+   __block id<ORBasicModel> mdl = [_engine model];
+   NSArray* variables = [mdl variables];
+//   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
    while ((i=[bv lsFreeBit])>=0) {
       NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
-      [_search try: ^() { [self labelBV:x at:i with:false];}
-               alt: ^() { [self labelBV:x at:i with:true];}];
+//<<<<<<< HEAD
+      [_search try: ^() {  domainBefore = domainAfter = 0;
+                           for(int j=0;j<[variables count];j++)
+                              domainBefore += [variables[j] domsize];
+                           [self labelBV:x at:i with:false];
+//                           [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[x.getId] at:i with: false];
+                           for(int j=0;j<[variables count];j++)
+                              domainBefore += [variables[j] domsize];
+                              domainDiff = domainBefore-domainAfter;
+                           //if ((domainDiff = domainBefore-domainAfter)>20000)
+                              //NSLog(@"Setting bit %i to false of %@ reduced search space by %lli",i,x,domainDiff);
+                        }
+       
+                alt: ^() { domainBefore = domainAfter = 0;
+                   for(int j=0;j<[variables count];j++)
+                      domainBefore += [variables[j] domsize];
+                   [self labelBV:x at:i with:true];
+//                   [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[x.getId] at:i with: true];
+                   for(int j=0;j<[variables count];j++)
+                      domainBefore += [variables[j] domsize];
+                     domainDiff = domainBefore-domainAfter;
+                   //if ((domainDiff = domainBefore-domainAfter)>20000)
+                      //NSLog(@"Setting bit %i to true  of %@ reduced search space by %lli",i,x,domainDiff);
+                }
+];
+//=======
+//      [_search try: ^() { [self labelBV:x at:i with:false];}
+//               alt: ^() { [self labelBV:x at:i with:true];}];
+//>>>>>>> master
    }
 }
 
--(void) labelBitVarsFirstFail: (NSArray*)vars
+-(void) labelDownFromMSB:(id<ORBitVar>) x
 {
-   CPBitVarI* minDom;
-   ORULong minDomSize;
-   ORULong thisDomSize;
-   ORLong numVars;
-   bool freeVars = false;
-   NSMutableArray* cvars = [[[NSMutableArray alloc] initWithCapacity:[vars count]] autorelease];
-   for(id v in vars)
-      [cvars addObject:_gamma[[v getId]]];
-   vars = cvars;
+   int i;
    
-   numVars = [vars count];
-   int j;
-   int numBound;
-
-   for(int i=0;i<numVars;i++){
-      if ([vars[i] bound])
-         continue;
-      if ([vars[i] domsize] <= 0)
-         continue;
-      minDom = vars[i];
-      minDomSize = [minDom domsize];
-      freeVars = true;
-      break;
+   id<CPBitVar> bv = _gamma[x.getId];
+   while ((i=[bv msFreeBit])>=0) {
+//      i=[bv msFreeBit];
+//      NSLog(@"%@ shows MSB as %d",bv,i);
+      NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
+      [_search try: ^() { [self labelBV:x at:i with:true];}
+               alt: ^() { [self labelBV:x at:i with:false];}];
    }
+}
 
-//   NSLog(@"%lld unbound variables.",numVars);
-   while (freeVars) {
-      freeVars = false;
-      numBound = 0;
-      for(int i=0;i<numVars;i++){
-         if ([vars[i] bound]){
-            numBound++;
-            continue;
+//<<<<<<< HEAD
+//-(void) labelOutFromMidFreeBit:(id<ORBitVar>) x
+//{
+//   int i=-1;
+//   id<CPBitVar> bv = _gamma[x.getId];
+//
+//   __block long long int domainBefore;
+//   __block long long int domainAfter;
+//   __block long long int domainDiff;
+//   __block id<ORBasicModel> mdl = [_engine model];
+//   NSArray* variables = [mdl variables];
+//   //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
+//   while (![bv bound]) {
+//      i=[bv midFreeBit];
+//      NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
+//      [_search try: ^() {  domainBefore = domainAfter = 0;
+//         for(int j=0;j<[variables count];j++)
+//            domainBefore += [variables[j] domsize];
+//         [self labelBV:x at:i with:false];
+//         for(int j=0;j<[variables count];j++)
+//            domainBefore += [variables[j] domsize];
+//         domainDiff = domainBefore-domainAfter;
+//         //if ((domainDiff = domainBefore-domainAfter)>20000)
+//         //NSLog(@"Setting bit %i to false of %@ reduced search space by %lli",i,x,domainDiff);
+//=======
+////   NSLog(@"%lld unbound variables.",numVars);
+//   while (freeVars) {
+//      freeVars = false;
+//      numBound = 0;
+//      for(int i=0;i<numVars;i++){
+//         if ([vars[i] bound]){
+//            numBound++;
+//            continue;
+//         }
+//         if ([vars[i] domsize] <= 0)
+//            continue;
+//         if (!freeVars) {
+//            minDom = vars[i];
+//            minDomSize = [minDom domsize];
+//            freeVars = true;
+//            continue;
+//         }
+//         thisDomSize= [vars[i] domsize];
+//         if(thisDomSize==0)
+//            continue;
+//         if (thisDomSize < minDomSize) {
+//            minDom = vars[i];
+//            minDomSize = thisDomSize;
+//         }
+//      }
+//      if (!freeVars)
+//         break;
+//      //NSLog(@"%d//%lld bound.",numBound, numVars);
+////      j=[minDom randomFreeBit];
+//      
+//      //NSLog(@"Labeling %@ at %d.", minDom, j);
+//      while ([minDom domsize] > 0) {
+//         j= [minDom randomFreeBit];
+//         [_search try: ^() { [self labelBVImpl:(id)minDom at:j with:false];}
+//                  alt: ^() { [self labelBVImpl:(id)minDom at:j with:true];}];
+//>>>>>>> master
+//      }
+//       
+//                or: ^() { domainBefore = domainAfter = 0;
+//                   for(int j=0;j<[variables count];j++)
+//                      domainBefore += [variables[j] domsize];
+//                   [self labelBV:x at:i with:true];
+//                   for(int j=0;j<[variables count];j++)
+//                      domainBefore += [variables[j] domsize];
+//                   domainDiff = domainBefore-domainAfter;
+//                   //if ((domainDiff = domainBefore-domainAfter)>20000)
+//                   //NSLog(@"Setting bit %i to true  of %@ reduced search space by %lli",i,x,domainDiff);
+//                }
+//       ];
+//   }
+//}
+//
+-(void) labelRandomFreeBit:(id<ORBitVar>) x
+{
+//   NSLog(@"Labeling bitvars by selecting unbound bits uniformly at random");
+   int i=-1;
+   id<CPBitVar> bv = _gamma[x.getId];
+
+   //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
+   while (![bv bound]) {
+      i=[bv randomFreeBit];
+//      NSLog(@"Labeling Bit at index %d",i);
+      // LDM: TODO: This needs fixing! We should be using distributions here!
+#if defined(__APPLE__)
+      int rand = arc4random();
+#else
+      int rand = random();
+#endif
+      if (rand > 0.5){
+//         NSLog(@"Labeling Bit at index %d with false first",i);
+         [_search try: ^() { [self labelBV:x at:i with:false];}
+                   then: ^() { [self labelBV:x at:i with:true];}];
+      }
+      else {
+//         NSLog(@"Labeling Bit at index %d with true first",i);
+         [_search try: ^() { [self labelBV:x at:i with:true];}
+                   then: ^() { [self labelBV:x at:i with:false];}];
+   }
+}
+}
+
+-(void) labelBitsMixedStrategy:(id<ORBitVar>) x
+{
+      int i=-1;
+   id<CPBitVar> bv = _gamma[x.getId];
+
+      //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
+      while (![bv bound]) {
+         i=[bv midFreeBit];
+         //      NSLog(@"%@ shows MSB as %d",bv,i);
+         NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
+         [_search try: ^() { [self labelBV:x at:i with:false];}
+                 then: ^() { [self labelBV:x at:i with:true];}];
+         
+         
+         if (![bv bound]) {
+            i = [bv lsFreeBit];
+            [_search try: ^() { [self labelBV:x at:i with:false];}
+                    then: ^() { [self labelBV:x at:i with:true];}];
          }
-         if ([vars[i] domsize] <= 0)
-            continue;
-         if (!freeVars) {
-            minDom = vars[i];
-            minDomSize = [minDom domsize];
-            freeVars = true;
-            continue;
-         }
-         thisDomSize= [vars[i] domsize];
-         if(thisDomSize==0)
-            continue;
-         if (thisDomSize < minDomSize) {
-            minDom = vars[i];
-            minDomSize = thisDomSize;
+         if (![bv bound]) {
+            i = [bv msFreeBit];
+            [_search try: ^() { [self labelBV:x at:i with:false];}
+                    then: ^() { [self labelBV:x at:i with:true];}];
          }
       }
-      if (!freeVars)
-         break;
-      //NSLog(@"%d//%lld bound.",numBound, numVars);
-//      j=[minDom randomFreeBit];
-      
-      //NSLog(@"Labeling %@ at %d.", minDom, j);
-      while ([minDom domsize] > 0) {
-         j= [minDom randomFreeBit];
-         [_search try: ^() { [self labelBVImpl:(id)minDom at:j with:false];}
-                  alt: ^() { [self labelBVImpl:(id)minDom at:j with:true];}];
-      }
-
-      //NSLog(@"Labeled %@ at %d.", minDom, j);
-   }
 }
 
 -(void)splitArray:(id<ORIntVarArray>)x
@@ -796,6 +952,17 @@
    }
 }
 
+-(void)split:(id<ORIntVar>)x
+{
+   CPIntVar* cx = _gamma[getId(x)];
+   while (!bound(cx)) {
+      ORInt lb =cx.min,ub = cx.max;
+      ORInt mp = lb + (ub - lb)/2;
+      [self try: ^{ [self lthen:x with:mp+1];}
+            alt: ^{ [self gthen:x with:mp];}];
+   }
+}
+
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt low = [x low];
@@ -804,8 +971,8 @@
       CPIntVar* xi = _gamma[getId(x[i])];
       while (!bound(xi)) {
          ORInt m = minDom(xi);
-         [_search try: ^{ [self labelImpl: xi with: m]; }
-                  alt: ^{ [self  diffImpl: xi with: m]; }
+         [_search try: ^{  [self label: x[i] with: m]; }
+                  alt: ^{  [self  diff: x[i] with: m]; }
           ];
       }
    }
@@ -941,7 +1108,7 @@
    do {
       id<ORIntVar> x = [last idValue];
       //NSLog(@"at top: last = %p",x);
-      if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [self bound:x])) {
+      if ([failStamp intValue]  == [self nbFailures] || (x == nil || [self bound:x])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
@@ -949,9 +1116,9 @@
          //NSLog(@"-->Chose variable: %p",x);
          [last setIdValue:x];
       }/* else {
-         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+         NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
       }*/
-      [failStamp setValue:[_search nbFailures]];
+      [failStamp setValue:[self nbFailures]];
       ORDouble bestValue = - MAXDBL;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = x.min;
@@ -983,6 +1150,317 @@
       }
    } while (true);
 }
+
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h
+{
+   [self labelBitVarHeuristic:h withConcrete:(id)[h allBitVars]];
+}
+-(void) labelBitVarHeuristicCDCL: (id<CPBitVarHeuristic>) h
+{
+   [self labelBitVarHeuristicCDCL:h withConcrete:(id)[h allBitVars]];
+}
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h restricted:(id<ORBitVarArray>)av
+{
+   id<CPBitVarArray> cav = (id<CPBitVarArray>)[ORFactory varArray:self range:av.range with:^id<ORBitVar>(ORInt k) {
+      return _gamma[av[k].getId];
+   }];
+   [self labelBitVarHeuristic:h withConcrete:cav];
+}
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h withConcrete:(id<ORVarArray>)av
+{
+   id<CPBitVarArray> cav = [CPFactory bitVarArray:self range:av.range with:^id<CPBitVar>(ORInt i) {
+      CPBitVarI* sv =_gamma[av[i].getId];
+      assert([sv isKindOfClass:[CPBitVarI class]]);
+      return sv;
+   }];
+   id<ORSelect> select = [ORFactory selectRandom: _engine
+                                           range: RANGE(_engine,[cav low],[cav up])
+//                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
+                                  suchThat: ^ORBool(ORInt i) { return ![cav[i] bound]; }
+                                       orderedBy: ^ORDouble(ORInt i) {
+                                          ORDouble rv = [h varOrdering:cav[i]];
+                                          return rv;
+                                       }];
+   
+//   /*************************************************************
+//    Apply SAC constraint to all variables
+//    ************************************************************/
+//   NSLog(@"Pruning with SAC constraint.");
+//
+//   id<ORTracer> tracer = [self tracer];
+//   ORStatus oc;
+//   
+//   ORUInt wordLength;
+//   TRUInt* up;
+//   TRUInt* low;
+//   ORUInt freeBits;
+//   ORBool failUp = false;
+//   ORUInt failLow = 0;
+//   ORUInt bitsInWord = 0;
+//   
+//   for (int k = [av low]; k<=[av up];k++){
+//      id<CPBitVar>bv = [av at:k];
+//      wordLength = [(CPBitVarI*)bv getWordLength];
+//      [(CPBitVarI*)bv getUp:&up andLow:&low];
+//
+//      for (int i=0; i<wordLength; i++) {
+//         freeBits = up[i]._val & ~(low[i]._val);
+//         if (i==wordLength-1)
+//            bitsInWord = [(CPBitVarI*)bv bitLength]%32;
+//         else
+//            bitsInWord = 32;
+//         for (int j=0; j<bitsInWord; j++) {
+//            if (freeBits&1) {
+//               [tracer pushNode];
+//               oc = [_engine enforce:^void{[bv bind:j to:true];[ORConcurrency pumpEvents];}];
+//               if (oc==ORFailure) {
+//                  NSLog(@"Failure in probing for SAC upon search startup.");
+//                  failUp = true;
+//                  [tracer popNode];
+//                  freeBits >>= 1;
+//                  [bv bind:(i*32)+j to:false];
+//               }
+//               else
+//                  [tracer popNode];
+//               
+//               [tracer pushNode];
+//               oc = [_engine enforce:^void{[bv bind:j to:false];[ORConcurrency pumpEvents];}];
+//               if (oc==ORFailure) {
+//                  NSLog(@"Failure in probing for SAC upon search startup.");
+//                  failLow = true;
+//                  [tracer popNode];
+//                  [bv bind:(i*32)+j to:true];
+//                  freeBits >>= 1;
+//               }
+//               else
+//                  [tracer popNode];
+//            }
+//            freeBits >>= 1;
+//
+//            if (failUp & failLow) {
+//               NSLog(@"Backtracking on SAC constraint.");
+//            failNow();
+//            }
+//            if (failUp & 1) {
+//               [bv bind:(i*32)+j to:false];
+//            }
+//            if (failLow & 1) {
+//               [bv bind:(i*32)+j to:true];
+//            }
+//            failUp = false;
+//            failLow = false;
+//         }
+//      }
+//   }
+//   NSLog(@"Pruning with SAC constraint finished.");
+   
+   id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
+   ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
+   ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
+   __block ORInt i ;
+   do {
+      id<CPBitVar> x = [last idValue];
+//      NSLog(@"at top: last = %p",x);
+      if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
+         i = [select max];
+         if (i == MAXINT)
+            return;
+         x = cav[i];
+//         NSLog(@"-->Chose variable: %p=%@",x,x);
+         [last setIdValue:x];
+      } else {
+//        NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
+        }
+      NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);      
+      [failStamp setValue:[self nbFailures]];
+      ORFloat bestValue = - MAXFLOAT;
+      ORLong bestRand = 0x7fffffffffffffff;
+      ORInt low = [x lsFreeBit];
+      ORInt up  = [x msFreeBit];
+      ORInt bestIndex = - 1;
+      for(ORInt v = low;v <= up;v++) {
+         if ([x isFree:v]) {
+            ORFloat vValue = [h valOrdering:v forVar:x];
+            if (vValue > bestValue) {
+               bestValue = vValue;
+               bestIndex = v;
+               bestRand  = [valStream next];
+            } else if (vValue == bestValue) {
+               ORLong rnd = [valStream next];
+               if (rnd < bestRand) {
+                  bestIndex = v;
+                  bestRand = rnd;
+               }
+            }
+         }
+      }
+
+      if (bestIndex != - 1)  {
+         [_search try: ^{
+//            NSLog(@"Setting bit %i of 0x%lx to 0 \n",bestIndex,(unsigned long)x);
+
+//            NSLog(@"Setting bit %i of %@ to 0 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
+//            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+//            NSLog(@"%@\n",[_engine variables]);
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+            
+         } alt: ^{
+//            NSLog(@"Setting bit %i of 0x%lx to 1 \n",bestIndex,(unsigned long)x);
+//            NSLog(@"Setting bit %i of %@ to 1 at level %i\n",bestIndex,(unsigned long)x,[(CPLearningEngineI*)_engine getLevel]);
+//            NSLog(@"%@",[_engine variables]);
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+//            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+         }];
+      }
+   } while (true);
+
+}
+
+
+-(void) labelBitVarHeuristicCDCL: (id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
+{
+   __block id<ORSelect> select = [ORFactory selectRandom: _engine
+                                           range: RANGE(_engine,[av low],[av up])
+                          //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
+                                        suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
+                                       orderedBy: ^ORDouble(ORInt i) {
+                                          ORDouble rv = [h varOrdering:av[i]];
+                                          return rv;
+                                       }];
+   
+   /*************************************************************
+    Apply SAC constraint to all variables
+    ************************************************************/
+//   NSLog(@"Pruning with SAC constraint.");
+//   
+//   id<ORTracer> tracer = [self tracer];
+//   ORStatus oc;
+//   
+//   ORUInt wordLength;
+//   TRUInt* up;
+//   TRUInt* low;
+//   ORUInt freeBits;
+//   ORUInt failUp = 0;
+//   ORUInt failLow = 0;
+//   
+//   for (int i = [av low]; i<[av up];i++){
+//      id<CPBitVar>bv = [av at:i];
+//      wordLength = [(CPBitVarI*)bv getWordLength];
+//      [(CPBitVarI*)bv getUp:&up andLow:&low];
+//      
+//      for (int i=0; i<wordLength; i++) {
+//         freeBits = up[i]._val & ~(low[i]._val);
+//         for (int j=0; j<32; j++) {
+//            if (freeBits&1) {
+//               [tracer pushNode];
+//               oc = [_engine enforce:^void{[bv bind:j to:true];[ORConcurrency pumpEvents];}];
+//               if (oc==ORFailure) {
+//                  NSLog(@"Failure in probing for SAC upon search startup.");
+//                  failUp &= 1;
+//                  [tracer popNode];
+//                  freeBits >>= 1;
+//                  [bv bind:(i*32)+j to:false];
+//                  continue;
+//               }
+//               [tracer popNode];
+//               
+//               [tracer pushNode];
+//               oc = [_engine enforce:^void{[bv bind:j to:false];[ORConcurrency pumpEvents];}];
+//               if (oc==ORFailure) {
+//                  NSLog(@"Failure in probing for SAC upon search startup.");
+//                  failLow &= 1;
+//                  [tracer popNode];
+//                  [bv bind:(i*32)+j to:true];
+//                  freeBits >>= 1;
+//                  continue;
+//               }
+//               [tracer popNode];
+//            }
+//            freeBits >>= 1;
+//         }
+//         if (failUp & failLow) {
+//            NSLog(@"Backtracking on SAC constraint.");
+//            failNow();
+//         }
+//         for (int k=31; k>=0; k--) {
+//            if (failUp & 1) {
+//               [bv bind:(i*32)+k to:false];
+//            }
+//            if (failLow & 1) {
+//               [bv bind:(i*32)+k to:true];
+//            }
+//            failUp >>= 1;
+//            failLow >>=1;
+//         }
+//      }
+//   }
+   
+   id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
+   ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
+   ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
+   __block ORInt i ;
+   do {
+      id<CPBitVar> x = [last idValue];
+      //NSLog(@"at top: last = %p",x);
+      if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
+         i = [select max];
+         if (i == MAXINT)
+            return;
+         x = av[i];
+//                  NSLog(@"-->Chose variable: %p=%@",x,x);
+         [last setIdValue:x];
+      } else {
+//         NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
+      }
+      NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
+      [failStamp setValue:[self nbFailures]];
+      ORFloat bestValue = - MAXFLOAT;
+      ORLong bestRand = 0x7fffffffffffffff;
+      ORInt low = [x lsFreeBit];
+      ORInt up  = [x msFreeBit];
+      __block ORInt bestIndex = 0;
+      for(ORInt v = low;v <= up;v++) {
+         if ([x isFree:v]) {
+            ORFloat vValue = [h valOrdering:v forVar:x];
+            if (vValue > bestValue) {
+               bestValue = vValue;
+               bestIndex = v;
+               bestRand  = [valStream next];
+            } else if (vValue == bestValue) {
+               ORLong rnd = [valStream next];
+               if (rnd < bestRand) {
+                  bestIndex = v;
+                  bestRand = rnd;
+               }
+            }
+         }
+      }
+      
+      if (bestIndex != - 1)  {
+         [_search try: ^{
+//            NSLog(@"Choicepoint: setting %lx[%d] = false",(unsigned long)x, bestIndex);
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+         } alt: ^{
+//            NSLog(@"Choicepoint: setting %lx[%d] = true",(unsigned long)x, bestIndex);
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+         }];
+      }
+   } while (true);
+}
+
+
+
+
+-(void) labelBitVar: (id<ORBitVar>) var at:(ORUInt)idx with: (ORUInt) val
+{
+   
+   return [self labelBVImpl: _gamma[var.getId] at:idx with: val];
+}
+-(void) bitVarDiff: (id<ORBitVar>) var with: (ORUInt) val
+{
+   [self diffBVImpl:_gamma[var.getId] with: val];
+}
+
 -(void) label: (id<ORIntVar>) mx
 {
    id<CPIntVar> x = _gamma[mx.getId];
@@ -1103,14 +1581,13 @@
 {
    [self floatGEqualImpl: _gamma[var.getId] with: val];
 }
-
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [self restrictImpl: _gamma[var.getId] to: S];
 }
--(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(ORBool)val
+-(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
-   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
+   [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
 }
 -(void) realLabel: (id<ORRealVar>) var with: (ORDouble) val
 {
@@ -1124,8 +1601,69 @@
 {
    [self realGthenImpl: _gamma[var.getId] with: val];
 }
-//TODO check orderedbyfloat
--(void) dynamicFloatSplitArray: (id<ORFloatVarArray>) x
+//-------------------------------------------------------
+//float search
+-(void) maxCardinalitySearch: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+       orderedBy: ^ORInt(ORInt i) {
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return -[v cardinality];
+       }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+      }];
+}
+-(void) minCardinalitySearch: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedBy: ^ORInt(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         return [v cardinality];
+      }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+      }];
+}
+-(void) maxDensitySearch: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedBy: ^ORInt(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         return -[v density];
+      }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+      }];
+}
+-(void) minDensitySearch: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedBy: ^ORInt(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         return [v density];
+      }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+      }];
+}
+-(void) maxWidthSearch: (id<ORFloatVarArray>) x
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1140,6 +1678,70 @@
          [self floatSplit:_gamma[getId(x[i])]];
       }];
    
+}
+-(void) minWidthSearch: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedByFloat: ^ORFloat(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         return [v domwidth];
+      }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+      }];
+}
+-(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedByFloat: ^ORFloat(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         return -[v magnitude];
+      }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+       }];
+   
+}
+-(void) minMagnitudeSearch: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedByFloat: ^ORFloat(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         return [v magnitude];
+      }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+      }];
+}
+-(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x
+{
+   ORBool min = true;
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedByFloat: ^ORFloat(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         float r = (min)?  [v magnitude] :  -[v magnitude];
+         min = not(min);
+         return r;
+      }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+      }];
 }
 -(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
@@ -1165,6 +1767,7 @@
          [self float5WaySplitOnce3:_gamma[getId(x[i])]];
       }];
 }
+
 -(void) floatSplitArray: (id<ORFloatVarArray>) x
 {
    ORInt low = [x low];
@@ -1331,6 +1934,7 @@
       [self float5WaySplitOnce:xi];
    }
 }
+//----------------------------------------------------------
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
    [_search repeat: body onRepeat: onRepeat until: nil];
@@ -1421,9 +2025,33 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPBitVarHeuristic>) createBitVarFF
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarFirstFail alloc] initCPBitVarFirstFail:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPBitVarHeuristic>) createBitVarFF: (id<ORVarArray>) rvars
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarFirstFail alloc] initCPBitVarFirstFail:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars
 {
    id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarABS alloc] initCPBitVarABS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarIBS alloc] initCPBitVarIBS:self restricted:rvars];
    [self addHeuristic:h];
    return h;
 }
@@ -1469,22 +2097,50 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPBitVarHeuristic>) createBitVarABS
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarABS alloc] initCPBitVarABS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPBitVarHeuristic>) createBitVarIBS
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarIBS alloc] initCPBitVarIBS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createFDS
 {
    id<CPHeuristic> h = [[CPFDS alloc] initCPFDS:self restricted:nil];
    [self addHeuristic:h];
    return h;
 }
-
 -(NSString*)stringValue:(id<ORBitVar>)x
 {
    return [_gamma[x.getId] stringValue];
 }
+-(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x
+{
+   CPBitVarI* cx = _gamma[x.getId];
+   return [cx isFree:k] ? YES : [cx getBit:k] == v;
+}
+-(ORBool)boundBit:(ORInt)k in:(id<ORBitVar>)x
+{
+   CPBitVarI* cx = _gamma[x.getId];
+   return ![cx isFree:k];
+}
+-(ORBool)bitAt:(ORInt)k in:(id<ORBitVar>)x
+{
+   CPBitVarI* cx = _gamma[x.getId];
+   return [cx bitAt:k];
+}
+
 -(ORUInt) degree:(id<ORVar>)x
 {
    return [_gamma[x.getId] degree];
 }
--(ORInt) intValue: (id) x
+
+-(ORInt)intValue:(id<ORIntVar>)x
 {
    return [_gamma[[x getId]] intValue];
 }
@@ -1528,8 +2184,13 @@
 }
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
-  return [((id<CPIntVar>) _gamma[x.getId]) domsize];
+  return [((id<CPVar>) _gamma[x.getId]) domsize];
 }
+-(ORInt)  regret:(id<ORIntVar>)x
+{
+   return [((id<CPIntVar>) _gamma[x.getId]) regret];
+}
+
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];
@@ -1552,6 +2213,7 @@
    return [(id<CPVar>)_gamma[x.getId] constraints];
 }
 -(void) incr: (id<ORMutableInteger>) i
+
 {
    [((ORMutableIntegerI*) _gamma[i.getId]) incr];
 }
@@ -1717,6 +2379,24 @@
    [cFact release];
    return self;
 }
+//-(id<CPProgram>) initCPSolverBackjumpingDFS
+//{
+//   self = [super initCPCoreSolver];
+//   _trail = [ORFactory trail];
+//   _mt    = [ORFactory memoryTrail];
+//   _tracer = [[SemTracer alloc] initSemTracer:_trail memory:_mt];
+////   _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
+//   _engine = [CPFactory learningEngine: _trail memory:_mt tracer:_tracer];
+//   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+////                                                                    rootControllerClass: [ORDFSController class]
+//                                                                    rootControllerClass: [ORSemDFSController class]
+////                                                                  nestedControllerClass: [ORDFSController class]];
+//                                                                  nestedControllerClass: [ORSemDFSController class]];
+//   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+//   [cFact release];
+//   return self;
+//}
+
 -(void) dealloc
 {
    NSLog(@"CPSolver dealloc'd (%p)",self);
@@ -1733,31 +2413,42 @@
    // PVH: Need to flatten/concretize
    // PVH: Only used	 during search
    // LDM: DONE. Have not checked the variable creation/deallocation logic though.
-    CPINCModel* trg = [[CPINCModel alloc] init:self];
-    ORStatus status = [trg post:c];
-    [trg release];
-    if (status == ORFailure)
-        [_search fail];
-    [ORConcurrency pumpEvents];
+   CPINCModel* trg = [[CPINCModel alloc] init:self];
+   ORStatus status = [trg post:c];
+   [trg release];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
+   [ORConcurrency pumpEvents];
 }
 -(void) add: (id<ORConstraint>) c annotation: (ORCLevel) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
    // LDM: See above. 
-    CPINCModel* trg = [[CPINCModel alloc] init:self];
-    ORStatus status = [trg post:c];
-    [trg release];
-    if (status == ORFailure)
-        [_search fail];
-    [ORConcurrency pumpEvents];
+   CPINCModel* trg = [[CPINCModel alloc] init:self];
+   ORStatus status = [trg post:c];
+   [trg release];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
+   [ORConcurrency pumpEvents];
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^{ bindDom((CPIntVarI*)var, val);}];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
-      [_search fail];
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
    }
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
@@ -1765,8 +2456,12 @@
 -(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^{ [var remove:val];}];
-   if (status == ORFailure)
-      [_search fail];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
    [ORConcurrency pumpEvents];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
@@ -1774,7 +2469,10 @@
    ORStatus status = [_engine enforce: ^{ [var updateMax:val-1];}];
    if (status == ORFailure) {
       [_failLT notifyWith:var andInt:val];
-      [_search fail];
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
    }
    [_returnLT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
@@ -1784,7 +2482,10 @@
    ORStatus status = [_engine enforce:^{ [var updateMin:val+1];}];
    if (status == ORFailure) {
       [_failGT notifyWith:var andInt:val];
-      [_search fail];
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
    }
    [_returnGT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
@@ -1792,16 +2493,37 @@
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
    ORStatus status = [_engine enforce:^{ [var inside:S];}];
-   if (status == ORFailure)
-      [_search fail];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
    [ORConcurrency pumpEvents];
 }
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
+   //changed by gaj 08/07/15
    ORStatus status = [_engine enforce:^{ [[var domain] setBit:i to:val for:var];}];
-   if (status == ORFailure)
-      [_search fail];
-   [ORConcurrency pumpEvents];   
+//   ORStatus status = [_engine enforce:^{ [var bind:i to:val];}];
+   if (status == ORFailure ){
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
+   [ORConcurrency pumpEvents];
+}
+-(void) labelBitsImpl:(id<CPBitVar>)x withValue:(ORInt) v
+{
+   ORStatus status = [_engine enforce:^{ [(CPBitVarI*)x bindUInt64:(ORULong)v];}];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
+   [ORConcurrency pumpEvents];
 }
 -(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
@@ -1813,15 +2535,23 @@
 -(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
-   if (status == ORFailure)
-      [_search fail];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
    [ORConcurrency pumpEvents];
 }
 -(void) realGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
-   if (status == ORFailure)
-      [_search fail];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
    [ORConcurrency pumpEvents];
 }
 -(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
@@ -1882,7 +2612,6 @@
                                                                     rootControllerClass: [ORDFSController proto]
                                                                   nestedControllerClass: [ORDFSController proto]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
-   _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
    return self;
 }
@@ -1898,7 +2627,6 @@
                                                                     rootControllerClass: [ORSemDFSControllerCSP proto]
                                                                   nestedControllerClass: [ORSemDFSControllerCSP proto]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
-   _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
    return self;
 }
@@ -1914,18 +2642,39 @@
                                                                     rootControllerClass: [ORSemDFSControllerCSP proto]
                                                                   nestedControllerClass: ctrlProto];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   [cFact release];
+   return self;
+}
+-(id<CPSemanticProgram>) initCPSolverBackjumpingDFS
+{
+   self = [super initCPCoreSolver];
+   _trail = [ORFactory trail];
+   _mt    = [ORFactory memoryTrail];
+   _tracer = [[SemTracer alloc] initSemTracer:_trail memory:_mt];
+   _engine = [CPFactory learningEngine: _trail memory:_mt tracer:_tracer];
+   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+                                                                    rootControllerClass: [ORSemDFSController proto]
+                                                                  nestedControllerClass: [ORBackjumpingDFSController proto]];
+
+   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
    return self;
 }
 -(void) dealloc
 {
+   NSLog(@"CPSemanticSolver dealloc'd [%p]  model RC [%d]",self,(int)[_model retainCount]);
    [_imdl  release];
    [_trail release];
    [_engine release];
    [_search release];
    [_tracer release];
    [super dealloc];
+}
+-(void) close
+{
+   [super close];
+   _imdl   = [[CPINCModel alloc] init:self];
 }
 -(void) add: (id<ORConstraint>) c
 {
@@ -1977,6 +2726,18 @@
    [self realLabelImpl: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory realEqualc:self var:var to:val]];
 }
+-(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
+{
+   [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
+   [_tracer addCommand: [ORFactory bvEqualBit:self var:var bit:i with:val]];
+}
+
+-(void) labelBits:(id<ORBitVar>)x withValue:(ORInt) val
+{
+   [self labelBitsImpl: _gamma[x.getId] withValue:val];
+   [_tracer addCommand: [ORFactory bvEqualc:self var:x to:val]];
+}
+
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -1985,6 +2746,8 @@
       //[var bind: val];
    }];
    if (status == ORFailure) {
+      if ([_engine isPropagating])
+         failNow();
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
@@ -1994,14 +2757,19 @@
 -(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^ { [var remove:val];}];
-   if (status == ORFailure)
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
       [_search fail];
+   }
    [ORConcurrency pumpEvents];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^ {  [var updateMax:val-1];}];
    if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
       [_failLT notifyWith:var andInt:val];
       [_search fail];
    }
@@ -2012,6 +2780,8 @@
 {
    ORStatus status = [_engine enforce:^ { [var updateMin:val+1];}];
    if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
       [_failGT notifyWith:var andInt:val];
       [_search fail];
    }
@@ -2021,15 +2791,23 @@
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
    ORStatus status = [_engine enforce:^{[var inside:S];}];
-   if (status == ORFailure)
-      [_search fail];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
    [ORConcurrency pumpEvents];
 }
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
    ORStatus status = [_engine enforce:^ { [[var domain] setBit:i to:val for:var];}];
-   if (status == ORFailure)
-      [_search fail];
+   if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
    [ORConcurrency pumpEvents];
 }
 -(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val
@@ -2038,6 +2816,8 @@
       [var updateInterval:createORI1(val)];
    }];
    if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
       //[_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
@@ -2050,6 +2830,8 @@
       [var updateMax:val];
    }];
    if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
       //[_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
@@ -2062,6 +2844,8 @@
       [var updateMin:val];
    }];
    if (status == ORFailure) {
+      if (_engine.isPropagating)
+         failNow();
       //[_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
@@ -2120,6 +2904,10 @@
 +(id<CPProgram>) solver
 {
    return [[[CPSolver alloc] initCPSolver] autorelease];
+}
++(id<CPSemanticProgramDFS>) solverBackjumpingDFS
+{
+   return [[CPSemanticSolver alloc] initCPSolverBackjumpingDFS];
 }
 +(id<CPSemanticProgramDFS>) semanticSolverDFS
 {

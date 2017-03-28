@@ -14,28 +14,28 @@
 #import <objmp/LPSolverI.h>
 #import "gurobi_c.h"
 
-@interface GurobiBasis<LPBasis>  : ORObject {
+@interface GurobiBasis  : ORObject<LPBasis> {
    @package
    int* _vb;
    int* _cb;
    int  _nbVars;
    int  _nbCons;
 }
--(id)init:(struct _GRBenv*)env withModel:(struct _GRBmodel*)model;
+-(id<LPBasis>)init:(struct _GRBenv*)env withModel:(struct _GRBmodel*)model;
 -(void)restore:(LPSolverI *)solver;
 @end
 
 
 @implementation GurobiBasis
--(id)init:(struct _GRBenv*)env withModel:(struct _GRBmodel*)model;
+-(id<LPBasis>)init:(struct _GRBenv*)env withModel:(struct _GRBmodel*)model;
 {
    self = [super init];
    GRBgetintattr(model,"NumConstrs",&_nbCons);
    GRBgetintattr(model,"NumVars",&_nbVars);
    _vb = calloc(_nbVars, sizeof(int));
    _cb = calloc(_nbCons,sizeof(int));
-   int st1 = GRBgetintattrarray(model, "VBasis", 0, _nbVars, _vb);
-   int st2 = GRBgetintattrarray(model, "CBasis", 0, _nbCons, _cb);
+   GRBgetintattrarray(model, "VBasis", 0, _nbVars, _vb);
+   GRBgetintattrarray(model, "CBasis", 0, _nbCons, _cb);
    return self;
 }
 -(void)dealloc
@@ -46,7 +46,7 @@
 }
 -(void)restore:(LPSolverI *)solver
 {
-   [solver restoreBasis:self];
+   [solver restoreBasis:(id<LPBasis>)self];
 }
 @end
 
@@ -83,7 +83,7 @@ static int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrda
 
 -(void) dealloc
 {
-   NSLog(@"Iterations simplex: %d",_statIter);
+   NSLog(@"Iterations simplex: %lld",_statIter);
    GRBfreemodel(_model);
    GRBfreeenv(_env);
    [super dealloc];
@@ -97,8 +97,8 @@ static int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrda
 
 -(void)restoreBasis:(GurobiBasis*)basis
 {
-   int st1 = GRBsetintattrarray(_model, "VBasis", 0, basis->_nbVars, basis->_vb);
-   int st2 = GRBsetintattrarray(_model, "CBasis", 0, basis->_nbCons, basis->_cb);
+   GRBsetintattrarray(_model, "VBasis", 0, basis->_nbVars, basis->_vb);
+   GRBsetintattrarray(_model, "CBasis", 0, basis->_nbCons, basis->_cb);
 }
 
 -(void) addVariable: (LPVariableI*) var;
@@ -275,8 +275,7 @@ static int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrda
 -(ORBool) inBasis: (LPVariableI*) var
 {
    int value = 0;
-   int st = GRBgetintattrelement(_model, "VBasis",[var idx], &value);
-   assert(st==0);
+   GRBgetintattrelement(_model, "VBasis",[var idx], &value);
    return value==0;
 }
 
@@ -411,7 +410,6 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata)
       /* Simplex callback */
       double itcnt, obj, pinf, dinf;
       int    ispert;
-      char   ch;
       GRBcbget(cbdata, where, GRB_CB_SPX_ITRCNT, &itcnt);
       GRBcbget(cbdata, where, GRB_CB_SPX_OBJVAL, &obj);
       GRBcbget(cbdata, where, GRB_CB_SPX_ISPERT, &ispert);

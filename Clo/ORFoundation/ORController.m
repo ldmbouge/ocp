@@ -284,7 +284,7 @@
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
-   _atRoot = 0;
+   _atRoot = -1;
    [model release]; // not needed
    return self;
 }
@@ -296,7 +296,7 @@
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
-   _atRoot = 0;
+   _atRoot = -1;
    return self;
 }
 - (void) dealloc
@@ -328,14 +328,14 @@
 
 -(void)setup
 {
-   if (_atRoot==0)
+   if (_atRoot==-1)
       _atRoot = [_tracer pushNode];
 }
 
 -(void) cleanup
 {
    while (_sz > 0)
-      letgo(_tab[--_sz]);
+      [_tab[--_sz] letgo];
    [_tracer popToNode:_atRoot];
 }
 
@@ -365,7 +365,7 @@
 {
    ORInt ofs = _sz-1;
    if (ofs >= 0) {
-      [_tracer popNode];
+      [[_tracer popNode] letgo];
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;
       --_sz;

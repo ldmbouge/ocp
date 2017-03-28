@@ -68,6 +68,12 @@
    return _gamma[x.getId];
 }
 
+-(id) concreteIdArray: (id<ORIdArray>) x
+{
+   [x visit: self];
+   return _gamma[x.getId];
+}
+
 -(id)concreteMatrix: (id<ORIntVarMatrix>) m
 {
    [m visit:self];
@@ -209,6 +215,10 @@
          case BergeGroup:
             cg = [CPFactory bergeGroup:_engine];
             break;
+         case GuardedGroup: {
+            id<CPIntVar> cGuard = [self concreteVar:[g guard]];
+            cg = [CPFactory group:_engine guard:cGuard];
+         } break;
          default:
             cg = [CPFactory group:_engine];
             break;
@@ -810,6 +820,21 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitBinImply: (id<ORBinImply>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> left = [cstr left];
+      id<ORIntVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) _gamma[left.getId]
+                                                   imply: (id<CPIntVar>) _gamma[right.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitElementCst: (id<ORElementCst>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -862,6 +887,25 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitElementBitVar: (id<ORElementBitVar>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIdArray> array = [self concreteIdArray:[cstr array]];
+      id<CPBitVar> idx = [self concreteVar:[cstr idx]];
+      id<CPBitVar> res = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory element: idx
+                                          idxBitVarArray: array
+                                                   equal: res
+                                              annotation: DomainConsistency
+                                       ];
+      
+      
+      
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"reached elementMatrixVar in CPConcretizer"];
@@ -1048,6 +1092,15 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      id<CPConstraint> concreteCstr = [CPFactory sumbool:x neq:[cstr cst]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) 
@@ -1214,6 +1267,26 @@
    }
 }
 
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPConstraint> concreteCstr = [CPFactory bitEqualAt:x at:[cstr bit] to:[cstr cst]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitEqualc:(id<ORBitEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPConstraint> concreteCstr = [CPFactory bitEqualc:x to:[cstr cst]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr
 {
@@ -1232,7 +1305,7 @@
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
-      id<CPConstraint> concreteCstr = [CPFactory bitOR:x or:y equals:z];
+      id<CPConstraint> concreteCstr = [CPFactory bitOR:x bor:y equals:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1244,7 +1317,7 @@
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
-      id<CPConstraint> concreteCstr = [CPFactory bitAND:x and:y equals:z];
+      id<CPConstraint> concreteCstr = [CPFactory bitAND:x band:y equals:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1266,7 +1339,7 @@
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
-      id<CPConstraint> concreteCstr = [CPFactory bitXOR:x xor:y equals:z];
+      id<CPConstraint> concreteCstr = [CPFactory bitXOR:x bxor:y equals:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1284,6 +1357,96 @@
    }
 }
 
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> places = [self concreteVar:[cstr places]];
+      
+      id<CPConstraint> concreteCstr;
+      if(![places bound])
+      {
+         concreteCstr = [CPFactory bitShiftLBV:(CPBitVarI*)x by:(CPBitVarI*)places equals:(CPBitVarI*)y];
+      }
+      else
+      {
+         ORUInt p = [(CPBitVarI*)places getLow][0]._val;
+         concreteCstr = [CPFactory bitShiftL:x by:p equals:y];
+      }
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitShiftR:(id<ORBitShiftR>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      ORInt p = [cstr places];
+      id<CPConstraint> concreteCstr = [CPFactory bitShiftR:x by:p equals:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> places = [self concreteVar:[cstr places]];
+      
+      id<CPConstraint> concreteCstr;
+      if(![places bound])
+      {
+         concreteCstr = [CPFactory bitShiftRBV:x by:places equals:y];
+      }
+      else
+      {
+         ORUInt p = [(CPBitVarI*)places getLow][0]._val;
+         concreteCstr = [CPFactory bitShiftR:x by:p equals:y];
+      }
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      ORInt p = [cstr places];
+      id<CPConstraint> concreteCstr = [CPFactory bitShiftRA:x by:p equals:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> places = [self concreteVar:[cstr places]];
+
+      id<CPConstraint> concreteCstr;
+      if(![places bound])
+      {
+         concreteCstr = [CPFactory bitShiftRABV:x by:places equals:y];
+      }
+      else
+      {
+         ORUInt p = [(CPBitVarI*)places getLow][0]._val;
+         concreteCstr = [CPFactory bitShiftRA:x by:p equals:y];
+      }
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitBitRotateL:(id<ORBitRotateL>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1291,6 +1454,17 @@
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       ORInt p = [cstr places];
       id<CPConstraint> concreteCstr = [CPFactory bitRotateL:x by:p equals:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitNegative:(id<ORBitNegative>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitNegative:x equals:y];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1310,6 +1484,43 @@
    }
 }
 
+-(void) visitBitSubtract:(id<ORBitSubtract>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitSubtract:x minus:y equals:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitMultiply:(id<ORBitMultiply>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitMultiply:x times:y equals:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitDivide:(id<ORBitDivide>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> q = [self concreteVar:[cstr res]];
+      id<CPBitVar> r = [self concreteVar: [cstr rem]];
+      id<CPConstraint> concreteCstr = [CPFactory bitDivide:x dividedby:y equals:q rem:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitBitIf:(id<ORBitIf>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1318,6 +1529,225 @@
       id<CPBitVar> y = [self concreteVar:[cstr equals]];
       id<CPBitVar> z = [self concreteVar:[cstr zeroIfXEquals]];
       id<CPConstraint> concreteCstr = [CPFactory bitIF:w equalsOneIf:x equals:y andZeroIfXEquals:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitCount:(id<ORBitCount>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPIntVar> p = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory bitCount:x count:p];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitChannel:(id<ORBitChannel>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPIntVar> p = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory bitChannel:x channel:p];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory bitZeroExtend:x extendTo:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory bitSignExtend:x extendTo:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitExtract:(id<ORBitExtract>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+
+      ORUInt lsb = [cstr lsb];
+      ORUInt msb = [cstr msb];
+      id<CPConstraint> concreteCstr = [CPFactory bitExtract:x from:lsb to:msb eq:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitConcat:(id<ORBitConcat>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitConcat:x concat:y eq:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitLogicalEqual:x EQ:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitLT:(id<ORBitLT>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitLT:x LT:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitLE:(id<ORBitLE>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitLE:x LE:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitSLE:(id<ORBitSLE>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitSLE:x SLE:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitSLT:(id<ORBitSLT>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitSLT:x SLT:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitITE:(id<ORBitITE>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> i = [self concreteVar:[cstr left]];
+      id<CPBitVar> t = [self concreteVar:[cstr right1]];
+      id<CPBitVar> e = [self concreteVar:[cstr right2]];
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitITE:i then:t else:e result:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntRange> R = [[cstr left] range];
+      id<CPBitVarArray> x = [CPFactory bitVarArray:_solver range:R];
+      ORInt low = R.low;
+      ORInt up = R.up;
+      for(ORInt i = low; i <= up; i++) {
+         x[i] = [self concreteVar:[cstr left][i]];
+      }
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      
+      id<CPConstraint> concreteCstr = [CPFactory bitLogicalAnd:x eval:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntRange> R = [[cstr left] range];
+      id<CPBitVarArray> x = [CPFactory bitVarArray:_solver range:R];
+      ORInt low = R.low;
+      ORInt up = R.up;
+      for(ORInt i = low; i <= up; i++) {
+         x[i] = [self concreteVar:[cstr left][i]];
+      }
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      
+      id<CPConstraint> concreteCstr = [CPFactory bitLogicalOr:x eval:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitOrb:(id<ORBitOrb>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitOrb:x bor:y eval:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitNotb:(id<ORBitNotb>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitNotb:x eval:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitEqualb:(id<ORBitEqualb>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitEqualb:x equal:y eval:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitDistinct:(id<ORBitDistinct>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitDistinct:x distinctFrom:y eval:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1451,6 +1881,15 @@
       [left updateMin:cstr.cst];
    }];
 }
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)cstr
+{
+   id<CPBitVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left bind:cstr.bit to:cstr.cst];
+   }];
+}
+
+
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (!_gamma[v.getId]) {

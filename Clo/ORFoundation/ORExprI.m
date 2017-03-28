@@ -9,12 +9,17 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORExpr.h>
 #import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORExpr.h>
+#import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORFactory.h>
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
+
+#if __clang_major__==3 && __clang_minor__==6
+#define _Nonnull 
+#endif
 
 @implementation NSNumber (Expressions)
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
@@ -143,15 +148,42 @@
 -(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 // Bit
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)c;
+-(void) visitBitEqualc:(id<ORBitEqualc>)c;
 -(void) visitBitEqual:(id<ORBitEqual>)c;
 -(void) visitBitOr:(id<ORBitOr>)c;
 -(void) visitBitAnd:(id<ORBitAnd>)c;
 -(void) visitBitNot:(id<ORBitNot>)c;
 -(void) visitBitXor:(id<ORBitXor>)c;
 -(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c;
+-(void) visitBitShiftR:(id<ORBitShiftR>)c;
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c;
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)c;
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)c;
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitNegative:(id<ORBitNegative>)cstr;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
+-(void) visitBitSubtract:(id<ORBitSubtract>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
+-(void) visitBitCount:(id<ORBitCount>)cstr;
+-(void) visitBitChannel:(id<ORBitChannel>)cstr;
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c;
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c;
+-(void) visitBitExtract:(id<ORBitExtract>)c;
+-(void) visitBitConcat:(id<ORBitConcat>)c;
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c;
+-(void) visitBitLT:(id<ORBitLT>)c;
+-(void) visitBitLE:(id<ORBitLE>)c;
+-(void) visitBitSLE:(id<ORBitSLE>)c;
+-(void) visitBitSLT:(id<ORBitSLT>)c;
+-(void) visitBitITE:(id<ORBitITE>)c;
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c;
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c;
+-(void) visitBitOrb:(id<ORBitOrb>)c;
+-(void) visitBitNotb:(id<ORBitNotb>)c;
+-(void) visitBitEqualb:(id<ORBitEqualb>)c;
+-(void) visitBitDistinct:(id<ORBitDistinct>)c;
 @end
 
 @implementation ORSweep
@@ -334,6 +366,14 @@
    }];
 }
 // Bit
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)c
+{
+   [[c left] visit:self];
+}
+-(void) visitBitEqualc:(id<ORBitEqualc>)c
+{
+   [[c left] visit:self];
+}
 -(void) visitBitEqual:(id<ORBitEqual>)c
 {
    [[c left] visit:self];
@@ -367,10 +407,55 @@
    [[c left] visit:self];
    [[c right] visit:self];
 }
+
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   //Current implementation of CPBitShiftL only shifts by a constant
+   //Must "visit" places variable when this is corrected
+   [[c places] visit:self];
+}
+
+-(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   //Current implementation of CPBitShiftR only shifts by a constant
+   //Must "visit" places variable when this is corrected
+   [[c places] visit:self];
+}
+
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   //Current implementation of CPBitShiftR only shifts by a constant
+   //Must "visit" places variable when this is corrected
+   [[c places] visit:self];
+}
+
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    [[c left] visit:self];
    [[c right] visit:self];
+}
+-(void) visitBitNegative:(id<ORBitNegative>)c
+{
+   [[c res] visit:self];
+   [[c left] visit:self];
 }
 -(void) visitBitSum:(id<ORBitSum>)c
 {
@@ -380,6 +465,12 @@
    [[c in] visit:self];
    [[c out] visit:self];
 }
+-(void) visitBitSubtract:(id<ORBitSubtract>)c
+{
+   [[c res] visit:self];
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
 -(void) visitBitIf:(id<ORBitIf>)c
 {
    [[c trueIf] visit:self];
@@ -387,8 +478,119 @@
    [[c equals] visit:self];
    [[c zeroIfXEquals] visit:self];
 }
-@end
+-(void) visitBitCount:(id<ORBitCount>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitBitChannel:(id<ORBitChannel>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
 
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+
+-(void) visitBitConcat:(id<ORBitConcat>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitExtract:(id<ORBitExtract>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitLT:(id<ORBitLT>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitLE:(id<ORBitLE>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitSLE:(id<ORBitSLE>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitSLT:(id<ORBitSLT>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitITE:(id<ORBitITE>)c
+{
+   [[c left] visit:self];
+   [[c right1] visit:self];
+   [[c right2] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c
+{
+   [[c left] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c
+{
+   [[c left] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitOrb:(id<ORBitOrb>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitNotb:(id<ORBitNotb>)c
+{
+   [[c left] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitEqualb:(id<ORBitEqualb>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitDistinct:(id<ORBitDistinct>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+@end
 
 @implementation ORExprI
 -(id<ORTracker>) tracker
@@ -671,6 +873,8 @@
       return (id)[ORFactory expr:(id)self land:(id)e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return (id)[ORFactory expr:(id)self land:(id)[(id)e asExpression:t] track:t];
+   else if ([e conformsToProtocol:@protocol(ORConstraint)])
+      return (id)[ORFactory expr:(id)self land:(id)e track:t];
    else
       return NULL;
 }
@@ -1172,6 +1376,20 @@
 {
    [visitor visitExprPlusI: self]; 
 }
+-(enum ORVType) vtype
+{
+   ORExprI* root = self;
+   ORVType vty = ORTNA;
+   while ([root isKindOfClass:[ORExprPlusI class]]) {
+      ORExprPlusI* pn = (ORExprPlusI*)root;
+      ORVType rvt = [pn->_right conformsToProtocol:@protocol(ORExpr)] ? [pn->_right vtype] : ORTInt;
+      vty  = lubVType(vty,rvt);
+      root = pn->_left;
+   }
+   ORVType rvt = [root conformsToProtocol:@protocol(ORExpr)] ? [root vtype] : ORTInt;
+   return lubVType(vty,rvt);
+}
+
 -(NSString*) description 
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

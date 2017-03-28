@@ -12,21 +12,23 @@
 #import "ORColumnGeneration.h"
 #import "ORConcurrencyI.h"
 #import "LPRunnable.h"
-#import "LPSolverI.h"
+#import <objmp/LPSolverI.h>
 #import <ORProgram/ORSolution.h>
 
 @implementation ORColumnGeneration {
     @protected
     id<ORRunnable> _master;
-    Void2Column _slaveBlock;
+    DoubleArray2DoubleArray _slaveBlock;
     id<ORSignature> _sig;
+    id<ORSolution> _bestSol;
 }
 
--(id) initWithMaster: (id<ORRunnable>)master slave: (Void2Column)slaveBlock {
+-(id) initWithMaster: (id<ORRunnable>)master slave: (DoubleArray2DoubleArray)slaveBlock {
     if((self = [super init]) != nil) {
         _master = [master retain];
         _slaveBlock = [slaveBlock copy];
         _sig = nil;
+        _bestSol = nil;
     }
     return self;
 }
@@ -35,6 +37,7 @@
     [_master release];
     [_sig release];
     [_slaveBlock release];
+    [_bestSol release];
     [super dealloc];
 }
 
@@ -47,33 +50,48 @@
 
 -(id<ORModel>) model { return [_master model]; }
 
+-(ORDouble) bestBound
+{
+    return [[_bestSol objectiveValue] doubleValue];
+}
+
+-(id<ORSolution>) bestSolution
+{
+    return _bestSol;
+}
+
 -(void) run {
+    id<ORModel> model = [_master model];
+    NSArray* cstrs = [model constraints];
     id<LPRunnable> master = (id<LPRunnable>)_master;
     id<LPProgram> lp = [master solver];
     [master run];
     while(1) {
-        NSLog(@"PO: %@", [[lp solutionPool] best]);
-        id<LPColumn> col = _slaveBlock();
-        NSLog(@"col: %@", col);
-        if(col == nil)
-           break;
-        [master injectColumn: col];
+        id<LPSolution> sol = (id<LPSolution>)[[lp solutionPool] best];
+        _bestSol = (id<ORSolution>)sol;
+        id<ORDoubleArray> costs = [ORFactory doubleArray: model range: RANGE(model, 0, (int)[cstrs count]-1) with:^ORDouble(ORInt i) {
+            return [sol dual: cstrs[i]];
+        }];
+        id<ORDoubleArray> col = _slaveBlock(costs);
+        [costs release];
+        if(col == nil) break;
+        
+        // Inject Column into master
+        id<LPColumn> lpcol = [lp createColumn];
+        [lpcol addObjCoef: 1.0];
+        for(ORInt i = [col low]; i <= [col up]; i++) {
+            [lpcol addConstraint: cstrs[i - [col low]] coef: [col at: i]];
+        }
+        [master injectColumn: lpcol];
+        [master solver];
     }
 }
 
 @end
 
 @implementation ORFactory(ORColumnGeneration)
-+(id<ORRunnable>) columnGeneration: (id<LPRunnable>)master slave: (Void2Column)slaveBlock {
++(id<ORRunnable>) columnGeneration: (id<LPRunnable>)master slave:(DoubleArray2DoubleArray)slaveBlock
+{
     return [[ORColumnGeneration alloc] initWithMaster: master slave: slaveBlock];
-}
-+(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<ORGroup>)cstrs {
-    id<LPColumn> col = [lp createColumn];
-    [col addObjCoef: +1.0]; // [ldm] TOCHECK: this was set to -1. I'm unclear as to why.
-    for(ORInt i = 0; i < [cstrs size]; i++) {
-        NSLog(@"c[%i] = %f", i, (ORDouble)[sol intValue: [arr at: i]]);
-        [col addConstraint: [cstrs at: i] coef: [[sol value: [arr at: i]] floatValue]];
-    }
-    return col;
 }
 @end

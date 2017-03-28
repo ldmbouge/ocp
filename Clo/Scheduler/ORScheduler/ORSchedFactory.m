@@ -353,9 +353,9 @@
 +(id<ORResourceTask>) resourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "Resource tasks are not available yet!"];
-    id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTaskEmpty:model horizon:horizon duration:duration];
-    [model trackMutable:o];
-    return o;
+//    id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTaskEmpty:model horizon:horizon duration:duration];
+//    [model trackMutable:o];
+//    return o;
 }
 +(id<ORResourceTask>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (id<ORIntRange>(^)(ORInt)) cloDuration
 {
@@ -368,9 +368,9 @@
 +(id<ORResourceTask>) optionalResourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "Resource tasks are not available yet!"];
-    id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTaskEmpty:model horizon:horizon duration:duration];
-    [model trackMutable:o];
-    return o;
+//    id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTaskEmpty:model horizon:horizon duration:duration];
+//    [model trackMutable:o];
+//    return o;
 }
 // ORAlternativeTask array
 +(id<ORAlternativeTaskArray>) alternativeVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORAlternativeTask>(^)(ORInt)) clo

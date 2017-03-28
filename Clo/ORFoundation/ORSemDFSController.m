@@ -43,6 +43,7 @@
    for(ORInt i = 0;i  < _sz;i++)
       [_cpTab[i] release];
    free(_cpTab);
+   [_model release];
    [super dealloc];
 }
 +(id<ORSearchController>)proto
@@ -112,13 +113,11 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
-         //assert(status != ORFailure);
          [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
-         if (k &&  status != ORFailure) {
-            //NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
+         if (k &&  (k.admin || status != ORFailure)) {
             [k call];
          } else {
             if (k==nil)
@@ -147,26 +146,39 @@
    if (_sz >= 1) {
 //      NSCont* c = _tab[_sz - 1];
 //      id<ORCheckpoint> cp = _cpTab[_sz -1];
-
-      NSCont* c           = _tab[0];
-      id<ORCheckpoint> cp = _cpTab[0];
-      for(ORInt i=1;i<_sz;i++) {
-         _tab[i-1] = _tab[i];
-         _cpTab[i-1] = _cpTab[i];
+      ORInt selection = -1;
+      for(ORInt i=0;i<_sz;i++) {
+         if (!_tab[i].admin) {
+            selection = i;
+            break;
+         }
       }
-
-      --_sz;
-      ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:[[_engine objective] primalValue]];
-      [cp letgo];
-      return rv;
+      if (selection != -1) {
+         NSCont* c           = _tab[selection];
+         id<ORCheckpoint> cp = _cpTab[selection];
+         for(ORInt i=selection + 1;i<_sz;i++) {
+            _tab[i-1] = _tab[i];
+            _cpTab[i-1] = _cpTab[i];
+         }
+         --_sz;
+         id<ORObjectiveValue> pb = [[_engine objective] primalValue];
+         ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:pb];
+         [pb release]; // needed to avoid leak.
+         [cp letgo];
+         return rv;
+      } else return nil;
    } else return nil;
 }
 
 -(ORBool)willingToShare
 {
    BOOL some = _sz >= 4;
+   for(ORInt i=0;i<_sz;i++)
+      if (!_tab[i].admin)
+         return some;
+   return NO;
    //some = some && [_cpTab[0] sizeEstimate] < 10;
-   return some;
+   //return some;
 }
 @end
 

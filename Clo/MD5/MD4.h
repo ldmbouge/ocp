@@ -14,6 +14,8 @@
 #import <Foundation/NSString.h>
 
 #import <ORFoundation/ORAVLTree.h>
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORSetI.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <objcp/CPObjectQueue.h>
@@ -29,8 +31,10 @@
 #define DIGEST_VAR_LENGTH 8
 #define BLOCK_LENGTH 4
 
-//typedef id<ORBitVar> MD4Block[16];
-
+#ifndef BV_SEARCH_HEUR
+#define BV_SEARCH_HEUR
+typedef enum {BVFF, BVABS, BVIBS, BVLSB, BVMSB, BVMID, BVRAND, BVMIX} BVSearchHeuristic;
+#endif
 
 @interface MD4 : NSObject{
    @private
@@ -71,7 +75,7 @@
 -(id<ORBitVar>) shuffle1:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x;
 -(id<ORBitVar>) shuffle2:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x;
 -(id<ORBitVar>) shuffle3:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x;
--(NSString*) preimage:(NSString*) filename withMask:(uint32*)mask;
+-(NSString*) preimage:(NSString*) filename withMask:(uint32*)mask andHeuristic:(BVSearchHeuristic)heur;
 -(id<ORBitVar>*) stateModel;
 
 

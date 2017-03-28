@@ -16,11 +16,18 @@
 #import <ORProgram/CPSolver.h>
 #import <ORProgram/ORSolution.h>
 #import <ORProgram/CPHeuristic.h>
+#import "CPBitVarHeuristic.h"
 #import <ORProgram/CPDDeg.h>
 #import <ORProgram/CPDeg.h>
 #import <ORProgram/CPWDeg.h>
 #import <ORProgram/CPIBS.h>
 #import <ORProgram/CPABS.h>
+
+#import <ORProgram/CPBitVarABS.h>
+#import <ORProgram/CPBitVarIBS.h>
+#import <ORProgram/CPFirstFail.h>
+#import <ORProgram/CPBitVarFirstFail.h>
+
 #import <ORProgram/CPFDS.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPConcretizer.h>
@@ -33,6 +40,7 @@
 #import <ORProgram/ORRunnable.h>
 #import <ORProgram/ORSignature.h>
 #import <ORProgram/ORParallelCombinator.h>
+#import <ORProgram/ORColumnGeneration.h>
 
 #import <ORProgram/PCBranching.h>
 
@@ -41,8 +49,8 @@
 //project: #import <ORProgram/LPRunnable.h>
 //project: #import <ORProgram/MIPRunnable.h
 //project: #import <ORProgram/ORColumnGeneration.h>
-//project: #import <ORProgram/ORLagrangeRelax.h>
-//project: #import <ORProgram/ORLagrangianTransform.h>
+#import <ORProgram/ORLagrangeRelax.h>
+#import <ORProgram/ORLagrangianTransform.h>
 //project: #import <ORProgram/ORLogicBenders.h>
 //project: #import <ORProgram/ORParallelRunnable.h>
 //project: #import <ORProgram/ORRunnablePiping.h>

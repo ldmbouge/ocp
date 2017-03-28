@@ -9,14 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
-
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 
 int main (int argc, const char * argv[])
 {
@@ -31,16 +24,21 @@ int main (int argc, const char * argv[])
    [itemSize set: 5 at: 2];
    [itemSize set: 2 at: 1];
    [itemSize set: 1 at: 0];
-   [model add: [ORFactory packing: item itemSize: itemSize load: binSize]];
+   [model add: [ORFactory packing:model item:item itemSize: itemSize load: binSize]];
 
    NSLog(@"ORIGINAL: %@",model);
    id<CPProgram> cp = [ORFactory createCPProgram: model];
 
-   [cp solve:
-    ^ {
+   [cp solve: ^{
        [cp labelArray: item];
-       NSLog(@"%@",item);
-       NSLog(@"%@",binSize);
+      printf("Items = [");
+      for(id<ORIntVar> xi in item)
+         printf("%d ",[cp intValue:xi]);
+      printf("]\n");
+      printf("BinSize = [");
+      for(id<ORIntVar> xi in binSize)
+         printf("%d ",[cp intValue:xi]);
+      printf("]\n");
        printf("\n");
     }
     ];

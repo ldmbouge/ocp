@@ -71,7 +71,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg"};
 }
 -(void)measure:(struct ORResult(^)())block
 {
-   mallocWatch();
+   //mallocWatch();
    if (randomized)
       [ORStreamManager setRandomized];
    ORLong startWC  = [ORRuntimeMonitor wctime];

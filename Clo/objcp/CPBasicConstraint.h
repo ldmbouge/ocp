@@ -11,6 +11,7 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
+#import <CPUKernel/CPGroup.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
 
@@ -328,6 +329,18 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
+
+@interface CPBinImplyDC : CPCoreConstraint { // (x => y)
+   CPIntVar* _x;
+   CPIntVar* _y;
+}
+-(id)initCPBinImplyDC:(id)x imply:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
 @interface CPAllDifferenceVC : CPCoreConstraint 
 -(id) initCPAllDifferenceVC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x;
 -(id) initCPAllDifferenceVC: (CPIntVar**) x nb: (ORInt) n;
@@ -382,5 +395,10 @@ typedef int (^intgetter) (void) ;
 -(void)  post;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
+@end
+
+@interface CPGuardedGroup : CPGroup<CPGroup>
+-(id)   init: (id<CPEngine>) engine guard:(id<CPIntVar>)guard;
+-(void) post;
 @end
 

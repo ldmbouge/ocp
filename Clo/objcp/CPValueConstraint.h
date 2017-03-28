@@ -180,6 +180,20 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPSumBoolNEq : CPCoreConstraint {
+   id<CPIntVarArray> _xa;
+   CPIntVar**        _x;
+   ORLong            _nb;
+   ORInt              _c;
+}
+-(id) initCPSumBool:(id)x neq:(ORInt)c;
+-(void) dealloc;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
 @interface CPReifySumBoolEq : CPCoreConstraint {
    CPIntVar*          _b;
    id<CPIntVarArray> _xa;

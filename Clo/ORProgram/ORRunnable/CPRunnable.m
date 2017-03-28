@@ -126,14 +126,13 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    static __thread int bndCount = 0;
-    NSLog(@"CPRunnable(%p): received bound(%i): %i", _program, ++bndCount, bound);
+    //static __thread int bndCount = 0;
+    //id<ORObjectiveValue> pb = [[_program objective] primalBound];
+    //NSLog(@"CPRunnable(%p): received bound(%i): %i  PRIMAL WAS: %@ inside: %p", _program, ++bndCount, bound,pb,[NSThread currentThread]);
     //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
-    [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
-   //ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
-   //static ORLong ttlCP = 0;
-   //ttlCP += (ORLong)cpu1.tv_sec * 1000000 + cpu1.tv_usec;
-   //NSLog(@"ttlCP =  %lld",ttlCP);
+   id<ORObjectiveValue> nb = [ORFactory objectiveValueInt:bound minimize:YES];
+   [[_program objective] tightenPrimalBound:nb];
+   [nb release];
 }
 
 -(void) receiveLowerBound:(ORDouble)bound
@@ -147,11 +146,10 @@
 
 -(void) run
 {
-    NSLog(@"Running CP runnable(%p)...", _program);
+   NSLog(@"Running CP runnable(%p)...", _program);
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [_program onStartup:^{
-      if (_startBlock)
-         _startBlock();
+      [self doStart];
    }];
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution:^{
@@ -161,7 +159,7 @@
         //NSLog(@"Sending solution: %p  -- %@",[NSThread currentThread],objectiveValue);
         [self notifyUpperBound: [objectiveValue value]];
     }];
-    
+   
     [_program onExit: ^ {
         //id<ORObjectiveValueInt> objectiveValue = [[(id<ORObjectiveValueInt>)[[self solver] solutionPool] best] objectiveValue];
         //[self notifyLowerBound: [objectiveValue value]];

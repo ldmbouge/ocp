@@ -20,6 +20,19 @@
 
 #define BIND_EPSILON (0.0000001)
 #define TOLERANCE    (0.0000001)
+#define NB_FLOAT_BY_E (8388608)
+#define E_MAX (254)
+
+/*useful struct to get exponent mantissa and sign*/
+typedef union {
+    float f;
+    struct {
+        unsigned int mantisa : 23;
+        unsigned int exponent : 8;
+        unsigned int sign : 1;
+    } parts;
+} double_cast;
+
 
 @implementation CPFloatDom
 
@@ -126,6 +139,30 @@
 -(TRFloatInterval) domain
 {
     return _domain;
+}
+-(ORUInt) cardinality
+{
+    double_cast i_inf;
+    double_cast i_sup;
+    i_inf.f = _domain._low;
+    i_sup.f = _domain._up;
+    return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+}
+-(ORFloat) density
+{
+    ORFloat c = (ORFloat)[self cardinality];
+    ORLDouble w = [self domwidth];
+    return c / w;
+}
+-(ORFloat) magnitude
+{
+    double_cast i_inf;
+    double_cast i_sup;
+    i_inf.f = _domain._low;
+    i_sup.f = _domain._up;
+    ORInt c = i_sup.parts.exponent + i_inf.parts.exponent;
+    ORFloat w = E_MAX * 2;
+    return c / w;
 }
 -(ORBool) member:(ORFloat)v
 {

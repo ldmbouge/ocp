@@ -51,6 +51,7 @@
 -(id<ORObjectiveFunction>)objective;
 -(id<ORIntVarArray>)intVars;
 -(id<ORRealVarArray>)realVars;
+-(id<ORBitVarArray>)bitVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) mutables;
@@ -106,7 +107,7 @@
 @interface ORParameterizedModelI : ORModelI<ORParameterizedModel>
 -(ORParameterizedModelI*) initORParamModelI;
 -(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
--(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs;
+-(ORParameterizedModelI*) initWithModel: (id<ORModel>) src relax: (NSArray*)cstrs;
 -(NSArray*) softConstraints;
 -(NSArray*) hardConstraints;
 -(NSArray*) parameters;
@@ -138,7 +139,7 @@
 -(id)init;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
-//-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
+-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
 
 @interface OROrderedConstraintSetI : NSObject<OROrderedConstraintSet> {

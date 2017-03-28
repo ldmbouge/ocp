@@ -303,11 +303,19 @@
 {
    _result = c;
 }
+-(void) visitBinImply: (id<ORBinImply>)c
+{
+   _result = c;
+}
 -(void) visitElementCst: (id<ORElementCst>)c
 {
    _result = c;
 }
 -(void) visitElementVar: (id<ORElementVar>)c
+{
+   _result = c;
+}
+-(void) visitElementBitVar: (id<ORElementBitVar>)c
 {
    _result = c;
 }
@@ -391,6 +399,10 @@
 {
    _result = c;
 }
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
+{
+   _result = c;
+}
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
 {
    _result = c;
@@ -412,6 +424,14 @@
    _result = c;
 }
 // Bit
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)c
+{
+   _result = c;
+}
+-(void) visitBitEqualc:(id<ORBitEqualc>)c
+{
+   _result = c;
+}
 -(void) visitBitEqual:(id<ORBitEqual>)c
 {
    _result = c;
@@ -436,7 +456,31 @@
 {
    _result = c;
 }
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c
+{
+   _result = c;
+}
+-(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   _result = c;
+}
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c
+{
+   _result = c;
+}
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)c
+{
+   _result = c;
+}
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)c
+{
+   _result = c;
+}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
+{
+   _result = c;
+}
+-(void) visitBitNegative:(id<ORBitNegative>)c
 {
    _result = c;
 }
@@ -444,7 +488,88 @@
 {
    _result = c;
 }
+-(void) visitBitSubtract:(id<ORBitSubtract>)c
+{
+   _result = c;
+}
 -(void) visitBitIf:(id<ORBitIf>)c
+{
+   _result = c;
+}
+-(void) visitBitCount:(id<ORBitCount>)c
+{
+   _result = c;
+}
+-(void) visitBitChannel:(id<ORBitChannel>)c
+{
+   _result = c;
+}
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
+{
+   _result = c;
+}
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c
+{
+   _result = c;
+}
+-(void) visitBitExtract:(id<ORBitExtract>)c
+{
+   _result = c;
+}
+-(void) visitBitConcat:(id<ORBitConcat>)c
+{
+   _result = c;
+}
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c
+{
+   _result = c;
+}
+-(void) visitBitLT:(id<ORBitLT>)c
+{
+   _result = c;
+}
+
+-(void) visitBitLE:(id<ORBitLE>)c
+{
+   _result = c;
+}
+
+-(void) visitBitSLE:(id<ORBitSLE>)c
+{
+   _result = c;
+}
+
+-(void) visitBitSLT:(id<ORBitSLT>)c
+{
+   _result = c;
+}
+
+-(void) visitBitITE:(id<ORBitITE>)c
+{
+   _result = c;
+}
+
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c
+{
+   _result = c;
+}
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c
+{
+   _result = c;
+}
+-(void) visitBitOrb:(id<ORBitOrb>)c
+{
+   _result = c;
+}
+-(void) visitBitNotb:(id<ORBitNotb>)c
+{
+   _result = c;
+}
+-(void) visitBitEqualb:(id<ORBitEqualb>)c
+{
+   _result = c;
+}
+-(void) visitBitDistinct:(id<ORBitDistinct>)c
 {
    _result = c;
 }

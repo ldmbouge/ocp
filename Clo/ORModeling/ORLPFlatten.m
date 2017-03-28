@@ -83,7 +83,7 @@ static BOOL _alreadyAdded;
        id<ORConstraint> fc = [self flattenIt:c];
        if (!_alreadyAdded)
           [_into addConstraint:fc];
-       assert(_alreadyAdded == YES);
+       //assert(_alreadyAdded == YES);
     }
       onObjective:^(id<ORObjectiveFunction> o) {
          [self flattenIt:o];
@@ -190,6 +190,10 @@ static BOOL _alreadyAdded;
    _result = c;
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   _result = c;
+}
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
 {
    _result = c;
 }

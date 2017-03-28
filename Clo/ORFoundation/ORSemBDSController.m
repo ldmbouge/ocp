@@ -65,12 +65,23 @@
 }
 -(struct BDSNode)steal
 {
-   struct BDSNode stolen = _tab[0];
-   _sz--;
-   for(ORInt i=0;i < _sz;i++) {
-      _tab[i] = _tab[i+1];
+   ORInt selection = -1;
+   for(ORInt i=0;i<_sz;i++) {
+      if (!_tab[i]._cont.admin) {
+         selection = i;
+         break;
+      }
    }
-   return stolen;
+   if (selection != -1) {
+      struct BDSNode stolen = _tab[selection];
+      _sz--;
+      for(ORInt i=selection;i < _sz;i++)
+         _tab[i] = _tab[i+1];
+      return stolen;
+   } else {
+      struct BDSNode stolen = {nil,nil,0,nil};
+      return stolen;
+   }
 }
 
 -(ORInt)size 
@@ -244,7 +255,7 @@
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver model:_model];
          [node._cp letgo];
          //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
-         if (status != ORFailure)
+         if (node._cont &&  (node._cont.admin || status != ORFailure))
             [node._cont call];
          else
             [node._cont letgo]; // we must deallocate this continuation since it will never be used again.
@@ -265,6 +276,8 @@
 {
    if ([_next size] >=1) {
       struct BDSNode node = [_next steal];
+      if (node._cont == nil)
+         return  nil;
       ORHeist* rv = [[ORHeist alloc] init:node._cont from:node._cp oValue:node._atCapture];
       //[node._cont letgo];  // [ldm] no longer in the controller
       [node._cp letgo];  // [ldm] no longer in the controller

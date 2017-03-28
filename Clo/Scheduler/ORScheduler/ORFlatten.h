@@ -9,5 +9,18 @@
  
  ***********************************************************************/
 
+//<<<<<<< HEAD:Clo/testCard.h
+//
+//#import <XCTest/XCTest.h>
+//
+//
+//@interface testCard : XCTestCase {
+//@private
+//    
+//}
+//
+//@end
+//=======
 #import <ORFoundation/ORFoundation.h>
 #import <CPScheduler/ORConstraint.h>
+//>>>>>>> master:Clo/Scheduler/ORScheduler/ORFlatten.h

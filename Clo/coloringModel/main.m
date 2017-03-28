@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
       ORFloat timeLimit = 5 * 60;
       
       id<ORModel> model = [ORFactory createModel];
-      FILE* dta = fopen("/Users/dan/Desktop/LRPaperStuff/clique.col","r");  // file is located in the executable directory.
+      FILE* dta = fopen("clique.col","r");  // file is located in the executable directory.
       //FILE* dta = fopen("smallColoring.col","r");
       //FILE* dta = fopen("test-n30-e50.col","r");
       //FILE* dta = fopen("test-n80-p40-0.col","r");
@@ -115,19 +115,18 @@ int main(int argc, const char * argv[])
       };
    
       // FIND RELAXATION -------------------------------------------------------------------------------
-      ORFloat UB = 43;
       NSArray* split = [ORSubgradientTemplate autosplitVariables: [c toNSArray] constraints: nonCoupledCstr];
       NSMutableArray* varSets = [[NSMutableArray alloc] initWithCapacity: split.count];
       [split enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL* stop) {
          NSArray* allObjs = [(NSSet*)obj allObjects];
-         [varSets addObject: [ORFactory idArray: model NSArray: allObjs]];
+         [varSets addObject: [ORFactory idArray: model array: allObjs]];
       }];
    
    // DEBUGGING
    NSMutableArray* idSplit = [[NSMutableArray alloc] init];
    NSMapTable* idDeg = [[NSMapTable alloc] init];
    for(NSSet* s in split) {
-      NSMutableArray* arr2 = [s allObjects];
+      NSArray* arr2 = [s allObjects];
       [idSplit addObject: arr2];
       
       for(id<ORIntVar> x in s) {
@@ -176,8 +175,8 @@ int main(int argc, const char * argv[])
       
       
       
-      id<ORModel> lm = [ORFactory linearizeModel: model];
-      id<ORRunnable> r = [ORFactory MIPRunnable: lm numThreads: 1];
+//      id<ORModel> lm = [ORFactory linearizeModel: model];
+//      id<ORRunnable> r = [ORFactory MIPRunnable: lm numThreads: 1];
    
       // --------------------------------------------------------------------------------------
 
@@ -250,22 +249,22 @@ int main(int argc, const char * argv[])
 //      fflush(f);
 //   
 //      // Full MIP ------------------------------------------
-      id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-      [r setTimeLimit: timeLimit];
-      //[(MIPSubgradient*)r setSolverTimeLimit: 5];
-      NSDate* t0 = [NSDate date];
-      [r run];
-      NSDate* t1 = [NSDate date];
-      NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
-      if(time > timeLimit) time = timeLimit;
-      ORInt bnd = [(id<ORLagrangeRelax>)r bestBound];
-      if(fabs(bnd) > 1000) bnd = -1;
-      id<ORSolution> sol = [(id<ORLagrangeRelax>)r bestSolution];
-      ORFloat inc = sol ? [[sol objectiveValue] floatValue] : -1;
-      if(fabs(inc) > 1000) inc = -1;
-      [r release];
-      fprintf(f, "MIP: %f %f %f\n", time, bnd, inc);
-      fflush(f);
+//      id<ORRunnable> mr = [ORFactory MIPRunnable: lm];
+//      [mr setTimeLimit: timeLimit];
+//      //[(MIPSubgradient*)r setSolverTimeLimit: 5];
+//      NSDate* t0 = [NSDate date];
+//      [mr run];
+//      NSDate* t1 = [NSDate date];
+//      NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
+//      if(time > timeLimit) time = timeLimit;
+//      ORInt bnd = [(id<ORLagrangeRelax>)mr bestBound];
+//      if(abs(bnd) > 1000) bnd = -1;
+//      id<ORSolution> sol = [(id<ORLagrangeRelax>)mr bestSolution];
+//      ORFloat inc = sol ? [[sol objectiveValue] doubleValue] : -1;
+//      if(fabs(inc) > 1000) inc = -1;
+//      [r release];
+//      fprintf(f, "MIP: %f %d %f\n", time, bnd, inc);
+//      fflush(f);
 //
 //      
 ////      // TEST CP-LR -----------------------------------------------------------------------
@@ -345,11 +344,15 @@ int main(int argc, const char * argv[])
 //      [t4 release];
    
       // TEST FULL CP -----------------------------------------------------------------
-      __block cpbnd = 99999;
       __block ORFloat bndtime = -1;
       id<CPProgram> cp = [ORFactory createCPProgram: model]; //[args makeProgram:model];
-      t0 = [NSDate date];
-      [cp solve: ^{
+      NSDate* t0 = [NSDate date];
+      id<CPHeuristic> heur = [cp createFF];
+      [cp solve:^{
+         [cp labelHeuristic: heur];
+         id<ORSolution> sol = [cp captureSolution];
+         NSLog(@"new objective bound: %i", [[sol objectiveValue] intValue]);
+         
          [cp limitTime: timeLimit * 1000 in: ^{
             //         [cp labelHeuristic:h];
             [cp forall: V
@@ -374,12 +377,10 @@ int main(int argc, const char * argv[])
          [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@ and first variable %d",s,[s objectiveValue],[s intValue: c[1]]); } ];
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
-         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
       }];
-      t1 = [NSDate date];
-      time = [t1 timeIntervalSinceDate: t0];
-      ORFloat bnd2 = [[[[cp solutionPool] best] objectiveValue] floatValue];
+      NSDate* t1 = [NSDate date];
+      NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
+      ORFloat bnd2 = [[[[cp solutionPool] best] objectiveValue] doubleValue];
       fprintf(f, "CP: %f %f %f %f\n", time, -1.0, bnd2, bndtime);
       fflush(f);
       fclose(f);

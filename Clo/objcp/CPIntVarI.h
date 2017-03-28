@@ -13,7 +13,6 @@
 #import <ORFoundation/ORSetI.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPConstraintI.h>
-#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPData.h>
 #import <objcp/CPDom.h>
 #import <objcp/CPConstraint.h>
@@ -81,8 +80,6 @@
 +(CPIntVar*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
 +(CPIntVar*)    initCPNegateBoolView:(id<CPIntVar>)x;
 @end
-
-
 
 // ---------------------------------------------------------------------
 // Views
@@ -419,6 +416,5 @@ static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
 }
 
 
-void literalDomEvt(CPLiterals* x,id<CPDom> sender);
 
 

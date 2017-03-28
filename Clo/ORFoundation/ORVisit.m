@@ -337,6 +337,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Imply: visit method not defined"]; 
 }
+-(void) visitBinImply: (id<ORBinImply>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BinImply: visit method not defined"];
+}
 -(void) visitElementCst: (id<ORElementCst>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ElementCst: visit method not defined"]; 
@@ -344,6 +348,10 @@
 -(void) visitElementVar: (id<ORElementVar>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ElementVar: visit method not defined"]; 
+}
+-(void) visitElementBitVar: (id<ORElementBitVar>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ElementBitVar: visit method not defined"];
 }
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c
 {
@@ -413,6 +421,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolEqualc: visit method not defined"]; 
 }
+-(void) visitSumBoolNEqualc: (id<ORSumBoolEqc>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolNEqualc: visit method not defined"];
+}
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolLEqualc: visit method not defined"]; 
@@ -481,6 +493,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearEq: visit method not defined"]; 
 }
+-(void) visitBitEqualAt:(id<ORConstraint>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitEqualAt: visit method not defined"];
+}
+-(void) visitBitEqualc:(id<ORConstraint>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitEqualc: visit method not defined"];
+}
 -(void) visitBitEqual:(id<ORBitEqual>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitEqual: visit method not defined"]; 
@@ -505,18 +525,134 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftL: visit method not defined"]; 
 }
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftL_BV: visit method not defined"];
+}
+-(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftR: visit method not defined"];
+}
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftR_BV: visit method not defined"];
+}
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftRA: visit method not defined"];
+}
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftRA_BV: visit method not defined"];
+}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitRotateL: visit method not defined"]; 
+}
+-(void) visitBitNegative:(id<ORBitNegative>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitNegative: visit method not defined"];
 }
 -(void) visitBitSum:(id<ORBitSum>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitSum: visit method not defined"]; 
 }
+-(void) visitBitSubtract:(id<ORBitSubtract>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitSubtract: visit method not defined"];
+}
+-(void) visitBitMultiply:(id<ORBitMultiply>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitMultiply: visit method not defined"];
+}
+-(void) visitBitDivide:(id<ORBitDivide>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitDivide: visit method not defined"];
+}
 -(void) visitBitIf:(id<ORBitIf>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitIf: visit method not defined"]; 
 }
+-(void) visitBitCount:(id<ORBitCount>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitCount: visit method not defined"];
+}
+-(void) visitBitChannel:(id<ORBitChannel>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitChannel: visit method not defined"];
+}
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitZeroExtend: visit method not defined"];
+}
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitSignExtend: visit method not defined"];
+}
+-(void) visitBitExtract:(id<ORBitExtract>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitExtract: visit method not defined"];
+}
+-(void) visitBitConcat:(id<ORBitConcat>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitConcat: visit method not defined"];
+}
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLogicalEqual: visit method not defined"];
+}
+
+-(void) visitBitLT:(id<ORBitLT>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLT: visit method not defined"];
+}
+
+-(void) visitBitLE:(id<ORBitLE>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLE: visit method not defined"];
+}
+
+-(void) visitBitSLE:(id<ORBitSLE>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitSLE: visit method not defined"];
+}
+
+-(void) visitBitSLT:(id<ORBitSLT>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitSLT: visit method not defined"];
+}
+
+-(void) visitBitITE:(id<ORBitITE>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitITE: visit method not defined"];
+}
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLogicalAnd: visit method not defined"];
+}
+
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLogicalOr: visit method not defined"];
+}
+-(void) visitBitOrb:(id<ORBitOrb>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitOrb: visit method not defined"];
+}
+-(void) visitBitNotb:(id<ORBitNotb>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitNotb: visit method not defined"];
+}
+-(void) visitBitEqualb:(id<ORBitEqualb>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitEqualb: visit method not defined"];
+}
+-(void) visitBitDistinct:(id<ORBitDistinct>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitDistinct: visit method not defined"];
+}
+
+
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntegerI: visit method not defined"]; 
@@ -735,8 +871,10 @@
 -(void) visitOr: (id<OROr>)c  {}
 -(void) visitAnd:( id<ORAnd>)c  {}
 -(void) visitImply: (id<ORImply>)c  {}
+-(void) visitBinImply: (id<ORBinImply>)c  {}
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
+-(void) visitElementBitVar: (id<ORElementBitVar>)c  {}
 -(void) visitRealElementCst: (id<ORRealElementCst>) cstr {}
 -(void) visitImplyEqualc: (id<ORImplyEqualc>)c  {}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c  {}
@@ -753,6 +891,7 @@
 -(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c {}
 -(void) visitClause:(id<ORConstraint>)c           {}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c  {}
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c  {}
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c  {}
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c  {}
 -(void) visitSumEqualc:(id<ORSumEqc>)c  {}
@@ -766,15 +905,41 @@
 -(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c {}
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c {}
 // Bit
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)c {}
+-(void) visitBitEqualc:(id<ORBitEqualc>)c {}
 -(void) visitBitEqual:(id<ORBitEqual>)c {}
 -(void) visitBitOr:(id<ORBitOr>)c {}
 -(void) visitBitAnd:(id<ORBitAnd>)c {}
 -(void) visitBitNot:(id<ORBitNot>)c {}
 -(void) visitBitXor:(id<ORBitXor>)c {}
 -(void) visitBitShiftL:(id<ORBitShiftL>)c {}
+-(void) visitBitShiftR:(id<ORBitShiftR>)c {}
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c {}
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)c {}
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)c {}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c {}
+-(void) visitBitNegative:(id<ORBitNegative>)c {}
 -(void) visitBitSum:(id<ORBitSum>)c {}
+-(void) visitBitSubtract:(id<ORBitSubtract>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}
+-(void) visitBitCount:(id<ORBitCount>)c {}
+-(void) visitBitChannel:(id<ORBitChannel>)c {}
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c{}
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c{}
+-(void) visitBitExtract:(id<ORBitExtract>)c{}
+-(void) visitBitConcat:(id<ORBitConcat>)c{}
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c{}
+-(void) visitBitLT:(id<ORBitLT>)c{}
+-(void) visitBitLE:(id<ORBitLE>)c{}
+-(void) visitBitSLE:(id<ORBitSLE>)c{}
+-(void) visitBitSLT:(id<ORBitSLT>)c{}
+-(void) visitBitITE:(id<ORBitITE>)c{}
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c{}
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c{}
+-(void) visitBitOrb:(id<ORBitOrb>)c{}
+-(void) visitBitNotb:(id<ORBitNotb>)c{}
+-(void) visitBitEqualb:(id<ORBitEqualb>)c{}
+-(void) visitBitDistinct:(id<ORBitDistinct>)c{}
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}

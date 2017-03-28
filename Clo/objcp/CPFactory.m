@@ -14,6 +14,9 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPData.h>
 
+#import <objcp/CPBitVarI.h>
+#import <objcp/CPRealVarI.h>
+
 #import "CPTableI.h"
 #import "CPBitVarI.h"
 #import "CPRealVarI.h"
@@ -252,6 +255,7 @@
 {
    return [ORFactory TRIntMatrix: cp range: R1 : R2];
 }
+
 @end
 
 
@@ -281,8 +285,21 @@
 @end
 
 @implementation CPFactory (BV)
-+(id<CPBitVar>) bitVar:(id<CPEngine>)engine withLow: (ORUInt*) low andUp:(ORUInt*) up andLength:(int) len
++(id<CPBitVar>) bitVar:(id<CPEngine>)engine withLow: (ORUInt*) low andUp:(ORUInt*) up andLength:(unsigned int) len
 {
    return [[CPBitVarI alloc] initCPExplicitBitVarPat:engine withLow:low andUp:up andLen:len];
+}
++(id<CPBitVarArray>) bitVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
+{
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   return (id<CPBitVarArray>) o;
+}
++(id<CPBitVarArray>) bitVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPBitVar>(^)(ORInt)) clo
+{
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      [o  set:clo(k) at:k];
+   }
+   return (id<CPBitVarArray>)o;
 }
 @end

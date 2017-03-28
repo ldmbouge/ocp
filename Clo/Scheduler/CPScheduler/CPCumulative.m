@@ -129,7 +129,7 @@ typedef struct {
     return nb;
 }
 
--(ORStatus) post
+-(void) post
 {
 //    printf("CPCumulative: post\n");
     ORLong size = _start.count;
@@ -157,7 +157,7 @@ typedef struct {
     }
 
     if (_size <= 0) {
-        return ORSuccess;
+        return ;
     }
     
     _first_fixed = makeTRInt(_trail, (ORInt) _size);
@@ -229,9 +229,6 @@ typedef struct {
     }
     if (!_cap.bound)
         [_cap whenChangeMaxPropagate:self];
-
-    // Return of the state
-    return ORSuspend;
 }
 
 -(void) propagate

@@ -14,6 +14,10 @@
 #import <ORProgram/CPSolver.h>
 #import <objcp/CPObjectQueue.h>
 
+#if defined(__linux__)
+#include <pthread.h>
+#endif
+
 @implementation CPParallelAdapter {
    id<CPSemanticProgram>  _solver;
    PCObjectQueue*           _pool;
@@ -46,6 +50,21 @@
 {
    return [_controller succeeds];
 }
+-(void) abort
+{
+   *_stopNow = YES;
+   [super abort];
+}
+
+#if defined(__linux__)
+static pthread_spinlock_t lock;
+__attribute__((constructor))
+void lock_constructor() {
+  if (pthread_spin_init(&lock,0) != 0) {
+    exit(1);
+  }
+}
+#endif
 
 -(void) publishWork
 {
@@ -55,32 +74,44 @@
    id<ORTracer> tracer = [_solver tracer];
    id<ORCheckpoint> theCP = [tracer captureCheckpoint];
    //NSLog(@"MT(0):%d : %@",[NSThread threadID],[theCP getMT]);
-   ORHeist* stolen = [_controller steal];
-   //NSLog(@"     Publishing(%d) : %@ - %p  -- current objective: %@ stole:%d",[NSThread threadID],stolen.oValue,stolen.theCP,[_solver objective],[stolen sizeEstimate]);
-   
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
-   ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine] model:pItf];
-   if (ok == ORFailure) {
-      ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
-      _publishing = NO;
-      [theCP letgo];
-      [pItf release];
+   ORHeist* stolen = [_controller steal];
+   //NSLog(@"     Publishing(%d) : %@ - %p  -- current objective: %@ stole:%d",[NSThread threadID],
+   //stolen.oValue,stolen.theCP,[_solver objective],[stolen sizeEstimate]);
+   ORStatus ok;
+   if (stolen) {
+      ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine] model:pItf];
+      if (ok == ORFailure) {
+         ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
+         _publishing = NO;
+         [theCP letgo];
+         [pItf release];
+         [stolen release];
+         return;
+      }
+      assert(ok != ORFailure);
+      
+      [tracer pushNode];
+      
+      id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer]
+                                                                           engine:[_solver engine]
+                                                                          posting:[pItf retain]];
+      
+      [[_solver explorer] applyController: base
+                                       in: ^ {
+                                          [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
+                                                                  onSolution:nil
+                                                                      onExit:nil
+                                                                     control:[[CPGenerator alloc] initCPGenerator:base
+                                                                                                         explorer:_solver
+                                                                                                           onPool:_pool
+                                                                                                             post:pItf]];
+                                       }];
+      
+      [tracer popNode];
+      //NSLog(@"     PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
       [stolen release];
-      return;
    }
-   assert(ok != ORFailure);
-   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
-   
-   [[_solver explorer] applyController: base
-                                    in: ^ {
-                                       [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
-                                                               onSolution:nil
-                                                                   onExit:nil
-                                                                  control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool post:pItf]];
-                                    }];
-   
-   //NSLog(@"     PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
-   [stolen release];
    //NSLog(@"MT(1):%d : %@",[NSThread threadID],[theCP getMT]);
    //NSLog(@"CT(1):%d : %@",[NSThread threadID],[tracer getMT]);
    ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
@@ -91,12 +122,20 @@
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    [pItf release];
    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+#if defined(__APPLE__)
    static OSSpinLock lock = OS_SPINLOCK_INIT;
    OSSpinLockLock(&lock);
+#else   
+   pthread_spin_lock(&lock);
+#endif
    static ORLong ttl = 0;
    ttl += cpu1.tv_sec*1000 + cpu1.tv_usec/1000;
+#if defined(__APPLE__)
    OSSpinLockUnlock(&lock);
-   NSLog(@"publishing took: %lld",ttl);
+#else
+   pthread_spin_unlock(&lock);
+#endif   
+   //NSLog(@"publishing took: %lld",ttl);
    _publishing = NO;
    if (ok == ORFailure)
       [self fail];
@@ -244,12 +283,11 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:[_solver engine] model:_model];
-         assert(ok != ORFailure);
          [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
-         if (k && ok)
+         if (k &&  (k.admin || ok != ORFailure))
             [k call];
          else [k letgo];
       } else break;
@@ -274,6 +312,7 @@
 -(void)packAndFail
 {
    id<ORProblem> p = [[_solver tracer] captureProblem];
+   //NSLog(@"packAndFail called. Saving problem %@",p);
    [_pool enQueue:p];
    [self fail];
    [self finitelyFailed];

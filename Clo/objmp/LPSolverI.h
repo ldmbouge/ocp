@@ -323,6 +323,7 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(void) close;
 -(ORBool) isClosed;
 -(OROutcome) solve;
+-(OROutcome) solveFrom:(id<LPBasis>)basis;
 
 -(OROutcome) status;
 -(ORDouble) doubleValue: (LPVariableI*) var;
@@ -336,6 +337,7 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(ORBool)trivialDownRoundable:(LPVariableI*)var;
 -(ORBool)trivialUpRoundable:(LPVariableI*)var;
 -(ORInt)nbLocks:(LPVariableI*)var;
+-(ORBool)minLockDown:(LPVariableI*)var;
 -(ORDouble) dual: (LPConstraintI*) cstr;
 -(id<ORDoubleArray>) duals;
 -(id<ORObjectiveValue>) objectiveValue;

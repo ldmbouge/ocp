@@ -10,9 +10,11 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORBackjumpingDFSController.h>
 #import <ORFoundation/ORDataI.h>
 #import <ORProgram/CPProgram.h>
 #import <ORModeling/ORModeling.h>
+#import <CPUKernel/CPUKernel.h>
 
 /***************************************************************************/
 /*                  This file should be private                            */
@@ -78,11 +80,48 @@
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
+//-(id<ORSolutionPool>) globalSolutionPool;
+//-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation*)n;
+//-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
+//-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
+//-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
+//-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
+//-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
 -(id<ORSolution>) captureSolution;
 -(ORInt) maxBound:(id<ORIdArray>) x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 -(id<ORIntVar>)smallestDom:(id<ORIdArray>)x;
+
+//-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
+//
+//// pvh: do we have to put these here. Any way to externalize them.
+//-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
+
+// pvh: do we have to put these here. Any way to externalize them.
+//-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createSDeg: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
+
+//-(id<CPHeuristic>) createFF;
+//-(id<CPHeuristic>) createWDeg;
+//-(id<CPHeuristic>) createDDeg;
+//-(id<CPHeuristic>) createSDeg;
+//-(id<CPHeuristic>) createIBS;
+//-(id<CPHeuristic>) createABS;
+
+//=======
+//-(void) addConstraintDuringSearch: (id<ORConstraint>) c;
+//>>>>>>> master
 -(void) defaultSearch;
 -(id<ORMemoryTrail>)memoryTrail;
 -(void)tracer:(id<ORTracer>)tracer;
@@ -97,11 +136,17 @@
 // SemanticPath CPSolver
 @interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram,CPSemanticProgramDFS>
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
+
+-(id<CPSemanticProgramDFS>) initCPSolverBackjumpingDFS;
+//-(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
+//=======
 -(id<CPSemanticProgram>)    initCPSemanticSolver: (id<ORSearchController>) ctrlProto;
+//>>>>>>> master
 @end
 
 @interface CPSolverFactory : NSObject
 +(id<CPProgram>) solver;
++(id<CPSemanticProgramDFS>) solverBackjumpingDFS;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
 +(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto;
 @end

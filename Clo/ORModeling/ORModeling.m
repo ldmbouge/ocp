@@ -34,7 +34,10 @@
 {
    return [[ORBatchModel alloc]  init: flatModel source:srcModel annotation:notes];
 }
-
++(id<ORParameterizedModel>)createParametricModel:(id<ORModel>)m relax:(NSArray*)cstrs
+{
+   return [[ORParameterizedModelI alloc] initWithModel:m relax:cstrs];
+}
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into
 {
   return [[ORFlatten alloc] initORFlatten:into];

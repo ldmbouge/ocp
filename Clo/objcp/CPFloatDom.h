@@ -34,6 +34,7 @@
 -(ORInterval) bounds;
 -(ORLDouble) domwidth;
 -(TRFloatInterval) domain;
+-(ORUInt) cardinality;
 -(ORBool) member:(ORFloat)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPFloatDom>)toRestore;

@@ -9,12 +9,12 @@ ab = ['ais',
 'bacp',
 'bibd',
 'circle',
-'coloringModel',
 'costas',
 'costas2',
 'debruijn',
 'eq20',
 'Euler',
+'smory',
 'fdmul',
 'fdmul2',
 'fwarehouse',
@@ -57,7 +57,13 @@ ab = ['ais',
 'testLPConcretization',
 'testPacking',
 'warehouse',
-'wka']
+      'wka',
+      'coloringModel',
+      'jobshop',
+      'JobShopBenchmarks',
+      'UTC',
+      'FanghuiTest'
+]
 
 nba = len(sys.argv)
 aa  = str(sys.argv)

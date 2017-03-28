@@ -68,8 +68,11 @@
 {
 }
 -(void) visitRealRange:(id<ORRealRange>)v
-{}
-
+{
+}
+-(void) visitIntMatrix:(id<ORIntMatrix>)v
+{
+}
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (_gamma[v.getId] == NULL)
@@ -146,6 +149,9 @@
 {
 }
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
+{
+}
+-(void) visitUniformDistribution:(id) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
@@ -291,6 +297,10 @@
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint:concreteCstr];
    }
+}
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
+{
+   assert(0);
 }
 
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c

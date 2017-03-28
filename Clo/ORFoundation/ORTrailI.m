@@ -309,8 +309,7 @@ TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
 {
     return (TRFloatInterval){min, max, [trail magic]-1};
 }
-ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
-{
+ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail){
    TRInt* ei = a._entries + i;
    if (ei->_mgc != [trail magic]) {
       trailIntFun(trail, & ei->_val);
@@ -628,6 +627,7 @@ ORInt trailMagic(ORTrailI* trail)
    do {
       --_sz;
    } while(_sz>0 && (_tab[_sz]._x != x));
+   assert(self->_sz >= 0);
    const ORInt ofs  = _tab[_sz]._ofs;
    const ORInt mOfs = _tab[_sz]._mOfs;
    [_trail backtrack:ofs];

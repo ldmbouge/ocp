@@ -7,9 +7,10 @@
 //
 
 #import "ORLagrangianTransform.h"
-#import "ORSoftify.h"
-#import "ORConstraintI.h"
-#import "ORModelI.h"
+#import <ORModeling/ORSoftify.h>
+
+//#import "ORConstraintI.h"
+//#import "ORModelI.h"
 
 @interface ORHyperGraphEdge : NSObject {
     NSSet* _vertices;

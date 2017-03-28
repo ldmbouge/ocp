@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0730"
+   LastUpgradeVersion = "0820"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -32,9 +32,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B2309B61AF2C2900083A8E7"
-               BuildableName = "OBJCP-TEST"
-               BlueprintName = "OBJCP-TEST"
+               BlueprintIdentifier = "5B9ABD011391329D000997E5"
+               BuildableName = "objcpTests.xctest"
+               BlueprintName = "objcpTests"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </TestableReference>

@@ -33,6 +33,13 @@
 
 @implementation CPFactory (Constraint)
 
++(id<CPGroup>)group:(id<CPEngine>)engine guard:(id<CPIntVar>)guard
+{
+   id<CPGroup> g = [[CPGuardedGroup alloc] init:engine guard:guard];
+   [engine trackMutable:g];
+   return g;
+}
+
 // alldifferent
 +(id<ORConstraint>) alldifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x
 {
@@ -338,6 +345,12 @@
    [[x tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x neq: (ORInt) c
+{
+   id<CPConstraint> o = [[CPSumBoolNEq alloc] initCPSumBool: x neq: c];
+   [[x tracker] trackMutable: o];
+   return o;
+}
 
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c
 {
@@ -374,6 +387,12 @@
    id<ORConstraint> o = [[CPImplyDC alloc] initCPImplyDC:b equal:x imply:y];
    [[x tracker] trackMutable:o];
    return o;   
+}
++(id<ORConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y
+{
+   id<ORConstraint> o = [[CPBinImplyDC alloc] initCPBinImplyDC:x imply:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 
 +(id<ORConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c
@@ -567,6 +586,22 @@
    [[x tracker] trackMutable:o];
    return o;
 }
+
++(id<CPConstraint>) element:(id<CPBitVar>)x idxBitVarArray:(id<ORIdArray>)array equal:(id<CPBitVar>)y annotation:(ORCLevel)n
+{
+   id<CPConstraint> o = nil;
+   switch(n) {
+      case DomainConsistency:
+         o = [[CPElementBitVarAC alloc] initCPElementAC:x indexVarArray:array equal:y];
+         break;
+      default:
+         o = [[CPElementBitVarBC alloc] initCPElementBC:x indexVarArray:array equal:y];
+         break;
+   }
+   [[x engine] trackMutable:o];
+   return o;
+}
+
 +(id<CPConstraint>) fail:(id<CPEngine>)engine
 {
    id<CPConstraint> c = [[CPFalse alloc] init:engine];

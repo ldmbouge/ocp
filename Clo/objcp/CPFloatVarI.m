@@ -365,6 +365,18 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom domwidth];
 }
+-(ORUInt) cardinality
+{
+    return [_dom cardinality];
+}
+-(ORFloat) density
+{
+    return [_dom density];
+}
+-(ORFloat) magnitude
+{
+    return [_dom magnitude];
+}
 @end
 
 @implementation CPFloatViewOnIntVarI

@@ -12,25 +12,23 @@
 #import <ORFoundation/ORDataI.h>
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORSetI.h>
+#import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORFactory.h>
+
 #import <sys/time.h>
 #import <sys/types.h>
 #import <sys/resource.h>
 #import <unistd.h>
 #import <ORUtilities/ORConcurrency.h>
-#import <ORFoundation/ORFactory.h>
 
 @implementation NSObject (Concretization)
 -(void) setImpl: (id) impl
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
-    NSLog(@"%@",self); 
-    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
 }
 -(void) makeImpl
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
-    NSLog(@"%@",self);
-    @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: This object is already an implementation"];
 }
 -(id) impl
 {
@@ -914,6 +912,21 @@ struct timeval timeval_subtract(struct timeval* x,struct timeval* y) {
       for(ORInt j = 0; j < _arity; j++)
          [self index: j];
    }
+}
+
+-(ORInt) size
+{
+    return _size;
+}
+
+-(ORInt) arity
+{
+    return _arity;
+}
+
+-(ORInt) atColumn: (ORInt)c position: (ORInt)p
+{
+    return _column[c][p];
 }
 
 -(NSString*)description

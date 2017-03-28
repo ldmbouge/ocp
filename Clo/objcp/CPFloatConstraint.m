@@ -392,7 +392,6 @@
 -(void) propagate
 {
     int changed = false;
-    //TODO generalise
     ORInt precision = 1;
     ORInt arrondi = FE_TONEAREST;
     float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -612,7 +611,6 @@
 -(void) propagate
 {
     int changed = false;
-    //TO generalise
     ORInt precision = 1;
     ORInt arrondi = FE_TONEAREST;
     float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -658,3 +656,28 @@
 }
 @end
 
+@implementation CPFloatSSA
+-(id) init:(CPFloatVarI*)x ssa:(CPFloatVarI*)y
+{
+    self = [super initCPCoreConstraint: [x engine]];
+    _x = x;
+    _y = y;
+    return self;
+}
+-(void) post
+{
+    //use narrows function
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound];
+}
+-(NSString*)description
+{
+    return [NSString stringWithFormat:@"<SSA %@ U %@>", _x, _y];
+}
+@end

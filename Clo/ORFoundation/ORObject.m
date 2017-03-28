@@ -17,10 +17,12 @@
 static Class __orObjectClass = nil;
 
 @implementation ORObject
+
 +(void)load
 {
    __orObjectClass = [ORObject class];
 }
+
 -(id)init
 {
    self = [super init];
@@ -28,6 +30,10 @@ static Class __orObjectClass = nil;
    memset(_ba,0,sizeof(_ba));
    _rc = 1;
    return self;
+}
+-(ORBool)vertical
+{
+   return NO;
 }
 -(void)setId:(ORUInt)name
 {
@@ -45,7 +51,7 @@ static Class __orObjectClass = nil;
 }
 -(id)retain
 {
-   _rc += 1;
+   __sync_add_and_fetch(&_rc,1);
    return self;
 }
 -(NSUInteger)retainCount
@@ -55,7 +61,8 @@ static Class __orObjectClass = nil;
 -(oneway void)release
 {
    //printf("Release called on solver: RC=%d [%s]\n",_rc,[[[self class] description] UTF8String]);
-   if (--_rc == 0) {
+   ORUInt nc = __sync_sub_and_fetch(&_rc,1);
+   if (nc == 0) {
       [self dealloc];
    }
 }
@@ -66,17 +73,17 @@ static Class __orObjectClass = nil;
    id rv = [super autorelease];
    _ba[3] = 1;
    return rv;
-//   _rc += 1;
-//   [NSAutoreleasePool addObject:self];
-//   return self;
 }
 -(void) visit: (ORVisitor*) visitor
 {}
 - (BOOL)isEqual:(id)object
 {
-   Class me = object_getClass(self);
-   if ([me isKindOfClass:__orObjectClass]) {
-      return _name == getId(object);
+   if ((id)self == object)
+      return YES;
+   if ([self isKindOfClass:__orObjectClass]) {
+      ORBool eq = _name == getId(object);
+      assert(!eq || [self class] == [object class]);
+      return eq;
    } else return NO;
 }
 - (NSUInteger)hash

@@ -10,10 +10,15 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 #import <objcp/CPWatch.h>
 
+@protocol NSRefreshable
+   -(void)refresh;
+@end
+
 @interface NSBoardController : NSObject {
-   NSView*           _drawOn;
+   NSView<NSRefreshable>*  _drawOn;
    NSMutableArray*   _toDraw;
    NSCondition*       _pause;
    BOOL            _isPaused;

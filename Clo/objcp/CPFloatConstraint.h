@@ -154,3 +154,16 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+// phy function to link ssa variables
+@interface CPFloatSSA : CPCoreConstraint {
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)x ssa:(id)y ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+

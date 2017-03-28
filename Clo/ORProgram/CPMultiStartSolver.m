@@ -352,6 +352,10 @@
 {
    return [[self worker] trackVariable: object];
 }
+-(void) atomic: (ORClosure)body
+{
+   [[self worker] atomic:body];
+}
 -(void) add: (id<ORConstraint>) c
 {
    [(CPSolver*)[self worker] add:c];
@@ -360,9 +364,45 @@
 {
    [[self worker] addConstraintDuringSearch: c];
 }
+-(void)split:(id<ORIntVar>)x
+{
+   [[self worker] split:x];
+}
 -(void) splitArray: (id<ORIntVarArray>) x
 {
    [[self worker] splitArray:x];
+}
+-(void) maxwidthSearch:(id<ORFloatVarArray>)x
+{
+    [[self worker] maxwidthSearch:x];
+}
+-(void) minWidthSearch:(id<ORFloatVarArray>)x
+{
+    [[self worker] minWidthSearch:x];
+}
+-(void) maxCardinalitySearch:(id<ORFloatVarArray>)x
+{
+    [[self worker] maxCardinalitySearch:x];
+}
+-(void) minCardinalitySearch:(id<ORFloatVarArray>)x
+{
+    [[self worker] minCardinalitySearch:x];
+}
+-(void) maxDensitySearch:(id<ORFloatVarArray>)x
+{
+    [[self worker] maxDensitySearch:x];
+}
+-(void) minDensitySearch:(id<ORFloatVarArray>)x
+{
+    [[self worker] minDensitySearch:x];
+}
+-(void) maxMagnitudeSearch:(id<ORFloatVarArray>)x
+{
+    [[self worker] maxMagnitudeSearch:x];
+}
+-(void) minMagnitudeSearch:(id<ORFloatVarArray>)x
+{
+    [[self worker] minDensitySearch:x];
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -691,6 +731,10 @@
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
    return [[self worker] domsize: x];
+}
+-(ORInt) regret: (id<ORIntVar>) x
+{
+   return [[self worker] regret:x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {

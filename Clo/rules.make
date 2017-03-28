@@ -6,7 +6,7 @@ ORCmdLineArgs.m : ../ORCmdLineArgs.m
 
 $(EXE): $(OFILES) 
 #	@echo "Linking " $(EXE)
-	@$(OC) $(CFLAGS) $(LFLAGS)  $(notdir $(OFILES)) -o $(EXE)
+	$(OC) $(CFLAGS) $(LFLAGS) $(notdir $(OFILES)) -o $(EXE)
 
 ../bin/$(EXE): $(EXE)
 	@echo "Copy -> bin..." $(EXE)

@@ -138,8 +138,10 @@
 -(void) visitOr: (id<ORConstraint>)c;
 -(void) visitAnd:( id<ORConstraint>)c;
 -(void) visitImply: (id<ORConstraint>)c;
+-(void) visitBinImply: (id<ORBinImply>)c;
 -(void) visitElementCst: (id<ORConstraint>)c;
 -(void) visitElementVar: (id<ORConstraint>)c;
+-(void) visitElementBitVar: (id<ORConstraint>)c;
 -(void) visitElementMatrixVar:(id<ORConstraint>)c;
 -(void) visitRealElementCst: (id<ORConstraint>)c;
 -(void) visitImplyEqualc: (id<ORConstraint>)c;
@@ -157,6 +159,7 @@
 -(void) visitHReifySumBoolGEqualc: (id<ORConstraint>) c;
 -(void) visitClause:(id<ORConstraint>)c;
 -(void) visitSumBoolEqualc: (id<ORConstraint>) c;
+-(void) visitSumBoolNEqualc: (id<ORConstraint>) c;
 -(void) visitSumBoolLEqualc:(id<ORConstraint>)c;
 -(void) visitSumBoolGEqualc:(id<ORConstraint>)c;
 -(void) visitSumEqualc:(id<ORConstraint>)c;
@@ -215,15 +218,44 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
 // Bit
+-(void) visitBitEqualAt:(id<ORConstraint>)c;
+-(void) visitBitEqualc:(id<ORConstraint>)c;
 -(void) visitBitEqual:(id<ORConstraint>)c;
 -(void) visitBitOr:(id<ORConstraint>)c;
 -(void) visitBitAnd:(id<ORConstraint>)c;
 -(void) visitBitNot:(id<ORConstraint>)c;
 -(void) visitBitXor:(id<ORConstraint>)c;
 -(void) visitBitShiftL:(id<ORConstraint>)c;
+-(void) visitBitShiftL_BV:(id<ORConstraint>)c;
+-(void) visitBitShiftR:(id<ORConstraint>)c;
+-(void) visitBitShiftR_BV:(id<ORConstraint>)c;
+-(void) visitBitShiftRA:(id<ORConstraint>)c;
+-(void) visitBitShiftRA_BV:(id<ORConstraint>)c;
 -(void) visitBitRotateL:(id<ORConstraint>)c;
 -(void) visitBitSum:(id<ORConstraint>)cstr;
+-(void) visitBitSubtract:(id<ORConstraint>)cstr;
+-(void) visitBitMultiply:(id<ORConstraint>)cstr;
+-(void) visitBitDivide:(id<ORConstraint>)cstr;
 -(void) visitBitIf:(id<ORConstraint>)cstr;
+-(void) visitBitCount:(id<ORConstraint>)cstr;
+-(void) visitBitChannel:(id<ORBitChannel>)cstr;
+-(void) visitBitZeroExtend:(id<ORConstraint>)c;
+-(void) visitBitExtract:(id<ORConstraint>)c;
+-(void) visitBitConcat:(id<ORConstraint>)c;
+-(void) visitBitLogicalEqual:(id<ORConstraint>)c;
+-(void) visitBitLT:(id<ORConstraint>)c;
+-(void) visitBitLE:(id<ORConstraint>)c;
+-(void) visitBitSLE:(id<ORConstraint>)c;
+-(void) visitBitSLT:(id<ORConstraint>)c;
+-(void) visitBitITE:(id<ORConstraint>)c;
+-(void) visitBitLogicalAnd:(id<ORConstraint>)c;
+-(void) visitBitLogicalOr:(id<ORConstraint>)c;
+-(void) visitBitOrb:(id<ORConstraint>)c;
+-(void) visitBitNotb:(id<ORConstraint>)c;
+-(void) visitBitEqualb:(id<ORConstraint>)c;
+-(void) visitBitNegative:(id<ORConstraint>)c;
+-(void) visitBitSignExtend:(id<ORConstraint>)c;
+-(void) visitBitDistinct:(id<ORConstraint>)c;
 @end
 
 @interface ORNOopVisit : ORVisitor

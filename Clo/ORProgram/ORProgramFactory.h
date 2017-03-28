@@ -25,6 +25,7 @@ PORTABLE_BEGIN
  * @param model : an ORModel instance.
  */
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
++(id<CPProgram>) createCPProgramBackjumpingDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (id<ORSearchController>) ctrlProto;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (id<ORSearchController>) ctrlProto;

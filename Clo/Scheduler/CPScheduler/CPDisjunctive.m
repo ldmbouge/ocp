@@ -176,7 +176,7 @@
 //    
 //    [super dealloc];
 //}
-//-(ORStatus) post
+//-(void) post
 //{
 //    _cIdx         = makeTRInt(_trail, 0     );
 //    _uIdx         = makeTRInt(_trail, _size );

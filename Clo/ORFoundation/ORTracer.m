@@ -9,7 +9,9 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTracer.h>
+#import <ORFoundation/ORCommand.h>
+#import <ORFoundation/ORTrailI.h>
 #include <pthread.h>
 
 
@@ -447,7 +449,8 @@ static __thread id checkPointCache = NULL;
    [_cmds pushList: _lastNode memory:[_mt trailSize]];     // add a list of constraint
    [_trail incMagic];
    _lastNode++;
-   assert([_cmds size] == [_trStack size]);
+   //removed following line 8/18/15 GAJ
+//   assert([_cmds size] == [_trStack size]);
    assignTRInt(&_level,_level._val+1,_trail);
    return _lastNode - 1;
 }
@@ -464,7 +467,7 @@ static __thread id checkPointCache = NULL;
 }
 -(id) popToNode: (ORInt) n
 {
-   assert(false);
+
    [_trStack popNode: n];
    // not clear this is needed for the intended uses but this is safe anyway
    [_trail incMagic];
@@ -472,8 +475,13 @@ static __thread id checkPointCache = NULL;
 }
 -(void)       trust
 {
+//<<<<<<< HEAD
+//   assignTRInt(&_level,_level._val+1,_trail);
+//   [self pushNode];
+//=======
    assignTRInt(&_level,_level._val+1,_trail);
    //[self pushNode];  // [ldm] trying to remove this but it causes trouble.
+//>>>>>>> master
 }
 -(ORInt)      level
 {

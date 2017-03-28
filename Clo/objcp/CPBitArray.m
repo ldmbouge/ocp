@@ -423,8 +423,8 @@ unsigned int getLengthInWords(CPBitArray* array)
 -(unsigned int)    getLength { return _length;}
 -(unsigned int*)   getUSPtr  { return _data.usPtr;}
 -(int*)            getPtr    { return _data.ptr;}
--(ORBool)            isSigned  { return _signed;}
--(ORBool)          getOverflow { return _overflow;}
+-(bool)            isSigned  { return _signed;}
+-(bool)          getOverflow { return _overflow;}
 
 -(NSString*) description
 {

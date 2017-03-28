@@ -10,10 +10,10 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORData.h>
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORTrailable.h>
 
 @protocol ORSearchEngine;
 

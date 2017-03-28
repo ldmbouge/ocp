@@ -10,25 +10,28 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORArray.h>
-#import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORArray.h>
+//#import <ORFoundation/ORVar.h>
 
-@protocol ORIntVarArray;
-@protocol ORVarArray;
-@protocol ORExprArray;
-@protocol ORIntVarMatrix;
 @protocol ORExpr;
-@protocol ORVar;
-@protocol ORIntVar;
-@protocol ORBitVar;
-@protocol ORRealVar;
 @protocol OREngine;
 @protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
-@protocol ORSolution;
-@protocol ORSolutionPool;
 @protocol ORParameter;
+
+@protocol ORVar;
+@protocol ORIntVar;
+@protocol ORRealVar;
+@protocol ORFloatVar;
+@protocol ORDoubleVar;
+@protocol ORLDoubleVar;
+@protocol ORBitVar;
+
+@protocol ORVarArray;
+@protocol ORExprArray;
+@protocol ORIntVarArray;
+@protocol ORIntVarMatrix;
 
 @protocol ORBasicModel
 -(id<ORObjectiveFunction>) objective;
@@ -56,6 +59,7 @@
 @protocol ORConstraintSet <NSObject>
 -(void)addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
+-(void) enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
 
 @protocol OROrderedConstraintSet <ORConstraintSet>
@@ -64,7 +68,8 @@
 
 enum ORGroupType {
    DefaultGroup = 0,
-   BergeGroup = 1
+   BergeGroup = 1,
+   GuardedGroup = 2
 };
 
 @protocol ORGroup <ORObject,ORConstraint>
@@ -73,6 +78,7 @@ enum ORGroupType {
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
+-(id<ORIntVar>)guard;
 @end
 
 @protocol ORFail <ORConstraint>
@@ -203,6 +209,11 @@ enum ORGroupType {
 -(id<ORIntVar>) right;
 @end
 
+@protocol ORBinImply <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
 @protocol ORElementCst <ORConstraint>
 -(id<ORIntArray>) array;
 -(id<ORIntVar>)   idx;
@@ -213,6 +224,12 @@ enum ORGroupType {
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+@end
+
+@protocol ORElementBitVar <ORConstraint>
+-(id<ORIdArray>) array;
+-(id<ORBitVar>)   idx;
+-(id<ORBitVar>)   res;
 @end
 
 @protocol ORElementMatrixVar <ORConstraint>
@@ -303,6 +320,11 @@ enum ORGroupType {
 @end
 
 @protocol ORSumBoolEqc <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@protocol ORSumBoolNEqc <ORConstraint>
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end
@@ -591,6 +613,17 @@ enum ORGroupType {
 
 // ====== Bit Constraints =====================================
 
+@protocol ORBitEqualAt <ORConstraint>
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+-(ORInt)bit;
+@end
+
+@protocol ORBitEqualc <ORConstraint>
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+@end
+
 @protocol  ORBitEqual <ORConstraint>
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
@@ -625,10 +658,46 @@ enum ORGroupType {
 -(ORInt) places;
 @end
 
+@protocol  ORBitShiftL_BV <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) places;
+@end
+
+@protocol  ORBitShiftR <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(ORInt) places;
+@end
+
+@protocol  ORBitShiftR_BV <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) places;
+@end
+
+@protocol  ORBitShiftRA <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(ORInt) places;
+@end
+
+@protocol  ORBitShiftRA_BV <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) places;
+@end
+
 @protocol  ORBitRotateL <ORConstraint>
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 -(ORInt) places;
+@end
+
+
+@protocol  ORBitNegative <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
 @end
 
 @protocol  ORBitSum <ORConstraint>
@@ -639,11 +708,133 @@ enum ORGroupType {
 -(id<ORBitVar>) out;
 @end
 
+@protocol  ORBitSubtract <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitMultiply <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitDivide <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
 @protocol  ORBitIf <ORConstraint>
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) trueIf;
 -(id<ORBitVar>) equals;
 -(id<ORBitVar>) zeroIfXEquals;
+@end
+
+@protocol  ORBitCount <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@protocol ORBitChannel<ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@protocol  ORBitZeroExtend <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitSignExtend <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitConcat <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+@end
+
+@protocol  ORBitExtract <ORConstraint>
+-(id<ORBitVar>) left;
+-(ORUInt) lsb;
+-(ORUInt) msb;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitLogicalEqual <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitLT <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitLE <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitSLE <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitSLT <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitITE <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right1;
+-(id<ORBitVar>) right2;
+@end
+
+@protocol  ORBitLogicalAnd <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORVarArray>) left;
+@end
+
+@protocol  ORBitLogicalOr <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORVarArray>) left;
+@end
+
+@protocol  ORBitOrb <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitNotb <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+@end
+
+@protocol  ORBitEqualb <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitDistinct <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
 @end
 
 // Root implementation class (needed so that sub-frameworks can write constraints)
@@ -653,4 +844,3 @@ enum ORGroupType {
 -(NSString*) description;
 -(void) close;
 @end
-

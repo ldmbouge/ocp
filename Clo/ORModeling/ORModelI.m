@@ -23,6 +23,11 @@
 
 #import <objc/runtime.h>
 
+#if __clang_major__==3 && __clang_minor__==6
+#define _Nonnull
+#endif
+
+
 @implementation ORTau
 {
    NSMapTable* _mapping;
@@ -202,6 +207,7 @@
    _mappings = [[ORModelMappings alloc] initORModelMappings];
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
+   _source = nil;
    return self;
 }
 -(ORModelI*) initORModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings
@@ -277,7 +283,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORModelI [%p] dealloc called...\n",self);
+   NSLog(@"ORModelI [%p] dealloc called...  source (%p) RC[%lu]\n",self,_source,(unsigned long)[_source retainCount]);
    [_source release];
    [_vars release];
    [_mStore release];
@@ -370,6 +376,17 @@
          rv[k++] = xk;
    return (id<ORRealVarArray>)rv;
 }
+-(id<ORBitVarArray>)bitVars
+{
+   ORInt k=0,nbBV = 0;
+   for(id<ORVar> xk in _vars)
+      nbBV += [xk conformsToProtocol:@protocol(ORBitVar)];
+   id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,nbBV-1)];
+   for(id<ORVar> xk in _vars)
+      if ([xk conformsToProtocol:@protocol(ORBitVar)])
+         rv[k++] = xk;
+   return (id<ORBitVarArray>)rv;
+}
 
 -(NSArray*) variables
 {
@@ -445,6 +462,7 @@
 -(id) trackMutable: (id) obj
 {
    [obj setId:_nbObjects++];
+   //printf("T(%p) mStore(%p) SZ: %lu  --- NBO = %d\n",[NSThread currentThread],_mStore,[_mStore count],_nbObjects);fflush(stdout);
    [_mStore addObject:obj];
    [_memory addObject:obj];
    [obj release];
@@ -982,6 +1000,13 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(void) emptyPool
 {
     [_all removeAllObjects];
+}
+
+-(void) enumerateWith:(void(^)(id<ORConstraint>))block
+{
+   [_all enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+      block(obj);
+   }];
 }
 @end
 

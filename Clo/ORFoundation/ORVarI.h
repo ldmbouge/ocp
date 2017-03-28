@@ -115,6 +115,15 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
+
+
+//-(ORInt)  domsize;
+//-(ORULong)  numPatterns;
+//-(ORULong)  maxRank;
+//-(ORULong)  getRank:(ORUInt *)v;
+//-(ORUInt*)  atRank:(ORULong)r;
+//-(ORStatus) bind:(unsigned int *)val;
+//-(bool) member: (unsigned int*) v;
 -(void) visit: (ORVisitor*)v;
 -(NSString*)stringValue;
 -(enum ORVType) vtype;

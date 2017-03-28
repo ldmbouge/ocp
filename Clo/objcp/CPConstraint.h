@@ -13,6 +13,7 @@
 #import <objcp/CPFactory.h>
 
 @interface CPFactory (Constraint)
++(id<CPGroup>)group:(id<CPEngine>)engine guard:(id<CPIntVar>)guard;
 
 +(id<CPConstraint>) fail:(id<CPEngine>)engine;
 +(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x;
@@ -45,6 +46,8 @@
 +(id<CPConstraint>) clause:(id<CPIntVarArray>) x eq:(id<CPIntVar>)tv;
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c;
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (ORInt) c;
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x neq: (ORInt) c;
+
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c annotation: (ORCLevel)cons;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (ORInt) c;
@@ -52,6 +55,7 @@
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
++(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y;
 
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) path: (id<CPIntVarArray>) x;
@@ -82,6 +86,7 @@
 +(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y annotation:(ORCLevel)c;
 +(id<CPConstraint>) element:(id<CPIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<CPIntVar>)y annotation:(ORCLevel)n;
 +(id<CPConstraint>) element:(id<CPIntVar>)x idxVarArray:(id<CPIntVarArray>)c equal:(id<CPIntVar>)y annotation:(ORCLevel)n;
++(id<CPConstraint>) element:(id<CPBitVar>)x idxBitVarArray:(id<ORIdArray>)array equal:(id<CPBitVar>)y annotation:(ORCLevel)n;
 +(id<CPConstraint>) table: (id<ORTable>) table on: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) table: (id<ORTable>) table on: (id<CPIntVar>) x : (id<CPIntVar>) y : (id<CPIntVar>) z;
 +(id<CPConstraint>) assignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<CPIntVar>) cost;

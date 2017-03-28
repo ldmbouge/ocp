@@ -36,7 +36,7 @@
     CPRealParamI* _w;
 }
 -(id)initCPRealWeightedVarBC:(id)z equal:(id)x weight: (id)w;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

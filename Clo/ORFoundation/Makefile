@@ -3,13 +3,14 @@ include ../setup.make
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES)  \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities -lORUtilities
 
-SRCS =  ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \
-	ORFoundation.m  ORObject.m     ORSemBDSController.m  ORSemFDSController.m ORTracer.m \
-	ORCommand.m     ORDataI.m    ORError.m      ORFactoryI.m  \
-	ORLimit.m       ORParallel.m   ORSemDFSController.m  ORTrailI.m \
+SRCS =  ORAVLTree.m     ORFunc.m ORControl.m  OREngine.m     ORExprI.m     \
+	ORFoundation.m  ORObject.m     \
+	ORSemDFSController.m ORSemBDSController.m  ORSemFDSController.m ORSemBFSController.m \
+	ORTracer.m ORCommand.m     ORDataI.m    ORError.m      ORFactoryI.m  \
+	ORLimit.m       ORParallel.m     ORTrailI.m \
 	ORArrayI.m  ORController.m  ORData.m     ORExplorerI.m  ORFactory.m  \
 	ORSelectorI.m  ORSetI.m ORVisit.m   ORVarI.m ORConstraintI.m \
-	ORAnnotation.m
+	ORAnnotation.m ORParameterI.m ORBackjumpingDFSController.m
 
 
 OBJEXT=o

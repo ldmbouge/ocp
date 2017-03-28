@@ -9,23 +9,20 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORRunnablePiping.h>
+#import <ORProgram/LPProgram.h>
 
-
-typedef id<ORRunnable> (^ORDoubleArray2Runnable)(id<ORDoubleArray>);
-typedef id<LPColumn> (^Void2Column)();
+typedef id<ORDoubleArray> (^DoubleArray2DoubleArray)(id<ORDoubleArray>);
 
 @interface ORColumnGeneration : ORPipedRunnable<ORColumnConsumer>
--(id) initWithMaster: (id<ORRunnable>)master slave: (Void2Column)slaveBlock;
+-(id) initWithMaster: (id<ORRunnable>)master slave: (DoubleArray2DoubleArray)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
 @end
 
 @interface ORFactory(ORColumnGeneration)
-+(id<ORRunnable>) columnGeneration: (id<ORRunnable>)master slave: (Void2Column)slaveBlock;
-+(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<ORGroup>)cstrs;
++(id<ORRunnable>) columnGeneration: (id<ORRunnable>)master slave: (DoubleArray2DoubleArray)slaveBlock;
 @end

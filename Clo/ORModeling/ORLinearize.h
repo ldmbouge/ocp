@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModelTransformation.h>
 
 @interface ORLinearizeConstraint : ORVisitor<NSObject> {

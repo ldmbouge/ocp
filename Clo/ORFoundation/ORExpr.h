@@ -16,7 +16,6 @@
 @protocol ORRelation;
 @protocol ORExpr;
 @protocol ORIntArray;
-@protocol ORIntVarArray;
 
 #if defined(__APPLE__)
 typedef NS_ENUM(NSUInteger,ORRelationType) {
@@ -58,11 +57,12 @@ typedef enum ORRelationType {
 } ORRelationType;
 
 typedef enum ORVType {
-   ORTInt = 0,
-   ORTReal = 1,
-   ORTBit  = 2,
-   ORTSet  = 3,
-   ORTNA = 4
+  ORTBool = 0,
+  ORTInt = 1,
+  ORTReal = 2,
+  ORTBit  = 3,
+  ORTSet  = 4,
+  ORTNA = 5
 } ORVType;
 
 #endif
@@ -75,9 +75,7 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
    else if (t1+t2 <= 1)
       return ORTInt;
    else if(t1 == ORTReal || t2 == ORTReal)
-       //TODO CHANGE TO ORTreal
-       //return ORTReal;
-       return ORTFloat;
+       return ORTReal;
     else if(t1 == ORTFloat || t2 == ORTFloat)
         return ORTFloat;
    else

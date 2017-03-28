@@ -36,7 +36,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORCoreExplorer dealloc called...\n");
+   NSLog(@"ORCoreExplorer dealloc called...");
    id ctrl = _controller;
    [ctrl release];
    [_trail release];
@@ -60,7 +60,6 @@
 -(void) setController: (id<ORSearchController>) controller
 {
    assignTRId(&_controller,controller,_trail);
-   [controller setup];
 }
 
 -(void) push: (id<ORSearchController>) controller
@@ -261,8 +260,9 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 -(void) limitFailures: (ORInt) nb in: (ORClosure) cl
 {
    ORLimitFailures* limit = [[ORLimitFailures alloc] initORLimitFailures: nb];
+   //[_engine trackObject:limit];  // [ldm. that causes a leak. Seems like there is a strong reference from each checkpoint as well as from the controller in the explorer.]
    [self push: limit];
-   [limit release];
+   [limit release];  // [LDM] debugging this... The release here is necessary so that there is only *ONE* referefence to the limit (from the controller var).
    cl();
    [limit succeeds];
    [self popController];
@@ -290,6 +290,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    //   id<ORMutableInteger> nbRestarts = [ORFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
+   if ([enter nbCalls]==0)
+      enter.admin = YES;       // This makes sure that this specific continuation can't be stolen (parallel code).
    if (isDone && isDone()) {
       [enter letgo];
       [_controller fail];
@@ -375,9 +377,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       id<ORSearchController> dfs = [_cFact makeRootController];
       NSCont* exit = [NSCont takeContinuation];
       if ([exit nbCalls]==0) {
+         exit.admin = YES;
          _controller = makeTRId(_trail,dfs);
-         [dfs addChoice: exit];
          [dfs setup];
+         [dfs addChoice: exit];
          body();
          // [ldm] Do *not* letgo of exit here. The cleanup call will do this automatically.
          //[exit letgo];
@@ -385,6 +388,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller release];
          _controller = nil;
          NSLog(@"top-level success");
+         //[exit letgo];
       }
       else {
          NSLog(@"top-level fail");
@@ -400,6 +404,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
+      exit.admin = YES;
+      [newCtrl setup];
       [_controller addChoice: exit];                           // add the choice in the original controller
       [self setController:newCtrl];                                 // install the new controller chain
       if (body) body();
@@ -425,7 +431,9 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
-      [_controller addChoice: exit];
+      exit.admin = YES;
+      [newCtrl setup];
+      [newCtrl addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       if (body) body();
       if (onSolution) onSolution();
@@ -433,6 +441,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
    else { // if ([newCtrl isFinitelyFailed]) {
       [exit letgo];
+      [newCtrl cleanup];
       [newCtrl release];
       if (onExit) onExit();
       // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.
@@ -447,6 +456,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
+      exit.admin = YES;
+      [newCtrl setup];
       [_controller addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       id<ORSearchObjectiveFunction> obj = solver.objective;

@@ -33,7 +33,7 @@ int main(int argc, const char * argv[])
          [mdl add:[ORFactory alldifferent:x]];
          id<ORMutableInteger> nbSolutions = [ORFactory mutable:mdl value:0];
          
-         NSLog(@"MODEL = %@\n",mdl);
+         //NSLog(@"MODEL = %@\n",mdl);
          id<CPProgram> cp =  [args makeProgram:mdl annotation:notes];
          __block ORInt nbs = 0;
          [cp solveAll:^{

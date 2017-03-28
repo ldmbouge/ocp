@@ -16,6 +16,15 @@
 #import <ORProgram/ORProgramFactory.h>
 #import "ORCmdLineArgs.h"
 
+ORBool mustGoon(id<ORModel> m,ORBool* b)
+{
+  ORBool rv;
+  @synchronized(m) {
+    rv = !*b;
+  }
+  return rv;
+}
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -51,23 +60,12 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [args makeProgram:model];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
-         __block BOOL found = NO;
+         ORBool* found = malloc(sizeof(ORBool));
+         *found = NO;
          [cp solve:^{
-//            [cp labelArray:[ORFactory flattenMatrix:s]];
-//            [cp label:[s at:1 :1] with:1];
-//            [cp label:[s at:1 :2] with:7];
-//            [cp label:[s at:1 :3] with:2];
-//            [cp label:[s at:2 :1] with:6];
-//            [cp label:[s at:2 :2] with:5];
-//            [cp label:[s at:2 :3] with:4];
-//            [cp label:[s at:3 :1] with:8];
-//            [cp label:[s at:3 :2] with:3];
-//            [cp label:[s at:3 :3] with:9];
-            
             [cp limitTime:maxTime in: ^ {
-               ///[cp repeat:^{
-               while(!found) {
-                  [cp try:^{
+               while (mustGoon(model,found)) {
+                  [cp perform:^{
                      [cp limitFailures:[nbFailures intValue:cp] in: ^ {
                         [cp labelHeuristic:h];
                         @autoreleasepool {
@@ -79,21 +77,22 @@ int main(int argc, const char * argv[])
                               NSLog(@"%@",buf);
                            }
                         }
-                        found = YES;
+                        @synchronized(model) {
+                           *found = YES;
+                        }
                      }];
-                  } alt:^{
+                  } onLimit:^{
                      [nbFailures setValue:(double)[nbFailures intValue:cp] * rf in:cp];
                      [nbRestarts incr:cp];
                      NSLog(@"Hit failure limit. Failure limit now: %d / %d",[nbFailures intValue:cp],[nbRestarts intValue:cp]);
                   }];
-               //} onRepeat:^{
                };
             }];
             
          }];
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
-         struct ORResult r = REPORT(found, [cp nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(*found, [cp nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];
    }

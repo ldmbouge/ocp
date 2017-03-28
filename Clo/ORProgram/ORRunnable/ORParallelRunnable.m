@@ -7,9 +7,9 @@
 //
 
 #import "ORParallelRunnable.h"
-#import "ORModelI.h"
-#import "ORConcurrencyI.h"
 #import <ORProgram/ORSolution.h>
+//#import "ORModelI.h"
+//#import "ORConcurrencyI.h"
 
 #define CPR_DONE    0
 #define CPR_RUNNING 1
@@ -54,9 +54,13 @@
 }
 -(void)start:(id<ORVoidInformer>)stop
 {
-   [stop whenNotifiedDo:^ {
-      [_c cancelSearch];
+   [_c performOnStart:^{
+      NSLog(@"We are about to setup a listener on stop informer: %p",[NSThread currentThread]);
+      [stop whenNotifiedDo:^ {
+         [_c cancelSearch];
+      }];
    }];
+   
    [_c start];
    [stop notify];
    [self notifyDone];

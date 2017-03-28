@@ -13,7 +13,7 @@
 #import <ORProgram/CPSolver.h>
 #import <ORFoundation/ORTracer.h>
 #import <CPUKernel/CPUKernel.h>
-#import <ORPRogram/CPConcretizer.h>
+#import <ORProgram/CPConcretizer.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPFactory.h>

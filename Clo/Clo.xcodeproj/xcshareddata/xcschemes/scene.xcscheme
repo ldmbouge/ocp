@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0730"
+   LastUpgradeVersion = "0820"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B65049D1940C21600AEA65C"
+               BlueprintIdentifier = "5BB272641D065631008E94CF"
                BuildableName = "scene"
                BlueprintName = "scene"
                ReferencedContainer = "container:Clo.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B65049D1940C21600AEA65C"
+            BlueprintIdentifier = "5BB272641D065631008E94CF"
             BuildableName = "scene"
             BlueprintName = "scene"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -55,7 +55,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B65049D1940C21600AEA65C"
+            BlueprintIdentifier = "5BB272641D065631008E94CF"
             BuildableName = "scene"
             BlueprintName = "scene"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -74,7 +74,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B65049D1940C21600AEA65C"
+            BlueprintIdentifier = "5BB272641D065631008E94CF"
             BuildableName = "scene"
             BlueprintName = "scene"
             ReferencedContainer = "container:Clo.xcodeproj">

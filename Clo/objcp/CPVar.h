@@ -15,6 +15,7 @@
 
 @protocol CPEngine;
 @protocol ORTracer;
+@protocol CPBitVar;
 
 enum CPVarClass {
    CPVCBare = 0,
@@ -40,6 +41,8 @@ enum CPVarClass {
 -(ORBool) bound;
 -(NSSet*)constraints;
 -(ORInt)degree;
+-(ORBool)vertical;
+-(ORInt) domsize;
 @end
 
 
@@ -105,6 +108,7 @@ enum CPVarClass {
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
+-(ORInt) regret;
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
@@ -132,6 +136,14 @@ enum CPVarClass {
 -(void) set: (id<CPIntVar>) x at: (ORInt) value;
 -(id<CPIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<CPIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
+@protocol CPBitVarArray <CPVarArray>
+-(id<CPBitVar>) at: (ORInt) value;
+-(void) set: (id<CPBitVar>) x at: (ORInt) value;
+-(id<CPBitVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPBitVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 
@@ -171,6 +183,9 @@ enum CPVarClass {
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
 -(ORLDouble) domwidth;
+-(ORUInt) cardinality;
+-(ORFloat) density;
+-(ORFloat) magnitude;
 -(void) bind:(ORFloat) val;
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;

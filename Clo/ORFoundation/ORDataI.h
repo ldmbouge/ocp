@@ -117,6 +117,9 @@
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;
 -(void) close;
+-(ORInt) size;
+-(ORInt) arity;
+-(ORInt) atColumn: (ORInt)c position: (ORInt)p;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 -(void) print;

@@ -29,8 +29,8 @@ int main(int argc, const char * argv[]) {
             NSLog(@"helloword %@ !",p);
             NSLog(@"x : %f (%s)",[p floatValue:x],[p bound:x] ? "YES" : "NO");
             NSLog(@"y : %f (%s)",[p floatValue:y],[p bound:y] ? "YES" : "NO");
-          //  id zc = [p concretize:z];
-          //  NSLog(@"cz : %@",zc);
+            //  id zc = [p concretize:z];
+            //  NSLog(@"cz : %@",zc);
             NSLog(@"z : %f (%s)",[p floatValue:z],[p bound:z] ? "YES" : "NO");
             NSLog(@"r : %f (%s)",[p floatValue:r],[p bound:r] ? "YES" : "NO");//*/
         }];

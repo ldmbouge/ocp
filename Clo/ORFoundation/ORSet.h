@@ -10,8 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORAVLTree.h>
-#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORObject.h>
 @protocol ORTracker;
 
 @protocol ORIntIterable <ORObject>

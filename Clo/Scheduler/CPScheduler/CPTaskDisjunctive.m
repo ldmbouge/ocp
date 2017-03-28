@@ -188,7 +188,7 @@ typedef ORBool(*REType)(id,SEL,...);
     
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     _cIdx        = makeTRInt(_trail, 0     );
     _uIdx        = makeTRInt(_trail, _size );
@@ -253,8 +253,6 @@ typedef ORBool(*REType)(id,SEL,...);
     
     // Initial propagation
     [self propagate];
-    
-    return ORSuspend;
 }
 -(void) propagate
 {
@@ -1154,8 +1152,8 @@ static void dprec_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORIn
                 // The leaf must be a gray one
                 if (theta[leaf_idx]._time != MININT || lambda[leaf_idx]._gTime == MININT) {
                     break;
-                    dumpThetaTree(theta, tsize);
-                    dumpLambdaTree(lambda, tsize);
+                    //dumpThetaTree(theta, tsize);
+                    //dumpLambdaTree(lambda, tsize);
                 }
                 assert(theta[leaf_idx]._time == MININT && lambda[leaf_idx]._gTime != MININT);
                 // Map leaf index to task ID

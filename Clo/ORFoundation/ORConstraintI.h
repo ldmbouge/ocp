@@ -20,11 +20,13 @@
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)g;
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
+-(id<ORIntVar>)guard;
 -(enum ORGroupType)type;
 @end
 
@@ -187,6 +189,12 @@
 -(id<ORIntVar>) right;
 @end
 
+@interface ORBinImply : ORConstraintI<ORBinImply>
+-(ORImply*)init:(id<ORIntVar>)x imply:(id<ORIntVar>)y;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
 @interface ORElementCst : ORConstraintI<ORElementCst>
 -(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
 -(id<ORIntArray>) array;
@@ -199,6 +207,13 @@
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+@end
+
+@interface ORElementBitVar : ORConstraintI<ORElementBitVar>
+-(ORElementBitVar*)initORElement:(id<ORBitVar>)idx array:(id<ORIdArray>)y equal:(id<ORBitVar>)z; // y[idx] == z
+-(id<ORIdArray>) array;
+-(id<ORBitVar>)   idx;
+-(id<ORBitVar>)   res;
 @end
 
 @interface ORElementMatrixVar : ORConstraintI<ORElementMatrixVar>
@@ -281,6 +296,12 @@
 
 @interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>
 -(ORSumBoolEqc*) initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORSumBoolNEqc : ORConstraintI<ORSumBoolNEqc>
+-(ORSumBoolNEqc*) initSumBool:(id<ORIntVarArray>)ba neqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end
@@ -551,7 +572,6 @@
 -(id<ORIntVar>) cost;
 @end
 
-
 @interface ORObjectiveValueIntI : ORObject<ORObjectiveValueInt> {
    ORInt _value;
    ORInt _direction;
@@ -638,6 +658,19 @@
 -(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef;
 @end
 
+@interface ORBitEqualAt : ORConstraintI<ORBitEqualAt>
+-(ORBitEqualAt*)init:(id<ORBitVar>)x at:(ORInt)k with:(ORInt)c;
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+-(ORInt)bit;
+@end
+
+@interface ORBitEqualc : ORConstraintI<ORBitEqualc>
+-(ORBitEqualc*)init:(id<ORBitVar>)x eqc:(ORInt)c;
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+@end
+
 @interface ORBitEqual : ORConstraintI<ORBitEqual>
 -(ORBitEqual*)initORBitEqual: (id<ORBitVar>) x eq: (id<ORBitVar>) y;
 -(id<ORBitVar>) left;
@@ -645,27 +678,27 @@
 @end
 
 @interface ORBitOr : ORConstraintI<ORBitOr>
--(ORBitOr*)initORBitOr: (id<ORBitVar>) x or: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(ORBitOr*)initORBitOr: (id<ORBitVar>) x bor: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 @end
 
 @interface ORBitAnd : ORConstraintI<ORBitAnd>
--(ORBitAnd*)initORBitAnd: (id<ORBitVar>) x and: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(ORBitAnd*)initORBitAnd: (id<ORBitVar>) x band: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 @end
 
 @interface ORBitNot : ORConstraintI<ORBitNot>
--(ORBitNot*)initORBitNot: (id<ORBitVar>) x not: (id<ORBitVar>) y;
+-(ORBitNot*)initORBitNot: (id<ORBitVar>) x bnot: (id<ORBitVar>) y;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 @end
 
 @interface ORBitXor : ORConstraintI<ORBitXor>
--(ORBitXor*)initORBitXor: (id<ORBitVar>) x xor: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(ORBitXor*)initORBitXor: (id<ORBitVar>) x bxor: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
@@ -678,11 +711,52 @@
 -(id<ORBitVar>) right;
 @end
 
+@interface ORBitShiftL_BV : ORConstraintI<ORBitShiftL_BV>
+-(ORBitShiftL_BV*)initORBitShiftL_BV: (id<ORBitVar>) x by:(id<ORBitVar>)p eq: (id<ORBitVar>) y;
+-(id<ORBitVar>) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitShiftR : ORConstraintI<ORBitShiftR>
+-(ORBitShiftR*)initORBitShiftR: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
+-(ORInt) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitShiftR_BV : ORConstraintI<ORBitShiftR_BV>
+-(ORBitShiftR_BV*)initORBitShiftR_BV: (id<ORBitVar>) x by:(id<ORBitVar>)p eq: (id<ORBitVar>) y;
+-(id<ORBitVar>) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitShiftRA : ORConstraintI<ORBitShiftRA>
+-(ORBitShiftRA*)initORBitShiftRA: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
+-(ORInt) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitShiftRA_BV : ORConstraintI<ORBitShiftRA_BV>
+-(ORBitShiftRA_BV*)initORBitShiftRA_BV: (id<ORBitVar>) x by:(id<ORBitVar>)p eq: (id<ORBitVar>) y;
+-(id<ORBitVar>) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
 @interface ORBitRotateL : ORConstraintI<ORBitRotateL>
 -(ORBitRotateL*)initORBitRotateL: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
 -(ORInt) places;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
+@end
+
+@interface ORBitNegative : ORConstraintI<ORBitNegative>
+-(ORBitNegative*)initORBitNegative: (id<ORBitVar>) x eq:(id<ORBitVar>)y;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) res;
 @end
 
 @interface ORBitSum : ORConstraintI<ORBitSum>
@@ -694,10 +768,152 @@
 -(id<ORBitVar>) out;
 @end
 
+@interface ORBitSubtract : ORConstraintI<ORBitSubtract>
+-(ORBitSubtract*)initORBitSubtract: (id<ORBitVar>) x minus:(id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+@end
+
+@interface ORBitMultiply : ORConstraintI<ORBitMultiply>
+-(ORBitMultiply*)initORBitMultiply: (id<ORBitVar>) x times:(id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+@end
+
+@interface ORBitDivide: ORConstraintI<ORBitDivide>
+-(ORBitDivide*)initORBitDivide: (id<ORBitVar>) x dividedby:(id<ORBitVar>) y eq:(id<ORBitVar>)z rem:(id<ORBitVar>)r;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
+@end
+
 @interface ORBitIf : ORConstraintI<ORBitIf>
 -(ORBitIf*)initORBitIf: (id<ORBitVar>) w trueIf:(id<ORBitVar>) x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z;
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) trueIf;
 -(id<ORBitVar>) equals;
 -(id<ORBitVar>) zeroIfXEquals;
+@end
+
+@interface ORBitCount : ORConstraintI<ORBitCount>
+-(ORBitCount*)initORBitCount: (id<ORBitVar>) x count:(id<ORIntVar>)p;
+-(id<ORBitVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@interface ORBitChannel: ORConstraintI<ORBitChannel>
+-(ORBitCount*)init: (id<ORBitVar>) x channel:(id<ORIntVar>)p;
+-(id<ORBitVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@interface ORBitZeroExtend : ORConstraintI<ORBitZeroExtend>
+-(ORBitZeroExtend*)initORBitZeroExtend: (id<ORBitVar>) x extendTo: (id<ORBitVar>) y;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitSignExtend : ORConstraintI<ORBitSignExtend>
+-(ORBitSignExtend*)initORBitSignExtend: (id<ORBitVar>) x extendTo: (id<ORBitVar>) y;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitConcat : ORConstraintI<ORBitConcat>
+-(ORBitConcat*)initORBitConcat: (id<ORBitVar>) x concat: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitExtract : ORConstraintI<ORBitExtract>
+-(ORBitExtract*)initORBitExtract: (id<ORBitVar>) x from:(ORUInt)lsb to:(ORUInt)msb eq:(id<ORBitVar>)y;
+-(id<ORBitVar>) left;
+-(ORUInt) lsb;
+-(ORUInt) msb;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitLogicalEqual : ORConstraintI<ORBitLogicalEqual>
+-(ORBitLogicalEqual*)initORBitLogicalEqual:(id<ORBitVar>)x EQ:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitLT : ORConstraintI<ORBitLT>
+-(ORBitLT*)initORBitLT:(id<ORBitVar>)x LT:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitLE : ORConstraintI<ORBitLE>
+-(ORBitLE*)initORBitLE:(id<ORBitVar>)x LE:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitSLE : ORConstraintI<ORBitSLE>
+-(ORBitSLE*)initORBitSLE:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitSLT : ORConstraintI<ORBitSLT>
+-(ORBitSLT*)initORBitSLT:(id<ORBitVar>)x SLT:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitITE : ORConstraintI<ORBitITE>
+-(ORBitITE*)initORBitITE:(id<ORBitVar>)i then:(id<ORBitVar>)t else:(id<ORBitVar>)e result:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right1;
+-(id<ORBitVar>) right2;
+@end
+@interface ORBitLogicalAnd : ORConstraintI<ORBitLogicalAnd>
+-(ORBitLogicalAnd*)initORBitLogicalAnd:(id<ORBitVarArray>)x eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVarArray>) left;
+@end
+
+@interface ORBitLogicalOr : ORConstraintI<ORBitLogicalOr>
+-(ORBitLogicalOr*)initORBitLogicalOr:(id<ORBitVarArray>)x eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVarArray>) left;
+@end
+
+@interface ORBitOrb : ORConstraintI<ORBitOrb>
+-(ORBitOrb*)initORBitOrb: (id<ORBitVar>) x bor: (id<ORBitVar>) y eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitNotb : ORConstraintI<ORBitNotb>
+-(ORBitNotb*)initORBitNotb: (id<ORBitVar>) x eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+@end
+
+@interface ORBitEqualb : ORConstraintI<ORBitEqualb>
+-(ORBitEqualb*)initORBitEqualb: (id<ORBitVar>) x equal: (id<ORBitVar>) y eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitDistinct : ORConstraintI<ORBitDistinct>
+-(ORBitDistinct*)initORBitDistinct: (id<ORBitVar>) x distinctFrom: (id<ORBitVar>) y eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
 @end

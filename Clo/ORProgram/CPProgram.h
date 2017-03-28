@@ -12,6 +12,8 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORParameter.h>
 #import <ORProgram/CPHeuristic.h>
+#import <ORProgram/CPBitVarHeuristic.h>
+#import <objcp/CPData.h>
 
 @protocol ORModel;
 @protocol ORSearchController;
@@ -58,9 +60,17 @@ PORTABLE_BEGIN
 -(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          maxwidthSearch: (id<ORFloatVarArray>) x;
+-(void)          minWidthSearch: (id<ORFloatVarArray>) x;
+-(void)          maxCardinalitySearch: (id<ORFloatVarArray>) x;
+-(void)          minCardinalitySearch: (id<ORFloatVarArray>) x;
+-(void)          maxDensitySearch: (id<ORFloatVarArray>) x;
+-(void)          minDensitySearch: (id<ORFloatVarArray>) x;
+-(void)          maxMagnitudeSearch: (id<ORFloatVarArray>) x;
+-(void)          minMagnitudeSearch: (id<ORFloatVarArray>) x;
+-(void)          alternateMagnitudeSearch: (id<ORFloatVarArray>) x;
 -(void)          floatSplitArray: (id<ORFloatVarArray>) x;
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x;
--(void)          dynamicFloatSplitArray: (id<ORFloatVarArray>) x;
 -(void)          realLabel: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;
@@ -69,6 +79,7 @@ PORTABLE_BEGIN
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
+-(void)               split: (id<ORIntVar>)x;
 -(void)          splitArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy;
@@ -119,7 +130,7 @@ PORTABLE_BEGIN
                   onFailure: (ORInt2Void) onFailure;
 
 -(void)              select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body;
-
+-(void)              atomic: (ORClosure)body;
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)                 try: (ORClosure) body then: (ORClosure) body;
 -(void)                once: (ORClosure) cl;
@@ -169,7 +180,8 @@ PORTABLE_BEGIN
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
--(ORInt)  domsize: (id<ORIntVar>) x;
+-(ORInt)  domsize: (id<ORVar>) x;
+-(ORInt)  regret:(id<ORIntVar>)x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
 
@@ -219,11 +231,29 @@ PORTABLE_BEGIN
 @protocol CPSemanticProgram <CPCommonProgram>
 @end
 
-@protocol CPBV
+@protocol CPBV <CPCommonProgram>
+-(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val;
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
+-(void) labelBits:(id<ORBitVar>)x withValue:(ORInt) v;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
--(void) labelBitVarsFirstFail: (NSArray*)vars;
+-(void) labelDownFromMSB:(id<CPBitVar>) x;
+-(void) labelOutFromMidFreeBit:(id<CPBitVar>) x;
+-(void) labelBitsMixedStrategy:(id<CPBitVar>) x;
+-(void) labelRandomFreeBit:(id<CPBitVar>) x;
+//-(void) labelBitVarsFirstFail: (NSArray*)vars;
+-(void) labelBitVarHeuristic:(id<CPBitVarHeuristic>) h;
+-(void) labelBitVarHeuristicCDCL:(id<CPBitVarHeuristic>) h;
+
+-(id<CPBitVarHeuristic>) createBitVarFF;
+-(id<CPBitVarHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarABS;
+-(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarIBS;
+-(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
+
 -(NSString*)stringValue:(id<ORBitVar>)x;
+-(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x;
+-(ORBool)boundBit:(ORInt)k in:(id<ORBitVar>)x;
+-(ORBool)bitAt:(ORInt)k in:(id<ORBitVar>)x;
 @end
 PORTABLE_END
-

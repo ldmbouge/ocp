@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ORProgram/MIPProgram.h>
 #import "ORRunnablePiping.h"
-#import "MIPProgram.h"
 
 @protocol MIPRunnable <ORRunnable>
 -(id<MIPProgram>) solver;
--(void) injectColumn: (id<ORDoubleArray>) col;
+-(void) addCuts: (id<ORConstraintSet>) cuts;
 @end
 
 @interface MIPRunnableI : ORPipedRunnable<MIPRunnable>
@@ -20,7 +20,7 @@
 -(id) initWithModel: (id<ORModel>)m numThreads: (ORInt)nth;
 -(id<ORSignature>) signature;
 -(id<MIPProgram>) solver;
--(void) injectColumn: (id<ORDoubleArray>) col;
+-(void) addCuts: (id<ORConstraintSet>) cuts;
 -(id<ORModel>) model;
 -(void) run;
 -(void) setTimeLimit: (ORDouble) secs;

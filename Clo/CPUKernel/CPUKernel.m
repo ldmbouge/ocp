@@ -10,16 +10,21 @@
  ***********************************************************************/
 
 #import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPClosureEvent.h>
+#import <CPUKernel/CPGroup.h>
 #import "CPEngineI.h"
-#import "CPClosureEvent.h"
-#import "CPGroup.h"
+#import "CPLearningEngineI.h"
 
 @implementation CPFactory
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
 {
    return [[CPEngineI alloc] initEngine: trail memory:mt];
 }
-+(id<CPGroup>) group: (id<CPEngine>)engine
++(id<CPEngine>) learningEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr
+{
+   return [[CPLearningEngineI alloc] initEngine: trail memory:mt tracer:tr];
+}
++(id<CPGroup>)group:(id<CPEngine>)engine
 {
    id<CPGroup> g = [[CPGroup alloc] init:engine];
    [engine trackMutable:g];
@@ -55,7 +60,10 @@
    [_node release];
    [super dealloc];
 }
-
+-(ORBool)vertical
+{
+   return NO;
+}
 -(ORClosure) trigger
 {
    return _trigger;

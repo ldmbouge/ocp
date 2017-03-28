@@ -287,6 +287,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _valueClosureQueue = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
    _propagating = 0;
    _nbpropag = 0;
+   _nbFailures = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
    _propagFail = nil;
    _propagDone = nil;
@@ -321,6 +322,16 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 {
    return self;
 }
+-(ORBool)holdsVertical
+{
+   ORBool isVertical = NO;
+   for(id<ORObject> obj in _oStore) {
+      isVertical |= [obj vertical];
+      if (isVertical)
+         break;
+   }
+   return isVertical;
+}
 -(NSMutableArray*)variables
 {
    return _vars;
@@ -340,6 +351,10 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 -(void)incNbPropagation:(ORUInt)add
 {
    _nbpropag += add;
+}
+-(ORUInt) nbFailures
+{
+   return _nbFailures;
 }
 -(ORUInt) nbPropagation
 {
@@ -452,6 +467,7 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
             id<CPGroup> group = lc->_group;
             lc->_todo = CPTocheck;
             if (group) {
+               [group toCheck];
                ClosureQueueEnqueue(fdm->_closureQueue[LOWEST_PRIO], nil, group);
                [group scheduleClosure:list];
             }
@@ -491,6 +507,7 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
         else {
             cstr->_todo = CPChecked;
             cstr->_propagate(cstr,@selector(propagate));
+           //[cstr propagate];
         }
     }
     return ORSuspend;
@@ -556,11 +573,15 @@ ORStatus propagateFDM(CPEngineI* fdm)
          [fdm->_propagFail notifyWith:[*last getId]];
       //[exception release];
       fdm->_nbpropag += nbp;
+      fdm->_nbFailures += 1;
       --fdm->_propagating;
       assignTRInt(&fdm->_iStat, ORFailure, fdm->_trail);
    ENDFAIL(ORFailure)
 }
-
+-(ORBool)isPropagating
+{
+   return _propagating > 0;
+}
 -(ORStatus) propagate
 {
    return propagateFDM(self);

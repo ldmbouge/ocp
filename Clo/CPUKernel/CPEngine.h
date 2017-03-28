@@ -38,7 +38,8 @@
 -(void)  tryEnforce:(ORClosure) cl;
 -(void)  tryAtomic:(ORClosure) cl;
 -(ORStatus) atomic: (ORClosure) cl;
-
+-(ORBool) isPropagating;
+-(ORUInt) nbFailures;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
@@ -47,6 +48,7 @@
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 -(id<ORIntRange>)boolRange;
+-(ORBool)holdsVertical;
 @end
 
 #define ISLOADED(q)  ((q)->_csz)
