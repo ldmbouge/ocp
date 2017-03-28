@@ -12,10 +12,10 @@
 
 @property int serviceId;
 @property int serviceMemory;
-@property NSString *serviceBandwidth;
+@property int serviceBandwidth;
 
 - (id) initWithId: (int) serviceId
     serviceMemory: (int) serviceMemory
- serviceBandwidth: (NSString *) serviceBandwidth;
+ serviceBandwidth: (int) serviceBandwidth;
 
 @end

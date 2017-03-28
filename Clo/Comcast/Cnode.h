@@ -12,10 +12,10 @@
 
 @property int cnodeId;
 @property int cnodeMemory; // in MB
-@property NSString* cnodeBandwidth; // in MB/s
+@property int cnodeBandwidth; // in MB/s
 
 - (id) initWithId: (int) cnodeId
          cnodeMemory: (int) cnodeMemory
-         cnodeBandwidth: (NSString *) cnodeBandwidth;
+         cnodeBandwidth: (int) cnodeBandwidth;
 
 @end

@@ -12,7 +12,7 @@
 
 - (id) initWithId: (int) serviceId
     serviceMemory: (int) serviceMemory
- serviceBandwidth: (NSString *) serviceBandwidth{
+ serviceBandwidth: (int) serviceBandwidth{
     self = [super init];
     if (self){
         self.serviceId = serviceId;

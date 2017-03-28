@@ -4,46 +4,46 @@
     <cnode>
 		<id>1</id>
 		<cnodeMemory>128</cnodeMemory> 
-		<cnodeBandwidth>value2</cnodeBandwidth>
+		<cnodeBandwidth>50000</cnodeBandwidth>
 	</cnode>
 	<cnode>
 		<id>2</id>
 		<cnodeMemory>512</cnodeMemory>
-		<cnodeBandwidth>value2</cnodeBandwidth>
+		<cnodeBandwidth>5000</cnodeBandwidth>
 	</cnode>
 	<cnode>
 		<id>3</id>
 		<cnodeMemory>64</cnodeMemory>
-		<cnodeBandwidth>value2</cnodeBandwidth>
+		<cnodeBandwidth>50000</cnodeBandwidth>
 	</cnode>
 	<service>
 		<id>1</id>
-		<serviceMemory>value1</serviceMemory>
-		<serviceBandwidth>value2</serviceBandwidth>
+		<serviceMemory>32</serviceMemory>
+		<serviceBandwidth>10000</serviceBandwidth>
 	</service>
 	<service>
 		<id>2</id>
-		<serviceProp1>value1</serviceProp1>
-		<serviceProp2>value2</serviceProp2>
+        <serviceMemory>24</serviceMemory>
+        <serviceBandwidth>2000</serviceBandwidth>
 	</service>
 	<service>
 		<id>3</id>
-		<serviceProp1>value1</serviceProp1>
-		<serviceProp2>value2</serviceProp2>
+        <serviceMemory>16</serviceMemory>
+        <serviceBandwidth>10000</serviceBandwidth>
 	</service>		
 	<sec>
 		<id>1</id>
-		<secProp1>value1</secProp1>
+		<secProp1>1</secProp1>
 		<secProp2>value2</secProp2>
 	</sec>
 	<sec>
 		<id>2</id>
-		<secProp1>value1</secProp1>
+		<secProp1>3</secProp1>
 		<secProp2>value2</secProp2>
 	</sec>
 	<sec>
 		<id>3</id>
-		<secProp1>value1</secProp1>
+		<secProp1>2</secProp1>
 		<secProp2>value2</secProp2>
 	</sec>
 </document>

@@ -11,8 +11,8 @@
 @implementation SecurityTech
 
 - (id) initWithId: (int) secId
-       secProp1: (NSString *) secProp1
-       secProp2: (NSString *) secProp2 {
+       secProp1: (int) secProp1
+       secProp2: (int) secProp2 {
     self = [super init];
     if (self){
         self.secId = secId;

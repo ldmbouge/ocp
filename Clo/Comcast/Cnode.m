@@ -12,7 +12,7 @@
 
 - (id) initWithId: (int) cnodeId
          cnodeMemory: (int) cnodeMemory
-         cnodeBandwidth: (NSString *) cnodeBandwidth {
+         cnodeBandwidth: (int) cnodeBandwidth {
     self = [super init];
     if (self){
         self.cnodeId = cnodeId;

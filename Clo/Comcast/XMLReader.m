@@ -23,17 +23,17 @@
 // cnode properties
 @property int currentCnodeId;
 @property int currentCnodeMemory;
-@property NSString* currentCnodeBandwidth;
+@property int currentCnodeBandwidth;
 
 // app properties
 @property int currentServiceId;
 @property int currentServiceMemory;
-@property NSString* currentServiceBandwidth;
+@property int currentServiceBandwidth;
 
 // security technology properties
 @property int currentSecId;
-@property NSString* currentSecProp1;
-@property NSString* currentSecProp2;
+@property int currentSecProp1;
+@property int currentSecProp2;
 
 @end
 
@@ -78,7 +78,7 @@ foundCharacters:(NSString *)string{
         self.currentCnodeMemory = string.intValue;
     }
     else if ([self.element isEqualToString:@"cnodeBandwidth"]){
-        self.currentCnodeBandwidth = string;
+        self.currentCnodeBandwidth = string.intValue;
     }
     else if ([self.element isEqualToString:@"serviceId"]){
         self.currentServiceId = string.intValue;
@@ -87,16 +87,16 @@ foundCharacters:(NSString *)string{
         self.currentServiceMemory = string.intValue;
     }
     else if ([self.element isEqualToString:@"serviceBandwidth"]){
-        self.currentServiceBandwidth = string;
+        self.currentServiceBandwidth = string.intValue;
     }
     else if ([self.element isEqualToString:@"secId"]){
         self.currentSecId = string.intValue;
     }
     else if ([self.element isEqualToString:@"secProp1"]){
-        self.currentSecProp1 = string;
+        self.currentSecProp1 = string.intValue;
     }
     else if ([self.element isEqualToString:@"secProp2"]){
-        self.currentSecProp2 = string;
+        self.currentSecProp2 = string.intValue;
     }
 }
 

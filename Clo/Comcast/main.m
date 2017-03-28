@@ -22,23 +22,54 @@ int main(int argc, const char * argv[])
     
     srand(2);//(unsigned int)time(NULL));
     
-    ORInt Ncnodes = 3;
-    ORInt Napps = 3;
-    ORInt Nsec = 2;
+    // Get info from XML
+    NSMutableArray *mutCnodes;
+    NSMutableArray *mutService;
+    NSMutableArray *mutSec;
+    id<ORIntArray> cnodes;
+    id<ORIntArray> service;
+    id<ORIntArray> sec;
+    
+    [[XMLReader alloc] initWithArrays: mutCnodes serviceArray: mutApps secArray: mutSec];
+    
+    for(ORInt count = 0; count < (sizeof mutCnodes); count++){
+        cnodes[count]=mutCnodes[count];
+    }
+    
+    for(ORInt count = 0; count < (sizeof mutService); count++){
+        service[count]=mutService[count];
+    }
+    
+    for(ORInt count = 0; count < (sizeof mutSec); count++){
+        sec[count]=mutSec[count];
+    }
+    
+    // Base these on size of arrays instead of random
+    /*
+     ORInt Ncnodes = 3;
+     ORInt Napps = 3;
+     ORInt Nsec = 2;
+     */
+    
+    ORInt Ncnodes = (sizeof cnodes);
+    ORInt Nservice = (sizeof service);
+    ORInt Nsec = (sizeof sec);
     ORInt MAX_CONN = 2;
     ORInt VM_MEM = 50;
     
-    id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
-    id<ORIntRange> apps = RANGE(model,1, Napps);
-    id<ORIntRange> sec = RANGE(model,0, Nsec);
+    /* Get info from XML instead of random
+     id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
+     id<ORIntRange> apps = RANGE(model,1, Napps);
+     id<ORIntRange> sec = RANGE(model,0, Nsec);
+     */
 
-    id<ORIntArray> D = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 8 + 1; }];
+    id<ORIntArray> D = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 8 + 1; }];
     id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 400 + 1; }];
-    id<ORIntArray> Mapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 28 + 1; }];
+    id<ORIntArray> Mapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return  rand() % 28 + 1; }]; //{ return service.[i].serviceId; }];
     id<ORIntArray> B = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 1000 + 1; }];
-    id<ORIntArray> Bapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
+    id<ORIntArray> Bapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
     
-    id<ORIntMatrix> C = [ORFactory intMatrix: model range: apps : apps with:^int(ORInt i, ORInt j) {
+    id<ORIntMatrix> C = [ORFactory intMatrix: model range: service : service with:^int(ORInt i, ORInt j) {
         if (i < j) {
             return rand() % MAX_CONN + 1;
         }
@@ -46,8 +77,8 @@ int main(int argc, const char * argv[])
         return -1;
     }];
     // Hack to make C symmetric.
-    for(ORInt i = [apps low]; i <= [apps up]; i++) {
-        for(ORInt j = [apps low]; j <= [apps up]; j++) {
+    for(ORInt i = [service low]; i <= [service up]; i++) {
+        for(ORInt j = [service low]; j <= [service up]; j++) {
             if([C at: i : j] == -1) [C set: [C at: j : i] at: i : j];
         }
     }
@@ -55,9 +86,9 @@ int main(int argc, const char * argv[])
     
     ORInt Vmax = 3;//[D sumWith:^ORInt(ORInt value, int idx) { return value; }];
     id<ORIntRange> vm = RANGE(model,1, Vmax);
-    id<ORIntArray> Uapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return (ORInt)([D at: i] * 1.3); }];
+    id<ORIntArray> Uapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return (ORInt)([D at: i] * 1.3); }];
     id<ORIntRange> Iapp = RANGE(model,0, [Uapp sumWith:^ORInt(ORInt value, int idx) { return value; }]-1);
-    id<ORIdArray> omega = [ORFactory idArray: model range: apps with:^id _Nonnull(ORInt a) {
+    id<ORIdArray> omega = [ORFactory idArray: model range: service with:^id _Nonnull(ORInt a) {
         ORInt offset = [Uapp sumWith:^ORInt(ORInt value, int idx) { return idx < a ? value : 0; }];
         return RANGE(model, offset, offset + [Uapp at: a] - 1);
     }];
@@ -71,7 +102,7 @@ int main(int argc, const char * argv[])
     
     ORInt t[3] = {0,1,2};
     id<ORIntArray> T = [ORFactory intArray: model range: sec values: (ORInt*)&t];
-    id<ORIntArray> Tapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 3; }];
+    id<ORIntArray> Tapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 3; }];
     
     id<ORIntArray> Fmem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     id<ORIntArray> Fbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
@@ -82,7 +113,7 @@ int main(int argc, const char * argv[])
     // Variables
     id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
     id<ORIntVarArray> vc = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, [Iapp size])];
-    id<ORIntVarMatrix> vm_conn = [ORFactory intVarMatrix: model range: vm : apps domain: RANGE(model, 0, [Iapp size] * MAX_CONN)];
+    id<ORIntVarMatrix> vm_conn = [ORFactory intVarMatrix: model range: vm : service domain: RANGE(model, 0, [Iapp size] * MAX_CONN)];
     
     id<ORIntVarArray> a = [ORFactory intVarArray: model range: Iapp domain: RANGE(model, 0, Vmax)];
     id<ORIntVarMatrix> conn = [ORFactory intVarMatrix: model range: Iapp : Iapp domain: RANGE(model, 0, MAX_CONN)];
@@ -96,12 +127,12 @@ int main(int argc, const char * argv[])
     //[model add: [Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]]) leq: @(457)]];
     
     // Demand Constraints
-    for(ORInt j = [apps low]; j <= [apps up]; j++) {
+    for(ORInt j = [service low]; j <= [service up]; j++) {
         [model add: [Sum(model, i, [omega at: j], [[a at: i] gt: @(0)]) geq: @([D at: j])]];
     }
     
     // App Symmetry breaking
-    for(ORInt j = [apps low]; j <= [apps up]; j++) {
+    for(ORInt j = [service low]; j <= [service up]; j++) {
         id<ORIntRange> r = [omega at: j];
         for(ORInt i = [r low]; i < [r up]; i++) {
             [model add: [[[a at: i] leq: @(0)] imply: [[a at: i+1] leq: @(0)]]];
@@ -126,7 +157,7 @@ int main(int argc, const char * argv[])
     
     // Count connections on each VM. A connection is not counted if the two apps are both within the same VM.
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
-        for(ORInt j = [apps low]; j <= [apps up]; j++) {
+        for(ORInt j = [service low]; j <= [service up]; j++) {
             [model add: [[vm_conn at: i : j] eq: Sum2(model, k, [omega at: j], k2, Iapp, [[conn at: k : k2] mul: [[[a at: k] eq: @(i)] land: [[a at: k2] neq: @(i)]] ])] ];
         }
     }
@@ -168,7 +199,7 @@ int main(int argc, const char * argv[])
 //    // Bandwidth usage:
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_bw at: i] geq:
-                     [[Sum(model, j, apps, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
+                     [[Sum(model, j, service, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
                       [Fbw elt: [s at: i]]
                      ]]];
     }

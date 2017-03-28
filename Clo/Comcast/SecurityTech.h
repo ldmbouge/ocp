@@ -11,11 +11,11 @@
 @interface SecurityTech : NSObject
 
 @property int secId;
-@property NSString* secProp1;
-@property NSString* secProp2;
+@property int secProp1;
+@property int secProp2;
 
 - (id) initWithId: (int) secId
-       secProp1: (NSString *) secProp1
-       secProp2: (NSString *) secProp2;
+       secProp1: (int) secProp1
+       secProp2: (int) secProp2;
 
 @end
