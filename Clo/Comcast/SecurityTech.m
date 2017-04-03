@@ -11,13 +11,13 @@
 @implementation SecurityTech
 
 - (id) initWithId: (int) secId
-       secProp1: (int) secProp1
-       secProp2: (int) secProp2 {
+       secMemory: (int) secProp1
+       secBandwidth: (int) secProp2 {
     self = [super init];
     if (self){
         self.secId = secId;
-        self.secProp1 = secProp1;
-        self.secProp2 = secProp2;
+        self.secMemory = secProp1;
+        self.secBandwidth = secProp2;
     }
     return self;
 }

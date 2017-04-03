@@ -10,12 +10,13 @@
 
 @implementation Cnode
 
-- (id) initWithId: (int) cnodeId
-         cnodeMemory: (int) cnodeMemory
+- (id) initWithId: (int) cnodeExtId
+         cnodeMemory: (ORInt) cnodeMemory
          cnodeBandwidth: (int) cnodeBandwidth {
     self = [super init];
     if (self){
-        self.cnodeId = cnodeId;
+        /* self.cnodeIntId = cnodeIntId; */
+        self.cnodeExtId = cnodeExtId;
         self.cnodeMemory = cnodeMemory;
         self.cnodeBandwidth = cnodeBandwidth;
     }

@@ -13,7 +13,14 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
 #import <ORModeling/ORLinearize.h>
+@class XMLReader;
 #import "XMLReader.h"
+@class Cnode;
+#import "Cnode.h"
+@class SecurityTech;
+#import "SecurityTech.h"
+@class Service;
+#import "Service.h"
 
 int main(int argc, const char * argv[])
 {    
@@ -23,51 +30,40 @@ int main(int argc, const char * argv[])
     srand(2);//(unsigned int)time(NULL));
     
     // Get info from XML
-    NSMutableArray *mutCnodes;
-    NSMutableArray *mutService;
-    NSMutableArray *mutSec;
-    id<ORIntArray> cnodes;
-    id<ORIntArray> service;
-    id<ORIntArray> sec;
+    NSMutableArray * serviceArray;
+    NSMutableArray * secArray;
+    NSMutableArray * cnodeArray;
+    id dataIn;
     
-    [[XMLReader alloc] initWithArrays: mutCnodes serviceArray: mutApps secArray: mutSec];
-    
-    for(ORInt count = 0; count < (sizeof mutCnodes); count++){
-        cnodes[count]=mutCnodes[count];
-    }
-    
-    for(ORInt count = 0; count < (sizeof mutService); count++){
-        service[count]=mutService[count];
-    }
-    
-    for(ORInt count = 0; count < (sizeof mutSec); count++){
-        sec[count]=mutSec[count];
-    }
-    
-    // Base these on size of arrays instead of random
-    /*
-     ORInt Ncnodes = 3;
-     ORInt Napps = 3;
-     ORInt Nsec = 2;
-     */
-    
-    ORInt Ncnodes = (sizeof cnodes);
-    ORInt Nservice = (sizeof service);
-    ORInt Nsec = (sizeof sec);
+    dataIn = [[XMLReader alloc] initWithArrays: cnodeArray serviceArray: serviceArray secArray: secArray];
+
+    ORInt Ncnodes = (sizeof cnodeArray);
+    ORInt Nservice = (sizeof serviceArray);
+    ORInt Nsec = (sizeof secArray);
     ORInt MAX_CONN = 2;
     ORInt VM_MEM = 50;
     
-    /* Get info from XML instead of random
-     id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
-     id<ORIntRange> apps = RANGE(model,1, Napps);
-     id<ORIntRange> sec = RANGE(model,0, Nsec);
-     */
-
+    // Get ranges from XML
+    id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
+    id<ORIntRange> service = RANGE(model,1, Nservice);
+    id<ORIntRange> sec = RANGE(model,0, Nsec);
+    
+    // Use info from XML instead of random values
+    id<ORIntArray> cnodeMem = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return [cnodeArray[i] cnodeMemory]; } ];
+    id<ORIntArray> cnodeBw = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return [cnodeArray[i] cnodeBandwidth]; } ];
+    id<ORIntArray> serviceMem = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return [serviceArray[i] serviceMemory]; } ];
+    id<ORIntArray> serviceBw = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return [serviceArray[i] serviceBandwidth]; } ];
+    id<ORIntArray> secMem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return [secArray[i] secMemory]; } ];
+    id<ORIntArray> secBw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return [secArray[i] secBandwidth]; } ];
     id<ORIntArray> D = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 8 + 1; }];
+    
+    
+     /*
     id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 400 + 1; }];
     id<ORIntArray> Mapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return  rand() % 28 + 1; }]; //{ return service.[i].serviceId; }];
     id<ORIntArray> B = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 1000 + 1; }];
     id<ORIntArray> Bapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
+    */
     
     id<ORIntMatrix> C = [ORFactory intMatrix: model range: service : service with:^int(ORInt i, ORInt j) {
         if (i < j) {
@@ -84,7 +80,7 @@ int main(int argc, const char * argv[])
     }
  
     
-    ORInt Vmax = 3;//[D sumWith:^ORInt(ORInt value, int idx) { return value; }];
+    ORInt Vmax = 3;// [D sumWith:^ORInt(ORInt value, int idx) { return value; }];
     id<ORIntRange> vm = RANGE(model,1, Vmax);
     id<ORIntArray> Uapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return (ORInt)([D at: i] * 1.3); }];
     id<ORIntRange> Iapp = RANGE(model,0, [Uapp sumWith:^ORInt(ORInt value, int idx) { return value; }]-1);
@@ -101,11 +97,15 @@ int main(int argc, const char * argv[])
     }];
     
     ORInt t[3] = {0,1,2};
+    
     id<ORIntArray> T = [ORFactory intArray: model range: sec values: (ORInt*)&t];
+    /* Tapp = service zone */
     id<ORIntArray> Tapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 3; }];
     
+    /* Replace Fmem with secMem and Fbw with SecBw
     id<ORIntArray> Fmem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     id<ORIntArray> Fbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
+    */
     
     id<ORDoubleArray> Smem = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
     id<ORDoubleArray> Sbw = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
@@ -188,19 +188,20 @@ int main(int argc, const char * argv[])
     }
 
     // Memory usage = Fixed memory for deploying VM + per app memory usage scaled by security technology + fixed cost of sec. technology.
+    // ======= Replace Mapp with serviceMem ======
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_mem at: i] geq:
                      [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
-                      [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] plus:
-                      [Fmem elt: [s at: i]]]
+                      [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([serviceMem at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] plus:
+                      [SecMem elt: [s at: i]]]
                      ]]];
     }
     
-//    // Bandwidth usage:
+//    // Bandwidth usage: ==== replace Bapp with serviceBw ====
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_bw at: i] geq:
-                     [[Sum(model, j, service, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
-                      [Fbw elt: [s at: i]]
+                     [[Sum(model, j, service, [[vm_conn at: i : j] mul: @([serviceBw at: j])]) mul: [Sbw elt: [s at: i]]] plus:
+                      [secBw] elt: [s at: i]]
                      ]]];
     }
 

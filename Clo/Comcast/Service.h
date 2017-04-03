@@ -3,6 +3,10 @@
 //  Clo
 //
 //  Created by Sarah Peck on 3/6/17.
+/*
+        Need to add security zone - Tapp; max connections
+ 
+ */
 //
 //
 

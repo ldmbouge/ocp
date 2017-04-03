@@ -3,6 +3,9 @@
 //  Clo
 //
 //  Created by Sarah Peck on 3/6/17.
+/*
+        Need to add zone (T), scaled memory, scaled bandwidth (Smem, Sbw)
+*/
 //
 //
 
@@ -11,11 +14,11 @@
 @interface SecurityTech : NSObject
 
 @property int secId;
-@property int secProp1;
-@property int secProp2;
+@property int secMemory;
+@property int secBandwidth;
 
 - (id) initWithId: (int) secId
-       secProp1: (int) secProp1
-       secProp2: (int) secProp2;
+       secMemory: (int) secProp1
+       secBandwidth: (int) secProp2;
 
 @end

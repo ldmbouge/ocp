@@ -25,7 +25,7 @@
 @property int currentCnodeMemory;
 @property int currentCnodeBandwidth;
 
-// app properties
+// service properties
 @property int currentServiceId;
 @property int currentServiceMemory;
 @property int currentServiceBandwidth;
@@ -109,21 +109,27 @@ foundCharacters:(NSString *)string{
         Cnode *thisCnode = [[Cnode alloc] initWithId:self.currentCnodeId
                                          cnodeMemory:self.currentCnodeMemory
                                       cnodeBandwidth:self.currentCnodeBandwidth];
-        [self.cnodeArray addObject:thisCnode];
+        int size;
+        size = sizeof(self.cnodeArray);
+        [self.cnodeArray[size] addObject:thisCnode];
     }
     
     else if ([elementName isEqualToString:@"service"]){
         Service *thisService = [[Service alloc] initWithId:self.currentServiceId
-                                     serviceMemory:self.currentServiceMemory
-                                  serviceBandwidth:self.currentServiceBandwidth];
-        [self.serviceArray addObject:thisService];
+                                             serviceMemory:self.currentServiceMemory
+                                          serviceBandwidth:self.currentServiceBandwidth];
+        int size;
+        size = sizeof(self.serviceArray);
+        [self.serviceArray[size] addObject:thisService];
     }
     
     else if ([elementName isEqualToString:@"sec"]){
         SecurityTech *thisSecurityTech = [[SecurityTech alloc] initWithId:self.currentSecId
                                                                  secProp1:self.currentSecProp1
                                                                  secProp2:self.currentSecProp2];
-        [self.secArray addObject:thisSecurityTech];
+        int size;
+        size = sizeof(self.secArray);
+        [self.secArray[size] addObject:thisSecurityTech];
     }
     
     self.element = nil;
