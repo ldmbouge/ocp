@@ -1,3 +1,7 @@
 *.o
 *.d
 *~
+patches*
+*.DS_Store
+*.xcodeproj/*
+*.pbxproj
