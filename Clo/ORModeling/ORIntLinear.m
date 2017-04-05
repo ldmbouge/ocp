@@ -591,6 +591,14 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return [_real postGEQZ:model];
 }
+-(id<ORConstraint>)postLTZ:(id<ORAddToModel>)model
+{
+    return [_real postLTZ:model];
+}
+-(id<ORConstraint>)postGTZ:(id<ORAddToModel>)model
+{
+    return [_real postGTZ:model];
+}
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
     return [_real postDISJ:model];

@@ -725,7 +725,6 @@
     [[x tracker] trackMutable:o];
     return o;
 }
-//TODO clean
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
 {
     if([x count] == 1 && [coefs at:coefs.low]==1.0){
@@ -782,6 +781,12 @@
 +(id<CPConstraint>) floatDiv: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
 {
     id<CPConstraint> o = [[CPFloatTernaryDiv alloc] init:z equals:x div:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) floatSSA: (id<CPFloatVar>)x with:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
+{
+    id<CPConstraint> o = [[CPFloatSSA alloc] init:z ssa:x with:y];
     [[x tracker] trackMutable:o];
     return o;
 }

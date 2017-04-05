@@ -378,7 +378,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     return [_dom magnitude];
 }
 @end
-
 @implementation CPFloatViewOnIntVarI
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv
 {

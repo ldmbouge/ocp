@@ -116,11 +116,10 @@ PORTABLE_BEGIN
 +(id<ORIntVar>) boolVar: (id<ORTracker>) solver;
 +(id<ORBitVar>) bitVar:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORUInt)bLen;
 +(id<ORBitVar>) bitVar:(id<ORTracker>)tracker withLength:(ORUInt)bLen;
-//+(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up;
-//+(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker;
 //=======
 +(id<ORRealVar>) realVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORRealVar>) realVar: (id<ORTracker>) tracker;
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker var:(id<ORFloatVar>) x scale: (ORFloat) a shift:(ORFloat) b;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker;
@@ -187,6 +186,7 @@ PORTABLE_BEGIN
 +(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left min: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left max: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORRelation>) expr: (id<ORExpr>) res ssa: (id<ORExpr>) left with:right track:(id<ORTracker>)t;
 +(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORRelation>) expr: (id<ORExpr>) left lt: (id<ORExpr>) right track:(id<ORTracker>)t;
@@ -308,12 +308,16 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORFloat)
++(id<ORConstraint>) floatEqualc: (id<ORTracker>) model var: (id<ORFloatVar>)x eqc:(ORFloat)c;
++(id<ORConstraint>) floatNEqualc:(id<ORTracker>) model var: (id<ORFloatVar>)x neqc:(ORFloat)c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  neq: (ORFloat) c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  lt: (ORFloat) c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  gt: (ORFloat) c;
++(id<ORConstraint>) floatSSA:(id<ORTracker>)model  array:(id<ORVarArray>)x;
 +(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 +(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
++(id<ORConstraint>) floatSSA:(id<ORTracker>)model  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 @end
 
 @interface ORFactory (BV)

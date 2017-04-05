@@ -351,6 +351,10 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 {
     return [_dom domwidth];
 }
+-(ORInt) domsize
+{
+    return (ORInt)[_dom domwidth];
+}
 @end
 
 @implementation CPDoubleViewOnIntVarI

@@ -118,14 +118,14 @@
 }
 -(void) post
 {
+    [self propagate];
+    [_x whenBindPropagate:self];
+}
+-(void) propagate
+{
     if ([_x bound]) {
         if([_x min] == _c)
             failNow();
-    } else {
-        [_x whenBindDo:^{
-            if([_x min] == _c)
-                failNow();
-        } onBehalf:self];
     }
 }
 -(NSSet*)allVars
@@ -376,7 +376,6 @@
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
     self = [super initCPCoreConstraint: [x engine]];
-    printf("%16.16e\n",fp_next_float(0));
     _z = z;
     _x = x;
     _y = y;
@@ -657,16 +656,38 @@
 @end
 
 @implementation CPFloatSSA
--(id) init:(CPFloatVarI*)x ssa:(CPFloatVarI*)y
+-(id) init:(CPFloatVarI*)z ssa:(CPFloatVarI*)x with:(CPFloatVarI*)y
 {
     self = [super initCPCoreConstraint: [x engine]];
+    _z = z;
     _x = x;
     _y = y;
     return self;
 }
 -(void) post
 {
-    //use narrows function
+    [self propagate];
+    if (![_x bound]) [_x whenChangeBoundsPropagate:self];
+    if (![_y bound]) [_y whenChangeBoundsPropagate:self];
+    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+    ORFloat min = maxFlt([_x min], [_y min]);
+    ORFloat max = minFlt([_x max], [_y max]);
+    [_z updateInterval:min and:max];
+    //y = z inter y
+    if([_z isIntersectingWith:_y]){
+        min = maxFlt([_z min], [_y min]);
+        max = minFlt([_z min], [_y min]);
+        [_y updateInterval:min and:max];
+    }
+    //x = z inter x
+    if([_z isIntersectingWith:_x]){
+        min = maxFlt([_z min], [_x min]);
+        max = minFlt([_z min], [_x min]);
+        [_x updateInterval:min and:max];
+    }
 }
 -(NSSet*)allVars
 {

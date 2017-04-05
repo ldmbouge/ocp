@@ -85,13 +85,6 @@
     } else {
         id<ORFloatVar> alpha =  [ORNormalizer floatVarIn:_model expr:e];
         [_terms addTerm:alpha by:1];
-        
-        /*[[e left] visit:self];
-        id<ORFloatLinear> old = _terms;
-        _terms = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: _terms];
-        [[e right] visit:self];
-        [_terms release];
-        _terms = old;*/
     }
 }
 -(void) visitExprMulI: (ORExprMulI*) e
@@ -101,26 +94,95 @@
         [_terms addTerm:alpha by:1];
         _eqto = nil;
     } else {
-       /* BOOL cv = [[e left] isConstant] && [[e right] isVariable];
-        BOOL vc = [[e left] isVariable] && [[e right] isConstant];
-        if (cv || vc) {
-            ORFloat coef = cv ? [[e left] floatValue] : [[e right] floatValue];
-            id       x = cv ? [e right] : [e left];
-            [_terms addTerm:x by:coef];
-        } else if ([[e left] isConstant]) {
-            id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:[e right]];
-            [_terms addTerm:alpha by:[[e left] min]];
-        } else if ([[e right] isConstant]) {
-            ORFloatLinear* left = [ORNormalizer floatLinearFrom:[e left] model:_model];
-            [left scaleBy:[[e right] min]];
-            [_terms addLinear:left];
-        } else {*/
-            id<ORFloatVar> alpha =  [ORNormalizer floatVarIn:_model expr:e];
-            [_terms addTerm:alpha by:1];
-       // }
+        id<ORFloatVar> alpha =  [ORNormalizer floatVarIn:_model expr:e];
+        [_terms addTerm:alpha by:1];
     }
 }
 -(void) visitExprDivI:(ORExprDivI *)e
+{
+    if (_eqto) {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+        [_terms addTerm:alpha by:1];
+    }
+}
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+    ORFloatLinear* linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+    [ORNormalizer addToFloatLinear:linLeft from:[e right] model:_model];
+    _terms = linLeft;
+}
+-(void) visitExprEqualI:(ORExprEqualI*)e
+{
+    if (_eqto) {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+        [_terms addTerm:alpha by:1];
+    }
+}
+-(void) visitExprNEqualI:(ORExprNotEqualI*)e
+{
+    if (_eqto) {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+        [_terms addTerm:alpha by:1];
+    }
+}
+-(void) visitExprLEqualI:(ORExprLEqualI*)e
+{
+    if (_eqto) {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+        [_terms addTerm:alpha by:1];
+    }
+}
+-(void) visitExprGEqualI:(ORExprLEqualI*)e
+{
+    if (_eqto) {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+        [_terms addTerm:alpha by:1];
+    }
+}
+-(void) visitExprLThenI:(ORExprLEqualI*)e
+{
+    if (_eqto) {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+        [_terms addTerm:alpha by:1];
+    }
+}
+
+-(void) visitExprGThenI:(ORExprLEqualI*)e
+{
+    if (_eqto) {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+        [_terms addTerm:alpha by:1];
+    }
+}
+-(void) visitExprNegateI:(ORExprNegateI*) e
 {
     if (_eqto) {
         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
@@ -201,16 +263,20 @@
     ORInt nb = (llb == lub) + (rlb == rub);
     id<ORVarArray> var = [ORFactory floatVarArray:_model range:RANGE(_model,0,2-nb)];
     var[0] = _rv;
-    var[1] = (llb == lub) ? rV : lV;
-    if(rlb != rub) var[2] = rV;
+    if (nb < 1) {
+        var[1] = (llb == lub) ? rV : lV;
+        if(nb == 0 && rlb != rub) var[2] = rV;
+    }
     id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0,2-nb)];
     [coefs set:1 at:0];
     [coefs set:1 at:1];
     if([coefs count] == 3){
         [coefs set:-1 at:2];
     }
-    var[1] = (llb == lub) ? rV : lV;
-    if(rlb != rub) var[2] = rV;
+    if (nb < 1) {
+        var[1] = (llb == lub) ? rV : lV;
+        if(nb == 0 && rlb != rub) var[2] = rV;
+    }
     ORFloat cst;
     cst = (rlb == rub) ? -rlb : 0.f;
     cst = (llb == lub) ? -llb :cst;
@@ -244,9 +310,231 @@
     [lT release];
     [rT release];
 }
-
+-(void) visitExprSSAI: (ORExprSSAI*) e
+{
+    id<ORFloatVar> lV = (id<ORFloatVar>)[e left];
+    id<ORFloatVar> rV = (id<ORFloatVar>)[e right];
+    id<ORFloatVar> resV = (id<ORFloatVar>)[e res];
+    [_model addConstraint: [ORFactory floatSSA:_model var:lV with:rV equal:resV]];
+}
 -(id<ORFloatVar>)result
 {
     return _rv;
 }
+-(void) visitExprEqualI:(ORExprEqualI*)e
+{
+    if (e.left.isConstant) {
+        id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        [_model addConstraint:[ORFactory floatEqualc:_model var:rV eqc:e.left.fmin]];
+        [linRight release];
+    } else if (e.right.isConstant) {
+        id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
+        [_model addConstraint:[ORFactory floatEqualc:_model var:lV eqc:e.right.fmin]];
+        [linLeft release];
+    } else {
+        id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+        id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        if (_rv==nil) {
+            _rv = [ORFactory floatVar:_model];
+        }
+        id<ORFloatVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,2)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model,0,2) with:^ORFloat(ORInt i) {
+            return 1;
+        }];
+        vars[0] = _rv;
+        vars[1] = lV;
+        vars[2] = rV;
+        [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs eq:0.0f]];
+        [linLeft release];
+        [linRight release];
+    }
+}
+-(void) visitExprNEqualI:(ORExprNotEqualI*)e
+{
+    if ([[e left] isConstant] && [[e right] isVariable]) {
+        id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        [_model addConstraint:[ORFactory floatNEqualc:_model var:rV neqc:e.left.fmin]];
+        [linRight release];
+    } else if ([[e right] isConstant] && [[e left] isVariable]) {
+        id<ORFloatLinear> linLeft = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft for:_model];
+        [_model addConstraint:[ORFactory floatNEqualc:_model var:lV neqc:e.right.fmin]];
+        [linLeft release];
+    } else {
+        id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+        id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        if (_rv==nil)
+            _rv = [ORFactory floatVar:_model];
+        id<ORFloatVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,2)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model,0,2) with:^ORFloat(ORInt i) {
+            return 1.0f;
+        }];
+        vars[0] = _rv;
+        vars[1] = lV;
+        vars[2] = rV;
+        [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs neq:0.0f]];
+        [linLeft release];
+        [linRight release];
+    }
+}
+-(void) visitExprLThenI:(ORExprLThenI*)e
+{
+    if ([[e left] isConstant]) {
+        id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        id<ORFloatVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0, 1) with:^ORFloat(ORInt i) {
+            return 1.0f;
+        }];
+        vars[0] = rV;
+        [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:e.left.fmin]];
+        [linRight release];
+    } else if ([[e right] isConstant]) {
+        id<ORFloatLinear> linLeft = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft for:_model];
+        id<ORFloatVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0, 1) with:^ORFloat(ORInt i) {
+            return 1.0f;
+        }];
+        vars[0] = lV;
+        [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:e.left.fmin]];
+        [linLeft release];
+    } else {
+        id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+        id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        if (_rv==nil)
+            _rv = [ORFactory floatVar:_model];
+        id<ORFloatVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,2)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model,0,2) with:^ORFloat(ORInt i) {
+            return 1.0f;
+        }];
+        vars[0] = _rv;
+        vars[1] = lV;
+        vars[2] = rV;
+        [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:0.0f]];
+        [linLeft release];
+        [linRight release];
+    }
+}
+-(void) visitExprGThenI:(ORExprGThenI*)e
+{
+    if ([[e left] isConstant]) {
+        id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        id<ORFloatVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0, 1) with:^ORFloat(ORInt i) {
+            return 1.0f;
+        }];
+        vars[0] = rV;
+        [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:e.left.fmin]];
+        [linRight release];
+    } else if ([[e right] isConstant]) {
+        id<ORFloatLinear> linLeft = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft for:_model];
+        id<ORFloatVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0, 1) with:^ORFloat(ORInt i) {
+            return 1.0f;
+        }];
+        vars[0] = lV;
+        [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:e.left.fmin]];
+        [linLeft release];
+    } else {
+        id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+        id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        if (_rv==nil)
+            _rv = [ORFactory floatVar:_model];
+        id<ORFloatVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,2)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model,0,2) with:^ORFloat(ORInt i) {
+            return 1.0f;
+        }];
+        vars[0] = _rv;
+        vars[1] = lV;
+        vars[2] = rV;
+        [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:0.0f]];
+        [linLeft release];
+        [linRight release];
+    }
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+    assert(NO);
+}
+-(void) visitExprLEqualI:(ORExprGEqualI*)e
+{
+    assert(NO);
+}
+-(void) visitExprNegateI:(ORExprNegateI*)e
+{
+    id<ORFloatLinear> lT = [ORNormalizer floatLinearFrom:e.operand model:_model];
+    if (_rv==nil) {  // NEG(E)  ->  produce y == NEG(E) ; return y.
+        id<ORFloatVar> oV = [ORNormalizer floatVarIn:lT for:_model];
+        _rv = [ORFactory floatVar:_model var:oV scale:-1 shift:1];
+    } else {  // x = NEG(e)  ==>  NOT(X) == e
+        // x = NEG(a0 OR ... OR an)
+        // a0 OR ... OR an OR x   (to make sure that when x=0, a0 OR ... an must be satisfied (classic clause)
+        // NOT(X) OR NOT(ai)      (to make sure that when x=1, ai=0 must be true (so that the expression be false)
+        // The second can be rewritten (for every i) as:  1 - x ≥ ai
+        // Note that x=1  => 1-x = 0 =>  0 ≥ ai  and all the disjunct must be false.
+        //           x=0  => 1-x = 1 =>  1 ≥ ai  no constraints on the ai
+        //           ai=1 => 1-x ≥ 1 =>  x ≤ 0   and x must be zero. (ok, since the expression is true)
+        //           ai=0 => 1-x ≥ 0 =>  x ≤ 1   and no impact on x.
+        // This requires n+1 clauses, x appears in all of them, each ai appears in 2.
+        id<ORFloatVar> negRet = [ORFactory floatVar:_model var:_rv scale:-1 shift:1];
+        [ORNormalizer floatVar:negRet equal:lT for:_model];
+    }
+    [lT release];
+}
+
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+    assert(NO);
+    id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+    id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+    if ([linLeft isZero] && [linRight isZero]) {
+        assert(0);
+    }else{
+    id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
+        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+        id<ORIntVar> r = [ORFactory boolVar:_model];
+        //[_model addConstraint:[ORFactory model:_model boolean:lV lor:rV equal:r]];
+    }
+    [linLeft release];
+    [linRight release];
+}
+-(void) visitExprConjunctI:(ORConjunctI*)e
+{
+    assert(NO);
+    id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+    id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+    id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
+    id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+    if ([[lV domain] low] >= 1) {
+        if (_rv)
+            [_model addConstraint:[ORFactory equal:_model var:_rv to:rV plus:0]];
+        else
+            _rv = rV;
+    } else if ([[rV domain] low] >= 1) {
+        if (_rv)
+            [_model addConstraint:[ORFactory equal:_model var:_rv to:lV plus:0]];
+        else
+            _rv = lV;
+    } else {
+        //id<ORIntVar> r = [ORFactory boolVar:_model];
+        //[_model addConstraint:[ORFactory model:_model boolean:lV land:rV equal:r]];
+    }
+    [linLeft release];
+    [linRight release];
+}
+
 @end

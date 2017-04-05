@@ -72,7 +72,6 @@
     }
     return ((-FLT_MAX) > lb) ? -FLT_MAX : lb;
 }
-
 -(ORFloat) fmax
 {
     ORDouble ub = _indep;
@@ -137,7 +136,10 @@
         nbN += (_terms[k]._coef < 0);
     return nbN;
 }
-
+-(BOOL)isZero
+{
+    return _nb == 0 && _indep == 0;
+}
 -(NSString*) description
 {
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:128] autorelease];
@@ -164,12 +166,17 @@
     return _nb;
 }
 
+-(id<ORConstraint>) postSSA: (id<ORAddToModel>) model
+{
+    return [model addConstraint:[ORFactory floatSSA: model
+                                              array: [self variables:model]]];
+}
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model
 {
     return [model addConstraint:[ORFactory floatSum: model
-                                             array: [self variables: model]
-                                              coef: [self coefficients: model]
-                                                eq: -_indep]];
+                                              array: [self variables: model]
+                                               coef: [self coefficients: model]
+                                                 eq: -_indep]];
 }
 -(id<ORConstraint>) postLTZ: (id<ORAddToModel>) model
 {
@@ -312,7 +319,10 @@
 {
     return [_float fmax];
 }
-
+-(BOOL)isZero
+{
+    return [_float isZero];
+}
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model
 {
     return [_float postEQZ:model];
@@ -344,6 +354,10 @@
 -(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
 {
     return [_float postIMPLY:model];
+}
+-(id<ORConstraint>)postSSA:(id<ORAddToModel>)model
+{
+    return [_float postSSA:model];
 }
 @end
 

@@ -25,6 +25,7 @@
 -(ORFloat) independent;
 -(ORFloat) fmin;
 -(ORFloat) fmax;
+-(BOOL) isZero;
 @end
 
 @interface ORFloatLinear :  NSObject<ORFloatLinear> {
@@ -46,6 +47,7 @@
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
 -(void) addLinear: (ORFloatLinear*) lts;
 -(void) scaleBy: (ORFloat) s;
+-(BOOL) isZero;
 -(ORFloat) independent;
 -(NSString*) description;
 -(ORFloat) fmin;
@@ -72,6 +74,7 @@
 -(void) setIndependent: (ORFloat) idp;
 -(void) addIndependent: (ORFloat) idp;
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
+-(BOOL) isZero;
 -(ORFloat) fmin;
 -(ORFloat) fmax;
 @end

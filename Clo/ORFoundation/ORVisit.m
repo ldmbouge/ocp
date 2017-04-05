@@ -252,7 +252,11 @@
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Equalc: visit method not defined"]; 
+    @throw [[ORExecutionError alloc] initORExecutionError: "Equalc: visit method not defined"];
+}
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];
 }
 -(void) visitRealEqualc: (id<ORRealEqualc>)c
 {
@@ -261,6 +265,10 @@
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NEqualc: visit method not defined"]; 
+}
+-(void) visitFloatNEqualc: (id<ORFloatNEqualc>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "FloatNEqualc: visit method not defined"];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
@@ -480,6 +488,14 @@
 -(void) visitFloatDiv: (id<ORFloatDiv>) c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatDiv: visit method not defined"];
+}
+-(void) visitFloatSSA: (id<ORFloatSSA>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatSSA: visit method not defined"];
+}
+-(void) visitExprSSAI: (id<ORExpr>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORExprSSAI: visit method not defined"];
 }
 -(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c
 {

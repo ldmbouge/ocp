@@ -1153,6 +1153,28 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
+-(void) visitFloatEqualc:(id<ORFloatEqualc>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORFloatVar> left = [cstr left];
+        ORFloat cst = [cstr cst];
+        [left visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory floatEqualc:_gamma[left.getId]  to: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatNEqualc:(id<ORFloatNEqualc>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORFloatVar> left = [cstr left];
+        ORFloat cst = [cstr cst];
+        [left visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory floatNEqualc: _gamma[left.getId]  to: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 -(void) visitFloatLinearEq:(id<ORFloatLinearEq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1230,6 +1252,19 @@
             ];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatSSA:(id<ORFloatSSA>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+    id<ORFloatVar> res = [cstr res];
+    id<ORFloatVar> left = [cstr left];
+    id<ORFloatVar> right = [cstr right];
+    id<CPConstraint> concreteCstr = [CPFactory floatSSA:(id<CPFloatVar>) _gamma[left.getId]
+                                                  with:(id<CPFloatVar>) _gamma[right.getId]
+                                                  equal:(id<CPFloatVar>) _gamma[res.getId]];
+    [_engine add: concreteCstr];
+    _gamma[cstr.getId] = concreteCstr;
     }
 }
 -(void)visitRealLinearLeq:(id<ORRealLinearLeq>)cstr
@@ -1774,6 +1809,8 @@
 -(void) visitExprPlusI: (id<ORExpr>) e
 {}
 -(void) visitExprMinusI: (id<ORExpr>) e
+{}
+-(void) visitExprSSAI: (id<ORExpr>) e
 {}
 -(void) visitExprMulI: (id<ORExpr>) e
 {}

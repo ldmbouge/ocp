@@ -172,12 +172,15 @@
 -(void) visitRealLinearLeq: (id<ORConstraint>) c;
 -(void) visitRealLinearGeq: (id<ORConstraint>) c;
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
+-(void) visitFloatEqualc: (id<ORConstraint>)c;
+-(void) visitFloatNEqualc: (id<ORConstraint>)c;
 -(void) visitFloatLinearEq: (id<ORConstraint>) c;
 -(void) visitFloatLinearNEq: (id<ORConstraint>) c;
 -(void) visitFloatLinearLT: (id<ORConstraint>) c;
 -(void) visitFloatLinearGT: (id<ORConstraint>) c;
 -(void) visitFloatMult: (id<ORFloatMult>) c;
 -(void) visitFloatDiv: (id<ORFloatDiv>) c;
+-(void) visitFloatSSA: (id<ORFloatSSA>) c;
 
 
 
@@ -217,6 +220,8 @@
 -(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
+-(void) visitExprSSAI:(id<ORExpr>)e;
+
 // Bit
 -(void) visitBitEqualAt:(id<ORConstraint>)c;
 -(void) visitBitEqualc:(id<ORConstraint>)c;

@@ -866,6 +866,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORExpr> o = [[ORExprMaxI alloc] initORExprMaxI: left max: right];
    return [self validate:o onError:"No CP tracker in max Expression" track:t];
 }
++(id<ORRelation>) expr: (id<ORVar>) res ssa: (id<ORVar>) left with:(id<ORVar>) right track:(id<ORTracker>)t
+{
+    id<ORRelation> o = [[ORExprSSAI alloc] initORExprSSAI: res ssa: left with:right tracker:t];
+    [self validate:o onError:"No CP tracker in SSA Expression" track:t];
+    return o;
+}
 +(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORRelation> o = [[ORExprEqualI alloc] initORExprEqualI: left and: right]; 
@@ -1540,7 +1546,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORFloat)
-
++(id<ORConstraint>) floatEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x eqc:(ORFloat)c
+{
+    id<ORConstraint> o = [[ORFloatEqualc alloc] initORFloatEqualc:x eqi:c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) floatNEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x neqc:(ORFloat)c
+{
+    id<ORConstraint> o = [[ORFloatNEqualc alloc]initORFloatNEqualc:x neqi:c];
+    [model trackObject:o];
+    return o;
+}
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
 {
     id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
@@ -1565,6 +1582,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORConstraint>) floatSSA: (id<ORTracker>) model array: (id<ORFloatVarArray>) x
+{
+    return [self floatSSA:model var:x[0] with:x[1] equal:x[2]];
+}
 +(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {
     id<ORConstraint> o = [[ORFloatMult alloc] initORFloatMult:z eq:x times:y];
@@ -1574,6 +1595,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {
     id<ORConstraint> o = [[ORFloatDiv alloc] initORFloatDiv:z eq:x times:y];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) floatSSA:(id<ORTracker>)model  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
+{
+    id<ORConstraint> o = [[ORFloatSSA alloc] initORFloatSSA:z eq:x with:y];
     [model trackObject:o];
     return o;
 }

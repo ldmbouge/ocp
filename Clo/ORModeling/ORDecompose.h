@@ -46,4 +46,5 @@
 +(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
 +(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORFloatVar>)x;
 +(id<ORFloatVar>) floatVarIn:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model;
++(void)floatVar:(id<ORFloatVar>)var equal:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model;
 @end

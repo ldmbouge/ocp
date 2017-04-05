@@ -58,6 +58,18 @@
 -(ORInt) cst;
 @end
 
+@interface ORFloatEqualc : ORConstraintI<ORFloatEqualc>
+-(ORFloatEqualc*)initORFloatEqualc:(id<ORFloatVar>)x eqi:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@interface ORFloatNEqualc : ORConstraintI<ORFloatNEqualc>
+-(ORFloatNEqualc*)initORFloatNEqualc:(id<ORFloatVar>)x neqi:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @interface ORLEqualc : ORConstraintI<ORLEqualc>
 -(ORLEqualc*)initORLEqualc:(id<ORIntVar>)x leqi:(ORInt)c;
 -(id<ORIntVar>) left;
@@ -422,7 +434,14 @@
 @end
 
 @interface ORFloatDiv : ORConstraintI<ORFloatDiv>
--(ORFloatMult*)initORFloatDiv:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
+-(ORFloatDiv*)initORFloatDiv:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
+@interface ORFloatSSA : ORConstraintI<ORFloatDiv>
+-(ORFloatSSA*)initORFloatSSA:(id<ORVar>)z eq:(id<ORVar>)x with:(id<ORVar>)y;
 -(id<ORVar>) res;
 -(id<ORVar>) left;
 -(id<ORVar>) right;

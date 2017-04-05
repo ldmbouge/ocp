@@ -548,8 +548,6 @@ struct CPVarPair {
         ORFloat c = lc ? [[e left] fmin] : [[e right] fmin];
         ORExprI* other = lc ? [e right] : [e left];
         ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
-        //model addConstraint equalc
-        //to remove 
         [lin addIndependent: - c];
         _terms = lin;
     } else {
@@ -612,7 +610,6 @@ struct CPVarPair {
     bool rc = [[e right] isConstant];
     if (lc && rc) {
         bool isOk = [[e left] fmin] < [[e right] fmin];
-        return;
         if (!isOk)
             [_model addConstraint:[ORFactory fail:_model]];
     }else {
@@ -634,7 +631,6 @@ struct CPVarPair {
         }else assert(NO);
     }
 }
-
 //TODO to check
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
@@ -644,7 +640,17 @@ struct CPVarPair {
     [linRight release];
     _terms = linLeft;
 }
-
+-(void) visitExprSSAI:(ORExprSSAI*)e
+{
+    id<ORFloatVar> l = (id<ORFloatVar>)[e left];
+    id<ORFloatVar> r = (id<ORFloatVar>)[e right];
+    id<ORFloatVar> res = (id<ORFloatVar>)[e res];
+    [_model addConstraint:[ORFactory floatSSA:_model var:l with:r equal:res]];
+}
+-(void) visitExprNegateI:(ORExprNegateI*) e
+{
+    assert(NO);
+}
 @end
 
 
@@ -1578,6 +1584,18 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
         [e addTerm:xv by:-1];
         [e postEQZ: model];
         return xv;
+    }
+}
++(void)floatVar:(id<ORFloatVar>)var equal:(ORFloatLinear*)e for:(id<ORAddToModel>) model
+{
+    if (e.size == 0) {
+        [model addConstraint:[ORFactory floatEqualc:model var:var eqc:0.0f]];
+    } else if (e.size == 1) {
+        [e addTerm:var by:-1];
+        [e postEQZ:model];
+    } else {
+        [e addTerm:var by:-1];
+        [e postEQZ:model];
     }
 }
 @end

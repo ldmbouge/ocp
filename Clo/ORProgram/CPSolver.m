@@ -1727,7 +1727,7 @@
 }
 -(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x
 {
-   ORBool min = true;
+   __block ORBool min = true;
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
           id<CPFloatVar> v = _gamma[getId(x[i])];
@@ -1736,7 +1736,7 @@
       orderedByFloat: ^ORFloat(ORInt i) {
          id<CPFloatVar> v = _gamma[getId(x[i])];
          float r = (min)?  [v magnitude] :  -[v magnitude];
-         min = not(min);
+         min = !min;
          return r;
       }
       do: ^(ORInt i){
@@ -2154,7 +2154,7 @@
 }
 -(ORFloat) floatValue:(id<ORVar>)x
 {
-   return [(id<CPFloatVar>)_gamma[x.getId] value];
+   return [((id<CPFloatVar>)_gamma[x.getId]) value];
 }
 -(ORDouble) paramValue: (id<ORRealParam>)x
 {
