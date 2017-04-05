@@ -9,4 +9,5 @@ patches*
 Clo/Clo.xcodeproj/*
 Clo/Clo.xcodeproj/project.pbxproj
 Clo/mpsReader/mpsReader.xcodeproj/project.pbxproj
+*.pbxuser
 
