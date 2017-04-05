@@ -224,26 +224,17 @@
     id<ORFloatLinear> rT = [ORNormalizer floatLinearFrom:[e right] model:_model];
     id<ORFloatVar> lV = [ORNormalizer floatVarIn:lT for:_model];
     id<ORFloatVar> rV = [ORNormalizer floatVarIn:rT for:_model];
-    ORFloat llb = [[lV domain] low];
-    ORFloat lub = [[lV domain] up];
-    ORFloat rlb = [[rV domain] low];
-    ORFloat rub = [[rV domain] up];
     if (_rv==nil){
         _rv = [ORFactory floatVar:_model];
     }
-    ORInt nb = (llb == lub) + (rlb == rub);
-    id<ORVarArray> var = [ORFactory floatVarArray:_model range:RANGE(_model,0,2-nb)];
+    id<ORVarArray> var = [ORFactory floatVarArray:_model range:RANGE(_model,0,2)];
     var[0] = _rv;
-    if(nb != 2)
-        var[1] = (llb == lub) ? rV : lV;
-    if(rlb != rub) var[2] = rV;
-    id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0,2-nb) with:^ORFloat(ORInt i) {
+    var[1] = lV;
+    var[2] = rV;
+    id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0,2) with:^ORFloat(ORInt i) {
         return 1;
     }];
-    ORFloat cst;
-    cst = (rlb == rub) ? rlb : 0.f;
-    cst = (llb == lub) ? llb :cst;
-    [_model addConstraint:[ORFactory floatSum:_model array:var coef:coefs eq:cst]];
+    [_model addConstraint:[ORFactory floatSum:_model array:var coef:coefs eq:0.0f]];
     [lT release];
     [rT release];
 }
@@ -253,34 +244,18 @@
     id<ORFloatLinear> rT = [ORNormalizer floatLinearFrom:[e right] model:_model];
     id<ORFloatVar> lV = [ORNormalizer floatVarIn:lT for:_model];
     id<ORFloatVar> rV = [ORNormalizer floatVarIn:rT for:_model];
-    ORFloat llb = [[lV domain] low];
-    ORFloat lub = [[lV domain] up];
-    ORFloat rlb = [[rV domain] low];
-    ORFloat rub = [[rV domain] up];
     if (_rv==nil){
         _rv = [ORFactory floatVar:_model];
     }
-    ORInt nb = (llb == lub) + (rlb == rub);
-    id<ORVarArray> var = [ORFactory floatVarArray:_model range:RANGE(_model,0,2-nb)];
+    id<ORVarArray> var = [ORFactory floatVarArray:_model range:RANGE(_model,0,2)];
     var[0] = _rv;
-    if (nb < 1) {
-        var[1] = (llb == lub) ? rV : lV;
-        if(nb == 0 && rlb != rub) var[2] = rV;
-    }
-    id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0,2-nb)];
+    var[1] = lV;
+    var[2] = rV;
+    id<ORFloatArray> coefs = [ORFactory floatArray:_model range:RANGE(_model, 0,2)];
     [coefs set:1 at:0];
     [coefs set:1 at:1];
-    if([coefs count] == 3){
-        [coefs set:-1 at:2];
-    }
-    if (nb < 1) {
-        var[1] = (llb == lub) ? rV : lV;
-        if(nb == 0 && rlb != rub) var[2] = rV;
-    }
-    ORFloat cst;
-    cst = (rlb == rub) ? -rlb : 0.f;
-    cst = (llb == lub) ? -llb :cst;
-    [_model addConstraint:[ORFactory floatSum:_model array:var coef:coefs eq:cst]];
+    [coefs set:-1 at:2];
+    [_model addConstraint:[ORFactory floatSum:_model array:var coef:coefs eq:0.0f]];
     [lT release];
     [rT release];
 }

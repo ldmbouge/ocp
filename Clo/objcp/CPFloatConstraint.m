@@ -45,7 +45,6 @@
 }
 -(void) propagate
 {
-    //TODO clean up
     if([_x bound]){
         [_y bind:[_x value]];
         assignTRInt(&_active, NO, _trail);
@@ -158,17 +157,8 @@
 }
 -(void) propagate
 {
-    if([_x bound]){
-        ORFloat nmin = fp_next_float([_x min]);
-        [_y updateMin:nmin];
-        assignTRInt(&_active, NO, _trail);
-        return;
-    }else if ([_y bound]){
-        ORFloat pmin = fp_previous_float([_y min]);
-        [_x updateMax:pmin];
-        assignTRInt(&_active, NO, _trail);
-        return;
-    }
+    if([_x canFollow:_y])
+        failNow();
     if([_x isIntersectingWith:_y]){
         if([_x min] >= [_y min]){
             ORFloat nmin = fp_next_float([_x min]);
@@ -178,10 +168,12 @@
             ORFloat pmax = fp_previous_float([_y max]);
             [_x updateMax:pmax];
         }
-    }else{
-        if([_x canFollow:_y])
-            failNow();
     }
+    if([_x bound] || [_y bound]){
+        assignTRInt(&_active, NO, _trail);
+        return;
+    }
+    
 }
 -(NSSet*)allVars
 {
@@ -213,21 +205,8 @@
 }
 -(void) propagate
 {
-    if([_x bound]){
-        if([_y max] > [_x max]){
-            ORFloat pmin = fp_previous_float([_x min]);
-            [_y updateMax:pmin];
-            assignTRInt(&_active, NO, _trail);
-        }
-        return;
-    }else if ([_y bound]){
-        if([_y min] < [_x min]){
-            ORFloat nmin = fp_next_float([_y min]);
-            [_x updateMin:nmin];
-            assignTRInt(&_active, NO, _trail);
-        }
-        return;
-    }
+    if([_x canPrecede:_y])
+        failNow();
     if([_x isIntersectingWith:_y]){
         if([_x min] <= [_y min]){
             ORFloat pmin = fp_next_float([_y min]);
@@ -237,10 +216,12 @@
             ORFloat nmax = fp_previous_float([_x max]);
             [_y updateMax:nmax];
         }
-    }else{
-        if([_x canPrecede:_y])
-            failNow();
     }
+    if([_x bound] || [_y bound]){
+        assignTRInt(&_active, NO, _trail);
+        return;
+    }
+    
 }
 -(NSSet*)allVars
 {
@@ -252,7 +233,7 @@
 }
 -(NSString*)description
 {
-    return [NSString stringWithFormat:@"<%@ >= %@>",_x,_y];
+    return [NSString stringWithFormat:@"<%@ > %@>",_x,_y];
 }
 @end
 
@@ -273,30 +254,23 @@
 }
 -(void) propagate
 {
-    if([_x bound]){
-        ORFloat nmin = fp_next_float([_x min]);
-        [_y updateMin:nmin];
-        assignTRInt(&_active, NO, _trail);
-        return;
-    }else if ([_y bound]){
-        ORFloat pmin = fp_previous_float([_y min]);
-        [_x updateMax:pmin];
-        assignTRInt(&_active, NO, _trail);
-        return;
-    }
+    if([_x canFollow:_y])
+        failNow();
     if([_x isIntersectingWith:_y]){
-        if([_x min] >= [_y min]){
-            ORFloat nmin = fp_next_float([_x min]);
+        if([_x min] > [_y min]){
+            ORFloat nmin = [_x min];
             [_y updateMin:nmin];
         }
-        if([_x max] >= [_y max]){
-            ORFloat pmax = fp_previous_float([_y max]);
+        if([_x max] > [_y max]){
+            ORFloat pmax = [_y max];
             [_x updateMax:pmax];
         }
-    }else{
-        if([_x canFollow:_y])
-            failNow();
     }
+    if([_x bound] || [_y bound]){
+        assignTRInt(&_active, NO, _trail);
+        return;
+    }
+   
 }
 -(NSSet*)allVars
 {
@@ -328,34 +302,23 @@
 }
 -(void) propagate
 {
-    if([_x bound]){
-        if([_y max] > [_x max]){
-            ORFloat pmin = fp_previous_float([_x min]);
-            [_y updateMax:pmin];
-            assignTRInt(&_active, NO, _trail);
-        }
-        return;
-    }else if ([_y bound]){
-        if([_y min] < [_x min]){
-            ORFloat nmin = fp_next_float([_y min]);
-            [_x updateMin:nmin];
-            assignTRInt(&_active, NO, _trail);
-        }
-        return;
-    }
+    if([_x canPrecede:_y])
+        failNow();
     if([_x isIntersectingWith:_y]){
-        if([_x min] <= [_y min]){
-            ORFloat pmin = fp_next_float([_y min]);
+        if([_x min] < [_y min]){
+            ORFloat pmin = [_y min];
             [_x updateMin:pmin];
         }
-        if([_x max] <= [_y max]){
-            ORFloat nmax = fp_previous_float([_x max]);
+        if([_x max] < [_y max]){
+            ORFloat nmax = [_x max];
             [_y updateMax:nmax];
         }
-    }else{
-        if([_x canPrecede:_y])
-            failNow();
     }
+    if([_x bound] || [_y bound]){
+        assignTRInt(&_active, NO, _trail);
+        return;
+    }
+    
 }
 -(NSSet*)allVars
 {
@@ -367,7 +330,7 @@
 }
 -(NSString*)description
 {
-    return [NSString stringWithFormat:@"<%@ > %@>",_x,_y];
+    return [NSString stringWithFormat:@"<%@ >= %@>",_x,_y];
 }
 @end
 

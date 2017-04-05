@@ -1615,7 +1615,7 @@
           return -[v cardinality];
        }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
       }];
 }
 -(void) minCardinalitySearch: (id<ORFloatVarArray>) x
@@ -1630,7 +1630,7 @@
          return [v cardinality];
       }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
       }];
 }
 -(void) maxDensitySearch: (id<ORFloatVarArray>) x
@@ -1645,7 +1645,7 @@
          return -[v density];
       }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
       }];
 }
 -(void) minDensitySearch: (id<ORFloatVarArray>) x
@@ -1660,7 +1660,7 @@
          return [v density];
       }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
       }];
 }
 -(void) maxWidthSearch: (id<ORFloatVarArray>) x
@@ -1675,7 +1675,7 @@
          return -[v domwidth];
       }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
       }];
    
 }
@@ -1691,7 +1691,7 @@
          return [v domwidth];
       }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
       }];
 }
 -(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x
@@ -1706,7 +1706,7 @@
          return -[v magnitude];
       }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
        }];
    
 }
@@ -1722,7 +1722,7 @@
          return [v magnitude];
       }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
       }];
 }
 -(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x
@@ -1740,7 +1740,7 @@
          return r;
       }
       do: ^(ORInt i){
-         [self floatSplit:_gamma[getId(x[i])]];
+         [self float2Split:_gamma[getId(x[i])]];
       }];
 }
 -(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
