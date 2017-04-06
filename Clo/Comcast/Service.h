@@ -17,9 +17,13 @@
 @property int serviceId;
 @property int serviceMemory;
 @property int serviceBandwidth;
+@property int serviceZone;
+@property int serviceMaxConn;
 
 - (id) initWithId: (int) serviceId
     serviceMemory: (int) serviceMemory
- serviceBandwidth: (int) serviceBandwidth;
+ serviceBandwidth: (int) serviceBandwidth
+      serviceZone: (int) serviceZone
+   serviceMaxConn: (int) serviceMaxConn;
 
 @end

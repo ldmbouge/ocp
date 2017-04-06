@@ -14,11 +14,17 @@
 @interface SecurityTech : NSObject
 
 @property int secId;
-@property int secMemory;
-@property int secBandwidth;
+@property int secFixedMemory;
+@property int secFixedBandwidth;
+@property double secScaledMemory;
+@property double secScaledBandwidth;
+@property int secZone;
 
 - (id) initWithId: (int) secId
-       secMemory: (int) secProp1
-       secBandwidth: (int) secProp2;
+   secFixedMemory: (int) secFixedMemory
+secFixedBandwidth: (int) secFixedBandwidth
+  secScaledMemory: (double) secScaledMemory
+secScaledBandwidth: (double) secScaledBandwidth
+          secZone: (int) secZone;
 
 @end

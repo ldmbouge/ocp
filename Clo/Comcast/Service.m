@@ -12,12 +12,16 @@
 
 - (id) initWithId: (int) serviceId
     serviceMemory: (int) serviceMemory
- serviceBandwidth: (int) serviceBandwidth{
+ serviceBandwidth: (int) serviceBandwidth
+      serviceZone: (int) serviceZone
+   serviceMaxConn: (int) serviceMaxConn{
     self = [super init];
     if (self){
         self.serviceId = serviceId;
         self.serviceMemory = serviceMemory;
         self.serviceBandwidth = serviceBandwidth;
+        self.serviceZone = serviceZone;
+        self.serviceMaxConn = serviceMaxConn;
     }
     return self;
 }

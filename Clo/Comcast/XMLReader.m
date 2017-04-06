@@ -29,11 +29,16 @@
 @property int currentServiceId;
 @property int currentServiceMemory;
 @property int currentServiceBandwidth;
+@property int currentServiceZone;
+@property int currentServiceMaxConn;
 
 // security technology properties
 @property int currentSecId;
-@property int currentSecProp1;
-@property int currentSecProp2;
+@property int currentSecFixedMemory;
+@property int currentSecFixedBandwidth;
+@property double currentSecScaledMemory;
+@property double currentSecScaledBandwidth;
+@property int currentSecZone;
 
 @end
 
@@ -89,14 +94,29 @@ foundCharacters:(NSString *)string{
     else if ([self.element isEqualToString:@"serviceBandwidth"]){
         self.currentServiceBandwidth = string.intValue;
     }
+    else if ([self.element isEqualToString:@"serviceZone"]){
+        self.currentServiceZone = string.intValue;
+    }
+    else if ([self.element isEqualToString:@"serviceMaxConn"]){
+        self.currentServiceMaxConn = string.intValue;
+    }
     else if ([self.element isEqualToString:@"secId"]){
         self.currentSecId = string.intValue;
     }
-    else if ([self.element isEqualToString:@"secProp1"]){
-        self.currentSecProp1 = string.intValue;
+    else if ([self.element isEqualToString:@"secFixedMemory"]){
+        self.currentSecFixedMemory = string.intValue;
     }
-    else if ([self.element isEqualToString:@"secProp2"]){
-        self.currentSecProp2 = string.intValue;
+    else if ([self.element isEqualToString:@"secFixedBandwidth"]){
+        self.currentSecFixedBandwidth = string.intValue;
+    }
+    else if ([self.element isEqualToString:@"secScaledMemory"]){
+        self.currentSecScaledMemory = string.doubleValue;
+    }
+    else if ([self.element isEqualToString:@"secScaledBandwidth"]){
+        self.currentSecScaledBandwidth = string.doubleValue;
+    }
+    else if ([self.element isEqualToString:@"secZone"]){
+        self.currentSecZone = string.intValue;
     }
 }
 
@@ -117,7 +137,9 @@ foundCharacters:(NSString *)string{
     else if ([elementName isEqualToString:@"service"]){
         Service *thisService = [[Service alloc] initWithId:self.currentServiceId
                                              serviceMemory:self.currentServiceMemory
-                                          serviceBandwidth:self.currentServiceBandwidth];
+                                          serviceBandwidth:self.currentServiceBandwidth
+                                               serviceZone:self.currentServiceZone
+                                            serviceMaxConn:self.currentServiceMaxConn];
         int size;
         size = sizeof(self.serviceArray);
         [self.serviceArray[size] addObject:thisService];
@@ -125,8 +147,11 @@ foundCharacters:(NSString *)string{
     
     else if ([elementName isEqualToString:@"sec"]){
         SecurityTech *thisSecurityTech = [[SecurityTech alloc] initWithId:self.currentSecId
-                                                                 secProp1:self.currentSecProp1
-                                                                 secProp2:self.currentSecProp2];
+                                                           secFixedMemory:self.currentSecFixedMemory
+                                                        secFixedBandwidth:self.currentSecFixedBandwidth
+                                                          secScaledMemory:self.currentSecScaledMemory
+                                                       secScaledBandwidth:self.currentSecScaledBandwidth
+                                                                  secZone:self.currentSecZone];
         int size;
         size = sizeof(self.secArray);
         [self.secArray[size] addObject:thisSecurityTech];

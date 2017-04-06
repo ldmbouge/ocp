@@ -11,13 +11,19 @@
 @implementation SecurityTech
 
 - (id) initWithId: (int) secId
-       secMemory: (int) secProp1
-       secBandwidth: (int) secProp2 {
+   secFixedMemory: (int) secFixedMemory
+secFixedBandwidth: (int) secFixedBandwidth
+  secScaledMemory: (double) secScaledMemory
+secScaledBandwidth: (double) secScaledBandwidth
+          secZone: (int) secZone{
     self = [super init];
     if (self){
         self.secId = secId;
-        self.secMemory = secProp1;
-        self.secBandwidth = secProp2;
+        self.secFixedMemory = secFixedMemory;
+        self.secFixedBandwidth = secFixedBandwidth;
+        self.secScaledMemory = secScaledMemory;
+        self.secScaledBandwidth = secScaledBandwidth;
+        self.secZone = secZone;
     }
     return self;
 }

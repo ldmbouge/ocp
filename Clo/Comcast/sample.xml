@@ -20,30 +20,42 @@
 		<id>1</id>
 		<serviceMemory>32</serviceMemory>
 		<serviceBandwidth>10000</serviceBandwidth>
+        <serviceZone>1</serviceZone>
 	</service>
 	<service>
 		<id>2</id>
         <serviceMemory>24</serviceMemory>
         <serviceBandwidth>2000</serviceBandwidth>
+        <serviceZone>2</serviceZone>
 	</service>
 	<service>
 		<id>3</id>
         <serviceMemory>16</serviceMemory>
         <serviceBandwidth>10000</serviceBandwidth>
+        <serviceZone>3</serviceZone>
 	</service>		
 	<sec>
 		<id>1</id>
-		<secProp1>1</secProp1>
-		<secProp2>value2</secProp2>
+		<secFixedMemory>1</secFixedMemory>
+		<secFixedBandwidth>10000</secFixedBandwidth>
+        <secScaledMemory>1</secScaledMemory>
+        <secScaledBandwidth>1</secScaledBandwidth>
+        <secZone>1</secZone>
 	</sec>
-	<sec>
-		<id>2</id>
-		<secProp1>3</secProp1>
-		<secProp2>value2</secProp2>
-	</sec>
-	<sec>
-		<id>3</id>
-		<secProp1>2</secProp1>
-		<secProp2>value2</secProp2>
-	</sec>
+    <sec>
+        <id>2</id>
+        <secFixedMemory>1</secFixedMemory>
+        <secFixedBandwidth>10000</secFixedBandwidth>
+        <secScaledMemory>1</secScaledMemory>
+        <secScaledBandwidth>1</secScaledBandwidth>
+        <secZone>2</secZone>
+    </sec>
+    <sec>
+        <id>3</id>
+        <secFixedMemory>1</secFixedMemory>
+        <secFixedBandwidth>10000</secFixedBandwidth>
+        <secScaledMemory>1</secScaledMemory>
+        <secScaledBandwidth>1</secScaledBandwidth>
+        <secZone>3</secZone>
+    </sec>
 </document>

@@ -48,14 +48,48 @@ int main(int argc, const char * argv[])
     id<ORIntRange> service = RANGE(model,1, Nservice);
     id<ORIntRange> sec = RANGE(model,0, Nsec);
     
+    NSLog(@"Ncnodes: %i \t Nservice: %i \t Nsec: %i", Ncnodes, Nservice, Nsec);
+    
     // Use info from XML instead of random values
-    id<ORIntArray> cnodeMem = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return [cnodeArray[i] cnodeMemory]; } ];
-    id<ORIntArray> cnodeBw = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return [cnodeArray[i] cnodeBandwidth]; } ];
-    id<ORIntArray> serviceMem = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return [serviceArray[i] serviceMemory]; } ];
-    id<ORIntArray> serviceBw = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return [serviceArray[i] serviceBandwidth]; } ];
-    id<ORIntArray> secMem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return [secArray[i] secMemory]; } ];
-    id<ORIntArray> secBw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return [secArray[i] secBandwidth]; } ];
-    id<ORIntArray> D = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 8 + 1; }];
+    id<ORIntArray> cnodeMem = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) {
+        NSLog(@"cnodeMem: %i \n", [cnodeArray[i] cnodeMemory]);
+        return [cnodeArray[i] cnodeMemory];
+    } ];
+    id<ORIntArray> cnodeBw = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) {
+        NSLog(@"cnodeBw: %i \n", [cnodeArray[i] cnodeBandwidth]);
+        return [cnodeArray[i] cnodeBandwidth];
+    } ];
+    id<ORIntArray> serviceMem = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
+        NSLog(@"serviceMem: %i \n", [serviceArray[i] serviceMemory]);
+        return [serviceArray[i] serviceMemory];
+    } ];
+    id<ORIntArray> serviceBw = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
+        NSLog(@"serviceBw: %i \n", [serviceArray[i] serviceBandwidth]);
+        return [serviceArray[i] serviceBandwidth];
+    } ];
+    id<ORIntArray> secFixMem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
+        NSLog(@"secFixMem: %i \n", [secArray[i] secFixedMemory]);
+        return [secArray[i] secFixedMemory];
+    } ];
+    id<ORIntArray> secFixBw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
+        NSLog(@"secFixBw: %i \n", [secArray[i] secFixedBandwidth]);
+        return [secArray[i] secFixedBandwidth];
+    } ];
+    id<ORDoubleArray> secScaledMem = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) {
+        NSLog(@"secScaledMem: %f \n", [secArray[i] secScaledMemory]);
+        return [secArray[i] secScaledMemory];
+    } ];
+    id<ORDoubleArray> secScaledBw = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) {
+        NSLog(@"secScaledBw: %f \n", [secArray[i] secScaledBandwidth]);
+        return [secArray[i] secScaledBandwidth];
+    } ];
+    id<ORIntArray> secZone = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
+        NSLog(@"secZone: %i \n", [secArray[i] secZone]);
+        return [secArray[i] secZone];
+    } ];
+    id<ORIntArray> D = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
+        return rand() % 8 + 1;
+    }];
     
     
      /*
@@ -65,6 +99,8 @@ int main(int argc, const char * argv[])
     id<ORIntArray> Bapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
     */
     
+    
+    /* Debugging Comment
     id<ORIntMatrix> C = [ORFactory intMatrix: model range: service : service with:^int(ORInt i, ORInt j) {
         if (i < j) {
             return rand() % MAX_CONN + 1;
@@ -97,19 +133,26 @@ int main(int argc, const char * argv[])
     }];
     
     ORInt t[3] = {0,1,2};
-    
+     
+     end debugging comment */
+    /* Replace T with secZone
     id<ORIntArray> T = [ORFactory intArray: model range: sec values: (ORInt*)&t];
+     */
+    
     /* Tapp = service zone */
     id<ORIntArray> Tapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 3; }];
     
-    /* Replace Fmem with secMem and Fbw with SecBw
+    /* Replace Fmem with secFixMem and Fbw with SecFixBw
     id<ORIntArray> Fmem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     id<ORIntArray> Fbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     */
     
+    /* Replace Smem with secScaledMem and Sbw with secScaledBw
     id<ORDoubleArray> Smem = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
     id<ORDoubleArray> Sbw = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
-
+     */
+    /* ======================================================= Begin Debug =================================================================
+    
     // Variables
     id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
     id<ORIntVarArray> vc = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, [Iapp size])];
@@ -193,7 +236,7 @@ int main(int argc, const char * argv[])
         [model add: [[u_mem at: i] geq:
                      [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
                       [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([serviceMem at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] plus:
-                      [SecMem elt: [s at: i]]]
+                      [SecFixMem elt: [s at: i]]]
                      ]]];
     }
     
@@ -201,7 +244,7 @@ int main(int argc, const char * argv[])
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_bw at: i] geq:
                      [[Sum(model, j, service, [[vm_conn at: i : j] mul: @([serviceBw at: j])]) mul: [Sbw elt: [s at: i]]] plus:
-                      [secBw] elt: [s at: i]]
+                      [secFixBw] elt: [s at: i]]
                      ]]];
     }
 
@@ -277,5 +320,7 @@ int main(int argc, const char * argv[])
     NSLog(@"#best objective: %i",[[best objectiveValue] intValue]);
    NSLog(@"Total time: %f",el.tv_sec * 1000.0 + (double)el.tv_usec / 1000.0);
     return 0;
+     
+     */
 }
 
