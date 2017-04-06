@@ -33,9 +33,12 @@ int main(int argc, const char * argv[])
     NSMutableArray * serviceArray;
     NSMutableArray * secArray;
     NSMutableArray * cnodeArray;
-    id dataIn;
     
-    dataIn = [[XMLReader alloc] initWithArrays: cnodeArray serviceArray: serviceArray secArray: secArray];
+    NSLog(@"Ncnodes: %lu \t Nservice: %lu \t Nsec: %lu",(sizeof cnodeArray), (sizeof serviceArray),(sizeof secArray));
+        
+    // create and init delegate
+    XMLReader * dataIn = [[XMLReader alloc] initWithArrays: cnodeArray serviceArray: serviceArray secArray: secArray];
+    // XMLReader * parser = [[XMLReader alloc] init];
 
     ORInt Ncnodes = (sizeof cnodeArray);
     ORInt Nservice = (sizeof serviceArray);
@@ -139,8 +142,8 @@ int main(int argc, const char * argv[])
     id<ORIntArray> T = [ORFactory intArray: model range: sec values: (ORInt*)&t];
      */
     
-    /* Tapp = service zone */
-    id<ORIntArray> Tapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 3; }];
+    // Tapp = service zone
+    //id<ORIntArray> Tapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 3; }];
     
     /* Replace Fmem with secFixMem and Fbw with SecFixBw
     id<ORIntArray> Fmem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];

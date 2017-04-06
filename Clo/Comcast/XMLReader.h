@@ -14,9 +14,27 @@
 @property NSMutableArray *serviceArray;
 @property NSMutableArray *secArray;
 
-- (id) initWithArrays: (NSMutableArray *) cnodeArray
+- (XMLReader *) initWithArrays: (NSMutableArray *) cnodeArray
          serviceArray: (NSMutableArray *) serviceArray
              secArray: (NSMutableArray *) secArray;
+
+- (void) parserDidStartDocument:(NSXMLParser *)parser;
+
 - (void) parseXMLFile;
+
+- (void) parser:(NSXMLParser *)parser
+ didStartElement:(NSString *)elementName
+    namespaceURI:(nullable NSString *)namespaceURI
+   qualifiedName:(nullable NSString *)qName
+      attributes:(NSDictionary<NSString *, NSString *> *)attributeDict;
+
+- (void) parser:(NSXMLParser *)parser
+ foundCharacters:(NSString *)string;
+
+- (void) parser:(NSXMLParser *) parser
+   didEndElement:(nonnull NSString *) elementName
+    namespaceURI:(nullable NSString *) namespaceURI
+   qualifiedName:(nullable NSString *) qname;
+
 
 @end

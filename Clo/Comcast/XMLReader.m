@@ -44,7 +44,7 @@
 
 @implementation XMLReader
 
-- (id) initWithArrays:(NSMutableArray *)cnodeArray
+- (XMLReader *) initWithArrays:(NSMutableArray *)cnodeArray
          serviceArray:(NSMutableArray *)serviceArray
              secArray:(NSMutableArray *)secArray{
     self = [super init];
@@ -53,14 +53,37 @@
         self.serviceArray = serviceArray;
         self.secArray = secArray;
     }
+    NSLog(@"Initialized! \n");
+    
+    // Let's XML!
+    [self parseXMLFile];
+    
     return self;
 }
 
+- (void) parserDidStartDocument:(NSXMLParser *)parser{
+    NSLog(@"File found and parsing has begun");
+}
+
 - (void) parseXMLFile {
-    NSURL *xmlPath = [[NSBundle mainBundle] URLForResource:@"sample"
-                                             withExtension:@"xml"];
+    
+    NSURL * baseURL = [NSURL fileURLWithPath:@"/Users/sarah/DocumentsFolder/projects/objcp-private/Clo/Comcast"];
+    NSURL * xmlPath = [NSURL URLWithString:@"./sample.xml" relativeToURL:baseURL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:xmlPath];
+    NSString * error;
+    if ([xmlPath checkResourceIsReachableAndReturnError: &error]){
+        NSLog(@"XML Reached!");
+    }
+    else {
+        NSLog(@"Cant fnd XML");
+    }
+    bool xmlFile = [NSURLConnection sendSynchronousRequest:request
+                                    returningResponse:nil
+                                                error:nil];
+    NSLog(@"Entering ParseXMLPath \n");
     
     self.parser = [[NSXMLParser alloc] initWithContentsOfURL:xmlPath];
+    //[self.parser setDelegate:self];
     self.parser.delegate = self;
     [self.parser parse];
 }
@@ -70,12 +93,13 @@ didStartElement:(NSString *)elementName
   namespaceURI:(nullable NSString *)namespaceURI
  qualifiedName:(nullable NSString *)qName
     attributes:(NSDictionary<NSString *, NSString *> *)attributeDict{
-    
+    NSLog(@"entering parser the first \n");
     self.element = elementName;
 }
 
 - (void) parser:(NSXMLParser *)parser
 foundCharacters:(NSString *)string{
+    NSLog(@"Entering parser the second \n");
     if ([self.element isEqualToString:@"cnodeId"]){
         self.currentCnodeId = string.intValue;
     }
@@ -124,14 +148,18 @@ foundCharacters:(NSString *)string{
  didEndElement:(nonnull NSString *)elementName
   namespaceURI:(nullable NSString *)namespaceURI
  qualifiedName:(nullable NSString *)qName{
-    
+    NSLog(@"Entering parser the third \n");
     if ([elementName isEqualToString:@"cnode"]){
         Cnode *thisCnode = [[Cnode alloc] initWithId:self.currentCnodeId
                                          cnodeMemory:self.currentCnodeMemory
                                       cnodeBandwidth:self.currentCnodeBandwidth];
+        NSLog(@"i read a cnode!");
         int size;
-        size = sizeof(self.cnodeArray);
+        size = (sizeof self.cnodeArray);
+        NSLog(@"size: %i \n", size);
         [self.cnodeArray[size] addObject:thisCnode];
+        NSLog(@"I added an object to cnodeArray!!");
+        NSLog(@"New size: %lu \n", (sizeof self.cnodeArray));
     }
     
     else if ([elementName isEqualToString:@"service"]){
@@ -141,7 +169,7 @@ foundCharacters:(NSString *)string{
                                                serviceZone:self.currentServiceZone
                                             serviceMaxConn:self.currentServiceMaxConn];
         int size;
-        size = sizeof(self.serviceArray);
+        size = (sizeof self.serviceArray);
         [self.serviceArray[size] addObject:thisService];
     }
     
@@ -153,11 +181,15 @@ foundCharacters:(NSString *)string{
                                                        secScaledBandwidth:self.currentSecScaledBandwidth
                                                                   secZone:self.currentSecZone];
         int size;
-        size = sizeof(self.secArray);
+        size = (sizeof self.secArray);
         [self.secArray[size] addObject:thisSecurityTech];
     }
     
     self.element = nil;
+}
+
+- (void) parserDidEndDocument:(NSXMLParser *)parser{
+    NSLog(@"Parsing complete");
 }
 
 @end
