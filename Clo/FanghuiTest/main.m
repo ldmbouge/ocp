@@ -397,46 +397,18 @@ int main(int argc, const char * argv[]) {
                             [phase setValue:pn in:cp];
                             [cp tryall:S suchThat:^ORBool(ORInt k) { return hw_hits[s][p_list[s][k]] == evalue;} orderedBy:^ORDouble(ORInt k) {
                                  return -(hw_hits[s][p_list[s][k]] << 10) + elevatori[s];
-                                 return -hw_hits[s][p_list[s][k]];
                             }
                                     in:^(ORInt k) {
                                        //assert(s >= 0  && s <= 47);
                                        ORInt i = p_list[s][k]; //elevator[size-1][k];
                                        [cp atomic:^{
-//                                          int aux1, aux2;
-//                                          uint32 val1, val2;
-//                                          if(s < 16){
-//                                             aux1 = s+16;
-//                                             val1 = (i ^ Plaintext[s%16]);
-//                                             aux2 = s+32;
-//                                             val2 = sb[val1];
-//                                          }
-//                                          else if(s < 32){
-//                                             aux1 = s-16;
-//                                             val1 = (i ^ Plaintext[s%16]);
-//                                             aux2 = s+16;
-//                                             val2 = sb[i];
-//                                          }
-//                                          else{
-//                                             aux1 = s-16;
-//                                             val1 = inv_s[i];
-//                                             aux2 = s-32;
-//                                             val2 = (val1 ^ Plaintext[s%16]);
-//                                          }
-                                          uint32 count = 0;
+                                          ORUInt count = 0;
                                           for(int nbit = 0; nbit < 8; nbit++){
                                              BOOL val = (i >> count++) & 1;
-//                                             BOOL vala = (val1 >> count) & 1;
-//                                             BOOL valb = (val2 >> count++) & 1;
                                              [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
-//                                             [cp labelBV:o[aux1] at:nbit with:vala];
-//                                             [cp labelBV:o[aux2] at:nbit with:valb];
                                           }
                                        }];
-                                    } onFailure:^(ORInt i) {
-                                       //NSLog(@"Failed");
-                                       //Do Nothing
-                                    }];
+                                    } onFailure:^(ORInt i) {}];
                          }
                   onFailure: ^void(ORInt pn) {
                   
