@@ -59,7 +59,10 @@ int main(int argc, const char * argv[])
          id<CPHeuristic> h = [cp createFF];
          
          [cp solve: ^{
-            [cp labelHeuristic:h];
+            //[cp labelHeuristic:h];
+            [cp labelArray:x];
+            [cp labelArray:c];
+            
             id<ORIntArray> sx = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt i) {
                return [cp intValue:x[i]];
             }];

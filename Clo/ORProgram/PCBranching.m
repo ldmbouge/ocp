@@ -357,10 +357,9 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       }
       if (nbtr == [I count]) {
          NSLog(@"About to round %lu easy guys",(unsigned long)nbtr);
-         ORStatus ok =  [[_p engine] atomic:^{
+         //ORStatus ok =
+         [[_p engine] atomic:^{
             for(id<ORIntVar> xi in I) {
-               //ORDouble sxv = [_relax value:sx];
-               //ORDouble ni = floor(sxv + 0.5);
                if ([_relax trivialDownRoundable:xi]) {
                   [_p lthen:xi with:[xi low] + 1];
                } else {
@@ -369,7 +368,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                }
             }
          }];
-         assert(ok != ORFailure);
+         //assert(ok != ORFailure);
       }
       fCur   = [_relax objectiveValue];
    }
@@ -413,7 +412,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       }
       if (nbtr == [I count]) {
          NSLog(@"About to round %lu easy guys",(unsigned long)nbtr);
-         ORStatus ok =  [[_p engine] atomic:^{
+         //ORStatus ok =
+         [[_p engine] atomic:^{
             for(id<ORIntVar> xi in I) {
                //ORDouble sxv = [_relax value:sx];
                //ORDouble ni = floor(sxv + 0.5);
@@ -425,7 +425,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                }
             }
          }];
-         assert(ok != ORFailure);
+         //assert(ok != ORFailure);
       }
       fCur   = [_relax objectiveValue];
    }
@@ -659,14 +659,14 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                                              break;
                                        }
                                        [_relax updateLowerBound:vi with:lb];
-                                       OROutcome fok = [_relax solve];
+                                       [_relax solve];
                                        if (sLow == ORinfeasible && sUp == ORinfeasible)
                                           [[_p explorer] fail];
                                        if (sLow == ORinfeasible || sUp == ORinfeasible) {
                                           i -= 1;
                                           continue;
                                        }
-                                       assert(fok != ORinfeasible);
+                                       //assert(fok != ORinfeasible);
                                        //printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vir,downRate,upRate);
                                        VStat* vs = [_pc objectForKey:@(vi.getId)];
                                        if (vs==nil) {
@@ -752,8 +752,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                break;
          }
          [_relax updateLowerBound:vi with:lb];
-         OROutcome back = [_relax solve];
-         assert(back == ORoptimal);
+         [_relax solve];
+         //assert(back == ORoptimal); // back is return value from [_relax solve];
 
          if (sLow == ORinfeasible && sUp == ORinfeasible)
             [[_p explorer] fail];
@@ -942,8 +942,8 @@ static long nbCall = 0;
             [_relax updateLowerBound:vi with:lb];
             if (sLow == ORinfeasible && sUp == ORinfeasible)
                [[_p explorer] fail];
-            OROutcome back = [_relax solve];
-            assert(back == ORoptimal);
+            [_relax solve]; // OROutcome back =
+            //assert(back == ORoptimal);
             double finalOBJ = [_relax objective];
             io = finalOBJ;
             //assert(fabs(finalOBJ - io) <= 0.000001);

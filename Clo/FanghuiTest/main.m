@@ -127,8 +127,7 @@ int main(int argc, const char * argv[]) {
    
    uint32 rconstant[] = {1,2,4,8,16,32,64,128,27,54};
    
-   uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
-   
+   //uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
    //uint32 cipher2[] = {4,79,253,149,226,60,238,192,17,123,136,192,248,95,102,123};
    
    int totalstates = 0;
@@ -300,7 +299,6 @@ int main(int argc, const char * argv[]) {
       [o set:states[1][k] at:(k+16)];
    
    id<ORIntVarArray> iv = [model intVars];
-   id<ORBitVarArray> av = [model bitVars];
    
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
@@ -317,8 +315,6 @@ int main(int argc, const char * argv[]) {
          return ((4 - abs(4 - s_SC[i])) << 10) - i; // [current best]
       }
               do:^(ORInt s) {
-                 ORUInt size = [cp domsize:o[s]];
-                 assert(size != 0);
                  id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
                  [cp tryall:S suchThat:^ORBool(ORInt k) { return true;}
                   orderedBy:^ORDouble(ORInt z) {
@@ -482,8 +478,8 @@ void mixColumns(){
       int ir = (r - 2) / 4;
       for(ORInt j = 0; j < 4; j++){
          id<ORBitVar> temp[4];
-         id<ORBitVar> temp1[4];
-         id<ORBitVar> temp2[4];
+         //id<ORBitVar> temp1[4];
+         //id<ORBitVar> temp2[4];
          
          for(int i = 0; i < 4; i++){
             temp[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :7];

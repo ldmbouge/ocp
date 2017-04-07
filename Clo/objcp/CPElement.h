@@ -98,7 +98,7 @@
    id<ORTrailableIntArray> _I; // _I[i] tells us if _y = _z[i] is a possible assignment
    TRIntArray _svx0,_svx1;
    TRIntArray _svy0,_svy1;
-   id<ORTrailableInt> _cI;        // cardinality of _I
+   TRInt              _cI;        // cardinality of _I
 }
 -(id)initCPElementAC: (id) x indexVarArray:(id<ORIdArray>)y equal:(id)z;
 -(void) post;
