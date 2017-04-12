@@ -72,11 +72,7 @@ typedef union {
         failNow();
     updateMin(&_domain, newMin, _trail);
     ORBool isBound = (_domain._low == _domain._up);
-    if(isBound){
-        NSLog(@"ok");
-    }
     [x changeMinEvt: isBound sender:self];
-    NSLog(@"%16.16e %16.16e %s\n",_domain._low, _domain._up,isBound ? "YES" : "NO");
     if (isBound)
         [x bindEvt:self];
 }
