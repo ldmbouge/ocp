@@ -1,8 +1,11 @@
 #import <ORProgram/ORProgram.h>
+#import "ORCmdLineArgs.h"
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
+        ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+        [args measure:^struct ORResult(){
+            
         id<ORModel> model = [ORFactory createModel];
-        int h = atoi(argv[1]);
         id<ORFloatVar> c_0 = [ORFactory floatVar:model];
         id<ORFloatVar> r_0 = [ORFactory floatVar:model];
         id<ORFloatVar> a_0 = [ORFactory floatVar:model];
@@ -37,46 +40,21 @@ int main(int argc, const char * argv[]) {
         [model add:[R_0 eq:@(0.0f)]];
         [model add:[Q_0 eq:@(0.0f)]]];
         
-        id<ORFloatVarArray> vars = [model floatVars];
-        id<CPProgram> p = [ORFactory createCPProgram:model];
-        [p solve:^{
-            switch (h) {
-                case 0:
-                    [p maxwidthSearch:vars];
-                    break;
-                case 1:
-                    [p minWidthSearch:vars];
-                    break;
-                case 2:
-                    [p maxCardinalitySearch:vars];
-                    break;
-                case 3:
-                    [p minCardinalitySearch:vars];
-                    break;
-                case 4:
-                    [p maxDensitySearch:vars];
-                    break;
-                case 5:
-                    [p minDensitySearch:vars];
-                    break;
-                case 6:
-                    [p maxMagnitudeSearch:vars];
-                    break;
-                case 7:
-                    [p minMagnitudeSearch:vars];
-                    break;
-                case 8:
-                    [p alternateMagnitudeSearch:vars];
-                    break;
-                case 9:
-                    [p floatSplitArrayOrderedByDomSize:vars];
-                    break;
-                default:
-                    [p maxwidthSearch:vars];
-                    break;
-            };
-            for(id<ORFloatVar> v in vars)
-                NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+            id<ORFloatVarArray> vars = [model floatVars];
+            id<CPProgram> cp = [args makeProgram:model];
+            __block bool found = false;
+            [cp solveOn:^(id<CPCommonProgram> p) {
+                
+                
+                [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+                for(id<ORFloatVar> v in vars)
+                    NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+                
+                found=true;
+                
+            } withTimeLimit:[args timeOut]];
+            struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+            return r;
         }];
     }
     return 0;

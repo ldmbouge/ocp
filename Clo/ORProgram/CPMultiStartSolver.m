@@ -372,37 +372,37 @@
 {
    [[self worker] splitArray:x];
 }
--(void) maxwidthSearch:(id<ORFloatVarArray>)x
+-(void) maxWidthSearch:(id<ORFloatVarArray>)x do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] maxwidthSearch:x];
+    [[self worker] maxWidthSearch:x do:b];
 }
--(void) minWidthSearch:(id<ORFloatVarArray>)x
+-(void) minWidthSearch:(id<ORFloatVarArray>)x  do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] minWidthSearch:x];
+    [[self worker] minWidthSearch:x do:b];
 }
--(void) maxCardinalitySearch:(id<ORFloatVarArray>)x
+-(void) maxCardinalitySearch:(id<ORFloatVarArray>)x  do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] maxCardinalitySearch:x];
+    [[self worker] maxCardinalitySearch:x do:b];
 }
--(void) minCardinalitySearch:(id<ORFloatVarArray>)x
+-(void) minCardinalitySearch:(id<ORFloatVarArray>)x  do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] minCardinalitySearch:x];
+    [[self worker] minCardinalitySearch:x do:b];
 }
--(void) maxDensitySearch:(id<ORFloatVarArray>)x
+-(void) maxDensitySearch:(id<ORFloatVarArray>)x  do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] maxDensitySearch:x];
+    [[self worker] maxDensitySearch:x do:b];
 }
--(void) minDensitySearch:(id<ORFloatVarArray>)x
+-(void) minDensitySearch:(id<ORFloatVarArray>)x  do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] minDensitySearch:x];
+    [[self worker] minDensitySearch:x do:b];
 }
--(void) maxMagnitudeSearch:(id<ORFloatVarArray>)x
+-(void) maxMagnitudeSearch:(id<ORFloatVarArray>)x  do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] maxMagnitudeSearch:x];
+    [[self worker] maxMagnitudeSearch:x do:b];
 }
--(void) minMagnitudeSearch:(id<ORFloatVarArray>)x
+-(void) minMagnitudeSearch:(id<ORFloatVarArray>)x  do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] minDensitySearch:x];
+    [[self worker] minDensitySearch:x do:b];
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {

@@ -60,17 +60,28 @@ PORTABLE_BEGIN
 -(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
--(void)          maxwidthSearch: (id<ORFloatVarArray>) x;
--(void)          minWidthSearch: (id<ORFloatVarArray>) x;
--(void)          maxCardinalitySearch: (id<ORFloatVarArray>) x;
--(void)          minCardinalitySearch: (id<ORFloatVarArray>) x;
--(void)          maxDensitySearch: (id<ORFloatVarArray>) x;
--(void)          minDensitySearch: (id<ORFloatVarArray>) x;
--(void)          maxMagnitudeSearch: (id<ORFloatVarArray>) x;
--(void)          minMagnitudeSearch: (id<ORFloatVarArray>) x;
--(void)          alternateMagnitudeSearch: (id<ORFloatVarArray>) x;
--(void)          floatSplitArray: (id<ORFloatVarArray>) x;
+
+-(void)          maxWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          minWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          minCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x;
+-(void)          floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+
+
+-(void)          floatStaticSplit: (id<ORFloatVar>) x;
+-(void)          floatStatic3WaySplit: (id<ORFloatVar>) x;
+-(void)          floatStatic5WaySplit: (id<ORFloatVar>) x;
+-(void)          floatStatic6WaySplit: (id<ORFloatVar>) x;
+-(void)          floatSplit: (id<ORFloatVar>) x;
+-(void)          float3WaySplit: (id<ORFloatVar>) x;
+-(void)          float5WaySplit: (id<ORFloatVar>) x;
+-(void)          float6WaySplit: (id<ORFloatVar>) x;
 -(void)          realLabel: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;

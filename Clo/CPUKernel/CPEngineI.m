@@ -458,6 +458,8 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 
 void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
 {
+    //TODO 
+    //hzi : entre une fois de trop dans la boucle pour solve_cubic2
    while (*mlist) {
       CPClosureList* list = *mlist;
       while (list) {

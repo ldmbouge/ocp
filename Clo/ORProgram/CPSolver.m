@@ -1603,7 +1603,7 @@
 }
 //-------------------------------------------------------
 //float search
--(void) maxCardinalitySearch: (id<ORFloatVarArray>) x
+-(void) maxCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1614,11 +1614,11 @@
           id<CPFloatVar> v = _gamma[getId(x[i])];
           return -[v cardinality];
        }
-      do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+             do: ^(ORInt i){
+                b(x[i]);
       }];
 }
--(void) minCardinalitySearch: (id<ORFloatVarArray>) x
+-(void) minCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1630,10 +1630,10 @@
          return [v cardinality];
       }
       do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+         b(x[i]);
       }];
 }
--(void) maxDensitySearch: (id<ORFloatVarArray>) x
+-(void) maxDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1645,10 +1645,10 @@
          return -[v density];
       }
       do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+         b(x[i]);
       }];
 }
--(void) minDensitySearch: (id<ORFloatVarArray>) x
+-(void) minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1660,10 +1660,10 @@
          return [v density];
       }
       do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+         b(x[i]);
       }];
 }
--(void) maxWidthSearch: (id<ORFloatVarArray>) x
+-(void) maxWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1675,11 +1675,11 @@
          return -[v domwidth];
       }
       do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+         b(x[i]);
       }];
    
 }
--(void) minWidthSearch: (id<ORFloatVarArray>) x
+-(void) minWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1691,10 +1691,10 @@
          return [v domwidth];
       }
       do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+         b(x[i]);
       }];
 }
--(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x
+-(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1706,11 +1706,11 @@
          return -[v magnitude];
       }
       do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+         b(x[i]);
        }];
    
 }
--(void) minMagnitudeSearch: (id<ORFloatVarArray>) x
+-(void) minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
@@ -1722,10 +1722,10 @@
          return [v magnitude];
       }
       do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+         b(x[i]);
       }];
 }
--(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x
+-(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    __block ORBool min = true;
    [self forall: RANGE(self, [x low], [x up])
@@ -1740,12 +1740,11 @@
          return r;
       }
       do: ^(ORInt i){
-         [self float2Split:_gamma[getId(x[i])]];
+         b(x[i]);
       }];
 }
 -(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
-   //check used[]
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
           id<CPFloatVar> v = _gamma[getId(x[i])];
@@ -1756,65 +1755,90 @@
          return (ORFloat)-[v domwidth];
       }
       do: ^(ORInt i){
-         NSLog(@"---------------------------");
-         for(ORInt j = [x low]; j <= [x up]; j++){
-            id<CPFloatVar> v2 = _gamma[getId(x[j])];
-            NSLog(@"%@ sizeBound : %20.20Lf",v2, [v2 domwidth]);
-         }
-         NSLog(@"---------------------------");
-         NSLog(@"Selected Variable : %@",_gamma[getId(x[i])]);
-         NSLog(@"---------------------------");
-         [self float5WaySplitOnce3:_gamma[getId(x[i])]];
+         [self float6WaySplit:_gamma[getId(x[i])]];
       }];
 }
-
--(void) floatSplitArray: (id<ORFloatVarArray>) x
+//noOrder
+-(void) floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
-      //[self floatSplit:_gamma[getId(x[i])]];
-      [self float5WaySplit:_gamma[getId(x[i])]];
-      //[self float2Split:_gamma[getId(x[i])]];
+      b(x[i]);
    }
 }
--(void) floatSplit: (id<CPFloatVar>) xi
+//split until value
+-(void) floatStaticSplit: (id<ORFloatVar>) x
 {
+   id<CPFloatVar> xi = _gamma[getId(x)];
    while (![xi bound]) {
-      ORFloat theMax = xi.max;
-      ORFloat theMin = xi.min;
-      ORFloat mid = (theMin + theMax)/2.0f;
-      if(mid == theMax)
-         mid = theMin;
-      [_search try: ^{ [self floatGthenImpl:xi with:mid]; }
-               alt: ^{ [self floatLEqualImpl:xi with:mid]; }
-       ];
+      [self floatSplit:x];
    }
 }
--(void) float2Split: (id<CPFloatVar>) xi
+//static 3 split
+-(void) floatStatic3WaySplit: (id<ORFloatVar>) x
 {
-   float_interval interval[5];
+   id<CPFloatVar> xi = _gamma[getId(x)];
    while (![xi bound]) {
-      ORFloat theMax = xi.max;
-      ORFloat theMin = xi.min;
-      ORFloat mid = (theMin + theMax)/2.0f;
-      if(fp_next_float(theMin) == theMax){
-         interval[0].inf = interval[0].sup = theMin;
-         interval[1].inf = interval[1].sup = theMax;
-      }else{
-         interval[0].inf  = theMin;
-         interval[0].sup = fp_previous_float(mid);
-         interval[1].inf = mid;
-         interval[1].sup = theMax;
-      }
-      float_interval* ip = interval;
-      [_search tryall:RANGE(self,0,2) suchThat:nil in:^(ORInt i) {
-         [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
-      }];
+      [self float3WaySplit:x];
    }
 }
--(void) float5WaySplitOnce:(id<CPFloatVar>) xi
+//static split in 5 way until the var is bound
+-(void) floatStatic5WaySplit: (id<ORFloatVar>) x
 {
+   id<CPFloatVar> xi = _gamma[getId(x)];
+   while (![xi bound]) {
+      [self float5WaySplit:x];
+   }
+}
+//static split in 6 way until the var is bound
+-(void) floatStatic6WaySplit: (id<ORFloatVar>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x)];
+   while (![xi bound]) {
+      [self float6WaySplit:x];
+   }
+}
+
+//split in 2 intervals Once
+-(void) floatSplit:(id<ORFloatVar>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x)];
+   ORFloat theMax = xi.max;
+   ORFloat theMin = xi.min;
+   ORFloat mid = (theMin + theMax)/2.0f;
+   if(mid == theMax)
+      mid = theMin;
+   [_search try: ^{ [self floatGthenImpl:xi with:mid]; }
+            alt: ^{ [self floatLEqualImpl:xi with:mid]; }
+    ];
+}
+//split in 3 intervals Once
+-(void) float3WaySplit:(id<ORFloatVar>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x)];
+   ORFloat theMax = xi.max;
+   ORFloat theMin = xi.min;
+   ORFloat mid = (theMin + theMax)/2.0f;
+   float_interval interval[2];
+   if(fp_next_float(theMin) == theMax){
+      interval[0].inf = interval[0].sup = theMin;
+      interval[1].inf = interval[1].sup = theMax;
+   }else{
+      interval[0].inf  = theMin;
+      interval[0].sup = fp_previous_float(mid);
+      interval[1].inf = mid;
+      interval[1].sup = theMax;
+   }
+   float_interval* ip = interval;
+   [_search tryall:RANGE(self,0,2) suchThat:nil in:^(ORInt i) {
+      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   }];
+}
+//split in 5 intervals Once
+-(void) float5WaySplit:(id<ORFloatVar>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x)];
    float_interval interval[5];
    ORInt length = 0;
    ORFloat theMax = xi.max;
@@ -1846,10 +1870,10 @@
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
-
-
--(void) float5WaySplitOnce3: (id<CPFloatVar>) xi
+//split in 6 intervals Once
+-(void) float6WaySplit: (id<ORFloatVar>) x
 {
+   id<CPFloatVar> xi = _gamma[getId(x)];
    float_interval interval[6];
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
@@ -1914,25 +1938,18 @@
    }
    float_interval* ip = interval;
    length--;
-    NSLog(@"%@ \n",xi);
+   // NSLog(@"%@ \n",xi);
     unsigned int * pinf;
     unsigned int * psup;
     for(int i = length; i >= 0;i--){
     pinf = (unsigned int *)&(ip[i].inf);
     psup = (unsigned int *)&(ip[i].sup);
-    printf("ip[%d] = [%18.18e,%18.18e] Hexa [%4X,%4X]\n",i,ip[i].inf,ip[i].sup,*pinf,*psup);
+   // printf("ip[%d] = [%18.18e,%18.18e] Hexa [%4X,%4X]\n",i,ip[i].inf,ip[i].sup,*pinf,*psup);
     }
-    printf("\n\n\n\n");
+   // printf("\n\n\n\n");
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
          [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
-}
-
--(void) float5WaySplit: (id<CPFloatVar>) xi
-{
-   while (![xi bound]) {
-      [self float5WaySplitOnce:xi];
-   }
 }
 //----------------------------------------------------------
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat

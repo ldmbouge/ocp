@@ -20,7 +20,28 @@ enum Heuristic {
    IBS = 2,
    WDEG = 3,
    DDEG = 4,
-   SDEG = 5
+    SDEG = 5,
+    maxWidth = 10,
+    minWidth = 11,
+    maxCard  = 12,
+    minCard  = 13,
+    maxDens  = 14,
+    minDens  = 15,
+    minMagn  = 16,
+    maxMagn  = 17,
+    alertMagn  = 18,
+    ref = 19
+};
+enum ValHeuristic
+{
+    split = 0,
+    split3Way = 1,
+    split5Way = 2,
+    split6Way = 3,
+    dynamicSplit = 4,
+    dynamic3Split = 5,
+    dynamic5Split = 6,
+    dynamic6Split = 7
 };
 
 struct ORResult {
@@ -38,6 +59,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORInt   timeOut;
 @property (nonatomic,readonly) BOOL    randomized;
 @property (nonatomic,readonly) enum Heuristic heuristic;
+@property (nonatomic,readonly) enum ValHeuristic valordering;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
 @property (nonatomic,readonly) NSString* fName;
@@ -48,4 +70,5 @@ struct ORResult {
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
+-(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORFloatVarArray>)x;
 @end

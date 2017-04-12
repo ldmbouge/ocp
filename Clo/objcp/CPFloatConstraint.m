@@ -47,11 +47,11 @@
 {
     if([_x bound]){
         [_y bind:[_x value]];
-        assignTRInt(&_active, NO, _trail);
+       // assignTRInt(&_active, NO, _trail);
         return;
     }else if([_y bound]){
         [_x bind:[_y value]];
-        assignTRInt(&_active, NO, _trail);
+       // assignTRInt(&_active, NO, _trail);
         return;
     }
     if(![_x isIntersectingWith:_y]){
@@ -170,7 +170,7 @@
         }
     }
     if([_x bound] || [_y bound]){
-        assignTRInt(&_active, NO, _trail);
+       // assignTRInt(&_active, NO, _trail);
         return;
     }
     
@@ -218,7 +218,7 @@
         }
     }
     if([_x bound] || [_y bound]){
-        assignTRInt(&_active, NO, _trail);
+       // assignTRInt(&_active, NO, _trail);
         return;
     }
     
@@ -267,7 +267,7 @@
         }
     }
     if([_x bound] || [_y bound]){
-        assignTRInt(&_active, NO, _trail);
+       // assignTRInt(&_active, NO, _trail);
         return;
     }
    
@@ -315,7 +315,7 @@
         }
     }
     if([_x bound] || [_y bound]){
-        assignTRInt(&_active, NO, _trail);
+       // assignTRInt(&_active, NO, _trail);
         return;
     }
     

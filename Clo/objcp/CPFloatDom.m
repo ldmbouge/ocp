@@ -68,20 +68,20 @@ typedef union {
 }
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
-    //TODO -inf et inf
-    //when selecting unbound variable
-//    assert(newMin <= FLT_MAX);
     if(newMin > [self max])
         failNow();
     updateMin(&_domain, newMin, _trail);
     ORBool isBound = (_domain._low == _domain._up);
+    if(isBound){
+        NSLog(@"ok");
+    }
     [x changeMinEvt: isBound sender:self];
+    NSLog(@"%16.16e %16.16e %s\n",_domain._low, _domain._up,isBound ? "YES" : "NO");
     if (isBound)
         [x bindEvt:self];
 }
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
 {
-    //assert(newMax >=  -FLT_MAX);
     if(newMax < [self min])
         failNow();
     updateMax(&_domain, newMax, _trail);
