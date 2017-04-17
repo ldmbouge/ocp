@@ -255,6 +255,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     ORUInt k = 0;
     mList[k] = _net._bindEvt;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender
@@ -267,6 +268,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     k += mList[k] != NULL;
     mList[k] = bound ? _net._bindEvt : NULL;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender
@@ -279,6 +281,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     k += mList[k] != NULL;
     mList[k] = bound ? _net._bindEvt : NULL;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 
@@ -531,6 +534,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     k += mList[k] != NULL;
     mList[k] = _net._bindEvt;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 -(void) domEvt:(id<CPDom>)sender
@@ -548,6 +552,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     k += mList[k] != NULL;
     mList[k] = (dsz==1) ? _net._bindEvt : NULL;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 -(void) changeMaxEvt:(ORInt) dsz sender:(id<CPFloatDom>)sender
@@ -560,6 +565,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     k += mList[k] != NULL;
     mList[k] = (dsz==1) ? _net._bindEvt : NULL;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 

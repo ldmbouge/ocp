@@ -71,7 +71,7 @@ typedef union {
     if(newMin > [self max])
         failNow();
     updateMin(&_domain, newMin, _trail);
-    ORBool isBound = (_domain._low == _domain._up);
+    ORBool isBound = is_eqf(_domain._low,_domain._up);
     [x changeMinEvt: isBound sender:self];
     if (isBound)
         [x bindEvt:self];
@@ -81,7 +81,7 @@ typedef union {
     if(newMax < [self min])
         failNow();
     updateMax(&_domain, newMax, _trail);
-    ORBool isBound = (_domain._low == _domain._up);
+    ORBool isBound = is_eqf(_domain._low,_domain._up);
     [x changeMaxEvt:isBound sender:self];
     if (isBound)
         [x bindEvt:self];
