@@ -383,7 +383,7 @@ int main(int argc, const char * argv[]) {
       NSLog(@"Search Started: ;-)");
       
       //Attempt all values that results in no error
-      [cp forall:R suchThat:^ORBool(ORInt i) {return [cp domsize: o[i]] > 0;} orderedBy:^ORInt(ORInt i) {
+      [cp forall:R suchThat:^ORBool(ORInt i) {return [cp domsize: o[i]] > 1;} orderedBy:^ORInt(ORInt i) {
          //NSLog(@"pcount %d", p_hwcount[i][1]);
          int isphase = [phase intValue:cp];
          return (-isphase << 20) + (-1 * abs(4 - s_SC[i]) << 10) + p_count[i];
