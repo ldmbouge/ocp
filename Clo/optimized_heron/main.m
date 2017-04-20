@@ -106,9 +106,9 @@ int main(int argc, const char * argv[]) {
         
         
         id<ORFloatVarArray> vars = [model floatVars];
-        id<CPProgram> p = [args makeProgram:model];
+        id<CPProgram> cp = [args makeProgram:model];
         __block bool found = false;
-            [p solveAll:^{//^(id<CPCommonProgram> p) {
+            [cp solveOn:^(id<CPCommonProgram> p) {
              [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
              NSLog(@"Valeurs solutions : \n");
              for(id<ORFloatVar> v in vars){
@@ -116,13 +116,12 @@ int main(int argc, const char * argv[]) {
                  NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
              }
            /*  if(found){
-                 NSLog(@"\n");
+                          NSLog(@"\n");
                  NSLog(@"Verification solutions : \n");
                  check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:squared_area]);
              }*/
-         }];// withTimeLimit:[args timeOut]];
-            struct ORResult r = REPORT(found, [[p explorer] nbFailures],[[p explorer] nbChoices], [[p engine] nbPropagation]);
-         //   struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation])
+            }  withTimeLimit:[args timeOut]];
+            struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
             return r;
         }];
     }

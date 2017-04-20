@@ -73,7 +73,6 @@ PORTABLE_BEGIN
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x;
 -(void)          floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 
-
 -(void)          floatStaticSplit: (id<ORFloatVar>) x;
 -(void)          floatStatic3WaySplit: (id<ORFloatVar>) x;
 -(void)          floatStatic5WaySplit: (id<ORFloatVar>) x;

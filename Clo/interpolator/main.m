@@ -43,10 +43,10 @@ int main(int argc, const char * argv[]) {
                 
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
                 
-            for(id<ORFloatVar> v in vars)
-                NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-            
-            found=true;
+            for(id<ORFloatVar> v in vars){
+                 found &= [p bound: v];
+                 NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+            }
                 
         } withTimeLimit:[args timeOut]];
             struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
