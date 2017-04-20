@@ -545,7 +545,9 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             break;
         default :
             heuristic = ref;
-            [p floatSplitArrayOrderedByDomSize:vars];
+            [p floatSplitNoOrder:vars do:^(id<ORFloatVar> x) {
+                [p float6WaySplit:x];
+            }];
             break;
     }
 }

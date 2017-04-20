@@ -1640,7 +1640,7 @@
           id<CPFloatVar> v = _gamma[getId(x[i])];
           return ![v bound];
        }
-      orderedBy: ^ORInt(ORInt i) {
+      orderedByFloat: ^ORFloat(ORInt i) {
          id<CPFloatVar> v = _gamma[getId(x[i])];
          return -[v density];
       }
@@ -1655,7 +1655,7 @@
           id<CPFloatVar> v = _gamma[getId(x[i])];
           return ![v bound];
        }
-      orderedBy: ^ORInt(ORInt i) {
+      orderedByFloat: ^ORFloat(ORInt i) {
          id<CPFloatVar> v = _gamma[getId(x[i])];
          return [v density];
       }
@@ -1761,11 +1761,17 @@
 //noOrder
 -(void) floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
-   ORInt low = [x low];
-   ORInt up = [x up];
-   for(ORInt i = low; i <= up; i++) {
-      b(x[i]);
-   }
+   [self forall:RANGE(self, [x low], [x up])
+         suchThat: ^ORBool(ORInt i){
+               id<CPFloatVar> v = _gamma[getId(x[i])];
+               return ![v bound];
+               }
+            orderedByFloat: ^ORFloat(ORInt i) {
+            return (ORFloat)i;
+            }
+         do: ^(ORInt i){
+            b(x[i]);
+         }];
 }
 //split until value
 -(void) floatStaticSplit: (id<ORFloatVar>) x
