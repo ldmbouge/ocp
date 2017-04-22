@@ -95,3 +95,10 @@
 -(void)  startTry;
 @end
 
+@interface ORTrackDepth : ORDefaultController <NSCopying,ORSearchController>
+-(id)    initORTrackDepth: (id<ORTrail>) trail;
+-(void)  dealloc;
+-(void)  startTry;
+-(void)  startTryall;
+-(ORInt) maxDepth;
+@end

@@ -108,14 +108,16 @@ int main(int argc, const char * argv[]) {
         id<ORFloatVarArray> vars = [model floatVars];
         id<CPProgram> cp = [args makeProgram:model];
         __block bool found = false;
+            __block bool has_found = false;
+            
             [cp solveOn:^(id<CPCommonProgram> p) {
              [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-             NSLog(@"Valeurs solutions : \n");
-             for(id<ORFloatVar> v in vars){
-                 found &= [p bound: v];
-                 NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-             }
-           /*  if(found){
+                has_found = YES;
+                for(id<ORFloatVar> v in vars){
+                    found &= [p bound: v];
+                    NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+                }
+                /*  if(found){
                           NSLog(@"\n");
                  NSLog(@"Verification solutions : \n");
                  check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:squared_area]);

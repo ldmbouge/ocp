@@ -69,11 +69,10 @@ int main(int argc, const char * argv[]) {
             id<CPProgram> cp = [args makeProgram:model];
             __block bool found = false;
             [cp solveOn:^(id<CPCommonProgram> p) {
-            
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars)
                 NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-             //   check_solution([cp floatValue:a], [cp floatValue:b], [cp floatValue:c], [cp floatValue:s], [cp floatValue:squared_area]);
+            check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);
             found=true;
             
         } withTimeLimit:[args timeOut]];

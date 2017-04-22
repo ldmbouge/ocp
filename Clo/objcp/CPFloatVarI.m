@@ -368,11 +368,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom domwidth];
 }
--(ORUInt) cardinality
+-(ORDouble) cardinality
 {
     return [_dom cardinality];
 }
--(ORFloat) density
+-(ORLDouble) density
 {
     return [_dom density];
 }

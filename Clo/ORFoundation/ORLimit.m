@@ -371,4 +371,46 @@
 }
 @end
 
+@implementation ORTrackDepth
+{
+    id<ORTrail>  _trail;
+    ORInt        _mDepth;
+    TRInt        _depth;
+    
+}
+-(id) initORTrackDepth:(id<ORTrail>) trail;
+{
+    self = [super initORDefaultController];
+    _trail = trail;
+    _depth = makeTRInt(_trail,0);
+    _mDepth = 0;
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(void) startTry
+{
+    assignTRInt(&_depth,_depth._val + 1,_trail);
+    _mDepth = max(_mDepth, _depth._val);
+    [_controller startTry];
+}
+-(void) startTryall
+{
+    assignTRInt(&_depth,_depth._val + 1,_trail);
+    _mDepth = max(_mDepth, _depth._val);
+    [_controller startTryall];
+}
+-(void)trust
+{
+    assignTRInt(&_depth,_depth._val + 1,_trail);
+    _mDepth = max(_mDepth, _depth._val);
+    [super trust];
+}
+-(ORInt)maxDepth
+{
+    return _mDepth;
+}
+@end
 

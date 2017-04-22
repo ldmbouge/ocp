@@ -202,11 +202,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
         ORInt chosen = -1;
         ORInt i = 0;
         while (i < nb) {
-            /*
-             used[i] for tie break
-             */
-            if (!suchThat || suchThat(value[i])) {
-           //     if (!used[i] && (!suchThat || suchThat(value[i]))) {
+            if (!used[i] && (!suchThat || suchThat(value[i]))) {
                     ORFloat efi = order? order(value[i]) : i;
                 if (efi < best) {
                     chosen = i;

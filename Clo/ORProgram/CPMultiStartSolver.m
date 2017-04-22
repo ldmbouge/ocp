@@ -404,6 +404,51 @@
 {
     [[self worker] minDensitySearch:x do:b];
 }
+-(void)  alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] alternateMagnitudeSearch:x do:b];
+}
+-(void)  floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
+{
+    [[self worker] floatSplitArrayOrderedByDomSize:x];
+    
+}
+-(void)  floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] floatSplitNoOrder:x do:b];
+}
+-(void)          floatStaticSplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatStaticSplit:x];
+}
+-(void)          floatStatic3WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatStatic3WaySplit:x];
+}
+-(void)          floatStatic5WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatStatic5WaySplit:x];
+}
+-(void)          floatStatic6WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatStatic6WaySplit:x];
+}
+-(void)          floatSplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatSplit:x];
+}
+-(void)          float3WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] float3WaySplit:x];
+}
+-(void)          float5WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] float5WaySplit:x];
+}
+-(void)          float6WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] float6WaySplit:x];
+}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    [[self worker] labelArray: x];

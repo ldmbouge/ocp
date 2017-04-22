@@ -71,18 +71,20 @@ int main(int argc, const char * argv[]) {
         
             id<ORFloatVarArray> vars = [model floatVars];
             id<CPProgram> cp = [args makeProgram:model];
-            __block bool found = false;
+            __block bool found = true;
+            __block bool has_found = false;
             [cp solveOn:^(id<CPCommonProgram> p) {
                 
                 
                 [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+                has_found = YES;
                 for(id<ORFloatVar> v in vars){
                     found &= [p bound: v];
                     NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
                 }
                 
             } withTimeLimit:[args timeOut]];
-            struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+            struct ORResult r = REPORT(has_found && found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
             return r;
         }];
 

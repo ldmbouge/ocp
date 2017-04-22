@@ -67,18 +67,22 @@ int main(int argc, const char * argv[]) {
             id<ORFloatVarArray> vars = [model floatVars];
             id<CPProgram> cp = [args makeProgram:model];
             __block bool found = false;
+            __block bool has_found = false;
             [cp solveOn:^(id<CPCommonProgram> p) {
                 
                 
                 [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-                for(id<ORFloatVar> v in vars)
-                    NSLog(@"%@ : %16.15e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[cp concretize:v]);
-           //     check_solution([cp floatValue:a], [cp floatValue:b], [cp floatValue:c], [cp floatValue:s], [cp floatValue:squared_area]);
+                has_found = YES;
+                for(id<ORFloatVar> v in vars){
+                    found &= [p bound: v];
+                    NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+                }
+                //     check_solution([cp floatValue:a], [cp floatValue:b], [cp floatValue:c], [cp floatValue:s], [cp floatValue:squared_area]);
                 
                 found=true;
                 
             } withTimeLimit:[args timeOut]];
-            struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+            struct ORResult r = REPORT(has_found && found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
             return r;
         }];
         

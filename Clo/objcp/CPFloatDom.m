@@ -136,7 +136,7 @@ typedef union {
 {
     return _domain;
 }
--(ORUInt) cardinality
+-(ORDouble) cardinality
 {
     double_cast i_inf;
     double_cast i_sup;
@@ -144,9 +144,9 @@ typedef union {
     i_sup.f = _domain._up;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
 }
--(ORFloat) density
+-(ORLDouble) density
 {
-    ORFloat c = (ORFloat)[self cardinality];
+    ORULong c = [self cardinality];
     ORLDouble w = [self domwidth];
     return c / w;
 }
