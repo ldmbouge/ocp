@@ -1625,7 +1625,7 @@
       } while (true);
    }];
    NSLog(@"max level : %d",[t maxDepth]);
-    [t dealloc];
+    [t release];
 }
 -(void) minCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1649,7 +1649,7 @@
    } while (true);
    }];
    NSLog(@"max level : %d",[t maxDepth]);
- [t dealloc];
+   [t release];
 }
 -(void) maxDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1673,7 +1673,7 @@
    } while (true);
    }];
    NSLog(@"max level : %d",[t maxDepth]);
-    [t dealloc];
+   [t release];
 }
 -(void) minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1698,7 +1698,7 @@
    }];
    
    NSLog(@"max level : %d",[t maxDepth]);
-   [t dealloc];
+   [t release];
 }
 -(void) maxWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1723,7 +1723,7 @@
       
    }];
    NSLog(@"max level : %d",[t maxDepth]);
-    [t dealloc];
+   [t release];
 }
 -(void) minWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1747,7 +1747,7 @@
    } while (true);
    }];
    NSLog(@"max level : %d",[t maxDepth]);
-    [t dealloc];
+   [t release];
 }
 -(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1772,7 +1772,8 @@
    } while (true);
    }];
    NSLog(@"max level : %d",[t maxDepth]);
-   [t dealloc];
+   
+   [t release];
 }
 -(void) minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1797,7 +1798,8 @@
    } while (true);
    }];
    NSLog(@"max level : %d",[t maxDepth]);
-    [t dealloc];
+   
+   [t release];
 }
 -(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1825,7 +1827,8 @@
    } while (true);
    }];
    NSLog(@"max level : %d",[t maxDepth]);
-    [t dealloc];
+   
+   [t release];
 }
 -(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
@@ -1861,7 +1864,8 @@
          }];
    }];
    NSLog(@"max level : %d",[t maxDepth]);
-    [t dealloc];
+   
+   [t release];
 }
 //split until value
 -(void) floatStaticSplit: (id<ORFloatVar>) x
