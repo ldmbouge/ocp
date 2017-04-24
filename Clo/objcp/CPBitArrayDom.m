@@ -14,7 +14,6 @@
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPError.h>
 #import <objcp/CPBitVar.h>
-#import <objcp/CPBitMacros.h>
 #import <objcp/CPIntVarI.h>
 #import "CPBitVarI.h"
 
@@ -24,18 +23,38 @@
 
 @implementation CPBitArrayDom
 
+static inline ORULong BAMin(CPBitArrayDom* dom)
+{
+   return dom->_min[0]._val | ((ORULong)dom->_min[1]._val << 32);
+}
+static inline ORULong BAMax(CPBitArrayDom* dom)
+{
+   return dom->_max[0]._val | ((ORULong)dom->_max[1]._val << 32);
+}
+/*
+static inline ORULong BALow(CPBitArrayDom* dom)
+{
+   return dom->_low[0]._val | ((ORULong)dom->_low[1]._val << 32);
+}
+static inline ORULong BAUp(CPBitArrayDom* dom)
+{
+   return dom->_up[0]._val | ((ORULong)dom->_up[1]._val << 32);
+}
+*/
+
 -(CPBitArrayDom*)      initWithLength: (int) len withEngine:(id<CPEngine>)engine withTrail:(id<ORTrail>) tr
 {
    self = [super init];
    _trail = tr;
    _bitLength = len;
+//   _learning = [engine conformsToProtocol:@protocol(CPLEngine)];
    _freebits = makeTRUInt(tr, len);
    _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
    _low = malloc(sizeof(TRUInt)*_wordLength);
    _up = malloc(sizeof(TRUInt)*_wordLength);
    _min = malloc(sizeof(TRUInt)*_wordLength);
    _max = malloc(sizeof(TRUInt)*_wordLength);
-   _levels = malloc(sizeof(TRUInt)*len);
+//   _levels = malloc(sizeof(TRUInt)*len);
    
    for(int i=0;i<_wordLength;i++){
       _low[i] = makeTRUInt(tr, 0);
@@ -43,48 +62,50 @@
       _min[i] = makeTRUInt(tr, 0);
       _max[i] = makeTRUInt(tr, CP_UMASK);
    }
-   for (int i=0; i<len; i++) {
-      _levels[i] = makeTRUInt(tr, -1);
-   }
+//   for (int i=0; i<len; i++) {
+//      _levels[i] = makeTRUInt(tr, -1);
+//   }
    return self;
 }
 
 -(CPBitArrayDom*)initWithBitPat:(int)len withLow:(ORUInt *)low andUp:(ORUInt *)up andEngine:(id<CPEngine>)engine andTrail:(id<ORTrail>) tr
 {
-    self = [super init];
-    _trail = tr;
-    _bitLength = len;
-    _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
-    _low = malloc(sizeof(TRUInt)*_wordLength);
-    _up = malloc(sizeof(TRUInt)*_wordLength);
-    _min = malloc(sizeof(TRUInt)*_wordLength);
-    _max = malloc(sizeof(TRUInt)*_wordLength);
-    _levels = malloc(sizeof(TRUInt)*len);
-
+   self = [super init];
+   _trail = tr;
+   _bitLength = len;
+   _engine = (id)engine;
+//   _learning = [engine conformsToProtocol:@protocol(CPLEngine)];
+   _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
+   _low = malloc(sizeof(TRUInt)*_wordLength);
+   _up = malloc(sizeof(TRUInt)*_wordLength);
+   _min = malloc(sizeof(TRUInt)*_wordLength);
+   _max = malloc(sizeof(TRUInt)*_wordLength);
+//   _levels = malloc(sizeof(TRUInt)*len);
+   
    //Mask out unused bits - bits are bound to zero
    ORUInt remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
    ORUInt mask = CP_UMASK;
    mask >>= 32 - remainingbits;
    up[0] &= mask;
    low[0] &= mask;
-
-    for(int i=0;i<_wordLength;i++){
-        _low[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
-        _up[_wordLength - 1 - i]  = makeTRUInt(tr, up[i]);
-        _min[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
-        _max[_wordLength - 1 - i] = makeTRUInt(tr, up[i]);
-    }
-   for (int i=0; i<len; i++) {
-      _levels[i] = makeTRUInt(tr, -1);
-   }
-    ORUInt boundBits = 0;
-    ORUInt freeBits = 0;
-    for (int i=0; i<_wordLength; i++) {
-        boundBits = (_low[i]._val ^ _up[i]._val);
-        freeBits += __builtin_popcount(boundBits);
-    }
    
-    _freebits = makeTRUInt(tr, freeBits);
+   for(int i=0;i<_wordLength;i++){
+      _low[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
+      _up[_wordLength - 1 - i]  = makeTRUInt(tr, up[i]);
+      _min[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
+      _max[_wordLength - 1 - i] = makeTRUInt(tr, up[i]);
+   }
+//   for (int i=0; i<len; i++) {
+//      _levels[i] = makeTRUInt(tr, -1);
+//   }
+   ORUInt boundBits = 0;
+   ORUInt freeBits = 0;
+   for (int i=0; i<_wordLength; i++) {
+      boundBits = (_low[i]._val ^ _up[i]._val);
+      freeBits += __builtin_popcount(boundBits);
+   }
+   
+   _freebits = makeTRUInt(tr, freeBits);
    return self;
 }
 
@@ -252,13 +273,24 @@
 
 -(ORBool) getBit:(ORUInt) idx
 {
-   if (BITFREE(idx)) 
+   if (BITFREE(idx))
       @throw [[ORExecutionError alloc] initORExecutionError: "Trying to 'get' unbound bit in CPBitArrayDom"];
    if (_low[WORDIDX(idx)]._val  & ONEAT(idx))
       return true;
    else
       return false;
 }
+
+static inline void updateFreeBitCount(CPBitArrayDom* dom)
+{
+   ORUInt freeBits = 0;
+   for (int i=0; i < dom->_wordLength; i++) {
+      ORUInt boundBits = (dom->_low[i]._val ^ dom->_up[i]._val);
+      freeBits += __builtin_popcount(boundBits);
+   }
+   assignTRUInt(&(dom->_freebits), freeBits, dom->_trail);
+}
+
 
 -(ORStatus) setBit:(ORUInt)idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
 {
@@ -278,11 +310,11 @@
       }
    }
 
-   [self updateFreeBitCount];
-   if([_engine conformsToProtocol:@protocol(CPLEngine)]){
-      ORUInt level = [(id<CPLEngine>)_engine getLevel];
-      assignTRUInt(&(_levels[idx]),level, _trail);
-   }
+   updateFreeBitCount(self);
+//   if (_learning){
+//      ORUInt level = [(id<CPLEngine>)_engine getLevel];
+//      assignTRUInt(&(_levels[idx]),level, _trail);
+//   }
    [x bitFixedEvt:_freebits._val sender:self];
    return ORSuspend;
 }
@@ -293,7 +325,7 @@
 -(ORUInt) lsFreeBit
 {
    int j;
-   //[self updateFreeBitCount];
+   //updateFreeBitCount(self);
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
@@ -310,7 +342,7 @@
 {
    ORUInt freeBits;
    int j;
-   //[self updateFreeBitCount];
+   //updateFreeBitCount(self);
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
@@ -344,7 +376,7 @@
 
 -(ORUInt) randomFreeBit
 {
-   //[self updateFreeBitCount];
+   //updateFreeBitCount(self);
 #if defined(__linux__)
    int r = random() % _freebits._val;
 #else
@@ -396,15 +428,6 @@
    return lsBitPos+(numConsecutiveUnboundBits/2);
 }
 
--(void) updateFreeBitCount
-{
-   ORUInt freeBits = 0;
-   for (int i=0; i<_wordLength; i++) {
-      ORUInt boundBits = (_low[i]._val ^ _up[i]._val);
-      freeBits += __builtin_popcount(boundBits);
-   }
-   assignTRUInt(&(_freebits), freeBits, _trail);
-}
 -(ORBool) member:(ORUInt*) val
 {
    bool isMember = true;
@@ -415,19 +438,6 @@
       if ((~val[i] & _low[i]._val)!=0)
          isMember = false;
    }
-   /*
-   for(int i=0;i<[_remValues count];i++)
-   {
-      wasRemoved = true;
-      for (int j=0; j<_wordLength; j++) {
-         if (((ORUInt*)[[_remValues objectAtIndex:i] pointerValue])[j] != val[j]) {
-            wasRemoved = false;
-            break;
-         }
-      }
-      if (wasRemoved)
-         return false;
-   }*/
    return isMember;
 }
 
@@ -728,11 +738,21 @@
    // [LDM]. This is buggy  Some bits might already be set in low/up and *incompatible* with the
    // mass setting done here. In this case it should *FAIL*.
    
-   
-   if ((val < [self min]) || (val > [self max]))
+   assert(_wordLength <= 2);
+   if ((val < BAMin(self)) || (val > BAMax(self)))
       failNow();
-   if ((_freebits._val == 0) && (val == [self min])) return ORSuccess;
+   if ((_freebits._val == 0) && (val == BAMin(self))) return ORSuspend;
    ORUInt* pc = (ORUInt*)&val;
+   ORUInt boundAt0w0 = ~(_low[0]._val ^ _up[0]._val) & ~_low[0]._val;
+   ORUInt boundAt1w0 = ~(_low[0]._val ^ _up[0]._val) & _up[0]._val;
+   ORBool W0Ok = ((pc[0] & boundAt0w0) == boundAt0w0) && ((pc[0] & boundAt1w0) == boundAt1w0);
+   if (!W0Ok) return ORFailure;
+   if (_wordLength >= 2) {
+      ORUInt boundAt0w1 = ~(_low[1]._val ^ _up[1]._val) & ~_low[1]._val;
+      ORUInt boundAt1w1 = ~(_low[1]._val ^ _up[1]._val) & _up[1]._val;
+      ORBool W1Ok = ((pc[1] & boundAt0w1) == boundAt0w1) && ((pc[1] & boundAt1w1) == boundAt1w1);
+      if (!W1Ok) return ORFailure;
+   }
    //Deal with arrays < 64 bits long
    assignTRUInt(&_min[1], pc[1], _trail);
    assignTRUInt(&_max[1], pc[1], _trail);
@@ -765,7 +785,7 @@
 
    assignTRUInt(&_freebits, 0, _trail);
    [x bindEvt:1 sender:self];
-   [self updateFreeBitCount];
+   updateFreeBitCount(self);
    return ORSuspend;   
 }
 
@@ -804,7 +824,7 @@
       lmod |= _low[i]._val != newLow[i];
       assignTRUInt(&_low[i], newLow[i], _trail);
    }
-    [self updateFreeBitCount];
+   updateFreeBitCount(self);
    if (lmod){
        [x bitFixedEvt:_freebits._val sender:self];
 
@@ -819,15 +839,15 @@
          [x changeMinEvt:[self domsize] sender:self];
       }
 
-      if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
-         for (int i=0; i<_wordLength; i++) {
-            for (int j=0; j<BITSPERWORD; j++) {
-               if (isChanged[i] & 0x00000001)
-                  assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(id<CPLEngine>)_engine getLevel], _trail);
-               isChanged[i] >>= 1;
-            }
-         }
-      }
+//      if(_learning) {
+//         for (int i=0; i<_wordLength; i++) {
+//            for (int j=0; j<BITSPERWORD; j++) {
+//               if (isChanged[i] & 0x00000001)
+//                  assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(id<CPLEngine>)_engine getLevel], _trail);
+//               isChanged[i] >>= 1;
+//            }
+//         }
+//      }
    }
 }
 
@@ -841,7 +861,7 @@
       umod |= _up[i]._val != newUp[i];
       assignTRUInt(&_up[i], newUp[i], _trail);
    }
-   [self updateFreeBitCount];
+   updateFreeBitCount(self);
    
    if (umod){
       [x bitFixedEvt:_freebits._val sender:self];
@@ -856,15 +876,15 @@
          [x changeMaxEvt:[self domsize] sender:self];
       }
       //record level new bits were set at
-      if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
-         for (int i=0; i<_wordLength; i++) {
-            for (int j=0; j<BITSPERWORD; j++) {
-               if (isChanged[i] & 0x00000001)
-                  assignTRUInt(&_levels[i*BITSPERWORD+j],[(id<CPLEngine>)_engine getLevel],_trail);
-               isChanged[i] >>= 1;
-            }
-         }
-      }
+//      if(_learning) {
+//         for (int i=0; i<_wordLength; i++) {
+//            for (int j=0; j<BITSPERWORD; j++) {
+//               if (isChanged[i] & 0x00000001)
+//                  assignTRUInt(&_levels[i*BITSPERWORD+j],[(id<CPLEngine>)_engine getLevel],_trail);
+//               isChanged[i] >>= 1;
+//            }
+//         }
+//      }
    }
 }
 
@@ -877,19 +897,20 @@
    ORUInt* isChanged = alloca(sizeof(ORUInt)*_wordLength);
 
    for(int i=0;i<_wordLength;i++){
+      //Check consistency
+      if((~_up[i]._val) & newLow[i])
+         failNow();
+      if(_low[i]._val & ~newUp[i])
+         failNow();
+
       isChanged[i]  = (_up[i]._val ^ newUp[i]);
       isChanged[i] |= (_low[i]._val ^ newLow[i]);
       umod |= _up[i]._val != newUp[i];
       assignTRUInt(&_up[i], newUp[i], _trail);
       lmod |= _low[i]._val != newLow[i];
       assignTRUInt(&_low[i], newLow[i], _trail);
-      //Check consistency
-      if((~_up[i]._val) & newLow[i])
-         failNow();
-      if(_low[i]._val & ~newUp[i])
-         failNow();
    }
-   [self updateFreeBitCount];
+   updateFreeBitCount(self);
    if (umod || lmod){
       [x bitFixedEvt:_freebits._val sender:self];
       ORULong upInterpretation = TOULONG(_up);
@@ -911,15 +932,16 @@
          [x changeMinEvt:[self domsize] sender:self];         // ditto, see above.
       }
 
-      if([_engine conformsToProtocol:@protocol(CPLEngine)]) {
-         for (int i=0; i<_wordLength; i++) {
-            for (int j=0; j<BITSPERWORD; j++) {
-               if (isChanged[i] & 0x00000001)
-                  assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(CPLearningEngineI*)_engine getLevel], _trail);
-               isChanged[i] >>= 1;
-            }
-         }
-      }
+//      if(_learning) {
+//         ORUInt level = [(CPLearningEngineI*)_engine getLevel];
+//         for (int i=0; i<_wordLength; i++) {
+//            for (int j=0; j<BITSPERWORD; j++) {
+//               if (isChanged[i] & 0x00000001)
+//                  assignTRUInt(&_levels[(i*BITSPERWORD)+j], level, _trail);
+//               isChanged[i] >>= 1;
+//            }
+//         }
+//      }
    }
 }
 
@@ -958,13 +980,16 @@
 //   _max._val = toRestore;
 //   _sz._val  = 1;
 }
--(ORUInt) getLevelForBit:(ORUInt)bit{
-   return _levels[bit]._val;
+-(ORUInt) getLevelForBit:(ORUInt)bit
+{
+//   return _levels[bit]._val;
+   assert(false);
+   return 0;
 }
 
--(id) copyWithZone:(NSZone*) zone{
+-(id) copyWithZone:(NSZone*) zone
+{
    CPBitArrayDom* copy = [[CPBitArrayDom alloc] initWithBitPat:_bitLength withLow:&_low->_val andUp:&_up->_val andEngine:_engine andTrail:_trail];
-   [copy setEngine:_engine];
    return copy;
 }
 @end

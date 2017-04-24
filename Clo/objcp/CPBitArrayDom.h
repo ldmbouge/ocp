@@ -10,11 +10,11 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPBitArrayDom.h>
 #import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPLEngine.h>
 #import <objcp/CPData.h>
+#import <objcp/CPBitMacros.h>
 
 @protocol CPBitVarNotifier;
 @class CPBitArrayIterator;
@@ -37,6 +37,7 @@ typedef struct ULRep ULRep;
     ORUInt    _wordLength;
 @private
     ORUInt    _bitLength;
+    ORBool     _learning;
     TRUInt          _freebits;
     TRUInt*         _min;
     TRUInt*         _max;
@@ -51,7 +52,6 @@ typedef struct ULRep ULRep;
 -(ORUInt)               getSize;
 -(ORInt)                domsize;
 -(ORULong)              numPatterns;
--(void)                 updateFreeBitCount;
 -(ORBounds)             bounds;
 -(ORBool)               bound;
 -(ORULong)               min;
@@ -102,4 +102,11 @@ static inline ORUInt getWordLength(CPBitArrayDom* dom)
 {
    return dom->_wordLength;
 }
-
+static inline ORBool DomBitFree(CPBitArrayDom* dom,ORUInt idx)
+{
+   return ((dom->_low[WORDIDX(idx)]._val ^ dom->_up[WORDIDX(idx)]._val) & ONEAT(idx) & dom->_up[WORDIDX(idx)]._val) != 0;
+}
+static inline ORBool DomBitGet(CPBitArrayDom* dom,ORUInt idx)
+{
+   return (dom->_low[WORDIDX(idx)]._val  & ONEAT(idx)) !=  0;
+}
