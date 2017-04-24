@@ -404,6 +404,22 @@
 {
     return ![_x bound];
 }
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x
+{
+    if([x getId] == [_y getId]){
+        ORFloat ym = maxFlt([_y min],[_y max]);
+        ORFloat min = (ym - fp_next_float(ym)) / 2.0;
+        ORFloat max = (ym + fp_next_float(ym)) / 2.0;
+        return ((isIntersectionWith(min,max,[_x min],[_x max])) ? (minFlt(max,[_x max]) - maxFlt(min,[_x min])):0.0);
+    }else if([x getId] == [_x getId]){
+        ORFloat xm = maxFlt([_y min],[_y max]);
+        ORFloat min = (xm - fp_next_float(xm)) / 2.0;
+        ORFloat max = (xm + fp_next_float(xm)) / 2.0;
+        return ((isIntersectionWith(min,max,[_x min],[_x max])) ? (minFlt(max,[_x max]) - maxFlt(min,[_x min])):0.0);
+    }else{
+        return 0.0;
+    }
+}
 -(NSString*)description
 {
     return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
@@ -482,6 +498,22 @@
 -(ORUInt)nbUVars
 {
     return ![_x bound];
+}
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x
+{
+    if([x getId] == [_y getId]){
+        ORFloat ym = maxFlt([_y min],[_y max]);
+        ORFloat min = (ym - fp_next_float(ym)) / 2.0;
+        ORFloat max = (ym + fp_next_float(ym)) / 2.0;
+        return ((isIntersectionWith(min,max,[_x min],[_x max])) ? (minFlt(max,[_x max]) - maxFlt(min,[_x min])):0.0);
+    }else if([x getId] == [_x getId]){
+        ORFloat xm = maxFlt([_y min],[_y max]);
+        ORFloat min = (xm - fp_next_float(xm)) / 2.0;
+        ORFloat max = (xm + fp_next_float(xm)) / 2.0;
+        return ((isIntersectionWith(min,max,[_x min],[_x max])) ? (minFlt(max,[_x max]) - maxFlt(min,[_x min])):0.0);
+    }else{
+        return 0.0;
+    }
 }
 -(NSString*)description
 {

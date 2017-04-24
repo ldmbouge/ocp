@@ -34,7 +34,9 @@ enum Heuristic {
     minDegree  = 20,
     maxOcc  = 21,
     minOcc  = 22,
-    ref = 23
+    maxAbs  = 23,
+    minAbs  = 24,
+    ref = 25
 };
 enum ValHeuristic
 {

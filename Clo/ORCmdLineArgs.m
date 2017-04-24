@@ -719,6 +719,94 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                     break;
             }
             break;
+        case maxAbs :
+            switch (valordering) {
+                case split:
+                    [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStaticSplit:x];
+                    }];
+                    break;
+                case split3Way:
+                    [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic3WaySplit:x];
+                    }];
+                    break;
+                case split5Way:
+                    [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic5WaySplit:x];
+                    }];
+                    break;
+                case split6Way:
+                    [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic6WaySplit:x];
+                    }];
+                    break;
+                case dynamicSplit:
+                    [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatSplit:x];
+                    }];
+                    break;
+                case dynamic3Split:
+                    [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float3WaySplit:x];
+                    }];
+                    break;
+                case dynamic5Split:
+                    [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float5WaySplit:x];
+                    }];
+                    break;
+                case dynamic6Split:
+                    [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                    }];
+                    break;
+            }
+            break;
+        case minAbs :
+            switch (valordering) {
+                case split:
+                    [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStaticSplit:x];
+                    }];
+                    break;
+                case split3Way:
+                    [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic3WaySplit:x];
+                    }];
+                    break;
+                case split5Way:
+                    [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic5WaySplit:x];
+                    }];
+                    break;
+                case split6Way:
+                    [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic6WaySplit:x];
+                    }];
+                    break;
+                case dynamicSplit:
+                    [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatSplit:x];
+                    }];
+                    break;
+                case dynamic3Split:
+                    [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float3WaySplit:x];
+                    }];
+                    break;
+                case dynamic5Split:
+                    [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float5WaySplit:x];
+                    }];
+                    break;
+                case dynamic6Split:
+                    [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                    }];
+                    break;
+            }
+            break;
         default :
             heuristic = ref;
             [p floatSplitNoOrder:vars do:^(id<ORFloatVar> x) {

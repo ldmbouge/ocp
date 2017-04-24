@@ -66,6 +66,10 @@
    }
    return i;
 }
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x
+{
+   return 0.0;
+}
 @end
 
 @implementation ORGroupI {
@@ -184,6 +188,10 @@
          i++;
    }
    return i;
+}
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x
+{
+   return 0.0;
 }
 @end
 

@@ -363,6 +363,22 @@
 {
     [[self worker] minDegreeSearch:x do:b];
 }
+-(void)          maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxOccurencesSearch:x do:b];
+}
+-(void)          minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minOccurencesSearch:x do:b];
+}
+-(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxAbsorptionSearch:x do:b];
+}
+-(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minAbsorptionSearch:x do:b];
+}
 -(void) splitArray: (id<ORIntVarArray>) x
 {
    [[self worker] splitArray:x];
