@@ -1624,8 +1624,7 @@
          b(x[i]);
       } while (true);
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
-    [t release];
+     
 }
 -(void) minCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1648,8 +1647,7 @@
       b(x[i]);
    } while (true);
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
-   [t release];
+    
 }
 -(void) maxDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1672,8 +1670,6 @@
       b(x[i]);
    } while (true);
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
-   [t release];
 }
 -(void) minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1697,8 +1693,7 @@
    } while (true);
    }];
    
-   NSLog(@"max level : %d",[t maxDepth]);
-   [t release];
+    
 }
 -(void) maxWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1722,8 +1717,7 @@
    } while (true);
       
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
-   [t release];
+    
 }
 -(void) minWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1746,8 +1740,7 @@
       b(x[i]);
    } while (true);
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
-   [t release];
+    
 }
 -(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1771,9 +1764,7 @@
       b(x[i]);
    } while (true);
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
-   
-   [t release];
+    
 }
 -(void) minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1797,9 +1788,7 @@
       b(x[i]);
    } while (true);
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
-   
-   [t release];
+    
 }
 -(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1826,9 +1815,8 @@
       b(x[i]);
    } while (true);
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
    
-   [t release];
+    
 }
 -(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
@@ -1849,23 +1837,25 @@
 -(void) floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   id<ORSelect> select = [ORFactory select: _engine
+                                     range: RANGE(self,[x low],[x up])
+                                  suchThat: ^ORBool(ORInt i) {
+                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     return ![v bound];
+                                  }
+                                 orderedBy: ^ORDouble(ORInt i) {
+                                    return (ORDouble)i;
+                                 }];
    
    [[self explorer] applyController:t in:^{
-   [self forall:RANGE(self, [x low], [x up])
-         suchThat: ^ORBool(ORInt i){
-               id<CPFloatVar> v = _gamma[getId(x[i])];
-               return ![v bound];
-               }
-            orderedByFloat: ^ORFloat(ORInt i) {
-            return (ORFloat)i;
-            }
-         do: ^(ORInt i){
-            b(x[i]);
-         }];
+      do {
+         ORInt i = [select min];
+         if (i == MAXINT)
+            break;
+         b(x[i]);
+      } while (true);
    }];
-   NSLog(@"max level : %d",[t maxDepth]);
-   
-   [t release];
+
 }
 //split until value
 -(void) floatStaticSplit: (id<ORFloatVar>) x

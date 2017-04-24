@@ -77,7 +77,7 @@
 -(ORInterval) bounds;
 -(ORLDouble) domwidth;
 -(ORDouble) cardinality;
--(ORLDouble) density;
+-(ORDouble) density;
 -(ORFloat) magnitude;
 -(TRFloatInterval) domain;
 -(ORBool) member:(ORFloat)v;

@@ -100,5 +100,5 @@
 -(void)  dealloc;
 -(void)  startTry;
 -(void)  startTryall;
--(ORInt) maxDepth;
+-(ORUInt) maxDepth;
 @end

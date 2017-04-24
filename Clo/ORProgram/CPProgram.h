@@ -216,7 +216,6 @@ PORTABLE_BEGIN
 -(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
-
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
 -(void)             perform: (ORClosure) body onLimit: (ORClosure) onRestart;

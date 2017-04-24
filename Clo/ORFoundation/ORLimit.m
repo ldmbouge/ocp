@@ -374,7 +374,7 @@
 @implementation ORTrackDepth
 {
     id<ORTrail>  _trail;
-    ORInt        _mDepth;
+    ORUInt        _mDepth;
     TRInt        _depth;
     
 }
@@ -388,6 +388,8 @@
 }
 -(void) dealloc
 {
+    NSLog(@"maxdepth : %u",[self maxDepth]);
+    NSLog(@"ORTrackDepth dealloc called...\n");
     [super dealloc];
 }
 -(void) startTry
@@ -408,7 +410,7 @@
     _mDepth = max(_mDepth, _depth._val);
     [super trust];
 }
--(ORInt)maxDepth
+-(ORUInt)maxDepth
 {
     return _mDepth;
 }

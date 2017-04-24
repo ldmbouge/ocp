@@ -144,9 +144,9 @@ typedef union {
     i_sup.f = _domain._up;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
 }
--(ORLDouble) density
+-(ORDouble) density
 {
-    ORULong c = [self cardinality];
+    ORDouble c = [self cardinality];
     ORLDouble w = [self domwidth];
     return c / w;
 }
