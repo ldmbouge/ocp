@@ -30,7 +30,11 @@ enum Heuristic {
     minMagn  = 16,
     maxMagn  = 17,
     alertMagn  = 18,
-    ref = 19
+    maxDegree  = 19,
+    minDegree  = 20,
+    maxOcc  = 21,
+    minOcc  = 22,
+    ref = 23
 };
 enum ValHeuristic
 {

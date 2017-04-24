@@ -124,6 +124,16 @@
     [[e left] visit:self];
     [[e right] visit:self];
 }
+-(void) visitExprLThenI: (ORExprBinaryI*) e
+{
+    [[e left] visit:self];
+    [[e right] visit:self];
+}
+-(void) visitExprGThenI: (ORExprBinaryI*) e
+{
+    [[e left] visit:self];
+    [[e right] visit:self];
+}
 -(void) visitExprSumI: (ORExprSumI*) e
 {
     [[e expr] visit:self];

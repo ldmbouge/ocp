@@ -41,7 +41,11 @@
 {}
 -(NSSet*)allVars
 {
-   return [[[NSSet alloc] init] autorelease];
+    return [[[NSSet alloc] init] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+    return [[[NSArray alloc] init] autorelease];
 }
 -(ORUInt) nbVars
 {
@@ -81,6 +85,11 @@
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitConstraint:self];
+}
+-(ORBool) memberVar:(id<ORVar>)x
+{
+    NSSet *vars = [self allVars];
+    return [vars containsObject:x];
 }
 @end
 

@@ -234,7 +234,11 @@
 }
 -(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-   return [[self worker] forall: S suchThat: filter orderedBy: order do: body];
+    return [[self worker] forall: S suchThat: filter orderedBy: order do: body];
+}
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedByFloat:(ORInt2Float)o do:(ORInt2Void)b
+{
+    return [[self worker] forall: S suchThat: filter orderedByFloat: o do: b];
 }
 -(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
@@ -411,11 +415,18 @@
 -(void)  floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
     [[self worker] floatSplitArrayOrderedByDomSize:x];
-    
 }
 -(void)  floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
     [[self worker] floatSplitNoOrder:x do:b];
+}
+-(void)  maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxDegreeSearch:x do:b];
+}
+-(void)  minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minDegreeSearch:x do:b];
 }
 -(void)          floatStaticSplit: (id<ORFloatVar>) x
 {

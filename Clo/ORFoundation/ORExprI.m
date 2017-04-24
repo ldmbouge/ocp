@@ -109,9 +109,11 @@
 
 @interface ORSweep : ORNOopVisit<NSObject> {
    NSMutableSet* _ms;
+   NSMutableArray* _ma;
 }
 -(id)init;
 -(NSSet*)doIt:(id<ORExpr>)e;
+-(NSArray*)doItAsArray:(id<ORExpr>)e;
 // Variables
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitBitVar: (id<ORBitVar>) v;
@@ -192,46 +194,63 @@
 {
    self = [super init];
    _ms  = NULL;
+   _ma  = NULL;
    return self;
 }
 -(NSSet*)doIt:(id<ORExpr>)e
 {
-   _ms = [[[NSMutableSet alloc] initWithCapacity:8] autorelease];
+    _ms = [[[NSMutableSet alloc] initWithCapacity:8] autorelease];
+    _ma = [[[NSMutableArray alloc] initWithCapacity:8] autorelease];
    [e visit:self];
    return _ms;
+}
+-(NSArray*)doItAsArray:(id<ORExpr>)e
+{
+    _ms = [[[NSMutableSet alloc] initWithCapacity:8] autorelease];
+    _ma = [[[NSMutableArray alloc] initWithCapacity:8] autorelease];
+    [e visit:self];
+    return _ma;
 }
 // Variables
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   [_ms addObject:v];
+    [_ms addObject:v];
+    [_ma addObject:v];
 }
 -(void) visitBitVar: (id<ORBitVar>) v
 {
-   [_ms addObject:v];
+    [_ms addObject:v];
+    [_ma addObject:v];
 }
 -(void) visitRealVar: (id<ORRealVar>) v
 {
     [_ms addObject:v];
+    [_ma addObject:v];
 }
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
     [_ms addObject:v];
+    [_ma addObject:v];
 }
 -(void) visitDoubleVar: (id<ORDoubleVar>) v
 {
     [_ms addObject:v];
+    [_ma addObject:v];
 }
 -(void) visitLDoubleVar: (id<ORLDoubleVar>) v
 {
     [_ms addObject:v];
+    [_ma addObject:v];
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
-   [_ms addObject:v];
+    [_ms addObject:v];
+    [_ma addObject:v];
 }
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
-   [_ms addObject:v];
+    [_ms addObject:v];
+    [_ma addObject:v];
 }
 // Expressions
 -(void) visitExprPlusI: (ORExprBinaryI*) e
@@ -367,8 +386,9 @@
 {
    [[e index] visit:self];
    id<ORIntVarArray> a = [e array];
-   [a enumerateWith:^(id obj, int idx) {
-      [_ms addObject:obj];
+    [a enumerateWith:^(id obj, int idx) {
+        [_ms addObject:obj];
+        [_ma addObject:obj];
    }];
 }
 // Bit
@@ -924,6 +944,28 @@
    NSSet* rv = [sweep doIt:self];
    [sweep release];
    return rv;
+}
+-(NSArray*)allVarsArray
+{
+    ORSweep* sweep = [[ORSweep alloc] init];
+    NSArray* rv = [sweep doItAsArray:self];
+    [sweep release];
+    return rv;
+}
+-(ORBool) memberVar:(id<ORVar>)x
+{
+    NSSet *vars = [self allVars];
+    return [vars containsObject:x];
+}
+-(ORUInt) nbOccurences:(id<ORVar>)x
+{
+    NSArray *vars = [self allVarsArray];
+    ORUInt i = 0;
+    for(id<ORVar> v in vars){
+        if ([v getId] == [x getId])
+            i++;
+    }
+    return i;
 }
 @end
 

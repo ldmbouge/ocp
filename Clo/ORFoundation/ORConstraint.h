@@ -45,6 +45,9 @@
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
 -(NSSet*)allVars;
+-(NSArray*)allVarsArray;
+-(ORBool) memberVar:(id<ORVar>) x;
+-(ORUInt) nbOccurences:(id<ORVar>)x;
 -(void) close;
 @end
 

@@ -35,6 +35,10 @@
 {
    return [[[NSSet alloc] init] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] init] autorelease];
+}
 -(void) close
 {
    
@@ -46,6 +50,21 @@
 {
    self = [super init];
    return self;
+}
+-(ORBool) memberVar:(id<ORVar>)x
+{
+   NSSet *vars = [self allVars];
+   return [vars containsObject:x];
+}
+-(ORUInt) nbOccurences:(id<ORVar>)x
+{
+   NSArray *vars = [self allVarsArray];
+   ORUInt i = 0;
+   for(id<ORVar> v in vars){
+      if ([v getId] == [x getId])
+         i++;
+   }
+   return i;
 }
 @end
 
@@ -125,7 +144,10 @@
 {
    return [[[NSSet alloc] init] autorelease];
 }
-
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] init] autorelease];
+}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitGroup:self];
@@ -147,6 +169,21 @@
    _model   = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_gt];
    return self;
+}
+-(ORBool) memberVar:(id<ORVar>)x
+{
+   NSSet *vars = [self allVars];
+   return [vars containsObject:x];
+}
+-(ORUInt) nbOccurences:(id<ORVar>)x
+{
+   NSArray *vars = [self allVarsArray];
+   ORUInt i = 0;
+   for(id<ORVar> v in vars){
+      if ([v getId] == [x getId])
+         i++;
+   }
+   return i;
 }
 @end
 
@@ -202,6 +239,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -255,6 +296,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -307,6 +352,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -356,6 +405,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -403,6 +456,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -452,6 +509,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -500,6 +561,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -547,6 +612,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -602,6 +671,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, _y,nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -666,6 +739,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORNEqual {
@@ -728,6 +805,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -813,6 +894,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -873,6 +958,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -929,6 +1018,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -978,6 +1071,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_z, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1040,6 +1137,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -1096,6 +1197,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_z, nil] autorelease];
+}
 @end
 
 @implementation ORMin { // z = min(x,y)
@@ -1136,6 +1241,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
 
@@ -1178,6 +1287,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORAbs { // x = |y|
@@ -1212,6 +1325,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -1255,6 +1372,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORAnd { // x = y && z
@@ -1295,6 +1416,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
 
@@ -1337,6 +1462,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 
@@ -1372,6 +1501,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -1414,6 +1547,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_idx,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_idx,_z, nil] autorelease];
 }
 @end
 
@@ -1462,6 +1599,16 @@
    [ms addObject:_z];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:2 + [_y count]] autorelease];
+   [_y enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_idx];
+   [ms addObject:_z];
+   return ms;
+}
 @end
 
 @implementation ORElementBitVar {  // y[idx] == z
@@ -1502,6 +1649,16 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2 + [_y count]] autorelease];
+   [_y enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_idx];
+   [ms addObject:_z];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:2 + [_y count]] autorelease];
    [_y enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -1565,6 +1722,19 @@
    [ms addObject:_y];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:2 + [_m count]] autorelease];
+   [[_m range:0] enumerateWithBlock:^(ORInt i) {
+      [[_m range:1] enumerateWithBlock:^(ORInt j) {
+         [ms addObject:[_m at:i :j]];
+      }];
+   }];
+   [ms addObject:_v0];
+   [ms addObject:_v1];
+   [ms addObject:_y];
+   return ms;
+}
 @end
 
 
@@ -1607,6 +1777,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_idx,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_idx,_z, nil] autorelease];
+}
 @end
 
 
@@ -1648,6 +1822,10 @@
 -(NSSet*)allVars
 {
     return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1706,6 +1884,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -1761,6 +1943,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1818,6 +2004,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -1873,6 +2063,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1930,6 +2124,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -1985,6 +2183,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -2098,6 +2300,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -2156,6 +2362,15 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]+1] autorelease];
    [_ba enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -2224,6 +2439,15 @@
    [ms addObject:_b];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -2280,6 +2504,15 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]+1] autorelease];
    [_ba enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -2348,6 +2581,15 @@
    [ms addObject:_b];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -2399,6 +2641,15 @@
    [ms addObject:_tv];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_tv];
+   return ms;
+}
 -(id<ORIntVar>)targetValue
 {
    return _tv;
@@ -2442,6 +2693,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORSumBoolNEqc {
@@ -2476,6 +2735,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]] autorelease];
    [_ba enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -2521,6 +2788,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORSumBoolGEqc {
@@ -2555,6 +2830,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ba count]] autorelease];
    [_ba enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -2599,6 +2882,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORSumLEqc {
@@ -2633,6 +2924,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
    [_ia enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -2673,6 +2972,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
    [_ia enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -2724,6 +3031,15 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+
 @end
 
 @implementation ORLinearLeq {
@@ -2765,6 +3081,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
    [_ia enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -2821,6 +3145,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 
@@ -2862,6 +3194,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -2919,6 +3255,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -2957,7 +3297,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitFloatSSA:self];
+   [v visitFloatSSA:((id<ORFloatSSA>)self)];
 }
 -(id<ORVar>) res
 {
@@ -2974,6 +3314,10 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -3036,6 +3380,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORFloatLinearNEq{
@@ -3077,6 +3429,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
    [_ia enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -3128,6 +3488,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORFloatLinearGT{
@@ -3174,6 +3542,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORRealLinearEq {
@@ -3214,6 +3590,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
    [_ia enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -3265,6 +3649,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORRealLinearGeq {
@@ -3306,6 +3698,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
    [_ia enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -3361,6 +3761,13 @@
    }
    return _av;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
+   for(id<ORExpr> e in _x)
+      [ms addObject:e];
+   return ms;
+}
 @end
 
 @implementation ORRegularI {
@@ -3399,6 +3806,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
    [_x enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -3444,13 +3859,24 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @interface VarCollector : ORNOopVisit {
    NSMutableSet* _theSet;
+   NSMutableArray* _theArray;
 }
 -(id)init:(NSMutableSet*)theSet;
+-(id)initwith:(NSMutableArray*)theArray;
 +(NSSet*)collect:(id<ORExpr>)e;
++(NSArray*)collectAsArray:(id<ORExpr>)e;
 @end
 
 @implementation VarCollector
@@ -3462,43 +3888,67 @@
    [vc release];
    return rv;
 }
++(NSArray*)collectAsArray:(id<ORExpr>)e
+{
+   NSMutableArray* rv = [[NSMutableArray alloc] initWithCapacity:4];
+   VarCollector* vc = [[VarCollector alloc] initwith:rv];
+   [e visit:vc];
+   [vc release];
+   return rv;
+}
 -(id)init:(NSMutableSet*)theSet
 {
    self = [super init];
    _theSet = theSet;
+   _theArray = [[NSMutableArray alloc] initWithCapacity:4];
+   return self;
+}
+-(id)initwith:(NSMutableArray *)theArray
+{
+   self = [super init];
+   _theArray = theArray;
+   _theSet = [[NSMutableSet alloc] initWithCapacity:4];
    return self;
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    [_theSet addObject:v];
+   [_theArray addObject:v];
 }
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    [_theSet addObject:v];
+   [_theArray addObject:v];
 }
 -(void) visitRealVar: (id<ORRealVar>) v
 {
-    [_theSet addObject:v];
+   [_theSet addObject:v];
+   [_theArray addObject:v];
 }
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
-    [_theSet addObject:v];
+   [_theSet addObject:v];
+   [_theArray addObject:v];
 }
 -(void) visitDoubleVar: (id<ORDoubleVar>) v
 {
-    [_theSet addObject:v];
+   [_theSet addObject:v];
+   [_theArray addObject:v];
 }
 -(void) visitLDoubleVar: (id<ORLDoubleVar>) v
 {
-    [_theSet addObject:v];
+   [_theSet addObject:v];
+   [_theArray addObject:v];
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
    [_theSet addObject:v];
+   [_theArray addObject:v];
 }
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
    [_theSet addObject:v];
+   [_theArray addObject:v];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {}
@@ -3626,8 +4076,10 @@
 {
    [[e index] visit:self];
    id<ORIntVarArray> a = [e array];
-   for(id<ORIntVar> ak in a)
-       [_theSet addObject:ak];
+   for(id<ORIntVar> ak in a){
+      [_theSet addObject:ak];
+      [_theArray addObject:ak];
+   }
 }
 -(void) visitExprMatrixVarSubI:(ORExprMatrixVarSubI*)e
 {
@@ -3635,8 +4087,10 @@
    [[e index1] visit:self];
    id<ORIntVarMatrix> m = [e matrix];
    ORInt sz = (ORInt)[m count];
-   for(ORInt i=0;i < sz;i++)
+   for(ORInt i=0;i < sz;i++){
       [_theSet addObject:[m  flat:i]];
+      [_theArray addObject:[m  flat:i]];
+   }
 }
 @end
 
@@ -3666,6 +4120,11 @@
 -(NSSet*)allVars
 {
    NSSet* ms = [[VarCollector collect:_expr] autorelease];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSArray* ms = [[VarCollector collectAsArray:_expr] autorelease];
    return ms;
 }
 @end
@@ -3714,6 +4173,10 @@
 {
    return [[NSSet setWithObjects: _x, _z, nil] autorelease];
 }
+-(NSArray*) allVarsArray
+{
+   return [[NSArray arrayWithObjects: _x, _z, nil] autorelease];
+}
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -3753,6 +4216,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
    [_x enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -3800,6 +4271,17 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]+[_y count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [_y enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORCircuit {
@@ -3828,6 +4310,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
    [_x enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -3866,6 +4356,14 @@
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
    
 @implementation ORSubCircuit {
@@ -3894,6 +4392,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
    [_x enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -3928,6 +4434,14 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
    [_x enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -3979,6 +4493,15 @@
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_item count]+1] autorelease];
+   [_item enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_binSize];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_item count]+1] autorelease];
    [_item enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -4056,6 +4579,17 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]+[_load count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [_load enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORMultiKnapsackI {
@@ -4096,6 +4630,14 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
    [_x enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -4152,6 +4694,14 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 
@@ -4201,6 +4751,17 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    }];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [_y enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORKnapsackI {
@@ -4241,6 +4802,14 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]] autorelease];
    [_x enumerateWith:^(id obj, int idx) {
       [ms addObject:obj];
    }];
@@ -4304,6 +4873,15 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [ms addObject:_cost];
    return ms;
 }
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_x count]+1] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_cost];
+   return ms;
+}
 @end
 
 @implementation ORObjectiveFunctionI
@@ -4352,6 +4930,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_var, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_var, nil] autorelease];
 }
 @end
 
@@ -4551,6 +5133,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_var, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_var, nil] autorelease];
+}
 @end
 
 @implementation ORMaximizeVarI
@@ -4577,6 +5163,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_var, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_var, nil] autorelease];
 }
 @end
 
@@ -4716,6 +5306,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
+}
 @end
 
 @implementation ORBitEqualc {
@@ -4751,7 +5345,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
 }
-
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
+}
 @end
 
 @implementation ORBitEqual {
@@ -4786,6 +5383,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -4828,6 +5429,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitAnd {
@@ -4869,6 +5474,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitNot {
@@ -4903,6 +5512,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -4945,6 +5558,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitShiftL {
@@ -4985,6 +5602,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -5027,6 +5648,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_places, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_places, nil] autorelease];
+}
 @end
 
 @implementation ORBitShiftR {
@@ -5067,6 +5692,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -5109,6 +5738,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_places, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_places, nil] autorelease];
+}
 @end
 
 @implementation ORBitShiftRA {
@@ -5149,6 +5782,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -5191,6 +5828,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_places, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_places, nil] autorelease];
+}
 @end
 
 @implementation ORBitRotateL {
@@ -5231,6 +5872,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -5275,7 +5920,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_ci,_z,_co, nil] autorelease];
 }
-
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_ci,_z,_co, nil] autorelease];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -5312,7 +5960,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
-
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -5355,7 +6006,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
-
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -5397,7 +6051,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
-
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -5446,7 +6103,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_q, nil] autorelease];
 }
-
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_q, nil] autorelease];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -5504,6 +6164,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_w,_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_w,_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitCount {
@@ -5528,6 +6192,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_p, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_p, nil] autorelease];
 }
 -(NSString*) description
 {
@@ -5563,6 +6231,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_xc, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_xc, nil] autorelease];
 }
 -(NSString*) description
 {
@@ -5609,6 +6281,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORBitSignExtend {
@@ -5643,6 +6319,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -5691,6 +6371,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORBitConcat {
@@ -5731,6 +6415,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
 }
 @end
 
@@ -5773,6 +6461,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitLT {
@@ -5813,6 +6505,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
 
@@ -5855,6 +6551,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitSLE {
@@ -5896,6 +6596,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitSLT {
@@ -5936,6 +6640,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
 
@@ -5985,6 +6693,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_i,_t,_e,_r, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_i,_t,_e,_r, nil] autorelease];
+}
 @end
 
 @implementation ORBitLogicalAnd {
@@ -6020,6 +6732,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_r, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_r, nil] autorelease];
+}
 @end
 
 @implementation ORBitLogicalOr {
@@ -6054,6 +6770,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_r, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_r, nil] autorelease];
 }
 @end
 
@@ -6096,6 +6816,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_r, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_r, nil] autorelease];
+}
 @end
 
 @implementation ORBitNotb {
@@ -6130,6 +6854,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_r, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_r, nil] autorelease];
 }
 @end
 
@@ -6172,6 +6900,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_r, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_r, nil] autorelease];
+}
 @end
 
 
@@ -6213,6 +6945,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_r, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_r, nil] autorelease];
 }
 @end
 

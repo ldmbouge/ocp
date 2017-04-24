@@ -355,6 +355,14 @@
 {
     [[self worker] floatSplitNoOrder:x do:b];
 }
+-(void)          maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxDegreeSearch:x do:b];
+}
+-(void)          minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minDegreeSearch:x do:b];
+}
 -(void) splitArray: (id<ORIntVarArray>) x
 {
    [[self worker] splitArray:x];
