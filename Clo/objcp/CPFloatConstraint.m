@@ -406,25 +406,27 @@
 }
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x
 {
+    ORFloat m;
+    ORFloat min, max;
+    ORInt e;
     if([x getId] == [_y getId]){
-        ORFloat ym = maxFlt(fabsf([_y min]),fabs([_y max]));
-        ORFloat min = (ym + fp_previous_float(ym)) / 2.0;
-        ORFloat max = (ym + fp_next_float(ym)) / 2.0;
-        ORFloat s = (minFlt(max,[_x max]) - maxFlt(min,[_x min]));
-        ORFloat yms = ((max-min) == 0) ?fp_next_float(0.0):(max-min);
-        s = (s==0.0)?fp_next_float(0.0):s;
-        return ((isIntersectionWith(min,max,[_x min],[_x max])) ? (s/yms):0.0);
+        m = maxFlt(fabsf([_y min]),fabs([_y max]));
+        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        min = -pow(2.0,e - 23 - 1);
+        max = pow(2.0,e -23 - 1);
+        if(isIntersectionWith(min, max, [_y min], [_y max])){
+            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        }
     }else if([x getId] == [_x getId]){
-        ORFloat xm = maxFlt(fabsf([_x min]),fabs([_x max]));
-        ORFloat min = (xm + fp_previous_float(xm)) / 2.0;
-        ORFloat max = (xm + fp_next_float(xm)) / 2.0;
-        ORFloat s = (minFlt(max,[_y max]) - maxFlt(min,[_y min]));
-        ORFloat yms = ((max-min) == 0) ?fp_next_float(0.0):(max-min);
-        s = (s==0.0)?fp_next_float(0.0):s;
-        return ((isIntersectionWith(min,max,[_y min],[_y max])) ? (s/yms):0.0);
-    }else{
-        return 0.0;
+        m = maxFlt(fabsf([_y min]),fabs([_y max]));
+        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        min = -pow(2.0,e - 23 - 1);
+        max = pow(2.0,e -23 - 1);
+        if(isIntersectionWith(min, max, [_y min], [_y max])){
+            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        }
     }
+    return 0.0;
 }
 -(NSString*)description
 {
@@ -506,25 +508,27 @@
 }
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x
 {
-        if([x getId] == [_y getId]){
-            ORFloat ym = maxFlt(fabsf([_y min]),fabs([_y max]));
-            ORFloat min = (ym + fp_previous_float(ym)) / 2.0;
-            ORFloat max = (ym + fp_next_float(ym)) / 2.0;
-            ORFloat s = (minFlt(max,[_x max]) - maxFlt(min,[_x min]));
-            ORFloat yms = ((max-min) == 0) ?fp_next_float(0.0):(max-min);
-            s = (s==0.0)?fp_next_float(0.0):s;
-            return ((isIntersectionWith(min,max,[_x min],[_x max])) ? (s/yms):0.0);
-        }else if([x getId] == [_x getId]){
-            ORFloat xm = maxFlt(fabsf([_x min]),fabs([_x max]));
-            ORFloat min = (xm + fp_previous_float(xm)) / 2.0;
-            ORFloat max = (xm + fp_next_float(xm)) / 2.0;
-            ORFloat s = (minFlt(max,[_y max]) - maxFlt(min,[_y min]));
-            ORFloat yms = ((max-min) == 0) ?fp_next_float(0.0):(max-min);
-            s = (s==0.0)?fp_next_float(0.0):s;
-            return ((isIntersectionWith(min,max,[_y min],[_y max])) ? (s/yms):0.0);
-        }else{
-            return 0.0;
+    ORFloat m;
+    ORFloat min, max;
+    ORInt e;
+    if([x getId] == [_y getId]){
+        m = maxFlt(fabsf([_y min]),fabs([_y max]));
+        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        min = -pow(2.0,e - 23 - 1);
+        max = pow(2.0,e -23 - 1);
+        if(isIntersectionWith(min, max, [_y min], [_y max])){
+            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
         }
+    }else if([x getId] == [_x getId]){
+        m = maxFlt(fabsf([_y min]),fabs([_y max]));
+        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        min = -pow(2.0,e - 23 - 1);
+        max = pow(2.0,e -23 - 1);
+        if(isIntersectionWith(min, max, [_y min], [_y max])){
+            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        }
+    }
+    return 0.0;
 }
 -(NSString*)description
 {

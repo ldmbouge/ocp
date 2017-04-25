@@ -1980,7 +1980,6 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    NSLog(@"%f",[self absorptionQuantity:x[i]]);
                                     return [self absorptionQuantity:x[i]];
                                  }];
    
