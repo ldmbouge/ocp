@@ -1833,8 +1833,8 @@
          [self float6WaySplit:_gamma[getId(x[i])]];
       }];
 }
-//noOrder
--(void) floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+//lexicalorder
+-(void) lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine

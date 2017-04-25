@@ -809,7 +809,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             break;
         default :
             heuristic = ref;
-            [p floatSplitNoOrder:vars do:^(id<ORFloatVar> x) {
+            [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
                 [p float6WaySplit:x];
             }];
             break;

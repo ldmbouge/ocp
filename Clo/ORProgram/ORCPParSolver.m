@@ -351,9 +351,9 @@
 {
     [[self worker] floatSplitArrayOrderedByDomSize:x];
 }
--(void)          floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void)          lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] floatSplitNoOrder:x do:b];
+    [[self worker] lexicalOrderedSearch:x do:b];
 }
 -(void)          maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
