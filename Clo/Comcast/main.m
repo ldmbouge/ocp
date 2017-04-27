@@ -34,60 +34,79 @@ int main(int argc, const char * argv[])
     NSMutableArray * secArray;
     NSMutableArray * cnodeArray;
     
-    NSLog(@"Ncnodes: %lu \t Nservice: %lu \t Nsec: %lu",(sizeof cnodeArray), (sizeof serviceArray),(sizeof secArray));
-        
+    // Create count objects for arrays
+    serviceArray = [[NSMutableArray alloc] init];
+    secArray = [[NSMutableArray alloc] init];
+    cnodeArray = [[NSMutableArray alloc] init];
+    
+    Cnode *thisCnode = [[Cnode alloc] initWithId:0
+                                     cnodeMemory:0
+                                  cnodeBandwidth:0];
+    [cnodeArray addObject:thisCnode];
+    
+    Service *thisService = [[Service alloc] initWithId:0
+                                      serviceFixMemory:0
+                                   serviceScaledMemory:0
+                                   serviceFixBandwidth:0
+                                serviceScaledBandwidth:0
+                                           serviceZone:0
+                                        serviceMaxConn:0];
+    [serviceArray addObject:thisService];
+    
+    SecurityTech *thisSecurityTech = [[SecurityTech alloc] initWithId:0
+                                                       secFixedMemory:0
+                                                    secFixedBandwidth:0
+                                                      secScaledMemory:0
+                                                   secScaledBandwidth:0
+                                                              secZone:0];
+    [secArray addObject:thisSecurityTech];
+    
     // create and init delegate
     XMLReader * dataIn = [[XMLReader alloc] initWithArrays: cnodeArray serviceArray: serviceArray secArray: secArray];
-    // XMLReader * parser = [[XMLReader alloc] init];
-
-    ORInt Ncnodes = (sizeof cnodeArray);
-    ORInt Nservice = (sizeof serviceArray);
-    ORInt Nsec = (sizeof secArray);
+    
+    ORInt Ncnodes = [cnodeArray[0] cnodeExtId];
+    ORInt Nservice = [serviceArray[0] serviceId];
+    ORInt Nsec = [secArray[0] secId];
     ORInt MAX_CONN = 2;
     ORInt VM_MEM = 50;
     
     // Get ranges from XML
-    id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
-    id<ORIntRange> service = RANGE(model,1, Nservice);
-    id<ORIntRange> sec = RANGE(model,0, Nsec);
-    
-    NSLog(@"Ncnodes: %i \t Nservice: %i \t Nsec: %i", Ncnodes, Nservice, Nsec);
+    id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);    // [0] holds number of nodes
+    id<ORIntRange> service = RANGE(model,1, Nservice);  // [0] holds number of services
+    id<ORIntRange> sec = RANGE(model,1, Nsec);          // [0] holds number of security technologies
     
     // Use info from XML instead of random values
     id<ORIntArray> cnodeMem = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) {
-        NSLog(@"cnodeMem: %i \n", [cnodeArray[i] cnodeMemory]);
         return [cnodeArray[i] cnodeMemory];
     } ];
     id<ORIntArray> cnodeBw = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) {
-        NSLog(@"cnodeBw: %i \n", [cnodeArray[i] cnodeBandwidth]);
         return [cnodeArray[i] cnodeBandwidth];
     } ];
-    id<ORIntArray> serviceMem = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
-        NSLog(@"serviceMem: %i \n", [serviceArray[i] serviceMemory]);
-        return [serviceArray[i] serviceMemory];
+    id<ORIntArray> serviceFixMem = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
+        return [serviceArray[i] serviceFixMemory];
     } ];
-    id<ORIntArray> serviceBw = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
-        NSLog(@"serviceBw: %i \n", [serviceArray[i] serviceBandwidth]);
-        return [serviceArray[i] serviceBandwidth];
+    id<ORDoubleArray> serviceScaledMem = [ORFactory doubleArray: model range: service with:^ORDouble(ORInt i) {
+        return [serviceArray[i] serviceScaledMemory];
+    } ];
+    id<ORIntArray> serviceFixBw = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
+        return [serviceArray[i] serviceFixBandwidth];
+    } ];
+    id<ORDoubleArray> serviceScaledBw = [ORFactory doubleArray: model range: service with:^ORDouble(ORInt i) {
+        return [serviceArray[i] serviceScaledBandwidth];
     } ];
     id<ORIntArray> secFixMem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
-        NSLog(@"secFixMem: %i \n", [secArray[i] secFixedMemory]);
         return [secArray[i] secFixedMemory];
     } ];
     id<ORIntArray> secFixBw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
-        NSLog(@"secFixBw: %i \n", [secArray[i] secFixedBandwidth]);
         return [secArray[i] secFixedBandwidth];
     } ];
     id<ORDoubleArray> secScaledMem = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) {
-        NSLog(@"secScaledMem: %f \n", [secArray[i] secScaledMemory]);
         return [secArray[i] secScaledMemory];
     } ];
     id<ORDoubleArray> secScaledBw = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) {
-        NSLog(@"secScaledBw: %f \n", [secArray[i] secScaledBandwidth]);
         return [secArray[i] secScaledBandwidth];
     } ];
     id<ORIntArray> secZone = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
-        NSLog(@"secZone: %i \n", [secArray[i] secZone]);
         return [secArray[i] secZone];
     } ];
     id<ORIntArray> D = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
@@ -95,15 +114,14 @@ int main(int argc, const char * argv[])
     }];
     
     
-     /*
-    id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 400 + 1; }];
-    id<ORIntArray> Mapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return  rand() % 28 + 1; }]; //{ return service.[i].serviceId; }];
-    id<ORIntArray> B = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 1000 + 1; }];
-    id<ORIntArray> Bapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
-    */
+    // Random values
+    //id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 400 + 1; }];
+    //id<ORIntArray> Mapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return  rand() % 28 + 1; }]; //{ return service.[i].serviceId; }];
+    //id<ORIntArray> B = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 1000 + 1; }];
+    //id<ORIntArray> Bapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
     
     
-    /* Debugging Comment
+    
     id<ORIntMatrix> C = [ORFactory intMatrix: model range: service : service with:^int(ORInt i, ORInt j) {
         if (i < j) {
             return rand() % MAX_CONN + 1;
@@ -135,26 +153,23 @@ int main(int argc, const char * argv[])
         return -1;
     }];
     
-    ORInt t[3] = {0,1,2};
+    ORInt t[3] = {0,1,2}; // zones
      
-     end debugging comment */
-    /* Replace T with secZone
-    id<ORIntArray> T = [ORFactory intArray: model range: sec values: (ORInt*)&t];
-     */
     
-    // Tapp = service zone
+    // Replace T with secZone
+    //id<ORIntArray> T = [ORFactory intArray: model range: sec values: (ORInt*)&t];
+    
+    // Replace Tapp with serviceZone
     //id<ORIntArray> Tapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 3; }];
     
-    /* Replace Fmem with secFixMem and Fbw with SecFixBw
-    id<ORIntArray> Fmem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
-    id<ORIntArray> Fbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
-    */
+    // Replace Fmem with secFixMem and Fbw with SecFixBw
+    //id<ORIntArray> Fmem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
+    //id<ORIntArray> Fbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     
-    /* Replace Smem with secScaledMem and Sbw with secScaledBw
-    id<ORDoubleArray> Smem = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
-    id<ORDoubleArray> Sbw = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
-     */
-    /* ======================================================= Begin Debug =================================================================
+    
+    // Replace Smem with secScaledMem and Sbw with secScaledBw
+    //id<ORDoubleArray> Smem = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
+    //id<ORDoubleArray> Sbw = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
     
     // Variables
     id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
@@ -185,9 +200,9 @@ int main(int argc, const char * argv[])
         }
     }
     
-    // Connection Constraints
+    // Connection Constraints - replace apps with service
     for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
-        for(ORInt j = [apps low]; j <= [apps up]; j++) {
+        for(ORInt j = [service low]; j <= [service up]; j++) {
             [model add: [[[a at: k] gt: @(0)] eq:
                          [Sum(model, i, [omega at: j], [conn at: k : i]) geq: @([C at: [alpha at: k] : j])]
                          ]];
@@ -224,26 +239,30 @@ int main(int argc, const char * argv[])
     }
     
     // Security Constraints
+    // ====== Replace Tapp with serviceZone
     for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
         [model add: [[[a at: k] gt: @(0)] eq: [[s elt: [a at: k]] geq: @([Tapp at: [alpha at: k]])] ]];
     }
     
     // Limit total memory usage on each node
+    // ===== Replace M with cnodeMem =====
     for(ORInt c = [cnodes low]; c <= [cnodes up]; c++) {
-        [model add: [Sum(model, i, vm, [[[v at: i] eq: @(c)] mul: [u_mem at: i]]) leq: @([M at: c])]];
+        [model add: [Sum(model, i, vm, [[[v at: i] eq: @(c)] mul: [u_mem at: i]]) leq: @([cnodeMem at: c])]];
     }
 
     // Memory usage = Fixed memory for deploying VM + per app memory usage scaled by security technology + fixed cost of sec. technology.
-    // ======= Replace Mapp with serviceMem ======
+    // ===== Replace Mapp with serviceFixMem ======
+    // ===== Replace Smem with serviceScaledMem =====
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_mem at: i] geq:
                      [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
-                      [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([serviceMem at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] plus:
+                      [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] ) mul: [serviceScaledMem elt: [s at: i]] ] plus:
                       [SecFixMem elt: [s at: i]]]
                      ]]];
     }
     
-//    // Bandwidth usage: ==== replace Bapp with serviceBw ====
+    // Bandwidth usage:
+    // ===== replace Bapp with serviceBw =====
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_bw at: i] geq:
                      [[Sum(model, j, service, [[vm_conn at: i : j] mul: @([serviceBw at: j])]) mul: [Sbw elt: [s at: i]]] plus:

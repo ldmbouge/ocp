@@ -27,8 +27,10 @@
 
 // service properties
 @property int currentServiceId;
-@property int currentServiceMemory;
-@property int currentServiceBandwidth;
+@property int currentServiceFixMemory;
+@property double currentServiceScaledMemory;
+@property int currentServiceFixBandwidth;
+@property double currentServiceScaledBandwidth;
 @property int currentServiceZone;
 @property int currentServiceMaxConn;
 
@@ -44,16 +46,19 @@
 
 @implementation XMLReader
 
+@synthesize cnodeArray;
+@synthesize serviceArray;
+@synthesize secArray;
+
 - (XMLReader *) initWithArrays:(NSMutableArray *)cnodeArray
          serviceArray:(NSMutableArray *)serviceArray
              secArray:(NSMutableArray *)secArray{
-    self = [super init];
+    self = [super init];    
     if (self){
         self.cnodeArray = cnodeArray;
         self.serviceArray = serviceArray;
         self.secArray = secArray;
     }
-    NSLog(@"Initialized! \n");
     
     // Let's XML!
     [self parseXMLFile];
@@ -62,7 +67,6 @@
 }
 
 - (void) parserDidStartDocument:(NSXMLParser *)parser{
-    NSLog(@"File found and parsing has begun");
 }
 
 - (void) parseXMLFile {
@@ -72,18 +76,14 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:xmlPath];
     NSString * error;
     if ([xmlPath checkResourceIsReachableAndReturnError: &error]){
-        NSLog(@"XML Reached!");
-    }
-    else {
+    } else {
         NSLog(@"Cant fnd XML");
     }
     bool xmlFile = [NSURLConnection sendSynchronousRequest:request
                                     returningResponse:nil
                                                 error:nil];
-    NSLog(@"Entering ParseXMLPath \n");
     
     self.parser = [[NSXMLParser alloc] initWithContentsOfURL:xmlPath];
-    //[self.parser setDelegate:self];
     self.parser.delegate = self;
     [self.parser parse];
 }
@@ -93,13 +93,11 @@ didStartElement:(NSString *)elementName
   namespaceURI:(nullable NSString *)namespaceURI
  qualifiedName:(nullable NSString *)qName
     attributes:(NSDictionary<NSString *, NSString *> *)attributeDict{
-    NSLog(@"entering parser the first \n");
     self.element = elementName;
 }
 
 - (void) parser:(NSXMLParser *)parser
 foundCharacters:(NSString *)string{
-    NSLog(@"Entering parser the second \n");
     if ([self.element isEqualToString:@"cnodeId"]){
         self.currentCnodeId = string.intValue;
     }
@@ -112,11 +110,17 @@ foundCharacters:(NSString *)string{
     else if ([self.element isEqualToString:@"serviceId"]){
         self.currentServiceId = string.intValue;
     }
-    else if ([self.element isEqualToString:@"serviceMemory"]){
-        self.currentServiceMemory = string.intValue;
+    else if ([self.element isEqualToString:@"serviceFixMemory"]){
+        self.currentServiceFixMemory = string.intValue;
     }
-    else if ([self.element isEqualToString:@"serviceBandwidth"]){
-        self.currentServiceBandwidth = string.intValue;
+    else if ([self.element isEqualToString:@"serviceFixMemory"]){
+        self.currentServiceScaledMemory = string.doubleValue;
+    }
+    else if ([self.element isEqualToString:@"serviceFixBandwidth"]){
+        self.currentServiceFixBandwidth = string.intValue;
+    }
+    else if ([self.element isEqualToString:@"serviceFixMemory"]){
+        self.currentServiceScaledBandwidth = string.doubleValue;
     }
     else if ([self.element isEqualToString:@"serviceZone"]){
         self.currentServiceZone = string.intValue;
@@ -148,29 +152,33 @@ foundCharacters:(NSString *)string{
  didEndElement:(nonnull NSString *)elementName
   namespaceURI:(nullable NSString *)namespaceURI
  qualifiedName:(nullable NSString *)qName{
-    NSLog(@"Entering parser the third \n");
     if ([elementName isEqualToString:@"cnode"]){
         Cnode *thisCnode = [[Cnode alloc] initWithId:self.currentCnodeId
                                          cnodeMemory:self.currentCnodeMemory
                                       cnodeBandwidth:self.currentCnodeBandwidth];
-        NSLog(@"i read a cnode!");
-        int size;
-        size = (sizeof self.cnodeArray);
-        NSLog(@"size: %i \n", size);
-        [self.cnodeArray[size] addObject:thisCnode];
-        NSLog(@"I added an object to cnodeArray!!");
-        NSLog(@"New size: %lu \n", (sizeof self.cnodeArray));
+        int size = [cnodeArray[0] cnodeExtId];
+        size ++;
+        [self.cnodeArray addObject:thisCnode];
+        Cnode *sizeNode = [[Cnode alloc] initWithId:size cnodeMemory:0 cnodeBandwidth:0];
+        [self.cnodeArray removeObjectAtIndex:0];
+        [self.cnodeArray insertObject:sizeNode atIndex:0];
     }
     
     else if ([elementName isEqualToString:@"service"]){
         Service *thisService = [[Service alloc] initWithId:self.currentServiceId
-                                             serviceMemory:self.currentServiceMemory
-                                          serviceBandwidth:self.currentServiceBandwidth
+                                          serviceFixMemory:self.currentServiceFixMemory
+                                       serviceScaledMemory:self.currentServiceScaledMemory
+                                          serviceFixBandwidth:self.currentServiceFixBandwidth
+                                    serviceScaledBandwidth:self.currentServiceScaledBandwidth
                                                serviceZone:self.currentServiceZone
                                             serviceMaxConn:self.currentServiceMaxConn];
         int size;
-        size = (sizeof self.serviceArray);
-        [self.serviceArray[size] addObject:thisService];
+        size = [serviceArray[0] serviceId];
+        size ++;
+        [self.serviceArray addObject:thisService];
+        Service *sizeNode = [[Service alloc] initWithId:size serviceMemory:0 serviceBandwidth:0 serviceZone:0 serviceMaxConn:0];
+        [self.serviceArray removeObjectAtIndex:0];
+        [self.serviceArray insertObject:sizeNode atIndex:0];
     }
     
     else if ([elementName isEqualToString:@"sec"]){
@@ -181,8 +189,12 @@ foundCharacters:(NSString *)string{
                                                        secScaledBandwidth:self.currentSecScaledBandwidth
                                                                   secZone:self.currentSecZone];
         int size;
-        size = (sizeof self.secArray);
-        [self.secArray[size] addObject:thisSecurityTech];
+        size = [secArray[0] secId];
+        size ++;
+        [self.secArray addObject:thisSecurityTech];
+        SecurityTech *sizeNode = [[SecurityTech alloc] initWithId:size secFixedMemory:0 secFixedBandwidth:0 secScaledMemory:0 secScaledBandwidth:0 secZone:0];
+        [self.secArray removeObjectAtIndex:0];
+        [self.secArray insertObject: sizeNode atIndex:0];
     }
     
     self.element = nil;

@@ -11,15 +11,19 @@
 @implementation Service
 
 - (id) initWithId: (int) serviceId
-    serviceMemory: (int) serviceMemory
- serviceBandwidth: (int) serviceBandwidth
+    serviceFixMemory: (int) serviceFixMemory
+serviceScaledMemory: (double) serviceScaledMemory
+ serviceFixBandwidth: (int) serviceFixBandwidth
+serviceScaledBandwidth: (double) serviceScaledBandwidth
       serviceZone: (int) serviceZone
    serviceMaxConn: (int) serviceMaxConn{
     self = [super init];
     if (self){
         self.serviceId = serviceId;
-        self.serviceMemory = serviceMemory;
-        self.serviceBandwidth = serviceBandwidth;
+        self.serviceFixMemory = serviceFixMemory;
+        self.serviceScaledMemory = serviceScaledMemory;
+        self.serviceFixBandwidth = serviceFixBandwidth;
+        self.serviceScaledBandwidth = serviceScaledBandwidth;
         self.serviceZone = serviceZone;
         self.serviceMaxConn = serviceMaxConn;
     }

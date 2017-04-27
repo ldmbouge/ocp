@@ -19,8 +19,10 @@
 	</cnode>
 	<service>
 		<id>1</id>
-		<serviceMemory>32</serviceMemory>
-		<serviceBandwidth>10000</serviceBandwidth>
+		<serviceFixMemory>32</serviceFixMemory>
+        <serviceScaledMemory>0.01</serviceScaledMemory>
+		<serviceFixBandwidth>10000</serviceFixBandwidth>
+        <serviceScaledBandwidth>0.25</serviceScaledBandwidth>
         <serviceZone>1</serviceZone>
 	</service>
 	<service>

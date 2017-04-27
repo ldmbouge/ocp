@@ -15,14 +15,18 @@
 @interface Service : NSObject
 
 @property int serviceId;
-@property int serviceMemory;
-@property int serviceBandwidth;
+@property int serviceFixMemory;
+@property double serviceScaledMemory;
+@property int serviceFixBandwidth;
+@property double serviceScaledBandwidth;
 @property int serviceZone;
 @property int serviceMaxConn;
 
 - (id) initWithId: (int) serviceId
-    serviceMemory: (int) serviceMemory
- serviceBandwidth: (int) serviceBandwidth
+    serviceFixMemory: (int) serviceFixMemory
+serviceScaledMemory: (double) serviceScaledMemory
+ serviceFixBandwidth: (int) serviceFixBandwidth
+serviceScaledBandwidth: (double) serviceScaledBandwidth
       serviceZone: (int) serviceZone
    serviceMaxConn: (int) serviceMaxConn;
 
