@@ -94,6 +94,9 @@ int main(int argc, const char * argv[])
     id<ORDoubleArray> serviceScaledBw = [ORFactory doubleArray: model range: service with:^ORDouble(ORInt i) {
         return [serviceArray[i] serviceScaledBandwidth];
     } ];
+    id<ORIntArray> serviceZone = [ORFactory intArray: model range: service with:^ORInt(ORInt i) {
+        return [serviceArray[i] serviceZone];
+    } ];
     id<ORIntArray> secFixMem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
         return [secArray[i] secFixedMemory];
     } ];
@@ -275,14 +278,14 @@ int main(int argc, const char * argv[])
             NSLog(@"Node: %i {", c);
             for(ORInt i = [vm low]; i <= [vm up]; i++) {
                 if([best intValue: [v at: i]] == c) {
-                    NSLog(@"\tVM: %i (security: %i, %i apps) {", i, [best intValue: [s at: i]], [best intValue: [vc at: i]]);
+                    NSLog(@"\tVM: %i (security: %i, %i services) {", i, [best intValue: [s at: i]], [best intValue: [vc at: i]]);
                     for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
                         if([best intValue: [a at: k]] == i) {
                             NSLog(@"\t\t app: %i {", k);
                             for(ORInt k2 = [Iapp low]; k2 <= [Iapp up]; k2++) {
                                 ORInt connections = [best intValue: [conn at: k : k2]];
                                 if(connections > 0) {
-                                    NSLog(@"\t\t\t[app %i] <=> [app %i] (x%i)", k, k2, connections);
+                                    NSLog(@"\t\t\t[service %i] <=> [service %i] (x%i)", k, k2, connections);
                                 }
                             }
                             NSLog(@"\t\t}");
@@ -339,8 +342,7 @@ int main(int argc, const char * argv[])
    ORTimeval el = [ORRuntimeMonitor elapsedSince:now];
     NSLog(@"#best objective: %i",[[best objectiveValue] intValue]);
    NSLog(@"Total time: %f",el.tv_sec * 1000.0 + (double)el.tv_usec / 1000.0);
+    
     return 0;
-     
-     */
 }
 

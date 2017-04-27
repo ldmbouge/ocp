@@ -82,7 +82,7 @@
     bool xmlFile = [NSURLConnection sendSynchronousRequest:request
                                     returningResponse:nil
                                                 error:nil];
-    
+    NSLog(@"Parsing begun");
     self.parser = [[NSXMLParser alloc] initWithContentsOfURL:xmlPath];
     self.parser.delegate = self;
     [self.parser parse];
@@ -176,7 +176,7 @@ foundCharacters:(NSString *)string{
         size = [serviceArray[0] serviceId];
         size ++;
         [self.serviceArray addObject:thisService];
-        Service *sizeNode = [[Service alloc] initWithId:size serviceMemory:0 serviceBandwidth:0 serviceZone:0 serviceMaxConn:0];
+        Service *sizeNode = [[Service alloc] initWithId:size serviceFixMemory:0 serviceScaledMemory:0 serviceFixBandwidth:0 serviceScaledBandwidth:0 serviceZone:0 serviceMaxConn:0];
         [self.serviceArray removeObjectAtIndex:0];
         [self.serviceArray insertObject:sizeNode atIndex:0];
     }
