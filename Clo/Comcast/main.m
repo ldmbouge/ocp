@@ -113,14 +113,11 @@ int main(int argc, const char * argv[])
         return rand() % 8 + 1;
     }];
     
-    
     // Random values
     //id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 400 + 1; }];
     //id<ORIntArray> Mapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return  rand() % 28 + 1; }]; //{ return service.[i].serviceId; }];
     //id<ORIntArray> B = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 1000 + 1; }];
     //id<ORIntArray> Bapp = [ORFactory intArray: model range: service with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
-    
-    
     
     id<ORIntMatrix> C = [ORFactory intMatrix: model range: service : service with:^int(ORInt i, ORInt j) {
         if (i < j) {
@@ -241,7 +238,7 @@ int main(int argc, const char * argv[])
     // Security Constraints
     // ====== Replace Tapp with serviceZone
     for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
-        [model add: [[[a at: k] gt: @(0)] eq: [[s elt: [a at: k]] geq: @([Tapp at: [alpha at: k]])] ]];
+        [model add: [[[a at: k] gt: @(0)] eq: [[s elt: [a at: k]] geq: @([serviceZone at: [alpha at: k]])] ]];
     }
     
     // Limit total memory usage on each node
@@ -257,16 +254,17 @@ int main(int argc, const char * argv[])
         [model add: [[u_mem at: i] geq:
                      [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
                       [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] ) mul: [serviceScaledMem elt: [s at: i]] ] plus:
-                      [SecFixMem elt: [s at: i]]]
+                      [secFixMem elt: [s at: i]]]
                      ]]];
     }
     
     // Bandwidth usage:
     // ===== replace Bapp with serviceBw =====
+    // ===== replace Sbw with secScaledBw =====
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_bw at: i] geq:
-                     [[Sum(model, j, service, [[vm_conn at: i : j] mul: @([serviceBw at: j])]) mul: [Sbw elt: [s at: i]]] plus:
-                      [secFixBw] elt: [s at: i]]
+                     [[Sum(model, j, service, [[vm_conn at: i : j] mul: @([serviceFixBw at: j])]) mul: [secScaledBw elt: [s at: i]]] plus:
+                      [secFixBw elt: [s at: i]]
                      ]]];
     }
 
