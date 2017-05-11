@@ -194,7 +194,7 @@
         [_model addConstraint: [z geq: [[x0 plus: x1] sub: @(1)]]];
     }
     // x1 or x0 binary
-    if (([d0 low] == 0 && [d0 up] == 1) || ([d1 low] == 0 && [d1 up] == 1)) {
+    else if (([d0 low] == 0 && [d0 up] == 1) || ([d1 low] == 0 && [d1 up] == 1)) {
         id<ORIntVar> x = x0;
         id<ORIntRange> dx = d0;
         id<ORIntVar> a = x1;
