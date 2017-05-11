@@ -128,8 +128,8 @@
       ORInt low = R.low;
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++) {
-         [v[i] visit: self];
-         dx[i] = _gamma[[v[i] getId]];
+          [[v at: i] visit: self];
+          [dx set: _gamma[[[v at: i] getId]] at: i];
       }
       _gamma[v.getId] = dx;
    }

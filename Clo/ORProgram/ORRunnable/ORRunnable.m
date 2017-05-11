@@ -115,9 +115,17 @@
     id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m search: body];
     return r;
 }
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m willSolve: (CPRunnableSearch(^)(id<CPCommonProgram>))body {
+    id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m willSearch: body];
+    return r;
+}
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m numThreads: (ORInt)nth solve: (void(^)(id<CPCommonProgram>))body
 {
     id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m numThreads: nth search: body];
+    return r;
+}
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m numThreads: (ORInt)nth willSolve: (CPRunnableSearch(^)(id<CPCommonProgram>))body {
+    id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m numThreads: nth willSearch: body];
     return r;
 }
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m withRelaxation:(id<ORRelaxation>)relax solve: (void(^)(id<CPCommonProgram>))body

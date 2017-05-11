@@ -20,21 +20,21 @@ int main(int argc, const char * argv[])
     id<ORModel> model = [ORFactory createModel];
     //id<ORAnnotation> notes = [ORFactory annotation];
     
-    srand(2);//(unsigned int)time(NULL));
+    srand(4);//(unsigned int)time(NULL));
     
     ORInt Ncnodes = 3;
-    ORInt Napps = 3;
+    ORInt Napps = 4;
     ORInt Nsec = 2;
-    ORInt MAX_CONN = 2;
-    ORInt VM_MEM = 50;
+    ORInt MAX_CONN = 1; //2;
+    ORInt VM_MEM = 100; // 120 MB base requirement for VM.
     
     id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
     id<ORIntRange> apps = RANGE(model,1, Napps);
     id<ORIntRange> sec = RANGE(model,0, Nsec);
 
-    id<ORIntArray> D = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 8 + 1; }];
-    id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 400 + 1; }];
-    id<ORIntArray> Mapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 28 + 1; }];
+    id<ORIntArray> D = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 20 + 1; }];
+    id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 4*1000 + 4*1000; }]; // Available memory on nodes in range 4 GB - 8 GB.
+    id<ORIntArray> Mapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 50 + 50; }]; // Applications memory requirements in range 50 MB - 500 GB.
     id<ORIntArray> B = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 1000 + 1; }];
     id<ORIntArray> Bapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
     
@@ -53,7 +53,7 @@ int main(int argc, const char * argv[])
     }
  
     
-    ORInt Vmax = 3;//[D sumWith:^ORInt(ORInt value, int idx) { return value; }];
+    ORInt Vmax = 6;//[D sumWith:^ORInt(ORInt value, int idx) { return value; }];
     id<ORIntRange> vm = RANGE(model,1, Vmax);
     id<ORIntArray> Uapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return (ORInt)([D at: i] * 1.3); }];
     id<ORIntRange> Iapp = RANGE(model,0, [Uapp sumWith:^ORInt(ORInt value, int idx) { return value; }]-1);
@@ -76,8 +76,8 @@ int main(int argc, const char * argv[])
     id<ORIntArray> Fmem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     id<ORIntArray> Fbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 10; }];
     
-    id<ORDoubleArray> Smem = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
-    id<ORDoubleArray> Sbw = [ORFactory doubleArray: model range: sec with:^ORDouble(ORInt i) { return rand() % 3 + 1; }];
+    id<ORIntArray> Smem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 5 + 2; }];
+    id<ORIntArray> Sbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 3 + 1; }];
 
     // Variables
     id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
@@ -89,11 +89,10 @@ int main(int argc, const char * argv[])
     
     id<ORIntVarArray>  s = [ORFactory intVarArray: model range: RANGE(model, 0, Vmax) domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
     
-    id<ORRealVarArray> u_mem = [ORFactory realVarArray: model range: vm low: 0 up:189];//realVarArray: model range: vm domain: RANGE(model, 0, 189)];
-    id<ORRealVarArray> u_bw = [ORFactory realVarArray: model range: vm low: 0 up:50];//intVarArray: model range: vm domain: RANGE(model, 0, 50)];
+    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 189)];
+    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 50)];
     
     [model minimize: Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]])];
-    //[model add: [Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]]) leq: @(457)]];
     
     // Demand Constraints
     for(ORInt j = [apps low]; j <= [apps up]; j++) {
@@ -158,20 +157,35 @@ int main(int argc, const char * argv[])
 
     // Memory usage = Fixed memory for deploying VM + per app memory usage scaled by security technology + fixed cost of sec. technology.
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
+        // CP
+//        [model add: [[u_mem at: i] geq:
+//                     [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
+//                      [[[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] div: @(100)] plus:
+//                      [Fmem elt: [s at: i]]]
+//                     ]]];
+        // MIP
         [model add: [[u_mem at: i] geq:
                      [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
-                      [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] plus:
-                      [Fmem elt: [s at: i]]]
-                     ]]];
+                      [[[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] mul: @(.01)] plus:
+                       [Fmem elt: [s at: i]]]
+                      ]]];
+        
+        // MIP with Term moved
+//        [model add: [[u_mem at: i] geq:
+//                     [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
+//                      [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: [[Smem elt: [s at: i]] mul: @([Mapp at: [alpha at: k]])]] ) mul: @(.01)] plus:
+//                       [Fmem elt: [s at: i]]]
+//                      ]]];
+
     }
     
 //    // Bandwidth usage:
-    for(ORInt i = [vm low]; i <= [vm up]; i++) {
-        [model add: [[u_bw at: i] geq:
-                     [[Sum(model, j, apps, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
-                      [Fbw elt: [s at: i]]
-                     ]]];
-    }
+//    for(ORInt i = [vm low]; i <= [vm up]; i++) {
+//        [model add: [[u_bw at: i] geq:
+//                     [[Sum(model, j, apps, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
+//                      [Fbw elt: [s at: i]]
+//                     ]]];
+//    }
 
     // Function to write solution.
     // Print solution
@@ -203,42 +217,35 @@ int main(int argc, const char * argv[])
     
     ORTimeval now = [ORRuntimeMonitor now];
     
-//    id<ORModel> lm = [ORFactory linearizeModel: model];
-//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-//    [r start];
-//    id<ORSolution> best = [r bestSolution];
-//    writeOut(best);
+    id<ORModel> lm = [ORFactory linearizeModel: model];
+    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+    [r start];
+    id<ORSolution> best = [r bestSolution];
+    writeOut(best);
 
-//    id<ORRunnable> r = [ORFactory CPRunnable: model solve:^(id<CPCommonProgram> cp) {
-//        [cp labelArray: u_bw];
-//        [cp labelArray: u_mem];
-//        id<ORIntVarArray> conn_flat = [conn flatten];
-//        id<ORIntVarArray> vm_conn_flat = [vm_conn flatten];
-//        [cp labelArray: a];
-//        [cp labelArray: v];
-//        [cp labelArray: vc];
-//        [cp labelArray: s];
-//        [cp labelArray: vm_conn_flat];
-//        [cp labelArray: conn_flat];
-//        
-//        id<ORSolution> sol = [cp captureSolution];
-//        NSLog(@"Found Solution: %i", [[sol objectiveValue] intValue]);
+//    id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
+//        id<CPHeuristic> h = [cp createDDeg];
+//        return [^(id<CPCommonProgram> cp) {
+//            [cp labelHeuristic: h];
+//            id<ORSolution> sol = [cp captureSolution];
+//            writeOut(sol);
+//            NSLog(@"Found Solution: %i", [[sol objectiveValue] intValue]);
+//        } copy];
 //    }];
 //    [r start];
 //    id<ORSolution> best = [r bestSolution];
     
     
-    // 457 optimal objective
-    id<CPProgram> cp = [ORFactory createCPProgram: model];
-    //NSLog(@"Model %@",model);
-    id<CPHeuristic> h = [cp createFF];
-    [cp solve:^{
-        [cp labelHeuristic:h];
-        id<ORSolution> s = [cp captureSolution];
-        NSLog(@"Found Solution: %f", [[s objectiveValue] doubleValue]);
-        writeOut(s);
-    }];
-    id<ORSolution> best = [[cp solutionPool] best];
+//    id<CPProgram> cp = [ORFactory createCPProgram: model];
+//    //NSLog(@"Model %@",model);
+//    id<CPHeuristic> h = [cp createDDeg];
+//    [cp solve:^{
+//        [cp labelHeuristic:h];
+//        id<ORSolution> s = [cp captureSolution];
+//        NSLog(@"Found Solution: %f", [[s objectiveValue] doubleValue]);
+//        writeOut(s);
+//    }];
+//    id<ORSolution> best = [[cp solutionPool] best];
 
     //NSLog(@"Number of solutions found: %li", [[cp solutionPool] count]);
    ORTimeval el = [ORRuntimeMonitor elapsedSince:now];

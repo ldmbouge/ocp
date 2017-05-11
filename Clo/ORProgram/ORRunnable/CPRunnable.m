@@ -37,6 +37,16 @@
     return self;
 }
 
+-(id) initWithModel: (id<ORModel>)m willSearch: (CPRunnableSearch(^)(id<CPCommonProgram>))willSearch {
+    if((self = [super initWithModel: m]) != nil) {
+        _program = [ORFactory createCPProgram: m];
+        _sig = nil;
+        void(^searchBlock)(id<CPCommonProgram>) = willSearch(_program);
+        _search = [searchBlock retain];
+    }
+    return self;
+}
+
 -(id) initWithModel: (id<ORModel>)m numThreads: (ORInt) nth
 {
     if((self = [super initWithModel: m]) != nil) {
@@ -59,6 +69,19 @@
                                                 with: [ORSemDFSController proto]];
         _sig = nil;
         _search = [search retain];
+    }
+    return self;
+}
+
+-(id) initWithModel: (id<ORModel>)m numThreads: (ORInt) nth willSearch: (CPRunnableSearch(^)(id<CPCommonProgram>))willSearch {
+    if((self = [super initWithModel: m]) != nil) {
+        _program = (id)[ORFactory createCPParProgram: m
+                                                  nb: nth
+                                          annotation: [ORFactory annotation]
+                                                with: [ORSemDFSController proto]];
+        _sig = nil;
+        void(^searchBlock)(id<CPCommonProgram>) = willSearch(_program);
+        _search = [searchBlock retain];
     }
     return self;
 }

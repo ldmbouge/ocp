@@ -13,6 +13,8 @@
 #import <ORProgram/ORParallelCombinator.h>
 #import <ORProgram/ORSequentialCombinator.h>
 
+typedef void(^CPRunnableSearch)(id<CPCommonProgram>);
+
 //Forward Declarations
 @protocol ORModel;
 @protocol ORRunnable<NSObject>
@@ -49,7 +51,9 @@
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m;
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m numThreads: (ORInt)nth;
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m solve: (void(^)(id<CPCommonProgram>))body;
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m willSolve: (CPRunnableSearch(^)(id<CPCommonProgram>))body;
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m numThreads: (ORInt)nth solve: (void(^)(id<CPCommonProgram>))body;
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m numThreads: (ORInt)nth willSolve: (CPRunnableSearch(^)(id<CPCommonProgram>))body;
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m withRelaxation:(id<ORRelaxation>)relax solve: (void(^)(id<CPCommonProgram>))body;
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m
               withRelaxation: (id<ORRelaxation>)relax
