@@ -364,9 +364,9 @@ int main(int argc, const char * argv[]) {
    id<ORIntVarArray> iv = [model intVars];
    id<ORBitVarArray> av = [model bitVars];
    
-   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
    generateLists();
    MCFilter();
    printDebug();
