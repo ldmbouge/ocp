@@ -93,6 +93,7 @@ int main(int argc, const char * argv[])
     id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 50)];
     
     [model minimize: Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]])];
+    //[model minimize: [Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]]) lt: @(300)]];
     
     // Demand Constraints
     for(ORInt j = [apps low]; j <= [apps up]; j++) {
@@ -158,35 +159,30 @@ int main(int argc, const char * argv[])
     // Memory usage = Fixed memory for deploying VM + per app memory usage scaled by security technology + fixed cost of sec. technology.
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         // CP
-//        [model add: [[u_mem at: i] geq:
-//                     [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
-//                      [[[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] div: @(100)] plus:
-//                      [Fmem elt: [s at: i]]]
-//                     ]]];
-        // MIP
         [model add: [[u_mem at: i] geq:
                      [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
-                      [[[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] mul: @(.01)] plus:
-                       [Fmem elt: [s at: i]]]
-                      ]]];
-        
-        // MIP with Term moved
+                      [[[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] div: @(100)] plus:
+                      [Fmem elt: [s at: i]]]
+                     ]]];
+        // MIP
 //        [model add: [[u_mem at: i] geq:
 //                     [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
-//                      [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: [[Smem elt: [s at: i]] mul: @([Mapp at: [alpha at: k]])]] ) mul: @(.01)] plus:
+//                      [[[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] mul: @(.01)] plus:
 //                       [Fmem elt: [s at: i]]]
 //                      ]]];
 
     }
     
 //    // Bandwidth usage:
-//    for(ORInt i = [vm low]; i <= [vm up]; i++) {
-//        [model add: [[u_bw at: i] geq:
-//                     [[Sum(model, j, apps, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
-//                      [Fbw elt: [s at: i]]
-//                     ]]];
-//    }
+    for(ORInt i = [vm low]; i <= [vm up]; i++) {
+        [model add: [[u_bw at: i] geq:
+                     [[Sum(model, j, apps, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
+                      [Fbw elt: [s at: i]]
+                     ]]];
+    }
 
+    
+    
     // Function to write solution.
     // Print solution
     void(^writeOut)(id<ORSolution>) = ^(id<ORSolution> best){
@@ -217,23 +213,23 @@ int main(int argc, const char * argv[])
     
     ORTimeval now = [ORRuntimeMonitor now];
     
-    id<ORModel> lm = [ORFactory linearizeModel: model];
-    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-    [r start];
-    id<ORSolution> best = [r bestSolution];
-    writeOut(best);
-
-//    id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
-//        id<CPHeuristic> h = [cp createDDeg];
-//        return [^(id<CPCommonProgram> cp) {
-//            [cp labelHeuristic: h];
-//            id<ORSolution> sol = [cp captureSolution];
-//            writeOut(sol);
-//            NSLog(@"Found Solution: %i", [[sol objectiveValue] intValue]);
-//        } copy];
-//    }];
+//    id<ORModel> lm = [ORFactory linearizeModel: model];
+//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
 //    [r start];
 //    id<ORSolution> best = [r bestSolution];
+//    writeOut(best);
+
+    id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
+        id<CPHeuristic> h = [cp createDDeg];
+        return [^(id<CPCommonProgram> cp) {
+            [cp labelHeuristic: h];
+            id<ORSolution> sol = [cp captureSolution];
+            writeOut(sol);
+            NSLog(@"Found Solution: %i", [[sol objectiveValue] intValue]);
+        } copy];
+    }];
+    [r start];
+    id<ORSolution> best = [r bestSolution];
     
     
 //    id<CPProgram> cp = [ORFactory createCPProgram: model];

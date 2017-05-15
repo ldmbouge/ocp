@@ -1115,6 +1115,10 @@ static inline ORLong maxSeq(ORLong v[4])  {
         [linRight release];
     }
 }
+-(void) visitAffineVar:(id<ORIntVar>) v
+{
+    /* */
+}
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
     if ([[e left] isConstant]) {
