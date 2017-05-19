@@ -159,10 +159,11 @@ int main(int argc, const char * argv[])
     // Memory usage = Fixed memory for deploying VM + per app memory usage scaled by security technology + fixed cost of sec. technology.
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         // CP
-        [model add: [[u_mem at: i] geq:
-                     [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
-                      [[[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] div: @(100)] plus:
-                      [Fmem elt: [s at: i]]]
+       [model add: [[[u_mem at: i] mul: @(100)] geq:
+                     [[[[vc at: i] gt: @(0)] mul: @(VM_MEM * 100)] plus:
+                      [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] plus:
+                       [[Fmem elt: [s at: i]] mul: @(100)]
+                       ]
                      ]]];
         // MIP
 //        [model add: [[u_mem at: i] geq:
@@ -220,7 +221,7 @@ int main(int argc, const char * argv[])
 //    writeOut(best);
 
     id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
-        id<CPHeuristic> h = [cp createDDeg];
+        id<CPHeuristic> h = [cp createPortfolio:<#(nonnull NSArray *)#> with:<#(nonnull id<ORVarArray>)#>
         return [^(id<CPCommonProgram> cp) {
             [cp labelHeuristic: h];
             id<ORSolution> sol = [cp captureSolution];
@@ -230,7 +231,7 @@ int main(int argc, const char * argv[])
     }];
     [r start];
     id<ORSolution> best = [r bestSolution];
-    
+   
     
 //    id<CPProgram> cp = [ORFactory createCPProgram: model];
 //    //NSLog(@"Model %@",model);
