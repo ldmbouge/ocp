@@ -5,12 +5,36 @@
 ////  Created by Sarah Peck on 2/23/17.
 ////
 ////
-//
-//#import <Foundation/Foundation.h>
-//
-//@interface XMLReader : NSObject
-//
-//-(id) init;
-//-(void) sayHi: (NSString*)name;
-//
-//@end
+
+#import <Foundation/Foundation.h>
+
+@interface XMLReader : NSObject <NSXMLParserDelegate>
+
+@property (nonatomic,strong) NSMutableArray * _Nonnull cnodeArray;
+@property (nonatomic,strong) NSMutableArray * _Nonnull serviceArray;
+@property (nonatomic,strong) NSMutableArray * _Nonnull secArray;
+
+- (XMLReader * _Nonnull) initWithArrays: (NSMutableArray * _Nonnull) cnodeArray
+         serviceArray: (NSMutableArray * _Nonnull) serviceArray
+             secArray: (NSMutableArray * _Nonnull) secArray;
+
+- (void) parserDidStartDocument:(NSXMLParser * _Nonnull)parser;
+
+- (void) parseXMLFile;
+
+- (void) parser:(NSXMLParser * _Nonnull)parser
+ didStartElement:(NSString * _Nonnull)elementName
+    namespaceURI:(nullable NSString *)namespaceURI
+   qualifiedName:(nullable NSString *)qName
+      attributes:(NSDictionary<NSString *, NSString *> * _Nullable)attributeDict;
+
+- (void) parser:(NSXMLParser * _Nonnull)parser
+ foundCharacters:(NSString * _Nullable)string;
+
+- (void) parser:(NSXMLParser * _Nonnull) parser
+   didEndElement:(nonnull NSString *) elementName
+    namespaceURI:(nullable NSString *) namespaceURI
+   qualifiedName:(nullable NSString *) qname;
+
+
+@end
