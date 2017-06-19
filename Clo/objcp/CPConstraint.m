@@ -623,6 +623,12 @@
 @end
 
 @implementation CPFactory (ORReal)
++(id<CPConstraint>) realMult: (id<CPRealVar>)x mul: (id<CPRealVar>)y equal:(id<CPRealVar>)z annotation:(ORCLevel)c
+{
+    id<CPConstraint> o = [[CPRealMultBC alloc] initCPRealMultBC: x mul: y equal: z];
+    [[x tracker] trackMutable:o];
+    return o;
+}
 +(id<CPConstraint>) realSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c
 {
    id<CPConstraint> o = [[CPRealSquareBC alloc] initCPRealSquareBC:z equalSquare:x];

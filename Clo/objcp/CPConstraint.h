@@ -100,6 +100,7 @@
 +(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c;
 +(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c;
 +(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs geqi:(ORDouble)c;
++(id<CPConstraint>) realMult: (id<CPRealVar>)x mul: (id<CPRealVar>)y equal:(id<CPRealVar>)z annotation:(ORCLevel)c;
 +(id<CPConstraint>) realSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c;
 +(id<CPConstraint>) realWeightedVar: (id<CPRealVar>)z equal:(id<CPRealVar>)x weight: (id<CPRealParam>)w;
 +(id<CPConstraint>) realEqualc: (id<CPIntVar>) x to:(ORDouble) c;

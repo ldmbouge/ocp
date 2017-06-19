@@ -893,6 +893,13 @@
 }
 @end
 
+@implementation ORRealMult
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRealMult: self];
+}
+@end
+
 @implementation ORRealSquare
 -(void)visit:(ORVisitor*)v
 {

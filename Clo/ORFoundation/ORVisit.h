@@ -116,6 +116,7 @@
 -(void) visitMult: (id<ORConstraint>)c;
 -(void) visitSquare: (id<ORConstraint>)c;
 -(void) visitRealSquare: (id<ORConstraint>)c;
+-(void) visitRealMult:(id<ORMult>)c;
 -(void) visitMod: (id<ORConstraint>)c;
 -(void) visitModc: (id<ORConstraint>)c;
 -(void) visitMin: (id<ORConstraint>)c;

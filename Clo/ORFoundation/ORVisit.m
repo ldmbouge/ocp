@@ -270,6 +270,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Square: visit method not defined"]; 
 }
+-(void) visitRealMult:(id<ORMult>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "RealMult: visit method not defined"];
+}
 -(void) visitRealSquare:(id<ORSquare>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealSquare: visit method not defined"]; 

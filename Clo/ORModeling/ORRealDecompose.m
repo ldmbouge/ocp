@@ -120,14 +120,20 @@
          id       x = cv ? [e right] : [e left];
          [_terms addTerm: x by: coef];
       } else if ([[e left] isConstant]) {
-         id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:[e right]];
+          // changed by Dan
+          id<ORVar> alpha = nil;
+          if([e vtype] == ORTReal) [ORNormalizer realVarIn:_model expr:[e right]];
+          else [ORNormalizer intVarIn:_model expr:[e right]];
          [_terms addTerm:alpha by:[[e left] min]];
       } else if ([[e right] isConstant]) {
          id<ORRealLinear> left = [ORNormalizer realLinearFrom:[e left] model:_model];
          [left scaleBy:[[e right] min]];
          [_terms addLinear:left];
       } else {
-         id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e];
+          // changed by Dan
+          id<ORVar> alpha =  nil;
+          if([e vtype] == ORTReal) alpha = [ORNormalizer realVarIn:_model expr:e];
+          else alpha = [ORNormalizer intVarIn:_model expr:e];
          [_terms addTerm:alpha by:1];
       }
    }
@@ -157,7 +163,28 @@
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    // Changed by Dan
+    id<ORVar> alpha = nil;
+    if([e vtype] == ORTReal) alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    else {
+        // Hack, add another variable so we can use intvar reification.
+        id<ORIntVar> intVar = [ORFactory intVar: _model bounds: RANGE(_model, [e min], [e max])];
+        [_model addConstraint: [intVar eq: _eqto]];
+        alpha = [ORNormalizer intVarIn:_model expr:e by: intVar];
+    }
+    [_terms addTerm:alpha by:1];
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+    // Changed by Dan
+    id<ORVar> alpha = nil;
+    if([e vtype] == ORTReal) alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    else {
+        // Hack, add another variable so we can use intvar reification.
+        id<ORIntVar> intVar = [ORFactory intVar: _model bounds: RANGE(_model, [e min], [e max])];
+        [_model addConstraint: [intVar eq: _eqto]];
+        alpha = [ORNormalizer intVarIn:_model expr:e by: intVar];
+    }
     [_terms addTerm:alpha by:1];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
@@ -187,7 +214,15 @@
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
-    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    // Changed by Dan
+    id<ORVar> alpha = nil;
+    if([e vtype] == ORTReal) alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    else {
+        // Hack, add another variable so we can use intvar reification.
+        id<ORIntVar> intVar = [ORFactory intVar: _model bounds: RANGE(_model, [e min], [e max])];
+        [_model addConstraint: [intVar eq: _eqto]];
+        alpha = [ORNormalizer intVarIn:_model expr:e by: intVar];
+    }
     [_terms addTerm:alpha by:1];
 }
 -(void) visitExprCstDoubleSubI: (ORExprCstDoubleSubI*) e
@@ -301,6 +336,22 @@
    [terms release];
 }
 
+-(void) visitExprMulI:(ORExprMulI *)e
+{
+    id<ORRealLinear> lT = [ORNormalizer realLinearFrom: [e left] model:_model];
+    id<ORRealLinear> rT = [ORNormalizer realLinearFrom: [e right] model:_model];
+    id<ORRealVar> lV = [ORNormalizer realVarIn:lT for:_model];
+    id<ORRealVar> rV = [ORNormalizer realVarIn:rT for:_model];
+
+    ORDouble b0 = [lT fmin], b1 = [lT fmax], b2 = [rT fmin], b3 = [rT fmax];
+    ORDouble nlb = min(min(b0*b2, b0*b3), min(b1*b2, b1*b3));
+    ORDouble nub = max(max(b0*b2, b0*b3), max(b1*b2, b1*b3));
+    if (_rv == nil)
+        _rv = [ORFactory realVar:_model low:nlb up:nub];
+    [_model addConstraint:[ORFactory realMult: _model x: lV y: rV equal:_rv]];
+    [lT release];
+}
+
 -(void) visitExprSquareI:(ORExprSquareI *)e
 {
     id<ORRealLinear> lT = [ORNormalizer realLinearFrom:[e operand] model:_model];
@@ -351,4 +402,5 @@
 {
     [[e expr] visit:self];
 }
+
 @end

@@ -15,6 +15,67 @@
 #import "CPRealVarI.h"
 #import "ORConstraintI.h"
 
+@implementation CPRealMultBC
+
+-(id)initCPRealMultBC: (CPRealVarI*)x mul: (CPRealVarI*)y equal: (CPRealVarI*)z;
+{
+    self = [super initCPCoreConstraint:[x engine]];
+    _x = x;
+    _y = y;
+    _z = z;
+    return self;
+}
+-(void) post
+{
+    [self propagate];
+    if (![_x bound])
+        [_x whenChangeBoundsPropagate:self];
+    if (![_y bound])
+        [_y whenChangeBoundsPropagate:self];
+    if (![_z bound])
+        [_z whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+    ORIReady();
+    ORNarrowing xs = ORNone, ys = ORNone, zs = ORNone;
+    do {
+        if ([_x bound] && [_y bound]) {
+            zs = [_z updateInterval:ORIMul([_x bounds], [_y bounds])];
+            break;
+        } else if ([_z bound] && [_y bound]) {
+            xs = [_x updateInterval:ORIDiv([_z bounds], [_y bounds])];
+            break;
+        } else if ([_z bound] && [_x bound]) {
+            ys = [_y updateInterval:ORIDiv([_z bounds], [_x bounds])];
+            break;
+        }
+//        } else {
+//            ORInterval xb = [_x bounds];
+//            ORInterval yb = [_y bounds];
+//            zs = [_z updateInterval:ORIMul(xb, yb)];
+//            ORInterval zb = [_z bounds];
+//            xs = [_x updateInterval: ORIDiv(zb, yb)];
+//            ys = [_y updateInterval: ORIDiv(zb, xb)];
+//        }
+    }
+    while (zs != ORNone || xs != ORNone || ys != ORNone);
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,_z,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound] + ![_z bound];
+}
+-(NSString*)description
+{
+    return [NSMutableString stringWithFormat:@"<CPRealSquareBC:%02d %@ == %@^2>",_name,_z,_x];
+}
+@end
+
+
 @implementation CPRealSquareBC
 
 -(id)initCPRealSquareBC:(CPRealVarI*)z equalSquare:(CPRealVarI*)x  // z == x^2
