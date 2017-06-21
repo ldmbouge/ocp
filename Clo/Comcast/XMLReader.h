@@ -20,7 +20,7 @@
 
 - (void) parserDidStartDocument:(NSXMLParser * _Nonnull)parser;
 
-- (void) parseXMLFile;
+- (void) parseXMLFile: (NSString* _Nonnull)path;
 
 - (void) parser:(NSXMLParser * _Nonnull)parser
  didStartElement:(NSString * _Nonnull)elementName
