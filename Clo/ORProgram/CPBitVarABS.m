@@ -510,7 +510,7 @@
 {
    return _cp;
 }
--(ORFloat)varOrdering:(id<CPBitVar>)x
+-(ORDouble)varOrdering:(id<CPBitVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:x.getId];
    ABSBitVariableActivity* varAct  = [_varActivity objectForKey:key];
@@ -518,7 +518,7 @@
    [key release];
    return rv / [x domsize];
 }
--(ORFloat)valOrdering:(ORBool)v atIndex:(ORUInt)idx forVar:(id<CPBitVar>)x
+-(ORDouble)valOrdering:(ORBool)v atIndex:(ORUInt)idx forVar:(id<CPBitVar>)x
 {
    
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];

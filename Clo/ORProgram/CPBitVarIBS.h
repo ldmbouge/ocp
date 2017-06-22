@@ -31,8 +31,8 @@
    id<CPCommonProgram>   _cp;
 }
 -(id)initCPBitVarIBS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
--(ORFloat)varOrdering:(id<CPBitVar>)x;
--(ORFloat)valOrdering:(ORBool)v forVar:(id<CPBitVar>)x atIndex:(ORUInt)idx;
+-(ORDouble)varOrdering:(id<CPBitVar>)x;
+-(ORDouble)valOrdering:(ORBool)v forVar:(id<CPBitVar>)x atIndex:(ORUInt)idx;
 -(void)initInternal:(id<ORBitVarArray>)t and:(id<CPBitVarArray>)cvs;
 -(id<CPBitVarArray>)allBitVars;
 -(void)initImpacts;
