@@ -79,6 +79,29 @@ int main(int argc, const char * argv[])
     id<ORIntArray> Smem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 5 + 2; }];
     id<ORIntArray> Sbw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) { return rand() % 3 + 1; }];
 
+   
+   NSLog(@"D    = %@",D);
+   NSLog(@"M    = %@",M);
+   NSLog(@"Mapp = %@",Mapp);
+   NSLog(@"B    = %@",B);
+   NSLog(@"Bapp = %@",Bapp);
+   NSLog(@"C    = ");
+   for(ORInt i = [apps low]; i <= [apps up]; i++) {
+      for(ORInt j = [apps low]; j <= [apps up]; j++) {
+         printf("%2d ",[C at:i :j]);
+      }
+      printf("\n");
+   }
+   NSLog(@"vmax = %d",Vmax);
+   NSLog(@"T    = %@",T);
+   NSLog(@"Tapp = %@",Tapp);
+   NSLog(@"Fmem = %@",Fmem);
+   NSLog(@"Fbw  = %@",Fbw);
+   NSLog(@"Smem = %@",Smem);
+   NSLog(@"Sbw  = %@",Sbw);
+   NSLog(@"alpha= %@",alpha);
+   
+   
     // Variables
     id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
     id<ORIntVarArray> vc = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, [Iapp size])];
@@ -221,7 +244,7 @@ int main(int argc, const char * argv[])
 //    writeOut(best);
 
     id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
-        id<CPHeuristic> h = [cp createPortfolio:<#(nonnull NSArray *)#> with:<#(nonnull id<ORVarArray>)#>
+       id<CPHeuristic> h = [cp createDDeg];
         return [^(id<CPCommonProgram> cp) {
             [cp labelHeuristic: h];
             id<ORSolution> sol = [cp captureSolution];
