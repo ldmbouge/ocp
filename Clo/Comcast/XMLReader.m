@@ -79,7 +79,8 @@
       // if there is an error then resolved is set with the path which caused the issue
       // returning nil will prevent further action on this path
       return nil;
-   }
+   } else if (returnValue == NULL)
+      return nil;
    return [NSString stringWithCString:returnValue encoding:NSUTF8StringEncoding];
 }
 
