@@ -49,15 +49,17 @@
 @synthesize cnodeArray;
 @synthesize serviceArray;
 @synthesize secArray;
+@synthesize C;
+@synthesize D;
 
-- (XMLReader *) initWithArrays:(NSMutableArray *)cnodeArray
-         serviceArray:(NSMutableArray *)serviceArray
-             secArray:(NSMutableArray *)secArray{
+- (XMLReader *) initWithArrays:(NSMutableArray *)cnArr
+         serviceArray:(NSMutableArray *)srvArr
+             secArray:(NSMutableArray *)secArr{
     self = [super init];    
     if (self){
-        self.cnodeArray = cnodeArray;
-        self.serviceArray = serviceArray;
-        self.secArray = secArray;
+        self.cnodeArray = cnArr;
+        self.serviceArray = srvArr;
+        self.secArray = secArr;
     }
     
     return self;
@@ -69,8 +71,8 @@
 - (void) parseXMLFile: (NSString*)path; {
     
     NSURL * xmlPath = [NSURL URLWithString: [NSString stringWithFormat: @"file://%@", path]];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:xmlPath];
-    NSString *_Nullable error;
+    //NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:xmlPath];
+    NSError* _Nullable error;
     if ([xmlPath checkResourceIsReachableAndReturnError: &error]){
     } else {
         NSLog(@"Cant fnd XML");
@@ -121,132 +123,38 @@
         ORInt bwScaled = [[n stringValue] intValue];
         n = [node nodesForXPath: @"secZone" error: &err][0];
         ORInt zone = [[n stringValue] intValue];
-        [secArray addObject: [[SecurityTech alloc] initWithId: nodeId secFixedMemory: memFix secFixedBandwidth: bwFix
-            secScaledMemory: memScaled secScaledBandwidth: bwScaled secZone: zone]];
-
+        [secArray addObject: [[SecurityTech alloc] initWithId: nodeId
+                                               secFixedMemory: memFix
+                                            secFixedBandwidth: bwFix
+                                              secScaledMemory: memScaled
+                                           secScaledBandwidth: bwScaled
+                                                      secZone: zone]];
     }
-//    bool xmlFile = [NSURLConnection sendSynchronousRequest:request
-//                                    returningResponse:nil
-//                                                error:nil];
-//    self.parser = [[NSXMLParser alloc] initWithContentsOfURL:xmlPath];
-//    self.parser.delegate = self;
-//    [self.parser parse];
+   NSArray* conn = [[xmlDoc rootElement] nodesForXPath:@"conn/entry" error:&err];
+   C = [NSMutableArray arrayWithCapacity:services.count];
+   for(int i=0;i < services.count;i++)
+      [C addObject:[NSMutableArray arrayWithCapacity:services.count]];
+   for(NSXMLNode* node in conn) {
+      NSXMLNode* n;
+      n = [node nodesForXPath:@"row" error:&err][0];
+      ORInt row = [[n stringValue] intValue];
+      n = [node nodesForXPath:@"col" error:&err][0];
+      ORInt col = [[n stringValue] intValue];
+      n = [node nodesForXPath:@"value" error:&err][0];
+      ORInt value = [[n stringValue] intValue];
+      C[row][col] = [NSNumber numberWithInt:value];
+   }
+   NSArray* demand = [[xmlDoc rootElement] nodesForXPath:@"demand/entry" error:&err];
+   D = [NSMutableDictionary dictionaryWithCapacity:services.count];
+   for(NSXMLNode* node in demand) {
+      NSXMLNode* n;
+      n = [node nodesForXPath:@"idx" error:&err][0];
+      ORInt idx = [[n stringValue] intValue];
+      n = [node nodesForXPath:@"value" error:&err][0];
+      ORInt value = [[n stringValue] intValue];
+      [D setObject:@(value) forKey:@(idx)];
+   }
+   NSLog(@"D = %@",D);
 }
-
-//- (void)parser:(NSXMLParser *)parser
-//didStartElement:(NSString *)elementName
-//  namespaceURI:(nullable NSString *)namespaceURI
-// qualifiedName:(nullable NSString *)qName
-//    attributes:(NSDictionary<NSString *, NSString *> *)attributeDict{
-//    self.element = elementName;
-//}
-//
-//- (void) parser:(NSXMLParser *)parser
-//foundCharacters:(NSString *)string{
-//    if ([self.element isEqualToString:@"cnodeId"]){
-//        self.currentCnodeId = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"cnodeMemory"]){
-//        self.currentCnodeMemory = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"cnodeBandwidth"]){
-//        self.currentCnodeBandwidth = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"serviceId"]){
-//        self.currentServiceId = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"serviceFixMemory"]){
-//        self.currentServiceFixMemory = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"serviceFixMemory"]){
-//        self.currentServiceScaledMemory = string.doubleValue;
-//    }
-//    else if ([self.element isEqualToString:@"serviceFixBandwidth"]){
-//        self.currentServiceFixBandwidth = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"serviceFixMemory"]){
-//        self.currentServiceScaledBandwidth = string.doubleValue;
-//    }
-//    else if ([self.element isEqualToString:@"serviceZone"]){
-//        self.currentServiceZone = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"serviceMaxConn"]){
-//        self.currentServiceMaxConn = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"secId"]){
-//        self.currentSecId = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"secFixedMemory"]){
-//        self.currentSecFixedMemory = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"secFixedBandwidth"]){
-//        self.currentSecFixedBandwidth = string.intValue;
-//    }
-//    else if ([self.element isEqualToString:@"secScaledMemory"]){
-//        self.currentSecScaledMemory = string.doubleValue;
-//    }
-//    else if ([self.element isEqualToString:@"secScaledBandwidth"]){
-//        self.currentSecScaledBandwidth = string.doubleValue;
-//    }
-//    else if ([self.element isEqualToString:@"secZone"]){
-//        self.currentSecZone = string.intValue;
-//    }
-//}
-//
-//- (void)parser:(NSXMLParser *)parser
-// didEndElement:(nonnull NSString *)elementName
-//  namespaceURI:(nullable NSString *)namespaceURI
-// qualifiedName:(nullable NSString *)qName{
-//    if ([elementName isEqualToString:@"cnode"]){
-//        Cnode *thisCnode = [[Cnode alloc] initWithId:self.currentCnodeId
-//                                         cnodeMemory:self.currentCnodeMemory
-//                                      cnodeBandwidth:self.currentCnodeBandwidth];
-//        int size = [cnodeArray[0] cnodeExtId];
-//        size ++;
-//        [self.cnodeArray addObject:thisCnode];
-//        Cnode *sizeNode = [[Cnode alloc] initWithId:size cnodeMemory:0 cnodeBandwidth:0];
-//        [self.cnodeArray removeObjectAtIndex:0];
-//        [self.cnodeArray insertObject:sizeNode atIndex:0];
-//    }
-//    
-//    else if ([elementName isEqualToString:@"service"]){
-//        Service *thisService = [[Service alloc] initWithId:self.currentServiceId
-//                                          serviceFixMemory:self.currentServiceFixMemory
-//                                       serviceScaledMemory:self.currentServiceScaledMemory
-//                                          serviceFixBandwidth:self.currentServiceFixBandwidth
-//                                    serviceScaledBandwidth:self.currentServiceScaledBandwidth
-//                                               serviceZone:self.currentServiceZone
-//                                            serviceMaxConn:self.currentServiceMaxConn];
-//        int size;
-//        size = [serviceArray[0] serviceId];
-//        size ++;
-//        [self.serviceArray addObject:thisService];
-//        Service *sizeNode = [[Service alloc] initWithId:size serviceFixMemory:0 serviceScaledMemory:0 serviceFixBandwidth:0 serviceScaledBandwidth:0 serviceZone:0 serviceMaxConn:0];
-//        [self.serviceArray removeObjectAtIndex:0];
-//        [self.serviceArray insertObject:sizeNode atIndex:0];
-//    }
-//    
-//    else if ([elementName isEqualToString:@"sec"]){
-//        SecurityTech *thisSecurityTech = [[SecurityTech alloc] initWithId:self.currentSecId
-//                                                           secFixedMemory:self.currentSecFixedMemory
-//                                                        secFixedBandwidth:self.currentSecFixedBandwidth
-//                                                          secScaledMemory:self.currentSecScaledMemory
-//                                                       secScaledBandwidth:self.currentSecScaledBandwidth
-//                                                                  secZone:self.currentSecZone];
-//        int size;
-//        size = [secArray[0] secId];
-//        size ++;
-//        [self.secArray addObject:thisSecurityTech];
-//        SecurityTech *sizeNode = [[SecurityTech alloc] initWithId:size secFixedMemory:0 secFixedBandwidth:0 secScaledMemory:0 secScaledBandwidth:0 secZone:0];
-//        [self.secArray removeObjectAtIndex:0];
-//        [self.secArray insertObject: sizeNode atIndex:0];
-//    }
-//    
-//    self.element = nil;
-//}
-//
-//- (void) parserDidEndDocument:(NSXMLParser *)parser{
-//    NSLog(@"Parsing complete");
-//}
 
 @end

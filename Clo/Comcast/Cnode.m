@@ -22,5 +22,11 @@
     }
     return self;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"(%d : %d,%d)",_cnodeExtId,_cnodeMemory,_cnodeBandwidth];
+   return buf;
+}
 
 @end

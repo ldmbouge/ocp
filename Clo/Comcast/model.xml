@@ -73,4 +73,28 @@
         <secScaledBandwidth>3</secScaledBandwidth>
         <secZone>2</secZone>
     </sec>
+    <demand>
+       <entry><idx>1</idx><value>9</value></entry>
+       <entry><idx>2</idx><value>17</value></entry>
+       <entry><idx>3</idx><value>12</value></entry>
+       <entry><idx>4</idx><value>6</value></entry>
+    </demand>
+    <conn>
+       <entry><row>0</row><col>0</col><value>0</value></entry>
+       <entry><row>0</row><col>1</col><value>1</value></entry>
+       <entry><row>0</row><col>2</col><value>1</value></entry>
+       <entry><row>0</row><col>3</col><value>1</value></entry>
+       <entry><row>1</row><col>0</col><value>1</value></entry>
+       <entry><row>1</row><col>1</col><value>0</value></entry>
+       <entry><row>1</row><col>2</col><value>1</value></entry>
+       <entry><row>1</row><col>3</col><value>1</value></entry>
+       <entry><row>2</row><col>0</col><value>1</value></entry>
+       <entry><row>2</row><col>1</col><value>1</value></entry>
+       <entry><row>2</row><col>2</col><value>0</value></entry>
+       <entry><row>2</row><col>3</col><value>1</value></entry>
+       <entry><row>3</row><col>0</col><value>1</value></entry>
+       <entry><row>3</row><col>1</col><value>1</value></entry>
+       <entry><row>3</row><col>2</col><value>1</value></entry>
+       <entry><row>3</row><col>3</col><value>0</value></entry>
+    </conn>
 </model>

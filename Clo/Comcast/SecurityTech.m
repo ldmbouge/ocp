@@ -27,5 +27,11 @@ secScaledBandwidth: (double) secScaledBandwidth
     }
     return self;
 }
-
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"(%d: %d,%d,%f,%f -- %d)",_secId,_secFixedMemory,_secFixedBandwidth,
+    _secScaledMemory,_secScaledBandwidth,_secZone];
+   return buf;
+}
 @end

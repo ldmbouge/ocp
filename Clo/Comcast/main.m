@@ -46,9 +46,9 @@ int main(int argc, const char * argv[])
     
     ORInt Ncnodes = (ORInt)[cnodeArray count];
     ORInt Nservices = (ORInt)[serviceArray count];
-    ORInt Nsec = (ORInt)[secArray count]-1;
-    ORInt MAX_CONN = 2;
-    ORInt VM_MEM = 50;
+    ORInt Nsec = (ORInt)[secArray count]-1;   //2  (in data file this is 3)
+   ORInt MAX_CONN = 1;//2;   // 1    // must be read from data file  (inside serviceArray?)
+   ORInt VM_MEM = 100;//50;    // 100  // must be read from data file
     
     id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
     id<ORIntRange> services = RANGE(model,1, Nservices);
@@ -91,25 +91,17 @@ int main(int argc, const char * argv[])
     id<ORIntArray> secZone = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
         return [secArray[i] secZone];
     } ];
+   NSDictionary* Ddict = dataIn.D;
     id<ORIntArray> D = [ORFactory intArray: model range: services with:^ORInt(ORInt i) {
-        return rand() % 8 + 1;
+       return [[Ddict objectForKey:@(i)] intValue];
     }];
 
     
+   NSArray* Cmatrix = dataIn.C;
     id<ORIntMatrix> C = [ORFactory intMatrix: model range: services : services with:^int(ORInt i, ORInt j) {
-        if (i < j) {
-            return rand() % MAX_CONN + 1;
-        }
-        else if (i == j) return 0;
-        return -1;
+       return [[[Cmatrix objectAtIndex:i - 1] objectAtIndex:j - 1] intValue];  // matrix in XML file is 0-based
     }];
-    // Hack to make C symmetric.
-    for(ORInt i = [services low]; i <= [services up]; i++) {
-        for(ORInt j = [services low]; j <= [services up]; j++) {
-            if([C at: i : j] == -1) [C set: [C at: j : i] at: i : j];
-        }
-    }
-    
+   
     
     ORInt Vmax = 6;//[D sumWith:^ORInt(ORInt value, int idx) { return value; }];
     id<ORIntRange> vm = RANGE(model,1, Vmax);
@@ -264,23 +256,23 @@ int main(int argc, const char * argv[])
     
     ORTimeval now = [ORRuntimeMonitor now];
     
-    id<ORModel> lm = [ORFactory linearizeModel: model];
-    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-    [r start];
-    id<ORSolution> best = [r bestSolution];
-    writeOut(best);
+//    id<ORModel> lm = [ORFactory linearizeModel: model];
+//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+//    [r start];
+//    id<ORSolution> best = [r bestSolution];
+//    writeOut(best);
    
-//        id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
-//            id<CPHeuristic> h = [cp createDDeg];
-//            return [^(id<CPCommonProgram> cp) {
-//                [cp labelHeuristic: h];
-//                id<ORSolution> sol = [cp captureSolution];
-//                writeOut(sol);
-//                NSLog(@"Found Solution: %i", [[sol objectiveValue] intValue]);
-//            } copy];
-//        }];
-//        [r start];
-//        id<ORSolution> best = [r bestSolution];
+        id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
+            id<CPHeuristic> h = [cp createDDeg];
+            return [^(id<CPCommonProgram> cp) {
+                [cp labelHeuristic: h];
+                id<ORSolution> sol = [cp captureSolution];
+                writeOut(sol);
+                NSLog(@"Found Solution: %i", [[sol objectiveValue] intValue]);
+            } copy];
+        }];
+        [r start];
+        id<ORSolution> best = [r bestSolution];
    
     
 //        id<CPProgram> cp = [ORFactory createCPProgram: model];

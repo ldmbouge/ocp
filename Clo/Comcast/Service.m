@@ -29,5 +29,11 @@ serviceScaledBandwidth: (double) serviceScaledBandwidth
     }
     return self;
 }
-
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"(%d : %d,%.2f,%d,%.2f,z:%d,MC:%d)",_serviceId,_serviceFixMemory,_serviceScaledMemory,
+    _serviceFixBandwidth,_serviceScaledBandwidth,_serviceZone,_serviceMaxConn];
+   return buf;
+}
 @end
