@@ -22,7 +22,6 @@
 		5B4E17871CF4DFFE00A15258 /* libMPSReader.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17711CF4DE7400A15258 /* libMPSReader.dylib */; };
 		5B4E17921CF4E40700A15258 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17881CF4E40700A15258 /* CPScheduler.framework */; };
 		5B4E17931CF4E40700A15258 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17891CF4E40700A15258 /* CPUKernel.framework */; };
-		5B4E17941CF4E40700A15258 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178A1CF4E40700A15258 /* objcp.framework */; };
 		5B4E17951CF4E40700A15258 /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178B1CF4E40700A15258 /* objmp.framework */; };
 		5B4E17961CF4E40700A15258 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178C1CF4E40700A15258 /* ORFoundation.framework */; };
 		5B4E17971CF4E40700A15258 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178D1CF4E40700A15258 /* ORModeling.framework */; };
@@ -31,6 +30,7 @@
 		5B4E179A1CF4E40700A15258 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17901CF4E40700A15258 /* ORSchedulingProgram.framework */; };
 		5B4E179B1CF4E40700A15258 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17911CF4E40700A15258 /* ORUtilities.framework */; };
 		5B8295361D22EBBA00DC55F1 /* wolsey1.mps in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B8295351D22EAB400DC55F1 /* wolsey1.mps */; };
+		5BC29B551EFEE30F00178E76 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BC29B541EFEE30F00178E76 /* objcp.framework */; };
 		5BC38DD11CF3385D0019E673 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BC38DD01CF3385D0019E673 /* main.mm */; };
 /* End PBXBuildFile section */
 
@@ -76,7 +76,6 @@
 		5B4E17771CF4DE7400A15258 /* MPSReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MPSReader.cpp; sourceTree = "<group>"; };
 		5B4E17881CF4E40700A15258 /* CPScheduler.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CPScheduler.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/CPScheduler.framework"; sourceTree = "<group>"; };
 		5B4E17891CF4E40700A15258 /* CPUKernel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CPUKernel.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/CPUKernel.framework"; sourceTree = "<group>"; };
-		5B4E178A1CF4E40700A15258 /* objcp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = objcp.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/objcp.framework"; sourceTree = "<group>"; };
 		5B4E178B1CF4E40700A15258 /* objmp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = objmp.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/objmp.framework"; sourceTree = "<group>"; };
 		5B4E178C1CF4E40700A15258 /* ORFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORFoundation.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORFoundation.framework"; sourceTree = "<group>"; };
 		5B4E178D1CF4E40700A15258 /* ORModeling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORModeling.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORModeling.framework"; sourceTree = "<group>"; };
@@ -85,6 +84,7 @@
 		5B4E17901CF4E40700A15258 /* ORSchedulingProgram.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORSchedulingProgram.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORSchedulingProgram.framework"; sourceTree = "<group>"; };
 		5B4E17911CF4E40700A15258 /* ORUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORUtilities.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORUtilities.framework"; sourceTree = "<group>"; };
 		5B8295351D22EAB400DC55F1 /* wolsey1.mps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wolsey1.mps; sourceTree = "<group>"; };
+		5BC29B541EFEE30F00178E76 /* objcp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = objcp.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/objcp.framework"; sourceTree = "<group>"; };
 		5BC38DCD1CF3385D0019E673 /* mpsReader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpsReader; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC38DD01CF3385D0019E673 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -103,7 +103,7 @@
 			files = (
 				5B4E17921CF4E40700A15258 /* CPScheduler.framework in Frameworks */,
 				5B4E17931CF4E40700A15258 /* CPUKernel.framework in Frameworks */,
-				5B4E17941CF4E40700A15258 /* objcp.framework in Frameworks */,
+				5BC29B551EFEE30F00178E76 /* objcp.framework in Frameworks */,
 				5B4E17951CF4E40700A15258 /* objmp.framework in Frameworks */,
 				5B4E17961CF4E40700A15258 /* ORFoundation.framework in Frameworks */,
 				5B4E17971CF4E40700A15258 /* ORModeling.framework in Frameworks */,
@@ -141,9 +141,9 @@
 		5BC38DC41CF3385D0019E673 = {
 			isa = PBXGroup;
 			children = (
+				5BC29B541EFEE30F00178E76 /* objcp.framework */,
 				5B4E17881CF4E40700A15258 /* CPScheduler.framework */,
 				5B4E17891CF4E40700A15258 /* CPUKernel.framework */,
-				5B4E178A1CF4E40700A15258 /* objcp.framework */,
 				5B4E178B1CF4E40700A15258 /* objmp.framework */,
 				5B4E178C1CF4E40700A15258 /* ORFoundation.framework */,
 				5B4E178D1CF4E40700A15258 /* ORModeling.framework */,
