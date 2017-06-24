@@ -11,7 +11,7 @@
 @implementation Cnode
 
 - (id) initWithId: (int) cnodeExtId
-         cnodeMemory: (ORInt) cnodeMemory
+         cnodeMemory: (int) cnodeMemory
          cnodeBandwidth: (int) cnodeBandwidth {
     self = [super init];
     if (self){

@@ -82,29 +82,29 @@
     NSXMLDocument* xmlDoc = [[NSXMLDocument alloc] initWithContentsOfURL: xmlPath options: NSXMLDocumentTidyXML error: &err];
     
     NSXMLNode* maxConnNode = [[xmlDoc rootElement] nodesForXPath: @"maxConn" error: &err][0];
-    ORInt maxConn = [[maxConnNode stringValue] intValue];
+    int maxConn = [[maxConnNode stringValue] intValue];
     
     NSArray* cnodes = [[xmlDoc rootElement] nodesForXPath: @"cnode" error: &err];
     for(NSXMLNode* node in cnodes) {
         NSXMLNode* n = [node nodesForXPath: @"id" error: &err][0];
-        ORInt nodeId = [[n stringValue] intValue];
+        int nodeId = [[n stringValue] intValue];
         n = [node nodesForXPath: @"cnodeMemory" error: &err][0];
-        ORInt mem = [[n stringValue] intValue];
+        int mem = [[n stringValue] intValue];
         n = [node nodesForXPath: @"cnodeBandwidth" error: &err][0];
-        ORInt bw = [[n stringValue] intValue];
+        int bw = [[n stringValue] intValue];
         [cnodeArray addObject: [[Cnode alloc] initWithId: nodeId cnodeMemory: mem cnodeBandwidth: bw]];
     }
     
     NSArray* services = [[xmlDoc rootElement] nodesForXPath: @"service" error: &err];
     for(NSXMLNode* node in services) {
         NSXMLNode* n = [node nodesForXPath: @"id" error: &err][0];
-        ORInt nodeId = [[n stringValue] intValue];
+        int nodeId = [[n stringValue] intValue];
         n = [node nodesForXPath: @"serviceFixMemory" error: &err][0];
-        ORInt mem = [[n stringValue] intValue];
+        int mem = [[n stringValue] intValue];
         n = [node nodesForXPath: @"serviceFixBandwidth" error: &err][0];
-        ORInt bw = [[n stringValue] intValue];
+        int bw = [[n stringValue] intValue];
         n = [node nodesForXPath: @"serviceZone" error: &err][0];
-        ORInt zone = [[n stringValue] intValue];
+        int zone = [[n stringValue] intValue];
         [serviceArray addObject: [[Service alloc] initWithId: nodeId serviceFixMemory:mem serviceScaledMemory: 1 serviceFixBandwidth: bw
                                     serviceScaledBandwidth: 1 serviceZone: zone serviceMaxConn: maxConn]];
     }
@@ -112,17 +112,17 @@
     NSArray* sec = [[xmlDoc rootElement] nodesForXPath: @"sec" error: &err];
     for(NSXMLNode* node in sec) {
         NSXMLNode* n = [node nodesForXPath: @"id" error: &err][0];
-        ORInt nodeId = [[n stringValue] intValue];
+        int nodeId = [[n stringValue] intValue];
         n = [node nodesForXPath: @"secFixedMemory" error: &err][0];
-        ORInt memFix = [[n stringValue] intValue];
+        int memFix = [[n stringValue] intValue];
         n = [node nodesForXPath: @"secScaledMemory" error: &err][0];
-        ORInt memScaled = [[n stringValue] intValue];
+        int memScaled = [[n stringValue] intValue];
         n = [node nodesForXPath: @"secFixedBandwidth" error: &err][0];
-        ORInt bwFix = [[n stringValue] intValue];
+        int bwFix = [[n stringValue] intValue];
         n = [node nodesForXPath: @"secScaledBandwidth" error: &err][0];
-        ORInt bwScaled = [[n stringValue] intValue];
+        int bwScaled = [[n stringValue] intValue];
         n = [node nodesForXPath: @"secZone" error: &err][0];
-        ORInt zone = [[n stringValue] intValue];
+        int zone = [[n stringValue] intValue];
         [secArray addObject: [[SecurityTech alloc] initWithId: nodeId
                                                secFixedMemory: memFix
                                             secFixedBandwidth: bwFix
@@ -137,11 +137,11 @@
    for(NSXMLNode* node in conn) {
       NSXMLNode* n;
       n = [node nodesForXPath:@"row" error:&err][0];
-      ORInt row = [[n stringValue] intValue];
+      int row = [[n stringValue] intValue];
       n = [node nodesForXPath:@"col" error:&err][0];
-      ORInt col = [[n stringValue] intValue];
+      int col = [[n stringValue] intValue];
       n = [node nodesForXPath:@"value" error:&err][0];
-      ORInt value = [[n stringValue] intValue];
+      int value = [[n stringValue] intValue];
       C[row][col] = [NSNumber numberWithInt:value];
    }
    NSArray* demand = [[xmlDoc rootElement] nodesForXPath:@"demand/entry" error:&err];
@@ -149,9 +149,9 @@
    for(NSXMLNode* node in demand) {
       NSXMLNode* n;
       n = [node nodesForXPath:@"idx" error:&err][0];
-      ORInt idx = [[n stringValue] intValue];
+      int idx = [[n stringValue] intValue];
       n = [node nodesForXPath:@"value" error:&err][0];
-      ORInt value = [[n stringValue] intValue];
+      int value = [[n stringValue] intValue];
       [D setObject:@(value) forKey:@(idx)];
    }
    NSLog(@"D = %@",D);

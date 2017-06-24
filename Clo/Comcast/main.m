@@ -13,14 +13,11 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
 #import <ORModeling/ORLinearize.h>
-@class XMLReader;
 #import "XMLReader.h"
-@class Cnode;
 #import "Cnode.h"
-@class SecurityTech;
 #import "SecurityTech.h"
-@class Service;
 #import "Service.h"
+
 
 int main(int argc, const char * argv[])
 {
