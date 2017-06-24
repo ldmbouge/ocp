@@ -26,10 +26,6 @@ int main(int argc, const char * argv[])
 {
     id<ORModel> model = [ORFactory createModel];
     //id<ORAnnotation> notes = [ORFactory annotation];
-    
-    srand(4);//(unsigned int)time(NULL));
-    
-    ////    // Get info from XML
     NSMutableArray * serviceArray;
     NSMutableArray * secArray;
     NSMutableArray * cnodeArray;
