@@ -207,11 +207,16 @@ int main(int argc, const char * argv[])
 //    // Memory usage = Fixed memory for deploying VM + per service memory usage scaled by security technology + fixed cost of sec. technology.
     for(ORInt i = [vm low]; i <= [vm up]; i++) {
         // CP
-                [model add: [[u_mem at: i] geq:
-                             [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
-                              [[[Sum(model, k, Iservice, [ [[a at: k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] ) mul: [secScaledMem elt: [s at: i]] ] div: @(100)] plus:
-                              [secFixMem elt: [s at: i]]]
+       [model add: [[[u_mem at: i] mul: @(100)] geq:
+                             [[[[vc at: i] gt: @(0)] mul: @(VM_MEM * 100)] plus:
+                              [[Sum(model, k, Iservice, [ [[a at: k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] ) mul: [secScaledMem elt: [s at: i]] ] plus:
+                               [[secFixMem elt: [s at: i]] mul: @(100)]]
                              ]]];
+//       [model add: [[u_mem at: i] geq:
+//                    [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
+//                     [[[Sum(model, k, Iservice, [ [[a at: k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] ) mul: [secScaledMem elt: [s at: i]] ] div: @(100)] plus:
+//                      [secFixMem elt: [s at: i]]]
+//                     ]]];
         // MIP
 //        [model add: [[u_mem at: i] geq:
 //                     [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
@@ -259,12 +264,12 @@ int main(int argc, const char * argv[])
     
     ORTimeval now = [ORRuntimeMonitor now];
     
-//    id<ORModel> lm = [ORFactory linearizeModel: model];
-//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-//    [r start];
-//    id<ORSolution> best = [r bestSolution];
-//    writeOut(best);
-    
+    id<ORModel> lm = [ORFactory linearizeModel: model];
+    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+    [r start];
+    id<ORSolution> best = [r bestSolution];
+    writeOut(best);
+   
 //        id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
 //            id<CPHeuristic> h = [cp createDDeg];
 //            return [^(id<CPCommonProgram> cp) {
@@ -276,19 +281,19 @@ int main(int argc, const char * argv[])
 //        }];
 //        [r start];
 //        id<ORSolution> best = [r bestSolution];
+   
     
-    
-        id<CPProgram> cp = [ORFactory createCPProgram: model];
-        //NSLog(@"Model %@",model);
-        id<CPHeuristic> h = [cp createDDeg];
-        [cp solve:^{
-            [cp labelHeuristic:h];
-            id<ORSolution> s = [cp captureSolution];
-            NSLog(@"Found Solution: %f", [[s objectiveValue] doubleValue]);
-            writeOut(s);
-        }];
-        id<ORSolution> best = [[cp solutionPool] best];
-    
+//        id<CPProgram> cp = [ORFactory createCPProgram: model];
+//        //NSLog(@"Model %@",model);
+//        id<CPHeuristic> h = [cp createDDeg];
+//        [cp solve:^{
+//            [cp labelHeuristic:h];
+//            id<ORSolution> s = [cp captureSolution];
+//            NSLog(@"Found Solution: %f", [[s objectiveValue] doubleValue]);
+//            writeOut(s);
+//        }];
+//        id<ORSolution> best = [[cp solutionPool] best];
+   
     //NSLog(@"Number of solutions found: %li", [[cp solutionPool] count]);
     ORTimeval el = [ORRuntimeMonitor elapsedSince:now];
     NSLog(@"#best objective: %i",[[best objectiveValue] intValue]);

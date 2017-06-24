@@ -178,6 +178,14 @@
     id<ORIntVar> x1 = (id<ORIntVar>)[ self linearizeExpr: [c right]];
     [_model addConstraint: [x1 geq: x0]];
 }
+-(void) visitPlus: (id<ORPlus>)c
+{
+   id<ORIntVar> x0 = (id<ORIntVar>)[ self linearizeExpr: [c left]];
+   id<ORIntVar> x1 = (id<ORIntVar>)[ self linearizeExpr: [c right]];
+   id<ORIntVar> x2 = (id<ORIntVar>)[ self linearizeExpr: [c res]];
+   [_model addConstraint:[x2 eq: [x0 plus:x1]]];
+}
+
 -(void) visitMult: (id<ORMult>)c
 {
     id<ORIntVar> x0 = (id<ORIntVar>)[ self linearizeExpr: [c left]];
@@ -460,6 +468,16 @@
     ORIntVarAffineI* av = (ORIntVarAffineI*)v;
     id<ORIntVar> x = (id<ORIntVar>)[self linearizeExpr: [av base]];
     [_model addConstraint: [av eq: [[x mul: @([av scale])] plus: @([av shift])] track: _model]];
+}
+-(void) visitModc: (id<ORModc>)c
+{  // res = left modc right
+   id<ORIntVar> x0 = (id<ORIntVar>)[self linearizeExpr:(id<ORIntVar>)[c left]];
+   id<ORIntVar> r  = (id<ORIntVar>)[self linearizeExpr:(id<ORIntVar>)[c res]];
+   ORInt        cst  = [c right];
+   ORInt ubm = [x0 max] / cst;
+   id<ORIntVar> multiplier = [ORFactory intVar:_model bounds:RANGE(_model,0,ubm)];
+   [_model addConstraint:[x0 eq: [[multiplier mul:@(cst)] plus: r]]];
+   [_model addConstraint:[r lt:@(cst)]];
 }
 
 -(void) visitEqual: (id<OREqual>)c
