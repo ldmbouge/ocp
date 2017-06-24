@@ -19,38 +19,30 @@
     </cnode>
     <service>
         <id>1</id>
-        <serviceFixMemory>32</serviceFixMemory>
+        <serviceFixMemory>68</serviceFixMemory>
         <serviceFixBandwidth>9</serviceFixBandwidth>
         <serviceZone>1</serviceZone>
     </service>
     <service>
         <id>2</id>
-        <serviceFixMemory>32</serviceFixMemory>
+        <serviceFixMemory>98</serviceFixMemory>
         <serviceFixBandwidth>9</serviceFixBandwidth>
         <serviceZone>1</serviceZone>
     </service>
     <service>
         <id>3</id>
-        <serviceFixMemory>32</serviceFixMemory>
+        <serviceFixMemory>95</serviceFixMemory>
         <serviceFixBandwidth>5</serviceFixBandwidth>
-        <serviceZone>1</serviceZone>
+        <serviceZone>0</serviceZone>
     </service>
     <service>
         <id>4</id>
-        <serviceFixMemory>32</serviceFixMemory>
+        <serviceFixMemory>63</serviceFixMemory>
         <serviceFixBandwidth>7</serviceFixBandwidth>
         <serviceZone>1</serviceZone>
     </service>
     <sec>
         <id>0</id>
-        <secFixedMemory>0</secFixedMemory>
-        <secFixedBandwidth>0</secFixedBandwidth>
-        <secScaledMemory>1</secScaledMemory>
-        <secScaledBandwidth>1</secScaledBandwidth>
-        <secZone>0</secZone>
-    </sec>
-    <sec>
-        <id>1</id>
         <secFixedMemory>7</secFixedMemory>
         <secFixedBandwidth>3</secFixedBandwidth>
         <secScaledMemory>3</secScaledMemory>
@@ -58,7 +50,7 @@
         <secZone>0</secZone>
     </sec>
     <sec>
-        <id>2</id>
+        <id>1</id>
         <secFixedMemory>6</secFixedMemory>
         <secFixedBandwidth>1</secFixedBandwidth>
         <secScaledMemory>2</secScaledMemory>
@@ -66,7 +58,7 @@
         <secZone>1</secZone>
     </sec>
     <sec>
-        <id>3</id>
+        <id>2</id>
         <secFixedMemory>7</secFixedMemory>
         <secFixedBandwidth>8</secFixedBandwidth>
         <secScaledMemory>4</secScaledMemory>

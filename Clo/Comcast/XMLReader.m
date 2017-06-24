@@ -68,9 +68,24 @@
 - (void) parserDidStartDocument:(NSXMLParser *)parser{
 }
 
-- (void) parseXMLFile: (NSString*)path; {
-    
-    NSURL * xmlPath = [NSURL URLWithString: [NSString stringWithFormat: @"file://%@", path]];
+- (NSString *)resolvePath:(NSString *)path {
+   NSString *expandedPath = [[path stringByExpandingTildeInPath] stringByStandardizingPath];
+   const char *cpath = [expandedPath cStringUsingEncoding:NSUTF8StringEncoding];
+   char *resolved = NULL;
+   char *returnValue = realpath(cpath, resolved);
+   
+   if (returnValue == NULL && resolved != NULL) {
+      printf("Error with path: %s\n", resolved);
+      // if there is an error then resolved is set with the path which caused the issue
+      // returning nil will prevent further action on this path
+      return nil;
+   }
+   return [NSString stringWithCString:returnValue encoding:NSUTF8StringEncoding];
+}
+
+- (void) parseXMLFile: (NSString*)path {
+   NSURL* absPath = [NSURL URLWithString:[self resolvePath:path]];
+   NSURL * xmlPath = [NSURL URLWithString: [NSString stringWithFormat: @"file://%@", absPath]];
     //NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:xmlPath];
     NSError* _Nullable error;
     if ([xmlPath checkResourceIsReachableAndReturnError: &error]){

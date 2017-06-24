@@ -33,9 +33,10 @@ int main(int argc, const char * argv[])
     cnodeArray = [[NSMutableArray alloc] init];
         
     // create and init delegate
+    NSString* fName = [NSString stringWithUTF8String:argv[1]];
     XMLReader * dataIn = [[XMLReader alloc] initWithArrays: cnodeArray serviceArray: serviceArray secArray: secArray];
-    NSString* path = [[NSBundle mainBundle] pathForResource: @"model" ofType: @"xml"];
-    [dataIn parseXMLFile: path];
+    //NSString* path = [[NSBundle mainBundle] pathForResource: fName ofType: @"xml"];
+    [dataIn parseXMLFile: fName];
     
     ORInt Ncnodes = (ORInt)[cnodeArray count];
     ORInt Nservices = (ORInt)[serviceArray count];
