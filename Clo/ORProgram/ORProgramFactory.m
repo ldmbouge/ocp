@@ -240,6 +240,7 @@
             @synchronized(global) {
                [global addSolution:sol];
             }
+            [sol release];
          }];
 #if defined(__APPLE__)  || defined(__linux__)
       });

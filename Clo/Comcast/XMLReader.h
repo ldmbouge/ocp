@@ -15,6 +15,10 @@
 @property (nonatomic,strong) NSMutableArray * _Nonnull secArray;
 @property (nonatomic,strong) NSMutableArray* _Nonnull  C;
 @property (nonatomic,strong) NSMutableDictionary* _Nonnull  D;
+@property (nonatomic) int maxVMs;
+@property (nonatomic) int maxPerVM;
+@property (nonatomic) int maxCONN;
+@property (nonatomic) int vmMEM;
 
 - (XMLReader * _Nonnull) initWithArrays: (NSMutableArray * _Nonnull) cnodeArray
          serviceArray: (NSMutableArray * _Nonnull) serviceArray

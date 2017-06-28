@@ -118,7 +118,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    //int error = GRBsetintparam(GRBgetenv(_model), "LazyConstraints", 1); // Enable lazy constraints for bounds update
    //if(error != 0) assert(YES);
    GRBupdatemodel(_model);
-   [self printModelToFile: "/Users/dan/Desktop/MIPgurobi.lp"];
+   [self printModelToFile: "/Users/ldm/Desktop/MIPgurobi.lp"];
    GRBsetcallbackfunc(_model, &gurobi_callback, self);
    _terminate = NO;
    
@@ -359,7 +359,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 {
    if(_newSolVars && _newSolVals) {
       ORTimeval cpu0 = [ORRuntimeMonitor now];
-      int numVars;
+      int numVars = 0;
       GRBgetintattr(_model, "NumVars", &numVars);
       double* solution = malloc(numVars * sizeof(double));
       for(ORInt i = 0; i < numVars; i++) {
@@ -371,8 +371,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
          //NSLog(@"idx: %i => %f", idx, val);
          solution[idx] = val;
       }
-      
-      int error = GRBcbsolution(cbdata, solution);
+      double objP = 0.0;
+      int error = GRBcbsolution(cbdata, solution,&objP);
       if (error != 0) assert(NO);
       
       free(solution);

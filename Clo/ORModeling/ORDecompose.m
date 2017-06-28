@@ -770,6 +770,13 @@ struct CPVarPair {
     else
         _rv = e;
 }
+-(void) visitAffineVar:(id<ORIntVar>) v
+{
+   if (_rv)
+      [_model addConstraint:[ORFactory equal:_model var:_rv to:v plus:0]];
+   else
+      _rv = v;
+}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
     if (!_rv)

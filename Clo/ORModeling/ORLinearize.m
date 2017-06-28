@@ -172,6 +172,21 @@
 {
     assert(NO);
 }
+-(void) visitMax:(id<ORMax>)c
+{
+   id<ORIntVar> x0 = (id<ORIntVar>)[ self linearizeExpr: [c left]];
+   id<ORIntVar> x1 = (id<ORIntVar>)[ self linearizeExpr: [c right]];
+   id<ORIntVar> y  = (id<ORIntVar>)[ self linearizeExpr: [c res]];
+   id<ORIntVar> d0 = [ORFactory boolVar:_model];
+   id<ORIntVar> d1 = [ORFactory boolVar:_model];
+   ORInt Umax = max(x0.up, x1.up);
+   [_model addConstraint:[[d0 plus: d1] eq: @(1)]];
+   [_model addConstraint:[y geq: x0]];
+   [_model addConstraint:[y geq: x1]];
+   [_model addConstraint:[y leq: [x0 plus: [[d0 neg] mul: @(Umax - x0.low)]]]];
+   [_model addConstraint:[y leq: [x1 plus: [[d1 neg] mul: @(Umax - x1.low)]]]];
+}
+
 -(void) visitBinImply: (id<ORBinImply>)c
 {
     id<ORIntVar> x0 = (id<ORIntVar>)[ self linearizeExpr: [c left]];
@@ -547,8 +562,9 @@
     id<ORIntRange> binRange = RANGE(_model, 0, 1);
     id<ORIntVarArray> bidx = [self binarizationForVar: [c idx]];
     id<ORExpr> sum = [ORFactory integer: _model value: 0];
-    for(ORInt i = [[c array] low]; i <= [[c array] up]; i++) {
-        id<ORIntVar> x = [[c array] at: i];
+    ORInt lb = max(c.array.low,c.idx.min), ub = min(c.array.up,c.idx.max);
+    for(ORInt i = lb; i <= ub; i++) {
+        id<ORIntVar> x = [c. array at: i];
         //NSLog(@"x: %@", [x class]);
         id<ORIntVarArray> bx = [self binarizationForVar: x];
         for(ORInt val = [[x domain] low]; val <= [[x domain] up]; val++) {

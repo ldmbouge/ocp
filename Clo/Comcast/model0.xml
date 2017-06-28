@@ -1,27 +1,34 @@
 <?xml version="1.0"?>
 <model>
-   <vMax>6</vMax>
-   <maxConn>2</maxConn>
+   <maxCONN>1</maxCONN>
+   <maxVMs>15</maxVMs>
+   <maxPerVM>7</maxPerVM>
+   <vmMEM>50</vmMEM>
    <cnode>
       <id>1</id>
-      <cnodeMemory>6000</cnodeMemory>
+      <cnodeMemory>800</cnodeMemory>
       <cnodeBandwidth>367</cnodeBandwidth>
    </cnode>
    <cnode>
       <id>2</id>
-      <cnodeMemory>4000</cnodeMemory>
+      <cnodeMemory>1500</cnodeMemory>
       <cnodeBandwidth>28</cnodeBandwidth>
    </cnode>
    <cnode>
       <id>3</id>
-      <cnodeMemory>4000</cnodeMemory>
+      <cnodeMemory>500</cnodeMemory>
+      <cnodeBandwidth>169</cnodeBandwidth>
+   </cnode>
+   <cnode>
+      <id>4</id>
+      <cnodeMemory>1000</cnodeMemory>
       <cnodeBandwidth>169</cnodeBandwidth>
    </cnode>
    <service>
       <id>1</id>
       <serviceFixMemory>32</serviceFixMemory>
       <serviceFixBandwidth>9</serviceFixBandwidth>
-      <serviceZone>1</serviceZone>
+      <serviceZone>0</serviceZone>
    </service>
    <service>
       <id>2</id>
@@ -39,13 +46,13 @@
       <id>4</id>
       <serviceFixMemory>32</serviceFixMemory>
       <serviceFixBandwidth>7</serviceFixBandwidth>
-      <serviceZone>1</serviceZone>
+      <serviceZone>2</serviceZone>
    </service>
    <sec>
       <id>0</id>
       <secFixedMemory>7</secFixedMemory>
       <secFixedBandwidth>3</secFixedBandwidth>
-      <secScaledMemory>3</secScaledMemory>
+      <secScaledMemory>103</secScaledMemory>
       <secScaledBandwidth>2</secScaledBandwidth>
       <secZone>0</secZone>
    </sec>
@@ -53,7 +60,7 @@
       <id>1</id>
       <secFixedMemory>6</secFixedMemory>
       <secFixedBandwidth>1</secFixedBandwidth>
-      <secScaledMemory>2</secScaledMemory>
+      <secScaledMemory>102</secScaledMemory>
       <secScaledBandwidth>1</secScaledBandwidth>
       <secZone>1</secZone>
    </sec>
@@ -61,32 +68,32 @@
       <id>2</id>
       <secFixedMemory>7</secFixedMemory>
       <secFixedBandwidth>8</secFixedBandwidth>
-      <secScaledMemory>4</secScaledMemory>
+      <secScaledMemory>104</secScaledMemory>
       <secScaledBandwidth>3</secScaledBandwidth>
       <secZone>2</secZone>
    </sec>
    <demand>
-      <entry><idx>1</idx><value>9</value></entry>
-      <entry><idx>2</idx><value>17</value></entry>
-      <entry><idx>3</idx><value>12</value></entry>
-      <entry><idx>4</idx><value>6</value></entry>
+      <entry><idx>1</idx><value>11</value></entry>
+      <entry><idx>2</idx><value>22</value></entry>
+      <entry><idx>3</idx><value>15</value></entry>
+      <entry><idx>4</idx><value>7</value></entry>
    </demand>
    <conn>
       <entry><row>0</row><col>0</col><value>0</value></entry>
       <entry><row>0</row><col>1</col><value>1</value></entry>
-      <entry><row>0</row><col>2</col><value>1</value></entry>
-      <entry><row>0</row><col>3</col><value>1</value></entry>
+      <entry><row>0</row><col>2</col><value>0</value></entry>
+      <entry><row>0</row><col>3</col><value>0</value></entry>
       <entry><row>1</row><col>0</col><value>1</value></entry>
       <entry><row>1</row><col>1</col><value>0</value></entry>
       <entry><row>1</row><col>2</col><value>1</value></entry>
       <entry><row>1</row><col>3</col><value>1</value></entry>
-      <entry><row>2</row><col>0</col><value>1</value></entry>
+      <entry><row>2</row><col>0</col><value>0</value></entry>
       <entry><row>2</row><col>1</col><value>1</value></entry>
       <entry><row>2</row><col>2</col><value>0</value></entry>
-      <entry><row>2</row><col>3</col><value>1</value></entry>
-      <entry><row>3</row><col>0</col><value>1</value></entry>
+      <entry><row>2</row><col>3</col><value>0</value></entry>
+      <entry><row>3</row><col>0</col><value>0</value></entry>
       <entry><row>3</row><col>1</col><value>1</value></entry>
-      <entry><row>3</row><col>2</col><value>1</value></entry>
+      <entry><row>3</row><col>2</col><value>0</value></entry>
       <entry><row>3</row><col>3</col><value>0</value></entry>
    </conn>
 </model>

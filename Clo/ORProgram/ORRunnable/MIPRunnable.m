@@ -140,6 +140,13 @@
          [vars addObject: x];
          //[vals addObject: @((ORInt)[[sol value: t] est])];
          [vals addObject: @([sol est:t])];
+      } else if ([v conformsToProtocol:@protocol(ORIntVar)]) {
+         id<ORIntVar> t = (id<ORIntVar>)v;
+         MIPVariableI* x = [_program concretize:t];
+         if (x!=nil) {
+            [vars addObject: x];
+            [vals addObject: @([sol intValue:t])];
+         }
       }
    }
    

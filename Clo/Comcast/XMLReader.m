@@ -16,10 +16,6 @@
 @property NSXMLParser *parser;
 @property NSString *element;
 
-// model properties
-@property int vMax;
-@property int maxConn;
-
 // cnode properties
 @property int currentCnodeId;
 @property int currentCnodeMemory;
@@ -49,6 +45,10 @@
 @synthesize cnodeArray;
 @synthesize serviceArray;
 @synthesize secArray;
+@synthesize maxVMs;
+@synthesize maxPerVM;
+@synthesize maxCONN;
+@synthesize vmMEM;
 @synthesize C;
 @synthesize D;
 
@@ -97,9 +97,12 @@
     NSError *err=nil;
     NSXMLDocument* xmlDoc = [[NSXMLDocument alloc] initWithContentsOfURL: xmlPath options: NSXMLDocumentTidyXML error: &err];
     
-    NSXMLNode* maxConnNode = [[xmlDoc rootElement] nodesForXPath: @"maxConn" error: &err][0];
-    int maxConn = [[maxConnNode stringValue] intValue];
-    
+   
+   maxVMs   =  [[[[xmlDoc rootElement] nodesForXPath: @"maxVMs" error: &err][0]  stringValue] intValue];
+   maxPerVM =  [[[[xmlDoc rootElement] nodesForXPath: @"maxPerVM" error: &err][0]  stringValue] intValue];
+   maxCONN  =  [[[[xmlDoc rootElement] nodesForXPath: @"maxCONN" error: &err][0]  stringValue] intValue];
+   vmMEM    =  [[[[xmlDoc rootElement] nodesForXPath: @"vmMEM" error: &err][0]  stringValue] intValue];
+   
     NSArray* cnodes = [[xmlDoc rootElement] nodesForXPath: @"cnode" error: &err];
     for(NSXMLNode* node in cnodes) {
         NSXMLNode* n = [node nodesForXPath: @"id" error: &err][0];
@@ -122,7 +125,7 @@
         n = [node nodesForXPath: @"serviceZone" error: &err][0];
         int zone = [[n stringValue] intValue];
         [serviceArray addObject: [[Service alloc] initWithId: nodeId serviceFixMemory:mem serviceScaledMemory: 1 serviceFixBandwidth: bw
-                                    serviceScaledBandwidth: 1 serviceZone: zone serviceMaxConn: maxConn]];
+                                    serviceScaledBandwidth: 1 serviceZone: zone serviceMaxConn: maxCONN]];
     }
     
     NSArray* sec = [[xmlDoc rootElement] nodesForXPath: @"sec" error: &err];
