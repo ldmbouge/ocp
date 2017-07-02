@@ -19,7 +19,7 @@
 #import "Service.h"
 
 enum Mode {
-   MIP,CP,Hybrid,Expe
+   MIP,CP,Hybrid,LNS,Expe
 };
 
 int main(int argc, const char * argv[])
@@ -30,6 +30,8 @@ int main(int argc, const char * argv[])
       mode = MIP;
    else if (strncmp(argv[2],"CP",2) == 0)
       mode = CP;
+   else if (strncmp(argv[2],"LNS",2) == 0)
+      mode = LNS;
    else if (strncmp(argv[2],"Hybrid",6)==0)
       mode = Hybrid;
    else mode= Expe;
@@ -203,6 +205,33 @@ int main(int argc, const char * argv[])
          [model add:[[chanSec at:k1 :k2] eq: [[[same at:k1 :k2] neg] mul: [sSec[k1] max: sSec[k2]]]]];
       }
    }
+   ORInt nbUsed = 0;
+   for(ORInt k1 = [Iservice low]; k1 <= [Iservice up]; k1++) {
+      for(ORInt k2 = [Iservice low]; k2 <= [Iservice up]; k2++) {
+         ORInt tk1 = [alpha at: k1];
+         ORInt tk2 = [alpha at: k2];
+         if ([C at:tk1 :tk2] == 0) {
+            [model add: [[conn at:k1 :k2] eq: @(0)]];
+         } else nbUsed++;
+      }
+   }
+   NSLog(@"used: %d out of %d",nbUsed,[Iservice size] * [Iservice size]);
+
+//   for(ORInt k1 = [Iservice low]; k1 <= [Iservice up]; k1++) {
+//      ORInt tk1 = [alpha at:k1];
+//      for(ORInt tk2 = services.low; tk2 <= services.up;tk2++) {
+//         if ([C at:tk1 :tk2] > 0) {
+//            id<ORIntRange> r2 = [omega at:tk2];
+//            id<ORIntVar> lc = [conn at:k1 :r2.low];
+//            if (r2.low <= k1) continue;
+//            for(ORInt k2 = r2.low+1;k2 <= r2.up;k2++) {
+//               [model add: [lc geq: [conn at:k1 :k2]]];
+//               //[model add: [[lc eq:@(0)] imply:[[conn at:k1 :k2]  eq: @(0)]]];
+//               lc = [conn at:k1 :k2];
+//            }
+//         }
+//      }
+//   }
    
    // Count connections on each VM. A connection is not counted if the two services are both within the same VM.
    for(ORInt i = [vm low]; i <= [vm up]; i++) {
@@ -331,6 +360,61 @@ int main(int argc, const char * argv[])
                   if (printSol) writeOut(sol);
                   ORTimeval ts = [ORRuntimeMonitor elapsedSince:now];
                   NSLog(@"Found Solution: %i   at: %f", [[sol objectiveValue] intValue],((double)ts.tv_sec) * 1000 + ts.tv_usec / 1000);
+               }];
+            } copy];
+         }];
+         [r start];
+         best = [r bestSolution];
+         if (printSol) writeOut(best);
+      }break;
+      case LNS: {
+         id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPProgram> cp) {
+            [ORStreamManager setRandomized];
+            id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,1,100)];
+            id<ORIntVarArray> av = [model intVars];
+            id<CPHeuristic> h = [cp createDDeg];
+            id<CPHeuristic> h2 = [cp createFF];
+            __block ORInt lim = 2000;
+            __block BOOL improved = NO;
+            __block BOOL firstTime = YES;
+            id<ORObjectiveFunction> obj = [cp objective];
+            
+            return [^(id<CPProgram> cp) {
+               [cp limitTime:tLim in:^{
+                  [cp repeat:^{
+                     improved = NO;
+                     [cp limitFailures:lim in:^{
+                        if (firstTime) {
+                           [cp labelHeuristic: h restricted:a];
+                           [cp labelHeuristic: h restricted:v];
+                           [cp labelHeuristic: h restricted:(id<ORIntVarArray>)conn.flatten];
+                           [cp labelHeuristic: h];
+                        } else {
+                           [cp labelHeuristic:h];
+                        }
+                        NSLog(@"+++++++ ALL done...");
+                        id<ORSolution> sol = [cp captureSolution];
+                        if (printSol) writeOut(sol);
+                        ORTimeval ts = [ORRuntimeMonitor elapsedSince:now];
+                        NSLog(@"Found Solution: %i   at: %f", [[sol objectiveValue] intValue],((double)ts.tv_sec) * 1000 + ts.tv_usec / 1000);
+                     }];
+                  } onRepeat:^{
+                     id<ORSolution> s = [[cp solutionPool] best];
+                     if (s!=nil) {
+                        [cp once:^{
+                           for(id<ORIntVar> avk in av) {
+                              if ([d next]  <= 40) {
+                                 [cp add:[avk eq:@([s intValue:avk])]];
+                              }
+                           }
+                        }];
+                        lim = min(20000,lim * 1.1);
+                        NSLog(@"New limit: %d",lim);
+                     }
+                  }];
+                  firstTime = NO;
+                  improved = YES;
+                  NSLog(@"Objective value: %@  --improved = %d",[obj primalValue],improved);
                }];
             } copy];
          }];
