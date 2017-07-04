@@ -657,6 +657,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    ORAutomatonI* o = [[ORAutomatonI alloc] init:a states:s transition:tf size:stf initial:is final:fs table:tt];
    return [tracker trackImmutable:o];
 }
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
+   return (id<ORIntVarMatrix>)o;
+}
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
