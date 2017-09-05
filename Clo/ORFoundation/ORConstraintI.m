@@ -70,6 +70,10 @@
 {
    return 0.0;
 }
+-(ORDouble) leadToACancellation:(id<ORVar>)x
+{
+   return 0.0;
+}
 @end
 
 @implementation ORGroupI {
@@ -190,6 +194,10 @@
    return i;
 }
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x
+{
+   return 0.0;
+}
+-(ORDouble) leadToACancellation:(id<ORVar>)x
 {
    return 0.0;
 }
@@ -3559,6 +3567,115 @@
    return ms;
 }
 @end
+
+@implementation ORFloatLinearGEQ{
+   id<ORVarArray> _ia;
+   id<ORFloatArray>  _coefs;
+   ORFloat _c;
+}
+-(ORFloatLinearGEQ*) initFloatLinearGEQ: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %f)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitFloatLinearGEQ: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORFloatLinearLEQ{
+   id<ORVarArray> _ia;
+   id<ORFloatArray>  _coefs;
+   ORFloat _c;
+}
+-(ORFloatLinearLEQ*) initFloatLinearLEQ: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) <= %f)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitFloatLinearLEQ: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
 
 @implementation ORRealLinearEq {
    id<ORVarArray> _ia;

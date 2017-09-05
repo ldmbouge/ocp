@@ -379,6 +379,14 @@
 {
     [[self worker] minAbsorptionSearch:x do:b];
 }
+-(void)          maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxCancellationSearch:x do:b];
+}
+-(void)          minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minCancellationSearch:x do:b];
+}
 -(void) splitArray: (id<ORIntVarArray>) x
 {
    [[self worker] splitArray:x];

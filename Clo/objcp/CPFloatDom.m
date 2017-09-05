@@ -114,7 +114,9 @@
 }
 -(ORLDouble) domwidth
 {
-    return  _domain._up - _domain._low;
+    ORDouble min = (_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
+    ORDouble max = (_domain._up == infinityf()) ? FLT_MAX : _domain._up;
+    return  max - min;
 }
 -(TRFloatInterval) domain
 {

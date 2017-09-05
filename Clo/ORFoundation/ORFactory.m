@@ -17,6 +17,7 @@
 #import "ORConstraintI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
+
 //#import <objcp/CPBitMacros.h>
 
 @interface OROrderedSweep : NSObject<OROrderedSweep> {
@@ -1579,6 +1580,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  gt: (ORFloat) c
 {
     id<ORConstraint> o = [[ORFloatLinearGT alloc] initFloatLinearGT: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  leq: (ORFloat) c
+{
+    id<ORConstraint> o = [[ORFloatLinearLEQ alloc] initFloatLinearLEQ: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  geq: (ORFloat) c
+{
+    id<ORConstraint> o = [[ORFloatLinearGEQ alloc] initFloatLinearGEQ: x coef: coef cst: c];
     [model trackObject:o];
     return o;
 }

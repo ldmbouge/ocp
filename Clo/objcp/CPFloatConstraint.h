@@ -139,6 +139,7 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
 -(void) post;
 -(NSSet*)allVars;
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
+-(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 
@@ -152,6 +153,7 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
 -(void) post;
 -(NSSet*)allVars;
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
+-(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 

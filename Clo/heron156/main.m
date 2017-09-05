@@ -72,6 +72,7 @@ int main(int argc, const char * argv[]) {
                 
                 
                 [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+            
                 has_found = YES;
                 for(id<ORFloatVar> v in vars){
                     found &= [p bound: v];

@@ -105,5 +105,9 @@
 {
     return 0.0;
 }
+-(ORDouble) leadToACancellation:(id<ORVar>)x
+{
+    return 0.0;
+}
 @end
 

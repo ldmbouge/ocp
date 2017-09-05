@@ -414,5 +414,9 @@
 {
     return _mDepth;
 }
+-(ORUInt)depth
+{
+    return _depth._val;
+}
 @end
 

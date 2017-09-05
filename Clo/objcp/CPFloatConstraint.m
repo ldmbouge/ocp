@@ -428,6 +428,21 @@
     }
     return 0.0;
 }
+-(ORDouble) leadToACancellation:(id<ORVar>)x
+{
+    ORInt exmin, exmax, eymin,eymax,ezmin,ezmax,gmax,zmin;
+    frexpf(fabs([_x min]),&exmin);
+    frexpf(fabs([_x max]),&exmax);
+    frexpf(fabs([_y min]),&eymin);
+    frexpf(fabs([_y max]),&eymax);
+    frexpf(fabs([_z min]),&ezmin);
+    frexpf(fabs([_z max]),&ezmax);
+    gmax = max(exmin, exmax);
+    gmax = max(gmax,eymin);
+    gmax = max(gmax,eymax);
+    zmin = ([_z min] <= 0 && [_z max] >= 0) ? 0 : min(ezmin,ezmax);
+    return gmax-zmin;
+}
 -(NSString*)description
 {
     return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
@@ -529,6 +544,21 @@
         }
     }
     return 0.0;
+}
+-(ORDouble) leadToACancellation:(id<ORVar>)x
+{
+    ORInt exmin, exmax, eymin,eymax,ezmin,ezmax,gmax,zmin;
+    frexpf([_x min],&exmin);
+    frexpf([_x max],&exmax);
+    frexpf([_y min],&eymin);
+    frexpf([_y max],&eymax);
+    frexpf([_z min],&ezmin);
+    frexpf([_z max],&ezmax);
+    gmax = max(exmin, exmax);
+    gmax = max(gmax,eymin);
+    gmax = max(gmax,eymax);
+    zmin = ([_z min] <= 0 && [_z max] >= 0) ? 0 : min(ezmin,ezmax);
+    return gmax-zmin;
 }
 -(NSString*)description
 {

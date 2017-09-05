@@ -101,4 +101,5 @@
 -(void)  startTry;
 -(void)  startTryall;
 -(ORUInt) maxDepth;
+-(ORUInt) depth;
 @end

@@ -481,6 +481,14 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatLinearLT: visit method not defined"];
 }
+-(void) visitFloatLinearLEQ: (id<ORFloatLinearLEQ>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatLinearLEQ: visit method not defined"];
+}
+-(void) visitFloatLinearGEQ: (id<ORFloatLinearGEQ>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatLinearGEQ: visit method not defined"];
+}
 -(void) visitFloatMult: (id<ORFloatMult>) c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatMult: visit method not defined"];

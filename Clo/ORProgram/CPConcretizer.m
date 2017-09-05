@@ -1220,6 +1220,28 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
+-(void) visitFloatLinearLEQ:(id<ORFloatLinearLEQ>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPFloatVarArray> x = [self concreteArray:av];
+        id<ORFloatArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c leq:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatLinearGEQ:(id<ORFloatLinearGEQ>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPFloatVarArray> x = [self concreteArray:av];
+        id<ORFloatArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c geq:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 -(void) visitFloatMult:(id<ORFloatMult>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {

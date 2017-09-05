@@ -17,7 +17,8 @@
 }
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
                             @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
-                            @"alertMagn",@"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"ref"};
+                            @"alertMagn",@"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
+                            @"minCan",@"absWDens", @"densWAbs", @"ref"};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split"};
 
@@ -807,10 +808,186 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                     break;
             }
             break;
+        case maxCan :
+            switch (valordering) {
+                case split:
+                    [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStaticSplit:x];
+                    }];
+                    break;
+                case split3Way:
+                    [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic3WaySplit:x];
+                    }];
+                    break;
+                case split5Way:
+                    [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic5WaySplit:x];
+                    }];
+                    break;
+                case split6Way:
+                    [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic6WaySplit:x];
+                    }];
+                    break;
+                case dynamicSplit:
+                    [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatSplit:x];
+                    }];
+                    break;
+                case dynamic3Split:
+                    [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float3WaySplit:x];
+                    }];
+                    break;
+                case dynamic5Split:
+                    [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float5WaySplit:x];
+                    }];
+                    break;
+                case dynamic6Split:
+                    [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                    }];
+                    break;
+            }
+            break;
+        case minCan :
+            switch (valordering) {
+                case split:
+                    [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStaticSplit:x];
+                    }];
+                    break;
+                case split3Way:
+                    [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic3WaySplit:x];
+                    }];
+                    break;
+                case split5Way:
+                    [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic5WaySplit:x];
+                    }];
+                    break;
+                case split6Way:
+                    [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic6WaySplit:x];
+                    }];
+                    break;
+                case dynamicSplit:
+                    [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatSplit:x];
+                    }];
+                    break;
+                case dynamic3Split:
+                    [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float3WaySplit:x];
+                    }];
+                    break;
+                case dynamic5Split:
+                    [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float5WaySplit:x];
+                    }];
+                    break;
+                case dynamic6Split:
+                    [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                    }];
+                    break;
+            }
+            break;
+        case absWDens :
+            switch (valordering) {
+                case split:
+                    [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStaticSplit:x];
+                    }];
+                    break;
+                case split3Way:
+                    [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic3WaySplit:x];
+                    }];
+                    break;
+                case split5Way:
+                    [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic5WaySplit:x];
+                    }];
+                    break;
+                case split6Way:
+                    [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic6WaySplit:x];
+                    }];
+                    break;
+                case dynamicSplit:
+                    [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatSplit:x];
+                    }];
+                    break;
+                case dynamic3Split:
+                    [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float3WaySplit:x];
+                    }];
+                    break;
+                case dynamic5Split:
+                    [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float5WaySplit:x];
+                    }];
+                    break;
+                case dynamic6Split:
+                    [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                    }];
+                    break;
+            }
+            break;
+        case densWAbs :
+            switch (valordering) {
+                case split:
+                    [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStaticSplit:x];
+                    }];
+                    break;
+                case split3Way:
+                    [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic3WaySplit:x];
+                    }];
+                    break;
+                case split5Way:
+                    [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic5WaySplit:x];
+                    }];
+                    break;
+                case split6Way:
+                    [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic6WaySplit:x];
+                    }];
+                    break;
+                case dynamicSplit:
+                    [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatSplit:x];
+                    }];
+                    break;
+                case dynamic3Split:
+                    [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float3WaySplit:x];
+                    }];
+                    break;
+                case dynamic5Split:
+                    [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float5WaySplit:x];
+                    }];
+                    break;
+                case dynamic6Split:
+                    [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                    }];
+                    break;
+            }
+            break;
         default :
             heuristic = ref;
             [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
-                [p float6WaySplit:x];
+                [p floatSplit:x];
             }];
             break;
     }
