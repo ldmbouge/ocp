@@ -1845,7 +1845,7 @@
     [_engine open];
 }
 
--(void) search:(void*(^)())stask
+-(void) search:(void*(^)(void))stask
 {
    [self solve:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();
@@ -1854,7 +1854,7 @@
    [_engine open];
 }
 
--(void) searchAll:(void*(^)())stask
+-(void) searchAll:(void*(^)(void))stask
 {
    [self solveAll:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();

@@ -83,4 +83,4 @@
 -(ORInt)      level;
 @end
 
-void logCheckpoint();
+void logCheckpoint(void);

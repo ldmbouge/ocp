@@ -239,13 +239,13 @@
     ORFloat cutoff = 0.0005;
     ORInt noImproveLimit = 30;
     ORInt noImprove = 0;
-    ORInt timeIncrease = 0;
-    NSTimeInterval remainingTime = 0;
-    NSDate* t0 = [NSDate date];
-    
+//    ORInt timeIncrease = 0;
+//    NSTimeInterval remainingTime = 0;
+//    NSDate* t0 = [NSDate date];
+   
     _iters = 0;
     while(pi > cutoff) {
-        NSDate* t1 = [NSDate date];
+//        NSDate* t1 = [NSDate date];
         [[program solutionPool] emptyPool];
         if([program respondsToSelector: @selector(setTimeLimit:)]) [program setTimeLimit: 5.0];
         [self solveIt: program];

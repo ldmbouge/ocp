@@ -67,6 +67,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitVar: visit method not defined"];    
 }
+-(void) visitAffineVar:(id<ORIntVar>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "AffineVar: visit method not defined"];
+}
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntVarLitEQView: visit method not defined"];    

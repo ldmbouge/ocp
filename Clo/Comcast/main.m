@@ -116,9 +116,9 @@ int main(int argc, const char * argv[])
    id<ORIntArray> secScaledBw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
       return [secArray[i] secScaledBandwidth];
    } ];
-   id<ORIntArray> secZone = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
-      return [secArray[i] secZone];
-   } ];
+//   id<ORIntArray> secZone = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
+//      return [secArray[i] secZone];
+//   } ];
    NSDictionary* Ddict = dataIn.D;
    id<ORIntArray> D = [ORFactory intArray: model range: services with:^ORInt(ORInt i) {
       return [[Ddict objectForKey:@(i)] intValue];
@@ -183,7 +183,17 @@ int main(int argc, const char * argv[])
    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 1000)];
    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 200)];
    
-   [model minimize: [Sum(model, i, vm, [u_mem[i] plus: u_bw[i]])  plus: Sum(model,i,Iservice, nbConn[i]) ]];
+   id<ORExpr> sumConn = nil;
+   for(NSArray* lnk in links) {
+      id<ORIntVarMatrix> lc = links[lnk];
+      id<ORIntRange> r = [lc range:0];
+      id<ORIntRange> c = [lc range:1];
+      id<ORExpr> term = Sum2(model, i, r, j, c, [lc at:i :j]);
+      if (sumConn == nil)
+         sumConn = term;
+      else sumConn = [sumConn plus: term];
+   }
+   [model minimize: [[Sum(model, i, vm, [u_mem[i] plus: u_bw[i]])  plus: Sum(model,i,Iservice, nbConn[i]) ] plus: sumConn]];
    //[model minimize: [Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]]) lt: @(300)]];
    
    // Demand Constraints
@@ -208,10 +218,27 @@ int main(int argc, const char * argv[])
       for(ORInt s = r.low;s <= r.up;s++) {
          [model add:[Sum(model, k, c, [lc at:s :k]) geq: @([C at:t1 :t2])]];
          [model add:[Sum(model, k, c, [lc at:s :k]) leq: @([D at:t2])]];
+         if (r.size <= c.size) {
+            ORInt lb = c.size / r.size;
+            ORInt md = c.size % r.size;
+            ORInt ub = lb + md;
+            [model add:[Sum(model, k, c, [lc at:s :k]) geq: @(lb)]];
+            [model add:[Sum(model, k, c, [lc at:s :k]) leq: @(ub)]];
+         }
       }
       for(ORInt k = c.low;k <= c.up; k++) {
-         [model add:[Sum(model, j,r,[lc at:j :k]) leq: @([D at:t1])]];
+         [model add:[Sum(model, j, r, [lc at:j :k]) geq: @([C at:t2 :t1])]];  // C is symmetric anyhow
+         [model add:[Sum(model, j, r, [lc at:j :k]) leq: @([D at:t1])]];
+         if (c.size <= r.size) {
+            ORInt lb = r.size / c.size;
+            ORInt md = r.size % c.size;
+            ORInt ub = lb + md;
+            [model add:[Sum(model, j, r, [lc at:j :k]) geq: @(lb)]];
+            [model add:[Sum(model, j, r, [lc at:j :k]) leq: @(ub)]];
+         }
       }
+      ORInt toServe = max([D at:t1],[D at:t2]) * [C at:t1 :t2];
+      [model add:[Sum2(model, i, r, j, c, [lc at:i :j]) eq: @(toServe)]];
    }
    
    
@@ -235,18 +262,29 @@ int main(int argc, const char * argv[])
       for(ORInt k2 = [Iservice low]; k2 <= [Iservice up]; k2++) {
          if (k2 == k1)
             [model add: [[same at:k1 :k2] eq: @(1)]];
-         else
-            [model add: [[a[k1] eq: a[k2]] eq: [same at:k1 :k2]]];
+         else {
+            id<ORIntVarArray> bvm = [ORFactory intVarArray:model range:vm domain:RANGE(model,0,1)];
+            for(ORInt v = vm.low; v <= vm.up;v++) {
+               [model add: [bvm[v] eq: [[a[k1] eq: @(v)] land: [a[k2] eq:@(v)]]]];
+            }
+            //[model add:[[same at:k1 :k2] leq: Or(model, v, vm, bvm[v])]];
+            [model add:[[same at:k1 :k2] leq: Sum(model, v, vm, bvm[v])]];
+            for(ORInt i = vm.low;i <= vm.up;i++)
+               [model add: [bvm[i]  leq: [same at:k1 :k2]]];
+            //[model add: [[a[k1] eq: a[k2]] eq: [same at:k1 :k2]]];
+         }
       }
    }
 
    for(ORInt k1 = [Iservice low]; k1 <= [Iservice up]; k1++) {
       [model add: [sSec[k1] eq: @([serviceZone at:[alpha at:k1]])]];
    }
-   
+   id<ORIntVarMatrix> maxSec = [ORFactory intVarMatrix:model range:Iservice :Iservice bounds:sec];
    for(ORInt k1 = [Iservice low]; k1 <= [Iservice up]; k1++) {
       for(ORInt k2 = [Iservice low]; k2 <= [Iservice up]; k2++) {
-         [model add:[[chanSec at:k1 :k2] eq: [[[same at:k1 :k2] neg] mul: [sSec[k1] max: sSec[k2]]]]];
+         if (k2 == k1) continue;
+         [model add:[[maxSec at:k1 :k2] eq: [sSec[k1] max: sSec[k2]]]];
+         [model add:[[chanSec at:k1 :k2] eq: [[[same at:k1 :k2] neg] mul: [maxSec at:k1 :k2]]]];
       }
    }
 //   ORInt nbUsed = 0;
@@ -387,8 +425,10 @@ int main(int argc, const char * argv[])
                            for(ORInt k2 = [cm range:1].low;k2 <= [cm range:1].up; k2++) {
                               ORInt cl = [best intValue:[cm at:k1 :k2]];
                               if(cl > 0) {
-                                 NSLog(@"\t\t\t[service %i <%d>] <=(%d)=> [service %i <Type:%d,Sec=%d> vm=%d] (x%i)", k1, tk,
+                                 NSLog(@"\t\t\t[service %i <%d>] <=(%d,%d,NEG %d,%d)=> [service %i <Type:%d,Sec=%d> vm=%d] (x%i)", k1, tk,
                                        [best intValue:[chanSec at:k1 :k2]],
+                                       [best intValue:[same at:k1 :k2]],1 - [best intValue:[same at:k1 :k2]],
+                                       [best intValue:[maxSec at:k1 :k2]],
                                        k2,[alpha at:k2], [best intValue:[sSec at:k2]],[best intValue:a[k2]],cl);
                               }
                            }
@@ -470,7 +510,7 @@ int main(int argc, const char * argv[])
                   } onRepeat:^{
                      id<ORSolution> s = [[cp solutionPool] best];
                      if (s!=nil) {
-                        per = per / 2;
+                        per = per * 0.8;
                         NSLog(@"Restart with per = %d",per);
                         [cp atomic:^{
                            [cp once:^{
@@ -481,13 +521,13 @@ int main(int argc, const char * argv[])
                               }
                            }];
                         }];
-                        lim = min(20000,lim * 1.1);
+                        lim = min(20000,lim * 1.05);
                         NSLog(@"New limit: %d",lim);
                      }
                   }];
                   //firstTime = NO;
                   improved = YES;
-                  per = min(100,per * 2);
+                  per = 80;
                   NSLog(@"Objective value: %@  --improved = %d",[obj primalValue],improved);
                }];
             } copy];
@@ -519,63 +559,70 @@ int main(int argc, const char * argv[])
          best = [r bestSolution];
       }break;
       case Expe: {
-         id<ORRunnable> r = [ORFactory CPRunnable: model numThreads:2  willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
-            id<CPHeuristic> h = [cp createWDeg];
-            id<ORIntVar> av = [model intVars];
+         id<ORRunnable> r = [ORFactory CPRunnable: model /*numThreads:1 */ willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
+            id<CPHeuristic> h = [cp createFF];
+            //id<ORIntVarArray> av = [model intVars];
+            
             return [^(id<CPCommonProgram> cp) {
+
+               for(NSNumber* sLinkID in serLnk) {
+                  NSSet* sLink = serLnk[sLinkID];
+                  for(id<ORIntVarMatrix> m0 in sLink) {
+                     id<ORIntVarMatrix> m;
+                     if ([m0 range:0].size < [m0 range:1].size)
+                        m = transpose(m0);
+                     else m = m0;
+                     id<ORIntRange> r = [m range:0];
+                     id<ORIntRange> c = [m range:1];
+                     assert(r.size > c.size);
+                     {
+                        for(ORInt i = r.low;i <= r.up;i++) {
+                           ORInt last = c.low - 1;
+                           for(ORInt s=r.low;s <= i;s++)
+                              for(ORInt k=c.low;k <= c.up;k++)
+                                 if ([cp bound: [m at:s :k]] && [cp min:[m at:s :k]] != 0)
+                                    last = k;
+                           last = last < c.up ? (last + 1) : c.up;
+                           [cp forall: RANGE(cp,c.low,last) suchThat:^ORBool(ORInt j) { return ![cp bound: [m at:i :j]];}
+                            orderedBy: ^ORInt(ORInt j) { return -j;}
+                                   do: ^(ORInt j) {
+                                      [cp tryall:[[m at:i :j] domain]
+                                        suchThat:^ORBool(ORInt v) { return [cp member:v in:[m at:i :j]];}
+                                       orderedBy:^ORDouble(ORInt v) { return -v;}
+                                              in:^(ORInt v) {
+                                                 [cp label:[m at:i :j] with:v];
+                                              } onFailure:^(ORInt v) {
+                                                 [cp diff:[m at:i :j] with:v];
+                                              }];
+                                   }];
+                           //NSLog(@"Wipe rest of the row...");
+                           [cp forall:RANGE(cp,last+1,c.up) suchThat:^ORBool(ORInt j) { return ![cp bound:[m at:i :j]];} orderedBy:nil do:^(ORInt j) {
+                              [cp label:[m at:i :j] with:0];
+                           }];
+                        }
+                        //NSLog(@"Done with first matrix\n");
+                     }
+                  }
+               }
+               NSLog(@"+++++++ connectivity done... ");
                
                [cp labelHeuristic: h restricted:a];
                NSLog(@"+++++++ a done... ");
-               
                [cp labelHeuristic: h restricted:v];
                NSLog(@"+++++++ a/v done... ");
                
-//               for(ORInt k1 = services.low;k1 <= services.up;k1++) {
-//                  for(ORInt k2 = services.low;k2 <= services.up;k2++) {
-//                     if ([cp bound: [slb at:k1 :k2]]) continue;
-//                     [cp label:[slb at:k1 :k2]];
-//                     id<ORIntRange> s1 = [omega at:k1], s2 = [omega at:k2];
-//                     for(ORInt i=s1.low;i <= s1.up;i++) {
-//                        for(ORInt j=s2.low;j <= s2.up;j++) {
-//                           if ([cp bound:[conn at:i :j]]) continue;
-//                           [cp label:[conn at:i :j]];
-//                        }
-//                     }
-//                  }
-//               }
-               //         [cp labelArrayFF:slb.flatten];
-               //         [cp labelHeuristic:h restricted:slb.flatten];
-               //NSLog(@"+++++++ a/slb done... ");
+//               [cp labelHeuristic: h restricted:s];
+//               NSLog(@"+++++++ a/v/s done... ");
                
-//               [cp labelHeuristic: h restricted:conn.flatten];
-               NSLog(@"+++++++ a/v/s/conn done... ");
-               
-               [cp labelHeuristic: h restricted:s];
-               NSLog(@"+++++++ a/v/s done... ");
-               
-               ORInt nbf = 0;
-               for(ORInt i = av.low;i <= av.up;i++) {
-                  nbf += [cp domsize:av[i]] > 1;
+//               ORInt nbf = 0;
+//               for(ORInt i = av.low;i <= av.up;i++) {
+//                  nbf += [cp domsize:av[i]] > 1;
 //                  if ([cp domsize:av[i]] > 1)
 //                     NSLog(@"UNBOUND VAR: %@",av[i]);
-               }
-               NSLog(@"#Free vars : %d",nbf);
-               //         [cp forall:a.range suchThat:^ORBool(ORInt i) {
-               //            return ![cp bound:a[i]];
-               //         } orderedBy:^ORInt(ORInt i) {
-               //            return [h varOrdering:[cp concretize:a[i]]];
-               //            //return - [serviceFixMem at:(ORInt)[alpha[i] integerValue]];
-               //         } do:^(ORInt i) {
-               //            [cp label:a[i]];
-               ////            ORInt maxVM = max(0,[cp maxBound:a]);
-               ////            [cp tryall:vm suchThat:^ORBool(ORInt v) { return v <= maxVM + 1 && [cp member:v in:a[i]];} in:^(ORInt v) {
-               ////               [cp label:a[i] with:v];
-               ////            } onFailure:^(ORInt v) {
-               ////               [cp diff:a[i] with:v];
-               ////            }];
-               //         }];
-               static int count = 0;
-               NSLog(@"+++++++ ALL done... %d",count++);
+//               }
+//               NSLog(@"#Free vars : %d",nbf);
+//               static int count = 0;
+//               NSLog(@"+++++++ ALL done... %d",count++);
                [cp labelHeuristic: h];
                id<ORSolution> sol = [cp captureSolution];
                if (printSol) writeOut(sol);

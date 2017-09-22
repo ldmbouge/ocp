@@ -1065,7 +1065,7 @@ struct timeval timeval_subtract(struct timeval* x,struct timeval* y) {
       id<ORTau> tau = _mappings.tau;
       ob = o;
       id<ORObject> nob = [tau get: ob];
-      while (nob) {
+      while (nob && nob != ob) {
          ob = nob;
          nob = [tau get: ob];
       }

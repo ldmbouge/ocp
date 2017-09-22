@@ -124,6 +124,10 @@ BOOL _alreadyAdded;
 {
     _result = v;
 }
+-(void) visitAffineVar:(id<ORIntVar>) v
+{
+   _result = v;
+}
 -(void) visitRealVar: (ORRealVarI*) v
 {
     _result = v;

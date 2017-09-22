@@ -948,7 +948,7 @@
    self = [super init];
    _solver = solver;
    _size = 0;
-   _maxSize = 8;
+   _maxSize = 2;
    if (_maxSize == 0)
       _maxSize++;
    _var = (MIPVariableI**) malloc(_maxSize * sizeof(MIPVariableI*));
@@ -1016,26 +1016,48 @@
          uidx = idx;
    }
    int sizeIdx = (uidx - lidx + 1);
-   ORDouble* bucket = (ORDouble*) alloca(sizeIdx * sizeof(ORDouble));
-   MIPVariableI** bucketVar = (MIPVariableI**) alloca(sizeIdx * sizeof(MIPVariableI*));
-   bucket -= lidx;
-   bucketVar -= lidx;
-   for(ORInt i = lidx; i <= uidx; i++)
-      bucket[i] = 0.0;
-   for(ORInt i = 0; i < _size; i++) {
-      int idx = [_var[i] idx];
-      bucket[idx] += _coef[i];
-      bucketVar[idx] = _var[i];
-   }
-   int nb = 0;
-   for(ORInt i = lidx; i <= uidx; i++) {
-      if (bucket[i] != 0) {
-         _var[nb] = bucketVar[i];
-         _coef[nb] = bucket[i];
-         nb++;
+   if (((ORFloat)_size / sizeIdx) < 0.1) {
+      @autoreleasepool {
+         NSMutableDictionary* bucket = [[[NSMutableDictionary alloc] initWithCapacity:_size] autorelease];
+         for(ORInt i = 0; i < _size; i++) {
+            NSNumber* key = @([_var[i] idx]);
+            NSArray* entry = bucket[key];
+            ORDouble coef = _coef[i] + (entry ? [entry[1] doubleValue] : 0.0);
+            [bucket setObject:@[_var[i],@(coef)] forKey:key];
+         }
+         int nb = 0;
+         for(NSNumber* key in bucket) {
+            NSArray* entry = bucket[key];
+            if (entry && [entry[1] doubleValue] != 0.0) {
+               _var[nb]  = entry[0];
+               _coef[nb] = [entry[1] doubleValue];
+               nb++;
+            }
+         }
+         _size = nb;
       }
+   } else {
+      ORDouble* bucket = (ORDouble*) alloca(sizeIdx * sizeof(ORDouble));
+      MIPVariableI** bucketVar = (MIPVariableI**) alloca(sizeIdx * sizeof(MIPVariableI*));
+      bucket -= lidx;
+      bucketVar -= lidx;
+      for(ORInt i = lidx; i <= uidx; i++)
+         bucket[i] = 0.0;
+      for(ORInt i = 0; i < _size; i++) {
+         int idx = [_var[i] idx];
+         bucket[idx] += _coef[i];
+         bucketVar[idx] = _var[i];
+      }
+      int nb = 0;
+      for(ORInt i = lidx; i <= uidx; i++) {
+         if (bucket[i] != 0) {
+            _var[nb] = bucketVar[i];
+            _coef[nb] = bucket[i];
+            nb++;
+         }
+      }
+      _size = nb;
    }
-   _size = nb;
 }
 @end
 

@@ -115,9 +115,9 @@
    return to - from + 1;
 }
 
--(int(^)()) getMin
+-(int(^)(void)) getMin
 {
-   return [^int() {
+   return [^int(void) {
       return self->_min._val;
    } copy];
 }

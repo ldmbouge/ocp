@@ -183,8 +183,8 @@
    [_model addConstraint:[[d0 plus: d1] eq: @(1)]];
    [_model addConstraint:[y geq: x0]];
    [_model addConstraint:[y geq: x1]];
-   [_model addConstraint:[y leq: [x0 plus: [[d0 neg] mul: @(Umax - x0.low)]]]];
-   [_model addConstraint:[y leq: [x1 plus: [[d1 neg] mul: @(Umax - x1.low)]]]];
+   [_model addConstraint:[y leq: [x0 plus: [[@(1) sub: d0] mul: @(Umax - x0.low)]]]];
+   [_model addConstraint:[y leq: [x1 plus: [[@(1) sub: d1] mul: @(Umax - x1.low)]]]];
 }
 
 -(void) visitBinImply: (id<ORBinImply>)c
@@ -202,39 +202,26 @@
 }
 
 -(void) visitMult: (id<ORMult>)c
-{
+{   
     id<ORIntVar> x0 = (id<ORIntVar>)[ self linearizeExpr: [c left]];
     id<ORIntRange> d0 = [x0 domain];
     id<ORIntVar> x1 = (id<ORIntVar>)[ self linearizeExpr: [c right]];
     id<ORIntRange> d1 = [x1 domain];
-    
-    // Both Binary
-    if ([d0 low] == 0 && [d0 up] == 1 &&
-        [d1 low] == 0 && [d1 up] == 1) {
-        id<ORIntVar> z = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
+    id<ORIntVar> z = (id<ORIntVar>)[ self linearizeExpr: [c res]];
+    if (d0.isBool && d1.isBool) {     // Both Binary
         [_model addConstraint: [z leq: x0]];
         [_model addConstraint: [z leq: x1]];
         [_model addConstraint: [z geq: [[x0 plus: x1] sub: @(1)]]];
     }
-    // x1 or x0 binary
-    else if (([d0 low] == 0 && [d0 up] == 1) || ([d1 low] == 0 && [d1 up] == 1)) {
-        id<ORIntVar> x = x0;
-        id<ORIntRange> dx = d0;
-        id<ORIntVar> a = x1;
-        id<ORIntRange> da = d1;
-        if([d1 low] == 0 && [d1 up] == 1) {
-            x = x1; a = x0;
-            dx = d1; da = d0;
-        }
-        
-        id<ORIntVar> z = [ORFactory intVar: _model bounds: RANGE(_model, min(0, [da low]), [da up])];
-        [_model addConstraint: [z geq: [x mul: @([da low])]]];
-        [_model addConstraint: [z leq: [x mul: @([da up])]]];
-        
-        [_model addConstraint: [z geq: [a sub: [[@(1) sub: x] mul: @([da up])]]]];
-        [_model addConstraint: [z leq: [a sub: [[@(1) sub: x] mul: @([da low])]]]];
-        
-        [_model addConstraint: [z leq: [a plus: [[@(1) sub: x] mul: @([da up])]]]];
+    else if (d0.isBool || d1.isBool) {     // x1 or x0 binary
+       ORBool d0b = d0.isBool;
+       id<ORIntVar> x = d0b ? x1 : x0;
+       id<ORIntVar> b = d0b ? x0 : x1;
+       ORInt L = x.low, U = x.up;
+       [_model addConstraint: [z geq: [@(L) mul: b]]];
+       [_model addConstraint: [z leq: [@(U) mul: b]]];
+       [_model addConstraint: [[x sub: z] geq: [@(L) mul: [@(1) sub: b]]]];
+       [_model addConstraint: [[x sub: z] leq: [@(U) mul: [@(1) sub: b]]]];
     }
     else {
         id<ORIntVarArray> bx0 = [self binarizationForVar: x0];
@@ -432,6 +419,18 @@
     [_model addConstraint: cstr];
     [[[_model modelMappings] tau] set: cstr forKey: c];
 }
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   id<ORIntVarArray> array = (id)[c.vars map:^id _Nonnull(id  _Nonnull obj, int idx) {
+      return [_model.modelMappings.tau get:obj];
+   }];
+   [_model addMutable:array];
+   [_model trackMutable:array];
+   id<ORConstraint> cstr = [Sum(_model, i, array.range, array[i]) eq: @(c.cst)];
+   [_model addConstraint:cstr];
+   [_model.modelMappings.tau set:cstr forKey:c];
+}
+
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
 {
     id<ORIntVar> x = [c x];
@@ -463,26 +462,64 @@
 }
 -(void) visitReifyEqual: (id<ORReifyEqual>)c
 {
-    id<ORIntVar> x = [c x];
-    id<ORIntVar> y = [c y];
-    id<ORIntVar> r = [c b];
-    id<ORIntVar> z0 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
-    id<ORIntVar> z1 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
-    ORInt M = 999999;
-    
-    // x + (z0 * M) >= y
-    // x - (z1 * M) <= y
-    [_model addConstraint: [[x plus: [z0 mul: @(M)]] geq: y]];
-    [_model addConstraint: [[x sub: [z1 mul: @(M)]] leq: y]];
-    
-    // r == 1 - (z0 + z1)
-    [_model addConstraint: [r eq: [@(1) sub: [z0 plus: z1]]]];
+   id<ORIntVar> x = [c x];
+   id<ORIntVar> y = [c y];
+   id<ORIntVar> r = [c b];
+   // The original rewrite was wrong. We need to express this as
+   // r = max(0, 1 - | x - y | )
+   // whenever x = y we get |x-y| = 0 and therefore r = max(0,1) = 1
+   //          x ≠ y we get |x-y| ≥ 1 and therefore r = max(0,non-positive number or zero) = 0
+   // Therefore chain the rewrite for a max and an absolute value and we are set.
+   // Let w = | x - y |
+   ORInt La = 0,Ua    = max(abs(x.up - y.low),abs(x.low - y.up));
+   id<ORIntVar> z0 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
+   id<ORIntVar> z1 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
+   id<ORIntVar> a  = [ORFactory intVar: _model bounds:RANGE(_model,La,Ua)];
+   [_model addConstraint: [[z0 plus: z1] eq: @(1)]];
+   [_model addConstraint: [[a sub:[x sub: y]] geq:@(0)]];
+   [_model addConstraint: [[a sub:[x sub: y]] leq:[z1 mul: @(2 * Ua)]]];
+   [_model addConstraint: [[a sub:[y sub: x]] geq:@(0)]];
+   [_model addConstraint: [[a sub:[y sub: x]] leq:[z0 mul: @(2 * Ua)]]];
+   // r = max(0, 1 - a)
+   ORInt Umax = 1;
+   id<ORIntVar> d0 = [ORFactory intVar:_model bounds:RANGE(_model,0,1)];
+   id<ORIntVar> d1 = [ORFactory intVar:_model bounds:RANGE(_model,0,1)];
+   [_model addConstraint:[r geq: @(0)]];
+   [_model addConstraint:[r geq: [@(1) sub: a]]];
+   [_model addConstraint:[r leq: [@(0) plus:[@(Umax - 0) mul:[@(1) sub: d0] ]]]];
+   [_model addConstraint:[r leq: [[@(1) sub: a] plus:[@(Umax - (1 - a.up)) mul:[@(1) sub: d1] ]]]];
+   [_model addConstraint:[[d0 plus: d1] eq: @(1)]];
+//   
+//   ORInt M1 = x.up - y.low;
+//   ORInt M2 = y.up - x.low;
+//   //ORInt M = 999999;
+//   
+//   // x + (z0 * M) >= y
+//   // x - (z1 * M) <= y
+//   [_model addConstraint: [[x plus: [z0 mul: @(M2)]] geq: y]];
+//   [_model addConstraint: [[x sub: [z1 mul: @(M1)]] leq: y]];
+//   
+//   // r == 1 - (z0 + z1)
+//   [_model addConstraint: [r eq: [@(1) sub: [z0 plus: z1]]]];
 }
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
-    ORIntVarAffineI* av = (ORIntVarAffineI*)v;
-    id<ORIntVar> x = (id<ORIntVar>)[self linearizeExpr: [av base]];
-    [_model addConstraint: [av eq: [[x mul: @([av scale])] plus: @([av shift])] track: _model]];
+//   id<ORIntVar> dv = [[[_model modelMappings] tau] get: v];
+//   if(dv == nil) {
+//      [[[_model modelMappings] tau] set: v forKey: v];
+//      [_model addVariable: v];
+//      return;
+//   }
+//   _exprResult = dv;
+   ORIntVarAffineI* av = (ORIntVarAffineI*)v;
+   id<ORIntVar> x = (id<ORIntVar>)[self linearizeExpr: [av base]];
+   ORInt tl = x.low * av.scale + av.shift, tu = x.up * av.scale + av.shift;
+   id<ORIntVar> z = [ORFactory intVar:_model bounds:RANGE(_model,min(tl,tu),max(tl,tu))];
+   [_model addConstraint: [z eq: [[x mul: @(av.scale)] plus: @(av.shift)] track: _model]];
+   _exprResult = z;
+//    ORIntVarAffineI* av = (ORIntVarAffineI*)v;
+//    id<ORIntVar> x = (id<ORIntVar>)[self linearizeExpr: [av base]];
+//    [_model addConstraint: [av eq: [[x mul: @([av scale])] plus: @([av shift])] track: _model]];
 }
 -(void) visitModc: (id<ORModc>)c
 {  // res = left modc right
@@ -547,6 +584,16 @@
     [_model addConstraint: [r leq: x0]];
     [_model addConstraint: [r leq: x1]];
     [_model addConstraint: [[r plus: @(1)] geq: [x0 plus: x1]]];
+}
+-(void) visitOr:(id<OROr>)c
+{
+   id<ORIntVar> x0 = (id<ORIntVar>)[self linearizeExpr: [c left]];
+   id<ORIntVar> x1 = (id<ORIntVar>)[self linearizeExpr: [c right]];;
+   id<ORIntVar> r  = (id<ORIntVar>)[self linearizeExpr:[c res]];
+   [_model addConstraint: [x0 leq: r]];
+   [_model addConstraint: [x1 leq: r]];
+   [_model addConstraint: [r leq: [x0 plus:x1]]];
+   [_model addConstraint: [r leq: @(1)]];
 }
 -(void) visitElementCst: (id<ORElementCst>)c
 {
