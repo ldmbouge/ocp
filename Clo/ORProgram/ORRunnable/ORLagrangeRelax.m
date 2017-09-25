@@ -192,7 +192,7 @@
     if(_solverTimeLimit <= 0) _solverTimeLimit = -DBL_MAX;
 }
 
--(void) setTimeLimit:(ORFloat)secs {
+-(void) setTimeLimit:(ORDouble)secs {
     _subgradientTimeLimit = secs;
     if(_subgradientTimeLimit <= 0) _subgradientTimeLimit = -DBL_MAX;
 }
@@ -247,7 +247,7 @@
     while(pi > cutoff) {
 //        NSDate* t1 = [NSDate date];
         [[program solutionPool] emptyPool];
-        if([program respondsToSelector: @selector(setTimeLimit:)]) [program setTimeLimit: 5.0];
+        if([program respondsToSelector: @selector(setTimeLimit:)]) [(id)program setTimeLimit: 5.0];
         [self solveIt: program];
         _iters++;
         
@@ -298,7 +298,7 @@
             ORDouble slackVal = [slack conformsToProtocol: @protocol(ORIntVar)] ?
                 [sol intValue: (id<ORIntVar>)slack] : [sol doubleValue: (id<ORRealVar>)slack];
             ORDouble newValue = MAX(0, value + stepSize * slackVal);
-            [program param: lambda setValue: newValue];
+            [(id)program param: lambda setValue: newValue];
             NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, slackVal);
         }];
         

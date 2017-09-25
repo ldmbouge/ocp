@@ -47,7 +47,7 @@
 {
    return nil;
 }
--(void) setTimeLimit: (double)limit
+-(void) setTimeLimit: (ORDouble)limit
 {
     [_MIPsolver setTimeLimit: limit];
 }

@@ -44,7 +44,6 @@ typedef void(^CPRunnableSearch)(id<CPCommonProgram>);
 -(void) doStart;
 -(void) doExit;
 -(id<ORASolver>) solver;
--(void) setTimeLimit: (ORDouble) secs;
 @end
 
 @interface ORFactory(ORRunnable)

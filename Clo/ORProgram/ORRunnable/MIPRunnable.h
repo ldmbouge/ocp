@@ -23,7 +23,6 @@
 -(void) addCuts: (id<ORConstraintSet>) cuts;
 -(id<ORModel>) model;
 -(void) run;
--(void) setTimeLimit: (ORDouble) secs;
 -(ORDouble) bestBound;
 -(id<ORSolution>) bestSolution;
 @end

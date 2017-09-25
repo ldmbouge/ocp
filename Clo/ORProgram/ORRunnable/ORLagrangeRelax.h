@@ -16,7 +16,6 @@
 -(ORFloat) bestBound;
 -(id<ORSolution>) bestSolution;
 -(void) setSolverTimeLimit: (ORFloat)limit;
--(void) setTimeLimit:(ORFloat)secs;
 -(ORInt) iterations;
 @end
 
@@ -26,7 +25,6 @@
 -(id<ORModel>) model;
 -(void) run;
 -(void) setSolverTimeLimit: (ORFloat)limit;
--(void) setTimeLimit:(ORFloat)secs;
 -(void) setAgility: (ORFloat)val;
 -(ORFloat) bestBound;
 -(id<ORSolution>) bestSolution;

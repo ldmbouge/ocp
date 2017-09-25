@@ -1427,7 +1427,7 @@
       [self close];
    return [_MIP solve];
 }
--(void) setTimeLimit: (double)limit
+-(void) setTimeLimit: (ORDouble)limit
 {
     [_MIP setTimeLimit: limit];
 }
