@@ -86,15 +86,15 @@ void XORFour32(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar>
 void sbox(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> b1, id<ORBitVar> b2);
 void SideChannel(id<ORBitVar> x, int sc);
 void xtimes(id<ORBitVar> a, id<ORBitVar> b);
-void keyExpansion();
-void addRoundKey();
-void shiftRows();
-void mixColumns();
-void subBytes();
-void sideChannelCon();
-void generateLists();
-void printDebug();
-void MCFilter();
+void keyExpansion(void);
+void addRoundKey(void);
+void shiftRows(void);
+void mixColumns(void);
+void subBytes(void);
+void sideChannelCon(void);
+void generateLists(void);
+void printDebug(void);
+void MCFilter(void);
 uint32 xtimes_i(uint32 a);
 void readFile(FILE *f);
 
@@ -103,7 +103,7 @@ id<ORModel> model;
 id<ORIdArray> ca;
 id<ORRealVar> y;
 int SC[9][16];
-int* p_SC = SC;
+int* p_SC = (int*)SC;
 
 id<ORBitVar> states [5][16];
 //id<ORIntVar> error[10][16][2];
@@ -169,7 +169,7 @@ int main(int argc, const char * argv[]) {
    
    uint32 rconstant[] = {1,2,4,8,16,32,64,128,27,54};
    
-   uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
+   //uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
    
    //uint32 cipher2[] = {4,79,253,149,226,60,238,192,17,123,136,192,248,95,102,123};
    
@@ -362,7 +362,7 @@ int main(int argc, const char * argv[]) {
    phase = [ORFactory mutable:model value:3];
    
    id<ORIntVarArray> iv = [model intVars];
-   id<ORBitVarArray> av = [model bitVars];
+   //id<ORBitVarArray> av = [model bitVars];
    
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
@@ -687,8 +687,8 @@ int main(int argc, const char * argv[]) {
     }];
     */
    
-   id<ORSolutionPool> solutions = [cp solutionPool];
-   ORInt numberSol = [solutions count];
+   //id<ORSolutionPool> solutions = [cp solutionPool];
+   //NSUInteger numberSol = [solutions count];
    ORLong searchStop = [ORRuntimeMonitor wctime];
    ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
    NSLog(@"FinishTime (s): %f",elapsed);
@@ -815,8 +815,8 @@ void mixColumns(){
       int ir = (r - 2) / 4;
       for(ORInt j = 0; j < 4; j++){
          id<ORBitVar> temp[4];
-         id<ORBitVar> temp1[4];
-         id<ORBitVar> temp2[4];
+         //id<ORBitVar> temp1[4];
+         //id<ORBitVar> temp2[4];
          
          for(int i = 0; i < 4; i++){
             temp[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :7];
@@ -978,7 +978,7 @@ void generateLists(){
          if( k == 174 && v == 1){
             if(testb)
                //NSLog(@"testb Passed!");
-               if(testc)
+               if(testc) {
                   //NSLog(@"testb Passed!");
                   if((count) <= (s_SC[v] + 1) && (count) >= (s_SC[v] - 1)){
                      //NSLog(@"Origin Hamming-Weight Passed!");
@@ -986,6 +986,7 @@ void generateLists(){
                   else{
                      //NSLog(@"Origin Hamming-Weight Failed! should be: %d is: %d", s_SC[v], count);
                   }
+               }
             
             if(count2 <= (s_SC[var] + 1) && count2 >= (s_SC[var] - 1)){
                //NSLog(@"Remote Hamming-Weight Passed!");
