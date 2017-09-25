@@ -115,13 +115,6 @@
    return to - from + 1;
 }
 
--(int(^)()) getMin
-{
-   return [^int() {
-      return self->_min._val;
-   } copy];
-}
-
 -(NSString*) description
 {
    if (_min._val == _max._val)

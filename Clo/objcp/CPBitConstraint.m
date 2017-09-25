@@ -419,9 +419,7 @@ __attribute__((noinline))
 ORBool checkDomainConsistency(CPBitVarI* var, unsigned int* low, unsigned int* up, ORUInt len, id<CPBVConstraint> constraint)
 {
    ORUInt upXORlow;
-   ORUInt mask;
-   ORUInt index;
-   ORUInt bitlength = [var bitLength];
+   //ORUInt mask,index,bitlength = [var bitLength];
    ORBool isConflict = false;
    
    unsigned int* conflicts = alloca(sizeof(unsigned int)*len);
@@ -639,6 +637,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                                                           equals:(CPBitVarI*)z];
    [[x engine] trackMutable:o];
    return o;
+}
++(id<CPBVConstraint>) bitMultiplyComposed:(id<CPBitVar>)x times:(id<CPBitVar>) y equals:(id<CPBitVar>) z
+{
+   assert(NO);
+   return nil;
 }
 
 +(id<CPBVConstraint>) bitDivide:(id<CPBitVar>)x dividedby:(id<CPBitVar>) y equals:(id<CPBitVar>) q rem:(id<CPBitVar>)r
@@ -10385,7 +10388,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if([_r bound] && [_r getBit:0]){
       for(int i=[_x low]; i<=[_x up];i++)
       {
-         if([_x[i] bound] && ![_x[i] getBit:0])
+         if([_x[i] bound] && ![_x[i] bitAt:0])    // [LDM] this was calling getBit: (which does not exist.) I guess this was meant to be "bitAt:"
             NSLog(@"x variable false in LogicalAND");
       }
    }

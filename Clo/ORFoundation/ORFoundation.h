@@ -53,8 +53,8 @@
 #import "TargetConditionals.h"
 #endif
 
-ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());
-void failNow();
+ORStatus tryfail(ORStatus(^block)(void),ORStatus(^handle)(void));
+void failNow(void);
 
 #if TARGET_OS_IPHONE
 
