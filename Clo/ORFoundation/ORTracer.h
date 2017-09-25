@@ -82,5 +82,3 @@
 -(void)       trust;
 -(ORInt)      level;
 @end
-
-void logCheckpoint();
