@@ -15,5 +15,5 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-void mallocWatch();
-NSString* mallocReport();
+void mallocWatch(void);
+NSString* mallocReport(void);
