@@ -54,7 +54,7 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
          [cp solveAll: ^{
 	     //NSLog(@"Searching...");
-            [cp labelArray:costas];
+            [cp createDDeg:costas];
             @synchronized(cp) { // synchronized to work correctly even if you ask for a parallel run on the command line.
                nbSol++;
             }

@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
         id<ORFloatVar> R_0 = [ORFactory floatVar:model];
         id<ORFloatVar> q_0 = [ORFactory floatVar:model];
         id<ORFloatVar> b_0 = [ORFactory floatVar:model];
-        //[model add:[a_0 eq:@(15.0f)]];
+        //[model add:[a_0 neq:@(15.0f)]];
             
         [model add:[q_0 eq: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
         

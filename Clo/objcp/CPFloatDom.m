@@ -18,22 +18,6 @@
 #include <fpi.h>
 
 
-#define BIND_EPSILON (0.0000001)
-#define TOLERANCE    (0.0000001)
-#define NB_FLOAT_BY_E (8388608)
-#define E_MAX (254)
-
-/*useful struct to get exponent mantissa and sign*/
-typedef union {
-    float f;
-    struct {
-        unsigned int mantisa : 23;
-        unsigned int exponent : 8;
-        unsigned int sign : 1;
-    } parts;
-} double_cast;
-
-
 @implementation CPFloatDom
 
 -(id)initCPFloatDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up
@@ -130,13 +114,15 @@ typedef union {
 }
 -(ORLDouble) domwidth
 {
-    return  _domain._up - _domain._low;
+    ORDouble min = (_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
+    ORDouble max = (_domain._up == infinityf()) ? FLT_MAX : _domain._up;
+    return  max - min;
 }
 -(TRFloatInterval) domain
 {
     return _domain;
 }
--(ORUInt) cardinality
+-(ORDouble) cardinality
 {
     double_cast i_inf;
     double_cast i_sup;
@@ -144,9 +130,9 @@ typedef union {
     i_sup.f = _domain._up;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
 }
--(ORFloat) density
+-(ORDouble) density
 {
-    ORFloat c = (ORFloat)[self cardinality];
+    ORDouble c = [self cardinality];
     ORLDouble w = [self domwidth];
     return c / w;
 }

@@ -631,7 +631,59 @@ struct CPVarPair {
         }else assert(NO);
     }
 }
-//TODO to check
+-(void) visitExprLEqualI:(ORExprLEqualI*)e
+{
+    bool lc = [[e left] isConstant];
+    bool rc = [[e right] isConstant];
+    if (lc && rc) {
+        bool isOk = [[e left] fmin] <= [[e right] fmin];
+        if (!isOk)
+            [_model addConstraint:[ORFactory fail:_model]];
+    }else {
+        bool lv = [[e left] isVariable];
+        bool rv = [[e right] isVariable];
+        if (lv || rv) {
+            id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+            ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
+            id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
+            vars[0] = [ORNormalizer floatVarIn:left for:_model];
+            vars[1] = [ORNormalizer floatVarIn:right for:_model];
+            id<ORFloatArray> coefs = [ORFactory floatArray:_model
+                                                     range:RANGE(_model,0,1)
+                                                      with:^ORFloat(ORInt i) {
+                                                          return 1;
+                                                      }];
+            
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:0.f]];
+        }else assert(NO);
+    }
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+    bool lc = [[e left] isConstant];
+    bool rc = [[e right] isConstant];
+    if (lc && rc) {
+        bool isOk = [[e left] fmin] >= [[e right] fmin];
+        if (!isOk)
+            [_model addConstraint:[ORFactory fail:_model]];
+    }else {
+        bool lv = [[e left] isVariable];
+        bool rv = [[e right] isVariable];
+        if (lv || rv) {
+            id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+            ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
+            id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
+            vars[0] = [ORNormalizer floatVarIn:left for:_model];
+            vars[1] = [ORNormalizer floatVarIn:right for:_model];
+            id<ORFloatArray> coefs = [ORFactory floatArray:_model
+                                                     range:RANGE(_model,0,1)
+                                                      with:^ORFloat(ORInt i) {
+                                                          return 1;
+                                                      }];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:0.f]];
+        }else assert(NO);
+    }
+}
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
     ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model];

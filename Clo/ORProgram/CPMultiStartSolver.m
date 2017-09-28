@@ -234,7 +234,11 @@
 }
 -(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-   return [[self worker] forall: S suchThat: filter orderedBy: order do: body];
+    return [[self worker] forall: S suchThat: filter orderedBy: order do: body];
+}
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedByFloat:(ORInt2Float)o do:(ORInt2Void)b
+{
+    return [[self worker] forall: S suchThat: filter orderedByFloat: o do: b];
 }
 -(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
@@ -403,6 +407,82 @@
 -(void) minMagnitudeSearch:(id<ORFloatVarArray>)x  do:(void(^)(id<ORFloatVar>))b
 {
     [[self worker] minDensitySearch:x do:b];
+}
+-(void)  alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] alternateMagnitudeSearch:x do:b];
+}
+-(void)  floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
+{
+    [[self worker] floatSplitArrayOrderedByDomSize:x];
+}
+-(void)  lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] lexicalOrderedSearch:x do:b];
+}
+-(void)  maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxDegreeSearch:x do:b];
+}
+-(void)  minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minDegreeSearch:x do:b];
+}
+-(void)          maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxOccurencesSearch:x do:b];
+}
+-(void)          minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minOccurencesSearch:x do:b];
+}
+-(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxAbsorptionSearch:x do:b];
+}
+-(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minAbsorptionSearch:x do:b];
+}
+-(void)          maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxCancellationSearch:x do:b];
+}
+-(void)          minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minCancellationSearch:x do:b];
+}
+-(void)          floatStaticSplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatStaticSplit:x];
+}
+-(void)          floatStatic3WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatStatic3WaySplit:x];
+}
+-(void)          floatStatic5WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatStatic5WaySplit:x];
+}
+-(void)          floatStatic6WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatStatic6WaySplit:x];
+}
+-(void)          floatSplit: (id<ORFloatVar>) x
+{
+    [[self worker] floatSplit:x];
+}
+-(void)          float3WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] float3WaySplit:x];
+}
+-(void)          float5WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] float5WaySplit:x];
+}
+-(void)          float6WaySplit: (id<ORFloatVar>) x
+{
+    [[self worker] float6WaySplit:x];
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {

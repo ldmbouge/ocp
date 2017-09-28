@@ -611,4 +611,9 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
     ORBounds b = [_theVar bounds];
     return b.max - b.min;
 }
+-(ORInt) domsize
+{
+    ORBounds b = [_theVar bounds];
+    return (ORInt)(b.max - b.min);
+}
 @end

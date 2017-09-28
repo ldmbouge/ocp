@@ -368,11 +368,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom domwidth];
 }
--(ORUInt) cardinality
+-(ORDouble) cardinality
 {
     return [_dom cardinality];
 }
--(ORFloat) density
+-(ORDouble) density
 {
     return [_dom density];
 }
@@ -626,5 +626,21 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     ORBounds b = [_theVar bounds];
     return b.max - b.min;
+}
+-(ORBool) isIntersectingWith : (CPFloatVarI*) y
+{
+    return ![self isDisjointWith:y];
+}
+-(ORBool) isDisjointWith : (id<CPFloatVar>) y
+{
+    return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
+}
+-(ORBool) canPrecede : (id<CPFloatVar>) y
+{
+    return [self min] < [y min] && [self max] < [y max];
+}
+-(ORBool) canFollow : (id<CPFloatVar>) y
+{
+    return [self min] > [y min] && [self max] > [y max];
 }
 @end

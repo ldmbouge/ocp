@@ -45,6 +45,11 @@
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
 -(NSSet*)allVars;
+-(NSArray*)allVarsArray;
+-(ORBool) memberVar:(id<ORVar>) x;
+-(ORUInt) nbOccurences:(id<ORVar>)x;
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
+-(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(void) close;
 @end
 
@@ -424,6 +429,19 @@ enum ORGroupType {
 -(id<ORFloatArray>) coefs;
 -(ORFloat) cst;
 @end
+
+@protocol ORFloatLinearLEQ <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
+@protocol ORFloatLinearGEQ <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
 
 @protocol ORRealLinearEq <ORConstraint>
 -(id<ORVarArray>) vars;

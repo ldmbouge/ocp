@@ -24,16 +24,37 @@ typedef struct {
     int  changed;
 } intersectionInterval;
 
-
 static inline float_interval makeFloatInterval(float min, float max)
 {
     return (float_interval){min,max};
 }
-
 static inline intersectionInterval intersection(int changed,float_interval r, float_interval x)
 {
     fpi_narrowf(&r, &x, &changed);
     return (intersectionInterval){r,x,changed};
+}
+static inline unsigned long long cardinality(float xmin, float xmax){
+    double_cast i_inf;
+    double_cast i_sup;
+    i_inf.f = xmin;
+    i_sup.f = xmax;
+    return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+}
+static inline bool isDisjointWith(float xmin,float xmax,float ymin, float ymax)
+{
+    return (xmin < ymin &&  xmax < ymin) || (ymin < xmin && ymax < xmin);
+}
+static inline bool isIntersectionWith(float xmin,float xmax,float ymin, float ymax)
+{
+    return !isDisjointWith(xmin, xmax, ymin, ymax);
+}
+static inline bool canPrecede(float xmin,float xmax,float ymin, float ymax)
+{
+    return xmin < ymin &&  xmax < ymax;
+}
+static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
+{
+    return xmin > ymin && xmax > ymax;
 }
 
 @interface CPFloatEqual : CPCoreConstraint {
@@ -117,11 +138,13 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
 -(id) init:(id)z equals:(id)x plus:(id)y ;
 -(void) post;
 -(NSSet*)allVars;
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
+-(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 
 
-@interface CPFloatTernarySub : CPCoreConstraint { // z = x + y
+@interface CPFloatTernarySub : CPCoreConstraint { // z = x - y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -129,6 +152,8 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
 -(id) init:(id)z equals:(id)x minus:(id)y ;
 -(void) post;
 -(NSSet*)allVars;
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
+-(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 

@@ -351,9 +351,41 @@
 {
     [[self worker] floatSplitArrayOrderedByDomSize:x];
 }
--(void)          floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void)          lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
-    [[self worker] floatSplitNoOrder:x do:b];
+    [[self worker] lexicalOrderedSearch:x do:b];
+}
+-(void)          maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxDegreeSearch:x do:b];
+}
+-(void)          minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minDegreeSearch:x do:b];
+}
+-(void)          maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxOccurencesSearch:x do:b];
+}
+-(void)          minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minOccurencesSearch:x do:b];
+}
+-(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxAbsorptionSearch:x do:b];
+}
+-(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minAbsorptionSearch:x do:b];
+}
+-(void)          maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] maxCancellationSearch:x do:b];
+}
+-(void)          minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+{
+    [[self worker] minCancellationSearch:x do:b];
 }
 -(void) splitArray: (id<ORIntVarArray>) x
 {

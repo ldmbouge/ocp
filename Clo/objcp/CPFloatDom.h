@@ -15,6 +15,22 @@
 
 #include <fpi.h>
 
+#define BIND_EPSILON (0.0000001)
+#define TOLERANCE    (0.0000001)
+#define NB_FLOAT_BY_E (8388608)
+#define E_MAX (254)
+
+/*useful struct to get exponent mantissa and sign*/
+typedef union {
+    float f;
+    struct {
+        unsigned int mantisa : 23;
+        unsigned int exponent : 8;
+        unsigned int sign : 1;
+    } parts;
+} double_cast;
+
+
 @interface CPFloatDom : NSObject<CPFloatDom,NSCopying> {
     id<ORTrail>        _trail;
     ORFloat            _imin;
@@ -34,7 +50,7 @@
 -(ORInterval) bounds;
 -(ORLDouble) domwidth;
 -(TRFloatInterval) domain;
--(ORUInt) cardinality;
+-(ORDouble) cardinality;
 -(ORBool) member:(ORFloat)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPFloatDom>)toRestore;

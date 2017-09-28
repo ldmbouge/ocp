@@ -41,7 +41,11 @@
 {}
 -(NSSet*)allVars
 {
-   return [[[NSSet alloc] init] autorelease];
+    return [[[NSSet alloc] init] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+    return [[[NSArray alloc] init] autorelease];
 }
 -(ORUInt) nbVars
 {
@@ -81,6 +85,29 @@
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitConstraint:self];
+}
+-(ORBool) memberVar:(id<ORVar>)x
+{
+    NSSet *vars = [self allVars];
+    return [vars containsObject:x];
+}
+-(ORUInt) nbOccurences:(id<ORVar>)x
+{
+    NSArray *vars = [self allVarsArray];
+    ORUInt i = 0;
+    for(id<ORVar> v in vars){
+        if ([v getId] == [x getId])
+            i++;
+    }
+    return i;
+}
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x
+{
+    return 0.0;
+}
+-(ORDouble) leadToACancellation:(id<ORVar>)x
+{
+    return 0.0;
 }
 @end
 

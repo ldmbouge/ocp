@@ -725,6 +725,18 @@
     [[x tracker] trackMutable:o];
     return o;
 }
++(id<CPConstraint>) floatLEQ: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
+{
+    id<CPConstraint> o = [[CPFloatLEQ alloc] init:x leq:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) floatGEQ: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
+{
+    id<CPConstraint> o = [[CPFloatGEQ alloc] init:x geq:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
 {
     if([x count] == 1 && [coefs at:coefs.low]==1.0){
@@ -769,6 +781,20 @@
 {
     id<CPConstraint> m;
     m = [self floatGT:x[0] to:x[1]];
+    [[x tracker] trackMutable:m];
+    return m;
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leq:(ORFloat)c
+{
+    id<CPConstraint> m;
+    m = [self floatLEQ:x[0] to:x[1]];
+    [[x tracker] trackMutable:m];
+    return m;
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geq:(ORFloat)c
+{
+    id<CPConstraint> m;
+    m = [self floatGEQ:x[0] to:x[1]];
     [[x tracker] trackMutable:m];
     return m;
 }

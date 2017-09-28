@@ -404,6 +404,45 @@
 {
     return ![_x bound];
 }
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x
+{
+    ORFloat m;
+    ORFloat min, max;
+    ORInt e;
+    if([x getId] == [_y getId]){
+        m = maxFlt(fabsf([_y min]),fabs([_y max]));
+        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        min = -pow(2.0,e - 23 - 1);
+        max = pow(2.0,e -23 - 1);
+        if(isIntersectionWith(min, max, [_y min], [_y max])){
+            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        }
+    }else if([x getId] == [_x getId]){
+        m = maxFlt(fabsf([_y min]),fabs([_y max]));
+        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        min = -pow(2.0,e - 23 - 1);
+        max = pow(2.0,e -23 - 1);
+        if(isIntersectionWith(min, max, [_y min], [_y max])){
+            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        }
+    }
+    return 0.0;
+}
+-(ORDouble) leadToACancellation:(id<ORVar>)x
+{
+    ORInt exmin, exmax, eymin,eymax,ezmin,ezmax,gmax,zmin;
+    frexpf(fabs([_x min]),&exmin);
+    frexpf(fabs([_x max]),&exmax);
+    frexpf(fabs([_y min]),&eymin);
+    frexpf(fabs([_y max]),&eymax);
+    frexpf(fabs([_z min]),&ezmin);
+    frexpf(fabs([_z max]),&ezmax);
+    gmax = max(exmin, exmax);
+    gmax = max(gmax,eymin);
+    gmax = max(gmax,eymax);
+    zmin = ([_z min] <= 0 && [_z max] >= 0) ? 0 : min(ezmin,ezmax);
+    return gmax-zmin;
+}
 -(NSString*)description
 {
     return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
@@ -473,7 +512,6 @@
     [_x updateInterval:x.inf and:x.sup];
     [_y updateInterval:y.inf and:y.sup];
     [_z updateInterval:z.inf and:z.sup];
-
 }
 -(NSSet*)allVars
 {
@@ -482,6 +520,45 @@
 -(ORUInt)nbUVars
 {
     return ![_x bound];
+}
+-(ORDouble) leadToAnAbsorption:(id<ORVar>)x
+{
+    ORFloat m;
+    ORFloat min, max;
+    ORInt e;
+    if([x getId] == [_y getId]){
+        m = maxFlt(fabsf([_y min]),fabs([_y max]));
+        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        min = -pow(2.0,e - 23 - 1);
+        max = pow(2.0,e -23 - 1);
+        if(isIntersectionWith(min, max, [_y min], [_y max])){
+            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        }
+    }else if([x getId] == [_x getId]){
+        m = maxFlt(fabsf([_y min]),fabs([_y max]));
+        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        min = -pow(2.0,e - 23 - 1);
+        max = pow(2.0,e -23 - 1);
+        if(isIntersectionWith(min, max, [_y min], [_y max])){
+            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        }
+    }
+    return 0.0;
+}
+-(ORDouble) leadToACancellation:(id<ORVar>)x
+{
+    ORInt exmin, exmax, eymin,eymax,ezmin,ezmax,gmax,zmin;
+    frexpf([_x min],&exmin);
+    frexpf([_x max],&exmax);
+    frexpf([_y min],&eymin);
+    frexpf([_y max],&eymax);
+    frexpf([_z min],&ezmin);
+    frexpf([_z max],&ezmax);
+    gmax = max(exmin, exmax);
+    gmax = max(gmax,eymin);
+    gmax = max(gmax,eymax);
+    zmin = ([_z min] <= 0 && [_z max] >= 0) ? 0 : min(ezmin,ezmax);
+    return gmax-zmin;
 }
 -(NSString*)description
 {

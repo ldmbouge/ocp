@@ -82,7 +82,7 @@ typedef struct  {
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 -(ORFloat) floatValue;
--(ORFloat) domwidth;
+-(ORLDouble) domwidth;
 -(TRFloatInterval) domain;
 @end
 

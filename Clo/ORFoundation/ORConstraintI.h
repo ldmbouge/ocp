@@ -419,6 +419,21 @@
 -(ORFloat) cst;
 @end
 
+@interface ORFloatLinearLEQ : ORConstraintI<ORFloatLinearNEq>
+-(id) initFloatLinearLEQ: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
+@interface ORFloatLinearGEQ : ORConstraintI<ORFloatLinearGEQ>
+-(id) initFloatLinearGEQ: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
+
 @interface ORFloatLinearNEq : ORConstraintI<ORFloatLinearNEq>
 -(id) initFloatLinearNEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
 -(id<ORVarArray>) vars;

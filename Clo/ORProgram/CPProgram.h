@@ -70,8 +70,19 @@ PORTABLE_BEGIN
 -(void)          maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          combinedAbsWithDensSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          combinedDensWithAbsSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          switchedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x;
--(void)          floatSplitNoOrder: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 
 -(void)          floatStaticSplit: (id<ORFloatVar>) x;
 -(void)          floatStatic3WaySplit: (id<ORFloatVar>) x;
@@ -216,7 +227,6 @@ PORTABLE_BEGIN
 -(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
-
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
 -(void)             perform: (ORClosure) body onLimit: (ORClosure) onRestart;

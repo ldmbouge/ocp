@@ -27,7 +27,7 @@ int main (int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram: model];
          
          [cp solveAll: ^{
-            [cp  labelArray: x];
+            [cp  createDDeg: x];
             for(ORInt i = 0; i < n; i++)
                printf("%d ",[cp intValue:x[i]]);
             printf("\n");
