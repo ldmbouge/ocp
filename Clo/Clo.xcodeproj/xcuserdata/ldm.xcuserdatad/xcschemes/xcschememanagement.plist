@@ -254,6 +254,16 @@
 			<key>orderHint</key>
 			<integer>12</integer>
 		</dict>
+		<key>cancellation.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>197</integer>
+		</dict>
+		<key>cardinalityBench.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>200</integer>
+		</dict>
 		<key>circle.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -289,10 +299,20 @@
 			<key>orderHint</key>
 			<integer>24</integer>
 		</dict>
+		<key>degreeBench.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>199</integer>
+		</dict>
 		<key>diet.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>25</integer>
+		</dict>
+		<key>doppler.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>203</integer>
 		</dict>
 		<key>driver.xcscheme</key>
 		<dict>
@@ -349,6 +369,21 @@
 			<key>orderHint</key>
 			<integer>37</integer>
 		</dict>
+		<key>heron.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>193</integer>
+		</dict>
+		<key>heron10-8.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>198</integer>
+		</dict>
+		<key>heron156.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>194</integer>
+		</dict>
 		<key>iCP.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -363,6 +398,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>40</integer>
+		</dict>
+		<key>jetEngine.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>204</integer>
 		</dict>
 		<key>jobshop.xcscheme_^#shared#^_</key>
 		<dict>
@@ -634,6 +674,16 @@
 			<key>orderHint</key>
 			<integer>105</integer>
 		</dict>
+		<key>sineOrder3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>202</integer>
+		</dict>
+		<key>sinetaylor.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>201</integer>
+		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -658,6 +708,21 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>110</integer>
+		</dict>
+		<key>slope26+10.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>196</integer>
+		</dict>
+		<key>slope26-1.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>192</integer>
+		</dict>
+		<key>slope26-10.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>195</integer>
 		</dict>
 		<key>slow_convergence.xcscheme_^#shared#^_</key>
 		<dict>
@@ -688,6 +753,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>117</integer>
+		</dict>
+		<key>square10.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>206</integer>
 		</dict>
 		<key>stressLimit.xcscheme_^#shared#^_</key>
 		<dict>
@@ -738,6 +808,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>129</integer>
+		</dict>
+		<key>turbine.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>205</integer>
 		</dict>
 		<key>vietnameseSnake.xcscheme_^#shared#^_</key>
 		<dict>
