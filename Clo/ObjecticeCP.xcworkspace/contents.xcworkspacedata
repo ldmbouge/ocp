@@ -2,6 +2,13 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Float/Float.xcodeproj">
+   </FileRef>
+   <Group
+      location = "group:Float/Float"
+      name = "Float">
+   </Group>
+   <FileRef
       location = "group:mpsReader/mpsReader.xcodeproj">
    </FileRef>
    <FileRef
