@@ -37,11 +37,11 @@ typedef NS_ENUM(NSUInteger,ORVType) {
    ORTBool = 0,
    ORTInt = 1,
    ORTReal = 2,
-   ORTBit  = 3,
-   ORTSet  = 4,
-   ORTFloat = 5,
-   ORTDouble = 6,
-   ORTLDouble = 7,
+   ORTFloat = 3,
+   ORTDouble = 4,
+   ORTLDouble = 5,
+   ORTBit  = 6,
+   ORTSet  = 7,
    ORTNA = 8
 };
 #else
@@ -75,11 +75,15 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
       return t1;
    else if (t1+t2 <= 1)
       return ORTInt;
-   else if(t1 == ORTReal || t2 == ORTReal)
+   else if(t1 == ORTReal && t2 <= ORTReal)
        return ORTReal;
-    else if(t1 == ORTFloat || t2 == ORTFloat)
+    else if(t1 == ORTFloat && t2 <= ORTFloat)
         return ORTFloat;
-   else
+    else if (t1 == ORTNA)
+       return t2;
+    else if (t2 == ORTNA)
+       return t1;
+    else
       return ORTNA;
 }
 
