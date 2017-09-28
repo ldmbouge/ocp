@@ -35,7 +35,6 @@ PORTABLE_BEGIN
 -(BOOL) next: (ORInt*) v;
 @end
 
-
 @interface ORFactory : NSObject
 +(void) shutdown;
 +(id<ORTrail>) trail;
@@ -66,12 +65,12 @@ PORTABLE_BEGIN
 
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
-+(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORInt[]) values;
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORInt*) values;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORDouble) value;
-+(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORDouble[]) values;
++(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORDouble*) values;
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORDouble(^)(ORInt)) clo;
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORDouble(^)(ORInt,ORInt)) clo;
 +(id<ORDoubleArray>) doubleArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr;
@@ -105,6 +104,7 @@ PORTABLE_BEGIN
 +(id<OROrderedSweep>) orderedSweep: (id<ORTracker>) t over: (id<ORIntIterable>) r filter: (ORInt2Bool) filter orderedBy: (ORInt2Double) o;
 +(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order;
 +(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order;
++(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized:(ORBool)rand;
 +(id<ORSelector>) selectMin:(id<ORTracker>)tracker;
 +(id<ORIntVar>) reifyView:(id<ORTracker>) tracker var:(id<ORIntVar>) x eqi:(ORInt)c;
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker value: (ORInt) value;
@@ -314,6 +314,9 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  neq: (ORFloat) c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  lt: (ORFloat) c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  gt: (ORFloat) c;
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  leq: (ORFloat) c;
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  geq: (ORFloat) c;
+
 +(id<ORConstraint>) floatSSA:(id<ORTracker>)model  array:(id<ORVarArray>)x;
 +(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 +(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;

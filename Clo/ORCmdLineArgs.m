@@ -83,7 +83,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 {
     return valHName[valordering];
 }
--(void)measure:(struct ORResult(^)())block
+-(void)measure:(struct ORResult(^)(void))block
 {
    //mallocWatch();
    if (randomized)

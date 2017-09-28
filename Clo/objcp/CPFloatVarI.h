@@ -20,7 +20,6 @@
 
 @protocol CPFloatVarNotifier;
 
-
 @protocol CPFloatVarSubscriber <NSObject>
 // AC3 Closure Event
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;

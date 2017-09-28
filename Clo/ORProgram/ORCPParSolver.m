@@ -682,7 +682,7 @@
       [self labelHeuristic:h];
    }];
 }
--(void) search:(void*(^)())stask
+-(void) search:(void*(^)(void))stask
 {
    //TODO: This is not correct yet.
    [self solve:^{
@@ -690,7 +690,7 @@
       [theTask execute];
    }];
 }
--(void) searchAll:(void*(^)())stask
+-(void) searchAll:(void*(^)(void))stask
 {
    [self solveAll:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();
@@ -1035,10 +1035,29 @@
 {
     [[self worker] param: _gamma[p.getId] setValue: val];
 }
+
+- (void)combinedAbsWithDensSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+{
+   [[self worker] combinedAbsWithDensSearch:x do:b];
+}
+- (void)combinedDensWithAbsSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+{
+   [[self worker] combinedDensWithAbsSearch:x do:b];
+}
+- (void)switchedSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+{
+   [[self worker] switchedSearch:x do:b];
+}
+
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];
 }
+- (void)visit:(ORVisitor *)visitor
+{
+
+}
+
 @end
 
 

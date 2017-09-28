@@ -16,6 +16,9 @@
 #import "CPTask.h"
 #import "CPTaskI.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+
 // Randomly set, but it should be less than MAXINT/2, because Vilim's algorithms
 // need a tree of size 2 * (#tasks) - 1
 #define MAXNBTASK ((MAXINT)/4)
@@ -2733,4 +2736,5 @@ static void propagateAbsenceMT(CPTaskDisjunctive * disj, ORInt * idx_map_est)
 }
 @end
 
+#pragma clang diagnostic pop
 

@@ -73,8 +73,8 @@ typedef struct  {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORLDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-    id<CPDoubleDom>               _dom;
-    CPLDoubleEventNetwork      _net;
+    id<CPDoubleDom>           _dom;
+    CPLDoubleEventNetwork     _net;
     CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORLDouble)low up:(ORLDouble)up;

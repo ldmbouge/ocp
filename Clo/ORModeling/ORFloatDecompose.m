@@ -479,10 +479,10 @@
     if ([linLeft isZero] && [linRight isZero]) {
         assert(0);
     }else{
-    id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
-        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
-        id<ORIntVar> r = [ORFactory boolVar:_model];
-        //[_model addConstraint:[ORFactory model:_model boolean:lV lor:rV equal:r]];
+       id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
+       id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
+       id<ORIntVar> r = [ORFactory boolVar:_model];
+       //[_model addConstraint:[ORFactory model:_model boolean:lV lor:rV equal:r]];
     }
     [linLeft release];
     [linRight release];

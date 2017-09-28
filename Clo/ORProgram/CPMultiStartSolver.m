@@ -565,10 +565,6 @@
 {
    [[self worker] realGthen: var with: val];
 }
--(void) floatSplitArray:(id<ORFloatVarArray>)x
-{
-    [[self worker] floatSplitArray:x];
-}
 -(void) floatLthen:(id<ORFloatVar>)var with:(ORFloat)val
 {
     [[self worker] floatLthen:var with:val];
@@ -666,7 +662,7 @@
       [self labelHeuristic:h];
    }];
 }
--(void) search:(void*(^)())stask
+-(void) search:(void*(^)(void))stask
 {
    //TODO: This is not correct yet.
    [self solve:^{
@@ -674,7 +670,7 @@
       [theTask execute];
    }];
 }
--(void) searchAll:(void*(^)())stask
+-(void) searchAll:(void*(^)(void))stask
 {
    [self solveAll:^{
       id<ORSTask> theTask = (id)stask();
@@ -868,6 +864,23 @@
 {
    return (id<ORSolution>) [[self worker] captureSolution];
 }
+
+- (void)combinedAbsWithDensSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+{
+   [[self worker] combinedAbsWithDensSearch:x do:b];
+}
+
+
+- (void)combinedDensWithAbsSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+{
+   [[self worker] combinedDensWithAbsSearch:x do:b];
+}
+
+- (void)switchedSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+{
+   [[self worker] switchedSearch:x do:b];
+}
+
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];
@@ -875,5 +888,8 @@
 -(id<ORObjectiveValue>) objectiveValue
 {
    return [[self worker] objectiveValue];
+}
+- (void)visit:(ORVisitor *)visitor
+{
 }
 @end

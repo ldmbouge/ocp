@@ -364,23 +364,29 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom bound];
 }
+- (ORInt)domsize
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
+   return 0;
+}
 -(ORLDouble) domwidth
 {
-    return [_dom domwidth];
+   return [_dom domwidth];
 }
 -(ORDouble) cardinality
 {
-    return [_dom cardinality];
+   return [_dom cardinality];
 }
 -(ORDouble) density
 {
-    return [_dom density];
+   return [_dom density];
 }
 -(ORFloat) magnitude
 {
-    return [_dom magnitude];
+   return [_dom magnitude];
 }
 @end
+
 @implementation CPFloatViewOnIntVarI
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv
 {

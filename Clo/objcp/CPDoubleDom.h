@@ -31,7 +31,7 @@
 -(ORDouble) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORDouble) domwidth;
+-(ORLDouble) domwidth;
 -(ORBool) member:(ORDouble)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPDoubleDom>)toRestore;

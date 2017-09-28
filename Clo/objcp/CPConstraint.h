@@ -120,6 +120,8 @@
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs neqi:(ORFloat)c;
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c;
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs gt:(ORFloat)c;
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leq:(ORFloat)c;
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geq:(ORFloat)c;
 +(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z;
 +(id<CPConstraint>) floatDiv: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z;
 +(id<CPConstraint>) floatSSA: (id<CPFloatVar>)x with:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z;

@@ -630,8 +630,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _x = x;
    _y = y;
    _z = z;
-   //_xold = NULL;
-   _cI = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
+   _cI = makeTRInt(_trail, 0);
    _la = makeTRInt(_trail, 0);
    _ua = makeTRInt(_trail, 0);
    _I = NULL;
@@ -679,11 +678,16 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    assignTRInt(&_la, la, _trail);
    assignTRInt(&_ua, ua, _trail);
    _I = [ORFactory trailableIntArray:engine range:RANGE([_x engine],la,ua) value:0];
-   _svx0 = makeTRIntArray(_trail, xwl*WORD_BIT-1, 0);
-   _svx1 = makeTRIntArray(_trail, xwl*WORD_BIT-1, 0);
-   _svy0 = makeTRIntArray(_trail, [_y getWordLength]*WORD_BIT-1, 0);
-   _svy1 = makeTRIntArray(_trail, [_y getWordLength]*WORD_BIT-1, 0);
-   
+//   _svx0 = makeTRIntArray(_trail, xwl*WORD_BIT-1, 0);
+//   _svx1 = makeTRIntArray(_trail, xwl*WORD_BIT-1, 0);
+//   _svy0 = makeTRIntArray(_trail, [_y getWordLength]*WORD_BIT-1, 0);
+//   _svy1 = makeTRIntArray(_trail, [_y getWordLength]*WORD_BIT-1, 0);
+
+   _svx0 = makeTRIntArray(_trail, [_x bitLength], 0);
+   _svx1 = makeTRIntArray(_trail, [_x bitLength], 0);
+   _svy0 = makeTRIntArray(_trail, [_y bitLength], 0);
+   _svy1 = makeTRIntArray(_trail, [_y bitLength], 0);
+
    CPBitVarI* elmt;
    unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
    
@@ -725,12 +729,11 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
             }
          }
          [_I[k] setValue:1];
-         [_cI incr];
-         //            [_cI setValue:[_cI value]+1];
+         assignTRInt(&_cI, _cI._val+1, _trail);
       }
    }
    
-   if ([_cI value]==1) {
+   if (_cI._val == 1) {
       for(ORInt k=_la._val;k <= _ua._val;k++) {
          if ([_I[k] value]) {
             [self doACEqual:k];
@@ -738,7 +741,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          }
       }
    }
-   else if (![_cI value])
+   else if (_cI._val == 0)
       failNow();
    
    for (int b=0   ;b < _svx0._nb;b++) {
@@ -788,7 +791,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 -(void) propagate
 {
    
-   if ([_cI value]==1) {
+   if (_cI._val == 1) {
       for(ORInt k=_la._val;k <= _ua._val;k++) {
          if ([_I[k] value]) {
             [self doACEqual:k];
@@ -797,7 +800,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       }
       return;
    }
-   else if ([_cI value]<=0)
+   else if (_cI._val <= 0)
       failNow();
    CPBitVarI* elmt = NULL;
    unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
@@ -813,7 +816,10 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    for(ORUInt k=_la._val;k <= _ua._val;k++) {
       if ([_I[k] value]) {
          elmt = (CPBitVarI*)[_z at:k];
-         [elmt getUp:&eUp andLow:&eLow];
+         ULRep ulr =  getULVarRep(elmt);
+         //[elmt getUp:&eUp andLow:&eLow];
+         eUp = ulr._up;
+         eLow = ulr._low;
          elmtfixed = ~(eLow[0]._val^eUp[0]._val);
          yfixed = ~(yLow[0]._val^yUp[0]._val);
          bothfixed = yfixed&elmtfixed;
@@ -822,8 +828,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          inXDom = [_x member:&k];
          if (!inXDom||notcomp) {
             [_I[k] setValue:0];
-            [_cI setValue:[_cI value]-1];
-            if ([_cI value]==1) {
+            assignTRInt(&_cI,_cI._val - 1,_trail);
+            if (_cI._val == 1) {
                for(ORInt k= _la._val;k <= _ua._val;k++) {
                   if ([_I[k] value]) {
                      [self doACEqual:k];
@@ -837,18 +843,18 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
                   bool bit = DomBitGet(elmt->_dom, b);
                   if (bit) {
                      if (_svy1._entries[b]._val)
-                        assignTRIntArray(_svy1, b, _svy1._entries[b]._val - 1, _trail);
+                        inline_assignTRIntArray(_svy1, b, _svy1._entries[b]._val - 1, _trail);
                   }
                   else  {
                      if (_svy0._entries[b]._val)
-                        assignTRIntArray(_svy0, b, _svy0._entries[b]._val - 1, _trail);
+                        inline_assignTRIntArray(_svy0, b, _svy0._entries[b]._val - 1, _trail);
                   }
                }
                else {
                   if (_svy1._entries[b]._val)
-                     assignTRIntArray(_svy1, b, _svy1._entries[b]._val - 1, _trail);
+                     inline_assignTRIntArray(_svy1, b, _svy1._entries[b]._val - 1, _trail);
                   if (_svy0._entries[b]._val)
-                     assignTRIntArray(_svy0, b, _svy0._entries[b]._val - 1, _trail);
+                     inline_assignTRIntArray(_svy0, b, _svy0._entries[b]._val - 1, _trail);
                }
             }
             // update svx0, svx1
@@ -856,9 +862,9 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
                if (DomBitFree(_xold2, b)) {
                   bool isOne = (k)&(1<<(b));
                   if (_svx0._entries[b]._val)
-                     assignTRIntArray(_svx0, b, _svx0._entries[b]._val - !isOne, _trail);
+                     inline_assignTRIntArray(_svx0, b, _svx0._entries[b]._val - !isOne, _trail);
                   if (_svx1._entries[b]._val)
-                     assignTRIntArray(_svx1, b, _svx1._entries[b]._val - isOne, _trail);
+                     inline_assignTRIntArray(_svx1, b, _svx1._entries[b]._val - isOne, _trail);
                }
             }
             

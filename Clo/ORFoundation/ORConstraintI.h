@@ -419,7 +419,7 @@
 -(ORFloat) cst;
 @end
 
-@interface ORFloatLinearLEQ : ORConstraintI<ORFloatLinearNEq>
+@interface ORFloatLinearLEQ : ORConstraintI<ORFloatLinearLEQ>
 -(id) initFloatLinearLEQ: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
 -(id<ORVarArray>) vars;
 -(id<ORFloatArray>) coefs;

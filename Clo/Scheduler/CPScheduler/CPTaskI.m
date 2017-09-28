@@ -177,6 +177,12 @@ typedef struct  {
 {
    return YES;
 }
+
+- (void)visit:(ORVisitor *)visitor
+{
+   
+}
+
 -(id) takeSnapshot: (ORInt) id
 {
    return [[CPTaskVarSnapshot alloc] initCPTaskVarSnapshot: self name: id];
@@ -187,13 +193,13 @@ typedef struct  {
 }
 -(ORInt) lst
 {
-    return _lst._val;
-//   return _end._val - _durationMin._val;
+   return _lst._val;
+   //   return _end._val - _durationMin._val;
 }
 -(ORInt) ect
 {
-    return _ect._val;
-//   return _start._val + _durationMin._val;
+   return _ect._val;
+   //   return _start._val + _durationMin._val;
 }
 -(ORInt) lct
 {
@@ -225,70 +231,70 @@ typedef struct  {
 }
 -(ORBool) readEst:(ORInt *)est lst:(ORInt *)lst ect:(ORInt *)ect lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)resource
 {
-    ORBool bound   = (_start._val + _durationMin._val == _end._val) && (_durationMin._val == _durationMax._val);
-    *est     = _start._val;
-    *lst     = _lst._val;
-    *ect     = _ect._val;
-    *lct     = _end._val;
-    *minD    = _durationMin._val;
-    *maxD    = _durationMax._val;
-    *present = TRUE;
-    *absent  = FALSE;
-    return bound;
+   ORBool bound   = (_start._val + _durationMin._val == _end._val) && (_durationMin._val == _durationMax._val);
+   *est     = _start._val;
+   *lst     = _lst._val;
+   *ect     = _ect._val;
+   *lct     = _end._val;
+   *minD    = _durationMin._val;
+   *maxD    = _durationMax._val;
+   *present = TRUE;
+   *absent  = FALSE;
+   return bound;
 }
 -(void) updateStart: (ORInt) newStart
 {
-    if (newStart > _start._val) {
-        if (newStart > _lst._val)
-            failNow();
-        assert(newStart + _durationMin._val <= _end._val);
-//      if (newStart + _durationMin._val > _end._val)
-//         failNow();
-        [self changeStartEvt];
-        assignTRInt(&_start, newStart, _trail);
-        if (newStart + _durationMin._val > _ect._val)
-            assignTRInt(&_ect, newStart + _durationMin._val, _trail);
-        
-        if (!_constantDuration) {
-            ORInt newDurationMax = _end._val - _start._val;
-            [self updateMaxDuration: newDurationMax];
-        }
-    }
+   if (newStart > _start._val) {
+      if (newStart > _lst._val)
+         failNow();
+      assert(newStart + _durationMin._val <= _end._val);
+      //      if (newStart + _durationMin._val > _end._val)
+      //         failNow();
+      [self changeStartEvt];
+      assignTRInt(&_start, newStart, _trail);
+      if (newStart + _durationMin._val > _ect._val)
+         assignTRInt(&_ect, newStart + _durationMin._val, _trail);
+      
+      if (!_constantDuration) {
+         ORInt newDurationMax = _end._val - _start._val;
+         [self updateMaxDuration: newDurationMax];
+      }
+   }
 }
 -(void) updateLst:(ORInt)newLst
 {
-    if (newLst < _lst._val) {
-        if (newLst < _start._val)
-            failNow();
-        [self changeStartEvt];
-        assignTRInt(&_lst, newLst, _trail);
-        if (newLst + _durationMax._val < _end._val)
-            [self updateEnd:newLst + _durationMax._val];
-    }
+   if (newLst < _lst._val) {
+      if (newLst < _start._val)
+         failNow();
+      [self changeStartEvt];
+      assignTRInt(&_lst, newLst, _trail);
+      if (newLst + _durationMax._val < _end._val)
+         [self updateEnd:newLst + _durationMax._val];
+   }
 }
 -(void) updateEct:(ORInt)newEct
 {
-    if (newEct > _ect._val) {
-        if (newEct > _end._val)
-            failNow();
-        [self changeEndEvt];
-        assignTRInt(&_ect, newEct, _trail);
-        if (newEct - _durationMax._val > _start._val)
-            [self updateStart:newEct - _durationMax._val];
-    }
+   if (newEct > _ect._val) {
+      if (newEct > _end._val)
+         failNow();
+      [self changeEndEvt];
+      assignTRInt(&_ect, newEct, _trail);
+      if (newEct - _durationMax._val > _start._val)
+         [self updateStart:newEct - _durationMax._val];
+   }
 }
 -(void) updateEnd: (ORInt) newEnd
 {
    if (newEnd < _end._val) {
-       if (newEnd < _ect._val)
-           failNow();
-       assert(newEnd >= _start._val + _durationMin._val);
-//      if (newEnd < _start._val + _durationMin._val)
-//         failNow();
+      if (newEnd < _ect._val)
+         failNow();
+      assert(newEnd >= _start._val + _durationMin._val);
+      //      if (newEnd < _start._val + _durationMin._val)
+      //         failNow();
       [self changeEndEvt];
       assignTRInt(&_end,newEnd,_trail);
-       if (newEnd - _durationMin._val < _lst._val)
-           assignTRInt(&_lst, newEnd - _durationMin._val, _trail);
+      if (newEnd - _durationMin._val < _lst._val)
+         assignTRInt(&_lst, newEnd - _durationMin._val, _trail);
       
       if (!_constantDuration) {
          ORInt newDurationMax = _end._val - _start._val;
@@ -302,18 +308,18 @@ typedef struct  {
    if (work) {
       newStart = max(_start._val,newStart);
       newEnd   = min(_end._val,newEnd);
-       if (newStart > _lst._val || newEnd < _ect._val)
-           failNow();
+      if (newStart > _lst._val || newEnd < _ect._val)
+         failNow();
       if (newStart + _durationMin._val > newEnd || newEnd < newStart + _durationMin._val)
          failNow();
       [self changeStartEvt];
       [self changeEndEvt];
       assignTRInt(&_start, newStart, _trail);
       assignTRInt(&_end, newEnd, _trail);
-       if (newStart + _durationMin._val > _ect._val)
-           assignTRInt(&_ect, newStart + _durationMin._val, _trail);
-       if (newEnd - _durationMin._val < _lst._val)
-           assignTRInt(&_lst, newEnd - _durationMin._val, _trail);
+      if (newStart + _durationMin._val > _ect._val)
+         assignTRInt(&_ect, newStart + _durationMin._val, _trail);
+      if (newEnd - _durationMin._val < _lst._val)
+         assignTRInt(&_lst, newEnd - _durationMin._val, _trail);
       if (!_constantDuration) {
          ORInt newDurationMax = _end._val - _start._val;
          [self updateMaxDuration: newDurationMax];
@@ -329,14 +335,14 @@ typedef struct  {
          failNow();
       [self changeDurationEvt];
       assignTRInt(&_durationMin,newDurationMin,_trail);
-       if (_start._val + newDurationMin > _ect._val) {
-           [self changeEndEvt];
-           assignTRInt(&_ect, _start._val + newDurationMin, _trail);
-       }
-       if (_end._val - newDurationMin < _lst._val) {
-           [self changeStartEvt];
-           assignTRInt(&_lst, _end._val - newDurationMin, _trail);
-       }
+      if (_start._val + newDurationMin > _ect._val) {
+         [self changeEndEvt];
+         assignTRInt(&_ect, _start._val + newDurationMin, _trail);
+      }
+      if (_end._val - newDurationMin < _lst._val) {
+         [self changeStartEvt];
+         assignTRInt(&_lst, _end._val - newDurationMin, _trail);
+      }
    }
 }
 -(void) updateMaxDuration: (ORInt) newDurationMax
@@ -346,28 +352,28 @@ typedef struct  {
          failNow();
       [self changeDurationEvt];
       assignTRInt(&_durationMax,newDurationMax,_trail);
-       if (_lst._val + newDurationMax < _end._val)
-           [self updateEnd:_lst._val + newDurationMax];
-       if (_ect._val - newDurationMax > _start._val)
-           [self updateStart:_ect._val - newDurationMax];
+      if (_lst._val + newDurationMax < _end._val)
+         [self updateEnd:_lst._val + newDurationMax];
+      if (_ect._val - newDurationMax > _start._val)
+         [self updateStart:_ect._val - newDurationMax];
    }
 }
 -(void) labelStart: (ORInt) start
 {
    [self updateStart: start];
-    if (_lst._val > start) {
-        [self changeStartEvt];
-        assignTRInt(&_lst, start, _trail);
-    }
+   if (_lst._val > start) {
+      [self changeStartEvt];
+      assignTRInt(&_lst, start, _trail);
+   }
    [self updateEnd: start + _durationMax._val];
 }
 -(void) labelEnd: (ORInt) end
 {
    [self updateEnd: end];
-    if (_ect._val < end) {
-        [self changeEndEvt];
-        assignTRInt(&_ect, end, _trail);
-    }
+   if (_ect._val < end) {
+      [self changeEndEvt];
+      assignTRInt(&_ect, end, _trail);
+   }
    [self updateStart: end - _durationMax._val];
 }
 -(void) labelDuration: (ORInt) duration
@@ -540,6 +546,12 @@ typedef struct  {
    [_net._durationEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    return d;
 }
+
+- (ORInt)domsize
+{
+   return 0;
+}
+
 @end
 
 typedef struct  {
@@ -577,6 +589,11 @@ typedef struct  {
 {
    return YES;
 }
+
+- (void)visit:(ORVisitor *)visitor
+{
+}
+
 -(ORInt) est
 {
    return [_task est];
@@ -619,9 +636,9 @@ typedef struct  {
 }
 -(ORBool) readEst:(ORInt *)est lst:(ORInt *)lst ect:(ORInt *)ect lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)res
 {
-    [_task readEst:est lst:lst ect:ect lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:res];
-    *present = [self isPresent];
-    *absent  = [self isAbsent ];
+   [_task readEst:est lst:lst ect:ect lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:res];
+   *present = [self isPresent];
+   *absent  = [self isAbsent ];
    return [self bound];
 }
 -(void) handleFailure: (ORClosure) cl
@@ -633,29 +650,29 @@ typedef struct  {
       [_task updateStart: newStart];
    else if (_presentMax._val)
       tryfail(
-           ^ORStatus() { [_task updateStart: newStart]; return ORSuccess;},
-           ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-           );
+              ^ORStatus() { [_task updateStart: newStart]; return ORSuccess;},
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) updateLst:(ORInt)newLst
 {
-    if (_presentMin._val)
-        [_task updateLst: newLst];
-    else if (_presentMax._val)
-        tryfail(
-                ^ORStatus() { [_task updateLst: newLst]; return ORSuccess; },
-                ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-                );
+   if (_presentMin._val)
+      [_task updateLst: newLst];
+   else if (_presentMax._val)
+      tryfail(
+              ^ORStatus() { [_task updateLst: newLst]; return ORSuccess; },
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) updateEct:(ORInt)newEct
 {
-    if (_presentMin._val)
-        [_task updateEct: newEct];
-    else if (_presentMax._val)
-        tryfail(
-                ^ORStatus() { [_task updateEct: newEct]; return ORSuccess; },
-                ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-                );
+   if (_presentMin._val)
+      [_task updateEct: newEct];
+   else if (_presentMax._val)
+      tryfail(
+              ^ORStatus() { [_task updateEct: newEct]; return ORSuccess; },
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) updateEnd: (ORInt) newEnd
 {
@@ -663,9 +680,9 @@ typedef struct  {
       [_task updateEnd: newEnd];
    else if (_presentMax._val)
       tryfail(
-           ^ORStatus() { [_task updateEnd: newEnd]; return ORSuccess;},
-           ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-           );
+              ^ORStatus() { [_task updateEnd: newEnd]; return ORSuccess;},
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) updateStart: (ORInt) newStart end:(ORInt) newEnd
 {
@@ -686,9 +703,9 @@ typedef struct  {
       [_task updateMinDuration: newMinDuration];
    else if (_presentMax._val)
       tryfail(
-           ^ORStatus() { [_task updateMinDuration: newMinDuration]; return ORSuccess;},
-           ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-           );
+              ^ORStatus() { [_task updateMinDuration: newMinDuration]; return ORSuccess;},
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) updateMaxDuration: (ORInt) newMaxDuration
 {
@@ -696,9 +713,9 @@ typedef struct  {
       [_task updateMaxDuration: newMaxDuration];
    else if (_presentMax._val)
       tryfail(
-           ^ORStatus() { [_task updateMaxDuration: newMaxDuration];  return ORSuccess;},
-           ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-           );
+              ^ORStatus() { [_task updateMaxDuration: newMaxDuration];  return ORSuccess;},
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) labelStart: (ORInt) start
 {
@@ -706,9 +723,9 @@ typedef struct  {
       [_task labelStart: start];
    else if (_presentMax._val)
       tryfail(
-           ^ORStatus() { [_task labelStart: start]; return ORSuccess;},
-           ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-           );
+              ^ORStatus() { [_task labelStart: start]; return ORSuccess;},
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) labelEnd: (ORInt) end
 {
@@ -716,9 +733,9 @@ typedef struct  {
       [_task labelEnd: end];
    else if (_presentMax._val)
       tryfail(
-           ^ORStatus() {  [_task labelEnd: end]; return ORSuccess;},
-           ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-           );
+              ^ORStatus() {  [_task labelEnd: end]; return ORSuccess;},
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) labelDuration: (ORInt) duration
 {
@@ -726,9 +743,9 @@ typedef struct  {
       [_task labelDuration: duration];
    else if (_presentMax._val)
       tryfail(
-           ^ORStatus() { [_task labelDuration: duration]; return ORSuccess;},
-           ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
-           );
+              ^ORStatus() { [_task labelDuration: duration]; return ORSuccess;},
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
 }
 -(void) labelPresent: (ORBool) present
 {
@@ -792,7 +809,7 @@ typedef struct  {
 }
 -(void) whenPresentDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
 {
-    hookupEvent(_engine, _net._presentEvt, todo, c, p);
+   hookupEvent(_engine, _net._presentEvt, todo, c, p);
 }
 -(void) whenChangeDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
 {
@@ -908,6 +925,11 @@ typedef struct  {
    [_net._absentEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    [_net._presentEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    return d;
+}
+
+- (ORInt)domsize
+{
+   return 0;
 }
 @end
 
