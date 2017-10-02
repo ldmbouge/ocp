@@ -15,9 +15,8 @@
 
 #include <fpi.h>
 
-//TODO UPDATE ED_MAX
 #define NB_DOUBLE_BY_E (4.5035996e+15)
-#define ED_MAX (254)
+#define ED_MAX (2047)
 
 /*useful struct to get exponent mantissa and sign*/
 typedef union {
