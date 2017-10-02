@@ -63,6 +63,12 @@ typedef struct {
 } TRFloatInterval;
 
 typedef struct {
+    double    _low;
+    double    _up;
+    ORUInt    _mgc;
+} TRDoubleInterval;
+
+typedef struct {
     float    _val;
     ORUInt    _mgc;
 } TRFloat;
@@ -117,10 +123,14 @@ void  freeTRIntArray(TRIntArray a);
 TRDoubleArray makeTRDoubleArray(id<ORTrail> trail,int nb,int low);
 void  freeTRDoubleArray(TRDoubleArray a);
 TRFloatInterval makeTRFloatInterval(id<ORTrail> trail,float min, float max);
+TRDoubleInterval makeTRDoubleInterval(id<ORTrail> trail,double min, double max);
 
 void  updateMin(TRFloatInterval* dom,float min, id<ORTrail> trail);
 void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail);
 void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail> trail);
+void  updateMinD(TRDoubleInterval* dom,double min, id<ORTrail> trail);
+void  updateMaxD(TRDoubleInterval* dom,double max, id<ORTrail> trail);
+void  updateTRDoubleInterval(TRDoubleInterval* dom,double min,double max, id<ORTrail> trail);
 void  assignTRInt(TRInt* v,int val,id<ORTrail> trail);
 void  assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail);
 void  assignTRLong(TRLong* v,long long val,id<ORTrail> trail);

@@ -28,11 +28,11 @@
 @end
 
 @interface ORRealLinear :  NSObject<ORRealLinear> {
-   struct ORDoubleTerm {
+   struct ORRealTerm {
       id<ORVar>   _var;
       ORDouble    _coef;
    };
-   struct ORDoubleTerm* _terms;
+   struct ORRealTerm* _terms;
    ORInt             _nb;
    ORInt            _max;
    ORDouble          _indep;

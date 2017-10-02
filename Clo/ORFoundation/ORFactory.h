@@ -26,6 +26,8 @@
 @protocol ORAutomaton;
 @protocol ORRealVarArray;
 @protocol ORFloatVarArray;
+@protocol ORDoubleVarArray;
+@protocol ORLDoubleVarArray;
 @protocol ORIntVarArray;
 @protocol ORBitVarArray;
 @protocol ORVarLitterals;
@@ -60,7 +62,9 @@ PORTABLE_BEGIN
 +(id<ORRealRange>) realRange: (id<ORTracker>) tracker low:(ORDouble)low up:(ORDouble) up;
 +(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker;
 +(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker low:(ORFloat)low up:(ORFloat) up;
++(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker;
 +(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker low:(ORDouble)low up:(ORDouble) up;
++(id<ORLDoubleRange>) ldoubleRange: (id<ORTracker>) tracker;
 +(id<ORLDoubleRange>) ldoubleRange: (id<ORTracker>) tracker low:(ORLDouble)low up:(ORLDouble) up;
 
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array;
@@ -69,11 +73,14 @@ PORTABLE_BEGIN
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
+
++(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORDouble) value;
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORDouble*) values;
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORDouble(^)(ORInt)) clo;
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORDouble(^)(ORInt,ORInt)) clo;
 +(id<ORDoubleArray>) doubleArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr;
+
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range:(id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo;
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array;
@@ -123,6 +130,7 @@ PORTABLE_BEGIN
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker;
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker var:(id<ORDoubleVar>) x scale: (ORDouble) a shift:(ORDouble) b;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker;
@@ -156,6 +164,12 @@ PORTABLE_BEGIN
 
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up;
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
+
++(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
++(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
+
++(id<ORLDoubleVarArray>) ldoubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORLDouble)low up:(ORLDouble)up;
++(id<ORLDoubleVarArray>) ldoubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 
 +(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
 +(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
@@ -322,6 +336,24 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 +(id<ORConstraint>) floatSSA:(id<ORTracker>)model  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 @end
+
+@interface ORFactory (ORDouble)
++(id<ORConstraint>) doubleEqualc: (id<ORTracker>) model var: (id<ORDoubleVar>)x eqc:(ORDouble)c;
++(id<ORConstraint>) doubleNEqualc:(id<ORTracker>) model var: (id<ORDoubleVar>)x neqc:(ORDouble)c;
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  eq: (ORDouble) c;
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  neq: (ORDouble) c;
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  lt: (ORDouble) c;
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  gt: (ORDouble) c;
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  leq: (ORDouble) c;
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  geq: (ORDouble) c;
+
++(id<ORConstraint>) doubleSSA:(id<ORTracker>)model  array:(id<ORVarArray>)x;
++(id<ORConstraint>) doubleMult:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z;
++(id<ORConstraint>) doubleDiv:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z;
++(id<ORConstraint>) doubleSSA:(id<ORTracker>)model  var: (id<ORDoubleVar>)x with:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z;
+@end
+
+
 
 @interface ORFactory (BV)
 +(id<ORBitVarArray>) bitVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;

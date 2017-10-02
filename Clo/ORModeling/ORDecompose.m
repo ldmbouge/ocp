@@ -14,10 +14,11 @@
 #import "ORExprI.h"
 #import "ORRealLinear.h"
 #import "ORFloatLinear.h"
+#import "ORDoubleLinear.h"
 #import "ORVarI.h"
-//-- temp
 #import "ORRealDecompose.h"
 #import "ORFloatDecompose.h"
+#import "ORDoubleDecompose.h"
 
 @interface ORIntNormalizer : ORVisitor<NSObject> {
     id<ORIntLinear>     _terms;
@@ -535,7 +536,6 @@ struct CPVarPair {
 {
     return _terms;
 }
-//TODO to update
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
     bool lc = [[e left] isConstant];
@@ -575,7 +575,6 @@ struct CPVarPair {
         }
     }
 }
-//TODO to update
 -(void) visitExprGThenI:(ORExprGThenI*)e
 {
     bool lc = [[e left] isConstant];
@@ -603,7 +602,6 @@ struct CPVarPair {
         }else assert(NO);
     }
 }
-//TODO to update
 -(void) visitExprLThenI:(ORExprLThenI*)e
 {
     bool lc = [[e left] isConstant];
@@ -702,6 +700,16 @@ struct CPVarPair {
 -(void) visitExprNegateI:(ORExprNegateI*) e
 {
     assert(NO);
+}
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+    ORFloatLinear* linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+    [ORNormalizer addToFloatLinear:linLeft from:[e right] model:_model];
+    _terms = linLeft;
+}
+-(void) visitExprConjunctI:(ORConjunctI*)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "NO conjunction Visitor in ORFloatNormalizer"];
 }
 @end
 
@@ -1595,11 +1603,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
     [v release];
     return rv;
 }
-+(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORFloatVar>)x
-{
-    assert(NO);
-    return nil;
-}
 +(id<ORFloatLinear>)addToFloatLinear:(id<ORFloatLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
 {
     ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: terms model: model];
@@ -1642,6 +1645,68 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
     if (e.size == 0) {
         [model addConstraint:[ORFactory floatEqualc:model var:var eqc:0.0f]];
+    } else if (e.size == 1) {
+        [e addTerm:var by:-1];
+        [e postEQZ:model];
+    } else {
+        [e addTerm:var by:-1];
+        [e postEQZ:model];
+    }
+}
+@end
+
+
+@implementation ORNormalizer(Double)
++(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+    ORDoubleLinear* rv = [[ORDoubleLinear alloc] initORDoubleLinear:4 type:[e type]];
+    ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: rv model: model];
+    [e visit:v];
+    [v release];
+    return rv;
+}
++(id<ORDoubleLinear>)addToDoubleLinear:(id<ORDoubleLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+    ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: terms model: model];
+    [e visit:v];
+    [v release];
+    return terms;
+}
++(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
+{
+    ORDoubleSubst* subst = [[ORDoubleSubst alloc] initORDoubleSubst: model];
+    [expr visit:subst];
+    id<ORDoubleVar> theVar = [subst result];
+    [subst release];
+    return theVar;
+}
++(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORDoubleVar>)x
+{
+    ORDoubleSubst* subst = [[ORDoubleSubst alloc] initORDoubleSubst: model];
+    [expr visit:subst];
+    id<ORDoubleVar> theVar = [subst result];
+    [subst release];
+    return theVar;
+}
++(id<ORDoubleVar>) doubleVarIn:(id<ORDoubleLinear>)e for:(id<ORAddToModel>) model
+{
+    id<ORDoubleRange> r = [ORFactory doubleRange:model low:[e dmin] up:[e dmax]];
+    if ([e size] == 0) {
+        id<ORDoubleVar> xv = [ORFactory doubleVar: model domain: r];
+        return xv;
+    } else if ([e size] == 1 && [e coef:0] == 1) {
+        return (id<ORDoubleVar>)[e var:0];
+    } else {
+        id<ORDoubleVar> xv = [ORFactory doubleVar: model domain: r];
+        [e addTerm:xv by:-1];
+        [e postEQZ: model];
+        return xv;
+    }
+}
++(void)doubleVar:(id<ORDoubleVar>)var equal:(ORDoubleLinear*)e for:(id<ORAddToModel>) model
+{
+    if (e.size == 0) {
+        [model addConstraint:[ORFactory doubleEqualc:model var:var eqc:0.0f]];
     } else if (e.size == 1) {
         [e addTerm:var by:-1];
         [e postEQZ:model];

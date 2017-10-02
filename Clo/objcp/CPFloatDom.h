@@ -15,8 +15,6 @@
 
 #include <fpi.h>
 
-#define BIND_EPSILON (0.0000001)
-#define TOLERANCE    (0.0000001)
 #define NB_FLOAT_BY_E (8388608)
 #define E_MAX (254)
 
@@ -28,7 +26,7 @@ typedef union {
         unsigned int exponent : 8;
         unsigned int sign : 1;
     } parts;
-} double_cast;
+} float_cast;
 
 
 @interface CPFloatDom : NSObject<CPFloatDom,NSCopying> {

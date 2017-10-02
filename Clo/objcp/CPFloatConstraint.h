@@ -34,8 +34,8 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
     return (intersectionInterval){r,x,changed};
 }
 static inline unsigned long long cardinality(float xmin, float xmax){
-    double_cast i_inf;
-    double_cast i_sup;
+    float_cast i_inf;
+    float_cast i_sup;
     i_inf.f = xmin;
     i_sup.f = xmax;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;

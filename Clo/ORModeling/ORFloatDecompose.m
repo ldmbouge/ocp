@@ -474,7 +474,7 @@
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
     assert(NO);
-    id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+   /* id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
     id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
     if ([linLeft isZero] && [linRight isZero]) {
         assert(0);
@@ -482,10 +482,10 @@
        id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
        id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
        id<ORIntVar> r = [ORFactory boolVar:_model];
-       //[_model addConstraint:[ORFactory model:_model boolean:lV lor:rV equal:r]];
+       [_model addConstraint:[ORFactory model:_model boolean:lV lor:rV equal:r]];
     }
     [linLeft release];
-    [linRight release];
+    [linRight release];*/
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {

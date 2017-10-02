@@ -75,52 +75,6 @@
     if (isBound)
         [x bindEvt:self];
 }
--(ORNarrowing) updateInterval: (ORInterval) v for: (id<CPLDoubleVarNotifier>) x
-{
-    ORIReady();
-    ORInterval src= createORI2(_min._val, _max._val);
-    ORInterval is = ORIInter(src, v);
-    if (ORIEmpty(is))
-        failNow();
-    switch (ORINarrow(src, is)) {
-        case ORBoth:
-        {
-            ORLDouble nl,nu;
-            ORIBounds(is, &nl, &nu);
-            assignTRLDouble(&_min, nl, _trail);
-            assignTRLDouble(&_max, nu, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
-            [x changeMinEvt:isBound sender:self];
-            [x changeMaxEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORBoth;
-        }break;
-        case ORLow:
-        {
-            ORLDouble nl = ORILow(is);
-            assignTRLDouble(&_min, nl, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
-            [x changeMinEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORLow;
-        }break;
-        case ORUp:
-        {
-            ORLDouble nu = ORIUp(is);
-            assignTRLDouble(&_max, nu, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
-            [x changeMaxEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORUp;
-        }break;
-        case ORNone:
-            return ORNone;
-    }
-}
-
 -(void) bind:(ORLDouble)val  for:(id<CPLDoubleVarNotifier>)x
 {
     ORIReady();

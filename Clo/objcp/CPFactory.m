@@ -121,6 +121,10 @@
     }
     return (id<CPFloatVarArray>)o;
 }
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp value:(ORDouble) v
+{
+    return [[CPDoubleVarI alloc] init:cp low:v up:v];
+}
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range
 {
     return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up];

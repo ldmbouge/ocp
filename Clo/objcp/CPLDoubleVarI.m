@@ -25,7 +25,7 @@
 }
 -(CPLDoubleVarSnapshot*) init: (CPLDoubleVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
--(ORLDouble) dblValue;
+-(ORLDouble) ldoubleValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -46,7 +46,7 @@
     }
     return self;
 }
--(ORLDouble) dblValue
+-(ORLDouble) ldoubleValue
 {
     return _value;
 }
@@ -165,11 +165,6 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 }
 -(NSString*)description
 {
-    ORIReady();
-   // [LDM] This is dead code. Commenting. Zitoun please check! [TODO]
-    //long double a,b;
-    //TODO:Shouldn't use ORIBounds on long double:
-    //ORIBounds([_dom bounds], &a, &b);
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [buf appendFormat:@"var<%d>=",_name];
     [buf appendString:[_dom description]];
@@ -254,15 +249,16 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
 }
 
--(void) bindEvt:(id<CPDoubleDom>)sender
+-(void) bindEvt:(id<CPLDoubleDom>)sender
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
     mList[k] = _net._bindEvt;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
--(void) changeMinEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPLDoubleDom>)sender
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
@@ -272,9 +268,10 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     k += mList[k] != NULL;
     mList[k] = bound ? _net._bindEvt : NULL;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPLDoubleDom>)sender
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
@@ -284,6 +281,7 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     k += mList[k] != NULL;
     mList[k] = bound ? _net._bindEvt : NULL;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 
@@ -293,15 +291,20 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 }
 -(void) updateMin: (ORLDouble) newMin
 {
-    [_dom updateMin:newMin for:self];
+    if(newMin > [self min])
+        [_dom updateMin:newMin for:self];
 }
 -(void) updateMax: (ORLDouble) newMax
 {
-    [_dom updateMax:newMax for:self];
+    if(newMax < [self max])
+        [_dom updateMax:newMax for:self];
 }
--(ORNarrowing) updateInterval: (ORInterval) nb
+-(void) updateInterval: (ORLDouble) newMin and:(ORLDouble)newMax
 {
-    return [_dom updateInterval:nb for:self];
+    if(newMin > newMax)
+        failNow();
+    [self updateMin:newMin];
+    [self updateMax:newMax];
 }
 -(ORLDouble) min
 {
@@ -311,25 +314,33 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     return [_dom max];
 }
--(ORLDouble) dblMin
-{
-    return [_dom min];
-}
--(ORLDouble) dblMax
-{
-    return [_dom max];
-}
 -(ORLDouble) value
 {
     if ([_dom bound])
         return [_dom min];
     return _value;
 }
--(ORLDouble) dblValue
+-(ORLDouble) ldoubleValue
 {
     if ([_dom bound])
         return [_dom min];
     return _value;
+}
+-(ORBool) isIntersectingWith : (CPLDoubleVarI*) y
+{
+    return ![self isDisjointWith:y];
+}
+-(ORBool) isDisjointWith : (id<CPLDoubleVar>) y
+{
+    return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
+}
+-(ORBool) canPrecede : (id<CPLDoubleVar>) y
+{
+    return [self min] < [y min] && [self max] < [y max];
+}
+-(ORBool) canFollow : (id<CPLDoubleVar>) y
+{
+    return [self min] > [y min] && [self max] > [y max];
 }
 -(void) assignRelaxationValue: (ORLDouble) f
 {
@@ -349,13 +360,14 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     return [_dom bound];
 }
+- (ORInt)domsize
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVar: method domsize  not defined"];
+    return 0;
+}
 -(ORLDouble) domwidth
 {
     return [_dom domwidth];
-}
--(ORInt) domsize
-{
-    return (ORInt)[_dom domwidth];
 }
 @end
 
@@ -390,6 +402,11 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
     return rv;
+}
+- (ORInt)domsize
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
+    return 0;
 }
 -(ORInt)degree
 {
@@ -500,7 +517,7 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     
 }
 
--(void) bindEvt: (id<CPDoubleDom>) sender
+-(void) bindEvt: (id<CPLDoubleDom>) sender
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
@@ -512,11 +529,12 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     k += mList[k] != NULL;
     mList[k] = _net._bindEvt;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 -(void) domEvt:(id<CPDom>)sender
 {
-    // [ldm]. There is nothing to do here. We lost a value _inside_ the domain, but LDoubleVars are intervals
+    // [ldm]. There is nothing to do here. We lost a value _inside_ the domain, but DoubleVars are intervals
     // So no hope of propagating.
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
@@ -529,9 +547,10 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     k += mList[k] != NULL;
     mList[k] = (dsz==1) ? _net._bindEvt : NULL;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
--(void) changeMaxEvt:(ORInt) dsz sender:(id<CPDoubleDom>)sender
+-(void) changeMaxEvt:(ORInt) dsz sender:(id<CPLDoubleDom>)sender
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
@@ -541,6 +560,7 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     k += mList[k] != NULL;
     mList[k] = (dsz==1) ? _net._bindEvt : NULL;
     k += mList[k] != NULL;
+    mList[k] = NULL;
     scheduleClosures(_engine,mList);
 }
 
@@ -556,21 +576,10 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     [_theVar updateMax:(ORInt)floor(newMax)];
 }
--(ORNarrowing) updateInterval: (ORInterval) nb
+-(void) updateInterval: (ORLDouble) newMin and: (ORLDouble)newMax
 {
-    long double a,b;
-    ORIBounds(nb, &a, &b);
-    ORBounds bb = [_theVar bounds];
-    [_theVar updateMin: (ORInt) ceil(a) andMax: (ORInt) floor(b)];
-    ORBounds ba = [_theVar bounds];
-    if (ba.min > bb.min && ba.max < bb.max)
-        return ORBoth;
-    else if (ba.min > bb.min)
-        return ORLow;
-    else if (ba.max < bb.max)
-        return ORUp;
-    else
-        return ORNone;
+    [self updateMax:newMax];
+    [self updateMin:newMin];
 }
 -(ORLDouble) min
 {
@@ -584,7 +593,7 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     return [_theVar min];
 }
--(ORLDouble)dblValue
+-(ORLDouble)ldoubleValue
 {
     return [_theVar min];
 }
@@ -613,8 +622,32 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     ORBounds b = [_theVar bounds];
     return b.max - b.min;
 }
--(ORInt) domsize
+-(ORLDouble) cardinality
 {
-    return (ORInt)[self domwidth];
+    @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality not definied for a view"];
+}
+-(ORLDouble) density
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "density not definied for a view"];
+}
+-(ORLDouble) magnitude
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "magnitude not definied for a view"];
+}
+-(ORBool) isIntersectingWith : (CPLDoubleVarI*) y
+{
+    return ![self isDisjointWith:y];
+}
+-(ORBool) isDisjointWith : (id<CPLDoubleVar>) y
+{
+    return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
+}
+-(ORBool) canPrecede : (id<CPLDoubleVar>) y
+{
+    return [self min] < [y min] && [self max] < [y max];
+}
+-(ORBool) canFollow : (id<CPLDoubleVar>) y
+{
+    return [self min] > [y min] && [self max] > [y max];
 }
 @end

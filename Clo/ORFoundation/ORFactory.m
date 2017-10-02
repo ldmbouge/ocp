@@ -172,9 +172,20 @@
     ORFloatRangeI* o = [[ORFloatRangeI alloc] init:low up:up];
     return [tracker trackImmutable:o];
 }
+//TODO Check if infinity work with double and ldouble
++(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker
+{
+    ORDoubleRangeI* o = [[ORDoubleRangeI alloc] init:-INFINITY up:INFINITY];
+    return [tracker trackImmutable:o];
+}
 +(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker low:(ORDouble)low up:(ORDouble) up
 {
     ORDoubleRangeI* o = [[ORDoubleRangeI alloc] init:low up:up];
+    return [tracker trackImmutable:o];
+}
++(id<ORLDoubleRange>) ldoubleRange: (id<ORTracker>) tracker
+{
+    ORLDoubleRangeI* o = [[ORLDoubleRangeI alloc] init:-INFINITY up:INFINITY];
     return [tracker trackImmutable:o];
 }
 +(id<ORLDoubleRange>) ldoubleRange: (id<ORTracker>) tracker low:(ORLDouble)low up:(ORLDouble) up
@@ -238,6 +249,11 @@
     return [ORFactory doubleArray: tracker range: [arr range] with:^ORDouble(ORInt i) {
         return (ORDouble)[[arr at: i] literal];
     }];
+}
++(ORDoubleArrayI*) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+    ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range value:0];
+    return [tracker trackMutable: o];
 }
 +(ORFloatArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo
 {
@@ -555,6 +571,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
     return [[ORFloatVarI alloc]  init: tracker];
 }
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker var:(id<ORDoubleVar>) x scale: (ORDouble) a shift:(ORDouble) b
+{
+    assert(NO);
+    return nil;
+}
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
     return [[ORDoubleVarI alloc]  init: tracker low: low up: up];
@@ -614,7 +635,30 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];
     return (id<ORFloatVarArray>)o;
 }
-
++(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
+{
+    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+    for(ORInt k=range.low;k <= range.up;k++)
+        [o set:[ORFactory doubleVar:tracker low:low up:up] at:k];
+    return (id<ORDoubleVarArray>)o;
+}
++(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+    return (id<ORDoubleVarArray>)o;
+}
++(id<ORLDoubleVarArray>) ldoubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORLDouble)low up:(ORLDouble)up
+{
+    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+    for(ORInt k=range.low;k <= range.up;k++)
+        [o set:[ORFactory ldoubleVar:tracker low:low up:up] at:k];
+    return (id<ORLDoubleVarArray>)o;
+}
++(id<ORLDoubleVarArray>) ldoubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+    return (id<ORLDoubleVarArray>)o;
+}
 +(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -1626,6 +1670,78 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 @end
 
+@implementation ORFactory (ORDouble)
++(id<ORConstraint>) doubleEqualc: (id<ORTracker>) model var:(id<ORDoubleVar>) x eqc:(ORDouble)c
+{
+    id<ORConstraint> o = [[ORDoubleEqualc alloc] initORDoubleEqualc:x eqi:c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleNEqualc: (id<ORTracker>) model var:(id<ORDoubleVar>) x neqc:(ORDouble)c
+{
+    id<ORConstraint> o = [[ORDoubleNEqualc alloc]initORDoubleNEqualc:x neqi:c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  eq: (ORDouble) c
+{
+    id<ORConstraint> o = [[ORDoubleLinearEq alloc] initDoubleLinearEq: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  neq: (ORDouble) c
+{
+    id<ORConstraint> o = [[ORDoubleLinearNEq alloc] initDoubleLinearNEq: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  lt: (ORDouble) c
+{
+    id<ORConstraint> o = [[ORDoubleLinearLT alloc] initDoubleLinearLT: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  gt: (ORDouble) c
+{
+    id<ORConstraint> o = [[ORDoubleLinearGT alloc] initDoubleLinearGT: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  leq: (ORDouble) c
+{
+    id<ORConstraint> o = [[ORDoubleLinearLEQ alloc] initDoubleLinearLEQ: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  geq: (ORDouble) c
+{
+    id<ORConstraint> o = [[ORDoubleLinearGEQ alloc] initDoubleLinearGEQ: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleSSA: (id<ORTracker>) model array: (id<ORDoubleVarArray>) x
+{
+    return [self doubleSSA:model var:x[0] with:x[1] equal:x[2]];
+}
++(id<ORConstraint>) doubleMult:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z
+{
+    id<ORConstraint> o = [[ORDoubleMult alloc] initORDoubleMult:z eq:x times:y];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleDiv:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z
+{
+    id<ORConstraint> o = [[ORDoubleDiv alloc] initORDoubleDiv:z eq:x times:y];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) doubleSSA:(id<ORTracker>)model  var: (id<ORDoubleVar>)x with:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z
+{
+    id<ORConstraint> o = [[ORDoubleSSA alloc] initORDoubleSSA:z eq:x with:y];
+    [model trackObject:o];
+    return o;
+}
+@end
 
 @implementation ORFactory (BV)
 +(id<ORBitVarArray>) bitVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range

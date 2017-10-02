@@ -209,6 +209,7 @@
                                                coef:[self coefficients:model]
                                                 neq:-_indep]];
 }
+//TODO need to be filled
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
     assert(NO);
@@ -216,7 +217,7 @@
 }
 -(void) postMinimize: (id<ORAddToModel>) model
 {
-   // [model minimize: [self variables: model] coef: [self coefficients: model]];
+//    [model minimize: [self variables: model] coef: [self coefficients: model]];
     assert(NO);
 }
 -(void) postMaximize: (id<ORAddToModel>) model

@@ -20,7 +20,6 @@
 
 @protocol CPDoubleVarNotifier;
 
-
 @protocol CPDoubleVarSubscriber <NSObject>
 // AC3 Closure Event
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
@@ -50,7 +49,7 @@
 @protocol CPDoubleVarExtendedItf <CPDoubleVarSubscriber>
 -(void) updateMin: (ORDouble) newMin;
 -(void) updateMax: (ORDouble) newMax;
--(ORStatus) updateInterval: (ORInterval)nb;
+-(void) updateInterval: (ORDouble) newMin and: (ORDouble)newMax;
 -(void) bind: (ORDouble) val;
 @end
 
@@ -73,7 +72,7 @@ typedef struct  {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-    id<CPDoubleDom>               _dom;
+    id<CPDoubleDom>            _dom;
     CPDoubleEventNetwork      _net;
     CPMultiCast*             _recv;
 }
@@ -81,8 +80,9 @@ typedef struct  {
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
--(ORDouble) dblValue;
--(ORDouble) domwidth;
+-(ORDouble) doubleValue;
+-(ORLDouble) domwidth;
+-(TRDoubleInterval) domain;
 @end
 
 @interface CPDoubleViewOnIntVarI : ORObject<CPDoubleVar,CPDoubleVarExtendedItf,CPIntVarNotifier> {

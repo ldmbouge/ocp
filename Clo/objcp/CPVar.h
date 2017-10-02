@@ -207,11 +207,18 @@ enum CPVarClass {
 -(ORBool) member:(ORDouble)v;
 -(ORBool) bound;
 -(ORDouble) domwidth;
+-(ORDouble) cardinality;
+-(ORDouble) density;
+-(ORDouble) magnitude;
 -(void) bind:(ORDouble) val;
 -(void) updateMin:(ORDouble) newMin;
 -(void) updateMax:(ORDouble) newMax;
 -(void) assignRelaxationValue: (ORDouble) f;
--(ORNarrowing) updateInterval: (ORInterval) v;
+-(void) updateInterval: (ORDouble) newMin and:(ORDouble) newMax;
+-(ORBool) isIntersectingWith : (id<CPDoubleVar>) y;
+-(ORBool) isDisjointWith : (id<CPDoubleVar>) y;
+-(ORBool) canPrecede : (id<CPDoubleVar>) y;
+-(ORBool) canFollow : (id<CPDoubleVar>) y;
 @end
 
 @protocol CPLDoubleVar<CPVar>
@@ -226,7 +233,6 @@ enum CPVarClass {
 -(void) updateMin:(ORLDouble) newMin;
 -(void) updateMax:(ORLDouble) newMax;
 -(void) assignRelaxationValue: (ORLDouble) f;
--(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 //----------------------
 
@@ -235,6 +241,14 @@ enum CPVarClass {
 -(void) set: (id<CPFloatVar>) x at: (ORInt) value;
 -(id<CPFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<CPFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
+@protocol CPDoubleVarArray <CPVarArray>
+-(id<CPDoubleVar>) at: (ORInt) value;
+-(void) set: (id<CPDoubleVar>) x at: (ORInt) value;
+-(id<CPDoubleVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPDoubleVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 

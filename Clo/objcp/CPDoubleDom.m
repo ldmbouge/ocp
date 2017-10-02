@@ -15,8 +15,8 @@
 #import "CPError.h"
 #import "CPDoubleVarI.h"
 
-#define BIND_EPSILON (0.0000001)
-#define TOLERANCE    (0.0000001)
+#include <fpi.h>
+
 
 @implementation CPDoubleDom
 
@@ -26,8 +26,7 @@
     _trail = trail;
     _imin = low;
     _imax = up;
-    _min = makeTRDouble(_trail, _imin);
-    _max = makeTRDouble(_trail, _imax);
+    _domain = makeTRDoubleInterval(_trail, _imin, _imax);
     return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -36,113 +35,65 @@
 }
 -(NSString*) description
 {
-    ORIReady();
-    return ORIFormat(createORI2(_min._val, _max._val));
+    if([self bound]){
+        unsigned int *inf;
+        inf = (unsigned int *)&(_domain._low);
+        NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+        [buf appendFormat:@"%20.20e [%4X]",_domain._low,*inf ];
+        return buf;
+    }
+    unsigned int *inf;
+    unsigned int *sup;
+    inf = (unsigned int *)&(_domain._low);
+    sup = (unsigned int *)&(_domain._up);
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",_domain._low,_domain._up,*inf,*sup];
+    return buf;
 }
 -(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x
 {
-    ORIReady();
-    ORInterval me = createORI2(_min._val, _max._val);
-    BOOL isb = ORIBound(me, TOLERANCE);
-    if (isb)
-        return;
-    if (newMin <= _min._val)
-        return;
-    if (ORIEmpty(ORIInter(me, createORI1(newMin))))
+    if(newMin > [self max])
         failNow();
-    assignTRDouble(&_min, newMin, _trail);
-    ORIReady();
-    ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+    updateMinD(&_domain, newMin, _trail);
+    ORBool isBound = is_eqf(_domain._low,_domain._up);
     [x changeMinEvt: isBound sender:self];
     if (isBound)
         [x bindEvt:self];
 }
 -(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x
 {
-    ORIReady();
-    ORInterval me = createORI2(_min._val, _max._val);
-    BOOL isb = ORIBound(me, TOLERANCE);
-    if (isb)
-        return;
-    if (newMax >= _max._val)
-        return;
-    if (ORIEmpty(ORIInter(me, createORI1(newMax))))
+    if(newMax < [self min])
         failNow();
-    assignTRDouble(&_max, newMax, _trail);
-    ORIReady();
-    ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+    updateMaxD(&_domain, newMax, _trail);
+    ORBool isBound = is_eqf(_domain._low,_domain._up);
     [x changeMaxEvt:isBound sender:self];
     if (isBound)
         [x bindEvt:self];
 }
--(ORNarrowing) updateInterval: (ORInterval) v for: (id<CPDoubleVarNotifier>) x
+-(void) updateInterval:(double_interval)v for:(id<CPDoubleVarNotifier>)x;
 {
-    ORIReady();
-    ORInterval src= createORI2(_min._val, _max._val);
-    ORInterval is = ORIInter(src, v);
-    if (ORIEmpty(is))
-        failNow();
-    switch (ORINarrow(src, is)) {
-        case ORBoth:
-        {
-            ORDouble nl,nu;
-            ORIBounds(is, &nl, &nu);
-            assignTRDouble(&_min, nl, _trail);
-            assignTRDouble(&_max, nu, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
-            [x changeMinEvt:isBound sender:self];
-            [x changeMaxEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORBoth;
-        }break;
-        case ORLow:
-        {
-            ORDouble nl = ORILow(is);
-            assignTRDouble(&_min, nl, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
-            [x changeMinEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORLow;
-        }break;
-        case ORUp:
-        {
-            ORDouble nu = ORIUp(is);
-            assignTRDouble(&_max, nu, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
-            [x changeMaxEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORUp;
-        }break;
-        case ORNone:
-            return ORNone;
-    }
+    [self updateMin:v.inf for:x];
+    [self updateMax:v.sup for:x];
 }
 
 -(void) bind:(ORDouble)val  for:(id<CPDoubleVarNotifier>)x
 {
-    ORIReady();
-    if (_min._val <= val && val <= _max._val) {
-        if (ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON))
-            return;
+    if (_domain._low <= val && val <= _domain._up) {
         [x changeMinEvt:YES sender:self];
         [x changeMaxEvt:YES sender:self];
         [x bindEvt:self];
-        assignTRDouble(&_min, val, _trail);
-        assignTRDouble(&_max, val, _trail);
+        updateTRDoubleInterval(&_domain, val, val, _trail);
     }
     else
         failNow();
 }
 -(ORDouble) min
 {
-    return _min._val;
+    return _domain._low;
 }
 -(ORDouble) max
 {
-    return _max._val;
+    return _domain._up;
 }
 -(ORDouble) imin
 {
@@ -154,22 +105,50 @@
 }
 -(ORBool) bound
 {
-    ORIReady();
-    return ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+    return _domain._up == _domain._low;
 }
 -(ORInterval) bounds
 {
     ORIReady();
-    return createORI2(_min._val, _max._val);
+    return createORI2(_domain._low, _domain._up);
 }
 -(ORLDouble) domwidth
 {
-    ORIReady();
-    return ORIWidth(createORI2(_min._val, _max._val));
+    ORDouble min = (_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
+    ORDouble max = (_domain._up == infinityf()) ? FLT_MAX : _domain._up;
+    return  max - min;
+}
+-(TRDoubleInterval) domain
+{
+    return _domain;
+}
+-(ORDouble) cardinality
+{
+    double_cast i_inf;
+    double_cast i_sup;
+    i_inf.f = _domain._low;
+    i_sup.f = _domain._up;
+    return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_DOUBLE_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+}
+-(ORDouble) density
+{
+    ORDouble c = [self cardinality];
+    ORLDouble w = [self domwidth];
+    return c / w;
+}
+-(ORDouble) magnitude
+{
+    double_cast i_inf;
+    double_cast i_sup;
+    i_inf.f = _domain._low;
+    i_sup.f = _domain._up;
+    ORInt c = i_sup.parts.exponent + i_inf.parts.exponent;
+    ORDouble w = ED_MAX * 2;
+    return c / w;
 }
 -(ORBool) member:(ORDouble)v
 {
-    return _min._val <= v && v <= _max._val;
+    return _domain._low <= v && v <= _domain._up;
 }
 -(id) copy
 {
@@ -177,27 +156,30 @@
 }
 -(void) restoreDomain:(id<CPDoubleDom>)toRestore
 {
-    _min._val = [toRestore min];
-    _max._val = [toRestore max];
+    updateMinD(&_domain, toRestore.min, _trail);
+    updateMaxD(&_domain, toRestore.max, _trail);
 }
 -(void) restoreValue:(ORDouble)toRestore for:(id<CPDoubleVarNotifier>)x
 {
-    _min._val = _max._val = toRestore;
+    updateMinD(&_domain, toRestore, _trail);
+    updateMaxD(&_domain, toRestore, _trail);
     [x bindEvt:self];
 }
 
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_min._val];
-    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_max._val];
+    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_domain._low];
+    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_domain._up];
     [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_imin];
     [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_imax];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
     self = [super init];
-    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_min._val];
-    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_max._val];
+    double low, up;
+    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&low];
+    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&up];
+    _domain = makeTRDoubleInterval(_trail, low, up);
     [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_imin];
     [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_imax];
     return self;

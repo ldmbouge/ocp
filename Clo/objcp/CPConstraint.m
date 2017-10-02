@@ -28,6 +28,7 @@
 #import "CPKnapsack.h"
 #import "CPRealConstraint.h"
 #import "CPFloatConstraint.h"
+#import "CPDoubleConstraint.h"
 #import "CPIntSetConstraint.h"
 
 
@@ -813,6 +814,141 @@
 +(id<CPConstraint>) floatSSA: (id<CPFloatVar>)x with:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
 {
     id<CPConstraint> o = [[CPFloatSSA alloc] init:z ssa:x with:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+@end
+
+
+@implementation CPFactory (ORDouble)
++(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
+{
+    id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleEqualc: (id<CPDoubleVar>) x to:(ORDouble) c
+{
+    id<CPConstraint> o = [[CPDoubleEqualc alloc] init:x and:c];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleNEqualc: (id<CPDoubleVar>) x to:(ORDouble) c
+{
+    id<CPConstraint> o = [[CPDoubleNEqualc alloc] init:x and:c];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleLTc: (id<CPDoubleVar>) x to:(ORDouble) c
+{
+    id<CPDoubleVar> cvar = [CPFactory doubleVar:[x engine] value:c];
+    return [self doubleLT:x to:cvar];
+}
++(id<CPConstraint>) doubleGTc: (id<CPDoubleVar>) x to:(ORDouble) c
+{
+    id<CPDoubleVar> cvar = [CPFactory doubleVar:[x engine] value:c];
+    return [self doubleGT:x to:cvar];
+}
++(id<CPConstraint>) doubleLT: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
+{
+    id<CPConstraint> o = [[CPDoubleLT alloc] init:x lt:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleGT: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
+{
+    id<CPConstraint> o = [[CPDoubleGT alloc] init:x gt:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleLEQ: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
+{
+    id<CPConstraint> o = [[CPDoubleLEQ alloc] init:x leq:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleGEQ: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
+{
+    id<CPConstraint> o = [[CPDoubleGEQ alloc] init:x geq:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
+{
+    if([x count] == 1 && [coefs at:coefs.low]==1.0){
+        return [self doubleEqualc:x[x.low] to:c];
+    }else{
+        if([x count] == 2){
+            //form x = y + c
+            //or   x = y - c
+            id<CPDoubleVar> z;
+            if(c < 0){
+                z = [CPFactory doubleVar:[x[x.low] engine] value:-c];
+                return [[CPDoubleTernarySub alloc] init:x[0] equals:x[1] minus:z];
+            }else
+                z = [CPFactory doubleVar:[x[x.low] engine] value:c];
+            return [[CPDoubleTernaryAdd alloc] init:x[0] equals:x[1] plus:z];
+        }else{ // [x count] = 3
+            //form x = y + z
+            //or   x = y - z
+            if([coefs at:2]<0){
+                return [[CPDoubleTernarySub alloc] init:x[0] equals:x[1] minus:x[2]];
+            }
+            return [[CPDoubleTernaryAdd alloc] init:x[0] equals:x[1] plus:x[2]];
+        }
+    }
+}
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs neqi:(ORDouble)c
+{
+    if([x count] == 1 && [coefs at:coefs.low]==1.0){
+        return [self doubleNEqualc:x[x.low] to:c];
+    }else{
+        assert(NO);
+    }
+}
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs lt:(ORDouble)c
+{
+    id<CPConstraint> m;
+    m = [self doubleLT:x[0] to:x[1]];
+    [[x tracker] trackMutable:m];
+    return m;
+}
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs gt:(ORDouble)c
+{
+    id<CPConstraint> m;
+    m = [self doubleGT:x[0] to:x[1]];
+    [[x tracker] trackMutable:m];
+    return m;
+}
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs leq:(ORDouble)c
+{
+    id<CPConstraint> m;
+    m = [self doubleLEQ:x[0] to:x[1]];
+    [[x tracker] trackMutable:m];
+    return m;
+}
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs geq:(ORDouble)c
+{
+    id<CPConstraint> m;
+    m = [self doubleGEQ:x[0] to:x[1]];
+    [[x tracker] trackMutable:m];
+    return m;
+}
++(id<CPConstraint>) doubleMult: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
+{
+    id<CPConstraint> o = [[CPDoubleTernaryMult alloc] init:z equals:x mult:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleDiv: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
+{
+    id<CPConstraint> o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) doubleSSA: (id<CPDoubleVar>)x with:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
+{
+    id<CPConstraint> o = [[CPDoubleSSA alloc] init:z ssa:x with:y];
     [[x tracker] trackMutable:o];
     return o;
 }

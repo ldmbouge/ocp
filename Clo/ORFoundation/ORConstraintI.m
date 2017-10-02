@@ -387,6 +387,61 @@
 }
 @end
 
+@implementation ORDoubleEqualc {
+   id<ORDoubleVar> _x;
+   ORDouble        _c;
+}
+-(ORDoubleEqualc*)initORDoubleEqualc:(id<ORDoubleVar>)x eqi:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %16.16e)",[self class],self,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleEqualc:self];
+}
+-(id<ORDoubleVar>) left
+{
+   return _x;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_c];
+   return self;
+}
+@end
 
 @implementation ORRealEqualc {
    id<ORRealVar> _x;
@@ -543,6 +598,59 @@
    return self;
 }
 @end
+
+@implementation ORDoubleNEqualc {
+   id<ORDoubleVar> _x;
+   ORDouble        _c;
+}
+-(ORDoubleNEqualc*)initORDoubleNEqualc:(id<ORDoubleVar>)x neqi:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ != %16.16e)",[self class],self,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleNEqualc:self];
+}
+-(id<ORDoubleVar>) left
+{
+   return _x;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
 
 @implementation ORLEqualc {
    id<ORIntVar> _x;
@@ -3676,6 +3784,515 @@
 }
 @end
 
+//----
+
+@implementation ORDoubleMult { // x = y * z
+   id<ORVar> _x;
+   id<ORVar> _y;
+   id<ORVar> _z;
+}
+-(ORDoubleMult*)initORDoubleMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ * %@)",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleMult:self];
+}
+-(id<ORVar>) res
+{
+   return _x;
+}
+-(id<ORVar>) left
+{
+   return _y;
+}
+-(id<ORVar>) right
+{
+   return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORDoubleDiv { // x = y * z
+   id<ORVar> _x;
+   id<ORVar> _y;
+   id<ORVar> _z;
+}
+-(ORDoubleDiv*)initORDoubleDiv:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ / %@)",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleDiv:self];
+}
+-(id<ORVar>) res
+{
+   return _x;
+}
+-(id<ORVar>) left
+{
+   return _y;
+}
+-(id<ORVar>) right
+{
+   return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORDoubleSSA { // z = x u y
+   id<ORVar> _x;
+   id<ORVar> _y;
+   id<ORVar> _z;
+}
+-(ORDoubleSSA*)initORDoubleSSA:(id<ORVar>)z eq:(id<ORVar>)x with:(id<ORVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ U %@)",[self class],self,_z,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleSSA:((id<ORDoubleSSA>)self)];
+}
+-(id<ORVar>) res
+{
+   return _z;
+}
+-(id<ORVar>) left
+{
+   return _x;
+}
+-(id<ORVar>) right
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_z];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _z = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORDoubleLinearEq{
+   id<ORVarArray> _ia;
+   id<ORDoubleArray>  _coefs;
+   ORDouble _c;
+}
+-(ORDoubleLinearEq*) initDoubleLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) == %lf)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitDoubleLinearEq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORDoubleArray>) coefs
+{
+   return _coefs;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORDoubleLinearNEq{
+   id<ORVarArray> _ia;
+   id<ORDoubleArray>  _coefs;
+   ORDouble _c;
+}
+-(ORDoubleLinearNEq*) initDoubleLinearNEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) != %lf)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitDoubleLinearNEq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORDoubleArray>) coefs
+{
+   return _coefs;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORDoubleLinearLT{
+   id<ORVarArray> _ia;
+   id<ORDoubleArray>  _coefs;
+   ORDouble _c;
+}
+-(ORDoubleLinearLT*) initDoubleLinearLT: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) < %lf)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitDoubleLinearLT: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORDoubleArray>) coefs
+{
+   return _coefs;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORDoubleLinearGT{
+   id<ORVarArray> _ia;
+   id<ORDoubleArray>  _coefs;
+   ORDouble _c;
+}
+-(ORDoubleLinearGT*) initDoubleLinearGT: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) > %lf)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitDoubleLinearGT: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORDoubleArray>) coefs
+{
+   return _coefs;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORDoubleLinearGEQ{
+   id<ORVarArray> _ia;
+   id<ORDoubleArray>  _coefs;
+   ORDouble _c;
+}
+-(ORDoubleLinearGEQ*) initDoubleLinearGEQ: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %lf)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitDoubleLinearGEQ: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORDoubleArray>) coefs
+{
+   return _coefs;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORDoubleLinearLEQ{
+   id<ORVarArray> _ia;
+   id<ORDoubleArray>  _coefs;
+   ORDouble _c;
+}
+-(ORDoubleLinearLEQ*) initDoubleLinearLEQ: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) <= %lf)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitDoubleLinearLEQ: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORDoubleArray>) coefs
+{
+   return _coefs;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+
+
+//----
 
 @implementation ORRealLinearEq {
    id<ORVarArray> _ia;

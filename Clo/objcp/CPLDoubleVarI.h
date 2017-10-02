@@ -50,7 +50,6 @@
 @protocol CPLDoubleVarExtendedItf <CPLDoubleVarSubscriber>
 -(void) updateMin: (ORLDouble) newMin;
 -(void) updateMax: (ORLDouble) newMax;
--(ORStatus) updateInterval: (ORInterval)nb;
 -(void) bind: (ORLDouble) val;
 @end
 
@@ -64,16 +63,16 @@ typedef struct  {
 @class CPLDoubleVarI;
 @protocol CPLDoubleVarNotifier <NSObject>
 -(CPLDoubleVarI*) findAffine: (ORLDouble) scale shift: (ORLDouble) shift;
--(void) bindEvt:(id<CPDoubleDom>)sender;
--(void) changeMinEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
+-(void) bindEvt:(id<CPLDoubleDom>)sender;
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPLDoubleDom>)sender;
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPLDoubleDom>)sender;
 @end
 
 @interface CPLDoubleVarI : ORObject<CPLDoubleVar,CPLDoubleVarNotifier,CPLDoubleVarExtendedItf> {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORLDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-    id<CPDoubleDom>           _dom;
+    id<CPLDoubleDom>           _dom;
     CPLDoubleEventNetwork     _net;
     CPMultiCast*             _recv;
 }
@@ -81,7 +80,7 @@ typedef struct  {
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
--(ORLDouble) dblValue;
+-(ORLDouble) ldoubleValue;
 -(ORLDouble) domwidth;
 @end
 

@@ -1289,6 +1289,143 @@
     _gamma[cstr.getId] = concreteCstr;
     }
 }
+//--
+-(void) visitDoubleEqualc:(id<ORDoubleEqualc>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORDoubleVar> left = [cstr left];
+        ORDouble cst = [cstr cst];
+        [left visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory doubleEqualc:_gamma[left.getId]  to: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleNEqualc:(id<ORDoubleNEqualc>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORDoubleVar> left = [cstr left];
+        ORDouble cst = [cstr cst];
+        [left visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory doubleNEqualc: _gamma[left.getId]  to: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleLinearEq:(id<ORDoubleLinearEq>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPDoubleVarArray> x = [self concreteArray:av];
+        id<ORDoubleArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c eqi:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+-(void) visitDoubleLinearNEq:(id<ORDoubleLinearNEq>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPDoubleVarArray> x = [self concreteArray:av];
+        id<ORDoubleArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c neqi:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleLinearLT:(id<ORDoubleLinearLT>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPDoubleVarArray> x = [self concreteArray:av];
+        id<ORDoubleArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c lt:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleLinearGT:(id<ORDoubleLinearGT>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPDoubleVarArray> x = [self concreteArray:av];
+        id<ORDoubleArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c gt:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleLinearLEQ:(id<ORDoubleLinearLEQ>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPDoubleVarArray> x = [self concreteArray:av];
+        id<ORDoubleArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c leq:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleLinearGEQ:(id<ORDoubleLinearGEQ>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPDoubleVarArray> x = [self concreteArray:av];
+        id<ORDoubleArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c geq:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleMult:(id<ORDoubleMult>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORDoubleVar> res = [cstr res];
+        id<ORDoubleVar> left = [cstr left];
+        id<ORDoubleVar> right = [cstr right];
+        [res visit: self];
+        [left visit: self];
+        [right visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory doubleMult: (id<CPDoubleVar>) _gamma[left.getId]
+                                                          by: (id<CPDoubleVar>) _gamma[right.getId]
+                                                       equal: (id<CPDoubleVar>) _gamma[res.getId]
+                                         ];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleDiv:(id<ORDoubleDiv>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORDoubleVar> res = [cstr res];
+        id<ORDoubleVar> left = [cstr left];
+        id<ORDoubleVar> right = [cstr right];
+        [res visit: self];
+        [left visit: self];
+        [right visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory doubleDiv: (id<CPDoubleVar>) _gamma[left.getId]
+                                                         by: (id<CPDoubleVar>) _gamma[right.getId]
+                                                      equal: (id<CPDoubleVar>) _gamma[res.getId]
+                                         ];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitDoubleSSA:(id<ORDoubleSSA>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORDoubleVar> res = [cstr res];
+        id<ORDoubleVar> left = [cstr left];
+        id<ORDoubleVar> right = [cstr right];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSSA:(id<CPDoubleVar>) _gamma[left.getId]
+                                                       with:(id<CPDoubleVar>) _gamma[right.getId]
+                                                      equal:(id<CPDoubleVar>) _gamma[res.getId]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 -(void)visitRealLinearLeq:(id<ORRealLinearLeq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

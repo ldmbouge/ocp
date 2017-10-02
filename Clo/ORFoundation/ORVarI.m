@@ -431,6 +431,14 @@
 {
     return _domain.up;
 }
+-(ORFloat) fmin
+{
+    return [_domain low];
+}
+-(ORFloat) fmax
+{
+    return [_domain up];
+}
 @end
 
 @implementation ORDoubleVarI
@@ -508,7 +516,7 @@
 }
 -(NSString*) description
 {
-    return [NSString stringWithFormat:@"var<OR>{double}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+    return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {

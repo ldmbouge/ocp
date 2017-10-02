@@ -18,7 +18,7 @@
 {
    self = [super init];
    _max   = mxs;
-   _terms = malloc(sizeof(struct ORDoubleTerm) *_max);
+   _terms = malloc(sizeof(struct ORRealTerm) *_max);
    _nb    = 0;
    _indep = 0.0;
    return self;
@@ -104,17 +104,17 @@
       _terms[mid]._coef += c;
    } else {
       if (_nb >= _max) {
-         _terms = realloc(_terms, sizeof(struct ORDoubleTerm)*_max*2);
+         _terms = realloc(_terms, sizeof(struct ORRealTerm)*_max*2);
          _max <<= 1;
       }
       if (mid==-1)
-         _terms[_nb++] = (struct ORDoubleTerm){x,c};
+         _terms[_nb++] = (struct ORRealTerm){x,c};
       else {
          if (xid > kid)
             mid++;
          for(int k=_nb-1;k>=mid;--k)
             _terms[k+1] = _terms[k];
-         _terms[mid] = (struct ORDoubleTerm){x,c};
+         _terms[mid] = (struct ORRealTerm){x,c};
          _nb += 1;
       }
    }
@@ -161,13 +161,13 @@
       nbN += (_terms[k]._coef < 0);
    return nbN;
 }
-static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
+static int decCoef(const struct ORRealTerm* t1,const struct ORRealTerm* t2)
 {
    return t2->_coef - t1->_coef;
 }
 -(void) positiveFirst  // sort by decreasing coefficient
 {
-   qsort(_terms, _nb, sizeof(struct ORDoubleTerm),(int(*)(const void*,const void*))&decCoef);
+   qsort(_terms, _nb, sizeof(struct ORRealTerm),(int(*)(const void*,const void*))&decCoef);
 }
 
 -(NSString*) description

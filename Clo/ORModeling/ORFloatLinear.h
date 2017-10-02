@@ -62,6 +62,7 @@
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model;
 -(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model;
+-(id<ORConstraint>) postSSA: (id<ORAddToModel>) model;
 -(void)  postMinimize: (id<ORAddToModel>) model;
 -(void)  postMaximize: (id<ORAddToModel>) model;
 -(void) visit:(id<ORFloatLinear>) right;

@@ -119,6 +119,16 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
+@protocol  ORDoubleNEqualc <ORConstraint>
+-(id<ORDoubleVar>) left;
+-(ORInt) cst;
+@end
+
+@protocol  ORDoubleEqualc <ORConstraint>
+-(id<ORDoubleVar>) left;
+-(ORInt) cst;
+@end
+
 @protocol  ORLEqualc <ORConstraint>
 -(id<ORIntVar>) left;
 -(ORInt) cst;
@@ -440,6 +450,60 @@ enum ORGroupType {
 -(id<ORVarArray>) vars;
 -(id<ORFloatArray>) coefs;
 -(ORFloat) cst;
+@end
+
+@protocol ORDoubleMult <ORConstraint>
+-(id<ORDoubleVar>) res;
+-(id<ORDoubleVar>) left;
+-(id<ORDoubleVar>) right;
+@end
+
+@protocol ORDoubleDiv <ORConstraint>
+-(id<ORDoubleVar>) res;
+-(id<ORDoubleVar>) left;
+-(id<ORDoubleVar>) right;
+@end
+
+@protocol ORDoubleSSA <ORConstraint>
+-(id<ORDoubleVar>) res;
+-(id<ORDoubleVar>) left;
+-(id<ORDoubleVar>) right;
+@end
+
+@protocol ORDoubleLinearEq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@protocol ORDoubleLinearNEq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@protocol ORDoubleLinearLT <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@protocol ORDoubleLinearGT <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@protocol ORDoubleLinearLEQ <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@protocol ORDoubleLinearGEQ <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
 @end
 
 

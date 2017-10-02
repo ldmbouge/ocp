@@ -258,6 +258,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];
 }
+-(void) visitDoubleEqualc: (id<ORDoubleEqualc>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleEqualc: visit method not defined"];
+}
 -(void) visitRealEqualc: (id<ORRealEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealEqualc: visit method not defined"];    
@@ -269,6 +273,10 @@
 -(void) visitFloatNEqualc: (id<ORFloatNEqualc>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatNEqualc: visit method not defined"];
+}
+-(void) visitDoubleNEqualc: (id<ORDoubleNEqualc>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleNEqualc: visit method not defined"];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
@@ -500,6 +508,42 @@
 -(void) visitFloatSSA: (id<ORFloatSSA>) c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatSSA: visit method not defined"];
+}
+-(void) visitDoubleLinearEq: (id<ORDoubleLinearEq>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleLinearLeq: visit method not defined"];
+}
+-(void) visitDoubleLinearNEq: (id<ORDoubleLinearNEq>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleLinearNeq: visit method not defined"];
+}
+-(void) visitDoubleLinearLT: (id<ORDoubleLinearLT>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleLinearLT: visit method not defined"];
+}
+-(void) visitDoubleLinearGT: (id<ORDoubleLinearGT>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleLinearLT: visit method not defined"];
+}
+-(void) visitDoubleLinearLEQ: (id<ORDoubleLinearLEQ>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleLinearLEQ: visit method not defined"];
+}
+-(void) visitDoubleLinearGEQ: (id<ORDoubleLinearGEQ>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleLinearGEQ: visit method not defined"];
+}
+-(void) visitDoubleMult: (id<ORDoubleMult>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleMult: visit method not defined"];
+}
+-(void) visitDoubleDiv: (id<ORDoubleDiv>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleDiv: visit method not defined"];
+}
+-(void) visitDoubleSSA: (id<ORDoubleSSA>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleSSA: visit method not defined"];
 }
 -(void) visitExprSSAI: (id<ORExpr>) c
 {

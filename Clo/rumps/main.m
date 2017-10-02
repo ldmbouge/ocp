@@ -18,7 +18,9 @@ int main(int argc, const char * argv[]) {
         [model add:[r_0 eq: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
         
         //assert((r >= 0));
-        [model add:[r_0 lt:@(0.0f)]];
+        [model add:[r_0 geq:@(0.0f)]];
+            
+            //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
         
             id<ORFloatVarArray> vars = [model floatVars];
             id<CPProgram> cp = [args makeProgram:model];
@@ -29,7 +31,7 @@ int main(int argc, const char * argv[]) {
                 [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
                 for(id<ORFloatVar> v in vars){
                     found &= [p bound: v];
-                    NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+                    NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
                 }
             } withTimeLimit:[args timeOut]];
             NSLog(@"nb fail : %d",[[cp engine] nbFailures]);

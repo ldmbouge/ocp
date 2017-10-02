@@ -633,6 +633,26 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     ORBounds b = [_theVar bounds];
     return b.max - b.min;
 }
+- (ORInt)domsize
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
+    return 0;
+}
+-(ORDouble) cardinality
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: Cardinality not definied for a view"];
+    return 0.0;
+}
+-(ORDouble) density
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: density not definied for a view"];
+    return 0.0;
+}
+-(ORFloat) magnitude
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
+    return 0.0;
+}
 -(ORBool) isIntersectingWith : (CPFloatVarI*) y
 {
     return ![self isDisjointWith:y];

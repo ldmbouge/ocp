@@ -13,7 +13,7 @@
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 
-@interface CPLDoubleDom : NSObject<CPDoubleDom,NSCopying> {
+@interface CPLDoubleDom : NSObject<CPLDoubleDom,NSCopying> {
     id<ORTrail>        _trail;
     ORLDouble            _imin;
     ORLDouble            _imax;
@@ -23,7 +23,6 @@
 -(id)initCPLDoubleDom:(id<ORTrail>)trail low:(ORLDouble)low up:(ORLDouble)up;
 -(void) updateMin:(ORLDouble)newMin for:(id<CPLDoubleVarNotifier>)x;
 -(void) updateMax:(ORLDouble)newMax for:(id<CPLDoubleVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPLDoubleVarNotifier>)x;
 -(void) bind:(ORLDouble)val  for:(id<CPLDoubleVarNotifier>)x;
 -(ORLDouble) min;
 -(ORLDouble) max;

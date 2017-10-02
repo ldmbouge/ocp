@@ -309,6 +309,10 @@ TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
 {
     return (TRFloatInterval){min, max, [trail magic]-1};
 }
+TRDoubleInterval makeTRDoubleInterval(ORTrailI* trail, double min, double max)
+{
+    return (TRDoubleInterval){min, max, [trail magic]-1};
+}
 ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail){
    TRInt* ei = a._entries + i;
    if (ei->_mgc != [trail magic]) {
@@ -436,6 +440,35 @@ void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail
         dom->_mgc = [trail magic];
         [trail trailFloat:&dom->_low];
         [trail trailFloat:&dom->_up];
+    }
+    dom->_low = min;
+    dom->_up = max;
+}
+void  updateMinD(TRDoubleInterval* dom,double min, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailDouble:&dom->_low];
+        [trail trailDouble:&dom->_up];
+    }
+    dom->_low = min;
+}
+void  updateMaxD(TRDoubleInterval* dom,double max, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailDouble:&dom->_low];
+        [trail trailDouble:&dom->_up];
+    }
+    dom->_up = max;
+    
+}
+void  updateTRDoubleInterval(TRDoubleInterval* dom,double min,double max, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailDouble:&dom->_low];
+        [trail trailDouble:&dom->_up];
     }
     dom->_low = min;
     dom->_up = max;

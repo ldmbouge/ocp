@@ -70,6 +70,19 @@
 -(ORFloat) cst;
 @end
 
+@interface ORDoubleEqualc : ORConstraintI<ORDoubleEqualc>
+-(ORDoubleEqualc*)initORDoubleEqualc:(id<ORDoubleVar>)x eqi:(ORDouble)c;
+-(id<ORDoubleVar>) left;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleNEqualc : ORConstraintI<ORDoubleNEqualc>
+-(ORDoubleNEqualc*)initORDoubleNEqualc:(id<ORDoubleVar>)x neqi:(ORDouble)c;
+-(id<ORDoubleVar>) left;
+-(ORDouble) cst;
+@end
+
+
 @interface ORLEqualc : ORConstraintI<ORLEqualc>
 -(ORLEqualc*)initORLEqualc:(id<ORIntVar>)x leqi:(ORInt)c;
 -(id<ORIntVar>) left;
@@ -433,7 +446,6 @@
 -(ORFloat) cst;
 @end
 
-
 @interface ORFloatLinearNEq : ORConstraintI<ORFloatLinearNEq>
 -(id) initFloatLinearNEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
 -(id<ORVarArray>) vars;
@@ -455,12 +467,77 @@
 -(id<ORVar>) right;
 @end
 
-@interface ORFloatSSA : ORConstraintI<ORFloatDiv>
+@interface ORFloatSSA : ORConstraintI<ORFloatSSA>
 -(ORFloatSSA*)initORFloatSSA:(id<ORVar>)z eq:(id<ORVar>)x with:(id<ORVar>)y;
 -(id<ORVar>) res;
 -(id<ORVar>) left;
 -(id<ORVar>) right;
 @end
+
+@interface ORDoubleLinearEq : ORConstraintI<ORDoubleLinearEq>
+-(id) initDoubleLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleLinearLT : ORConstraintI<ORDoubleLinearLT>
+-(id) initDoubleLinearLT: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleLinearGT : ORConstraintI<ORDoubleLinearGT>
+-(id) initDoubleLinearGT: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleLinearLEQ : ORConstraintI<ORDoubleLinearLEQ>
+-(id) initDoubleLinearLEQ: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleLinearGEQ : ORConstraintI<ORDoubleLinearGEQ>
+-(id) initDoubleLinearGEQ: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+
+@interface ORDoubleLinearNEq : ORConstraintI<ORDoubleLinearNEq>
+-(id) initDoubleLinearNEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleMult : ORConstraintI<ORDoubleMult>
+-(ORDoubleMult*)initORDoubleMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
+@interface ORDoubleDiv : ORConstraintI<ORDoubleDiv>
+-(ORDoubleDiv*)initORDoubleDiv:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
+@interface ORDoubleSSA : ORConstraintI<ORDoubleSSA>
+-(ORDoubleSSA*)initORDoubleSSA:(id<ORVar>)z eq:(id<ORVar>)x with:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
 
 @interface ORRealLinearEq : ORConstraintI<ORRealLinearEq>
 -(id) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;

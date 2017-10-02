@@ -124,8 +124,8 @@
 }
 -(ORDouble) cardinality
 {
-    double_cast i_inf;
-    double_cast i_sup;
+    float_cast i_inf;
+    float_cast i_sup;
     i_inf.f = _domain._low;
     i_sup.f = _domain._up;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
@@ -138,8 +138,8 @@
 }
 -(ORFloat) magnitude
 {
-    double_cast i_inf;
-    double_cast i_sup;
+    float_cast i_inf;
+    float_cast i_sup;
     i_inf.f = _domain._low;
     i_sup.f = _domain._up;
     ORInt c = i_sup.parts.exponent + i_inf.parts.exponent;

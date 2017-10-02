@@ -127,6 +127,25 @@
 +(id<CPConstraint>) floatSSA: (id<CPFloatVar>)x with:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z;
 @end
 
+@interface CPFactory (ORDouble)
++(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;
++(id<CPConstraint>) doubleEqualc: (id<CPDoubleVar>) x to:(ORDouble) c;
++(id<CPConstraint>) doubleNEqualc: (id<CPDoubleVar>) x to:(ORDouble) c;
++(id<CPConstraint>) doubleLTc: (id<CPDoubleVar>) x to:(ORDouble) c;
++(id<CPConstraint>) doubleGTc: (id<CPDoubleVar>) x to:(ORDouble) c;
++(id<CPConstraint>) doubleLT: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;
++(id<CPConstraint>) doubleGT: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c;
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs neqi:(ORDouble)c;
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs lt:(ORDouble)c;
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs gt:(ORDouble)c;
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs leq:(ORDouble)c;
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs geq:(ORDouble)c;
++(id<CPConstraint>) doubleMult: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z;
++(id<CPConstraint>) doubleDiv: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z;
++(id<CPConstraint>) doubleSSA: (id<CPDoubleVar>)x with:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z;
+@end
+
 @interface CPFactory (ORIntSet)
 +(id<CPConstraint>) inter:(id<CPIntSetVar>)x with:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z;
 @end

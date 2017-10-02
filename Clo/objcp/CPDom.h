@@ -99,6 +99,10 @@
 -(ORDouble) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
+-(ORDouble) cardinality;
+-(ORDouble) density;
+-(ORDouble) magnitude;
+-(TRDoubleInterval) domain;
 -(ORLDouble) domwidth;
 -(ORBool) member:(ORDouble)v;
 -(NSString*)description;
@@ -113,7 +117,6 @@
 @protocol CPLDoubleDom
 -(void) updateMin:(ORLDouble)newMin for:(id<CPLDoubleVarNotifier>)x;
 -(void) updateMax:(ORLDouble)newMax for:(id<CPLDoubleVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPLDoubleVarNotifier>)x;
 -(void) bind:(ORLDouble)val  for:(id<CPLDoubleVarNotifier>)x;
 -(ORLDouble) min;
 -(ORLDouble) max;
