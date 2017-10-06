@@ -765,6 +765,12 @@
 -(id<ORIntVar>) right;
 @end
 
+@interface ORBitChannel: ORConstraintI<ORBitChannel>
+-(ORBitCount*)init: (id<ORBitVar>) x channel:(id<ORIntVar>)p;
+-(id<ORBitVar>) left;
+-(id<ORIntVar>) right;
+@end
+
 @interface ORBitZeroExtend : ORConstraintI<ORBitZeroExtend>
 -(ORBitZeroExtend*)initORBitZeroExtend: (id<ORBitVar>) x extendTo: (id<ORBitVar>) y;
 -(id<ORBitVar>) left;

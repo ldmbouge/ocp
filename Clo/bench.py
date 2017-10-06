@@ -78,7 +78,7 @@ for b in ab:
 	gmf.write(b + ' ')
 gmf.write('\n')
 gmf.write('VIEWS=1\n')
-gmf.write('CFL= -g\n')
+gmf.write(dOpt + '\n')
 gmf.write('.PHONY: $(TARGETS)\n')
 gmf.write('all: $(TARGETS)\n')
 gmf.write('	@echo "Done all..."\n')

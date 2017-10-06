@@ -16,11 +16,13 @@
 @class CPEngineI;
 @protocol CPGroup;
 
+typedef id (*SELPROTO)(id,SEL,...);
+
 @interface CPCoreConstraint : ORObject<CPConstraint> {
 @public
    CPTodo            _todo;
    ORInt         _priority;
-   IMP          _propagate;
+   SELPROTO     _propagate;
    id<ORTrail>      _trail;
    TRInt           _active;
    id<CPGroup>      _group;

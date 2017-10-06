@@ -399,10 +399,17 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order
 {
-   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: YES];
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: NO];
    [tracker trackMutable: o];
    return o;
 }
++(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized:(ORBool)rand
+{
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: rand];
+   [tracker trackMutable: o];
+   return o;
+}
+
 +(id<ORSelector>) selectMin:(id<ORTracker>)tracker
 {
    id<ORSelector> sweeper = [[ORMinSelector alloc] init];
@@ -1575,6 +1582,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    id<ORConstraint> o = [[ORBitCount alloc] initORBitCount:x count:p];
    [[x tracker]trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x channel:(id<ORIntVar>)xc
+{
+   id<ORConstraint> o = [[ORBitChannel alloc] init:x channel:xc];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)x zeroExtendTo:(id<ORBitVar>)y

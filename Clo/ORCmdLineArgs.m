@@ -69,7 +69,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg"};
 {
    return hName[heuristic];
 }
--(void)measure:(struct ORResult(^)())block
+-(void)measure:(struct ORResult(^)(void))block
 {
    //mallocWatch();
    if (randomized)

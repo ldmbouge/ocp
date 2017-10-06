@@ -500,6 +500,10 @@
 {
    _result = c;
 }
+-(void) visitBitChannel:(id<ORBitChannel>)c
+{
+   _result = c;
+}
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
 {
    _result = c;

@@ -526,6 +526,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitCount: visit method not defined"];
 }
+-(void) visitBitChannel:(id<ORBitChannel>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitChannel: visit method not defined"];
+}
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitZeroExtend: visit method not defined"];
@@ -852,6 +856,7 @@
 -(void) visitBitSubtract:(id<ORBitSubtract>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}
 -(void) visitBitCount:(id<ORBitCount>)c {}
+-(void) visitBitChannel:(id<ORBitChannel>)c {}
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c{}
 -(void) visitBitSignExtend:(id<ORBitSignExtend>)c{}
 -(void) visitBitExtract:(id<ORBitExtract>)c{}

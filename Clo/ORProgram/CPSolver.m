@@ -1073,7 +1073,7 @@
                                        orderedBy: ^ORDouble(ORInt i) {
                                           ORDouble rv = [h varOrdering:cav[i]];
                                           return rv;
-                                       }];
+                                       } randomized:YES];
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
@@ -1147,84 +1147,14 @@
    }];
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[cav low],[cav up])
-//                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
-                                  suchThat: ^ORBool(ORInt i) { return ![cav[i] bound]; }
+                                        suchThat: ^ORBool(ORInt i) { return ![cav[i] bound]; }
                                        orderedBy: ^ORDouble(ORInt i) {
                                           ORDouble rv = [h varOrdering:cav[i]];
-                                          return rv;
-                                       }];
-   
-//   /*************************************************************
-//    Apply SAC constraint to all variables
-//    ************************************************************/
-//   NSLog(@"Pruning with SAC constraint.");
-//
-//   id<ORTracer> tracer = [self tracer];
-//   ORStatus oc;
-//   
-//   ORUInt wordLength;
-//   TRUInt* up;
-//   TRUInt* low;
-//   ORUInt freeBits;
-//   ORBool failUp = false;
-//   ORUInt failLow = 0;
-//   ORUInt bitsInWord = 0;
-//   
-//   for (int k = [av low]; k<=[av up];k++){
-//      id<CPBitVar>bv = [av at:k];
-//      wordLength = [(CPBitVarI*)bv getWordLength];
-//      [(CPBitVarI*)bv getUp:&up andLow:&low];
-//
-//      for (int i=0; i<wordLength; i++) {
-//         freeBits = up[i]._val & ~(low[i]._val);
-//         if (i==wordLength-1)
-//            bitsInWord = [(CPBitVarI*)bv bitLength]%32;
-//         else
-//            bitsInWord = 32;
-//         for (int j=0; j<bitsInWord; j++) {
-//            if (freeBits&1) {
-//               [tracer pushNode];
-//               oc = [_engine enforce:^void{[bv bind:j to:true];[ORConcurrency pumpEvents];}];
-//               if (oc==ORFailure) {
-//                  NSLog(@"Failure in probing for SAC upon search startup.");
-//                  failUp = true;
-//                  [tracer popNode];
-//                  freeBits >>= 1;
-//                  [bv bind:(i*32)+j to:false];
-//               }
-//               else
-//                  [tracer popNode];
-//               
-//               [tracer pushNode];
-//               oc = [_engine enforce:^void{[bv bind:j to:false];[ORConcurrency pumpEvents];}];
-//               if (oc==ORFailure) {
-//                  NSLog(@"Failure in probing for SAC upon search startup.");
-//                  failLow = true;
-//                  [tracer popNode];
-//                  [bv bind:(i*32)+j to:true];
-//                  freeBits >>= 1;
-//               }
-//               else
-//                  [tracer popNode];
-//            }
-//            freeBits >>= 1;
-//
-//            if (failUp & failLow) {
-//               NSLog(@"Backtracking on SAC constraint.");
-//            failNow();
-//            }
-//            if (failUp & 1) {
-//               [bv bind:(i*32)+j to:false];
-//            }
-//            if (failLow & 1) {
-//               [bv bind:(i*32)+j to:true];
-//            }
-//            failUp = false;
-//            failLow = false;
-//         }
-//      }
-//   }
-//   NSLog(@"Pruning with SAC constraint finished.");
+                                          ORInt bl = [cav[i] bitLength];
+                                          return rv / (1 << bl);
+                                       }
+                                      randomized:NO
+                          ];
    
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
@@ -1298,7 +1228,7 @@
                                        orderedBy: ^ORDouble(ORInt i) {
                                           ORDouble rv = [h varOrdering:av[i]];
                                           return rv;
-                                       }];
+                                       } randomized:YES];
    
    /*************************************************************
     Apply SAC constraint to all variables

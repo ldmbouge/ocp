@@ -43,13 +43,11 @@
 @class CPCoreConstraint;
 
 @protocol CPBitVarSubscriber <NSObject>
--(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ORClosure) todo;
+-(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt) idx do:(ORClosure) todo;
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//=======
-//-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
-//>>>>>>> master
+-(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
+-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 @end
 
 @class CPBitVarI;
@@ -62,8 +60,6 @@
 -(ORBool) tracksLoseEvt:(CPBitArrayDom*)sender;
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtEvt:(ORUInt) dsz at:(ORUInt)idx sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMinEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMaxEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 @end

@@ -10,29 +10,38 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPBitArrayDom.h>
 #import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPLEngine.h>
 #import <objcp/CPData.h>
+#import <objcp/CPBitMacros.h>
 
 @protocol CPBitVarNotifier;
 @class CPBitArrayIterator;
+
+struct ULRep {
+   TRUInt* _low;
+   TRUInt* _up;
+};
+
+typedef struct ULRep ULRep;
+
 
 @interface CPBitArrayDom : NSObject {
 @private
     id<ORTrail>     _trail;
     id<CPLEngine>    _engine;
+@public
     TRUInt*         _low;
     TRUInt*         _up;
     ORUInt    _wordLength;
+@private
     ORUInt    _bitLength;
+    ORBool     _learning;
     TRUInt          _freebits;
     TRUInt*         _min;
     TRUInt*         _max;
     TRUInt*         _levels;  //tracks at what level in the search that a bit was set
-   
-    NSMutableArray*        _remValues;
 }
 -(CPBitArrayDom*)       initWithLength: (int) len withEngine:(id<CPEngine>)engine withTrail:(id<ORTrail>) tr;
 -(CPBitArrayDom*)       initWithBitPat: (int) len withLow: (ORUInt*) low andUp:(ORUInt*) up andEngine:(id<CPEngine>)engine andTrail:(id<ORTrail>)tr;
@@ -43,7 +52,6 @@
 -(ORUInt)               getSize;
 -(ORInt)                domsize;
 -(ORULong)              numPatterns;
--(void)                 updateFreeBitCount;
 -(ORBounds)             bounds;
 -(ORBool)               bound;
 -(ORULong)               min;
@@ -85,3 +93,20 @@
 
 -(id) copyWithZone:(NSZone*) zone;
 @end
+
+static inline ULRep getULDomRep(CPBitArrayDom* dom)
+{
+   return (ULRep){dom->_low,dom->_up};
+}
+static inline ORUInt getWordLength(CPBitArrayDom* dom)
+{
+   return dom->_wordLength;
+}
+static inline ORBool DomBitFree(CPBitArrayDom* dom,ORUInt idx)
+{
+   return ((dom->_low[WORDIDX(idx)]._val ^ dom->_up[WORDIDX(idx)]._val) & ONEAT(idx) & dom->_up[WORDIDX(idx)]._val) != 0;
+}
+static inline ORBool DomBitGet(CPBitArrayDom* dom,ORUInt idx)
+{
+   return (dom->_low[WORDIDX(idx)]._val  & ONEAT(idx)) !=  0;
+}

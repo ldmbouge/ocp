@@ -35,6 +35,8 @@ typedef unsigned char uint8;
 typedef signed char sint8;
 #endif
 
+typedef short ORShort;
+typedef unsigned short ORUShort;
 typedef int ORInt;
 typedef unsigned int ORUInt;
 typedef long long ORLong;

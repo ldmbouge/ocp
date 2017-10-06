@@ -666,7 +666,7 @@ ORInterval ORILogn(ORInterval a)
 
 // ===========================================================================================
 
-void ORIInit()
+void ORIInit(void)
 {
    double MZ   = 0;
 #ifndef BYTE_ORDER

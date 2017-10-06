@@ -49,7 +49,6 @@ enum CPDomClass {
 -(ORBool)member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt)findMax:(ORInt)from;
--(int(^)(void))getMin;
 -(NSString*)description;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;

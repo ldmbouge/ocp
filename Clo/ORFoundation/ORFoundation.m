@@ -52,7 +52,7 @@ ORStatus tryfail(ORStatus(^block)(void),ORStatus(^handle)(void))
    }
 }
 
-void failNow()
+void failNow(void)
 {
    NSValue* tv = [NSThread.currentThread.threadDictionary objectForKey:@(2)];
    jmp_buf* old = tv.pointerValue;

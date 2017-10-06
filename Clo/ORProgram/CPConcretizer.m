@@ -1460,6 +1460,16 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitBitChannel:(id<ORBitChannel>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPIntVar> p = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory bitChannel:x channel:p];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 OC = clang-3.6  # clang 3.8 is broken. Code crashes before startup.
-#CFL=-O2
+CFL=-g
 ifeq ($(findstring -g,$(CFL)),-g)
 GSC=`gnustep-config --debug-flags`
 else

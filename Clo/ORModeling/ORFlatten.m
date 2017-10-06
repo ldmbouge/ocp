@@ -613,6 +613,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitBitChannel:(id<ORBitChannel>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
 {
    _result = [_into addConstraint:c];

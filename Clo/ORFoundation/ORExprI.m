@@ -157,6 +157,7 @@
 -(void) visitBitSubtract:(id<ORBitSubtract>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
 -(void) visitBitCount:(id<ORBitCount>)cstr;
+-(void) visitBitChannel:(id<ORBitChannel>)cstr;
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c;
 -(void) visitBitSignExtend:(id<ORBitSignExtend>)c;
 -(void) visitBitExtract:(id<ORBitExtract>)c;
@@ -450,7 +451,11 @@
    [[c left] visit:self];
    [[c right] visit:self];
 }
-
+-(void) visitBitChannel:(id<ORBitChannel>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
 {
    [[c left] visit:self];

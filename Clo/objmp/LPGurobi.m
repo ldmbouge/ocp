@@ -275,8 +275,7 @@ static int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrda
 -(ORBool) inBasis: (LPVariableI*) var
 {
    int value = 0;
-   int st = GRBgetintattrelement(_model, "VBasis",[var idx], &value);
-   assert(st==0);
+   GRBgetintattrelement(_model, "VBasis",[var idx], &value);
    return value==0;
 }
 

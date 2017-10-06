@@ -7,7 +7,7 @@
 #import "ORCmdLineArgs.h"
 
 #define EXPECTKEY
-#define KNOWNKEYS 2
+#define KNOWNKEYS 1
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -26,7 +26,8 @@ uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x6
    ,0xe1 ,0xf8 ,0x98 ,0x11 ,0x69 ,0xd9 ,0x8e ,0x94 ,0x9b ,0x1e ,0x87 ,0xe9 ,0xce ,0x55 ,0x28 ,0xdf
    ,0x8c ,0xa1 ,0x89 ,0x0d ,0xbf ,0xe6 ,0x42 ,0x68 ,0x41 ,0x99 ,0x2d ,0x0f ,0xb0 ,0x54 ,0xbb ,0x16};
 
-uint32 x[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
+
+uint32 sb[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
    ,0xb7 ,0xfd ,0x93 ,0x26 ,0x36 ,0x3f ,0xf7 ,0xcc ,0x34 ,0xa5 ,0xe5 ,0xf1 ,0x71 ,0xd8 ,0x31 ,0x15
    ,0x04 ,0xc7 ,0x23 ,0xc3 ,0x18 ,0x96 ,0x05 ,0x9a ,0x07 ,0x12 ,0x80 ,0xe2 ,0xeb ,0x27 ,0xb2 ,0x75
@@ -43,10 +44,36 @@ uint32 x[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x6
    ,0xe1 ,0xf8 ,0x98 ,0x11 ,0x69 ,0xd9 ,0x8e ,0x94 ,0x9b ,0x1e ,0x87 ,0xe9 ,0xce ,0x55 ,0x28 ,0xdf
    ,0x8c ,0xa1 ,0x89 ,0x0d ,0xbf ,0xe6 ,0x42 ,0x68 ,0x41 ,0x99 ,0x2d ,0x0f ,0xb0 ,0x54 ,0xbb ,0x16};
 
+uint32 inv_s[256] =
+{0x52 ,0x09 ,0x6a ,0xd5 ,0x30 ,0x36 ,0xa5 ,0x38 ,0xbf ,0x40 ,0xa3 ,0x9e ,0x81 ,0xf3 ,0xd7 ,0xfb
+   ,0x7c ,0xe3 ,0x39 ,0x82 ,0x9b ,0x2f ,0xff ,0x87 ,0x34 ,0x8e ,0x43 ,0x44 ,0xc4 ,0xde ,0xe9 ,0xcb
+   ,0x54 ,0x7b ,0x94 ,0x32 ,0xa6 ,0xc2 ,0x23 ,0x3d ,0xee ,0x4c ,0x95 ,0x0b ,0x42 ,0xfa ,0xc3 ,0x4e
+   ,0x08 ,0x2e ,0xa1 ,0x66 ,0x28 ,0xd9 ,0x24 ,0xb2 ,0x76 ,0x5b ,0xa2 ,0x49 ,0x6d ,0x8b ,0xd1 ,0x25
+   ,0x72 ,0xf8 ,0xf6 ,0x64 ,0x86 ,0x68 ,0x98 ,0x16 ,0xd4 ,0xa4 ,0x5c ,0xcc ,0x5d ,0x65 ,0xb6 ,0x92
+   ,0x6c ,0x70 ,0x48 ,0x50 ,0xfd ,0xed ,0xb9 ,0xda ,0x5e ,0x15 ,0x46 ,0x57 ,0xa7 ,0x8d ,0x9d ,0x84
+   ,0x90 ,0xd8 ,0xab ,0x00 ,0x8c ,0xbc ,0xd3 ,0x0a ,0xf7 ,0xe4 ,0x58 ,0x05 ,0xb8 ,0xb3 ,0x45 ,0x06
+   ,0xd0 ,0x2c ,0x1e ,0x8f ,0xca ,0x3f ,0x0f ,0x02 ,0xc1 ,0xaf ,0xbd ,0x03 ,0x01 ,0x13 ,0x8a ,0x6b
+   ,0x3a ,0x91 ,0x11 ,0x41 ,0x4f ,0x67 ,0xdc ,0xea ,0x97 ,0xf2 ,0xcf ,0xce ,0xf0 ,0xb4 ,0xe6 ,0x73
+   ,0x96 ,0xac ,0x74 ,0x22 ,0xe7 ,0xad ,0x35 ,0x85 ,0xe2 ,0xf9 ,0x37 ,0xe8 ,0x1c ,0x75 ,0xdf ,0x6e
+   ,0x47 ,0xf1 ,0x1a ,0x71 ,0x1d ,0x29 ,0xc5 ,0x89 ,0x6f ,0xb7 ,0x62 ,0x0e ,0xaa ,0x18 ,0xbe ,0x1b
+   ,0xfc ,0x56 ,0x3e ,0x4b ,0xc6 ,0xd2 ,0x79 ,0x20 ,0x9a ,0xdb ,0xc0 ,0xfe ,0x78 ,0xcd ,0x5a ,0xf4
+   ,0x1f ,0xdd ,0xa8 ,0x33 ,0x88 ,0x07 ,0xc7 ,0x31 ,0xb1 ,0x12 ,0x10 ,0x59 ,0x27 ,0x80 ,0xec ,0x5f
+   ,0x60 ,0x51 ,0x7f ,0xa9 ,0x19 ,0xb5 ,0x4a ,0x0d ,0x2d ,0xe5 ,0x7a ,0x9f ,0x93 ,0xc9 ,0x9c ,0xef
+   ,0xa0 ,0xe0 ,0x3b ,0x4d ,0xae ,0x2a ,0xf5 ,0xb0 ,0xc8 ,0xeb ,0xbb ,0x3c ,0x83 ,0x53 ,0x99 ,0x61
+   ,0x17 ,0x2b ,0x04 ,0x7e ,0xba ,0x77 ,0xd6 ,0x26 ,0xe1 ,0x69 ,0x14 ,0x63 ,0x55 ,0x21 ,0x0c ,0x7d};
+
+
+
+int elevatorc[] = {254, 252, 250, 248, 246, 244, 242, 240, 238, 236, 234, 232, 230, 228, 226, 224, 222, 220, 218, 216, 214, 212, 210, 208, 206, 204, 202, 200, 198, 196, 194, 192, 190, 188, 186, 184, 182, 180, 178, 176, 174, 172, 170, 168, 166, 164, 162, 160, 158, 156, 154, 152, 150, 148, 146, 144, 142, 140, 138, 136, 134, 132, 130, 128, 126, 124, 122, 120, 118, 116, 114, 112, 110, 108, 106, 104, 102, 100, 98, 96, 94, 92, 90, 88, 86, 84, 82, 80, 78, 76, 74, 72, 70, 68, 66, 64, 62, 60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 38, 36, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99, 101, 103, 105, 107, 109, 111, 113, 115, 117, 119, 121, 123, 125, 127, 129, 131, 133, 135, 137, 139, 141, 143, 145, 147, 149, 151, 153, 155, 157, 159, 161, 163, 165, 167, 169, 171, 173, 175, 177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 201, 203, 205, 207, 209, 211, 213, 215, 217, 219, 221, 223, 225, 227, 229, 231, 233, 235, 237, 239, 241, 243, 245, 247, 249, 251, 253, 255};
+
+
+int elevatori[] = {5, 72, 191, 223, 255, 8, 18, 36, 65, 68, 80, 126, 127, 129, 136, 239, 254, 12, 34, 66, 83, 95, 123, 130, 145, 166, 208, 17, 44, 58, 82, 159, 187, 192, 247, 251, 14, 22, 57, 84, 124, 125, 147, 156, 165, 219, 222, 224, 243, 245, 253, 48, 89, 105, 111, 188, 194, 215, 237, 250, 252, 29, 56, 175, 176, 183, 190, 235, 63, 170, 189, 242, 28, 46, 135, 201, 210, 37, 60, 199, 221, 167, 40, 153, 20, 64, 160, 134, 32, 4, 3, 96, 144, 6, 196, 16, 33, 9, 24, 2, 128, 0, 43, 249, 151, 1, 246, 204, 75, 238, 119, 197, 198, 164, 76, 163, 26, 106, 118, 169, 35, 104, 216, 209, 110, 15, 154, 217, 7, 100, 212, 143, 93, 13, 226, 234, 120, 229, 77, 205, 59, 133, 173, 213, 206, 73, 142, 79, 155, 137, 207, 45, 228, 121, 49, 85, 148, 21, 180, 131, 23, 172, 141, 54, 162, 241, 231, 52, 150, 195, 117, 113, 71, 214, 168, 248, 181, 138, 115, 103, 232, 218, 51, 185, 107, 90, 200, 39, 94, 184, 67, 236, 174, 109, 114, 171, 149, 220, 102, 92, 50, 186, 182, 88, 41, 177, 230, 47, 240, 152, 202, 179, 158, 140, 74, 193, 146, 87, 161, 98, 30, 91, 112, 101, 233, 31, 227, 62, 225, 81, 78, 122, 157, 61, 42, 203, 53, 69, 108, 139, 70, 244, 86, 132, 116, 211, 25, 178, 11, 19, 55, 99, 97, 27, 10, 38};
+
+
 int hw[256] = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8};
 
 
-uint32 expect_key[] = {197,79,167,90,39,16,175,2,233,69,53,43,101,2,108,155};
+uint32 expect_key[16];// = {65, 239, 40, 131, 86, 120, 56, 228, 157, 240, 16, 193, 242, 72, 22, 139};
 
 
 //Function Prototypes
@@ -59,20 +86,25 @@ void XORFour32(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar>
 void sbox(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> b1, id<ORBitVar> b2);
 void SideChannel(id<ORBitVar> x, int sc);
 void xtimes(id<ORBitVar> a, id<ORBitVar> b);
-void keyExpansion();
-void addRoundKey();
-void shiftRows();
-void mixColumns();
-void subBytes();
-void sideChannelCon();
-void generateLists();
-void MCFilter();
-void printDebug();
+void keyExpansion(void);
+void addRoundKey(void);
+void shiftRows(void);
+void mixColumns(void);
+void subBytes(void);
+void sideChannelCon(void);
+void generateLists(void);
+void printDebug(void);
+void MCFilter(void);
+uint32 xtimes_i(uint32 a);
+void readFile(FILE *f);
 
 //Global Variables
 id<ORModel> model;
 id<ORIdArray> ca;
 id<ORRealVar> y;
+int SC[9][16];
+int* p_SC = (int*)SC;
+
 id<ORBitVar> states [5][16];
 //id<ORIntVar> error[10][16][2];
 id<ORBitVar> rcon[10];
@@ -94,8 +126,8 @@ id<ORBitVar> xor1b;
 uint32 i_zero = 0x00;
 id<ORBitVar> zero;
 int s_SC[64];
-ORUInt num_checks = 0;
-unsigned int Plaintext[] = {197,174,245,236,70,202,43,217,26,99,198,174,222,3,132,138};
+ORInt num_checks = 0;
+unsigned int Plaintext[16];// = {197,174,245,236,70,202,43,217,26,99,198,174,222,3,132,138};
 int elevator[8][256];
 int elevator_1[] = {0,1};
 int elevator_2[] = {1,2,0,3};
@@ -108,16 +140,27 @@ int elevator_8[] = {127, 128, 126, 129, 125, 130, 124, 131, 123, 132, 122, 133, 
 
 int prob[] = {7, 11, 13, 14, 19, 21, 22, 25, 26, 28, 31, 35, 37, 38, 41, 42, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62, 67, 69, 70, 73, 74, 76, 79, 81, 82, 84, 87, 88, 91, 93, 94, 97, 98, 100, 103, 104, 107, 109, 110, 112, 115, 117, 118, 121, 122, 124, 131, 133, 134, 137, 138, 140, 143, 145, 146, 148, 151, 152, 155, 157, 158, 161, 162, 164, 167, 168, 171, 173, 174, 176, 179, 181, 182, 185, 186, 188, 193, 194, 196, 199, 200, 203, 205, 206, 208, 211, 213, 214, 217, 218, 220, 224, 227, 229, 230, 233, 234, 236, 241, 242, 244, 248, 15, 23, 27, 29, 30, 39, 43, 45, 46, 51, 53, 54, 57, 58, 60, 71, 75, 77, 78, 83, 85, 86, 89, 90, 92, 99, 101, 102, 105, 106, 108, 113, 114, 116, 120, 135, 139, 141, 142, 147, 149, 150, 153, 154, 156, 163, 165, 166, 169, 170, 172, 177, 178, 180, 184, 195, 197, 198, 201, 202, 204, 209, 210, 212, 216, 225, 226, 228, 232, 240, 3, 5, 6, 9, 10, 12, 17, 18, 20, 24, 33, 34, 36, 40, 48, 63, 65, 66, 68, 72, 80, 95, 96, 111, 119, 123, 125, 126, 129, 130, 132, 136, 144, 159, 160, 175, 183, 187, 189, 190, 192, 207, 215, 219, 221, 222, 231, 235, 237, 238, 243, 245, 246, 249, 250, 252, 1, 2, 4, 8, 16, 32, 64, 127, 128, 191, 223, 239, 247, 251, 253, 254, 0, 255};
 
-int p_list[32][256];
-int p_count[32];
-int p_min[32];
-int p_max[32];
+unsigned int p_list[48][256];
+unsigned int p_count[48];
+int p_min[48];
+int p_max[48];
 
+int hw_hits[48][256];
+int hw_hits_sum[48];
+int p_hwcount[48][3];
+int value[256];
+int sum_value[48];
+bool attempted[48];
+//id<ORMutableInteger> phase[48];
+id<ORMutableInteger> phase;
+int hw_mode[48];
 
 int main(int argc, const char * argv[]) {
-   
+  //FILE* instance = fopen("/Users/ldm/work/objcppriv/Clo/FanghuiTest/origInstance", "r");
+   FILE* instance = fopen("origInstance", "r");
+   readFile(instance);
    ORCmdLineArgs* cmd = [ORCmdLineArgs newWith:argc argv:argv];
-   const int knownKeys = cmd.size;
+   ORInt kKeys = [cmd size];
    model = [ORFactory createModel];
    ca = NULL;
    zero = [ORFactory bitVar:model low:&i_zero up:&i_zero bitLength:8];
@@ -127,7 +170,7 @@ int main(int argc, const char * argv[]) {
    
    uint32 rconstant[] = {1,2,4,8,16,32,64,128,27,54};
    
-   uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
+   //uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
    
    //uint32 cipher2[] = {4,79,253,149,226,60,238,192,17,123,136,192,248,95,102,123};
    
@@ -215,7 +258,7 @@ int main(int argc, const char * argv[]) {
 #ifdef EXPECTKEY
    for(int i = 0; i < 1; i++){ //i < 10
       for(int w = 0; w < 16; w++)
-         if(w < knownKeys)
+         if(w < kKeys)
             keys[i][w] = [ORFactory bitVar: model low :&expect_key[w] up :&expect_key[w] bitLength :8];
          else
             keys[i][w] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :8];
@@ -287,63 +330,214 @@ int main(int argc, const char * argv[]) {
    [model add: [Sum(model,j,[ORFactory intRange:model low:0 up:error_count-1],[errorPtr[2*j] plus: errorPtr[2*j + 1]]) eq: miniVar]];
    
    [model minimize: miniVar];
-   //[model add: [miniVar leq: @(10)]];
+   //[model add: [miniVar eq: @(10)]];
    
-  
-   id<ORIntRange> R = [[ORIntRangeI alloc] initORIntRangeI:0 up:31];
+   
+   id<ORIntRange> R = [[ORIntRangeI alloc] initORIntRangeI:0 up:47];
    
    id<ORBitVarArray> o = (id)[CPFactory bitVarArray:model range: R];
+   
    for(ORInt k=0;k <= 15;k++)
       [o set:keys[0][k] at:k];
    
    for(ORInt k=0;k <= 15;k++)
       [o set:states[1][k] at:(k+16)];
    
-   id<ORIntVarArray> iv = [model intVars];
-   id<ORBitVarArray> av = [model bitVars];
+   for(ORInt k=0;k <= 15;k++)
+      [o set:states[2][k] at:(k+32)];
    
-   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   
+   /*
+    for(ORInt k=0;k <= 15;k++)
+    [o set:keys[0][k] at:(k+48)];
+    
+    for(ORInt k=0;k <= 15;k++)
+    [o set:states[1][k] at:(k+64)];
+    
+    for(ORInt k=0;k <= 15;k++)
+    [o set:states[2][k] at:(k+80)];
+    */
+   
+   //    for(int i = 0; i < 48; i++)
+   //        phase[i] = [ORFactory mutable:model value:3];
+   phase = [ORFactory mutable:model value:3];
+   
+   id<ORIntVarArray> iv = [model intVars];
+   //id<ORBitVarArray> av = [model bitVars];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
    generateLists();
    MCFilter();
    printDebug();
    ORLong searchStart = [ORRuntimeMonitor wctime];
+   id<ORIntSet> phaseNames = [ORFactory intSet:cp];
+   [phaseNames insert:3];
+   [phaseNames insert:2];
+   [phaseNames insert:1];
+   [phaseNames insert:0];
+   
+   
+   
    [cp solve:^(){
       NSLog(@"Search Started: ;-)");
-      //NSLog(@"Minivar: %@", miniVar);
-      [cp forall:R suchThat:^ORBool(ORInt i) { return [cp domsize: o[i]] > 0;} orderedBy:^ORInt(ORInt i) {
-         //return -i;
-         return ((4 - abs(4 - s_SC[i])) << 10) - i; // [current best]
+      
+      //Attempt all values that results in no error
+      [cp forall:R suchThat:^ORBool(ORInt i) {return [cp domsize: o[i]] > 1;} orderedBy:^ORInt(ORInt i) {
+         //NSLog(@"pcount %d", p_hwcount[i][1]);
+         int isphase = [phase intValue:cp];
+         return (-isphase << 20) + (-1 * abs(4 - s_SC[i]) << 10) + p_count[i];
       }
               do:^(ORInt s) {
-                 ORUInt size = [cp domsize:o[s]];
-                 assert(size != 0);
                  id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
-                 [cp tryall:S suchThat:^ORBool(ORInt k) { return true;}
-                  orderedBy:^ORDouble(ORInt z) {
-                     //return abs(z - ((p_max[s] - p_min[s])/3));
-                     return (abs(s_SC[s] - hw[p_list[s][z]]) << 20) - z;
-                  }
-                         in:^(ORInt k) {
-                            assert(s >= 0  && s <= 47);
-                            ORInt i = p_list[s][k]; //elevator[size-1][k];
-                            [cp atomic:^{
-                               uint32 count = 0;
-                               for(int nbit = 0; nbit < 8; nbit++){
-                                  BOOL val = (i >> count++) & 1;
-                                  [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
-                               }
-                            }];
-                         } onFailure:^(ORInt i) {
-                            //Do Nothing
-                         }];
-      }];
-      // label "everything else"
-//      for(id<ORBitVar> bvk in o)
-//         [cp labelUpFromLSB:bvk];
-//      for(id<ORBitVar> bvk in av)
-//         [cp labelUpFromLSB:bvk];
+                 
+                 [cp tryall:phaseNames suchThat:nil orderedBy:^ORDouble(ORInt pn) { return -pn;}
+                         in: ^void(ORInt pn) {
+                            int evalue = pn;
+                            [phase setValue:pn in:cp];
+                            [cp tryall:S suchThat:^ORBool(ORInt k) { return hw_hits[s][p_list[s][k]] == evalue;} orderedBy:^ORDouble(ORInt k) {
+                                 return -(hw_hits[s][p_list[s][k]] << 10) + elevatori[s];
+                            }
+                                    in:^(ORInt k) {
+                                       //assert(s >= 0  && s <= 47);
+                                       ORInt i = p_list[s][k]; //elevator[size-1][k];
+                                       [cp atomic:^{
+                                          ORUInt count = 0;
+                                          for(int nbit = 0; nbit < 8; nbit++){
+                                             BOOL val = (i >> count++) & 1;
+                                             [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
+                                          }
+                                       }];
+                                    } onFailure:^(ORInt i) {}];
+                         }
+                  onFailure: ^void(ORInt pn) {
+                  
+                  }];
+
+              }];
+      
+      //id<ORMutableInteger> test = phase[s];
+      
+      //NSLog(@"Testing BV(%d): Phase:%d",s,[test intValue:cp]);
+      /*
+       [cp try:^{
+       id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
+       
+       [cp tryall:S suchThat:^ORBool(ORInt k) { return hw[p_list[s][k]] == s_SC[s];} orderedBy:^ORDouble(ORInt z) {
+       //return elevatori[z];
+       //return -value[z];
+       //return value[z];
+       return -(hw_hits[s][p_list[s][z]] << 10) + elevatori[s];
+       return -hw_hits[s][p_list[s][z]];
+       //return hw_hits[p_list[s][z]];//elevatori[z];
+       }
+       in:^(ORInt k) {
+       
+       //assert(s >= 0  && s <= 47);
+       ORInt i = p_list[s][k]; //elevator[size-1][k];
+       [cp atomic:^{
+       
+       int aux1, aux2;
+       uint32 val1, val2;
+       if(s < 16){
+       aux1 = s+16;
+       val1 = (i ^ Plaintext[s%16]);
+       aux2 = s+32;
+       val2 = sb[val1];
+       }
+       else if(s < 32){
+       aux1 = s-16;
+       val1 = (i ^ Plaintext[s%16]);
+       aux2 = s+16;
+       val2 = sb[i];
+       }
+       else{
+       aux1 = s-16;
+       val1 = inv_s[i];
+       aux2 = s-32;
+       val2 = (val1 ^ Plaintext[s%16]);
+       }
+       
+       uint32 count = 0;
+       for(int nbit = 0; nbit < 8; nbit++){
+       BOOL val = (i >> count) & 1;
+       BOOL vala = (val1 >> count) & 1;
+       BOOL valb = (val2 >> count++) & 1;
+       [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
+       [cp labelBV:o[aux1] at:nbit with:vala];
+       [cp labelBV:o[aux2] at:nbit with:valb];
+       }
+       }];
+       } onFailure:^(ORInt i) {
+       //NSLog(@"Failed");
+       //Do Nothing
+       }];
+       
+       
+       } alt:^{
+       
+       id<ORMutableInteger> test = phase[s];
+       
+       [test setValue:1 in:cp];
+       
+       id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
+       
+       [cp tryall:S suchThat:^ORBool(ORInt k) { return hw[p_list[s][k]] != s_SC[s];} orderedBy:^ORDouble(ORInt z) {
+       //return -value[z];
+       return -(hw_hits[s][p_list[s][z]] << 10) - z;// elevatori[s];
+       //return value[z];
+       //return -elevatori[s];
+       //return -value[z];
+       //return hw_hits[s][p_list[s][z]];
+       
+       }
+       in:^(ORInt k) {
+       
+       //assert(s >= 0  && s <= 47);
+       ORInt i = p_list[s][k]; //elevator[size-1][k];
+       [cp atomic:^{
+       
+       int aux1, aux2;
+       uint32 val1, val2;
+       if(s < 16){
+       aux1 = s+16;
+       val1 = (i ^ Plaintext[s%16]);
+       aux2 = s+32;
+       val2 = sb[val1];
+       }
+       else if(s < 32){
+       aux1 = s-16;
+       val1 = (i ^ Plaintext[s%16]);
+       aux2 = s+16;
+       val2 = sb[i];
+       }
+       else{
+       aux1 = s-16;
+       val1 = inv_s[i];
+       aux2 = s-32;
+       val2 = (val1 ^ Plaintext[s%16]);
+       }
+       
+       uint32 count = 0;
+       for(int nbit = 0; nbit < 8; nbit++){
+       BOOL val = (i >> count) & 1;
+       BOOL vala = (val1 >> count) & 1;
+       BOOL valb = (val2 >> count++) & 1;
+       [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
+       [cp labelBV:o[aux1] at:nbit with:vala];
+       [cp labelBV:o[aux2] at:nbit with:valb];
+       }
+       }];
+       } onFailure:^(ORInt i) {
+       //NSLog(@"Failed");
+       //Do Nothing
+       }];
+       }];
+       
+       }];
+       */
+      
       [cp labelArrayFF:iv];
       
       ORLong searchStop = [ORRuntimeMonitor wctime];
@@ -354,8 +548,148 @@ int main(int argc, const char * argv[]) {
          NSLog(@"[thread:%d]     Search Time (s): %f",tid,elapsed);
          NSLog(@"[thread:%d] Objective Function : %@",tid,[cp objectiveValue]);
          NSLog(@"[thread:%d]            Choices : %d / %d",tid,[cp nbChoices],[cp nbFailures]);
+         
+         for(int i = 0; i < 16; i++){
+            NSLog(@" %@", [cp stringValue:keys[0][i]]);
+            
+         }
       }
    }];
+   /*
+    [cp solveAll:^(){
+    NSLog(@"Search Started: ;-)");
+    //NSLog(@"Minivar: %@", miniVar);
+    
+    //Attempt all values that results in no error
+    [cp forall:R suchThat:^ORBool(ORInt i) {return [cp domsize: o[i]] > 0;} orderedBy:^ORInt(ORInt i) {
+    //NSLog(@"pcount %d", p_hwcount[i][1]);
+    return p_hwcount[i][1]; // number of values that results in no error
+    }
+    do:^(ORInt s) {
+    id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
+    
+    [cp tryall:S suchThat:^ORBool(ORInt k) { return hw[p_list[s][k]] == s_SC[s];} orderedBy:^ORDouble(ORInt z) {
+    //return -value[z];
+    //return -hw_hits[s][p_list[s][z]];
+    return -elevatori[z];
+    }
+    in:^(ORInt k) {
+    
+    //assert(s >= 0  && s <= 47);
+    ORInt i = p_list[s][k]; //elevator[size-1][k];
+    [cp atomic:^{
+    
+    int aux1, aux2;
+    uint32 val1, val2;
+    if(s < 16){
+    aux1 = s+16;
+    val1 = (i ^ Plaintext[s%16]);
+    aux2 = s+32;
+    val2 = sb[val1];
+    }
+    else if(s < 32){
+    aux1 = s-16;
+    val1 = (i ^ Plaintext[s%16]);
+    aux2 = s+16;
+    val2 = sb[i];
+    }
+    else{
+    aux1 = s-16;
+    val1 = inv_s[i];
+    aux2 = s-32;
+    val2 = (val1 ^ Plaintext[s%16]);
+    }
+    
+    uint32 count = 0;
+    for(int nbit = 0; nbit < 8; nbit++){
+    BOOL val = (i >> count) & 1;
+    BOOL vala = (val1 >> count) & 1;
+    BOOL valb = (val2 >> count++) & 1;
+    [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
+    [cp labelBV:o[aux1] at:nbit with:vala];
+    [cp labelBV:o[aux2] at:nbit with:valb];
+    }
+    }];
+    } onFailure:^(ORInt i) {
+    //NSLog(@"Failed");
+    //Do Nothing
+    }];
+    }];
+    
+    [cp forall:R suchThat:^ORBool(ORInt i) {return [cp domsize: o[i]] > 0;} orderedBy:^ORInt(ORInt i) {
+    return p_hwcount[i][0] + p_hwcount[i][2]; // number of values that results in error
+    }
+    do:^(ORInt s) {
+    // assert(size != 0);
+    id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
+    [cp tryall:S suchThat:^ORBool(ORInt k) { return hw[p_list[s][k]] != s_SC[s];} orderedBy:^ORDouble(ORInt z) {
+    return elevatori[z];
+    }
+    in:^(ORInt k) {
+    //assert(s >= 0  && s <= 47);
+    ORInt i = p_list[s][k]; //elevator[size-1][k];
+    [cp atomic:^{
+    int aux1, aux2;
+    uint32 val1, val2;
+    if(s < 16){
+    aux1 = s+16;
+    val1 = (i ^ Plaintext[s%16]);
+    aux2 = s+32;
+    val2 = sb[val1];
+    }
+    else if(s < 32){
+    aux1 = s-16;
+    val1 = (i ^ Plaintext[s%16]);
+    aux2 = s+16;
+    val2 = sb[i];
+    }
+    else{
+    aux1 = s-16;
+    val1 = inv_s[i];
+    aux2 = s-32;
+    val2 = (val1 ^ Plaintext[s%16]);
+    }
+    
+    uint32 count = 0;
+    for(int nbit = 0; nbit < 8; nbit++){
+    BOOL val = (i >> count) & 1;
+    BOOL vala = (val1 >> count) & 1;
+    BOOL valb = (val2 >> count++) & 1;
+    [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
+    [cp labelBV:o[aux1] at:nbit with:vala];
+    [cp labelBV:o[aux2] at:nbit with:valb];
+    }
+    }];
+    } onFailure:^(ORInt i) {
+    //NSLog(@"Failed");
+    //Do Nothing
+    }];
+    }];
+    
+    
+    
+    
+    [cp labelArrayFF:iv];
+    
+    ORLong searchStop = [ORRuntimeMonitor wctime];
+    ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
+    @autoreleasepool {
+    ORInt tid = [NSThread threadID];
+    assert([cp ground]  == YES);
+    NSLog(@"[thread:%d]     Search Time (s): %f",tid,elapsed);
+    NSLog(@"[thread:%d] Objective Function : %@",tid,[cp objectiveValue]);
+    NSLog(@"[thread:%d]            Choices : %d / %d",tid,[cp nbChoices],[cp nbFailures]);
+    
+    for(int i = 0; i < 16; i++){
+    NSLog(@" %@", [cp stringValue:keys[0][i]]);
+    
+    }
+    }
+    }];
+    */
+   
+   //id<ORSolutionPool> solutions = [cp solutionPool];
+   //NSUInteger numberSol = [solutions count];
    ORLong searchStop = [ORRuntimeMonitor wctime];
    ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
    NSLog(@"FinishTime (s): %f",elapsed);
@@ -482,8 +816,8 @@ void mixColumns(){
       int ir = (r - 2) / 4;
       for(ORInt j = 0; j < 4; j++){
          id<ORBitVar> temp[4];
-         id<ORBitVar> temp1[4];
-         id<ORBitVar> temp2[4];
+         //id<ORBitVar> temp1[4];
+         //id<ORBitVar> temp2[4];
          
          for(int i = 0; i < 4; i++){
             temp[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :7];
@@ -545,18 +879,20 @@ void mixColumns(){
    
 }
 void sideChannelCon(){
-   int SC[9][16] =
-   {
-      {4,5,6,5,3,4,4,5,3,4,4,5,6,2,2,3}, //(0) Plaintext
-      {0,4,3,5,3,5,2,5,6,3,6,3,6,0,4,2}, //
-      {4,5,0,4,7,5,6,5,3,7,3,5,5,5,4,2}, //
-      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, //3
-      {6,3,4,4,4,5,2,4,4,-1,-1,-1,-1,-1,-1,-1},
-      {5,2,2,4,4,5,4,2,4,-1,-1,-1,-1,-1,-1,-1},
-      {3,4,4,5,5,5,4,4,5,-1,-1,-1,-1,-1,-1,-1},
-      {5,1,1,5,4,3,4,7,6,-1,-1,-1,-1,-1,-1,-1},
-      {4,5,5,4,4,1,6,1,6,3,4,4,4,1,4,5}
-   };
+   /*
+    int SC[9][16] =
+    {
+    {4, 5, 6, 5, 3, 4, 4, 5, 4, 4, 4, 5, 6, 2, 2, 3}, //(0) Plaintext
+    {2, 2, 6, 6, 1, 4, 3, 5, 4, 4, 5, 5, 3, 4, 3, 1}, //
+    {6, 3, 3, 3, 4, 5, 6, 4, 3, 5, 6, 3, 4, 6, 5, 5}, //
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, //3
+    {4, 3, 3, 3, 4, 3, 4, 3, 2,-1,-1,-1,-1,-1,-1,-1},
+    {5, 3, 2, 4, 5, 6, 5, 3, 3,-1,-1,-1,-1,-1,-1,-1},
+    {1, 3, 4, 4, 4, 5, 6, 2, 2,-1,-1,-1,-1,-1,-1,-1},
+    {4, 5, 8, 7, 6, 5, 4, 5, 4,-1,-1,-1,-1,-1,-1,-1},
+    {2, 7, 2, 4, 4, 4, 3, 4, 5, 4, 1, 3, 6, 2, 3, 5}
+    };
+    */
    //First Rounds {Plaintext, Addkey, Subbyte, Shiftrows}
    
    for(ORInt subr = 0; subr < 4; subr++){
@@ -611,7 +947,7 @@ void xtimes(id<ORBitVar> a, id<ORBitVar> b){
 void generateLists(){
    for (int v = 0; v < 32; v++){
       for(int k = 0; k < 256; k++){
-         ORInt i = elevator[7][k];
+         ORInt i = k;
          ORInt test = Plaintext[v % 16] ^ i;
          
          int count2 = hw[test];
@@ -639,35 +975,108 @@ void generateLists(){
             if(k < p_min[v])
                p_min[v] = k;
          }
+         
+         if( k == 174 && v == 1){
+            if(testb)
+               //NSLog(@"testb Passed!");
+               if(testc) {
+                  //NSLog(@"testb Passed!");
+                  if((count) <= (s_SC[v] + 1) && (count) >= (s_SC[v] - 1)){
+                     //NSLog(@"Origin Hamming-Weight Passed!");
+                  }
+                  else{
+                     //NSLog(@"Origin Hamming-Weight Failed! should be: %d is: %d", s_SC[v], count);
+                  }
+               }
+            
+            if(count2 <= (s_SC[var] + 1) && count2 >= (s_SC[var] - 1)){
+               //NSLog(@"Remote Hamming-Weight Passed!");
+            }
+            else{
+               //NSLog(@"Remote Hamming-Weight Failed! var: %d should be: %d is: %d", var, s_SC[var], count2);
+            }
+         }
       }
    }
+   /*
+    for(int i = 16; i < 32; i++){
+    for(int j = 0; j < p_count[i]; j++){
+    p_list[i-16][j] = (p_list[i][j] ^ Plaintext[i-16]);
+    }
+    p_count[i-16] = p_count[i];
+    }
+    */
 }
 
-void MCFilter()
-{
-   int SC[9][16] =
-   {
-      {4,5,6,5,3,4,4,5,3,4,4,5,6,2,2,3}, //(0) Plaintext
-      {0,4,3,5,3,5,2,5,6,3,6,3,6,0,4,2}, //
-      {4,5,0,4,7,5,6,5,3,7,3,5,5,5,4,2}, //
-      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, //3
-      {6,3,4,4,4,5,2,4,4,-1,-1,-1,-1,-1,-1,-1},
-      {5,2,2,4,4,5,4,2,4,-1,-1,-1,-1,-1,-1,-1},
-      {3,4,4,5,5,5,4,4,5,-1,-1,-1,-1,-1,-1,-1},
-      {5,1,1,5,4,3,4,7,6,-1,-1,-1,-1,-1,-1,-1},
-      {4,5,5,4,4,1,6,1,6,3,4,4,4,1,4,5}
-   };
+void MCFilter(){
    int count = 0;
-   /*
-    XOR(ca,model, states[r][j*4], states[r][(j*4+5) % 16], tm1[ir][j][0]);
-    
-    XOR(ca,model, states[r][(j*4+5) % 16], states[r][(j*4+10) % 16], tm1[ir][j][1]);
-    
-    XOR(ca,model, states[r][(j*4+10) % 16], states[r][(j*4+15) % 16], tm1[ir][j][2]);
-    
-    XOR(ca,model, states[r][(j*4+15) % 16], states[r][j*4], tm1[ir][j][3]);
-    */
    
+   //tm0 Filtering
+   
+   int tmpcomp[4];
+   int tempc[4];
+   int rcount = 0;
+   
+   for(int col = 0; col < 4; col++){
+      tmpcomp[0] = (col*4)%16 + 16;
+      tmpcomp[1] = (col*4 + 5)%16 + 16;
+      tmpcomp[2] = (col*4 + 10)%16 + 16;
+      tmpcomp[3] = (col*4 + 15)%16 + 16;
+      
+      for(int j = 0; j < 4; j++){
+         int temp[256];
+         int temp_count = 0;
+         tempc[(j + 0) % 4] = tmpcomp[0];
+         tempc[(j + 1) % 4] = tmpcomp[1];
+         tempc[(j + 2) % 4] = tmpcomp[2];
+         tempc[(j + 3) % 4] = tmpcomp[3];
+         
+         //NSLog(@"count1: %d", p_count[tempc[0]]);
+         //NSLog(@"count2: %d", p_count[tempc[1]]);
+         //NSLog(@"count3: %d", p_count[tempc[2]]);
+         //NSLog(@"count4: %d", p_count[tempc[0]]);
+         
+         
+         for(int a = 0; a < p_count[tempc[0]]; a++){
+            int vala = s[p_list[tempc[0]][a]];
+            bool toggle = false;
+            for(int b = 0; b < p_count[tempc[1]]; b++){
+               int valb = s[p_list[tempc[1]][b]];
+               //sum = sum ^ b;
+               for(int c = 0; c < p_count[tempc[2]]; c++){
+                  int valc = s[p_list[tempc[2]][c]];
+                  //sum = sum ^ c;
+                  for(int d = 0; d < p_count[tempc[3]]; d++){
+                     int vald = s[p_list[tempc[3]][d]];
+                     int sum = vala ^ valb ^ valc ^ vald;
+                     //NSLog(@"val %d", sum);
+                     if(hw[sum] <= SC[4 + col][0] + 1 && hw[sum] >= SC[4 + col][0] - 1){
+                        //NSLog(@"val %d", sum);
+                        toggle = true;
+                        temp[temp_count++] = p_list[tempc[0]][a];
+                        break;
+                     }
+                  }
+                  if(toggle)
+                     break;
+               }
+               if(toggle)
+                  break;
+            }
+            if(!toggle)
+               rcount++;
+            
+         }
+         for(int c = 0; c < count; c++){
+            p_list[tempc[0]][c] = temp[c];
+         }
+         p_count[tempc[0]] = temp_count;
+      }
+      
+   }
+   
+   
+   //tmp1 & tmp2 Filtering
    for(int col = 0; col < 4; col++){
       for(int eq = 0; eq < 4; eq++){
          
@@ -680,14 +1089,16 @@ void MCFilter()
          for(int j = 0; j < p_count[state1]; j++){
             bool toggle = false;
             for(int k = 0; k < p_count[state2]; k++){
-               int tm1hw = hw[s[p_list[state1][j]] ^ s[p_list[state2][k]]];
-               if(!toggle && (tm1hw <= SC[4 + col][2*eq + 1] + 1) && (tm1hw >= SC[4 + col][2*eq + 1] - 1)){
+               uint32 tm1 = s[p_list[state1][j]] ^ s[p_list[state2][k]];
+               int tm1hw = hw[tm1];
+               if(!toggle && (tm1hw <= SC[4 + col][2*eq + 1] + 1) && (tm1hw >= SC[4 + col][2*eq + 1] - 1)
+                  && (hw[xtimes_i(tm1)] <= SC[4 + col][2*eq + 2] + 1) && (hw[xtimes_i(tm1)] >= SC[4 + col][2*eq + 2] - 1) ){
                   toggle = true;
                   temp1[tcount1++] = p_list[state1][j];
                }
             }
             if(!toggle){
-               NSLog(@"REDUCTION!");
+               //NSLog(@"REDUCTION!");
                count++;
             }
          }
@@ -695,21 +1106,23 @@ void MCFilter()
          for(int j = 0; j < p_count[state2]; j++){
             bool toggle = false;
             for(int k = 0; k < p_count[state1]; k++){
-               int tm1hw = hw[s[p_list[state2][j]] ^ s[p_list[state1][k]]];
-               if(!toggle && (tm1hw <= SC[4 + col][2*eq + 1] + 1) && (tm1hw >= SC[4 + col][2*eq + 1] - 1)){
+               uint32 tm1 = s[p_list[state2][j]] ^ s[p_list[state1][k]];
+               int tm1hw = hw[tm1];
+               if(!toggle && (tm1hw <= SC[4 + col][2*eq + 1] + 1) && (tm1hw >= SC[4 + col][2*eq + 1] - 1)
+                  && (hw[xtimes_i(tm1)] <= SC[4 + col][2*eq + 2] + 1) && (hw[xtimes_i(tm1)] >= SC[4 + col][2*eq + 2] - 1) ){
                   toggle = true;
                   temp2[tcount2++] = p_list[state2][j];
                   
                }
             }
             if(!toggle){
-               NSLog(@"REDUCTION!");
+               //NSLog(@"REDUCTION!");
                count++;
             }
             
          }
-         NSLog(@"tc1: %d",tcount1);
-         NSLog(@"tc2: %d",tcount2);
+         //NSLog(@"tc1: %d",tcount1);
+         //NSLog(@"tc2: %d",tcount2);
          
          for(int c = 0; c < tcount1; c++){
             p_list[state1][c] = temp1[c];
@@ -724,32 +1137,306 @@ void MCFilter()
       }
    }
    
+   
+   
+   for(int i = 16; i < 32; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         p_list[i+16][j] = s[p_list[i][j]];
+      }
+      p_count[i+16] = p_count[i];
+   }
+   
+   
+   
+   for(int i = 16; i < 32; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         p_list[i-16][j] = (p_list[i][j] ^ Plaintext[i-16]);
+      }
+      p_count[i-16] = p_count[i];
+   }
+   
+   for(int i = 0; i < 48; i++){
+      for(int j = 0; j < 3; j++){
+         p_hwcount[i][j] = 0;
+      }
+   }
+   
+   for(int i = 0; i < 16; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         if(hw[p_list[i][j]] == s_SC[i])
+            p_hwcount[i][1]++;
+         if(hw[p_list[i][j]] == s_SC[i] - 1)
+            p_hwcount[i][0]++;
+         if(hw[p_list[i][j]] == s_SC[i] + 1)
+            p_hwcount[i][2]++;
+      }
+   }
+   
+   for(int i = 16; i < 32; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         if(hw[p_list[i][j]] == s_SC[i])
+            p_hwcount[i][1]++;
+         if(hw[p_list[i][j]] == s_SC[i] - 1)
+            p_hwcount[i][0]++;
+         if(hw[p_list[i][j]] == s_SC[i] + 1)
+            p_hwcount[i][2]++;
+      }
+   }
+   
+   for(int i = 32; i < 48; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         if(hw[p_list[i][j]] == s_SC[i])
+            p_hwcount[i][1]++;
+         if(hw[p_list[i][j]] == s_SC[i] - 1)
+            p_hwcount[i][0]++;
+         if(hw[p_list[i][j]] == s_SC[i] + 1)
+            p_hwcount[i][2]++;
+      }
+   }
+   
+   
+   NSLog(@"count is %d!", count);
+   
+   //Generate HW Hits
+   //Init
+   for(int i = 0; i < 48; i++){
+      for(int j = 0; j < 256; j++){
+         hw_hits[i][j] = 0;
+      }
+   }
+   
+   
+   
+   for(int i = 0; i < 16; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         if(hw[p_list[i][j]] == s_SC[i]){
+            hw_hits[i][p_list[i][j]] += 1;
+            NSLog(@"INCRE");
+         }
+         if(hw[(p_list[i][j] ^ Plaintext[i])] == s_SC[i+16]){
+            hw_hits[i][p_list[i][j]] += 1;
+            NSLog(@"INCRE");
+            
+         }
+         if(hw[s[(p_list[i][j] ^ Plaintext[i])]] == s_SC[i+32]){
+            hw_hits[i][p_list[i][j]] += 1;
+            NSLog(@"INCRE");
+            
+         }
+      }
+   }
+   
+   //tm0 Filtering
+   /*
+    for(int col = 0; col < 4; col++){
+    tmpcomp[0] = (col*4)%16 + 16;
+    tmpcomp[1] = (col*4 + 5)%16 + 16;
+    tmpcomp[2] = (col*4 + 10)%16 + 16;
+    tmpcomp[3] = (col*4 + 15)%16 + 16;
+    
+    for(int j = 0; j < 4; j++){
+    tempc[(j + 0) % 4] = tmpcomp[0];
+    tempc[(j + 1) % 4] = tmpcomp[1];
+    tempc[(j + 2) % 4] = tmpcomp[2];
+    tempc[(j + 3) % 4] = tmpcomp[3];
+    
+    for(int a = 0; a < p_count[tempc[0]]; a++){
+    int vala = s[p_list[tempc[0]][a]];
+    bool toggle = false;
+    for(int b = 0; b < p_count[tempc[1]]; b++){
+    int valb = s[p_list[tempc[1]][b]];
+    for(int c = 0; c < p_count[tempc[2]]; c++){
+    int valc = s[p_list[tempc[2]][c]];
+    for(int d = 0; d < p_count[tempc[3]]; d++){
+    int vald = s[p_list[tempc[3]][d]];
+    int sum = vala ^ valb ^ valc ^ vald;
+    if(hw[sum] == SC[4 + col][0]){
+    toggle = true;
+    //NSLog(@"NEW");
+    
+    hw_hits[tempc[0]][p_list[tempc[0]][a]]++;
+    break;
+    }
+    }
+    if(toggle)
+    break;
+    }
+    if(toggle)
+    break;
+    }
+    }
+    }
+    }
+    
+    //tmp1 & tmp2 Filtering
+    for(int col = 0; col < 4; col++){
+    for(int eq = 0; eq < 4; eq++){
+    
+    int state1 = (col*4+(5*eq))%16 + 16;
+    int state2 = (col*4+(5*eq)+5)%16 + 16;
+    for(int j = 0; j < p_count[state1]; j++){
+    bool toggle = false;
+    for(int k = 0; k < p_count[state2]; k++){
+    uint32 tm1 = s[p_list[state1][j]] ^ s[p_list[state2][k]];
+    int tm1hw = hw[tm1];
+    if(!toggle && (tm1hw == SC[4 + col][2*eq + 1] + 1) && (hw[xtimes_i(tm1)] == SC[4 + col][2*eq + 2] - 1) ){
+    toggle = true;
+    //NSLog(@"NEW");
+    hw_hits[state1][p_list[state1][j]]++;
+    }
+    }
+    }
+    
+    for(int j = 0; j < p_count[state2]; j++){
+    bool toggle = false;
+    for(int k = 0; k < p_count[state1]; k++){
+    uint32 tm1 = s[p_list[state2][j]] ^ s[p_list[state1][k]];
+    int tm1hw = hw[tm1];
+    if(!toggle && (tm1hw == SC[4 + col][2*eq + 1] + 1) && (hw[xtimes_i(tm1)] == SC[4 + col][2*eq + 2] - 1) ){
+    //NSLog(@"NEW");
+    toggle = true;
+    hw_hits[state2][p_list[state2][j]]++;
+    }
+    }
+    }
+    }
+    }
+    */
    /*
     for(int i = 16; i < 32; i++){
     for(int j = 0; j < p_count[i]; j++){
-    p_list[i+16][j] = s[p_list[i][j]];
+    hw_hits[i+16][s[p_list[i][j]]] = hw_hits[i][p_list[i][j]];
+    hw_hits[i-16][p_list[i][j] ^ Plaintext[i % 16]] = hw_hits[i][p_list[i][j]];
     }
-    p_count[i+16] = p_count[i];
-    }
-    
-    for(int i = 16; i < 32; i++){
-    for(int j = 0; j < p_count[i]; j++){
-    p_list[i-16][j] = (p_list[i][j] ^ Plaintext[j]);
-    }
-    p_count[i-16] = p_count[i];
     }
     */
    
-   NSLog(@"count is %d!", count);
+   
+   
+   for(int i = 0; i < 16; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         hw_hits[i+32][s[p_list[i][j] ^ Plaintext[i % 16]]] = hw_hits[i][p_list[i][j]];
+         hw_hits[i+16][p_list[i][j] ^ Plaintext[i % 16]] = hw_hits[i][p_list[i][j]];
+      }
+   }
+   
+   
+   int modetest[4] = {0,0,0,0};
+   
+   for(int i = 0; i < 48; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         modetest[hw_hits[i][p_list[i][j]]]++;
+      }
+      /*
+       int a = max(modetest[2],modetest[1]);
+       int b = max(modetest[3],modetest[2]);
+       int r = max(a,b);
+       
+       //if(modetest[0] == r) hw_mode[i] = 0;
+       if(modetest[1] == r) hw_mode[i] = 1;
+       if(modetest[2] == r) hw_mode[i] = 2;
+       if(modetest[3] == r) hw_mode[i] = 3;
+       */
+      hw_mode[i] = modetest[3];
+      
+      modetest[0] = 0;
+      modetest[1] = 0;
+      modetest[2] = 0;
+      modetest[3] = 0;
+      
+   }
+   
+   
+   /*
+    for(int i = 32; i < 48; i++){
+    for(int j = 0; j < p_count[i]; j++){
+    if(hw[p_list[i][j]] == s_SC[i])
+    hw_hits[i][p_list[i][j]]++;
+    if(hw[inv_s[p_list[i][j]]] == s_SC[i-16])
+    hw_hits[i][p_list[i][j]]++;
+    if(hw[(inv_s[p_list[i][j]] ^ Plaintext[i])] == s_SC[i-32])
+    hw_hits[i][p_list[i][j]]++;
+    }
+    }
+    */
+   
+   
+   int hcount[8];
+   hcount[0] = 0;
+   hcount[1] = 0;
+   hcount[2] = 0;
+   hcount[3] = 0;
+   hcount[4] = 0;
+   hcount[5] = 0;
+   hcount[6] = 0;
+   hcount[7] = 0;
+   
+   
+   
+   for(int i = 0; i < 48; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         if(hw_hits[i][j] != -1)
+            hcount[hw_hits[i][j]]++;
+      }
+   }
+   
+   
+   for(int i=0; i<256; i++) value[i] = 0;
+   for(int i=0; i<48; i++) sum_value[i] = 0;
+   
+   
+   for(int i = 0; i < 48; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         //if(s_SC[i] == hw[p_list[i][j]])
+         //value[p_list[i][j]] += 4;//= hw_hits[i][j] + 1;
+         //else
+         if(s_SC[i] == hw[p_list[i][j]])
+            value[p_list[i][j]]++;//= hw_hits[i][j] + 1;
+         
+      }
+   }
+   
+   for(int i = 0; i < 48; i++){
+      for(int j = 0; j < p_count[i]; j++){
+         sum_value[i] += value[p_list[i][j]];
+      }
+   }
+   
+   printf("Value of num: ");
+   for(int c = 0; c < 256; c++){
+      printf("%d ", value[c]);
+   }
+   printf("\n");
+   
+   NSLog(@"Error: (7): %d | (6): %d | (5): %d | (4): %d (3): %d | (2): %d | (1): %d | (0): %d",hcount[0],hcount[1],hcount[2],hcount[3], hcount[4],hcount[5],hcount[6],hcount[7]);
+   
+   for(int i = 0; i < 48; i++){
+      hw_hits_sum[i] = 0;
+      for(int j = 0; j < p_count[i]; j++){
+         if(hw[p_list[i][j]] == s_SC[i]){
+            if(hw_hits[i][j] > 0 && hw_hits[i][j] < 4)
+               hw_hits_sum[i] += (1 << ((hw_hits[i][j] - 1) * 4));
+         }
+      }
+   }
    
 }
 
 
 void printDebug(){
-   for (int v = 0; v < 32; v++){
+   printf("SUM VALUES:");
+   
+   for (int v = 0; v < 48; v++){
+      printf("%d ",sum_value[v]);
+   }
+   
+   printf("\n");
+   
+   
+   for (int v = 0; v < 48; v++){
       printf("BV: %d ", v);
       for(int c = 0; c < p_count[v]; c++){
-         printf("%d ",abs(c - ((p_max[v] - p_min[v])/3)));
+         printf("%d ",p_list[v][c]);
       }
       printf("\n");
    }
@@ -761,4 +1448,191 @@ void printDebug(){
       printf("\n");
       
    }
+   
+   
+   printf("Value of Keys:");
+   
+   for(int v = 0; v < 16; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == expect_key[v]){
+            printf(" %d ", value[p_list[v][z]]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Value of State 1:");
+   
+   for(int v = 16; v < 32; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == (expect_key[v%16] ^ Plaintext[v%16])){
+            printf(" %d ", value[p_list[v][z]]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Value of State 2:");
+   
+   for(int v = 32; v < 48; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == s[(expect_key[v%16] ^ Plaintext[v%16])]){
+            printf(" %d ", value[p_list[v][z]]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Error Dist Key:");
+   
+   for(int v = 0; v < 16; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == expect_key[v]){
+            printf(" %d ", hw_hits[v][p_list[v][z]]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Error Dist State:");
+   
+   
+   for(int v = 16; v < 32; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == (expect_key[v%16] ^ Plaintext[v%16])){
+            printf(" %d ", hw_hits[v][p_list[v][z]]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Error Dist State:");
+   
+   
+   for(int v = 32; v < 48; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == s[(expect_key[v%16] ^ Plaintext[v%16])]){
+            printf(" %d ", hw_hits[v][p_list[v][z]]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Sum Dist Key:");
+   
+   for(int v = 0; v < 16; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == expect_key[v]){
+            printf(" %d ", sum_value[v]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Sum Dist State:");
+   
+   
+   for(int v = 16; v < 32; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == (expect_key[v%16] ^ Plaintext[v%16])){
+            printf(" %d ", sum_value[v]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Sum Dist State:");
+   
+   
+   for(int v = 32; v < 48; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == s[(expect_key[v%16] ^ Plaintext[v%16])]){
+            printf(" %d ", sum_value[v]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   
+   printf("Mode Dist Key:");
+   
+   for(int v = 0; v < 16; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == expect_key[v]){
+            printf(" %d ", hw_mode[v]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Mode Dist State:");
+   
+   
+   for(int v = 16; v < 32; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == (expect_key[v%16] ^ Plaintext[v%16])){
+            printf(" %d ", hw_mode[v]);
+         }
+      }
+   }
+   
+   printf("\n");
+   
+   printf("Mode Dist State:");
+   
+   
+   for(int v = 32; v < 48; v++){
+      for(int z = 0; z < p_count[v]; z++){
+         if(p_list[v][z] == s[(expect_key[v%16] ^ Plaintext[v%16])]){
+            printf(" %d ", hw_mode[v]);
+         }
+      }
+   }
+   
+   printf("\n");
+}
+
+uint32 xtimes_i(uint32 a){
+   uint32 res = 0;
+   if((a >> 7) & 1){
+      res = (a << 1) ^ 0x1B;
+   }
+   else{
+      res = (a << 1);
+   }
+   if(res >= 256){
+      res = res - 256;
+   }
+   return res;
+}
+
+void readFile(FILE *f){
+   char x[1024];
+   int sc_count = 0;
+   int count = 0;
+   /* assumes no word exceeds length of 1023 */
+   while (fscanf(f, " %1023s", x) == 1) {
+      if(count < 16){
+         Plaintext[count] = atoi(x);
+      }
+      else if(count < 32){
+         expect_key[count % 16] = atoi(x);
+      }
+      else{
+         p_SC[sc_count++] = atoi(x);
+      }
+      count++;
+   }
+   
+   NSLog(@"count is %d", count);
 }
