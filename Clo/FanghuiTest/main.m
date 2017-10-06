@@ -126,7 +126,7 @@ id<ORBitVar> xor1b;
 uint32 i_zero = 0x00;
 id<ORBitVar> zero;
 int s_SC[64];
-UInt32 num_checks = 0;
+ORInt num_checks = 0;
 unsigned int Plaintext[16];// = {197,174,245,236,70,202,43,217,26,99,198,174,222,3,132,138};
 int elevator[8][256];
 int elevator_1[] = {0,1};
@@ -156,7 +156,8 @@ id<ORMutableInteger> phase;
 int hw_mode[48];
 
 int main(int argc, const char * argv[]) {
-   FILE* instance = fopen("/Users/ldm/work/objcppriv/Clo/FanghuiTest/origInstance", "r");
+  //FILE* instance = fopen("/Users/ldm/work/objcppriv/Clo/FanghuiTest/origInstance", "r");
+   FILE* instance = fopen("origInstance", "r");
    readFile(instance);
    ORCmdLineArgs* cmd = [ORCmdLineArgs newWith:argc argv:argv];
    ORInt kKeys = [cmd size];
