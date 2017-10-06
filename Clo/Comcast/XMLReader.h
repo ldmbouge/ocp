@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+#if defined(__linux__)
+#define _Nonnull
+#define _Nullable
+#endif
+
 @interface XMLReader : NSObject <NSXMLParserDelegate>
 
 @property (nonatomic,strong) NSMutableArray * _Nonnull cnodeArray;
