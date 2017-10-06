@@ -27,7 +27,6 @@ typedef struct  {
    ORUInt          _bitLength;
 } CPBitEventNetwork;
 
-
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
 /*****************************************************************************************/
@@ -115,7 +114,14 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 //****************************************************
 @implementation CPBitVarI {
-   ORBool       _learningOn;
+   ORBool               _learningOn;
+   ORUInt*              _bitChanges;
+   ORUInt*              _lvls;
+   CPCoreConstraint**   _constraints;
+   TRUInt               _top;
+   ORUInt               _cap;
+   ORUInt               _wordLength;
+   
 @public
    CPBitEventNetwork   _net;
    TRId*      _implications;
@@ -123,6 +129,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 }
 -(CPBitVarI*) initCPBitVarCore:(CPEngineI*)engine low: (unsigned int*) low up: (unsigned int*)up length:(int)len
 {
+   _wordLength = (len / BITSPERWORD) + ((len % BITSPERWORD != 0) ? 1: 0);
+   
    _net._bitLength = len;
    self = [super init];
    _trail = [engine trail];
@@ -133,13 +141,24 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    _dom = [[CPBitArrayDom alloc] initWithLength:len withEngine:_engine withTrail:_trail];
    _learningOn = [_engine conformsToProtocol:@protocol(CPLEngine)];
    if (_learningOn) {
-      _levels = malloc(sizeof(TRUInt)*len);
-      _implications = malloc(sizeof(TRId)*len);
-      for (int i=0; i<len; i++) {
-         _levels[i] = makeTRUInt(_trail, -1);
-         _implications[i] = makeTRId(_trail, 0);
-      }
+      _cap = len;
+      _bitChanges = malloc(sizeof(ORUInt)*_wordLength* _cap);
+      _lvls = malloc(sizeof(ORUInt)*_cap);
+      _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
+      _top = makeTRUInt(_trail, 0);
+      
+      
+      
+      
+//      _levels = malloc(sizeof(TRUInt)*len);
+//      _implications = malloc(sizeof(TRId)*len);
+//      for (int i=0; i<len; i++) {
+//         _levels[i] = makeTRUInt(_trail, -1);
+//         _implications[i] = makeTRId(_trail, 0);
+//      }
    } else {
+      _cap = 0;
+      
       _levels = nil;
       _implications = nil;
    }
@@ -329,7 +348,12 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) bind:(ORUInt)bit to:(ORBool)value
 {
-   return [_dom setBit:bit to:value for:self];
+   if(_learningOn && [_dom isFree:bit])
+      [self bit:bit setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+
+   ORStatus s = [_dom setBit:bit to:value for:self];
+
+   return s;
 }
 -(ORBool)member:(unsigned int*)v
 {
@@ -343,19 +367,35 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(ORUInt) getLevelBitWasSet:(ORUInt)bit
 {
-   return [_dom getLevelForBit:bit];
+   ORUInt mask = 0x1 << bit%BITSPERWORD;
+   for(int i=0;i<_top._val;i++)
+      if((_bitChanges[i*_wordLength+(bit/BITSPERWORD)] & mask) !=0){
+         return(_lvls[i]);
+      }
+   return -1;
 }
 -(void) bit:(ORUInt)i setAtLevel:(ORUInt)l
 {
-   if (_learningOn)
-      assignTRUInt(&_levels[i], l, _trail);
+   if (_learningOn){
+      if(_top._val >= _cap)
+         NSLog(@"Exceeded capacity of constraint stack");
+      for(int j=0;j<_wordLength;j++)
+         _bitChanges[_top._val*_wordLength+j] = 0;
+      _bitChanges[_top._val*_wordLength+(i/BITSPERWORD)] = 0x1 << (i%BITSPERWORD);
+      _lvls[_top._val] = l;
+      _constraints[_top._val] = nil;
+      assignTRUInt(&_top, _top._val+1,_trail);
+   }
 }
 -(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i
 {
-   if (_learningOn)
-      return (id<CPBVConstraint>)_implications[i];
-   else
-      return nil;
+   if (_learningOn){
+      ORUInt mask = 0x1 << i%BITSPERWORD;
+      for(int j=0;j<_top._val;j++)
+         if((_bitChanges[j*_wordLength+(i/BITSPERWORD)] & mask) != 0)
+            return((id<CPBVConstraint>)_constraints[j]);
+   }
+   return nil;
 }
 -(ORBool) isFree:(ORUInt)pos
 {
@@ -584,18 +624,40 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    newLow[wordLength-1] &= mask;
    
    if(_learningOn) {
+      ORUInt* changed = alloca(sizeof(ORUInt)*_wordLength);
+      ORUInt wasChanged = 0;
+//      ORUInt level = [(CPLearningEngineI*)_engine getLevel];
       for (int i=0; i<wordLength; i++) {
-         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
-         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
-         mask = 0x1;
-         for(int j=0;j<BITSPERWORD; j++){
-            if ((i*BITSPERWORD)+j >=bitLength)
-               break;
-            if ((changedUp & mask) || (changedLow & mask))
-               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-            mask <<= 1;
-         }
+         changed[i] = oldUp[i]._val ^ newUp[i];
+         changed[i] |= oldLow[i]._val ^ newLow[i];
+         wasChanged |= changed[i];
       }
+      
+         if(wasChanged){
+            if(_top._val >= _cap)
+               NSLog(@"exceeded capacity of constraint stack");
+            for(int i=0;i<_wordLength;i++)
+               _bitChanges[_top._val*_wordLength+i] = changed[i];
+            _constraints[_top._val]= constraint;
+            _lvls[_top._val] = [(CPLearningEngineI*)_engine getLevel];
+            assignTRUInt(&_top, _top._val+1, _trail);
+         }
+ 
+//         mask = 0x1;
+//         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
+//         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
+//
+//         for(int j=0;j<BITSPERWORD; j++){
+//            if ((i*BITSPERWORD)+j >=bitLength)
+//               break;
+//            if ((changedUp & mask) || (changedLow & mask)){
+//               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
+////               if (level > 4)
+////                  NSLog(@"%@ 0x%lx[%d] set at level %d by 0x%lx",self,self,i*BITSPERWORD+j, level,constraint);
+//            }
+//            mask <<= 1;
+//         }
+//      }
    }
    [_dom setUp: newUp andLow:newLow for:self];
 }
@@ -641,6 +703,9 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 -(CPBitVarI*) initCPExplicitBitVarPat: (CPEngineI*)engine withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
 {
    self = [super init];
+   
+   _wordLength = (len / BITSPERWORD) + ((len % BITSPERWORD != 0) ? 1: 0);
+
    _engine  = engine;
    [_engine trackVariable: self];
    _trail = [engine trail];
@@ -649,12 +714,18 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andEngine:engine andTrail:_trail];
    _learningOn = [_engine conformsToProtocol:@protocol(CPLEngine)];
    if (_learningOn) {
-      _levels = malloc(sizeof(TRUInt)*len);
-      _implications = malloc(sizeof(TRId)*len);
-      for (int i=0; i<len; i++) {
-         _levels[i] = makeTRUInt(_trail, 0);
-         _implications[i] = makeTRId(_trail, 0);
-      }
+      _cap = len;
+      _bitChanges = malloc(sizeof(ORUInt)*_wordLength* _cap);
+      _lvls = malloc(sizeof(ORUInt)*_cap);
+      _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
+      _top = makeTRUInt(_trail, 0);
+
+//      _levels = malloc(sizeof(TRUInt)*len);
+//      _implications = malloc(sizeof(TRId)*len);
+//      for (int i=0; i<len; i++) {
+//         _levels[i] = makeTRUInt(_trail, 0);
+//         _implications[i] = makeTRId(_trail, 0);
+//      }
    } else {
       _levels = nil;
       _implications = nil;

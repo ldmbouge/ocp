@@ -31,7 +31,7 @@ extern double ninf;
 
 #pragma clang diagnostic pop
 
-void ORIInit();
+void ORIInit(void);
 
 #if __cplusplus
 extern "C" {

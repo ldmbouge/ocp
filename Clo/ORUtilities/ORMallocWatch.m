@@ -91,7 +91,7 @@ void my_free_definite_size(malloc_zone_t * zone, void *ptr , size_t sz)
    system_free_definite_size(zone, ptr,sz);
 }
 
-void mallocWatch()
+void mallocWatch(void)
 {
    size_t  protect_size = sizeof(malloc_zone_t);
    malloc_zone_t *zone = malloc_default_zone();
@@ -117,7 +117,7 @@ void mallocWatch()
    }
 }
 
-NSString* mallocReport()
+NSString* mallocReport(void)
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"%ld,%ld",nbBytes,peakBytes];
@@ -125,9 +125,9 @@ NSString* mallocReport()
 }
 
 #else
-void mallocWatch()
+void mallocWatch(void)
 {}
-NSString* mallocReport()
+NSString* mallocReport(void)
 {
    return @"iOS no report";
 }

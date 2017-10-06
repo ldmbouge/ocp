@@ -86,15 +86,15 @@ void XORFour32(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar>
 void sbox(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> b1, id<ORBitVar> b2);
 void SideChannel(id<ORBitVar> x, int sc);
 void xtimes(id<ORBitVar> a, id<ORBitVar> b);
-void keyExpansion();
-void addRoundKey();
-void shiftRows();
-void mixColumns();
-void subBytes();
-void sideChannelCon();
-void generateLists();
-void printDebug();
-void MCFilter();
+void keyExpansion(void);
+void addRoundKey(void);
+void shiftRows(void);
+void mixColumns(void);
+void subBytes(void);
+void sideChannelCon(void);
+void generateLists(void);
+void printDebug(void);
+void MCFilter(void);
 uint32 xtimes_i(uint32 a);
 void readFile(FILE *f);
 
@@ -103,7 +103,7 @@ id<ORModel> model;
 id<ORIdArray> ca;
 id<ORRealVar> y;
 int SC[9][16];
-int* p_SC = SC;
+int* p_SC = (int*)SC;
 
 id<ORBitVar> states [5][16];
 //id<ORIntVar> error[10][16][2];
@@ -170,7 +170,7 @@ int main(int argc, const char * argv[]) {
    
    uint32 rconstant[] = {1,2,4,8,16,32,64,128,27,54};
    
-   uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
+   //uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
    
    //uint32 cipher2[] = {4,79,253,149,226,60,238,192,17,123,136,192,248,95,102,123};
    
@@ -363,11 +363,11 @@ int main(int argc, const char * argv[]) {
    phase = [ORFactory mutable:model value:3];
    
    id<ORIntVarArray> iv = [model intVars];
-   id<ORBitVarArray> av = [model bitVars];
+   //id<ORBitVarArray> av = [model bitVars];
    
-   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
    generateLists();
    MCFilter();
    printDebug();
@@ -384,7 +384,7 @@ int main(int argc, const char * argv[]) {
       NSLog(@"Search Started: ;-)");
       
       //Attempt all values that results in no error
-      [cp forall:R suchThat:^ORBool(ORInt i) {return [cp domsize: o[i]] > 0;} orderedBy:^ORInt(ORInt i) {
+      [cp forall:R suchThat:^ORBool(ORInt i) {return [cp domsize: o[i]] > 1;} orderedBy:^ORInt(ORInt i) {
          //NSLog(@"pcount %d", p_hwcount[i][1]);
          int isphase = [phase intValue:cp];
          return (-isphase << 20) + (-1 * abs(4 - s_SC[i]) << 10) + p_count[i];
@@ -398,46 +398,18 @@ int main(int argc, const char * argv[]) {
                             [phase setValue:pn in:cp];
                             [cp tryall:S suchThat:^ORBool(ORInt k) { return hw_hits[s][p_list[s][k]] == evalue;} orderedBy:^ORDouble(ORInt k) {
                                  return -(hw_hits[s][p_list[s][k]] << 10) + elevatori[s];
-                                 return -hw_hits[s][p_list[s][k]];
                             }
                                     in:^(ORInt k) {
                                        //assert(s >= 0  && s <= 47);
                                        ORInt i = p_list[s][k]; //elevator[size-1][k];
                                        [cp atomic:^{
-//                                          int aux1, aux2;
-//                                          uint32 val1, val2;
-//                                          if(s < 16){
-//                                             aux1 = s+16;
-//                                             val1 = (i ^ Plaintext[s%16]);
-//                                             aux2 = s+32;
-//                                             val2 = sb[val1];
-//                                          }
-//                                          else if(s < 32){
-//                                             aux1 = s-16;
-//                                             val1 = (i ^ Plaintext[s%16]);
-//                                             aux2 = s+16;
-//                                             val2 = sb[i];
-//                                          }
-//                                          else{
-//                                             aux1 = s-16;
-//                                             val1 = inv_s[i];
-//                                             aux2 = s-32;
-//                                             val2 = (val1 ^ Plaintext[s%16]);
-//                                          }
-                                          uint32 count = 0;
+                                          ORUInt count = 0;
                                           for(int nbit = 0; nbit < 8; nbit++){
                                              BOOL val = (i >> count++) & 1;
-//                                             BOOL vala = (val1 >> count) & 1;
-//                                             BOOL valb = (val2 >> count++) & 1;
                                              [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
-//                                             [cp labelBV:o[aux1] at:nbit with:vala];
-//                                             [cp labelBV:o[aux2] at:nbit with:valb];
                                           }
                                        }];
-                                    } onFailure:^(ORInt i) {
-                                       //NSLog(@"Failed");
-                                       //Do Nothing
-                                    }];
+                                    } onFailure:^(ORInt i) {}];
                          }
                   onFailure: ^void(ORInt pn) {
                   
@@ -716,8 +688,8 @@ int main(int argc, const char * argv[]) {
     }];
     */
    
-   id<ORSolutionPool> solutions = [cp solutionPool];
-   ORInt numberSol = [solutions count];
+   //id<ORSolutionPool> solutions = [cp solutionPool];
+   //NSUInteger numberSol = [solutions count];
    ORLong searchStop = [ORRuntimeMonitor wctime];
    ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
    NSLog(@"FinishTime (s): %f",elapsed);
@@ -844,8 +816,8 @@ void mixColumns(){
       int ir = (r - 2) / 4;
       for(ORInt j = 0; j < 4; j++){
          id<ORBitVar> temp[4];
-         id<ORBitVar> temp1[4];
-         id<ORBitVar> temp2[4];
+         //id<ORBitVar> temp1[4];
+         //id<ORBitVar> temp2[4];
          
          for(int i = 0; i < 4; i++){
             temp[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :7];
@@ -1007,7 +979,7 @@ void generateLists(){
          if( k == 174 && v == 1){
             if(testb)
                //NSLog(@"testb Passed!");
-               if(testc)
+               if(testc) {
                   //NSLog(@"testb Passed!");
                   if((count) <= (s_SC[v] + 1) && (count) >= (s_SC[v] - 1)){
                      //NSLog(@"Origin Hamming-Weight Passed!");
@@ -1015,6 +987,7 @@ void generateLists(){
                   else{
                      //NSLog(@"Origin Hamming-Weight Failed! should be: %d is: %d", s_SC[v], count);
                   }
+               }
             
             if(count2 <= (s_SC[var] + 1) && count2 >= (s_SC[var] - 1)){
                //NSLog(@"Remote Hamming-Weight Passed!");

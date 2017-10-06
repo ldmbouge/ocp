@@ -131,7 +131,7 @@ __attribute__((noinline)) NSCont* restoreCtx(struct Ctx64* ctx,char* start,char*
 }
 #endif
 
-char* getContBase()
+char* getContBase(void)
 {
    return baseStack;
 }

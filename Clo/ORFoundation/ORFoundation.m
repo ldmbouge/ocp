@@ -14,7 +14,7 @@
 #if TARGET_OS_IPHONE==0
 __thread jmp_buf* ptr = 0;
 
-ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)())
+ORStatus tryfail(ORStatus(^block)(void),ORStatus(^handle)(void))
 {
    jmp_buf buf;
    jmp_buf* old = ptr;
@@ -52,7 +52,7 @@ ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)())
    }
 }
 
-void failNow()
+void failNow(void)
 {
    NSValue* tv = [NSThread.currentThread.threadDictionary objectForKey:@(2)];
    jmp_buf* old = tv.pointerValue;
