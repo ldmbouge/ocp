@@ -17,7 +17,7 @@
 }
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
                             @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
-                            @"alertMagn",@"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
+                            @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
                             @"minCan",@"absWDens", @"densWAbs", @"ref"};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split"};
@@ -142,6 +142,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
       case WDEG: h = [cp createWDeg:x];break;
       case DDEG: h = [cp createDDeg:x];break;
       case SDEG: h = [cp createSDeg:x];break;
+       default:h = [cp createFF:x];break;
    }
    return h;
 }
@@ -495,50 +496,6 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                     break;
                 case dynamic6Split:
                     [p minMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
-                        [p float6WaySplit:x];
-                    }];
-                    break;
-            }
-            break;
-        case alertMagn :
-            switch (valordering) {
-                case split:
-                    [p alternateMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
-                        [p floatStaticSplit:x];
-                    }];
-                    break;
-                case split3Way:
-                    [p alternateMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
-                        [p floatStatic3WaySplit:x];
-                    }];
-                    break;
-                case split5Way:
-                    [p alternateMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
-                        [p floatStatic5WaySplit:x];
-                    }];
-                    break;
-                case split6Way:
-                    [p alternateMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
-                        [p floatStatic6WaySplit:x];
-                    }];
-                    break;
-                case dynamicSplit:
-                    [p alternateMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
-                        [p floatSplit:x];
-                    }];
-                    break;
-                case dynamic3Split:
-                    [p alternateMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
-                        [p float3WaySplit:x];
-                    }];
-                    break;
-                case dynamic5Split:
-                    [p alternateMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
-                        [p float5WaySplit:x];
-                    }];
-                    break;
-                case dynamic6Split:
-                    [p alternateMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
                         [p float6WaySplit:x];
                     }];
                     break;

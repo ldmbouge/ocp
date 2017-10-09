@@ -36,11 +36,14 @@ int main(int argc, const char * argv[]) {
             id<ORFloatVar> result = [ORFactory floatVar:model];
             
             
+            
             id<ORExpr> fc = [ORFactory float:model value:1.0f];
             id<ORExpr> fc2 = [ORFactory float:model value:0.5f];
             id<ORExpr> fc3 = [ORFactory float:model value:0.125f];
             id<ORExpr> fc4 = [ORFactory float:model value:0.0625f];
             id<ORExpr> fc5 = [ORFactory float:model value:0.0390625f];
+            
+            [model add:[IN lt:@(1.0f)]];
             
             [model add:[[[[fc plus:[fc2 mul:IN]] sub: [[fc3 mul:IN ] mul:IN]] plus: [[[fc4 mul:IN] mul:IN] mul:IN]] sub:[[[[fc5 mul:IN] mul:IN] mul:IN] mul:IN]]];
             

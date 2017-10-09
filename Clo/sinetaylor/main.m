@@ -29,7 +29,6 @@ int main(int argc, const char * argv[]) {
             
             [model add:[res gt:@(-1.0f)]];
             [model add:[res lt:@(1.0f)]];
-            [model add:[res eq:@(1e-14f)]];
             
             
             id<ORFloatVarArray> vars = [model floatVars];

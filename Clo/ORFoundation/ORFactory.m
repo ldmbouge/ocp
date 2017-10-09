@@ -633,6 +633,8 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+    for(ORInt k=range.low;k <= range.up;k++)
+        [o set:[ORFactory floatVar:tracker] at:k];
     return (id<ORFloatVarArray>)o;
 }
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
