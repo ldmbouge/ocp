@@ -1670,6 +1670,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORConstraint>) SSA:(id<ORTracker>)model on:(id<ORRelation>) c  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y or:(id<ORFloatVar>)z
+{
+    id<ORConstraint> o = [c imply:[x eq:y]];
+    id<ORConstraint> o2 = [[c neg] imply:[x eq:y]];
+    [model trackObject:o];
+    [model trackObject:o2];
+    return o;
+}
+
 @end
 
 @implementation ORFactory (ORDouble)

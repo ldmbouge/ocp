@@ -769,6 +769,7 @@
         return [self floatNEqualc:x[x.low] to:c];
     }else{
         assert(NO);
+        return nil;
     }
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c
@@ -904,6 +905,7 @@
         return [self doubleNEqualc:x[x.low] to:c];
     }else{
         assert(NO);
+        return nil;
     }
 }
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs lt:(ORDouble)c

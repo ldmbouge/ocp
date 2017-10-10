@@ -335,6 +335,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 +(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 +(id<ORConstraint>) floatSSA:(id<ORTracker>)model  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
++(id<ORConstraint>) SSA:(id<ORTracker>)model on:(id<ORRelation>) c  var: (id<ORVar>)x with:(id<ORVar>)y or:(id<ORVar>)z;
 @end
 
 @interface ORFactory (ORDouble)

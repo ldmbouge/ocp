@@ -1998,11 +1998,13 @@
                                      range: RANGE(self,[x low],[x  up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     NSLog(@"%d bound : %s",i,([v bound])?"Y":"N");
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     ORDouble c = [self absorptionQuantity:x[i]];
                                     if(c > taux){
+                                       NSLog(@"ajout de %d",i);
                                        [considered addObject:@(i)];
                                        found = YES;
                                     }
@@ -2021,18 +2023,20 @@
          if (i == MAXINT)
             break;
          ORDouble choosed = 0.0;
-         ORDouble val = 0.0;
+         ORDouble val = 0.0; //max density is 1
          ORInt ind = 0;
          for (ORInt j = 0; j < [considered count]; j++) {
             ind = [considered[j] intValue];
             val = [_gamma[getId(x[ind])] density];
             if (val > choosed) {
                choosed = val;
-               i = j;
+               i = [considered[j] intValue];
             }
+            if(val == 1.0) break;//max density is 1
          }
          b(x[i]);
          [considered removeAllObjects];
+         NSLog(@"release");
       } while (true);
    }];
 }
@@ -2089,7 +2093,7 @@
             val = [self absorptionQuantity:(x[ind])];
             if (val > choosed) {
                choosed = val;
-               i = j;
+               i = [considered[j] intValue];
             }
          }
          b(x[i]);
@@ -2168,11 +2172,14 @@
 -(void) floatSplit:(id<ORFloatVar>) x
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
+   if([xi bound]) return;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
    ORFloat mid = (theMin + theMax)/2.0f;
    if(mid == theMax)
       mid = theMin;
+   else if(is_infinity(theMin) && is_infinity(theMax))
+      mid = 0.f;
    [_search try: ^{ [self floatGthenImpl:xi with:mid]; }
             alt: ^{ [self floatLEqualImpl:xi with:mid]; }
     ];
@@ -2181,9 +2188,10 @@
 -(void) float3WaySplit:(id<ORFloatVar>) x
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
+   if([xi bound]) return;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORFloat mid = (theMin + theMax)/2.0f;
+   ORFloat mid = ((theMin == -INFINITY) && (theMax == INFINITY))? 0 : (theMin + theMax)/2.0f;
    float_interval interval[2];
    if(fp_next_float(theMin) == theMax){
       interval[0].inf = interval[0].sup = theMin;
@@ -2203,11 +2211,12 @@
 -(void) float5WaySplit:(id<ORFloatVar>) x
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
+   if([xi bound]) return;
    float_interval interval[5];
    ORInt length = 0;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORFloat mid = (theMin + theMax)/2.0f;
+   ORFloat mid = ((theMin == -INFINITY) && (theMax == INFINITY))? 0 : (theMin + theMax)/2.0f;
    length = 1;
    interval[0].inf = interval[0].sup = theMax;
    interval[1].inf = interval[1].sup = theMin;
@@ -2238,6 +2247,7 @@
 -(void) float6WaySplit: (id<ORFloatVar>) x
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
+   if([xi bound]) return;
    float_interval interval[6];
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;

@@ -128,6 +128,7 @@
     double_cast i_sup;
     i_inf.f = _domain._low;
     i_sup.f = _domain._up;
+    if(_domain._low == -INFINITY && _domain._up == INFINITY) return DBL_MAX;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_DOUBLE_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
 }
 -(ORDouble) density

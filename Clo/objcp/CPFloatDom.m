@@ -116,6 +116,7 @@
 {
     ORDouble min = (_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
     ORDouble max = (_domain._up == infinityf()) ? FLT_MAX : _domain._up;
+    if(_domain._low == -INFINITY && _domain._up == INFINITY) return DBL_MAX;
     return  max - min;
 }
 -(TRFloatInterval) domain
@@ -128,6 +129,7 @@
     float_cast i_sup;
     i_inf.f = _domain._low;
     i_sup.f = _domain._up;
+    if(_domain._low == -INFINITY && _domain._up == INFINITY) return DBL_MAX;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
 }
 -(ORDouble) density
