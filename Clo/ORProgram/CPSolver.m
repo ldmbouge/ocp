@@ -1998,13 +1998,11 @@
                                      range: RANGE(self,[x low],[x  up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     NSLog(@"%d bound : %s",i,([v bound])?"Y":"N");
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     ORDouble c = [self absorptionQuantity:x[i]];
                                     if(c > taux){
-                                       NSLog(@"ajout de %d",i);
                                        [considered addObject:@(i)];
                                        found = YES;
                                     }
@@ -2036,7 +2034,6 @@
          }
          b(x[i]);
          [considered removeAllObjects];
-         NSLog(@"release");
       } while (true);
    }];
 }
