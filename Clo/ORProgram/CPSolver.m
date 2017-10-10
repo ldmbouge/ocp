@@ -2172,11 +2172,10 @@
    if([xi bound]) return;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORFloat mid = (theMin + theMax)/2.0f;
+   ORFloat mid = ((theMin == -INFINITY) && (theMax == INFINITY))? 0 : (theMin + theMax)/2.0f;
    if(mid == theMax)
       mid = theMin;
-   else if(is_infinity(theMin) && is_infinity(theMax))
-      mid = 0.f;
+//   NSLog(@"max = %16.16e  min = %16.16e mid : %16.16e",theMax,theMin,mid);
    [_search try: ^{ [self floatGthenImpl:xi with:mid]; }
             alt: ^{ [self floatLEqualImpl:xi with:mid]; }
     ];
