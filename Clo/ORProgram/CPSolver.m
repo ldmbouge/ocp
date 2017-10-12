@@ -2641,6 +2641,7 @@
       id<CPConstraint> c = _gamma[[csts[i] getId]];
       res += [c leadToACancellation:x];
    }
+   assert(res != NAN);
    return res;
 }
 -(ORInt)  regret:(id<ORIntVar>)x

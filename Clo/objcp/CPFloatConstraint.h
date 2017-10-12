@@ -33,12 +33,17 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
     fpi_narrowf(&r, &x, &changed);
     return (intersectionInterval){r,x,changed};
 }
+static inline int sign(float_cast p){
+    if(p.parts.sign) return -1;
+    return 1;
+}
 static inline unsigned long long cardinality(float xmin, float xmax){
     float_cast i_inf;
     float_cast i_sup;
     i_inf.f = xmin;
     i_sup.f = xmax;
-    return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+    if(xmin == -INFINITY && xmax == INFINITY) return DBL_MAX;
+    return (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
 }
 static inline bool isDisjointWith(float xmin,float xmax,float ymin, float ymax)
 {

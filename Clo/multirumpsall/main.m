@@ -8,7 +8,7 @@ int main(int argc, const char * argv[]) {
             
             id<ORModel> model = [ORFactory createModel];
             id<ORFloatVarArray> y = [ORFactory floatVarArray:model range:RANGE(model, 0, 26)];
-            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, 4)r];
+            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, 4)];
             id<ORFloatVar> r_0 = [ORFactory floatVar:model];
             
             
