@@ -16,7 +16,7 @@
 #import <ORProgram/CPSolver.h>
 #import <ORProgram/ORSolution.h>
 #import <ORProgram/CPHeuristic.h>
-#import "CPBitVarHeuristic.h"
+#import <ORProgram/CPBitVarHeuristic.h>
 #import <ORProgram/CPDDeg.h>
 #import <ORProgram/CPDeg.h>
 #import <ORProgram/CPWDeg.h>

@@ -11474,8 +11474,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                vars[ants->numAntecedents]->value = !((ISTRUE(state[2][i/BITSPERWORD], state[3][i/BITSPERWORD]) & (0x1 << (i%BITSPERWORD))) == 0);
             ants->numAntecedents++;
          }
-      }
-      
+      }     
    }
    if((assignment->var != _r)  && ([_r getBit:0]==0)){
       for(int i=0;i<bitLength;i++){

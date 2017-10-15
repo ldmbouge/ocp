@@ -288,7 +288,7 @@ static long __nbPull = 0;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer
+   ORSemBFSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer
                                                                             engine:_engine
                                                                            posting:_model];
    [ctrl setController:[_controller copyWithZone:zone]];
