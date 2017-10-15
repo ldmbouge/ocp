@@ -340,18 +340,16 @@
 }
 -(id<ORIdArray>) intVars
 {
-   __block ORInt cnt = 0;
-   [_vars enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      cnt += [obj conformsToProtocol:@protocol(ORIntVar)];
-   }];
+   ORInt cnt = 0;
+   for(id<ORVar> xk in _vars) 
+     cnt += [xk conformsToProtocol:@protocol(ORIntVar)];
    id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,cnt-1)];
    cnt = 0;
-   [_vars enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      if ([obj conformsToProtocol:@protocol(ORIntVar)]) {
-         [rv set:obj at:cnt];
-         cnt++;
-      }
-   }];
+   for(id<ORVar> xk in _vars)
+     if ([xk conformsToProtocol:@protocol(ORIntVar)]) {
+       [rv set:xk at:cnt];
+       cnt++;
+     }
    return rv;
 }
 -(id<ORRealVarArray>)realVars
@@ -993,9 +991,9 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
 -(void) enumerateWith:(void(^)(id<ORConstraint>))block
 {
-   [_all enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+  [_all enumerateObjectsUsingBlock:^(id  _Nonnull obj,BOOL * _Nonnull stop) {
       block(obj);
-   }];
+    }];
 }
 @end
 

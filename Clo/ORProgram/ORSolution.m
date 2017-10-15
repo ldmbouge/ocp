@@ -342,19 +342,19 @@
    __block id<ORSolution> sel = nil;
    __block id<ORObjectiveValue> bestSoFar = nil;
    @synchronized(self) {
-     [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
-	 if (bestSoFar == nil) {
-	   bestSoFar = [obj objectiveValue];
+     for(id<ORSolution> obj in _all) {
+       if (bestSoFar == nil) {
+	 bestSoFar = [obj objectiveValue];
+	 sel = obj;
+       }
+       else {
+	 id<ORObjectiveValue> nv = [obj objectiveValue];
+	 if ([bestSoFar compare: nv] == 1) {
+	   bestSoFar = nv;
 	   sel = obj;
 	 }
-	 else {
-	   id<ORObjectiveValue> nv = [obj objectiveValue];
-	   if ([bestSoFar compare: nv] == 1) {
-	     bestSoFar = nv;
-	     sel = obj;
-	   }
-	 }
-       }];
+       }
+     }
    }
    return [sel retain];
 }
