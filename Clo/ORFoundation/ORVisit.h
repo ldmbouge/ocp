@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORData.h>
-#import <ORFoundation/ORParameter.h>
 
 @protocol ORTrailableInt;
 @protocol ORRealVar;
@@ -45,6 +44,8 @@
 @protocol ORObjectiveFunction;
 @protocol ORRealEqualc;
 @protocol ORRealRange;
+@protocol ORIntParam;
+@protocol ORRealParam;
 
 
 @interface ORVisitor : NSObject<NSObject>

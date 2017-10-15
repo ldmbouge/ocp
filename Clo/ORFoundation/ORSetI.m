@@ -331,8 +331,12 @@
 
 id<ORIntSet> filterSet(id<ORTracker> t,id<ORIntIterable> s,ORBool(^cond)(ORInt i))
 {
-   id<ORIntSet> sub = [ORFactory intSet:t];
-   [s enumerateWithBlock:^(ORInt i) {
+  //id<ORIntSet> sub = [ORFactory intSet:t];
+
+  id<ORIntSet> sub = [[ORIntSetI alloc] initORIntSetI];
+  [t trackMutable:sub];
+
+  [s enumerateWithBlock:^(ORInt i) {
       if (cond(i))
          [sub insert:i];
    }];

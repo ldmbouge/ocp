@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORController.h>
 #import <ORUtilities/cont.h>
 
 @implementation ORHeist

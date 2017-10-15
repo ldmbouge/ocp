@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/OREngine.h>
+#import <ORFoundation/ORConstraint.h>
 
 @protocol ORCommand;
 @protocol ORSearchEngine;
