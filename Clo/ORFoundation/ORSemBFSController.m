@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORSemBFSController.h>
 #import <ORUtilities/ORPQueue.h>
-#import "ORConcurrencyI.h"
+#import <ORUtilities/ORConcurrency.h>
 
 @interface BFSKey : NSObject {
 @public
@@ -103,7 +103,7 @@
    _engine = engine;
    _model  = model;
    _k      = NULL;
-   _primalBoundInformer = [[ORInformer alloc] initORInformer];
+   _primalBoundInformer = [ORConcurrency doubleInformer];
    _bestBound = [[[engine objective] dualBound] doubleValue];
    _buf    = [[ORPQueue alloc] init:^BOOL(BFSKey* a,BFSKey* b) {
       NSComparisonResult cr = [a->_v compare:b->_v];

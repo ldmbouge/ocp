@@ -482,10 +482,11 @@ int main(int argc, const char * argv[])
             id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,1,100)];
             id<ORIntVarArray> av = [model intVars];
             id<CPHeuristic> h = [cp createDDeg];
-            __block ORInt lim = 2000;
+            __block ORInt lim = 1000;
             __block BOOL improved = NO;
             __block BOOL firstTime = YES;
             __block ORInt per = 80;
+	    __block ORInt nbRestart = 0;
             id<ORObjectiveFunction> obj = [cp objective];
             
             return [^(id<CPProgram> cp) {
@@ -508,10 +509,20 @@ int main(int argc, const char * argv[])
                         NSLog(@"Found Solution: %i   at: %f", [[sol objectiveValue] intValue],((double)ts.tv_sec) * 1000 + ts.tv_usec / 1000);
                      }];
                   } onRepeat:^{
+		      nbRestart++;
                      id<ORSolution> s = [[cp solutionPool] best];
                      if (s!=nil) {
-                        per = per * 0.8;
-                        NSLog(@"Restart with per = %d",per);
+		       if (nbRestart < 10) {
+			 per = 0;
+			 return;
+		       } else if (nbRestart == 10) {
+			 per = 100;
+		       }
+		       if (nbRestart % 10 == 0) {
+			 per = per * 0.5;
+			 lim = 1000;
+		       }
+		       NSLog(@"Restart [%d] with per = %d",nbRestart,per);
                         [cp atomic:^{
                            [cp once:^{
                               for(id<ORIntVar> avk in av) {
@@ -523,7 +534,9 @@ int main(int argc, const char * argv[])
                         }];
                         lim = min(20000,lim * 1.05);
                         NSLog(@"New limit: %d",lim);
-                     }
+                     } else {
+		       NSLog(@"No solution yet. Restart [%d]",nbRestart);
+		     }
                   }];
                   //firstTime = NO;
                   improved = YES;

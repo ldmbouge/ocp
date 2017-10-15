@@ -421,6 +421,9 @@
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
+#if defined(__linux__)
+#define _Nonnull
+#endif  
    id<ORIntVarArray> array = (id)[c.vars map:^id _Nonnull(id  _Nonnull obj, int idx) {
       return [_model.modelMappings.tau get:obj];
    }];

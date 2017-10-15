@@ -372,7 +372,11 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
          solution[idx] = val;
       }
       double objP = 0.0;
+#if GRB_VERSION_MAJOR <= 6
+      int error = GRBcbsolution(cbdata, solution);
+#else      
       int error = GRBcbsolution(cbdata, solution,&objP);
+#endif
       if (error != 0) assert(NO);
       
       free(solution);
