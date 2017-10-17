@@ -12,10 +12,15 @@
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
 
+typedef struct {
+    ORInt found;
+    ORInt index;
+} ORSelectorResult;
+
 @protocol ORSelect <NSObject>
--(ORInt)              min;
--(ORInt)              max;
--(ORInt)              any;
+-(ORSelectorResult)              min;
+-(ORSelectorResult)              max;
+-(ORSelectorResult)              any;
 @end
 
 @protocol ORSelector<NSObject>

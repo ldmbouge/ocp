@@ -996,10 +996,10 @@
                                   suchThat: ^ORBool(ORInt i) { return ![cxp[i - low] bound]; }
                                  orderedBy: orderedBy];
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      [self label: x[i]];
+      [self label: x[i.index]];
    } while (true);
 }
 
@@ -1109,10 +1109,10 @@
       id<ORIntVar> x = [last idValue];
       //NSLog(@"at top: last = %p",x);
       if ([failStamp intValue]  == [self nbFailures] || (x == nil || [self bound:x])) {
-         ORInt i = [select max];
-         if (i == MAXINT)
+         ORSelectorResult i = [select max];
+         if (!i.found)
             return;
-         x = av[i];
+         x = av[i.index];
          //NSLog(@"-->Chose variable: %p",x);
          [last setIdValue:x];
       }/* else {
@@ -1187,15 +1187,15 @@
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
-   __block ORInt i ;
+   __block ORSelectorResult i ;
    do {
       id<CPBitVar> x = [last idValue];
 //      NSLog(@"at top: last = %p",x);
       if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
          i = [select max];
-         if (i == MAXINT)
+         if (!i.found)
             return;
-         x = cav[i];
+         x = cav[i.index];
 //         NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
       } else {
@@ -1328,15 +1328,15 @@
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
-   __block ORInt i ;
+   __block ORSelectorResult i ;
    do {
       id<CPBitVar> x = [last idValue];
       //NSLog(@"at top: last = %p",x);
       if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
          i = [select max];
-         if (i == MAXINT)
+         if (!i.found)
             return;
-         x = av[i];
+         x = av[i.index];
 //                  NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
       } else {
@@ -1548,10 +1548,10 @@
                                  }];
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select min];
-         if (i == MAXINT)
+         ORSelectorResult i = [select min];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
      
@@ -1571,10 +1571,10 @@
                                  }];
    [[self explorer] applyController:t in:^{
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      b(x[i]);
+      b(x[i.index]);
    } while (true);
    }];
     
@@ -1594,10 +1594,10 @@
                                  }];
    [[self explorer] applyController:t in:^{
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      b(x[i]);
+      b(x[i.index]);
    } while (true);
    }];
 }
@@ -1616,10 +1616,10 @@
                                  }];
    [[self explorer] applyController:t in:^{
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      b(x[i]);
+      b(x[i.index]);
    } while (true);
    }];
    
@@ -1640,10 +1640,10 @@
                                  }];
    [[self explorer] applyController:t in:^{
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      b(x[i]);
+      b(x[i.index]);
    } while (true);
       
    }];
@@ -1664,10 +1664,10 @@
                                  }];
    [[self explorer] applyController:t in:^{
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      b(x[i]);
+      b(x[i.index]);
    } while (true);
    }];
     
@@ -1688,10 +1688,10 @@
    
    [[self explorer] applyController:t in:^{
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      b(x[i]);
+      b(x[i.index]);
    } while (true);
    }];
     
@@ -1712,10 +1712,10 @@
    
    [[self explorer] applyController:t in:^{
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      b(x[i]);
+      b(x[i.index]);
    } while (true);
    }];
     
@@ -1739,10 +1739,10 @@
    
    [[self explorer] applyController:t in:^{
    do {
-      ORInt i = [select min];
-      if (i == MAXINT)
+      ORSelectorResult i = [select min];
+      if (!i.found)
          break;
-      b(x[i]);
+      b(x[i.index]);
    } while (true);
    }];
    
@@ -1779,10 +1779,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select min];
-         if (i == MAXINT)
+         ORSelectorResult i = [select min];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
 
@@ -1808,10 +1808,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select max];
-         if (i == MAXINT)
+         ORSelectorResult i = [select max];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
    [deg release];
@@ -1836,10 +1836,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select min];
-         if (i == MAXINT)
+         ORSelectorResult i = [select min];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
    [deg release];
@@ -1864,10 +1864,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select max];
-         if (i == MAXINT)
+         ORSelectorResult i = [select max];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
    [occ release];
@@ -1892,10 +1892,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select min];
-         if (i == MAXINT)
+         ORSelectorResult i = [select min];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
    [occ release];
@@ -1915,10 +1915,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select max];
-         if (i == MAXINT)
+         ORSelectorResult i = [select max];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
 }
@@ -1937,10 +1937,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select min];
-         if (i == MAXINT)
+         ORSelectorResult i = [select min];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
 }
@@ -1959,10 +1959,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select max];
-         if (i == MAXINT)
+         ORSelectorResult i = [select max];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
 }
@@ -1981,10 +1981,10 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select min];
-         if (i == MAXINT)
+         ORSelectorResult i = [select min];
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
 }
@@ -2013,12 +2013,12 @@
    [[self explorer] applyController:t in:^{
       do {
          found = NO;
-         ORInt i = [select max];
+         ORSelectorResult i = [select max];
          if(!found){
             taux = -1.0;
             i = [select max];
          }
-         if (i == MAXINT)
+         if (!i.found)
             break;
          ORDouble choosed = 0.0;
          ORDouble val = 0.0; //max density is 1
@@ -2028,11 +2028,11 @@
             val = [_gamma[getId(x[ind])] density];
             if (val > choosed) {
                choosed = val;
-               i = [considered[j] intValue];
+               i.index = [considered[j] intValue];
             }
             if(val == 1.0) break;//max density is 1
          }
-         b(x[i]);
+         b(x[i.index]);
          [considered removeAllObjects];
       } while (true);
    }];
@@ -2079,8 +2079,8 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i = [select max];
-         if (i == MAXINT)
+         ORSelectorResult i = [select min];
+         if (!i.found)
             break;
          ORDouble choosed = 0.0;
          ORDouble val = 0.0;
@@ -2090,21 +2090,21 @@
             val = [self absorptionQuantity:(x[ind])];
             if (val > choosed) {
                choosed = val;
-               i = [considered[j] intValue];
+               i.index = [considered[j] intValue];
             }
          }
-         b(x[i]);
+         b(x[i.index]);
          ORDouble d = 0.0;
          min = max = 0.0;
-         for(ORUInt i = 0; i < [x count]; i++){
-            cv = _gamma[getId(x[i])];
+         for(ORUInt k = 0; k < [x count]; k++){
+            cv = _gamma[getId(x[k])];
             if([cv bound]){
                [dens addObject:@(0.0)];
                continue;
             }
             d = [cv density];
             [dens addObject:@(d)];
-            if(i == 0)
+            if(k == 0)
                min = max = d;
             else if(d < min)
                min = d;
@@ -2357,14 +2357,14 @@
    
    [[self explorer] applyController:t in:^{
       do {
-         ORInt i;
+         ORSelectorResult i;
          if([t depth] > depth)
             i = [select min];
          else
             i = [select2 min];
-         if (i == MAXINT)
+         if (!i.found)
             break;
-         b(x[i]);
+         b(x[i.index]);
       } while (true);
    }];
 }

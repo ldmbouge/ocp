@@ -47,32 +47,34 @@
    [super dealloc];
 }
 
--(ORInt) min
+-(ORSelectorResult) min
 {
    _direction = 1.0;
    return [self choose];
 }
--(ORInt) max
+-(ORSelectorResult) max
 {
    _direction = -1.0;
    return [self choose];
 }
--(ORInt) any
+-(ORSelectorResult) any
 {
    _direction = 0.0;
    return [self choose];
 }
--(ORInt) choose
+-(ORSelectorResult) choose
 {
    __block ORDouble bestFound = MAXDBL;
    __block ORLong bestRand = 0x7fffffffffffffff;
+   __block ORInt found = 0;
    __block ORInt indexFound = MAXINT;
    [_range enumerateWithBlock:^(ORInt i) {
        if ((id)_filter==nil || _filter(i)) {
          ORDouble val = _direction * (_order ? _order(i) : 0.0);
-         if (val < bestFound) {
+         if (val < bestFound || !found) {
             bestFound = val;
             indexFound = i;
+             found = 1;
             bestRand = [_stream next];
          }
          else if (_randomized && val == bestFound) {
@@ -85,7 +87,7 @@
       }
  
    }];
-   return indexFound;
+    return (ORSelectorResult){found,indexFound};
 }
 @end
 
@@ -106,15 +108,15 @@
    [super dealloc];
 }
 
--(ORInt) min
+-(ORSelectorResult) min
 {
    return [_select min];
 }
--(ORInt) max
+-(ORSelectorResult) max
 {
    return [_select max];
 }
--(ORInt) any
+-(ORSelectorResult) any
 {
    return [_select any];
 }
