@@ -18,7 +18,7 @@
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
                             @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
                             @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
-                            @"minCan",@"absWDens", @"densWAbs", @"ref"};
+                            @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico"};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split"};
 
@@ -47,7 +47,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    size = 4;
    nArg = 0;
    heuristic = ref;
-   valordering = split3Way;
+   valordering = dynamicSplit;
    restartRate = 0;
    timeOut = 60;
    nbThreads = 0;
@@ -942,10 +942,50 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             }
             break;
         default :
-            heuristic = ref;
-            [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
-                [p floatSplit:x];
-            }];
+            heuristic = lexico;
+            switch (valordering) {
+                case split:
+                    [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStaticSplit:x];
+                    }];
+                    break;
+                case split3Way:
+                    [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic3WaySplit:x];
+                    }];
+                    break;
+                case split5Way:
+                    [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic5WaySplit:x];
+                    }];
+                    break;
+                case split6Way:
+                    [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatStatic6WaySplit:x];
+                    }];
+                    break;
+                case dynamicSplit:
+                    heuristic = ref;
+                    [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                        [p floatSplit:x];
+                    }];
+                    break;
+                case dynamic3Split:
+                    [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float3WaySplit:x];
+                    }];
+                    break;
+                case dynamic5Split:
+                    [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float5WaySplit:x];
+                    }];
+                    break;
+                case dynamic6Split:
+                    [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                    }];
+                    break;
+            }
             break;
     }
 }

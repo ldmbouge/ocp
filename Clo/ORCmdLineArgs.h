@@ -39,7 +39,8 @@ enum Heuristic {
     minCan  = 25,
     absWDens  = 26,
     densWAbs  = 27,
-    ref = 28
+    ref = 28,
+    lexico=29
 };
 enum ValHeuristic
 {

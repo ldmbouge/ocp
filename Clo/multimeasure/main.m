@@ -15,7 +15,7 @@ int main(int argc, const char * argv[]) {
             }
             
             id<ORModel> model = [ORFactory createModel];
-            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, n) low:-1.f up:1.f];
+            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, n) low:1e3f up:1e10f];
             id<ORFloatVar> res = [ORFactory floatVar:model];
             
             id<ORExpr> fc = [ORFactory float:model value:1.0f];
