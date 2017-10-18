@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
             id<CPProgram> cp = [args makeProgram:model];
             __block bool found = false;
             [cp solveOn:^(id<CPCommonProgram> p) {
-               [cp limitTime:500 in:^{
+               [cp limitTime:args.timeOut * 1000 in:^{
                   [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
                   for(id<ORFloatVar> v in vars){
                      found &= [p bound: v];
