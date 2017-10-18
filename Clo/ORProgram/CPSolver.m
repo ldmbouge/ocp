@@ -2175,7 +2175,7 @@
    ORFloat mid = theMin; //force to the left side if next(theMin) == theMax
    if(fp_next_float(theMin) != theMax){
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMax == -infinityf()) ? -maxnormalf() : theMin;
+      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
    }
    if(mid == theMax)
@@ -2199,7 +2199,7 @@
       interval[1].inf = interval[1].sup = theMax;
    }else{
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMax == -infinityf()) ? -maxnormalf() : theMin;
+      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
       interval[0].inf  = theMin;
       interval[0].sup = fp_previous_float(mid);
@@ -2230,7 +2230,7 @@
       length = 2;
    }else{
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMax == -infinityf()) ? -maxnormalf() : theMin;
+      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
       //force the interval to right side
       if(mid == fp_previous_float(theMax)){
@@ -2268,7 +2268,7 @@
    if(!(only2float || only3float)){
       //au moins 4 floatants
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMax == -infinityf()) ? -maxnormalf() : theMin;
+      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       ORFloat mid = tmpMin/2 + tmpMax/2;
 
       ORFloat midInf = -0.0f;
