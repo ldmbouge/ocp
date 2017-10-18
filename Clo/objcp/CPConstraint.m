@@ -774,30 +774,22 @@
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c
 {
-    id<CPConstraint> m;
-    m = [self floatLT:x[0] to:x[1]];
-    [[x tracker] trackMutable:m];
+    id<CPConstraint> m = [self floatLT:x[0] to:x[1]];
     return m;
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs gt:(ORFloat)c
 {
-    id<CPConstraint> m;
-    m = [self floatGT:x[0] to:x[1]];
-    [[x tracker] trackMutable:m];
+    id<CPConstraint> m = [self floatGT:x[0] to:x[1]];
     return m;
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leq:(ORFloat)c
 {
-    id<CPConstraint> m;
-    m = [self floatLEQ:x[0] to:x[1]];
-    [[x tracker] trackMutable:m];
+    id<CPConstraint> m = [self floatLEQ:x[0] to:x[1]];
     return m;
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geq:(ORFloat)c
 {
-    id<CPConstraint> m;
-    m = [self floatGEQ:x[0] to:x[1]];
-    [[x tracker] trackMutable:m];
+    id<CPConstraint> m = [self floatGEQ:x[0] to:x[1]];
     return m;
 }
 +(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
