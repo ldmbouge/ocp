@@ -2259,8 +2259,8 @@
    float_interval interval[6];
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORBool minIsInfinity = (theMin == -INFINITY) ;
-   ORBool maxIsInfinity = (theMax == INFINITY) ;
+   ORBool minIsInfinity = (theMin == -infinityf()) ;
+   ORBool maxIsInfinity = (theMax == infinityf()) ;
    ORBool only2float = (fp_next_float(theMin) == theMax);
    ORBool only3float = (fp_next_float(theMin) == fp_previous_float(theMax));
    interval[0].inf = interval[0].sup = theMax;

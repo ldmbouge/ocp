@@ -9,7 +9,7 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
         [args measure:^struct ORResult(){
-            ORInt n = 100;
+            ORInt n = 500;
             if(n<1) {
                 @throw [[ORExecutionError alloc] initORExecutionError: "Erreur n < 1"];
             }

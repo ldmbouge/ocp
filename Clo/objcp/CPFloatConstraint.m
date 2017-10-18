@@ -418,12 +418,12 @@
             return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
         }
     }else if([x getId] == [_x getId]){
-        m = maxFlt(fabsf([_y min]),fabs([_y max]));
-        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        m = maxFlt(fabsf([_x min]),fabs([_x max]));
+        frexpf((maxFlt(fabsf([_x min]),fabs([_x max]))), &e);
         min = -pow(2.0,e - 23 - 1);
         max = pow(2.0,e -23 - 1);
-        if(isIntersectionWith(min, max, [_y min], [_y max])){
-            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        if(isIntersectionWith(min, max, [_x min], [_x max])){
+            return cardinality(maxFlt(min, [_x min]),minFlt(max, [_x max]))/[_x cardinality];
         }
     }
     return 0.0;
@@ -535,12 +535,13 @@
             return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
         }
     }else if([x getId] == [_x getId]){
-        m = maxFlt(fabsf([_y min]),fabs([_y max]));
-        frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
+        m = maxFlt(fabsf([_x min]),fabs([_x max]));
+        frexpf((maxFlt(fabsf([_x min]),fabs([_x max]))), &e);
         min = -pow(2.0,e - 23 - 1);
         max = pow(2.0,e -23 - 1);
-        if(isIntersectionWith(min, max, [_y min], [_y max])){
-            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        if(isIntersectionWith(min, max, [_x min], [_x max])){
+            ORDouble card_intersection = cardinality(maxFlt(min, [_x min]),minFlt(max, [_x max]));
+            return card_intersection/[_x cardinality];
         }
     }
     return 0.0;

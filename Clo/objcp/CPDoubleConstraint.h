@@ -37,6 +37,8 @@ static inline intersectionDoubleInterval intersectionDouble(int changed,double_i
 static inline unsigned long long cardinalityD(double xmin, double xmax){
     double_cast i_inf;
     double_cast i_sup;
+    if(xmin == xmax) return 1;
+    if(xmin == -infinity() && xmax == infinity()) return MAXDBL;
     i_inf.f = xmin;
     i_sup.f = xmax;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_DOUBLE_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;

@@ -42,8 +42,10 @@ static inline unsigned long long cardinality(float xmin, float xmax){
     float_cast i_sup;
     i_inf.f = xmin;
     i_sup.f = xmax;
-    if(xmin == -INFINITY && xmax == INFINITY) return DBL_MAX;
-    return (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+    if(xmin == xmax) return 1.0;
+    if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX;
+    long long res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+    return (res < 0) ? -res : res;
 }
 static inline bool isDisjointWith(float xmin,float xmax,float ymin, float ymax)
 {

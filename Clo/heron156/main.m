@@ -78,7 +78,7 @@ int main(int argc, const char * argv[]) {
                     found &= [p bound: v];
                     NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
                 }
-                //     check_solution([cp floatValue:a], [cp floatValue:b], [cp floatValue:c], [cp floatValue:s], [cp floatValue:squared_area]);
+                     check_solution([cp floatValue:a], [cp floatValue:b], [cp floatValue:c], [cp floatValue:s], [cp floatValue:squared_area]);
                 
                 found=true;
                 

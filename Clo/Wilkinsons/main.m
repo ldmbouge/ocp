@@ -9,13 +9,13 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
         [args measure:^struct ORResult(){
-            ORInt n = 20;
+            ORInt n = 4;
             if(n<1) {
                 @throw [[ORExecutionError alloc] initORExecutionError: "Erreur n < 1"];
             }
             
             id<ORModel> model = [ORFactory createModel];
-            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, n) low:1.f up:INFINITY];
+            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, n) low:-1.f up:INFINITY];
             id<ORFloatVar> p = [ORFactory floatVar:model];
             id<ORFloatVar> res = [ORFactory floatVar:model];
             

@@ -122,14 +122,20 @@
 {
     return _domain;
 }
+//TODO check if double is ok or need ldouble
 -(ORDouble) cardinality
 {
     double_cast i_inf;
     double_cast i_sup;
     i_inf.f = _domain._low;
     i_sup.f = _domain._up;
-    if(_domain._low == -INFINITY && _domain._up == INFINITY) return DBL_MAX;
-    return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_DOUBLE_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+    if([self bound]) return 1;
+    if(_domain._low == -infinity() && _domain._up == infinity()) return DBL_MAX;
+    ORInt smin = (i_inf.parts.sign) ? -1:1;
+    ORInt smax = (i_sup.parts.sign) ? -1:1;
+    ORDouble res = (smax * i_sup.parts.exponent - smin * i_inf.parts.exponent) * NB_DOUBLE_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+    return (res < 0) ? -res : res;
+
 }
 -(ORDouble) density
 {

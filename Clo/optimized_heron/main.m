@@ -117,6 +117,8 @@ int main(int argc, const char * argv[]) {
                     found &= [p bound: v];
                     NSLog(@"%@ : %f (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
                 }
+                
+                check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:squared_area]);
                 /*  if(found){
                           NSLog(@"\n");
                  NSLog(@"Verification solutions : \n");
