@@ -17,8 +17,10 @@ int main(int argc, const char * argv[]) {
             
             
             id<ORModel> model = [ORFactory createModel];
-            
+            //1.40129846432481707092e-45,9.09494701772928237915e-13
             id<ORFloatVar> x = [ORFactory floatVar:model low:-2.0f up:2.0f];
+//            id<ORFloatVar> x = [ORFactory floatVar:model low:1.40129846432481707092e-45f up:9.09494701772928237915e-13f];
+            
             id<ORFloatVar> y = [ORFactory floatVar:model];
             id<ORFloatVar> res = [ORFactory floatVar:model];
             
@@ -31,6 +33,7 @@ int main(int argc, const char * argv[]) {
             [model add:[res eq:[x plus:y]]];
             
             [model add:[res eq:y]];
+            [model add:[x eq:@(0.f)]];
   
             id<ORFloatVarArray> vars = [model floatVars];
             id<CPProgram> cp = [args makeProgram:model];

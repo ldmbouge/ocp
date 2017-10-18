@@ -103,6 +103,10 @@
 {
     return [[CPFloatVarI alloc] init:cp low:v up:v];
 }
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp
+{
+    return [[CPFloatVarI alloc] init:cp low:-INFINITY up:INFINITY];
+}
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
    // return [[CPFloatViewOnIntVarI alloc] init:cp intVar:x];

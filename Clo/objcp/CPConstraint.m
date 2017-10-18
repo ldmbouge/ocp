@@ -754,6 +754,7 @@
                  z = [CPFactory floatVar:[x[x.low] engine] value:c];
             return [[CPFloatTernaryAdd alloc] init:x[0] equals:x[1] plus:z];
         }else{ // [x count] = 3
+            assert([x count] <= 3);
             //form x = y + z
             //or   x = y - z
             if([coefs at:2]<0){
@@ -765,32 +766,97 @@
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs neqi:(ORFloat)c
 {
-    if([x count] == 1 && [coefs at:coefs.low]==1.0){
+    if([x count] == 1 && [coefs at:coefs.low] == 1.0){
         return [self floatNEqualc:x[x.low] to:c];
-    }else{
-        assert(NO);
-        return nil;
     }
+    id<CPEngine> engine = [x[x.low] engine];
+    if([x count] == 2){ // x + y != c
+        id<CPFloatVar> res = [self floatVar:engine];
+        if([coefs at:1] < 0)
+          [[CPFloatTernarySub alloc] init:res equals:x[0] minus:x[1]];
+        else
+            [[CPFloatTernaryAdd alloc] init:res equals:x[0] plus:x[1]];
+        return [self floatNEqualc:res to:c];
+    }
+    assert([x count] <= 3);
+    id<CPFloatVar> tmp = [self floatVar:engine];
+    id<CPFloatVar> res = [self floatVar:engine];
+    if([coefs at:1] < 0)
+        [[CPFloatTernarySub alloc] init:tmp equals:x[0] minus:x[1]];
+    else
+        [[CPFloatTernaryAdd alloc] init:tmp equals:x[0] plus:x[1]];
+    if([coefs at:2] < 0)
+        [[CPFloatTernarySub alloc] init:res equals:tmp minus:x[2]];
+    else
+        [[CPFloatTernaryAdd alloc] init:res equals:tmp plus:x[2]];
+    return [self floatNEqualc:res to:c];
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c
 {
-    id<CPConstraint> m = [self floatLT:x[0] to:x[1]];
-    return m;
+    id<CPEngine> engine = [x[x.low] engine];
+    id<CPFloatVar> vc = [self floatVar:engine value:c];
+    if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+        return [self floatLT:x[0] to:vc];
+    }else if([x count] == 2){
+        if(c == 0)
+            return [self floatLT:x[0] to:x[1]];
+        id<CPFloatVar> res = [self floatVar:engine];
+        if([coefs at:1] < 0)
+            [[CPFloatTernarySub alloc] init:res equals:x[0] minus:x[1]];
+        else
+            [[CPFloatTernaryAdd alloc] init:res equals:x[0] plus:x[1]];
+        return [self floatLT:res to:vc];
+    }
+    assert([x count] <= 3);
+    id<CPFloatVar> tmp = [self floatVar:engine];
+    id<CPFloatVar> res = [self floatVar:engine];
+    if([coefs at:1] < 0)
+        [[CPFloatTernarySub alloc] init:tmp equals:x[0] minus:x[1]];
+    else
+        [[CPFloatTernaryAdd alloc] init:tmp equals:x[0] plus:x[1]];
+    if([coefs at:2] < 0)
+        [[CPFloatTernarySub alloc] init:res equals:tmp minus:x[2]];
+    else
+        [[CPFloatTernaryAdd alloc] init:res equals:tmp plus:x[2]];
+    return [self floatLT:res to:vc];
+    
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs gt:(ORFloat)c
 {
-    id<CPConstraint> m = [self floatGT:x[0] to:x[1]];
-    return m;
+    id<CPEngine> engine = [x[x.low] engine];
+    id<CPFloatVar> vc = [self floatVar:engine value:c];
+    if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+        return [self floatGT:x[0] to:vc];
+    }else if([x count] == 2){
+        if(c == 0)
+            return [self floatGT:x[0] to:x[1]];
+        id<CPFloatVar> res = [self floatVar:engine];
+        if([coefs at:1] < 0)
+            [[CPFloatTernarySub alloc] init:res equals:x[0] minus:x[1]];
+        else
+            [[CPFloatTernaryAdd alloc] init:res equals:x[0] plus:x[1]];
+        return [self floatGT:res to:vc];
+    }
+    assert([x count] <= 3);
+    id<CPFloatVar> tmp = [self floatVar:engine];
+    id<CPFloatVar> res = [self floatVar:engine];
+    if([coefs at:1] < 0)
+        [[CPFloatTernarySub alloc] init:tmp equals:x[0] minus:x[1]];
+    else
+        [[CPFloatTernaryAdd alloc] init:tmp equals:x[0] plus:x[1]];
+    if([coefs at:2] < 0)
+        [[CPFloatTernarySub alloc] init:res equals:tmp minus:x[2]];
+    else
+        [[CPFloatTernaryAdd alloc] init:res equals:tmp plus:x[2]];
+    return [self floatGT:res to:vc];
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leq:(ORFloat)c
 {
-    id<CPConstraint> m = [self floatLEQ:x[0] to:x[1]];
-    return m;
+    return [self floatSum:x coef:coefs lt:fp_next_float(c)];
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geq:(ORFloat)c
 {
-    id<CPConstraint> m = [self floatGEQ:x[0] to:x[1]];
-    return m;
+    return [self floatSum:x coef:coefs lt:fp_previous_float(c)];
 }
 +(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
 {
