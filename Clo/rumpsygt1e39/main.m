@@ -25,14 +25,15 @@ int main(int argc, const char * argv[]) {
             id<CPProgram> cp = [args makeProgram:model];
             __block bool found = false;
             [cp solveOn:^(id<CPCommonProgram> p) {
-                
-                
-                [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-                for(id<ORFloatVar> v in vars){
-                    found &= [p bound: v];
-                    NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-                }
-            } withTimeLimit:[args timeOut]];
+               [cp limitTime:args.timeOut * 1000 in:^{
+                  [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+                  for(id<ORFloatVar> v in vars){
+                     found &= [p bound: v];
+                     NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+                  }
+               }];
+            }];
+            //} withTimeLimit:[args timeOut]];
             NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
             struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
             return r;

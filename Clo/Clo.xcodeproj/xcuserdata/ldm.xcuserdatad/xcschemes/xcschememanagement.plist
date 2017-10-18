@@ -164,6 +164,11 @@
 			<key>orderHint</key>
 			<integer>149</integer>
 		</dict>
+		<key>Rosenbrock.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>201</integer>
+		</dict>
 		<key>SMTLIB2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -323,6 +328,16 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>143</integer>
+		</dict>
+		<key>e1_1.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>197</integer>
+		</dict>
+		<key>e1_2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>198</integer>
 		</dict>
 		<key>eq20.xcscheme_^#shared#^_</key>
 		<dict>
@@ -504,6 +519,36 @@
 			<key>orderHint</key>
 			<integer>66</integer>
 		</dict>
+		<key>multiRumps.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>191</integer>
+		</dict>
+		<key>multimeasure.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>200</integer>
+		</dict>
+		<key>multinewton.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>196</integer>
+		</dict>
+		<key>multinewtonall.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>199</integer>
+		</dict>
+		<key>multirumpsall.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>194</integer>
+		</dict>
+		<key>newton.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>195</integer>
+		</dict>
 		<key>nfraction.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -659,6 +704,11 @@
 			<key>orderHint</key>
 			<integer>102</integer>
 		</dict>
+		<key>rumpsygt1e39.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>193</integer>
+		</dict>
 		<key>scene.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -683,6 +733,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>201</integer>
+		</dict>
+		<key>sinetaylorAbs.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>192</integer>
 		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
@@ -837,6 +892,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>082D251C1F83C59E009C6F59</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>085F7ADF1E93EFA00021620E</key>
 		<dict>
 			<key>primary</key>
