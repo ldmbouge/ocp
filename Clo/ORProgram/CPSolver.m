@@ -2172,7 +2172,12 @@
    if([xi bound]) return;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORFloat mid = ((theMin == -INFINITY) && (theMax == INFINITY))? 0 : (theMin + theMax)/2.0f;
+   ORFloat mid = theMin; //force to the left side if next(theMin) == theMax
+   if(fp_next_float(theMin) != theMax){
+      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
+      ORFloat tmpMin = (theMax == -infinityf()) ? -maxnormalf() : theMin;
+      mid = tmpMin/2 + tmpMax/2;
+   }
    if(mid == theMax)
       mid = theMin;
 //   NSLog(@"max = %16.16e  min = %16.16e mid : %16.16e",theMax,theMin,mid);
@@ -2187,12 +2192,15 @@
    if([xi bound]) return;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORFloat mid = ((theMin == -INFINITY) && (theMax == INFINITY))? 0 : (theMin + theMax)/2.0f;
+   ORFloat mid;
    float_interval interval[2];
    if(fp_next_float(theMin) == theMax){
       interval[0].inf = interval[0].sup = theMin;
       interval[1].inf = interval[1].sup = theMax;
    }else{
+      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
+      ORFloat tmpMin = (theMax == -infinityf()) ? -maxnormalf() : theMin;
+      mid = tmpMin/2 + tmpMax/2;
       interval[0].inf  = theMin;
       interval[0].sup = fp_previous_float(mid);
       interval[1].inf = mid;
@@ -2212,14 +2220,18 @@
    ORInt length = 0;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORFloat mid = ((theMin == -INFINITY) && (theMax == INFINITY))? 0 : (theMin + theMax)/2.0f;
+   ORFloat mid;
    length = 1;
    interval[0].inf = interval[0].sup = theMax;
    interval[1].inf = interval[1].sup = theMin;
    if(fp_next_float(theMin) == fp_previous_float(theMax)){
+      mid = fp_next_float(theMin);
       interval[2].inf = interval[2].sup = mid;
       length = 2;
    }else{
+      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
+      ORFloat tmpMin = (theMax == -infinityf()) ? -maxnormalf() : theMin;
+      mid = tmpMin/2 + tmpMax/2;
       //force the interval to right side
       if(mid == fp_previous_float(theMax)){
          mid = fp_previous_float(mid);
@@ -2249,15 +2261,16 @@
    ORFloat theMin = xi.min;
    ORBool minIsInfinity = (theMin == -INFINITY) ;
    ORBool maxIsInfinity = (theMax == INFINITY) ;
-   ORFloat minValue = minIsInfinity ? -maxnormalf() : theMin;
-   ORFloat maxValue = maxIsInfinity ? maxnormalf() : theMax;
    ORBool only2float = (fp_next_float(theMin) == theMax);
    ORBool only3float = (fp_next_float(theMin) == fp_previous_float(theMax));
    interval[0].inf = interval[0].sup = theMax;
    ORInt length = 1;
    if(!(only2float || only3float)){
       //au moins 4 floatants
-      ORFloat mid = minValue/2 + maxValue/2;
+      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
+      ORFloat tmpMin = (theMax == -infinityf()) ? -maxnormalf() : theMin;
+      ORFloat mid = tmpMin/2 + tmpMax/2;
+
       ORFloat midInf = -0.0f;
       ORFloat midSup = +0.0f;
       if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){

@@ -9,13 +9,13 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
         [args measure:^struct ORResult(){
-            ORInt n = 1;
+            ORInt n = 100;
             if(n<1) {
                 @throw [[ORExecutionError alloc] initORExecutionError: "Erreur n < 1"];
             }
             
             id<ORModel> model = [ORFactory createModel];
-            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, n) low:1e3f up:1e10f];
+            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, n)];
             id<ORFloatVar> res = [ORFactory floatVar:model];
             
             id<ORExpr> fc = [ORFactory float:model value:1.0f];
@@ -23,10 +23,10 @@ int main(int argc, const char * argv[]) {
             
             id<ORExpr> fc2 = [ORFactory float:model value:100.0f];
             
-            id<ORExpr> cst = [[[fc sub:x[0]] mul:[fc sub:x[0]]] plus:[[fc2 mul:[x[1] sub:[x[0] mul:x[0]]]] mul:[x[1] sub:[x[0] mul:x[0]]]]];
+            id<ORExpr> cst = [fc div:[[[fc sub:x[0]] mul:[fc sub:x[0]]] plus:[[fc2 mul:[x[1] sub:[x[0] mul:x[0]]]] mul:[x[1] sub:[x[0] mul:x[0]]]]]];
             
             for(int i = 1; n>1 && i < [x count]-1;i++){
-                cst = [cst plus:[[[[fc sub:x[i]] mul:[fc sub:x[i]]] plus:[[fc2 mul:[x[i+1] sub:[x[i] mul:x[i]]]] mul:[x[i+1] sub:[x[i] mul:x[i]]]]] plus:@(1.0f)]];
+                cst = [cst plus:[fc div:[[[[fc sub:x[i]] mul:[fc sub:x[i]]] plus:[[fc2 mul:[x[i+1] sub:[x[i] mul:x[i]]]] mul:[x[i+1] sub:[x[i] mul:x[i]]]]] plus:@(1.0f)]]];
             }
             
             [model add:[res eq:cst]];
