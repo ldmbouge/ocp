@@ -586,7 +586,6 @@
 -(void) propagate
 {
     int changed = false;
-    //TO generalise
     ORInt precision = 1;
     ORInt arrondi = FE_TONEAREST;
     float_interval zTemp,yTemp,xTemp,z,x,y;

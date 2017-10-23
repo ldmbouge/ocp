@@ -9,13 +9,13 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
         [args measure:^struct ORResult(){
-            ORInt n = 1;
+            ORInt n = 2;
             if(n<1) {
                @throw [[ORExecutionError alloc] initORExecutionError: "Erreur n < 1"];
              }
             
             id<ORModel> model = [ORFactory createModel];
-            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, n)];
+            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, n) low:1.f up:2.f];
             id<ORFloatVar> res = [ORFactory floatVar:model];
             
             id<ORExpr> fc = [ORFactory float:model value:2.0f];
@@ -34,7 +34,7 @@ int main(int argc, const char * argv[]) {
             //            [model add:[res eq:[[[fc sub:x] mul:[fc sub:x]] plus:[[fc2 mul:[y sub:[x mul:x]]] mul:[y sub:[x mul:x]]]]]];
             
             
-            [model add:[res eq:@(0.f)]];
+            [model add:[res eq:@(1.f)]];
             
         
             id<ORFloatVarArray> vars = [model floatVars];

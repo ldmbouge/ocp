@@ -747,6 +747,7 @@
             //form x = y + c
             //or   x = y - c
             id<CPFloatVar> z;
+            if(c == 0) return [self floatEqual:x[x.low] to:x[1]];
             if(c < 0){
                 z = [CPFactory floatVar:[x[x.low] engine] value:-c];
                 return [[CPFloatTernarySub alloc] init:x[0] equals:x[1] minus:z];

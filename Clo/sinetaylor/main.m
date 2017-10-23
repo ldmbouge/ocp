@@ -18,7 +18,7 @@ int main(int argc, const char * argv[]) {
             
             id<ORModel> model = [ORFactory createModel];
             
-            id<ORFloatVar> x = [ORFactory floatVar:model low:-2.0f up:2.0f];
+            id<ORFloatVar> x = [ORFactory floatVar:model];
             id<ORFloatVar> res = [ORFactory floatVar:model];
             
             [model add:[res eq:[[[x sub:
