@@ -28,9 +28,14 @@ static inline float_interval makeFloatInterval(float min, float max)
 {
     return (float_interval){min,max};
 }
-static inline intersectionInterval intersection(int changed,float_interval r, float_interval x)
+static inline intersectionInterval intersection(int changed,float_interval r, float_interval x, ORDouble percent)
 {
-    fpi_narrowf(&r, &x, &changed);
+    double reduced = 0;
+    if(percent == 0.0)
+        fpi_narrowf(&r, &x, &changed);
+    else{
+        fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
+    }
     return (intersectionInterval){r,x,changed};
 }
 static inline int sign(float_cast p){
@@ -141,6 +146,9 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
+    ORInt _precision;
+    ORDouble _percent;
+    ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
 -(void) post;
@@ -155,6 +163,9 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
+    ORInt _precision;
+    ORDouble _percent;
+    ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x minus:(id)y ;
 -(void) post;
@@ -168,6 +179,9 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
+    ORInt _precision;
+    ORDouble _percent;
+    ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x mult:(id)y ;
 -(void) post;
@@ -180,6 +194,9 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
+    ORInt _precision;
+    ORDouble _percent;
+    ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x div:(id)y ;
 -(void) post;

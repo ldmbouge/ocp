@@ -555,11 +555,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     return [[ORRealVarI alloc]  init: tracker];
 }
 //-------------------------------
-+(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker var:(id<ORFloatVar>) x scale: (ORFloat) a shift:(ORFloat) b
-{
-    assert(NO);
-    return nil;
-}
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up
 {
     return [[ORFloatVarI alloc]  init: tracker low: low up: up];
@@ -570,11 +565,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker
 {
     return [[ORFloatVarI alloc]  init: tracker];
-}
-+(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker var:(id<ORDoubleVar>) x scale: (ORDouble) a shift:(ORDouble) b
-{
-    assert(NO);
-    return nil;
 }
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
@@ -1670,7 +1660,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
-+(id<ORConstraint>) SSA:(id<ORTracker>)model on:(id<ORRelation>) c  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y or:(id<ORFloatVar>)z
++(id<ORConstraint>) SSA:(id<ORTracker>)model on:(id<ORExpr>) c  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y or:(id<ORFloatVar>)z
 {
     id<ORConstraint> o = [c imply:[x eq:y]];
     id<ORConstraint> o2 = [[c neg] imply:[x eq:y]];

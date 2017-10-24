@@ -451,24 +451,7 @@
 }
 -(void) visitExprNegateI:(ORExprNegateI*)e
 {
-    id<ORDoubleLinear> lT = [ORNormalizer doubleLinearFrom:e.operand model:_model];
-    if (_rv==nil) {  // NEG(E)  ->  produce y == NEG(E) ; return y.
-        id<ORDoubleVar> oV = [ORNormalizer doubleVarIn:lT for:_model];
-        _rv = [ORFactory doubleVar:_model var:oV scale:-1 shift:1];
-    } else {  // x = NEG(e)  ==>  NOT(X) == e
-        // x = NEG(a0 OR ... OR an)
-        // a0 OR ... OR an OR x   (to make sure that when x=0, a0 OR ... an must be satisfied (classic clause)
-        // NOT(X) OR NOT(ai)      (to make sure that when x=1, ai=0 must be true (so that the expression be false)
-        // The second can be rewritten (for every i) as:  1 - x ≥ ai
-        // Note that x=1  => 1-x = 0 =>  0 ≥ ai  and all the disjunct must be false.
-        //           x=0  => 1-x = 1 =>  1 ≥ ai  no constraints on the ai
-        //           ai=1 => 1-x ≥ 1 =>  x ≤ 0   and x must be zero. (ok, since the expression is true)
-        //           ai=0 => 1-x ≥ 0 =>  x ≤ 1   and no impact on x.
-        // This requires n+1 clauses, x appears in all of them, each ai appears in 2.
-        id<ORDoubleVar> negRet = [ORFactory doubleVar:_model var:_rv scale:-1 shift:1];
-        [ORNormalizer doubleVar:negRet equal:lT for:_model];
-    }
-    [lT release];
+    assert(NO);
 }
 
 -(void) visitExprDisjunctI:(ORDisjunctI*)e

@@ -24,6 +24,7 @@ int main(int argc, const char * argv[]) {
             id<ORFloatVar> y = [ORFactory floatVar:model];
             id<ORFloatVar> res = [ORFactory floatVar:model];
             
+            //need to changes precision > 0 in cpfloatconstraint for this bench
             [model add:[res eq:[[[x sub:
                                   [[x mul:[x mul:x]] div:@(6.0f)]] plus:
                                  [[x mul:[x mul:[x mul:[x mul:x]]]] div:@(120.0f)]] sub:

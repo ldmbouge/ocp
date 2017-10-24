@@ -126,11 +126,9 @@ PORTABLE_BEGIN
 //=======
 +(id<ORRealVar>) realVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORRealVar>) realVar: (id<ORTracker>) tracker;
-+(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker var:(id<ORFloatVar>) x scale: (ORFloat) a shift:(ORFloat) b;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker;
-+(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker var:(id<ORDoubleVar>) x scale: (ORDouble) a shift:(ORDouble) b;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker;
@@ -335,7 +333,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 +(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 +(id<ORConstraint>) floatSSA:(id<ORTracker>)model  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
-+(id<ORConstraint>) SSA:(id<ORTracker>)model on:(id<ORRelation>) c  var: (id<ORVar>)x with:(id<ORVar>)y or:(id<ORVar>)z;
++(id<ORConstraint>) SSA:(id<ORTracker>)model on:(id<ORExpr>) c  var: (id<ORVar>)x with:(id<ORVar>)y or:(id<ORVar>)z;
 @end
 
 @interface ORFactory (ORDouble)

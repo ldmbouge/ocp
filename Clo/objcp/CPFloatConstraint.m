@@ -342,6 +342,9 @@
     _z = z;
     _x = x;
     _y = y;
+    _precision = 1;
+    _percent = 0.0;
+    _rounding = FE_TONEAREST;
     return self;
 }
 -(void) post
@@ -353,9 +356,8 @@
 }
 -(void) propagate
 {
-    int changed = false;
-    ORInt precision = 1;
-    ORInt arrondi = FE_TONEAREST;
+    int gchanged,changed;
+    changed = gchanged = false;
     float_interval zTemp,yTemp,xTemp,z,x,y;
     intersectionInterval inter;
     z = makeFloatInterval([_z min],[_z max]);
@@ -364,37 +366,40 @@
     do {
         changed = false;
         zTemp = z;
-        fpi_addf(precision, arrondi, &zTemp, &x, &y);
-        inter = intersection(changed, z, zTemp);
+        fpi_addf(_precision, _rounding, &zTemp, &x, &y);
+        inter = intersection(changed, z, zTemp,_percent);
         z = inter.result;
         changed |= inter.changed;
         
         xTemp = x;
         yTemp = y;
-        fpi_add_invsub_boundsf(precision, arrondi, &xTemp, &yTemp, &z);
-        inter = intersection(changed, x , xTemp);
+        fpi_add_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
+        inter = intersection(changed, x , xTemp,_percent);
         x = inter.result;
         changed |= inter.changed;
         
-        inter = intersection(changed, y, yTemp);
+        inter = intersection(changed, y, yTemp,_percent);
         y = inter.result;
         changed |= inter.changed;
         
         xTemp = x;
-        fpi_addxf_inv(precision, arrondi, &xTemp, &z, &y);
-        inter = intersection(changed, x , xTemp);
+        fpi_addxf_inv(_precision, _rounding, &xTemp, &z, &y);
+        inter = intersection(changed, x , xTemp,_percent);
         x = inter.result;
         changed |= inter.changed;
         
         yTemp = y;
-        fpi_addyf_inv(precision, arrondi, &yTemp, &z, &x);
-        inter = intersection(changed, y, yTemp);
+        fpi_addyf_inv(_precision, _rounding, &yTemp, &z, &x);
+        inter = intersection(changed, y, yTemp,_percent);
         y = inter.result;
         changed |= inter.changed;
+        gchanged |= changed;
      } while(changed);
-    [_x updateInterval:x.inf and:x.sup];
-    [_y updateInterval:y.inf and:y.sup];
-    [_z updateInterval:z.inf and:z.sup];
+    if(gchanged){
+        [_x updateInterval:x.inf and:x.sup];
+        [_y updateInterval:y.inf and:y.sup];
+        [_z updateInterval:z.inf and:z.sup];
+    }
 }
 -(NSSet*)allVars
 {
@@ -457,6 +462,9 @@
     _z = z;
     _x = x;
     _y = y;
+    _precision = 1;
+    _percent = 0.0;
+    _rounding = FE_TONEAREST;
     return self;
 }
 
@@ -469,10 +477,8 @@
 }
 -(void) propagate
 {
-    int changed = false;
-    //TO generalise
-    ORInt precision = 1;
-    ORInt arrondi = FE_TONEAREST;
+    int gchanged,changed;
+    changed = gchanged = false;
     float_interval zTemp,yTemp,xTemp,z,x,y;
     intersectionInterval inter;
     z = makeFloatInterval([_z min],[_z max]);
@@ -481,37 +487,40 @@
     do {
         changed = false;
         zTemp = z;
-        fpi_subf(precision, arrondi, &zTemp, &x, &y);
-        inter = intersection(changed, z, zTemp);
+        fpi_subf(_precision, _rounding, &zTemp, &x, &y);
+        inter = intersection(changed, z, zTemp,_percent);
         z = inter.result;
         changed |= inter.changed;
         
         xTemp = x;
         yTemp = y;
-        fpi_sub_invsub_boundsf(precision, arrondi, &xTemp, &yTemp, &z);
-        inter = intersection(changed, x , xTemp);
+        fpi_sub_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
+        inter = intersection(changed, x , xTemp,_percent);
         x = inter.result;
         changed |= inter.changed;
         
-        inter = intersection(changed, y, yTemp);
+        inter = intersection(changed, y, yTemp,_percent);
         y = inter.result;
         changed |= inter.changed;
         
         xTemp = x;
-        fpi_subxf_inv(precision, arrondi, &xTemp, &z, &y);
-        inter = intersection(changed, x , xTemp);
+        fpi_subxf_inv(_precision, _rounding, &xTemp, &z, &y);
+        inter = intersection(changed, x , xTemp,_percent);
         x = inter.result;
         changed |= inter.changed;
         
         yTemp = y;
-        fpi_subyf_inv(precision, arrondi, &yTemp, &z, &x);
-        inter = intersection(changed, y, yTemp);
+        fpi_subyf_inv(_precision, _rounding, &yTemp, &z, &x);
+        inter = intersection(changed, y, yTemp,_percent);
         y = inter.result;
         changed |= inter.changed;
+        gchanged |= changed;
     } while(changed);
-    [_x updateInterval:x.inf and:x.sup];
-    [_y updateInterval:y.inf and:y.sup];
-    [_z updateInterval:z.inf and:z.sup];
+    if(gchanged){
+        [_x updateInterval:x.inf and:x.sup];
+        [_y updateInterval:y.inf and:y.sup];
+        [_z updateInterval:z.inf and:z.sup];
+    }
 }
 -(NSSet*)allVars
 {
@@ -574,6 +583,9 @@
     _z = z;
     _x = x;
     _y = y;
+    _precision = 1;
+    _percent = 0.0;
+    _rounding = FE_TONEAREST;
     return self;
 }
 -(void) post
@@ -585,9 +597,8 @@
 }
 -(void) propagate
 {
-    int changed = false;
-    ORInt precision = 1;
-    ORInt arrondi = FE_TONEAREST;
+    int gchanged,changed;
+    changed = gchanged = false;
     float_interval zTemp,yTemp,xTemp,z,x,y;
     intersectionInterval inter;
     z = makeFloatInterval([_z min],[_z max]);
@@ -596,26 +607,30 @@
     do {
         changed = false;
         zTemp = z;
-        fpi_multf(precision, arrondi, &zTemp, &x, &y);
-        inter = intersection(changed, z, zTemp);
+        fpi_multf(_precision, _rounding, &zTemp, &x, &y);
+        inter = intersection(changed, z, zTemp,_percent);
         z = inter.result;
         changed |= inter.changed;
         
         xTemp = x;
-        fpi_multxf_inv(precision, arrondi, &xTemp, &z, &y);
-        inter = intersection(changed, x , xTemp);
+        fpi_multxf_inv(_precision, _rounding, &xTemp, &z, &y);
+        inter = intersection(changed, x , xTemp,_percent);
         x = inter.result;
         changed |= inter.changed;
         
         yTemp = y;
-        fpi_multyf_inv(precision, arrondi, &yTemp, &z, &x);
-        inter = intersection(changed, y, yTemp);
+        fpi_multyf_inv(_precision, _rounding, &yTemp, &z, &x);
+        inter = intersection(changed, y, yTemp,_percent);
         y = inter.result;
         changed |= inter.changed;
+        gchanged |= changed;
     } while(changed);
-    [_x updateInterval:x.inf and:x.sup];
-    [_y updateInterval:y.inf and:y.sup];
-    [_z updateInterval:z.inf and:z.sup];
+    if(gchanged){
+        [_x updateInterval:x.inf and:x.sup];
+        [_y updateInterval:y.inf and:y.sup];
+        [_z updateInterval:z.inf and:z.sup];
+    }
+
 }
 -(NSSet*)allVars
 {
@@ -638,6 +653,9 @@
     _z = z;
     _x = x;
     _y = y;
+    _precision = 1;
+    _percent = 0.0;
+    _rounding = FE_TONEAREST;
     return self;
 }
 -(void) post
@@ -649,9 +667,8 @@
 }
 -(void) propagate
 {
-    int changed = false;
-    ORInt precision = 1;
-    ORInt arrondi = FE_TONEAREST;
+    int gchanged,changed;
+    changed = gchanged = false;
     float_interval zTemp,yTemp,xTemp,z,x,y;
     intersectionInterval inter;
     z = makeFloatInterval([_z min],[_z max]);
@@ -660,26 +677,29 @@
     do {
         changed = false;
         zTemp = z;
-        fpi_divf(precision, arrondi, &zTemp, &x, &y);
-        inter = intersection(changed, z, zTemp);
+        fpi_divf(_precision, _rounding, &zTemp, &x, &y);
+        inter = intersection(changed, z, zTemp,_percent);
         z = inter.result;
         changed |= inter.changed;
         
         xTemp = x;
-        fpi_divxf_inv(precision, arrondi, &xTemp, &z, &y);
-        inter = intersection(changed, x , xTemp);
+        fpi_divxf_inv(_precision, _rounding, &xTemp, &z, &y);
+        inter = intersection(changed, x , xTemp,_percent);
         x = inter.result;
         changed |= inter.changed;
         
         yTemp = y;
-        fpi_divyf_inv(precision, arrondi, &yTemp, &z, &x);
-        inter = intersection(changed, y, yTemp);
+        fpi_divyf_inv(_precision, _rounding, &yTemp, &z, &x);
+        inter = intersection(changed, y, yTemp,_percent);
         y = inter.result;
         changed |= inter.changed;
+        gchanged |= changed;
     } while(changed);
-    [_x updateInterval:x.inf and:x.sup];
-    [_y updateInterval:y.inf and:y.sup];
-    [_z updateInterval:z.inf and:z.sup];
+    if(gchanged){
+        [_x updateInterval:x.inf and:x.sup];
+        [_y updateInterval:y.inf and:y.sup];
+        [_z updateInterval:z.inf and:z.sup];
+    }
 }
 -(NSSet*)allVars
 {
