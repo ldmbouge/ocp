@@ -17,6 +17,7 @@
 #import "ORConstraintI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
+#import "fpi.h"
 
 //#import <objcp/CPBitMacros.h>
 
@@ -123,6 +124,11 @@
     ORFloatI* o = [[ORFloatI alloc] init: tracker value: value];
     return [tracker trackImmutable: o];
 }
++(id<ORFloatNumber>) infinityf: (id<ORTracker>) tracker
+{
+    ORFloatI* o = [[ORFloatI alloc] init: tracker value: infinityf()];
+    return [tracker trackImmutable: o];
+}
 +(id<ORMutableDouble>) mutableDouble: (id<ORTracker>)tracker value: (ORDouble) value
 {
    ORMutableDoubleI* o = [[ORMutableDoubleI alloc] initORMutableRealI: tracker value:value];
@@ -172,7 +178,6 @@
     ORFloatRangeI* o = [[ORFloatRangeI alloc] init:low up:up];
     return [tracker trackImmutable:o];
 }
-//TODO Check if infinity work with double and ldouble
 +(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker
 {
     ORDoubleRangeI* o = [[ORDoubleRangeI alloc] init:-INFINITY up:INFINITY];
@@ -202,7 +207,6 @@
       [o set:k.intValue at:i++];
    return o;
 }
-
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range value: (ORInt) value];

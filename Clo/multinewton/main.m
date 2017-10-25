@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
             
             id<ORModel> model = [ORFactory createModel];
             id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, 3)];
-            id<ORFloatVarArray> y = [ORFactory floatVarArray:model range:RANGE(model, 0, 2) low:0.f up:1e6f];
+            id<ORFloatVarArray> y = [ORFactory floatVarArray:model range:RANGE(model, 0, 2)];
             id<ORFloatVar> z = [ORFactory floatVar:model];
             id<ORFloatVar> r_0 = [ORFactory floatVar:model];
             id<ORFloatVar> f_x = [ORFactory floatVar:model];
@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]) {
             
             [model add:[r_0 eq:[z sub:[f_x div:fp_x]]]];
             
-            [model add:[r_0 eq:@(1.0f)]];
+            [model add:[r_0 geq:@(1.0f)]];
             
             
             id<ORFloatVarArray> vars = [model floatVars];

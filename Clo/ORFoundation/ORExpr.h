@@ -68,6 +68,31 @@ typedef enum ORVType {
 
 #endif
 
+static ORVType lookup_relation_table[][9] = {
+    //ORTBOOL  ORTINT    ORTREAL,  ORTFLOAT,  ORTDouble,  ORTLDOUBLE, ORTBIT,     ORTSET,  ORTNA
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTBOOL
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTINT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTREAL
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      // ORTFLOAT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTDouble
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTLDouble
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTBIT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTSET
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool,  ORTNA}       //ORTTNA
+};
+
+static ORVType lookup_expr_table[][9] = {
+    //ORTBOOL  ORTINT       ORTREAL,  ORTFLOAT,  ORTDouble,  ORTLDOUBLE, ORTBIT,   ORTSET,  ORTNA
+    {ORTBool,  ORTInt,    ORTReal,  ORTFloat,   ORTDouble, ORTLDouble, ORTBit,  ORTSet, ORTBool},     // ORTBOOL
+    {ORTInt,  ORTInt,     ORTReal,  ORTFloat,  ORTDouble, ORTLDouble, ORTBit,   ORTSet,  ORTInt},     // ORTINT
+    {ORTReal,  ORTReal,    ORTReal,  ORTReal,   ORTReal,   ORTReal,    ORTBit,   ORTSet,  ORTReal},     // ORTREAL
+    {ORTFloat,  ORTFloat,   ORTReal,  ORTFloat,  ORTDouble, ORTLDouble,  ORTBit,   ORTSet, ORTFloat},      // ORTFLOAT
+    {ORTDouble,  ORTDouble,  ORTReal,  ORTDouble, ORTLDouble, ORTLDouble, ORTBit,   ORTSet, ORTDouble},      //ORTDouble
+    {ORTLDouble,  ORTLDouble, ORTReal,  ORTLDouble,ORTLDouble, ORTLDouble, ORTBit,   ORTSet, ORTLDouble},      //ORTLDouble
+    {ORTBit,  ORTBit,     ORTBit,   ORTBit,   ORTBit,     ORTBit,     ORTBit,   ORTSet, ORTBit},      //ORTBIT
+    {ORTSet,  ORTSet,     ORTSet,   ORTSet,   ORTSet,     ORTSet,     ORTSet,   ORTSet, ORTSet},      //ORTSET
+    {ORTBool,  ORTInt,     ORTReal, ORTFloat,  ORTDouble,  ORTLDouble, ORTBit,    ORTSet,  ORTNA}       //ORTTNA
+};
 
 static inline ORVType lubVType(ORVType t1,ORVType t2)
 {

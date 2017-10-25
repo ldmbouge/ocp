@@ -1016,7 +1016,10 @@
 {
    ORVType rvt = [_right conformsToProtocol:@protocol(ORExpr)] ? [_right vtype] : ORTInt;
    ORVType lvt = [_left conformsToProtocol:@protocol(ORExpr)] ? [_left vtype] : ORTInt;
-   return lubVType(lvt,rvt);
+    // hzi : just return ORTBool it's not enought ? 
+//    if([self conformsToProtocol:@protocol(ORRelation)])
+//        return lookup_relation_table[rvt][lvt];
+    return lookup_expr_table[rvt][lvt];
 }
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
@@ -1450,11 +1453,11 @@
    while ([root isKindOfClass:[ORExprPlusI class]]) {
       ORExprPlusI* pn = (ORExprPlusI*)root;
       ORVType rvt = [pn->_right conformsToProtocol:@protocol(ORExpr)] ? [pn->_right vtype] : ORTInt;
-      vty  = lubVType(vty,rvt);
+      vty  = lookup_expr_table[vty][rvt];
       root = pn->_left;
    }
    ORVType rvt = [root conformsToProtocol:@protocol(ORExpr)] ? [root vtype] : ORTInt;
-   return lubVType(vty,rvt);
+   return  lookup_expr_table[vty][rvt];
 }
 
 -(NSString*) description 

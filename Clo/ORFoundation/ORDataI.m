@@ -420,7 +420,7 @@
 }
 -(enum ORVType) vtype
 {
-    return ORTReal;
+    return ORTDouble;
 }
 -(id<ORTracker>) tracker
 {
