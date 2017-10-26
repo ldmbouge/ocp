@@ -89,6 +89,15 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatNEqual : CPCoreConstraint {
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)x nequals:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPFloatNEqualc : CPCoreConstraint {
     CPFloatVarI* _x;

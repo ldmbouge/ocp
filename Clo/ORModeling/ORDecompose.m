@@ -592,17 +592,29 @@ struct CPVarPair {
             [_model addConstraint:[ORFactory fail:_model]];
         return;
     }else {
+        ORInt length = !lc + !rc;
+        id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORFloat(ORInt i) {
+                                                      return 1;
+                                                  }];
+        if(lc){
+            ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
+            vars[0] = [ORNormalizer floatVarIn:right for:_model];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[[e left] floatValue]]];
+        }else if(rc){
+            id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+            vars[0] = [ORNormalizer floatVarIn:left for:_model];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:0.f]];
+            
+        }else{
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
             ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-            id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
             vars[0] = [ORNormalizer floatVarIn:left for:_model];
             vars[1] = [ORNormalizer floatVarIn:right for:_model];
-            id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                                     range:RANGE(_model,0,1)
-                                                      with:^ORFloat(ORInt i) {
-                                                          return 1;
-                                                      }];
             [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:0.f]];
+        }
     }
 }
 -(void) visitExprLThenI:(ORExprLThenI*)e
@@ -614,19 +626,30 @@ struct CPVarPair {
         if (!isOk)
             [_model addConstraint:[ORFactory fail:_model]];
     }else {
+        ORInt length = !lc + !rc;
+        id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORFloat(ORInt i) {
+                                                      return 1;
+                                                  }];
+        if(lc){
+            ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
+            vars[0] = [ORNormalizer floatVarIn:right for:_model];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[[e left] floatValue]]];
+        }else if(rc){
+            id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+            vars[0] = [ORNormalizer floatVarIn:left for:_model];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:0.f]];
+            
+        }else{
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
             ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-            id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
             vars[0] = [ORNormalizer floatVarIn:left for:_model];
             vars[1] = [ORNormalizer floatVarIn:right for:_model];
-            id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                                     range:RANGE(_model,0,1)
-                                                      with:^ORFloat(ORInt i) {
-                                                          return 1;
-                                                      }];
-           
             [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:0.f]];
-    }
+        }
+  }
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
@@ -637,19 +660,28 @@ struct CPVarPair {
         if (!isOk)
             [_model addConstraint:[ORFactory fail:_model]];
     }else {
+        ORInt length = !lc + !rc;
+        id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORFloat(ORInt i) {
+                                                      return 1;
+                                                  }];
+        if(lc){
+            ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
+            vars[0] = [ORNormalizer floatVarIn:right for:_model];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[[e left] floatValue]]];
+        }else if(rc){
+            id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+            vars[0] = [ORNormalizer floatVarIn:left for:_model];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[[e right] floatValue]]];
+        }else{
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
             ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-            id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
             vars[0] = [ORNormalizer floatVarIn:left for:_model];
             vars[1] = [ORNormalizer floatVarIn:right for:_model];
-            id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                                     range:RANGE(_model,0,1)
-                                                      with:^ORFloat(ORInt i) {
-                                                          return 1;
-                                                      }];
-            
             [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:0.f]];
-     //   }
+        }
     }
 }
 -(void) visitExprGEqualI:(ORExprGEqualI*)e
@@ -661,17 +693,28 @@ struct CPVarPair {
         if (!isOk)
             [_model addConstraint:[ORFactory fail:_model]];
     }else {
+        ORInt length = !lc + !rc;
+        id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
+        id<ORFloatArray> coefs = [ORFactory floatArray:_model
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORFloat(ORInt i) {
+                                                      return 1;
+                                                  }];
+        if(lc){
+            ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
+            vars[0] = [ORNormalizer floatVarIn:right for:_model];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[[e left] floatValue]]];
+        }else if(rc){
+            id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+            vars[0] = [ORNormalizer floatVarIn:left for:_model];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[[e right] floatValue]]];
+        }else{
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
             ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-            id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
             vars[0] = [ORNormalizer floatVarIn:left for:_model];
             vars[1] = [ORNormalizer floatVarIn:right for:_model];
-            id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                                     range:RANGE(_model,0,1)
-                                                      with:^ORFloat(ORInt i) {
-                                                          return 1;
-                                                      }];
             [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:0.f]];
+        }
     }
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e

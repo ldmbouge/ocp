@@ -112,6 +112,7 @@
 +(id<CPConstraint>) floatEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatEqualc: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatNEqualc: (id<CPFloatVar>) x to:(ORFloat) c;
++(id<CPConstraint>) floatNEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatLTc: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatGTc: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatLT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;

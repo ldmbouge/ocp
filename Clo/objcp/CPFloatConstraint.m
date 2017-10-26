@@ -106,6 +106,48 @@
 }
 @end
 
+
+@implementation CPFloatNEqual
+-(id) init:(CPFloatVarI*)x nequals:(CPFloatVarI*)y
+{
+    self = [super initCPCoreConstraint: [x engine]];
+    _x = x;
+    _y = y;
+    return self;
+    
+}
+-(void) post
+{
+    [self propagate];
+    [_x whenBindPropagate:self];
+    [_y whenBindPropagate:self];
+}
+-(void) propagate
+{
+    if ([_x bound]) {
+        if([_y bound]){
+            if ([_x min] == [_y min])
+                failNow();
+            else
+                assignTRInt(&_active, NO, _trail);
+            return;
+        }
+    }
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound];
+}
+-(NSString*)description
+{
+    return [NSString stringWithFormat:@"<%@ != %@>",_x,_y];
+}
+@end
+
 @implementation CPFloatNEqualc
 -(id) init:(CPFloatVarI*)x and:(ORFloat)c
 {
