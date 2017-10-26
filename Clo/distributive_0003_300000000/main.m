@@ -12,15 +12,15 @@ int main(int argc, const char * argv[]) {
             id<ORFloatVar> b = [ORFactory floatVar:model low:-1000000.0f up:1000000.0f];
             id<ORFloatVar> c = [ORFactory floatVar:model low:-1000000.0f up:1000000.0f];
             
-            id<ORFloatVar> assoc1 = [ORFactory floatVar:model];
-            id<ORFloatVar> assoc2 = [ORFactory floatVar:model];
+            id<ORFloatVar> dist1 = [ORFactory floatVar:model];
+            id<ORFloatVar> dist2 = [ORFactory floatVar:model];
             id<ORFloatVar> diffab = [ORFactory floatVar:model];
             id<ORFloatVar> diffac = [ORFactory floatVar:model];
             id<ORFloatVar> diffbc = [ORFactory floatVar:model];
             
             
-            id<ORExpr> delta =  [ORFactory float:model value:0.1f];
-            id<ORExpr> epsilon =  [ORFactory float:model value:30000.f];
+            id<ORExpr> delta =  [ORFactory float:model value:0.03f];
+            id<ORExpr> epsilon =  [ORFactory float:model value:300000000.f];
             
             id<ORExpr> infinity = [ORFactory infinityf:model];
             id<ORExpr> sub_infinity = [ORFactory float:model value:-INFINITY];
@@ -30,22 +30,23 @@ int main(int argc, const char * argv[]) {
             
             [model add:[a geq:b]];
             [model add:[b geq:c]];
+            [model add:[a geq:c]];
             
             
             [model add:[diffab leq:delta]];
             [model add:[diffac leq:delta]];
             [model add:[diffbc leq:delta]];
             
-            [model add:[assoc1 eq:[[a mul:b] mul:c]]];
-            [model add:[assoc2 eq:[a mul:[b mul:c]]]];
+            [model add:[dist1 eq:[a mul:[b plus:c]]]];
+            [model add:[dist2 eq:[[a mul:b] plus:[a mul:c]]]];
             
-            [model add:[assoc1 neq:infinity]];
-            [model add:[assoc1 neq:sub_infinity]];
+            [model add:[dist1 neq:infinity]];
+            [model add:[dist1 neq:sub_infinity]];
             
-            [model add:[assoc2 neq:infinity]];
-            [model add:[assoc2 neq:sub_infinity]];
+            [model add:[dist2 neq:infinity]];
+            [model add:[dist2 neq:sub_infinity]];
             
-            [model add:[[assoc1 sub:assoc2] leq:epsilon]];
+            [model add:[[dist1 sub:dist2] leq:epsilon]];
             
             id<ORFloatVarArray> vars = [model floatVars];
             id<CPProgram> cp = [args makeProgram:model];

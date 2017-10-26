@@ -24,8 +24,8 @@ int main(int argc, const char * argv[]) {
         [args measure:^struct ORResult(){
             
             id<ORModel> model = [ORFactory createModel];
-            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, 3)];
-            id<ORFloatVarArray> y = [ORFactory floatVarArray:model range:RANGE(model, 0, 2)];
+            id<ORFloatVarArray> x = [ORFactory floatVarArray:model range:RANGE(model, 0, 3)  low:-0.2f up:0.2f];
+            id<ORFloatVarArray> y = [ORFactory floatVarArray:model range:RANGE(model, 0, 2)  low:-0.2f up:0.2f];
             id<ORFloatVar> z = [ORFactory floatVar:model];
             id<ORFloatVar> r_0 = [ORFactory floatVar:model];
             id<ORFloatVar> f_x = [ORFactory floatVar:model];
