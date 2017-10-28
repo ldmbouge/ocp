@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-
+#import <ORFoundation/ORController.h>
 
 @interface ORLimitSolutions : ORDefaultController <NSCopying,ORSearchController> {
 @private

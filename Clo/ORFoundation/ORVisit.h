@@ -48,6 +48,8 @@
 @protocol ORObjectiveFunction;
 @protocol ORRealEqualc;
 @protocol ORRealRange;
+@protocol ORIntParam;
+@protocol ORRealParam;
 @protocol ORFloatRange;
 @protocol ORDoubleRange;
 @protocol ORLDoubleRange;

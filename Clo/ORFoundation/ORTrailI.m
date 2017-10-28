@@ -14,9 +14,12 @@
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORData.h>
-#import <ORFoundation/ORVisit.h>
-#import <ORFoundation/ORCommand.h>
+//#import <ORFoundation/ORVisit.h>
+//#import <ORFoundation/ORCommand.h>
 #import <assert.h>
+
+
+@class ORCommandList;
 
 @implementation ORTrailI
 -(ORTrailI*) init
@@ -586,6 +589,8 @@ ORInt trailMagic(ORTrailI* trail)
 }
 -(void)comply:(ORMemoryTrailI*)mt upTo:(ORCommandList*)cl
 {
+  //TOFIX
+  /*
    ORInt fh = [cl memoryFrom];
    ORInt th = [cl memoryTo];
    for(ORInt k=fh;k < th;k++) {
@@ -593,6 +598,7 @@ ORInt trailMagic(ORTrailI* trail)
       if (_csz >= _mxs) [self resize];
       _tab[_csz++] = [mt->_tab[k] retain];
    }
+  */
 }
 -(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th
 {
@@ -740,10 +746,15 @@ void freeTRIntArray(TRIntArray a)
    [buf appendFormat:@"TR<int>(%d)",_trint._val];
    return buf;
 }
+
+@class ORVisitor;
+
 -(void)visit:(ORVisitor*)visitor
 {
-   [visitor visitTrailableInt:self];
+  // TOFIX
+  //[visitor visitTrailableInt:self];
 }
+
 @end
 
 /**********************************************************************************************/

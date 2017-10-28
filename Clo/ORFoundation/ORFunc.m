@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFunc.h>
-#import "math.h"
+#import <math.h>
 
 ORDouble frac(ORDouble f)
 {

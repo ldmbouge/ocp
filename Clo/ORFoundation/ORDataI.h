@@ -10,9 +10,12 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORUtilities/ORCrFactory.h>
 #import <ORFoundation/ORData.h>
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORError.h>
+
+typedef struct timeval ORTimeval;
 
 @interface ORIntegerI : ORExprI<NSCoding,NSCopying,ORInteger>
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value;
@@ -157,5 +160,44 @@
 -(void) setImpl: (id) impl;
 -(id) impl;
 -(NSString*)description;
+@end
+
+@interface ORGamma : ORObject<ORGamma>
+{
+@protected
+   id __strong*  _gamma;
+   id<ORModelMappings> _mappings;
+}
+-(ORGamma*) init;
+-(void) dealloc;
+-(id*) gamma;
+-(id) concretize: (id) o;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
+-(id<ORModelMappings>) modelMappings;
+@end
+
+@interface NSObject (Concretization)
+-(void) visit: (ORVisitor*) visitor;
+@end
+
+@interface ORRuntimeMonitor : NSObject
++(ORLong) cputime;
++(ORLong) microseconds;
++(ORLong) wctime;
++(ORTimeval)now;
++(ORTimeval)elapsedSince:(ORTimeval)tv;
+@end;
+
+@interface ORStreamManager : NSObject
++(void) initialize;
++(void) setDeterministic;
++(void) setRandomized;
++(ORInt) deterministic;
++(ORInt) randomized;
++(void) initSeed: (unsigned short*) seed;
+@end
+
+@interface ORCrFactory (OR)
++(id<ORMutableInteger>) integer:(ORInt) value;
 @end
 

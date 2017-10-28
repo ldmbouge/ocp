@@ -12,7 +12,7 @@
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORArray.h>
-//#import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORSet.h>
 
 @protocol ORExpr;
 @protocol OREngine;
@@ -27,11 +27,16 @@
 @protocol ORDoubleVar;
 @protocol ORLDoubleVar;
 @protocol ORBitVar;
+@protocol ORIntMatrix;
 
+@protocol ORIdArray;
 @protocol ORVarArray;
 @protocol ORExprArray;
 @protocol ORIntVarArray;
 @protocol ORIntVarMatrix;
+
+@protocol ORAutomaton;
+@protocol ORTable;
 
 @protocol ORBasicModel
 -(id<ORObjectiveFunction>) objective;
@@ -680,22 +685,6 @@ enum ORGroupType {
 -(void) emptyPool;
 -(NSUInteger) count;
 @end
-
-
-// pvh: to reconsider the solution pool in this interface; not sure I like them here
-@protocol ORASolver <NSObject,ORTracker,ORGamma>
--(void)               close;
--(id<OREngine>)       engine;
--(id) concretize: (id) o;
--(id<ORObjectiveValue>) objectiveValue;
--(id<ORSolutionPool>) solutionPool;
--(ORBool)ground;
-@end
-
-@protocol ORASearchSolver <ORASolver>
--(id<ORSearchObjectiveFunction>) objective;
-@end
-
 
 // ====== Bit Constraints =====================================
 

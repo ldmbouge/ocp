@@ -10,15 +10,11 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORUtilities/ORCrFactory.h>
 #import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORExpr.h>
 
-typedef struct timeval ORTimeval;
-
-@protocol ORExpr;
 @protocol ORIntRange;
 @protocol ORIntSet;
-@class ORVisitor;
 
 @protocol ORTau <NSObject,NSCopying>
 -(void) set: (id) value forKey: (id) key;
@@ -46,25 +42,6 @@ typedef struct timeval ORTimeval;
 -(id<ORTau>) tau;
 -(id<ORLambda>) lambda;
 -(id) copy;
-@end
-
-@interface ORGamma : ORObject<ORGamma>
-{
-@protected
-   id __strong*  _gamma;
-   id<ORModelMappings> _mappings;
-}
--(ORGamma*) init;
--(void) dealloc;
--(id*) gamma;
--(id) concretize: (id) o;
--(void) setModelMappings: (id<ORModelMappings>) mappings;
--(id<ORModelMappings>) modelMappings;
-@end
-
-
-@interface NSObject (Concretization)
--(void) visit: (ORVisitor*) visitor;
 @end
 
 @protocol ORInteger <ORObject,ORRelation>
@@ -105,23 +82,6 @@ typedef struct timeval ORTimeval;
 -(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 @end
 
-@interface ORRuntimeMonitor : NSObject
-+(ORLong) cputime;
-+(ORLong) microseconds;
-+(ORLong) wctime;
-+(ORTimeval)now;
-+(ORTimeval)elapsedSince:(ORTimeval)tv;
-@end;
-
-@interface ORStreamManager : NSObject
-+(void) initialize;
-+(void) setDeterministic;
-+(void) setRandomized;
-+(ORInt) deterministic;
-+(ORInt) randomized;
-+(void) initSeed: (unsigned short*) seed;
-@end
-
 @protocol ORRandomStream <ORObject>
 -(ORLong) next;
 @end
@@ -136,10 +96,6 @@ typedef struct timeval ORTimeval;
 
 @protocol ORRandomPermutation <ORRandomStream>
 -(ORInt) next;
-@end
-
-@interface ORCrFactory (OR)
-+(id<ORMutableInteger>) integer:(ORInt) value;
 @end
 
 @protocol ORTable <ORObject>

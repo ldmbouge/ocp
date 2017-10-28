@@ -9,13 +9,12 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORData.h>
 #import <ORFoundation/ORTrailable.h>
+#import <ORFoundation/ORSet.h>
 
 @protocol ORExpr;
-@protocol ORIntSet;
-@protocol ORIntRange;
 
 PORTABLE_BEGIN
 

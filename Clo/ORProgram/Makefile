@@ -7,11 +7,12 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-L../CPUKernel -Wl,-rpath=`pwd`/../CPUKernel \
 	-L../objcp -Wl,-rpath=`pwd`/../objcp \
+	-L../objmp -Wl,-rpath=`pwd`/../objmp \
 	-L../ORModeling -Wl,-rpath=`pwd`/../ORModeling \
 	-L../Scheduler/ORScheduler -Wl,-rpath=`pwd`/../Scheduler/ORScheduler \
 	-L../Scheduler/CPScheduler -Wl,-rpath=`pwd`/../Scheduler/CPScheduler \
 	-L../Scheduler/ORSchedulingProgram -Wl,-rpath=`pwd`/../Scheduler/ORSchedulingProgram \
-	-lORUtilities -lORFoundation -lCPUKernel -lobjcp -lORModeling \
+	-lORUtilities -lORFoundation -lCPUKernel -lobjcp -lobjmp -lORModeling \
 	-lORScheduler -lCPScheduler -lORSchedulerProgram
 
 SRCS = CPABS.m CPConcretizer.m  CPFirstFail.m  CPMultiStartSolver.m  \

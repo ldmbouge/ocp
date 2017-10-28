@@ -16,6 +16,7 @@
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORAnnotation.h>
 #import <ORFoundation/ORSelector.h>
+#import <ORFoundation/ORData.h>
 
 @protocol ORSearchEngine;
 @protocol ORSearchController;
