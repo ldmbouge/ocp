@@ -166,11 +166,6 @@
     return _nb;
 }
 
--(id<ORConstraint>) postSSA: (id<ORAddToModel>) model
-{
-    return [model addConstraint:[ORFactory floatSSA: model
-                                              array: [self variables:model]]];
-}
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model
 {
     return [model addConstraint:[ORFactory floatSum: model
@@ -355,10 +350,6 @@
 -(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
 {
     return [_float postIMPLY:model];
-}
--(id<ORConstraint>)postSSA:(id<ORAddToModel>)model
-{
-    return [_float postSSA:model];
 }
 @end
 

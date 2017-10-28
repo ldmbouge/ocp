@@ -213,16 +213,3 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
 -(ORUInt)nbUVars;
 @end
 
-// phy function to link ssa variables
-@interface CPFloatSSA : CPCoreConstraint {
-    CPFloatVarI* _z;
-    CPFloatVarI* _x;
-    CPFloatVarI* _y;
-}
--(id) init:(id)z ssa:(id)x with:(id)y;
--(void) post;
--(NSSet*)allVars;
--(ORUInt)nbUVars;
-@end
-
-

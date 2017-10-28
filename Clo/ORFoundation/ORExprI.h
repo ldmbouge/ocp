@@ -28,7 +28,6 @@
 -(id<ORExpr>) mod: (id) e;
 -(id<ORExpr>) min: (id) e;
 -(id<ORExpr>) max: (id) e;
--(id<ORRelation>) ssa: (id) v with:(id)v2;
 -(id<ORRelation>) eq: (id) e;
 -(id<ORRelation>) neq: (id) e;
 -(id<ORRelation>) leq: (id) e;
@@ -49,7 +48,6 @@
 -(id<ORExpr>) mod: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) min: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) max: (id) e  track:(id<ORTracker>)t;
--(id<ORRelation>) ssa: (id) v with:(id)v2  track:(id<ORTracker>)t;
 -(id<ORRelation>) eq: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) neq: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) leq: (id) e  track:(id<ORTracker>)t;
@@ -237,18 +235,6 @@
 -(ORFloat) fmax;
 -(NSString *)description;
 -(void) visit: (ORVisitor*)v;
-@end
-
-@interface ORExprSSAI : ORExprI<ORRelation,NSCoding>
--(id<ORExpr>) initORExprSSAI: (id<ORVar>) res ssa: (id<ORVar>) left with:(id<ORVar>) right tracker:(id<ORTracker>)tracker;
--(NSString *)description;
--(void) visit: (ORVisitor*)v;
--(id<ORTracker>) tracker;
--(id<ORVar>) res;
--(id<ORVar>) left;
--(id<ORVar>) right;
--(ORVType) vtype;
--(ORRelationType) type;
 @end
 
 @interface ORExprEqualI : ORExprBinaryI<ORRelation,NSCoding> 

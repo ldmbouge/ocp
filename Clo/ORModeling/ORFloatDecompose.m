@@ -284,15 +284,7 @@
     [_model addConstraint: [ORFactory floatDiv:_model var:lV by:rV equal:_rv]];
     [lT release];
     [rT release];
-}
--(void) visitExprSSAI: (ORExprSSAI*) e
-{
-    id<ORFloatVar> lV = (id<ORFloatVar>)[e left];
-    id<ORFloatVar> rV = (id<ORFloatVar>)[e right];
-    id<ORFloatVar> resV = (id<ORFloatVar>)[e res];
-    [_model addConstraint: [ORFactory floatSSA:_model var:lV with:rV equal:resV]];
-}
--(id<ORFloatVar>)result
+}-(id<ORFloatVar>)result
 {
     return _rv;
 }

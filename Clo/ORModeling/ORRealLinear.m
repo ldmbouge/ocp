@@ -242,12 +242,6 @@ static int decCoef(const struct ORRealTerm* t1,const struct ORRealTerm* t2)
     return nil;
 }
 
-- (id<ORConstraint>)postSSA:(id<ORAddToModel>)model
-{
-   assert(NO);
-   return nil;
-}
-
 -(void) postMinimize: (id<ORAddToModel>) model
 {
     [model minimize: [self variables: model] coef: [self coefficients: model]];
@@ -349,11 +343,6 @@ static int decCoef(const struct ORRealTerm* t1,const struct ORRealTerm* t2)
 -(id<ORConstraint>)postGTZ:(id<ORAddToModel>)model
 {
     return [_real postGTZ:model];
-}
-
-- (id<ORConstraint>)postSSA:(id<ORAddToModel>)model
-{
-   return [_real postSSA:model];
 }
 
 @end

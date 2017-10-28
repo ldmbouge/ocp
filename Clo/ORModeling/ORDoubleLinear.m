@@ -165,12 +165,7 @@
 {
     return _nb;
 }
-//TODO rename SSA ?
--(id<ORConstraint>) postSSA: (id<ORAddToModel>) model
-{
-    return [model addConstraint:[ORFactory floatSSA: model
-                                              array: [self variables:model]]];
-}
+
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model
 {
     return [model addConstraint:[ORFactory doubleSum: model
@@ -353,10 +348,6 @@
 -(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
 {
     return [_double postIMPLY:model];
-}
--(id<ORConstraint>)postSSA:(id<ORAddToModel>)model
-{
-    return [_double postSSA:model];
 }
 @end
 

@@ -142,14 +142,13 @@
 //         [v release];
 //         return rv;
 //      }
-  /* hzi : suppose we need some thing like this ? right
-   }else if(e.vtype == ORTFloat){
-       ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
-       ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init:rv model: model];
-       [e visit:v];
-       [v release];
-       return rv;
-   */
+// hzi : suppose we need some thing like this ? right
+//   }else if(e.vtype == ORTFloat){
+//       ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+//       ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init:rv model: model];
+//       [e visit:v];
+//       [v release];
+//       return rv;
    } else {
       ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
       ORIntLinearizer* v = [[ORIntLinearizer alloc] init:rv model: model];
@@ -724,13 +723,6 @@ struct CPVarPair {
     [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
     [linRight release];
     _terms = linLeft;
-}
--(void) visitExprSSAI:(ORExprSSAI*)e
-{
-    id<ORFloatVar> l = (id<ORFloatVar>)[e left];
-    id<ORFloatVar> r = (id<ORFloatVar>)[e right];
-    id<ORFloatVar> res = (id<ORFloatVar>)[e res];
-    [_model addConstraint:[ORFactory floatSSA:_model var:l with:r equal:res]];
 }
 -(void) visitExprNegateI:(ORExprNegateI*) e
 {

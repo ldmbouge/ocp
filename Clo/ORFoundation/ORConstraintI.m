@@ -3400,66 +3400,6 @@
 }
 @end
 
-@implementation ORFloatSSA { // z = x u y
-   id<ORVar> _x;
-   id<ORVar> _y;
-   id<ORVar> _z;
-}
--(ORFloatSSA*)initORFloatSSA:(id<ORVar>)z eq:(id<ORVar>)x with:(id<ORVar>)y
-{
-   self = [super initORConstraintI];
-   _x = x;
-   _y = y;
-   _z = z;
-   return self;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ U %@)",[self class],self,_z,_x,_y];
-   return buf;
-}
--(void)visit:(ORVisitor*)v
-{
-   [v visitFloatSSA:((id<ORFloatSSA>)self)];
-}
--(id<ORVar>) res
-{
-   return _z;
-}
--(id<ORVar>) left
-{
-   return _x;
-}
--(id<ORVar>) right
-{
-   return _y;
-}
--(NSSet*)allVars
-{
-   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
-}
--(NSArray*)allVarsArray
-{
-   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_z];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   _z = [aDecoder decodeObject];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
-}
-@end
-
 @implementation ORFloatLinearEq{
    id<ORVarArray> _ia;
    id<ORFloatArray>  _coefs;
@@ -3902,66 +3842,6 @@
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
    _z = [aDecoder decodeObject];
-   return self;
-}
-@end
-
-@implementation ORDoubleSSA { // z = x u y
-   id<ORVar> _x;
-   id<ORVar> _y;
-   id<ORVar> _z;
-}
--(ORDoubleSSA*)initORDoubleSSA:(id<ORVar>)z eq:(id<ORVar>)x with:(id<ORVar>)y
-{
-   self = [super initORConstraintI];
-   _x = x;
-   _y = y;
-   _z = z;
-   return self;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ U %@)",[self class],self,_z,_x,_y];
-   return buf;
-}
--(void)visit:(ORVisitor*)v
-{
-   [v visitDoubleSSA:((id<ORDoubleSSA>)self)];
-}
--(id<ORVar>) res
-{
-   return _z;
-}
--(id<ORVar>) left
-{
-   return _x;
-}
--(id<ORVar>) right
-{
-   return _y;
-}
--(NSSet*)allVars
-{
-   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
-}
--(NSArray*)allVarsArray
-{
-   return [[[NSArray alloc] initWithObjects:_x,_y,_z, nil] autorelease];
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_z];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   _z = [aDecoder decodeObject];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
    return self;
 }
 @end
@@ -4711,11 +4591,6 @@
    [[e right] visit:self];
 }
 -(void) visitExprMulI: (ORExprBinaryI*) e
-{
-   [[e left] visit:self];
-   [[e right] visit:self];
-}
--(void) visitExprSSAI: (ORExprBinaryI*) e
 {
    [[e left] visit:self];
    [[e right] visit:self];

@@ -500,13 +500,6 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
     assert(NO);
     return nil;
 }
-
-- (id<ORConstraint>)postSSA:(id<ORAddToModel>)model
-{
-   assert(NO);
-   return nil;
-}
-
 @end
 
 
@@ -614,11 +607,5 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return [_real postIMPLY:model];
 }
-
-- (id<ORConstraint>)postSSA:(id<ORAddToModel>)model
-{
-   return [_real postSSA:model];
-}
-
 @end
 

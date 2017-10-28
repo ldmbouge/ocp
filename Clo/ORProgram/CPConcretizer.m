@@ -1276,20 +1276,7 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
--(void) visitFloatSSA:(id<ORFloatSSA>)cstr
-{
-    if (_gamma[cstr.getId] == NULL) {
-    id<ORFloatVar> res = [cstr res];
-    id<ORFloatVar> left = [cstr left];
-    id<ORFloatVar> right = [cstr right];
-    id<CPConstraint> concreteCstr = [CPFactory floatSSA:(id<CPFloatVar>) _gamma[left.getId]
-                                                  with:(id<CPFloatVar>) _gamma[right.getId]
-                                                  equal:(id<CPFloatVar>) _gamma[res.getId]];
-    [_engine add: concreteCstr];
-    _gamma[cstr.getId] = concreteCstr;
-    }
-}
-//--
+//------
 -(void) visitDoubleEqualc:(id<ORDoubleEqualc>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1409,19 +1396,6 @@
                                                          by: (id<CPDoubleVar>) _gamma[right.getId]
                                                       equal: (id<CPDoubleVar>) _gamma[res.getId]
                                          ];
-        [_engine add: concreteCstr];
-        _gamma[cstr.getId] = concreteCstr;
-    }
-}
--(void) visitDoubleSSA:(id<ORDoubleSSA>)cstr
-{
-    if (_gamma[cstr.getId] == NULL) {
-        id<ORDoubleVar> res = [cstr res];
-        id<ORDoubleVar> left = [cstr left];
-        id<ORDoubleVar> right = [cstr right];
-        id<CPConstraint> concreteCstr = [CPFactory doubleSSA:(id<CPDoubleVar>) _gamma[left.getId]
-                                                       with:(id<CPDoubleVar>) _gamma[right.getId]
-                                                      equal:(id<CPDoubleVar>) _gamma[res.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1968,8 +1942,6 @@
 -(void) visitExprPlusI: (id<ORExpr>) e
 {}
 -(void) visitExprMinusI: (id<ORExpr>) e
-{}
--(void) visitExprSSAI: (id<ORExpr>) e
 {}
 -(void) visitExprMulI: (id<ORExpr>) e
 {}

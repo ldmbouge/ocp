@@ -914,12 +914,6 @@
     [[x tracker] trackMutable:o];
     return o;
 }
-+(id<CPConstraint>) floatSSA: (id<CPFloatVar>)x with:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
-{
-    id<CPConstraint> o = [[CPFloatSSA alloc] init:z ssa:x with:y];
-    [[x tracker] trackMutable:o];
-    return o;
-}
 @end
 
 
@@ -1047,12 +1041,6 @@
 +(id<CPConstraint>) doubleDiv: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
 {
     id<CPConstraint> o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-+(id<CPConstraint>) doubleSSA: (id<CPDoubleVar>)x with:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
-{
-    id<CPConstraint> o = [[CPDoubleSSA alloc] init:z ssa:x with:y];
     [[x tracker] trackMutable:o];
     return o;
 }

@@ -285,13 +285,6 @@
     [lT release];
     [rT release];
 }
--(void) visitExprSSAI: (ORExprSSAI*) e
-{
-    id<ORDoubleVar> lV = (id<ORDoubleVar>)[e left];
-    id<ORDoubleVar> rV = (id<ORDoubleVar>)[e right];
-    id<ORDoubleVar> resV = (id<ORDoubleVar>)[e res];
-    [_model addConstraint: [ORFactory doubleSSA:_model var:lV with:rV equal:resV]];
-}
 -(id<ORDoubleVar>)result
 {
     return _rv;

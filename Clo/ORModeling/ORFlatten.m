@@ -416,10 +416,6 @@
 {
    _result = [_into addConstraint:c];
 }
--(void) visitFloatSSA:(id<ORFloatSSA>)c
-{
-    _result = [_into addConstraint:c];
-}
 static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
 {
    if (d == arity) {
@@ -790,7 +786,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
         case ORNeg: rv = [terms postEQZ:model];break;
         case ORRDisj:rv = [terms postDISJ:model];break;
         case ORRImply: rv = [terms postIMPLY:model];break;
-        case ORRSSA: rv = [terms postSSA:model];break;
         default:
             assert(terms == nil);
             break;

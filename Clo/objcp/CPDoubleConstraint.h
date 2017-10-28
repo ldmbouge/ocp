@@ -174,17 +174,3 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
-
-// phy function to link ssa variables
-@interface CPDoubleSSA : CPCoreConstraint {
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
-}
--(id) init:(id)z ssa:(id)x with:(id)y;
--(void) post;
--(NSSet*)allVars;
--(ORUInt)nbUVars;
-@end
-
-

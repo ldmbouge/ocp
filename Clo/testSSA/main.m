@@ -30,7 +30,7 @@ int main(int argc, const char * argv[]) {
 //            {
 //                [g_1 add:[y_1 eq: @(1.f)]];
 //            }
-//            [ORFactory SSA:model on:c_0 var:y_2 with:y_0 or:y_1];
+            [ORFactory phi:model on:c_0 var:y_2 with:y_0 or:y_1];
 //            [model add:g_0];
 //            
             

@@ -505,10 +505,6 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatDiv: visit method not defined"];
 }
--(void) visitFloatSSA: (id<ORFloatSSA>) c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatSSA: visit method not defined"];
-}
 -(void) visitDoubleLinearEq: (id<ORDoubleLinearEq>) c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "DoubleLinearLeq: visit method not defined"];
@@ -540,14 +536,6 @@
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleDiv: visit method not defined"];
-}
--(void) visitDoubleSSA: (id<ORDoubleSSA>) c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleSSA: visit method not defined"];
-}
--(void) visitExprSSAI: (id<ORExpr>) c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ORExprSSAI: visit method not defined"];
 }
 -(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c
 {

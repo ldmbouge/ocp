@@ -22,21 +22,6 @@ int main(int argc, const char * argv[]) {
         id<ORExpr> expr_4 = [ORFactory float:model value:0.5f];
         id<ORExpr> expr_5 = [ORFactory float:model value:0.125f];
         
-        [model add:[c_0 eq:b_if0]];
-        [model add:[[c_0 neg] eq:b_else0]];
-        
-        
-        id<ORGroup> g_0 = [ORFactory group:model guard:b_if0];
-        {
-            [g_0 add:[S_0 eq: [sqrt2_0 mul:[expr_0 plus:[[[I_0 div:@(2.0f)] sub:@(1.0f)] mul:[expr_1 sub:[expr_2 mul:[[I_0 div:@(2.0f)] sub:@(1.0f)]]]]]]]];
-        }
-        id<ORGroup> g_1 = [ORFactory group:model guard:b_else0];
-        {
-            [g_1 add:[S_1 eq:[expr_3 plus:[[I_0 sub:@(-1.0f)] mul:[expr_4 plus:[[I_0 sub:@(1.0f)] mul:[expr_5 plus:[[I_0 sub:@(-1.0f)] mul:@(0.0625f)]]]]]]]];
-        }
-        [model add:[S_2 ssa:S_1 with:S_0]];
-        [model add:g_0];
-        
         //assert(S >= 1. && S <= 2.);
         [model add:[[S_2 lt:@(1.0f)] lor:[S_2 gt:@(2.0f)]]];
         

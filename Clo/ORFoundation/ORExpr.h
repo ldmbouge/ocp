@@ -135,7 +135,6 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
 -(id<ORExpr>) mod: (id) e;
 -(id<ORExpr>) min: (id) e;
 -(id<ORExpr>) max: (id) e;
--(id<ORRelation>) ssa: (id) v with:(id)v2;
 -(id<ORRelation>) eq: (id) e;
 -(id<ORRelation>) neq: (id) e;
 -(id<ORRelation>) leq: (id) e;
@@ -155,7 +154,6 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
 -(id<ORExpr>) mod: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) min: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) max: (id) e  track:(id<ORTracker>)t;
--(id<ORRelation>) ssa:(id)v with:(id)v2 track:(id<ORTracker>)t;
 -(id<ORRelation>) eq: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) neq: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) leq: (id) e  track:(id<ORTracker>)t;

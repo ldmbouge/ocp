@@ -410,12 +410,6 @@ enum ORGroupType {
 -(id<ORFloatVar>) right;
 @end
 
-@protocol ORFloatSSA <ORConstraint>
--(id<ORFloatVar>) res;
--(id<ORFloatVar>) left;
--(id<ORFloatVar>) right;
-@end
-
 @protocol ORFloatLinearEq <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORFloatArray>) coefs;
@@ -459,12 +453,6 @@ enum ORGroupType {
 @end
 
 @protocol ORDoubleDiv <ORConstraint>
--(id<ORDoubleVar>) res;
--(id<ORDoubleVar>) left;
--(id<ORDoubleVar>) right;
-@end
-
-@protocol ORDoubleSSA <ORConstraint>
 -(id<ORDoubleVar>) res;
 -(id<ORDoubleVar>) left;
 -(id<ORDoubleVar>) right;

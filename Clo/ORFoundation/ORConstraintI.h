@@ -467,13 +467,6 @@
 -(id<ORVar>) right;
 @end
 
-@interface ORFloatSSA : ORConstraintI<ORFloatSSA>
--(ORFloatSSA*)initORFloatSSA:(id<ORVar>)z eq:(id<ORVar>)x with:(id<ORVar>)y;
--(id<ORVar>) res;
--(id<ORVar>) left;
--(id<ORVar>) right;
-@end
-
 @interface ORDoubleLinearEq : ORConstraintI<ORDoubleLinearEq>
 -(id) initDoubleLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
@@ -530,14 +523,6 @@
 -(id<ORVar>) left;
 -(id<ORVar>) right;
 @end
-
-@interface ORDoubleSSA : ORConstraintI<ORDoubleSSA>
--(ORDoubleSSA*)initORDoubleSSA:(id<ORVar>)z eq:(id<ORVar>)x with:(id<ORVar>)y;
--(id<ORVar>) res;
--(id<ORVar>) left;
--(id<ORVar>) right;
-@end
-
 
 @interface ORRealLinearEq : ORConstraintI<ORRealLinearEq>
 -(id) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;

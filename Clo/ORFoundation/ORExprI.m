@@ -129,7 +129,6 @@
 -(void) visitExprMulI: (id<ORExpr>) e;
 -(void) visitExprDivI: (id<ORExpr>) e;
 -(void) visitExprModI: (id<ORExpr>) e;
--(void) visitExprSSAI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
@@ -282,11 +281,6 @@
 {
    [[e left] visit:self];
    [[e right] visit:self];
-}
--(void) visitExprSSAI: (ORExprBinaryI*) e
-{
-    [[e left] visit:self];
-    [[e right] visit:self];
 }
 -(void) visitExprMaxI: (ORExprBinaryI*) e
 {
@@ -710,10 +704,6 @@
 {
    return [self max:e track:[self tracker]];
 }
--(id<ORRelation>) ssa: (id) v with:(id)v2
-{
-    return [self ssa:v with:v2 track:[self tracker]];
-}
 -(id<ORRelation>) eq: (id) e
 {
     return [self eq:e track:[self tracker]];
@@ -830,13 +820,6 @@
       return [ORFactory expr:self max:[e asExpression:t] track:t];
    else
       return NULL;
-}
--(id<ORRelation>) ssa: (id) v with:(id) v2 track:(id<ORTracker>)t
-{
-    if ([v conformsToProtocol:@protocol(ORVar)] && [v2 conformsToProtocol:@protocol(ORVar)])
-        return [ORFactory expr:self ssa:v with:v2 track:t];
-    else
-        return NULL;
 }
 -(id<ORRelation>) eq: (id) e  track:(id<ORTracker>)t
 {
@@ -1016,9 +999,8 @@
 {
    ORVType rvt = [_right conformsToProtocol:@protocol(ORExpr)] ? [_right vtype] : ORTInt;
    ORVType lvt = [_left conformsToProtocol:@protocol(ORExpr)] ? [_left vtype] : ORTInt;
-    // hzi : just return ORTBool it's not enought ? 
-//    if([self conformsToProtocol:@protocol(ORRelation)])
-//        return lookup_relation_table[rvt][lvt];
+    if([self conformsToProtocol:@protocol(ORRelation)])
+        return lookup_relation_table[rvt][lvt];
     return lookup_expr_table[rvt][lvt];
 }
 
@@ -1633,74 +1615,6 @@
 {
    self = [super initWithCoder:aDecoder];
    return self;
-}
-@end
-
-@implementation ORExprSSAI{
-    id<ORVar> _res;
-    id<ORVar> _left;
-    id<ORVar> _right;
-    id<ORTracker> _tracker;
-}
--(id<ORExpr>) initORExprSSAI: (id<ORVar>) res ssa:(id<ORVar>)left with:(id<ORVar>)right tracker:(id<ORTracker>)tracker
-{
-    self = [super init];
-    _res = res;
-    _left = left;
-    _right = right;
-    _tracker = tracker;
-    return self;
-}
--(void) dealloc
-{
-    [super dealloc];
-}
--(void) visit: (ORVisitor*) visitor
-{
-    [visitor visitExprSSAI: self];
-}
--(NSString*) description
-{
-    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [rv appendFormat:@"(%@ U %@)",[_left description],[_right description]];
-    return rv;
-}
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-    [aCoder encodeObject:_res];
-    [aCoder encodeObject:_left];
-    [aCoder encodeObject:_right];
-}
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super init];
-    _left  = [aDecoder decodeObject];
-    _right = [aDecoder decodeObject];
-    return self;
-}
--(id<ORVar>) res
-{
-    return _res;
-}
--(id<ORVar>) left
-{
-    return _left;
-}
--(id<ORVar>) right
-{
-    return _right;
-}
--(id<ORTracker>) tracker
-{
-    return _tracker;
-}
--(enum ORVType) vtype
-{
-    return ORTFloat;
-}
--(enum ORRelationType) type
-{
-    return ORRSSA;
 }
 @end
 
