@@ -73,8 +73,6 @@
    ORExprI* _right;
    id<ORTracker> _tracker;
 }
-
-//+ (ORInt**) _lookup_table;
 -(id<ORExpr>) initORExprBinaryI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(id<ORTracker>) tracker;
 -(ORExprI*) left;
