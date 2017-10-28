@@ -81,6 +81,19 @@ static ORVType lookup_relation_table[][9] = {
     {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool,  ORTNA}       //ORTTNA
 };
 
+static ORVType lookup_logical_table[][9] = {
+    //ORTBOOL  ORTINT    ORTREAL,  ORTFLOAT,  ORTDouble,  ORTLDOUBLE, ORTBIT,     ORTSET,  ORTNA
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTBOOL
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTINT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTREAL
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      // ORTFLOAT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTDouble
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTLDouble
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTBIT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTSET
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool,  ORTNA}       //ORTTNA
+};
+
 static ORVType lookup_expr_table[][9] = {
     //ORTBOOL  ORTINT       ORTREAL,  ORTFLOAT,  ORTDouble,  ORTLDOUBLE, ORTBIT,   ORTSET,  ORTNA
     {ORTBool,  ORTInt,    ORTReal,  ORTFloat,   ORTDouble, ORTLDouble, ORTBit,  ORTSet, ORTBool},     // ORTBOOL
@@ -93,27 +106,6 @@ static ORVType lookup_expr_table[][9] = {
     {ORTSet,  ORTSet,     ORTSet,   ORTSet,   ORTSet,     ORTSet,     ORTSet,   ORTSet, ORTSet},      //ORTSET
     {ORTBool,  ORTInt,     ORTReal, ORTFloat,  ORTDouble,  ORTLDouble, ORTBit,    ORTSet,  ORTNA}       //ORTTNA
 };
-
-static inline ORVType lubVType(ORVType t1,ORVType t2)
-{
-   if (t1 == t2)
-      return t1;
-   else if (t1+t2 <= 1)
-      return ORTInt;
-   else if(t1 == ORTReal && t2 <= ORTReal)
-       return ORTReal;
-    else if((t1 == ORTFloat && t2 == ORTBool) || (t2 == ORTFloat && t1 == ORTBool))
-        return ORTBool;
-    else if(t1 == ORTFloat && t2 <= ORTFloat)
-        return ORTFloat;
-    else if (t1 == ORTNA)
-       return t2;
-    else if (t2 == ORTNA)
-       return t1;
-    else
-      return ORTNA;
-}
-
 
 @protocol ORExpr <ORConstraint,NSObject,NSCoding>
 -(id<ORTracker>) tracker;

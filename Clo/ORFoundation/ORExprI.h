@@ -66,6 +66,34 @@
 -(NSSet*)allVars;
 @end
 
+@interface ORExprRelationI : ORExprI<ORRelation,NSCoding>
+{
+    ORExprI* _left;
+    ORExprI* _right;
+    id<ORTracker> _tracker;
+}
+-(id<ORExpr>) initORExprRelationI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(id<ORTracker>) tracker;
+-(ORExprI*) left;
+-(ORExprI*) right;
+-(ORBool) isConstant;
+-(ORVType) vtype;
+@end
+
+@interface ORExprLogiqueI : ORExprI<ORExpr,NSCoding>
+{
+    ORExprI* _left;
+    ORExprI* _right;
+    id<ORTracker> _tracker;
+}
+-(id<ORExpr>) initORExprLogiqueI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(id<ORTracker>) tracker;
+-(ORExprI*) left;
+-(ORExprI*) right;
+-(ORBool) isConstant;
+-(ORVType) vtype;
+@end
+
 @interface ORExprBinaryI : ORExprI<ORExpr,NSCoding>
 {
    ORExprI* _left;
@@ -234,7 +262,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORExprEqualI : ORExprBinaryI<ORRelation,NSCoding> 
+@interface ORExprEqualI : ORExprRelationI<ORRelation,NSCoding>
 -(id<ORExpr>) initORExprEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -243,7 +271,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORExprNotEqualI : ORExprBinaryI<ORRelation,NSCoding>
+@interface ORExprNotEqualI : ORExprRelationI<ORRelation,NSCoding>
 -(id<ORExpr>) initORExprNotEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -252,7 +280,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORExprLEqualI : ORExprBinaryI<ORRelation,NSCoding>
+@interface ORExprLEqualI : ORExprRelationI<ORRelation,NSCoding>
 -(id<ORExpr>) initORExprLEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -261,7 +289,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORExprGEqualI : ORExprBinaryI<ORRelation,NSCoding>
+@interface ORExprGEqualI : ORExprRelationI<ORRelation,NSCoding>
 -(id<ORExpr>) initORExprGEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -270,7 +298,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORExprLThenI : ORExprBinaryI<ORRelation,NSCoding>
+@interface ORExprLThenI : ORExprRelationI<ORRelation,NSCoding>
 -(id<ORExpr>) initORExprLThenI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -279,7 +307,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORExprGThenI : ORExprBinaryI<ORRelation,NSCoding>
+@interface ORExprGThenI : ORExprRelationI<ORRelation,NSCoding>
 -(id<ORExpr>) initORExprGThenI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -379,7 +407,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORDisjunctI : ORExprBinaryI<ORRelation,NSCoding>
+@interface ORDisjunctI : ORExprLogiqueI<ORRelation,NSCoding>
 -(id<ORExpr>) initORDisjunctI: (id<ORExpr>) left or: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -388,7 +416,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORConjunctI : ORExprBinaryI<ORRelation,NSCoding>
+@interface ORConjunctI : ORExprLogiqueI<ORRelation,NSCoding>
 -(id<ORExpr>) initORConjunctI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -397,7 +425,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORImplyI : ORExprBinaryI<ORRelation,NSCoding>
+@interface ORImplyI : ORExprLogiqueI<ORRelation,NSCoding>
 -(id<ORExpr>) initORImplyI: (id<ORExpr>) left imply: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
@@ -406,7 +434,7 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
-@interface ORExprNegateI : ORExprI<ORRelation,NSCoding> {
+@interface ORExprNegateI : ORExprLogiqueI<ORRelation,NSCoding> {
    id<ORExpr> _op;
 }
 -(id<ORExpr>)initORNegateI:(id<ORExpr>)op;

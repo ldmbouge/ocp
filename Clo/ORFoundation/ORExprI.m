@@ -962,6 +962,112 @@
 // --------------------------------------------------------------------------------
 
 
+@implementation ORExprRelationI
+
+-(id<ORExpr>) initORExprRelationI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+    self = [super init];
+    _left = left;
+    _right = right;
+    _tracker = [left tracker];
+    if (!_tracker)
+        _tracker = [right tracker];
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(id<ORExpr>) left
+{
+    return _left;
+}
+-(id<ORExpr>) right
+{
+    return _right;
+}
+-(id<ORTracker>) tracker
+{
+    return _tracker;
+}
+-(ORBool) isConstant
+{
+    return [_left isConstant] && [_right isConstant];
+}
+-(enum ORVType) vtype
+{
+    ORVType rvt = [_right vtype];
+    ORVType lvt = [_left vtype];
+    return lookup_relation_table[rvt][lvt];
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:_left];
+    [aCoder encodeObject:_right];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+    _left  = [aDecoder decodeObject];
+    _right = [aDecoder decodeObject];
+    return self;
+}
+@end
+
+
+@implementation ORExprLogiqueI
+
+-(id<ORExpr>) initORExprLogiqueI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+    self = [super init];
+    _left = left;
+    _right = right;
+    _tracker = [left tracker];
+    if (!_tracker)
+        _tracker = [right tracker];
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(id<ORExpr>) left
+{
+    return _left;
+}
+-(id<ORExpr>) right
+{
+    return _right;
+}
+-(id<ORTracker>) tracker
+{
+    return _tracker;
+}
+-(ORBool) isConstant
+{
+    return [_left isConstant] && [_right isConstant];
+}
+-(enum ORVType) vtype
+{
+    ORVType rvt = [_right vtype];
+    ORVType lvt = [_left vtype];
+    return lookup_logical_table[rvt][lvt];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:_left];
+    [aCoder encodeObject:_right];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+    _left  = [aDecoder decodeObject];
+    _right = [aDecoder decodeObject];
+    return self;
+}
+@end
+
 @implementation ORExprBinaryI
 
 -(id<ORExpr>) initORExprBinaryI: (id<ORExpr>) left and: (id<ORExpr>) right
@@ -996,11 +1102,9 @@
 }
 -(enum ORVType) vtype
 {
-   ORVType rvt = [_right conformsToProtocol:@protocol(ORExpr)] ? [_right vtype] : ORTInt;
+    ORVType rvt = [_right conformsToProtocol:@protocol(ORExpr)] ? [_right vtype] : ORTInt;
    ORVType lvt = [_left conformsToProtocol:@protocol(ORExpr)] ? [_left vtype] : ORTInt;
-    if([self conformsToProtocol:@protocol(ORRelation)])
-        return lookup_relation_table[rvt][lvt];
-    return lookup_expr_table[rvt][lvt];
+   return lookup_expr_table[rvt][lvt];
 }
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
@@ -1735,7 +1839,7 @@
 @implementation ORExprEqualI 
 -(id<ORExpr>) initORExprEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
-   self = [super initORExprBinaryI:left and:right];
+    self = [super initORExprRelationI:left and:right];
    return self;
 }
 -(void) dealloc
@@ -1786,7 +1890,7 @@
 @implementation ORExprNotEqualI
 -(id<ORExpr>) initORExprNotEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
-   self = [super initORExprBinaryI:left and:right];
+   self = [super initORExprRelationI:left and:right];
    return self;
 }
 -(void) dealloc
@@ -1831,7 +1935,7 @@
 @implementation ORExprLEqualI
 -(id<ORExpr>) initORExprLEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
-   self = [super initORExprBinaryI:left and:right];
+   self = [super initORExprRelationI:left and:right];
    return self;
 }
 -(void) dealloc
@@ -1876,8 +1980,8 @@
 @implementation ORExprGEqualI
 -(id<ORExpr>) initORExprGEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
-   self = [super initORExprBinaryI:left and:right];
-   return self;
+    self = [super initORExprRelationI:left and:right];
+    return self;
 }
 -(void) dealloc
 {
@@ -1921,7 +2025,7 @@
 @implementation ORExprLThenI
 -(id<ORExpr>) initORExprLThenI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
-    self = [super initORExprBinaryI:left and:right];
+    self = [super initORExprRelationI:left and:right];
     return self;
 }
 -(void) dealloc
@@ -1966,7 +2070,7 @@
 @implementation ORExprGThenI
 -(id<ORExpr>) initORExprGThenI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
-    self = [super initORExprBinaryI:left and:right];
+    self = [super initORExprRelationI:left and:right];
     return self;
 }
 -(void) dealloc
@@ -2013,7 +2117,7 @@
 @implementation ORDisjunctI
 -(id<ORExpr>) initORDisjunctI: (id<ORExpr>) left or: (id<ORExpr>) right
 {
-   self = [super initORExprBinaryI:left and:right];
+    self = [super initORExprLogiqueI:left and:right];
    return self;
 }
 -(void) dealloc
@@ -2056,7 +2160,7 @@
 @implementation ORConjunctI
 -(id<ORExpr>) initORConjunctI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
-   self = [super initORExprBinaryI:left and:right];
+   self = [super initORExprLogiqueI:left and:right];
    return self;
 }
 -(void) dealloc
@@ -2099,7 +2203,7 @@
 @implementation ORImplyI
 -(id<ORExpr>) initORImplyI: (id<ORExpr>) left imply: (id<ORExpr>) right
 {
-   self = [super initORExprBinaryI:left and:right];
+    self = [super initORExprLogiqueI:left and:right];
    return self;
 }
 -(void) dealloc
