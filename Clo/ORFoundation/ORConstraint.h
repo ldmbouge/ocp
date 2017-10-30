@@ -451,6 +451,54 @@ enum ORGroupType {
 -(ORFloat) cst;
 @end
 
+@protocol ORFloatReifyEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@protocol ORFloatReifyNEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@protocol ORFloatReifyEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@protocol ORFloatReifyNEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@protocol ORFloatReifyLEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@protocol ORFloatReifyLEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@protocol ORFloatReifyGEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@protocol ORFloatReifyGEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
 @protocol ORDoubleMult <ORConstraint>
 -(id<ORDoubleVar>) res;
 -(id<ORDoubleVar>) left;

@@ -1251,7 +1251,7 @@
         [res visit: self];
         [left visit: self];
         [right visit: self];
-        id<CPConstraint> concreteCstr = [CPFactory floatMult: (id<CPFloatVar>) _gamma[left.getId]
+        id<CPConstraint> concreteCstr = [CPFactory floatMult: (id<CPFloatVar>)_gamma[left.getId]
                                                      by: (id<CPFloatVar>) _gamma[right.getId]
                                                   equal: (id<CPFloatVar>) _gamma[res.getId]
                                          ];
@@ -1273,6 +1273,112 @@
             equal: (id<CPFloatVar>) _gamma[res.getId]
             ];
         [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+-(void) visitFloatReifyEqualc: (id<ORFloatReifyEqualc>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORFloatVar> x = [cstr x];
+        ORFloat cst = [cstr cst];
+        [b visit: self];
+        [x visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify:(id<CPIntVar>)_gamma[b.getId] with:(id<CPFloatVar>)_gamma[x.getId] eqi: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatReifyEqual: (id<ORFloatReifyEqual>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORFloatVar> x = [cstr x];
+        id<ORFloatVar> y = [cstr y];
+        ORCLevel annotation = [_notes levelFor:cstr];
+        [b visit: self];
+        [x visit: self];
+        [y visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] eq: _gamma[y.getId] annotation: annotation];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+    
+}
+-(void) visitFloatReifyNEqualc: (id<ORFloatReifyNEqualc>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORFloatVar> x = [cstr x];
+        ORFloat cst = [cstr cst];
+        [b visit: self];
+        [x visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] neqi: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatReifyNEqual: (id<ORFloatReifyNEqual>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORFloatVar> x = [cstr x];
+        id<ORFloatVar> y = [cstr y];
+        ORCLevel annotation = [_notes levelFor:cstr];
+        [b visit: self];
+        [x visit: self];
+        [y visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] neq: _gamma[y.getId] annotation: annotation];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatReifyLEqualc: (id<ORFloatReifyLEqualc>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORFloatVar> x = [cstr x];
+        ORInt cst = [cstr cst];
+        [b visit: self];
+        [x visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatReifyLEqual: (id<ORFloatReifyLEqual>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVar> b = [self concreteVar:[cstr b]];
+        id<CPFloatVar> x = [self concreteVar:[cstr x]];
+        id<CPFloatVar> y = [self concreteVar:[cstr y]];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify: b with: x leq: y annotation: Default];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatReifyGEqualc: (id<ORFloatReifyGEqualc>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORFloatVar> x = [cstr x];
+        ORFloat cst = [cstr cst];
+        [b visit: self];
+        [x visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] geqi: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatReifyGEqual: (id<ORFloatReifyGEqual>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVar> b = [self concreteVar:[cstr b]];
+        id<CPFloatVar> x = [self concreteVar:[cstr x]];
+        id<CPFloatVar> y = [self concreteVar:[cstr y]];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify: b with: y leq: x annotation: Default];
+        [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
 }

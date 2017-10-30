@@ -213,3 +213,105 @@ static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatReifyGEqual : CPCoreConstraint {
+@private
+    CPIntVar* _b;
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) initCPReifyGEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x geqi:(id<CPFloatVar>)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatReifyNEqual : CPCoreConstraint {
+@private
+    CPIntVar* _b;
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPFloatVar>)x neq:(id<CPFloatVar>)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatReifyEqual : CPCoreConstraint {
+@private
+    CPIntVar* _b;
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(id<CPFloatVar>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatReifyLEqual : CPCoreConstraint {
+@private
+    CPIntVar* _b;
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) initCPReifyLEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x leqi:(id<CPFloatVar>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+@interface CPFloatReifyEqualc : CPCoreConstraint {
+@private
+    CPIntVar* _b;
+    CPFloatVarI* _x;
+    ORFloat      _c;
+}
+-(id) initCPReifyEqualc:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+
+@interface CPFloatReifyLEqualc : CPCoreConstraint {
+@private
+    CPIntVar* _b;
+    CPFloatVarI* _x;
+    ORFloat      _c;
+}
+-(id) initCPReifyLEqualc:(id<CPIntVar>)b when:(id<CPFloatVar>)x leqi:(ORFloat)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+@interface CPFloatReifyNotEqualc : CPCoreConstraint {
+@private
+    CPIntVar* _b;
+    CPFloatVarI* _x;
+    ORFloat      _c;
+}
+-(id) initCPReifyNotEqualc:(id<CPIntVar>)b when:(id<CPFloatVar>)x neqi:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+
+@interface CPFloatReifyGEqualc : CPCoreConstraint {
+@private
+    CPIntVar* _b;
+    CPFloatVarI* _x;
+    ORFloat      _c;
+}
+-(id) initCPReifyGEqualc:(id<CPIntVar>)b when:(id<CPFloatVar>)x geqi:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+

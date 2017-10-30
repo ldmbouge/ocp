@@ -125,6 +125,14 @@
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geq:(ORFloat)c;
 +(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z;
 +(id<CPConstraint>) floatDiv: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eq: (id<CPFloatVar>) y annotation:(ORCLevel)c;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geq: (id<CPFloatVar>) y annotation:(ORCLevel)c;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neq: (id<CPFloatVar>) y annotation:(ORCLevel)c;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x leq:(id<CPFloatVar>)y annotation:(ORCLevel)c;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eqi: (ORFloat) i;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neqi: (ORFloat) i;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x leqi: (ORFloat) i;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geqi: (ORFloat) i;
 @end
 
 @interface CPFactory (ORDouble)

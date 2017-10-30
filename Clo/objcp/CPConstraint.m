@@ -914,6 +914,60 @@
     [[x tracker] trackMutable:o];
     return o;
 }
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neq: (id<CPFloatVar>) y annotation:(ORCLevel)c
+{
+    id<CPConstraint> o = [[CPFloatReifyNEqual alloc] initCPReify:b when:x neq:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x leq:(id<CPFloatVar>)y annotation:(ORCLevel)c
+{
+    id<CPConstraint> o = [[CPFloatReifyLEqual alloc] initCPReifyLEqual:b when:x leqi:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geq:(id<CPFloatVar>)y annotation:(ORCLevel)c
+{
+    id<CPConstraint> o = [[CPFloatReifyGEqual alloc] initCPReifyGEqual:b when:x geqi:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eq: (id<CPFloatVar>) y annotation:(ORCLevel)c
+{
+    id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y];
+    [[x tracker] trackMutable: o];
+    return o;
+}
++(id<ORConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eqi: (ORFloat) i
+{
+    id<ORConstraint> o = [[CPFloatReifyEqualc alloc] initCPReifyEqualc: b when: x eqi: i];
+    [[x engine] trackMutable: o];
+    return o;
+}
+
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neqi: (ORFloat) i
+{
+    id<CPConstraint> o = [[CPFloatReifyNotEqualc alloc] initCPReifyNotEqualc: b when: x neqi: i];
+    [[x tracker] trackMutable: o];
+    return o;
+}
+
++(id<ORConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x leqi: (ORFloat) i
+{
+    id<ORConstraint> o = [[CPFloatReifyLEqualc alloc] initCPReifyLEqualc: b when: x leqi: i];
+    [[x tracker] trackMutable: o];
+    return o;
+}
+
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geqi: (ORFloat) i
+{
+    id<CPConstraint> o = [[CPFloatReifyGEqualc alloc] initCPReifyGEqualc: b when: x geqi: i];
+    [[x tracker] trackMutable: o];
+    return o;
+}
 @end
 
 

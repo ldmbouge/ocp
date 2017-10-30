@@ -127,8 +127,6 @@
     id<ORModel> model = [ORFactory createModel];
     
     id<ORFloatVar> x = [ORFactory floatVar:model];
-    id<ORFloatVar> y = [ORFactory floatVar:model];
-    
     id<ORIntVar> b = [ORFactory intVar:model domain:RANGE(model,0,1)];
     
     
@@ -351,7 +349,7 @@
         
         id<ORFloatVar> x = [ORFactory floatVar:model low:0.f up:10.f];
         id<ORFloatVar> y = [ORFactory floatVar:model low:0.f up:10.f];
-        id<ORFloatVar> z = [ORFactory floatVar:model low:0.f up:10.f];
+//        id<ORFloatVar> z = [ORFactory floatVar:model low:0.f up:10.f];
         
         [model add:[x geq:@(2.0f)]];
         [model add:[x leq:@(8.0f)]];
@@ -359,7 +357,7 @@
         [model add:[y gt:@(2.0f)]];
         [model add:[y lt:@(8.0f)]];
         
-        id<CPProgram> cp = [ORFactory createCPProgram:model];
+//        id<CPProgram> cp = [ORFactory createCPProgram:model];
         
         
     }

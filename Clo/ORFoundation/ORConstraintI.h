@@ -467,6 +467,61 @@
 -(id<ORVar>) right;
 @end
 
+
+@interface ORFloatReifyEqualc : ORConstraintI<ORFloatReifyEqualc>
+-(ORFloatReifyEqualc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x eqi:(ORFloat)c;
+@end
+
+@interface ORFloatReifyNEqualc : ORConstraintI<ORFloatReifyNEqualc>
+-(ORFloatReifyNEqualc*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x neqi:(ORFloat)c;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@interface ORFloatReifyEqual : ORConstraintI<ORFloatReifyEqual>
+-(ORFloatReifyEqual*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@interface ORFloatReifyNEqual : ORConstraintI<ORFloatReifyNEqual>
+-(ORFloatReifyNEqual*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x neq:(id<ORFloatVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@interface ORFloatReifyLEqualc : ORConstraintI<ORFloatReifyLEqualc>
+-(ORFloatReifyLEqualc*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x leqi:(ORFloat)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@interface ORFloatReifyLEqual : ORConstraintI<ORFloatReifyLEqual>
+-(ORFloatReifyLEqual*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x leq:(id<ORFloatVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@interface ORFloatReifyGEqualc : ORConstraintI<ORFloatReifyGEqualc>
+-(ORFloatReifyGEqualc*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x geqi:(ORFloat)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@interface ORFloatReifyGEqual : ORConstraintI<ORFloatReifyGEqual>
+-(ORFloatReifyGEqual*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x geq:(id<ORFloatVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+
 @interface ORDoubleLinearEq : ORConstraintI<ORDoubleLinearEq>
 -(id) initDoubleLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
