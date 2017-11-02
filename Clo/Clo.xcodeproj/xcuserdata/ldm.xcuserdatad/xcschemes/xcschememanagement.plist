@@ -167,7 +167,7 @@
 		<key>Rosenbrock.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>201</integer>
+			<integer>202</integer>
 		</dict>
 		<key>SMTLIB2.xcscheme</key>
 		<dict>
@@ -209,6 +209,16 @@
 			<key>orderHint</key>
 			<integer>122</integer>
 		</dict>
+		<key>TestVtype.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>223</integer>
+		</dict>
+		<key>Testfloat.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>230</integer>
+		</dict>
 		<key>UTC.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -218,6 +228,111 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>141</integer>
+		</dict>
+		<key>Wilkinsons.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>203</integer>
+		</dict>
+		<key>add_01_05_1.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>224</integer>
+		</dict>
+		<key>add_01_05_2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>225</integer>
+		</dict>
+		<key>add_01_05_3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>226</integer>
+		</dict>
+		<key>add_01_05_4.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>227</integer>
+		</dict>
+		<key>add_01_1000_1.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>219</integer>
+		</dict>
+		<key>add_01_1000_2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>220</integer>
+		</dict>
+		<key>add_01_1000_3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>221</integer>
+		</dict>
+		<key>add_01_1000_4.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>222</integer>
+		</dict>
+		<key>add_01_100_1.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>215</integer>
+		</dict>
+		<key>add_01_100_2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>216</integer>
+		</dict>
+		<key>add_01_100_3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>217</integer>
+		</dict>
+		<key>add_01_100_4.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>218</integer>
+		</dict>
+		<key>add_01_10_1.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>211</integer>
+		</dict>
+		<key>add_01_10_2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>212</integer>
+		</dict>
+		<key>add_01_10_3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>213</integer>
+		</dict>
+		<key>add_01_10_4.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>214</integer>
+		</dict>
+		<key>add_01_1_1.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>207</integer>
+		</dict>
+		<key>add_01_1_2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>208</integer>
+		</dict>
+		<key>add_01_1_3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>209</integer>
+		</dict>
+		<key>add_01_1_4.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>210</integer>
 		</dict>
 		<key>ais.xcscheme_^#shared#^_</key>
 		<dict>
@@ -262,12 +377,12 @@
 		<key>cancellation.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>197</integer>
+			<integer>196</integer>
 		</dict>
 		<key>cardinalityBench.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>200</integer>
+			<integer>202</integer>
 		</dict>
 		<key>circle.xcscheme_^#shared#^_</key>
 		<dict>
@@ -307,17 +422,22 @@
 		<key>degreeBench.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>199</integer>
+			<integer>198</integer>
 		</dict>
 		<key>diet.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>25</integer>
 		</dict>
+		<key>distributive_0003_300000000.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>229</integer>
+		</dict>
 		<key>doppler.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>203</integer>
+			<integer>206</integer>
 		</dict>
 		<key>driver.xcscheme</key>
 		<dict>
@@ -332,12 +452,12 @@
 		<key>e1_1.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>197</integer>
+			<integer>199</integer>
 		</dict>
 		<key>e1_2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>198</integer>
+			<integer>200</integer>
 		</dict>
 		<key>eq20.xcscheme_^#shared#^_</key>
 		<dict>
@@ -387,17 +507,17 @@
 		<key>heron.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>193</integer>
+			<integer>192</integer>
 		</dict>
 		<key>heron10-8.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>198</integer>
+			<integer>199</integer>
 		</dict>
 		<key>heron156.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>194</integer>
+			<integer>197</integer>
 		</dict>
 		<key>iCP.xcscheme</key>
 		<dict>
@@ -417,7 +537,7 @@
 		<key>jetEngine.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>204</integer>
+			<integer>207</integer>
 		</dict>
 		<key>jobshop.xcscheme_^#shared#^_</key>
 		<dict>
@@ -519,35 +639,50 @@
 			<key>orderHint</key>
 			<integer>66</integer>
 		</dict>
+		<key>mul_00003_30000.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>228</integer>
+		</dict>
 		<key>multiRumps.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>191</integer>
-		</dict>
-		<key>multimeasure.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>200</integer>
-		</dict>
-		<key>multinewton.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>196</integer>
-		</dict>
-		<key>multinewtonall.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>199</integer>
-		</dict>
-		<key>multirumpsall.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>194</integer>
 		</dict>
-		<key>newton.xcscheme</key>
+		<key>multimeasure.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>197</integer>
+		</dict>
+		<key>multinewton.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>195</integer>
+		</dict>
+		<key>multinewtonall.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>198</integer>
+		</dict>
+		<key>multirumpsall.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>192</integer>
+		</dict>
+		<key>multisineTaylor.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>204</integer>
+		</dict>
+		<key>multisintaylorAll.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>205</integer>
+		</dict>
+		<key>newton.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>196</integer>
 		</dict>
 		<key>nfraction.xcscheme_^#shared#^_</key>
 		<dict>
@@ -634,6 +769,11 @@
 			<key>orderHint</key>
 			<integer>89</integer>
 		</dict>
+		<key>puma.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>201</integer>
+		</dict>
 		<key>qg7.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -707,7 +847,7 @@
 		<key>rumpsygt1e39.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>193</integer>
+			<integer>191</integer>
 		</dict>
 		<key>scene.xcscheme_^#shared#^_</key>
 		<dict>
@@ -727,7 +867,7 @@
 		<key>sineOrder3.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>202</integer>
+			<integer>200</integer>
 		</dict>
 		<key>sinetaylor.xcscheme</key>
 		<dict>
@@ -737,7 +877,7 @@
 		<key>sinetaylorAbs.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>192</integer>
+			<integer>193</integer>
 		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
@@ -767,12 +907,12 @@
 		<key>slope26+10.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>196</integer>
+			<integer>194</integer>
 		</dict>
 		<key>slope26-1.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>192</integer>
+			<integer>193</integer>
 		</dict>
 		<key>slope26-10.xcscheme</key>
 		<dict>
@@ -812,7 +952,7 @@
 		<key>square10.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>206</integer>
+			<integer>203</integer>
 		</dict>
 		<key>stressLimit.xcscheme_^#shared#^_</key>
 		<dict>
@@ -854,6 +994,11 @@
 			<key>orderHint</key>
 			<integer>128</integer>
 		</dict>
+		<key>testSSA.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>206</integer>
+		</dict>
 		<key>testScheduler.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -867,7 +1012,7 @@
 		<key>turbine.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>205</integer>
+			<integer>204</integer>
 		</dict>
 		<key>vietnameseSnake.xcscheme_^#shared#^_</key>
 		<dict>
