@@ -1870,16 +1870,17 @@ static ORTIntHandler *ORTInt_singleton = nil;
 {
    ORExprI* newleft  = right;
    ORExprI* newright = left;    // switch side and pretend it is ≤
+   id<ORIntVar> rv = nil;
    id<TypeNormalizer> recVisit = vtype2Obj(newleft.vtype);
    if ([newleft isConstant]) {
-      _rv = [recVisit reifyGEQc:_model other:newright constant:left]; // [self reifyGEQc:_model other:newright constant:[left min]];
+      rv = [recVisit reifyGEQc:_model other:newright constant:left]; // [self reifyGEQc:_model other:newright constant:[left min]];
    } else if ([newright isConstant]) {
-      _rv = [recVisit reifyLEQc:_model other:newleft constant:right]; //[self reifyLEQc:_model other:newleft constant:[right min]];
+      rv = [recVisit reifyLEQc:_model other:newleft constant:right]; //[self reifyLEQc:_model other:newleft constant:[right min]];
    } else
       //id<ORIntVar> _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
-      _rv =  [recVisit reifyLEQ:_model left:newleft right:newright];  //[self reifyLEQ:_model left:newleft right:newright];
+      rv =  [recVisit reifyLEQ:_model left:newleft right:newright];  //[self reifyLEQ:_model left:newleft right:newright];
    [recVisit release];
-   return _rv;
+   return rv;
 }
 
 @end
