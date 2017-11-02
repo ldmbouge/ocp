@@ -14,60 +14,9 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPFloatDom.h>
-#include <fpi.h>
+
 
 @class CPFloatVarI;
-
-typedef struct {
-    float_interval  result;
-    float_interval  interval;
-    int  changed;
-} intersectionInterval;
-
-static inline float_interval makeFloatInterval(float min, float max)
-{
-    return (float_interval){min,max};
-}
-static inline intersectionInterval intersection(int changed,float_interval r, float_interval x, ORDouble percent)
-{
-    double reduced = 0;
-    if(percent == 0.0)
-        fpi_narrowf(&r, &x, &changed);
-    else{
-        fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
-    }
-    return (intersectionInterval){r,x,changed};
-}
-static inline int sign(float_cast p){
-    if(p.parts.sign) return -1;
-    return 1;
-}
-static inline unsigned long long cardinality(float xmin, float xmax){
-    float_cast i_inf;
-    float_cast i_sup;
-    i_inf.f = xmin;
-    i_sup.f = xmax;
-    if(xmin == xmax) return 1.0;
-    if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX;
-    long long res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
-    return (res < 0) ? -res : res;
-}
-static inline bool isDisjointWith(float xmin,float xmax,float ymin, float ymax)
-{
-    return (xmin < ymin &&  xmax < ymin) || (ymin < xmin && ymax < xmin);
-}
-static inline bool isIntersectionWith(float xmin,float xmax,float ymin, float ymax)
-{
-    return !isDisjointWith(xmin, xmax, ymin, ymax);
-}
-static inline bool canPrecede(float xmin,float xmax,float ymin, float ymax)
-{
-    return xmin < ymin &&  xmax < ymax;
-}
-static inline bool canFollow(float xmin,float xmax,float ymin, float ymax)
-{
-    return xmin > ymin && xmax > ymax;
-}
 
 @interface CPFloatEqual : CPCoreConstraint {
     CPFloatVarI* _x;

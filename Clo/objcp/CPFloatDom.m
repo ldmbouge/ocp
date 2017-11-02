@@ -123,6 +123,7 @@
 {
     return _domain;
 }
+// HZI_TODO make this following 3 methods has function
 -(ORDouble) cardinality
 {
     float_cast i_inf;

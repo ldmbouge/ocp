@@ -330,22 +330,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom domain];
 }
--(ORBool) isIntersectingWith : (CPFloatVarI*) y
-{
-    return ![self isDisjointWith:y];
-}
--(ORBool) isDisjointWith : (id<CPFloatVar>) y
-{
-    return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
-}
--(ORBool) canPrecede : (id<CPFloatVar>) y
-{
-    return [self min] < [y min] && [self max] < [y max];
-}
--(ORBool) canFollow : (id<CPFloatVar>) y
-{
-    return [self min] > [y min] && [self max] > [y max];
-}
 -(void) assignRelaxationValue: (ORFloat) f
 {
     if (f < [_dom min] && f > [_dom max])
@@ -652,21 +636,5 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
     return 0.0;
-}
--(ORBool) isIntersectingWith : (CPFloatVarI*) y
-{
-    return ![self isDisjointWith:y];
-}
--(ORBool) isDisjointWith : (id<CPFloatVar>) y
-{
-    return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
-}
--(ORBool) canPrecede : (id<CPFloatVar>) y
-{
-    return [self min] < [y min] && [self max] < [y max];
-}
--(ORBool) canFollow : (id<CPFloatVar>) y
-{
-    return [self min] > [y min] && [self max] > [y max];
 }
 @end

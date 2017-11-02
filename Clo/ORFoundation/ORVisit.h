@@ -53,6 +53,11 @@
 @protocol ORFloatRange;
 @protocol ORDoubleRange;
 @protocol ORLDoubleRange;
+@protocol ORInteger;
+@protocol ORFloatNumber;
+@protocol ORDoubleNumber;
+@protocol ORMutableInteger;
+@protocol ORMutableDouble;
 
 
 
@@ -184,6 +189,14 @@
 -(void) visitFloatLinearGEQ: (id<ORFloatLinearGEQ>) c;
 -(void) visitFloatMult: (id<ORFloatMult>) c;
 -(void) visitFloatDiv: (id<ORFloatDiv>) c;
+-(void) visitFloatReifyEqualc: (id<ORConstraint>)c;
+-(void) visitFloatReifyEqual: (id<ORConstraint>)c;
+-(void) visitFloatReifyNEqualc: (id<ORConstraint>)c;
+-(void) visitFloatReifyNEqual: (id<ORConstraint>)c;
+-(void) visitFloatReifyLEqualc: (id<ORConstraint>)c;
+-(void) visitFloatReifyLEqual: (id<ORConstraint>)c;
+-(void) visitFloatReifyGEqualc: (id<ORConstraint>)c;
+-(void) visitFloatReifyGEqual: (id<ORConstraint>)c;
 -(void) visitDoubleEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleNEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleLinearEq: (id<ORConstraint>) c;

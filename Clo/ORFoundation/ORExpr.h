@@ -12,6 +12,7 @@
 #import <ORUtilities/ORTypes.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORVisit.h>
 
 @protocol ORRelation;
 @protocol ORExpr;
@@ -30,7 +31,6 @@ typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORRDisj = 8,
    ORRConj = 9,
    ORRImply = 10,
-   ORRSSA = 11
 };
 
 typedef NS_ENUM(NSUInteger,ORVType) {
@@ -80,6 +80,7 @@ static ORVType lookup_relation_table[][9] = {
     {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTSET
     {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool,  ORTNA}       //ORTTNA
 };
+
 
 static ORVType lookup_logical_table[][9] = {
     //ORTBOOL  ORTINT    ORTREAL,  ORTFLOAT,  ORTDouble,  ORTLDOUBLE, ORTBIT,     ORTSET,  ORTNA
@@ -181,4 +182,3 @@ static ORVType lookup_expr_table[][9] = {
 -(id<ORRelation>) lt: (id<ORExpr>) e;
 -(id<ORRelation>) gt: (id<ORExpr>) e;
 @end
-

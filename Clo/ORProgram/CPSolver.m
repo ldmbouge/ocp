@@ -26,8 +26,10 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
+#import <objcp/CPFloatVarI.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
+
 
 #if defined(__linux__)
 #import <values.h>
@@ -1910,7 +1912,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    return [self absorptionQuantity:x[i]];
+                                    return [self absorptionQuantity:x[i]].quantity;
                                  }];
    
    [[self explorer] applyController:t in:^{
@@ -1932,7 +1934,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    return [self absorptionQuantity:x[i]];
+                                    return [self absorptionQuantity:x[i]].quantity;
                                  }];
    
    [[self explorer] applyController:t in:^{
@@ -2001,7 +2003,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    ORDouble c = [self absorptionQuantity:x[i]];
+                                    ORDouble c = [self absorptionQuantity:x[i]].quantity;
                                     if(c > taux){
                                        [considered addObject:@(i)];
                                        found = YES;
@@ -2036,6 +2038,7 @@
          [considered removeAllObjects];
       } while (true);
    }];
+   //   [considered release];
 }
 
 -(void) combinedDensWithAbsSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
@@ -2087,7 +2090,7 @@
          ORInt ind = 0;
          for (ORInt j = 0; j < [considered count]; j++) {
             ind = [considered[j] intValue];
-            val = [self absorptionQuantity:(x[ind])];
+            val = [self absorptionQuantity:(x[ind])].quantity;
             if (val > choosed) {
                choosed = val;
                i.index = [considered[j] intValue];
@@ -2115,6 +2118,7 @@
          [considered removeAllObjects];
       } while (true);
    }];
+//   [considered release];
 }
 
 
@@ -2163,6 +2167,25 @@
    while (![xi bound]) {
       [self float6WaySplit:x];
    }
+}
+
+//hzi: check which way I can do alt part with ldm
+-(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<ORFloatVar>) y
+{
+   id<CPFloatVar> cx = _gamma[getId(x)];
+   id<CPFloatVar> cy = _gamma[getId(y)];
+   if([cx bound] && [cy bound]) return;
+   //ax should be equal to fmax(x.low,x.up) and ay should be equal y inter AbsI(x)
+   ORFloat ax = fmaxFlt([cx min], [cx max]);
+   float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
+   [_search try:^{
+      [self floatIntervalImpl:cx low:ax up:ax];
+      [self floatIntervalImpl:cy low:ay.inf up:ay.sup];
+   } alt:^{
+      //neq ax
+      //[y.low,ay.inf[,[ay.inf,ay.sup],]ay.sup,y.up]
+   }];
+   
 }
 
 //split in 2 intervals Once
@@ -2634,16 +2657,67 @@
    }
    return max;
 }
--(ORDouble)  absorptionQuantity:(id<ORVar>) x
+-(ORDouble) computeAbsorptionQuantity:(id<ORFloatVar>)y by:(id<ORFloatVar>)x
+{
+   CPFloatVarI* cx = _gamma[getId(x)];
+   id<CPFloatVar> cy = _gamma[getId(y)];
+   float_interval ax = computeAbsordedInterval(cx);
+   if(isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max])){
+      return cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max]))/[cy cardinality];
+   }
+   return 0.0;
+}
+-(AbsElement*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
+{
+   ORULong size = [vars count];
+   NSArray* csts = [_model constraints];
+   AbsElement *abs = malloc(sizeof(AbsElement) * size);
+   NSMutableArray<NSMutableSet*> *involementInConstraints = [[NSMutableArray alloc] initWithCapacity:size];
+   ORUInt id_v;
+   ORDouble absV;
+   for (id<ORConstraint> c in csts)
+   {
+      for (id<ORVar> v in vars) {
+         //hzi does it work ? or should use a dictionnary
+         id_v = [v getId];
+         [[involementInConstraints objectAtIndex:id_v] unionSet:[c allVars]];
+      }
+   }
+   for (ORUInt i = [vars low]; i < size ; i++) {
+      for (ORUInt j = i + 1; j < size; j++) {
+         if([[involementInConstraints objectAtIndex:i] member:vars[j]]){
+            absV = [self computeAbsorptionQuantity:vars[i] by:vars[j]];
+            if(absV > 0){
+               abs[i].quantity += absV;
+               [abs[i].vars setByAddingObject:vars[j]];
+            }
+            absV = [self computeAbsorptionQuantity:vars[j] by:vars[i]];
+            if(absV > 0){
+               abs[i].quantity += absV;
+               [abs[i].vars setByAddingObject:vars[j]];
+            }
+         }
+      }
+   }
+   return  abs;
+}
+-(AbsElement)  absorptionQuantity:(id<ORVar>) x
 {
    NSArray* csts = [_model constraints];
+   NSMutableSet* vars = [[NSMutableSet alloc] init];
    ORDouble res = 0.0;
+    ORDouble current = 0.0;
    for (ORInt i = 0; i < [csts count];i++)
    {
       id<CPConstraint> c = _gamma[[csts[i] getId]];
-      res += [c leadToAnAbsorption:x];
+      if(! [c memberVar:x]) continue;
+       current = [c leadToAnAbsorption:x];
+       if(current > 0.0){
+           res += current;
+           [vars unionSet:[c allVars]];
+       }
    }
-   return res;
+    return (AbsElement){res,vars};
 }
 -(ORDouble)  cancellationQuantity:(id<ORVar>) x
 {
@@ -2652,6 +2726,7 @@
    for (ORInt i = 0; i < [csts count];i++)
    {
       id<CPConstraint> c = _gamma[[csts[i] getId]];
+      if(! [c memberVar:x]) continue;
       res += [c leadToACancellation:x];
    }
    assert(res != NAN);

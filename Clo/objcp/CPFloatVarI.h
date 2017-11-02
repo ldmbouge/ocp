@@ -18,6 +18,12 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
+#include "fpi.h"
+
+#define NB_FLOAT_BY_E (8388608)
+#define S_PRECISION 23
+#define E_MAX (254)
+
 @protocol CPFloatVarNotifier;
 
 @protocol CPFloatVarSubscriber <NSObject>
@@ -95,3 +101,96 @@ typedef struct  {
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 @end
+
+/*useful struct to get exponent mantissa and sign*/
+typedef union {
+    float f;
+    struct {
+        unsigned int mantisa : 23;
+        unsigned int exponent : 8;
+        unsigned int sign : 1;
+    } parts;
+} float_cast;
+
+
+typedef struct {
+    float_interval  result;
+    float_interval  interval;
+    int  changed;
+} intersectionInterval;
+
+static inline int sign(float_cast p){
+    if(p.parts.sign) return -1;
+    return 1;
+}
+
+static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
+{
+    return (xmin < ymin &&  xmax < ymin) || (ymin < xmin && ymax < xmin);
+}
+
+static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float ymax)
+{
+    return isDisjointWithV(xmin,xmax,ymin,ymax);
+}
+
+static inline unsigned long long cardinalityV(float xmin, float xmax){
+    float_cast i_inf;
+    float_cast i_sup;
+    i_inf.f = xmin;
+    i_sup.f = xmax;
+    if(xmin == xmax) return 1.0;
+    if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX;
+    long long res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+    return (res < 0) ? -res : res;
+}
+
+static inline bool isDisjointWith(CPFloatVarI* x, CPFloatVarI* y)
+{
+    return isDisjointWithV([x min], [x max], [y min], [y max]);
+}
+
+static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
+{
+    return !isDisjointWithV([x min],[x max], [y min], [y max]);
+}
+
+static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
+{
+    return [x min] < [y min] &&  [x max] < [y max];
+}
+static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
+{
+    return [x min] > [y min ] && [x max] > [y max];
+}
+
+static inline ORDouble cardinality(CPFloatVarI* x)
+{
+    return cardinalityV([x min], [x max]);
+}
+static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
+{
+    ORFloat m, min, max;
+    ORInt e;
+    m = fmaxFlt([x min],[x max]);
+    frexpf(m, &e);
+    min = -pow(2.0,e - S_PRECISION - 1);
+    max = pow(2.0,e - S_PRECISION - 1);
+    return (float_interval){min,max};
+}
+
+static inline float_interval makeFloatInterval(float min, float max)
+{
+    return (float_interval){min,max};
+}
+
+static inline intersectionInterval intersection(int changed,float_interval r, float_interval x, ORDouble percent)
+{
+    double reduced = 0;
+    if(percent == 0.0)
+        fpi_narrowf(&r, &x, &changed);
+    else{
+        fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
+    }
+    return (intersectionInterval){r,x,changed};
+}

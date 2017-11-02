@@ -12,21 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
-
-#include <fpi.h>
-
-#define NB_FLOAT_BY_E (8388608)
-#define E_MAX (254)
-
-/*useful struct to get exponent mantissa and sign*/
-typedef union {
-    float f;
-    struct {
-        unsigned int mantisa : 23;
-        unsigned int exponent : 8;
-        unsigned int sign : 1;
-    } parts;
-} float_cast;
+#import <objcp/CPFloatVarI.h>
 
 
 @interface CPFloatDom : NSObject<CPFloatDom,NSCopying> {

@@ -3745,7 +3745,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitReifyEqualc:self];
+   [v visitFloatReifyEqualc:self];
 }
 -(id<ORIntVar>) b
 {
@@ -3805,7 +3805,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitReifyNEqualc:self];
+   [v visitFloatReifyNEqualc:self];
 }
 -(id<ORIntVar>) b
 {
@@ -3865,7 +3865,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitReifyEqual:self];
+   [v visitFloatReifyEqual:self];
 }
 -(id<ORIntVar>) b
 {
@@ -3925,7 +3925,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitReifyNEqual:self];
+   [v visitFloatReifyNEqual:self];
 }
 -(id<ORIntVar>) b
 {
@@ -3985,7 +3985,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitReifyLEqualc:self];
+   [v visitFloatReifyLEqualc:self];
 }
 -(id<ORIntVar>) b
 {
@@ -4045,7 +4045,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitReifyLEqual:self];
+   [v visitFloatReifyLEqual:self];
 }
 -(id<ORIntVar>) b
 {
@@ -4105,7 +4105,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitReifyGEqualc:self];
+   [v visitFloatReifyGEqualc:self];
 }
 -(id<ORIntVar>) b
 {
@@ -4161,7 +4161,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitReifyGEqual:self];
+   [v visitFloatReifyGEqual:self];
 }
 -(id<ORIntVar>) b
 {

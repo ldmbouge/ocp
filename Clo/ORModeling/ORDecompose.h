@@ -59,3 +59,45 @@
 +(void)doubleVar:(id<ORDoubleVar>)var equal:(id<ORDoubleLinear>)e for:(id<ORAddToModel>) model;
 
 @end
+
+@interface ORVTypeHandler : NSObject
+-(ORVType) value;
++(ORVTypeHandler*) instance;
+-(id<ORIntVar>) reifyEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORIntVar>) reifyNEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORIntVar>) reifyLEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORIntVar>) reifyGEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+@end
+
+//hzi : use NSNumber work ? 
+@interface ORTIntHandler : ORVTypeHandler<NSObject>
++(ORTIntHandler*) instance;
+-(id<ORIntVar>) reifyEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
+-(id<ORIntVar>) reifyNEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
+-(id<ORIntVar>) reifyLEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
+-(id<ORIntVar>) reifyGEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
+@end
+
+@interface ORTBoolHandler : ORVTypeHandler<NSObject>
++(ORTBoolHandler*) instance;
+@end
+
+@interface ORTFloatHandler : ORVTypeHandler<NSObject>
++(ORTFloatHandler*) instance;
+@end
+
+@interface ORTDoubleHandler : ORVTypeHandler<NSObject>
++(ORTDoubleHandler*) instance;
+@end
+
+
+
+static inline ORVTypeHandler* vtype2Object(ORVType type){
+    switch(type){
+        case  ORTBool    : return [ORTBoolHandler instance];
+        case  ORTInt     : return [ORTIntHandler instance];
+        case  ORTFloat   : return [ORTFloatHandler instance];
+        default         : return [ORVTypeHandler instance];
+    }
+}
+

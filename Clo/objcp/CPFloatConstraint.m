@@ -32,7 +32,7 @@
         [_x bind:[_y value]];
         return;
     }
-    if(![_x isIntersectingWith:_y]){
+    if(isDisjointWith(_x,_y)){
         failNow();
     }else{
         ORFloat min = maxFlt([_x min], [_y min]);
@@ -54,7 +54,7 @@
         assignTRInt(&_active, NO, _trail);
         return;
     }
-    if(![_x isIntersectingWith:_y]){
+    if(isDisjointWith(_x,_y)){
         failNow();
     }else{
         ORFloat min = maxFlt([_x min], [_y min]);
@@ -64,7 +64,6 @@
     }
 
 }
-
 -(NSSet*)allVars
 {
     return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
@@ -199,9 +198,9 @@
 }
 -(void) propagate
 {
-    if([_x canFollow:_y])
+    if(canFollow(_x,_y))
         failNow();
-    if([_x isIntersectingWith:_y]){
+    if(isIntersectingWith(_x,_y)){
         if([_x min] >= [_y min]){
             ORFloat nmin = fp_next_float([_x min]);
             [_y updateMin:nmin];
@@ -247,9 +246,9 @@
 }
 -(void) propagate
 {
-    if([_x canPrecede:_y])
+    if(canPrecede(_x,_y))
         failNow();
-    if([_x isIntersectingWith:_y]){
+    if(isIntersectingWith(_x,_y)){
         if([_x min] <= [_y min]){
             ORFloat pmin = fp_next_float([_y min]);
             [_x updateMin:pmin];
@@ -296,9 +295,9 @@
 }
 -(void) propagate
 {
-    if([_x canFollow:_y])
+    if(canFollow(_x,_y))
         failNow();
-    if([_x isIntersectingWith:_y]){
+    if(isIntersectingWith(_x,_y)){
         if([_x min] > [_y min]){
             ORFloat nmin = [_x min];
             [_y updateMin:nmin];
@@ -344,9 +343,9 @@
 }
 -(void) propagate
 {
-    if([_x canPrecede:_y])
+    if(canPrecede(_x,_y))
         failNow();
-    if([_x isIntersectingWith:_y]){
+    if(isIntersectingWith(_x,_y)){
         if([_x min] < [_y min]){
             ORFloat pmin = [_y min];
             [_x updateMin:pmin];
@@ -459,18 +458,20 @@
     if([x getId] == [_y getId]){
         m = maxFlt(fabsf([_y min]),fabs([_y max]));
         frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
-        min = -pow(2.0,e - 23 - 1);
-        max = pow(2.0,e -23 - 1);
-        if(isIntersectionWith(min, max, [_y min], [_y max])){
-            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        ORInt e_r = e - S_PRECISION - 1;
+        min = -pow(2.0,e_r);
+        max = pow(2.0,e_r);
+        if(isIntersectingWithV(min, max, [_y min], [_y max])){
+            return cardinalityV(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
         }
     }else if([x getId] == [_x getId]){
         m = maxFlt(fabsf([_x min]),fabs([_x max]));
         frexpf((maxFlt(fabsf([_x min]),fabs([_x max]))), &e);
-        min = -pow(2.0,e - 23 - 1);
-        max = pow(2.0,e -23 - 1);
-        if(isIntersectionWith(min, max, [_x min], [_x max])){
-            return cardinality(maxFlt(min, [_x min]),minFlt(max, [_x max]))/[_x cardinality];
+        ORInt e_r = e - S_PRECISION - 1;
+        min = -pow(2.0,e_r);
+        max = pow(2.0,e_r);
+        if(isIntersectingWithV(min, max, [_x min], [_x max])){
+            return cardinalityV(maxFlt(min, [_x min]),minFlt(max, [_x max]))/[_x cardinality];
         }
     }
     return 0.0;
@@ -582,16 +583,16 @@
         frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
         min = -pow(2.0,e - 23 - 1);
         max = pow(2.0,e -23 - 1);
-        if(isIntersectionWith(min, max, [_y min], [_y max])){
-            return cardinality(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
+        if(isIntersectingWithV(min, max, [_y min], [_y max])){
+            return cardinalityV(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
         }
     }else if([x getId] == [_x getId]){
         m = maxFlt(fabsf([_x min]),fabs([_x max]));
         frexpf((maxFlt(fabsf([_x min]),fabs([_x max]))), &e);
         min = -pow(2.0,e - 23 - 1);
         max = pow(2.0,e -23 - 1);
-        if(isIntersectionWith(min, max, [_x min], [_x max])){
-            ORDouble card_intersection = cardinality(maxFlt(min, [_x min]),minFlt(max, [_x max]));
+        if(isIntersectingWithV(min, max, [_x min], [_x max])){
+            ORDouble card_intersection = cardinalityV(maxFlt(min, [_x min]),minFlt(max, [_x max]));
             return card_intersection/[_x cardinality];
         }
     }

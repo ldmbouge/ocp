@@ -56,6 +56,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 
 static inline ORFloat minFlt(ORFloat a,ORFloat b) { return a < b ? a : b;}
 static inline ORFloat maxFlt(ORFloat a,ORFloat b) { return a > b ? a : b;}
+static inline ORFloat fmaxFlt(ORFloat a,ORFloat b) { return maxFlt(fabsf(a), fabsf(b));}
 
 static inline ORInt min(ORInt a,ORInt b) { return a < b ? a : b;}
 static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}

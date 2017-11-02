@@ -165,3 +165,10 @@
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end
+
+
+
+typedef struct{
+    ORDouble quantity;
+    NSSet* vars;
+} AbsElement;
