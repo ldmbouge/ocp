@@ -1401,12 +1401,12 @@ static inline ORLong maxSeq(ORLong v[4])  {
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-    ORVTypeHandler *h = vtype2Object(e.etype);
+    ORVTypeHandler *h = vtype2Obj(e.etype);
     _rv = [h reifyLEQ:_model left:e.left right:e.right];
 }
 -(void) visitExprGEqualI:(ORExprGEqualI*)e
 {
-    ORVTypeHandler *h = vtype2Object(e.etype);
+    ORVTypeHandler *h = vtype2Obj(e.etype);
     _rv = [h reifyGEQ:_model left:e.left right:e.right];
 }
 //TODO: add the visits for < , > (for cleanliness)
@@ -1738,20 +1738,23 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 
 //rename ORVTypeReifier
 @implementation ORVTypeHandler
-static ORVTypeHandler *ORTNA_singleton = nil;
 
+-(id) init:(ORVType)vtype
+{
+   self = [super init];
+   _vtype = vtype;
+   return self;
+}
+
+-(id) init
+{
+   self = [super init];
+   _vtype = ORTNA;
+   return self;
+}
 -(ORVType) value{
-    return ORTNA;
+    return _vtype;
 }
-
-+(ORVTypeHandler*) instance{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        ORTNA_singleton = [[ORVTypeHandler alloc] init];
-    });
-    return ORTNA_singleton;
-}
-
 -(id<ORIntVar>) reifyEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector"];
@@ -1771,25 +1774,11 @@ static ORVTypeHandler *ORTNA_singleton = nil;
 @end
 
 @implementation ORTIntHandler
-static ORTIntHandler *ORTInt_singleton = nil;
-
-+(ORTIntHandler*) instance{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        ORTInt_singleton = [[ORTIntHandler alloc] init];
-    });
-    return ORTInt_singleton;
+-(id) init
+{
+   self = [super init:ORTInt];
+   return self;
 }
-
--(ORVType) value{
-    return ORTInt;
-}
-
-#if  USEVIEWS==1
-#define OLDREIFY 0
-#else
-#define OLDREIFY 1
-#endif
 
 -(id<ORIntVar>) reifyEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c
 {
@@ -1868,60 +1857,41 @@ static ORTIntHandler *ORTInt_singleton = nil;
 }
 -(id<ORIntVar>) reifyGEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*) right
 {
-    
-    ORExprI* newleft  = right;
-    ORExprI* newright = left;    // switch side and pretend it is ≤
-    id<ORIntVar> _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
-       if ([newleft isConstant]) {
-           _rv = [self reifyGEQc:_model other:newright constant:[left min]];
-       } else if ([newright isConstant]) {
-          _rv = [self reifyLEQc:_model other:newleft constant:[right min]];
-       } else
-           _rv = [self reifyLEQ:_model left:newleft right:newright];
-    return _rv;
+   ORExprI* newleft  = right;
+   ORExprI* newright = left;    // switch side and pretend it is ≤
+   id<ORIntVar> rv = nil;
+   id<TypeNormalizer> recVisit = vtype2Obj(newleft.vtype);
+   if ([newleft isConstant]) {
+      rv = [recVisit reifyGEQc:_model other:newright constant:left]; // [self reifyGEQc:_model other:newright constant:[left min]];
+   } else if ([newright isConstant]) {
+      rv = [recVisit reifyLEQc:_model other:newleft constant:right]; //[self reifyLEQc:_model other:newleft constant:[right min]];
+   } else
+      //id<ORIntVar> _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
+      rv =  [recVisit reifyLEQ:_model left:newleft right:newright];  //[self reifyLEQ:_model left:newleft right:newright];
+   [recVisit release];
+   return rv;
 }
 
 @end
 
 
 @implementation ORTBoolHandler
-static ORTBoolHandler *ORTBool_singleton = nil;
 
-+(ORTBoolHandler*) instance{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        ORTBool_singleton = [[ORTBoolHandler alloc] init];
-    });
-    return ORTBool_singleton;
-}
-
--(ORVType) value{
-    return ORTBool;
+-(id) init
+{
+   self = [super init:ORTBool];
+   return self;
 }
 @end
 
 
-
 @implementation ORTFloatHandler
-static ORTFloatHandler *ORTFloat_singleton = nil;
 
--(ORVType) value{
-    return ORTFloat;
+-(id) init
+{
+   self = [super init:ORTFloat];
+   return self;
 }
-
-+(ORTFloatHandler*) instance{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        ORTFloat_singleton = [[ORTFloatHandler alloc] init];
-    });
-    return ORTFloat_singleton;
-}
-
-#if  USEVIEWS==1
-#define OLDREIFY 0
-#else
-#define OLDREIFY 1
-#endif
 
 -(id<ORIntVar>) reifyEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORFloat)c
 {

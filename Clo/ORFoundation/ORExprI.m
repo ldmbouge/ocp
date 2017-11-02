@@ -1001,8 +1001,9 @@
 -(enum ORVType) vtype
 {
     ORVType rvt = [_right vtype];
-    ORVType lvt = [_left vtype];
-    return lookup_relation_table[rvt][lvt];
+   ORVType lvt = [_left vtype];
+   return lookup_expr_table[rvt][lvt];
+//    return lookup_relation_table[rvt][lvt];
 }
 -(enum ORVType) etype
 {
@@ -1060,8 +1061,9 @@
 -(enum ORVType) vtype
 {
     ORVType rvt = [_right vtype];
-    ORVType lvt = [_left vtype];
-    return lookup_logical_table[rvt][lvt];
+   ORVType lvt = [_left vtype];
+   return lookup_expr_table[rvt][lvt];
+//    return lookup_logical_table[rvt][lvt];
 }
 -(enum ORVType) etype
 {

@@ -60,9 +60,20 @@
 
 @end
 
-@interface ORVTypeHandler : NSObject
+@protocol TypeNormalizer <NSObject>
 -(ORVType) value;
-+(ORVTypeHandler*) instance;
+-(id<ORIntVar>) reifyEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORIntVar>) reifyNEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORIntVar>) reifyLEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORIntVar>) reifyGEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+@end
+
+@interface ORVTypeHandler : NSObject<TypeNormalizer>
+{
+   ORVType _vtype;
+}
+-(id) init:(ORVType)vtype;
+-(ORVType) value;
 -(id<ORIntVar>) reifyEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORIntVar>) reifyNEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORIntVar>) reifyLEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
@@ -71,7 +82,7 @@
 
 //hzi : use NSNumber work ? 
 @interface ORTIntHandler : ORVTypeHandler<NSObject>
-+(ORTIntHandler*) instance;
+-(id) init;
 -(id<ORIntVar>) reifyEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
 -(id<ORIntVar>) reifyNEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
 -(id<ORIntVar>) reifyLEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
@@ -79,25 +90,23 @@
 @end
 
 @interface ORTBoolHandler : ORVTypeHandler<NSObject>
-+(ORTBoolHandler*) instance;
+-(ORVType) value;
 @end
 
 @interface ORTFloatHandler : ORVTypeHandler<NSObject>
-+(ORTFloatHandler*) instance;
+-(ORVType) value;
 @end
 
 @interface ORTDoubleHandler : ORVTypeHandler<NSObject>
-+(ORTDoubleHandler*) instance;
+-(ORVType) value;
 @end
 
-
-
-static inline ORVTypeHandler* vtype2Object(ORVType type){
+static inline ORVTypeHandler* vtype2Obj(ORVType type){
     switch(type){
-        case  ORTBool    : return [ORTBoolHandler instance];
-        case  ORTInt     : return [ORTIntHandler instance];
-        case  ORTFloat   : return [ORTFloatHandler instance];
-        default         : return [ORVTypeHandler instance];
+        case  ORTBool    : return [[ORTBoolHandler alloc] init];
+        case  ORTInt     : return [[ORTIntHandler alloc] init];
+        case  ORTFloat   : return [[ORTFloatHandler alloc] init];
+        default         : return [[ORVTypeHandler alloc] init];
     }
 }
 
