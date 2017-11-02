@@ -1868,6 +1868,7 @@ static ORTIntHandler *ORTInt_singleton = nil;
 }
 -(id<ORIntVar>) reifyGEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*) right
 {
+    
     ORExprI* newleft  = right;
     ORExprI* newright = left;    // switch side and pretend it is ≤
     id<ORIntVar> _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];

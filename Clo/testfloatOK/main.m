@@ -23,6 +23,7 @@ int main(int argc, const char * argv[]) {
         [mdl add:[r eq: [y sub:z]]];
         
         NSLog(@"model: %@",mdl);
+        [mdl floatVars];
         id<CPProgram> p = [ORFactory createCPProgram:mdl];
         [p solve:^{
             NSLog(@"helloword %@ !",p);

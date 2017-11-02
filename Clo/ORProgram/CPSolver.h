@@ -166,9 +166,11 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-
-
-typedef struct{
-    ORDouble quantity;
-    NSSet* vars;
-} AbsElement;
+@interface ABSElement : NSObject{
+    ORDouble _quantity;
+    NSSet* _vars;
+}
+-(id) init:(ORDouble)quantity vars:(NSSet*)vars;
+-(ORDouble) quantity;
+-(NSSet*) vars;
+@end

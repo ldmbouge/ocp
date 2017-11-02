@@ -1876,6 +1876,7 @@
 }
 -(void) minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
+   //use ORIntArray -> use engine or solver
    NSMutableArray* occ = [[NSMutableArray alloc] initWithCapacity:[x count]];
    for(ORUInt i = [x low]; i <= [x up];i++){
       ORUInt v = [self countMemberedConstraints:x[i]];
@@ -1900,7 +1901,6 @@
          b(x[i.index]);
       } while (true);
    }];
-   [occ release];
 }
 -(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -2182,6 +2182,10 @@
       [self floatIntervalImpl:cx low:ax up:ax];
       [self floatIntervalImpl:cy low:ay.inf up:ay.sup];
    } alt:^{
+//      cx != ax
+//      cy try [y.low,ay.inf[
+//      alt ]ay.sup,y.up]
+//
       //neq ax
       //[y.low,ay.inf[,[ay.inf,ay.sup],]ay.sup,y.up]
    }];
@@ -2667,41 +2671,45 @@
    }
    return 0.0;
 }
--(AbsElement*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
-{
-   ORULong size = [vars count];
-   NSArray* csts = [_model constraints];
-   AbsElement *abs = malloc(sizeof(AbsElement) * size);
-   NSMutableArray<NSMutableSet*> *involementInConstraints = [[NSMutableArray alloc] initWithCapacity:size];
-   ORUInt id_v;
-   ORDouble absV;
-   for (id<ORConstraint> c in csts)
-   {
-      for (id<ORVar> v in vars) {
-         //hzi does it work ? or should use a dictionnary
-         id_v = [v getId];
-         [[involementInConstraints objectAtIndex:id_v] unionSet:[c allVars]];
-      }
-   }
-   for (ORUInt i = [vars low]; i < size ; i++) {
-      for (ORUInt j = i + 1; j < size; j++) {
-         if([[involementInConstraints objectAtIndex:i] member:vars[j]]){
-            absV = [self computeAbsorptionQuantity:vars[i] by:vars[j]];
-            if(absV > 0){
-               abs[i].quantity += absV;
-               [abs[i].vars setByAddingObject:vars[j]];
-            }
-            absV = [self computeAbsorptionQuantity:vars[j] by:vars[i]];
-            if(absV > 0){
-               abs[i].quantity += absV;
-               [abs[i].vars setByAddingObject:vars[j]];
-            }
-         }
-      }
-   }
-   return  abs;
-}
--(AbsElement)  absorptionQuantity:(id<ORVar>) x
+//-(AbsElement*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
+//{
+//   ORULong size = [vars count];
+//   NSArray* csts = [_model constraints];
+//   //Todo return nsarray
+//   AbsElement *abs = malloc(sizeof(AbsElement) * size);
+//   NSMutableArray<NSMutableSet*> *involementInConstraints = [[NSMutableArray alloc] initWithCapacity:size];
+//   ORUInt id_v;
+//   ORDouble absV;
+//   //getId min up shift array
+//   for (id<ORConstraint> c in csts)
+//   {
+//      for (id<ORVar> v in vars) {
+//         //hzi does it work ? or should use a dictionnary
+//         id_v = [v getId];
+//         //hzi TODO create empty mutableSet first time
+//         //update syntaxe with []
+//         [involementInConstraints[id_v] unionSet:[c allVars]];
+//      }
+//   }
+//   for (ORUInt i = [vars low]; i < size ; i++) {
+//      for (ORUInt j = i + 1; j < size; j++) {
+//         if([[involementInConstraints objectAtIndex:i] member:vars[j]]){
+//            absV = [self computeAbsorptionQuantity:vars[i] by:vars[j]];
+//            if(absV > 0){
+//               abs[i].quantity += absV;
+//               [abs[i].vars setByAddingObject:vars[j]];
+//            }
+//            absV = [self computeAbsorptionQuantity:vars[j] by:vars[i]];
+//            if(absV > 0){
+//               abs[i].quantity += absV;
+//               [abs[i].vars setByAddingObject:vars[j]];
+//            }
+//         }
+//      }
+//   }
+//   return  abs;
+//}
+-(ABSElement*)  absorptionQuantity:(id<ORVar>) x
 {
    NSArray* csts = [_model constraints];
    NSMutableSet* vars = [[NSMutableSet alloc] init];
@@ -2717,7 +2725,7 @@
            [vars unionSet:[c allVars]];
        }
    }
-    return (AbsElement){res,vars};
+   return [[ABSElement alloc] init:res vars:vars];
 }
 -(ORDouble)  cancellationQuantity:(id<ORVar>) x
 {
@@ -3462,6 +3470,25 @@
 +(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto
 {
    return [[[CPSemanticSolver alloc] initCPSemanticSolver: ctrlProto] autorelease];
+}
+@end
+
+@implementation ABSElement
+
+-(id) init:(ORDouble)quantity vars:(NSSet *)vars
+{
+   self = [super init];
+   _quantity = quantity;
+   _vars = vars;
+   return self;
+}
+-(ORDouble) quantity
+{
+   return _quantity;
+}
+-(NSSet*) vars
+{
+   return _vars;
 }
 @end
 
