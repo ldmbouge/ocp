@@ -19,7 +19,7 @@
 #else
 #define PORTABLE_BEGIN
 #define PORTABLE_END
-#define PNONNULL 
+#define c 
 #define PNULLABLE 
 #endif
 

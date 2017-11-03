@@ -1793,11 +1793,9 @@
 -(void) maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   NSMutableArray* deg = [[NSMutableArray alloc] initWithCapacity:[x count]];
-   for(ORUInt i = [x low]; i <= [x up];i++){
-      ORUInt v = [self countMemberedConstraints:x[i]];
-      [deg addObject:@(v)];
-   }
+   id<ORIntArray> deg = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
+      return  [self countMemberedConstraints:x[i]];
+   }];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
@@ -1816,15 +1814,12 @@
          b(x[i.index]);
       } while (true);
    }];
-   [deg release];
 }
 -(void) minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
-   NSMutableArray* deg = [[NSMutableArray alloc] initWithCapacity:[x count]];
-   for(ORUInt i = [x low]; i <= [x up];i++){
-      ORUInt v = [self countMemberedConstraints:x[i]];
-      [deg addObject:@(v)];
-   }
+   id<ORIntArray> deg = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
+      return  [self countMemberedConstraints:x[i]];
+   }];
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
@@ -1844,16 +1839,13 @@
          b(x[i.index]);
       } while (true);
    }];
-   [deg release];
 }
 -(void) maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   NSMutableArray* occ = [[NSMutableArray alloc] initWithCapacity:[x count]];
-   for(ORUInt i = [x low]; i <= [x up];i++){
-      ORUInt v = [self maxOccurences:x[i]];
-      [occ addObject:@(v)];
-   }
+   id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
+      return [self maxOccurences:x[i]];
+   }];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
@@ -1861,7 +1853,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    return [occ[i] doubleValue];
+                                    return [occ at:i];
                                  }];
    
    [[self explorer] applyController:t in:^{
@@ -1872,16 +1864,12 @@
          b(x[i.index]);
       } while (true);
    }];
-   [occ release];
 }
 -(void) minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
-   //use ORIntArray -> use engine or solver
-   NSMutableArray* occ = [[NSMutableArray alloc] initWithCapacity:[x count]];
-   for(ORUInt i = [x low]; i <= [x up];i++){
-      ORUInt v = [self countMemberedConstraints:x[i]];
-      [occ addObject:@(v)];
-   }
+   id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
+      return [self maxOccurences:x[i]];
+   }];
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
@@ -1993,7 +1981,7 @@
 -(void) combinedAbsWithDensSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   NSMutableArray* considered = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
+   id<ORIntArray> considered = [ORFactory intArray:self range:x.range value:0];
    __block ORDouble taux = 0.0;
    __block ORBool found = NO;
    id<ORSelect> select = [ORFactory select: _engine
@@ -2005,9 +1993,10 @@
                                  orderedBy: ^ORDouble(ORInt i) {
                                     ORDouble c = [self absorptionQuantity:x[i]].quantity;
                                     if(c > taux){
-                                       [considered addObject:@(i)];
+                                       [considered set:1 at:i];
                                        found = YES;
-                                    }
+                                    }else
+                                       [considered set:0 at:i];
                                     return c;
                                  }];
 
@@ -2024,28 +2013,27 @@
             break;
          ORDouble choosed = 0.0;
          ORDouble val = 0.0; //max density is 1
-         ORInt ind = 0;
          for (ORInt j = 0; j < [considered count]; j++) {
-            ind = [considered[j] intValue];
-            val = [_gamma[getId(x[ind])] density];
+            if(!considered[j]) continue;
+            val = [_gamma[getId(x[j])] density];
             if (val > choosed) {
                choosed = val;
-               i.index = [considered[j] intValue];
+               i.index = j;
             }
             if(val == 1.0) break;//max density is 1
          }
          b(x[i.index]);
-         [considered removeAllObjects];
       } while (true);
    }];
-   //   [considered release];
 }
 
 -(void) combinedDensWithAbsSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   NSMutableArray* considered = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
-   NSMutableArray* dens = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
+   id<ORIntArray> considered = [ORFactory intArray:self range:x.range value:0];
+   id<ORDoubleArray> dens = [ORFactory doubleArray:self range:x.range value:0.0];
+//   NSMutableArray* considered = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
+//   NSMutableArray* dens = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
    __block ORDouble min = 0.0;
    __block ORDouble max = 0.0;
    __block id<CPFloatVar> cv;
@@ -2053,11 +2041,9 @@
    for(ORUInt i = 0; i < [x count]; i++){
       cv = _gamma[getId(x[i])];
       if([cv bound]){
-         [dens addObject:@(0.0)];
          continue;
       }
-      d = [cv density];
-      [dens addObject:@(d)];
+      [dens set:[cv density] at:i];
       if(i == 0)
          min = max = d;
       else if(d < min)
@@ -2073,10 +2059,8 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    if([dens[i] doubleValue] >= mid){
-                                       [considered addObject:@(i)];
-                                     }
-                                    return [dens[i] doubleValue];
+                                    [considered set:([dens at:i] >= mid) at:i];
+                                    return [dens at:i];
                                  }];
    
    
@@ -2087,13 +2071,12 @@
             break;
          ORDouble choosed = 0.0;
          ORDouble val = 0.0;
-         ORInt ind = 0;
          for (ORInt j = 0; j < [considered count]; j++) {
-            ind = [considered[j] intValue];
-            val = [self absorptionQuantity:(x[ind])].quantity;
+            if(!considered[j]) continue;
+            val = [self absorptionQuantity:(x[j])].quantity;
             if (val > choosed) {
                choosed = val;
-               i.index = [considered[j] intValue];
+               i.index = j;
             }
          }
          b(x[i.index]);
@@ -2102,11 +2085,10 @@
          for(ORUInt k = 0; k < [x count]; k++){
             cv = _gamma[getId(x[k])];
             if([cv bound]){
-               [dens addObject:@(0.0)];
+               [dens set:0.0 at:k];
                continue;
             }
-            d = [cv density];
-            [dens addObject:@(d)];
+            [dens set:[cv density] at:k];
             if(k == 0)
                min = max = d;
             else if(d < min)
@@ -2115,10 +2097,8 @@
                max = d;
          }
          mid = min/2 + max/2;
-         [considered removeAllObjects];
       } while (true);
    }];
-//   [considered release];
 }
 
 
