@@ -230,4 +230,83 @@
 
 }
 
+-(void) testPropagationOnly
+{
+   @autoreleasepool {
+   id<ORModel> model = [ORFactory createModel];
+   id<ORFloatVar> c_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> r_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> a_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> Q_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> R2_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> CR2_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> CQ3_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> Q3_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> R_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> q_0 = [ORFactory floatVar:model];
+   id<ORFloatVar> b_0 = [ORFactory floatVar:model];
+   [model add:[q_0 eq: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
+   
+   [model add:[r_0 eq: [[[[[a_0 mul:@(2.f)] mul: a_0] mul: a_0] sub: [[a_0 mul:@(9.f)] mul: b_0]] plus: [c_0 mul:@(27.f)]]]];
+   
+   
+   [model add:[Q_0 eq: [q_0 div:@(9.f)]]];
+   
+   [model add:[R_0 eq: [r_0 div:@(54.f)]]];
+   
+   
+   [model add:[Q3_0 eq: [[Q_0 mul:Q_0] mul:Q_0]]];
+   
+   [model add:[R2_0 eq: [R_0 mul:R_0]]];
+   
+   
+   [model add:[CR2_0 eq: [[r_0 mul:@(729.f)] mul: r_0]]];
+   
+   [model add:[CQ3_0 eq: [[[q_0 mul:@(2916.f)] mul: q_0] mul: q_0]]];
+   
+   //assert(!(R == 0 && Q == 0));
+      [model add:[R_0 eq:@(0.0f)]];
+      [model add:[Q_0 eq:@(0.0f)]];
+      [model add:[a_0 eq:@(15.0f)]];
+      
+   id<CPProgram> p = [ORFactory createCPProgram:model];
+      [p solve:^{
+         id<CPFloatVar> cc = [p concretize:c_0];
+         id<CPFloatVar> rc = [p concretize:r_0];
+         id<CPFloatVar> ac = [p concretize:a_0];
+         id<CPFloatVar> Qc = [p concretize:Q_0];
+         id<CPFloatVar> R2c = [p concretize:R2_0];
+         id<CPFloatVar> CR2c = [p concretize:CR2_0];
+         id<CPFloatVar> CQ3c = [p concretize:CQ3_0];
+         id<CPFloatVar> Q3c = [p concretize:Q3_0];
+         id<CPFloatVar> qc = [p concretize:q_0];
+         id<CPFloatVar> bc = [p concretize:b_0];
+         XCTAssertTrue([cc bound]);
+         XCTAssertTrue([rc bound]);
+         XCTAssertTrue([ac bound]);
+         XCTAssertTrue([Qc bound]);
+         XCTAssertTrue([R2c bound]);
+         XCTAssertTrue([CR2c bound]);
+         XCTAssertTrue([CQ3c bound]);
+         XCTAssertTrue([Q3c bound]);
+         XCTAssertTrue([qc bound]);
+         XCTAssertTrue([bc bound]);
+         
+         
+         XCTAssertEqual([cc min],125.f);
+         XCTAssertEqual([rc min],0.f);
+         XCTAssertEqual([ac min],15.f);
+         XCTAssertEqual([bc min],75.f);
+         XCTAssertEqual([Qc min],0.0f);
+         XCTAssertEqual([R2c min],0.0f);
+         XCTAssertEqual([CR2c min],0.0f);
+         XCTAssertEqual([CQ3c min],0.0f);
+         XCTAssertEqual([Q3c min],0.0f);
+         XCTAssertEqual([qc min],0.0f);      
+      
+   }];
+}
+
+}
+
 @end

@@ -2698,8 +2698,7 @@
    for (ORInt i = 0; i < [csts count];i++)
    {
       id<CPConstraint> c = _gamma[[csts[i] getId]];
-      //error with heron
-      if(! [c memberVar:x]) continue;
+      if(! [c memberVar:_gamma[[x getId]]]) continue;
        current = [c leadToAnAbsorption:x];
        if(current > 0.0){
            res += current;
