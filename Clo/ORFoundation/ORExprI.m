@@ -2768,7 +2768,7 @@
 -(enum ORVType) vtype
 {
    __block bool allBool = true;
-   [_array enumerateWith:^(id<ORIntVar>  _Nonnull vk, int k) {
+   [_array enumerateWith:^(id<ORIntVar>  PNONNULL vk, int k) {
       id<ORIntRange> dom = [vk domain];
       allBool |= dom.isBool;
    }];

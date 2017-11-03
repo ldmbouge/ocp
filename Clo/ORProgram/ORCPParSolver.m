@@ -1036,15 +1036,15 @@
     [[self worker] param: _gamma[p.getId] setValue: val];
 }
 
-- (void)combinedAbsWithDensSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+- (void)combinedAbsWithDensSearch:(PNONNULL id<ORFloatVarArray>)x do:(PNONNULL void (^)(id<ORFloatVar> PNONNULL))b
 {
    [[self worker] combinedAbsWithDensSearch:x do:b];
 }
-- (void)combinedDensWithAbsSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+- (void)combinedDensWithAbsSearch:(PNONNULL id<ORFloatVarArray>)x do:(PNONNULL void (^)(id<ORFloatVar> PNONNULL))b
 {
    [[self worker] combinedDensWithAbsSearch:x do:b];
 }
-- (void)switchedSearch:(nonnull id<ORFloatVarArray>)x do:(nonnull void (^)(id<ORFloatVar> _Nonnull))b
+- (void)switchedSearch:(PNONNULL id<ORFloatVarArray>)x do:(PNONNULL void (^)(id<ORFloatVar> PNONNULL))b
 {
    [[self worker] switchedSearch:x do:b];
 }

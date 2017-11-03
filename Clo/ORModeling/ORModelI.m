@@ -1004,7 +1004,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
 -(void) enumerateWith:(void(^)(id<ORConstraint>))block
 {
-   [_all enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+   [_all enumerateObjectsUsingBlock:^(id  PNONNULL obj, BOOL * PNONNULL stop) {
       block(obj);
    }];
 }

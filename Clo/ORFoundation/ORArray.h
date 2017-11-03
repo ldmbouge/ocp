@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import <ORUtilities/ORTypes.h>
 #import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORTrailable.h>
