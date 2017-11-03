@@ -441,50 +441,5 @@
 {
     assert(NO);
 }
--(void) visitExprNegateI:(ORExprNegateI*)e
-{
-    assert(NO); //should go in bool path 
-}
-
--(void) visitExprDisjunctI:(ORDisjunctI*)e
-{
-    assert(NO);
-   /* id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-    id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
-    if ([linLeft isZero] && [linRight isZero]) {
-        assert(0);
-    }else{
-       id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
-       id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
-       id<ORIntVar> r = [ORFactory boolVar:_model];
-       [_model addConstraint:[ORFactory model:_model boolean:lV lor:rV equal:r]];
-    }
-    [linLeft release];
-    [linRight release];*/
-}
--(void) visitExprConjunctI:(ORConjunctI*)e
-{
-    assert(NO);
-    id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-    id<ORFloatLinear> linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
-    id<ORFloatVar> lV = [ORNormalizer floatVarIn:linLeft  for:_model];
-    id<ORFloatVar> rV = [ORNormalizer floatVarIn:linRight for:_model];
-    if ([[lV domain] low] >= 1) {
-        if (_rv)
-            [_model addConstraint:[ORFactory equal:_model var:_rv to:rV plus:0]];
-        else
-            _rv = rV;
-    } else if ([[rV domain] low] >= 1) {
-        if (_rv)
-            [_model addConstraint:[ORFactory equal:_model var:_rv to:lV plus:0]];
-        else
-            _rv = lV;
-    } else {
-        //id<ORIntVar> r = [ORFactory boolVar:_model];
-        //[_model addConstraint:[ORFactory model:_model boolean:lV land:rV equal:r]];
-    }
-    [linLeft release];
-    [linRight release];
-}
 
 @end

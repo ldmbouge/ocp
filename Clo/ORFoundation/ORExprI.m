@@ -667,10 +667,6 @@
 {
    return ORTNA;
 }
--(enum ORVType) etype
-{
-    return ORTNA;
-}
 -(id<ORExpr>) abs
 {
    return [ORFactory exprAbs:self track:[self tracker]];
@@ -1000,16 +996,9 @@
 }
 -(enum ORVType) vtype
 {
-    ORVType rvt = [_right vtype];
+   ORVType rvt = [_right vtype];
    ORVType lvt = [_left vtype];
-   return lookup_expr_table[rvt][lvt];
-//    return lookup_relation_table[rvt][lvt];
-}
--(enum ORVType) etype
-{
-    ORVType rvt = [_right vtype];
-    ORVType lvt = [_left vtype];
-    return lookup_expr_table[rvt][lvt];
+   return lookup_relation_table[rvt][lvt];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1060,16 +1049,9 @@
 }
 -(enum ORVType) vtype
 {
-    ORVType rvt = [_right vtype];
+   ORVType rvt = [_right vtype];
    ORVType lvt = [_left vtype];
-   return lookup_expr_table[rvt][lvt];
-//    return lookup_logical_table[rvt][lvt];
-}
--(enum ORVType) etype
-{
-    ORVType rvt = [_right vtype];
-    ORVType lvt = [_left vtype];
-    return lookup_expr_table[rvt][lvt];
+   return lookup_logical_table[rvt][lvt];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1123,13 +1105,6 @@
    ORVType lvt = [_left conformsToProtocol:@protocol(ORExpr)] ? [_left vtype] : ORTInt;
    return lookup_expr_table[rvt][lvt];
 }
--(enum ORVType) etype
-{
-    ORVType rvt = [_right conformsToProtocol:@protocol(ORExpr)] ? [_right etype] : ORTInt;
-    ORVType lvt = [_left conformsToProtocol:@protocol(ORExpr)] ? [_left etype] : ORTInt;
-    return lookup_expr_table[rvt][lvt];
-}
-
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_left];

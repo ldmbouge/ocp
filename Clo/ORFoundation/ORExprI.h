@@ -63,7 +63,6 @@
 -(void) visit: (ORVisitor*)v;
 -(ORRelationType) type;
 -(ORVType) vtype;
--(ORVType) etype;
 -(NSSet*)allVars;
 @end
 
@@ -79,7 +78,6 @@
 -(ORExprI*) right;
 -(ORBool) isConstant;
 -(ORVType) vtype;
--(ORVType) etype;
 @end
 
 @interface ORExprLogiqueI : ORExprI<ORExpr,NSCoding>
@@ -94,7 +92,6 @@
 -(ORExprI*) right;
 -(ORBool) isConstant;
 -(ORVType) vtype;
--(ORVType) etype;
 @end
 
 @interface ORExprBinaryI : ORExprI<ORExpr,NSCoding>
@@ -109,7 +106,6 @@
 -(ORExprI*) right;
 -(ORBool) isConstant;
 -(ORVType) vtype;
--(ORVType) etype;
 @end
 
 @interface ORExprAbsI : ORExprI<ORExpr,NSCoding> {

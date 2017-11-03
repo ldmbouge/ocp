@@ -14,7 +14,7 @@
 #import <ORModeling/ORLinear.h>
 
 @protocol ORFloatLinear <NSObject,ORLinear>
--(void) setIndependent: (ORFloat) idp;
+-(void) setIndependent: (ORExprI*) idp direction:(ORInt)d;
 -(void) addIndependent: (ORFloat) idp;
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
 -(void) addLinear: (id<ORFloatLinear>) lts;
@@ -42,7 +42,7 @@
 -(ORFloatLinear*) initORFloatLinear: (ORInt) mxs;
 -(ORFloatLinear*) initORFloatLinear: (ORInt) mxs type:(ORRelationType) t;
 -(void) dealloc;
--(void) setIndependent: (ORFloat) idp;
+-(void) setIndependent: (ORExprI*) idp direction:(ORInt)d;
 -(void) addIndependent: (ORFloat) idp;
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
 -(void) addLinear: (ORFloatLinear*) lts;
@@ -71,7 +71,7 @@
     id<ORFloatLinear> _float;
 }
 -(id) initORFloatLinearFlip: (id<ORFloatLinear>) r;
--(void) setIndependent: (ORFloat) idp;
+-(void) setIndependent: (ORExprI*) idp;
 -(void) addIndependent: (ORFloat) idp;
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
 -(BOOL) isZero;

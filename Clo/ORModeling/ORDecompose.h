@@ -62,10 +62,20 @@
 
 @protocol TypeNormalizer <NSObject>
 -(ORVType) value;
--(id<ORIntVar>) reifyEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
--(id<ORIntVar>) reifyNEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
--(id<ORIntVar>) reifyLEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
--(id<ORIntVar>) reifyGEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyNEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv  left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyLEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyGEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(void) reifyNEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(void) reifyLEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv  other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(void) reifyGEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(id<ORLinear>) visitExprGEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprLEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprGThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprLThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 @end
 
 @interface ORVTypeHandler : NSObject<TypeNormalizer>
@@ -74,33 +84,39 @@
 }
 -(id) init:(ORVType)vtype;
 -(ORVType) value;
--(id<ORIntVar>) reifyEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
--(id<ORIntVar>) reifyNEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
--(id<ORIntVar>) reifyLEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
--(id<ORIntVar>) reifyGEQ:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyNEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv  left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyLEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyGEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(void) reifyNEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(void) reifyLEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv  other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(void) reifyGEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(id<ORLinear>) visitExprGEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprLEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprGThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprLThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 @end
 
-//hzi : use NSNumber work ? 
 @interface ORTIntHandler : ORVTypeHandler<NSObject>
 -(id) init;
--(id<ORIntVar>) reifyEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
--(id<ORIntVar>) reifyNEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
--(id<ORIntVar>) reifyLEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
--(id<ORIntVar>) reifyGEQc:(id<ORAddToModel>)_model other:(ORExprI*)theOther constant:(ORInt)c;
 @end
 
 @interface ORTBoolHandler : ORVTypeHandler<NSObject>
--(ORVType) value;
+-(id) init;
 @end
 
 @interface ORTFloatHandler : ORVTypeHandler<NSObject>
--(ORVType) value;
+-(id) init;
 @end
 
 @interface ORTDoubleHandler : ORVTypeHandler<NSObject>
--(ORVType) value;
+-(id) init;
 @end
 
+//TODO should have other ORType
 static inline ORVTypeHandler* vtype2Obj(ORVType type){
     switch(type){
         case  ORTBool    : return [[ORTBoolHandler alloc] init];

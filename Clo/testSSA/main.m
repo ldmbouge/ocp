@@ -22,7 +22,8 @@ int main(int argc, const char * argv[]) {
 //            [model add:[y_0 eq:[x_0 plus:@(2.0f)]]];
             
 //            [model add: [[[a plus:b] geq:z] lor: [z geq:@(1)]]];
-            [model add: [[[af plus:bf] geq:zf] lor: [zf geq:@(20.f)]]];
+//            [model add: [[[af plus:bf] geq:z] lor: [z geq:@(20.f)]]];
+           [model add:[[af plus:bf] geq:zf]];
 //            [model add:[af geq:@(1.0f)]];
 //            [model add:[bf geq:@(5.0f)]];
 //            [model add:[zf geq:@(9.0f)]];

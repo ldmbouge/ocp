@@ -38,9 +38,9 @@
     free(_terms);
     [super dealloc];
 }
--(void) setIndependent: (ORFloat) idp
+-(void) setIndependent: (ORExprI*) idp direction:(ORInt)d
 {
-    _indep = idp;
+   _indep = (d > 0) ? [idp fmin] : -[idp fmin];
 }
 -(void) addIndependent: (ORFloat) idp
 {
@@ -264,9 +264,13 @@
     _float = r;
     return self;
 }
--(void) setIndependent: (ORFloat) idp
+-(void) setIndependent: (ORExprI*) idp direction:(ORInt)d
 {
-    [_float setIndependent: -idp];
+    [_float setIndependent:idp direction:d];
+}
+-(void) setIndependent: (ORExprI*) idp
+{
+   [_float setIndependent:idp direction:-1];
 }
 -(void) addIndependent: (ORFloat) idp
 {
