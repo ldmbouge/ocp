@@ -127,10 +127,43 @@
         if([_y bound]){
             if ([_x min] == [_y min])
                 failNow();
-            else
-                assignTRInt(&_active, NO, _trail);
+            else{
+               if([_x min] == [_y min]){
+                  [_y updateMin:fp_next_float([_y min])];
+                  assignTRInt(&_active, NO, _trail);
+               }
+               if([_x min] == [_y max]) {
+                  [_y updateMax:fp_previous_float([_y max])];
+                  assignTRInt(&_active, NO, _trail);
+               }
+               if([_x max] == [_y min]){
+                  [_y updateMin:fp_next_float([_y max])];
+                  assignTRInt(&_active, NO, _trail);
+               }
+               if([_x max] == [_y max]) {
+                  [_y updateMax:fp_previous_float([_y max])];
+                  assignTRInt(&_active, NO, _trail);
+               }
+            }
             return;
         }
+    }else  if([_y bound]){
+       if([_x min] == [_y min]){
+          [_x updateMin:fp_next_float([_x min])];
+          assignTRInt(&_active, NO, _trail);
+       }
+       if([_x min] == [_y max]) {
+          [_x updateMin:fp_next_float([_x min])];
+          assignTRInt(&_active, NO, _trail);
+       }
+       if([_x max] == [_y min]){
+          [_x updateMax:fp_previous_float([_x max])];
+          assignTRInt(&_active, NO, _trail);
+       }
+       if([_x max] == [_y max]) {
+          [_x updateMax:fp_previous_float([_x max])];
+          assignTRInt(&_active, NO, _trail);
+       }
     }
 }
 -(NSSet*)allVars
@@ -158,14 +191,24 @@
 }
 -(void) post
 {
-    [self propagate];
-    [_x whenBindPropagate:self];
+   [self propagate];
+   [_x whenBindPropagate:self];
+   [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
     if ([_x bound]) {
         if([_x min] == _c)
             failNow();
+    }else{
+       if([_x min] == _c){
+          [_x updateMin:fp_next_float(_c)];
+          assignTRInt(&_active, NO, _trail);
+       }
+       if([_x max] == _c){
+          [_x updateMax:fp_previous_float(_c)];
+          assignTRInt(&_active, NO, _trail);
+       }
     }
 }
 -(NSSet*)allVars

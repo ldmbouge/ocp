@@ -341,26 +341,4 @@
     XCTAssertEqual(div_expr_var.vtype, ORTFloat, @"succes");
 }
 
-//Wait for changed
--(void) IgnoredtestInegality {
-    @autoreleasepool {
-        
-        id<ORModel> model = [ORFactory createModel];
-        
-        id<ORFloatVar> x = [ORFactory floatVar:model low:0.f up:10.f];
-        id<ORFloatVar> y = [ORFactory floatVar:model low:0.f up:10.f];
-//        id<ORFloatVar> z = [ORFactory floatVar:model low:0.f up:10.f];
-        
-        [model add:[x geq:@(2.0f)]];
-        [model add:[x leq:@(8.0f)]];
-        
-        [model add:[y gt:@(2.0f)]];
-        [model add:[y lt:@(8.0f)]];
-        
-//        id<CPProgram> cp = [ORFactory createCPProgram:model];
-        
-        
-    }
-}
-
 @end
