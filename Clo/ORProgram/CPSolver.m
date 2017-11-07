@@ -182,8 +182,8 @@
 -(void) dealloc
 {
    NSLog(@"CPSolver dealloc'd %p",self);
-   [_model release];
    [_hSet release];
+   [_model release];
    [_portal release];
    [_returnLabel release];
    [_returnLT release];
