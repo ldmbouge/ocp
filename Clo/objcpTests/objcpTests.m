@@ -662,4 +662,5 @@
    
    NSLog(@"End testing bitwise Sum constraint.\n");
 }
+
 @end

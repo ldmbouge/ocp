@@ -27,7 +27,7 @@
 
 void oneByteMD4(NSString* filename, BVSearchHeuristic heur)
 {
-   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+//   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
    NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"ObjCP-MD4Data"];
    switch (heur) {
       case BVFF:  [outputFilename appendString:@"-FirstFail-2BYTE-"];
@@ -191,12 +191,12 @@ void twoByteMD5(NSString* filename, BVSearchHeuristic heur)
             if ((j==3) && (i<15)) {
                mask[i+1] = 0x00FFFFFF;
             }
-            pool = [[NSAutoreleasePool alloc] init];
+//            pool = [[NSAutoreleasePool alloc] init];
             myMD5 = [MD5 initMD5];
             [str appendFormat:@"%d ",num++];
             [str appendString:[myMD5 preimage:filename withMask:mask andHeuristic:heur]];
             [myMD5 dealloc];
-            [pool drain];
+//            [pool drain];
             twobytemask >>= 8;
          }
          mask[i] = 0xFFFFFFFF;
@@ -250,12 +250,12 @@ void twoByteSHA1(NSString* filename, BVSearchHeuristic heur)
          if ((j==3) && (i<15)) {
             mask[i+1] = 0x00FFFFFF;
          }
-         pool = [[NSAutoreleasePool alloc] init];
+//         pool = [[NSAutoreleasePool alloc] init];
          mySHA1 = [SHA1b initSHA1b];
          [str appendFormat:@"%d ",num++];
          [str appendString:[mySHA1 preimage:filename withMask:mask andHeuristic:heur]];
          [mySHA1 dealloc];
-         [pool drain];
+//         [pool drain];
          twobytemask >>= 8;
       }
       mask[i] = 0xFFFFFFFF;
@@ -314,7 +314,7 @@ void zeroByteSHA1(NSString* filename, BVSearchHeuristic heur)
 int main(int argc, const char* argv[])
 {
    
-   [ORStreamManager setRandomized];
+//   [ORStreamManager setRandomized];
 
    
    
@@ -470,7 +470,7 @@ int main(int argc, const char* argv[])
 
 //   twoByteMD4(@"lorem-mssg.txt", BVFF);
    
-   oneByteMD4(@"lorem-mssg.txt", BVFF);
+   twoByteMD5(@"lorem-mssg.txt", BVFF);
    
 //   twoByteSHA1(@"lorem-mssg.txt", BVFF);
 //   twoByteSHA1(@"lorem-mssg.txt", BVABS);

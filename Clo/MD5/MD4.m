@@ -205,7 +205,8 @@
    [_m add:[ORFactory bit:digest[3] eq:digestVars[3]]];
    
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
+//   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
+    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 //   id<ORBasicModel> model = [engine model];
@@ -226,7 +227,7 @@
       [o set:bitVars[k] at:k];
 
    id<CPBitVarHeuristic> h;
-   h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+   h =[cp createBitVarVSIDS];
    
    [cp solve: ^{
       NSLog(@"Search");

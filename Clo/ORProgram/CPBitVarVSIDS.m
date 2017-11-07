@@ -15,6 +15,7 @@
 
 @implementation CPBitVarVSIDS {
    id<CPEngine>    _engine;
+    
 }
 -(CPBitVarVSIDS*)initCPBitVarVSIDS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
@@ -23,6 +24,7 @@
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
+    _count = 100;
    return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -45,7 +47,16 @@
 
 -(ORFloat)varOrdering:(id<CPBitVar>)x
 {
-   float rv = - [x degree];
+   float rv = - (ORFloat)[x getVSIDSCount];
+    id<ORVarArray> vars = (_rvars!=nil ? _rvars : _cvs);
+    if (_count <= 0)
+    {
+        for (id<CPBitVar> var in vars)
+            [var reduceVSIDS];
+        _count = 100;
+    }
+    else
+        _count--;
    return rv;
 }
 -(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
@@ -56,7 +67,7 @@
 {
    _vars = t;
    _cvs  = cv;
-   NSLog(@"FirstFail ready...");
+   NSLog(@"VSIDS ready...");
 }
 
 @end

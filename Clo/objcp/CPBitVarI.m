@@ -121,6 +121,10 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    TRUInt               _top;
    ORUInt               _cap;
    ORUInt               _wordLength;
+//   TRDouble*                        _vsids;
+    ORFloat              _vsids;
+
+
    
 @public
    CPBitEventNetwork   _net;
@@ -146,20 +150,13 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       _lvls = malloc(sizeof(ORUInt)*_cap);
       _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
       _top = makeTRUInt(_trail, 0);
-      
-      
-      
-      
-//      _levels = malloc(sizeof(TRUInt)*len);
-//      _implications = malloc(sizeof(TRId)*len);
-//      for (int i=0; i<len; i++) {
-//         _levels[i] = makeTRUInt(_trail, -1);
-//         _implications[i] = makeTRId(_trail, 0);
-//      }
-   } else {
+//       _vsids = malloc(sizeof(TRDouble*)*len);
+//       for(int i=0;i<len;i++)
+//           _vsids[i] = makeTRDouble(_trail, 0.0);
+       _vsids=0.0;
+    } else {
       _cap = 0;
-      
-      _levels = nil;
+      _lvls = nil;
       _implications = nil;
    }
    _vc = CPVCBare;
@@ -195,6 +192,13 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    [_net._bitFixedEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
    return d;
 
+}
+-(ORFloat) getVSIDSCount
+{
+    return _vsids;
+}
+-(void) reduceVSIDS{
+    _vsids /= 2.0;
 }
 -(id) takeSnapshot: (ORInt) id
 {
@@ -441,6 +445,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 -(void) whenChangePropagate:  (CPCoreConstraint*) c
 {
    hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
+    if(_learningOn)
+        _vsids += 1.0;
 }
 //-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 //{
@@ -586,8 +592,10 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       for (int i=0; i<[_dom getWordLength]; i++) {
          ORUInt changedLow = oldLow[i]._val ^ newLow[i];
          for(int j=0;j<BITSPERWORD; j++){
-            if (changedLow & 0x1)
+             if (changedLow & 0x1){
                assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
+               NSLog(@"%@[%d] set by %@",self,i*BITSPERWORD+j, constraint);
+             }
             changedLow >>= 1;
          }
       }
@@ -643,6 +651,15 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
             assignTRUInt(&_top, _top._val+1, _trail);
          }
  
+       
+       
+       //DEBUGGING ONLY
+//       if([_engine closed])
+//       for(int i =0;i<bitLength;i++){
+//           if(changed[i/BITSPERWORD] & (0x1 << i%BITSPERWORD))
+//           NSLog(@"%@[%d] set by %@",self,i, constraint);
+//       }
+
 //         mask = 0x1;
 //         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
 //         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
@@ -719,7 +736,10 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       _lvls = malloc(sizeof(ORUInt)*_cap);
       _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
       _top = makeTRUInt(_trail, 0);
-
+//       _vsids = malloc(sizeof(TRDouble*)*len);
+//       for(int i=0;i<len;i++)
+//           _vsids[i] = makeTRDouble(_trail, 0.0);
+       _vsids=0.0;
 //      _levels = malloc(sizeof(TRUInt)*len);
 //      _implications = malloc(sizeof(TRId)*len);
 //      for (int i=0; i<len; i++) {
@@ -727,7 +747,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 //         _implications[i] = makeTRId(_trail, 0);
 //      }
    } else {
-      _levels = nil;
+      _lvls = nil;
       _implications = nil;
    }
    _recv = nil;

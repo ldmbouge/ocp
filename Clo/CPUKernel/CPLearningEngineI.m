@@ -20,53 +20,11 @@
    _capacity = 8;
    _globalStore = malloc(sizeof(CPBVConflict*)*_capacity);
    _size = 0;
-   _backjumpLevel = -1;
+   _backjumpLevel = 0;
    _retry = false;
    return self;
 }
 
-
-//-(ORStatus) restoreLostConstraints:(ORUInt) level
-//{
-//   //re-insert lost constraints (at lower levels in search tree)
-//   //at the current level
-//   ORStatus s;
-//   ORStatus status = ORSuspend;
-//   
-//   for (int n = 0; n<_size; n++) {
-//      if (_globalStore[n]->level > level){
-////         s= [self addConstraintDuringSearch:c];
-//         s = [self post:_globalStore[n]->constraint];
-////         NSLog(@"Adding new global constraint %@ to constraint store",c);
-////         [self propagate];
-//         if (s == ORFailure){
-//            return ORFailure;
-//         }
-////         if (status == ORFailure) {
-////            NSLog(@"failure in restoring constraint %d\n",n);
-////            NSLog(@"--------------------Begin Global Constraint Store--------------------\n");
-////            for(int i=0;i<_size;i++){
-////               NSLog(@"******************************");
-////               NSLog(@"_globalStore[%d]\n",i);
-////               for(int j=0;j<_globalStore[i]->vars->numAntecedents;j++)
-////                  NSLog(@"0x%lx[%d] = %d\n",_globalStore[i]->vars->antecedents[j]->var,_globalStore[i]->vars->antecedents[j]->index,_globalStore[i]->vars->antecedents[j]->value);
-////            }
-////            NSLog(@"--------------------End Global Constraint Store--------------------\n");
-////         }
-////         ORUInt l;
-////         for(int j=0;j<_globalStore[n]->vars->numAntecedents;j++){
-////            if (_backjumpLevel > (l=[(CPBitVarI*)_globalStore[n]->vars->antecedents[j]->var getLevelBitWasSet:_globalStore[n]->vars->antecedents[j]->index]) &&
-////                (l!=0)) {
-////               _backjumpLevel = l;
-////            }
-////         }
-//         _globalStore[n]->level = level;
-//         _newConstraint = true;
-//      }
-//   }
-//   _backjumpLevel = -1;
-//   return status;
-//}
 -(void) addConstraint:(CPCoreConstraint*) c
 {
    
@@ -83,19 +41,19 @@
       free(_globalStore);
       _globalStore = newStore;
    }
-   _globalStore[_size++] = newConflict;
+   _globalStore[_size] = newConflict;
+   _size++;
+   
    _retry = true;
 }
 -(void) addConstraint:(CPCoreConstraint*) c withJumpLevel:(ORUInt) level
 {
-//   NSLog(@"Adding constraint with level %u",level);
    [self addConstraint:c];
-
-   if (level < 5)
-      level = 5;
+//   NSLog(@"Adding constraint at level %d and backjumping to level %d",[self getLevel], level);
+   if ((ORInt)level < 5)
+      level = [_tracer level]-1;
    
-   if (level < [_tracer level])
-      _backjumpLevel = ((level < _backjumpLevel) && (level > 4)) ? level:_backjumpLevel;
+      _backjumpLevel = (((ORInt)level > (ORInt)_backjumpLevel) && (level > 4)) ? level:_backjumpLevel;
 }
 -(ORUInt) getLevel
 {
@@ -105,7 +63,7 @@
 -(ORUInt) getBackjumpLevel
 {
    ORUInt tmp = _backjumpLevel;
-   _backjumpLevel = -1;
+   _backjumpLevel = 0;
    return tmp;
 }
 
@@ -126,6 +84,7 @@
       ORStatus status;
       for (int n = 0; n<_size; n++) {
          if (_globalStore[n]->level > currLevel){
+//             status = [self addInternal:_globalStore[n]->constraint];
             status=[self post:_globalStore[n]->constraint];
             if(status==ORFailure){
                return ORFailure;
@@ -134,6 +93,8 @@
          }
       }
       status = propagateFDM(self);
+       if (status == ORFailure)
+           return status;
       return status;
    }, ^ORStatus{
       return ORFailure;

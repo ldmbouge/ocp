@@ -302,7 +302,8 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
          SETBITFALSE(idx);
       }
    } else {
-      bool theBit = _low[WORDIDX(idx)]._val  & ONEAT(idx);
+      ORBool theBit = (_low[WORDIDX(idx)]._val  & ONEAT(idx)) != 0;
+       // BUG HERE!!! Fixed 11/1/17
       if (theBit ^ val)
          failNow();
       else{

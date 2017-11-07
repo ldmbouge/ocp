@@ -19,6 +19,7 @@
    id<ORVarArray>   _cvs;  // concrete variables
    id<ORVarArray> _rvars;
    id<CPProgram>     _cp;
+    ORLong          _count;
 }
 -(CPBitVarVSIDS*)initCPBitVarVSIDS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPBitVar>)x;

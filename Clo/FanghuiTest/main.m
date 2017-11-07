@@ -156,7 +156,7 @@ id<ORMutableInteger> phase;
 int hw_mode[48];
 
 int main(int argc, const char * argv[]) {
-   FILE* instance = fopen("/Users/ldm/work/objcppriv/Clo/FanghuiTest/origInstance", "r");
+   FILE* instance = fopen("/Users/gregjohnson/TA/git/platform/Clo/FanghuiTest/origInstance", "r");
    readFile(instance);
    ORCmdLineArgs* cmd = [ORCmdLineArgs newWith:argc argv:argv];
    ORInt kKeys = [cmd size];
@@ -364,9 +364,10 @@ int main(int argc, const char * argv[]) {
    id<ORIntVarArray> iv = [model intVars];
    id<ORBitVarArray> av = [model bitVars];
    
-   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:model];
+//   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
+//   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
    generateLists();
    MCFilter();
    printDebug();

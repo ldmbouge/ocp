@@ -39,7 +39,7 @@
     CPTriggerMap*                  _triggers;
     CPBitVarMultiCast*                 _recv;
     enum CPVarClass                      _vc;
-    TRUInt*                          _levels;
+//    TRUInt*                          _levels;
 }
 -(CPBitVarI*) initCPBitVarCore:(id<CPEngine>)cp low:(ORUInt*)low up:(ORUInt*)up length:(int) len;
 -(void) dealloc;

@@ -58,5 +58,4 @@
    _cvs  = cv;
    NSLog(@"FirstFail ready...");
 }
-
 @end

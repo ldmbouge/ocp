@@ -612,11 +612,11 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
    CPBitVarI* _x;
    CPBitVarI* _y;
    CPBitVarI* _z;
-   CPBitVarI* _one;
-   CPBitVarI* _notY;
-   CPBitVarI* _negY;
-   CPBitVarI* _negYCin;
-   CPBitVarI* _negYCout;
+//   CPBitVarI* _one;
+//   CPBitVarI* _notY;
+//   CPBitVarI* _negY;
+//   CPBitVarI* _negYCin;
+//   CPBitVarI* _negYCout;
    CPBitVarI* _cin;
    CPBitVarI* _cout;
 }
