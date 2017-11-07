@@ -89,6 +89,7 @@ PORTABLE_BEGIN
 -(void)          floatStatic5WaySplit: (id<ORFloatVar>) x;
 -(void)          floatStatic6WaySplit: (id<ORFloatVar>) x;
 -(void)          floatSplit: (id<ORFloatVar>) x;
+-(void)          floatAbsSplit: (id<ORFloatVar>) x by:(id<ORFloatVar>) y;
 -(void)          float3WaySplit: (id<ORFloatVar>) x;
 -(void)          float5WaySplit: (id<ORFloatVar>) x;
 -(void)          float6WaySplit: (id<ORFloatVar>) x;

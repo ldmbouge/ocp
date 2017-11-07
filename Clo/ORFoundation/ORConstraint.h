@@ -53,6 +53,8 @@
 -(NSArray*)allVarsArray;
 -(ORBool) memberVar:(id<ORVar>) x;
 -(ORUInt) nbOccurences:(id<ORVar>)x;
+-(ORBool) canLeadToAnAbsorption;
+-(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x;
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(void) close;

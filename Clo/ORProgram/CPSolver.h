@@ -168,9 +168,13 @@
 
 @interface ABSElement : NSObject{
     ORDouble _quantity;
-    NSSet* _vars;
+    NSMutableSet* _vars;
 }
--(id) init:(ORDouble)quantity vars:(NSSet*)vars;
+-(id) init:(ORDouble)quantity vars:(NSMutableSet*)vars;
+-(id) init;
 -(ORDouble) quantity;
--(NSSet*) vars;
+-(NSMutableSet*) vars;
+-(void) addQuantity:(ORFloat)c;
+-(void) addVar:(id<ORVar>)v;
+-(NSString*)description;
 @end

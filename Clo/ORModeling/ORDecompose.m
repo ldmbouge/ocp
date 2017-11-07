@@ -532,12 +532,12 @@ struct CPVarPair {
         if(lc){
             ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
             vars[0] = [ORNormalizer floatVarIn:right for:_model];
-            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[[e left] floatValue]]];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[[e left] fmin]]];
            [right release];
         }else if(rc){
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
             vars[0] = [ORNormalizer floatVarIn:left for:_model];
-            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[[e right] floatValue]]];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[[e right] fmin]]];
            [left release];
         }else{
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
@@ -569,12 +569,12 @@ struct CPVarPair {
         if(lc){
             ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
             vars[0] = [ORNormalizer floatVarIn:right for:_model];
-           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[[e left] floatValue]]];
+           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[[e left] fmin]]];
            [right release];
         }else if(rc){
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
             vars[0] = [ORNormalizer floatVarIn:left for:_model];
-            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[[e right] floatValue]]];
+            [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[[e right] fmin]]];
            [left release];
         }else{
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
@@ -606,12 +606,12 @@ struct CPVarPair {
         if(lc){
             ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
             vars[0] = [ORNormalizer floatVarIn:right for:_model];
-           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[[e left] floatValue]]];
+           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[[e left] fmin]]];
            [right release];
         }else if(rc){
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
             vars[0] = [ORNormalizer floatVarIn:left for:_model];
-           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[[e right] floatValue]]];
+           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[[e right] fmin]]];
            [left release];
         }else{
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
@@ -643,12 +643,12 @@ struct CPVarPair {
         if(lc){
             ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
             vars[0] = [ORNormalizer floatVarIn:right for:_model];
-           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[[e left] floatValue]]];
+           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[[e left] fmin]]];
            [right release];
         }else if(rc){
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
             vars[0] = [ORNormalizer floatVarIn:left for:_model];
-           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[[e right] floatValue]]];
+           [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[[e right] fmin]]];
            [left release];
         }else{
             id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
@@ -1964,12 +1964,12 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       if(lc){
          ORFloatLinear* linRight  = [ORNormalizer floatLinearFrom:right model:_model];
          vars[0] = [ORNormalizer floatVarIn:linRight for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[left floatValue]]];
+         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[left fmin]]];
          [linRight release];
       }else if(rc){
          id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:left model:_model];
          vars[0] = [ORNormalizer floatVarIn:linLeft for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[right floatValue]]];
+         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[right fmin]]];
          [linLeft release];
       }else{
          id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:left model:_model];
@@ -2002,12 +2002,12 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       if(lc){
          ORFloatLinear* linRight  = [ORNormalizer floatLinearFrom:right model:_model];
          vars[0] = [ORNormalizer floatVarIn:linRight for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[left floatValue]]];
+         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[left fmin]]];
          [linRight release];
       }else if(rc){
          id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:left model:_model];
          vars[0] = [ORNormalizer floatVarIn:linLeft for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[right floatValue]]];
+         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[right fmin]]];
          [linLeft release];
       }else{
          id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:left model:_model];
@@ -2041,12 +2041,12 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       if(lc){
          ORFloatLinear* linright  = [ORNormalizer floatLinearFrom:right model:_model];
          vars[0] = [ORNormalizer floatVarIn:linright for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[left floatValue]]];
+         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[left fmin]]];
          [linright release];
       }else if(rc){
          id<ORFloatLinear> linleft  = [ORNormalizer floatLinearFrom:left model:_model];
          vars[0] = [ORNormalizer floatVarIn:linleft for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[right floatValue]]];
+         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[right fmin]]];
          [linleft release];
       }else{
          id<ORFloatLinear> linleft  = [ORNormalizer floatLinearFrom:left model:_model];
@@ -2079,12 +2079,12 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       if(lc){
          ORFloatLinear* linright  = [ORNormalizer floatLinearFrom:right model:_model];
          vars[0] = [ORNormalizer floatVarIn:linright for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[left floatValue]]];
+         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[left fmin]]];
          [linright release];
       }else if(rc){
          id<ORFloatLinear> linleft  = [ORNormalizer floatLinearFrom:left model:_model];
          vars[0] = [ORNormalizer floatVarIn:linleft for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[right floatValue]]];
+         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[right fmin]]];
          [linleft release];
       }else{
          id<ORFloatLinear> linleft  = [ORNormalizer floatLinearFrom:left model:_model];

@@ -66,11 +66,11 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+   return ![_x bound] + ![_y bound];
 }
 -(NSString*)description
 {
@@ -168,11 +168,11 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+   return ![_x bound] + ![_y bound];
 }
 -(NSString*)description
 {
@@ -261,11 +261,11 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+   return ![_x bound] + ![_y bound];
 }
 -(NSString*)description
 {
@@ -309,12 +309,13 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+   return ![_x bound] + ![_y bound];
 }
+
 -(NSString*)description
 {
     return [NSString stringWithFormat:@"<%@ > %@>",_x,_y];
@@ -358,12 +359,13 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+   return ![_x bound] + ![_y bound];
 }
+
 -(NSString*)description
 {
     return [NSString stringWithFormat:@"<%@ <= %@>",_x,_y];
@@ -406,11 +408,11 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+    return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+    return ![_x bound] + ![_y bound];
 }
 -(NSString*)description
 {
@@ -487,11 +489,23 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+    return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+    return ![_x bound] + ![_y bound] + ![_z bound];
+}
+-(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+{
+   if([x getId] == [_x getId])
+      return [[[NSSet alloc] initWithObjects:_y,nil] autorelease];
+   else if([x getId] == [_y getId])
+         return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] init] autorelease];
+}
+-(ORBool) canLeadToAnAbsorption
+{
+   return true;
 }
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x
 {
@@ -610,11 +624,23 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+   return ![_x bound] + ![_y bound] + ![_z bound];
+}
+-(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+{
+   if([x getId] == [_x getId])
+      return [[[NSSet alloc] initWithObjects:_y,nil] autorelease];
+   else if([x getId] == [_y getId])
+      return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] init] autorelease];
+}
+-(ORBool) canLeadToAnAbsorption
+{
+   return true;
 }
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x
 {
@@ -720,11 +746,11 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+   return ![_x bound] + ![_y bound] + ![_z bound];
 }
 -(NSString*)description
 {
@@ -789,11 +815,11 @@
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound];
+   return ![_x bound] + ![_y bound] + ![_z bound];
 }
 -(NSString*)description
 {

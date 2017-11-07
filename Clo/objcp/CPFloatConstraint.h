@@ -111,6 +111,8 @@
 -(id) init:(id)z equals:(id)x plus:(id)y ;
 -(void) post;
 -(NSSet*)allVars;
+-(ORBool) canLeadToAnAbsorption;
+-(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x;
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
@@ -128,6 +130,8 @@
 -(id) init:(id)z equals:(id)x minus:(id)y ;
 -(void) post;
 -(NSSet*)allVars;
+-(ORBool) canLeadToAnAbsorption;
+-(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x;
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;

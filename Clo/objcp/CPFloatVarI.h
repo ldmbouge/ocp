@@ -131,7 +131,7 @@ static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
 
 static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float ymax)
 {
-    return isDisjointWithV(xmin,xmax,ymin,ymax);
+    return !isDisjointWithV(xmin,xmax,ymin,ymax);
 }
 
 static inline unsigned long long cardinalityV(float xmin, float xmax){

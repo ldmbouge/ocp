@@ -64,7 +64,7 @@ int main(int argc, const char * argv[]) {
             
             [model add:[squared_area lt:@(1e-5f)]]; /* */
             
-            
+           NSLog(@"%@",model);
             id<ORFloatVarArray> vars = [model floatVars];
             id<CPProgram> cp = [args makeProgram:model];
             __block bool found = false;

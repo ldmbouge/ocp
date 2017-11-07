@@ -101,9 +101,17 @@
     }
     return i;
 }
+-(ORBool) canLeadToAnAbsorption
+{
+   return false;
+}
+-(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+{
+   return [[[NSSet alloc] init] autorelease];
+}
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x
 {
-    return 0.0;
+   return 0.0;
 }
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {

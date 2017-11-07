@@ -66,6 +66,15 @@
    }
    return i;
 }
+-(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+{
+   return [[[NSSet alloc] init] autorelease];
+}
+-(ORBool) canLeadToAnAbsorption
+{
+   return false;
+}
+//hzi : should be removed
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x
 {
    return 0.0;
@@ -192,6 +201,14 @@
          i++;
    }
    return i;
+}
+-(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+{
+   return [[[NSSet alloc] init] autorelease];
+}
+-(ORBool) canLeadToAnAbsorption
+{
+   return false;
 }
 -(ORDouble) leadToAnAbsorption:(id<ORVar>)x
 {
