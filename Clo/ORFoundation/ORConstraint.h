@@ -489,6 +489,18 @@ enum ORGroupType {
 -(id<ORFloatVar>) y;
 @end
 
+@protocol ORFloatReifyLThen <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@protocol ORFloatReifyLThenc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
 @protocol ORFloatReifyGEqualc <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORFloatVar>) x;
@@ -500,6 +512,19 @@ enum ORGroupType {
 -(id<ORFloatVar>) x;
 -(id<ORFloatVar>) y;
 @end
+
+@protocol ORFloatReifyGThen <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@protocol ORFloatReifyGThenc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
 
 @protocol ORDoubleMult <ORConstraint>
 -(id<ORDoubleVar>) res;

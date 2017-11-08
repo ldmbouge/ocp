@@ -194,9 +194,13 @@
 -(void) visitFloatReifyNEqualc: (id<ORConstraint>)c;
 -(void) visitFloatReifyNEqual: (id<ORConstraint>)c;
 -(void) visitFloatReifyLEqualc: (id<ORConstraint>)c;
+-(void) visitFloatReifyLThen: (id<ORConstraint>)c;
+-(void) visitFloatReifyLThenc: (id<ORConstraint>)c;
 -(void) visitFloatReifyLEqual: (id<ORConstraint>)c;
 -(void) visitFloatReifyGEqualc: (id<ORConstraint>)c;
 -(void) visitFloatReifyGEqual: (id<ORConstraint>)c;
+-(void) visitFloatReifyGThenc: (id<ORConstraint>)c;
+-(void) visitFloatReifyGThen: (id<ORConstraint>)c;
 -(void) visitDoubleEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleNEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleLinearEq: (id<ORConstraint>) c;

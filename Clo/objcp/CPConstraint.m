@@ -935,6 +935,20 @@
     return o;
 }
 
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lt:(id<CPFloatVar>)y annotation:(ORCLevel)c
+{
+   id<CPConstraint> o = [[CPFloatReifyLThen alloc] initCPReifyLThen:b when:x lti:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gt:(id<CPFloatVar>)y annotation:(ORCLevel)c
+{
+   id<CPConstraint> o = [[CPFloatReifyGThen alloc] initCPReifyGThen:b when:x gti:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eq: (id<CPFloatVar>) y annotation:(ORCLevel)c
 {
     id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y];
@@ -967,6 +981,20 @@
     id<CPConstraint> o = [[CPFloatReifyGEqualc alloc] initCPReifyGEqualc: b when: x geqi: i];
     [[x tracker] trackMutable: o];
     return o;
+}
+
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gti: (ORFloat) i
+{
+   id<CPConstraint> o = [[CPFloatReifyGThenc alloc] initCPReifyGThenc: b when: x gti: i];
+   [[x tracker] trackMutable: o];
+   return o;
+}
+
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lti: (ORFloat) i
+{
+   id<CPConstraint> o = [[CPFloatReifyLThenc alloc] initCPReifyLThenc: b when: x lti: i];
+   [[x tracker] trackMutable: o];
+   return o;
 }
 @end
 

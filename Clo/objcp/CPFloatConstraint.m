@@ -837,7 +837,6 @@
     return self;
 }
 
-
 -(void) post
 {
     if (bound(_b)) {
@@ -989,77 +988,154 @@
 }
 @end
 
+@implementation CPFloatReifyGThen
+-(id) initCPReifyGThen:(CPIntVar*)b when:(CPFloatVarI*)x gti:(CPFloatVarI*)y
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {  // YES <=>  x > y
+         [_y updateMax:fp_previous_float([_x max])];
+         [_x updateMin:fp_next_float([_y min])];
+      } else {            // NO <=> x <= y   ==>  YES <=> x < y
+         if ([_x bound]) { // c <= y
+            [_y updateMin:[_x min]];
+         } else {         // x <= y
+            [_y updateMin:[_x min]];
+            [_x updateMax:[_y max]];
+         }
+      }
+      if (![_x bound])
+         [_x whenChangeBoundsPropagate:self];
+      if (![_y bound])
+         [_y whenChangeBoundsPropagate:self];
+   } else {
+      if ([_y max] < [_x min])
+         [_b bind:YES];
+      else if ([_x max] <= [_y min])
+         [_b bind:NO];
+      else {
+         [_x whenChangeBoundsPropagate:self];
+         [_y whenChangeBoundsPropagate:self];
+         [_b whenBindPropagate:self];
+      }
+   }
+}
+-(void)propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {
+         [_y updateMax:fp_previous_float([_x max])];
+         [_x updateMin:fp_next_float([_y min])];
+      } else {
+         if ([_x bound]) { // c <= y
+            [_y updateMin:[_x min]];
+         } else {         // x <= y
+            [_y updateMin:[_x min]];
+            [_x updateMax:[_y max]];
+         }
+      }
+   } else {
+      if ([_y max] < [_x min]) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x max] <= [_y min]){
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyGEqual:%02d %@ <=> (%@ > %@)>",_name,_b,_x,_y];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_x bound] + ![_b bound];
+}
+@end
+
 
 @implementation CPFloatReifyGEqual
 -(id) initCPReifyGEqual:(CPIntVar*)b when:(CPFloatVarI*)x geqi:(CPFloatVarI*)y
 {
-    self = [super initCPCoreConstraint:[x engine]];
-    _b = b;
-    _x = x;
-    _y = y;
-    return self;
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
 }
 -(void) post
 {
-    if (bound(_b)) {
-        if (minDom(_b)) {  // YES <=>  x >= y
-            [_y updateMax:[_x max]];
-            [_x updateMin:[_y min]];
-        } else {            // NO <=> x <= y   ==>  YES <=> x < y
-            if ([_x bound]) { // c < y
-                [_y updateMax:fp_next_float([_x min])];
-            } else {         // x < y
-                [_y updateMax:fp_next_float([_x max])];
-                [_x updateMin:fp_previous_float([_y min])];
-            }
-        }
-        if (![_x bound])
-            [_x whenChangeBoundsPropagate:self];
-        if (![_y bound])
-            [_y whenChangeBoundsPropagate:self];
-    } else {
-        if ([_y max] <= [_x min])
-            [_b bind:YES];
-        else if ([_x min] < [_y max])
-            [_b bind:NO];
-        else {
-            [_x whenChangeBoundsPropagate:self];
-            [_y whenChangeBoundsPropagate:self];
-            [_b whenBindPropagate:self];
-        }
-    }
+   if (bound(_b)) {
+      if (minDom(_b)) {  // YES <=>  x >= y
+         [_y updateMax:[_x max]];
+         [_x updateMin:[_y min]];
+      } else {            // NO <=> x <= y   ==>  YES <=> x < y
+         if ([_x bound]) { // c < y
+            [_y updateMax:fp_next_float([_x min])];
+         } else {         // x < y
+            [_y updateMax:fp_next_float([_x max])];
+            [_x updateMin:fp_previous_float([_y min])];
+         }
+      }
+      if (![_x bound])
+         [_x whenChangeBoundsPropagate:self];
+      if (![_y bound])
+         [_y whenChangeBoundsPropagate:self];
+   } else {
+      if ([_y max] <= [_x min])
+         [_b bind:YES];
+      else if ([_x min] < [_y max])
+         [_b bind:NO];
+      else {
+         [_x whenChangeBoundsPropagate:self];
+         [_y whenChangeBoundsPropagate:self];
+         [_b whenBindPropagate:self];
+      }
+   }
 }
 -(void)propagate
 {
-    if (bound(_b)) {
-        if (minDom(_b)) {
-            [_y updateMax:[_x max]];
-            [_x updateMin:[_y min]];
-        } else {
-            [_y updateMax:fp_next_float([_x max])];
-            [_x updateMin:fp_previous_float([_y min])];
-        }
-    } else {
-        if ([_y max] <= [_x min]) {
-            assignTRInt(&_active, NO, _trail);
-            bindDom(_b,YES);
-        } else if ([_x min] < [_y max]) {
-            assignTRInt(&_active, NO, _trail);
-            bindDom(_b,NO);
-        }
-    }
+   if (bound(_b)) {
+      if (minDom(_b)) {
+         [_y updateMax:[_x max]];
+         [_x updateMin:[_y min]];
+      } else {
+         [_y updateMax:fp_next_float([_x max])];
+         [_x updateMin:fp_previous_float([_y min])];
+      }
+   } else {
+      if ([_y max] <= [_x min]) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x min] < [_y max]) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
 }
 -(NSString*)description
 {
-    return [NSMutableString stringWithFormat:@"<CPFloatReifyGEqual:%02d %@ <=> (%@ >= %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyGEqual:%02d %@ <=> (%@ >= %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
-    return ![_x bound] + ![_x bound] + ![_b bound];
+   return ![_x bound] + ![_x bound] + ![_b bound];
 }
 @end
 
@@ -1138,6 +1214,82 @@
 @end
 
 
+@implementation CPFloatReifyLThen
+-(id) initCPReifyLThen:(CPIntVar*)b when:(CPFloatVarI*)x lti:(CPFloatVarI*)y
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {  // YES <=>  x < y
+         [_x updateMax:fp_previous_float([_y max])];
+         [_y updateMin:fp_next_float([_x min])];
+      } else {            // NO <=> x <= y   ==>  YES <=> x > y
+         if ([_x bound]) { // c >= y
+            [_y updateMax:[_x min]];
+         } else {         // x >= y
+            [_y updateMax:[_x max]];
+            [_x updateMin:[_y min]];
+         }
+      }
+      if (![_x bound])
+         [_x whenChangeBoundsPropagate:self];
+      if (![_y bound])
+         [_y whenChangeBoundsPropagate:self];
+   } else {
+      if ([_x max] <= [_y min])
+         [_b bind:YES];
+      else if ([_x min] > [_y max])
+         [_b bind:NO];
+      else {
+         [_x whenChangeBoundsPropagate:self];
+         [_y whenChangeBoundsPropagate:self];
+         [_b whenBindPropagate:self];
+      }
+   }
+}
+-(void)propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {
+         [_x updateMax:fp_previous_float([_y max])];
+         [_y updateMin:fp_next_float([_x min])];
+      } else {
+         [_y updateMax:[_x max]];
+         [_x updateMin:[_y min]];
+      }
+   } else {
+      if ([_x max] <= [_y min]) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x min] > [_y max]) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ < %@)>",_name,_b,_x,_y];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_b bound];
+}
+@end
+
+
+
+
 @implementation CPFloatReifyEqualc
 -(id) initCPReifyEqualc:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(ORFloat)c
 {
@@ -1191,7 +1343,6 @@
     return ![_x bound] + ![_b bound];
 }
 @end
-
 
 @implementation CPFloatReifyLEqualc
 -(id) initCPReifyLEqualc:(CPIntVar*)b when:(CPFloatVarI*)x leqi:(ORFloat)c
@@ -1252,6 +1403,65 @@
 @end
 
 
+@implementation CPFloatReifyLThenc
+-(id) initCPReifyLThenc:(CPIntVar*)b when:(CPFloatVarI*)x lti:(ORFloat)c
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(void) post
+{
+   if ([_b bound]) {
+      if ([_b min]) // x < c
+         [_x updateMax:fp_previous_float(_c)];
+      else // x >= c
+         [_x updateMin:_c];
+   }
+   else if ([_x max] < _c)
+      [_b bind:YES];
+   else if ([_x min] >= _c)
+      [_b bind:NO];
+   else {
+      [_b whenBindPropagate:self];
+      [_x whenChangeBoundsPropagate:self];
+   }
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b))
+         [_x updateMax:fp_previous_float(_c)];
+      else
+         [_x updateMin:_c];
+   } else {
+      if ([_x min] >= _c) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b, NO);
+      } else if ([_x max] < _c) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b, YES);
+      }
+   }
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ < %16.16e)>",_name,_b,_x,_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_c,_b, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+@end
+
+
 @implementation CPFloatReifyNotEqualc
 -(id) initCPReifyNotEqualc:(CPIntVar*)b when:(CPFloatVarI*)x neqi:(ORFloat)c
 {
@@ -1302,8 +1512,6 @@
     return ![_x bound] + ![_b bound];
 }
 @end
-
-
 
 @implementation CPFloatReifyGEqualc
 -(id) initCPReifyGEqualc:(CPIntVar*)b when:(CPFloatVarI*)x geqi:(ORFloat)c
@@ -1360,6 +1568,65 @@
 -(ORUInt)nbUVars
 {
     return ![_x bound] + ![_b bound];
+}
+@end
+
+
+@implementation CPFloatReifyGThenc
+-(id) initCPReifyGThenc:(CPIntVar*)b when:(CPFloatVarI*)x gti:(ORFloat)c
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(void) post  // b <=>  x > c
+{
+   if ([_b bound]) {
+      if ([_b min])
+         [_x updateMin:fp_next_float(_c)];
+      else // x <= c
+         [_x updateMax:_c];
+   }
+   else if ([_x min] > _c)
+      [_b bind:YES];
+   else if ([_x max] <= _c)
+      [_b bind:NO];
+   else {
+      [_b whenBindPropagate:self];
+      [_x whenChangeBoundsPropagate:self];
+   }
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b))
+         [_x updateMin:fp_next_float(_c)];
+      else
+         [_x updateMax:_c];
+   } else {
+      if ([_x min] > _c) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x max] <= _c) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyGEqualc:%02d %@ <=> (%@ > %16.16e)>",_name,_b,_x,_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_c,_b, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
 }
 @end
 

@@ -340,6 +340,11 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x leqi: (ORFloat) i;
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x geqi: (ORFloat) i;
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x leq: (id<ORFloatVar>) y;
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x geq: (id<ORFloatVar>) y;
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x gt: (id<ORFloatVar>) y;
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x lt: (id<ORFloatVar>) y;
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x gti: (ORFloat) i;
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x lti: (ORFloat) i;
 @end
 
 @interface ORFactory (ORDouble)

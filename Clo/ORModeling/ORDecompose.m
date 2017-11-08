@@ -1226,7 +1226,25 @@ static inline ORLong maxSeq(ORLong v[4])  {
    [recVisit reifyGEQ:_model boolean:_rv left:left right:right];
    [recVisit release];
 }
-//TODO: add the visits for < , > (for cleanliness)
+
+-(void) visitExprLThenI:(ORExprLThenI*)e
+{
+   ORExprI* left = [e left];
+   ORExprI* right = [e right];
+   id<TypeNormalizer> recVisit = vtype2Obj(left.vtype);
+   if(_rv == nil) _rv = [ORFactory boolVar:_model];
+   [recVisit reifyLT:_model boolean:_rv left:left right:right];
+   [recVisit release];
+}
+-(void) visitExprGThenI:(ORExprGThenI*)e
+{
+   ORExprI* left = [e left];
+   ORExprI* right = [e right];
+   id<TypeNormalizer> recVisit = vtype2Obj(left.vtype);
+   if(_rv == nil) _rv = [ORFactory boolVar:_model];
+   [recVisit reifyGT:_model boolean:_rv left:left right:right];
+   [recVisit release];
+}
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
     id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
@@ -1586,6 +1604,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyGEQ>"];
 }
+-(void) reifyLT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyLT>"];
+}
+-(void) reifyGT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyGT>"];
+}
 -(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyEQc>"];
@@ -1601,6 +1627,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) reifyGEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyGEQc>"];
+}
+-(void) reifyLTc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyLTc>"];
+}
+-(void) reifyGTc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyGTc>"];
 }
 -(id<ORLinear>) visitExprGEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
@@ -1885,32 +1919,88 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
     }
     [linOther release];
 }
--(void) reifyLEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv left:(ORExprI*)left right:(ORExprI*)right
+-(void) reifyLTc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv other:(ORExprI*)theOther constant:(ORExprI*)ce
+{
+   ORFloat c = [ce fmin];
+   id<ORFloatLinear> linOther  = [ORNormalizer floatLinearFrom:theOther model:_model];
+   id<ORFloatVar> theVar = [ORNormalizer floatVarIn:linOther for:_model];
+   if ([[theVar domain] up] < c) {
+      [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
+   } else {
+      [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:theVar lti:c]];
+   }
+   [linOther release];
+}
+-(void) reifyGTc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv other:(ORExprI*)theOther constant:(ORExprI*)ce
+{
+   ORFloat c = [ce fmin];
+   id<ORFloatLinear> linOther  = [ORNormalizer floatLinearFrom:theOther model:_model];
+   id<ORFloatVar> theVar = [ORNormalizer floatVarIn:linOther for:_model];
+   if ([[theVar domain] low] > c) {
+      [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
+   } else {
+      [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:theVar gti:c]];
+   }
+   [linOther release];
+}
+-(void) reifyLT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv left:(ORExprI*)left right:(ORExprI*)right
 {
     if ([left isConstant]) {
-      [self reifyGEQc:_model boolean:rv other:right constant:left];
+      [self reifyGTc:_model boolean:rv other:right constant:left];
     } else if ([right isConstant]) {
-        [self reifyLEQc:_model boolean:rv other:left constant:right];
+        [self reifyLTc:_model boolean:rv other:left constant:right];
     } else{
         id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
         id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
         id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
         id<ORFloatVar> varRight = [ORNormalizer floatVarIn:linRight for:_model];
-        [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:varLeft leq:varRight]];
+        [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:varLeft lt:varRight]];
         [linLeft release];
         [linRight release];
     }
 }
+-(void) reifyGT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv left:(ORExprI*)left right:(ORExprI*) right
+{
+   if ([left isConstant]) {
+      [self reifyGTc:_model boolean:rv other:right constant:left];
+   } else if ([right isConstant]) {
+      [self reifyLTc:_model boolean:rv other:left constant:right];
+   } else{
+      id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
+      id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
+      id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
+      id<ORFloatVar> varRight = [ORNormalizer floatVarIn:linRight for:_model];
+      [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:varLeft gt:varRight]];
+      [linLeft release];
+      [linRight release];
+   }
+}
+-(void) reifyLEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv left:(ORExprI*)left right:(ORExprI*)right
+{
+   if ([left isConstant]) {
+      [self reifyGEQc:_model boolean:rv other:right constant:left];
+   } else if ([right isConstant]) {
+      [self reifyLEQc:_model boolean:rv other:left constant:right];
+   } else{
+      id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
+      id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
+      id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
+      id<ORFloatVar> varRight = [ORNormalizer floatVarIn:linRight for:_model];
+      [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:varLeft leq:varRight]];
+      [linLeft release];
+      [linRight release];
+   }
+}
 -(void) reifyGEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv left:(ORExprI*)left right:(ORExprI*) right
 {
-    ORExprI* newleft  = right;
-    ORExprI* newright = left;    // switch side and pretend it is ≤
-    if ([newleft isConstant]) {
-       [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
-    } else if ([newright isConstant]) {
-        [self reifyLEQc:_model boolean:rv  other:newleft constant:newright];
-    } else
-        [self reifyLEQ:_model boolean:rv  left:newleft right:newright];
+   ORExprI* newleft  = right;
+   ORExprI* newright = left;    // switch side and pretend it is ≤
+   if ([newleft isConstant]) {
+      [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
+   } else if ([newright isConstant]) {
+      [self reifyLEQc:_model boolean:rv  other:newleft constant:newright];
+   } else
+      [self reifyLEQ:_model boolean:rv  left:newleft right:newright];
 }
 
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right

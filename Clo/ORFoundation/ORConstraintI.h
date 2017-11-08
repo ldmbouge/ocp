@@ -507,6 +507,20 @@
 -(id<ORFloatVar>) y;
 @end
 
+@interface ORFloatReifyLThen : ORConstraintI<ORFloatReifyLThen>
+-(ORFloatReifyLThen*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x lt:(id<ORFloatVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@interface ORFloatReifyLThenc : ORConstraintI<ORFloatReifyLThenc>
+-(ORFloatReifyLThenc*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x lti:(ORFloat)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
 @interface ORFloatReifyGEqualc : ORConstraintI<ORFloatReifyGEqualc>
 -(ORFloatReifyGEqualc*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x geqi:(ORFloat)y;
 -(id<ORIntVar>) b;
@@ -516,6 +530,20 @@
 
 @interface ORFloatReifyGEqual : ORConstraintI<ORFloatReifyGEqual>
 -(ORFloatReifyGEqual*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x geq:(id<ORFloatVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@interface ORFloatReifyGThenc : ORConstraintI<ORFloatReifyGThenc>
+-(ORFloatReifyGThenc*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x gti:(ORFloat)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@interface ORFloatReifyGThen : ORConstraintI<ORFloatReifyGThen>
+-(ORFloatReifyGThen*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x gt:(id<ORFloatVar>)y;
 -(id<ORIntVar>) b;
 -(id<ORFloatVar>) x;
 -(id<ORFloatVar>) y;

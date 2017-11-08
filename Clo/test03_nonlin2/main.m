@@ -18,8 +18,12 @@ int main(int argc, const char * argv[]) {
          
          [model add:[res eq:[[x plus:y] div:[x sub:y]]]];
          
-         [model add:[res gt:@(6.f)]];
-         [model add:[res lt:@(7.48875938e2f)]];
+         //         ORFloat c = 8.81975174f - 2.42721237e-5f;
+         ORFloat c = 8.81975174f - 5.3f;
+         //         [model add:[res gt:@(c)]];
+         [model add:[res lt:@(.6f)]];
+         [model add:[res gt:@(0.f)]];
+         
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;

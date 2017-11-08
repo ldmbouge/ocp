@@ -178,6 +178,19 @@
 -(ORUInt)nbUVars;
 @end
 
+
+@interface CPFloatReifyGThen : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   CPFloatVarI* _y;
+}
+-(id) initCPReifyGThen:(id<CPIntVar>)b when:(id<CPFloatVar>)x gti:(id<CPFloatVar>)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPFloatReifyNEqual : CPCoreConstraint {
 @private
     CPIntVar* _b;
@@ -214,6 +227,17 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatReifyLThen : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   CPFloatVarI* _y;
+}
+-(id) initCPReifyLThen:(id<CPIntVar>)b when:(id<CPFloatVar>)x lti:(id<CPFloatVar>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPFloatReifyEqualc : CPCoreConstraint {
 @private
@@ -254,8 +278,6 @@
 -(ORUInt)nbUVars;
 @end
 
-
-
 @interface CPFloatReifyGEqualc : CPCoreConstraint {
 @private
     CPIntVar* _b;
@@ -263,6 +285,30 @@
     ORFloat      _c;
 }
 -(id) initCPReifyGEqualc:(id<CPIntVar>)b when:(id<CPFloatVar>)x geqi:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatReifyGThenc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   ORFloat      _c;
+}
+-(id) initCPReifyGThenc:(id<CPIntVar>)b when:(id<CPFloatVar>)x gti:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatReifyLThenc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   ORFloat      _c;
+}
+-(id) initCPReifyLThenc:(id<CPIntVar>)b when:(id<CPFloatVar>)x lti:(ORFloat)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

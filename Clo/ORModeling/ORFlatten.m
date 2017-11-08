@@ -543,9 +543,17 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
     _result = [_into addConstraint:c];
 }
+-(void) visitFloatReifyLThenc: (id<ORFloatReifyLThenc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitFloatReifyLEqual: (id<ORFloatReifyLEqual>)c
 {
     _result = [_into addConstraint:c];
+}
+-(void) visitFloatReifyLThen: (id<ORFloatReifyLThen>)c
+{
+   _result = [_into addConstraint:c];
 }
 -(void) visitFloatReifyGEqualc: (id<ORFloatReifyGEqualc>)c
 {
@@ -553,7 +561,15 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 -(void) visitFloatReifyGEqual: (id<ORFloatReifyGEqual>)c
 {
-    _result = [_into addConstraint:c];
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatReifyGThen: (id<ORFloatReifyGThen>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatReifyGThenc: (id<ORFloatReifyGThenc>)c
+{
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {

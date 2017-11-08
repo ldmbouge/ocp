@@ -129,10 +129,14 @@
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geq: (id<CPFloatVar>) y annotation:(ORCLevel)c;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neq: (id<CPFloatVar>) y annotation:(ORCLevel)c;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x leq:(id<CPFloatVar>)y annotation:(ORCLevel)c;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lt:(id<CPFloatVar>)y annotation:(ORCLevel)c;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gt: (id<CPFloatVar>) y annotation:(ORCLevel)c;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eqi: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neqi: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x leqi: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geqi: (ORFloat) i;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lti: (ORFloat) i;
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gti: (ORFloat) i;
 @end
 
 @interface CPFactory (ORDouble)

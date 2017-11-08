@@ -4101,6 +4101,129 @@
 }
 @end
 
+
+@implementation ORFloatReifyLThen {
+   id<ORIntVar> _b;
+   id<ORFloatVar> _x;
+   id<ORFloatVar> _y;
+}
+-(ORFloatReifyLThen*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x lt:(id<ORFloatVar>)y
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ < %@)",[self class],self,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatReifyLThen:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORFloatVar>) x
+{
+   return _x;
+}
+-(id<ORFloatVar>) y
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+@implementation ORFloatReifyLThenc {
+   id<ORIntVar> _b;
+   id<ORFloatVar> _x;
+   ORFloat        _c;
+}
+-(ORFloatReifyLThenc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x lti:(ORFloat)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ < %16.16e)",[self class],self,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatReifyLThenc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORFloatVar>) x
+{
+   return _x;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+
 @implementation ORFloatReifyGEqualc {
    id<ORIntVar> _b;
    id<ORFloatVar> _x;
@@ -4213,6 +4336,125 @@
    _b = [aDecoder decodeObject];
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+@implementation ORFloatReifyGThen {
+   id<ORIntVar> _b;
+   id<ORFloatVar> _x;
+   id<ORFloatVar> _y;
+}
+-(ORFloatReifyGThen*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x gt:(id<ORFloatVar>)y
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ > %@)",[self class],self,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatReifyGThen:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORFloatVar>) x
+{
+   return _x;
+}
+-(id<ORFloatVar>) y
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+
+@implementation ORFloatReifyGThenc {
+   id<ORIntVar> _b;
+   id<ORFloatVar> _x;
+   ORFloat        _c;
+}
+-(ORFloatReifyGThenc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x gti:(ORFloat)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ > %16.16e)",[self class],self,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatReifyGThenc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORFloatVar>) x
+{
+   return _x;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
