@@ -1656,6 +1656,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 //    [model trackObject:o2];
     return o;
 }
++(id<ORConstraint>) phi:(id<ORTracker>)model on_boolean:(id<ORIntVar>) b  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y or:(id<ORFloatVar>)z
+{
+   //correspond to : 2 hreify one for c and one for not(c)
+   id<ORConstraint> o = [[b imply:[x eq:y]] land: [[b neg] imply:[x eq:z]]];
+   //    [model trackObject:o];
+   //    [model trackObject:o2];
+   return o;
+}
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x eq: (id<ORFloatVar>) y
 {
     id<ORConstraint> o = [[ORFloatReifyEqual alloc] initFloatReify: b equiv: x eq: y];

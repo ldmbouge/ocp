@@ -54,9 +54,10 @@
       id<ORIntVar> b_else0 = [ORFactory boolVar:model];
       
 //      +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x eqi: (ORFloat) i
-      [model add:[ORFactory floatReify:model boolean:b_if0 with:x_0 gti:5.0f]];
-      [model add:[ORFactory floatReify:model boolean:b_else0 with:x_0 leqi:5.0f]];
-//      [model add:[[c_0 neg] eq:b_else0]];
+//      [model add:[ORFactory floatReify:model boolean:b_if0 with:x_0 gti:5.0f]];
+//      [model add:[ORFactory floatReify:model boolean:b_else0 with:x_0 leqi:5.0f]];
+      [model add:[c_0  eq:b_if0]];
+      [model add:[[b_if0 neg] eq:b_else0]];
       id<ORGroup> g_0 = [ORFactory group:model guard:b_if0];
       {
          [g_0 add:[y_1 eq: expr_1]];
@@ -65,7 +66,8 @@
       {
          [g_1 add:[y_2 eq: expr_2]];
       }
-      [model add:[ORFactory phi:model on:c_0 var:y_0 with:y_1 or:y_2]];
+      [model add:[ORFactory phi:model on_boolean:b_if0 var:y_0 with:y_1 or:y_2]];
+//      [model add:[ORFactory phi:model on:c_0 var:y_0 with:y_1 or:y_2]];
       [model add:g_0];
       [model add:g_1];
       

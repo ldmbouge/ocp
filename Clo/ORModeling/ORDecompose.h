@@ -112,7 +112,7 @@
 -(id) init;
 @end
 
-@interface ORTBoolHandler : ORVTypeHandler<NSObject>
+@interface ORTBoolHandler : ORTIntHandler<NSObject>
 -(id) init;
 @end
 
