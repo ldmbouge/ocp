@@ -2565,17 +2565,17 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) post
 {
-//   if (bound(_guard)){
-//      if(minDom(_guard) == 1)
-//         [super post];
+   if (bound(_guard)){
+      if(minDom(_guard) == 1)
+         [super post];
 //      else
 //         assignTRInt(&_active, NO, _trail);
-//   } else {
+   } else {
       [_guard whenBindDo:^{
          if ([_guard min] == 1)
             [super post];
       } onBehalf:self];
-//   }
+   }
 }
 -(NSString*)description
 {

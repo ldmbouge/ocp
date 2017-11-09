@@ -5,7 +5,7 @@ int main(int argc, const char * argv[]) {
         ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
         [args measure:^struct ORResult(){
            id<ORModel> model = [ORFactory createModel];
-           id<ORFloatVar> x_0 = [ORFactory floatVar:model low:7.f up:7.f];
+           id<ORFloatVar> x_0 = [ORFactory floatVar:model low:5.0 up:nextafterf(5.f, +INFINITY)];
            id<ORFloatVar> y_0 = [ORFactory floatVar:model];
            id<ORFloatVar> y_1 = [ORFactory floatVar:model];
            id<ORFloatVar> y_2 = [ORFactory floatVar:model];
@@ -37,19 +37,19 @@ int main(int argc, const char * argv[]) {
            [model add:g_1];
            
            NSLog(@"%@",model);
-//           id<ORFloatVarArray> vars = [ORFactory floatVarArray:model range:RANGE(model, 0, 1) ];
-//           vars[0] = x_0;
-//           vars[1] = y_0;
+           id<ORFloatVarArray> vars = [ORFactory floatVarArray:model range:RANGE(model, 0, 1) ];
+           vars[0] = x_0;
+           vars[1] = y_0;
            id<CPProgram> cp = [ORFactory createCPProgram:model];
-                 id<ORFloatVarArray> vars = [model floatVars];
+//                 id<ORFloatVarArray> vars = [model floatVars];
          
             __block bool found = false;
-            [cp solveOn:^(id<CPCommonProgram> p) {
-//                [args launchHeuristic:(id<CPProgram>)p restricted:vars];
+            [cp solveAll:^() {
+                [args launchHeuristic:cp restricted:vars];
                 for(id<ORFloatVar> v in vars)
-                    NSLog(@"%@ (bound %s) = %16.16e\n ",v,[p bound:v] ? "YES" : "NO",[p floatValue:v]);
+                    NSLog(@"%@ (bound %s) = %16.16e\n ",v,[cp bound:v] ? "YES" : "NO",[cp floatValue:v]);
                 found=true;
-            } withTimeLimit:[args timeOut]];
+            }];
             struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
             return r;
         }];
