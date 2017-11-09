@@ -1962,9 +1962,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) reifyGT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv left:(ORExprI*)left right:(ORExprI*) right
 {
    if ([left isConstant]) {
-      [self reifyGTc:_model boolean:rv other:right constant:left];
+      [self reifyLTc:_model boolean:rv other:right constant:left];
    } else if ([right isConstant]) {
-      [self reifyLTc:_model boolean:rv other:left constant:right];
+      [self reifyGTc:_model boolean:rv other:left constant:right];
    } else{
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
@@ -1980,7 +1980,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    if ([left isConstant]) {
       [self reifyGEQc:_model boolean:rv other:right constant:left];
    } else if ([right isConstant]) {
-      [self reifyLEQc:_model boolean:rv other:left constant:right];
+      [self reifyGEQc:_model boolean:rv other:left constant:right];
    } else{
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];

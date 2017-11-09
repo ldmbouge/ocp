@@ -15,6 +15,7 @@
 #import <ORProgram/CPProgram.h>
 #import <ORModeling/ORModeling.h>
 #import <CPUKernel/CPUKernel.h>
+#import <objcp/CPVar.h>
 
 /***************************************************************************/
 /*                  This file should be private                            */
@@ -175,6 +176,6 @@
 -(ORDouble) quantity;
 -(NSMutableSet*) vars;
 -(void) addQuantity:(ORFloat)c;
--(void) addVar:(id<ORVar>)v;
+-(void) addVar:(id<CPFloatVar>)v;
 -(NSString*)description;
 @end

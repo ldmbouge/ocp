@@ -2709,10 +2709,10 @@
    }
    return max;
 }
--(ORDouble) computeAbsorptionQuantity:(id<ORFloatVar>)y by:(id<ORFloatVar>)x
+-(ORDouble) computeAbsorptionQuantity:(id<CPFloatVar>)y by:(id<ORFloatVar>)x
 {
    CPFloatVarI* cx = _gamma[getId(x)];
-   id<CPFloatVar> cy = _gamma[getId(y)];
+   id<CPFloatVar> cy = y;
    float_interval ax = computeAbsordedInterval(cx);
    if(isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max])){
       return cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max]))/[cy cardinality];
@@ -2756,8 +2756,8 @@
    for (ORUInt i = [vars low]; i < size ; i++) {
       id_v = [vars[i] getId] - [vars[low] getId];
       tmp = involementInConstraints[id_v];
-      for (id<ORFloatVar> v in tmp) {
-         absV = [self computeAbsorptionQuantity:vars[i] by:v];
+      for (id<CPFloatVar> v in tmp) {
+         absV = [self computeAbsorptionQuantity:v by:vars[i]];
          assert(absV <= 1.0f && absV >= 0.f);
          if(absV > 0){
             [abs[i] addQuantity:absV];
@@ -2794,7 +2794,7 @@
    for (ORInt i = 0; i < [csts count];i++)
    {
       id<CPConstraint> c = _gamma[[csts[i] getId]];
-      if(! [c memberVar:x]) continue;
+      if(! [c memberVar:_gamma[[x getId]]]) continue;
       res += [c leadToACancellation:x];
    }
    assert(res != NAN);
@@ -3555,7 +3555,7 @@
 {
    return _vars;
 }
--(void) addVar:(id<ORVar>) v
+-(void) addVar:(id<CPFloatVar>) v
 {
    [_vars addObject:v];
 }

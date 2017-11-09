@@ -21,8 +21,10 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> expr_1 = [ORFactory float:model value:1.0f];
          
          [model add:[res_0 eq: [expr_0 div: [x_0 plus: expr_1]]]];
-                  
-         //         [model add:[res gt:@(6.f)]];
+         
+//         ORFloat c = 9.999899864196777344e-01;
+//         ORFloat c2 =  3.333333432674407959e-01 ;
+//         [model add:[[res_0 gt:@(c2)] lor:[res_0 lt:@(c)]]];
          //         [model add:[res lt:@(7.48875938e2f)]];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];

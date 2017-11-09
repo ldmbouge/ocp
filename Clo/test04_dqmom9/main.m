@@ -16,7 +16,6 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> res = [ORFactory floatVar:model];
          id<ORFloatVar> m2_0 = [ORFactory floatVar:model low:-1.f up:1.f];
          id<ORFloatVar> m1_0 = [ORFactory floatVar:model low:-1.f up:1.f];
          id<ORFloatVar> v2_0 = [ORFactory floatVar:model low:-1.f up:1.f];
@@ -29,6 +28,7 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> w1_0 = [ORFactory floatVar:model low:0.00001f up:1.f];
          id<ORFloatVar> w0_0 = [ORFactory floatVar:model low:0.00001f up:1.f];
          id<ORFloatVar> v1_0 = [ORFactory floatVar:model low:0.00001f up:1.f];
+         id<ORFloatVar> res = [ORFactory floatVar:model];
        
          id<ORExpr> expr_8 = [ORFactory float:model value:1.0f];
          id<ORExpr> expr_6 = [ORFactory float:model value:0.0f];
@@ -56,9 +56,10 @@ int main(int argc, const char * argv[]) {
          
          [model add:[res eq: [expr_9 plus: [[v0_0 mul: expr_10] plus: [[v1_0 mul: expr_11] plus: [[v2_0 mul: expr_12] plus: expr_13]]]]]];
 
-         
+         ORFloat c = -9.667969024000000000e+09;
+//         [model add:[res gt:@(c)]];
 //         [model add:[res gt:@(6.f)]];
-//         [model add:[res lt:@(7.48875938e2f)]];
+         [model add:[res gt:@(c)]];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;

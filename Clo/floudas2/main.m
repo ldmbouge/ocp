@@ -31,6 +31,9 @@ int main(int argc, const char * argv[]) {
          [model add:[res_0 eq: [[expr_0 sub:x1_0] sub: x2_0]]];
 
          
+         [model add:[res_0 leq:@(1.f)]];
+         [model add:[res_0 geq:@(-1.f)]];
+         
          
          //         [model add:[res gt:@(6.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];

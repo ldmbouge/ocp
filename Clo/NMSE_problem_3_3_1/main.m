@@ -30,7 +30,8 @@ int main(int argc, const char * argv[]) {
          [model add:[res_0 eq: [[expr_0 div: [x_0 plus: expr_1]] sub: [expr_2 div: x_0]]]];
 
          
-         [model add:[x_0 neq:0]];
+         [model add:[x_0 eq:@(0.f)]];
+         [model add:[res_0 geq:@(1e5f)]];
          
          //         [model add:[res gt:@(6.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];

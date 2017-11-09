@@ -5,7 +5,7 @@
  float ex8(float x3, float x0, float x2, float x1) {
 	return (((x0 + x1) + x2) + x3);
  }
-
+ 
  */
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
@@ -25,7 +25,8 @@ int main(int argc, const char * argv[]) {
          
          
          
-         //         [model add:[res gt:@(6.f)]];
+         [model add:[res_0 gt:@(-1.f)]];
+         [model add:[res_0 lt:@(1.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];

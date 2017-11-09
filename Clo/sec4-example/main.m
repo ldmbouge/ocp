@@ -33,7 +33,7 @@ int main(int argc, const char * argv[]) {
 //         id<ORExpr> fc = [ORFactory float:model value:v];
 //         [model add:[res gt:[fc plus:@(1.65814304e-2f)]]];
          [model add:[res gt:@(6.f)]];
-         [model add:[res lt:@(7.48875938e2f)]];
+//         [model add:[res lt:@(7.48875938e2f)]];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;

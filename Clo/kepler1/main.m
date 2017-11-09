@@ -35,8 +35,9 @@ int main(int argc, const char * argv[]) {
          [model add:[res_0 eq: [[[[[[[[x1_0 mul: x4_0] mul: [[[[expr_unop sub:x1_0] plus: x2_0] plus: x3_0] sub: x4_0]] plus: [x2_0 mul: [[[x1_0 sub: x2_0] plus: x3_0] plus: x4_0]]] plus: [x3_0 mul: [[[x1_0 plus: x2_0] sub: x3_0] plus: x4_0]]] sub: [[x2_0 mul: x3_0] mul: x4_0]] sub: [x1_0 mul: x3_0]] sub: [x1_0 mul: x2_0]] sub: x4_0]]];
          
          
-         
-         
+    
+         [model add:[res_0 geq:@(-1.f)]];
+         [model add:[res_0 geq:@(-2.355440139770507812e+01)]];
          //         [model add:[res gt:@(6.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];
          id<ORFloatVarArray> vars = [model floatVars];

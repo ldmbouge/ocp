@@ -72,13 +72,15 @@
       [model add:g_1];
       
       NSLog(@"%@",model);
-     
+      id<ORFloatVarArray> vars = [ORFactory floatVarArray:model range:RANGE(model, 0, 1) ];
+      vars[0] = x_0;
+      vars[1] = y_0;
       id<CPProgram> cp = [ORFactory createCPProgram:model];
-      id<ORFloatVarArray> vars = [model floatVars];
+//      id<ORFloatVarArray> vars = [model floatVars];
       [cp solve:^(){
-         [cp lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
-            [cp floatStaticSplit:x];
-         }];
+//         [cp lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+//            [cp floatStaticSplit:x];
+//         }];
 
          id<CPFloatVar> xc = [cp concretize:x_0];
          id<CPFloatVar> yc = [cp concretize:y_0];

@@ -20,7 +20,8 @@ int main(int argc, const char * argv[]) {
             
             
             id<ORFloatVar> delta = [ORFactory floatVar:model low:0.1f up:0.1f];
-            id<ORExpr> epsilon =  [ORFactory float:model value:10.f];
+           id<ORFloatVar> epsilon = [ORFactory floatVar:model low:10.f up:10.f];
+//            id<ORExpr> epsilon =  [ORFactory float:model value:10.f];
             
             
             id<ORExpr> infinity = [ORFactory infinityf:model];

@@ -248,7 +248,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
 }
-
+//hzi doesn't need 6, 2 should be enought ?
 -(void) bindEvt:(id<CPFloatDom>)sender
 {
     id<CPClosureList> mList[6];

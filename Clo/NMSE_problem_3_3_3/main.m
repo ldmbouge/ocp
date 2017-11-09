@@ -25,6 +25,8 @@ int main(int argc, const char * argv[]) {
          
          id<ORModel> model = [ORFactory createModel];
          
+         id<ORFloatVar> res_0 = [ORFactory floatVar:model];
+         id<ORFloatVar> x_0 = [ORFactory floatVar:model];
          id<ORExpr> expr_4 = [ORFactory float:model value:1.0f];
          id<ORExpr> expr_0 = [ORFactory float:model value:1.0f];
          id<ORExpr> expr_1 = [ORFactory float:model value:1.0f];
@@ -33,9 +35,9 @@ int main(int argc, const char * argv[]) {
          
          [model add:[res_0 eq: [[[expr_0 div: [x_0 plus: expr_1]] sub: [expr_2 div: x_0]] plus: [expr_3 div: [x_0 sub: expr_4]]]]];
          
-         [model add:[x_0 neq:0]];
-         [model add:[x_0 neq:1]];
-         [model add:[x_0 neq:-1]];
+         [model add:[x_0 neq:@(0.f)]];
+         [model add:[x_0 neq:@(1.f)]];
+         [model add:[x_0 neq:@(-1.f)]];
          
          //         [model add:[res gt:@(6.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];
@@ -58,4 +60,4 @@ int main(int argc, const char * argv[]) {
       
    }
    return 0;
-}}
+}

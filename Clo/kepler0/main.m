@@ -25,12 +25,12 @@ int main(int argc, const char * argv[]) {
          
          id<ORModel> model = [ORFactory createModel];
          
-         id<ORFloatVar> x6_0 = [ORFactory floatVar:model low:4.f up:6.36f];
+         id<ORFloatVar> x1_0 = [ORFactory floatVar:model low:4.f up:6.36f];
+         id<ORFloatVar> x2_0 = [ORFactory floatVar:model low:4.f up:6.36f];
+         id<ORFloatVar> x3_0 = [ORFactory floatVar:model low:4.f up:6.36f];
          id<ORFloatVar> x4_0 = [ORFactory floatVar:model low:4.f up:6.36f];
          id<ORFloatVar> x5_0 = [ORFactory floatVar:model low:4.f up:6.36f];
-         id<ORFloatVar> x2_0 = [ORFactory floatVar:model low:4.f up:6.36f];
-         id<ORFloatVar> x1_0 = [ORFactory floatVar:model low:4.f up:6.36f];
-         id<ORFloatVar> x3_0 = [ORFactory floatVar:model low:4.f up:6.36f];
+         id<ORFloatVar> x6_0 = [ORFactory floatVar:model low:4.f up:6.36f];
          id<ORFloatVar> res_0 = [ORFactory floatVar:model];
          
          id<ORExpr> expr_unop = [ORFactory float:model value:0.f];
@@ -38,6 +38,11 @@ int main(int argc, const char * argv[]) {
          [model add:[res_0 eq: [[[[[x2_0 mul: x5_0] plus: [x3_0 mul: x6_0]] sub: [x2_0 mul: x3_0]] sub: [x5_0 mul: x6_0]] plus: [x1_0 mul: [[[[[[expr_unop sub:x1_0] plus: x2_0] plus: x3_0] sub: x4_0] plus: x5_0] plus: x6_0]]]]];
 
          
+         
+         
+//         [model add:[res_0 leq:@(1.368960876464843750e+02)]];
+         [model add:[res_0 leq:@(-1.f)]];
+         [model add:[res_0 geq:@(-2.355440139770507812e+01)]];
          
          //         [model add:[res gt:@(6.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];

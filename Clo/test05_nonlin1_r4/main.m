@@ -21,6 +21,7 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1.00001f up:1.f];
          id<ORFloatVar> res = [ORFactory floatVar:model];
          id<ORFloatVar> r1_0 = [ORFactory floatVar:model];
+         id<ORFloatVar> r_3 = [ORFactory floatVar:model];
          id<ORExpr> expr_0 = [ORFactory float:model value:1.0f];
          id<ORExpr> expr_1 = [ORFactory float:model value:1.0f];
          
@@ -28,9 +29,12 @@ int main(int argc, const char * argv[]) {
          
          [model add:[r2_0 eq: [x_0 mul: x_0]]];
          
-         [model add:[res eq: [r1_0 div: [r2_0 sub: expr_1]]]];
+         [model add:[r_3 eq:[r2_0 sub: expr_1]]];
+         
+         [model add:[res eq: [r1_0 div: r_3]]];
 
          
+         [model add:[res leq:@(1e-3f)]];
          
          //         [model add:[res gt:@(6.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];

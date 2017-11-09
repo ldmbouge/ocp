@@ -2,7 +2,7 @@
 #import "ORCmdLineArgs.h"
 
 /*
-  float ex3(float x1, float x2, float x3, float x4, float x5, float x6) {
+ float ex3(float x1, float x2, float x3, float x4, float x5, float x6) {
 	return ((((((-25.0 * ((x1 - 2.0) * (x1 - 2.0))) - ((x2 - 2.0) * (x2 - 2.0))) - ((x3 - 1.0) * (x3 - 1.0))) - ((x4 - 4.0) * (x4 - 4.0))) - ((x5 - 1.0) * (x5 - 1.0))) - ((x6 - 4.0) * (x6 - 4.0)));
  }
  
@@ -19,8 +19,8 @@
  res = ex3(x1,x2,x3,x4,x5,x6);
  return 0;
  }
-
-
+ 
+ 
  */
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
@@ -29,13 +29,14 @@ int main(int argc, const char * argv[]) {
          
          id<ORModel> model = [ORFactory createModel];
          
-         id<ORFloatVar> x6_0 = [ORFactory floatVar:model];
-         id<ORFloatVar> x4_0 = [ORFactory floatVar:model];
-         id<ORFloatVar> x5_0 = [ORFactory floatVar:model];
-         id<ORFloatVar> x2_0 = [ORFactory floatVar:model];
-         id<ORFloatVar> x1_0 = [ORFactory floatVar:model];
+         id<ORFloatVar> x6_0 = [ORFactory floatVar:model low:0.f up:10.f];
+         id<ORFloatVar> x4_0 = [ORFactory floatVar:model low:0.f up:6.f];
+         id<ORFloatVar> x5_0 = [ORFactory floatVar:model low:0.f up:6.f];
+         id<ORFloatVar> x2_0 = [ORFactory floatVar:model  low:0.f up:6.f];
+         id<ORFloatVar> x1_0 = [ORFactory floatVar:model low:0.f up:6.f];
+         id<ORFloatVar> x3_0 = [ORFactory floatVar:model  low:1.f up:5.f];
+         
          id<ORFloatVar> res_0 = [ORFactory floatVar:model];
-         id<ORFloatVar> x3_0 = [ORFactory floatVar:model];
          
          id<ORExpr> expr_8 = [ORFactory float:model value:4.0f];
          id<ORExpr> expr_4 = [ORFactory float:model value:2.0f];
@@ -52,9 +53,10 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> expr_0 = [ORFactory float:model value:-25.0f];
          
          [model add:[res_0 eq: [[[[[[expr_0 mul: [[x1_0 sub: expr_1] mul: [x1_0 sub: expr_2]]] sub: [[x2_0 sub: expr_3] mul: [x2_0 sub: expr_4]]] sub: [[x3_0 sub: expr_5] mul: [x3_0 sub: expr_6]]] sub: [[x4_0 sub: expr_7] mul: [x4_0 sub: expr_8]]] sub: [[x5_0 sub: expr_9] mul: [x5_0 sub: expr_10]]] sub: [[x6_0 sub: expr_11] mul: [x6_0 sub: expr_12]]]]];
-
          
-         //         [model add:[res gt:@(6.f)]];
+         
+         [model add:[res_0 leq:@(1.f)]];
+         [model add:[res_0 geq:@(-1.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
