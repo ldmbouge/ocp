@@ -2702,7 +2702,7 @@
 {
    CPFloatVarI* cx = _gamma[[x getId]];
    NSMutableSet* cstr = [cx constraints];
-   ORUInt cpt = [cstr count];
+   ORUInt cpt = (ORUInt) [cstr count];
    [cstr release];
    return cpt;
 }

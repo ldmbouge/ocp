@@ -65,8 +65,6 @@ PORTABLE_BEGIN
 
 @protocol ORFloatVar <ORExprVar>
 -(id<ORFloatRange>) domain;
--(ORBool) isInConstraint: (id<ORConstraint>) c;
--(void) addConstraint: (id<ORConstraint>) c;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
