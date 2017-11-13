@@ -404,30 +404,6 @@
 {
     return ![_x bound];
 }
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x
-{
-    ORDouble m;
-    ORDouble min, max;
-    ORInt e;
-    if([x getId] == [_y getId]){
-        m = maxDbl(fabs([_y min]),fabs([_y max]));
-        frexpf((maxDbl(fabs([_y min]),fabs([_y max]))), &e);
-        min = -pow(2.0,e - 23 - 1);
-        max = pow(2.0,e -23 - 1);
-        if(isIntersectionWithD(min, max, [_y min], [_y max])){
-            return cardinalityD(maxDbl(min, [_y min]),minDbl(max, [_y max]))/[_y cardinality];
-        }
-    }else if([x getId] == [_x getId]){
-        m = maxDbl(fabs([_y min]),fabs([_y max]));
-        frexpf((maxDbl(fabs([_y min]),fabs([_y max]))), &e);
-        min = -pow(2.0,e - 23 - 1);
-        max = pow(2.0,e -23 - 1);
-        if(isIntersectionWithD(min, max, [_y min], [_y max])){
-            return cardinalityD(maxDbl(min, [_y min]),minDbl(max, [_y max]))/[_y cardinality];
-        }
-    }
-    return 0.0;
-}
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {
     ORInt exmin, exmax, eymin,eymax,ezmin,ezmax,gmax,zmin;
@@ -520,30 +496,6 @@
 -(ORUInt)nbUVars
 {
     return ![_x bound];
-}
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x
-{
-    ORDouble m;
-    ORDouble min, max;
-    ORInt e;
-    if([x getId] == [_y getId]){
-        m = maxDbl(fabs([_y min]),fabs([_y max]));
-        frexpf((maxDbl(fabs([_y min]),fabs([_y max]))), &e);
-        min = -pow(2.0,e - 23 - 1);
-        max = pow(2.0,e -23 - 1);
-        if(isIntersectionWithD(min, max, [_y min], [_y max])){
-            return cardinalityD(maxDbl(min, [_y min]),minDbl(max, [_y max]))/[_y cardinality];
-        }
-    }else if([x getId] == [_x getId]){
-        m = maxFlt(fabs([_y min]),fabs([_y max]));
-        frexpf((maxFlt(fabs([_y min]),fabs([_y max]))), &e);
-        min = -pow(2.0,e - 23 - 1);
-        max = pow(2.0,e -23 - 1);
-        if(isIntersectionWithD(min, max, [_y min], [_y max])){
-            return cardinalityD(maxDbl(min, [_y min]),minDbl(max, [_y max]))/[_y cardinality];
-        }
-    }
-    return 0.0;
 }
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {

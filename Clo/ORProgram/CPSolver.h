@@ -178,4 +178,5 @@
 -(void) addQuantity:(ORFloat)c;
 -(void) addVar:(id<CPFloatVar>)v;
 -(NSString*)description;
+-(void) dealloc;
 @end

@@ -66,18 +66,13 @@
    }
    return i;
 }
--(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<ORVar>)x
 {
-   return [[[NSSet alloc] init] autorelease];
+   return nil;
 }
 -(ORBool) canLeadToAnAbsorption
 {
    return false;
-}
-//hzi : should be removed
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x
-{
-   return 0.0;
 }
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {
@@ -202,17 +197,13 @@
    }
    return i;
 }
--(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<ORVar>)x
 {
-   return [[[NSSet alloc] init] autorelease];
+   return nil;
 }
 -(ORBool) canLeadToAnAbsorption
 {
    return false;
-}
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x
-{
-   return 0.0;
 }
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {

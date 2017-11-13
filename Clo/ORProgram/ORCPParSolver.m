@@ -588,6 +588,14 @@
 {
    return [[self worker] max:x];
 }
+-(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
+{
+   return [[self worker] computeAbsorptionsQuantities: vars];
+}
+-(ORDouble) computeAbsorptionRate:(id<ORFloatVar>) x
+{
+   return [[self worker] computeAbsorptionRate:x];
+}
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
    return [[self worker] domsize:x];

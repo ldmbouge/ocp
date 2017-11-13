@@ -2057,7 +2057,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    ORDouble c = [self absorptionQuantity:x[i]].quantity;
+                                    ORDouble c = [self computeAbsorptionRate:x[i]];
                                     if(c > taux){
                                        [considered set:1 at:i];
                                        found = YES;
@@ -2139,7 +2139,7 @@
          ORDouble val = 0.0;
          for (ORInt j = 0; j < [considered count]; j++) {
             if(!considered[j]) continue;
-            val = [self absorptionQuantity:(x[j])].quantity;
+            val = [self computeAbsorptionRate:x[j]];
             if (val > choosed) {
                choosed = val;
                i.index = j;
@@ -2220,22 +2220,34 @@
    if(y == nil) [self float6WaySplit:x];
    id<CPFloatVar> cx = _gamma[getId(x)];
    id<CPFloatVar> cy = _gamma[getId(y)];
+   ORInt e;
    if([cx bound] && [cy bound]) return;
    //ax should be equal to fmax(x.low,x.up) and ay should be equal y inter AbsI(x)
-   ORFloat ax = fmaxFlt([cx min], [cx max]);
+   ORFloat m = fmaxFlt([cx min], [cx max]);
+   frexpf(m, &e);
+   ORFloat min = pow(2.0,e);
+   min = (min < cx.min) ? cx.min : min;
+   //symetric vue
+   float_interval ax = makeFloatInterval(min,m);
    float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
    [_search try:^{
-      [self floatIntervalImpl:cx low:ax up:ax];
+      [self floatIntervalImpl:cx low:ax.inf up:ax.sup];
       [self floatIntervalImpl:cy low:ay.inf up:ay.sup];
    } alt:^{
       [_search try:^{
+         [self floatIntervalImpl:cx low:cx.min up:fp_previous_float(ax.inf)];
          [self floatIntervalImpl:cy low:cy.min up:fp_previous_float(ay.inf)];
       } alt:^{
+         [self floatIntervalImpl:cx low:fp_next_float(ax.sup) up:cx.max];
          [self floatIntervalImpl:cy low:fp_next_float(ay.sup) up:cy.max];
       }];
-      //      cx != ax
-      //      cy try [y.low,ay.inf[
-      //      alt ]ay.sup,y.up]
+      [_search try:^{
+         [self floatIntervalImpl:cx low:fp_next_float(ax.sup) up:cx.max];
+         [self floatIntervalImpl:cy low:cy.min up:fp_previous_float(ay.inf)];
+      } alt:^{
+         [self floatIntervalImpl:cx low:cx.min up:fp_previous_float(ax.inf)];
+         [self floatIntervalImpl:cy low:fp_next_float(ay.sup) up:cy.max];
+      }];
    }];
    
 }
@@ -2688,13 +2700,10 @@
 }
 -(ORUInt)  countMemberedConstraints:(id<ORVar>) x
 {
-   NSArray* csts = [_model constraints];
-   ORUInt cpt = 0;
-   for (ORInt i = 0; i < [csts count];i++)
-   {
-      if([csts[i] memberVar:x])
-         cpt++;
-   }
+   CPFloatVarI* cx = _gamma[[x getId]];
+   NSMutableSet* cstr = [cx constraints];
+   ORUInt cpt = [cstr count];
+   [cstr release];
    return cpt;
 }
 -(ORUInt)  maxOccurences:(id<ORVar>) x
@@ -2722,83 +2731,62 @@
 -(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
 {
    ORULong size = [vars count];
-   ORUInt low = [vars low];
-   ORUInt up  = [vars up];
-   ORULong mapsize = [vars[up] getId] - [vars[low] getId] ;
-   NSArray* csts = [_model constraints];
    //hzi maybe should be array created by factory to be tracked in search ...
    NSMutableArray<ABSElement *> *abs = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
-   NSMutableArray<NSMutableSet*> *involementInConstraints = [[NSMutableArray alloc] initWithCapacity:mapsize];
-   NSSet* tmp = nil;
-   ORUInt id_v;
    ORDouble absV;
    for(ORInt i = 0; i < size; i++){
-      id_v = [vars[i] getId] - [vars[low] getId];
       abs[i] = [[ABSElement alloc] init];
-      involementInConstraints[id_v] = [[NSMutableSet alloc] init];
    }
-   //getId min up shift array
-   id<CPConstraint> cx = nil;
-   //hzi : should be done once
-   for (id<ORConstraint> c in csts)
-   {
-      cx = _gamma[getId(c)];
-      if ([cx canLeadToAnAbsorption]) {
-         tmp = [c allVars];
-         for (id<ORVar> v in tmp) {
-            id_v = [v getId] - [vars[low] getId];
-            if(id_v > mapsize) continue;           // it's var introduce by normalizer we don't need to have it in involvement
-            [involementInConstraints[id_v] unionSet:[cx varsSubjectToAbsorption:v]];
+   ORUInt i = 0;
+   CPFloatVarI* cx;
+   id<CPFloatVar> v;
+   for (id<ORVar> x in vars) {
+      cx = _gamma[[x getId]];
+      NSMutableSet* cstr = [cx constraints];
+      for(id<CPConstraint> c in cstr){
+         if([c canLeadToAnAbsorption]){
+            v = (id<CPFloatVar>)[c varSubjectToAbsorption:x];
+            absV = [self computeAbsorptionQuantity:v by:(id<ORFloatVar>)x];
+            assert(absV >= 0.0f && absV <= 1.f);
+            if(absV){
+               [abs[i] addQuantity:absV];
+               [abs[i] addVar:v];
+            }
          }
       }
-      
+      [cstr release];
+      i++;
    }
-   for (ORUInt i = [vars low]; i < size ; i++) {
-      id_v = [vars[i] getId] - [vars[low] getId];
-      tmp = involementInConstraints[id_v];
-      for (id<CPFloatVar> v in tmp) {
-         absV = [self computeAbsorptionQuantity:v by:vars[i]];
-         assert(absV <= 1.0f && absV >= 0.f);
-         if(absV > 0){
-            [abs[i] addQuantity:absV];
-            [abs[i] addVar:v];
-         }
-      }
-      
-   }
-   [involementInConstraints release];
    return  abs;
 }
--(ABSElement*)  absorptionQuantity:(id<ORVar>) x
+-(ORDouble) computeAbsorptionRate:(id<ORVar>) x
 {
-   NSArray* csts = [_model constraints];
-   NSMutableSet* vars = [[NSMutableSet alloc] init];
-   ORDouble res = 0.0;
-   ORDouble current = 0.0;
-   for (ORInt i = 0; i < [csts count];i++)
-   {
-      id<CPConstraint> c = _gamma[[csts[i] getId]];
-      if(! [c memberVar:_gamma[[x getId]]]) continue;
-      current = [c leadToAnAbsorption:x];
-      if(current > 0.0){
-         res += current;
-         [vars unionSet:[c allVars]];
+   CPFloatVarI* cx = _gamma[[x getId]];
+   NSMutableSet* cstr = [cx constraints];
+   ORDouble rate = 0.0;
+   id<CPFloatVar> v;
+   for(id<CPConstraint> c in cstr){
+      if([c canLeadToAnAbsorption]){
+         v = (id<CPFloatVar>)[c varSubjectToAbsorption:x];
+         rate += [self computeAbsorptionQuantity:v by:(id<ORFloatVar>)x];
       }
    }
-   return [[ABSElement alloc] init:res vars:vars];
+   [cstr release];
+   return rate;
 }
 -(ORDouble)  cancellationQuantity:(id<ORVar>) x
 {
-   NSArray* csts = [_model constraints];
-   ORDouble res = 0.0;
-   for (ORInt i = 0; i < [csts count];i++)
-   {
-      id<CPConstraint> c = _gamma[[csts[i] getId]];
-      if(! [c memberVar:_gamma[[x getId]]]) continue;
-      res += [c leadToACancellation:x];
+   CPFloatVarI* cx = _gamma[[x getId]];
+   NSMutableSet* cstr = [cx constraints];
+   ORDouble rate = 0.0;
+   for(id<CPConstraint> c in cstr){
+      if([c canLeadToAnAbsorption]){
+         rate += [c leadToACancellation:x];
+      }
    }
-   assert(res != NAN);
-   return res;
+   [cstr release];
+   assert(rate != NAN);
+   return rate;
 }
 -(ORInt)  regret:(id<ORIntVar>)x
 {
@@ -3546,6 +3534,11 @@
 {
    self = [self init:0.0 vars:[[NSMutableSet alloc] init]];
    return self;
+}
+-(void) dealloc
+{
+   [_vars release];
+   [super dealloc];
 }
 -(ORDouble) quantity
 {

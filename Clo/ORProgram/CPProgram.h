@@ -84,6 +84,8 @@ PORTABLE_BEGIN
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x;
 -(void)          lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 
+-(ORDouble)      computeAbsorptionRate:(id<ORFloatVar>) x;
+-(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars;
 -(void)          floatStaticSplit: (id<ORFloatVar>) x;
 -(void)          floatStatic3WaySplit: (id<ORFloatVar>) x;
 -(void)          floatStatic5WaySplit: (id<ORFloatVar>) x;
@@ -96,7 +98,7 @@ PORTABLE_BEGIN
 -(void)          realLabel: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;
--(void)         addConstraintDuringSearch: (id<ORConstraint>) c;
+-(void)           addConstraintDuringSearch: (id<ORConstraint>) c;
 
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;

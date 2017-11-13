@@ -105,13 +105,9 @@
 {
    return false;
 }
--(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<ORVar>)x
 {
-   return [[[NSSet alloc] init] autorelease];
-}
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x
-{
-   return 0.0;
+   return nil;
 }
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {

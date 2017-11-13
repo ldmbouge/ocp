@@ -16,8 +16,6 @@
 #import <objcp/CPFloatVarI.h>
 #import <ORProgram/CPSolver.h>
 
-//#import "fpi.h"
-//hzi test SSA
 
 @interface Testfloat : XCTestCase
 
@@ -34,7 +32,140 @@
    // Put teardown code here. This method is called after the invocation of each test method in the class.
    [super tearDown];
 }
-//todo : hzi check propagator we shouldn't need to search in this case
+
+-(void) testNoAbsorptionNoOp
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[x_0 gt: y_0]];
+      [model add:[res eq:[x_0 mul:y_0]]];
+      
+      id<ORFloatVarArray> vars =[model floatVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solve:^(){
+         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         for(ABSElement* v in Abs){
+            XCTAssertEqual([v quantity],0.0f);
+            XCTAssertEqual([[v vars] count],0);
+         }
+      }];
+   }
+}
+-(void) testNoAbsorption
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[x_0 gt: y_0]];
+      [model add:[res eq:[x_0 plus:y_0]]];
+      
+      id<ORFloatVarArray> vars =[model floatVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solve:^(){
+         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         for(ABSElement* v in Abs){
+            XCTAssertEqual([v quantity],0.0f);
+            XCTAssertEqual([[v vars] count],0);
+         }
+      }];
+   }
+}
+-(void) testAbsorption
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x_0 = [ORFactory floatVar:model low:-1.f up:1e4f];
+      id<ORFloatVar> y_0 = [ORFactory floatVar:model low:-1.f up:1e4f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[x_0 gt: y_0]];
+      [model add:[res eq:[x_0 plus:y_0]]];
+      
+      id<ORFloatVarArray> vars =[model floatVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solve:^(){
+         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         
+         XCTAssertTrue([Abs[0] quantity] > 0.0f);
+         XCTAssertEqual([[Abs[0] vars] count],1);
+         
+         XCTAssertTrue([Abs[1] quantity] > 0.0f);
+         XCTAssertEqual([[Abs[1] vars] count],1);
+         
+         XCTAssertFalse([Abs[2] quantity] > 0.0f);
+         XCTAssertNotEqual([[Abs[2] vars] count],1);
+      }];
+      
+   }
+}
+-(void) testAbsorptionRateNoOp
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[x_0 gt: y_0]];
+      [model add:[res eq:[x_0 mul:y_0]]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solve:^(){
+         XCTAssertEqual([cp computeAbsorptionRate:x_0],0.0);
+         XCTAssertEqual([cp computeAbsorptionRate:y_0],0.0);
+      }];
+   }
+}
+-(void) testAbsorptionRateNoAbs
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[x_0 gt: y_0]];
+      [model add:[res eq:[x_0 plus:y_0]]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solve:^(){
+         XCTAssertEqual([cp computeAbsorptionRate:x_0],0.0);
+         XCTAssertEqual([cp computeAbsorptionRate:y_0],0.0);
+      }];
+   }
+}
+-(void) testAbsorptionRateAbs
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
+      id<ORFloatVar> y_0 = [ORFactory floatVar:model low:-1.f up:1.f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[x_0 gt: y_0]];
+      [model add:[res eq:[x_0 plus:y_0]]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solve:^(){
+         XCTAssertTrue([cp computeAbsorptionRate:x_0] > 0.0);
+         XCTAssertFalse([cp computeAbsorptionRate:y_0] > 0.0);
+      }];
+   }
+}
+
 -(void) testSSA1WithoutSearch
 {
    @autoreleasepool {
@@ -74,15 +205,15 @@
       vars[1] = y_0;
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solve:^(){
-
+         
          id<CPFloatVar> xc = [cp concretize:x_0];
          id<CPFloatVar> yc = [cp concretize:y_0];
          
-         XCTAssertTrue([xc bound]);
+         XCTAssertFalse([xc bound]);
          XCTAssertTrue([yc bound]);
          
          XCTAssertEqual([xc min],7.f);
-         XCTAssertEqual([xc max],7.f);
+         XCTAssertEqual([xc max],10.f);
          
          XCTAssertEqual([yc max],2.f);
          XCTAssertEqual([yc max],2.f);
@@ -134,11 +265,11 @@
          id<CPFloatVar> xc = [cp concretize:x_0];
          id<CPFloatVar> yc = [cp concretize:y_0];
          
-         XCTAssertTrue([xc bound]);
+         XCTAssertFalse([xc bound]);
          XCTAssertTrue([yc bound]);
          
          XCTAssertEqual([xc min],3.f);
-         XCTAssertEqual([xc max],3.f);
+         XCTAssertEqual([xc max],4.f);
          
          XCTAssertEqual([yc max],0.f);
          XCTAssertEqual([yc max],0.f);

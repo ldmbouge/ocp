@@ -339,6 +339,7 @@
     id<ORTracker>    _tracker;
     id<ORFloatRange> _domain;
     BOOL             _hasBounds;
+   NSMutableSet*    _constraints;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
 {
@@ -406,6 +407,16 @@
 -(ORBool) isVariable
 {
     return YES;
+}
+-(ORBool) isInConstraint : (id<ORConstraint>) c
+{
+   ORUInt obj = [c getId];
+   return [_constraints containsObject:@(obj)];
+}
+-(void) addConstraint : (id<ORConstraint>) c
+{
+   ORUInt obj = [c getId];
+   [_constraints addObject:@(obj)];
 }
 -(NSString*) description
 {

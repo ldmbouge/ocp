@@ -495,43 +495,17 @@
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
 }
--(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<ORVar>)x
 {
    if([x getId] == [_x getId])
-      return [[[NSSet alloc] initWithObjects:_y,nil] autorelease];
+      return _y;
    else if([x getId] == [_y getId])
-      return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
-   return [[[NSSet alloc] init] autorelease];
+      return _x;
+   return nil;
 }
 -(ORBool) canLeadToAnAbsorption
 {
    return true;
-}
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x
-{
-   ORFloat m;
-   ORFloat min, max;
-   ORInt e;
-   if([x getId] == [_y getId]){
-      m = maxFlt(fabsf([_y min]),fabs([_y max]));
-      frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
-      ORInt e_r = e - S_PRECISION - 1;
-      min = -pow(2.0,e_r);
-      max = pow(2.0,e_r);
-      if(isIntersectingWithV(min, max, [_y min], [_y max])){
-         return cardinalityV(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
-      }
-   }else if([x getId] == [_x getId]){
-      m = maxFlt(fabsf([_x min]),fabs([_x max]));
-      frexpf((maxFlt(fabsf([_x min]),fabs([_x max]))), &e);
-      ORInt e_r = e - S_PRECISION - 1;
-      min = -pow(2.0,e_r);
-      max = pow(2.0,e_r);
-      if(isIntersectingWithV(min, max, [_x min], [_x max])){
-         return cardinalityV(maxFlt(min, [_x min]),minFlt(max, [_x max]))/[_x cardinality];
-      }
-   }
-   return 0.0;
 }
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {
@@ -630,42 +604,17 @@
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
 }
--(NSSet*) varsSubjectToAbsorption:(id<ORVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<ORVar>)x
 {
    if([x getId] == [_x getId])
-      return [[[NSSet alloc] initWithObjects:_y,nil] autorelease];
+      return _y;
    else if([x getId] == [_y getId])
-      return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
-   return [[[NSSet alloc] init] autorelease];
+      return _x;
+   return nil;
 }
 -(ORBool) canLeadToAnAbsorption
 {
    return true;
-}
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x
-{
-   ORFloat m;
-   ORFloat min, max;
-   ORInt e;
-   if([x getId] == [_y getId]){
-      m = maxFlt(fabsf([_y min]),fabs([_y max]));
-      frexpf((maxFlt(fabsf([_y min]),fabs([_y max]))), &e);
-      min = -pow(2.0,e - 23 - 1);
-      max = pow(2.0,e -23 - 1);
-      if(isIntersectingWithV(min, max, [_y min], [_y max])){
-         return cardinalityV(maxFlt(min, [_y min]),minFlt(max, [_y max]))/[_y cardinality];
-      }
-   }else if([x getId] == [_x getId]){
-      m = maxFlt(fabsf([_x min]),fabs([_x max]));
-      frexpf((maxFlt(fabsf([_x min]),fabs([_x max]))), &e);
-      min = -pow(2.0,e - 23 - 1);
-      max = pow(2.0,e -23 - 1);
-      if(isIntersectingWithV(min, max, [_x min], [_x max])){
-         ORDouble card_intersection = cardinalityV(maxFlt(min, [_x min]),minFlt(max, [_x max]));
-         return card_intersection/[_x cardinality];
-      }
-   }
-   return 0.0;
 }
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {

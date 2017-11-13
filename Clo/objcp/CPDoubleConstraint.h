@@ -133,7 +133,6 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 -(id) init:(id)z equals:(id)x plus:(id)y ;
 -(void) post;
 -(NSSet*)allVars;
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
@@ -147,7 +146,6 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 -(id) init:(id)z equals:(id)x minus:(id)y ;
 -(void) post;
 -(NSSet*)allVars;
--(ORDouble) leadToAnAbsorption:(id<ORVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end

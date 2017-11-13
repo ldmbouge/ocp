@@ -2568,8 +2568,6 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    if (bound(_guard)){
       if(minDom(_guard) == 1)
          [super post];
-//      else
-//         assignTRInt(&_active, NO, _trail);
    } else {
       [_guard whenBindDo:^{
          if ([_guard min] == 1)
