@@ -123,25 +123,7 @@
 {
     return _domain;
 }
-// HZI_TODO make this following 3 methods has function
--(ORDouble) cardinality
-{
-    float_cast i_inf;
-    float_cast i_sup;
-    i_inf.f = _domain._low;
-    i_sup.f = _domain._up;
-    if(_domain._low == -infinityf() && _domain._up == infinityf()) return DBL_MAX;
-    ORInt smin = (i_inf.parts.sign) ? -1:1;
-    ORInt smax = (i_sup.parts.sign) ? -1:1;
-    ORDouble res = (smax * i_sup.parts.exponent - smin * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
-    return (res < 0) ? -res : res;
-}
--(ORDouble) density
-{
-    ORDouble c = [self cardinality];
-    ORLDouble w = [self domwidth];
-    return c / w;
-}
+// HZI_TODO make this following methods has function
 -(ORFloat) magnitude
 {
     float_cast i_inf;

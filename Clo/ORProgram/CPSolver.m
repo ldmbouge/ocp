@@ -1545,8 +1545,8 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    id<CPFloatVar> v = _gamma[getId(x[i])];
-                                    return -[v cardinality];
+                                    CPFloatVarI* v = _gamma[getId(x[i])];
+                                    return -cardinality(v);
                                  }];
    [[self explorer] applyController:t in:^{
       do {
@@ -1568,8 +1568,8 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    id<CPFloatVar> v = _gamma[getId(x[i])];
-                                    return [v cardinality];
+                                    CPFloatVarI* v = _gamma[getId(x[i])];
+                                    return cardinality(v);
                                  }];
    [[self explorer] applyController:t in:^{
       do {
@@ -1591,8 +1591,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    id<CPFloatVar> v = _gamma[getId(x[i])];
-                                    return -[v density];
+                                    return -[self density:x[i]];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
@@ -1613,8 +1612,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    id<CPFloatVar> v = _gamma[getId(x[i])];
-                                    return [v density];
+                                    return [self density:x[i]];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
@@ -1892,7 +1890,6 @@
 }
 -(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
-   __block NSMutableArray* abs = [self computeAbsorptionsQuantities:x];
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
@@ -1901,7 +1898,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    return [abs[i] quantity];
+                                    return [self computeAbsorptionRate:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
@@ -1910,39 +1907,40 @@
          if (!i.found)
             break;
          b(x[i.index]);
-         abs = [self computeAbsorptionsQuantities:x];
       } while (true);
    }];
 }
 -(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x
 {
-   __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     return ![v bound];
-                                  }
-                                 orderedBy: ^ORDouble(ORInt i) {
-                                    return [abs[i] quantity];
-                                 }];
-   
-   [[self explorer] applyController:t in:^{
-      do {
-         ORSelectorResult i = [select max];
-         if (!i.found)
-            break;
-         id<ORFloatVar> v = nil;
-         if([abs[i.index] quantity] > 0){
-            NSSet* varsAbs = [abs[i.index] vars];
-            assert([varsAbs count] > 0);
-            v = [varsAbs anyObject];
-         }
-         [self floatAbsSplit: x[i.index] by:v];
-         abs = [self computeAbsorptionsQuantities:x];
-      } while (true);
-   }];
+   @autoreleasepool {
+      __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
+      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+      id<ORSelect> select = [ORFactory select: _engine
+                                        range: RANGE(self,[x low],[x up])
+                                     suchThat: ^ORBool(ORInt i) {
+                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        return ![v bound];
+                                     }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       return [abs[i] quantity];
+                                    }];
+      
+      [[self explorer] applyController:t in:^{
+         do {
+            ORSelectorResult i = [select max];
+            if (!i.found)
+               break;
+            id<ORFloatVar> v = nil;
+            if([abs[i.index] quantity] > 0){
+               NSSet* varsAbs = [abs[i.index] vars];
+               assert([varsAbs count] > 0);
+               v = [varsAbs anyObject];
+            }
+            [self floatAbsSplit: x[i.index] by:v];
+            abs = [self computeAbsorptionsQuantities:x];
+         } while (true);
+      }];
+   }
 }
 -(void) minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -2081,7 +2079,7 @@
          ORDouble val = 0.0; //max density is 1
          for (ORInt j = 0; j < [considered count]; j++) {
             if(!considered[j]) continue;
-            val = [_gamma[getId(x[j])] density];
+            val = [self density:x[j]];
             if (val > choosed) {
                choosed = val;
                i.index = j;
@@ -2109,7 +2107,7 @@
       if([cv bound]){
          continue;
       }
-      [dens set:[cv density] at:i];
+      [dens set:[self density:x[i]] at:i];
       if(i == 0)
          min = max = d;
       else if(d < min)
@@ -2154,7 +2152,7 @@
                [dens set:0.0 at:k];
                continue;
             }
-            [dens set:[cv density] at:k];
+            [dens set:[self density:x[k]] at:k];
             if(k == 0)
                min = max = d;
             else if(d < min)
@@ -2172,11 +2170,11 @@
 {
    [self switchSearchOnDepthUsingProperties:
     ^ORDouble(id<ORFloatVar> v) {
-       id<CPFloatVar> cv = _gamma[getId(v)];
-       return [cv cardinality];
+       CPFloatVarI* cv = _gamma[getId(v)];
+       return cardinality(cv);
     } to:^ORDouble(id<ORFloatVar> v) {
-       id<CPFloatVar> cv = _gamma[getId(v)];
-       return -[cv cardinality];
+       CPFloatVarI* cv = _gamma[getId(v)];
+       return -cardinality(cv);
     } do:b limit:2 restricted:x];
 }
 
@@ -2698,6 +2696,13 @@
 {
    return [((id<CPVar>) _gamma[x.getId]) domsize];
 }
+-(ORLDouble) density: (id<ORFloatVar>) x
+{
+   CPFloatVarI* cx = _gamma[[x getId]];
+   ORDouble c = cardinality(cx);
+   ORLDouble w = [self fdomwidth:x];
+   return c / w;
+}
 -(ORUInt)  countMemberedConstraints:(id<ORVar>) x
 {
    CPFloatVarI* cx = _gamma[[x getId]];
@@ -2718,13 +2723,14 @@
    }
    return max;
 }
+
 -(ORDouble) computeAbsorptionQuantity:(id<CPFloatVar>)y by:(id<ORFloatVar>)x
 {
    CPFloatVarI* cx = _gamma[getId(x)];
-   id<CPFloatVar> cy = y;
+   CPFloatVarI* cy = (CPFloatVarI*) y;
    float_interval ax = computeAbsordedInterval(cx);
    if(isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max])){
-      return cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max]))/[cy cardinality];
+      return cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max]))/cardinality(cy);
    }
    return 0.0;
 }
@@ -2740,13 +2746,14 @@
    ORUInt i = 0;
    CPFloatVarI* cx;
    id<CPFloatVar> v;
-   for (id<ORVar> x in vars) {
+   for (id<ORFloatVar> x in vars) {
       cx = _gamma[[x getId]];
       NSMutableSet* cstr = [cx constraints];
       for(id<CPConstraint> c in cstr){
          if([c canLeadToAnAbsorption]){
-            v = (id<CPFloatVar>)[c varSubjectToAbsorption:x];
-            absV = [self computeAbsorptionQuantity:v by:(id<ORFloatVar>)x];
+            v = [c varSubjectToAbsorption:cx];
+            if(v == nil) continue;
+            absV = [self computeAbsorptionQuantity:v by:x];
             assert(absV >= 0.0f && absV <= 1.f);
             if(absV){
                [abs[i] addQuantity:absV];
@@ -2767,7 +2774,7 @@
    id<CPFloatVar> v;
    for(id<CPConstraint> c in cstr){
       if([c canLeadToAnAbsorption]){
-         v = (id<CPFloatVar>)[c varSubjectToAbsorption:x];
+         v = [c varSubjectToAbsorption:cx];
          rate += [self computeAbsorptionQuantity:v by:(id<ORFloatVar>)x];
       }
    }
@@ -2792,7 +2799,6 @@
 {
    return [((id<CPIntVar>) _gamma[x.getId]) regret];
 }
-
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];
@@ -2800,6 +2806,10 @@
 -(ORDouble) domwidth:(id<ORRealVar>) x
 {
    return [((id<CPRealVar>)_gamma[x.getId]) domwidth];
+}
+-(ORLDouble) fdomwidth:(id<ORFloatVar>) x
+{
+   return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
 }
 -(ORDouble) doubleMin:(id<ORRealVar>)x
 {

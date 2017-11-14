@@ -360,14 +360,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return [_dom domwidth];
 }
--(ORDouble) cardinality
-{
-   return [_dom cardinality];
-}
--(ORDouble) density
-{
-   return [_dom density];
-}
 -(ORFloat) magnitude
 {
    return [_dom magnitude];
@@ -624,16 +616,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
    return 0;
-}
--(ORDouble) cardinality
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: Cardinality not definied for a view"];
-   return 0.0;
-}
--(ORDouble) density
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: density not definied for a view"];
-   return 0.0;
 }
 -(ORFloat) magnitude
 {

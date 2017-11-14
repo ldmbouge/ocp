@@ -14,7 +14,7 @@
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORSet.h>
 
-@protocol CPVar;
+@protocol CPFloatVar;
 @protocol ORExpr;
 @protocol OREngine;
 @protocol ORSearchEngine;
@@ -55,7 +55,7 @@
 -(ORBool) memberVar:(id<ORVar>) x;
 -(ORUInt) nbOccurences:(id<ORVar>)x;
 -(ORBool) canLeadToAnAbsorption;
--(id<CPVar>) varSubjectToAbsorption:(id<ORVar>)x;
+-(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(void) close;
 @end

@@ -105,7 +105,7 @@
 {
    return false;
 }
--(id<CPVar>) varSubjectToAbsorption:(id<ORVar>)x
+-(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
 {
    return nil;
 }

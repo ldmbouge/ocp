@@ -260,31 +260,37 @@
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
    _terms = [recVisit visitExprEqualI:_model left:[e left] right:[e right]];
+   [recVisit release];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
    _terms = [recVisit visitExprNEqualI:_model left:[e left] right:[e right]];
+   [recVisit release];
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
    _terms = [recVisit visitExprLEqualI:_model left:[e left] right:[e right]];
+   [recVisit release];
 }
 -(void) visitExprGEqualI:(ORExprLEqualI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
    _terms = [recVisit visitExprGEqualI:_model left:[e left] right:[e right]];
+   [recVisit release];
 }
 -(void) visitExprLThenI:(ORExprLEqualI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
    _terms = [recVisit visitExprLThenI:_model left:[e left] right:[e right]];
+   [recVisit release];
 }
 -(void) visitExprGThenI:(ORExprLEqualI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
    _terms = [recVisit visitExprGThenI:_model left:[e left] right:[e right]];
+   [recVisit release];
 }
 
 struct CPVarPair {

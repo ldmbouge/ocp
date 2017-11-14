@@ -184,8 +184,6 @@ enum CPVarClass {
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
 -(ORLDouble) domwidth;
--(ORDouble) cardinality;
--(ORDouble) density;
 -(ORFloat) magnitude;
 -(void) bind:(ORFloat) val;
 -(void) updateMin:(ORFloat) newMin;
