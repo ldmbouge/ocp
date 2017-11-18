@@ -24,10 +24,17 @@
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(void)clear;
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
 -(id<ORIntVar>)guard;
 -(enum ORGroupType)type;
+-(id<ORConstraint>)alphaVars:(id<ORVarArray>) xa;
+@end
+
+@interface ORCDisjGroupI : ORGroupI<ORCDGroup>
+-(ORCDisjGroupI*)initORCDGroupI:(id<ORTracker>)model;
+-(ORCDisjGroupI*)initORCDGroupI:(id<ORTracker>)model witMap:(NSArray*)vMap;
 @end
 
 @interface ORFail : ORConstraintI<ORFail>

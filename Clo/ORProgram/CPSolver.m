@@ -444,7 +444,7 @@
    _oneSol = NO;
    [self doOnStartup];
    [_search solveAllModel: self using: search
-               onSolution: ^{ [self doOnSolution];}
+               onSolution: ^{ [self doOnSolution];[_engine incNbFailures:1];}
                    onExit: ^{ [self doOnExit];}
     ];
 }

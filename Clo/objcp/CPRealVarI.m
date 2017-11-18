@@ -366,10 +366,32 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_dom bound];
 }
+
+- (id<CPADom>)domain
+{
+   return _dom;
+}
+- (void)subsumedBy:(id<CPVar>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealVarI: method subsumedBy not defined"];
+}
+-(void)subsumedByDomain:(id<CPFDom>)dom
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealVarI: method subsumedByDomain not defined"];
+}
+-(ORBool)sameDomain:(CPRealVarI*)x
+{
+   return [_dom isEqual:x->_dom];
+}
 -(ORDouble) domwidth
 {
    return [_dom domwidth];
 }
+- (void)visit:(ORVisitor *)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealVarI: method visit not defined"];
+}
+
 @end
 
 @implementation CPRealViewOnIntVarI {
@@ -628,11 +650,33 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_theVar bound];
 }
+
+- (id<CPADom>)domain
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method domain not defined"];
+}
+- (void)subsumedBy:(id<CPVar>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method subsumedBy not defined"];
+}
+- (void)subsumedByDomain:(id<CPADom>)dom
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method subsumedByDomain not defined"];
+}
+
+-(ORBool)sameDomain:(id<CPVar>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method sameDomain not defined"];
+}
+
 -(ORDouble) domwidth
 {
    ORBounds b = [_theVar bounds];
    return b.max - b.min;
 }
+- (void)visit:(ORVisitor *)visitor
+{}
+
 @end
 
 @implementation CPRealParamI

@@ -174,6 +174,12 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
          assert(as != ORFailure);
       }
       [_engine incNbPropagation:nbp];
+      ORBool allEntailed = true;
+      for(ORInt k = 0;k < _nbIn && allEntailed;k++) {
+         allEntailed = allEntailed && [_inGroup[k] entailed];
+      }
+      if (allEntailed)
+         assignTRInt(&_active,NO,_trail);
       return ORSuspend;
    }, ^ORStatus{
       ORClosure cb;
@@ -329,3 +335,4 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
    });
 }
 @end
+

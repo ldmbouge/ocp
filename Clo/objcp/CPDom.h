@@ -14,7 +14,11 @@
 
 @protocol CPIntVarNotifier;
 
-@protocol CPDom <NSObject,NSCopying>
+@protocol CPADom <NSObject,NSCopying>
+-(void) unionWith:(id<CPADom>)d;
+@end
+
+@protocol CPDom <CPADom>
 -(void)dealloc;
 -(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
@@ -35,6 +39,7 @@
 -(ORBool) member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt) findMax:(ORInt)from;
+-(BOOL) isEqual:(id)object;
 -(id) copy;
 -(void) restoreDomain:(id<CPDom>)toRestore;
 -(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
@@ -43,7 +48,7 @@
 @end
 
 @protocol CPRealVarNotifier;
-@protocol CPFDom
+@protocol CPFDom <CPADom>
 -(void) updateMin:(ORDouble)newMin for:(id<CPRealVarNotifier>)x;
 -(void) updateMax:(ORDouble)newMax for:(id<CPRealVarNotifier>)x;
 -(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRealVarNotifier>)x;

@@ -15,6 +15,65 @@
 #import "ORConstraintI.h"
 #import "ORParameterI.h"
 
+
+@interface ORAlphaVisit : ORVisitor {
+   id<ORVarArray> _map;
+   id<ORConstraint> _result;
+}
+-(ORAlphaVisit*)initAlpha:(id<ORVarArray>)va;
+-(id<ORConstraint>)result;
++(id<ORConstraint>)alphaRename:(id<ORConstraint>)c  with:(id<ORVarArray>)m;
+@end
+
+@implementation ORAlphaVisit
+-(ORAlphaVisit*)initAlpha:(id<ORVarArray>)va
+{
+   self = [super init];
+   _map = va;
+   _result = nil;
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(id<ORConstraint>)result
+{
+   return _result;
+}
++(id<ORConstraint>)alphaRename:(id<ORConstraint>)c with:(id<ORVarArray>)m
+{
+   ORAlphaVisit* v = [[ORAlphaVisit alloc] initAlpha:m];
+   [c visit:v];
+   id<ORConstraint> result = v.result;
+   [v release];
+   return result;
+}
+-(void) visitEqualc: (id<OREqualc>)c
+{
+   
+}
+-(void) visitNEqualc: (id<ORNEqualc>)c
+{
+   
+}
+-(void) visitLEqualc: (id<ORLEqualc>)c
+{
+   
+}
+-(void) visitGEqualc: (id<ORGEqualc>)c
+{
+   
+}
+-(void) visitEqual: (id<OREqual>)c
+{
+   id<ORVar> clp = _map[getId(c.left)];
+   id<ORVar> crp = _map[getId(c.right)];
+   id<ORTracker> t = [(id)crp tracker];
+   _result = [ORFactory equal:t var:clp to:crp plus:c.cst];
+}
+@end
+
 @implementation ORConstraintI
 -(ORConstraintI*) initORConstraintI
 {
@@ -88,17 +147,52 @@
    [_model trackConstraintInGroup:c];
    return c;
 }
+-(void)clear
+{
+   [_content removeAllObjects];
+}
+
 -(id<ORIntVar>)guard
 {
    return _guard;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* os = [[[NSMutableSet alloc] initWithCapacity:2] autorelease];
+   if (_guard) [os addObject:_guard];
+   @autoreleasepool {
+      for(id<ORConstraint> c in _content) {
+         NSSet* cs = [c allVars];
+         [os unionSet:cs];
+      }
+   }
+   return os;
+}
+
+-(id<ORConstraint>)alphaVars:(id<ORVarArray>) xa
+{
+   id<ORGroup> gp = [ORFactory group:_model type:_gt guard:_guard];
+   for(id<ORConstraint> c in _content) {
+      id<ORConstraint> cp = [ORAlphaVisit alphaRename:c with: xa];
+      [gp add:cp];
+   }
+   return gp;
+}
+
 -(void) close
 {
 }
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> ",[self class],self];
+   const char* gt;
+   switch(_gt) {
+      case DefaultGroup: gt = "def";break;
+      case BergeGroup: gt = "berge";break;
+      case GuardedGroup: gt = "guarded";break;
+      case CDGroup: gt = "cdisj";break;
+   }
+   [buf appendFormat:@"<%@ (%s): %p> -> ",[self class],gt,self];
    [buf appendString:@"{\n"];
    [_content enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"\t\t%@\n",[obj description]];
@@ -120,10 +214,6 @@
 -(id<ORConstraint>) at: (ORInt) idx
 {
     return [_content objectAtIndex: idx];
-}
--(NSSet*)allVars
-{
-   return [[[NSSet alloc] init] autorelease];
 }
 
 -(void) visit: (ORVisitor*) visitor
@@ -147,6 +237,36 @@
    _model   = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_gt];
    return self;
+}
+@end
+
+@implementation ORCDisjGroupI {
+   NSArray* _varMap;
+}
+-(ORCDisjGroupI*)initORCDGroupI:(id<ORTracker>)model
+{
+   self = [super initORGroupI: model type: CDGroup];
+   _varMap = nil;
+   return self;
+}
+-(ORCDisjGroupI*)initORCDGroupI:(id<ORTracker>)model witMap:(NSArray*)vMap
+{
+   self = [super initORGroupI: model type: CDGroup];
+   _varMap = [vMap retain];
+   return self;
+}
+-(void) dealloc
+{
+   [_varMap release];
+   [super dealloc];
+}
+-(NSArray*)varMap
+{
+   return _varMap;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitCDGroup:self];
 }
 @end
 

@@ -106,6 +106,22 @@ static void deallocNetwork(CPISVNetwork* net)
    @throw [[ORExecutionError alloc] initORExecutionError:"domsize not supported on int set var"];
    return 0;
 }
+- (id<CPADom>)domain
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntSetVar: method domain not defined"];
+}
+- (void)subsumedBy:(id<CPVar>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntSetVar: method subsumedBy not defined"];
+}
+-(void)subsumedByDomain:(id<CPADom>)dom
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntSetVar: method subsumedByDomain not defined"];
+}
+-(ORBool)sameDomain:(CPIntSetVarI*)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntSetVar: method sameDomain not defined"];
+}
 -(id<IntEnumerator>)required
 {
    return [_req enumerator];
@@ -251,4 +267,8 @@ static void deallocNetwork(CPISVNetwork* net)
 {
    hookupEvent((id)_engine, _net._changeEvt, todo, c, HIGHEST_PRIO);
 }
+- (void)visit:(ORVisitor *)visitor
+{
+}
+
 @end

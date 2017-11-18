@@ -21,6 +21,7 @@
 -(void)  assignIdToConstraint:(id<ORConstraint>)c;
 -(void)  scheduleClosure:(id<CPClosureList>)evt;
 -(id<ORTrail>) trail;
+-(void) propagate;
 @end
 
 @interface CPGroup : CPCoreConstraint<CPGroup>
