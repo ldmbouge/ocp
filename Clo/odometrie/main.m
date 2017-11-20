@@ -50,6 +50,20 @@
 
 
 int main(int argc, const char * argv[]) {
+   {
+      unsigned int xcw;
+      __asm__ ("stmxcsr %0" : "=m" (*&xcw));
+      printf("SS cw = %d %8.8X\n", xcw, xcw);
+      //         fesetround(FE_TONEAREST);
+      __asm__ ("stmxcsr %0" : "=m" (*&xcw));
+      printf("SS cw = %d %8.8X\n", xcw, xcw);
+      float x = 1.e4;
+      float y = -4.8828125000000000e-04;
+      float z = x + y;
+      printf("x = %24.24e y = %24.24e z = %24.24e z==x ? %s\n",x,y,z,(z==x) ? "YES":"NO");
+      float z2 = x - y;
+      printf("x = %24.24e y = %24.24e z = %24.24e z==x ? %s\n",x,y,z2,(z2==x) ? "YES":"NO");
+   }
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
@@ -105,7 +119,7 @@ int main(int argc, const char * argv[]) {
          [model add:[delta_dl eq:[c mul:sl]]];
          [model add:[delta_dr eq:[c mul:sr]]];
          [model add:[delta_d eq:[[delta_dl plus:delta_dr] mul:@(0.5f)]]];
-         [model add:[delta_theta eq:[[delta_dr plus:delta_dl] mul:inv_l]]];
+         [model add:[delta_theta eq:[[delta_dr sub:delta_dl] mul:inv_l]]];
          
          
 //         TMP_6 = (0.1 * (0.5 * (9.691813336318980 - (12.34 * sl)))) ;
@@ -141,7 +155,7 @@ int main(int argc, const char * argv[]) {
          //         model.add(diff*diff > 0.0622f);
          
          [model add:[diff eq:[x[NBLOOPS] sub:x_opt[NBLOOPS]]]];
-         [model add:[[diff mul:diff] gt:@(0.0622f)]];
+         [model add:[[diff mul:diff] gt:@(0.0f)]];
          
          //         NSLog(@"%@", model);
          id<ORFloatVarArray> vars = [model floatVars];

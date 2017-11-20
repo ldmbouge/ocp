@@ -31,7 +31,7 @@
 
 
 int main(int argc, const char * argv[]) {
-   @autoreleasepool {
+   @autoreleasepool {    
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          
@@ -63,7 +63,6 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVarArray> t_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
          id<ORFloatVarArray> e_old_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
          id<ORFloatVarArray> i_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         
          
          //
          //         model.add(*(e[0]) = 0.0f);

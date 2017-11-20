@@ -32,6 +32,43 @@
    // Put teardown code here. This method is called after the invocation of each test method in the class.
    [super tearDown];
 }
+-(void) testComputeAbsorbed
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x_0 = [ORFactory floatVar:model low:0.f up:1.f];
+      id<ORFloatVar> y_0 = [ORFactory floatVar:model low:-1e2f up:0.f];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solve:^(){
+         
+         fesetround(FE_TONEAREST);
+         CPFloatVarI* xc = [cp concretize:x_0];
+         CPFloatVarI* yc = [cp concretize:y_0];
+         
+         NSLog(@"xc : %@\n yx : %@",xc,yc);
+         
+         float_interval fx = computeAbsordedInterval(xc);
+         float_interval fy = computeAbsordedInterval(yc);
+         
+         
+         NSLog(@"fx : [%16.16e,%16.16e]",fx.inf,fx.sup);
+         NSLog(@"fy : [%16.16e,%16.16e]",fy.inf,fy.sup);
+         NSLog(@"fy : [%16.16e,%16.16e]",fy1.inf,fy1.sup);
+         
+         XCTAssertEqual([xc max]+fx.inf,[xc max]);
+         XCTAssertEqual([xc max]-fx.inf,[xc max]);
+         XCTAssertEqual([xc max]+fx.sup,[xc max]);
+         XCTAssertEqual([xc max]-fx.sup,[xc max]);
+         XCTAssertEqual([yc min]-fy.inf,[yc min]);
+         XCTAssertEqual([yc min]+fy.inf,[yc min]);
+         XCTAssertEqual([yc min]-fy.sup,[yc min]);
+         XCTAssertEqual([yc min]+fy.sup,[yc min]);
+         
+      }];
+   }
+}
 
 -(void) testNoAbsorptionNoOp
 {

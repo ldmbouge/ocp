@@ -2212,42 +2212,72 @@
       [self float6WaySplit:x];
    }
 }
-//hzi: check which way I can do alt part with ldm
 -(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<ORFloatVar>) y
 {
    if(y == nil) [self float6WaySplit:x];
+   float_interval interval_x[3];
+   float_interval interval_y[3];
+   ORInt length_x = 0;
+   ORInt length_y = 0;
    id<CPFloatVar> cx = _gamma[getId(x)];
    id<CPFloatVar> cy = _gamma[getId(y)];
-   ORInt e;
    if([cx bound] && [cy bound]) return;
-   //ax should be equal to fmax(x.low,x.up) and ay should be equal y inter AbsI(x)
-   ORFloat m = fmaxFlt([cx min], [cx max]);
-   frexpf(m, &e);
-   ORFloat min = pow(2.0,e);
-   min = (min < cx.min) ? cx.min : min;
-   //symetric vue
-   float_interval ax = makeFloatInterval(min,m);
+   float_interval ax = computeAbsorbingInterval((CPFloatVarI*)cx);
    float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
-   [_search try:^{
-      [self floatIntervalImpl:cx low:ax.inf up:ax.sup];
-      [self floatIntervalImpl:cy low:ay.inf up:ay.sup];
-   } alt:^{
-      [_search try:^{
-         [self floatIntervalImpl:cx low:cx.min up:fp_previous_float(ax.inf)];
-         [self floatIntervalImpl:cy low:cy.min up:fp_previous_float(ay.inf)];
-      } alt:^{
-         [self floatIntervalImpl:cx low:fp_next_float(ax.sup) up:cx.max];
-         [self floatIntervalImpl:cy low:fp_next_float(ay.sup) up:cy.max];
-      }];
-      [_search try:^{
-         [self floatIntervalImpl:cx low:fp_next_float(ax.sup) up:cx.max];
-         [self floatIntervalImpl:cy low:cy.min up:fp_previous_float(ay.inf)];
-      } alt:^{
-         [self floatIntervalImpl:cx low:cx.min up:fp_previous_float(ax.inf)];
-         [self floatIntervalImpl:cy low:fp_next_float(ay.sup) up:cy.max];
-      }];
-   }];
-   
+   if(isIntersectingWithV([cy min],[cy max],ay.inf,ay.sup)){
+      ay.inf = maxFlt(ay.inf, [cy min]);
+      ay.sup = minFlt(ay.sup, [cy max]);
+      length_y = !([cy min] == ay.inf) + !([cy max] == ay.sup);
+      interval_y[0] = ay;
+      if(ay.inf > [cy min] && [cy max] > ay.sup){
+         interval_y[1] = makeFloatInterval([cy min],fp_previous_float(ay.inf));
+         interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [cy max]);
+      }
+      else if(ay.inf == [cy min]){
+         interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[cy max]);
+      }else {
+         interval_y[1] = makeFloatInterval([cy min],fp_previous_float(ay.inf));
+      }
+  	}else{
+      interval_y[0] = makeFloatInterval([cy min], [cy max]);
+      length_y = 0;
+  	}
+   length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
+   interval_x[0].inf = maxFlt([cx min],ax.inf);
+   interval_x[0].sup = minFlt([cx max],ax.sup);
+   ORInt i_x = 1;
+   ORFloat xmax = [cx max];
+   if(ax.sup == [cx max]){
+      interval_x[1].inf = minFlt([cx min],fp_next_float(ax.inf));
+      interval_x[1].sup = fp_next_float(ax.inf);
+   }else{
+      if(-ax.sup < [cx max]){
+         interval_x[i_x].inf = -ax.sup;
+         interval_x[i_x].sup = [cx max];
+         xmax = -ax.sup;
+         length_x++;
+         i_x++;
+      }
+      interval_x[i_x].inf = fp_next_float(ax.sup);
+      interval_x[i_x].sup = fp_previous_float(xmax);
+  	}
+   if(length_x > 1 && length_y > 1){
+      float_interval* ip_x = interval_x;
+      float_interval* ip_y = interval_y;
+      for(ORUInt i = 0; i <= length_y;i++){
+         for(ORUInt j = 0; j <= length_x;j++){
+            [self atomic:^{
+               [self add:[x geq:@(ip_x[i].inf)]];
+               [self add:[x leq:@(ip_x[i].sup)]];
+               [self add:[y geq:@(ip_y[j].inf)]];
+               [self add:[y leq:@(ip_y[j].sup)]];
+            }];
+         }
+      }
+   }else{
+      [self float6WaySplit:x];
+      [self float6WaySplit:y];
+   }
 }
 
 //split in 2 intervals Once
