@@ -156,4 +156,8 @@
     [aDecoder decodeValueOfObjCType:@encode(ORLDouble) at:&_imax];
     return self;
 }
+- (void)unionWith:(id<CPLDoubleDom>)d
+{
+   //TOFIX:Heytem
+}
 @end

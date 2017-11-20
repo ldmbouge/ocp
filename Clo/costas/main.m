@@ -52,9 +52,11 @@ int main(int argc, const char * argv[])
          }
          __block ORInt nbSol = 0;
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
          [cp solveAll: ^{
 	     //NSLog(@"Searching...");
-            [cp createDDeg:costas];
+            [cp labelHeuristic:h];
+            //[cp labelArray:costas];
             @synchronized(cp) { // synchronized to work correctly even if you ask for a parallel run on the command line.
                nbSol++;
             }

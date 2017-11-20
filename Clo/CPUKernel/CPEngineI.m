@@ -347,10 +347,15 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 -(void) setLastFailure:(id<CPConstraint>)lastToFail
 {
    _last = lastToFail;
+   _nbFailures += 1;
 }
 -(void)incNbPropagation:(ORUInt)add
 {
    _nbpropag += add;
+}
+-(void)incNbFailures:(ORUInt)add
+{
+   _nbFailures += add;
 }
 -(ORUInt) nbFailures
 {

@@ -81,16 +81,23 @@
 enum ORGroupType {
    DefaultGroup = 0,
    BergeGroup = 1,
-   GuardedGroup = 2
+   GuardedGroup = 2,
+   CDGroup = 3
 };
 
 @protocol ORGroup <ORObject,ORConstraint>
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
+-(void)clear;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
 -(id<ORIntVar>)guard;
+-(id<ORConstraint>)alphaVars:(id<ORVarArray>) xa;
+@end
+
+@protocol ORCDGroup <ORGroup>
+-(NSArray*)varMap;
 @end
 
 @protocol ORFail <ORConstraint>

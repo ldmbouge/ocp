@@ -219,16 +219,57 @@
             id<CPIntVar> cGuard = [self concreteVar:[g guard]];
             cg = [CPFactory group:_engine guard:cGuard];
          } break;
+         case CDGroup:
+            cg = [CPFactory group:_engine];  // TOFIX:ldm
+            break;
          default:
             cg = [CPFactory group:_engine];
             break;
       }
-      [_engine add:cg]; // Do this first!!!! We want to have the group posted before posting the constraints of the group.
+      [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
       id<CPEngine> old = _engine;
       _engine = (id)cg;
       [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
          [ck visit:self];
-//         [cg add: _gamma[ck.getId]];
+      }];
+      _engine = old;
+      _gamma[g.getId] = cg;
+   }
+}
+
+-(void) visitCDGroup:(id<ORCDGroup>)g
+{
+   if (_gamma[g.getId] == NULL) {
+      NSArray* avm  = g.varMap;
+      ORInt low=FDMAXINT,up=FDMININT;
+      for(id<ORIdArray> varOfClause in avm) {
+         id<ORIntRange> r = varOfClause.range;
+         low = min(low,r.low);
+         up  = max(up,r.up);
+      }
+      id<CPVarArray> oVars = (id)[ORFactory idArray:_engine
+                                              range:RANGE(_engine,low,up)
+                                               with:^id<ORVar> _Nonnull(ORInt k) {
+         return _gamma[k];
+      }];
+      NSMutableArray* cvm = [[NSMutableArray alloc] initWithCapacity:avm.count];
+      for(id<ORVarArray> acm in avm) {
+         id<CPVarArray> ccm = [CPFactory varArray:_engine range:acm.range];
+         for(ORInt i=acm.range.low;i <= acm.range.up;i++) {
+            id<ORVar> av = acm[i];
+            if (av) {
+               id<CPVar> cv = _gamma[getId(av)];
+               ccm[i] = cv;
+            }
+         }
+         [cvm addObject:ccm];
+      }
+      id<CPGroup> cg = [CPFactory cdisj: _engine originals: oVars varmap:cvm];
+      [_engine add:cg];
+      id<CPEngine> old = _engine;
+      _engine = (id)cg;
+      [g enumerateObjectWithBlock:^(id<ORGroup> ck) {
+         [ck visit:self];
       }];
       _engine = old;
       _gamma[g.getId] = cg;

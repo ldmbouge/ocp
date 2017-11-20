@@ -94,6 +94,22 @@
 {
    return [self group:model type:DefaultGroup];
 }
++(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(nullable NSArray*)cl
+{
+   id<ORGroup> g = [[ORCDisjGroupI alloc] initORCDGroupI:model];
+   [model trackObject:g];
+   if (cl)
+      for(id<ORGroup> c in cl)
+         [g add:c];
+   return g;
+}
++(id<ORGroup>)cdisj:(id<ORTracker>)model vmap:(NSArray*)varMap
+{
+   id<ORGroup> g = [[ORCDisjGroupI alloc] initORCDGroupI:model witMap:varMap];
+   [model trackObject:g];
+   return g;
+}
+
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model
 {
    return [self group:model type:BergeGroup];

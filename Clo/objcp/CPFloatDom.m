@@ -172,6 +172,11 @@
     [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_imax];
     return self;
 }
+- (void)unionWith:(id<CPADom>)d
+{
+   //Heytem:tofix
+}
+
 @end
 
 

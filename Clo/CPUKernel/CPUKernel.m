@@ -38,7 +38,6 @@
 }
 @end
 
-
 @implementation CPClosureList
 -(id)initCPEventNode:(ORClosure)t
                 cstr:(id<CPConstraint>)c

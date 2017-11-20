@@ -93,6 +93,7 @@
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c;
 -(void) visitGroup:(id<ORGroup>)g;
+-(void) visitCDGroup:(id<ORGroup>)g;
 -(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f;
 -(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f;
 -(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f;

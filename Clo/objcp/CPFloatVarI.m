@@ -356,6 +356,24 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
    return 0;
 }
+
+- (ORBool)sameDomain:(CPFloatVarI*)x
+{
+   return [_dom isEqual:x->_dom];
+}
+
+
+- (void)subsumedBy:(id<CPVar>)x
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
+
+- (void)subsumedByDomain:(id<CPADom>)dom
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
 -(ORLDouble) domwidth
 {
    return [_dom domwidth];
@@ -364,6 +382,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return [_dom magnitude];
 }
+- (void)visit:(ORVisitor *)visitor
+{}
 @end
 
 @implementation CPFloatViewOnIntVarI
@@ -617,9 +637,36 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
    return 0;
 }
+
+- (id<CPADom>)domain
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
+
+- (ORBool)sameDomain:(id<CPVar>)x
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
+
+- (void)subsumedBy:(id<CPVar>)x
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
+
+- (void)subsumedByDomain:(id<CPADom>)dom
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
 -(ORFloat) magnitude
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
    return 0.0;
 }
+- (void)visit:(ORVisitor *)visitor
+{}
+
 @end

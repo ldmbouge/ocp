@@ -16,6 +16,7 @@
 @protocol CPEngine;
 @protocol ORTracer;
 @protocol CPBitVar;
+@protocol CPADom;
 
 enum CPVarClass {
    CPVCBare = 0,
@@ -43,6 +44,10 @@ enum CPVarClass {
 -(ORInt)degree;
 -(ORBool)vertical;
 -(ORInt) domsize;
+-(id<CPADom>) domain;
+-(void)subsumedBy:(id<CPVar>)x;
+-(void)subsumedByDomain:(id<CPADom>)dom;
+-(ORBool)sameDomain:(id<CPVar>)x;
 @end
 
 

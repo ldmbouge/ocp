@@ -365,10 +365,38 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVar: method domsize  not defined"];
     return 0;
 }
+
+- (id<CPADom>)domain
+{
+   return _dom;
+}
+
+
+- (ORBool)sameDomain:(CPLDoubleVarI*)x
+{
+   return [_dom isEqual:x->_dom];
+}
+
+
+- (void)subsumedBy:(id<CPLDoubleVar>)x
+{
+   //TODO:Heytem
+}
+
+
+- (void)subsumedByDomain:(id<CPLDoubleDom>)dom
+{
+   //TODO:Heytem
+}
+
 -(ORLDouble) domwidth
 {
-    return [_dom domwidth];
+   return [_dom domwidth];
 }
+- (void)visit:(ORVisitor *)visitor
+{
+}
+
 @end
 
 @implementation CPLDoubleViewOnIntVarI
@@ -617,37 +645,63 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     return [_theVar bound];
 }
+
+- (id<CPADom>)domain
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
+
+- (ORBool)sameDomain:(id<CPVar>)x
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
+
+- (void)subsumedBy:(id<CPVar>)x
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
+
+- (void)subsumedByDomain:(id<CPADom>)dom
+{
+#warning Heytem must implement this one (See CPIntVar for example)
+}
+
 -(ORLDouble) domwidth
 {
-    ORBounds b = [_theVar bounds];
-    return b.max - b.min;
+   ORBounds b = [_theVar bounds];
+   return b.max - b.min;
 }
 -(ORLDouble) cardinality
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality not definied for a view"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality not definied for a view"];
 }
 -(ORLDouble) density
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "density not definied for a view"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "density not definied for a view"];
 }
 -(ORLDouble) magnitude
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "magnitude not definied for a view"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "magnitude not definied for a view"];
 }
 -(ORBool) isIntersectingWith : (CPLDoubleVarI*) y
 {
-    return ![self isDisjointWith:y];
+   return ![self isDisjointWith:y];
 }
 -(ORBool) isDisjointWith : (id<CPLDoubleVar>) y
 {
-    return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
+   return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
 }
 -(ORBool) canPrecede : (id<CPLDoubleVar>) y
 {
-    return [self min] < [y min] && [self max] < [y max];
+   return [self min] < [y min] && [self max] < [y max];
 }
 -(ORBool) canFollow : (id<CPLDoubleVar>) y
 {
-    return [self min] > [y min] && [self max] > [y max];
+   return [self min] > [y min] && [self max] > [y max];
 }
+- (void)visit:(ORVisitor *)visitor
+{}
 @end

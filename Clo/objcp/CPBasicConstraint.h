@@ -402,3 +402,14 @@ typedef int (^intgetter) (void) ;
 -(void) post;
 @end
 
+@interface CPCDisjunction : CPCoreConstraint<CPGroup>
+-(id)   init: (id<CPEngine>) engine originals:(id<CPVarArray>)origs varMap:(NSArray*)vm;
+-(void) add: (id<CPConstraint>) p;
+-(void) assignIdToConstraint:(id<ORConstraint>)c;
+-(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
+-(void) scheduleClosure: (id<CPClosureList>) evt;
+-(void) scheduleValueClosure: (id<CPValueEvent>) evt;
+-(void) enumerateWithBlock:(void(^)(ORInt,id<ORConstraint>))block;
+-(void) post;
+-(void) propagate;
+@end

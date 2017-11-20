@@ -185,8 +185,8 @@
 -(void) dealloc
 {
    NSLog(@"CPSolver dealloc'd %p",self);
-   [_model release];
    [_hSet release];
+   [_model release];
    [_portal release];
    [_returnLabel release];
    [_returnLT release];
@@ -447,7 +447,7 @@
    _oneSol = NO;
    [self doOnStartup];
    [_search solveAllModel: self using: search
-               onSolution: ^{ [self doOnSolution];}
+               onSolution: ^{ [self doOnSolution];[_engine incNbFailures:1];}
                    onExit: ^{ [self doOnExit];}
     ];
 }
