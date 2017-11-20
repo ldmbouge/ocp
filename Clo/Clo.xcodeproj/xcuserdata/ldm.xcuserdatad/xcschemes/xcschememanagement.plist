@@ -254,7 +254,7 @@
 			<key>orderHint</key>
 			<integer>12</integer>
 		</dict>
-		<key>cdisj.xcscheme</key>
+		<key>cdisj.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>152</integer>
@@ -279,7 +279,7 @@
 			<key>orderHint</key>
 			<integer>18</integer>
 		</dict>
-		<key>costas2.xcscheme</key>
+		<key>costas2.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>138</integer>
@@ -344,7 +344,7 @@
 			<key>orderHint</key>
 			<integer>36</integer>
 		</dict>
-		<key>groupDisj.xcscheme</key>
+		<key>groupDisj.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>150</integer>
@@ -514,7 +514,7 @@
 			<key>orderHint</key>
 			<integer>76</integer>
 		</dict>
-		<key>orderSwift.xcscheme</key>
+		<key>orderSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>139</integer>
@@ -623,11 +623,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>102</integer>
-		</dict>
-		<key>rumpsygt1e39.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>151</integer>
 		</dict>
 		<key>scene.xcscheme_^#shared#^_</key>
 		<dict>
@@ -738,11 +733,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>128</integer>
-		</dict>
-		<key>testScheduler.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>130</integer>
 		</dict>
 		<key>testScheduler.xcscheme_^#shared#^_</key>
 		<dict>
@@ -983,6 +973,11 @@
 			<true/>
 		</dict>
 		<key>5B6B0EFD178B557F00104246</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B6BCBEF1FB754E50014BAC6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
