@@ -2,6 +2,7 @@
 #import "ORCmdLineArgs.h"
 
 /*
+ from : Zumkeller, Roland Formal Global Optimisation with Taylor Models
  float ex8(float x1, float x2, float x3, float x4, float x5, float x6) {
  return (((((x2 * x5) + (x3 * x6)) - (x2 * x3)) - (x5 * x6)) + (x1 * (((((-x1 + x2) + x3) - x4) + x5) + x6)));
  }

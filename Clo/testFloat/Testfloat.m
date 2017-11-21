@@ -55,7 +55,6 @@
          
          NSLog(@"fx : [%16.16e,%16.16e]",fx.inf,fx.sup);
          NSLog(@"fy : [%16.16e,%16.16e]",fy.inf,fy.sup);
-         NSLog(@"fy : [%16.16e,%16.16e]",fy1.inf,fy1.sup);
          
          XCTAssertEqual([xc max]+fx.inf,[xc max]);
          XCTAssertEqual([xc max]-fx.inf,[xc max]);
