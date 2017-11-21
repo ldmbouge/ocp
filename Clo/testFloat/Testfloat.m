@@ -73,6 +73,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
@@ -96,6 +97,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
@@ -119,6 +121,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:-1.f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:-1.f up:1e4f];
@@ -148,6 +151,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
@@ -167,6 +171,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
@@ -186,6 +191,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:-1.f up:1.f];
@@ -206,6 +212,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:7.f up:10.f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model];
@@ -262,6 +269,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:3.f up:4.f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model];
@@ -316,6 +324,7 @@
 
 -(void) testSimpleEgality{
    @autoreleasepool {
+      fesetround(FE_TONEAREST);
       
       id<ORModel> model = [ORFactory createModel];
       
@@ -376,6 +385,7 @@
 -(void) testFail{
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       
       id<ORFloatVar> x = [ORFactory floatVar:model low:0.f up:0.f];
@@ -393,6 +403,7 @@
 -(void) testSimpleInegality {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       
       id<ORFloatVar> x = [ORFactory floatVar:model low:0.f up:10.f];
@@ -445,6 +456,7 @@
 -(void) testComplexeInegality {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       
       id<ORFloatVar> x = [ORFactory floatVar:model low:0.f up:10.f];
@@ -476,6 +488,8 @@
 
 -(void) testFloatOk{
    @autoreleasepool {
+      
+      fesetround(FE_TONEAREST);
       id<ORModel> mdl = [ORFactory createModel];
       id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:-1e8f up:1e8f];
       id<ORFloatVar> x = [ORFactory floatVar:mdl domain:r0];
@@ -512,6 +526,7 @@
 -(void) testPropagationOnly
 {
    @autoreleasepool {
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> c_0 = [ORFactory floatVar:model];
       id<ORFloatVar> r_0 = [ORFactory floatVar:model];
@@ -591,6 +606,7 @@
 -(void) testOperationDom
 {
    @autoreleasepool {
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x = [ORFactory floatVar:model low:5.f up:10.f];
       id<ORFloatVar> y = [ORFactory floatVar:model low:6.f up:8.f];

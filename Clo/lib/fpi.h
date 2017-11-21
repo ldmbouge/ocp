@@ -70,21 +70,21 @@ extern float infinityf(void);
 extern double infinity(void);
 extern long double infinityl(void);
 
-extern float maxnormalf();
-extern double maxnormal();
-extern long double maxnormall();
+extern float maxnormalf(void);
+extern double maxnormal(void);
+extern long double maxnormall(void);
 
-extern float minnormalf();
-extern double minnormal();
-extern long double minnormall();
+extern float minnormalf(void);
+extern double minnormal(void);
+extern long double minnormall(void);
 
-extern float maxdenormalf();
-extern double maxdenormal();
-extern long double maxdenormall();
+extern float maxdenormalf(void);
+extern double maxdenormal(void);
+extern long double maxdenormall(void);
 
-extern float mindenormalf();
-extern double mindenormal();
-extern long double mindenormall();
+extern float mindenormalf(void);
+extern double mindenormal(void);
+extern long double mindenormall(void);
 
 extern int is_infinityf(float v);
 extern int is_infinity(double v);
@@ -794,7 +794,7 @@ extern void fpi_expl_inv(int fpu_precision, int fpu_rounding, ldouble_interval *
 
 
 
-extern void init_acos();
+extern void init_acos(void);
 
 
 
@@ -813,7 +813,7 @@ extern void fpi_asinl(int fpu_precision, int fpu_rounding, ldouble_interval *Res
 
 
 
-extern void init_asin();
+extern void init_asin(void);
 
 
 
@@ -853,7 +853,7 @@ extern void fpi_atanl(int fpu_precision, int fpu_rounding, ldouble_interval *Res
 
 
 
-extern void init_atan();
+extern void init_atan(void);
 
 
 
