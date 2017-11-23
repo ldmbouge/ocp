@@ -28,10 +28,12 @@ int main(int argc, const char * argv[])
          id<ORIntVar> m = [ORFactory intVar:model domain:RANGE(model,0,20)];
          
          id<ORIntVarArray> vars = [model intVars];
-
-         [model add:[x leq: m]];
-         [model add:[y leq: m]];
-         
+//         
+//         id<ORConstraint> c = [x leq: m];
+//         id<ORConstraint> c2 = [y leq: m];
+//         [model add:[x leq: m]];
+//         [model add:[y leq: m]];
+//
          id<ORGroup> g0 = [ORFactory group:model];
          {
             [g0 add:[m eq: x]];

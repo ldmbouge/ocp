@@ -1910,7 +1910,7 @@
       } while (true);
    }];
 }
--(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x
+-(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
 {
    @autoreleasepool {
       __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
@@ -1936,7 +1936,7 @@
                assert([varsAbs count] > 0);
                v = [varsAbs anyObject];
             }
-            [self floatAbsSplit: x[i.index] by:v];
+            [self floatAbsSplit: x[i.index] by:v default:b];
             abs = [self computeAbsorptionsQuantities:x];
          } while (true);
       }];
@@ -1966,7 +1966,7 @@
       } while (true);
    }];
 }
--(void) minAbsorptionSearch: (id<ORFloatVarArray>) x
+-(void) minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
 {
    __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
@@ -1991,7 +1991,7 @@
             assert([varsAbs count] > 0);
             v = [varsAbs anyObject];
          }
-         [self floatAbsSplit: x[i.index] by:v];
+         [self floatAbsSplit: x[i.index] by:v default:b];
          abs = [self computeAbsorptionsQuantities:x];
       } while (true);
    }];
@@ -2212,9 +2212,10 @@
       [self float6WaySplit:x];
    }
 }
--(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<ORFloatVar>) y
+-(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<ORFloatVar>) y default:(void(^)(id<ORFloatVar>))b
 {
    if(y == nil) [self float6WaySplit:x];
+   float_interval interval[18];
    float_interval interval_x[3];
    float_interval interval_y[3];
    ORInt length_x = 0;
@@ -2262,21 +2263,23 @@
       interval_x[i_x].sup = fp_previous_float(xmax);
   	}
    if(length_x > 1 && length_y > 1){
-      float_interval* ip_x = interval_x;
-      float_interval* ip_y = interval_y;
-      for(ORUInt i = 0; i <= length_y;i++){
-         for(ORUInt j = 0; j <= length_x;j++){
-            [self atomic:^{
-               [self add:[x geq:@(ip_x[i].inf)]];
-               [self add:[x leq:@(ip_x[i].sup)]];
-               [self add:[y geq:@(ip_y[j].inf)]];
-               [self add:[y leq:@(ip_y[j].sup)]];
-            }];
-         }
+      ORInt mi;
+      for(ORUInt i = 0; i <= length_x;i++){
+         mi = 6*i;
+         interval[mi] = interval[mi+2] = interval[mi+4] = interval_x[i];
       }
+      for(ORUInt i = 0; i <= length_y;i++){
+         mi = 6*i+1;
+         interval[mi] = interval[mi+2] = interval[mi+4] = interval_y[i];
+      }
+      float_interval* ip = interval_x;
+      [_search tryall:RANGE(self,0,length_x) suchThat:nil in:^(ORInt i) {
+         [self floatIntervalImpl:cx low:ip[i].inf up:ip[i].sup];
+         [self floatIntervalImpl:cx low:ip[i+1].inf up:ip[i+1].sup];
+      }];
    }else{
-      [self float6WaySplit:x];
-      [self float6WaySplit:y];
+      b(x);
+      b(y);
    }
 }
 
@@ -2886,6 +2889,7 @@
    }];
    [_engine open];
 }
+
 @end
 
 /******************************************************************************************/

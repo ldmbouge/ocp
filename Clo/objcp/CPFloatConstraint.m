@@ -21,7 +21,6 @@
    _x = x;
    _y = y;
    return self;
-   
 }
 -(void) post
 {
@@ -187,7 +186,6 @@
    _x = x;
    _c = c;
    return self;
-   
 }
 -(void) post
 {
@@ -442,6 +440,10 @@
 }
 -(void) propagate
 {
+   if ([_x bound] && [_y bound] && [_z bound]) {
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -551,6 +553,10 @@
 }
 -(void) propagate
 {
+   if ([_x bound] && [_y bound] && [_z bound]) {
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -658,6 +664,10 @@
 }
 -(void) propagate
 {
+   if ([_x bound] && [_y bound] && [_z bound]) {
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -728,6 +738,10 @@
 }
 -(void) propagate
 {
+   if ([_x bound] && [_y bound] && [_z bound]) {
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -791,15 +805,19 @@
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b engine] addInternal: [CPFactory floatNEqual:_x to:_y]];         // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
          return ;
       } else {
          [[_b engine] addInternal: [CPFactory floatEqual:_x to:_y]];     // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
          return ;
       }
    }
-   else if ([_x bound] && [_y bound])        //  b <=> c == d =>  b <- c==d
+   else if ([_x bound] && [_y bound]) {       //  b <=> c == d =>  b <- c==d
       [_b bind:[_x min] != [_y min]];
-   else if ([_x bound]) {
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if ([_x bound]) {
       [[_b engine] addInternal: [CPFactory floatReify:_b with:_y neqi:[_x min]]];
       return ;
    }
@@ -820,26 +838,39 @@
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
-      if ([_x bound])            // TRUE <=> (y != c)
+      if ([_x bound]){            // TRUE <=> (y != c)
          [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x min]]];         // Rewrite as x==y  (addInternal can throw)
-      else  if ([_y bound])      // TRUE <=> (x != c)
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }else  if ([_y bound]) {     // TRUE <=> (x != c)
          [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]];         // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
-      if ([_x bound])
+      if ([_x bound]){
          [_y bind:[_x min]];
-      else if ([_y bound])
+         assignTRInt(&_active, NO, _trail);
+         return;
+      } else if ([_y bound]){
          [_x bind:[_y min]];
-      else {                    // FALSE <=> (x == y)
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }else {                    // FALSE <=> (x == y)
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
       }
    }
    else {                        // b is unknown
-      if ([_x bound] && [_y bound])
+      if ([_x bound] && [_y bound]){
          [_b bind: [_x min] != [_y min]];
-      else if ([_x max] < [_y min] || [_y max] < [_x min])
+         assignTRInt(&_active, NO, _trail);
+      } else if ([_x max] < [_y min] || [_y max] < [_x min]){
          [_b bind:YES];
+         assignTRInt(&_active, NO, _trail);
+         
+      }
    }
 }
 -(NSString*)description

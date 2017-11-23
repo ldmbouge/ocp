@@ -72,6 +72,19 @@
    id<ORTracker> t = [(id)crp tracker];
    _result = [ORFactory equal:t var:clp to:crp plus:c.cst];
 }
+-(void) visitFloatLinearEq: (id<ORFloatLinearEq>)c
+{
+   @autoreleasepool {
+      NSArray* vs = [c allVarsArray];
+      id<ORTracker> t = [(id)_map[getId(vs[0])] tracker];
+      ORInt size = (ORInt)[vs count];
+      id<ORVarArray> vars = (id<ORVarArray>)[ORFactory idArray:t range:RANGE(t,0,size-1)];
+      for(ORUInt i = 0; i < size;i++){
+         vars[i] = _map[getId(vs[i])];
+      }
+      _result = [ORFactory floatSum:t array:vars coef:[c coefs] eq:[c cst]];
+   }
+}
 @end
 
 @implementation ORConstraintI
@@ -240,11 +253,11 @@
 }
 -(ORInt) size
 {
-    return (ORInt)[_content count];
+   return (ORInt)[_content count];
 }
 -(id<ORConstraint>) at: (ORInt) idx
 {
-    return [_content objectAtIndex: idx];
+   return [_content objectAtIndex: idx];
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -295,11 +308,17 @@
 {
    return 0.0;
 }
-
 - (NSArray *)allVarsArray
 {
-   //Heytem:tofix
-   return nil;
+   NSMutableArray* os = [[[NSMutableArray alloc] initWithCapacity:2] autorelease];
+   if (_guard) [os addObject:_guard];
+   @autoreleasepool {
+      for(id<ORConstraint> c in _content) {
+         NSArray* cs = [c allVarsArray];
+         [os addObjectsFromArray:cs];
+      }
+   }
+   return os;
 }
 
 @end
@@ -1019,7 +1038,7 @@
    _x = x;
    _y = y;
    _c = c;
-   return self;   
+   return self;
 }
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1068,7 +1087,7 @@
 @end
 
 @implementation ORSoftNEqual {
-    id<ORVar> _slack;
+   id<ORVar> _slack;
 }
 -(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y slack: (id<ORVar>)slack {
    self = [super initORNEqual: x neq: y];
@@ -2040,43 +2059,43 @@
 
 
 @implementation ORImplyEqualc {
-    id<ORIntVar> _b;
-    id<ORIntVar> _x;
-    ORInt        _c;
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   ORInt        _c;
 }
 -(ORImplyEqualc*)initImply:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c
 {
-    self = [super initORConstraintI];
-    _b = b;
-    _x = x;
-    _c = c;
-    return self;
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
 }
 -(NSString*) description
 {
-    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %d)",[self class],self,_b,_x,_c];
-    return buf;
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %d)",[self class],self,_b,_x,_c];
+   return buf;
 }
 -(void)visit:(ORVisitor*)v
 {
-    [v visitImplyEqualc:self];
+   [v visitImplyEqualc:self];
 }
 -(id<ORIntVar>) b
 {
-    return _b;
+   return _b;
 }
 -(id<ORIntVar>) x
 {
-    return _x;
+   return _x;
 }
 -(ORInt) cst
 {
-    return _c;
+   return _c;
 }
 -(NSSet*)allVars
 {
-    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
 -(NSArray*)allVarsArray
 {
@@ -2084,18 +2103,18 @@
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_b];
-    [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    self = [super initWithCoder:aDecoder];
-    _b = [aDecoder decodeObject];
-    _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-    return self;
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
 }
 @end
 
@@ -3008,14 +3027,14 @@
 
 @implementation ORSumBoolLEqc {
    id<ORIntVarArray> _ba;
-   ORInt             _c;   
+   ORInt             _c;
 }
 -(ORSumBoolLEqc*)initSumBool:(id<ORIntVarArray>)ba leqi:(ORInt)c
 {
    self = [super initORConstraintI];
    _ba = ba;
    _c  = c;
-   return self;   
+   return self;
 }
 -(NSString*) description
 {
@@ -3149,7 +3168,7 @@
 
 @implementation ORSumLEqc {
    id<ORIntVarArray> _ia;
-   ORInt              _c;   
+   ORInt              _c;
 }
 -(ORSumLEqc*) initSum:(id<ORIntVarArray>)ia leqi:(ORInt)c
 {
@@ -3196,7 +3215,7 @@
 
 @implementation ORSumGEqc {
    id<ORIntVarArray> _ia;
-   ORInt              _c;   
+   ORInt              _c;
 }
 -(ORSumGEqc*)initSum:(id<ORIntVarArray>)ia geqi:(ORInt)c
 {
@@ -5225,9 +5244,9 @@
       NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
       for(id<ORExpr> e in _x)
          [ms addObject:e];
-//      [_x enumerateWith:^(id obj, int idx) {
-//         [ms addObject:obj];
-//      }];
+      //      [_x enumerateWith:^(id obj, int idx) {
+      //         [ms addObject:obj];
+      //      }];
       _av = [ms retain];
    }
    return _av;
@@ -5831,7 +5850,7 @@
    return ms;
 }
 @end
-   
+
 @implementation ORSubCircuit {
    id<ORIntVarArray> _x;
 }
@@ -6000,14 +6019,14 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    int k = 0;
    for(ORInt i = low; i <= up; i++)
       toSort[k++] = (CPPairIntId){[size at: i],x[i]};
-   qsort(toSort,nb,sizeof(CPPairIntId),(int(*)(const void*,const void*)) &compareCPPairIntId);   
+   qsort(toSort,nb,sizeof(CPPairIntId),(int(*)(const void*,const void*)) &compareCPPairIntId);
    *sx = [ORFactory intVarArray: [x tracker] range: R with: ^id<ORIntVar>(int i) { return toSort[i - low]._id; }];
    *sortedSize = [ORFactory intArray:[x tracker] range: R with: ^ORInt(ORInt i) { return toSort[i - low]._int; }];
 }
 
 -(ORPackingI*)initORPackingI:(id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
 {
-   self = [super initORConstraintI];   
+   self = [super initORConstraintI];
    sortIntVarInt(x,itemSize,&_x,&_itemSize);
    _load     = load;
    return self;
@@ -6387,7 +6406,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(id<ORObjectiveValue>)value
 {
-  return NULL;
+   return NULL;
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -6679,7 +6698,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(ORVisitor*)v
 {
    [v visitMinimizeExpr:self];
-    //[v visitMinimizeVar: self];
+   //[v visitMinimizeVar: self];
 }
 @end
 
@@ -7405,7 +7424,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @implementation ORBitNegative{
    id<ORBitVar> _x;
    id<ORBitVar> _y;
-
+   
 }
 -(ORBitNegative*)initORBitNegative: (id<ORBitVar>) x eq:(id<ORBitVar>)y
 {

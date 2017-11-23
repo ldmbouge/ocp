@@ -191,9 +191,9 @@
     [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_imax];
     return self;
 }
-- (void)unionWith:(id<CPADom>)d
+-(void) unionWith:(CPDoubleDom*)d
 {
-   //Heytem:tofix
+   updateMinD(&_domain, minFlt(_imin,d->_imin), _trail);
+   updateMaxD(&_domain, maxFlt(_imax,d->_imax), _trail);
 }
-
 @end

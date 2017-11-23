@@ -2698,6 +2698,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       if ([_origs[i] conformsToProtocol:@protocol(CPIntVar)]) {
          id<CPIntVar> oi = (id)_origs[i];
          [oi whenChangePropagate:self];
+      }else  if ([_origs[i] conformsToProtocol:@protocol(CPFloatVar)]) {
+         id<CPFloatVar> oi = (id)_origs[i];
+         [oi whenChangePropagate:self];
       }
    }
    [self propagate];

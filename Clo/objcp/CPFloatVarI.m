@@ -186,7 +186,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return nil;
 }
-
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
@@ -200,6 +199,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+}
+- (void)whenChangeDo:(ORClosure)todo priority:(ORInt)p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
 }
@@ -236,6 +239,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
 }
+- (void)whenChangePropagate:(CPCoreConstraint*)c priority:(ORInt)p
+{
+   hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+}
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
    [self whenBindPropagate:c priority:HIGHEST_PRIO];
@@ -252,11 +259,21 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
 }
+- (void)whenChangePropagate:(id<CPConstraint>)c
+{
+   [self whenChangePropagate: c priority:HIGHEST_PRIO];
+}
+- (void)whenChangeDo:(ORClosure)todo onBehalf:(id<CPConstraint>)c
+{
+     [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
 -(void) bindEvt:(id<CPFloatDom>)sender
 {
-   id<CPClosureList> mList[2];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._bindEvt;
+   k += mList[k] != NULL;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
@@ -287,7 +304,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
 }
-
 -(void) bind:(ORFloat) val
 {
    [_dom bind:val for:self];
@@ -329,9 +345,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
       return [_dom min];
    return _value;
 }
--(TRFloatInterval) domain
+-(id<CPFloatDom>) domain
 {
-   return [_dom domain];
+   return [_dom retain];
 }
 -(void) assignRelaxationValue: (ORFloat) f
 {
@@ -356,24 +372,18 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
    return 0;
 }
-
 - (ORBool)sameDomain:(CPFloatVarI*)x
 {
    return [_dom isEqual:x->_dom];
 }
-
-
-- (void)subsumedBy:(id<CPVar>)x
+- (void)subsumedBy:(id<CPFloatVar>)x
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[x min] and:[x max]];
 }
-
-
-- (void)subsumedByDomain:(id<CPADom>)dom
+- (void)subsumedByDomain:(id<CPFloatDom>)dom
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[dom min] and:[dom max]];
 }
-
 -(ORLDouble) domwidth
 {
    return [_dom domwidth];
@@ -499,6 +509,19 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
 }
+- (void)whenChangeDo:(ORClosure)todo onBehalf:(id<CPConstraint>)c
+{
+}
+- (void)whenChangeDo:(ORClosure)todo priority:(ORInt)p onBehalf:(id<CPConstraint>)c
+{
+}
+- (void)whenChangePropagate:(id<CPConstraint>)c
+{
+}
+- (void)whenChangePropagate:(id<CPConstraint>)c priority:(ORInt)p
+{
+}
+
 -(void) setDelegate:(id<CPFloatVarNotifier>)delegate
 {
 }
@@ -640,25 +663,19 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 - (id<CPADom>)domain
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   return [_theVar flatDomain];
 }
-
-
-- (ORBool)sameDomain:(id<CPVar>)x
+- (ORBool)sameDomain:(id<CPFloatVar>)x
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   return [self min] == [x min] && [self max] == [x max];
 }
-
-
-- (void)subsumedBy:(id<CPVar>)x
+- (void)subsumedBy:(id<CPFloatVar>)x
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[x min] and:[x max]];
 }
-
-
-- (void)subsumedByDomain:(id<CPADom>)dom
+- (void)subsumedByDomain:(id<CPDom>)dom
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[dom min] and:[dom max]];
 }
 
 -(ORFloat) magnitude

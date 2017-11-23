@@ -320,6 +320,12 @@
       for(id<ORVar> x in varsOfGroup) {
          if ([x conformsToProtocol:@protocol(ORIntVar)])
             vm[getId(x)] = [ORFactory intVar:t domain:[(id<ORIntVar>)x domain]];
+         else if ([x conformsToProtocol:@protocol(ORFloatVar)])
+            vm[getId(x)] = [ORFactory floatVar:t domain:[(id<ORFloatVar>)x domain]];
+         else if ([x conformsToProtocol:@protocol(ORDoubleVar)])
+            vm[getId(x)] = [ORFactory doubleVar:t domain:[(id<ORDoubleVar>)x domain]];
+         else if ([x conformsToProtocol:@protocol(ORLDoubleVar)])
+            vm[getId(x)] = [ORFactory ldoubleVar:t domain:[(id<ORLDoubleVar>)x domain]];
       }
       cvm[cn++] = vm;
       id<ORGroup> ckp = (id) [fg alphaVars:vm];

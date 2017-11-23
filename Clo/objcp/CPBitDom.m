@@ -101,7 +101,6 @@
       return 0;
    else return 1;
 }
-
 -(ORBool) get:(ORInt)v
 {
    return _min._val <= v && v <= _max._val;

@@ -88,7 +88,7 @@ typedef struct  {
 -(NSMutableSet*) constraints;
 -(ORFloat) floatValue;
 -(ORLDouble) domwidth;
--(TRFloatInterval) domain;
+-(id<CPDom>) domain;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {

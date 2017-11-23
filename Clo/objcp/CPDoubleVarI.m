@@ -326,9 +326,9 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
         return [_dom min];
     return _value;
 }
--(TRDoubleInterval) domain
+-(id<CPDoubleDom>) domain
 {
-    return [_dom domain];
+    return [_dom retain];
 }
 -(ORBool) isIntersectingWith : (CPDoubleVarI*) y
 {
@@ -369,25 +369,18 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
     @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleVar: method domsize  not defined"];
     return 0;
 }
-
-- (ORBool)sameDomain:(id<CPDoubleVar>)x
+- (ORBool)sameDomain:(CPDoubleVarI*)x
 {
-#warning Heytem must implement this one (See CPIntVar for example)
-   return NO;
+   return [_dom isEqual:x->_dom];
 }
-
-
 - (void)subsumedBy:(id<CPDoubleVar>)x
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[x min] and:[x max]];
 }
-
-
-- (void)subsumedByDomain:(id<CPDoubleDom>)dom
+- (void)subsumedByDomain:(id<CPDom>)dom
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[dom min] and:[dom max]];
 }
-
 -(ORLDouble) domwidth
 {
    return [_dom domwidth];
@@ -654,30 +647,23 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 {
     return [_theVar bound];
 }
-
-- (id<CPADom>)domain
+-(id<CPDom>)domain
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   return [_theVar domain];
+}
+- (ORBool)sameDomain:(id<CPLDoubleVar>)x
+{
+   return [self min] == [x min] && [self max] == [x max];
 }
 
-
-- (ORBool)sameDomain:(id<CPVar>)x
+- (void)subsumedBy:(id<CPLDoubleVar>)x
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[x min] and:[x max]];
 }
-
-
-- (void)subsumedBy:(id<CPVar>)x
+- (void)subsumedByDomain:(id<CPDom>)dom
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[dom min] and:[dom max]];
 }
-
-
-- (void)subsumedByDomain:(id<CPADom>)dom
-{
-#warning Heytem must implement this one (See CPIntVar for example)
-}
-
 -(ORDouble) domwidth
 {
    ORBounds b = [_theVar bounds];

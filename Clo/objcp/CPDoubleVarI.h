@@ -82,7 +82,6 @@ typedef struct  {
 -(NSMutableSet*) constraints;
 -(ORDouble) doubleValue;
 -(ORLDouble) domwidth;
--(TRDoubleInterval) domain;
 @end
 
 @interface CPDoubleViewOnIntVarI : ORObject<CPDoubleVar,CPDoubleVarExtendedItf,CPIntVarNotifier> {

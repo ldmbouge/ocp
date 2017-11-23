@@ -468,9 +468,9 @@
 {
     [[self worker] floatStatic6WaySplit:x];
 }
--(void)          floatAbsSplit: (id<ORFloatVar>) x by: (id<ORFloatVar>) y
+-(void)          floatAbsSplit: (id<ORFloatVar>) x by: (id<ORFloatVar>) y  default:(void(^)(id<ORFloatVar>))b
 {
-   [[self worker] floatAbsSplit:x by:y];
+   [[self worker] floatAbsSplit:x by:y default:b];
 }
 -(void)          floatSplit: (id<ORFloatVar>) x
 {

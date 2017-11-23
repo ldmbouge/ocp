@@ -527,7 +527,7 @@
 }
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearLeq: visit method not defined"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLineareq: visit method not defined"];
 }
 -(void) visitFloatLinearNEq: (id<ORFloatLinearNEq>) c
 {
