@@ -168,15 +168,15 @@
 @end
 
 @interface ABSElement : NSObject{
-    ORDouble _quantity;
-    NSMutableSet* _vars;
+   ORDouble _quantity;
+   id<CPFloatVar> _choice;
 }
--(id) init:(ORDouble)quantity vars:(NSMutableSet*)vars;
+-(id) init:(ORDouble)quantity;
 -(id) init;
 -(ORDouble) quantity;
--(NSMutableSet*) vars;
 -(void) addQuantity:(ORFloat)c;
--(void) addVar:(id<CPFloatVar>)v;
+-(void) setChoice:(id<CPFloatVar>)c;
+-(id<CPFloatVar>) bestChoice;
 -(NSString*)description;
 -(void) dealloc;
 @end

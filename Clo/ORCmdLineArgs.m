@@ -28,6 +28,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 @synthesize randomized;
 @synthesize heuristic;
 @synthesize valordering;
+@synthesize defaultAbsSplit;
 @synthesize nbThreads;
 @synthesize nArg;
 @synthesize fName;
@@ -48,6 +49,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    nArg = 0;
    heuristic = ref;
    valordering = dynamicSplit;
+   defaultAbsSplit = dynamicSplit;
    restartRate = 0;
    timeOut = 60;
    nbThreads = 0;
@@ -72,6 +74,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          fName = [NSString stringWithCString:argv[k]+2 encoding:NSASCIIStringEncoding];
       else if (strncmp(argv[k],"-vh",3)==0)
          valordering = atoi(argv[k]+3);
+      else if (strncmp(argv[k],"-dh",3)==0)
+         defaultAbsSplit = atoi(argv[k]+3);
    }
    return self;
 }
@@ -82,6 +86,10 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 -(NSString*)valueHeuristicName
 {
    return valHName[valordering];
+}
+-(NSString*)valueDefaultAbsSplitName
+{
+   return valHName[defaultAbsSplit];
 }
 -(void)measure:(struct ORResult(^)(void))block
 {
@@ -732,9 +740,50 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                }];
                break;
             case dedicatedSplit:
-               [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
-                  [p float6WaySplit:x];
-               }];
+               switch(defaultAbsSplit){
+                  case split:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                        [p floatStaticSplit:x];
+                     }];
+                     break;
+                  case split3Way:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                        [p floatStatic3WaySplit:x];
+                     }];
+                     break;
+                  case split5Way:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                        [p floatStatic5WaySplit:x];
+                     }];
+                     break;
+                  case split6Way:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                        [p floatSplit:x];
+                     }];
+                     break;
+                  case dynamicSplit:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                     }];
+                     break;
+                  case dynamic3Split:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                        [p float3WaySplit:x];
+                     }];
+                     break;
+                  case dynamic5Split:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                        [p float5WaySplit:x];
+                     }];break;
+                  case dynamic6Split:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                     [p float6WaySplit:x];
+                  }];
+                  default:
+                     [p maxAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
+                        [p float6WaySplit:x];
+                     }];
+               }
                break;
          }
          break;
@@ -781,7 +830,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                }];
                break;
             case dedicatedSplit:
-               [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+               [p minAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
                }];
                break;

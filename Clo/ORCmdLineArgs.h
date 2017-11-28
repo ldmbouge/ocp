@@ -54,7 +54,6 @@ enum ValHeuristic
    dynamic6Split = 7,
     dedicatedSplit = 8
 };
-
 struct ORResult {
    ORInt found;
    ORInt nbFailures;
@@ -71,6 +70,7 @@ struct ORResult {
 @property (nonatomic,readonly) BOOL    randomized;
 @property (nonatomic,readonly) enum Heuristic heuristic;
 @property (nonatomic,readonly) enum ValHeuristic valordering;
+@property (nonatomic,readonly) enum ValHeuristic defaultAbsSplit;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
 @property (nonatomic,readonly) NSString* fName;

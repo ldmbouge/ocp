@@ -76,6 +76,8 @@ PORTABLE_BEGIN
 -(void)          minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b;
+-(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b;
 -(void)          minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          combinedAbsWithDensSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
@@ -91,7 +93,7 @@ PORTABLE_BEGIN
 -(void)          floatStatic5WaySplit: (id<ORFloatVar>) x;
 -(void)          floatStatic6WaySplit: (id<ORFloatVar>) x;
 -(void)          floatSplit: (id<ORFloatVar>) x;
--(void)          floatAbsSplit: (id<ORFloatVar>) x by:(id<ORFloatVar>) y  default:(void(^)(id<ORFloatVar>))b;
+-(void)          floatAbsSplit: (id<ORFloatVar>) x by:(id<CPFloatVar>) y  default:(void(^)(id<ORFloatVar>))b;
 -(void)          float3WaySplit: (id<ORFloatVar>) x;
 -(void)          float5WaySplit: (id<ORFloatVar>) x;
 -(void)          float6WaySplit: (id<ORFloatVar>) x;

@@ -14,6 +14,8 @@
 #import "CPFloatVarI.h"
 #import "ORConstraintI.h"
 
+#define PERCENT 0.0
+
 @implementation CPFloatEqual
 -(id) init:(CPFloatVarI*)x equals:(CPFloatVarI*)y
 {
@@ -427,7 +429,7 @@
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = PERCENT;
    _rounding = FE_TONEAREST;
    return self;
 }
@@ -539,7 +541,7 @@
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = PERCENT;
    _rounding = FE_TONEAREST;
    return self;
 }
@@ -651,7 +653,7 @@
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = PERCENT;
    _rounding = FE_TONEAREST;
    return self;
 }
@@ -725,7 +727,7 @@
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = PERCENT;
    _rounding = FE_TONEAREST;
    return self;
 }

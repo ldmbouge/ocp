@@ -48,6 +48,7 @@ int main(int argc, const char * argv[]) {
             
             
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+            found=true;
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];
                NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");

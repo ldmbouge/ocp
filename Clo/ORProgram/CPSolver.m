@@ -1904,8 +1904,13 @@
    [[self explorer] applyController:t in:^{
       do {
          ORSelectorResult i = [select max];
-         if (!i.found)
+//         for(id<ORVar> v in x){
+//            id<CPFloatVar> cv = _gamma[getId(v)];
+//            NSLog(@"%@ bound ? %s ",cv,([cv bound])? "YES":"NO");
+//         }
+         if (!i.found){
             break;
+         }
          b(x[i.index]);
       } while (true);
    }];
@@ -1930,12 +1935,7 @@
             ORSelectorResult i = [select max];
             if (!i.found)
                break;
-            id<ORFloatVar> v = nil;
-            if([abs[i.index] quantity] > 0){
-               NSSet* varsAbs = [abs[i.index] vars];
-               assert([varsAbs count] > 0);
-               v = [varsAbs anyObject];
-            }
+            id<CPFloatVar> v = [abs[i.index] bestChoice];
             [self floatAbsSplit: x[i.index] by:v default:b];
             abs = [self computeAbsorptionsQuantities:x];
          } while (true);
@@ -1985,12 +1985,7 @@
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
-         id<ORFloatVar> v = nil;
-         if([abs[i.index] quantity] > 0){
-            NSSet* varsAbs = [abs[i.index] vars];
-            assert([varsAbs count] > 0);
-            v = [varsAbs anyObject];
-         }
+         id<CPFloatVar> v = [abs[i.index] bestChoice];
          [self floatAbsSplit: x[i.index] by:v default:b];
          abs = [self computeAbsorptionsQuantities:x];
       } while (true);
@@ -2212,38 +2207,38 @@
       [self float6WaySplit:x];
    }
 }
--(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<ORFloatVar>) y default:(void(^)(id<ORFloatVar>))b
+-(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<CPFloatVar>) y default:(void(^)(id<ORFloatVar>))b
 {
-   if(y == nil) [self float6WaySplit:x];
+   if(y == nil) b(x);
    float_interval interval[18];
    float_interval interval_x[3];
    float_interval interval_y[3];
    ORInt length_x = 0;
    ORInt length_y = 0;
    id<CPFloatVar> cx = _gamma[getId(x)];
-   id<CPFloatVar> cy = _gamma[getId(y)];
-   if([cx bound] && [cy bound]) return;
+   if([cx bound] && [y bound]) return;
    float_interval ax = computeAbsorbingInterval((CPFloatVarI*)cx);
    float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
-   if(isIntersectingWithV([cy min],[cy max],ay.inf,ay.sup)){
-      ay.inf = maxFlt(ay.inf, [cy min]);
-      ay.sup = minFlt(ay.sup, [cy max]);
-      length_y = !([cy min] == ay.inf) + !([cy max] == ay.sup);
+   if(isIntersectingWithV([y min],[y max],ay.inf,ay.sup)){
+      ay.inf = maxFlt(ay.inf, [y min]);
+      ay.sup = minFlt(ay.sup, [y max]);
+      length_y = !([y min] == ay.inf) + !([y max] == ay.sup);
       interval_y[0] = ay;
-      if(ay.inf > [cy min] && [cy max] > ay.sup){
-         interval_y[1] = makeFloatInterval([cy min],fp_previous_float(ay.inf));
-         interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [cy max]);
+      if(ay.inf > [y min] && [y max] > ay.sup){
+         interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
+         interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [y max]);
       }
-      else if(ay.inf == [cy min]){
-         interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[cy max]);
+      else if(ay.inf == [y min]){
+         interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[y max]);
       }else {
-         interval_y[1] = makeFloatInterval([cy min],fp_previous_float(ay.inf));
+         interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
       }
   	}else{
-      interval_y[0] = makeFloatInterval([cy min], [cy max]);
+      interval_y[0] = makeFloatInterval([y min], [y max]);
       length_y = 0;
   	}
    length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
+//   NSLog(@"cx = [%16.16e,%16.16e] ax = [%16.16e,%16.16e]) %d %d",[cx min],[cx max],ax.inf,ax.sup,([cx min] == ax.inf),([cx max] == ax.sup));
    interval_x[0].inf = maxFlt([cx min],ax.inf);
    interval_x[0].sup = minFlt([cx max],ax.sup);
    ORInt i_x = 1;
@@ -2262,24 +2257,26 @@
       interval_x[i_x].inf = fp_next_float(ax.sup);
       interval_x[i_x].sup = fp_previous_float(xmax);
   	}
-   if(length_x > 1 && length_y > 1){
-      ORInt mi;
-      for(ORUInt i = 0; i <= length_x;i++){
-         mi = 6*i;
-         interval[mi] = interval[mi+2] = interval[mi+4] = interval_x[i];
+   if(length_x >= 1 && length_y >= 1){
+      ORInt length = 0;
+      for(ORInt i = 0; i <= length_x;i++){
+         for(ORInt j = 0; j <= length_y;j++){
+            interval[length] = interval_x[i];
+            length++;
+            interval[length] = interval_y[j];
+            length++;
+         }
       }
-      for(ORUInt i = 0; i <= length_y;i++){
-         mi = 6*i+1;
-         interval[mi] = interval[mi+2] = interval[mi+4] = interval_y[i];
-      }
-      float_interval* ip = interval_x;
-      [_search tryall:RANGE(self,0,length_x) suchThat:nil in:^(ORInt i) {
-         [self floatIntervalImpl:cx low:ip[i].inf up:ip[i].sup];
-         [self floatIntervalImpl:cx low:ip[i+1].inf up:ip[i+1].sup];
+      float_interval* ip = interval;
+      length-=2;
+      [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt i) {
+//         NSLog(@"try : %@ with [%16.16e,%16.16e] and %@ with [%16.16e,%16.16e]",cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
+         [self floatIntervalImpl:cx low:ip[2*i].inf up:ip[2*i].sup];
+         [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
       }];
    }else{
       b(x);
-      b(y);
+//      b(y);
    }
 }
 
@@ -2325,7 +2322,8 @@
       interval[1].sup = theMax;
    }
    float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,2) suchThat:nil in:^(ORInt i) {
+   [_search tryall:RANGE(self,0,1) suchThat:nil in:^(ORInt i) {
+      NSLog(@"%d ",i);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -2779,8 +2777,10 @@
    ORUInt i = 0;
    CPFloatVarI* cx;
    id<CPFloatVar> v;
+   ORDouble best_rate;
    for (id<ORFloatVar> x in vars) {
       cx = _gamma[[x getId]];
+      best_rate = 0.0;
       NSMutableSet* cstr = [cx constraints];
       for(id<CPConstraint> c in cstr){
          if([c canLeadToAnAbsorption]){
@@ -2790,7 +2790,7 @@
             assert(absV >= 0.0f && absV <= 1.f);
             if(absV){
                [abs[i] addQuantity:absV];
-               [abs[i] addVar:v];
+               if(absV > best_rate) [abs[i] setChoice:v];
             }
          }
       }
@@ -3567,42 +3567,41 @@
 //hzi should redefine release
 @implementation ABSElement
 
--(id) init:(ORDouble)quantity vars:(NSMutableSet *)vars
+-(id) init:(ORDouble)quantity
 {
    self = [super init];
    _quantity = quantity;
-   _vars = vars;
+   _choice = nil;
    return self;
 }
 -(id) init
 {
-   self = [self init:0.0 vars:[[NSMutableSet alloc] init]];
+   self = [self init:0.0];
    return self;
 }
 -(void) dealloc
 {
-   [_vars release];
    [super dealloc];
 }
 -(ORDouble) quantity
 {
    return _quantity;
 }
--(NSSet*) vars
-{
-   return _vars;
-}
--(void) addVar:(id<CPFloatVar>) v
-{
-   [_vars addObject:v];
-}
 -(void) addQuantity:(ORFloat) c
 {
    _quantity += c;
 }
+-(void) setChoice:(CPFloatVarI*) c
+{
+   _choice = c;
+}
+-(id<CPFloatVar>) bestChoice
+{
+   return _choice;
+}
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%lf,%@>",_quantity,_vars];
+   return [NSString stringWithFormat:@"<%lf,%@>",_quantity,_choice];
 }
 @end
 

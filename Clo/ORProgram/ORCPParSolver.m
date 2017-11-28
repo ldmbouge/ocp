@@ -379,6 +379,14 @@
 {
     [[self worker] minAbsorptionSearch:x do:b];
 }
+-(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
+{
+   [[self worker] maxAbsorptionSearch:x default:b];
+}
+-(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
+{
+   [[self worker] minAbsorptionSearch:x default:b];
+}
 -(void)          maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
     [[self worker] maxCancellationSearch:x do:b];
@@ -503,7 +511,7 @@
 {
     [[self worker] floatStaticSplit: x];
 }
--(void)          floatAbsSplit: (id<ORFloatVar>) x by:(id<ORFloatVar>) y  default:(void(^)(id<ORFloatVar>))b
+-(void)          floatAbsSplit: (id<ORFloatVar>) x by:(id<CPFloatVar>) y  default:(void(^)(id<ORFloatVar>))b
 {
    [[self worker] floatAbsSplit: x by:y default:b];
 }
