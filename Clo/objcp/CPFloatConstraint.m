@@ -442,10 +442,6 @@
 }
 -(void) propagate
 {
-   if ([_x bound] && [_y bound] && [_z bound]) {
-      assignTRInt(&_active, NO, _trail);
-      return;
-   }
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -490,6 +486,8 @@
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
    }
+   
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -555,10 +553,6 @@
 }
 -(void) propagate
 {
-   if ([_x bound] && [_y bound] && [_z bound]) {
-      assignTRInt(&_active, NO, _trail);
-      return;
-   }
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -603,6 +597,8 @@
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
    }
+
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -666,10 +662,6 @@
 }
 -(void) propagate
 {
-   if ([_x bound] && [_y bound] && [_z bound]) {
-      assignTRInt(&_active, NO, _trail);
-      return;
-   }
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -704,6 +696,7 @@
       [_z updateInterval:z.inf and:z.sup];
    }
    
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -740,10 +733,6 @@
 }
 -(void) propagate
 {
-   if ([_x bound] && [_y bound] && [_z bound]) {
-      assignTRInt(&_active, NO, _trail);
-      return;
-   }
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
@@ -777,6 +766,8 @@
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
    }
+   
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {

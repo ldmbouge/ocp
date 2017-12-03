@@ -51,10 +51,6 @@ int main(int argc, const char * argv[]) {
          [model add:[[a plus:b] gt:c]];
          [model add:[[b plus:c] gt:a]];
          
-//         [model add:[b eq:@(5.0000000000000000e+00)]];
-//         [model add:[a eq:@(7.0737042427062988e+00)]];
-         //         [model add:[c eq:@(4.9999995231628418e+00)]];
-         
          
          [model add:[a gt:b]];
          [model add:[b gt:c]];

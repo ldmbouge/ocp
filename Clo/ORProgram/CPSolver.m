@@ -1904,10 +1904,10 @@
    [[self explorer] applyController:t in:^{
       do {
          ORSelectorResult i = [select max];
-//         for(id<ORVar> v in x){
-//            id<CPFloatVar> cv = _gamma[getId(v)];
-//            NSLog(@"%@ bound ? %s ",cv,([cv bound])? "YES":"NO");
-//         }
+         //         for(id<ORVar> v in x){
+         //            id<CPFloatVar> cv = _gamma[getId(v)];
+         //            NSLog(@"%@ bound ? %s ",cv,([cv bound])? "YES":"NO");
+         //         }
          if (!i.found){
             break;
          }
@@ -1918,7 +1918,7 @@
 -(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
 {
    @autoreleasepool {
-      __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
+      __block NSMutableArray* abs = [self computeAbsorptionsQuantities:x];
       ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
       id<ORSelect> select = [ORFactory select: _engine
                                         range: RANGE(self,[x low],[x up])
@@ -1944,7 +1944,6 @@
 }
 -(void) minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
-   __block NSMutableArray* abs = [self computeAbsorptionsQuantities:x];
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
@@ -1953,7 +1952,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    return [abs[i] quantity];
+                                    return -[self computeAbsorptionRate:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
@@ -1962,35 +1961,35 @@
          if (!i.found)
             break;
          b(x[i.index]);
-         abs = [self computeAbsorptionsQuantities:x];
       } while (true);
    }];
 }
 -(void) minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
 {
-   __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     return ![v bound];
-                                  }
-                                 orderedBy: ^ORDouble(ORInt i) {
-                                    return [abs[i] quantity];
-                                 }];
-   
-   [[self explorer] applyController:t in:^{
-      do {
-         ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         id<CPFloatVar> v = [abs[i.index] bestChoice];
-         [self floatAbsSplit: x[i.index] by:v default:b];
-         abs = [self computeAbsorptionsQuantities:x];
-      } while (true);
-   }];
-   
+   @autoreleasepool {
+      __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
+      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+      id<ORSelect> select = [ORFactory select: _engine
+                                        range: RANGE(self,[x low],[x up])
+                                     suchThat: ^ORBool(ORInt i) {
+                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        return ![v bound];
+                                     }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       return [abs[i] quantity];
+                                    }];
+      
+      [[self explorer] applyController:t in:^{
+         do {
+            ORSelectorResult i = [select min];
+            if (!i.found)
+               break;
+            id<CPFloatVar> v = [abs[i.index] bestChoice];
+            [self floatAbsSplit: x[i.index] by:v default:b];
+            abs = [self computeAbsorptionsQuantities:x];
+         } while (true);
+      }];
+   }
 }
 
 -(void) maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
@@ -2233,12 +2232,12 @@
       }else {
          interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
       }
-  	}else{
+   }else{
       interval_y[0] = makeFloatInterval([y min], [y max]);
       length_y = 0;
-  	}
+   }
    length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
-//   NSLog(@"cx = [%16.16e,%16.16e] ax = [%16.16e,%16.16e]) %d %d",[cx min],[cx max],ax.inf,ax.sup,([cx min] == ax.inf),([cx max] == ax.sup));
+   //   NSLog(@"cx = [%16.16e,%16.16e] ax = [%16.16e,%16.16e]) %d %d",[cx min],[cx max],ax.inf,ax.sup,([cx min] == ax.inf),([cx max] == ax.sup));
    interval_x[0].inf = maxFlt([cx min],ax.inf);
    interval_x[0].sup = minFlt([cx max],ax.sup);
    ORInt i_x = 1;
@@ -2256,7 +2255,7 @@
       }
       interval_x[i_x].inf = fp_next_float(ax.sup);
       interval_x[i_x].sup = fp_previous_float(xmax);
-  	}
+   }
    if(length_x >= 1 && length_y >= 1){
       ORInt length = 0;
       for(ORInt i = 0; i <= length_x;i++){
@@ -2270,13 +2269,13 @@
       float_interval* ip = interval;
       length-=2;
       [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt i) {
-//         NSLog(@"try : %@ with [%16.16e,%16.16e] and %@ with [%16.16e,%16.16e]",cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
+         //         NSLog(@"try : %@ with [%16.16e,%16.16e] and %@ with [%16.16e,%16.16e]",cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
          [self floatIntervalImpl:cx low:ip[2*i].inf up:ip[2*i].sup];
          [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
       }];
    }else{
       b(x);
-//      b(y);
+      //      b(y);
    }
 }
 
@@ -2291,6 +2290,7 @@
    if(fp_next_float(theMin) != theMax){
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
+      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       mid = tmpMin/2 + tmpMax/2;
    }
    if(mid == theMax)
@@ -2316,6 +2316,7 @@
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
+      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       interval[0].inf  = theMin;
       interval[0].sup = fp_previous_float(mid);
       interval[1].inf = mid;
@@ -2323,7 +2324,7 @@
    }
    float_interval* ip = interval;
    [_search tryall:RANGE(self,0,1) suchThat:nil in:^(ORInt i) {
-      NSLog(@"%d ",i);
+      //      NSLog(@"%d ",i);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -2348,6 +2349,7 @@
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
+      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       //force the interval to right side
       if(mid == fp_previous_float(theMax)){
          mid = fp_previous_float(mid);
@@ -2387,6 +2389,7 @@
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       ORFloat mid = tmpMin/2 + tmpMax/2;
       
+      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       ORFloat midInf = -0.0f;
       ORFloat midSup = +0.0f;
       if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){

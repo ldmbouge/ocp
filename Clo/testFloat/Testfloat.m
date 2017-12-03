@@ -85,10 +85,10 @@
       id<ORFloatVarArray> vars =[model floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solve:^(){
-         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         NSMutableArray<ABSElement*>* Abs = [cp computeAbsorptionsQuantities:vars];
          for(ABSElement* v in Abs){
             XCTAssertEqual([v quantity],0.0f);
-            XCTAssertEqual([[v vars] count],0);
+            XCTAssertEqual([v bestChoice],nil);
          }
       }];
    }
@@ -109,10 +109,10 @@
       id<ORFloatVarArray> vars =[model floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solve:^(){
-         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         NSMutableArray<ABSElement*>* Abs = [cp computeAbsorptionsQuantities:vars];
          for(ABSElement* v in Abs){
             XCTAssertEqual([v quantity],0.0f);
-            XCTAssertEqual([[v vars] count],0);
+            XCTAssertEqual([v bestChoice],nil);
          }
       }];
    }
@@ -133,16 +133,17 @@
       id<ORFloatVarArray> vars =[model floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solve:^(){
-         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         NSMutableArray<ABSElement*>* Abs = [cp computeAbsorptionsQuantities:vars];
          
          XCTAssertTrue([Abs[0] quantity] > 0.0f);
-         XCTAssertEqual([[Abs[0] vars] count],1);
+         XCTAssertTrue([Abs[0] bestChoice] != nil);
          
          XCTAssertTrue([Abs[1] quantity] > 0.0f);
-         XCTAssertEqual([[Abs[1] vars] count],1);
+         XCTAssertTrue([Abs[1] bestChoice] != nil);
          
          XCTAssertFalse([Abs[2] quantity] > 0.0f);
-         XCTAssertNotEqual([[Abs[2] vars] count],1);
+         XCTAssertTrue([Abs[2] bestChoice] == nil);
+         
       }];
       
    }
@@ -667,4 +668,53 @@
    }
 }
 
+
+//-(void) testNoSolution
+//{
+//   @autoreleasepool {
+//      id<ORModel> model = [ORFactory createModel];
+//      id<ORFloatVar> a = [ORFactory floatVar:model low:5.0f up:10.0f];
+//      id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f];
+//      id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f];
+//      id<ORFloatVar> squared_area = [ORFactory floatVar:model];
+//      
+//      [model add:[a gt:@(0.0f)]];
+//      [model add:[b gt:@(0.0f)]];
+//      [model add:[c gt:@(0.0f)]];
+//      
+//      [model add:[[a plus:c] gt:b]];
+//      [model add:[[a plus:b] gt:c]];
+//      [model add:[[b plus:c] gt:a]];
+//      
+//      
+//      [model add:[a gt:b]];
+//      [model add:[b gt:c]];
+//      
+//      //squared_area = (((a+(b+c))*(c-(a-b))*(c+(a-b))*(a+(b-c)))/16.0f)
+//      [model add:[squared_area eq:[[
+//                                    [[
+//                                      [a plus:[b plus:c]]
+//                                      mul:[c sub:[a sub:b]]]
+//                                     mul:[c plus:[a sub:b]]]
+//                                    mul:[a plus:[b sub:c]]]
+//                                   div:@(16.0f)]
+//                  ]];
+//      
+//      float v = 156.25f;
+//      id<ORExpr> fc = [ORFactory float:model value:v];
+//      [model add:[squared_area gt:[fc plus:@(1e-5f)]]];
+//      id<ORFloatVarArray> vars = [model floatVars];
+//      id<CPProgram> cp =[ORFactory createCPProgram:model];
+//      __block bool found = false;
+//      [cp solve:^() {
+//         [cp maxWidthSearch:vars do:^(id<ORFloatVar> x) {
+//            [cp floatSplit:x];
+//         }];
+//         for(id<ORFloatVar> v in vars){
+//            XCTAssertFalse([cp bound: v]);
+//            
+//         }
+//      }];
+//   }
+//}
 @end
