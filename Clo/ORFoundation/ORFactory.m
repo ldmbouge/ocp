@@ -94,7 +94,7 @@
 {
    return [self group:model type:DefaultGroup];
 }
-+(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(nullable NSArray*)cl
++(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(PNULLABLE NSArray*)cl
 {
    id<ORGroup> g = [[ORCDisjGroupI alloc] initORCDGroupI:model];
    [model trackObject:g];
