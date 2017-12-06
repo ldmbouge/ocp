@@ -288,6 +288,8 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
       ORUInt boundBits = (dom->_low[i]._val ^ dom->_up[i]._val);
       freeBits += __builtin_popcount(boundBits);
    }
+    if(freeBits > (dom->_freebits)._val)
+        NSLog(@"Domain lost assignments?!");
    assignTRUInt(&(dom->_freebits), freeBits, dom->_trail);
 }
 
@@ -303,7 +305,6 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
       }
    } else {
       ORBool theBit = (_low[WORDIDX(idx)]._val  & ONEAT(idx)) != 0;
-       // BUG HERE!!! Fixed 11/1/17
       if (theBit ^ val)
          failNow();
       else{

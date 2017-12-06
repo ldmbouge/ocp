@@ -121,14 +121,13 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    TRUInt               _top;
    ORUInt               _cap;
    ORUInt               _wordLength;
-//   TRDouble*                        _vsids;
     ORFloat              _vsids;
 
 
    
 @public
    CPBitEventNetwork   _net;
-   TRId*      _implications;
+//   TRId*      _implications;
    
 }
 -(CPBitVarI*) initCPBitVarCore:(CPEngineI*)engine low: (unsigned int*) low up: (unsigned int*)up length:(int)len
@@ -157,7 +156,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
     } else {
       _cap = 0;
       _lvls = nil;
-      _implications = nil;
+//      _implications = nil;
    }
    _vc = CPVCBare;
    _recv = nil;
@@ -352,8 +351,10 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) bind:(ORUInt)bit to:(ORBool)value
 {
-   if(_learningOn && [_dom isFree:bit])
+    if(_learningOn && [_dom isFree:bit]){
       [self bit:bit setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+//        NSLog(@"%@[%d] set to %d at level %d by choice",self,bit,value,[(CPLearningEngineI*)_engine getLevel]);
+    }
 
    ORStatus s = [_dom setBit:bit to:value for:self];
 
@@ -587,36 +588,36 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(void) setLow:(unsigned int *)newLow for:(CPCoreConstraint*) constraint
 {
-   TRUInt* oldLow = [_dom getLow];
-   if(_learningOn) {
-      for (int i=0; i<[_dom getWordLength]; i++) {
-         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
-         for(int j=0;j<BITSPERWORD; j++){
-             if (changedLow & 0x1){
-               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-               NSLog(@"%@[%d] set by %@",self,i*BITSPERWORD+j, constraint);
-             }
-            changedLow >>= 1;
-         }
-      }
-   }
+//   TRUInt* oldLow = [_dom getLow];
+//   if(_learningOn) {
+//      for (int i=0; i<[_dom getWordLength]; i++) {
+//         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
+//         for(int j=0;j<BITSPERWORD; j++){
+//             if (changedLow & 0x1){
+////               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
+////               NSLog(@"%@[%d] set by %@",self,i*BITSPERWORD+j, constraint);
+//             }
+//            changedLow >>= 1;
+//         }
+//      }
+//   }
    [_dom setLow: newLow for:self];
 }
 
 -(void) setUp:(unsigned int *)newUp for:(CPCoreConstraint*) constraint
 {
-   TRUInt* oldUp = [_dom getUp];
-   if(_learningOn) {
-      for (int i=0; i<[_dom getWordLength]; i++) {
-         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
-         for(int j=0;j<BITSPERWORD; j++){
-            if (changedUp & 0x1) {
-               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-            }
-            changedUp >>= 1;
-         }
-      }
-   }
+//   TRUInt* oldUp = [_dom getUp];
+//   if(_learningOn) {
+//      for (int i=0; i<[_dom getWordLength]; i++) {
+//         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
+//         for(int j=0;j<BITSPERWORD; j++){
+//            if (changedUp & 0x1) {
+//               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
+//            }
+//            changedUp >>= 1;
+//         }
+//      }
+//   }
    [_dom setUp: newUp for:self];
 }
 
@@ -649,16 +650,26 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
             _constraints[_top._val]= constraint;
             _lvls[_top._val] = [(CPLearningEngineI*)_engine getLevel];
             assignTRUInt(&_top, _top._val+1, _trail);
+             //DEBUGGING ONLY
+//             if([_dom getLength] < 32)
+//              NSLog(@"%@ set by %@",self, [constraint class]);
+//             if([_engine closed])
+//                 for(int i =0;i<bitLength;i++){
+//                     if((changed[i/BITSPERWORD] & (0x1 << i%BITSPERWORD)) && ([_dom getLength] < 32))
+//                         NSLog(@"%@[%d] set by %@",self,i, [constraint class]);
+//                 }
+//             if([[[constraint class] description] isEqualToString: @"CPBitLogicalAnd"])
+//                 NSLog(@"Logical And");
+//             for (int i=0; i<wordLength; i++) {
+//                 if(newLow[i] & (~ newUp[i]))
+//                     NSLog(@"Invalid domain");
+//             }
+//             if([_dom getLength] < 32)
+//                 NSLog(@"short bv");
          }
  
        
        
-       //DEBUGGING ONLY
-//       if([_engine closed])
-//       for(int i =0;i<bitLength;i++){
-//           if(changed[i/BITSPERWORD] & (0x1 << i%BITSPERWORD))
-//           NSLog(@"%@[%d] set by %@",self,i, constraint);
-//       }
 
 //         mask = 0x1;
 //         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
@@ -748,7 +759,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 //      }
    } else {
       _lvls = nil;
-      _implications = nil;
+       _constraints = nil;
+//      _implications = nil;
    }
    _recv = nil;
    return self;

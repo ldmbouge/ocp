@@ -45,7 +45,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 +(id<CPBVConstraint>) bitADD:(id<CPBitVar>)x plus:(id<CPBitVar>) y withCarryIn:(id<CPBitVar>) cin equals:(id<CPBitVar>) z withCarryOut:(id<CPBitVar>) cout;
 +(id<CPBVConstraint>) bitSubtract:(id<CPBitVar>)x minus:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
 +(id<CPBVConstraint>) bitMultiply:(id<CPBitVar>)x times:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
-+(id<CPBVConstraint>) bitMultiplyComposed:(id<CPBitVar>)x times:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
+//+(id<CPBVConstraint>) bitMultiplyComposed:(id<CPBitVar>)x times:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
 +(id<CPBVConstraint>) bitDivide:(id<CPBitVar>)x dividedby:(id<CPBitVar>) y equals:(id<CPBitVar>)q rem:(id<CPBitVar>) r;
 +(id<CPBVConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
 +(id<CPBVConstraint>) bitCount:(id<CPBitVar>)x count:(id<CPIntVar>)y;
@@ -636,13 +636,13 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 -(void) propagate;
 @end
 
-@interface CPBitMultiply : CPBitCoreConstraint<CPBVConstraint>
--(id) initCPBitMultiply: (CPBitVarI*) x times: (CPBitVarI*) y equals: (CPBitVarI*)z;
--(void) dealloc;
--(NSString*) description;
--(void) post;
--(void) propagate;
-@end
+//@interface CPBitMultiply : CPBitCoreConstraint<CPBVConstraint>
+//-(id) initCPBitMultiply: (CPBitVarI*) x times: (CPBitVarI*) y equals: (CPBitVarI*)z;
+//-(void) dealloc;
+//-(NSString*) description;
+//-(void) post;
+//-(void) propagate;
+//@end
 
 @interface CPBitDivide : CPBitCoreConstraint<CPBVConstraint>{
 @private
