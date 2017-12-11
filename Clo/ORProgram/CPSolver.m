@@ -1917,30 +1917,28 @@
 }
 -(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
 {
-   @autoreleasepool {
-      __block NSMutableArray* abs = [self computeAbsorptionsQuantities:x];
-      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-      id<ORSelect> select = [ORFactory select: _engine
-                                        range: RANGE(self,[x low],[x up])
-                                     suchThat: ^ORBool(ORInt i) {
-                                        id<CPFloatVar> v = _gamma[getId(x[i])];
-                                        return ![v bound];
-                                     }
-                                    orderedBy: ^ORDouble(ORInt i) {
-                                       return [abs[i] quantity];
-                                    }];
-      
-      [[self explorer] applyController:t in:^{
-         do {
-            ORSelectorResult i = [select max];
-            if (!i.found)
-               break;
-            id<CPFloatVar> v = [abs[i.index] bestChoice];
-            [self floatAbsSplit: x[i.index] by:v default:b];
-            abs = [self computeAbsorptionsQuantities:x];
-         } while (true);
-      }];
-   }
+   __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   id<ORSelect> select = [ORFactory select: _engine
+                                     range: RANGE(self,[x low],[x up])
+                                  suchThat: ^ORBool(ORInt i) {
+                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     return ![v bound];
+                                  }
+                                 orderedBy: ^ORDouble(ORInt i) {
+                                    return [abs[i] quantity];
+                                 }];
+   
+   [[self explorer] applyController:t in:^{
+      do {
+         ORSelectorResult i = [select max];
+         if (!i.found)
+            break;
+         id<CPFloatVar> v = [abs[i.index] bestChoice];
+         [self floatAbsSplit: x[i.index] by:v default:b];
+         abs = [self computeAbsorptionsQuantities:x];
+      } while (true);
+   }];
 }
 -(void) minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
@@ -1967,7 +1965,7 @@
 -(void) minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
 {
    @autoreleasepool {
-      __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
+      __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
       ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
       id<ORSelect> select = [ORFactory select: _engine
                                         range: RANGE(self,[x low],[x up])
@@ -2090,8 +2088,6 @@
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORIntArray> considered = [ORFactory intArray:self range:x.range value:0];
    id<ORDoubleArray> dens = [ORFactory doubleArray:self range:x.range value:0.0];
-   //   NSMutableArray* considered = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
-   //   NSMutableArray* dens = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
    __block ORDouble min = 0.0;
    __block ORDouble max = 0.0;
    __block id<CPFloatVar> cv;
@@ -2295,7 +2291,7 @@
    }
    if(mid == theMax)
       mid = theMin;
-   //   NSLog(@"max = %16.16e  min = %16.16e mid : %16.16e",theMax,theMin,mid);
+   assert(mid != NAN && mid <= xi.max && mid >= xi.min);
    [_search try: ^{ [self floatGthenImpl:xi with:mid]; }
             alt: ^{ [self floatLEqualImpl:xi with:mid]; }
     ];
@@ -2768,14 +2764,15 @@
    }
    return 0.0;
 }
--(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
+-(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
 {
-   ORULong size = [vars count];
-   //hzi maybe should be array created by factory to be tracked in search ...
-   NSMutableArray<ABSElement *> *abs = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
+   ORInt size = (ORInt)[vars count];
+   id<ORIdArray> abs = [ORFactory idArray:self range:RANGE(self,0,size-1)];
    ORDouble absV;
    for(ORInt i = 0; i < size; i++){
-      abs[i] = [[ABSElement alloc] init];
+      ABSElement* ae = [[ABSElement alloc] init];
+      [self trackObject:ae];
+      abs[i] = ae;
    }
    ORUInt i = 0;
    CPFloatVarI* cx;

@@ -1380,7 +1380,7 @@
     if (_gamma[cstr.getId] == NULL) {
         id<ORIntVar> b = [cstr b];
         id<ORFloatVar> x = [cstr x];
-        ORInt cst = [cstr cst];
+        ORFloat cst = [cstr cst];
         [b visit: self];
         [x visit: self];
         id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
@@ -1393,7 +1393,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORFloatVar> x = [cstr x];
-      ORInt cst = [cstr cst];
+      ORFloat cst = [cstr cst];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] lti: cst];

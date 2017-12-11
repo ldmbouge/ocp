@@ -19,7 +19,7 @@
 #elif NR == 8
 #define VAL 2.0f
 #endif
-/*<
+/*
  float f(float x)
  {
  return x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;

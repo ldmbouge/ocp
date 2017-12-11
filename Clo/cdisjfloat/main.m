@@ -33,6 +33,7 @@ int main(int argc, const char * argv[])
          id<ORGroup> g0 = [ORFactory group:model];
          {
             [g0 add:[m eq: x]];
+//           don't work [g0 add:[m eq: [x plus:@(2.f)]]];
          }
          
          id<ORGroup> g1 = [ORFactory group:model];

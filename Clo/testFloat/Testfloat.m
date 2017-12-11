@@ -668,53 +668,117 @@
    }
 }
 
+-(void) testSin1lex
+{
+   @autoreleasepool {
+   fesetround(FE_TONEAREST);
+   id<ORModel> model = [ORFactory createModel];
+   
+   id<ORFloatVar> IN = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
+   id<ORFloatVar> res = [ORFactory floatVar:model];
+   
+   [model add:[res eq:[[[IN sub:
+                         [[IN mul:[IN mul:IN]] div:@(6.0f)]] plus:
+                        [[IN mul:[IN mul:[IN mul:[IN mul:IN]]]] div:@(120.0f)]] plus:
+                       [[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:IN]]]]]] div:@(5040.0f)]]]];
+   
+   [model add:[[res geq:@(-0.99f)] land:[res lt:@(0.99f)]]];
+   
+   
+   id<ORFloatVarArray> vars = [model floatVars];
+   id<CPProgram> cp =  [ORFactory createCPProgram:model];
+   [cp solve:^() {
+      [cp lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+         [cp floatSplit:x];
+      }];
+      for(id<ORFloatVar> v in vars){
+         NSLog(@"%@ : %20.20e (%s) %@",v,[cp floatValue:v],[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
+      }
+      float x = [cp floatValue:vars[0]];
+      float result = x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
+      XCTAssertTrue([cp bound:vars[0]]);
+      XCTAssertTrue([cp bound:vars[1]]);
+      XCTAssertTrue(x < 1.57079632f && x >= -1.57079632f);
+      XCTAssertTrue(result < 0.99f && result >= -0.99f);
+      XCTAssertTrue(result == [cp floatValue:vars[1]]);
+   }];
+   }
+}
 
-//-(void) testNoSolution
-//{
-//   @autoreleasepool {
-//      id<ORModel> model = [ORFactory createModel];
-//      id<ORFloatVar> a = [ORFactory floatVar:model low:5.0f up:10.0f];
-//      id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f];
-//      id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f];
-//      id<ORFloatVar> squared_area = [ORFactory floatVar:model];
-//      
-//      [model add:[a gt:@(0.0f)]];
-//      [model add:[b gt:@(0.0f)]];
-//      [model add:[c gt:@(0.0f)]];
-//      
-//      [model add:[[a plus:c] gt:b]];
-//      [model add:[[a plus:b] gt:c]];
-//      [model add:[[b plus:c] gt:a]];
-//      
-//      
-//      [model add:[a gt:b]];
-//      [model add:[b gt:c]];
-//      
-//      //squared_area = (((a+(b+c))*(c-(a-b))*(c+(a-b))*(a+(b-c)))/16.0f)
-//      [model add:[squared_area eq:[[
-//                                    [[
-//                                      [a plus:[b plus:c]]
-//                                      mul:[c sub:[a sub:b]]]
-//                                     mul:[c plus:[a sub:b]]]
-//                                    mul:[a plus:[b sub:c]]]
-//                                   div:@(16.0f)]
-//                  ]];
-//      
-//      float v = 156.25f;
-//      id<ORExpr> fc = [ORFactory float:model value:v];
-//      [model add:[squared_area gt:[fc plus:@(1e-5f)]]];
-//      id<ORFloatVarArray> vars = [model floatVars];
-//      id<CPProgram> cp =[ORFactory createCPProgram:model];
-//      __block bool found = false;
-//      [cp solve:^() {
-//         [cp maxWidthSearch:vars do:^(id<ORFloatVar> x) {
-//            [cp floatSplit:x];
-//         }];
-//         for(id<ORFloatVar> v in vars){
-//            XCTAssertFalse([cp bound: v]);
-//            
-//         }
-//      }];
-//   }
-//}
+-(void) testSin1Dens
+{
+   @autoreleasepool {
+      fesetround(FE_TONEAREST);
+      id<ORModel> model = [ORFactory createModel];
+      
+      id<ORFloatVar> IN = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[res eq:[[[IN sub:
+                            [[IN mul:[IN mul:IN]] div:@(6.0f)]] plus:
+                           [[IN mul:[IN mul:[IN mul:[IN mul:IN]]]] div:@(120.0f)]] plus:
+                          [[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:IN]]]]]] div:@(5040.0f)]]]];
+      
+      [model add:[[res geq:@(-0.99f)] land:[res lt:@(0.99f)]]];
+      
+      
+      id<ORFloatVarArray> vars = [model floatVars];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      [cp solve:^() {
+         [cp maxDensitySearch:vars do:^(id<ORFloatVar> x) {
+            [cp floatSplit:x];
+         }];
+         for(id<ORFloatVar> v in vars){
+            NSLog(@"%@ : %20.20e (%s) %@",v,[cp floatValue:v],[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
+         }
+         float x =[cp floatValue:vars[0]];
+         float result = x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
+         XCTAssertTrue([cp bound:vars[0]]);
+         XCTAssertTrue([cp bound:vars[1]]);
+         XCTAssertTrue(x < 1.57079632f && x >= -1.57079632f);
+         XCTAssertTrue(result < 0.99f && result >= -0.99f);
+         XCTAssertTrue(result == [cp floatValue:vars[1]]);
+      }];
+   }
+}
+
+
+-(void) testSin1Abs
+{
+   @autoreleasepool {
+      fesetround(FE_TONEAREST);
+      id<ORModel> model = [ORFactory createModel];
+      
+      id<ORFloatVar> IN = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[res eq:[[[IN sub:
+                            [[IN mul:[IN mul:IN]] div:@(6.0f)]] plus:
+                           [[IN mul:[IN mul:[IN mul:[IN mul:IN]]]] div:@(120.0f)]] plus:
+                          [[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:IN]]]]]] div:@(5040.0f)]]]];
+      
+      [model add:[[res geq:@(-0.99f)] land:[res lt:@(0.99f)]]];
+      
+      
+      id<ORFloatVarArray> vars = [model floatVars];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      [cp solve:^() {
+         [cp maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+            [cp floatSplit:x];
+         }];
+         for(id<ORFloatVar> v in vars){
+            NSLog(@"%@ : %20.20e (%s) %@",v,[cp floatValue:v],[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
+         }
+         float x =[cp floatValue:vars[0]];
+         float result = x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
+         XCTAssertTrue([cp bound:vars[0]]);
+         XCTAssertTrue([cp bound:vars[1]]);
+         XCTAssertTrue(x < 1.57079632f && x >= -1.57079632f);
+         XCTAssertTrue(result < 0.99f && result >= -0.99f);
+         XCTAssertTrue(result == [cp floatValue:vars[1]]);
+      }];
+   }
+}
+
+
 @end

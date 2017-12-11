@@ -167,7 +167,14 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@interface ABSElement : NSObject{
+@protocol ORAbsElement <ORObject>
+-(ORDouble) quantity;
+-(void) addQuantity:(ORFloat)c;
+-(void) setChoice:(id<CPFloatVar>)c;
+-(id<CPFloatVar>) bestChoice;
+@end
+
+@interface ABSElement : ORObject<ORAbsElement> {
    ORDouble _quantity;
    id<CPFloatVar> _choice;
 }

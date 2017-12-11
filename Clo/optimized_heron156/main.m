@@ -36,7 +36,7 @@ int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
-         
+         fesetround(FE_TONEAREST);
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> a = [ORFactory floatVar:model low:5.0f up:10.0f];
          id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f];

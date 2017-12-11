@@ -816,7 +816,7 @@
 {
    return [[self worker] max: x];
 }
--(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
+-(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
 {
    return [[self worker] computeAbsorptionsQuantities: vars];
 }

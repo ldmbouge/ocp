@@ -87,7 +87,7 @@ PORTABLE_BEGIN
 -(void)          lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 
 -(ORDouble)      computeAbsorptionRate:(id<ORFloatVar>) x;
--(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars;
+-(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars;
 -(void)          floatStaticSplit: (id<ORFloatVar>) x;
 -(void)          floatStatic3WaySplit: (id<ORFloatVar>) x;
 -(void)          floatStatic5WaySplit: (id<ORFloatVar>) x;
