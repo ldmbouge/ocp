@@ -249,7 +249,7 @@
       }
       id<CPVarArray> oVars = (id)[ORFactory idArray:_engine
                                               range:RANGE(_engine,low,up)
-                                               with:^id<ORVar> _Nonnull(ORInt k) {
+                                               with:^id<ORVar> PNONNULL(ORInt k) {
          return _gamma[k];
       }];
       NSMutableArray* cvm = [[NSMutableArray alloc] initWithCapacity:avm.count];

@@ -49,7 +49,7 @@ PORTABLE_BEGIN
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)guard;
 +(id<ORGroup>)group:(id<ORTracker>)model;
-+(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(nullable NSArray*)clauses;
++(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(PNULLABLE NSArray*)clauses;
 +(id<ORGroup>)cdisj:(id<ORTracker>)model vmap:(NSArray*)varMap;
 +(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;
