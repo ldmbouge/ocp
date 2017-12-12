@@ -20,7 +20,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSea
    @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
    @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico"};
 
-static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"dedicatedSplit"};
+static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"split3B",@"dedicatedSplit"};
 
 @synthesize size;
 @synthesize restartRate;
@@ -31,6 +31,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 @synthesize defaultAbsSplit;
 @synthesize nbThreads;
 @synthesize nArg;
+@synthesize level;
 @synthesize fName;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
@@ -53,6 +54,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    restartRate = 0;
    timeOut = 60;
    nbThreads = 0;
+   level = 0;
    fName = @"";
    randomized = NO;
    for(int k = 1;k< argc;k++) {
@@ -76,6 +78,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          valordering = atoi(argv[k]+3);
       else if (strncmp(argv[k],"-dh",3)==0)
          defaultAbsSplit = atoi(argv[k]+3);
+      else if (strncmp(argv[k],"-l",2)==0)
+         level = atoi(argv[k]+2);
    }
    return self;
 }
@@ -135,7 +139,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
    switch(nbThreads) {
-      case 0: return [ORFactory createCPProgram:model annotation:notes];
+      case 0: return [ORFactory createCPProgram:model annotation:notes level:level];
       case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];
    }
@@ -200,6 +204,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p maxWidthSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case minWidth :
@@ -243,6 +252,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p minWidthSearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p minWidthSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
          }
@@ -290,6 +304,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p maxCardinalitySearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case minCard :
@@ -333,6 +352,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p minCardinalitySearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p minCardinalitySearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
          }
@@ -380,6 +404,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p maxDensitySearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case minDens :
@@ -423,6 +452,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p minDensitySearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p minDensitySearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
          }
@@ -470,6 +504,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p maxMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case minMagn :
@@ -513,6 +552,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p minMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p minMagnitudeSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
          }
@@ -560,6 +604,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p maxDegreeSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case minDegree :
@@ -603,6 +652,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p minDegreeSearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p minDegreeSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
          }
@@ -650,6 +704,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p maxOccurencesSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case minOcc :
@@ -695,6 +754,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p minOccurencesSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case maxAbs :
@@ -737,6 +801,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p maxAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
             case dedicatedSplit:
@@ -829,6 +898,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p minAbsorptionSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
             case dedicatedSplit:
                [p minAbsorptionSearch:vars default:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
@@ -879,6 +953,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p maxCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case minCan :
@@ -922,6 +1001,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p minCancellationSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
          }
@@ -969,6 +1053,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float6WaySplit:x];
                }];
                break;
+            case split3B:
+               [p combinedAbsWithDensSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
+               }];
+               break;
          }
          break;
       case densWAbs :
@@ -1012,6 +1101,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p combinedDensWithAbsSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
          }
@@ -1059,6 +1153,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
             case dynamic6Split:
                [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
                   [p float6WaySplit:x];
+               }];
+               break;
+            case split3B:
+               [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> x) {
+                  [p float3BSplit:x];
                }];
                break;
          }

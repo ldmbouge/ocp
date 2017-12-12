@@ -343,10 +343,6 @@
 {
     [[self worker] minMagnitudeSearch:x do:b];
 }
--(void)          alternateMagnitudeSearch: (id<ORFloatVarArray>) x  do:(void(^)(id<ORFloatVar>))b
-{
-    [[self worker] alternateMagnitudeSearch:x do:b];
-}
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
     [[self worker] floatSplitArrayOrderedByDomSize:x];
@@ -517,7 +513,11 @@
 }
 -(void)          floatSplit: (id<ORFloatVar>) x
 {
-   [[self worker] floatStaticSplit: x];
+   [[self worker] floatSplit: x];
+}
+-(void)          float3BSplit: (id<ORFloatVar>) x
+{
+   [[self worker] float3BSplit: x];
 }
 -(void)          float3WaySplit: (id<ORFloatVar>) x
 {

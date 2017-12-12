@@ -30,6 +30,8 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 
+#include <os/log.h>
+
 
 #if defined(__linux__)
 #import <values.h>
@@ -153,6 +155,8 @@
    id<ORTracer>          _tracer;
    CPHeuristicSet*       _hSet;
    id<CPPortal>          _portal;
+   
+   ORInt                 _level;
    
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
@@ -328,6 +332,10 @@
       }
       [ORConcurrency pumpEvents];
    }
+}
+-(void) setLevel:(ORInt) level
+{
+   _level = level;
 }
 -(void) addHeuristic: (id<CPHeuristic>) h
 {
@@ -1546,13 +1554,16 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     CPFloatVarI* v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return -cardinality(v);
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1569,13 +1580,16 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     CPFloatVarI* v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return cardinality(v);
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1591,13 +1605,16 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return -[self density:x[i]];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1612,13 +1629,16 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [self density:x[i]];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1636,13 +1656,16 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return -[v domwidth];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
       
@@ -1660,13 +1683,16 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return [v domwidth];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1683,14 +1709,17 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return -[v magnitude];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1707,45 +1736,20 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return [v magnitude];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
-   
-}
--(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
-{
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   __block ORBool min = true;
-   id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     return ![v bound];
-                                  }
-                                 orderedBy: ^ORDouble(ORInt i) {
-                                    id<CPFloatVar> v = _gamma[getId(x[i])];
-                                    float r = (min)?  [v magnitude] :  -[v magnitude];
-                                    min = !min;
-                                    return r;
-                                 }];
-   
-   [[self explorer] applyController:t in:^{
-      do {
-         ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
-      } while (true);
-   }];
-   
    
 }
 -(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
@@ -1774,14 +1778,17 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return (ORDouble)i;
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1801,14 +1808,17 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [deg[i] doubleValue];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1826,14 +1836,17 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [deg[i] doubleValue];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1851,14 +1864,17 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [occ at:i];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1876,14 +1892,17 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [occ[i] doubleValue];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1898,19 +1917,18 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [self computeAbsorptionRate:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
-         //         for(id<ORVar> v in x){
-         //            id<CPFloatVar> cv = _gamma[getId(v)];
-         //            NSLog(@"%@ bound ? %s ",cv,([cv bound])? "YES":"NO");
-         //         }
          if (!i.found){
             break;
          }
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1926,15 +1944,18 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [abs[i] quantity];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
          if (!i.found)
             break;
          id<CPFloatVar> v = [abs[i.index] bestChoice];
+         LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
          [self floatAbsSplit: x[i.index] by:v default:b];
          abs = [self computeAbsorptionsQuantities:x];
       } while (true);
@@ -1950,14 +1971,17 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return -[self computeAbsorptionRate:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -1974,15 +1998,18 @@
                                         return ![v bound];
                                      }
                                     orderedBy: ^ORDouble(ORInt i) {
+                                       LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                        return [abs[i] quantity];
                                     }];
       
       [[self explorer] applyController:t in:^{
          do {
+            LOG(_level,2,@"State before selection");
             ORSelectorResult i = [select min];
             if (!i.found)
                break;
             id<CPFloatVar> v = [abs[i.index] bestChoice];
+            LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
             [self floatAbsSplit: x[i.index] by:v default:b];
             abs = [self computeAbsorptionsQuantities:x];
          } while (true);
@@ -2000,14 +2027,17 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [self cancellationQuantity:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -2022,14 +2052,17 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [self cancellationQuantity:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -2047,6 +2080,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     ORDouble c = [self computeAbsorptionRate:x[i]];
                                     if(c > taux){
                                        [considered set:1 at:i];
@@ -2060,6 +2094,7 @@
    [[self explorer] applyController:t in:^{
       do {
          found = NO;
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
          if(!found){
             taux = -1.0;
@@ -2078,6 +2113,7 @@
             }
             if(val == 1.0) break;//max density is 1
          }
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
       } while (true);
    }];
@@ -2113,6 +2149,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     [considered set:([dens at:i] >= mid) at:i];
                                     return [dens at:i];
                                  }];
@@ -2120,6 +2157,7 @@
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found)
             break;
@@ -2133,6 +2171,7 @@
                i.index = j;
             }
          }
+         LOG(_level,2,@"selected variable : %@",_gamma[getId(x[i.index])]);
          b(x[i.index]);
          ORDouble d = 0.0;
          min = max = 0.0;
@@ -2233,7 +2272,6 @@
       length_y = 0;
    }
    length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
-   //   NSLog(@"cx = [%16.16e,%16.16e] ax = [%16.16e,%16.16e]) %d %d",[cx min],[cx max],ax.inf,ax.sup,([cx min] == ax.inf),([cx max] == ax.sup));
    interval_x[0].inf = maxFlt([cx min],ax.inf);
    interval_x[0].sup = minFlt([cx max],ax.sup);
    ORInt i_x = 1;
@@ -2263,17 +2301,45 @@
          }
       }
       float_interval* ip = interval;
-      length-=2;
+      length--;
       [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt i) {
-         //         NSLog(@"try : %@ with [%16.16e,%16.16e] and %@ with [%16.16e,%16.16e]",cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
+         ORInt nbC = [[self explorer] nbChoices];
+         LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]\t y %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
          [self floatIntervalImpl:cx low:ip[2*i].inf up:ip[2*i].sup];
          [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
-      }];
+       }];
    }else{
       b(x);
       //      b(y);
    }
 }
+
+-(void) float3BSplit:(id<ORFloatVar>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x)];
+   if([xi bound]) return;
+   ORFloat theMax = xi.max;
+   ORFloat theMin = xi.min;
+   ORFloat minN,maxP;
+   ORDouble s = [xi domwidth];
+   ORDouble sw = s/4.0;
+   float_interval interval[3];
+   ORInt length = 2;
+   ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
+   ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
+   minN = (tmpMin + sw > theMax) ? tmpMin/2 + tmpMax/2 : tmpMin +sw;
+   maxP = (tmpMax - sw < minN) ? minN : tmpMax - sw;
+   setFloatInterval(theMin, minN,&interval[0]);
+   setFloatInterval(maxP, theMax,&interval[1]);
+   setFloatInterval(minN, maxP,&interval[2]);
+   if(minN == maxP) length--;
+   float_interval* ip = interval;
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   }];
+}
+
 
 //split in 2 intervals Once
 -(void) floatSplit:(id<ORFloatVar>) x
@@ -2292,8 +2358,13 @@
    if(mid == theMax)
       mid = theMin;
    assert(mid != NAN && mid <= xi.max && mid >= xi.min);
-   [_search try: ^{ [self floatGthenImpl:xi with:mid]; }
-            alt: ^{ [self floatLEqualImpl:xi with:mid]; }
+   [_search try: ^{
+      LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],xi,mid);
+      [self floatGthenImpl:xi with:mid];
+   } alt: ^{
+      LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],xi,mid);
+      [self floatLEqualImpl:xi with:mid];
+   }
     ];
 }
 //split in 3 intervals Once
@@ -2320,7 +2391,7 @@
    }
    float_interval* ip = interval;
    [_search tryall:RANGE(self,0,1) suchThat:nil in:^(ORInt i) {
-      //      NSLog(@"%d ",i);
+      LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -2362,6 +2433,7 @@
    }
    float_interval* ip = interval;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -2437,6 +2509,7 @@
    float_interval* ip = interval;
    length--;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"> START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -2889,7 +2962,6 @@
    }];
    [_engine open];
 }
-
 @end
 
 /******************************************************************************************/
@@ -3551,6 +3623,7 @@
 {
    return [[[CPSolver alloc] initCPSolver] autorelease];
 }
+
 +(id<CPSemanticProgramDFS>) solverBackjumpingDFS
 {
    return [[CPSemanticSolver alloc] initCPSolverBackjumpingDFS];

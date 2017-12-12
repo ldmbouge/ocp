@@ -69,7 +69,6 @@ PORTABLE_BEGIN
 -(void)          minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
--(void)          alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
@@ -93,6 +92,7 @@ PORTABLE_BEGIN
 -(void)          floatStatic5WaySplit: (id<ORFloatVar>) x;
 -(void)          floatStatic6WaySplit: (id<ORFloatVar>) x;
 -(void)          floatSplit: (id<ORFloatVar>) x;
+-(void)          float3BSplit:(id<ORFloatVar>) x;
 -(void)          floatAbsSplit: (id<ORFloatVar>) x by:(id<CPFloatVar>) y  default:(void(^)(id<ORFloatVar>))b;
 -(void)          float3WaySplit: (id<ORFloatVar>) x;
 -(void)          float5WaySplit: (id<ORFloatVar>) x;

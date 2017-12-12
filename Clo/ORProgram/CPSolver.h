@@ -57,6 +57,7 @@
 -(CPCoreSolver*) initCPCoreSolver;
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
+-(void) setLevel:(ORInt) level;
 -(id<ORModel>)source;
 -(ORBool) ground;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;

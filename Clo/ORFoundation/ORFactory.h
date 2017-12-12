@@ -425,6 +425,8 @@ PORTABLE_END
 #define Or(track,P,R,E)       [ORFactory lor: track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 #define And(track,P,R,E)      [ORFactory land:track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 
+#define LOG(ls,l,fmt, ...)    if(l && l<=ls) NSLog(fmt, ##__VA_ARGS__);
+
 // [ldm] To check. Not clear why there is such a macro.
 #define geq(track,x,y,c)      [ORFactory geq: track x: x y: y plus: c]
 

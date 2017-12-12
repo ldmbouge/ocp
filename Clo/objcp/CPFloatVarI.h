@@ -187,7 +187,11 @@ static inline float_interval makeFloatInterval(float min, float max)
 {
    return (float_interval){min,max};
 }
-
+static inline void setFloatInterval(float min, float max,float_interval * ft)
+{
+   ft->inf = min;
+   ft->sup = max;
+}
 //hzi : missing denormalised case
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 {
