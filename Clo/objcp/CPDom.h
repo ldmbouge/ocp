@@ -90,6 +90,27 @@
 -(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
 @end
 
+@protocol CPRationalVarNotifier;
+@protocol CPRationalDom
+-(void) updateMin:(ORRational)newMin for:(id<CPRationalVarNotifier>)x;
+-(void) updateMax:(ORRational)newMax for:(id<CPRationalVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRationalVarNotifier>)x;
+-(void) bind:(ORRational)val  for:(id<CPRationalVarNotifier>)x;
+-(ORRational*) min;
+-(ORRational*) max;
+-(ORRational*) imin;
+-(ORRational*) imax;
+-(ORBool) bound;
+-(ORInterval) bounds;
+-(ORLDouble) domwidth;
+-(TRRationalInterval) domain;
+-(ORBool) member:(ORRational)v;
+-(NSString*)description;
+-(id) copy;
+-(void) restoreDomain:(id<CPRationalDom>)toRestore;
+-(void) restoreValue:(ORRational)toRestore for:(id<CPRationalVarNotifier>)x;
+@end
+
 @protocol CPDoubleVarNotifier;
 @protocol CPDoubleDom <CPADom> 
 -(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x;

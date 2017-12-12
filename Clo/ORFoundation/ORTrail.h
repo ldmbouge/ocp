@@ -22,6 +22,7 @@
 -(void) trailId:(id*) ptr;
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
+-(void) trailRational:(ORRational*) ptr;
 -(void) trailDouble:(double*) ptr;
 -(void) trailLDouble:(long double*)ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
@@ -63,6 +64,12 @@ typedef struct {
 } TRFloatInterval;
 
 typedef struct {
+    ORRational _low;
+    ORRational _up;
+    ORUInt     _mgc;
+} TRRationalInterval;
+
+typedef struct {
     double    _low;
     double    _up;
     ORUInt    _mgc;
@@ -72,6 +79,11 @@ typedef struct {
     float    _val;
     ORUInt    _mgc;
 } TRFloat;
+
+typedef struct {
+    ORRational _val;
+    ORUInt     _mgc;
+} TRRational;
 
 typedef struct {
    double    _val;
@@ -123,11 +135,15 @@ void  freeTRIntArray(TRIntArray a);
 TRDoubleArray makeTRDoubleArray(id<ORTrail> trail,int nb,int low);
 void  freeTRDoubleArray(TRDoubleArray a);
 TRFloatInterval makeTRFloatInterval(id<ORTrail> trail,float min, float max);
+TRRationalInterval makeTRRationalInterval(id<ORTrail> trail,ORRational min, ORRational max);
 TRDoubleInterval makeTRDoubleInterval(id<ORTrail> trail,double min, double max);
 
 void  updateMin(TRFloatInterval* dom,float min, id<ORTrail> trail);
 void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail);
+void  updateMinR(TRRationalInterval* dom,ORRational min, id<ORTrail> trail);
+void  updateMaxR(TRRationalInterval* dom,ORRational max, id<ORTrail> trail);
 void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail> trail);
+void  updateTRRationalInterval(TRRationalInterval* dom,ORRational min,ORRational max, id<ORTrail> trail);
 void  updateMinD(TRDoubleInterval* dom,double min, id<ORTrail> trail);
 void  updateMaxD(TRDoubleInterval* dom,double max, id<ORTrail> trail);
 void  updateTRDoubleInterval(TRDoubleInterval* dom,double min,double max, id<ORTrail> trail);

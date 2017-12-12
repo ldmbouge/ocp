@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "gmp.h"
 
 #if (defined(__APPLE__)) && (__MAC_OS_X_VERSION_MAX_ALLOWED > __MAC_10_9)
 #define PORTABLE_BEGIN NS_ASSUME_NONNULL_BEGIN
@@ -44,6 +45,7 @@ typedef unsigned long long ORULong;
 typedef float  ORFloat;
 typedef double ORDouble;
 typedef long double ORLDouble;
+typedef mpq_t ORRational;
 typedef BOOL   ORBool;
 
 //#define minOf(a,b) ((a) < (b) ? (a) : (b))
@@ -60,6 +62,16 @@ static inline ORFloat fmaxFlt(ORFloat a,ORFloat b) { return maxFlt(fabsf(a), fab
 
 static inline ORInt min(ORInt a,ORInt b) { return a < b ? a : b;}
 static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}
+
+static inline ORRational* minR(ORRational* a, ORRational* b) { return mpq_cmp(*a, *b) > 0 ? a : b;}
+static inline ORRational* maxR(ORRational* a, ORRational* b) { return mpq_cmp(*a, *b) < 0 ? a : b;}
+static inline ORRational* fmaxR(ORRational* a, ORRational* b) {
+    ORRational* _a = NULL;
+    ORRational* _b = NULL;
+    mpq_abs(*_a, *a);
+    mpq_abs(*_b, *b);
+    return maxR(_a,_b);
+}
 
 #define MAXINT ((ORInt)0x7FFFFFFF)
 #define MININT ((ORInt)0x80000000)

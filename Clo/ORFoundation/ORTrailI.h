@@ -33,6 +33,7 @@
 #define TAGFree         0xC
 #define TAGIdNC         0xD
 #define TAGLDouble      0xF
+#define TAGRational     0x0
 
 @interface ORTrailI : NSObject<ORTrail>
 {
@@ -46,6 +47,7 @@
          ORLong       longVal;          // 8-bytes
          ORULong     ulongVal;          // 8-bytes
          float       floatVal;          // 4-bytes
+         ORRational  rationalVal;
          double     doubleVal;          // 8-bytes
          long double    ldVal;          // 10-byte
          void*         ptrVal;          // 4 or 8 (pointer)
@@ -73,6 +75,7 @@
 -(void) trailId:(id*) ptr;
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
+-(void) trailRational:(ORRational *)ptr;
 -(void) trailDouble:(double*) ptr;
 -(void) trailLDouble:(long double*)ptr;
 -(void) trailPointer:(void**) ptr;
@@ -167,6 +170,10 @@ static inline TRDouble  inline_makeTRDouble(ORTrailI* trail,double val)
 static inline TRLDouble  inline_makeTRLDouble(ORTrailI* trail,long double val)
 {
    return (TRLDouble){val,[trail magic]-1};
+}
+static inline TRRational inline_makeTRRational(ORTrailI* trail, ORRational val)
+{
+    return (TRRational){*val, [trail magic]-1};
 }
 
 static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)

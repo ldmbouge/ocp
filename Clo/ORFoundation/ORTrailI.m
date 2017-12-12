@@ -129,6 +129,17 @@
    s->floatVal = *ptr;
    ++_seg[_cSeg]->top;
 }
+
+-(void)trailRational:(ORRational*)ptr
+{
+    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+    s->ptr = ptr;
+    s->code = TAGRational;
+    mpq_set(s->rationalVal, *ptr);
+    ++_seg[_cSeg]->top;
+}
+
 -(void)trailDouble:(double*)ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
@@ -229,6 +240,9 @@
             case TAGLDouble:
                *((long double*)cs->ptr) = cs->ldVal;
                break;
+            case TAGRational:
+                 mpq_set(*((ORRational*)cs->ptr), cs->rationalVal);
+                 break;
             case TAGPointer:
                *((void**)cs->ptr) = cs->ptrVal;
                break;
@@ -311,6 +325,14 @@ TRLDouble makeTRLDouble(id<ORTrail> trail,long double val)
 TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
 {
     return (TRFloatInterval){min, max, [trail magic]-1};
+}
+TRRationalInterval makeTRRationalInterval(ORTrailI* trail, ORRational min, ORRational max)
+{
+    TRRationalInterval rational_interval;
+    mpq_set(rational_interval._low, min);
+    mpq_set(rational_interval._up, max);
+    rational_interval._mgc = [trail magic] - 1;
+    return rational_interval;
 }
 TRDoubleInterval makeTRDoubleInterval(ORTrailI* trail, double min, double max)
 {
@@ -437,6 +459,27 @@ void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail)
     dom->_up = max;
     
 }
+
+void  updateMinR(TRRationalInterval* dom,ORRational min, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailRational:&dom->_low];
+        [trail trailRational:&dom->_up];
+    }
+    mpq_set(dom->_low,min);
+}
+
+void  updateMaxR(TRRationalInterval* dom,ORRational max, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailRational:&dom->_low];
+        [trail trailRational:&dom->_up];
+    }
+    mpq_set(dom->_up,max);
+}
+
 void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
@@ -447,6 +490,18 @@ void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail
     dom->_low = min;
     dom->_up = max;
 }
+
+void  updateTRRationalInterval(TRRationalInterval* dom,ORRational min,ORRational max, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailRational:&dom->_low];
+        [trail trailRational:&dom->_up];
+    }
+    mpq_set(dom->_low, min);
+    mpq_set(dom->_up, max);
+}
+
 void  updateMinD(TRDoubleInterval* dom,double min, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {

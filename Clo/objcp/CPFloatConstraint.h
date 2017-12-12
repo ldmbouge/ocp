@@ -14,6 +14,7 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPFloatDom.h>
+#import <objcp/CPRationalDom.h>
 
 
 @class CPFloatVarI;
