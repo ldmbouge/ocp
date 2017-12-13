@@ -75,11 +75,6 @@ typedef struct {
 } float_interval;
 
 typedef struct {
-  ORRational inf;
-  ORRational sup;
-} rational_interval;
-
-typedef struct {
   internal_float inf;
   internal_float sup;
 } internal_float_interval;

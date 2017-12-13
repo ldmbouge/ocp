@@ -14,7 +14,6 @@
 //#import "CPEngineI.h"
 #import "CPRationalVarI.h"
 
-#import <gmp.h>
 
 @implementation CPRationalDom
 
@@ -137,8 +136,8 @@
 }
 -(void) restoreDomain:(id<CPRationalDom>)toRestore
 {
-    updateMinR(&_domain, toRestore.min, _trail);
-    updateMaxR(&_domain, toRestore.max, _trail);
+    updateMinR(&_domain, *toRestore.min, _trail);
+    updateMaxR(&_domain, *toRestore.max, _trail);
 }
 -(void) restoreValue:(ORRational)toRestore for:(id<CPRationalVarNotifier>)x
 {

@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPTrigger.h>
+//#import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <CPUKernel/CPTrigger.h>
 #import <objcp/CPDom.h>
@@ -18,7 +18,8 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
-#include "fpi.h"
+//#include "fpi.h"
+#import "gmp.h"
 
 #define NB_FLOAT_BY_E (8388608)
 #define S_PRECISION 23
@@ -102,26 +103,16 @@ typedef struct  {
 -(NSMutableSet*) constraints;
 @end
 
-/*useful struct to get exponent mantissa and sign*/
-typedef union {
-    ORRational f;
-    struct {
-        unsigned int mantisa : 23;
-        unsigned int exponent : 8;
-        unsigned int sign : 1;
-    } parts;
-} rational_cast;
-
 typedef struct {
     rational_interval  result;
     rational_interval  interval;
     int  changed;
 } intersectionIntervalR;
 
-static inline int signR(rational_cast p){
+/*static inline int signR(rational_cast p){
     if(p.parts.sign) return -1;
     return 1;
-}
+}*/
 
 static inline bool isDisjointWithVR(ORRational xmin,ORRational xmax,ORRational ymin,ORRational ymax)
 {
@@ -180,18 +171,21 @@ static inline bool canFollowR(CPRationalVarI* x, CPRationalVarI* y)
 
 static inline rational_interval makeRationalInterval(ORRational min, ORRational max)
 {
-    return (rational_interval){*min,*max};
+    rational_interval ri;
+    mpq_set(ri.inf, min);
+    mpq_set(ri.sup, max);
+    return ri;
 }
 
-static inline intersectionIntervalR intersectionR(int changed,rational_interval r, rational_interval x, ORDouble percent)
+/*static inline intersectionIntervalR intersectionR(int changed,rational_interval r, rational_interval x, ORDouble percent)
 {
-    /*double reduced = 0;
+     double reduced = 0;
      if(percent == 0.0)
      fpi_narrowf(&r, &x, &changed);
      else{
      fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
-     }*/
+     }
     return (intersectionIntervalR){r,x,changed};
-}
+}*/
 
 

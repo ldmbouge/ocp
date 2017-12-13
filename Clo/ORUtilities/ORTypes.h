@@ -48,6 +48,11 @@ typedef long double ORLDouble;
 typedef mpq_t ORRational;
 typedef BOOL   ORBool;
 
+typedef struct {
+    ORRational inf;
+    ORRational sup;
+} rational_interval;
+
 //#define minOf(a,b) ((a) < (b) ? (a) : (b))
 //#define maxOf(a,b) ((a) > (b) ? (a) : (b))
 static inline ORLong minOf(ORLong a,ORLong b) { return a < b ? a : b;}

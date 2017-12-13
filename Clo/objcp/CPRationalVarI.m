@@ -13,6 +13,7 @@
 #import <CPUKernel/CPUKernel.h>
 #import "CPRationalDom.h"
 
+
 /*****************************************************************************************/
 /*                        CPFloatVarSnapshot                                              */
 /*****************************************************************************************/
@@ -358,17 +359,17 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
 }
 
 - (ORBool)sameDomain:(id<CPVar>)x {
-    <#code#>
+    # warning todo
 }
 
 
 - (void)subsumedBy:(id<CPVar>)x {
-    <#code#>
+    # warning todo
 }
 
 
 - (void)subsumedByDomain:(id<CPADom>)dom {
-    <#code#>
+    # warning todo
 }
 
 /*-(ORLDouble) domwidth
@@ -380,7 +381,7 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
  return [_dom magnitude];
  }*/
 - (void)visit:(ORVisitor *)visitor {
-    <#code#>
+    # warning todo
 }
 
 @end
@@ -651,22 +652,22 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
 }
 
 - (id<CPADom>)domain {
-    <#code#>
+    # warning todo
 }
 
 
 - (ORBool)sameDomain:(id<CPVar>)x {
-    <#code#>
+    # warning todo
 }
 
 
 - (void)subsumedBy:(id<CPVar>)x {
-    <#code#>
+    # warning todo
 }
 
 
 - (void)subsumedByDomain:(id<CPADom>)dom {
-    <#code#>
+    # warning todo
 }
 
 -(ORFloat) magnitude
@@ -675,7 +676,7 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
     return 0.0;
 }
 - (void)visit:(ORVisitor *)visitor {
-    <#code#>
+    # warning todo
 }
 
 @end
