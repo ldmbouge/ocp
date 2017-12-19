@@ -9,6 +9,7 @@ endif
 USER_DEFINES += $(CFL)
 
 CFLAGS =$(GSC) -msse4.1 -fblocks -fobjc-nonfragile-abi \
+	-Wno-nullability-completeness \
 	-DUSEVIEWS=1 \
 	$(USER_DEFINES) -I. -I.. -I../Scheduler 
 
