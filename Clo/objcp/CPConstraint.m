@@ -29,6 +29,7 @@
 #import "CPRealConstraint.h"
 #import "CPIntSetConstraint.h"
 
+#import "CPBensBasicConstraint.h"
 
 @implementation CPFactory (Constraint)
 
@@ -620,6 +621,35 @@
    [[cv[0] tracker] trackMutable:o];
    return o;
 }
+
++(id<CPConstraint>) fiveGreater:(id<CPIntVar>)x to: (id<CPIntVar>) y
+{
+   id<CPConstraint> o = [[CPFiveGreater alloc] initCPFiveGreater:x and:y];
+   [[x tracker] trackMutable:o];
+   return o;   
+}
+
++(id<CPConstraint>) ExactMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced
+{
+    id<CPConstraint> o = [[CPExactMDDAllDifferent alloc] initCPExactMDDAllDifferent: cp over: x reduced:reduced];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) RelaxedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced
+{
+    id<CPConstraint> o = [[CPRelaxedMDDAllDifferent alloc] initCPRelaxedMDDAllDifferent:cp over: x relaxationSize:relaxationSize reduced:reduced];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) RestrictedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced
+{
+    id<CPConstraint> o = [[CPRestrictedMDDAllDifferent alloc] initCPRestrictedMDDAllDifferent: cp over: x restrictionSize:restrictionSize reduced:reduced];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
 @end
 
 @implementation CPFactory (ORReal)

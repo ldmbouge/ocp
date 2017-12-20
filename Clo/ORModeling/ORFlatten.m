@@ -78,6 +78,22 @@
    }];
 }
 
+-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
+-(void) visitRelaxedMDDAllDifferent: (id<ORRelaxedMDDAllDifferent>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
+-(void) visitRestrictedMDDAllDifferent: (id<ORRestrictedMDDAllDifferent>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
+
 -(void) visitIntVar: (id) v
 {
    _result = v;

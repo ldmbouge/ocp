@@ -1,0 +1,62 @@
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
+
+#import <ORProgram/ORProgram.h>
+#import "ORCmdLineArgs.h"
+#import <objcp/CPConstraint.h>
+#import <ORFoundation/ORFoundation.h>
+
+int MIN = 1;
+int MAX = 5;
+
+int main (int argc, const char * argv[])
+{
+    @autoreleasepool {
+        //ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+
+        id<ORModel> mdl = [ORFactory createModel];
+        id<ORIntRange> R = RANGE(mdl, MIN, MAX);
+        id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R domain: R];
+        id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
+        ORInt layerSize = 8;
+        bool reduced = true;
+  
+        //[mdl add: [ORFactory ExactMDDAllDifferent: mdl var: a reduced:reduced]];
+        //[mdl add: [ORFactory RestrictedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
+        [mdl add: [ORFactory RelaxedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
+        
+        id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+        
+        [cp solveAll: ^{
+            //[cp label: [a at: MIN+2] with: MIN];
+            //[cp label: [a at: MIN] with: MIN+1];
+            //[cp label: [a at: MIN+2] with: MIN+2];
+            //[cp label: [a at: MIN+3] with: MIN+3];
+            //[cp label: [a at: MIN+4] with: MIN+4];
+            //[cp label: [a at: MIN+5] with: MIN+5];
+            //[cp label: [a at: MIN+6] with: MIN+6];
+            
+            [cp labelArray: a];
+
+            //for (int i = MIN; i <= MAX; i++) {
+            //  printf("%d  ",[cp intValue: [a at:i]]);
+            //}
+            //printf("\n");
+            [nbSolutions incr: cp];
+        }
+         ];
+        
+        printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
+        NSLog(@"Solver status: %@\n",cp);
+        NSLog(@"Quitting");
+    }
+    return 0;
+}

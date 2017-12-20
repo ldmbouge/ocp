@@ -392,6 +392,32 @@ enum ORGroupType {
 -(id<ORExprArray>) array;
 @end
 
+
+
+@protocol ORFiveGreater <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@protocol ORExactMDDAllDifferent <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(bool) reduced;
+@end
+
+@protocol ORRestrictedMDDAllDifferent <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(ORInt)restrictionSize;
+-(bool) reduced;
+@end
+
+@protocol ORRelaxedMDDAllDifferent <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+@end
+
+
+
 @protocol ORRegular<ORConstraint>
 -(id<ORIntVarArray>) array;
 -(id<ORAutomaton>)automaton;

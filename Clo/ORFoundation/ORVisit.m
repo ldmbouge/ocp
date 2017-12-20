@@ -15,6 +15,27 @@
 
 @implementation ORVisitor
 
+
+-(void) visitFiveGreater: (id<ORFiveGreater>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "FiveGreater: visit method not defined"];
+}
+
+-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExactMDDAllDifferent: visit method not defined"];
+}
+
+-(void) visitRelaxedMDDAllDifferent: (id<ORRelaxedMDDAllDifferent>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedMDDAllDifferent: visit method not defined"];
+}
+
+-(void) visitRestrictedMDDAllDifferent: (id<ORRestrictedMDDAllDifferent>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "RestrictedMDDAllDifferent: visit method not defined"];
+}
+
 -(void) visitRandomStream:(id) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RandomStream: visit method not defined"];
@@ -779,6 +800,7 @@
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e {}
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o {}
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o {}
+
 
 -(void) visitEqualc: (id<OREqualc>)c  {}
 -(void) visitNEqualc: (id<ORNEqualc>)c  {}

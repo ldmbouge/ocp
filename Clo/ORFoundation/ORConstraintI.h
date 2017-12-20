@@ -18,6 +18,33 @@
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORVisit.h>
 
+@interface ORFiveGreater : ORConstraintI<ORFiveGreater>
+-(ORFiveGreater*)initORFiveGreater:(id<ORIntVar>)x and:(id<ORIntVar>)y;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@interface ORExactMDDAllDifferent : ORConstraintI<ORExactMDDAllDifferent>
+-(ORExactMDDAllDifferent*)initORExactMDDAllDifferent:(id<ORIntVarArray>)x reduced:(bool)reduced;
+-(id<ORIntVarArray>) vars;
+-(bool) reduced;
+@end
+
+@interface ORRestrictedMDDAllDifferent : ORConstraintI<ORRestrictedMDDAllDifferent>
+-(ORRestrictedMDDAllDifferent*)initORRestrictedMDDAllDifferent:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced;
+-(id<ORIntVarArray>) vars;
+-(ORInt) restrictionSize;
+-(bool) reduced;
+@end
+
+@interface ORRelaxedMDDAllDifferent : ORConstraintI<ORRelaxedMDDAllDifferent>
+-(ORRelaxedMDDAllDifferent*)initORRelaxedMDDAllDifferent:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced;
+-(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+@end
+
+
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)g;

@@ -901,6 +901,34 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 // =====================================================================================================================
 
 @implementation ORFactory (Constraints)
++(id<ORConstraint>) fiveGreater:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y
+{
+   id<ORConstraint> o = [[ORFiveGreater alloc] initORFiveGreater:x and:y ];
+   [model trackObject:o];
+   return o;
+}
+
++(id<ORConstraint>) ExactMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced
+{
+    id<ORConstraint> o = [[ORExactMDDAllDifferent alloc] initORExactMDDAllDifferent:x reduced:reduced];
+    [model trackObject:o];
+    return o;
+}
+
++(id<ORConstraint>) RestrictedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced
+{
+    id<ORConstraint> o = [[ORRestrictedMDDAllDifferent alloc] initORRestrictedMDDAllDifferent:x size: restrictionSize reduced:reduced];
+    [model trackObject:o];
+    return o;
+}
+
++(id<ORConstraint>) RelaxedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced
+{
+    id<ORConstraint> o = [[ORRelaxedMDDAllDifferent alloc] initORRelaxedMDDAllDifferent:x size:relaxationSize reduced:reduced];
+    [model trackObject:o];
+    return o;
+}
+
 +(id<ORConstraint>) fail:(id<ORTracker>)model
 {
    id<ORConstraint> o = [[ORFail alloc] init];
@@ -1671,7 +1699,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker]trackObject:o];
    return o;
 }
-
 @end
 
 

@@ -17,6 +17,7 @@
 #import <objcp/CPBitConstraint.h>
 #import <ORFoundation/ORVisit.h>
 
+
 @implementation ORCPConcretizer
 
 -(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes
@@ -1713,6 +1714,48 @@
 {}
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {}
+
+-(void) visitFiveGreater: (id<ORFiveGreater>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar>    a = [self concreteVar:[cstr left]];
+      id<CPIntVar>    b = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory fiveGreater:a to:b];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPConstraint> concreteCstr = [CPFactory ExactMDDAllDifferent:_engine over: a reduced:[cstr reduced]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+-(void) visitRelaxedMDDAllDifferent: (id<ORRelaxedMDDAllDifferent>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPConstraint> concreteCstr = [CPFactory RelaxedMDDAllDifferent:_engine over: a relaxationSize:[cstr relaxationSize] reduced:[cstr reduced]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+-(void) visitRestrictedMDDAllDifferent: (id<ORRestrictedMDDAllDifferent>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        ORInt restrictionSize = [cstr restrictionSize];
+        id<CPConstraint> concreteCstr = [CPFactory RestrictedMDDAllDifferent:_engine over: a restrictionSize:restrictionSize reduced:[cstr reduced]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 @end
 
 

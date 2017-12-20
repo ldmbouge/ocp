@@ -45,6 +45,7 @@
 @protocol ORObjectiveFunction;
 @protocol ORRealEqualc;
 @protocol ORRealRange;
+@protocol ORFiveGreater;
 
 
 @interface ORVisitor : NSObject<NSObject>
@@ -101,6 +102,12 @@
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e;
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
+
+-(void) visitFiveGreater: (id<ORConstraint>)c;
+
+-(void) visitExactMDDAllDifferent: (id<ORConstraint>) c;
+-(void) visitRestrictedMDDAllDifferent: (id<ORConstraint>) c;
+-(void) visitRelaxedMDDAllDifferent: (id<ORConstraint>) c;
 
 -(void) visitRealEqualc: (id<ORRealEqualc>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;

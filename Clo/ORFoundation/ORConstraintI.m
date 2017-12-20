@@ -15,6 +15,178 @@
 #import "ORConstraintI.h"
 #import "ORParameterI.h"
 
+@implementation ORFiveGreater {
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+}
+-(ORFiveGreater*)initORFiveGreater:(id<ORIntVar>)x and:(id<ORIntVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ +5)",[self class],self,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFiveGreater:self];
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORExactMDDAllDifferent {
+   id<ORIntVarArray> _x;
+   bool _reduced;
+}
+-(ORExactMDDAllDifferent*)initORExactMDDAllDifferent:(id<ORIntVarArray>)x reduced:(bool)reduced
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _reduced = reduced;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitExactMDDAllDifferent:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORRestrictedMDDAllDifferent {
+   id<ORIntVarArray> _x;
+   ORInt _restrictionSize;
+   bool _reduced;
+}
+-(ORRestrictedMDDAllDifferent*)initORRestrictedMDDAllDifferent:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _restrictionSize = restrictionSize;
+   _reduced = reduced;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRestrictedMDDAllDifferent:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(ORInt) restrictionSize
+{
+   return _restrictionSize;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORRelaxedMDDAllDifferent {
+   id<ORIntVarArray> _x;
+   ORInt _relaxationSize;
+   bool _reduced;
+}
+-(ORRelaxedMDDAllDifferent*)initORRelaxedMDDAllDifferent:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _relaxationSize = relaxationSize;
+   _reduced = reduced;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRelaxedMDDAllDifferent:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
 @implementation ORConstraintI
 -(ORConstraintI*) initORConstraintI
 {
