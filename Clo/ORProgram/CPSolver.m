@@ -2323,6 +2323,14 @@
          [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
       }];
    }else{
+      [self shave:x direction:-1 percent:10.f coef:2];
+      [self shave:x direction:1 percent:10.f coef:2];
+      // now x is shaved on both-end. Proceed with a normal dichotomy
+      // on x and recur.
+      [self floatSplit:x];
+      [self float3BSplit:x]; // you could be iterative here....
+   }
+/*
       [_search try:^{
          [self shave:x direction:-1 percent:10.f coef:2];
       } alt:^{
@@ -2334,6 +2342,7 @@
          }];
       }];
    }
+ */
 }
 #warning LDM TODO :) 
 -(void) shave :(id<ORFloatVar>) x direction:(ORInt) d percent:(ORFloat)p coef:(ORInt)c
@@ -2366,6 +2375,44 @@
    }
 //   __block id<ORSearchController> contr= nil;
    
+   __block ORBool goon = YES;
+   while (goon) {
+      [self nestedSolve:^{
+         [_search applyController:t in:^{
+            [self floatIntervalImpl:xi low:[min value] up:[max value]];
+            // The call above triggers propagation. Either this will succeed, suspend or it will fail
+            // If it fails, there are provably no solution in the slice, so onSolution won't
+            // be called and onExit will do the right thing.
+            // If there is a solution, onSolution sets goon = NO and onExit attempts to go
+            // to the next iteration but the outer loop stops.
+            // If it suspends, then without branching we can't tell what happening inside the slide.
+            // So we carry on and reach this point (right here) where we should *BRANCH* on the
+            // variables in the slide. That is within the nested search and this array of vars
+            // should be accessible.
+            // ultimately that nested search will succeed or fail.
+            // If it succeeds, goon = NO.
+            // If it tails, onSolution is never called and you can check the depth of the
+            // search with the controller t.
+            [self branchOnRemaingVars: <RemainingVarsThatShouldHaveBeenPassedAsArgument>];
+         }];
+      } onSolution:^{
+         goon = NO;
+      } onExit:^{
+         if (min.value == max.value || t.maxDepth > 2)
+            goon = NO;
+         [percent setValue: percent.value * c];
+         sw = s * percent.value / 100;
+         [t reset];
+         next();
+      }];
+   }
+   // Note that you will always reach this point.
+   // so you will return from this shave method normally.
+   // Hence the caller should shave left, shave right and when that is all
+   // done, it can resume branching. So the top-level should also change.
+   
+   
+   /**
    [_search applyController:t in:^{
       [_search repeat:^{
 //         id<ORSearchController> new     = [[_search controllerFactory] makeNestedController];
@@ -2393,7 +2440,7 @@
          return hasfailed == NO || [t maxDepth] > 2;
       }];
    } ];
-   
+   **/
 }
 //split in 2 intervals Once
 -(void) floatSplit:(id<ORFloatVar>) x
