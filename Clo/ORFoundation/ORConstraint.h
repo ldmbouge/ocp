@@ -12,7 +12,7 @@
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORArray.h>
-//#import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORSet.h>
 
 @protocol ORExpr;
 @protocol OREngine;
@@ -24,11 +24,16 @@
 @protocol ORIntVar;
 @protocol ORRealVar;
 @protocol ORBitVar;
+@protocol ORIntMatrix;
 
+@protocol ORIdArray;
 @protocol ORVarArray;
 @protocol ORExprArray;
 @protocol ORIntVarArray;
 @protocol ORIntVarMatrix;
+
+@protocol ORAutomaton;
+@protocol ORTable;
 
 @protocol ORBasicModel
 -(id<ORObjectiveFunction>) objective;
@@ -66,16 +71,23 @@
 enum ORGroupType {
    DefaultGroup = 0,
    BergeGroup = 1,
-   GuardedGroup = 2
+   GuardedGroup = 2,
+   CDGroup = 3
 };
 
 @protocol ORGroup <ORObject,ORConstraint>
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
+-(void)clear;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
 -(id<ORIntVar>)guard;
+-(id<ORConstraint>)alphaVars:(id<ORVarArray>) xa;
+@end
+
+@protocol ORCDGroup <ORGroup>
+-(NSArray*)varMap;
 @end
 
 @protocol ORFail <ORConstraint>
@@ -581,22 +593,6 @@ enum ORGroupType {
 -(void) emptyPool;
 -(NSUInteger) count;
 @end
-
-
-// pvh: to reconsider the solution pool in this interface; not sure I like them here
-@protocol ORASolver <NSObject,ORTracker,ORGamma>
--(void)               close;
--(id<OREngine>)       engine;
--(id) concretize: (id) o;
--(id<ORObjectiveValue>) objectiveValue;
--(id<ORSolutionPool>) solutionPool;
--(ORBool)ground;
-@end
-
-@protocol ORASearchSolver <ORASolver>
--(id<ORSearchObjectiveFunction>) objective;
-@end
-
 
 // ====== Bit Constraints =====================================
 

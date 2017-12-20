@@ -37,16 +37,16 @@ int main(int argc, const char * argv[])
          [mdl add:[dx[1] leq:dx[2]]];
 
          id<CPProgram> cp =  [args makeProgram:mdl annotation:notes];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
          __block ORInt nbSolutions = 0;
          [cp clearOnSolution]; // other solvers are not saving the solutions. So we shouldn't either.
          [cp solveAll: ^{
-            while(true) {
-               /**
-                * Manual implementation of 'mindom' heuristic to have a deterministic 
-                * tie break and be as close as possible to other solvers
-                * sd is the size of the smallest domain so-far
-                * sdi is the index of the first variable  in 'sx' with the smallest domain.
-                */
+            [cp labelHeuristic:h];
+/*            while(true) {
+                // Manual implementation of 'mindom' heuristic to have a deterministic
+                // tie break and be as close as possible to other solvers
+                // sd is the size of the smallest domain so-far
+                // sdi is the index of the first variable  in 'sx' with the smallest domain.
                ORInt sd  = FDMAXINT;
                ORInt sdi = -1;
                for(ORInt i=1;i<=n;i++) {
@@ -63,6 +63,7 @@ int main(int argc, const char * argv[])
                           [cp label:sx[sdi] with:v];
                        }];
             }
+ */
             nbSolutions++;
          }];
          NSLog(@"#solutions: %d",nbSolutions);

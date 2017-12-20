@@ -43,12 +43,12 @@
    return (id<ORVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
--(ORFloat)varOrdering:(id<CPBitVar>)x
+-(ORDouble)varOrdering:(id<CPBitVar>)x
 {
    float rv = - [x domsize];
    return rv;
 }
--(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
+-(ORDouble)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
 {
    return -v;
 }

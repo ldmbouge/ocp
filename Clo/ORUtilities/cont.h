@@ -31,4 +31,4 @@
 void letgo(NSCont*);
 
 void initContinuationLibrary(int *base);
-char* getContBase();
+char* getContBase(void);

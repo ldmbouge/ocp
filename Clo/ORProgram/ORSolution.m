@@ -59,7 +59,6 @@
 
 -(void) dealloc
 {
-   //   NSLog(@"dealloc ORSolution");
    [_varShots release];
    [_objValue release];
    [super dealloc];

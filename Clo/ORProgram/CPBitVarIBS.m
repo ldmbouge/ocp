@@ -228,14 +228,14 @@
    return _cp;
 }
 
--(ORFloat)varOrdering:(id<CPBitVar>)x
+-(ORDouble)varOrdering:(id<CPBitVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
    double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
--(ORFloat)valOrdering:(ORBool)v forVar:(id<CPBitVar>)x atIndex:(ORUInt)idx
+-(ORDouble)valOrdering:(ORBool)v forVar:(id<CPBitVar>)x atIndex:(ORUInt)idx
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
    double rv = [[_impacts objectForKey:key] impactForValue:v atIndex:idx];

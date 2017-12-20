@@ -259,7 +259,7 @@ void findAntecedents(ORUInt level, CPBitAssignment* conflict, id<CPBVConstraint>
          c = constraint;
       }
       
-      if((antecedents == nil) || (antecedents->numAntecedents == 0)) {
+      if((antecedents == NULL) || (antecedents->numAntecedents == 0)) {
          if (antecedents){
             free(antecedents->antecedents);
             free(antecedents);
@@ -323,8 +323,8 @@ void analyzeUIP(id<CPLEngine> engine, CPBitAssignment* conflict, id<CPBVConstrai
    
    ORUInt level = [engine getLevel];
    
-   CPBitAntecedents* antecedents = nil;
-   CPBitAntecedents* moreAntecedents = nil;
+   CPBitAntecedents* antecedents = NULL;
+   CPBitAntecedents* moreAntecedents = NULL;
    if (c == nil) //failure was at choice
       conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, conflict);
    else{
@@ -339,10 +339,10 @@ void analyzeUIP(id<CPLEngine> engine, CPBitAssignment* conflict, id<CPBVConstrai
 
    ORUInt numAntecedents = 0;
    
-   if ((c!=nil) && antecedents != nil)
+   if ((c!=nil) && antecedents != NULL)
       numAntecedents = antecedents->numAntecedents;
 
-   if (moreAntecedents != nil)
+   if (moreAntecedents != NULL)
       numAntecedents += moreAntecedents->numAntecedents;
    
    CPBitAntecedents* reasonSide = malloc(sizeof(CPBitAntecedents));
@@ -351,29 +351,29 @@ void analyzeUIP(id<CPLEngine> engine, CPBitAssignment* conflict, id<CPBVConstrai
    
    ORUInt idx = 0;
 
-   if((c!=nil) && antecedents != nil)
+   if((c!=nil) && antecedents != NULL)
       for(int i=0;i<antecedents->numAntecedents;i++)
          reasonSide->antecedents[idx++] = antecedents->antecedents[i];
    
-   if (moreAntecedents != nil)
+   if (moreAntecedents != NULL)
       for(int i = 0; i<moreAntecedents->numAntecedents;i++)
          reasonSide->antecedents[idx++] = moreAntecedents->antecedents[i];
    
    reasonSide->numAntecedents = idx;
    
-   if(antecedents != nil){
-      if(antecedents->antecedents != nil)
+   if(antecedents != NULL){
+      if(antecedents->antecedents != NULL)
          free (antecedents->antecedents);
       free (antecedents);
    }
-   if(moreAntecedents != nil){
-      if (moreAntecedents->antecedents != nil)
+   if(moreAntecedents != NULL){
+      if (moreAntecedents->antecedents != NULL)
          free (moreAntecedents->antecedents);
       free (moreAntecedents);
    }
    
    
-   if ((reasonSide->numAntecedents != 0) && (reasonSide->antecedents != nil))
+   if ((reasonSide->numAntecedents != 0) && (reasonSide->antecedents != NULL))
       findAntecedents(level, conflict, constraint, reasonSide, &conflictVars, &numConflictVars, &capConflictVars, &visited, &vsize, &vcap);
    else
       NSLog(@"No antecedents to trace");
@@ -419,9 +419,7 @@ __attribute__((noinline))
 ORBool checkDomainConsistency(CPBitVarI* var, unsigned int* low, unsigned int* up, ORUInt len, id<CPBVConstraint> constraint)
 {
    ORUInt upXORlow;
-   ORUInt mask;
-   ORUInt index;
-   ORUInt bitlength = [var bitLength];
+   //ORUInt mask,index,bitlength = [var bitLength];
    ORBool isConflict = false;
    
    unsigned int* conflicts = alloca(sizeof(unsigned int)*len);
@@ -640,6 +638,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [[x engine] trackMutable:o];
    return o;
 }
++(id<CPBVConstraint>) bitMultiplyComposed:(id<CPBitVar>)x times:(id<CPBitVar>) y equals:(id<CPBitVar>) z
+{
+   assert(NO);
+   return nil;
+}
 
 +(id<CPBVConstraint>) bitDivide:(id<CPBitVar>)x dividedby:(id<CPBitVar>) y equals:(id<CPBitVar>) q rem:(id<CPBitVar>)r
 {
@@ -789,11 +792,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*)assignment
 {
-   return nil;
+   return NULL;
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment
 {
-   return nil;
+   return NULL;
 }
 @end
 
@@ -824,11 +827,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state
 {
-   return nil;
+   return NULL;
 }
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment
 {
-   return nil;
+   return NULL;
 }
 -(void) post
 {
@@ -866,11 +869,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state
 {
-   return nil;
+   return NULL;
 }
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment
 {
-   return nil;
+   return NULL;
 }
 -(void) post
 {
@@ -2248,7 +2251,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
-   return nil;
+   return NULL;
 }
 - (void) dealloc
 {
@@ -3090,7 +3093,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
-   return nil;
+   return NULL;
 }
 
 -(void) post
@@ -3388,7 +3391,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
-   return nil;
+   return NULL;
 }
 
 -(void) post
@@ -4946,20 +4949,20 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(CPBitAntecedents*) getAntecedents
 {
-   return nil;
+   return NULL;
 }
 
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt **)state
 {
    //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
    
-   return nil;
+   return NULL;
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
-   return nil;
+   return NULL;
 }
 -(void) post
 {
@@ -5071,15 +5074,15 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment
 {
-   return nil;
+   return NULL;
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state
 {
-   return nil;
+   return NULL;
 }
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment
 {
-   return nil;
+   return NULL;
 }
 -(void) post
 {
@@ -5141,7 +5144,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
    
    if (assignment->index >= [_x bitLength])
-      return nil;
+      return NULL;
    
    CPBitAntecedents* ants = malloc(sizeof(CPBitAntecedents));
    CPBitAssignment** vars;
@@ -5194,7 +5197,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
    if (assignment->index >= [_x bitLength])
-      return nil;
+      return NULL;
 
    CPBitAntecedents* ants = malloc(sizeof(CPBitAntecedents));
    CPBitAssignment** vars;
@@ -5699,7 +5702,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
    
    //   if ((assignment->var == _y) && (assignment->index < _lsb || assignment->index > _msb))
-   //      return nil;
+   //      return NULL;
    
    CPBitAntecedents* ants = malloc(sizeof(CPBitAntecedents));
    CPBitAssignment** vars;
@@ -5744,7 +5747,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
 //   if ((assignment->var == _y) && (assignment->index < _lsb || assignment->index > _msb))
-//      return nil;
+//      return NULL;
    
    CPBitAntecedents* ants = malloc(sizeof(CPBitAntecedents));
    CPBitAssignment** vars;
@@ -9254,7 +9257,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       }
    }
    else {
-      vars=nil;
+      vars=NULL;
    }
    ants->antecedents = vars;
    return ants;
@@ -9400,7 +9403,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       }
    }
    else {
-      vars=nil;
+      vars=NULL;
    }
    ants->antecedents = vars;
    return ants;
@@ -9660,7 +9663,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       }
    }
    else{
-      vars = nil;
+      vars = NULL;
    }
    ants->antecedents = vars;
    return ants;
@@ -9784,7 +9787,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       }
    }
    else{
-      vars = nil;
+      vars = NULL;
    }
    ants->antecedents = vars;
    return ants;
@@ -10385,7 +10388,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if([_r bound] && [_r getBit:0]){
       for(int i=[_x low]; i<=[_x up];i++)
       {
-         if([_x[i] bound] && ![_x[i] getBit:0])
+         if([_x[i] bound] && ![_x[i] bitAt:0])    // [LDM] this was calling getBit: (which does not exist.) I guess this was meant to be "bitAt:"
             NSLog(@"x variable false in LogicalAND");
       }
    }
@@ -10423,13 +10426,13 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 -(CPBitAntecedents*) getAntecedents
 {
-   return nil;
+   return NULL;
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
-   return nil;
+   return NULL;
 }
 
 - (void) dealloc
@@ -11739,20 +11742,20 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment
 {
    //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
-   
-   return nil;
+  
+  return NULL;
 }
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt **)state
 {
    //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
    
-   return nil;
+  return NULL;
 }
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment
 {
    //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
    
-   return nil;
+  return NULL;
 }
 @end
 
@@ -11826,7 +11829,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
    
-   return nil;
+   return NULL;
 }
 
 -(void) propagate{}
@@ -11907,7 +11910,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
-   return nil;
+   return NULL;
 }
 
 -(void) propagate{}
@@ -11982,7 +11985,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 {
    //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
    
-   return nil;
+   return NULL;
 }
 
 -(void) propagate{}
@@ -12133,7 +12136,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 {
    //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
    
-   return nil;
+   return NULL;
 }
 
 -(void) propagate{}
@@ -12327,7 +12330,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          }
       }
       else{
-         vars=nil;
+         vars=NULL;
       }
    }
    else {
@@ -12591,7 +12594,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
 
-   return nil;
+   return NULL;
 }
 
 -(void) propagate{}

@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORData.h>
-#import <ORFoundation/ORParameter.h>
 
 @protocol ORTrailableInt;
 @protocol ORRealVar;
@@ -46,6 +45,8 @@
 @protocol ORRealEqualc;
 @protocol ORRealRange;
 @protocol ORFiveGreater;
+@protocol ORIntParam;
+@protocol ORRealParam;
 
 
 @interface ORVisitor : NSObject<NSObject>
@@ -73,6 +74,7 @@
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c;
 -(void) visitGroup:(id<ORGroup>)g;
+-(void) visitCDGroup:(id<ORGroup>)g;
 -(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f;
 -(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f;
 -(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f;

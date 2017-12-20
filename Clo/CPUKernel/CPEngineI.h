@@ -90,6 +90,7 @@ enum CPEngineState {
 
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;
+-(void)incNbFailures:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 -(id<ORIntRange>)boolRange;
 -(ORBool)isPropagating;

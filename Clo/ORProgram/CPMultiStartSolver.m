@@ -534,7 +534,7 @@
       [self labelHeuristic:h];
    }];
 }
--(void) search:(void*(^)())stask
+-(void) search:(void*(^)(void))stask
 {
    //TODO: This is not correct yet.
    [self solve:^{
@@ -542,7 +542,7 @@
       [theTask execute];
    }];
 }
--(void) searchAll:(void*(^)())stask
+-(void) searchAll:(void*(^)(void))stask
 {
    [self solveAll:^{
       id<ORSTask> theTask = (id)stask();

@@ -124,6 +124,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Group: visit method not defined"]; 
 }
+-(void) visitCDGroup:(id<ORGroup>)g
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CDGroup: visit method not defined"];
+}
 -(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ObjectiveFunctionVar: visit method not defined"]; 
@@ -770,6 +774,7 @@
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
 -(void) visitGroup:(id<ORGroup>)g {}
+-(void) visitCDGroup:(id<ORGroup>)g {}
 -(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f  {}
 -(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f  {}
 -(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f  {}

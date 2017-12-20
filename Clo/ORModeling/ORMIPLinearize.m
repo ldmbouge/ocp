@@ -193,6 +193,10 @@
 {
     assert(false);
 }
+-(void) visitCDGroup:(id<ORGroup>)g
+{
+   assert(false);
+}
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
    _result = cstr;

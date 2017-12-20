@@ -21,8 +21,8 @@
    id<CPProgram>     _cp;
 }
 -(CPBitVarFirstFail*)initCPBitVarFirstFail:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
--(ORFloat)varOrdering:(id<CPBitVar>)x;
--(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x ;
+-(ORDouble)varOrdering:(id<CPBitVar>)x;
+-(ORDouble)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x ;
 -(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv;
 -(id<ORVarArray>)allBitVars;
 -(id<CPProgram>)solver;

@@ -32,8 +32,7 @@
 }
 -(void)dealloc
 {
-   NSInteger ub = [_vars count];
-   for(int k=0; k < ub;k++)
+   for(int k=0; k < _nbv;k++)
       [_cv[k] release];
    free(_cv);
    free(_map);

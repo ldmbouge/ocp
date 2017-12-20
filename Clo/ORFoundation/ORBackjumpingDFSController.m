@@ -40,7 +40,7 @@
 
 +(id<ORSearchController>)proto
 {
-   return [[ORSemDFSController alloc] initTheController:nil engine:nil posting:nil];
+   return [[ORBackjumpingDFSController alloc] initTheController:nil engine:nil posting:nil];
 }
 
 
@@ -141,7 +141,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_engine posting:_model];
+   ORBackjumpingDFSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_engine posting:_model];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }

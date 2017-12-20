@@ -202,4 +202,10 @@
    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_imax];
    return self;
 }
+- (void)unionWith:(id<CPFDom>)d
+{
+   assignTRDouble(&_min,min(_min._val,d.min),_trail);
+   assignTRDouble(&_max,max(_max._val,d.max),_trail);
+}
+
 @end
