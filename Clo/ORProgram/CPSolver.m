@@ -2335,7 +2335,7 @@
       }];
    }
 }
-
+#warning LDM TODO :) 
 -(void) shave :(id<ORFloatVar>) x direction:(ORInt) d percent:(ORFloat)p coef:(ORInt)c
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
