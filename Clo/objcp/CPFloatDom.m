@@ -172,11 +172,11 @@
     [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_imax];
     return self;
 }
-- (void)unionWith:(id<CPADom>)d
+-(void) unionWith:(CPFloatDom*)d
 {
-   //Heytem:tofix
+   updateMin(&_domain, minFlt(_imin,d->_imin), _trail);
+   updateMax(&_domain, maxFlt(_imax,d->_imax), _trail);
 }
-
 @end
 
 

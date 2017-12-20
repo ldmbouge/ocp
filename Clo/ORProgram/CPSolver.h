@@ -57,6 +57,7 @@
 -(CPCoreSolver*) initCPCoreSolver;
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
+-(void) setLevel:(ORInt) level;
 -(id<ORModel>)source;
 -(ORBool) ground;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
@@ -167,16 +168,23 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@interface ABSElement : NSObject{
-    ORDouble _quantity;
-    NSMutableSet* _vars;
+@protocol ORAbsElement <ORObject>
+-(ORDouble) quantity;
+-(void) addQuantity:(ORFloat)c;
+-(void) setChoice:(id<CPFloatVar>)c;
+-(id<CPFloatVar>) bestChoice;
+@end
+
+@interface ABSElement : ORObject<ORAbsElement> {
+   ORDouble _quantity;
+   id<CPFloatVar> _choice;
 }
--(id) init:(ORDouble)quantity vars:(NSMutableSet*)vars;
+-(id) init:(ORDouble)quantity;
 -(id) init;
 -(ORDouble) quantity;
--(NSMutableSet*) vars;
 -(void) addQuantity:(ORFloat)c;
--(void) addVar:(id<CPFloatVar>)v;
+-(void) setChoice:(id<CPFloatVar>)c;
+-(id<CPFloatVar>) bestChoice;
 -(NSString*)description;
 -(void) dealloc;
 @end

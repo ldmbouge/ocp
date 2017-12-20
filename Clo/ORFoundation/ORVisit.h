@@ -57,6 +57,7 @@
 @protocol ORFloatNumber;
 @protocol ORDoubleNumber;
 @protocol ORMutableInteger;
+@protocol ORMutableFloat;
 @protocol ORMutableDouble;
 
 
@@ -94,6 +95,7 @@
 -(void) visitConstraint:(id<ORConstraint>)c;
 -(void) visitGroup:(id<ORGroup>)g;
 -(void) visitCDGroup:(id<ORGroup>)g;
+-(void) visit3BGroup:(id<ORGroup>)g;
 -(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f;
 -(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f;
 -(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f;
@@ -218,6 +220,7 @@
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitMutableDouble: (id<ORMutableDouble>) e;
 -(void) visitFloat: (id<ORFloatNumber>) e;
 -(void) visitDouble: (id<ORDoubleNumber>) e;

@@ -49,12 +49,14 @@ PORTABLE_BEGIN
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)guard;
 +(id<ORGroup>)group:(id<ORTracker>)model;
-+(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(nullable NSArray*)clauses;
++(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(NSArray* PNULLABLE)clauses;
 +(id<ORGroup>)cdisj:(id<ORTracker>)model vmap:(NSArray*)varMap;
 +(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g;
++(id<ORGroup>)group3B:(id<ORTracker>)model;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value;
++(id<ORMutableFloat>) mutable: (id<ORTracker>)tracker fvalue: (ORFloat) value;
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORDoubleNumber>) double: (id<ORTracker>) tracker value: (ORDouble) value;
 +(id<ORFloatNumber>) infinityf: (id<ORTracker>) tracker;
@@ -424,6 +426,8 @@ PORTABLE_END
 #define All2(track,RT,P1,RANGE1,P2,RANGE2,E)  [ORFactory array##RT: track range:(RANGE1) range:(RANGE2) with:^id<RT>(ORInt P1,ORInt P2) { return (E);}]
 #define Or(track,P,R,E)       [ORFactory lor: track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 #define And(track,P,R,E)      [ORFactory land:track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
+
+#define LOG(ls,l,fmt, ...)    if(l && l<=ls) NSLog(fmt, ##__VA_ARGS__);
 
 // [ldm] To check. Not clear why there is such a macro.
 #define geq(track,x,y,c)      [ORFactory geq: track x: x y: y plus: c]

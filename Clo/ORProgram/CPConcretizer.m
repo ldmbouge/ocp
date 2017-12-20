@@ -249,7 +249,7 @@
       }
       id<CPVarArray> oVars = (id)[ORFactory idArray:_engine
                                               range:RANGE(_engine,low,up)
-                                               with:^id<ORVar> _Nonnull(ORInt k) {
+                                               with:^id<ORVar> PNONNULL(ORInt k) {
          return _gamma[k];
       }];
       NSMutableArray* cvm = [[NSMutableArray alloc] initWithCapacity:avm.count];
@@ -275,7 +275,11 @@
       _gamma[g.getId] = cg;
    }
 }
-
+-(void) visit3BGroup:(id<OR3BGroup>)g
+{
+   if (_gamma[g.getId] == NULL) {
+   }
+}
 -(void) visitFail:(id<ORFail>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1380,7 +1384,7 @@
     if (_gamma[cstr.getId] == NULL) {
         id<ORIntVar> b = [cstr b];
         id<ORFloatVar> x = [cstr x];
-        ORInt cst = [cstr cst];
+        ORFloat cst = [cstr cst];
         [b visit: self];
         [x visit: self];
         id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
@@ -1393,7 +1397,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORFloatVar> x = [cstr x];
-      ORInt cst = [cstr cst];
+      ORFloat cst = [cstr cst];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] lti: cst];

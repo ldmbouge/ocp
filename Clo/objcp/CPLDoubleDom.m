@@ -156,8 +156,9 @@
     [aDecoder decodeValueOfObjCType:@encode(ORLDouble) at:&_imax];
     return self;
 }
-- (void)unionWith:(id<CPLDoubleDom>)d
+-(void) unionWith:(CPLDoubleDom*)d
 {
-   //TOFIX:Heytem
+   assignTRLDouble(&_min,min(_min._val,d->_min._val),_trail);
+   assignTRLDouble(&_max,max(_max._val,d->_max._val),_trail);
 }
 @end

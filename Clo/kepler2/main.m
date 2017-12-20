@@ -2,6 +2,7 @@
 #import "ORCmdLineArgs.h"
 
 /*
+ from : Zumkeller, Roland Formal Global Optimisation with Taylor Models
  float ex10(float x1, float x2, float x3, float x4, float x5, float x6) {
  return ((((((((x1 * x4) * (((((-x1 + x2) + x3) - x4) + x5) + x6)) + ((x2 * x5) * (((((x1 - x2) + x3) + x4) - x5) + x6))) + ((x3 * x6) * (((((x1 + x2) - x3) + x4) + x5) - x6))) - ((x2 * x3) * x4)) - ((x1 * x3) * x5)) - ((x1 * x2) * x6)) - ((x4 * x5) * x6));
  }
@@ -51,6 +52,7 @@ int main(int argc, const char * argv[]) {
             
             
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+            found=true;
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];
                NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");

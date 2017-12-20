@@ -14,6 +14,8 @@
 #import "CPFloatVarI.h"
 #import "ORConstraintI.h"
 
+#define PERCENT 0.0
+
 @implementation CPFloatEqual
 -(id) init:(CPFloatVarI*)x equals:(CPFloatVarI*)y
 {
@@ -21,7 +23,6 @@
    _x = x;
    _y = y;
    return self;
-   
 }
 -(void) post
 {
@@ -187,7 +188,6 @@
    _x = x;
    _c = c;
    return self;
-   
 }
 -(void) post
 {
@@ -429,7 +429,7 @@
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = PERCENT;
    _rounding = FE_TONEAREST;
    return self;
 }
@@ -485,7 +485,11 @@
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
    }
+   
+      fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -537,7 +541,7 @@
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = PERCENT;
    _rounding = FE_TONEAREST;
    return self;
 }
@@ -594,7 +598,11 @@
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
    }
+   
+      fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -645,7 +653,7 @@
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = PERCENT;
    _rounding = FE_TONEAREST;
    return self;
 }
@@ -690,8 +698,11 @@
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
    }
    
+      fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -715,7 +726,7 @@
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = PERCENT;
    _rounding = FE_TONEAREST;
    return self;
 }
@@ -760,7 +771,11 @@
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
    }
+   
+      fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -791,15 +806,19 @@
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b engine] addInternal: [CPFactory floatNEqual:_x to:_y]];         // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
          return ;
       } else {
          [[_b engine] addInternal: [CPFactory floatEqual:_x to:_y]];     // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
          return ;
       }
    }
-   else if ([_x bound] && [_y bound])        //  b <=> c == d =>  b <- c==d
+   else if ([_x bound] && [_y bound]) {       //  b <=> c == d =>  b <- c==d
       [_b bind:[_x min] != [_y min]];
-   else if ([_x bound]) {
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if ([_x bound]) {
       [[_b engine] addInternal: [CPFactory floatReify:_b with:_y neqi:[_x min]]];
       return ;
    }
@@ -820,26 +839,39 @@
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
-      if ([_x bound])            // TRUE <=> (y != c)
+      if ([_x bound]){            // TRUE <=> (y != c)
          [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x min]]];         // Rewrite as x==y  (addInternal can throw)
-      else  if ([_y bound])      // TRUE <=> (x != c)
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }else  if ([_y bound]) {     // TRUE <=> (x != c)
          [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]];         // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
-      if ([_x bound])
+      if ([_x bound]){
          [_y bind:[_x min]];
-      else if ([_y bound])
+         assignTRInt(&_active, NO, _trail);
+         return;
+      } else if ([_y bound]){
          [_x bind:[_y min]];
-      else {                    // FALSE <=> (x == y)
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }else {                    // FALSE <=> (x == y)
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
       }
    }
    else {                        // b is unknown
-      if ([_x bound] && [_y bound])
+      if ([_x bound] && [_y bound]){
          [_b bind: [_x min] != [_y min]];
-      else if ([_x max] < [_y min] || [_y max] < [_x min])
+         assignTRInt(&_active, NO, _trail);
+      } else if ([_x max] < [_y min] || [_y max] < [_x min]){
          [_b bind:YES];
+         assignTRInt(&_active, NO, _trail);
+         
+      }
    }
 }
 -(NSString*)description
@@ -1152,7 +1184,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ <= %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLEqual:%02d %@ <=> (%@ <= %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {
@@ -1226,7 +1258,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ < %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLThen:%02d %@ <=> (%@ < %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {
@@ -1341,7 +1373,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ <= %16.16e)>",_name,_b,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLThen:%02d %@ <=> (%@ <= %16.16e)>",_name,_b,_x,_c];
 }
 -(NSSet*)allVars
 {
@@ -1383,11 +1415,11 @@
 -(void) propagate
 {
    if (bound(_b)) {
-      assignTRInt(&_active, NO, _trail);
       if (minDom(_b))
          [_x updateMax:fp_previous_float(_c)];
       else
          [_x updateMin:_c];
+      assignTRInt(&_active, NO, _trail);
    } else {
       if ([_x min] >= _c) {
          assignTRInt(&_active, NO, _trail);
@@ -1400,7 +1432,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ < %16.16e)>",_name,_b,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLThenc:%02d %@ <=> (%@ < %16.16e)>",_name,_b,_x,_c];
 }
 -(NSSet*)allVars
 {

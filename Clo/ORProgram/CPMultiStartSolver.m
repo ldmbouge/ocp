@@ -408,10 +408,6 @@
 {
     [[self worker] minDensitySearch:x do:b];
 }
--(void)  alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
-{
-    [[self worker] alternateMagnitudeSearch:x do:b];
-}
 -(void)  floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
     [[self worker] floatSplitArrayOrderedByDomSize:x];
@@ -444,6 +440,14 @@
 {
     [[self worker] minAbsorptionSearch:x do:b];
 }
+-(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
+{
+   [[self worker] maxAbsorptionSearch:x default:b];
+}
+-(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
+{
+   [[self worker] minAbsorptionSearch:x default:b];
+}
 -(void)          maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
 {
     [[self worker] maxCancellationSearch:x do:b];
@@ -468,13 +472,17 @@
 {
     [[self worker] floatStatic6WaySplit:x];
 }
--(void)          floatAbsSplit: (id<ORFloatVar>) x by: (id<ORFloatVar>) y
+-(void)          floatAbsSplit: (id<ORFloatVar>) x by: (id<CPFloatVar>) y  default:(void(^)(id<ORFloatVar>))b
 {
-   [[self worker] floatAbsSplit:x by:y];
+   [[self worker] floatAbsSplit:x by:y default:b];
 }
 -(void)          floatSplit: (id<ORFloatVar>) x
 {
    [[self worker] floatSplit:x];
+}
+-(void)          float3BSplit:(id<ORFloatVar>) x
+{
+   [[self worker] float3BSplit:x];
 }
 -(void)          float3WaySplit: (id<ORFloatVar>) x
 {
@@ -808,7 +816,7 @@
 {
    return [[self worker] max: x];
 }
--(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
+-(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
 {
    return [[self worker] computeAbsorptionsQuantities: vars];
 }

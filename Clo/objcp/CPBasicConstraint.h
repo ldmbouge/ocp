@@ -413,3 +413,9 @@ typedef int (^intgetter) (void) ;
 -(void) post;
 -(void) propagate;
 @end
+
+@interface CP3BGroup : CPCoreConstraint<CPGroup>
+-(id)   init: (id<CPEngine>) engine;
+-(void) post;
+-(void) propagate;
+@end

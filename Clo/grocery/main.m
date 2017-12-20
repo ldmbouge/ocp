@@ -67,14 +67,14 @@ void splitUpFF(id<CPProgram> cp,id<ORIntVarArray> vars)
       id<ORSelect> sel = [ORFactory select:cp range:V
                                   suchThat:^ORBool(ORInt i)   { return ![cp bound:vars[i]];}
                                  orderedBy:^ORDouble(ORInt i) { return [cp domsize:vars[i]];}];
-      ORInt si = [sel min];
-      if (si != MAXINT) {
+      ORSelectorResult si = [sel min];
+      if (si.found) {
          found = YES;
-         ORInt mid = ([cp min:vars[si]] + [cp max:vars[si]]) / 2;
+         ORInt mid = ([cp min:vars[si.index]] + [cp max:vars[si.index]]) / 2;
          [cp try:^{
-            [cp gthen:vars[si] with:mid];
+            [cp gthen:vars[si.index] with:mid];
          } alt:^{
-            [cp lthen:vars[si] with:mid+1];
+            [cp lthen:vars[si.index] with:mid+1];
          }];
       }
    } while(found);

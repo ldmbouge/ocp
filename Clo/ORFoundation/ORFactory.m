@@ -94,7 +94,7 @@
 {
    return [self group:model type:DefaultGroup];
 }
-+(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(nullable NSArray*)cl
++(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(NSArray* PNULLABLE)cl
 {
    id<ORGroup> g = [[ORCDisjGroupI alloc] initORCDGroupI:model];
    [model trackObject:g];
@@ -109,7 +109,6 @@
    [model trackObject:g];
    return g;
 }
-
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model
 {
    return [self group:model type:BergeGroup];
@@ -117,6 +116,12 @@
 +(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g
 {
    id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:GuardedGroup guard:g];
+   [model trackObject:o];
+   return o;
+}
++(id<ORGroup>)group3B:(id<ORTracker>)model
+{
+   id<ORGroup> o = [[OR3BGroupI alloc] initOR3BGroupI:model];
    [model trackObject:o];
    return o;
 }
@@ -128,6 +133,11 @@
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORMutableIntegerI* o = [[ORMutableIntegerI alloc] initORMutableIntegerI: tracker value:value];
+   return [tracker trackMutable: o];
+}
++(id<ORMutableFloat>) mutable: (id<ORTracker>)tracker fvalue: (ORFloat) value
+{
+   ORMutableFloatI* o = [[ORMutableFloatI alloc] initORMutableFloatI: tracker value:value];
    return [tracker trackMutable: o];
 }
 +(id<ORDoubleNumber>) double: (id<ORTracker>) tracker value: (ORDouble) value
@@ -2156,4 +2166,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    }
 }
 @end
+
+
 

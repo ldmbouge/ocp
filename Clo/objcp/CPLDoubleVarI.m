@@ -365,30 +365,22 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
     @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVar: method domsize  not defined"];
     return 0;
 }
-
 - (id<CPADom>)domain
 {
    return _dom;
 }
-
-
 - (ORBool)sameDomain:(CPLDoubleVarI*)x
 {
    return [_dom isEqual:x->_dom];
 }
-
-
 - (void)subsumedBy:(id<CPLDoubleVar>)x
 {
-   //TODO:Heytem
+   [self updateInterval:[x min] and:[x max]];
 }
-
-
-- (void)subsumedByDomain:(id<CPLDoubleDom>)dom
+- (void)subsumedByDomain:(id<CPDom>)dom
 {
-   //TODO:Heytem
+   [self updateInterval:[dom min] and:[dom max]];
 }
-
 -(ORLDouble) domwidth
 {
    return [_dom domwidth];
@@ -396,7 +388,6 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 - (void)visit:(ORVisitor *)visitor
 {
 }
-
 @end
 
 @implementation CPLDoubleViewOnIntVarI
@@ -645,30 +636,22 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     return [_theVar bound];
 }
-
 - (id<CPADom>)domain
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   return [_theVar domain];
 }
-
-
-- (ORBool)sameDomain:(id<CPVar>)x
+- (ORBool)sameDomain:(id<CPLDoubleVar>)x
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   return [self min] == [x min] && [self max] == [x max];
 }
-
-
-- (void)subsumedBy:(id<CPVar>)x
+- (void)subsumedBy:(id<CPLDoubleVar>)x
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[x min] and:[x max]];
 }
-
-
-- (void)subsumedByDomain:(id<CPADom>)dom
+- (void)subsumedByDomain:(id<CPDom>)dom
 {
-#warning Heytem must implement this one (See CPIntVar for example)
+   [self updateInterval:[dom min] and:[dom max]];
 }
-
 -(ORLDouble) domwidth
 {
    ORBounds b = [_theVar bounds];

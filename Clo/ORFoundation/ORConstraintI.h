@@ -37,6 +37,10 @@
 -(ORCDisjGroupI*)initORCDGroupI:(id<ORTracker>)model witMap:(NSArray*)vMap;
 @end
 
+@interface OR3BGroupI : ORGroupI
+-(OR3BGroupI*)initOR3BGroupI:(id<ORTracker>)model;
+@end
+
 @interface ORFail : ORConstraintI<ORFail>
 -(ORFail*)init;
 @end

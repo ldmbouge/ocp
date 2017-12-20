@@ -69,13 +69,14 @@ PORTABLE_BEGIN
 -(void)          minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
--(void)          alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
+-(void)          maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b;
+-(void)          minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b;
 -(void)          minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 -(void)          combinedAbsWithDensSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
@@ -85,13 +86,14 @@ PORTABLE_BEGIN
 -(void)          lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b;
 
 -(ORDouble)      computeAbsorptionRate:(id<ORFloatVar>) x;
--(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars;
+-(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars;
 -(void)          floatStaticSplit: (id<ORFloatVar>) x;
 -(void)          floatStatic3WaySplit: (id<ORFloatVar>) x;
 -(void)          floatStatic5WaySplit: (id<ORFloatVar>) x;
 -(void)          floatStatic6WaySplit: (id<ORFloatVar>) x;
 -(void)          floatSplit: (id<ORFloatVar>) x;
--(void)          floatAbsSplit: (id<ORFloatVar>) x by:(id<ORFloatVar>) y;
+-(void)          float3BSplit:(id<ORFloatVar>) x;
+-(void)          floatAbsSplit: (id<ORFloatVar>) x by:(id<CPFloatVar>) y  default:(void(^)(id<ORFloatVar>))b;
 -(void)          float3WaySplit: (id<ORFloatVar>) x;
 -(void)          float5WaySplit: (id<ORFloatVar>) x;
 -(void)          float6WaySplit: (id<ORFloatVar>) x;

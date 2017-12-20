@@ -138,6 +138,10 @@
 {
    _result = e;
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _result = e;
+}
 -(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    _result = e;
@@ -320,6 +324,12 @@
       for(id<ORVar> x in varsOfGroup) {
          if ([x conformsToProtocol:@protocol(ORIntVar)])
             vm[getId(x)] = [ORFactory intVar:t domain:[(id<ORIntVar>)x domain]];
+         else if ([x conformsToProtocol:@protocol(ORFloatVar)])
+            vm[getId(x)] = [ORFactory floatVar:t domain:[(id<ORFloatVar>)x domain]];
+         else if ([x conformsToProtocol:@protocol(ORDoubleVar)])
+            vm[getId(x)] = [ORFactory doubleVar:t domain:[(id<ORDoubleVar>)x domain]];
+         else if ([x conformsToProtocol:@protocol(ORLDoubleVar)])
+            vm[getId(x)] = [ORFactory ldoubleVar:t domain:[(id<ORLDoubleVar>)x domain]];
       }
       cvm[cn++] = vm;
       id<ORGroup> ckp = (id) [fg alphaVars:vm];
@@ -331,7 +341,16 @@
       [ng add:c];
    _result = [_into addConstraint:ng];
 }
-
+-(void) visit3BGroup:(id<ORGroup>)g
+{
+   id<ORGroup> ng = [ORFactory group3B:[_into tracker]];
+   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:(id)[_into tracker] group:ng];
+   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+      [ORFlatten flatten:ck into:a2g];
+   }];
+   [a2g release];
+   _result = [_into addConstraint:ng];
+}
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
    _result = [_into addConstraint:cstr];

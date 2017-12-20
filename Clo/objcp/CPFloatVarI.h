@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPConstraintI.h>
-#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPDom.h>
 #import <objcp/CPData.h>
 #import <objcp/CPConstraint.h>
@@ -88,7 +87,7 @@ typedef struct  {
 -(NSMutableSet*) constraints;
 -(ORFloat) floatValue;
 -(ORLDouble) domwidth;
--(TRFloatInterval) domain;
+-(id<CPDom>) domain;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
@@ -187,7 +186,11 @@ static inline float_interval makeFloatInterval(float min, float max)
 {
    return (float_interval){min,max};
 }
-
+static inline void setFloatInterval(float min, float max,float_interval * ft)
+{
+   ft->inf = min;
+   ft->sup = max;
+}
 //hzi : missing denormalised case
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 {

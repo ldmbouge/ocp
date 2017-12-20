@@ -412,11 +412,16 @@
 }
 -(ORUInt)maxDepth
 {
-    return _mDepth;
+   return (_mDepth == 0) ? _mDepth:_mDepth-1;
 }
 -(ORUInt)depth
 {
     return _depth._val;
+}
+-(void) reset
+{
+   _depth = makeTRInt(_trail,0);
+   _mDepth = 0;
 }
 @end
 
