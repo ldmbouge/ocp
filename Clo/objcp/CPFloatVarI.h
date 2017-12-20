@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPConstraintI.h>
-#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPDom.h>
 #import <objcp/CPData.h>
 #import <objcp/CPConstraint.h>

@@ -2804,3 +2804,96 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {}
 @end
 
+
+@implementation CP3BGroup {
+   CPEngineI*               _engine;
+}
+-(id)   init: (id<CPEngine>) engine
+{
+   self = [super initCPCoreConstraint:engine];
+   _engine = engine;
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CP3BGroup(%p): ",self];
+   [buf appendString:@"\n\t>"];
+   return buf;
+}
+-(void) post
+{
+   [self propagate];
+}
+-(void) propagate
+{
+   //sv <- set Vars
+   //for all constraints in group
+   //for all v in vars
+   //push(sv,v)
+   
+   //for all v in SV
+   //left side
+   //failed = true
+   //while (failed == true)
+   //status = try reduceDomain and propagateFDM
+   //if(success)
+   //  failed = false
+   //else
+   //  failed = true
+   //  increasePercentToReduce
+   //restore
+   //reduceLastDomainFailed and Propagate
+   //right side
+   //failed = true
+   //while (failed == true)
+   //status = try reduceDomain and propagateFDM
+   //if(success)
+   //  failed = false
+   //else
+   //  failed = true
+   //  increasePercentToReduce
+   //restore
+   //reduceLastDomainFailed and Propagate
+
+}
+-(void) add: (id<CPGroup>) p
+{
+   [p setGroup:self];
+   [_engine assignIdToConstraint:p];
+}
+-(void) assignIdToConstraint:(id<ORConstraint>)c
+{
+   [_engine assignIdToConstraint:c];
+}
+-(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c
+{
+   assert(NO);
+}
+-(void) scheduleClosure: (id<CPClosureList>) evt
+{
+   assert(NO);
+}
+-(void)incNbPropagation:(ORUInt)add
+{
+   [_engine incNbPropagation:add];
+}
+
+- (id<ORTrail>)trail
+{
+   return [_engine trail];
+}
+
+- (void)visit:(ORVisitor *)visitor
+{}
+
+- (void)close
+{}
+
+@end
+

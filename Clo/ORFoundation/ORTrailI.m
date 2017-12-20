@@ -300,6 +300,10 @@ TRIdNC  makeTRIdNC(ORTrailI* trail,id val)
 {
    return (TRIdNC) {val};
 }
+TRFloat makeTRFloat(ORTrailI* trail,float val)
+{
+   return (TRFloat){val,[trail magic]-1};
+}
 TRDouble  makeTRDouble(ORTrailI* trail,double val)
 {
    return (TRDouble){val,[trail magic]-1};

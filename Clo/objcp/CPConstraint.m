@@ -40,14 +40,18 @@
    [engine trackMutable:g];
    return g;
 }
-
 +(id<CPGroup>) cdisj:(id<CPEngine>)engine originals:(id<CPVarArray>)origs varmap:(NSArray*)vm
 {
    id<CPGroup> g = [[CPCDisjunction alloc] init:engine originals: origs varMap:vm];
    [engine trackMutable:g];
    return g;
 }
-
++(id<CPGroup>) group3B:(id<CPEngine>)engine
+{
+   id<CPGroup> g = [[CP3BGroup alloc] init:engine];
+   [engine trackMutable:g];
+   return g;
+}
 // alldifferent
 +(id<ORConstraint>) alldifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x
 {

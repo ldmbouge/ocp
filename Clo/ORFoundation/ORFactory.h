@@ -52,9 +52,11 @@ PORTABLE_BEGIN
 +(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(NSArray* PNULLABLE)clauses;
 +(id<ORGroup>)cdisj:(id<ORTracker>)model vmap:(NSArray*)varMap;
 +(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g;
++(id<ORGroup>)group3B:(id<ORTracker>)model;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value;
++(id<ORMutableFloat>) mutable: (id<ORTracker>)tracker fvalue: (ORFloat) value;
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORDoubleNumber>) double: (id<ORTracker>) tracker value: (ORDouble) value;
 +(id<ORFloatNumber>) infinityf: (id<ORTracker>) tracker;

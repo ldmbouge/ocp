@@ -120,6 +120,7 @@ void trailIdNCFun(id<ORTrail> t,id* ptr);
 TRInt makeTRInt(id<ORTrail> trail,int val);
 TRUInt makeTRUInt(id<ORTrail> trail,unsigned val);
 TRLong makeTRLong(id<ORTrail> trail,long long val);
+TRFloat makeTRFloat(id<ORTrail> trail,float val);
 TRDouble  makeTRDouble(id<ORTrail> trail,double val);
 TRLDouble makeTRLDouble(id<ORTrail> trail,long double val);
 TRId  makeTRId(id<ORTrail> trail,id val);

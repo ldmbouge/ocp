@@ -138,6 +138,10 @@
 {
    _result = e;
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _result = e;
+}
 -(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    _result = e;
@@ -337,7 +341,16 @@
       [ng add:c];
    _result = [_into addConstraint:ng];
 }
-
+-(void) visit3BGroup:(id<ORGroup>)g
+{
+   id<ORGroup> ng = [ORFactory group3B:[_into tracker]];
+   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:(id)[_into tracker] group:ng];
+   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+      [ORFlatten flatten:ck into:a2g];
+   }];
+   [a2g release];
+   _result = [_into addConstraint:ng];
+}
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
    _result = [_into addConstraint:cstr];

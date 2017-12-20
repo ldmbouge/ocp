@@ -30,9 +30,6 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 
-#include <os/log.h>
-
-
 #if defined(__linux__)
 #import <values.h>
 #endif
@@ -2303,11 +2300,10 @@
       float_interval* ip = interval;
       length--;
       [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt i) {
-         ORInt nbC = [[self explorer] nbChoices];
          LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]\t y %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
          [self floatIntervalImpl:cx low:ip[2*i].inf up:ip[2*i].sup];
          [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
-       }];
+      }];
    }else{
       b(x);
       //      b(y);
@@ -2318,29 +2314,87 @@
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    if([xi bound]) return;
-   ORFloat theMax = xi.max;
-   ORFloat theMin = xi.min;
-   ORFloat minN,maxP;
-   ORDouble s = [xi domwidth];
-   ORDouble sw = s/4.0;
-   float_interval interval[3];
-   ORInt length = 2;
-   ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-   ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-   minN = (tmpMin + sw > theMax) ? tmpMin/2 + tmpMax/2 : tmpMin +sw;
-   maxP = (tmpMax - sw < minN) ? minN : tmpMax - sw;
-   setFloatInterval(theMin, minN,&interval[0]);
-   setFloatInterval(maxP, theMax,&interval[1]);
-   setFloatInterval(minN, maxP,&interval[2]);
-   if(minN == maxP) length--;
-   float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
-      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
-   }];
+   ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+   ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+   if(fp_next_float(tmpMin) == tmpMax){
+      [_search try:^{
+         [self floatIntervalImpl:xi low:tmpMin up:tmpMin];
+      } alt:^{
+         [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
+      }];
+   }else{
+      [_search try:^{
+         [self shave:x direction:-1 percent:10.f coef:2];
+      } alt:^{
+         [_search try:^{
+            [self shave:x direction:1 percent:10.f coef:2];
+         } alt:^{
+            LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,xi.min,xi.max);
+            [self floatIntervalImpl:xi low:xi.min up:xi.max];
+         }];
+      }];
+   }
 }
 
-
+-(void) shave :(id<ORFloatVar>) x direction:(ORInt) d percent:(ORFloat)p coef:(ORInt)c
+{
+   id<CPFloatVar> xi = _gamma[getId(x)];
+   ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+   ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+   __block id<ORMutableFloat> percent = [ORFactory mutable:_engine fvalue:p];
+   __block ORTrackDepth* t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   __block ORBool hasfailed = YES;
+   __block id<ORMutableFloat> min,max;
+   ORDouble s = [xi domwidth];
+   __block ORDouble sw = s * ([percent value]/100);
+   ORClosure next;
+   if(d > 0) //shave sup side
+   {
+      max = [ORFactory mutable:_engine fvalue:tmpMax];
+      min = [ORFactory mutable:_engine fvalue:(tmpMax - sw > tmpMin) ? tmpMax - sw : tmpMin];
+      next = ^(void) {
+         [max setValue:[min value]];
+         [min setValue:([max value] - sw > xi.min) ? [max value] - sw : xi.max];
+      };
+   }else{
+      min = [ORFactory mutable:_engine fvalue:tmpMin];
+      max = [ORFactory mutable:_engine fvalue:(tmpMin + sw < tmpMax) ? tmpMin + sw : tmpMax];
+      next = ^(void) {
+         [min setValue:[max value]];
+         [max setValue:([min value] + sw < xi.max) ? [min value] + sw : xi.max];
+      };
+   }
+//   __block id<ORSearchController> contr= nil;
+   
+   [_search applyController:t in:^{
+      [_search repeat:^{
+//         id<ORSearchController> new     = [[_search controllerFactory] makeNestedController];
+//         contr = [[ORNestedController alloc] init:new parent:[_search controller]];
+//         [new release];
+//         [_search setController:contr];
+         [_search tryall:RANGE(self, 0, 0) suchThat:nil in:^(ORInt i) {
+            LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
+            [self floatIntervalImpl:xi low:[min value] up:[max value]];
+         } onFailure:^(ORInt i) {
+            //set to handle finetely failed
+            NSLog(@"fail");
+            hasfailed = YES;
+         }];
+      } onRepeat:^{
+         if([min value] == [max value]) return;
+         [percent setValue:[percent value]*c];
+         sw = s * ([percent value]/100);
+         next();
+         [t reset];
+         hasfailed=NO;
+      } until:^ORBool{
+//         ORBool test = (contr != nil) && [contr isFinitelyFailed];
+//         NSLog(@"-> %s",(test)?"YES":"NO");
+         return hasfailed == NO || [t maxDepth] > 2;
+      }];
+   } ];
+   
+}
 //split in 2 intervals Once
 -(void) floatSplit:(id<ORFloatVar>) x
 {

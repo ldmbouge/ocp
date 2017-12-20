@@ -63,6 +63,14 @@
 -(ORDouble) doubleValue: (id<ORGamma>) solver;
 @end
 
+@protocol ORMutableFloat <ORObject,ORExpr>
+-(ORFloat) initialValue;
+-(ORFloat) value;
+-(ORFloat) setValue: (ORFloat) value;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(ORFloat) value: (id<ORGamma>) solver;
+@end
+
 @protocol ORDoubleNumber <ORObject,ORExpr>
 -(ORDouble) doubleValue;
 -(ORDouble) value;

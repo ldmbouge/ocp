@@ -138,6 +138,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CDGroup: visit method not defined"];
 }
+-(void) visit3BGroup:(id<ORGroup>)g
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "3BGroup: visit method not defined"];
+}
 -(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ObjectiveFunctionVar: visit method not defined"]; 
@@ -769,6 +773,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "MutableIntegerI: visit method not defined"]; 
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "MutableFloatI: visit method not defined"];
+}
 -(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "MutableRealI: visit method not defined"]; 
@@ -929,6 +937,7 @@
 -(void) visitConstraint:(id<ORConstraint>)c  {}
 -(void) visitGroup:(id<ORGroup>)g {}
 -(void) visitCDGroup:(id<ORGroup>)g {}
+-(void) visit3BGroup:(id<ORGroup>)g {}
 -(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f  {}
 -(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f  {}
 -(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f  {}
@@ -1052,6 +1061,7 @@
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e  {}
 -(void) visitMutableDouble: (id<ORMutableDouble>) e {}
 -(void) visitDouble: (id<ORDoubleNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}

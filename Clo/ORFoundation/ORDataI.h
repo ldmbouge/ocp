@@ -38,6 +38,15 @@ typedef struct timeval ORTimeval;
 -(ORInt) decr;
 @end
 
+@interface ORMutableFloatI : ORExprI<NSCoding,ORMutableFloat>
+-(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
+-(ORFloat)  initialValue;
+-(ORFloat) setValue: (ORFloat) value;
+-(ORFloat)  value: (id<ORGamma>) solver;
+-(ORFloat)  setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(id<ORTracker>) tracker;
+@end
+
 @interface ORMutableId : ORObject<ORMutableId> {
    id _value;
 }

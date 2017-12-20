@@ -235,6 +235,7 @@
       case BergeGroup: gt = "berge";break;
       case GuardedGroup: gt = "guarded";break;
       case CDGroup: gt = "cdisj";break;
+      case Group3B: gt = "3BGroup";break;
    }
    [buf appendFormat:@"<%@ (%s): %p> -> ",[self class],gt,self];
    [buf appendString:@"{\n"];
@@ -350,6 +351,22 @@
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitCDGroup:self];
+}
+@end
+
+@implementation OR3BGroupI
+-(OR3BGroupI*)initOR3BGroupI:(id<ORTracker>)model
+{
+   self = [super initORGroupI: model type: Group3B];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visit3BGroup:self];
 }
 @end
 
@@ -5443,6 +5460,8 @@
 -(void) visitIntegerI: (id<ORInteger>) e
 {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
 {}
 -(void) visitMutableDouble: (id<ORMutableDouble>) e
 {}

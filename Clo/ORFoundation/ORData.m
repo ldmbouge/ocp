@@ -18,6 +18,10 @@
 {
    return [[ORMutableIntegerI alloc] initORMutableIntegerI:nil value:value];
 }
++(id<ORMutableFloat>) float:(ORFloat) value
+{
+   return [[ORMutableFloatI alloc] initORMutableFloatI:nil value:value];
+}
 +(id<ORDoubleNumber>) double: (ORDouble) value
 {
    return [[ORDoubleI alloc] init:nil value:value];

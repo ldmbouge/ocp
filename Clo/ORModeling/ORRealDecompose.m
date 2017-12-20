@@ -70,6 +70,10 @@
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
+   [_terms addIndependent:[e initialValue]];
+}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
     [_terms addIndependent:[e initialValue]];
 }
 -(void) visitMutableDouble: (id<ORMutableDouble>) e

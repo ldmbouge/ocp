@@ -82,7 +82,8 @@ enum ORGroupType {
    DefaultGroup = 0,
    BergeGroup = 1,
    GuardedGroup = 2,
-   CDGroup = 3
+   CDGroup = 3,
+   Group3B = 4
 };
 
 @protocol ORGroup <ORObject,ORConstraint>
@@ -98,6 +99,9 @@ enum ORGroupType {
 
 @protocol ORCDGroup <ORGroup>
 -(NSArray*)varMap;
+@end
+
+@protocol OR3BGroup <ORGroup>
 @end
 
 @protocol ORFail <ORConstraint>

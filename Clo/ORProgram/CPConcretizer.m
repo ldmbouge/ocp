@@ -275,7 +275,11 @@
       _gamma[g.getId] = cg;
    }
 }
-
+-(void) visit3BGroup:(id<OR3BGroup>)g
+{
+   if (_gamma[g.getId] == NULL) {
+   }
+}
 -(void) visitFail:(id<ORFail>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
