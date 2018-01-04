@@ -388,8 +388,8 @@
 }
 -(void) dealloc
 {
-    NSLog(@"maxdepth : %u",[self maxDepth]);
-    NSLog(@"ORTrackDepth dealloc called...\n");
+   // NSLog(@"maxdepth : %u",[self maxDepth]);
+   // NSLog(@"ORTrackDepth dealloc called...\n");
     [super dealloc];
 }
 -(void) startTry
@@ -412,7 +412,7 @@
 }
 -(ORUInt)maxDepth
 {
-   return (_mDepth == 0) ? _mDepth:_mDepth-1;
+   return _mDepth;
 }
 -(ORUInt)depth
 {

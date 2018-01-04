@@ -13,6 +13,7 @@
 #import "CPBasicConstraint.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
+#import "fpi.h"
 
 @implementation CPRestrictI
 -(id) initRestrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
@@ -2807,15 +2808,18 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 @implementation CP3BGroup {
    CPEngineI*               _engine;
+   NSMutableSet*            _vars;
 }
 -(id)   init: (id<CPEngine>) engine
 {
    self = [super initCPCoreConstraint:engine];
    _engine = engine;
+   _vars = [[NSMutableSet alloc] init];
    return self;
 }
 -(void)dealloc
 {
+   [_vars release];
    [super dealloc];
 }
 
@@ -2826,41 +2830,62 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [buf appendString:@"\n\t>"];
    return buf;
 }
+-(void) addVars:(NSMutableSet *)vars
+{
+   for(id<CPVar> v in vars)
+      [_vars addObject:v];
+}
 -(void) post
 {
    [self propagate];
 }
 -(void) propagate
 {
-   //sv <- set Vars
-   //for all constraints in group
-   //for all v in vars
-   //push(sv,v)
-   
-   //for all v in SV
-   //left side
-   //failed = true
-   //while (failed == true)
-   //status = try reduceDomain and propagateFDM
-   //if(success)
-   //  failed = false
-   //else
-   //  failed = true
-   //  increasePercentToReduce
-   //restore
-   //reduceLastDomainFailed and Propagate
-   //right side
-   //failed = true
-   //while (failed == true)
-   //status = try reduceDomain and propagateFDM
-   //if(success)
-   //  failed = false
-   //else
-   //  failed = true
-   //  increasePercentToReduce
-   //restore
-   //reduceLastDomainFailed and Propagate
-
+   ORBool failed = true;
+   ORStatus s = ORSuspend;
+   ORLDouble size;
+   ORDouble step;
+   ORInt percent;
+   ORFloat min,max;
+   for(id<CPFloatVar> v in _vars){
+      size = [v domwidth];
+      percent = 10;
+      min = v.min;
+      max = (v.min == -infinityf()) ? -maxnormalf() : v.min;
+      while (failed) {
+         step = size * (percent/100.f);
+         max = (min + step < v.max) ? min+step : max;
+         s=tryfail(^ORStatus{
+            
+            //propage constraint of the group
+            //enforce min,max
+            return ORSuccess;
+         }, ^ORStatus{
+            return ORFailure;
+         });
+         failed = (s==ORFailure);
+         percent*=2;
+      }
+      //restore
+      //enforce last failed domain and propagate
+      percent = 10;
+      max = v.max;
+      min = (v.max == infinityf()) ? maxnormalf() : v.max;
+      while (failed) {
+         step = size * (percent/100.f);
+         min = (max - step > v.min) ? max-step : min;
+         s=tryfail(^ORStatus{
+            //enforce min,max
+            return ORSuccess;
+         }, ^ORStatus{
+            return ORFailure;
+         });
+         failed = (s==ORFailure);
+         percent*=2;
+      }
+      //restore
+      //enforce last failed domain and propagate
+   }
 }
 -(void) add: (id<CPGroup>) p
 {

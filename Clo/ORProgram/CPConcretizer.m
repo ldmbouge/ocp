@@ -14,6 +14,7 @@
 #import <CPUKernel/CPEngine.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
+#import <objcp/CPBasicConstraint.h>
 #import <objcp/CPBitConstraint.h>
 #import <ORFoundation/ORVisit.h>
 
@@ -278,6 +279,22 @@
 -(void) visit3BGroup:(id<OR3BGroup>)g
 {
    if (_gamma[g.getId] == NULL) {
+      CP3BGroup* cg = [CPFactory group3B: _engine];
+      [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
+      id<CPEngine> old = _engine;
+      _engine = (id)cg;
+      NSMutableSet* vars = [[NSMutableSet alloc] init];
+      @autoreleasepool{
+         [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+            [ck visit:self];
+            //vars should be originals or concrete one ?
+            [vars unionSet:[_gamma[getId(ck)] allVars]];
+         }];
+      }
+      [cg addVars:vars];
+      [vars release];
+      _engine = old;
+      _gamma[g.getId] = cg;
    }
 }
 -(void) visitFail:(id<ORFail>)cstr

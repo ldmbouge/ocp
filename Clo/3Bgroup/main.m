@@ -32,7 +32,7 @@ int main(int argc, const char * argv[])
          
          id<ORGroup> g0 = [ORFactory group3B:model];
          {
-            [g0 add:[m eq: x]];
+            [g0 add:[x eq: y]];
          }
          
          [model add:g0];
@@ -44,12 +44,9 @@ int main(int argc, const char * argv[])
          [cps solveAll:^{
             //[cps label:y with:10];
             //[cps gthen:y with:9];
-            [cps label:x];
-            [cps label:y];
-            [cps label:m];
-            for(id<ORIntVar> v in vars)
-               printf("%d ",[cps intValue:v]);
-            printf("\n");
+//            for(id<ORIntVar> v in vars)
+//               printf("%d ",[cps intValue:v]);
+//            printf("\n");
             nbSol++;
          }];
          NSLog(@"#sol = %d",nbSol);

@@ -589,13 +589,23 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
     return [[ORFloatVarI alloc]  init: tracker low: low up: up];
 }
-+(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom{
-    return [[ORFloatVarI alloc]  init: tracker domain:dom];
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom
+{
+   return [[ORFloatVarI alloc]  init: tracker domain:dom];
+}
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker name:(NSString*) name
+{
+   return [[ORFloatVarI alloc]  init: tracker name:name];
+}
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up name:(NSString*) name
+{
+   return [[ORFloatVarI alloc]  init: tracker low: low up: up name:name];
 }
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker
 {
-    return [[ORFloatVarI alloc]  init: tracker];
+   return [[ORFloatVarI alloc]  init: tracker];
 }
+
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
     return [[ORDoubleVarI alloc]  init: tracker low: low up: up];

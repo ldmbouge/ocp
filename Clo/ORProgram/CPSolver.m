@@ -1540,7 +1540,7 @@
 }
 //-------------------------------------------------------
 //float search
--(void) maxCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1561,12 +1561,12 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(maxCardinalitySearch:do:),x);
       } while (true);
    }];
    
 }
--(void) minCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1587,12 +1587,12 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(minCardinalitySearch:do:),x);
       } while (true);
    }];
    
 }
--(void) maxDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1612,11 +1612,13 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+//         [self shave:x[i.index] direction:-1 percent:5.f coef:2];
+//         [self shave:x[i.index] direction:1 percent:5.f coef:2];
+         b(x[i.index],@selector(maxDensitySearch:do:),x);
       } while (true);
    }];
 }
--(void) minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1636,13 +1638,13 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(minDensitySearch:do:),x);
       } while (true);
    }];
    
    
 }
--(void) maxWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1663,13 +1665,13 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(maxWidthSearch:do:),x);
       } while (true);
       
    }];
    
 }
--(void) minWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1690,12 +1692,12 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(minWidthSearch:do:),x);
       } while (true);
    }];
    
 }
--(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1717,12 +1719,12 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(maxMagnitudeSearch:do:),x);
       } while (true);
    }];
    
 }
--(void) minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1744,13 +1746,14 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(minMagnitudeSearch:do:),x);
       } while (true);
    }];
    
 }
 -(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
 {
+   SEL s = @selector(floatSplitArrayOrderedByDomSize:);
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
           id<CPFloatVar> v = _gamma[getId(x[i])];
@@ -1761,11 +1764,11 @@
     return (ORFloat)-[v domwidth];
  }
              do: ^(ORInt i){
-                [self float6WaySplit:_gamma[getId(x[i])]];
+                [self float6WaySplit:_gamma[getId(x[i])] call:s withVars:x];
              }];
 }
 //lexicalorder
--(void) lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1786,13 +1789,13 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(lexicalOrderedSearch:do:),x);
       } while (true);
    }];
    
 }
 //-------------------------------------------------
--(void) maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORIntArray> deg = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
@@ -1816,11 +1819,11 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(maxDegreeSearch:do:),x);
       } while (true);
    }];
 }
--(void) minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    id<ORIntArray> deg = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
       return  [self countMemberedConstraints:x[i]];
@@ -1844,11 +1847,11 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(minDegreeSearch:do:),x);
       } while (true);
    }];
 }
--(void) maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
@@ -1872,11 +1875,11 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(maxOccurencesSearch:do:),x);
       } while (true);
    }];
 }
--(void) minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
       return [self maxOccurences:x[i]];
@@ -1900,11 +1903,11 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(minOccurencesSearch:do:),x);
       } while (true);
    }];
 }
--(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1926,39 +1929,45 @@
             break;
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         
+//         [self shave:x[i.index] direction:-1 percent:5.f coef:2];
+//         [self shave:x[i.index] direction:1 percent:5.f coef:2];
+         b(x[i.index],@selector(maxAbsorptionSearch:do:),x);
       } while (true);
    }];
 }
--(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
+-(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
-   __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     return ![v bound];
-                                  }
-                                 orderedBy: ^ORDouble(ORInt i) {
-                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
-                                    return [abs[i] quantity];
-                                 }];
-   
-   [[self explorer] applyController:t in:^{
-      do {
-         LOG(_level,2,@"State before selection");
-         ORSelectorResult i = [select max];
-         if (!i.found)
-            break;
-         id<CPFloatVar> v = [abs[i.index] bestChoice];
-         LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
-         [self floatAbsSplit: x[i.index] by:v default:b];
-         abs = [self computeAbsorptionsQuantities:x];
-      } while (true);
-   }];
+   @autoreleasepool {
+      SEL s = @selector(maxAbsorptionSearch:default:);
+      __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+      id<ORSelect> select = [ORFactory select: _engine
+                                        range: RANGE(self,[x low],[x up])
+                                     suchThat: ^ORBool(ORInt i) {
+                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        return ![v bound];
+                                     }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                       return [abs[i] quantity];
+                                    }];
+      
+      [[self explorer] applyController:t in:^{
+         do {
+            LOG(_level,2,@"State before selection");
+            ORSelectorResult i = [select max];
+            if (!i.found)
+               break;
+            id<CPFloatVar> v = [abs[i.index] bestChoice];
+            LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
+            [self floatAbsSplit: x[i.index] by:v call:s withVars:x default:b];
+            abs = [self computeAbsorptionsQuantities:x];
+         } while (true);
+      }];
+   }
 }
--(void) minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -1979,13 +1988,14 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(minAbsorptionSearch:do:),x);
       } while (true);
    }];
 }
--(void) minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>))b
+-(void) minAbsorptionSearch: (id<ORFloatVarArray>) x default:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    @autoreleasepool {
+      SEL s = @selector(minAbsorptionSearch:default:);
       __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
       ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
       id<ORSelect> select = [ORFactory select: _engine
@@ -2007,14 +2017,14 @@
                break;
             id<CPFloatVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
-            [self floatAbsSplit: x[i.index] by:v default:b];
+            [self floatAbsSplit: x[i.index] by:v call:s withVars:x default:b];
             abs = [self computeAbsorptionsQuantities:x];
          } while (true);
       }];
    }
 }
 
--(void) maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -2035,11 +2045,11 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(maxCancellationSearch:do:),x);
       } while (true);
    }];
 }
--(void) minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -2060,11 +2070,11 @@
          if (!i.found)
             break;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(minCancellationSearch:do:),x);
       } while (true);
    }];
 }
--(void) combinedAbsWithDensSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) combinedAbsWithDensSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORIntArray> considered = [ORFactory intArray:self range:x.range value:0];
@@ -2111,12 +2121,12 @@
             if(val == 1.0) break;//max density is 1
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(combinedAbsWithDensSearch:do:),x);
       } while (true);
    }];
 }
 
--(void) combinedDensWithAbsSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) combinedDensWithAbsSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORIntArray> considered = [ORFactory intArray:self range:x.range value:0];
@@ -2169,7 +2179,7 @@
             }
          }
          LOG(_level,2,@"selected variable : %@",_gamma[getId(x[i.index])]);
-         b(x[i.index]);
+         b(x[i.index],@selector(combinedDensWithAbsSearch:do:),x);
          ORDouble d = 0.0;
          min = max = 0.0;
          for(ORUInt k = 0; k < [x count]; k++){
@@ -2192,7 +2202,7 @@
 }
 
 
--(void) switchedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) switchedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
    [self switchSearchOnDepthUsingProperties:
     ^ORDouble(id<ORFloatVar> v) {
@@ -2207,40 +2217,40 @@
 //-------------------------------------------------
 //Value ordering
 //split until value
--(void) floatStaticSplit: (id<ORFloatVar>) x
+-(void) floatStaticSplit: (id<ORFloatVar>) x call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    while (![xi bound]) {
-      [self floatSplit:x];
+      [self floatSplit:x call:s withVars:vars];
    }
 }
 //static 3 split
--(void) floatStatic3WaySplit: (id<ORFloatVar>) x
+-(void) floatStatic3WaySplit: (id<ORFloatVar>) x call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    while (![xi bound]) {
-      [self float3WaySplit:x];
+      [self float3WaySplit:x call:s withVars:vars];
    }
 }
 //static split in 5 way until the var is bound
--(void) floatStatic5WaySplit: (id<ORFloatVar>) x
+-(void) floatStatic5WaySplit: (id<ORFloatVar>) x call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    while (![xi bound]) {
-      [self float5WaySplit:x];
+      [self float5WaySplit:x call:s withVars:vars];
    }
 }
 //static split in 6 way until the var is bound
--(void) floatStatic6WaySplit: (id<ORFloatVar>) x
+-(void) floatStatic6WaySplit: (id<ORFloatVar>) x call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    while (![xi bound]) {
-      [self float6WaySplit:x];
+      [self float6WaySplit:x call:s withVars:vars];
    }
 }
--(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<CPFloatVar>) y default:(void(^)(id<ORFloatVar>))b
+-(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<CPFloatVar>) y call:(SEL)s withVars:(id<ORFloatVarArray>) vars default:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b
 {
-   if(y == nil) b(x);
+   if(y == nil) b(x,s,vars);
    float_interval interval[18];
    float_interval interval_x[3];
    float_interval interval_y[3];
@@ -2305,12 +2315,11 @@
          [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
       }];
    }else{
-      b(x);
+      b(x,s,vars);
       //      b(y);
    }
 }
-
--(void) float3BSplit:(id<ORFloatVar>) x
+-(void) float3BSplit:(id<ORFloatVar>)x call:(SEL)s withVars:(id<ORFloatVarArray>)vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    if([xi bound]) return;
@@ -2323,62 +2332,40 @@
          [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
       }];
    }else{
-      [self shave:x direction:-1 percent:10.f coef:2];
-      [self shave:x direction:1 percent:10.f coef:2];
+      [self shave:x direction:1 percent:5.f coef:1 call:s withVars:vars];
+      [self shave:x direction:-1 percent:5.f coef:1 call:s withVars:vars];
       // now x is shaved on both-end. Proceed with a normal dichotomy
       // on x and recur.
-      [self floatSplit:x];
-      [self float3BSplit:x]; // you could be iterative here....
+      [self floatSplit:x call:s withVars:vars];
+//      [self float6WaySplit:x call:s withVars:vars];
    }
-/*
-      [_search try:^{
-         [self shave:x direction:-1 percent:10.f coef:2];
-      } alt:^{
-         [_search try:^{
-            [self shave:x direction:1 percent:10.f coef:2];
-         } alt:^{
-            LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,xi.min,xi.max);
-            [self floatIntervalImpl:xi low:xi.min up:xi.max];
-         }];
-      }];
-   }
- */
 }
-#warning LDM TODO :) 
--(void) shave :(id<ORFloatVar>) x direction:(ORInt) d percent:(ORFloat)p coef:(ORInt)c
+-(void) shave :(id<ORFloatVar>) x direction:(ORInt) d percent:(ORFloat)p coef:(ORInt)c  call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
+   if([xi bound]) return;
    ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
    ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
    __block id<ORMutableFloat> percent = [ORFactory mutable:_engine fvalue:p];
-   __block ORTrackDepth* t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   __block ORBool hasfailed = YES;
+   __block ORTrackDepth* t ;
    __block id<ORMutableFloat> min,max;
-   ORDouble s = [xi domwidth];
-   __block ORDouble sw = s * ([percent value]/100);
-   ORClosure next;
+   ORDouble size = [xi domwidth];
+   __block ORDouble step = size * ([percent value]/100);
    if(d > 0) //shave sup side
    {
       max = [ORFactory mutable:_engine fvalue:tmpMax];
-      min = [ORFactory mutable:_engine fvalue:(tmpMax - sw > tmpMin) ? tmpMax - sw : tmpMin];
-      next = ^(void) {
-         [max setValue:[min value]];
-         [min setValue:([max value] - sw > xi.min) ? [max value] - sw : xi.max];
-      };
+      min = [ORFactory mutable:_engine fvalue:(tmpMax - step > tmpMin) ? tmpMax - step : tmpMin];
    }else{
       min = [ORFactory mutable:_engine fvalue:tmpMin];
-      max = [ORFactory mutable:_engine fvalue:(tmpMin + sw < tmpMax) ? tmpMin + sw : tmpMax];
-      next = ^(void) {
-         [min setValue:[max value]];
-         [max setValue:([min value] + sw < xi.max) ? [min value] + sw : xi.max];
-      };
+      max = [ORFactory mutable:_engine fvalue:(tmpMin + step < tmpMax) ? tmpMin + step : tmpMax];
    }
-//   __block id<ORSearchController> contr= nil;
-   
+   __block ORUInt depth = 0;
    __block ORBool goon = YES;
    while (goon) {
+      t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
       [self nestedSolve:^{
          [_search applyController:t in:^{
+            LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
             [self floatIntervalImpl:xi low:[min value] up:[max value]];
             // The call above triggers propagation. Either this will succeed, suspend or it will fail
             // If it fails, there are provably no solution in the slice, so onSolution won't
@@ -2391,59 +2378,44 @@
             // should be accessible.
             // ultimately that nested search will succeed or fail.
             // If it succeeds, goon = NO.
-            // If it tails, onSolution is never called and you can check the depth of the
+            // If it fails, onSolution is never called and you can check the depth of the
             // search with the controller t.
-            [self branchOnRemaingVars: <RemainingVarsThatShouldHaveBeenPassedAsArgument>];
+            [self performSelector:s withObject:vars withObject:^(id<ORFloatVar> x, SEL call,id<ORFloatVarArray> vs){
+//               [self float3BSplit:x call:call withVars:vs];
+                              [self float6WaySplit:x call:call withVars:vs];
+            }];
+            depth = t.maxDepth;
          }];
       } onSolution:^{
-         goon = NO;
+         LOG(_level,1,@"solution found! in depth %d",depth);
+         //we should stop the search here if we want only one solution
+         if(_oneSol){
+            goon = NO;
+         }
+         [self doOnSolution];
       } onExit:^{
-         if (min.value == max.value || t.maxDepth > 2)
+         LOG(_level,1,@"fail on depth:%d",depth);
+         if (min.value == max.value || depth > 2)
             goon = NO;
          [percent setValue: percent.value * c];
-         sw = s * percent.value / 100;
-         [t reset];
-         next();
+         step = size * percent.value / 100;
+         if(d > 0) //shave sup side
+         {
+            [max setValue:fp_next_float([min value])];
+            [min setValue:([max value] - step > xi.min) ? [max value] - step : xi.max];
+         }else{
+            [min setValue:fp_previous_float([max value])];
+            [max setValue:([min value] + step < xi.max) ? [min value] + step : xi.max];
+         }
       }];
    }
    // Note that you will always reach this point.
    // so you will return from this shave method normally.
    // Hence the caller should shave left, shave right and when that is all
    // done, it can resume branching. So the top-level should also change.
-   
-   
-   /**
-   [_search applyController:t in:^{
-      [_search repeat:^{
-//         id<ORSearchController> new     = [[_search controllerFactory] makeNestedController];
-//         contr = [[ORNestedController alloc] init:new parent:[_search controller]];
-//         [new release];
-//         [_search setController:contr];
-         [_search tryall:RANGE(self, 0, 0) suchThat:nil in:^(ORInt i) {
-            LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
-            [self floatIntervalImpl:xi low:[min value] up:[max value]];
-         } onFailure:^(ORInt i) {
-            //set to handle finetely failed
-            NSLog(@"fail");
-            hasfailed = YES;
-         }];
-      } onRepeat:^{
-         if([min value] == [max value]) return;
-         [percent setValue:[percent value]*c];
-         sw = s * ([percent value]/100);
-         next();
-         [t reset];
-         hasfailed=NO;
-      } until:^ORBool{
-//         ORBool test = (contr != nil) && [contr isFinitelyFailed];
-//         NSLog(@"-> %s",(test)?"YES":"NO");
-         return hasfailed == NO || [t maxDepth] > 2;
-      }];
-   } ];
-   **/
 }
 //split in 2 intervals Once
--(void) floatSplit:(id<ORFloatVar>) x
+-(void) floatSplit:(id<ORFloatVar>) x call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    if([xi bound]) return;
@@ -2469,7 +2441,7 @@
     ];
 }
 //split in 3 intervals Once
--(void) float3WaySplit:(id<ORFloatVar>) x
+-(void) float3WaySplit:(id<ORFloatVar>) x call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    if([xi bound]) return;
@@ -2497,7 +2469,7 @@
    }];
 }
 //split in 5 intervals Once
--(void) float5WaySplit:(id<ORFloatVar>) x
+-(void) float5WaySplit:(id<ORFloatVar>) x call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    if([xi bound]) return;
@@ -2539,7 +2511,7 @@
    }];
 }
 //split in 6 intervals Once
--(void) float6WaySplit: (id<ORFloatVar>) x
+-(void) float6WaySplit: (id<ORFloatVar>) x call:(SEL)s withVars:(id<ORFloatVarArray>) vars
 {
    id<CPFloatVar> xi = _gamma[getId(x)];
    if([xi bound]) return;
@@ -2635,7 +2607,7 @@
 {
    [_search switchOnDepth: s1 to: s2 limit: depth];
 }
--(void) switchSearchOnDepthUsingProperties:(ORDouble(^)(id<ORFloatVar>)) criteria1 to: (ORDouble(^)(id<ORFloatVar>)) criteria2 do:(void(^)(id<ORFloatVar>))b limit: (ORInt) depth restricted:(id<ORFloatVarArray>) x
+-(void) switchSearchOnDepthUsingProperties:(ORDouble(^)(id<ORFloatVar>)) criteria1 to: (ORDouble(^)(id<ORFloatVar>)) criteria2 do:(void(^)(id<ORFloatVar>,SEL,id<ORFloatVarArray>))b limit: (ORInt) depth restricted:(id<ORFloatVarArray>) x
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
    id<ORSelect> select = [ORFactory select: _engine
@@ -2660,13 +2632,13 @@
    [[self explorer] applyController:t in:^{
       do {
          ORSelectorResult i;
-         if([t depth] > depth)
+         if([t maxDepth] > depth)
             i = [select min];
          else
             i = [select2 min];
          if (!i.found)
             break;
-         b(x[i.index]);
+         b(x[i.index],@selector(switchSearchOnDepthUsingProperties:to:do:limit:restricted:),x);
       } while (true);
    }];
 }
@@ -3778,4 +3750,3 @@
    return [NSString stringWithFormat:@"<%lf,%@>",_quantity,_choice];
 }
 @end
-

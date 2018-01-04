@@ -416,6 +416,7 @@ typedef int (^intgetter) (void) ;
 
 @interface CP3BGroup : CPCoreConstraint<CPGroup>
 -(id)   init: (id<CPEngine>) engine;
+-(void) addVars:(NSMutableSet*) v;
 -(void) post;
 -(void) propagate;
 @end

@@ -31,8 +31,8 @@ int main(int argc, const char * argv[]) {
          fesetround(FE_TONEAREST);
          id<ORModel> model = [ORFactory createModel];
          
-         id<ORFloatVar> x = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
-         id<ORFloatVar> res = [ORFactory floatVar:model];
+         id<ORFloatVar> x = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f name:@"x"];
+         id<ORFloatVar> res = [ORFactory floatVar:model name:@"res"];
          [model add:[res eq:[[[x sub:
                                [[x mul:[x mul:x]] div:@(6.0f)]] plus:
                               [[x mul:[x mul:[x mul:[x mul:x]]]] div:@(120.0f)]] plus:

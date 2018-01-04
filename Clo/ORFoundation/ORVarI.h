@@ -70,6 +70,9 @@
 -(ORFloatVarI*) init: (id<ORTracker>) tracker domain:(id<ORFloatRange>)dom;
 -(ORFloatVarI*) init: (id<ORTracker>) tracker up: (ORFloat) up;
 -(ORFloatVarI*) init: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
+-(ORFloatVarI*) init: (id<ORTracker>) tracker name:(NSString*) name;
+-(ORFloatVarI*) init: (id<ORTracker>) tracker up: (ORFloat) up name:(NSString*) name;
+-(ORFloatVarI*) init: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up name:(NSString*) name;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
