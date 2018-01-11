@@ -29,8 +29,7 @@ int main(int argc, const char * argv[])
          id<ORFloatVarArray> vars = [model floatVars];
          
          [model add:[x leq: y]];
-         
-         id<ORGroup> g0 = [ORFactory group3B:model];
+         id<ORGroup> g0 = [ORFactory group:model];
          {
             [g0 add:[x eq: y]];
          }
@@ -41,7 +40,7 @@ int main(int argc, const char * argv[])
          __block BOOL found = false;
          id<CPProgram>   cps = [args makeProgram:model annotation:notes];
          __block int nbSol = 0;
-         [cps solveAll:^{
+         [cps solve:^{
             //[cps label:y with:10];
             //[cps gthen:y with:9];
 //            for(id<ORIntVar> v in vars)

@@ -415,8 +415,10 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CP3BGroup : CPCoreConstraint<CPGroup>
--(id)   init: (id<CPEngine>) engine;
--(void) addVars:(NSMutableSet*) v;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer;
+-(void) add: (id<CPConstraint>) p;
+-(void) assignIdToConstraint:(id<ORConstraint>)c;
+-(void) addVars:(NSSet*) v;
 -(void) post;
 -(void) propagate;
 @end

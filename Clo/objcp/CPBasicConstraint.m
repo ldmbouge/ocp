@@ -2663,7 +2663,6 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    [_engine incNbPropagation:add];
 }
-
 - (id<ORTrail>)trail
 {
    return [_engine trail];
@@ -2808,21 +2807,28 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 @implementation CP3BGroup {
    CPEngineI*               _engine;
+   id<ORTracer>             _tracer;
+   id<CPGroup>*              _inGroup;
+   ORInt                    _nbIn;
+   ORInt                    _max;
    NSMutableSet*            _vars;
 }
--(id)   init: (id<CPEngine>) engine
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer
 {
    self = [super initCPCoreConstraint:engine];
    _engine = engine;
+   _tracer = tracer;
+   _nbIn = 0;
+   _inGroup = malloc(sizeof(id<CPConstraint>)*_max);
    _vars = [[NSMutableSet alloc] init];
    return self;
 }
 -(void)dealloc
 {
+   free(_inGroup);
    [_vars release];
    [super dealloc];
 }
-
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -2830,7 +2836,24 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [buf appendString:@"\n\t>"];
    return buf;
 }
--(void) addVars:(NSMutableSet *)vars
+-(void)add:(id<CPGroup>) p
+{
+   if (_nbIn == _max) {
+      _inGroup = realloc(_inGroup,sizeof(id<CPConstraint>)*_max*2);
+      _max <<= 1;
+   }
+   _inGroup[_nbIn++] = p;
+   [p setGroup:self];
+   [self assignIdToConstraint:p];
+   @autoreleasepool{
+      [self addVars:[p allVars]];
+   }
+}
+-(void)assignIdToConstraint:(id<ORConstraint>)c
+{
+   [_engine assignIdToConstraint:c];
+}
+-(void) addVars:(NSSet *)vars
 {
    for(id<CPVar> v in vars)
       [_vars addObject:v];
@@ -2839,9 +2862,14 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    [self propagate];
 }
+-(void) internalPorpagate
+{
+   for(ORInt i=0;i<_nbIn;i++) {
+      [_inGroup[i] propagate];
+   }
+}
 -(void) propagate
 {
-   ORBool failed = true;
    ORStatus s = ORSuspend;
    ORLDouble size;
    ORDouble step;
@@ -2852,49 +2880,40 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       percent = 10;
       min = v.min;
       max = (v.min == -infinityf()) ? -maxnormalf() : v.min;
-      while (failed) {
+      while (s==ORFailure) {
+         [_tracer pushNode];
          step = size * (percent/100.f);
          max = (min + step < v.max) ? min+step : max;
          s=tryfail(^ORStatus{
-            
-            //propage constraint of the group
-            //enforce min,max
+            [v updateInterval:min and:max];
+            [self internalPorpagate];
             return ORSuccess;
          }, ^ORStatus{
             return ORFailure;
          });
-         failed = (s==ORFailure);
          percent*=2;
+         if(s==ORFailure)
+            [_tracer popNode];
       }
-      //restore
-      //enforce last failed domain and propagate
       percent = 10;
       max = v.max;
       min = (v.max == infinityf()) ? maxnormalf() : v.max;
-      while (failed) {
+      while (s==ORFailure) {
+         [_tracer pushNode];
          step = size * (percent/100.f);
          min = (max - step > v.min) ? max-step : min;
          s=tryfail(^ORStatus{
-            //enforce min,max
+            [v updateInterval:min and:max];
+            [self internalPorpagate];
             return ORSuccess;
          }, ^ORStatus{
             return ORFailure;
          });
-         failed = (s==ORFailure);
          percent*=2;
+         if(s==ORFailure)
+            [_tracer popNode];
       }
-      //restore
-      //enforce last failed domain and propagate
    }
-}
--(void) add: (id<CPGroup>) p
-{
-   [p setGroup:self];
-   [_engine assignIdToConstraint:p];
-}
--(void) assignIdToConstraint:(id<ORConstraint>)c
-{
-   [_engine assignIdToConstraint:c];
 }
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c
 {

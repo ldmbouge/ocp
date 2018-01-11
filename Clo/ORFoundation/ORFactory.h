@@ -25,6 +25,7 @@
 @protocol ORTRIntArray;
 @protocol ORTRIntMatrix;
 @protocol ORAutomaton;
+@protocol ORDisabledFloatVarArray;
 @protocol ORRealVarArray;
 @protocol ORFloatVarArray;
 @protocol ORDoubleVarArray;
@@ -170,7 +171,8 @@ PORTABLE_BEGIN
 
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up;
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
-
++(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo;
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>) engine;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 

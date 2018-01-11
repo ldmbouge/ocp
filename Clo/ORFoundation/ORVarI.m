@@ -911,3 +911,91 @@
    return rv;
 }
 @end
+
+
+@implementation ORDisabledFloatVarArrayI{
+   id<ORFloatVarArray>          _vars;
+   id<ORTrailableIntArray>      _disabled;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORSearchEngine>)engine range:(id<ORIntRange>)range
+{
+   self = [super init];
+   _vars = [ORFactory floatVarArray:engine range:range];
+   _disabled = [ORFactory trailableIntArray:engine range:range value:0];
+   return self;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine
+{
+   self = [super init];
+   _vars = vars;
+   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   return self;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine with:(ORInt(^)(ORInt)) clo
+{
+   self = [super init];
+   _vars = vars;
+   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   for(ORInt k = [vars range].low; k <= [vars range].up; k++)
+      [_disabled[k] setValue:clo(k)];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<ORFloatVar>) at: (ORInt) value
+{
+   return [_vars at:value];
+}
+-(void) set: (id<ORFloatVar>) x at: (ORInt) value
+{
+   [_vars set:x at:value];
+}
+-(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key
+{
+   return [_vars objectAtIndexedSubscript:key];
+}
+-(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx
+{
+   [_vars setObject:newValue atIndexedSubscript:idx];
+}
+-(id<ORASolver>) solver
+{
+   return [_vars solver];
+}
+-(void) disable:(ORUInt) index
+{
+   [_disabled[index] setValue:1];
+}
+-(void) enable:(ORUInt) index
+{
+   [_disabled[index] setValue:0];
+}
+-(ORInt) isEnable:(ORUInt) index
+{
+   return ![_disabled[index] value];
+}
+-(id<ORIntRange>) range
+{
+   return [_vars range];
+}
+-(ORInt) low
+{
+   return [_vars low];
+}
+-(ORInt) up
+{
+   return [_vars up];
+}
+-(NSUInteger) count
+{
+   return [_vars count];
+}
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
+                                  objects:(id *)stackbuf
+                                    count:(NSUInteger)len
+{
+  return [_vars countByEnumeratingWithState:state objects:stackbuf count:len];
+}
+@end

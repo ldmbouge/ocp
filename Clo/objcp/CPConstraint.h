@@ -15,7 +15,7 @@
 @interface CPFactory (Constraint)
 +(id<CPGroup>)group:(id<CPEngine>)engine guard:(id<CPIntVar>)guard;
 +(id<CPGroup>)cdisj:(id<CPEngine>)engine originals:(id<CPVarArray>)origs  varmap:(NSArray*)vm;
-+(id<CPGroup>)group3B:(id<CPEngine>)engine;
++(id<CPGroup>)group3B:(id<CPEngine>)engine tracer:(id<ORTracer>) tracer;
 
 +(id<CPConstraint>) fail:(id<CPEngine>)engine;
 +(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x;

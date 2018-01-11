@@ -295,7 +295,6 @@
     ORFloatArrayI* o = [[ORFloatArrayI alloc] init: tracker range:range value:0];
     return [tracker trackMutable: o];
 }
-
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:RANGE(tracker,0,(ORInt)[array count] - 1)];
@@ -667,6 +666,17 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
         [o set:[ORFactory floatVar:tracker] at:k];
     return (id<ORFloatVarArray>)o;
 }
++(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set:clo(k) at:k];
+   return (id<ORFloatVarArray>)o;
+}
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>) engine
+{
+   return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
+}
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
 {
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -788,7 +798,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [self intVarArray:cp range:r1 :r2 with:clo];
 }
-
 +(id<ORTrailableIntArray>) trailableIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) range value: (ORInt) value
 {
    id<ORIdArray> o = [ORFactory idArray:engine range:range];
@@ -802,7 +811,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [engine trackMutable: o];
    return o;
 }
-
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
 {
    ORTRIntMatrixI* o = [[ORTRIntMatrixI alloc] initORTRIntMatrix: engine range: R1 : R2];

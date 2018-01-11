@@ -140,3 +140,21 @@
 -(BOOL) exist: (ORInt) i;
 -(NSString*) description;
 @end
+
+
+@interface ORDisabledFloatVarArrayI : ORObject<ORDisabledFloatVarArray>
+-(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine;
+-(id<ORDisabledFloatVarArray>) init:(id<ORSearchEngine>)engine range:(id<ORIntRange>)range;
+-(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine with:(ORInt(^)(ORInt)) clo;
+-(id<ORFloatVar>) at: (ORInt) value;
+-(void) set: (id<ORFloatVar>) x at: (ORInt) value;
+-(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger) count;
+-(void) disable:(ORUInt) index;
+-(void) enable:(ORUInt) index;
+-(ORInt) isEnable:(ORUInt) index;
+@end

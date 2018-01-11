@@ -28,12 +28,12 @@ int main(int argc, const char * argv[]) {
          
          id<ORModel> model = [ORFactory createModel];
          
-         id<ORFloatVar> x6_0 = [ORFactory floatVar:model low:4.f up:6.36f];
+         id<ORFloatVar> x1_0 = [ORFactory floatVar:model low:4.f up:6.36f];
+         id<ORFloatVar> x2_0 = [ORFactory floatVar:model low:4.f up:6.36f];
+         id<ORFloatVar> x3_0 = [ORFactory floatVar:model low:4.f up:6.36f];
          id<ORFloatVar> x4_0 = [ORFactory floatVar:model low:4.f up:6.36f];
          id<ORFloatVar> x5_0 = [ORFactory floatVar:model low:4.f up:6.36f];
-         id<ORFloatVar> x2_0 = [ORFactory floatVar:model low:4.f up:6.36f];
-         id<ORFloatVar> x1_0 = [ORFactory floatVar:model low:4.f up:6.36f];
-         id<ORFloatVar> x3_0 = [ORFactory floatVar:model low:4.f up:6.36f];
+         id<ORFloatVar> x6_0 = [ORFactory floatVar:model low:4.f up:6.36f];
          id<ORFloatVar> res_0 = [ORFactory floatVar:model];
          
          id<ORExpr> expr_unop = [ORFactory float:model value:0.f];
@@ -49,7 +49,6 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
             
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             found=true;

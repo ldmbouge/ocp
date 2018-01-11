@@ -116,6 +116,21 @@ PORTABLE_BEGIN
 -(id<ORASolver>) solver;
 @end
 
+@protocol ORDisabledFloatVarArray <ORObject,NSFastEnumeration>
+-(id<ORFloatVar>) at: (ORInt) value;
+-(void) set: (id<ORFloatVar>) x at: (ORInt) value;
+-(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+-(id<ORIntRange>) range;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger) count;
+-(void) disable:(ORInt) index;
+-(void) enable:(ORInt) index;
+-(ORBool) isEnable:(ORInt) index;
+@end
+
 @protocol ORDoubleVarArray <ORVarArray>
 -(id<ORDoubleVar>) at: (ORInt) value;
 -(void) set: (id<ORDoubleVar>) x at: (ORInt) value;

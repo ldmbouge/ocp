@@ -46,9 +46,9 @@
    [engine trackMutable:g];
    return g;
 }
-+(id<CPGroup>) group3B:(id<CPEngine>)engine
++(id<CPGroup>) group3B:(id<CPEngine>)engine tracer:(id<ORTracer>)tracer
 {
-   id<CPGroup> g = [[CP3BGroup alloc] init:engine];
+   id<CPGroup> g = [[CP3BGroup alloc] init:engine tracer:tracer];
    [engine trackMutable:g];
    return g;
 }
