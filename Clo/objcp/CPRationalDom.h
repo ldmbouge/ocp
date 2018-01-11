@@ -31,7 +31,7 @@
 -(ORRational*) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORLDouble) domwidth;
+//-(ORLDouble) domwidth;
 -(TRRationalInterval) domain;
 -(ORBool) member:(ORRational)v;
 -(id) copy;

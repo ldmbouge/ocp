@@ -109,7 +109,7 @@
     ORIReady();
     return createORI2(mpq_get_d(_domain._low), mpq_get_d(_domain._up));
 }
--(ORLDouble) domwidth
+/*-(ORLDouble) domwidth
 {
     //ORDouble min = _domain._low;//(_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
     //ORDouble max = _domain._up;//(_domain._up == infinityf()) ? FLT_MAX : _domain._up;
@@ -118,7 +118,7 @@
     ORRational width;
     mpq_sub(width, _domain._up, _domain._low);
     return  mpq_get_d(width);
-}
+}*/
 -(TRRationalInterval) domain
 {
     return _domain;

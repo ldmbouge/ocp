@@ -29,7 +29,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatEqualc : CPCoreConstraint {
+@interface CPFloatEqualc : CPCoreConstraint {   
     CPFloatVarI* _x;
     ORFloat      _c;
 }
@@ -105,6 +105,9 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
+    CPRationalVarI* _ez;
+    CPRationalVarI* _ex;
+    CPRationalVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;

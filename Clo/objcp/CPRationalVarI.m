@@ -596,28 +596,24 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
     ORRational * _min = NULL;
     mpq_set_d(*_min, [_theVar min]);
     return _min;
-    //return [_theVar min];
 }
 -(ORRational*) max
 {
     ORRational * _max = NULL;
     mpq_set_d(*_max, [_theVar max]);
     return _max;
-    //return [_theVar max];
 }
 -(ORRational*) value
 {
     ORRational * _value = NULL;
     mpq_set_d(*_value, [_theVar min]);
     return _value;
-    //return [_theVar min];
 }
 -(ORRational*)rationalValue
 {
     ORRational * _rationalValue = NULL;
     mpq_set_d(*_rationalValue, [_theVar min]);
     return _rationalValue;
-    //return [_theVar min];
 }
 -(void) assignRelaxationValue: (ORRational) f
 {
