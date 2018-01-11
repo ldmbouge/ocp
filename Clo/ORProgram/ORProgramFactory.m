@@ -130,21 +130,6 @@
    [ncpy release];
 }
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes level:(ORInt)l
-{
-   __block id<CPProgram> cpprogram = [CPSolverFactory solver];
-   [(CPCoreSolver*)cpprogram setLevel:l];
-   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
-   id<ORSolutionPool> sp = [cpprogram solutionPool];
-   [cpprogram onSolution:^{
-      id<ORSolution> s = [cpprogram captureSolution];
-      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
-      [sp addSolution: s];
-      [s release];
-   }];
-   return cpprogram;
-}
-
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {
    __block id<CPProgram> cpprogram = [CPSolverFactory solver];

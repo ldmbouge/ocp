@@ -58,6 +58,7 @@
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
 -(void) setLevel:(ORInt) level;
+-(void) setUnique:(ORBool) u;
 -(id<ORModel>)source;
 -(ORBool) ground;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;

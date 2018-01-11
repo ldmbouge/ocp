@@ -154,6 +154,7 @@
    id<CPPortal>          _portal;
    
    ORInt                 _level;
+   ORBool                 _unique;
    
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
@@ -178,6 +179,8 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
+   _level = 0;
+   _unique = NO;
    _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnSolArray     = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnExitArray    = [[NSMutableArray alloc] initWithCapacity: 1];
@@ -333,6 +336,10 @@
 -(void) setLevel:(ORInt) level
 {
    _level = level;
+}
+-(void) setUnique:(ORBool) u
+{
+   _unique = u;
 }
 -(void) addHeuristic: (id<CPHeuristic>) h
 {
@@ -1569,6 +1576,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxCardinalitySearch:do:),x);
@@ -1605,6 +1614,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minCardinalitySearch:do:),x);
@@ -1640,6 +1651,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxDensitySearch:do:),x);
@@ -1674,6 +1687,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minDensitySearch:do:),x);
@@ -1711,6 +1726,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxWidthSearch:do:),x);
@@ -1748,6 +1765,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minWidthSearch:do:),x);
@@ -1785,6 +1804,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxMagnitudeSearch:do:),x);
@@ -1822,6 +1843,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minMagnitudeSearch:do:),x);
@@ -1853,7 +1876,6 @@
    if(disabled.found){
       [x enable:disabled.index];
       [self float6WaySplit:disabled.index call:s withVars:x];
-      
    }
 }
 //lexicalorder
@@ -1886,6 +1908,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(lexicalOrderedSearch:do:),x);
@@ -1926,6 +1950,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxDegreeSearch:do:),x);
@@ -1959,8 +1985,14 @@
       do {
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minDegreeSearch:do:),x);
       } while (true);
@@ -1998,6 +2030,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxOccurencesSearch:do:),x);
@@ -2037,6 +2071,9 @@
             i.index = disabled.index;
             [x enable:i.index];
          }
+         else if(_unique){
+            [x disable:i.index];
+         }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minOccurencesSearch:do:),x);
       } while (true);
@@ -2071,6 +2108,9 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         }
+         else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxAbsorptionSearch:do:),x);
@@ -2109,6 +2149,8 @@
                   break;
                i.index = disabled.index;
                [x enable:i.index];
+            } else if(_unique){
+               [x disable:i.index];
             }
             id<CPFloatVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
@@ -2147,6 +2189,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minAbsorptionSearch:do:),x);
@@ -2185,6 +2229,8 @@
                   break;
                i.index = disabled.index;
                [x enable:i.index];
+            } else if(_unique){
+               [x disable:i.index];
             }
             id<CPFloatVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
@@ -2224,6 +2270,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxCancellationSearch:do:),x);
@@ -2259,6 +2307,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minCancellationSearch:do:),x);
@@ -2309,6 +2359,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          ORDouble choosed = 0.0;
          ORDouble val = 0.0; //max density is 1
@@ -2378,6 +2430,8 @@
                break;
             i.index = disabled.index;
             [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
          }
          ORDouble choosed = 0.0;
          ORDouble val = 0.0;
@@ -2543,8 +2597,8 @@
          [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
       }];
    }else{
-      [self shave:index direction:-1 percent:5.f coef:2 call:s withVars:x];
-      [self shave:index direction:1 percent:5.f coef:2 call:s withVars:x];
+      [self shave:index direction:-1 percent:10.f coef:2 call:s withVars:x];
+      [self shave:index direction:1 percent:10.f coef:2 call:s withVars:x];
       //for splitting percent 50 and coef 0.5 ?
       // now x is shaved on both-end. Proceed with a normal dichotomy
       // on x and recur.
@@ -2591,11 +2645,10 @@
             // If it succeeds, goon = NO.
             // If it fails, onSolution is never called and you can check the depth of the
             // search with the controller t.
-            [x disable:index];
             [self performSelector:s withObject:x withObject:^(ORUInt ind, SEL call,id<ORDisabledFloatVarArray> vs){
-               [self float3BSplit:ind call:call withVars:vs];
+//               [self float3BSplit:ind call:call withVars:vs];
 //               [self float6WaySplit:ind call:call withVars:vs];
-//               [self floatSplit:ind call:call withVars:vs];
+               [self floatSplit:ind call:call withVars:vs];
             }];
          }];
       } onSolution:^{

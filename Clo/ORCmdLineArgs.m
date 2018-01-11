@@ -32,6 +32,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 @synthesize nbThreads;
 @synthesize nArg;
 @synthesize level;
+@synthesize unique;
 @synthesize fName;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
@@ -55,6 +56,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    timeOut = 60;
    nbThreads = 0;
    level = 0;
+   unique = NO;
    fName = @"";
    randomized = NO;
    for(int k = 1;k< argc;k++) {
@@ -80,6 +82,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          defaultAbsSplit = atoi(argv[k]+3);
       else if (strncmp(argv[k],"-l",2)==0)
          level = atoi(argv[k]+2);
+      else if (strncmp(argv[k],"-u",1)==0)
+         unique=YES;
    }
    return self;
 }
@@ -138,8 +142,13 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 }
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
+   id<CPProgram> p = nil;
    switch(nbThreads) {
-      case 0: return [ORFactory createCPProgram:model annotation:notes level:level];
+      case 0:
+         p = [ORFactory createCPProgram:model annotation:notes];
+         [(CPCoreSolver*)p setLevel:level];
+         [(CPCoreSolver*)p setUnique:unique];
+         return p;
       case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];
    }
