@@ -41,9 +41,9 @@ int main(int argc, const char * argv[])
          id<CPProgram>   cps = [args makeProgram:model annotation:notes];
          __block int nbSol = 0;
          [cps solve:^{
+#warning Claude si tu veux que ça effectue un search tu dois décommenter la ligne suivante
 //            [args launchHeuristic:cps restricted:vars];
-            //[cps label:y with:10];
-            //[cps gthen:y with:9];
+            NSLog(@"Domaines finaux");
             for(id<ORFloatVar> v in vars)
                NSLog(@"%@ bound : (%s) %@\n ",v,[cps bound:v]?"YES":"NO",[cps concretize:v]);
 //            printf("\n");

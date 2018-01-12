@@ -2866,7 +2866,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) post
 {
+#warning Claude : Si tu commentes la ligne suivante la 2B ne sera pas appelé lors du post des contraintes
    [self internalPropagate];
+   //------------------
    [self propagate];
    for(id<CPFloatVar> v in _vars){
       [v whenChangeBoundsPropagate:self];
@@ -2880,6 +2882,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) propagate
 {
+#warning Claude : Si tu commentes la ligne suivante la 2B ne sera pas appelé lors de la propag contraintes
+   [self internalPropagate];
+   //------------------
    [self propagateSplitting];
 }
 -(void) propagateShaving
@@ -2946,6 +2951,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    ORLDouble size;
    ORDouble epsilon;
    __block ORFloat min,max,mid;
+   NSLog(@"Variable avant 3B");
+   for(id<CPFloatVar> v in _vars){
+      NSLog(@"%@",v);
+   }
+   NSLog(@"-----------------");
    for(id<CPFloatVar> v in _vars){
       s = ORSuccess;
       size = [v domwidth];
@@ -2971,6 +2981,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          [v updateMin:min];
          [self internalPropagate];
       }
+      NSLog(@"Variable durant 3B : fin borne sup");
+      for(id<CPFloatVar> v in _vars){
+         NSLog(@"%@",v);
+      }
+      NSLog(@"-----------------");
       
       s = ORSuccess;
       size = [v domwidth];
@@ -2996,7 +3011,17 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          [v updateMax:max];
          [self internalPropagate];
       }
+      NSLog(@"Variable durant 3B : fin borne inf");
+      for(id<CPFloatVar> v in _vars){
+         NSLog(@"%@",v);
+      }
+      NSLog(@"-----------------");
    }
+   NSLog(@"Variable après 3B");
+   for(id<CPFloatVar> v in _vars){
+      NSLog(@"%@",v);
+   }
+   NSLog(@"-----------------");
 }
 
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c

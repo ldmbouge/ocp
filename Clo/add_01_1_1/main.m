@@ -8,15 +8,15 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> a = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
-         id<ORFloatVar> b = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
-         id<ORFloatVar> c = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
+         id<ORFloatVar> a = [ORFactory floatVar:model low:-1000.0f up:1000.0f name:@"a"];
+         id<ORFloatVar> b = [ORFactory floatVar:model low:-1000.0f up:1000.0f name:@"b"];
+         id<ORFloatVar> c = [ORFactory floatVar:model low:-1000.0f up:1000.0f name:@"c"];
          
-         id<ORFloatVar> assoc1 = [ORFactory floatVar:model];
-         id<ORFloatVar> assoc2 = [ORFactory floatVar:model];
-         id<ORFloatVar> diffab = [ORFactory floatVar:model];
-         id<ORFloatVar> diffac = [ORFactory floatVar:model];
-         id<ORFloatVar> diffbc = [ORFactory floatVar:model];
+         id<ORFloatVar> assoc1 = [ORFactory floatVar:model name:@"assoc1"];
+         id<ORFloatVar> assoc2 = [ORFactory floatVar:model name:@"asooc2"];
+         id<ORFloatVar> diffab = [ORFactory floatVar:model name:@"diffab"];
+         id<ORFloatVar> diffac = [ORFactory floatVar:model name:@"diffac"];
+         id<ORFloatVar> diffbc = [ORFactory floatVar:model name:@"diffbc"];
          
          
          id<ORFloatVar> delta = [ORFactory floatVar:model low:0.1f up:0.1f];
@@ -26,11 +26,11 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> infinity = [ORFactory infinityf:model];
          id<ORExpr> sub_infinity = [ORFactory float:model value:-INFINITY];
          
-         [model add:[delta gt:@(0.0f)]];
-         [model add:[epsilon gt:@(0.0f)]];
+//         [model add:[delta gt:@(0.0f)]];
+//         [model add:[epsilon gt:@(0.0f)]];
          
-         [model add:[a geq:b]];
-         [model add:[b geq:c]];
+//         [model add:[a geq:b]];
+//         [model add:[b geq:c]];
          
          [model add:[diffab eq:[a sub:b]]];
          [model add:[diffac eq:[a sub:c]]];
@@ -38,19 +38,19 @@ int main(int argc, const char * argv[]) {
          
          [model add:[diffab leq:delta]];
          [model add:[diffac leq:delta]];
-         [model add:[diffbc leq:delta]];
+//         [model add:[diffbc leq:delta]];
          
-         [model add:[assoc1 eq:[[a plus:b] plus:c]]];
-         [model add:[assoc2 eq:[a plus:[b plus:c]]]];
+//         [model add:[assoc1 eq:[[a plus:b] plus:c]]];
+//         [model add:[assoc2 eq:[a plus:[b plus:c]]]];
          
-         [model add:[assoc1 neq:infinity]];
-         [model add:[assoc1 neq:sub_infinity]];
+//         [model add:[assoc1 neq:infinity]];
+//         [model add:[assoc1 neq:sub_infinity]];
+//
+//         [model add:[assoc2 neq:infinity]];
+//         [model add:[assoc2 neq:sub_infinity]];
          
-         [model add:[assoc2 neq:infinity]];
-         [model add:[assoc2 neq:sub_infinity]];
          
-         
-         [model add:[[assoc1 sub:assoc2] gt:epsilon]];
+//         [model add:[[assoc1 sub:assoc2] gt:epsilon]];
          
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
