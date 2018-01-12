@@ -280,21 +280,16 @@
 {
    if (_gamma[g.getId] == NULL) {
       CP3BGroup* cg = [CPFactory group3B: _engine tracer:[_solver tracer]];
-//      [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
-//      id<CPEngine> old = _engine;
-//      _engine = (id)cg;
-//      NSMutableSet* vars = [[NSMutableSet alloc] init];
-//      @autoreleasepool{
-//         [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
-//            [ck visit:self];
-//            //vars should be originals or concrete one ?
-//       //     [vars unionSet:[_gamma[getId(ck)] allVars]];
-//         }];
-//      }
-//    //  [cg addVars:vars];
-//      [vars release];
-//      _engine = old;
-//      _gamma[g.getId] = cg;
+      [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
+      id<CPEngine> old = _engine;
+      _engine = (id)cg;
+      @autoreleasepool{
+         [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+            [ck visit:self];
+         }];
+      }
+      _engine = old;
+      _gamma[g.getId] = cg;
    }
 }
 -(void) visitFail:(id<ORFail>)cstr

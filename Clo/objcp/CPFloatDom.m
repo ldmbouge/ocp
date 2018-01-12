@@ -116,7 +116,7 @@
 {
     ORDouble min = (_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
     ORDouble max = (_domain._up == infinityf()) ? FLT_MAX : _domain._up;
-    if(_domain._low == -infinityf() && _domain._up == infinityf()) return DBL_MAX;
+    if(_domain._low == -infinityf() && _domain._up == infinityf()) return (ORDouble)FLT_MAX+(ORDouble)FLT_MAX;
     return  max - min;
 }
 -(TRFloatInterval) domain

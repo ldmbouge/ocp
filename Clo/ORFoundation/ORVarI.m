@@ -998,4 +998,8 @@
 {
   return [_vars countByEnumeratingWithState:state objects:stackbuf count:len];
 }
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@)",_name,_vars,_disabled];
+}
 @end

@@ -23,15 +23,15 @@ int main(int argc, const char * argv[])
          id<ORModel> model = [ORFactory createModel];
          id<ORAnnotation> notes = [ORFactory annotation];
          
-         id<ORFloatVar> x = [ORFactory floatVar:model];
-         id<ORFloatVar> y = [ORFactory floatVar:model];
+         id<ORFloatVar> x = [ORFactory floatVar:model low:2.f up:4.f name:@"x"];
+         id<ORFloatVar> y = [ORFactory floatVar:model name:@"y"];
          
          id<ORFloatVarArray> vars = [model floatVars];
          
-         [model add:[x leq: y]];
-         id<ORGroup> g0 = [ORFactory group:model];
+//         [model add:[x leq: y]];
+         id<ORGroup> g0 = [ORFactory group3B:model];
          {
-            [g0 add:[x eq: y]];
+            [g0 add:[y eq: [[x mul:x] sub:[x mul:x]]]];
          }
          
          [model add:g0];
@@ -41,10 +41,11 @@ int main(int argc, const char * argv[])
          id<CPProgram>   cps = [args makeProgram:model annotation:notes];
          __block int nbSol = 0;
          [cps solve:^{
+//            [args launchHeuristic:cps restricted:vars];
             //[cps label:y with:10];
             //[cps gthen:y with:9];
-//            for(id<ORIntVar> v in vars)
-//               printf("%d ",[cps intValue:v]);
+            for(id<ORFloatVar> v in vars)
+               NSLog(@"%@ bound : (%s) %@\n ",v,[cps bound:v]?"YES":"NO",[cps concretize:v]);
 //            printf("\n");
             nbSol++;
          }];

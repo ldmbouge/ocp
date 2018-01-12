@@ -2811,6 +2811,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    id<CPGroup>*              _inGroup;
    ORInt                    _nbIn;
    ORInt                    _max;
+   ORInt                    _percent;
    NSMutableSet*            _vars;
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer
@@ -2819,6 +2820,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    _engine = engine;
    _tracer = tracer;
    _nbIn = 0;
+   _max  = 2;
+   _percent = 5;
    _inGroup = malloc(sizeof(id<CPConstraint>)*_max);
    _vars = [[NSMutableSet alloc] init];
    return self;
@@ -2833,18 +2836,21 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<CP3BGroup(%p): ",self];
+   for(ORInt i=0;i<_nbIn;i++) {
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
+   }
    [buf appendString:@"\n\t>"];
    return buf;
 }
--(void)add:(id<CPGroup>) p
+-(void) add: (id<CPGroup>) p
 {
-   if (_nbIn == _max) {
-      _inGroup = realloc(_inGroup,sizeof(id<CPConstraint>)*_max*2);
-      _max <<= 1;
+   [p setGroup:self];
+   if (_nbIn >= _max) {
+      _inGroup = realloc(_inGroup,sizeof(id<CPGroup>)* _max * 2);
+      _max *= 2;
    }
    _inGroup[_nbIn++] = p;
-   [p setGroup:self];
-   [self assignIdToConstraint:p];
+   [_engine assignIdToConstraint:p];
    @autoreleasepool{
       [self addVars:[p allVars]];
    }
@@ -2860,9 +2866,13 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) post
 {
+   [self internalPropagate];
    [self propagate];
+   for(id<CPFloatVar> v in _vars){
+      [v whenChangeBoundsPropagate:self];
+   }
 }
--(void) internalPorpagate
+-(void) internalPropagate
 {
    for(ORInt i=0;i<_nbIn;i++) {
       [_inGroup[i] propagate];
@@ -2870,51 +2880,125 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) propagate
 {
-   ORStatus s = ORSuspend;
+   [self propagateSplitting];
+}
+-(void) propagateShaving
+{
+   ORStatus s;
    ORLDouble size;
    ORDouble step;
    ORInt percent;
-   ORFloat min,max;
+   __block ORFloat min,max,last;
    for(id<CPFloatVar> v in _vars){
+      s = ORFailure;
       size = [v domwidth];
-      percent = 10;
-      min = v.min;
-      max = (v.min == -infinityf()) ? -maxnormalf() : v.min;
+      percent = _percent;
+      last = max = min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
       while (s==ORFailure) {
          [_tracer pushNode];
          step = size * (percent/100.f);
          max = (min + step < v.max) ? min+step : max;
          s=tryfail(^ORStatus{
-            [v updateInterval:min and:max];
-            [self internalPorpagate];
+            [v updateMax:max];
+            [self internalPropagate];
             return ORSuccess;
          }, ^ORStatus{
+            last=max;
             return ORFailure;
          });
          percent*=2;
-         if(s==ORFailure)
-            [_tracer popNode];
+         [_tracer popNode];
       }
-      percent = 10;
-      max = v.max;
-      min = (v.max == infinityf()) ? maxnormalf() : v.max;
+      if(last != v.min){
+         [v updateMin:last];
+         [self internalPropagate];
+      }
+      
+      s=ORFailure;
+      size = [v domwidth];
+      percent = _percent;
+      last = max = min = (v.max == infinityf()) ? maxnormalf() : v.max;
       while (s==ORFailure) {
          [_tracer pushNode];
          step = size * (percent/100.f);
          min = (max - step > v.min) ? max-step : min;
          s=tryfail(^ORStatus{
-            [v updateInterval:min and:max];
-            [self internalPorpagate];
+            [v updateMin:min];
+            [self internalPropagate];
             return ORSuccess;
          }, ^ORStatus{
+            last = min;
             return ORFailure;
          });
          percent*=2;
-         if(s==ORFailure)
-            [_tracer popNode];
+        [_tracer popNode];
+      }
+      if(last != v.max){
+         [v updateMax:last];
+         [self internalPropagate];
       }
    }
 }
+
+-(void) propagateSplitting
+{
+   ORStatus s;
+   ORLDouble size;
+   ORDouble epsilon;
+   __block ORFloat min,max,mid;
+   for(id<CPFloatVar> v in _vars){
+      s = ORSuccess;
+      size = [v domwidth];
+      epsilon = size * (_percent/100.f);
+      min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
+      mid = max = (v.max == infinityf()) ? maxnormalf() : v.max;
+      epsilon += min;
+      while (s==ORSuccess && mid > epsilon) {
+         [_tracer pushNode];
+         mid = min/2 + max/2;
+         s=tryfail(^ORStatus{
+            [v updateMax:mid];
+            [self internalPropagate];
+            return ORSuccess;
+         }, ^ORStatus{
+            min=mid;
+            return ORFailure;
+         });
+         max=mid;
+         [_tracer popNode];
+      }
+      if(min != v.min){
+         [v updateMin:min];
+         [self internalPropagate];
+      }
+      
+      s = ORSuccess;
+      size = [v domwidth];
+      epsilon = size * (_percent/100.f);
+      min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
+      max = (v.max == infinityf()) ? maxnormalf() : v.max;
+      epsilon = max - epsilon;
+      while (s==ORSuccess && mid < epsilon) {
+         [_tracer pushNode];
+         mid = min/2 + max/2;
+         s=tryfail(^ORStatus{
+            [v updateMin:mid];
+            [self internalPropagate];
+            return ORSuccess;
+         }, ^ORStatus{
+            max = mid;
+            return ORFailure;
+         });
+         min=mid;
+         [_tracer popNode];
+      }
+      if(max != v.max){
+         [v updateMax:max];
+         [self internalPropagate];
+      }
+   }
+}
+
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c
 {
    assert(NO);
