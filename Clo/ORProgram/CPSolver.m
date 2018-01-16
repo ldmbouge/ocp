@@ -1556,8 +1556,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1579,6 +1582,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxCardinalitySearch:do:),x);
       } while (true);
@@ -1594,8 +1598,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1617,6 +1624,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minCardinalitySearch:do:),x);
       } while (true);
@@ -1632,8 +1640,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1654,6 +1665,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxDensitySearch:do:),x);
       } while (true);
@@ -1668,8 +1680,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1690,6 +1705,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minDensitySearch:do:),x);
       } while (true);
@@ -1705,9 +1721,13 @@
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+//                                     LOG(_level,2,@"%@",v);
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        [x enable:i];
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
                                         return false;
                                      }
                                      return ![v bound];
@@ -1729,6 +1749,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxWidthSearch:do:),x);
       } while (true);
@@ -1745,8 +1766,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1768,6 +1792,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minWidthSearch:do:),x);
       } while (true);
@@ -1783,8 +1808,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1807,6 +1835,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxMagnitudeSearch:do:),x);
       } while (true);
@@ -1822,8 +1851,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1846,6 +1878,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minMagnitudeSearch:do:),x);
       } while (true);
@@ -1874,6 +1907,7 @@
                 [self float6WaySplit:i call:s withVars:x];
              }];
    if(disabled.found){
+      disabled.found = NO;
       [x enable:disabled.index];
       [self float6WaySplit:disabled.index call:s withVars:x];
    }
@@ -1888,8 +1922,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1911,6 +1948,8 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
+         assert(![_gamma[getId(x[i.index])] bound]);
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(lexicalOrderedSearch:do:),x);
       } while (true);
@@ -1930,8 +1969,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1953,6 +1995,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxDegreeSearch:do:),x);
       } while (true);
@@ -1970,8 +2013,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -1993,6 +2039,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minDegreeSearch:do:),x);
       } while (true);
@@ -2010,8 +2057,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -2033,6 +2083,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxOccurencesSearch:do:),x);
       } while (true);
@@ -2050,8 +2101,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -2074,6 +2128,7 @@
          else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minOccurencesSearch:do:),x);
       } while (true);
@@ -2088,8 +2143,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -2112,6 +2170,7 @@
          else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxAbsorptionSearch:do:),x);
       } while (true);
@@ -2129,8 +2188,11 @@
                                      suchThat: ^ORBool(ORInt i) {
                                         id<CPFloatVar> v = _gamma[getId(x[i])];
                                         if(![x isEnable:i]){
-                                           disabled.found = YES;
-                                           disabled.index = i;
+                                           if(![v bound]){
+                                              disabled.found = YES;
+                                              disabled.index = i;
+                                           }
+                                           [x enable:i];
                                            return false;
                                         }
                                         return ![v bound];
@@ -2151,6 +2213,7 @@
                [x enable:i.index];
             } else if(_unique){
                [x disable:i.index];
+               disabled.found = NO;
             }
             id<CPFloatVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
@@ -2169,8 +2232,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -2192,6 +2258,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minAbsorptionSearch:do:),x);
       } while (true);
@@ -2209,8 +2276,11 @@
                                      suchThat: ^ORBool(ORInt i) {
                                         id<CPFloatVar> v = _gamma[getId(x[i])];
                                         if(![x isEnable:i]){
-                                           disabled.found = YES;
-                                           disabled.index = i;
+                                           if(![v bound]){
+                                              disabled.found = YES;
+                                              disabled.index = i;
+                                           }
+                                           [x enable:i];
                                            return false;
                                         }
                                         return ![v bound];
@@ -2232,6 +2302,7 @@
             } else if(_unique){
                [x disable:i.index];
             }
+            disabled.found = NO;
             id<CPFloatVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
             [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
@@ -2250,8 +2321,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -2273,6 +2347,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxCancellationSearch:do:),x);
       } while (true);
@@ -2287,8 +2362,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -2310,6 +2388,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minCancellationSearch:do:),x);
       } while (true);
@@ -2327,8 +2406,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -2362,6 +2444,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          ORDouble choosed = 0.0;
          ORDouble val = 0.0; //max density is 1
          for (ORInt j = 0; j < [considered count]; j++) {
@@ -2408,8 +2491,11 @@
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
                                      if(![x isEnable:i]){
-                                        disabled.found = YES;
-                                        disabled.index = i;
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
                                         return false;
                                      }
                                      return ![v bound];
@@ -2433,6 +2519,7 @@
          } else if(_unique){
             [x disable:i.index];
          }
+         disabled.found = NO;
          ORDouble choosed = 0.0;
          ORDouble val = 0.0;
          for (ORInt j = 0; j < [considered count]; j++) {
@@ -2597,8 +2684,8 @@
          [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
       }];
    }else{
-      [self shave:index direction:-1 percent:10.f coef:2 call:s withVars:x];
-      [self shave:index direction:1 percent:10.f coef:2 call:s withVars:x];
+      [self shave:index direction:-1 percent:5.f coef:2 call:s withVars:x];
+      [self shave:index direction:1 percent:5.f coef:2 call:s withVars:x];
       //for splitting percent 50 and coef 0.5 ?
       // now x is shaved on both-end. Proceed with a normal dichotomy
       // on x and recur.
@@ -2646,9 +2733,9 @@
             // If it fails, onSolution is never called and you can check the depth of the
             // search with the controller t.
             [self performSelector:s withObject:x withObject:^(ORUInt ind, SEL call,id<ORDisabledFloatVarArray> vs){
-//               [self float3BSplit:ind call:call withVars:vs];
+               [self float3BSplit:ind call:call withVars:vs];
 //               [self float6WaySplit:ind call:call withVars:vs];
-               [self floatSplit:ind call:call withVars:vs];
+//               [self floatSplit:ind call:call withVars:vs];
             }];
          }];
       } onSolution:^{

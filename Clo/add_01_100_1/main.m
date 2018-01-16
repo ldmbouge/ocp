@@ -51,6 +51,14 @@ int main(int argc, const char * argv[]) {
          
          [model add:[[assoc1 sub:assoc2] gt:epsilon]];
          
+//         [model add:[diffab eq:@(0.0f)]];
+//         [model add:[diffbc eq:@(9.9975585937500000e-02f)]];
+//         [model add:[diffac eq:@(9.9975585937500000e-02f)]];
+//         [model add:[assoc1 eq:@(0.0f)]];
+//         [model add:[assoc2 eq:@(-1.0000000762939453e+02)]];
+//         [model add:[a eq:@(-5.0000003814697266e+01f)]];
+//         
+         
          
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];

@@ -24,7 +24,7 @@ int main(int argc, const char * argv[])
          id<ORAnnotation> notes = [ORFactory annotation];
          
          id<ORFloatVar> x = [ORFactory floatVar:model low:2.f up:4.f name:@"x"];
-         id<ORFloatVar> y = [ORFactory floatVar:model name:@"y"];
+         id<ORFloatVar> y = [ORFactory floatVar:model low:-12.f up:1.f name:@"res"];
          
          id<ORFloatVarArray> vars = [model floatVars];
          
@@ -41,8 +41,7 @@ int main(int argc, const char * argv[])
          id<CPProgram>   cps = [args makeProgram:model annotation:notes];
          __block int nbSol = 0;
          [cps solve:^{
-#warning Claude si tu veux que ça effectue un search tu dois décommenter la ligne suivante
-//            [args launchHeuristic:cps restricted:vars];
+            [args launchHeuristic:cps restricted:vars];
             NSLog(@"Domaines finaux");
             for(id<ORFloatVar> v in vars)
                NSLog(@"%@ bound : (%s) %@\n ",v,[cps bound:v]?"YES":"NO",[cps concretize:v]);

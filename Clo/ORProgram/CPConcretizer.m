@@ -223,6 +223,9 @@
          case CDGroup:
             cg = [CPFactory group:_engine];  // TOFIX:ldm
             break;
+         case Group3B:
+            cg =  [CPFactory group3B: _engine tracer:[_solver tracer]];
+            break;
          default:
             cg = [CPFactory group:_engine];
             break;
@@ -283,11 +286,9 @@
       [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
       id<CPEngine> old = _engine;
       _engine = (id)cg;
-      @autoreleasepool{
-         [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
-            [ck visit:self];
-         }];
-      }
+      [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+         [ck visit:self];
+      }];
       _engine = old;
       _gamma[g.getId] = cg;
    }

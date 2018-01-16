@@ -18,8 +18,6 @@
    CPEngineI*               _engine;
    CPClosureQueue*          _closureQueue[NBPRIORITIES];
    CPValueClosureQueue*     _valueClosureQueue;
-   id<CPConstraint>*        _inGroup;
-   ORInt                    _nbIn;
    ORInt                    _max;
 }
 -(id)init:(CPEngineI*) engine

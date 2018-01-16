@@ -25,6 +25,10 @@
 @end
 
 @interface CPGroup : CPCoreConstraint<CPGroup>
+{
+   id<CPConstraint>*        _inGroup;
+   ORInt                    _nbIn;
+}
 -(id)   init: (id<CPEngine>) engine;
 -(void) add: (id<CPConstraint>) p;
 -(void) assignIdToConstraint:(id<ORConstraint>)c;

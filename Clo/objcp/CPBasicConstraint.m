@@ -2806,29 +2806,20 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 
 @implementation CP3BGroup {
-   CPEngineI*               _engine;
    id<ORTracer>             _tracer;
-   id<CPGroup>*              _inGroup;
-   ORInt                    _nbIn;
-   ORInt                    _max;
    ORInt                    _percent;
    NSMutableSet*            _vars;
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer
 {
-   self = [super initCPCoreConstraint:engine];
-   _engine = engine;
+   self = [super init:engine];
    _tracer = tracer;
-   _nbIn = 0;
-   _max  = 2;
    _percent = 5;
-   _inGroup = malloc(sizeof(id<CPConstraint>)*_max);
    _vars = [[NSMutableSet alloc] init];
    return self;
 }
 -(void)dealloc
 {
-   free(_inGroup);
    [_vars release];
    [super dealloc];
 }
@@ -2836,29 +2827,23 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<CP3BGroup(%p): ",self];
-   for(ORInt i=0;i<_nbIn;i++) {
-      [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
+   for(ORInt i=0; i < _nbIn;i++) {
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[_group[i] description]];
    }
    [buf appendString:@"\n\t>"];
    return buf;
 }
 -(void) add: (id<CPGroup>) p
 {
-   [p setGroup:self];
-   if (_nbIn >= _max) {
-      _inGroup = realloc(_inGroup,sizeof(id<CPGroup>)* _max * 2);
-      _max *= 2;
-   }
-   _inGroup[_nbIn++] = p;
-   [_engine assignIdToConstraint:p];
+   [super add:p];
    @autoreleasepool{
       [self addVars:[p allVars]];
    }
 }
--(void)assignIdToConstraint:(id<ORConstraint>)c
-{
-   [_engine assignIdToConstraint:c];
-}
+//-(void)assignIdToConstraint:(id<ORConstraint>)c
+//{
+//   [_engine assignIdToConstraint:c];
+//}
 -(void) addVars:(NSSet *)vars
 {
    for(id<CPVar> v in vars)
@@ -2866,26 +2851,12 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) post
 {
-#warning Claude : Si tu commentes la ligne suivante la 2B ne sera pas appelé lors du post des contraintes
-   [self internalPropagate];
-   //------------------
-   [self propagate];
-   for(id<CPFloatVar> v in _vars){
-      [v whenChangeBoundsPropagate:self];
-   }
-}
--(void) internalPropagate
-{
-   for(ORInt i=0;i<_nbIn;i++) {
-      [_inGroup[i] propagate];
-   }
+   [super post];
+   [super propagate];
+   [self propagateSplitting];
 }
 -(void) propagate
 {
-#warning Claude : Si tu commentes la ligne suivante la 2B ne sera pas appelé lors de la propag contraintes
-   [self internalPropagate];
-   //------------------
-   [self propagateSplitting];
 }
 -(void) propagateShaving
 {
@@ -2905,7 +2876,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          max = (min + step < v.max) ? min+step : max;
          s=tryfail(^ORStatus{
             [v updateMax:max];
-            [self internalPropagate];
+            [super propagate];// verifier que ca appel pas de 3B
             return ORSuccess;
          }, ^ORStatus{
             last=max;
@@ -2916,7 +2887,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       }
       if(last != v.min){
          [v updateMin:last];
-         [self internalPropagate];
+         [super propagate];
       }
       
       s=ORFailure;
@@ -2929,7 +2900,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          min = (max - step > v.min) ? max-step : min;
          s=tryfail(^ORStatus{
             [v updateMin:min];
-            [self internalPropagate];
+            [super propagate];
             return ORSuccess;
          }, ^ORStatus{
             last = min;
@@ -2940,7 +2911,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       }
       if(last != v.max){
          [v updateMax:last];
-         [self internalPropagate];
+         [super propagate];
       }
    }
 }
@@ -2968,7 +2939,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          mid = min/2 + max/2;
          s=tryfail(^ORStatus{
             [v updateMax:mid];
-            [self internalPropagate];
+            [super propagate];
             return ORSuccess;
          }, ^ORStatus{
             min=mid;
@@ -2979,13 +2950,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       }
       if(min != v.min){
          [v updateMin:min];
-         [self internalPropagate];
+         [super propagate];
       }
-      NSLog(@"Variable durant 3B : fin borne sup");
-      for(id<CPFloatVar> v in _vars){
-         NSLog(@"%@",v);
-      }
-      NSLog(@"-----------------");
       
       s = ORSuccess;
       size = [v domwidth];
@@ -2996,9 +2962,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       while (s==ORSuccess && mid < epsilon) {
          [_tracer pushNode];
          mid = min/2 + max/2;
+        
          s=tryfail(^ORStatus{
             [v updateMin:mid];
-            [self internalPropagate];
+            [super propagate];
             return ORSuccess;
          }, ^ORStatus{
             max = mid;
@@ -3009,13 +2976,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       }
       if(max != v.max){
          [v updateMax:max];
-         [self internalPropagate];
+         [super propagate];
       }
-      NSLog(@"Variable durant 3B : fin borne inf");
-      for(id<CPFloatVar> v in _vars){
-         NSLog(@"%@",v);
-      }
-      NSLog(@"-----------------");
    }
    NSLog(@"Variable après 3B");
    for(id<CPFloatVar> v in _vars){
@@ -3023,30 +2985,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    }
    NSLog(@"-----------------");
 }
-
--(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c
-{
-   assert(NO);
-}
--(void) scheduleClosure: (id<CPClosureList>) evt
-{
-   assert(NO);
-}
--(void)incNbPropagation:(ORUInt)add
-{
-   [_engine incNbPropagation:add];
-}
-
-- (id<ORTrail>)trail
-{
-   return [_engine trail];
-}
-
 - (void)visit:(ORVisitor *)visitor
 {}
-
 - (void)close
 {}
-
 @end
 

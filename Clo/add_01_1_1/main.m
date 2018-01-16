@@ -26,35 +26,36 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> infinity = [ORFactory infinityf:model];
          id<ORExpr> sub_infinity = [ORFactory float:model value:-INFINITY];
          
-//         [model add:[delta gt:@(0.0f)]];
-//         [model add:[epsilon gt:@(0.0f)]];
+         [model add:[delta gt:@(0.0f)]];
+         [model add:[epsilon gt:@(0.0f)]];
          
-//         [model add:[a geq:b]];
-//         [model add:[b geq:c]];
+         [model add:[a geq:b]];
+         [model add:[b geq:c]];
+         
+         
+         [model add:[diffab leq:delta]];
+         [model add:[diffac leq:delta]];
+         [model add:[diffbc leq:delta]];
          
          [model add:[diffab eq:[a sub:b]]];
          [model add:[diffac eq:[a sub:c]]];
          [model add:[diffbc eq:[b sub:c]]];
+         [model add:[assoc1 eq:[[a plus:b] plus:c]]];
+         [model add:[assoc2 eq:[a plus:[b plus:c]]]];
          
-         [model add:[diffab leq:delta]];
-         [model add:[diffac leq:delta]];
-//         [model add:[diffbc leq:delta]];
-         
-//         [model add:[assoc1 eq:[[a plus:b] plus:c]]];
-//         [model add:[assoc2 eq:[a plus:[b plus:c]]]];
-         
-//         [model add:[assoc1 neq:infinity]];
-//         [model add:[assoc1 neq:sub_infinity]];
+         [model add:[assoc1 neq:infinity]];
+         [model add:[assoc1 neq:sub_infinity]];
 //
-//         [model add:[assoc2 neq:infinity]];
-//         [model add:[assoc2 neq:sub_infinity]];
+         [model add:[assoc2 neq:infinity]];
+         [model add:[assoc2 neq:sub_infinity]];
          
          
-//         [model add:[[assoc1 sub:assoc2] gt:epsilon]];
+         [model add:[[assoc1 sub:assoc2] gt:epsilon]];
          
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
+         fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
             
             
