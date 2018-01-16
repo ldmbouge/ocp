@@ -223,9 +223,10 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
    }
    return makeFloatInterval(min,max);
 }
-static inline intersectionInterval intersection(int changed,float_interval r, float_interval x, ORDouble percent)
+static inline intersectionInterval intersection(float_interval r, float_interval x, ORDouble percent)
 {
    double reduced = 0;
+   int changed = 0;
    if(percent == 0.0)
       fpi_narrowf(&r, &x, &changed);
    else{

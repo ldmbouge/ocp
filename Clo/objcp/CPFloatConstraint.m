@@ -453,30 +453,30 @@
       changed = false;
       zTemp = z;
       fpi_addf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(changed, z, zTemp,_percent);
+      inter = intersection(z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       yTemp = y;
       fpi_add_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_addxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_addyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
@@ -566,30 +566,30 @@
       changed = false;
       zTemp = z;
       fpi_subf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(changed, z, zTemp,_percent);
+      inter = intersection(z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       yTemp = y;
       fpi_sub_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_subxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_subyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
@@ -677,19 +677,19 @@
       changed = false;
       zTemp = z;
       fpi_multf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(changed, z, zTemp,_percent);
+      inter = intersection(z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_multxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_multyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
@@ -750,19 +750,19 @@
       changed = false;
       zTemp = z;
       fpi_divf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(changed, z, zTemp,_percent);
+      inter = intersection(z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_divxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_divyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
