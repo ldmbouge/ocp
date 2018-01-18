@@ -15,9 +15,8 @@
 #import "CPEngineI.h"
 
 @implementation CPGroup {
-   CPEngineI*               _engine;
-   CPClosureQueue*          _closureQueue[NBPRIORITIES];
-   CPValueClosureQueue*     _valueClosureQueue;
+//   CPEngineI*               _engine;
+//   CPValueClosureQueue*     _valueClosureQueue;
    ORInt                    _max;
 }
 -(id)init:(CPEngineI*) engine

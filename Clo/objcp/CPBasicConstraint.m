@@ -2818,6 +2818,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    _vars = [[NSMutableSet alloc] init];
    return self;
 }
+//todo hzi : add constructor with note to customize percent
 -(void)dealloc
 {
    [_vars release];
@@ -2840,10 +2841,6 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [self addVars:[p allVars]];
    }
 }
-//-(void)assignIdToConstraint:(id<ORConstraint>)c
-//{
-//   [_engine assignIdToConstraint:c];
-//}
 -(void) addVars:(NSSet *)vars
 {
    for(id<CPVar> v in vars)
@@ -2852,12 +2849,13 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(void) post
 {
    [super post];
-   [super propagate];
-   [self propagateSplitting];
 }
 -(void) propagate
 {
+   [super propagate];
+   [self propagateSplitting];
 }
+//TODO hzi : correction on lower bound
 -(void) propagateShaving
 {
    ORStatus s;
@@ -2922,11 +2920,6 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    ORLDouble size;
    ORDouble epsilon;
    __block ORFloat min,max,mid;
-   NSLog(@"Variable avant 3B");
-   for(id<CPFloatVar> v in _vars){
-      NSLog(@"%@",v);
-   }
-   NSLog(@"-----------------");
    for(id<CPFloatVar> v in _vars){
       s = ORSuccess;
       size = [v domwidth];
@@ -2951,7 +2944,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       if(min != v.min){
          [v updateMin:min];
          [super propagate];
-      }
+       }
       
       s = ORSuccess;
       size = [v domwidth];
@@ -2977,13 +2970,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       if(max != v.max){
          [v updateMax:max];
          [super propagate];
-      }
+       }
    }
-   NSLog(@"Variable après 3B");
-   for(id<CPFloatVar> v in _vars){
-      NSLog(@"%@",v);
-   }
-   NSLog(@"-----------------");
 }
 - (void)visit:(ORVisitor *)visitor
 {}

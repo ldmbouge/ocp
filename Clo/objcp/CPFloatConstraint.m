@@ -14,7 +14,7 @@
 #import "CPFloatVarI.h"
 #import "ORConstraintI.h"
 
-#define PERCENT 0.0
+#define PERCENT 5.0
 
 @implementation CPFloatEqual
 -(id) init:(CPFloatVarI*)x equals:(CPFloatVarI*)y
