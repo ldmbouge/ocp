@@ -2829,7 +2829,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<CP3BGroup(%p): ",self];
    for(ORInt i=0; i < _nbIn;i++) {
-      [buf appendFormat:@"\n\t\t%3d : %@",i,[_group[i] description]];
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
    }
    [buf appendString:@"\n\t>"];
    return buf;
@@ -2854,6 +2854,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    [super propagate];
    [self propagateSplitting];
+   self->_todo = CPChecked;
 }
 //TODO hzi : correction on lower bound
 -(void) propagateShaving
@@ -2918,7 +2919,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    ORStatus s;
    ORLDouble size;
-   ORDouble epsilon;
+   ORFloat epsilon;
    __block ORFloat min,max,mid;
    for(id<CPFloatVar> v in _vars){
       s = ORSuccess;
@@ -2926,10 +2927,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       epsilon = size * (_percent/100.f);
       min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
       mid = max = (v.max == infinityf()) ? maxnormalf() : v.max;
-      epsilon += min;
-      while (s==ORSuccess && mid > epsilon) {
+      while (s==ORSuccess) {
          [_tracer pushNode];
-         mid = min/2 + max/2;
+         mid = (fp_next_float(min) == max)? min : min/2 + max/2;
+         if (mid <= min || (mid - min <= epsilon))
+            break;
          s=tryfail(^ORStatus{
             [v updateMax:mid];
             [super propagate];
@@ -2951,11 +2953,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       epsilon = size * (_percent/100.f);
       min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
       max = (v.max == infinityf()) ? maxnormalf() : v.max;
-      epsilon = max - epsilon;
-      while (s==ORSuccess && mid < epsilon) {
+      while (s==ORSuccess) {
          [_tracer pushNode];
-         mid = min/2 + max/2;
-        
+         mid = (fp_next_float(min) == max) ? max : min/2 + max/2;
+         if (mid >= max || (max - mid <= epsilon))
+            break;
          s=tryfail(^ORStatus{
             [v updateMin:mid];
             [super propagate];
