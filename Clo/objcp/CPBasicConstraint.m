@@ -2932,16 +2932,16 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
       mid = max = (v.max == infinityf()) ? maxnormalf() : v.max;
       while (s==ORSuccess) {
-         [_tracer pushNode];
          mid = (fp_next_float(min) == max)? min : min/2 + max/2;
          if (mid <= min || (mid - min <= epsilon))
             break;
+         [_tracer pushNode];
          s=tryfail(^ORStatus{
             [v updateMax:mid];
             [super propagate];
             return ORSuccess;
          }, ^ORStatus{
-            min=mid;
+            min=fp_next_float(mid);
             return ORFailure;
          });
          max=mid;
@@ -2958,16 +2958,16 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
       max = (v.max == infinityf()) ? maxnormalf() : v.max;
       while (s==ORSuccess) {
-         [_tracer pushNode];
          mid = (fp_next_float(min) == max) ? max : min/2 + max/2;
          if (mid >= max || (max - mid <= epsilon))
             break;
+         [_tracer pushNode];
          s=tryfail(^ORStatus{
             [v updateMin:mid];
             [super propagate];
             return ORSuccess;
          }, ^ORStatus{
-            max = mid;
+            max = fp_previous_float(mid);
             return ORFailure;
          });
          min=mid;
