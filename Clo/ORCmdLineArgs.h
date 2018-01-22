@@ -72,6 +72,7 @@ struct ORResult {
 @property (nonatomic,readonly) enum Heuristic heuristic;
 @property (nonatomic,readonly) enum ValHeuristic valordering;
 @property (nonatomic,readonly) enum ValHeuristic defaultAbsSplit;
+@property (nonatomic,readonly) ORBool is3Bfiltering;
 @property (nonatomic,readonly) ORBool unique;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
@@ -81,6 +82,7 @@ struct ORResult {
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
 -(void)measure:(struct ORResult(^)(void))block;
+-(id<ORGroup>)makeGroup:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;

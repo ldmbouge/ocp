@@ -769,7 +769,8 @@
       id<CPProgram> cp =  [ORFactory createCPProgram:model];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       [cp solve:^() {
-         [cp maxAbsorptionSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+         
+         [cp maxAbsorptionSearch:vars do:^(ORInt i,SEL s,id<ORDisabledFloatVarArray> x) {
             [cp floatSplit:i call:s withVars:x];
          }];
          for(id<ORFloatVar> v in vars){

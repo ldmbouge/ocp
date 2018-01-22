@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import "CPBasicConstraint.h"
 #import "CPIntVarI.h"
+#import "CPFloatVarI.h"
 #import "CPEngineI.h"
 #import "fpi.h"
 
@@ -2828,9 +2829,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<CP3BGroup(%p): ",self];
-   for(ORInt i=0; i < _nbIn;i++) {
-      [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
-   }
+   [self enumerateWithBlock:^(ORInt i , id<ORConstraint> c) {
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[c description]];
+   }];
    [buf appendString:@"\n\t>"];
    return buf;
 }
@@ -2844,7 +2845,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(void) addVars:(NSSet *)vars
 {
    for(id<CPVar> v in vars)
-      [_vars addObject:v];
+      if ([v isKindOfClass:[CPFloatVarI class]] && ![v bound])
+         [_vars addObject:v];
 }
 -(void) post
 {
@@ -2865,6 +2867,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    ORInt percent;
    __block ORFloat min,max,last;
    for(id<CPFloatVar> v in _vars){
+      if([v bound]) continue;
       s = ORFailure;
       size = [v domwidth];
       percent = _percent;
@@ -2922,6 +2925,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    ORFloat epsilon;
    __block ORFloat min,max,mid;
    for(id<CPFloatVar> v in _vars){
+      if([v bound]) continue;
       s = ORSuccess;
       size = [v domwidth];
       epsilon = size * (_percent/100.f);

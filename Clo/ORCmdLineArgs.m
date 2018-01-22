@@ -57,6 +57,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    nbThreads = 0;
    level = 0;
    unique = NO;
+   _is3Bfiltering = NO;
    fName = @"";
    randomized = NO;
    for(int k = 1;k< argc;k++) {
@@ -82,8 +83,10 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          defaultAbsSplit = atoi(argv[k]+3);
       else if (strncmp(argv[k],"-l",2)==0)
          level = atoi(argv[k]+2);
-      else if (strncmp(argv[k],"-u",1)==0)
+      else if (strncmp(argv[k],"-u",2)==0)
          unique=YES;
+      else if (strncmp(argv[k],"-3B",3)==0)
+         _is3Bfiltering=YES;
    }
    return self;
 }
@@ -122,8 +125,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];
    NSString* str = mallocReport();
-   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak\n");
-   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
+   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,Filtering\n");
+   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           [[self valueHeuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           randomized,
           nbThreads,
@@ -134,7 +137,16 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
           run.nbChoices,
           run.nbPropagations,
           endCPU - startCPU,
-          endWC - startWC,[str cStringUsingEncoding:NSASCIIStringEncoding]);
+          endWC - startWC,
+          [str cStringUsingEncoding:NSASCIIStringEncoding],
+          (_is3Bfiltering)?"3B":"2B");
+}
+-(id<ORGroup>)makeGroup:(id<ORModel>)model
+{
+   if(_is3Bfiltering){
+      return [ORFactory group:model type:Group3B];
+   }
+   return [ORFactory group:model];
 }
 -(id<CPProgram>)makeProgram:(id<ORModel>)model
 {

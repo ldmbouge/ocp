@@ -2733,9 +2733,9 @@
             // If it fails, onSolution is never called and you can check the depth of the
             // search with the controller t.
             [self performSelector:s withObject:x withObject:^(ORUInt ind, SEL call,id<ORDisabledFloatVarArray> vs){
-//               [self float3BSplit:ind call:call withVars:vs];
+               [self float3BSplit:ind call:call withVars:vs];
 //               [self float6WaySplit:ind call:call withVars:vs];
-               [self floatSplit:ind call:call withVars:vs];
+//               [self floatSplit:ind call:call withVars:vs];
             }];
          }];
       } onSolution:^{

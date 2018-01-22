@@ -37,6 +37,7 @@ int main(int argc, const char * argv[]) {
          
          id<ORModel> model = [ORFactory createModel];
          
+         id<ORGroup> g = [args makeGroup:model];
          id<ORFloatVar> diff = [ORFactory floatVar:model];
          /* Input */
          id<ORFloatVar> m_init = [ORFactory floatVar:model low:4.5f up:9.0f];
@@ -73,23 +74,23 @@ int main(int argc, const char * argv[]) {
          //         model.add(*(m[0]) = m_init);
          //         model.add(*(e_old[0]) = 0.0f);
          //         model.add(*(t[0]) = 0.0f);
-         [model add:[e[0] eq:@(0.0f)]];
-         [model add:[p[0] eq:@(0.0f)]];
-         [model add:[i[0] eq:@(0.0f)]];
-         [model add:[d[0] eq:@(0.0f)]];
-         [model add:[r[0] eq:@(0.0f)]];
-         [model add:[m[0] eq:m_init]];
-         [model add:[e_old[0] eq:@(0.0f)]];
-         [model add:[t[0] eq:@(0.0f)]];
+         [g add:[e[0] eq:@(0.0f)]];
+         [g add:[p[0] eq:@(0.0f)]];
+         [g add:[i[0] eq:@(0.0f)]];
+         [g add:[d[0] eq:@(0.0f)]];
+         [g add:[r[0] eq:@(0.0f)]];
+         [g add:[m[0] eq:m_init]];
+         [g add:[e_old[0] eq:@(0.0f)]];
+         [g add:[t[0] eq:@(0.0f)]];
          
          //         model.add(*(m_opt[0]) = m_init);
          //         model.add(*(t_opt[0]) = 0.0f);
          //         model.add(*(i_opt[0]) = 0.0f);
          //         model.add(*(e_old_opt[0]) = 0.0f);
-         [model add:[m_opt[0] eq:m_init]];
-         [model add:[t_opt[0] eq:@(0.0f)]];
-         [model add:[i_opt[0] eq:@(0.0f)]];
-         [model add:[e_old_opt[0] eq:@(0.0f)]];
+         [g add:[m_opt[0] eq:m_init]];
+         [g add:[t_opt[0] eq:@(0.0f)]];
+         [g add:[i_opt[0] eq:@(0.0f)]];
+         [g add:[e_old_opt[0] eq:@(0.0f)]];
          //
          
 //         model.add(e[n] = c - m[n-1]);
@@ -109,28 +110,28 @@ int main(int argc, const char * argv[]) {
          
          
          for (ORUInt n = 1; n <= NBLOOPS; n++) {
-            [model add:[e[n] eq:[c sub:m[n-1]]]];
-            [model add:[p[n] eq:[kp mul:e[n]]]];
-            [model add:[i[n] eq:[i[n-1] plus:[[ki mul:dt] mul:e[n]]]]];
-            [model add:[d[n] eq:[[kd mul:invdt] mul:[e[n] sub:e_old[n-1]]]]];
-            [model add:[r[n] eq:[[p[n] plus:i[n]] plus:d[n]]]];
-            [model add:[m[n] eq:[m[n-1] plus:[expr mul:r[n]]]]];
-            [model add:[e_old[n] eq:e[n]]];
-            [model add:[t[n] eq:[t[n-1] plus:dt]]];
+            [g add:[e[n] eq:[c sub:m[n-1]]]];
+            [g add:[p[n] eq:[kp mul:e[n]]]];
+            [g add:[i[n] eq:[i[n-1] plus:[[ki mul:dt] mul:e[n]]]]];
+            [g add:[d[n] eq:[[kd mul:invdt] mul:[e[n] sub:e_old[n-1]]]]];
+            [g add:[r[n] eq:[[p[n] plus:i[n]] plus:d[n]]]];
+            [g add:[m[n] eq:[m[n-1] plus:[expr mul:r[n]]]]];
+            [g add:[e_old[n] eq:e[n]]];
+            [g add:[t[n] eq:[t[n-1] plus:dt]]];
             
-            [model add:[i_opt[n] eq:[i_opt[n-1] plus:[expr_1 mul:[c sub:m_opt[n-1]]]]]];
-            [model add:[e_old_opt[n] eq:[c sub:m_opt[n-1]]]];
-            [model add:[m_opt[n] eq:[m_opt[n-1] plus:[expr mul:[[[c sub:m_opt[n-1]] mul:kp] plus:i_opt[n]]]]]];
+            [g add:[i_opt[n] eq:[i_opt[n-1] plus:[expr_1 mul:[c sub:m_opt[n-1]]]]]];
+            [g add:[e_old_opt[n] eq:[c sub:m_opt[n-1]]]];
+            [g add:[m_opt[n] eq:[m_opt[n-1] plus:[expr mul:[[[c sub:m_opt[n-1]] mul:kp] plus:i_opt[n]]]]]];
             
-            [model add:[t_opt[n] eq:[t_opt[n-1] plus:dt]]];
+            [g add:[t_opt[n] eq:[t_opt[n-1] plus:dt]]];
          }
          
          //         model.add(diff = *(m[NBLOOPS]) - *(m_opt[NBLOOPS]));
          //         model.add(diff*diff > 0.0622f);
 
-         [model add:[diff eq:[m[NBLOOPS] sub:m_opt[NBLOOPS]]]];
-         [model add:[[diff mul:diff] gt:@(0.0622f)]];
-         
+         [g add:[diff eq:[m[NBLOOPS] sub:m_opt[NBLOOPS]]]];
+         [g add:[[diff mul:diff] gt:@(0.0622f)]];
+         [model add:g];
 //         NSLog(@"%@", model);
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
@@ -138,7 +139,7 @@ int main(int argc, const char * argv[]) {
          
          [cp solveOn:^(id<CPCommonProgram> p) {
             
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+//            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             found=true;
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];

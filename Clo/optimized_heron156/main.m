@@ -43,20 +43,20 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f];
          id<ORFloatVar> squared_area = [ORFactory floatVar:model];
          
-         [model add:[a gt:@(0.0f)]];
-         [model add:[b gt:@(0.0f)]];
-         [model add:[c gt:@(0.0f)]];
+         [g add:[a gt:@(0.0f)]];
+         [g add:[b gt:@(0.0f)]];
+         [g add:[c gt:@(0.0f)]];
          
-         [model add:[[a plus:c] gt:b]];
-         [model add:[[a plus:b] gt:c]];
-         [model add:[[b plus:c] gt:a]];
+         [g add:[[a plus:c] gt:b]];
+         [g add:[[a plus:b] gt:c]];
+         [g add:[[b plus:c] gt:a]];
          
          
-         [model add:[a gt:b]];
-         [model add:[b gt:c]];
+         [g add:[a gt:b]];
+         [g add:[b gt:c]];
          
          //squared_area = (((a+(b+c))*(c-(a-b))*(c+(a-b))*(a+(b-c)))/16.0f)
-         [model add:[squared_area eq:[[
+         [g add:[squared_area eq:[[
                                        [[
                                          [a plus:[b plus:c]]
                                          mul:[c sub:[a sub:b]]]
@@ -67,7 +67,8 @@ int main(int argc, const char * argv[]) {
          
          float v = 156.25f;
          id<ORExpr> fc = [ORFactory float:model value:v];
-         [model add:[squared_area gt:[fc plus:@(1e-5f)]]];
+         [g add:[squared_area gt:[fc plus:@(1e-5f)]]];
+         [model add:g];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;

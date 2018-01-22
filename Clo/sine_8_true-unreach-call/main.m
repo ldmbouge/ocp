@@ -36,13 +36,15 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> x = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
          id<ORFloatVar> res = [ORFactory floatVar:model];
          
-         [model add:[res eq:[[[x sub:
-                               [[x mul:[x mul:x]] div:@(6.0f)]] plus:
-                              [[x mul:[x mul:[x mul:[x mul:x]]]] div:@(120.0f)]] plus:
-                             [[x mul:[x mul:[x mul:[x mul:[x mul:[x mul:x]]]]]] div:@(5040.0f)]]]];
+         id<ORGroup> g = [args makeGroup:model];
+         [g add:[res eq:[[[x sub:
+                           [[x mul:[x mul:x]] div:@(6.0f)]] plus:
+                          [[x mul:[x mul:[x mul:[x mul:x]]]] div:@(120.0f)]] plus:
+                         [[x mul:[x mul:[x mul:[x mul:[x mul:[x mul:x]]]]]] div:@(5040.0f)]]]];
          
-         [model add:[[res lt:@(-VAL)] lor:[res gt:@(VAL)]]];
+         [g add:[[res lt:@(-VAL)] lor:[res gt:@(VAL)]]];
          
+         [model add:g];
          
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];

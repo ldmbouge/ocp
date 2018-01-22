@@ -37,13 +37,16 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> res_0 = [ORFactory floatVar:model];
          
          id<ORExpr> expr_unop = [ORFactory float:model value:0.f];
-         [model add:[res_0 eq: [[[[[[[[x1_0 mul: x4_0] mul: [[[[[[expr_unop sub:x1_0] plus: x2_0] plus: x3_0] sub: x4_0] plus: x5_0] plus: x6_0]] plus: [[x2_0 mul: x5_0] mul: [[[[[x1_0 sub: x2_0] plus: x3_0] plus: x4_0] sub: x5_0] plus: x6_0]]] plus: [[x3_0 mul: x6_0] mul: [[[[[x1_0 plus: x2_0] sub: x3_0] plus: x4_0] plus: x5_0] sub: x6_0]]] sub: [[x2_0 mul: x3_0] mul: x4_0]] sub: [[x1_0 mul: x3_0] mul: x5_0]] sub: [[x1_0 mul: x2_0] mul: x6_0]] sub: [[x4_0 mul: x5_0] mul: x6_0]]]];
+         id<ORGroup> g = [args makeGroup:model];
+         
+         [g add:[res_0 eq: [[[[[[[[x1_0 mul: x4_0] mul: [[[[[[expr_unop sub:x1_0] plus: x2_0] plus: x3_0] sub: x4_0] plus: x5_0] plus: x6_0]] plus: [[x2_0 mul: x5_0] mul: [[[[[x1_0 sub: x2_0] plus: x3_0] plus: x4_0] sub: x5_0] plus: x6_0]]] plus: [[x3_0 mul: x6_0] mul: [[[[[x1_0 plus: x2_0] sub: x3_0] plus: x4_0] plus: x5_0] sub: x6_0]]] sub: [[x2_0 mul: x3_0] mul: x4_0]] sub: [[x1_0 mul: x3_0] mul: x5_0]] sub: [[x1_0 mul: x2_0] mul: x6_0]] sub: [[x4_0 mul: x5_0] mul: x6_0]]]];
          
          
          
          //         [model add:[res_0 lt:@(-668.0f)]];
          //         [model add:[res_0 lt:@(-9.999999403953552246e-01f)]];
-         [model add:[res_0 lt:@(-6.68e2f)]];
+         [g add:[res_0 lt:@(-6.68e2f)]];
+         [model add:g];
          
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];

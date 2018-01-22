@@ -25,13 +25,6 @@
 @end
 
 @interface CPGroup : CPCoreConstraint<CPGroup>
-{
-   CPEngineI*               _engine;
-   id<CPConstraint>*        _inGroup;
-   ORInt                    _nbIn;
-   CPClosureQueue*          _closureQueue[NBPRIORITIES];
-   CPValueClosureQueue*     _valueClosureQueue;
-}
 -(id)   init: (id<CPEngine>) engine;
 -(void) add: (id<CPConstraint>) p;
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
