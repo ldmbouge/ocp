@@ -428,6 +428,11 @@ enum ORGroupType {
 -(bool) reduced;
 @end
 
+@protocol ORExactMDDMISP <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+@end
 
 
 @protocol ORRegular<ORConstraint>

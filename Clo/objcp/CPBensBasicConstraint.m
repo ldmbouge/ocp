@@ -263,6 +263,42 @@
 }
 @end
 
+@implementation MISPState
+-(id) initMISPState:(int)minValue :(int)maxValue {
+    _state = [[NSMutableArray alloc] init];
+    for (int stateValue = minValue; stateValue <= maxValue; stateValue++) {
+        [_state addObject:@YES];
+    }
+    _minValue = minValue;
+    _maxValue = maxValue;
+    
+    return self;
+}
+-(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState *)parentNodeState withValue:(int)edgeValue {
+    _state = [[NSMutableArray alloc] init];
+    for (int stateValue = minValue; stateValue <= maxValue; stateValue++) {
+        [_state addObject: [NSNumber numberWithBool: [parentNodeState canChooseValue: stateValue]]];
+    }
+    if (edgeValue == 1) {
+        //iterate over adjacency matrix with value added changing all adjacent values to 0.
+    }
+}
+-(id) state { return _state; }
+-(bool) canChooseValue:(int)value {
+    return [_state[value - _minValue] boolValue];
+}
+-(void) mergeStateWith:(MISPState *)other {
+    for (int value = _minValue; value <= _maxValue; value++) {
+        bool combinedStateValue = [self canChooseValue: value] || [other canChooseValue:value];
+        [_state setObject: [NSNumber numberWithBool: combinedStateValue] atIndexedSubscript:value];
+    }
+}
+-(BOOL) isEqual:(MISPState*)object {
+    return [_state isEqual:[object state]];
+}
+@end
+
+
 @implementation CPMDD
 -(id) initCPMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced
 {
@@ -697,5 +733,26 @@
 -(NSString*)description
 {
     return [NSMutableString stringWithFormat:@"<CPRelaxedMDDAllDifferent:%02d %@>",_name,_x];
+}
+@end
+
+@implementation CPExactMDDMISP
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+{
+    self = [super initCPMDD:engine over:x reduced:reduced];
+    //self.adjacencyMatrix = adjacencyMatrix;
+    return self;
+}
+-(id) generateRootState
+{
+    return [[MISPState alloc] initMISPState:[_x low] :[_x up]];
+}
+-(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
+{
+    return [[MISPState alloc] initMISPState:min_domain_val :max_domain_val parentNodeState:[parentNode getState] withValue:value];
+}
+-(NSString*)description
+{
+    return [NSMutableString stringWithFormat:@"<CPExactMDDMISP:%02d %@>",_name,_x];
 }
 @end

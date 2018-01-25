@@ -17,6 +17,25 @@
 int MIN = 1;
 int MAX = 5;
 
+bool** adjacencyMatrix (NSArray* *edges, bool directed) {
+    bool** adjacencyMatrix;
+    adjacencyMatrix = malloc((MAX-MIN+1) * sizeof(bool*));
+    adjacencyMatrix -= MIN;
+    
+    for (int i = MIN; i <= MAX; i++) {
+        adjacencyMatrix[i] = malloc((MAX-MIN+1) * sizeof(bool));
+        adjacencyMatrix[i] -= MIN;
+    }
+    
+    for (NSArray* edge in *edges) {
+        adjacencyMatrix[[[edge objectAtIndex:0] integerValue]][[[edge objectAtIndex:1] integerValue]] = true;
+        if (!directed) {
+            adjacencyMatrix[[[edge objectAtIndex:0] integerValue]][[[edge objectAtIndex:1] integerValue]] = true;
+        }
+    }
+    return adjacencyMatrix;
+}
+
 int main (int argc, const char * argv[])
 {
     @autoreleasepool {
@@ -29,9 +48,17 @@ int main (int argc, const char * argv[])
         ORInt layerSize = 8;
         bool reduced = true;
   
-        //[mdl add: [ORFactory ExactMDDAllDifferent: mdl var: a reduced:reduced]];
+        [mdl add: [ORFactory ExactMDDAllDifferent: mdl var: a reduced:reduced]];
         //[mdl add: [ORFactory RestrictedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
-        [mdl add: [ORFactory RelaxedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
+        //[mdl add: [ORFactory RelaxedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
+        
+        NSArray* edges = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MAX]],
+                           @[[NSNumber numberWithInt:MIN+1], [NSNumber numberWithInt:MAX-1]]];
+        
+        bool** adjacencies = adjacencyMatrix(&edges, false);
+        
+        
+        [mdl add: [ORFactory ExactMDDMISP:mdl var:a reduced:reduced adjacencies:adjacencies]];
         
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
         

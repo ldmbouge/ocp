@@ -101,6 +101,7 @@
 +(id<CPConstraint>) ExactMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced;
 +(id<CPConstraint>) RelaxedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
 +(id<CPConstraint>) RestrictedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced;
++(id<CPConstraint>) ExactMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
 @end
 
 @interface CPFactory (ORReal)

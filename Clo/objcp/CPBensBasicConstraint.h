@@ -92,7 +92,20 @@
 -(void) mergeStateWith:(AllDifferentState*)other;
 @end
 
-@interface CPMDD : CPCoreConstraint {
+@interface MISPState : NSObject {
+@private
+    NSMutableArray* _state;
+    int _minValue;
+    int _maxValue;
+}
+-(id) initMISPState:(int)minValue :(int)maxValue;
+-(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withValue:(int)edgeValue;
+-(id) state;
+-(bool) canChooseValue:(int)value;
+-(void) mergeStateWith:(MISPState*)other;
+@end
+
+@interface CPMDD : CPCoreConstraint<ORSearchObjectiveFunction> {
 @private
     TRInt **layer_variable_count;
     int _max_nodes_per_layer;
@@ -163,4 +176,11 @@
 
 @interface CPRelaxedMDDAllDifferent : CPMDDRelaxation
 -(id) initCPRelaxedMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
+@end
+
+@interface CPExactMDDMISP : CPMDD {
+@private
+    bool** adjacencyMatrix;
+}
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
 @end

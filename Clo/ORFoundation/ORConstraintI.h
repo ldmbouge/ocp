@@ -45,6 +45,14 @@
 @end
 
 
+@interface ORExactMDDMISP : ORConstraintI<ORExactMDDMISP>
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(id<ORIntVarArray>) vars;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+@end
+
+
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)g;

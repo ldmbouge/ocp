@@ -250,6 +250,8 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) ExactMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced;
 +(id<ORConstraint>) RestrictedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced;
 +(id<ORConstraint>) RelaxedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced;
++(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+
 
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z;

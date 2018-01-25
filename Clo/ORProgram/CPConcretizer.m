@@ -1797,6 +1797,18 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
+
+
+-(void) visitExactMDDMISP: (id<ORExactMDDMISP>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        bool** adjacencyMatrix = [cstr adjacencyMatrix];
+        id<CPConstraint> concreteCstr = [CPFactory ExactMDDMISP:_engine over: a reduced:[cstr reduced] adjacencies:adjacencyMatrix];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 @end
 
 

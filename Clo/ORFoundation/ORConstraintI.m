@@ -187,6 +187,54 @@
 }
 @end
 
+
+@implementation ORExactMDDMISP {
+   id<ORIntVarArray> _x;
+   bool _reduced;
+   bool** _adjacencyMatrix;
+}
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _reduced = reduced;
+   _adjacencyMatrix = adjacencyMatrix;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitExactMDDMISP:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(bool**) adjacencyMatrix
+{
+   return _adjacencyMatrix;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+
 @interface ORAlphaVisit : ORVisitor {
    id<ORVarArray> _map;
    id<ORConstraint> _result;
@@ -202,7 +250,6 @@
    self = [super init];
    _map = va;
    _result = nil;
->>>>>>> 116184882f379e03de2b0ba0ae0408e9a4959a0b
    return self;
 }
 -(void)dealloc

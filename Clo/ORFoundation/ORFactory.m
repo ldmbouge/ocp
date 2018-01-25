@@ -952,6 +952,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     return o;
 }
 
+
++(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+{
+    id<ORConstraint> o = [[ORExactMDDMISP alloc] initORExactMDDMISP:x reduced:reduced adjacencies:adjacencyMatrix];
+    [model trackObject:o];
+    return o;
+}
+
 +(id<ORConstraint>) fail:(id<ORTracker>)model
 {
    id<ORConstraint> o = [[ORFail alloc] init];

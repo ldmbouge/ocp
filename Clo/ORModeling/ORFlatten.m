@@ -102,6 +102,11 @@
     _result = [_into addConstraint:cstr];
 }
 
+-(void) visitExactMDDMISP: (id<ORExactMDDMISP>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
 
 -(void) visitIntVar: (id) v
 {

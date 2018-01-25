@@ -36,6 +36,11 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "RestrictedMDDAllDifferent: visit method not defined"];
 }
 
+-(void) visitExactMDDMISP: (id<ORExactMDDMISP>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExactMDDMISP: visit method not defined"];
+}
+
 -(void) visitRandomStream:(id) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RandomStream: visit method not defined"];
