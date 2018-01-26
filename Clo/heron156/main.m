@@ -44,37 +44,36 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f];
          id<ORFloatVar> s = [ORFactory floatVar:model];
          id<ORFloatVar> squared_area = [ORFactory floatVar:model];
+         id<ORGroup> g = [args makeGroup:model];
+         [g add:[a gt:@(0.0f)]];
+         [g add:[b gt:@(0.0f)]];
+         [g add:[c gt:@(0.0f)]];
          
-         [model add:[a gt:@(0.0f)]];
-         [model add:[b gt:@(0.0f)]];
-         [model add:[c gt:@(0.0f)]];
-         
-         [model add:[[a plus:c] gt:b]];
-         [model add:[[a plus:b] gt:c]];
-         [model add:[[b plus:c] gt:a]];
+         [g add:[[a plus:c] gt:b]];
+         [g add:[[a plus:b] gt:c]];
+         [g add:[[b plus:c] gt:a]];
          
          
-         [model add:[a gt:b]];
-         [model add:[b gt:c]];
+         [g add:[a gt:b]];
+         [g add:[b gt:c]];
          
-         [model add:[s eq: [[[a plus:b] plus:c] div:@(2.0f)]]];
-         [model add:[squared_area eq: [[[s mul:[s sub:a]] mul:[s sub:b]] mul:[s sub:c]]]];
+         [g add:[s eq: [[[a plus:b] plus:c] div:@(2.0f)]]];
+         [g add:[squared_area eq: [[[s mul:[s sub:a]] mul:[s sub:b]] mul:[s sub:c]]]];
          
          float v = 156.25f;
          id<ORExpr> fc = [ORFactory float:model value:v];
-         [model add:[squared_area gt:[fc plus:@(1e-5f)]]];
-         
+         [g add:[squared_area gt:[fc plus:@(1e-5f)]]];
+         [model add:g];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
-            
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+            NSLog(@"Valeurs solutions : \n");
             found=true;
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];
-               NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+               NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
          } withTimeLimit:[args timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

@@ -424,12 +424,16 @@
 @implementation CPFloatTernaryAdd
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
+   return [self init:z equals:x plus:y kbpercent:PERCENT];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p
+{
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = PERCENT;
+   _percent = p;
    _rounding = FE_TONEAREST;
    return self;
 }
@@ -488,8 +492,7 @@
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
-   
-      fesetround(FE_TONEAREST);
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -534,16 +537,20 @@
 
 
 @implementation CPFloatTernarySub
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = PERCENT;
+   _percent = p;
    _rounding = FE_TONEAREST;
    return self;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
+{
+   return [self init:z equals:x minus:y kbpercent:PERCENT];
 }
 
 -(void) post
@@ -646,16 +653,20 @@
 @end
 
 @implementation CPFloatTernaryMult
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = PERCENT;
+   _percent = p;
    _rounding = FE_TONEAREST;
    return self;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y
+{
+   return [self init:z equals:x mult:y kbpercent:PERCENT];
 }
 -(void) post
 {
@@ -701,8 +712,7 @@
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
-   
-      fesetround(FE_TONEAREST);
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -719,16 +729,20 @@
 @end
 
 @implementation CPFloatTernaryDiv
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x div:(CPFloatVarI*)y
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x div:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
    _y = y;
    _precision = 1;
-   _percent = PERCENT;
+   _percent = p;
    _rounding = FE_TONEAREST;
    return self;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x div:(CPFloatVarI*)y
+{
+   return [self init:z equals:x div:y kbpercent:PERCENT];
 }
 -(void) post
 {
@@ -774,8 +788,7 @@
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
-   
-      fesetround(FE_TONEAREST);
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {

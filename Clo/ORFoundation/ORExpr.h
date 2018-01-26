@@ -30,7 +30,7 @@ typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORNeg   = 7,
    ORRDisj = 8,
    ORRConj = 9,
-   ORRImply = 10,
+   ORRImply = 10
 };
 
 typedef NS_ENUM(NSUInteger,ORVType) {
@@ -51,19 +51,24 @@ typedef enum ORRelationType {
    ORRNEq = 2,
    ORRLEq = 3,
    ORRGEq = 4,
-   ORNeg   = 5,
-   ORRDisj = 6,
-   ORRConj = 7,
-   ORRImply = 8
+   ORRLThen = 5,
+   ORRGThen = 6,
+   ORNeg   = 7,
+   ORRDisj = 8,
+   ORRConj = 9,
+   ORRImply = 10
 } ORRelationType;
 
 typedef enum ORVType {
-  ORTBool = 0,
-  ORTInt = 1,
-  ORTReal = 2,
-  ORTBit  = 3,
-  ORTSet  = 4,
-  ORTNA = 5
+   ORTBool = 0,
+   ORTInt = 1,
+   ORTReal = 2,
+   ORTFloat = 3,
+   ORTDouble = 4,
+   ORTLDouble = 5,
+   ORTBit  = 6,
+   ORTSet  = 7,
+   ORTNA = 8
 } ORVType;
 
 #endif

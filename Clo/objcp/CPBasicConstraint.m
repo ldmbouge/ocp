@@ -2808,18 +2808,21 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 @implementation CP3BGroup {
    id<ORTracer>             _tracer;
-   ORInt                    _percent;
+   ORDouble                 _percent;
    NSMutableSet*            _vars;
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer
 {
+   return [self init:engine tracer:tracer percent:5];
+}
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p
+{
    self = [super init:engine];
    _tracer = tracer;
-   _percent = 5;
+   _percent = p;
    _vars = [[NSMutableSet alloc] init];
    return self;
 }
-//todo hzi : add constructor with note to customize percent
 -(void)dealloc
 {
    [_vars release];
@@ -2864,7 +2867,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    ORStatus s;
    ORLDouble size;
    ORDouble step;
-   ORInt percent;
+   ORDouble percent;
    __block ORFloat min,max,last;
    for(id<CPFloatVar> v in _vars){
       if([v bound]) continue;

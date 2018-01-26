@@ -2684,8 +2684,8 @@
          [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
       }];
    }else{
-      [self shave:index direction:-1 percent:10.f coef:2 call:s withVars:x];
-      [self shave:index direction:1 percent:10.f coef:2 call:s withVars:x];
+      [self shave:index direction:-1 percent:5.f coef:2 call:s withVars:x];
+      [self shave:index direction:1 percent:5.f coef:2 call:s withVars:x];
       //for splitting percent 50 and coef 0.5 ?
       // now x is shaved on both-end. Proceed with a normal dichotomy
       // on x and recur.

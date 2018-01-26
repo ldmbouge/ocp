@@ -12,11 +12,11 @@ SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m CPConstraint.m  \
 	CPEvent.m  CPKnapsack.m CPTableI.m CPAssignmentI.m CPBitArray.m  \
 	CPCardinalityDC.m  CPElement.m     CPExprI.m    \
 	CPLexConstraint.m  CPValueConstraint.m \
-	CPBasicConstraint.m  CPRealConstraint.m \
+	CPBasicConstraint.m  CPRealConstraint.m CPFloatConstraint.m \
 	CPBitConstraint.m  CPCardinality.m    CPEquationBC.m  \
 	CPFactory.m  CPObjectQueue.m CPWatch.m CPBinPacking.m CPBitDom.m \
-	CPRealDom.m    \
-	CPCircuitI.m CPError.m  CPIntVarI.m CPRealVarI.m CPISVarI.m CPIntSetConstraint.m \
+	CPRealDom.m  CPFloatDom.m  \
+	CPCircuitI.m CPError.m  CPIntVarI.m CPRealVarI.m CPFloatVarI.m CPISVarI.m CPIntSetConstraint.m \
 	CPTrailIntSet.m CPStatisticsMonitor.m 
 
 #	./NSBoardController.m

@@ -568,7 +568,9 @@
       [model add:[a_0 eq:@(15.0f)]];
       
       id<CPProgram> p = [ORFactory createCPProgram:model];
+      __block bool found=false;
       [p solve:^{
+         found = true;
          id<CPFloatVar> cc = [p concretize:c_0];
          id<CPFloatVar> rc = [p concretize:r_0];
          id<CPFloatVar> ac = [p concretize:a_0];
@@ -603,6 +605,7 @@
          XCTAssertEqual([qc min],0.0f);
          
       }];
+      XCTAssert(found);
    }
 }
 

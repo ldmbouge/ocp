@@ -24,8 +24,11 @@ typedef enum {
 
 @protocol ORAnnotation <NSObject,NSCopying>
 -(ORCLevel) levelFor:(id<ORConstraint>)cstr;
+-(ORDouble) kbpercent;
 -(id)copy;
 
+-(ORBool) hasFilteringPercent;
+-(void) kbpercent:(ORDouble) p;
 -(id<ORConstraint>) dc: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) bc: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) vc: (id<ORConstraint>) cstr;
@@ -51,5 +54,4 @@ typedef enum {
 -(id)initWith:(ORCLevel)cl;
 -(ORCLevel)level;
 @end
-
 

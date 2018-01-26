@@ -21,7 +21,7 @@
 #define VAL 2.0f
 #endif
 /*
-
+ 
  float f(float x)
  {
  return x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
@@ -59,43 +59,43 @@ int main(int argc, const char * argv[]) {
          
          
          id<ORExpr> fc = [ORFactory float:model value:1.0f];
+         id<ORGroup> g = [args makeGroup:model];
+         
+         [g add:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
+                         plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
          
          
-         [model add:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
-                             plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
+         [g add:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
+                          plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
+         
+         [g add:[x2 eq:[x sub:[f_x div:fp_x]]]];
+         
+         [g add:[f_x2 eq:[[[x2 sub:[[[x2 mul:x2] mul:x2] div:@(6.0f)]] plus:[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] div:@(120.0f)]]
+                          plus:[[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(5040.0f)]]]];
          
          
-         [model add:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
-                              plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
+         [g add:[fp_x2 eq:[[[fc sub:[[x2 mul:x2] div:@(2.0f)]] plus:[[[[x2 mul:x2] mul:x2] mul:x2] div:@(24.0f)]]
+                           plus:[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(720.0f)]]]];
          
-         [model add:[x2 eq:[x sub:[f_x div:fp_x]]]];
+         [g add:[x3 eq:[x2 sub:[f_x2 div:fp_x2]]]];
          
-         [model add:[f_x2 eq:[[[x2 sub:[[[x2 mul:x2] mul:x2] div:@(6.0f)]] plus:[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] div:@(120.0f)]]
-                              plus:[[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(5040.0f)]]]];
-         
-         
-         [model add:[fp_x2 eq:[[[fc sub:[[x2 mul:x2] div:@(2.0f)]] plus:[[[[x2 mul:x2] mul:x2] mul:x2] div:@(24.0f)]]
-                               plus:[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(720.0f)]]]];
-         
-         [model add:[x3 eq:[x2 sub:[f_x2 div:fp_x2]]]];
-         
-         [model add:[f_x3 eq:[[[x3 sub:[[[x3 mul:x3] mul:x3] div:@(6.0f)]] plus:[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] div:@(120.0f)]]
-                              plus:[[[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] div:@(5040.0f)]]]];
+         [g add:[f_x3 eq:[[[x3 sub:[[[x3 mul:x3] mul:x3] div:@(6.0f)]] plus:[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] div:@(120.0f)]]
+                          plus:[[[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] div:@(5040.0f)]]]];
          
          
-         [model add:[fp_x3 eq:[[[fc sub:[[x3 mul:x3] div:@(2.0f)]] plus:[[[[x3 mul:x3] mul:x3] mul:x3] div:@(24.0f)]]
-                               plus:[[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] div:@(720.0f)]]]];
+         [g add:[fp_x3 eq:[[[fc sub:[[x3 mul:x3] div:@(2.0f)]] plus:[[[[x3 mul:x3] mul:x3] mul:x3] div:@(24.0f)]]
+                           plus:[[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] div:@(720.0f)]]]];
          
-         [model add:[r_0 eq:[x3 sub:[f_x3 div:fp_x3]]]];
+         [g add:[r_0 eq:[x3 sub:[f_x3 div:fp_x3]]]];
          
-         [model add:[r_0 geq:@(0.1f)]];
+         [g add:[r_0 geq:@(0.1f)]];
          
-         
+         [model add:g];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
+            found=true;
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];

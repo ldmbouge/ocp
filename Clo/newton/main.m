@@ -84,19 +84,20 @@ int main(int argc, const char * argv[]) {
          
          
          id<ORExpr> fc = [ORFactory float:model value:1.0f];
+         id<ORGroup> g = [args makeGroup:model];
          
-         
-         [model add:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
+         [g add:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
                              plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
          
          
-         [model add:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
+         [g add:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
                               plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
          
-         [model add:[r_0 eq:[x sub:[f_x div:fp_x]]]];
+         [g add:[r_0 eq:[x sub:[f_x div:fp_x]]]];
          
          
-         [model add:[r_0 geq:@(0.1f)]];
+         [g add:[r_0 geq:@(0.1f)]];
+         [model add:g];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          

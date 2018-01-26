@@ -36,16 +36,17 @@ int main(int argc, const char * argv[]) {
             
             id<ORFloatVarArray> vars = [model floatVars];
             id<CPProgram> cp = [args makeProgram:model];
-            __block bool found = false;
-            [cp solveOn:^(id<CPCommonProgram> p) {
-                
-                
-                [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-                for(id<ORFloatVar> v in vars){
-                    found &= [p bound: v];
-                    NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-                }
-            } withTimeLimit:[args timeOut]];
+           __block bool found = false;
+           [cp solveOn:^(id<CPCommonProgram> p) {
+              [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+              NSLog(@"Valeurs solutions : \n");
+              found=true;
+              for(id<ORFloatVar> v in vars){
+                 found &= [p bound: v];
+                 NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
+              }
+              checksolution([p floatValue:vars[0]], [p floatValue:vars[1]]);
+           } withTimeLimit:[args timeOut]];
             NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
             struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
             return r;

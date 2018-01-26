@@ -42,7 +42,7 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f];
          id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f];
          id<ORFloatVar> squared_area = [ORFactory floatVar:model];
-         
+         id<ORGroup> g = [args makeGroup:model];
          [g add:[a gt:@(0.0f)]];
          [g add:[b gt:@(0.0f)]];
          [g add:[c gt:@(0.0f)]];

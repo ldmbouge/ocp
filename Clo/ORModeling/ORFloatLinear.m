@@ -44,6 +44,8 @@
 }
 -(void) addIndependent: (ORFloat) idp
 {
+   if(_indep == 0 && idp == -0.f)
+      _indep = -0.f;
     _indep += idp;
 }
 -(ORFloat) independent

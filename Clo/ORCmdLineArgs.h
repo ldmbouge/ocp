@@ -73,6 +73,7 @@ struct ORResult {
 @property (nonatomic,readonly) enum ValHeuristic valordering;
 @property (nonatomic,readonly) enum ValHeuristic defaultAbsSplit;
 @property (nonatomic,readonly) ORBool is3Bfiltering;
+@property (nonatomic,readonly) ORDouble kbpercent;
 @property (nonatomic,readonly) ORBool unique;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;

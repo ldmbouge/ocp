@@ -37,14 +37,16 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> fc3 = [ORFactory float:model value:0.125f];
          id<ORExpr> fc4 = [ORFactory float:model value:0.0625f];
          id<ORExpr> fc5 = [ORFactory float:model value:0.0390625f];
+         id<ORGroup> g = [args makeGroup:model];
          
-         [model add:[IN lt:@(1.0f)]];
+         [g add:[IN lt:@(1.0f)]];
          
-         [model add:[result eq:[[[[fc plus:[fc2 mul:IN]] sub: [[fc3 mul:IN ] mul:IN]] plus: [[[fc4 mul:IN] mul:IN] mul:IN]] sub:[[[[fc5 mul:IN] mul:IN] mul:IN] mul:IN]]]];
+         [g add:[result eq:[[[[fc plus:[fc2 mul:IN]] sub: [[fc3 mul:IN ] mul:IN]] plus: [[[fc4 mul:IN] mul:IN] mul:IN]] sub:[[[[fc5 mul:IN] mul:IN] mul:IN] mul:IN]]]];
          
-         [model add:[[result lt:@(0.0f)] lor: [result geq:@(VAL)]]];
-         
-         NSLog(@"%@",model);
+         [g add:[[result lt:@(0.0f)] lor: [result geq:@(VAL)]]];
+         [model add:g];
+
+//         NSLog(@"%@",model);
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;

@@ -109,6 +109,7 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
+-(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -126,7 +127,8 @@
     ORDouble _percent;
     ORInt _rounding;
 }
--(id) init:(id)z equals:(id)x minus:(id)y ;
+-(id) init:(id)z equals:(id)x minus:(id)y;
+-(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -144,6 +146,7 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x mult:(id)y ;
+-(id) init:(id)z equals:(id)x mult:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -159,6 +162,7 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x div:(id)y ;
+-(id) init:(id)z equals:(id)x div:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

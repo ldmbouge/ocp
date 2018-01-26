@@ -153,7 +153,7 @@ static inline unsigned long long cardinalityV(float xmin, float xmax){
    i_inf.f = xmin;
    i_sup.f = xmax;
    if(xmin == xmax) return 1.0;
-   if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX;
+   if(xmin == -infinityf() && xmax == infinityf()) return ((unsigned long long) DBL_MAX);
    long long res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
    return (res < 0) ? -res : res;
 }

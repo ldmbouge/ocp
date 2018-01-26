@@ -33,6 +33,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 @synthesize nArg;
 @synthesize level;
 @synthesize unique;
+@synthesize is3Bfiltering;
+@synthesize kbpercent;
 @synthesize fName;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
@@ -57,7 +59,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    nbThreads = 0;
    level = 0;
    unique = NO;
-   _is3Bfiltering = NO;
+   is3Bfiltering = NO;
+   kbpercent=-1;
    fName = @"";
    randomized = NO;
    for(int k = 1;k< argc;k++) {
@@ -73,6 +76,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          timeOut = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-r",2)==0)
          randomized = atoi(argv[k]+2);
+      else if (strncmp(argv[k],"-percent",8)==0)
+         kbpercent=atof(argv[k+1]);
       else if (strncmp(argv[k],"-p",2)==0)
          nbThreads = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-f",2)==0)
@@ -86,7 +91,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
       else if (strncmp(argv[k],"-u",2)==0)
          unique=YES;
       else if (strncmp(argv[k],"-3B",3)==0)
-         _is3Bfiltering=YES;
+         is3Bfiltering=YES;
    }
    return self;
 }
@@ -125,8 +130,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];
    NSString* str = mallocReport();
-   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,Filtering\n");
-   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
+   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%\n");
+   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           [[self valueHeuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           randomized,
           nbThreads,
@@ -139,18 +144,26 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
           endCPU - startCPU,
           endWC - startWC,
           [str cStringUsingEncoding:NSASCIIStringEncoding],
-          (_is3Bfiltering)?"3B":"2B");
+          (is3Bfiltering)?"3B":"2B",
+          (kbpercent != -1)?kbpercent:5.0);
+}
+-(void) updateNotes: (id<ORAnnotation>) notes
+{
+   if(kbpercent != -1)
+      [notes kbpercent:kbpercent];
 }
 -(id<ORGroup>)makeGroup:(id<ORModel>)model
 {
-   if(_is3Bfiltering){
+   if(is3Bfiltering){
       return [ORFactory group:model type:Group3B];
    }
    return [ORFactory group:model];
 }
 -(id<CPProgram>)makeProgram:(id<ORModel>)model
 {
-   return [self makeProgram:model annotation:nil];
+   id<ORAnnotation> notes = [ORFactory annotation];
+   [self updateNotes:notes];
+   return [self makeProgram:model annotation:notes];
 }
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
