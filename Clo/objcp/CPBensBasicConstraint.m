@@ -282,6 +282,11 @@
     if (edgeValue == 1) {
         //iterate over adjacency matrix with value added changing all adjacent values to 0.
     }
+    
+    _minValue = minValue;
+    _maxValue = maxValue;
+    
+    return self;
 }
 -(id) state { return _state; }
 -(bool) canChooseValue:(int)value {
