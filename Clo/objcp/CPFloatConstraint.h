@@ -112,7 +112,7 @@
     ORDouble _percent;
     ORInt _rounding;
 }
--(id) init:(id)z equals:(id)x plus:(id)y ;
+-(id) init:(id)z equals:(id)x plus:(id)y;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;

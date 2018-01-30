@@ -19,6 +19,7 @@
 #import <objcp/CPIntVarI.h>
 
 #include "fpi.h"
+#include "gmp.h"
 
 #define NB_FLOAT_BY_E (8388608)
 #define S_PRECISION 23
@@ -54,9 +55,14 @@
 
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
 -(void) updateMin: (ORFloat) newMin;
+-(void) updateMinError: (ORRational) newMinError;
 -(void) updateMax: (ORFloat) newMax;
+-(void) updateMaxError: (ORRational) newMaxError;
 -(void) updateInterval: (ORFloat) newMin and: (ORFloat)newMax;
+-(void) updateIntervalError: (ORRational) newMinError and: (ORRational) newMaxError;
 -(void) bind: (ORFloat) val;
+-(void) bindError: (ORRational) valError;
+
 @end
 
 typedef struct  {
@@ -78,7 +84,9 @@ typedef struct  {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
+   ORRational              _valueError;
    id<CPFloatDom>            _dom;
+   id<CPRationalDom>     _domError;
    CPFloatEventNetwork      _net;
    CPMultiCast*             _recv;
 }
@@ -87,8 +95,10 @@ typedef struct  {
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 -(ORFloat) floatValue;
+-(ORRational*) errorValue;
 -(ORLDouble) domwidth;
 -(TRFloatInterval) domain;
+-(TRRationalInterval) domainError;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
@@ -118,6 +128,12 @@ typedef struct {
    float_interval  interval;
    int  changed;
 } intersectionInterval;
+
+typedef struct {
+    rational_interval result;
+    rational_interval interval;
+    int changed;
+} intersectionIntervalError;
 
 static inline int sign(float_cast p){
    if(p.parts.sign) return -1;
@@ -188,6 +204,14 @@ static inline float_interval makeFloatInterval(float min, float max)
    return (float_interval){min,max};
 }
 
+static inline rational_interval makeErrorInterval(ORRational min, ORRational max)
+{
+    rational_interval ri;
+    mpq_set(ri.inf, min);
+    mpq_set(ri.sup, max);
+    return ri;
+}
+
 //hzi : missing denormalised case
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 {
@@ -220,6 +244,25 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
    }
    return makeFloatInterval(min,max);
 }
+
+void minError(ORRational* r, ORRational* a, ORRational* b){
+    if(mpq_cmp(*a, *b)){
+        mpq_set(*r, *b);
+    }
+    else {
+        mpq_set(*r, *a);
+    }
+}
+
+void maxError(ORRational* r, ORRational* a, ORRational* b){
+    if(mpq_cmp(*a, *b)){
+        mpq_set(*r, *a);
+    }
+    else {
+        mpq_set(*r, *b);
+    }
+}
+
 static inline intersectionInterval intersection(int changed,float_interval r, float_interval x, ORDouble percent)
 {
    double reduced = 0;
@@ -229,4 +272,11 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
       fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
    }
    return (intersectionInterval){r,x,changed};
+}
+
+static inline intersectionIntervalError intersectionError(int changed, rational_interval* a, rational_interval* b){
+    rational_interval* new = NULL;
+    maxOP(&new->inf, &a->inf, &b->inf);
+    minOP(&new->sup, &a->sup, &b->sup);
+    return (intersectionIntervalError){*new,*a,changed};
 }

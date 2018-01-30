@@ -183,11 +183,15 @@ enum CPVarClass {
 @protocol CPFloatVar<CPVar>
 -(ORFloat) min;
 -(ORFloat) max;
+-(ORRational*) minError;
+-(ORRational*) maxError;
 -(ORFloat) value;
 -(ORFloat) floatValue;
+-(ORRational*) errorValue;
 -(ORInterval) bounds;
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
+-(ORBool) boundError;
 -(ORLDouble) domwidth;
 -(ORFloat) magnitude;
 -(void) bind:(ORFloat) val;

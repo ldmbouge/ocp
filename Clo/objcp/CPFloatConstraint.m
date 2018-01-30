@@ -15,29 +15,6 @@
 #import "CPRationalVarI.h"
 #import "ORConstraintI.h"
 
-void minOP(ORRational* r, ORRational* a, ORRational* b){
-    if(mpq_cmp(*a, *b)){
-        mpq_set(*r, *b);
-    }
-    else {
-        mpq_set(*r, *a);
-    }
-}
-
-void maxOP(ORRational* r, ORRational* a, ORRational* b){
-    if(mpq_cmp(*a, *b)){
-        mpq_set(*r, *a);
-    }
-    else {
-        mpq_set(*r, *b);
-    }
-}
-
-void intersectionR(rational_interval* new, rational_interval* a, rational_interval* b){
-    maxOP(&new->inf, &a->inf, &b->inf);
-    minOP(&new->sup, &a->sup, &b->sup);
-}
-
 void addR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
     mpq_add(ez->inf, ex->inf, ey->inf);
     mpq_add(ez->inf, ez->inf, eo->inf);
@@ -1137,6 +1114,9 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _z = z;
    _x = x;
    _y = y;
+   _ez = z;
+   _ex = x;
+   _ey = y;
    _precision = 1;
    _percent = 0.0;
    _rounding = FE_TONEAREST;
@@ -1157,10 +1137,14 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    rational_interval ezTemp, eyTemp, exTemp, ez, ex, ey;
    rational_interval eoTemp, eo;
    intersectionInterval inter;
-   intersectionIntervalR interR;
+   intersectionIntervalError interError;
    z = makeFloatInterval([_z min],[_z max]);
    x = makeFloatInterval([_x min],[_x max]);
    y = makeFloatInterval([_y min],[_y max]);
+   ez = makeRationalInterval(*[_ez min], *[_ez max]);
+   ex = makeRationalInterval(*[_ex min], *[_ex max]);
+   ey = makeRationalInterval(*[_ey min], *[_ey max]);
+   eo = makeRationalInterval(*[_ez min], *[_ez max]);
    do {
       changed = false;
       zTemp = z;
@@ -1197,6 +1181,38 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+       do {
+           changed = false;
+           ezTemp = ez;
+           addR(&ezTemp, &ex, &ey, &eo);
+           interError = intersectionError(changed, &ez, &ezTemp);
+           ez = interError.result;
+           changed |= interError.changed;
+           
+           exTemp = ex;
+           eyTemp = ey;
+           addR_inv_ex(&exTemp, &ez, &ey, &eo);
+           interError = intersectionError(changed, &ex, &exTemp);
+           ex = interError.result;
+           changed |= interError.changed;
+           
+           addR_inv_ey(&eyTemp, &ez, &ex, &eo);
+           interError = intersectionError(changed, &ey, &eyTemp);
+           changed |= interError.changed;
+           
+           eoTemp = eo;
+           addR_inv_eo(&eoTemp, &ez, &ex, &ey);
+           interError = intersectionError(changed, &eo, &eoTemp);
+           changed |= interError.changed;
+           
+           gchanged |= changed;
+       } while(changed);
+       if(gchanged){
+           [_x updateIntervalError:ex.inf and:ex.sup];
+           [_y updateIntervalError:ey.inf and:ey.sup];
+           [_z updateIntervalError:ez.inf and:ez.sup];
+           
+       }
    }
 }
 -(NSSet*)allVars
