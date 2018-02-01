@@ -264,33 +264,44 @@
 @end
 
 @implementation MISPState
--(id) initMISPState:(int)minValue :(int)maxValue {
+-(id) initMISPState:(int)layerValue :(int)minValue :(int)maxValue {
     _state = [[NSMutableArray alloc] init];
-    for (int stateValue = minValue; stateValue <= maxValue; stateValue++) {
-        [_state addObject:@YES];
-    }
+    _layerValue = layerValue;
     _minValue = minValue;
     _maxValue = maxValue;
+    
+    for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
+        [_state addObject:@YES];
+    }
     
     return self;
 }
--(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState *)parentNodeState withValue:(int)edgeValue {
+-(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState *)parentNodeState withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix{
     _state = [[NSMutableArray alloc] init];
-    for (int stateValue = minValue; stateValue <= maxValue; stateValue++) {
+    
+    int parentLayerValue = [parentNodeState layerValue];
+    _layerValue = parentLayerValue+1;
+    _minValue = minValue;
+    _maxValue = maxValue;
+    
+    for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
         [_state addObject: [NSNumber numberWithBool: [parentNodeState canChooseValue: stateValue]]];
     }
     if (edgeValue == 1) {
-        //iterate over adjacency matrix with value added changing all adjacent values to 0.
+        for (int index = _minValue; index <= _maxValue; index++) {
+            if (adjacencyMatrix[parentLayerValue][index]) {
+                [_state replaceObjectAtIndex:(index - _minValue) withObject:@NO];
+            }
+        }
     }
-    
-    _minValue = minValue;
-    _maxValue = maxValue;
     
     return self;
 }
 -(id) state { return _state; }
+-(int) layerValue { return _layerValue; }
 -(bool) canChooseValue:(int)value {
-    return [_state[value - _minValue] boolValue];
+    if (value == 0) return true;
+    return [_state[_layerValue - _minValue] boolValue];
 }
 -(void) mergeStateWith:(MISPState *)other {
     for (int value = _minValue; value <= _maxValue; value++) {
@@ -388,7 +399,7 @@
     [sink setIsSink: true];
     [self addNode: sink toLayer:([_x up] +1)];
     
-    id state = [self generateRootState];
+    id state = [self generateRootState: [_x low]];
     
     Node* root =[[Node alloc] initNode: _trail
                          minChildIndex:min_domain_val
@@ -473,7 +484,7 @@
         }];
     }
 }
--(id) generateRootState
+-(id) generateRootState:(int)layerValue
 {
     return NULL;
 }
@@ -567,7 +578,7 @@
 }
 -(void) printGraph {
     //[[NSFileManager defaultManager] createFileAtPath:[NSString stringWithFormat: @"/Users/ben/graphs/%d.dot", ] contents:nil attributes:nil];
-    
+    if (false) {
     NSMutableDictionary* nodeNames = [[NSMutableDictionary alloc] init];
     
     NSMutableString* output = [NSMutableString stringWithFormat: @"\ndigraph {\n"];
@@ -602,6 +613,7 @@
     }
     
     [output writeToFile: [NSString stringWithFormat: @"/Users/ben/graphs/%d.dot", numBound] atomically: YES encoding:NSUTF8StringEncoding error: nil];
+    }
 }
 @end
 
@@ -687,7 +699,7 @@
     self = [super initCPMDD:engine over:x reduced:reduced];
     return self;
 }
--(id) generateRootState
+-(id) generateRootState:(int)layerValue
 {
     return [[AllDifferentState alloc] initAllDifferentState:min_domain_val :max_domain_val];
 }
@@ -707,7 +719,7 @@
     self = [super initCPMDDRestriction:engine over:x restrictionSize:restrictionSize reduced:reduced];
     return self;
 }
--(id) generateRootState
+-(id) generateRootState:(int)layerValue
 {
     return [[AllDifferentState alloc] initAllDifferentState:min_domain_val :max_domain_val];
 }
@@ -727,7 +739,7 @@
     self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced];
     return self;
 }
--(id) generateRootState
+-(id) generateRootState:(int)layerValue
 {
     return [[AllDifferentState alloc] initAllDifferentState:min_domain_val :max_domain_val];
 }
@@ -745,16 +757,16 @@
 -(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
 {
     self = [super initCPMDD:engine over:x reduced:reduced];
-    //self.adjacencyMatrix = adjacencyMatrix;
+    _adjacencyMatrix = adjacencyMatrix;
     return self;
 }
--(id) generateRootState
+-(id) generateRootState:(int)layerValue
 {
-    return [[MISPState alloc] initMISPState:[_x low] :[_x up]];
+    return [[MISPState alloc] initMISPState:layerValue :[_x low] :[_x up]];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
-    return [[MISPState alloc] initMISPState:min_domain_val :max_domain_val parentNodeState:[parentNode getState] withValue:value];
+    return [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withValue:value adjacencies:_adjacencyMatrix];
 }
 -(NSString*)description
 {

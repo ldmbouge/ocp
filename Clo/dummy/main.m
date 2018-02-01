@@ -30,7 +30,7 @@ bool** adjacencyMatrix (NSArray* *edges, bool directed) {
     for (NSArray* edge in *edges) {
         adjacencyMatrix[[[edge objectAtIndex:0] integerValue]][[[edge objectAtIndex:1] integerValue]] = true;
         if (!directed) {
-            adjacencyMatrix[[[edge objectAtIndex:0] integerValue]][[[edge objectAtIndex:1] integerValue]] = true;
+            adjacencyMatrix[[[edge objectAtIndex:1] integerValue]][[[edge objectAtIndex:0] integerValue]] = true;
         }
     }
     return adjacencyMatrix;
@@ -42,20 +42,23 @@ int main (int argc, const char * argv[])
         //ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
 
         id<ORModel> mdl = [ORFactory createModel];
-        id<ORIntRange> R = RANGE(mdl, MIN, MAX);
-        id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R domain: R];
+        id<ORIntRange> R1 = RANGE(mdl, MIN, MAX);
+        id<ORIntRange> R2 = RANGE(mdl, 0, 1);
+        id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
         ORInt layerSize = 8;
         bool reduced = true;
   
-        [mdl add: [ORFactory ExactMDDAllDifferent: mdl var: a reduced:reduced]];
+        //[mdl add: [ORFactory ExactMDDAllDifferent: mdl var: a reduced:reduced]];
         //[mdl add: [ORFactory RestrictedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
         //[mdl add: [ORFactory RelaxedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
         
+        NSArray* emptyEdges = [[NSArray alloc] init];
+        NSArray* oneEdge = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MIN+1]]];
         NSArray* edges = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MAX]],
                            @[[NSNumber numberWithInt:MIN+1], [NSNumber numberWithInt:MAX-1]]];
         
-        bool** adjacencies = adjacencyMatrix(&edges, false);
+        bool** adjacencies = adjacencyMatrix(&oneEdge, false);
         
         
         [mdl add: [ORFactory ExactMDDMISP:mdl var:a reduced:reduced adjacencies:adjacencies]];
@@ -73,10 +76,10 @@ int main (int argc, const char * argv[])
             
             [cp labelArray: a];
 
-            //for (int i = MIN; i <= MAX; i++) {
-            //  printf("%d  ",[cp intValue: [a at:i]]);
-            //}
-            //printf("\n");
+            for (int i = MIN; i <= MAX; i++) {
+              printf("%d  ",[cp intValue: [a at:i]]);
+            }
+            printf("\n");
             [nbSolutions incr: cp];
         }
          ];

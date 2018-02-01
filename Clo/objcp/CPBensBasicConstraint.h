@@ -95,12 +95,14 @@
 @interface MISPState : NSObject {
 @private
     NSMutableArray* _state;
+    int _layerValue;
     int _minValue;
     int _maxValue;
 }
--(id) initMISPState:(int)minValue :(int)maxValue;
--(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withValue:(int)edgeValue;
+-(id) initMISPState:(int)layerValue :(int)minValue :(int)maxValue;
+-(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix;
 -(id) state;
+-(int) layerValue;
 -(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(MISPState*)other;
 @end
@@ -130,7 +132,7 @@
 -(void) addPropagationsAndTrimValues;
 -(void) trimValuesFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
--(id) generateRootState;
+-(id) generateRootState:(int)layerValue;
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
 -(void) removeNode: (Node*) node;
@@ -180,7 +182,7 @@
 
 @interface CPExactMDDMISP : CPMDD {
 @private
-    bool** adjacencyMatrix;
+    bool** _adjacencyMatrix;
 }
 -(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
 @end
