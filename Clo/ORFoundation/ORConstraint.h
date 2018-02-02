@@ -432,6 +432,7 @@ enum ORGroupType {
 -(id<ORIntVarArray>) vars;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
+-(int*) vertexValues;
 @end
 
 

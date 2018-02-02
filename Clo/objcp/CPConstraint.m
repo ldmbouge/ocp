@@ -657,9 +657,9 @@
     return o;
 }
 
-+(id<CPConstraint>) ExactMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
++(id<CPConstraint>) ExactMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues
 {
-    id<CPConstraint> o = [[CPExactMDDMISP alloc] initCPExactMDDMISP: cp over: x reduced:reduced adjacencies:adjacencyMatrix];
+    id<CPConstraint> o = [[CPExactMDDMISP alloc] initCPExactMDDMISP: cp over: x reduced:reduced adjacencies:adjacencyMatrix vertexValues:vertexValues];
     [[x tracker] trackMutable:o];
     return o;
 }

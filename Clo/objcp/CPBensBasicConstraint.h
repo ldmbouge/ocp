@@ -107,7 +107,7 @@
 -(void) mergeStateWith:(MISPState*)other;
 @end
 
-@interface CPMDD : CPCoreConstraint<ORSearchObjectiveFunction> {
+@interface CPMDD : CPCoreConstraint {
 @private
     TRInt **layer_variable_count;
     int _max_nodes_per_layer;
@@ -180,9 +180,10 @@
 -(id) initCPRelaxedMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
 @end
 
-@interface CPExactMDDMISP : CPMDD {
+@interface CPExactMDDMISP : CPMDD<ORSearchObjectiveFunction> {
 @private
     bool** _adjacencyMatrix;
+    int* _vertexValues;
 }
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues;
 @end

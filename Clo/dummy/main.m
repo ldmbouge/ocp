@@ -54,14 +54,21 @@ int main (int argc, const char * argv[])
         //[mdl add: [ORFactory RelaxedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
         
         NSArray* emptyEdges = [[NSArray alloc] init];
-        NSArray* oneEdge = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MIN+1]]];
+        NSArray* oneEdge = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MIN+2]]];
         NSArray* edges = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MAX]],
                            @[[NSNumber numberWithInt:MIN+1], [NSNumber numberWithInt:MAX-1]]];
         
-        bool** adjacencies = adjacencyMatrix(&oneEdge, false);
+        int* vertexValues = malloc((MAX-MIN+1) * sizeof(int));
+        vertexValues -= MIN;
+        
+        for (int i = MIN; i <= MAX; i++) {
+            vertexValues[i] = MIN * 5;
+        }
+        
+        bool** adjacencies = adjacencyMatrix(&edges, false);
         
         
-        [mdl add: [ORFactory ExactMDDMISP:mdl var:a reduced:reduced adjacencies:adjacencies]];
+        [mdl add: [ORFactory ExactMDDMISP:mdl var:a reduced:reduced adjacencies:adjacencies vertexValues:vertexValues]];
         
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
         

@@ -46,10 +46,11 @@
 
 
 @interface ORExactMDDMISP : ORConstraintI<ORExactMDDMISP>
--(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues;
 -(id<ORIntVarArray>) vars;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
+-(int*) vertexValues;
 @end
 
 

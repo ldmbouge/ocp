@@ -276,7 +276,7 @@
     
     return self;
 }
--(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState *)parentNodeState withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix{
+-(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix{
     _state = [[NSMutableArray alloc] init];
     
     int parentLayerValue = [parentNodeState layerValue];
@@ -284,8 +284,12 @@
     _minValue = minValue;
     _maxValue = maxValue;
     
-    for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
-        [_state addObject: [NSNumber numberWithBool: [parentNodeState canChooseValue: stateValue]]];
+    for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
+        if (stateIndex < _layerValue) { //If already chose a value for that layer, set it to NO, can't be chosen (this helps reduction work better)
+            [_state addObject: @NO];
+        } else {
+            [_state addObject: [parentNodeState state][stateIndex - _minValue]];
+        }
     }
     if (edgeValue == 1) {
         for (int index = _minValue; index <= _maxValue; index++) {
@@ -294,7 +298,7 @@
             }
         }
     }
-    
+
     return self;
 }
 -(id) state { return _state; }
@@ -578,12 +582,11 @@
 }
 -(void) printGraph {
     //[[NSFileManager defaultManager] createFileAtPath:[NSString stringWithFormat: @"/Users/ben/graphs/%d.dot", ] contents:nil attributes:nil];
-    if (false) {
     NSMutableDictionary* nodeNames = [[NSMutableDictionary alloc] init];
     
     NSMutableString* output = [NSMutableString stringWithFormat: @"\ndigraph {\n"];
     
-    for (int layer = min_domain_val; layer < max_domain_val+1; layer++) {
+    for (int layer = [_x low]; layer < [_x up]+1; layer++) {
         for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
             Node* node = layers[layer][node_index];
             if (node != nil) {
@@ -613,7 +616,6 @@
     }
     
     [output writeToFile: [NSString stringWithFormat: @"/Users/ben/graphs/%d.dot", numBound] atomically: YES encoding:NSUTF8StringEncoding error: nil];
-    }
 }
 @end
 
@@ -754,10 +756,11 @@
 @end
 
 @implementation CPExactMDDMISP
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues
 {
     self = [super initCPMDD:engine over:x reduced:reduced];
     _adjacencyMatrix = adjacencyMatrix;
+    _vertexValues = vertexValues;
     return self;
 }
 -(id) generateRootState:(int)layerValue
@@ -767,6 +770,7 @@
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
     return [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withValue:value adjacencies:_adjacencyMatrix];
+
 }
 -(NSString*)description
 {

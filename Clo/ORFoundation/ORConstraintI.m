@@ -192,13 +192,15 @@
    id<ORIntVarArray> _x;
    bool _reduced;
    bool** _adjacencyMatrix;
+   int* _vertexValues;
 }
--(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues
 {
    self = [super initORConstraintI];
    _x = x;
    _reduced = reduced;
    _adjacencyMatrix = adjacencyMatrix;
+   _vertexValues = vertexValues;
    return self;
 }
 -(void)dealloc
@@ -227,6 +229,10 @@
 -(bool**) adjacencyMatrix
 {
    return _adjacencyMatrix;
+}
+-(int*) vertexValues
+{
+   return _vertexValues;
 }
 -(NSSet*)allVars
 {

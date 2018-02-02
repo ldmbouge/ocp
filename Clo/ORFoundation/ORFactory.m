@@ -953,9 +953,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 
 
-+(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
++(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues
 {
-    id<ORConstraint> o = [[ORExactMDDMISP alloc] initORExactMDDMISP:x reduced:reduced adjacencies:adjacencyMatrix];
+    id<ORConstraint> o = [[ORExactMDDMISP alloc] initORExactMDDMISP:x reduced:reduced adjacencies:adjacencyMatrix vertexValues:vertexValues];
     [model trackObject:o];
     return o;
 }
