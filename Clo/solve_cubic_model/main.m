@@ -42,14 +42,6 @@ int main(int argc, const char * argv[]) {
          [model add:[R_0 eq:@(0.0f)]];
          [model add:[Q_0 eq:@(0.0f)]];
          [model add:[a_0 eq:@(15.0f)]];
-         [model add:[c_0 eq:@(1.25000000000000000000e+02f)]];
-         [model add:[r_0 eq:@(0.f)]];
-         [model add:[R2_0 eq:@(0.f)]];
-         [model add:[q_0 eq:@(0.f)]];
-         [model add:[Q3_0 eq:@(0.f)]];
-         [model add:[CQ3_0 eq:@(0.f)]];
-         [model add:[CR2_0 eq:@(0.f)]];
-         [model add:[b_0 eq:@(75.f)]];
          
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          

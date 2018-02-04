@@ -18,7 +18,6 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> q_0 = [ORFactory floatVar:model name:@"q"];
          id<ORFloatVar> b_0 = [ORFactory floatVar:model name:@"b"];
          id<ORGroup> g = [args makeGroup:model];
-//         [g add:[a_0 eq:@(5.0)]];
          [g add:[q_0 eq: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
          
          [g add:[r_0 eq: [[[[[a_0 mul:@(2.f)] mul: a_0] mul: a_0] sub: [[a_0 mul:@(9.f)] mul: b_0]] plus: [c_0 mul:@(27.f)]]]];
@@ -41,15 +40,8 @@ int main(int argc, const char * argv[]) {
          //assert(!(R == 0 && Q == 0));
          [g add:[R_0 eq:@(0.0f)]];
          [g add:[Q_0 eq:@(0.0f)]];
-         //         [g add:[a_0 eq:@(15.0f)]];
-//         [g add:[c_0 eq:@(1.25000000000000000000e+02f)]];
-//         [g add:[r_0 eq:@(0.f)]];
-//         [g add:[R2_0 eq:@(0.f)]];
-//         [g add:[q_0 eq:@(0.f)]];
-//         [g add:[Q3_0 eq:@(0.f)]];
-//         [g add:[CQ3_0 eq:@(0.f)]];
-//         [g add:[CR2_0 eq:@(0.f)]];
-//         [g add:[b_0 eq:@(75.f)]];
+         [g add:[a_0 eq:@(15.0f)]];
+
          [model add:g];
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          
