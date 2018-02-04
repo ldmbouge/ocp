@@ -62,6 +62,15 @@ int main(int argc, const char * argv[]) {
 //         NSLog(@"%@",model);
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         int nb = 0;
+         int max = 0;
+         int tmp = 0;
+         for(id<ORFloatVar> x in vars){
+            tmp = (int)[cp maxOccurences:x];
+            max = MAX(max, tmp);
+            if(tmp > 1) nb++;
+         }
+         NSLog(@"max = %d nb = %d",max,nb);
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];

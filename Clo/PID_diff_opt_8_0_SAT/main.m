@@ -137,6 +137,7 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          
+         NSLog(@"%@",[cp concretize:g]);
          [cp solveOn:^(id<CPCommonProgram> p) {
             
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];

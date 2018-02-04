@@ -2861,14 +2861,12 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [self propagateSplitting];
    self->_todo = CPChecked;
 }
-//TODO hzi : correction on lower bound
 -(void) propagateShaving
 {
    ORStatus s;
    ORLDouble size;
-   ORDouble step;
    ORDouble percent;
-   __block ORFloat min,max,last;
+   __block ORFloat min,max,last,step;
    for(id<CPFloatVar> v in _vars){
       if([v bound]) continue;
       s = ORFailure;
@@ -2878,10 +2876,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       while (s==ORFailure) {
          [_tracer pushNode];
          step = size * (percent/100.f);
-         max = (min + step < v.max) ? min+step : max;
+         min = max;
+         max = (min + step < v.max) ? min+step : v.max;
          s=tryfail(^ORStatus{
-            [v updateMax:max];
-            [super propagate];// verifier que ca appel pas de 3B
+            [v updateInterval:min and:max];
+            [super propagate];
             return ORSuccess;
          }, ^ORStatus{
             last=max;
@@ -2902,9 +2901,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       while (s==ORFailure) {
          [_tracer pushNode];
          step = size * (percent/100.f);
-         min = (max - step > v.min) ? max-step : min;
+         max = min;
+         min = (max - step > v.min) ? max-step : v.min;
          s=tryfail(^ORStatus{
-            [v updateMin:min];
+            [v updateInterval:min and:max];
             [super propagate];
             return ORSuccess;
          }, ^ORStatus{

@@ -60,6 +60,7 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          fesetround(FE_TONEAREST);
+         
          [cp solveOn:^(id<CPCommonProgram> p) {
             
             

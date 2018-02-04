@@ -210,6 +210,7 @@ PORTABLE_BEGIN
 -(ORInt)  regret:(id<ORIntVar>)x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
+-(ORUInt)  maxOccurences:(id<ORVar>) x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
 -(ORDouble) doubleValue: (id<ORRealVar>) x;

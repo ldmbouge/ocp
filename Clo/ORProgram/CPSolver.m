@@ -2684,8 +2684,8 @@
          [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
       }];
    }else{
-      [self shave:index direction:-1 percent:5.f coef:2 call:s withVars:x];
-      [self shave:index direction:1 percent:5.f coef:2 call:s withVars:x];
+      [self shave:index direction:-1 percent:10.f coef:2 call:s withVars:x];
+      [self shave:index direction:1 percent:10.f coef:2 call:s withVars:x];
       //for splitting percent 50 and coef 0.5 ?
       // now x is shaved on both-end. Proceed with a normal dichotomy
       // on x and recur.
@@ -2733,9 +2733,9 @@
             // If it fails, onSolution is never called and you can check the depth of the
             // search with the controller t.
             [self performSelector:s withObject:x withObject:^(ORUInt ind, SEL call,id<ORDisabledFloatVarArray> vs){
-               [self float3BSplit:ind call:call withVars:vs];
+//               [self float3BSplit:ind call:call withVars:vs];
 //               [self float6WaySplit:ind call:call withVars:vs];
-//               [self floatSplit:ind call:call withVars:vs];
+               [self floatSplit:ind call:call withVars:vs];
             }];
          }];
       } onSolution:^{

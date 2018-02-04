@@ -136,9 +136,10 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
-         
+        
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
+            NSLog(@"A : #vars : %lu #cstr : %lu",(unsigned long)[vars count],(unsigned long)[[model constraints] count]);
+            NSLog(@"%d",[g size]);
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             found=true;
             for(id<ORFloatVar> v in vars){

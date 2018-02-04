@@ -139,6 +139,7 @@ int main(int argc, const char * argv[]) {
          
          [cp solveOn:^(id<CPCommonProgram> p) {
             
+           
                         [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             found=true;
             for(id<ORFloatVar> v in vars){

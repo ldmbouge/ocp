@@ -17,48 +17,48 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> R_0 = [ORFactory floatVar:model name:@"R"];
          id<ORFloatVar> q_0 = [ORFactory floatVar:model name:@"q"];
          id<ORFloatVar> b_0 = [ORFactory floatVar:model name:@"b"];
-         id<ORGroup> g = [args makeGroup:model];
-//         [g add:[a_0 eq:@(5.0)]];
-         [g add:[q_0 eq: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
+//         id<ORGroup> model = [args makeGroup:model];
+         //         [model add:[a_0 eq:@(5.0)]];
+         [model add:[q_0 eq: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
          
-         [g add:[r_0 eq: [[[[[a_0 mul:@(2.f)] mul: a_0] mul: a_0] sub: [[a_0 mul:@(9.f)] mul: b_0]] plus: [c_0 mul:@(27.f)]]]];
-         
-         
-         [g add:[Q_0 eq: [q_0 div:@(9.f)]]];
-         
-         [g add:[R_0 eq: [r_0 div:@(54.f)]]];
+         [model add:[r_0 eq: [[[[[a_0 mul:@(2.f)] mul: a_0] mul: a_0] sub: [[a_0 mul:@(9.f)] mul: b_0]] plus: [c_0 mul:@(27.f)]]]];
          
          
-         [g add:[Q3_0 eq: [[Q_0 mul:Q_0] mul:Q_0]]];
+         [model add:[Q_0 eq: [q_0 div:@(9.f)]]];
          
-         [g add:[R2_0 eq: [R_0 mul:R_0]]];
+         [model add:[R_0 eq: [r_0 div:@(54.f)]]];
          
          
-         [g add:[CR2_0 eq: [[r_0 mul:@(729.f)] mul: r_0]]];
+         [model add:[Q3_0 eq: [[Q_0 mul:Q_0] mul:Q_0]]];
          
-         [g add:[CQ3_0 eq: [[[q_0 mul:@(2916.f)] mul: q_0] mul: q_0]]];
+         [model add:[R2_0 eq: [R_0 mul:R_0]]];
+         
+         
+         [model add:[CR2_0 eq: [[r_0 mul:@(729.f)] mul: r_0]]];
+         
+         [model add:[CQ3_0 eq: [[[q_0 mul:@(2916.f)] mul: q_0] mul: q_0]]];
          
          //assert(!(R == 0 && Q == 0));
-         [g add:[R_0 eq:@(0.0f)]];
-         [g add:[Q_0 eq:@(0.0f)]];
-         //         [g add:[a_0 eq:@(15.0f)]];
-//         [g add:[c_0 eq:@(1.25000000000000000000e+02f)]];
-//         [g add:[r_0 eq:@(0.f)]];
-//         [g add:[R2_0 eq:@(0.f)]];
-//         [g add:[q_0 eq:@(0.f)]];
-//         [g add:[Q3_0 eq:@(0.f)]];
-//         [g add:[CQ3_0 eq:@(0.f)]];
-//         [g add:[CR2_0 eq:@(0.f)]];
-//         [g add:[b_0 eq:@(75.f)]];
-         [model add:g];
+         [model add:[R_0 eq:@(0.0f)]];
+         [model add:[Q_0 eq:@(0.0f)]];
+         [model add:[a_0 eq:@(15.0f)]];
+         [model add:[c_0 eq:@(1.25000000000000000000e+02f)]];
+         [model add:[r_0 eq:@(0.f)]];
+         [model add:[R2_0 eq:@(0.f)]];
+         [model add:[q_0 eq:@(0.f)]];
+         [model add:[Q3_0 eq:@(0.f)]];
+         [model add:[CQ3_0 eq:@(0.f)]];
+         [model add:[CR2_0 eq:@(0.f)]];
+         [model add:[b_0 eq:@(75.f)]];
+         
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          
          id<ORFloatVarArray> vars = [model floatVars];
          NSLog(@"%@",model);
-//         id<CPProgram> cp = [args makeProgram:model];
+         //         id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-//            NSLog(@"%@",p);
+            //            NSLog(@"%@",p);
             
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");

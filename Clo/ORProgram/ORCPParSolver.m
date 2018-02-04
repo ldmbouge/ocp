@@ -616,6 +616,10 @@
 {
    return [[self worker] domwidth:x];
 }
+-(ORUInt)  maxOccurences:(id<ORVar>) x
+{
+   return [[self worker] maxOccurences: x];
+}
 -(ORDouble) doubleMin:(id<ORRealVar>)x
 {
    return [[self worker] doubleMin:x];
