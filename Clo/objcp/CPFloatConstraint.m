@@ -27,10 +27,16 @@
 -(void) post
 {
    if([_x bound]){
-      [_y bind:[_x value]];
+      if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
+         [_y updateInterval:[_x min] and:[_x max]];
+      else
+         [_y bind:[_x value]];
       return;
    }else if([_y bound]){
-      [_x bind:[_y value]];
+      if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
+         [_x updateInterval:[_y min] and:[_y max]];
+      else
+         [_x bind:[_y value]];
       return;
    }
    if(isDisjointWith(_x,_y)){
@@ -47,11 +53,19 @@
 -(void) propagate
 {
    if([_x bound]){
-      [_y bind:[_x value]];
+      //hzi : if x in [-0.0,0.0]f : x is bound, but value return x.min
+      //the domain of y must stay  [-0.0,0.0]f and not just -0.0f
+      if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
+         [_y updateInterval:[_x min] and:[_x max]];
+      else
+         [_y bind:[_x value]];
       assignTRInt(&_active, NO, _trail);
       return;
    }else if([_y bound]){
-      [_x bind:[_y value]];
+      if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
+         [_x updateInterval:[_y min] and:[_y max]];
+      else
+         [_x bind:[_y value]];
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -126,7 +140,7 @@
 {
    if ([_x bound]) {
       if([_y bound]){
-         if ([_x min] == [_y min])
+         if (is_eqf([_x min],[_y min]))
             failNow();
          else{
             if([_x min] == [_y min]){
@@ -864,11 +878,17 @@
    }
    else if (maxDom(_b)==0) {     // b is FALSE
       if ([_x bound]){
-         [_y bind:[_x min]];
+         if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
+            [_y updateInterval:[_x min] and:[_x max]];
+         else
+            [_y bind:[_x min]];
          assignTRInt(&_active, NO, _trail);
          return;
       } else if ([_y bound]){
-         [_x bind:[_y min]];
+         if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
+            [_x updateInterval:[_y min] and:[_y max]];
+         else
+            [_x bind:[_y min]];
          assignTRInt(&_active, NO, _trail);
          return;
       }else {                    // FALSE <=> (x == y)
@@ -948,10 +968,16 @@
    if (minDom(_b)) {            // b is TRUE
       if ([_x bound]) {           // TRUE <=> (y == c)
          assignTRInt(&_active, 0, _trail);
-         [_y bind:[_x min]];
+         if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
+            [_y updateInterval:[_x min] and:[_x max]];
+         else
+            [_y bind:[_x min]];
       }else  if ([_y bound]) {     // TRUE <=> (x == c)
          assignTRInt(&_active, 0, _trail);
-         [_x bind:[_y min]];
+         if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
+            [_x updateInterval:[_y min] and:[_y max]];
+         else
+            [_x bind:[_y min]];
       } else {                    // TRUE <=> (x == y)
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];

@@ -153,8 +153,10 @@
    CPHeuristicSet*       _hSet;
    id<CPPortal>          _portal;
    
-   ORInt                 _level;
+   ORInt                  _level;
    ORBool                 _unique;
+   ORFloat                  _split3Bpercent;
+   SEL                    _subcut;
    
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
@@ -180,6 +182,8 @@
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
    _level = 0;
+   _split3Bpercent = 10.f;
+   _subcut = @selector(float3BSplit:call:withVars:);
    _unique = NO;
    _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnSolArray     = [[NSMutableArray alloc] initWithCapacity: 1];
@@ -340,6 +344,14 @@
 -(void) setUnique:(ORBool) u
 {
    _unique = u;
+}
+-(void) set3BSplitPercent:(ORFloat) p
+{
+   _split3Bpercent = p;
+}
+-(void) setSubcut:(SEL) s
+{
+   _subcut = s;
 }
 -(void) addHeuristic: (id<CPHeuristic>) h
 {
@@ -2684,8 +2696,8 @@
          [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
       }];
    }else{
-      [self shave:index direction:-1 percent:10.f coef:2 call:s withVars:x];
-      [self shave:index direction:1 percent:10.f coef:2 call:s withVars:x];
+      [self shave:index direction:-1 percent:_split3Bpercent coef:2 call:s withVars:x];
+      [self shave:index direction:1 percent:_split3Bpercent coef:2 call:s withVars:x];
       //for splitting percent 50 and coef 0.5 ?
       // now x is shaved on both-end. Proceed with a normal dichotomy
       // on x and recur.
@@ -2733,9 +2745,8 @@
             // If it fails, onSolution is never called and you can check the depth of the
             // search with the controller t.
             [self performSelector:s withObject:x withObject:^(ORUInt ind, SEL call,id<ORDisabledFloatVarArray> vs){
-//               [self float3BSplit:ind call:call withVars:vs];
-//               [self float6WaySplit:ind call:call withVars:vs];
-               [self floatSplit:ind call:call withVars:vs];
+               SELPROTO subcut = (SELPROTO)[self methodForSelector:_subcut];
+               subcut(self,_subcut,ind,call,vs);
             }];
          }];
       } onSolution:^{

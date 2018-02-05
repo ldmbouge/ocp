@@ -35,7 +35,7 @@
 }
 -(NSString*) description
 {
-    if([self bound]){
+    if([self bound] && !(is_eqf(_domain._low,-0.0f) && is_eqf(_domain._up,+0.0f))){
         unsigned int *inf;
         inf = (unsigned int *)&(_domain._low);
         NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -105,7 +105,7 @@
 }
 -(ORBool) bound
 {
-    return _domain._up == _domain._low;
+    return _domain._low == _domain._up;
 }
 -(ORInterval) bounds
 {

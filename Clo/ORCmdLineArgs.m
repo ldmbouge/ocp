@@ -28,6 +28,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 @synthesize randomized;
 @synthesize heuristic;
 @synthesize valordering;
+@synthesize subcut;
 @synthesize defaultAbsSplit;
 @synthesize nbThreads;
 @synthesize nArg;
@@ -35,6 +36,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 @synthesize unique;
 @synthesize is3Bfiltering;
 @synthesize kbpercent;
+@synthesize search3Bpercent;
 @synthesize fName;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
@@ -53,6 +55,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    nArg = 0;
    heuristic = ref;
    valordering = dynamicSplit;
+   subcut = dynamicSplit;
    defaultAbsSplit = dynamicSplit;
    restartRate = 0;
    timeOut = 60;
@@ -61,6 +64,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    unique = NO;
    is3Bfiltering = NO;
    kbpercent=-1;
+   search3Bpercent=10;
    fName = @"";
    randomized = NO;
    for(int k = 1;k< argc;k++) {
@@ -92,6 +96,10 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          unique=YES;
       else if (strncmp(argv[k],"-3B",3)==0)
          is3Bfiltering=YES;
+      else if (strncmp(argv[k],"-subcut",7)==0)
+         subcut = atoi(argv[k+1]);
+      else if (strncmp(argv[k],"-search3Bpercent",16)==0)
+         search3Bpercent = atof(argv[k+1]);
    }
    return self;
 }
@@ -106,6 +114,28 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 -(NSString*)valueDefaultAbsSplitName
 {
    return valHName[defaultAbsSplit];
+}
+-(NSString*)valueSubCutName
+{
+   if (valordering != split3B)
+      return @"none";
+   return valHName[subcut];
+}
+-(SEL) subCutSelector
+{
+   switch (subcut){
+      case split : return @selector(floatStaticSplit:call:withVars:);
+      case split3Way : return @selector(floatStatic3WaySplit:call:withVars:);
+      case split5Way : return @selector(floatStatic5WaySplit:call:withVars:);
+      case split6Way : return @selector(floatStatic6WaySplit:call:withVars:);
+      case dynamicSplit : return @selector(floatSplit:call:withVars:);
+      case dynamic3Split : return @selector(float3WaySplit:call:withVars:);
+      case dynamic5Split : return @selector(float5WaySplit:call:withVars:);
+      case dynamic6Split : return @selector(float6WaySplit:call:withVars:);
+      case split3B : return @selector(float3BSplit:call:withVars:);
+      default:
+         return @selector(float3BSplit:call:withVars:);
+   }
 }
 -(void)measure:(struct ORResult(^)(void))block
 {
@@ -130,8 +160,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];
    NSString* str = mallocReport();
-   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%\n");
-   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
+   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,subcut,split3Bpercent\n");
+   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%s,%f\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           [[self valueHeuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           randomized,
           nbThreads,
@@ -145,7 +175,10 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
           endWC - startWC,
           [str cStringUsingEncoding:NSASCIIStringEncoding],
           (is3Bfiltering)?"3B":"2B",
-          (kbpercent != -1)?kbpercent:5.0);
+          (kbpercent != -1)?kbpercent:5.0,
+          (unique) ? "YES":"NO",
+          [[self valueSubCutName] cStringUsingEncoding:NSASCIIStringEncoding],
+          search3Bpercent);
 }
 -(void) updateNotes: (id<ORAnnotation>) notes
 {
@@ -173,6 +206,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setLevel:level];
          [(CPCoreSolver*)p setUnique:unique];
+         [(CPCoreSolver*)p set3BSplitPercent:search3Bpercent];
+         [(CPCoreSolver*)p setSubcut:[self subCutSelector]];
          return p;
       case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];

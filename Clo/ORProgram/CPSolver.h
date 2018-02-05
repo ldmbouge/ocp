@@ -59,6 +59,8 @@
 -(void) setSource:(id<ORModel>)src;
 -(void) setLevel:(ORInt) level;
 -(void) setUnique:(ORBool) u;
+-(void) set3BSplitPercent:(ORFloat) p;
+-(void) setSubcut:(SEL)s;
 -(id<ORModel>)source;
 -(ORBool) ground;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;

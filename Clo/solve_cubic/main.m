@@ -1,5 +1,56 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+
+void check_solution(float a,float b, float c, float r, float q, float Q, float R, float R2, float Q3, float CR2, float CQ3){
+   bool err = false;
+   float q_c = (a * a - 3 * b);
+   float r_c = (2 * a * a * a - 9 * a * b + 27 * c);
+   
+   float Q_c = q / 9;
+   float R_c = r / 54;
+   
+   float Q3_c = Q * Q * Q;
+   float R2_c = R * R;
+   
+   float CR2_c = 729 * r * r;
+   float CQ3_c = 2916 * q * q * q;
+   if(r_c != r){
+      err = true;
+      printf("(r_c)%16.16e != (r)%16.16e \n",r_c,r);
+   }
+   if(q_c != q){
+      err = true;
+      printf("(q_c)%16.16e != (q)%16.16e \n",q_c,q);
+   }
+   if(Q_c != Q){
+      err = true;
+      printf("(Q_c)%16.16e != (Q)%16.16e \n",Q_c,Q);
+   }
+   if(R_c != R){
+      err = true;
+      printf("(R_c)%16.16e != (R)%16.16e \n",R_c,R);
+   }
+   if(Q3_c != Q3){
+      err = true;
+      printf("(Q3_c)%16.16e != (Q3)%16.16e \n",Q3_c,Q3);
+      
+   }
+   if(R2_c != R2){
+      err = true;
+      printf("(R2_c)%16.16e != (R2)%16.16e \n",R2_c,R2);
+   }
+   if(CR2_c != CR2){
+      err = true;
+      printf("(CR2_c)%16.16e != (CR2)%16.16e \n",CR2_c,CR2);
+   }
+   if(CQ3_c != CQ3){
+      err = true;
+      printf("(CQ3_c)%16.16e != (CQ3)%16.16e \n",CQ3_c,CQ3);
+   }
+   if(!err)
+      printf("Les inputs sont correctes\n");
+}
+
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
@@ -40,17 +91,17 @@ int main(int argc, const char * argv[]) {
          //assert(!(R == 0 && Q == 0));
          [g add:[R_0 eq:@(0.0f)]];
          [g add:[Q_0 eq:@(0.0f)]];
-         [g add:[a_0 eq:@(15.0f)]];
-
+         //         [g add:[a_0 eq:@(15.0f)]];
+         
          [model add:g];
-         id<CPProgram> cp = [ORFactory createCPProgram:model];
+         id<CPProgram> cp = [args makeProgram:model];
          
          id<ORFloatVarArray> vars = [model floatVars];
          NSLog(@"%@",model);
-//         id<CPProgram> cp = [args makeProgram:model];
+         //         id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-//            NSLog(@"%@",p);
+            //            NSLog(@"%@",p);
             
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
@@ -59,6 +110,7 @@ int main(int argc, const char * argv[]) {
                found &= [p bound: v];
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
+            check_solution([p floatValue:a_0],[p floatValue:b_0],[p floatValue:c_0],[p floatValue:r_0],[p floatValue:q_0],[p floatValue:Q_0],[p floatValue:R_0], [p floatValue:R2_0],[p floatValue:Q3_0],[p floatValue:CR2_0],[p floatValue:CQ3_0]);
          } withTimeLimit:[args timeOut]];
          
          struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
