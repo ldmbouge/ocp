@@ -398,9 +398,9 @@
 }
 -(void) dealloc
 {
-   [super dealloc];
    if(_prettyname != nil)
       [_prettyname release];
+   [super dealloc];
 }
 -(enum ORVType) vtype
 {

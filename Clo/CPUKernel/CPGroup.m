@@ -125,7 +125,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
       cb();
    else {
       CPCoreConstraint* cstr = forCstr;
-      if (cstr->_todo == CPChecked)
+      if (cstr->_todo == CPChecked || cstr->_active._val == 0)
          return ORSkip;
       else {
          cstr->_todo = CPChecked;

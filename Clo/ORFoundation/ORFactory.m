@@ -666,6 +666,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
         [o set:[ORFactory floatVar:tracker] at:k];
     return (id<ORFloatVarArray>)o;
 }
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set:[ORFactory floatVar:tracker name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
+   return (id<ORFloatVarArray>)o;
+}
 +(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
