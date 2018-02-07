@@ -18,7 +18,7 @@
 /*                        CPFloatVarSnapshot                                              */
 /*****************************************************************************************/
 
-@interface CPRationalVarSnapshot : NSObject
+/*@interface CPRationalVarSnapshot : NSObject
 {
     ORUInt      _name;
     ORRational  _value;
@@ -372,7 +372,7 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
     # warning todo
 }
 
-/*-(ORLDouble) domwidth
+-(ORLDouble) domwidth
  {
  return [_dom domwidth];
  }
@@ -380,7 +380,7 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
  {
  return [_dom magnitude];
  }*/
-- (void)visit:(ORVisitor *)visitor {
+/*- (void)visit:(ORVisitor *)visitor {
     # warning todo
 }
 
@@ -676,5 +676,5 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
 }
 
 @end
-
+*/
 

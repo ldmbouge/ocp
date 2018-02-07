@@ -21,7 +21,7 @@
 //#include "fpi.h"
 #import "gmp.h"
 
-#define NB_FLOAT_BY_E (8388608)
+/*#define NB_FLOAT_BY_E (8388608)
 #define S_PRECISION 23
 #define E_MAX (254)
 
@@ -109,12 +109,12 @@ typedef struct {
     int  changed;
 } intersectionIntervalR;
 
-/*static inline int signR(rational_cast p){
+static inline int signR(rational_cast p){
     if(p.parts.sign) return -1;
     return 1;
 }*/
 
-static inline bool isDisjointWithVR(ORRational xmin,ORRational xmax,ORRational ymin,ORRational ymax)
+/*static inline bool isDisjointWithVR(ORRational xmin,ORRational xmax,ORRational ymin,ORRational ymax)
 {
     return (mpq_cmp(xmin, ymin) < 0 &&  mpq_cmp(xmax, ymin) < 0) || (mpq_cmp(ymin, xmin) < 0 && mpq_cmp(ymax, xmin) < 0);
 }
@@ -124,7 +124,7 @@ static inline bool isIntersectingWithVR(ORRational xmin,ORRational xmax,ORRation
     return !isDisjointWithVR(xmin,xmax,ymin,ymax);
 }
 
-/*static inline unsigned long long cardinalityV(float xmin, float xmax){
+static inline unsigned long long cardinalityV(float xmin, float xmax){
  Rational_cast i_inf;
  Rational_cast i_sup;
  i_inf.f = xmin;
@@ -135,7 +135,7 @@ static inline bool isIntersectingWithVR(ORRational xmin,ORRational xmax,ORRation
  return (res < 0) ? -res : res;
  }*/
 
-static inline bool isDisjointWithR(CPRationalVarI* x, CPRationalVarI* y)
+/*static inline bool isDisjointWithR(CPRationalVarI* x, CPRationalVarI* y)
 {
     return isDisjointWithVR(*[x min], *[x max], *[y min], *[y max]);
 }
@@ -154,7 +154,7 @@ static inline bool canFollowR(CPRationalVarI* x, CPRationalVarI* y)
     return mpq_cmp(*[x min], *[y min ]) > 0 && mpq_cmp(*[x max], *[y max]) > 0;
 }
 
-/*static inline ORDouble cardinality(CPRationalVarI* x)
+static inline ORDouble cardinality(CPRationalVarI* x)
  {
  return 0.0;//cardinalityV(*[x min], *[x max]);
  }*/
@@ -169,7 +169,7 @@ static inline bool canFollowR(CPRationalVarI* x, CPRationalVarI* y)
  return (float_interval){min,max};
  }*/
 
-static inline rational_interval makeRationalInterval(ORRational min, ORRational max)
+/*static inline rational_interval makeRationalInterval(ORRational min, ORRational max)
 {
     rational_interval ri;
     mpq_set(ri.inf, min);
@@ -177,7 +177,7 @@ static inline rational_interval makeRationalInterval(ORRational min, ORRational 
     return ri;
 }
 
-/*static inline intersectionIntervalR intersectionR(int changed,rational_interval r, rational_interval x, ORDouble percent)
+static inline intersectionIntervalR intersectionR(int changed,rational_interval r, rational_interval x, ORDouble percent)
 {
      double reduced = 0;
      if(percent == 0.0)

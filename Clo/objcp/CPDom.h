@@ -92,10 +92,10 @@
 
 @protocol CPRationalVarNotifier;
 @protocol CPRationalDom
--(void) updateMin:(ORRational)newMin for:(id<CPRationalVarNotifier>)x;
--(void) updateMax:(ORRational)newMax for:(id<CPRationalVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRationalVarNotifier>)x;
--(void) bind:(ORRational)val  for:(id<CPRationalVarNotifier>)x;
+-(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x;
+-(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
+-(void) bind:(ORRational)val  for:(id<CPFloatVarNotifier>)x;
 -(ORRational*) min;
 -(ORRational*) max;
 -(ORRational*) imin;
@@ -108,7 +108,7 @@
 -(NSString*)description;
 -(id) copy;
 -(void) restoreDomain:(id<CPRationalDom>)toRestore;
--(void) restoreValue:(ORRational)toRestore for:(id<CPRationalVarNotifier>)x;
+-(void) restoreValue:(ORRational)toRestore for:(id<CPFloatVarNotifier>)x;
 @end
 
 @protocol CPDoubleVarNotifier;

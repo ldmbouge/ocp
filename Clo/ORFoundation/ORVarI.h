@@ -73,6 +73,8 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
+-(ORRational*) lowError;
+-(ORRational*) upError;
 -(id<ORFloatRange>) domain;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;

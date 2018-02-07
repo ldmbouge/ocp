@@ -70,14 +70,21 @@ typedef struct  {
    TRId            _minEvt;
    TRId            _maxEvt;
    TRId         _boundsEvt;
+   TRId        _bindEvtErr;
+   TRId         _maxEvtErr;
+   TRId         _minEvtErr;
+   TRId      _boundsEvtErr;
 } CPFloatEventNetwork;
 
 @class CPFloatVarI;
 @protocol CPFloatVarNotifier <NSObject>
 -(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
 -(void) bindEvt:(id<CPFloatDom>)sender;
+-(void) bindEvtErr:(id<CPRationalDom>)sender;
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
+-(void) changeMinEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
+-(void) changeMaxEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
 @end
 
 @interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPFloatVarExtendedItf> {
@@ -204,6 +211,14 @@ static inline float_interval makeFloatInterval(float min, float max)
    return (float_interval){min,max};
 }
 
+static inline rational_interval makeRationalInterval(ORRational min, ORRational max)
+{
+    rational_interval ri;
+    mpq_set(ri.inf, min);
+    mpq_set(ri.sup, max);
+    return ri;
+}
+
 static inline rational_interval makeErrorInterval(ORRational min, ORRational max)
 {
     rational_interval ri;
@@ -245,7 +260,7 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
    return makeFloatInterval(min,max);
 }
 
-void minError(ORRational* r, ORRational* a, ORRational* b){
+static inline void minError(ORRational* r, ORRational* a, ORRational* b){
     if(mpq_cmp(*a, *b)){
         mpq_set(*r, *b);
     }
@@ -254,7 +269,7 @@ void minError(ORRational* r, ORRational* a, ORRational* b){
     }
 }
 
-void maxError(ORRational* r, ORRational* a, ORRational* b){
+static inline void maxError(ORRational* r, ORRational* a, ORRational* b){
     if(mpq_cmp(*a, *b)){
         mpq_set(*r, *a);
     }
@@ -276,7 +291,7 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
 
 static inline intersectionIntervalError intersectionError(int changed, rational_interval* a, rational_interval* b){
     rational_interval* new = NULL;
-    maxOP(&new->inf, &a->inf, &b->inf);
-    minOP(&new->sup, &a->sup, &b->sup);
+    maxError(&new->inf, &a->inf, &b->inf);
+    minError(&new->sup, &a->sup, &b->sup);
     return (intersectionIntervalError){*new,*a,changed};
 }

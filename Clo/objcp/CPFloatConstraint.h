@@ -16,6 +16,8 @@
 #import <objcp/CPFloatDom.h>
 #import <objcp/CPRationalDom.h>
 
+#include "gmp.h"
+
 
 @class CPFloatVarI;
 
@@ -105,9 +107,9 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
-    CPRationalVarI* _ez;
-    CPRationalVarI* _ex;
-    CPRationalVarI* _ey;
+    CPFloatVarI* _ez;
+    CPFloatVarI* _ex;
+    CPFloatVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;
@@ -126,6 +128,9 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
+    CPFloatVarI* _ez;
+    CPFloatVarI* _ex;
+    CPFloatVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;
@@ -143,6 +148,9 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
+    CPFloatVarI* _ez;
+    CPFloatVarI* _ex;
+    CPFloatVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;
@@ -158,6 +166,9 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
+    CPFloatVarI* _ez;
+    CPFloatVarI* _ex;
+    CPFloatVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;

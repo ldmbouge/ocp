@@ -409,7 +409,7 @@
 }
 -(NSString*) description
 {
-    return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+    return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f){error}:(%f, %f)",_name,_domain.low,_domain.up,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {

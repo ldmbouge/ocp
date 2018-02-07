@@ -285,6 +285,15 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
 }
+-(void) bindEvtErr:(id<CPRationalDom>)sender
+{
+    id<CPClosureList> mList[2];
+    ORUInt k = 0;
+    mList[k] = _net._bindEvtErr;
+    k += mList[k] != NULL;
+    mList[k] = NULL;
+    scheduleClosures(_engine,mList);
+}
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender
 {
    id<CPClosureList> mList[6];
@@ -297,6 +306,19 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
+}
+-(void) changeMinEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender
+{
+    id<CPClosureList> mList[6];
+    ORUInt k = 0;
+    mList[k] = _net._minEvtErr;
+    k += mList[k] != NULL;
+    mList[k] = _net._boundsEvtErr;
+    k += mList[k] != NULL;
+    mList[k] = bound ? _net._bindEvtErr : NULL;
+    k += mList[k] != NULL;
+    mList[k] = NULL;
+    scheduleClosures(_engine,mList);
 }
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender
 {
@@ -311,7 +333,19 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
 }
-
+-(void) changeMaxEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender
+{
+    id<CPClosureList> mList[6];
+    ORUInt k = 0;
+    mList[k] = _net._maxEvtErr;
+    k += mList[k] != NULL;
+    mList[k] = _net._boundsEvtErr;
+    k += mList[k] != NULL;
+    mList[k] = bound ? _net._bindEvtErr : NULL;
+    k += mList[k] != NULL;
+    mList[k] = NULL;
+    scheduleClosures(_engine,mList);
+}
 -(void) bind:(ORFloat) val
 {
    [_dom bind:val for:self];
@@ -339,7 +373,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 
 
-- (void)updateIntervalError:(__mpq_struct *)newMinError and:(__mpq_struct *)newMaxError {
+- (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError {
     if(newMinError > newMaxError)
         failNow();
     [self updateMinError:newMinError];
@@ -348,13 +382,13 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateMaxError:(ORRational)newMaxError {
-    if(mpq_cmp(newMaxError, *[self maxError]) < 0)
+    if(mpq_cmp(newMaxError, *[self maxErr]) < 0)
         [_domError updateMax:newMaxError for:self];
 }
 
 
 - (void)updateMinError:(ORRational)newMinError {
-    if(mpq_cmp(newMinError, *[self minError]) > 0)
+    if(mpq_cmp(newMinError, *[self minErr]) > 0)
         [_domError updateMin:newMinError for:self];
 }
 
@@ -383,6 +417,12 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     if ([_domError bound])
         return [_domError min];
     return &_valueError;
+}
+- (ORRational*)maxErr {
+    return [_domError max];
+}
+- (ORRational*)minErr {
+    return [_domError min];
 }
 -(TRFloatInterval) domain
 {
@@ -444,15 +484,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(ORFloat) magnitude
 {
     return [_dom magnitude];
-}
-
-- (ORRational *)maxError {
-    return [_domError max];
-}
-
-
-- (ORRational *)minError {
-    return [_domError min];
 }
 
 - (void)visit:(ORVisitor *)visitor
@@ -688,6 +719,16 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_theVar max];
 }
+- (ORRational *)maxErr {
+    ORRational* maxE = NULL;
+    mpq_set_d(*maxE, [_theVar max]);
+    return maxE;
+}
+- (ORRational *)minErr {
+    ORRational* minE = NULL;
+    mpq_set_d(*minE, [_theVar min]);
+    return minE;
+}
 -(ORFloat) value
 {
     return [_theVar min];
@@ -762,17 +803,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (ORRational *)errorValue {
-    return [_theVar min];
-}
-
-
-- (ORRational *)maxError {
-    return [_theVar max];
-}
-
-
-- (ORRational *)minError {
-    return [_theVar min];
+    ORRational* errV = NULL;
+    mpq_set_d(*errV, [_theVar min]);
+    return errV;
 }
 
 

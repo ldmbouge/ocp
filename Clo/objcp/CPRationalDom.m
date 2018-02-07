@@ -12,7 +12,8 @@
 #import <ORFoundation/ORFoundation.h>
 #import "CPRationalDom.h"
 //#import "CPEngineI.h"
-#import "CPRationalVarI.h"
+//#import "CPRationalVarI.h"
+#import "CPFloatVarI.h"
 
 
 @implementation CPRationalDom
@@ -47,25 +48,25 @@
     [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",mpq_get_d(_domain._low),mpq_get_d(_domain._up),*inf,*sup];
     return buf;
 }
--(void) updateMin:(ORRational)newMin for:(id<CPRationalVarNotifier>)x
+-(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x
 {
     if(mpq_cmp(newMin, *[self max]))
         failNow();
     updateMinR(&_domain, newMin, _trail);
     ORBool isBound = mpq_equal(_domain._low,_domain._up);
-    [x changeMinEvt: isBound sender:self];
+    [x changeMinEvtErr: isBound sender:self];
     if (isBound)
-        [x bindEvt:self];
+        [x bindEvtErr:self];
 }
--(void) updateMax:(ORRational)newMax for:(id<CPRationalVarNotifier>)x
+-(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x
 {
     if(mpq_cmp(*[self min], newMax))
         failNow();
     updateMaxR(&_domain, newMax, _trail);
     ORBool isBound = mpq_equal(_domain._low,_domain._up);
-    [x changeMaxEvt:isBound sender:self];
+    [x changeMaxEvtErr:isBound sender:self];
     if (isBound)
-        [x bindEvt:self];
+        [x bindEvtErr:self];
 }
 -(void) updateInterval:(rational_interval)v for:(id<CPRationalVarNotifier>)x;
 {
@@ -73,12 +74,12 @@
     [self updateMax:v.sup for:x];
 }
 
--(void) bind:(ORRational)val  for:(id<CPRationalVarNotifier>)x
+-(void) bind:(ORRational)val  for:(id<CPFloatVarNotifier>)x
 {
     if ((mpq_cmp(val, _domain._low) || mpq_equal(val, _domain._low)) && (mpq_cmp(_domain._up, val) || mpq_equal(_domain._up, val))) {
-        [x changeMinEvt:YES sender:self];
-        [x changeMaxEvt:YES sender:self];
-        [x bindEvt:self];
+        [x changeMinEvtErr:YES sender:self];
+        [x changeMaxEvtErr:YES sender:self];
+        [x bindEvtErr:self];
         updateTRRationalInterval(&_domain, val, val, _trail);
     }
     else
@@ -139,11 +140,11 @@
     updateMinR(&_domain, *toRestore.min, _trail);
     updateMaxR(&_domain, *toRestore.max, _trail);
 }
--(void) restoreValue:(ORRational)toRestore for:(id<CPRationalVarNotifier>)x
+-(void) restoreValue:(ORRational)toRestore for:(id<CPFloatVarNotifier>)x
 {
     updateMinR(&_domain, toRestore, _trail);
     updateMaxR(&_domain, toRestore, _trail);
-    [x bindEvt:self];
+    [x bindEvtErr:self];
 }
 
 - (void) encodeWithCoder:(NSCoder *) aCoder
