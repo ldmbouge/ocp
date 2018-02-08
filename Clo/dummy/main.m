@@ -13,6 +13,7 @@
 #import "ORCmdLineArgs.h"
 #import <objcp/CPConstraint.h>
 #import <ORFoundation/ORFoundation.h>
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
 
 int MIN = 1;
 int MAX = 5;
@@ -46,7 +47,7 @@ int main (int argc, const char * argv[])
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
         id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
-        ORInt layerSize = 8;
+        ORInt layerSize = 3;
         bool reduced = true;
   
         //[mdl add: [ORFactory ExactMDDAllDifferent: mdl var: a reduced:reduced]];
@@ -61,17 +62,25 @@ int main (int argc, const char * argv[])
         int* vertexValues = malloc((MAX-MIN+1) * sizeof(int));
         vertexValues -= MIN;
         
+        int maxSum = 0;
+        
         for (int i = MIN; i <= MAX; i++) {
-            vertexValues[i] = MIN * 5;
+            vertexValues[i] = i*5;
+            maxSum += vertexValues[i];
         }
+        
+        
+        id<ORIntVar> valueSum = [ORFactory intVar: mdl domain: RANGE(mdl, 0, maxSum)];
         
         bool** adjacencies = adjacencyMatrix(&edges, false);
         
         
-        [mdl add: [ORFactory ExactMDDMISP:mdl var:a reduced:reduced adjacencies:adjacencies vertexValues:vertexValues]];
+        [mdl add: [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies]];
+        
+        [mdl add: [valueSum eq: Sum(mdl,v,R1,[a[v] mul: @(vertexValues[v])])]];
+        [mdl maximize: valueSum];
         
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-        
         [cp solveAll: ^{
             //[cp label: [a at: MIN+2] with: MIN];
             //[cp label: [a at: MIN] with: MIN+1];
@@ -86,14 +95,38 @@ int main (int argc, const char * argv[])
             for (int i = MIN; i <= MAX; i++) {
               printf("%d  ",[cp intValue: [a at:i]]);
             }
+            printf("  |  Objective value: %d", [cp intValue: valueSum]);
             printf("\n");
             [nbSolutions incr: cp];
+            
         }
          ];
-        
+
         printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
         NSLog(@"Solver status: %@\n",cp);
         NSLog(@"Quitting");
+        
+        /*id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram: mdl];
+        [cp solve: ^{
+            [cp label: valueSum];
+            printf("Value = [%d,%d] \n",[cp min: valueSum],[cp max: valueSum]);
+        }
+         ];
+        id<ORSolutionPool> pool = [cp solutionPool];
+        [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
+        id<ORSolution,ORSchedulerSolution> optimum = (id)[pool best];
+        printf("Value: %d \n",[optimum intValue: valueSum]);
+        for(ORInt i = MIN; i <= MAX; i++) {
+            //ORInt s = [optimum est: activities[i]];
+            //printf("task %d = [%d,%d] \n",i,s,s + [duration at: i]);
+        }
+        printf("Value: %d \n",[optimum intValue: valueSum]);
+        NSLog(@"Solver status: %@\n",cp);
+        NSLog(@"Quitting");*/
+        
+        
+        vertexValues += MIN;
     }
+    
     return 0;
 }

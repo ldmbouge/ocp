@@ -432,7 +432,20 @@ enum ORGroupType {
 -(id<ORIntVarArray>) vars;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
--(int*) vertexValues;
+@end
+
+@protocol ORRestrictedMDDMISP <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(ORInt) restrictionSize;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+@end
+
+@protocol ORRelaxedMDDMISP <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
 @end
 
 

@@ -180,10 +180,23 @@
 -(id) initCPRelaxedMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
 @end
 
-@interface CPExactMDDMISP : CPMDD<ORSearchObjectiveFunction> {
+@interface CPExactMDDMISP : CPMDD {
 @private
     bool** _adjacencyMatrix;
-    int* _vertexValues;
 }
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues;
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+@end
+
+@interface CPRestrictedMDDMISP : CPMDDRestriction {
+@private
+    bool** _adjacencyMatrix;
+}
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+@end
+
+@interface CPRelaxedMDDMISP : CPMDDRelaxation {
+@private
+    bool** _adjacencyMatrix;
+}
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
 @end

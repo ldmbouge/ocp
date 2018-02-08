@@ -756,11 +756,10 @@
 @end
 
 @implementation CPExactMDDMISP
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
 {
     self = [super initCPMDD:engine over:x reduced:reduced];
     _adjacencyMatrix = adjacencyMatrix;
-    _vertexValues = vertexValues;
     return self;
 }
 -(id) generateRootState:(int)layerValue
@@ -771,6 +770,50 @@
 {
     return [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withValue:value adjacencies:_adjacencyMatrix];
 
+}
+-(NSString*)description
+{
+    return [NSMutableString stringWithFormat:@"<CPExactMDDMISP:%02d %@>",_name,_x];
+}
+@end
+
+@implementation CPRestrictedMDDMISP
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+{
+    self = [super initCPMDDRestriction:engine over:x restrictionSize:restrictionSize reduced:reduced];
+    _adjacencyMatrix = adjacencyMatrix;
+    return self;
+}
+-(id) generateRootState:(int)layerValue
+{
+    return [[MISPState alloc] initMISPState:layerValue :[_x low] :[_x up]];
+}
+-(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
+{
+    return [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withValue:value adjacencies:_adjacencyMatrix];
+    
+}
+-(NSString*)description
+{
+    return [NSMutableString stringWithFormat:@"<CPExactMDDMISP:%02d %@>",_name,_x];
+}
+@end
+
+@implementation CPRelaxedMDDMISP
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+{
+    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced];
+    _adjacencyMatrix = adjacencyMatrix;
+    return self;
+}
+-(id) generateRootState:(int)layerValue
+{
+    return [[MISPState alloc] initMISPState:layerValue :[_x low] :[_x up]];
+}
+-(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
+{
+    return [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withValue:value adjacencies:_adjacencyMatrix];
+    
 }
 -(NSString*)description
 {

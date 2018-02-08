@@ -1804,8 +1804,29 @@
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
         bool** adjacencyMatrix = [cstr adjacencyMatrix];
-        int* vertexValues = [cstr vertexValues];
-        id<CPConstraint> concreteCstr = [CPFactory ExactMDDMISP:_engine over: a reduced:[cstr reduced] adjacencies:adjacencyMatrix vertexValues:vertexValues];
+        id<CPConstraint> concreteCstr = [CPFactory ExactMDDMISP:_engine over: a reduced:[cstr reduced] adjacencies:adjacencyMatrix];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitRestrictedMDDMISP: (id<ORRestrictedMDDMISP>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        ORInt restrictionSize = [cstr restrictionSize];
+        bool** adjacencyMatrix = [cstr adjacencyMatrix];
+        id<CPConstraint> concreteCstr = [CPFactory RestrictedMDDMISP:_engine over: a size:restrictionSize reduced:[cstr reduced] adjacencies:adjacencyMatrix];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitRelaxedMDDMISP: (id<ORRelaxedMDDMISP>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        ORInt relaxationSize = [cstr relaxationSize];
+        bool** adjacencyMatrix = [cstr adjacencyMatrix];
+        id<CPConstraint> concreteCstr = [CPFactory RelaxedMDDMISP:_engine over: a size:relaxationSize reduced:[cstr reduced] adjacencies:adjacencyMatrix];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

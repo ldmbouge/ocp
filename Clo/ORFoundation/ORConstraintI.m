@@ -192,15 +192,14 @@
    id<ORIntVarArray> _x;
    bool _reduced;
    bool** _adjacencyMatrix;
-   int* _vertexValues;
+   id<ORIntArray> _vertexValues;
 }
--(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix vertexValues:(int*)vertexValues
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
 {
    self = [super initORConstraintI];
    _x = x;
    _reduced = reduced;
    _adjacencyMatrix = adjacencyMatrix;
-   _vertexValues = vertexValues;
    return self;
 }
 -(void)dealloc
@@ -230,9 +229,111 @@
 {
    return _adjacencyMatrix;
 }
--(int*) vertexValues
+-(NSSet*)allVars
 {
-   return _vertexValues;
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORRestrictedMDDMISP {
+   id<ORIntVarArray> _x;
+   ORInt _restrictionSize;
+   bool _reduced;
+   bool** _adjacencyMatrix;
+   id<ORIntArray> _vertexValues;
+}
+-(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _restrictionSize = restrictionSize;
+   _reduced = reduced;
+   _adjacencyMatrix = adjacencyMatrix;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRestrictedMDDMISP:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(ORInt) restrictionSize
+{
+   return _restrictionSize;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(bool**) adjacencyMatrix
+{
+   return _adjacencyMatrix;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORRelaxedMDDMISP {
+   id<ORIntVarArray> _x;
+   ORInt _relaxationSize;
+   bool _reduced;
+   bool** _adjacencyMatrix;
+   id<ORIntArray> _vertexValues;
+}
+-(ORRelaxedMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _relaxationSize = relaxationSize;
+   _reduced = reduced;
+   _adjacencyMatrix = adjacencyMatrix;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRelaxedMDDMISP:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(bool**) adjacencyMatrix
+{
+   return _adjacencyMatrix;
 }
 -(NSSet*)allVars
 {

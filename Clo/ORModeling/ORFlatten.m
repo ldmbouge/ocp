@@ -106,6 +106,14 @@
 {
     _result = [_into addConstraint:cstr];
 }
+-(void) visitRestrictedMDDMISP: (id<ORRestrictedMDDMISP>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+-(void) visitRelaxedMDDMISP: (id<ORRelaxedMDDMISP>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
 
 
 -(void) visitIntVar: (id) v
