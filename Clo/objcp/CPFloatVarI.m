@@ -59,6 +59,11 @@
     }
    return self;
 }
+-(void) dealloc
+{
+   mpq_clear(_valueError);
+   [super dealloc];
+}
 -(ORFloat) floatValue
 {
    return _value;
@@ -103,8 +108,8 @@
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_bound];
-    [aCoder encodeValueOfObjCType:@encode(ORRational) at:&_valueError];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_boundError];
+   [aCoder encodeValueOfObjCType:@encode(ORRational) at:&_valueError];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_boundError];
 }
 - (id) initWithCoder: (NSCoder *) aDecoder
 {
@@ -112,8 +117,8 @@
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_bound];
-    [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_valueError];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_boundError];
+   [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_valueError];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_boundError];
    return self;
 }
 @end
@@ -150,12 +155,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    self = [super init];
    _engine = engine;
    _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:low up:up];
-    mpq_t lowError, upError;
-    mpq_init(lowError);
-    mpq_init(upError);
-    mpq_set_d(lowError, -FLT_MAX);
-    mpq_set_d(upError, FLT_MAX);
-    _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail] low:lowError up:upError];
+   _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail]];
    _recv = nil;
    _hasValue = false;
    _value = 0.0;
@@ -199,6 +199,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"var<%d>=",_name];
    [buf appendString:[_dom description]];
+   [buf appendString:[_domError description]];
    return buf;
 }
 -(void)setDelegate:(id<CPFloatVarNotifier>)delegate
@@ -385,12 +386,14 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateMaxError:(ORRational)newMaxError {
+   NSLog(@"%@ newmax : %16.16e",_domError, mpq_get_d(newMaxError));
     if(mpq_cmp(newMaxError, *[self maxErr]) < 0)
         [_domError updateMax:newMaxError for:self];
 }
 
 
 - (void)updateMinError:(ORRational)newMinError {
+   NSLog(@"%@ newmin : %16.16e",_domError, mpq_get_d(newMinError));
     if(mpq_cmp(newMinError, *[self minErr]) > 0)
         [_domError updateMin:newMinError for:self];
 }

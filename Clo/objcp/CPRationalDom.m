@@ -21,21 +21,30 @@ void printRational(ORRational r){
 
 @implementation CPRationalDom
 
--(id)initCPRationalDom:(id<ORTrail>)trail low:(ORRational)low up:(ORRational)up
+-(id)initCPRationalDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up
 {
     self = [super init];
     _trail = trail;
     mpq_init(_imin);
     mpq_init(_imax);
-    mpq_set(_imin,low);
-    mpq_set(_imax,up);
-    //NSLog(@"%16.16e,%16.16e", mpq_get_d(low),mpq_get_d(up));
+    mpq_set_d(_imin,low);
+    mpq_set_d(_imax,up);
     _domain = makeTRRationalInterval(trail, _imin, _imax);
     return self;
 }
+-(id)initCPRationalDom:(id<ORTrail>)trail
+{
+   self = [self initCPRationalDom:trail low:-FLT_MAX up:FLT_MAX];
+   return self;
+}
+-(void) dealloc
+{
+   mpq_clears(_imin,_imax,NULL);
+   [super dealloc];
+}
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail low:_imin up:_imax];
+    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail low:mpq_get_d(_imin) up:mpq_get_d(_imax)];
 }
 -(NSString*) description
 {
@@ -143,7 +152,7 @@ void printRational(ORRational r){
 }
 -(id) copy
 {
-    return [[CPRationalDom alloc] initCPRationalDom:_trail low:_imin up:_imax];
+    return [[CPRationalDom alloc] initCPRationalDom:_trail low:mpq_get_d(_imin) up:mpq_get_d(_imax)];
 }
 -(void) restoreDomain:(id<CPRationalDom>)toRestore
 {

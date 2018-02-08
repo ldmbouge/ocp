@@ -98,6 +98,7 @@ typedef struct  {
    CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
+-(id)init:(id<CPEngine>)engine;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
@@ -221,14 +222,15 @@ static inline rational_interval makeRationalInterval(ORRational min, ORRational 
     return ri;
 }
 
-static inline rational_interval makeErrorInterval(ORRational min, ORRational max)
+static inline void freeRationalInterval(rational_interval * r)
 {
-    rational_interval ri;
-    mpq_set(ri.inf, min);
-    mpq_set(ri.sup, max);
-    return ri;
+   mpq_clears(r->inf,r->sup);
 }
 
+static inline void setRationalInterval(rational_interval r, rational_interval r2){
+   mpq_set(r.inf, r2.inf);
+   mpq_set(r.sup, r2.sup);
+}
 //hzi : missing denormalised case
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 {

@@ -20,7 +20,8 @@
     ORRational            _imax;
     TRRationalInterval       _domain;
 }
--(id)initCPRationalDom:(id<ORTrail>)trail low:(ORRational)low up:(ORRational)up;
+-(id)initCPRationalDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up;
+-(id)initCPRationalDom:(id<ORTrail>)trail;
 -(void) updateMin:(ORRational)newMin for:(id<CPRationalVarNotifier>)x;
 -(void) updateMax:(ORRational)newMax for:(id<CPRationalVarNotifier>)x;
 -(void) updateInterval:(rational_interval)v for:(id<CPRationalVarNotifier>)x;
