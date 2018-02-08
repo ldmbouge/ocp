@@ -40,6 +40,7 @@
 {
    self = [super init];
    _name = name;
+    mpq_init(_valueError);
    if ([v bound]) {
       _bound = TRUE;
       _value = [v value];
@@ -94,7 +95,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"Float(%d) : %f",_name,_value];
+   [buf appendFormat:@"Float(%d) : %f±%f",_name,_value,mpq_get_d(_valueError)];
    return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
@@ -149,8 +150,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    self = [super init];
    _engine = engine;
    _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:low up:up];
-    ORRational lowError, upError;
-    mpq_set_d(lowError, FLT_MIN);
+    mpq_t lowError, upError;
+    mpq_init(lowError);
+    mpq_init(upError);
+    mpq_set_d(lowError, -FLT_MAX);
     mpq_set_d(upError, FLT_MAX);
     _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail] low:lowError up:upError];
    _recv = nil;
@@ -374,7 +377,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError {
-    if(newMinError > newMaxError)
+    if(mpq_cmp(newMinError,newMaxError)>0)
         failNow();
     [self updateMinError:newMinError];
     [self updateMaxError:newMaxError];
@@ -423,6 +426,12 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 - (ORRational*)minErr {
     return [_domError min];
+}
+- (ORFloat)maxErrF {
+    return mpq_get_d(*[_domError max]);
+}
+- (ORFloat)minErrF {
+    return mpq_get_d(*[_domError min]);
 }
 -(TRFloatInterval) domain
 {

@@ -15,6 +15,9 @@
 //#import "CPRationalVarI.h"
 #import "CPFloatVarI.h"
 
+void printRational(ORRational r){
+   NSLog(@"%16.16e", mpq_get_d(r));
+}
 
 @implementation CPRationalDom
 
@@ -22,8 +25,11 @@
 {
     self = [super init];
     _trail = trail;
+    mpq_init(_imin);
+    mpq_init(_imax);
     mpq_set(_imin,low);
     mpq_set(_imax,up);
+    //NSLog(@"%16.16e,%16.16e", mpq_get_d(low),mpq_get_d(up));
     _domain = makeTRRationalInterval(trail, _imin, _imax);
     return self;
 }
@@ -50,7 +56,9 @@
 }
 -(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x
 {
-    if(mpq_cmp(newMin, *[self max]))
+   printRational(newMin);
+   printRational(*[self max]);
+    if(mpq_cmp(newMin, *[self max]) > 0)
         failNow();
     updateMinR(&_domain, newMin, _trail);
     ORBool isBound = mpq_equal(_domain._low,_domain._up);
@@ -60,7 +68,9 @@
 }
 -(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x
 {
-    if(mpq_cmp(*[self min], newMax))
+   printRational(*[self min]);
+   printRational(newMax);
+    if(mpq_cmp(*[self min], newMax) > 0)
         failNow();
     updateMaxR(&_domain, newMax, _trail);
     ORBool isBound = mpq_equal(_domain._low,_domain._up);

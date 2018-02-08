@@ -18,15 +18,19 @@ int main(int argc, const char * argv[]) {
         id<ORFloatVar> r = [ORFactory floatVar:mdl domain:r0];
         
         [mdl add:[x eq: @(1e7f)]];
-        [mdl add:[y eq: [x plus:@(1.f)]]];
-        [mdl add:[z eq: [x sub:@(1.f)]]];
-        [mdl add:[r eq: [y sub:z]]];
+//        [mdl add:[y eq: [x plus:@(1.f)]]];
+//        [mdl add:[z eq: [x sub:@(1.f)]]];
+//        [mdl add:[r eq: [y sub:z]]];
         
         NSLog(@"model: %@",mdl);
-        [mdl floatVars];
+        id<ORFloatVarArray> vars = [mdl floatVars];
         id<CPProgram> p = [ORFactory createCPProgram:mdl];
         [p solve:^{
+            [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> b) {
+                [p floatSplit:b];
+            }];
             NSLog(@"helloword %@ !",p);
+            NSLog(@"[%f;%f]",[p minError:x],[p maxError:x]);
             NSLog(@"x : %f (%s)",[p floatValue:x],[p bound:x] ? "YES" : "NO");
             NSLog(@"y : %f (%s)",[p floatValue:y],[p bound:y] ? "YES" : "NO");
             NSLog(@"z : %f (%s)",[p floatValue:z],[p bound:z] ? "YES" : "NO");

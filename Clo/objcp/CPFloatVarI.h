@@ -214,6 +214,8 @@ static inline float_interval makeFloatInterval(float min, float max)
 static inline rational_interval makeRationalInterval(ORRational min, ORRational max)
 {
     rational_interval ri;
+    mpq_init(ri.inf);
+    mpq_init(ri.sup);
     mpq_set(ri.inf, min);
     mpq_set(ri.sup, max);
     return ri;
@@ -290,8 +292,10 @@ static inline intersectionInterval intersection(int changed,float_interval r, fl
 }
 
 static inline intersectionIntervalError intersectionError(int changed, rational_interval* a, rational_interval* b){
-    rational_interval* new = NULL;
-    maxError(&new->inf, &a->inf, &b->inf);
-    minError(&new->sup, &a->sup, &b->sup);
-    return (intersectionIntervalError){*new,*a,changed};
+    rational_interval new;
+    mpq_init(new.inf);
+    mpq_init(new.sup);
+    maxError(&new.inf, &a->inf, &b->inf);
+    minError(&new.sup, &a->sup, &b->sup);
+    return (intersectionIntervalError){new,*a,changed};
 }

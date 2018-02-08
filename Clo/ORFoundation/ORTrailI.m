@@ -329,6 +329,8 @@ TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
 TRRationalInterval makeTRRationalInterval(ORTrailI* trail, ORRational min, ORRational max)
 {
     TRRationalInterval rational_interval;
+    mpq_init(rational_interval._low);
+    mpq_init(rational_interval._up);
     mpq_set(rational_interval._low, min);
     mpq_set(rational_interval._up, max);
     rational_interval._mgc = [trail magic] - 1;

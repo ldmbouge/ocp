@@ -185,6 +185,8 @@ enum CPVarClass {
 -(ORFloat) max;
 -(ORRational*) minErr;
 -(ORRational*) maxErr;
+-(ORFloat) minErrF;
+-(ORFloat) maxErrF;
 -(ORFloat) value;
 -(ORFloat) floatValue;
 -(ORRational*) errorValue;

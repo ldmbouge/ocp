@@ -201,6 +201,8 @@ PORTABLE_BEGIN
 -(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;
 -(ORFloat) floatValue:(id<ORVar>)x;
+-(ORFloat) minError:(id<ORVar>)x;
+-(ORFloat) maxError:(id<ORVar>)x;
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;

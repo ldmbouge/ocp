@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "gmp.h"
+#include "gmp.h"
 
 #if (defined(__APPLE__)) && (__MAC_OS_X_VERSION_MAX_ALLOWED > __MAC_10_9)
 #define PORTABLE_BEGIN NS_ASSUME_NONNULL_BEGIN
@@ -60,6 +60,8 @@ static inline ORLong maxOf(ORLong a,ORLong b) { return a > b ? a : b;}
 
 static inline ORDouble minDbl(ORDouble a,ORDouble b) { return a < b ? a : b;}
 static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
+
+//static inline ORFloat rationalToFloat(ORRational* a) { return mpq_get_d(*a);}
 
 static inline ORFloat minFlt(ORFloat a,ORFloat b) { return a < b ? a : b;}
 static inline ORFloat maxFlt(ORFloat a,ORFloat b) { return a > b ? a : b;}
