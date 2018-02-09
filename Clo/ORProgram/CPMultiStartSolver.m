@@ -796,6 +796,12 @@
 {
     return [(id<CPProgram>)[self worker] floatValue: x];
 }
+- (ORFloat)maxError:(nonnull id<ORVar>)x {
+   return [(id<CPProgram>)[self worker] maxError:x];
+}
+- (ORFloat)minError:(nonnull id<ORVar>)x {
+   return [(id<CPProgram>)[self worker] maxError:x];
+}
 -(ORBool) bound: (id<ORVar>) x
 {
    return [[self worker] bound: x];
@@ -892,7 +898,6 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
-
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];

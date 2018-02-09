@@ -1027,6 +1027,12 @@
 {
     return [[self worker] intValue: x];
 }
+- (ORFloat)maxError:(nonnull id<ORVar>)x {
+   return [[self worker] maxError: x];
+}
+- (ORFloat)minError:(nonnull id<ORVar>)x {
+      return [[self worker] minError: x];
+}
 -(ORDouble) doubleValue: (id<ORRealVar>) x
 {
    return [[self worker] doubleValue: x];
@@ -1060,7 +1066,6 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
-
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];

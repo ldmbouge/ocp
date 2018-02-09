@@ -163,6 +163,20 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    [_engine trackVariable: self];
    return self;
 }
+
+-(id)init:(CPEngineI*)engine
+{
+   self = [super init];
+   _engine = engine;
+   _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:-FLT_MAX up:FLT_MAX];
+   _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail]];
+   _recv = nil;
+   _hasValue = false;
+   _value = 0.0;
+   setUpNetwork(&_net, [engine trail]);
+   [_engine trackVariable: self];
+   return self;
+}
 -(void)dealloc
 {
    deallocNetwork(&_net);
@@ -386,14 +400,14 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateMaxError:(ORRational)newMaxError {
-   NSLog(@"%@ newmax : %16.16e",_domError, mpq_get_d(newMaxError));
+   //NSLog(@"%@ newmax : %16.16e",_domError, mpq_get_d(newMaxError));
     if(mpq_cmp(newMaxError, *[self maxErr]) < 0)
         [_domError updateMax:newMaxError for:self];
 }
 
 
 - (void)updateMinError:(ORRational)newMinError {
-   NSLog(@"%@ newmin : %16.16e",_domError, mpq_get_d(newMinError));
+   //NSLog(@"%@ newmin : %16.16e",_domError, mpq_get_d(newMinError));
     if(mpq_cmp(newMinError, *[self minErr]) > 0)
         [_domError updateMin:newMinError for:self];
 }
@@ -741,6 +755,15 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     mpq_set_d(*minE, [_theVar min]);
     return minE;
 }
+- (ORFloat)maxErrF {
+   return [_theVar max];
+}
+
+
+- (ORFloat)minErrF {
+   return [_theVar min];
+}
+
 -(ORFloat) value
 {
     return [_theVar min];
@@ -808,19 +831,14 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
     return 0.0;
 }
-
 - (ORBool)boundError {
     return [_theVar bound];
 }
-
-
 - (ORRational *)errorValue {
     ORRational* errV = NULL;
     mpq_set_d(*errV, [_theVar min]);
     return errV;
 }
-
-
 - (void)visit:(ORVisitor *)visitor
 {}
 
