@@ -81,7 +81,7 @@ int main (int argc, const char * argv[])
         [mdl maximize: valueSum];
         
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-        [cp solveAll: ^{
+        [cp solve: ^{
             //[cp label: [a at: MIN+2] with: MIN];
             //[cp label: [a at: MIN] with: MIN+1];
             //[cp label: [a at: MIN+2] with: MIN+2];
