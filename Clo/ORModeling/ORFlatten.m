@@ -634,6 +634,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatAssign: (id<ORFloatAssign>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatAssignC: (id<ORFloatAssignC>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    _result = [_into addConstraint:c];
@@ -896,7 +904,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
         case ORRGEq:rv = [terms postGEQZ:model];break;
         case ORNeg: rv = [terms postEQZ:model];break;
         case ORRDisj:rv = [terms postDISJ:model];break;
-        case ORRImply: rv = [terms postIMPLY:model];break;
+       case ORRImply: rv = [terms postIMPLY:model];break;
+       case ORRSet: rv = [terms postSET:model];break;
         default:
             assert(terms == nil);
             break;

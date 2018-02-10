@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORSelector.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPFactory.h>
 #import <ORModeling/ORModeling.h>

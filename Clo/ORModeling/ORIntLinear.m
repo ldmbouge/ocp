@@ -361,6 +361,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
     }
     return rv;
 }
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   //[hzi] : assignement correspond to EQZ on integer
+   return [self postEQZ:model];
+}
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {
    id<ORConstraint> rv = NULL;
@@ -502,7 +507,6 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 }
 @end
 
-
 @implementation ORLinearFlip {
     id<ORIntLinear> _real;
 }
@@ -606,6 +610,10 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 -(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
 {
    return [_real postIMPLY:model];
+}
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   return [_real postSET:model];
 }
 @end
 

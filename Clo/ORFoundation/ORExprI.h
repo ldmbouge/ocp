@@ -20,6 +20,7 @@
 @interface ORExprI: ORObject<ORExpr,NSCoding>
 -(id<ORExpr>) abs;
 -(id<ORExpr>) square;
+-(id<ORExpr>) set: (id) e;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
 -(id<ORExpr>) mul: (id) e;
@@ -197,6 +198,14 @@
 -(void) visit:(ORVisitor*) v;
 @end
 
+@interface ORExprAssignI : ORExprRelationI<ORRelation,NSCoding>
+-(id<ORExpr>) initORExprAssignI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(ORRelationType)type;
+-(void) visit: (ORVisitor*)v;
+@end
 
 @interface ORExprPlusI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprPlusI: (id<ORExpr>) left and: (id<ORExpr>) right;

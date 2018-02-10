@@ -38,6 +38,26 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatAssign : CPCoreConstraint {
+   CPFloatVarI* _x;
+   CPFloatVarI* _y;
+}
+-(id) init:(id)x set:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatAssignC : CPCoreConstraint {
+   CPFloatVarI* _x;
+   ORFloat      _c;
+}
+-(id) init:(id)x set:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPFloatNEqual : CPCoreConstraint {
     CPFloatVarI* _x;
     CPFloatVarI* _y;

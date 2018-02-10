@@ -147,14 +147,15 @@ static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float y
 {
    return !isDisjointWithV(xmin,xmax,ymin,ymax);
 }
-static inline unsigned long long cardinalityV(float xmin, float xmax){
+//hzi : return double because this function is used to compute densisty
+static inline double cardinalityV(float xmin, float xmax){
    float_cast i_inf;
    float_cast i_sup;
    i_inf.f = xmin;
    i_sup.f = xmax;
    if(xmin == xmax) return 1.0;
-   if(xmin == -infinityf() && xmax == infinityf()) return ((unsigned long long) DBL_MAX);
-   long long res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+   if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
+   double res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
    return (res < 0) ? -res : res;
 }
 
@@ -177,7 +178,7 @@ static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
    return [x min] > [y min ] && [x max] > [y max];
 }
 
-static inline ORDouble cardinality(CPFloatVarI* x)
+static inline double cardinality(CPFloatVarI* x)
 {
    return cardinalityV([x min], [x max]);
 }
@@ -186,10 +187,11 @@ static inline float_interval makeFloatInterval(float min, float max)
 {
    return (float_interval){min,max};
 }
-static inline void setFloatInterval(float min, float max,float_interval * ft)
+
+static inline void updateFloatInterval(float_interval * ft,CPFloatVarI* x)
 {
-   ft->inf = min;
-   ft->sup = max;
+   ft->inf = x.min;
+   ft->sup = x.max;
 }
 //hzi : missing denormalised case
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)

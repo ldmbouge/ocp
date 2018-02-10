@@ -675,6 +675,42 @@ struct CPVarPair {
    [linRight release];
    _terms = linLeft;
 }
+-(void) visitExprFloatAssignI:(ORExprAssignI*)e
+{
+   bool lc = [[e left] isConstant];
+   bool rc = [[e right] isConstant];
+   if (lc && rc) {
+      bool isOk = [[e left] fmin] == [[e right] fmin];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      ORFloat c = lc ? [[e left] fmin] : [[e right] fmin];
+      ORExprI* other = lc ? [e right] : [e left];
+      ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
+      id<ORFloatVar> x = [ORNormalizer floatVarIn:lin for:_model];
+      [_model addConstraint:[ORFactory floatAssignC:_model var:x to:c]];
+   } else {
+      bool lv = [[e left] isVariable];
+      bool rv = [[e right] isVariable];
+      if (lv || rv) {
+         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
+         id<ORFloatVar> x = [ORNormalizer floatVarIn:left for:_model];
+         id<ORFloatVar> y = [ORNormalizer floatVarIn:right for:_model];
+         [_model addConstraint:[ORFactory floatAssign:_model var:x to:y]];
+         [right release];
+         [left release];
+      } else {
+         //should never append 
+         ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model ];
+         ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
+         [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
+         [linRight release];
+         [linRight release];
+         _terms = linLeft;
+      }
+   }
+}
 @end
 
 
@@ -1010,6 +1046,10 @@ struct CPVarPair {
 -(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a Mutable Double"];
+}
+-(void) visitExprFloatAssignI:(ORExprAssignI*)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer Assignement expression"];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {

@@ -150,7 +150,7 @@ int main(int argc, const char * argv[]) {
          
          fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
+            found = true;
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];

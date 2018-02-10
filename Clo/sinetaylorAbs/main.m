@@ -1,5 +1,5 @@
 #import <ORProgram/ORProgram.h>
-
+#import <objcp/CPFloatVarI.h>
 #import "ORCmdLineArgs.h"
 /**
  
@@ -10,6 +10,7 @@
  
  
  **/
+
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
@@ -17,29 +18,33 @@ int main(int argc, const char * argv[]) {
             
             
             id<ORModel> model = [ORFactory createModel];
-            //1.40129846432481707092e-45,9.09494701772928237915e-13
-//            id<ORFloatVar> x = [ORFactory floatVar:model low:-2.0f up:2.0f];
-            id<ORFloatVar> x = [ORFactory floatVar:model low:1.40129846432481707092e-45f up:9.09494701772928237915e-13f];
-            
-            id<ORFloatVar> y = [ORFactory floatVar:model];
-            id<ORFloatVar> res = [ORFactory floatVar:model];
-            
-            //need to changes precision > 0 in cpfloatconstraint for this bench
-            [model add:[res eq:[[[x sub:
-                                  [[x mul:[x mul:x]] div:@(6.0f)]] plus:
-                                 [[x mul:[x mul:[x mul:[x mul:x]]]] div:@(120.0f)]] sub:
-                                [[x mul:[x mul:[x mul:[x mul:[x mul:[x mul:x]]]]]] div:@(5040.0f)]]]];
-
            
-            
-            [model add:[res eq:[x plus:y]]];
-            
-            [model add:[res eq:y]];
-//            [model add:[x eq:@(0.f)]];
-  
+           
+           id<ORFloatVar> y = [ORFactory floatVar:model low:300.f up:1.e5f name:@"y"];
+           id<ORFloatVar> tmp = [ORFactory floatVar:model name:@"tmp"];
+           id<ORFloatVar> tmp2 = [ORFactory floatVar:model name:@"tmp2"];
+           id<ORFloatVar> tmp3 = [ORFactory floatVar:model name:@"tmp3"];
+           id<ORFloatVar> tmp4 = [ORFactory floatVar:model name:@"tmp4"];
+           id<ORFloatVar> tmp5 = [ORFactory floatVar:model  name:@"tmp5"];
+           id<ORFloatVar> tmp6 = [ORFactory floatVar:model  name:@"tmp6"];
+           id<ORFloatVar> res = [ORFactory floatVar:model name:@"res"];
+           id<ORFloatVar> x = [ORFactory floatVar:model low:-5.f up:1.e10f  name:@"y"];
+           
+           [model add:[tmp eq:[x div:@(2.0f)]]];
+           [model add:[tmp2 eq:[res div:@(10.0f)]]];
+           [model add:[tmp3 eq:[x div:@(10.0f)]]];
+           
+           [model add:[tmp4 eq:[tmp2 mul:[y mul:y]]]];
+           [model add:[tmp5 eq:[tmp3 mul:[[y mul:y] mul:y]]]];
+           [model add:[tmp6 eq:[[tmp3 mul:tmp2] mul:y]]];
+           
+           [model add:[res eq:[x plus:y]]];
+           [model add:[res eq:x]];
             id<ORFloatVarArray> vars = [model floatVars];
             id<CPProgram> cp = [args makeProgram:model];
-            __block bool found = false;
+           fesetround(FE_TONEAREST);
+           NSLog(@"%@",model);
+           __block bool found = false;
             [cp solveOn:^(id<CPCommonProgram> p) {
                 [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
                 NSLog(@"Valeurs solutions : \n");
@@ -48,7 +53,7 @@ int main(int argc, const char * argv[]) {
                     NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
                 }
             } withTimeLimit:[args timeOut]];
-            struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+            struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
             return r;
         }];
     }

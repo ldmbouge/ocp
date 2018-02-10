@@ -51,7 +51,6 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "LDoubleRange: visit method not defined"];
 }
-
 -(void) visitIntArray:(id<ORIntArray>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntArray: visit method not defined"];    
@@ -94,6 +93,10 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "LDoubleVar: visit method not defined"];
 }
 //-------------------------
+-(void) visitExprFloatAssignI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatAssign: visit method not defined"];
+}
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitVar: visit method not defined"];    
@@ -264,7 +267,11 @@
 }
 -(void) visitFloatEqualc: (id<ORFloatEqualc>)c
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];
+}
+-(void) visitFloatAssignC: (id<ORFloatAssignC>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatAssignc: visit method not defined"];
 }
 -(void) visitDoubleEqualc: (id<ORDoubleEqualc>)c
 {
@@ -308,6 +315,10 @@
 -(void) visitNEqual: (id<ORNEqual>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NEqual: visit method not defined"]; 
+}
+-(void) visitFloatAssign: (id<ORFloatAssign>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatAssign: visit method not defined"];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {

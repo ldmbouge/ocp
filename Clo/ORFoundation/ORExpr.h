@@ -30,7 +30,8 @@ typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORNeg   = 7,
    ORRDisj = 8,
    ORRConj = 9,
-   ORRImply = 10
+   ORRImply = 10,
+   ORRSet = 11
 };
 
 typedef NS_ENUM(NSUInteger,ORVType) {
@@ -56,7 +57,8 @@ typedef enum ORRelationType {
    ORNeg   = 7,
    ORRDisj = 8,
    ORRConj = 9,
-   ORRImply = 10
+   ORRImply = 10,
+   ORRSet = 11
 } ORRelationType;
 
 typedef enum ORVType {
@@ -126,6 +128,7 @@ static ORVType lookup_expr_table[][9] = {
 -(ORBool) isVariable;
 -(id<ORExpr>) abs;
 -(id<ORExpr>) square;
+-(id<ORRelation>) set: (id) e;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
 -(id<ORExpr>) mul: (id) e;
@@ -175,6 +178,7 @@ static ORVType lookup_expr_table[][9] = {
 
 @interface NSNumber (Expressions)
 -(id<ORExpr>)asExpression:(id<ORTracker>)tracker;
+-(id<ORRelation>) set: (id<ORExpr>) e;
 -(id<ORExpr>) plus: (id<ORExpr>) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;

@@ -183,8 +183,10 @@
 -(void) visitRealLinearGeq: (id<ORConstraint>) c;
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
 -(void) visitFloatEqualc: (id<ORConstraint>)c;
+-(void) visitFloatAssignC: (id<ORConstraint>)c;
 -(void) visitFloatNEqualc: (id<ORConstraint>)c;
 -(void) visitFloatLinearEq: (id<ORConstraint>) c;
+-(void) visitFloatAssign: (id<ORConstraint>)c;
 -(void) visitFloatLinearNEq: (id<ORConstraint>) c;
 -(void) visitFloatLinearLT: (id<ORConstraint>) c;
 -(void) visitFloatLinearGT: (id<ORConstraint>) c;
@@ -214,8 +216,6 @@
 -(void) visitDoubleLinearGEQ: (id<ORDoubleLinearGEQ>) c;
 -(void) visitDoubleMult: (id<ORDoubleMult>) c;
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c;
-
-
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
@@ -254,6 +254,7 @@
 -(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
+-(void) visitExprFloatAssignI:(id<ORExpr>)e;
 
 // Bit
 -(void) visitBitEqualAt:(id<ORConstraint>)c;

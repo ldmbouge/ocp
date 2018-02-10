@@ -40,6 +40,10 @@
    }
    return NULL;
 }
+-(id<ORRelation>)  set: (id<ORExpr>)  r
+{
+   return [[self asExpression:[r tracker]] set:r];
+}
 -(id<ORExpr>) mul: (id<ORExpr>)  r
 {
    return [[self asExpression:[r tracker]] mul:r];
@@ -123,6 +127,7 @@
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 // Expressions
+-(void) visitExprAssignI: (id<ORExpr>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
@@ -250,7 +255,11 @@
     [_ms addObject:v];
     [_ma addObject:v];
 }
-// Expressions
+-(void) visitExprAssignI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
 -(void) visitExprPlusI: (ORExprBinaryI*) e
 {
    [[e left] visit:self];
@@ -675,6 +684,10 @@
 {
    return [ORFactory exprSquare:self track:[self tracker]];
 }
+-(id<ORRelation>) set: (id) e
+{
+   return [self set:e track:[self tracker]];
+}
 -(id<ORExpr>) plus: (id) e
 {
    return [self plus:e track:[self tracker]];
@@ -765,6 +778,15 @@
       return [ORFactory expr:self plus:[e asExpression:t] track:t];
    else
       return NULL;   
+}
+-(id<ORRelation>) set: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self set:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self set:[e asExpression:t] track:t];
+   else
+      return NULL;
 }
 -(id<ORExpr>) sub: (id) e  track:(id<ORTracker>)t
 {
@@ -1499,6 +1521,61 @@
    self = [super init];
    _array = [aDecoder decodeObject];
    _index = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORExprAssignI
+-(id<ORExpr>) initORExprAssignI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprRelationI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return min([_left min],[_right min]);
+}
+-(ORInt) max
+{
+   return max([_left max],[_right max]);
+}
+-(ORFloat) fmin
+{
+   return minFlt([_left fmin],[_right fmin]);
+}
+-(ORFloat) fmax
+{
+   return maxFlt([_left fmax] ,[_right fmax]);
+}
+-(void) visit:(ORVisitor*) visitor
+{
+   [visitor visitExprFloatAssignI: self];
+}
+-(enum ORVType) vtype
+{
+   return  lookup_expr_table[[_left vtype]][[_right vtype]];
+}
+-(enum ORRelationType)type
+{
+   return ORREq;
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@ = %@",[_left description],[_right description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
    return self;
 }
 @end

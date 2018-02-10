@@ -320,7 +320,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat)newMax
 {
-   if(newMin > newMax)
+   if(newMin > newMax || (is_plus_zerof(newMin) && is_minus_zerof(newMax)))
       failNow();
    [self updateMin:newMin];
    [self updateMax:newMax];

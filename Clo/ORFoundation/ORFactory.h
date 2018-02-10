@@ -202,6 +202,7 @@ PORTABLE_BEGIN
 
 
 @interface ORFactory (Expressions)
++(id<ORRelation>) expr: (id<ORExpr>) left set: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right track:(id<ORTracker>)t;
@@ -330,6 +331,8 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORFloat)
++(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var: (id<ORFloatVar>)x to:(ORFloat)c;
++(id<ORConstraint>) floatAssign: (id<ORTracker>) model var: (id<ORFloatVar>)x to: (id<ORFloatVar>)y;
 +(id<ORConstraint>) floatEqualc: (id<ORTracker>) model var: (id<ORFloatVar>)x eqc:(ORFloat)c;
 +(id<ORConstraint>) floatNEqualc:(id<ORTracker>) model var: (id<ORFloatVar>)x neqc:(ORFloat)c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c;

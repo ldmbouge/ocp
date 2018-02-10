@@ -112,6 +112,8 @@
 @end
 
 @interface CPFactory (ORFloat)
++(id<CPConstraint>) floatAssign: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
++(id<CPConstraint>) floatAssignC: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatEqualc: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatNEqualc: (id<CPFloatVar>) x to:(ORFloat) c;

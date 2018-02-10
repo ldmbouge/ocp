@@ -703,6 +703,18 @@
 @end
 
 @implementation CPFactory (ORFloat)
++(id<CPConstraint>) floatAssign: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatAssign alloc] init:x set:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatAssignC: (id<CPFloatVar>) x to:(ORFloat) c
+{
+   id<CPConstraint> o = [[CPFloatAssignC alloc] init:x set:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) floatEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
    id<CPConstraint> o = [[CPFloatEqual alloc] init:x equals:y];

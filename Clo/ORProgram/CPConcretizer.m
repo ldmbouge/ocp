@@ -1218,6 +1218,17 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
+-(void) visitFloatAssignC:(id<ORFloatAssignC>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORFloat cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatAssignC:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatEqualc:(id<ORFloatEqualc>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1251,7 +1262,18 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
-
+-(void) visitFloatAssign:(id<ORFloatAssign>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      id<ORFloatVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatAssign:_gamma[left.getId]  to:_gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatLinearNEq:(id<ORFloatLinearNEq>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {

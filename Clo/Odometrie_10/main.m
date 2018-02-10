@@ -143,14 +143,16 @@ int main(int argc, const char * argv[]) {
          [g add:[[diff mul:diff] eq:@(0.0f)]];
          [model add:g];
          
-         NSLog(@"%@", model);
+//         NSLog(@"%@", model);
+         
+         NSLog(@"%d", [g size]);
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          
          fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
+            found = true;
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];

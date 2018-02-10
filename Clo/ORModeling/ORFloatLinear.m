@@ -206,6 +206,13 @@
                                                coef:[self coefficients:model]
                                                 neq:-_indep]];
 }
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   return [model addConstraint:[ORFactory floatSum:model
+                                             array:[self variables:model]
+                                              coef:[self coefficients:model]
+                                               neq:-_indep]];
+}
 //TODO need to be filled
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
@@ -356,6 +363,10 @@
 -(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
 {
     return [_float postIMPLY:model];
+}
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   return [_float postSET:model];
 }
 @end
 

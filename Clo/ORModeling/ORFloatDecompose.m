@@ -56,7 +56,6 @@
     } else
         [_terms addTerm:e by:1];
 }
-
 -(void) visitFloat: (id<ORFloatNumber>) e
 {
     [_terms addIndependent:[e floatValue]];
@@ -64,6 +63,17 @@
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
     [_terms addIndependent:[e doubleValue]];
+}
+-(void) visitExprFloatAssignI:(ORExprAssignI*)e
+{
+   if (_eqto) {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORFloatVar> alpha =  [ORNormalizer floatVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {

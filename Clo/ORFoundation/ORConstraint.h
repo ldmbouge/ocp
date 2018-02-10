@@ -137,6 +137,11 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
+@protocol  ORFloatAssignC <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @protocol  ORDoubleNEqualc <ORConstraint>
 -(id<ORDoubleVar>) left;
 -(ORInt) cst;
@@ -415,6 +420,13 @@ enum ORGroupType {
 -(NSUInteger)count;
 -(ORInt) cst;
 @end
+
+
+@protocol ORFloatAssign <ORConstraint>
+-(id<ORFloatVar>) left;
+-(id<ORFloatVar>) right;
+@end
+
 
 @protocol ORFloatMult <ORConstraint>
 -(id<ORFloatVar>) res;

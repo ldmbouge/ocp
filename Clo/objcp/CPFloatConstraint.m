@@ -26,29 +26,9 @@
 }
 -(void) post
 {
-   if([_x bound]){
-      if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
-         [_y updateInterval:[_x min] and:[_x max]];
-      else
-         [_y bind:[_x value]];
-      return;
-   }else if([_y bound]){
-      if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
-         [_x updateInterval:[_y min] and:[_y max]];
-      else
-         [_x bind:[_y value]];
-      return;
-   }
-   if(isDisjointWith(_x,_y)){
-      failNow();
-   }else{
-      ORFloat min = maxFlt([_x min], [_y min]);
-      ORFloat max = minFlt([_x max], [_y max]);
-      [_x updateInterval:min and:max];
-      [_y updateInterval:min and:max];
-      [_x whenChangeBoundsPropagate:self];
-      [_y whenChangeBoundsPropagate:self];
-   }
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -104,7 +84,13 @@
 }
 -(void) post
 {
-   [_x bind:_c];
+   //hzi : equality constraint is different from assignment constraint for 0.0
+   //in case when check equality -0.0f == 0.0f
+   //in case of assignement x = -0.0f != from x = 0.0f
+   if(is_eqf(_c,0.f))
+      [_x updateInterval:-0.0f and:+0.0f];
+   else
+      [_x bind:_c];
 }
 -(NSSet*)allVars
 {
@@ -117,6 +103,102 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == %16.16e>",_x,_c];
+}
+@end
+
+@implementation CPFloatAssign{
+   int _precision;
+   int _rounding;
+   float_interval _xi;
+   float_interval _yi;
+}
+-(id) init:(CPFloatVarI*)x set:(CPFloatVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _xi = makeFloatInterval(x.min, x.max);
+   _yi = makeFloatInterval(y.min, y.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   updateFloatInterval(&_xi,_x);
+   updateFloatInterval(&_yi,_y);
+   intersectionInterval inter;
+   if([_x bound]){
+      float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+      fpi_setf(_precision, _rounding, &yTmp, &_xi);
+      inter = intersection(_yi, yTmp, 0.0f);
+      if (inter.changed) [_y updateInterval:inter.result.inf and:inter.result.sup];
+      return;
+   }else if([_y bound]){
+      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+      fpi_setf(_precision, _rounding, &xTmp, &_yi);
+      inter = intersection(_xi, xTmp, 0.0f);
+      if (inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+      return;
+   }
+   if(isDisjointWith(_x,_y)){
+      failNow();
+   }else{
+      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+      fpi_setf(_precision, _rounding, &xTmp, &_xi);
+      inter = intersection(_xi, xTmp, 0.0f);
+      if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+      float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+      fpi_setf(_precision, _rounding, &xTmp, &_yi);
+      inter = intersection(_yi, yTmp, 0.0f);
+      if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+   }
+   
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ = %@>",_x,_y];
+}
+@end
+
+@implementation CPFloatAssignC
+-(id) init:(CPFloatVarI*)x set:(ORFloat)c
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _c = c;
+   return self;
+   
+}
+-(void) post
+{
+   [_x bind:_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ = %16.16e>",_x,_c];
 }
 @end
 
