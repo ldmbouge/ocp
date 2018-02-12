@@ -63,6 +63,7 @@
 {
     [super init];
     _trail = trail;
+    _childEdgeWeights = NULL;
     _children = NULL;
     _numChildren = makeTRInt(_trail, 0);
     _minChildIndex = 0;
@@ -85,6 +86,12 @@
     _children -= _minChildIndex;
     for (int child = _minChildIndex; child <= maxChildIndex; child++) {
         _children[child] = NULL;
+    }
+    
+    _childEdgeWeights = malloc((_maxChildIndex-_minChildIndex +1) * sizeof(TRInt));
+    _childEdgeWeights -= _minChildIndex;
+    for (int child = _minChildIndex; child <= maxChildIndex; child++) {
+        _childEdgeWeights[child] = makeTRInt(_trail, 0);
     }
     
     _state = state;
@@ -122,14 +129,19 @@
 -(Node**) children {
     return _children;
 }
+-(int) getWeightFor: (int)index {
+    return 0;
+}
 -(void) addChild:(Node*)child at:(int)index {
     _children[index] = child;
     [self setNumChildren:_numChildren._val+1];
     assignTRInt(&_numChildren, _numChildren._val, _trail);
+    assignTRInt(&_childEdgeWeights[index], [self getWeightFor: index], _trail);
 }
 -(void) removeChildAt: (int) index {
     assignTRId(&_children[index], NULL, _trail);
     assignTRInt(&_numChildren, _numChildren._val -1, _trail);
+    assignTRInt(&_childEdgeWeights[index], 0, _trail);
 }
 -(int) findChildIndex: (Node*) child {
     for (int child_index = _minChildIndex; child_index <= _maxChildIndex; child_index++) {

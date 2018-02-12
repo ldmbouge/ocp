@@ -35,6 +35,7 @@
 
 @interface Node : NSObject {
 @private
+    TRInt* _childEdgeWeights;
     Node* *_children;
     TRInt _numChildren;
     int _minChildIndex;
@@ -184,19 +185,19 @@
 @private
     bool** _adjacencyMatrix;
 }
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:weights;
 @end
 
 @interface CPRestrictedMDDMISP : CPMDDRestriction {
 @private
     bool** _adjacencyMatrix;
 }
--(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:weights;
 @end
 
 @interface CPRelaxedMDDMISP : CPMDDRelaxation {
 @private
     bool** _adjacencyMatrix;
 }
--(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:weight`;
 @end

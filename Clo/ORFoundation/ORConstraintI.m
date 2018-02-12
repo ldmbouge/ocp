@@ -192,14 +192,15 @@
    id<ORIntVarArray> _x;
    bool _reduced;
    bool** _adjacencyMatrix;
-   id<ORIntArray> _vertexValues;
+   id<ORIntArray> _weights;
 }
--(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights
 {
    self = [super initORConstraintI];
    _x = x;
    _reduced = reduced;
    _adjacencyMatrix = adjacencyMatrix;
+   _weights = weights;
    return self;
 }
 -(void)dealloc
@@ -229,6 +230,10 @@
 {
    return _adjacencyMatrix;
 }
+-(id<ORIntArray>) weights
+{
+   return _weights;
+}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
@@ -240,15 +245,16 @@
    ORInt _restrictionSize;
    bool _reduced;
    bool** _adjacencyMatrix;
-   id<ORIntArray> _vertexValues;
+   id<ORIntArray> _weights;
 }
--(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+-(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights
 {
    self = [super initORConstraintI];
    _x = x;
    _restrictionSize = restrictionSize;
    _reduced = reduced;
    _adjacencyMatrix = adjacencyMatrix;
+   _weights = weights;
    return self;
 }
 -(void)dealloc
@@ -282,6 +288,10 @@
 {
    return _adjacencyMatrix;
 }
+-(id<ORIntArray>) weights
+{
+   return _weights;
+}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
@@ -293,15 +303,16 @@
    ORInt _relaxationSize;
    bool _reduced;
    bool** _adjacencyMatrix;
-   id<ORIntArray> _vertexValues;
+   id<ORIntArray> _weights;
 }
--(ORRelaxedMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+-(ORRelaxedMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights
 {
    self = [super initORConstraintI];
    _x = x;
    _relaxationSize = relaxationSize;
    _reduced = reduced;
    _adjacencyMatrix = adjacencyMatrix;
+   _weights = weights;
    return self;
 }
 -(void)dealloc
@@ -334,6 +345,10 @@
 -(bool**) adjacencyMatrix
 {
    return _adjacencyMatrix;
+}
+-(id<ORIntArray>) weights
+{
+   return _weights;
 }
 -(NSSet*)allVars
 {

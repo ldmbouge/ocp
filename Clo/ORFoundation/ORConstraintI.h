@@ -46,26 +46,29 @@
 
 
 @interface ORExactMDDMISP : ORConstraintI<ORExactMDDMISP>
--(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights;
 -(id<ORIntVarArray>) vars;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
 @end
 
 @interface ORRestrictedMDDMISP : ORConstraintI<ORRestrictedMDDMISP>
--(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights;
 -(id<ORIntVarArray>) vars;
 -(ORInt) restrictionSize;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
 @end
 
 @interface ORRelaxedMDDMISP : ORConstraintI<ORRelaxedMDDMISP>
--(ORExactMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix;
+-(ORExactMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
 @end
 
 

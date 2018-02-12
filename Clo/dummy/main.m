@@ -59,16 +59,15 @@ int main (int argc, const char * argv[])
         NSArray* edges = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MAX]],
                            @[[NSNumber numberWithInt:MIN+1], [NSNumber numberWithInt:MAX-1]]];
         
-        int* vertexValues = malloc((MAX-MIN+1) * sizeof(int));
-        vertexValues -= MIN;
-        
+        id<ORIntArray> weights = [ORFactory intArray: mdl range: R1 value: 0];
         int maxSum = 0;
-        
-        for (int i = MIN; i <= MAX; i++) {
-            vertexValues[i] = i*5;
-            maxSum += vertexValues[i];
+        for(ORInt vertex = MIN; vertex <= MAX; vertex++) {
+            ORInt weight;
+            weight = vertex * 5;
+            [weights set: weight at: vertex];
+            
+            maxSum += weight;
         }
-        
         
         id<ORIntVar> valueSum = [ORFactory intVar: mdl domain: RANGE(mdl, 0, maxSum)];
         
@@ -77,7 +76,7 @@ int main (int argc, const char * argv[])
         
         [mdl add: [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies]];
         
-        [mdl add: [valueSum eq: Sum(mdl,v,R1,[a[v] mul: @(vertexValues[v])])]];
+        [mdl add: [valueSum eq: Sum(mdl,v,R1,[a[v] mul: @([weights at: v])])]];
         [mdl maximize: valueSum];
         
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
@@ -123,9 +122,6 @@ int main (int argc, const char * argv[])
         printf("Value: %d \n",[optimum intValue: valueSum]);
         NSLog(@"Solver status: %@\n",cp);
         NSLog(@"Quitting");*/
-        
-        
-        vertexValues += MIN;
     }
     
     return 0;
