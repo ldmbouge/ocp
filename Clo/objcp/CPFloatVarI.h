@@ -299,5 +299,8 @@ static inline intersectionIntervalError intersectionError(int changed, rational_
     mpq_init(new.sup);
     maxError(&new.inf, &a->inf, &b->inf);
     minError(&new.sup, &a->sup, &b->sup);
+   if(mpq_cmp(new.inf, a->inf) != 0 && mpq_cmp(new.sup, a->sup) != 0){
+      changed = 1;
+   }
     return (intersectionIntervalError){new,*a,changed};
 }

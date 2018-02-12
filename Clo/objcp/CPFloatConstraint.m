@@ -1145,6 +1145,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _percent = 0.0;
    _rounding = FE_TONEAREST;
    ez = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
+   /* INIT at 0.0 */
    ex = makeRationalInterval(*[_ex minErr], *[_ex maxErr]);
    ey = makeRationalInterval(*[_ey minErr], *[_ey maxErr]);
    eo = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
@@ -1157,6 +1158,10 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    if (![_x bound]) [_x whenChangeBoundsPropagate:self];
    if (![_y bound]) [_y whenChangeBoundsPropagate:self];
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+   if (![_x boundError]) [_x whenChangeBoundsPropagate:self];
+   if (![_y boundError]) [_y whenChangeBoundsPropagate:self];
+   if (![_z boundError]) [_z whenChangeBoundsPropagate:self];
+
 }
 -(void) propagate
 {
@@ -1172,14 +1177,14 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    z = makeFloatInterval([_z min],[_z max]);
    x = makeFloatInterval([_x min],[_x max]);
    y = makeFloatInterval([_y min],[_y max]);
-   mpq_set(ez.inf,*[_ez minErr]);
-   mpq_set(ez.sup,*[_ez maxErr]);
-   mpq_set(ex.inf,*[_ex minErr]);
-   mpq_set(ex.sup,*[_ex maxErr]);
-   mpq_set(ey.inf,*[_ey minErr]);
-   mpq_set(ey.sup,*[_ey maxErr]);
-   mpq_set(eo.inf,*[_ez minErr]);
-   mpq_set(eo.sup,*[_ez maxErr]);
+   mpq_set(ez.inf,*[_z minErr]);
+   mpq_set(ez.sup,*[_z maxErr]);
+   mpq_set_d(ex.inf,0.0);
+   mpq_set_d(ex.sup,0.0);
+   mpq_set_d(ey.inf,0.0);
+   mpq_set_d(ey.sup,0.0);
+   mpq_set_d(eo.inf,0.0);
+   mpq_set_d(eo.sup,0.0);
    /*ezTemp = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
    exTemp = makeRationalInterval(*[_ex minErr], *[_ex maxErr]);
    eyTemp = makeRationalInterval(*[_ey minErr], *[_ey maxErr]);
@@ -1237,7 +1242,6 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       interError = intersectionError(changed, &eo, &eoTemp);
       changed |= interError.changed;
       /* END ERROR PROPAG */
-      
       
       gchanged |= changed;
    } while(changed);

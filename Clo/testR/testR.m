@@ -31,9 +31,11 @@ int main(int argc, const char * argv[]) {
             }];
             NSLog(@"helloword %@ !",p);
             NSLog(@"x : %16.16e (%s)",[p floatValue:x],[p bound:x] ? "YES" : "NO");
-            NSLog(@"[%16.16e;%16.16e]",[p minError:x],[p maxError:x]);
+            NSLog(@"ex: [%16.16e;%16.16e]",[p minError:x],[p maxError:x]);
             NSLog(@"y : %16.16e (%s)",[p floatValue:y],[p bound:y] ? "YES" : "NO");
+            NSLog(@"ey: [%16.16e;%16.16e]",[p minError:y],[p maxError:y]);
             NSLog(@"z : %16.16e (%s)",[p floatValue:z],[p bound:z] ? "YES" : "NO");
+            NSLog(@"ez: [%16.16e;%16.16e]",[p minError:z],[p maxError:z]);
         }];
     }
     return 0;
