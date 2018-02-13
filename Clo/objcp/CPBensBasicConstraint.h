@@ -45,15 +45,18 @@
     bool _isSink;
     bool _isSource;
     id<ORTrail> _trail;
+    int* _weights;
     
     id _state;
 }
 -(id) initNode: (id<ORTrail>) trail;
--(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state weights:(int*)weights;
 -(void) dealloc;
 -(id) getState;
 -(int) value;
 -(Node**) children;
+-(int) getWeightFor: (int)index;
+-(int) getNodeObjectiveValue: (int)value;
 -(void) addChild:(Node*)child at:(int)index;
 -(void) removeChildAt: (int) index;
 -(int) findChildIndex: (Node*) child;
@@ -113,6 +116,7 @@
     TRInt **layer_variable_count;
     int _max_nodes_per_layer;
     bool _reduced;
+    TRInt _objective;
 @protected
     id<CPIntVarArray> _x;
     TRInt *layer_size;
@@ -126,6 +130,7 @@
 -(NSString*) description;
 -(id<CPIntVarArray>) x;
 -(void) post;
+-(int*) getWeightsForLayer:(int)layer;
 -(void) createRootAndSink;
 -(void) cleanLayer:(int)layer;
 -(void) buildNewLayerUnder:(int)layer;
@@ -133,6 +138,7 @@
 -(void) addPropagationsAndTrimValues;
 -(void) trimValuesFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
+-(void) addObjectiveValueForLayer:(ORInt)layer;
 -(id) generateRootState:(int)layerValue;
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
@@ -184,20 +190,23 @@
 @interface CPExactMDDMISP : CPMDD {
 @private
     bool** _adjacencyMatrix;
+    id<ORIntArray> _weights;
 }
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:weights;
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
 @end
 
 @interface CPRestrictedMDDMISP : CPMDDRestriction {
 @private
     bool** _adjacencyMatrix;
+    id<ORIntArray> _weights;
 }
--(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:weights;
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
 @end
 
 @interface CPRelaxedMDDMISP : CPMDDRelaxation {
 @private
     bool** _adjacencyMatrix;
+    id<ORIntArray> _weights;
 }
--(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:weight`;
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
 @end

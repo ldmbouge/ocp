@@ -73,9 +73,11 @@
     _isSink = false;
     _isSource = false;
     
+    _weights = NULL;
+    
     return self;
 }
--(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state weights:(int*)weights
 {
     [super init];
     _trail = trail;
@@ -101,6 +103,7 @@
     _parents = [NSMutableSet set];
     _isSink = false;
     _isSource = false;
+    _weights = weights;
     
     return self;
 }
@@ -130,7 +133,10 @@
     return _children;
 }
 -(int) getWeightFor: (int)index {
-    return 0;
+    return _weights[index];
+}
+-(int) getNodeObjectiveValue: (int)value {
+    return _childEdgeWeights[value]._val;
 }
 -(void) addChild:(Node*)child at:(int)index {
     _children[index] = child;
@@ -338,6 +344,7 @@
     _trail = [engine trail];
     _x = x;
     _reduced = reduced;
+    _objective = makeTRInt(_trail,0);
     
     _max_nodes_per_layer = 1;
     for (int variable = [_x low]; variable <= [_x up]; variable++) {
@@ -409,6 +416,16 @@
     [self printGraph];
     return;
 }
+-(int*) getWeightsForLayer:(int)layer
+{
+    int* weights = malloc((max_domain_val - min_domain_val + 1) * sizeof(int));
+    weights -= min_domain_val;
+    for (int index = min_domain_val; index <= max_domain_val; index++) {
+        weights[index] = 0;
+    }
+    
+    return weights;
+}
 -(void) createRootAndSink
 {
     Node *sink = [[Node alloc] initNode: _trail];
@@ -421,7 +438,8 @@
                          minChildIndex:min_domain_val
                          maxChildIndex:max_domain_val
                                  value:[_x low]
-                                 state:state];
+                                 state:state
+                               weights:[self getWeightsForLayer:[_x low]]];
     [root setIsSource:true];
     [self addNode:root toLayer:[_x low]];
 }
@@ -465,7 +483,8 @@
                                      minChildIndex:min_domain_val
                                      maxChildIndex:max_domain_val
                                              value:parentValue+1
-                                             state:state];
+                                             state:state
+                                           weights:[self getWeightsForLayer:parentValue+1]];
                 
                 [self addNode:childNode toLayer:parentValue+1];
             } else {
@@ -498,7 +517,14 @@
         [_x[layer] whenLoseValue:self do:^(ORInt value) {
             [self trimValueFromLayer: layer :value ];
         }];
+        [_x[layer] whenBindDo:^() {
+            [self addObjectiveValueForLayer: layer];
+        } onBehalf:self];
     }
+}
+-(void) addObjectiveValueForLayer:(ORInt)layer
+{
+    assignTRInt(&_objective,_objective._val + [layers[layer][0] getNodeObjectiveValue:[_x[layer] value]], _trail);
 }
 -(id) generateRootState:(int)layerValue
 {
@@ -768,11 +794,20 @@
 @end
 
 @implementation CPExactMDDMISP
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
 {
-    self = [super initCPMDD:engine over:x reduced:reduced];
+    self = [super initCPMDD:engine over:x reduced:reduced objective:objectiveValue];
     _adjacencyMatrix = adjacencyMatrix;
+    _weights = weights;
     return self;
+}
+-(int*) getWeightsForLayer:(int)layer
+{
+    int* weights = malloc(2 * sizeof(int));
+    weights[0] = 0;
+    weights[1] = (int)[_weights[layer] longValue];
+    
+    return weights;
 }
 -(id) generateRootState:(int)layerValue
 {
@@ -790,11 +825,20 @@
 @end
 
 @implementation CPRestrictedMDDMISP
--(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
 {
     self = [super initCPMDDRestriction:engine over:x restrictionSize:restrictionSize reduced:reduced];
     _adjacencyMatrix = adjacencyMatrix;
+    _weights = weights;
     return self;
+}
+-(int*) getWeightsForLayer:(int)layer
+{
+    int* weights = malloc(2 * sizeof(int));
+    weights[0] = 0;
+    weights[1] = (int)[_weights[layer] longValue];
+    
+    return weights;
 }
 -(id) generateRootState:(int)layerValue
 {
@@ -812,11 +856,20 @@
 @end
 
 @implementation CPRelaxedMDDMISP
--(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
 {
     self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced];
     _adjacencyMatrix = adjacencyMatrix;
+    _weights = weights;
     return self;
+}
+-(int*) getWeightsForLayer:(int)layer
+{
+    int* weights = malloc(2 * sizeof(int));
+    weights[0] = 0;
+    weights[1] = (int)[_weights[layer] longValue];
+    
+    return weights;
 }
 -(id) generateRootState:(int)layerValue
 {

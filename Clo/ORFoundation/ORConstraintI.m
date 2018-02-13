@@ -190,14 +190,16 @@
 
 @implementation ORExactMDDMISP {
    id<ORIntVarArray> _x;
+   id<ORIntVar> _objective;
    bool _reduced;
    bool** _adjacencyMatrix;
    id<ORIntArray> _weights;
 }
--(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
 {
    self = [super initORConstraintI];
    _x = x;
+   _objective = objectiveValue;
    _reduced = reduced;
    _adjacencyMatrix = adjacencyMatrix;
    _weights = weights;
@@ -222,6 +224,10 @@
 {
    return _x;
 }
+-(id<ORIntVar>) objective
+{
+   return _objective;
+}
 -(bool) reduced
 {
    return _reduced;
@@ -242,15 +248,17 @@
 
 @implementation ORRestrictedMDDMISP {
    id<ORIntVarArray> _x;
+   id<ORIntVar> _objective;
    ORInt _restrictionSize;
    bool _reduced;
    bool** _adjacencyMatrix;
    id<ORIntArray> _weights;
 }
--(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights
+-(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue
 {
    self = [super initORConstraintI];
    _x = x;
+   _objective = objectiveValue;
    _restrictionSize = restrictionSize;
    _reduced = reduced;
    _adjacencyMatrix = adjacencyMatrix;
@@ -276,6 +284,10 @@
 {
    return _x;
 }
+-(id<ORIntVar>) objective
+{
+   return _objective;
+}
 -(ORInt) restrictionSize
 {
    return _restrictionSize;
@@ -300,15 +312,17 @@
 
 @implementation ORRelaxedMDDMISP {
    id<ORIntVarArray> _x;
+   id<ORIntVar> _objective;
    ORInt _relaxationSize;
    bool _reduced;
    bool** _adjacencyMatrix;
    id<ORIntArray> _weights;
 }
--(ORRelaxedMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights
+-(ORRelaxedMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue
 {
    self = [super initORConstraintI];
    _x = x;
+   _objective = objectiveValue;
    _relaxationSize = relaxationSize;
    _reduced = reduced;
    _adjacencyMatrix = adjacencyMatrix;
@@ -333,6 +347,10 @@
 -(id<ORIntVarArray>) vars
 {
    return _x;
+}
+-(id<ORIntVar>) objective
+{
+   return _objective;
 }
 -(ORInt) relaxationSize
 {

@@ -69,15 +69,14 @@ int main (int argc, const char * argv[])
             maxSum += weight;
         }
         
-        id<ORIntVar> valueSum = [ORFactory intVar: mdl domain: RANGE(mdl, 0, maxSum)];
+        id<ORIntVar> totalWeight = [ORFactory intVar: mdl domain: RANGE(mdl, 0, maxSum)];
         
         bool** adjacencies = adjacencyMatrix(&edges, false);
         
         
-        [mdl add: [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies]];
+        [mdl add: [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight]];
         
-        [mdl add: [valueSum eq: Sum(mdl,v,R1,[a[v] mul: @([weights at: v])])]];
-        [mdl maximize: valueSum];
+        [mdl maximize: totalWeight];
         
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
         [cp solve: ^{
@@ -94,7 +93,7 @@ int main (int argc, const char * argv[])
             for (int i = MIN; i <= MAX; i++) {
               printf("%d  ",[cp intValue: [a at:i]]);
             }
-            printf("  |  Objective value: %d", [cp intValue: valueSum]);
+            //printf("  |  Objective value: %d", [cp intValue: totalWeight]);
             printf("\n");
             [nbSolutions incr: cp];
             

@@ -430,6 +430,7 @@ enum ORGroupType {
 
 @protocol ORExactMDDMISP <ORConstraint>
 -(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
 -(id<ORIntArray>) weights;
@@ -437,6 +438,7 @@ enum ORGroupType {
 
 @protocol ORRestrictedMDDMISP <ORConstraint>
 -(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
 -(ORInt) restrictionSize;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
@@ -445,6 +447,7 @@ enum ORGroupType {
 
 @protocol ORRelaxedMDDMISP <ORConstraint>
 -(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
 -(ORInt) relaxationSize;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;

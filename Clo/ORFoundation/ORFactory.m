@@ -953,23 +953,23 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 
 
-+(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights
++(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
 {
-    id<ORConstraint> o = [[ORExactMDDMISP alloc] initORExactMDDMISP:x reduced:reduced adjacencies:adjacencyMatrix weights:weights];
+    id<ORConstraint> o = [[ORExactMDDMISP alloc] initORExactMDDMISP:x reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
     [model trackObject:o];
     return o;
 }
 
-+(id<ORConstraint>) RestrictedMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights
++(id<ORConstraint>) RestrictedMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
 {
-    id<ORConstraint> o = [[ORRestrictedMDDMISP alloc] initORRestrictedMDDMISP:x size:restrictionSize reduced:reduced adjacencies:adjacencyMatrix weights:weights];
+    id<ORConstraint> o = [[ORRestrictedMDDMISP alloc] initORRestrictedMDDMISP:x size:restrictionSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
     [model trackObject:o];
     return o;
 }
 
-+(id<ORConstraint>) RelaxedMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights
++(id<ORConstraint>) RelaxedMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
 {
-    id<ORConstraint> o = [[ORRelaxedMDDMISP alloc] initORRelaxedMDDMISP:x size:relaxationSize reduced:reduced adjacencies:adjacencyMatrix weights:weights];
+    id<ORConstraint> o = [[ORRelaxedMDDMISP alloc] initORRelaxedMDDMISP:x size:relaxationSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
     [model trackObject:o];
     return o;
 }

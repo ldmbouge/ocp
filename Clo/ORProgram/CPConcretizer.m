@@ -1803,9 +1803,10 @@
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPIntVar> objective = [self concreteVar: [cstr objective]];
         bool** adjacencyMatrix = [cstr adjacencyMatrix];
         id<ORIntArray> weights = [cstr weights];
-        id<CPConstraint> concreteCstr = [CPFactory ExactMDDMISP:_engine over: a reduced:[cstr reduced] adjacencies:adjacencyMatrix weights:weights];
+        id<CPConstraint> concreteCstr = [CPFactory ExactMDDMISP:_engine over: a reduced:[cstr reduced] adjacencies:adjacencyMatrix weights:weights objective:objective];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1814,9 +1815,11 @@
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPIntVar> objective = [self concreteVar: [cstr objective]];
         ORInt restrictionSize = [cstr restrictionSize];
         bool** adjacencyMatrix = [cstr adjacencyMatrix];
-        id<CPConstraint> concreteCstr = [CPFactory RestrictedMDDMISP:_engine over: a size:restrictionSize reduced:[cstr reduced] adjacencies:adjacencyMatrix];
+        id<ORIntArray> weights = [cstr weights];
+        id<CPConstraint> concreteCstr = [CPFactory RestrictedMDDMISP:_engine over: a size:restrictionSize reduced:[cstr reduced] adjacencies:adjacencyMatrix weights:weights objective:objective];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1825,9 +1828,11 @@
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
-        ORInt relaxationSize = [cstr relaxationSize];
+        id<CPIntVar> objective = [self concreteVar: [cstr objective]];
+        ORInt relaxationSize   = [cstr relaxationSize];
         bool** adjacencyMatrix = [cstr adjacencyMatrix];
-        id<CPConstraint> concreteCstr = [CPFactory RelaxedMDDMISP:_engine over: a size:relaxationSize reduced:[cstr reduced] adjacencies:adjacencyMatrix];
+        id<ORIntArray> weights = [cstr weights];
+        id<CPConstraint> concreteCstr = [CPFactory RelaxedMDDMISP:_engine over: a size:relaxationSize reduced:[cstr reduced] adjacencies:adjacencyMatrix weights:weights objective:objective];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
