@@ -46,6 +46,7 @@
     bool _isSource;
     id<ORTrail> _trail;
     int* _weights;
+    TRInt _longestPath;
     
     id _state;
 }
@@ -54,14 +55,19 @@
 -(void) dealloc;
 -(id) getState;
 -(int) value;
+-(int) minChildIndex;
+-(int) maxChildIndex;
 -(Node**) children;
 -(int) getWeightFor: (int)index;
 -(int) getNodeObjectiveValue: (int)value;
 -(void) addChild:(Node*)child at:(int)index;
 -(void) removeChildAt: (int) index;
 -(int) findChildIndex: (Node*) child;
+-(int) longestPath;
 -(NSSet*) parents; //Probably a different structure
 -(void) addParent: (Node*) parent;
+-(void) calculateLongestPath;
+-(void) calculateNewLongestPathWithParent: (Node*) parent;
 -(void) removeParentValue: (Node*) parent;
 -(bool) isVital;
 -(bool) isNonVitalAndChildless;
@@ -138,7 +144,6 @@
 -(void) addPropagationsAndTrimValues;
 -(void) trimValuesFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
--(void) addObjectiveValueForLayer:(ORInt)layer;
 -(id) generateRootState:(int)layerValue;
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;

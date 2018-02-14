@@ -48,7 +48,7 @@ int main (int argc, const char * argv[])
         id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
         ORInt layerSize = 3;
-        bool reduced = true;
+        bool reduced = false;
   
         //[mdl add: [ORFactory ExactMDDAllDifferent: mdl var: a reduced:reduced]];
         //[mdl add: [ORFactory RestrictedMDDAllDifferent:mdl var:a size:layerSize reduced:reduced]];
@@ -73,8 +73,8 @@ int main (int argc, const char * argv[])
         
         bool** adjacencies = adjacencyMatrix(&edges, false);
         
-        
-        [mdl add: [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight]];
+        [mdl add: [ORFactory ExactMDDMISP:mdl var:a reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight]];
+        //[mdl add: [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight]];
         
         [mdl maximize: totalWeight];
         

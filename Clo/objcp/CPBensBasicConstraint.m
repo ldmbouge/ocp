@@ -74,6 +74,7 @@
     _isSource = false;
     
     _weights = NULL;
+    _longestPath = makeTRInt(_trail, 0);
     
     return self;
 }
@@ -104,6 +105,7 @@
     _isSink = false;
     _isSource = false;
     _weights = weights;
+    _longestPath = makeTRInt(_trail, 0);
     
     return self;
 }
@@ -125,7 +127,12 @@
 -(void) setNumChildren: (int) numChildren {
     assignTRInt(&_numChildren, numChildren, _trail);
 }
-
+-(int) minChildIndex {
+    return _minChildIndex;
+}
+-(int) maxChildIndex {
+    return _maxChildIndex;
+}
 -(int) value {
     return _value;
 }
@@ -157,18 +164,38 @@
     }
     return -1;
 }
-
+-(int) longestPath {
+    return _longestPath._val;
+}
 -(NSMutableSet*) parents {
     return _parents;
 }
 -(void) addParent: (Node*) parent {
     [_parents addObject: parent];
+    [self calculateNewLongestPathWithParent: parent];
+}
+-(void) calculateLongestPath {
+    for (Node* parent in _parents) {
+        [self calculateNewLongestPathWithParent: parent];
+    }
+}
+-(void) calculateNewLongestPathWithParent: (Node*) parent {
+    int parentLongestPath = [parent longestPath];
+    for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
+        if ([parent children][childIndex] == self) {
+            int candidatePath = parentLongestPath + [parent getWeightFor:childIndex];
+            if (candidatePath > _longestPath._val) {
+                assignTRInt(&_longestPath, candidatePath, _trail);
+            }
+        }
+    }
 }
 -(void) removeParentValue: (Node*) parent {
     NSMutableSet* newParents = [_parents mutableCopy];
     [newParents removeObject: parent];
     
     assignTRId(&_parents, newParents, _trail);
+    [self calculateLongestPath];
 }
 
 -(bool) isVital {
@@ -517,14 +544,7 @@
         [_x[layer] whenLoseValue:self do:^(ORInt value) {
             [self trimValueFromLayer: layer :value ];
         }];
-        [_x[layer] whenBindDo:^() {
-            [self addObjectiveValueForLayer: layer];
-        } onBehalf:self];
     }
-}
--(void) addObjectiveValueForLayer:(ORInt)layer
-{
-    assignTRInt(&_objective,_objective._val + [layers[layer][0] getNodeObjectiveValue:[_x[layer] value]], _trail);
 }
 -(id) generateRootState:(int)layerValue
 {
@@ -640,7 +660,7 @@
                         if (![nodeNames objectForKey:[NSValue valueWithPointer: child]]) {
                             [nodeNames setObject:[NSNumber numberWithInt: (int)[nodeNames count]] forKey:childPointerValue];
                         }
-                        [output appendString: [NSString stringWithFormat: @"%d -> %d [label=\"%d\"];\n", [nodeNames[nodePointerValue] intValue], [nodeNames[childPointerValue] intValue], child_index]];
+                        [output appendString: [NSString stringWithFormat: @"%d -> %d [label=\"%d\"];\n", [nodeNames[nodePointerValue] intValue], [nodeNames[childPointerValue] intValue], [child longestPath]]];
                     }
                 }
             }
@@ -796,7 +816,7 @@
 @implementation CPExactMDDMISP
 -(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
 {
-    self = [super initCPMDD:engine over:x reduced:reduced objective:objectiveValue];
+    self = [super initCPMDD:engine over:x reduced:reduced];
     _adjacencyMatrix = adjacencyMatrix;
     _weights = weights;
     return self;
