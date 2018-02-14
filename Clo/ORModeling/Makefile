@@ -7,8 +7,8 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-lORUtilities -lORFoundation
 
-SRCS = ORDecompose.m  ORFlatten.m  ORIntLinear.m  \
-	ORRealLinear.m ORRealDecompose.m  \
+SRCS = ORDecompose.m  ORFlatten.m  ORIntLinear.m ORFloatLinear ORDoubleLinear.m \
+	ORRealLinear.m ORRealDecompose.m ORFloatDecompose.m ORDoubleDecompose.m \
 	ORLPFlatten.m ORLSFlatten.m   ORMIPFlatten.m  \
 	ORLinearize.m  ORMIPLinearize.m  \
 	ORSoftify.m \

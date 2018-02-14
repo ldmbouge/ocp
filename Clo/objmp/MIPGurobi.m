@@ -371,8 +371,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
          //NSLog(@"idx: %i => %f", idx, val);
          solution[idx] = val;
       }
-      
-      int error = GRBcbsolution(cbdata, solution);
+      double funVal;
+      int error = GRBcbsolution(cbdata, solution,&funVal);
       if (error != 0) assert(NO);
       
       free(solution);

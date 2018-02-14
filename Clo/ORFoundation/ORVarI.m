@@ -17,6 +17,7 @@
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
+   NSString* _prettyname;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
@@ -26,6 +27,12 @@
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
+   return self;
+}
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain name:(NSString*) name
+{
+   self = [self initORIntVarI: track domain:domain];
+   _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain
@@ -42,6 +49,8 @@
 {
    //NSLog(@"ORIntVarI(%p)::dealloc %d\n",self,_name);
    [super dealloc];
+   if(_prettyname != nil)
+      [_prettyname release];
 }
 
 -(void)encodeWithCoder:(NSCoder *)aCoder
@@ -76,6 +85,8 @@
 }
 -(NSString*) description
 {
+   if(_prettyname != nil)
+      return [NSString stringWithFormat:@"%@:(%@,%c)",_prettyname,[_domain description],_ba[0] ? 'D':'S'];
    return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_ba[0] ? 'D':'S'];
 }
 -(ORInt) value
@@ -336,306 +347,314 @@
 @implementation ORFloatVarI
 {
 @protected
-    id<ORTracker>    _tracker;
-    id<ORFloatRange> _domain;
-    BOOL             _hasBounds;
-}
--(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
-{
-    self = [super init];
-    _tracker = track;
-    _domain = [ORFactory floatRange:track low:low up:up];
-    _hasBounds = true;
-    [track trackVariable: self];
-    return self;
-}
--(ORFloatVarI*) init: (id<ORTracker>) track up: (ORFloat) up
-{
-    self = [super init];
-    _tracker = track;
-    _domain = [ORFactory floatRange:track low:0 up:up];
-    _hasBounds = true;
-    [track trackVariable: self];
-    return self;
-}
--(ORFloatVarI*) init: (id<ORTracker>) track
-{
-    self = [super init];
-    _tracker = track;
-    _domain = [ORFactory floatRange:track];
-    _hasBounds = false;
-    [track trackVariable: self];
-    return self;
+   id<ORTracker>    _tracker;
+   id<ORFloatRange> _domain;
+   BOOL             _hasBounds;
+   NSString*         _prettyname;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track domain:(id<ORFloatRange>)dom
 {
-    self = [super init];
-    _tracker = track;
-    _hasBounds = false;
-    _domain = dom;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _domain = dom;
+   _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
+   [track trackVariable: self];
+   return self;
+}
+-(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
+{
+   return  [self init:track domain:[ORFactory floatRange:track low:low up:up]];
+}
+-(ORFloatVarI*) init: (id<ORTracker>) track up: (ORFloat) up
+{
+   return [self init:track low:0.f up:up];
+}
+-(ORFloatVarI*) init: (id<ORTracker>) track
+{
+   return [self init:track domain:[ORFactory floatRange:track]];
+}
+-(ORFloatVarI*) init: (id<ORTracker>) track name:(NSString*) name
+{
+   self = [self init:track];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
+}
+-(ORFloatVarI*) init: (id<ORTracker>) track up: (ORFloat) up name:(NSString*) name
+{
+   self = [self init:track low:0.f up:up name:name];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
+}
+-(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up name:(NSString*) name
+{
+   self = [self init:track domain:[ORFactory floatRange:track low:low up:up]];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
 }
 -(id<ORFloatRange>) domain
 {
-    assert(_domain != NULL);
-    return _domain;
+   assert(_domain != NULL);
+   return _domain;
 }
 -(void) dealloc
 {
-    [super dealloc];
+   if(_prettyname != nil)
+      [_prettyname release];
+   [super dealloc];
 }
 -(enum ORVType) vtype
 {
-    return ORTFloat;
+   return ORTFloat;
 }
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
-    [aCoder encodeObject:_tracker];
-    [aCoder encodeObject:_domain];
-    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeObject:_domain];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id) initWithCoder:(NSCoder *)aDecoder
 {
-    self = [super init];
-    _tracker = [aDecoder decodeObject];
-    _domain  = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-    return self;
+   self = [super init];
+   _tracker = [aDecoder decodeObject];
+   _domain  = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   return self;
 }
 -(ORBool) isVariable
 {
-    return YES;
+   return YES;
 }
 -(NSString*) description
 {
-    return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f){error}:(%f, %f)",_name,_domain.low,_domain.up,_domain.low,_domain.up];
+   if(_prettyname != nil)
+      return [NSString stringWithFormat:@"%@:(%f,%f)",_prettyname,_domain.low,_domain.up];
+   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
-    return _tracker;
+   return _tracker;
 }
 -(void) visit: (ORVisitor*) v
 {
-    [v visitFloatVar: self];
+   [v visitFloatVar: self];
 }
 -(ORBool) hasBounds
 {
-    return _hasBounds;
+   return _hasBounds;
 }
 -(ORFloat) low
 {
-    return _domain.low;
+   return _domain.low;
 }
 -(ORFloat) up
 {
-    return _domain.up;
+   return _domain.up;
 }
 -(ORFloat) fmin
 {
-    return [_domain low];
+   return [_domain low];
 }
 -(ORFloat) fmax
 {
-    return [_domain up];
+   return [_domain up];
 }
 @end
 
 @implementation ORDoubleVarI
 {
 @protected
-    id<ORTracker>    _tracker;
-    id<ORDoubleRange> _domain;
-    BOOL             _hasBounds;
+   id<ORTracker>    _tracker;
+   id<ORDoubleRange> _domain;
+   BOOL             _hasBounds;
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up
 {
-    self = [super init];
-    _tracker = track;
-    _domain = [ORFactory doubleRange:track low:low up:up];
-    _hasBounds = true;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _domain = [ORFactory doubleRange:track low:low up:up];
+   _hasBounds = true;
+   [track trackVariable: self];
+   return self;
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track up: (ORDouble) up
 {
-    self = [super init];
-    _tracker = track;
-    _domain = [ORFactory doubleRange:track low:0 up:up];
-    _hasBounds = true;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _domain = [ORFactory doubleRange:track low:0 up:up];
+   _hasBounds = true;
+   [track trackVariable: self];
+   return self;
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track
 {
-    self = [super init];
-    _tracker = track;
-    _hasBounds = false;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _hasBounds = false;
+   [track trackVariable: self];
+   return self;
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track domain:(id<ORDoubleRange>)dom
 {
-    self = [super init];
-    _tracker = track;
-    _hasBounds = false;
-    _domain = dom;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _hasBounds = false;
+   _domain = dom;
+   [track trackVariable: self];
+   return self;
 }
 -(id<ORDoubleRange>) domain
 {
-    assert(_domain != NULL);
-    return _domain;
+   assert(_domain != NULL);
+   return _domain;
 }
 -(void) dealloc
 {
-    [super dealloc];
+   [super dealloc];
 }
 -(enum ORVType) vtype
 {
-    return ORTDouble;
+   return ORTDouble;
 }
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
-    [aCoder encodeObject:_tracker];
-    [aCoder encodeObject:_domain];
-    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeObject:_domain];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id) initWithCoder:(NSCoder *)aDecoder
 {
-    self = [super init];
-    _tracker = [aDecoder decodeObject];
-    _domain  = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-    return self;
+   self = [super init];
+   _tracker = [aDecoder decodeObject];
+   _domain  = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   return self;
 }
 -(ORBool) isVariable
 {
-    return YES;
+   return YES;
 }
 -(NSString*) description
 {
-    return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
+   return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
-    return _tracker;
+   return _tracker;
 }
 -(void) visit: (ORVisitor*) v
 {
-    [v visitDoubleVar: self];
+   [v visitDoubleVar: self];
 }
 -(ORBool) hasBounds
 {
-    return _hasBounds;
+   return _hasBounds;
 }
 -(ORDouble) low
 {
-    return _domain.low;
+   return _domain.low;
 }
 -(ORDouble) up
 {
-    return _domain.up;
+   return _domain.up;
 }
 @end
 
 @implementation ORLDoubleVarI
 {
 @protected
-    id<ORTracker>    _tracker;
-    id<ORLDoubleRange> _domain;
-    BOOL             _hasBounds;
+   id<ORTracker>    _tracker;
+   id<ORLDoubleRange> _domain;
+   BOOL             _hasBounds;
 }
 -(ORLDoubleVarI*) init: (id<ORTracker>) track low: (ORLDouble) low up: (ORLDouble) up
 {
-    self = [super init];
-    _tracker = track;
-    _domain = [ORFactory ldoubleRange:track low:low up:up];
-    _hasBounds = true;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _domain = [ORFactory ldoubleRange:track low:low up:up];
+   _hasBounds = true;
+   [track trackVariable: self];
+   return self;
 }
 -(ORLDoubleVarI*) init: (id<ORTracker>) track up: (ORLDouble) up
 {
-    self = [super init];
-    _tracker = track;
-    _domain = [ORFactory ldoubleRange:track low:0 up:up];
-    _hasBounds = true;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _domain = [ORFactory ldoubleRange:track low:0 up:up];
+   _hasBounds = true;
+   [track trackVariable: self];
+   return self;
 }
 -(ORLDoubleVarI*) init: (id<ORTracker>) track
 {
-    self = [super init];
-    _tracker = track;
-    _hasBounds = false;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _hasBounds = false;
+   [track trackVariable: self];
+   return self;
 }
 -(ORLDoubleVarI*) init: (id<ORTracker>) track domain:(id<ORLDoubleRange>)dom
 {
-    self = [super init];
-    _tracker = track;
-    _hasBounds = false;
-    _domain = dom;
-    [track trackVariable: self];
-    return self;
+   self = [super init];
+   _tracker = track;
+   _hasBounds = false;
+   _domain = dom;
+   [track trackVariable: self];
+   return self;
 }
 -(id<ORLDoubleRange>) domain
 {
-    assert(_domain != NULL);
-    return _domain;
+   assert(_domain != NULL);
+   return _domain;
 }
 -(void) dealloc
 {
-    [super dealloc];
+   [super dealloc];
 }
 -(enum ORVType) vtype
 {
-    return ORTLDouble;
+   return ORTLDouble;
 }
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
-    [aCoder encodeObject:_tracker];
-    [aCoder encodeObject:_domain];
-    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeObject:_domain];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id) initWithCoder:(NSCoder *)aDecoder
 {
-    self = [super init];
-    _tracker = [aDecoder decodeObject];
-    _domain  = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-    return self;
+   self = [super init];
+   _tracker = [aDecoder decodeObject];
+   _domain  = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   return self;
 }
 -(ORBool) isVariable
 {
-    return YES;
+   return YES;
 }
 -(NSString*) description
 {
-    return [NSString stringWithFormat:@"var<OR>{ldouble}:%03d(%LF,%LF)",_name,_domain.low,_domain.up];
+   return [NSString stringWithFormat:@"var<OR>{ldouble}:%03d(%LF,%LF)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
-    return _tracker;
+   return _tracker;
 }
 -(void) visit: (ORVisitor*) v
 {
-    [v visitLDoubleVar: self];
+   [v visitLDoubleVar: self];
 }
 -(ORBool) hasBounds
 {
-    return _hasBounds;
+   return _hasBounds;
 }
 -(ORLDouble) low
 {
-    return _domain.low;
+   return _domain.low;
 }
 -(ORLDouble) up
 {
-    return _domain.up;
+   return _domain.up;
 }
 @end
 //-------------------------
@@ -890,5 +909,97 @@
       [rv appendFormat:@"\t%@\n",[_array[i] description]];
    [rv appendFormat:@"] \n"];
    return rv;
+}
+@end
+
+
+@implementation ORDisabledFloatVarArrayI{
+   id<ORFloatVarArray>          _vars;
+   id<ORTrailableIntArray>      _disabled;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORSearchEngine>)engine range:(id<ORIntRange>)range
+{
+   self = [super init];
+   _vars = [ORFactory floatVarArray:engine range:range];
+   _disabled = [ORFactory trailableIntArray:engine range:range value:0];
+   return self;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine
+{
+   self = [super init];
+   _vars = vars;
+   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   return self;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine with:(ORInt(^)(ORInt)) clo
+{
+   self = [super init];
+   _vars = vars;
+   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   for(ORInt k = [vars range].low; k <= [vars range].up; k++)
+      [_disabled[k] setValue:clo(k)];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<ORFloatVar>) at: (ORInt) value
+{
+   return [_vars at:value];
+}
+-(void) set: (id<ORFloatVar>) x at: (ORInt) value
+{
+   [_vars set:x at:value];
+}
+-(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key
+{
+   return [_vars objectAtIndexedSubscript:key];
+}
+-(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx
+{
+   [_vars setObject:newValue atIndexedSubscript:idx];
+}
+-(id<ORASolver>) solver
+{
+   return [_vars solver];
+}
+-(void) disable:(ORUInt) index
+{
+   [_disabled[index] setValue:1];
+}
+-(void) enable:(ORUInt) index
+{
+   [_disabled[index] setValue:0];
+}
+-(ORInt) isEnable:(ORUInt) index
+{
+   return ![_disabled[index] value];
+}
+-(id<ORIntRange>) range
+{
+   return [_vars range];
+}
+-(ORInt) low
+{
+   return [_vars low];
+}
+-(ORInt) up
+{
+   return [_vars up];
+}
+-(NSUInteger) count
+{
+   return [_vars count];
+}
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
+                                  objects:(id *)stackbuf
+                                    count:(NSUInteger)len
+{
+  return [_vars countByEnumeratingWithState:state objects:stackbuf count:len];
+}
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@)",_name,_vars,_disabled];
 }
 @end

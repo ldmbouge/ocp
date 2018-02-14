@@ -35,7 +35,7 @@
 }
 -(NSString*) description
 {
-    if([self bound]){
+    if([self bound] && !(is_eqf(_domain._low,-0.0f) && is_eqf(_domain._up,+0.0f))){
         unsigned int *inf;
         inf = (unsigned int *)&(_domain._low);
         NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -105,7 +105,7 @@
 }
 -(ORBool) bound
 {
-    return _domain._up == _domain._low;
+    return _domain._low == _domain._up;
 }
 -(ORInterval) bounds
 {
@@ -116,7 +116,7 @@
 {
     ORDouble min = (_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
     ORDouble max = (_domain._up == infinityf()) ? FLT_MAX : _domain._up;
-    if(_domain._low == -infinityf() && _domain._up == infinityf()) return DBL_MAX;
+    if(_domain._low == -infinityf() && _domain._up == infinityf()) return (ORDouble)FLT_MAX+(ORDouble)FLT_MAX;
     return  max - min;
 }
 -(TRFloatInterval) domain
@@ -172,11 +172,11 @@
     [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_imax];
     return self;
 }
-- (void)unionWith:(id<CPADom>)d
+-(void) unionWith:(CPFloatDom*)d
 {
-   //Heytem:tofix
+   updateMin(&_domain, minFlt(_imin,d->_imin), _trail);
+   updateMax(&_domain, maxFlt(_imax,d->_imax), _trail);
 }
-
 @end
 
 

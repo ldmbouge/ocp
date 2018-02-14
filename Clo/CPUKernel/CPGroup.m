@@ -16,11 +16,11 @@
 
 @implementation CPGroup {
    CPEngineI*               _engine;
-   CPClosureQueue*          _closureQueue[NBPRIORITIES];
    CPValueClosureQueue*     _valueClosureQueue;
+   ORInt                    _max;
    id<CPConstraint>*        _inGroup;
    ORInt                    _nbIn;
-   ORInt                    _max;
+   CPClosureQueue*          _closureQueue[NBPRIORITIES];
 }
 -(id)init:(CPEngineI*) engine
 {
@@ -109,7 +109,7 @@
 }
 -(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
 {
-    [_closureQueue[HIGHEST_PRIO] enQueue: cb cstr: c];
+   [_closureQueue[HIGHEST_PRIO] enQueue: cb cstr: c];
 }
 -(void)incNbPropagation:(ORUInt)add
 {
@@ -125,11 +125,11 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
       cb();
    else {
       CPCoreConstraint* cstr = forCstr;
-      if (cstr->_todo == CPChecked)
+      if (cstr->_todo == CPChecked || cstr->_active._val == 0)
          return ORSkip;
       else {
-          cstr->_todo = CPChecked;
-          ((SELPROTO)cstr->_propagate)(cstr,@selector(propagate));
+         cstr->_todo = CPChecked;
+         ((SELPROTO)cstr->_propagate)(cstr,@selector(propagate));
       }
    }
    return ORSuspend;
@@ -301,7 +301,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
 }
 -(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
 {
-    assert(NO);
+   assert(NO);
 }
 -(void)propagate
 {

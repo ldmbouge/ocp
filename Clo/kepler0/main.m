@@ -2,6 +2,7 @@
 #import "ORCmdLineArgs.h"
 
 /*
+ from : Zumkeller, Roland Formal Global Optimisation with Taylor Models
  float ex8(float x1, float x2, float x3, float x4, float x5, float x6) {
  return (((((x2 * x5) + (x3 * x6)) - (x2 * x3)) - (x5 * x6)) + (x1 * (((((-x1 + x2) + x3) - x4) + x5) + x6)));
  }
@@ -35,24 +36,29 @@ int main(int argc, const char * argv[]) {
          
          id<ORExpr> expr_unop = [ORFactory float:model value:0.f];
          
-         [model add:[res_0 eq: [[[[[x2_0 mul: x5_0] plus: [x3_0 mul: x6_0]] sub: [x2_0 mul: x3_0]] sub: [x5_0 mul: x6_0]] plus: [x1_0 mul: [[[[[[expr_unop sub:x1_0] plus: x2_0] plus: x3_0] sub: x4_0] plus: x5_0] plus: x6_0]]]]];
+         id<ORGroup> g = [args makeGroup:model];
+         
+         [g add:[res_0 eq: [[[[[x2_0 mul: x5_0] plus: [x3_0 mul: x6_0]] sub: [x2_0 mul: x3_0]] sub: [x5_0 mul: x6_0]] plus: [x1_0 mul: [[[[[[expr_unop sub:x1_0] plus: x2_0] plus: x3_0] sub: x4_0] plus: x5_0] plus: x6_0]]]]];
 
          
          
          
-//         [model add:[res_0 leq:@(1.368960876464843750e+02)]];
-         [model add:[res_0 leq:@(-1.f)]];
-         [model add:[res_0 geq:@(-2.355440139770507812e+01)]];
-         
-         //         [model add:[res gt:@(6.f)]];
-         //         [model add:[res lt:@(7.48875938e2f)]];
+//         [g add:[res_0 leq:@(1.368960876464843750e+02)]];
+         [g add:[res_0 leq:@(-1.f)]];
+         [g add:[res_0 geq:@(-2.355440139770507812e+01)]];
+         [model add:g];
+         //         [g add:[res gt:@(6.f)]];
+         //         [g add:[res lt:@(7.48875938e2f)]];
          id<ORFloatVarArray> vars = [model floatVars];
+         
          id<CPProgram> cp = [args makeProgram:model];
+        
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             
             
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+            found=true;
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];
                NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");

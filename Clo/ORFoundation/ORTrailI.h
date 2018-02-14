@@ -163,6 +163,10 @@ static inline TRIdNC  inline_makeTRIdNC(ORTrailI* trail,id val)
 {
    return (TRIdNC) {val};
 }
+static inline TRFloat inline_makeTRFloat(ORTrailI* trail,float val)
+{
+   return (TRFloat){val,[trail magic]-1};
+}
 static inline TRDouble  inline_makeTRDouble(ORTrailI* trail,double val)
 {
    return (TRDouble){val,[trail magic]-1};

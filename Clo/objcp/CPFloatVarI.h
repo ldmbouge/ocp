@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPConstraintI.h>
-#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPDom.h>
 #import <objcp/CPData.h>
 #import <objcp/CPConstraint.h>
@@ -105,7 +104,7 @@ typedef struct  {
 -(ORFloat) floatValue;
 -(ORRational*) errorValue;
 -(ORLDouble) domwidth;
--(TRFloatInterval) domain;
+-(id<CPDom>) domain;
 -(TRRationalInterval) domainError;
 @end
 
@@ -172,14 +171,15 @@ static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float y
 {
    return !isDisjointWithV(xmin,xmax,ymin,ymax);
 }
-static inline unsigned long long cardinalityV(float xmin, float xmax){
+//hzi : return double because this function is used to compute densisty
+static inline double cardinalityV(float xmin, float xmax){
    float_cast i_inf;
    float_cast i_sup;
    i_inf.f = xmin;
    i_sup.f = xmax;
    if(xmin == xmax) return 1.0;
-   if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX;
-   long long res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * NB_FLOAT_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
+   if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
+   double res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
    return (res < 0) ? -res : res;
 }
 
@@ -202,7 +202,7 @@ static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
    return [x min] > [y min ] && [x max] > [y max];
 }
 
-static inline ORDouble cardinality(CPFloatVarI* x)
+static inline double cardinality(CPFloatVarI* x)
 {
    return cardinalityV([x min], [x max]);
 }
@@ -212,6 +212,11 @@ static inline float_interval makeFloatInterval(float min, float max)
    return (float_interval){min,max};
 }
 
+static inline void updateFloatInterval(float_interval * ft,CPFloatVarI* x)
+{
+   ft->inf = x.min;
+   ft->sup = x.max;
+}
 static inline rational_interval makeRationalInterval(ORRational min, ORRational max)
 {
     rational_interval ri;
@@ -282,13 +287,16 @@ static inline void maxError(ORRational* r, ORRational* a, ORRational* b){
     }
 }
 
-static inline intersectionInterval intersection(int changed,float_interval r, float_interval x, ORDouble percent)
+static inline intersectionInterval intersection(float_interval r, float_interval x, ORDouble percent)
 {
    double reduced = 0;
+   int changed = 0;
    if(percent == 0.0)
       fpi_narrowf(&r, &x, &changed);
    else{
       fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
+      if(x.inf > x.sup)
+         failNow();
    }
    return (intersectionInterval){r,x,changed};
 }

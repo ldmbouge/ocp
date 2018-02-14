@@ -25,6 +25,7 @@
 @protocol ORTRIntArray;
 @protocol ORTRIntMatrix;
 @protocol ORAutomaton;
+@protocol ORDisabledFloatVarArray;
 @protocol ORRealVarArray;
 @protocol ORFloatVarArray;
 @protocol ORDoubleVarArray;
@@ -49,12 +50,14 @@ PORTABLE_BEGIN
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)guard;
 +(id<ORGroup>)group:(id<ORTracker>)model;
-+(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(nullable NSArray*)clauses;
++(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(NSArray* PNULLABLE)clauses;
 +(id<ORGroup>)cdisj:(id<ORTracker>)model vmap:(NSArray*)varMap;
 +(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g;
++(id<ORGroup>)group3B:(id<ORTracker>)model;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value;
++(id<ORMutableFloat>) mutable: (id<ORTracker>)tracker fvalue: (ORFloat) value;
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORDoubleNumber>) double: (id<ORTracker>) tracker value: (ORDouble) value;
 +(id<ORFloatNumber>) infinityf: (id<ORTracker>) tracker;
@@ -133,6 +136,8 @@ PORTABLE_BEGIN
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker;
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up name:(NSString*) name;
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker name:(NSString*) name;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker;
@@ -166,7 +171,9 @@ PORTABLE_BEGIN
 
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up;
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
-
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name;
++(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo;
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>) engine;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 
@@ -195,6 +202,7 @@ PORTABLE_BEGIN
 
 
 @interface ORFactory (Expressions)
++(id<ORRelation>) expr: (id<ORExpr>) left set: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right track:(id<ORTracker>)t;
@@ -323,6 +331,8 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORFloat)
++(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var: (id<ORFloatVar>)x to:(ORFloat)c;
++(id<ORConstraint>) floatAssign: (id<ORTracker>) model var: (id<ORFloatVar>)x to: (id<ORFloatVar>)y;
 +(id<ORConstraint>) floatEqualc: (id<ORTracker>) model var: (id<ORFloatVar>)x eqc:(ORFloat)c;
 +(id<ORConstraint>) floatNEqualc:(id<ORTracker>) model var: (id<ORFloatVar>)x neqc:(ORFloat)c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c;
@@ -424,6 +434,8 @@ PORTABLE_END
 #define All2(track,RT,P1,RANGE1,P2,RANGE2,E)  [ORFactory array##RT: track range:(RANGE1) range:(RANGE2) with:^id<RT>(ORInt P1,ORInt P2) { return (E);}]
 #define Or(track,P,R,E)       [ORFactory lor: track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 #define And(track,P,R,E)      [ORFactory land:track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
+
+#define LOG(ls,l,fmt, ...)    if(l && l<=ls) NSLog(fmt, ##__VA_ARGS__);
 
 // [ldm] To check. Not clear why there is such a macro.
 #define geq(track,x,y,c)      [ORFactory geq: track x: x y: y plus: c]

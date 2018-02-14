@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>3Bgroup.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>269</integer>
+		</dict>
 		<key>AC.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -187,7 +192,7 @@
 		<key>Rosenbrock.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>201</integer>
+			<integer>202</integer>
 		</dict>
 		<key>SMTLIB2.xcscheme</key>
 		<dict>
@@ -252,7 +257,7 @@
 		<key>Wilkinsons.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>202</integer>
+			<integer>203</integer>
 		</dict>
 		<key>add_01_05_1.xcscheme</key>
 		<dict>
@@ -337,7 +342,7 @@
 		<key>add_01_1_1.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>207</integer>
+			<integer>192</integer>
 		</dict>
 		<key>add_01_1_2.xcscheme</key>
 		<dict>
@@ -397,17 +402,22 @@
 		<key>cancellation.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>157</integer>
+			<integer>197</integer>
 		</dict>
 		<key>cardinalityBench.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>160</integer>
+			<integer>200</integer>
 		</dict>
 		<key>cdisj.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>147</integer>
+		</dict>
+		<key>cdisjfloat.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>249</integer>
 		</dict>
 		<key>circle.xcscheme_^#shared#^_</key>
 		<dict>
@@ -452,7 +462,7 @@
 		<key>degreeBench.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>159</integer>
+			<integer>199</integer>
 		</dict>
 		<key>diet.xcscheme</key>
 		<dict>
@@ -467,7 +477,7 @@
 		<key>doppler.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>163</integer>
+			<integer>203</integer>
 		</dict>
 		<key>driver.xcscheme</key>
 		<dict>
@@ -482,12 +492,12 @@
 		<key>e1_1.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>197</integer>
+			<integer>198</integer>
 		</dict>
 		<key>e1_2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>198</integer>
+			<integer>199</integer>
 		</dict>
 		<key>eq20.xcscheme_^#shared#^_</key>
 		<dict>
@@ -557,17 +567,17 @@
 		<key>heron.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>153</integer>
+			<integer>193</integer>
 		</dict>
 		<key>heron10-8.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>158</integer>
+			<integer>198</integer>
 		</dict>
 		<key>heron156.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>154</integer>
+			<integer>194</integer>
 		</dict>
 		<key>iCP.xcscheme</key>
 		<dict>
@@ -587,7 +597,7 @@
 		<key>jetEngine.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>164</integer>
+			<integer>204</integer>
 		</dict>
 		<key>jobshop.xcscheme_^#shared#^_</key>
 		<dict>
@@ -712,42 +722,57 @@
 		<key>multiRumps.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>192</integer>
+			<integer>193</integer>
 		</dict>
 		<key>multimeasure.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>200</integer>
+			<integer>201</integer>
 		</dict>
 		<key>multinewton.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>196</integer>
+			<integer>197</integer>
 		</dict>
 		<key>multinewtonall.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>199</integer>
+			<integer>200</integer>
 		</dict>
 		<key>multirumpsall.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>194</integer>
+			<integer>195</integer>
 		</dict>
 		<key>multisineTaylor.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>204</integer>
+			<integer>205</integer>
 		</dict>
 		<key>multisintaylorAll.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>205</integer>
+			<integer>206</integer>
 		</dict>
 		<key>newton.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>195</integer>
+			<integer>250</integer>
+		</dict>
+		<key>newtonI.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>196</integer>
+		</dict>
+		<key>newtonI3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>251</integer>
+		</dict>
+		<key>newtonI_N.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>252</integer>
 		</dict>
 		<key>nfraction.xcscheme_^#shared#^_</key>
 		<dict>
@@ -847,7 +872,7 @@
 		<key>puma.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>203</integer>
+			<integer>204</integer>
 		</dict>
 		<key>qg7.xcscheme_^#shared#^_</key>
 		<dict>
@@ -947,17 +972,57 @@
 		<key>sineOrder3.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>162</integer>
+			<integer>202</integer>
+		</dict>
+		<key>sine_1_false-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>253</integer>
+		</dict>
+		<key>sine_2_false-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>254</integer>
+		</dict>
+		<key>sine_3_false-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>255</integer>
+		</dict>
+		<key>sine_4_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>256</integer>
+		</dict>
+		<key>sine_5_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>257</integer>
+		</dict>
+		<key>sine_6_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>258</integer>
+		</dict>
+		<key>sine_7_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>259</integer>
+		</dict>
+		<key>sine_8_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>260</integer>
 		</dict>
 		<key>sinetaylor.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>161</integer>
+			<integer>201</integer>
 		</dict>
 		<key>sinetaylorAbs.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>193</integer>
+			<integer>194</integer>
 		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
@@ -987,17 +1052,17 @@
 		<key>slope26+10.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>156</integer>
+			<integer>196</integer>
 		</dict>
 		<key>slope26-1.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>152</integer>
+			<integer>192</integer>
 		</dict>
 		<key>slope26-10.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>155</integer>
+			<integer>195</integer>
 		</dict>
 		<key>slow_convergence.xcscheme_^#shared#^_</key>
 		<dict>
@@ -1032,7 +1097,47 @@
 		<key>square10.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>166</integer>
+			<integer>206</integer>
+		</dict>
+		<key>square_1_false-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>261</integer>
+		</dict>
+		<key>square_2_false-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>262</integer>
+		</dict>
+		<key>square_3_false-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>263</integer>
+		</dict>
+		<key>square_4_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>264</integer>
+		</dict>
+		<key>square_5_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>265</integer>
+		</dict>
+		<key>square_6_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>266</integer>
+		</dict>
+		<key>square_7_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>267</integer>
+		</dict>
+		<key>square_8_true-unreach-call.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>268</integer>
 		</dict>
 		<key>stressLimit.xcscheme_^#shared#^_</key>
 		<dict>
@@ -1112,7 +1217,7 @@
 		<key>testSSA.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>206</integer>
+			<integer>207</integer>
 		</dict>
 		<key>testScheduler.xcscheme</key>
 		<dict>
@@ -1127,7 +1232,7 @@
 		<key>turbine.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>165</integer>
+			<integer>205</integer>
 		</dict>
 		<key>vietnameseSnake.xcscheme_^#shared#^_</key>
 		<dict>

@@ -241,7 +241,11 @@ static int decCoef(const struct ORRealTerm* t1,const struct ORRealTerm* t2)
     assert(NO);
     return nil;
 }
-
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   assert(NO);
+   return nil;
+}
 -(void) postMinimize: (id<ORAddToModel>) model
 {
     [model minimize: [self variables: model] coef: [self coefficients: model]];
@@ -251,7 +255,6 @@ static int decCoef(const struct ORRealTerm* t1,const struct ORRealTerm* t2)
     [model maximize: [self variables: model] coef: [self coefficients: model]];
 }
 @end
-
 
 @implementation ORRealLinearFlip
 -(id) initORRealLinearFlip: (id<ORRealLinear>) r
@@ -342,7 +345,11 @@ static int decCoef(const struct ORRealTerm* t1,const struct ORRealTerm* t2)
 }
 -(id<ORConstraint>)postGTZ:(id<ORAddToModel>)model
 {
-    return [_real postGTZ:model];
+   return [_real postGTZ:model];
+}
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+    return [_real postSET:model];
 }
 
 @end

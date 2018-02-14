@@ -24,6 +24,7 @@
 @implementation ORAnnotation {
    NSMutableDictionary* _cstr;
    NSMutableDictionary* _classCstr;
+   ORDouble _kbpercent;
 }
 
 -(id) init
@@ -31,6 +32,7 @@
    self = [super init];
    _classCstr = [[NSMutableDictionary alloc] initWithCapacity:16];
    _cstr = [[NSMutableDictionary alloc] initWithCapacity:16];
+   _kbpercent = -1;
    return self;
 }
 
@@ -136,7 +138,18 @@
    [k release];
    return rv;
 }
-
+-(ORBool) hasFilteringPercent
+{
+   return _kbpercent != -1;
+}
+-(ORDouble) kbpercent
+{
+   return _kbpercent;
+}
+-(void) kbpercent:(ORDouble) p
+{
+   _kbpercent = p;
+}
 -(ORCLevel) levelFor: (id<ORConstraint>) cstr
 {
    ORConsistency* cn = [self findConstraintNote: cstr ofClass: [ORConsistency class]];
@@ -176,6 +189,7 @@
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
    [buf appendString:@"{"];
+   [buf appendFormat:@"kbpercent : %f",_kbpercent];
    @autoreleasepool {
       [_cstr enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
          [buf appendString:[key description]];
@@ -224,6 +238,7 @@
 {
    self = [super init];
    _original = [src retain];
+   [super kbpercent:[_original kbpercent]];
    return self;
 }
 -(void) dealloc

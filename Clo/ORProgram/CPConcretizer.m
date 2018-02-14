@@ -14,6 +14,7 @@
 #import <CPUKernel/CPEngine.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
+#import <objcp/CPBasicConstraint.h>
 #import <objcp/CPBitConstraint.h>
 #import <ORFoundation/ORVisit.h>
 
@@ -222,9 +223,15 @@
          case CDGroup:
             cg = [CPFactory group:_engine];  // TOFIX:ldm
             break;
-         default:
-            cg = [CPFactory group:_engine];
+         case Group3B:
+            if([_notes hasFilteringPercent])
+               cg =  [CPFactory group3B: _engine tracer:[_solver tracer] percent:[_notes kbpercent]];
+            else
+               cg =  [CPFactory group3B: _engine tracer:[_solver tracer]];
             break;
+         default:
+          cg = [CPFactory group:_engine];
+         break;
       }
       [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
       id<CPEngine> old = _engine;
@@ -249,7 +256,7 @@
       }
       id<CPVarArray> oVars = (id)[ORFactory idArray:_engine
                                               range:RANGE(_engine,low,up)
-                                               with:^id<ORVar> _Nonnull(ORInt k) {
+                                               with:^id<ORVar> PNONNULL(ORInt k) {
          return _gamma[k];
       }];
       NSMutableArray* cvm = [[NSMutableArray alloc] initWithCapacity:avm.count];
@@ -275,7 +282,24 @@
       _gamma[g.getId] = cg;
    }
 }
-
+-(void) visit3BGroup:(id<OR3BGroup>)g
+{
+   if (_gamma[g.getId] == NULL) {
+      CP3BGroup* cg = nil;
+      if([_notes hasFilteringPercent])
+         cg = [CPFactory group3B: _engine tracer:[_solver tracer] percent:[_notes kbpercent]];
+      else
+         cg = [CPFactory group3B: _engine tracer:[_solver tracer]];
+      [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
+      id<CPEngine> old = _engine;
+      _engine = (id)cg;
+      [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+         [ck visit:self];
+      }];
+      _engine = old;
+      _gamma[g.getId] = cg;
+   }
+}
 -(void) visitFail:(id<ORFail>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1194,6 +1218,17 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
+-(void) visitFloatAssignC:(id<ORFloatAssignC>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORFloat cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatAssignC:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatEqualc:(id<ORFloatEqualc>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1222,19 +1257,30 @@
       id<ORVarArray> av = [cstr vars];
       id<CPFloatVarArray> x = [self concreteArray:av];
       id<ORFloatArray> c = [cstr coefs];
-      id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst]];
+      id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst] annotation:_notes];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
 }
-
+-(void) visitFloatAssign:(id<ORFloatAssign>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      id<ORFloatVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatAssign:_gamma[left.getId]  to:_gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatLinearNEq:(id<ORFloatLinearNEq>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
         id<ORVarArray> av = [cstr vars];
         id<CPFloatVarArray> x = [self concreteArray:av];
         id<ORFloatArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c neqi:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c neqi:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1245,7 +1291,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPFloatVarArray> x = [self concreteArray:av];
         id<ORFloatArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c lt:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c lt:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1256,7 +1302,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPFloatVarArray> x = [self concreteArray:av];
         id<ORFloatArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c gt:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c gt:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1267,7 +1313,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPFloatVarArray> x = [self concreteArray:av];
         id<ORFloatArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c leq:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c leq:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1278,7 +1324,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPFloatVarArray> x = [self concreteArray:av];
         id<ORFloatArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c geq:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c geq:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1295,6 +1341,7 @@
         id<CPConstraint> concreteCstr = [CPFactory floatMult: (id<CPFloatVar>)_gamma[left.getId]
                                                      by: (id<CPFloatVar>) _gamma[right.getId]
                                                   equal: (id<CPFloatVar>) _gamma[res.getId]
+                                                   annotation:_notes
                                          ];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
@@ -1312,7 +1359,8 @@
         id<CPConstraint> concreteCstr = [CPFactory floatDiv: (id<CPFloatVar>) _gamma[left.getId]
             by: (id<CPFloatVar>) _gamma[right.getId]
             equal: (id<CPFloatVar>) _gamma[res.getId]
-            ];
+            annotation:_notes
+         ];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1380,7 +1428,7 @@
     if (_gamma[cstr.getId] == NULL) {
         id<ORIntVar> b = [cstr b];
         id<ORFloatVar> x = [cstr x];
-        ORInt cst = [cstr cst];
+        ORFloat cst = [cstr cst];
         [b visit: self];
         [x visit: self];
         id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
@@ -1393,7 +1441,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORFloatVar> x = [cstr x];
-      ORInt cst = [cstr cst];
+      ORFloat cst = [cstr cst];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] lti: cst];

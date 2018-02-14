@@ -57,6 +57,7 @@
 @protocol ORFloatNumber;
 @protocol ORDoubleNumber;
 @protocol ORMutableInteger;
+@protocol ORMutableFloat;
 @protocol ORMutableDouble;
 
 
@@ -94,6 +95,7 @@
 -(void) visitConstraint:(id<ORConstraint>)c;
 -(void) visitGroup:(id<ORGroup>)g;
 -(void) visitCDGroup:(id<ORGroup>)g;
+-(void) visit3BGroup:(id<ORGroup>)g;
 -(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f;
 -(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f;
 -(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f;
@@ -181,8 +183,10 @@
 -(void) visitRealLinearGeq: (id<ORConstraint>) c;
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
 -(void) visitFloatEqualc: (id<ORConstraint>)c;
+-(void) visitFloatAssignC: (id<ORConstraint>)c;
 -(void) visitFloatNEqualc: (id<ORConstraint>)c;
 -(void) visitFloatLinearEq: (id<ORConstraint>) c;
+-(void) visitFloatAssign: (id<ORConstraint>)c;
 -(void) visitFloatLinearNEq: (id<ORConstraint>) c;
 -(void) visitFloatLinearLT: (id<ORConstraint>) c;
 -(void) visitFloatLinearGT: (id<ORConstraint>) c;
@@ -213,11 +217,10 @@
 -(void) visitDoubleMult: (id<ORDoubleMult>) c;
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c;
 
-
-
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitMutableDouble: (id<ORMutableDouble>) e;
 -(void) visitFloat: (id<ORFloatNumber>) e;
 -(void) visitDouble: (id<ORDoubleNumber>) e;
@@ -251,6 +254,7 @@
 -(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
+-(void) visitExprFloatAssignI:(id<ORExpr>)e;
 
 // Bit
 -(void) visitBitEqualAt:(id<ORConstraint>)c;

@@ -41,6 +41,26 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatAssign : CPCoreConstraint {
+   CPFloatVarI* _x;
+   CPFloatVarI* _y;
+}
+-(id) init:(id)x set:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatAssignC : CPCoreConstraint {
+   CPFloatVarI* _x;
+   ORFloat      _c;
+}
+-(id) init:(id)x set:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPFloatNEqual : CPCoreConstraint {
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -114,7 +134,8 @@
     ORDouble _percent;
     ORInt _rounding;
 }
--(id) init:(id)z equals:(id)x plus:(id)y;
+-(id) init:(id)z equals:(id)x plus:(id)y ;
+-(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -135,7 +156,8 @@
     ORDouble _percent;
     ORInt _rounding;
 }
--(id) init:(id)z equals:(id)x minus:(id)y ;
+-(id) init:(id)z equals:(id)x minus:(id)y;
+-(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -156,6 +178,7 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x mult:(id)y ;
+-(id) init:(id)z equals:(id)x mult:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -174,6 +197,7 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x div:(id)y ;
+-(id) init:(id)z equals:(id)x div:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

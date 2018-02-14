@@ -112,6 +112,12 @@ BOOL _alreadyAdded;
           cstr = [terms postLEQZ: model];
           _alreadyAdded = YES;
        }break;
+       case ORRSet:
+       {
+          cstr = [terms postSET: model];
+          _alreadyAdded = YES;
+       }
+          break;
        default:
           assert(terms == nil);
           break;

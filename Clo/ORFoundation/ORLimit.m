@@ -144,7 +144,7 @@
 }
 -(void) succeeds
 {
-//   NSLog(@"succeeds");
+   //   NSLog(@"succeeds");
    //printf(".");
    _nbFailures = 0;
 }
@@ -340,7 +340,7 @@
    ORInt        _limit;
    NSCont*      _next;
    TRInt        _depth;
-
+   
 }
 -(id) initORSwitchOnDepth: (ORInt) limit next: (NSCont*) next withTrail: (id<ORTrail>) trail;
 {
@@ -373,50 +373,61 @@
 
 @implementation ORTrackDepth
 {
-    id<ORTrail>  _trail;
-    ORUInt        _mDepth;
-    TRInt        _depth;
-    
+   id<ORTrail>  _trail;
+   ORMutableIntegerI *_mDepth;
+   TRInt        _depth;
+   
 }
--(id) initORTrackDepth:(id<ORTrail>) trail;
+-(id) initORTrackDepth:(id<ORTrail>) trail tracker:(id<ORTracker>)track;
 {
-    self = [super initORDefaultController];
-    _trail = trail;
-    _depth = makeTRInt(_trail,0);
-    _mDepth = 0;
-    return self;
+   self = [super initORDefaultController];
+   _trail = trail;
+   _depth = makeTRInt(_trail,0);
+   _mDepth = [ORFactory mutable:track value:0];
+   return self;
+}
+-(id) initORTrackDepth:(id<ORTrail>) trail  with:(ORMutableIntegerI*)mdepth;
+{
+   self = [super initORDefaultController];
+   _trail = trail;
+   _depth = makeTRInt(_trail,0);
+   _mDepth = mdepth;
+   return self;
 }
 -(void) dealloc
 {
-    NSLog(@"maxdepth : %u",[self maxDepth]);
-    NSLog(@"ORTrackDepth dealloc called...\n");
-    [super dealloc];
+   [super dealloc];
 }
 -(void) startTry
 {
-    assignTRInt(&_depth,_depth._val + 1,_trail);
-    _mDepth = max(_mDepth, _depth._val);
-    [_controller startTry];
+   assignTRInt(&_depth,_depth._val + 1,_trail);
+   [_mDepth setValue:max(_mDepth.intValue, _depth._val)];
+   [_controller startTry];
 }
 -(void) startTryall
 {
-    assignTRInt(&_depth,_depth._val + 1,_trail);
-    _mDepth = max(_mDepth, _depth._val);
-    [_controller startTryall];
+   assignTRInt(&_depth,_depth._val + 1,_trail);
+   [_mDepth setValue:max(_mDepth.intValue, _depth._val)];
+   [_controller startTryall];
 }
 -(void)trust
 {
-    assignTRInt(&_depth,_depth._val + 1,_trail);
-    _mDepth = max(_mDepth, _depth._val);
-    [super trust];
+   assignTRInt(&_depth,_depth._val + 1,_trail);
+   [_mDepth setValue:max(_mDepth.intValue, _depth._val)];
+   [super trust];
 }
 -(ORUInt)maxDepth
 {
-    return _mDepth;
+   return _mDepth.intValue;
 }
 -(ORUInt)depth
 {
-    return _depth._val;
+   return _depth._val;
+}
+-(void) reset
+{
+   _depth = makeTRInt(_trail,0);
+   _mDepth = 0;
 }
 @end
 

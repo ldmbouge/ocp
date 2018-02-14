@@ -180,7 +180,7 @@ enum CPVarClass {
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 //----------------------
-@protocol CPFloatVar<CPVar>
+@protocol CPFloatVar<CPVar,CPNumVarSubscriber>
 -(ORFloat) min;
 -(ORFloat) max;
 -(ORRational*) minErr;

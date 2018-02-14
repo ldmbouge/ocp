@@ -37,6 +37,10 @@
 -(ORCDisjGroupI*)initORCDGroupI:(id<ORTracker>)model witMap:(NSArray*)vMap;
 @end
 
+@interface OR3BGroupI : ORGroupI
+-(OR3BGroupI*)initOR3BGroupI:(id<ORTracker>)model;
+@end
+
 @interface ORFail : ORConstraintI<ORFail>
 -(ORFail*)init;
 @end
@@ -417,6 +421,18 @@
 -(ORInt) cst;
 @end
 
+@interface ORFloatAssignC : ORConstraintI<ORFloatAssignC>
+-(id) initORFloatAssignC: (id<ORVar>) var to: (ORFloat) c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+
+@interface ORFloatAssign : ORConstraintI<ORFloatAssign>
+-(id) initORFloatAssign: (id<ORVar>) x to: (id<ORVar>) y;
+-(id<ORFloatVar>) left;
+-(id<ORFloatVar>) right;
+@end
 
 @interface ORFloatLinearEq : ORConstraintI<ORFloatLinearEq>
 -(id) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;

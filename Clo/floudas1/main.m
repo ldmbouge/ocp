@@ -55,8 +55,8 @@ int main(int argc, const char * argv[]) {
          [model add:[res_0 eq: [[[[[[expr_0 mul: [[x1_0 sub: expr_1] mul: [x1_0 sub: expr_2]]] sub: [[x2_0 sub: expr_3] mul: [x2_0 sub: expr_4]]] sub: [[x3_0 sub: expr_5] mul: [x3_0 sub: expr_6]]] sub: [[x4_0 sub: expr_7] mul: [x4_0 sub: expr_8]]] sub: [[x5_0 sub: expr_9] mul: [x5_0 sub: expr_10]]] sub: [[x6_0 sub: expr_11] mul: [x6_0 sub: expr_12]]]]];
          
          
-         [model add:[res_0 leq:@(1.f)]];
-         [model add:[res_0 geq:@(-1.f)]];
+//         [model add:[res_0 leq:@(1.f)]];
+         [model add:[res_0 geq:@(0.f)]];
          //         [model add:[res lt:@(7.48875938e2f)]];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];

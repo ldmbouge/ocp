@@ -210,6 +210,12 @@
     assert(NO);
     return nil;
 }
+//TODO need to be filled
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   assert(NO);
+   return nil;
+}
 -(void) postMinimize: (id<ORAddToModel>) model
 {
     [model minimize: [self variables: model] coef: [self coefficients: model]];
@@ -253,7 +259,6 @@
     }
 }
 @end
-
 
 @implementation ORDoubleLinearFlip
 -(id) initORDoubleLinearFlip: (id<ORDoubleLinear>) r
@@ -348,6 +353,10 @@
 -(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
 {
     return [_double postIMPLY:model];
+}
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   return [_double postSET:model];
 }
 @end
 

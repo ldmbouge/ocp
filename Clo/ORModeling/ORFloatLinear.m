@@ -44,6 +44,8 @@
 }
 -(void) addIndependent: (ORFloat) idp
 {
+   if(_indep == 0 && idp == -0.f)
+      _indep = -0.f;
     _indep += idp;
 }
 -(ORFloat) independent
@@ -204,6 +206,13 @@
                                                coef:[self coefficients:model]
                                                 neq:-_indep]];
 }
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   return [model addConstraint:[ORFactory floatSum:model
+                                             array:[self variables:model]
+                                              coef:[self coefficients:model]
+                                               neq:-_indep]];
+}
 //TODO need to be filled
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
@@ -354,6 +363,10 @@
 -(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
 {
     return [_float postIMPLY:model];
+}
+-(id<ORConstraint>)postSET:(id<ORAddToModel>)model
+{
+   return [_float postSET:model];
 }
 @end
 

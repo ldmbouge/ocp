@@ -94,7 +94,7 @@
 {
    return [self group:model type:DefaultGroup];
 }
-+(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(nullable NSArray*)cl
++(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(NSArray* PNULLABLE)cl
 {
    id<ORGroup> g = [[ORCDisjGroupI alloc] initORCDGroupI:model];
    [model trackObject:g];
@@ -109,7 +109,6 @@
    [model trackObject:g];
    return g;
 }
-
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model
 {
    return [self group:model type:BergeGroup];
@@ -117,6 +116,12 @@
 +(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g
 {
    id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:GuardedGroup guard:g];
+   [model trackObject:o];
+   return o;
+}
++(id<ORGroup>)group3B:(id<ORTracker>)model
+{
+   id<ORGroup> o = [[OR3BGroupI alloc] initOR3BGroupI:model];
    [model trackObject:o];
    return o;
 }
@@ -128,6 +133,11 @@
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORMutableIntegerI* o = [[ORMutableIntegerI alloc] initORMutableIntegerI: tracker value:value];
+   return [tracker trackMutable: o];
+}
++(id<ORMutableFloat>) mutable: (id<ORTracker>)tracker fvalue: (ORFloat) value
+{
+   ORMutableFloatI* o = [[ORMutableFloatI alloc] initORMutableFloatI: tracker value:value];
    return [tracker trackMutable: o];
 }
 +(id<ORDoubleNumber>) double: (id<ORTracker>) tracker value: (ORDouble) value
@@ -285,7 +295,6 @@
     ORFloatArrayI* o = [[ORFloatArrayI alloc] init: tracker range:range value:0];
     return [tracker trackMutable: o];
 }
-
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:RANGE(tracker,0,(ORInt)[array count] - 1)];
@@ -579,13 +588,23 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
     return [[ORFloatVarI alloc]  init: tracker low: low up: up];
 }
-+(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom{
-    return [[ORFloatVarI alloc]  init: tracker domain:dom];
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom
+{
+   return [[ORFloatVarI alloc]  init: tracker domain:dom];
+}
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker name:(NSString*) name
+{
+   return [[ORFloatVarI alloc]  init: tracker name:name];
+}
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up name:(NSString*) name
+{
+   return [[ORFloatVarI alloc]  init: tracker low: low up: up name:name];
 }
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker
 {
-    return [[ORFloatVarI alloc]  init: tracker];
+   return [[ORFloatVarI alloc]  init: tracker];
 }
+
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
     return [[ORDoubleVarI alloc]  init: tracker low: low up: up];
@@ -646,6 +665,24 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     for(ORInt k=range.low;k <= range.up;k++)
         [o set:[ORFactory floatVar:tracker] at:k];
     return (id<ORFloatVarArray>)o;
+}
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set:[ORFactory floatVar:tracker name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
+   return (id<ORFloatVarArray>)o;
+}
++(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set:clo(k) at:k];
+   return (id<ORFloatVarArray>)o;
+}
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>) engine
+{
+   return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
 }
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
 {
@@ -768,7 +805,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [self intVarArray:cp range:r1 :r2 with:clo];
 }
-
 +(id<ORTrailableIntArray>) trailableIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) range value: (ORInt) value
 {
    id<ORIdArray> o = [ORFactory idArray:engine range:range];
@@ -782,7 +818,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [engine trackMutable: o];
    return o;
 }
-
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
 {
    ORTRIntMatrixI* o = [[ORTRIntMatrixI alloc] initORTRIntMatrix: engine range: R1 : R2];
@@ -894,6 +929,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       @throw [[ORExecutionError alloc] initORExecutionError: str]; 
    [cp trackObject: e];
    return e;   
+}
++(id<ORRelation>) expr: (id<ORExpr>) left set: (id<ORExpr>) right track:(id<ORTracker>)t
+{
+   id<ORRelation> o = [[ORExprAssignI alloc] initORExprAssignI: left and: right];
+   [self validate:o onError:"No CP tracker in Assign Expression" track:t];
+   return o;
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right track:(id<ORTracker>)t
 {
@@ -1604,6 +1645,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORFloat)
++(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var:(id<ORFloatVar>) x to:(ORFloat)c
+{
+   id<ORConstraint> o = [[ORFloatAssignC alloc] initORFloatAssignC:x to:c];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) floatEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x eqc:(ORFloat)c
 {
     id<ORConstraint> o = [[ORFloatEqualc alloc] initORFloatEqualc:x eqi:c];
@@ -1615,6 +1662,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORConstraint> o = [[ORFloatNEqualc alloc]initORFloatNEqualc:x neqi:c];
     [model trackObject:o];
     return o;
+}
++(id<ORConstraint>) floatAssign: (id<ORTracker>) model var:(id<ORFloatVar>) x to:(id<ORFloatVar>) y
+{
+   id<ORConstraint> o = [[ORFloatAssign alloc] initORFloatAssign:x to:y];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
 {
@@ -2156,4 +2209,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    }
 }
 @end
+
+
 

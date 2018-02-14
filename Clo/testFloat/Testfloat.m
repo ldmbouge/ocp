@@ -32,6 +32,89 @@
    // Put teardown code here. This method is called after the invocation of each test method in the class.
    [super tearDown];
 }
+-(void) testAssignementFail
+{
+   @autoreleasepool {
+   
+   id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x = [ORFactory floatVar:model];
+      id<ORFloatVar> y = [ORFactory floatVar:model];
+      id<ORFloatVar> r = [ORFactory floatVar:model];
+      
+      
+      [model add:[x set:@(0.0f)]];
+      [model add:[y set:@(0.0f)]];
+      [model add:[r set:@(-0.f)]];
+      [model add:[r set:[x mul:y]]];
+   
+   id<CPProgram> cp = [ORFactory createCPProgram:model];
+   [cp solve:^(){
+      XCTAssertTrue(NO);
+   }];
+}
+}
+
+-(void) testAssignementFail2
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x = [ORFactory floatVar:model];
+      id<ORFloatVar> y = [ORFactory floatVar:model];
+      
+      
+      [model add:[x set:@(0.0f)]];
+      [model add:[y set:@(-0.0f)]];
+
+      [model add:[x set: y]];
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solve:^(){
+         XCTAssertTrue(NO);
+      }];
+   }
+}
+
+-(void) testAssignementSuccess
+{
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x = [ORFactory floatVar:model low:5.0f up:10.0f];
+      id<ORFloatVar> y = [ORFactory floatVar:model  low:12.0f up:15.0f];
+      id<ORFloatVar> z = [ORFactory floatVar:model];
+      id<ORFloatVar> x2 = [ORFactory floatVar:model  low:5.0f up:10.0f];
+      id<ORFloatVar> y2 = [ORFactory floatVar:model  low:12.0f up:15.0f];
+      id<ORFloatVar> z2 = [ORFactory floatVar:model];
+      
+      
+      [model add:[z set:[x plus:y]]];
+      [model add:[z2 eq:[x2 plus:y2]]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      id<ORFloatVarArray> vs = [model floatVars];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      [cp solve:^(){
+         
+         [cp maxAbsorptionSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+            [cp floatSplit:i call:s withVars:x];
+         }];
+         
+         CPFloatVarI* xc = [cp concretize:x];
+         CPFloatVarI* yc = [cp concretize:y];
+         CPFloatVarI* zc = [cp concretize:z];
+         CPFloatVarI* x2c = [cp concretize:x2];
+         CPFloatVarI* y2c = [cp concretize:y2];
+         CPFloatVarI* z2c = [cp concretize:z2];
+         
+         XCTAssertEqual([xc min],[x2c min]);
+         XCTAssertEqual([yc min],[y2c min]);
+         XCTAssertEqual([zc min],[z2c min]);
+         XCTAssertEqual([xc max],[x2c max]);
+         XCTAssertEqual([yc max],[y2c max]);
+         XCTAssertEqual([zc max],[z2c max]);
+      }];
+   }
+}
 -(void) testComputeAbsorbed
 {
    @autoreleasepool {
@@ -55,7 +138,6 @@
          
          NSLog(@"fx : [%16.16e,%16.16e]",fx.inf,fx.sup);
          NSLog(@"fy : [%16.16e,%16.16e]",fy.inf,fy.sup);
-         NSLog(@"fy : [%16.16e,%16.16e]",fy1.inf,fy1.sup);
          
          XCTAssertEqual([xc max]+fx.inf,[xc max]);
          XCTAssertEqual([xc max]-fx.inf,[xc max]);
@@ -74,6 +156,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
@@ -82,13 +165,14 @@
       [model add:[x_0 gt: y_0]];
       [model add:[res eq:[x_0 mul:y_0]]];
       
-      id<ORFloatVarArray> vars =[model floatVars];
+      id<ORFloatVarArray> vs = [model floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:model];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       [cp solve:^(){
-         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         id<ORIdArray> Abs = [cp computeAbsorptionsQuantities:vars];
          for(ABSElement* v in Abs){
             XCTAssertEqual([v quantity],0.0f);
-            XCTAssertEqual([[v vars] count],0);
+            XCTAssertEqual([v bestChoice],nil);
          }
       }];
    }
@@ -97,6 +181,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
@@ -105,13 +190,14 @@
       [model add:[x_0 gt: y_0]];
       [model add:[res eq:[x_0 plus:y_0]]];
       
-      id<ORFloatVarArray> vars =[model floatVars];
+      id<ORFloatVarArray> vs = [model floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:model];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       [cp solve:^(){
-         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         id<ORIdArray> Abs = [cp computeAbsorptionsQuantities:vars];
          for(ABSElement* v in Abs){
             XCTAssertEqual([v quantity],0.0f);
-            XCTAssertEqual([[v vars] count],0);
+            XCTAssertEqual([v bestChoice],nil);
          }
       }];
    }
@@ -120,6 +206,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:-1.f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:-1.f up:1e4f];
@@ -128,19 +215,21 @@
       [model add:[x_0 gt: y_0]];
       [model add:[res eq:[x_0 plus:y_0]]];
       
-      id<ORFloatVarArray> vars =[model floatVars];
+      id<ORFloatVarArray> vs = [model floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:model];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       [cp solve:^(){
-         NSMutableArray* Abs = [cp computeAbsorptionsQuantities:vars];
+         id<ORIdArray> Abs = [cp computeAbsorptionsQuantities:vars];
          
          XCTAssertTrue([Abs[0] quantity] > 0.0f);
-         XCTAssertEqual([[Abs[0] vars] count],1);
+         XCTAssertTrue([Abs[0] bestChoice] != nil);
          
          XCTAssertTrue([Abs[1] quantity] > 0.0f);
-         XCTAssertEqual([[Abs[1] vars] count],1);
+         XCTAssertTrue([Abs[1] bestChoice] != nil);
          
          XCTAssertFalse([Abs[2] quantity] > 0.0f);
-         XCTAssertNotEqual([[Abs[2] vars] count],1);
+         XCTAssertTrue([Abs[2] bestChoice] == nil);
+         
       }];
       
    }
@@ -149,6 +238,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
@@ -168,6 +258,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
@@ -187,6 +278,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:1e3f up:1e4f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model low:-1.f up:1.f];
@@ -207,6 +299,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:7.f up:10.f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model];
@@ -263,6 +356,7 @@
 {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x_0 = [ORFactory floatVar:model low:3.f up:4.f];
       id<ORFloatVar> y_0 = [ORFactory floatVar:model];
@@ -317,6 +411,7 @@
 
 -(void) testSimpleEgality{
    @autoreleasepool {
+      fesetround(FE_TONEAREST);
       
       id<ORModel> model = [ORFactory createModel];
       
@@ -377,6 +472,7 @@
 -(void) testFail{
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       
       id<ORFloatVar> x = [ORFactory floatVar:model low:0.f up:0.f];
@@ -394,6 +490,7 @@
 -(void) testSimpleInegality {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       
       id<ORFloatVar> x = [ORFactory floatVar:model low:0.f up:10.f];
@@ -446,6 +543,7 @@
 -(void) testComplexeInegality {
    @autoreleasepool {
       
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       
       id<ORFloatVar> x = [ORFactory floatVar:model low:0.f up:10.f];
@@ -477,6 +575,8 @@
 
 -(void) testFloatOk{
    @autoreleasepool {
+      
+      fesetround(FE_TONEAREST);
       id<ORModel> mdl = [ORFactory createModel];
       id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:-1e8f up:1e8f];
       id<ORFloatVar> x = [ORFactory floatVar:mdl domain:r0];
@@ -513,6 +613,7 @@
 -(void) testPropagationOnly
 {
    @autoreleasepool {
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> c_0 = [ORFactory floatVar:model];
       id<ORFloatVar> r_0 = [ORFactory floatVar:model];
@@ -550,7 +651,9 @@
       [model add:[a_0 eq:@(15.0f)]];
       
       id<CPProgram> p = [ORFactory createCPProgram:model];
+      __block bool found=false;
       [p solve:^{
+         found = true;
          id<CPFloatVar> cc = [p concretize:c_0];
          id<CPFloatVar> rc = [p concretize:r_0];
          id<CPFloatVar> ac = [p concretize:a_0];
@@ -585,6 +688,7 @@
          XCTAssertEqual([qc min],0.0f);
          
       }];
+      XCTAssert(found);
    }
 }
 
@@ -592,6 +696,7 @@
 -(void) testOperationDom
 {
    @autoreleasepool {
+      fesetround(FE_TONEAREST);
       id<ORModel> model = [ORFactory createModel];
       id<ORFloatVar> x = [ORFactory floatVar:model low:5.f up:10.f];
       id<ORFloatVar> y = [ORFactory floatVar:model low:6.f up:8.f];
@@ -651,5 +756,121 @@
       }];
    }
 }
+
+-(void) testSin1lex
+{
+   @autoreleasepool {
+   fesetround(FE_TONEAREST);
+   id<ORModel> model = [ORFactory createModel];
+   
+   id<ORFloatVar> IN = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
+   id<ORFloatVar> res = [ORFactory floatVar:model];
+   
+   [model add:[res eq:[[[IN sub:
+                         [[IN mul:[IN mul:IN]] div:@(6.0f)]] plus:
+                        [[IN mul:[IN mul:[IN mul:[IN mul:IN]]]] div:@(120.0f)]] plus:
+                       [[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:IN]]]]]] div:@(5040.0f)]]]];
+   
+   [model add:[[res geq:@(-0.99f)] land:[res lt:@(0.99f)]]];
+   
+   
+      id<ORFloatVarArray> vs = [model floatVars];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+   [cp solve:^() {
+      [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> vs) {
+         [cp floatSplit:i call:s withVars:vs];
+      }];
+      for(id<ORFloatVar> v in vars){
+         NSLog(@"%@ : %20.20e (%s) %@",v,[cp floatValue:v],[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
+      }
+      float x = [cp floatValue:vars[0]];
+      float result = x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
+      XCTAssertTrue([cp bound:vars[0]]);
+      XCTAssertTrue([cp bound:vars[1]]);
+      XCTAssertTrue(x < 1.57079632f && x >= -1.57079632f);
+      XCTAssertTrue(result < 0.99f && result >= -0.99f);
+      XCTAssertTrue(result == [cp floatValue:vars[1]]);
+   }];
+   }
+}
+
+-(void) testSin1Dens
+{
+   @autoreleasepool {
+      fesetround(FE_TONEAREST);
+      id<ORModel> model = [ORFactory createModel];
+      
+      id<ORFloatVar> IN = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[res eq:[[[IN sub:
+                            [[IN mul:[IN mul:IN]] div:@(6.0f)]] plus:
+                           [[IN mul:[IN mul:[IN mul:[IN mul:IN]]]] div:@(120.0f)]] plus:
+                          [[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:IN]]]]]] div:@(5040.0f)]]]];
+      
+      [model add:[[res geq:@(-0.99f)] land:[res lt:@(0.99f)]]];
+      
+      
+      id<ORFloatVarArray> vs = [model floatVars];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      [cp solve:^() {
+         [cp maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+            [cp floatSplit:i call:s withVars:x];
+         }];
+         for(id<ORFloatVar> v in vars){
+            NSLog(@"%@ : %20.20e (%s) %@",v,[cp floatValue:v],[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
+         }
+         float x =[cp floatValue:vars[0]];
+         float result = x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
+         XCTAssertTrue([cp bound:vars[0]]);
+         XCTAssertTrue([cp bound:vars[1]]);
+         XCTAssertTrue(x < 1.57079632f && x >= -1.57079632f);
+         XCTAssertTrue(result < 0.99f && result >= -0.99f);
+         XCTAssertTrue(result == [cp floatValue:vars[1]]);
+      }];
+   }
+}
+
+
+-(void) testSin1Abs
+{
+   @autoreleasepool {
+      fesetround(FE_TONEAREST);
+      id<ORModel> model = [ORFactory createModel];
+      
+      id<ORFloatVar> IN = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
+      id<ORFloatVar> res = [ORFactory floatVar:model];
+      
+      [model add:[res eq:[[[IN sub:
+                            [[IN mul:[IN mul:IN]] div:@(6.0f)]] plus:
+                           [[IN mul:[IN mul:[IN mul:[IN mul:IN]]]] div:@(120.0f)]] plus:
+                          [[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:[IN mul:IN]]]]]] div:@(5040.0f)]]]];
+      
+      [model add:[[res geq:@(-0.99f)] land:[res lt:@(0.99f)]]];
+      
+      
+      id<ORFloatVarArray> vs = [model floatVars];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      [cp solve:^() {
+         [cp maxAbsorptionSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+            [cp floatSplit:i call:s withVars:x];
+         }];
+         for(id<ORFloatVar> v in vars){
+            NSLog(@"%@ : %20.20e (%s) %@",v,[cp floatValue:v],[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
+         }
+         float x =[cp floatValue:vars[0]];
+         float result = x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
+         XCTAssertTrue([cp bound:vars[0]]);
+         XCTAssertTrue([cp bound:vars[1]]);
+         XCTAssertTrue(x < 1.57079632f && x >= -1.57079632f);
+         XCTAssertTrue(result < 0.99f && result >= -0.99f);
+         XCTAssertTrue(result == [cp floatValue:vars[1]]);
+      }];
+   }
+}
+
 
 @end

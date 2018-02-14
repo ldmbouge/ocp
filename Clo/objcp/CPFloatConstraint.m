@@ -16,6 +16,8 @@
 #import "ORConstraintI.h"
 #include "gmp.h"
 
+#define PERCENT 5.0
+
 
 void addR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
    mpq_add(ez->inf, ex->inf, ey->inf);
@@ -728,36 +730,29 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _x = x;
    _y = y;
    return self;
-   
 }
 -(void) post
 {
-   if([_x bound]){
-      [_y bind:[_x value]];
-      return;
-   }else if([_y bound]){
-      [_x bind:[_y value]];
-      return;
-   }
-   if(isDisjointWith(_x,_y)){
-      failNow();
-   }else{
-      ORFloat min = maxFlt([_x min], [_y min]);
-      ORFloat max = minFlt([_x max], [_y max]);
-      [_x updateInterval:min and:max];
-      [_y updateInterval:min and:max];
-      [_x whenChangeBoundsPropagate:self];
-      [_y whenChangeBoundsPropagate:self];
-   }
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
    if([_x bound]){
-      [_y bind:[_x value]];
+      //hzi : if x in [-0.0,0.0]f : x is bound, but value return x.min
+      //the domain of y must stay  [-0.0,0.0]f and not just -0.0f
+      if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
+         [_y updateInterval:[_x min] and:[_x max]];
+      else
+         [_y bind:[_x value]];
       assignTRInt(&_active, NO, _trail);
       return;
    }else if([_y bound]){
-      [_x bind:[_y value]];
+      if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
+         [_x updateInterval:[_y min] and:[_y max]];
+      else
+         [_x bind:[_y value]];
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -796,7 +791,13 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 }
 -(void) post
 {
-   [_x bind:_c];
+   //hzi : equality constraint is different from assignment constraint for 0.0
+   //in case when check equality -0.0f == 0.0f
+   //in case of assignement x = -0.0f != from x = 0.0f
+   if(is_eqf(_c,0.f))
+      [_x updateInterval:-0.0f and:+0.0f];
+   else
+      [_x bind:_c];
 }
 -(NSSet*)allVars
 {
@@ -809,6 +810,102 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == %16.16e>",_x,_c];
+}
+@end
+
+@implementation CPFloatAssign{
+   int _precision;
+   int _rounding;
+   float_interval _xi;
+   float_interval _yi;
+}
+-(id) init:(CPFloatVarI*)x set:(CPFloatVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _xi = makeFloatInterval(x.min, x.max);
+   _yi = makeFloatInterval(y.min, y.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   updateFloatInterval(&_xi,_x);
+   updateFloatInterval(&_yi,_y);
+   intersectionInterval inter;
+   if([_x bound]){
+      float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+      fpi_setf(_precision, _rounding, &yTmp, &_xi);
+      inter = intersection(_yi, yTmp, 0.0f);
+      if (inter.changed) [_y updateInterval:inter.result.inf and:inter.result.sup];
+      return;
+   }else if([_y bound]){
+      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+      fpi_setf(_precision, _rounding, &xTmp, &_yi);
+      inter = intersection(_xi, xTmp, 0.0f);
+      if (inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+      return;
+   }
+   if(isDisjointWith(_x,_y)){
+      failNow();
+   }else{
+      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+      fpi_setf(_precision, _rounding, &xTmp, &_xi);
+      inter = intersection(_xi, xTmp, 0.0f);
+      if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+      float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+      fpi_setf(_precision, _rounding, &xTmp, &_yi);
+      inter = intersection(_yi, yTmp, 0.0f);
+      if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+   }
+   
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ = %@>",_x,_y];
+}
+@end
+
+@implementation CPFloatAssignC
+-(id) init:(CPFloatVarI*)x set:(ORFloat)c
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _c = c;
+   return self;
+   
+}
+-(void) post
+{
+   [_x bind:_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ = %16.16e>",_x,_c];
 }
 @end
 
@@ -832,7 +929,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 {
    if ([_x bound]) {
       if([_y bound]){
-         if ([_x min] == [_y min])
+         if (is_eqf([_x min],[_y min]))
             failNow();
          else{
             if([_x min] == [_y min]){
@@ -894,7 +991,6 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _x = x;
    _c = c;
    return self;
-   
 }
 -(void) post
 {
@@ -1134,6 +1230,10 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
+   return [self init:z equals:x plus:y kbpercent:PERCENT];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p
+{
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
@@ -1142,7 +1242,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _ex = x;
    _ey = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = p;
    _rounding = FE_TONEAREST;
    ez = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
    /* INIT at 0.0 */
@@ -1193,30 +1293,30 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       changed = false;
       zTemp = z;
       fpi_addf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(changed, z, zTemp,_percent);
+      inter = intersection(z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       yTemp = y;
       fpi_add_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_addxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_addyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       /* ERROR PROPAG */
@@ -1249,11 +1349,14 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
       [_x updateIntervalError:ex.inf and:ex.sup];
       [_y updateIntervalError:ey.inf and:ey.sup];
       [_z updateIntervalError:ez.inf and:ez.sup];
       
    }
+   fesetround(FE_TONEAREST);
 }
 - (void)dealloc {
    freeRationalInterval(&ez);
@@ -1307,7 +1410,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 
 
 @implementation CPFloatTernarySub
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -1317,9 +1420,13 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _ex = x;
    _ey = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = p;
    _rounding = FE_TONEAREST;
    return self;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
+{
+   return [self init:z equals:x minus:y kbpercent:PERCENT];
 }
 
 -(void) post
@@ -1349,30 +1456,30 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       changed = false;
       zTemp = z;
       fpi_subf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(changed, z, zTemp,_percent);
+      inter = intersection(z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       yTemp = y;
       fpi_sub_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_subxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_subyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
@@ -1381,6 +1488,8 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
       do {
          changed = false;
          ezTemp = ez;
@@ -1415,6 +1524,8 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       }
       
    }
+   
+      fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -1458,7 +1569,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 @end
 
 @implementation CPFloatTernaryMult
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -1468,9 +1579,13 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _ex = x;
    _ey = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = p;
    _rounding = FE_TONEAREST;
    return self;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y
+{
+   return [self init:z equals:x mult:y kbpercent:PERCENT];
 }
 -(void) post
 {
@@ -1499,19 +1614,19 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       changed = false;
       zTemp = z;
       fpi_multf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(changed, z, zTemp,_percent);
+      inter = intersection(z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_multxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_multyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
@@ -1520,6 +1635,8 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
       do {
          changed = false;
          ezTemp = ez;
@@ -1556,7 +1673,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       }
       
    }
-   
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -1573,7 +1690,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 @end
 
 @implementation CPFloatTernaryDiv
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x div:(CPFloatVarI*)y
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x div:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -1583,9 +1700,13 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _ex = x;
    _ey = y;
    _precision = 1;
-   _percent = 0.0;
+   _percent = p;
    _rounding = FE_TONEAREST;
    return self;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x div:(CPFloatVarI*)y
+{
+   return [self init:z equals:x div:y kbpercent:PERCENT];
 }
 -(void) post
 {
@@ -1614,19 +1735,19 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       changed = false;
       zTemp = z;
       fpi_divf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(changed, z, zTemp,_percent);
+      inter = intersection(z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_divxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(changed, x , xTemp,_percent);
+      inter = intersection(x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_divyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(changed, y, yTemp,_percent);
+      inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
@@ -1635,6 +1756,8 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
       do {
          changed = false;
          ezTemp = ez;
@@ -1669,6 +1792,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
          [_ez updateIntervalError:ez.inf and:ez.sup];
       }
    }
+   fesetround(FE_TONEAREST);
 }
 -(NSSet*)allVars
 {
@@ -1699,15 +1823,19 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b engine] addInternal: [CPFactory floatNEqual:_x to:_y]];         // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
          return ;
       } else {
          [[_b engine] addInternal: [CPFactory floatEqual:_x to:_y]];     // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
          return ;
       }
    }
-   else if ([_x bound] && [_y bound])        //  b <=> c == d =>  b <- c==d
+   else if ([_x bound] && [_y bound]) {       //  b <=> c == d =>  b <- c==d
       [_b bind:[_x min] != [_y min]];
-   else if ([_x bound]) {
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if ([_x bound]) {
       [[_b engine] addInternal: [CPFactory floatReify:_b with:_y neqi:[_x min]]];
       return ;
    }
@@ -1728,26 +1856,45 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
-      if ([_x bound])            // TRUE <=> (y != c)
+      if ([_x bound]){            // TRUE <=> (y != c)
          [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x min]]];         // Rewrite as x==y  (addInternal can throw)
-      else  if ([_y bound])      // TRUE <=> (x != c)
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }else  if ([_y bound]) {     // TRUE <=> (x != c)
          [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]];         // Rewrite as x==y  (addInternal can throw)
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
-      if ([_x bound])
-         [_y bind:[_x min]];
-      else if ([_y bound])
-         [_x bind:[_y min]];
-      else {                    // FALSE <=> (x == y)
+      if ([_x bound]){
+         if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
+            [_y updateInterval:[_x min] and:[_x max]];
+         else
+            [_y bind:[_x min]];
+         assignTRInt(&_active, NO, _trail);
+         return;
+      } else if ([_y bound]){
+         if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
+            [_x updateInterval:[_y min] and:[_y max]];
+         else
+            [_x bind:[_y min]];
+         assignTRInt(&_active, NO, _trail);
+         return;
+      }else {                    // FALSE <=> (x == y)
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
       }
    }
    else {                        // b is unknown
-      if ([_x bound] && [_y bound])
+      if ([_x bound] && [_y bound]){
          [_b bind: [_x min] != [_y min]];
-      else if ([_x max] < [_y min] || [_y max] < [_x min])
+         assignTRInt(&_active, NO, _trail);
+      } else if ([_x max] < [_y min] || [_y max] < [_x min]){
          [_b bind:YES];
+         assignTRInt(&_active, NO, _trail);
+         
+      }
    }
 }
 -(NSString*)description
@@ -1811,10 +1958,16 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    if (minDom(_b)) {            // b is TRUE
       if ([_x bound]) {           // TRUE <=> (y == c)
          assignTRInt(&_active, 0, _trail);
-         [_y bind:[_x min]];
+         if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
+            [_y updateInterval:[_x min] and:[_x max]];
+         else
+            [_y bind:[_x min]];
       }else  if ([_y bound]) {     // TRUE <=> (x == c)
          assignTRInt(&_active, 0, _trail);
-         [_x bind:[_y min]];
+         if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
+            [_x updateInterval:[_y min] and:[_y max]];
+         else
+            [_x bind:[_y min]];
       } else {                    // TRUE <=> (x == y)
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
@@ -2060,7 +2213,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ <= %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLEqual:%02d %@ <=> (%@ <= %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {
@@ -2134,7 +2287,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ < %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLThen:%02d %@ <=> (%@ < %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {
@@ -2249,7 +2402,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ <= %16.16e)>",_name,_b,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLThen:%02d %@ <=> (%@ <= %16.16e)>",_name,_b,_x,_c];
 }
 -(NSSet*)allVars
 {
@@ -2291,11 +2444,11 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 -(void) propagate
 {
    if (bound(_b)) {
-      assignTRInt(&_active, NO, _trail);
       if (minDom(_b))
          [_x updateMax:fp_previous_float(_c)];
       else
          [_x updateMin:_c];
+      assignTRInt(&_active, NO, _trail);
    } else {
       if ([_x min] >= _c) {
          assignTRInt(&_active, NO, _trail);
@@ -2308,7 +2461,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ < %16.16e)>",_name,_b,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLThenc:%02d %@ <=> (%@ < %16.16e)>",_name,_b,_x,_c];
 }
 -(NSSet*)allVars
 {

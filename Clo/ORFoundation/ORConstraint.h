@@ -82,7 +82,8 @@ enum ORGroupType {
    DefaultGroup = 0,
    BergeGroup = 1,
    GuardedGroup = 2,
-   CDGroup = 3
+   CDGroup = 3,
+   Group3B = 4
 };
 
 @protocol ORGroup <ORObject,ORConstraint>
@@ -98,6 +99,9 @@ enum ORGroupType {
 
 @protocol ORCDGroup <ORGroup>
 -(NSArray*)varMap;
+@end
+
+@protocol OR3BGroup <ORGroup>
 @end
 
 @protocol ORFail <ORConstraint>
@@ -131,6 +135,11 @@ enum ORGroupType {
 @protocol  ORFloatEqualc <ORConstraint>
 -(id<ORFloatVar>) left;
 -(ORInt) cst;
+@end
+
+@protocol  ORFloatAssignC <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
 @end
 
 @protocol  ORDoubleNEqualc <ORConstraint>
@@ -411,6 +420,13 @@ enum ORGroupType {
 -(NSUInteger)count;
 -(ORInt) cst;
 @end
+
+
+@protocol ORFloatAssign <ORConstraint>
+-(id<ORFloatVar>) left;
+-(id<ORFloatVar>) right;
+@end
+
 
 @protocol ORFloatMult <ORConstraint>
 -(id<ORFloatVar>) res;

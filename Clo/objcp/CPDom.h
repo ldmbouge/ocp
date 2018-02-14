@@ -82,7 +82,6 @@
 -(ORInterval) bounds;
 -(ORLDouble) domwidth;
 -(ORFloat) magnitude;
--(TRFloatInterval) domain;
 -(ORBool) member:(ORFloat)v;
 -(NSString*)description;
 -(id) copy;
@@ -126,7 +125,6 @@
 -(ORDouble) cardinality;
 -(ORDouble) density;
 -(ORDouble) magnitude;
--(TRDoubleInterval) domain;
 -(ORLDouble) domwidth;
 -(ORBool) member:(ORDouble)v;
 -(NSString*)description;

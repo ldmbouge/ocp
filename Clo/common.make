@@ -12,10 +12,11 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../Scheduler/CPScheduler -Wl,-rpath=`pwd`/../Scheduler/CPScheduler \
 	-L../Scheduler/ORSchedulingProgram -Wl,-rpath=`pwd`/../Scheduler/ORSchedulingProgram \
 	-L../objmp -Wl,-rpath=`pwd`/../objmp \
-	-L/opt/gurobi652/linux64/lib -Wl,-rpath=/opt/gurobi652/linux64/lib \
+	-L/opt/gurobi752/linux64/lib -Wl,-rpath=/opt/gurobi752/linux64/lib \
+   -L/usr/local/fpcs/lib -Wl \
 	-lORUtilities -lORFoundation -lCPUKernel -lobjcp -lORModeling -lORProgram \
 	-lORScheduler -lCPScheduler -lORSchedulerProgram \
-	-lobjmp -lgurobi65 -ldispatch \
+	-lobjmp -lgurobi75 -lfpi -ldispatch \
 	-fobjc-runtime=gnustep
 
 OBJEXT=o

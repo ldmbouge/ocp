@@ -30,7 +30,6 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 
-
 #if defined(__linux__)
 #import <values.h>
 #endif
@@ -154,6 +153,11 @@
    CPHeuristicSet*       _hSet;
    id<CPPortal>          _portal;
    
+   ORInt                  _level;
+   ORBool                 _unique;
+   ORFloat                  _split3Bpercent;
+   SEL                    _subcut;
+   
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
    id<ORIdxIntInformer>  _returnGT;
@@ -177,6 +181,10 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
+   _level = 0;
+   _split3Bpercent = 10.f;
+   _subcut = @selector(float3BSplit:call:withVars:);
+   _unique = NO;
    _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnSolArray     = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnExitArray    = [[NSMutableArray alloc] initWithCapacity: 1];
@@ -328,6 +336,22 @@
       }
       [ORConcurrency pumpEvents];
    }
+}
+-(void) setLevel:(ORInt) level
+{
+   _level = level;
+}
+-(void) setUnique:(ORBool) u
+{
+   _unique = u;
+}
+-(void) set3BSplitPercent:(ORFloat) p
+{
+   _split3Bpercent = p;
+}
+-(void) setSubcut:(SEL) s
+{
+   _subcut = s;
 }
 -(void) addHeuristic: (id<CPHeuristic>) h
 {
@@ -1535,224 +1559,356 @@
 }
 //-------------------------------------------------------
 //float search
--(void) maxCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxCardinalitySearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     CPFloatVarI* v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return -cardinality(v);
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxCardinalitySearch:do:),x);
       } while (true);
    }];
    
 }
--(void) minCardinalitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minCardinalitySearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     CPFloatVarI* v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return cardinality(v);
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(minCardinalitySearch:do:),x);
       } while (true);
    }];
    
 }
--(void) maxDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxDensitySearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return -[self density:x[i]];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxDensitySearch:do:),x);
       } while (true);
    }];
 }
--(void) minDensitySearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minDensitySearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [self density:x[i]];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(minDensitySearch:do:),x);
       } while (true);
    }];
    
    
 }
--(void) maxWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxWidthSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+//                                     LOG(_level,2,@"%@",v);
+                                     if(![x isEnable:i]){
+                                        [x enable:i];
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return -[v domwidth];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxWidthSearch:do:),x);
       } while (true);
       
    }];
    
 }
--(void) minWidthSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minWidthSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return [v domwidth];
                                  }];
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(minWidthSearch:do:),x);
       } while (true);
    }];
    
 }
--(void) maxMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxMagnitudeSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return -[v magnitude];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxMagnitudeSearch:do:),x);
       } while (true);
    }];
    
 }
--(void) minMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minMagnitudeSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@",v);
                                     return [v magnitude];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(minMagnitudeSearch:do:),x);
       } while (true);
    }];
    
 }
--(void) alternateMagnitudeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) floatSplitArrayOrderedByDomSize: (id<ORDisabledFloatVarArray>) x
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   __block ORBool min = true;
-   id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     return ![v bound];
-                                  }
-                                 orderedBy: ^ORDouble(ORInt i) {
-                                    id<CPFloatVar> v = _gamma[getId(x[i])];
-                                    float r = (min)?  [v magnitude] :  -[v magnitude];
-                                    min = !min;
-                                    return r;
-                                 }];
-   
-   [[self explorer] applyController:t in:^{
-      do {
-         ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
-      } while (true);
-   }];
-   
-   
-}
--(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
-{
+   SEL s = @selector(floatSplitArrayOrderedByDomSize:);
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    [self forall: RANGE(self, [x low], [x up])
        suchThat: ^ORBool(ORInt i){
           id<CPFloatVar> v = _gamma[getId(x[i])];
+          if(![x isEnable:i]){
+             disabled.found = YES;
+             disabled.index = i;
+             return false;
+          }
           return ![v bound];
        }
  orderedByFloat: ^ORFloat(ORInt i) {
@@ -1760,301 +1916,519 @@
     return (ORFloat)-[v domwidth];
  }
              do: ^(ORInt i){
-                [self float6WaySplit:_gamma[getId(x[i])]];
+                [self float6WaySplit:i call:s withVars:x];
              }];
+   if(disabled.found){
+      disabled.found = NO;
+      [x enable:disabled.index];
+      [self float6WaySplit:disabled.index call:s withVars:x];
+   }
 }
 //lexicalorder
--(void) lexicalOrderedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) lexicalOrderedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return (ORDouble)i;
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         assert(![_gamma[getId(x[i.index])] bound]);
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(lexicalOrderedSearch:do:),x);
       } while (true);
    }];
    
 }
 //-------------------------------------------------
--(void) maxDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxDegreeSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    id<ORIntArray> deg = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
       return  [self countMemberedConstraints:x[i]];
    }];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [deg[i] doubleValue];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxDegreeSearch:do:),x);
       } while (true);
    }];
 }
--(void) minDegreeSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minDegreeSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    id<ORIntArray> deg = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
       return  [self countMemberedConstraints:x[i]];
    }];
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [deg[i] doubleValue];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(minDegreeSearch:do:),x);
       } while (true);
    }];
 }
--(void) maxOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
       return [self maxOccurences:x[i]];
    }];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [occ at:i];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxOccurencesSearch:do:),x);
       } while (true);
    }];
 }
--(void) minOccurencesSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
       return [self maxOccurences:x[i]];
    }];
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [occ[i] doubleValue];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         }
+         else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(minOccurencesSearch:do:),x);
       } while (true);
    }];
 }
--(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxAbsorptionSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [self computeAbsorptionRate:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         }
+         else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxAbsorptionSearch:do:),x);
       } while (true);
    }];
 }
--(void) maxAbsorptionSearch: (id<ORFloatVarArray>) x
+-(void) maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    @autoreleasepool {
-      __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
-      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+      SEL s = @selector(maxAbsorptionSearch:default:);
+      __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+      __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
       id<ORSelect> select = [ORFactory select: _engine
                                         range: RANGE(self,[x low],[x up])
                                      suchThat: ^ORBool(ORInt i) {
                                         id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        if(![x isEnable:i]){
+                                           if(![v bound]){
+                                              disabled.found = YES;
+                                              disabled.index = i;
+                                           }
+                                           [x enable:i];
+                                           return false;
+                                        }
                                         return ![v bound];
                                      }
                                     orderedBy: ^ORDouble(ORInt i) {
+                                       LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                        return [abs[i] quantity];
                                     }];
       
       [[self explorer] applyController:t in:^{
          do {
+            LOG(_level,2,@"State before selection");
             ORSelectorResult i = [select max];
-            if (!i.found)
-               break;
-            id<ORFloatVar> v = nil;
-            if([abs[i.index] quantity] > 0){
-               NSSet* varsAbs = [abs[i.index] vars];
-               assert([varsAbs count] > 0);
-               v = [varsAbs anyObject];
+            if (!i.found){
+               if(!disabled.found)
+                  break;
+               i.index = disabled.index;
+               [x enable:i.index];
+            } else if(_unique){
+               [x disable:i.index];
+               disabled.found = NO;
             }
-            [self floatAbsSplit: x[i.index] by:v];
+            id<CPFloatVar> v = [abs[i.index] bestChoice];
+            LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
+            [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
             abs = [self computeAbsorptionsQuantities:x];
          } while (true);
       }];
    }
 }
--(void) minAbsorptionSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minAbsorptionSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   __block NSMutableArray* abs = [self computeAbsorptionsQuantities:x];
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    return [abs[i] quantity];
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                    return -[self computeAbsorptionRate:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
-         abs = [self computeAbsorptionsQuantities:x];
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(minAbsorptionSearch:do:),x);
       } while (true);
    }];
 }
--(void) minAbsorptionSearch: (id<ORFloatVarArray>) x
+-(void) minAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   __block NSMutableArray<ABSElement*>* abs = [self computeAbsorptionsQuantities:x];
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
-   id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     return ![v bound];
-                                  }
-                                 orderedBy: ^ORDouble(ORInt i) {
-                                    return [abs[i] quantity];
-                                 }];
-   
-   [[self explorer] applyController:t in:^{
-      do {
-         ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         id<ORFloatVar> v = nil;
-         if([abs[i.index] quantity] > 0){
-            NSSet* varsAbs = [abs[i.index] vars];
-            assert([varsAbs count] > 0);
-            v = [varsAbs anyObject];
-         }
-         [self floatAbsSplit: x[i.index] by:v];
-         abs = [self computeAbsorptionsQuantities:x];
-      } while (true);
-   }];
-   
+   @autoreleasepool {
+      SEL s = @selector(minAbsorptionSearch:default:);
+      __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+      __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
+      id<ORSelect> select = [ORFactory select: _engine
+                                        range: RANGE(self,[x low],[x up])
+                                     suchThat: ^ORBool(ORInt i) {
+                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        if(![x isEnable:i]){
+                                           if(![v bound]){
+                                              disabled.found = YES;
+                                              disabled.index = i;
+                                           }
+                                           [x enable:i];
+                                           return false;
+                                        }
+                                        return ![v bound];
+                                     }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                       return [abs[i] quantity];
+                                    }];
+      
+      [[self explorer] applyController:t in:^{
+         do {
+            LOG(_level,2,@"State before selection");
+            ORSelectorResult i = [select min];
+            if (!i.found){
+               if(!disabled.found)
+                  break;
+               i.index = disabled.index;
+               [x enable:i.index];
+            } else if(_unique){
+               [x disable:i.index];
+            }
+            disabled.found = NO;
+            id<CPFloatVar> v = [abs[i.index] bestChoice];
+            LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
+            [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
+            abs = [self computeAbsorptionsQuantities:x];
+         } while (true);
+      }];
+   }
 }
 
--(void) maxCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) maxCancellationSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [self cancellationQuantity:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxCancellationSearch:do:),x);
       } while (true);
    }];
 }
--(void) minCancellationSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) minCancellationSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return [self cancellationQuantity:x[i]];
                                  }];
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
-         b(x[i.index]);
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(minCancellationSearch:do:),x);
       } while (true);
    }];
 }
--(void) combinedAbsWithDensSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) combinedAbsWithDensSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    id<ORIntArray> considered = [ORFactory intArray:self range:x.range value:0];
    __block ORDouble taux = 0.0;
    __block ORBool found = NO;
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x  up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     ORDouble c = [self computeAbsorptionRate:x[i]];
                                     if(c > taux){
                                        [considered set:1 at:i];
@@ -2068,13 +2442,21 @@
    [[self explorer] applyController:t in:^{
       do {
          found = NO;
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
          if(!found){
             taux = -1.0;
             i = [select max];
          }
-         if (!i.found)
-            break;
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
          ORDouble choosed = 0.0;
          ORDouble val = 0.0; //max density is 1
          for (ORInt j = 0; j < [considered count]; j++) {
@@ -2086,18 +2468,18 @@
             }
             if(val == 1.0) break;//max density is 1
          }
-         b(x[i.index]);
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(combinedAbsWithDensSearch:do:),x);
       } while (true);
    }];
 }
 
--(void) combinedDensWithAbsSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) combinedDensWithAbsSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    id<ORIntArray> considered = [ORFactory intArray:self range:x.range value:0];
    id<ORDoubleArray> dens = [ORFactory doubleArray:self range:x.range value:0.0];
-   //   NSMutableArray* considered = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
-   //   NSMutableArray* dens = [[[NSMutableArray alloc] initWithCapacity:[x count]] autorelease];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    __block ORDouble min = 0.0;
    __block ORDouble max = 0.0;
    __block id<CPFloatVar> cv;
@@ -2120,9 +2502,18 @@
                                      range: RANGE(self,[x low],[x  up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     [considered set:([dens at:i] >= mid) at:i];
                                     return [dens at:i];
                                  }];
@@ -2130,9 +2521,17 @@
    
    [[self explorer] applyController:t in:^{
       do {
+         LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
-         if (!i.found)
-            break;
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
          ORDouble choosed = 0.0;
          ORDouble val = 0.0;
          for (ORInt j = 0; j < [considered count]; j++) {
@@ -2143,7 +2542,8 @@
                i.index = j;
             }
          }
-         b(x[i.index]);
+         LOG(_level,2,@"selected variable : %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(combinedDensWithAbsSearch:do:),x);
          ORDouble d = 0.0;
          min = max = 0.0;
          for(ORUInt k = 0; k < [x count]; k++){
@@ -2166,7 +2566,7 @@
 }
 
 
--(void) switchedSearch: (id<ORFloatVarArray>) x do:(void(^)(id<ORFloatVar>))b
+-(void) switchedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    [self switchSearchOnDepthUsingProperties:
     ^ORDouble(id<ORFloatVar> v) {
@@ -2181,67 +2581,67 @@
 //-------------------------------------------------
 //Value ordering
 //split until value
--(void) floatStaticSplit: (id<ORFloatVar>) x
+-(void) floatStaticSplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x)];
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    while (![xi bound]) {
-      [self floatSplit:x];
+      [self floatSplit:i call:s withVars:x];
    }
 }
 //static 3 split
--(void) floatStatic3WaySplit: (id<ORFloatVar>) x
+-(void) floatStatic3WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x)];
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    while (![xi bound]) {
-      [self float3WaySplit:x];
+      [self float3WaySplit:i call:s withVars:x];
    }
 }
 //static split in 5 way until the var is bound
--(void) floatStatic5WaySplit: (id<ORFloatVar>) x
+-(void) floatStatic5WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x)];
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    while (![xi bound]) {
-      [self float5WaySplit:x];
+      [self float5WaySplit:i call:s withVars:x];
    }
 }
 //static split in 6 way until the var is bound
--(void) floatStatic6WaySplit: (id<ORFloatVar>) x
+-(void) floatStatic6WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x)];
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    while (![xi bound]) {
-      [self float6WaySplit:x];
+      [self float6WaySplit:i call:s withVars:x];
    }
 }
--(void) floatAbsSplit:(id<ORFloatVar>)x by:(id<ORFloatVar>) y
+-(void) floatAbsSplit:(ORUInt)i by:(id<CPFloatVar>) y call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   if(y == nil) [self float6WaySplit:x];
+   if(y == nil) b(i,s,x);
+   float_interval interval[18];
    float_interval interval_x[3];
    float_interval interval_y[3];
    ORInt length_x = 0;
    ORInt length_y = 0;
-   id<CPFloatVar> cx = _gamma[getId(x)];
-   id<CPFloatVar> cy = _gamma[getId(y)];
-   if([cx bound] && [cy bound]) return;
+   id<CPFloatVar> cx = _gamma[getId(x[i])];
+   if([cx bound] && [y bound]) return;
    float_interval ax = computeAbsorbingInterval((CPFloatVarI*)cx);
    float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
-   if(isIntersectingWithV([cy min],[cy max],ay.inf,ay.sup)){
-      ay.inf = maxFlt(ay.inf, [cy min]);
-      ay.sup = minFlt(ay.sup, [cy max]);
-      length_y = !([cy min] == ay.inf) + !([cy max] == ay.sup);
+   if(isIntersectingWithV([y min],[y max],ay.inf,ay.sup)){
+      ay.inf = maxFlt(ay.inf, [y min]);
+      ay.sup = minFlt(ay.sup, [y max]);
+      length_y = !([y min] == ay.inf) + !([y max] == ay.sup);
       interval_y[0] = ay;
-      if(ay.inf > [cy min] && [cy max] > ay.sup){
-         interval_y[1] = makeFloatInterval([cy min],fp_previous_float(ay.inf));
-         interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [cy max]);
+      if(ay.inf > [y min] && [y max] > ay.sup){
+         interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
+         interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [y max]);
       }
-      else if(ay.inf == [cy min]){
-         interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[cy max]);
+      else if(ay.inf == [y min]){
+         interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[y max]);
       }else {
-         interval_y[1] = makeFloatInterval([cy min],fp_previous_float(ay.inf));
+         interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
       }
-  	}else{
-      interval_y[0] = makeFloatInterval([cy min], [cy max]);
+   }else{
+      interval_y[0] = makeFloatInterval([y min], [y max]);
       length_y = 0;
-  	}
+   }
    length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
    interval_x[0].inf = maxFlt([cx min],ax.inf);
    interval_x[0].sup = minFlt([cx max],ax.sup);
@@ -2260,30 +2660,138 @@
       }
       interval_x[i_x].inf = fp_next_float(ax.sup);
       interval_x[i_x].sup = fp_previous_float(xmax);
-  	}
-   if(length_x > 1 && length_y > 1){
-      float_interval* ip_x = interval_x;
-      float_interval* ip_y = interval_y;
-      for(ORUInt i = 0; i <= length_y;i++){
-         for(ORUInt j = 0; j <= length_x;j++){
-            [self atomic:^{
-               [self add:[x geq:@(ip_x[i].inf)]];
-               [self add:[x leq:@(ip_x[i].sup)]];
-               [self add:[y geq:@(ip_y[j].inf)]];
-               [self add:[y leq:@(ip_y[j].sup)]];
-            }];
+   }
+   if(length_x >= 1 && length_y >= 1){
+      ORInt length = 0;
+      for(ORInt i = 0; i <= length_x;i++){
+         for(ORInt j = 0; j <= length_y;j++){
+            interval[length] = interval_x[i];
+            length++;
+            interval[length] = interval_y[j];
+            length++;
          }
       }
+      float_interval* ip = interval;
+      length--;
+      [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt i) {
+         LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]\t y %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
+         [self floatIntervalImpl:cx low:ip[2*i].inf up:ip[2*i].sup];
+         [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
+      }];
    }else{
-      [self float6WaySplit:x];
-      [self float6WaySplit:y];
+      b(i,s,x);
+      //      b(y);
    }
 }
-
-//split in 2 intervals Once
--(void) floatSplit:(id<ORFloatVar>) x
+-(void) float3BSplit:(ORUInt)index call:(SEL)s withVars:(id<ORDisabledFloatVarArray>)x
 {
-   id<CPFloatVar> xi = _gamma[getId(x)];
+   id<CPFloatVar> xi = _gamma[getId(x[index])];
+   if([xi bound]) return;
+   ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+   ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+   if(fp_next_float(tmpMin) == tmpMax){
+      [_search try:^{
+         [self floatIntervalImpl:xi low:tmpMin up:tmpMin];
+      } alt:^{
+         [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
+      }];
+   }else{
+      [self shave:index direction:-1 percent:_split3Bpercent coef:2 call:s withVars:x];
+      [self shave:index direction:1 percent:_split3Bpercent coef:2 call:s withVars:x];
+      //for splitting percent 50 and coef 0.5 ?
+      // now x is shaved on both-end. Proceed with a normal dichotomy
+      // on x and recur.
+      [self floatSplit:index call:s withVars:x];
+   }
+}
+-(void) shave :(ORUInt) index direction:(ORInt) d percent:(ORFloat)p coef:(ORInt)c  call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x[index])];
+   if([xi bound]) return;
+   ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+   ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+   __block id<ORMutableFloat> percent = [ORFactory mutable:_engine fvalue:p];
+   __block ORTrackDepth* t ;
+   __block id<ORMutableFloat> min,max;
+   ORDouble size = [xi domwidth];
+   __block ORDouble step = size * ([percent value]/100);
+   if(d > 0) //shave sup side
+   {
+      max = [ORFactory mutable:_engine fvalue:tmpMax];
+      min = [ORFactory mutable:_engine fvalue:(tmpMax - step > tmpMin) ? tmpMax - step : tmpMin];
+   }else{
+      min = [ORFactory mutable:_engine fvalue:tmpMin];
+      max = [ORFactory mutable:_engine fvalue:(tmpMin + step < tmpMax) ? tmpMin + step : tmpMax];
+   }
+   __block ORMutableIntegerI* depth = [ORFactory mutable:_engine value:0];
+   __block ORBool goon = YES;
+   t = [[ORTrackDepth alloc] initORTrackDepth:_trail with:depth];
+   while (goon) {
+      [self nestedSolve:^{
+         [_search applyController:t in:^{
+            LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
+            [self floatIntervalImpl:xi low:[min value] up:[max value]];
+            // The call above triggers propagation. Either this will succeed, suspend or it will fail
+            // If it fails, there are provably no solution in the slice, so onSolution won't
+            // be called and onExit will do the right thing.
+            // If there is a solution, onSolution sets goon = NO and onExit attempts to go
+            // to the next iteration but the outer loop stops.
+            // If it suspends, then without branching we can't tell what happening inside the slide.
+            // So we carry on and reach this point (right here) where we should *BRANCH* on the
+            // variables in the slide. That is within the nested search and this array of vars
+            // should be accessible.
+            // ultimately that nested search will succeed or fail.
+            // If it succeeds, goon = NO.
+            // If it fails, onSolution is never called and you can check the depth of the
+            // search with the controller t.
+            [self performSelector:s withObject:x withObject:^(ORUInt ind, SEL call,id<ORDisabledFloatVarArray> vs){
+               SELPROTO subcut = (SELPROTO)[self methodForSelector:_subcut];
+               subcut(self,_subcut,ind,call,vs);
+            }];
+         }];
+      } onSolution:^{
+         LOG(_level,1,@"solution found! in depth %d",[depth intValue]);
+         if(_oneSol){
+            goon = NO;
+         }
+         [self doOnSolution];
+      } onExit:^{
+         LOG(_level,1,@"fail on depth:%d",[depth intValue]);
+         if (max.value == min.value || [depth intValue] > 1){
+            goon = NO;
+            if(d>0){
+               [max setValue:maxFlt(fp_previous_float([min value]),xi.min)];
+               [min setValue:xi.min];
+            }else{
+               [min setValue:minFlt(fp_next_float([max value]),xi.max)];
+               [max setValue:xi.max];
+            }
+            [self floatIntervalImpl:xi low:min.value up:max.value];
+         }else{
+            [depth setValue:0];
+            t = [[ORTrackDepth alloc] initORTrackDepth:_trail with:depth];
+            [percent setValue: percent.value * c];
+            step = size * percent.value / 100;
+            if(d > 0){ //shave sup side
+               [max setValue:maxFlt(fp_previous_float([min value]),xi.min)];
+               [min setValue:([max value] - step > xi.min) ? [max value] - step : xi.max];
+            }else{
+               [min setValue:minFlt(fp_next_float([max value]),xi.max)];
+               [max setValue:([min value] + step < xi.max) ? [min value] + step : xi.max];
+            }
+         }
+      }];
+   }
+   LOG(_level,1,@"quit goon on depth %d",[depth intValue]);
+   // Note that you will always reach this point.
+   // so you will return from this shave method normally.
+   // Hence the caller should shave left, shave right and when that is all
+   // done, it can resume branching. So the top-level should also change.
+}
+//split in 2 intervals Once
+-(void) floatSplit:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    if([xi bound]) return;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
@@ -2291,19 +2799,25 @@
    if(fp_next_float(theMin) != theMax){
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
+      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       mid = tmpMin/2 + tmpMax/2;
    }
    if(mid == theMax)
       mid = theMin;
-   //   NSLog(@"max = %16.16e  min = %16.16e mid : %16.16e",theMax,theMin,mid);
-   [_search try: ^{ [self floatGthenImpl:xi with:mid]; }
-            alt: ^{ [self floatLEqualImpl:xi with:mid]; }
+   assert(mid != NAN && mid <= xi.max && mid >= xi.min);
+   [_search try: ^{
+      LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],xi,mid);
+      [self floatGthenImpl:xi with:mid];
+   } alt: ^{
+      LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],xi,mid);
+      [self floatLEqualImpl:xi with:mid];
+   }
     ];
 }
 //split in 3 intervals Once
--(void) float3WaySplit:(id<ORFloatVar>) x
+-(void) float3WaySplit:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x)];
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    if([xi bound]) return;
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
@@ -2316,20 +2830,22 @@
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
+      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       interval[0].inf  = theMin;
       interval[0].sup = fp_previous_float(mid);
       interval[1].inf = mid;
       interval[1].sup = theMax;
    }
    float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,2) suchThat:nil in:^(ORInt i) {
+   [_search tryall:RANGE(self,0,1) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
 //split in 5 intervals Once
--(void) float5WaySplit:(id<ORFloatVar>) x
+-(void) float5WaySplit:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x)];
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    if([xi bound]) return;
    float_interval interval[5];
    ORInt length = 0;
@@ -2347,6 +2863,7 @@
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
+      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       //force the interval to right side
       if(mid == fp_previous_float(theMax)){
          mid = fp_previous_float(mid);
@@ -2363,13 +2880,14 @@
    }
    float_interval* ip = interval;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
 //split in 6 intervals Once
--(void) float6WaySplit: (id<ORFloatVar>) x
+-(void) float6WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x)];
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    if([xi bound]) return;
    float_interval interval[6];
    ORFloat theMax = xi.max;
@@ -2386,6 +2904,7 @@
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       ORFloat mid = tmpMin/2 + tmpMax/2;
       
+      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       ORFloat midInf = -0.0f;
       ORFloat midSup = +0.0f;
       if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
@@ -2437,6 +2956,7 @@
    float_interval* ip = interval;
    length--;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"> START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -2461,9 +2981,9 @@
 {
    [_search switchOnDepth: s1 to: s2 limit: depth];
 }
--(void) switchSearchOnDepthUsingProperties:(ORDouble(^)(id<ORFloatVar>)) criteria1 to: (ORDouble(^)(id<ORFloatVar>)) criteria2 do:(void(^)(id<ORFloatVar>))b limit: (ORInt) depth restricted:(id<ORFloatVarArray>) x
+-(void) switchSearchOnDepthUsingProperties:(ORDouble(^)(id<ORFloatVar>)) criteria1 to: (ORDouble(^)(id<ORFloatVar>)) criteria2 do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b limit: (ORInt) depth restricted:(id<ORDisabledFloatVarArray>) x
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
@@ -2486,13 +3006,13 @@
    [[self explorer] applyController:t in:^{
       do {
          ORSelectorResult i;
-         if([t depth] > depth)
+         if([t maxDepth] > depth)
             i = [select min];
          else
             i = [select2 min];
          if (!i.found)
             break;
-         b(x[i.index]);
+         b(i.index,@selector(switchSearchOnDepthUsingProperties:to:do:limit:restricted:),x);
       } while (true);
    }];
 }
@@ -2777,20 +3297,23 @@
    }
    return 0.0;
 }
--(NSMutableArray*) computeAbsorptionsQuantities:(id<ORFloatVarArray>) vars
+-(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledFloatVarArray>) vars
 {
-   ORULong size = [vars count];
-   //hzi maybe should be array created by factory to be tracked in search ...
-   NSMutableArray<ABSElement *> *abs = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
+   ORInt size = (ORInt)[vars count];
+   id<ORIdArray> abs = [ORFactory idArray:self range:RANGE(self,0,size-1)];
    ORDouble absV;
    for(ORInt i = 0; i < size; i++){
-      abs[i] = [[ABSElement alloc] init];
+      ABSElement* ae = [[ABSElement alloc] init];
+      [self trackObject:ae];
+      abs[i] = ae;
    }
    ORUInt i = 0;
    CPFloatVarI* cx;
    id<CPFloatVar> v;
+   ORDouble best_rate;
    for (id<ORFloatVar> x in vars) {
       cx = _gamma[[x getId]];
+      best_rate = 0.0;
       NSMutableSet* cstr = [cx constraints];
       for(id<CPConstraint> c in cstr){
          if([c canLeadToAnAbsorption]){
@@ -2800,7 +3323,7 @@
             assert(absV >= 0.0f && absV <= 1.f);
             if(absV){
                [abs[i] addQuantity:absV];
-               [abs[i] addVar:v];
+               if(absV > best_rate) [abs[i] setChoice:v];
             }
          }
       }
@@ -3560,6 +4083,7 @@
 {
    return [[[CPSolver alloc] initCPSolver] autorelease];
 }
+
 +(id<CPSemanticProgramDFS>) solverBackjumpingDFS
 {
    return [[CPSemanticSolver alloc] initCPSolverBackjumpingDFS];
@@ -3576,42 +4100,40 @@
 //hzi should redefine release
 @implementation ABSElement
 
--(id) init:(ORDouble)quantity vars:(NSMutableSet *)vars
+-(id) init:(ORDouble)quantity
 {
    self = [super init];
    _quantity = quantity;
-   _vars = vars;
+   _choice = nil;
    return self;
 }
 -(id) init
 {
-   self = [self init:0.0 vars:[[NSMutableSet alloc] init]];
+   self = [self init:0.0];
    return self;
 }
 -(void) dealloc
 {
-   [_vars release];
    [super dealloc];
 }
 -(ORDouble) quantity
 {
    return _quantity;
 }
--(NSSet*) vars
-{
-   return _vars;
-}
--(void) addVar:(id<CPFloatVar>) v
-{
-   [_vars addObject:v];
-}
 -(void) addQuantity:(ORFloat) c
 {
    _quantity += c;
 }
+-(void) setChoice:(CPFloatVarI*) c
+{
+   _choice = c;
+}
+-(id<CPFloatVar>) bestChoice
+{
+   return _choice;
+}
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%lf,%@>",_quantity,_vars];
+   return [NSString stringWithFormat:@"<%lf,%@>",_quantity,_choice];
 }
 @end
-

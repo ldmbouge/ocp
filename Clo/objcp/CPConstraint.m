@@ -2,11 +2,11 @@
  Mozilla Public License
  
  Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
-
+ 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
@@ -40,14 +40,24 @@
    [engine trackMutable:g];
    return g;
 }
-
 +(id<CPGroup>) cdisj:(id<CPEngine>)engine originals:(id<CPVarArray>)origs varmap:(NSArray*)vm
 {
    id<CPGroup> g = [[CPCDisjunction alloc] init:engine originals: origs varMap:vm];
    [engine trackMutable:g];
    return g;
 }
-
++(id<CPGroup>) group3B:(id<CPEngine>)engine tracer:(id<ORTracer>)tracer
+{
+   id<CPGroup> g = [[CP3BGroup alloc] init:engine tracer:tracer];
+   [engine trackMutable:g];
+   return g;
+}
++(id<CPGroup>) group3B:(id<CPEngine>)engine tracer:(id<ORTracer>)tracer percent: (ORDouble) p
+{
+   id<CPGroup> g = [[CP3BGroup alloc] init:engine tracer:tracer percent:p];
+   [engine trackMutable:g];
+   return g;
+}
 // alldifferent
 +(id<ORConstraint>) alldifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x
 {
@@ -57,26 +67,26 @@
 }
 +(id<ORConstraint>) alldifferent: (id<CPIntVarArray>) x
 {
-    return [CPFactory alldifferent: x annotation: DomainConsistency];
+   return [CPFactory alldifferent: x annotation: DomainConsistency];
 }
 +(id<ORConstraint>) alldifferent: (id<CPIntVarArray>) x annotation: (ORCLevel) c
 {
-    id<ORConstraint> o;
-    switch (c) {
-        case DomainConsistency: 
-            o = [[CPAllDifferentDC alloc] initCPAllDifferentDC:[x tracker] over:x];
-            break;
-        case ValueConsistency:
-            o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC:x]; 
-            break;
-        case RangeConsistency:
-            @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];            
-            break;
-        default:
-            @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
-    }
-    [[x tracker] trackMutable: o];
-    return o;
+   id<ORConstraint> o;
+   switch (c) {
+      case DomainConsistency: 
+         o = [[CPAllDifferentDC alloc] initCPAllDifferentDC:[x tracker] over:x];
+         break;
+      case ValueConsistency:
+         o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC:x]; 
+         break;
+      case RangeConsistency:
+         @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];            
+         break;
+      default:
+         @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
+   }
+   [[x tracker] trackMutable: o];
+   return o;
 }
 +(id<ORConstraint>) alldifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x annotation: (ORCLevel) c
 {
@@ -105,41 +115,41 @@
 // cardinality
 +(id<ORConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
-    return [CPFactory cardinality: x low: low up: up annotation: ValueConsistency];
+   return [CPFactory cardinality: x low: low up: up annotation: ValueConsistency];
 }
 +(id<ORConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation: (ORCLevel) c
 { 
-    id<ORConstraint> o;
-    switch (c) {
-        case ValueConsistency:
-            o = [[CPCardinalityCst alloc] initCardinalityCst: x low: low up: up]; 
-            break;
-        case RangeConsistency:
-            @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on cardinality"];            
-            break;
-        case DomainConsistency: 
-            o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up]; 
-            break;
-        default:
-          o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up];
-          break;
-    }
-    [[x tracker ] trackMutable: o];
-    return o;
+   id<ORConstraint> o;
+   switch (c) {
+      case ValueConsistency:
+         o = [[CPCardinalityCst alloc] initCardinalityCst: x low: low up: up]; 
+         break;
+      case RangeConsistency:
+         @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on cardinality"];            
+         break;
+      case DomainConsistency: 
+         o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up]; 
+         break;
+      default:
+         o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up];
+         break;
+   }
+   [[x tracker ] trackMutable: o];
+   return o;
 }
 
 +(id<ORConstraint>) minimize: (id<CPIntVar>) x
 {
-    id<ORConstraint> o = [[CPIntVarMinimize alloc] init: x];
-    [[x engine] trackMutable: o];
-    return o;
+   id<ORConstraint> o = [[CPIntVarMinimize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
 }
 
 +(id<ORConstraint>) maximize: (id<CPIntVar>) x
 {
-    id<ORConstraint> o = [[CPIntVarMaximize alloc] init: x];
-    [[x engine] trackMutable: o];
-    return o;
+   id<ORConstraint> o = [[CPIntVarMaximize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
 }
 
 +(id<ORConstraint>) circuit: (id<CPIntVarArray>) x
@@ -228,9 +238,9 @@
 
 +(id<ORConstraint>) imply: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
 {
-    id<ORConstraint> o = [[CPImplyEqualcDC alloc] initCPImplyEqualcDC: b when: x eq: i];
-    [[x engine] trackMutable: o];
-    return o;
+   id<ORConstraint> o = [[CPImplyEqualcDC alloc] initCPImplyEqualcDC: b when: x eq: i];
+   [[x engine] trackMutable: o];
+   return o;
 }
 
 +(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
@@ -284,9 +294,9 @@
 
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neqi: (ORInt) i
 {
-    id<CPConstraint> o = [[CPReifyNotEqualcDC alloc] initCPReifyNotEqualcDC: b when: x neq: i];
-    [[x tracker] trackMutable: o];
-    return o;
+   id<CPConstraint> o = [[CPReifyNotEqualcDC alloc] initCPReifyNotEqualcDC: b when: x neq: i];
+   [[x tracker] trackMutable: o];
+   return o;
 }
 
 +(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leqi: (ORInt) i
@@ -342,9 +352,9 @@
 
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c
 {
-    id<CPConstraint> o = [[CPSumBoolGeq alloc] initCPSumBool: x geq: c];
-    [[x tracker] trackMutable: o];
-    return o;
+   id<CPConstraint> o = [[CPSumBoolGeq alloc] initCPSumBool: x geq: c];
+   [[x tracker] trackMutable: o];
+   return o;
 }
 
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (ORInt) c
@@ -466,7 +476,7 @@
 +(id<ORConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c 
 {
    id<ORConstraint> o = [[CPDiffc alloc] initCPDiffc:x and:c];
-  [[x tracker] trackMutable:o];
+   [[x tracker] trackMutable:o];
    return o;
 }
 +(id<ORConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y
@@ -640,9 +650,9 @@
 }
 +(id<CPConstraint>) realWeightedVar: (id<CPRealVar>)z equal:(id<CPRealVar>)x weight: (id<CPRealParam>)w
 {
-    id<CPConstraint> o = [[CPRealWeightedVarBC alloc] initCPRealWeightedVarBC: z equal: x weight: w];
-    [[x tracker] trackMutable: o];
-    return o;
+   id<CPConstraint> o = [[CPRealWeightedVarBC alloc] initCPRealWeightedVarBC: z equal: x weight: w];
+   [[x tracker] trackMutable: o];
+   return o;
 }
 +(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
 {
@@ -693,253 +703,286 @@
 @end
 
 @implementation CPFactory (ORFloat)
++(id<CPConstraint>) floatAssign: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatAssign alloc] init:x set:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatAssignC: (id<CPFloatVar>) x to:(ORFloat) c
+{
+   id<CPConstraint> o = [[CPFloatAssignC alloc] init:x set:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) floatEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
-    id<CPConstraint> o = [[CPFloatEqual alloc] init:x equals:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatEqual alloc] init:x equals:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) floatEqualc: (id<CPFloatVar>) x to:(ORFloat) c
 {
-    id<CPConstraint> o = [[CPFloatEqualc alloc] init:x and:c];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatEqualc alloc] init:x and:c];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) floatNEqualc: (id<CPFloatVar>) x to:(ORFloat) c
 {
-    id<CPConstraint> o = [[CPFloatNEqualc alloc] init:x and:c];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatNEqualc alloc] init:x and:c];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) floatNEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
-    id<CPConstraint> o = [[CPFloatNEqual alloc] init:x nequals:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatNEqual alloc] init:x nequals:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) floatLTc: (id<CPFloatVar>) x to:(ORFloat) c
 {
-    id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
-    return [self floatLT:x to:cvar];
+   id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
+   return [self floatLT:x to:cvar];
 }
 +(id<CPConstraint>) floatGTc: (id<CPFloatVar>) x to:(ORFloat) c
 {
-    id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
-    return [self floatGT:x to:cvar];
+   id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
+   return [self floatGT:x to:cvar];
 }
 +(id<CPConstraint>) floatLT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
-    id<CPConstraint> o = [[CPFloatLT alloc] init:x lt:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatLT alloc] init:x lt:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) floatGT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
-    id<CPConstraint> o = [[CPFloatGT alloc] init:x gt:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatGT alloc] init:x gt:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) floatLEQ: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
-    id<CPConstraint> o = [[CPFloatLEQ alloc] init:x leq:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatLEQ alloc] init:x leq:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) floatGEQ: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
-    id<CPConstraint> o = [[CPFloatGEQ alloc] init:x geq:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatGEQ alloc] init:x geq:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
++(id<CPConstraint>) floatTernaryAdd:(id<CPFloatVar>) x equals:(id<CPFloatVar>) y plus:(id<CPFloatVar>) z annotation:(id<ORAnnotation>) notes
 {
-    if([x count] == 1 && [coefs at:coefs.low]==1.0){
-        return [self floatEqualc:x[x.low] to:c];
-    }else{
-        if([x count] == 2){
-            //form x = y + c
-            //or   x = y - c
-            id<CPFloatVar> z;
-            if(c == 0) return [self floatEqual:x[x.low] to:x[1]];
-            if(c < 0){
-                z = [CPFactory floatVar:[x[x.low] engine] value:-c];
-                return [[CPFloatTernarySub alloc] init:x[0] equals:x[1] minus:z];
-            }else
-                 z = [CPFactory floatVar:[x[x.low] engine] value:c];
-            return [[CPFloatTernaryAdd alloc] init:x[0] equals:x[1] plus:z];
-        }else{ // [x count] = 3
-            assert([x count] <= 3);
-            //form x = y + z
-            //or   x = y - z
-            if([coefs at:2]<0){
-                return [[CPFloatTernarySub alloc] init:x[0] equals:x[1] minus:x[2]];
-            }
-            return [[CPFloatTernaryAdd alloc] init:x[0] equals:x[1] plus:x[2]];
-        }
-    }
+   if([notes hasFilteringPercent])
+      return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent]];
+   return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z];
+   
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs neqi:(ORFloat)c
++(id<CPConstraint>) floatTernarySub:(id<CPFloatVar>) x equals:(id<CPFloatVar>) y minus:(id<CPFloatVar>) z annotation:(id<ORAnnotation>) notes
 {
-    if([x count] == 1 && [coefs at:coefs.low] == 1.0){
-        return [self floatNEqualc:x[x.low] to:c];
-    }
-    id<CPEngine> engine = [x[x.low] engine];
-    if([x count] == 2){ // x + y != c
-        if(c == 0) return [self floatNEqual:x[x.low] to:x[1]];
-        id<CPFloatVar> res = [self floatVar:engine];
-        if([coefs at:1] < 0)
-          [[CPFloatTernarySub alloc] init:res equals:x[0] minus:x[1]];
-        else
-            [[CPFloatTernaryAdd alloc] init:res equals:x[0] plus:x[1]];
-        return [self floatNEqualc:res to:c];
-    }
-    assert([x count] <= 3);
-    id<CPFloatVar> tmp = [self floatVar:engine];
-    id<CPFloatVar> res = [self floatVar:engine];
-    if([coefs at:1] < 0)
-        [[CPFloatTernarySub alloc] init:tmp equals:x[0] minus:x[1]];
-    else
-        [[CPFloatTernaryAdd alloc] init:tmp equals:x[0] plus:x[1]];
-    if([coefs at:2] < 0)
-        [[CPFloatTernarySub alloc] init:res equals:tmp minus:x[2]];
-    else
-        [[CPFloatTernaryAdd alloc] init:res equals:tmp plus:x[2]];
-    return [self floatNEqualc:res to:c];
+   if([notes hasFilteringPercent])
+      return [[CPFloatTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent]];
+   return [[CPFloatTernarySub alloc] init:x equals:y minus:z];
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c annotation:(id<ORAnnotation>) notes
 {
-    id<CPEngine> engine = [x[x.low] engine];
-    id<CPFloatVar> vc = [self floatVar:engine value:c];
-    if([x count] == 1 && [coefs at:coefs.low] == 1.0){
-        return [self floatLT:x[0] to:vc];
-    }else if([x count] == 2){
-        if(c == 0)
-            return [self floatLT:x[0] to:x[1]];
-        id<CPFloatVar> res = [self floatVar:engine];
-        if([coefs at:1] < 0)
-            [[CPFloatTernarySub alloc] init:res equals:x[0] minus:x[1]];
-        else
-            [[CPFloatTernaryAdd alloc] init:res equals:x[0] plus:x[1]];
-        return [self floatGT:res to:vc];
-    }
-    //should never happen normalizer transform expression like x + y + z in auxiliary var wyz
-    assert([x count] <= 3);
-    id<CPFloatVar> tmp = [self floatVar:engine];
-    id<CPFloatVar> res = [self floatVar:engine];
-    if([coefs at:1] < 0)
-        [[CPFloatTernarySub alloc] init:tmp equals:x[0] minus:x[1]];
-    else
-        [[CPFloatTernaryAdd alloc] init:tmp equals:x[0] plus:x[1]];
-    return [self floatLT:res to:x[2]];
-    
+   if([x count] == 1 && [coefs at:coefs.low]==1.0){
+      return [self floatEqualc:x[x.low] to:c];
+   }else{
+      if([x count] == 2){
+         //form x = y + c
+         //or   x = y - c
+         id<CPFloatVar> z;
+         if(c == 0) return [self floatEqual:x[x.low] to:x[1]];
+         if(c < 0){
+            z = [CPFactory floatVar:[x[x.low] engine] value:-c];
+            return [CPFactory floatTernarySub:x[0] equals:x[1] minus:z annotation:notes];
+         }else
+            z = [CPFactory floatVar:[x[x.low] engine] value:c];
+         return [CPFactory floatTernaryAdd:x[0] equals:x[1] plus:z annotation:notes];
+      }else{ // [x count] = 3
+         assert([x count] <= 3);
+         //form x = y + z
+         //or   x = y - z
+         if([coefs at:2]<0){
+            return [CPFactory floatTernarySub:x[0] equals:x[1] minus:x[2] annotation:notes];
+         }
+         return [CPFactory floatTernaryAdd:x[0] equals:x[1] plus:x[2] annotation:notes];
+      }
+   }
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs neqi:(ORFloat)c annotation:(id<ORAnnotation>) notes
+{
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self floatNEqualc:x[x.low] to:c];
+   }
+   id<CPEngine> engine = [x[x.low] engine];
+   if([x count] == 2){ // x + y != c
+      if(c == 0) return [self floatNEqual:x[x.low] to:x[1]];
+      id<CPFloatVar> res = [self floatVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory floatTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory floatTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self floatNEqualc:res to:c];
+   }
+   assert([x count] <= 3);
+   id<CPFloatVar> tmp = [self floatVar:engine];
+   id<CPFloatVar> res = [self floatVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory floatTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory floatTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   if([coefs at:2] < 0)
+      [CPFactory floatTernarySub:res equals:tmp minus:x[2] annotation:notes];
+   else
+      [CPFactory floatTernaryAdd:res equals:tmp plus:x[2] annotation:notes];
+   return [self floatNEqualc:res to:c];
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c annotation:(id<ORAnnotation>) notes
+{
+   id<CPEngine> engine = [x[x.low] engine];
+   id<CPFloatVar> vc = [self floatVar:engine value:c];
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self floatLT:x[0] to:vc];
+   }else if([x count] == 2){
+      if(c == 0)
+         return [self floatLT:x[0] to:x[1]];
+      id<CPFloatVar> res = [self floatVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory floatTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory floatTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self floatGT:res to:vc];
+   }
+   //should never happen normalizer transform expression like x + y + z in auxiliary var wyz
+   assert([x count] <= 3);
+   id<CPFloatVar> tmp = [self floatVar:engine];
+   id<CPFloatVar> res = [self floatVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory floatTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory floatTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   return [self floatLT:res to:x[2]];
+   
 }
 // hzi : w + y > z is transformed by decompose in var : wy , z  and c : 0
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs gt:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs gt:(ORFloat)c annotation:(id<ORAnnotation>) notes
 {
-    id<CPEngine> engine = [x[x.low] engine];
-    id<CPFloatVar> vc = [self floatVar:engine value:c];
-    if([x count] == 1 && [coefs at:coefs.low] == 1.0){
-        return [self floatGT:x[0] to:vc];
-    }else if([x count] == 2){
-        if(c == 0)
-            return [self floatGT:x[0] to:x[1]];
-        id<CPFloatVar> res = [self floatVar:engine];
-        if([coefs at:1] < 0)
-            [[CPFloatTernarySub alloc] init:res equals:x[0] minus:x[1]];
-        else
-            [[CPFloatTernaryAdd alloc] init:res equals:x[0] plus:x[1]];
-        return [self floatGT:res to:vc];
-    }
-    assert([x count] <= 3);
-    id<CPFloatVar> tmp = [self floatVar:engine];
-    id<CPFloatVar> res = [self floatVar:engine];
-    if([coefs at:1] < 0)
-        [[CPFloatTernarySub alloc] init:tmp equals:x[0] minus:x[1]];
-    else
-        [[CPFloatTernaryAdd alloc] init:tmp equals:x[0] plus:x[1]];
-    return [self floatGT:res to:x[2]];
+   id<CPEngine> engine = [x[x.low] engine];
+   id<CPFloatVar> vc = [self floatVar:engine value:c];
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self floatGT:x[0] to:vc];
+   }else if([x count] == 2){
+      if(c == 0)
+         return [self floatGT:x[0] to:x[1]];
+      id<CPFloatVar> res = [self floatVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory floatTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory floatTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self floatGT:res to:vc];
+   }
+   assert([x count] <= 3);
+   id<CPFloatVar> tmp = [self floatVar:engine];
+   id<CPFloatVar> res = [self floatVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory floatTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory floatTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   return [self floatGT:res to:x[2]];
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leq:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leq:(ORFloat)c annotation:(id<ORAnnotation>) notes
 {
-    id<CPEngine> engine = [x[x.low] engine];
-    id<CPFloatVar> vc = [self floatVar:engine value:c];
-    if([x count] == 1 && [coefs at:coefs.low] == 1.0){
-        return [self floatLEQ:x[0] to:vc];
-    }else if([x count] == 2){
-        if(c == 0)
-            return [self floatLEQ:x[0] to:x[1]];
-        id<CPFloatVar> res = [self floatVar:engine];
-        if([coefs at:1] < 0)
-            [[CPFloatTernarySub alloc] init:res equals:x[0] minus:x[1]];
-        else
-            [[CPFloatTernaryAdd alloc] init:res equals:x[0] plus:x[1]];
-        return [self floatLEQ:res to:vc];
-    }
-    assert([x count] <= 3);
-    id<CPFloatVar> tmp = [self floatVar:engine];
-    id<CPFloatVar> res = [self floatVar:engine];
-    if([coefs at:1] < 0)
-        [[CPFloatTernarySub alloc] init:tmp equals:x[0] minus:x[1]];
-    else
-        [[CPFloatTernaryAdd alloc] init:tmp equals:x[0] plus:x[1]];
-    return [self floatLEQ:res to:x[2]];
+   id<CPEngine> engine = [x[x.low] engine];
+   id<CPFloatVar> vc = [self floatVar:engine value:c];
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self floatLEQ:x[0] to:vc];
+   }else if([x count] == 2){
+      if(c == 0)
+         return [self floatLEQ:x[0] to:x[1]];
+      id<CPFloatVar> res = [self floatVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory floatTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory floatTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self floatLEQ:res to:vc];
+   }
+   assert([x count] <= 3);
+   id<CPFloatVar> tmp = [self floatVar:engine];
+   id<CPFloatVar> res = [self floatVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory floatTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory floatTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   return [self floatLEQ:res to:x[2]];
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geq:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geq:(ORFloat)c annotation:(id<ORAnnotation>) notes
 {
-    id<CPEngine> engine = [x[x.low] engine];
-    id<CPFloatVar> vc = [self floatVar:engine value:c];
-    if([x count] == 1 && [coefs at:coefs.low] == 1.0){
-        return [self floatGEQ:x[0] to:vc];
-    }else if([x count] == 2){
-        if(c == 0)
-            return [self floatGEQ:x[0] to:x[1]];
-        id<CPFloatVar> res = [self floatVar:engine];
-        if([coefs at:1] < 0)
-            [[CPFloatTernarySub alloc] init:res equals:x[0] minus:x[1]];
-        else
-            [[CPFloatTernaryAdd alloc] init:res equals:x[0] plus:x[1]];
-        return [self floatGEQ:res to:vc];
-    }
-    assert([x count] <= 3);
-    id<CPFloatVar> tmp = [self floatVar:engine];
-    id<CPFloatVar> res = [self floatVar:engine];
-    if([coefs at:1] < 0)
-        [[CPFloatTernarySub alloc] init:tmp equals:x[0] minus:x[1]];
-    else
-        [[CPFloatTernaryAdd alloc] init:tmp equals:x[0] plus:x[1]];
-    return [self floatGEQ:res to:x[2]];
+   id<CPEngine> engine = [x[x.low] engine];
+   id<CPFloatVar> vc = [self floatVar:engine value:c];
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self floatGEQ:x[0] to:vc];
+   }else if([x count] == 2){
+      if(c == 0)
+         return [self floatGEQ:x[0] to:x[1]];
+      id<CPFloatVar> res = [self floatVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory floatTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory floatTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self floatGEQ:res to:vc];
+   }
+   assert([x count] <= 3);
+   id<CPFloatVar> tmp = [self floatVar:engine];
+   id<CPFloatVar> res = [self floatVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory floatTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory floatTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   return [self floatGEQ:res to:x[2]];
 }
-+(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
++(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z annotation:(id<ORAnnotation>) notes
 {
-    id<CPConstraint> o = [[CPFloatTernaryMult alloc] init:z equals:x mult:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = nil;
+   if([notes hasFilteringPercent])
+      o = [[CPFloatTernaryMult alloc] init:z equals:x mult:y kbpercent:[notes kbpercent]];
+   else
+      o = [[CPFloatTernaryMult alloc] init:z equals:x mult:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
-+(id<CPConstraint>) floatDiv: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
++(id<CPConstraint>) floatDiv: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z annotation:(id<ORAnnotation>) notes
 {
-    id<CPConstraint> o = [[CPFloatTernaryDiv alloc] init:z equals:x div:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = nil;
+   if([notes hasFilteringPercent])
+      o = [[CPFloatTernaryDiv alloc] init:z equals:x div:y kbpercent:[notes kbpercent]];
+   else
+      o = [[CPFloatTernaryDiv alloc] init:z equals:x div:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neq: (id<CPFloatVar>) y annotation:(ORCLevel)c
 {
-    id<CPConstraint> o = [[CPFloatReifyNEqual alloc] initCPReify:b when:x neq:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatReifyNEqual alloc] initCPReify:b when:x neq:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x leq:(id<CPFloatVar>)y annotation:(ORCLevel)c
 {
-    id<CPConstraint> o = [[CPFloatReifyLEqual alloc] initCPReifyLEqual:b when:x leqi:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatReifyLEqual alloc] initCPReifyLEqual:b when:x leqi:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geq:(id<CPFloatVar>)y annotation:(ORCLevel)c
 {
-    id<CPConstraint> o = [[CPFloatReifyGEqual alloc] initCPReifyGEqual:b when:x geqi:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPFloatReifyGEqual alloc] initCPReifyGEqual:b when:x geqi:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lt:(id<CPFloatVar>)y annotation:(ORCLevel)c
@@ -958,36 +1001,36 @@
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eq: (id<CPFloatVar>) y annotation:(ORCLevel)c
 {
-    id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y];
-    [[x tracker] trackMutable: o];
-    return o;
+   id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y];
+   [[x tracker] trackMutable: o];
+   return o;
 }
 +(id<ORConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eqi: (ORFloat) i
 {
-    id<ORConstraint> o = [[CPFloatReifyEqualc alloc] initCPReifyEqualc: b when: x eqi: i];
-    [[x engine] trackMutable: o];
-    return o;
+   id<ORConstraint> o = [[CPFloatReifyEqualc alloc] initCPReifyEqualc: b when: x eqi: i];
+   [[x engine] trackMutable: o];
+   return o;
 }
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neqi: (ORFloat) i
 {
-    id<CPConstraint> o = [[CPFloatReifyNotEqualc alloc] initCPReifyNotEqualc: b when: x neqi: i];
-    [[x tracker] trackMutable: o];
-    return o;
+   id<CPConstraint> o = [[CPFloatReifyNotEqualc alloc] initCPReifyNotEqualc: b when: x neqi: i];
+   [[x tracker] trackMutable: o];
+   return o;
 }
 
 +(id<ORConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x leqi: (ORFloat) i
 {
-    id<ORConstraint> o = [[CPFloatReifyLEqualc alloc] initCPReifyLEqualc: b when: x leqi: i];
-    [[x tracker] trackMutable: o];
-    return o;
+   id<ORConstraint> o = [[CPFloatReifyLEqualc alloc] initCPReifyLEqualc: b when: x leqi: i];
+   [[x tracker] trackMutable: o];
+   return o;
 }
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geqi: (ORFloat) i
 {
-    id<CPConstraint> o = [[CPFloatReifyGEqualc alloc] initCPReifyGEqualc: b when: x geqi: i];
-    [[x tracker] trackMutable: o];
-    return o;
+   id<CPConstraint> o = [[CPFloatReifyGEqualc alloc] initCPReifyGEqualc: b when: x geqi: i];
+   [[x tracker] trackMutable: o];
+   return o;
 }
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gti: (ORFloat) i
@@ -1009,129 +1052,129 @@
 @implementation CPFactory (ORDouble)
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
-    id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleEqualc: (id<CPDoubleVar>) x to:(ORDouble) c
 {
-    id<CPConstraint> o = [[CPDoubleEqualc alloc] init:x and:c];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleEqualc alloc] init:x and:c];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleNEqualc: (id<CPDoubleVar>) x to:(ORDouble) c
 {
-    id<CPConstraint> o = [[CPDoubleNEqualc alloc] init:x and:c];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleNEqualc alloc] init:x and:c];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleLTc: (id<CPDoubleVar>) x to:(ORDouble) c
 {
-    id<CPDoubleVar> cvar = [CPFactory doubleVar:[x engine] value:c];
-    return [self doubleLT:x to:cvar];
+   id<CPDoubleVar> cvar = [CPFactory doubleVar:[x engine] value:c];
+   return [self doubleLT:x to:cvar];
 }
 +(id<CPConstraint>) doubleGTc: (id<CPDoubleVar>) x to:(ORDouble) c
 {
-    id<CPDoubleVar> cvar = [CPFactory doubleVar:[x engine] value:c];
-    return [self doubleGT:x to:cvar];
+   id<CPDoubleVar> cvar = [CPFactory doubleVar:[x engine] value:c];
+   return [self doubleGT:x to:cvar];
 }
 +(id<CPConstraint>) doubleLT: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
-    id<CPConstraint> o = [[CPDoubleLT alloc] init:x lt:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleLT alloc] init:x lt:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleGT: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
-    id<CPConstraint> o = [[CPDoubleGT alloc] init:x gt:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleGT alloc] init:x gt:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleLEQ: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
-    id<CPConstraint> o = [[CPDoubleLEQ alloc] init:x leq:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleLEQ alloc] init:x leq:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleGEQ: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
-    id<CPConstraint> o = [[CPDoubleGEQ alloc] init:x geq:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleGEQ alloc] init:x geq:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
 {
-    if([x count] == 1 && [coefs at:coefs.low]==1.0){
-        return [self doubleEqualc:x[x.low] to:c];
-    }else{
-        if([x count] == 2){
-            //form x = y + c
-            //or   x = y - c
-            id<CPDoubleVar> z;
-            if(c < 0){
-                z = [CPFactory doubleVar:[x[x.low] engine] value:-c];
-                return [[CPDoubleTernarySub alloc] init:x[0] equals:x[1] minus:z];
-            }else
-                z = [CPFactory doubleVar:[x[x.low] engine] value:c];
-            return [[CPDoubleTernaryAdd alloc] init:x[0] equals:x[1] plus:z];
-        }else{ // [x count] = 3
-            //form x = y + z
-            //or   x = y - z
-            if([coefs at:2]<0){
-                return [[CPDoubleTernarySub alloc] init:x[0] equals:x[1] minus:x[2]];
-            }
-            return [[CPDoubleTernaryAdd alloc] init:x[0] equals:x[1] plus:x[2]];
-        }
-    }
+   if([x count] == 1 && [coefs at:coefs.low]==1.0){
+      return [self doubleEqualc:x[x.low] to:c];
+   }else{
+      if([x count] == 2){
+         //form x = y + c
+         //or   x = y - c
+         id<CPDoubleVar> z;
+         if(c < 0){
+            z = [CPFactory doubleVar:[x[x.low] engine] value:-c];
+            return [[CPDoubleTernarySub alloc] init:x[0] equals:x[1] minus:z];
+         }else
+            z = [CPFactory doubleVar:[x[x.low] engine] value:c];
+         return [[CPDoubleTernaryAdd alloc] init:x[0] equals:x[1] plus:z];
+      }else{ // [x count] = 3
+         //form x = y + z
+         //or   x = y - z
+         if([coefs at:2]<0){
+            return [[CPDoubleTernarySub alloc] init:x[0] equals:x[1] minus:x[2]];
+         }
+         return [[CPDoubleTernaryAdd alloc] init:x[0] equals:x[1] plus:x[2]];
+      }
+   }
 }
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs neqi:(ORDouble)c
 {
-    if([x count] == 1 && [coefs at:coefs.low]==1.0){
-        return [self doubleNEqualc:x[x.low] to:c];
-    }else{
-        assert(NO);
-        return nil;
-    }
+   if([x count] == 1 && [coefs at:coefs.low]==1.0){
+      return [self doubleNEqualc:x[x.low] to:c];
+   }else{
+      assert(NO);
+      return nil;
+   }
 }
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs lt:(ORDouble)c
 {
-    id<CPConstraint> m;
-    m = [self doubleLT:x[0] to:x[1]];
-    [[x tracker] trackMutable:m];
-    return m;
+   id<CPConstraint> m;
+   m = [self doubleLT:x[0] to:x[1]];
+   [[x tracker] trackMutable:m];
+   return m;
 }
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs gt:(ORDouble)c
 {
-    id<CPConstraint> m;
-    m = [self doubleGT:x[0] to:x[1]];
-    [[x tracker] trackMutable:m];
-    return m;
+   id<CPConstraint> m;
+   m = [self doubleGT:x[0] to:x[1]];
+   [[x tracker] trackMutable:m];
+   return m;
 }
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs leq:(ORDouble)c
 {
-    id<CPConstraint> m;
-    m = [self doubleLEQ:x[0] to:x[1]];
-    [[x tracker] trackMutable:m];
-    return m;
+   id<CPConstraint> m;
+   m = [self doubleLEQ:x[0] to:x[1]];
+   [[x tracker] trackMutable:m];
+   return m;
 }
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs geq:(ORDouble)c
 {
-    id<CPConstraint> m;
-    m = [self doubleGEQ:x[0] to:x[1]];
-    [[x tracker] trackMutable:m];
-    return m;
+   id<CPConstraint> m;
+   m = [self doubleGEQ:x[0] to:x[1]];
+   [[x tracker] trackMutable:m];
+   return m;
 }
 +(id<CPConstraint>) doubleMult: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
 {
-    id<CPConstraint> o = [[CPDoubleTernaryMult alloc] init:z equals:x mult:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleTernaryMult alloc] init:z equals:x mult:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleDiv: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
 {
-    id<CPConstraint> o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y];
-    [[x tracker] trackMutable:o];
-    return o;
+   id<CPConstraint> o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 @end
 

@@ -31,6 +31,7 @@ typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORRDisj = 8,
    ORRConj = 9,
    ORRImply = 10,
+   ORRSet = 11
 };
 
 typedef NS_ENUM(NSUInteger,ORVType) {
@@ -51,19 +52,25 @@ typedef enum ORRelationType {
    ORRNEq = 2,
    ORRLEq = 3,
    ORRGEq = 4,
-   ORNeg   = 5,
-   ORRDisj = 6,
-   ORRConj = 7,
-   ORRImply = 8
+   ORRLThen = 5,
+   ORRGThen = 6,
+   ORNeg   = 7,
+   ORRDisj = 8,
+   ORRConj = 9,
+   ORRImply = 10,
+   ORRSet = 11
 } ORRelationType;
 
 typedef enum ORVType {
-  ORTBool = 0,
-  ORTInt = 1,
-  ORTReal = 2,
-  ORTBit  = 3,
-  ORTSet  = 4,
-  ORTNA = 5
+   ORTBool = 0,
+   ORTInt = 1,
+   ORTReal = 2,
+   ORTFloat = 3,
+   ORTDouble = 4,
+   ORTLDouble = 5,
+   ORTBit  = 6,
+   ORTSet  = 7,
+   ORTNA = 8
 } ORVType;
 
 #endif
@@ -121,6 +128,7 @@ static ORVType lookup_expr_table[][9] = {
 -(ORBool) isVariable;
 -(id<ORExpr>) abs;
 -(id<ORExpr>) square;
+-(id<ORRelation>) set: (id) e;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
 -(id<ORExpr>) mul: (id) e;
@@ -170,6 +178,7 @@ static ORVType lookup_expr_table[][9] = {
 
 @interface NSNumber (Expressions)
 -(id<ORExpr>)asExpression:(id<ORTracker>)tracker;
+-(id<ORRelation>) set: (id<ORExpr>) e;
 -(id<ORExpr>) plus: (id<ORExpr>) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;
