@@ -14,7 +14,7 @@
 #import <objcp/CPDom.h>
 #import <objcp/CPFloatVarI.h>
 
-#include <gmp.h>
+#include "gmp.h"
 
 
 @interface CPFloatDom : NSObject<CPFloatDom,NSCopying> {

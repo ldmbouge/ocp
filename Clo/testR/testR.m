@@ -17,19 +17,21 @@ int main(int argc, const char * argv[]) {
         id<ORFloatVar> y = [ORFactory floatVar:mdl];
         id<ORFloatVar> z = [ORFactory floatVar:mdl];
         
-        [mdl add:[x eq: @(0.1f)]];
-        [mdl add:[y eq: @(0.2f)]];
-        [mdl add:[z eq: [x plus:y]]];
+        [mdl add:[x set: @(0.1f)]];
+        [mdl add:[y set: @(0.2f)]];
+        [mdl add:[z set: [x plus:y]]];
         
         NSLog(@"model: %@",mdl);
-        id<ORFloatVarArray> vars = [mdl floatVars];
-        id<CPProgram> p = [ORFactory createCPProgram:mdl];
+       id<ORFloatVarArray> vs = [mdl floatVars];
+       id<CPProgram> p = [ORFactory createCPProgram:mdl];
+       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine]];
 
         [p solve:^{
-            [p lexicalOrderedSearch:vars do:^(id<ORFloatVar> b) {
-                [p floatSplit:b];
+            [p lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+               [p floatSplit:i call:s withVars:x];
             }];
-            NSLog(@"helloword %@ !",p);
+           
+            NSLog(@"%@",p);
             NSLog(@"x : %16.16e (%s)",[p floatValue:x],[p bound:x] ? "YES" : "NO");
             NSLog(@"ex: [%16.16e;%16.16e]",[p minError:x],[p maxError:x]);
             NSLog(@"y : %16.16e (%s)",[p floatValue:y],[p bound:y] ? "YES" : "NO");
