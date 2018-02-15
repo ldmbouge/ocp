@@ -808,7 +808,7 @@
    return [(id<CPProgram>)[self worker] maxError:x];
 }
 - (ORFloat)minError:(nonnull id<ORVar>)x {
-   return [(id<CPProgram>)[self worker] maxError:x];
+   return [(id<CPProgram>)[self worker] minError:x];
 }
 -(ORBool) bound: (id<ORVar>) x
 {

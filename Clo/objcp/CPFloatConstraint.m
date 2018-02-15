@@ -18,6 +18,9 @@
 
 #define PERCENT 5.0
 
+void printRational(ORRational r){
+   NSLog(@"%16.16e", mpq_get_d(r));
+}
 
 void addR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
    mpq_add(ez->inf, ex->inf, ey->inf);
@@ -33,33 +36,41 @@ void addR_inv_ex(rational_interval* ex, rational_interval* ez, rational_interval
    
    mpq_sub(ex->sup, ez->sup, ey->sup);
    mpq_sub(ex->sup, ex->sup, eo->sup);
+   
+   /*NSLog(@"ex");
+   printRational(ez->sup);
+   printRational(ez->inf);
+   NSLog(@"------");
+   printRational(ex->sup);
+   printRational(ex->inf);
+   NSLog(@"------");
+   printRational(ey->sup);
+   printRational(ey->inf);
+   NSLog(@"------");
+   printRational(eo->sup);
+   printRational(eo->inf);*/
+
 }
 
 void addR_inv_ey(rational_interval* ey, rational_interval* ez, rational_interval* ex, rational_interval* eo){
-   /*printRational(ey->inf);
-   printRational(ez->inf);
-   printRational(ex->inf);*/
    mpq_sub(ey->inf, ez->inf, ex->inf);
-//   printRational(ey->inf);
-//   printRational(ez->inf);
-//   printRational(ex->inf);
-   NSLog(@"next");
-//   printRational(ey->inf);
-//   printRational(ey->inf);
-//   printRational(eo->inf);
    mpq_sub(ey->inf, ey->inf, eo->inf);
-//   printRational(ey->inf);
-//   printRational(ey->inf);
-//   printRational(eo->inf);
-//   NSLog(@"next");
-//   printRational(ey->sup);
-//   printRational(ez->sup);
-//   printRational(ex->sup);
+   
    mpq_sub(ey->sup, ez->sup, ex->sup);
-//   printRational(ey->sup);
-//   printRational(ez->sup);
-//   printRational(ex->sup);
    mpq_sub(ey->sup, ey->sup, eo->sup);
+   
+   /*NSLog(@"ey");
+   printRational(ez->sup);
+   printRational(ez->inf);
+   NSLog(@"------");
+   printRational(ex->sup);
+   printRational(ex->inf);
+   NSLog(@"------");
+   printRational(ey->sup);
+   printRational(ey->inf);
+   NSLog(@"------");
+   printRational(eo->sup);
+   printRational(eo->inf);*/
 }
 
 void addR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval* ex, rational_interval* ey){
@@ -68,6 +79,19 @@ void addR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval
    
    mpq_sub(eo->sup, ez->sup, ex->sup);
    mpq_sub(eo->sup, eo->sup, ey->sup);
+   
+   /*NSLog(@"eo");
+   printRational(ez->sup);
+   printRational(ez->inf);
+   NSLog(@"------");
+   printRational(ex->sup);
+   printRational(ex->inf);
+   NSLog(@"------");
+   printRational(ey->sup);
+   printRational(ey->inf);
+   NSLog(@"------");
+   printRational(eo->sup);
+   printRational(eo->inf);*/
 }
 
 void subR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
@@ -835,6 +859,8 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    [self propagate];
     if(![_x bound])  [_x whenChangeBoundsPropagate:self];
     if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+    if(![_x boundError])  [_x whenChangeBoundsPropagate:self];
+    if(![_y boundError])  [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -845,13 +871,19 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
       fpi_setf(_precision, _rounding, &yTmp, &_xi);
       inter = intersection(_yi, yTmp, 0.0f);
-      if (inter.changed) [_y updateInterval:inter.result.inf and:inter.result.sup];
+      if (inter.changed)
+         [_y updateInterval:inter.result.inf and:inter.result.sup];
+      if(!mpq_equal(*[_x minErr], *[_y minErr]) || !mpq_equal(*[_x maxErr], *[_y maxErr]))
+         [_y updateIntervalError:*[_x minErr] and:*[_x maxErr]];
       return;
    }else if([_y bound]){
       float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
       fpi_setf(_precision, _rounding, &xTmp, &_yi);
       inter = intersection(_xi, xTmp, 0.0f);
-      if (inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+      if (inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
+      if(!mpq_equal(*[_x minErr], *[_y minErr]) || !mpq_equal(*[_x maxErr], *[_y maxErr]))
+         [_x updateIntervalError:*[_y minErr] and:*[_y maxErr]];
       return;
    }
    if(isDisjointWith(_x,_y)){
@@ -865,6 +897,8 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       fpi_setf(_precision, _rounding, &xTmp, &_yi);
       inter = intersection(_yi, yTmp, 0.0f);
       if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+      if(!mpq_equal(*[_x minErr], *[_y minErr]) || !mpq_equal(*[_x maxErr], *[_y maxErr]))
+         [_x updateIntervalError:*[_x minErr] and:*[_x maxErr]];
    }
    
 }
@@ -894,6 +928,11 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 -(void) post
 {
    [_x bind:_c];
+   ORRational _zero;
+   mpq_init(_zero);
+   mpq_set_d(_zero, 0.0f);
+   [_x bindError:_zero];
+   mpq_clear(_zero);
 }
 -(NSSet*)allVars
 {
@@ -1238,18 +1277,10 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    _z = z;
    _x = x;
    _y = y;
-   _ez = z;
-   _ex = x;
-   _ey = y;
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
-   ez = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
-   /* INIT at 0.0 */
-   ex = makeRationalInterval(*[_ex minErr], *[_ex maxErr]);
-   ey = makeRationalInterval(*[_ey minErr], *[_ey maxErr]);
-   eo = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
-   mpq_inits(ezTemp.inf, ezTemp.sup, exTemp.inf, exTemp.sup, eyTemp.inf, eyTemp.sup, eoTemp.sup, eoTemp.inf, NULL);
+   mpq_inits(ez.sup, ez.inf, ex.sup, ex.inf, ey.sup, ey.inf, eo.sup, eo.inf, ezTemp.sup, ezTemp.inf, exTemp.sup, exTemp.inf, eyTemp.sup, eyTemp.inf, eoTemp.sup, eoTemp.inf, NULL);
    return self;
 }
 -(void) post
@@ -1277,18 +1308,10 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    z = makeFloatInterval([_z min],[_z max]);
    x = makeFloatInterval([_x min],[_x max]);
    y = makeFloatInterval([_y min],[_y max]);
-   mpq_set(ez.inf,*[_z minErr]);
-   mpq_set(ez.sup,*[_z maxErr]);
-   mpq_set_d(ex.inf,0.0);
-   mpq_set_d(ex.sup,0.0);
-   mpq_set_d(ey.inf,0.0);
-   mpq_set_d(ey.sup,0.0);
-   mpq_set_d(eo.inf,0.0);
-   mpq_set_d(eo.sup,0.0);
-   /*ezTemp = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
-   exTemp = makeRationalInterval(*[_ex minErr], *[_ex maxErr]);
-   eyTemp = makeRationalInterval(*[_ey minErr], *[_ey maxErr]);
-   eoTemp = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);*/
+   makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
+   makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
+   makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
+   makeRationalInterval(&eo, *[_x minErr], *[_x maxErr]);
    do {
       changed = false;
       zTemp = z;
@@ -1319,27 +1342,35 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
+      
       /* ERROR PROPAG */
-      setRationalInterval(ezTemp,ez);
+      printf("\nez\n");
+      printRational(ez.inf);
+      printRational(ez.sup);
+      printf("\n\n");
+      
+      setRationalInterval(&ezTemp,&ez);
       addR(&ezTemp, &ex, &ey, &eo);
-      interError = intersectionError(changed, &ez, &ezTemp);
-      ez = interError.result;
+      intersectionError(&interError, ez, ezTemp);
+      setRationalInterval(&ez, &interError.result);
       changed |= interError.changed;
       
-      setRationalInterval(exTemp,ex);
-      setRationalInterval(eyTemp,ey);
+      setRationalInterval(&exTemp,&ex);
       addR_inv_ex(&exTemp, &ez, &ey, &eo);
-      interError = intersectionError(changed, &ex, &exTemp);
-      ex = interError.result;
+      intersectionError(&interError, ex, exTemp);
+      setRationalInterval(&ex, &interError.result);
       changed |= interError.changed;
       
+      setRationalInterval(&eyTemp,&ey);
       addR_inv_ey(&eyTemp, &ez, &ex, &eo);
-      interError = intersectionError(changed, &ey, &eyTemp);
+      intersectionError(&interError, ey, eyTemp);
+      setRationalInterval(&ey, &interError.result);
       changed |= interError.changed;
       
-      setRationalInterval(eoTemp,eo);
+      setRationalInterval(&eoTemp,&eo);
       addR_inv_eo(&eoTemp, &ez, &ex, &ey);
-      interError = intersectionError(changed, &eo, &eoTemp);
+      intersectionError(&interError, eo, eoTemp);
+      setRationalInterval(&eo, &interError.result);
       changed |= interError.changed;
       /* END ERROR PROPAG */
       
@@ -1349,24 +1380,30 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([_x bound] && [_y bound] && [_z bound])
-         assignTRInt(&_active, NO, _trail);
       [_x updateIntervalError:ex.inf and:ex.sup];
       [_y updateIntervalError:ey.inf and:ey.sup];
       [_z updateIntervalError:ez.inf and:ez.sup];
-      
+      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
+         assignTRInt(&_active, NO, _trail);
    }
    fesetround(FE_TONEAREST);
+   mpq_clear(interError.interval.inf);
+   mpq_clear(interError.result.sup);
+   mpq_clear(interError.interval.sup);
+   mpq_clear(interError.result.inf);
 }
 - (void)dealloc {
    freeRationalInterval(&ez);
    freeRationalInterval(&ex);
    freeRationalInterval(&ey);
    freeRationalInterval(&eo);
-   mpq_clears(ezTemp.inf, ezTemp.sup, exTemp.inf, exTemp.sup, eyTemp.inf, eyTemp.sup, eoTemp.sup, eoTemp.inf, NULL);
+   freeRationalInterval(&ezTemp);
+   freeRationalInterval(&exTemp);
+   freeRationalInterval(&eyTemp);
+   freeRationalInterval(&eoTemp);
+   //mpq_clears(ezTemp.inf, ezTemp.sup, exTemp.inf, exTemp.sup, eyTemp.inf, eyTemp.sup, eoTemp.sup, eoTemp.inf, NULL);
    [super dealloc];
 }
-
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
@@ -1409,19 +1446,20 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 @end
 
 
-@implementation CPFloatTernarySub
+@implementation CPFloatTernarySub{
+   rational_interval ezTemp, eyTemp, exTemp, ez, ex, ey;
+   rational_interval eoTemp, eo;
+}
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
    _y = y;
-   _ez = z;
-   _ex = x;
-   _ey = y;
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
+   
    return self;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
@@ -1435,23 +1473,24 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    if (![_x bound]) [_x whenChangeBoundsPropagate:self];
    if (![_y bound]) [_y whenChangeBoundsPropagate:self];
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+   if (![_x boundError]) [_x whenChangeBoundsPropagate:self];
+   if (![_y boundError]) [_y whenChangeBoundsPropagate:self];
+   if (![_z boundError]) [_z whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
-   rational_interval ezTemp, eyTemp, exTemp, ez, ex, ey;
-   rational_interval eoTemp, eo;
    intersectionInterval inter;
    intersectionIntervalError interError;
+   mpq_init(interError.interval.inf);
+   mpq_init(interError.result.sup);
+   mpq_init(interError.interval.sup);
+   mpq_init(interError.result.inf);
    z = makeFloatInterval([_z min],[_z max]);
    x = makeFloatInterval([_x min],[_x max]);
    y = makeFloatInterval([_y min],[_y max]);
-   ez = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
-   ex = makeRationalInterval(*[_ex minErr], *[_ex maxErr]);
-   ey = makeRationalInterval(*[_ey minErr], *[_ey maxErr]);
-   eo = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
    do {
       changed = false;
       zTemp = z;
@@ -1482,50 +1521,57 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
+      
+      /* ERROR PROPAG */
+      ezTemp = ez;
+      subR(&ezTemp, &ex, &ey, &eo);
+      intersectionError(&interError, ez, ezTemp);
+      ez = interError.result;
+      changed |= interError.changed;
+      
+      exTemp = ex;
+      eyTemp = ey;
+      subR_inv_ex(&exTemp, &ez, &ey, &eo);
+      intersectionError(&interError, ex, exTemp);
+      ex = interError.result;
+      changed |= interError .changed;
+      
+      subR_inv_ey(&eyTemp, &ez, &ex, &eo);
+      intersectionError(&interError, ey, eyTemp);
+      ey = interError.result;
+      changed |= interError.changed;
+      
+      subR_inv_eo(&eoTemp, &ez, &ex, &ey);
+      intersectionError(&interError, eo, eoTemp);
+      eo = interError.result;
+      changed |= interError.changed;
+      /* END ERROR PROPAG */
+
       gchanged |= changed;
    } while(changed);
    if(gchanged){
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([_x bound] && [_y bound] && [_z bound])
+      [_x updateIntervalError:ex.inf and:ex.sup];
+      [_y updateIntervalError:ey.inf and:ey.sup];
+      [_z updateIntervalError:ez.inf and:ez.sup];
+      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
          assignTRInt(&_active, NO, _trail);
-      do {
-         changed = false;
-         ezTemp = ez;
-         subR(&ezTemp, &ex, &ey, &eo);
-         interError = intersectionError(changed, &ez, &ezTemp);
-         ez = interError.result;
-         changed |= interError.changed;
-         
-         exTemp = ex;
-         eyTemp = ey;
-         subR_inv_ex(&exTemp, &ez, &ey, &eo);
-         interError = intersectionError(changed, &ex, &exTemp);
-         ex = interError.result;
-         changed |= interError .changed;
-         
-         subR_inv_ey(&eyTemp, &ez, &ex, &eo);
-         interError = intersectionError(changed, &ey, &eyTemp);
-         ey = interError.result;
-         changed |= interError.changed;
-         
-         subR_inv_eo(&eoTemp, &ez, &ex, &ey);
-         interError = intersectionError(changed, &eo, &eoTemp);
-         eo = interError.result;
-         changed |= interError.changed;
-         
-         gchanged |= changed;
-      } while(changed);
-      if(gchanged){
-         [_ex updateIntervalError:ex.inf and:ex.sup];
-         [_ey updateIntervalError:ey.inf and:ey.sup];
-         [_ez updateIntervalError:ez.inf and:ez.sup];
-      }
-      
    }
-   
-      fesetround(FE_TONEAREST);
+   fesetround(FE_TONEAREST);
+}
+- (void)dealloc {
+   freeRationalInterval(&ez);
+   freeRationalInterval(&ex);
+   freeRationalInterval(&ey);
+   freeRationalInterval(&eo);
+   freeRationalInterval(&ezTemp);
+   freeRationalInterval(&exTemp);
+   freeRationalInterval(&eyTemp);
+   freeRationalInterval(&eoTemp);
+   //mpq_clears(ezTemp.inf, ezTemp.sup, exTemp.inf, exTemp.sup, eyTemp.inf, eyTemp.sup, eoTemp.sup, eoTemp.inf, NULL);
+   [super dealloc];
 }
 -(NSSet*)allVars
 {
@@ -1568,16 +1614,16 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 }
 @end
 
-@implementation CPFloatTernaryMult
+@implementation CPFloatTernaryMult{
+   rational_interval ezTemp, eyTemp, exTemp, ez, ex, ey;
+   rational_interval eoTemp, eo;
+}
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
    _y = y;
-   _ez = z;
-   _ex = x;
-   _ey = y;
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
@@ -1593,23 +1639,29 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    if (![_x bound]) [_x whenChangeBoundsPropagate:self];
    if (![_y bound]) [_y whenChangeBoundsPropagate:self];
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+   if (![_x boundError]) [_x whenChangeBoundsPropagate:self];
+   if (![_y boundError]) [_y whenChangeBoundsPropagate:self];
+   if (![_z boundError]) [_z whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
-   rational_interval ezTemp, eyTemp, exTemp, ez, ex, ey;
-   rational_interval eoTemp, eo;
    intersectionInterval inter;
    intersectionIntervalError interError;
+   mpq_init(interError.interval.inf);
+   mpq_init(interError.result.sup);
+   mpq_init(interError.interval.sup);
+   mpq_init(interError.result.inf);
    z = makeFloatInterval([_z min],[_z max]);
    x = makeFloatInterval([_x min],[_x max]);
    y = makeFloatInterval([_y min],[_y max]);
-   ez = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
-   ex = makeRationalInterval(*[_ex minErr], *[_ex maxErr]);
-   ey = makeRationalInterval(*[_ey minErr], *[_ey maxErr]);
-   eo = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
+   makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
+   makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
+   makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
+   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+
    do {
       changed = false;
       zTemp = z;
@@ -1629,51 +1681,59 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
+      
+      /* ERROR PROPAG */
+      ezTemp = ez;
+      mulR(&ezTemp, &ex, &ey, &eo, &x, &y);
+      intersectionError(&interError, ez, ezTemp);
+      ez = interError.result;
+      changed |= interError.changed;
+      
+      exTemp = ex;
+      mulR_inv_ex(&exTemp, &ez, &ey, &eo, &x, &y);
+      intersectionError(&interError, ex , exTemp);
+      ex = interError.result;
+      changed |= interError.changed;
+      
+      eyTemp = ey;
+      mulR_inv_ey(&eyTemp, &ez, &ex, &eo, &x, &y);
+      intersectionError(&interError, ey, eyTemp);
+      ey = interError.result;
+      changed |= interError.changed;
+      
+      eoTemp = eo;
+      mulR_inv_eo(&eoTemp, &ez, &ex, &ey, &x, &y);
+      intersectionError(&interError, eo, eoTemp);
+      eo = interError.result;
+      changed |= interError.changed;
+      /* END ERROR PROPAG */
+
       gchanged |= changed;
    } while(changed);
    if(gchanged){
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([_x bound] && [_y bound] && [_z bound])
+      [_x updateIntervalError:ex.inf and:ex.sup];
+      [_y updateIntervalError:ey.inf and:ey.sup];
+      [_z updateIntervalError:ez.inf and:ez.sup];
+      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
          assignTRInt(&_active, NO, _trail);
-      do {
-         changed = false;
-         ezTemp = ez;
-         mulR(&ezTemp, &ex, &ey, &eo, &x, &y);
-         interError = intersectionError(changed, &ez, &ezTemp);
-         ez = interError.result;
-         changed |= interError.changed;
          
-         exTemp = ex;
-         mulR_inv_ex(&exTemp, &ez, &ey, &eo, &x, &y);
-         interError = intersectionError(changed, &ex , &exTemp);
-         ex = interError.result;
-         changed |= interError.changed;
-         
-         eyTemp = ey;
-         mulR_inv_ey(&eyTemp, &ez, &ex, &eo, &x, &y);
-         interError = intersectionError(changed, &ey, &eyTemp);
-         ey = interError.result;
-         changed |= interError.changed;
-         
-         eoTemp = eo;
-         mulR_inv_eo(&eoTemp, &ez, &ex, &ey, &x, &y);
-         interError = intersectionError(changed, &eo, &eoTemp);
-         eo = interError.result;
-         changed |= interError.changed;
-         
-         gchanged |= changed;
-      } while(changed);
-      if(gchanged){
-         [_ex updateIntervalError:ex.inf and:ex.sup];
-         [_ey updateIntervalError:ey.inf and:ey.sup];
-         [_ez updateIntervalError:ez.inf and:ez.sup];
-         
-      }
-      
    }
    fesetround(FE_TONEAREST);
+}
+- (void)dealloc {
+   freeRationalInterval(&ez);
+   freeRationalInterval(&ex);
+   freeRationalInterval(&ey);
+   freeRationalInterval(&eo);
+   freeRationalInterval(&ezTemp);
+   freeRationalInterval(&exTemp);
+   freeRationalInterval(&eyTemp);
+   freeRationalInterval(&eoTemp);
+   //mpq_clears(ezTemp.inf, ezTemp.sup, exTemp.inf, exTemp.sup, eyTemp.inf, eyTemp.sup, eoTemp.sup, eoTemp.inf, NULL);
+   [super dealloc];
 }
 -(NSSet*)allVars
 {
@@ -1689,16 +1749,16 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
 }
 @end
 
-@implementation CPFloatTernaryDiv
+@implementation CPFloatTernaryDiv{
+   rational_interval ezTemp, eyTemp, exTemp, ez, ex, ey;
+   rational_interval eoTemp, eo;
+}
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x div:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
    _y = y;
-   _ez = z;
-   _ex = x;
-   _ey = y;
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
@@ -1714,23 +1774,28 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    if (![_x bound]) [_x whenChangeBoundsPropagate:self];
    if (![_y bound]) [_y whenChangeBoundsPropagate:self];
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+   if (![_x boundError]) [_x whenChangeBoundsPropagate:self];
+   if (![_y boundError]) [_y whenChangeBoundsPropagate:self];
+   if (![_z boundError]) [_z whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
-   rational_interval ezTemp, eyTemp, exTemp, ez, ex, ey;
-   rational_interval eoTemp, eo;
    intersectionInterval inter;
    intersectionIntervalError interError;
+   mpq_init(interError.interval.inf);
+   mpq_init(interError.result.sup);
+   mpq_init(interError.interval.sup);
+   mpq_init(interError.result.inf);
    z = makeFloatInterval([_z min],[_z max]);
    x = makeFloatInterval([_x min],[_x max]);
    y = makeFloatInterval([_y min],[_y max]);
-   ez = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
-   ex = makeRationalInterval(*[_ex minErr], *[_ex maxErr]);
-   ey = makeRationalInterval(*[_ey minErr], *[_ey maxErr]);
-   eo = makeRationalInterval(*[_ez minErr], *[_ez maxErr]);
+   makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
+   makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
+   makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
+   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
    do {
       changed = false;
       zTemp = z;
@@ -1750,49 +1815,58 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
       inter = intersection(y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
+      /* ERROR PROPAG */
+      changed = false;
+      ezTemp = ez;
+      divR(&ezTemp, &ex, &ey, &eo, &x, &y);
+      intersectionError(&interError, ez, ezTemp);
+      ez = interError.result;
+      changed |= interError.changed;
+      
+      exTemp = ex;
+      divR_inv_ex(&exTemp, &ez, &ey, &eo, &x, &y);
+      intersectionError(&interError, ex , exTemp);
+      ex = interError.result;
+      changed |= interError.changed;
+      
+      eyTemp = ey;
+      divR_inv_ey(&eyTemp, &ez, &ex, &eo, &x, &y);
+      intersectionError(&interError, ey, eyTemp);
+      ey = interError.result;
+      changed |= interError.changed;
+      
+      eoTemp = eo;
+      divR_inv_eo(&eoTemp, &ez, &ex, &ey, &x, &y);
+      intersectionError(&interError, eo, eoTemp);
+      eo = interError.result;
+      changed |= interError.changed;
+      /* END ERROR PROPAG */
+
       gchanged |= changed;
    } while(changed);
    if(gchanged){
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([_x bound] && [_y bound] && [_z bound])
+      [_x updateIntervalError:ex.inf and:ex.sup];
+      [_y updateIntervalError:ey.inf and:ey.sup];
+      [_z updateIntervalError:ez.inf and:ez.sup];
+      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
          assignTRInt(&_active, NO, _trail);
-      do {
-         changed = false;
-         ezTemp = ez;
-         divR(&ezTemp, &ex, &ey, &eo, &x, &y);
-         interError = intersectionError(changed, &ez, &ezTemp);
-         ez = interError.result;
-         changed |= interError.changed;
-         
-         exTemp = ex;
-         divR_inv_ex(&exTemp, &ez, &ey, &eo, &x, &y);
-         interError = intersectionError(changed, &ex , &exTemp);
-         ex = interError.result;
-         changed |= interError.changed;
-         
-         eyTemp = ey;
-         divR_inv_ey(&eyTemp, &ez, &ex, &eo, &x, &y);
-         interError = intersectionError(changed, &ey, &eyTemp);
-         ey = interError.result;
-         changed |= interError.changed;
-         
-         eoTemp = eo;
-         divR_inv_eo(&eoTemp, &ez, &ex, &ey, &x, &y);
-         interError = intersectionError(changed, &eo, &eoTemp);
-         eo = interError.result;
-         changed |= interError.changed;
-         
-         gchanged |= changed;
-      } while(changed);
-      if(gchanged){
-         [_ex updateIntervalError:ex.inf and:ex.sup];
-         [_ey updateIntervalError:ey.inf and:ey.sup];
-         [_ez updateIntervalError:ez.inf and:ez.sup];
-      }
    }
    fesetround(FE_TONEAREST);
+}
+- (void)dealloc {
+   freeRationalInterval(&ez);
+   freeRationalInterval(&ex);
+   freeRationalInterval(&ey);
+   freeRationalInterval(&eo);
+   freeRationalInterval(&ezTemp);
+   freeRationalInterval(&exTemp);
+   freeRationalInterval(&eyTemp);
+   freeRationalInterval(&eoTemp);
+   //mpq_clears(ezTemp.inf, ezTemp.sup, exTemp.inf, exTemp.sup, eyTemp.inf, eyTemp.sup, eoTemp.sup, eoTemp.inf, NULL);
+   [super dealloc];
 }
 -(NSSet*)allVars
 {

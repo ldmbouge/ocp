@@ -127,9 +127,6 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
-    CPFloatVarI* _ez;
-    CPFloatVarI* _ex;
-    CPFloatVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;
@@ -149,9 +146,6 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
-    CPFloatVarI* _ez;
-    CPFloatVarI* _ex;
-    CPFloatVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;
@@ -170,9 +164,6 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
-    CPFloatVarI* _ez;
-    CPFloatVarI* _ex;
-    CPFloatVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;
@@ -189,9 +180,6 @@
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
-    CPFloatVarI* _ez;
-    CPFloatVarI* _ex;
-    CPFloatVarI* _ey;
     ORInt _precision;
     ORDouble _percent;
     ORInt _rounding;

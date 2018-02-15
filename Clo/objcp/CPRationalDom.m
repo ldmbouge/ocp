@@ -15,9 +15,9 @@
 //#import "CPRationalVarI.h"
 #import "CPFloatVarI.h"
 
-void printRational(ORRational r){
+/*void printRational(ORRational r){
    NSLog(@"%16.16e", mpq_get_d(r));
-}
+}*/
 
 @implementation CPRationalDom
 
@@ -65,8 +65,8 @@ void printRational(ORRational r){
 }
 -(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x
 {
-   printRational(newMin);
-   printRational(*[self max]);
+   //printRational(newMin);
+   //printRational(*[self max]);
     if(mpq_cmp(newMin, *[self max]) > 0)
         failNow();
     updateMinR(&_domain, newMin, _trail);
@@ -77,8 +77,8 @@ void printRational(ORRational r){
 }
 -(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x
 {
-   printRational(*[self min]);
-   printRational(newMax);
+   //printRational(*[self min]);
+   //printRational(newMax);
     if(mpq_cmp(*[self min], newMax) > 0)
         failNow();
     updateMaxR(&_domain, newMax, _trail);
@@ -129,16 +129,6 @@ void printRational(ORRational r){
     ORIReady();
     return createORI2(mpq_get_d(_domain._low), mpq_get_d(_domain._up));
 }
-/*-(ORLDouble) domwidth
-{
-    //ORDouble min = _domain._low;//(_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
-    //ORDouble max = _domain._up;//(_domain._up == infinityf()) ? FLT_MAX : _domain._up;
-    //if(_domain._low == -infinityf() && _domain._up == infinityf()) return DBL_MAX;
-    // WARNING: Experimental
-    ORRational width;
-    mpq_sub(width, _domain._up, _domain._low);
-    return  mpq_get_d(width);
-}*/
 -(TRRationalInterval) domain
 {
     return _domain;
@@ -146,9 +136,7 @@ void printRational(ORRational r){
 
 -(ORBool) member:(ORRational)v
 {
-    // mpq_cmp -> 0 if == ; 1 if >0 ; -1 if <0
     return mpq_cmp(_domain._low, v) <= 0 && mpq_cmp(v, _domain._low) <= 0;
-    //return _domain._low <= v && v <= _domain._up;
 }
 -(id) copy
 {

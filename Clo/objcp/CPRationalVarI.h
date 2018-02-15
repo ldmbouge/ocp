@@ -19,7 +19,7 @@
 #import <objcp/CPIntVarI.h>
 
 //#include "fpi.h"
-#import "gmp.h"
+#include "gmp.h"
 
 /*#define NB_FLOAT_BY_E (8388608)
 #define S_PRECISION 23
