@@ -226,7 +226,7 @@ static inline void makeRationalInterval(rational_interval* ri, ORRational min, O
 
 static inline void freeRationalInterval(rational_interval * r)
 {
-   mpq_clears(r->inf,r->sup);
+   mpq_clears(r->inf,r->sup, NULL);
 }
 
 static inline void setRationalInterval(rational_interval* r, rational_interval* r2){
@@ -299,16 +299,13 @@ static inline intersectionInterval intersection(float_interval r, float_interval
 }
 
 static inline void intersectionError(intersectionIntervalError* interErr, rational_interval a, rational_interval b){
-    //rational_interval new;
-    interErr->changed = false;
-    maxError(&interErr->result.inf, &a.inf, &b.inf);
-    //NSLog(@"%16.16e %16.16e %16.16e", mpq_get_d(new.inf), mpq_get_d(a.inf), mpq_get_d(b.inf));
-    minError(&interErr->result.sup, &a.sup, &b.sup);
-    //NSLog(@"%16.16e %16.16e %16.16e", mpq_get_d(new.sup), mpq_get_d(a.sup), mpq_get_d(b.sup));
+   interErr->changed = false;
+   maxError(&interErr->result.inf, &a.inf, &b.inf);
+   minError(&interErr->result.sup, &a.sup, &b.sup);
+   
    if(!mpq_equal(interErr->result.inf, a.inf) && !mpq_equal(interErr->result.sup, a.sup)){
       interErr->changed = true;
    }
    mpq_set(interErr->interval.inf, a.inf);
    mpq_set(interErr->interval.sup, a.sup);
-    //return (intersectionIntervalError){new,a,changed};
 }

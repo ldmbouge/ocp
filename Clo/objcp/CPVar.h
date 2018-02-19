@@ -203,22 +203,6 @@ enum CPVarClass {
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat) newMax;
 @end
 
-@protocol CPRationalVar<CPVar>
--(ORRational*) min;
--(ORRational*) max;
--(ORRational*) value;
--(ORRational*) rationalValue;
--(ORInterval) bounds;
--(ORBool) member:(ORRational)v;
--(ORBool) bound;
-//-(ORLDouble) domwidth;
--(void) bind:(ORRational) val;
--(void) updateMin:(ORRational) newMin;
--(void) updateMax:(ORRational) newMax;
--(void) assignRelaxationValue: (ORRational) f;
--(void) updateInterval: (ORRational) newMin and:(ORRational) newMax;
-@end
-
 @protocol CPDoubleVar<CPVar>
 -(ORDouble) min;
 -(ORDouble) max;

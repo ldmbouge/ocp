@@ -23,7 +23,6 @@
 #import "CPFloatVarI.h"
 #import "CPDoubleVarI.h"
 #import "CPLDoubleVarI.h"
-#import "CPRationalVarI.h"
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 

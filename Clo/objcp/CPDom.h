@@ -89,7 +89,7 @@
 -(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
 @end
 
-@protocol CPRationalVarNotifier;
+@protocol CPFloatVarNotifier;
 @protocol CPRationalDom
 -(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x;
 -(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x;

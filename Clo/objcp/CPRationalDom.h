@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
-#import <objcp/CPRationalVarI.h>
 
 @interface CPRationalDom : NSObject<CPRationalDom,NSCopying> {
     id<ORTrail>           _trail;
@@ -22,10 +21,10 @@
 }
 -(id)initCPRationalDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up;
 -(id)initCPRationalDom:(id<ORTrail>)trail;
--(void) updateMin:(ORRational)newMin for:(id<CPRationalVarNotifier>)x;
--(void) updateMax:(ORRational)newMax for:(id<CPRationalVarNotifier>)x;
--(void) updateInterval:(rational_interval)v for:(id<CPRationalVarNotifier>)x;
--(void) bind:(ORRational)val  for:(id<CPRationalVarNotifier>)x;
+-(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x;
+-(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x;
+-(void) updateInterval:(rational_interval)v for:(id<CPFloatVarNotifier>)x;
+-(void) bind:(ORRational)val  for:(id<CPFloatVarNotifier>)x;
 -(ORRational*) min;
 -(ORRational*) max;
 -(ORRational*) imin;
@@ -37,6 +36,6 @@
 -(ORBool) member:(ORRational)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPRationalDom>)toRestore;
--(void) restoreValue:(ORRational)toRestore for:(id<CPRationalVarNotifier>)x;
+-(void) restoreValue:(ORRational)toRestore for:(id<CPFloatVarNotifier>)x;
 @end
 

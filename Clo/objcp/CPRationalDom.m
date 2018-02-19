@@ -12,12 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import "CPRationalDom.h"
 //#import "CPEngineI.h"
-//#import "CPRationalVarI.h"
 #import "CPFloatVarI.h"
-
-/*void printRational(ORRational r){
-   NSLog(@"%16.16e", mpq_get_d(r));
-}*/
 
 @implementation CPRationalDom
 
@@ -25,8 +20,7 @@
 {
     self = [super init];
     _trail = trail;
-    mpq_init(_imin);
-    mpq_init(_imax);
+    mpq_inits(_imin, _imax, NULL);
     mpq_set_d(_imin,low);
     mpq_set_d(_imax,up);
     _domain = makeTRRationalInterval(trail, _imin, _imax);
@@ -65,8 +59,6 @@
 }
 -(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x
 {
-   //printRational(newMin);
-   //printRational(*[self max]);
     if(mpq_cmp(newMin, *[self max]) > 0)
         failNow();
     updateMinR(&_domain, newMin, _trail);
@@ -77,8 +69,6 @@
 }
 -(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x
 {
-   //printRational(*[self min]);
-   //printRational(newMax);
     if(mpq_cmp(*[self min], newMax) > 0)
         failNow();
     updateMaxR(&_domain, newMax, _trail);
@@ -87,7 +77,7 @@
     if (isBound)
         [x bindEvtErr:self];
 }
--(void) updateInterval:(rational_interval)v for:(id<CPRationalVarNotifier>)x;
+-(void) updateInterval:(rational_interval)v for:(id<CPFloatVarNotifier>)x;
 {
     [self updateMin:v.inf for:x];
     [self updateMax:v.sup for:x];
