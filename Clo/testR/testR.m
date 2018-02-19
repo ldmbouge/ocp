@@ -32,12 +32,29 @@ int main(int argc, const char * argv[]) {
             }];
            
             NSLog(@"%@",p);
-            NSLog(@"x : %16.16e (%s)",[p floatValue:x],[p bound:x] ? "YES" : "NO");
-            NSLog(@"ex: [%16.16e;%16.16e]",[p minError:x],[p maxError:x]);
-            NSLog(@"y : %16.16e (%s)",[p floatValue:y],[p bound:y] ? "YES" : "NO");
-            NSLog(@"ey: [%16.16e;%16.16e]",[p minError:y],[p maxError:y]);
-            NSLog(@"z : %16.16e (%s)",[p floatValue:z],[p bound:z] ? "YES" : "NO");
-            NSLog(@"ez: [%16.16e;%16.16e]",[p minError:z],[p maxError:z]);
+            /* format of 8.8e to have the same value displayed as in FLUCTUAT */
+            NSLog(@"x : %8.8e (%s)",[p floatValue:x],[p bound:x] ? "YES" : "NO");
+            NSLog(@"ex: [%8.8e;%8.8e]",[p minError:x],[p maxError:x]);
+            NSLog(@"y : %8.8e (%s)",[p floatValue:y],[p bound:y] ? "YES" : "NO");
+            NSLog(@"ey: [%8.8e;%8.8e]",[p minError:y],[p maxError:y]);
+            NSLog(@"z : %8.8e (%s)",[p floatValue:z],[p bound:z] ? "YES" : "NO");
+            NSLog(@"ez: [%8.8e;%8.8e]",[p minError:z],[p maxError:z]);
+            /* OBJ-CP
+             x : 1.00000001e-01 (YES)
+             ex: [0.00000000e+00;0.00000000e+00]
+             y : 2.00000003e-01 (YES)
+             ey: [0.00000000e+00;0.00000000e+00]
+             z : 3.00000012e-01 (YES)
+             ez: [2.23517418e-08;2.23517418e-08]
+             */
+            /* FLUCTUAT
+             x : [1.00000001e-1;1.00000002e-1]
+             ex: [-1.49011612e-8;-1.49011611e-8]
+             y : [2.00000002e-1;2.00000003e-1]
+             ey: [-1.49011612e-8;-1.49011611e-8]
+             z : [3.00000011e-1;3.00000012e-1]
+             ex: [-3.97364299e-8;-3.97364298e-8]
+             */
         }];
     }
     return 0;

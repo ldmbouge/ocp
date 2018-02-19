@@ -1339,7 +1339,41 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_x minErr], *[_x maxErr]);
+   
+   /* compute eo interval with substraction from op on rational and op on float */
+   ORRational tmp_eo_inf_r, tmp_eo_sup_r, tmp_eo_r;
+   float_interval tmp_eo_fi;
+   
+   /* Initilization of ORRationals */
+   mpq_inits(tmp_eo_inf_r,tmp_eo_sup_r,tmp_eo_r,NULL);
+   /* interval result from op on float */
+   tmp_eo_fi = makeFloatInterval(x.inf + y.inf, x.sup + y.sup);
+   
+   /* Build op on rational */
+   /* x.inf + y.inf in tmp_eo_inf_r */
+   mpq_set_d(tmp_eo_inf_r, x.inf);
+   mpq_set_d(tmp_eo_r, y.inf);
+   mpq_add(tmp_eo_inf_r,  tmp_eo_inf_r, tmp_eo_r);
+   
+   /* x.sup + y.sup in tmp_eo_sup_r */
+   mpq_set_d(tmp_eo_sup_r, x.sup);
+   mpq_set_d(tmp_eo_r, y.sup);
+   mpq_add(tmp_eo_sup_r, tmp_eo_sup_r, tmp_eo_r);
+
+   /* R(x.inf + y.inf) - F(x.inf + y.inf) in tmp_eo_inf_r */
+   mpq_set_d(tmp_eo_r, tmp_eo_fi.inf);
+   mpq_sub(tmp_eo_inf_r, tmp_eo_inf_r, tmp_eo_r);
+   
+   /* R(x.sup + y.sup) - F(x.sup + y.sup) in tmp_eo_sup_r */
+   mpq_set_d(tmp_eo_r, tmp_eo_fi.sup);
+   mpq_sub(tmp_eo_sup_r, tmp_eo_sup_r, tmp_eo_r);
+   
+   /* Build rational_interval from result in eo */
+   makeRationalInterval(&eo, tmp_eo_inf_r, tmp_eo_sup_r);
+   
+   /* clear memory of ORRationals */
+   mpq_clears(tmp_eo_inf_r, tmp_eo_sup_r,tmp_eo_r, NULL);
+   
    do {
       changed = false;
       zTemp = z;
@@ -1510,7 +1544,40 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_x minErr], *[_x maxErr]);
+   
+   /* compute eo interval with substraction from op on rational and op on float */
+   ORRational tmp_eo_inf_r, tmp_eo_sup_r, tmp_eo_r;
+   float_interval tmp_eo_fi;
+   
+   /* Initilization of ORRationals */
+   mpq_inits(tmp_eo_inf_r,tmp_eo_sup_r,tmp_eo_r,NULL);
+   /* interval result from op on float */
+   tmp_eo_fi = makeFloatInterval(x.inf + y.inf, x.sup + y.sup);
+   
+   /* Build op on rational */
+   /* x.inf - y.inf in tmp_eo_inf_r */
+   mpq_set_d(tmp_eo_inf_r, x.inf);
+   mpq_set_d(tmp_eo_r, y.inf);
+   mpq_sub(tmp_eo_inf_r,  tmp_eo_inf_r, tmp_eo_r);
+   
+   /* x.sup - y.sup in tmp_eo_sup_r */
+   mpq_set_d(tmp_eo_sup_r, x.sup);
+   mpq_set_d(tmp_eo_r, y.sup);
+   mpq_sub(tmp_eo_sup_r, tmp_eo_sup_r, tmp_eo_r);
+   
+   /* R(x.inf - y.inf) - F(x.inf - y.inf) in tmp_eo_inf_r */
+   mpq_set_d(tmp_eo_r, tmp_eo_fi.inf);
+   mpq_sub(tmp_eo_inf_r, tmp_eo_inf_r, tmp_eo_r);
+   
+   /* R(x.sup - y.sup) - F(x.sup - y.sup) in tmp_eo_sup_r */
+   mpq_set_d(tmp_eo_r, tmp_eo_fi.sup);
+   mpq_sub(tmp_eo_sup_r, tmp_eo_sup_r, tmp_eo_r);
+   
+   /* Build rational_interval from result in eo */
+   makeRationalInterval(&eo, tmp_eo_inf_r, tmp_eo_sup_r);
+   
+   /* clear memory of ORRationals */
+   mpq_clears(tmp_eo_inf_r, tmp_eo_sup_r,tmp_eo_r, NULL);
    do {
       changed = false;
       zTemp = z;
@@ -1680,7 +1747,40 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   
+   /* compute eo interval with substraction from op on rational and op on float */
+   ORRational tmp_eo_inf_r, tmp_eo_sup_r, tmp_eo_r;
+   float_interval tmp_eo_fi;
+   
+   /* Initilization of ORRationals */
+   mpq_inits(tmp_eo_inf_r,tmp_eo_sup_r,tmp_eo_r,NULL);
+   /* interval result from op on float */
+   tmp_eo_fi = makeFloatInterval(x.inf + y.inf, x.sup + y.sup);
+   
+   /* Build op on rational */
+   /* x.inf * y.inf in tmp_eo_inf_r */
+   mpq_set_d(tmp_eo_inf_r, x.inf);
+   mpq_set_d(tmp_eo_r, y.inf);
+   mpq_mul(tmp_eo_inf_r,  tmp_eo_inf_r, tmp_eo_r);
+   
+   /* x.sup * y.sup in tmp_eo_sup_r */
+   mpq_set_d(tmp_eo_sup_r, x.sup);
+   mpq_set_d(tmp_eo_r, y.sup);
+   mpq_mul(tmp_eo_sup_r, tmp_eo_sup_r, tmp_eo_r);
+   
+   /* R(x.inf * y.inf) - F(x.inf * y.inf) in tmp_eo_inf_r */
+   mpq_set_d(tmp_eo_r, tmp_eo_fi.inf);
+   mpq_sub(tmp_eo_inf_r, tmp_eo_inf_r, tmp_eo_r);
+   
+   /* R(x.sup * y.sup) - F(x.sup * y.sup) in tmp_eo_sup_r */
+   mpq_set_d(tmp_eo_r, tmp_eo_fi.sup);
+   mpq_sub(tmp_eo_sup_r, tmp_eo_sup_r, tmp_eo_r);
+   
+   /* Build rational_interval from result in eo */
+   makeRationalInterval(&eo, tmp_eo_inf_r, tmp_eo_sup_r);
+   
+   /* clear memory of ORRationals */
+   mpq_clears(tmp_eo_inf_r, tmp_eo_sup_r,tmp_eo_r, NULL);
 
    do {
       changed = false;
@@ -1814,7 +1914,41 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   
+   /* compute eo interval with substraction from op on rational and op on float */
+   ORRational tmp_eo_inf_r, tmp_eo_sup_r, tmp_eo_r;
+   float_interval tmp_eo_fi;
+   
+   /* Initilization of ORRationals */
+   mpq_inits(tmp_eo_inf_r,tmp_eo_sup_r,tmp_eo_r,NULL);
+   /* interval result from op on float */
+   tmp_eo_fi = makeFloatInterval(x.inf + y.inf, x.sup + y.sup);
+   
+   /* Build op on rational */
+   /* x.inf / y.inf in tmp_eo_inf_r */
+   mpq_set_d(tmp_eo_inf_r, x.inf);
+   mpq_set_d(tmp_eo_r, y.inf);
+   mpq_div(tmp_eo_inf_r,  tmp_eo_inf_r, tmp_eo_r);
+   
+   /* x.sup / y.sup in tmp_eo_sup_r */
+   mpq_set_d(tmp_eo_sup_r, x.sup);
+   mpq_set_d(tmp_eo_r, y.sup);
+   mpq_div(tmp_eo_sup_r, tmp_eo_sup_r, tmp_eo_r);
+   
+   /* R(x.inf / y.inf) - F(x.inf / y.inf) in tmp_eo_inf_r */
+   mpq_set_d(tmp_eo_r, tmp_eo_fi.inf);
+   mpq_sub(tmp_eo_inf_r, tmp_eo_inf_r, tmp_eo_r);
+   
+   /* R(x.sup / y.sup) - F(x.sup / y.sup) in tmp_eo_sup_r */
+   mpq_set_d(tmp_eo_r, tmp_eo_fi.sup);
+   mpq_sub(tmp_eo_sup_r, tmp_eo_sup_r, tmp_eo_r);
+   
+   /* Build rational_interval from result in eo */
+   makeRationalInterval(&eo, tmp_eo_inf_r, tmp_eo_sup_r);
+   
+   /* clear memory of ORRationals */
+   mpq_clears(tmp_eo_inf_r, tmp_eo_sup_r,tmp_eo_r, NULL);
+   
    do {
       changed = false;
       zTemp = z;
