@@ -26,17 +26,17 @@ void* PNONNULL firstFail(PNONNULL id<CPCommonProgram> solver,PNONNULL id<ORIntVa
 void* PNONNULL sequence(PNONNULL id<CPCommonProgram> solver,int n,void* PNONNULL*PNONNULL s);
 void* PNONNULL alts(PNONNULL id<CPCommonProgram> solver,int n,void*PNONNULL* PNONNULL s);
 void* PNONNULL whileDo(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,
-                        bool(^PNONNULL cond)(),
-                        void* PNONNULL (^PNONNULL body)());
+                        bool(^PNONNULL cond)(void),
+                       void* PNONNULL (^PNONNULL body)(void));
 
 void* PNONNULL forallDo(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,
                          PNONNULL __unsafe_unretained id<ORIntRange> R,
                          void* PNONNULL(^PNONNULL body)(NSInteger)
                          );
-void* PNONNULL Do(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,void(^PNONNULL body)());
+void* PNONNULL Do(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,void(^PNONNULL body)(void));
 void* PNONNULL limitSolutionsDo(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,
                                  ORInt k,
-                                 void* PNONNULL(^PNONNULL body)());
+                                void* PNONNULL(^PNONNULL body)(void));
 
 
 

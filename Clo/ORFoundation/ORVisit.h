@@ -211,6 +211,7 @@
 -(void) visitBitSubtract:(id<ORConstraint>)cstr;
 -(void) visitBitMultiply:(id<ORConstraint>)cstr;
 -(void) visitBitDivide:(id<ORConstraint>)cstr;
+-(void) visitBitDivideSigned:(id<ORConstraint>)cstr;
 -(void) visitBitIf:(id<ORConstraint>)cstr;
 -(void) visitBitCount:(id<ORConstraint>)cstr;
 -(void) visitBitChannel:(id<ORBitChannel>)cstr;

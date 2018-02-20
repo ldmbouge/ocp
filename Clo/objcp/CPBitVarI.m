@@ -446,7 +446,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 -(void) whenChangePropagate:  (CPCoreConstraint*) c
 {
    hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
-    if(_learningOn)
+//    if(_learningOn)
         _vsids += 1.0;
 }
 //-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
@@ -639,6 +639,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       for (int i=0; i<wordLength; i++) {
          changed[i] = oldUp[i]._val ^ newUp[i];
          changed[i] |= oldLow[i]._val ^ newLow[i];
+//          if((oldUp[i]._val ^ newUp[i]) & (oldLow[i]._val ^ newLow[i]))
+//              NSLog(@"Fixed bit flipped in constraint");
          wasChanged |= changed[i];
       }
       

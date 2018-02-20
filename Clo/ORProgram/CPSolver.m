@@ -1667,7 +1667,13 @@
 }
 -(id<CPBitVarHeuristic>) createBitVarVSIDS: (id<ORVarArray>) rvars
 {
-   id<CPBitVarHeuristic> h = [[CPBitVarVSIDS alloc] initCPBitVarVSIDS:self restricted:rvars];
+      id<CPBitVarArray> cav = [CPFactory bitVarArray:self range:rvars.range with:^id<CPBitVar>(ORInt i) {
+         CPBitVarI* sv =_gamma[rvars[i].getId];
+         assert([sv isKindOfClass:[CPBitVarI class]]);
+         return sv;
+      }];
+
+   id<CPBitVarHeuristic> h = [[CPBitVarVSIDS alloc] initCPBitVarVSIDS:self restricted:cav];
    [self addHeuristic:h];
    return h;
 }

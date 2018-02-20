@@ -51,6 +51,7 @@
 -(id)grab;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
+-(ORInt)level;
 -(ORInt)sizeEstimate;
 @end
 
@@ -83,4 +84,4 @@
 -(ORInt)      level;
 @end
 
-void logCheckpoint();
+void logCheckpoint(void);

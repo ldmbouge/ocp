@@ -305,8 +305,8 @@ void zeroByteSHA1(NSString* filename, BVSearchHeuristic heur)
          mySHA1 = [SHA1b initSHA1b];
          [str appendFormat:@"%d ",num++];
          [str appendString:[mySHA1 preimage:filename withMask:mask andHeuristic:heur]];
-         [mySHA1 dealloc];
-//         [pool drain];
+         //[mySHA1 dealloc];
+         [pool drain];
    [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 //   [pool drain];
 }
@@ -470,7 +470,7 @@ int main(int argc, const char* argv[])
 
 //   twoByteMD4(@"lorem-mssg.txt", BVFF);
    
-   twoByteMD5(@"lorem-mssg.txt", BVFF);
+   twoByteSHA1(@"lorem-mssg.txt", BVFF);
    
 //   twoByteSHA1(@"lorem-mssg.txt", BVFF);
 //   twoByteSHA1(@"lorem-mssg.txt", BVABS);

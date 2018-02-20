@@ -9,6 +9,8 @@
 #import "objcpgateway.h"
 #include "/usr/local/include/gmp.h"
 
+#include "objcp/CPBitConstraint.h"
+
 @interface OBJCPType : NSObject{
 @private
    NSString* _name;
@@ -311,61 +313,379 @@
    clock_t start;
    start = clock();
 
-//   NSLog(@"Checking CP Model\n");
    __block ORBool sat = false;
    __block clock_t searchStart;
    __block clock_t searchFinish;
    double totalTime, searchTime;
    mallocWatch();
    
-   id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:_model];
-//    id<CPProgram,CPBV> cp = (id<CPProgram,CPBV>)[ORFactory createCPProgram:_model];
-//   id<CPEngine> engine = [cp engine];
-//   id<ORExplorer> explorer = [cp explorer];
-//   NSArray* allvars = [[[cp engine] model] variables];
-//   NSLog(@"%@",_model);
-
-//   id* gamma = [cp gamma];
-
+//    id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:_model];
+    id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgram:_model];
    id<ORBitVarArray> o = [ORFactory bitVarArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:(ORUInt)[_declarations count]-1]];
    ORInt k=0;
    for (id var in _declarations)
    {
-//      NSLog(@"%@\t%@",var, [cp stringValue:[[_declarations objectForKey:var] getVariable]]);
-      //[o set:gamma[[[_declarations objectForKey:var] getVariable].getId] at:k];
       [o set:[[_declarations objectForKey:var]getVariable] at:k];
       k++;
    }
    
     __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
 
-   searchStart = clock();
-   [cp solve:^{
+    NSMutableArray* engineVars = [[cp engine] variables];
+    __block CPBitAntecedents* ants;
+    __block CPBitAssignment** vars;
+    __block id<CPBVConstraint> c;
+
+//    ants = malloc(sizeof(CPBitAntecedents));
+//    vars= malloc(sizeof(CPBitAssignment*));
+//    vars[0] = malloc(sizeof(CPBitAssignment));
+//    vars[0]->var = [engineVars objectAtIndex:93];
+//    vars[0]->index = 30;
+//    vars[0]->value = true;
+//    ants->antecedents = vars;
+//    ants->numAntecedents = 1;
+//    c =  [CPFactory bitConflict:ants];
+//    [[cp engine] add:c];
+
+    ants = malloc(sizeof(CPBitAntecedents));
+    vars= malloc(sizeof(CPBitAssignment*)*2);
+    vars[0] = malloc(sizeof(CPBitAssignment));
+    vars[0]->var = [engineVars objectAtIndex:3];
+    vars[0]->index = 4;
+    vars[0]->value = true;
+    vars[1] = malloc(sizeof(CPBitAssignment));
+    vars[1]->var = [engineVars objectAtIndex:87];
+    vars[1]->index = 3;
+    vars[1]->value = false;
+    ants->antecedents = vars;
+    ants->numAntecedents = 2;
+    c =  [CPFactory bitConflict:ants];
+    [[cp engine] add:c];
+
+//    ants = malloc(sizeof(CPBitAntecedents));
+//    vars= malloc(sizeof(CPBitAssignment*));
+//    vars[0] = malloc(sizeof(CPBitAssignment));
+//    vars[0]->var = [engineVars objectAtIndex:103];
+//    vars[0]->index = 27;
+//    vars[0]->value = true;
+//    ants->antecedents = vars;
+//    ants->numAntecedents = 1;
+//    c =  [CPFactory bitConflict:ants];
+//    [[cp engine] add:c];
+//
+//    ants = malloc(sizeof(CPBitAntecedents));
+//    vars= malloc(sizeof(CPBitAssignment*)*2);
+//    vars[0] = malloc(sizeof(CPBitAssignment));
+//    vars[0]->var = [engineVars objectAtIndex:96];
+//    vars[0]->index = 7;
+//    vars[0]->value = false;
+//    vars[1] = malloc(sizeof(CPBitAssignment));
+//    vars[1]->var = [engineVars objectAtIndex:19];
+//    vars[1]->index = 7;
+//    vars[1]->value = true;
+//    ants->antecedents = vars;
+//    ants->numAntecedents = 2;
+//    c =  [CPFactory bitConflict:ants];
+//    [[cp engine] add:c];
+//
+//    ants = malloc(sizeof(CPBitAntecedents));
+//    vars= malloc(sizeof(CPBitAssignment*)*3);
+//    vars[0] = malloc(sizeof(CPBitAssignment));
+//    vars[0]->var = [engineVars objectAtIndex:94];
+//    vars[0]->index = 4;
+//    vars[0]->value = true;
+//    vars[1] = malloc(sizeof(CPBitAssignment));
+//    vars[1]->var = [engineVars objectAtIndex:94];
+//    vars[1]->index = 5;
+//    vars[1]->value = true;
+//    vars[2] = malloc(sizeof(CPBitAssignment));
+//    vars[2]->var = [engineVars objectAtIndex:19];
+//    vars[2]->index = 5;
+//    vars[2]->value = false;
+//    ants->antecedents = vars;
+//    ants->numAntecedents = 3;
+//    c =  [CPFactory bitConflict:ants];
+//    [[cp engine] add:c];
+//
+//    ants = malloc(sizeof(CPBitAntecedents));
+//    vars= malloc(sizeof(CPBitAssignment*)*4);
+//    vars[0] = malloc(sizeof(CPBitAssignment));
+//    vars[0]->var = [engineVars objectAtIndex:15];
+//    vars[0]->index = 4;
+//    vars[0]->value = false;
+//    vars[1] = malloc(sizeof(CPBitAssignment));
+//    vars[1]->var = [engineVars objectAtIndex:95];
+//    vars[1]->index = 4;
+//    vars[1]->value = false;
+//    vars[2] = malloc(sizeof(CPBitAssignment));
+//    vars[2]->var = [engineVars objectAtIndex:94];
+//    vars[2]->index = 4;
+//    vars[2]->value = true;
+//    vars[3] = malloc(sizeof(CPBitAssignment));
+//    vars[3]->var = [engineVars objectAtIndex:15];
+//    vars[3]->index = 5;
+//    vars[3]->value = true;
+//    ants->antecedents = vars;
+//    ants->numAntecedents = 4;
+//    c =  [CPFactory bitConflict:ants];
+//    [[cp engine] add:c];
+//
+//
+//
+//
+//
+//
+//    ants = malloc(sizeof(CPBitAntecedents));
+//    vars= malloc(sizeof(CPBitAssignment*)*3);
+//    vars[0] = malloc(sizeof(CPBitAssignment));
+//    vars[0]->var = [engineVars objectAtIndex:96];
+//    vars[0]->index = 5;
+//    vars[0]->value = false;
+//    vars[1] = malloc(sizeof(CPBitAssignment));
+//    vars[1]->var = [engineVars objectAtIndex:15];
+//    vars[1]->index = 5;
+//    vars[1]->value = true;
+//    vars[2] = malloc(sizeof(CPBitAssignment));
+//    vars[2]->var = [engineVars objectAtIndex:94];
+//    vars[2]->index = 4;
+//    vars[2]->value = false;
+//    ants->antecedents = vars;
+//    ants->numAntecedents = 3;
+//    c =  [CPFactory bitConflict:ants];
+//    [[cp engine] add:c];
+
+    
+    
+
+    [cp solve:^{
       [cp limitTime:180000 in: ^{
-//      id<CPEngine> engine = [cp engine];
-//      NSLog(@"%@",[[cp engine] model]);
-//      NSLog(@"%@",_model);
-//      for (int k=0;k<[allvars count];k++)
-//         NSLog(@"0x%lx = %@",(long int)allvars[k],allvars[k]);
 
-//       for (id var in _declarations)
-//           NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*2);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:112];
+//          vars[0]->index = 27;
+//          vars[0]->value = false;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:102];
+//          vars[1]->index = 27;
+//          vars[1]->value = true;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 2;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          //last one learned
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*2);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:112];
+//          vars[0]->index = 24;
+//          vars[0]->value = false;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:102];
+//          vars[1]->index = 24;
+//          vars[1]->value = true;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 2;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*4);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:112];
+//          vars[0]->index = 4;
+//          vars[0]->value = true;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:18];
+//          vars[1]->index = 5;
+//          vars[1]->value = false;
+//          vars[2] = malloc(sizeof(CPBitAssignment));
+//          vars[2]->var = [engineVars objectAtIndex:15];
+//          vars[2]->index = 4;
+//          vars[2]->value = true;
+//          vars[3] = malloc(sizeof(CPBitAssignment));
+//          vars[3]->var = [engineVars objectAtIndex:94];
+//          vars[3]->index = 1;
+//          vars[3]->value = true;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 4;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*3);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:15];
+//          vars[0]->index = 5;
+//          vars[0]->value = true;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:15];
+//          vars[1]->index = 4;
+//          vars[1]->value = false;
+//          vars[2] = malloc(sizeof(CPBitAssignment));
+//          vars[2]->var = [engineVars objectAtIndex:95];
+//          vars[2]->index = 4;
+//          vars[2]->value = false;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 3;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*2);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:15];
+//          vars[0]->index = 6;
+//          vars[0]->value = true;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:20];
+//          vars[1]->index = 6;
+//          vars[1]->value = false;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 2;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*3);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:19];
+//          vars[0]->index = 3;
+//          vars[0]->value = true;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:96];
+//          vars[1]->index = 5;
+//          vars[1]->value = false;
+//          vars[2] = malloc(sizeof(CPBitAssignment));
+//          vars[2]->var = [engineVars objectAtIndex:15];
+//          vars[2]->index = 5;
+//          vars[2]->value = true;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 3;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*3);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:94];
+//          vars[0]->index = 5;
+//          vars[0]->value = false;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:15];
+//          vars[1]->index = 4;
+//          vars[1]->value = true;
+//          vars[2] = malloc(sizeof(CPBitAssignment));
+//          vars[2]->var = [engineVars objectAtIndex:95];
+//          vars[2]->index = 4;
+//          vars[2]->value = true;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 3;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*));
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:102];
+//          vars[0]->index = 26;
+//          vars[0]->value = true;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 1;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*2);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:15];
+//          vars[0]->index = 4;
+//          vars[0]->value = true;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:95];
+//          vars[1]->index = 4;
+//          vars[1]->value = false;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 2;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*2);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:112];
+//          vars[0]->index = 25;
+//          vars[0]->value = false;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:102];
+//          vars[1]->index = 25;
+//          vars[1]->value = true;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 2;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*3);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:96];
+//          vars[0]->index = 6;
+//          vars[0]->value = false;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:15];
+//          vars[1]->index = 6;
+//          vars[1]->value = true;
+//          vars[2] = malloc(sizeof(CPBitAssignment));
+//          vars[2]->var = [engineVars objectAtIndex:94];
+//          vars[2]->index = 6;
+//          vars[2]->value = true;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 3;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+//
+//          ants = malloc(sizeof(CPBitAntecedents));
+//          vars= malloc(sizeof(CPBitAssignment*)*3);
+//          vars[0] = malloc(sizeof(CPBitAssignment));
+//          vars[0]->var = [engineVars objectAtIndex:96];
+//          vars[0]->index = 5;
+//          vars[0]->value = false;
+//          vars[1] = malloc(sizeof(CPBitAssignment));
+//          vars[1]->var = [engineVars objectAtIndex:15];
+//          vars[1]->index = 5;
+//          vars[1]->value = true;
+//          vars[2] = malloc(sizeof(CPBitAssignment));
+//          vars[2]->var = [engineVars objectAtIndex:94];
+//          vars[2]->index = 4;
+//          vars[2]->value = false;
+//          ants->antecedents = vars;
+//          ants->numAntecedents = 3;
+//          c =  [CPFactory bitConflict:ants];
+//          [[cp engine] add:c];
+          
 
-      [cp labelBitVarHeuristic:h];
-      searchFinish = clock();
-//      NSLog(@"  Search Finish Time : %ld",searchFinish);
-//      for (int k=0;k<[allvars count];k++)
-//         NSLog(@"0x%lx = %@",(long int)allvars[k],allvars[k]);
-//         NSLog(@"%@",o);
+          
+          
+          searchStart = clock();
+          [cp labelBitVarHeuristic:h];
+          searchFinish = clock();
       
-      
-         for (id var in _declarations)
+          for (id var in _declarations)
             NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
 
-      
-      
-      sat = true;
-//      NSLog(@"%@",[[cp engine] model]);
+          NSString *sep = @" ,";
+          char binvalue[512];
+          NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:sep];
+          for (id var in _declarations){
+              NSArray *temp=[[cp stringValue:[[_declarations objectForKey:var] getVariable]] componentsSeparatedByCharactersInSet:set];
+              [temp[2] getCString:binvalue maxLength:512 encoding:NSUTF8StringEncoding];
+              long int foo = strtol(binvalue,NULL, 2);
+              NSLog(@"(assert (= %@ (_ bv%ld %d)))",var, foo, [[_declarations objectForKey:var]getSize]);
+          }
+          sat = true;
       }];
    }];
    
@@ -373,13 +693,6 @@
    searchFinish = clock();
    totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
    searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
-//   NSLog(@"%@",[[cp engine] model]);
-
-//   NSLog(@"  Number propagations: %d",[engine nbPropagation]);
-//   NSLog(@"       Number choices: %d",[explorer nbChoices]);
-//   NSLog(@"      Number Failures: %d", [explorer nbFailures]);
-//   NSLog(@"   Search Start Time : %ld",searchStart);
-//   NSLog(@"  Search Finish Time : %ld",searchFinish);
    NSLog(@"      Search Time (s): %f",searchTime);
    NSLog(@"       Total Time (s): %f\n\n",totalTime);
    NSLog(@"Solver status: %@\n",cp);
@@ -867,8 +1180,8 @@
    int size = [(id<ORBitVar>)a1 bitLength];
    
    ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
-   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
-   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength*2);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength*2);
    for(int i=0; i< (wordlength*2);i++){
       low[i] = 0;
       up[i] = CP_UMASK;
@@ -902,6 +1215,27 @@
    return q;
 }
 
+-(objcp_expr) objcp_mk_bv_sdiv:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
+    int size = [(id<ORBitVar>)a1 bitLength];
+    
+    ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
+    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+    for(int i=0; i< wordlength;i++){
+        low[i] = 0;
+        up[i] = CP_UMASK;
+    }
+    
+    id<ORBitVar> q;
+    id<ORBitVar> r;
+
+    q = [ORFactory bitVar:_model low:low up:up bitLength:size];
+    r = [ORFactory bitVar:_model low:low up:up bitLength:size];
+
+    [_model add:[ORFactory bit:a1 dividedbysigned:a2 eq:q rem:r]];
+    return q;
+}
+
 //-(objcp_expr) objcp_mk_bv_rem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
 -(objcp_expr) objcp_mk_bv_rem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
    int size = [(id<ORBitVar>)a1 bitLength];
@@ -922,6 +1256,27 @@
    [_model add:[ORFactory bit:a1 dividedby:a2 eq:q rem:r]];
    
    return r;
+}
+
+-(objcp_expr) objcp_mk_bv_srem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
+    int size = [(id<ORBitVar>)a1 bitLength];
+    
+    ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
+    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+    for(int i=0; i< wordlength;i++){
+        low[i] = 0;
+        up[i] = CP_UMASK;
+    }
+    
+    id<ORBitVar> q;
+    id<ORBitVar> r;
+    
+    q = [ORFactory bitVar:_model low:low up:up bitLength:size];
+    r = [ORFactory bitVar:_model low:low up:up bitLength:size];
+    [_model add:[ORFactory bit:a1 dividedbysigned:a2 eq:q rem:r]];
+    
+    return r;
 }
 
 -(objcp_expr) objcp_mk_bv_extract:(objcp_context)ctx from:(ORUInt)msb downTo:(ORUInt)lsb in:(objcp_expr)bv{

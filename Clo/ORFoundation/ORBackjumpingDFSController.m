@@ -118,53 +118,54 @@
 }
 -(void) fail
 {
-   ORUInt faillevel = [_tracer level];
-   ORUInt level = faillevel;
-   ORInt jumplevel = (ORUInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
- 
+   ORInt faillevel = (ORInt)[_tracer level];
+   ORInt level = faillevel;
+//   ORInt jumplevel = (ORInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
+
    id<ORCheckpoint> cp;
    NSCont* k;
-   ORInt ofs;
+   ORInt ofs = _sz-1;
    ORStatus status;
+//    ORStatus lastStatus = ORSuspend;
 
+//    if (jumplevel > 4){
+//        while ((level > jumplevel) && (_sz > 1)){
+//            ofs = _sz-1;
+//            if (ofs >= 0) {
+//                cp = _cpTab[ofs];
+//                level = [cp level];
+//                [cp letgo];
+//                [_tab[ofs] letgo];
+//                _tab[ofs] = 0;
+//                --_sz;
+//            }
+//        }
+//    }
+    
    do {
-       if (jumplevel > 4){
-           while (level > jumplevel){
-               ofs = _sz-1;
-               if (ofs >= 0) {
-                   cp = _cpTab[ofs];
-                   [cp letgo];
-                   k = _tab[ofs];
-                   [k letgo];
-                   _tab[ofs] = 0;
-                   --_sz;
-               }
-               [[_tracer popNode] letgo];
-               level = [_tracer level];
-           }
-       }
-       
        ofs = _sz-1;
       
       if (ofs >= 0) {
          cp = _cpTab[ofs];
-          level = [_tracer level];
          status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
-         //assert(status != ORFailure);
+          level = [cp level];
          [cp letgo];
          k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
-//          level = [_tracer level];
 
           if (k &&  (k.admin || status != ORFailure)) {
-              if (((ORInt)jumplevel > 0) && (level < faillevel) ){
-                  [k callInvisible];
-              }
-              else
+//              if ((jumplevel > 0) && (level < faillevel) && !k.admin){
+//              if (((jumplevel > 0) && (level < faillevel-1)) ||  (lastStatus == ORFailure)){
+//              if ((jumplevel > 0) && (faillevel != jumplevel)) {
+//                  [k callInvisible];
+//              }
+//              else
                   [k call];
-         } else {
-            jumplevel = -1;
+
+          } else {
+//              lastStatus = status;
+//            jumplevel=-1;
             if (k==nil)
                @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
             else

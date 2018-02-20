@@ -37,7 +37,7 @@ typedef struct CPBVConflict{
    ORUInt                    _capacity;
 //   ORUInt                   _currLevel;
 //   ORUInt                   _baseLevel;
-   ORUInt               _backjumpLevel;
+   ORInt               _backjumpLevel;
    ORBool                       _retry;
    
    SemTracer*                  _tracer;
@@ -50,4 +50,5 @@ typedef struct CPBVConflict{
 -(ORUInt) getBackjumpLevel;
 -(ORBool) retry;
 -(ORStatus) enforceObjective;
+//-(ORStatus)   close;
 @end

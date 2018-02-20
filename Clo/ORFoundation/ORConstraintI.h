@@ -748,6 +748,14 @@
 -(id<ORBitVar>) rem;
 @end
 
+@interface ORBitDivideSigned: ORConstraintI<ORBitDivideSigned>
+-(ORBitDivideSigned*)initORBitDivideSigned: (id<ORBitVar>) x dividedby:(id<ORBitVar>) y eq:(id<ORBitVar>)z rem:(id<ORBitVar>)r;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
+@end
+
 @interface ORBitIf : ORConstraintI<ORBitIf>
 -(ORBitIf*)initORBitIf: (id<ORBitVar>) w trueIf:(id<ORBitVar>) x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z;
 -(id<ORBitVar>) res;

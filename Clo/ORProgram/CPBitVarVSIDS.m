@@ -15,6 +15,7 @@
 
 @implementation CPBitVarVSIDS {
    id<CPEngine>    _engine;
+   ORInt          _countMax;
     
 }
 -(CPBitVarVSIDS*)initCPBitVarVSIDS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
@@ -24,7 +25,8 @@
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
-    _count = 100;
+    _countMax = 32;
+    _count = _countMax;
    return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -53,7 +55,8 @@
     {
         for (id<CPBitVar> var in vars)
             [var reduceVSIDS];
-        _count = 100;
+        _countMax <<= 1;
+        _count = _countMax;
     }
     else
         _count--;

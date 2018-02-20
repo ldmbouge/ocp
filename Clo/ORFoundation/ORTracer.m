@@ -41,6 +41,7 @@
 -(NSString*)description;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
+-(ORInt)level;
 -(void)letgo;
 -(id)grab;
 -(ORInt)sizeEstimate;
@@ -256,7 +257,10 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    return _nodeId;
 }
-
+-(ORInt) level
+{
+    return _level;
+}
 #if TARGET_OS_IPHONE
 +(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
 {
