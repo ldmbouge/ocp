@@ -14,7 +14,7 @@
 #import <ORFoundation/ORDataI.h>
 #import "ORLimit.h"
 #import "ORExplorerI.h"
-#import <CPProfiler/CPProfiler.h>
+//#import <CPProfiler/CPProfiler.h>
 
 
 @implementation ORCoreExplorerI
@@ -28,7 +28,7 @@
    ORInt                     _nbc;
    id<ORControllerFactory> _cFact;
    ORInt _execId;
-   id<Profiler> _prof;
+   //   id<Profiler> _prof;
 }
 -(id) initORExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
 {
@@ -40,9 +40,9 @@
    _cFact = [cFact retain];
    
    _execId = 1;
-   _prof = [CPPFactory makeProfiler:6565];
-   [_prof connect];
-   [_prof start:"example" withIdentifier:_execId];
+   // _prof = [CPPFactory makeProfiler:6565];
+   // [_prof connect];
+   // [_prof start:"example" withIdentifier:_execId];
 
    return self;
 }
@@ -50,8 +50,8 @@
 {
    NSLog(@"ORCoreExplorer dealloc called...");
    
-   [_prof disconnect];
-   [_prof release];
+   // [_prof disconnect];
+   // [_prof release];
    
    id ctrl = _controller;
    [ctrl release];
@@ -60,16 +60,16 @@
    [super dealloc];
 }
 
--(void)shipNode:(enum NStatus)st
-{
-   NodeID cn = {_tracer.curNode,0,0};
-   ChildSpec cs = [_controller declareChildNode];
-   NodeID pn = {cs._parent , 0, 0};
-   int kids[4] = {0,0,2,0};
-   id<STNode> n = [_prof createNode:cn parent:pn altNumber:cs._alt kids:kids[(int)st] status:st];
-   [n send];
-   [n release];
-}
+// -(void)shipNode:(enum NStatus)st
+// {
+//    NodeID cn = {_tracer.curNode,0,0};
+//    ChildSpec cs = [_controller declareChildNode];
+//    NodeID pn = {cs._parent , 0, 0};
+//    int kids[4] = {0,0,2,0};
+//    id<STNode> n = [_prof createNode:cn parent:pn altNumber:cs._alt kids:kids[(int)st] status:st];
+//    [n send];
+//    [n release];
+// }
 
 -(id<ORControllerFactory>) controllerFactory
 {
@@ -108,9 +108,9 @@
 }
 -(void) fail
 {
-   [self shipNode:NSFailed];
+   //[self shipNode:NSFailed];
    [ORConcurrency pumpEvents];
-   [_tracer fail];  // notify the tracer we failed (for proper numbering of nodes)
+   //[_tracer fail];  // notify the tracer we failed (for proper numbering of nodes)
    _nbf++;
    [_controller fail];
    assert(0);
@@ -119,7 +119,7 @@
 -(void) try: (ORClosure) left alt: (ORClosure) right
 {
    [_controller startTry];
-   [self shipNode:NSBranch];
+   //[self shipNode:NSBranch];
    NSCont* k = [NSCont takeContinuation];
    if ([k nbCalls] == 0) {
       [_controller startTryLeft];
@@ -440,7 +440,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self setController:newCtrl];                                 // install the new controller chain
       if (body) body();
       if (onSolution) onSolution();
-      [self shipNode:NSSolved];
+      //[self shipNode:NSSolved];
       [_controller succeeds];
    }
    else if ([newCtrl isFinitelyFailed]) {
@@ -475,8 +475,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [newCtrl cleanup];
       [newCtrl release];
       if (onExit) onExit();
-      [self shipNode:NSSolved];
-      [_prof done];
+      //[self shipNode:NSSolved];
+      // [_prof done];
       // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.
    }
 }
