@@ -141,7 +141,10 @@
 {
    return [_controller isAborted];
 }
-
+-(ChildSpec) declareChildNode
+{
+   return [_controller declareChildNode];
+}
 -(void) startTry
 {
    [_controller startTry];
@@ -264,15 +267,21 @@
 {
    return _isAborted;
 }
+-(ChildSpec) declareChildNode
+{
+   return [_controller declareChildNode];
+}
 @end
 
 @implementation ORDFSController
 {
    NSCont**          _tab;
+   ChildSpec*         _nd;
    ORInt              _sz;
    ORInt              _mx;
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
+   ChildSpec         _cur;
 }
 +(id<ORSearchController>)proto
 {
@@ -284,8 +293,10 @@
    _tracer = tracer ? [tracer retain] : nil;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
+   _nd = malloc(sizeof(ChildSpec)* _mx);
    _sz  = 0;
-   _atRoot = -1;
+   _atRoot =  -1;
+   _cur = (ChildSpec){tracer.curNode,0};
    [model release]; // not needed
    return self;
 }
@@ -296,8 +307,10 @@
    _tracer = tracer ? [tracer retain] : nil;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
+   _nd = malloc(sizeof(ChildSpec)* _mx);
    _sz  = 0;
-   _atRoot = -1;
+   _atRoot =  -1;
+   _cur = (ChildSpec){tracer.curNode,0};
    return self;
 }
 - (void) dealloc
@@ -306,6 +319,7 @@
    if (_tracer)
       [_tracer release];
    free(_tab);
+   free(_nd);
    [super dealloc];
 }
 -(id<ORSearchController>)clone
@@ -313,11 +327,14 @@
    ORDFSController* c = [[ORDFSController alloc] initTheController:_tracer engine:nil posting:nil];
    free(c->_tab);
    c->_tab = malloc(sizeof(NSCont*)*_mx);
+   c->_nd = malloc(sizeof(ChildSpec)* _mx);
    for(ORInt k=0;k<_sz;k++) {
       c->_tab[k] = _tab[k];
+      c->_nd[k] = _nd[k];
    }
    c->_sz = _sz;
    c->_mx = _mx;
+   c->_cur = _cur;
    return c;
 }
 -(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf
@@ -332,14 +349,20 @@
    if (_atRoot==-1)
       _atRoot = [_tracer pushNode];
 }
-
+-(ChildSpec) declareChildNode
+{
+   return (ChildSpec){_cur._parent,_cur._alt++};
+//   if (_sz==0)
+//      return (ChildSpec){-1,0};  // root and first alternative.
+//   else
+//      return (ChildSpec){_nd[_sz-1]._parent,_nd[_sz-1]._alt++};
+}
 -(void) cleanup
 {
    while (_sz > 0)
       [_tab[--_sz] letgo];
    [_tracer popToNode:_atRoot];
 }
-
 -(ORInt) addChoice: (NSCont*)k
 {
    if (_sz >= _mx) {
@@ -351,7 +374,11 @@
       _mx <<= 1;
    }
    _tab[_sz++] = k;
-   return [_tracer pushNode];
+   ORInt nn = [_tracer pushNode];
+   _nd[_sz - 1] = _cur = (ChildSpec){nn,0};
+//   _nd[_sz - 1]._parent = nn;
+//   _nd[_sz - 1]._alt    = 0;
+   return nn;
 }
 
 -(void) trust
@@ -369,6 +396,7 @@
       [[_tracer popNode] letgo];
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;
+      _cur = _nd[ofs];
       --_sz;
       if (k!=NULL)
          [k call];

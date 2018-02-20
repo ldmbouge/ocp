@@ -16,6 +16,11 @@
 @protocol ORObjectiveValue;
 @class ORHeist;
 
+typedef struct ChildSpec {
+   ORInt _parent;
+   ORInt _alt;
+} ChildSpec;
+
 @protocol ORStealing
 -(ORHeist*) steal;
 -(ORBool)willingToShare;
@@ -67,6 +72,7 @@
 -(ORBool)     isFinitelyFailed;
 -(ORBool)     isAborted;
 -(id)         copy;
+-(ChildSpec) declareChildNode;
 @end
 
 @interface ORDefaultController : NSObject <NSCopying,ORSearchController>
@@ -100,6 +106,7 @@
 -(void)       exitTryallOnFailure;
 -(ORBool)     isFinitelyFailed;
 -(ORBool)     isAborted;
+-(ChildSpec) declareChildNode;
 @end
 
 @interface ORNestedController : ORDefaultController
@@ -111,6 +118,7 @@
 -(void) finitelyFailed;
 -(ORBool) isFinitelyFailed;
 -(ORBool) isAborted;
+-(ChildSpec) declareChildNode;
 @end
 
 @interface ORDFSController : ORDefaultController <NSCopying,ORSearchController>
@@ -122,6 +130,7 @@
 -(ORInt) addChoice:(NSCont*)k;
 -(void) trust;
 -(void) fail;
+-(ChildSpec) declareChildNode;
 @end
 
 @protocol ORControllerFactory<NSObject>

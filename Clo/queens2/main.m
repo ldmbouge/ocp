@@ -29,7 +29,7 @@ int main (int argc, const char * argv[])
       
       id<CPProgram> cp = [ORFactory createCPProgram: model annotation:notes];
       //id<CPHeuristic> h = [cp createFF];
-      [cp solveAll:
+      [cp solve:  // solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize:x[i]];}];
           printf("S[%d] = [",[nbSolutions intValue:cp]);
