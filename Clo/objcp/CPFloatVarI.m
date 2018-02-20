@@ -417,14 +417,12 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateMaxError:(ORRational)newMaxError {
-   //NSLog(@"%@ newmax : %16.16e",_domError, mpq_get_d(newMaxError));
     if(mpq_cmp(newMaxError, *[self maxErr]) < 0)
         [_domError updateMax:newMaxError for:self];
 }
 
 
 - (void)updateMinError:(ORRational)newMinError {
-   //NSLog(@"%@ newmin : %16.16e",_domError, mpq_get_d(newMinError));
     if(mpq_cmp(newMinError, *[self minErr]) > 0)
         [_domError updateMin:newMinError for:self];
 }

@@ -18,6 +18,7 @@
 #import <ORProgram/ORSolution.h>
 #import <ORProgram/ORSTask.h>
 #import <objcp/CPObjectQueue.h>
+#import <ORUtilities/ORTypes.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;
@@ -1039,10 +1040,10 @@
 {
     return [[self worker] intValue: x];
 }
-- (ORFloat)maxError:(nonnull id<ORVar>)x {
+- (ORFloat)maxError:(PNONNULL id<ORVar>)x {
    return [[self worker] maxError: x];
 }
-- (ORFloat)minError:(nonnull id<ORVar>)x {
+- (ORFloat)minError:(PNONNULL id<ORVar>)x {
       return [[self worker] minError: x];
 }
 -(ORDouble) doubleValue: (id<ORRealVar>) x

@@ -7,8 +7,6 @@
 //
 
 #import <ORProgram/ORProgram.h>
-#import <objcp/CPFloatVarI.h>
-//#import "gmp.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -33,6 +31,7 @@ int main(int argc, const char * argv[]) {
            
             NSLog(@"%@",p);
             /* format of 8.8e to have the same value displayed as in FLUCTUAT */
+            /* Use printRational(ORRational r) to print a rational inside the solver */
             NSLog(@"x : %8.8e (%s)",[p floatValue:x],[p bound:x] ? "YES" : "NO");
             NSLog(@"ex: [%8.8e;%8.8e]",[p minError:x],[p maxError:x]);
             NSLog(@"y : %8.8e (%s)",[p floatValue:y],[p bound:y] ? "YES" : "NO");

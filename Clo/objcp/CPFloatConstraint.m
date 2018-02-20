@@ -17,10 +17,6 @@
 
 #define PERCENT 5.0
 
-void printRational(ORRational r){
-   NSLog(@"%16.16e", mpq_get_d(r));
-}
-
 void addR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
    mpq_add(ez->inf, ex->inf, ey->inf);
    mpq_add(ez->inf, ez->inf, eo->inf);
@@ -35,20 +31,6 @@ void addR_inv_ex(rational_interval* ex, rational_interval* ez, rational_interval
    
    mpq_sub(ex->sup, ez->sup, ey->sup);
    mpq_sub(ex->sup, ex->sup, eo->sup);
-   
-   /*NSLog(@"ex");
-   printRational(ez->sup);
-   printRational(ez->inf);
-   NSLog(@"------");
-   printRational(ex->sup);
-   printRational(ex->inf);
-   NSLog(@"------");
-   printRational(ey->sup);
-   printRational(ey->inf);
-   NSLog(@"------");
-   printRational(eo->sup);
-   printRational(eo->inf);*/
-
 }
 
 void addR_inv_ey(rational_interval* ey, rational_interval* ez, rational_interval* ex, rational_interval* eo){
@@ -57,19 +39,6 @@ void addR_inv_ey(rational_interval* ey, rational_interval* ez, rational_interval
    
    mpq_sub(ey->sup, ez->sup, ex->sup);
    mpq_sub(ey->sup, ey->sup, eo->sup);
-   
-   /*NSLog(@"ey");
-   printRational(ez->sup);
-   printRational(ez->inf);
-   NSLog(@"------");
-   printRational(ex->sup);
-   printRational(ex->inf);
-   NSLog(@"------");
-   printRational(ey->sup);
-   printRational(ey->inf);
-   NSLog(@"------");
-   printRational(eo->sup);
-   printRational(eo->inf);*/
 }
 
 void addR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval* ex, rational_interval* ey){
@@ -78,19 +47,6 @@ void addR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval
    
    mpq_sub(eo->sup, ez->sup, ex->sup);
    mpq_sub(eo->sup, eo->sup, ey->sup);
-   
-   /*NSLog(@"eo");
-   printRational(ez->sup);
-   printRational(ez->inf);
-   NSLog(@"------");
-   printRational(ex->sup);
-   printRational(ex->inf);
-   NSLog(@"------");
-   printRational(ey->sup);
-   printRational(ey->inf);
-   NSLog(@"------");
-   printRational(eo->sup);
-   printRational(eo->inf);*/
 }
 
 void subR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
@@ -207,7 +163,7 @@ void mulR_inv_ex(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_set_d(_y.inf, y->inf);
    mpq_set_d(_x.sup, x->sup);
    mpq_set_d(_y.sup, y->sup);
-   mpq_set_d(one, 1);
+   mpq_set_d(one, 1.0f);
    
    /* y + ey */
    mpq_add(tmp1, _y.inf, ey->inf);
@@ -274,7 +230,7 @@ void mulR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_set_d(_y.inf, y->inf);
    mpq_set_d(_x.sup, x->sup);
    mpq_set_d(_y.sup, y->sup);
-   mpq_set_d(one, 1);
+   mpq_set_d(one, 1.0f);
    
    /* x + ex */
    mpq_add(tmp1, _x.inf, ex->inf);
@@ -413,7 +369,7 @@ void divR(rational_interval* ez, rational_interval* ex, rational_interval* ey, r
    mpq_set_d(_y.inf, y->inf);
    mpq_set_d(_x.sup, x->sup);
    mpq_set_d(_y.sup, y->sup);
-   mpq_set_d(one, 1);
+   mpq_set_d(one, 1.0f);
    
    /* y * ex */
    mpq_mul(tmp1, _y.inf, ex->inf);
@@ -507,7 +463,7 @@ void divR_inv_ex(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_set_d(_y.inf, y->inf);
    mpq_set_d(_x.sup, x->sup);
    mpq_set_d(_y.sup, y->sup);
-   mpq_set_d(one, 1);
+   mpq_set_d(one, 1.0f);
    
    /* ez - eo */
    mpq_sub(tmp1, ez->inf, eo->sup);
@@ -587,7 +543,7 @@ void divR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_set_d(_y.inf, y->inf);
    mpq_set_d(_x.sup, x->sup);
    mpq_set_d(_y.sup, y->sup);
-   mpq_set_d(one, 1);
+   mpq_set_d(one, 1.0f);
    
    /* ez * y */
    mpq_mul(tmp1, ez->inf, _y.inf);
@@ -692,7 +648,7 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_set_d(_y.inf, y->inf);
    mpq_set_d(_x.sup, x->sup);
    mpq_set_d(_y.sup, y->sup);
-   mpq_set_d(one, 1);
+   mpq_set_d(one, 1.0f);
    
    /* y * ex */
    mpq_mul(tmp1, _y.inf, ex->inf);

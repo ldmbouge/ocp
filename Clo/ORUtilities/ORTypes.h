@@ -80,6 +80,12 @@ static inline ORRational* fmaxR(ORRational* a, ORRational* b) {
     return maxR(_a,_b);
 }
 
+static inline void printRational(ORRational r){
+   printf("\n\n########################################");
+   NSLog(@"%16.16e", mpq_get_d(r));
+   printf("########################################\n\n");
+}
+
 #define MAXINT ((ORInt)0x7FFFFFFF)
 #define MININT ((ORInt)0x80000000)
 
