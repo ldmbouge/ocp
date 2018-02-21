@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
        
         [mdl add:[x set: @(0.1f)]];
         [mdl add:[y set: @(0.2f)]];
-        [mdl add:[z set: [x plus:y]]];
+        [mdl add:[z set: [x mul:y]]];
        
         NSLog(@"model: %@",mdl);
        id<ORFloatVarArray> vs = [mdl floatVars];
