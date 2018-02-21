@@ -15,8 +15,8 @@
 #import "CPMisc.h"
 
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-function"
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wunused-function"
 
     // Whether skipping of dominated time intervals should be activated wrt.
     // TTEF propagation rule
@@ -1474,4 +1474,5 @@ static Precedence * cumuGetPartialOrder(CPCumulative * cumu, ORInt * psize)
 
 @end
 
-#pragma clang diagnostic pop
+//#pragma clang diagnostic pop
+

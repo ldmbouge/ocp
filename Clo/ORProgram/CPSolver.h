@@ -15,7 +15,7 @@
 #import <ORProgram/CPProgram.h>
 #import <ORModeling/ORModeling.h>
 #import <CPUKernel/CPUKernel.h>
-#import <objcp/CPVar.h>
+//#import <objcp/CPVar.h>
 
 /***************************************************************************/
 /*                  This file should be private                            */

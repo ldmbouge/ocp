@@ -16,8 +16,8 @@
 #import "CPTaskI.h"
 #import "CPMisc.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-function"
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wunused-function"
 
 // NOTE that the TTEF filtering is not adjusted for optional tasks yet, but the
 // TT filtering.
@@ -2499,4 +2499,5 @@ static void doPropagationRT(CPTaskCumulative * cumu)
 
 @end
 
-#pragma clang diagnostic pop
+//#pragma clang diagnostic pop
+

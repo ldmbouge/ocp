@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORData.h>
-#import <ORFoundation/ORParameter.h>
+//#import <ORFoundation/ORParameter.h>
 
 @protocol ORTrailableInt;
 @protocol ORRealVar;

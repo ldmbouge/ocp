@@ -14,9 +14,9 @@
 #import <CPUKernel/CPEngine.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
-#import <objcp/CPBasicConstraint.h>
 #import <objcp/CPBitConstraint.h>
 #import <ORFoundation/ORVisit.h>
+#import <objcp/CPBasicConstraint.h> //order ?
 
 @implementation ORCPConcretizer
 

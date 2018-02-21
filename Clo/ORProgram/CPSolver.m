@@ -26,9 +26,9 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
-#import <objcp/CPFloatVarI.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
+#import <objcp/CPFloatVarI.h>
 
 #if defined(__linux__)
 #import <values.h>

@@ -25,14 +25,14 @@
 @protocol ORTRIntArray;
 @protocol ORTRIntMatrix;
 @protocol ORAutomaton;
-@protocol ORDisabledFloatVarArray;
+@protocol ORIntVarArray;
+@protocol ORBitVarArray;
+@protocol ORVarLitterals;
 @protocol ORRealVarArray;
 @protocol ORFloatVarArray;
 @protocol ORDoubleVarArray;
 @protocol ORLDoubleVarArray;
-@protocol ORIntVarArray;
-@protocol ORBitVarArray;
-@protocol ORVarLitterals;
+@protocol ORDisabledFloatVarArray;
 
 PORTABLE_BEGIN
 @protocol OROrderedSweep <NSObject>
