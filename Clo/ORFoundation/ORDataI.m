@@ -362,7 +362,6 @@
 {
     return (ORInt)ceil(_value);
 }
-
 -(ORFloat) fmin
 {
     return _value;
