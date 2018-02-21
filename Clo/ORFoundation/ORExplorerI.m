@@ -216,9 +216,9 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller fail];
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls]==0) {
+         [_controller addChoice:k];
          [_controller startTryallBody];
          _nbc++;
-         [_controller addChoice:k];
          body(sel);
          [_controller exitTryallBody];
          break;
@@ -348,6 +348,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self push: monitor];
    [monitor release];
    NSCont* enter = [NSCont takeContinuation];
+   enter.admin = YES;
    if ([enter nbCalls]==0) {
       [_controller addChoice: enter];
       body();
@@ -384,6 +385,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    //       reclaimed on backtrack when the memory trail is cleared.
    ORMutableIntegerI* isPruned = [ORFactory mutable:_engine value:NO];
    NSCont* enter = [NSCont takeContinuation];
+   enter.admin = YES;
    if ([enter nbCalls]==0) {
       [_controller addChoice: enter];
       [self perform: s1 onLimit: ^{
