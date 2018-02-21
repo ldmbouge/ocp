@@ -1,5 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 
 #define NBLOOPS 500
 

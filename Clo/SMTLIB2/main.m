@@ -59,8 +59,8 @@ int main(int argc, const char * argv[])
    }
    else{
       fprintf(stdout, "Enter data file path and filename:");
-      fscanf(stdin, "%s", fname);
-      fp = fopen(fname, "r");
+//      fscanf(stdin, "%s", fname);
+      fp = fopen("/Users/zitoun/Documents/Bench/QF/griggio/fmcad12/add_01_1_1.smt2", "r");
       if (fp==NULL) {
          printf("Error opening file.\n");
          return false;

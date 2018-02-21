@@ -1,5 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 
 void check_solution(float a,float b, float c, float r, float q, float Q, float R, float R2, float Q3, float CR2, float CQ3){
    bool err = false;

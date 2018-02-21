@@ -9,6 +9,7 @@
 #import <ORProgram/ORProgram.h>
 
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 
 #define VAL 1.399f
 

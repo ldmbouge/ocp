@@ -1,5 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 float check_solution(float a, float b, float c, float c_aire) {
    float aire = 0.0;
    unsigned int *aptr, *bptr, *cptr,*sqptr;

@@ -1804,6 +1804,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
+
++(id<ORExpr>) expr:(id<ORExpr>) e1 mul:(id<ORVar>) var power:(ORInt) i
+{
+   id<ORExpr> r = e1;
+   for (int j = 0; j < i; j++)
+      r = [r mul:var];
+   return r;
+}
 @end
 
 @implementation ORFactory (ORDouble)

@@ -689,6 +689,7 @@ struct CPVarPair {
       ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
       id<ORFloatVar> x = [ORNormalizer floatVarIn:lin for:_model];
       [_model addConstraint:[ORFactory floatAssignC:_model var:x to:c]];
+      [lin release];
    } else {
       bool lv = [[e left] isVariable];
       bool rv = [[e right] isVariable];

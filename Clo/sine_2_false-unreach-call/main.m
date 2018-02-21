@@ -2,6 +2,8 @@
 
 #import "ORCmdLineArgs.h"
 
+#include <fenv.h>
+
 #define VAL 1.f
 /**
  
