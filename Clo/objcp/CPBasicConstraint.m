@@ -2638,14 +2638,14 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    return [_engine trackConstraintInGroup:cg];
 }
 
--(void) add: (id<CPGroup>) p
+-(void) add: (id<CPConstraint>) p
 {
    [p setGroup:self];
    if (_nbIn >= _max) {
       _inGroup = realloc(_inGroup,sizeof(id<CPGroup>)* _max * 2);
       _max *= 2;
    }
-   _inGroup[_nbIn++] = p;
+   _inGroup[_nbIn++] = (id<CPGroup>)p;
    [_engine assignIdToConstraint:p];
 }
 -(void) assignIdToConstraint:(id<ORConstraint>)c
@@ -2838,7 +2838,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [buf appendString:@"\n\t>"];
    return buf;
 }
--(void) add: (id<CPGroup>) p
+-(void) add: (id<CPConstraint>) p
 {
    [super add:p];
    @autoreleasepool{
