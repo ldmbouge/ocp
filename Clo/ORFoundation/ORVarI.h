@@ -156,5 +156,5 @@
 -(NSUInteger) count;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
--(ORInt) isEnable:(ORUInt) index;
+-(ORBool) isEnable:(ORUInt) index;
 @end
