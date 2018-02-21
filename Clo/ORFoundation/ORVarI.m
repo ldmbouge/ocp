@@ -972,7 +972,7 @@
 {
    [_disabled[index] setValue:0];
 }
--(ORInt) isEnable:(ORUInt) index
+-(ORInt) isEnable:(ORUInt) index;
 {
    return ![_disabled[index] value];
 }
