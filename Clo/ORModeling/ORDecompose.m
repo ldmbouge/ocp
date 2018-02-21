@@ -1546,10 +1546,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    if (e.size == 0) {
       [model addConstraint:[ORFactory floatEqualc:model var:var eqc:0.0f]];
    } else if (e.size == 1) {
-      [e addTerm:var by:-1];
+      [e addTerm:var by:-1.f];
       [e postEQZ:model];
    } else {
-      [e addTerm:var by:-1];
+      [e addTerm:var by:-1.f];
       [e postEQZ:model];
    }
 }
