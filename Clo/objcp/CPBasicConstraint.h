@@ -418,7 +418,6 @@ typedef int (^intgetter) (void) ;
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer;
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer percent:(ORDouble) p;
 -(void) add: (id<CPConstraint>) p;
-//-(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(void) addVars:(NSSet*) v;
 -(void) post;
 -(void) propagate;
