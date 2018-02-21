@@ -121,10 +121,10 @@ void mulR(rational_interval* ez, rational_interval* ex, rational_interval* ey, r
    maxError(&mulM2, &mulM2, &tmp4);
    
    /* ex * ey */
-   mpq_mul(tmp1, ey->inf, ex->inf);
-   mpq_mul(tmp2, ey->inf, ex->sup);
-   mpq_mul(tmp3, ey->sup, ex->inf);
-   mpq_mul(tmp4, ey->sup, ex->sup);
+   mpq_mul(tmp1, ex->inf, ey->inf);
+   mpq_mul(tmp2, ex->inf, ey->sup);
+   mpq_mul(tmp3, ex->sup, ey->inf);
+   mpq_mul(tmp4, ex->sup, ey->sup);
    
    minError(&mulm3, &tmp1, &tmp2);
    minError(&mulm3, &mulm3, &tmp3);
@@ -153,7 +153,7 @@ void mulR(rational_interval* ez, rational_interval* ex, rational_interval* ey, r
    mpq_clears(_x.inf, _x.sup, _y.inf, _y.sup, tmp1, tmp2, tmp3, tmp4, mulm1, mulm2, mulm3, mulM1, mulM2, mulM3, NULL);
 }
 
-void mulR_inv_ex(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo, float_interval* x, float_interval* y){
+void mulR_inv_ex(rational_interval* ex, rational_interval* ez, rational_interval* ey, rational_interval* eo, float_interval* x, float_interval* y){
    rational_interval _x, _y;
    ORRational tmp1, tmp2, tmp3, tmp4, one, divm, divM, mulm, mulM;
    
@@ -170,11 +170,8 @@ void mulR_inv_ex(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_add(tmp2, _y.sup, ey->sup);
    
    /* 1 / (y+ey) */
-   mpq_div(tmp1, one, tmp1);
-   mpq_div(tmp2, one, tmp2);
-   
-   minError(&divm, &tmp1, &tmp2);
-   maxError(&divM, &tmp1, &tmp2);
+   mpq_div(divM, one, tmp1);
+   mpq_div(divm, one, tmp2);
    
    /* x * ey */
    mpq_mul(tmp1, _x.inf, ey->inf);
@@ -217,11 +214,10 @@ void mulR_inv_ex(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_set(ex->inf, mulm);
    mpq_set(ex->sup, mulM);
    
-   printRational(@"ex->inf", ex->inf);
    mpq_clears(_x.inf, _x.sup, _y.inf, _y.sup, tmp1, tmp2, tmp3, tmp4, one, divm, divM, mulm, mulM, NULL);
 }
 
-void mulR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo, float_interval* x, float_interval* y){
+void mulR_inv_ey(rational_interval* ey, rational_interval* ez, rational_interval* ex, rational_interval* eo, float_interval* x, float_interval* y){
    rational_interval _x, _y;
    ORRational tmp1, tmp2, tmp3, tmp4, one, divm, divM, mulm, mulM;
    
@@ -238,11 +234,8 @@ void mulR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_add(tmp2, _x.sup, ex->sup);
    
    /* 1 / (x+ex) */
-   mpq_div(tmp1, one, tmp1);
-   mpq_div(tmp2, one, tmp2);
-   
-   minError(&divm, &tmp1, &tmp2);
-   maxError(&divM, &tmp1, &tmp2);
+   mpq_div(divM, one, tmp1);
+   mpq_div(divm, one, tmp2);
    
    /* y * ex */
    mpq_mul(tmp1, _y.inf, ex->inf);
@@ -288,7 +281,7 @@ void mulR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_clears(_x.inf, _x.sup, _y.inf, _y.sup, tmp1, tmp2, tmp3, tmp4, one, divm, divM, mulm, mulM, NULL);
 }
 
-void mulR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo, float_interval* x, float_interval* y){
+void mulR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval* ex, rational_interval* ey, float_interval* x, float_interval* y){
    rational_interval _x, _y;
    ORRational tmp1, tmp2, tmp3, tmp4, mulm1, mulm2, mulm3, mulM1, mulM2, mulM3;
    
@@ -419,12 +412,9 @@ void divR(rational_interval* ez, rational_interval* ex, rational_interval* ey, r
    maxError(&mulM3, &mulM3, &tmp4);
    
    /* 1 / (y*(y+ey)) */
-   mpq_div(tmp1, one, mulm3);
-   mpq_div(tmp2, one, mulM3);
-   
-   minError(&divm, &tmp1, &tmp2);
-   maxError(&divM, &tmp1, &tmp2);
-   
+   mpq_div(divM, one, mulm3);
+   mpq_div(divm, one, mulM3);
+
    /* (y*ex) -  (x*ey) */
    mpq_sub(tmp1, mulm1, mulM2);
    mpq_sub(tmp2, mulM1, mulm2);
@@ -454,7 +444,7 @@ void divR(rational_interval* ez, rational_interval* ex, rational_interval* ey, r
    mpq_clears(_x.inf, _x.sup, _y.inf, _y.sup, one, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, mulm1, mulm2, mulm3, mulM1, mulM2, mulM3, divm, divM, NULL);
 }
 
-void divR_inv_ex(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo, float_interval* x, float_interval* y){
+void divR_inv_ex(rational_interval* ex, rational_interval* ez, rational_interval* ey, rational_interval* eo, float_interval* x, float_interval* y){
    rational_interval _x, _y;
    ORRational one, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, mulm1, mulm2, mulM1, mulM2, divm, divM;
    
@@ -503,12 +493,9 @@ void divR_inv_ex(rational_interval* ez, rational_interval* ex, rational_interval
    maxError(&mulM2, &mulM2, &tmp4);
    
    /* 1 / y */
-   mpq_div(tmp1, one, _y.inf);
-   mpq_div(tmp2, one, _y.sup);
-   
-   minError(&divm, &tmp1, &tmp2);
-   maxError(&divM, &tmp1, &tmp2);
-   
+   mpq_div(divM, one, _y.inf);
+   mpq_div(divm, one, _y.sup);
+
    /* (x*ey) * (1/y) */
    mpq_mul(tmp1, mulm2, divm);
    mpq_mul(tmp2, mulm2, divM);
@@ -534,7 +521,7 @@ void divR_inv_ex(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_inits(_x.inf, _x.sup, _y.inf, _y.sup, one, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, mulm1, mulm2, mulM1, mulM2, divm, divM, NULL);
 }
 
-void divR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo, float_interval* x, float_interval* y){
+void divR_inv_ey(rational_interval* ey, rational_interval* ez, rational_interval* ex, rational_interval* eo, float_interval* x, float_interval* y){
    rational_interval _x, _y;
    ORRational one, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, mulm1, mulm2, mulM1, mulM2, divm, divM;
    
@@ -583,12 +570,9 @@ void divR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_add(tmp2, tmp2, mulM2);
    
    /* 1 / y */
-   mpq_div(tmp3, one, _y.inf);
-   mpq_div(tmp4, one, _y.sup);
-   
-   minError(&divm, &tmp3, &tmp4);
-   maxError(&divM, &tmp3, &tmp4);
-   
+   mpq_div(divM, one, _y.inf);
+   mpq_div(divm, one, _y.sup);
+
    /* x * (1/y) */
    mpq_mul(tmp3, _x.inf, divm);
    mpq_mul(tmp4, _x.inf, divM);
@@ -612,11 +596,8 @@ void divR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_sub(tmp4, tmp4, mulm1);
    
    /* 1 / (ez-eo-(x*(1/y))) */
-   mpq_div(tmp3, one, tmp3);
-   mpq_div(tmp4, one, tmp4);
-   
-   minError(&divm, &tmp3, &tmp4);
-   maxError(&divM, &tmp3, &tmp4);
+   mpq_div(divM, one, tmp3);
+   mpq_div(divm, one, tmp4);
    
    /* (ex-(ez*y)+eo*y) * (1/(ez-eo-(x*(1/y)))) */
    mpq_mul(tmp5, tmp1, tmp3);
@@ -639,7 +620,7 @@ void divR_inv_ey(rational_interval* ez, rational_interval* ex, rational_interval
    mpq_clears(_x.inf, _x.sup, _y.inf, _y.sup, one, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, mulm1, mulm2, mulM1, mulM2, divm, divM, NULL);
 }
 
-void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo, float_interval* x, float_interval* y){
+void divR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval* ex, rational_interval* ey, float_interval* x, float_interval* y){
    rational_interval _x, _y;
    ORRational one, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, mulm1, mulm2, mulm3, mulM1, mulM2, mulM3, divm, divM;
    
@@ -698,11 +679,8 @@ void divR_inv_eo(rational_interval* ez, rational_interval* ex, rational_interval
    maxError(&mulM3, &mulM3, &tmp4);
    
    /* 1 / (y*(y+ey)) */
-   mpq_div(tmp1, one, mulm3);
-   mpq_div(tmp2, one, mulM3);
-   
-   minError(&divm, &tmp1, &tmp2);
-   maxError(&divM, &tmp1, &tmp2);
+   mpq_div(divM, one, mulm3);
+   mpq_div(divm, one, mulM3);
    
    /* (y*ex) -  (x*ey) */
    mpq_sub(tmp1, mulm1, mulM2);
@@ -814,7 +792,8 @@ void compute_eo_mul(rational_interval* eo, rational_interval* eoTemp, float_inte
          mpq_inits(tmp_eo_r,tmp_eo_fi_r,NULL);
          
          tmp_eo_fi = x.inf * y.inf;
-         
+         ORFloat div = 1. / y.sup;
+         tmp_eo_fi = x.inf * div;
          mpq_set_d(tmp_eo_r, x.inf);
          mpq_set_d(tmp_eo_fi_r, y.inf);
          mpq_mul(tmp_eo_r,  tmp_eo_r, tmp_eo_fi_r);
@@ -851,10 +830,9 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
          mpq_inits(tmp_eo_r,tmp_eo_fi_r,NULL);
          
          tmp_eo_fi = x.inf / y.inf;
-
          mpq_set_d(tmp_eo_r, x.inf);
          mpq_set_d(tmp_eo_fi_r, y.inf);
-         mpq_add(tmp_eo_r,  tmp_eo_r, tmp_eo_fi_r);
+         mpq_div(tmp_eo_r,  tmp_eo_r, tmp_eo_fi_r);
          
          mpq_set_d(tmp_eo_fi_r, tmp_eo_fi);
          mpq_sub(tmp_eo_r, tmp_eo_r, tmp_eo_fi_r);
@@ -1810,25 +1788,51 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       compute_eo_mul(&eo, &eoTemp, x, y);
       setRationalInterval(&ezTemp,&ez);
       mulR(&ezTemp, &ex, &ey, &eo, &x, &y);
+      printRational(@"ez.inf", ez.inf);
+      printRational(@"ez.sup", ez.sup);
+      printRational(@"ezTemp.inf", ezTemp.inf);
+      printRational(@"ezTemp.inf", ezTemp.sup);
       intersectionError(&interError, ez, ezTemp);
+      printRational(@"interError.inf", interError.result.inf);
+      printRational(@"interError.sup", interError.result.sup);
       setRationalInterval(&ez, &interError.result);
       changed |= interError.changed;
       
       setRationalInterval(&exTemp,&ex);
+      printRational(@"TUTUez.inf", ez.inf);
+      printRational(@"TUTUez.sup", ez.sup);
       mulR_inv_ex(&exTemp, &ez, &ey, &eo, &x, &y);
+      /*printRational(@"ex.inf", ex.inf);
+      printRational(@"ex.sup", ex.sup);
+      printRational(@"exTemp.inf", exTemp.inf);
+      printRational(@"exTemp.inf", exTemp.sup);*/
       intersectionError(&interError, ex , exTemp);
+      /*printRational(@"interError.inf", interError.result.inf);
+      printRational(@"interError.sup", interError.result.sup);*/
       setRationalInterval(&ex, &interError.result);
       changed |= interError.changed;
       
       setRationalInterval(&eyTemp,&ey);
       mulR_inv_ey(&eyTemp, &ez, &ex, &eo, &x, &y);
+      /*printRational(@"ey.inf", ey.inf);
+      printRational(@"ey.sup", ey.sup);
+      printRational(@"eyTemp.inf", eyTemp.inf);
+      printRational(@"eyTemp.inf", eyTemp.sup);*/
       intersectionError(&interError, ey, eyTemp);
+      /*printRational(@"interError.inf", interError.result.inf);
+      printRational(@"interError.sup", interError.result.sup);*/
       setRationalInterval(&ey, &interError.result);
       changed |= interError.changed;
       
       setRationalInterval(&eoTemp,&eo);
       mulR_inv_eo(&eoTemp, &ez, &ex, &ey, &x, &y);
+      /*printRational(@"eo.inf", eo.inf);
+      printRational(@"eo.sup", eo.sup);
+      printRational(@"eoTemp.inf", eoTemp.inf);
+      printRational(@"eoTemp.inf", eoTemp.sup);*/
       intersectionError(&interError, eo, eoTemp);
+      /*printRational(@"interError.inf", interError.result.inf);
+      printRational(@"interError.sup", interError.result.sup);*/
       setRationalInterval(&eo, &interError.result);
       changed |= interError.changed;
       /* END ERROR PROPAG */
