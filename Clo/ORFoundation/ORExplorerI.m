@@ -122,9 +122,9 @@
    //[self shipNode:NSBranch];
    NSCont* k = [NSCont takeContinuation];
    if ([k nbCalls] == 0) {
+      [_controller addChoice: k];
       [_controller startTryLeft];
       _nbc++;
-      [_controller addChoice: k];
       left();
       [_controller exitTryLeft];
    }
@@ -180,9 +180,9 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller fail];
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls] == 0) {
+         [_controller addChoice: k];
          [_controller startTryallBody];
          _nbc++;
-         [_controller addChoice: k];
          body(nv.value);
          [_controller exitTryallBody];
          break;

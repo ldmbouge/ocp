@@ -69,7 +69,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-p4"
+            argument = "-p2"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
