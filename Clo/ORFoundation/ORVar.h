@@ -128,7 +128,7 @@ PORTABLE_BEGIN
 -(NSUInteger) count;
 -(void) disable:(ORInt) index;
 -(void) enable:(ORInt) index;
--(ORBool) isEnable:(ORInt) index;
+-(ORBool) isEnable:(ORUInt) index;
 @end
 
 @protocol ORDoubleVarArray <ORVarArray>
