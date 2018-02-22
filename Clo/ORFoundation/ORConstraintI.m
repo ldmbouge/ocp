@@ -252,7 +252,7 @@
    }
    [buf appendFormat:@"<%@ (%s): %p> -> ",[self class],gt,self];
    [buf appendString:@"{\n"];
-   [_content enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+   [self enumerateObjectWithBlock:^(id<ORConstraint> obj) {
       [buf appendFormat:@"\t\t%@\n",[obj description]];
    }];
    [buf appendString:@"\t}"];

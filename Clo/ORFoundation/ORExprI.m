@@ -886,7 +886,7 @@
     else if ([e isKindOfClass:[NSNumber class]])
         re = [e asExpression:t];
     enum ORVType et = [(id<ORExpr>)re vtype];
-    if (et == ORTFloat)
+   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
         return [ORFactory expr:self lt:re track:t];
     else
         return [ORFactory expr:self leq:[re plus:[ORFactory integer:t value:1]] track:t];
@@ -899,7 +899,7 @@
    else if ([e isKindOfClass:[NSNumber class]])
       re = [e asExpression:t];
    enum ORVType et = [(id<ORExpr>)re vtype];
-   if (et == ORTFloat)
+   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
        return [ORFactory expr:self gt:re track:t];
     else
         return [ORFactory expr:self geq:[re plus:[ORFactory integer:t value:1]] track:t];
