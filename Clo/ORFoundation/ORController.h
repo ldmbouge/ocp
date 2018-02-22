@@ -16,11 +16,6 @@
 @protocol ORObjectiveValue;
 @class ORHeist;
 
-typedef struct ChildSpec {
-   ORInt _parent;
-   ORInt _alt;
-} ChildSpec;
-
 @protocol ORStealing
 -(ORHeist*) steal;
 -(ORBool)willingToShare;
@@ -47,6 +42,7 @@ typedef struct ChildSpec {
 -(id<ORSearchController>)    controller;
 -(void)       setup;
 -(void)       cleanup;
+-(void)       startSearch;
 -(id<ORSearchController>)clone;
 -(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf;
 -(ORInt)      addChoice: (NSCont*) k;
@@ -72,7 +68,6 @@ typedef struct ChildSpec {
 -(ORBool)     isFinitelyFailed;
 -(ORBool)     isAborted;
 -(id)         copy;
--(ChildSpec) declareChildNode;
 @end
 
 @interface ORDefaultController : NSObject <NSCopying,ORSearchController>
@@ -84,6 +79,7 @@ typedef struct ChildSpec {
 -(id<ORSearchController>) controller;
 -(void)       setup;
 -(void)       cleanup;
+-(void)       startSearch;
 -(ORInt)      addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       fail: (ORBool) pruned;
@@ -106,7 +102,6 @@ typedef struct ChildSpec {
 -(void)       exitTryallOnFailure;
 -(ORBool)     isFinitelyFailed;
 -(ORBool)     isAborted;
--(ChildSpec) declareChildNode;
 @end
 
 @interface ORNestedController : ORDefaultController
@@ -118,7 +113,6 @@ typedef struct ChildSpec {
 -(void) finitelyFailed;
 -(ORBool) isFinitelyFailed;
 -(ORBool) isAborted;
--(ChildSpec) declareChildNode;
 @end
 
 @interface ORDFSController : ORDefaultController <NSCopying,ORSearchController>
@@ -130,7 +124,6 @@ typedef struct ChildSpec {
 -(ORInt) addChoice:(NSCont*)k;
 -(void) trust;
 -(void) fail;
--(ChildSpec) declareChildNode;
 @end
 
 @protocol ORControllerFactory<NSObject>

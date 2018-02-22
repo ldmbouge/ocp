@@ -13,6 +13,9 @@
 #import <ORFoundation/ORController.h>
 #import <ORUtilities/cont.h>
 
+#import <CPProfiler/CPProfiler.h>
+
+
 @implementation ORHeist
 -(ORHeist*)init:(NSCont*)c from:(id<ORCheckpoint>)cp oValue:(id<ORObjectiveValue>)ov;
 {
@@ -95,6 +98,10 @@
 {
    [_controller cleanup];
 }
+-(void) startSearch
+{
+   [_controller startSearch];
+}
 -(void)       trust
 {
    if (_controller)
@@ -140,10 +147,6 @@
 -(ORBool) isAborted
 {
    return [_controller isAborted];
-}
--(ChildSpec) declareChildNode
-{
-   return [_controller declareChildNode];
 }
 -(void) startTry
 {
@@ -267,21 +270,17 @@
 {
    return _isAborted;
 }
--(ChildSpec) declareChildNode
-{
-   return [_controller declareChildNode];
-}
 @end
 
 @implementation ORDFSController
 {
    NSCont**          _tab;
-   ChildSpec*         _nd;
    ORInt              _sz;
    ORInt              _mx;
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
-   ChildSpec         _cur;
+   TRId           _parent;
+   TRId              _cur;
 }
 +(id<ORSearchController>)proto
 {
@@ -293,10 +292,10 @@
    _tracer = tracer ? [tracer retain] : nil;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
-   _nd = malloc(sizeof(ChildSpec)* _mx);
    _sz  = 0;
    _atRoot =  -1;
-   _cur = (ChildSpec){tracer.curNode,0};
+   _parent = makeTRId(_tracer.trail,nil);
+   _cur = makeTRId(_tracer.trail,nil);
    [model release]; // not needed
    return self;
 }
@@ -307,10 +306,10 @@
    _tracer = tracer ? [tracer retain] : nil;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
-   _nd = malloc(sizeof(ChildSpec)* _mx);
    _sz  = 0;
    _atRoot =  -1;
-   _cur = (ChildSpec){tracer.curNode,0};
+   _parent = makeTRId(_tracer.trail,nil);
+   _cur = makeTRId(_tracer.trail,nil);
    return self;
 }
 - (void) dealloc
@@ -319,7 +318,6 @@
    if (_tracer)
       [_tracer release];
    free(_tab);
-   free(_nd);
    [super dealloc];
 }
 -(id<ORSearchController>)clone
@@ -327,13 +325,12 @@
    ORDFSController* c = [[ORDFSController alloc] initTheController:_tracer engine:nil posting:nil];
    free(c->_tab);
    c->_tab = malloc(sizeof(NSCont*)*_mx);
-   c->_nd = malloc(sizeof(ChildSpec)* _mx);
    for(ORInt k=0;k<_sz;k++) {
       c->_tab[k] = _tab[k];
-      c->_nd[k] = _nd[k];
    }
    c->_sz = _sz;
    c->_mx = _mx;
+   c->_parent = _parent;
    c->_cur = _cur;
    return c;
 }
@@ -349,13 +346,12 @@
    if (_atRoot==-1)
       _atRoot = [_tracer pushNode];
 }
--(ChildSpec) declareChildNode
+-(void) startSearch
 {
-   return (ChildSpec){_cur._parent,_cur._alt++};
-//   if (_sz==0)
-//      return (ChildSpec){-1,0};  // root and first alternative.
-//   else
-//      return (ChildSpec){_nd[_sz-1]._parent,_nd[_sz-1]._alt++};
+   NSLog(@"Starting search...");
+   NodeID me = {0,0,0};
+   NodeID p  = {-1,0,0};
+   _cur = [_tracer.profiler createNode:me parent:p altNumber:0];
 }
 -(void) cleanup
 {
@@ -375,9 +371,6 @@
    }
    _tab[_sz++] = k;
    ORInt nn = [_tracer pushNode];
-   _nd[_sz - 1] = _cur = (ChildSpec){nn,0};
-//   _nd[_sz - 1]._parent = nn;
-//   _nd[_sz - 1]._alt    = 0;
    return nn;
 }
 
@@ -396,7 +389,6 @@
       [[_tracer popNode] letgo];
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;
-      _cur = _nd[ofs];
       --_sz;
       if (k!=NULL)
          [k call];

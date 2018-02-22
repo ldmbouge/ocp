@@ -14,12 +14,10 @@
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORData.h>
-//#import <ORFoundation/ORVisit.h>
-//#import <ORFoundation/ORCommand.h>
+#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORCommand.h>
 #import <assert.h>
 
-
-@class ORCommandList;
 
 @implementation ORTrailI
 -(ORTrailI*) init
@@ -681,12 +679,9 @@ void freeTRIntArray(TRIntArray a)
    return buf;
 }
 
-@class ORVisitor;
-
 -(void)visit:(ORVisitor*)visitor
 {
-  // TOFIX
-  //[visitor visitTrailableInt:self];
+  [visitor visitTrailableInt:self];
 }
 
 @end

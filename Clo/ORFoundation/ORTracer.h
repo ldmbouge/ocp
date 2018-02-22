@@ -19,6 +19,8 @@
 @protocol ORCheckpoint;
 @protocol ORTrail;
 @protocol ORPost;
+@protocol Profiler;
+
 @class ORCommandList;
 @class ORTrailI;
 @class ORMemoryTrailI;
@@ -35,6 +37,7 @@
 -(ORInt)      level;
 -(ORInt) curNode;
 -(void) fail;
+-(id<Profiler>)profiler;
 @optional -(void) addCommand: (id<ORConstraint>) com;
 @optional -(id<ORCheckpoint>) captureCheckpoint;
 @optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model;
@@ -69,6 +72,7 @@
 -(ORInt)      level;
 -(ORInt)      curNode;
 -(void) fail;
+-(id<Profiler>)profiler;
 @end
 
 @interface SemTracer : NSObject<ORTracer>
@@ -88,4 +92,5 @@
 -(ORInt)      level;
 -(ORInt)      curNode;
 -(void) fail;
+-(id<Profiler>)profiler;
 @end

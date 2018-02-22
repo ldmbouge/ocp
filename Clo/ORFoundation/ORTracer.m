@@ -16,6 +16,9 @@
 #import <ORFoundation/ORTrailI.h>
 #import <pthread.h>
 
+#import <CPProfiler/CPProfiler.h>
+
+
 
 @interface ORProblemI : NSObject<ORProblem> {    // a semantic sub-problem description (as a set of constraints aka commands)
    ORCommandList* _cstrs;
@@ -338,6 +341,7 @@ static __thread id checkPointCache = NULL;
    ORTrailIStack*   _trStack;
    ORInt           _lastNode;
    TRInt              _level;
+   id<Profiler>        _prof;
 }
 -(DFSTracer*) initDFSTracer: (ORTrailI*) trail memory:(ORMemoryTrailI*)mt
 {
@@ -352,10 +356,23 @@ static __thread id checkPointCache = NULL;
 -(void) dealloc
 {
    NSLog(@"Releasing DFSTracer %p\n",self);
+   if (_prof) {
+      [_prof disconnect];
+      [_prof release];
+   }
    [_trail release];
    [_mt release];
    [_trStack release];
    [super dealloc];
+}
+-(id<Profiler>)profiler
+{
+   if (_prof==nil) {
+      _prof = [CPPFactory makeProfiler:6565];
+      [_prof connect];
+      [_prof start:"OCP" withIdentifier:1];
+   }
+   return _prof;
 }
 -(ORInt)      curNode
 {
@@ -423,6 +440,7 @@ static __thread id checkPointCache = NULL;
    ORInt           _lastNode;
    ORCmdStack*         _cmds;
    TRInt              _level;
+   id<Profiler>        _prof;
 }
 -(SemTracer*) initSemTracer: (ORTrailI*) trail memory:(ORMemoryTrailI*)mt
 {
@@ -443,6 +461,16 @@ static __thread id checkPointCache = NULL;
    [_cmds release];
    [super dealloc];
 }
+-(id<Profiler>)profiler
+{
+   if (_prof==nil) {
+      _prof = [CPPFactory makeProfiler:6565];
+      [_prof connect];
+      [_prof start:"OCP" withIdentifier:1];
+   }
+   return _prof;
+}
+
 -(ORInt)      curNode
 {
    return _lastNode;

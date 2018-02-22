@@ -14,8 +14,6 @@
 #import <ORFoundation/ORDataI.h>
 #import "ORLimit.h"
 #import "ORExplorerI.h"
-//#import <CPProfiler/CPProfiler.h>
-
 
 @implementation ORCoreExplorerI
 {
@@ -27,8 +25,6 @@
    ORInt                     _nbf;
    ORInt                     _nbc;
    id<ORControllerFactory> _cFact;
-   ORInt _execId;
-   //   id<Profiler> _prof;
 }
 -(id) initORExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
 {
@@ -38,21 +34,11 @@
    _trail = [[tracer trail] retain];
    _nbc = _nbf = 0;
    _cFact = [cFact retain];
-   
-   _execId = 1;
-   // _prof = [CPPFactory makeProfiler:6565];
-   // [_prof connect];
-   // [_prof start:"example" withIdentifier:_execId];
-
    return self;
 }
 -(void) dealloc
 {
-   NSLog(@"ORCoreExplorer dealloc called...");
-   
-   // [_prof disconnect];
-   // [_prof release];
-   
+   NSLog(@"ORCoreExplorer dealloc called...");   
    id ctrl = _controller;
    [ctrl release];
    [_trail release];
@@ -438,6 +424,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if ([exit nbCalls]==0) {
       exit.admin = YES;
       [newCtrl setup];
+      [newCtrl startSearch];
       [_controller addChoice: exit];                           // add the choice in the original controller
       [self setController:newCtrl];                                 // install the new controller chain
       if (body) body();
@@ -466,6 +453,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if ([exit nbCalls]==0) {
       exit.admin = YES;
       [newCtrl setup];
+      [newCtrl startSearch];
       [newCtrl addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       if (body) body();
@@ -493,6 +481,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if ([exit nbCalls]==0) {
       exit.admin = YES;
       [newCtrl setup];
+      [newCtrl startSearch];
       [_controller addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       id<ORSearchObjectiveFunction> obj = solver.objective;
