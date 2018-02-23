@@ -6,7 +6,7 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-L../CPUKernel -Wl,-rpath=`pwd`/../CPUKernel \
-	-L/usr/local/fpcs/lib/libfpi.so -Wl \
+	-L../../lib/linux/libfpi.so -Wl \
 	-lORUtilities -lORFoundation -lCPUKernel 
 
 SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m CPConstraint.m  \

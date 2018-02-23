@@ -21,6 +21,7 @@
 #endif
 
 @implementation NSNumber (Expressions)
+#if defined(__APPLE__)
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
 {
    const char* tt = [self objCType];
@@ -40,6 +41,27 @@
    }
    return NULL;
 }
+#else
+-(id<ORExpr>) asExpression:(id<ORTracker>) tracker
+{
+   const char* tt = [self objCType];
+   if (strcmp(tt,@encode(ORInt))==0 || strcmp(tt,@encode(ORUInt)) ==0 || strcmp(tt,@encode(ORLong)) ==0 || strcmp(tt,@encode(ORULong)) ==0)
+       return [ORFactory integer:tracker value:[self intValue]];
+   else if (strcmp(class_getName([self class]),"NSSmallFloat")==0) { // THIS IS FOR CIRCUMVENTING A LINUX BUG.     
+       return [ORFactory float:tracker value:[self floatValue]];
+   } else if (strcmp(tt,@encode(double))==0 || strcmp(tt,@encode(ORDouble))==0)
+       return [ORFactory double:tracker value:[self doubleValue]];
+   //TODO
+   /*else if (strcmp(tt,@encode(long double))==0 || strcmp(tt,@encode(ORLDouble))==0)
+       return [ORFactory ldouble:tracker value:[self ldoubleValue]];*/
+   else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
+      return [ORFactory integer:tracker value:[self boolValue]];
+   else {
+      assert(NO);
+   }
+   return NULL;
+}
+#endif
 -(id<ORRelation>)  set: (id<ORExpr>)  r
 {
    return [[self asExpression:[r tracker]] set:r];

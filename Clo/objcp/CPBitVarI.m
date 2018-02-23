@@ -159,8 +159,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    } else {
       _cap = 0;
       
-      _levels = nil;
-      _implications = nil;
+      _levels = NULL;
+      _implications = NULL;
    }
    _vc = CPVCBare;
    _recv = nil;
@@ -739,8 +739,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       //         _implications[i] = makeTRId(_trail, 0);
       //      }
    } else {
-      _levels = nil;
-      _implications = nil;
+      _levels = NULL;
+      _implications = NULL;
    }
    _recv = nil;
    return self;

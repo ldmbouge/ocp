@@ -181,7 +181,7 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
-   _level = 0;
+   _level = 100;
    _split3Bpercent = 10.f;
    _subcut = @selector(float3BSplit:call:withVars:);
    _unique = NO;
