@@ -29,30 +29,30 @@ int main(int argc, const char * argv[]) {
          id<ORGroup> g = [args makeGroup:model];
          
          [g add:[delta gt:@(0.0f)]];
-        [g add:[epsilon gt:@(0.0f)]];
-        
-        [g add:[a geq:b]];
-        [g add:[b geq:c]];
-        
-        
-        [g add:[diffab leq:delta]];
-        [g add:[diffac leq:delta]];
-        [g add:[diffbc leq:delta]];
-        
-        [g add:[diffab eq:[a sub:b]]];
-        [g add:[diffac eq:[a sub:c]]];
-        [g add:[diffbc eq:[b sub:c]]];
-        [g add:[assoc1 eq:[[a plus:b] plus:c]]];
-        [g add:[assoc2 eq:[a plus:[b plus:c]]]];
-        
-        [g add:[assoc1 neq:infinity]];
-        [g add:[assoc1 neq:sub_infinity]];
-
-        [g add:[assoc2 neq:infinity]];
-        [g add:[assoc2 neq:sub_infinity]];
-        
-        
-        [g add:[[assoc1 sub:assoc2] gt:epsilon]];
+         [g add:[epsilon gt:@(0.0f)]];
+         
+         [g add:[a geq:b]];
+         [g add:[b geq:c]];
+         
+         
+         [g add:[diffab leq:delta]];
+         [g add:[diffac leq:delta]];
+         [g add:[diffbc leq:delta]];
+         
+         [g add:[diffab eq:[a sub:b]]];
+         [g add:[diffac eq:[a sub:c]]];
+         [g add:[diffbc eq:[b sub:c]]];
+         [g add:[assoc1 eq:[[a plus:b] plus:c]]];
+         [g add:[assoc2 eq:[a plus:[b plus:c]]]];
+         
+         [g add:[assoc1 neq:infinity]];
+         [g add:[assoc1 neq:sub_infinity]];
+//
+         [g add:[assoc2 neq:infinity]];
+         [g add:[assoc2 neq:sub_infinity]];
+         
+         
+         [g add:[[assoc1 sub:assoc2] gt:epsilon]];
          
          [model add:g];
          
