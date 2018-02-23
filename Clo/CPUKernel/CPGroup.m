@@ -66,7 +66,7 @@
 {
    return [_engine trackConstraintInGroup:cg];
 }
--(void)add:(id<CPConstraint>)p
+-(ORStatus)add:(id<CPConstraint>)p
 {
    [p setGroup:self];
    if (_nbIn >= _max) {
@@ -75,6 +75,7 @@
    }
    _inGroup[_nbIn++] = p;
    [_engine assignIdToConstraint:p];
+   return ORSuspend;
 }
 -(void)assignIdToConstraint:(id<ORConstraint>)c
 {
@@ -243,7 +244,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
 {
    return [_engine trail];
 }
--(void)add:(id<CPConstraint>)p
+-(ORStatus)add:(id<CPConstraint>)p
 {
    if (_nbIn == _max) {
       _inGroup = realloc(_inGroup,sizeof(id<CPConstraint>)*_max*2);
@@ -252,6 +253,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
    _inGroup[_nbIn++] = p;
    [p setGroup:self];
    [self assignIdToConstraint:p];
+   return ORSuspend;
 }
 -(void)assignIdToConstraint:(id<ORConstraint>)c
 {

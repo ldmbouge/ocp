@@ -17,7 +17,7 @@
 @class CPGroupController;
 
 @protocol CPGroup <CPConstraint>
--(void)  add:(id<CPConstraint>)p;
+-(ORStatus)  add:(id<CPConstraint>)p;
 -(void)  assignIdToConstraint:(id<ORConstraint>)c;
 -(void)  scheduleClosure:(id<CPClosureList>)evt;
 -(id<ORTrail>) trail;
@@ -26,7 +26,7 @@
 
 @interface CPGroup : CPCoreConstraint<CPGroup>
 -(id)   init: (id<CPEngine>) engine;
--(void) add: (id<CPConstraint>) p;
+-(ORStatus) add: (id<CPConstraint>) p;
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure: (id<CPClosureList>) evt;
@@ -38,7 +38,7 @@
 
 @interface CPBergeGroup : CPCoreConstraint<CPGroup>
 -(id) init:(id<CPEngine>)engine;
--(void) add:(id<CPConstraint>)p;
+-(ORStatus) add:(id<CPConstraint>)p;
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure:(id<CPClosureList>)evt;

@@ -2638,7 +2638,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    return [_engine trackConstraintInGroup:cg];
 }
 
--(void) add: (id<CPConstraint>) p
+-(ORStatus) add: (id<CPConstraint>) p
 {
    [p setGroup:self];
    if (_nbIn >= _max) {
@@ -2647,6 +2647,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    }
    _inGroup[_nbIn++] = (id<CPGroup>)p;
    [_engine assignIdToConstraint:p];
+   return ORSuspend;
 }
 -(void) assignIdToConstraint:(id<ORConstraint>)c
 {
@@ -2838,12 +2839,13 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [buf appendString:@"\n\t>"];
    return buf;
 }
--(void) add: (id<CPConstraint>) p
+-(ORStatus) add: (id<CPConstraint>) p
 {
-   [super add:p];
+   ORStatus s = [super add:p];
    @autoreleasepool{
       [self addVars:[p allVars]];
    }
+   return s;
 }
 -(void) addVars:(NSSet *)vars
 {
