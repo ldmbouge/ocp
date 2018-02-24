@@ -126,8 +126,8 @@ PORTABLE_BEGIN
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
--(void) disable:(ORInt) index;
--(void) enable:(ORInt) index;
+-(void) disable:(ORUInt) index;
+-(void) enable:(ORUInt) index;
 -(ORBool) isEnable:(ORUInt) index;
 @end
 
