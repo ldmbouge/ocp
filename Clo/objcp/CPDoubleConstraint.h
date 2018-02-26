@@ -38,7 +38,7 @@ static inline unsigned long long cardinalityD(double xmin, double xmax){
     double_cast i_inf;
     double_cast i_sup;
     if(xmin == xmax) return 1;
-    if(xmin == -infinity() && xmax == infinity()) return MAXLONG; // [ldm]: this MAXDBL causes casting issues. MAXDBL;
+    if(xmin == -infinity() && xmax == infinity()) return LONG_MAX; // [ldm]: this MAXDBL causes casting issues. MAXDBL;
     i_inf.f = xmin;
     i_sup.f = xmax;
     return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_DOUBLE_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
