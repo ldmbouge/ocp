@@ -92,7 +92,7 @@ int main(int argc, const char * argv[]) {
          //assert(!(R == 0 && Q == 0));
          [g add:[R_0 eq:@(0.0f)]];
          [g add:[Q_0 eq:@(0.0f)]];
-         [g add:[a_0 eq:@(15.0f)]];
+//         [g add:[a_0 eq:@(15.0f)]];
          
          [model add:g];
          id<CPProgram> cp = [args makeProgram:model];
