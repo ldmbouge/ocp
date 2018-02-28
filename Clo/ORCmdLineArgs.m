@@ -88,8 +88,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          fName = [NSString stringWithCString:argv[k]+2 encoding:NSASCIIStringEncoding];
       else if (strncmp(argv[k],"-vh",3)==0)
          valordering = atoi(argv[k]+3);
-      else if (strncmp(argv[k],"-dh",3)==0)
-         defaultAbsSplit = atoi(argv[k]+3);
+      else if (strncmp(argv[k],"-default",8)==0)
+         defaultAbsSplit = atoi(argv[k+1]);
       else if (strncmp(argv[k],"-l",2)==0)
          level = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-u",2)==0)
@@ -917,7 +917,12 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   case dynamic6Split:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                      [p float6WaySplit:i call:s withVars:x];
-                  }];
+                     }];
+                  case split3B:
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [p float3BSplit:i call:s withVars:x];
+                     }];
+                     break;
                   default:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                         [p float6WaySplit:i call:s withVars:x];
