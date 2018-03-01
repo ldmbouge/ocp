@@ -29,6 +29,7 @@ PORTABLE_BEGIN
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) diffLabel;
 -(id<ORIdxIntInformer>) retLT;
 -(id<ORIdxIntInformer>) retGT;
 -(id<ORIdxIntInformer>) failLabel;

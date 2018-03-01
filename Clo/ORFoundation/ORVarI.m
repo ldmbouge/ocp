@@ -17,6 +17,7 @@
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
+   NSString*      _vname;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
@@ -25,6 +26,7 @@
    _domain = domain;
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
+   _vname = nil;
    [track trackVariable: self];
    return self;
 }
@@ -43,7 +45,14 @@
    //NSLog(@"ORIntVarI(%p)::dealloc %d\n",self,_name);
    [super dealloc];
 }
-
+-(void)name:(NSString*)n
+{
+   _vname = [n retain];
+}
+-(NSString*)name
+{
+   return _vname;
+}
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];

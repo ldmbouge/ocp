@@ -29,6 +29,8 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 
+#import <CPProfiler/profiler.h>
+
 #if defined(__linux__)
 #import <values.h>
 #endif
@@ -152,6 +154,7 @@
    id<CPPortal>          _portal;
 
    id<ORIdxIntInformer>  _returnLabel;
+   id<ORIdxIntInformer>  _diffLabel;
    id<ORIdxIntInformer>  _returnLT;
    id<ORIdxIntInformer>  _returnGT;
    id<ORIdxIntInformer>  _failLabel;
@@ -169,7 +172,7 @@
    self = [super init];
    _model = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
-   _returnLabel = _failLabel = _returnLT = _returnGT = _failLT = _failGT = nil;
+   _returnLabel = _diffLabel = _failLabel = _returnLT = _returnGT = _failLT = _failGT = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
@@ -186,6 +189,7 @@
    [_model release];
    [_portal release];
    [_returnLabel release];
+   [_diffLabel release];
    [_returnLT release];
    [_returnGT release];
    [_failLabel release];
@@ -224,6 +228,12 @@
    if (_returnLabel==nil)
       _returnLabel = [ORConcurrency idxIntInformer];
    return _returnLabel;
+}
+-(id<ORIdxIntInformer>) diffLabel
+{
+   if (_diffLabel == nil)
+      _diffLabel = [ORConcurrency idxIntInformer];
+   return _diffLabel;
 }
 -(id<ORIdxIntInformer>) retLT
 {
@@ -1368,7 +1378,7 @@
    id<CPIntVar> x = _gamma[mx.getId];
    while (![x bound]) {
       ORInt m = [x min];
-      [_search try: ^{  [self label: mx with: m]; }
+      [_search try: ^{ [self label: mx with: m]; }
                alt: ^{ [self  diff: mx with: m]; }
       ];
    }
@@ -1445,11 +1455,17 @@
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [self labelImpl: _gamma[var.getId] with: val];
+   [self labelImpl: _gamma[var.getId] with: val];
+   id<Profiler> profiler = _tracer.profiler;
+   if (profiler)
+      [profiler tag:_search.controller.curNode label:var.name with:val];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
    [self diffImpl: _gamma[var.getId] with: val];
+   id<Profiler> profiler = _tracer.profiler;
+   if (profiler)
+      [profiler tag:_search.controller.curNode diff:var.name with:val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
@@ -2010,6 +2026,7 @@
       else
          [_search fail];
    }
+   [_diffLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
@@ -2252,10 +2269,7 @@
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce: ^ {
-      bindDom((id)var, val);
-      //[var bind: val];
-   }];
+   ORStatus status = [_engine enforce: ^ { bindDom((id)var, val);}];
    if (status == ORFailure) {
       if ([_engine isPropagating])
          failNow();
@@ -2271,8 +2285,10 @@
    if (status == ORFailure) {
       if (_engine.isPropagating)
          failNow();
+      [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
+   [_diffLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
@@ -2380,6 +2396,10 @@
 -(id<ORIdxIntInformer>) retLabel
 {
    return [_cp retLabel];
+}
+-(id<ORIdxIntInformer>) diffLabel
+{
+   return [_cp diffLabel];
 }
 -(id<ORIdxIntInformer>) retLT
 {

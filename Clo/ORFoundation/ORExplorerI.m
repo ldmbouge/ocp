@@ -46,17 +46,6 @@
    [super dealloc];
 }
 
-// -(void)shipNode:(enum NStatus)st
-// {
-//    NodeID cn = {_tracer.curNode,0,0};
-//    ChildSpec cs = [_controller declareChildNode];
-//    NodeID pn = {cs._parent , 0, 0};
-//    int kids[4] = {0,0,2,0};
-//    id<STNode> n = [_prof createNode:cn parent:pn altNumber:cs._alt kids:kids[(int)st] status:st];
-//    [n send];
-//    [n release];
-// }
-
 -(id<ORControllerFactory>) controllerFactory
 {
    return _cFact;
@@ -94,9 +83,8 @@
 }
 -(void) fail
 {
-   //[self shipNode:NSFailed];
    [ORConcurrency pumpEvents];
-   //[_tracer fail];  // notify the tracer we failed (for proper numbering of nodes)
+   [_tracer fail];  // notify the tracer we failed (for proper numbering of nodes)
    _nbf++;
    [_controller fail];
    assert(0);
@@ -105,7 +93,6 @@
 -(void) try: (ORClosure) left alt: (ORClosure) right
 {
    [_controller startTry];
-   //[self shipNode:NSBranch];
    NSCont* k = [NSCont takeContinuation];
    if ([k nbCalls] == 0) {
       [_controller addChoice: k];
@@ -429,7 +416,6 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self setController:newCtrl];                                 // install the new controller chain
       if (body) body();
       if (onSolution) onSolution();
-      //[self shipNode:NSSolved];
       [_controller succeeds];
    }
    else if ([newCtrl isFinitelyFailed]) {
@@ -458,6 +444,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self setController:newCtrl];           // install the new controller
       if (body) body();
       if (onSolution) onSolution();
+      [_controller onLeaf];
       [_controller fail];                // If fail runs out of node, it will trigger finitelyFailed.
    }
    else { // if ([newCtrl isFinitelyFailed]) {
@@ -465,8 +452,6 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [newCtrl cleanup];
       [newCtrl release];
       if (onExit) onExit();
-      //[self shipNode:NSSolved];
-      // [_prof done];
       // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.
    }
 }

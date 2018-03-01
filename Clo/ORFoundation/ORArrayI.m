@@ -424,6 +424,7 @@
    ORInt               _up;
    ORInt               _nb;
    id<ORIntRange>   _range;
+   NSString*         _name;
 }
 
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
@@ -438,6 +439,7 @@
    _array = malloc(_nb * sizeof(id));
    memset(_array,0,sizeof(id)*_nb);
    _array -= _low;
+   _name = nil;
    return self;
 }
 -(id)copyWithZone:(NSZone *)zone
@@ -446,6 +448,16 @@
    for(ORInt i=_low;i<=_up;i++)
        [rv set:[self at:i] at:i];
    return rv;
+}
+-(void)name:(NSString*)an
+{
+   _name = [an retain];
+   for(ORInt i=_low;i <= _up;i++) {
+      NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:16];
+      [buf appendFormat:@"%@[%d]",_name,i];
+      [[self at:i] name:buf];
+      [buf release];
+   }
 }
 -(BOOL)isEqual:(id)object
 {
@@ -474,6 +486,7 @@
 {
    _array += _low;
    free(_array);
+   [_name release];
    [super dealloc];
 }
 -(id*)base

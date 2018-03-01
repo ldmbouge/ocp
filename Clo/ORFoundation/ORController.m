@@ -102,6 +102,15 @@
 {
    [_controller startSearch];
 }
+-(void)       onLeaf
+{
+   [_controller onLeaf];
+}
+-(id<STNode>) curNode
+{
+   return [_controller curNode];
+}
+
 -(void)       trust
 {
    if (_controller)
@@ -353,6 +362,13 @@
    NodeID p  = {-1,0,0};
    _cur = [_tracer.profiler createNode:me parent:p altNumber:0];
 }
+-(void) onLeaf
+{
+   [_cur setStatus:NSSolved];
+   [_cur commit];
+   assignTRIdNC(&_cur,nil,_tracer.trail);
+}
+
 -(void) cleanup
 {
    while (_sz > 0)
@@ -374,6 +390,29 @@
    return nn;
 }
 
+-(void) startTryLeft
+{
+   NodeID me = {_tracer.curNode,0,0};
+   NodeID p = [(id<STNode>)_cur getNodeId];
+   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:0];
+   [_cur setNbKids:2];
+   [_cur setStatus:NSBranch];
+   [_cur commit];
+   assignTRIdNC(&_parent, _cur, _tracer.trail);
+   assignTRIdNC(&_cur,newNode,_tracer.trail);
+}
+-(void) startTryRight
+{
+   NodeID me = {_tracer.curNode,0,0};
+   NodeID p = [(id<STNode>)_cur getNodeId];
+   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:1];
+   assignTRIdNC(&_parent, _cur, _tracer.trail);
+   assignTRIdNC(&_cur,newNode,_tracer.trail);
+}
+-(id<STNode>) curNode
+{
+   return _cur;
+}
 -(void) trust
 {
    [_tracer trust];
@@ -386,6 +425,8 @@
 {
    ORInt ofs = _sz-1;
    if (ofs >= 0) {
+      [_cur setStatus: NSFailed];
+      [_cur commit];
       [[_tracer popNode] letgo];
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;

@@ -88,6 +88,7 @@
 -(id)initWithCoder: (NSCoder*) aDecoder;
 -(void)visit:(ORVisitor*)v;
 -(id*)base;
+-(void)name:(NSString*)an;
 @end
 
 

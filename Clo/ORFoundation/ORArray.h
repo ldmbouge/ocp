@@ -92,6 +92,7 @@ PORTABLE_BEGIN
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
 -(id<ORIdArray>) map:(id(^)(id obj, int idx))block;
 -(NSArray*) toNSArray;
+-(void)name:(NSString*)an;
 @end
 
 @protocol ORIdMatrix <ORObject>

@@ -20,7 +20,7 @@ int main (int argc, const char * argv[])
       id<ORIntRange> R = RANGE(model,0,n-1);
       
       id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value:0];
-      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
+      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];[x name:@"x"];
       id<ORIntVarArray> xp = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:i]; }];
       id<ORIntVarArray> xn = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:-i]; }];
       [notes dc:[model add: [ORFactory alldifferent: x ]]];
@@ -29,6 +29,7 @@ int main (int argc, const char * argv[])
       
       id<CPProgram> cp = [ORFactory createCPProgram: model annotation:notes];
       //id<CPHeuristic> h = [cp createFF];
+      
       [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize:x[i]];}];

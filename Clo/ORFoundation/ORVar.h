@@ -33,6 +33,8 @@ PORTABLE_BEGIN
 -(ORInt) shift;
 -(ORInt) literal;
 -(id<ORIntVar>)base;
+-(void)name:(NSString*)n;
+-(NSString*)name;
 @end
 
 @protocol ORBitVar <ORExprVar>

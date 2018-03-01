@@ -14,6 +14,8 @@
 
 @protocol ORTracer;
 @protocol ORObjectiveValue;
+@protocol STNode;
+
 @class ORHeist;
 
 @protocol ORStealing
@@ -43,6 +45,8 @@
 -(void)       setup;
 -(void)       cleanup;
 -(void)       startSearch;
+-(void)       onLeaf;
+-(id<STNode>) curNode;
 -(id<ORSearchController>)clone;
 -(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf;
 -(ORInt)      addChoice: (NSCont*) k;
