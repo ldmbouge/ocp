@@ -14,8 +14,8 @@
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORData.h>
-//#import <ORFoundation/ORVisit.h>
-//#import <ORFoundation/ORCommand.h>
+#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORCommand.h>
 #import <assert.h>
 
 
