@@ -12,18 +12,18 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
        id<ORModel> mdl = [ORFactory createModel];
        //id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:1.f up:5.f];
-       id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:2.f up:4.f];
-       id<ORFloatVar> x = [ORFactory floatVar:mdl];
+       id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:2.0f up:4.0f];
+       id<ORFloatVar> x = [ORFactory floatVar:mdl];// domain:r0];
        id<ORFloatVar> y = [ORFactory floatVar:mdl domain:r1];
        id<ORFloatVar> z = [ORFactory floatVar:mdl];
        
-        [mdl add:[x set: @(1.f)]];
+        [mdl add:[x set: @(0.1f)]];
         //[mdl add:[x set: y]];
         //[mdl add:[y set: @(0.2f)]];
         [mdl add:[z set: [x plus:y]]];
        
        
-        NSLog(@"model: %@",mdl);
+       NSLog(@"model: %@",mdl);
        id<ORFloatVarArray> vs = [mdl floatVars];
        id<CPProgram> p = [ORFactory createCPProgram:mdl];
        id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine]];
