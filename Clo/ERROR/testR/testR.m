@@ -2,7 +2,7 @@
 //  main.m
 //  testFloat
 //
-//  Created by Remy on 19/07/2016.
+//  Created by Remy on 01/12/2017.
 //
 //
 
@@ -12,7 +12,7 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
        id<ORModel> mdl = [ORFactory createModel];
        //id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:1.f up:5.f];
-       id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:2.0f up:4.0f];
+       id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:0.2f up:0.4f];
        id<ORFloatVar> x = [ORFactory floatVar:mdl];// domain:r0];
        id<ORFloatVar> y = [ORFactory floatVar:mdl domain:r1];
        id<ORFloatVar> z = [ORFactory floatVar:mdl];

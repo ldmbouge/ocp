@@ -1,0 +1,63 @@
+//
+//  carbonGas.m
+//
+//  Created by Remy Garcia on 06/03/2018.
+//
+#import <ORProgram/ORProgram.h>
+
+int main(int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:0.1f up:0.5f];
+      id<ORFloatVar> p = [ORFactory floatVar:mdl];
+      id<ORFloatVar> a = [ORFactory floatVar:mdl];
+      id<ORFloatVar> b = [ORFactory floatVar:mdl];
+      id<ORFloatVar> t = [ORFactory floatVar:mdl];
+      id<ORFloatVar> n = [ORFactory floatVar:mdl];
+      id<ORFloatVar> k = [ORFactory floatVar:mdl];
+      id<ORFloatVar> v = [ORFactory floatVar:mdl domain:r0];
+      id<ORFloatVar> r = [ORFactory floatVar:mdl];
+      
+      [mdl add:[p set: @(35000000.0f)]];
+      [mdl add:[a set: @(0.401f)]];
+      [mdl add:[b set: @(4.27e-05f)]];
+      [mdl add:[t set: @(300.0f)]];
+      [mdl add:[n set: @(1000.0f)]];
+      [mdl add:[k set: @(1.3806503e-23f)]];
+
+      [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
+      
+      
+      NSLog(@"model: %@",mdl);
+      id<ORFloatVarArray> vs = [mdl floatVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+            [cp floatSplit:i call:s withVars:x];
+         }];
+         
+         NSLog(@"%@",cp);
+         /* format of 8.8e to have the same value displayed as in FLUCTUAT */
+         /* Use printRational(ORRational r) to print a rational inside the solver */
+         NSLog(@"x : %8.8e (%s)",[cp floatValue:p],[cp bound:p] ? "YES" : "NO");
+         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:p],[cp maxError:p]);
+         NSLog(@"x : %8.8e (%s)",[cp floatValue:a],[cp bound:a] ? "YES" : "NO");
+         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:a],[cp maxError:a]);
+         NSLog(@"x : %8.8e (%s)",[cp floatValue:b],[cp bound:b] ? "YES" : "NO");
+         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:b],[cp maxError:b]);
+         NSLog(@"x : %8.8e (%s)",[cp floatValue:t],[cp bound:t] ? "YES" : "NO");
+         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:t],[cp maxError:t]);
+         NSLog(@"x : %8.8e (%s)",[cp floatValue:n],[cp bound:n] ? "YES" : "NO");
+         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:n],[cp maxError:n]);
+         NSLog(@"x : %8.8e (%s)",[cp floatValue:k],[cp bound:k] ? "YES" : "NO");
+         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:k],[cp maxError:k]);
+         NSLog(@"x : %8.8e (%s)",[cp floatValue:v],[cp bound:v] ? "YES" : "NO");
+         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:v],[cp maxError:v]);
+         NSLog(@"x : %8.8e (%s)",[cp floatValue:r],[cp bound:r] ? "YES" : "NO");
+         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:r],[cp maxError:r]);
+      }];
+   }
+   return 0;
+}
