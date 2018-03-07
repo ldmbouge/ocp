@@ -132,7 +132,7 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {
-   __block id<CPProgram> cpprogram = [CPSolverFactory solver];
+   __block id<CPProgram> cpprogram = [CPSolverFactory solver: notes.profiling];
    [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
@@ -372,7 +372,7 @@
 
 +(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {
-   id<CPProgram> cpprogram = [CPSolverFactory solver];
+   id<CPProgram> cpprogram = [CPSolverFactory solver:NO];
    [ORFactory createCPLinearizedProgram: model program: cpprogram annotation:notes];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
@@ -399,7 +399,7 @@
                   withRelaxation: (id<ORRelaxation>) relaxation
                       annotation: (id<ORAnnotation>)notes
 {
-   __block id<CPProgram> cpprogram = [CPSolverFactory solver];
+   __block id<CPProgram> cpprogram = [CPSolverFactory solver:NO];
    [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    

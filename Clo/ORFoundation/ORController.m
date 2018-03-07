@@ -288,8 +288,6 @@
    ORInt              _mx;
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
-   TRId           _parent;
-   TRId              _cur;
 }
 +(id<ORSearchController>)proto
 {
@@ -303,12 +301,9 @@
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
    _atRoot =  -1;
-   _parent = makeTRId(_tracer.trail,nil);
-   _cur = makeTRId(_tracer.trail,nil);
    [model release]; // not needed
    return self;
 }
-
 - (id) initTheControllerWithTracer:(id<ORTracer>)tracer
 {
    self = [super initORDefaultController];
@@ -317,8 +312,6 @@
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
    _atRoot =  -1;
-   _parent = makeTRId(_tracer.trail,nil);
-   _cur = makeTRId(_tracer.trail,nil);
    return self;
 }
 - (void) dealloc
@@ -331,7 +324,7 @@
 }
 -(id<ORSearchController>)clone
 {
-   ORDFSController* c = [[ORDFSController alloc] initTheController:_tracer engine:nil posting:nil];
+   ORDFSController* c = [[[self class] alloc] initTheController:_tracer engine:nil posting:nil];
    free(c->_tab);
    c->_tab = malloc(sizeof(NSCont*)*_mx);
    for(ORInt k=0;k<_sz;k++) {
@@ -339,8 +332,6 @@
    }
    c->_sz = _sz;
    c->_mx = _mx;
-   c->_parent = _parent;
-   c->_cur = _cur;
    return c;
 }
 -(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf
@@ -355,20 +346,6 @@
    if (_atRoot==-1)
       _atRoot = [_tracer pushNode];
 }
--(void) startSearch
-{
-   NSLog(@"Starting search...");
-   NodeID me = {0,0,0};
-   NodeID p  = {-1,0,0};
-   _cur = [_tracer.profiler createNode:me parent:p altNumber:0];
-}
--(void) onLeaf
-{
-   [_cur setStatus:NSSolved];
-   [_cur commit];
-   assignTRIdNC(&_cur,nil,_tracer.trail);
-}
-
 -(void) cleanup
 {
    while (_sz > 0)
@@ -389,29 +366,9 @@
    ORInt nn = [_tracer pushNode];
    return nn;
 }
-
--(void) startTryLeft
-{
-   NodeID me = {_tracer.curNode,0,0};
-   NodeID p = [(id<STNode>)_cur getNodeId];
-   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:0];
-   [_cur setNbKids:2];
-   [_cur setStatus:NSBranch];
-   [_cur commit];
-   assignTRIdNC(&_parent, _cur, _tracer.trail);
-   assignTRIdNC(&_cur,newNode,_tracer.trail);
-}
--(void) startTryRight
-{
-   NodeID me = {_tracer.curNode,0,0};
-   NodeID p = [(id<STNode>)_cur getNodeId];
-   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:1];
-   assignTRIdNC(&_parent, _cur, _tracer.trail);
-   assignTRIdNC(&_cur,newNode,_tracer.trail);
-}
 -(id<STNode>) curNode
 {
-   return _cur;
+   return nil;
 }
 -(void) trust
 {
@@ -425,8 +382,6 @@
 {
    ORInt ofs = _sz-1;
    if (ofs >= 0) {
-      [_cur setStatus: NSFailed];
-      [_cur commit];
       [[_tracer popNode] letgo];
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;
@@ -446,3 +401,80 @@
 }
 @end
 
+@implementation ORProfilerController {
+   TRId           _parent;
+   TRId              _cur;
+   id<ORTracer>   _tracer;
+}
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
+{
+   self = [super initORDefaultController];
+   _tracer = tracer;
+   _parent = makeTRId(_tracer.trail,nil);
+   _cur = makeTRId(_tracer.trail,nil);
+   return self;
+}
+-(id<ORSearchController>)clone
+{
+   ORProfilerController* c = [[ORProfilerController alloc] initTheController:_tracer engine:nil posting:nil];
+   assignTRIdNC(&c->_parent,_parent,_tracer.trail);
+   assignTRIdNC(&c->_cur,_parent,_tracer.trail);
+   return c;
+}
+- (id) copyWithZone: (NSZone*) zone
+{
+   ORProfilerController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:nil posting:nil];
+   [ctrl setController:[_controller copyWithZone:zone]];
+   return ctrl;
+}
+-(void) startSearch
+{
+   NSLog(@"Starting search...");
+   NodeID me = {0,0,0};
+   NodeID p  = {-1,0,0};
+   _cur = [_tracer.profiler createNode:me parent:p altNumber:0];
+   [_controller startSearch];
+}
+-(void) onLeaf
+{
+   [_cur setStatus:NSSolved];
+   [_cur commit];
+   assignTRIdNC(&_cur,nil,_tracer.trail);
+   [_controller onLeaf];
+}
+-(id<STNode>) curNode
+{
+   return _cur;
+}
+-(void) startTry
+{
+   [_cur setNbKids:2];
+   [_cur setStatus:NSBranch];
+   [_cur commit];
+   [_controller startTry];
+}
+-(void) startTryLeft
+{
+   NodeID me = {_tracer.curNode,0,0};
+   NodeID p = [(id<STNode>)_cur getNodeId];
+   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:0];
+   assignTRIdNC(&_parent, _cur, _tracer.trail);
+   assignTRIdNC(&_cur,newNode,_tracer.trail);
+   [_controller startTryLeft];
+}
+-(void) startTryRight
+{
+   NodeID me = {_tracer.curNode,0,0};
+   NodeID p = [(id<STNode>)_cur getNodeId];
+   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:1];
+   assignTRIdNC(&_parent, _cur, _tracer.trail);
+   assignTRIdNC(&_cur,newNode,_tracer.trail);
+   [_controller startTryRight];
+}
+-(void) fail
+{
+   [_cur setStatus: NSFailed];
+   [_cur commit];
+   [_controller fail];
+}
+@end

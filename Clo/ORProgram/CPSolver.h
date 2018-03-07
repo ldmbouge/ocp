@@ -133,6 +133,10 @@
 -(id<CPProgram>) initCPSolverWithEngine: (id<CPEngine>) engine;
 @end
 
+@interface CPProfilingSolver : CPSolver<CPProgram>
+-(id<CPProgram>) initCPSolver;
+@end
+
 // SemanticPath CPSolver
 @interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram,CPSemanticProgramDFS>
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
@@ -145,7 +149,7 @@
 @end
 
 @interface CPSolverFactory : NSObject
-+(id<CPProgram>) solver;
++(id<CPProgram>) solver:(BOOL)profiling;
 +(id<CPSemanticProgramDFS>) solverBackjumpingDFS;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
 +(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto;

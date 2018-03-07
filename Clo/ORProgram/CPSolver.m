@@ -1360,9 +1360,6 @@
    } while (true);
 }
 
-
-
-
 -(void) labelBitVar: (id<ORBitVar>) var at:(ORUInt)idx with: (ORUInt) val
 {
    
@@ -1456,16 +1453,10 @@
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
    [self labelImpl: _gamma[var.getId] with: val];
-   id<Profiler> profiler = _tracer.profiler;
-   if (profiler)
-      [profiler tag:_search.controller.curNode label:var.name with:val];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
    [self diffImpl: _gamma[var.getId] with: val];
-   id<Profiler> profiler = _tracer.profiler;
-   if (profiler)
-      [profiler tag:_search.controller.curNode diff:var.name with:val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
@@ -2381,6 +2372,34 @@
 }
 @end
 
+@implementation CPProfilingSolver
+-(id<CPProgram>) initCPSolver
+{
+   self = [super initCPCoreSolver];
+   _trail = [ORFactory trail];
+   _mt    = [ORFactory memoryTrail];
+   _closed = makeTRInt(_trail, NO);
+   _engine = [CPFactory engine: _trail memory:_mt];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
+   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+                                                                    rootControllerClass: [ORDFSController proto]
+                                                                  nestedControllerClass: [ORDFSController proto]];
+   _search = [ORExplorerFactory explorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   [cFact release];
+   return self;
+}
+-(void) label: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self labelImpl: _gamma[var.getId] with: val];
+   [_tracer.profiler tag:_search.controller.curNode label:var.name with:val];
+}
+-(void) diff: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self diffImpl: _gamma[var.getId] with: val];
+   [_tracer.profiler tag:_search.controller.curNode diff:var.name with:val];
+}
+@end
+
 
 @implementation CPInformerPortal
 -(CPInformerPortal*) initCPInformerPortal: (CPSolver*) cp
@@ -2432,9 +2451,12 @@
 @end
 
 @implementation CPSolverFactory 
-+(id<CPProgram>) solver
++(id<CPProgram>) solver:(BOOL)profiling
 {
-   return [[[CPSolver alloc] initCPSolver] autorelease];
+   if (profiling)
+      return [[[CPProfilingSolver alloc] initCPSolver] autorelease];
+   else
+      return [[[CPSolver alloc] initCPSolver] autorelease];
 }
 +(id<CPSemanticProgramDFS>) solverBackjumpingDFS
 {

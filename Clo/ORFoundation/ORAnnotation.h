@@ -33,6 +33,8 @@ typedef enum {
 -(id<ORConstraint>) cstr: (id<ORConstraint>) cstr consistency: (ORCLevel) cl;
 -(id<ORConstraint>) hard:(id<ORConstraint>) cstr;
 -(void) alldifferent: (ORCLevel) cl;
+-(void) profiling:(ORBool)b;
+-(BOOL) profiling;
 
 -(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr;
 -(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) o;

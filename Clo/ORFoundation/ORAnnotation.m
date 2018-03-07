@@ -24,6 +24,7 @@
 @implementation ORAnnotation {
    NSMutableDictionary* _cstr;
    NSMutableDictionary* _classCstr;
+   BOOL _profiling;
 }
 
 -(id) init
@@ -31,6 +32,7 @@
    self = [super init];
    _classCstr = [[NSMutableDictionary alloc] initWithCapacity:16];
    _cstr = [[NSMutableDictionary alloc] initWithCapacity:16];
+   _profiling = NO;
    return self;
 }
 
@@ -166,7 +168,14 @@
 {
    return [self noteConstraint: cstr consistency: RelaxedConsistency];
 }
-
+-(void) profiling:(ORBool)b
+{
+   _profiling = b;
+}
+-(BOOL) profiling
+{
+   return _profiling;
+}
 -(void) alldifferent: (ORCLevel) cl
 {
    return [self classNoteConstraint: [ORAlldifferentI class] consistency: cl];

@@ -130,6 +130,16 @@
 -(void) fail;
 @end
 
+@interface ORProfilerController : ORDefaultController<NSCopying,ORSearchController>
+-(void) startSearch;
+-(void) onLeaf;
+-(id<STNode>) curNode;
+-(void) startTry;
+-(void) startTryLeft;
+-(void) startTryRight;
+-(void) fail;
+@end
+
 @protocol ORControllerFactory<NSObject>
 -(id<ORSearchController>) makeRootController;
 -(id<ORSearchController>) makeNestedController;
