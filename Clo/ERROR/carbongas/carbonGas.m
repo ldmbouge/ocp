@@ -8,14 +8,15 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:0.1f up:0.5f];
+//      id<ORFloatRange> r0 = [ORFactory floatRange:mdl];
+//      id<ORFloatRange> r1 = [ORFactory floatRange:mdl];
       id<ORFloatVar> p = [ORFactory floatVar:mdl];
       id<ORFloatVar> a = [ORFactory floatVar:mdl];
       id<ORFloatVar> b = [ORFactory floatVar:mdl];
       id<ORFloatVar> t = [ORFactory floatVar:mdl];
       id<ORFloatVar> n = [ORFactory floatVar:mdl];
       id<ORFloatVar> k = [ORFactory floatVar:mdl];
-      id<ORFloatVar> v = [ORFactory floatVar:mdl domain:r0];
+      id<ORFloatVar> v = [ORFactory floatVar:mdl  low:0.1f up:0.5f];
       id<ORFloatVar> r = [ORFactory floatVar:mdl];
       
       [mdl add:[p set: @(35000000.0f)]];
@@ -26,6 +27,7 @@ int main(int argc, const char * argv[]) {
       [mdl add:[k set: @(1.3806503e-23f)]];
 
       [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
+      //[mdl add:[r set:[n div: v]]];
       
       
       NSLog(@"model: %@",mdl);

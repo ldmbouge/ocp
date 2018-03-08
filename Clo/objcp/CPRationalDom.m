@@ -28,6 +28,7 @@
 }
 -(id)initCPRationalDom:(id<ORTrail>)trail
 {
+   //self = [self initCPRationalDom:trail low:-fabsf((FLT_MAX/2 - nextafterf(FLT_MAX/2, -INFINITY))/2) up:fabsf((FLT_MAX/2 - nextafterf(FLT_MAX/2, +INFINITY))/2)];
    self = [self initCPRationalDom:trail low:-FLT_MAX up:FLT_MAX];
    return self;
 }

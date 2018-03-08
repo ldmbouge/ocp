@@ -298,14 +298,33 @@ static inline intersectionInterval intersection(float_interval r, float_interval
    return (intersectionInterval){r,x,changed};
 }
 
-static inline void intersectionError(intersectionIntervalError* interErr, rational_interval a, rational_interval b){
+static inline void intersectionError(intersectionIntervalError* interErr, rational_interval original_error, rational_interval computed_error){
    interErr->changed = false;
-   maxError(&interErr->result.inf, &a.inf, &b.inf);
-   minError(&interErr->result.sup, &a.sup, &b.sup);
+   mpq_set(interErr->interval.inf, original_error.inf);
+   mpq_set(interErr->interval.sup, original_error.sup);
    
-   if(!mpq_equal(interErr->result.inf, a.inf) && !mpq_equal(interErr->result.sup, a.sup)){
+   /*printRational(@"TEST : oe inf " , original_error.inf);
+   printRational(@"TEST : oe sup " , original_error.sup);
+   printRational(@"TEST : ce inf " , computed_error.inf);
+   printRational(@"TEST : ce sup" , computed_error.sup);*/
+   
+   /* original_error < computed_error */
+   if(mpq_get_d(original_error.inf) < mpq_get_d(computed_error.inf)){
       interErr->changed = true;
+      mpq_set(interErr->result.inf, computed_error.inf);
    }
-   mpq_set(interErr->interval.inf, a.inf);
-   mpq_set(interErr->interval.sup, a.sup);
+   /* original_error > computed_error */
+   if(mpq_get_d(original_error.sup) > mpq_get_d(computed_error.sup)){
+      interErr->changed = true;
+      mpq_set(interErr->result.sup, computed_error.sup);
+   }
+   
+   if(mpq_get_d(interErr->result.inf) > mpq_get_d(interErr->result.sup))
+      failNow();
+   /*printRational(@"TEST : oe inf " , original_error.inf);
+   printRational(@"TEST : oe sup " , original_error.sup);
+   printRational(@"TEST : ce inf " , computed_error.inf);
+   printRational(@"TEST : ce sup" , computed_error.sup);*/
+   mpq_set(interErr->interval.inf, original_error.inf);
+   mpq_set(interErr->interval.sup, original_error.sup);
 }

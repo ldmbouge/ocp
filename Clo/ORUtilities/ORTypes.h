@@ -81,7 +81,9 @@ static inline ORRational* fmaxR(ORRational* a, ORRational* b) {
 }
 
 static inline void printRational(NSString* n, ORRational r){
-   NSLog(@"%@ : %16.16e", n, mpq_get_d(r));
+   float tmp = mpq_get_d(r);
+   unsigned int * ptmp = (unsigned int *) &tmp;
+   NSLog(@"%@ : %16.16e [%4X]", n, mpq_get_d(r),*ptmp);
 }
 
 #define MAXINT ((ORInt)0x7FFFFFFF)
