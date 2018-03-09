@@ -36,29 +36,29 @@ int main(int argc, const char * argv[]) {
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
-         [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+         /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
             [cp floatSplit:i call:s withVars:x];
-         }];
+         }];*/
          
          NSLog(@"%@",cp);
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */
          /* Use printRational(ORRational r) to print a rational inside the solver */
-         NSLog(@"x : %8.8e (%s)",[cp floatValue:p],[cp bound:p] ? "YES" : "NO");
-         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:p],[cp maxError:p]);
-         NSLog(@"x : %8.8e (%s)",[cp floatValue:a],[cp bound:a] ? "YES" : "NO");
-         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:a],[cp maxError:a]);
-         NSLog(@"x : %8.8e (%s)",[cp floatValue:b],[cp bound:b] ? "YES" : "NO");
-         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:b],[cp maxError:b]);
-         NSLog(@"x : %8.8e (%s)",[cp floatValue:t],[cp bound:t] ? "YES" : "NO");
-         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:t],[cp maxError:t]);
-         NSLog(@"x : %8.8e (%s)",[cp floatValue:n],[cp bound:n] ? "YES" : "NO");
-         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:n],[cp maxError:n]);
-         NSLog(@"x : %8.8e (%s)",[cp floatValue:k],[cp bound:k] ? "YES" : "NO");
-         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:k],[cp maxError:k]);
-         NSLog(@"x : %8.8e (%s)",[cp floatValue:v],[cp bound:v] ? "YES" : "NO");
-         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:v],[cp maxError:v]);
-         NSLog(@"x : %8.8e (%s)",[cp floatValue:r],[cp bound:r] ? "YES" : "NO");
-         NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:r],[cp maxError:r]);
+         NSLog(@"p : %8.8e (%s)",[cp floatValue:p],[cp bound:p] ? "YES" : "NO");
+         NSLog(@"ep: [%8.8e;%8.8e]",[cp minError:p],[cp maxError:p]);
+         NSLog(@"a : %8.8e (%s)",[cp floatValue:a],[cp bound:a] ? "YES" : "NO");
+         NSLog(@"ea: [%8.8e;%8.8e]",[cp minError:a],[cp maxError:a]);
+         NSLog(@"b : %8.8e (%s)",[cp floatValue:b],[cp bound:b] ? "YES" : "NO");
+         NSLog(@"eb: [%8.8e;%8.8e]",[cp minError:b],[cp maxError:b]);
+         NSLog(@"t : %8.8e (%s)",[cp floatValue:t],[cp bound:t] ? "YES" : "NO");
+         NSLog(@"et: [%8.8e;%8.8e]",[cp minError:t],[cp maxError:t]);
+         NSLog(@"n : %8.8e (%s)",[cp floatValue:n],[cp bound:n] ? "YES" : "NO");
+         NSLog(@"en: [%8.8e;%8.8e]",[cp minError:n],[cp maxError:n]);
+         NSLog(@"k : %8.8e (%s)",[cp floatValue:k],[cp bound:k] ? "YES" : "NO");
+         NSLog(@"ek: [%8.8e;%8.8e]",[cp minError:k],[cp maxError:k]);
+         NSLog(@"v : %8.8e (%s)",[cp floatValue:v],[cp bound:v] ? "YES" : "NO");
+         NSLog(@"ev: [%8.8e;%8.8e]",[cp minError:v],[cp maxError:v]);
+         NSLog(@"r : %8.8e (%s)",[cp floatValue:r],[cp bound:r] ? "YES" : "NO");
+         NSLog(@"er: [%8.8e;%8.8e]",[cp minError:r],[cp maxError:r]);
       }];
    }
    return 0;

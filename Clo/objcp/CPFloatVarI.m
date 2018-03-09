@@ -85,7 +85,8 @@
    if ([object isKindOfClass:[self class]]) {
       CPFloatVarSnapshot* other = object;
       if (_name == other->_name) {
-         return _value == other->_value && _bound == other->_bound && mpq_cmp(_valueError, other->_valueError) == 0 && _boundError == other->_boundError;
+         //return _value == other->_value && _bound == other->_bound && mpq_cmp(_valueError, other->_valueError) == 0 && _boundError == other->_boundError;
+         return _value == other->_value && _bound == other->_bound && mpq_get_d(_valueError) == mpq_get_d(other->_valueError) && _boundError == other->_boundError;
       }
       else
          return NO;
@@ -409,7 +410,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError {
-    if(mpq_cmp(newMinError,newMaxError)>0)
+    //if(mpq_cmp(newMinError,newMaxError)>0)
+   if(mpq_get_d(newMinError) > mpq_get_d(newMaxError))
         failNow();
     [self updateMinError:newMinError];
     [self updateMaxError:newMaxError];
@@ -417,13 +419,15 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateMaxError:(ORRational)newMaxError {
-    if(mpq_cmp(newMaxError, *[self maxErr]) < 0)
+    //if(mpq_cmp(newMaxError, *[self maxErr]) < 0)
+   if(mpq_get_d(newMaxError) < mpq_get_d(*[self maxErr]))
         [_domError updateMax:newMaxError for:self];
 }
 
 
 - (void)updateMinError:(ORRational)newMinError {
-    if(mpq_cmp(newMinError, *[self minErr]) > 0)
+    //if(mpq_cmp(newMinError, *[self minErr]) > 0)
+   if(mpq_get_d(newMinError) > mpq_get_d(*[self minErr]))
         [_domError updateMin:newMinError for:self];
 }
 

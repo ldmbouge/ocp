@@ -267,7 +267,9 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
 }
 
 static inline void minError(ORRational* r, ORRational* a, ORRational* b){
-    if(mpq_cmp(*a, *b) > 0){
+    //if(mpq_cmp(*a, *b) > 0){
+   if(mpq_get_d(*a) > mpq_get_d(*b)){
+
         mpq_set(*r, *b);
     }
     else {
@@ -276,7 +278,8 @@ static inline void minError(ORRational* r, ORRational* a, ORRational* b){
 }
 
 static inline void maxError(ORRational* r, ORRational* a, ORRational* b){
-    if(mpq_cmp(*a, *b) > 0){
+    //if(mpq_cmp(*a, *b) > 0){
+   if(mpq_get_d(*a) > mpq_get_d(*b)){
         mpq_set(*r, *a);
     }
     else {
@@ -300,13 +303,9 @@ static inline intersectionInterval intersection(float_interval r, float_interval
 
 static inline void intersectionError(intersectionIntervalError* interErr, rational_interval original_error, rational_interval computed_error){
    interErr->changed = false;
-   mpq_set(interErr->interval.inf, original_error.inf);
-   mpq_set(interErr->interval.sup, original_error.sup);
-   
-   /*printRational(@"TEST : oe inf " , original_error.inf);
-   printRational(@"TEST : oe sup " , original_error.sup);
-   printRational(@"TEST : ce inf " , computed_error.inf);
-   printRational(@"TEST : ce sup" , computed_error.sup);*/
+   //mpq_set(interErr->result.inf, original_error.inf);
+   //mpq_set(interErr->result.sup, original_error.sup);
+
    
    /* original_error < computed_error */
    if(mpq_get_d(original_error.inf) < mpq_get_d(computed_error.inf)){
@@ -321,10 +320,7 @@ static inline void intersectionError(intersectionIntervalError* interErr, ration
    
    if(mpq_get_d(interErr->result.inf) > mpq_get_d(interErr->result.sup))
       failNow();
-   /*printRational(@"TEST : oe inf " , original_error.inf);
-   printRational(@"TEST : oe sup " , original_error.sup);
-   printRational(@"TEST : ce inf " , computed_error.inf);
-   printRational(@"TEST : ce sup" , computed_error.sup);*/
+   
    mpq_set(interErr->interval.inf, original_error.inf);
    mpq_set(interErr->interval.sup, original_error.sup);
 }

@@ -21,7 +21,7 @@ int main(int argc, const char * argv[]) {
         //[mdl add:[y set: @(0.4f)]];
         //[mdl add:[x set: y]];
         //[mdl add:[y set: @(0.2f)]];
-        [mdl add:[z set: [x plus:y]]];
+       [mdl add:[z set: [x plus:y]]];
        
        
        NSLog(@"model: %@",mdl);
@@ -30,9 +30,9 @@ int main(int argc, const char * argv[]) {
        id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine]];
 
         [p solve:^{
-            [p lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-               [p floatSplit:i call:s withVars:x];
-            }];
+            //[p lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+               //[p floatSplit:i call:s withVars:x];
+            //}];
            
             NSLog(@"%@",p);
             /* format of 8.8e to have the same value displayed as in FLUCTUAT */
