@@ -95,7 +95,7 @@ void sbox_0(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> b1, id<ORBitVar> b
 void xtimes(id<ORBitVar> a, id<ORBitVar> b);
 int checkKey(NSString* key);
 
-void keyExpansion();
+void keyExpansion(id<ORBitVar>*);
 void shiftRows(id<ORBitVar>* state, id<ORBitVar>* stateOut);
 void addRoundKey(id<ORBitVar>* state, id<ORBitVar>* stateOut, id<ORBitVar>* keys);
 void mixColumns(id<ORBitVar>* state, id<ORBitVar>* stateOut);
@@ -105,17 +105,17 @@ uint32 xtimes_i(uint32 a);
 void readFile(FILE *f);
 
 void connectBV(id<ORBitVar> bv, id<ORIntVar> iv);
-void DxConstraints();
+void DxConstraints(void);
 
 //Part One Function Prototypes
 void p1_xor(id<ORIntVar> a, id<ORIntVar> b, id<ORIntVar> c);
 void p1_xorequ(id<ORIntVar> a, id<ORIntVar> b, id<ORIntVar> c, id<ORIntVar> eab, id<ORIntVar> ebc, id<ORIntVar> eac);
-void p1_addKey();
-void p1_initKS();
-void p1_keyExpansion();
-void p1_shiftrows();
-void p1_mixColumns();
-void p1_equRelation();
+void p1_addKey(void);
+void p1_initKS(void);
+void p1_keyExpansion(void);
+void p1_shiftrows(void);
+void p1_mixColumns(void);
+void p1_equRelation(void);
 
 //Part One Variables
 id<ORIntVar> equRK[Nr][4][Nr][4][4];
@@ -142,9 +142,9 @@ ORInt probscount = 0;
 ORInt pcount = 0;
 ORInt pkcount = 0;
 
-void postSB();
-void postK();
-id<ORTable> createRelationSbox();
+void postSB(void);
+void postK(void);
+id<ORTable> createRelationSbox(void);
 
 //Constants
 uint32 MIN8 = 0x00000000;
@@ -171,7 +171,7 @@ id<ORModel> model;
 id<ORIdArray> ca;
 id<ORRealVar> y;
 int SC[100][16];
-int* p_SC = SC;
+int* p_SC = (int*)SC;
 //State Variables
 
 id<ORBitVar> states [4 * (Nr + 1) + 1][16];
@@ -245,7 +245,7 @@ int main(int argc, const char * argv[]) {
     
     // Generate State Variables
     
-    ORUInt sf = 75;
+    //ORUInt sf = 75;
     
     for(int sround = 0; sround < 4 * (Nr) + 1; sround++){
         for (int b = 0; b < 16; b++){
@@ -293,12 +293,12 @@ int main(int argc, const char * argv[]) {
     }
     
     
-    id<ORIntVar> miniVar;
+    //id<ORIntVar> miniVar;
     
     
     //keyExpansion(keys1);
     //keyExpansion(keys2);
-    keyExpansion(keysDK);
+    keyExpansion((id<ORBitVar>*)keysDK);
     NSLog(@"Keys Branch Var Count: %d", branchVarsCount);
     int counter = 0;
     while (counter < Nr)
@@ -535,7 +535,7 @@ int main(int argc, const char * argv[]) {
     NSLog(@"CPROB: %d", probscount);
     
     id<ORIntVarArray> iv = [model intVars];
-    id<ORIntVarArray> bv = [model bitVars];
+    //id<ORBitVarArray> bv = [model bitVars];
     
     id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
     
@@ -1627,7 +1627,7 @@ void readFile(FILE *f){
 }
 
 int checkKey(NSString* key){
-    NSString *skey = [key substringFromIndex:14];
+    //NSString *skey = [key substringFromIndex:14];
     const char* ckey = [[key substringFromIndex:[key length] - 8] UTF8String];
     //printf("%s\n",ckey);
     int value = 0;
