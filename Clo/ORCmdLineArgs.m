@@ -281,7 +281,6 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
       }];
       printf("FM_STAT : #V_ALL,#V_INF,#V_CONCRETE,#V_CBOUNDS,#V_CINF,#CSTS,#C_CONCRETE,#MIN_MOCC,#MAX_MOCC,#AVG_MOCC,#SUP1_OCC,#MIN_WIDTH,#MAX_WIDTH,#AVG_WIDTH,#MIN_CARD,#MAX_CARD,#AVG_CARD,#MIN_DEGREE,#MAX_DEGREE,#AVG_DEGREE,#MIN_DNS,#MAX_DNS,#AVG_DNS,#MIN_ABS,#MAX_ABS,#AVG_ABS,#SUP0_ABS,#MAX_CANC,#AVG_CANC,#AVG_CANC,#SUP0_CANC;#MIN_VAR/CST;#MAX_VAR/CST;#AVERAGE_VAR/CST;#MIN_DVAR/CST;#MAX_DVAR/CST;#AVERAGE_DVAR/CST;\n");
       printf("OUT_STAT : %d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%16.16e;%16.16e;%16.16e;%16.16e;%16.16e;%16.16e;%d;%d;%d;%16.16Le;%16.16Le;%16.16Le;%16.16e;%16.16e;%16.16e;%d;%16.16e;%16.16e;%16.16e;%d;%d;%d;%d;%d;%d;%d\n",(ORInt)[[g variables] count],nbInfini,[[p engine] nbVars],[[p engine] nbVars]-nbNotBound,nbInfinic,[g size],[cg size],[occs min],[occs max],[occs average],nbocc,[width min],[width max],[width average],[cardinality min],[cardinality max],[cardinality average],[degree min],[degree max],[degree average],[density min],[density max],[density average],minabs,maxabs,somme/i,nbabs,[cancellation min],[cancellation max],[cancellation average],nbcanc,[nbVarByConstraints min],[nbVarByConstraints max],[nbVarByConstraints average],[nbDistinctVarByConstraints min],[nbDistinctVarByConstraints max],[nbDistinctVarByConstraints average]);
-      fflush(__stdoutp);
    }
 }
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x
