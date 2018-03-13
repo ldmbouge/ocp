@@ -15,19 +15,21 @@ int main(int argc, const char * argv[]) {
        id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:0.2f up:0.4f];
        id<ORFloatVar> x = [ORFactory floatVar:mdl];// domain:r0];
        id<ORFloatVar> y = [ORFactory floatVar:mdl domain:r1];
+       id<ORFloatVar> w = [ORFactory floatVar:mdl];
        id<ORFloatVar> z = [ORFactory floatVar:mdl];
        
         [mdl add:[x set: @(0.1f)]];
         //[mdl add:[y set: @(0.4f)]];
         //[mdl add:[x set: y]];
         //[mdl add:[y set: @(0.2f)]];
-       [mdl add:[z set: [x plus:y]]];
+       [mdl add:[w set: [x plus:y]]];
+       [mdl add:[w set: [w sub:y]]];
        
        
        NSLog(@"model: %@",mdl);
-       id<ORFloatVarArray> vs = [mdl floatVars];
+       //id<ORFloatVarArray> vs = [mdl floatVars];
        id<CPProgram> p = [ORFactory createCPProgram:mdl];
-       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine]];
+       //id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine]];
 
         [p solve:^{
             //[p lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {

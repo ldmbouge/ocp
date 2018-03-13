@@ -18,7 +18,16 @@
 #define PERCENT 5.0
 
 ORFloat max_absFlt(ORFloat inf, ORFloat sup){
-   ORFloat max_abs = maxFlt(inf, sup);
+   ORFloat max_abs = maxFlt(fabsf(inf), sup);
+   if(max_abs == fabsf(inf)){
+      max_abs = inf;
+   } else {
+      max_abs = sup;
+   }
+   return max_abs;
+}
+ORFloat min_absFlt(ORFloat inf, ORFloat sup){
+   ORFloat max_abs = minFlt(inf, sup);
    if(max_abs == fabsf(inf)){
       max_abs = inf;
    } else {
@@ -31,36 +40,42 @@ float_interval ulp_computation(float_interval f){
    ORFloat max_inf, max_sup;
    rational_interval ulp_r;
    ORRational next_i, next_s;
-   ORFloat inf_m, inf_p, sup_m, sup_p;
+   ORDouble inf_m, inf_p, sup_m, sup_p;
    mpq_inits(ulp_r.inf, ulp_r.sup, next_i, next_s, NULL);
    if(f.inf == -INFINITY){
-      mpq_set_d(ulp_r.inf, FLT_MAX*1.5);
+      /*mpq_set_d(ulp_r.inf, FLT_MAX*1.5);
       mpq_set_d(ulp_r.sup, FLT_MAX*1.5);
       mpq_set_d(next_i, nextafter(FLT_MAX*1.5, -INFINITY));
       mpq_set_d(next_s, nextafter(FLT_MAX*1.5, -INFINITY));
       mpq_sub(next_i, next_i, ulp_r.inf);
       mpq_sub(next_s, next_s, ulp_r.sup);
-      max_inf = maxFlt(mpq_get_d(next_i), mpq_get_d(next_s));
-   }else{
+      max_inf = minFlt(mpq_get_d(next_i), mpq_get_d(next_s));*/
+      max_inf = -FLT_MAX;
+   }else if(f.inf == -FLT_MAX){
+      max_inf = nextafterf(f.inf, -INFINITY) - f.inf;
+   } else{
       inf_m = nextafterf(f.inf, -INFINITY) - f.inf;
       sup_m = nextafterf(f.sup, -INFINITY) - f.sup;
-      max_inf = maxFlt(inf_m, sup_m);
+      max_inf = minFlt(inf_m, sup_m)/2.0f;
    }
    if(f.sup == +INFINITY){
-      mpq_set_d(ulp_r.inf, FLT_MAX*1.5);
+      /*mpq_set_d(ulp_r.inf, FLT_MAX*1.5);
       mpq_set_d(ulp_r.sup, FLT_MAX*1.5);
       mpq_set_d(next_i, nextafter(FLT_MAX*1.5, +INFINITY));
       mpq_set_d(next_s, nextafter(FLT_MAX*1.5, +INFINITY));
       mpq_sub(next_i, next_i, ulp_r.inf);
       mpq_sub(next_s, next_s, ulp_r.sup);
-      max_sup = maxFlt(mpq_get_d(next_i), mpq_get_d(next_s));
+      max_sup = maxFlt(mpq_get_d(next_i), mpq_get_d(next_s));*/
+      max_sup = FLT_MAX;
+   } else if(f.sup == FLT_MAX){
+      max_sup = nextafterf(f.inf, -INFINITY) - f.inf;
    } else {
       inf_p = nextafterf(f.inf, +INFINITY) - f.inf;
       sup_p = nextafterf(f.sup, +INFINITY) - f.sup;
-      max_sup = maxFlt(inf_p, sup_p);
+      max_sup = maxFlt(inf_p, sup_p)/2.0f;
    }
-   ulp.inf = max_inf / 2.f;
-   ulp.sup = max_sup / 2.f;
+   ulp.inf = max_inf;// / 2.f;
+   ulp.sup = max_sup;// / 2.f;
    //NSLog(@"ULP: %16.16e %16.16e", ulp.inf, ulp.sup);
    mpq_clears(ulp_r.inf, ulp_r.sup, next_i, next_s, NULL);
    return ulp;
@@ -1663,7 +1678,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
    /*printRational(@"ez.inf", ez.inf);
    printRational(@"ez.sup", ez.sup);
    printRational(@"ex.inf", ex.inf);
@@ -1853,7 +1868,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
    
    //NSLog(@"IN SUBTRACTION");
    do {
@@ -2034,7 +2049,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
    
    //NSLog(@"IN MULTIPLICATION");
    do {
@@ -2175,7 +2190,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
    
    //NSLog(@"IN DIVISION");
    do {
