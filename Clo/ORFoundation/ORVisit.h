@@ -74,6 +74,7 @@
 -(void) visitLDoubleRange:(id<ORLDoubleRange>)v;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitDoubleArray:(id<ORDoubleArray>)v;
+-(void) visitLDoubleArray:(id<ORLDoubleArray>)v;
 -(void) visitFloatArray:(id<ORFloatArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;

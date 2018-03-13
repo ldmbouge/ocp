@@ -269,6 +269,10 @@
 {
    return (ORInt)[_content count];
 }
+-(NSSet*) variables
+{
+   return [self allVars];
+}
 -(id<ORConstraint>) at: (ORInt) idx
 {
    return [_content objectAtIndex: idx];
@@ -5585,6 +5589,8 @@
 {}
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {}
+-(void) visitFloat: (id<ORFloatNumber>) e
+{}
 -(void) visitExprPlusI: (ORExprBinaryI*) e
 {
    [[e left] visit:self];
@@ -5713,6 +5719,21 @@
       [_theSet addObject:[m  flat:i]];
       [_theArray addObject:[m  flat:i]];
    }
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprGThenI:(ORExprGThenI*)e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprLThenI:(ORExprLThenI*)e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
 }
 @end
 

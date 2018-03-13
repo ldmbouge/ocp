@@ -151,6 +151,9 @@
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }
+-(void) visitLDoubleArray:(id<ORLDoubleArray>) v
+{
+}
 -(void) visitUniformDistribution:(id) v
 {
 }
@@ -399,5 +402,3 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"]; 
 }
 @end
-
-

@@ -22,6 +22,7 @@
 -(void)  scheduleClosure:(id<CPClosureList>)evt;
 -(id<ORTrail>) trail;
 -(void) propagate;
+-(ORInt) size;
 @end
 
 @interface CPGroup : CPCoreConstraint<CPGroup>
@@ -34,6 +35,7 @@
 -(void) enumerateWithBlock:(void(^)(ORInt,id<ORConstraint>))block;
 -(void) post;
 -(void) propagate;
+-(ORInt) size;
 @end
 
 @interface CPBergeGroup : CPCoreConstraint<CPGroup>

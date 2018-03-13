@@ -91,6 +91,7 @@ enum ORGroupType {
 -(void)clear;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
 -(ORInt) size;
+-(NSSet*) variables;
 -(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
 -(id<ORIntVar>)guard;

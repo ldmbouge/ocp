@@ -63,6 +63,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "doubleArray: visit method not defined"];    
 }
+-(void) visitLDoubleArray:(id<ORLDoubleArray>)v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ldoubleArray: visit method not defined"];
+}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntMatrix: visit method not defined"];    
@@ -932,6 +936,7 @@
 -(void) visitRealRange:(id<ORRealRange>)v {}
 -(void) visitIntArray:(id<ORIntArray>)v  {}
 -(void) visitDoubleArray:(id<ORDoubleArray>)v  {}
+-(void) visitLDoubleArray:(id<ORLDoubleArray>)v  {}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v  {}
 -(void) visitTrailableInt:(id<ORTrailableInt>)v  {}
 -(void) visitIntVar: (id<ORIntVar>) v  {}

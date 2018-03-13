@@ -109,8 +109,7 @@ int main(int argc, const char * argv[]) {
          
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            NSLog(@"%@",[p concretize:g]);
-            
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;

@@ -2804,6 +2804,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 - (void)close
 {}
+- (ORInt) size
+{
+   return _nbIn;
+}
 @end
 
 

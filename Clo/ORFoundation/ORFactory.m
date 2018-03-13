@@ -282,8 +282,8 @@
 }
 +(ORDoubleArrayI*) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
-    ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range value:0];
-    return [tracker trackMutable: o];
+   ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range value:0];
+   return [tracker trackMutable: o];
 }
 +(ORFloatArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo
 {
@@ -292,8 +292,18 @@
 }
 +(ORFloatArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
-    ORFloatArrayI* o = [[ORFloatArrayI alloc] init: tracker range:range value:0];
+    ORFloatArrayI* o = [[ORFloatArrayI alloc] init: tracker range:range value:0.f];
     return [tracker trackMutable: o];
+}
++(ORLDoubleArrayI*) ldoubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORLDouble(^)(ORInt)) clo
+{
+   ORLDoubleArrayI* o = [[ORLDoubleArrayI alloc] init: tracker range:range with:clo];
+   return [tracker trackMutable: o];
+}
++(ORLDoubleArrayI*) ldoubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+   ORLDoubleArrayI* o = [[ORLDoubleArrayI alloc] init: tracker range:range value:0.0];
+   return [tracker trackMutable: o];
 }
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array
 {

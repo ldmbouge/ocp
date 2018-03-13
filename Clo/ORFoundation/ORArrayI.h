@@ -30,6 +30,7 @@
 -(ORInt) up;
 -(ORInt) max;
 -(ORInt) min;
+-(ORInt) average;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*)description;
@@ -58,17 +59,19 @@
 -(ORInt) up;
 -(ORFloat) max;
 -(ORFloat) min;
+-(ORFloat) average;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
+-(ORFloat) sumWith: (ORFloat(^)(ORFloat value,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
-
-
 
 @interface ORDoubleArrayI : ORObject<NSCoding,ORDoubleArray>
 -(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORDouble) v;
@@ -83,12 +86,40 @@
 -(ORInt) up;
 -(ORDouble) max;
 -(ORDouble) min;
+-(ORDouble) average;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORDouble obj,int idx))block;
+-(ORDouble) sumWith: (ORDouble(^)(ORDouble value,int idx))block;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (id)initWithCoder:(NSCoder *)aDecoder;
+@end
+
+@interface ORLDoubleArrayI : ORObject<NSCoding,ORLDoubleArray>
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORLDouble) v;
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with: (ORLDouble(^)(ORInt)) clo;
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORLDouble) v;
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (ORLDouble(^)(ORInt)) clo;
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORLDouble(^)(ORInt,ORInt)) clo;
+-(void) dealloc;
+-(ORLDouble) at: (ORInt) value;
+-(void) set: (ORLDouble) value at:(ORInt)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(ORLDouble) max;
+-(ORLDouble) min;
+-(ORLDouble) average;
+-(id<ORIntRange>) range;
+-(NSUInteger)count;
+-(NSString*)description;
+-(id<ORTracker>) tracker;
+-(void)enumerateWith:(void(^)(ORLDouble obj,int idx))block;
+-(ORLDouble) sumWith: (ORLDouble(^)(ORLDouble value,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end

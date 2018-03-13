@@ -1933,6 +1933,7 @@
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     LOG(_level,2,@"%@ %s %s",_gamma[getId(x[i])],[x isEnable:i] ? "" : "disabled",([v bound]) ? "b":"");
                                      if(![x isEnable:i]){
                                         if(![v bound]){
                                            disabled.found = YES;
@@ -1944,7 +1945,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+//                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return (ORDouble)i;
                                  }];
    
@@ -2729,7 +2730,7 @@
    while (goon) {
       [self nestedSolve:^{
          [_search applyController:t in:^{
-            LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
+            LOG(_level,1,@"(3Bsplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
             [self floatIntervalImpl:xi low:[min value] up:[max value]];
             // The call above triggers propagation. Either this will succeed, suspend or it will fail
             // If it fails, there are provably no solution in the slice, so onSolution won't
@@ -2916,9 +2917,9 @@
       ORFloat midInfPrev = nextafterf(midInf,-INFINITY);
       ORFloat infNext = nextafterf(theMin,+INFINITY);
       
-      interval[1].inf = interval[1].sup = midSup;
-      interval[2].inf = interval[2].sup = midInf;
-      interval[3].inf = interval[3].sup = theMin;
+      interval[2].inf = interval[2].sup = midSup;
+      interval[3].inf = interval[3].sup = midInf;
+      interval[1].inf = interval[1].sup = theMin;
       length+=3;
       if(midSupNext != supPrev){
          interval[length].inf = midSupNext;
@@ -2956,7 +2957,7 @@
    float_interval* ip = interval;
    length--;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"> START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      LOG(_level,1,@"(6split) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -3246,12 +3247,18 @@
 {
    return [((id<CPVar>) _gamma[x.getId]) domsize];
 }
+-(ORDouble) cardinality: (id<ORFloatVar>) x
+{
+   CPFloatVarI* cx = _gamma[[x getId]];
+   ORDouble c = cardinality(cx);
+   return c;
+}
 -(ORLDouble) density: (id<ORFloatVar>) x
 {
    CPFloatVarI* cx = _gamma[[x getId]];
    ORDouble c = cardinality(cx);
-   ORLDouble w = [self fdomwidth:x];
-   return c / w;
+   ORDouble w = [self fdomwidth:x];
+   return (ORLDouble) (c / w);
 }
 -(ORUInt)  countMemberedConstraints:(id<ORVar>) x
 {
@@ -3345,7 +3352,7 @@
       }
    }
    [cstr release];
-   assert(rate != NAN);
+   assert(rate != NAN && rate >= 0.0);
    return rate;
 }
 -(ORInt)  regret:(id<ORIntVar>)x
@@ -3360,7 +3367,7 @@
 {
    return [((id<CPRealVar>)_gamma[x.getId]) domwidth];
 }
--(ORLDouble) fdomwidth:(id<ORFloatVar>) x
+-(ORDouble) fdomwidth:(id<ORFloatVar>) x
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
 }

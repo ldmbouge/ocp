@@ -77,9 +77,8 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            NSLog(@"%@",[p concretize:g]);
-            
             found=true;
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];

@@ -107,6 +107,9 @@
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }
+-(void) visitLDoubleArray:(id<ORLDoubleArray>) v
+{
+}
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
@@ -346,6 +349,9 @@
 {
 }
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
+{
+}
+-(void) visitLDoubleArray:(id<ORLDoubleArray>) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v

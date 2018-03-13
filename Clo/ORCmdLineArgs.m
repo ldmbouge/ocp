@@ -213,6 +213,77 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];
    }
 }
+-(void) printStats:(id<ORGroup>) g model:(id<ORModel>)m program:(id<CPProgram>)p
+{
+   @autoreleasepool{
+      id<CPGroup> cg = [p concretize:g];
+      id<ORFloatVarArray> vars = [m floatVars];
+      id<ORDisabledFloatVarArray> x = [ORFactory disabledFloatVarArray:vars engine:[p engine]];
+      ORInt nbNotBound = 0;
+      for (id<ORFloatVar> v in x){
+         id<CPFloatVar> cv = [p concretize:v];
+         nbNotBound += (![cv bound]);
+      }
+      id<ORIntRange> r = RANGE(m,0,nbNotBound-1);
+      id<ORIntArray> occs = [ORFactory intArray:m range:r value:0] ;
+      __block id<ORIntArray> nbDistinctVarByConstraints = [ORFactory intArray:m range:RANGE(m,0,[g size]-1) value:0] ;
+      __block id<ORIntArray> nbVarByConstraints = [ORFactory intArray:m range:RANGE(m,0,[g size]-1) value:0] ;
+      id<ORIntArray> degree = [ORFactory intArray:m range:r value:0] ;
+      id<ORIdArray> abs = [p computeAbsorptionsQuantities:x];
+      id<ORDoubleArray> width = [ORFactory doubleArray:m range:r];
+      id<ORDoubleArray> cardinality = [ORFactory doubleArray:m range:r];
+      id<ORDoubleArray> cancellation = [ORFactory doubleArray:m range:r];
+      id<ORLDoubleArray> density = [ORFactory ldoubleArray:m range:r];
+      ORDouble minabs = MAXDBL;
+      ORDouble maxabs = 0.0;
+      ORDouble somme = 0.0;
+      __block ORInt i = 0;
+      ORInt nbInfini = 0;
+      ORInt nbInfinic = 0;
+      ORInt nbocc = 0;
+      ORInt nbcanc = 0;
+      ORInt occ = 0;
+      ORDouble canc = 0.0;
+      for(id<ORFloatVar> v in vars){
+         id<CPFloatVar> cv = [p concretize:v];
+         if([cv bound]) continue;
+         if([v fmin] == -INFINITY && [v fmax] == +INFINITY) nbInfini++;
+         if([cv min] == -INFINITY && [cv max] == +INFINITY) nbInfinic++;
+         occ = [p maxOccurences:v];
+         canc = [p cancellationQuantity:v];
+         occs[i] = @(occ);
+         degree[i] = @([p countMemberedConstraints:v]);
+         width[i] = @([p fdomwidth:v]);
+         cardinality[i] = @([p cardinality:v]);
+         cancellation[i] = @(canc);
+         [density set:[p density:v] at:i];
+         i++;
+         if(canc > 0)
+            nbcanc++;
+         if(occ > 1)
+            nbocc++;
+      }
+      int nbabs = 0;
+      i=0;
+      for(ORUInt index = [abs low];index <= [abs up]; index++){
+         id<CPFloatVar> cv = [p concretize:x[i]];
+         if([cv bound]) continue;
+         minabs = minDbl(minabs,[abs[index] quantity]);
+         maxabs = maxDbl(maxabs,[abs[index] quantity]);
+         if([abs[index] quantity] > 0) nbabs++;
+         somme += [abs[index] quantity];
+      }
+      
+      [g enumerateObjectWithBlock:^(id<ORConstraint> c) {
+         nbVarByConstraints[i] = @((ORInt)[[c allVarsArray] count]);
+         nbDistinctVarByConstraints[i] = @((ORInt)[[c allVars] count]);
+         i++;
+      }];
+      printf("FM_STAT : #V_ALL,#V_INF,#V_CONCRETE,#V_CBOUNDS,#V_CINF,#CSTS,#C_CONCRETE,#MIN_MOCC,#MAX_MOCC,#AVG_MOCC,#SUP1_OCC,#MIN_WIDTH,#MAX_WIDTH,#AVG_WIDTH,#MIN_CARD,#MAX_CARD,#AVG_CARD,#MIN_DEGREE,#MAX_DEGREE,#AVG_DEGREE,#MIN_DNS,#MAX_DNS,#AVG_DNS,#MIN_ABS,#MAX_ABS,#AVG_ABS,#SUP0_ABS,#MAX_CANC,#AVG_CANC,#AVG_CANC,#SUP0_CANC;#MIN_VAR/CST;#MAX_VAR/CST;#AVERAGE_VAR/CST;#MIN_DVAR/CST;#MAX_DVAR/CST;#AVERAGE_DVAR/CST;\n");
+      printf("OUT_STAT : %d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%16.16e;%16.16e;%16.16e;%16.16e;%16.16e;%16.16e;%d;%d;%d;%16.16Le;%16.16Le;%16.16Le;%16.16e;%16.16e;%16.16e;%d;%16.16e;%16.16e;%16.16e;%d;%d;%d;%d;%d;%d;%d\n",(ORInt)[[g variables] count],nbInfini,[[p engine] nbVars],[[p engine] nbVars]-nbNotBound,nbInfinic,[g size],[cg size],[occs min],[occs max],[occs average],nbocc,[width min],[width max],[width average],[cardinality min],[cardinality max],[cardinality average],[degree min],[degree max],[degree average],[density min],[density max],[density average],minabs,maxabs,somme/i,nbabs,[cancellation min],[cancellation max],[cancellation average],nbcanc,[nbVarByConstraints min],[nbVarByConstraints max],[nbVarByConstraints average],[nbDistinctVarByConstraints min],[nbDistinctVarByConstraints max],[nbDistinctVarByConstraints average]);
+      fflush(__stdoutp);
+   }
+}
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x
 {
    id<CPHeuristic> h = nil;

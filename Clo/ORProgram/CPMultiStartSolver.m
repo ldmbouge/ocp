@@ -848,6 +848,15 @@
 {
    return [[self worker] maxOccurences: x];
 }
+-(ORDouble)  cancellationQuantity:(id<ORVar>) x
+{
+   return [[self worker] cancellationQuantity: x];
+}
+-(ORDouble) fdomwidth:(id<ORFloatVar>) x
+{
+   return [[self worker] fdomwidth: x];
+}
+
 -(ORDouble) doubleMin:(id<ORRealVar>)x
 {
    return [[self worker] doubleMin:x];
@@ -899,6 +908,18 @@
 - (void)switchedSearch:(PNONNULL id<ORDisabledFloatVarArray>)x do:(void (^ PNONNULL)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    [[self worker] switchedSearch:x do:b];
+}
+- (ORUInt)countMemberedConstraints:(nonnull id<ORVar>)x
+{
+   return [[self worker] countMemberedConstraints:x];
+}
+-(ORDouble) cardinality: (id<ORFloatVar>) x
+{
+   return [[self worker] cardinality: x];
+}
+- (ORLDouble)density:(nonnull id<ORFloatVar>)x
+{
+   return [[self worker] density:x];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

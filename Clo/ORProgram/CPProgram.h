@@ -211,6 +211,11 @@ PORTABLE_BEGIN
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
 -(ORUInt)  maxOccurences:(id<ORVar>) x;
+-(ORLDouble) density: (id<ORFloatVar>) x;
+-(ORDouble) cardinality: (id<ORFloatVar>) x;
+-(ORUInt)  countMemberedConstraints:(id<ORVar>) x;
+-(ORDouble) fdomwidth:(id<ORFloatVar>) x;
+-(ORDouble)  cancellationQuantity:(id<ORVar>) x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
 -(ORDouble) doubleValue: (id<ORRealVar>) x;

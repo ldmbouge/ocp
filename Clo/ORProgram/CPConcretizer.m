@@ -185,6 +185,9 @@
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }
+-(void) visitLDoubleArray:(id<ORDoubleArray>) v
+{
+}
 -(void) visitFloatArray:(id<ORFloatArray>) v
 {
 }

@@ -98,12 +98,9 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          
          id<ORFloatVarArray> vars = [model floatVars];
-         NSLog(@"%@",model);
-         //         id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            //            NSLog(@"%@",p);
-            
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;

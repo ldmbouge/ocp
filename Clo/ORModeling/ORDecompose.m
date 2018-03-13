@@ -982,7 +982,10 @@ struct CPVarPair {
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"Cannot take a Real-var within an integer context without a cast"];
 }
-
+-(void) visitExprCstLDoubleSubI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"Cannot take a Real-var within an integer context without a cast"];
+}
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];

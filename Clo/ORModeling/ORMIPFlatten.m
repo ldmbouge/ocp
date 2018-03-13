@@ -154,6 +154,10 @@ BOOL _alreadyAdded;
 {
     _result = v;
 }
+-(void) visitLDoubleArray:(id<ORLDoubleArray>)v
+{
+   _result = v;
+}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
     _result = v;
