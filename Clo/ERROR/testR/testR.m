@@ -11,19 +11,21 @@
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
        id<ORModel> mdl = [ORFactory createModel];
-       //id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:1.f up:5.f];
-       id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:0.2f up:0.4f];
-       id<ORFloatVar> x = [ORFactory floatVar:mdl];// domain:r0];
-       id<ORFloatVar> y = [ORFactory floatVar:mdl domain:r1];
+       //id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:0.1f up:0.1f];
+       //id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:0.2f up:0.4f];
+       id<ORFloatVar> x = [ORFactory floatVar:mdl low:-INFINITY up:INFINITY];
+       id<ORFloatVar> y = [ORFactory floatVar:mdl low:-INFINITY up:INFINITY];
        id<ORFloatVar> w = [ORFactory floatVar:mdl];
        id<ORFloatVar> z = [ORFactory floatVar:mdl];
        
-        [mdl add:[x set: @(0.1f)]];
-        //[mdl add:[y set: @(0.4f)]];
-        //[mdl add:[x set: y]];
-        //[mdl add:[y set: @(0.2f)]];
-       [mdl add:[w set: [x plus:y]]];
-       [mdl add:[w set: [w sub:y]]];
+       //[mdl add:[x set: @(0.1f)]];
+       [mdl add:[z set: @(3.f)]];
+       //[mdl add:[y set: @(6.f)]];
+       //[mdl add:[x set: y]];
+       //[mdl add:[y set: @(0.2f)]];
+       [mdl add:[z set: [x plus:y]]];
+       //[mdl add:[z set: [w sub:y]]];
+       //[mdl add:[z set: [x plus:[y mul:[x plus: y]]]]];
        
        
        NSLog(@"model: %@",mdl);
@@ -39,11 +41,13 @@ int main(int argc, const char * argv[]) {
             NSLog(@"%@",p);
             /* format of 8.8e to have the same value displayed as in FLUCTUAT */
             /* Use printRational(ORRational r) to print a rational inside the solver */
-            NSLog(@"x : %8.8e (%s)",[p floatValue:x],[p bound:x] ? "YES" : "NO");
+            NSLog(@"x : [%8.8e;%8.8e] (%s)",[p minF:x],[p maxF:x],[p bound:x] ? "YES" : "NO");
             NSLog(@"ex: [%8.8e;%8.8e]",[p minError:x],[p maxError:x]);
-            NSLog(@"y : %8.8e (%s)",[p floatValue:y],[p bound:y] ? "YES" : "NO");
+            NSLog(@"y : [%8.8e;%8.8e] (%s)",[p minF:y],[p maxF:y],[p bound:y] ? "YES" : "NO");
             NSLog(@"ey: [%8.8e;%8.8e]",[p minError:y],[p maxError:y]);
-            NSLog(@"z : %8.8e (%s)",[p floatValue:z],[p bound:z] ? "YES" : "NO");
+            //NSLog(@"w : [%8.8e;%8.8e] (%s)",[p minF:w],[p maxF:w],[p bound:w] ? "YES" : "NO");
+            //NSLog(@"ew: [%8.8e;%8.8e]",[p minError:w],[p maxError:w]);
+            NSLog(@"z : [%8.8e;%8.8e] (%s)",[p minF:z],[p maxF:z],[p bound:z] ? "YES" : "NO");
             NSLog(@"ez: [%8.8e;%8.8e]",[p minError:z],[p maxError:z]);
         }];
     }

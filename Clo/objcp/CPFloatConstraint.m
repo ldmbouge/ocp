@@ -38,46 +38,23 @@ ORFloat min_absFlt(ORFloat inf, ORFloat sup){
 float_interval ulp_computation(float_interval f){
    float_interval ulp;
    ORFloat max_inf, max_sup;
-   rational_interval ulp_r;
-   ORRational next_i, next_s;
-   ORDouble inf_m, inf_p, sup_m, sup_p;
-   mpq_inits(ulp_r.inf, ulp_r.sup, next_i, next_s, NULL);
-   if(f.inf == -INFINITY){
-      /*mpq_set_d(ulp_r.inf, FLT_MAX*1.5);
-      mpq_set_d(ulp_r.sup, FLT_MAX*1.5);
-      mpq_set_d(next_i, nextafter(FLT_MAX*1.5, -INFINITY));
-      mpq_set_d(next_s, nextafter(FLT_MAX*1.5, -INFINITY));
-      mpq_sub(next_i, next_i, ulp_r.inf);
-      mpq_sub(next_s, next_s, ulp_r.sup);
-      max_inf = minFlt(mpq_get_d(next_i), mpq_get_d(next_s));*/
+   if(f.inf == -INFINITY || f.sup == INFINITY){
       max_inf = -FLT_MAX;
-   }else if(f.inf == -FLT_MAX){
+      max_sup = FLT_MAX;
+   }else if(fabsf(f.inf) == FLT_MAX || fabsf(f.sup) == FLT_MAX){
       max_inf = nextafterf(f.inf, -INFINITY) - f.inf;
+      max_sup = -max_inf;
    } else{
+      ORDouble inf_m, inf_p, sup_m, sup_p;
       inf_m = nextafterf(f.inf, -INFINITY) - f.inf;
       sup_m = nextafterf(f.sup, -INFINITY) - f.sup;
-      max_inf = minFlt(inf_m, sup_m)/2.0f;
-   }
-   if(f.sup == +INFINITY){
-      /*mpq_set_d(ulp_r.inf, FLT_MAX*1.5);
-      mpq_set_d(ulp_r.sup, FLT_MAX*1.5);
-      mpq_set_d(next_i, nextafter(FLT_MAX*1.5, +INFINITY));
-      mpq_set_d(next_s, nextafter(FLT_MAX*1.5, +INFINITY));
-      mpq_sub(next_i, next_i, ulp_r.inf);
-      mpq_sub(next_s, next_s, ulp_r.sup);
-      max_sup = maxFlt(mpq_get_d(next_i), mpq_get_d(next_s));*/
-      max_sup = FLT_MAX;
-   } else if(f.sup == FLT_MAX){
-      max_sup = nextafterf(f.inf, -INFINITY) - f.inf;
-   } else {
       inf_p = nextafterf(f.inf, +INFINITY) - f.inf;
       sup_p = nextafterf(f.sup, +INFINITY) - f.sup;
+      max_inf = minFlt(inf_m, sup_m)/2.0f;
       max_sup = maxFlt(inf_p, sup_p)/2.0f;
    }
-   ulp.inf = max_inf;// / 2.f;
-   ulp.sup = max_sup;// / 2.f;
-   //NSLog(@"ULP: %16.16e %16.16e", ulp.inf, ulp.sup);
-   mpq_clears(ulp_r.inf, ulp_r.sup, next_i, next_s, NULL);
+   ulp.inf = max_inf;
+   ulp.sup = max_sup;
    return ulp;
 }
 void addR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
@@ -94,6 +71,11 @@ void addR_inv_ex(rational_interval* ex, rational_interval* ez, rational_interval
    
    mpq_sub(ex->sup, ez->sup, ey->inf);
    mpq_sub(ex->sup, ex->sup, eo->inf);
+   printRationalInterval(@"ex", *ex);
+   printRationalInterval(@"ey", *ey);
+   printRationalInterval(@"ez", *ez);
+   printRationalInterval(@"eo", *eo);
+
 }
 
 void addR_inv_ey(rational_interval* ey, rational_interval* ez, rational_interval* ex, rational_interval* eo){
@@ -1011,8 +993,8 @@ void compute_eo_mul(rational_interval* eo, rational_interval* eoTemp, float_inte
          mpq_inits(tmp_eo_r,tmp_eo_fi_r,NULL);
          
          tmp_eo_fi = x.inf * y.inf;
-         ORFloat div = 1. / y.sup;
-         tmp_eo_fi = x.inf * div;
+         //ORFloat div = 1. / y.sup;
+         //tmp_eo_fi = x.inf * div;
          mpq_set_d(tmp_eo_r, x.inf);
          mpq_set_d(tmp_eo_fi_r, y.inf);
          mpq_mul(tmp_eo_r,  tmp_eo_r, tmp_eo_fi_r);
@@ -1678,16 +1660,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
-   /*printRational(@"ez.inf", ez.inf);
-   printRational(@"ez.sup", ez.sup);
-   printRational(@"ex.inf", ex.inf);
-   printRational(@"ex.sup", ex.sup);
-   printRational(@"ey.inf", ey.inf);
-   printRational(@"ey.sup", ey.sup);
-   printRational(@"eo.inf", eo.inf);
-   printRational(@"eo.sup", eo.sup);*/
-   //NSLog(@"IN ADDITION");
    do {
       changed = false;
       zTemp = z;
@@ -1721,14 +1693,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 
       /* ERROR PROPAG */
       compute_eo_add(&eo, &eoTemp, x, y, z);
-      /*printRational(@"eo.inf", eo.inf);
-      printRational(@"eo.sup", eo.sup);*/
       
       setRationalInterval(&ezTemp,&ez);
       addR(&ezTemp, &ex, &ey, &eo);
       intersectionError(&interError, ez, ezTemp);
-      /*printRational(@"ezTemp.inf", ezTemp.inf);
-      printRational(@"ezTemp.sup", ezTemp.sup);*/
       if(interError.changed)
          setRationalInterval(&ez, &interError.result);
       changed |= interError.changed;
@@ -1758,7 +1726,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       gchanged |= changed;
    } while(changed);
    if(gchanged){
-      //NSLog(@"OUT OF ADDITION");
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -1868,9 +1835,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
-   
-   //NSLog(@"IN SUBTRACTION");
    do {
       changed = false;
       zTemp = z;
@@ -1904,10 +1868,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       
       /* ERROR PROPAG */
       compute_eo_sub(&eo, &eoTemp, x, y, z);
+      
       setRationalInterval(&ezTemp,&ez);
       subR(&ezTemp, &ex, &ey, &eo);
       intersectionError(&interError, ez, ezTemp);
-      //NSLog(@"ez: %d", interError.changed);
       if(interError.changed)
          setRationalInterval(&ez, &interError.result);
       changed |= interError.changed;
@@ -1915,7 +1879,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       setRationalInterval(&exTemp,&ex);
       subR_inv_ex(&exTemp, &ez, &ey, &eo);
       intersectionError(&interError, ex, exTemp);
-      //NSLog(@"ex: %d", interError.changed);
       if(interError.changed)
          setRationalInterval(&ex, &interError.result);
       changed |= interError.changed;
@@ -1923,7 +1886,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       setRationalInterval(&eyTemp,&ey);
       subR_inv_ey(&eyTemp, &ez, &ex, &eo);
       intersectionError(&interError, ey, eyTemp);
-      //NSLog(@"ey: %d", interError.changed);
       if(interError.changed)
          setRationalInterval(&ey, &interError.result);
       changed |= interError.changed;
@@ -1931,7 +1893,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       setRationalInterval(&eoTemp,&eo);
       subR_inv_eo(&eoTemp, &ez, &ex, &ey);
       intersectionError(&interError, eo, eoTemp);
-      //NSLog(@"eo: %d", interError.changed);
       if(interError.changed)
          setRationalInterval(&eo, &interError.result);
       changed |= interError.changed;
@@ -1940,7 +1901,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       gchanged |= changed;
    } while(changed);
    if(gchanged){
-      //NSLog(@"OUT OF SUBTRACTION");
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -2049,9 +2009,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
-   
-   //NSLog(@"IN MULTIPLICATION");
    do {
       changed = false;
       zTemp = z;
@@ -2074,6 +2031,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       
       /* ERROR PROPAG */
       compute_eo_mul(&eo, &eoTemp, x, y, z);
+      
       setRationalInterval(&ezTemp,&ez);
       mulR(&ezTemp, &ex, &ey, &eo, &x, &y);
       intersectionError(&interError, ez, ezTemp);
@@ -2106,7 +2064,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       gchanged |= changed;
    } while(changed);
    if(gchanged){
-      //NSLog(@"OUT OF MULTIPLICATION");
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -2129,7 +2086,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    freeRationalInterval(&exTemp);
    freeRationalInterval(&eyTemp);
    freeRationalInterval(&eoTemp);
-   //mpq_clears(ezTemp.inf, ezTemp.sup, exTemp.inf, exTemp.sup, eyTemp.inf, eyTemp.sup, eoTemp.sup, eoTemp.inf, NULL);
    [super dealloc];
 }
 -(NSSet*)allVars
@@ -2190,9 +2146,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
-   
-   //NSLog(@"IN DIVISION");
    do {
       changed = false;
       zTemp = z;
@@ -2215,26 +2168,17 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       
       /* ERROR PROPAG */
       compute_eo_div(&eo, &eoTemp, x, y, z);
+      
       setRationalInterval(&ezTemp,&ez);
       divR(&ezTemp, &ex, &ey, &eo, &x, &y);
       intersectionError(&interError, ez, ezTemp);
-      //NSLog(@"ez: %d", interError.changed);
       if(interError.changed)
          setRationalInterval(&ez, &interError.result);
       changed |= interError.changed;
-      //printRational(@"ez.inf", ez.inf);
-      //printRational(@"ez.sup", ez.sup);
-      /*NSLog(@"interErr.inf: %100.100e", mpq_get_d(interError.result.inf));
-       NSLog(@"interErr.sup: %100.100e", mpq_get_d(interError.result.sup));
-       NSLog(@"ey.inf: %100.100e", mpq_get_d(ey.inf));
-       NSLog(@"ey.sup: %100.100e", mpq_get_d(ey.sup));
-       NSLog(@"eyTemp.inf: %100.100e", mpq_get_d(eyTemp.inf));
-       NSLog(@"eyTemp.sup: %100.100e", mpq_get_d(eyTemp.sup));*/
       
       setRationalInterval(&exTemp,&ex);
       divR_inv_ex(&exTemp, &ez, &ey, &eo, &x, &y);
       intersectionError(&interError, ex , exTemp);
-      //NSLog(@"ex: %d", interError.changed);
       if(interError.changed)
          setRationalInterval(&ex, &interError.result);
       changed |= interError.changed;
@@ -2242,31 +2186,13 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       setRationalInterval(&eyTemp,&ey);
       divR_inv_ey(&eyTemp, &ez, &ex, &eo, &x, &y);
       intersectionError(&interError, ey, eyTemp);
-      //NSLog(@"ey: %d", interError.changed);
-      /*NSLog(@"interErr.inf: %100.100e", mpq_get_d(interError.result.inf));
-      NSLog(@"interErr.sup: %100.100e", mpq_get_d(interError.result.sup));
-      NSLog(@"ey.inf: %100.100e", mpq_get_d(ey.inf));
-      NSLog(@"ey.sup: %100.100e", mpq_get_d(ey.sup));
-      NSLog(@"eyTemp.inf: %100.100e", mpq_get_d(eyTemp.inf));
-      NSLog(@"eyTemp.sup: %100.100e", mpq_get_d(eyTemp.sup));*/
       if(interError.changed)
          setRationalInterval(&ey, &interError.result);
       changed |= interError.changed;
-      //NSLog(@"ey.inf: %100.100e", mpq_get_d(ey.inf));
-      //NSLog(@"ey.sup: %100.100e", mpq_get_d(ey.sup));
       
       setRationalInterval(&eoTemp,&eo);
       divR_inv_eo(&eoTemp, &ez, &ex, &ey, &x, &y);
       intersectionError(&interError, eo, eoTemp);
-      //NSLog(@"eo: %d", interError.changed);
-      //printRational(@"eo.inf", eo.inf);
-      //printRational(@"eo.sup", eo.sup);
-      /*NSLog(@"interErr.inf: %100.100e", mpq_get_d(interError.result.inf));
-      NSLog(@"interErr.sup: %100.100e", mpq_get_d(interError.result.sup));
-      NSLog(@"eo.inf: %100.100e", mpq_get_d(eo.inf));
-      NSLog(@"eo.sup: %100.100e", mpq_get_d(eo.sup));
-      NSLog(@"eoTemp.inf: %100.100e", mpq_get_d(eoTemp.inf));
-      NSLog(@"eoTemp.sup: %100.100e", mpq_get_d(eoTemp.sup));*/
       if(interError.changed)
          setRationalInterval(&eo, &interError.result);
       changed |= interError.changed;
@@ -2275,7 +2201,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       gchanged |= changed;
    } while(changed);
    if(gchanged){
-      //NSLog(@"OUT OF DIVISION");
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -2297,7 +2222,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    freeRationalInterval(&exTemp);
    freeRationalInterval(&eyTemp);
    freeRationalInterval(&eoTemp);
-   //mpq_clears(ezTemp.inf, ezTemp.sup, exTemp.inf, exTemp.sup, eyTemp.inf, eyTemp.sup, eoTemp.sup, eoTemp.inf, NULL);
    [super dealloc];
 }
 -(NSSet*)allVars

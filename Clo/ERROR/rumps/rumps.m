@@ -12,14 +12,18 @@ int main(int argc, const char * argv[]) {
       id<ORFloatVar> y_0 = [ORFactory floatVar:mdl];
       id<ORFloatVar> r_0 = [ORFactory floatVar:mdl];
       id<ORFloatVar> x_0 = [ORFactory floatVar:mdl];
+      id<ORFloatVar> t_0 = [ORFactory floatVar:mdl];
+      id<ORFloatVar> t_1 = [ORFactory floatVar:mdl];
+      id<ORFloatVar> t_2 = [ORFactory floatVar:mdl];
+
       
       
       [mdl add:[x_0 set: @(77617.f)]];
       [mdl add:[y_0 set: @(33096.f)]];
       [mdl add:[r_0 set: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
       //assert((r_0 >= 0));
-      [mdl add:[r_0 set:[x_0 plus: y_0]]];
-      [mdl add:[r_0 geq:@(0.0f)]];
+      //[mdl add:[r_0 set:[x_0 plus: y_0]]];
+      //[mdl add:[r_0 geq:@(0.0f)]];
       //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
       
       NSLog(@"model: %@",mdl);
@@ -31,7 +35,6 @@ int main(int argc, const char * argv[]) {
          /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
          [cp floatSplit:i call:s withVars:x];
          }];*/
-         NSLog(@"TOTO");
          NSLog(@"%@",cp);
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */
          /* Use printRational(ORRational r) to print a rational inside the solver */

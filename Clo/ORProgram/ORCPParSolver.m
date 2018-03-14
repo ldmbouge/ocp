@@ -1040,6 +1040,12 @@
 {
     return [[self worker] intValue: x];
 }
+- (ORFloat)maxF:(PNONNULL id<ORVar>)x {
+   return [[self worker] maxF: x];
+}
+- (ORFloat)minF:(PNONNULL id<ORVar>)x {
+   return [[self worker] minF: x];
+}
 - (ORFloat)maxError:(PNONNULL id<ORVar>)x {
    return [[self worker] maxError: x];
 }

@@ -3216,12 +3216,21 @@
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) value];
 }
+-(ORFloat) minF:(id<ORVar>)x
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   return [cx min];
+}
+-(ORFloat) maxF:(id<ORVar>)x
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   return [cx max];
+}
 -(ORFloat) minError:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx minErrF];
 }
-
 -(ORFloat) maxError:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];

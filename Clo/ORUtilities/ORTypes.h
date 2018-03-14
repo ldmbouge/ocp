@@ -83,7 +83,15 @@ static inline ORRational* fmaxR(ORRational* a, ORRational* b) {
 static inline void printRational(NSString* n, ORRational r){
    float tmp = mpq_get_d(r);
    unsigned int * ptmp = (unsigned int *) &tmp;
-   NSLog(@"%@ : %16.16e [%4X]", n, mpq_get_d(r),*ptmp);
+   NSLog(@"%@ : %8.8e [%4X]", n, mpq_get_d(r),*ptmp);
+}
+
+static inline void printRationalInterval(NSString* n, rational_interval r){
+   float tmp_inf = mpq_get_d(r.inf);
+   unsigned int * ptmp_inf = (unsigned int *) &tmp_inf;
+   float tmp_sup = mpq_get_d(r.sup);
+   unsigned int * ptmp_sup = (unsigned int *) &tmp_sup;
+   NSLog(@"%@ : [%8.8e;%8.8e] [%4X] [%4X]", n, mpq_get_d(r.inf), mpq_get_d(r.sup),*ptmp_inf,*ptmp_sup);
 }
 
 #define MAXINT ((ORInt)0x7FFFFFFF)
