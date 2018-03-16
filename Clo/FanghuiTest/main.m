@@ -362,8 +362,8 @@ int main(int argc, const char * argv[]) {
                         
                         return [cp member:k in:pairIndexPtr[s]] &&
                         (leftValue == -1 || leftValue == valuePair[s][k].x)//[labeled[left] value] == valuePair[s][k].x)
-			  && (rightValue == -1 || rightValue == valuePair[s][k].y)// [labeled[right] value] == valuePair[s][k].y)
-			  && (currentobj > ([cp min:currentErrors] + valuePair[s][k].score - totalContribution)); //solve for optimal
+                        && (rightValue == -1 || rightValue == valuePair[s][k].y)// [labeled[right] value] == valuePair[s][k].y)
+                        && (currentobj > ([cp min:currentErrors] + valuePair[s][k].score - totalContribution)); //solve for optimal
                         
                         
                         //&& ([currentobj intValue:cp] >= ([accumscore value] + valuePair[s][k].score - totalContribution)); //solve all
@@ -417,10 +417,10 @@ int main(int argc, const char * argv[]) {
                                 [cp diff:pairIndexPtr[s] with:i];
                             }];
                 }];
-        //NSLog(@"Finshed Search Step One");
-        NSLog(@"Choices before label: (%d/%d)",[cp nbChoices], [cp nbFailures]);
+
+	NSLog(@"ChoicesBefore: (%d / %d)\n",[cp nbChoices], [cp nbFailures]);
 	[cp labelArrayFF:iv];
-	NSLog(@"Choices after label: (%d/%d)",[cp nbChoices], [cp nbFailures]);
+	NSLog(@"ChoicesAfter: (%d / %d)\n",[cp nbChoices], [cp nbFailures]);
         /*
          for(int j = 0; j < 16; j++){
          if(![cp bound:pairIndexPtr[j]]){
@@ -516,6 +516,8 @@ void SideChannel(id<ORBitVar> x, int sc){
     id<ORIntVar> scval = [ORFactory intVar: model value:sc];
     
     [model add: [[errorPtr[error_count*2 + 1] plus: errorPtr[error_count*2]] leq: @(1)]];
+    
+    [model add: [[val eq: scval] eq: [[errorPtr[error_count*2 + 1] eq: @(0)] land: [errorPtr[error_count*2] eq: @(0)]]]];
     
     [model add: [ORFactory bit:x count:val]];
     [model add: [[[val plus: errorPtr[error_count*2]] sub: errorPtr[error_count*2+1]] eq:scval]];
