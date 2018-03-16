@@ -2823,7 +2823,8 @@
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
    ORFloat mid;
-   float_interval interval[2];
+   ORInt length = 1;
+   float_interval interval[3];
    if(fp_next_float(theMin) == theMax){
       interval[0].inf = interval[0].sup = theMin;
       interval[1].inf = interval[1].sup = theMax;
@@ -2832,13 +2833,16 @@
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
-      interval[0].inf  = theMin;
-      interval[0].sup = fp_previous_float(mid);
-      interval[1].inf = mid;
-      interval[1].sup = theMax;
+      interval[1].inf  = mid;
+      interval[1].sup = mid;
+      interval[1].inf  = theMin;
+      interval[1].sup = fp_previous_float(mid);
+      interval[2].inf = fp_next_float(mid);
+      interval[2].sup = theMax;
+      length++;
    }
    float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,1) suchThat:nil in:^(ORInt i) {
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
       LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
@@ -2960,6 +2964,67 @@
       LOG(_level,1,@"(6split) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
+}
+-(void) floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+{
+   CPFloatVarI* xi = _gamma[getId(x[i])];
+   if([xi bound]) return;
+   ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+   ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+   if(fp_next_float(tmpMin) == tmpMax){
+      [_search try:^{
+         LOG(_level,1,@"(Esplit) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,tmpMin,tmpMin);
+         [self floatIntervalImpl:xi low:tmpMin up:tmpMin];
+      } alt:^{
+         LOG(_level,1,@"(Esplit) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,tmpMax,tmpMax);
+         [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
+      }];
+   }else{
+      __block id<ORMutableFloat> max;
+      max = [ORFactory mutable:_engine fvalue:tmpMax];
+      __block ORBool goon,finish;
+      finish = NO;
+      ORMutableIntegerI* d = [ORFactory mutable:self value:0];
+      ORMutableIntegerI* nb = [ORFactory mutable:self value:0];
+      ORInt E = 10;
+      while (!finish){
+         goon = YES;
+         while (goon) {
+            [self nestedSolve:^{
+               [nb incr];
+               LOG(_level,1,@"(Esplit) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[max value],[max value]);
+               [self floatIntervalImpl:xi low:[max value] up:[max value]];
+            } onSolution:^{
+               LOG(_level,1,@"(Esplit) solution found");
+               if(_oneSol){
+                  goon = NO;
+                  finish = YES;
+               }
+               [self doOnSolution];
+            } onExit:^{
+               if((nb.intValue == E) || (d.intValue == 0 && (max.value == xi.min)) || (d.intValue == 1 && (max.value == xi.max))){
+                  goon = NO;
+                  if(d.intValue == 0)
+                     [self floatIntervalImpl:xi low:xi.min up:max.value];
+                  else
+                     [self floatIntervalImpl:xi low:max.value up:xi.max];
+               }else{
+                  if(d.intValue == 0){ //shave sup side
+                     [max setValue:maxFlt(fp_previous_float([max value]),xi.min)];
+                  }else{
+                     [max setValue:minFlt(fp_next_float([max value]),xi.max)];
+                  }
+               }
+            }];
+         }
+         [max setValue:tmpMin];
+         [d incr];
+         [nb setValue:0];
+         if(d.intValue == 2)
+            finish = YES;
+      }
+   }
+   [self float3WaySplit:i call:s withVars:x];
 }
 //----------------------------------------------------------
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
@@ -3352,7 +3417,7 @@
       }
    }
    [cstr release];
-   assert(rate != NAN && rate >= 0.0);
+   assert(rate != NAN);
    return rate;
 }
 -(ORInt)  regret:(id<ORIntVar>)x
