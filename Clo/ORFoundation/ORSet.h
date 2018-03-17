@@ -60,8 +60,6 @@
 -(NSString*)description;
 @end
 
-
-
 @protocol ORDoubleRange
 -(ORDouble)low;
 -(ORDouble)up;

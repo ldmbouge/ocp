@@ -54,7 +54,7 @@
         mpq_set(_valueError, *[v errorValue]);
     }
     else {
-        mpq_set_d(_valueError, 0.0);
+        mpq_set_d(_valueError, 0.0f);
         _boundError = FALSE;
     }
    return self;
@@ -156,7 +156,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    self = [super init];
    _engine = engine;
    _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:low up:up];
-   _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail]];
+   if(low == up)
+      _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail] low:0.0f up:0.0f];
+   else
+      _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail]];
    _recv = nil;
    _hasValue = false;
    _value = 0.0;
@@ -169,7 +172,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    self = [super init];
    _engine = engine;
-   _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:-FLT_MAX up:FLT_MAX];
+   _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:-INFINITY up:INFINITY];
    _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail]];
    _recv = nil;
    _hasValue = false;

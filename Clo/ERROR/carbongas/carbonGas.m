@@ -8,8 +8,6 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-//      id<ORFloatRange> r0 = [ORFactory floatRange:mdl];
-//      id<ORFloatRange> r1 = [ORFactory floatRange:mdl];
       id<ORFloatVar> p = [ORFactory floatVar:mdl];
       id<ORFloatVar> a = [ORFactory floatVar:mdl];
       id<ORFloatVar> b = [ORFactory floatVar:mdl];
@@ -31,15 +29,9 @@ int main(int argc, const char * argv[]) {
       
       
       NSLog(@"model: %@",mdl);
-      id<ORFloatVarArray> vs = [mdl floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
-         /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-            [cp floatSplit:i call:s withVars:x];
-         }];*/
-         
          NSLog(@"%@",cp);
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */
          /* Use printRational(ORRational r) to print a rational inside the solver */

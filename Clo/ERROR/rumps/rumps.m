@@ -12,10 +12,6 @@ int main(int argc, const char * argv[]) {
       id<ORFloatVar> y_0 = [ORFactory floatVar:mdl];
       id<ORFloatVar> r_0 = [ORFactory floatVar:mdl];
       id<ORFloatVar> x_0 = [ORFactory floatVar:mdl];
-      id<ORFloatVar> t_0 = [ORFactory floatVar:mdl];
-      id<ORFloatVar> t_1 = [ORFactory floatVar:mdl];
-      id<ORFloatVar> t_2 = [ORFactory floatVar:mdl];
-
       
       
       [mdl add:[x_0 set: @(77617.f)]];
@@ -27,14 +23,9 @@ int main(int argc, const char * argv[]) {
       //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
       
       NSLog(@"model: %@",mdl);
-      //id<ORFloatVarArray> vs = [mdl floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      //id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
-         /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-         [cp floatSplit:i call:s withVars:x];
-         }];*/
          NSLog(@"%@",cp);
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */
          /* Use printRational(ORRational r) to print a rational inside the solver */
@@ -42,8 +33,8 @@ int main(int argc, const char * argv[]) {
          NSLog(@"ex: [%8.8e;%8.8e]",[cp minError:x_0],[cp maxError:x_0]);
          NSLog(@"y : %8.8e (%s)",[cp floatValue:y_0],[cp bound:y_0] ? "YES" : "NO");
          NSLog(@"ey: [%8.8e;%8.8e]",[cp minError:y_0],[cp maxError:y_0]);
-         NSLog(@"z : %8.8e (%s)",[cp floatValue:r_0],[cp bound:r_0] ? "YES" : "NO");
-         NSLog(@"ez: [%8.8e;%8.8e]",[cp minError:r_0],[cp maxError:r_0]);
+         NSLog(@"r_0 : %8.8e (%s)",[cp floatValue:r_0],[cp bound:r_0] ? "YES" : "NO");
+         NSLog(@"er_0: [%8.8e;%8.8e]",[cp minError:r_0],[cp maxError:r_0]);
       }];
    }
    return 0;
