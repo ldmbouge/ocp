@@ -3379,7 +3379,7 @@
             v = [c varSubjectToAbsorption:cx];
             if(v == nil) continue;
             absV = [self computeAbsorptionQuantity:v by:x];
-            assert(absV >= 0.0f && absV <= 1.f);
+            assert(absV >= 0.0f && absV <= 1.f && absV != 1.7976931348623157e+308);
             if(absV){
                [abs[i] addQuantity:absV];
                if(absV > best_rate) [abs[i] setChoice:v];
