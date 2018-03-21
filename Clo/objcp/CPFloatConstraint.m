@@ -17,24 +17,6 @@
 
 #define PERCENT 5.0
 
-ORFloat max_absFlt(ORFloat inf, ORFloat sup){
-   ORFloat max_abs = maxFlt(fabsf(inf), sup);
-   if(max_abs == fabsf(inf)){
-      max_abs = inf;
-   } else {
-      max_abs = sup;
-   }
-   return max_abs;
-}
-ORFloat min_absFlt(ORFloat inf, ORFloat sup){
-   ORFloat max_abs = minFlt(inf, sup);
-   if(max_abs == fabsf(inf)){
-      max_abs = inf;
-   } else {
-      max_abs = sup;
-   }
-   return max_abs;
-}
 float_interval ulp_computation(float_interval f){
    float_interval ulp;
    ORFloat max_inf, max_sup;
@@ -56,6 +38,12 @@ float_interval ulp_computation(float_interval f){
    ulp.inf = max_inf;
    ulp.sup = max_sup;
    return ulp;
+}
+
+void setR(rational_interval* result, rational_interval* value)
+{
+   mpq_set(result->inf, value->inf);
+   mpq_set(result->sup, value->sup);
 }
 void addR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
    mpq_add(ez->inf, ex->inf, ey->inf);
@@ -881,9 +869,9 @@ void divR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval
 }
 
 void compute_eo_add(rational_interval* eo, rational_interval* eoTemp, float_interval x, float_interval y, float_interval z){
-   //if(!mpq_equal(eo->inf, eoTemp->inf) || !mpq_equal(eo->sup, eoTemp->sup)){
-   if(mpq_get_d(eo->inf) != mpq_get_d(eoTemp->inf) || mpq_get_d(eo->sup) != mpq_get_d(eoTemp->sup)){
-      if(x.inf == x.sup && y.inf == y.sup){
+      intersectionIntervalError interError;
+      mpq_inits(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
+      if((x.inf == x.sup) && (y.inf == y.sup)){
          ORRational tmp_eo_r, tmp_eo_fi_r;
          ORFloat tmp_eo_fi;
 
@@ -898,7 +886,7 @@ void compute_eo_add(rational_interval* eo, rational_interval* eoTemp, float_inte
          mpq_set_d(tmp_eo_fi_r, tmp_eo_fi);
          mpq_sub(tmp_eo_r, tmp_eo_r, tmp_eo_fi_r);
 
-         makeRationalInterval(eo, tmp_eo_r, tmp_eo_r);
+         makeRationalInterval(eoTemp, tmp_eo_r, tmp_eo_r);
 
          mpq_clears(tmp_eo_r, tmp_eo_fi_r, NULL);
          
@@ -910,24 +898,23 @@ void compute_eo_add(rational_interval* eo, rational_interval* eoTemp, float_inte
          ulp_f = ulp_computation(z);
          mpq_set_d(ulp, ulp_f.sup);
          mpq_set_d(ulp_neg, ulp_f.inf);
-         makeRationalInterval(eo, ulp_neg, ulp);
+         makeRationalInterval(eoTemp, ulp_neg, ulp);
          mpq_clears(ulp, ulp_neg, NULL);
       }
-   }
-   //printRationalInterval(@"eo_add", *eo);
+   intersectionError(&interError, *eo, *eoTemp);
+   if(interError.changed)
+      makeRationalInterval(eo, interError.result.inf, interError.result.sup);
+   mpq_clears(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
 }
 
 void compute_eo_sub(rational_interval* eo, rational_interval* eoTemp, float_interval x, float_interval y, float_interval z){
-   //if(!mpq_equal(eo->inf, eoTemp->inf) || !mpq_equal(eo->sup, eoTemp->sup)){
-   if(mpq_get_d(eo->inf) != mpq_get_d(eoTemp->inf) || mpq_get_d(eo->sup) != mpq_get_d(eoTemp->sup)){
-      //y/2 <= x <= y*2
-      // [y.inf,y.sup]/[2,2] <= [x.inf,x.sup] <= [y.inf,y.sup]*[2,2]
-      //
-      if(minFlt(y.inf/2.0f,y.sup/2.0f) <= x.inf && maxFlt(y.inf/2.0f,y.sup/2.0f) <= x.sup && x.inf <= minFlt(2.0f*y.inf,2.0f*y.sup) && x.sup <= maxFlt(2.0f*y.inf,2.0f*y.sup)){
+   intersectionIntervalError interError;
+   mpq_inits(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
+   if(minFlt(y.inf/2.0f,y.sup/2.0f) <= x.inf && maxFlt(y.inf/2.0f,y.sup/2.0f) <= x.sup && x.inf <= minFlt(2.0f*y.inf,2.0f*y.sup) && x.sup <= maxFlt(2.0f*y.inf,2.0f*y.sup)){
          ORRational zero;
          mpq_init(zero);
          mpq_set_d(zero, 0.0f);
-         makeRationalInterval(eo, zero, zero);
+         makeRationalInterval(eoTemp, zero, zero);
          mpq_clear(zero);
       } else if(x.inf == x.sup && y.inf == y.sup){
          /* compute eo interval with substraction from op on rational and op on float */
@@ -944,7 +931,7 @@ void compute_eo_sub(rational_interval* eo, rational_interval* eoTemp, float_inte
          mpq_set_d(tmp_eo_fi_r, tmp_eo_fi);
          mpq_sub(tmp_eo_r, tmp_eo_r, tmp_eo_fi_r);
          
-         makeRationalInterval(eo, tmp_eo_r, tmp_eo_r);
+         makeRationalInterval(eoTemp, tmp_eo_r, tmp_eo_r);
 
          mpq_clears(tmp_eo_r, tmp_eo_fi_r, NULL);
       } else {
@@ -954,17 +941,19 @@ void compute_eo_sub(rational_interval* eo, rational_interval* eoTemp, float_inte
          ulp_f = ulp_computation(z);
          mpq_set_d(ulp, ulp_f.sup);
          mpq_set_d(ulp_neg, ulp_f.inf);
-         makeRationalInterval(eo, ulp_neg, ulp);
+         makeRationalInterval(eoTemp, ulp_neg, ulp);
          mpq_clears(ulp, ulp_neg, NULL);
       }
-   }
-   //printRationalInterval(@"eo_sub", *eo);
+   intersectionError(&interError, *eo, *eoTemp);
+   if(interError.changed)
+      makeRationalInterval(eo, interError.result.inf, interError.result.sup);
+   mpq_clears(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
 }
 
 void compute_eo_mul(rational_interval* eo, rational_interval* eoTemp, float_interval x, float_interval y, float_interval z){
-   //if(!mpq_equal(eo->inf, eoTemp->inf) || !mpq_equal(eo->sup, eoTemp->sup)){
-   if(mpq_get_d(eo->inf) != mpq_get_d(eoTemp->inf) || mpq_get_d(eo->sup) != mpq_get_d(eoTemp->sup)){
-      if(x.inf == x.sup && y.inf == y.sup){
+   intersectionIntervalError interError;
+   mpq_inits(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
+   if(x.inf == x.sup && y.inf == y.sup){
          ORRational tmp_eo_r, tmp_eo_fi_r, tmp_eo_r_s, tmp_eo_fi_r_s, tmp1, tmp2, tmp3, tmp4;
          ORFloat tmp_eo_fi;
          mpq_inits(tmp_eo_r,tmp_eo_fi_r,tmp_eo_r_s, tmp_eo_fi_r_s,tmp1, tmp2, tmp3, tmp4, NULL);
@@ -986,8 +975,7 @@ void compute_eo_mul(rational_interval* eo, rational_interval* eoTemp, float_inte
          mpq_set_d(tmp_eo_fi_r, tmp_eo_fi);
          mpq_sub(tmp_eo_r, tmp_eo_r, tmp_eo_fi_r);
          
-         makeRationalInterval(eo, tmp_eo_r, tmp_eo_r);
-         
+         makeRationalInterval(eoTemp, tmp_eo_r, tmp_eo_r);
          mpq_clears(tmp_eo_r, tmp_eo_fi_r,tmp_eo_r_s, tmp_eo_fi_r_s, tmp1, tmp2, tmp3, tmp4, NULL);
       }
       else {
@@ -997,25 +985,23 @@ void compute_eo_mul(rational_interval* eo, rational_interval* eoTemp, float_inte
          ulp_f = ulp_computation(z);
          mpq_set_d(ulp, ulp_f.sup);
          mpq_set_d(ulp_neg, ulp_f.inf);
-         makeRationalInterval(eo, ulp_neg, ulp);
+         makeRationalInterval(eoTemp, ulp_neg, ulp);
          mpq_clears(ulp, ulp_neg, NULL);
       }
-   }
-   //printRationalInterval(@"eo_mul", *eo);
+   intersectionError(&interError, *eo, *eoTemp);
+   if(interError.changed)
+      makeRationalInterval(eo, interError.result.inf, interError.result.sup);
+   mpq_clears(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
 }
 
 void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_interval x, float_interval y, float_interval z){
-   //if(!mpq_equal(eo->inf, eoTemp->inf) || !mpq_equal(eo->sup, eoTemp->sup)){
-   if(mpq_get_d(eo->inf) != mpq_get_d(eoTemp->inf) || mpq_get_d(eo->sup) != mpq_get_d(eoTemp->sup)){
-      if(x.inf == x.sup && y.inf == y.sup){
+   intersectionIntervalError interError;
+   mpq_inits(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
+   if(x.inf == x.sup && y.inf == y.sup){
          ORRational tmp_eo_r, tmp_eo_fi_r,tmp_eo_r_s, tmp_eo_fi_r_s, tmp1, tmp2, tmp3, tmp4;
          ORFloat tmp_eo_fi;
          mpq_inits(tmp_eo_r,tmp_eo_fi_r, tmp_eo_r_s, tmp_eo_fi_r_s, tmp1, tmp2, tmp3, tmp4, NULL);
-         
-         /*tmp_eo_fi = x.inf / y.inf;
-         mpq_set_d(tmp_eo_r, x.inf);
-         mpq_set_d(tmp_eo_fi_r, y.inf);
-         mpq_div(tmp_eo_r,  tmp_eo_r, tmp_eo_fi_r);*/
+      
          tmp_eo_fi = minFlt(minFlt(x.inf / y.inf, x.inf / y.sup),minFlt(x.sup / y.inf, x.sup / y.sup));
          mpq_set_d(tmp_eo_r, x.inf);
          mpq_set_d(tmp_eo_fi_r, y.inf);
@@ -1033,7 +1019,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
          mpq_set_d(tmp_eo_fi_r, tmp_eo_fi);
          mpq_sub(tmp_eo_r, tmp_eo_r, tmp_eo_fi_r);
          
-         makeRationalInterval(eo, tmp_eo_r, tmp_eo_r);
+         makeRationalInterval(eoTemp, tmp_eo_r, tmp_eo_r);
          
          mpq_clears(tmp_eo_r, tmp_eo_fi_r,tmp_eo_r_s, tmp_eo_fi_r_s, tmp1, tmp2, tmp3, tmp4, NULL);
       }
@@ -1044,11 +1030,13 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
          ulp_f = ulp_computation(z);
          mpq_set_d(ulp, ulp_f.sup);
          mpq_set_d(ulp_neg, ulp_f.inf);
-         makeRationalInterval(eo, ulp_neg, ulp);
+         makeRationalInterval(eoTemp, ulp_neg, ulp);
          mpq_clears(ulp, ulp_neg, NULL);
       }
-   }
-   //printRationalInterval(@"eo_div", *eo);
+   intersectionError(&interError, *eo, *eoTemp);
+   if(interError.changed)
+      makeRationalInterval(eo, interError.result.inf, interError.result.sup);
+   mpq_clears(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
 }
 
 @implementation CPFloatEqual
@@ -1146,8 +1134,8 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    int _rounding;
    float_interval _xi;
    float_interval _yi;
-   rational_interval _xie;
-   rational_interval _yie;
+   rational_interval _exi;
+   rational_interval _eyi;
 }
 -(id) init:(CPFloatVarI*)x set:(CPFloatVarI*)y
 {
@@ -1156,9 +1144,9 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    _y = y;
    _xi = makeFloatInterval(x.min, x.max);
    _yi = makeFloatInterval(y.min, y.max);
-   mpq_inits(_xie.inf, _xie.sup, _yie.inf, _yie.sup, NULL);
-   makeRationalInterval(&_xie, *x.minErr, *x.maxErr);
-   makeRationalInterval(&_yie, *y.minErr, *y.maxErr);
+   mpq_inits(_exi.inf, _exi.sup, _eyi.inf, _eyi.sup, NULL);
+   makeRationalInterval(&_exi, *x.minErr, *x.maxErr);
+   makeRationalInterval(&_eyi, *y.minErr, *y.maxErr);
    _precision = 1;
    _rounding = FE_TONEAREST;
    return self;
@@ -1175,79 +1163,78 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    updateFloatInterval(&_xi,_x);
    updateFloatInterval(&_yi,_y);
-   float_interval ulp;
+   updateRationalInterval(&_exi,_x);
+   updateRationalInterval(&_eyi,_y);
    intersectionInterval inter;
    intersectionIntervalError interError;
    mpq_inits(interError.interval.inf, interError.result.sup, interError.interval.sup, interError.result.inf, NULL);
    if([_x bound]){
       float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
-      rational_interval eOrigin, eTmp;
-      mpq_inits(eTmp.inf, eTmp.sup, eOrigin.inf, eOrigin.sup, NULL);
+      rational_interval eyTmp;
+      mpq_inits(eyTmp.inf, eyTmp.sup,NULL);
+      makeRationalInterval(&eyTmp, _eyi.inf, _eyi.sup);
       fpi_setf(_precision, _rounding, &yTmp, &_xi);
-      ulp = ulp_computation(_yi);
-      mpq_set_d(eOrigin.sup, ulp.sup);
-      mpq_set_d(eOrigin.inf, ulp.inf);
-      ulp = ulp_computation(yTmp);
-      mpq_set_d(eTmp.sup, ulp.sup);
-      mpq_set_d(eTmp.inf, ulp.inf);
+      setR(&eyTmp, &_exi);
       inter = intersection(_yi, yTmp, 0.0f);
-      intersectionError(&interError,  eOrigin, eTmp);
+      intersectionError(&interError,  _eyi, eyTmp);
       if (inter.changed)
          [_y updateInterval:inter.result.inf and:inter.result.sup];
       if(interError.changed)
          [_y updateIntervalError:interError.result.inf and:interError.result.sup];
-      mpq_clears(eTmp.inf, eTmp.sup, eOrigin.inf, eOrigin.sup, NULL);
+      mpq_clears(eyTmp.inf, eyTmp.sup,NULL);
       return;
    }else if([_y bound]){
       float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+      rational_interval exTmp;
+      mpq_inits(exTmp.inf, exTmp.sup, NULL);
       fpi_setf(_precision, _rounding, &xTmp, &_yi);
+      setR(&exTmp, &_eyi);
       inter = intersection(_xi, xTmp, 0.0f);
+      intersectionError(&interError, _exi, exTmp);
       if (inter.changed)
          [_x updateInterval:inter.result.inf and:inter.result.sup];
-      //if(!mpq_equal(*[_x minErr], *[_y minErr]   ) && !mpq_equal(*[_x maxErr], *[_y maxErr])){
-      if(mpq_get_d(*[_x minErr]) != mpq_get_d(*[_y minErr]) && mpq_get_d(*[_x maxErr]) != mpq_get_d(*[_y maxErr]))
-         [_x updateIntervalError:*[_y minErr] and:*[_y maxErr]];
+      if (interError.changed)
+         [_x updateIntervalError:interError.result.inf and:interError.result.sup];
       return;
    }
    if(isDisjointWith(_x,_y)){
       failNow();
    }else{
       float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
-      rational_interval eOrigin, eTmp;
-      mpq_inits(eTmp.inf, eTmp.sup, eOrigin.inf, eOrigin.sup, NULL);
+      rational_interval exTmp;
+      mpq_inits(exTmp.inf, exTmp.sup, NULL);
+      makeRationalInterval(&exTmp, _exi.inf, _exi.sup);
       fpi_setf(_precision, _rounding, &xTmp, &_yi);
-      ulp = ulp_computation(_xi);
-      mpq_set_d(eOrigin.sup, ulp.sup);
-      mpq_set_d(eOrigin.inf, ulp.inf);
-      ulp = ulp_computation(xTmp);
-      mpq_set_d(eTmp.sup, ulp.sup);
-      mpq_set_d(eTmp.inf, ulp.inf);
+      setR(&exTmp, &_eyi);
       inter = intersection(_xi, xTmp, 0.0f);
-      intersectionError(&interError,  eOrigin, eTmp);
-      if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+      intersectionError(&interError, _exi, exTmp);
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
       if(interError.changed)
          [_x updateIntervalError:interError.result.inf and:interError.result.sup];
+      mpq_clears(exTmp.inf, exTmp.sup, NULL);
       float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+      rational_interval eyTmp;
+      mpq_inits(eyTmp.inf, eyTmp.sup,NULL);
+      makeRationalInterval(&eyTmp, _eyi.inf, _eyi.sup);
       updateFloatInterval(&_xi,_x);
+      updateRationalInterval(&_exi, _x);
       fpi_setf(_precision, _rounding,&yTmp,&_xi);
-      ulp = ulp_computation(_yi);
-      mpq_set_d(eOrigin.sup, ulp.sup);
-      mpq_set_d(eOrigin.inf, ulp.inf);
-      ulp = ulp_computation(yTmp);
-      mpq_set_d(eTmp.sup, ulp.sup);
-      mpq_set_d(eTmp.inf, ulp.inf);
+      setR(&eyTmp, &_exi);
       inter = intersection(_yi, yTmp, 0.0f);
-      intersectionError(&interError,  eOrigin, eTmp);
-      if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
+      intersectionError(&interError,  _eyi, eyTmp);
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
       if(interError.changed)
          [_y updateIntervalError:interError.result.inf and:interError.result.sup];
-      mpq_clears(eTmp.inf, eTmp.sup, eOrigin.inf, eOrigin.sup, NULL);
+      mpq_clears(eyTmp.inf, eyTmp.sup,NULL);
    }
+   mpq_clears(interError.interval.inf, interError.result.sup, interError.interval.sup, interError.result.inf, NULL);
    
 }
 - (void)dealloc {
-   freeRationalInterval(&_xie);
-   freeRationalInterval(&_yie);
+   freeRationalInterval(&_exi);
+   freeRationalInterval(&_eyi);
    [super dealloc];
 }
 
@@ -1658,7 +1645,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
    makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
-
    do {
       changed = false;
       zTemp = z;
@@ -1692,7 +1678,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 
       /* ERROR PROPAG */
       compute_eo_add(&eo, &eoTemp, x, y, z);
-
+      
       setRationalInterval(&ezTemp,&ez);
       addR(&ezTemp, &ex, &ey, &eo);
       intersectionError(&interError, ez, ezTemp);

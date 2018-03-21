@@ -3236,6 +3236,18 @@
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx maxErrF];
 }
+-(void) setMinError:(id<ORVar>)x minError:(ORFloat) minError
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   [cx updateMinErrorF:minError];
+   //return [cx minErrF];
+}
+-(void) setMaxError:(id<ORVar>)x maxError:(ORFloat) maxError
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   [cx updateMaxErrorF:maxError];
+   //return [cx maxErrF];
+}
 -(ORDouble) paramValue: (id<ORRealParam>)x
 {
    id<CPRealParam> p = _gamma[x.getId];

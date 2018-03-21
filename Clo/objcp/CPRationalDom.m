@@ -63,7 +63,7 @@
    if(mpq_get_d(newMin) > mpq_get_d(*[self max]))
         failNow();
     updateMinR(&_domain, newMin, _trail);
-    ORBool isBound = mpq_equal(_domain._low,_domain._up);
+    ORBool isBound = (mpq_get_d(_domain._low) == mpq_get_d(_domain._up));
     [x changeMinEvtErr: isBound sender:self];
     if (isBound)
         [x bindEvtErr:self];
@@ -74,7 +74,7 @@
    if(mpq_get_d(*[self min]) > mpq_get_d(newMax))
         failNow();
     updateMaxR(&_domain, newMax, _trail);
-    ORBool isBound = mpq_equal(_domain._low,_domain._up);
+    ORBool isBound = (mpq_get_d(_domain._low) == mpq_get_d(_domain._up));
     [x changeMaxEvtErr:isBound sender:self];
     if (isBound)
         [x bindEvtErr:self];

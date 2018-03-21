@@ -205,6 +205,8 @@ PORTABLE_BEGIN
 -(ORFloat) floatValue:(id<ORVar>)x;
 -(ORFloat) minError:(PNONNULL id<ORVar>)x;
 -(ORFloat) maxError:(PNONNULL id<ORVar>)x;
+-(void) setMinError:(PNONNULL id<ORVar>)x minError:(ORFloat) minError;
+-(void) setMaxError:(PNONNULL id<ORVar>)x maxError:(ORFloat) maxError;
 -(ORFloat) minF:(PNONNULL id<ORVar>)x;
 -(ORFloat) maxF:(PNONNULL id<ORVar>)x;
 -(ORBool) bound: (id<ORVar>) x;

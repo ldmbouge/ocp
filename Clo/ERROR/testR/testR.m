@@ -19,29 +19,33 @@ int main(int argc, const char * argv[]) {
        //id<ORFloatVar> u = [ORFactory floatVar:mdl];
        id<ORFloatVar> z = [ORFactory floatVar:mdl];
        [mdl add:[x set: @(0.1f)]];
-       //[mdl add:[z set: @(3.0f)]];
-       //[mdl add:[x set: y]];
-       //[mdl add:[y set: @(0.2f)]];
        //[mdl add:[w set: [x div:y]]];
        //[mdl add:[u set: [x plus: y]]];
-       [mdl add:[z set: [x plus: y]]];
-       //[mdl add:[z set: [w sub:y]]];
-       //[mdl add:[z set: [x plus:[y mul:[x plus: y]]]]];
+       //[mdl add:[z set: [x plus: y]]];
+       //[mdl add:[z gt: @(0.0f)]];
+       //[mdl add:[z set: @(5.0e-1)]];
+       [mdl add:[z set: [x plus:y]]];
        
        //[mdl add:[y set: @(4.0f)]];
        //[mdl add:[w set: @(1.11f)]];
-       //[mdl add:[z set:[[y mul: x] div: [@(1.0f) plus: [x div: w]]]]];
+       //[mdl add:[z set:[[x plus: y] sub: [x div: y]]]];
 
        NSLog(@"model: %@",mdl);
-       id<ORFloatVarArray> vs = [mdl floatVars];
+       //id<ORFloatVarArray> vs = [mdl floatVars];
        id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
-
-        [cp solve:^{
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+       //id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       
+       //NSLog(@"%@ (%s)",[cp concretize:z],[cp bound:z] ? "YES" : "NO");
+       //[cp setMinError:z minError:0.0f];
+       [cp setMinError:y minError:0.0f];
+       [cp setMaxError:y maxError:0.0f];
+       //NSLog(@"%@ (%s)",[cp concretize:z],[cp bound:z] ? "YES" : "NO");
+       [cp solve:^{
+          //NSLog(@"%@ (%s)",[cp concretize:z],[cp bound:z] ? "YES" : "NO");
+            /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                [cp floatSplit:i call:s withVars:x];
-            }];
-           
+            }];*/
+          NSLog(@"%@ (%s)",[cp concretize:z],[cp bound:z] ? "YES" : "NO");
             NSLog(@"%@",cp);
             //NSLog(@"%@ (%s)",[cp concretize:x],[cp bound:x] ? "YES" : "NO");
             /* format of 8.8e to have the same value displayed as in FLUCTUAT */

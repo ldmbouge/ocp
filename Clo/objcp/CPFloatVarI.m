@@ -433,6 +433,24 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    if(mpq_get_d(newMinError) > mpq_get_d(*[self minErr]))
         [_domError updateMin:newMinError for:self];
 }
+- (void)updateMaxErrorF:(ORFloat)newMaxError {
+   ORRational mError;
+   mpq_init(mError);
+   mpq_set_d(mError, newMaxError);
+   //if(newMaxError < mpq_get_d(*[self maxErr]))
+   [_domError updateMax:mError for:self];
+   mpq_clear(mError);
+}
+
+
+- (void)updateMinErrorF:(ORFloat)newMinError {
+   ORRational mError;
+   mpq_init(mError);
+   mpq_set_d(mError, newMinError);
+   //if(newMinError > mpq_get_d(*[self minErr]))
+   [_domError updateMin:mError for:self];
+   mpq_clear(mError);
+}
 
 -(ORFloat) min
 {
@@ -765,6 +783,14 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 - (void)updateMinError:(__mpq_struct *)newMinError {
 }
+
+- (void)updateMaxErrorF:(ORFloat)newMaxError {
+}
+
+
+- (void)updateMinErrorF:(ORFloat)newMinError {
+}
+
 
 -(ORFloat) min
 {

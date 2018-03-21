@@ -32,6 +32,9 @@
    memset(_seg,0,sizeof(struct Segment*)*_mxSeg);
    _seg[0] = malloc(sizeof(struct Segment));
    _seg[0]->top = 0;
+   for(ORInt l=0;l<NBSLOT;l++)
+         mpq_init(_seg[0]->tab[l].rationalVal);
+   
    return self;
 }
 -(void)dealloc
@@ -41,6 +44,10 @@
       if (_seg[k])
          free(_seg[k]);
    free(_seg);
+   for(ORInt k=0;k<_mxSeg;k++)
+      if (_seg[k])
+         for(ORInt l=0;l<NBSLOT;l++)
+            mpq_clear(_seg[k]->tab[l].rationalVal);
    [super dealloc];
 }
 -(ORUInt)magic

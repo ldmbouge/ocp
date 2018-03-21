@@ -1052,6 +1052,14 @@
 - (ORFloat)minError:(PNONNULL id<ORVar>)x {
       return [[self worker] minError: x];
 }
+-(void) setMinError:(PNONNULL id<ORVar>)x minError:(ORFloat) minError
+{
+   [[self worker] setMinError: x minError: minError];
+}
+-(void) setMaxError:(PNONNULL id<ORVar>)x maxError:(ORFloat) maxError
+{
+   [[self worker] setMaxError: x maxError: maxError];
+}
 -(ORDouble) doubleValue: (id<ORRealVar>) x
 {
    return [[self worker] doubleValue: x];

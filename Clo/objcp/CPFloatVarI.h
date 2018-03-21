@@ -55,8 +55,10 @@
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
 -(void) updateMin: (ORFloat) newMin;
 -(void) updateMinError: (ORRational) newMinError;
+-(void) updateMinErrorF: (ORFloat) newMinError;
 -(void) updateMax: (ORFloat) newMax;
 -(void) updateMaxError: (ORRational) newMaxError;
+-(void) updateMaxErrorF: (ORFloat) newMaxError;
 -(void) updateInterval: (ORFloat) newMin and: (ORFloat)newMax;
 -(void) updateIntervalError: (ORRational) newMinError and: (ORRational) newMaxError;
 -(void) bind: (ORFloat) val;
@@ -221,7 +223,12 @@ static inline void makeRationalInterval(rational_interval* ri, ORRational min, O
 {
     mpq_set(ri->inf, min);
     mpq_set(ri->sup, max);
-    //return ri;
+}
+
+static inline void updateRationalInterval(rational_interval* ri, CPFloatVarI* x)
+{
+   mpq_set(ri->inf, *x.minErr);
+   mpq_set(ri->sup, *x.maxErr);
 }
 
 static inline void freeRationalInterval(rational_interval * r)
@@ -303,10 +310,9 @@ static inline intersectionInterval intersection(float_interval r, float_interval
 
 static inline void intersectionError(intersectionIntervalError* interErr, rational_interval original_error, rational_interval computed_error){
    interErr->changed = false;
-   //mpq_set(interErr->result.inf, original_error.inf);
-   //mpq_set(interErr->result.sup, original_error.sup);
-
-   
+   if(((mpq_get_d(original_error.inf) < mpq_get_d(computed_error.inf)) && (mpq_get_d(original_error.sup) < mpq_get_d(computed_error.sup))) ||
+      ((mpq_get_d(original_error.inf) > mpq_get_d(computed_error.inf)) && (mpq_get_d(original_error.sup) > mpq_get_d(computed_error.sup))))
+      failNow();
    /* original_error < computed_error */
    if(mpq_get_d(original_error.inf) < mpq_get_d(computed_error.inf)){
       interErr->changed = true;
@@ -321,6 +327,19 @@ static inline void intersectionError(intersectionIntervalError* interErr, ration
    if(mpq_get_d(interErr->result.inf) > mpq_get_d(interErr->result.sup))
       failNow();
    
+   if(interErr->changed){
+      float_interval original;
+      original.inf = mpq_get_d(original_error.inf);
+      original.sup = mpq_get_d(original_error.sup);
+      float_interval computed;
+      computed.inf = mpq_get_d(interErr->result.inf);
+      computed.sup = mpq_get_d(interErr->result.sup);
+      float_interval percent;
+      percent.inf = fabsf(((original.inf - computed.inf)/original.inf)*100.0f);
+      percent.sup = fabsf(((original.sup - computed.sup)/original.sup)*100.0f);
+      if(percent.inf <= 1.0f || percent.sup <= 1.0f)
+         interErr->changed = false;
+   }
    mpq_set(interErr->interval.inf, original_error.inf);
    mpq_set(interErr->interval.sup, original_error.sup);
 }
