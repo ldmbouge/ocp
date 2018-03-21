@@ -155,7 +155,8 @@
    
    ORInt                  _level;
    ORBool                 _unique;
-   ORFloat                  _split3Bpercent;
+   ORFloat                _split3Bpercent;
+   ORInt                  _searchNBFloats;
    SEL                    _subcut;
    
    id<ORIdxIntInformer>  _returnLabel;
@@ -183,6 +184,7 @@
    _oneSol = YES;
    _level = 100;
    _split3Bpercent = 10.f;
+   _searchNBFloats = 2;
    _subcut = @selector(float3BSplit:call:withVars:);
    _unique = NO;
    _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
@@ -348,6 +350,10 @@
 -(void) set3BSplitPercent:(ORFloat) p
 {
    _split3Bpercent = p;
+}
+-(void) setSearchNBFloats:(ORInt) p
+{
+   _searchNBFloats = p;
 }
 -(void) setSubcut:(SEL) s
 {
@@ -2843,7 +2849,7 @@
    }
    float_interval* ip = interval;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      LOG(_level,1,@"(3split) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -2986,7 +2992,7 @@
       finish = NO;
       ORMutableIntegerI* d = [ORFactory mutable:self value:0];
       ORMutableIntegerI* nb = [ORFactory mutable:self value:0];
-      ORInt E = 10;
+      ORInt E = _searchNBFloats;
       while (!finish){
          goon = YES;
          while (goon) {
@@ -3002,7 +3008,7 @@
                }
                [self doOnSolution];
             } onExit:^{
-               if((nb.intValue == E) || (d.intValue == 0 && (max.value == xi.min)) || (d.intValue == 1 && (max.value == xi.max))){
+               if((nb.intValue >= E) || (d.intValue == 0 && (max.value == xi.min)) || (d.intValue == 1 && (max.value == xi.max))){
                   goon = NO;
                   if(d.intValue == 0)
                      [self floatIntervalImpl:xi low:xi.min up:max.value];

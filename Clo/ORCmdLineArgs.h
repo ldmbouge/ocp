@@ -53,7 +53,8 @@ enum ValHeuristic
    dynamic5Split = 6,
    dynamic6Split = 7,
    split3B = 8,
-   dedicatedSplit = 9
+   dedicatedSplit = 9,
+   Esplit = 10
 };
 struct ORResult {
    ORInt found;
@@ -77,6 +78,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORDouble kbpercent;
 @property (nonatomic,readonly) ORBool unique;
 @property (nonatomic,readonly) ORFloat search3Bpercent;
+@property (nonatomic,readonly) ORInt searchNBFloats;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
 @property (nonatomic,readonly) ORInt    level;

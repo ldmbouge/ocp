@@ -60,6 +60,7 @@
 -(void) setLevel:(ORInt) level;
 -(void) setUnique:(ORBool) u;
 -(void) set3BSplitPercent:(ORFloat) p;
+-(void) setSearchNBFloats:(ORInt) p;
 -(void) setSubcut:(SEL)s;
 -(id<ORModel>)source;
 -(ORBool) ground;

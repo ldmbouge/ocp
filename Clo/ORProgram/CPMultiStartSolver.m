@@ -496,6 +496,10 @@
 {
     [[self worker] float6WaySplit:i call:s withVars:x];
 }
+-(void)          floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>)x
+{
+   [[self worker] floatEWaySplit:i call:s withVars:x];
+}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    [[self worker] labelArray: x];

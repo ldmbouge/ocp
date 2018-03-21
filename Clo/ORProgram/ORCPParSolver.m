@@ -497,15 +497,15 @@
 }
 -(void)          floatStatic3WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] floatStatic3WaySplit:i call:s withVars:vars];
 }
 -(void)          floatStatic5WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] floatStatic5WaySplit:i call:s withVars:vars];
 }
 -(void)          floatStatic6WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] floatStatic6WaySplit:i call:s withVars:vars];
 }
 -(void)          floatAbsSplit: (ORUInt) i by:(id<CPFloatVar>) y call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x  default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
@@ -521,15 +521,19 @@
 }
 -(void)          float3WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] float3WaySplit:i call:s withVars:vars];
 }
 -(void)          float5WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] float5WaySplit:i call:s withVars:vars];
 }
 -(void)          float6WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] float6WaySplit:i call:s withVars:vars];
+}
+-(void)          floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
+{
+   [[self worker] floatEWaySplit:i call:s withVars:vars];
 }
 -(void) floatLthen:(id<ORFloatVar>)var with:(ORFloat)val
 {
