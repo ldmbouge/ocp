@@ -171,7 +171,7 @@ static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
 
 static inline bool isDisjointWithVR(ORRational xmin, ORRational xmax, ORRational ymin, ORRational ymax)
 {
-   return ((mpq_cmp(xmin, ymin) < 0) && (mpq_cmp(xmax, ymin) < 0)) || ((mpq_cmp(ymin, xmin) < 0) && (mpq_cmp(ymax, xmin) < 0));
+   return (mpq_cmp(xmax, ymin) < 0) || (mpq_cmp(ymax, xmin) < 0 );
 }
 
 

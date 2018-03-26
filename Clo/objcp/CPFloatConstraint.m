@@ -17,9 +17,9 @@
 
 #define PERCENT 5.0
 
-float_interval ulp_computation(float_interval f){
-   float_interval ulp;
-   ORFloat max_inf, max_sup;
+double_interval ulp_computation(float_interval f){
+   double_interval ulp;
+   ORDouble max_inf, max_sup;
    if(f.inf == -INFINITY || f.sup == INFINITY){
       max_inf = -FLT_MAX;
       max_sup = FLT_MAX;
@@ -40,11 +40,11 @@ float_interval ulp_computation(float_interval f){
    return ulp;
 }
 
-void setR(rational_interval* result, rational_interval* value)
-{
+void setR(rational_interval* result, rational_interval* value){
    mpq_set(result->inf, value->inf);
    mpq_set(result->sup, value->sup);
 }
+
 void addR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
    mpq_add(ez->inf, ex->inf, ey->inf);
    mpq_add(ez->inf, ez->inf, eo->inf);
@@ -79,33 +79,33 @@ void addR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval
 
 void subR(rational_interval* ez, rational_interval* ex, rational_interval* ey, rational_interval* eo){
    mpq_sub(ez->inf, ex->inf, ey->sup);
-   mpq_add(ez->inf, ez->inf, eo->inf);
-   
    mpq_sub(ez->sup, ex->sup, ey->inf);
+
+   mpq_add(ez->inf, ez->inf, eo->inf);
    mpq_add(ez->sup, ez->sup, eo->sup);
 }
 
 void subR_inv_ex(rational_interval* ex, rational_interval* ez, rational_interval* ey, rational_interval* eo){
    mpq_add(ex->inf, ez->inf, ey->inf);
-   mpq_sub(ex->inf, ex->inf, eo->sup);
-   
    mpq_add(ex->sup, ez->sup, ey->sup);
+
+   mpq_sub(ex->inf, ex->inf, eo->sup);
    mpq_sub(ex->sup, ex->sup, eo->inf);
 }
 
 void subR_inv_ey(rational_interval* ey, rational_interval* ez, rational_interval* ex, rational_interval* eo){
    mpq_sub(ey->inf, ex->inf, ez->sup);
-   mpq_add(ey->inf, ey->inf, eo->inf);
-   
    mpq_sub(ey->sup, ex->sup, ez->inf);
+   
+   mpq_add(ey->inf, ey->inf, eo->inf);
    mpq_add(ey->sup, ey->sup, eo->sup);
 }
 
 void subR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval* ex, rational_interval* ey){
    mpq_sub(eo->inf, ez->inf, ex->sup);
-   mpq_add(eo->inf, eo->inf, ey->inf);
-   
    mpq_sub(eo->sup, ez->sup, ex->inf);
+
+   mpq_add(eo->inf, eo->inf, ey->inf);
    mpq_add(eo->sup, eo->sup, ey->sup);
 }
 
@@ -892,7 +892,7 @@ void compute_eo_add(rational_interval* eo, rational_interval* eoTemp, float_inte
       
    }
    else {
-      float_interval ulp_f;
+      double_interval ulp_f;
       ORRational ulp, ulp_neg;
       mpq_inits(ulp, ulp_neg,  NULL);
       ulp_f = ulp_computation(z);
@@ -935,7 +935,7 @@ void compute_eo_sub(rational_interval* eo, rational_interval* eoTemp, float_inte
       
       mpq_clears(tmp_eo_r, tmp_eo_fi_r, NULL);
    } else {
-      float_interval ulp_f;
+      double_interval ulp_f;
       ORRational ulp, ulp_neg;
       mpq_inits(ulp, ulp_neg,  NULL);
       ulp_f = ulp_computation(z);
@@ -979,7 +979,7 @@ void compute_eo_mul(rational_interval* eo, rational_interval* eoTemp, float_inte
       mpq_clears(tmp_eo_r, tmp_eo_fi_r,tmp_eo_r_s, tmp_eo_fi_r_s, tmp1, tmp2, tmp3, tmp4, NULL);
    }
    else {
-      float_interval ulp_f;
+      double_interval ulp_f;
       ORRational ulp, ulp_neg;
       mpq_inits(ulp, ulp_neg,  NULL);
       ulp_f = ulp_computation(z);
@@ -1024,7 +1024,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       mpq_clears(tmp_eo_r, tmp_eo_fi_r,tmp_eo_r_s, tmp_eo_fi_r_s, tmp1, tmp2, tmp3, tmp4, NULL);
    }
    else {
-      float_interval ulp_f;
+      double_interval ulp_f;
       ORRational ulp, ulp_neg;
       mpq_inits(ulp, ulp_neg,  NULL);
       ulp_f = ulp_computation(z);

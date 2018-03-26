@@ -31,17 +31,17 @@ int main(int argc, const char * argv[]) {
        //[mdl add:[z set:[[x plus: y] sub: [x div: y]]]];
 
        NSLog(@"model: %@",mdl);
-       id<ORFloatVarArray> vs = [mdl floatVars];
+       //id<ORFloatVarArray> vs = [mdl floatVars];
        id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       //id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
        
-       [cp setMinError:z minError:7.5e-9f];
+       //[cp setMinError:z minError:7.45e-9f];
        [cp setMinError:y minError:0.0f];
        [cp setMaxError:y maxError:0.0f];
        [cp solve:^{
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+            /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                [cp floatSplit:i call:s withVars:x];
-            }];
+            }];*/
             NSLog(@"%@",cp);
             //NSLog(@"%@ (%s)",[cp concretize:x],[cp bound:x] ? "YES" : "NO");
             /* format of 8.8e to have the same value displayed as in FLUCTUAT */
