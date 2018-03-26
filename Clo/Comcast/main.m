@@ -3,7 +3,7 @@
 //  Comcast
 //
 //  Created by Daniel Fontaine on 2/3/17.
-//
+//  Modified by Waldemar Cruz and Fanghui Liu
 //
 
 #import <ORFoundation/ORFoundation.h>
@@ -132,7 +132,7 @@ int main(int argc, const char * argv[])
 
    
    
-   id<ORIntRange> vm = RANGE(model,1, maxVMs);
+   //id<ORIntRange> vm = RANGE(model,1, maxVMs);
 //   id<ORIntArray> Uservice = [ORFactory intArray: model range: services with:^ORInt(ORInt i) { return (ORInt)([D at: i] * 1.3); }];
    id<ORIntArray> Uservice = [ORFactory intArray: model range: services with:^ORInt(ORInt i) { return [D at: i]; }]; // same as D!
    id<ORIntRange> Iservice = RANGE(model,0, [Uservice sumWith:^ORInt(ORInt value, int idx) { return value; }]-1);
@@ -168,20 +168,20 @@ int main(int argc, const char * argv[])
    }
    
    // Variables
-   id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
-   id<ORIntVarArray> vc = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, maxPerVM)];
-   id<ORIntVarMatrix> vm_conn = [ORFactory intVarMatrix: model range: vm : services domain: RANGE(model, 0, maxPerVM * MAX_CONN)];
+   //id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
+   id<ORIntVarArray> mc = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, maxPerVM*10)];
+   id<ORIntVarMatrix> mc_conn = [ORFactory intVarMatrix: model range: cnodes : services domain: RANGE(model, 0, maxPerVM * 10 * MAX_CONN)];
    
-   id<ORIntVarArray> a = [ORFactory intVarArray: model range: Iservice domain: RANGE(model, 1, maxVMs)];
+   id<ORIntVarArray> a = [ORFactory intVarArray: model range: Iservice domain: RANGE(model, 1, Ncnodes)];
 //   id<ORIntVarMatrix> conn = [ORFactory intVarMatrix: model range: Iservice : Iservice domain: RANGE(model, 0, MAX_CONN)];
    id<ORIntVarMatrix> chanSec = [ORFactory intVarMatrix: model range: Iservice : Iservice domain: sec];
    id<ORIntVarArray> nbConn = [ORFactory intVarArray:model range:Iservice domain:RANGE(model,1,Iservice.size)];
    
-   id<ORIntVarArray>  s = [ORFactory intVarArray: model range: RANGE(model, 0, maxVMs) domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
+   id<ORIntVarArray>  s = [ORFactory intVarArray: model range: RANGE(model, 0, Ncnodes) domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
    id<ORIntVarArray>  sSec = [ORFactory intVarArray: model range: Iservice  domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
    
-   id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 1000)];
-   id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 200)];
+   id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 1000)];
+   id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 200)];
    
    id<ORExpr> sumConn = nil;
    for(NSArray* lnk in links) {
@@ -193,7 +193,7 @@ int main(int argc, const char * argv[])
          sumConn = term;
       else sumConn = [sumConn plus: term];
    }
-   [model minimize: [[Sum(model, i, vm, [u_mem[i] plus: u_bw[i]])  plus: Sum(model,i,Iservice, nbConn[i]) ] plus: sumConn]];
+   [model minimize: [[Sum(model, i, cnodes, [u_mem[i] plus: u_bw[i]])  plus: Sum(model,i,Iservice, nbConn[i]) ] plus: sumConn]];
    //[model minimize: [Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]]) lt: @(300)]];
    
    // Demand Constraints
@@ -263,13 +263,13 @@ int main(int argc, const char * argv[])
          if (k2 == k1)
             [model add: [[same at:k1 :k2] eq: @(1)]];
          else {
-            id<ORIntVarArray> bvm = [ORFactory intVarArray:model range:vm domain:RANGE(model,0,1)];
-            for(ORInt v = vm.low; v <= vm.up;v++) {
+            id<ORIntVarArray> bvm = [ORFactory intVarArray:model range:cnodes domain:RANGE(model,0,1)];
+            for(ORInt v = cnodes.low; v <= cnodes.up; v++) {
                [model add: [bvm[v] eq: [[a[k1] eq: @(v)] land: [a[k2] eq:@(v)]]]];
             }
             //[model add:[[same at:k1 :k2] leq: Or(model, v, vm, bvm[v])]];
-            [model add:[[same at:k1 :k2] leq: Sum(model, v, vm, bvm[v])]];
-            for(ORInt i = vm.low;i <= vm.up;i++)
+            [model add:[[same at:k1 :k2] leq: Sum(model, v, cnodes, bvm[v])]];
+            for(ORInt i = cnodes.low;i <= cnodes.up;i++)
                [model add: [bvm[i]  leq: [same at:k1 :k2]]];
             //[model add: [[a[k1] eq: a[k2]] eq: [same at:k1 :k2]]];
          }
@@ -301,7 +301,7 @@ int main(int argc, const char * argv[])
 
    
    // Count connections on each VM. A connection is not counted if the two services are both within the same VM.
-   for(ORInt i = [vm low]; i <= [vm up]; i++) {
+   for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
       for(ORInt j = services.low; j <= services.up; j++) {
 //         [model add: [[vm_conn at: i : j] eq: Sum2(model, k, [omega at: j], k2, Iservice, [[conn at: k : k2] mul: [[a[k] eq: @(i)] land: [a[k2] neq: @(i)]] ])] ];
 //         [model add: [[vm_conn at: i : j] eq: Sum2(model, k, [omega at: j], k2, Iservice, [[conn at: k : k2] mul: [[[same at:k :k2] neg] land: [a[k] eq:@(i)]]] )] ];
@@ -322,21 +322,23 @@ int main(int argc, const char * argv[])
             }
             
          }
-         [model add: [ce eq: [vm_conn at:i :j]]];
+         [model add: [ce eq: [mc_conn at:i :j]]];
       }
    }
    
-   // Constraint counting the number of services running in each VM.
-   for(ORInt i = [vm low]; i <= [vm up]; i++) {
-      [model add: [vc[i] eq: Sum(model, k, Iservice, [a[k] eq: @(i)])]];
+   // Constraint counting the number of services running in each Machine.
+   for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
+      [model add: [mc[i] eq: Sum(model, k, Iservice, [a[k] eq: @(i)])]];
    }
    
    // Constraint adding VM to node if it is in use.
-   for(ORInt i = [vm low]; i <= [vm up]; i++) {
-      [model add: [[vc[i] gt: @(0)] eq: [v[i] gt: @(0)]]];
-      [model add: [[vc[i] eq: @(0)] eq: [v[i] eq: @(0)]]];
+    /*
+   for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
+      [model add: [[mc[i] gt: @(0)] eq: [v[i] gt: @(0)]]];
+      [model add: [[mc[i] eq: @(0)] eq: [v[i] eq: @(0)]]];
    }
-   
+   */
+    
    // Bounding the # of connections for a service
 //   for(ORInt i= Iservice.low; i <= Iservice.up;i++) {
 //       [model add: [nbConn[i] eq: Sum(model, j, Iservice, [conn at:i :j])]];
@@ -356,8 +358,8 @@ int main(int argc, const char * argv[])
    
 
    // VM symmetry breaking
-   for(ORInt i = [vm low]; i < [vm up]; i++) {
-      [model add: [[vc[i] eq: @(0)] imply: [vc[i+1] eq: @(0)]]];
+   for(ORInt i = [cnodes low]; i < [cnodes up]; i++) {
+      [model add: [[mc[i] eq: @(0)] imply: [mc[i+1] eq: @(0)]]];
    }
    
    // Security Constraints
@@ -370,21 +372,40 @@ int main(int argc, const char * argv[])
    
    // Limit total memory usage on each physical node
    for(ORInt c = [cnodes low]; c <= [cnodes up]; c++) {
-      [model add: [Sum(model, i, vm, [[v[i] eq: @(c)] mul: u_mem[i]]) leq: cnodeMem[c]]];
+      //[model add: [Sum(model, i, vm, [[v[i] eq: @(c)] mul: u_mem[i]]) leq: cnodeMem[c]]];
+       [model add: [u_mem[c] leq: cnodeMem[c]]];
+
    }
    // Limit total bandwidth usage on each physical node.
    for(ORInt c = [cnodes low]; c <= [cnodes up]; c++) {
-      [model add: [Sum(model, i, vm, [[v[i] eq:@(c)] mul:u_bw[i]]) leq: cnodeBw[c]]];
+      //[model add: [Sum(model, i, vm, [[v[i] eq:@(c)] mul:u_bw[i]]) leq: cnodeBw[c]]];
+       [model add: [u_bw[c] leq: cnodeBw[c]]];
+
    }
    
    //    // Memory usage = Fixed memory for deploying VM + per service memory usage scaled by security technology + fixed cost of sec. technology.
-   for(ORInt i = [vm low]; i <= [vm up]; i++) {
+   for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
       // CP
+       
+       //Containers
+       /*
       [model add: [[u_mem[i] mul: @(100)] geq:
-                   [[[vc[i] gt: @(0)] mul: @(VM_MEM * 100)] plus:
+                   [[[mc[i] gt: @(0)] mul: @(VM_MEM * 100)] plus:
                     [[Sum(model, k, Iservice, [ [a[k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] ) mul: [secScaledMem elt: s[i]] ] plus:
                      [[secFixMem elt: s[i]] mul: @(100)]]
                     ]]];
+        */
+       //VMs
+       
+       [model add: [[u_mem[i] mul: @(100)] geq:
+                    [[mc[i] mul: @(VM_MEM * 100)] plus:
+                     [[Sum(model, k, Iservice, [ [a[k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] ) mul: [secScaledMem elt: s[i]] ] plus:
+                      [[secFixMem elt: s[i]] mul: @(100)]]
+                     ]]];
+       
+       
+       
+       
       //       [model add: [[u_mem at: i] geq:
       //                    [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
       //                     [[[Sum(model, k, Iservice, [ [[a at: k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] ) mul: [secScaledMem elt: [s at: i]] ] div: @(100)] plus:
@@ -400,21 +421,21 @@ int main(int argc, const char * argv[])
    }
    
    //    // Bandwidth usage:
-   for(ORInt i = [vm low]; i <= [vm up]; i++) {
+   for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
       [model add: [[u_bw at: i] geq:
-                   [[Sum(model, j, services, [[vm_conn at: i : j] mul: @([serviceFixBw at: j])]) mul: [secScaledBw elt: [s at: i]]] plus:
+                   [[Sum(model, j, services, [[mc_conn at: i : j] mul: @([serviceFixBw at: j])]) mul: [secScaledBw elt: [s at: i]]] plus:
                     [secFixBw elt: [s at: i]]
                     ]]];
    }
    
    // Function to write solution.
    // Print solution
+    
    void(^writeOut)(id<ORSolution>) = ^(id<ORSolution> best){
       for(ORInt c = [cnodes low]; c <= [cnodes up]; c++) {
          NSLog(@"Node: %i {", c);
-         for(ORInt i = [vm low]; i <= [vm up]; i++) {
-            if([best intValue: [v at: i]] == c) {
-               NSLog(@"\tVM: %i (security: %i, %i services  memory: %d bw:%d) {", i, [best intValue: [s at: i]], [best intValue: [vc at: i]],[best intValue:[u_mem at:i]],[best intValue:[u_bw at:i]]);
+          ORInt i = c;
+               NSLog(@"\tNode: %i (security: %i, %i services  memory: %d bw:%d) {", i, [best intValue: [s at: i]], [best intValue: [mc at: i]],[best intValue:[u_mem at:i]],[best intValue:[u_bw at:i]]);
                for(ORInt tk = services.low; tk <= services.up; tk++) {
                   id<ORIntRange> tr = omega[tk];
                   for(ORInt k1 = tr.low; k1 <= tr.up;k1++) {
@@ -438,8 +459,8 @@ int main(int argc, const char * argv[])
                   }
                }
                NSLog(@"\t}");
-            }
-         }
+            
+         
          NSLog(@"}");
       }
       NSLog(@"");
@@ -461,7 +482,7 @@ int main(int argc, const char * argv[])
             return [^(id<CPCommonProgram> cp) {
                [cp limitTime:tLim in:^{
                   [cp labelHeuristic: h restricted:a];
-                  [cp labelHeuristic: h restricted:v];
+                  //[cp labelHeuristic: h restricted:v];
 //                  [cp labelHeuristic: h restricted:(id<ORIntVarArray>)conn.flatten];
                   [cp labelHeuristic: h];
                   NSLog(@"+++++++ ALL done...");
@@ -496,7 +517,7 @@ int main(int argc, const char * argv[])
                      [cp limitFailures:lim in:^{
                         if (firstTime) {
                            [cp labelHeuristic: h restricted:a];
-                           [cp labelHeuristic: h restricted:v];
+                           //[cp labelHeuristic: h restricted:v];
 //                           [cp labelHeuristic: h restricted:(id<ORIntVarArray>)conn.flatten];
                            [cp labelHeuristic: h];
                         } else {
@@ -554,7 +575,7 @@ int main(int argc, const char * argv[])
             id<CPHeuristic> h = [cp createWDeg];
             return [^(id<CPCommonProgram> cp) {
                [cp labelHeuristic: h restricted:a];
-               [cp labelHeuristic: h restricted:v];
+               //[cp labelHeuristic: h restricted:v];
 //               [cp labelHeuristic: h restricted:(id<ORIntVarArray>)conn.flatten];
                [cp labelHeuristic: h restricted:s];
                [cp labelHeuristic: h];
@@ -621,7 +642,7 @@ int main(int argc, const char * argv[])
                
                [cp labelHeuristic: h restricted:a];
                NSLog(@"+++++++ a done... ");
-               [cp labelHeuristic: h restricted:v];
+               //[cp labelHeuristic: h restricted:v];
                NSLog(@"+++++++ a/v done... ");
                
 //               [cp labelHeuristic: h restricted:s];
