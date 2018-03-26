@@ -59,8 +59,7 @@
 }
 -(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x
 {
-    //if(mpq_cmp(newMin, *[self max]) > 0)
-   if(mpq_get_d(newMin) > mpq_get_d(*[self max]))
+   if(mpq_cmp(newMin, *[self max]) > 0)
         failNow();
     updateMinR(&_domain, newMin, _trail);
     ORBool isBound = (mpq_get_d(_domain._low) == mpq_get_d(_domain._up));
@@ -70,8 +69,7 @@
 }
 -(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x
 {
-   //if(mpq_cmp(*[self min], newMax) > 0)
-   if(mpq_get_d(*[self min]) > mpq_get_d(newMax))
+   if(mpq_cmp(*[self min], newMax) > 0)
         failNow();
     updateMaxR(&_domain, newMax, _trail);
     ORBool isBound = (mpq_get_d(_domain._low) == mpq_get_d(_domain._up));
@@ -87,9 +85,7 @@
 
 -(void) bind:(ORRational)val  for:(id<CPFloatVarNotifier>)x
 {
-    //if ((mpq_cmp(val, _domain._low) || mpq_equal(val, _domain._low)) && (mpq_cmp(_domain._up, val) || mpq_equal(_domain._up, val))) {
-   if (mpq_get_d(_domain._low) <= mpq_get_d(val) && mpq_get_d(val) <= mpq_get_d(_domain._up)) {
-
+    if ((mpq_cmp(val, _domain._low) || mpq_equal(val, _domain._low)) && (mpq_cmp(_domain._up, val) || mpq_equal(_domain._up, val))) {
         [x changeMinEvtErr:YES sender:self];
         [x changeMaxEvtErr:YES sender:self];
         [x bindEvtErr:self];
@@ -130,8 +126,7 @@
 
 -(ORBool) member:(ORRational)v
 {
-   //return mpq_cmp(_domain._low, v) <= 0 && mpq_cmp(v, _domain._low) <= 0;
-   return mpq_get_d(_domain._low) <= mpq_get_d(v) && mpq_get_d(v) <= mpq_get_d(_domain._low);
+   return mpq_cmp(_domain._low, v) <= 0 && mpq_cmp(v, _domain._low) <= 0;
 }
 -(id) copy
 {

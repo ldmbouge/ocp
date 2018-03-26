@@ -139,9 +139,9 @@ typedef struct {
 } intersectionInterval;
 
 typedef struct {
-    rational_interval result;
-    rational_interval interval;
-    int changed;
+   rational_interval result;
+   rational_interval interval;
+   int changed;
 } intersectionIntervalError;
 
 static inline int sign(float_cast p){
@@ -169,6 +169,12 @@ static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
    return (xmin < ymin &&  xmax < ymin) || (ymin < xmin && ymax < xmin);
 }
 
+static inline bool isDisjointWithVR(ORRational xmin, ORRational xmax, ORRational ymin, ORRational ymax)
+{
+   return ((mpq_cmp(xmin, ymin) < 0) && (mpq_cmp(xmax, ymin) < 0)) || ((mpq_cmp(ymin, xmin) < 0) && (mpq_cmp(ymax, xmin) < 0));
+}
+
+
 static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float ymax)
 {
    return !isDisjointWithV(xmin,xmax,ymin,ymax);
@@ -188,6 +194,11 @@ static inline double cardinalityV(float xmin, float xmax){
 static inline bool isDisjointWith(CPFloatVarI* x, CPFloatVarI* y)
 {
    return isDisjointWithV([x min], [x max], [y min], [y max]);
+}
+
+static inline bool isDisjointWithR(CPFloatVarI* x, CPFloatVarI* y)
+{
+   return isDisjointWithVR(*[x minErr], *[x maxErr], *[y minErr], *[y maxErr]);
 }
 
 static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
@@ -221,8 +232,8 @@ static inline void updateFloatInterval(float_interval * ft,CPFloatVarI* x)
 }
 static inline void makeRationalInterval(rational_interval* ri, ORRational min, ORRational max)
 {
-    mpq_set(ri->inf, min);
-    mpq_set(ri->sup, max);
+   mpq_set(ri->inf, min);
+   mpq_set(ri->sup, max);
 }
 
 static inline void updateRationalInterval(rational_interval* ri, CPFloatVarI* x)
@@ -274,24 +285,24 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
 }
 
 static inline void minError(ORRational* r, ORRational* a, ORRational* b){
-    //if(mpq_cmp(*a, *b) > 0){
+   //if(mpq_cmp(*a, *b) > 0){
    if(mpq_get_d(*a) > mpq_get_d(*b)){
-
-        mpq_set(*r, *b);
-    }
-    else {
-        mpq_set(*r, *a);
-    }
+      
+      mpq_set(*r, *b);
+   }
+   else {
+      mpq_set(*r, *a);
+   }
 }
 
 static inline void maxError(ORRational* r, ORRational* a, ORRational* b){
-    //if(mpq_cmp(*a, *b) > 0){
+   //if(mpq_cmp(*a, *b) > 0){
    if(mpq_get_d(*a) > mpq_get_d(*b)){
-        mpq_set(*r, *a);
-    }
-    else {
-        mpq_set(*r, *b);
-    }
+      mpq_set(*r, *a);
+   }
+   else {
+      mpq_set(*r, *b);
+   }
 }
 
 static inline intersectionInterval intersection(float_interval r, float_interval x, ORDouble percent)
@@ -309,37 +320,53 @@ static inline intersectionInterval intersection(float_interval r, float_interval
 }
 
 static inline void intersectionError(intersectionIntervalError* interErr, rational_interval original_error, rational_interval computed_error){
+   int cmp_val;
    interErr->changed = false;
-   if(((mpq_get_d(original_error.inf) < mpq_get_d(computed_error.inf)) && (mpq_get_d(original_error.sup) < mpq_get_d(computed_error.sup))) ||
-      ((mpq_get_d(original_error.inf) > mpq_get_d(computed_error.inf)) && (mpq_get_d(original_error.sup) > mpq_get_d(computed_error.sup))))
-      failNow();
-   /* original_error < computed_error */
-   if(mpq_get_d(original_error.inf) < mpq_get_d(computed_error.inf)){
+   
+   /* inf = max of (original_error.inf, computed_error.inf) */
+   cmp_val = mpq_cmp(original_error.inf, computed_error.inf);
+   if(cmp_val < 0) {
       interErr->changed = true;
       mpq_set(interErr->result.inf, computed_error.inf);
+   } else if (cmp_val >= 0) {
+      mpq_set(interErr->result.inf, original_error.inf);
    }
    /* original_error > computed_error */
-   if(mpq_get_d(original_error.sup) > mpq_get_d(computed_error.sup)){
+   cmp_val = mpq_cmp(original_error.sup, computed_error.sup);
+   if(cmp_val > 0){
       interErr->changed = true;
       mpq_set(interErr->result.sup, computed_error.sup);
+   } else if (cmp_val <= 0) {
+      mpq_set(interErr->result.sup, original_error.sup);
    }
    
-   if(mpq_get_d(interErr->result.inf) > mpq_get_d(interErr->result.sup))
+   if(mpq_cmp(interErr->result.inf, interErr->result.sup) > 0) // interErr empty !
       failNow();
    
-   if(interErr->changed){
-      float_interval original;
-      original.inf = mpq_get_d(original_error.inf);
-      original.sup = mpq_get_d(original_error.sup);
-      float_interval computed;
-      computed.inf = mpq_get_d(interErr->result.inf);
-      computed.sup = mpq_get_d(interErr->result.sup);
-      float_interval percent;
-      percent.inf = fabsf(((original.inf - computed.inf)/original.inf)*100.0f);
-      percent.sup = fabsf(((original.sup - computed.sup)/original.sup)*100.0f);
-      if(percent.inf <= 1.0f || percent.sup <= 1.0f)
+   /*if(interErr->changed){
+      rational_interval percent;
+      ORRational hundred;
+      mpq_inits(hundred, percent.inf, percent.sup, NULL);
+      mpq_set_d(hundred, 100.0f);
+      mpq_sub(percent.inf, original_error.inf, interErr->result.inf);
+      mpq_sub(percent.sup, original_error.sup, interErr->result.sup);
+      
+      mpq_div(percent.inf, percent.inf, original_error.inf);
+      mpq_div(percent.sup, percent.sup, original_error.sup);
+      
+      mpq_mul(percent.inf, percent.inf, hundred);
+      mpq_mul(percent.sup, percent.sup, hundred);
+      
+      mpq_abs(percent.inf, percent.inf);
+      mpq_abs(percent.sup, percent.sup);
+      
+      mpq_set_d(hundred, 1.0f);
+      
+      if(mpq_cmp(percent.inf, hundred) <= 0 || mpq_cmp(percent.sup, hundred) <= 0)
          interErr->changed = false;
-   }
+      
+      mpq_clears(hundred, percent.inf, percent.sup, NULL);
+   }*/
    mpq_set(interErr->interval.inf, original_error.inf);
    mpq_set(interErr->interval.sup, original_error.sup);
 }
