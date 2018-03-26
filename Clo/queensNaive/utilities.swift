@@ -11,7 +11,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import ORProgram
 
-
 //infix operator ∨ { associativity left precedence 110 }
 infix operator ∨ : LogicalDisjunctionPrecedence
 
@@ -29,6 +28,9 @@ public func ==(lhs : ORExpr,rhs : Int) -> ORRelation {
 }
 public func ==(lhs : ORExpr,rhs : Int32) -> ORRelation {
    return lhs.eq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func ==(lhs : ORExpr,rhs : Double) -> ORRelation {
+   return lhs.eq(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
 }
 public func ==(lhs : ORExpr,rhs : ORIntVar!) -> ORRelation {
    return lhs.eq(rhs)
@@ -71,13 +73,24 @@ public func ≥(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
 public func ≥(lhs : ORExpr,rhs : Int) -> ORRelation {
    return lhs.geq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
 }
+public func ≥(lhs : ORExpr,rhs : Double) -> ORRelation {
+   return lhs.geq(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
+}
 public func ≥(lhs : ORExpr,rhs : Int32) -> ORRelation {
    return lhs.geq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
 }
 public func ≥(lhs : ORExpr,rhs : ORIntVar) -> ORRelation {
    return lhs.geq(rhs)
 }
-
+public func ≤(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
+   return lhs.leq(rhs)
+}
+public func ≤(lhs : ORExpr,rhs : Int) -> ORRelation {
+   return lhs.leq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func ≤(lhs : ORExpr,rhs : Double) -> ORRelation {
+   return lhs.leq(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
+}
 
 public func !=(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.neq(rhs)
@@ -88,6 +101,10 @@ infix operator ≠ : ComparisonPrecedence
 public func ≠(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.neq(rhs)
 }
+public func ≠(lhs : ORExpr,rhs : Double) -> ORRelation {
+   return lhs.neq(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
+}
+
 public func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.plus(rhs)
 }
@@ -114,6 +131,9 @@ public func *(lhs: ORExpr, rhs : Int) -> ORExpr {
 }
 public func *(lhs: ORExpr, rhs : ORInt) -> ORExpr {
    return lhs.mul(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func *(lhs: ORExpr, rhs : Double) -> ORExpr {
+   return lhs.mul(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
 }
 public func /(lhs: ORExpr, rhs : ORExpr) -> ORExpr {
    return lhs.div(rhs)
@@ -263,6 +283,25 @@ extension ORIntVarArray {
       }
    }
    subscript (key: Int) -> ORIntVar {
+      get {
+         return self.at(ORInt(key))
+      }
+      set(newValue) {
+         return self.set(newValue, at: ORInt(key))
+      }
+   }
+}
+
+extension ORRealVarArray {
+   subscript (key: ORInt) -> ORRealVar {
+      get {
+         return self.at(key)
+      }
+      set(newValue) {
+         return self.set(newValue, at: ORInt(key))
+      }
+   }
+   subscript (key: Int) -> ORRealVar {
       get {
          return self.at(ORInt(key))
       }
