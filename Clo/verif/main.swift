@@ -44,6 +44,34 @@ struct Equation {
    }
 }
 
+class Shard {
+   var m : ORModel
+   var cut : ORExpr?
+   init(_ model : ORModel,_ c : ORExpr?) {
+      m = model
+      cut  = c
+   }
+   func getModel() -> ORModel {
+      return m
+   }
+}
+
+class Region {
+   var space : [Shard] = []
+   func addShard(_ s : Shard) {
+      space.append(s)
+   }
+   func size() -> Int {
+      return space.count
+   }
+   func empty() -> Bool {
+      return space.count == 0
+   }
+   func popShard() -> Shard {
+      return space.removeLast()
+   }
+}
+
 // Datatype to represent one problem (A x ≤ b).
 // solve method is to establish whether the isolated problem is feasible or not.
 // addToModel is meant to add the set of equations for this one into a master problem (containing a conjunction
@@ -124,6 +152,8 @@ class Trajectory {
       let selection = pStatus.indices.filter { (j) -> Bool in pStatus[j]}
 
       genSubset(selection) { (_ sub : Set<Int>,_ ns : Set<Int>) in
+//         print("\(sub) and \(ns)\n")
+//         return
          if (sub.count == 0) {
             return
          }
@@ -138,32 +168,46 @@ class Trajectory {
          let solver = ORFactory.createMIPProgram(m)
          solver.setIntParameter("OutputFlag", val: 0)
          let oc = solver.solve()
+         print("Composite for \(sub) is \(oc == ORinfeasible ? "infeasible" : "feasible")",terminator:"\n");
          if (oc == ORoptimal) {
-            print("Composite for \(sub) is \(oc)",terminator:"\n");
+            var good = Region()
+            good.addShard(Shard(m,nil))
+            var nextWave = Region()
             for p in ns {
-               let mc = m.copy()
-               allProbs[p].addToModel(mc, dvars)
-               let solver = ORFactory.createMIPProgram(mc)
-               solver.setIntParameter("OutputFlag", val: 0)
-               if solver.solve() == ORoptimal {
-                  // the excluded problem can be satisfied too. Is there a point in the polytope
-                  // of m that makes allProbs[p] infeasible ?
-                  // Iterate over the hyperplanes of allProbs[p] and add their negation to m
-                  // If that is feasible, such a point exist and we should keep that polytope
-                  // If that is infeasible, then we can safely skip this half-space and move to the
-                  // next one.
-                  for e in allProbs[p].allEqs {
-                     let mc = m.copy()
-                     let ne = e.state(mc,dvars,negate : true)
-                     mc.add(ne)
+               while (!good.empty()) {
+                  autoreleasepool {
+                     let cs = good.popShard()  // that's the current shard.
+                     let mc = cs.getModel().copy()
+                     allProbs[p].addToModel(mc, dvars)
                      let solver = ORFactory.createMIPProgram(mc)
                      solver.setIntParameter("OutputFlag", val: 0)
                      if solver.solve() == ORoptimal {
-                        print("Composite for \(sub) can exclude \(p) with \(ne)\n")
+                        // the excluded problem can be satisfied too. Is there a point in the polytope
+                        // of m that makes allProbs[p] infeasible ?
+                        // Iterate over the hyperplanes of allProbs[p] and add their negation to m
+                        // If that is feasible, such a point exist and we should keep that polytope
+                        // If that is infeasible, then we can safely skip this half-space and move to the
+                        // next one.
+                        for e in allProbs[p].allEqs {
+                           let mcc = cs.getModel().copy()
+                           let ne = e.state(mcc,dvars,negate : true)
+                           mcc.add(ne)
+                           let solver = ORFactory.createMIPProgram(mcc)
+                           solver.setIntParameter("OutputFlag", val: 0)
+                           if solver.solve() == ORoptimal {
+                              //print("Composite for \(sub) can exclude \(p) with \(ne)\n")
+                              nextWave.addShard(Shard(mcc,ne))
+                           }
+                        }
+                     } else {
+                        nextWave.addShard(cs)  // p does not cut into the current shard. Add it untouched to next wave.
                      }
                   }
                }
+               good = nextWave
+               nextWave = Region()
             }
+            print("\tThe region \(sub) MINUS \(ns) has \(good.size()) feasible shards\n")
          }
       }
    }
