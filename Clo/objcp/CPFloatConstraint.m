@@ -27,11 +27,12 @@ double_interval ulp_computation(float_interval f){
       max_inf = (nextafterf(FLT_MAX, -INFINITY) - FLT_MAX)/2.0f;
       max_sup = -max_inf;
    } else{
-      ORDouble inf_m, inf_p, sup_m, sup_p;
+      ORFloat inf_m, inf_p, sup_m, sup_p;
       inf_m = nextafterf(f.inf, -INFINITY) - f.inf;
       sup_m = nextafterf(f.sup, -INFINITY) - f.sup;
       inf_p = nextafterf(f.inf, +INFINITY) - f.inf;
       sup_p = nextafterf(f.sup, +INFINITY) - f.sup;
+      
       max_inf = minFlt(inf_m, sup_m)/2.0f;
       max_sup = maxFlt(inf_p, sup_p)/2.0f;
    }
