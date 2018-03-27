@@ -175,7 +175,8 @@
         if(_array[i] < v) v = _array[i];
     return v;
 }
--(ORInt) average {
+-(ORInt) average
+{
    if(_nb == 0) return 0;
    ORInt somme = _array[_low];
    for(int i = _low+1; i <= _up; i++)

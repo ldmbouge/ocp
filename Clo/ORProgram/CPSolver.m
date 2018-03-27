@@ -2841,8 +2841,8 @@
       assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       interval[1].inf  = mid;
       interval[1].sup = mid;
-      interval[1].inf  = theMin;
-      interval[1].sup = fp_previous_float(mid);
+      interval[0].inf  = theMin;
+      interval[0].sup = fp_previous_float(mid);
       interval[2].inf = fp_next_float(mid);
       interval[2].sup = theMax;
       length++;
@@ -2971,66 +2971,84 @@
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
--(void) floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+-(void) floatDeltaSplit:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
 {
-   CPFloatVarI* xi = _gamma[getId(x[i])];
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
    if([xi bound]) return;
-   ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
-   ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
-   if(fp_next_float(tmpMin) == tmpMax){
-      [_search try:^{
-         LOG(_level,1,@"(Esplit) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,tmpMin,tmpMin);
-         [self floatIntervalImpl:xi low:tmpMin up:tmpMin];
-      } alt:^{
-         LOG(_level,1,@"(Esplit) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,tmpMax,tmpMax);
-         [self floatIntervalImpl:xi low:tmpMax up:tmpMax];
-      }];
+   float_interval interval[5];
+   ORInt length = 1;
+   if(fp_next_float(xi.min) == xi.max){
+      updateFTWithValues(&interval[0], xi.min, xi.min);
+      updateFTWithValues(&interval[1], xi.max, xi.max);
    }else{
-      __block id<ORMutableFloat> max;
-      max = [ORFactory mutable:_engine fvalue:tmpMax];
-      __block ORBool goon,finish;
-      finish = NO;
-      ORMutableIntegerI* d = [ORFactory mutable:self value:0];
-      ORMutableIntegerI* nb = [ORFactory mutable:self value:0];
-      ORInt E = _searchNBFloats;
-      while (!finish){
-         goon = YES;
-         while (goon) {
-            [self nestedSolve:^{
-               [nb incr];
-               LOG(_level,1,@"(Esplit) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[max value],[max value]);
-               [self floatIntervalImpl:xi low:[max value] up:[max value]];
-            } onSolution:^{
-               LOG(_level,1,@"(Esplit) solution found");
-               if(_oneSol){
-                  goon = NO;
-                  finish = YES;
-               }
-               [self doOnSolution];
-            } onExit:^{
-               if((nb.intValue >= E) || (d.intValue == 0 && (max.value == xi.min)) || (d.intValue == 1 && (max.value == xi.max))){
-                  goon = NO;
-                  if(d.intValue == 0)
-                     [self floatIntervalImpl:xi low:xi.min up:max.value];
-                  else
-                     [self floatIntervalImpl:xi low:max.value up:xi.max];
-               }else{
-                  if(d.intValue == 0){ //shave sup side
-                     [max setValue:maxFlt(fp_previous_float([max value]),xi.min)];
-                  }else{
-                     [max setValue:minFlt(fp_next_float([max value]),xi.max)];
-                  }
-               }
-            }];
-         }
-         [max setValue:tmpMin];
-         [d incr];
-         [nb setValue:0];
-         if(d.intValue == 2)
-            finish = YES;
+      ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+      ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+      ORFloat mid = tmpMin/2 + tmpMax/2;
+      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats,mid);
+      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
+      updateFTWithValues(&interval[0],xi.min,deltaMin);
+      updateFTWithValues(&interval[1],deltaMax,xi.max);
+      length++;
+      if(deltaMin != mid){
+         updateFTWithValues(&interval[2],mid,mid);
+         length++;
+      }
+      if(fp_next_float(deltaMin) != fp_previous_float(mid)){
+         updateFTWithValues(&interval[3],fp_next_float(deltaMin),fp_previous_float(mid));
+         length++;
+      }
+      if(deltaMax > fp_next_float(mid)){
+         updateFTWithValues(&interval[4],fp_next_float(mid),fp_previous_float(deltaMax));
+         length++;
       }
    }
-   [self float3WaySplit:i call:s withVars:x];
+   float_interval* ip = interval;
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"(Deltasplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   }];
+}
+-(void) floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
+   if([xi bound]) return;
+   float_interval interval[14];
+   ORInt length = 1;
+   if(fp_next_float(xi.min) == xi.max){
+      updateFTWithValues(&interval[0], xi.min, xi.min);
+      updateFTWithValues(&interval[1], xi.max, xi.max);
+   }else{
+      ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+      ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+      ORFloat mid = tmpMin/2 + tmpMax/2;
+      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats,mid);
+      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
+      for(ORFloat v = xi.min; v <= deltaMin; v = fp_next_float(v)){
+         updateFTWithValues(&interval[length-1], v,v);
+         length++;
+      }
+      for(ORFloat v = xi.max; v >= deltaMax; v = fp_previous_float(v)){
+         updateFTWithValues(&interval[length-1],v,v);
+         length++;
+      }
+      if(deltaMin < mid){
+         updateFTWithValues(&interval[length-1], mid,mid);
+         length++;
+      }
+      if(fp_next_float(deltaMin) != fp_previous_float(mid)){
+         updateFTWithValues(&interval[length-1],fp_next_float(deltaMin),fp_previous_float(mid));
+         length++;
+      }
+      if(deltaMax > fp_next_float(mid)){
+         updateFTWithValues(&interval[length-1],fp_next_float(mid),fp_previous_float(deltaMax));
+         length++;
+      }
+   }
+   float_interval* ip = interval;
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"(Esplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   }];
 }
 //----------------------------------------------------------
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat

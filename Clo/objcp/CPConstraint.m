@@ -58,6 +58,12 @@
    [engine trackMutable:g];
    return g;
 }
++(id<CPGroup>) group3B:(id<CPEngine>)engine tracer:(id<ORTracer>)tracer percent: (ORDouble) p avars:(NSSet*) avars gamma:(id<ORGamma>) solver
+{
+   id<CPGroup> g = [[CP3BGroup alloc] init:engine tracer:tracer percent:p vars:avars gamma:solver];
+   [engine trackMutable:g];
+   return g;
+}
 // alldifferent
 +(id<ORConstraint>) alldifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x
 {

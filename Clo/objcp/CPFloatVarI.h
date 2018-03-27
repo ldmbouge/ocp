@@ -114,7 +114,6 @@ typedef union {
 
 typedef struct {
    float_interval  result;
-   float_interval  interval;
    int  changed;
 } intersectionInterval;
 
@@ -140,7 +139,7 @@ static inline float floatFromParts(unsigned int mantissa, unsigned int exponent,
 
 static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
 {
-   return (xmin < ymin &&  xmax < ymin) || (ymin < xmin && ymax < xmin);
+   return (xmax < ymin) || (ymax < xmin);
 }
 
 static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float ymax)
@@ -193,6 +192,11 @@ static inline void updateFloatInterval(float_interval * ft,CPFloatVarI* x)
    ft->inf = x.min;
    ft->sup = x.max;
 }
+static inline void updateFTWithValues(float_interval * ft,float min, float max)
+{
+   ft->inf = min;
+   ft->sup = max;
+}
 //hzi : missing denormalised case
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 {
@@ -236,5 +240,19 @@ static inline intersectionInterval intersection(float_interval r, float_interval
       if(x.inf > x.sup)
          failNow();
    }
-   return (intersectionInterval){r,x,changed};
+   return (intersectionInterval){r,changed};
+}
+
+static inline float next_nb_float(float v, int nb, float def)
+{
+   for(int i = 1; i < nb && v < def; i++)
+      v = fp_next_float(v);
+   return v;
+}
+
+static inline float previous_nb_float(float v, int nb, float def)
+{
+   for(int i = 1; i < nb && v > def; i++)
+      v = fp_previous_float(v);
+   return v;
 }

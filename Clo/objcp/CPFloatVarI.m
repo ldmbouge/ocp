@@ -131,7 +131,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:low up:up];
    _recv = nil;
    _hasValue = false;
-   _value = 0.0;
+   _value = 0.0f;
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    return self;

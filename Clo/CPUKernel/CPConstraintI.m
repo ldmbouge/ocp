@@ -113,6 +113,10 @@
 {
    return nil;
 }
+-(id<CPFloatVar>) result
+{
+   return nil;
+}
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {
     return 0.0;

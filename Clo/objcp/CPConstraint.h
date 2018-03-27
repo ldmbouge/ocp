@@ -17,6 +17,7 @@
 +(id<CPGroup>)cdisj:(id<CPEngine>)engine originals:(id<CPVarArray>)origs  varmap:(NSArray*)vm;
 +(id<CPGroup>)group3B:(id<CPEngine>)engine tracer:(id<ORTracer>) tracer;
 +(id<CPGroup>) group3B:(id<CPEngine>)engine tracer:(id<ORTracer>)tracer percent: (ORDouble) p;
++(id<CPGroup>) group3B:(id<CPEngine>)engine tracer:(id<ORTracer>)tracer percent: (ORDouble) p avars:(NSSet*) avars gamma:(id<ORGamma>) solver;
 
 +(id<CPConstraint>) fail:(id<CPEngine>)engine;
 +(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x;

@@ -145,6 +145,10 @@
 {
    [v visitIntVar: self];
 }
+-(NSString*) prettyname
+{
+   return _prettyname;
+}
 @end
 
 @implementation ORIntVarAffineI {
@@ -457,6 +461,10 @@
 -(ORFloat) fmax
 {
    return [_domain up];
+}
+-(NSString*) prettyname
+{
+   return _prettyname;
 }
 @end
 

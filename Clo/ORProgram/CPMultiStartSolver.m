@@ -500,6 +500,10 @@
 {
    [[self worker] floatEWaySplit:i call:s withVars:x];
 }
+-(void)          floatDeltaSplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>)x
+{
+   [[self worker] floatDeltaSplit:i call:s withVars:x];
+}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    [[self worker] labelArray: x];

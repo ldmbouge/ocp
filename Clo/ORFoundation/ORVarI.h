@@ -26,6 +26,7 @@
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
+-(NSString*) prettyname;
 -(void) visit: (ORVisitor*)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
@@ -76,6 +77,7 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
+-(NSString*) prettyname;
 -(id<ORFloatRange>) domain;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;

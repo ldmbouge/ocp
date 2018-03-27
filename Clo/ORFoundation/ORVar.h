@@ -68,6 +68,7 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
+-(NSString*) prettyname;
 @end
 
 @protocol ORDoubleVar <ORExprVar>
