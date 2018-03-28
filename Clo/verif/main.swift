@@ -111,11 +111,45 @@ class Problem {
    }
 }
 
+func isFeasible(_ m : ORModel) -> Bool {
+   return autoreleasepool { () -> Bool in
+      let solver = ORFactory.createMIPProgram(m)
+      solver.setIntParameter("OutputFlag", val: 0)
+      return solver.solve() == ORoptimal
+   }
+}
+
+func shaveFeasible(_ m : ORModel,_ hp : Equation,_ dvars : ORRealVarArray)
+   -> (feasible : Bool, model : ORModel, cut : ORExpr)
+{
+   let mcc = m.copy()
+   let cut = hp.state(mcc,dvars,negate : true)
+   mcc.add(cut)
+   let feasible = isFeasible(mcc)
+   return (feasible,mcc,cut)
+}
+
 class Trajectory {
    var allProbs : [Problem] = []
    init(_ ap : [Problem]) {
       allProbs = ap
    }
+   func makeModel(_ varIds : [Int],_ polytopes : Set<Int>) -> (model : ORModel,vars : ORRealVarArray)
+   {
+      let m = ORFactory.createModel()
+      let varRange = range(m,varIds[0]...varIds[varIds.count-1])
+      let dvars = ORFactory.realVarArray(m, range: varRange, low:-1000.0,up:1000.0)
+      for p in polytopes {
+         allProbs[p].addToModel(m,dvars)
+      }
+      return (m,dvars)
+   }
+   func refineModel(_ m : ORModel,_ p : Int,_ dvars : ORRealVarArray) -> ORModel {
+      let mc = m.copy()
+      allProbs[p].addToModel(mc, dvars)
+      return mc
+   }
+
    // Solve all the subproblems and get their statuses (feasible or not) in an array.
    func solveIsolated() -> [Bool] {
       return allProbs.map { (p) -> Bool in
@@ -144,68 +178,46 @@ class Trajectory {
    // Extract the subset of problems that are _individually_ feasible.
    // Then enumerate the power set and for each subset we get, construct the problem which is the
    // conjunction of the selected sub-problems. Create a solver and resolve. If feasible, print-out.
-   // TODO: When feasible, make sure that the sub-problems in the complement of 'sub' are indeed infeasible
-   //       if one of them is not, create a cut to remove that solution and iterate. Repeat on all subs that
-   //       are meant to be infeasible.
    func solveFeasibleTogether() {
       let pStatus = solveIsolated()
       let selection = pStatus.indices.filter { (j) -> Bool in pStatus[j]}
 
       genSubset(selection) { (_ sub : Set<Int>,_ ns : Set<Int>) in
-//         print("\(sub) and \(ns)\n")
-//         return
          if (sub.count == 0) {
             return
          }
          let varIds = sub.reduce([]) { (acc : Set<Int>, p : Int) -> Set<Int> in
             return acc.union(allProbs[p].getVars())
          }.sorted()
-         let m = ORFactory.createModel()
-         let dvars = ORFactory.realVarArray(m, range: range(m,varIds[0]...varIds[varIds.count-1]), low:-1000.0,up:1000.0)
-         for p in sub {
-            allProbs[p].addToModel(m,dvars)
-         }
-         let solver = ORFactory.createMIPProgram(m)
-         solver.setIntParameter("OutputFlag", val: 0)
-         let oc = solver.solve()
-         print("Composite for \(sub) is \(oc == ORinfeasible ? "infeasible" : "feasible")",terminator:"\n");
-         if (oc == ORoptimal) {
+         let (m,dvars) = makeModel(varIds,sub)
+         let feasible = isFeasible(m)
+         print("Composite for \(sub) \\ \(ns) is \(feasible ? "feasible" : "infeasible")",terminator:"\n");
+         if (feasible) {
             var good = Region()
             good.addShard(Shard(m,nil))
-            var nextWave = Region()
             for p in ns {
+               let nextWave = Region()
                while (!good.empty()) {
-                  autoreleasepool {
-                     let cs = good.popShard()  // that's the current shard.
-                     let mc = cs.getModel().copy()
-                     allProbs[p].addToModel(mc, dvars)
-                     let solver = ORFactory.createMIPProgram(mc)
-                     solver.setIntParameter("OutputFlag", val: 0)
-                     if solver.solve() == ORoptimal {
-                        // the excluded problem can be satisfied too. Is there a point in the polytope
-                        // of m that makes allProbs[p] infeasible ?
-                        // Iterate over the hyperplanes of allProbs[p] and add their negation to m
-                        // If that is feasible, such a point exist and we should keep that polytope
-                        // If that is infeasible, then we can safely skip this half-space and move to the
-                        // next one.
-                        for e in allProbs[p].allEqs {
-                           let mcc = cs.getModel().copy()
-                           let ne = e.state(mcc,dvars,negate : true)
-                           mcc.add(ne)
-                           let solver = ORFactory.createMIPProgram(mcc)
-                           solver.setIntParameter("OutputFlag", val: 0)
-                           if solver.solve() == ORoptimal {
-                              //print("Composite for \(sub) can exclude \(p) with \(ne)\n")
-                              nextWave.addShard(Shard(mcc,ne))
-                           }
+                  let cs = good.popShard()  // that's the current shard.
+                  if isFeasible(refineModel(cs.getModel(),p,dvars)) {
+                     // the excluded problem can be satisfied too. Is there a point in the polytope
+                     // of m that makes allProbs[p] infeasible ?
+                     // Iterate over the hyperplanes of allProbs[p] and add their negation to m
+                     // If that is feasible, such a point exist and we should keep that shard of the polytope
+                     // If that is infeasible, then we can safely skip this half-space and move to the
+                     // next one.
+                     for e in allProbs[p].allEqs {
+                        let r = shaveFeasible(cs.getModel(), e, dvars)
+                        if r.feasible {
+                           //print("Composite for \(sub) can exclude \(p) with \(ne)\n")
+                           nextWave.addShard(Shard(r.model,r.cut))
                         }
-                     } else {
-                        nextWave.addShard(cs)  // p does not cut into the current shard. Add it untouched to next wave.
                      }
+                  } else { // p does not cut into the current shard. Add it untouched to next wave.
+                     nextWave.addShard(cs)
                   }
                }
                good = nextWave
-               nextWave = Region()
             }
             print("\tThe region \(sub) MINUS \(ns) has \(good.size()) feasible shards\n")
          }
