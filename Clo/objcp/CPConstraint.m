@@ -46,9 +46,9 @@
    [engine trackMutable:g];
    return g;
 }
-+(id<CPGroup>) group3B:(id<CPEngine>)engine tracer:(id<ORTracer>)tracer
++(id<CPGroup>) group3B:(id<CPEngine>)engine tracer:(id<ORTracer>)tracer avars:(NSSet*) avars gamma:(id<ORGamma>) solver
 {
-   id<CPGroup> g = [[CP3BGroup alloc] init:engine tracer:tracer];
+   id<CPGroup> g = [[CP3BGroup alloc] init:engine tracer:tracer vars:avars gamma:solver];
    [engine trackMutable:g];
    return g;
 }

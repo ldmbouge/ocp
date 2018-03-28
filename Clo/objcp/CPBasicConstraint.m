@@ -2817,14 +2817,19 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    id __unsafe_unretained* _gamma;
    ORDouble                 _percent;
    NSMutableSet*            _vars;
-   NSMutableSet*            _avars; //abstract vars
+   NSSet*                  _avars; //abstract vars
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p vars:(NSSet*) avars gamma:(id<ORGamma>) solver
 {
    self = [self init:engine tracer:tracer];
    _gamma = [solver gamma];
-   _avars = [[NSMutableSet alloc] init];
+   _avars = [avars retain];
    return self;
+}
+
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer vars:(NSSet*) avars gamma:(id<ORGamma>) solver
+{
+   return [self init:engine tracer:tracer percent:5 vars:avars gamma:solver];
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer
 {
@@ -2836,10 +2841,12 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    _tracer = tracer;
    _percent = p;
    _vars = [[NSMutableSet alloc] init];
+   _avars = [[NSMutableSet alloc] init];
    return self;
 }
 -(void)dealloc
 {
+   [_avars release];
    [_vars release];
    [super dealloc];
 }
@@ -2871,53 +2878,31 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    [super post];
 //   hzi : Test on 3B vars we sould reduce the number of vars involved in filtering
-//   ORInt mini = 0;
-//   ORInt maxi = 0;
-//   for(CPFloatVarI* cv in _vars)
-//   {
-//      mini = min(mini, cv.getId);
-//      maxi = max(maxi, cv.getId);
-//   }
-//
-//   NSMutableSet* varocc = [[NSMutableSet alloc] init];
-//   NSMutableSet* last = [[NSMutableSet alloc] init];
+//   uncomment to test new 3B
 //   CPFloatVarI* cv = nil;
+//   [_vars release];
+//   _vars = [[NSMutableSet alloc] init];
 //   @autoreleasepool{
+//      //hzi : review this code to implicit call to allvars
 //      for(id<ORFloatVar> v in _avars){
 //         cv = _gamma[v.getId];
-//         if([cv degree] > 1){
-//            [varocc addObject:v];
-//         }else{
+//         __block ORBool found = NO;
+//         if(![cv bound]){
 //            [self enumerateWithBlock:^(ORInt i, id<ORConstraint> c) {
-//               if([c nbOccurences:v] > 1)
-//                  [varocc addObject:v];
+//               if([c nbOccurences:v] > 1){
+//                  found = YES;
+//                  [_vars addObject:cv];
+////                 [_vars unionSet:[c allvars]];
+//               }
 //            }];
+//            if(!found && [cv degree] > 1){
+//               [_vars addObject:cv];
+//            }
 //         }
 //      }
 //   }
-//   [_vars removeAllObjects];
-//   NSSet* tmp = nil;
-//   for(id<ORFloatVar> v in varocc){
-//      cv = _gamma[v.getId];
-//      tmp = [cv constraints];
-//      [_vars addObject:cv];
-//      for(id<CPConstraint> c in tmp){
-//         if([c result] != nil)
-//            [last addObject:[c result]];
-//      }
-//   }
-//   for(id<CPFloatVar> cv in last){
-//      tmp = [cv constraints];
-//      [_vars addObject:cv];
-//      for(id<CPConstraint> c in tmp){
-//         if([c result] != nil)
-//            [_vars addObject:[c result]];
-//      }
-//   }
-//   [tmp release];
-//   _vars = last;
    //hzi : remove vars already bound.
-   NSMutableArray *discardedItems = [NSMutableArray array];
+   NSMutableArray *discardedItems = [[NSMutableArray alloc] init];
    for (CPFloatVarI* cv in _vars) {
       if([cv bound])
          [discardedItems addObject:cv];
@@ -3052,70 +3037,6 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          [v updateMax:max];
          [super propagate];
        }
-   }
-}
-//hzi : Try to filter only on abstract vars ?
--(void) propagateSplitting2
-{
-   ORStatus s;
-   ORLDouble size;
-   ORFloat epsilon;
-   __block ORFloat min,max,mid;
-   CPFloatVarI* cv = nil;
-   for(id<ORFloatVar> v in _avars){
-      cv = _gamma[v.getId];
-      if([cv bound]) continue;
-      s = ORSuccess;
-      size = [cv domwidth];
-      epsilon = size * (_percent/100.f);
-      min = (cv.min == -infinityf()) ? -maxnormalf() : cv.min;
-      mid = max = (cv.max == infinityf()) ? maxnormalf() : cv.max;
-      while (s==ORSuccess) {
-         mid = (fp_next_float(min) == max)? min : min/2 + max/2;
-         if (mid <= min || (mid - min <= epsilon))
-            break;
-         [_tracer pushNode];
-         s=tryfail(^ORStatus{
-            [cv updateMax:mid];
-            [super propagate];
-            return ORSuccess;
-         }, ^ORStatus{
-            min=fp_next_float(mid);
-            return ORFailure;
-         });
-         max=mid;
-         [_tracer popNode];
-      }
-      if(min != cv.min){
-         [cv updateMin:min];
-         [super propagate];
-      }
-      
-      s = ORSuccess;
-      size = [cv domwidth];
-      epsilon = size * (_percent/100.f);
-      min = (cv.min == -infinityf()) ? -maxnormalf() : cv.min;
-      max = (cv.max == infinityf()) ? maxnormalf() : cv.max;
-      while (s==ORSuccess) {
-         mid = (fp_next_float(min) == max) ? max : min/2 + max/2;
-         if (mid >= max || (max - mid <= epsilon))
-            break;
-         [_tracer pushNode];
-         s=tryfail(^ORStatus{
-            [cv updateMin:mid];
-            [super propagate];
-            return ORSuccess;
-         }, ^ORStatus{
-            max = fp_previous_float(mid);
-            return ORFailure;
-         });
-         min=mid;
-         [_tracer popNode];
-      }
-      if(max != cv.max){
-         [cv updateMax:max];
-         [super propagate];
-      }
    }
 }
 - (void)visit:(ORVisitor *)visitor

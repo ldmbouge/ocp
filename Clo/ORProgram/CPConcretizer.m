@@ -215,6 +215,8 @@
 {
    if (_gamma[g.getId] == NULL) {
       id<CPGroup> cg = nil;
+      NSMutableSet* ov = nil;
+      NSSet* vars = nil;
       switch([g type]) {
          case BergeGroup:
             cg = [CPFactory bergeGroup:_engine];
@@ -227,11 +229,19 @@
             cg = [CPFactory group:_engine];  // TOFIX:ldm
             break;
          case Group3B:
+            ov = [[NSMutableSet alloc] init];
+            @autoreleasepool {
+            vars = [g variables];
+               for(id<ORFloatVar> v in vars){
+                  if([_notes isKBEligeble:v])
+                     [ov addObject:v];
+               }
+            }
             if([_notes hasFilteringPercent])
-               cg =  [CPFactory group3B: _engine tracer:[_solver tracer] percent:[_notes kbpercent]];
+               cg = [CPFactory group3B: _engine tracer:[_solver tracer] percent:[_notes kbpercent] avars:ov gamma:_solver];
             else
-               cg = [CPFactory group3B: _engine tracer:[_solver tracer] percent:5 avars:[g variables] gamma:_solver];
-//               cg =  [CPFactory group3B: _engine tracer:[_solver tracer]];
+               cg = [CPFactory group3B: _engine tracer:[_solver tracer] avars:ov gamma:_solver];
+            [ov release];
             break;
          default:
           cg = [CPFactory group:_engine];
@@ -290,10 +300,18 @@
 {
    if (_gamma[g.getId] == NULL) {
       CP3BGroup* cg = nil;
+      NSMutableSet* ov = [[NSMutableSet alloc] init];
+      NSSet* vars = [g variables];
+      for(id<ORFloatVar> v in vars){
+         if([_notes isKBEligeble:v])
+            [ov addObject:v];
+      }
+      [vars release];
       if([_notes hasFilteringPercent])
-         cg = [CPFactory group3B: _engine tracer:[_solver tracer] percent:[_notes kbpercent] avars:[g variables] gamma:_solver];
+         cg = [CPFactory group3B: _engine tracer:[_solver tracer] percent:[_notes kbpercent] avars:ov gamma:_solver];
       else
-         cg = [CPFactory group3B: _engine tracer:[_solver tracer]];
+         cg = [CPFactory group3B: _engine tracer:[_solver tracer] avars:ov gamma:_solver];
+      [ov release];
       [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
       id<CPEngine> old = _engine;
       _engine = (id)cg;

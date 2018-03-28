@@ -92,18 +92,22 @@
 }
 -(ORBool) memberVar:(id<ORVar>)x
 {
-    NSSet *vars = [self allVars];
-    return [vars containsObject:x];
+   @autoreleasepool{
+      NSSet *vars = [self allVars];
+      return [vars containsObject:x];
+   }
 }
 -(ORUInt) nbOccurences:(id<ORVar>)x
 {
-    NSArray *vars = [self allVarsArray];
-    ORUInt i = 0;
-    for(id<ORVar> v in vars){
+   @autoreleasepool{
+      NSArray *vars = [self allVarsArray];
+      ORUInt i = 0;
+      for(id<ORVar> v in vars){
         if ([v getId] == [x getId])
             i++;
-    }
-    return i;
+      }
+      return i;
+   }
 }
 -(ORBool) canLeadToAnAbsorption
 {

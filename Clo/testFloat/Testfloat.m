@@ -32,88 +32,17 @@
    // Put teardown code here. This method is called after the invocation of each test method in the class.
    [super tearDown];
 }
--(void) testAssignementFail
+-(void) testNextFloats
 {
-   @autoreleasepool {
-   
-   id<ORModel> model = [ORFactory createModel];
-      id<ORFloatVar> x = [ORFactory floatVar:model];
-      id<ORFloatVar> y = [ORFactory floatVar:model];
-      id<ORFloatVar> r = [ORFactory floatVar:model];
-      
-      
-      [model add:[x set:@(0.0f)]];
-      [model add:[y set:@(0.0f)]];
-      [model add:[r set:@(-0.f)]];
-      [model add:[r set:[x mul:y]]];
-   
-   id<CPProgram> cp = [ORFactory createCPProgram:model];
-   [cp solve:^(){
-      XCTAssertTrue(NO);
-   }];
-}
-}
-
--(void) testAssignementFail2
-{
-   @autoreleasepool {
-      
-      id<ORModel> model = [ORFactory createModel];
-      id<ORFloatVar> x = [ORFactory floatVar:model];
-      id<ORFloatVar> y = [ORFactory floatVar:model];
-      
-      
-      [model add:[x set:@(0.0f)]];
-      [model add:[y set:@(-0.0f)]];
-
-      [model add:[x set: y]];
-      id<CPProgram> cp = [ORFactory createCPProgram:model];
-      [cp solve:^(){
-         XCTAssertTrue(NO);
-      }];
-   }
-}
-
--(void) testAssignementSuccess
-{
-   @autoreleasepool {
-      
-      id<ORModel> model = [ORFactory createModel];
-      id<ORFloatVar> x = [ORFactory floatVar:model low:5.0f up:10.0f];
-      id<ORFloatVar> y = [ORFactory floatVar:model  low:12.0f up:15.0f];
-      id<ORFloatVar> z = [ORFactory floatVar:model];
-      id<ORFloatVar> x2 = [ORFactory floatVar:model  low:5.0f up:10.0f];
-      id<ORFloatVar> y2 = [ORFactory floatVar:model  low:12.0f up:15.0f];
-      id<ORFloatVar> z2 = [ORFactory floatVar:model];
-      
-      
-      [model add:[z set:[x plus:y]]];
-      [model add:[z2 eq:[x2 plus:y2]]];
-      
-      id<CPProgram> cp = [ORFactory createCPProgram:model];
-      id<ORFloatVarArray> vs = [model floatVars];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
-      [cp solve:^(){
-         
-         [cp maxAbsorptionSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-            [cp floatSplit:i call:s withVars:x];
-         }];
-         
-         CPFloatVarI* xc = [cp concretize:x];
-         CPFloatVarI* yc = [cp concretize:y];
-         CPFloatVarI* zc = [cp concretize:z];
-         CPFloatVarI* x2c = [cp concretize:x2];
-         CPFloatVarI* y2c = [cp concretize:y2];
-         CPFloatVarI* z2c = [cp concretize:z2];
-         
-         XCTAssertEqual([xc min],[x2c min]);
-         XCTAssertEqual([yc min],[y2c min]);
-         XCTAssertEqual([zc min],[z2c min]);
-         XCTAssertEqual([xc max],[x2c max]);
-         XCTAssertEqual([yc max],[y2c max]);
-         XCTAssertEqual([zc max],[z2c max]);
-      }];
-   }
+   fesetround(FE_TONEAREST);
+   NSLog(@"%16.16e",nextafterf(-0.0f, +INFINITY));
+   XCTAssertEqual(next_nb_float(4.f,2,fp_next_float(4.f)), fp_next_float(4.f)); //here we should no go after 4.f +
+   XCTAssertNotEqual(next_nb_float(4.f,5,5.f), 5.f);
+   XCTAssertNotEqual(next_nb_float(4.f,5,5.f), 4.f);
+   XCTAssertEqual(next_nb_float(0.f,1,5.f), 0.f);
+   XCTAssertEqual(next_nb_float(-0.f,1,5.f), -0.f);
+   XCTAssertEqual(next_nb_float(0.f,2,5.f), fp_next_float(0.f));
+   XCTAssertEqual(next_nb_float(-0.f,2,5.f), fp_next_float(0.f));
 }
 -(void) testComputeAbsorbed
 {

@@ -2989,17 +2989,17 @@
       updateFTWithValues(&interval[0],xi.min,deltaMin);
       updateFTWithValues(&interval[1],deltaMax,xi.max);
       length++;
-      if(deltaMin != mid){
+      if(deltaMin < mid && deltaMax > mid){
          updateFTWithValues(&interval[2],mid,mid);
          length++;
-      }
-      if(fp_next_float(deltaMin) != fp_previous_float(mid)){
-         updateFTWithValues(&interval[3],fp_next_float(deltaMin),fp_previous_float(mid));
-         length++;
-      }
-      if(deltaMax > fp_next_float(mid)){
-         updateFTWithValues(&interval[4],fp_next_float(mid),fp_previous_float(deltaMax));
-         length++;
+         if(fp_next_float(deltaMin) != fp_previous_float(mid)){
+            updateFTWithValues(&interval[3],fp_next_float(deltaMin),fp_previous_float(mid));
+            length++;
+         }
+         if(deltaMax > fp_next_float(mid)){
+            updateFTWithValues(&interval[4],fp_next_float(mid),fp_previous_float(deltaMax));
+            length++;
+         }
       }
    }
    float_interval* ip = interval;
@@ -3012,7 +3012,8 @@
 {
    id<CPFloatVar> xi = _gamma[getId(x[i])];
    if([xi bound]) return;
-   float_interval interval[14];
+   ORInt nb = 2*_searchNBFloats+4;
+   float_interval interval[nb];//to check + assert
    ORInt length = 1;
    if(fp_next_float(xi.min) == xi.max){
       updateFTWithValues(&interval[0], xi.min, xi.min);
@@ -3025,23 +3026,28 @@
       ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
       for(ORFloat v = xi.min; v <= deltaMin; v = fp_next_float(v)){
          updateFTWithValues(&interval[length-1], v,v);
+         assert(length-1 >= 0 && length-1 < nb);
          length++;
       }
       for(ORFloat v = xi.max; v >= deltaMax; v = fp_previous_float(v)){
          updateFTWithValues(&interval[length-1],v,v);
+         assert(length-1 >= 0 && length-1 < nb);
          length++;
       }
-      if(deltaMin < mid){
+      if(deltaMin < mid && deltaMax > mid){
          updateFTWithValues(&interval[length-1], mid,mid);
+         assert(length-1 >= 0 && length-1 < nb);
          length++;
-      }
-      if(fp_next_float(deltaMin) != fp_previous_float(mid)){
-         updateFTWithValues(&interval[length-1],fp_next_float(deltaMin),fp_previous_float(mid));
-         length++;
-      }
-      if(deltaMax > fp_next_float(mid)){
-         updateFTWithValues(&interval[length-1],fp_next_float(mid),fp_previous_float(deltaMax));
-         length++;
+         if(fp_next_float(deltaMin) != fp_previous_float(mid)){
+            updateFTWithValues(&interval[length-1],fp_next_float(deltaMin),fp_previous_float(mid));
+            assert(length-1 >= 0 && length-1 < nb);
+            length++;
+         }
+         if(deltaMax > fp_next_float(mid)){
+            updateFTWithValues(&interval[length-1],fp_next_float(mid),fp_previous_float(deltaMax));
+            assert(length-1 >= 0 && length-1 < nb);
+            length++;
+         }
       }
    }
    float_interval* ip = interval;

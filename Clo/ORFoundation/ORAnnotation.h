@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORConstraint.h>
 
 typedef enum {
    DomainConsistency,
@@ -26,8 +27,9 @@ typedef enum {
 -(ORCLevel) levelFor:(id<ORConstraint>)cstr;
 -(ORDouble) kbpercent;
 -(id)copy;
-
 -(ORBool) hasFilteringPercent;
+-(void) setKBEligebleVars : (NSArray*) vars;
+-(ORInt) isKBEligeble : (id<ORVar>) v;
 -(void) kbpercent:(ORDouble) p;
 -(id<ORConstraint>) dc: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) bc: (id<ORConstraint>) cstr;
@@ -42,6 +44,9 @@ typedef enum {
 @end
 
 @interface ORAnnotation : ORObject<ORAnnotation,NSCopying>
+{
+   NSMutableArray* _modelVariables;
+}
 @end
 
 @protocol ORNote <NSObject,NSCopying>

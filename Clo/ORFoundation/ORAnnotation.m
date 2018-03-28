@@ -18,6 +18,7 @@
    id<ORAnnotation> _original;
 }
 -(id)initWith:(id<ORAnnotation>)src;
+-(id)initWith:(id<ORAnnotation>)src ovars:(NSArray*)vars;
 -(ORCLevel)levelFor:(id<ORConstraint>)cstr;
 @end
 
@@ -32,12 +33,14 @@
    self = [super init];
    _classCstr = [[NSMutableDictionary alloc] initWithCapacity:16];
    _cstr = [[NSMutableDictionary alloc] initWithCapacity:16];
+   _modelVariables = nil;
    _kbpercent = -1;
    return self;
 }
 
 -(void) dealloc
 {
+   [_modelVariables release];
    [_classCstr release];
    [_cstr release];
    [super dealloc];
@@ -45,7 +48,7 @@
 
 - (id) copyWithZone: (NSZone *) zone
 {
-   return [[ORAnnotationCopy allocWithZone:zone] initWith:self];
+   return [[ORAnnotationCopy allocWithZone:zone] initWith:self ovars:_modelVariables];
 }
 
 -(void) addCstr: (id<ORConstraint>) cstr note: (id<ORNote>) n
@@ -150,6 +153,25 @@
 {
    _kbpercent = p;
 }
+-(void) setKBEligebleVars : (NSArray*) vars
+{
+   [_modelVariables release];
+   ORInt maxi = 0;
+   for(id<ORVar> v in vars){
+      maxi = max(maxi,v.getId);
+   }
+   _modelVariables = [[NSMutableArray alloc] initWithCapacity:maxi];
+   for(ORInt i = 0; i <= maxi; i++){
+      [_modelVariables addObject:@(0)];
+   }
+   for(id<ORVar> v in vars){
+      _modelVariables[v.getId] = @(1);
+   }
+}
+-(ORInt) isKBEligeble : (id<ORVar>) v
+{
+   return (v.getId < [_modelVariables count]) ? (ORInt)(_modelVariables[v.getId]) : 0;
+}
 -(ORCLevel) levelFor: (id<ORConstraint>) cstr
 {
    ORConsistency* cn = [self findConstraintNote: cstr ofClass: [ORConsistency class]];
@@ -234,6 +256,14 @@
 @end
 
 @implementation ORAnnotationCopy
+-(id)initWith: (id<ORAnnotation>) src ovars:(NSMutableArray*)vars
+{
+   self = [super init];
+   _original = [src retain];
+   [super kbpercent:[_original kbpercent]];
+   _modelVariables = [vars retain];
+   return self;
+}
 -(id)initWith: (id<ORAnnotation>) src
 {
    self = [super init];

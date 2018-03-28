@@ -57,7 +57,6 @@
       [_x updateInterval:min and:max];
       [_y updateInterval:min and:max];
    }
-   
 }
 -(NSSet*)allVars
 {
@@ -66,10 +65,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return _x;
 }
 -(ORUInt)nbUVars
 {
@@ -107,10 +102,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return nil;
 }
 -(ORUInt)nbUVars
 {
@@ -172,10 +163,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return _x;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound];
@@ -206,10 +193,6 @@
 -(ORUInt)nbUVars
 {
    return ![_x bound];
-}
--(id<CPFloatVar>) result
-{
-   return _x;
 }
 -(NSString*)description
 {
@@ -286,10 +269,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return _x;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound];
@@ -337,10 +316,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return _x;
 }
 -(ORUInt)nbUVars
 {
@@ -394,10 +369,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return nil;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound];
@@ -448,10 +419,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return nil;
 }
 -(ORUInt)nbUVars
 {
@@ -506,10 +473,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return nil;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound];
@@ -560,10 +523,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return nil;
 }
 -(ORUInt)nbUVars
 {
@@ -656,10 +615,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return _z;
 }
 -(ORUInt)nbUVars
 {
@@ -782,10 +737,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return _z;
 }
 -(ORUInt)nbUVars
 {
@@ -978,10 +929,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return _z;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
@@ -1093,10 +1040,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return nil;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] +  ![_y bound] + ![_b bound];
@@ -1190,10 +1133,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return _x;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] +  ![_y bound] + ![_b bound];
@@ -1275,10 +1214,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return nil;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_x bound] + ![_b bound];
@@ -1356,10 +1291,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return nil;
 }
 -(ORUInt)nbUVars
 {
@@ -1439,10 +1370,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return nil;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
@@ -1521,10 +1448,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return nil;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
@@ -1585,10 +1508,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return nil;
 }
 -(ORUInt)nbUVars
 {
@@ -1651,10 +1570,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return nil;
 }
 -(ORUInt)nbUVars
 {
@@ -1719,10 +1634,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return nil;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_b bound];
@@ -1778,10 +1689,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return nil;
 }
 -(ORUInt)nbUVars
 {
@@ -1845,10 +1752,6 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
 }
--(id<CPFloatVar>) result
-{
-   return nil;
-}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_b bound];
@@ -1911,10 +1814,6 @@
 -(NSArray*)allVarsArray
 {
    return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
-}
--(id<CPFloatVar>) result
-{
-   return nil;
 }
 -(ORUInt)nbUVars
 {

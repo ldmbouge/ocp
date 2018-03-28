@@ -54,7 +54,8 @@ enum ValHeuristic
    dynamic6Split = 7,
    split3B = 8,
    dedicatedSplit = 9,
-   Esplit = 10
+   Esplit = 10,
+   Dsplit = 11
 };
 struct ORResult {
    ORInt found;

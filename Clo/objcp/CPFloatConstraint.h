@@ -321,7 +321,6 @@
 -(id) initCPReifyGThenc:(id<CPIntVar>)b when:(id<CPFloatVar>)x gti:(ORFloat)c;
 -(void) post;
 -(NSSet*)allVars;
--(id<CPFloatVar>) result;
 -(ORUInt)nbUVars;
 @end
 
