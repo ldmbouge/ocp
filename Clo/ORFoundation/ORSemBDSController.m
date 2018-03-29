@@ -142,6 +142,7 @@
 @implementation ORSemBDSController {
    BDSStack*             _tab;
    BDSStack*            _next;
+   BDSStack*            _admin;
    ORDiscrepancy*    _maxDisc;
    ORInt              _nbDisc;
    SemTracer*         _tracer;
@@ -158,8 +159,10 @@
    _model = model;
    _tab  = [[BDSStack alloc] initBDSStack:32];
    _next = [[BDSStack alloc] initBDSStack:32];
+   _admin = [[BDSStack alloc] initBDSStack:32];
    _nbDisc = 0;
    _maxDisc = [[ORDiscrepancy alloc] init];
+   [_maxDisc setBound:0];
    return self;
 }
 
@@ -224,24 +227,36 @@
 -(ORInt) addChoice: (NSCont*)k 
 {
    id<ORCheckpoint> snap = [_tracer captureCheckpoint];
-/*
-   if (_nbDisc + 1 < _maxDisc)
-      NSLog(@"adding snaphot to current wave: %@",snap);
-   else
-      NSLog(@"adding snaphot to next    wave: %@",snap);
-*/
-   id<ORObjectiveValue> ov = [[_solver objective] primalValue];
-   if (_nbDisc + 1 < _maxDisc.bound)
-      [_tab  pushCont:k cp:snap discrepancies:_nbDisc+1 ov:ov];
-   else [_next pushCont:k cp:snap discrepancies:_nbDisc+1 ov:ov];
+   if (k.admin) {
+      [_admin pushCont:k cp:snap discrepancies:0 ov:nil];
+   } else {
+      /*
+       if (_nbDisc + 1 < _maxDisc)
+       NSLog(@"adding snaphot to current wave: %@",snap);
+       else
+       NSLog(@"adding snaphot to next    wave: %@",snap);
+       */
+      id<ORObjectiveValue> ov = [[_solver objective] primalValue];
+      if (_nbDisc + 1 < _maxDisc.bound)
+         [_tab  pushCont:k cp:snap discrepancies:_nbDisc+1 ov:ov];
+      else [_next pushCont:k cp:snap discrepancies:_nbDisc+1 ov:ov];
+   }
    return -1;
 }
 -(void) fail
 {
    do {
-      if ([_tab empty] && [_next empty])
-         return;  // Nothing left to process. Go back!
-      else {
+      if ([_tab empty] && [_next empty]) {
+         if (_admin.empty)
+            return;  // Nothing left to process. Go back!
+         else {
+            struct BDSNode node = [_admin pop];
+            ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver model:_model];
+            [node._cp letgo];
+            if (node._cont && status != ORFailure)
+               [node._cont call];
+         }
+      } else {
          if ([_tab empty]) {
             NSLog(@"**************************** next wave: [%d]",[_next size]);
             BDSStack* tmp = _tab;

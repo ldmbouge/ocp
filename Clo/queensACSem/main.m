@@ -20,7 +20,7 @@
 
 NSString* tab(int d);
 
-#define TESTTA 1
+#define TESTTA 0
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -75,6 +75,11 @@ int main (int argc, const char * argv[])
 #endif
             }];
             @synchronized(cp) {
+               printf("Solution:%d  <%d,%d> [",nbSol,[cp nbChoices],[cp nbFailures]);
+               for(ORInt k=0;k < n;k++) {
+                  printf("%d%c",[cp intValue:x[k]],k<n-1 ? ',' : ']');
+               }
+               printf("\n");
                ++nbSol;
             }
             [[cp explorer] fail]; // to avoid saving solutions.
