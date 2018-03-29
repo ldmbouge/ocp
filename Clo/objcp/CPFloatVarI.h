@@ -347,13 +347,23 @@ static inline void intersectionError(intersectionIntervalError* interErr, ration
       rational_interval percent;
       ORRational hundred;
       mpq_inits(hundred, percent.inf, percent.sup, NULL);
-      mpq_set_d(hundred, 100.0f);
+
       mpq_sub(percent.inf, original_error.inf, interErr->result.inf);
       mpq_sub(percent.sup, original_error.sup, interErr->result.sup);
       
-      mpq_div(percent.inf, percent.inf, original_error.inf);
-      mpq_div(percent.sup, percent.sup, original_error.sup);
+      mpq_set_d(hundred, 0.0f);
+      if(mpq_equal(original_error.inf, hundred)){
+         mpq_set_d(percent.inf, -DBL_MAX);
+      } else{
+         mpq_div(percent.inf, percent.inf, original_error.inf);
+      }
+      if(mpq_equal(original_error.sup, hundred)){
+         mpq_set_d(percent.sup, DBL_MAX);
+      } else{
+         mpq_div(percent.sup, percent.sup, original_error.sup);
+      }
       
+      mpq_set_d(hundred, 100.0f);
       mpq_mul(percent.inf, percent.inf, hundred);
       mpq_mul(percent.sup, percent.sup, hundred);
       
@@ -362,7 +372,7 @@ static inline void intersectionError(intersectionIntervalError* interErr, ration
       
       mpq_set_d(hundred, 1.0f);
       
-      if(mpq_cmp(percent.inf, hundred) <= 0 || mpq_cmp(percent.sup, hundred) <= 0)
+      if(mpq_cmp(percent.inf, hundred) <= 0 && mpq_cmp(percent.sup, hundred) <= 0)
          interErr->changed = false;
       
       mpq_clears(hundred, percent.inf, percent.sup, NULL);

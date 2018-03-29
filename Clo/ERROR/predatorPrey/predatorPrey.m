@@ -20,9 +20,9 @@ int main(int argc, const char * argv[]) {
       [mdl add:[K set: @(1.11f)]];
       [mdl add:[z set:[[[r mul: x] mul: x] div: [@(1.0f) plus: [[x div: K] mul:[x div: K]]]]]];
       NSLog(@"model: %@",mdl);
-      //id<ORFloatVarArray> vs = [mdl floatVars];
+      id<ORFloatVarArray> vs = [mdl floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      //id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp setMinError:x minError:0.0f];
       [cp setMaxError:x maxError:0.0f];

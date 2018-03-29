@@ -23,8 +23,8 @@ int main(int argc, const char * argv[]) {
       
       NSLog(@"model: %@",mdl);
       id<CPProgram> p = [ORFactory createCPProgram:mdl];
-      //id<ORFloatVarArray> vs = [mdl floatVars];
-      //id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine]];
+      id<ORFloatVarArray> vs = [mdl floatVars];
+      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine]];
 
       [p setMaxError:u maxError:0.0f];
       [p setMinError:u minError:0.0f];
@@ -35,7 +35,7 @@ int main(int argc, const char * argv[]) {
       [p solve:^{
          /*[p lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
             [p floatSplit:i call:s withVars:x];
-         }];*/
+         }];/*
          NSLog(@"%@",p);
          //NSLog(@"%@ (%s)",[p concretize:x],[p bound:x] ? "YES" : "NO");
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */

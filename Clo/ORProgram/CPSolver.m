@@ -1933,6 +1933,7 @@
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     LOG(_level,2,@"%@ %s",v,([v bound]) ? "b" :"");
                                      if(![x isEnable:i]){
                                         if(![v bound]){
                                            disabled.found = YES;
@@ -1944,7 +1945,6 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return (ORDouble)i;
                                  }];
    

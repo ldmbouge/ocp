@@ -649,11 +649,7 @@ void divR_inv_ey(rational_interval* ey, rational_interval* ez, rational_interval
    ORRational one, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, mulm1, mulm2, mulM1, mulM2, divm, divM;
    
    mpq_inits(_x.inf, _x.sup, _y.inf, _y.sup, one, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, mulm1, mulm2, mulM1, mulM2, divm, divM, NULL);
-   
-   /*mpq_set_d(_x.inf, x->inf);
-    mpq_set_d(_y.inf, y->inf);
-    mpq_set_d(_x.sup, x->sup);
-    mpq_set_d(_y.sup, y->sup);*/
+
    if(x->inf == -INFINITY){
       mpq_set_d(_x.inf, -2*FLT_MAX);
    } else {
@@ -1173,7 +1169,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    if(isDisjointWith(_x,_y)){
       failNow();
    }else if(isDisjointWithR(_x,_y)){
-      NSLog(@"LMOL");
       failNow();
    }else{
       float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
@@ -1189,24 +1184,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
          [_y updateInterval:inter.result.inf and:inter.result.sup];
       if ((mpq_cmp(_eyi.inf, interError.result.inf) != 0) || (mpq_cmp(_eyi.sup, interError.result.sup) != 0))
          [_y updateIntervalError:interError.result.inf and:interError.result.sup];
-      /*
-       float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
-       rational_interval eyTmp;
-       mpq_inits(eyTmp.inf, eyTmp.sup,NULL);
-       makeRationalInterval(&eyTmp, _eyi.inf, _eyi.sup);
-       updateFloatInterval(&_xi,_x);
-       updateRationalInterval(&_exi, _x);
-       fpi_setf(_precision, _rounding,&yTmp,&_xi);
-       setR(&eyTmp, &_exi);
-       
-       inter = intersection(_yi, yTmp, 0.0f);
-       intersectionError(&interError, eyTmp, _exi);
-       if(inter.changed)
-       [_y updateInterval:inter.result.inf and:inter.result.sup];
-       if(interError.changed)
-       [_y updateIntervalError:interError.result.inf and:interError.result.sup];
-       mpq_clears(eyTmp.inf, eyTmp.sup,NULL);
-       */
    }
    mpq_clears(interError.interval.inf, interError.result.sup, interError.interval.sup, interError.result.inf, NULL);
    
@@ -1627,6 +1604,15 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
    //  makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   NSLog(@"START");
+   NSLog(@"x: [%8.8e,%8.8e]", x.inf, x.sup);
+   printRationalInterval(@"ex", ex);
+   NSLog(@"y: [%8.8e,%8.8e]", y.inf, y.sup);
+   printRationalInterval(@"ey", ey);
+   NSLog(@"z: [%8.8e,%8.8e]", z.inf, z.sup);
+   printRationalInterval(@"ez", ez);
+   printRationalInterval(@"eo", eo);
+   NSLog(@"");
    do {
       changed = false;
       zTemp = z;
@@ -1693,6 +1679,14 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       
       gchanged |= changed;
    } while(changed);
+   /*NSLog(@"x: [%8.8e,%8.8e]", x.inf, x.sup);
+   printRationalInterval(@"ex", ex);
+   NSLog(@"y: [%8.8e,%8.8e]", y.inf, y.sup);
+   printRationalInterval(@"ey", ey);
+   NSLog(@"z: [%8.8e,%8.8e]", z.inf, z.sup);
+   printRationalInterval(@"ez", ez);
+   printRationalInterval(@"eo", eo);
+   NSLog(@"END");*/
    if(gchanged){
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
@@ -1700,8 +1694,8 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       [_x updateIntervalError:ex.inf and:ex.sup];
       [_y updateIntervalError:ey.inf and:ey.sup];
       [_z updateIntervalError:ez.inf and:ez.sup];
-      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
-         assignTRInt(&_active, NO, _trail);
+//      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
+//         assignTRInt(&_active, NO, _trail);
    }
    fesetround(FE_TONEAREST);
    
@@ -1724,7 +1718,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 }
 -(ORUInt)nbUVars
 {
-   return ![_x bound] + ![_y bound] + ![_z bound];
+   return ![_x bound] + ![_y bound] + ![_z bound] + ![_x boundError] + ![_y boundError] + ![_z boundError];
 }
 -(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
 {

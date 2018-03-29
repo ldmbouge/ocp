@@ -41,13 +41,12 @@
 {
    NSLog(@"ORTrailI %p dealloc called...\n",self);
    for(ORInt k=0;k<_mxSeg;k++)
-      if (_seg[k])
-         free(_seg[k]);
-   free(_seg);
-   for(ORInt k=0;k<_mxSeg;k++)
-      if (_seg[k])
+      if (_seg[k]){
          for(ORInt l=0;l<NBSLOT;l++)
             mpq_clear(_seg[k]->tab[l].rationalVal);
+         free(_seg[k]);
+      }
+   free(_seg);
    [super dealloc];
 }
 -(ORUInt)magic
@@ -143,6 +142,7 @@
     struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
     s->ptr = ptr;
     s->code = TAGRational;
+    //mpq_init(s->rationalVal);
     mpq_set(s->rationalVal, *ptr);
     ++_seg[_cSeg]->top;
 }
