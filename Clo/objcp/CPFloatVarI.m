@@ -283,6 +283,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._boundsEvtErr, nil, c, p);
 }
 - (void)whenChangePropagate:(CPCoreConstraint*)c priority:(ORInt)p
 {

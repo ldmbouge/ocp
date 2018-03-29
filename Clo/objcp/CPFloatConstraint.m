@@ -1151,10 +1151,8 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 -(void) post
 {
    [self propagate];
-   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
-   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
-   if(![_x boundError])  [_x whenChangeBoundsPropagate:self];
-   if(![_y boundError])  [_y whenChangeBoundsPropagate:self];
+   if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -1581,12 +1579,9 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 -(void) post
 {
    [self propagate];
-   if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-   if (![_y bound]) [_y whenChangeBoundsPropagate:self];
-   if (![_z bound]) [_z whenChangeBoundsPropagate:self];
-   if (![_x boundError]) [_x whenChangeBoundsPropagate:self];
-   if (![_y boundError]) [_y whenChangeBoundsPropagate:self];
-   if (![_z boundError]) [_z whenChangeBoundsPropagate:self];
+   if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
+   if (![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
    
 }
 -(void) propagate
