@@ -1582,7 +1582,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
    if (![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
-   
 }
 -(void) propagate
 {
@@ -1599,15 +1598,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
    //  makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
-   NSLog(@"START");
-   NSLog(@"x: [%8.8e,%8.8e]", x.inf, x.sup);
-   printRationalInterval(@"ex", ex);
-   NSLog(@"y: [%8.8e,%8.8e]", y.inf, y.sup);
-   printRationalInterval(@"ey", ey);
-   NSLog(@"z: [%8.8e,%8.8e]", z.inf, z.sup);
-   printRationalInterval(@"ez", ez);
-   printRationalInterval(@"eo", eo);
-   NSLog(@"");
    do {
       changed = false;
       zTemp = z;
@@ -1674,14 +1664,6 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       
       gchanged |= changed;
    } while(changed);
-   /*NSLog(@"x: [%8.8e,%8.8e]", x.inf, x.sup);
-   printRationalInterval(@"ex", ex);
-   NSLog(@"y: [%8.8e,%8.8e]", y.inf, y.sup);
-   printRationalInterval(@"ey", ey);
-   NSLog(@"z: [%8.8e,%8.8e]", z.inf, z.sup);
-   printRationalInterval(@"ez", ez);
-   printRationalInterval(@"eo", eo);
-   NSLog(@"END");*/
    if(gchanged){
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
@@ -1689,8 +1671,8 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       [_x updateIntervalError:ex.inf and:ex.sup];
       [_y updateIntervalError:ey.inf and:ey.sup];
       [_z updateIntervalError:ez.inf and:ez.sup];
-//      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
-//         assignTRInt(&_active, NO, _trail);
+      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
+         assignTRInt(&_active, NO, _trail);
    }
    fesetround(FE_TONEAREST);
    
@@ -1775,12 +1757,9 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 -(void) post
 {
    [self propagate];
-   if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-   if (![_y bound]) [_y whenChangeBoundsPropagate:self];
-   if (![_z bound]) [_z whenChangeBoundsPropagate:self];
-   if (![_x boundError]) [_x whenChangeBoundsPropagate:self];
-   if (![_y boundError]) [_y whenChangeBoundsPropagate:self];
-   if (![_z boundError]) [_z whenChangeBoundsPropagate:self];
+   if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
+   if (![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -1945,17 +1924,16 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    _percent = p;
    _rounding = FE_TONEAREST;
    mpq_inits(ez.sup, ez.inf, ex.sup, ex.inf, ey.sup, ey.inf, eo.sup, eo.inf, ezTemp.sup, ezTemp.inf, exTemp.sup, exTemp.inf, eyTemp.sup, eyTemp.inf, eoTemp.sup, eoTemp.inf, NULL);
+   mpq_set_d(eo.inf, -MAXFLOAT);
+   mpq_set_d(eo.sup,  MAXFLOAT);
    return self;
 }
 -(void) post
 {
    [self propagate];
-   if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-   if (![_y bound]) [_y whenChangeBoundsPropagate:self];
-   if (![_z bound]) [_z whenChangeBoundsPropagate:self];
-   if (![_x boundError]) [_x whenChangeBoundsPropagate:self];
-   if (![_y boundError]) [_y whenChangeBoundsPropagate:self];
-   if (![_z boundError]) [_z whenChangeBoundsPropagate:self];
+   if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
+   if (![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -1971,7 +1949,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
    do {
       changed = false;
       zTemp = z;
@@ -2083,17 +2061,16 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    _percent = p;
    _rounding = FE_TONEAREST;
    mpq_inits(ez.sup, ez.inf, ex.sup, ex.inf, ey.sup, ey.inf, eo.sup, eo.inf, ezTemp.sup, ezTemp.inf, exTemp.sup, exTemp.inf, eyTemp.sup, eyTemp.inf, eoTemp.sup, eoTemp.inf, NULL);
+   mpq_set_d(eo.inf, -MAXFLOAT);
+   mpq_set_d(eo.sup,  MAXFLOAT);
    return self;
 }
 -(void) post
 {
    [self propagate];
-   if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-   if (![_y bound]) [_y whenChangeBoundsPropagate:self];
-   if (![_z bound]) [_z whenChangeBoundsPropagate:self];
-   if (![_x boundError]) [_x whenChangeBoundsPropagate:self];
-   if (![_y boundError]) [_y whenChangeBoundsPropagate:self];
-   if (![_z boundError]) [_z whenChangeBoundsPropagate:self];
+   if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
+   if (![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -2109,7 +2086,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    makeRationalInterval(&ez, *[_z minErr], *[_z maxErr]);
    makeRationalInterval(&ex, *[_x minErr], *[_x maxErr]);
    makeRationalInterval(&ey, *[_y minErr], *[_y maxErr]);
-   makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
+   //makeRationalInterval(&eo, *[_z minErr], *[_z maxErr]);
    do {
       changed = false;
       zTemp = z;

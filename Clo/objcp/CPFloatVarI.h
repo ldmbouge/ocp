@@ -343,7 +343,7 @@ static inline void intersectionError(intersectionIntervalError* interErr, ration
    if(mpq_cmp(interErr->result.inf, interErr->result.sup) > 0) // interErr empty !
       failNow();
    
-   /*if(interErr->changed){
+   if(interErr->changed){
       rational_interval percent;
       ORRational hundred;
       mpq_inits(hundred, percent.inf, percent.sup, NULL);
@@ -376,7 +376,7 @@ static inline void intersectionError(intersectionIntervalError* interErr, ration
          interErr->changed = false;
       
       mpq_clears(hundred, percent.inf, percent.sup, NULL);
-   }*/
+   }
    mpq_set(interErr->interval.inf, original_error.inf);
    mpq_set(interErr->interval.sup, original_error.sup);
 }

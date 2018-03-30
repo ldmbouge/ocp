@@ -15,7 +15,7 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
        //id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:0.100001f up:0.399434344f];
-       id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:0.2f up:0.4f];
+       //id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:0.2f up:0.4f];
          id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.1f up:0.2f name:@"x"];
        id<ORFloatVar> y = [ORFactory floatVar:mdl low:0.2f up:0.4f name:@"y"];
        id<ORFloatVar> w = [ORFactory floatVar:mdl low:0.6f up:0.9f name:@"w"];
@@ -36,9 +36,9 @@ int main(int argc, const char * argv[]) {
        //[mdl add:[z set:[[x plus: y] sub: [x div: y]]]];
 
        NSLog(@"model: %@",mdl);
-       id<ORFloatVarArray> vs = [mdl floatVars];
+       //id<ORFloatVarArray> vs = [mdl floatVars];
        id<CPProgram> cp = [args makeProgram:mdl];
-       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       //id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
        
        //[cp setMinError:z minError:7.45e-9f];
        [cp setMinError:y minError:0.0f];
@@ -48,9 +48,9 @@ int main(int argc, const char * argv[]) {
        [cp setMinError:w minError:0.0f];
        [cp setMaxError:w maxError:0.0f];
        [cp solve:^{
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+            /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                [cp floatSplit:i call:s withVars:x];
-            }];
+            }];*/
             NSLog(@"%@",cp);
             //NSLog(@"%@ (%s)",[cp concretize:x],[cp bound:x] ? "YES" : "NO");
             /* format of 8.8e to have the same value displayed as in FLUCTUAT */

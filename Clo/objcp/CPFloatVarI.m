@@ -234,22 +234,27 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._bindEvtErr, todo, c, p);
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._minEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._minEvtErr, todo, c, p);
 }
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._maxEvtErr, todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._boundsEvtErr, todo, c, p);
 }
 - (void)whenChangeDo:(ORClosure)todo priority:(ORInt)p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._boundsEvtErr, todo, c, p);
 }
 -(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -271,14 +276,17 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    hookupEvent((id)_engine, &_net._bindEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._bindEvtErr, nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    hookupEvent((id)_engine, &_net._minEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._minEvtErr, nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    hookupEvent((id)_engine, &_net._maxEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
@@ -288,6 +296,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 - (void)whenChangePropagate:(CPCoreConstraint*)c priority:(ORInt)p
 {
    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._boundsEvtErr, nil, c, p);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
@@ -596,18 +605,22 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._bindEvtErr, todo, c, p);
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._minEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._minEvtErr, todo, c, p);
 }
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._maxEvtErr, todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+   hookupEvent((id)_engine, &_net._boundsEvtErr, todo, c, p);
 }
 -(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -629,18 +642,22 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    hookupEvent((id)_engine, &_net._bindEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._bindEvtErr, nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    hookupEvent((id)_engine, &_net._minEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._minEvtErr, nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    hookupEvent((id)_engine, &_net._maxEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+   hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {

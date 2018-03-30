@@ -27,9 +27,9 @@ int main(int argc, const char * argv[]) {
       [cp setMinError:x minError:0.0f];
       [cp setMaxError:x maxError:0.0f];
       [cp solve:^{
-         /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+         [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
             [cp floatSplit:i call:s withVars:x];
-         }];*/
+         }];
          NSLog(@"%@",cp);
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */
          /* Use printRational(ORRational r) to print a rational inside the solver */
