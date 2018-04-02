@@ -217,6 +217,18 @@
 -(void) visitDoubleLinearGEQ: (id<ORDoubleLinearGEQ>) c;
 -(void) visitDoubleMult: (id<ORDoubleMult>) c;
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c;
+-(void) visitDoubleReifyEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyNEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyNEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyLEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyLThen: (id<ORConstraint>)c;
+-(void) visitDoubleReifyLThenc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyLEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyGEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyGEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyGThenc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyGThen: (id<ORConstraint>)c;
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;

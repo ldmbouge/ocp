@@ -101,8 +101,6 @@
 -(ORDouble) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORDouble) cardinality;
--(ORDouble) density;
 -(ORDouble) magnitude;
 -(ORLDouble) domwidth;
 -(ORBool) member:(ORDouble)v;

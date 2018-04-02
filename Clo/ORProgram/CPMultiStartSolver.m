@@ -844,7 +844,7 @@
 {
    return [[self worker] member: v in: x];
 }
--(ORDouble) doubleValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORVar>) x
 {
    return [((id<CPProgram>)[self worker]) doubleValue: x];
 }

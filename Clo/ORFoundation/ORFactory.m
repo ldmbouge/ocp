@@ -627,6 +627,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
     return [[ORDoubleVarI alloc]  init: tracker];
 }
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up name:(NSString*) name
+{
+   return [[ORDoubleVarI alloc]  init: tracker low: low up: up name:name];
+}
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom name:(NSString*) name
+{
+   return [[ORDoubleVarI alloc]  init: tracker domain:dom name:name];
+}
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker name:(NSString*) name
+{
+   return [[ORDoubleVarI alloc]  init: tracker name:name];
+}
 +(id<ORLDoubleVar>) ldoubleVar: (id<ORTracker>) tracker low:(ORLDouble) low up: (ORLDouble) up
 {
     return [[ORLDoubleVarI alloc]  init: tracker low: low up: up];
@@ -690,7 +702,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       [o set:clo(k) at:k];
    return (id<ORFloatVarArray>)o;
 }
-+(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>) engine
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine
 {
    return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
 }
@@ -1814,7 +1826,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
-
 +(id<ORExpr>) expr:(id<ORExpr>) e1 mul:(id<ORVar>) var power:(ORInt) i
 {
    id<ORExpr> r = e1;
@@ -1884,6 +1895,78 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORConstraint> o = [[ORDoubleDiv alloc] initORDoubleDiv:z eq:x times:y];
     [model trackObject:o];
     return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eq: (id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleReifyEqual alloc] initDoubleReify: b equiv: x eq: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x neq: (id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleReifyNEqual alloc] initDoubleReify: b equiv: x neq: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x leq: (id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleReifyLEqual alloc] initDoubleReify: b equiv: x leq: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x geq: (id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleReifyGEqual alloc] initDoubleReify: b equiv: x geq: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x gt: (id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleReifyGThen alloc] initDoubleReify: b equiv: x gt: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x lt: (id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleReifyLThen alloc] initDoubleReify: b equiv: x lt: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORDoubleReifyEqualc alloc] initDoubleReify: b equiv:x eqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x neqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORDoubleReifyNEqualc alloc] initDoubleReify: b equiv: x neqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x leqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORDoubleReifyLEqualc alloc] initDoubleReify: b equiv: x leqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x geqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORDoubleReifyGEqualc alloc] initDoubleReify: b equiv: x geqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x gti: (ORDouble)c
+{
+   id<ORConstraint> o = [[ORDoubleReifyGThenc alloc] initDoubleReify: b equiv: x gti: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x lti: (ORDouble)c
+{
+   id<ORConstraint> o = [[ORDoubleReifyLThenc alloc] initDoubleReify: b equiv: x lti:c];
+   [model trackObject:o];
+   return o;
 }
 @end
 

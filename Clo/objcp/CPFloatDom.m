@@ -179,6 +179,3 @@
    updateMax(&_domain, maxFlt(_imax,d->_imax), _trail);
 }
 @end
-
-
-

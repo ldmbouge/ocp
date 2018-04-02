@@ -500,6 +500,54 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatReifyGThenc: visit method not defined"];
 }
+-(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyEqualc: visit method not defined"];
+}
+-(void) visitDoubleReifyEqual: (id<ORDoubleReifyEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyNEqualc: (id<ORDoubleReifyNEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyNEqualc: visit method not defined"];
+}
+-(void) visitDoubleReifyNEqual: (id<ORDoubleReifyNEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyNEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyLEqualc: (id<ORDoubleReifyLEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyLEqualc: visit method not defined"];
+}
+-(void) visitDoubleReifyLEqual: (id<ORDoubleReifyLEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyLEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyLThen: (id<ORDoubleReifyLThen>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyLThen: visit method not defined"];
+}
+-(void) visitDoubleReifyLThenc: (id<ORDoubleReifyLThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyLThenc: visit method not defined"];
+}
+-(void) visitDoubleReifyGEqualc: (id<ORDoubleReifyGEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyGEqualc: visit method not defined"];
+}
+-(void) visitDoubleReifyGEqual: (id<ORDoubleReifyGEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyGEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyGThen: (id<ORDoubleReifyGThen>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyGThen: visit method not defined"];
+}
+-(void) visitDoubleReifyGThenc: (id<ORDoubleReifyGThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyGThenc: visit method not defined"];
+}
 -(void) visitClause:(id<ORClause>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Clause: visit method not defined"];

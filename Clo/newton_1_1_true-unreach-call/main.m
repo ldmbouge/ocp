@@ -66,11 +66,11 @@ int main(int argc, const char * argv[]) {
          [model add:g];
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         [args printStats:g model:model program:cp];
         
          //           NSLog(@"%@", model);
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             found = true;
             for(id<ORFloatVar> v in vars){

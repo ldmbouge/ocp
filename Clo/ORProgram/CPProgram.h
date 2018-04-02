@@ -205,6 +205,9 @@ PORTABLE_BEGIN
 -(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;
 -(ORFloat) floatValue:(id<ORVar>)x;
+-(ORDouble) doubleValue: (id<ORVar>) x;
+-(ORDouble) doubleMin: (id<ORVar>)x;
+-(ORDouble) doubleMax: (id<ORVar>)x;
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
@@ -220,9 +223,6 @@ PORTABLE_BEGIN
 -(ORDouble)  cancellationQuantity:(id<ORVar>) x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
--(ORDouble) doubleValue: (id<ORRealVar>) x;
--(ORDouble) doubleMin: (id<ORRealVar>)x;
--(ORDouble) doubleMax: (id<ORRealVar>)x;
 -(ORDouble) domwidth: (id<ORRealVar>)x;
 -(ORDouble) paramValue: (id<ORRealParam>)p;
 -(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;

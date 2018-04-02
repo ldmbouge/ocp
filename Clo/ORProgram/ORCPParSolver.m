@@ -1067,7 +1067,7 @@
 {
     return [[self worker] intValue: x];
 }
--(ORDouble) doubleValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORVar>) x
 {
    return [[self worker] doubleValue: x];
 }

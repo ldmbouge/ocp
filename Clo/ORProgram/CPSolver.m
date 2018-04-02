@@ -1938,7 +1938,7 @@
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     id<CPVar> v = _gamma[getId(x[i])];
                                      LOG(_level,2,@"%@ %s %s",_gamma[getId(x[i])],[x isEnable:i] ? "" : "disabled",([v bound]) ? "b":"");
                                      if(![x isEnable:i]){
                                         if(![v bound]){
@@ -3304,9 +3304,9 @@
 {
    return [_gamma[x.getId] intValue];
 }
--(ORDouble) doubleValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORVar>) x
 {
-   return [(id<ORRealVar>)_gamma[x.getId] doubleValue];
+   return [(id<CPDoubleVar>)_gamma[x.getId] value];
 }
 -(ORFloat) floatValue:(id<ORVar>)x
 {

@@ -475,6 +475,14 @@
 {
     return (ORFloat)_value;
 }
+-(ORDouble) dmin
+{
+   return _value;
+}
+-(ORDouble) dmax
+{
+   return _value;
+}
 -(ORDouble) doubleValue
 {
     return _value;

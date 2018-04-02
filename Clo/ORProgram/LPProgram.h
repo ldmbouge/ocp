@@ -20,7 +20,7 @@
 @end
 
 @protocol LPSolution
--(ORDouble) doubleValue: (id<ORRealVar>) var;
+-(ORDouble) doubleValue: (id<ORVar>) var;
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORRealVar>) x;
 @end

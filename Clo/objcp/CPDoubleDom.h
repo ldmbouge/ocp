@@ -15,20 +15,6 @@
 
 #include <fpi.h>
 
-#define NB_DOUBLE_BY_E (4.5035996e+15)
-#define ED_MAX (2047)
-
-/*useful struct to get exponent mantissa and sign*/
-typedef union {
-    double f;
-    struct {
-        unsigned long mantisa : 52;
-        unsigned int exponent : 11;
-        unsigned int sign : 1;
-    } parts;
-} double_cast;
-
-
 @interface CPDoubleDom : NSObject<CPDoubleDom,NSCopying> {
     id<ORTrail>        _trail;
     ORDouble            _imin;
@@ -48,7 +34,6 @@ typedef union {
 -(ORInterval) bounds;
 -(ORLDouble) domwidth;
 -(TRDoubleInterval) domain;
--(ORDouble) cardinality;
 -(ORBool) member:(ORDouble)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPDoubleDom>)toRestore;

@@ -122,7 +122,6 @@ PORTABLE_BEGIN
 -(void) set: (id<ORFloatVar>) x at: (ORInt) value;
 -(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
--(id<ORASolver>) solver;
 -(id<ORIntRange>) range;
 -(ORInt) low;
 -(ORInt) up;

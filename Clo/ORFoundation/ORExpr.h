@@ -121,6 +121,8 @@ static ORVType lookup_expr_table[][9] = {
 -(ORInt) max;
 -(ORFloat) fmin;
 -(ORFloat) fmax;
+-(ORDouble) dmin;
+-(ORDouble) dmax;
 -(ORInt) intValue;
 -(ORFloat) floatValue;
 -(ORDouble) doubleValue;

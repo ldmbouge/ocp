@@ -1056,6 +1056,19 @@
 
 
 @implementation CPFactory (ORDouble)
+
++(id<CPConstraint>) doubleAssign: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleAssign alloc] init:x set:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleAssignC: (id<CPDoubleVar>) x to:(ORDouble) c
+{
+   id<CPConstraint> o = [[CPDoubleAssignC alloc] init:x set:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
    id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y];
@@ -1071,6 +1084,12 @@
 +(id<CPConstraint>) doubleNEqualc: (id<CPDoubleVar>) x to:(ORDouble) c
 {
    id<CPConstraint> o = [[CPDoubleNEqualc alloc] init:x and:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleNEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleNEqual alloc] init:x nequals:y];
    [[x tracker] trackMutable:o];
    return o;
 }
@@ -1180,6 +1199,89 @@
 {
    id<CPConstraint> o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y];
    [[x tracker] trackMutable:o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x neq: (id<CPDoubleVar>) y annotation:(ORCLevel)c
+{
+   id<CPConstraint> o = [[CPDoubleReifyNEqual alloc] initCPReify:b when:x neq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x leq:(id<CPDoubleVar>)y annotation:(ORCLevel)c
+{
+   id<CPConstraint> o = [[CPDoubleReifyLEqual alloc] initCPReifyLEqual:b when:x leqi:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x geq:(id<CPDoubleVar>)y annotation:(ORCLevel)c
+{
+   id<CPConstraint> o = [[CPDoubleReifyGEqual alloc] initCPReifyGEqual:b when:x geqi:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x lt:(id<CPDoubleVar>)y annotation:(ORCLevel)c
+{
+   id<CPConstraint> o = [[CPDoubleReifyLThen alloc] initCPReifyLThen:b when:x lti:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x gt:(id<CPDoubleVar>)y annotation:(ORCLevel)c
+{
+   id<CPConstraint> o = [[CPDoubleReifyGThen alloc] initCPReifyGThen:b when:x gti:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x eq: (id<CPDoubleVar>) y annotation:(ORCLevel)c
+{
+   id<CPConstraint> o = [[CPDoubleReifyEqual alloc] initCPReifyEqual: b when: x eqi: y];
+   [[x tracker] trackMutable: o];
+   return o;
+}
++(id<ORConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x eqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[CPDoubleReifyEqualc alloc] initCPReifyEqualc: b when: x eqi: i];
+   [[x engine] trackMutable: o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x neqi: (ORDouble) i
+{
+   id<CPConstraint> o = [[CPDoubleReifyNotEqualc alloc] initCPReifyNotEqualc: b when: x neqi: i];
+   [[x tracker] trackMutable: o];
+   return o;
+}
+
++(id<ORConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x leqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[CPDoubleReifyLEqualc alloc] initCPReifyLEqualc: b when: x leqi: i];
+   [[x tracker] trackMutable: o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x geqi: (ORDouble) i
+{
+   id<CPConstraint> o = [[CPDoubleReifyGEqualc alloc] initCPReifyGEqualc: b when: x geqi: i];
+   [[x tracker] trackMutable: o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x gti: (ORDouble) i
+{
+   id<CPConstraint> o = [[CPDoubleReifyGThenc alloc] initCPReifyGThenc: b when: x gti: i];
+   [[x tracker] trackMutable: o];
+   return o;
+}
+
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x lti: (ORDouble) i
+{
+   id<CPConstraint> o = [[CPDoubleReifyLThenc alloc] initCPReifyLThenc: b when: x lti: i];
+   [[x tracker] trackMutable: o];
    return o;
 }
 @end

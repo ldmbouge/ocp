@@ -143,6 +143,9 @@ PORTABLE_BEGIN
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker;
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up name:(NSString*) name;
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom name:(NSString*) name;
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker name:(NSString*) name;
 +(id<ORLDoubleVar>) ldoubleVar: (id<ORTracker>) tracker low:(ORLDouble) low up: (ORLDouble) up;
 +(id<ORLDoubleVar>) ldoubleVar: (id<ORTracker>) tracker domain:(id<ORLDoubleRange>) dom;
 +(id<ORLDoubleVar>) ldoubleVar: (id<ORTracker>) tracker;
@@ -175,7 +178,7 @@ PORTABLE_BEGIN
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name;
 +(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo;
-+(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>) engine;
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 
@@ -375,6 +378,18 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  geq: (ORDouble) c;
 +(id<ORConstraint>) doubleMult:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z;
 +(id<ORConstraint>) doubleDiv:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eqi: (ORDouble) i;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eq: (id<ORDoubleVar>) y;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x neq: (id<ORDoubleVar>) y;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x neqi: (ORDouble) i;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x leqi: (ORDouble) i;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x geqi: (ORDouble) i;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x leq: (id<ORDoubleVar>) y;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x geq: (id<ORDoubleVar>) y;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x gt: (id<ORDoubleVar>) y;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x lt: (id<ORDoubleVar>) y;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x gti: (ORDouble) i;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x lti: (ORDouble) i;
 @end
 
 

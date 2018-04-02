@@ -1544,6 +1544,163 @@
    }
 }
 //------
+
+-(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      ORDouble cst = [cstr cst];
+      [b visit: self];
+      [x visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify:(id<CPIntVar>)_gamma[b.getId] with:(id<CPDoubleVar>)_gamma[x.getId] eqi: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleReifyEqual: (id<ORDoubleReifyEqual>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      id<ORDoubleVar> y = [cstr y];
+      ORCLevel annotation = [_notes levelFor:cstr];
+      [b visit: self];
+      [x visit: self];
+      [y visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] eq: _gamma[y.getId] annotation: annotation];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+   
+}
+-(void) visitDoubleReifyNEqualc: (id<ORDoubleReifyNEqualc>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      ORDouble cst = [cstr cst];
+      [b visit: self];
+      [x visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] neqi: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleReifyNEqual: (id<ORDoubleReifyNEqual>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      id<ORDoubleVar> y = [cstr y];
+      ORCLevel annotation = [_notes levelFor:cstr];
+      [b visit: self];
+      [x visit: self];
+      [y visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] neq: _gamma[y.getId] annotation: annotation];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleReifyLEqualc: (id<ORDoubleReifyLEqualc>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      ORDouble cst = [cstr cst];
+      [b visit: self];
+      [x visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleReifyLThenc: (id<ORDoubleReifyLThenc>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      ORDouble cst = [cstr cst];
+      [b visit: self];
+      [x visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] lti: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleReifyLEqual: (id<ORDoubleReifyLEqual>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPDoubleVar> x = [self concreteVar:[cstr x]];
+      id<CPDoubleVar> y = [self concreteVar:[cstr y]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: x leq: y annotation: Default];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleReifyGEqualc: (id<ORDoubleReifyGEqualc>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      ORDouble cst = [cstr cst];
+      [b visit: self];
+      [x visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] geqi: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleReifyGThenc: (id<ORDoubleReifyGThenc>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      ORDouble cst = [cstr cst];
+      [b visit: self];
+      [x visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] gti: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleReifyGEqual: (id<ORDoubleReifyGEqual>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPDoubleVar> x = [self concreteVar:[cstr x]];
+      id<CPDoubleVar> y = [self concreteVar:[cstr y]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: y leq: x annotation: Default];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitDoubleReifyLThen: (id<ORDoubleReifyLThen>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPDoubleVar> x = [self concreteVar:[cstr x]];
+      id<CPDoubleVar> y = [self concreteVar:[cstr y]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: y lt: x annotation: Default];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitDoubleReifyGThen: (id<ORDoubleReifyGThen>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPDoubleVar> x = [self concreteVar:[cstr x]];
+      id<CPDoubleVar> y = [self concreteVar:[cstr y]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: y gt: x annotation: Default];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+//------
 -(void) visitDoubleEqualc:(id<ORDoubleEqualc>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {

@@ -18,6 +18,12 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
+#include "fpi.h"
+
+#define NB_DOUBLE_BY_E (4.5035996e+15)
+#define ED_MAX (2047)
+
+
 @protocol CPDoubleVarNotifier;
 
 @protocol CPDoubleVarSubscriber <NSObject>
@@ -94,3 +100,77 @@ typedef struct  {
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 @end
+
+/*useful struct to get exponent mantissa and sign*/
+typedef union {
+   double f;
+   struct {
+      unsigned long mantisa : 52;
+      unsigned int exponent : 11;
+      unsigned int sign : 1;
+   } parts;
+} double_cast;
+
+typedef struct {
+   double_interval  result;
+   int  changed;
+} intersectionIntervalD;
+
+static inline int signD(double_cast p){
+   if(p.parts.sign) return -1;
+   return 1;
+}
+
+static inline bool isDisjointWithDV(double xmin,double xmax,double ymin, double ymax)
+{
+   return (xmax < ymin) || (ymax < xmin);
+}
+
+static inline bool isIntersectingWithDV(double xmin,double xmax,double ymin, double ymax)
+{
+   return !isDisjointWithDV(xmin,xmax,ymin,ymax);
+}
+
+static inline bool isDisjointWithD(CPDoubleVarI* x, CPDoubleVarI* y)
+{
+   return isDisjointWithDV([x min], [x max], [y min], [y max]);
+}
+
+static inline bool isIntersectingWithD(CPDoubleVarI* x, CPDoubleVarI* y)
+{
+   return !isDisjointWithDV([x min],[x max], [y min], [y max]);
+}
+
+static inline bool canPrecedeD(CPDoubleVarI* x, CPDoubleVarI* y)
+{
+   return [x min] < [y min] &&  [x max] < [y max];
+}
+static inline bool canFollowD(CPDoubleVarI* x, CPDoubleVarI* y)
+{
+   return [x min] > [y min ] && [x max] > [y max];
+}
+
+static inline double_interval makeDoubleInterval(double min, double max)
+{
+   return (double_interval){min,max};
+}
+
+static inline void updateDoubleInterval(double_interval * ft,CPDoubleVarI* x)
+{
+   ft->inf = x.min;
+   ft->sup = x.max;
+}
+
+static inline intersectionIntervalD intersectionD(double_interval r, double_interval x, ORDouble percent)
+{
+   double reduced = 0;
+   int changed = 0;
+   if(percent == 0.0)
+      fpi_narrowd(&r, &x, &changed);
+   else{
+      fpi_narrowpercentd(&r, &x, &changed, percent, &reduced);
+      if(x.inf > x.sup)
+         failNow();
+   }
+   return (intersectionIntervalD){r,changed};
+}
