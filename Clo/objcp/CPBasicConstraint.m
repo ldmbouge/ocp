@@ -2891,8 +2891,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
             [self enumerateWithBlock:^(ORInt i, id<ORConstraint> c) {
                if([c nbOccurences:v] > 1){
                   found = YES;
-                  [_vars addObject:cv];
-//                 [_vars unionSet:[c allvars]];
+//                  [_vars addObject:cv];
+                  [_vars unionSet:[c allVars]];
                }
             }];
             if(!found && [cv degree] > 1){
