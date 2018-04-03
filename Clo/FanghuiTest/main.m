@@ -78,13 +78,13 @@ bool isValid(ORInt a, ORInt b, ORInt sc1, ORInt sc2);
 
 void keyExpansion(int);
 void addRoundKey(int);
-void shiftRows();
+void shiftRows(void);
 void mixColumns(int);
 void subBytes(int);
-void sideChannelCon();
-void generateLists();
-void printDebug();
-void MCFilter();
+void sideChannelCon(void);
+void generateLists(void);
+void printDebug(void);
+void MCFilter(void);
 uint32 xtimes_i(uint32 a);
 void readFile(FILE *f);
 
