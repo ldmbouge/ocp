@@ -235,11 +235,11 @@ static inline intersectionInterval intersection(float_interval r, float_interval
    int changed = 0;
    if(percent == 0.0)
       fpi_narrowf(&r, &x, &changed);
-   else{
+   else
       fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
-      if(x.inf > x.sup)
-         failNow();
-   }
+   
+   if(x.inf > x.sup)
+      failNow();
    return (intersectionInterval){r,changed};
 }
 

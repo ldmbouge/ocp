@@ -167,10 +167,10 @@ static inline intersectionIntervalD intersectionD(double_interval r, double_inte
    int changed = 0;
    if(percent == 0.0)
       fpi_narrowd(&r, &x, &changed);
-   else{
+   else
       fpi_narrowpercentd(&r, &x, &changed, percent, &reduced);
-      if(x.inf > x.sup)
-         failNow();
-   }
+   
+   if(x.inf > x.sup)
+      failNow();
    return (intersectionIntervalD){r,changed};
 }
