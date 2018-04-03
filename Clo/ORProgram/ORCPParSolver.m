@@ -539,6 +539,10 @@
 {
    [[self worker] floatDeltaSplit:i call:s withVars:vars];
 }
+-(void)          floatSplitD: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
+{
+   [[self worker] floatSplitD:i call:s withVars:vars];
+}
 -(void) floatLthen:(id<ORFloatVar>)var with:(ORFloat)val
 {
     [[self worker] floatLthen:var with:val];

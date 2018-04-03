@@ -949,7 +949,7 @@
    id<ORVarArray>          _vars;
    id<ORTrailableIntArray>      _disabled;
 }
--(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
 {
    self = [super init];
    _vars = vars;

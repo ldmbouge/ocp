@@ -681,6 +681,26 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatIntervalImpl: not implemented"];
 }
+-(void) doubleLthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleLthenImpl: not implemented"];
+}
+-(void) doubleGthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleGthenImpl: not implemented"];
+}
+-(void) doubleLEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleLEqualImpl: not implemented"];
+}
+-(void) doubleGEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleGEqualImpl: not implemented"];
+}
+-(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) u
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleIntervalImpl: not implemented"];
+}
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method restrictImpl not implemented"];
@@ -3056,6 +3076,32 @@
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
+
+-(void) floatSplitD:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+{
+   id<CPDoubleVar> xi = _gamma[getId(x[i])];
+   if([xi bound]) return;
+   ORDouble theMax = xi.max;
+   ORDouble theMin = xi.min;
+   ORDouble mid = theMin; //force to the left side if next(theMin) == theMax
+   if(fp_next_double(theMin) != theMax){
+      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
+      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
+      assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
+      mid = tmpMin/2 + tmpMax/2;
+   }
+   if(mid == theMax)
+      mid = theMin;
+   assert(mid != NAN && mid <= xi.max && mid >= xi.min);
+   [_search try: ^{
+      LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],xi,mid);
+      [self doubleGthenImpl:xi with:mid];
+   } alt: ^{
+      LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],xi,mid);
+      [self doubleLEqualImpl:xi with:mid];
+   }
+    ];
+}
 //----------------------------------------------------------
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
@@ -3852,6 +3898,44 @@
    [ORConcurrency pumpEvents];
 }
 -(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up
+{
+   ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+//--
+-(void) doubleLthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORDouble pval = fp_previous_double(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:pval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleGthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORDouble nval = fp_next_double(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:nval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleLEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleGEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) up
 {
    ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
    if (status == ORFailure)

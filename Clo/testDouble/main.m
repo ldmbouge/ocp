@@ -42,16 +42,19 @@ int main(int argc, const char * argv[]) {
          //assert(!(R == 0 && Q == 0));
          [g add:[R_0 eq:@(0.0)]];
          [g add:[Q_0 eq:@(0.0)]];
-         [g add:[a_0 eq:@(15.0)]];
+//         [g add:[a_0 eq:@(15.0)]];
          
          [model add:g];
          id<CPProgram> cp = [args makeProgram:model];
          NSLog(@"%@",g);
-         id<ORDoubleVarArray> vars = [model doubleVars];
+         id<ORDoubleVarArray> dv = [model doubleVars];
+         id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:dv engine:[cp engine]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-//            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> d) {
+               [cp floatSplitD:i call:s withVars:d];
+            }];
             found=true;
             for(id<ORVar> v in vars){
                found &= [p bound: v];
