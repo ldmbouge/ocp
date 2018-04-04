@@ -403,7 +403,7 @@
     block();
   }
 }
--(void) solve: (ORClosure) search
+-(void) solveInternal: (ORClosure) search
 {
    _objective = [_engine objective];
    [self doOnStartup];
@@ -423,37 +423,37 @@
        ];
    }
 }
+-(void) solve: (ORClosure) search
+{
+   [self solveInternal:^{
+      [[_search controller] startSearch];
+      search();
+   }];
+}
 -(void) solveOn: (void(^)(id<CPCommonProgram>))body
 {
-   ORClosure search = ^() { body(self); };
-   [self solve: search];
+   [self solveInternal: ^{
+      [[_search controller] startSearch];
+      body(self);
+   }];
 }
 -(void) solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 {
-    ORClosure newSearch = ^() { [self limitTime: limit * 1000 in: ^(){ body(self); }]; };
-   [self doOnStartup];
-    _objective = [_engine objective];
-    if (_objective != nil) {
-        _oneSol = NO;
-        [_search optimizeModel: self using: newSearch
-                    onSolution: ^{ [self doOnSolution];}
-                        onExit: ^{ [self doOnExit];}
-         ];
-        NSLog(@"Optimal Solution: %@ thread:%d\n",[_objective primalBound],[NSThread threadID]);
-    }
-    else {
-        _oneSol = YES;
-        [_search solveModel: self using: newSearch
-                 onSolution: ^{ [self doOnSolution];}
-                     onExit: ^{ [self doOnExit];}
-         ];
-    }
+   [self solveInternal: ^{
+      [self limitTime: limit * 1000 in: ^(){
+         [[_search controller] startSearch];
+         body(self);
+      }];
+   }];
 }
 -(void) solveAll: (ORClosure) search
 {
    _oneSol = NO;
    [self doOnStartup];
-   [_search solveAllModel: self using: search
+   [_search solveAllModel: self using: ^{
+      [[_search controller] startSearch];
+      search();
+   }
                onSolution: ^{ [self doOnSolution];[_engine incNbFailures:1];}
                    onExit: ^{ [self doOnExit];}
     ];
@@ -1777,6 +1777,7 @@
 {
    id<CPHeuristic> h = [self createFF];
    [self solveAll:^{
+      [[_search controller] startSearch];
       [self labelHeuristic:h];
    }];
     [_engine open];
@@ -1794,6 +1795,7 @@
 -(void) searchAll:(void*(^)(void))stask
 {
    [self solveAll:^{
+      [[_search controller] startSearch];
       id<ORSTask> theTask = (id<ORSTask>)stask();
       [theTask execute];
    }];
@@ -2397,6 +2399,44 @@
 {
    [self diffImpl: _gamma[var.getId] with: val];
    [_tracer.profiler tag:_search.controller.curNode diff:var.name with:val];
+}
+-(void) lthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self lthenImpl: _gamma[var.getId] with: val];
+   [_tracer.profiler tag:_search.controller.curNode lthen:var.name with:val];
+}
+-(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self gthenImpl: _gamma[var.getId] with: val];
+   [_tracer.profiler tag:_search.controller.curNode gthen:var.name with:val];
+}
+
+-(void) solve: (ORClosure) search
+{
+   [self solveInternal:^{
+      id<ORSearchController> prof = [[ORProfilerController alloc] initTheController:_tracer];
+      [_search applyController:prof in:^{
+         [[_search controller] startSearch];
+         search();
+         [[_search controller] onLeaf];
+      }];
+   }];
+}
+-(void) solveAll: (ORClosure) search
+{
+   _oneSol = NO;
+   [self doOnStartup];
+   [_search solveAllModel: self using: ^{
+      id<ORSearchController> prof = [[ORProfilerController alloc] initTheController:_tracer];
+      [_search applyController:prof in:^{
+         [[_search controller] startSearch];
+         search();
+         [[_search controller] onLeaf];
+      }];
+   }
+               onSolution: ^{ [self doOnSolution];[_engine incNbFailures:1];}
+                   onExit: ^{ [self doOnExit];}
+    ];
 }
 @end
 

@@ -327,9 +327,8 @@
    ORDFSController* c = [[[self class] alloc] initTheController:_tracer engine:nil posting:nil];
    free(c->_tab);
    c->_tab = malloc(sizeof(NSCont*)*_mx);
-   for(ORInt k=0;k<_sz;k++) {
+   for(ORInt k=0;k<_sz;k++)
       c->_tab[k] = _tab[k];
-   }
    c->_sz = _sz;
    c->_mx = _mx;
    return c;
@@ -406,7 +405,7 @@
    TRId              _cur;
    id<ORTracer>   _tracer;
 }
--(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
+-(id) initTheController:(id<ORTracer>)tracer
 {
    self = [super initORDefaultController];
    _tracer = tracer;
@@ -416,14 +415,14 @@
 }
 -(id<ORSearchController>)clone
 {
-   ORProfilerController* c = [[ORProfilerController alloc] initTheController:_tracer engine:nil posting:nil];
+   ORProfilerController* c = [[ORProfilerController alloc] initTheController:_tracer];
    assignTRIdNC(&c->_parent,_parent,_tracer.trail);
    assignTRIdNC(&c->_cur,_parent,_tracer.trail);
    return c;
 }
 - (id) copyWithZone: (NSZone*) zone
 {
-   ORProfilerController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:nil posting:nil];
+   ORProfilerController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }

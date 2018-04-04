@@ -16,7 +16,7 @@ autoreleasepool {
    let model = ORFactory.createModel()
    let R     = ORFactory.intRange(model, low: 0, up: ORInt(n) - 1)
    let x     = ORFactory.intVarArray(model, range: R, domain: R)
-   let e     = sum(model, R : R) { k in x[k] }   
+   //let e     = sum(model, R : R) { k in x[k] }
    for i in 0..<n  {
       for j : ORInt in i+1..<n {
          model.add(x[i] ≠ x[j])
@@ -27,8 +27,8 @@ autoreleasepool {
    let cp = ORFactory.createCPProgram(model)
    let R1 = ORFactory.intRange(model, low: 0, up: n/2)
    let R2 = ORFactory.intRange(model, low: n/2+1, up: n - 1)
-   let y1 = ORFactory.intVarArray(model, range: R1) { k in x[k] }
-   let y2 = ORFactory.intVarArray(model, range: R2) { k in x[k] }
+   //let y1 = ORFactory.intVarArray(model, range: R1) { k in x[k] }
+   //let y2 = ORFactory.intVarArray(model, range: R2) { k in x[k] }
    //cp.search { firstFail(cp, x) }
    //cp.search { sequence(cp,[firstFail(cp, y1),firstFail(cp, y2)])}
 //   cp.search {
@@ -38,7 +38,7 @@ autoreleasepool {
 //         return alts(cp,[equal(cp,y,v),diff(cp,y,v)])
 //      }
 //   }
-   let nbF = ORFactory.mutable(cp, value: 0)
+   //let nbF = ORFactory.mutable(cp, value: 0)
    cp.searchAll {
 //      repeatDo(cp, {
 //            limitSolutionsDo(cp, nbF.intValue()) { firstFail(cp, x) }

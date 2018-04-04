@@ -11,7 +11,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import ORProgram
 
-func show(cp : CPProgram,_ x : ORIntVarMatrix)
+func show(_ cp : CPProgram,_ x : ORIntVarMatrix)
 {
    let r0 = x.range(0)
    let r1 = x.range(1)
@@ -25,11 +25,11 @@ func show(cp : CPProgram,_ x : ORIntVarMatrix)
 
 autoreleasepool {
    do {
-      let buf = try String(contentsOfFile: "sudokuFile3.txt", encoding: NSASCIIStringEncoding)
+      let buf = try String(contentsOfFile: "sudokuFile3.txt", encoding: String.Encoding.ascii)
       print(buf)
-      let scan = NSScanner(string: buf)
+      let scan = Scanner(string: buf)
       var nb : Int = 0
-      scan.scanInteger(&nb)
+      scan.scanInt(&nb)
       print("#entries \(nb)\n")
       
       let model = ORFactory.createModel()
@@ -37,11 +37,11 @@ autoreleasepool {
       let x     = ORFactory.intVarMatrix(model, range: R, R, domain:R)
       
       // Read the sudoku model
-      for i in 0..<nb {
+      for _ in 0..<nb {
          var r : ORInt = 0,c : ORInt = 0,v : ORInt = 0
-         scan.scanInt(&r)
-         scan.scanInt(&c)
-         scan.scanInt(&v)
+         scan.scanInt32(&r)
+         scan.scanInt32(&c)
+         scan.scanInt32(&v)
          model.add(x[r,c] == v)
       }
       

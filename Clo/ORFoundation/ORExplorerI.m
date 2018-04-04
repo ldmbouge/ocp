@@ -411,7 +411,6 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if ([exit nbCalls]==0) {
       exit.admin = YES;
       [newCtrl setup];
-      [newCtrl startSearch];
       [_controller addChoice: exit];                           // add the choice in the original controller
       [self setController:newCtrl];                                 // install the new controller chain
       if (body) body();
@@ -439,12 +438,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if ([exit nbCalls]==0) {
       exit.admin = YES;
       [newCtrl setup];
-      [newCtrl startSearch];
       [newCtrl addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       if (body) body();
       if (onSolution) onSolution();
-      [_controller onLeaf];
       [_controller fail];                // If fail runs out of node, it will trigger finitelyFailed.
    }
    else { // if ([newCtrl isFinitelyFailed]) {
@@ -466,7 +463,6 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if ([exit nbCalls]==0) {
       exit.admin = YES;
       [newCtrl setup];
-      [newCtrl startSearch];
       [_controller addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       id<ORSearchObjectiveFunction> obj = solver.objective;

@@ -131,6 +131,7 @@
 @end
 
 @interface ORProfilerController : ORDefaultController<NSCopying,ORSearchController>
+-(id) initTheController:(id<ORTracer>)tracer;
 -(void) startSearch;
 -(void) onLeaf;
 -(id<STNode>) curNode;
