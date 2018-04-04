@@ -65,7 +65,7 @@
 
 -(void)       startTryall;
 -(void)       exitTryall;
--(void)       startTryallBody;
+-(void)       startTryallBody:(ORInt)alt;
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
@@ -100,7 +100,7 @@
 
 -(void)       startTryall;
 -(void)       exitTryall;
--(void)       startTryallBody;
+-(void)       startTryallBody:(ORInt)alt;
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;

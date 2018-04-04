@@ -249,12 +249,12 @@
    } else
       [_controller startTryRight];
 }
--(void) startTryallBody
+-(void) startTryallBody:(ORInt)alt
 {
    if (_canImprove() == ORFailure) {
       [_controller fail];
    } else
-      [_controller startTryallBody];
+      [_controller startTryallBody:alt];
 }
 -(void) startTryallOnFailure
 {

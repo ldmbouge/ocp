@@ -257,7 +257,7 @@ void lock_constructor() {
 -(void) startTryLeft
 {
 }
--(void) startTryallBody
+-(void) startTryallBody:(ORInt)alt
 {
 }
 -(void) startTryallOnFailure

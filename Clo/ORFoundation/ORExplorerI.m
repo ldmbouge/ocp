@@ -147,6 +147,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [_controller startTryall];
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
    struct TAOutput nv;
+   ORInt alt = 0;
    while (true) {
       nv = nextTAValue(ite, filter);
       if (!nv.found)
@@ -154,7 +155,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls] == 0) {
          [_controller addChoice: k];
-         [_controller startTryallBody];
+         [_controller startTryallBody:alt];
          _nbc++;
          body(nv.value);
          [_controller exitTryallBody];
@@ -168,6 +169,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
             onFailure(nv.value);
          [_controller exitTryallOnFailure];
       }
+      alt += 1;
    }
    [_controller exitTryall];
 }
@@ -183,6 +185,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    id<OROrderedSweep> ite = [ORFactory orderedSweep: _engine over: range filter: filter orderedBy: o];
    BOOL found = YES;
    ORInt sel = FDMININT;
+   ORInt alt = 0;
    while (true) {
       found = [ite next:&sel];
       if (!found)
@@ -190,7 +193,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls]==0) {
          [_controller addChoice:k];
-         [_controller startTryallBody];
+         [_controller startTryallBody:alt];
          _nbc++;
          body(sel);
          [_controller exitTryallBody];
@@ -204,6 +207,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
             onFailure(sel);
          [_controller exitTryallOnFailure];
       }
+      alt += 1;
    }   
    [_controller exitTryall];
 }

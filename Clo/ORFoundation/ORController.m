@@ -185,9 +185,9 @@
 {
    [_controller startTryall];
 }
--(void) startTryallBody
+-(void) startTryallBody:(ORInt)alt
 {
-   [_controller startTryallBody];
+   [_controller startTryallBody:alt];
 }
 -(void) exitTryallBody
 {
@@ -477,14 +477,14 @@
    [_cur commit];
    [_controller startTryall];
 }
--(void) startTryallBody
+-(void) startTryallBody:(ORInt)alt
 {
    NodeID me = {_tracer.curNode,0,0};
    NodeID p = [(id<STNode>)_cur getNodeId];
-   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:0];
+   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:alt];
    assignTRIdNC(&_parent, _cur, _tracer.trail);
    assignTRIdNC(&_cur,newNode,_tracer.trail);
-   [_controller startTryallBody];
+   [_controller startTryallBody:alt];
 }
 -(void) startTryallOnFailure
 {

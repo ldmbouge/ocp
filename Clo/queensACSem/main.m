@@ -20,7 +20,7 @@
 
 NSString* tab(int d);
 
-#define TESTTA 1
+#define TESTTA 0
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -31,14 +31,14 @@ int main (int argc, const char * argv[])
          id<ORModel> model = [ORFactory createModel];
          int n = [args size];
          id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
-         id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
+         id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];[x name:@"x"];
          id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
          id<ORIntVarArray> xn = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:-i]; }];
           [note vc: [model add: [ORFactory alldifferent: x]]];
           [note vc: [model add: [ORFactory alldifferent: xp]]];
           [note vc:[model add: [ORFactory alldifferent: xn]]];
          __block ORInt nbSol = 0;
-         [note profiling:YES];
+         //[note profiling:YES];
 
          id<CPProgram> cp = [args makeProgram:model annotation: note];
 
@@ -79,7 +79,7 @@ int main (int argc, const char * argv[])
             @synchronized(cp) {
                ++nbSol;
             }
-            [[cp explorer] fail]; // to avoid saving solutions.
+            //[[cp explorer] fail]; // to avoid saving solutions.
          }];
          ORLong endTime = [ORRuntimeMonitor cputime];
          NSLog(@"Quitting #SOL=%d",nbSol);
