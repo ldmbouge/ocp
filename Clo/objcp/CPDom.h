@@ -110,12 +110,12 @@
 -(void) restoreValue:(ORRational)toRestore for:(id<CPFloatVarNotifier>)x;
 @end
 
-@protocol CPDoubleVarNotifier;
-@protocol CPDoubleDom <CPADom> 
--(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x;
--(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPDoubleVarNotifier>)x;
--(void) bind:(ORDouble)val  for:(id<CPDoubleVarNotifier>)x;
+//@protocol CPDoubleVarNotifier;
+@protocol CPDoubleDom <CPADom>
+-(void) updateMin:(ORDouble)newMin for:(id<CPFloatVarNotifier>)x;
+-(void) updateMax:(ORDouble)newMax for:(id<CPFloatVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
+-(void) bind:(ORDouble)val  for:(id<CPFloatVarNotifier>)x;
 -(ORDouble) min;
 -(ORDouble) max;
 -(ORDouble) imin;
@@ -128,7 +128,7 @@
 -(NSString*)description;
 -(id) copy;
 -(void) restoreDomain:(id<CPDoubleDom>)toRestore;
--(void) restoreValue:(ORDouble)toRestore for:(id<CPDoubleVarNotifier>)x;
+-(void) restoreValue:(ORDouble)toRestore for:(id<CPFloatVarNotifier>)x;
 @end
 
 

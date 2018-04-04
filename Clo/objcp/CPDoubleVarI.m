@@ -174,7 +174,7 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
    [buf appendString:[_dom description]];
    return buf;
 }
--(void)setDelegate:(id<CPDoubleVarNotifier>)delegate
+-(void)setDelegate:(id<CPFloatVarNotifier>)delegate
 {}
 -(void) addVar:(CPDoubleVarI*)var
 {}
@@ -522,7 +522,7 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 {
 }
 
--(void) setDelegate:(id<CPDoubleVarNotifier>)delegate
+-(void) setDelegate:(id<CPFloatVarNotifier>)delegate
 {
 }
 -(void) addVar:(CPDoubleVarI*)var

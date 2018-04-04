@@ -79,12 +79,12 @@ typedef struct  {
 
 @class CPFloatVarI;
 @protocol CPFloatVarNotifier <NSObject>
--(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
--(void) bindEvt:(id<CPFloatDom>)sender;
+//-(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
+-(void) bindEvt:(id<CPADom>)sender;
 -(void) bindEvtErr:(id<CPRationalDom>)sender;
--(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPADom>)sender;
 -(void) changeMinEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPADom>)sender;
 -(void) changeMaxEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
 @end
 

@@ -17,6 +17,7 @@
 #import <objcp/CPData.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
+#import <objcp/CPFloatVarI.h>
 
 #include "fpi.h"
 
@@ -24,7 +25,7 @@
 #define ED_MAX (2047)
 
 
-@protocol CPDoubleVarNotifier;
+@protocol CPFloatVarNotifier;
 
 @protocol CPDoubleVarSubscriber <NSObject>
 // AC3 Closure Event
@@ -67,14 +68,14 @@ typedef struct  {
 } CPDoubleEventNetwork;
 
 @class CPDoubleVarI;
-@protocol CPDoubleVarNotifier <NSObject>
--(CPDoubleVarI*) findAffine: (ORDouble) scale shift: (ORDouble) shift;
--(void) bindEvt:(id<CPDoubleDom>)sender;
--(void) changeMinEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
-@end
+//@protocol CPDoubleVarNotifier <NSObject>
+//-(CPDoubleVarI*) findAffine: (ORDouble) scale shift: (ORDouble) shift;
+//-(void) bindEvt:(id<CPDoubleDom>)sender;
+//-(void) changeMinEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
+//-(void) changeMaxEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
+//@end
 
-@interface CPDoubleVarI : ORObject<CPDoubleVar,CPDoubleVarNotifier,CPDoubleVarExtendedItf> {
+@interface CPDoubleVarI : ORObject<CPDoubleVar,CPFloatVarNotifier,CPDoubleVarExtendedItf> {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
