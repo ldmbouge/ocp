@@ -108,7 +108,7 @@ static ORVType lookup_expr_table[][9] = {
     {ORTInt,  ORTInt,     ORTReal,  ORTFloat,  ORTDouble, ORTLDouble, ORTBit,   ORTSet,  ORTInt},     // ORTINT
     {ORTReal,  ORTReal,    ORTReal,  ORTReal,   ORTReal,   ORTReal,    ORTBit,   ORTSet,  ORTReal},     // ORTREAL
     {ORTFloat,  ORTFloat,   ORTReal,  ORTFloat,  ORTDouble, ORTLDouble,  ORTBit,   ORTSet, ORTFloat},      // ORTFLOAT
-    {ORTDouble,  ORTDouble,  ORTReal,  ORTDouble, ORTLDouble, ORTLDouble, ORTBit,   ORTSet, ORTDouble},      //ORTDouble
+    {ORTDouble,  ORTDouble,  ORTReal,  ORTDouble, ORTDouble, ORTLDouble, ORTBit,   ORTSet, ORTDouble},      //ORTDouble
     {ORTLDouble,  ORTLDouble, ORTReal,  ORTLDouble,ORTLDouble, ORTLDouble, ORTBit,   ORTSet, ORTLDouble},      //ORTLDouble
     {ORTBit,  ORTBit,     ORTBit,   ORTBit,   ORTBit,     ORTBit,     ORTBit,   ORTSet, ORTBit},      //ORTBIT
     {ORTSet,  ORTSet,     ORTSet,   ORTSet,   ORTSet,     ORTSet,     ORTSet,   ORTSet, ORTSet},      //ORTSET

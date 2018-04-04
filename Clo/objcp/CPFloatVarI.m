@@ -267,7 +267,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
      [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) bindEvt:(id<CPFloatDom>)sender
+-(void) bindEvt:(id<CPADom>)sender
 {
    id<CPClosureList> mList[3];
    ORUInt k = 0;
@@ -278,7 +278,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
 }
--(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPADom>)sender
 {
    id<CPClosureList> mList[4];
    ORUInt k = 0;
@@ -291,7 +291,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
 }
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPADom>)sender
 {
    id<CPClosureList> mList[4];
    ORUInt k = 0;

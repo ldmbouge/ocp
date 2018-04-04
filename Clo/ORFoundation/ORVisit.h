@@ -229,6 +229,9 @@
 -(void) visitDoubleReifyGEqual: (id<ORConstraint>)c;
 -(void) visitDoubleReifyGThenc: (id<ORConstraint>)c;
 -(void) visitDoubleReifyGThen: (id<ORConstraint>)c;
+-(void) visitDoubleAssignC: (id<ORConstraint>)c;
+-(void) visitDoubleAssign: (id<ORConstraint>)c;
+
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
@@ -267,7 +270,7 @@
 -(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
--(void) visitExprFloatAssignI:(id<ORExpr>)e;
+-(void) visitExprAssignI:(id<ORExpr>)e;
 
 // Bit
 -(void) visitBitEqualAt:(id<ORConstraint>)c;

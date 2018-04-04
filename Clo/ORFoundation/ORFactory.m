@@ -614,7 +614,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORFloatVarI alloc]  init: tracker];
 }
-
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
     return [[ORDoubleVarI alloc]  init: tracker low: low up: up];
@@ -692,7 +691,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
-      [o set:[ORFactory floatVar:tracker name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
+      [o set:[ORFactory floatVar:tracker name:[[NSString alloc] initWithFormat:@"%@[%d]",name,k]] at:k];
    return (id<ORFloatVarArray>)o;
 }
 +(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo
@@ -717,6 +716,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];
     return (id<ORDoubleVarArray>)o;
+}
++(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set:[ORFactory doubleVar:tracker name:[[NSString alloc] initWithFormat:@"%@[%d]",name,k]] at:k];
+   return (id<ORDoubleVarArray>)o;
 }
 +(id<ORLDoubleVarArray>) ldoubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORLDouble)low up:(ORLDouble)up
 {
@@ -1841,6 +1847,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORConstraint> o = [[ORDoubleEqualc alloc] initORDoubleEqualc:x eqi:c];
     [model trackObject:o];
     return o;
+}
++(id<ORConstraint>) doubleAssignC: (id<ORTracker>) model var:(id<ORDoubleVar>) x to:(ORDouble)c
+{
+   id<ORConstraint> o = [[ORDoubleAssignC alloc] initORDoubleAssignC:x to:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleAssign: (id<ORTracker>) model var:(id<ORDoubleVar>) x to:(id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleAssign alloc] initORDoubleAssign:x to:y];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) doubleNEqualc: (id<ORTracker>) model var:(id<ORDoubleVar>) x neqc:(ORDouble)c
 {

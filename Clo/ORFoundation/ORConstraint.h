@@ -145,12 +145,12 @@ enum ORGroupType {
 
 @protocol  ORDoubleNEqualc <ORConstraint>
 -(id<ORDoubleVar>) left;
--(ORInt) cst;
+-(ORDouble) cst;
 @end
 
 @protocol  ORDoubleEqualc <ORConstraint>
 -(id<ORDoubleVar>) left;
--(ORInt) cst;
+-(ORDouble) cst;
 @end
 
 @protocol  ORLEqualc <ORConstraint>

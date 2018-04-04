@@ -64,7 +64,7 @@
 {
     [_terms addIndependent:[e doubleValue]];
 }
--(void) visitExprFloatAssignI:(ORExprAssignI*)e
+-(void) visitExprAssignI:(ORExprAssignI*)e
 {
    if (_eqto) {
       id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
