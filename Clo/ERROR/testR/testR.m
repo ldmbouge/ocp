@@ -16,7 +16,7 @@ int main(int argc, const char * argv[]) {
          id<ORModel> mdl = [ORFactory createModel];
        //id<ORFloatRange> r0 = [ORFactory floatRange:mdl low:0.100001f up:0.399434344f];
        //id<ORFloatRange> r1 = [ORFactory floatRange:mdl low:0.2f up:0.4f];
-         id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.1f up:0.2f name:@"x"];
+         id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.2f up:0.3f name:@"x"];
        id<ORFloatVar> y = [ORFactory floatVar:mdl low:0.2f up:0.4f name:@"y"];
        id<ORFloatVar> w = [ORFactory floatVar:mdl low:0.6f up:0.9f name:@"w"];
        //id<ORFloatVar> u = [ORFactory floatVar:mdl];
@@ -27,9 +27,9 @@ int main(int argc, const char * argv[]) {
        //[mdl add:[w set: @(0.9f)]];
        //[mdl add:[w set: [x div:y]]];
        //[mdl add:[u set: [x plus: y]]];
-       //[mdl add:[z set: [x plus: y]]];
+       [mdl add:[z set: [x sub: y]]];
        //[mdl add:[z set: @(5.0e-1)]];
-       [mdl add:[z set: [x plus:[y plus: w]]]];
+       //[mdl add:[z set: [x plus:[y plus: w]]]];
        
        //[mdl add:[y set: @(4.0f)]];
        //[mdl add:[w set: @(1.11f)]];

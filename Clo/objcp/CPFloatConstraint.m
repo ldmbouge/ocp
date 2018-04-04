@@ -17,6 +17,10 @@
 
 #define PERCENT 5.0
 
+ORBool same_sign(ORFloat x, ORFloat y){
+   return signbit(x) == signbit(y);
+}
+
 double_interval ulp_computation(float_interval f){
    double_interval ulp;
    ORDouble max_inf, max_sup;
@@ -868,7 +872,15 @@ void divR_inv_eo(rational_interval* eo, rational_interval* ez, rational_interval
 void compute_eo_add(rational_interval* eo, rational_interval* eoTemp, float_interval x, float_interval y, float_interval z){
    intersectionIntervalError interError;
    mpq_inits(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
-   if((x.inf == x.sup) && (y.inf == y.sup)){
+   if((!same_sign(x.inf, y.inf) && !same_sign(x.sup, y.sup)) &&
+      ((y.inf/2.0f <= x.inf) && (y.sup/2.0f <= x.sup)) &&
+      ((x.inf <= y.inf*2.0f) && (x.sup <= y.sup*2.0f))){
+      ORRational zero;
+      mpq_init(zero);
+      mpq_set_d(zero, 0.0f);
+      makeRationalInterval(eoTemp, zero, zero);
+      mpq_clear(zero);
+   } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORRational tmp_eo_r, tmp_eo_fi_r;
       ORFloat tmp_eo_fi;
       
@@ -907,7 +919,9 @@ void compute_eo_add(rational_interval* eo, rational_interval* eoTemp, float_inte
 void compute_eo_sub(rational_interval* eo, rational_interval* eoTemp, float_interval x, float_interval y, float_interval z){
    intersectionIntervalError interError;
    mpq_inits(interError.result.inf,interError.result.sup,interError.interval.inf,interError.interval.sup,NULL);
-   if(minFlt(y.inf/2.0f,y.sup/2.0f) <= x.inf && maxFlt(y.inf/2.0f,y.sup/2.0f) <= x.sup && x.inf <= minFlt(2.0f*y.inf,2.0f*y.sup) && x.sup <= maxFlt(2.0f*y.inf,2.0f*y.sup)){
+   if((same_sign(x.inf, y.inf) && same_sign(x.sup, y.sup)) &&
+      ((y.sup/2.0f <= x.inf) && (y.sup/2.0f <= x.sup)) &&
+      ((x.inf <= y.inf*2.0f) && (x.sup <= y.inf*2.0f))){
       ORRational zero;
       mpq_init(zero);
       mpq_set_d(zero, 0.0f);

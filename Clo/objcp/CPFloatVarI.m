@@ -892,6 +892,16 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
    return 0.0f;
 }
+
+- (ORBool)boundError {
+   return true;
+}
+
+
+- (ORRational *)errorValue {
+   return NULL;
+}
+
 - (void)visit:(ORVisitor *)visitor
 {}
 
