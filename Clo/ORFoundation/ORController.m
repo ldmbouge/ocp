@@ -141,7 +141,6 @@
 {
    return [_controller isAborted];
 }
-
 -(void) startTry
 {
    [_controller startTry];
@@ -209,7 +208,7 @@
 }
 -(void)dealloc
 {
-   //NSLog(@"ORNestedController %p dealloc called...\n",self);
+//   NSLog(@"ORNestedController %p dealloc called...\n",self);
    [_parent release];
    [super dealloc];
 }
@@ -285,7 +284,7 @@
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
-   _atRoot = -1;
+   _atRoot =  -1;
    [model release]; // not needed
    return self;
 }
@@ -297,7 +296,7 @@
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
-   _atRoot = -1;
+   _atRoot =  -1;
    return self;
 }
 - (void) dealloc
@@ -332,14 +331,12 @@
    if (_atRoot==-1)
       _atRoot = [_tracer pushNode];
 }
-
 -(void) cleanup
 {
    while (_sz > 0)
       [_tab[--_sz] letgo];
    [_tracer popToNode:_atRoot];
 }
-
 -(ORInt) addChoice: (NSCont*)k
 {
    if (_sz >= _mx) {
@@ -351,7 +348,8 @@
       _mx <<= 1;
    }
    _tab[_sz++] = k;
-   return [_tracer pushNode];
+   ORInt nn = [_tracer pushNode];
+   return nn;
 }
 
 -(void) trust

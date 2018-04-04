@@ -572,6 +572,90 @@
 -(id<ORFloatVar>) y;
 @end
 
+//------
+
+
+@interface ORDoubleReifyEqualc : ORConstraintI<ORDoubleReifyEqualc>
+-(ORDoubleReifyEqualc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x eqi:(ORDouble)c;
+@end
+
+@interface ORDoubleReifyNEqualc : ORConstraintI<ORDoubleReifyNEqualc>
+-(ORDoubleReifyNEqualc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x neqi:(ORDouble)c;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@interface ORDoubleReifyEqual : ORConstraintI<ORDoubleReifyEqual>
+-(ORDoubleReifyEqual*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyNEqual : ORConstraintI<ORDoubleReifyNEqual>
+-(ORDoubleReifyNEqual*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x neq:(id<ORDoubleVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyLEqualc : ORConstraintI<ORDoubleReifyLEqualc>
+-(ORDoubleReifyLEqualc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x leqi:(ORDouble)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@interface ORDoubleReifyLEqual : ORConstraintI<ORDoubleReifyLEqual>
+-(ORDoubleReifyLEqual*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x leq:(id<ORDoubleVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyLThen : ORConstraintI<ORDoubleReifyLThen>
+-(ORDoubleReifyLThen*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x lt:(id<ORDoubleVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyLThenc : ORConstraintI<ORDoubleReifyLThenc>
+-(ORDoubleReifyLThenc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x lti:(ORDouble)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@interface ORDoubleReifyGEqualc : ORConstraintI<ORDoubleReifyGEqualc>
+-(ORDoubleReifyGEqualc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x geqi:(ORDouble)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@interface ORDoubleReifyGEqual : ORConstraintI<ORDoubleReifyGEqual>
+-(ORDoubleReifyGEqual*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x geq:(id<ORDoubleVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyGThenc : ORConstraintI<ORDoubleReifyGThenc>
+-(ORDoubleReifyGThenc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x gti:(ORDouble)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)   cst;
+@end
+
+@interface ORDoubleReifyGThen : ORConstraintI<ORDoubleReifyGThen>
+-(ORDoubleReifyGThen*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x gt:(id<ORDoubleVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+//--------
 
 @interface ORDoubleLinearEq : ORConstraintI<ORDoubleLinearEq>
 -(id) initDoubleLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;

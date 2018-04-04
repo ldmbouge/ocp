@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORUtilities/ORTypes.h>
+//#import <ORUtilities/ORTypes.h>
 #import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORTrailable.h>
@@ -28,6 +28,7 @@ PORTABLE_BEGIN
 -(ORInt) up;
 -(ORInt) max;
 -(ORInt) min;
+-(ORInt) average;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
@@ -40,31 +41,53 @@ PORTABLE_BEGIN
 @protocol ORFloatArray <ORObject>
 -(ORFloat) at: (ORInt) value;
 -(void) set: (ORFloat) value at: (ORInt) idx;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(ORFloat) max;
 -(ORFloat) min;
+-(ORFloat) average;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
+-(ORFloat) sumWith: (ORFloat(^)(ORFloat value,int idx))block;
 @end
 
 @protocol ORDoubleArray <ORObject>
 -(ORDouble) at: (ORInt) value;
 -(void) set: (ORDouble) value at: (ORInt) idx;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(ORDouble) max;
 -(ORDouble) min;
+-(ORDouble) average;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORDouble obj,int idx))block;
+@end
+
+@protocol ORLDoubleArray <ORObject>
+-(ORLDouble) at: (ORInt) value;
+-(void) set: (ORLDouble) value at: (ORInt) idx;
+-(ORInt) low;
+-(ORInt) up;
+-(ORLDouble) max;
+-(ORLDouble) min;
+-(ORLDouble) average;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+-(void)enumerateWith:(void(^)(ORLDouble obj,int idx))block;
 @end
 
 @protocol ORIntRangeArray <ORObject>

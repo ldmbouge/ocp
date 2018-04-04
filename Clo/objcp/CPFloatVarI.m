@@ -46,7 +46,7 @@
       _value = [v value];
    }
    else {
-      _value = 0.0;
+      _value = 0.0f;
       _bound = FALSE;
    }
     if ([v boundError]) {
@@ -175,7 +175,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail]];
    _recv = nil;
    _hasValue = false;
-   _value = 0.0;
+   _value = 0.0f;
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    return self;
@@ -344,7 +344,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender
 {
-   id<CPClosureList> mList[6];
+   id<CPClosureList> mList[4];
    ORUInt k = 0;
    mList[k] = _net._minEvt;
    k += mList[k] != NULL;
@@ -370,7 +370,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender
 {
-   id<CPClosureList> mList[6];
+   id<CPClosureList> mList[4];
    ORUInt k = 0;
    mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
@@ -738,7 +738,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
-   id<CPClosureList> mList[6];
+   id<CPClosureList> mList[4];
    ORUInt k = 0;
    mList[k] = _net._minEvt;
    k += mList[k] != NULL;
@@ -751,7 +751,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) changeMaxEvt:(ORInt) dsz sender:(id<CPFloatDom>)sender
 {
-   id<CPClosureList> mList[6];
+   id<CPClosureList> mList[4];
    ORUInt k = 0;
    mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
@@ -889,16 +889,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 -(ORFloat) magnitude
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
-    return 0.0;
-}
-- (ORBool)boundError {
-    return [_theVar bound];
-}
-- (ORRational *)errorValue {
-    ORRational* errV = NULL;
-    mpq_set_d(*errV, [_theVar min]);
-    return errV;
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
+   return 0.0f;
 }
 - (void)visit:(ORVisitor *)visitor
 {}

@@ -1,5 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 
 void check_solution(float a,float b, float c, float r, float q, float Q, float R, float R2, float Q3, float CR2, float CQ3){
    bool err = false;
@@ -91,18 +92,15 @@ int main(int argc, const char * argv[]) {
          //assert(!(R == 0 && Q == 0));
          [g add:[R_0 eq:@(0.0f)]];
          [g add:[Q_0 eq:@(0.0f)]];
-         [g add:[a_0 eq:@(15.0f)]];
+//         [g add:[a_0 eq:@(15.0f)]];
          
          [model add:g];
          id<CPProgram> cp = [args makeProgram:model];
          
          id<ORFloatVarArray> vars = [model floatVars];
-         NSLog(@"%@",model);
-         //         id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            //            NSLog(@"%@",p);
-            
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;

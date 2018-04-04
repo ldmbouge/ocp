@@ -91,12 +91,15 @@ PORTABLE_BEGIN
 -(void)          floatStatic3WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
 -(void)          floatStatic5WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
 -(void)          floatStatic6WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
+-(void)          floatSplitD: (ORUInt) x call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars;
 -(void)          floatSplit: (ORUInt) x call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars;
 -(void)          float3BSplit:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
 -(void)          floatAbsSplit: (ORUInt) x by:(id<CPFloatVar>) y  call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          float3WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
 -(void)          float5WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
 -(void)          float6WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
+-(void)          floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
+-(void)          floatDeltaSplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x;
 -(void)          realLabel: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;
@@ -203,6 +206,9 @@ PORTABLE_BEGIN
 -(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;
 -(ORFloat) floatValue:(id<ORVar>)x;
+-(ORDouble) doubleValue: (id<ORVar>) x;
+-(ORDouble) doubleMin: (id<ORVar>)x;
+-(ORDouble) doubleMax: (id<ORVar>)x;
 -(ORFloat) minError:(PNONNULL id<ORVar>)x;
 -(ORFloat) maxError:(PNONNULL id<ORVar>)x;
 -(void) setMinError:(PNONNULL id<ORVar>)x minError:(ORFloat) minError;
@@ -217,11 +223,13 @@ PORTABLE_BEGIN
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
 -(ORUInt)  maxOccurences:(id<ORVar>) x;
+-(ORLDouble) density: (id<ORFloatVar>) x;
+-(ORDouble) cardinality: (id<ORFloatVar>) x;
+-(ORUInt)  countMemberedConstraints:(id<ORVar>) x;
+-(ORDouble) fdomwidth:(id<ORFloatVar>) x;
+-(ORDouble)  cancellationQuantity:(id<ORVar>) x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
--(ORDouble) doubleValue: (id<ORRealVar>) x;
--(ORDouble) doubleMin: (id<ORRealVar>)x;
--(ORDouble) doubleMax: (id<ORRealVar>)x;
 -(ORDouble) domwidth: (id<ORRealVar>)x;
 -(ORDouble) paramValue: (id<ORRealParam>)p;
 -(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;

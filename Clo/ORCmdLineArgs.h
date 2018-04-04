@@ -53,7 +53,9 @@ enum ValHeuristic
    dynamic5Split = 6,
    dynamic6Split = 7,
    split3B = 8,
-   dedicatedSplit = 9
+   dedicatedSplit = 9,
+   Esplit = 10,
+   Dsplit = 11
 };
 struct ORResult {
    ORInt found;
@@ -77,6 +79,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORDouble kbpercent;
 @property (nonatomic,readonly) ORBool unique;
 @property (nonatomic,readonly) ORFloat search3Bpercent;
+@property (nonatomic,readonly) ORInt searchNBFloats;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
 @property (nonatomic,readonly) ORInt    level;
@@ -88,6 +91,7 @@ struct ORResult {
 -(id<ORGroup>)makeGroup:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
+-(void) printStats:(id<ORGroup>) g model:(id<ORModel>)m program:(id<CPProgram>)p;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
--(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORFloatVarArray>)x;
+-(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;
 @end

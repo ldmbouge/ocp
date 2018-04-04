@@ -63,6 +63,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "doubleArray: visit method not defined"];    
 }
+-(void) visitLDoubleArray:(id<ORLDoubleArray>)v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ldoubleArray: visit method not defined"];
+}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntMatrix: visit method not defined"];    
@@ -495,6 +499,54 @@
 -(void) visitFloatReifyGThenc: (id<ORFloatReifyGThenc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatReifyGThenc: visit method not defined"];
+}
+-(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyEqualc: visit method not defined"];
+}
+-(void) visitDoubleReifyEqual: (id<ORDoubleReifyEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyNEqualc: (id<ORDoubleReifyNEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyNEqualc: visit method not defined"];
+}
+-(void) visitDoubleReifyNEqual: (id<ORDoubleReifyNEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyNEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyLEqualc: (id<ORDoubleReifyLEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyLEqualc: visit method not defined"];
+}
+-(void) visitDoubleReifyLEqual: (id<ORDoubleReifyLEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyLEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyLThen: (id<ORDoubleReifyLThen>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyLThen: visit method not defined"];
+}
+-(void) visitDoubleReifyLThenc: (id<ORDoubleReifyLThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyLThenc: visit method not defined"];
+}
+-(void) visitDoubleReifyGEqualc: (id<ORDoubleReifyGEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyGEqualc: visit method not defined"];
+}
+-(void) visitDoubleReifyGEqual: (id<ORDoubleReifyGEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyGEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyGThen: (id<ORDoubleReifyGThen>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyGThen: visit method not defined"];
+}
+-(void) visitDoubleReifyGThenc: (id<ORDoubleReifyGThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyGThenc: visit method not defined"];
 }
 -(void) visitClause:(id<ORClause>)c
 {
@@ -932,6 +984,7 @@
 -(void) visitRealRange:(id<ORRealRange>)v {}
 -(void) visitIntArray:(id<ORIntArray>)v  {}
 -(void) visitDoubleArray:(id<ORDoubleArray>)v  {}
+-(void) visitLDoubleArray:(id<ORLDoubleArray>)v  {}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v  {}
 -(void) visitTrailableInt:(id<ORTrailableInt>)v  {}
 -(void) visitIntVar: (id<ORIntVar>) v  {}

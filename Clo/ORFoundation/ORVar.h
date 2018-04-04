@@ -68,6 +68,7 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
+-(NSString*) prettyname;
 @end
 
 @protocol ORDoubleVar <ORExprVar>
@@ -121,14 +122,13 @@ PORTABLE_BEGIN
 -(void) set: (id<ORFloatVar>) x at: (ORInt) value;
 -(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
--(id<ORASolver>) solver;
 -(id<ORIntRange>) range;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
--(void) disable:(ORInt) index;
--(void) enable:(ORInt) index;
--(ORBool) isEnable:(ORInt) index;
+-(void) disable:(ORUInt) index;
+-(void) enable:(ORUInt) index;
+-(ORBool) isEnable:(ORUInt) index;
 @end
 
 @protocol ORDoubleVarArray <ORVarArray>

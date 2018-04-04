@@ -26,9 +26,9 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
-#import <objcp/CPFloatVarI.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
+#import <objcp/CPFloatVarI.h>
 
 #if defined(__linux__)
 #import <values.h>
@@ -155,7 +155,8 @@
    
    ORInt                  _level;
    ORBool                 _unique;
-   ORFloat                  _split3Bpercent;
+   ORFloat                _split3Bpercent;
+   ORInt                  _searchNBFloats;
    SEL                    _subcut;
    
    id<ORIdxIntInformer>  _returnLabel;
@@ -181,8 +182,9 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
-   _level = 0;
+   _level = 100;
    _split3Bpercent = 10.f;
+   _searchNBFloats = 2;
    _subcut = @selector(float3BSplit:call:withVars:);
    _unique = NO;
    _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
@@ -348,6 +350,10 @@
 -(void) set3BSplitPercent:(ORFloat) p
 {
    _split3Bpercent = p;
+}
+-(void) setSearchNBFloats:(ORInt) p
+{
+   _searchNBFloats = p;
 }
 -(void) setSubcut:(SEL) s
 {
@@ -674,6 +680,26 @@
 -(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) u
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatIntervalImpl: not implemented"];
+}
+-(void) doubleLthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleLthenImpl: not implemented"];
+}
+-(void) doubleGthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleGthenImpl: not implemented"];
+}
+-(void) doubleLEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleLEqualImpl: not implemented"];
+}
+-(void) doubleGEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleGEqualImpl: not implemented"];
+}
+-(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) u
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method doubleIntervalImpl: not implemented"];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
@@ -1932,8 +1958,8 @@
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     LOG(_level,2,@"%@ %s",v,([v bound]) ? "b" :"");
+                                     id<CPVar> v = _gamma[getId(x[i])];
+                                     LOG(_level,2,@"%@ %s %s",_gamma[getId(x[i])],[x isEnable:i] ? "" : "disabled",([v bound]) ? "b":"");
                                      if(![x isEnable:i]){
                                         if(![v bound]){
                                            disabled.found = YES;
@@ -1945,6 +1971,7 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+//                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return (ORDouble)i;
                                  }];
    
@@ -2729,7 +2756,7 @@
    while (goon) {
       [self nestedSolve:^{
          [_search applyController:t in:^{
-            LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
+            LOG(_level,1,@"(3Bsplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
             [self floatIntervalImpl:xi low:[min value] up:[max value]];
             // The call above triggers propagation. Either this will succeed, suspend or it will fail
             // If it fails, there are provably no solution in the slice, so onSolution won't
@@ -2822,7 +2849,8 @@
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
    ORFloat mid;
-   float_interval interval[2];
+   ORInt length = 1;
+   float_interval interval[3];
    if(fp_next_float(theMin) == theMax){
       interval[0].inf = interval[0].sup = theMin;
       interval[1].inf = interval[1].sup = theMax;
@@ -2831,14 +2859,17 @@
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
+      interval[1].inf  = mid;
+      interval[1].sup = mid;
       interval[0].inf  = theMin;
       interval[0].sup = fp_previous_float(mid);
-      interval[1].inf = mid;
-      interval[1].sup = theMax;
+      interval[2].inf = fp_next_float(mid);
+      interval[2].sup = theMax;
+      length++;
    }
    float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,1) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"(3split) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
@@ -2916,9 +2947,9 @@
       ORFloat midInfPrev = nextafterf(midInf,-INFINITY);
       ORFloat infNext = nextafterf(theMin,+INFINITY);
       
-      interval[1].inf = interval[1].sup = midSup;
-      interval[2].inf = interval[2].sup = midInf;
-      interval[3].inf = interval[3].sup = theMin;
+      interval[2].inf = interval[2].sup = midSup;
+      interval[3].inf = interval[3].sup = midInf;
+      interval[1].inf = interval[1].sup = theMin;
       length+=3;
       if(midSupNext != supPrev){
          interval[length].inf = midSupNext;
@@ -2956,9 +2987,120 @@
    float_interval* ip = interval;
    length--;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"> START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      LOG(_level,1,@"(6split) START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
+}
+-(void) floatDeltaSplit:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
+   if([xi bound]) return;
+   float_interval interval[5];
+   ORInt length = 1;
+   if(fp_next_float(xi.min) == xi.max){
+      updateFTWithValues(&interval[0], xi.min, xi.min);
+      updateFTWithValues(&interval[1], xi.max, xi.max);
+   }else{
+      ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+      ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+      ORFloat mid = tmpMin/2 + tmpMax/2;
+      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats,mid);
+      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
+      updateFTWithValues(&interval[0],xi.min,deltaMin);
+      updateFTWithValues(&interval[1],deltaMax,xi.max);
+      length++;
+      if(deltaMin < mid && deltaMax > mid){
+         updateFTWithValues(&interval[2],mid,mid);
+         length++;
+         if(fp_next_float(deltaMin) != fp_previous_float(mid)){
+            updateFTWithValues(&interval[3],fp_next_float(deltaMin),fp_previous_float(mid));
+            length++;
+         }
+         if(deltaMax > fp_next_float(mid)){
+            updateFTWithValues(&interval[4],fp_next_float(mid),fp_previous_float(deltaMax));
+            length++;
+         }
+      }
+   }
+   float_interval* ip = interval;
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"(Deltasplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   }];
+}
+-(void) floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+{
+   id<CPFloatVar> xi = _gamma[getId(x[i])];
+   if([xi bound]) return;
+   ORInt nb = 2*_searchNBFloats+4;
+   float_interval interval[nb];//to check + assert
+   ORInt length = 1;
+   if(fp_next_float(xi.min) == xi.max){
+      updateFTWithValues(&interval[0], xi.min, xi.min);
+      updateFTWithValues(&interval[1], xi.max, xi.max);
+   }else{
+      ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
+      ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
+      ORFloat mid = tmpMin/2 + tmpMax/2;
+      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats,mid);
+      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
+      for(ORFloat v = xi.min; v <= deltaMin; v = fp_next_float(v)){
+         updateFTWithValues(&interval[length-1], v,v);
+         assert(length-1 >= 0 && length-1 < nb);
+         length++;
+      }
+      for(ORFloat v = xi.max; v >= deltaMax; v = fp_previous_float(v)){
+         updateFTWithValues(&interval[length-1],v,v);
+         assert(length-1 >= 0 && length-1 < nb);
+         length++;
+      }
+      if(deltaMin < mid && deltaMax > mid){
+         updateFTWithValues(&interval[length-1], mid,mid);
+         assert(length-1 >= 0 && length-1 < nb);
+         length++;
+         if(fp_next_float(deltaMin) != fp_previous_float(mid)){
+            updateFTWithValues(&interval[length-1],fp_next_float(deltaMin),fp_previous_float(mid));
+            assert(length-1 >= 0 && length-1 < nb);
+            length++;
+         }
+         if(deltaMax > fp_next_float(mid)){
+            updateFTWithValues(&interval[length-1],fp_next_float(mid),fp_previous_float(deltaMax));
+            assert(length-1 >= 0 && length-1 < nb);
+            length++;
+         }
+      }
+   }
+   float_interval* ip = interval;
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      LOG(_level,1,@"(Esplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   }];
+}
+
+-(void) floatSplitD:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x
+{
+   id<CPDoubleVar> xi = _gamma[getId(x[i])];
+   if([xi bound]) return;
+   ORDouble theMax = xi.max;
+   ORDouble theMin = xi.min;
+   ORDouble mid = theMin; //force to the left side if next(theMin) == theMax
+   if(fp_next_double(theMin) != theMax){
+      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
+      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
+      assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
+      mid = tmpMin/2 + tmpMax/2;
+   }
+   if(mid == theMax)
+      mid = theMin;
+   assert(mid != NAN && mid <= xi.max && mid >= xi.min);
+   [_search try: ^{
+      LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],xi,mid);
+      [self doubleGthenImpl:xi with:mid];
+   } alt: ^{
+      LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],xi,mid);
+      [self doubleLEqualImpl:xi with:mid];
+   }
+    ];
 }
 //----------------------------------------------------------
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
@@ -3208,9 +3350,9 @@
 {
    return [_gamma[x.getId] intValue];
 }
--(ORDouble) doubleValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORVar>) x
 {
-   return [(id<ORRealVar>)_gamma[x.getId] doubleValue];
+   return [(id<CPDoubleVar>)_gamma[x.getId] value];
 }
 -(ORFloat) floatValue:(id<ORVar>)x
 {
@@ -3278,12 +3420,18 @@
 {
    return [((id<CPVar>) _gamma[x.getId]) domsize];
 }
+-(ORDouble) cardinality: (id<ORFloatVar>) x
+{
+   CPFloatVarI* cx = _gamma[[x getId]];
+   ORDouble c = cardinality(cx);
+   return c;
+}
 -(ORLDouble) density: (id<ORFloatVar>) x
 {
    CPFloatVarI* cx = _gamma[[x getId]];
    ORDouble c = cardinality(cx);
-   ORLDouble w = [self fdomwidth:x];
-   return c / w;
+   ORDouble w = [self fdomwidth:x];
+   return (ORLDouble) (c / w);
 }
 -(ORUInt)  countMemberedConstraints:(id<ORVar>) x
 {
@@ -3339,7 +3487,7 @@
             v = [c varSubjectToAbsorption:cx];
             if(v == nil) continue;
             absV = [self computeAbsorptionQuantity:v by:x];
-            assert(absV >= 0.0f && absV <= 1.f);
+            assert(absV >= 0.0f && absV <= 1.f && absV != 1.7976931348623157e+308);
             if(absV){
                [abs[i] addQuantity:absV];
                if(absV > best_rate) [abs[i] setChoice:v];
@@ -3392,7 +3540,7 @@
 {
    return [((id<CPRealVar>)_gamma[x.getId]) domwidth];
 }
--(ORLDouble) fdomwidth:(id<ORFloatVar>) x
+-(ORDouble) fdomwidth:(id<ORFloatVar>) x
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
 }
@@ -3782,6 +3930,44 @@
    [ORConcurrency pumpEvents];
 }
 -(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up
+{
+   ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+//--
+-(void) doubleLthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORDouble pval = fp_previous_double(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:pval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleGthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORDouble nval = fp_next_double(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:nval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleLEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleGEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) up
 {
    ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
    if (status == ORFailure)

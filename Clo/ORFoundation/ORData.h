@@ -79,6 +79,7 @@
 
 @protocol ORFloatNumber <ORObject,ORExpr>
 -(ORFloat) floatValue;
+-(ORFloat) fmin;
 -(ORFloat) value;
 -(ORInt) intValue;
 @end

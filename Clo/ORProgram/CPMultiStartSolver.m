@@ -496,6 +496,18 @@
 {
     [[self worker] float6WaySplit:i call:s withVars:x];
 }
+-(void)          floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>)x
+{
+   [[self worker] floatEWaySplit:i call:s withVars:x];
+}
+-(void)          floatDeltaSplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>)x
+{
+   [[self worker] floatDeltaSplit:i call:s withVars:x];
+}
+-(void)          floatSplitD: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
+{
+   [[self worker] floatSplitD:i call:s withVars:vars];
+}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    [[self worker] labelArray: x];
@@ -854,7 +866,7 @@
 {
    return [[self worker] member: v in: x];
 }
--(ORDouble) doubleValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORVar>) x
 {
    return [((id<CPProgram>)[self worker]) doubleValue: x];
 }
@@ -866,6 +878,15 @@
 {
    return [[self worker] maxOccurences: x];
 }
+-(ORDouble)  cancellationQuantity:(id<ORVar>) x
+{
+   return [[self worker] cancellationQuantity: x];
+}
+-(ORDouble) fdomwidth:(id<ORFloatVar>) x
+{
+   return [[self worker] fdomwidth: x];
+}
+
 -(ORDouble) doubleMin:(id<ORRealVar>)x
 {
    return [[self worker] doubleMin:x];
@@ -917,6 +938,18 @@
 - (void)switchedSearch:(PNONNULL id<ORDisabledFloatVarArray>)x do:(void (^ PNONNULL)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    [[self worker] switchedSearch:x do:b];
+}
+- (ORUInt)countMemberedConstraints:(nonnull id<ORVar>)x
+{
+   return [[self worker] countMemberedConstraints:x];
+}
+-(ORDouble) cardinality: (id<ORFloatVar>) x
+{
+   return [[self worker] cardinality: x];
+}
+- (ORLDouble)density:(nonnull id<ORFloatVar>)x
+{
+   return [[self worker] density:x];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

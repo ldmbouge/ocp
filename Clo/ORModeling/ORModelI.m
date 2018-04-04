@@ -365,6 +365,18 @@
          rv[k++] = xk;
    return (id<ORFloatVarArray>)rv;
 }
+
+-(id<ORDoubleVarArray>)doubleVars
+{
+   ORInt k=0,nbfloat = 0;
+   for(id<ORVar> xk in _vars)
+      nbfloat += [xk conformsToProtocol:@protocol(ORDoubleVar)];
+   id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,nbfloat-1)];
+   for(id<ORVar> xk in _vars)
+      if ([xk conformsToProtocol:@protocol(ORDoubleVar)])
+         rv[k++] = xk;
+   return (id<ORDoubleVarArray>)rv;
+}
 -(id<ORRealVarArray>)realVars
 {
    ORInt k=0,nbReal = 0;

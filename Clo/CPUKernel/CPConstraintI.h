@@ -31,6 +31,7 @@ typedef id (*SELPROTO)(id,SEL,...);
 -(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
+-(id<CPFloatVar>) result;
 -(ORUInt) nbUVars;
 -(ORUInt) nbVars;
 -(void)setGroup:(id<CPGroup>)g;

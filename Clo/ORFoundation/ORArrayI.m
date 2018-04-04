@@ -162,16 +162,26 @@
    return _up;
 }
 -(ORInt) max {
+   if(_nb == 0) return 0;
     ORInt v = _array[_low];
     for(int i = _low+1; i <= _up; i++)
         if(_array[i] > v) v = _array[i];
     return v;
 }
 -(ORInt) min {
+   if(_nb == 0) return 0;
     ORInt v = _array[_low];
     for(int i = _low+1; i <= _up; i++)
         if(_array[i] < v) v = _array[i];
     return v;
+}
+-(ORInt) average
+{
+   if(_nb == 0) return 0;
+   ORInt somme = _array[_low];
+   for(int i = _low+1; i <= _up; i++)
+      somme += _array[i];
+   return somme/_nb;
 }
 -(NSUInteger)count
 {
@@ -328,13 +338,25 @@
         @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORDoubleArrayElement"];
     _array[idx] = value;
 }
+-(id)objectAtIndexedSubscript: (NSUInteger) key
+{
+   if (key < _low || key > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORDoubleArrayElement"];
+   return [NSNumber numberWithDouble:_array[key]];
+}
+-(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSUInteger) idx
+{
+   if (idx < _low || idx > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORDoubleArrayElement"];
+   _array[idx] = [newValue doubleValue];
+}
 -(void) enumerateWith: (void(^)(ORDouble obj,int idx)) block
 {
     for(ORInt i=_low;i<=_up;i++)
         block(_array[i],i);
 }
--(ORFloat) sumWith: (ORFloat(^)(ORFloat value,int idx))block {
-    __block ORFloat sum = 0.0;
+-(ORDouble) sumWith: (ORDouble(^)(ORDouble value,int idx))block {
+    __block ORDouble sum = 0.0;
     [self enumerateWith:^(ORDouble obj, int idx) {
         sum += block(obj, idx);
     }];
@@ -353,16 +375,25 @@
    return [ORFactory elt: _tracker doubleArray: self index: idx];
 }
 -(ORDouble) max {
+   if(_nb == 0) return 0;
     ORDouble v = _array[_low];
     for(int i = _low+1; i <= _up; i++)
         if(_array[i] > v) v = _array[i];
     return v;
 }
 -(ORDouble) min {
+   if(_nb == 0) return 0;
     ORDouble v = _array[_low];
     for(int i = _low+1; i <= _up; i++)
         if(_array[i] < v) v = _array[i];
     return v;
+}
+-(ORDouble) average {
+   if(_nb == 0) return 0;
+   ORLDouble somme = _array[_low];
+   for(int i = _low+1; i <= _up; i++)
+      somme += _array[i];
+   return (ORDouble)(somme/_nb);
 }
 -(NSUInteger)count
 {
@@ -409,6 +440,201 @@
 -(void) visit: (ORVisitor*) v
 {
    [v visitDoubleArray: self];
+}
+
+@end
+
+/**********************************************************************************************/
+/*                          ORLDoubleArray                                                     */
+/**********************************************************************************************/
+
+@implementation ORLDoubleArrayI
+{
+   id<ORTracker> _tracker;
+   ORLDouble*        _array;
+   ORInt             _low;
+   ORInt              _up;
+   ORInt              _nb;
+   id<ORIntRange>  _range;
+}
+
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORLDouble) value
+{
+   self = [super init];
+   _tracker = tracker;
+   _array = malloc(nb * sizeof(ORLDouble));
+   _low = 0;
+   _up = nb-1;
+   _nb = nb;
+   _range = [ORFactory intRange: tracker low: _low up: _up];
+   for (ORInt i=0 ; i < _nb; i++)
+      _array[i] = value;
+   return self;
+}
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with:(ORLDouble(^)(ORInt)) clo
+{
+   self = [super init];
+   _tracker = tracker;
+   _array = malloc(nb * sizeof(ORLDouble));
+   _low = 0;
+   _up = nb-1;
+   _nb = nb;
+   _range = [ORFactory intRange: tracker low: _low up: _up];
+   for (ORInt i=0 ; i < _nb; i++)
+      _array[i] = clo(i);
+   return self;
+}
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORLDouble) value
+{
+   self = [super init];
+   _tracker = tracker;
+   _low = range.low;
+   _up = range.up;
+   _nb = _up - _low + 1;
+   _range = range;
+   _array = malloc(_nb * sizeof(ORLDouble));
+   _array -= _low;
+   for (ORInt i=_low ; i <= _up; i++)
+      _array[i] = value;
+   return self;
+}
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORLDouble(^)(ORInt)) clo
+{
+   self = [super init];
+   _tracker = tracker;
+   _low = range.low;
+   _up = range.up;
+   _nb = _up - _low + 1;
+   _range = range;
+   _array = malloc(_nb * sizeof(ORLDouble));
+   _array -= _low;
+   for (ORInt i=_low ; i <= _up; i++)
+      _array[i] = clo(i);
+   return self;
+}
+-(ORLDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORLDouble(^)(ORInt,ORInt)) clo
+{
+   self = [super init];
+   _tracker = tracker;
+   _nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1);
+   _low = 0;
+   _up = _nb-1;
+   _range = [ORFactory intRange: tracker low: _low up: _up];
+   _array = malloc(_nb * sizeof(ORLDouble));
+   int k = 0;
+   for (ORInt i=r1.low ; i <= r1.up; i++)
+      for (ORInt j=r2.low ; j <= r2.up; j++)
+         _array[k++] = clo(i,j);
+   return self;
+}
+-(id<ORIntRange>) range
+{
+   return _range;
+}
+-(void) dealloc
+{
+   _array += _low;
+   free(_array);
+   [super dealloc];
+}
+-(ORLDouble) at: (ORInt) value
+{
+   if (value < _low || value > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORLDoubleArrayElement"];
+   return _array[value];
+}
+-(void) set: (ORLDouble) value at:(ORInt)idx
+{
+   if (idx < _low || idx > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORLDoubleArrayElement"];
+   _array[idx] = value;
+}
+-(void) enumerateWith: (void(^)(ORLDouble obj,int idx)) block
+{
+   for(ORInt i=_low;i<=_up;i++)
+      block(_array[i],i);
+}
+-(ORLDouble) sumWith: (ORLDouble(^)(ORLDouble value,int idx))block {
+   __block ORLDouble sum = 0.0;
+   [self enumerateWith:^(ORLDouble obj, int idx) {
+      sum += block(obj, idx);
+   }];
+   return sum;
+}
+-(ORInt) low
+{
+   return _low;
+}
+-(ORInt) up
+{
+   return _up;
+}
+-(ORLDouble) max {
+   if(_nb == 0) return 0;
+   ORDouble v = _array[_low];
+   for(int i = _low+1; i <= _up; i++)
+      if(_array[i] > v) v = _array[i];
+   return v;
+}
+-(ORLDouble) min {
+   if(_nb == 0) return 0;
+   ORLDouble v = _array[_low];
+   for(int i = _low+1; i <= _up; i++)
+      if(_array[i] < v) v = _array[i];
+   return v;
+}
+-(ORLDouble) average {
+   if(_nb == 0) return 0;
+   ORLDouble somme = _array[_low];
+   for(int i = _low+1; i <= _up; i++)
+      somme += _array[i];
+   return somme/_nb;
+}
+-(NSUInteger)count
+{
+   return _nb;
+}
+-(NSString*)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendString:@"["];
+   for(ORInt i=_low;i<=_up;i++) {
+      [rv appendFormat:@"%d:%Lf",i,_array[i]];
+      if (i < _up)
+         [rv appendString:@","];
+   }
+   [rv appendString:@"]"];
+   return rv;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   for(ORInt i=_low;i<=_up;i++)
+      [aCoder encodeValueOfObjCType:@encode(ORLDouble) at:_array+i];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _tracker = [[aDecoder decodeObject] retain];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   _array =  malloc(sizeof(ORLDouble)*_nb);
+   _array -= _low;
+   for(ORInt i=_low;i<=_up;i++)
+      [aDecoder decodeValueOfObjCType:@encode(ORLDouble) at:_array+i];
+   return self;
+}
+-(void) visit: (ORVisitor*) v
+{
+   [v visitLDoubleArray: self];
 }
 
 @end
@@ -520,6 +746,18 @@
         @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORFloatArrayElement"];
     _array[idx] = value;
 }
+-(id)objectAtIndexedSubscript: (NSUInteger) key
+{
+   if (key < _low || key > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORFloatArrayElement"];
+   return [NSNumber numberWithFloat:_array[key]];
+}
+-(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSUInteger) idx
+{
+   if (idx < _low || idx > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORFloatArrayElement"];
+   _array[idx] = [newValue floatValue];
+}
 -(void) enumerateWith: (void(^)(ORFloat obj,int idx)) block
 {
     for(ORInt i=_low;i<=_up;i++)
@@ -555,6 +793,12 @@
     for(int i = _low+1; i <= _up; i++)
         if(_array[i] < v) v = _array[i];
     return v;
+}
+-(ORFloat) average {
+   ORDouble somme = _array[_low];
+   for(int i = _low+1; i <= _up; i++)
+      somme += _array[i];
+   return (ORFloat)(somme/_nb);
 }
 -(NSUInteger)count
 {

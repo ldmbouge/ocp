@@ -9,6 +9,7 @@
 #import <ORProgram/ORProgram.h>
 
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 
 #define VAL 1.399f
 
@@ -43,13 +44,15 @@ int main(int argc, const char * argv[]) {
          
          [g add:[result eq:[[[[fc plus:[fc2 mul:IN]] sub: [[fc3 mul:IN ] mul:IN]] plus: [[[fc4 mul:IN] mul:IN] mul:IN]] sub:[[[[fc5 mul:IN] mul:IN] mul:IN] mul:IN]]]];
          
-         [g add:[[result lt:@(0.0f)] lor: [result geq:@(VAL)]]];
+//         [g add:[[result lt:@(0.0f)] lor: [result geq:@(VAL)]]];
+         [g add:[[result geq:@(0.0f)] land: [result lt:@(VAL)]]];
          [model add:g];
 
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;

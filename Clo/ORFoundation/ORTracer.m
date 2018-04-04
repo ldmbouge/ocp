@@ -357,6 +357,14 @@ static __thread id checkPointCache = NULL;
    [_trStack release];
    [super dealloc];
 }
+-(ORInt)      curNode
+{
+   return _lastNode;
+}
+-(void) fail
+{
+   _lastNode++;
+}
 -(ORInt) pushNode
 {
    [_trStack pushNode: _lastNode];
@@ -434,6 +442,14 @@ static __thread id checkPointCache = NULL;
    [_trStack release];
    [_cmds release];
    [super dealloc];
+}
+-(ORInt)      curNode
+{
+   return _lastNode;
+}
+-(void) fail
+{
+   _lastNode++;
 }
 -(ORInt) pushNode
 {

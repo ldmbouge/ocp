@@ -80,7 +80,7 @@
 -(ORFloat) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORLDouble) domwidth;
+-(ORDouble) domwidth;
 -(ORFloat) magnitude;
 -(ORBool) member:(ORFloat)v;
 -(NSString*)description;
@@ -122,8 +122,6 @@
 -(ORDouble) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORDouble) cardinality;
--(ORDouble) density;
 -(ORDouble) magnitude;
 -(ORLDouble) domwidth;
 -(ORBool) member:(ORDouble)v;

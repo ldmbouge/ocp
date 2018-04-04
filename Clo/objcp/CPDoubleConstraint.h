@@ -14,47 +14,13 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPDoubleDom.h>
-#include <fpi.h>
+
 
 @class CPDoubleVarI;
 
-typedef struct {
-    double_interval  result;
-    double_interval  interval;
-    int  changed;
-} intersectionDoubleInterval;
-
-static inline double_interval makeDoubleInterval(double min, double max)
-{
-    return (double_interval){min,max};
-}
-static inline intersectionDoubleInterval intersectionDouble(int changed,double_interval r, double_interval x)
-{
-    fpi_narrowd(&r, &x, &changed);
-    return (intersectionDoubleInterval){r,x,changed};
-}
-
-static inline unsigned long long cardinalityD(double xmin, double xmax){
-    double_cast i_inf;
-    double_cast i_sup;
-    if(xmin == xmax) return 1;
-    if(xmin == -infinity() && xmax == infinity()) return MAXDBL;
-    i_inf.f = xmin;
-    i_sup.f = xmax;
-    return (i_sup.parts.exponent - i_inf.parts.exponent) * NB_DOUBLE_BY_E - i_inf.parts.mantisa + i_sup.parts.mantisa;
-}
-static inline bool isDisjointWithD(double xmin,double xmax,double ymin, double ymax)
-{
-    return (xmin < ymin &&  xmax < ymin) || (ymin < xmin && ymax < xmin);
-}
-static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, double ymax)
-{
-    return !isDisjointWithD(xmin, xmax, ymin, ymax);
-}
-
 @interface CPDoubleEqual : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
 }
 -(id) init:(id)x equals:(id)y;
 -(void) post;
@@ -63,8 +29,8 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 @end
 
 @interface CPDoubleEqualc : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    ORDouble      _c;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
 }
 -(id) init:(id)x and:(ORDouble)c;
 -(void) post;
@@ -72,10 +38,39 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 -(ORUInt)nbUVars;
 @end
 
+@interface CPDoubleAssign : CPCoreConstraint {
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) init:(id)x set:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleAssignC : CPCoreConstraint {
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) init:(id)x set:(ORDouble)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleNEqual : CPCoreConstraint {
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) init:(id)x nequals:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPDoubleNEqualc : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    ORDouble      _c;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
 }
 -(id) init:(id)x and:(ORDouble)c;
 -(void) post;
@@ -84,8 +79,8 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 @end
 
 @interface CPDoubleLT : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
 }
 -(id) init:(id)x lt:(id)y;
 -(void) post;
@@ -94,8 +89,8 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 @end
 
 @interface CPDoubleGT : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
 }
 -(id) init:(id)x gt:(id)y;
 -(void) post;
@@ -105,8 +100,8 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 
 
 @interface CPDoubleLEQ : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
 }
 -(id) init:(id)x leq:(id)y;
 -(void) post;
@@ -115,8 +110,8 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 @end
 
 @interface CPDoubleGEQ : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
 }
 -(id) init:(id)x geq:(id)y;
 -(void) post;
@@ -126,36 +121,52 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 
 
 @interface CPDoubleTernaryAdd : CPCoreConstraint { // z = x + y
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _z;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+   ORInt _precision;
+   ORDouble _percent;
+   ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
+-(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
 -(void) post;
 -(NSSet*)allVars;
+-(ORBool) canLeadToAnAbsorption;
+-(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 
 
 @interface CPDoubleTernarySub : CPCoreConstraint { // z = x - y
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _z;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+   ORInt _precision;
+   ORDouble _percent;
+   ORInt _rounding;
 }
--(id) init:(id)z equals:(id)x minus:(id)y ;
+-(id) init:(id)z equals:(id)x minus:(id)y;
+-(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
+-(ORBool) canLeadToAnAbsorption;
+-(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 
 @interface CPDoubleTernaryMult : CPCoreConstraint { // z = x * y
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _z;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+   ORInt _precision;
+   ORDouble _percent;
+   ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x mult:(id)y ;
+-(id) init:(id)z equals:(id)x mult:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -163,11 +174,163 @@ static inline bool isIntersectionWithD(double xmin,double xmax,double ymin, doub
 
 
 @interface CPDoubleTernaryDiv : CPCoreConstraint { // z = x / y
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+   CPDoubleVarI* _z;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+   ORInt _precision;
+   ORDouble _percent;
+   ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x div:(id)y ;
+-(id) init:(id)z equals:(id)x div:(id)y kbpercent:(ORDouble) p;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyGEqual : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) initCPReifyGEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x geqi:(id<CPDoubleVar>)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+@interface CPDoubleReifyGThen : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) initCPReifyGThen:(id<CPIntVar>)b when:(id<CPDoubleVar>)x gti:(id<CPDoubleVar>)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyNEqual : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPDoubleVar>)x neq:(id<CPDoubleVar>)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyEqual : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(id<CPDoubleVar>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyLEqual : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) initCPReifyLEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x leqi:(id<CPDoubleVar>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyLThen : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) initCPReifyLThen:(id<CPIntVar>)b when:(id<CPDoubleVar>)x lti:(id<CPDoubleVar>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyEqualc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) initCPReifyEqualc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(ORDouble)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+
+@interface CPDoubleReifyLEqualc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) initCPReifyLEqualc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x leqi:(ORDouble)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+@interface CPDoubleReifyNotEqualc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) initCPReifyNotEqualc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x neqi:(ORDouble)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyGEqualc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) initCPReifyGEqualc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x geqi:(ORDouble)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyGThenc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) initCPReifyGThenc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x gti:(ORDouble)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleReifyLThenc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) initCPReifyLThenc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x lti:(ORDouble)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

@@ -16,6 +16,7 @@
 #import "CPEngineI.h"
 #import "fpi.h"
 
+
 @implementation CPRestrictI
 -(id) initRestrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
 {
@@ -2638,15 +2639,16 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    return [_engine trackConstraintInGroup:cg];
 }
 
--(void) add: (id<CPGroup>) p
+-(ORStatus) add: (id<CPConstraint>) p
 {
    [p setGroup:self];
    if (_nbIn >= _max) {
       _inGroup = realloc(_inGroup,sizeof(id<CPGroup>)* _max * 2);
       _max *= 2;
    }
-   _inGroup[_nbIn++] = p;
+   _inGroup[_nbIn++] = (id<CPGroup>)p;
    [_engine assignIdToConstraint:p];
+   return ORSuspend;
 }
 -(void) assignIdToConstraint:(id<ORConstraint>)c
 {
@@ -2803,13 +2805,31 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 - (void)close
 {}
+- (ORInt) size
+{
+   return _nbIn;
+}
 @end
 
 
 @implementation CP3BGroup {
    id<ORTracer>             _tracer;
+   id __unsafe_unretained* _gamma;
    ORDouble                 _percent;
    NSMutableSet*            _vars;
+   NSSet*                  _avars; //abstract vars
+}
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p vars:(NSSet*) avars gamma:(id<ORGamma>) solver
+{
+   self = [self init:engine tracer:tracer];
+   _gamma = [solver gamma];
+   _avars = [avars retain];
+   return self;
+}
+
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer vars:(NSSet*) avars gamma:(id<ORGamma>) solver
+{
+   return [self init:engine tracer:tracer percent:5 vars:avars gamma:solver];
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer
 {
@@ -2821,10 +2841,12 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    _tracer = tracer;
    _percent = p;
    _vars = [[NSMutableSet alloc] init];
+   _avars = [[NSMutableSet alloc] init];
    return self;
 }
 -(void)dealloc
 {
+   [_avars release];
    [_vars release];
    [super dealloc];
 }
@@ -2838,12 +2860,13 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [buf appendString:@"\n\t>"];
    return buf;
 }
--(void) add: (id<CPGroup>) p
+-(ORStatus) add: (id<CPConstraint>) p
 {
-   [super add:p];
+   ORStatus s = [super add:p];
    @autoreleasepool{
       [self addVars:[p allVars]];
    }
+   return s;
 }
 -(void) addVars:(NSSet *)vars
 {
@@ -2854,6 +2877,40 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(void) post
 {
    [super post];
+//   hzi : Test on 3B vars we sould reduce the number of vars involved in filtering
+//   uncomment to test new 3B
+   CPFloatVarI* cv = nil;
+   [_vars release];
+   _vars = [[NSMutableSet alloc] init];
+   @autoreleasepool{
+      //hzi : review this code to implicit call to allvars
+      for(id<ORFloatVar> v in _avars){
+         cv = _gamma[v.getId];
+         __block ORBool found = NO;
+         if(![cv bound]){
+            [self enumerateWithBlock:^(ORInt i, id<ORConstraint> c) {
+               if([c nbOccurences:v] > 1){
+                  found = YES;
+//                  [_vars addObject:cv];
+                  [_vars unionSet:[c allVars]];
+               }
+            }];
+            if(!found && [cv degree] > 1){
+               [_vars addObject:cv];
+            }
+         }
+      }
+   }
+   //hzi : remove vars already bound.
+   NSMutableArray *discardedItems = [[NSMutableArray alloc] init];
+   for (CPFloatVarI* cv in _vars) {
+      if([cv bound])
+         [discardedItems addObject:cv];
+   }
+   for(CPFloatVarI* cv in discardedItems){
+      [_vars removeObject:cv];
+   }
+   [discardedItems release];
 }
 -(void) propagate
 {

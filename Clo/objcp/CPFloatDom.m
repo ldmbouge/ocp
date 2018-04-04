@@ -112,11 +112,12 @@
     ORIReady();
     return createORI2(_domain._low, _domain._up);
 }
--(ORLDouble) domwidth
+-(ORDouble) domwidth
 {
     ORDouble min = (_domain._low == -infinityf()) ? -FLT_MAX : _domain._low;
     ORDouble max = (_domain._up == infinityf()) ? FLT_MAX : _domain._up;
     if(_domain._low == -infinityf() && _domain._up == infinityf()) return (ORDouble)FLT_MAX+(ORDouble)FLT_MAX;
+   if([self bound]) return 0.0; //hzi : to deal with such domain [+INF,+INF] -> 0
     return  max - min;
 }
 -(TRFloatInterval) domain
@@ -178,6 +179,3 @@
    updateMax(&_domain, maxFlt(_imax,d->_imax), _trail);
 }
 @end
-
-
-

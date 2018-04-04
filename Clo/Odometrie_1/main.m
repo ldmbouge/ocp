@@ -1,5 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 
 #define NBLOOPS 1
 
@@ -153,6 +154,7 @@ int main(int argc, const char * argv[]) {
          fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
             found = true;
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];

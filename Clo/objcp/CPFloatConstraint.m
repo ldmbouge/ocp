@@ -1077,11 +1077,14 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       [_x updateInterval:min and:max];
       [_y updateInterval:min and:max];
    }
-   
 }
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1115,6 +1118,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1195,6 +1202,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1303,6 +1314,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound];
@@ -1346,6 +1361,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1395,6 +1414,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound];
@@ -1437,11 +1460,14 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       assignTRInt(&_active, NO, _trail);
       return;
    }
-   
 }
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1487,17 +1513,19 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       assignTRInt(&_active, NO, _trail);
       return;
    }
-   
 }
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound];
 }
-
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ <= %@>",_x,_y];
@@ -1536,11 +1564,14 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
       assignTRInt(&_active, NO, _trail);
       return;
    }
-   
 }
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1693,6 +1724,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_z bound] + ![_x boundError] + ![_y boundError] + ![_z boundError];
@@ -1709,6 +1744,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return true;
 }
+//hzi : todo check cancellation for odometrie_10
 -(ORDouble) leadToACancellation:(id<ORVar>)x
 {
    ORInt exmin, exmax, eymin,eymax,ezmin,ezmax,gmax,zmin;
@@ -1721,7 +1757,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    gmax = max(exmin, exmax);
    gmax = max(gmax,eymin);
    gmax = max(gmax,eymax);
-   zmin = ([_z min] <= 0 && [_z max] >= 0) ? 0 : min(ezmin,ezmax);
+   zmin = (([_z min] <= 0 && [_z max] >= 0) || ([_x min] == 0.f && [_x max] == 0.f) ||([_y min] == 0.0f && [_y max] == 0.0f)) ? 0.0 : min(ezmin,ezmax);
    return gmax-zmin;
 }
 -(NSString*)description
@@ -1869,6 +1905,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
@@ -1897,7 +1937,7 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
    gmax = max(exmin, exmax);
    gmax = max(gmax,eymin);
    gmax = max(gmax,eymax);
-   zmin = ([_z min] <= 0 && [_z max] >= 0) ? 0 : min(ezmin,ezmax);
+   zmin = (([_z min] <= 0 && [_z max] >= 0) || ([_x min] == 0.f && [_x max] == 0.f) ||([_y min] == 0.0f && [_y max] == 0.0f)) ? 0.0 : min(ezmin,ezmax);
    return gmax-zmin;
 }
 -(NSString*)description
@@ -2032,6 +2072,14 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
+}
+-(id<CPFloatVar>) result
+{
+   return _z;
 }
 -(ORUInt)nbUVars
 {
@@ -2169,6 +2217,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
@@ -2276,6 +2328,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] +  ![_y bound] + ![_b bound];
@@ -2365,6 +2421,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] +  ![_y bound] + ![_b bound];
@@ -2442,6 +2502,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_x bound] + ![_b bound];
@@ -2515,6 +2579,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2590,6 +2658,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
@@ -2664,6 +2736,10 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+}
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
@@ -2719,7 +2795,11 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 }
 -(NSSet*)allVars
 {
-   return [[[NSSet alloc] initWithObjects:_x,_c,_b, nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2777,7 +2857,11 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 }
 -(NSSet*)allVars
 {
-   return [[[NSSet alloc] initWithObjects:_x,_c,_b, nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2836,7 +2920,11 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 }
 -(NSSet*)allVars
 {
-   return [[[NSSet alloc] initWithObjects:_x,_c,_b, nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2888,7 +2976,11 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 }
 -(NSSet*)allVars
 {
-   return [[[NSSet alloc] initWithObjects:_x,_c,_b, nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2946,7 +3038,11 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 }
 -(NSSet*)allVars
 {
-   return [[[NSSet alloc] initWithObjects:_x,_c,_b, nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -3005,7 +3101,11 @@ void compute_eo_div(rational_interval* eo, rational_interval* eoTemp, float_inte
 }
 -(NSSet*)allVars
 {
-   return [[[NSSet alloc] initWithObjects:_x,_c,_b, nil] autorelease];
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {

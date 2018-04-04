@@ -21,6 +21,7 @@
 #endif
 
 @implementation NSNumber (Expressions)
+#if defined(__APPLE__)
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
 {
    const char* tt = [self objCType];
@@ -40,6 +41,27 @@
    }
    return NULL;
 }
+#else
+-(id<ORExpr>) asExpression:(id<ORTracker>) tracker
+{
+   const char* tt = [self objCType];
+   if (strcmp(tt,@encode(ORInt))==0 || strcmp(tt,@encode(ORUInt)) ==0 || strcmp(tt,@encode(ORLong)) ==0 || strcmp(tt,@encode(ORULong)) ==0)
+       return [ORFactory integer:tracker value:[self intValue]];
+   else if (strcmp(class_getName([self class]),"NSSmallFloat")==0) { // THIS IS FOR CIRCUMVENTING A LINUX BUG.     
+       return [ORFactory float:tracker value:[self floatValue]];
+   } else if (strcmp(tt,@encode(double))==0 || strcmp(tt,@encode(ORDouble))==0)
+       return [ORFactory double:tracker value:[self doubleValue]];
+   //TODO
+   /*else if (strcmp(tt,@encode(long double))==0 || strcmp(tt,@encode(ORLDouble))==0)
+       return [ORFactory ldouble:tracker value:[self ldoubleValue]];*/
+   else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
+      return [ORFactory integer:tracker value:[self boolValue]];
+   else {
+      assert(NO);
+   }
+   return NULL;
+}
+#endif
 -(id<ORRelation>)  set: (id<ORExpr>)  r
 {
    return [[self asExpression:[r tracker]] set:r];
@@ -642,8 +664,18 @@
 }
 -(ORFloat) fmax
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "maxFloat not defined on expression"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "fmax not defined on expression"];
     return 0;
+}
+-(ORDouble) dmin
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "dmin not defined on expression"];
+   return 0;
+}
+-(ORDouble) dmax
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "dmax not defined on expression"];
+   return 0;
 }
 -(ORInt) intValue
 {
@@ -886,7 +918,7 @@
     else if ([e isKindOfClass:[NSNumber class]])
         re = [e asExpression:t];
     enum ORVType et = [(id<ORExpr>)re vtype];
-    if (et == ORTFloat)
+   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
         return [ORFactory expr:self lt:re track:t];
     else
         return [ORFactory expr:self leq:[re plus:[ORFactory integer:t value:1]] track:t];
@@ -899,7 +931,7 @@
    else if ([e isKindOfClass:[NSNumber class]])
       re = [e asExpression:t];
    enum ORVType et = [(id<ORExpr>)re vtype];
-   if (et == ORTFloat)
+   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
        return [ORFactory expr:self gt:re track:t];
     else
         return [ORFactory expr:self geq:[re plus:[ORFactory integer:t value:1]] track:t];
@@ -1406,17 +1438,31 @@
 }
 -(ORFloat) fmin
 {
-    ORDouble minOf = MAXINT;
+    ORFloat minOf = MAXFLOAT;
     for(ORInt k=[_array low];k<=[_array up];k++)
         minOf = minOf <[_array at:k] ? minOf : [_array at:k];
     return minOf;
 }
 -(ORFloat) fmax
 {
-    ORDouble maxOf = MININT;
+    ORFloat maxOf = -MAXFLOAT;
     for(ORInt k=[_array low];k<=[_array up];k++)
         maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
     return maxOf;
+}
+-(ORDouble) dmin
+{
+   ORDouble minOf = MAXDBL;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      minOf = minOf <[_array at:k] ? minOf : [_array at:k];
+   return minOf;
+}
+-(ORDouble) dmax
+{
+   ORDouble maxOf = -MAXDBL;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
+   return maxOf;
 }
 -(NSString *)description
 {
@@ -1473,14 +1519,28 @@
 }
 -(ORFloat) fmin
 {
-   ORDouble minOf = MAXINT;
+   ORFloat minOf = MAXFLOAT;
    for(ORInt k=[_array low];k<=[_array up];k++)
       minOf = minOf <[_array at:k] ? minOf : [_array at:k];
    return minOf;
 }
 -(ORFloat) fmax
 {
-   ORDouble maxOf = MININT;
+   ORFloat maxOf = -MAXFLOAT;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
+   return maxOf;
+}
+-(ORDouble) dmin
+{
+   ORDouble minOf = MAXDBL;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      minOf = minOf <[_array at:k] ? minOf : [_array at:k];
+   return minOf;
+}
+-(ORDouble) dmax
+{
+   ORDouble maxOf = -MAXDBL;
    for(ORInt k=[_array low];k<=[_array up];k++)
       maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
    return maxOf;
@@ -1551,6 +1611,14 @@
 {
    return maxFlt([_left fmax] ,[_right fmax]);
 }
+-(ORDouble) dmin
+{
+   return minDbl([_left dmin],[_right dmin]);
+}
+-(ORDouble) dmax
+{
+   return maxDbl([_left dmax] ,[_right dmax]);
+}
 -(void) visit:(ORVisitor*) visitor
 {
    [visitor visitExprFloatAssignI: self];
@@ -1605,6 +1673,14 @@
 -(ORFloat) fmax
 {
     return [_left fmax] + [_right fmax];
+}
+-(ORDouble) dmin
+{
+   return [_left dmin] + [_right dmin];
+}
+-(ORDouble) dmax
+{
+   return [_left dmax] + [_right dmax];
 }
 -(void) visit:(ORVisitor*) visitor
 {
@@ -1667,6 +1743,14 @@
 {
      return [_left fmax] - [_right fmin];
 }
+-(ORDouble) dmin
+{
+   return [_left dmin] - [_right dmax];
+}
+-(ORDouble) dmax
+{
+   return [_left dmax] - [_right dmin];
+}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprMinusI: self]; 
@@ -1712,15 +1796,27 @@
 }
 -(ORFloat) fmin
 {
-    ORFloat m1 = minFlt([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
-    ORFloat m2 = minFlt([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
-    return minFlt(m1,m2);
+    ORDouble m1 = minDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
+    ORDouble m2 = minDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
+    return minDbl(m1,m2);
 }
 -(ORFloat) fmax
 {
-    ORFloat m1 = maxFlt([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
-    ORFloat m2 = maxFlt([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
-    return maxFlt(m1,m2);
+    ORDouble m1 = maxDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
+    ORDouble m2 = maxDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
+    return maxDbl(m1,m2);
+}
+-(ORDouble) dmin
+{
+   ORLDouble m1 = minLDbl([_left dmin] * [_right dmin],[_left dmin] * [_right dmax]);
+   ORLDouble m2 = minLDbl([_left dmax] * [_right dmin],[_left dmax] * [_right dmax]);
+   return minLDbl(m1,m2);
+}
+-(ORDouble) dmax
+{
+   ORLDouble m1 = maxLDbl([_left dmin] * [_right dmin],[_left dmin] * [_right dmax]);
+   ORLDouble m2 = maxLDbl([_left dmax] * [_right dmin],[_left dmax] * [_right dmax]);
+   return maxLDbl(m1,m2);
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -1767,17 +1863,28 @@
 }
 -(ORFloat) fmin
 {
-    ORInt m1 = minDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
-    ORInt m2 = minDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
+    ORDouble m1 = minDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
+    ORDouble m2 = minDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
     return minDbl(m1,m2);
 
 }
 -(ORFloat) fmax
 {
-    ORInt m1 = maxDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
-    ORInt m2 = maxDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
+    ORDouble m1 = maxDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
+    ORDouble m2 = maxDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
     return maxDbl(m1,m2);
-
+}
+-(ORDouble) dmin
+{
+   ORLDouble m1 = minLDbl([_left dmin] / [_right dmin],[_left dmin] / [_right dmax]);
+   ORLDouble m2 = minLDbl([_left dmax] / [_right dmin],[_left dmax] / [_right dmax]);
+   return minLDbl(m1,m2);
+}
+-(ORDouble) dmax
+{
+   ORLDouble m1 = maxLDbl([_left dmin] / [_right dmin],[_left dmin] / [_right dmax]);
+   ORLDouble m2 = maxLDbl([_left dmax] / [_right dmin],[_left dmax] / [_right dmax]);
+   return maxLDbl(m1,m2);
 }
 -(void) visit: (ORVisitor*) visitor
 {

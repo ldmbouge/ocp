@@ -362,7 +362,6 @@
 {
     return (ORInt)ceil(_value);
 }
-
 -(ORFloat) fmin
 {
     return _value;
@@ -475,6 +474,14 @@
 -(ORFloat) fmax
 {
     return (ORFloat)_value;
+}
+-(ORDouble) dmin
+{
+   return _value;
+}
+-(ORDouble) dmax
+{
+   return _value;
 }
 -(ORDouble) doubleValue
 {

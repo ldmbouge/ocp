@@ -61,7 +61,8 @@ static inline ORLong maxOf(ORLong a,ORLong b) { return a > b ? a : b;}
 static inline ORDouble minDbl(ORDouble a,ORDouble b) { return a < b ? a : b;}
 static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 
-//static inline ORFloat rationalToFloat(ORRational* a) { return mpq_get_d(*a);}
+static inline ORLDouble minLDbl(ORLDouble a,ORLDouble b) { return a < b ? a : b;}
+static inline ORLDouble maxLDbl(ORLDouble a,ORLDouble b) { return a > b ? a : b;}
 
 static inline ORFloat minFlt(ORFloat a,ORFloat b) { return a < b ? a : b;}
 static inline ORFloat maxFlt(ORFloat a,ORFloat b) { return a > b ? a : b;}

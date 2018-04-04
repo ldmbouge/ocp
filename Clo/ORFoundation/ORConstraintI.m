@@ -138,11 +138,14 @@
 }
 -(ORBool) memberVar:(id<ORVar>)x
 {
-   NSSet *vars = [self allVars];
-   return [vars containsObject:x];
+   @autoreleasepool{
+      NSSet *vars = [self allVars];
+      return [vars containsObject:x];
+   }
 }
 -(ORUInt) nbOccurences:(id<ORVar>)x
 {
+   @autoreleasepool{
    NSArray *vars = [self allVarsArray];
    ORUInt i = 0;
    for(id<ORVar> v in vars){
@@ -150,6 +153,7 @@
          i++;
    }
    return i;
+   }
 }
 -(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
 {
@@ -252,7 +256,7 @@
    }
    [buf appendFormat:@"<%@ (%s): %p> -> ",[self class],gt,self];
    [buf appendString:@"{\n"];
-   [_content enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+   [self enumerateObjectWithBlock:^(id<ORConstraint> obj) {
       [buf appendFormat:@"\t\t%@\n",[obj description]];
    }];
    [buf appendString:@"\t}"];
@@ -268,6 +272,10 @@
 -(ORInt) size
 {
    return (ORInt)[_content count];
+}
+-(NSSet*) variables
+{
+   return [self allVars];
 }
 -(id<ORConstraint>) at: (ORInt) idx
 {
@@ -4729,6 +4737,730 @@
 
 //------------------
 
+
+@implementation ORDoubleReifyEqualc {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   ORDouble        _c;
+}
+-(ORDoubleReifyEqualc*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x eqi:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %16.16e)",[self class],self,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+@implementation ORDoubleReifyNEqualc {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   ORDouble        _c;
+}
+-(ORDoubleReifyNEqualc*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x neqi:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ != %16.16e)",[self class],self,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyNEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+@implementation ORDoubleReifyEqual {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   id<ORDoubleVar> _y;
+}
+-(ORDoubleReifyEqual*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %@)",[self class],self,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyEqual:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(id<ORDoubleVar>) y
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORDoubleReifyNEqual {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   id<ORDoubleVar> _y;
+}
+-(ORDoubleReifyNEqual*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x neq:(id<ORDoubleVar>)y
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ != %@)",[self class],self,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyNEqual:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(id<ORDoubleVar>) y
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORDoubleReifyLEqualc {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   ORDouble        _c;
+}
+-(ORDoubleReifyLEqualc*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x leqi:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ <= %16.16e)",[self class],self,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyLEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+@implementation ORDoubleReifyLEqual {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   id<ORDoubleVar> _y;
+}
+-(ORDoubleReifyLEqual*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x leq:(id<ORDoubleVar>)y
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ <= %@)",[self class],self,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyLEqual:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(id<ORDoubleVar>) y
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+@implementation ORDoubleReifyLThen {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   id<ORDoubleVar> _y;
+}
+-(ORDoubleReifyLThen*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x lt:(id<ORDoubleVar>)y
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ < %@)",[self class],self,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyLThen:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(id<ORDoubleVar>) y
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+@implementation ORDoubleReifyLThenc {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   ORDouble        _c;
+}
+-(ORDoubleReifyLThenc*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x lti:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ < %16.16e)",[self class],self,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyLThenc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+
+@implementation ORDoubleReifyGEqualc {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   ORDouble        _c;
+}
+-(ORDoubleReifyGEqualc*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x geqi:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ >= %16.16e)",[self class],self,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyGEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+@implementation ORDoubleReifyGEqual {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   id<ORDoubleVar> _y;
+}
+-(ORDoubleReifyGEqual*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x geq:(id<ORDoubleVar>)y
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ >= %@)",[self class],self,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyGEqual:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(id<ORDoubleVar>) y
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+@implementation ORDoubleReifyGThen {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   id<ORDoubleVar> _y;
+}
+-(ORDoubleReifyGThen*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x gt:(id<ORDoubleVar>)y
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ > %@)",[self class],self,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyGThen:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(id<ORDoubleVar>) y
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+@implementation ORDoubleReifyGThenc {
+   id<ORIntVar> _b;
+   id<ORDoubleVar> _x;
+   ORDouble        _c;
+}
+-(ORDoubleReifyGThenc*)initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x gti:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ > %16.16e)",[self class],self,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleReifyGThenc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORDoubleVar>) x
+{
+   return _x;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+//------------------
+
+
+
+//---------------
+
 @implementation ORDoubleMult { // x = y * z
    id<ORVar> _x;
    id<ORVar> _y;
@@ -5585,6 +6317,8 @@
 {}
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {}
+-(void) visitFloat: (id<ORFloatNumber>) e
+{}
 -(void) visitExprPlusI: (ORExprBinaryI*) e
 {
    [[e left] visit:self];
@@ -5713,6 +6447,21 @@
       [_theSet addObject:[m  flat:i]];
       [_theArray addObject:[m  flat:i]];
    }
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprGThenI:(ORExprGThenI*)e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprLThenI:(ORExprLThenI*)e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
 }
 @end
 

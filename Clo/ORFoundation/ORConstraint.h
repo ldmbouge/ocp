@@ -91,6 +91,7 @@ enum ORGroupType {
 -(void)clear;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
 -(ORInt) size;
+-(NSSet*) variables;
 -(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
 -(id<ORIntVar>)guard;
@@ -547,8 +548,92 @@ enum ORGroupType {
 -(id<ORFloatVar>) x;
 -(ORFloat)        cst;
 @end
+//-----------
+@protocol ORDoubleReifyEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORDoubleReifyNEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORDoubleReifyEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@protocol ORDoubleReifyNEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@protocol ORDoubleReifyLEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORDoubleReifyLEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@protocol ORDoubleReifyLThen <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@protocol ORDoubleReifyLThenc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORDoubleReifyGEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORDoubleReifyGEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@protocol ORDoubleReifyGThen <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@protocol ORDoubleReifyGThenc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
 
 
+@protocol ORDoubleAssign <ORConstraint>
+-(id<ORDoubleVar>) left;
+-(id<ORDoubleVar>) right;
+@end
+
+
+@protocol ORDoubleAssignC <ORConstraint>
+-(id<ORDoubleVar>) left;
+-(ORDouble) cst;
+@end
+
+//---------
 @protocol ORDoubleMult <ORConstraint>
 -(id<ORDoubleVar>) res;
 -(id<ORDoubleVar>) left;

@@ -1,6 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
-
+#include <fenv.h>
 /*
  from : Zumkeller, Roland Formal Global Optimisation with Taylor Models
  float ex9(float x1, float x2, float x3, float x4) {
@@ -48,8 +48,7 @@ int main(int argc, const char * argv[]) {
          NSLog(@"%@",[cp concretize:g]);
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
-            
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             found=true;
             for(id<ORFloatVar> v in vars){

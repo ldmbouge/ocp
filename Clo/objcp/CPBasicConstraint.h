@@ -404,7 +404,7 @@ typedef int (^intgetter) (void) ;
 
 @interface CPCDisjunction : CPCoreConstraint<CPGroup>
 -(id)   init: (id<CPEngine>) engine originals:(id<CPVarArray>)origs varMap:(NSArray*)vm;
--(void) add: (id<CPConstraint>) p;
+-(ORStatus) add: (id<CPConstraint>) p;
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure: (id<CPClosureList>) evt;
@@ -417,8 +417,9 @@ typedef int (^intgetter) (void) ;
 @interface CP3BGroup : CPGroup<CPGroup>
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer;
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer percent:(ORDouble) p;
--(void) add: (id<CPConstraint>) p;
-//-(void) assignIdToConstraint:(id<ORConstraint>)c;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p vars:(NSSet*)avars gamma:(id<ORGamma>) solver;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer vars:(NSSet*)avars gamma:(id<ORGamma>) solver;
+-(ORStatus) add: (id<CPConstraint>) p;
 -(void) addVars:(NSSet*) v;
 -(void) post;
 -(void) propagate;

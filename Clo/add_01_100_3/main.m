@@ -33,7 +33,6 @@ int main(int argc, const char * argv[]) {
          [g add:[a geq:b]];
          [g add:[b geq:c]];
          
-         
          [g add:[diffab leq:delta]];
          [g add:[diffac leq:delta]];
          [g add:[diffbc leq:delta]];
@@ -44,6 +43,11 @@ int main(int argc, const char * argv[]) {
          [g add:[assoc1 eq:[[a plus:b] plus:c]]];
          [g add:[assoc2 eq:[a plus:[b plus:c]]]];
          
+         
+//         [g add:[sub_infinity lt:assoc1]];
+//         [g add:[assoc1 lt:infinity]];
+//         [g add:[sub_infinity lt:assoc2]];
+//         [g add:[assoc2 lt:infinity]];
          [g add:[assoc1 neq:infinity]];
          [g add:[assoc1 neq:sub_infinity]];
          //
@@ -59,8 +63,7 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
-            
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];

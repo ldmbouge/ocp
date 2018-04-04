@@ -66,8 +66,7 @@
 {
    return [_engine trackConstraintInGroup:cg];
 }
-
--(void)add:(id<CPConstraint>)p
+-(ORStatus)add:(id<CPConstraint>)p
 {
    [p setGroup:self];
    if (_nbIn >= _max) {
@@ -76,6 +75,7 @@
    }
    _inGroup[_nbIn++] = p;
    [_engine assignIdToConstraint:p];
+   return ORSuspend;
 }
 -(void)assignIdToConstraint:(id<ORConstraint>)c
 {
@@ -115,7 +115,10 @@
 {
    [_engine incNbPropagation:add];
 }
-
+-(ORInt) size
+{
+   return _nbIn;
+}
 typedef id (*SELPROTO)(id,SEL,...);
 
 static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<CPConstraint>* last)
@@ -202,7 +205,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<CPGroup(%p): ",self];
+   [buf appendFormat:@"<CPGroup(%p): %d",self,_nbIn];
    for(ORInt i=0;i<_nbIn;i++) {
       [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
    }
@@ -244,7 +247,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
 {
    return [_engine trail];
 }
--(void)add:(id<CPConstraint>)p
+-(ORStatus)add:(id<CPConstraint>)p
 {
    if (_nbIn == _max) {
       _inGroup = realloc(_inGroup,sizeof(id<CPConstraint>)*_max*2);
@@ -253,6 +256,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
    _inGroup[_nbIn++] = p;
    [p setGroup:self];
    [self assignIdToConstraint:p];
+   return ORSuspend;
 }
 -(void)assignIdToConstraint:(id<ORConstraint>)c
 {
@@ -333,6 +337,10 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
       failNow();
       return ORFailure; // just to make compiler happy.
    });
+}
+-(ORInt) size
+{
+   return _nbIn;
 }
 @end
 

@@ -1,5 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 /*
  yn = [ 10.1,10.1]; t = 0.0; k = 1.2; c = 100.1;
  while(t < 1.0) do {
@@ -108,6 +109,7 @@ int main(int argc, const char * argv[]) {
          fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
             found = true;
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];

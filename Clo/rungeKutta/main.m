@@ -1,5 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 /*
  yn = [ 10.1,10.1]; t = 0.0; k = 1.2; c = 100.1;
  h=0.1;
@@ -23,7 +24,7 @@
  yn+1 = (yn + (0.016666667 * ((((TMP_7 * TMP_8) + (2.0 * TMP_28)) + (2.0 * (TMP_13 * TMP_14))) + ((1.2 * (100.099 − TMP_38)) * (100.099 − ( yn + TMP_40))))));
  }
  */
-#define NBLOOPS 2
+#define NBLOOPS 1
 
 void checksolution()//float yi, float yi_opt, float yl, float yl_opt, float diff)
 {
@@ -38,7 +39,8 @@ void checksolution()//float yi, float yi_opt, float yl, float yl_opt, float diff
    float ynext_opt = 0.0f;
    float TMP_7, TMP_8, TMP_13,TMP_14, TMP_18, TMP_28, TMP_38, TMP_40;
    int nb=0;
-   for(float y0 = -10.1f; y0 <= 10.1f; y0=nextafterf(y0, +INFINITY)){
+   //for(float y0 = -10.1f; y0 <= 10.1f; y0=nextafterf(y0, +INFINITY)){
+   float y0 = -10.1f;
       for(float y1 = -10.1f; y1 <= 10.1f; y1=nextafterf(y1, +INFINITY)){
 //         printf ("%16.16e %16.16e\n", yi, yi_opt);
          float yi=y0; float  yi_opt = y1;
@@ -69,7 +71,7 @@ void checksolution()//float yi, float yi_opt, float yl, float yl_opt, float diff
             printf ("yi : %16.16e yi_opt : %16.16e\n",y0,y1);
             break;
          }
-      }
+    //  }
    }
    printf("%d",nb);
 //   if(ynext != yl)
@@ -174,7 +176,7 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
-         checksolution();
+//         checksolution();
          fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];

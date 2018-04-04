@@ -145,6 +145,10 @@
 {
    [v visitIntVar: self];
 }
+-(NSString*) prettyname
+{
+   return _prettyname;
+}
 @end
 
 @implementation ORIntVarAffineI {
@@ -410,6 +414,7 @@
 {
    [aCoder encodeObject:_tracker];
    [aCoder encodeObject:_domain];
+   [aCoder encodeObject:_prettyname];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id) initWithCoder:(NSCoder *)aDecoder
@@ -417,6 +422,7 @@
    self = [super init];
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
+   _prettyname = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
@@ -458,6 +464,10 @@
 {
    return [_domain up];
 }
+-(NSString*) prettyname
+{
+   return _prettyname;
+}
 @end
 
 @implementation ORDoubleVarI
@@ -466,41 +476,45 @@
    id<ORTracker>    _tracker;
    id<ORDoubleRange> _domain;
    BOOL             _hasBounds;
+   NSString*         _prettyname;
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up
 {
-   self = [super init];
-   _tracker = track;
-   _domain = [ORFactory doubleRange:track low:low up:up];
-   _hasBounds = true;
-   [track trackVariable: self];
-   return self;
+   return [self init:track domain:[ORFactory doubleRange:track low:low up:up] name:nil];
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track up: (ORDouble) up
 {
-   self = [super init];
-   _tracker = track;
-   _domain = [ORFactory doubleRange:track low:0 up:up];
-   _hasBounds = true;
-   [track trackVariable: self];
-   return self;
+   return [self init:track low:-INFINITY up:+INFINITY];
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track
 {
-   self = [super init];
-   _tracker = track;
-   _hasBounds = false;
-   [track trackVariable: self];
-   return self;
+   return [self init:track low:-INFINITY up:+INFINITY];
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track domain:(id<ORDoubleRange>)dom
 {
+   return [self init:track domain:dom name:nil];
+}
+-(ORDoubleVarI*) init: (id<ORTracker>) track domain:(id<ORDoubleRange>)dom name:(NSString *)name
+{
    self = [super init];
    _tracker = track;
-   _hasBounds = false;
    _domain = dom;
+   _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
+   _prettyname = name;
    [track trackVariable: self];
    return self;
+}
+-(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up name:(NSString *)name
+{
+   return [self init:track domain:[ORFactory doubleRange:track low:low up:up] name:name];
+}
+-(ORDoubleVarI*) init: (id<ORTracker>) track up: (ORDouble) up name:(NSString *)name
+{
+   return [self init:track low:-INFINITY up:+INFINITY name:name];
+}
+-(ORDoubleVarI*) init: (id<ORTracker>) track name:(NSString *)name
+{
+   return [self init:track low:-INFINITY up:+INFINITY name:name];
 }
 -(id<ORDoubleRange>) domain
 {
@@ -509,6 +523,8 @@
 }
 -(void) dealloc
 {
+   if(_prettyname != nil)
+      [_prettyname release];
    [super dealloc];
 }
 -(enum ORVType) vtype
@@ -519,6 +535,7 @@
 {
    [aCoder encodeObject:_tracker];
    [aCoder encodeObject:_domain];
+   [aCoder encodeObject:_prettyname];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id) initWithCoder:(NSCoder *)aDecoder
@@ -526,6 +543,7 @@
    self = [super init];
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
+   _prettyname = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
@@ -535,6 +553,8 @@
 }
 -(NSString*) description
 {
+   if(_prettyname != nil)
+   return [NSString stringWithFormat:@"%@:(%lf,%lf)",_prettyname,_domain.low,_domain.up];
    return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
@@ -556,6 +576,18 @@
 -(ORDouble) up
 {
    return _domain.up;
+}
+-(ORDouble) dmin
+{
+   return [_domain low];
+}
+-(ORDouble) dmax
+{
+   return [_domain up];
+}
+-(NSString*) prettyname
+{
+   return _prettyname;
 }
 @end
 
@@ -914,55 +946,35 @@
 
 
 @implementation ORDisabledFloatVarArrayI{
-   id<ORFloatVarArray>          _vars;
+   id<ORVarArray>          _vars;
    id<ORTrailableIntArray>      _disabled;
 }
--(id<ORDisabledFloatVarArray>) init:(id<ORSearchEngine>)engine range:(id<ORIntRange>)range
-{
-   self = [super init];
-   _vars = [ORFactory floatVarArray:engine range:range];
-   _disabled = [ORFactory trailableIntArray:engine range:range value:0];
-   return self;
-}
--(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
 {
    self = [super init];
    _vars = vars;
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
-   return self;
-}
--(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine with:(ORInt(^)(ORInt)) clo
-{
-   self = [super init];
-   _vars = vars;
-   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
-   for(ORInt k = [vars range].low; k <= [vars range].up; k++)
-      [_disabled[k] setValue:clo(k)];
    return self;
 }
 -(void) dealloc
 {
    [super dealloc];
 }
--(id<ORFloatVar>) at: (ORInt) value
+-(id<ORVar>) at: (ORInt) value
 {
    return [_vars at:value];
 }
--(void) set: (id<ORFloatVar>) x at: (ORInt) value
+-(void) set: (id<ORVar>) x at: (ORInt) value
 {
    [_vars set:x at:value];
 }
--(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key
 {
    return [_vars objectAtIndexedSubscript:key];
 }
 -(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx
 {
    [_vars setObject:newValue atIndexedSubscript:idx];
-}
--(id<ORASolver>) solver
-{
-   return [_vars solver];
 }
 -(void) disable:(ORUInt) index
 {
@@ -972,7 +984,7 @@
 {
    [_disabled[index] setValue:0];
 }
--(ORInt) isEnable:(ORUInt) index
+-(ORBool) isEnable:(ORUInt) index;
 {
    return ![_disabled[index] value];
 }
@@ -996,7 +1008,7 @@
                                   objects:(id *)stackbuf
                                     count:(NSUInteger)len
 {
-  return [_vars countByEnumeratingWithState:state objects:stackbuf count:len];
+   return [_vars countByEnumeratingWithState:state objects:stackbuf count:len];
 }
 -(NSString*) description
 {

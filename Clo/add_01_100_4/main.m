@@ -20,7 +20,7 @@ int main(int argc, const char * argv[]) {
          
          
          id<ORFloatVar> delta = [ORFactory floatVar:model low:0.1f up:0.1f];
-         id<ORExpr> epsilon =  [ORFactory floatVar:model low:1.f up:100.f];
+         id<ORExpr> epsilon =  [ORFactory float:model value:100.f];
          
          
          id<ORExpr> infinity = [ORFactory infinityf:model];
@@ -60,8 +60,7 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
-            
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];

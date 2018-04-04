@@ -498,15 +498,15 @@
 }
 -(void)          floatStatic3WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] floatStatic3WaySplit:i call:s withVars:vars];
 }
 -(void)          floatStatic5WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] floatStatic5WaySplit:i call:s withVars:vars];
 }
 -(void)          floatStatic6WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] floatStatic6WaySplit:i call:s withVars:vars];
 }
 -(void)          floatAbsSplit: (ORUInt) i by:(id<CPFloatVar>) y call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x  default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
@@ -522,15 +522,27 @@
 }
 -(void)          float3WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] float3WaySplit:i call:s withVars:vars];
 }
 -(void)          float5WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] float5WaySplit:i call:s withVars:vars];
 }
 -(void)          float6WaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
 {
-    [[self worker] floatStaticSplit:i call:s withVars:vars];
+    [[self worker] float6WaySplit:i call:s withVars:vars];
+}
+-(void)          floatEWaySplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
+{
+   [[self worker] floatEWaySplit:i call:s withVars:vars];
+}
+-(void)          floatDeltaSplit: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
+{
+   [[self worker] floatDeltaSplit:i call:s withVars:vars];
+}
+-(void)          floatSplitD: (ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) vars
+{
+   [[self worker] floatSplitD:i call:s withVars:vars];
 }
 -(void) floatLthen:(id<ORFloatVar>)var with:(ORFloat)val
 {
@@ -620,6 +632,26 @@
 -(ORUInt)  maxOccurences:(id<ORVar>) x
 {
    return [[self worker] maxOccurences: x];
+}
+-(ORDouble) cardinality: (id<ORFloatVar>) x
+{
+   return [[self worker] cardinality: x];
+}
+-(ORDouble)  cancellationQuantity:(id<ORVar>) x
+{
+   return [[self worker] cancellationQuantity: x];
+}
+-(ORLDouble) density: (id<ORFloatVar>) x
+{
+   return [[self worker] density: x];
+}
+-(ORUInt)  countMemberedConstraints:(id<ORVar>) x
+{
+   return [[self worker] countMemberedConstraints: x];
+}
+-(ORDouble) fdomwidth:(id<ORFloatVar>) x
+{
+   return [[self worker] fdomwidth: x];
 }
 -(ORDouble) doubleMin:(id<ORRealVar>)x
 {
@@ -1060,7 +1092,7 @@
 {
    [[self worker] setMaxError: x maxError: maxError];
 }
--(ORDouble) doubleValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORVar>) x
 {
    return [[self worker] doubleValue: x];
 }

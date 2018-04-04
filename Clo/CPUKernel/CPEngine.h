@@ -38,7 +38,7 @@
 -(void)  tryEnforce:(ORClosure) cl;
 -(void)  tryAtomic:(ORClosure) cl;
 -(ORStatus) atomic: (ORClosure) cl;
--(void)incNbFailures:(ORInt)inc;
+-(void)incNbFailures:(ORUInt)inc;
 -(ORBool) isPropagating;
 -(ORUInt) nbFailures;
 -(ORUInt) nbPropagation;

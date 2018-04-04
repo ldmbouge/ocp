@@ -134,7 +134,6 @@ typedef union {
 
 typedef struct {
    float_interval  result;
-   float_interval  interval;
    int  changed;
 } intersectionInterval;
 
@@ -166,7 +165,7 @@ static inline float floatFromParts(unsigned int mantissa, unsigned int exponent,
 
 static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
 {
-   return (xmin < ymin &&  xmax < ymin) || (ymin < xmin && ymax < xmin);
+   return (xmax < ymin) || (ymax < xmin);
 }
 
 static inline bool isDisjointWithVR(ORRational xmin, ORRational xmax, ORRational ymin, ORRational ymax)
@@ -251,6 +250,11 @@ static inline void setRationalInterval(rational_interval* r, rational_interval* 
    mpq_set(r->inf, r2->inf);
    mpq_set(r->sup, r2->sup);
 }
+static inline void updateFTWithValues(float_interval * ft,float min, float max)
+{
+   ft->inf = min;
+   ft->sup = max;
+}
 //hzi : missing denormalised case
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 {
@@ -311,12 +315,26 @@ static inline intersectionInterval intersection(float_interval r, float_interval
    int changed = 0;
    if(percent == 0.0)
       fpi_narrowf(&r, &x, &changed);
-   else{
+   else
       fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
-      if(x.inf > x.sup)
-         failNow();
-   }
-   return (intersectionInterval){r,x,changed};
+   
+   if(x.inf > x.sup)
+      failNow();
+   return (intersectionInterval){r,changed};
+}
+
+static inline float next_nb_float(float v, int nb, float def)
+{
+   for(int i = 1; i < nb && v < def; i++)
+      v = fp_next_float(v);
+   return v;
+}
+
+static inline float previous_nb_float(float v, int nb, float def)
+{
+   for(int i = 1; i < nb && v > def; i++)
+      v = fp_previous_float(v);
+   return v;
 }
 
 static inline void intersectionError(intersectionIntervalError* interErr, rational_interval original_error, rational_interval computed_error){

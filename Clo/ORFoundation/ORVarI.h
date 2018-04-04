@@ -26,6 +26,7 @@
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
+-(NSString*) prettyname;
 -(void) visit: (ORVisitor*)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
@@ -76,8 +77,7 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
-//-(ORRational*) lowError;
-//-(ORRational*) upError;
+-(NSString*) prettyname;
 -(id<ORFloatRange>) domain;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
@@ -91,9 +91,14 @@
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up;
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker name:(NSString*) name;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom name:(NSString*) name;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up name:(NSString*) name;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up name:(NSString*) name;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(NSString*) prettyname;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
 -(id) initWithCoder:(NSCoder *)aDecoder;
@@ -145,18 +150,15 @@
 
 
 @interface ORDisabledFloatVarArrayI : ORObject<ORDisabledFloatVarArray>
--(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine;
--(id<ORDisabledFloatVarArray>) init:(id<ORSearchEngine>)engine range:(id<ORIntRange>)range;
--(id<ORDisabledFloatVarArray>) init:(id<ORFloatVarArray>) vars engine:(id<ORSearchEngine>)engine with:(ORInt(^)(ORInt)) clo;
--(id<ORFloatVar>) at: (ORInt) value;
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine;
+-(id<ORVar>) at: (ORInt) value;
 -(void) set: (id<ORFloatVar>) x at: (ORInt) value;
--(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
--(id<ORASolver>) solver;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
--(ORInt) isEnable:(ORUInt) index;
+-(ORBool) isEnable:(ORUInt) index;
 @end

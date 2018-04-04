@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORData.h>
-#import <ORFoundation/ORParameter.h>
+//#import <ORFoundation/ORParameter.h>
 
 @protocol ORTrailableInt;
 @protocol ORRealVar;
@@ -74,6 +74,7 @@
 -(void) visitLDoubleRange:(id<ORLDoubleRange>)v;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitDoubleArray:(id<ORDoubleArray>)v;
+-(void) visitLDoubleArray:(id<ORLDoubleArray>)v;
 -(void) visitFloatArray:(id<ORFloatArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
@@ -216,6 +217,18 @@
 -(void) visitDoubleLinearGEQ: (id<ORDoubleLinearGEQ>) c;
 -(void) visitDoubleMult: (id<ORDoubleMult>) c;
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c;
+-(void) visitDoubleReifyEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyNEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyNEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyLEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyLThen: (id<ORConstraint>)c;
+-(void) visitDoubleReifyLThenc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyLEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyGEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyGEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyGThenc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyGThen: (id<ORConstraint>)c;
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;

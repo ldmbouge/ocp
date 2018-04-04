@@ -9,6 +9,7 @@
 #import <ORProgram/ORProgram.h>
 
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 
 #define VAL 1.398f
 
@@ -51,6 +52,7 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;

@@ -12,7 +12,7 @@
 #import <ORUtilities/ORTypes.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORConstraint.h>
-#import <ORFoundation/ORVisit.h>
+//#import <ORFoundation/ORVisit.h>
 
 @protocol ORRelation;
 @protocol ORExpr;
@@ -121,6 +121,8 @@ static ORVType lookup_expr_table[][9] = {
 -(ORInt) max;
 -(ORFloat) fmin;
 -(ORFloat) fmax;
+-(ORDouble) dmin;
+-(ORDouble) dmax;
 -(ORInt) intValue;
 -(ORFloat) floatValue;
 -(ORDouble) doubleValue;

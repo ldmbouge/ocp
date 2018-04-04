@@ -210,19 +210,13 @@ enum CPVarClass {
 -(ORInterval) bounds;
 -(ORBool) member:(ORDouble)v;
 -(ORBool) bound;
--(ORDouble) domwidth;
--(ORDouble) cardinality;
--(ORDouble) density;
+-(ORLDouble) domwidth;
 -(ORDouble) magnitude;
 -(void) bind:(ORDouble) val;
 -(void) updateMin:(ORDouble) newMin;
 -(void) updateMax:(ORDouble) newMax;
 -(void) assignRelaxationValue: (ORDouble) f;
 -(void) updateInterval: (ORDouble) newMin and:(ORDouble) newMax;
--(ORBool) isIntersectingWith : (id<CPDoubleVar>) y;
--(ORBool) isDisjointWith : (id<CPDoubleVar>) y;
--(ORBool) canPrecede : (id<CPDoubleVar>) y;
--(ORBool) canFollow : (id<CPDoubleVar>) y;
 @end
 
 @protocol CPLDoubleVar<CPVar>

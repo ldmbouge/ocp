@@ -155,6 +155,10 @@
 {
    _result = v;
 }
+-(void) visitLDoubleArray:(id<ORLDoubleArray>)v
+{
+   _result = v;
+}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
    _result = v;
@@ -639,6 +643,62 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    _result = [_into addConstraint:c];
 }
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyEqual: (id<ORDoubleReifyEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyNEqualc: (id<ORDoubleReifyNEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyNEqual: (id<ORDoubleReifyNEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyLEqualc: (id<ORDoubleReifyLEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyLThenc: (id<ORDoubleReifyLThenc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyLEqual: (id<ORDoubleReifyLEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyLThen: (id<ORDoubleReifyLThen>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyGEqualc: (id<ORDoubleReifyGEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyGEqual: (id<ORDoubleReifyGEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyGThen: (id<ORDoubleReifyGThen>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleReifyGThenc: (id<ORDoubleReifyGThenc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleAssign: (id<ORDoubleAssign>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleAssignC: (id<ORDoubleAssignC>)c
 {
    _result = [_into addConstraint:c];
 }

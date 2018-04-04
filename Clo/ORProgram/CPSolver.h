@@ -15,7 +15,7 @@
 #import <ORProgram/CPProgram.h>
 #import <ORModeling/ORModeling.h>
 #import <CPUKernel/CPUKernel.h>
-#import <objcp/CPVar.h>
+//#import <objcp/CPVar.h>
 
 /***************************************************************************/
 /*                  This file should be private                            */
@@ -60,6 +60,7 @@
 -(void) setLevel:(ORInt) level;
 -(void) setUnique:(ORBool) u;
 -(void) set3BSplitPercent:(ORFloat) p;
+-(void) setSearchNBFloats:(ORInt) p;
 -(void) setSubcut:(SEL)s;
 -(id<ORModel>)source;
 -(ORBool) ground;

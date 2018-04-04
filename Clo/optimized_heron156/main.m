@@ -1,5 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 float check_solution(float a, float b, float c, float c_aire) {
    float aire = 0.0;
    unsigned int *aptr, *bptr, *cptr,*sqptr;
@@ -74,8 +75,7 @@ int main(int argc, const char * argv[]) {
          __block bool found = false;
          NSLog(@"%@",[cp concretize:g]);
          [cp solveOn:^(id<CPCommonProgram> p) {
-            
-            
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             found=true;
             for(id<ORFloatVar> v in vars){
