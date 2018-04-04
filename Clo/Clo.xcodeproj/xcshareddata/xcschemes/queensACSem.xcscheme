@@ -63,7 +63,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p2"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

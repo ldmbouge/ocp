@@ -26,16 +26,16 @@ int main (int argc, const char * argv[])
       [notes dc:[model add: [ORFactory alldifferent: x ]]];
       [notes dc:[model add: [ORFactory alldifferent: xp ]]];
       [notes dc:[model add: [ORFactory alldifferent: xn ]]];
-      [notes profiling:YES];
+      //[notes profiling:YES];
       
       id<CPProgram> cp = [ORFactory createCPProgram: model annotation:notes];
       id<CPHeuristic> h = [cp createFF];
       
       [cp solve:
        ^() {
-          //[cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize:x[i]];}];
+          [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize:x[i]];}];
           //[cp labelHeuristic:h];
-          [cp splitArray:x];
+          //[cp splitArray:x];
           printf("S[%d] = [",[nbSolutions intValue:cp]);
           for(ORInt k=0;k < n;k++) {
              printf("%d%c",[cp intValue:x[k]],k<n-1 ? ',' : ']');

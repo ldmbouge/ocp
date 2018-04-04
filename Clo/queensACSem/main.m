@@ -37,11 +37,13 @@ int main (int argc, const char * argv[])
           [note vc: [model add: [ORFactory alldifferent: x]]];
           [note vc: [model add: [ORFactory alldifferent: xp]]];
           [note vc:[model add: [ORFactory alldifferent: xn]]];
-         __block ORInt nbSol = 0;        
-         //id<CPProgram> cp = [args makeProgram:model annotation: note];
-         id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController proto]];
-         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemBDSController proto]];
+         __block ORInt nbSol = 0;
+         [note profiling:YES];
 
+         id<CPProgram> cp = [args makeProgram:model annotation: note];
+
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController proto]];
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemBDSController proto]];
          //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:6 with:[ORSemDFSController proto]];
          
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];

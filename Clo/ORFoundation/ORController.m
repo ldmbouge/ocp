@@ -470,6 +470,32 @@
    assignTRIdNC(&_cur,newNode,_tracer.trail);
    [_controller startTryRight];
 }
+-(void) startTryall
+{
+   [_cur setNbKids:10];
+   [_cur setStatus:NSBranch];
+   [_cur commit];
+   [_controller startTryall];
+}
+-(void) startTryallBody
+{
+   NodeID me = {_tracer.curNode,0,0};
+   NodeID p = [(id<STNode>)_cur getNodeId];
+   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:0];
+   assignTRIdNC(&_parent, _cur, _tracer.trail);
+   assignTRIdNC(&_cur,newNode,_tracer.trail);
+   [_controller startTryallBody];
+}
+-(void) startTryallOnFailure
+{
+//   NodeID me = {_tracer.curNode,0,0};
+//   NodeID p = [(id<STNode>)_cur getNodeId];
+//   id<STNode> newNode = [_tracer.profiler createNode:me parent:p altNumber:_bid._val+1];
+//   assignTRIdNC(&_parent, _cur, _tracer.trail);
+//   assignTRIdNC(&_cur,newNode,_tracer.trail);
+//   assignTRInt(&_bid,_bid._val+1,_tracer.trail);
+   [_controller startTryallOnFailure];
+}
 -(void) fail
 {
    [_cur setStatus: NSFailed];
