@@ -55,10 +55,10 @@
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
 -(void) updateMin: (ORFloat) newMin;
 -(void) updateMinError: (ORRational) newMinError;
--(void) updateMinErrorF: (ORFloat) newMinError;
+-(void) updateMinErrorF: (ORDouble) newMinError;
 -(void) updateMax: (ORFloat) newMax;
 -(void) updateMaxError: (ORRational) newMaxError;
--(void) updateMaxErrorF: (ORFloat) newMaxError;
+-(void) updateMaxErrorF: (ORDouble) newMaxError;
 -(void) updateInterval: (ORFloat) newMin and: (ORFloat)newMax;
 -(void) updateIntervalError: (ORRational) newMinError and: (ORRational) newMaxError;
 -(void) bind: (ORFloat) val;
@@ -77,15 +77,24 @@ typedef struct  {
    TRId      _boundsEvtErr;
 } CPFloatEventNetwork;
 
+
 @class CPFloatVarI;
-@protocol CPFloatVarNotifier <NSObject>
-//-(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
--(void) bindEvt:(id<CPADom>)sender;
+/*
+ @protocol CPFloatVarNotifier <NSObject>
+-(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
+-(void) bindEvt:(id<CPFloatDom>)sender;
 -(void) bindEvtErr:(id<CPRationalDom>)sender;
--(void) changeMinEvt:(ORBool) bound sender:(id<CPADom>)sender;
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
 -(void) changeMinEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPADom>)sender;
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
 -(void) changeMaxEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
+@end
+ */
+@protocol CPFloatVarNotifier <CPFVarNotifier>
+-(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
+-(void) bindEvt:(id<CPFloatDom>)sender;
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
 @end
 
 @interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPFloatVarExtendedItf> {
@@ -99,6 +108,8 @@ typedef struct  {
    CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
+-(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(ORRational)elow errUp:(ORRational) eup;
+-(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup;
 -(id)init:(id<CPEngine>)engine;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
@@ -289,24 +300,19 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
 }
 
 static inline void minError(ORRational* r, ORRational* a, ORRational* b){
-   //if(mpq_cmp(*a, *b) > 0){
-   if(mpq_get_d(*a) > mpq_get_d(*b)){
-      
-      mpq_set(*r, *b);
-   }
-   else {
-      mpq_set(*r, *a);
-   }
+    // if(mpq_get_d(*a) > mpq_get_d(*b)){ // WRONG: this might produce strange results (cpjm)
+    if (mpq_cmp(*a, *b) > 0)
+        mpq_set(*r, *b);
+    else
+        mpq_set(*r, *a);
 }
 
 static inline void maxError(ORRational* r, ORRational* a, ORRational* b){
-   //if(mpq_cmp(*a, *b) > 0){
-   if(mpq_get_d(*a) > mpq_get_d(*b)){
-      mpq_set(*r, *a);
-   }
-   else {
-      mpq_set(*r, *b);
-   }
+    // if(mpq_get_d(*a) > mpq_get_d(*b)){ // WRONG: this might produce strange results (cpjm)
+    if (mpq_cmp(*a, *b) > 0)
+        mpq_set(*r, *a);
+    else
+        mpq_set(*r, *b);
 }
 
 static inline intersectionInterval intersection(float_interval r, float_interval x, ORDouble percent)

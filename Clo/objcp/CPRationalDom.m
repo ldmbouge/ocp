@@ -12,11 +12,21 @@
 #import <ORFoundation/ORFoundation.h>
 #import "CPRationalDom.h"
 //#import "CPEngineI.h"
-#import "CPFloatVarI.h"
+//#import "CPFloatVarI.h"
 
 @implementation CPRationalDom
 
--(id)initCPRationalDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up
+-(id)initCPRationalDom:(id<ORTrail>)trail low:(ORRational)low up:(ORRational)up
+{
+    self = [super init];
+    _trail = trail;
+    mpq_inits(_imin, _imax, NULL);
+    mpq_set(_imin,low);
+    mpq_set(_imax,up);
+    _domain = makeTRRationalInterval(trail, _imin, _imax);
+    return self;
+}
+-(id)initCPRationalDom:(id<ORTrail>)trail lowF:(ORDouble)low upF:(ORDouble)up
 {
     self = [super init];
     _trail = trail;
@@ -28,7 +38,7 @@
 }
 -(id)initCPRationalDom:(id<ORTrail>)trail
 {
-   self = [self initCPRationalDom:trail low:-FLT_MAX up:FLT_MAX];
+   self = [self initCPRationalDom:trail lowF:-DBL_MAX upF:DBL_MAX];
    return self;
 }
 -(void) dealloc
@@ -38,7 +48,7 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail low:mpq_get_d(_imin) up:mpq_get_d(_imax)];
+    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail lowF:mpq_get_d(_imin) upF:mpq_get_d(_imax)];
 }
 -(NSString*) description
 {
@@ -57,7 +67,7 @@
     [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",mpq_get_d(_domain._low),mpq_get_d(_domain._up),*inf,*sup];
     return buf;
 }
--(void) updateMin:(ORRational)newMin for:(id<CPFloatVarNotifier>)x
+-(void) updateMin:(ORRational)newMin for:(id<CPFVarNotifier>)x
 {
    if(mpq_cmp(newMin, *[self max]) > 0)
         failNow();
@@ -67,7 +77,7 @@
     if (isBound)
         [x bindEvtErr:self];
 }
--(void) updateMax:(ORRational)newMax for:(id<CPFloatVarNotifier>)x
+-(void) updateMax:(ORRational)newMax for:(id<CPFVarNotifier>)x
 {
    if(mpq_cmp(*[self min], newMax) > 0)
         failNow();
@@ -77,13 +87,13 @@
     if (isBound)
         [x bindEvtErr:self];
 }
--(void) updateInterval:(rational_interval)v for:(id<CPFloatVarNotifier>)x;
+-(void) updateInterval:(rational_interval)v for:(id<CPFVarNotifier>)x;
 {
     [self updateMin:v.inf for:x];
     [self updateMax:v.sup for:x];
 }
 
--(void) bind:(ORRational)val  for:(id<CPFloatVarNotifier>)x
+-(void) bind:(ORRational)val  for:(id<CPFVarNotifier>)x
 {
     if ((mpq_cmp(val, _domain._low) || mpq_equal(val, _domain._low)) && (mpq_cmp(_domain._up, val) || mpq_equal(_domain._up, val))) {
         [x changeMinEvtErr:YES sender:self];
@@ -130,14 +140,14 @@
 }
 -(id) copy
 {
-    return [[CPRationalDom alloc] initCPRationalDom:_trail low:mpq_get_d(_imin) up:mpq_get_d(_imax)];
+    return [[CPRationalDom alloc] initCPRationalDom:_trail lowF:mpq_get_d(_imin) upF:mpq_get_d(_imax)];
 }
 -(void) restoreDomain:(id<CPRationalDom>)toRestore
 {
     updateMinR(&_domain, *toRestore.min, _trail);
     updateMaxR(&_domain, *toRestore.max, _trail);
 }
--(void) restoreValue:(ORRational)toRestore for:(id<CPFloatVarNotifier>)x
+-(void) restoreValue:(ORRational)toRestore for:(id<CPFVarNotifier>)x
 {
     updateMinR(&_domain, toRestore, _trail);
     updateMaxR(&_domain, toRestore, _trail);

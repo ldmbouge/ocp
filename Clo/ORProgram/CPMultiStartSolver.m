@@ -816,23 +816,65 @@
 {
     return [(id<CPProgram>)[self worker] floatValue: x];
 }
--(ORFloat)maxF:(nonnull id<ORVar>)x {
-   return [(id<CPProgram>)[self worker] maxF:x];
+-(ORFloat)maxF:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] maxF:x];
 }
--(ORFloat)minF:(nonnull id<ORVar>)x {
-   return [(id<CPProgram>)[self worker] minF:x];
+-(ORFloat)minF:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] minF:x];
 }
--(ORFloat)maxError:(nonnull id<ORVar>)x {
-   return [(id<CPProgram>)[self worker] maxError:x];
+-(ORDouble)maxErrorFD:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] maxErrorFD:x];
 }
--(ORFloat)minError:(nonnull id<ORVar>)x {
-   return [(id<CPProgram>)[self worker] minError:x];
+-(ORDouble)minErrorFD:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] minErrorFD:x];
 }
--(void) setMinError:(PNONNULL id<ORVar>)x minError:(ORFloat) minError{
-   [(id<CPProgram>)[self worker] setMinError:x minError:minError];
+-(void) setMinErrorFD:(PNONNULL id<ORVar>)x minErrorF:(ORDouble) minError{
+    [(id<CPProgram>)[self worker] setMinErrorFD:x minErrorF:minError];
 }
--(void) setMaxError:(PNONNULL id<ORVar>)x maxError:(ORFloat) maxError{
-   [(id<CPProgram>)[self worker] setMaxError:x maxError:maxError];
+-(void) setMaxErrorFD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError{
+    [(id<CPProgram>)[self worker] setMaxErrorFD:x maxErrorF:maxError];
+}
+-(ORRational*)maxErrorFQ:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] maxErrorFQ:x];
+}
+-(ORRational*)minErrorFQ:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] minErrorFQ:x];
+}
+-(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError{
+    [(id<CPProgram>)[self worker] setMinErrorFQ:x minError:minError];
+}
+-(void) setMaxErrorFQ:(PNONNULL id<ORVar>)x maxError:(ORRational) maxError{
+    [(id<CPProgram>)[self worker] setMaxErrorFQ:x maxError:maxError];
+}
+-(ORDouble)maxD:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] maxD:x];
+}
+-(ORDouble)minD:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] minD:x];
+}
+-(ORDouble)maxErrorDD:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] maxErrorDD:x];
+}
+-(ORDouble)minErrorDD:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] minErrorDD:x];
+}
+-(void) setMinErrorDD:(PNONNULL id<ORVar>)x minErrorF:(ORDouble) minError{
+    [(id<CPProgram>)[self worker] setMinErrorDD:x minErrorF:minError];
+}
+-(void) setMaxErrorDD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError{
+    [(id<CPProgram>)[self worker] setMaxErrorDD:x maxErrorF:maxError];
+}
+-(ORRational*)maxErrorDQ:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] maxErrorDQ:x];
+}
+-(ORRational*)minErrorDQ:(PNONNULL id<ORVar>)x {
+    return [(id<CPProgram>)[self worker] minErrorDQ:x];
+}
+-(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError{
+    [(id<CPProgram>)[self worker] setMinErrorDQ:x minError:minError];
+}
+-(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(ORRational) maxError{
+    [(id<CPProgram>)[self worker] setMaxErrorDQ:x maxError:maxError];
 }
 -(ORBool) bound: (id<ORVar>) x
 {
@@ -939,7 +981,7 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
-- (ORUInt)countMemberedConstraints:(nonnull id<ORVar>)x
+- (ORUInt)countMemberedConstraints:(PNONNULL id<ORVar>)x
 {
    return [[self worker] countMemberedConstraints:x];
 }
@@ -947,7 +989,7 @@
 {
    return [[self worker] cardinality: x];
 }
-- (ORLDouble)density:(nonnull id<ORFloatVar>)x
+- (ORLDouble)density:(PNONNULL id<ORFloatVar>)x
 {
    return [[self worker] density:x];
 }

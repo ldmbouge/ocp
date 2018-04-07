@@ -29,6 +29,7 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 #import <objcp/CPFloatVarI.h>
+#import <objcp/CPDoubleVarI.h>
 
 #if defined(__linux__)
 #import <values.h>
@@ -3368,27 +3369,95 @@
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx max];
 }
--(ORFloat) minError:(id<ORVar>)x
+-(ORDouble) minErrorFD:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx minErrF];
 }
--(ORFloat) maxError:(id<ORVar>)x
+-(ORDouble) maxErrorFD:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx maxErrF];
 }
--(void) setMinError:(id<ORVar>)x minError:(ORFloat) minError
+-(void) setMinErrorFD:(id<ORVar>)x minErrorF:(ORDouble) minError
 {
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMinErrorF:minError];
-   //return [cx minErrF];
 }
--(void) setMaxError:(id<ORVar>)x maxError:(ORFloat) maxError
+-(void) setMaxErrorFD:(id<ORVar>)x maxErrorF:(ORDouble) maxError
 {
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMaxErrorF:maxError];
-   //return [cx maxErrF];
+}
+-(ORRational*) minErrorFQ:(id<ORVar>)x
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   return [cx minErr];
+}
+-(ORRational*) maxErrorFQ:(id<ORVar>)x
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   return [cx maxErr];
+}
+-(void) setMinErrorFQ:(id<ORVar>)x minError:(ORRational) minError
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   [cx updateMinError:minError];
+}
+-(void) setMaxErrorFQ:(id<ORVar>)x maxError:(ORRational) maxError
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   [cx updateMaxError:maxError];
+}
+-(ORDouble) minD:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [cx min];
+}
+-(ORDouble) maxD:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [cx max];
+}
+-(ORDouble) minErrorDD:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [cx minErrF];
+}
+-(ORDouble) maxErrorDD:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [cx maxErrF];
+}
+-(void) setMinErrorDD:(id<ORVar>)x minErrorF:(ORDouble) minError
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   [cx updateMinErrorF:minError];
+}
+-(void) setMaxErrorDD:(id<ORVar>)x maxErrorF:(ORDouble) maxError
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   [cx updateMaxErrorF:maxError];
+}
+-(ORRational*) minErrorDQ:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [cx minErr];
+}
+-(ORRational*) maxErrorDQ:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [cx maxErr];
+}
+-(void) setMinErrorDQ:(id<ORVar>)x minError:(ORRational) minError
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   [cx updateMinError:minError];
+}
+-(void) setMaxErrorDQ:(id<ORVar>)x maxError:(ORRational) maxError
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   [cx updateMaxError:maxError];
 }
 -(ORDouble) paramValue: (id<ORRealParam>)x
 {

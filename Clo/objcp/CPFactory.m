@@ -125,6 +125,10 @@
     }
     return (id<CPFloatVarArray>)o;
 }
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp
+{
+   return [[CPDoubleVarI alloc] init:cp low:-INFINITY up:INFINITY];
+}
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp value:(ORDouble) v
 {
     return [[CPDoubleVarI alloc] init:cp low:v up:v];

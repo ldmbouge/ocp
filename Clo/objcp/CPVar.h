@@ -185,8 +185,8 @@ enum CPVarClass {
 -(ORFloat) max;
 -(ORRational*) minErr;
 -(ORRational*) maxErr;
--(ORFloat) minErrF;
--(ORFloat) maxErrF;
+-(ORDouble) minErrF;
+-(ORDouble) maxErrF;
 -(ORFloat) value;
 -(ORFloat) floatValue;
 -(ORRational*) errorValue;
@@ -206,8 +206,13 @@ enum CPVarClass {
 @protocol CPDoubleVar<CPVar>
 -(ORDouble) min;
 -(ORDouble) max;
+-(ORRational*) minErr;
+-(ORRational*) maxErr;
+-(ORDouble) minErrF;
+-(ORDouble) maxErrF;
 -(ORDouble) value;
 -(ORInterval) bounds;
+-(ORBool) boundError;
 -(ORBool) member:(ORDouble)v;
 -(ORBool) bound;
 -(ORLDouble) domwidth;

@@ -1621,7 +1621,7 @@
 }
 -(void) visit:(ORVisitor*) visitor
 {
-   [visitor visitExprFloatAssignI: self];
+   [visitor visitExprAssignI: self];
 }
 -(enum ORVType) vtype
 {

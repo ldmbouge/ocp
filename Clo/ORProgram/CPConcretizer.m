@@ -1545,6 +1545,30 @@
 }
 //------
 
+-(void) visitDoubleAssignC:(id<ORDoubleAssignC>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> left = [cstr left];
+      ORDouble cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleAssignC:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitDoubleAssign:(id<ORDoubleAssign>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> left = [cstr left];
+      id<ORDoubleVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleAssign:_gamma[left.getId]  to:_gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1729,7 +1753,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPDoubleVarArray> x = [self concreteArray:av];
         id<ORDoubleArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c eqi:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c eqi:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1741,7 +1765,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPDoubleVarArray> x = [self concreteArray:av];
         id<ORDoubleArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c neqi:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c neqi:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1752,7 +1776,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPDoubleVarArray> x = [self concreteArray:av];
         id<ORDoubleArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c lt:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c lt:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1763,7 +1787,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPDoubleVarArray> x = [self concreteArray:av];
         id<ORDoubleArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c gt:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c gt:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1774,7 +1798,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPDoubleVarArray> x = [self concreteArray:av];
         id<ORDoubleArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c leq:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c leq:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1785,7 +1809,7 @@
         id<ORVarArray> av = [cstr vars];
         id<CPDoubleVarArray> x = [self concreteArray:av];
         id<ORDoubleArray> c = [cstr coefs];
-        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c geq:[cstr cst]];
+        id<CPConstraint> concreteCstr = [CPFactory doubleSum:x coef:c geq:[cstr cst] annotation:_notes];
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1802,7 +1826,7 @@
         id<CPConstraint> concreteCstr = [CPFactory doubleMult: (id<CPDoubleVar>) _gamma[left.getId]
                                                           by: (id<CPDoubleVar>) _gamma[right.getId]
                                                        equal: (id<CPDoubleVar>) _gamma[res.getId]
-                                         ];
+                                        annotation:_notes  ];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1819,7 +1843,7 @@
         id<CPConstraint> concreteCstr = [CPFactory doubleDiv: (id<CPDoubleVar>) _gamma[left.getId]
                                                          by: (id<CPDoubleVar>) _gamma[right.getId]
                                                       equal: (id<CPDoubleVar>) _gamma[res.getId]
-                                         ];
+                                      annotation:_notes    ];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

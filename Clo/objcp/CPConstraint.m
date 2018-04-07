@@ -1069,6 +1069,19 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) doubleTernaryAdd:(id<CPDoubleVar>) x equals:(id<CPDoubleVar>) y plus:(id<CPDoubleVar>) z annotation:(id<ORAnnotation>) notes
+{
+   if([notes hasFilteringPercent])
+      return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent]];
+   return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z];
+   
+}
++(id<CPConstraint>) doubleTernarySub:(id<CPDoubleVar>) x equals:(id<CPDoubleVar>) y minus:(id<CPDoubleVar>) z annotation:(id<ORAnnotation>) notes
+{
+   if([notes hasFilteringPercent])
+      return [[CPDoubleTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent]];
+   return [[CPDoubleTernarySub alloc] init:x equals:y minus:z];
+}
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
    id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y];
@@ -1127,7 +1140,8 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
+
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c annotation:(id<ORAnnotation>) notes
 {
    if([x count] == 1 && [coefs at:coefs.low]==1.0){
       return [self doubleEqualc:x[x.low] to:c];
@@ -1136,68 +1150,172 @@
          //form x = y + c
          //or   x = y - c
          id<CPDoubleVar> z;
+         if(c == 0) return [self doubleEqual:x[x.low] to:x[1]];
          if(c < 0){
             z = [CPFactory doubleVar:[x[x.low] engine] value:-c];
-            return [[CPDoubleTernarySub alloc] init:x[0] equals:x[1] minus:z];
+            return [CPFactory doubleTernarySub:x[0] equals:x[1] minus:z annotation:notes];
          }else
             z = [CPFactory doubleVar:[x[x.low] engine] value:c];
-         return [[CPDoubleTernaryAdd alloc] init:x[0] equals:x[1] plus:z];
+         return [CPFactory doubleTernaryAdd:x[0] equals:x[1] plus:z annotation:notes];
       }else{ // [x count] = 3
+         assert([x count] <= 3);
          //form x = y + z
          //or   x = y - z
          if([coefs at:2]<0){
-            return [[CPDoubleTernarySub alloc] init:x[0] equals:x[1] minus:x[2]];
+            return [CPFactory doubleTernarySub:x[0] equals:x[1] minus:x[2] annotation:notes];
          }
-         return [[CPDoubleTernaryAdd alloc] init:x[0] equals:x[1] plus:x[2]];
+         return [CPFactory doubleTernaryAdd:x[0] equals:x[1] plus:x[2] annotation:notes];
       }
    }
 }
-+(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs neqi:(ORDouble)c
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs neqi:(ORDouble)c annotation:(id<ORAnnotation>) notes
 {
-   if([x count] == 1 && [coefs at:coefs.low]==1.0){
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
       return [self doubleNEqualc:x[x.low] to:c];
-   }else{
-      assert(NO);
-      return nil;
    }
+   id<CPEngine> engine = [x[x.low] engine];
+   if([x count] == 2){ // x + y != c
+      if(c == 0) return [self doubleNEqual:x[x.low] to:x[1]];
+      id<CPDoubleVar> res = [self doubleVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory doubleTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory doubleTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self doubleNEqualc:res to:c];
+   }
+   assert([x count] <= 3);
+   id<CPDoubleVar> tmp = [self doubleVar:engine];
+   id<CPDoubleVar> res = [self doubleVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory doubleTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory doubleTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   if([coefs at:2] < 0)
+      [CPFactory doubleTernarySub:res equals:tmp minus:x[2] annotation:notes];
+   else
+      [CPFactory doubleTernaryAdd:res equals:tmp plus:x[2] annotation:notes];
+   return [self doubleNEqualc:res to:c];
 }
-+(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs lt:(ORDouble)c
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs lt:(ORDouble)c annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> m;
-   m = [self doubleLT:x[0] to:x[1]];
-   [[x tracker] trackMutable:m];
-   return m;
+   id<CPEngine> engine = [x[x.low] engine];
+   id<CPDoubleVar> vc = [self doubleVar:engine value:c];
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self doubleLT:x[0] to:vc];
+   }else if([x count] == 2){
+      if(c == 0)
+         return [self doubleLT:x[0] to:x[1]];
+      id<CPDoubleVar> res = [self doubleVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory doubleTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory doubleTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self doubleGT:res to:vc];
+   }
+   //should never happen normalizer transform expression like x + y + z in auxiliary var wyz
+   assert([x count] <= 3);
+   id<CPDoubleVar> tmp = [self doubleVar:engine];
+   id<CPDoubleVar> res = [self doubleVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory doubleTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory doubleTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   return [self doubleLT:res to:x[2]];
+   
 }
-+(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs gt:(ORDouble)c
+// hzi : w + y > z is transformed by decompose in var : wy , z  and c : 0
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs gt:(ORDouble)c annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> m;
-   m = [self doubleGT:x[0] to:x[1]];
-   [[x tracker] trackMutable:m];
-   return m;
+   id<CPEngine> engine = [x[x.low] engine];
+   id<CPDoubleVar> vc = [self doubleVar:engine value:c];
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self doubleGT:x[0] to:vc];
+   }else if([x count] == 2){
+      if(c == 0)
+         return [self doubleGT:x[0] to:x[1]];
+      id<CPDoubleVar> res = [self doubleVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory doubleTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory doubleTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self doubleGT:res to:vc];
+   }
+   assert([x count] <= 3);
+   id<CPDoubleVar> tmp = [self doubleVar:engine];
+   id<CPDoubleVar> res = [self doubleVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory doubleTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory doubleTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   return [self doubleGT:res to:x[2]];
 }
-+(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs leq:(ORDouble)c
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs leq:(ORDouble)c annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> m;
-   m = [self doubleLEQ:x[0] to:x[1]];
-   [[x tracker] trackMutable:m];
-   return m;
+   id<CPEngine> engine = [x[x.low] engine];
+   id<CPDoubleVar> vc = [self doubleVar:engine value:c];
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self doubleLEQ:x[0] to:vc];
+   }else if([x count] == 2){
+      if(c == 0)
+         return [self doubleLEQ:x[0] to:x[1]];
+      id<CPDoubleVar> res = [self doubleVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory doubleTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory doubleTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self doubleLEQ:res to:vc];
+   }
+   assert([x count] <= 3);
+   id<CPDoubleVar> tmp = [self doubleVar:engine];
+   id<CPDoubleVar> res = [self doubleVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory doubleTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory doubleTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   return [self doubleLEQ:res to:x[2]];
 }
-+(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs geq:(ORDouble)c
++(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs geq:(ORDouble)c annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> m;
-   m = [self doubleGEQ:x[0] to:x[1]];
-   [[x tracker] trackMutable:m];
-   return m;
+   id<CPEngine> engine = [x[x.low] engine];
+   id<CPDoubleVar> vc = [self doubleVar:engine value:c];
+   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+      return [self doubleGEQ:x[0] to:vc];
+   }else if([x count] == 2){
+      if(c == 0)
+         return [self doubleGEQ:x[0] to:x[1]];
+      id<CPDoubleVar> res = [self doubleVar:engine];
+      if([coefs at:1] < 0)
+         [CPFactory doubleTernarySub:res equals:x[0] minus:x[1] annotation:notes];
+      else
+         [CPFactory doubleTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+      return [self doubleGEQ:res to:vc];
+   }
+   assert([x count] <= 3);
+   id<CPDoubleVar> tmp = [self doubleVar:engine];
+   id<CPDoubleVar> res = [self doubleVar:engine];
+   if([coefs at:1] < 0)
+      [CPFactory doubleTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
+   else
+      [CPFactory doubleTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
+   return [self doubleGEQ:res to:x[2]];
 }
-+(id<CPConstraint>) doubleMult: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
++(id<CPConstraint>) doubleMult: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> o = [[CPDoubleTernaryMult alloc] init:z equals:x mult:y];
+   id<CPConstraint> o = nil;
+   if([notes hasFilteringPercent])
+      o = [[CPDoubleTernaryMult alloc] init:z equals:x mult:y kbpercent:[notes kbpercent]];
+   else
+      o = [[CPDoubleTernaryMult alloc] init:z equals:x mult:y];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) doubleDiv: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
++(id<CPConstraint>) doubleDiv: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y];
+   id<CPConstraint> o = nil;
+   if([notes hasFilteringPercent])
+      o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y kbpercent:[notes kbpercent]];
+   else
+      o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y];
    [[x tracker] trackMutable:o];
    return o;
 }

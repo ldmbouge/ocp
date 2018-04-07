@@ -97,9 +97,9 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "LDoubleVar: visit method not defined"];
 }
 //-------------------------
--(void) visitExprFloatAssignI:(id<ORExpr>)e
+-(void) visitExprAssignI:(id<ORExpr>)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "FloatAssign: visit method not defined"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "visitExprAssignI: visit method not defined"];
 }
 -(void) visitBitVar: (id<ORBitVar>) v
 {
@@ -547,6 +547,14 @@
 -(void) visitDoubleReifyGThenc: (id<ORDoubleReifyGThenc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleReifyGThenc: visit method not defined"];
+}
+-(void) visitDoubleAssignC: (id<ORDoubleAssignC>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "visitDoubleAssignC: visit method not defined"];
+}
+-(void) visitDoubleAssign: (id<ORDoubleAssign>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "visitDoubleAssign: visit method not defined"];
 }
 -(void) visitClause:(id<ORClause>)c
 {
