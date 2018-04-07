@@ -309,18 +309,6 @@ int main(int argc, const char * argv[])
                 [model add: [[secAdapter at:k1 :s] geq: [[chanSec at:k1 :k2] eq: @(s)]]];
         }
     }
-    //   ORInt nbUsed = 0;
-    //   for(ORInt k1 = [Iservice low]; k1 <= [Iservice up]; k1++) {
-    //      for(ORInt k2 = [Iservice low]; k2 <= [Iservice up]; k2++) {
-    //         ORInt tk1 = [alpha at: k1];
-    //         ORInt tk2 = [alpha at: k2];
-    //         if ([C at:tk1 :tk2] == 0) {
-    //            [model add: [[conn at:k1 :k2] eq: @(0)]];
-    //         } else nbUsed++;
-    //      }
-    //   }
-    //   NSLog(@"used: %d out of %d",nbUsed,[Iservice size] * [Iservice size]);
-    
     
     // Count connections on each VM. A connection is not counted if the two services are both within the same VM.
     for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
