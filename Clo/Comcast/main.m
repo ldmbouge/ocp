@@ -401,6 +401,7 @@ int main(int argc, const char * argv[])
                       [Sum(model, k, Iservice, [[[a[k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] mul: [Sum(model, x, sec, [secScaledMem elt: [secAdapter at: k: x]]) plus: @(10)]]) plus:
                        Sum(model,j, Iservice, [ [a[j] eq: @(i)] mul: [Sum(model, x, sec, [secFixMem elt: [secAdapter at: j: x]]) mul: @(10)]])
                        ]]]];
+    }
         
     
     for(int i = 0; i < 100; i++)
@@ -508,20 +509,21 @@ int main(int argc, const char * argv[])
     }
      */
     NSLog(@"Iservice %d", Iservice.up +1);
-    id<ORIntArray> w2 = [ORFactory intArray:model range:RANGE(model,0,((Iservice.up+1)*(sec.up + 1))-1) with:^ORInt(ORInt j) {
-        
-        ORInt Security = j % (sec.up + 1);
-        ORInt minScaledMem = 10000000;
-        ORInt minFixedMem = 10000000;
-        for(int i = Security; i <= sec.up; i++){
-            minScaledMem = minScaledMem > [secScaledMem at:Security] ? [secScaledMem at:Security] : minScaledMem;
-            minFixedMem = minFixedMem > [secFixMem at: Security] ? [secFixMem at: Security] : minFixedMem;
-        }
-        NSLog(@"AIndex: %d", j);
+//    id<ORIntArray> w2 = [ORFactory intArray:model range:RANGE(model,0,((Iservice.up+1)*(sec.up + 1))-1) with:^ORInt(ORInt j) {
+//
+//        ORInt Security = j % (sec.up + 1);
+//        ORInt minScaledMem = 10000000;
+//        ORInt minFixedMem = 10000000;
+//        for(int i = Security; i <= sec.up; i++){
+//            minScaledMem = minScaledMem > [secScaledMem at:Security] ? [secScaledMem at:Security] : minScaledMem;
+//            minFixedMem = minFixedMem > [secFixMem at: Security] ? [secFixMem at: Security] : minFixedMem;
+//        }
+//        NSLog(@"AIndex: %d", j);
+//
+//        return ([serviceFixMem at: [alpha at: (j/(sec.up + 1))]] * minScaledMem) + minFixedMem * 10 + 10 * VM_MEM;
+//    }];
 
-        return ([serviceFixMem at: [alpha at: (j/(sec.up + 1))]] * minScaledMem) + minFixedMem * 10 + 10 * VM_MEM;
-    }];
-/*
+       /*
     for(int z = cnodes.low ; z <= cnodes.up; z++){
         id<ORIntVarArray> x = All(model,ORIntVar, i, RANGE(model,0,((Iservice.up+1)*(sec.up + 1))-1), [ORFactory intVar:model domain:RANGE(model,0,1)]);
         for(int i = 0; i <= ((Iservice.up+1)*(sec.up + 1))-1; i++){
@@ -1316,23 +1318,4 @@ int main(int argc, const char * argv[])
     NSLog(@"#best objective: %@",[best objectiveValue]);
     NSLog(@"Total time: %f",el.tv_sec * 1000.0 + (double)el.tv_usec / 1000.0);
     return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}    
