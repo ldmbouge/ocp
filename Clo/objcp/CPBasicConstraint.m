@@ -163,11 +163,13 @@
 
 -(void) propagate
 {
-    if (bound(_x))
-       bindDom(_y,minDom(_x) - _c);
-    else if (bound(_y))
+   if (bound(_x)) {
+      bindDom(_y,minDom(_x) - _c);
+      assignTRInt(&_active,NO,_trail);
+   } else if (bound(_y)) {
        bindDom(_x,minDom(_y) + _c);
-    else {
+      assignTRInt(&_active,NO,_trail);
+   } else {
        updateMinAndMaxOfDom(_x, minDom(_y)+_c, maxDom(_y)+_c);
        updateMinAndMaxOfDom(_y, minDom(_x)-_c, maxDom(_x)-_c);
     }
@@ -2583,4 +2585,214 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 @end
 
 
+@implementation CPCDisjunction {
+   NSArray*                 _vm;
+   id<CPVarArray>            _origs;
+   CPEngineI*               _engine;
+   id<CPGroup>*             _inGroup;
+   ORInt                    _nbIn;
+   ORInt                    _max;
+   TRIntArray               _cStat;
+}
+-(id)   init: (id<CPEngine>) engine originals:(id<CPVarArray>)origs varMap:(NSArray*)vm;
+{
+   self = [super initCPCoreConstraint:engine];
+   _engine = engine;
+   _origs = origs;
+   _vm = vm;
+   _max  = 2;
+   _nbIn = 0;
+   _inGroup = malloc(sizeof(id<CPGroup>)*_max);
+   return self;
+}
+-(void)dealloc
+{
+   free(_inGroup);
+   [super dealloc];
+}
+-(id) trackMutable: (id) obj
+{
+   return [_engine trackMutable:obj];
+}
+-(id) trackImmutable: (id) obj
+{
+   return [_engine trackImmutable:obj];
+}
+-(id) trackVariable: (id) obj
+{
+   return [_engine trackVariable:obj];
+}
+-(id) trackObjective:(id) obj
+{
+   return [_engine trackObjective:obj];
+}
+-(id) trackConstraintInGroup:(id) cg
+{
+   return [_engine trackConstraintInGroup:cg];
+}
+
+-(void) add: (id<CPGroup>) p
+{
+   [p setGroup:self];
+   if (_nbIn >= _max) {
+      _inGroup = realloc(_inGroup,sizeof(id<CPGroup>)* _max * 2);
+      _max *= 2;
+   }
+   _inGroup[_nbIn++] = p;
+   [_engine assignIdToConstraint:p];
+}
+-(void) assignIdToConstraint:(id<ORConstraint>)c
+{
+   [_engine assignIdToConstraint:c];
+}
+-(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c
+{
+   assert(NO);
+}
+-(void) scheduleClosure: (id<CPClosureList>) evt
+{
+   assert(NO);
+}
+-(void)incNbPropagation:(ORUInt)add
+{
+   [_engine incNbPropagation:add];
+}
+
+- (id<ORTrail>)trail
+{
+   return [_engine trail];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CPCDisjunction(%p): ",self];
+   [buf appendFormat:@"\n\tVM=%@",_vm];
+   for(ORInt i=0;i<_nbIn;i++) {
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
+   }
+   [buf appendString:@"\n\t>"];
+   return buf;
+}
+-(void) scheduleValueClosure: (id<CPValueEvent>) evt
+{
+   assert(NO);
+}
+-(void) enumerateWithBlock:(void(^)(ORInt,id<ORConstraint>))block
+{
+   for(ORInt i = 0;i <_nbIn;i++)
+      block(i,_inGroup[i]);
+}
+-(void) post
+{
+   _cStat = makeTRIntArray(_trail, _nbIn, 0);
+   for(ORInt i=0;i<_nbIn;i++) {
+      assignTRIntArray(_cStat, i, ORSuspend, _trail);
+      [_inGroup[i] post];
+   }
+   for(int i=_origs.range.low;i <= _origs.range.up;i++) {
+      if ([_origs[i] conformsToProtocol:@protocol(CPIntVar)]) {
+         id<CPIntVar> oi = (id)_origs[i];
+         [oi whenChangePropagate:self];
+      }
+   }
+   [self propagate];
+}
+-(void) propagate
+{
+   if (_active._val==0)
+      return;
+   ORBool allFailed = true;
+   ORBool entailedAndMatching = false;
+   ORInt entailedClauses[_nbIn];
+   ORInt nbEntailed = 0;
+   for(ORInt k=0;k < _nbIn;k++) {
+      if (getTRIntArray(_cStat, k) == ORFailure)
+         continue;
+      id<CPVarArray> vc = _vm[k];
+      ORStatus s = ORSuspend;
+      for(ORInt i=_origs.range.low;i <= _origs.range.up && s != ORFailure;i++) {
+         id<CPVar> oVar = _origs[i];
+         if (vc.range.low <= oVar.getId && oVar.getId <= vc.range.up && vc[oVar.getId]!=nil) {
+            id<CPVar> cVar = vc[oVar.getId];
+            // cVar subseteq oVar
+            s = tryfail(^ORStatus{
+               [cVar subsumedBy:oVar];
+               return ORSuspend;
+            }, ^ORStatus{
+               return ORFailure;
+            });
+         }
+      }
+      if (s != ORFailure) {
+         s = tryfail(^ORStatus{
+            [_inGroup[k] propagate];
+            return _inGroup[k].entailed ? ORSuccess : ORSuspend;
+         }, ^ORStatus{
+            return ORFailure;
+         });
+      }
+      if (s == ORSuccess)
+         entailedClauses[nbEntailed++] = k;
+      allFailed   = allFailed   && (s == ORFailure);
+      assignTRIntArray(_cStat, k, s, _trail);
+   }
+   if (allFailed) {
+      failNow();
+   }
+   for(ORInt i=0;i<nbEntailed;i++) {
+      ORInt c = entailedClauses[i];
+      id<CPVarArray> vmc = _vm[c];  // now we have the alpha-renamed variable for every original var in clause c.
+      ORBool allSame = true;
+      for(ORInt j=_origs.range.low;j <= _origs.range.up && allSame;j++) {
+         id<CPVar> original = _origs[j];
+         ORInt oid = original.getId;
+         if (vmc.range.low <= oid && oid <= vmc.range.up && vmc[oid]!=nil) {
+            id<CPVar> renamed = vmc[oid]; // ok, now we have the original and the renamed one. Check equality
+            ORBool same = [original sameDomain:renamed];
+            allSame = allSame && same;
+         }
+      }
+      if (allSame) {
+         assignTRInt(&_active,NO,_trail);
+         entailedAndMatching = true;
+      }
+   }
+   // Still go on to propagate the effect of the entailed clause back up to the original vars.
+   for(ORInt j=_origs.range.low;j <= _origs.range.up;j++) {
+      id<CPIntVar> oi = (id)_origs[j];
+      ORInt oiId = oi.getId;
+      id<CPDom> uDom = nil;
+      for(ORInt c=0;c < _nbIn;c++) {
+         if (getTRIntArray(_cStat, c) == ORFailure || (entailedAndMatching && getTRIntArray(_cStat, c)!=ORSuccess))
+            continue;
+         id<CPVarArray> varsOfClause = _vm[c];
+         if (varsOfClause.range.low <= oiId && oiId <= varsOfClause.range.up && varsOfClause[oiId] != nil) {
+            id<CPVar> ax = (id) varsOfClause[oiId];
+            if (uDom == nil)
+               uDom = [[ax domain] copyWithZone:NULL];
+            else {
+               id<CPADom> axd = [ax domain];
+               [uDom unionWith:axd];
+               [axd release];
+            }
+         } else {
+            if (uDom == nil)
+               uDom = [[oi domain] copyWithZone:NULL];
+            else {
+               id<CPADom> oxd = [oi domain];
+               [uDom unionWith:oxd];
+               [oxd release];
+            }
+         }
+      }
+      [oi subsumedByDomain:uDom];
+      [uDom release];
+   }
+}
+- (void)visit:(ORVisitor *)visitor
+{}
+
+- (void)close
+{}
+@end
 

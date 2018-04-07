@@ -19,6 +19,7 @@
 -(id<CPGroup>) group;
 -(void) post;
 -(void) toCheck;
+-(ORBool)entailed;
 @end
 
 

@@ -178,7 +178,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return NO;
 }
-
+- (void)visit:(ORVisitor *)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: visit method value not defined"];
+}
 -(id<ORTracker>) tracker
 {
    return _fdm;
@@ -310,6 +313,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method constraint not defined"];
    return NULL;
+}
+- (void)subsumedBy:(id<CPVar>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method subsumedBy not defined"];
+}
+-(void)subsumedByDomain:(id<CPADom>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method subsumedByDomain not defined"];
+}
+- (ORBool)sameDomain:(id<CPVar>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method sameDomain not defined"];
 }
 -(CPMultiCast*) delegate
 {
@@ -1154,6 +1169,26 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 -(void) remove: (ORInt) val
 {
    [_dom remove:val for:self];
+}
+-(void)subsumedBy:(id<CPIntVar>)x
+{
+   for(ORInt v = _dom.min; v <= _dom.max;v++) {
+      if (![x member:v])
+         [_dom remove:v for:self];
+   }
+}
+-(void)subsumedByDomain:(id<CPDom>)dom
+{
+   for(ORInt v = _dom.min; v <= _dom.max;v++) {
+      if (![dom member:v])
+         [_dom remove:v for:self];
+   }
+}
+
+-(ORBool)sameDomain:(CPIntVarI*)x
+{
+   ORBool sd = [_dom isEqual:x->_dom];
+   return sd;
 }
 -(void) inside:(ORIntSetI*) S
 {

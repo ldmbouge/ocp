@@ -660,7 +660,7 @@
    _src    = src;
    _notes  = notes;
    _current = nil;
-   NSLog(@"size: %zu",class_getInstanceSize([ORBatchModel class]));
+   //NSLog(@"size: %zu",class_getInstanceSize([ORBatchModel class]));
    return self;
 }
 -(id<ORVar>) addVariable: (id<ORVar>) var

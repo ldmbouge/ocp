@@ -135,13 +135,13 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
    return ORSuspend;
 }
 
--(ORStatus)propagate
+-(void)propagate
 {
    __block ORStatus status = ORSuspend;
    __block bool done = false;
    __block id<CPConstraint> last = nil;
    __block ORInt nbp = 0;
-   return tryfail(^ORStatus{
+   tryfail(^ORStatus{
       ORClosure cb;
       id<CPConstraint> forCstr;
       while (!done) {
@@ -174,7 +174,13 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
          assert(as != ORFailure);
       }
       [_engine incNbPropagation:nbp];
-      return status;
+      ORBool allEntailed = true;
+      for(ORInt k = 0;k < _nbIn && allEntailed;k++) {
+         allEntailed = allEntailed && [_inGroup[k] entailed];
+      }
+      if (allEntailed)
+         assignTRInt(&_active,NO,_trail);
+      return ORSuspend;
    }, ^ORStatus{
       ORClosure cb;
       id<CPConstraint> forCstr;
@@ -190,7 +196,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
       [_engine incNbPropagation:nbp];
       [_engine setLastFailure:last];
       failNow();
-      return ORSuspend;
+      return ORFailure; // just to make compiler happy.
    });
 }
 -(NSString*)description
@@ -297,11 +303,11 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
 {
     assert(NO);
 }
--(ORStatus)propagate
+-(void)propagate
 {
    __block ORInt nbp = 0;
    __block id<CPConstraint> last = nil;
-   return tryfail(^ORStatus{
+   tryfail(^ORStatus{
       for(ORInt k=0;k<_nbIn;k++) {
          CPClosureList* evt = _scanMap[k];
          if (evt) {
@@ -325,7 +331,8 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
       [_engine incNbPropagation:nbp];
       [_engine setLastFailure:last];
       failNow();
-      return ORSuspend;
+      return ORFailure; // just to make compiler happy.
    });
 }
 @end
+

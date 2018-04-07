@@ -51,6 +51,16 @@
                                                                        up:_imax];
    return copy;
 }
+-(void) unionWith:(CPBoundsDom*)d
+{
+   assignTRInt(&_min,min(_min._val,d->_min._val),_trail);
+   assignTRInt(&_max,max(_max._val,d->_max._val),_trail);
+   assignTRInt(&_sz,_max._val - _min._val + 1,_trail);
+}
+-(BOOL) isEqual:(CPBoundsDom*)d
+{
+   return _min._val == d->_min._val && _max._val == d->_max._val;
+}
 
 - (void) dealloc
 {
@@ -332,6 +342,32 @@
       copy->_magic[k] = _magic[k];
    }
    return copy;
+}
+-(void) unionWith:(CPBitDom*)d
+{
+   assert(_imin == d->_imin && _imax == d->_imax);
+   assignTRInt(&_min,min(_min._val,d->_min._val),_trail);
+   assignTRInt(&_max,max(_max._val,d->_max._val),_trail);
+   assignTRInt(&_sz,_max._val - _min._val + 1,_trail);
+   const ORInt sz = _imax - _imin + 1;
+   const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   ORUInt magic = [_trail magic];
+   for(ORInt k=0;k<nb;k++) {
+      _bits[k]  = _bits[k] | d->_bits[k];
+      _magic[k] = magic;
+   }
+}
+-(BOOL) isEqual:(CPBitDom*)d
+{
+   assert(_imin == d->_imin && _imax == d->_imax);
+   BOOL sd = _min._val == d->_min._val && _max._val == d->_max._val && _sz._val == d->_sz._val;
+   if (sd) {
+      const ORInt sz = _imax - _imin + 1;
+      const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+      for(ORInt k=0;k < nb && sd;k++)
+         sd = d->_bits[k] == d->_bits[k];
+   }
+   return sd;
 }
 
 -(void)dealloc 
@@ -1063,6 +1099,11 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
       [_theDom enumerateWithBlock:^(ORInt k) {
          block(k * _a + _b);
       }];
+}
+
+- (void)unionWith:(id<CPADom>)d {
+   //TODO:LDM
+   return;
 }
 
 @end

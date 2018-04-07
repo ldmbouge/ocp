@@ -36,4 +36,5 @@ typedef id (*SELPROTO)(id,SEL,...);
 -(void)setGroup:(id<CPGroup>)g;
 -(id<CPGroup>)group;
 -(void) toCheck;
+-(ORBool)entailed;
 @end

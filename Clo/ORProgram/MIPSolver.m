@@ -62,12 +62,15 @@
 {
    return _MIPsolver;
 }
--(void) solve
+-(OROutcome) solve
 {
-   [_MIPsolver solve];
-   id<ORSolution> s = [self captureSolution];
-   [_sPool addSolution: s];
-   [s release];
+   MIPOutcome mo = [_MIPsolver solve];
+   if (mo == MIPoptimal || mo == MIPsuboptimal) {
+      id<ORSolution> s = [self captureSolution];
+      [_sPool addSolution: s];
+      [s release];
+   }
+   return (OROutcome)mo;
 }
 -(ORBool) ground
 {
@@ -88,6 +91,10 @@
 -(void) param: (id<ORRealParam>)p setValue: (ORDouble)val
 {
     [_MIPsolver setParam: _gamma[p.getId] value: val];
+}
+-(void) setIntParameter: (const char*) name val: (ORInt) val
+{
+   [_MIPsolver setIntParameter:name val:val];
 }
 -(ORInt) intValue: (id<ORIntVar>) v
 {
