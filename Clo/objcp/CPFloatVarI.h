@@ -136,7 +136,7 @@ typedef struct  {
 typedef union {
    float f;
    struct {
-      unsigned int mantisa : 23;
+      unsigned int mantissa : 23;
       unsigned int exponent : 8;
       unsigned int sign : 1;
    } parts;
@@ -162,13 +162,13 @@ static inline int sign(float_cast p){
 static inline float minFloatBaseOnExponent(float v){
    float_cast v_cast;
    v_cast.f = v;
-   v_cast.parts.mantisa = 1;
+   v_cast.parts.mantissa = 1;
    return v_cast.f;
 }
 
 static inline float floatFromParts(unsigned int mantissa, unsigned int exponent,unsigned int sign){
    float_cast f_cast;
-   f_cast.parts.mantisa = mantissa;
+   f_cast.parts.mantissa = mantissa;
    f_cast.parts.exponent = exponent;
    f_cast.parts.sign = sign;
    return f_cast.f;
@@ -197,7 +197,7 @@ static inline double cardinalityV(float xmin, float xmax){
    i_sup.f = xmax;
    if(xmin == xmax) return 1.0;
    if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
-   double res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
+   double res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantissa + i_sup.parts.mantissa;
    return (res < 0) ? -res : res;
 }
 
@@ -275,7 +275,7 @@ static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
    float_cast m_cast;
    m_cast.f = m;
    e = m_cast.parts.exponent - S_PRECISION - 1;
-   if(m_cast.parts.mantisa == 0){
+   if(m_cast.parts.mantissa == 0){
       e--;
    }
    max = floatFromParts(0,e,0);

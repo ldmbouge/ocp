@@ -12,6 +12,8 @@
 void mpri_set_from_d(mpri_t z, double inf, double sup) {
     mpq_set_from_d(mpri_lepref(z), inf);
     mpq_set_from_d(mpri_repref(z), sup);
+    mpq_canonicalize(mpri_lepref(z));
+    mpq_canonicalize(mpri_repref(z));
 }
 
 void mpri_set_from_q(mpri_t z, const mpq_t inf, const mpq_t sup) {

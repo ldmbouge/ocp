@@ -134,7 +134,7 @@ typedef struct  {
 typedef union {
    double f;
    struct {
-      unsigned long mantisa : 52;
+      unsigned long mantissa : 52;
       unsigned int exponent : 11;
       unsigned int sign : 1;
    } parts;

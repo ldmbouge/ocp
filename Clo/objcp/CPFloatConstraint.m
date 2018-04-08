@@ -52,15 +52,16 @@ double_interval ulp_computation(float_interval f){
 int compute_eo_add(mpri_t eo, const float_interval x, const float_interval y, const float_interval z){
     int changed = 0;
     
-    /* // Sterbenz: has to hold for all x and all y (whenever x and y signs are opposites
-     if(minFlt(y.inf/2.0f,y.sup/2.0f) <= x.inf && maxFlt(y.inf/2.0f,y.sup/2.0f) <= x.sup && x.inf <= minFlt(2.0f*y.inf,2.0f*y.sup) && x.sup <= maxFlt(2.0f*y.inf,2.0f*y.sup)){
-     ORRational zero;
-     mpq_init(zero);
-     mpq_set_d(zero, 0.0f);
-     makeRationalInterval(eoTemp, zero, zero);
-     mpq_clear(zero);
-     } else */
-    if((x.inf == x.sup) && (y.inf == y.sup)){
+
+    /* First, let see if Sterbenz is applicable */
+    if (((0.0 <= x.inf) && (y.sup <= 0.0) && (-y.inf/2.0 <= x.inf) && (x.sup <= -2.0*y.sup)) ||
+        ((x.sup <= 0.0) && (0.0 <= y.inf) && (y.sup/2.0 <= -x.sup) && (-x.inf <= 2.0*y.inf))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else if((x.inf == x.sup) && (y.inf == y.sup)){
         ORFloat tmpf = x.inf + y.inf;
         ORRational tmpq, xq, yq;
         
@@ -91,15 +92,16 @@ int compute_eo_add(mpri_t eo, const float_interval x, const float_interval y, co
 int compute_eo_sub(mpri_t eo, const float_interval x, const float_interval y, const float_interval z){
     int changed = 0;
     
-    /* // Sterbenz: has to hold for all x and all y
-     if(minFlt(y.inf/2.0f,y.sup/2.0f) <= x.inf && maxFlt(y.inf/2.0f,y.sup/2.0f) <= x.sup && x.inf <= minFlt(2.0f*y.inf,2.0f*y.sup) && x.sup <= maxFlt(2.0f*y.inf,2.0f*y.sup)){
-     ORRational zero;
-     mpq_init(zero);
-     mpq_set_d(zero, 0.0f);
-     makeRationalInterval(eoTemp, zero, zero);
-     mpq_clear(zero);
-     } else */
-    if((x.inf == x.sup) && (y.inf == y.sup)){
+
+    /* First, let see if Sterbenz is applicable */
+    if (((x.inf >= 0.0) && (y.inf >= 0.0) && (y.sup/2.0 <= x.inf) && (x.sup <= 2.0*y.inf)) ||
+        ((x.sup <= 0.0) && (y.sup <= 0.0) && (y.inf/2.0 >= x.sup) && (x.inf >= 2.0*y.sup))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else     if((x.inf == x.sup) && (y.inf == y.sup)){
         ORFloat tmpf = x.inf - y.inf;
         ORRational tmpq, xq, yq;
         

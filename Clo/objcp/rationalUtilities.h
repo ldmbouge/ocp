@@ -22,6 +22,7 @@ static inline void mpq_set_from_d(mpq_t z, double dvalue) {
     } else {
         mpq_set_d(z, dvalue);
     }
+    mpq_canonicalize(z);
 }
 
 

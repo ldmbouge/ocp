@@ -14,7 +14,6 @@
 #import "CPDoubleVarI.h"
 #import "ORConstraintI.h"
 #include "rationalUtilities.h"
-#include "gmp.h"
 
 #define PERCENT 5.0
 
@@ -25,13 +24,17 @@ void ulp_computation_d(mpri_t ulp, const double_interval f){
     
     if(f.inf == -INFINITY || f.sup == INFINITY){
         mpq_set_d(tmp0, DBL_MAX);
+        mpq_canonicalize(tmp0);
         mpq_set_d(tmp1, 2.0);
+        mpq_canonicalize(tmp1);
         mpq_mul(tmp2, tmp1, tmp0);
         mpq_neg(tmp1, tmp2);
         mpri_set_from_q(ulp, tmp1, tmp2);
     }else if(fabs(f.inf) == DBL_MAX || fabs(f.sup) == DBL_MAX){
         mpq_set_d(tmp0, nextafter(DBL_MAX, -INFINITY) - DBL_MAX);
+        mpq_canonicalize(tmp0);
         mpq_set_d(tmp1, 2.0);
+        mpq_canonicalize(tmp1);
         mpq_div(tmp2, tmp0, tmp1);
         mpq_neg(tmp1, tmp2);
         mpri_set_from_q(ulp, tmp2, tmp1);
@@ -41,10 +44,13 @@ void ulp_computation_d(mpri_t ulp, const double_interval f){
         sup = maxDbl(nextafter(f.inf, +INFINITY) - f.inf, nextafter(f.sup, +INFINITY) - f.sup);
         
         mpq_set_d(tmp0, inf);
+        mpq_canonicalize(tmp0);
         mpq_set_d(tmp1, 2.0);
+        mpq_canonicalize(tmp1);
         mpq_div(tmp2, tmp0, tmp1);
         mpq_set(mpri_lepref(ulp), tmp2);
         mpq_set_d(tmp0, sup);
+        mpq_canonicalize(tmp0);
         mpq_div(tmp2, tmp0, tmp1);
         mpq_set(mpri_repref(ulp), tmp2);
     }
@@ -55,24 +61,27 @@ void ulp_computation_d(mpri_t ulp, const double_interval f){
 int compute_eo_add_d(mpri_t eo, const double_interval x, const double_interval y, const double_interval z){
     int changed = 0;
     
-    /* // Sterbenz: has to hold for all x and all y (whenever x and y signs are opposites
-     if(minFlt(y.inf/2.0f,y.sup/2.0f) <= x.inf && maxFlt(y.inf/2.0f,y.sup/2.0f) <= x.sup && x.inf <= minFlt(2.0f*y.inf,2.0f*y.sup) && x.sup <= maxFlt(2.0f*y.inf,2.0f*y.sup)){
-     ORRational zero;
-     mpq_init(zero);
-     mpq_set_d(zero, 0.0f);
-     makeRationalInterval(eoTemp, zero, zero);
-     mpq_clear(zero);
-     } else */
-    if((x.inf == x.sup) && (y.inf == y.sup)){
+    /* First, let see if Sterbenz is applicable */
+    if (((0.0 <= x.inf) && (y.sup <= 0.0) && (-y.inf/2.0 <= x.inf) && (x.sup <= -2.0*y.sup)) ||
+        ((x.sup <= 0.0) && (0.0 <= y.inf) && (y.sup/2.0 <= -x.sup) && (-x.inf <= 2.0*y.inf))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else if((x.inf == x.sup) && (y.inf == y.sup)){
         ORDouble tmpf = x.inf + y.inf;
         ORRational tmpq, xq, yq;
         
         mpq_inits(tmpq, xq, yq, NULL);
         
         mpq_set_d(xq, x.inf);
+        mpq_canonicalize(xq);
         mpq_set_d(yq, y.inf);
+        mpq_canonicalize(yq);
         mpq_add(tmpq, xq, yq);
         mpq_set_d(yq, tmpf);
+        mpq_canonicalize(yq);
         mpq_sub(xq, tmpq, yq);
         
         changed = mpri_proj_inter_infsup(eo, xq, xq);
@@ -93,24 +102,27 @@ int compute_eo_add_d(mpri_t eo, const double_interval x, const double_interval y
 int compute_eo_sub_d(mpri_t eo, const double_interval x, const double_interval y, const double_interval z){
     int changed = 0;
     
-    /* // Sterbenz: has to hold for all x and all y
-     if(minFlt(y.inf/2.0f,y.sup/2.0f) <= x.inf && maxFlt(y.inf/2.0f,y.sup/2.0f) <= x.sup && x.inf <= minFlt(2.0f*y.inf,2.0f*y.sup) && x.sup <= maxFlt(2.0f*y.inf,2.0f*y.sup)){
-     ORRational zero;
-     mpq_init(zero);
-     mpq_set_d(zero, 0.0f);
-     makeRationalInterval(eoTemp, zero, zero);
-     mpq_clear(zero);
-     } else */
-    if((x.inf == x.sup) && (y.inf == y.sup)){
+    /* First, let see if Sterbenz is applicable */
+    if (((x.inf >= 0.0) && (y.inf >= 0.0) && (y.sup/2.0 <= x.inf) && (x.sup <= 2.0*y.inf)) ||
+        ((x.sup <= 0.0) && (y.sup <= 0.0) && (y.inf/2.0 >= x.sup) && (x.inf >= 2.0*y.sup))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else if((x.inf == x.sup) && (y.inf == y.sup)){
         ORDouble tmpf = x.inf - y.inf;
         ORRational tmpq, xq, yq;
         
         mpq_inits(tmpq, xq, yq, NULL);
         
         mpq_set_d(xq, x.inf);
+        mpq_canonicalize(xq);
         mpq_set_d(yq, y.inf);
+        mpq_canonicalize(yq);
         mpq_sub(tmpq, xq, yq);
         mpq_set_d(yq, tmpf);
+        mpq_canonicalize(yq);
         mpq_sub(xq, tmpq, yq);
         
         changed = mpri_proj_inter_infsup(eo, xq, xq);
@@ -128,19 +140,31 @@ int compute_eo_sub_d(mpri_t eo, const double_interval x, const double_interval y
     return changed;
 }
 
+
 int compute_eo_mul_d(mpri_t eo, const double_interval x, const double_interval y, const double_interval z){
     int changed = 0;
     
-    if((x.inf == x.sup) && (y.inf == y.sup)){
+    /* Check if its a product by a power of 2 */
+    if (((x.inf == x.sup) && (((double_cast)((x.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(x.inf) <= y.inf) && (y.sup <= DBL_MAX/fabs(x.inf))) ||
+        ((y.inf == y.sup) && (((double_cast)((y.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(y.inf) <= x.inf) && (x.sup <= DBL_MAX/fabs(y.inf)))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else if((x.inf == x.sup) && (y.inf == y.sup)){
         ORDouble tmpf = x.inf*y.inf;
         ORRational tmpq, xq, yq;
         
         mpq_inits(tmpq, xq, yq, NULL);
         
         mpq_set_d(xq, x.inf);
+        mpq_canonicalize(xq);
         mpq_set_d(yq, y.inf);
+        mpq_canonicalize(yq);
         mpq_mul(tmpq, xq, yq);
         mpq_set_d(yq, tmpf);
+        mpq_canonicalize(yq);
         mpq_sub(xq, tmpq, yq);
         
         changed = mpri_proj_inter_infsup(eo, xq, xq);
@@ -158,19 +182,36 @@ int compute_eo_mul_d(mpri_t eo, const double_interval x, const double_interval y
     return changed;
 }
 
+int checkDivPower2(double x, double y) { // x/y
+    double_cast z;
+    z.f = x/y;
+    return (z.parts.exponent >= 1);
+}
+
 int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y, const double_interval z){
     int changed = 0;
     
-    if((x.inf == x.sup) && (y.inf == y.sup)){
+    /* Check if its a division by a power of 2 */
+    if ((y.inf == y.sup) && (((double_cast)(y.inf)).parts.mantissa == 0) &&
+        (((-DBL_MAX <= x.inf) && (x.sup < 0.0) && checkDivPower2(x.sup, y.inf)) || ((0.0 < x.inf) && (x.sup <= DBL_MAX) && checkDivPower2(x.inf, y.inf)))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else if((x.inf == x.sup) && (y.inf == y.sup)){
         ORDouble tmpf = x.inf/y.inf;
         ORRational tmpq, xq, yq;
         
         mpq_inits(tmpq, xq, yq, NULL);
         
         mpq_set_from_d(xq, x.inf);
+        mpq_canonicalize(xq);
         mpq_set_from_d(yq, y.inf);
+        mpq_canonicalize(yq);
         mpq_div(tmpq, xq, yq);
         mpq_set_from_d(yq, tmpf);
+        mpq_canonicalize(yq);
         mpq_sub(xq, tmpq, yq);
         
         changed = mpri_proj_inter_infsup(eo, xq, xq);
@@ -384,6 +425,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     ORRational _zero;
     mpq_init(_zero);
     mpq_set_d(_zero, 0.0f);
+    mpq_canonicalize(_zero);
     [_x bindError:_zero];
     mpq_clear(_zero);
 }
@@ -755,7 +797,9 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpq_inits(eo.sup, eo.inf, NULL);
     //cpjm
     mpq_set_d(eo.inf, -MAXFLOAT);
+    mpq_canonicalize(eo.inf);
     mpq_set_d(eo.sup,  MAXFLOAT);
+    mpq_canonicalize(eo.sup);
     return self;
 }
 -(void) post
@@ -933,7 +977,9 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpq_inits(eo.sup, eo.inf, NULL);
     //cpjm
     mpq_set_d(eo.inf, -MAXFLOAT);
+    mpq_canonicalize(eo.inf);
     mpq_set_d(eo.sup,  MAXFLOAT);
+    mpq_canonicalize(eo.sup);
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y
@@ -1115,7 +1161,9 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpq_inits(eo.sup, eo.inf, NULL);
     //cpjm
     mpq_set_d(eo.inf, -MAXFLOAT);
+    mpq_canonicalize(eo.inf);
     mpq_set_d(eo.sup,  MAXFLOAT);
+    mpq_canonicalize(eo.sup);
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y
@@ -1297,6 +1345,8 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     //cpjm
     mpq_set_d(eo.inf, -MAXFLOAT);
     mpq_set_d(eo.sup,  MAXFLOAT);
+    mpq_canonicalize(eo.inf);
+    mpq_canonicalize(eo.sup);
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y
