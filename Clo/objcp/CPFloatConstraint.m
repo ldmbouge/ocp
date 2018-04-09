@@ -132,7 +132,15 @@ int compute_eo_sub(mpri_t eo, const float_interval x, const float_interval y, co
 int compute_eo_mul(mpri_t eo, const float_interval x, const float_interval y, const float_interval z){
     int changed = 0;
     
-    if((x.inf == x.sup) && (y.inf == y.sup)){
+    /* Check if its a product by a power of 2 */
+    if (((x.inf == x.sup) && (((float_cast)((x.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(x.inf) <= y.inf) && (y.sup <= DBL_MAX/fabs(x.inf))) ||
+        ((y.inf == y.sup) && (((float_cast)((y.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(y.inf) <= x.inf) && (x.sup <= DBL_MAX/fabs(y.inf)))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else    if((x.inf == x.sup) && (y.inf == y.sup)){
         ORFloat tmpf = x.inf*y.inf;
         ORRational tmpq, xq, yq;
         
@@ -160,10 +168,24 @@ int compute_eo_mul(mpri_t eo, const float_interval x, const float_interval y, co
     return changed;
 }
 
+int checkDivPower2f(float x, float y) { // x/y
+    float_cast z;
+    z.f = x/y;
+    return (z.parts.exponent >= 1);
+}
+
 int compute_eo_div(mpri_t eo, const float_interval x, const float_interval y, const float_interval z){
     int changed = 0;
     
-    if((x.inf == x.sup) && (y.inf == y.sup)){
+    /* Check if its a division by a power of 2 */
+    if ((y.inf == y.sup) && (((float_cast)(y.inf)).parts.mantissa == 0) &&
+        (((-DBL_MAX <= x.inf) && (x.sup < 0.0) && checkDivPower2f(x.sup, y.inf)) || ((0.0 < x.inf) && (x.sup <= DBL_MAX) && checkDivPower2f(x.inf, y.inf)))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else if((x.inf == x.sup) && (y.inf == y.sup)){
         ORFloat tmpf = x.inf/y.inf;
         ORRational tmpq, xq, yq;
         
