@@ -589,15 +589,22 @@ int main(int argc, const char * argv[])
         }break;
         case CP: {
             id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
-                id<CPHeuristic> h = [cp createDDeg];
+                id<CPHeuristic> h = [cp createWDeg];
                 return [^(id<CPCommonProgram> cp) {
                     [cp limitTime:tLim in:^{
                         //NSLog(@"CMem = %d", [cp intValue:totalCMem]);
                         //NSLog(@"VMMem = %d", [cp intValue:totalVMMem]);
-                        [cp labelHeuristic: h restricted:a];
-                        //[cp labelHeuristic: h restricted:v];
-                        //                  [cp labelHeuristic: h restricted:(id<ORIntVarArray>)conn.flatten];
-                        [cp labelHeuristic: h];
+                       [cp labelHeuristic: h restricted:u_mem];
+                       [cp labelHeuristic: h restricted:u_bw];
+                       for(NSArray* lnk in links) {
+                          id<ORIntVarMatrix> lc = links[lnk];
+                          [cp labelHeuristic: h restricted:lc.flatten];
+                       }
+                       [cp once:^{
+                          [cp labelHeuristic: h restricted:a];
+                          [cp labelHeuristic: h restricted:chanSec.flatten]; // nbConn chanSec
+                          [cp labelHeuristic: h];
+                       }];
                         NSLog(@"+++++++ ALL done...");
                         id<ORSolution> sol = [cp captureSolution];
                         if (printSol) writeOut(sol);
