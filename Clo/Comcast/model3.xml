@@ -7,22 +7,22 @@
     <vmMEM>50</vmMEM>
     <cnode>
         <id>1</id>
-        <cnodeMemory>800000</cnodeMemory>
-        <cnodeBandwidth>367</cnodeBandwidth>
+        <cnodeMemory>1000</cnodeMemory>
+        <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <cnode>
         <id>2</id>
-        <cnodeMemory>1500000</cnodeMemory>
-        <cnodeBandwidth>28</cnodeBandwidth>
+        <cnodeMemory>1000</cnodeMemory>
+        <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <cnode>
         <id>3</id>
-        <cnodeMemory>500000</cnodeMemory>
+        <cnodeMemory>1000</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <cnode>
         <id>4</id>
-        <cnodeMemory>1000000</cnodeMemory>
+        <cnodeMemory>1000</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <service>

@@ -180,8 +180,15 @@ int main(int argc, const char * argv[])
     // Variables
     //id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
     id<ORIntVarArray> mc = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, maxPerVM*10)];
-    id<ORIntVarMatrix> mc_conn = [ORFactory intVarMatrix: model range: cnodes : services domain: RANGE(model, 0, maxPerVM * 10 * MAX_CONN)];
+    //id<ORIntVarMatrix> mc_conn = [ORFactory intVarMatrix: model range: cnodes : services domain: RANGE(model, 0, maxPerVM * 10 * MAX_CONN)];
     
+    id<ORIntVarMatrix> mc_conn = [ORFactory intVarMatrix:model range:cnodes :services :sec domain:[ORFactory intRange:model low:0 up:(Iservice.up+1)]];
+    
+    /*
+    id<ORIntVarArray> mc_conn = [ORFactory intVarArray:model range:cnodes :services :sec with:^id<ORIntVar> _Nonnull(ORInt x, ORInt y, ORInt z) {
+        return [ORFactory intVar: model domain:RANGE(model, 0, maxPerVM * 10 * MAX_CONN)];
+    }];
+    */
     id<ORIntVarArray> a = [ORFactory intVarArray: model range: Iservice domain: RANGE(model, 1, Ncnodes)];
     //   id<ORIntVarMatrix> conn = [ORFactory intVarMatrix: model range: Iservice : Iservice domain: RANGE(model, 0, MAX_CONN)];
     id<ORIntVarMatrix> chanSec = [ORFactory intVarMatrix: model range: Iservice : Iservice domain: sec];
@@ -194,8 +201,18 @@ int main(int argc, const char * argv[])
 
     
     
-    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 100000)];
-    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 200)];
+    //id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 1000)];
+    //id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 200)];
+    
+    
+    id<ORIntVarArray> u_mem = [ORFactory intVarArray:model range:cnodes with:^id<ORIntVar> _Nonnull(ORInt x) {
+        return [ORFactory intVar: model domain:[ORFactory intRange:model low:0 up:([cnodeMem at: x])]];
+    }];
+    
+    id<ORIntVarArray> u_bw =[ORFactory intVarArray:model range:cnodes with:^id<ORIntVar> _Nonnull(ORInt x) {
+        return [ORFactory intVar: model domain:[ORFactory intRange:model low:0 up:([cnodeBw at: x])]];
+    }];
+    
     id<ORIntVarMatrix> secAdapter = [ORFactory intVarMatrix:model range:Iservice :sec domain:RANGE(model,0,1)];
 
     //id<ORIntVarArray> sConnOut = [ORFactory intVarArray: model range: Iservice domain: RANGE(model, 0, Iservice.size)];
@@ -311,6 +328,7 @@ int main(int argc, const char * argv[])
     }
     
     // Count connections on each VM. A connection is not counted if the two services are both within the same VM.
+    /*
     for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
         for(ORInt j = services.low; j <= services.up; j++) {
             //         [model add: [[vm_conn at: i : j] eq: Sum2(model, k, [omega at: j], k2, Iservice, [[conn at: k : k2] mul: [[a[k] eq: @(i)] land: [a[k2] neq: @(i)]] ])] ];
@@ -333,6 +351,42 @@ int main(int argc, const char * argv[])
                 
             }
             [model add: [ce eq: [mc_conn at:i :j]]];
+        }
+    }
+     */
+    
+    for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
+        for(ORInt j = services.low; j <= services.up; j++) {
+            for(ORInt z = sec.low; z <= sec.up; z++){
+            //         [model add: [[vm_conn at: i : j] eq: Sum2(model, k, [omega at: j], k2, Iservice, [[conn at: k : k2] mul: [[a[k] eq: @(i)] land: [a[k2] neq: @(i)]] ])] ];
+            //         [model add: [[vm_conn at: i : j] eq: Sum2(model, k, [omega at: j], k2, Iservice, [[conn at: k : k2] mul: [[[same at:k :k2] neg] land: [a[k] eq:@(i)]]] )] ];
+                id<ORExpr> ce = nil;
+                for(NSArray* lnk in links) {
+                    ORInt t1 = (ORInt)[lnk[0] integerValue],t2 = (ORInt)[lnk[1] integerValue];
+                    if (t1 != j && t2 != j) continue;
+                    if(MAX([serviceZone at: t1], [serviceZone at: t2]) != z) continue;
+                    id<ORIntVarMatrix> lc = links[lnk];
+                    id<ORIntRange> r = [lc range:0];
+                    id<ORIntRange> c = [lc range:1];
+                    if (j == t1) {
+                        id<ORExpr> term = Sum2(model, k1, r, k2, c,[[lc at: k1 : k2] mul: [[[same at:k1 :k2] neg] land: [a[k1] eq:@(i)]]]);
+                        ce = ce == nil ? term : [ce plus: term];
+                    } else {
+                        assert(j == t2);
+                        id<ORExpr> term = Sum2(model, k1, r, k2, c,[[lc at: k1 : k2] mul: [[[same at:k1 :k2] neg] land: [a[k2] eq:@(i)]]]);
+                        ce = ce == nil ? term : [ce plus: term];
+                }
+                
+            }
+                //[model add: [ce eq: [mc_conn at:i :(j*(sec.up+1) + z)]]];
+                NSLog(@"mc_conn[%d,%d,%d]",i,j,z);
+                
+                if(ce != nil)
+                    [model add: [ce eq: [mc_conn at:i :j :z]]];
+                else
+                    [model add: [@(0) eq: [mc_conn at:i :j :z]]];
+
+            }
         }
     }
     
@@ -358,16 +412,23 @@ int main(int argc, const char * argv[])
     // VM symmetry breaking
     for(ORInt i = [cnodes low]; i < [cnodes up]; i++) {
         [model add: [[mc[i] eq: @(0)] imply: [mc[i+1] eq: @(0)]]];
+        [model add: [mc[i] geq: mc[i+1]]];
     }
     
     // Security Constraints
     for(ORInt k = [Iservice low]; k <= [Iservice up]; k++) {
+        /*
         [model add: //[[a[k] gt: @(0)] eq:
          [s[k] geq: @([serviceZone at: [alpha at: k]])]
          //]
          ];
+         */
+        for(ORInt j = [sec low]; j <= [sec up]; j++)
+            if([serviceZone at: [alpha at: k]] == j)
+                [model add: [[secAdapter at: k: j] eq: @(1)]];
     }
     
+    /*
     // Limit total memory usage on each physical node
     for(ORInt c = [cnodes low]; c <= [cnodes up]; c++) {
         //[model add: [Sum(model, i, vm, [[v[i] eq: @(c)] mul: u_mem[i]]) leq: cnodeMem[c]]];
@@ -380,6 +441,7 @@ int main(int argc, const char * argv[])
         [model add: [u_bw[c] leq: cnodeBw[c]]];
         
     }
+    */
     
     // Memory usage = Fixed memory for deploying VM + per service memory usage scaled by security technology + fixed cost of sec. technology.
     for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
@@ -398,8 +460,8 @@ int main(int argc, const char * argv[])
         
         [model add: [[u_mem[i] mul: @(10)] geq:
                      [[mc[i] mul: @(VM_MEM * 10)] plus:
-                      [Sum(model, k, Iservice, [[[a[k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] mul: [Sum(model, x, sec, [secScaledMem elt: [secAdapter at: k: x]]) plus: @(10)]]) plus:
-                       Sum(model,j, Iservice, [ [a[j] eq: @(i)] mul: [Sum(model, x, sec, [secFixMem elt: [secAdapter at: j: x]]) mul: @(10)]])
+                      [Sum(model, k, Iservice, [[[a[k] eq: @(i)] mul: @([serviceFixMem at: [alpha at: k]])] mul: [Sum(model, x, sec, [@([secScaledMem at: x]) mul:[secAdapter at: k: x]]) plus: @(10)]]) plus:
+                       Sum(model,j, Iservice, [ [a[j] eq: @(i)] mul: [Sum(model, x, sec, [@([secFixMem at: x]) mul: [secAdapter at: j: x]]) mul: @(10)]])
                        ]]]];
     }
         
@@ -430,15 +492,15 @@ int main(int argc, const char * argv[])
             }
         }
     }
-    
+/*
     for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
         id<ORExpr> ce = nil;
 
         for(ORInt j = Iservice.low; j <= Iservice.up; j++){
             for(ORInt k = 0; k < linkCount[j]; k++){
                 id<ORExpr> term = [[
-                                     [[a[j] eq: @(i)] mul: [a[links_i[j][k]] neq: @(i)]]
-                                    //[[same at:j :links_i[j][k]] neg]
+                                     //[[a[j] eq: @(i)] mul: [a[links_i[j][k]] neq: @(i)]]
+                                    [[same at:j :links_i[j][k]] neg]
                                     mul: [links_v[j][links_i[j][k]] mul: @([serviceFixBw at: [alpha at: j]])]]
                                    //mul: [secScaledBw elt: [chanSec at: j : links_i[j][k]]]];
                                    mul: [secScaledBw elt: s[j]]];
@@ -450,19 +512,49 @@ int main(int argc, const char * argv[])
         }
         [model add: [[u_bw at: i] geq: ce]];
     }
+*/
+
     /*
+    for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
+        id<ORExpr> ce = nil;
+     
+        for(ORInt j = Iservice.low; j <= Iservice.up; j++){
+            for(ORInt k = 0; k < linkCount[j]; k++){
+                id<ORExpr> term = [[
+                                    //[[a[j] eq: @(i)] mul: [a[links_i[j][k]] neq: @(i)]]
+                                    [[[same at:j :links_i[j][k]] neg] land: [a[j] eq: @(i)]]
+                                    mul: [links_v[j][links_i[j][k]] mul: @([serviceFixBw at: [alpha at: j]])]]
+                                   //mul: [secScaledBw elt: [chanSec at: j : links_i[j][k]]]];
+                                   mul: [secScaledBw elt: [chanSec at: j :links_i[j][k]]]];
+     
+                ce = ce == nil ? term : [ce plus: term];
+     
+                term = [secFixBw elt: [chanSec at: j :links_i[j][k]]];
+                ce = ce == nil ? term : [ce plus: term];
+            }
+
+        }
+        [model add: [[u_bw at: i] geq: ce]];
+    }
+  */
+    
+    
     for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
         [model add:
     [[u_bw at: i] geq:
-     Sum(model, j, Iservice,
-         [Sum(model, k, RANGE(model,0,linkCount[j]),
-                    [[[[a[j] eq: @(i)] mul: [a[links_i[j][k]] neq: @(i)]]
-                    mul: [links_v[j][links_i[j][k]] mul: @([serviceFixBw at: j])]]
-                    mul: [secScaledBw elt: [chanSec at: j : links_i[j][k]]]]) plus: [secFixBw elt: [s at: j]]]
-        )
+     Sum(model, j, services,
+         Sum(model, k, sec,
+             [[[[mc_conn at: i: j: k] mul: @([serviceFixBw at: j])] mul: @([secScaledBw at: k])] plus: [@([secFixBw at: k]) mul: [[mc_conn at: i: j: k] geq: @(1)]]]
+               //plus:
+               //[@([secFixBw at: k]) mul: [secAdapter at: j: k]]]
+              )
+         
+          //plus: [secFixBw elt: [s at: j]]]
+        
+         )
      ]];
     }
-    */
+    
     /*
     id<ORExpr> ce = [Sum(model, k, Iservice, [@([serviceFixMem at: [alpha at: k]]) mul: [secScaledMem elt: s[k]]]) plus:
                                            Sum(model,j, Iservice, [[secFixMem elt: s[j]] mul: @(10)])
@@ -540,13 +632,69 @@ int main(int argc, const char * argv[])
   */
     
     
+        id<ORIntArray> w3 = [ORFactory intArray:model range:RANGE(model,0,((Iservice.up+1)*(1 << (sec.up + 1)))-1) with:^ORInt(ORInt j) {
+            ORInt maxSecConfig = 1 << (sec.up + 1);
+            ORInt currentConfig = j % maxSecConfig;
+            ORInt ScaledMem = 0;
+            ORInt FixedMem = 0;
+            for(int i = 0; i < maxSecConfig; i++){
+                if((1 << i) & currentConfig){
+                    ScaledMem += [secScaledMem at: i];
+                    FixedMem += [secFixMem at: i];
+                }
+                //minScaledMem = minScaledMem > [secScaledMem at:Security] ? [secScaledMem at:Security] : minScaledMem;
+                //minFixedMem = minFixedMem > [secFixMem at: Security] ? [secFixMem at: Security] : minFixedMem;
+            }
+            NSLog(@"AIndex: %d", j);
+    
+            return ([serviceFixMem at: [alpha at: (j/(maxSecConfig))]] * (ScaledMem + 10)) + FixedMem * 10 + 10 * VM_MEM;
+        }];
+    
+     ORInt maxSecConfig = 1 << (sec.up + 1);
+     for(int z = cnodes.low ; z <= cnodes.up; z++){
+     id<ORIntVarArray> x = All(model,ORIntVar, i, RANGE(model,0,((Iservice.up+1)*(1 << (sec.up + 1)))-1), [ORFactory intVar:model domain:RANGE(model,0,1)]);
+     for(int j = 0; j <= ((Iservice.up+1)*maxSecConfig)-1; j++){
+     //NSLog(@"BIndex: %d", i);
+         ORInt currentConfig = j % maxSecConfig;
+         id<ORExpr> term = nil;
+         for(int i = 0; i < (sec.up + 1); i++){
+             NSLog(@"i = %d i2: %d currentConfig = %d", i, 1 << i, currentConfig);
+             if((1 << i) & currentConfig){
+                 term = term == nil ? [secAdapter at: (j/maxSecConfig) : i] : [term land: [secAdapter at: (j/maxSecConfig) : i]];
+                 
+                 //ScaledMem += [secScaledMem at: i];
+                 //FixedMem += [secFixMem at: i];
+             }
+             else{
+                 term = term == nil ? [[secAdapter at: (j/maxSecConfig) : i] neg] : [term land: [[secAdapter at: (j/maxSecConfig) : i] neg]];
+             }
+             //minScaledMem = minScaledMem > [secScaledMem at:Security] ? [secScaledMem at:Security] : minScaledMem;
+             //minFixedMem = minFixedMem > [secFixMem at: Security] ? [secFixMem at: Security] : minFixedMem;
+             //if(term == nil)
+             //    NSLog(@"NIL!");
+         }
+         
+         NSLog(@"a[%d] == %d", j/maxSecConfig, z);
+         [model add: [x[j] eq: [[a[j/maxSecConfig] eq: @(z)] land: term]]];
+     }
+     //for(int k = Iservice.low; k <= Iservice.up; k++)
+     //    printf("%d ", [w at: k]);
+     id<ORIntVar> c = [ORFactory intVar:model domain:RANGE(model,0,1000*10)];
+     //[model add:[c eq: [u_mem[z] mul: @(10)]]];
+     [model add:[ORFactory knapsack:x weight:w3 capacity:c]];
+     
+     }
+    
+    
+    
+    
     // Function to write solution.
     // Print solution
     void(^writeOut)(id<ORSolution>) = ^(id<ORSolution> best){
         for(ORInt c = [cnodes low]; c <= [cnodes up]; c++) {
-            NSLog(@"Node: %i {", c);
+            //NSLog(@"Node: %i {", c);
             ORInt i = c;
-            NSLog(@"\tNode: %i (security: %i, %i services  memory: %d bw:%d) {", i, [best intValue: [s at: i]], [best intValue: [mc at: i]],[best intValue:[u_mem at:i]],[best intValue:[u_bw at:i]]);
+            NSLog(@"\tNode: %i (%i services  memory: %d bw:%d) {", i, [best intValue: [mc at: i]],[best intValue:[u_mem at:i]],[best intValue:[u_bw at:i]]);
             for(ORInt tk = services.low; tk <= services.up; tk++) {
                 id<ORIntRange> tr = omega[tk];
                 for(ORInt k1 = tr.low; k1 <= tr.up;k1++) {
@@ -557,7 +705,7 @@ int main(int argc, const char * argv[])
                             for(ORInt k2 = [cm range:1].low;k2 <= [cm range:1].up; k2++) {
                                 ORInt cl = [best intValue:[cm at:k1 :k2]];
                                 if(cl > 0) {
-                                    NSLog(@"\t\t\t[service %i <%d>] <=(%d,%d,NEG %d,%d)=> [service %i <Type:%d,Sec=%d> vm=%d] (x%i)", k1, tk,
+                                    NSLog(@"\t\t\t[service %i <%d>] <=(%d,%d,NEG %d,%d)=> [service %i <Type:%d,Sec=%d> cnode=%d] (x%i)", k1, tk,
                                           [best intValue:[chanSec at:k1 :k2]],
                                           [best intValue:[same at:k1 :k2]],1 - [best intValue:[same at:k1 :k2]],
                                           [best intValue:[maxSec at:k1 :k2]],
@@ -572,7 +720,7 @@ int main(int argc, const char * argv[])
             NSLog(@"\t}");
             
             
-            NSLog(@"}");
+            //NSLog(@"}");
         }
         NSLog(@"");
     };
@@ -810,9 +958,15 @@ int main(int argc, const char * argv[])
                             return ![cp bound: a[i]];
                         } orderedBy:^ORInt(ORInt i) {
                             ORInt ConnectionOut = 0;
+                            ORInt Potential = 0;
                             for(int k = 0; k < linkCount[i]; k++)
-                                if([cp bound: a[links_i[i][k]]])
-                                ConnectionOut += [cp intValue: links_v[i][k]];
+                                if([cp bound: a[links_i[i][k]]]){
+                                    ConnectionOut += [cp intValue: links_v[i][k]];
+                                    if(abs([serviceZone at: [alpha at: i]] - [serviceZone at: [alpha at: links_i[i][k]]]) > 0){
+                                        ORInt max = MAX([serviceZone at: [alpha at: i]], [serviceZone at: [alpha at: links_i[i][k]]]);
+                                        Potential += [cp intValue: links_v[i][k]] * [secScaledMem at:max];
+                                    }
+                                }
                             //Choose the hardest to accomodate first (Encourage Fail Early)
                             /*
                              int minsec = sec.up + 1;
@@ -823,7 +977,14 @@ int main(int argc, const char * argv[])
                             //return -linkCount[i];
                             
                             //return -(ConnectionOut << 10) - [cp min: nbConn[i]];
-                            return -(ConnectionOut << 10) -([serviceZone at: [alpha at: i]]);
+                            
+                            return -(Potential << 10) - (linkCount[i] << 5) - [secScaledMem at:[serviceZone at: [alpha at: i]]];
+                            
+                            //return -(ConnectionOut << 10) - (linkCount[i] << 5) - [secScaledMem at:[serviceZone at: [alpha at: i]]];
+                            
+                            //return -(ConnectionOut << 10) -([serviceZone at: [alpha at: i]]);
+                            
+                            
                             //return abs([cp min: nbConn[i]] - ConnectionOut);
                             //return ConnectionOut - [cp min: nbConn[i]];
 
@@ -856,7 +1017,7 @@ int main(int argc, const char * argv[])
                              }
                              */
                             
-                            [cp tryall:cnodes suchThat:^ORBool(ORInt j) {
+                            [cp tryall:cnodes suchThat:^ORBool(ORInt j) { return true;
                                 //Adding Instance does not exceed the memory and bw of cnode j
                                 
                                 //NSLog(@"Trying %d", j);
@@ -865,8 +1026,14 @@ int main(int argc, const char * argv[])
                                 ORInt ConnCount = 0;
                                 ORInt SumBest = 0;
                                 for(int z = Iservice.low; z <= Iservice.up; z++){
-                                    if(![cp bound: a[z]])
-                                        SumBest += [w at: z];
+                                    if(![cp bound: a[z]]){
+                                        ORInt config = 0;
+                                        for(int x = sec.up; x >= 0; x--){
+                                            config = config * 2;
+                                            config += [cp min: [secAdapter at: z: x]];
+                                        }
+                                        SumBest += [w3 at: z * (1 << (sec.up + 1)) + config];
+                                    }
                                     else{
                                         ConnCount += [cp intValue:[nbConn at: z]];
                                     }
@@ -1152,6 +1319,39 @@ int main(int argc, const char * argv[])
                                     return sum;
                                 }];
                                 
+                                id<ORIntMatrix> secUpgrade = [ORFactory intMatrix:cp range: cnodes :sec with:^ORInt(ORInt x, ORInt k) {
+                                    ORInt sum = 0;
+                                    for(int z = [services low]; z <= [services up]; z++){
+                                        for(NSArray* lnk in links) {
+                                            ORInt t1 = (ORInt)[lnk[0] integerValue],t2 = (ORInt)[lnk[1] integerValue];
+                                            if (t1 != z && t2 != z) continue;
+                                            id<ORIntVarMatrix> lc = links[lnk];
+                                            id<ORIntRange> r = [lc range:0];
+                                            id<ORIntRange> c = [lc range:1];
+                                            if (z == t1) {
+                                                for(int m = r.low; m <= r.up; m++){
+                                                    for(int n = c.low; n <= c.up; n++){
+                                                        if(m == i && ([cp bound: a[n]]) && [cp intValue:a[n]] != j && (j == x || [cp intValue:a[n]] == x)){
+                                                            if(MAX([serviceZone at: [alpha at: m]], [serviceZone at: [alpha at: n]]) == k && abs([serviceZone at: [alpha at: m]] - [serviceZone at: [alpha at: n]]) > 0)
+                                                            sum += [cp intValue:[lc at: m : n]];
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                for(int m = r.low; m <= r.up; m++){
+                                                    for(int n = c.low; n <= c.up; n++){
+                                                        if(n == i && ([cp bound: a[m]]) && j != [cp intValue:a[m]] && (j == x || [cp intValue:a[m]] == x)){
+                                                            if(MAX([serviceZone at: [alpha at: m]], [serviceZone at: [alpha at: n]]) == k && abs([serviceZone at: [alpha at: m]] - [serviceZone at: [alpha at: n]]) > 0)
+                                                            sum += [cp intValue:[lc at: m : n]];
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    return sum;
+                                }];
+                                
                                 id<ORIntMatrix> sOut = [ORFactory intMatrix:cp range: cnodes :services with:^ORInt(ORInt j, ORInt k) {
                                     ORInt sum = 0;
                                     for(NSArray* lnk in links) {
@@ -1240,9 +1440,16 @@ int main(int argc, const char * argv[])
                                 for(int b = services.low; b <= services.up; b++){
                                     totalConnOut += [sOut at: j : b] + [sOut_i at: j : b];
                                 }
+                                
+                                ORInt ReqUpdates = 0;
+                                for(int c = [cnodes low]; c <= [cnodes up]; c++)
+                                    for(int s = [sec low]; s <= [sec up]; s++)
+                                        ReqUpdates += [secUpgrade at: c: s];
+                                
                                 //return (([cp min: s[j]] - [serviceZone at: [alpha at: i]]) << 10) + (numSameService << 3) + j;
-                                //return totalConnOut;
-                                return memCostSum;
+                                //return (totalConnOut << 10) + numSameService;
+                                return ReqUpdates;
+                                //return memCostSum;
                                 
                                 //return ((bwCostSum + memCostSum) << 10) + j;
                                 //return (abs([serviceZone at: [alpha at: i]] - [cp min: s[j]]) << 10) - totalConnOut;
@@ -1275,7 +1482,7 @@ int main(int argc, const char * argv[])
                         }
                         
                         id<ORSolution> sol = [cp captureSolution];
-                        //if (printSol) writeOut(sol);
+                        if (printSol) writeOut(sol);
                         ORTimeval ts = [ORRuntimeMonitor elapsedSince:now];
                         ORInt bwCostSum = 0;
                         ORInt memCostSum = 0;
