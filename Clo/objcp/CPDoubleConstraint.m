@@ -69,6 +69,18 @@ int compute_eo_add_d(mpri_t eo, const double_interval x, const double_interval y
         mpq_set_d(zero, 0.0);
         changed |= mpri_proj_inter_infsup(eo, zero, zero);
         mpq_clear(zero);
+    } else if ((((double_cast)((z.inf))).parts.exponent <= 1) && (((double_cast)((z.sup))).parts.exponent <= 1)) {
+        /* Hauser theorems:
+         3.4.1: if Round(x + y) is denormalized, then Round(x + y) = x + y (provided we use denormalized numbers)
+         see p 154. Also apply to subtraction (as x - y = x + (- y))
+         3.4.1a: Let u be the least positive normalized float. If abs(x + y) < 2*u then Round(x + y) = x + y
+         Hauser, J. R. 1996. Handling floating-point exceptions in numeric programs. ACM Transactions on Pro-
+         gramming Languages and Systems 18, 2, 139–174 */
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
     } else if((x.inf == x.sup) && (y.inf == y.sup)){
         ORDouble tmpf = x.inf + y.inf;
         ORRational tmpq, xq, yq;
@@ -102,9 +114,21 @@ int compute_eo_add_d(mpri_t eo, const double_interval x, const double_interval y
 int compute_eo_sub_d(mpri_t eo, const double_interval x, const double_interval y, const double_interval z){
     int changed = 0;
     
-    /* First, let see if Sterbenz is applicable */
+    /* First, let see if Sterbenz is applicable (requires gradual underflow (denormalized) or that x-y does not underflow */
     if (((x.inf >= 0.0) && (y.inf >= 0.0) && (y.sup/2.0 <= x.inf) && (x.sup <= 2.0*y.inf)) ||
         ((x.sup <= 0.0) && (y.sup <= 0.0) && (y.inf/2.0 >= x.sup) && (x.inf >= 2.0*y.sup))) {
+        ORRational zero;
+        mpq_init(zero);
+        mpq_set_d(zero, 0.0);
+        changed |= mpri_proj_inter_infsup(eo, zero, zero);
+        mpq_clear(zero);
+    } else if ((((double_cast)((z.inf))).parts.exponent <= 1) && (((double_cast)((z.sup))).parts.exponent <= 1)) {
+        /* Hauser theorems:
+         3.4.1: if Round(x + y) is denormalized, then Round(x + y) = x + y (provided we use denormalized numbers)
+         see p 154. Also apply to subtraction (as x - y = x + (- y))
+         3.4.1a: Let u be the least positive normalized float. If abs(x + y) < 2*u then Round(x + y) = x + y
+         Hauser, J. R. 1996. Handling floating-point exceptions in numeric programs. ACM Transactions on Pro-
+         gramming Languages and Systems 18, 2, 139–174 */
         ORRational zero;
         mpq_init(zero);
         mpq_set_d(zero, 0.0);
@@ -375,7 +399,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         
         inter = intersectionD(_xi, xTmp, 0.0);
         intersectionErrorD(&interError, _exi, _eyi);
-                
+        
         if(inter.changed)
             [_x updateInterval:inter.result.inf and:inter.result.sup];
         if(interError.changed)
@@ -823,11 +847,11 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpri_init(eoi);
     mpri_init(tmp0);
     mpri_init(tmp1);
-
+    
     z = makeDoubleInterval([_z min],[_z max]);
     x = makeDoubleInterval([_x min],[_x max]);
     y = makeDoubleInterval([_y min],[_y max]);
-
+    
     mpri_set_from_q(exi, *[_x minErr], *[_x maxErr]);
     mpri_set_from_q(eyi, *[_y minErr], *[_y maxErr]);
     mpri_set_from_q(ezi, *[_z minErr], *[_z maxErr]);
@@ -865,6 +889,14 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         changed |= inter.changed;
         
         /* ERROR PROPAG */
+        
+        if ((fabs(x.inf) == +INFINITY) || (fabs(x.sup) == +INFINITY) ||
+            (fabs(y.inf) == +INFINITY) || (fabs(y.sup) == +INFINITY) ||
+            (fabs(z.inf) == +INFINITY) || (fabs(z.sup) == +INFINITY)) {
+            printf("ADD: Infinites in operands: does not handle such cases yet\n");
+            exit(-1);
+        }
+        
         changed |= compute_eo_add_d(eoi, x, y, z);
         
         // ============================== ez
@@ -902,7 +934,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         // Cause no propagation on eo is insured
         mpq_set(eo.inf, mpri_lepref(eoi));
         mpq_set(eo.sup, mpri_repref(eoi));
-
+        
         [_x updateInterval:x.inf and:x.sup];
         [_y updateInterval:y.inf and:y.sup];
         [_z updateInterval:z.inf and:z.sup];
@@ -1048,7 +1080,15 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         inter = intersectionD(y, yTemp,_percent);
         y = inter.result;
         changed |= inter.changed;
+        
         /* ERROR PROPAG */
+        
+        if ((fabs(x.inf) == +INFINITY) || (fabs(x.sup) == +INFINITY) ||
+            (fabs(y.inf) == +INFINITY) || (fabs(y.sup) == +INFINITY) ||
+            (fabs(z.inf) == +INFINITY) || (fabs(z.sup) == +INFINITY)) {
+            printf("SUB: Infinites in operands: does not handle such cases yet\n");
+            exit(-1);
+        }
         
         changed |= compute_eo_sub_d(eoi, x, y, z);
         
@@ -1179,9 +1219,9 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
 }
 -(void) propagate
 {
-    int gchanged,changed;
+    int gchanged, changed;
     changed = gchanged = false;
-    double_interval zTemp,yTemp,xTemp,z,x,y;
+    double_interval zTemp, yTemp, xTemp, z, x, y;
     intersectionIntervalD inter;
     mpri_t xi, yi, zi, exi, eyi, ezi, eoi, tmp0, tmp1, tmp2, tmp3;
     
@@ -1227,9 +1267,24 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         changed |= inter.changed;
         
         /* ERROR PROPAG */
+        
+        if ((fabs(x.inf) == +INFINITY) || (fabs(x.sup) == +INFINITY) ||
+            (fabs(y.inf) == +INFINITY) || (fabs(y.sup) == +INFINITY) ||
+            (fabs(z.inf) == +INFINITY) || (fabs(z.sup) == +INFINITY)) {
+            printf("MUL: Infinites in operands: does not handle such cases yet\n");
+            exit(-1);
+        }
+        
         mpri_set_from_d(xi, x.inf, x.sup);
         mpri_set_from_d(yi, y.inf, y.sup);
         mpri_set_from_d(zi, z.inf, z.sup);
+        
+        mpq_canonicalize(mpri_lepref(xi));
+        mpq_canonicalize(mpri_repref(xi));
+        mpq_canonicalize(mpri_lepref(yi));
+        mpq_canonicalize(mpri_repref(yi));
+        mpq_canonicalize(mpri_lepref(zi));
+        mpq_canonicalize(mpri_repref(zi));
         
         changed |= compute_eo_mul_d(eoi, x, y, z);
         
@@ -1256,18 +1311,26 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         mpri_mul(tmp1, xi, eyi);
         mpri_sub(tmp2, tmp3, tmp1);
         mpri_add(tmp1, yi, eyi);
-        mpri_div(tmp0, tmp2, tmp1);
-        
-        changed |= mpri_proj_inter(exi, tmp0);
+        if ((mpq_cmp_ui(mpri_lepref(tmp1), 0, 1) > 0) || (mpq_cmp_ui(mpri_repref(tmp1), 0, 1) < 0)) {
+            // We do the division, and thus the projection, iff (y + ey) does not contain 0
+            mpri_div(tmp0, tmp2, tmp1);
+            
+            changed |= mpri_proj_inter(exi, tmp0);
+        } else
+            printf("MUL: WARNING: cannot compute ex projections due to division by zero\n");
         
         // ============================== ey
         // (ez - y*ex - eo)/(x + ex)
         mpri_mul(tmp1, yi, exi);
         mpri_sub(tmp2, tmp3, tmp1);
         mpri_add(tmp1, xi, exi);
-        mpri_div(tmp0, tmp2, tmp1);
-        
-        changed |= mpri_proj_inter(eyi, tmp0);
+        if ((mpq_cmp_ui(mpri_lepref(tmp1), 0, 1) > 0) || (mpq_cmp_ui(mpri_repref(tmp1), 0, 1) < 0)) {
+            // We do the division, and thus the projection, iff (y + ey) does not contain 0
+            mpri_div(tmp0, tmp2, tmp1);
+            
+            changed |= mpri_proj_inter(eyi, tmp0);
+        } else
+            printf("MUL: WARNING: cannot compute ey projections due to division by zero\n");
         
         /* END ERROR PROPAG */
         
@@ -1411,6 +1474,18 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         
         /* ERROR PROPAG */
         
+        if ((fabs(x.inf) == +INFINITY) || (fabs(x.sup) == +INFINITY) ||
+            (fabs(y.inf) == +INFINITY) || (fabs(y.sup) == +INFINITY) ||
+            (fabs(z.inf) == +INFINITY) || (fabs(z.sup) == +INFINITY)) {
+            printf("DIV: Infinites in operands: does not handle such cases yet\n");
+            exit(-1);
+        }
+        
+        if ((y.inf <= 0.0) && (0.0 <= y.sup)) {
+            printf("DIV: division by zero: does not handle such cases yet\n");
+            exit(-1);
+        }
+        
         mpri_set_from_d(xi, x.inf, x.sup);
         mpri_set_from_d(yi, y.inf, y.sup);
         mpri_set_from_d(zi, z.inf, z.sup);
@@ -1422,23 +1497,26 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         mpri_add(tmp0, yi, eyi);
         mpri_mul(tmp1, yi, tmp0);
         
-        // y*ex - x*ey
-        mpri_mul(tmp0, yi, exi);
-        mpri_mul(tmp2, xi, eyi);
-        mpri_sub(tmp3, tmp0, tmp2);
-        
-        // (y*ex - x*ey)/(y*(y + ey))
-        mpri_div(tmp0, tmp3, tmp1);
-        
-        // (y*ex - x*ey)/(y*(y + ey)) + eo
-        mpri_add(tmp1, tmp0, eoi);
-        
-        changed |= mpri_proj_inter(ezi, tmp1);
-        
-        // ============================== eo
-        mpri_sub(tmp1, ezi, tmp0);
-        
-        changed |= mpri_proj_inter(eoi, tmp1);
+        if ((mpq_cmp_ui(mpri_lepref(tmp1), 0, 1) > 0) || (mpq_cmp_ui(mpri_repref(tmp1), 0, 1) < 0)) {
+            // y*ex - x*ey
+            mpri_mul(tmp0, yi, exi);
+            mpri_mul(tmp2, xi, eyi);
+            mpri_sub(tmp3, tmp0, tmp2);
+            
+            // (y*ex - x*ey)/(y*(y + ey))
+            mpri_div(tmp0, tmp3, tmp1);
+            
+            // (y*ex - x*ey)/(y*(y + ey)) + eo
+            mpri_add(tmp1, tmp0, eoi);
+            
+            changed |= mpri_proj_inter(ezi, tmp1);
+            
+            // ============================== eo
+            mpri_sub(tmp1, ezi, tmp0);
+            
+            changed |= mpri_proj_inter(eoi, tmp1);
+        } else
+            printf("DIV: WARNING: cannot compute ez and eo projections due to division by zero\n");
         
         // ============================== ex
         // (ez - eo)*(y + ey)
@@ -1466,10 +1544,13 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         mpri_add(tmp2, tmp1, ezi);
         mpri_sub(tmp1, tmp2, eoi);
         
-        // (ex - ez*y + eo*y)/(ez - eo + (x/y))
-        mpri_div(tmp2, tmp0, tmp1);
-        
-        changed |= mpri_proj_inter(eyi, tmp2);
+        if ((mpq_cmp_ui(mpri_lepref(tmp1), 0, 1) > 0) || (mpq_cmp_ui(mpri_repref(tmp1), 0, 1) < 0)) {
+            // (ex - ez*y + eo*y)/(ez - eo + (x/y))
+            mpri_div(tmp2, tmp0, tmp1);
+            
+            changed |= mpri_proj_inter(eyi, tmp2);
+        } else
+            printf("DIV: WARNING: cannot compute ey projection due to division by zero\n");
         
         /* END ERROR PROPAG */
         
