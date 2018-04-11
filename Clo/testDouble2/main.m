@@ -5,10 +5,10 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORDoubleVar> r = [ORFactory doubleVar:mdl];
-      id<ORDoubleVar> K = [ORFactory doubleVar:mdl];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
-      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORDoubleVar> K = [ORFactory doubleVar:mdl name:@"K"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 name:@"x"];
       
       [mdl add:[r set: @(4.0)]];
       [mdl add:[K set: @(1.11)]];

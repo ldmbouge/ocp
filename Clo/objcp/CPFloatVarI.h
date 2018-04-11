@@ -67,10 +67,10 @@ typedef struct  {
 
 @class CPFloatVarI;
 @protocol CPFloatVarNotifier <NSObject>
-//-(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
--(void) bindEvt:(id<CPADom>)sender;
--(void) changeMinEvt:(ORBool) bound sender:(id<CPADom>)sender;
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPADom>)sender;
+-(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
+-(void) bindEvt:(id<CPFloatDom>)sender;
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
 @end
 
 @interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPFloatVarExtendedItf> {
@@ -256,3 +256,4 @@ static inline float previous_nb_float(float v, int nb, float def)
       v = fp_previous_float(v);
    return v;
 }
+

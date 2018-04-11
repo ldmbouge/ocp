@@ -53,7 +53,8 @@ int main(int argc, const char * argv[]) {
             [g add:[S_1[n-1] eq:S_0[n-1]]];
             [g add:[S_0[n] eq:P[n-1]]];
             //         assert(P >= -1327.05 && P <= 1327.05);
-            [g add:[[P[n-1] lt:@(-1327.05f)] lor:[P[n] gt:@(1327.05f)]]];
+//            [g add:[[P[n-1] lt:@(-1327.05f)] lor:[P[n-1] gt:@(1327.05f)]]];
+            [g add:[[P[n-1] geq:@(-1327.05f)] land:[P[n-1] leq:@(1327.05f)]]];
          }
          [model add:g];
          id<CPProgram> cp = [args makeProgram:model];
@@ -68,6 +69,7 @@ int main(int argc, const char * argv[]) {
             for(id<ORFloatVar> v in vars){
                found &= [p bound: v];
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
+               NSLog(@"%16.16e",[(id<CPFloatVar>)[p concretize:v] min]);
             }
          } withTimeLimit:[args timeOut]];
          

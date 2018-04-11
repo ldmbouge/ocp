@@ -138,22 +138,21 @@
 }
 -(void) propagate
 {
-   updateFloatInterval(&_xi,_x);
-   updateFloatInterval(&_yi,_y);
-   intersectionInterval inter;
-   if(isDisjointWith(_x,_y)){
-      failNow();
-   }else{
-      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
-      fpi_setf(_precision, _rounding, &xTmp, &_xi);
-      inter = intersection(_xi, xTmp, 0.0);
-      if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
-      float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
-      fpi_setf(_precision, _rounding, &xTmp, &_yi);
-      inter = intersection(_yi, yTmp, 0.0);
-      if(inter.changed) [_x updateInterval:inter.result.inf and:inter.result.sup];
-   }
-   
+      updateFloatInterval(&_xi,_x);
+      updateFloatInterval(&_yi,_y);
+      intersectionInterval inter;
+      if(isDisjointWith(_x,_y)){
+         failNow();
+      }else{
+         float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+         fpi_setf(_precision, _rounding, &xTmp, &_yi);
+         
+         inter = intersection(_xi, xTmp, 0.0f);
+         if(inter.changed)
+            [_x updateInterval:inter.result.inf and:inter.result.sup];
+         if ((_yi.inf != inter.result.inf) || (_yi.sup != inter.result.sup))
+            [_y updateInterval:inter.result.inf and:inter.result.sup];
+      }
 }
 -(NSSet*)allVars
 {
@@ -558,6 +557,7 @@
    if (![_y bound]) [_y whenChangeBoundsPropagate:self];
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
 }
+//hzi : _Temps variables are useless ? inter.result ? x is already changed ?
 -(void) propagate
 {
    int gchanged,changed;
