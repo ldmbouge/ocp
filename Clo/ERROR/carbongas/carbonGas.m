@@ -60,9 +60,9 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
         id<ORDoubleVar> r = [ORFactory doubleVar:mdl];
         
         //[mdl add:[v set: @(0.5)]];
-        [mdl add:[p set: @(35000000.0)]];
+        [mdl add:[p set: @(3.5e7)]];
         [mdl add:[a set: @(0.401)]];
-        [mdl add:[b set: @(4.27e-05)]];
+        [mdl add:[b set: @(42.7e-6)]];
         [mdl add:[t set: @(300.0)]];
         [mdl add:[n set: @(1000.0)]];
         [mdl add:[k set: @(1.3806503e-23)]];
@@ -207,7 +207,7 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-    carbonGas_f(1, argc, argv);
-    //carbonGas_d(0, argc, argv);
+    //carbonGas_f(1, argc, argv);
+    carbonGas_d(0, argc, argv);
     return 0;
 }

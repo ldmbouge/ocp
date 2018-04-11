@@ -96,6 +96,6 @@ void rigidBody2_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   rigidBody2_d(2, argc, argv);
+   rigidBody2_d(0, argc, argv);
    return 0;
 }

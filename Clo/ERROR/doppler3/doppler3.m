@@ -99,6 +99,6 @@ void doppler3_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   doppler3_d(1, argc, argv);
+   doppler3_d(0, argc, argv);
    return 0;
 }
