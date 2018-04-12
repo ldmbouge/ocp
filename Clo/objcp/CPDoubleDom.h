@@ -22,10 +22,10 @@
     TRDoubleInterval    _domain;
 }
 -(id)initCPDoubleDom:(id<ORTrail>)trail low:(ORDouble)low up:(ORDouble)up;
--(void) updateMin:(ORDouble)newMin for:(id<CPFloatVarNotifier>)x;
--(void) updateMax:(ORDouble)newMax for:(id<CPFloatVarNotifier>)x;
--(void) updateInterval:(double_interval)v for:(id<CPFloatVarNotifier>)x;
--(void) bind:(ORDouble)val  for:(id<CPFloatVarNotifier>)x;
+-(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x;
+-(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x;
+-(void) updateInterval:(double_interval)v for:(id<CPDoubleVarNotifier>)x;
+-(void) bind:(ORDouble)val  for:(id<CPDoubleVarNotifier>)x;
 -(ORDouble) min;
 -(ORDouble) max;
 -(ORDouble) imin;
@@ -37,5 +37,5 @@
 -(ORBool) member:(ORDouble)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPDoubleDom>)toRestore;
--(void) restoreValue:(ORDouble)toRestore for:(id<CPFloatVarNotifier>)x;
+-(void) restoreValue:(ORDouble)toRestore for:(id<CPDoubleVarNotifier>)x;
 @end

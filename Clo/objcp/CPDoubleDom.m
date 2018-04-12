@@ -49,7 +49,7 @@
    [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",_domain._low,_domain._up,*inf,*sup];
    return buf;
 }
--(void) updateMin:(ORDouble)newMin for:(id<CPFloatVarNotifier>)x
+-(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x
 {
    if(newMin > [self max])
       failNow();
@@ -59,7 +59,7 @@
    if (isBound)
       [x bindEvt:self];
 }
--(void) updateMax:(ORDouble)newMax for:(id<CPFloatVarNotifier>)x
+-(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x
 {
    if(newMax < [self min])
       failNow();
@@ -69,13 +69,13 @@
    if (isBound)
       [x bindEvt:self];
 }
--(void) updateInterval:(double_interval)v for:(id<CPFloatVarNotifier>)x;
+-(void) updateInterval:(double_interval)v for:(id<CPDoubleVarNotifier>)x;
 {
    [self updateMin:v.inf for:x];
    [self updateMax:v.sup for:x];
 }
 
--(void) bind:(ORDouble)val  for:(id<CPFloatVarNotifier>)x
+-(void) bind:(ORDouble)val  for:(id<CPDoubleVarNotifier>)x
 {
    if (_domain._low <= val && val <= _domain._up) {
       [x changeMinEvt:YES sender:self];
@@ -147,7 +147,7 @@
    updateMinD(&_domain, toRestore.min, _trail);
    updateMaxD(&_domain, toRestore.max, _trail);
 }
--(void) restoreValue:(ORDouble)toRestore for:(id<CPFloatVarNotifier>)x
+-(void) restoreValue:(ORDouble)toRestore for:(id<CPDoubleVarNotifier>)x
 {
    updateMinD(&_domain, toRestore, _trail);
    updateMaxD(&_domain, toRestore, _trail);

@@ -1138,7 +1138,7 @@
 }
 -(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(ORRational) maxError
 {
-    [[self worker] setMaxErrorDsQ: x maxError: maxError];
+    [[self worker] setMaxErrorDQ: x maxError: maxError];
 }
 -(ORDouble) doubleValue: (id<ORVar>) x
 {
