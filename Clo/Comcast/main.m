@@ -18,6 +18,19 @@
 #import "SecurityTech.h"
 #import "Service.h"
 
+struct linkTuple{
+    ORInt x;
+    ORInt y;
+    ORInt cnode;
+    id<ORIntVar> xv;
+    id<ORIntVar> yv;
+    id<ORIntVar> link;
+};
+
+struct linkTuple linkTupleList[200];
+int linkTupleCount = 0;
+
+
 int links_i[100][100];
 id<ORIntVar> links_v[100][100];
 
@@ -27,8 +40,11 @@ ORInt GlobalMin = 2000000;
 //ORInt GlobalMin = 2230;
 
 enum Mode {
-    MIP,CP,Hybrid,LNS,Expe,Waldy
+    MIP,CP,Hybrid,LNS,Expe,Waldy,Waldy2,Waldy3
 };
+
+id<ORIntArray> findComponents(id<CPCommonProgram> cp ,ORInt x, ORInt sum);
+
 
 id<ORIntVarMatrix> transpose(id<ORIntVarMatrix> m)
 {
@@ -53,8 +69,12 @@ int main(int argc, const char * argv[])
         mode = LNS;
     else if (strncmp(argv[2],"Hybrid",6)==0)
         mode = Hybrid;
-    else if (strncmp(argv[2],"Waldy",6)==0)
+    else if (strncmp(argv[2],"Waldy",5)==0)
         mode = Waldy;
+    else if (strncmp(argv[2],"2Waldy",6)==0)
+        mode = Waldy2;
+    else if (strncmp(argv[2],"3Waldy",6)==0)
+        mode = Waldy3;
     else mode= Expe;
     BOOL printSol = NO;
     if (argc >= 4) {
@@ -322,8 +342,10 @@ int main(int argc, const char * argv[])
             [model add:[[maxSec at:k1 :k2] eq: [sSec[k1] max: sSec[k2]]]];
             [model add:[[chanSec at:k1 :k2] eq: [[[same at:k1 :k2] neg] mul: [maxSec at:k1 :k2]]]];
             [model add:[s[k1] geq: [chanSec at: k1 : k2]]];
-            for(int s = sec.low; s <= sec.up; s++)
+            for(int s = sec.low; s <= sec.up; s++){
                 [model add: [[secAdapter at:k1 :s] geq: [[chanSec at:k1 :k2] eq: @(s)]]];
+                //[model add: [[secAdapter at:k2 :s] geq: [[chanSec at:k1 :k2] eq: @(s)]]];
+            }
         }
     }
     
@@ -379,7 +401,7 @@ int main(int argc, const char * argv[])
                 
             }
                 //[model add: [ce eq: [mc_conn at:i :(j*(sec.up+1) + z)]]];
-                NSLog(@"mc_conn[%d,%d,%d]",i,j,z);
+                //NSLog(@"mc_conn[%d,%d,%d]",i,j,z);
                 
                 if(ce != nil)
                     [model add: [ce eq: [mc_conn at:i :j :z]]];
@@ -417,12 +439,12 @@ int main(int argc, const char * argv[])
     
     // Security Constraints
     for(ORInt k = [Iservice low]; k <= [Iservice up]; k++) {
-        /*
-        [model add: //[[a[k] gt: @(0)] eq:
-         [s[k] geq: @([serviceZone at: [alpha at: k]])]
+     
+        //[model add: //[[a[k] gt: @(0)] eq:
+         //[s[k] geq: @([serviceZone at: [alpha at: k]])]
          //]
-         ];
-         */
+         //];
+     
         for(ORInt j = [sec low]; j <= [sec up]; j++)
             if([serviceZone at: [alpha at: k]] == j)
                 [model add: [[secAdapter at: k: j] eq: @(1)]];
@@ -645,7 +667,7 @@ int main(int argc, const char * argv[])
                 //minScaledMem = minScaledMem > [secScaledMem at:Security] ? [secScaledMem at:Security] : minScaledMem;
                 //minFixedMem = minFixedMem > [secFixMem at: Security] ? [secFixMem at: Security] : minFixedMem;
             }
-            NSLog(@"AIndex: %d", j);
+            //NSLog(@"AIndex: %d", j);
     
             return ([serviceFixMem at: [alpha at: (j/(maxSecConfig))]] * (ScaledMem + 10)) + FixedMem * 10 + 10 * VM_MEM;
         }];
@@ -658,7 +680,7 @@ int main(int argc, const char * argv[])
          ORInt currentConfig = j % maxSecConfig;
          id<ORExpr> term = nil;
          for(int i = 0; i < (sec.up + 1); i++){
-             NSLog(@"i = %d i2: %d currentConfig = %d", i, 1 << i, currentConfig);
+             //NSLog(@"i = %d i2: %d currentConfig = %d", i, 1 << i, currentConfig);
              if((1 << i) & currentConfig){
                  term = term == nil ? [secAdapter at: (j/maxSecConfig) : i] : [term land: [secAdapter at: (j/maxSecConfig) : i]];
                  
@@ -674,7 +696,7 @@ int main(int argc, const char * argv[])
              //    NSLog(@"NIL!");
          }
          
-         NSLog(@"a[%d] == %d", j/maxSecConfig, z);
+         //NSLog(@"a[%d] == %d", j/maxSecConfig, z);
          [model add: [x[j] eq: [[a[j/maxSecConfig] eq: @(z)] land: term]]];
      }
      //for(int k = Iservice.low; k <= Iservice.up; k++)
@@ -958,6 +980,11 @@ int main(int argc, const char * argv[])
                         id<ORIntVarArray> iv = [model intVars];
                         //Fix all Connections
                         [cp labelArrayFF:l];
+                        
+                        id<ORIntArray> comp = findComponents(cp, [Iservice low], [Iservice up]);
+                        NSLog(@"Range low: %d high: %d", [[comp range] low], [[comp range] up]);
+                        for(int i = [[comp range] low]; i <= [[comp range] up]; i++)
+                            NSLog(@"comp[%d] = %d",i, [comp at: i]);
                         
                         //Assign Each VM to a Cnode (Machine)
                         [cp forall:Iservice suchThat:^ORBool(ORInt i) {
@@ -1525,6 +1552,334 @@ int main(int argc, const char * argv[])
             best = [r bestSolution];
             if (printSol) writeOut(best);
         }break;
+        case Waldy2: {
+            //Calculate the total number of shared service.
+            id<ORIntArray> sharedVariables = [ORFactory intArray:model range:services with:^ORInt(ORInt k) {
+                return 0;
+            }];
+            for(NSArray* lnk in links) {
+                ORInt t1 = (ORInt)[lnk[0] integerValue],t2 = (ORInt)[lnk[1] integerValue];
+                id<ORIntVarMatrix> lc = links[lnk];
+                ORInt r = [[lc range:0] size];
+                ORInt c = [[lc range:1] size];
+                if(r < c){
+                    [sharedVariables set:( [sharedVariables at: t1] + c % r ) at: t1];
+                }
+                else if(c < r){
+                    [sharedVariables set:( [sharedVariables at: t2] + r % c ) at: t2];
+                }
+            }
+            
+            for(int i = services.low; i <= services.up; i++)
+                NSLog(@"sharedVariables[%d] = %d", i, [sharedVariables at: i]);
+            
+            id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
+                return [^(id<CPCommonProgram> cp) {
+                    [cp limitTime:tLim in:^{
+                        printf("Entering Waldys Search");
+                        id<ORIntVarArray> iv = [model intVars];
+
+                        ORInt lboundMem = 0;
+                        for(int i = [Iservice low]; i <= [Iservice up]; i++){
+                            ORInt secNum = [serviceZone at: [alpha at: i]];
+                            lboundMem += ((VM_MEM * 10) + [serviceFixMem at: [alpha at: i]] * ([secScaledMem at: secNum] + 10)
+                            + [secFixMem at: secNum] * 10)/10;
+                        }
+                        NSLog(@"lboundMem = %d", lboundMem);
+                        
+                        ORInt minCnode = (lboundMem + 1000) / 1000;
+                        
+                        [cp forall:Iservice suchThat:^ORBool(ORInt k) {
+                            return ![cp bound: a[k]];
+                        } orderedBy:^ORInt(ORInt k) {
+                            return -(linkCount[k] << 5) + [D at: [alpha at: k]];
+                            //return [D at: [alpha at: k]];//-linkCount[k];
+                        } do:^(ORInt k) {
+                            [cp tryall:cnodes
+                              suchThat:^ORBool(ORInt j) {
+                                  //While Links are not satisfied
+                                  //return ![cp bound: links_v[k][j]];
+                                  return [cp member:j in:a[k]];
+                              }
+                              orderedBy:^ORDouble(ORInt j) {
+                                  ORInt count = 0;
+                                  for(int i = [[omega at: [alpha at: k]] low]; i <= [[omega at: [alpha at: k]] up]; i++){
+                                      count += ([cp bound: a[i]] && [cp intValue:a[i]] == j);
+                                  }
+                                  
+                                  return -((j <= minCnode) << 15) + (count << 10) + j;
+                              } in:^(ORInt j) {
+                                  [cp label:a[k] with:j];
+                                  NSLog(@"label a[%d]",k);
+                              } onFailure:^(ORInt j) {
+                                  [cp diff:a[k] with:j];
+                              }];
+                        }];
+                        for(int i = [Iservice low]; i <= [Iservice up]; i++){
+                            NSLog(@"a[%d] = %d",i,[cp intValue: a[i]]);
+                        }
+                        [cp labelArrayFF:l];
+                        [cp labelArrayFF:iv];
+                        
+                        
+                        if(![cp ground]){
+                            NSLog(@"CP IS NOT BOUNDED");
+                            NSLog(@"%@", [[cp engine] model]);
+                        }
+                        
+                        id<ORSolution> sol = [cp captureSolution];
+                        ORTimeval ts = [ORRuntimeMonitor elapsedSince:now];
+
+                        //NSLog(@"MemTCost: %d   bwCostSum: %d", memCostSum, bwCostSum);
+                        NSLog(@"Found Solution: %i   at: %f", [[sol objectiveValue] intValue],((double)ts.tv_sec) * 1000 + ts.tv_usec / 1000);
+                        
+                    }];
+                } copy];
+            }];
+            [r start];
+            best = [r bestSolution];
+            if (printSol) writeOut(best);
+            
+        }break;
+        case Waldy3:{
+            //struct linkTuple linkTupleList[200];
+            //int linkTupleCount = 0;
+            
+            for(NSArray* lnk in links) {
+                id<ORIntVarMatrix> lc = links[lnk];
+                id<ORIntRange> r = [lc range:0];
+                id<ORIntRange> c = [lc range:1];
+                for(ORInt s = r.low;s <= r.up;s++) {
+                    for(ORInt k = c.low; k <= c.up; k++){
+                        //for(ORInt j = [cnodes low]; j <= [cnodes up]; j++){
+                            struct linkTuple temp;//(s,k,a[s],a[k], [lc at:s :k]);
+                            temp.x = s;
+                            temp.y = k;
+                            temp.xv = a[s];
+                            temp.yv = a[k];
+                            temp.link = [lc at:s :k];
+                            //temp.cnode = j;
+                            linkTupleList[linkTupleCount++] = temp;
+                        //}
+                    }
+                }
+            }
+            ORLong startTime = [ORRuntimeMonitor wctime];
+            id<ORRunnable> r = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
+                return [^(id<CPCommonProgram> cp) {
+                    [cp limitTime:tLim in:^{
+                        printf("Entering Waldy-3 Search\n");
+                        id<ORIntVarArray> iv = [model intVars];
+
+                        ORInt lboundMem = 0;
+                        for(int i = [Iservice low]; i <= [Iservice up]; i++){
+                            ORInt secNum = [serviceZone at: [alpha at: i]];
+                            lboundMem += ((VM_MEM * 10) + [serviceFixMem at: [alpha at: i]] * ([secScaledMem at: secNum] + 10)
+                                          + [secFixMem at: secNum] * 10)/10;
+                        }
+                        NSLog(@"lboundMem = %d", lboundMem);
+                        
+                        ORInt minCnode = (lboundMem + 1000) / 1000;
+                        
+                        [cp forall: RANGE(cp, 0, linkTupleCount-1) suchThat:^ORBool(ORInt i) {
+                            return ![cp bound: linkTupleList[i].link];
+                            
+                        } orderedBy:^ORInt(ORInt i) {
+                            ORInt numActivated = 0;
+                            ORInt numBound1 = 0;
+                            ORInt numBound2 = 0;
+                            ORInt numLinks = 0;
+                            for(int z = [cnodes low]; z <= [cnodes up]; z++)
+                                numActivated += ([cp min: mc[z]] > 0);
+                            
+                            for(int z = 0; z <= linkTupleCount; z++)
+                                if([alpha at:linkTupleList[z].x] == [alpha at:linkTupleList[i].x] &&
+                                   [alpha at:linkTupleList[z].y] == [alpha at:linkTupleList[i].y])
+                                    numLinks += [cp bound: linkTupleList[z].link];
+                            
+                            ORInt occurances = 0;
+                            ORInt idealRatio = 0;
+                            ORBool sameNode = false;
+                            if([cp bound: linkTupleList[i].xv] || [cp bound: linkTupleList[i].yv]){
+                                ORInt index = [cp bound: linkTupleList[i].xv] ? linkTupleList[i].x : linkTupleList[i].y;
+                                ORInt index2 = ![cp bound: linkTupleList[i].xv] ? linkTupleList[i].x : linkTupleList[i].y;
+                                sameNode = [cp member:[cp intValue:a[index]] in:a[index2]];
+                                for(int i = 0; i < linkCount[index]; i++){
+                                    if([cp bound: links_v[index][i]] && [alpha at: links_i[index][i]] == [alpha at: index2]){
+                                        occurances++;
+                                    }
+                                }
+                                idealRatio = MAX([D at: [alpha at: linkTupleList[i].x]],[D at: [alpha at: linkTupleList[i].y]]) / MIN([D at: [alpha at: linkTupleList[i].x]],[D at: [alpha at: linkTupleList[i].y]]);
+                            }
+                            //NSLog(@"sameNode: %d", sameNode);
+                            if([cp bound: linkTupleList[i].xv] && [cp bound: linkTupleList[i].yv]){
+                                assert(sameNode == ([cp intValue:linkTupleList[i].xv] == [cp intValue:linkTupleList[i].yv]));
+                            }
+                            return (([cp bound: linkTupleList[i].xv] + [cp bound: linkTupleList[i].yv]) << 15) + (MIN([D at: [alpha at: linkTupleList[i].x]],[D at: [alpha at: linkTupleList[i].y]]) << 10) - (sameNode << 5) - ((idealRatio - occurances))  ;
+                            //return (b1 || b2)*(-([cp bound: linkTupleList[i].xv] + [cp bound: linkTupleList[i].yv]))  + ((b1*numBound1 + b2*numBound2) << 15);
+                            //return MAX([D at: [alpha at: linkTupleList[i].x]],[D at: [alpha at: linkTupleList[i].y]]) + ((b1 + b2 + b3) << 10);
+                            
+                            //return (-([cp bound: linkTupleList[i].xv] + [cp bound: linkTupleList[i].yv]) << 10) - MAX([cp max:linkTupleList[i].xv],[cp max:linkTupleList[i].yv]);
+                        } do:^(ORInt i) {
+                            [cp tryall: cnodes suchThat:^ORBool(ORInt j) {
+                                ORBool bx = [cp bound: linkTupleList[i].xv] || [cp member:j in: linkTupleList[i].xv];
+                                ORBool by = [cp bound: linkTupleList[i].yv] || [cp member:j in: linkTupleList[i].yv];
+                                
+                                if([cp bound: linkTupleList[i].xv] && [cp bound: linkTupleList[i].yv]){
+                                    if([cp intValue:linkTupleList[i].xv] == [cp intValue:linkTupleList[i].yv])
+                                        return [cp intValue:linkTupleList[i].xv] == j;
+                                }
+                                
+                                /*
+                                if(([cp bound: linkTupleList[i].xv] && ![cp bound: linkTupleList[i].yv]) ||
+                                   ([cp bound: linkTupleList[i].yv] && ![cp bound: linkTupleList[i].xv])){
+                                    if([cp bound: linkTupleList[i].xv]){
+                                        return [cp intValue:linkTupleList[i].xv] == j && [cp member:[cp intValue:linkTupleList[i].xv] in: linkTupleList[i].yv];
+                                    }
+                                    else if([cp bound: linkTupleList[i].yv]){
+                                        return [cp intValue:linkTupleList[i].yv] == j && [cp member:[cp intValue:linkTupleList[i].yv] in: linkTupleList[i].xv];
+                                    }
+                                }
+                                */
+                                 
+                                return bx && by;
+                            } orderedBy:^ORDouble(ORInt j) {
+                                ORInt numBound = 0;
+
+                                ORInt numBound1 = 0;
+                                ORInt numBound2 = 0;
+
+                                if(![cp bound: linkTupleList[i].xv] && ![cp bound: linkTupleList[i].yv]){ //Both are not bounded!
+                                    ORInt size1 = [D at: [alpha at: linkTupleList[i].x]];
+                                    ORInt size2 = [D at: [alpha at: linkTupleList[i].y]];
+                                    ORInt instanceNum = size1 > size2 ? linkTupleList[i].x : linkTupleList[i].y;//-1;
+                                    ORInt instanceNum2 = size1 <= size2 ? linkTupleList[i].y : linkTupleList[i].x;//-1;
+/*
+                                    if(size1 < size2){
+                                        instanceNum = linkTupleList[i].x;
+                                    }
+                                    if(size2 < size1){
+                                        instanceNum = linkTupleList[i].y;
+                                    }
+ */
+                                    for(int z = [[omega at: [alpha at: instanceNum]] low];  z <= [[omega at: [alpha at: instanceNum]] up]; z++)
+                                        if([cp bound: a[z]] && [cp intValue: a[z]] == j) numBound1 += 1;
+                                    
+                                    for(int z = [[omega at: [alpha at: instanceNum2]] low];  z <= [[omega at: [alpha at: instanceNum2]] up]; z++)
+                                        if([cp bound: a[z]] && [cp intValue: a[z]] == j) numBound2 += 1;
+                                    
+                                    return /*(numBound << 15) +*/ j /*+ ((j > minCnode) << 20)*/ + (numBound1 << 10) + (numBound2 << 5);
+                                    //return /*(numBound << 15) +*/ j + ((j > minCnode) << 20) + (numBound1 << 10) + (numBound2 << 5);
+
+                                }
+                                else if(![cp bound: linkTupleList[i].xv] || ![cp bound: linkTupleList[i].yv]){ //One is not bounded!
+                                    //NSLog(@"---------------------------------------------------");
+                                    ORInt instanceNum = -1;
+                                    if(![cp bound: linkTupleList[i].xv]){
+                                        instanceNum = linkTupleList[i].x;
+                                    }
+                                    if(![cp bound: linkTupleList[i].yv]){
+                                        instanceNum = linkTupleList[i].y;
+                                    }
+                                    for(int z = [[omega at: [alpha at: instanceNum]] low];  z <= [[omega at: [alpha at: instanceNum]] up]; z++)
+                                        if([cp bound: a[z]] && [cp intValue: a[z]] == j) numBound += 1;
+                                    //NSLog(@"--------------------------------------------------- j:%d f:%d",j,(numBound << 10) + j + ((j > minCnode) << 15));
+
+                                    return (numBound << 10) + j /*+ ((j > minCnode) << 15)*/;
+                                    //return (numBound << 10) + j /*+ ((j > minCnode) << 15)*/;
+
+                                    
+                                }
+                                else{ //Both are bounded!
+                                    //NSLog(@"LASTSTRETCH!!!!!!!!!!");
+                                }
+                                
+                                if([cp bound: linkTupleList[i].xv] && [cp intValue: linkTupleList[i].xv] == j)
+                                    return -1;
+                                if([cp bound: linkTupleList[i].yv] && [cp intValue: linkTupleList[i].yv] == j)
+                                    return -1;
+                                return j;
+                                
+                                
+                            } in:^(ORInt j) {
+                                /*
+                                [cp atomic:^{
+                                    
+                                    //NSLog(@"x(%d:%d) <==> y(%d:%d) (%d)",
+                                    //      linkTupleList[i].x, [cp bound: linkTupleList[i].xv] ? [cp intValue: linkTupleList[i].xv] : j,
+                                    //      linkTupleList[i].y, [cp bound: linkTupleList[i].yv] ? [cp intValue: linkTupleList[i].yv] : j, j);
+                                    
+                                    if(![cp bound: linkTupleList[i].xv]){
+                                        [cp label:linkTupleList[i].xv with: j];
+                                    }
+                                    if(![cp bound: linkTupleList[i].yv]){
+                                        [cp label:linkTupleList[i].yv with: j];
+                                    }
+                                    [cp label:linkTupleList[i].link with:1];
+                                }];
+                                 */
+                                [cp try:^{
+                                    [cp label:linkTupleList[i].xv with: j];
+                                    [cp try:^{
+                                        [cp label:linkTupleList[i].yv with: j];
+                                    } alt:^{
+                                        [cp tryall:cnodes suchThat:^ORBool(ORInt k) {
+                                            return [cp member:j in:linkTupleList[i].yv] && j != k;
+                                        } do:^(ORInt k) {
+                                            [cp label:linkTupleList[i].yv with: k];
+                                        }];
+                                    }];
+                                    [cp label:linkTupleList[i].link with:1];
+                                } alt:^{
+                                    [cp tryall:cnodes suchThat:^ORBool(ORInt k) {
+                                        return [cp member:j in:linkTupleList[i].xv] && j != k;
+                                    } do:^(ORInt k) {
+                                        [cp label:linkTupleList[i].yv with: k];
+                                    }];
+                                    
+                                    [cp try:^{
+                                        [cp label:linkTupleList[i].yv with: j];
+                                    } alt:^{
+                                        [cp tryall:cnodes suchThat:^ORBool(ORInt k) {
+                                            return [cp member:j in:linkTupleList[i].yv] && j != k;
+                                        } do:^(ORInt k) {
+                                            [cp label:linkTupleList[i].yv with: k];
+                                        }];
+                                    }];
+                                    [cp label:linkTupleList[i].link with:1];
+                                }];
+                                
+                            } onFailure:^(ORInt j) {
+                                //NSLog(@"Fail");
+                            }];
+                        }];
+                        [cp labelArrayFF:iv];
+                        
+                        
+                        if(![cp ground]){
+                            NSLog(@"CP IS NOT BOUNDED");
+                            NSLog(@"%@", [[cp engine] model]);
+                        }
+                        
+                        ORLong endTime = [ORRuntimeMonitor wctime];
+
+                        id<ORSolution> sol = [cp captureSolution];
+                        ORTimeval ts = [ORRuntimeMonitor elapsedSince:now];
+                        //[ORRuntimeMonitor wctime];
+                        
+                        //NSLog(@"MemTCost: %d   bwCostSum: %d", memCostSum, bwCostSum);
+                        NSLog(@"Found Solution: %i   at: %f Gap: %f%% Choices: (%d/%d) Time: %lds",
+                              [[sol objectiveValue] intValue],((double)ts.tv_sec) * 1000 + ts.tv_usec / 1000, (([[sol objectiveValue] intValue] - 2732) / 2732.0)*100, [cp nbChoices], [cp nbFailures], (endTime - startTime) / 1000);
+                        
+                    }];
+                } copy];
+            }];
+            [r start];
+            best = [r bestSolution];
+            if (printSol) writeOut(best);
+            
+        }break;
+            
     }
     
     //NSLog(@"Number of solutions found: %li", [[cp solutionPool] count]);
@@ -1532,4 +1887,53 @@ int main(int argc, const char * argv[])
     NSLog(@"#best objective: %@",[best objectiveValue]);
     NSLog(@"Total time: %f",el.tv_sec * 1000.0 + (double)el.tv_usec / 1000.0);
     return 0;
-}    
+}
+
+id<ORIntArray> findComponents(id<CPCommonProgram> cp ,ORInt x, ORInt sum){
+    id<ORIntArray> nodes = [ORFactory intArray:cp range:RANGE(cp,0,sum) with:^ORInt(ORInt x) {
+        return -1;
+    }];
+    id<ORIntArray> location = [ORFactory intArray:cp range:RANGE(cp,0,sum) with:^ORInt(ORInt x) {
+        return 0;
+    }];
+    
+    [nodes set:x at:0];
+    [location set:1 at: x];
+    ORInt count = 1;
+    ORInt pos = 1;
+    ORInt compNum = 1;
+    int disjointNode = -1;
+    while(count < sum+1){
+        disjointNode = -1;
+        for(ORInt i = 0; i <= sum; i++){
+            //ORInt currpos = pos;
+            ORBool found = false;
+            for(ORInt j = 0; j < linkCount[[nodes at: i]]; j++){
+                if([location at: links_i[[nodes at: i]][j]] == 0 && [cp intValue: links_v[[nodes at: i]][j]] > 0){
+                    [nodes set:links_i[[nodes at: i]][j] at:pos];
+                    found = true;
+                    [location set:compNum at: links_i[[nodes at: i]][j]];
+                    pos++;
+                    count++;
+                }
+                else if([location at: links_i[[nodes at: i]][j]] == 0){
+                    disjointNode = links_i[[nodes at: i]][j];
+                }
+                
+            }
+            //if(!found)
+            //    break;
+        }
+        
+        pos = 1;
+        compNum++;
+        if (count < sum + 1){
+            if(disjointNode < 0) break;
+            [nodes set:disjointNode at:0];
+            [location set:compNum at: disjointNode];
+        }
+    }
+    
+    return location;
+}
+
