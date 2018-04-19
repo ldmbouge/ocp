@@ -59,16 +59,15 @@ void check_it_d(double x, double y, double z, mpq_t ez) {
     mpq_clears(xq, yq, zq, y2q, y4q, y6q, y8q, x2q, tmp0, tmp1, NULL);
 }
 
-void rump_d(int argc, const char * argv[]) {
+void rump_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        id<ORDoubleVar> y_0 = [ORFactory doubleVar:mdl];
+        id<ORDoubleVar> x_0 = [ORFactory doubleVar:mdl low:7617.0 up:147617.0];
+        id<ORDoubleVar> y_0 = [ORFactory doubleVar:mdl low:3096.0 up:63096.0];
         id<ORDoubleVar> r_0 = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> x_0 = [ORFactory doubleVar:mdl];
         
-        
-        [mdl add:[x_0 set: @(77617.0)]];
-        [mdl add:[y_0 set: @(33096.0)]];
+        //[mdl add:[x_0 set: @(77617.0)]];
+        //[mdl add:[y_0 set: @(33096.0)]];
         [mdl add:[r_0 set: [[[[[[[[[y_0 mul: @(333.75)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0)]]] plus: [[[[[[[[y_0 mul: @(5.5)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.0)]]]]];
         //assert((r_0 >= 0));
         //[mdl add:[r_0 set:[x_0 plus: y_0]]];
@@ -77,8 +76,20 @@ void rump_d(int argc, const char * argv[]) {
         
         NSLog(@"model: %@",mdl);
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-        
+        id<ORDoubleVarArray> vs = [mdl doubleVars];
+        id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       
+        [cp setMinErrorDD:x_0 minErrorF:0.0];
+        [cp setMaxErrorDD:x_0 maxErrorF:0.0];
+        [cp setMinErrorDD:y_0 minErrorF:0.0];
+        [cp setMaxErrorDD:y_0 maxErrorF:0.0];
+        [cp setMinErrorDD:r_0 minErrorF:0.0];
+        [cp setMaxErrorDD:r_0 maxErrorF:0.0];
         [cp solve:^{
+           if (search)
+              [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+                 [cp floatSplitD:i call:s withVars:x];
+              }];
             NSLog(@"%@",cp);
             printDvar("x", x_0);
             printDvar("y", y_0);
@@ -132,16 +143,16 @@ void check_it_f(float x, float y, float z, mpq_t ez) {
     mpq_clears(xq, yq, zq, y2q, y4q, y6q, y8q, x2q, tmp0, tmp1, NULL);
 }
 
-void rump_f(int argc, const char * argv[]) {
+void rump_f(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        id<ORFloatVar> y_0 = [ORFactory floatVar:mdl];
-        id<ORFloatVar> r_0 = [ORFactory floatVar:mdl];
-        id<ORFloatVar> x_0 = [ORFactory floatVar:mdl];
+        id<ORFloatVar> x_0 = [ORFactory floatVar:mdl low:70617.0f up:79617.0f name:@"x_0"];
+        id<ORFloatVar> y_0 = [ORFactory floatVar:mdl low:30096.0f up:37096.0f name:@"y_0"];
+        id<ORFloatVar> r_0 = [ORFactory floatVar:mdl name:@"r_0"];
         
         
-        [mdl add:[x_0 set: @(77617.f)]];
-        [mdl add:[y_0 set: @(33096.f)]];
+        //[mdl add:[x_0 set: @(77617.f)]];
+        //[mdl add:[y_0 set: @(33096.f)]];
         [mdl add:[r_0 set: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
         //assert((r_0 >= 0));
         //[mdl add:[r_0 set:[x_0 plus: y_0]]];
@@ -150,8 +161,20 @@ void rump_f(int argc, const char * argv[]) {
         
         NSLog(@"model: %@",mdl);
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-        
+        id<ORFloatVarArray> vs = [mdl floatVars];
+        id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+
+        [cp setMinErrorFD:x_0 minErrorF:0.0f];
+        [cp setMaxErrorFD:x_0 maxErrorF:0.0f];
+        [cp setMinErrorFD:y_0 minErrorF:0.0f];
+        [cp setMaxErrorFD:y_0 maxErrorF:0.0f];
+        //[cp setMinErrorFD:r_0 minErrorF:0.0f];
+        //[cp setMaxErrorFD:r_0 maxErrorF:0.0f];
         [cp solve:^{
+           if (search)
+              [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+                 [cp floatSplitD:i call:s withVars:x];
+              }];
             NSLog(@"%@",cp);
             printFvar("x", x_0);
             printFvar("y", y_0);
@@ -162,9 +185,10 @@ void rump_f(int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-//    rump_f(argc, argv);
-    rump_d(argc, argv);
 
+    rump_f(1, argc, argv);
+    //rump_d(1, argc, argv);
+    NSLog(@"%16.16e", FLT_MAX);
     return 0;
 }
 

@@ -85,9 +85,10 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
         id<ORDoubleVarArray> vs = [mdl doubleVars];
         id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
         
-        //[cp setMinErrorDD:r minErrorF:1.37616859e-1f];
-        [cp setMinErrorDD:v minErrorF:0.0f];
-        [cp setMaxErrorDD:v maxErrorF:0.0f];
+        [cp setMinErrorDD:v minErrorF:0.0];
+        [cp setMaxErrorDD:v maxErrorF:0.0];
+        //[cp setMinErrorDD:r minErrorF:0.0];
+        //[cp setMaxErrorDD:r maxErrorF:0.0];
         [cp solve:^{
             if (search)
                 [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -208,6 +209,6 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
     //carbonGas_f(1, argc, argv);
-    carbonGas_d(0, argc, argv);
+    carbonGas_d(1, argc, argv);
     return 0;
 }

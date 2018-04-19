@@ -71,6 +71,8 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
       
       [cp setMaxErrorDD:x maxErrorF:0.0];
       [cp setMinErrorDD:x minErrorF:0.0];
+      //[cp setMinErrorDD:z minErrorF:-10.0];
+      //[cp setMaxErrorDD:z maxErrorF:-0.99];
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -88,6 +90,6 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   sineOrder3_d(0, argc, argv);
+   sineOrder3_d(1, argc, argv);
    return 0;
 }

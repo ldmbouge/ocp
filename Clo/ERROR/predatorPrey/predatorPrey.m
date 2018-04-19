@@ -67,6 +67,8 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
         
         [cp setMinErrorDD:x minErrorF:0.0];
         [cp setMaxErrorDD:x maxErrorF:0.0];
+        [cp setMinErrorDD:z minErrorF:0.0];
+        [cp setMaxErrorDD:z maxErrorF:0.0];
         [cp solve:^{
             if (search)
                 [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -154,7 +156,7 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
     //predatorPrey_f(1, argc, argv);
-    predatorPrey_d(0, argc, argv);
+    predatorPrey_d(1, argc, argv);
     return 0;
 }
 

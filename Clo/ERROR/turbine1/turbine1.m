@@ -76,6 +76,8 @@ void turbine1_d(int search, int argc, const char * argv[]) {
       [cp setMinErrorDD:w minErrorF:0.0];
       [cp setMaxErrorDD:r maxErrorF:0.0];
       [cp setMinErrorDD:r minErrorF:0.0];
+      //[cp setMaxErrorDD:z maxErrorF:0.0];
+      //[cp setMinErrorDD:z minErrorF:0.0];
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -95,6 +97,6 @@ void turbine1_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   turbine1_d(0, argc, argv);
+   turbine1_d(1, argc, argv);
    return 0;
 }

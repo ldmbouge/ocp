@@ -72,6 +72,7 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
       [cp setMinErrorDD:x2 minErrorF:0.0];
       [cp setMaxErrorDD:x3 maxErrorF:0.0];
       [cp setMinErrorDD:x3 minErrorF:0.0];
+      //[cp setMinErrorDD:z minErrorF:0.01e-19];
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -91,6 +92,6 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   rigidBody1_d(0, argc, argv);
+   rigidBody1_d(1, argc, argv);
    return 0;
 }

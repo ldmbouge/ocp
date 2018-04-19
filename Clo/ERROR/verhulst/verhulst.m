@@ -60,6 +60,8 @@ void verhulst_d(int search, int argc, const char * argv[]) {
         
         [cp setMinErrorDD:x minErrorF:0.0];
         [cp setMaxErrorDD:x maxErrorF:0.0];
+        //[cp setMinErrorDD:z minErrorF:0.0];
+        //[cp setMaxErrorDD:z maxErrorF:0.0];
         
         [cp solve:^{
             if (search)
@@ -137,6 +139,6 @@ void verhulst_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
  //   verhulst_f(0, argc, argv);
-   verhulst_d(0, argc, argv);
+   verhulst_d(1, argc, argv);
     return 0;
 }
