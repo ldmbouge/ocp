@@ -701,9 +701,10 @@ int main(int argc, const char * argv[])
      }
      //for(int k = Iservice.low; k <= Iservice.up; k++)
      //    printf("%d ", [w at: k]);
-     id<ORIntVar> c = [ORFactory intVar:model domain:RANGE(model,0,1000*10)];
+
+        // id<ORIntVar> c = [ORFactory intVar:model domain:RANGE(model,0,1000*10)];
      //[model add:[c eq: [u_mem[z] mul: @(10)]]];
-     [model add:[ORFactory knapsack:x weight:w3 capacity:c]];
+    // [model add:[ORFactory knapsack:x weight:w3 capacity:c]];
      
      }
     
@@ -764,17 +765,18 @@ int main(int argc, const char * argv[])
                     [cp limitTime:tLim in:^{
                         //NSLog(@"CMem = %d", [cp intValue:totalCMem]);
                         //NSLog(@"VMMem = %d", [cp intValue:totalVMMem]);
-                       [cp labelHeuristic: h restricted:u_mem];
-                       [cp labelHeuristic: h restricted:u_bw];
-                       for(NSArray* lnk in links) {
-                          id<ORIntVarMatrix> lc = links[lnk];
-                          [cp labelHeuristic: h restricted:lc.flatten];
-                       }
-                       [cp once:^{
-                          [cp labelHeuristic: h restricted:a];
+                       //[cp labelHeuristic: h restricted:u_mem];
+                       [cp labelHeuristic: h restricted:a];
+                       //[cp labelHeuristic: h restricted:u_bw];
+//                       for(NSArray* lnk in links) {
+//                          id<ORIntVarMatrix> lc = links[lnk];
+//                          [cp labelHeuristic: h restricted:lc.flatten];
+//                       }
+//                       [cp once:^{
+                          //[cp labelHeuristic: h restricted:a];
                           [cp labelHeuristic: h restricted:chanSec.flatten]; // nbConn chanSec
                           [cp labelHeuristic: h];
-                       }];
+//                       }];
                         NSLog(@"+++++++ ALL done...");
                         id<ORSolution> sol = [cp captureSolution];
                         if (printSol) writeOut(sol);
