@@ -476,11 +476,20 @@
     _minValue = minValue;
     _maxValue = maxValue;
     _adjacencyMatrix = adjacencyMatrix;
+    
+    /*_state = [[NSMutableArray alloc] init];
+    for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
+        [_state addObject:@YES];
+    }*/
+    
     _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
     _state -= _minValue;
-    
+    _stateChar = malloc((_maxValue - _minValue +1) * sizeof(char));
+    _stateChar -= _minValue;
     for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
         _state[stateValue] = true;
+        _stateChar[stateValue] = '1';
+        //_stateKey = [_stateKey stringByAppendingString:@"1"];
     }
     
     return self;
@@ -490,28 +499,50 @@
     _minValue = minValue;
     _maxValue = maxValue;
     _adjacencyMatrix = adjacencyMatrix;
+    
+    /*NSMutableArray* parentState = [parentNodeState state];
+    _state = [NSMutableArray arrayWithArray: parentState];
+    int parentVariable = [parentNodeState variableIndex];
+    bool* parentAdjacencies = adjacencyMatrix[parentVariable];
+    if (edgeValue == 1) {
+        for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
+            if (parentAdjacencies[stateIndex]) {
+                [_state setObject: @NO atIndexedSubscript:(stateIndex - _minValue)];
+            }
+        }
+    }
+    [_state setObject:@NO atIndexedSubscript:(parentVariable - _minValue)];*/
+    
+    
     _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
     _state -= _minValue;
-    
     bool* parentState = [parentNodeState state];
     int parentVariable = [parentNodeState variableIndex];
     bool* parentAdjacencies = adjacencyMatrix[parentVariable];
-    
+    _stateChar = malloc((_maxValue - _minValue +1) * sizeof(char));
+    _stateChar -= _minValue;
     if (edgeValue == 1) {
         for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
             _state[stateIndex] = !parentAdjacencies[stateIndex] && parentState[stateIndex];
+            _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
+            //_stateKey = [_stateKey stringByAppendingString:(_state[stateIndex] ? @"1":@"0")];
         }
     }
     else {
         for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
             _state[stateIndex] = parentState[stateIndex];
+            _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
+            //_stateKey = [_stateKey stringByAppendingString:(_state[stateIndex] ? @"1":@"0")];
         }
     }
     _state[parentVariable] = false;
+    _stateChar[parentVariable] = '0';
+    //_stateKey = [_stateKey stringByReplacingCharactersInRange:NSMakeRange(parentVariable - _minValue,1) withString:@"0"];
 
     return self;
 }
 -(bool*) state { return _state; }
+-(char*) stateChar { return _stateChar; }
 -(int) variableIndex { return _variableIndex; }
 -(bool) canChooseValue:(int)value {
     if (value == 0) return true;
@@ -520,7 +551,7 @@
 -(void) mergeStateWith:(MISPState *)other {
     for (int value = _minValue; value <= _maxValue; value++) {
         bool combinedStateValue = [self canChooseValue: value] || [other canChooseValue:value];
-        _state[value] = combinedStateValue;
+        _state[value] = [NSNumber numberWithBool: combinedStateValue];
     }
 }
 -(bool) stateAllows:(int)variable {
@@ -533,13 +564,14 @@
     return !_adjacencyMatrix[_variableIndex][variable];
 }
 -(BOOL) isEqual:(MISPState*)object {
-    bool* otherState = [object state];
-    for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
+    NSMutableArray* otherState = [object state];
+    return [_state isEqual: otherState];
+    /*for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
         if (_state[stateIndex] != otherState[stateIndex]) {
             return false;
         }
     }
-    return true;
+    return true;*/
 }
 @end
 
@@ -629,23 +661,25 @@
     
     for (int layer = 0; layer < [_x count]; layer++) {
         if (_reduced) {
-            [self reduceLayer: layer];
+            [self reduceLayer: layer]; //~ 60 CPU
         }
-        [self cleanLayer: layer];       //~ 50 CPU
+        [self cleanLayer: layer];       //~ 4 CPU
         
-        int next_variable = [self pickVariableBelowLayer:layer];    //~ 65 CPU
+        int next_variable = [self pickVariableBelowLayer:layer];    //~ 45 CPU
         
         _variable_to_layer[next_variable] = layer+1;
         _layer_to_variable[layer+1] = next_variable;
         _variableUsed[next_variable] = true;
         
-        [self buildNewLayerUnder:layer];    //~ 135 CPU
+        [self buildNewLayerUnder:layer];    //~ 105 CPU
     }
     
     printf("CPU: %lld\n",totalCPU);
     printf("WC: %lld\n",totalWC);
     //[self printGraph];
     [self addPropagationsAndTrimValues];
+    
+    //printf("Longest Path: %d\n", [layers[[_x up]][0] longestPath]);
     
     //[self printGraph];
     return;
@@ -727,14 +761,17 @@
     
     for (int nodeIndex = 0; nodeIndex < layer_size[layer]._val; nodeIndex++) {
         Node* node= layers[layer][nodeIndex];
-        bool* state = [[node getState] state];
-
-        NSString* stateKey = [[NSString alloc] initWithString:@""];
-        for (int stateVal = [_x low]; stateVal <= [_x up]; stateVal++) {
-            stateKey = [stateKey stringByAppendingString: state[stateVal] ? @"1" : @"0"];
-        }
+        char* stateChar = [[node getState] stateChar] + [_x low];
         
-        if ([foundStates objectForKey:stateKey]) {     //BIG SLOWDOWN DUE TO NSMUTABLEDICTIONARY
+        NSString* stateKey = [NSString stringWithCString:stateChar encoding:NSASCIIStringEncoding];
+        
+        /*bool* state = [[node getState] state];
+        NSString* stateKey = [[NSString alloc] initWithString:@""];
+        for (int value = [_x low]; value <= [_x up]; value++) {
+            stateKey = [stateKey stringByAppendingString:(state[value] ? @"1":@"0")];
+        }*/
+        
+        if ([foundStates objectForKey:stateKey]) {
             [foundStates[stateKey] takeParentsFrom:node];
             [self removeChildlessNodeFromMDD:node trimmingVariables:false];
         
@@ -752,7 +789,7 @@
 {
     for (int parentNodeIndex = 0; parentNodeIndex < layer_size[layer]._val; parentNodeIndex++) {
         Node* parentNode = layers[layer][parentNodeIndex];
-        [self createChildrenForNode:parentNode];    //~140 CPU
+        [self createChildrenForNode:parentNode];
     }
 }
 -(void) createChildrenForNode:(Node*)parentNode
@@ -763,7 +800,7 @@
         if ([parentNode canChooseValue: edgeValue]) {
             Node* childNode;
             
-            id state = [self generateStateFromParent:parentNode withValue:edgeValue];   //~ 60 CPU
+            id state = [self generateStateFromParent:parentNode withValue:edgeValue];   //~ 50 CPU
             if (parentLayer != [_x count]-1) {
                 childNode = [[Node alloc] initNode: _trail
                                         maxParents:(_max_nodes_per_layer * (max_domain_val - min_domain_val +1))
@@ -779,7 +816,10 @@
             }
             
             [parentNode addChild:childNode at:edgeValue];
-            [childNode addParent:parentNode];   //~ 60 CPU
+            ORLong startCPU = [ORRuntimeMonitor cputime];
+            [childNode addParent:parentNode];   //~ 45 CPU
+            ORLong endCPU = [ORRuntimeMonitor cputime];
+            totalCPU += endCPU-startCPU;
             assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
         }
     }

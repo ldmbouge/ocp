@@ -118,6 +118,7 @@
 @interface MISPState : NSObject {
 @private
     bool* _state;
+    char* _stateChar;
     int _variableIndex;
     int _minValue;
     int _maxValue;
@@ -126,6 +127,7 @@
 -(id) initMISPState:(int)variableIndex :(int)minValue :(int)maxValue adjacencies:(bool**)adjacencyMatrix;
 -(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withVariableIndex:(int)variableIndex withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix;
 -(bool*) state;
+-(char*) stateChar;
 -(int) variableIndex;
 -(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(MISPState*)other;
@@ -203,7 +205,6 @@
 -(void) mergeTwoNodesOnLayer:(int)layer;
 -(void) findNodesToMerge:(int)layer first:(Node**)first second:(Node**)second;
 @end
-
 
 
 
