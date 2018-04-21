@@ -27,20 +27,20 @@ struct linkTuple{
     id<ORIntVar> link;
 };
 
-struct linkTuple linkTupleList[200];
+struct linkTuple linkTupleList[2000];
 int linkTupleCount = 0;
 
 
-int links_i[100][100];
-id<ORIntVar> links_v[100][100];
+int links_i[1000][1000];
+id<ORIntVar> links_v[1000][10000];
 
-int linkCount[100];
+int linkCount[1000];
 
 ORInt GlobalMin = 2000000;
 //ORInt GlobalMin = 2230;
 
 enum Mode {
-    MIP,CP,Hybrid,LNS,Expe,Waldy,Waldy2,Waldy3
+  MIP,CP,Hybrid,xHybrid,LNS,Expe,Waldy,Waldy2,Waldy3
 };
 
 id<ORIntArray> findComponents(id<CPCommonProgram> cp ,ORInt x, ORInt sum);
@@ -61,6 +61,7 @@ int main(int argc, const char * argv[])
 {
     enum Mode mode;
     ORInt tLim = 0;
+    ORInt scale = 2;
     if (strncmp(argv[2],"MIP",3)==0)
         mode = MIP;
     else if (strncmp(argv[2],"CP",2) == 0)
@@ -69,6 +70,8 @@ int main(int argc, const char * argv[])
         mode = LNS;
     else if (strncmp(argv[2],"Hybrid",6)==0)
         mode = Hybrid;
+    else if (strncmp(argv[2],"xHybrid",7)==0)
+        mode = xHybrid;
     else if (strncmp(argv[2],"Waldy",5)==0)
         mode = Waldy;
     else if (strncmp(argv[2],"2Waldy",6)==0)
@@ -82,8 +85,14 @@ int main(int argc, const char * argv[])
         while (ak < argc) {
             if (strncmp(argv[ak],"-print",6)==0)
                 printSol = YES;
-            else if (strncmp(argv[ak],"-time",5)==0)
+            else if (strncmp(argv[ak],"-time",5)==0){
                 tLim = atoi(argv[ak]+5);
+		NSLog(@"TIME = %d", tLim);
+	    }
+	    else if (strncmp(argv[ak],"-scale",6) == 0){
+	      scale = atoi(argv[ak]+6);
+	      NSLog(@"SCALE = %d", scale);
+	    }
             ak += 1;
         }
     }
@@ -99,7 +108,7 @@ int main(int argc, const char * argv[])
     XMLReader * dataIn = [[XMLReader alloc] initWithArrays: cnodeArray serviceArray: serviceArray secArray: secArray];
     [dataIn parseXMLFile: fName];
     
-    ORInt Ncnodes = (ORInt)[cnodeArray count];
+    ORInt Ncnodes = (ORInt)[cnodeArray count] * scale;
     ORInt Nservices = (ORInt)[serviceArray count];
     ORInt Nsec = (ORInt)[secArray count]-1;
     ORInt MAX_CONN = dataIn.maxCONN;
@@ -114,10 +123,10 @@ int main(int argc, const char * argv[])
     
     // Use info from XML instead of random values
     id<ORIntArray> cnodeMem = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) {
-        return [cnodeArray[i-1] cnodeMemory];
+        return [cnodeArray[(i-1)/scale] cnodeMemory];
     } ];
     id<ORIntArray> cnodeBw = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) {
-        return [cnodeArray[i-1] cnodeBandwidth];
+        return [cnodeArray[(i-1)/scale] cnodeBandwidth];
     } ];
     id<ORIntArray> serviceFixMem = [ORFactory intArray: model range: services with:^ORInt(ORInt i) {
         return [serviceArray[i-1] serviceFixMemory];
@@ -151,7 +160,7 @@ int main(int argc, const char * argv[])
     //   } ];
     NSDictionary* Ddict = dataIn.D;
     id<ORIntArray> D = [ORFactory intArray: model range: services with:^ORInt(ORInt i) {
-        return [[Ddict objectForKey:@(i)] intValue];
+        return [[Ddict objectForKey:@(i)] intValue] * scale;
     }];
     
     
@@ -434,7 +443,7 @@ int main(int argc, const char * argv[])
     // VM symmetry breaking
     for(ORInt i = [cnodes low]; i < [cnodes up]; i++) {
         [model add: [[mc[i] eq: @(0)] imply: [mc[i+1] eq: @(0)]]];
-        [model add: [mc[i] geq: mc[i+1]]];
+        //[model add: [mc[i] geq: mc[i+1]]];
     }
     
     // Security Constraints
@@ -804,7 +813,7 @@ int main(int argc, const char * argv[])
                 id<ORObjectiveFunction> obj = [cp objective];
                 
                 return [^(id<CPProgram> cp) {
-                    [cp limitTime:tLim in:^{
+                    //[cp limitTime:tLim in:^{
                         [cp repeat:^{
                             improved = NO;
                             [cp limitFailures:lim in:^{
@@ -857,13 +866,91 @@ int main(int argc, const char * argv[])
                         improved = YES;
                         per = 80;
                         NSLog(@"Objective value: %@  --improved = %d",[obj primalValue],improved);
-                    }];
+			//}];
                 } copy];
             }];
             [r start];
             best = [r bestSolution];
             if (printSol) writeOut(best);
         }break;
+    case xHybrid: {
+      id<ORRunnable> r1 = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPProgram> cp) {
+                [ORStreamManager setRandomized];
+                id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,1,100)];
+                id<ORIntVarArray> av = [model intVars];
+                id<CPHeuristic> h = [cp createDDeg];
+                  ORInt initialLimit = 2000;
+                __block ORInt lim = initialLimit;
+                __block BOOL improved = NO;
+                __block BOOL firstTime = YES;
+                __block ORInt per = 80;
+                __block ORInt nbRestart = 0;
+                id<ORObjectiveFunction> obj = [cp objective];
+                
+                return [^(id<CPProgram> cp) {
+                    //[cp limitTime:tLim in:^{
+                        [cp repeat:^{
+                            improved = NO;
+                            [cp limitFailures:lim in:^{
+                                if (firstTime) {
+                                    [cp labelHeuristic: h restricted:a];
+                                    //[cp labelHeuristic: h restricted:v];
+                                    //                           [cp labelHeuristic: h restricted:(id<ORIntVarArray>)conn.flatten];
+                                    [cp labelHeuristic: h];
+                                } else {
+                                    [cp labelHeuristic:h];
+                                }
+                                NSLog(@"+++++++ ALL done...");
+                                id<ORSolution> sol = [cp captureSolution];
+                                if (printSol) writeOut(sol);
+                                ORTimeval ts = [ORRuntimeMonitor elapsedSince:now];
+                                NSLog(@"Found Solution: %i   at: %f", [[sol objectiveValue] intValue],((double)ts.tv_sec) * 1000 + ts.tv_usec / 1000);
+                            }];
+                        } onRepeat:^{
+                            nbRestart++;
+                            id<ORSolution> s = [[cp solutionPool] best];
+                            if (s!=nil) {
+                                if (nbRestart < 10) {
+                                    per = 0;
+                                    return;
+                                } else if (nbRestart == 10) {
+                                    per = 100;
+                                }
+                                if (nbRestart % 10 == 0) {
+                                    per = per * 0.5;
+                                    lim = initialLimit;
+                                }
+                                NSLog(@"Restart [%d] with per = %d",nbRestart,per);
+                                [cp atomic:^{
+                                    [cp once:^{
+                                        for(id<ORIntVar> avk in av) {
+                                            if ([d next]  <= per) {
+                                                [cp add:[avk eq:@([s intValue:avk])]];
+                                            }
+                                        }
+                                    }];
+                                }];
+                                lim = min(20000,lim * 1.05);
+                                NSLog(@"New limit: %d",lim);
+                            } else {
+                               lim <<= 1;
+                                NSLog(@"No solution yet. Restart [%d] lim [%d]",nbRestart,lim);
+                            }
+                        }];
+                        //firstTime = NO;
+                        improved = YES;
+                        per = 80;
+                        NSLog(@"Objective value: %@  --improved = %d",[obj primalValue],improved);
+			//}];
+                } copy];
+            }];
+            id<ORModel> lm = [ORFactory linearizeModel: model];
+            id<ORRunnable> r0 = [ORFactory MIPRunnable: lm];
+            id<ORRunnable> r = [ORFactory composeCompleteParallel:r0 with:r1];
+            [r start];
+            best = [r bestSolution];
+
+    }break;
         case Hybrid: {
             id<ORRunnable> r1 = [ORFactory CPRunnable: model willSolve:^CPRunnableSearch(id<CPCommonProgram> cp) {
                 id<CPHeuristic> h = [cp createWDeg];
