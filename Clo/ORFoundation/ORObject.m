@@ -82,6 +82,9 @@ static Class __orObjectClass = nil;
       return YES;
    if ([self isKindOfClass:__orObjectClass]) {
       ORBool eq = _name == getId(object);
+//      if (eq && [self class] == [object class])
+//         return YES;
+//      else return NO;
       assert(!eq || [self class] == [object class]);
       return eq;
    } else return NO;

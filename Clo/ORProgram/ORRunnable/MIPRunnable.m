@@ -130,7 +130,8 @@
 {
    ORTimeval cpu0 = [ORRuntimeMonitor now];
    static int solCount = 0;
-   NSArray* modelVars = [[sol model] variables];
+   id<ORModel> theModel = [[sol model] rootModel];
+   NSArray* modelVars = [theModel variables];
    NSMutableArray* vars = [[NSMutableArray alloc] init];
    NSMutableArray* vals = [[NSMutableArray alloc] init];
    for(id<ORVar> v in modelVars) {
