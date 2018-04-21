@@ -795,7 +795,8 @@ int main(int argc, const char * argv[])
                 id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,1,100)];
                 id<ORIntVarArray> av = [model intVars];
                 id<CPHeuristic> h = [cp createDDeg];
-                __block ORInt lim = 1000;
+                  ORInt initialLimit = 2000;
+                __block ORInt lim = initialLimit;
                 __block BOOL improved = NO;
                 __block BOOL firstTime = YES;
                 __block ORInt per = 80;
@@ -833,7 +834,7 @@ int main(int argc, const char * argv[])
                                 }
                                 if (nbRestart % 10 == 0) {
                                     per = per * 0.5;
-                                    lim = 1000;
+                                    lim = initialLimit;
                                 }
                                 NSLog(@"Restart [%d] with per = %d",nbRestart,per);
                                 [cp atomic:^{
@@ -848,7 +849,8 @@ int main(int argc, const char * argv[])
                                 lim = min(20000,lim * 1.05);
                                 NSLog(@"New limit: %d",lim);
                             } else {
-                                NSLog(@"No solution yet. Restart [%d]",nbRestart);
+                               lim <<= 1;
+                                NSLog(@"No solution yet. Restart [%d] lim [%d]",nbRestart,lim);
                             }
                         }];
                         //firstTime = NO;
