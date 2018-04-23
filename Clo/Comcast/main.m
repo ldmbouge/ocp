@@ -803,8 +803,8 @@ int main(int argc, const char * argv[])
                 [ORStreamManager setRandomized];
                 id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,1,100)];
                 id<ORIntVarArray> av = [model intVars];
-                id<CPHeuristic> h = [cp createDDeg];
-                  ORInt initialLimit = 2000;
+               id<CPHeuristic> h = [cp createDDeg];
+                  ORInt initialLimit = 300;
                 __block ORInt lim = initialLimit;
                 __block BOOL improved = NO;
                 __block BOOL firstTime = YES;
@@ -825,6 +825,7 @@ int main(int argc, const char * argv[])
                                 } else {
                                     [cp labelHeuristic:h];
                                 }
+                                //[cp labelArrayFF:model.intVars];
                                 NSLog(@"+++++++ ALL done...");
                                 id<ORSolution> sol = [cp captureSolution];
                                 if (printSol) writeOut(sol);
