@@ -88,6 +88,6 @@ void sine_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   sine_d(0, argc, argv);
+   sine_d(1, argc, argv);
    return 0;
 }

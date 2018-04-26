@@ -22,7 +22,8 @@ int main(int argc, const char * argv[]) {
       //id<ORDoubleRange> r0 = [ORFactory doubleRange:mdl low:0.100001f up:0.399434344f];
       //id<ORDoubleRange> r1 = [ORFactory doubleRange:mdl low:0.2f up:0.4f];
       id<ORDoubleVar> x = [ORFactory doubleVar:mdl name:@"x"];
-      id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:0.2 up:0.4 name:@"y"];
+      /* Error with low:0.0 up:400.0 on assert(mid != NAN && mid <= xi.max && mid >= xi.min) */
+      id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:0.0 up:400.0 name:@"y"];
       id<ORDoubleVar> o = [ORFactory doubleVar:mdl name:@"o"];
       id<ORDoubleVar> k = [ORFactory doubleVar:mdl low:4.0 up:6.0 name:@"o"];
       id<ORDoubleVar> w = [ORFactory doubleVar:mdl name:@"w"];

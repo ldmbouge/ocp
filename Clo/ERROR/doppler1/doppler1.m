@@ -79,8 +79,9 @@ void doppler1_d(int search, int argc, const char * argv[]) {
         [cp setMinErrorDD:v minErrorF:0.0];
         [cp setMaxErrorDD:t maxErrorF:0.0];
         [cp setMinErrorDD:t minErrorF:0.0];
-        [cp setMaxErrorDD:z maxErrorF:0.0];
-        [cp setMinErrorDD:z minErrorF:0.0];
+        //[cp setMinErrorDD:z minErrorF:3.42e-15];
+        //[cp setMaxErrorDD:z maxErrorF:0.0];
+        //[cp setMinErrorDD:z minErrorF:0.0];
         [cp solve:^{
             if (search)
                 [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -162,7 +163,8 @@ void doppler1_f(int search, int argc, const char * argv[]) {
         [cp setMinErrorFD:v minErrorF:0.0];
         [cp setMaxErrorFD:t maxErrorF:0.0];
         [cp setMinErrorFD:t minErrorF:0.0];
-        
+        //[cp setMaxErrorFD:z maxErrorF:0.0];
+        //[cp setMinErrorFD:z minErrorF:0.0];
         [cp solve:^{
             if (search)
                 [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -183,8 +185,8 @@ void doppler1_f(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-    //doppler1_f(1, argc, argv);
-    doppler1_d(1, argc, argv);
+    doppler1_f(1, argc, argv);
+    //doppler1_d(1, argc, argv);
     return 0;
 }
 

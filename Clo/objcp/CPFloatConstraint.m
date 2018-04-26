@@ -38,7 +38,7 @@ void ulp_computation_f(mpri_t ulp, const float_interval f){
       mpq_neg(tmp1, tmp2);
       mpri_set_from_q(ulp, tmp1, tmp2);
    }else if(fabs(f.inf) == DBL_MAX || fabs(f.sup) == DBL_MAX){
-      mpq_set_d(tmp0, nextafter(DBL_MAX, -INFINITY) - DBL_MAX);
+      mpq_set_d(tmp0, nextafterf(DBL_MAX, -INFINITY) - DBL_MAX);
       mpq_canonicalize(tmp0);
       mpq_set_d(tmp1, 2.0);
       mpq_canonicalize(tmp1);
@@ -47,8 +47,8 @@ void ulp_computation_f(mpri_t ulp, const float_interval f){
       mpri_set_from_q(ulp, tmp2, tmp1);
    } else{
       ORDouble inf, sup;
-      inf = minDbl(nextafter(f.inf, -INFINITY) - f.inf, nextafter(f.sup, -INFINITY) - f.sup);
-      sup = maxDbl(nextafter(f.inf, +INFINITY) - f.inf, nextafter(f.sup, +INFINITY) - f.sup);
+      inf = minDbl(nextafterf(f.inf, -INFINITY) - f.inf, nextafterf(f.sup, -INFINITY) - f.sup);
+      sup = maxDbl(nextafterf(f.inf, +INFINITY) - f.inf, nextafterf(f.sup, +INFINITY) - f.sup);
       
       mpq_set_d(tmp0, inf);
       mpq_canonicalize(tmp0);

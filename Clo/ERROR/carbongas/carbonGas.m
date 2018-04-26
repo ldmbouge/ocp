@@ -182,7 +182,7 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
         id<ORFloatVarArray> vs = [mdl floatVars];
         id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
         
-        //[cp setMinErrorFD:r minErrorF:1.37616859e-1f];
+        [cp setMinErrorFD:r minErrorF:0.0f];
         [cp setMinErrorFD:v minErrorF:0.0f];
         [cp setMaxErrorFD:v maxErrorF:0.0f];
         [cp solve:^{
