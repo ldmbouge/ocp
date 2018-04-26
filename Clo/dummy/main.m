@@ -126,7 +126,7 @@ int main (int argc, const char * argv[])
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
         id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
-        ORInt layerSize = 100;
+        ORInt layerSize = 1000;
         bool reduced = true;
         
         
@@ -143,7 +143,7 @@ int main (int argc, const char * argv[])
             }
         }
 
-        NSString *filepath = @"/Users/ben/Downloads/DIMACS_cliques/brock200_1.clq";
+        NSString *filepath = @"/Users/ben/Downloads/DIMACS_cliques/brock200_4.clq";
         
         FILE *file = fopen([filepath UTF8String], "r");
         char buffer[256];

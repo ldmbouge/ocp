@@ -163,8 +163,10 @@
     return _childEdgeWeights[value]._val;
 }
 -(void) addChild:(Node*)child at:(int)index {
+    if (_children[index] == NULL) {
+        [self setNumChildren:_numChildren._val+1];
+    }
     _children[index] = child;
-    [self setNumChildren:_numChildren._val+1];
     assignTRInt(&_numChildren, _numChildren._val, _trail);
     assignTRInt(&_childEdgeWeights[index], [self getWeightFor: index], _trail);
 }
@@ -585,14 +587,16 @@
     _reduced = reduced;
     _objective = NULL;
     
-    _max_nodes_per_layer = 200;
+    _max_nodes_per_layer = 1000;
     //for (int variable = [_x low]; variable <= [_x up]; variable++) {
     //    _max_nodes_per_layer *= [_x[variable] domsize];
     //}
     
     layer_size = malloc(([_x count]+1) * sizeof(TRInt));
+    max_layer_size = malloc(([_x count]+1) * sizeof(TRInt));
     for (int layer = 0; layer <= [_x count]; layer++) {
         layer_size[layer] = makeTRInt(_trail,0);
+        max_layer_size[layer] = makeTRInt(_trail,1);
     }
     
     min_domain_val = [_x[[_x low]] min];
@@ -610,7 +614,7 @@
 
     layers = malloc(([_x count]+1) * sizeof(Node**));
     for (int layer = 0; layer <= [_x count]; layer++) {
-        layers[layer] = malloc(_max_nodes_per_layer * sizeof(Node*));
+        layers[layer] = malloc(1 * sizeof(Node*));
     }
     
     _layer_to_variable = malloc(([_x count]+1) * sizeof(int));
@@ -657,6 +661,8 @@
 }
 -(void) post
 {
+    ORLong startCPU = [ORRuntimeMonitor cputime];
+    ORLong startWC = [ORRuntimeMonitor wctime];
     [self createRootAndSink];
     
     for (int layer = 0; layer < [_x count]; layer++) {
@@ -673,13 +679,15 @@
         
         [self buildNewLayerUnder:layer];    //~ 105 CPU
     }
-    
-    printf("CPU: %lld\n",totalCPU);
-    printf("WC: %lld\n",totalWC);
-    //[self printGraph];
     [self addPropagationsAndTrimValues];
     
-    //printf("Longest Path: %d\n", [layers[[_x up]][0] longestPath]);
+    printf("Longest Path: %d\n", [layers[[_x up]][0] longestPath]);
+    ORLong endCPU = [ORRuntimeMonitor cputime];
+    ORLong endWC = [ORRuntimeMonitor wctime];
+    totalCPU += endCPU-startCPU;
+    totalWC += endWC-startWC;
+    printf("CPU: %lld\n",totalCPU);
+    printf("WC: %lld\n",totalWC);
     
     //[self printGraph];
     return;
@@ -746,7 +754,7 @@
     _layer_to_variable[0] = [_x low];
     
     Node* root =[[Node alloc] initNode: _trail
-                            maxParents:(_max_nodes_per_layer * (max_domain_val - min_domain_val +1))
+                            maxParents:(0 * (max_domain_val - min_domain_val +1))
                          minChildIndex:min_domain_val
                          maxChildIndex:max_domain_val
                                  value:[_x low]
@@ -774,8 +782,6 @@
         if ([foundStates objectForKey:stateKey]) {
             [foundStates[stateKey] takeParentsFrom:node];
             [self removeChildlessNodeFromMDD:node trimmingVariables:false];
-        
-            nodeIndex--;
         } else {
             [foundStates setObject:node forKey:stateKey];
         }
@@ -803,7 +809,7 @@
             id state = [self generateStateFromParent:parentNode withValue:edgeValue];   //~ 50 CPU
             if (parentLayer != [_x count]-1) {
                 childNode = [[Node alloc] initNode: _trail
-                                        maxParents:(_max_nodes_per_layer * (max_domain_val - min_domain_val +1))
+                                        maxParents:(max_layer_size[parentLayer]._val * (max_domain_val - min_domain_val +1))
                                      minChildIndex:min_domain_val
                                      maxChildIndex:max_domain_val
                                              value:[self variableIndexForLayer:parentLayer + 1]
@@ -816,10 +822,7 @@
             }
             
             [parentNode addChild:childNode at:edgeValue];
-            ORLong startCPU = [ORRuntimeMonitor cputime];
             [childNode addParent:parentNode];   //~ 45 CPU
-            ORLong endCPU = [ORRuntimeMonitor cputime];
-            totalCPU += endCPU-startCPU;
             assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
         }
     }
@@ -881,26 +884,43 @@
 }
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
+    if (max_layer_size[layer_index]._val == layer_size[layer_index]._val) {
+        Node* *temp = malloc(layer_size[layer_index]._val * sizeof(Node*));
+        for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
+            temp[node_index] = layers[layer_index][node_index];
+        }
+        
+        assignTRInt(&max_layer_size[layer_index], max_layer_size[layer_index]._val*2, _trail);
+        layers[layer_index] = malloc(max_layer_size[layer_index]._val * sizeof(Node*));
+        for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
+            layers[layer_index][node_index] = temp[node_index];
+        }
+    }
     layers[layer_index][layer_size[layer_index]._val] = node;
     assignTRInt(&layer_size[layer_index], layer_size[layer_index]._val+1, _trail);
 }
 -(void) removeNode: (Node*) node {
     int node_layer = [self layerIndexForVariable:node.value];
     Node* *layer = layers[node_layer];
+    int currentLayerSize = layer_size[node_layer]._val;
     
-    for (int node_index = 0; node_index < layer_size[node_layer]._val; node_index++) {
+    for (int node_index = 0; node_index < currentLayerSize; node_index++) {
         if (layer[node_index] != NULL && layer[node_index] == node) {
             int finalNodeIndex = layer_size[node_layer]._val-1;
             assignTRId(&layer[node_index], layer[finalNodeIndex], _trail);
             assignTRId(&layer[finalNodeIndex], NULL, _trail);
             assignTRInt(&layer_size[node_layer], finalNodeIndex,_trail);
+            node_index--;
+            currentLayerSize--;
         }
     }
 }
 -(void) removeChildlessNodeFromMDD:(Node*)node trimmingVariables:(bool)trimming
 {
     int parentLayer;
-    for (int parentIndex = 0; parentIndex < [node numParents]; parentIndex++) {
+    int numParents = [node numParents];
+    
+    for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
         Node* parent = [node parents][parentIndex];
         
         parentLayer = [self layerIndexForVariable:[parent value]];
@@ -917,6 +937,7 @@
         }
         if ([parent isNonVitalAndChildless]) {
             [self removeChildlessNodeFromMDD: parent trimmingVariables:trimming];
+            //parentIndex--;
         }
     }
     [self removeNode: node];
@@ -938,6 +959,7 @@
             
             if ([childNode isNonVitalAndParentless]) {
                 [self removeParentlessNodeFromMDD:childNode trimmingVariables:trimming];
+                child_index--;
             }
         }
     }

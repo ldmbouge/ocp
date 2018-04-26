@@ -147,6 +147,7 @@
 @protected
     id<CPIntVarArray> _x;
     TRInt *layer_size;
+    TRInt *max_layer_size;
     Node* **layers;
     int min_domain_val;
     int max_domain_val;
