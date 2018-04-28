@@ -32,8 +32,6 @@
    memset(_seg,0,sizeof(struct Segment*)*_mxSeg);
    _seg[0] = malloc(sizeof(struct Segment));
    _seg[0]->top = 0;
-   for(ORInt l=0;l<NBSLOT;l++)
-         mpq_init(_seg[0]->tab[l].rationalVal);
    
    return self;
 }
@@ -42,8 +40,6 @@
    NSLog(@"ORTrailI %p dealloc called...\n",self);
    for(ORInt k=0;k<_mxSeg;k++)
       if (_seg[k]){
-         for(ORInt l=0;l<NBSLOT;l++)
-            mpq_clear(_seg[k]->tab[l].rationalVal);
          free(_seg[k]);
       }
    free(_seg);
@@ -142,7 +138,7 @@
     struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
     s->ptr = ptr;
     s->code = TAGRational;
-    //mpq_init(s->rationalVal);
+    mpq_init(s->rationalVal);
     mpq_set(s->rationalVal, *ptr);
     ++_seg[_cSeg]->top;
 }
@@ -249,6 +245,7 @@
                break;
             case TAGRational:
                  mpq_set(*((ORRational*)cs->ptr), cs->rationalVal);
+                 mpq_clear(cs->rationalVal);
                  break;
             case TAGPointer:
                *((void**)cs->ptr) = cs->ptrVal;

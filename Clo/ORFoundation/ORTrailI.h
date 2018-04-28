@@ -33,7 +33,7 @@
 #define TAGFree         0xC
 #define TAGIdNC         0xD
 #define TAGLDouble      0xF
-#define TAGRational     0x0
+#define TAGRational     0x10
 
 @interface ORTrailI : NSObject<ORTrail>
 {
