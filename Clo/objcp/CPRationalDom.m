@@ -69,23 +69,29 @@
 }
 -(void) updateMin:(ORRational)newMin for:(id<CPFVarNotifier>)x
 {
-   if(mpq_cmp(newMin, *[self max]) > 0)
+    if(mpq_cmp(newMin, *[self max]) > 0)
         failNow();
     updateMinR(&_domain, newMin, _trail);
     ORBool isBound = (mpq_get_d(_domain._low) == mpq_get_d(_domain._up));
-    [x changeMinEvtErr: isBound sender:self];
-    if (isBound)
-        [x bindEvtErr:self];
+    // cpjm: so that eo can use this method without propagation
+    if (x != NULL) {
+        [x changeMinEvtErr: isBound sender:self];
+        if (isBound)
+            [x bindEvtErr:self];
+    }
 }
 -(void) updateMax:(ORRational)newMax for:(id<CPFVarNotifier>)x
 {
-   if(mpq_cmp(*[self min], newMax) > 0)
+    if(mpq_cmp(*[self min], newMax) > 0)
         failNow();
     updateMaxR(&_domain, newMax, _trail);
     ORBool isBound = (mpq_get_d(_domain._low) == mpq_get_d(_domain._up));
-    [x changeMaxEvtErr:isBound sender:self];
-    if (isBound)
-        [x bindEvtErr:self];
+    // cpjm: so that eo can use this method without propagation
+    if (x != NULL) {
+        [x changeMaxEvtErr:isBound sender:self];
+        if (isBound)
+            [x bindEvtErr:self];
+    }
 }
 -(void) updateInterval:(rational_interval)v for:(id<CPFVarNotifier>)x;
 {

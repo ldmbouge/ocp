@@ -57,7 +57,7 @@ void mpri_intersection(mpri_t z, const mpri_t x, const mpri_t y) {
 
 int mpri_proj_inter(mpri_t x, const mpri_t y) {
     int changed = 0;
-    //    double o_size = mpq_get_d(mpri_repref(x)) - mpq_get_d(mpri_lepref(x));
+    double o_size = mpq_get_d(mpri_repref(x)) - mpq_get_d(mpri_lepref(x));
     
     if (mpq_cmp(mpri_lepref(x), mpri_lepref(y)) < 0) {
         mpq_set(mpri_lepref(x),  mpri_lepref(y));
@@ -71,20 +71,19 @@ int mpri_proj_inter(mpri_t x, const mpri_t y) {
     
     if(mpq_cmp(mpri_lepref(x), mpri_repref(x)) > 0) failNow(); // empty !
     
-    /*
-     if (changed) {
-     double n_size = mpq_get_d(mpri_repref(x)) - mpq_get_d(mpri_lepref(x));
-     
-     if ((o_size - n_size)/o_size <= 0.2) changed = 0;
-     }
-     */
+    
+    if (changed) { // cpjm: Added to avoid some slow convergence issues
+        double n_size = mpq_get_d(mpri_repref(x)) - mpq_get_d(mpri_lepref(x));
+        
+        if ((o_size - n_size)/o_size <= 0.05) changed = 0; // cpjm: Ignore change when less than 5%
+    }
     
     return changed;
 }
 
 int mpri_proj_inter_infsup(mpri_t x, const mpq_t inf, const mpq_t sup) {
     int changed = 0;
-    //double o_size = mpq_get_d(mpri_repref(x)) - mpq_get_d(mpri_lepref(x));
+    double o_size = mpq_get_d(mpri_repref(x)) - mpq_get_d(mpri_lepref(x));
     
     if (mpq_cmp(mpri_lepref(x), inf) < 0) {
         mpq_set(mpri_lepref(x),  inf);
@@ -97,13 +96,13 @@ int mpri_proj_inter_infsup(mpri_t x, const mpq_t inf, const mpq_t sup) {
     }
     
     if(mpq_cmp(mpri_lepref(x), mpri_repref(x)) > 0) failNow(); // empty !
-    /*
-     if (changed) {
-     double n_size = mpq_get_d(mpri_repref(x)) - mpq_get_d(mpri_lepref(x));
-     
-     if ((o_size - n_size)/o_size <= 0.2) changed = 0;
-     }
-     */
+    
+    if (changed) { // cpjm: Added to avoid some slow convergence issues
+        double n_size = mpq_get_d(mpri_repref(x)) - mpq_get_d(mpri_lepref(x));
+        
+        if ((o_size - n_size)/o_size <= 0.05) changed = 0; // cpjm: Ignore change when less than 5%
+    }
+    
     return changed;
 }
 

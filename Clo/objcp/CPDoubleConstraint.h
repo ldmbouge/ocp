@@ -14,14 +14,15 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPDoubleDom.h>
+#import <objcp/CPRationalDom.h>
 
 // toto !
 
 @class CPDoubleVarI;
 
 @interface CPDoubleEqual : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) init:(id)x equals:(id)y;
 -(void) post;
@@ -30,8 +31,8 @@
 @end
 
 @interface CPDoubleEqualc : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) init:(id)x and:(ORDouble)c;
 -(void) post;
@@ -40,8 +41,8 @@
 @end
 
 @interface CPDoubleAssign : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) init:(id)x set:(id)y;
 -(void) post;
@@ -50,8 +51,8 @@
 @end
 
 @interface CPDoubleAssignC : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) init:(id)x set:(ORDouble)c;
 -(void) post;
@@ -60,8 +61,8 @@
 @end
 
 @interface CPDoubleNEqual : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) init:(id)x nequals:(id)y;
 -(void) post;
@@ -70,8 +71,8 @@
 @end
 
 @interface CPDoubleNEqualc : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) init:(id)x and:(ORDouble)c;
 -(void) post;
@@ -80,8 +81,8 @@
 @end
 
 @interface CPDoubleLT : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) init:(id)x lt:(id)y;
 -(void) post;
@@ -90,8 +91,8 @@
 @end
 
 @interface CPDoubleGT : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) init:(id)x gt:(id)y;
 -(void) post;
@@ -101,8 +102,8 @@
 
 
 @interface CPDoubleLEQ : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) init:(id)x leq:(id)y;
 -(void) post;
@@ -111,8 +112,8 @@
 @end
 
 @interface CPDoubleGEQ : CPCoreConstraint {
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) init:(id)x geq:(id)y;
 -(void) post;
@@ -122,12 +123,14 @@
 
 
 @interface CPDoubleTernaryAdd : CPCoreConstraint { // z = x + y
-   CPDoubleVarI* _z;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
-   ORInt _precision;
-   ORDouble _percent;
-   ORInt _rounding;
+    CPDoubleVarI* _z;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
+    ORInt _precision;
+    ORDouble _percent;
+    ORInt _rounding;
+    // cpjm: Use a trailed object for eo to insure that its value is saved
+    CPRationalDom* eo;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
 -(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
@@ -141,12 +144,14 @@
 
 
 @interface CPDoubleTernarySub : CPCoreConstraint { // z = x - y
-   CPDoubleVarI* _z;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
-   ORInt _precision;
-   ORDouble _percent;
-   ORInt _rounding;
+    CPDoubleVarI* _z;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
+    ORInt _precision;
+    ORDouble _percent;
+    ORInt _rounding;
+    // cpjm: Use a trailed object for eo to insure that its value is saved
+    CPRationalDom* eo;
 }
 -(id) init:(id)z equals:(id)x minus:(id)y;
 -(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
@@ -159,12 +164,14 @@
 @end
 
 @interface CPDoubleTernaryMult : CPCoreConstraint { // z = x * y
-   CPDoubleVarI* _z;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
-   ORInt _precision;
-   ORDouble _percent;
-   ORInt _rounding;
+    CPDoubleVarI* _z;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
+    ORInt _precision;
+    ORDouble _percent;
+    ORInt _rounding;
+    // cpjm: Use a trailed object for eo to insure that its value is saved
+    CPRationalDom* eo;
 }
 -(id) init:(id)z equals:(id)x mult:(id)y ;
 -(id) init:(id)z equals:(id)x mult:(id)y kbpercent:(ORDouble) p;
@@ -175,12 +182,14 @@
 
 
 @interface CPDoubleTernaryDiv : CPCoreConstraint { // z = x / y
-   CPDoubleVarI* _z;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
-   ORInt _precision;
-   ORDouble _percent;
-   ORInt _rounding;
+    CPDoubleVarI* _z;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
+    ORInt _precision;
+    ORDouble _percent;
+    ORInt _rounding;
+    // cpjm: Use a trailed object for eo to insure that its value is saved
+    CPRationalDom* eo;
 }
 -(id) init:(id)z equals:(id)x div:(id)y ;
 -(id) init:(id)z equals:(id)x div:(id)y kbpercent:(ORDouble) p;
@@ -191,9 +200,9 @@
 
 @interface CPDoubleReifyGEqual : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) initCPReifyGEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x geqi:(id<CPDoubleVar>)y;
 -(void) post;
@@ -204,9 +213,9 @@
 
 @interface CPDoubleReifyGThen : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) initCPReifyGThen:(id<CPIntVar>)b when:(id<CPDoubleVar>)x gti:(id<CPDoubleVar>)y;
 -(void) post;
@@ -216,9 +225,9 @@
 
 @interface CPDoubleReifyNEqual : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) initCPReify:(id<CPIntVar>)b when:(id<CPDoubleVar>)x neq:(id<CPDoubleVar>)y;
 -(void) post;
@@ -228,9 +237,9 @@
 
 @interface CPDoubleReifyEqual : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(id<CPDoubleVar>)c;
 -(void) post;
@@ -240,9 +249,9 @@
 
 @interface CPDoubleReifyLEqual : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) initCPReifyLEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x leqi:(id<CPDoubleVar>)c;
 -(void) post;
@@ -252,9 +261,9 @@
 
 @interface CPDoubleReifyLThen : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   CPDoubleVarI* _y;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    CPDoubleVarI* _y;
 }
 -(id) initCPReifyLThen:(id<CPIntVar>)b when:(id<CPDoubleVar>)x lti:(id<CPDoubleVar>)c;
 -(void) post;
@@ -264,9 +273,9 @@
 
 @interface CPDoubleReifyEqualc : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) initCPReifyEqualc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(ORDouble)c;
 -(void) post;
@@ -278,9 +287,9 @@
 
 @interface CPDoubleReifyLEqualc : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) initCPReifyLEqualc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x leqi:(ORDouble)y;
 -(void) post;
@@ -291,9 +300,9 @@
 
 @interface CPDoubleReifyNotEqualc : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) initCPReifyNotEqualc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x neqi:(ORDouble)c;
 -(void) post;
@@ -303,9 +312,9 @@
 
 @interface CPDoubleReifyGEqualc : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) initCPReifyGEqualc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x geqi:(ORDouble)c;
 -(void) post;
@@ -315,9 +324,9 @@
 
 @interface CPDoubleReifyGThenc : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) initCPReifyGThenc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x gti:(ORDouble)c;
 -(void) post;
@@ -327,9 +336,9 @@
 
 @interface CPDoubleReifyLThenc : CPCoreConstraint {
 @private
-   CPIntVar* _b;
-   CPDoubleVarI* _x;
-   ORDouble      _c;
+    CPIntVar* _b;
+    CPDoubleVarI* _x;
+    ORDouble      _c;
 }
 -(id) initCPReifyLThenc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x lti:(ORDouble)c;
 -(void) post;

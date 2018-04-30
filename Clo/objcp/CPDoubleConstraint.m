@@ -17,6 +17,13 @@
 
 #define PERCENT 5.0
 
+#if 0
+#define traceQP(body) body
+#else
+#define traceQP(body)
+#endif
+
+
 void ulp_computation_d(mpri_t ulp, const double_interval f){
     mpq_t tmp0, tmp1, tmp2;
     
@@ -803,7 +810,6 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
 
 
 @implementation CPDoubleTernaryAdd {
-    rational_interval eo;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x plus:(CPDoubleVarI*)y
 {
@@ -818,12 +824,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     _precision = 1;
     _percent = p;
     _rounding = FE_TONEAREST;
-    mpq_inits(eo.sup, eo.inf, NULL);
-    //cpjm
-    mpq_set_d(eo.inf, -MAXFLOAT);
-    mpq_canonicalize(eo.inf);
-    mpq_set_d(eo.sup,  MAXFLOAT);
-    mpq_canonicalize(eo.sup);
+    eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-MAXDBL upF:MAXDBL];
     return self;
 }
 -(void) post
@@ -855,8 +856,13 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpri_set_from_q(exi, *[_x minErr], *[_x maxErr]);
     mpri_set_from_q(eyi, *[_y minErr], *[_y maxErr]);
     mpri_set_from_q(ezi, *[_z minErr], *[_z maxErr]);
-    mpri_set_from_q(eoi, eo.inf, eo.sup);
+    mpri_set_from_q(eoi, *[eo min], *[eo max]);
     
+    traceQP(printf("================== ADD BEGIN d\nx    = [% 24.24e, % 24.24e], ex   = [% 24.24e, % 24.24e]\ny    = [% 24.24e, % 24.24e], ey   = [% 24.24e, % 24.24e]\nz    = [% 24.24e, % 24.24e], ez   = [% 24.24e, % 24.24e]\neo   = [% 24.24e, % 20.20e]\n",
+                   x.inf, x.sup, mpq_get_d(mpri_lepref(exi)), mpq_get_d(mpri_repref(exi)),
+                   y.inf, y.sup, mpq_get_d(mpri_lepref(eyi)), mpq_get_d(mpri_repref(eyi)),
+                   z.inf, z.sup, mpq_get_d(mpri_lepref(ezi)), mpq_get_d(mpri_repref(ezi)),
+                   mpq_get_d(mpri_lepref(eoi)), mpq_get_d(mpri_repref(eoi))));
     do {
         changed = false;
         zTemp = z;
@@ -930,10 +936,16 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         gchanged |= changed;
     } while(changed);
     
+    traceQP(printf("================== ADD END d\nx    = [% 24.24e, % 24.24e], ex   = [% 24.24e, % 24.24e]\ny    = [% 24.24e, % 24.24e], ey   = [% 24.24e, % 24.24e]\nz    = [% 24.24e, % 24.24e], ez   = [% 24.24e, % 24.24e]\neo   = [% 24.24e, % 20.20e]\n",
+                   x.inf, x.sup, mpq_get_d(mpri_lepref(exi)), mpq_get_d(mpri_repref(exi)),
+                   y.inf, y.sup, mpq_get_d(mpri_lepref(eyi)), mpq_get_d(mpri_repref(eyi)),
+                   z.inf, z.sup, mpq_get_d(mpri_lepref(ezi)), mpq_get_d(mpri_repref(ezi)),
+                   mpq_get_d(mpri_lepref(eoi)), mpq_get_d(mpri_repref(eoi))));
+    
     if(gchanged){
         // Cause no propagation on eo is insured
-        mpq_set(eo.inf, mpri_lepref(eoi));
-        mpq_set(eo.sup, mpri_repref(eoi));
+        [eo updateMin:mpri_lepref(eoi) for:NULL];
+        [eo updateMax:mpri_repref(eoi) for:NULL];
         
         [_x updateInterval:x.inf and:x.sup];
         [_y updateInterval:y.inf and:y.sup];
@@ -955,7 +967,6 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpri_clear(tmp1);
 }
 - (void)dealloc {
-    freeRationalIntervalD(&eo);
     [super dealloc];
 }
 -(NSSet*)allVars
@@ -995,7 +1006,6 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
 
 
 @implementation CPDoubleTernarySub {
-    rational_interval eo;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1006,12 +1016,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     _precision = 1;
     _percent = p;
     _rounding = FE_TONEAREST;
-    mpq_inits(eo.sup, eo.inf, NULL);
-    //cpjm
-    mpq_set_d(eo.inf, -MAXFLOAT);
-    mpq_canonicalize(eo.inf);
-    mpq_set_d(eo.sup,  MAXFLOAT);
-    mpq_canonicalize(eo.sup);
+    eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-MAXDBL upF:MAXDBL];
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y
@@ -1048,8 +1053,13 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpri_set_from_q(exi, *[_x minErr], *[_x maxErr]);
     mpri_set_from_q(eyi, *[_y minErr], *[_y maxErr]);
     mpri_set_from_q(ezi, *[_z minErr], *[_z maxErr]);
-    mpri_set_from_q(eoi, eo.inf, eo.sup);
+    mpri_set_from_q(eoi, *[eo min], *[eo max]);
     
+    traceQP(printf("================== SUB BEGIN d\nx    = [% 24.24e, % 24.24e], ex   = [% 24.24e, % 24.24e]\ny    = [% 24.24e, % 24.24e], ey   = [% 24.24e, % 24.24e]\nz    = [% 24.24e, % 24.24e], ez   = [% 24.24e, % 24.24e]\neo   = [% 24.24e, % 20.20e]\n",
+                   x.inf, x.sup, mpq_get_d(mpri_lepref(exi)), mpq_get_d(mpri_repref(exi)),
+                   y.inf, y.sup, mpq_get_d(mpri_lepref(eyi)), mpq_get_d(mpri_repref(eyi)),
+                   z.inf, z.sup, mpq_get_d(mpri_lepref(ezi)), mpq_get_d(mpri_repref(ezi)),
+                   mpq_get_d(mpri_lepref(eoi)), mpq_get_d(mpri_repref(eoi))));
     do {
         changed = false;
         zTemp = z;
@@ -1124,10 +1134,16 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         gchanged |= changed;
     } while(changed);
     
+    traceQP(printf("================== SUB END d\nx    = [% 24.24e, % 24.24e], ex   = [% 24.24e, % 24.24e]\ny    = [% 24.24e, % 24.24e], ey   = [% 24.24e, % 24.24e]\nz    = [% 24.24e, % 24.24e], ez   = [% 24.24e, % 24.24e]\neo   = [% 24.24e, % 20.20e]\n",
+                   x.inf, x.sup, mpq_get_d(mpri_lepref(exi)), mpq_get_d(mpri_repref(exi)),
+                   y.inf, y.sup, mpq_get_d(mpri_lepref(eyi)), mpq_get_d(mpri_repref(eyi)),
+                   z.inf, z.sup, mpq_get_d(mpri_lepref(ezi)), mpq_get_d(mpri_repref(ezi)),
+                   mpq_get_d(mpri_lepref(eoi)), mpq_get_d(mpri_repref(eoi))));
+    
     if(gchanged){
         // Cause no propagation on eo is insured
-        mpq_set(eo.inf, mpri_lepref(eoi));
-        mpq_set(eo.sup, mpri_repref(eoi));
+        [eo updateMin:mpri_lepref(eoi) for:NULL];
+        [eo updateMax:mpri_repref(eoi) for:NULL];
         
         [_x updateInterval:x.inf and:x.sup];
         [_y updateInterval:y.inf and:y.sup];
@@ -1149,7 +1165,6 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpri_clear(tmp1);
 }
 - (void)dealloc {
-    freeRationalIntervalD(&eo);
     [super dealloc];
 }
 -(NSSet*)allVars
@@ -1187,7 +1202,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
 @end
 
 @implementation CPDoubleTernaryMult {
-    rational_interval eo;
+    //    rational_interval eo;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1198,12 +1213,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     _precision = 1;
     _percent = p;
     _rounding = FE_TONEAREST;
-    mpq_inits(eo.sup, eo.inf, NULL);
-    //cpjm
-    mpq_set_d(eo.inf, -MAXFLOAT);
-    mpq_canonicalize(eo.inf);
-    mpq_set_d(eo.sup,  MAXFLOAT);
-    mpq_canonicalize(eo.sup);
+    eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-MAXDBL upF:MAXDBL];
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y
@@ -1244,7 +1254,13 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpri_set_from_q(exi, *[_x minErr], *[_x maxErr]);
     mpri_set_from_q(eyi, *[_y minErr], *[_y maxErr]);
     mpri_set_from_q(ezi, *[_z minErr], *[_z maxErr]);
-    mpri_set_from_q(eoi, eo.inf, eo.sup);
+    mpri_set_from_q(eoi, *[eo min], *[eo max]);
+    
+    traceQP(printf("================== MUL BEGIN d\nx    = [% 24.24e, % 24.24e], ex   = [% 24.24e, % 24.24e]\ny    = [% 24.24e, % 24.24e], ey   = [% 24.24e, % 24.24e]\nz    = [% 24.24e, % 24.24e], ez   = [% 24.24e, % 24.24e]\neo   = [% 24.24e, % 20.20e]\n",
+                   x.inf, x.sup, mpq_get_d(mpri_lepref(exi)), mpq_get_d(mpri_repref(exi)),
+                   y.inf, y.sup, mpq_get_d(mpri_lepref(eyi)), mpq_get_d(mpri_repref(eyi)),
+                   z.inf, z.sup, mpq_get_d(mpri_lepref(ezi)), mpq_get_d(mpri_repref(ezi)),
+                   mpq_get_d(mpri_lepref(eoi)), mpq_get_d(mpri_repref(eoi))));
     
     do {
         changed = false;
@@ -1337,10 +1353,16 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         gchanged |= changed;
     } while(changed);
     
+    traceQP(printf("================== MUL END d\nx    = [% 24.24e, % 24.24e], ex   = [% 24.24e, % 24.24e]\ny    = [% 24.24e, % 24.24e], ey   = [% 24.24e, % 24.24e]\nz    = [% 24.24e, % 24.24e], ez   = [% 24.24e, % 24.24e]\neo   = [% 24.24e, % 20.20e]\n",
+                   x.inf, x.sup, mpq_get_d(mpri_lepref(exi)), mpq_get_d(mpri_repref(exi)),
+                   y.inf, y.sup, mpq_get_d(mpri_lepref(eyi)), mpq_get_d(mpri_repref(eyi)),
+                   z.inf, z.sup, mpq_get_d(mpri_lepref(ezi)), mpq_get_d(mpri_repref(ezi)),
+                   mpq_get_d(mpri_lepref(eoi)), mpq_get_d(mpri_repref(eoi))));
+    
     if(gchanged){
         // Cause no propagation on eo is insured
-        mpq_set(eo.inf, mpri_lepref(eoi));
-        mpq_set(eo.sup, mpri_repref(eoi));
+        [eo updateMin:mpri_lepref(eoi) for:NULL];
+        [eo updateMax:mpri_repref(eoi) for:NULL];
         
         [_x updateInterval:x.inf and:x.sup];
         [_y updateInterval:y.inf and:y.sup];
@@ -1367,7 +1389,6 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpri_clear(tmp3);
 }
 - (void)dealloc {
-    freeRationalIntervalD(&eo);
     [super dealloc];
 }
 -(NSSet*)allVars
@@ -1393,7 +1414,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
 @end
 
 @implementation CPDoubleTernaryDiv {
-    rational_interval eo;
+    //rational_interval eo;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1404,12 +1425,7 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     _precision = 1;
     _percent = p;
     _rounding = FE_TONEAREST;
-    mpq_inits(eo.sup, eo.inf, NULL);
-    //cpjm
-    mpq_set_d(eo.inf, -MAXFLOAT);
-    mpq_set_d(eo.sup,  MAXFLOAT);
-    mpq_canonicalize(eo.inf);
-    mpq_canonicalize(eo.sup);
+    eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-MAXDBL upF:MAXDBL];
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y
@@ -1450,7 +1466,13 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     mpri_set_from_q(exi, *[_x minErr], *[_x maxErr]);
     mpri_set_from_q(eyi, *[_y minErr], *[_y maxErr]);
     mpri_set_from_q(ezi, *[_z minErr], *[_z maxErr]);
-    mpri_set_from_q(eoi, eo.inf, eo.sup);
+    mpri_set_from_q(eoi, *[eo min], *[eo max]);
+    
+    traceQP(printf("================== DIV BEGIN d\nx    = [% 24.24e, % 24.24e], ex   = [% 24.24e, % 24.24e]\ny    = [% 24.24e, % 24.24e], ey   = [% 24.24e, % 24.24e]\nz    = [% 24.24e, % 24.24e], ez   = [% 24.24e, % 24.24e]\neo   = [% 24.24e, % 20.20e]\n",
+                   x.inf, x.sup, mpq_get_d(mpri_lepref(exi)), mpq_get_d(mpri_repref(exi)),
+                   y.inf, y.sup, mpq_get_d(mpri_lepref(eyi)), mpq_get_d(mpri_repref(eyi)),
+                   z.inf, z.sup, mpq_get_d(mpri_lepref(ezi)), mpq_get_d(mpri_repref(ezi)),
+                   mpq_get_d(mpri_lepref(eoi)), mpq_get_d(mpri_repref(eoi))));
     
     do {
         changed = false;
@@ -1557,10 +1579,16 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
         gchanged |= changed;
     } while(changed);
     
+    traceQP(printf("================== DIV END d\nx    = [% 24.24e, % 24.24e], ex   = [% 24.24e, % 24.24e]\ny    = [% 24.24e, % 24.24e], ey   = [% 24.24e, % 24.24e]\nz    = [% 24.24e, % 24.24e], ez   = [% 24.24e, % 24.24e]\neo   = [% 24.24e, % 20.20e]\n",
+                   x.inf, x.sup, mpq_get_d(mpri_lepref(exi)), mpq_get_d(mpri_repref(exi)),
+                   y.inf, y.sup, mpq_get_d(mpri_lepref(eyi)), mpq_get_d(mpri_repref(eyi)),
+                   z.inf, z.sup, mpq_get_d(mpri_lepref(ezi)), mpq_get_d(mpri_repref(ezi)),
+                   mpq_get_d(mpri_lepref(eoi)), mpq_get_d(mpri_repref(eoi))));
+    
     if(gchanged){
         // Cause no propagation on eo is insured
-        mpq_set(eo.inf, mpri_lepref(eoi));
-        mpq_set(eo.sup, mpri_repref(eoi));
+        [eo updateMin:mpri_lepref(eoi) for:NULL];
+        [eo updateMax:mpri_repref(eoi) for:NULL];
         
         [_x updateInterval:x.inf and:x.sup];
         [_y updateInterval:y.inf and:y.sup];
@@ -1587,7 +1615,6 @@ int compute_eo_div_d(mpri_t eo, const double_interval x, const double_interval y
     fesetround(FE_TONEAREST);
 }
 - (void)dealloc {
-    freeRationalIntervalD(&eo);
     [super dealloc];
 }
 -(NSSet*)allVars
