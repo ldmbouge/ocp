@@ -111,7 +111,9 @@
         int mem = [[n stringValue] intValue];
         n = [node nodesForXPath: @"cnodeBandwidth" error: &err][0];
         int bw = [[n stringValue] intValue];
-        [cnodeArray addObject: [[Cnode alloc] initWithId: nodeId cnodeMemory: mem cnodeBandwidth: bw]];
+        n = [node nodesForXPath: @"cnodeCPU" error: &err][0];
+        int cpu = [[n stringValue] intValue];
+        [cnodeArray addObject: [[Cnode alloc] initWithId: nodeId cnodeMemory: mem cnodeBandwidth: bw cnodeCPU:cpu]];
     }
     
     NSArray* services = [[xmlDoc rootElement] nodesForXPath: @"service" error: &err];
@@ -122,10 +124,12 @@
         int mem = [[n stringValue] intValue];
         n = [node nodesForXPath: @"serviceFixBandwidth" error: &err][0];
         int bw = [[n stringValue] intValue];
+        n = [node nodesForXPath: @"serviceFixCPU" error: &err][0];
+        int cpu = [[n stringValue] intValue];
         n = [node nodesForXPath: @"serviceZone" error: &err][0];
         int zone = [[n stringValue] intValue];
         [serviceArray addObject: [[Service alloc] initWithId: nodeId serviceFixMemory:mem serviceScaledMemory: 1 serviceFixBandwidth: bw
-                                    serviceScaledBandwidth: 1 serviceZone: zone serviceMaxConn: maxCONN]];
+                                      serviceScaledBandwidth: 1 serviceZone: zone serviceMaxConn: maxCONN serviceFixCPU: cpu]];
     }
     
     NSArray* sec = [[xmlDoc rootElement] nodesForXPath: @"sec" error: &err];

@@ -61,7 +61,7 @@ int main(int argc, const char * argv[])
 {
     enum Mode mode;
     ORInt tLim = 0;
-    ORInt scale = 2;
+    ORInt scale = 1;
     if (strncmp(argv[2],"MIP",3)==0)
         mode = MIP;
     else if (strncmp(argv[2],"CP",2) == 0)
@@ -128,6 +128,10 @@ int main(int argc, const char * argv[])
     id<ORIntArray> cnodeBw = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) {
         return [cnodeArray[(i-1)/scale] cnodeBandwidth];
     } ];
+    id<ORIntArray> cnodeCpu = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) {
+        return [cnodeArray[(i-1)/scale] cnodeCPU];
+    } ];
+    
     id<ORIntArray> serviceFixMem = [ORFactory intArray: model range: services with:^ORInt(ORInt i) {
         return [serviceArray[i-1] serviceFixMemory];
     } ];
@@ -148,6 +152,9 @@ int main(int argc, const char * argv[])
     } ];
     id<ORIntArray> secFixBw = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
         return [secArray[i] secFixedBandwidth];
+    } ];
+    id<ORIntArray> serviceCPU = [ORFactory intArray: model range: services with:^ORInt(ORInt i) {
+        return [serviceArray[i-1] serviceFixCPU];
     } ];
     id<ORIntArray> secScaledMem = [ORFactory intArray: model range: sec with:^ORInt(ORInt i) {
         return [secArray[i] secScaledMemory];
@@ -208,23 +215,37 @@ int main(int argc, const char * argv[])
     
     // Variables
     //id<ORIntVarArray> v = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, Ncnodes)];
+    
+    //mc[i] is the number of instances deployed on machine i.
     id<ORIntVarArray> mc = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, maxPerVM*10)];
     //id<ORIntVarMatrix> mc_conn = [ORFactory intVarMatrix: model range: cnodes : services domain: RANGE(model, 0, maxPerVM * 10 * MAX_CONN)];
     
+    //mc_conn[i][s][x]: the sum of all external connection for machine i with service s and security x.
     id<ORIntVarMatrix> mc_conn = [ORFactory intVarMatrix:model range:cnodes :services :sec domain:[ORFactory intRange:model low:0 up:(Iservice.up+1)]];
     
     /*
     id<ORIntVarArray> mc_conn = [ORFactory intVarArray:model range:cnodes :services :sec with:^id<ORIntVar> _Nonnull(ORInt x, ORInt y, ORInt z) {
         return [ORFactory intVar: model domain:RANGE(model, 0, maxPerVM * 10 * MAX_CONN)];
     }];
+     
     */
+    
+    // a[i] is the machine that instance i is deployed on.
     id<ORIntVarArray> a = [ORFactory intVarArray: model range: Iservice domain: RANGE(model, 1, Ncnodes)];
     //   id<ORIntVarMatrix> conn = [ORFactory intVarMatrix: model range: Iservice : Iservice domain: RANGE(model, 0, MAX_CONN)];
+    
+    //chanSec[i][j]: the security requirement to secure the communication channel between service i and j.
     id<ORIntVarMatrix> chanSec = [ORFactory intVarMatrix: model range: Iservice : Iservice domain: sec];
+    
+    //nbConn[i]: the number of connections on instance i
     id<ORIntVarArray> nbConn = [ORFactory intVarArray:model range:Iservice domain:RANGE(model,1,Iservice.size)];
     
+    //s[i]: the security requirement of service instance i
     id<ORIntVarArray>  s = [ORFactory intVarArray: model range: RANGE(model, 0, Iservice.up) domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
+    
+    //sSec[i]: the security requirement of service instance i
     id<ORIntVarArray>  sSec = [ORFactory intVarArray: model range: Iservice  domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
+    
     //NEW VARIABLES
     //id<ORIntVarArray>  sSecImpl = [ORFactory intVarArray: model range: Iservice  domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
 
@@ -233,20 +254,23 @@ int main(int argc, const char * argv[])
     //id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 1000)];
     //id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 200)];
     
-    
+    //u_mem[i]: is the memory usage for machine i
     id<ORIntVarArray> u_mem = [ORFactory intVarArray:model range:cnodes with:^id<ORIntVar> _Nonnull(ORInt x) {
         return [ORFactory intVar: model domain:[ORFactory intRange:model low:0 up:([cnodeMem at: x])]];
     }];
     
+    //u_bw[i]: is the bandwidth usage for machine i
     id<ORIntVarArray> u_bw =[ORFactory intVarArray:model range:cnodes with:^id<ORIntVar> _Nonnull(ORInt x) {
         return [ORFactory intVar: model domain:[ORFactory intRange:model low:0 up:([cnodeBw at: x])]];
     }];
     
+    //secAdapter[i][x]: does service instance i implement the adapter for security x
     id<ORIntVarMatrix> secAdapter = [ORFactory intVarMatrix:model range:Iservice :sec domain:RANGE(model,0,1)];
 
     //id<ORIntVarArray> sConnOut = [ORFactory intVarArray: model range: Iservice domain: RANGE(model, 0, Iservice.size)];
     //id<ORIntVarArray> sConnIn = [ORFactory intVarArray: model range: Iservice domain: RANGE(model, 0, Iservice.size)];
     
+    //sumConn: sum of all connections between all the service instances.
     id<ORExpr> sumConn = nil;
     for(NSArray* lnk in links) {
         id<ORIntVarMatrix> lc = links[lnk];
@@ -273,6 +297,7 @@ int main(int argc, const char * argv[])
     //      }
     //   }
     
+    //Connection and Demand constraints
     ORInt numLinks = 0;
     for(NSArray* lnk in links) {
         ORInt t1 = (ORInt)[lnk[0] integerValue],t2 = (ORInt)[lnk[1] integerValue];
@@ -662,6 +687,11 @@ int main(int argc, const char * argv[])
     }
   */
     
+    for(int i = cnodes.low; i<=cnodes.up; i++){
+        [model add:[Sum(model, j, Iservice, [[a[j] eq: @(i)] mul: serviceCPU[[alpha at: j]]]) leq: @([cnodeCpu at:i])]];
+    }
+    
+    // [model add:[Sum(model, j, cnodes, u_mem[j]) leq: @(TotalMem)]];
     
         id<ORIntArray> w3 = [ORFactory intArray:model range:RANGE(model,0,((Iservice.up+1)*(1 << (sec.up + 1)))-1) with:^ORInt(ORInt j) {
             ORInt maxSecConfig = 1 << (sec.up + 1);

@@ -9,44 +9,52 @@
         <id>1</id>
         <cnodeMemory>1000</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
+        <cnodeCPU>100</cnodeCPU>
     </cnode>
     <cnode>
         <id>2</id>
         <cnodeMemory>1000</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
+        <cnodeCPU>100</cnodeCPU>
     </cnode>
     <cnode>
         <id>3</id>
         <cnodeMemory>1000</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
+        <cnodeCPU>100</cnodeCPU>
     </cnode>
     <cnode>
         <id>4</id>
         <cnodeMemory>1000</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
+        <cnodeCPU>100</cnodeCPU>
     </cnode>
     <service>
         <id>1</id>
         <serviceFixMemory>32</serviceFixMemory>
         <serviceFixBandwidth>9</serviceFixBandwidth>
+        <serviceFixCPU>8</serviceFixCPU>
         <serviceZone>0</serviceZone>
     </service>
     <service>
         <id>2</id>
         <serviceFixMemory>32</serviceFixMemory>
         <serviceFixBandwidth>9</serviceFixBandwidth>
+        <serviceFixCPU>5</serviceFixCPU>
         <serviceZone>1</serviceZone>
     </service>
     <service>
         <id>3</id>
         <serviceFixMemory>32</serviceFixMemory>
         <serviceFixBandwidth>5</serviceFixBandwidth>
+        <serviceFixCPU>10</serviceFixCPU>
         <serviceZone>0</serviceZone>
     </service>
     <service>
         <id>4</id>
         <serviceFixMemory>32</serviceFixMemory>
         <serviceFixBandwidth>7</serviceFixBandwidth>
+        <serviceFixCPU>7</serviceFixCPU>
         <serviceZone>2</serviceZone>
     </service>
     <sec>
