@@ -223,25 +223,23 @@
       [_m add:[ORFactory bit:digest[4] eq:digestVars[4]]];
    
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
-
-   __block id* gamma = [cp gamma];
    
    NSLog(@"SHA-1 Message Blocks (Original)");
    id<ORBitVar>* bitVars;
    for(int i=0; i<_numBlocks;i++){
       bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
       for(int j=0;j<16;j++)
-         NSLog(@"%@\n",gamma[bitVars[j].getId]);
+         NSLog(@"%@\n",[cp stringValue:bitVars[j]]);
    }
 
 //   NSArray* allvars = [model variables];
 
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
-      [o set:gamma[bitVars[k].getId] at:k];
+      [o set:bitVars[k] at:k];
    
    
    
@@ -251,73 +249,26 @@
          break;
       case BVIBS: h = [cp createBitVarIBS:(id<CPBitVarArray>)o];
          break;
-      case BVFF:
-      default:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+      //case BVFF:   h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+       default:    h =[cp createBitVarVSIDS:o];
+
          break;
-         //      default:
-         //         break;
    }
-//   __block ORUInt maxFail = 0x0000000000000600;
 
    [cp solve: ^{
-//      NSLog(@"All variables before search:");
-//      for (int i=0; i< [allvars count]; i++) {
-//         NSLog(@"Model Variable[%i]: %@",i,allvars[i]);
-//      }
-//      NSLog(@"End all variables before search:");
       NSLog(@"Search");
       for(int i=0;i<5;i++)
       {
-         NSLog(@"%@",gamma[digest[i].getId]);
-         NSLog(@"%@\n\n",gamma[digestVars[i].getId]);
+         NSLog(@"%@",[cp stringValue:digest[i]]);
+         NSLog(@"%@\n\n",[cp stringValue:digestVars[i]]);
       }
       //      NSLog(@"Message Blocks (With Data Recovered)");
       clock_t searchStart = clock();
-      switch (heur) {
-         case BVLSB:
-            for (int i=0;i<16;i++)
-               if (![gamma [bitVars[i].getId] bound]) {
-                  [cp labelUpFromLSB:gamma[bitVars[i].getId]];
-               }
-            break;
-         case BVRAND:
-            for (int i=0;i<16;i++)
-               if (![gamma [bitVars[i].getId] bound]) {
-                  [cp labelRandomFreeBit:gamma[bitVars[i].getId]];
-               }
-            break;
-         case BVMID:
-            for (int i=0;i<16;i++)
-               if (![gamma [bitVars[i].getId] bound]) {
-                  [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
-               }
-            break;
-         case BVMIX:
-            for (int i=0;i<16;i++)
-               if (![gamma [bitVars[i].getId] bound]) {
-                  [cp labelBitsMixedStrategy:gamma[bitVars[i].getId]];
-               }
-            break;
-         case BVFF:
-            [cp labelBitVarHeuristicCDCL:h];
-            break;
-            
-         default:
-            [cp labelBitVarHeuristic:h];
-//            [cp repeat:^{
-//               [cp limitFailures:maxFail
-//                        in:^{[cp labelBitVarHeuristic:h];}];}
-//                  onRepeat:^{maxFail+=maxFail>>4;NSLog(@"Restart, max failures=%u",maxFail);}];
-            break;
-      }
-      //      for (int i=0;i<16;i++)
-      //         if (![gamma [bitVars[i].getId] bound]) {
-      //            [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
-      //         }
+      [cp labelBitVarHeuristic:h];
       clock_t searchFinish = clock();
       
       for(int j=0;j<16;j++){
-         NSLog(@"%@\n",gamma[bitVars[j].getId]);
+         NSLog(@"%@\n",[cp stringValue:bitVars[j]]);
       }
       
 //      
@@ -329,8 +280,8 @@
       NSLog(@"Final digest variables");
       for(int j=0;j<5;j++)
       {
-         NSLog(@"%x",[gamma[digest[j].getId] getLow]->_val);
-         NSLog(@"%x\n\n",[gamma[digestVars[j].getId] getLow]->_val);
+         NSLog(@"%@",[cp stringValue:digest[j]]);
+         NSLog(@"%@\n\n",[cp stringValue:digestVars[j]]);
       }
       
       
@@ -347,7 +298,7 @@
       NSLog(@"     Total Time (s): %f\n\n",totalTime);
       
    }];
-   [cp release];
+//   [cp release];
    return results;
    
 }
