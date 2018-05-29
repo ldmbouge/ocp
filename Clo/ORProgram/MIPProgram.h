@@ -21,7 +21,7 @@
 -(void) setGamma: (id*) gamma;
 -(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
--(void) solve;
+-(OROutcome) solve;
 -(ORDouble) doubleValue: (id<ORRealVar>) v;
 -(ORInt) intValue: (id<ORIntVar>) v;
 -(void) setIntVar: (id<ORIntVar>)v value:(ORInt)val;
@@ -32,5 +32,6 @@
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolution>) captureSolution;
 -(id<ORExplorer>)  explorer;
+-(void) setIntParameter: (const char*) name val: (ORInt) val;
 @end
 

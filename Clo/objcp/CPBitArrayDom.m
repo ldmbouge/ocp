@@ -20,16 +20,19 @@
 #define BITFREE(idx)     ((_low[WORDIDX(idx)]._val ^ _up[WORDIDX(idx)]._val) & ONEAT(idx) & _up[WORDIDX(idx)]._val)
 #define SETBITTRUE(idx)   (assignTRUInt(&_low[WORDIDX(idx)],_low[WORDIDX(idx)]._val | ONEAT(idx),_trail))
 #define SETBITFALSE(idx)  (assignTRUInt(&_up[WORDIDX(idx)],_up[WORDIDX(idx)]._val & ZEROAT(idx),_trail))
+#define INTERPRETATION(t) ((((ORULong)(t)[1]._val)<<BITSPERWORD) | (t)[0]._val)
+#define TOULONG(v)  ((v)[0]._val | (_wordLength > 1 ? ((ORULong)(v)[1]._val << 32) : 0))
+
 
 @implementation CPBitArrayDom
 
 static inline ORULong BAMin(CPBitArrayDom* dom)
 {
-   return dom->_min[0]._val | ((ORULong)dom->_min[1]._val << 32);
+   return dom->_min[0]._val | (dom->_wordLength > 1 ? ((ORULong)dom->_min[1]._val << 32) : 0);
 }
 static inline ORULong BAMax(CPBitArrayDom* dom)
 {
-   return dom->_max[0]._val | ((ORULong)dom->_max[1]._val << 32);
+   return dom->_max[0]._val | (dom->_wordLength > 1 ? ((ORULong)dom->_max[1]._val << 32) : 0);
 }
 /*
 static inline ORULong BALow(CPBitArrayDom* dom)
@@ -314,6 +317,28 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
    }
 
    updateFreeBitCount(self);
+   
+   // Update the min/max based on bit set.
+   ORULong upInterpretation = TOULONG(_up);
+   ORULong lowInterpretation = TOULONG(_low);
+   ORULong currentMax = TOULONG(_max);
+   ORULong currentMin = TOULONG(_min);
+   if(upInterpretation < currentMax){
+      ORUInt* pc = (ORUInt*)&upInterpretation;
+      assignTRUInt(&_max[0], pc[0], _trail);
+      if (_wordLength>1)
+         assignTRUInt(&_max[1], pc[1], _trail);
+      [x changeMaxEvt:[self domsize] sender:self];         // This currently assumes that min/max are 32-bit wide. Some APIs are ORLong, so not consistent
+   }
+   if(lowInterpretation > currentMin){
+      ORUInt* pc = (ORUInt*)&lowInterpretation;
+      assignTRUInt(&_min[0], pc[0], _trail);
+      if (_wordLength>1)
+         assignTRUInt(&_min[1], pc[1], _trail);
+      [x changeMinEvt:[self domsize] sender:self];         // ditto, see above.
+   }
+
+   
 //   if (_learning){
 //      ORUInt level = [(id<CPLEngine>)_engine getLevel];
 //      assignTRUInt(&(_levels[idx]),level, _trail);
@@ -587,10 +612,6 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
    return outarray;
 }
 
-#define INTERPRETATION(t) ((((ORULong)(t)[1]._val)<<BITSPERWORD) | (t)[0]._val)
-#define TOULONG(v)  ((v)[0]._val | (_wordLength > 1 ? ((ORULong)(v)[1]._val << 32) : 0))
-
-
 -(ORStatus)updateMin:(ORULong)newMin for:(id<CPBitVarNotifier>)x
 {
    ORULong curMin = TOULONG(_min),curMax = TOULONG(_max);
@@ -740,32 +761,38 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
 {
    // [LDM]. This is buggy  Some bits might already be set in low/up and *incompatible* with the
    // mass setting done here. In this case it should *FAIL*.
+   ORULong mask = (0x1 << _bitLength) - 1; // bit mask with 1 for all meaningfull bits.
    
    assert(_wordLength <= 2);
    if ((val < BAMin(self)) || (val > BAMax(self)))
       failNow();
    if ((_freebits._val == 0) && (val == BAMin(self))) return ORSuspend;
    ORUInt* pc = (ORUInt*)&val;
-   ORUInt boundAt0w0 = ~(_low[0]._val ^ _up[0]._val) & ~_low[0]._val;
-   ORUInt boundAt1w0 = ~(_low[0]._val ^ _up[0]._val) & _up[0]._val;
+   ORUInt boundAt0w0 = ~(_low[0]._val ^ _up[0]._val) & ~_low[0]._val & mask;
+   ORUInt boundAt1w0 = ~(_low[0]._val ^ _up[0]._val) & _up[0]._val & mask;
    ORBool W0Ok = ((pc[0] & boundAt0w0) == boundAt0w0) && ((pc[0] & boundAt1w0) == boundAt1w0);
    if (!W0Ok) return ORFailure;
    if (_wordLength >= 2) {
-      ORUInt boundAt0w1 = ~(_low[1]._val ^ _up[1]._val) & ~_low[1]._val;
-      ORUInt boundAt1w1 = ~(_low[1]._val ^ _up[1]._val) & _up[1]._val;
+      ORULong w1Mask = (0x1 << (_bitLength - 32)) - 1;
+      ORUInt boundAt0w1 = ~(_low[1]._val ^ _up[1]._val) & ~_low[1]._val & w1Mask;
+      ORUInt boundAt1w1 = ~(_low[1]._val ^ _up[1]._val) & _up[1]._val & w1Mask;
       ORBool W1Ok = ((pc[1] & boundAt0w1) == boundAt0w1) && ((pc[1] & boundAt1w1) == boundAt1w1);
       if (!W1Ok) return ORFailure;
    }
    //Deal with arrays < 64 bits long
-   assignTRUInt(&_min[1], pc[1], _trail);
-   assignTRUInt(&_max[1], pc[1], _trail);
-   assignTRUInt(&_low[1], pc[1], _trail);
-   assignTRUInt(&_up[1], pc[1], _trail);
+   if (_wordLength > 1) {
+      assignTRUInt(&_min[1], pc[1], _trail);
+      assignTRUInt(&_max[1], pc[1], _trail);
+      assignTRUInt(&_low[1], pc[1], _trail);
+      assignTRUInt(&_up[1], pc[1], _trail);
+   }
    assignTRUInt(&_min[0], pc[0], _trail);
    assignTRUInt(&_max[0], pc[0], _trail);
    assignTRUInt(&_low[0], pc[0], _trail);
    assignTRUInt(&_up[0], pc[0], _trail);
    assignTRUInt(&_freebits, 0, _trail);
+   
+   
    [x bindEvt:1 sender:self];
    return ORSuspend;
 }

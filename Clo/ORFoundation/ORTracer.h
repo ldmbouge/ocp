@@ -33,6 +33,8 @@
 -(id<ORTrail>)   trail;
 -(void)       trust;
 -(ORInt)      level;
+-(ORInt) curNode;
+-(void) fail;
 @optional -(void) addCommand: (id<ORConstraint>) com;
 @optional -(id<ORCheckpoint>) captureCheckpoint;
 @optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model;
@@ -66,6 +68,8 @@
 -(id<ORTrail>)   trail;
 -(void)       trust;
 -(ORInt)      level;
+-(ORInt)      curNode;
+-(void) fail;
 @end
 
 @interface SemTracer : NSObject<ORTracer>
@@ -83,6 +87,8 @@
 -(id<ORProblem>)  captureProblem;
 -(void)       trust;
 -(ORInt)      level;
+-(ORInt)      curNode;
+-(void) fail;
 @end
 //<<<<<<< HEAD
 
