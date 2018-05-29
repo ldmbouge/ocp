@@ -141,7 +141,7 @@
 //            }
 //        }
 //    }
-    
+   
    do {
        ofs = _sz-1;
       
@@ -153,6 +153,8 @@
          k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
+          
+//          NSLog(@"Jumping from level %i back to level %i",faillevel, level);
 
           if (k &&  (k.admin || status != ORFailure)) {
 //              if ((jumplevel > 0) && (level < faillevel) && !k.admin){
@@ -165,7 +167,7 @@
 
           } else {
 //              lastStatus = status;
-//            jumplevel=-1;
+//            jumplevel = -1;
             if (k==nil)
                @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
             else

@@ -92,6 +92,22 @@
 {
    return [self group:model type:DefaultGroup];
 }
++(id<ORGroup>)cdisj:(id<ORTracker>)model clauses:(nullable NSArray*)cl
+{
+   id<ORGroup> g = [[ORCDisjGroupI alloc] initORCDGroupI:model];
+   [model trackObject:g];
+   if (cl)
+      for(id<ORGroup> c in cl)
+         [g add:c];
+   return g;
+}
++(id<ORGroup>)cdisj:(id<ORTracker>)model vmap:(NSArray*)varMap
+{
+   id<ORGroup> g = [[ORCDisjGroupI alloc] initORCDGroupI:model witMap:varMap];
+   [model trackObject:g];
+   return g;
+}
+
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model
 {
    return [self group:model type:BergeGroup];
@@ -399,10 +415,17 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order
 {
-   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: YES];
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: NO];
    [tracker trackMutable: o];
    return o;
 }
++(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized:(ORBool)rand
+{
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: rand];
+   [tracker trackMutable: o];
+   return o;
+}
+
 +(id<ORSelector>) selectMin:(id<ORTracker>)tracker
 {
    id<ORSelector> sweeper = [[ORMinSelector alloc] init];

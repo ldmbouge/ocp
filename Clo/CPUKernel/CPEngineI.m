@@ -347,10 +347,15 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 -(void) setLastFailure:(id<CPConstraint>)lastToFail
 {
    _last = lastToFail;
+   _nbFailures += 1;
 }
 -(void)incNbPropagation:(ORUInt)add
 {
    _nbpropag += add;
+}
+-(void)incNbFailures:(ORUInt)add
+{
+   _nbFailures += add;
 }
 -(ORUInt) nbFailures
 {
@@ -639,6 +644,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
 -(void) addInternal:(id<ORConstraint>) c
 {
    assert(_state != CPOpen);
+    if (getId(c) == -1)
+        [c setId: _nbCstrs++];
    ORStatus s = [self post:c];
    if (s==ORFailure) {
       failNow();

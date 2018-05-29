@@ -9,13 +9,11 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORExpr.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORSet.h>
-//#import <ORFoundation/ORConstraint.h>
-
-@protocol ORASolver;
+#import <ORFoundation/ORExpr.h>
+#import <ORFoundation/ORSolver.h>
 
 PORTABLE_BEGIN
 

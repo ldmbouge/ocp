@@ -182,8 +182,8 @@
 -(void) dealloc
 {
    NSLog(@"CPSolver dealloc'd %p",self);
-   [_model release];
    [_hSet release];
+   [_model release];
    [_portal release];
    [_returnLabel release];
    [_returnLT release];
@@ -444,7 +444,7 @@
    _oneSol = NO;
    [self doOnStartup];
    [_search solveAllModel: self using: search
-               onSolution: ^{ [self doOnSolution];}
+               onSolution: ^{ [self doOnSolution];[_engine incNbFailures:1];}
                    onExit: ^{ [self doOnExit];}
     ];
 }
@@ -1146,6 +1146,7 @@
 //      return sv;
 //   }];
    id<ORSelect> select = [ORFactory selectRandom: _engine
+//<<<<<<< HEAD
                                            range: RANGE(_engine,[av low],[av up])
 //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
                                   suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
@@ -1225,6 +1226,17 @@
 //      }
 //   }
 //   NSLog(@"Pruning with SAC constraint finished.");
+//=======
+//                                           range: RANGE(_engine,[cav low],[cav up])
+//                                        suchThat: ^ORBool(ORInt i) { return ![cav[i] bound]; }
+//                                       orderedBy: ^ORDouble(ORInt i) {
+//                                          ORDouble rv = [h varOrdering:cav[i]];
+//                                          ORInt bl = [cav[i] bitLength];
+//                                          return rv / (1 << bl);
+//                                       }
+//                                      randomized:NO
+//                          ];
+//>>>>>>> 116184882f379e03de2b0ba0ae0408e9a4959a0b
    
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
@@ -1275,7 +1287,6 @@
 //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
 //            NSLog(@"%@\n",[_engine variables]);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
-            
          } alt: ^{
 //           NSLog(@"Setting bit %i of 0x%lx to 1 \n",bestIndex,(unsigned long)x);
 //            NSLog(@"Setting bit %i of %@ to 1 at level %i\n",bestIndex,(unsigned long)x,[(CPLearningEngineI*)_engine getLevel]);
@@ -1863,7 +1874,7 @@
     [_engine open];
 }
 
--(void) search:(void*(^)())stask
+-(void) search:(void*(^)(void))stask
 {
    [self solve:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();
@@ -1872,7 +1883,7 @@
    [_engine open];
 }
 
--(void) searchAll:(void*(^)())stask
+-(void) searchAll:(void*(^)(void))stask
 {
    [self solveAll:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();

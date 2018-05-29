@@ -32,8 +32,7 @@
 }
 -(void)dealloc
 {
-   NSInteger ub = [_vars count];
-   for(int k=0; k < ub;k++)
+   for(int k=0; k < _nbv;k++)
       [_cv[k] release];
    free(_cv);
    free(_map);
@@ -47,6 +46,11 @@
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
+-(id<ORVarArray>)allBitVars
+{
+    return (id<ORVarArray>) (_rvars!=nil ? _rvars : _cvs);
+}
+
 -(ORDouble)varOrdering: (id<CPIntVar>) ox
 {
    id<CPIntVar> x = (id<CPIntVar>)ox;
@@ -57,6 +61,7 @@
    }
    return h / [x domsize];
 }
+
 -(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    return -v;   

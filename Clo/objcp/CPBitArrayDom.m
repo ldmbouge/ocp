@@ -142,6 +142,7 @@ static inline ORULong BAUp(CPBitArrayDom* dom)
 
    if(_wordLength > 1){
       for(int i=_wordLength-2; i>=0;i--){
+          [string appendString:@" "];
       boundLow = (~ _up[i]._val) & (~_low[i]._val);
       boundUp = _up[i]._val & _low[i]._val;
       err = ~_up[i]._val & _low[i]._val;

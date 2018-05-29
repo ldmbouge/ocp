@@ -78,6 +78,10 @@
 {
    _todo = CPTocheck;
 }
+-(ORBool)entailed
+{
+   return _active._val == NO;
+}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitConstraint:self];

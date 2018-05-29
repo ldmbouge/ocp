@@ -59,6 +59,7 @@ typedef struct _CPBitAntecedents {
 +(id<CPBVConstraint>) bitMultiply:(id<CPBitVar>)x times:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
 //+(id<CPBVConstraint>) bitMultiplyComposed:(id<CPBitVar>)x times:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
 +(id<CPBVConstraint>) bitDivide:(id<CPBitVar>)x dividedby:(id<CPBitVar>) y equals:(id<CPBitVar>)q rem:(id<CPBitVar>) r;
++(id<CPBVConstraint>) bitDivideSigned:(id<CPBitVar>)x dividedby:(id<CPBitVar>) y equals:(id<CPBitVar>) q rem:(id<CPBitVar>)r;
 +(id<CPBVConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
 +(id<CPBVConstraint>) bitCount:(id<CPBitVar>)x count:(id<CPIntVar>)y;
 +(id<CPBVConstraint>) bitChannel:(id<CPBitVar>)x channel:(id<CPIntVar>)y;
@@ -419,6 +420,11 @@ typedef struct _CPBitAntecedents {
    ORUInt _zUpCategory;
    ORUInt _zLowCategory;
    ORUInt**    _state;
+    
+//    ORUInt** _xChanges;
+//    ORUInt** _yChanges;
+//    ORUInt** _zChanges;
+//    TRUInt _top;
 }
 -(id) initCPBitLT: (CPBitVarI*) x LT: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
@@ -436,6 +442,11 @@ typedef struct _CPBitAntecedents {
    ORUInt*  _ycategories;
    ORUInt _zcategory;
    ORUInt**    _state;
+//    ORUInt** _xChanges;
+//    ORUInt** _yChanges;
+//    ORUInt** _zChanges;
+//    TRUInt _top;
+
 }
 -(id) initCPBitLE: (CPBitVarI*) x LE: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
@@ -453,6 +464,11 @@ typedef struct _CPBitAntecedents {
    ORUInt*  _ycategories;
    ORUInt _zcategory;
    ORUInt**    _state;
+//    ORUInt** _xChanges;
+//    ORUInt** _yChanges;
+//    ORUInt** _zChanges;
+//    TRUInt _top;
+
 }
 -(id) initCPBitSLE: (CPBitVarI*) x SLE: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
@@ -470,6 +486,11 @@ typedef struct _CPBitAntecedents {
    ORUInt*  _ycategories;
    ORUInt _zcategory;
    ORUInt**    _state;
+//    ORUInt** _xChanges;
+//    ORUInt** _yChanges;
+//    ORUInt** _zChanges;
+//    TRUInt _top;
+
 }
 -(id) initCPBitSLT: (CPBitVarI*) x SLT: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
@@ -630,7 +651,8 @@ typedef struct _CPBitAntecedents {
    CPBitVarI* _negYCin;
    CPBitVarI* _negYCout;
    CPBitVarI* _cin;
-   CPBitVarI* _cout;
+    CPBitVarI* _cout;
+    CPBitVarI* _overflow;
 }
 -(id) initCPBitSubtract: (CPBitVarI*) x minus: (CPBitVarI*) y equals: (CPBitVarI*)z;
 -(void) dealloc;
@@ -663,13 +685,20 @@ typedef struct _CPBitAntecedents {
    CPBitVarI* _q;
    CPBitVarI* _r;
     CPBitVarI* _zeroBitVar;
+    CPBitVarI* _oneBitVar;
     CPBitVarI* _falseVal;
    CPBitVarI* _product;
    CPBitVarI* _cin;
    CPBitVarI* _cout;
    CPBitVarI* _trueVal;
-    CPBitVarI* _overflow;
-    CPBitVarI* _xlty;
+//    CPBitVarI* _overflow;
+//    CPBitVarI* _xlty;
+//    CPBitVarI* _yeq0;
+//    CPBitVarI* _yneq0;
+//    CPBitVarI* _qeq1;
+
+//    CPBitVarI* _xeq0;
+//    CPBitVarI* _xneq0;
 }
 -(id) initCPBitDivide: (CPBitVarI*) x dividedby: (CPBitVarI*) y equals: (CPBitVarI*)q rem:(CPBitVarI*)r;
 -(void) dealloc;
@@ -684,7 +713,7 @@ typedef struct _CPBitAntecedents {
     CPBitVarI* _y;
     CPBitVarI* _q;
     CPBitVarI* _r;
-//    CPBitVarI* _zeroBitVar;
+    CPBitVarI* _zeroBitVar;
     CPBitVarI* _x2Comp;
     CPBitVarI* _y2Comp;
 //    CPBitVarI* _q2Comp;
@@ -695,17 +724,17 @@ typedef struct _CPBitAntecedents {
     CPBitVarI* _posR;
     CPBitVarI* _negQ;
     CPBitVarI* _negR;
-    CPBitVarI* _product;
-    CPBitVarI* _cin;
-    CPBitVarI* _cout;
+//    CPBitVarI* _product;
+//    CPBitVarI* _cin;
+//    CPBitVarI* _cout;
     CPBitVarI* _trueVal;
     CPBitVarI* _falseVal;
     CPBitVarI* _xSign;
     CPBitVarI* _ySign;
-//    CPBitVarI* _qSign;
-//    CPBitVarI* _rSign;
+    CPBitVarI* _qSign;
+    CPBitVarI* _rSign;
     CPBitVarI* _sameSign;
-//    CPBitVarI* _xlty;
+    CPBitVarI* _xlty;
 //    CPBitVarI* _qIsPos;
 //    CPBitVarI* _xrDiffSign;
 

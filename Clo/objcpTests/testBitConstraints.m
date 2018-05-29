@@ -1719,10 +1719,10 @@ char *int2bin(int a, char *buffer, int buf_size) {
    max[0] = 0xFFFFFFFF;
    max[1] = 0xFFFFFFFF;
    
-   unsigned int min4 = 0x00000000;
+//   unsigned int min4 = 0x00000000;
    unsigned int min4A = 0x0000000A;
    unsigned int max4 = 0x0000000F;
-   unsigned int max8 = 0x000000FF;
+//   unsigned int max8 = 0x000000FF;
    
    id<ORBitVar> x = [ORFactory bitVar:m low:&min4A up:&max4 bitLength:4];
    id<ORBitVar> y = [ORFactory bitVar:m withLength:8];
@@ -1767,10 +1767,10 @@ char *int2bin(int a, char *buffer, int buf_size) {
    max[0] = 0xFFFFFFFF;
    max[1] = 0xFFFFFFFF;
    
-   unsigned int min4 = 0x00000000;
-   unsigned int min4A = 0x0000000A;
-   unsigned int max4 = 0x0000000F;
-   unsigned int max8 = 0x000000FF;
+//   unsigned int min4 = 0x00000000;
+//   unsigned int min4A = 0x0000000A;
+//   unsigned int max4 = 0x0000000F;
+//   unsigned int max8 = 0x000000FF;
    
    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
    id<ORBitVar> y = [ORFactory bitVar:m withLength:33];

@@ -46,16 +46,17 @@ enum CPDomClass {
 -(ORBounds)bounds;
 -(ORBool)bound;
 -(ORInt)domsize;
+-(BOOL) isEqual:(id)object;
 -(ORBool)member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt)findMax:(ORInt)from;
--(int(^)())getMin;
 -(NSString*)description;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void)enumerateWithBlock:(void(^)(ORInt))block;
 -(void)enumerateBackwardWithBlock:(void(^)(ORInt))block;
+-(void) unionWith:(id<CPDom>)d;
 @end
 
 static inline ORBounds domBounds(CPBoundsDom* dom)
@@ -92,6 +93,8 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(void)translate:(ORInt)shift;
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
+-(void) unionWith:(id<CPDom>)d;
+-(BOOL) isEqual:(id)object;
 @end
 
 @interface CPAffineDom : NSObject<CPDom> {

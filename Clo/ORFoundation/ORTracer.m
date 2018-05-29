@@ -9,10 +9,12 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORTracer.h>
+#import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORCommand.h>
 #import <ORFoundation/ORTrailI.h>
-#include <pthread.h>
+#import <ORFoundation/ORCommand.h>
+#import <ORFoundation/ORTrailI.h>
+#import <pthread.h>
 
 
 @interface ORProblemI : NSObject<ORProblem> {    // a semantic sub-problem description (as a set of constraints aka commands)
@@ -106,15 +108,6 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
       _tab = realloc(_tab,sizeof(ORCommandList*)*_mxs*2);
       _mxs <<= 1;
    }
-/*   if (_sz  >= 1) {
-      if (_tab[_sz-1]->_frozen) {
-         ORCommandList* old = _tab[_sz - 1];
-         _tab[_sz-1] = [_tab[_sz-1] copy];
-         [old letgo];
-      }
-      [_tab[_sz - 1] setMemoryTo:mh];
-   }
- */
    assert(_sz == 0 || mh >= _tab[_sz-1].memoryTo);
    ORCommandList* list = [ORCommandList newCommandList:node from:mh to:mh];
    _tab[_sz++] = list;

@@ -37,6 +37,15 @@
 {
    return _into;
 }
+-(id)flattenIt:(id)obj into:(id<ORAddToModel>)into
+{
+   id<ORAddToModel> oldInto = _into;
+   _into = into;
+   id result = [self flattenIt:obj];
+   _into = oldInto;
+   return result;
+}
+
 -(id)flattenIt:(id)obj
 {
    if (obj==nil) return obj;
@@ -264,6 +273,41 @@
    [a2g release];
    _result = [_into addConstraint:ng];
 }
+-(void) visitCDGroup:(id<ORGroup>)g
+{
+   NSMutableArray* ma = [[NSMutableArray alloc] initWithCapacity:g.size];
+   NSMutableArray* cvm = [[NSMutableArray alloc] initWithCapacity:g.size];
+
+   id<ORGroup> ng = [ORFactory cdisj:[_into tracker] vmap:cvm];
+   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:(id)[_into tracker] group:ng];
+   __block int cn = 0;
+   [g enumerateObjectWithBlock:^(id<ORGroup> ck) {
+      id<ORGroup> fg = [self flattenIt:ck into:a2g];
+
+      // loop over the blocks inside the constructive disjunction
+      NSSet* varsOfGroup = [fg allVars];
+      int minID = FDMAXINT,maxID = FDMININT;
+      for(id<ORVar> x in varsOfGroup) {
+         minID = min(minID,getId(x));
+         maxID = max(maxID,getId(x));
+      }
+      id<ORTracker> t = [_into tracker];
+      id<ORVarArray> vm = (id)[ORFactory idArray:t range:RANGE(t,minID,maxID)];
+      for(id<ORVar> x in varsOfGroup) {
+         if ([x conformsToProtocol:@protocol(ORIntVar)])
+            vm[getId(x)] = [ORFactory intVar:t domain:[(id<ORIntVar>)x domain]];
+      }
+      cvm[cn++] = vm;
+      id<ORGroup> ckp = (id) [fg alphaVars:vm];
+      [ma addObject:ckp];
+   }];
+   [a2g release];
+   [ng clear];
+   for(id<ORConstraint> c in ma)
+      [ng add:c];
+   _result = [_into addConstraint:ng];
+}
+
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
    _result = [_into addConstraint:cstr];

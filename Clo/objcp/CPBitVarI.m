@@ -15,6 +15,7 @@
 #import "CPEngineI.h"
 #import "CPTrigger.h"
 #import "CPBitArrayDom.h"
+#import "CPBitConstraint.h"
 
 typedef struct  {
    TRId         _boundsEvt[2];
@@ -321,14 +322,26 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
     return [_dom domsize];
 }
 
--(ORULong) numPatterns  
+- (void)subsumedBy:(id<CPVar>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method subsumedBy not defined"];
+}
+- (void)subsumedByDomain:(id<CPADom>)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method subsumedByDomain not defined"];
+}
+-(ORBool)sameDomain:(CPBitVarI*)x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method sameDomain not defined"];
+}
+-(ORULong) numPatterns
 {
    return [_dom numPatterns];
 }
 
 -(unsigned int) randomFreeBit
 {
-//   NSLog(@"%@",self);
+   //   NSLog(@"%@",self);
    return [_dom randomFreeBit];
 }
 
@@ -343,26 +356,24 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 }
 -(unsigned int) midFreeBit
 {
-//   unsigned int freeBits = [_dom domsize];
-//   unsigned int midFreeBit = [_dom midFreeBit];
-//   NSLog(@"%@ mid free bit is %u",_dom, midFreeBit);
-//   return midFreeBit;
+   //   unsigned int freeBits = [_dom domsize];
+   //   unsigned int midFreeBit = [_dom midFreeBit];
+   //   NSLog(@"%@ mid free bit is %u",_dom, midFreeBit);
+   //   return midFreeBit;
    return [_dom midFreeBit];
 }
 -(ORStatus) bind:(ORUInt)bit to:(ORBool)value
 {
     if(_learningOn && [_dom isFree:bit]){
       [self bit:bit setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
-//        NSLog(@"%@[%d] set to %d at level %d by choice",self,bit,value,[(CPLearningEngineI*)_engine getLevel]);
     }
-
    ORStatus s = [_dom setBit:bit to:value for:self];
-
+   
    return s;
 }
 -(ORBool)member:(unsigned int*)v
 {
-    return [_dom member:v];
+   return [_dom member:v];
 }
 
 -(ORBool) getBit:(ORUInt) index
@@ -402,6 +413,46 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    }
    return nil;
 }
+
+//returns a bit mask for bits that had been set with bit at pos or prior to the time when bit at pos was set
+-(void) getState:(ORUInt*)state whenBitSet:(ORUInt)pos
+{
+    ORUInt bitMask = 0x1 << (pos%BITSPERWORD);
+    
+    for(ORUInt i=0;i<_wordLength;i++)
+        state[i] = 0;
+    
+    for(ORUInt i=0; i<_top._val;i++)
+        for(ORUInt j=0;j<_wordLength;j++){
+            state[j] |= _bitChanges[i*_wordLength+j];
+            if(bitMask & _bitChanges[i*_wordLength+(pos/BITSPERWORD)])
+                return;
+        }
+//    ORUInt i =0;
+//    for(i=0; i<_top._val;i++)
+//        if(bitMask & _bitChanges[pos/BITSPERWORD])
+//            break;
+//    for(i+=1;i<_top._val;i++)
+//        for(ORUInt j=0;j<_wordLength;j++){
+//            state[j] |= _bitChanges[i*_wordLength+j];
+//        }
+//    for(ORUInt j=0;j<_wordLength;j++)
+//        state[j] = ~state[j];
+    
+}
+-(void) getState:(ORUInt*)state afterLevel:(ORUInt)lvl
+{
+    for(ORUInt i=0;i<_wordLength;i++)
+        state[i] = 0;
+    
+    for(ORUInt i=0; i<_top._val;i++){
+        if((_lvls[i]!=-1) && (_lvls[i] > lvl))
+            return;
+        for(ORUInt j=0;j<_wordLength;j++){
+            state[j] |= _bitChanges[i*_wordLength+j];
+        }
+    }
+}
 -(ORBool) isFree:(ORUInt)pos
 {
    return [_dom isFree:pos];
@@ -418,7 +469,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
    NSString* domStr = [_dom description];
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-   [buf appendFormat:@"<CPBitVar : %p  dom = %@ >",self,domStr];
+   [buf appendFormat:@"<CPBitVar %i : %p  dom = %@ >", [self getId], self,domStr];
    return buf;
 }
 -(void)restoreDomain:(id<CPDom>)toRestore
@@ -432,7 +483,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(ORBool) tracksLoseEvt
 {
-    return _triggers != nil;
+   return _triggers != nil;
 }
 // nothing to do here
 -(void) setTracksLoseEvt
@@ -477,11 +528,11 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(void) createTriggers
 {
-    if (_triggers == nil) {
-        ORULong low = [_dom min];
-        ORULong up = [_dom max];
-        _triggers = [CPTriggerMap triggerMapFrom:(ORInt)low to:(ORInt)up dense:(up-low+1)<256];
-    }
+   if (_triggers == nil) {
+      ORULong low = [_dom min];
+      ORULong up = [_dom max];
+      _triggers = [CPTriggerMap triggerMapFrom:(ORInt)low to:(ORInt)up dense:(up-low+1)<256];
+   }
 }
 
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender
@@ -502,8 +553,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine, mList);
-    if (_triggers)
-        [_triggers bindEvt:_engine];
+   if (_triggers)
+      [_triggers bindEvt:_engine];
    return ORSuspend;
 }
 
@@ -522,7 +573,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    mList[k] = NULL;
    scheduleClosures(_engine, mList);
    if (dsz==1 && _triggers != nil)
-        [_triggers bindEvt:_engine];
+      [_triggers bindEvt:_engine];
    return ORSuspend;
 }
 -(ORStatus) changeMaxEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
@@ -539,8 +590,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine, mList);
-    if (dsz==1 && _triggers != nil)
-        [_triggers bindEvt:_engine];
+   if (dsz==1 && _triggers != nil)
+      [_triggers bindEvt:_engine];
    return ORSuspend;
 }
 
@@ -561,21 +612,21 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(ORStatus) updateMin: (ORULong) newMin
 {
-    return [_dom updateMin:newMin for:self];
+   return [_dom updateMin:newMin for:self];
 }
 
 -(ORStatus) updateMax: (ORULong) newMax
 {
-    return [_dom updateMax:newMax for:self];
+   return [_dom updateMax:newMax for:self];
 }
 
 -(void) setLow:(unsigned int *)newLow
 {
-    [_dom setLow: newLow for:self];
+   [_dom setLow: newLow for:self];
 }
 
 -(void) setUp:(unsigned int *)newUp{
-    [_dom setUp: newUp for:self];
+   [_dom setUp: newUp for:self];
 }
 
 -(void) setUp:(unsigned int *)newUp andLow:(unsigned int *)newLow
@@ -628,22 +679,24 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    ORUInt bitLength = [_dom getLength];
    ORUInt wordLength = getWordLength(_dom);
    ORUInt mask = CP_UMASK >> (BITSPERWORD-(bitLength%BITSPERWORD));
-   
+       
    newUp[wordLength-1]  &= mask;
    newLow[wordLength-1] &= mask;
    
    if(_learningOn) {
       ORUInt* changed = alloca(sizeof(ORUInt)*_wordLength);
       ORUInt wasChanged = 0;
-//      ORUInt level = [(CPLearningEngineI*)_engine getLevel];
+      //      ORUInt level = [(CPLearningEngineI*)_engine getLevel];
       for (int i=0; i<wordLength; i++) {
          changed[i] = oldUp[i]._val ^ newUp[i];
          changed[i] |= oldLow[i]._val ^ newLow[i];
-//          if((oldUp[i]._val ^ newUp[i]) & (oldLow[i]._val ^ newLow[i]))
-//              NSLog(@"Fixed bit flipped in constraint");
+          //debugging
+          if((oldUp[i]._val ^ newUp[i]) & (oldLow[i]._val ^ newLow[i]))
+              NSLog(@"Fixed bit flipped in constraint");
          wasChanged |= changed[i];
       }
-      
+
+    
          if(wasChanged){
             if(_top._val >= _cap)
                NSLog(@"exceeded capacity of constraint stack");
@@ -653,53 +706,36 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
             _lvls[_top._val] = [(CPLearningEngineI*)_engine getLevel];
             assignTRUInt(&_top, _top._val+1, _trail);
              //DEBUGGING ONLY
-//             if([_dom getLength] < 32)
-//              NSLog(@"%@ set by %@",self, [constraint class]);
-//             if([_engine closed])
-//                 for(int i =0;i<bitLength;i++){
-//                     if((changed[i/BITSPERWORD] & (0x1 << i%BITSPERWORD)) && ([_dom getLength] < 32))
-//                         NSLog(@"%@[%d] set by %@",self,i, [constraint class]);
+//             if([(CPLearningEngineI*)_engine closed])
+//             for(int i=0;i<_wordLength;i++)
+//                 for(int j =0;j<BITSPERWORD;j++){
+//                     if(changed[i] & (0x1 << j)){
+//                         NSLog(@"%i:%@[%d] set by %@ %p @ %i",[self getId],self,j, [constraint class],constraint,[(CPLearningEngineI*)_engine getLevel]);
+////                    printf("\\node[label={\\tiny %i[%i]=%i@%i}] (n%i-%i) at (%i,%i) {};%s %s \n",[self getId],j,(newLow[i]&(0x1<<j))!=0,[(CPLearningEngineI*)_engine getLevel],[self getId], j,[(CPLearningEngineI*)_engine getLevel], [self getId]+(j*2), "%", [[constraint description] cString]);
+//////                    printf("n/n%i-%i\n",[self getId], j);
+//                     }
 //                 }
-//             if([[[constraint class] description] isEqualToString: @"CPBitLogicalAnd"])
-//                 NSLog(@"Logical And");
-//             for (int i=0; i<wordLength; i++) {
-//                 if(newLow[i] & (~ newUp[i]))
-//                     NSLog(@"Invalid domain");
+//             if([constraint isKindOfClass:[CPBitShiftL class]]){
+//             NSLog(@"%@",constraint);
+//             [_dom setUp: newUp andLow:newLow for:self];
+//             NSLog(@"%@",constraint);
+//             NSLog(@"");
 //             }
-//             if([_dom getLength] < 32)
-//                 NSLog(@"short bv");
          }
- 
-       
-       
-
-//         mask = 0x1;
-//         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
-//         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
-//
-//         for(int j=0;j<BITSPERWORD; j++){
-//            if ((i*BITSPERWORD)+j >=bitLength)
-//               break;
-//            if ((changedUp & mask) || (changedLow & mask)){
-//               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-////               if (level > 4)
-////                  NSLog(@"%@ 0x%lx[%d] set at level %d by 0x%lx",self,self,i*BITSPERWORD+j, level,constraint);
-//            }
-//            mask <<= 1;
-//         }
-//      }
    }
    [_dom setUp: newUp andLow:newLow for:self];
+//    if([constraint isKindOfClass:[CPBitLT class]])
+//        NSLog(@"%@",constraint);
 }
 //end of setup and setlow for nogoods
 
 -(TRUInt*) getLow
 {
-    return [_dom getLow];
+   return [_dom getLow];
 }
 -(TRUInt*) getUp
 {
-    return [_dom getUp];
+   return [_dom getUp];
 }
 -(void) getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow
 {
@@ -708,15 +744,15 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(ORStatus) bindUInt64:(ORULong)val
 {
-//   ORUInt* temp = alloca(sizeof(ORUInt)*2);
-//   temp[0] = val >> 32;
-//   temp[1] = val & CP_UMASK;
-    return [_dom bind:val for:self];
+   //   ORUInt* temp = alloca(sizeof(ORUInt)*2);
+   //   temp[0] = val >> 32;
+   //   temp[1] = val & CP_UMASK;
+   return [_dom bind:val for:self];
 }
 
 -(ORStatus)bind:(ORUInt*)val
 {
-    return [_dom bindToPat:val for:self];
+   return [_dom bindToPat:val for:self];
 }
 -(ORStatus) remove:(ORUInt*) val
 {
@@ -724,10 +760,10 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 }
 -(CPBitVarI*) initCPExplicitBitVar: (id<CPEngine>)engine withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
 {
-    [self initCPBitVarCore:engine low:low up:up length:len];
-    [_dom setLow: low for:self];
-    [_dom setUp: up for:self];
-    return self;
+   [self initCPBitVarCore:engine low:low up:up length:len];
+   [_dom setLow: low for:self];
+   [_dom setUp: up for:self];
+   return self;
 }
 
 -(CPBitVarI*) initCPExplicitBitVarPat: (CPEngineI*)engine withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
@@ -735,7 +771,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    self = [super init];
    
    _wordLength = (len / BITSPERWORD) + ((len % BITSPERWORD != 0) ? 1: 0);
-
+   
    _engine  = engine;
    [_engine trackVariable: self];
    _trail = [engine trail];
@@ -749,20 +785,23 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       _lvls = malloc(sizeof(ORUInt)*_cap);
       _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
       _top = makeTRUInt(_trail, 0);
-//       _vsids = malloc(sizeof(TRDouble*)*len);
-//       for(int i=0;i<len;i++)
-//           _vsids[i] = makeTRDouble(_trail, 0.0);
        _vsids=0.0;
-//      _levels = malloc(sizeof(TRUInt)*len);
-//      _implications = malloc(sizeof(TRId)*len);
-//      for (int i=0; i<len; i++) {
-//         _levels[i] = makeTRUInt(_trail, 0);
-//         _implications[i] = makeTRId(_trail, 0);
-//      }
+       ORUInt boundBits=0;
+       for(int i=0;i<_wordLength;i++){
+           _bitChanges[i]=~(up[i]^low[i]);
+           if (i==0)
+              boundBits |= _bitChanges[i]<<(BITSPERWORD-(len%BITSPERWORD));
+           else
+              boundBits |= _bitChanges[i];
+       }
+       _constraints[0]=NULL;
+       _lvls[0] = -1;
+       if(boundBits)
+           assignTRUInt(&_top, 1, _trail);
+           
    } else {
       _lvls = nil;
        _constraints = nil;
-//      _implications = nil;
    }
    _recv = nil;
    return self;
@@ -774,41 +813,45 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 //Integer interpretation of BitVar
 +(CPBitVarI*) initCPBitVar: (id<CPEngine>)engine low: (int)low up: (int) up len: (unsigned int) len
 {
-    unsigned int uLow[2];
-    unsigned int uUp[2];
-    uLow[0] = 0;
-    uLow[1] = low;
-    uUp[0] = 0;
-    uUp[1] = up;
-    CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVar: engine withLow: uLow andUp: uUp andLen: len];
-    return x;
+   unsigned int uLow[2];
+   unsigned int uUp[2];
+   uLow[0] = 0;
+   uLow[1] = low;
+   uUp[0] = 0;
+   uUp[1] = up;
+   CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVar: engine withLow: uLow andUp: uUp andLen: len];
+   return x;
 }
 
 //Binary bit pattern interpretation of BitVar
 +(CPBitVarI*) initCPBitVarWithPat:(CPEngineI*)engine withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len{
-    
-    CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVarPat:engine withLow: low andUp: up andLen: len];
-    return x;
+   
+   CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVarPat:engine withLow: low andUp: up andLen: len];
+   return x;
 }
 
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
-    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-    [aCoder encodeObject:_dom];
-    [aCoder encodeObject:_engine];
-    [aCoder encodeObject:_recv];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeObject:_dom];
+   [aCoder encodeObject:_engine];
+   [aCoder encodeObject:_recv];
 }
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
-    self = [super init];
-    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-    _dom = [[aDecoder decodeObject] retain];
-    _engine = [aDecoder decodeObject];
-    setUpNetwork(&_net, [_engine trail], [_dom getLow]->_val, [_dom getUp]->_val,[_dom getLength]);
-    _triggers = nil;
-    _recv = [[aDecoder decodeObject] retain];
-    return self;
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   _dom = [[aDecoder decodeObject] retain];
+   _engine = [aDecoder decodeObject];
+   setUpNetwork(&_net, [_engine trail], [_dom getLow]->_val, [_dom getUp]->_val,[_dom getLength]);
+   _triggers = nil;
+   _recv = [[aDecoder decodeObject] retain];
+   return self;
 }
+- (void)visit:(ORVisitor *)visitor
+{   
+}
+
 @end
 
 @implementation CPBitVarMultiCast {

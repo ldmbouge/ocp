@@ -37,17 +37,17 @@
 
 @interface ORSDo : ORObject<ORSTask> {
    id<CPCommonProgram> _solver;
-   void(^_body)();
+   void(^_body)(void);
 }
--(id)initWith:(id<CPCommonProgram>)solver block:(void(^)())body;
+-(id)initWith:(id<CPCommonProgram>)solver block:(void(^)(void))body;
 @end
 
 @interface ORSLimitSolutionsDo : ORObject<ORSTask> {
    id<CPProgram> _solver;
-   id<ORSTask>(^_body)();
+   id<ORSTask>(^_body)(void);
    ORInt _lim;
 }
--(id)initWith:(id<CPCommonProgram>)solver limit:(ORInt)k block:(id<ORSTask>(^)())body;
+-(id)initWith:(id<CPCommonProgram>)solver limit:(ORInt)k block:(id<ORSTask>(^)(void))body;
 @end
 
 @interface ORSSequence : ORObject<ORSTask> {
@@ -68,7 +68,7 @@
 @end
 
 @interface ORSDoWhile : ORObject<ORSTask>
--(id)initWith:(id<CPCommonProgram>)solver condition:(bool(^)())cond body:(id<ORSTask>(^)())body;
+-(id)initWith:(id<CPCommonProgram>)solver condition:(bool(^)(void))cond body:(id<ORSTask>(^)(void))body;
 @end
 
 @interface ORSForallDo : ORObject<ORSTask>
@@ -185,7 +185,7 @@
 @end
 
 @implementation ORSDo
--(id)initWith:(id<CPCommonProgram>)solver block:(void(^)())body
+-(id)initWith:(id<CPCommonProgram>)solver block:(void(^)(void))body
 {
    self = [super init];
    _solver = solver;
@@ -208,7 +208,7 @@
 @end
 
 @implementation ORSLimitSolutionsDo
--(id)initWith:(id<CPCommonProgram>)solver limit:(ORInt)k block:(id<ORSTask>(^)())body
+-(id)initWith:(id<CPCommonProgram>)solver limit:(ORInt)k block:(id<ORSTask>(^)(void))body
 {
    self = [super init];
    _solver = (id)solver;
@@ -294,11 +294,11 @@
 @end
 
 @implementation ORSDoWhile {
-   bool(^_cond)();
-   id<ORSTask>(^_body)();
+   bool(^_cond)(void);
+   id<ORSTask>(^_body)(void);
    id<CPCommonProgram> _solver;
 }
--(id)initWith:(id<CPCommonProgram>)solver condition:(bool(^)())cond body:(id<ORSTask>(^)())body
+-(id)initWith:(id<CPCommonProgram>)solver condition:(bool(^)(void))cond body:(id<ORSTask>(^)(void))body
 {
    self = [super init];
    _solver = solver;
@@ -390,8 +390,8 @@ void* diff(id<CPCommonProgram> solver,id<ORIntVar> x,ORInt v)
 }
 
 void* PNONNULL whileDo(id<CPCommonProgram> solver,
-                        bool(^PNONNULL cond)(),
-                        void* PNONNULL (^PNONNULL body)())
+                        bool(^PNONNULL cond)(void),
+                        void* PNONNULL (^PNONNULL body)(void))
 {
    id<ORSTask> task = [[ORSDoWhile alloc] initWith:solver condition:cond body:(id)body];
    [solver trackObject:task];
@@ -408,14 +408,14 @@ void* PNONNULL forallDo(id<CPCommonProgram> solver,
    return task;
 }
 
-void* PNONNULL Do(id<CPCommonProgram> solver,void(^PNONNULL body)())
+void* PNONNULL Do(id<CPCommonProgram> solver,void(^PNONNULL body)(void))
 {
    id<ORSTask> task = [[ORSDo alloc] initWith:solver block:(id)body];
    [solver trackObject:task];
    return task;
 }
 
-void* PNONNULL limitSolutionsDo(id<CPCommonProgram> solver,ORInt k,void*(^PNONNULL body)())
+void* PNONNULL limitSolutionsDo(id<CPCommonProgram> solver,ORInt k,void*(^PNONNULL body)(void))
 {
    id<ORSTask> task = [[ORSLimitSolutionsDo alloc] initWith:solver limit:k block:(id)body];
    [solver trackObject:task];

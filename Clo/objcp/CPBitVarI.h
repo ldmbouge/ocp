@@ -96,6 +96,8 @@
 -(ORUInt) getLevelBitWasSet:(ORUInt)bit;
 -(void) bit:(ORUInt)i setAtLevel:(ORUInt)l;
 -(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i;
+-(void) getState:(ORUInt*)state whenBitSet:(ORUInt)pos;
+-(void) getState:(ORUInt*)state afterLevel:(ORUInt)lvl;
 
 // update
 -(ORStatus)     updateMin: (ORULong) newMin;

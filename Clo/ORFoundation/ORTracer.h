@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/OREngine.h>
+#import <ORFoundation/ORConstraint.h>
 
 @protocol ORCommand;
 @protocol ORSearchEngine;
@@ -83,5 +84,9 @@
 -(void)       trust;
 -(ORInt)      level;
 @end
+//<<<<<<< HEAD
 
-void logCheckpoint(void);
+//void logCheckpoint(void);
+//=======
+//>>>>>>> 116184882f379e03de2b0ba0ae0408e9a4959a0b
+

@@ -1317,36 +1317,36 @@ SMTLIB2_OBJCP_DECLHANDLER(bvsle) //{ return NULL; /* TODO */ }
 }
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvugt)  { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_gt:YCTX(ctx)
-//                           withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                            andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvugt) // { return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_gt:YCTX(ctx)
+                           x:(objcp_expr)smtlib2_vector_at(args, 0)
+                            gt:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvsgt) { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_sgt:YCTX(ctx)
-//                            withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                             andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvsgt) //{ return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_sgt:YCTX(ctx)
+                            x:(objcp_expr)smtlib2_vector_at(args, 0)
+                             sgt:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvuge)  { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_ge:YCTX(ctx)
-//                           withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                            andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvuge)  //{ return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_ge:YCTX(ctx)
+                           x:(objcp_expr)smtlib2_vector_at(args, 0)
+                            ge:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvsge) { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_sge:YCTX(ctx)
-//                            withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                             andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvsge) //{ return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_sge:YCTX(ctx)
+                            x:(objcp_expr)smtlib2_vector_at(args, 0)
+                             sge:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(bvcomp) { return NULL; /* TODO */ }
