@@ -319,6 +319,11 @@
 			<key>orderHint</key>
 			<integer>26</integer>
 		</dict>
+		<key>dummy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>155</integer>
+		</dict>
 		<key>dxAES.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -393,6 +398,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>43</integer>
+		</dict>
+		<key>keeloq.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>156</integer>
 		</dict>
 		<key>knapsack.xcscheme_^#shared#^_</key>
 		<dict>

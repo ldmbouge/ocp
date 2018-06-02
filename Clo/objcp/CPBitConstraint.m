@@ -5791,8 +5791,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 - (void) dealloc
 {
-   [super dealloc];
    free(_state);
+   [super dealloc];
 }
 -(NSString*) description
 {
