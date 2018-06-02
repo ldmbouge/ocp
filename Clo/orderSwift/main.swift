@@ -24,9 +24,9 @@ autoreleasepool {
    cp.search {
       Do(cp) {
          let xv = (0...n).map { i in cp.intValue(x[i]) }
-         println("solution: \(xv)")
+         print("solution: \(xv)",terminator:"\n")
       }
    }
    let end = ORRuntimeMonitor.cputime()
-   println("solving time: \(end - start)")
+   print("solving time: \(end - start)",terminator:"\n")
 }

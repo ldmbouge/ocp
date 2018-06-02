@@ -15,7 +15,7 @@ autoreleasepool {
    print("magicSerie in swift!",terminator:"\n")
    let n : ORInt = 14
    let m = ORFactory.createModel()
-   let R = range(m,0...n-1)
+   let R = range(m,0...Int(n-1))
    let x = ORFactory.intVarArray(m, range: R, domain: R)
    for i in 0..<n {
       m.add(Σ(m, R: R) {k in x[k] == i} == x[i])
