@@ -41,9 +41,11 @@
 
 +(id<CPGroup>) cdisj:(id<CPEngine>)engine originals:(id<CPVarArray>)origs varmap:(NSArray*)vm
 {
-   id<CPGroup> g = [[CPCDisjunction alloc] init:engine originals: origs varMap:vm];
-   [engine trackMutable:g];
-   return g;
+   //TOFIX
+//   id<CPGroup> g = [[CPCDisjunction alloc] init:engine originals: origs varMap:vm];
+//   [engine trackMutable:g];
+//   return g;
+   return nil;
 }
 
 // alldifferent
