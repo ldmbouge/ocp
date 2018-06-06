@@ -160,6 +160,8 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ = %16.16e (%s)",v,[cv value], [p bound:v] ? "YES" : "NO");
             }
             NSLog(@"diff : %16.16f", [p floatValue:y_opt[1]] - [p floatValue:y[1]] );
+            
+            [args checkAbsorption:vars];
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
          struct ORResult re = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

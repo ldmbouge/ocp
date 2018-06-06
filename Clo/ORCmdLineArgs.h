@@ -92,6 +92,7 @@ struct ORResult {
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
 -(void) printStats:(id<ORGroup>) g model:(id<ORModel>)m program:(id<CPProgram>)p;
+-(void) checkAbsorption:(id<ORFloatVar>)vars;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 -(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;
 @end

@@ -2641,7 +2641,10 @@
 }
 -(void) floatAbsSplit:(ORUInt)i by:(id<CPFloatVar>) y call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   if(y == nil) b(i,s,x);
+   if(y == nil) {
+      b(i,s,x);
+      return;
+   }
    float_interval interval[18];
    float_interval interval_x[3];
    float_interval interval_y[3];

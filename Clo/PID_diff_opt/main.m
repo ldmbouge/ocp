@@ -144,10 +144,9 @@ int main(int argc, const char * argv[]) {
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];
                found &= [p bound: v];
-//               NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-               
                NSLog(@"%@",cv);
             }
+            [args checkAbsorption:vars];
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
          struct ORResult re = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

@@ -298,6 +298,17 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    }
 #endif
 }
+-(void) checkAbsorption:(id<ORFloatVar>)vars
+{
+#define abs 1
+#if abs
+   for(id<ORFloatVar> x in vars){
+      ORDouble v = [cp computeAbsorptionRate:x];
+      if(v > 0.0)
+         NSLog(@"%@ is involved in abs %f",x,v);
+   }
+#endif
+}
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x
 {
    id<CPHeuristic> h = nil;
@@ -1112,12 +1123,12 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                      break;
                   case split6Way:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatSplit:i call:s withVars:x];
-                     }];
+                        [p floatStatic6WaySplit:i call:s withVars:x];
+                         }];
                      break;
                   case dynamicSplit:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p float6WaySplit:i call:s withVars:x];
+                        [p floatSplit:i call:s withVars:x];
                      }];
                      break;
                   case dynamic3Split:
@@ -1136,6 +1147,16 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   case split3B:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                         [p float3BSplit:i call:s withVars:x];
+                     }];
+                     break;
+                  case Esplit:
+                     [p maxAbsorptionSearch:vars  default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [p floatEWaySplit:i call:s withVars:x];
+                     }];
+                     break;
+                  case Dsplit:
+                     [p maxAbsorptionSearch:vars  default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [p floatDeltaSplit:i call:s withVars:x];
                      }];
                      break;
                   default:
