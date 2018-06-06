@@ -160,7 +160,7 @@ int main(int argc, const char * argv[]) {
             }
             NSLog(@"diff : %16.16f", [p floatValue:y_opt[1]] - [p floatValue:y[1]] );
             
-            [args checkAbsorption:vars];
+            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
          struct ORResult re = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

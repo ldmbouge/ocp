@@ -78,7 +78,7 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
             }
             
-            [args checkAbsorption:vars];
+            [args checkAbsorption:vars solver:cp];
             check_solution([p floatValue:vars[0]], [p floatValue:vars[1]]);
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);

@@ -85,7 +85,7 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
             }
             
-            [args checkAbsorption:vars];
+            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
          struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

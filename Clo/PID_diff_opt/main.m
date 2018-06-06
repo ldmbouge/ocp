@@ -146,7 +146,7 @@ int main(int argc, const char * argv[]) {
                found &= [p bound: v];
                NSLog(@"%@",cv);
             }
-            [args checkAbsorption:vars];
+            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
          struct ORResult re = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
