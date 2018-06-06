@@ -1438,14 +1438,14 @@
 }
 -(ORFloat) fmin
 {
-    ORFloat minOf = MAXFLOAT;
+    ORFloat minOf = FLT_MAX;
     for(ORInt k=[_array low];k<=[_array up];k++)
         minOf = minOf <[_array at:k] ? minOf : [_array at:k];
     return minOf;
 }
 -(ORFloat) fmax
 {
-    ORFloat maxOf = -MAXFLOAT;
+    ORFloat maxOf = -FLT_MAX;
     for(ORInt k=[_array low];k<=[_array up];k++)
         maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
     return maxOf;
@@ -1519,14 +1519,14 @@
 }
 -(ORFloat) fmin
 {
-   ORFloat minOf = MAXFLOAT;
+   ORFloat minOf = FLT_MAX;
    for(ORInt k=[_array low];k<=[_array up];k++)
       minOf = minOf <[_array at:k] ? minOf : [_array at:k];
    return minOf;
 }
 -(ORFloat) fmax
 {
-   ORFloat maxOf = -MAXFLOAT;
+   ORFloat maxOf = -FLT_MAX;
    for(ORInt k=[_array low];k<=[_array up];k++)
       maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
    return maxOf;
