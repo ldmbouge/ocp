@@ -375,6 +375,67 @@
 @end
 
 
+
+@implementation ORRelaxedCustomMDD {
+   id<ORIntVarArray> _x;
+   id<ORIntVar> _objective;
+   ORInt _relaxationSize;
+   bool _reduced;
+   bool _maximize;
+}
+-(ORRelaxedCustomMDD*)initORRelaxedCustomMDD:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _objective = objectiveValue;
+   _relaxationSize = relaxationSize;
+   _reduced = reduced;
+   _maximize = maximize;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRelaxedCustomMDD:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(id<ORIntVar>) objective
+{
+   return _objective;
+}
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(bool) maximize
+{
+   return _maximize;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+
+
 @interface ORAlphaVisit : ORVisitor {
    id<ORVarArray> _map;
    id<ORConstraint> _result;

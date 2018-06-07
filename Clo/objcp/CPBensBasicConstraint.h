@@ -54,6 +54,9 @@
     Node* *_shortestPathParents;
     TRInt _numShortestPathParents;
     
+    TRInt _reverseLongestPath;
+    TRInt _reverseShortestPath;
+    
     id _state;
 }
 -(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents;
@@ -91,14 +94,17 @@
 
 @interface GeneralState : NSObject {
 @private
-    NSMutableArray* _state;
+    int _variableIndex;
 }
--(id) initGeneralState;
--(id) initGeneralState:(GeneralState*)parentNodeState withValue:(int)edgeValue;
+-(id) initGeneralState:(int)variableIndex;
+-(id) initGeneralState:(GeneralState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue;
 -(id) state;
+-(char*) stateChar;
+-(int) variableIndex;
 -(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(GeneralState*)other;
 -(bool) stateAllows:(int)variable;
+-(BOOL) isEqual:(GeneralState*)object;
 @end
 
 @interface AllDifferentState : NSObject {
@@ -132,6 +138,7 @@
 -(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(MISPState*)other;
 -(bool) stateAllows:(int)variable;
+-(BOOL) isEqual:(MISPState*)object;
 @end
 
 @interface CPMDD : CPCoreConstraint {
@@ -151,10 +158,6 @@
     Node* **layers;
     int min_domain_val;
     int max_domain_val;
-    
-    
-    ORLong totalCPU;
-    ORLong totalWC;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x reduced:(bool)reduced;
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize;
@@ -180,6 +183,9 @@
 -(void) removeChildlessNodeFromMDD:(Node*)node trimmingVariables:(bool)trimming;
 -(void) removeParentlessNodeFromMDD:(Node*)node trimmingVariables:(bool)trimming;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
+
+-(ORInt) recommendationFor: (ORInt) variableIndex;
+
 -(void) printGraph;
 @end
 
@@ -245,3 +251,8 @@
 }
 -(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
 @end
+
+@interface CPRelaxedCustomMDD : CPMDDRelaxation
+-(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize;
+@end
+

@@ -115,6 +115,11 @@
     _result = [_into addConstraint:cstr];
 }
 
+-(void) visitRelaxedCustomMDD: (id<ORRelaxedCustomMDD>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
 
 -(void) visitIntVar: (id) v
 {

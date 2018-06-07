@@ -454,6 +454,14 @@ enum ORGroupType {
 -(id<ORIntArray>) weights;
 @end
 
+@protocol ORRelaxedCustomMDD <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+-(bool) maximize;
+@end
+
 
 @protocol ORRegular<ORConstraint>
 -(id<ORIntVarArray>) array;

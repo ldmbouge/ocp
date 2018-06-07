@@ -678,6 +678,13 @@
     return o;
 }
 
+
++(id<CPConstraint>) RelaxedCustomMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize
+{
+    id<CPConstraint> o = [[CPRelaxedCustomMDD alloc] initCPRelaxedCustomMDD: cp over: x size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize];
+    [[x tracker] trackMutable:o];
+    return o;
+}
 @end
 
 @implementation CPFactory (ORReal)

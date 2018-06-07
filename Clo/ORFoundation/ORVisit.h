@@ -113,6 +113,8 @@
 -(void) visitExactMDDMISP: (id<ORConstraint>) c;
 -(void) visitRestrictedMDDMISP: (id<ORConstraint>) c;
 -(void) visitRelaxedMDDMISP: (id<ORConstraint>) c;
+-(void) visitRelaxedCustomMDD: (id<ORConstraint>) c;
+
 
 -(void) visitRealEqualc: (id<ORRealEqualc>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;

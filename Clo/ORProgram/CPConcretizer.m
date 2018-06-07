@@ -1837,6 +1837,21 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
+
+
+
+
+-(void) visitRelaxedCustomMDD: (id<ORRelaxedCustomMDD>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPIntVar> objective = [self concreteVar: [cstr objective]];
+        ORInt relaxationSize   = [cstr relaxationSize];
+        id<CPConstraint> concreteCstr = [CPFactory RelaxedCustomMDD:_engine over: a size:relaxationSize reduced:[cstr reduced] objective:objective maximize:[cstr maximize]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 @end
 
 

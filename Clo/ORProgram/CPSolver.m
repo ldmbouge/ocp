@@ -29,6 +29,8 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 
+#import "CPBensBasicConstraint.h"
+
 #if defined(__linux__)
 #import <values.h>
 #endif
@@ -1755,6 +1757,14 @@
 {
    return [((id<CPRealVar>)_gamma[x.getId]) max];
 }
+
+
+
+-(ORInt)  recommendationBy:(id<ORConstraint>) mdd forVariableIndex:(ORInt) variableIndex
+{
+   return [((CPMDD*) _gamma[mdd.getId]) recommendationFor: variableIndex];
+}
+
 
 -(NSSet*) constraints: (id<ORVar>)x
 {

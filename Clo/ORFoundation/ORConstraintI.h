@@ -65,13 +65,23 @@
 @end
 
 @interface ORRelaxedMDDMISP : ORConstraintI<ORRelaxedMDDMISP>
--(ORExactMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue;
+-(ORRelaxedMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue;
 -(id<ORIntVarArray>) vars;
 -(id<ORIntVar>) objective;
 -(ORInt) relaxationSize;
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
 -(id<ORIntArray>) weights;
+@end
+
+
+@interface ORRelaxedCustomMDD : ORConstraintI<ORRelaxedCustomMDD>
+-(ORRelaxedCustomMDD*)initORRelaxedCustomMDD:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+-(bool) maximize;
 @end
 
 

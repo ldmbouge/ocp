@@ -19,17 +19,6 @@ int MIN = 1;
 int MAX = 200;
 double DENSITY = .5;
 
-//.1 ~ 260 CPU
-//.2 ~ 240 CPU
-//.3 ~ 215 CPU
-//.4 ~ 200 CPU
-//.5 ~ 190 CPU
-//.6 ~ 180 CPU
-//.7 ~ 170 CPU
-//.8 ~ 160 CPU
-//.9 ~ 150 CPU
-
-
 bool** adjacencyMatrix (NSArray* *edges, bool directed) {
     bool** adjacencyMatrix;
     adjacencyMatrix = malloc((MAX-MIN+1) * sizeof(bool*));
@@ -67,7 +56,7 @@ void decrementSolution(bool* solution, int* numSelected) {
     }
 }
 
-int findMISP(bool** adjacencies, NSMutableArray* edgeA, NSMutableArray* edgeB) {
+void findMISP(bool** adjacencies, NSMutableArray* edgeA, NSMutableArray* edgeB) {
     printf("Verifying answer...\n");
     
     bool* solution = malloc((MAX-MIN+1) * sizeof(bool));
@@ -79,7 +68,6 @@ int findMISP(bool** adjacencies, NSMutableArray* edgeA, NSMutableArray* edgeB) {
     
     int maxNumSelected = 0;
     int numSelected = MAX-MIN+1;
-    int legal;
     
     while (numSelected != 0) {
         decrementSolution(solution, &numSelected);
@@ -109,29 +97,6 @@ int findMISP(bool** adjacencies, NSMutableArray* edgeA, NSMutableArray* edgeB) {
         }
     }
     printf("Actual best value: %d\n", maxNumSelected);
-    
-    /*if (variable <= MAX) {
-        int valueWithoutVariable = findMISP(adjacencies, weights, variable+1, solution);
-        
-        bool canChooseVariable = true;
-        for (int index = MIN; index < variable; index++) {
-            if (adjacencies[index][variable] && solution[index]) {
-                canChooseVariable = false;
-                break;
-            }
-        }
-        if (canChooseVariable) {
-            solution[variable] = true;
-            int valueWithVariable = findMISP(adjacencies, weights, variable+1, solution) + [weights at: variable];
-            if (valueWithVariable > valueWithoutVariable) {
-                return valueWithVariable;
-            }
-            solution[variable] = false;
-        }
-        return valueWithoutVariable;
-    } else {
-        return 0;
-    }*/
 }
 
 bool** randomAdjacencyMatrix() {
@@ -158,17 +123,13 @@ bool** randomAdjacencyMatrix() {
 int main (int argc, const char * argv[])
 {
     @autoreleasepool {
-        /*NSArray* emptyEdges = [[NSArray alloc] init];
-         NSArray* oneEdge = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MIN+2]]];
-         NSArray* edges = @[@[[NSNumber numberWithInt:MIN], [NSNumber numberWithInt:MAX]],
-         @[[NSNumber numberWithInt:MIN+1], [NSNumber numberWithInt:MAX-1]]];*/
         
         id<ORModel> mdl = [ORFactory createModel];
         id<ORIntRange> R1 = RANGE(mdl, MIN, MAX);
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
         id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
-        ORInt layerSize = 100000;
+        ORInt layerSize = 1000;
         bool reduced = true;
         
         
@@ -188,7 +149,7 @@ int main (int argc, const char * argv[])
         NSMutableArray *edgeA = [[NSMutableArray alloc] init];
         NSMutableArray *edgeB = [[NSMutableArray alloc] init];
         
-        NSString *filepath = @"/Users/ben/Downloads/DIMACS_cliques/brock200_2.clq";
+        NSString *filepath = @"/Users/ben/Downloads/DIMACS_cliques/brock200_1.clq";
         
         FILE *file = fopen([filepath UTF8String], "r");
         char buffer[256];
@@ -204,11 +165,8 @@ int main (int argc, const char * argv[])
                 adjacencies[[second intValue]][[first intValue]] = true;
                 [edgeA addObject: first];
                 [edgeB addObject: second];
-                //NSLog(@"%d to %d\n",first, second);
             }
         }
-        
-        
         
         
         
@@ -217,7 +175,6 @@ int main (int argc, const char * argv[])
         int maxSum = 0;
         for(ORInt vertex = MIN; vertex <= MAX; vertex++) {
             ORInt weight;
-            //weight = arc4random_uniform(5)+1;
             weight = 1;
             [weights set: weight at: vertex];
             
@@ -226,18 +183,21 @@ int main (int argc, const char * argv[])
         
         id<ORIntVar> totalWeight = [ORFactory intVar: mdl domain: RANGE(mdl, 0, maxSum)];
         
-        [mdl add: [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight]];
-        //[mdl add: [ORFactory ExactMDDMISP:mdl var:a reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight]];
+        //id<ORConstraint> mddConstraint = [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight];
+        id<ORConstraint> mddConstraint = [ORFactory RelaxedCustomMDD:mdl var:a size:layerSize reduced:reduced objective:totalWeight maximize:true];
+        
+        
+        [mdl add: mddConstraint];
         
         [mdl maximize: totalWeight];
         
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-        ORLong startWC  = [ORRuntimeMonitor wctime];
-        ORLong startCPU = [ORRuntimeMonitor cputime];
         
         [cp solve: ^{
             
-            [cp labelArray: a];
+            for (int variableIndex = MIN; variableIndex <= MAX; variableIndex++) {
+                [cp label: a[variableIndex] with: [cp recommendationBy: mddConstraint forVariableIndex: variableIndex]];
+            }
             
             for (int i = MIN; i <= MAX; i++) {
               printf("%d  ",[cp intValue: [a at:i]]);
@@ -245,17 +205,18 @@ int main (int argc, const char * argv[])
             //printf("  |  Objective value: %d", [cp intValue: totalWeight]);
             printf("\n");
             [nbSolutions incr: cp];
-            
-        }
-         ];
-        
-        ORLong endWC  = [ORRuntimeMonitor wctime];
-        ORLong endCPU = [ORRuntimeMonitor cputime];
-        
-        printf("CPU: %d\n", endCPU - startCPU);
-        printf("WC: %d\n", endWC - startWC);
+         }
+        ];
         
         //findMISP(adjacencies, edgeA, edgeB);
+        
+        for (int a = MIN; a < MAX; a++) {
+            for (int b = MIN; b < a; b++) {
+                if (adjacencies[b][a]) {
+                    printf("e %d %d\n", a, b);
+                }
+            }
+        }
 
         printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
         NSLog(@"Solver status: %@\n",cp);

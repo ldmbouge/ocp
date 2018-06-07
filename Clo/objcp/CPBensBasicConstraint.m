@@ -84,6 +84,9 @@
     _shortestPathParents = malloc((maxParents) * sizeof(Node*));
     _numShortestPathParents = makeTRInt(_trail, 0);
     
+    _reverseLongestPath = makeTRInt(_trail, 0);
+    _reverseShortestPath = makeTRInt(_trail, 0);
+    
     return self;
 }
 -(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state weights:(int*)weights
@@ -121,6 +124,8 @@
     _shortestPathParents = malloc((maxParents) * sizeof(Node*));
     _numShortestPathParents = makeTRInt(_trail, 0);
     
+    _reverseLongestPath = makeTRInt(_trail, 0);
+    _reverseShortestPath = makeTRInt(_trail, 0);
     return self;
 }
 -(void) dealloc {
@@ -194,6 +199,11 @@
     }
     return false;
 }
+
+-(int) longestPathContainingSelf {
+    return _longestPath._val + _reverseLongestPath._val;
+}
+
 -(int) shortestPath {
     return _shortestPath._val;
 }
@@ -205,6 +215,43 @@
     }
     return false;
 }
+
+-(int) shortestPathContainingSelf {
+    return _shortestPath._val + _reverseShortestPath._val;
+}
+
+-(int) reverseLongestPath {
+    return _reverseLongestPath._val;
+}
+-(int) reverseShortestPath {
+    return _reverseShortestPath._val;
+}
+-(void) updateReversePaths {
+    if (_isSink) {
+        assignTRInt(&_reverseShortestPath, 0, _trail);
+        assignTRInt(&_reverseLongestPath, 0, _trail);
+        return;
+    }
+    int longest = -32767;
+    int shortest = 32768;
+    for (int child_index = _minChildIndex; child_index <= _maxChildIndex; child_index++) {
+        if (_children[child_index] != NULL) {
+            int childReverseLongestPath = [_children[child_index] reverseLongestPath];
+            int childReverseShortestPath = [_children[child_index] reverseShortestPath];
+            
+            if (longest < childReverseLongestPath + [self getWeightFor: child_index]) {
+                longest = childReverseLongestPath + [self getWeightFor: child_index];
+            }
+            if (shortest > childReverseShortestPath + [self getWeightFor: child_index]) {
+                shortest = childReverseShortestPath + [self getWeightFor: child_index];
+            }
+        }
+    }
+    
+    assignTRInt(&_reverseShortestPath, shortest, _trail);
+    assignTRInt(&_reverseLongestPath, longest, _trail);
+}
+
 -(Node**) parents {
     return _parents;
 }
@@ -393,36 +440,33 @@
 @end
 
 @implementation GeneralState
--(id) initGeneralState {
-    _state = [[NSMutableArray alloc] init];
+-(id) initGeneralState:(int)variableIndex {
     return self;
 }
--(id) initGeneralState:(GeneralState*)parentNodeState withValue:(int)edgeValue {
-    _state = [[NSMutableArray alloc] initWithArray:[parentNodeState state]];
-    NSMutableSet* newStateValue = [[NSMutableSet alloc] init];
-    [newStateValue addObject:[NSNumber numberWithInt:edgeValue]];
-    [_state addObject: newStateValue];
+-(id) initGeneralState:(GeneralState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
+    _variableIndex = variableIndex;
     return self;
 }
 -(id) state {
-    return _state;
+    return NULL;
+}
+-(char*) stateChar {
+    return NULL;
+}
+-(int) variableIndex {
+    return _variableIndex;
 }
 -(bool) canChooseValue:(int)value {
-    //constraint-specific here
     return true;
 }
 -(void) mergeStateWith:(GeneralState *)other {
-    for (int stateValue = 0; stateValue < [_state count]; stateValue++) {
-        for (int otherValue = 0; otherValue < [[other state][stateValue] count]; otherValue++) {
-            [_state[stateValue] addObject: [NSNumber numberWithInt:(int)[other state][stateValue][otherValue]]];
-        }
-    }
+    return;
 }
 -(bool) stateAllows:(int)variable {
     return true;
 }
 -(BOOL) isEqual:(GeneralState*)object {
-    return [_state isEqual:[object state]];
+    return true;
 }
 @end
 
@@ -479,11 +523,6 @@
     _maxValue = maxValue;
     _adjacencyMatrix = adjacencyMatrix;
     
-    /*_state = [[NSMutableArray alloc] init];
-    for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
-        [_state addObject:@YES];
-    }*/
-    
     _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
     _state -= _minValue;
     _stateChar = malloc((_maxValue - _minValue +1) * sizeof(char));
@@ -491,7 +530,6 @@
     for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
         _state[stateValue] = true;
         _stateChar[stateValue] = '1';
-        //_stateKey = [_stateKey stringByAppendingString:@"1"];
     }
     
     return self;
@@ -501,20 +539,6 @@
     _minValue = minValue;
     _maxValue = maxValue;
     _adjacencyMatrix = adjacencyMatrix;
-    
-    /*NSMutableArray* parentState = [parentNodeState state];
-    _state = [NSMutableArray arrayWithArray: parentState];
-    int parentVariable = [parentNodeState variableIndex];
-    bool* parentAdjacencies = adjacencyMatrix[parentVariable];
-    if (edgeValue == 1) {
-        for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
-            if (parentAdjacencies[stateIndex]) {
-                [_state setObject: @NO atIndexedSubscript:(stateIndex - _minValue)];
-            }
-        }
-    }
-    [_state setObject:@NO atIndexedSubscript:(parentVariable - _minValue)];*/
-    
     
     _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
     _state -= _minValue;
@@ -527,19 +551,16 @@
         for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
             _state[stateIndex] = !parentAdjacencies[stateIndex] && parentState[stateIndex];
             _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
-            //_stateKey = [_stateKey stringByAppendingString:(_state[stateIndex] ? @"1":@"0")];
         }
     }
     else {
         for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
             _state[stateIndex] = parentState[stateIndex];
             _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
-            //_stateKey = [_stateKey stringByAppendingString:(_state[stateIndex] ? @"1":@"0")];
         }
     }
     _state[parentVariable] = false;
     _stateChar[parentVariable] = '0';
-    //_stateKey = [_stateKey stringByReplacingCharactersInRange:NSMakeRange(parentVariable - _minValue,1) withString:@"0"];
 
     return self;
 }
@@ -560,20 +581,11 @@
     if (!_state[variable]) {
         return false;
     }
-    //if (value == 0) {
-    //    return true;
-    //}
     return !_adjacencyMatrix[_variableIndex][variable];
 }
 -(BOOL) isEqual:(MISPState*)object {
     NSMutableArray* otherState = [object state];
     return [_state isEqual: otherState];
-    /*for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
-        if (_state[stateIndex] != otherState[stateIndex]) {
-            return false;
-        }
-    }
-    return true;*/
 }
 @end
 
@@ -588,9 +600,6 @@
     _objective = NULL;
     
     _max_nodes_per_layer = 1000;
-    //for (int variable = [_x low]; variable <= [_x up]; variable++) {
-    //    _max_nodes_per_layer *= [_x[variable] domsize];
-    //}
     
     layer_size = malloc(([_x count]+1) * sizeof(TRInt));
     max_layer_size = malloc(([_x count]+1) * sizeof(TRInt));
@@ -627,10 +636,6 @@
     for (int variableIndex = [_x low]; variableIndex <= [_x up]; variableIndex++) {
         _variableUsed[variableIndex] = false;
     }
-    
-    
-    totalWC = 0;
-    totalCPU = 0;
     return self;
 }
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize
@@ -661,35 +666,30 @@
 }
 -(void) post
 {
-    ORLong startCPU = [ORRuntimeMonitor cputime];
-    ORLong startWC = [ORRuntimeMonitor wctime];
     [self createRootAndSink];
     
     for (int layer = 0; layer < [_x count]; layer++) {
         if (_reduced) {
-            [self reduceLayer: layer]; //~ 60 CPU
+            [self reduceLayer: layer];
         }
-        [self cleanLayer: layer];       //~ 4 CPU
+        [self cleanLayer: layer];
         
-        int next_variable = [self pickVariableBelowLayer:layer];    //~ 45 CPU
+        if (layer != [_x count] -1) {
+            int next_variable = [self pickVariableBelowLayer:layer];
         
-        _variable_to_layer[next_variable] = layer+1;
-        _layer_to_variable[layer+1] = next_variable;
-        _variableUsed[next_variable] = true;
-        
-        [self buildNewLayerUnder:layer];    //~ 105 CPU
+            _variable_to_layer[next_variable] = layer+1;
+            _layer_to_variable[layer+1] = next_variable;
+            _variableUsed[next_variable] = true;
+        }
+        [self buildNewLayerUnder:layer];
     }
     [self addPropagationsAndTrimValues];
     
-    printf("Longest Path: %d\n", [layers[[_x up]][0] longestPath]);
-    ORLong endCPU = [ORRuntimeMonitor cputime];
-    ORLong endWC = [ORRuntimeMonitor wctime];
-    totalCPU += endCPU-startCPU;
-    totalWC += endWC-startWC;
-    printf("CPU: %lld\n",totalCPU);
-    printf("WC: %lld\n",totalWC);
-    
-    //[self printGraph];
+    for (int layer = (int)[_x count]; layer >= 0; layer--) {
+        for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
+            [layers[layer][node_index] updateReversePaths];
+        }
+    }
     return;
 }
 -(int) pickVariableBelowLayer:(int)layer {
@@ -747,7 +747,7 @@
 {
     Node *sink = [[Node alloc] initNode: _trail maxParents:(_max_nodes_per_layer * (max_domain_val - min_domain_val +1))];
     [sink setIsSink: true];
-    [self addNode: sink toLayer:([_x count])];
+    [self addNode: sink toLayer:((int)[_x count])];
     
     id state = [self generateRootState: [_x low]];
     _variable_to_layer[[_x low]] = 0;
@@ -773,11 +773,6 @@
         
         NSString* stateKey = [NSString stringWithCString:stateChar encoding:NSASCIIStringEncoding];
         
-        /*bool* state = [[node getState] state];
-        NSString* stateKey = [[NSString alloc] initWithString:@""];
-        for (int value = [_x low]; value <= [_x up]; value++) {
-            stateKey = [stateKey stringByAppendingString:(state[value] ? @"1":@"0")];
-        }*/
         
         if ([foundStates objectForKey:stateKey]) {
             [foundStates[stateKey] takeParentsFrom:node];
@@ -876,11 +871,15 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return NULL;
+    return [[GeneralState alloc] initGeneralState:variableValue];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
-    return NULL;
+    GeneralState* parentState = [parentNode getState];
+    int parentLayer = [self layerIndexForVariable: [parentState variableIndex]];
+    int variableIndex = [self variableIndexForLayer:parentLayer+1];
+    
+    return [[GeneralState alloc] initGeneralState:parentState assigningVariable:variableIndex withValue:value];
 }
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
@@ -938,6 +937,8 @@
         if ([parent isNonVitalAndChildless]) {
             [self removeChildlessNodeFromMDD: parent trimmingVariables:trimming];
             //parentIndex--;
+        } else {
+            [parent updateReversePaths];
         }
     }
     [self removeNode: node];
@@ -993,6 +994,8 @@
                 if ([node isNonVitalAndChildless]) {
                     [self removeChildlessNodeFromMDD: node trimmingVariables:true];
                     node_index--;
+                } else {
+                    [node updateReversePaths];
                 }
             }
         }
@@ -1016,6 +1019,32 @@
         }
     }
 }
+
+-(ORInt) recommendationFor: (ORInt) variableIndex
+{
+    if (_objective != NULL) {
+        if (_maximize) {
+            int optimal = [layers[[_x count]][0] longestPathContainingSelf];
+            
+            int layer_index = [self layerIndexForVariable:variableIndex];
+            for (int index = 0; index < layer_size[layer_index]._val; index++) {
+                Node* node = layers[layer_index][index];
+                if ([node longestPathContainingSelf] == optimal) {
+                    Node** children = [node children];
+                    for (int child_index = [node minChildIndex]; child_index <= [node maxChildIndex]; child_index++) {
+                        Node* child = children[child_index];
+                        if (child != NULL && ([node longestPath] + [node getWeightFor: child_index] + [child reverseLongestPath]) == optimal ) {
+                            return child_index;
+                        }
+                    }
+                }
+            }
+        } else {
+        }
+    }
+    return [_x[variableIndex] min];
+}
+
 -(void) printGraph {
     //[[NSFileManager defaultManager] createFileAtPath:[NSString stringWithFormat: @"/Users/ben/graphs/%d.dot", ] contents:nil attributes:nil];
     NSMutableDictionary* nodeNames = [[NSMutableDictionary alloc] init];
@@ -1125,9 +1154,9 @@
 {
     Node* first_node;
     Node* second_node;
-    [self findNodesToMerge:layer first:&first_node second:&second_node];    //~ 15 CPU
+    [self findNodesToMerge:layer first:&first_node second:&second_node];
     
-    [first_node mergeWith: second_node];    //~ 30 CPU
+    [first_node mergeWith: second_node];
     [self removeChildlessNodeFromMDD:second_node trimmingVariables:false];
 }
 
@@ -1296,7 +1325,7 @@
 }
 -(NSString*)description
 {
-    return [NSMutableString stringWithFormat:@"<CPExactMDDMISP:%02d %@>",_name,_x];
+    return [NSMutableString stringWithFormat:@"<CPRestrictedMDDMISP:%02d %@>",_name,_x];
 }
 @end
 
@@ -1326,11 +1355,25 @@
     int parentLayer = [self layerIndexForVariable: [parentState variableIndex]];
     int variableIndex = [self variableIndexForLayer:parentLayer+1];
     
-    MISPState* state = [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withVariableIndex:variableIndex withValue:value adjacencies:_adjacencyMatrix];  //~ 50 CPU
+    MISPState* state = [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withVariableIndex:variableIndex withValue:value adjacencies:_adjacencyMatrix];
     return state;
 }
 -(NSString*)description
 {
-    return [NSMutableString stringWithFormat:@"<CPExactMDDMISP:%02d %@>",_name,_x];
+    return [NSMutableString stringWithFormat:@"<CPRelaxedMDDMISP:%02d %@>",_name,_x];
+}
+@end
+
+
+
+@implementation CPRelaxedCustomMDD
+-(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize
+{
+    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize];
+    return self;
+}
+-(NSString*)description
+{
+    return [NSMutableString stringWithFormat:@"<CPRelaxedCustomMDD:%02d %@>",_name,_x];
 }
 @end

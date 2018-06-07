@@ -51,6 +51,12 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedMDDMISP: visit method not defined"];
 }
 
+
+-(void) visitRelaxedCustomMDD: (id<ORRelaxedCustomMDD>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedCustomMDD: visit method not defined"];
+}
+
 -(void) visitRandomStream:(id) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RandomStream: visit method not defined"];

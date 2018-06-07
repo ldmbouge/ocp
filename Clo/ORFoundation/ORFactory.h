@@ -253,6 +253,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
 +(id<ORConstraint>) RestrictedMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
 +(id<ORConstraint>) RelaxedMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
++(id<ORConstraint>) RelaxedCustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objective maximize:(bool)maximize;
 
 
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
