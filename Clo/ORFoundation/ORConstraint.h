@@ -460,6 +460,7 @@ enum ORGroupType {
 -(ORInt) relaxationSize;
 -(bool) reduced;
 -(bool) maximize;
+-(Class) stateClass;
 @end
 
 

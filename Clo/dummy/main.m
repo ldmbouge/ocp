@@ -15,8 +15,156 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORSchedulingProgram/ORSchedulingProgram.h>
 
+
+
 int MIN = 1;
 int MAX = 200;
+bool** adjacencies;
+
+@interface CustomState : NSObject {
+@protected
+    int _variableIndex;
+    int _minValue;
+    int _maxValue;
+    char* _stateChar;
+}
+-(id) initState:(int)variableIndex;
+-(id) initState:(CustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue;
+-(id) state;
+-(char*) stateChar;
+-(int) variableIndex;
+-(bool) canChooseValue:(int)value;
+-(void) mergeStateWith:(CustomState*)other;
+-(bool) stateAllows:(int)variable;
+
++(int*) getWeightsForVariable:(int)variable;
++(int) maxPossibleWeightForVariable:(int)variable;
+@end
+
+@implementation CustomState
+-(id) initState:(int)variableIndex {
+    _variableIndex = variableIndex;
+    _minValue = MIN;
+    _maxValue = MAX;
+    _stateChar = malloc((_maxValue - _minValue +1) * sizeof(char));
+    _stateChar -= _minValue;
+    
+    return self;
+}
+-(id) initState:(CustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
+    [self initState:variableIndex];
+
+    return self;
+}
+
+-(id) state { return NULL; }
+-(char*) stateChar { return _stateChar; }
+-(int) variableIndex { return _variableIndex; }
+-(bool) canChooseValue:(int)value {
+    return true;
+}
+-(void) mergeStateWith:(CustomState *)other {
+    return;
+}
+-(bool) stateAllows:(int)variable {
+    return true;
+}
+
++(int*) getWeightsForVariable:(int)variable {
+    return NULL;
+}
++(int) maxPossibleWeightForVariable:(int)variable {
+    return 0;
+}
+@end
+
+
+
+
+@interface CustomMISPState : CustomState {
+ @private
+ bool* _state;
+ bool** _adjacencyMatrix;
+ }
+-(bool**) adjacencyMatrix;
+ -(bool*) state;
+ @end
+
+
+@implementation CustomMISPState
+-(id) initState:(int)variableIndex {
+    [super initState:variableIndex];
+    
+    _adjacencyMatrix = adjacencies;
+    _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
+    _state -= _minValue;
+    for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
+        _state[stateValue] = true;
+        _stateChar[stateValue] = '1';
+    }
+    
+    return self;
+}
+-(id) initState:(CustomMISPState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
+    [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
+    
+    _adjacencyMatrix = adjacencies;
+    _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
+    _state -= _minValue;
+    bool* parentState = [parentNodeState state];
+    int parentVariable = [parentNodeState variableIndex];
+    bool* parentAdjacencies = _adjacencyMatrix[parentVariable];
+    if (edgeValue == 1) {
+        for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
+            _state[stateIndex] = !parentAdjacencies[stateIndex] && parentState[stateIndex];
+            _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
+        }
+    }
+    else {
+        for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
+            _state[stateIndex] = parentState[stateIndex];
+            _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
+        }
+    }
+    _state[parentVariable] = false;
+    _stateChar[parentVariable] = '0';
+    
+    return self;
+}
+-(bool**) adjacencyMatrix { return _adjacencyMatrix; }
+-(bool*) state { return _state; }
+-(bool) canChooseValue:(int)value {
+    if (value == 0) return true;
+    return _state[_variableIndex];
+}
+-(void) mergeStateWith:(CustomMISPState *)other {
+    for (int value = _minValue; value <= _maxValue; value++) {
+        bool combinedStateValue = [self canChooseValue: value] || [other canChooseValue:value];
+        _state[value] = [NSNumber numberWithBool: combinedStateValue];
+    }
+}
+-(bool) stateAllows:(int)variable {
+    if (!_state[variable]) {
+        return false;
+    }
+    return !_adjacencyMatrix[_variableIndex][variable];
+}
+
++(int*) getWeightsForVariable:(int)variable {
+    int* weights = malloc(2 * sizeof(int));
+    weights[0] = 0;
+    weights[1] = 1;
+    return weights;
+}
++(int) maxPossibleWeightForVariable:(int)variable {
+    return 1;
+}
+@end
+
+
+
+
+
 double DENSITY = .5;
 
 bool** adjacencyMatrix (NSArray* *edges, bool directed) {
@@ -129,12 +277,9 @@ int main (int argc, const char * argv[])
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
         id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
-        ORInt layerSize = 1000;
+        ORInt layerSize = 100;
         bool reduced = true;
         
-        
-        //bool** adjacencies = randomAdjacencyMatrix();
-        bool** adjacencies;
         adjacencies = malloc((MAX-MIN+1) * sizeof(bool*));
         adjacencies -= MIN;
         
@@ -168,23 +313,19 @@ int main (int argc, const char * argv[])
             }
         }
         
+        Class stateClass = [CustomMISPState class];
         
         
-        
-        id<ORIntArray> weights = [ORFactory intArray: mdl range: R1 value: 0];
         int maxSum = 0;
-        for(ORInt vertex = MIN; vertex <= MAX; vertex++) {
-            ORInt weight;
-            weight = 1;
-            [weights set: weight at: vertex];
-            
-            maxSum += weight;
+        for(int vertex = MIN; vertex <= MAX; vertex++) {
+            maxSum += [stateClass maxPossibleWeightForVariable: vertex];
         }
         
         id<ORIntVar> totalWeight = [ORFactory intVar: mdl domain: RANGE(mdl, 0, maxSum)];
         
+        
         //id<ORConstraint> mddConstraint = [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight];
-        id<ORConstraint> mddConstraint = [ORFactory RelaxedCustomMDD:mdl var:a size:layerSize reduced:reduced objective:totalWeight maximize:true];
+        id<ORConstraint> mddConstraint = [ORFactory RelaxedCustomMDD:mdl var:a size:layerSize reduced:reduced objective:totalWeight maximize:true stateClass:[CustomMISPState class]];
         
         
         [mdl add: mddConstraint];
@@ -210,13 +351,13 @@ int main (int argc, const char * argv[])
         
         //findMISP(adjacencies, edgeA, edgeB);
         
-        for (int a = MIN; a < MAX; a++) {
+        /*for (int a = MIN; a < MAX; a++) {
             for (int b = MIN; b < a; b++) {
                 if (adjacencies[b][a]) {
                     printf("e %d %d\n", a, b);
                 }
             }
-        }
+        }*/
 
         printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
         NSLog(@"Solver status: %@\n",cp);

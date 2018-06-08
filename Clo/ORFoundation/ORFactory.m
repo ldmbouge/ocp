@@ -975,9 +975,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 
 
-+(id<ORConstraint>) RelaxedCustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize
++(id<ORConstraint>) RelaxedCustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
-    id<ORConstraint> o = [[ORRelaxedCustomMDD alloc] initORRelaxedCustomMDD:x size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize];
+    id<ORConstraint> o = [[ORRelaxedCustomMDD alloc] initORRelaxedCustomMDD:x size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:stateClass];
     [model trackObject:o];
     return o;
 }

@@ -382,8 +382,9 @@
    ORInt _relaxationSize;
    bool _reduced;
    bool _maximize;
+   Class _stateClass;
 }
--(ORRelaxedCustomMDD*)initORRelaxedCustomMDD:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize
+-(ORRelaxedCustomMDD*)initORRelaxedCustomMDD:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
    self = [super initORConstraintI];
    _x = x;
@@ -391,6 +392,7 @@
    _relaxationSize = relaxationSize;
    _reduced = reduced;
    _maximize = maximize;
+   _stateClass = stateClass;
    return self;
 }
 -(void)dealloc
@@ -427,6 +429,10 @@
 -(bool) maximize
 {
    return _maximize;
+}
+-(Class) stateClass
+{
+   return _stateClass;
 }
 -(NSSet*)allVars
 {

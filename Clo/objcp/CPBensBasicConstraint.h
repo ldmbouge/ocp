@@ -96,15 +96,14 @@
 @private
     int _variableIndex;
 }
--(id) initGeneralState:(int)variableIndex;
--(id) initGeneralState:(GeneralState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue;
+-(id) initState:(int)variableIndex;
+-(id) initState:(GeneralState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue;
 -(id) state;
 -(char*) stateChar;
 -(int) variableIndex;
 -(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(GeneralState*)other;
 -(bool) stateAllows:(int)variable;
--(BOOL) isEqual:(GeneralState*)object;
 @end
 
 @interface AllDifferentState : NSObject {
@@ -130,15 +129,14 @@
     int _maxValue;
     bool** _adjacencyMatrix;
 }
--(id) initMISPState:(int)variableIndex :(int)minValue :(int)maxValue adjacencies:(bool**)adjacencyMatrix;
--(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withVariableIndex:(int)variableIndex withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix;
+-(id) initState:(int)variableIndex :(int)minValue :(int)maxValue adjacencies:(bool**)adjacencyMatrix;
+-(id) initState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withVariableIndex:(int)variableIndex withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix;
 -(bool*) state;
 -(char*) stateChar;
 -(int) variableIndex;
 -(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(MISPState*)other;
 -(bool) stateAllows:(int)variable;
--(BOOL) isEqual:(MISPState*)object;
 @end
 
 @interface CPMDD : CPCoreConstraint {
@@ -151,6 +149,7 @@
     int* _variable_to_layer;
     int* _layer_to_variable;
     bool* _variableUsed;
+    Class _stateClass;
 @protected
     id<CPIntVarArray> _x;
     TRInt *layer_size;
@@ -161,6 +160,7 @@
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x reduced:(bool)reduced;
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize;
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(NSString*) description;
@@ -209,6 +209,7 @@
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize;
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
 -(void) mergeTwoNodesOnLayer:(int)layer;
 -(void) findNodesToMerge:(int)layer first:(Node**)first second:(Node**)second;
 @end
@@ -253,6 +254,6 @@
 @end
 
 @interface CPRelaxedCustomMDD : CPMDDRelaxation
--(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize;
+-(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
 @end
 

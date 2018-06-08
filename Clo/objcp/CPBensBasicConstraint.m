@@ -440,10 +440,10 @@
 @end
 
 @implementation GeneralState
--(id) initGeneralState:(int)variableIndex {
+-(id) initState:(int)variableIndex {
     return self;
 }
--(id) initGeneralState:(GeneralState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
+-(id) initState:(GeneralState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
     _variableIndex = variableIndex;
     return self;
 }
@@ -465,8 +465,8 @@
 -(bool) stateAllows:(int)variable {
     return true;
 }
--(BOOL) isEqual:(GeneralState*)object {
-    return true;
+-(int*) getWeightsForVariable:(int)variable {
+    return NULL;
 }
 @end
 
@@ -511,13 +511,10 @@
 -(bool) stateAllows:(int)variable {
     return [self canChooseValue:variable]; // TODO: FIX?
 }
--(BOOL) isEqual:(AllDifferentState*)object {
-    return [_state isEqual:[object state]];
-}
 @end
 
 @implementation MISPState
--(id) initMISPState:(int)variableIndex :(int)minValue :(int)maxValue adjacencies:(bool**)adjacencyMatrix {
+-(id) initState:(int)variableIndex :(int)minValue :(int)maxValue adjacencies:(bool**)adjacencyMatrix {
     _variableIndex = variableIndex;
     _minValue = minValue;
     _maxValue = maxValue;
@@ -534,7 +531,7 @@
     
     return self;
 }
--(id) initMISPState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withVariableIndex:(int)variableIndex withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix{
+-(id) initState:(int)minValue :(int)maxValue parentNodeState:(MISPState*)parentNodeState withVariableIndex:(int)variableIndex withValue:(int)edgeValue adjacencies:(bool**)adjacencyMatrix{
     _variableIndex = variableIndex;
     _minValue = minValue;
     _maxValue = maxValue;
@@ -582,10 +579,6 @@
         return false;
     }
     return !_adjacencyMatrix[_variableIndex][variable];
-}
--(BOOL) isEqual:(MISPState*)object {
-    NSMutableArray* otherState = [object state];
-    return [_state isEqual: otherState];
 }
 @end
 
@@ -636,6 +629,7 @@
     for (int variableIndex = [_x low]; variableIndex <= [_x up]; variableIndex++) {
         _variableUsed[variableIndex] = false;
     }
+    _stateClass = [GeneralState class];
     return self;
 }
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize
@@ -643,6 +637,15 @@
     self = [self initCPMDD:engine over:x reduced:reduced];
     _objective = objective;
     _maximize = maximize;
+    _stateClass = [GeneralState class];
+    return self;
+}
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass
+{
+    self = [self initCPMDD:engine over:x reduced:reduced];
+    _objective = objective;
+    _maximize = maximize;
+    _stateClass = stateClass;
     return self;
 }
 -(NSSet*)allVars
@@ -712,7 +715,7 @@
         if (!_variableUsed[variable_index]) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
                 Node* node = layers[layer][node_index];
-                GeneralState* state = [node getState];
+                id state = [node getState];
     
                 if ([state stateAllows: variable_index]) {
                     variableCount[variable_index]++;
@@ -735,13 +738,7 @@
 }
 -(int*) getWeightsForLayer:(int)layer
 {
-    int* weights = malloc((max_domain_val - min_domain_val + 1) * sizeof(int));
-    weights -= min_domain_val;
-    for (int index = min_domain_val; index <= max_domain_val; index++) {
-        weights[index] = 0;
-    }
-    
-    return weights;
+    return [_stateClass getWeightsForVariable: [self variableIndexForLayer:layer]];
 }
 -(void) createRootAndSink
 {
@@ -871,15 +868,15 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[GeneralState alloc] initGeneralState:variableValue];
+    return [[_stateClass alloc] initState:variableValue];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
-    GeneralState* parentState = [parentNode getState];
+    id parentState = [parentNode getState];
     int parentLayer = [self layerIndexForVariable: [parentState variableIndex]];
     int variableIndex = [self variableIndexForLayer:parentLayer+1];
     
-    return [[GeneralState alloc] initGeneralState:parentState assigningVariable:variableIndex withValue:value];
+    return [[_stateClass alloc] initState:parentState assigningVariable:variableIndex withValue:value];
 }
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
@@ -1144,6 +1141,12 @@
     relaxed_size = relaxationSize;
     return self;
 }
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass
+{
+    self = [super initCPMDD:engine over:x reduced:reduced objective:objective maximize:maximize stateClass:stateClass];
+    relaxed_size = relaxationSize;
+    return self;
+}
 -(void) cleanLayer:(int)layer
 {
     while (layer_size[layer]._val > relaxed_size) {
@@ -1279,14 +1282,14 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[MISPState alloc] initMISPState:variableValue :[_x low] :[_x up] adjacencies:_adjacencyMatrix];
+    return [[MISPState alloc] initState:variableValue :[_x low] :[_x up] adjacencies:_adjacencyMatrix];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
     MISPState* parentState = [parentNode getState];
     int parentLayer = [self layerIndexForVariable: [parentState variableIndex]];
     int variableIndex = [self variableIndexForLayer:parentLayer+1];
-    return [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withVariableIndex:variableIndex withValue:value adjacencies:_adjacencyMatrix];
+    return [[MISPState alloc] initState:[_x low] :[_x up] parentNodeState:[parentNode getState] withVariableIndex:variableIndex withValue:value adjacencies:_adjacencyMatrix];
 
 }
 -(NSString*)description
@@ -1313,14 +1316,14 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[MISPState alloc] initMISPState:variableValue :[_x low] :[_x up] adjacencies:_adjacencyMatrix];
+    return [[MISPState alloc] initState:variableValue :[_x low] :[_x up] adjacencies:_adjacencyMatrix];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
     MISPState* parentState = [parentNode getState];
     int parentLayer = [self layerIndexForVariable: [parentState variableIndex]];
     int variableIndex = [self variableIndexForLayer:parentLayer+1];
-    return [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withVariableIndex:variableIndex withValue:value adjacencies:_adjacencyMatrix];
+    return [[MISPState alloc] initState:[_x low] :[_x up] parentNodeState:[parentNode getState] withVariableIndex:variableIndex withValue:value adjacencies:_adjacencyMatrix];
     
 }
 -(NSString*)description
@@ -1347,7 +1350,7 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[MISPState alloc] initMISPState:variableValue :[_x low] :[_x up] adjacencies:_adjacencyMatrix];
+    return [[MISPState alloc] initState:variableValue :[_x low] :[_x up] adjacencies:_adjacencyMatrix];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
@@ -1355,7 +1358,7 @@
     int parentLayer = [self layerIndexForVariable: [parentState variableIndex]];
     int variableIndex = [self variableIndexForLayer:parentLayer+1];
     
-    MISPState* state = [[MISPState alloc] initMISPState:[_x low] :[_x up] parentNodeState:[parentNode getState] withVariableIndex:variableIndex withValue:value adjacencies:_adjacencyMatrix];
+    MISPState* state = [[MISPState alloc] initState:[_x low] :[_x up] parentNodeState:[parentNode getState] withVariableIndex:variableIndex withValue:value adjacencies:_adjacencyMatrix];
     return state;
 }
 -(NSString*)description
@@ -1367,9 +1370,9 @@
 
 
 @implementation CPRelaxedCustomMDD
--(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize
+-(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
-    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize];
+    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:stateClass];
     return self;
 }
 -(NSString*)description
