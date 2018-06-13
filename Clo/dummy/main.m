@@ -17,25 +17,28 @@
 
 
 
-int MIN = 1;
-int MAX = 200;
+int MINVARIABLE = 1;
+int MAXVARIABLE = 200;
+int MINVALUE = 0;
+int MAXVALUE = 1;
+
 bool** adjacencies;
+int* knapsackWeights;
+
+int MAXKNAPSACKWEIGHT = 300;
+int MAXKNAPSACKWEIGHTNUMDIGITS = 3;
 
 @interface CustomState : NSObject {
 @protected
     int _variableIndex;
-    int _minValue;
-    int _maxValue;
     char* _stateChar;
 }
 -(id) initState:(int)variableIndex;
 -(id) initState:(CustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue;
--(id) state;
 -(char*) stateChar;
 -(int) variableIndex;
--(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(CustomState*)other;
--(bool) stateAllows:(int)variable;
+-(int) numPathsForVariable:(int)variable;
 
 +(int*) getWeightsForVariable:(int)variable;
 +(int) maxPossibleWeightForVariable:(int)variable;
@@ -43,111 +46,171 @@ bool** adjacencies;
 
 @implementation CustomState
 -(id) initState:(int)variableIndex {
-    _variableIndex = variableIndex;
-    _minValue = MIN;
-    _maxValue = MAX;
-    _stateChar = malloc((_maxValue - _minValue +1) * sizeof(char));
-    _stateChar -= _minValue;
-    
     return self;
 }
 -(id) initState:(CustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
-    [self initState:variableIndex];
-
     return self;
 }
 
--(id) state { return NULL; }
 -(char*) stateChar { return _stateChar; }
 -(int) variableIndex { return _variableIndex; }
--(bool) canChooseValue:(int)value {
-    return true;
-}
 -(void) mergeStateWith:(CustomState *)other {
     return;
 }
--(bool) stateAllows:(int)variable {
-    return true;
+-(int) numPathsForVariable:(int)variable {
+    int count = 0;
+    for (int value = MINVALUE; value <= MAXVALUE; value++) {
+        if ([[self class] canChooseValue:value forVariable:variable givenState:NULL]) {
+            count++;
+        }
+    }
+    return count;
 }
 
++(bool) canChooseValue:(int)value forVariable:(int)variable givenState:(id)state {
+    return true;
+}
 +(int*) getWeightsForVariable:(int)variable {
     return NULL;
 }
 +(int) maxPossibleWeightForVariable:(int)variable {
-    return 0;
+    int* weights = [self getWeightsForVariable:variable];
+    int maxWeight = weights[MINVALUE];
+    for (int value = MINVALUE + 1; value <= MAXVALUE; value++) {
+        if (maxWeight < weights[value]) {
+            maxWeight = weights[value];
+        }
+    }
+    return maxWeight;
 }
 @end
 
+@interface CustomBDDState : CustomState {   //A state with a list of booleans corresponding to whether or not each variable can be assigned 1
+@protected
+    bool* _state;
+}
+-(bool*) state;
+-(void) writeStateFromParent:(CustomBDDState*)parent assigningValue:(int)value;
+-(int) numPathsWithNextVariable:(int)variable;
+-(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable;
 
++(void) undoChangesTo:(bool*)state with:(NSArray*)savedChanges;
++(bool) canChooseValue:(int)value forVariable:(int)variable givenState:(bool*)state;
+@end
 
-
-@interface CustomMISPState : CustomState {
- @private
- bool* _state;
- bool** _adjacencyMatrix;
- }
--(bool**) adjacencyMatrix;
- -(bool*) state;
- @end
-
-
-@implementation CustomMISPState
+@implementation CustomBDDState
 -(id) initState:(int)variableIndex {
-    [super initState:variableIndex];
-    
-    _adjacencyMatrix = adjacencies;
-    _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
-    _state -= _minValue;
-    for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
+    _variableIndex = variableIndex;
+    _state = malloc((MAXVARIABLE - MINVARIABLE +1) * sizeof(bool));
+    _state -= MINVARIABLE;
+    _stateChar = malloc((MAXVARIABLE - MINVARIABLE +1) * sizeof(char));
+    _stateChar -= MINVARIABLE;
+    for (int stateValue = MINVARIABLE; stateValue <= MAXVARIABLE; stateValue++) {
         _state[stateValue] = true;
         _stateChar[stateValue] = '1';
     }
     
     return self;
 }
--(id) initState:(CustomMISPState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
-    [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
+-(id) initState:(CustomBDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {    //Bad naming I think.  Parent is actually the one assigned that value, not the variableIndex
+    _variableIndex = variableIndex;
+    _state = malloc((MAXVARIABLE - MINVARIABLE +1) * sizeof(bool));
+    _state -= MINVARIABLE;
     
-    _adjacencyMatrix = adjacencies;
-    _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
-    _state -= _minValue;
-    bool* parentState = [parentNodeState state];
-    int parentVariable = [parentNodeState variableIndex];
-    bool* parentAdjacencies = _adjacencyMatrix[parentVariable];
-    if (edgeValue == 1) {
-        for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
-            _state[stateIndex] = !parentAdjacencies[stateIndex] && parentState[stateIndex];
+    [self writeStateFromParent:parentNodeState assigningValue:edgeValue];
+    
+    return self;
+}
+
+-(bool*) state {
+    return _state;
+}
+
+-(void) writeStateFromParent:(CustomBDDState*)parent assigningValue:(int)value {
+    int variable = [parent variableIndex];
+    _state[variable] = false;
+    _stateChar[variable] = '0';
+}
+-(int) numPathsWithNextVariable:(int)variable {
+    int count = 0;
+    for (int fromValue = MINVALUE; fromValue <= MAXVALUE; fromValue++) {
+        if ([[self class] canChooseValue:fromValue forVariable:_variableIndex givenState:_state]) {
+            NSArray* savedChanges = [self tempAlterStateAssigningVariable:_variableIndex value:fromValue toTestVariable:variable];
+            for (int toValue = MINVALUE; toValue <= MAXVALUE; toValue++) {
+                if ([[self class] canChooseValue:toValue forVariable:variable givenState:_state]) {
+                    count++;
+                }
+            }
+            [[self class] undoChangesTo:_state with:savedChanges];
+        }
+    }
+    return count;
+}
+-(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
+    return [self tempAlterStateAssigningVariable:variable value:value];
+}
+-(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value {
+    if (_state[variable] != value) {
+        _state[variable] = value;
+        return [[NSArray alloc] initWithObjects:[NSNumber numberWithInt: variable], nil];
+    } else {
+        return [[NSArray alloc] init];
+    }
+}
+
++(bool) canChooseValue:(int)value forVariable:(int)variable givenState:(bool*)state {
+    if (value == 0) return true;
+    return state[variable];
+}
++(void) undoChangesTo:(bool*)state with:(NSArray*)savedChanges {
+    for (int index = 0; index < [savedChanges count]; index++) {
+        state[[savedChanges[index] intValue]] = !(state[[savedChanges[index] intValue]]);
+    }
+}
+@end
+
+@interface CustomMISPState : CustomBDDState
+@end
+
+
+@implementation CustomMISPState
+-(id) initState:(CustomState *)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
+    _stateChar = malloc((MAXVARIABLE - MINVARIABLE +1) * sizeof(char));
+    _stateChar -= MINVARIABLE;
+    return [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
+}
+
+-(void) mergeStateWith:(CustomMISPState *)other {
+    for (int variable = MINVARIABLE; variable <= MAXVARIABLE; variable++) {
+        bool combinedStateValue = [CustomMISPState canChooseValue: 1 forVariable:variable givenState:_state] || [CustomMISPState canChooseValue: 1 forVariable:variable givenState:[other state]];
+        _state[variable] = [NSNumber numberWithBool: combinedStateValue];
+        _stateChar[variable] = _state[variable] ? '1' : '0';
+    }
+}
+-(void) writeStateFromParent:(CustomMISPState*)parent assigningValue:(int)value {
+    int variable = [parent variableIndex];
+    bool* variableAdjacencies = adjacencies[variable];
+    bool* parentState = [parent state];
+    if (value == 1) {
+        for (int stateIndex = MINVARIABLE; stateIndex <= MAXVARIABLE; stateIndex++) {
+            _state[stateIndex] = !variableAdjacencies[stateIndex] && parentState[stateIndex];
             _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
         }
     }
     else {
-        for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
+        for (int stateIndex = MINVARIABLE; stateIndex <= MAXVARIABLE; stateIndex++) {
             _state[stateIndex] = parentState[stateIndex];
             _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
         }
     }
-    _state[parentVariable] = false;
-    _stateChar[parentVariable] = '0';
-    
-    return self;
+    [super writeStateFromParent:parent assigningValue:value];
 }
--(bool**) adjacencyMatrix { return _adjacencyMatrix; }
--(bool*) state { return _state; }
--(bool) canChooseValue:(int)value {
-    if (value == 0) return true;
-    return _state[_variableIndex];
-}
--(void) mergeStateWith:(CustomMISPState *)other {
-    for (int value = _minValue; value <= _maxValue; value++) {
-        bool combinedStateValue = [self canChooseValue: value] || [other canChooseValue:value];
-        _state[value] = [NSNumber numberWithBool: combinedStateValue];
+-(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
+    if (value == 1 && adjacencies[variable][toVariable]) {
+        return [[NSArray alloc] initWithArray: [super tempAlterStateAssigningVariable:toVariable value:false]];
+    } else {
+        return [[NSArray alloc] init];
     }
-}
--(bool) stateAllows:(int)variable {
-    if (!_state[variable]) {
-        return false;
-    }
-    return !_adjacencyMatrix[_variableIndex][variable];
 }
 
 +(int*) getWeightsForVariable:(int)variable {
@@ -156,12 +219,84 @@ bool** adjacencies;
     weights[1] = 1;
     return weights;
 }
-+(int) maxPossibleWeightForVariable:(int)variable {
-    return 1;
-}
 @end
 
 
+@interface CustomKnapsackState : CustomBDDState {
+@private
+    int _weight;
+}
+-(int) weight;
+@end
+
+@implementation CustomKnapsackState
+
+-(id) initState:(int)variableIndex {
+    _weight = 0;
+    [super initState:variableIndex];
+    for (int digit = 1; digit <= MAXKNAPSACKWEIGHTNUMDIGITS; digit++) {
+        _stateChar[MAXVARIABLE + digit] = '0';
+    }
+    return self;
+}
+-(id) initState:(CustomKnapsackState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
+    _stateChar = malloc((MAXVARIABLE - MINVARIABLE+1 + MAXKNAPSACKWEIGHTNUMDIGITS) * sizeof(char));
+    _stateChar -= MINVARIABLE;
+    [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
+    return self;
+}
+
+-(int) weight { return _weight; }
+-(void) mergeStateWith:(CustomKnapsackState*)other {
+    if (_weight > [other weight]) {
+        _weight = [other weight];
+        bool* otherState = [other state];
+        for (int variable = MINVARIABLE; variable <= MAXVARIABLE; variable++) {
+            _state[variable] = otherState[variable];
+            _stateChar[variable] = _state[variable] ? '1' : '0';
+        }
+    }
+}
+-(void) writeStateFromParent:(CustomKnapsackState*)parent assigningValue:(int)value {
+    int variable = [parent variableIndex];
+    bool* parentState = [parent state];
+    if (value == 1) {
+        _weight = [parent weight] + [[self class] getWeightsForVariable:variable][1];
+        for (int stateIndex = MINVARIABLE; stateIndex <= MAXVARIABLE; stateIndex++) {
+            _state[stateIndex] = parentState[stateIndex] && ((_weight + [[self class] getWeightsForVariable:stateIndex][1]) <= MAXKNAPSACKWEIGHT);
+            _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
+        }
+        for (int digit = 1; digit <= MAXKNAPSACKWEIGHTNUMDIGITS; digit++) {
+            _stateChar[MAXVARIABLE+ 1 + (MAXKNAPSACKWEIGHTNUMDIGITS - digit)] = (char)((int)(_weight/pow(10,digit)) % 10 + (int)@"0");
+        }
+    }
+    else {
+        _weight = [parent weight];
+        for (int stateIndex = MINVARIABLE; stateIndex <= MAXVARIABLE; stateIndex++) {
+            _state[stateIndex] = parentState[stateIndex];
+            _stateChar[stateIndex] = _state[stateIndex] ? '1':'0';
+        }
+        for (int digit = 1; digit <= MAXKNAPSACKWEIGHTNUMDIGITS; digit++) {
+            _stateChar[MAXVARIABLE + digit] = [parent stateChar][MAXVARIABLE + digit];
+        }
+    }
+    [super writeStateFromParent:parent assigningValue:value];
+}
+-(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
+    if (value == 1 && (_weight + [[self class] getWeightsForVariable:variable][1] + [[self class] getWeightsForVariable:toVariable][1]) > MAXKNAPSACKWEIGHT ) {
+        return [[NSArray alloc] initWithArray: [super tempAlterStateAssigningVariable:toVariable value:false]];
+    } else {
+        return [[NSArray alloc] init];
+    }
+}
+
++(int*) getWeightsForVariable:(int)variable {
+    int* weights = malloc(2 * sizeof(int));
+    weights[0] = 0;
+    weights[1] = knapsackWeights[variable];
+    return weights;
+}
+@end
 
 
 
@@ -169,12 +304,12 @@ double DENSITY = .5;
 
 bool** adjacencyMatrix (NSArray* *edges, bool directed) {
     bool** adjacencyMatrix;
-    adjacencyMatrix = malloc((MAX-MIN+1) * sizeof(bool*));
-    adjacencyMatrix -= MIN;
+    adjacencyMatrix = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool*));
+    adjacencyMatrix -= MINVARIABLE;
     
-    for (int i = MIN; i <= MAX; i++) {
-        adjacencyMatrix[i] = malloc((MAX-MIN+1) * sizeof(bool));
-        adjacencyMatrix[i] -= MIN;
+    for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+        adjacencyMatrix[i] = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool));
+        adjacencyMatrix[i] -= MINVARIABLE;
     }
     
     for (NSArray* edge in *edges) {
@@ -187,7 +322,7 @@ bool** adjacencyMatrix (NSArray* *edges, bool directed) {
 }
 
 void decrementSolution(bool* solution, int* numSelected) {
-    int bit = MAX;
+    int bit = MAXVARIABLE;
     if (*numSelected == 0) {
         return;
     }
@@ -207,15 +342,15 @@ void decrementSolution(bool* solution, int* numSelected) {
 void findMISP(bool** adjacencies, NSMutableArray* edgeA, NSMutableArray* edgeB) {
     printf("Verifying answer...\n");
     
-    bool* solution = malloc((MAX-MIN+1) * sizeof(bool));
-    solution -= MIN;
+    bool* solution = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool));
+    solution -= MINVARIABLE;
     
-    for (int variable = MIN; variable <= MAX; variable++) {
+    for (int variable = MINVARIABLE; variable <= MAXVARIABLE; variable++) {
         solution[variable] = true;
     }
     
     int maxNumSelected = 0;
-    int numSelected = MAX-MIN+1;
+    int numSelected = MAXVARIABLE-MINVARIABLE+1;
     
     while (numSelected != 0) {
         decrementSolution(solution, &numSelected);
@@ -249,16 +384,16 @@ void findMISP(bool** adjacencies, NSMutableArray* edgeA, NSMutableArray* edgeB) 
 
 bool** randomAdjacencyMatrix() {
     bool** adjacencyMatrix;
-    adjacencyMatrix = malloc((MAX-MIN+1) * sizeof(bool*));
-    adjacencyMatrix -= MIN;
+    adjacencyMatrix = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool*));
+    adjacencyMatrix -= MINVARIABLE;
     
-    for (int i = MIN; i <= MAX; i++) {
-        adjacencyMatrix[i] = malloc((MAX-MIN+1) * sizeof(bool));
-        adjacencyMatrix[i] -= MIN;
+    for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+        adjacencyMatrix[i] = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool));
+        adjacencyMatrix[i] -= MINVARIABLE;
     }
     
-    for (int node1 = MIN; node1 < MAX; node1++) {
-        for (int node2 = node1 + 1; node2 <= MAX; node2++) {
+    for (int node1 = MINVARIABLE; node1 < MAXVARIABLE; node1++) {
+        for (int node2 = node1 + 1; node2 <= MAXVARIABLE; node2++) {
             if (arc4random_uniform(10) < DENSITY*10) {
                 adjacencyMatrix[node1][node2] = true;
                 adjacencyMatrix[node2][node1] = true;
@@ -273,20 +408,20 @@ int main (int argc, const char * argv[])
     @autoreleasepool {
         
         id<ORModel> mdl = [ORFactory createModel];
-        id<ORIntRange> R1 = RANGE(mdl, MIN, MAX);
+        id<ORIntRange> R1 = RANGE(mdl, MINVARIABLE, MAXVARIABLE);
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
         id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
         ORInt layerSize = 100;
         bool reduced = true;
         
-        adjacencies = malloc((MAX-MIN+1) * sizeof(bool*));
-        adjacencies -= MIN;
+        adjacencies = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool*));
+        adjacencies -= MINVARIABLE;
         
-        for (int i = MIN; i <= MAX; i++) {
-            adjacencies[i] = malloc((MAX-MIN+1) * sizeof(bool));
-            adjacencies[i] -= MIN;
-            for (int j = MIN; j <= MAX; j++) {
+        for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+            adjacencies[i] = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool));
+            adjacencies[i] -= MINVARIABLE;
+            for (int j = MINVARIABLE; j <= MAXVARIABLE; j++) {
                 adjacencies[i][j] = false;
             }
         }
@@ -313,11 +448,16 @@ int main (int argc, const char * argv[])
             }
         }
         
-        Class stateClass = [CustomMISPState class];
+        Class stateClass = [CustomKnapsackState class];
         
+        knapsackWeights = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(int));
+        knapsackWeights -= MINVARIABLE;
+        for (int variableIndex = MINVARIABLE; variableIndex <= MAXVARIABLE; variableIndex++) {
+            knapsackWeights[variableIndex] = 1 + arc4random() % 40;
+        }
         
         int maxSum = 0;
-        for(int vertex = MIN; vertex <= MAX; vertex++) {
+        for(int vertex = MINVARIABLE; vertex <= MAXVARIABLE; vertex++) {
             maxSum += [stateClass maxPossibleWeightForVariable: vertex];
         }
         
@@ -325,7 +465,7 @@ int main (int argc, const char * argv[])
         
         
         //id<ORConstraint> mddConstraint = [ORFactory RelaxedMDDMISP:mdl var:a size:layerSize reduced:reduced adjacencies:adjacencies weights:weights objective:totalWeight];
-        id<ORConstraint> mddConstraint = [ORFactory RelaxedCustomMDD:mdl var:a size:layerSize reduced:reduced objective:totalWeight maximize:true stateClass:[CustomMISPState class]];
+        id<ORConstraint> mddConstraint = [ORFactory RelaxedCustomMDD:mdl var:a size:layerSize reduced:reduced objective:totalWeight maximize:true stateClass:stateClass];
         
         
         [mdl add: mddConstraint];
@@ -336,11 +476,11 @@ int main (int argc, const char * argv[])
         
         [cp solve: ^{
             
-            for (int variableIndex = MIN; variableIndex <= MAX; variableIndex++) {
+            for (int variableIndex = MINVARIABLE; variableIndex <= MAXVARIABLE; variableIndex++) {
                 [cp label: a[variableIndex] with: [cp recommendationBy: mddConstraint forVariableIndex: variableIndex]];
             }
             
-            for (int i = MIN; i <= MAX; i++) {
+            for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
               printf("%d  ",[cp intValue: [a at:i]]);
             }
             //printf("  |  Objective value: %d", [cp intValue: totalWeight]);
@@ -351,8 +491,8 @@ int main (int argc, const char * argv[])
         
         //findMISP(adjacencies, edgeA, edgeB);
         
-        /*for (int a = MIN; a < MAX; a++) {
-            for (int b = MIN; b < a; b++) {
+        /*for (int a = MINVARIABLE; a < MAXVARIABLE; a++) {
+            for (int b = MINVARIABLE; b < a; b++) {
                 if (adjacencies[b][a]) {
                     printf("e %d %d\n", a, b);
                 }

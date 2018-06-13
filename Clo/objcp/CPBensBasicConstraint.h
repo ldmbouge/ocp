@@ -104,6 +104,8 @@
 -(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(GeneralState*)other;
 -(bool) stateAllows:(int)variable;
+-(int) numPathsForVariable:(int)variable;
+-(int) numPathsWithNextVariable:(int)variable;
 @end
 
 @interface AllDifferentState : NSObject {

@@ -432,7 +432,7 @@
     }
 }
 -(bool) canChooseValue:(int)value {
-    return [_state canChooseValue: value];
+    return [[_state class] canChooseValue:value forVariable:_value givenState:[_state state]];
 }
 -(void) mergeStateWith:(Node*)other {
     [_state mergeStateWith: [other getState]];
@@ -717,9 +717,8 @@
                 Node* node = layers[layer][node_index];
                 id state = [node getState];
     
-                if ([state stateAllows: variable_index]) {
-                    variableCount[variable_index]++;
-                }
+                //variableCount[variable_index] += [state numPathsForVariable:variable_index];
+                variableCount[variable_index] += [state numPathsWithNextVariable:variable_index];
             }
             if (variableCount[variable_index] < variableCount[selected_variable]) {
                 selected_variable = variable_index;
