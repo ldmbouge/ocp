@@ -13,7 +13,7 @@ import ORProgram
 
 autoreleasepool {
    let m  = ORFactory.createModel()
-   let x  = ORFactory.intVarArray(m, range: range(m, 1..<10), domain: range(m, 1..<10))
+   let x  = ORFactory.intVarArray(m, range: range(m, 1...9), domain: range(m, 1...9))
    m.add(ORFactory.alldifferent(x))
    let t2 = (x[2]*13)/x[3]
    let t3 = x[7]*(x[8]/x[9])
