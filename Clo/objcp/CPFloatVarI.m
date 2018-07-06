@@ -97,6 +97,14 @@
 }
 @end
 
+typedef struct  {
+   TRId           _bindEvt;
+   TRId            _minEvt;
+   TRId            _maxEvt;
+   TRId         _boundsEvt;
+} CPFloatEventNetwork;
+
+
 static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
 {
    net->_bindEvt   = makeTRId(t,nil);
@@ -122,7 +130,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    return rv;
 }
 
-@implementation CPFloatVarI
+@implementation CPFloatVarI {
+   CPFloatEventNetwork      _net;
+}
 
 -(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up
 {
@@ -396,7 +406,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {}
 @end
 
-@implementation CPFloatViewOnIntVarI
+@implementation CPFloatViewOnIntVarI {
+   CPFloatEventNetwork _net;
+}
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv
 {
    self = [super init];

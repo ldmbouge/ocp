@@ -17,7 +17,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
 
 #define NB_FLOAT_BY_E (8388608)
 #define S_PRECISION 23
@@ -58,13 +58,6 @@
 -(void) bind: (ORFloat) val;
 @end
 
-typedef struct  {
-   TRId           _bindEvt;
-   TRId            _minEvt;
-   TRId            _maxEvt;
-   TRId         _boundsEvt;
-} CPFloatEventNetwork;
-
 @class CPFloatVarI;
 @protocol CPFloatVarNotifier <NSObject>
 -(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
@@ -77,9 +70,9 @@ typedef struct  {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-   id<CPFloatDom>            _dom;
-   CPFloatEventNetwork      _net;
    CPMultiCast*             _recv;
+@public
+   id<CPFloatDom>            _dom;
 }
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(id<CPEngine>) engine;
@@ -93,7 +86,6 @@ typedef struct  {
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
    CPEngineI* _engine;
    CPIntVar* _theVar;
-   CPFloatEventNetwork _net;
 }
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
@@ -170,11 +162,11 @@ static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
 
 static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] < [y min] &&  [x max] < [y max];
+   return [x->_dom min] < [y->_dom min] &&  [x->_dom max] < [y->_dom max];
 }
 static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] > [y min ] && [x max] > [y max];
+   return [x min] > [y min] && [x max] > [y max];
 }
 
 static inline double cardinality(CPFloatVarI* x)
@@ -256,4 +248,3 @@ static inline float previous_nb_float(float v, int nb, float def)
       v = fp_previous_float(v);
    return v;
 }
-

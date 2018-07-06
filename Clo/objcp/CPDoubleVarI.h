@@ -18,7 +18,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
 
 #define NB_DOUBLE_BY_E (4.5035996e+15)
 #define ED_MAX (2047)
@@ -59,13 +59,6 @@
 -(void) bind: (ORDouble) val;
 @end
 
-typedef struct  {
-    TRId           _bindEvt;
-    TRId            _minEvt;
-    TRId            _maxEvt;
-    TRId         _boundsEvt;
-} CPDoubleEventNetwork;
-
 @class CPDoubleVarI;
 @protocol CPDoubleVarNotifier <NSObject>
 -(CPDoubleVarI*) findAffine: (ORDouble) scale shift: (ORDouble) shift;
@@ -79,7 +72,6 @@ typedef struct  {
     BOOL                     _hasValue;
     ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
     id<CPDoubleDom>            _dom;
-    CPDoubleEventNetwork      _net;
     CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
@@ -93,7 +85,6 @@ typedef struct  {
 @interface CPDoubleViewOnIntVarI : ORObject<CPDoubleVar,CPDoubleVarExtendedItf,CPIntVarNotifier> {
     CPEngineI* _engine;
     CPIntVar* _theVar;
-    CPDoubleEventNetwork _net;
 }
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;

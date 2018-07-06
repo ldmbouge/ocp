@@ -14,7 +14,7 @@
 #import "CPIntVarI.h"
 #import "CPFloatVarI.h"
 #import "CPEngineI.h"
-#import "fpi.h"
+#import <ORFoundation/fpi.h>
 
 
 @implementation CPRestrictI

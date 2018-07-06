@@ -13,8 +13,6 @@
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 
-#include <fpi.h>
-
 @interface CPDoubleDom : NSObject<CPDoubleDom,NSCopying> {
     id<ORTrail>        _trail;
     ORDouble            _imin;

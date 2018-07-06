@@ -34,7 +34,8 @@
 #import <values.h>
 #endif
 
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
+
 #if __clang_major__<=3 && __clang_minor__<=6
 #define _Nonnull
 #endif

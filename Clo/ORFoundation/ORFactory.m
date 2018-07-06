@@ -17,7 +17,7 @@
 #import "ORConstraintI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
 
 //#import <objcp/CPBitMacros.h>
 

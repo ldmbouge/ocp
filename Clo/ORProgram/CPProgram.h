@@ -13,7 +13,7 @@
 #import <ORFoundation/ORParameter.h>
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBitVarHeuristic.h>
-#import <objcp/CPData.h>
+#import <objcp/objcp.h>
 
 @protocol ORModel;
 @protocol ORSearchController;

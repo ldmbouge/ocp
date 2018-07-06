@@ -184,7 +184,7 @@ func packageVoidArray(sz : Int,body : (Int32,UnsafeMutablePointer<VoidPtr>,VoidB
    let ptr = UnsafeMutablePointer<VoidPtr>.allocate(capacity:sz)
    let ta = UnsafeMutableBufferPointer<VoidPtr>(start: ptr, count: sz)
    let rv = body(Int32(sz), ptr,ta)
-   ptr.deallocate(capacity:sz)
+   ptr.deallocate()
    return rv;
 }
 
