@@ -5086,6 +5086,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 -(void) post
 {
+  //NSLog(@"channel(post -BEFORE): %@",[self description]);
    [self propagate];
    if (![_x bound])
       [_x whenChangeDo:^{
@@ -5096,6 +5097,13 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          [self propagateIntToBit];
       } onBehalf:self];
    [self propagate];
+   //NSLog(@"channel(post -AFTER): %@",[self description]);   
+}
+-(void) propagate
+{
+  [_xc updateMin:(ORInt)_x.min andMax: (ORInt)_x.max];
+  [_x updateMin:(ORULong)_xc.min];
+  [_x updateMax:(ORULong)_xc.max];
 }
 -(void) propagateIntToBit
 {

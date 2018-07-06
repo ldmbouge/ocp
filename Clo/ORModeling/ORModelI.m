@@ -283,7 +283,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORModelI [%p] dealloc called...  source (%p) RC[%lu]\n",self,_source,(unsigned long)[_source retainCount]);
+   //NSLog(@"ORModelI [%p] dealloc called...  source (%p) RC[%lu]\n",self,_source,(unsigned long)[_source retainCount]);
    [_source release];
    [_vars release];
    [_mStore release];
@@ -685,7 +685,7 @@
    _src    = src;
    _notes  = notes;
    _current = nil;
-   NSLog(@"size: %zu",class_getInstanceSize([ORBatchModel class]));
+   //NSLog(@"size: %zu",class_getInstanceSize([ORBatchModel class]));
    return self;
 }
 -(id<ORVar>) addVariable: (id<ORVar>) var

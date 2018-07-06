@@ -67,16 +67,16 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-p4"
-            isEnabled = "YES">
+            argument = "-p2"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-q10"
+            argument = "-q9"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-h1"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-w2.0"
