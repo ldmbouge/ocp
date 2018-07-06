@@ -3007,8 +3007,8 @@
       ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
       ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
       ORFloat mid = tmpMin/2 + tmpMax/2;
-      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats,mid);
-      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
+      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats- (xi.min == -infinityf()),mid);
+      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats - (xi.max == +infinityf()),fp_next_float(mid));
       updateFTWithValues(&interval[0],xi.min,deltaMin);
       updateFTWithValues(&interval[1],deltaMax,xi.max);
       length++;
@@ -3045,8 +3045,8 @@
       ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
       ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
       ORFloat mid = tmpMin/2 + tmpMax/2;
-      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats,mid);
-      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
+      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats - (xi.min == -infinityf()),mid);
+      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats - (xi.max == +infinityf()),fp_next_float(mid));
       for(ORFloat v = xi.min; v <= deltaMin; v = fp_next_float(v)){
          updateFTWithValues(&interval[length-1], v,v);
          assert(length-1 >= 0 && length-1 < nb);
