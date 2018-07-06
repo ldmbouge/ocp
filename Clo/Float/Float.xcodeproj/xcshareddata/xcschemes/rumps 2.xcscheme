@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "08A5AAF91E932676005DA25A"
+               BlueprintIdentifier = "5BD8BEE720EFAEA500AF6787"
                BuildableName = "rumps"
                BlueprintName = "rumps"
-               ReferencedContainer = "container:../Clo.xcodeproj">
+               ReferencedContainer = "container:Float.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "08A5AAF91E932676005DA25A"
+            BlueprintIdentifier = "5BD8BEE720EFAEA500AF6787"
             BuildableName = "rumps"
             BlueprintName = "rumps"
-            ReferencedContainer = "container:../Clo.xcodeproj">
+            ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -55,10 +55,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "08A5AAF91E932676005DA25A"
+            BlueprintIdentifier = "5BD8BEE720EFAEA500AF6787"
             BuildableName = "rumps"
             BlueprintName = "rumps"
-            ReferencedContainer = "container:../Clo.xcodeproj">
+            ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -74,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "08A5AAF91E932676005DA25A"
+            BlueprintIdentifier = "5BD8BEE720EFAEA500AF6787"
             BuildableName = "rumps"
             BlueprintName = "rumps"
-            ReferencedContainer = "container:../Clo.xcodeproj">
+            ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
