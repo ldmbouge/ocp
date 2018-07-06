@@ -67,7 +67,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		08A5AD6A1E932A32005DA25A /* optimized_heron */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = optimized_heron; path = "/Users/zitoun/Documents/Programmation/objWorkedVersion/objcp-private/Clo/mpsReader/build/Debug/optimized_heron"; sourceTree = "<absolute>"; };
 		08CE602F1D4592B80041C97D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B4E17591CF3398200A15258 /* grammar.ypp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = grammar.ypp; path = ../mpsReader/grammar.ypp; sourceTree = "<group>"; };
 		5B4E175A1CF3398200A15258 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parser.cpp; path = ../mpsReader/parser.cpp; sourceTree = "<group>"; };
@@ -80,7 +79,6 @@
 		5B4E17681CF3C54D00A15258 /* model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = model.hpp; path = ../mpsReader/model.hpp; sourceTree = "<group>"; };
 		5B4E176A1CF4D0EC00A15258 /* mps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mps.cpp; path = ../mpsReader/mps.cpp; sourceTree = "<group>"; };
 		5B4E176B1CF4D0EC00A15258 /* mps.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mps.hpp; path = ../mpsReader/mps.hpp; sourceTree = "<group>"; };
-		5B4E17711CF4DE7400A15258 /* libMPSReader.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMPSReader.dylib; path = "/Users/zitoun/Documents/Programmation/objWorkedVersion/objcp-private/Clo/mpsReader/build/Debug/libMPSReader.dylib"; sourceTree = "<absolute>"; };
 		5B4E17731CF4DE7400A15258 /* MPSReader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MPSReader.hpp; sourceTree = "<group>"; };
 		5B4E17751CF4DE7400A15258 /* MPSReaderPriv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MPSReaderPriv.hpp; sourceTree = "<group>"; };
 		5B4E17771CF4DE7400A15258 /* MPSReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MPSReader.cpp; sourceTree = "<group>"; };
@@ -94,8 +92,10 @@
 		5B4E178F1CF4E40700A15258 /* ORScheduler.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORScheduler.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORScheduler.framework"; sourceTree = "<group>"; };
 		5B4E17901CF4E40700A15258 /* ORSchedulingProgram.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORSchedulingProgram.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORSchedulingProgram.framework"; sourceTree = "<group>"; };
 		5B4E17911CF4E40700A15258 /* ORUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORUtilities.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORUtilities.framework"; sourceTree = "<group>"; };
+		5B791B0520EF7CCF00851892 /* mpsReader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpsReader; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B791B0620EF7CCF00851892 /* libMPSReader.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libMPSReader.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B791B0720EF7CCF00851892 /* optimized_heron */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = optimized_heron; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B8295351D22EAB400DC55F1 /* wolsey1.mps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wolsey1.mps; sourceTree = "<group>"; };
-		5BC38DCD1CF3385D0019E673 /* mpsReader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = mpsReader; path = "/Users/zitoun/Documents/Programmation/objWorkedVersion/objcp-private/Clo/mpsReader/build/Debug/mpsReader"; sourceTree = "<absolute>"; };
 		5BC38DD01CF3385D0019E673 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -178,6 +178,9 @@
 				5BC38DCF1CF3385D0019E673 /* mpsReader */,
 				5B4E17721CF4DE7400A15258 /* MPSReader */,
 				08CE602E1D4592B80041C97D /* solve_cubic */,
+				5B791B0520EF7CCF00851892 /* mpsReader */,
+				5B791B0620EF7CCF00851892 /* libMPSReader.dylib */,
+				5B791B0720EF7CCF00851892 /* optimized_heron */,
 			);
 			sourceTree = "<group>";
 		};
@@ -223,7 +226,7 @@
 			);
 			name = optimized_heron;
 			productName = optimized_heron;
-			productReference = 08A5AD6A1E932A32005DA25A /* optimized_heron */;
+			productReference = 5B791B0720EF7CCF00851892 /* optimized_heron */;
 			productType = "com.apple.product-type.tool";
 		};
 		5B4E17701CF4DE7400A15258 /* MPSReader */ = {
@@ -240,7 +243,7 @@
 			);
 			name = MPSReader;
 			productName = MPSReader;
-			productReference = 5B4E17711CF4DE7400A15258 /* libMPSReader.dylib */;
+			productReference = 5B791B0620EF7CCF00851892 /* libMPSReader.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		5BC38DCC1CF3385D0019E673 /* mpsReader */ = {
@@ -258,7 +261,7 @@
 			);
 			name = mpsReader;
 			productName = mpsReader;
-			productReference = 5BC38DCD1CF3385D0019E673 /* mpsReader */;
+			productReference = 5B791B0520EF7CCF00851892 /* mpsReader */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -267,8 +270,8 @@
 		5BC38DC51CF3385D0019E673 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0820;
-		         	ORGANIZATIONNAME = "Laurent Michel";
+				LastUpgradeCheck = 0940;
+				ORGANIZATIONNAME = "Laurent Michel";
 				TargetAttributes = {
 					08A5AD691E932A32005DA25A = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -410,12 +413,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -462,12 +467,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -498,6 +505,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-Wno-deprecated-register",
 					"$(OTHER_CFLAGS)",
@@ -510,6 +518,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-Wno-deprecated-register",
 					"$(OTHER_CFLAGS)",
