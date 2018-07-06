@@ -767,13 +767,13 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
    ORUInt* pc = (ORUInt*)&val;
    ORUInt boundAt0w0 = ~(_low[0]._val ^ _up[0]._val) & ~_low[0]._val & mask;
    ORUInt boundAt1w0 = ~(_low[0]._val ^ _up[0]._val) & _up[0]._val & mask;
-   ORBool W0Ok = ((pc[0] & boundAt0w0) == boundAt0w0) && ((pc[0] & boundAt1w0) == boundAt1w0);
+   ORBool W0Ok = ((~pc[0] & boundAt0w0) == boundAt0w0) && ((pc[0] & boundAt1w0) == boundAt1w0);
    if (!W0Ok) return ORFailure;
    if (_wordLength >= 2) {
       ORULong w1Mask = (0x1 << (_bitLength - 32)) - 1;
       ORUInt boundAt0w1 = ~(_low[1]._val ^ _up[1]._val) & ~_low[1]._val & w1Mask;
       ORUInt boundAt1w1 = ~(_low[1]._val ^ _up[1]._val) & _up[1]._val & w1Mask;
-      ORBool W1Ok = ((pc[1] & boundAt0w1) == boundAt0w1) && ((pc[1] & boundAt1w1) == boundAt1w1);
+      ORBool W1Ok = ((~pc[1] & boundAt0w1) == boundAt0w1) && ((pc[1] & boundAt1w1) == boundAt1w1);
       if (!W1Ok) return ORFailure;
    }
    //Deal with arrays < 64 bits long
