@@ -152,7 +152,7 @@
 		<key>Odometrie_1.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>153</integer>
+			<integer>154</integer>
 		</dict>
 		<key>OptimizedHeron.xcscheme</key>
 		<dict>
@@ -318,6 +318,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>26</integer>
+		</dict>
+		<key>dummy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>195</integer>
 		</dict>
 		<key>dxAES.xcscheme</key>
 		<dict>
@@ -757,7 +762,7 @@
 		<key>verifSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>154</integer>
+			<integer>156</integer>
 		</dict>
 		<key>vietnameseSnake.xcscheme_^#shared#^_</key>
 		<dict>
