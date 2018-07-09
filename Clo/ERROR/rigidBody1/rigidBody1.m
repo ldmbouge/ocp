@@ -13,11 +13,15 @@
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
 
+#define LOO_MEASURE_TIME(__message) \
+for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
+NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
+
 #define printFvar(name, var) NSLog(@""name" : [% 20.20e, % 20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 20.20e, % 20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
 #define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
 #define getFminErr(var) *[(id<CPFloatVar>)[cp concretize:var] minErr]
 
-#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 24.24e, % 24.24e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
+#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 3.2e, % 3.2e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
@@ -72,6 +76,7 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
       [cp setMinErrorDD:x2 minErrorF:0.0];
       [cp setMaxErrorDD:x3 maxErrorF:0.0];
       [cp setMinErrorDD:x3 minErrorF:0.0];
+      [cp setMinErrorDD:z minErrorF:nextafter(0.0f, +INFINITY)];
       //[cp setMinErrorDD:z minErrorF:0.01e-19];
       [cp solve:^{
          if (search)
@@ -92,6 +97,8 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
+   LOO_MEASURE_TIME(@"d"){
    rigidBody1_d(1, argc, argv);
+   }
    return 0;
 }

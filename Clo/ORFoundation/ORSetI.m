@@ -401,6 +401,76 @@
 //----------------
 
 //-------------------------------------------------
+//ORRationalRange
+//-------------------------------------------------
+
+@implementation ORRationalRangeI {
+   ORRational _low;
+   ORRational _up;
+}
+-(id<ORRationalRange>)init:(ORRational) low up:(ORRational)up
+{
+   self = [super init];
+   rational_set(&_low, &low);
+   rational_set(&_up, &up);
+   return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORRationalRangeI allocWithZone:zone] init:_low up:_up];
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]])
+      return rational_eq(&_low, &((ORRationalRangeI*)object)->_low) && rational_eq(&_up, &((ORRationalRangeI*)object)->_up);
+   else return NO;
+}
+-(NSUInteger)hash
+{
+   return (NSUInteger)rational_get_d(&_low) ^ (NSUInteger)rational_get_d(&_up);
+}
+-(ORRational)low
+{
+   return _low;
+}
+-(ORRational)up
+{
+   return _up;
+}
+-(ORBool) isDefined
+{
+   return rational_leq(&_low, &_up);
+}
+-(ORBool)inRange:(ORRational)e
+{
+   return rational_leq(&_low, &e) && rational_leq(&e, &_up);
+}
+-(NSString*)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"[%lf,%lf]",rational_get_d(&_low),rational_get_d(&_up)];
+   return rv;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRationalRange:self];
+}
+- (void) encodeWithCoder:(NSCoder*) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
+}
+- (id) initWithCoder:(NSCoder*) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   return self;
+}
+@end
+//----------------
+
+//-------------------------------------------------
 //ORDOUBLERange
 //-------------------------------------------------
 

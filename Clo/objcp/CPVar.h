@@ -183,13 +183,13 @@ enum CPVarClass {
 @protocol CPFloatVar<CPVar,CPNumVarSubscriber>
 -(ORFloat) min;
 -(ORFloat) max;
--(ORRational*) minErr;
--(ORRational*) maxErr;
+-(ORRational) minErr;
+-(ORRational) maxErr;
 -(ORDouble) minErrF;
 -(ORDouble) maxErrF;
 -(ORFloat) value;
 -(ORFloat) floatValue;
--(ORRational*) errorValue;
+-(ORRational) errorValue;
 -(ORInterval) bounds;
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
@@ -203,11 +203,26 @@ enum CPVarClass {
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat) newMax;
 @end
 
+@protocol CPRationalVar<CPVar>
+-(ORRational) min;
+-(ORRational) max;
+-(ORRational) value;
+-(ORRational) rationalValue;
+-(ORInterval) bounds;
+-(ORBool) member:(ORRational)v;
+-(ORBool) bound;
+-(void) bind:(ORRational) val;
+-(void) updateMin:(ORRational) newMin;
+-(void) updateMax:(ORRational) newMax;
+-(void) assignRelaxationValue: (ORRational) f;
+-(void) updateInterval: (ORRational) newMin and:(ORRational) newMax;
+@end
+
 @protocol CPDoubleVar<CPVar>
 -(ORDouble) min;
 -(ORDouble) max;
--(ORRational*) minErr;
--(ORRational*) maxErr;
+-(ORRational) minErr;
+-(ORRational) maxErr;
 -(ORDouble) minErrF;
 -(ORDouble) maxErrF;
 -(ORDouble) value;
@@ -244,6 +259,14 @@ enum CPVarClass {
 -(void) set: (id<CPFloatVar>) x at: (ORInt) value;
 -(id<CPFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<CPFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
+@protocol CPRationalVarArray <CPVarArray>
+-(id<CPRationalVar>) at: (ORInt) value;
+-(void) set: (id<CPFloatVar>) x at: (ORInt) value;
+-(id<CPRationalVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPRationalVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 

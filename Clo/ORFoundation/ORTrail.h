@@ -12,6 +12,8 @@
 #import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORTracker.h>
 
+#include "rationalUtilities.h"
+
 @protocol ORIntRange;
 
 @protocol ORTrail <NSObject>

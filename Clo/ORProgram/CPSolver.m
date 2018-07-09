@@ -30,6 +30,7 @@
 #import <objcp/CPBitVarI.h>
 #import <objcp/CPFloatVarI.h>
 #import <objcp/CPDoubleVarI.h>
+#import <objcp/CPRationalVarI.h>
 
 #if defined(__linux__)
 #import <values.h>
@@ -3389,12 +3390,12 @@
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMaxErrorF:maxError];
 }
--(ORRational*) minErrorFQ:(id<ORVar>)x
+-(ORRational) minErrorFQ:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx minErr];
 }
--(ORRational*) maxErrorFQ:(id<ORVar>)x
+-(ORRational) maxErrorFQ:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx maxErr];
@@ -3419,6 +3420,21 @@
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx max];
 }
+
+-(ORDouble) minQ:(id<ORVar>)x
+{
+   CPRationalVarI* cx = _gamma[x.getId];
+   ORRational min;
+   min = [cx min];
+   return rational_get_d(&min);
+}
+-(ORDouble) maxQ:(id<ORVar>)x
+{
+   CPRationalVarI* cx = _gamma[x.getId];
+   ORRational max;
+   max = [cx max];
+   return rational_get_d(&max);
+}
 -(ORDouble) minErrorDD:(id<ORVar>)x
 {
    CPDoubleVarI* cx = _gamma[x.getId];
@@ -3439,12 +3455,12 @@
    CPDoubleVarI* cx = _gamma[x.getId];
    [cx updateMaxErrorF:maxError];
 }
--(ORRational*) minErrorDQ:(id<ORVar>)x
+-(ORRational) minErrorDQ:(id<ORVar>)x
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx minErr];
 }
--(ORRational*) maxErrorDQ:(id<ORVar>)x
+-(ORRational) maxErrorDQ:(id<ORVar>)x
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx maxErr];

@@ -77,6 +77,15 @@
 -(NSString*)description;
 @end
 
+@interface ORRationalRangeI : ORObject<ORRationalRange,NSCopying>
+-(id<ORRationalRange>)init:(ORRational) low up:(ORRational)up;
+-(ORRational)low;
+-(ORRational)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORRational)e;
+-(NSString*)description;
+@end
+
 @interface ORDoubleRangeI : ORObject<ORDoubleRange,NSCopying>
 -(id<ORDoubleRange>)init:(ORDouble) low up:(ORDouble)up;
 -(ORDouble)low;

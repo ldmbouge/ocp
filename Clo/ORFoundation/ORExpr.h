@@ -43,7 +43,8 @@ typedef NS_ENUM(NSUInteger,ORVType) {
    ORTLDouble = 5,
    ORTBit  = 6,
    ORTSet  = 7,
-   ORTNA = 8
+   ORTRational = 8,
+   ORTNA = 9
 };
 #else
 typedef enum ORRelationType {
@@ -70,49 +71,54 @@ typedef enum ORVType {
    ORTLDouble = 5,
    ORTBit  = 6,
    ORTSet  = 7,
-   ORTNA = 8
+   ORTRational = 8,
+   ORTNA = 9
 } ORVType;
 
 #endif
 
-static ORVType lookup_relation_table[][9] = {
-    //ORTBOOL  ORTINT    ORTREAL,  ORTFLOAT,  ORTDouble,  ORTLDOUBLE, ORTBIT,     ORTSET,  ORTNA
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTBOOL
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTINT
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTREAL
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      // ORTFLOAT
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTDouble
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTLDouble
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTBIT
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTSET
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool,  ORTNA}       //ORTTNA
+static ORVType lookup_relation_table[][10] = {
+    //ORTBOOL  ORTINT   ORTREAL,  ORTFLOAT, ORTDouble,  ORTLDOUBLE, ORTBIT,    ORTSET,  ORTRATIONAL,  ORTNA
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTBOOL
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTINT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTREAL
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTFLOAT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTDouble
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTLDouble
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTBIT
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTSET
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTBool},     // ORTRATIONAL
+    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,      ORTNA},       // ORTTNA
 };
 
 
-static ORVType lookup_logical_table[][9] = {
-    //ORTBOOL  ORTINT    ORTREAL,  ORTFLOAT,  ORTDouble,  ORTLDOUBLE, ORTBIT,     ORTSET,  ORTNA
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTBOOL
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTINT
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},     // ORTREAL
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      // ORTFLOAT
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTDouble
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTLDouble
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTBIT
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool},      //ORTSET
-    {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool,  ORTNA}       //ORTTNA
+static ORVType lookup_logical_table[][10] = {
+   //ORTBOOL  ORTINT   ORTREAL,  ORTFLOAT, ORTDouble,  ORTLDOUBLE, ORTBIT,    ORTSET,  ORTRATIONAL,   ORTNA
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTBOOL
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTINT
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTREAL
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTFLOAT
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTDouble
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTLDouble
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTBIT
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTSET
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTBool},     // ORTRATIONAL
+   {ORTBool,  ORTBool, ORTBool,  ORTBool,  ORTBool,    ORTBool,    ORTBool,   ORTBool, ORTBool,       ORTNA},       // ORTTNA
 };
 
-static ORVType lookup_expr_table[][9] = {
-    //ORTBOOL  ORTINT       ORTREAL,  ORTFLOAT,  ORTDouble,  ORTLDOUBLE, ORTBIT,   ORTSET,  ORTNA
-    {ORTBool,  ORTInt,    ORTReal,  ORTFloat,   ORTDouble, ORTLDouble, ORTBit,  ORTSet, ORTBool},     // ORTBOOL
-    {ORTInt,  ORTInt,     ORTReal,  ORTFloat,  ORTDouble, ORTLDouble, ORTBit,   ORTSet,  ORTInt},     // ORTINT
-    {ORTReal,  ORTReal,    ORTReal,  ORTReal,   ORTReal,   ORTReal,    ORTBit,   ORTSet,  ORTReal},     // ORTREAL
-    {ORTFloat,  ORTFloat,   ORTReal,  ORTFloat,  ORTDouble, ORTLDouble,  ORTBit,   ORTSet, ORTFloat},      // ORTFLOAT
-    {ORTDouble,  ORTDouble,  ORTReal,  ORTDouble, ORTDouble, ORTLDouble, ORTBit,   ORTSet, ORTDouble},      //ORTDouble
-    {ORTLDouble,  ORTLDouble, ORTReal,  ORTLDouble,ORTLDouble, ORTLDouble, ORTBit,   ORTSet, ORTLDouble},      //ORTLDouble
-    {ORTBit,  ORTBit,     ORTBit,   ORTBit,   ORTBit,     ORTBit,     ORTBit,   ORTSet, ORTBit},      //ORTBIT
-    {ORTSet,  ORTSet,     ORTSet,   ORTSet,   ORTSet,     ORTSet,     ORTSet,   ORTSet, ORTSet},      //ORTSET
-    {ORTBool,  ORTInt,     ORTReal, ORTFloat,  ORTDouble,  ORTLDouble, ORTBit,    ORTSet,  ORTNA}       //ORTTNA
+static ORVType lookup_expr_table[][10] = {
+    //ORTBOOL     ORTINT         ORTREAL, ORTFLOAT,      ORTDouble,     ORTLDOUBLE,    ORTBIT,  ORTSET,  ORTRATIONAL,   ORTNA
+    {ORTBool,     ORTInt,        ORTReal, ORTFloat,      ORTDouble,     ORTLDouble,    ORTBit,  ORTSet,  ORTRational,   ORTBool},      // ORTBOOL
+    {ORTInt,      ORTInt,        ORTReal, ORTFloat,      ORTDouble,     ORTLDouble,    ORTBit,  ORTSet,  ORTRational,   ORTInt},       // ORTINT
+    {ORTReal,     ORTReal,       ORTReal, ORTReal,       ORTReal,       ORTReal,       ORTBit,  ORTSet,  ORTReal,       ORTReal},      // ORTREAL
+    {ORTFloat,    ORTFloat,      ORTReal, ORTFloat,      ORTDouble,     ORTLDouble,    ORTBit,  ORTSet,  ORTRational,   ORTFloat},     // ORTFLOAT
+    {ORTDouble,   ORTDouble,     ORTReal, ORTDouble,     ORTDouble,     ORTLDouble,    ORTBit,  ORTSet,  ORTRational,   ORTDouble},    // ORTDouble
+    {ORTLDouble,  ORTLDouble,    ORTReal, ORTLDouble,    ORTLDouble,    ORTLDouble,    ORTBit,  ORTSet,  ORTRational,   ORTLDouble},   // ORTLDouble
+    {ORTBit,      ORTBit,        ORTBit,  ORTBit,        ORTBit,        ORTBit,        ORTBit,  ORTSet,  ORTBit,        ORTBit},       // ORTBIT
+    {ORTSet,      ORTSet,        ORTSet,  ORTSet,        ORTSet,        ORTSet,        ORTSet,  ORTSet,  ORTSet,        ORTSet},       // ORTSET
+    {ORTRational, ORTRational,   ORTReal, ORTRational,   ORTRational,   ORTRational,   ORTBit,  ORTSet,  ORTRational,   ORTRational},  // ORTRATIONAL
+    {ORTBool,     ORTInt,        ORTReal, ORTFloat,      ORTDouble,     ORTLDouble,    ORTBit,  ORTSet,  ORTRational,   ORTNA},        // ORTTNA
+
 };
 
 @protocol ORExpr <ORConstraint,NSObject,NSCoding>
@@ -121,10 +127,13 @@ static ORVType lookup_expr_table[][9] = {
 -(ORInt) max;
 -(ORFloat) fmin;
 -(ORFloat) fmax;
+-(ORRational) qmin;
+-(ORRational) qmax;
 -(ORDouble) dmin;
 -(ORDouble) dmax;
 -(ORInt) intValue;
 -(ORFloat) floatValue;
+-(ORRational) rationalValue;
 -(ORDouble) doubleValue;
 -(ORBool) isConstant;
 -(ORBool) isVariable;
@@ -180,6 +189,7 @@ static ORVType lookup_expr_table[][9] = {
 
 @interface NSNumber (Expressions)
 -(id<ORExpr>)asExpression:(id<ORTracker>)tracker;
+-(ORRational)rationalValue;
 -(id<ORRelation>) set: (id<ORExpr>) e;
 -(id<ORExpr>) plus: (id<ORExpr>) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;

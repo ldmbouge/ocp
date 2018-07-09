@@ -20,6 +20,7 @@
 
 #include "fpi.h"
 #include "gmp.h"
+#include "rationalUtilities.h"
 
 #define NB_DOUBLE_BY_E (4.5035996e+15)
 #define ED_MAX (2047)
@@ -78,25 +79,15 @@ typedef struct  {
 } CPDoubleEventNetwork;
 
 @class CPDoubleVarI;
-/*
+
 @protocol CPDoubleVarNotifier <NSObject>
--(CPDoubleVarI*) findAffine: (ORDouble) scale shift: (ORDouble) shift;
--(void) bindEvt:(id<CPDoubleDom>)sender;
--(void) bindEvtErr:(id<CPRationalDom>)sender;
--(void) changeMinEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
--(void) changeMinEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
--(void) changeMaxEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
-@end
- */
-@protocol CPDoubleVarNotifier <CPFVarNotifier>
 -(CPDoubleVarI*) findAffine: (ORDouble) scale shift: (ORDouble) shift;
 -(void) bindEvt:(id<CPDoubleDom>)sender;
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
 @end
 
-@interface CPDoubleVarI : ORObject<CPDoubleVar,CPDoubleVarNotifier,CPDoubleVarExtendedItf> {
+@interface CPDoubleVarI : ORObject<CPDoubleVar,CPDoubleVarNotifier,CPFloatVarRatNotifier,CPDoubleVarExtendedItf> {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORDouble                 _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
@@ -113,7 +104,7 @@ typedef struct  {
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 -(ORDouble) doubleValue;
--(ORRational*) errorValue;
+-(ORRational) errorValue;
 -(ORLDouble) domwidth;
 -(id<CPDom>) domain;
 -(TRRationalInterval) domainError;
@@ -147,8 +138,8 @@ typedef struct {
 
 /* Already defined */
 typedef struct {
-    rational_interval result;
-    rational_interval interval;
+    ri result;
+    ri interval;
     int changed;
 } intersectionIntervalErrorD;
 
@@ -165,7 +156,7 @@ static inline bool isDisjointWithDV(double xmin,double xmax,double ymin, double 
 
 static inline bool isDisjointWithDVR(ORRational xmin, ORRational xmax, ORRational ymin, ORRational ymax)
 {
-    return (mpq_cmp(xmax, ymin) < 0) || (mpq_cmp(ymax, xmin) < 0 );
+    return (rational_cmp(&xmax, &ymin) < 0) || (rational_cmp(&ymax, &xmin) < 0 );
 }
 
 static inline bool isIntersectingWithDV(double xmin,double xmax,double ymin, double ymax)
@@ -185,7 +176,7 @@ static inline bool isIntersectingWithD(CPDoubleVarI* x, CPDoubleVarI* y)
 
 static inline bool isDisjointWithDR(CPDoubleVarI* x, CPDoubleVarI* y)
 {
-    return isDisjointWithDVR(*[x minErr], *[x maxErr], *[y minErr], *[y maxErr]);
+    return isDisjointWithDVR([x minErr], [x maxErr], [y minErr], [y maxErr]);
 }
 
 static inline bool canPrecedeD(CPDoubleVarI* x, CPDoubleVarI* y)
@@ -208,42 +199,45 @@ static inline void updateDoubleInterval(double_interval * ft,CPDoubleVarI* x)
    ft->sup = x.max;
 }
 
-static inline void makeRationalIntervalD(rational_interval* ri, ORRational min, ORRational max)
+static inline void makeRationalIntervalD(ri ri_, ORRational min, ORRational max)
 {
-    mpq_set(ri->inf, min);
-    mpq_set(ri->sup, max);
+   ri_set_q(&ri_, &min, &max);
 }
 
-static inline void updateRationalIntervalD(rational_interval* ri, CPDoubleVarI* x)
+static inline void updateRationalIntervalD(ri ri_, CPDoubleVarI* x)
 {
-    mpq_set(ri->inf, *x.minErr);
-    mpq_set(ri->sup, *x.maxErr);
+    ORRational minE;
+    ORRational maxE;
+    rational_init(&minE);
+    rational_init(&maxE);
+    minE = x.minErr;
+    maxE = x.maxErr;
+    ri_set_q(&ri_, &minE, &maxE);
+    rational_clear(&minE);
+    rational_clear(&maxE);
 }
 
-static inline void freeRationalIntervalD(rational_interval * r)
+static inline void freeRationalIntervalD(ri r)
 {
-    mpq_clears(r->inf,r->sup, NULL);
+    ri_clear(&r);
 }
 
-static inline void setRationalIntervalD(rational_interval* r, rational_interval* r2){
-    mpq_set(r->inf, r2->inf);
-    mpq_set(r->sup, r2->sup);
+static inline void setRationalIntervalD(ri r, ri r2){
+   ri_set(&r, &r2);
 }
 
 static inline void minErrorD(ORRational* r, ORRational* a, ORRational* b){
-    // if(mpq_get_d(*a) > mpq_get_d(*b)){ // WRONG: this might produce strange results (cpjm)
-    if (mpq_cmp(*a, *b) > 0)
-        mpq_set(*r, *b);
+    if (rational_cmp(a, b) > 0)
+        rational_set(r, b);
     else
-        mpq_set(*r, *a);
+        rational_set(r, a);
 }
 
 static inline void maxErrorD(ORRational* r, ORRational* a, ORRational* b){
-    // if(mpq_get_d(*a) > mpq_get_d(*b)){ // WRONG: this might produce strange results (cpjm)
-    if (mpq_cmp(*a, *b) > 0)
-        mpq_set(*r, *a);
+    if (rational_cmp(a, b) > 0)
+        rational_set(r, a);
     else
-        mpq_set(*r, *b);
+        rational_set(r, b);
 }
 
 static inline intersectionIntervalD intersectionD(double_interval r, double_interval x, ORDouble percent)
@@ -260,65 +254,67 @@ static inline intersectionIntervalD intersectionD(double_interval r, double_inte
    return (intersectionIntervalD){r,changed};
 }
 
-static inline void intersectionErrorD(intersectionIntervalErrorD* interErr, rational_interval original_error, rational_interval computed_error){
+static inline void intersectionErrorD(intersectionIntervalErrorD* interErr, ri original_error, ri computed_error){
     int cmp_val;
     interErr->changed = false;
     
     /* inf = max of (original_error.inf, computed_error.inf) */
-    cmp_val = mpq_cmp(original_error.inf, computed_error.inf);
+    cmp_val = rational_cmp(&original_error.inf, &computed_error.inf);
     if(cmp_val < 0) {
         interErr->changed = true;
-        mpq_set(interErr->result.inf, computed_error.inf);
+        rational_set(&interErr->result.inf, &computed_error.inf);
     } else if (cmp_val >= 0) {
-        mpq_set(interErr->result.inf, original_error.inf);
+        rational_set(&interErr->result.inf, &original_error.inf);
     }
     /* original_error > computed_error */
-    cmp_val = mpq_cmp(original_error.sup, computed_error.sup);
+    cmp_val = rational_cmp(&original_error.sup, &computed_error.sup);
     if(cmp_val > 0){
         interErr->changed = true;
-        mpq_set(interErr->result.sup, computed_error.sup);
+        rational_set(&interErr->result.sup, &computed_error.sup);
     } else if (cmp_val <= 0) {
-        mpq_set(interErr->result.sup, original_error.sup);
+        rational_set(&interErr->result.sup, &original_error.sup);
     }
     
-    if(mpq_cmp(interErr->result.inf, interErr->result.sup) > 0) // interErr empty !
+    if(rational_cmp(&interErr->result.inf, &interErr->result.sup) > 0) // interErr empty !
         failNow();
     
     if(interErr->changed){
-        rational_interval percent;
+        ri percent;
         ORRational hundred;
-        mpq_inits(hundred, percent.inf, percent.sup, NULL);
+        rational_init(&hundred);
+        ri_init(&percent);
         
-        mpq_sub(percent.inf, original_error.inf, interErr->result.inf);
-        mpq_sub(percent.sup, original_error.sup, interErr->result.sup);
+        rational_subtraction(&percent.inf, &original_error.inf, &interErr->result.inf);
+        rational_subtraction(&percent.sup, &original_error.sup, &interErr->result.sup);
         
-        mpq_set_d(hundred, 0.0f);
-        if(mpq_equal(original_error.inf, hundred)){
-            mpq_set_d(percent.inf, -DBL_MAX);
+        rational_set_d(&hundred, 0.0f);
+        if(rational_eq(&original_error.inf, &hundred)){
+            rational_set_d(&percent.inf, -DBL_MAX);
         } else{
-            mpq_div(percent.inf, percent.inf, original_error.inf);
+            rational_division(&percent.inf, &percent.inf, &original_error.inf);
         }
-        if(mpq_equal(original_error.sup, hundred)){
-            mpq_set_d(percent.sup, DBL_MAX);
+        if(rational_eq(&original_error.sup, &hundred)){
+            rational_set_d(&percent.sup, DBL_MAX);
         } else{
-            mpq_div(percent.sup, percent.sup, original_error.sup);
+            rational_division(&percent.sup, &percent.sup, &original_error.sup);
         }
         
-        mpq_set_d(hundred, 100.0f);
-        mpq_mul(percent.inf, percent.inf, hundred);
-        mpq_mul(percent.sup, percent.sup, hundred);
+        rational_set_d(&hundred, 100.0f);
+        rational_multiplication(&percent.inf, &percent.inf, &hundred);
+        rational_multiplication(&percent.sup, &percent.sup, &hundred);
         
-        mpq_abs(percent.inf, percent.inf);
-        mpq_abs(percent.sup, percent.sup);
+        rational_abs(&percent.inf, &percent.inf);
+        rational_abs(&percent.sup, &percent.sup);
         
-        mpq_set_d(hundred, 1.0f);
+        rational_set_d(&hundred, 1.0f);
         
-        if(mpq_cmp(percent.inf, hundred) <= 0 && mpq_cmp(percent.sup, hundred) <= 0)
+        if(rational_cmp(&percent.inf, &hundred) <= 0 && rational_cmp(&percent.sup, &hundred) <= 0)
             interErr->changed = false;
         
-        mpq_clears(hundred, percent.inf, percent.sup, NULL);
+        rational_clear(&hundred);
+        ri_clear(&percent);
     }
-    mpq_set(interErr->interval.inf, original_error.inf);
-    mpq_set(interErr->interval.sup, original_error.sup);
+    rational_set(&interErr->interval.inf, &original_error.inf);
+   rational_set(&interErr->interval.sup, &original_error.sup);
 }
 

@@ -43,6 +43,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatRange: visit method not defined"];
 }
+-(void) visitRationalRange:(id<ORRationalRange>)v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalRange: visit method not defined"];
+}
 -(void) visitDoubleRange:(id<ORDoubleRange>)v
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "DoubleRange: visit method not defined"];
@@ -58,6 +62,10 @@
 -(void) visitFloatArray:(id<ORFloatArray>)v
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "floatArray: visit method not defined"];
+}
+-(void) visitRationalArray:(id<ORRationalArray>)v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "rationalArray: visit method not defined"];
 }
 -(void) visitDoubleArray:(id<ORDoubleArray>)v
 {
@@ -87,6 +95,10 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatVar: visit method not defined"];
+}
+-(void) visitRationalVar: (id<ORRationalVar>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalVar: visit method not defined"];
 }
 -(void) visitDoubleVar: (id<ORDoubleVar>) v
 {
@@ -273,9 +285,17 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];
 }
+-(void) visitRationalEqualc: (id<ORRationalEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalEqualc: visit method not defined"];
+}
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatAssignc: visit method not defined"];
+}
+-(void) visitRationalAssignC: (id<ORRationalAssignC>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalAssignc: visit method not defined"];
 }
 -(void) visitDoubleEqualc: (id<ORDoubleEqualc>)c
 {
@@ -292,6 +312,10 @@
 -(void) visitFloatNEqualc: (id<ORFloatNEqualc>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatNEqualc: visit method not defined"];
+}
+-(void) visitRationalNEqualc: (id<ORRationalNEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalNEqualc: visit method not defined"];
 }
 -(void) visitDoubleNEqualc: (id<ORDoubleNEqualc>)c
 {
@@ -323,6 +347,10 @@
 -(void) visitFloatAssign: (id<ORFloatAssign>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatAssign: visit method not defined"];
+}
+-(void) visitRationalAssign: (id<ORRationalAssign>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalAssign: visit method not defined"];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
@@ -456,49 +484,97 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyEqualc: visit method not defined"];
 }
+-(void) visitRationalReifyEqualc: (id<ORRationalReifyEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalReifyEqualc: visit method not defined"];
+}
 -(void) visitFloatReifyEqual: (id<ORFloatReifyEqual>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyEqual: visit method not defined"];
+}
+-(void) visitRationalReifyEqual: (id<ORRationalReifyEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalReifyEqual: visit method not defined"];
 }
 -(void) visitFloatReifyNEqualc: (id<ORFloatReifyNEqualc>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyNEqualc: visit method not defined"];
 }
+-(void) visitRationalReifyNEqualc: (id<ORRationalReifyNEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalReifyNEqualc: visit method not defined"];
+}
 -(void) visitFloatReifyNEqual: (id<ORFloatReifyNEqual>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyNEqual: visit method not defined"];
+}
+-(void) visitRationalReifyNEqual: (id<ORRationalReifyNEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalReifyNEqual: visit method not defined"];
 }
 -(void) visitFloatReifyLEqualc: (id<ORFloatReifyLEqualc>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyLEqualc: visit method not defined"];
 }
+-(void) visitRationalReifyLEqualc: (id<ORRationalReifyLEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalReifyLEqualc: visit method not defined"];
+}
 -(void) visitFloatReifyLEqual: (id<ORFloatReifyLEqual>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyLEqual: visit method not defined"];
+}
+-(void) visitRationalReifyLEqual: (id<ORRationalReifyLEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalReifyLEqual: visit method not defined"];
 }
 -(void) visitFloatReifyLThen: (id<ORFloatReifyLThen>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatReifyLThen: visit method not defined"];
 }
+-(void) visitRationalReifyLThen: (id<ORRationalReifyLThen>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalReifyLThen: visit method not defined"];
+}
 -(void) visitFloatReifyLThenc: (id<ORFloatReifyLThenc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatReifyLThenc: visit method not defined"];
+}
+-(void) visitRationalReifyLThenc: (id<ORRationalReifyLThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalsReifyLThenc: visit method not defined"];
 }
 -(void) visitFloatReifyGEqualc: (id<ORFloatReifyGEqualc>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyGEqualc: visit method not defined"];
 }
+-(void) visitRationalReifyGEqualc: (id<ORRationalReifyGEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalReifyGEqualc: visit method not defined"];
+}
 -(void) visitFloatReifyGEqual: (id<ORFloatReifyGEqual>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyGEqual: visit method not defined"];
+}
+-(void) visitRationalReifyGEqual: (id<ORRationalReifyGEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalReifyGEqual: visit method not defined"];
 }
 -(void) visitFloatReifyGThen: (id<ORFloatReifyGThen>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatReifyGThen: visit method not defined"];
 }
+-(void) visitRationalReifyGThen: (id<ORRationalReifyGThen>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalReifyGThen: visit method not defined"];
+}
 -(void) visitFloatReifyGThenc: (id<ORFloatReifyGThenc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatReifyGThenc: visit method not defined"];
+}
+-(void) visitRationalReifyGThenc: (id<ORRationalReifyGThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalReifyGThenc: visit method not defined"];
 }
 -(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>)c
 {
@@ -631,6 +707,38 @@
 -(void) visitFloatDiv: (id<ORFloatDiv>) c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatDiv: visit method not defined"];
+}
+-(void) visitRationalLinearEq: (id<ORRationalLinearEq>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalLineareq: visit method not defined"];
+}
+-(void) visitRationalLinearNEq: (id<ORRationalLinearNEq>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalLinearNeq: visit method not defined"];
+}
+-(void) visitRationalLinearLT: (id<ORRationalLinearLT>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalLinearLT: visit method not defined"];
+}
+-(void) visitRationalLinearGT: (id<ORRationalLinearGT>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalLinearLT: visit method not defined"];
+}
+-(void) visitRationalLinearLEQ: (id<ORRationalLinearLEQ>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalLinearLEQ: visit method not defined"];
+}
+-(void) visitRationalLinearGEQ: (id<ORRationalLinearGEQ>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalLinearGEQ: visit method not defined"];
+}
+-(void) visitRationalMult: (id<ORRationalMult>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalMult: visit method not defined"];
+}
+-(void) visitRationalDiv: (id<ORRationalDiv>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalDiv: visit method not defined"];
 }
 -(void) visitDoubleLinearEq: (id<ORDoubleLinearEq>) c
 {
@@ -848,6 +956,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "MutableFloatI: visit method not defined"];
 }
+-(void) visitMutableRationalI: (id<ORMutableRational>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "MutableRationalI: visit method not defined"];
+}
 -(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "MutableRealI: visit method not defined"]; 
@@ -855,6 +967,10 @@
 -(void) visitFloat: (id<ORFloatNumber>) e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatI: visit method not defined"];
+}
+-(void) visitRational: (id<ORRationalNumber>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalI: visit method not defined"];
 }
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
@@ -940,6 +1056,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstFloatSubI: visit method not defined"];
 }
+-(void) visitExprCstRationalSubI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstRationalSubI: visit method not defined"];
+}
 -(void) visitExprCstDoubleSubI:(id<ORExpr>)e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstDoubleSubI: visit method not defined"]; 
@@ -1005,6 +1125,7 @@
 -(void) visitTable:(id<ORTable>) v  {}
 -(void) visitIntParam: (id<ORIntParam>) v {}
 -(void) visitFloatParam: (id<ORRealParam>) v {}
+-(void) visitRationalParam: (id<ORRealParam>) v {}
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
 -(void) visitGroup:(id<ORGroup>)g {}
@@ -1134,6 +1255,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e  {}
+-(void) visitMutableRationalI: (id<ORMutableRational>) e  {}
 -(void) visitMutableDouble: (id<ORMutableDouble>) e {}
 -(void) visitDouble: (id<ORDoubleNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}

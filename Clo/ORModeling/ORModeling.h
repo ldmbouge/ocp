@@ -47,6 +47,7 @@ PORTABLE_BEGIN
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
 -(id<ORFloatVarArray>)floatVars;
+-(id<ORRationalVarArray>)rationalVars;
 -(id<ORDoubleVarArray>)doubleVars;
 -(id<ORRealVarArray>)realVars;
 -(id<ORBitVarArray>)bitVars;

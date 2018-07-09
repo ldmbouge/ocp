@@ -30,9 +30,11 @@
 @protocol ORVarLitterals;
 @protocol ORRealVarArray;
 @protocol ORFloatVarArray;
+@protocol ORRationalVarArray;
 @protocol ORDoubleVarArray;
 @protocol ORLDoubleVarArray;
 @protocol ORDisabledFloatVarArray;
+@protocol ORDisabledRationalVarArray;
 
 PORTABLE_BEGIN
 @protocol OROrderedSweep <NSObject>
@@ -69,6 +71,8 @@ PORTABLE_BEGIN
 +(id<ORRealRange>) realRange: (id<ORTracker>) tracker low:(ORDouble)low up:(ORDouble) up;
 +(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker;
 +(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker low:(ORFloat)low up:(ORFloat) up;
++(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker;
++(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker low:(ORRational)low up:(ORRational) up;
 +(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker;
 +(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker low:(ORDouble)low up:(ORDouble) up;
 +(id<ORLDoubleRange>) ldoubleRange: (id<ORTracker>) tracker;
@@ -90,6 +94,8 @@ PORTABLE_BEGIN
 
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range:(id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo;
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
++(id<ORRationalArray>) rationalArray: (id<ORTracker>) tracker range:(id<ORIntRange>) range with:(ORRational(^)(ORInt)) clo;
++(id<ORRationalArray>) rationalArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORLDoubleArray>) ldoubleArray: (id<ORTracker>) tracker range:(id<ORIntRange>) range with:(ORLDouble(^)(ORInt)) clo;
 +(id<ORLDoubleArray>) ldoubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array;
@@ -140,6 +146,11 @@ PORTABLE_BEGIN
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up name:(NSString*) name;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker name:(NSString*) name;
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(ORRational) low up: (ORRational) up;
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker domain:(id<ORRationalRange>) dom;
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker;
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(ORRational) low up: (ORRational) up name:(NSString*) name;
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker name:(NSString*) name;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker;
@@ -179,6 +190,11 @@ PORTABLE_BEGIN
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name;
 +(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo;
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine;
++(id<ORRationalVarArray>) rationalVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORRational)low up:(ORRational)up;
++(id<ORRationalVarArray>) rationalVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
++(id<ORRationalVarArray>) rationalVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name;
++(id<ORRationalVarArray>) rationalVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORRationalVar>(^)(ORInt)) clo;
++(id<ORDisabledRationalVarArray>) disabledRationalVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name;
@@ -240,6 +256,7 @@ PORTABLE_BEGIN
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intVarMatrix: (id<ORIntVarMatrix>) m elt:(id<ORExpr>) e0 elt:(id<ORExpr>)e1;
 +(id<ORExpr>) elt: (id<ORTracker>) tracker doubleArray: (id<ORDoubleArray>) a index: (id<ORExpr>) index;
 +(id<ORExpr>) elt: (id<ORTracker>) tracker floatArray: (id<ORFloatArray>) a index: (id<ORExpr>) index;
++(id<ORExpr>) elt: (id<ORTracker>) tracker rationalArray: (id<ORRationalArray>) a index: (id<ORExpr>) index;
 @end
 
 @interface ORFactory (Constraints)
@@ -365,6 +382,34 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x lti: (ORFloat) i;
 
 +(id<ORExpr>) expr:(id<ORExpr>) e1 mul:(id<ORVar>) var power:(ORInt) i;
+@end
+
+@interface ORFactory (ORRational)
++(id<ORConstraint>) rationalAssignC: (id<ORTracker>) model var: (id<ORRationalVar>)x to:(ORRational)c;
++(id<ORConstraint>) rationalAssign: (id<ORTracker>) model var: (id<ORRationalVar>)x to: (id<ORRationalVar>)y;
++(id<ORConstraint>) rationalEqualc: (id<ORTracker>) model var: (id<ORRationalVar>)x eqc:(ORRational)c;
++(id<ORConstraint>) rationalNEqualc:(id<ORTracker>) model var: (id<ORRationalVar>)x neqc:(ORRational)c;
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  eq: (ORRational) c;
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  neq: (ORRational) c;
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  lt: (ORRational) c;
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  gt: (ORRational) c;
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  leq: (ORRational) c;
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  geq: (ORRational) c;
++(id<ORConstraint>) rationalMult:(id<ORTracker>)model  var: (id<ORRationalVar>)x by:(id<ORRationalVar>)y equal:(id<ORRationalVar>)z;
++(id<ORConstraint>) rationalDiv:(id<ORTracker>)model  var: (id<ORRationalVar>)x by:(id<ORRationalVar>)y equal:(id<ORRationalVar>)z;
+
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x eqi: (ORRational) i;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x eq: (id<ORRationalVar>) y;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x neq: (id<ORRationalVar>) y;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x neqi: (ORRational) i;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x leqi: (ORRational) i;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x geqi: (ORRational) i;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x leq: (id<ORRationalVar>) y;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x geq: (id<ORRationalVar>) y;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x gt: (id<ORRationalVar>) y;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x lt: (id<ORRationalVar>) y;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x gti: (ORRational) i;
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x lti: (ORRational) i;
 @end
 
 @interface ORFactory (ORDouble)

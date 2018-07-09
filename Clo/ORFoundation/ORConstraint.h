@@ -25,6 +25,7 @@
 @protocol ORIntVar;
 @protocol ORRealVar;
 @protocol ORFloatVar;
+@protocol ORRationalVar;
 @protocol ORDoubleVar;
 @protocol ORLDoubleVar;
 @protocol ORBitVar;
@@ -141,6 +142,21 @@ enum ORGroupType {
 @protocol  ORFloatAssignC <ORConstraint>
 -(id<ORFloatVar>) left;
 -(ORFloat) cst;
+@end
+
+@protocol  ORRationalNEqualc <ORConstraint>
+-(id<ORRationalVar>) left;
+-(ORInt) cst;
+@end
+
+@protocol  ORRationalEqualc <ORConstraint>
+-(id<ORRationalVar>) left;
+-(ORInt) cst;
+@end
+
+@protocol  ORRationalAssignC <ORConstraint>
+-(id<ORRationalVar>) left;
+-(ORRational) cst;
 @end
 
 @protocol  ORDoubleNEqualc <ORConstraint>
@@ -547,6 +563,133 @@ enum ORGroupType {
 -(id<ORIntVar>) b;
 -(id<ORFloatVar>) x;
 -(ORFloat)        cst;
+@end
+
+//-----------
+@protocol ORRationalAssign <ORConstraint>
+-(id<ORRationalVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
+
+@protocol ORRationalMult <ORConstraint>
+-(id<ORRationalVar>) res;
+-(id<ORRationalVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
+@protocol ORRationalDiv <ORConstraint>
+-(id<ORRationalVar>) res;
+-(id<ORRationalVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
+@protocol ORRationalLinearEq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORRationalArray>) coefs;
+-(ORRational) cst;
+@end
+
+@protocol ORRationalLinearNEq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORRationalArray>) coefs;
+-(ORRational) cst;
+@end
+
+@protocol ORRationalLinearLT <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORRationalArray>) coefs;
+-(ORRational) cst;
+@end
+
+@protocol ORRationalLinearGT <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORRationalArray>) coefs;
+-(ORRational) cst;
+@end
+
+@protocol ORRationalLinearLEQ <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORRationalArray>) coefs;
+-(ORRational) cst;
+@end
+
+@protocol ORRationalLinearGEQ <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORRationalArray>) coefs;
+-(ORRational) cst;
+@end
+
+@protocol ORRationalReifyEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(ORRational)        cst;
+@end
+
+@protocol ORRationalReifyNEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(ORRational)        cst;
+@end
+
+@protocol ORRationalReifyEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(id<ORRationalVar>) y;
+@end
+
+@protocol ORRationalReifyNEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(id<ORRationalVar>) y;
+@end
+
+@protocol ORRationalReifyLEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(ORRational)        cst;
+@end
+
+@protocol ORRationalReifyLEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(id<ORRationalVar>) y;
+@end
+
+@protocol ORRationalReifyLThen <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(id<ORRationalVar>) y;
+@end
+
+@protocol ORRationalReifyLThenc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(ORRational)        cst;
+@end
+
+@protocol ORRationalReifyGEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(ORRational)        cst;
+@end
+
+@protocol ORRationalReifyGEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(id<ORRationalVar>) y;
+@end
+
+@protocol ORRationalReifyGThen <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(id<ORRationalVar>) y;
+@end
+
+@protocol ORRationalReifyGThenc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRationalVar>) x;
+-(ORRational)        cst;
 @end
 //-----------
 @protocol ORDoubleReifyEqualc <ORReify>

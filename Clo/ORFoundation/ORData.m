@@ -22,6 +22,10 @@
 {
    return [[ORMutableFloatI alloc] initORMutableFloatI:nil value:value];
 }
++(id<ORMutableRational>) rational:(ORRational) value
+{
+   return [[ORMutableRationalI alloc] initORMutableRationalI:nil value:value];
+}
 +(id<ORDoubleNumber>) double: (ORDouble) value
 {
    return [[ORDoubleI alloc] init:nil value:value];

@@ -849,7 +849,221 @@
 
 @end
 
+/**********************************************************************************************/
+/*                          ORRationalArray                                                     */
+/**********************************************************************************************/
 
+@implementation ORRationalArrayI
+{
+   id<ORTracker> _tracker;
+   ORRational*        _array;
+   ORInt             _low;
+   ORInt              _up;
+   ORInt              _nb;
+   id<ORIntRange>  _range;
+}
+
+-(ORRationalArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORRational) value
+{
+   self = [super init];
+   _tracker = tracker;
+   _array = malloc(nb * sizeof(ORRational));
+   _low = 0;
+   _up = nb-1;
+   _nb = nb;
+   _range = [ORFactory intRange: tracker low: _low up: _up];
+   for (ORInt i=0 ; i < _nb; i++)
+      _array[i] = value;
+   return self;
+}
+-(ORRationalArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with:(ORRational(^)(ORInt)) clo
+{
+   self = [super init];
+   _tracker = tracker;
+   _array = malloc(nb * sizeof(ORRational));
+   _low = 0;
+   _up = nb-1;
+   _nb = nb;
+   _range = [ORFactory intRange: tracker low: _low up: _up];
+   for (ORInt i=0 ; i < _nb; i++)
+      _array[i] = clo(i);
+   return self;
+}
+-(ORRationalArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORRational) value
+{
+   self = [super init];
+   _tracker = tracker;
+   _low = range.low;
+   _up = range.up;
+   _nb = _up - _low + 1;
+   _range = range;
+   _array = malloc(_nb * sizeof(ORFloat));
+   _array -= _low;
+   for (ORInt i=_low ; i <= _up; i++)
+      _array[i] = value;
+   return self;
+}
+-(ORRationalArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORRational(^)(ORInt)) clo
+{
+   self = [super init];
+   _tracker = tracker;
+   _low = range.low;
+   _up = range.up;
+   _nb = _up - _low + 1;
+   _range = range;
+   _array = malloc(_nb * sizeof(ORRational));
+   _array -= _low;
+   for (ORInt i=_low ; i <= _up; i++)
+      _array[i] = clo(i);
+   return self;
+}
+-(ORRationalArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORRational(^)(ORInt,ORInt)) clo
+{
+   self = [super init];
+   _tracker = tracker;
+   _nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1);
+   _low = 0;
+   _up = _nb-1;
+   _range = [ORFactory intRange: tracker low: _low up: _up];
+   _array = malloc(_nb * sizeof(ORRational));
+   int k = 0;
+   for (ORInt i=r1.low ; i <= r1.up; i++)
+      for (ORInt j=r2.low ; j <= r2.up; j++)
+         _array[k++] = clo(i,j);
+   return self;
+}
+-(id<ORIntRange>) range
+{
+   return _range;
+}
+-(void) dealloc
+{
+   _array += _low;
+   free(_array);
+   [super dealloc];
+}
+
+-(ORRational) at: (ORInt) value
+{
+   if (value < _low || value > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORRationalArrayElement"];
+   return _array[value];
+}
+-(void) set: (ORRational) value at:(ORInt)idx
+{
+   if (idx < _low || idx > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORRationalArrayElement"];
+   _array[idx] = value;
+}
+-(id)objectAtIndexedSubscript: (NSUInteger) key
+{
+   if (key < _low || key > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORRationalArrayElement"];
+   return [NSNumber numberWithFloat:rational_get_d(&_array[key])];
+}
+-(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSUInteger) idx
+{
+   if (idx < _low || idx > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORRationalArrayElement"];
+   _array[idx] = [newValue rationalValue];
+}
+-(void) enumerateWith: (void(^)(ORRational obj,int idx)) block
+{
+   for(ORInt i=_low;i<=_up;i++)
+      block(_array[i],i);
+}
+-(ORRational) sumWith: (ORRational(^)(ORRational value,int idx))block {
+   __block ORRational sum;
+   rational_init(&sum);
+   rational_set_d(&sum, 0.0);
+   [self enumerateWith:^(ORRational obj, int idx) {
+      ORRational r = block(obj, idx);
+      rational_addition(&sum, &sum, &r);
+   }];
+   return sum;
+}
+-(ORInt) low
+{
+   return _low;
+}
+-(ORInt) up
+{
+   return _up;
+}
+-(id<ORExpr>)elt:(id<ORExpr>)idx
+{
+   return [ORFactory elt: _tracker rationalArray: self index: idx];
+}
+-(ORRational) max {
+   ORRational v = _array[_low];
+   for(int i = _low+1; i <= _up; i++)
+      if(rational_gt(&_array[i], &v)) v = _array[i];
+   return v;
+}
+-(ORRational) min {
+   ORRational v = _array[_low];
+   for(int i = _low+1; i <= _up; i++)
+      if(rational_lt(&_array[i], &v)) v = _array[i];
+   return v;
+}
+-(ORRational) average {
+   ORRational somme = _array[_low];
+   ORRational nb;
+   rational_init(&nb);
+   rational_set_d(&nb, _nb);
+   for(int i = _low+1; i <= _up; i++)
+      rational_addition(&somme, &somme, &_array[i]);
+   rational_division(&nb, &somme, &nb);
+   return nb;
+}
+-(NSUInteger)count
+{
+   return _nb;
+}
+-(NSString*)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendString:@"["];
+   for(ORInt i=_low;i<=_up;i++) {
+      [rv appendFormat:@"%d:%f",i,rational_get_d(&_array[i])];
+      if (i < _up)
+         [rv appendString:@","];
+   }
+   [rv appendString:@"]"];
+   return rv;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   for(ORInt i=_low;i<=_up;i++)
+      [aCoder encodeValueOfObjCType:@encode(ORRational) at:_array+i];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _tracker = [[aDecoder decodeObject] retain];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   _array =  malloc(sizeof(ORRational)*_nb);
+   _array -= _low;
+   for(ORInt i=_low;i<=_up;i++)
+      [aDecoder decodeValueOfObjCType:@encode(ORRational) at:_array+i];
+   return self;
+}
+-(void) visit: (ORVisitor*) v
+{
+   [v visitRationalArray: self];
+}
+
+@end
 
 // ------------------------------------------------------------------------------------------
 

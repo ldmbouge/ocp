@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORObject.h>
+#import "rationalUtilities.h"
 @protocol ORTracker;
 
 @protocol ORIntIterable <ORObject>
@@ -57,6 +58,14 @@
 -(ORFloat)up;
 -(ORBool)isDefined;
 -(ORBool)inRange:(ORFloat)e;
+-(NSString*)description;
+@end
+
+@protocol ORRationalRange
+-(ORRational)low;
+-(ORRational)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORRational)e;
 -(NSString*)description;
 @end
 

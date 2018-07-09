@@ -470,6 +470,149 @@
 }
 @end
 
+//-------------------------
+@implementation ORRationalVarI
+{
+@protected
+   id<ORTracker>        _tracker;
+   id<ORRationalRange>  _domain;
+   BOOL                 _hasBounds;
+   NSString*            _prettyname;
+}
+-(ORRationalVarI*) init: (id<ORTracker>) track domain:(id<ORRationalRange>)dom
+{
+   self = [super init];
+   _tracker = track;
+   _domain = dom;
+   ORRational ninf, pinf;
+   rational_init(&ninf);
+   rational_init(&pinf);
+   rational_set_d(&ninf, -INFINITY);
+   rational_set_d(&pinf, INFINITY);
+   ORRational dl = [dom low];
+   ORRational du = [dom up];
+   _hasBounds = (rational_neq(&dl, &ninf) || rational_neq(& du, &pinf));
+   [track trackVariable: self];
+   rational_clear(&ninf);
+   rational_clear(&pinf);
+   return self;
+}
+-(ORRationalVarI*) init: (id<ORTracker>) track low: (ORRational) low up: (ORRational) up
+{
+   return  [self init:track domain:[ORFactory rationalRange:track low:low up:up]];
+}
+-(ORRationalVarI*) init: (id<ORTracker>) track up: (ORRational) up
+{
+   ORRational zero;
+   rational_init(&zero);
+   rational_set_d(&zero, 0.f);
+   ORRationalVarI* r = [self init:track low:zero up:up];
+   rational_clear(&zero);
+   return r;
+}
+-(ORRationalVarI*) init: (id<ORTracker>) track
+{
+   return [self init:track domain:[ORFactory rationalRange:track]];
+}
+-(ORRationalVarI*) init: (id<ORTracker>) track name:(NSString*) name
+{
+   self = [self init:track];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
+}
+-(ORRationalVarI*) init: (id<ORTracker>) track up: (ORRational) up name:(NSString*) name
+{
+   ORRational zero;
+   rational_init(&zero);
+   rational_set_d(&zero, 0.f);
+   self = [self init:track low:zero up:up name:name];
+   _prettyname = [[NSString alloc] initWithString:name];
+   rational_clear(&zero);
+   return self;
+}
+-(ORRationalVarI*) init: (id<ORTracker>) track low: (ORRational) low up: (ORRational) up name:(NSString*) name
+{
+   self = [self init:track domain:[ORFactory rationalRange:track low:low up:up]];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
+}
+-(id<ORRationalRange>) domain
+{
+   assert(_domain != NULL);
+   return _domain;
+}
+-(void) dealloc
+{
+   if(_prettyname != nil)
+      [_prettyname release];
+   [super dealloc];
+}
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
+-(void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeObject:_domain];
+   [aCoder encodeObject:_prettyname];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+}
+-(id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _tracker = [aDecoder decodeObject];
+   _domain  = [aDecoder decodeObject];
+   _prettyname = [[aDecoder decodeObject] retain];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   return self;
+}
+-(ORBool) isVariable
+{
+   return YES;
+}
+-(NSString*) description
+{
+   ORRational low = _domain.low;
+   ORRational up = _domain.up;
+   if(_prettyname != nil)
+      return [NSString stringWithFormat:@"%@:(%f,%f)",_prettyname,rational_get_d(&low),rational_get_d(&up)];
+   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,rational_get_d(&low),rational_get_d(&up)];
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(void) visit: (ORVisitor*) v
+{
+   [v visitRationalVar: self];
+}
+-(ORBool) hasBounds
+{
+   return _hasBounds;
+}
+-(ORRational) low
+{
+   return _domain.low;
+}
+-(ORRational) up
+{
+   return _domain.up;
+}
+-(ORRational) qmin
+{
+   return [_domain low];
+}
+-(ORRational) qmax
+{
+   return [_domain up];
+}
+-(NSString*) prettyname
+{
+   return _prettyname;
+}
+@end
+
 @implementation ORDoubleVarI
 {
 @protected
@@ -1013,5 +1156,76 @@
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@)",_name,_vars,_disabled];
+}
+@end
+
+@implementation ORDisabledRationalVarArrayI{
+   id<ORVarArray>          _vars;
+   id<ORTrailableIntArray>      _disabled;
+}
+-(id<ORDisabledRationalVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
+{
+   self = [super init];
+   _vars = vars;
+   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<ORVar>) at: (ORInt) value
+{
+   return [_vars at:value];
+}
+-(void) set: (id<ORVar>) x at: (ORInt) value
+{
+   [_vars set:x at:value];
+}
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key
+{
+   return [_vars objectAtIndexedSubscript:key];
+}
+-(void) setObject: (id<ORRationalVar>) newValue atIndexedSubscript: (NSUInteger) idx
+{
+   [_vars setObject:newValue atIndexedSubscript:idx];
+}
+-(void) disable:(ORUInt) index
+{
+   [_disabled[index] setValue:1];
+}
+-(void) enable:(ORUInt) index
+{
+   [_disabled[index] setValue:0];
+}
+-(ORBool) isEnable:(ORUInt) index;
+{
+   return ![_disabled[index] value];
+}
+-(id<ORIntRange>) range
+{
+   return [_vars range];
+}
+-(ORInt) low
+{
+   return [_vars low];
+}
+-(ORInt) up
+{
+   return [_vars up];
+}
+-(NSUInteger) count
+{
+   return [_vars count];
+}
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
+                                  objects:(id *)stackbuf
+                                    count:(NSUInteger)len
+{
+   return [_vars countByEnumeratingWithState:state objects:stackbuf count:len];
+}
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"DisabledRationalVarArray<OR>:%03d(v:%@,d:%@)",_name,_vars,_disabled];
 }
 @end

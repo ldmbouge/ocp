@@ -366,6 +366,18 @@
    return (id<ORFloatVarArray>)rv;
 }
 
+-(id<ORRationalVarArray>)rationalVars
+{
+   ORInt k=0,nbrational = 0;
+   for(id<ORVar> xk in _vars)
+      nbrational += [xk conformsToProtocol:@protocol(ORRationalVar)];
+   id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,nbrational-1)];
+   for(id<ORVar> xk in _vars)
+      if ([xk conformsToProtocol:@protocol(ORRationalVar)])
+         rv[k++] = xk;
+   return (id<ORRationalVarArray>)rv;
+}
+
 -(id<ORDoubleVarArray>)doubleVars
 {
    ORInt k=0,nbfloat = 0;

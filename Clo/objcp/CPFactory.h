@@ -40,6 +40,12 @@
 +(id<CPFloatVarArray>) floatVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<CPFloatVarArray>) floatVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPFloatVar>(^)(ORInt)) clo;
 
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp bounds:(id<ORRationalRange>) range;
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp value:(ORRational) v;
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp;
++(id<CPRationalVarArray>) rationalVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
++(id<CPRationalVarArray>) rationalVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPRationalVar>(^)(ORInt)) clo;
+
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp;
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp value:(ORDouble) v;
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range;

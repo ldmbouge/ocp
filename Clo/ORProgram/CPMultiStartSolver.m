@@ -834,10 +834,10 @@
 -(void) setMaxErrorFD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError{
     [(id<CPProgram>)[self worker] setMaxErrorFD:x maxErrorF:maxError];
 }
--(ORRational*)maxErrorFQ:(PNONNULL id<ORVar>)x {
+-(ORRational)maxErrorFQ:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] maxErrorFQ:x];
 }
--(ORRational*)minErrorFQ:(PNONNULL id<ORVar>)x {
+-(ORRational)minErrorFQ:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] minErrorFQ:x];
 }
 -(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError{
@@ -852,6 +852,12 @@
 -(ORDouble)minD:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] minD:x];
 }
+-(ORDouble)maxQ:(PNONNULL id<ORVar>)x {
+   return [(id<CPProgram>)[self worker] maxQ:x];
+}
+-(ORDouble)minQ:(PNONNULL id<ORVar>)x {
+   return [(id<CPProgram>)[self worker] minQ:x];
+}
 -(ORDouble)maxErrorDD:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] maxErrorDD:x];
 }
@@ -864,10 +870,10 @@
 -(void) setMaxErrorDD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError{
     [(id<CPProgram>)[self worker] setMaxErrorDD:x maxErrorF:maxError];
 }
--(ORRational*)maxErrorDQ:(PNONNULL id<ORVar>)x {
+-(ORRational)maxErrorDQ:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] maxErrorDQ:x];
 }
--(ORRational*)minErrorDQ:(PNONNULL id<ORVar>)x {
+-(ORRational)minErrorDQ:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] minErrorDQ:x];
 }
 -(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError{

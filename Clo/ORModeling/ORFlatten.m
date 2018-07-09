@@ -103,6 +103,10 @@
 {
     _result = v;
 }
+-(void) visitRationalVar: (id) v
+{
+   _result = v;
+}
 -(void) visitDoubleVar: (id) v
 {
     _result = v;
@@ -139,6 +143,10 @@
    _result = e;
 }
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _result = e;
+}
+-(void) visitMutableRationalI: (id<ORMutableRational>) e
 {
    _result = e;
 }
@@ -182,6 +190,10 @@
 -(void) visitFloatRange:(id<ORFloatRange>)v
 {
     _result = v;
+}
+-(void) visitRationalRange:(id<ORRationalRange>)v
+{
+   _result = v;
 }
 -(void) visitDoubleRange:(id<ORDoubleRange>)v
 {
@@ -330,6 +342,8 @@
             vm[getId(x)] = [ORFactory intVar:t domain:[(id<ORIntVar>)x domain]];
          else if ([x conformsToProtocol:@protocol(ORFloatVar)])
             vm[getId(x)] = [ORFactory floatVar:t domain:[(id<ORFloatVar>)x domain]];
+         else if ([x conformsToProtocol:@protocol(ORRationalVar)])
+            vm[getId(x)] = [ORFactory rationalVar:t domain:[(id<ORRationalVar>)x domain]];
          else if ([x conformsToProtocol:@protocol(ORDoubleVar)])
             vm[getId(x)] = [ORFactory doubleVar:t domain:[(id<ORDoubleVar>)x domain]];
          else if ([x conformsToProtocol:@protocol(ORLDoubleVar)])
@@ -643,6 +657,63 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    _result = [_into addConstraint:c];
 }
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
+{
+   _result = [_into addConstraint:c];
+}
+
+-(void) visitRationalReifyEqualc: (id<ORRationalReifyEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyEqual: (id<ORRationalReifyEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyNEqualc: (id<ORRationalReifyNEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyNEqual: (id<ORRationalReifyNEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyLEqualc: (id<ORRationalReifyLEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyLThenc: (id<ORRationalReifyLThenc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyLEqual: (id<ORRationalReifyLEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyLThen: (id<ORRationalReifyLThen>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyGEqualc: (id<ORRationalReifyGEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyGEqual: (id<ORRationalReifyGEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyGThen: (id<ORRationalReifyGThen>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalReifyGThenc: (id<ORRationalReifyGThenc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalAssign: (id<ORRationalAssign>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalAssignC: (id<ORRationalAssignC>)c
 {
    _result = [_into addConstraint:c];
 }

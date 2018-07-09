@@ -29,7 +29,7 @@
 -(CPFloatVarSnapshot*) init: (CPFloatVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
 -(ORFloat) floatValue;
--(ORRational*) errorValue;
+-(ORRational) errorValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -40,7 +40,7 @@
 {
     self = [super init];
     _name = name;
-    mpq_init(_valueError);
+    rational_init(&_valueError);
     if ([v bound]) {
         _bound = TRUE;
         _value = [v value];
@@ -51,26 +51,28 @@
     }
     if ([v boundError]) {
         _boundError = TRUE;
-        mpq_set(_valueError, *[v errorValue]);
+       ORRational errorValue;
+       errorValue = [v errorValue];
+        rational_set(&_valueError, &errorValue);
     }
     else {
-        mpq_set_d(_valueError, 0.0f);
+        rational_set_d(&_valueError, 0.0f);
         _boundError = FALSE;
     }
     return self;
 }
 -(void) dealloc
 {
-    mpq_clear(_valueError);
+    rational_clear(&_valueError);
     [super dealloc];
 }
 -(ORFloat) floatValue
 {
     return _value;
 }
--(ORRational*) errorValue
+-(ORRational) errorValue
 {
-    return &_valueError;
+    return _valueError;
 }
 -(ORBool) bound
 {
@@ -85,7 +87,7 @@
     if ([object isKindOfClass:[self class]]) {
         CPFloatVarSnapshot* other = object;
         if (_name == other->_name) {
-            return _value == other->_value && _bound == other->_bound && mpq_cmp(_valueError, other->_valueError) == 0 && _boundError == other->_boundError;
+            return _value == other->_value && _bound == other->_bound && rational_cmp(&_valueError, &other->_valueError) == 0 && _boundError == other->_boundError;
         }
         else
             return NO;
@@ -100,7 +102,7 @@
 -(NSString*) description
 {
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"Float(%d) : %f±%f",_name,_value,mpq_get_d(_valueError)];
+    [buf appendFormat:@"Float(%d) : %f±%f",_name,_value,rational_get_d(&_valueError)];
     return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
@@ -450,7 +452,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError {
-    if(mpq_cmp(newMinError,newMaxError)>0)
+    if(rational_cmp(&newMinError,&newMaxError)>0)
         failNow();
     [self updateMinError:newMinError];
     [self updateMaxError:newMaxError];
@@ -458,30 +460,34 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 
 - (void)updateMaxError:(ORRational)newMaxError {
-    if(mpq_cmp(newMaxError, *[self maxErr]) < 0)
+   ORRational maxError;
+   maxError = [self maxErr];
+   if(rational_cmp(&newMaxError, &maxError) < 0)
         [_domError updateMax:newMaxError for:self];
 }
 
 
 - (void)updateMinError:(ORRational)newMinError {
-    if(mpq_cmp(newMinError, *[self minErr]) > 0)
+   ORRational minError;
+   minError = [self minErr];
+    if(rational_cmp(&newMinError, &minError) > 0)
         [_domError updateMin:newMinError for:self];
 }
 - (void)updateMaxErrorF:(ORDouble)newMaxError {
     ORRational mError;
-    mpq_init(mError);
-    mpq_set_d(mError, newMaxError);
+    rational_init(&mError);
+    rational_set_d(&mError, newMaxError);
     [_domError updateMax:mError for:self];
-    mpq_clear(mError);
+    rational_clear(&mError);
 }
 
 
 - (void)updateMinErrorF:(ORDouble)newMinError {
     ORRational mError;
-    mpq_init(mError);
-    mpq_set_d(mError, newMinError);
+    rational_init(&mError);
+    rational_set_d(&mError, newMinError);
     [_domError updateMin:mError for:self];
-    mpq_clear(mError);
+    rational_clear(&mError);
 }
 
 -(ORFloat) min
@@ -504,23 +510,27 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
         return [_dom min];
     return _value;
 }
--(ORRational*) errorValue
+-(ORRational) errorValue
 {
     if ([_domError bound])
         return [_domError min];
-    return &_valueError;
+    return _valueError;
 }
-- (ORRational*)maxErr {
+- (ORRational)maxErr {
     return [_domError max];
 }
-- (ORRational*)minErr {
+- (ORRational)minErr {
     return [_domError min];
 }
 - (ORDouble)maxErrF {
-    return mpq_get_d(*[_domError max]);
+   ORRational max;
+   max = [_domError max];
+   return rational_get_d(&max);
 }
 - (ORDouble)minErrF {
-    return mpq_get_d(*[_domError min]);
+   ORRational min;
+   min = [_domError min];
+   return rational_get_d(&min);
 }
 -(id<CPFloatDom>) domain
 {
@@ -809,19 +819,19 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     [self updateMin:newMin];
 }
 
-- (void)bindError:(__mpq_struct *)valError {
+- (void)bindError:(ORRational)valError {
 }
 
 
-- (void)updateIntervalError:(__mpq_struct *)newMinError and:(__mpq_struct *)newMaxError { // nonsense (cpjm)
+- (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError { // nonsense (cpjm)
 }
 
 
-- (void)updateMaxError:(__mpq_struct *)newMaxError {
+- (void)updateMaxError:(ORRational)newMaxError {
 }
 
 
-- (void)updateMinError:(__mpq_struct *)newMinError {
+- (void)updateMinError:(ORRational)newMinError {
 }
 
 - (void)updateMaxErrorF:(ORDouble)newMaxError {
@@ -840,14 +850,16 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_theVar max];
 }
-- (ORRational *)maxErr { // Probably wrong (cpjm)
-    ORRational* maxE = NULL;
-    mpq_set_d(*maxE, [_theVar max]);
+- (ORRational)maxErr { // Probably wrong (cpjm)
+    ORRational maxE;
+   rational_init(&maxE);
+    rational_set_d(&maxE, [_theVar max]);
     return maxE;
 }
-- (ORRational *)minErr {
-    ORRational* minE = NULL;
-    mpq_set_d(*minE, [_theVar min]);
+- (ORRational)minErr {
+    ORRational minE;
+   rational_init(&minE);
+    rational_set_d(&minE, [_theVar min]);
     return minE;
 }
 - (ORDouble)maxErrF {
@@ -926,9 +938,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 
 
-- (ORRational *)errorValue {
-   ORRational* errV = NULL;
-   mpq_set_d(*errV, [_theVar min]);
+- (ORRational)errorValue {
+   ORRational errV;
+   rational_init(&errV);
+   rational_set_d(&errV, [_theVar min]);
    return errV;
 }
 

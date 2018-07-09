@@ -6,11 +6,15 @@
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
 
+#define LOO_MEASURE_TIME(__message) \
+for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
+NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
+
 #define printFvar(name, var) NSLog(@""name" : [% 20.20e, % 20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 20.20e, % 20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
 #define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
 #define getFminErr(var) *[(id<CPFloatVar>)[cp concretize:var] minErr]
 
-#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 24.24e, % 24.24e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
+#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 1.2e, % 1.2e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
@@ -87,6 +91,8 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
         
         [cp setMinErrorDD:v minErrorF:0.0];
         [cp setMaxErrorDD:v maxErrorF:0.0];
+        [cp setMinErrorDD:r minErrorF:nextafter(0.0f, +INFINITY)];
+       //[cp setMaxErrorDD:r maxErrorF:next(0.0f, +INFINITY)];
         //[cp setMinErrorDD:r minErrorF:0.0];
         //[cp setMaxErrorDD:r maxErrorF:0.0];
         [cp solve:^{
@@ -105,8 +111,8 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
             printDvar("k", k);
             printDvar("v", v);
             printDvar("r", r);
-            if (search)
-                check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), getDminErr(r));
+            /*if (search)
+                check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), getDminErr(r));*/
         }];
     }
 }
@@ -182,9 +188,10 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
         id<ORFloatVarArray> vs = [mdl floatVars];
         id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
         
-        [cp setMinErrorFD:r minErrorF:0.0f];
+        //[cp setMinErrorFD:r minErrorF:0.0f];
         [cp setMinErrorFD:v minErrorF:0.0f];
         [cp setMaxErrorFD:v maxErrorF:0.0f];
+
         [cp solve:^{
             if (search)
                 [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -201,14 +208,16 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
             printFvar("k", k);
             printFvar("v", v);
             printFvar("r", r);
-            if (search)
-                check_it_f(getFmin(p), getFmin(a), getFmin(b), getFmin(t), getFmin(n), getFmin(k), getFmin(v), getFmin(r), getFminErr(r));
+            /*if (search)
+                check_it_f(getFmin(p), getFmin(a), getFmin(b), getFmin(t), getFmin(n), getFmin(k), getFmin(v), getFmin(r), getFminErr(r));*/
         }];
     }
 }
 
 int main(int argc, const char * argv[]) {
-    //carbonGas_f(1, argc, argv);
+   LOO_MEASURE_TIME(@"foo"){
+    //carbonGas_f(1, argc, argv)
     carbonGas_d(1, argc, argv);
+   }
     return 0;
 }

@@ -19,7 +19,7 @@ int main(int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       /* Erreur avec low:0.0 up:100.0 */
-      id<ORDoubleVar> a = [ORFactory doubleVar:mdl low:0.0 up:100.0 name:@"a"];
+      id<ORDoubleVar> a = [ORFactory doubleVar:mdl low:14.0 up:16.0 name:@"a"];
       id<ORDoubleVar> b = [ORFactory doubleVar:mdl low:-200.0 up:200.0 name:@"b"];
       id<ORDoubleVar> c = [ORFactory doubleVar:mdl low:-200.0 up:200.0 name:@"c"];
       
@@ -31,9 +31,17 @@ int main(int argc, const char * argv[]) {
       //id<ORDoubleVar> Q3 = [ORFactory doubleVar:mdl name:@"Q3"];
       //id<ORDoubleVar> R2 = [ORFactory doubleVar:mdl name:@"R2"];
       //id<ORDoubleVar> CR2 = [ORFactory doubleVar:mdl name:@"CR2"];
-      //id<ORDoubleVar> CQ3 = [ORFactory doubleVar:mdl name:@"CQ3"];
+       //id<ORDoubleVar> CQ3 = [ORFactory doubleVar:mdl name:@"CQ3"];
       
-      //[mdl add:[a set:@(15.01)]];
+      [mdl add:[a set:@(1.500000000000006217248938e+01)]];
+      [mdl add:[b set:@(7.500000000000062527760747e+01)]];
+      [mdl add:[c set:@(1.250000000000015916157281e+02)]];
+      //[mdl add:[a lt:@(15.1)]];
+      //[mdl add:[c gt:@(125.25)]];
+      //[mdl add:[a lt:@(15.1)]];
+      /*[mdl add:[b set:@(7.51000333e+01)]];
+      [mdl add:[c set:@(1.25250167e+02)]];*/
+
        /*[mdl add:[b set:@(5087.0)]];
        [mdl add:[c set:@(-50065.0)]];*/
       [mdl add:[q set: [[a mul: a] sub: [@(3.0) mul: b]]]];
@@ -52,6 +60,7 @@ int main(int argc, const char * argv[]) {
       //[mdl add:[CQ3 set: [[[@(2916.0) mul: q] mul: q] mul: q]]];
       
       //[mdl add:[a lt:@(15.6)]];
+      
       [mdl add:[R eq:@(0.0)]];
       [mdl add:[Q eq:@(0.0)]];
       
@@ -83,8 +92,8 @@ int main(int argc, const char * argv[]) {
       //[cp setMaxErrorFD:R2 maxErrorF:0.0f];
       
       
-      //[cp setMinErrorDD:R minErrorF:nextafter(0.0f, +INFINITY)];
-      //[cp setMinErrorDD:Q minErrorF:nextafter(0.0f, +INFINITY)];
+      [cp setMinErrorDD:R minErrorF:nextafter(0.0f, +INFINITY)];
+      [cp setMinErrorDD:Q minErrorF:nextafter(0.0f, +INFINITY)];
       
       /*[cp setMinErrorDD:R minErrorF:0.0f];
       [cp setMaxErrorDD:R maxErrorF:0.0f];
@@ -101,8 +110,8 @@ int main(int argc, const char * argv[]) {
          printDvar("c", c);
          
          
-         printDvar("q", q);
-         printDvar("r", r);
+         //printDvar("q", q);
+         //printDvar("r", r);
          
          
          printDvar("Q", Q);

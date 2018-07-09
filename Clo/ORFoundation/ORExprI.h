@@ -183,6 +183,21 @@
 -(void) visit:(ORVisitor*) v;
 @end
 
+@interface ORExprCstRationalSubI : ORExprI<ORExpr,NSCoding> {
+   id<ORRationalArray> _array;
+   ORExprI*         _index;
+}
+-(id<ORExpr>) initORExprCstRationalSubI: (id<ORRationalArray>) array index:(id<ORExpr>) op;
+-(id<ORTracker>) tracker;
+-(ORRational) qmin;
+-(ORRational) qmax;
+-(NSString *)description;
+-(ORExprI*) index;
+-(id<ORRationalArray>)array;
+-(ORBool) isConstant;
+-(void) visit:(ORVisitor*) v;
+@end
+
 @interface ORExprCstDoubleSubI : ORExprI<ORExpr,NSCoding> {
    id<ORDoubleArray> _array;
    ORExprI*         _index;

@@ -15,6 +15,8 @@
 #import <ORFoundation/ORExpr.h>
 #import <ORFoundation/ORSolver.h>
 
+#import "rationalUtilities.h"
+
 PORTABLE_BEGIN
 
 @protocol ORVar <ORObject>
@@ -71,6 +73,14 @@ PORTABLE_BEGIN
 -(NSString*) prettyname;
 @end
 
+@protocol ORRationalVar <ORExprVar>
+-(id<ORRationalRange>) domain;
+-(ORBool) hasBounds;
+-(ORRational) low;
+-(ORRational) up;
+-(NSString*) prettyname;
+@end
+
 @protocol ORDoubleVar <ORExprVar>
 -(id<ORDoubleRange>) domain;
 -(ORBool) hasBounds;
@@ -117,11 +127,34 @@ PORTABLE_BEGIN
 -(id<ORASolver>) solver;
 @end
 
+@protocol ORRationalVarArray <ORVarArray>
+-(id<ORRationalVar>) at: (ORInt) value;
+-(void) set: (id<ORRationalVar>) x at: (ORInt) value;
+-(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORRationalVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
 @protocol ORDisabledFloatVarArray <ORObject,NSFastEnumeration>
 -(id<ORFloatVar>) at: (ORInt) value;
 -(void) set: (id<ORFloatVar>) x at: (ORInt) value;
 -(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORIntRange>) range;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger) count;
+-(void) disable:(ORUInt) index;
+-(void) enable:(ORUInt) index;
+-(ORBool) isEnable:(ORUInt) index;
+@end
+
+
+@protocol ORDisabledRationalVarArray <ORObject,NSFastEnumeration>
+-(id<ORRationalVar>) at: (ORInt) value;
+-(void) set: (id<ORRationalVar>) x at: (ORInt) value;
+-(id<ORRationalVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORRationalVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORIntRange>) range;
 -(ORInt) low;
 -(ORInt) up;

@@ -209,8 +209,8 @@ PORTABLE_BEGIN
 -(ORDouble) doubleValue: (id<ORVar>) x;
 -(ORDouble) doubleMin: (id<ORVar>)x;
 -(ORDouble) doubleMax: (id<ORVar>)x;
--(ORRational*) minErrorFQ:(PNONNULL id<ORVar>)x;
--(ORRational*) maxErrorFQ:(PNONNULL id<ORVar>)x;
+-(ORRational) minErrorFQ:(PNONNULL id<ORVar>)x;
+-(ORRational) maxErrorFQ:(PNONNULL id<ORVar>)x;
 -(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError;
 -(void) setMaxErrorFQ:(PNONNULL id<ORVar>)x maxError:(ORRational) maxError;
 -(ORDouble) minErrorFD:(PNONNULL id<ORVar>)x;
@@ -219,8 +219,8 @@ PORTABLE_BEGIN
 -(void) setMaxErrorFD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError;
 -(ORFloat) minF:(PNONNULL id<ORVar>)x;
 -(ORFloat) maxF:(PNONNULL id<ORVar>)x;
--(ORRational*) minErrorDQ:(PNONNULL id<ORVar>)x;
--(ORRational*) maxErrorDQ:(PNONNULL id<ORVar>)x;
+-(ORRational) minErrorDQ:(PNONNULL id<ORVar>)x;
+-(ORRational) maxErrorDQ:(PNONNULL id<ORVar>)x;
 -(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError;
 -(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(ORRational) maxError;
 -(ORDouble) minErrorDD:(PNONNULL id<ORVar>)x;
@@ -229,6 +229,8 @@ PORTABLE_BEGIN
 -(void) setMaxErrorDD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError;
 -(ORDouble) minD:(PNONNULL id<ORVar>)x;
 -(ORDouble) maxD:(PNONNULL id<ORVar>)x;
+-(ORDouble) minQ:(PNONNULL id<ORVar>)x;
+-(ORDouble) maxQ:(PNONNULL id<ORVar>)x;
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;

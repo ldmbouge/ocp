@@ -20,9 +20,10 @@
 {
     self = [super init];
     _trail = trail;
-    mpq_inits(_imin, _imax, NULL);
-    mpq_set(_imin,low);
-    mpq_set(_imax,up);
+    rational_init(&_imin);
+    rational_init(&_imax);
+    rational_set(&_imin,&low);
+    rational_set(&_imax,&up);
     _domain = makeTRRationalInterval(trail, _imin, _imax);
     return self;
 }
@@ -30,9 +31,10 @@
 {
     self = [super init];
     _trail = trail;
-    mpq_inits(_imin, _imax, NULL);
-    mpq_set_d(_imin,low);
-    mpq_set_d(_imax,up);
+    rational_init(&_imin);
+    rational_init(&_imax);
+    rational_set_d(&_imin,low);
+    rational_set_d(&_imax,up);
     _domain = makeTRRationalInterval(trail, _imin, _imax);
     return self;
 }
@@ -43,12 +45,13 @@
 }
 -(void) dealloc
 {
-   mpq_clears(_imin,_imax,NULL);
+   rational_clear(&_imin);
+   rational_clear(&_imax);
    [super dealloc];
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail lowF:mpq_get_d(_imin) upF:mpq_get_d(_imax)];
+    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail lowF:rational_get_d(&_imin) upF:rational_get_d(&_imax)];
 }
 -(NSString*) description
 {
@@ -56,7 +59,7 @@
         unsigned int *inf;
         inf = (unsigned int *)&(_domain._low);
         NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-        [buf appendFormat:@"%20.20e [%4X]",mpq_get_d(_domain._low),*inf ];
+        [buf appendFormat:@"%20.20e [%4X]",rational_get_d(&_domain._low),*inf ];
         return buf;
     }
     unsigned int *inf;
@@ -64,15 +67,16 @@
     inf = (unsigned int *)&(_domain._low);
     sup = (unsigned int *)&(_domain._up);
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",mpq_get_d(_domain._low),mpq_get_d(_domain._up),*inf,*sup];
+    [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",rational_get_d(&_domain._low),rational_get_d(&_domain._up),*inf,*sup];
     return buf;
 }
--(void) updateMin:(ORRational)newMin for:(id<CPFVarNotifier>)x
+-(void) updateMin:(ORRational)newMin for:(id<CPFloatVarRatNotifier>)x
 {
-    if(mpq_cmp(newMin, *[self max]) > 0)
+   ORRational max = [self max];
+    if(rational_cmp(&newMin, &max) > 0)
         failNow();
     updateMinR(&_domain, newMin, _trail);
-    ORBool isBound = (mpq_get_d(_domain._low) == mpq_get_d(_domain._up));
+    ORBool isBound = (rational_get_d(&_domain._low) == rational_get_d(&_domain._up));
     // cpjm: so that eo can use this method without propagation
     if (x != NULL) {
         [x changeMinEvtErr: isBound sender:self];
@@ -80,12 +84,13 @@
             [x bindEvtErr:self];
     }
 }
--(void) updateMax:(ORRational)newMax for:(id<CPFVarNotifier>)x
+-(void) updateMax:(ORRational)newMax for:(id<CPFloatVarRatNotifier>)x
 {
-    if(mpq_cmp(*[self min], newMax) > 0)
+   ORRational min = [self min];
+    if(rational_cmp(&min, &newMax) > 0)
         failNow();
     updateMaxR(&_domain, newMax, _trail);
-    ORBool isBound = (mpq_get_d(_domain._low) == mpq_get_d(_domain._up));
+    ORBool isBound = (rational_get_d(&_domain._low) == rational_get_d(&_domain._up));
     // cpjm: so that eo can use this method without propagation
     if (x != NULL) {
         [x changeMaxEvtErr:isBound sender:self];
@@ -93,15 +98,15 @@
             [x bindEvtErr:self];
     }
 }
--(void) updateInterval:(rational_interval)v for:(id<CPFVarNotifier>)x;
+-(void) updateInterval:(ri)v for:(id<CPFloatVarRatNotifier>)x;
 {
-    [self updateMin:v.inf for:x];
-    [self updateMax:v.sup for:x];
+   [self updateMin:v.inf for:x];
+   [self updateMax:v.sup for:x];
 }
 
--(void) bind:(ORRational)val  for:(id<CPFVarNotifier>)x
+-(void) bind:(ORRational)val  for:(id<CPFloatVarRatNotifier>)x
 {
-    if ((mpq_cmp(val, _domain._low) || mpq_equal(val, _domain._low)) && (mpq_cmp(_domain._up, val) || mpq_equal(_domain._up, val))) {
+    if ((rational_cmp(&val, &_domain._low) || rational_eq(&val, &_domain._low)) && (rational_cmp(&_domain._up, &val) || rational_eq(&_domain._up, &val))) {
         [x changeMinEvtErr:YES sender:self];
         [x changeMaxEvtErr:YES sender:self];
         [x bindEvtErr:self];
@@ -110,30 +115,30 @@
     else
         failNow();
 }
--(ORRational*) min
+-(ORRational) min
 {
-    return &_domain._low;
+    return _domain._low;
 }
--(ORRational*) max
+-(ORRational) max
 {
-    return &_domain._up;
+    return _domain._up;
 }
--(ORRational*) imin
+-(ORRational) imin
 {
-    return &_imin;
+    return _imin;
 }
--(ORRational*) imax
+-(ORRational) imax
 {
-    return &_imax;
+    return _imax;
 }
 -(ORBool) bound
 {
-    return (mpq_equal(_domain._up, _domain._low) != 0);
+    return (rational_eq(&_domain._up, &_domain._low) != 0);
 }
 -(ORInterval) bounds
 {
     ORIReady();
-    return createORI2(mpq_get_d(_domain._low), mpq_get_d(_domain._up));
+    return createORI2(rational_get_d(&_domain._low), rational_get_d(&_domain._up));
 }
 -(TRRationalInterval) domain
 {
@@ -142,18 +147,18 @@
 
 -(ORBool) member:(ORRational)v
 {
-   return mpq_cmp(_domain._low, v) <= 0 && mpq_cmp(v, _domain._low) <= 0;
+   return rational_cmp(&_domain._low, &v) <= 0 && rational_cmp(&v, &_domain._low) <= 0;
 }
 -(id) copy
 {
-    return [[CPRationalDom alloc] initCPRationalDom:_trail lowF:mpq_get_d(_imin) upF:mpq_get_d(_imax)];
+    return [[CPRationalDom alloc] initCPRationalDom:_trail lowF:rational_get_d(&_imin) upF:rational_get_d(&_imax)];
 }
 -(void) restoreDomain:(id<CPRationalDom>)toRestore
 {
-    updateMinR(&_domain, *toRestore.min, _trail);
-    updateMaxR(&_domain, *toRestore.max, _trail);
+    updateMinR(&_domain, toRestore.min, _trail);
+    updateMaxR(&_domain, toRestore.max, _trail);
 }
--(void) restoreValue:(ORRational)toRestore for:(id<CPFVarNotifier>)x
+-(void) restoreValue:(ORRational)toRestore for:(id<CPFloatVarRatNotifier>)x
 {
     updateMinR(&_domain, toRestore, _trail);
     updateMaxR(&_domain, toRestore, _trail);

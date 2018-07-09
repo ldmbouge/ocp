@@ -291,6 +291,75 @@
 }
 @end
 
+@implementation ORMutableRationalI
+{
+   ORRational    _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORMutableRationalI*) initORMutableRationalI:(id<ORTracker>)tracker value:(ORRational) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORRational) initialValue
+{
+   return _value;
+}
+-(ORRational) value
+{
+   return _value;
+}
+-(ORRational) setValue: (ORRational) value
+{
+   return _value = value;
+}
+-(ORRational) value: (id<ORGamma>) solver
+{
+   return [(ORMutableRationalI*)[solver concretize: self] initialValue];
+}
+-(ORRational) setValue: (ORRational) value in: (id<ORGamma>) solver
+{
+   return [((ORMutableRationalI*)[solver concretize: self]) setValue: value];
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTRational;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"%16.16e",rational_get_d(&_value)];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORRational) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_value];
+   return self;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitMutableRationalI: self];
+}
+@end
+
 @implementation ORMutableId
 -(id) initWith:(id)v
 {
@@ -419,6 +488,103 @@
 -(void) visit: (ORVisitor*) visitor
 {
     [visitor visitFloat: self];
+}
+@end
+
+@implementation ORRationalI
+{
+   ORRational       _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORRationalI*) init: (id<ORTracker>) tracker value: (ORRational) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORRationalI allocWithZone:zone] init:_tracker value:_value];
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[ORRationalI class]]) {
+      ORRationalI* o = object;
+      return rational_eq(&_value, &o->_value);
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   long* pv = (long*)&_value;
+   return pv[0];
+}
+-(ORInt) min
+{
+   return floor(rational_get_d(&_value));
+}
+-(ORInt) max
+{
+   return (ORInt)ceil(rational_get_d(&_value));
+}
+-(ORRational) qmin
+{
+   return _value;
+}
+-(ORRational) qmax
+{
+   return _value;
+}
+-(ORRational) value
+{
+   return _value;
+}
+-(ORInt) intValue
+{
+   return (ORInt) rational_get_d(&_value);
+}
+-(ORRational) rationalValue
+{
+   return _value;
+}
+-(ORDouble) doubleValue
+{
+   return (ORDouble) rational_get_d(&_value);
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTRational;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"%.9f",rational_get_d(&_value)];
+}
+- (void) encodeWithCoder:(NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORRational) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_value];
+   return self;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitRational: self];
 }
 @end
 

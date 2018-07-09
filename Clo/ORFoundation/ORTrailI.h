@@ -15,6 +15,8 @@
 #import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORTrailable.h>
 
+//#include "rationalUtilities.h"
+
 @protocol ORSearchEngine;
 
 #define NBSLOT 8192
@@ -177,7 +179,7 @@ static inline TRLDouble  inline_makeTRLDouble(ORTrailI* trail,long double val)
 }
 static inline TRRational inline_makeTRRational(ORTrailI* trail, ORRational val)
 {
-    return (TRRational){*val, [trail magic]-1};
+    return (TRRational){val, [trail magic]-1};
 }
 
 static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)

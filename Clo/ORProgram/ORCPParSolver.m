@@ -1092,10 +1092,10 @@
 {
     [[self worker] setMaxErrorFD: x maxErrorF: maxError];
 }
-- (ORRational*)maxErrorFQ:(PNONNULL id<ORVar>)x {
+- (ORRational)maxErrorFQ:(PNONNULL id<ORVar>)x {
     return [[self worker] maxErrorFQ: x];
 }
-- (ORRational*)minErrorFQ:(PNONNULL id<ORVar>)x {
+- (ORRational)minErrorFQ:(PNONNULL id<ORVar>)x {
     return [[self worker] minErrorFQ: x];
 }
 -(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError
@@ -1112,6 +1112,12 @@
 - (ORDouble)minD:(PNONNULL id<ORVar>)x {
     return [[self worker] minD: x];
 }
+- (ORDouble)maxQ:(PNONNULL id<ORVar>)x {
+   return [[self worker] maxQ: x];
+}
+- (ORDouble)minQ:(PNONNULL id<ORVar>)x {
+   return [[self worker] minQ: x];
+}
 - (ORDouble)maxErrorDD:(PNONNULL id<ORVar>)x {
     return [[self worker] maxErrorDD: x];
 }
@@ -1126,10 +1132,10 @@
 {
     [[self worker] setMaxErrorDD: x maxErrorF: maxError];
 }
-- (ORRational*)maxErrorDQ:(PNONNULL id<ORVar>)x {
+- (ORRational)maxErrorDQ:(PNONNULL id<ORVar>)x {
     return [[self worker] maxErrorDQ: x];
 }
-- (ORRational*)minErrorDQ:(PNONNULL id<ORVar>)x {
+- (ORRational)minErrorDQ:(PNONNULL id<ORVar>)x {
     return [[self worker] minErrorDQ: x];
 }
 -(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError

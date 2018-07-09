@@ -41,6 +41,10 @@
    }
    return NULL;
 }
+-(ORRational)rationalValue
+{
+   return (ORRational){{},0};
+}
 #else
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
 {
@@ -667,6 +671,16 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "fmax not defined on expression"];
     return 0;
 }
+-(ORRational) qmin
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "qmin not defined on expression"];
+   return (ORRational){{},0};
+}
+-(ORRational) qmax
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "qmax not defined on expression"];
+   return (ORRational){{},0};
+}
 -(ORDouble) dmin
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "dmin not defined on expression"];
@@ -686,6 +700,11 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
     return 0;
+}
+-(ORRational) rationalValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "rationalValue not defined on expression"];
+   return (ORRational){{},0};
 }
 -(ORDouble) doubleValue
 {
@@ -1501,6 +1520,83 @@
     _array = [aDecoder decodeObject];
     _index = [aDecoder decodeObject];
     return self;
+}
+@end
+
+
+@implementation ORExprCstRationalSubI
+-(id<ORExpr>) initORExprCstRationalSubI: (id<ORRationalArray>) array index:(id<ORExpr>) op
+{
+   self = [super init];
+   _array = array;
+   _index = op;
+   return self;
+}
+-(id<ORTracker>) tracker
+{
+   return [_index tracker];
+}
+-(ORRational) qmin
+{
+   ORRational minOf;
+   ORRational array_k;
+   rational_init(&minOf);
+   rational_set_d(&minOf, +INFINITY);
+   for(ORInt k=[_array low];k<=[_array up];k++){
+      array_k = [_array at:k];
+      minOf = rational_lt(&minOf, &array_k) ? minOf : array_k;
+   }
+   return minOf;
+}
+-(ORRational) qmax
+{
+   ORRational maxOf;
+   ORRational array_k;
+   rational_init(&maxOf);
+   rational_set_d(&maxOf, +INFINITY);
+   for(ORInt k=[_array low];k<=[_array up];k++){
+      array_k = [_array at:k];
+      maxOf = rational_gt(&maxOf, &array_k) ? maxOf : array_k;
+   }
+   return maxOf;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@[%@]",_array,_index];
+   return rv;
+}
+-(ORExprI*) index
+{
+   return  _index;
+}
+-(id<ORRationalArray>)array
+{
+   return _array;
+}
+-(ORBool) isConstant
+{
+   return [_index isConstant];
+}
+-(enum ORVType) vtype
+{
+   return ORTRational;
+}
+-(void) visit:(ORVisitor*)visitor
+{
+   [visitor visitExprCstFloatSubI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_array];
+   [aCoder encodeObject:_index];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _array = [aDecoder decodeObject];
+   _index = [aDecoder decodeObject];
+   return self;
 }
 @end
 

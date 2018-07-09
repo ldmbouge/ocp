@@ -45,13 +45,7 @@ typedef unsigned long long ORULong;
 typedef float  ORFloat;
 typedef double ORDouble;
 typedef long double ORLDouble;
-typedef mpq_t ORRational;
 typedef BOOL   ORBool;
-
-typedef struct {
-    ORRational inf;
-    ORRational sup;
-} rational_interval;
 
 //#define minOf(a,b) ((a) < (b) ? (a) : (b))
 //#define maxOf(a,b) ((a) > (b) ? (a) : (b))
@@ -70,30 +64,6 @@ static inline ORFloat fmaxFlt(ORFloat a,ORFloat b) { return maxFlt(fabsf(a), fab
 
 static inline ORInt min(ORInt a,ORInt b) { return a < b ? a : b;}
 static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}
-
-static inline ORRational* minR(ORRational* a, ORRational* b) { return mpq_cmp(*a, *b) > 0 ? a : b;}
-static inline ORRational* maxR(ORRational* a, ORRational* b) { return mpq_cmp(*a, *b) < 0 ? a : b;}
-static inline ORRational* fmaxR(ORRational* a, ORRational* b) {
-    ORRational* _a = NULL;
-    ORRational* _b = NULL;
-    mpq_abs(*_a, *a);
-    mpq_abs(*_b, *b);
-    return maxR(_a,_b);
-}
-
-static inline void printRational(NSString* n, ORRational r){
-   float tmp = mpq_get_d(r);
-   unsigned int * ptmp = (unsigned int *) &tmp;
-   NSLog(@"%@ : %8.8e [%4X]", n, mpq_get_d(r),*ptmp);
-}
-
-static inline void printRationalInterval(NSString* n, rational_interval r){
-   float tmp_inf = mpq_get_d(r.inf);
-   unsigned int * ptmp_inf = (unsigned int *) &tmp_inf;
-   float tmp_sup = mpq_get_d(r.sup);
-   unsigned int * ptmp_sup = (unsigned int *) &tmp_sup;
-   NSLog(@"%@ : [%8.8e;%8.8e] [%4X] [%4X]", n, mpq_get_d(r.inf), mpq_get_d(r.sup),*ptmp_inf,*ptmp_sup);
-}
 
 #define MAXINT ((ORInt)0x7FFFFFFF)
 #define MININT ((ORInt)0x80000000)

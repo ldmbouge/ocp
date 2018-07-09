@@ -21,6 +21,7 @@
 #import "CPBitVarI.h"
 #import "CPRealVarI.h"
 #import "CPFloatVarI.h"
+#import "CPRationalVarI.h"
 #import "CPDoubleVarI.h"
 #import "CPLDoubleVarI.h"
 
@@ -125,6 +126,45 @@
     }
     return (id<CPFloatVarArray>)o;
 }
+//----------------------------------------
+
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp bounds:(id<ORRationalRange>) range
+{
+   return [[CPRationalVarI alloc] init:cp low:range.low up:range.up];
+}
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp value:(ORRational) v
+{
+   return [[CPRationalVarI alloc] init:cp low:v up:v];
+}
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp
+{
+   ORRational ninf, pinf;
+   rational_init(&ninf);
+   rational_init(&pinf);
+   rational_set_d(&ninf, -INFINITY);
+   rational_set_d(&pinf, INFINITY);
+   return [[CPRationalVarI alloc] init:cp low:ninf up:pinf];
+}
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
+{
+   // return [[CPRationalViewOnIntVarI alloc] init:cp intVar:x];
+   assert(NO);return nil;
+}
++(id<CPRationalVarArray>) rationalVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
+{
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   return (id<CPRationalVarArray>) o;
+}
++(id<CPRationalVarArray>) rationalVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPRationalVar>(^)(ORInt)) clo
+{
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      [o  set:clo(k) at:k];
+   }
+   return (id<CPRationalVarArray>)o;
+}
+
+//----------------------------------------
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp
 {
    return [[CPDoubleVarI alloc] init:cp low:-INFINITY up:INFINITY];

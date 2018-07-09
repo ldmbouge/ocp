@@ -85,6 +85,25 @@
 -(enum ORVType) vtype;
 @end
 
+@interface ORRationalVarI : ORExprI<ORRationalVar>
+-(ORRationalVarI*) init: (id<ORTracker>) tracker;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker domain:(id<ORRationalRange>)dom;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker up: (ORRational) up;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker low: (ORRational) low up: (ORRational) up;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker name:(NSString*) name;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker up: (ORRational) up name:(NSString*) name;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker low: (ORRational) low up: (ORRational) up name:(NSString*) name;
+-(ORBool) hasBounds;
+-(ORRational) low;
+-(ORRational) up;
+-(NSString*) prettyname;
+-(id<ORRationalRange>) domain;
+-(void) visit: (ORVisitor*)v;
+-(void) encodeWithCoder:(NSCoder *)aCoder;
+-(id) initWithCoder:(NSCoder *)aDecoder;
+-(enum ORVType) vtype;
+@end
+
 
 @interface ORDoubleVarI : ORExprI<ORDoubleVar>
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker;
@@ -155,6 +174,20 @@
 -(void) set: (id<ORFloatVar>) x at: (ORInt) value;
 -(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger) count;
+-(void) disable:(ORUInt) index;
+-(void) enable:(ORUInt) index;
+-(ORBool) isEnable:(ORUInt) index;
+@end
+
+@interface ORDisabledRationalVarArrayI : ORObject<ORDisabledRationalVarArray>
+-(id<ORDisabledRationalVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine;
+-(id<ORVar>) at: (ORInt) value;
+-(void) set: (id<ORRationalVar>) x at: (ORInt) value;
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORRationalVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;

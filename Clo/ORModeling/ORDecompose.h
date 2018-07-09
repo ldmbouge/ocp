@@ -17,6 +17,7 @@
 @protocol ORRealLinear;
 @protocol ORFloatLinear;
 @protocol ORDoubleLinear;
+@protocol ORRationalLinear;
 @class ORExprI;
 
 @interface ORNormalizer : NSObject
@@ -49,6 +50,16 @@
 +(void)floatVar:(id<ORFloatVar>)var equal:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model;
 @end
 
+
+@interface ORNormalizer(Rational)
++(id<ORRationalLinear>)rationalLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
++(id<ORRationalLinear>)rationalLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORRationalVar>)x;
++(id<ORRationalLinear>)addToRationalLinear:(id<ORRationalLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
++(id<ORRationalVar>) rationalVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
++(id<ORRationalVar>) rationalVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORRationalVar>)x;
++(id<ORRationalVar>) rationalVarIn:(id<ORRationalLinear>)e for:(id<ORAddToModel>) model;
++(void)intVar:(id<ORRationalVar>)var equal:(id<ORRationalLinear>)e for:(id<ORAddToModel>) model;
+@end
 
 @interface ORNormalizer(Double)
 +(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
@@ -119,6 +130,10 @@
 @interface ORTFloatHandler : ORVTypeHandler<NSObject>
 -(id) init;
 @end
+
+@interface ORTRationalHandler : ORVTypeHandler<NSObject>
+-(id) init;
+@end;
 
 @interface ORTDoubleHandler : ORVTypeHandler<NSObject>
 -(id) init;
