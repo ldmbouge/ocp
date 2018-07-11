@@ -1335,7 +1335,7 @@
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalGEQ:res to:x[2]];
 }
-/*+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
++(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
 {
    id<CPConstraint> o = nil;
    if([notes hasFilteringPercent])

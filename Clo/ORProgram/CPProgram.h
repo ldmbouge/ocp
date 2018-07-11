@@ -231,8 +231,8 @@ PORTABLE_BEGIN
 -(void) setMaxErrorDD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError;
 -(ORDouble) minD:(PNONNULL id<ORVar>)x;
 -(ORDouble) maxD:(PNONNULL id<ORVar>)x;
--(char*) minQ:(PNONNULL id<ORVar>)x;
--(char*) maxQ:(PNONNULL id<ORVar>)x;
+-(NSString*) minQ:(PNONNULL id<ORVar>)x;
+-(NSString*) maxQ:(PNONNULL id<ORVar>)x;
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;

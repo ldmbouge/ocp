@@ -598,7 +598,7 @@
 {
    self = [super initORConstraintI];
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(void)dealloc
@@ -971,7 +971,7 @@
 {
    self = [super initORConstraintI];
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -1024,7 +1024,7 @@
 {
    self = [super initORConstraintI];
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5202,7 +5202,7 @@
    self = [super initORConstraintI];
    _ia = ia;
    _coefs = coefs;
-   _c  = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5256,7 +5256,7 @@
    self = [super initORConstraintI];
    _ia = ia;
    _coefs = coefs;
-   _c  = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5310,7 +5310,7 @@
    self = [super initORConstraintI];
    _ia = ia;
    _coefs = coefs;
-   _c  = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5364,7 +5364,7 @@
    self = [super initORConstraintI];
    _ia = ia;
    _coefs = coefs;
-   _c  = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5418,7 +5418,7 @@
    self = [super initORConstraintI];
    _ia = ia;
    _coefs = coefs;
-   _c  = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5472,7 +5472,7 @@
    self = [super initORConstraintI];
    _ia = ia;
    _coefs = coefs;
-   _c  = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5526,7 +5526,7 @@
    self = [super initORConstraintI];
    _b = b;
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5586,7 +5586,7 @@
    self = [super initORConstraintI];
    _b = b;
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5766,7 +5766,7 @@
    self = [super initORConstraintI];
    _b = b;
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -5948,7 +5948,7 @@
    self = [super initORConstraintI];
    _b = b;
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -6009,7 +6009,7 @@
    self = [super initORConstraintI];
    _b = b;
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description
@@ -6188,7 +6188,7 @@
    self = [super initORConstraintI];
    _b = b;
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
 }
 -(NSString*) description

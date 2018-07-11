@@ -20,10 +20,8 @@
 {
     self = [super init];
     _trail = trail;
-    _imin = [[ORRational alloc] init];
-    _imax = [[ORRational alloc] init];
-    [_imin set: low];
-    [_imax set: up];
+    _imin = [ORRational rationalWith:low];
+    _imax = [ORRational rationalWith:up];
     _domain = makeTRRationalInterval(trail, _imin, _imax);
     return self;
 }
@@ -31,10 +29,8 @@
 {
     self = [super init];
     _trail = trail;
-    _imin = [[ORRational alloc] init];
-    _imax = [[ORRational alloc] init];
-    [_imin set_d: low];
-    [_imax set_d: up];
+    _imin = [ORRational rationalWith_d:low];
+    _imax = [ORRational rationalWith_d:up];
     _domain = makeTRRationalInterval(trail, _imin, _imax);
     return self;
 }

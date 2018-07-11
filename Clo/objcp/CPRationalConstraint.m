@@ -66,7 +66,7 @@
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
-   _c = c;
+   _c = [ORRational rationalWith:c];
    return self;
    
 }

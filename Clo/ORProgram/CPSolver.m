@@ -3494,12 +3494,12 @@
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx max];
 }
--(char*) maxQ:(id<ORVar>)x
+-(NSString*) maxQ:(id<ORVar>)x
 {
    CPRationalVarI* cx = _gamma[x.getId];
    return [[cx max] description];
 }
--(char*) minQ:(id<ORVar>)x
+-(NSString*) minQ:(id<ORVar>)x
 {
    CPRationalVarI* cx = _gamma[x.getId];
    return [[cx max] description];

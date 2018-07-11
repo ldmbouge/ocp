@@ -1570,8 +1570,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> left = [cstr left];
       [left visit: self];
-      ORRational* cst = [[ORRational alloc ] init];
-      [cst set: [cstr cst]];
+      ORRational* cst = [ORRational rationalWith:[cstr cst]];
       id<CPConstraint> concreteCstr = [CPFactory rationalEqualc:_gamma[left.getId]  to: cst];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -1583,8 +1582,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> left = [cstr left];
       [left visit: self];
-      ORRational* cst = [[ORRational alloc ] init];
-      [cst set: [cstr cst]];
+      ORRational* cst = [ORRational rationalWith:[cstr cst]];
       id<CPConstraint> concreteCstr = [CPFactory rationalNEqualc: _gamma[left.getId]  to: cst];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -1711,8 +1709,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [[ORRational alloc ] init];
-      [cst set: [cstr cst]];
+      ORRational* cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify:(id<CPIntVar>)_gamma[b.getId] with:(id<CPRationalVar>)_gamma[x.getId] eqi: cst];
@@ -1742,8 +1739,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [[ORRational alloc ] init];
-      [cst set: [cstr cst]];
+      ORRational* cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] neqi: cst];
@@ -1772,8 +1768,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [[ORRational alloc ] init];
-      [cst set: [cstr cst]];
+      ORRational* cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
@@ -1787,8 +1782,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [[ORRational alloc ] init];
-      [cst set: [cstr cst]];
+      ORRational* cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] lti: cst];
@@ -1813,8 +1807,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [[ORRational alloc ] init];
-      [cst set: [cstr cst]];
+      ORRational* cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] geqi: cst];
@@ -1828,8 +1821,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [[ORRational alloc ] init];
-      [cst set: [cstr cst]];
+      ORRational* cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] gti: cst];

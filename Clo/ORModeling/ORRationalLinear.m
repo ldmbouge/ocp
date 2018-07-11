@@ -25,8 +25,7 @@
    _max   = mxs;
    _terms = malloc(sizeof(struct CPTerm)*_max);
    _nb    = 0;
-   _indep = [[ORRational alloc] init];
-   [_indep set_d:0];
+   _indep = [ORRational rationalWith_d:0.0];
    return self;
 }
 -(void)dealloc
@@ -78,8 +77,7 @@
    id<ORRationalRange> dom = [x domain];
    if ([dom.low eq: dom.up] && [dom.up isZero]) return;
    if ([dom.low eq: dom.up]) {
-      ORRational* tmp = [[ORRational alloc] init];
-      [tmp set_d: c];
+      ORRational* tmp = [ORRational rationalWith_d:c];
       _indep = [_indep add: [dom.low mul: tmp]];
       [tmp release];
       return;
@@ -132,8 +130,7 @@
 }
 -(void)scaleBy:(ORInt)s
 {
-   ORRational* sr = [[ORRational alloc] init];
-   [sr set_d:s];
+   ORRational* sr = [ORRational rationalWith_d:s];
    for(ORInt k=0;k<_nb;k++)
       _terms[k]._coef *= s;
    _indep = [_indep mul: sr];
@@ -195,8 +192,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    return [ORFactory rationalArray: model
                           range: RANGE(model,0,_nb-1)
                            with: ^ORRational*(ORInt i) {
-                              ORRational* coef = [[ORRational alloc] init];
-                              [coef set_d: _terms[i]._coef];
+                              ORRational* coef = [ORRational rationalWith_d:_terms[i]._coef];
                               return coef; }];
 }
 

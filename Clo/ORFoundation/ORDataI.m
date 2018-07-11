@@ -300,7 +300,7 @@
 -(ORMutableRationalI*) initORMutableRationalI:(id<ORTracker>)tracker value:(ORRational*) value
 {
    self = [super init];
-   _value = value;
+   _value = [ORRational rationalWith:value];
    _tracker = tracker;
    return self;
 }
@@ -500,7 +500,7 @@
 -(ORRationalI*) init: (id<ORTracker>) tracker value: (ORRational*) value
 {
    self = [super init];
-   _value = value;
+   _value = [ORRational rationalWith:value];
    _tracker = tracker;
    return self;
 }

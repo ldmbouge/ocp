@@ -28,6 +28,8 @@
 -(BOOL)isPosInf;
 -(BOOL)isNegInf;
 -(id)set:(id<ORRational>)r;
++(id<ORRational>)rationalWith:(id<ORRational>)r;
++(id<ORRational>)rationalWith_d:(double)d;
 -(id)set_d:(double)d;
 -(id)set:(int)num and:(int)den;
 -(id<ORRational>)add:(id<ORRational>)r;
@@ -94,6 +96,8 @@
 -(void)setType:(int)type;
 -(void)setRational:(mpq_t*)rational;
 -(id)set:(id<ORRational>)r;
++(id<ORRational>)rationalWith:(id<ORRational>)r;
++(id<ORRational>)rationalWith_d:(double)d;
 -(id)set_d:(double)d;
 -(id)set:(int)num and:(int)den;
 -(id<ORRational>)get;

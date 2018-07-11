@@ -28,9 +28,9 @@ int main(int argc, const char * argv[]) {
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solveAll:^{
          [cp labelRational:x];
-         NSLog(@"x : [%s;%s] (%s)",[cp minQ:x],[cp maxQ:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"y : [%s;%s] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
-         NSLog(@"z : [%s;%s] (%s)",[cp minQ:z],[cp maxQ:z],[cp bound:z] ? "YES" : "NO");
+         NSLog(@"x : [%@;%@] (%s)",[cp minQ:x],[cp maxQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
+         NSLog(@"z : [%@;%@] (%s)",[cp minQ:z],[cp maxQ:z],[cp bound:z] ? "YES" : "NO");
       }];
       NSLog(@"%@",cp);
    }

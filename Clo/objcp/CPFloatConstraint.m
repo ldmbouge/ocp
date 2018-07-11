@@ -24,7 +24,7 @@
 #endif
 
 
-void ulp_computation_f(ORRationalInterval* ulp, const float_interval f){
+/*void ulp_computation_f(ORRationalInterval* ulp, const float_interval f){
    ORRational* tmp0 = [[ORRational alloc] init];
    ORRational* tmp1 = [[ORRational alloc] init];
    ORRational* tmp2 = [[ORRational alloc] init];
@@ -61,7 +61,7 @@ void ulp_computation_f(ORRationalInterval* ulp, const float_interval f){
    [tmp0 release];
    [tmp1 release];
    [tmp2 release];
-}
+}*/
 
 //int compute_eo_add(ri eo, const float_interval x, const float_interval y, const float_interval z){
 //    int changed = 0;

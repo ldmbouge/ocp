@@ -131,11 +131,23 @@
    [buf appendFormat:@"%s",[self get_str]];
    return buf;
 }
--(id)set:(id<ORRational>)r{
-   mpq_set(_rational, *r.rational);
-   mpq_canonicalize(_rational);
+-(id)set:(ORRational*)r{
+   mpq_set(_rational, r->_rational);
+   //mpq_canonicalize(_rational);
    _type = r.type;
    return self;
+}
++(ORRational*)rationalWith:(id<ORRational>)r
+{
+   ORRational* result = [[ORRational alloc] init];
+   [result set:r];
+   return result;
+}
++(ORRational*)rationalWith_d:(double)d
+{
+   ORRational* result = [[ORRational alloc] init];
+   [result set_d:d];
+   return result;
 }
 -(id)set_d:(double)d{
    if (d == -INFINITY) {
@@ -487,7 +499,7 @@
    self = [super init];
    _low = [[ORRational alloc] init: mt];
    _up = [[ORRational alloc] init: mt];
-   [mt track:self];
+   //[mt track:self];
    return self;
 }
 -(void)dealloc{
@@ -537,8 +549,8 @@
    return self;
 }
 -(id)set_q:(id<ORRational>)low and:(id<ORRational>)up{
-   [low set:low];
-   [up set:up];
+   [_low set:low];
+   [_up set:up];
    
    return self;
 }

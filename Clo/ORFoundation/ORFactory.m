@@ -216,10 +216,8 @@
 }
 +(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker
 {
-   ORRational* ninf = [[ORRational alloc] init];
-   ORRational* pinf = [[ORRational alloc] init];
-   [ninf set_d:-INFINITY];
-   [pinf set_d:+INFINITY];
+   ORRational* ninf = [ORRational rationalWith_d:-INFINITY];
+   ORRational* pinf = [ORRational rationalWith_d:+INFINITY];
    ORRationalRangeI* o = [[ORRationalRangeI alloc] init:ninf up:pinf];
    [ninf release];
    [pinf release];

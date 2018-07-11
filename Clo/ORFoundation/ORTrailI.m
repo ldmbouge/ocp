@@ -140,8 +140,7 @@
     struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
     s->ptr = ptr;
     s->code = TAGRational;
-    s->rationalVal = [[ORRational alloc] init];
-    [s->rationalVal set: ptr];
+    s->rationalVal = [ORRational rationalWith:ptr];
     ++_seg[_cSeg]->top;
 }
 
@@ -339,10 +338,8 @@ TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
 TRRationalInterval makeTRRationalInterval(ORTrailI* trail, ORRational* min, ORRational* max)
 {
     TRRationalInterval rational_interval;
-    rational_interval._low = [[ORRational alloc] init];
-    rational_interval._up = [[ORRational alloc] init];
-    [rational_interval._low set: min];
-   [rational_interval._up set: max];
+    rational_interval._low = [ORRational rationalWith:min];
+    rational_interval._up = [ORRational rationalWith:max];
     rational_interval._mgc = [trail magic] - 1;
     return rational_interval;
 }

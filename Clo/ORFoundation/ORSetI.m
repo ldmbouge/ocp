@@ -411,8 +411,8 @@
 -(id<ORRationalRange>)init:(ORRational*) low up:(ORRational*)up
 {
    self = [super init];
-   [_low set: low];
-   [_up set: up];
+   _low = [ORRational rationalWith:low];
+   _up = [ORRational rationalWith:up];
    return self;
 }
 -(id)copyWithZone:(NSZone *)zone

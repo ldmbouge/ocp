@@ -1544,9 +1544,8 @@
 }
 -(ORRational*) qmin
 {
-   ORRational* minOf = [[ORRational alloc] init];
+   ORRational* minOf = [ORRational rationalWith_d:+INFINITY];
    ORRational* array_k = [[ORRational alloc] init];
-   [minOf set_d:+INFINITY];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
       minOf = [minOf lt: array_k] ? minOf : array_k;
@@ -1555,9 +1554,8 @@
 }
 -(ORRational*) qmax
 {
-   ORRational* maxOf = [[ORRational alloc] init];
+   ORRational* maxOf = [ORRational rationalWith_d:-INFINITY];
    ORRational* array_k = [[ORRational alloc] init];
-   [maxOf set_d:-INFINITY];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
       maxOf = [maxOf gt: array_k] ? maxOf : array_k;

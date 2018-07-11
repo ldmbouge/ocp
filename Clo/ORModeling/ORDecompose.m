@@ -1871,8 +1871,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 +(void)rationalVar:(id<ORRationalVar>)var equal:(ORRationalLinear*)e for:(id<ORAddToModel>) model
 {
    if (e.size == 0) {
-      ORRational* z = [[ORRational alloc] init];
-      [z set_d:0];
+      ORRational* z = [ORRational rationalWith_d:0.0];
       [model addConstraint:[ORFactory rationalEqualc:model var:var eqc:z]];
       [z release];
    } else if (e.size == 1) {

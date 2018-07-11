@@ -860,10 +860,10 @@
 -(ORDouble)minD:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] minD:x];
 }
--(char*)maxQ:(PNONNULL id<ORVar>)x {
+-(NSString*)maxQ:(PNONNULL id<ORVar>)x {
    return [(id<CPProgram>)[self worker] maxQ:x];
 }
--(char*)minQ:(PNONNULL id<ORVar>)x {
+-(NSString*)minQ:(PNONNULL id<ORVar>)x {
    return [(id<CPProgram>)[self worker] minQ:x];
 }
 -(ORDouble)maxErrorDD:(PNONNULL id<ORVar>)x {

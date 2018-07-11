@@ -484,10 +484,8 @@
    self = [super init];
    _tracker = track;
    _domain = dom;
-   ORRational* ninf = [[ORRational alloc] init];
-   ORRational* pinf = [[ORRational alloc] init];
-   [ninf set_d:-INFINITY];
-   [pinf set_d:+INFINITY];
+   ORRational* ninf = [ORRational rationalWith_d:-INFINITY];
+   ORRational* pinf = [ORRational rationalWith_d:+INFINITY];
    _hasBounds = ([[dom low] neq: ninf] || [[dom up] neq: pinf]);
    [track trackVariable: self];
    return self;
@@ -498,8 +496,7 @@
 }
 -(ORRationalVarI*) init: (id<ORTracker>) track up: (ORRational*) up
 {
-   ORRational* zero = [[ORRational alloc] init];
-   [zero set_d: 0.f];
+   ORRational* zero = [ORRational rationalWith_d:0.0];
    ORRationalVarI* r = [self init:track low:zero up:up];
    return r;
 }
@@ -515,8 +512,7 @@
 }
 -(ORRationalVarI*) init: (id<ORTracker>) track up: (ORRational*) up name:(NSString*) name
 {
-   ORRational* zero = [[ORRational alloc] init];
-   [zero set_d: 0.f];
+   ORRational* zero = [ORRational rationalWith_d:0.0];
    self = [self init:track low:zero up:up name:name];
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
