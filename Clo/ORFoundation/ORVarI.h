@@ -88,14 +88,14 @@
 @interface ORRationalVarI : ORExprI<ORRationalVar>
 -(ORRationalVarI*) init: (id<ORTracker>) tracker;
 -(ORRationalVarI*) init: (id<ORTracker>) tracker domain:(id<ORRationalRange>)dom;
--(ORRationalVarI*) init: (id<ORTracker>) tracker up: (ORRational) up;
--(ORRationalVarI*) init: (id<ORTracker>) tracker low: (ORRational) low up: (ORRational) up;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker up: (id<ORRational>) up;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker low: (id<ORRational>) low up: (id<ORRational>) up;
 -(ORRationalVarI*) init: (id<ORTracker>) tracker name:(NSString*) name;
--(ORRationalVarI*) init: (id<ORTracker>) tracker up: (ORRational) up name:(NSString*) name;
--(ORRationalVarI*) init: (id<ORTracker>) tracker low: (ORRational) low up: (ORRational) up name:(NSString*) name;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker up: (id<ORRational>) up name:(NSString*) name;
+-(ORRationalVarI*) init: (id<ORTracker>) tracker low: (id<ORRational>) low up: (id<ORRational>) up name:(NSString*) name;
 -(ORBool) hasBounds;
--(ORRational) low;
--(ORRational) up;
+-(id<ORRational>)low;
+-(id<ORRational>)up;
 -(NSString*) prettyname;
 -(id<ORRationalRange>) domain;
 -(void) visit: (ORVisitor*)v;

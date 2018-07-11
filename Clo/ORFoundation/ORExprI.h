@@ -189,8 +189,8 @@
 }
 -(id<ORExpr>) initORExprCstRationalSubI: (id<ORRationalArray>) array index:(id<ORExpr>) op;
 -(id<ORTracker>) tracker;
--(ORRational) qmin;
--(ORRational) qmax;
+-(ORRational*) qmin;
+-(ORRational*) qmax;
 -(NSString *)description;
 -(ORExprI*) index;
 -(id<ORRationalArray>)array;

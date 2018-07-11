@@ -41,9 +41,9 @@
    }
    return NULL;
 }
--(ORRational)rationalValue
+-(ORRational*)rationalValue
 {
-   return (ORRational){{},0};
+   return [[ORRational alloc] init];
 }
 #else
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
@@ -148,6 +148,7 @@
 -(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitRealVar: (id<ORRealVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitRationalVar: (id<ORRationalVar>) v;
 -(void) visitDoubleVar: (id<ORDoubleVar>) v;
 -(void) visitLDoubleVar: (id<ORLDoubleVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
@@ -260,6 +261,11 @@
 {
     [_ms addObject:v];
     [_ma addObject:v];
+}
+-(void) visitRationalVar: (id<ORRationalVar>) v
+{
+   [_ms addObject:v];
+   [_ma addObject:v];
 }
 -(void) visitDoubleVar: (id<ORDoubleVar>) v
 {
@@ -671,15 +677,15 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "fmax not defined on expression"];
     return 0;
 }
--(ORRational) qmin
+-(ORRational*) qmin
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "qmin not defined on expression"];
-   return (ORRational){{},0};
+   return [[ORRational alloc] init];
 }
--(ORRational) qmax
+-(ORRational*) qmax
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "qmax not defined on expression"];
-   return (ORRational){{},0};
+   return [[ORRational alloc] init];
 }
 -(ORDouble) dmin
 {
@@ -701,10 +707,10 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
     return 0;
 }
--(ORRational) rationalValue
+-(ORRational*) rationalValue
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "rationalValue not defined on expression"];
-   return (ORRational){{},0};
+   return [[ORRational alloc] init];
 }
 -(ORDouble) doubleValue
 {
@@ -1536,27 +1542,25 @@
 {
    return [_index tracker];
 }
--(ORRational) qmin
+-(ORRational*) qmin
 {
-   ORRational minOf;
-   ORRational array_k;
-   rational_init(&minOf);
-   rational_set_d(&minOf, +INFINITY);
+   ORRational* minOf = [[ORRational alloc] init];
+   ORRational* array_k = [[ORRational alloc] init];
+   [minOf set_d:+INFINITY];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
-      minOf = rational_lt(&minOf, &array_k) ? minOf : array_k;
+      minOf = [minOf lt: array_k] ? minOf : array_k;
    }
    return minOf;
 }
--(ORRational) qmax
+-(ORRational*) qmax
 {
-   ORRational maxOf;
-   ORRational array_k;
-   rational_init(&maxOf);
-   rational_set_d(&maxOf, +INFINITY);
+   ORRational* maxOf = [[ORRational alloc] init];
+   ORRational* array_k = [[ORRational alloc] init];
+   [maxOf set_d:-INFINITY];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
-      maxOf = rational_gt(&maxOf, &array_k) ? maxOf : array_k;
+      maxOf = [maxOf gt: array_k] ? maxOf : array_k;
    }
    return maxOf;
 }
@@ -1707,6 +1711,14 @@
 {
    return maxFlt([_left fmax] ,[_right fmax]);
 }
+-(ORRational*) qmin
+{
+   return minQ([_left qmin],[_right qmin]);
+}
+-(ORRational*) qmax
+{
+   return maxQ([_left qmax] ,[_right qmax]);
+}
 -(ORDouble) dmin
 {
    return minDbl([_left dmin],[_right dmin]);
@@ -1769,6 +1781,15 @@
 -(ORFloat) fmax
 {
     return [_left fmax] + [_right fmax];
+}
+-(ORRational*) qmin
+{
+
+   return [[_left qmin] add: [_right qmin]];
+}
+-(ORRational*) qmax
+{
+   return  [[_left qmax] add: [_right qmax]];
 }
 -(ORDouble) dmin
 {
@@ -1839,6 +1860,14 @@
 {
      return [_left fmax] - [_right fmin];
 }
+-(ORRational*) qmin
+{
+   return [[_left qmin] sub: [_right qmin]];
+}
+-(ORRational*) qmax
+{
+   return  [[_left qmax] sub: [_right qmax]];
+}
 -(ORDouble) dmin
 {
    return [_left dmin] - [_right dmax];
@@ -1901,6 +1930,56 @@
     ORDouble m1 = maxDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
     ORDouble m2 = maxDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
     return maxDbl(m1,m2);
+}
+-(ORRational*) qmin
+{
+   // TODO FIX
+   /*ORRational lmin = [_left qmin];
+   ORRational lmax = [_left qmax];
+   ORRational rmin = [_right qmin];
+   ORRational rmax = [_right qmax];
+   ORRational m1, m2, m3;
+   rational_init(&m1);
+   rational_init(&m2);
+   rational_init(&m3);
+   
+   rational_multiplication(&m1, &lmin, &rmin);
+   rational_multiplication(&m2, &lmin, &rmax);
+   m1 = minQ(m1, m2);
+   
+   rational_multiplication(&m3, &lmax, &rmin);
+   rational_multiplication(&m2, &lmax, &rmax);
+   m2 = minQ(m3, m2);
+
+   m3 = minQ(m1,m2);
+   rational_clear(&m1);
+   rational_clear(&m2);*/
+   return [[ORRational alloc] init];
+}
+-(ORRational*) qmax
+{
+   // TODO FIX
+   /*ORRational lmin = [_left qmin];
+   ORRational lmax = [_left qmax];
+   ORRational rmin = [_right qmin];
+   ORRational rmax = [_right qmax];
+   ORRational m1, m2, m3;
+   rational_init(&m1);
+   rational_init(&m2);
+   rational_init(&m3);
+   
+   rational_multiplication(&m1, &lmin, &rmin);
+   rational_multiplication(&m2, &lmin, &rmax);
+   m1 = maxQ(m1, m2);
+   
+   rational_multiplication(&m3, &lmax, &rmin);
+   rational_multiplication(&m2, &lmax, &rmax);
+   m2 = maxQ(m3, m2);
+   
+   m3 = maxQ(m1,m2);
+   rational_clear(&m1);
+   rational_clear(&m2);*/
+   return [[ORRational alloc] init];
 }
 -(ORDouble) dmin
 {
@@ -1969,6 +2048,57 @@
     ORDouble m1 = maxDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
     ORDouble m2 = maxDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
     return maxDbl(m1,m2);
+}
+-(ORRational*) qmin
+{
+   // TODO FIX
+   /*ORRational lmin = [_left qmin];
+   ORRational lmax = [_left qmax];
+   ORRational rmin = [_right qmin];
+   ORRational rmax = [_right qmax];
+   ORRational m1, m2, m3;
+   rational_init(&m1);
+   rational_init(&m2);
+   rational_init(&m3);
+   
+   rational_division(&m1, &lmin, &rmin);
+   rational_division(&m2, &lmin, &rmax);
+   m1 = minQ(m1, m2);
+   
+   rational_division(&m3, &lmax, &rmin);
+   rational_division(&m2, &lmax, &rmax);
+   m2 = minQ(m3, m2);
+   
+   m3 = minQ(m1,m2);
+   rational_clear(&m1);
+   rational_clear(&m2);*/
+   
+   return [[ORRational alloc] init];
+}
+-(ORRational*) qmax
+{
+   // TODO FIX
+   /*ORRational lmin = [_left qmin];
+   ORRational lmax = [_left qmax];
+   ORRational rmin = [_right qmin];
+   ORRational rmax = [_right qmax];
+   ORRational m1, m2, m3;
+   rational_init(&m1);
+   rational_init(&m2);
+   rational_init(&m3);
+   
+   rational_division(&m1, &lmin, &rmin);
+   rational_division(&m2, &lmin, &rmax);
+   m1 = maxQ(m1, m2);
+   
+   rational_division(&m3, &lmax, &rmin);
+   rational_division(&m2, &lmax, &rmax);
+   m2 = maxQ(m3, m2);
+   
+   m3 = maxQ(m1,m2);
+   rational_clear(&m1);
+   rational_clear(&m2);*/
+   return [[ORRational alloc] init];
 }
 -(ORDouble) dmin
 {

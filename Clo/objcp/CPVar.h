@@ -183,13 +183,13 @@ enum CPVarClass {
 @protocol CPFloatVar<CPVar,CPNumVarSubscriber>
 -(ORFloat) min;
 -(ORFloat) max;
--(ORRational) minErr;
--(ORRational) maxErr;
+-(ORRational*) minErr;
+-(ORRational*) maxErr;
 -(ORDouble) minErrF;
 -(ORDouble) maxErrF;
 -(ORFloat) value;
 -(ORFloat) floatValue;
--(ORRational) errorValue;
+-(ORRational*) errorValue;
 -(ORInterval) bounds;
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
@@ -204,25 +204,25 @@ enum CPVarClass {
 @end
 
 @protocol CPRationalVar<CPVar>
--(ORRational) min;
--(ORRational) max;
--(ORRational) value;
--(ORRational) rationalValue;
+-(ORRational*) min;
+-(ORRational*) max;
+-(ORRational*) value;
+-(ORRational*) rationalValue;
 -(ORInterval) bounds;
--(ORBool) member:(ORRational)v;
+-(ORBool) member:(ORRational*)v;
 -(ORBool) bound;
--(void) bind:(ORRational) val;
--(void) updateMin:(ORRational) newMin;
--(void) updateMax:(ORRational) newMax;
--(void) assignRelaxationValue: (ORRational) f;
--(void) updateInterval: (ORRational) newMin and:(ORRational) newMax;
+-(void) bind:(ORRational*) val;
+-(void) updateMin:(ORRational*) newMin;
+-(void) updateMax:(ORRational*) newMax;
+-(void) assignRelaxationValue: (ORRational*) f;
+-(void) updateInterval: (ORRational*) newMin and:(ORRational*) newMax;
 @end
 
 @protocol CPDoubleVar<CPVar>
 -(ORDouble) min;
 -(ORDouble) max;
--(ORRational) minErr;
--(ORRational) maxErr;
+-(ORRational*) minErr;
+-(ORRational*) maxErr;
 -(ORDouble) minErrF;
 -(ORDouble) maxErrF;
 -(ORDouble) value;

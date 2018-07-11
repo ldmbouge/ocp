@@ -22,7 +22,7 @@
 {
    return [[ORMutableFloatI alloc] initORMutableFloatI:nil value:value];
 }
-+(id<ORMutableRational>) rational:(ORRational) value
++(id<ORMutableRational>) rational:(ORRational*) value
 {
    return [[ORMutableRationalI alloc] initORMutableRationalI:nil value:value];
 }

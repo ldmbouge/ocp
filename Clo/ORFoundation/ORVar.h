@@ -76,8 +76,8 @@ PORTABLE_BEGIN
 @protocol ORRationalVar <ORExprVar>
 -(id<ORRationalRange>) domain;
 -(ORBool) hasBounds;
--(ORRational) low;
--(ORRational) up;
+-(ORRational*) low;
+-(ORRational*) up;
 -(NSString*) prettyname;
 @end
 

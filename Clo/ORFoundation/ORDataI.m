@@ -293,34 +293,34 @@
 
 @implementation ORMutableRationalI
 {
-   ORRational    _value;
+   ORRational*    _value;
    id<ORTracker> _tracker;
 }
 
--(ORMutableRationalI*) initORMutableRationalI:(id<ORTracker>)tracker value:(ORRational) value
+-(ORMutableRationalI*) initORMutableRationalI:(id<ORTracker>)tracker value:(ORRational*) value
 {
    self = [super init];
    _value = value;
    _tracker = tracker;
    return self;
 }
--(ORRational) initialValue
+-(ORRational*) initialValue
 {
    return _value;
 }
--(ORRational) value
+-(ORRational*) value
 {
    return _value;
 }
--(ORRational) setValue: (ORRational) value
+-(ORRational*) setValue: (ORRational*) value
 {
    return _value = value;
 }
--(ORRational) value: (id<ORGamma>) solver
+-(ORRational*) value: (id<ORGamma>) solver
 {
    return [(ORMutableRationalI*)[solver concretize: self] initialValue];
 }
--(ORRational) setValue: (ORRational) value in: (id<ORGamma>) solver
+-(ORRational*) setValue: (ORRational*) value in: (id<ORGamma>) solver
 {
    return [((ORMutableRationalI*)[solver concretize: self]) setValue: value];
 }
@@ -342,7 +342,7 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"%16.16e",rational_get_d(&_value)];
+   return [NSString stringWithFormat:@"%s",[_value get_str]];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -493,11 +493,11 @@
 
 @implementation ORRationalI
 {
-   ORRational       _value;
+   ORRational*       _value;
    id<ORTracker> _tracker;
 }
 
--(ORRationalI*) init: (id<ORTracker>) tracker value: (ORRational) value
+-(ORRationalI*) init: (id<ORTracker>) tracker value: (ORRational*) value
 {
    self = [super init];
    _value = value;
@@ -512,7 +512,7 @@
 {
    if ([object isKindOfClass:[ORRationalI class]]) {
       ORRationalI* o = object;
-      return rational_eq(&_value, &o->_value);
+      return [_value eq: o->_value];
    } else return NO;
 }
 - (NSUInteger)hash
@@ -522,35 +522,35 @@
 }
 -(ORInt) min
 {
-   return floor(rational_get_d(&_value));
+   return floor([_value get_d]);
 }
 -(ORInt) max
 {
-   return (ORInt)ceil(rational_get_d(&_value));
+   return ceil([_value get_d]);
 }
--(ORRational) qmin
+-(ORRational*) qmin
 {
    return _value;
 }
--(ORRational) qmax
+-(ORRational*) qmax
 {
    return _value;
 }
--(ORRational) value
+-(ORRational*) value
 {
    return _value;
 }
 -(ORInt) intValue
 {
-   return (ORInt) rational_get_d(&_value);
+   return (ORInt) [_value get_d];
 }
--(ORRational) rationalValue
+-(ORRational*) rationalValue
 {
    return _value;
 }
 -(ORDouble) doubleValue
 {
-   return (ORDouble) rational_get_d(&_value);
+   return (ORDouble) [_value get_d];
 }
 -(ORBool) isConstant
 {
@@ -570,16 +570,16 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"%.9f",rational_get_d(&_value)];
+   return [NSString stringWithFormat:@"%s",[_value get_str]];
 }
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORRational) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORRational*) at:_value];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORRational*) at:_value];
    return self;
 }
 -(void) visit: (ORVisitor*) visitor

@@ -18,8 +18,7 @@
 #import <objcp/CPIntVarI.h>
 
 #include "fpi.h"
-#include "gmp.h"
-#include "rationalUtilities.h"
+#import "rationalUtilities.h"
 
 #define NB_FLOAT_BY_E (8388608)
 #define S_PRECISION 23
@@ -55,15 +54,15 @@
 
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
 -(void) updateMin: (ORFloat) newMin;
--(void) updateMinError: (ORRational) newMinError;
+-(void) updateMinError: (ORRational*) newMinError;
 -(void) updateMinErrorF: (ORDouble) newMinError;
 -(void) updateMax: (ORFloat) newMax;
--(void) updateMaxError: (ORRational) newMaxError;
+-(void) updateMaxError: (ORRational*) newMaxError;
 -(void) updateMaxErrorF: (ORDouble) newMaxError;
 -(void) updateInterval: (ORFloat) newMin and: (ORFloat)newMax;
--(void) updateIntervalError: (ORRational) newMinError and: (ORRational) newMaxError;
+-(void) updateIntervalError: (ORRational*) newMinError and: (ORRational*) newMaxError;
 -(void) bind: (ORFloat) val;
--(void) bindError: (ORRational) valError;
+-(void) bindError: (ORRational*) valError;
 
 @end
 
@@ -92,21 +91,21 @@ typedef struct  {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-   ORRational              _valueError;
+   ORRational*              _valueError;
    id<CPFloatDom>            _dom;
    id<CPRationalDom>     _domError;
    CPFloatEventNetwork      _net;
    CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
--(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(ORRational)elow errUp:(ORRational) eup;
+-(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(ORRational*)elow errUp:(ORRational*) eup;
 -(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup;
 -(id)init:(id<CPEngine>)engine;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 -(ORFloat) floatValue;
--(ORRational) errorValue;
+-(ORRational*) errorValue;
 -(ORLDouble) domwidth;
 -(id<CPDom>) domain;
 -(TRRationalInterval) domainError;
@@ -139,24 +138,16 @@ typedef struct {
    int  changed;
 } intersectionInterval;
 
-typedef struct {
-   ri result;
-   ri interval;
-   int changed;
-} intersectionIntervalError;
-
 static inline int sign(float_cast p){
    if(p.parts.sign) return -1;
    return 1;
 }
-
 static inline float minFloatBaseOnExponent(float v){
    float_cast v_cast;
    v_cast.f = v;
    v_cast.parts.mantissa = 1;
    return v_cast.f;
 }
-
 static inline float floatFromParts(unsigned int mantissa, unsigned int exponent,unsigned int sign){
    float_cast f_cast;
    f_cast.parts.mantissa = mantissa;
@@ -164,18 +155,14 @@ static inline float floatFromParts(unsigned int mantissa, unsigned int exponent,
    f_cast.parts.sign = sign;
    return f_cast.f;
 }
-
 static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
 {
    return (xmax < ymin) || (ymax < xmin);
 }
-
-static inline bool isDisjointWithVR(ORRational xmin, ORRational xmax, ORRational ymin, ORRational ymax)
+static inline bool isDisjointWithVR(ORRational* xmin, ORRational* xmax, ORRational* ymin, ORRational* ymax)
 {
-   return (rational_cmp(&xmax, &ymin) < 0) || (rational_cmp(&ymax, &xmin) < 0 );
+   return ([xmax leq: ymin]) || ([ymax leq: xmin]);
 }
-
-
 static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float ymax)
 {
    return !isDisjointWithV(xmin,xmax,ymin,ymax);
@@ -206,7 +193,6 @@ static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
 {
    return !isDisjointWithV([x min],[x max], [y min], [y max]);
 }
-
 static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
 {
    return [x min] < [y min] &&  [x max] < [y max];
@@ -215,47 +201,18 @@ static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
 {
    return [x min] > [y min ] && [x max] > [y max];
 }
-
 static inline double cardinality(CPFloatVarI* x)
 {
    return cardinalityV([x min], [x max]);
 }
-
 static inline float_interval makeFloatInterval(float min, float max)
 {
    return (float_interval){min,max};
 }
-
 static inline void updateFloatInterval(float_interval * ft,CPFloatVarI* x)
 {
    ft->inf = x.min;
    ft->sup = x.max;
-}
-static inline void makeRationalInterval(ri ri_, ORRational min, ORRational max)
-{
-   ri_set_q(&ri_, &min, &max);
-}
-
-static inline void updateRationalInterval(ri ri_, CPFloatVarI* x)
-{
-   ORRational minE;
-   ORRational maxE;
-   rational_init(&minE);
-   rational_init(&maxE);
-   minE = x.minErr;
-   maxE = x.maxErr;
-   ri_set_q(&ri_, &minE, &maxE);
-   rational_clear(&minE);
-   rational_clear(&maxE);
-}
-
-static inline void freeRationalInterval(ri r)
-{
-   ri_clear(&r);
-}
-
-static inline void setRationalInterval(ri r, ri r2){
-   ri_set(&r, &r2);
 }
 static inline void updateFTWithValues(float_interval * ft,float min, float max)
 {
@@ -279,7 +236,6 @@ static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
    min = -max;
    return makeFloatInterval(min,max);
 }
-
 static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
 {
    float m = fmaxFlt([x min], [x max]);
@@ -294,21 +250,6 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
    }
    return makeFloatInterval(min,max);
 }
-
-static inline void minError(ORRational* r, ORRational* a, ORRational* b){
-    if (rational_cmp(a, b) > 0)
-        rational_set(r, b);
-    else
-        rational_set(r, a);
-}
-
-static inline void maxError(ORRational* r, ORRational* a, ORRational* b){
-    if (rational_cmp(a, b) > 0)
-        rational_set(r, a);
-    else
-        rational_set(r, b);
-}
-
 static inline intersectionInterval intersection(float_interval r, float_interval x, ORDouble percent)
 {
    double reduced = 0;
@@ -322,81 +263,15 @@ static inline intersectionInterval intersection(float_interval r, float_interval
       failNow();
    return (intersectionInterval){r,changed};
 }
-
 static inline float next_nb_float(float v, int nb, float def)
 {
    for(int i = 1; i < nb && v < def; i++)
       v = fp_next_float(v);
    return v;
 }
-
 static inline float previous_nb_float(float v, int nb, float def)
 {
    for(int i = 1; i < nb && v > def; i++)
       v = fp_previous_float(v);
    return v;
-}
-
-static inline void intersectionError(intersectionIntervalError* interErr, ri original_error, ri computed_error){
-   int cmp_val;
-   interErr->changed = false;
-   
-   /* inf = max of (original_error.inf, computed_error.inf) */
-   cmp_val = rational_cmp(&original_error.inf, &computed_error.inf);
-   if(cmp_val < 0) {
-      interErr->changed = true;
-      rational_set(&interErr->result.inf, &computed_error.inf);
-   } else if (cmp_val >= 0) {
-      rational_set(&interErr->result.inf, &original_error.inf);
-   }
-   /* original_error > computed_error */
-   cmp_val = rational_cmp(&original_error.sup, &computed_error.sup);
-   if(cmp_val > 0){
-      interErr->changed = true;
-      rational_set(&interErr->result.sup, &computed_error.sup);
-   } else if (cmp_val <= 0) {
-      rational_set(&interErr->result.sup, &original_error.sup);
-   }
-   
-   if(rational_cmp(&interErr->result.inf, &interErr->result.sup) > 0) // interErr empty !
-      failNow();
-   
-   if(interErr->changed){
-      ri percent;
-      ORRational hundred;
-      ri_init(&percent);
-      rational_init(&hundred);
-
-      rational_subtraction(&percent.inf, &original_error.inf, &interErr->result.inf);
-      rational_subtraction(&percent.sup, &original_error.sup, &interErr->result.sup);
-      
-      rational_set_d(&hundred, 0.0f);
-      if(rational_eq(&original_error.inf, &hundred)){
-         rational_set_d(&percent.inf, -DBL_MAX);
-      } else{
-         rational_division(&percent.inf, &percent.inf, &original_error.inf);
-      }
-      if(rational_eq(&original_error.sup, &hundred)){
-         rational_set_d(&percent.sup, DBL_MAX);
-      } else{
-         rational_division(&percent.sup, &percent.sup, &original_error.sup);
-      }
-      
-      rational_set_d(&hundred, 100.0f);
-      rational_multiplication(&percent.inf, &percent.inf, &hundred);
-      rational_multiplication(&percent.sup, &percent.sup, &hundred);
-      
-      rational_abs(&percent.inf, &percent.inf);
-      rational_abs(&percent.sup, &percent.sup);
-      
-      rational_set_d(&hundred, 1.0f);
-      
-      if(rational_cmp(&percent.inf, &hundred) <= 0 && rational_cmp(&percent.sup, &hundred) <= 0)
-         interErr->changed = false;
-      
-      rational_clear(&hundred);
-      ri_clear(&percent);
-   }
-   rational_set(&interErr->interval.inf, &original_error.inf);
-   rational_set(&interErr->interval.sup, &original_error.sup);
 }

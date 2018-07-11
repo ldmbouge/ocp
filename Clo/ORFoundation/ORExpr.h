@@ -127,13 +127,13 @@ static ORVType lookup_expr_table[][10] = {
 -(ORInt) max;
 -(ORFloat) fmin;
 -(ORFloat) fmax;
--(ORRational) qmin;
--(ORRational) qmax;
+-(ORRational*) qmin;
+-(ORRational*) qmax;
 -(ORDouble) dmin;
 -(ORDouble) dmax;
 -(ORInt) intValue;
 -(ORFloat) floatValue;
--(ORRational) rationalValue;
+-(ORRational*) rationalValue;
 -(ORDouble) doubleValue;
 -(ORBool) isConstant;
 -(ORBool) isVariable;
@@ -189,7 +189,7 @@ static ORVType lookup_expr_table[][10] = {
 
 @interface NSNumber (Expressions)
 -(id<ORExpr>)asExpression:(id<ORTracker>)tracker;
--(ORRational)rationalValue;
+-(ORRational*)rationalValue;
 -(id<ORRelation>) set: (id<ORExpr>) e;
 -(id<ORExpr>) plus: (id<ORExpr>) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;

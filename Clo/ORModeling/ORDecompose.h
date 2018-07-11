@@ -58,7 +58,7 @@
 +(id<ORRationalVar>) rationalVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
 +(id<ORRationalVar>) rationalVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORRationalVar>)x;
 +(id<ORRationalVar>) rationalVarIn:(id<ORRationalLinear>)e for:(id<ORAddToModel>) model;
-+(void)intVar:(id<ORRationalVar>)var equal:(id<ORRationalLinear>)e for:(id<ORAddToModel>) model;
++(void)rationalVar:(id<ORRationalVar>)var equal:(id<ORRationalLinear>)e for:(id<ORAddToModel>) model;
 @end
 
 @interface ORNormalizer(Double)
@@ -145,6 +145,7 @@ static inline ORVTypeHandler* vtype2Obj(ORVType type){
        case  ORTBool    : return [[ORTBoolHandler alloc] init];
        case  ORTInt     : return [[ORTIntHandler alloc] init];
        case  ORTFloat   : return [[ORTFloatHandler alloc] init];
+       case  ORTRational   : return [[ORTRationalHandler alloc] init];
        case  ORTDouble   : return [[ORTDoubleHandler alloc] init];
        default         : return [[ORVTypeHandler alloc] init];
     }

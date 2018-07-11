@@ -16,14 +16,14 @@
 
 @implementation CPRationalDom
 
--(id)initCPRationalDom:(id<ORTrail>)trail low:(ORRational)low up:(ORRational)up
+-(id)initCPRationalDom:(id<ORTrail>)trail low:(ORRational*)low up:(ORRational*)up
 {
     self = [super init];
     _trail = trail;
-    rational_init(&_imin);
-    rational_init(&_imax);
-    rational_set(&_imin,&low);
-    rational_set(&_imax,&up);
+    _imin = [[ORRational alloc] init];
+    _imax = [[ORRational alloc] init];
+    [_imin set: low];
+    [_imax set: up];
     _domain = makeTRRationalInterval(trail, _imin, _imax);
     return self;
 }
@@ -31,10 +31,10 @@
 {
     self = [super init];
     _trail = trail;
-    rational_init(&_imin);
-    rational_init(&_imax);
-    rational_set_d(&_imin,low);
-    rational_set_d(&_imax,up);
+    _imin = [[ORRational alloc] init];
+    _imax = [[ORRational alloc] init];
+    [_imin set_d: low];
+    [_imax set_d: up];
     _domain = makeTRRationalInterval(trail, _imin, _imax);
     return self;
 }
@@ -45,38 +45,31 @@
 }
 -(void) dealloc
 {
-   rational_clear(&_imin);
-   rational_clear(&_imax);
+   [_imin release];
+   [_imax release];
    [super dealloc];
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail lowF:rational_get_d(&_imin) upF:rational_get_d(&_imax)];
+    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail lowF:[_imin get_d] upF:[_imax get_d]];
 }
 -(NSString*) description
 {
     if([self bound]){
-        unsigned int *inf;
-        inf = (unsigned int *)&(_domain._low);
         NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-        [buf appendFormat:@"%20.20e [%4X]",rational_get_d(&_domain._low),*inf ];
+        [buf appendFormat:@"%@",_domain._low];
         return buf;
     }
-    unsigned int *inf;
-    unsigned int *sup;
-    inf = (unsigned int *)&(_domain._low);
-    sup = (unsigned int *)&(_domain._up);
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",rational_get_d(&_domain._low),rational_get_d(&_domain._up),*inf,*sup];
+    [buf appendFormat:@"(%@,%@)",_domain._low,_domain._up];
     return buf;
 }
--(void) updateMin:(ORRational)newMin for:(id<CPFloatVarRatNotifier>)x
+-(void) updateMin:(ORRational*)newMin for:(id<CPFloatVarRatNotifier>)x
 {
-   ORRational max = [self max];
-    if(rational_cmp(&newMin, &max) > 0)
+   if([newMin gt: [self max]])
         failNow();
     updateMinR(&_domain, newMin, _trail);
-    ORBool isBound = (rational_get_d(&_domain._low) == rational_get_d(&_domain._up));
+    ORBool isBound = [_domain._low eq: _domain._up];
     // cpjm: so that eo can use this method without propagation
     if (x != NULL) {
         [x changeMinEvtErr: isBound sender:self];
@@ -84,13 +77,12 @@
             [x bindEvtErr:self];
     }
 }
--(void) updateMax:(ORRational)newMax for:(id<CPFloatVarRatNotifier>)x
+-(void) updateMax:(ORRational*)newMax for:(id<CPFloatVarRatNotifier>)x
 {
-   ORRational min = [self min];
-    if(rational_cmp(&min, &newMax) > 0)
+   if([[self min] gt: newMax])
         failNow();
     updateMaxR(&_domain, newMax, _trail);
-    ORBool isBound = (rational_get_d(&_domain._low) == rational_get_d(&_domain._up));
+    ORBool isBound = [_domain._low eq: _domain._up];
     // cpjm: so that eo can use this method without propagation
     if (x != NULL) {
         [x changeMaxEvtErr:isBound sender:self];
@@ -98,15 +90,15 @@
             [x bindEvtErr:self];
     }
 }
--(void) updateInterval:(ri)v for:(id<CPFloatVarRatNotifier>)x;
+-(void) updateInterval:(ORRationalInterval*)v for:(id<CPFloatVarRatNotifier>)x;
 {
-   [self updateMin:v.inf for:x];
-   [self updateMax:v.sup for:x];
+   [self updateMin:v.low for:x];
+   [self updateMax:v.up for:x];
 }
 
--(void) bind:(ORRational)val  for:(id<CPFloatVarRatNotifier>)x
+-(void) bind:(ORRational*)val  for:(id<CPFloatVarRatNotifier>)x
 {
-    if ((rational_cmp(&val, &_domain._low) || rational_eq(&val, &_domain._low)) && (rational_cmp(&_domain._up, &val) || rational_eq(&_domain._up, &val))) {
+   if (([val gt: _domain._low] || [val eq: _domain._low]) && ([_domain._up gt: val] || [_domain._up eq:val])) {
         [x changeMinEvtErr:YES sender:self];
         [x changeMaxEvtErr:YES sender:self];
         [x bindEvtErr:self];
@@ -115,50 +107,50 @@
     else
         failNow();
 }
--(ORRational) min
+-(ORRational*) min
 {
     return _domain._low;
 }
--(ORRational) max
+-(ORRational*) max
 {
     return _domain._up;
 }
--(ORRational) imin
+-(ORRational*) imin
 {
     return _imin;
 }
--(ORRational) imax
+-(ORRational*) imax
 {
     return _imax;
 }
 -(ORBool) bound
 {
-    return (rational_eq(&_domain._up, &_domain._low) != 0);
+   return ([_domain._up eq: _domain._low]);
 }
 -(ORInterval) bounds
 {
     ORIReady();
-    return createORI2(rational_get_d(&_domain._low), rational_get_d(&_domain._up));
+    return createORI2([_domain._low get_d], [_domain._up get_d]);
 }
 -(TRRationalInterval) domain
 {
     return _domain;
 }
 
--(ORBool) member:(ORRational)v
+-(ORBool) member:(ORRational*)v
 {
-   return rational_cmp(&_domain._low, &v) <= 0 && rational_cmp(&v, &_domain._low) <= 0;
+   return [_domain._low leq: v] && [v leq: _domain._low];
 }
 -(id) copy
 {
-    return [[CPRationalDom alloc] initCPRationalDom:_trail lowF:rational_get_d(&_imin) upF:rational_get_d(&_imax)];
+    return [[CPRationalDom alloc] initCPRationalDom:_trail lowF:[_imin get_d] upF:[_imax get_d]];
 }
 -(void) restoreDomain:(id<CPRationalDom>)toRestore
 {
     updateMinR(&_domain, toRestore.min, _trail);
     updateMaxR(&_domain, toRestore.max, _trail);
 }
--(void) restoreValue:(ORRational)toRestore for:(id<CPFloatVarRatNotifier>)x
+-(void) restoreValue:(ORRational*)toRestore for:(id<CPFloatVarRatNotifier>)x
 {
     updateMinR(&_domain, toRestore, _trail);
     updateMaxR(&_domain, toRestore, _trail);
@@ -175,10 +167,13 @@
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
     self = [super init];
-    ORRational low, up;
+   ORRational* low = [[ORRational alloc] init];
+   ORRational* up = [[ORRational alloc] init];
     [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&low];
     [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&up];
     _domain = makeTRRationalInterval(_trail, low, up);
+   [low release];
+   [up release];
     [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_imin];
     [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_imax];
     return self;

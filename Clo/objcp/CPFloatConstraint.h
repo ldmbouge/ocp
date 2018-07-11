@@ -16,9 +16,6 @@
 #import <objcp/CPFloatDom.h>
 #import <objcp/CPRationalDom.h>
 
-#include "gmp.h"
-
-
 @class CPFloatVarI;
 
 @interface CPFloatEqual : CPCoreConstraint {

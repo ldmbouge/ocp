@@ -132,18 +132,17 @@
 {
    return [[CPRationalVarI alloc] init:cp low:range.low up:range.up];
 }
-+(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp value:(ORRational) v
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp value:(ORRational*) v
 {
    return [[CPRationalVarI alloc] init:cp low:v up:v];
 }
 +(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp
 {
-   ORRational ninf, pinf;
-   rational_init(&ninf);
-   rational_init(&pinf);
-   rational_set_d(&ninf, -INFINITY);
-   rational_set_d(&pinf, INFINITY);
-   return [[CPRationalVarI alloc] init:cp low:ninf up:pinf];
+   ORRational* low = [[ORRational alloc] init];
+   ORRational* up = [[ORRational alloc] init];
+   [low setNegInf];
+   [up setPosInf];
+   return [[CPRationalVarI alloc] init:cp low:low up:up];
 }
 +(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {

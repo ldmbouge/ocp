@@ -48,11 +48,11 @@ typedef struct timeval ORTimeval;
 @end
 
 @interface ORMutableRationalI : ORExprI<NSCoding,ORMutableRational>
--(ORMutableRationalI*) initORMutableRationalI: (id<ORTracker>) tracker value: (ORRational) value;
--(ORRational)  initialValue;
--(ORRational) setValue: (ORRational) value;
--(ORRational)  value: (id<ORGamma>) solver;
--(ORRational)  setValue: (ORRational) value in: (id<ORGamma>) solver;
+-(ORMutableRationalI*) initORMutableRationalI: (id<ORTracker>) tracker value: (ORRational*) value;
+-(ORRational*)  initialValue;
+-(ORRational*) setValue: (ORRational*) value;
+-(ORRational*)  value: (id<ORGamma>) solver;
+-(ORRational*)  setValue: (ORRational*) value in: (id<ORGamma>) solver;
 -(id<ORTracker>) tracker;
 @end
 
@@ -77,10 +77,10 @@ typedef struct timeval ORTimeval;
 @end
 
 @interface ORRationalI : ORExprI<NSCoding,NSCopying,ORRationalNumber>
--(ORRationalI*) init: (id<ORTracker>) tracker value: (ORRational) value;
--(ORRational) value;
--(ORRational) qmin;
--(ORRational) rationalValue;
+-(ORRationalI*) init: (id<ORTracker>) tracker value: (ORRational*) value;
+-(ORRational*) value;
+-(ORRational*) qmin;
+-(ORRational*) rationalValue;
 -(ORInt) intValue;
 -(id<ORTracker>) tracker;
 @end

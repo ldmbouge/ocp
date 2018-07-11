@@ -73,33 +73,6 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORRationalArrayI : ORObject<NSCoding,ORRationalArray>
--(ORRationalArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORRational) v;
--(ORRationalArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with: (ORRational(^)(ORInt)) clo;
--(ORRationalArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORRational) v;
--(ORRationalArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (ORRational(^)(ORInt)) clo;
--(ORRationalArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORRational(^)(ORInt,ORInt)) clo;
--(void) dealloc;
--(ORRational) at: (ORInt) value;
--(void) set: (ORRational) value at:(ORInt)idx;
--(ORInt) low;
--(ORInt) up;
--(ORRational) max;
--(ORRational) min;
--(ORRational) average;
--(id<ORIntRange>) range;
--(NSUInteger)count;
--(NSString*)description;
--(id<ORTracker>) tracker;
--(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id)objectAtIndexedSubscript: (NSUInteger) key;
--(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
--(void)enumerateWith:(void(^)(ORRational obj,int idx))block;
--(ORRational) sumWith: (ORRational(^)(ORRational value,int idx))block;
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-@end
-
 @interface ORDoubleArrayI : ORObject<NSCoding,ORDoubleArray>
 -(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORDouble) v;
 -(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with: (ORDouble(^)(ORInt)) clo;

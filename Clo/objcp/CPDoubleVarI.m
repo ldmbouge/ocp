@@ -22,14 +22,14 @@
 {
     ORUInt     _name;
     ORDouble   _value;
-    ORRational _valueError;
+    ORRational* _valueError;
     ORBool     _bound;
     ORBool     _boundError;
 }
 -(CPDoubleVarSnapshot*) init: (CPDoubleVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
 -(ORDouble) doubleValue;
--(ORRational) errorValue;
+-(ORRational*) errorValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -40,7 +40,7 @@
 {
     self = [super init];
     _name = name;
-    rational_init(&_valueError);
+    _valueError = [[ORRational alloc] init];
     if ([v bound]) {
         _bound = TRUE;
         _value = [v value];
@@ -51,28 +51,24 @@
     }
     if ([v boundError]) {
         _boundError = TRUE;
-       ORRational rationalValue;
-       rational_init(&rationalValue);
-       rationalValue = [v errorValue];
-        rational_set(&_valueError, &rationalValue);
-       rational_clear(&rationalValue);
+       [_valueError set: [v errorValue]];
     }
     else {
-        rational_set_d(&_valueError, 0.0);
+       [_valueError set_d: 0.0];
         _boundError = FALSE;
     }
     return self;
 }
 -(void) dealloc
 {
-    rational_clear(&_valueError);
+    [_valueError release];
     [super dealloc];
 }
 -(ORDouble) doubleValue
 {
     return _value;
 }
--(ORRational) errorValue
+-(ORRational*) errorValue
 {
     return _valueError;
 }
@@ -104,7 +100,7 @@
 -(NSString*) description
 {
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"Double(%d) : %f±%f",_name,_value,rational_get_d(&_valueError)];
+    [buf appendFormat:@"Double(%d) : %f±%@",_name,_value,_valueError];
     return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
@@ -154,7 +150,7 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 
 @implementation CPDoubleVarI
 
--(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLow:(ORRational)elow errUp:(ORRational) eup
+-(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLow:(ORRational*)elow errUp:(ORRational*) eup
 {
     self = [super init];
     _engine = engine;
@@ -445,50 +441,37 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
     [self updateMin:newMin];
     [self updateMax:newMax];
 }
-- (void)bindError:(ORRational)valError {
+- (void)bindError:(ORRational*)valError {
     [_domError bind:valError for:self];
 }
 
 
-- (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError {
-    if(rational_cmp(&newMinError,&newMaxError)>0)
+- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError {
+   if([newMinError gt: newMaxError])
         failNow();
     [self updateMinError:newMinError];
     [self updateMaxError:newMaxError];
 }
-
-
-- (void)updateMaxError:(ORRational)newMaxError {
-   ORRational max;
-   max = [self maxErr];
-    if(rational_cmp(&newMaxError, &max) < 0)
+- (void)updateMaxError:(ORRational*)newMaxError {
+   if([newMaxError lt: [self maxErr]])
         [_domError updateMax:newMaxError for:self];
 }
-
-
-- (void)updateMinError:(ORRational)newMinError {
-   ORRational min;
-   min = [self minErr];
-    if(rational_cmp(&newMinError, &min) > 0)
-        [_domError updateMin:newMinError for:self];
+- (void)updateMinError:(ORRational*)newMinError {
+   if([newMinError gt: [self minErr]])
+      [_domError updateMin:newMinError for:self];
 }
 - (void)updateMaxErrorF:(ORDouble)newMaxError {
-    ORRational mError;
-    rational_init(&mError);
-    rational_set_d(&mError, newMaxError);
-    [_domError updateMax:mError for:self];
-    rational_clear(&mError);
+   ORRational* mError = [[ORRational alloc ] init];
+   [mError set_d: newMaxError];
+   [_domError updateMax:mError for:self];
+   [mError release];
 }
-
-
 - (void)updateMinErrorF:(ORDouble)newMinError {
-    ORRational mError;
-    rational_init(&mError);
-    rational_set_d(&mError, newMinError);
-    [_domError updateMin:mError for:self];
-    rational_clear(&mError);
+   ORRational* mError = [[ORRational alloc ] init];
+   [mError set_d: newMinError];
+   [_domError updateMin:mError for:self];
+   [mError release];
 }
-
 -(ORDouble) min
 {
     return [_dom min];
@@ -509,27 +492,23 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
         return [_dom min];
     return _value;
 }
--(ORRational) errorValue
+-(ORRational*) errorValue
 {
     if ([_domError bound])
         return [_domError min];
     return _valueError;
 }
-- (ORRational)maxErr {
+- (ORRational*)maxErr {
     return [_domError max];
 }
-- (ORRational)minErr {
+- (ORRational*)minErr {
     return [_domError min];
 }
 - (ORDouble)maxErrF {
-   ORRational max;
-   max = [_domError max];
-    return rational_get_d(&max);
+    return [[_domError max] get_d];
 }
 - (ORDouble)minErrF {
-   ORRational min;
-   min = [_domError min];
-   return rational_get_d(&min);
+   return [[_domError min] get_d];
 }
 -(id<CPDoubleDom>) domain
 {
@@ -816,19 +795,19 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
     [self updateMax:newMax];
     [self updateMin:newMin];
 }
-- (void)bindError:(ORRational)valError {
+- (void)bindError:(ORRational*)valError {
 }
 
 
-- (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError {
+- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError {
 }
 
 
-- (void)updateMaxError:(ORRational)newMaxError {
+- (void)updateMaxError:(ORRational*)newMaxError {
 }
 
 
-- (void)updateMinError:(ORRational)newMinError {
+- (void)updateMinError:(ORRational*)newMinError {
 }
 
 - (void)updateMaxErrorF:(ORDouble)newMaxError {
@@ -846,23 +825,15 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 {
     return [_theVar max];
 }
-- (ORRational)maxErr {
-    ORRational maxE;
-   rational_init(&maxE);
-    rational_set_d(&maxE, [_theVar max]);
-    return maxE;
+- (ORRational*)maxErr {
+   return [[ORRational alloc] init];
 }
-- (ORRational)minErr {
-    ORRational minE;
-   rational_init(&minE);
-    rational_set_d(&minE, [_theVar min]);
-    return minE;
+- (ORRational*)minErr {
+   return [[ORRational alloc] init];
 }
 - (ORDouble)maxErrF {
     return [_theVar max];
 }
-
-
 - (ORDouble)minErrF {
     return [_theVar min];
 }
@@ -930,10 +901,8 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 - (ORBool)boundError {
     return [_theVar bound];
 }
-- (ORRational )errorValue {
-    ORRational errV;
-    rational_set_d(&errV, [_theVar min]);
-    return errV;
+- (ORRational* )errorValue {
+   return [[ORRational alloc] init];
 }
 
 - (void)visit:(ORVisitor *)visitor

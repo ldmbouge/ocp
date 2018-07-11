@@ -156,7 +156,7 @@ enum ORGroupType {
 
 @protocol  ORRationalAssignC <ORConstraint>
 -(id<ORRationalVar>) left;
--(ORRational) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol  ORDoubleNEqualc <ORConstraint>
@@ -587,49 +587,49 @@ enum ORGroupType {
 @protocol ORRationalLinearEq <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol ORRationalLinearNEq <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol ORRationalLinearLT <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol ORRationalLinearGT <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol ORRationalLinearLEQ <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol ORRationalLinearGEQ <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol ORRationalReifyEqualc <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @protocol ORRationalReifyNEqualc <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @protocol ORRationalReifyEqual <ORReify>
@@ -647,7 +647,7 @@ enum ORGroupType {
 @protocol ORRationalReifyLEqualc <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @protocol ORRationalReifyLEqual <ORReify>
@@ -665,13 +665,13 @@ enum ORGroupType {
 @protocol ORRationalReifyLThenc <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @protocol ORRationalReifyGEqualc <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @protocol ORRationalReifyGEqual <ORReify>
@@ -689,7 +689,7 @@ enum ORGroupType {
 @protocol ORRationalReifyGThenc <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational)        cst;
+-(id<ORRational>)        cst;
 @end
 //-----------
 @protocol ORDoubleReifyEqualc <ORReify>

@@ -6,55 +6,169 @@
 //
 //
 
-#include "rationalUtilities.h"
+#import "rationalUtilities.h"
+#import <ORFoundation/ORTrail.h>
 
-#define R_IS_ZERO(Q) ((((Q)->rational->_mp_num._mp_size) == 0)?1:0)
-#define R_IS_NONZERO(Q) ((((Q)->rational->_mp_num._mp_size) == 0)?0:1)
-#define R_IS_POSITIVE(Q) ((0 <= ((Q)->rational->_mp_num._mp_size))?1:0)
-#define R_IS_NEGATIVE(Q) ((((Q)->rational->_mp_num._mp_size) <= 0)?1:0)
-#define R_IS_STRICTLY_POSITIVE(Q) ((0 < ((Q)->rational->_mp_num._mp_size))?1:0)
-#define R_IS_STRICTLY_NEGATIVE(Q) ((((Q)->rational->_mp_num._mp_size) < 0)?1:0)
+#define R_IS_ZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?1:0)
+#define R_IS_NONZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?0:1)
+#define R_IS_POSITIVE(Q) ((0 <= (*(Q).rational->_mp_num._mp_size))?1:0)
+#define R_IS_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) <= 0)?1:0)
+#define R_IS_STRICTLY_POSITIVE(Q) ((0 < (*(Q).rational->_mp_num._mp_size))?1:0)
+#define R_IS_STRICTLY_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) < 0)?1:0)
 
-#define R_SET_ZERO(Q) { mpq_set_ui(((Q)->rational),0UL,1UL); (Q)->type = 0; }
-#define R_SET_POS_ONE(Q) { mpq_set_ui(((Q)->rational),1UL,1UL); Q->type = 1; }
-#define R_SET_NEG_ONE(Q) { mpq_set_si(((Q)->rational),-1L,1UL); (Q)->type = -1; }
-#define R_SET_NAN(Q) { mpz_set_ui(mpq_numref((Q)->rational),0UL); mpz_set_ui(mpq_denref((Q)->rational),0UL); (Q)->type = 3; }
-#define R_SET_POS_INF(Q) { mpz_set_ui(mpq_numref((Q)->rational),1UL); mpz_set_ui(mpq_denref((Q)->rational),0UL); (Q)->type = 2; }
-#define R_SET_NEG_INF(Q) { mpz_set_si(mpq_numref((Q)->rational),-1L); mpz_set_ui(mpq_denref((Q)->rational),0UL); (Q)->type = -2; }
+#define R_SET_POS_ONE(Q) { mpq_set_ui(((Q)->_rational),1UL,1UL); Q->_type = 1; }
+#define R_SET_NEG_ONE(Q) { mpq_set_si(((Q)->_rational),-1L,1UL); (Q)->_type = -1; }
 
-#define RI_SET_ZERO(RIA) { R_SET_ZERO(&(RIA)->inf); R_SET_ZERO(&(RIA)->sup); }
-#define RI_SET_NAN(RIA)  { R_SET_NAN(&(RIA)->inf); R_SET_NAN(&(RIA)->sup); }
-#define RI_SET_POS_INF(RIA)  { R_SET_POS_INF(&(RIA)->inf); R_SET_POS_INF(&(RIA)->sup); }
-#define RI_SET_NEG_INF(RIA)  { R_SET_NEG_INF(&(RIA)->inf); R_SET_NEG_INF(&(RIA)->sup); }
+#define RI_SET_ZERO(RIA) { R_SET_ZERO((RIA).low); R_SET_ZERO((RIA).up); }
+#define RI_SET_POS_INF(RIA)  { R_SET_POS_INF((RIA).low); R_SET_POS_INF((RIA).up); }
+#define RI_SET_NEG_INF(RIA)  { R_SET_NEG_INF((RIA).low); R_SET_NEG_INF((RIA).up); }
 
-void rational_init(ORRational* r){
-   mpq_init(r->rational);
-   r->type = 0;
+@implementation ORRational
+-(id)init:(id<ORMemoryTrail>) mt{
+   mpq_init(_rational);
+   _type = 0;
+   _mt = mt;
+   [_mt track:self];
+   return self;
 }
-
-void rational_clear(ORRational* r){
-   mpq_clear(r->rational);
+-(id)init
+{
+   mpq_init(_rational);
+   _type = 0;
+   return self;
 }
-
-void rational_print(const ORRational* r){
-   switch (r->type) {
-      case -2:
-         NSLog(@"-INF");
-         break;
-      case 2:
-         NSLog(@"+INF");
-         break;
-      case 3:
-         NSLog(@"NaN");
-         break;
-      default:
-         NSLog(@"%24.24e", rational_get_d(r));
-         break;
+-(void)dealloc{
+   mpq_clear(_rational);
+   [super dealloc];
+}
+-(void)print{
+   NSLog(@"%s", [self get_str]);
+}
+-(mpq_ptr)rational{
+   return _rational;
+}
+-(void)setNAN
+{
+   mpz_set_ui(mpq_numref(_rational),0UL);
+   mpz_set_ui(mpq_denref(_rational),0UL);
+   _type = 3;
+}
+-(void)setZero
+{
+   mpq_set_ui((_rational),0UL,1UL);
+   _type = 0;
+}
+-(void)setOne
+{
+   mpq_set_d((_rational),1);
+   _type = 1;
+}
+-(void)setPosInf
+{
+   mpz_set_ui(mpq_numref(_rational),1UL);
+   mpz_set_ui(mpq_denref(_rational),0UL);
+   _type = 2;
+}
+-(void)setNegInf
+{
+   mpz_set_si(mpq_numref(_rational),-1L);
+   mpz_set_ui(mpq_denref(_rational),0UL);
+   _type = -2;
+}
+-(BOOL)isNAN
+{
+   ORRational* z = [[ORRational alloc] init:_mt];
+   [z setNAN];
+   return [self eq: z];
+}
+-(BOOL)isZero
+{
+   ORRational* z = [[ORRational alloc] init:_mt];
+   [z setZero];
+   return [self eq: z];
+}
+-(BOOL)isOne
+{
+   ORRational* z = [[ORRational alloc] init:_mt];
+   [z setOne];
+   return [self eq: z];
+}
+-(BOOL)isMinusOne
+{
+   ORRational* z = [[ORRational alloc] init:_mt];
+   [z setOne];
+   z = [z neg];
+   return [self eq: z];
+}
+-(BOOL)isPosInf
+{
+   ORRational* z = [[ORRational alloc] init:_mt];
+   [z setPosInf];
+   return [self eq: z];
+}
+-(BOOL)isNegInf
+{
+   ORRational* z = [[ORRational alloc] init:_mt];
+   [z setNegInf];
+   return [self eq: z];
+}
+-(void)setRational:(mpq_t*)rational
+{
+   mpq_set(_rational, *rational);
+}
+-(int)type{
+   return _type;
+}
+-(id<ORMemoryTrail>)mt{
+   return _mt;
+}
+-(void)setType:(int)type{
+   _type = type;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"%s",[self get_str]];
+   return buf;
+}
+-(id)set:(id<ORRational>)r{
+   mpq_set(_rational, *r.rational);
+   mpq_canonicalize(_rational);
+   _type = r.type;
+   return self;
+}
+-(id)set_d:(double)d{
+   if (d == -INFINITY) {
+      [self setNegInf];
+   } else if (d == +INFINITY) {
+      [self setPosInf];
+   } else if (isnan(d)){
+      [self setNAN];
+   } else {
+      mpq_set_d(_rational, d);
+      _type = mpq_sgn(_rational);
+      mpq_canonicalize(_rational);
    }
+   return self;
 }
-
-char * rational_get_str(const ORRational* r){
-   switch (r->type) {
+-(id)set:(int)num and:(int)den{
+   mpz_t nz, dz;
+   mpz_inits(nz, dz, NULL);
+   mpz_set_d(nz, num);
+   mpz_set_d(dz, den);
+   mpq_set_num(_rational, nz);
+   mpq_set_den(_rational, dz);
+   mpq_canonicalize(_rational);
+   _type = mpq_sgn(_rational);
+   mpz_clears(nz, dz, NULL);
+   
+   return self;
+}
+-(id<ORRational>)get{
+   return self;
+}
+-(char*)get_str{
+   switch (_type) {
       case -2:
          return "-INF";
          break;
@@ -65,32 +179,12 @@ char * rational_get_str(const ORRational* r){
          return "NaN";
          break;
       default:
-         return mpq_get_str(NULL, 10, r->rational);
+         return mpq_get_str(NULL, 10, _rational);
          break;
    }
 }
-
-void rational_set_d(ORRational* r, const double d){
-   if (d == -INFINITY) {
-      R_SET_NEG_INF(r);
-   } else if (d == +INFINITY) {
-      R_SET_POS_INF(r);
-   } else if (isnan(d)){
-      R_SET_NAN(r);
-   } else {
-      mpq_set_d(r->rational, d);
-      r->type = mpq_sgn(r->rational);
-      mpq_canonicalize(r->rational);
-   }
-}
-
-void rational_set(ORRational* r, const ORRational* x){
-   mpq_set(r->rational, x->rational);
-   r->type = x->type;
-}
-
-double rational_get_d(const ORRational* r){
-   switch (r->type) {
+-(double)get_d{
+   switch (_type) {
       case -2:
          return -INFINITY;
          break;
@@ -101,72 +195,76 @@ double rational_get_d(const ORRational* r){
          return NAN;
          break;
       default:
-         return mpq_get_d(r->rational);
+         return mpq_get_d(_rational);
          break;
    }
 }
-
-void rational_addition(ORRational* z, const ORRational* x, const ORRational* y){
+-(id<ORRational>)add:(ORRational*)r
+{
+   ORRational* z = [[ORRational alloc] init: _mt];
    /* x = NaN || y = NaN */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       /* z = NaN */
-      R_SET_NAN(z);
+      [z setNAN];
    }
    /* (x = -inf && y = inf) || (x = inf && y = -inf) */
-   else if((x->type == -2 && y->type == 2) || (x->type == 2 && y->type == -2)){
+   else if((_type == -2 && r.type == 2) || (_type == 2 && r.type == -2)){
       /* z = NaN */
-      R_SET_NAN(z);
+      [z setNAN];
    }
    /* (x = -inf || y = -inf) */
-   else if(x->type == -2 || y->type == -2){
+   else if(_type == -2 || r.type == -2){
       /* z = -inf */
-      R_SET_NEG_INF(z);
+      [z setNegInf];
    }
    /* (x = inf || y = inf) */
-   else if((x->type == 2 || y->type == 2)){
+   else if((_type == 2 || r.type == 2)){
       /* z = inf */
-      R_SET_POS_INF(z);
+      [z setPosInf];
    }
    /* x = Q && y = Q */
    else {
-      mpq_add(z->rational, x->rational, y->rational);
-      z->type = mpq_sgn(z->rational);
+      mpq_add(z.rational, _rational, r.rational);
+      z->_type = mpq_sgn(z.rational);
    }
+   return z;
 }
-
-void rational_subtraction(ORRational* z, const ORRational* x, const ORRational* y){
+-(id<ORRational>)sub:(ORRational*)r{
+   ORRational* z = [[ORRational alloc] init: _mt];
    /* x = NaN || y = NaN */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       /* z = NaN */
-      R_SET_NAN(z);
+      [z setNAN];
    }
    /* (x = -inf && y = -inf) || (x = inf && y = inf) */
-   else if((x->type == -2 && y->type == -2) || (x->type == 2 && y->type == 2)){
+   else if((_type == -2 && r.type == -2) || (_type == 2 && r.type == 2)){
       /* z = NaN */
-      R_SET_NAN(z);
+      [z setNAN];
    }
    /* (x = -inf || y = inf) */
-   else if((x->type == -2) || (y->type == 2)){
+   else if((_type == -2) || (r.type == 2)){
       /* z = -inf */
-      R_SET_NEG_INF(z);
+      [z setNegInf];
    }
    /* (x = inf || y = -inf) */
-   else if((x->type == 2) || (y->type == -2)){
+   else if((_type == 2) || (r.type == -2)){
       /* z = inf */
-      R_SET_POS_INF(z);
+      [z setPosInf];
    }
    /* x = Q && y = Q */
    else {
-      mpq_sub(z->rational, x->rational, y->rational);
-      z->type = mpq_sgn(z->rational);
+      mpq_sub(z->_rational, _rational, r->_rational);
+      z->_type = mpq_sgn(z->_rational);
    }
+   return z;
 }
-
-void rational_multiplication(ORRational* z, const ORRational* x, const ORRational* y){
+-(id<ORRational>)mul:(ORRational*)r
+{
+   ORRational* z = [[ORRational alloc] init: _mt];
    /* x = NaN || y = NaN */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       /* z = NaN */
-      R_SET_NAN(z);
+      [z setNAN];
    }
    /*
     (x =  0    && y = -inf) ||
@@ -174,9 +272,9 @@ void rational_multiplication(ORRational* z, const ORRational* x, const ORRationa
     (x =  inf  && y =  0)   ||
     (x =  0    && y =  inf)
     */
-   else if((x->type == -2 && y->type == 0) || (x->type == 0 && y->type == -2) || (x->type == 2 && y->type == 0) || (x->type == 0 && y->type == 2)){
+   else if((_type == -2 && r.type == 0) || (_type == 0 && r.type == -2) || (_type == 2 && r.type == 0) || (_type == 0 && r.type == 2)){
       /* z = NaN */
-      R_SET_NAN(z);
+      [z setNAN];
    }
    /*
     (x = -inf && (y = PR || y =  inf)) ||
@@ -184,12 +282,12 @@ void rational_multiplication(ORRational* z, const ORRational* x, const ORRationa
     (x = inf  && (y = NR || y = -inf)) ||
     (y = inf  && (x = NR || x = -inf))
     */
-   else if((x->type == -2  && (y->type ==  1 || y->type ==  2)) ||
-           (y->type == -2  && (x->type ==  1 || x->type ==  2)) ||
-           (x->type ==  2  && (y->type == -1 || y->type == -2)) ||
-           (y->type ==  2  && (x->type == -1 || x->type == -2))){
+   else if((_type == -2  && (r.type ==  1 || r.type ==  2)) ||
+           (r.type == -2  && (_type ==  1 || _type ==  2)) ||
+           (_type ==  2  && (r.type == -1 || r.type == -2)) ||
+           (r.type ==  2  && (_type == -1 || _type == -2))){
       /* z = -inf */
-      R_SET_NEG_INF(z);
+      [z setNegInf];
    }
    /*
     (x = -inf && (y = -inf || y = NR)) ||
@@ -197,25 +295,26 @@ void rational_multiplication(ORRational* z, const ORRational* x, const ORRationa
     (x = inf  && (y =  inf || y = PR)) ||
     (y = inf  && (x =  inf || x = PR))
     */
-   else if((x->type == -2  && (y->type == -2 || y->type == -1)) ||
-           (y->type == -2  && (x->type == -2 || x->type == -1)) ||
-           (x->type ==  2  && (y->type ==  2 || y->type ==  1)) ||
-           (y->type ==  2  && (x->type ==  2 || x->type ==  1))){
+   else if((_type == -2  && (r.type == -2 || r.type == -1)) ||
+           (r.type == -2  && (_type == -2 || _type == -1)) ||
+           (_type ==  2  && (r.type ==  2 || r.type ==  1)) ||
+           (r.type ==  2  && (_type ==  2 || _type ==  1))){
       /* z = inf */
-      R_SET_POS_INF(z);
+      [z setPosInf];
    }
    /* x = Q && y = Q */
    else {
-      mpq_mul(z->rational, x->rational, y->rational);
-      z->type = mpq_sgn(z->rational);
+      mpq_mul(z->_rational, _rational, r->_rational);
+      z->_type = mpq_sgn(z->_rational);
    }
+   return z;
 }
-
-void rational_division(ORRational* z, const ORRational* x, const ORRational* y){
+-(id<ORRational>)div:(ORRational*)r{
+   ORRational* z = [[ORRational alloc] init: _mt];
    /* x = NaN || y = NaN */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       /* z = NaN */
-      R_SET_NAN(z);
+      [z setNAN];
    }
    /*
     (x = -inf  && y = -inf) ||
@@ -224,500 +323,560 @@ void rational_division(ORRational* z, const ORRational* x, const ORRational* y){
     (x =  inf  && y =  inf) ||
     (y =  0)
     */
-   else if((x->type == -2 && y->type ==  2) ||
-           (x->type == -2 && y->type == -2) ||
-           (x->type ==  2 && y->type ==  2) ||
-           (x->type ==  2 && y->type == -2) ||
-           (y->type ==  0)){
+   else if((_type == -2 && r.type ==  2) ||
+           (_type == -2 && r.type == -2) ||
+           (_type ==  2 && r.type ==  2) ||
+           (_type ==  2 && r.type == -2) ||
+           (r.type ==  0)){
       /* z = NaN */
-      R_SET_NAN(z);
+      [z setNAN];
    }
    /*
     (x = -inf && y = PR) ||
     (x =  inf && y = NR)
     */
-   else if((x->type == -2 && y->type == 1) ||
-           (x->type == 2 && y->type == -1)){
+   else if((_type == -2 && r.type == 1) ||
+           (_type == 2 && r.type == -1)){
       /* z = -inf */
-      R_SET_NEG_INF(z);
+      [z setNegInf];
    }
    /*
     (x = -inf && y = NR) ||
     (x =  inf && y = PR)
     */
-   else if((x->type == -2 && y->type == -1) ||
-           (x->type ==  2 && y->type ==  1)){
+   else if((_type == -2 && r.type == -1) ||
+           (_type ==  2 && r.type ==  1)){
       /* z = inf */
-      R_SET_POS_INF(z);
-   } else if(y->type == -2 || y->type == 2) {
+      [z setPosInf];
+   } else if(r.type == -2 || r.type == 2) {
       /* z = 0 */
-      R_SET_ZERO(z);
+      [z setZero];
    }
    /* x = Q && y = Q */
    else {
-      mpq_div(z->rational, x->rational, y->rational);
-      z->type = mpq_sgn(z->rational);
+      mpq_div(z->_rational, _rational, r.rational);
+      z->_type = mpq_sgn(z->_rational);
    }
+   return z;
 }
-
-void rational_neg(ORRational* z, const ORRational* x){
+-(id<ORRational>)neg{
    /* z = -x */
-   switch (x->type) {
+   ORRational* z = [[ORRational alloc] init: _mt];
+   switch (_type) {
       case -2:
-         R_SET_POS_INF(z);
+         [z setPosInf];
          break;
       case 2:
-         R_SET_NEG_INF(z);
+         [z setNegInf];
          break;
       case 3:
-         R_SET_NAN(z);
+         [z setNAN];
          break;
       default:
-         mpq_neg(z->rational, x->rational);
-         z->type = - x->type;
+         mpq_neg(z->_rational, _rational);
+         z.type = - _type;
          break;
    }
+   return z;
 }
-
-void rational_abs(ORRational* z, const ORRational* x){
-   if(x->type == 3){
-      R_SET_NAN(z);
-   } else if(x->type == -2){
-      R_SET_POS_INF(z);
-   } else if(x->type == 2){
-      R_SET_NEG_INF(z);
+-(id<ORRational>)abs
+{
+   ORRational* z = [[ORRational alloc] init: _mt];
+   if(_type == 3){
+      [z setNAN];
+   } else if(_type == -2){
+      [z setPosInf];
+   } else if(_type == 2){
+      [z setNegInf];
    } else {
-      mpq_abs(z->rational, x->rational);
-      z->type = mpq_sgn(z->rational);
+      mpq_abs(z->_rational, _rational);
+      z->_type = mpq_sgn(_rational);
    }
+   return z;
 }
-
-int rational_cmp(const ORRational* x, const ORRational* y){
-   if(rational_eq(x, y)){
+-(BOOL)cmp:(id<ORRational>)r{
+   if([self eq:r]){
       return 0;
-   } else if(rational_gt(x, y)){
+   } else if([self gt: r]){
       return 1;
    } else {
       return -1;
    }
 }
-
-int rational_cmp_ui(const ORRational* x, const long int num2, const long int den2){
-   return mpq_cmp_ui(x->rational, num2, den2);
+-(BOOL)cmp:(long int)num and:(long int)den{
+   return mpq_cmp_ui(_rational, num, den);
 }
-
-int rational_lt(const ORRational* x, const ORRational* y){
+-(BOOL)lt:(id<ORRational>)r{
    /* x < y */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       return 0;
-   } else if(x->type == 2 || y->type == -2){
+   } else if(_type == 2 || r.type == -2){
       return 0;
-   } else if(x->type == y->type && (x->type == -2)){
+   } else if((_type == r.type) && (_type == -2)){
       return 0;
-   } else if(x->type == -2){
+   } else if(_type == -2 || r.type == 2){
       return 1;
    } else{
-      return (mpq_cmp(x->rational, y->rational) < 0);
+      return (mpq_cmp(_rational, *r.rational) < 0);
    }
 }
-
-int rational_gt(const ORRational* x, const ORRational* y){
+-(BOOL)gt:(id<ORRational>)r{
    /* x > y */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       return 0;
-   } else if(x->type == -2 || y->type == 2){
+   } else if(_type == -2 || r.type == 2){
       return 0;
-   } else if(x->type == y->type && (x->type == 2)){
+   } else if(_type == r.type && (_type == 2)){
       return 0;
-   } else if(x->type == 2){
+   } else if(_type == 2){
       return 1;
    } else{
-      return (mpq_cmp(x->rational, y->rational) > 0);
+      return (mpq_cmp(_rational, *r.rational) > 0);
    }
 }
-
-int rational_leq(const ORRational* x, const ORRational* y){
+-(BOOL)leq:(id<ORRational>)r{
    /* x <= y */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       return 0;
-   } else if((x->type == -2 || x->type == 2) && (x->type == y->type)){
+   } else if((_type == -2 || _type == 2) && (_type == r.type)){
       return 1;
-   } else if(x->type == 2 || y->type == -2){
+   } else if(_type == 2 || r.type == -2){
       return 0;
-   } else if(x->type == -2){
+   } else if(_type == -2){
       return 1;
    } else{
-      return (mpq_cmp(x->rational, y->rational) <= 0);
+      return (mpq_cmp(_rational, *r.rational) <= 0);
    }
 }
-
-int rational_geq(const ORRational* x, const ORRational* y){
+-(BOOL)geq:(id<ORRational>)r{
    /* x >= y */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       return 0;
-   } else if((x->type == -2 || x->type == 2) &&
-             (x->type == y->type)){
+   } else if((_type == -2 || _type == 2) &&
+             (_type == r.type)){
       return 1;
-   } else if(x->type == -2 || y->type == 2){
+   } else if(_type == -2 || r.type == 2){
       return 0;
-   } else if(x->type == 2){
+   } else if(_type == 2){
       return 1;
    } else{
-      return (mpq_cmp(x->rational, y->rational) >= 0);
+      return (mpq_cmp(_rational, *r.rational) >= 0);
    }
 }
-
-int rational_eq(const ORRational* x, const ORRational* y){
+-(BOOL)eq:(id<ORRational>)r{
    /* x == y */
-   if(x->type == 3 || y->type == 3){
+   if(_type == 3 || r.type == 3){
       return 0;
-   } else if(x->type != y->type){
+   } else if(_type != r.type){
       return 0;
-   } else if((x->type == -2 || x->type == -2) &&
-             (x->type == y->type)){
+   } else if((_type == -2 || _type == -2) &&
+             (_type == r.type)){
       return 1;
    } else {
-      return mpq_equal(x->rational, y->rational);
+      return mpq_equal(_rational, *r.rational);
    }
 }
-
-int rational_neq(const ORRational* x, const ORRational* y){
+-(BOOL)neq:(id<ORRational>)r{
    /* x != y */
-   return !rational_eq(x, y);
+   return ![self eq:r];
 }
+@end
 
-
-/* RATIONAL INTERVAL FUNCTIONS */
-void ri_set_d(ri* z, double inf, double sup) {
-   rational_set_d(&z->inf, inf);
-   rational_set_d(&z->sup, sup);
+@implementation ORRationalInterval
+-(id)init:(id<ORMemoryTrail>) mt{
+   self = [super init];
+   _low = [[ORRational alloc] init: mt];
+   _up = [[ORRational alloc] init: mt];
+   [mt track:self];
+   return self;
 }
-
-void ri_set_q(ri* z, const ORRational* inf, const ORRational* sup) {
-   rational_set(&z->inf, inf);
-   rational_set(&z->sup, sup);
+-(void)dealloc{
+   [super dealloc];
+   [_low release];
+   [_up release];
 }
-
-void ri_set(ri* z, ri* x){
-   ri_set_q(z, &x->inf, &x->sup);
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"[%@,%@]",_low, _up];
+   return buf;
 }
-
-void ri_print(NSString *s, ri* x){
-   NSLog(@"%@ : [% 24.24e, % 24.24e]", s, rational_get_d(&x->inf), rational_get_d(&x->sup));
+-(id<ORRational>)low
+{
+   return _low;
 }
-
-int ri_is_empty(const ri* x){
-   return   (x->inf.type == 3 || x->sup.type == 3)  ||
-            (x->inf.type == 2 && x->sup.type < 2)   ||
-            (x->sup.type == -2 && x->inf.type > -2) ||
-            rational_gt(&x->inf, &x->sup);
+-(id<ORRational>)up
+{
+   return _up;
 }
-
-void ri_union(ri* z, const ri* x, const ri* y){
+-(void)setLow:(id<ORRational>)l
+{
+   [_low set: l];
+}
+-(void)setUp:(id<ORRational>)u
+{
+   [_up set: u];
+}
+-(int)changed
+{
+   return _changed;
+}
+-(void)setChanged:(int)c
+{
+   _changed = c;
+}
+-(id)set:(id<ORRationalInterval>)ri{
+   [self set_q:ri.low and:ri.up];
    
-   if(x->inf.type == 3 || x->sup.type == 3 || y->inf.type == 3 || y->sup.type == 3){
-      RI_SET_NAN(z);
-   } else {
-      /* lower bound */
-      if(x->inf.type == -2 || y->inf.type == -2){
-         R_SET_NEG_INF(&z->inf);
-      } else if(x->inf.type == 2 || y->inf.type == 2){
-         R_SET_POS_INF(&z->inf);
-      } else if(rational_leq(&x->inf, &y->inf)){
-         rational_set(&z->inf, &x->inf);
-      } else {
-         rational_set(&z->inf, &y->inf);
+   return self;
+}
+-(id)set_d:(double)low and:(double)up{
+   [_low set_d:low];
+   [_up set_d:up];
+   
+   return self;
+}
+-(id)set_q:(id<ORRational>)low and:(id<ORRational>)up{
+   [low set:low];
+   [up set:up];
+   
+   return self;
+}
+-(void)setNAN
+{
+   [_low setNAN];
+   [_up setNAN];
+}
+-(void)setZero
+{
+   [_low setZero];
+   [_up setZero];
+}
+-(void)setPosInf
+{
+   [_low setPosInf];
+   [_up setPosInf];
+}
+-(void)setNegInf
+{
+   [_low setNegInf];
+   [_up setNegInf];
+}
+-(id<ORRationalInterval>)add:(id<ORRationalInterval>)ri{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   z.low = [_low add: ri.low];
+   z.up = [_up add: ri.up];
+   return z;
+}
+-(id<ORRationalInterval>)sub:(id<ORRationalInterval>)ri{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   z.low = [_low add: ri.up];
+   z.up = [_up add: ri.low];
+   return z;
+}
+-(id<ORRationalInterval>)mul:(id<ORRationalInterval>)ri{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   if(_low.type >= 0 ) {                            /* A >= 0 */
+      if (ri.low.type >= 0) {                          /* B >= 0 */
+         z.low = [_low mul: ri.low];
+         z.up = [_up mul: ri.up];
       }
-      /* upper bound */
-      if(x->sup.type == -2 || y->sup.type == -2){
-         R_SET_NEG_INF(&z->inf);
-      } else if(x->sup.type == 2 || y->sup.type == 2){
-         R_SET_POS_INF(&z->sup);
-      } else if(rational_geq(&x->sup, &y->sup)){
-         rational_set(&z->sup, &x->sup);
-      } else {
-         rational_set(&z->sup, &y->sup);
-      }
-      
-      if(ri_is_empty(z))
-         RI_SET_NAN(z);
-   }
-}
-
-void ri_intersection(ri* z, const ri* x, const ri* y){
-   if(x->inf.type == 3 || x->sup.type == 3 || y->inf.type == 3 || y->sup.type == 3){
-      RI_SET_NAN(z);
-   } else {
-      /* lower bound */
-      if(x->inf.type == -2 || y->inf.type == -2){
-         R_SET_NEG_INF(&z->inf);
-      } else if(x->inf.type == 2 || y->inf.type == 2){
-         R_SET_POS_INF(&z->inf);
-      } else if(rational_leq(&x->inf, &y->inf)){
-         rational_set(&z->inf, &y->inf);
-      } else {
-         rational_set(&z->inf, &x->inf);
-      }
-      /* upper bound */
-      if(x->sup.type == -2 || y->sup.type == -2){
-         R_SET_NEG_INF(&z->inf);
-      } else if(x->sup.type == 2 || y->sup.type == 2){
-         R_SET_POS_INF(&z->sup);
-      } else if(rational_geq(&x->sup, &y->sup)){
-         rational_set(&z->sup, &y->sup);
-      } else {
-         rational_set(&z->sup, &x->sup);
-      }
-      
-      if(ri_is_empty(z))
-         RI_SET_NAN(z);
-   }
-}
-
-int ri_proj_inter(ri* x, const ri* y){
-   if(ri_is_empty(x) || ri_is_empty(y))
-      failNow();
-   
-   int changed = 0;
-   ORRational o_size, n_size;
-   rational_init(&o_size);
-   rational_init(&n_size);
-   rational_subtraction(&o_size, &x->sup, &x->inf);
-   
-   if(rational_lt(&x->inf, &y->inf)){
-      rational_set(&x->inf, &y->inf);
-      changed = 1;
-   }
-   
-   if(rational_gt(&x->sup, &y->sup)){
-      rational_set(&x->sup, &y->sup);
-      changed |= 2;
-   }
-   
-   if(ri_is_empty(x))
-      failNow();
-   
-   if(changed){
-      rational_subtraction(&n_size, &x->sup, &x->inf);
-      rational_subtraction(&n_size, &o_size, &n_size);
-      rational_division(&o_size, &n_size, &o_size);
-      
-      if(rational_get_d(&o_size) <= 0.05)
-         changed = 0;
-   }
-   
-   return changed;
-}
-
-int ri_proj_inter_infsup(ri* x, const ORRational* inf, const ORRational* sup){
-   if(x->inf.type == 3 || x->sup.type == 3 || inf->type == 3 || sup->type == 3 || ri_is_empty(x))
-      failNow();
-   
-   int changed = 0;
-   ORRational o_size, n_size;
-   rational_init(&o_size);
-   rational_init(&n_size);
-   rational_subtraction(&o_size, &x->sup, &x->inf);
-   
-   if(rational_lt(&x->inf, inf)){
-      rational_set(&x->inf, inf);
-      changed = 1;
-   }
-   
-   if(rational_gt(&x->sup, sup)){
-      rational_set(&x->sup, sup);
-      changed |= 2;
-   }
-   
-   if(ri_is_empty(x))
-      failNow();
-   
-   if(changed){
-      rational_subtraction(&n_size, &x->sup, &x->inf);
-      rational_subtraction(&n_size, &o_size, &n_size);
-      rational_division(&o_size, &n_size, &o_size);
-      
-      if(rational_get_d(&o_size) <= 0.05)
-         changed = 0;
-   }
-
-   return changed;
-}
-
-void ri_init(ri* a){
-   rational_init(&a->inf);
-   rational_init(&a->sup);
-}
-
-void ri_clear(ri* a){
-   rational_clear(&a->inf);
-   rational_clear(&a->sup);
-}
-
-void ri_add(ri* a, const ri* b, const ri* c){
-   rational_addition(&a->inf, &b->inf, &c->inf);
-   rational_addition(&a->sup, &b->sup, &c->sup);
-}
-
-void ri_sub(ri* a, const ri* b, const ri* c){
-   rational_subtraction(&a->inf, &b->inf, &c->sup);
-   rational_subtraction(&a->sup, &b->sup, &c->inf);
-}
-
-void ri_mul(ri* r, const ri* a, const ri* b){
-   if(a->inf.type >= 0 ) {                            /* A >= 0 */
-      if (b->inf.type >= 0) {                          /* B >= 0 */
-         rational_multiplication(&r->inf, &a->inf, &b->inf);
-         rational_multiplication(&r->sup, &a->sup, &b->sup);
-      }
-      else if (b->sup.type <= 0) {                          /* B <= 0 */
-         rational_multiplication(&r->inf, &a->sup, &b->inf);
-         rational_multiplication(&r->sup, &a->inf, &b->sup);
+      else if (ri.up.type <= 0) {                          /* B <= 0 */
+         z.low = [_up mul: ri.low];
+         z.up = [_low mul: ri.up];
       }
       else {                                              /* 0 in B */
-         rational_multiplication(&r->inf, &a->sup, &b->inf);
-         rational_multiplication(&r->sup, &a->sup, &b->sup);
+         z.low = [_up mul: ri.low];
+         z.up = [_up mul: ri.up];
       }
    }
-   else if (&a->sup.type <= 0) {                            /* A <= 0 */
-      if (&b->inf.type >= 0) {                          /* B >= 0 */
-         rational_multiplication(&r->inf, &a->inf, &b->sup);
-         rational_multiplication(&r->sup, &a->sup, &b->inf);
+   else if (_up.type <= 0) {                            /* A <= 0 */
+      if (ri.low.type >= 0) {                          /* B >= 0 */
+         z.low = [_low mul: ri.up];
+         z.up = [_up mul: ri.low];
       }
-      else if (b->sup.type <= 0) {                          /* B <= 0 */
-         rational_multiplication(&r->inf, &a->sup, &b->sup);
-         rational_multiplication(&r->sup, &a->inf, &b->inf);
+      else if (ri.up.type <= 0) {                          /* B <= 0 */
+         z.low = [_up mul: ri.up];
+         z.up = [_low mul: ri.low];
       }
       else {                                              /* 0 in B */
-         rational_multiplication(&r->inf, &a->inf, &b->sup);
-         rational_multiplication(&r->sup, &a->inf, &b->inf);
+         z.low = [_low mul: ri.up];
+         z.up = [_low mul: ri.low];
       }
    }
    else {                                                /* 0 in A */
-      if (b->inf.type >= 0) {                          /* B >= 0 */
-         rational_multiplication(&r->inf, &a->inf, &b->sup);
-         rational_multiplication(&r->sup, &a->sup, &b->sup);
+      if (ri.low.type >= 0) {                          /* B >= 0 */
+         z.low = [_low mul: ri.up];
+         z.up = [_up mul: ri.up];
       }
-      else if (b->sup.type <= 0) {                          /* B <= 0 */
-         rational_multiplication(&r->inf, &a->sup, &b->inf);
-         rational_multiplication(&r->sup, &a->inf, &b->inf);
+      else if (ri.up.type <= 0) {                          /* B <= 0 */
+         z.low = [_up mul: ri.low];
+         z.up = [_low mul: _low];
       }
       else {                                              /* 0 in B */
-         ri tmp;
-         ri_init(&tmp);
+         ORRationalInterval* tmp = [[ORRationalInterval alloc] init: _low.mt];
+         tmp.low = [_low mul: ri.up];
+         tmp.up = [_up mul: ri.low];
          
-         rational_multiplication(&tmp.inf, &a->inf, &b->sup);
-         rational_multiplication(&tmp.sup, &a->sup, &b->inf);
-
-         if(rational_lt(&tmp.inf, &tmp.sup)){
-            rational_set(&r->inf, &tmp.inf);
+         if([tmp.low lt: tmp.up]){
+            [z.low set: tmp.low];
          } else {
-            rational_set(&r->inf, &tmp.sup);
+            [z.low set: tmp.up];
          }
          
-         rational_multiplication(&tmp.inf, &a->inf, &b->inf);
-         rational_multiplication(&tmp.sup, &a->sup, &b->sup);
-
-         if(rational_gt(&tmp.inf, &tmp.sup)){
-            rational_set(&r->sup, &tmp.inf);
+         tmp.low = [_low mul: ri.low];
+         tmp.up = [_up mul: ri.up];
+         
+         if([tmp.low gt: tmp.up]){
+            [z.up set: tmp.low];
          } else {
-            rational_set(&r->sup, &tmp.sup);
+            [z.up set: tmp.up];
          }
-         ri_clear(&tmp);
       }
    }
+   return z;
 }
-
-void ri_div(ri* r, const ri* a, const ri* b){
-   if (a->inf.type >= 0) {                            /* A >= 0 */
-      if (b->inf.type > 0) {     /* B >  0 */
-         rational_division(&r->inf, &a->inf, &b->sup);
-         rational_division(&r->sup, &a->sup, &b->inf);
+-(id<ORRationalInterval>)div:(id<ORRationalInterval>)ri{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   if (_low.type >= 0) {                            /* A >= 0 */
+      if (ri.low.type > 0) {     /* B >  0 */
+         z.low = [_low div: ri.up];
+         z.up = [_up div: ri.low];
       }
-      else if (b->sup.type < 0) {       /* B <  0 */
-         rational_division(&r->inf, &a->sup, &b->sup);
-         rational_division(&r->sup, &a->inf, &b->inf);
+      else if (ri.up.type < 0) {       /* B <  0 */
+         z.low = [_up div: ri.up];
+         z.up = [_low div: ri.low];
       }
       else                                                /* 0 in B */
-         if(a->inf.type == 0){
-            RI_SET_NAN(r);
+         if(_low.type == 0){
+            [ri setNAN];
          } else{
-            R_SET_NEG_INF(&r->inf);
-            R_SET_POS_INF(&r->sup);
+            [ri.low setNegInf];
+            [ri.up setPosInf];
          }
       
    }
-   else if (a->sup.type <= 0) {                            /* A <= 0 */
-      if (b->inf.type > 0) {     /* B >  0 */
-         rational_division(&r->inf, &a->inf, &b->inf);
-         rational_division(&r->sup, &a->sup, &b->sup);
+   else if (_up.type <= 0) {                            /* A <= 0 */
+      if (ri.low.type > 0) {     /* B >  0 */
+         z.low = [_low div: ri.low];
+         z.up = [_up div: ri.up];
       }
-      else if (b->sup.type < 0) {       /* B <  0 */
-         rational_division(&r->inf, &a->sup, &b->inf);
-         rational_division(&r->sup, &a->inf, &b->sup);
+      else if (ri.up.type < 0) {       /* B <  0 */
+         z.low = [_up div: ri.low];
+         z.up = [_low div: ri.up];
       }
       else                                                /* 0 in B */
-         if(a->sup.type == 0){
-            RI_SET_NAN(r);
+         if(_up.type == 0){
+            [ri setNAN];
          } else{
-            R_SET_NEG_INF(&r->inf);
-            R_SET_POS_INF(&r->sup);
+            [ri.low setNegInf];
+            [ri.up setPosInf];
          }
    }
    else {                                                /* 0 in A */
-      if (b->inf.type > 0) {     /* B >  0 */
-         rational_division(&r->inf, &a->inf, &b->inf);
-         rational_division(&r->sup, &a->sup, &b->inf);
+      if (ri.low.type > 0) {     /* B >  0 */
+         z.low = [_low div: ri.low];
+         z.up = [_up div: ri.low];
       }
-      else if (b->sup.type < 0) {       /* B <  0 */
-         rational_division(&r->inf, &a->sup, &b->sup);
-         rational_division(&r->sup, &a->inf, &b->inf);
+      else if (ri.up.type < 0) {       /* B <  0 */
+         z.low = [_up div: ri.up];
+         z.up = [_low div: ri.low];
       }
       else                                                /* 0 in B */
-         RI_SET_NAN(r);
+         [ri setNAN];
    }
+   return z;
 }
-
-void ri_neg(ri* z, const ri* x){
-   rational_neg(&z->inf, &x->sup);
-   rational_neg(&z->sup, &x->inf);
+-(id<ORRationalInterval>)neg{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   z.low = [_up neg];
+   z.up = [_low neg];
+   
+   return z;
 }
-
-void ri_abs(ri* z, const ri* x){
-   rational_abs(&z->inf, &x->inf);
-   rational_abs(&z->sup, &x->sup);
+-(id<ORRationalInterval>)abs{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   z.low = [_low abs];
+   z.up = [_up abs];
+   
+   return z;
 }
-
-int ri_cmp(const ri* x, const ri* y){
-   if(ri_eq(x, y)){
+-(BOOL)cmp:(id<ORRationalInterval>)ri{
+   if([self eq: ri]){
       return 0;
-   } else if(ri_gt(x, y)){
+   } else if([self gt: ri]){
       return 1;
    } else {
       return -1;
    }
 }
-
-int ri_lt(const ri* x, const ri* y){
-   return rational_lt(&x->inf, &y->inf) && rational_lt(&x->sup, &y->sup);
+-(BOOL)lt:(id<ORRationalInterval>)ri{
+   return [_low lt: ri.low] && [_up lt: ri.up];
 }
-
-int ri_gt(const ri* x, const ri* y){
-   return rational_gt(&x->inf, &y->inf) && rational_gt(&x->sup, &y->sup);
+-(BOOL)gt:(id<ORRationalInterval>)ri{
+   return [_low gt: ri.low] && [_up gt: ri.up];
 }
-
-int ri_leq(const ri* x, const ri* y){
-   return rational_leq(&x->inf, &y->inf) && rational_leq(&x->sup, &y->sup);
+-(BOOL)leq:(id<ORRationalInterval>)ri{
+   return [_low leq: ri.low] && [_up leq: ri.up];
 }
-
-int ri_geq(const ri* x, const ri* y){
-   return rational_geq(&x->inf, &y->inf) && rational_geq(&x->sup, &y->sup);
+-(BOOL)geq:(id<ORRationalInterval>)ri{
+   return [_low geq: ri.low] && [_up geq: ri.up];
 }
-
-int ri_eq(const ri* x, const ri* y){
-   return rational_eq(&x->inf, &y->inf) && rational_eq(&x->sup, &y->sup);
+-(BOOL)eq:(id<ORRationalInterval>)ri{
+   return [_low eq: ri.low] && [_up eq: ri.up];
 }
-
-int ri_neq(const ri* x, const ri* y){
-      return !rational_eq(&x->inf, &y->inf) && !rational_eq(&x->sup, &y->sup);
+-(BOOL)neq:(id<ORRationalInterval>)ri{
+   return ![self eq: ri];
 }
+-(BOOL)empty{
+   return (_low.type == 3 || _up.type == 3)  ||
+   (_low.type == 2 && _up.type < 2)   ||
+   (_up.type == -2 && _low.type > -2) ||
+   [_low gt: _up];
+}
+-(id<ORRationalInterval>)union:(id<ORRationalInterval>)ri{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   if([self empty] || [ri empty]){
+      [z setNAN];
+   } else {
+      /* lower bound */
+      if(_low.type == -2 || ri.low.type == -2){
+         [z.low setNegInf];
+      } else if(_low.type == 2 || ri.low.type == 2){
+         [z.low setPosInf];
+      } else if([_low leq: ri.low]){
+         [z.low set: _low];
+      } else {
+         [z.low set: ri.low];
+      }
+      /* upper bound */
+      if(_up.type == -2 || ri.up.type == -2){
+         [z.up setNegInf];
+      } else if(_up.type == 2 || ri.up.type == 2){
+         [z.up setPosInf];
+      } else if([_up geq: ri.up]){
+         [z.up set: _up];
+      } else {
+         [z.up set: ri.up];
+      }
+      
+      if([z empty])
+         [z setNAN];
+   }
+   return z;
+}
+-(id<ORRationalInterval>)intersection:(id<ORRationalInterval>)ri{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   if([self empty] || [ri empty]){
+      [z setNAN];
+   } else {
+      /* lower bound */
+      if(_low.type == -2 || ri.low.type == -2){
+         [z.low setNegInf];
+      } else if(_low.type == 2 || ri.low.type == 2){
+         [z.low setPosInf];
+      } else if([_low leq: ri.low]){
+         [z.low set: ri.low];
+      } else {
+         [z.low set: _low];
+      }
+      /* upper bound */
+      if(_up.type == -2 || ri.up.type == -2){
+         [z.up setNegInf];
+      } else if(_up.type == 2 || ri.up.type == 2){
+         [z.up setPosInf];
+      } else if([_up geq: ri.up]){
+         [z.up set: ri.up];
+      } else {
+         [z.up set: _up];
+      }
+      
+      if([z empty])
+         [z setNAN];
+   }
+   return z;
+}
+-(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   if([self empty] || [ri empty]){
+      [z setNAN];
+      return z;
+   }
+   
+   z.changed = 0;
+   ORRational* o_size = [[ORRational alloc] init];
+   ORRational* n_size = [[ORRational alloc] init];
+   
+   o_size = [_up sub: _low];
+   
+   if([_low lt: ri.low]){
+      [z.low set: ri.low];
+      z.changed = 1;
+   }
+   
+   if([_up gt: ri.up]){
+      [z.up set: ri.low];
+      z.changed |= 2;
+   }
+   
+   if([z empty]){
+      [z set: self];
+      z.changed = 0;
+      return z;
+   }
+   
+   if(z.changed){
+      n_size = [[o_size sub: [_up sub: _low]] div: o_size];
+      [o_size set_d: 0.05];
+      
+      if([n_size leq: o_size]){
+         z.changed = 0;
+         [z set: self];
+      }
+   }
+   [o_size release];
+   [n_size release];
+   return z;
+}
+-(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup{
+   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   if([self empty] || inf.type == 3 || sup.type == 3){
+      [z setNAN];
+      return z;
+   }
+   
+   int changed = 0;
+   ORRational* o_size = [[ORRational alloc] init: _low.mt];
+   ORRational* n_size = [[ORRational alloc] init: _low.mt];
+   
+   o_size = [_up sub: _low];
+   
+   if([_low lt: inf]){
+      [z.low set: inf];
+      changed = 1;
+   }
+   
+   if([_up gt: sup]){
+      [z.up set: sup];
+      changed |= 2;
+   }
+   
+   if([z empty]){
+      [z set: self];
+      return z;
+   }
+   
+   if(changed){
+      n_size = [[o_size sub: [_up sub: _low]] div: o_size];
+      [o_size set_d: 0.05];
+      
+      if([n_size leq: o_size]){
+         changed = 0;
+         [z set: self];
+      }
+   }
+   [o_size release];
+   [n_size release];
+   return z;
+}
+@end

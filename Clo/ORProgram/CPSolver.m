@@ -643,6 +643,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method diffImpl not implemented"];
 }
+-(void) labelImplRational: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method labelImplRational not implemented"];
+}
+-(void) diffImplRational: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method diffImplRational not implemented"];
+}
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method lthenImpl not implemented"];
@@ -670,6 +678,22 @@
 -(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGthenImpl: not implemented"];
+}
+-(void) rationalLthenImpl: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method rationalLthenImpl: not implemented"];
+}
+-(void) rationalGthenImpl: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method rationalGthenImpl: not implemented"];
+}
+-(void) rationalLEqualImpl: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method rationalLEqualImpl: not implemented"];
+}
+-(void) rationalGEqualImpl: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method rationalGEqualImpl: not implemented"];
 }
 -(void) floatLEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
 {
@@ -1455,6 +1479,22 @@
        ];
    }
 }
+-(void) labelRational: (id<ORRationalVar>) mx
+{
+   id<CPRationalVar> x = _gamma[mx.getId];
+   ORRational* mid = [[ORRational alloc] init:_mt];
+   ORRational* two = [[ORRational alloc] init:_mt];
+   [two set_d:2];
+   while (![x bound]) {
+      mid = [[[x min] div: two] add: [[x max] div: two]];
+      [_search try: ^{
+          [self rationalGEqual: mx with: mid];
+      } alt: ^{
+          [self rationalLEqual: mx with: mid];
+       }
+       ];
+   }
+}
 -(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o
 {
    return [self selectValueImpl: _gamma[v.getId] by: o];
@@ -1529,9 +1569,27 @@
 {
    return [self labelImpl: _gamma[var.getId] with: val];
 }
+-(void) labelRational: (id<ORRationalVar>) var with: (ORRational*) val
+{
+   return [self labelImplRational: _gamma[var.getId] with: val];
+}
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
    [self diffImpl: _gamma[var.getId] with: val];
+}
+
+/*-(void) labelRational: (id<ORRationalVar>) var by: (ORRational) o
+{
+   id<CPRationalVar> x = _gamma[getId(var)];
+   while (![x bound]) {
+      ORRational val = [self selectValueImplRational: x by: o];
+      [self try: ^() { [self labelRational: var with: val]; }
+            alt: ^() { [self diffRational: var with: val]; }];
+   }
+}*/
+-(void) diffRational: (id<ORRationalVar>) var with: (ORRational*) val
+{
+   [self diffImplRational: _gamma[var.getId] with: val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
@@ -1548,6 +1606,22 @@
 -(void) gthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [self gthenImpl: _gamma[var.getId] with: rint(floor(val))];
+}
+-(void) rationalLthen: (id<ORRationalVar>) var with: (ORRational*) val
+{
+   [self rationalLthenImpl: _gamma[var.getId] with: val];
+}
+-(void) rationalGthen: (id<ORRationalVar>) var with: (ORRational*) val
+{
+   [self rationalGthenImpl: _gamma[var.getId] with: val];
+}
+-(void) rationalLEqual: (id<ORRationalVar>) var with: (ORRational*) val
+{
+   [self rationalLEqualImpl: _gamma[var.getId] with: val];
+}
+-(void) rationalGEqual: (id<ORRationalVar>) var with: (ORRational*) val
+{
+   [self rationalGEqualImpl: _gamma[var.getId] with: val];
 }
 -(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
 {
@@ -3390,22 +3464,22 @@
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMaxErrorF:maxError];
 }
--(ORRational) minErrorFQ:(id<ORVar>)x
+-(ORRational*) minErrorFQ:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx minErr];
 }
--(ORRational) maxErrorFQ:(id<ORVar>)x
+-(ORRational*) maxErrorFQ:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx maxErr];
 }
--(void) setMinErrorFQ:(id<ORVar>)x minError:(ORRational) minError
+-(void) setMinErrorFQ:(id<ORVar>)x minError:(ORRational*) minError
 {
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMinError:minError];
 }
--(void) setMaxErrorFQ:(id<ORVar>)x maxError:(ORRational) maxError
+-(void) setMaxErrorFQ:(id<ORVar>)x maxError:(ORRational*) maxError
 {
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMaxError:maxError];
@@ -3420,20 +3494,15 @@
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx max];
 }
-
--(ORDouble) minQ:(id<ORVar>)x
+-(char*) maxQ:(id<ORVar>)x
 {
    CPRationalVarI* cx = _gamma[x.getId];
-   ORRational min;
-   min = [cx min];
-   return rational_get_d(&min);
+   return [[cx max] description];
 }
--(ORDouble) maxQ:(id<ORVar>)x
+-(char*) minQ:(id<ORVar>)x
 {
    CPRationalVarI* cx = _gamma[x.getId];
-   ORRational max;
-   max = [cx max];
-   return rational_get_d(&max);
+   return [[cx max] description];
 }
 -(ORDouble) minErrorDD:(id<ORVar>)x
 {
@@ -3455,22 +3524,22 @@
    CPDoubleVarI* cx = _gamma[x.getId];
    [cx updateMaxErrorF:maxError];
 }
--(ORRational) minErrorDQ:(id<ORVar>)x
+-(ORRational*) minErrorDQ:(id<ORVar>)x
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx minErr];
 }
--(ORRational) maxErrorDQ:(id<ORVar>)x
+-(ORRational*) maxErrorDQ:(id<ORVar>)x
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx maxErr];
 }
--(void) setMinErrorDQ:(id<ORVar>)x minError:(ORRational) minError
+-(void) setMinErrorDQ:(id<ORVar>)x minError:(ORRational*) minError
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    [cx updateMinError:minError];
 }
--(void) setMaxErrorDQ:(id<ORVar>)x maxError:(ORRational) maxError
+-(void) setMaxErrorDQ:(id<ORVar>)x maxError:(ORRational*) maxError
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    [cx updateMaxError:maxError];
@@ -3894,6 +3963,19 @@
    }
    [ORConcurrency pumpEvents];
 }
+-(void) labelImplRational: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   ORStatus status = [_engine enforce: ^{ [(CPRationalVarI*)var bind:val];}];
+   if (status == ORFailure) {
+      //[_failLabel notifyWith:var andInt:val];
+      if (_engine.isPropagating)
+         failNow();
+      else
+         [_search fail];
+   }
+   //[_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
+}
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^{ [var updateMax:val-1];}];
@@ -3982,6 +4064,38 @@
       else
          [_search fail];
    }
+   [ORConcurrency pumpEvents];
+}
+-(void) rationalLthenImpl: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   // WRONG: use LEqual
+   //ORRational pval = fp_previous_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) rationalGthenImpl: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   // WRONG: use GEqual
+   //ORFloat nval = fp_next_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) rationalLEqualImpl: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) rationalGEqualImpl: (id<CPRationalVar>) var with: (ORRational*) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
@@ -4161,6 +4275,11 @@
 {
    [self labelImpl: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory equalc:self var:var to: val]];
+}
+-(void) labelRational: (id<ORRationalVar>) var with: (ORRational*) val
+{
+   [self labelImplRational: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory rationalEqualc:self var:var eqc: val]];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {

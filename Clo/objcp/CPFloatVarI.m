@@ -22,14 +22,14 @@
 {
     ORUInt    _name;
     ORFloat   _value;
-    ORRational _valueError;
+    ORRational* _valueError;
     ORBool    _bound;
     ORBool    _boundError;
 }
 -(CPFloatVarSnapshot*) init: (CPFloatVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
 -(ORFloat) floatValue;
--(ORRational) errorValue;
+-(ORRational*) errorValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -40,7 +40,7 @@
 {
     self = [super init];
     _name = name;
-    rational_init(&_valueError);
+    _valueError = [[ORRational alloc] init];
     if ([v bound]) {
         _bound = TRUE;
         _value = [v value];
@@ -51,26 +51,24 @@
     }
     if ([v boundError]) {
         _boundError = TRUE;
-       ORRational errorValue;
-       errorValue = [v errorValue];
-        rational_set(&_valueError, &errorValue);
+       [_valueError set: [v errorValue]];
     }
     else {
-        rational_set_d(&_valueError, 0.0f);
-        _boundError = FALSE;
+       [_valueError set_d: 0.0];
+       _boundError = FALSE;
     }
     return self;
 }
 -(void) dealloc
 {
-    rational_clear(&_valueError);
+    [_valueError release];
     [super dealloc];
 }
 -(ORFloat) floatValue
 {
     return _value;
 }
--(ORRational) errorValue
+-(ORRational*) errorValue
 {
     return _valueError;
 }
@@ -87,7 +85,7 @@
     if ([object isKindOfClass:[self class]]) {
         CPFloatVarSnapshot* other = object;
         if (_name == other->_name) {
-            return _value == other->_value && _bound == other->_bound && rational_cmp(&_valueError, &other->_valueError) == 0 && _boundError == other->_boundError;
+           return _value == other->_value && _bound == other->_bound && [_valueError eq: other->_valueError] && _boundError == other->_boundError;
         }
         else
             return NO;
@@ -102,7 +100,7 @@
 -(NSString*) description
 {
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"Float(%d) : %f±%f",_name,_value,rational_get_d(&_valueError)];
+    [buf appendFormat:@"Float(%d) : %f±%@",_name,_value,_valueError];
     return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
@@ -152,7 +150,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 @implementation CPFloatVarI
 
--(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(ORRational)elow errUp:(ORRational) eup
+-(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(ORRational*)elow errUp:(ORRational*) eup
 {
     self = [super init];
     _engine = engine;
@@ -446,48 +444,40 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     [self updateMax:newMax];
 }
 
-- (void)bindError:(ORRational)valError {
+- (void)bindError:(ORRational*)valError {
     [_domError bind:valError for:self];
 }
 
 
-- (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError {
-    if(rational_cmp(&newMinError,&newMaxError)>0)
+- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError {
+    if([newMinError gt: newMaxError])
         failNow();
     [self updateMinError:newMinError];
     [self updateMaxError:newMaxError];
 }
 
 
-- (void)updateMaxError:(ORRational)newMaxError {
-   ORRational maxError;
-   maxError = [self maxErr];
-   if(rational_cmp(&newMaxError, &maxError) < 0)
+- (void)updateMaxError:(ORRational*)newMaxError {
+   if([newMaxError lt: [self maxErr]])
         [_domError updateMax:newMaxError for:self];
 }
 
 
-- (void)updateMinError:(ORRational)newMinError {
-   ORRational minError;
-   minError = [self minErr];
-    if(rational_cmp(&newMinError, &minError) > 0)
+- (void)updateMinError:(ORRational*)newMinError {
+    if([newMinError gt: [self minErr]])
         [_domError updateMin:newMinError for:self];
 }
 - (void)updateMaxErrorF:(ORDouble)newMaxError {
-    ORRational mError;
-    rational_init(&mError);
-    rational_set_d(&mError, newMaxError);
-    [_domError updateMax:mError for:self];
-    rational_clear(&mError);
+   ORRational* mError = [[ORRational alloc ] init];
+   [mError set_d: newMaxError];
+   [_domError updateMax:mError for:self];
+   [mError release];
 }
-
-
 - (void)updateMinErrorF:(ORDouble)newMinError {
-    ORRational mError;
-    rational_init(&mError);
-    rational_set_d(&mError, newMinError);
-    [_domError updateMin:mError for:self];
-    rational_clear(&mError);
+   ORRational* mError = [[ORRational alloc ] init];
+   [mError set_d: newMinError];
+   [_domError updateMin:mError for:self];
+   [mError release];
 }
 
 -(ORFloat) min
@@ -510,27 +500,23 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
         return [_dom min];
     return _value;
 }
--(ORRational) errorValue
+-(ORRational*) errorValue
 {
     if ([_domError bound])
         return [_domError min];
     return _valueError;
 }
-- (ORRational)maxErr {
+- (ORRational*)maxErr {
     return [_domError max];
 }
-- (ORRational)minErr {
+- (ORRational*)minErr {
     return [_domError min];
 }
 - (ORDouble)maxErrF {
-   ORRational max;
-   max = [_domError max];
-   return rational_get_d(&max);
+   return [[_domError max] get_d];
 }
 - (ORDouble)minErrF {
-   ORRational min;
-   min = [_domError min];
-   return rational_get_d(&min);
+   return [[_domError min] get_d];
 }
 -(id<CPFloatDom>) domain
 {
@@ -819,19 +805,19 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     [self updateMin:newMin];
 }
 
-- (void)bindError:(ORRational)valError {
+- (void)bindError:(ORRational*)valError {
 }
 
 
-- (void)updateIntervalError:(ORRational)newMinError and:(ORRational)newMaxError { // nonsense (cpjm)
+- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError { // nonsense (cpjm)
 }
 
 
-- (void)updateMaxError:(ORRational)newMaxError {
+- (void)updateMaxError:(ORRational*)newMaxError {
 }
 
 
-- (void)updateMinError:(ORRational)newMinError {
+- (void)updateMinError:(ORRational*)newMinError {
 }
 
 - (void)updateMaxErrorF:(ORDouble)newMaxError {
@@ -850,27 +836,21 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_theVar max];
 }
-- (ORRational)maxErr { // Probably wrong (cpjm)
-    ORRational maxE;
-   rational_init(&maxE);
-    rational_set_d(&maxE, [_theVar max]);
-    return maxE;
+- (ORRational*)maxErr { // Probably wrong (cpjm)
+    return [[ORRational alloc] init];
 }
-- (ORRational)minErr {
-    ORRational minE;
-   rational_init(&minE);
-    rational_set_d(&minE, [_theVar min]);
-    return minE;
+- (ORRational*)minErr
+{
+    return [[ORRational alloc] init];
 }
-- (ORDouble)maxErrF {
+- (ORDouble)maxErrF
+{
     return [_theVar max];
 }
-
-
-- (ORDouble)minErrF {
+- (ORDouble)minErrF
+{
     return [_theVar min];
 }
-
 -(ORFloat) value
 {
     return [_theVar min];
@@ -932,20 +912,16 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
     return 0.0f;
 }
-
-- (ORBool)boundError {
+- (ORBool)boundError
+{
    return [_theVar bound];
 }
-
-
-- (ORRational)errorValue {
-   ORRational errV;
-   rational_init(&errV);
-   rational_set_d(&errV, [_theVar min]);
-   return errV;
+- (ORRational*)errorValue
+{
+   return [[ORRational alloc] init];
 }
-
 - (void)visit:(ORVisitor *)visitor
-{}
-
+{
+   
+}
 @end

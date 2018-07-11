@@ -405,14 +405,14 @@
 //-------------------------------------------------
 
 @implementation ORRationalRangeI {
-   ORRational _low;
-   ORRational _up;
+   ORRational* _low;
+   ORRational* _up;
 }
--(id<ORRationalRange>)init:(ORRational) low up:(ORRational)up
+-(id<ORRationalRange>)init:(ORRational*) low up:(ORRational*)up
 {
    self = [super init];
-   rational_set(&_low, &low);
-   rational_set(&_up, &up);
+   [_low set: low];
+   [_up set: up];
    return self;
 }
 -(id)copyWithZone:(NSZone *)zone
@@ -422,33 +422,33 @@
 -(BOOL)isEqual:(id)object
 {
    if ([object isKindOfClass:[self class]])
-      return rational_eq(&_low, &((ORRationalRangeI*)object)->_low) && rational_eq(&_up, &((ORRationalRangeI*)object)->_up);
+      return [_low eq: ((ORRationalRangeI*)object)->_low] && [_up eq: ((ORRationalRangeI*)object)->_up];
    else return NO;
 }
 -(NSUInteger)hash
 {
-   return (NSUInteger)rational_get_d(&_low) ^ (NSUInteger)rational_get_d(&_up);
+   return (NSUInteger)[_low get_d] ^ (NSUInteger)[_up get_d];
 }
--(ORRational)low
+-(ORRational*)low
 {
    return _low;
 }
--(ORRational)up
+-(ORRational*)up
 {
    return _up;
 }
 -(ORBool) isDefined
 {
-   return rational_leq(&_low, &_up);
+   return [_low leq: _up];
 }
--(ORBool)inRange:(ORRational)e
+-(ORBool)inRange:(ORRational*)e
 {
-   return rational_leq(&_low, &e) && rational_leq(&e, &_up);
+   return [_low leq: e] && [e leq: _up];
 }
 -(NSString*)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [rv appendFormat:@"[%lf,%lf]",rational_get_d(&_low),rational_get_d(&_up)];
+   [rv appendFormat:@"[%s,%s]",[_low get_str],[_up get_str]];
    return rv;
 }
 -(void)visit:(ORVisitor*)v

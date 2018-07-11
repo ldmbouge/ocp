@@ -20,6 +20,7 @@
 #import "ORRealDecompose.h"
 #import "ORFloatDecompose.h"
 #import "ORDoubleDecompose.h"
+#import "ORRationalDecompose.h"
 
 @interface ORIntNormalizer : ORVisitor<NSObject> {
    id<ORLinear>     _terms;
@@ -38,11 +39,11 @@
 @end
 
 @interface ORRationalNormalizer :  ORVisitor<NSObject> {
-   id<ORRationalLinear>  _terms;
+   id<ORLinear>  _terms;
    id<ORAddToModel>   _model;
 }
 -(id)init:(id<ORAddToModel>) model;
--(id<ORRationalLinear>)terms;
+-(id<ORLinear>)terms;
 @end
 
 @interface ORDoubleNormalizer :  ORVisitor<NSObject> {
@@ -120,7 +121,7 @@
       case ORTRational: {
          ORRationalNormalizer* v = [[ORRationalNormalizer alloc] init:model];
          [rel visit:v];
-         id<ORRationalLinear> rv = [v terms];
+         id<ORLinear> rv = [v terms];
          [v release];
          return rv;
       }break;
@@ -1805,23 +1806,23 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 @implementation ORNormalizer(Rational)
 +(ORRationalLinear*)rationalLinearFrom:(ORExprI*)e model:(id<ORAddToModel>)model equalTo:(id<ORRationalVar>)x
 {
-   ORRationalLinear* rv = [[ORRationalLinear alloc] initORLinear:4];
+   ORRationalLinear* rv = [[ORRationalLinear alloc] initORRationalLinear:4];
    ORRationalLinearizer* v = [[ORRationalLinearizer alloc] init:rv model: model  equalTo:x];
    [e visit:v];
    [v release];
    return rv;
-}/*
+}
 +(ORRationalLinear*)rationalLinearFrom:(ORExprI*)e model:(id<ORAddToModel>)model
 {
    //hzi : test useless ?
    if (e.vtype == ORTBool) {
-      ORRationalLinear* rv = [[ORRationalLinear alloc] initORLinear:4];
+      ORRationalLinear* rv = [[ORRationalLinear alloc] initORRationalLinear:4];
       ORRationalLinearizer* v = [[ORRationalLinearizer alloc] init:rv model: model];
       [e visit:v];
       [v release];
       return rv;
    } else {
-      ORRationalLinear* rv = [[ORRationalLinear alloc] initORLinear:4];
+      ORRationalLinear* rv = [[ORRationalLinear alloc] initORRationalLinear:4];
       ORRationalLinearizer* v = [[ORRationalLinearizer alloc] init:rv model: model];
       [e visit:v];
       [v release];
@@ -1837,7 +1838,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 +(id<ORRationalVar>) rationalVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
 {
-   ORRationalSubst* subst = [[ORRationalSubst alloc] initORSubst: model];
+   ORRationalSubst* subst = [[ORRationalSubst alloc] initORRationalSubst: model];
    [expr visit:subst];
    id<ORRationalVar> theVar = [subst result];
    [subst release];
@@ -1845,7 +1846,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 +(id<ORRationalVar>) rationalVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORRationalVar>)x
 {
-   ORRationalSubst* subst = [[ORRationalSubst alloc] initORSubst: model by:x];
+   ORRationalSubst* subst = [[ORRationalSubst alloc] initORRationalSubst: model by:x];
    [expr visit:subst];
    id<ORRationalVar> theVar = [subst result];
    [subst release];
@@ -1854,13 +1855,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 +(id<ORRationalVar>)rationalVarIn:(ORRationalLinear*)e for:(id<ORAddToModel>)model
 {
+   id<ORRationalRange> r = [ORFactory rationalRange:model low:[e qmin] up:[e qmax]];
    if ([e size] == 0) {
-      id<ORRationalVar> xv = [ORFactory rationalVar: model domain: RANGE(model,[e min],[e max])];
+      id<ORRationalVar> xv = [ORFactory rationalVar: model domain:r];
       return xv;
    } else if ([e size] == 1) {
-      return [e oneView:model];
+      return (id<ORRationalVar>)[e var:0];
    } else {
-         id<ORRationalVar> xv = [ORFactory rationalVar: model domain: RANGE(model,[e min],[e max])];
+         id<ORRationalVar> xv = [ORFactory rationalVar: model domain:r];
          [e addTerm:xv by:-1];
          [e postEQZ: model];
          return xv;
@@ -1869,17 +1871,18 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 +(void)rationalVar:(id<ORRationalVar>)var equal:(ORRationalLinear*)e for:(id<ORAddToModel>) model
 {
    if (e.size == 0) {
-      [model addConstraint:[ORFactory equalc:model var:var to:0]];
+      ORRational* z = [[ORRational alloc] init];
+      [z set_d:0];
+      [model addConstraint:[ORFactory rationalEqualc:model var:var eqc:z]];
+      [z release];
    } else if (e.size == 1) {
       [e addTerm:var by:-1];
       [e postEQZ:model];
-   } else if (e.clausalForm) {
-      [model addConstraint:[ORFactory clause:model over:[e variables:model] equal:var]];
    } else {
       [e addTerm:var by:-1];
       [e postEQZ:model];
    }
-}*/
+}
 @end
 
 @implementation ORNormalizer(Float)
@@ -2312,22 +2315,26 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    self = [super init:ORTInt];
    return self;
 }
--(id<ORLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+-(id<ORRationalLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
    ORRationalLinear* lin = nil;
    bool lc = [left isConstant];
    bool rc = [right isConstant];
-   ORRational lmin = [left qmin];
-   ORRational rmin = [right qmin];
    if (lc && rc) {
-      bool isOk = rational_eq(&lmin, &rmin);
+      bool isOk = [[left qmin] eq: [right qmin]];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
-      ORRational c = lc ? [left qmin] : [right qmin];
+      ORRational* c = [[ORRational alloc] init];
+      if(lc){
+         c = [left qmin];
+      } else {
+         c = [right qmin];
+      }
       ORExprI* other = lc ? right : left;
       lin  = [ORNormalizer rationalLinearFrom:other model:_model];
-      [lin addIndependent: - c];
+      [lin addIndependent:[c neg]];
+      [c release];
    } else {
       bool lv = [left isVariable];
       bool rv = [right isVariable];
@@ -2339,7 +2346,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          [lin addTerm:theVar by:-1];
       } else {
          lin = [ORNormalizer rationalLinearFrom:left model:_model ];
-         ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: lin];
+         ORRationalLinearFlip* linRight = [[ORRationalLinearFlip alloc] initORRationalLinearFlip: lin];
          [ORNormalizer addToRationalLinear:linRight from:right model:_model];
          [linRight release];
       }

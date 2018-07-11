@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#include "gmp.h"
 
 #if (defined(__APPLE__)) && (__MAC_OS_X_VERSION_MAX_ALLOWED > __MAC_10_9)
 #define PORTABLE_BEGIN NS_ASSUME_NONNULL_BEGIN

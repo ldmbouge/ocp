@@ -424,6 +424,10 @@
 {
    [[self worker] label: mx];
 }
+-(void) labelRational: (id<ORRationalVar>) mx
+{
+   [[self worker] labelRational: mx];
+}
 -(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
    [(id<CPBV>)[self worker] labelBV:var at:i with:val];
@@ -455,6 +459,10 @@
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
    [[self worker] label: var with: val];
+}
+-(void) labelRational: (id<ORRationalVar>) var with: (ORRational*) val
+{
+   [[self worker] labelRational: var with: val];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
@@ -1092,17 +1100,17 @@
 {
     [[self worker] setMaxErrorFD: x maxErrorF: maxError];
 }
-- (ORRational)maxErrorFQ:(PNONNULL id<ORVar>)x {
+- (ORRational*)maxErrorFQ:(PNONNULL id<ORVar>)x {
     return [[self worker] maxErrorFQ: x];
 }
-- (ORRational)minErrorFQ:(PNONNULL id<ORVar>)x {
+- (ORRational*)minErrorFQ:(PNONNULL id<ORVar>)x {
     return [[self worker] minErrorFQ: x];
 }
--(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError
+-(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(ORRational*) minError
 {
     [[self worker] setMinErrorFQ: x minError: minError];
 }
--(void) setMaxErrorFQ:(PNONNULL id<ORVar>)x maxError:(ORRational) maxError
+-(void) setMaxErrorFQ:(PNONNULL id<ORVar>)x maxError:(ORRational*) maxError
 {
     [[self worker] setMaxErrorFQ: x maxError: maxError];
 }
@@ -1112,10 +1120,10 @@
 - (ORDouble)minD:(PNONNULL id<ORVar>)x {
     return [[self worker] minD: x];
 }
-- (ORDouble)maxQ:(PNONNULL id<ORVar>)x {
+- (char*)maxQ:(PNONNULL id<ORVar>)x {
    return [[self worker] maxQ: x];
 }
-- (ORDouble)minQ:(PNONNULL id<ORVar>)x {
+- (char*)minQ:(PNONNULL id<ORVar>)x {
    return [[self worker] minQ: x];
 }
 - (ORDouble)maxErrorDD:(PNONNULL id<ORVar>)x {
@@ -1132,17 +1140,17 @@
 {
     [[self worker] setMaxErrorDD: x maxErrorF: maxError];
 }
-- (ORRational)maxErrorDQ:(PNONNULL id<ORVar>)x {
+- (ORRational*)maxErrorDQ:(PNONNULL id<ORVar>)x {
     return [[self worker] maxErrorDQ: x];
 }
-- (ORRational)minErrorDQ:(PNONNULL id<ORVar>)x {
+- (ORRational*)minErrorDQ:(PNONNULL id<ORVar>)x {
     return [[self worker] minErrorDQ: x];
 }
--(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(ORRational) minError
+-(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(ORRational*) minError
 {
     [[self worker] setMinErrorDQ: x minError: minError];
 }
--(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(ORRational) maxError
+-(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(ORRational*) maxError
 {
     [[self worker] setMaxErrorDQ: x maxError: maxError];
 }

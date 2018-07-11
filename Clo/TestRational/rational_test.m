@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #include "gmp.h"
-#include "rationalUtilities.h"
+#import "rationalUtilities.h"
 
 void check_result(NSString* s, ORRational r, ORDouble x_){
    ORRational x;

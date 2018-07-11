@@ -18,7 +18,7 @@
 //#import <ORFoundation/ORCommand.h>
 #import <assert.h>
 
-//#include "rationalUtilities.h"
+//#import "rationalUtilities.h"
 
 
 @class ORCommandList;
@@ -140,8 +140,8 @@
     struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
     s->ptr = ptr;
     s->code = TAGRational;
-    rational_init(&s->rationalVal);
-    rational_set(&s->rationalVal, ptr);
+    s->rationalVal = [[ORRational alloc] init];
+    [s->rationalVal set: ptr];
     ++_seg[_cSeg]->top;
 }
 
@@ -246,9 +246,9 @@
                *((long double*)cs->ptr) = cs->ldVal;
                break;
             case TAGRational:
-                 rational_set(((ORRational*)cs->ptr), &cs->rationalVal);
-                 rational_clear(&cs->rationalVal);
-                 break;
+               [(ORRational*)cs->ptr set: cs->rationalVal];
+               [cs->rationalVal release];
+               break;
             case TAGPointer:
                *((void**)cs->ptr) = cs->ptrVal;
                break;
@@ -336,13 +336,13 @@ TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
 {
     return (TRFloatInterval){min, max, [trail magic]-1};
 }
-TRRationalInterval makeTRRationalInterval(ORTrailI* trail, ORRational min, ORRational max)
+TRRationalInterval makeTRRationalInterval(ORTrailI* trail, ORRational* min, ORRational* max)
 {
     TRRationalInterval rational_interval;
-    rational_init(&rational_interval._low);
-    rational_init(&rational_interval._up);
-    rational_set(&rational_interval._low, &min);
-    rational_set(&rational_interval._up, &max);
+    rational_interval._low = [[ORRational alloc] init];
+    rational_interval._up = [[ORRational alloc] init];
+    [rational_interval._low set: min];
+   [rational_interval._up set: max];
     rational_interval._mgc = [trail magic] - 1;
     return rational_interval;
 }
@@ -484,24 +484,24 @@ void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail)
     
 }
 
-void  updateMinR(TRRationalInterval* dom,ORRational min, id<ORTrail> trail)
+void  updateMinR(TRRationalInterval* dom,ORRational* min, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
         dom->_mgc = [trail magic];
-        [trail trailRational:&dom->_low];
-        [trail trailRational:&dom->_up];
+        [trail trailRational:dom->_low];
+        [trail trailRational:dom->_up];
     }
-    rational_set(&dom->_low,&min);
+   [dom->_low set: min];
 }
 
-void  updateMaxR(TRRationalInterval* dom,ORRational max, id<ORTrail> trail)
+void  updateMaxR(TRRationalInterval* dom,ORRational* max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
         dom->_mgc = [trail magic];
-        [trail trailRational:&dom->_low];
-        [trail trailRational:&dom->_up];
+        [trail trailRational:dom->_low];
+        [trail trailRational:dom->_up];
     }
-    rational_set(&dom->_up,&max);
+   [dom->_up set: max];
 }
 
 void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail> trail)
@@ -515,15 +515,15 @@ void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail
     dom->_up = max;
 }
 
-void  updateTRRationalInterval(TRRationalInterval* dom,ORRational min,ORRational max, id<ORTrail> trail)
+void  updateTRRationalInterval(TRRationalInterval* dom,ORRational* min,ORRational* max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
         dom->_mgc = [trail magic];
-        [trail trailRational:&dom->_low];
-        [trail trailRational:&dom->_up];
+        [trail trailRational:dom->_low];
+        [trail trailRational:dom->_up];
     }
-    rational_set(&dom->_low, &min);
-    rational_set(&dom->_up, &max);
+   [dom->_low set: min];
+   [dom->_up set: max];
 }
 
 void  updateMinD(TRDoubleInterval* dom,double min, id<ORTrail> trail)

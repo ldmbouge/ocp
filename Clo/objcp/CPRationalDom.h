@@ -13,34 +13,34 @@
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 
-#include "rationalUtilities.h"
+#import "rationalUtilities.h"
 
 @interface CPRationalDom : NSObject<CPRationalDom,NSCopying> {
     id<ORTrail>           _trail;
-    ORRational            _imin;
-    ORRational            _imax;
+    ORRational*            _imin;
+    ORRational*            _imax;
     TRRationalInterval       _domain;
 }
 // Always gives to possiblity to use base type for precision (cpjm)
--(id)initCPRationalDom:(id<ORTrail>)trail low:(ORRational)low up:(ORRational)up;
+-(id)initCPRationalDom:(id<ORTrail>)trail low:(ORRational*)low up:(ORRational*)up;
 // Not reason to use ORFloat here. Use ORDouble instead (cpjm)
 -(id)initCPRationalDom:(id<ORTrail>)trail lowF:(ORDouble)low upF:(ORDouble)up;
 -(id)initCPRationalDom:(id<ORTrail>)trail;
--(void) updateMin:(ORRational)newMin for:(id<CPFloatVarRatNotifier>)x;
--(void) updateMax:(ORRational)newMax for:(id<CPFloatVarRatNotifier>)x;
--(void) updateInterval:(ri)v for:(id<CPFloatVarRatNotifier>)x;
--(void) bind:(ORRational)val  for:(id<CPFloatVarRatNotifier>)x;
--(ORRational) min;
--(ORRational) max;
--(ORRational) imin;
--(ORRational) imax;
+-(void) updateMin:(ORRational*)newMin for:(id<CPFloatVarRatNotifier>)x;
+-(void) updateMax:(ORRational*)newMax for:(id<CPFloatVarRatNotifier>)x;
+-(void) updateInterval:(ORRationalInterval*)v for:(id<CPFloatVarRatNotifier>)x;
+-(void) bind:(ORRational*)val  for:(id<CPFloatVarRatNotifier>)x;
+-(ORRational*) min;
+-(ORRational*) max;
+-(ORRational*) imin;
+-(ORRational*) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
 //-(ORLDouble) domwidth;
 -(TRRationalInterval) domain;
--(ORBool) member:(ORRational)v;
+-(ORBool) member:(ORRational*)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPRationalDom>)toRestore;
--(void) restoreValue:(ORRational)toRestore for:(id<CPFloatVarRatNotifier>)x;
+-(void) restoreValue:(ORRational*)toRestore for:(id<CPFloatVarRatNotifier>)x;
 @end
 

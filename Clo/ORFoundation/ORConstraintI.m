@@ -592,9 +592,9 @@
 
 @implementation ORRationalEqualc {
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*        _c;
 }
--(ORRationalEqualc*)initORRationalEqualc:(id<ORRationalVar>)x eqi:(ORRational)c
+-(ORRationalEqualc*)initORRationalEqualc:(id<ORRationalVar>)x eqi:(ORRational*)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -608,7 +608,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ == %16.16f)",[self class],self,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@)",[self class],self,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -619,7 +619,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -965,9 +965,9 @@
 
 @implementation ORRationalNEqualc {
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*        _c;
 }
--(ORRationalNEqualc*)initORRationalNEqualc:(id<ORRationalVar>)x neqi:(ORRational)c
+-(ORRationalNEqualc*)initORRationalNEqualc:(id<ORRationalVar>)x neqi:(ORRational*)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -977,7 +977,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ != %16.16e)",[self class],self,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ != %@)",[self class],self,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -988,7 +988,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -1018,9 +1018,9 @@
 
 @implementation ORRationalAssignC {
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*       _c;
 }
--(ORRationalAssignC*)initORRationalAssignC:(id<ORRationalVar>)x to:(ORRational)c
+-(ORRationalAssignC*)initORRationalAssignC:(id<ORRationalVar>)x to:(ORRational*)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -1030,7 +1030,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ = %16.16e)",[self class],self,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ = %@)",[self class],self,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -1041,7 +1041,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5195,9 +5195,9 @@
 @implementation ORRationalLinearEq{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational _c;
+   ORRational* _c;
 }
--(ORRationalLinearEq*) initRationalLinearEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational) c
+-(ORRationalLinearEq*) initRationalLinearEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5208,7 +5208,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) == %f)",[self class],self,_ia,_coefs,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) == %@)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 
@@ -5224,7 +5224,7 @@
 {
    return _coefs;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5249,9 +5249,9 @@
 @implementation ORRationalLinearNEq{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational _c;
+   ORRational* _c;
 }
--(ORRationalLinearNEq*) initRationalLinearNEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational) c
+-(ORRationalLinearNEq*) initRationalLinearNEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5262,7 +5262,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) != %f)",[self class],self,_ia,_coefs,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) != %@)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 
@@ -5278,7 +5278,7 @@
 {
    return _coefs;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5303,9 +5303,9 @@
 @implementation ORRationalLinearLT{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational _c;
+   ORRational* _c;
 }
--(ORRationalLinearLT*) initRationalLinearLT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational) c
+-(ORRationalLinearLT*) initRationalLinearLT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5316,7 +5316,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) < %f)",[self class],self,_ia,_coefs,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) < %@)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 
@@ -5332,7 +5332,7 @@
 {
    return _coefs;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5357,9 +5357,9 @@
 @implementation ORRationalLinearGT{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational _c;
+   ORRational* _c;
 }
--(ORRationalLinearGT*) initRationalLinearGT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational) c
+-(ORRationalLinearGT*) initRationalLinearGT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5370,7 +5370,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) > %f)",[self class],self,_ia,_coefs,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) > %@)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 
@@ -5386,7 +5386,7 @@
 {
    return _coefs;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5411,9 +5411,9 @@
 @implementation ORRationalLinearGEQ{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational _c;
+   ORRational* _c;
 }
--(ORRationalLinearGEQ*) initRationalLinearGEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational) c
+-(ORRationalLinearGEQ*) initRationalLinearGEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5424,7 +5424,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %f)",[self class],self,_ia,_coefs,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %@)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 
@@ -5440,7 +5440,7 @@
 {
    return _coefs;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5465,9 +5465,9 @@
 @implementation ORRationalLinearLEQ{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational _c;
+   ORRational* _c;
 }
--(ORRationalLinearLEQ*) initRationalLinearLEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational) c
+-(ORRationalLinearLEQ*) initRationalLinearLEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5478,7 +5478,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) <= %f)",[self class],self,_ia,_coefs,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) <= %@)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 
@@ -5494,7 +5494,7 @@
 {
    return _coefs;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5519,9 +5519,9 @@
 @implementation ORRationalReifyEqualc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*       _c;
 }
--(ORRationalReifyEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x eqi:(ORRational)c
+-(ORRationalReifyEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x eqi:(ORRational*)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -5532,7 +5532,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %16.16e)",[self class],self,_b,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %@)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -5547,7 +5547,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5579,9 +5579,9 @@
 @implementation ORRationalReifyNEqualc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*        _c;
 }
--(ORRationalReifyNEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x neqi:(ORRational)c
+-(ORRationalReifyNEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x neqi:(ORRational*)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -5592,7 +5592,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ != %16.16e)",[self class],self,_b,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ != %@)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -5607,7 +5607,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5759,9 +5759,9 @@
 @implementation ORRationalReifyLEqualc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*        _c;
 }
--(ORRationalReifyLEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x leqi:(ORRational)c
+-(ORRationalReifyLEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x leqi:(ORRational*)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -5772,7 +5772,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ <= %16.16e)",[self class],self,_b,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ <= %@)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -5787,7 +5787,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -5941,9 +5941,9 @@
 @implementation ORRationalReifyLThenc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*        _c;
 }
--(ORRationalReifyLThenc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x lti:(ORRational)c
+-(ORRationalReifyLThenc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x lti:(ORRational*)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -5954,7 +5954,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ < %16.16e)",[self class],self,_b,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ < %@)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -5969,7 +5969,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -6002,9 +6002,9 @@
 @implementation ORRationalReifyGEqualc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*        _c;
 }
--(ORRationalReifyGEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x geqi:(ORRational)c
+-(ORRationalReifyGEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x geqi:(ORRational*)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -6015,7 +6015,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ >= %16.16e)",[self class],self,_b,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ >= %@)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -6030,7 +6030,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -6181,9 +6181,9 @@
 @implementation ORRationalReifyGThenc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational        _c;
+   ORRational*        _c;
 }
--(ORRationalReifyGThenc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x gti:(ORRational)c
+-(ORRationalReifyGThenc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x gti:(ORRational*)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -6194,7 +6194,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ > %16.16e)",[self class],self,_b,_x,rational_get_d(&_c)];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ > %@)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -6209,7 +6209,7 @@
 {
    return _x;
 }
--(ORRational) cst
+-(ORRational*) cst
 {
    return _c;
 }
@@ -7784,6 +7784,11 @@
    [_theArray addObject:v];
 }
 -(void) visitFloatVar: (id<ORFloatVar>) v
+{
+   [_theSet addObject:v];
+   [_theArray addObject:v];
+}
+-(void) visitRationalVar: (id<ORRationalVar>) v
 {
    [_theSet addObject:v];
    [_theArray addObject:v];

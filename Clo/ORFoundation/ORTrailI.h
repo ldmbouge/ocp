@@ -15,7 +15,7 @@
 #import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORTrailable.h>
 
-//#include "rationalUtilities.h"
+#import "rationalUtilities.h"
 
 @protocol ORSearchEngine;
 
@@ -49,7 +49,7 @@
          ORLong       longVal;          // 8-bytes
          ORULong     ulongVal;          // 8-bytes
          float       floatVal;          // 4-bytes
-         ORRational  rationalVal;
+         ORRational*  rationalVal;
          double     doubleVal;          // 8-bytes
          long double    ldVal;          // 10-byte
          void*         ptrVal;          // 4 or 8 (pointer)
@@ -177,7 +177,7 @@ static inline TRLDouble  inline_makeTRLDouble(ORTrailI* trail,long double val)
 {
    return (TRLDouble){val,[trail magic]-1};
 }
-static inline TRRational inline_makeTRRational(ORTrailI* trail, ORRational val)
+static inline TRRational inline_makeTRRational(ORTrailI* trail, ORRational* val)
 {
     return (TRRational){val, [trail magic]-1};
 }

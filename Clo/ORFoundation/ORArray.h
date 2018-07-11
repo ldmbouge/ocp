@@ -58,22 +58,22 @@ PORTABLE_BEGIN
 @end
 
 @protocol ORRationalArray <ORObject>
--(ORRational) at: (ORInt) value;
--(void) set: (ORRational) value at: (ORInt) idx;
+-(id<ORRational>) at: (ORInt) value;
+-(void) set: (id<ORRational>) value at: (ORInt) idx;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
--(ORRational) max;
--(ORRational) min;
--(ORRational) average;
+-(id<ORRational>) max;
+-(id<ORRational>) min;
+-(id<ORRational>) average;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(void)enumerateWith:(void(^)(ORRational obj,int idx))block;
--(ORRational) sumWith: (ORRational(^)(ORRational value,int idx))block;
+-(void)enumerateWith:(void(^)(id<ORRational> obj,int idx))block;
+-(id<ORRational>) sumWith: (id<ORRational>(^)(id<ORRational> value,int idx))block;
 @end
 
 @protocol ORDoubleArray <ORObject>

@@ -62,10 +62,10 @@
 @end
 
 @protocol ORRationalRange
--(ORRational)low;
--(ORRational)up;
+-(id<ORRational>)low;
+-(id<ORRational>)up;
 -(ORBool)isDefined;
--(ORBool)inRange:(ORRational)e;
+-(ORBool)inRange:(id<ORRational>)e;
 -(NSString*)description;
 @end
 
