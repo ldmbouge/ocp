@@ -24,6 +24,7 @@
 #define E_MAX (254)
 
 @protocol CPRationalVarNotifier;
+@class CPFloatVarI;
 
 @protocol CPRationalVarSubscriber <NSObject>
 // AC3 Closure Event
@@ -112,5 +113,9 @@ static inline bool isDisjointWithVQ(ORRational* xmin, ORRational* xmax, ORRation
 static inline bool isDisjointWithQ(CPRationalVarI* x, CPRationalVarI* y)
 {
    return isDisjointWithVQ([x min], [x max], [y min], [y max]);
+}
+static inline bool isDisjointWithQF(CPFloatVarI* x, CPRationalVarI* y)
+{
+   return isDisjointWithVQ([x minErr], [x maxErr], [y min], [y max]);
 }
 #endif /* CPRationalVarI_h */

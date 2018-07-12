@@ -1577,6 +1577,18 @@
       [cst release];
    }
 }
+-(void) visitRationalErrorOf:(id<ORRationalErrorOf>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      id<ORRationalVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory errorOf:_gamma[left.getId] is:_gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitRationalNEqualc:(id<ORRationalNEqualc>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -2692,6 +2704,8 @@
 }
 
 -(void) visitIntegerI: (id<ORInteger>) e
+{}
+-(void) visitRationalI: (id<ORRational>) v
 {}
 //
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e

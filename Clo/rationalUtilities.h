@@ -9,11 +9,18 @@
 //#import <ORFoundation/ORTrail.h>
 #include "gmp.h"
 
+#import <ORFoundation/ORObject.h>
+typedef mpq_t rational_t;
+typedef mpq_ptr rational_ptr;
+
 @protocol ORMemoryTrail;
+@protocol ORTrail;
+@protocol ORVisitor;
 
 @protocol ORRational<NSObject>
--(mpq_t*)rational;
+-(rational_ptr)rational;
 -(int)type;
+-(void) visit: (id<ORVisitor>) visitor;
 -(void)setType:(int)type;
 -(id<ORMemoryTrail>)mt;
 -(void)setNAN;
@@ -28,6 +35,10 @@
 -(BOOL)isPosInf;
 -(BOOL)isNegInf;
 -(id)set:(id<ORRational>)r;
+-(id)set_q:(rational_t)r;
+-(id)set_t:(int)t;
+-(void)trailRational:(id<ORTrail>)trail;
+-(void)trailType:(id<ORTrail>)trail;
 +(id<ORRational>)rationalWith:(id<ORRational>)r;
 +(id<ORRational>)rationalWith_d:(double)d;
 -(id)set_d:(double)d;
@@ -62,7 +73,7 @@
 -(void)setNegInf;
 @end
 
-@interface ORRational : NSObject <ORRational> {
+@interface ORRational : ORObject <ORRational> {
    mpq_t _rational;
    /* type :
     -2   -INFINITY
@@ -77,9 +88,10 @@
 }
 -(id)init:(id<ORMemoryTrail>) mt;
 -(id)init;
+-(void) visit: (id<ORVisitor>) visitor;
 -(void)dealloc;  // call clear
 -(void)print;
--(mpq_ptr)rational;
+-(rational_ptr)rational;
 -(int)type;
 -(id<ORMemoryTrail>)mt;
 -(void)setNAN;
@@ -94,8 +106,12 @@
 -(BOOL)isPosInf;
 -(BOOL)isNegInf;
 -(void)setType:(int)type;
--(void)setRational:(mpq_t*)rational;
+-(void)setRational:(rational_t)rational;
 -(id)set:(id<ORRational>)r;
+-(id)set_q:(rational_t)r;
+-(id)set_t:(int)t;
+-(void)trailRational:(id<ORTrail>)trail;
+-(void)trailType:(id<ORTrail>)trail;
 +(id<ORRational>)rationalWith:(id<ORRational>)r;
 +(id<ORRational>)rationalWith_d:(double)d;
 -(id)set_d:(double)d;
@@ -125,11 +141,13 @@
    int _changed;
 }
 -(id)init:(id<ORMemoryTrail>) mt;
+-(id)init;
 -(void)dealloc;  // call clear
 -(id<ORRational>)low;
 -(id<ORRational>)up;
 -(void)setLow:(id<ORRational>)l;
 -(void)setUp:(id<ORRational>)u;
+-(void)setChanged:(int)c;
 -(int)changed;
 -(void)setChanged:(int)c;
 -(id)set:(id<ORRationalInterval>)ri;
@@ -164,3 +182,6 @@
 
 static inline ORRational* minQ(ORRational* a,ORRational* b) { return [a lt: b] ? a : b;}
 static inline ORRational* maxQ(ORRational* a,ORRational* b) { return [a gt: b] ? a : b;}
+static inline void clear_q(rational_t r) { mpq_clear(r); }
+static inline void init_q(rational_t r) { mpq_init(r); }
+static inline void set_q(rational_t r, rational_t s) { mpq_set(r, s); }

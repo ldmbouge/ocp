@@ -289,6 +289,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RationalEqualc: visit method not defined"];
 }
+-(void) visitRationalErrorOf: (id<ORRationalErrorOf>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalErrorOf: visit method not defined"];
+}
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatAssignc: visit method not defined"];
@@ -332,6 +336,10 @@
 -(void) visitEqual: (id<OREqual>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Equal: visit method not defined"]; 
+}
+-(void) visitErrorOf: (id<ORRationalErrorOf>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ErrorOf: visit method not defined"];
 }
 -(void) visitSoftNEqual: (id<ORSoftNEqual>)c {
     @throw [[ORExecutionError alloc] initORExecutionError: "SoftNEqual: visit method not defined"];
@@ -942,11 +950,13 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitDistinct: visit method not defined"];
 }
-
-
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntegerI: visit method not defined"]; 
+}
+-(void) visitRationalI: (id<ORRational>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalI: visit method not defined"];
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
@@ -995,6 +1005,10 @@
 -(void) visitExprEqualI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprEqualI: visit method not defined"]; 
+}
+-(void) visitExprErrorOfI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprErrorOfI: visit method not defined"];
 }
 -(void) visitExprNEqualI: (id<ORExpr>) e
 {
@@ -1167,6 +1181,7 @@
 -(void) visitLEqualc: (id<ORLEqualc>)c  {}
 -(void) visitGEqualc: (id<ORGEqualc>)c  {}
 -(void) visitEqual: (id<OREqual>)c  {}
+-(void) visitErrorOf: (id<ORRationalErrorOf>)c  {}
 -(void) visitAffine: (id<ORAffine>)c  {}
 -(void) visitNEqual: (id<ORNEqual>)c  {}
 -(void) visitLEqual: (id<ORLEqual>)c  {}
@@ -1263,6 +1278,7 @@
 -(void) visitExprMulI: (id<ORExpr>) e  {}
 -(void) visitExprDivI: (id<ORExpr>) e  {}
 -(void) visitExprEqualI: (id<ORExpr>) e  {}
+-(void) visitExprErrorOfI: (id<ORExpr>) e  {}
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}
 -(void) visitExprGEqualI: (id<ORExpr>) e  {}

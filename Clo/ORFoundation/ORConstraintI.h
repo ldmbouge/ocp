@@ -93,6 +93,12 @@
 -(ORRational*) cst;
 @end
 
+@interface ORRationalErrorOf : ORConstraintI<ORRationalErrorOf>
+-(ORRationalErrorOf*)initORRationalErrorOf:(id<ORFloatVar>)f is:(id<ORRationalVar>)r;
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
 @interface ORDoubleEqualc : ORConstraintI<ORDoubleEqualc>
 -(ORDoubleEqualc*)initORDoubleEqualc:(id<ORDoubleVar>)x eqi:(ORDouble)c;
 -(id<ORDoubleVar>) left;

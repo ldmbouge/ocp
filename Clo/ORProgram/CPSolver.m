@@ -3502,7 +3502,7 @@
 -(NSString*) minQ:(id<ORVar>)x
 {
    CPRationalVarI* cx = _gamma[x.getId];
-   return [[cx max] description];
+   return [[cx min] description];
 }
 -(ORDouble) minErrorDD:(id<ORVar>)x
 {

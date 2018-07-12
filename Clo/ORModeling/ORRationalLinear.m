@@ -193,6 +193,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
                           range: RANGE(model,0,_nb-1)
                            with: ^ORRational*(ORInt i) {
                               ORRational* coef = [ORRational rationalWith_d:_terms[i]._coef];
+                              [model trackMutable:coef];
                               return coef; }];
 }
 

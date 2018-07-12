@@ -44,15 +44,15 @@
       void*               ptr;
       unsigned short     code;
       union {
-         ORInt         intVal;          // 4-bytes
-         ORUInt       uintVal;          // 4-bytes
-         ORLong       longVal;          // 8-bytes
-         ORULong     ulongVal;          // 8-bytes
-         float       floatVal;          // 4-bytes
-         ORRational*  rationalVal;
-         double     doubleVal;          // 8-bytes
+         ORInt          intVal;          // 4-bytes
+         ORUInt         uintVal;          // 4-bytes
+         ORLong         longVal;          // 8-bytes
+         ORULong        ulongVal;          // 8-bytes
+         float          floatVal;          // 4-bytes
+         rational_t          rationalVal;
+         double         doubleVal;          // 8-bytes
          long double    ldVal;          // 10-byte
-         void*         ptrVal;          // 4 or 8 (pointer)
+         void*          ptrVal;          // 4 or 8 (pointer)
       };
    };
    struct Segment {
@@ -77,7 +77,7 @@
 -(void) trailId:(id*) ptr;
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
--(void) trailRational:(ORRational *)ptr;
+-(void) trailRational:(rational_t)ptr;
 -(void) trailDouble:(double*) ptr;
 -(void) trailLDouble:(long double*)ptr;
 -(void) trailPointer:(void**) ptr;

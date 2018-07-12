@@ -150,6 +150,7 @@ PORTABLE_BEGIN
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker;
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(ORRational*) low up: (ORRational*) up name:(NSString*) name;
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker name:(NSString*) name;
++(id<ORRationalVar>) errorVar: (id<ORTracker>) tracker of:(id<ORFloatVar>)f name:(NSString*) name;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker;
@@ -386,6 +387,7 @@ PORTABLE_BEGIN
 @interface ORFactory (ORRational)
 +(id<ORConstraint>) rationalAssignC: (id<ORTracker>) model var: (id<ORRationalVar>)x to:(ORRational*)c;
 +(id<ORConstraint>) rationalAssign: (id<ORTracker>) model var: (id<ORRationalVar>)x to: (id<ORRationalVar>)y;
++(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORFloatVar>) f is: (id<ORRationalVar>) x;
 +(id<ORConstraint>) rationalEqualc: (id<ORTracker>) model var: (id<ORRationalVar>)x eqc:(ORRational*)c;
 +(id<ORConstraint>) rationalNEqualc:(id<ORTracker>) model var: (id<ORRationalVar>)x neqc:(ORRational*)c;
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  eq: (ORRational*) c;

@@ -8,6 +8,8 @@
 
 #import "rationalUtilities.h"
 #import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORTrailI.h>
+#import <ORFoundation/ORVisit.h>
 
 #define R_IS_ZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?1:0)
 #define R_IS_NONZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?0:1)
@@ -24,7 +26,9 @@
 #define RI_SET_NEG_INF(RIA)  { R_SET_NEG_INF((RIA).low); R_SET_NEG_INF((RIA).up); }
 
 @implementation ORRational
--(id)init:(id<ORMemoryTrail>) mt{
+-(id)init:(id<ORMemoryTrail>) mt
+{
+   self = [super init];
    mpq_init(_rational);
    _type = 0;
    _mt = mt;
@@ -33,9 +37,14 @@
 }
 -(id)init
 {
+   self = [super init];
    mpq_init(_rational);
    _type = 0;
    return self;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitRationalI: self];
 }
 -(void)dealloc{
    mpq_clear(_rational);
@@ -44,7 +53,7 @@
 -(void)print{
    NSLog(@"%s", [self get_str]);
 }
--(mpq_ptr)rational{
+-(rational_ptr)rational{
    return _rational;
 }
 -(void)setNAN
@@ -112,9 +121,9 @@
    [z setNegInf];
    return [self eq: z];
 }
--(void)setRational:(mpq_t*)rational
+-(void)setRational:(rational_t)rational
 {
-   mpq_set(_rational, *rational);
+   mpq_set(_rational, rational);
 }
 -(int)type{
    return _type;
@@ -136,6 +145,34 @@
    //mpq_canonicalize(_rational);
    _type = r.type;
    return self;
+}
+-(id)set_q:(rational_t)r{
+   mpq_set(_rational, r);
+   //mpq_canonicalize(_rational);
+   return self;
+}
+-(id)set_t:(int)t{
+   _type = t;
+   return self;
+}
+-(void)trailRational:(ORTrailI*)trail
+{
+   if (trail->_seg[trail->_cSeg]->top >= NBSLOT-1) [trail resize];
+   struct Slot* s = trail->_seg[trail->_cSeg]->tab + trail->_seg[trail->_cSeg]->top;
+   s->ptr = &_rational;
+   s->code = TAGRational;
+   init_q(s->rationalVal);
+   set_q(s->rationalVal, _rational);
+   ++trail->_seg[trail->_cSeg]->top;
+}
+-(void)trailType:(ORTrailI*)trail
+{
+   if (trail->_seg[trail->_cSeg]->top >= NBSLOT-1) [trail resize];
+   struct Slot* s = trail->_seg[trail->_cSeg]->tab + trail->_seg[trail->_cSeg]->top;
+   s->ptr = &_type;
+   s->code = TAGInt;
+   s->intVal = _type;
+   ++trail->_seg[trail->_cSeg]->top;
 }
 +(ORRational*)rationalWith:(id<ORRational>)r
 {
@@ -429,7 +466,7 @@
    } else if(_type == -2 || r.type == 2){
       return 1;
    } else{
-      return (mpq_cmp(_rational, *r.rational) < 0);
+      return (mpq_cmp(_rational, r.rational) < 0);
    }
 }
 -(BOOL)gt:(id<ORRational>)r{
@@ -443,7 +480,7 @@
    } else if(_type == 2){
       return 1;
    } else{
-      return (mpq_cmp(_rational, *r.rational) > 0);
+      return (mpq_cmp(_rational, r.rational) > 0);
    }
 }
 -(BOOL)leq:(id<ORRational>)r{
@@ -457,7 +494,7 @@
    } else if(_type == -2){
       return 1;
    } else{
-      return (mpq_cmp(_rational, *r.rational) <= 0);
+      return (mpq_cmp(_rational, r.rational) <= 0);
    }
 }
 -(BOOL)geq:(id<ORRational>)r{
@@ -472,7 +509,7 @@
    } else if(_type == 2){
       return 1;
    } else{
-      return (mpq_cmp(_rational, *r.rational) >= 0);
+      return (mpq_cmp(_rational, r.rational) >= 0);
    }
 }
 -(BOOL)eq:(id<ORRational>)r{
@@ -481,11 +518,11 @@
       return 0;
    } else if(_type != r.type){
       return 0;
-   } else if((_type == -2 || _type == -2) &&
+   } else if((_type == -2 || _type == 2) &&
              (_type == r.type)){
       return 1;
    } else {
-      return mpq_equal(_rational, *r.rational);
+      return mpq_equal(_rational, r.rational);
    }
 }
 -(BOOL)neq:(id<ORRational>)r{
@@ -495,17 +532,25 @@
 @end
 
 @implementation ORRationalInterval
--(id)init:(id<ORMemoryTrail>) mt{
+-(id)init:(id<ORMemoryTrail>) mt
+{
    self = [super init];
    _low = [[ORRational alloc] init: mt];
    _up = [[ORRational alloc] init: mt];
    //[mt track:self];
    return self;
 }
+-(id)init
+{
+   self = [super init];
+   _low = [[ORRational alloc] init];
+   _up = [[ORRational alloc] init];
+   return self;
+}
 -(void)dealloc{
-   [super dealloc];
    [_low release];
    [_up release];
+   [super dealloc];
 }
 -(NSString*)description
 {
@@ -574,19 +619,19 @@
    [_low setNegInf];
    [_up setNegInf];
 }
--(id<ORRationalInterval>)add:(id<ORRationalInterval>)ri{
+-(ORRationalInterval*)add:(ORRationalInterval*)ri{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_low add: ri.low];
    z.up = [_up add: ri.up];
    return z;
 }
--(id<ORRationalInterval>)sub:(id<ORRationalInterval>)ri{
+-(ORRationalInterval*)sub:(ORRationalInterval*)ri{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
-   z.low = [_low add: ri.up];
-   z.up = [_up add: ri.low];
+   z.low = [_low sub: ri.up];
+   z.up = [_up sub: ri.low];
    return z;
 }
--(id<ORRationalInterval>)mul:(id<ORRationalInterval>)ri{
+-(ORRationalInterval*)mul:(ORRationalInterval*)ri{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
    if(_low.type >= 0 ) {                            /* A >= 0 */
       if (ri.low.type >= 0) {                          /* B >= 0 */
@@ -648,7 +693,7 @@
    }
    return z;
 }
--(id<ORRationalInterval>)div:(id<ORRationalInterval>)ri{
+-(ORRationalInterval*)div:(ORRationalInterval*)ri{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
    if (_low.type >= 0) {                            /* A >= 0 */
       if (ri.low.type > 0) {     /* B >  0 */
@@ -699,14 +744,14 @@
    }
    return z;
 }
--(id<ORRationalInterval>)neg{
+-(ORRationalInterval*)neg{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_up neg];
    z.up = [_low neg];
    
    return z;
 }
--(id<ORRationalInterval>)abs{
+-(ORRationalInterval*)abs{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_low abs];
    z.up = [_up abs];
@@ -741,12 +786,12 @@
    return ![self eq: ri];
 }
 -(BOOL)empty{
-   return (_low.type == 3 || _up.type == 3)  ||
+   return [_low gt: _up];
+   /*(_low.type == 3 || _up.type == 3)  ||
    (_low.type == 2 && _up.type < 2)   ||
-   (_up.type == -2 && _low.type > -2) ||
-   [_low gt: _up];
+   (_up.type == -2 && _low.type > -2) ||*/
 }
--(id<ORRationalInterval>)union:(id<ORRationalInterval>)ri{
+-(ORRationalInterval*)union:(ORRationalInterval*)ri{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
    if([self empty] || [ri empty]){
       [z setNAN];
@@ -777,7 +822,7 @@
    }
    return z;
 }
--(id<ORRationalInterval>)intersection:(id<ORRationalInterval>)ri{
+-(ORRationalInterval*)intersection:(ORRationalInterval*)ri{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
    if([self empty] || [ri empty]){
       [z setNAN];
@@ -808,8 +853,9 @@
    }
    return z;
 }
--(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri{
+-(ORRationalInterval*)proj_inter:(ORRationalInterval*)ri{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   [z set: self];
    if([self empty] || [ri empty]){
       [z setNAN];
       return z;
@@ -827,7 +873,7 @@
    }
    
    if([_up gt: ri.up]){
-      [z.up set: ri.low];
+      [z.up set: ri.up];
       z.changed |= 2;
    }
    
@@ -838,7 +884,7 @@
    }
    
    if(z.changed){
-      n_size = [[o_size sub: [_up sub: _low]] div: o_size];
+      n_size = [[o_size sub: [z.up sub: z.low]] div: o_size];
       [o_size set_d: 0.05];
       
       if([n_size leq: o_size]){
@@ -850,7 +896,7 @@
    [n_size release];
    return z;
 }
--(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup{
+-(ORRationalInterval*)proj_inter:(ORRational*)inf and:(ORRational*)sup{
    ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
    if([self empty] || inf.type == 3 || sup.type == 3){
       [z setNAN];

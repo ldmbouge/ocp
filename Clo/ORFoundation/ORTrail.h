@@ -24,7 +24,7 @@
 -(void) trailId:(id*) ptr;
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
--(void) trailRational:(ORRational*) ptr;
+-(void) trailRational:(rational_t) ptr;
 -(void) trailDouble:(double*) ptr;
 -(void) trailLDouble:(long double*)ptr;
 -(void) trailClosure:(void(^) (void) ) clo;

@@ -164,6 +164,13 @@
 }
 
 //----------------------------------------
+
+/*+(id<CPRationalVar>) errorVar:(id<CPEngine>)cp bounds:(id<ORRationalRange>) range
+{
+   return [[CPRationalVarI alloc] init:cp low:range.low up:range.up];
+}*/
+
+//----------------------------------------
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp
 {
    return [[CPDoubleVarI alloc] init:cp low:-INFINITY up:INFINITY];

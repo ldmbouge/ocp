@@ -322,6 +322,9 @@
 +(id<ORRationalArray>) rationalArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORRational*(^)(ORInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   [o.range enumerateWithBlock:^(ORInt k) {
+      [o set:clo(k) at:k];
+   }];
    return (id<ORRationalArray>)o;
 }
 
@@ -663,6 +666,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker
 {
    return [[ORRationalVarI alloc]  init: tracker];
+}
++(id<ORRationalVar>) errorVar: (id<ORTracker>) mdl of:(id<ORFloatVar>)f name:(NSString*) name
+{
+   ORRationalVarI* r = [[ORRationalVarI alloc] init: mdl
+                                                low:[[[ORRational alloc] init] set_d:-INFINITY]
+                                                 up:[[[ORRational alloc] init] set_d:+INFINITY] name:name];
+   id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
+   [mdl trackObject:c];
+   return r;
 }
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
@@ -1940,6 +1952,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) rationalEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x eqc:(ORRational*)c
 {
    id<ORConstraint> o = [[ORRationalEqualc alloc] initORRationalEqualc:x eqi:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORFloatVar>) x is: (id<ORRationalVar>) y
+{
+   id<ORConstraint> o = [[ORRationalErrorOf alloc] initORRationalErrorOf:x is:y];
    [model trackObject:o];
    return o;
 }
