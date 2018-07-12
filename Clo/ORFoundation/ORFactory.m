@@ -670,10 +670,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORRationalVar>) errorVar: (id<ORTracker>) mdl of:(id<ORFloatVar>)f name:(NSString*) name
 {
    ORRationalVarI* r = [[ORRationalVarI alloc] init: mdl
-                                                low:[[[ORRational alloc] init] set_d:-INFINITY]
-                                                 up:[[[ORRational alloc] init] set_d:+INFINITY] name:name];
+                                                low:[ORRational rationalWith_d:-INFINITY]
+                                                 up:[ORRational rationalWith_d:+INFINITY]
+                                               name:name];
    id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
-   [mdl trackObject:c];
+   [mdl add:c];
    return r;
 }
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up

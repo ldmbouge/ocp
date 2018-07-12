@@ -149,7 +149,6 @@ typedef mpq_ptr rational_ptr;
 -(void)setUp:(id<ORRational>)u;
 -(void)setChanged:(int)c;
 -(int)changed;
--(void)setChanged:(int)c;
 -(id)set:(id<ORRationalInterval>)ri;
 -(id)set_d:(double)low and:(double)up;
 -(id)set_q:(id<ORRational>)low and:(id<ORRational>)up;

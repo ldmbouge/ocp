@@ -41,12 +41,8 @@
       [buf appendFormat:@"%20.20e [%4X]",_domain._low,*inf ];
       return buf;
    }
-   unsigned int *inf;
-   unsigned int *sup;
-   inf = (unsigned int *)&(_domain._low);
-   sup = (unsigned int *)&(_domain._up);
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",_domain._low,_domain._up,*inf,*sup];
+   [buf appendFormat:@"(%20.20e,%20.20e)",_domain._low,_domain._up];
    return buf;
 }
 -(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x

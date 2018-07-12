@@ -1126,6 +1126,12 @@
 - (NSString*)minQ:(PNONNULL id<ORVar>)x {
    return [[self worker] minQ: x];
 }
+- (NSString*)maxFQ:(PNONNULL id<ORVar>)x {
+   return [[self worker] maxQ: x];
+}
+- (NSString*)minFQ:(PNONNULL id<ORVar>)x {
+   return [[self worker] minQ: x];
+}
 - (ORDouble)maxErrorDD:(PNONNULL id<ORVar>)x {
     return [[self worker] maxErrorDD: x];
 }

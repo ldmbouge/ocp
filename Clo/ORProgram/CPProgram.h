@@ -233,6 +233,8 @@ PORTABLE_BEGIN
 -(ORDouble) maxD:(PNONNULL id<ORVar>)x;
 -(NSString*) minQ:(PNONNULL id<ORVar>)x;
 -(NSString*) maxQ:(PNONNULL id<ORVar>)x;
+-(NSString*) minFQ:(PNONNULL id<ORVar>)x;
+-(NSString*) maxFQ:(PNONNULL id<ORVar>)x;
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;

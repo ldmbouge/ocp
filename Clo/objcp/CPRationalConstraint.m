@@ -58,7 +58,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ == %@>",[_x errorValue],_y];
+   return [NSString stringWithFormat:@"<%@ == %@>",[_x domainError],_y];
 }
 @end
 

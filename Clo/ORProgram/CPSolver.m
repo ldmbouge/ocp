@@ -3504,6 +3504,16 @@
    CPRationalVarI* cx = _gamma[x.getId];
    return [[cx min] description];
 }
+-(NSString*) maxFQ:(id<ORVar>)x
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   return [[cx maxErr] description];
+}
+-(NSString*) minFQ:(id<ORVar>)x
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   return [[cx minErr] description];
+}
 -(ORDouble) minErrorDD:(id<ORVar>)x
 {
    CPDoubleVarI* cx = _gamma[x.getId];

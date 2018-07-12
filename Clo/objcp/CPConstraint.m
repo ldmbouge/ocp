@@ -1145,9 +1145,6 @@
 +(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(ORRational*)c annotation:(id<ORAnnotation>) notes
 {
    // TODO : fix to work with arbitrary coefficient (fraction)
-   ORRational* coef = [[ORRational alloc] init];
-   ORRational* coef2 = [[ORRational alloc] init];
-   ORRational* coef3 = [[ORRational alloc] init];
    if([x count] == 1 && [[coefs at:coefs.low] isZero]){
    
       return [self rationalEqualc:x[x.low] to:c];

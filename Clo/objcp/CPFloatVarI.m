@@ -522,9 +522,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom retain];
 }
--(TRRationalInterval) domainError
+-(id<CPRationalDom>) domainError
 {
-    return [_domError domain];
+    return _domError;
 }
 -(void) assignRelaxationValue: (ORFloat) f
 {

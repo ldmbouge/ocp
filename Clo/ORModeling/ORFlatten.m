@@ -413,7 +413,7 @@
 {
    _result = [_into addConstraint:c];
 }
--(void) visitErrorOf: (id<ORRationalErrorOf>)c
+-(void) visitRationalErrorOf: (id<ORRationalErrorOf>)c
 {
    _result = [_into addConstraint:c];
 }

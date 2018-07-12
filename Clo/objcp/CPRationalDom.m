@@ -36,7 +36,7 @@
 }
 -(id)initCPRationalDom:(id<ORTrail>)trail
 {
-   self = [self initCPRationalDom:trail lowF:-DBL_MAX upF:DBL_MAX];
+   self = [self initCPRationalDom:trail lowF:-INFINITY upF:+INFINITY];
    return self;
 }
 -(void) dealloc

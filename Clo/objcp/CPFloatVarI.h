@@ -108,7 +108,8 @@ typedef struct  {
 -(ORRational*) errorValue;
 -(ORLDouble) domwidth;
 -(id<CPDom>) domain;
--(TRRationalInterval) domainError;
+-(id<CPDom>) domainError;
+//-(TRRationalInterval) domainError;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {

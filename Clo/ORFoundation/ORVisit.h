@@ -140,7 +140,6 @@
 -(void) visitLEqualc: (id<ORConstraint>)c;
 -(void) visitGEqualc: (id<ORConstraint>)c;
 -(void) visitEqual: (id<ORConstraint>)c;
--(void) visitEqual: (id<ORConstraint>)c;
 -(void) visitAffine: (id<ORConstraint>)c;
 -(void) visitNEqual: (id<ORConstraint>)c;
 -(void) visitSoftNEqual: (id<ORSoftNEqual>)c;
