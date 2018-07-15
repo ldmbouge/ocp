@@ -15,7 +15,7 @@
 #import <objcp/CPData.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
-
+#import <objcp/CPFloatVarI.h>
 #include "fpi.h"
 #import "rationalUtilities.h"
 
@@ -24,7 +24,6 @@
 #define E_MAX (254)
 
 @protocol CPRationalVarNotifier;
-@class CPFloatVarI;
 
 @protocol CPRationalVarSubscriber <NSObject>
 // AC3 Closure Event
@@ -117,5 +116,14 @@ static inline bool isDisjointWithQ(CPRationalVarI* x, CPRationalVarI* y)
 static inline bool isDisjointWithQF(CPFloatVarI* x, CPRationalVarI* y)
 {
    return isDisjointWithVQ([x minErr], [x maxErr], [y min], [y max]);
+}
+static inline bool isDisjointWithQFC(CPFloatVarI* x, CPRationalVarI* y)
+{
+   ORRational* xminRat = [ORRational rationalWith_d:x.min];
+   ORRational* xmaxRat = [ORRational rationalWith_d:x.max];
+   BOOL res = isDisjointWithVQ(xminRat, xmaxRat, [y min], [y max]);
+   [xminRat release];
+   [xmaxRat release];
+   return res;
 }
 #endif /* CPRationalVarI_h */

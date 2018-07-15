@@ -1081,6 +1081,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) channel: (id<CPFloatVar>) x with:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalChannel alloc] init:x with:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(ORRational*) c
 {
    id<CPConstraint> o = [[CPRationalEqualc alloc] init:x and:c];

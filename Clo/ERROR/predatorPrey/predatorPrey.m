@@ -20,7 +20,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_d(double r, double k, double x, double z, ORRational ez) {
+/*void check_it_d(double r, double k, double x, double z, ORRational ez) {
     mpq_t qz, qx, tmp0, tmp1, tmp2;
     double cz = ((r*x)*x) / (1.0 + ((x/k)*(x/k)));
     
@@ -51,7 +51,7 @@ void check_it_d(double r, double k, double x, double z, ORRational ez) {
     if (mpq_cmp(tmp1,ez) != 0)
         printf("WRONG: Err found = % 24.24e\n         != % 24.24e\n", mpq_get_d(tmp1), mpq_get_d(ez));
     mpq_clears(qz, qx, tmp0, tmp1, tmp2, NULL);
-}
+}*/
 
 void predatorPrey_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
@@ -86,12 +86,12 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
             printDvar("r", r);
             printDvar("K", K);
             printDvar("z", z);
-            if (search) check_it_d(getDmin(r),getDmin(K),getDmin(x),getDmin(z),getDminErr(z));
+            //if (search) check_it_d(getDmin(r),getDmin(K),getDmin(x),getDmin(z),getDminErr(z));
         }];
     }
 }
 
-void check_it_f(float r, float k, float x, float z, ORRational ez) {
+/*void check_it_f(float r, float k, float x, float z, ORRational ez) {
     mpq_t qz, qx, tmp0, tmp1, tmp2;
     float cz = ((r*x)*x) / (1.0f + ((x/k)*(x/k)));
     
@@ -122,7 +122,7 @@ void check_it_f(float r, float k, float x, float z, ORRational ez) {
     if (mpq_cmp(tmp1,ez) != 0)
         printf("WRONG: Err found = % 20.20e\n         != % 20.20e\n", mpq_get_d(tmp1), mpq_get_d(ez));
     mpq_clears(qz, qx, tmp0, tmp1, tmp2, NULL);
-}
+}*/
 
 void predatorPrey_f(int search, int argc, const char * argv[]) {
     @autoreleasepool {
@@ -154,7 +154,7 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
             printFvar("r", r);
             printFvar("K", K);
             printFvar("z", z);
-            if (search) check_it_f(getFmin(r),getFmin(K),getFmin(x),getFmin(z),getFminErr(z));
+            //if (search) check_it_f(getFmin(r),getFmin(K),getFmin(x),getFmin(z),getFminErr(z));
         }];
     }
 }

@@ -1931,53 +1931,11 @@
 }
 -(ORRational*) qmin
 {
-   // TODO FIX
-   /*ORRational lmin = [_left qmin];
-   ORRational lmax = [_left qmax];
-   ORRational rmin = [_right qmin];
-   ORRational rmax = [_right qmax];
-   ORRational m1, m2, m3;
-   rational_init(&m1);
-   rational_init(&m2);
-   rational_init(&m3);
-   
-   rational_multiplication(&m1, &lmin, &rmin);
-   rational_multiplication(&m2, &lmin, &rmax);
-   m1 = minQ(m1, m2);
-   
-   rational_multiplication(&m3, &lmax, &rmin);
-   rational_multiplication(&m2, &lmax, &rmax);
-   m2 = minQ(m3, m2);
-
-   m3 = minQ(m1,m2);
-   rational_clear(&m1);
-   rational_clear(&m2);*/
-   return [[ORRational alloc] init];
+   return minQ(minQ([[_left qmin] mul: [_right qmin]],[[_left qmin] mul: [_right qmax]]),minQ([[_left qmax] mul: [_right qmin]],[[_left qmax] mul: [_right qmax]]));
 }
 -(ORRational*) qmax
 {
-   // TODO FIX
-   /*ORRational lmin = [_left qmin];
-   ORRational lmax = [_left qmax];
-   ORRational rmin = [_right qmin];
-   ORRational rmax = [_right qmax];
-   ORRational m1, m2, m3;
-   rational_init(&m1);
-   rational_init(&m2);
-   rational_init(&m3);
-   
-   rational_multiplication(&m1, &lmin, &rmin);
-   rational_multiplication(&m2, &lmin, &rmax);
-   m1 = maxQ(m1, m2);
-   
-   rational_multiplication(&m3, &lmax, &rmin);
-   rational_multiplication(&m2, &lmax, &rmax);
-   m2 = maxQ(m3, m2);
-   
-   m3 = maxQ(m1,m2);
-   rational_clear(&m1);
-   rational_clear(&m2);*/
-   return [[ORRational alloc] init];
+   return maxQ(maxQ([[_left qmin] mul: [_right qmin]],[[_left qmin] mul: [_right qmax]]),maxQ([[_left qmax] mul: [_right qmin]],[[_left qmax] mul: [_right qmax]]));
 }
 -(ORDouble) dmin
 {
@@ -2049,54 +2007,11 @@
 }
 -(ORRational*) qmin
 {
-   // TODO FIX
-   /*ORRational lmin = [_left qmin];
-   ORRational lmax = [_left qmax];
-   ORRational rmin = [_right qmin];
-   ORRational rmax = [_right qmax];
-   ORRational m1, m2, m3;
-   rational_init(&m1);
-   rational_init(&m2);
-   rational_init(&m3);
-   
-   rational_division(&m1, &lmin, &rmin);
-   rational_division(&m2, &lmin, &rmax);
-   m1 = minQ(m1, m2);
-   
-   rational_division(&m3, &lmax, &rmin);
-   rational_division(&m2, &lmax, &rmax);
-   m2 = minQ(m3, m2);
-   
-   m3 = minQ(m1,m2);
-   rational_clear(&m1);
-   rational_clear(&m2);*/
-   
-   return [[ORRational alloc] init];
+   return minQ(minQ([[_left qmin] div: [_right qmin]],[[_left qmin] div: [_right qmax]]),minQ([[_left qmax] div: [_right qmin]],[[_left qmax] div: [_right qmax]]));
 }
 -(ORRational*) qmax
 {
-   // TODO FIX
-   /*ORRational lmin = [_left qmin];
-   ORRational lmax = [_left qmax];
-   ORRational rmin = [_right qmin];
-   ORRational rmax = [_right qmax];
-   ORRational m1, m2, m3;
-   rational_init(&m1);
-   rational_init(&m2);
-   rational_init(&m3);
-   
-   rational_division(&m1, &lmin, &rmin);
-   rational_division(&m2, &lmin, &rmax);
-   m1 = maxQ(m1, m2);
-   
-   rational_division(&m3, &lmax, &rmin);
-   rational_division(&m2, &lmax, &rmax);
-   m2 = maxQ(m3, m2);
-   
-   m3 = maxQ(m1,m2);
-   rational_clear(&m1);
-   rational_clear(&m2);*/
-   return [[ORRational alloc] init];
+   return maxQ(maxQ([[_left qmin] div: [_right qmin]],[[_left qmin] div: [_right qmax]]),maxQ([[_left qmax] div: [_right qmin]],[[_left qmax] div: [_right qmax]]));
 }
 -(ORDouble) dmin
 {

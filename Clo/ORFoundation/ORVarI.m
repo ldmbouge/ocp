@@ -353,6 +353,7 @@
 @protected
    id<ORTracker>    _tracker;
    id<ORFloatRange> _domain;
+   id<ORRationalRange> _domainError;
    BOOL             _hasBounds;
    NSString*         _prettyname;
 }
@@ -361,6 +362,21 @@
    self = [super init];
    _tracker = track;
    _domain = dom;
+   ORRational* low = [[[ORRational alloc] init] setNegInf];
+   ORRational* up = [[[ORRational alloc] init] setPosInf];
+   _domainError = [ORFactory rationalRange:track low:low up:up];
+   _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
+   [low release];
+   [up release];
+   [track trackVariable: self];
+   return self;
+}
+-(ORFloatVarI*) init: (id<ORTracker>) track domain:(id<ORFloatRange>)dom domainError:(id<ORRationalRange>)domError
+{
+   self = [super init];
+   _tracker = track;
+   _domain = dom;
+   _domainError = domError;
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
    [track trackVariable: self];
    return self;
@@ -395,10 +411,21 @@
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
+-(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up elow: (ORRational*) elow eup: (ORRational*) eup name:(NSString*) name
+{
+   self = [self init:track domain:[ORFactory floatRange:track low:low up:up] domainError:[ORFactory rationalRange:track low:elow up:eup]];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
+}
 -(id<ORFloatRange>) domain
 {
    assert(_domain != NULL);
    return _domain;
+}
+-(id<ORRationalRange>) domainError
+{
+   assert(_domainError != NULL);
+   return _domainError;
 }
 -(void) dealloc
 {
@@ -456,6 +483,14 @@
 {
    return _domain.up;
 }
+-(ORRational*) elow
+{
+   return _domainError.low;
+}
+-(ORRational*) eup
+{
+   return _domainError.up;
+}
 -(ORFloat) fmin
 {
    return [_domain low];
@@ -463,6 +498,14 @@
 -(ORFloat) fmax
 {
    return [_domain up];
+}
+-(ORRational*) qmin
+{
+   return [_domainError low];
+}
+-(ORRational*) qmax
+{
+   return [_domainError up];
 }
 -(NSString*) prettyname
 {

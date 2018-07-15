@@ -96,9 +96,9 @@
     return [[CPRealParamI alloc] initCPRealParam: cp initialValue: v];
 }
 //--------------
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range boundsError:(id<ORRationalRange>) rangeError
 {
-    return [[CPFloatVarI alloc] init:cp low:range.low up:range.up];
+   return [[CPFloatVarI alloc] init:cp low:range.low up:range.up errLow:rangeError.low errUp:rangeError.up];
 }
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp value:(ORFloat) v
 {

@@ -23,11 +23,12 @@ typedef mpq_ptr rational_ptr;
 -(void) visit: (id<ORVisitor>) visitor;
 -(void)setType:(int)type;
 -(id<ORMemoryTrail>)mt;
--(void)setNAN;
--(void)setZero;
--(void)setOne;
--(void)setPosInf;
--(void)setNegInf;
+-(id)setNAN;
+-(id)setZero;
+-(id)setOne;
+-(id)setMinusOne;
+-(id)setPosInf;
+-(id)setNegInf;
 -(BOOL)isNAN;
 -(BOOL)isZero;
 -(BOOL)isOne;
@@ -64,6 +65,10 @@ typedef mpq_ptr rational_ptr;
 -(id<ORRational>)up;
 -(void)setLow:(id<ORRational>)l;
 -(void)setUp:(id<ORRational>)u;
+-(id<ORRationalInterval>)add:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)sub:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)mul:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)div:(id<ORRationalInterval>)ri;
 -(int)changed;
 -(void)setChanged:(int)c;
 -(BOOL)empty;
@@ -94,11 +99,12 @@ typedef mpq_ptr rational_ptr;
 -(rational_ptr)rational;
 -(int)type;
 -(id<ORMemoryTrail>)mt;
--(void)setNAN;
--(void)setZero;
--(void)setOne;
--(void)setPosInf;
--(void)setNegInf;
+-(id)setNAN;
+-(id)setZero;
+-(id)setOne;
+-(id)setMinusOne;
+-(id)setPosInf;
+-(id)setNegInf;
 -(BOOL)isNAN;
 -(BOOL)isZero;
 -(BOOL)isOne;
@@ -175,9 +181,6 @@ typedef mpq_ptr rational_ptr;
 -(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri;
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup;
 @end
-
-/*id<ORRational> a = [x add: y.min];
-[mt track:a];*/
 
 static inline ORRational* minQ(ORRational* a,ORRational* b) { return [a lt: b] ? a : b;}
 static inline ORRational* maxQ(ORRational* a,ORRational* b) { return [a gt: b] ? a : b;}

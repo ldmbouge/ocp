@@ -35,6 +35,7 @@
 
 
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range;
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range boundsError:(id<ORRationalRange>) rangeError;
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp value:(ORFloat) v;
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp;
 +(id<CPFloatVarArray>) floatVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;

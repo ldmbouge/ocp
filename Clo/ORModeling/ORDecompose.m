@@ -294,10 +294,10 @@
    _terms = [recVisit visitExprEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
--(void) visitExprErrorI:(ORExprErrorOfI*)e
+-(void) visitExprErrorOfI:(ORExprErrorOfI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
-   _terms = [recVisit visitExprErrorI:_model left:[e left] right:[e right]];
+   _terms = [recVisit visitExprErrorOfI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e

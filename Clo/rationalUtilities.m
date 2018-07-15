@@ -18,12 +18,6 @@
 #define R_IS_STRICTLY_POSITIVE(Q) ((0 < (*(Q).rational->_mp_num._mp_size))?1:0)
 #define R_IS_STRICTLY_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) < 0)?1:0)
 
-#define R_SET_POS_ONE(Q) { mpq_set_ui(((Q)->_rational),1UL,1UL); Q->_type = 1; }
-#define R_SET_NEG_ONE(Q) { mpq_set_si(((Q)->_rational),-1L,1UL); (Q)->_type = -1; }
-
-#define RI_SET_ZERO(RIA) { R_SET_ZERO((RIA).low); R_SET_ZERO((RIA).up); }
-#define RI_SET_POS_INF(RIA)  { R_SET_POS_INF((RIA).low); R_SET_POS_INF((RIA).up); }
-#define RI_SET_NEG_INF(RIA)  { R_SET_NEG_INF((RIA).low); R_SET_NEG_INF((RIA).up); }
 
 @implementation ORRational
 -(id)init:(id<ORMemoryTrail>) mt
@@ -56,70 +50,76 @@
 -(rational_ptr)rational{
    return _rational;
 }
--(void)setNAN
+-(id)setNAN
 {
    mpz_set_ui(mpq_numref(_rational),0UL);
    mpz_set_ui(mpq_denref(_rational),0UL);
    _type = 3;
+   
+   return self;
 }
--(void)setZero
+-(id)setZero
 {
-   mpq_set_ui((_rational),0UL,1UL);
+   mpq_set_ui(_rational,0UL,1UL);
    _type = 0;
+   
+   return self;
 }
--(void)setOne
+-(id)setOne
 {
-   mpq_set_d((_rational),1);
+   mpq_set_ui(_rational,1UL,1UL);
    _type = 1;
+   
+   return self;
+
 }
--(void)setPosInf
+-(id)setMinusOne
+{
+   mpq_set_si(_rational,-1L,1UL);
+   _type = 1;
+   
+   return self;
+}
+-(id)setPosInf
 {
    mpz_set_ui(mpq_numref(_rational),1UL);
    mpz_set_ui(mpq_denref(_rational),0UL);
    _type = 2;
+   
+   return self;
+
 }
--(void)setNegInf
+-(id)setNegInf
 {
    mpz_set_si(mpq_numref(_rational),-1L);
    mpz_set_ui(mpq_denref(_rational),0UL);
    _type = -2;
+   
+   return self;
 }
 -(BOOL)isNAN
 {
-   ORRational* z = [[ORRational alloc] init:_mt];
-   [z setNAN];
-   return [self eq: z];
+   return [self eq: [ORRational rationalWith_d:NAN]];
 }
 -(BOOL)isZero
 {
-   ORRational* z = [[ORRational alloc] init:_mt];
-   [z setZero];
-   return [self eq: z];
+   return [self eq: [ORRational rationalWith_d:0]];
 }
 -(BOOL)isOne
 {
-   ORRational* z = [[ORRational alloc] init:_mt];
-   [z setOne];
-   return [self eq: z];
+   return [self eq: [ORRational rationalWith_d:1]];
 }
 -(BOOL)isMinusOne
 {
-   ORRational* z = [[ORRational alloc] init:_mt];
-   [z setOne];
-   z = [z neg];
-   return [self eq: z];
+   return [self eq: [ORRational rationalWith_d:-1]];
 }
 -(BOOL)isPosInf
 {
-   ORRational* z = [[ORRational alloc] init:_mt];
-   [z setPosInf];
-   return [self eq: z];
+   return [self eq: [ORRational rationalWith_d:+INFINITY]];
 }
 -(BOOL)isNegInf
 {
-   ORRational* z = [[ORRational alloc] init:_mt];
-   [z setNegInf];
-   return [self eq: z];
+   return [self eq: [ORRational rationalWith_d:-INFINITY]];
 }
 -(void)setRational:(rational_t)rational
 {
@@ -461,9 +461,9 @@
       return 0;
    } else if(_type == 2 || r.type == -2){
       return 0;
-   } else if((_type == r.type) && (_type == -2)){
+   } else if((_type == r.type) && (_type == -2 || _type == 2)){
       return 0;
-   } else if(_type == -2 || r.type == 2){
+   } else if(_type <= 1 || r.type == 2){
       return 1;
    } else{
       return (mpq_cmp(_rational, r.rational) < 0);
@@ -475,9 +475,11 @@
       return 0;
    } else if(_type == -2 || r.type == 2){
       return 0;
-   } else if(_type == r.type && (_type == 2)){
+   } else if(_type == r.type && (_type == 2 || _type == -2)){
       return 0;
    } else if(_type == 2){
+      return 1;
+   } else if(_type >= -1 && r.type == -2){
       return 1;
    } else{
       return (mpq_cmp(_rational, r.rational) > 0);
@@ -537,7 +539,6 @@
    self = [super init];
    _low = [[ORRational alloc] init: mt];
    _up = [[ORRational alloc] init: mt];
-   //[mt track:self];
    return self;
 }
 -(id)init
@@ -885,7 +886,7 @@
    
    if(z.changed){
       n_size = [[o_size sub: [z.up sub: z.low]] div: o_size];
-      [o_size set_d: 0.05];
+      [o_size set: 5 and: 100];
       
       if([n_size leq: o_size]){
          z.changed = 0;

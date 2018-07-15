@@ -53,15 +53,15 @@ void check_it_d(double p, double a, double b, double t, double n, double k, doub
 void carbonGas_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        id<ORDoubleVar> p = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> a = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> b = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> t = [ORFactory doubleVar:mdl];
+       id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
+        id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
+        id<ORDoubleVar> b = [ORFactory doubleVar:mdl name:@"b"];
+        id<ORDoubleVar> t = [ORFactory doubleVar:mdl name:@"t"];
         
-        id<ORDoubleVar> n = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> k = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> v = [ORFactory doubleVar:mdl  low:0.1 up:0.5];
-        id<ORDoubleVar> r = [ORFactory doubleVar:mdl];
+        id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
+        id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
+        id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 name:@"v"];
+        id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
         
         //[mdl add:[v set: @(0.5)]];
         [mdl add:[p set: @(3.5e7)]];
@@ -91,7 +91,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
         
         [cp setMinErrorDD:v minErrorF:0.0];
         [cp setMaxErrorDD:v maxErrorF:0.0];
-        [cp setMinErrorDD:r minErrorF:nextafter(0.0f, +INFINITY)];
+        //[cp setMinErrorDD:r minErrorF:nextafter(0.0f, +INFINITY)];
        //[cp setMaxErrorDD:r maxErrorF:next(0.0f, +INFINITY)];
         //[cp setMinErrorDD:r minErrorF:0.0];
         //[cp setMaxErrorDD:r maxErrorF:0.0];
@@ -103,14 +103,14 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
             NSLog(@"%@",cp);
             /* format of 8.8e to have the same value displayed as in FLUCTUAT */
             /* Use printRational(ORRational r) to print a rational inside the solver */
-            printDvar("p", p);
-            printDvar("a", a);
-            printDvar("b", b);
-            printDvar("t", t);
-            printDvar("n", n);
-            printDvar("k", k);
-            printDvar("v", v);
-            printDvar("r", r);
+           NSLog(@"p : [%f;%f]±[%@;%@] (%s)",[cp minF:p],[cp maxF:p],[cp minFQ:p],[cp maxFQ:p],[cp bound:p] ? "YES" : "NO");
+           NSLog(@"a : [%f;%f]±[%@;%@] (%s)",[cp minF:a],[cp maxF:a],[cp minFQ:a],[cp maxFQ:a],[cp bound:a] ? "YES" : "NO");
+           NSLog(@"b : [%f;%f]±[%@;%@] (%s)",[cp minF:b],[cp maxF:b],[cp minFQ:b],[cp maxFQ:b],[cp bound:b] ? "YES" : "NO");
+           NSLog(@"t : [%f;%f]±[%@;%@] (%s)",[cp minF:t],[cp maxF:t],[cp minFQ:t],[cp maxFQ:t],[cp bound:t] ? "YES" : "NO");
+           NSLog(@"n : [%f;%f]±[%@;%@] (%s)",[cp minF:n],[cp maxF:n],[cp minFQ:n],[cp maxFQ:n],[cp bound:n] ? "YES" : "NO");
+           NSLog(@"k : [%f;%f]±[%@;%@] (%s)",[cp minF:k],[cp maxF:k],[cp minFQ:k],[cp maxFQ:k],[cp bound:k] ? "YES" : "NO");
+           NSLog(@"v : [%f;%f]±[%@;%@] (%s)",[cp minF:v],[cp maxF:v],[cp minFQ:v],[cp maxFQ:v],[cp bound:v] ? "YES" : "NO");
+           NSLog(@"r : [%f;%f]±[%@;%@] (%s)",[cp minF:r],[cp maxF:r],[cp minFQ:r],[cp maxFQ:r],[cp bound:r] ? "YES" : "NO");
             /*if (search)
                 check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), getDminErr(r));*/
         }];

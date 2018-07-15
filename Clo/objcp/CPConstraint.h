@@ -151,6 +151,7 @@
 +(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(ORRational*) c;
 +(id<CPConstraint>) rationalEqual: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
 +(id<CPConstraint>) errorOf: (id<CPFloatVar>) x is:(id<CPRationalVar>) y;
++(id<CPConstraint>) channel: (id<CPFloatVar>) x with:(id<CPRationalVar>) y;
 +(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(ORRational*) c;
 +(id<CPConstraint>) rationalNEqualc: (id<CPRationalVar>) x to:(ORRational*) c;
 +(id<CPConstraint>) rationalNEqual: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;

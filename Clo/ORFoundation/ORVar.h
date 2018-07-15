@@ -67,9 +67,12 @@ PORTABLE_BEGIN
 
 @protocol ORFloatVar <ORExprVar>
 -(id<ORFloatRange>) domain;
+-(id<ORRationalRange>) domainError;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
+-(ORRational*) elow;
+-(ORRational*) eup;
 -(NSString*) prettyname;
 @end
 

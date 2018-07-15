@@ -293,6 +293,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RationalErrorOf: visit method not defined"];
 }
+-(void) visitRationalChannel: (id<ORRationalChannel>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalChannel: visit method not defined"];
+}
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatAssignc: visit method not defined"];
@@ -1178,6 +1182,7 @@
 -(void) visitGEqualc: (id<ORGEqualc>)c  {}
 -(void) visitEqual: (id<OREqual>)c  {}
 -(void) visitRationalErrorOf: (id<ORRationalErrorOf>)c  {}
+-(void) visitRationalChannel: (id<ORRationalErrorOf>)c  {}
 -(void) visitAffine: (id<ORAffine>)c  {}
 -(void) visitNEqual: (id<ORNEqual>)c  {}
 -(void) visitLEqual: (id<ORLEqual>)c  {}

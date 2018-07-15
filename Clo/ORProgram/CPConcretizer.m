@@ -127,7 +127,7 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
     if (!_gamma[v.getId])
-        _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
+       _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain] boundsError: [v domainError]];
 }
 
 -(void) visitRationalVar: (id<ORRationalVar>) v
@@ -1585,6 +1585,18 @@
       [left visit: self];
       [right visit: self];
       id<CPConstraint> concreteCstr = [CPFactory errorOf:_gamma[left.getId] is:_gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitRationalChannel:(id<ORRationalChannel>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      id<ORRationalVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory channel:_gamma[left.getId] with:_gamma[right.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

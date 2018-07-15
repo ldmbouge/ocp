@@ -643,6 +643,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORFloatVarI alloc]  init: tracker low: low up: up name:name];
 }
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up elow:(ORRational*) elow eup:(ORRational*) eup name:(NSString*) name
+{
+   return [[ORFloatVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name];
+}
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker
 {
    return [[ORFloatVarI alloc]  init: tracker];
@@ -1960,6 +1964,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    id<ORConstraint> o = [[ORRationalErrorOf alloc] initORRationalErrorOf:x is:y];
    [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) channel:(id<ORFloatVar>)x with:(id<ORRationalVar>)y
+{
+   id<ORConstraint> o = [[ORRationalChannel alloc] initORRationalChannel:x with:y];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) rationalNEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x neqc:(ORRational*)c

@@ -36,10 +36,8 @@
 -(NSString*) description
 {
     if([self bound] && !(is_eqf(_domain._low,-0.0f) && is_eqf(_domain._up,+0.0f))){
-        unsigned int *inf;
-        inf = (unsigned int *)&(_domain._low);
         NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-        [buf appendFormat:@"%20.20e [%4X]",_domain._low,*inf ];
+        [buf appendFormat:@"%20.20e",_domain._low];
         return buf;
     }
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

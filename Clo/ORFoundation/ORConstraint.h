@@ -164,6 +164,11 @@ enum ORGroupType {
 -(id<ORRationalVar>) right;
 @end
 
+@protocol  ORRationalChannel <ORConstraint>
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
 @protocol  ORDoubleNEqualc <ORConstraint>
 -(id<ORDoubleVar>) left;
 -(ORDouble) cst;

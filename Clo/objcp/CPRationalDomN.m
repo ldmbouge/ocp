@@ -116,11 +116,11 @@
 }
 -(ORBool) bound
 {
-   ORRational* epsilon = [[ORRational alloc] init];
+   /*ORRational* epsilon = [[ORRational alloc] init];
    [epsilon set: 1 and: 256];
-   BOOL b = [[_domain._up sub: _domain._low] lt: epsilon];
-   [epsilon release];
-   return b;
+   BOOL b = [[[_domain._up abs] sub: [_domain._low abs]] leq: epsilon];
+   [epsilon release];*/
+   return [_domain._up eq: _domain._low];
 }
 -(ORInterval) bounds
 {

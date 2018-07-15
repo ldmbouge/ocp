@@ -244,7 +244,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [buf appendFormat:@"var<%d>=",_name];
     [buf appendString:[_dom description]];
-    [buf appendString:[_domError description]];
+    [buf appendFormat:@"±%@",[_domError description]];
     return buf;
 }
 -(void)setDelegate:(id<CPFloatVarNotifier>)delegate
@@ -461,7 +461,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    if([newMaxError lt: [self maxErr]])
         [_domError updateMax:newMaxError for:self];
 }
-
 
 - (void)updateMinError:(ORRational*)newMinError {
     if([newMinError gt: [self minErr]])

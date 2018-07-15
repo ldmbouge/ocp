@@ -99,6 +99,12 @@
 -(id<ORRationalVar>) right;
 @end
 
+@interface ORRationalChannel : ORConstraintI<ORRationalErrorOf>
+-(ORRationalChannel*)initORRationalChannel:(id<ORFloatVar>)f with:(id<ORRationalVar>)r;
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
 @interface ORDoubleEqualc : ORConstraintI<ORDoubleEqualc>
 -(ORDoubleEqualc*)initORDoubleEqualc:(id<ORDoubleVar>)x eqi:(ORDouble)c;
 -(id<ORDoubleVar>) left;

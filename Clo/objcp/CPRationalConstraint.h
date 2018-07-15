@@ -15,6 +15,16 @@
 @class CPRationalVarI;
 @class CPFloatVarI;
 
+@interface CPRationalEqual : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x equals:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRationalErrorOf : CPCoreConstraint {
    CPFloatVarI* _x;
    CPRationalVarI* _y;
@@ -25,15 +35,16 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalEqual : CPCoreConstraint {
-   CPRationalVarI* _x;
+@interface CPRationalChannel : CPCoreConstraint {
+   CPFloatVarI* _x;
    CPRationalVarI* _y;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x with:(id)y;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
 
 @interface CPRationalEqualc : CPCoreConstraint {
    CPRationalVarI* _x;

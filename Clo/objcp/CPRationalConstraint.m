@@ -24,19 +24,20 @@
 {
    [self propagate];
    if(![_x boundError]) [_x whenChangeBoundsPropagate:self];
-   if(![_y bound])      [_y whenChangeBoundsPropagate:self];
+   //if(![_y bound])      [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
    if([_x boundError]){
-      [_y bind:[_x errorValue]];
+      //[_y bind:[_x errorValue]];
+      [_y updateInterval:[_x minErr] and:[_x maxErr]];
       assignTRInt(&_active, NO, _trail);
       return;
-   }else if([_y bound]){
+   }/*else if([_y bound]){
       [_x bindError:[_y value]];
       assignTRInt(&_active, NO, _trail);
       return;
-   }
+   }*/
    if(isDisjointWithQF(_x,_y)){
       failNow();
    }else{
@@ -59,6 +60,60 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == %@>",[_x domainError],_y];
+}
+@end
+
+@implementation CPRationalChannel
+-(id) init:(CPFloatVarI*)x with:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_x bound]){
+      [_y bind:[ORRational rationnalWith_d:[_x value]]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if([_y bound]){
+     [_x bind:[[_y value] get_d]];
+     assignTRInt(&_active, NO, _trail);
+     return;
+     }
+   if(isDisjointWithQFC(_x,_y)){
+      failNow();
+   }else{
+      id<ORRational> xminRat = [ORRational rationalWith_d:[_x min]];
+      id<ORRational> xmaxRat = [ORRational rationalWith_d:[_x max]];
+      [_x updateInterval:maxFlt([_x min], [[_y min] get_d]) and:minFlt([_x max], [[_y max] get_d])];
+      [_y updateInterval:maxQ(xminRat, [_y min]) and:minQ(xmaxRat, [_y max])];
+      [xminRat release];
+      [xmaxRat release];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<F:%@ == Q:%@>",[_x domain],_y];
 }
 @end
 
