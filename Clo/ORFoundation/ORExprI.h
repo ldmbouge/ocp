@@ -35,6 +35,7 @@
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORExpr>) neg;
+-(id<ORExpr>) error;
 -(id<ORExpr>) land:(id<ORRelation>) e;
 -(id<ORExpr>) lor:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;

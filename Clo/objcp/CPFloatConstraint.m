@@ -1091,9 +1091,9 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
         [_x updateInterval:x.inf and:x.sup];
         [_y updateInterval:y.inf and:y.sup];
         [_z updateInterval:z.inf and:z.sup];
-       [_x updateIntervalError:(ex.low) and:(ex.low)];
-       [_y updateIntervalError:(ey.low) and:(ey.low)];
-       [_z updateIntervalError:(ez.low) and:(ez.low)];
+       [_x updateIntervalError:(ex.low) and:(ex.up)];
+       [_y updateIntervalError:(ey.low) and:(ey.up)];
+       [_z updateIntervalError:(ez.low) and:(ez.up)];
         if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
             assignTRInt(&_active, NO, _trail);
     }
@@ -1279,9 +1279,9 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
         [_x updateInterval:x.inf and:x.sup];
         [_y updateInterval:y.inf and:y.sup];
         [_z updateInterval:z.inf and:z.sup];
-       [_x updateIntervalError:(ex.low) and:(ex.low)];
-       [_y updateIntervalError:(ey.low) and:(ey.low)];
-       [_z updateIntervalError:(ez.low) and:(ez.low)];
+       [_x updateIntervalError:(ex.low) and:(ex.up)];
+       [_y updateIntervalError:(ey.low) and:(ey.up)];
+       [_z updateIntervalError:(ez.low) and:(ez.up)];
         if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
             assignTRInt(&_active, NO, _trail);
         
@@ -1443,12 +1443,12 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
        [_eo updateMin:(eo.low) for:NULL];
        [_eo updateMax:(eo.up) for:NULL];
 
-        [_x updateInterval:x.inf and:x.sup];
-        [_y updateInterval:y.inf and:y.sup];
-        [_z updateInterval:z.inf and:z.sup];
-       [_x updateIntervalError:(ex.low) and:(ex.low)];
-       [_y updateIntervalError:(ey.low) and:(ey.low)];
-       [_z updateIntervalError:(ez.low) and:(ez.low)];
+       [_x updateInterval:x.inf and:x.sup];
+       [_y updateInterval:y.inf and:y.sup];
+       [_z updateInterval:z.inf and:z.sup];
+       [_x updateIntervalError:(ex.low) and:(ex.up)];
+       [_y updateIntervalError:(ey.low) and:(ey.up)];
+       [_z updateIntervalError:(ez.low) and:(ez.up)];
         if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
             assignTRInt(&_active, NO, _trail);
     }

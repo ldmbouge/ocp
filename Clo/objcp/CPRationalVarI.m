@@ -81,7 +81,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"Rational(%d) : %@",_name,_value];
+   [buf appendFormat:@"var<%d>=Rational(%d) : %@",[self getId],_name,_value];
    return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder

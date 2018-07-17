@@ -86,7 +86,7 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-      return [NSString stringWithFormat:@"%@:(%@,%c)",_prettyname,[_domain description],_ba[0] ? 'D':'S'];
+      return [NSString stringWithFormat:@"%@:%03d(%@,%c)",_prettyname,_name,[_domain description],_ba[0] ? 'D':'S'];
    return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_ba[0] ? 'D':'S'];
 }
 -(ORInt) value
@@ -460,8 +460,8 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-      return [NSString stringWithFormat:@"%@:(%f,%f)",_prettyname,_domain.low,_domain.up];
-   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@:%03d(%f,%f)±(%@,%@)",_prettyname,_name,_domain.low,_domain.up,_domainError.low,_domainError.up];
+   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)±(%@,%@)",_name,_domain.low,_domain.up,_domainError.low,_domainError.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -604,8 +604,8 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-      return [NSString stringWithFormat:@"%@:(%@,%@)",_prettyname,_domain.low,_domain.up];
-   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%@,%@)",_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@:%03d(%@,%@)",_prettyname,_name,_domain.low,_domain.up];
+   return [NSString stringWithFormat:@"var<OR>{rational}:%03d(%@,%@)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -725,8 +725,9 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-   return [NSString stringWithFormat:@"%@:(%lf,%lf)",_prettyname,_domain.low,_domain.up];
-   return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@:%03d(%lf,%lf)",_prettyname,_name,_domain.low,_domain.up];
+   else
+      return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {

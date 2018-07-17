@@ -56,6 +56,16 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPRationalLEQ : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x leq:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRationalTernaryAdd : CPCoreConstraint { // z = x + y
    CPRationalVarI* _z;
    CPRationalVarI* _x;

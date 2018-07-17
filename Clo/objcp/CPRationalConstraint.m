@@ -24,20 +24,20 @@
 {
    [self propagate];
    if(![_x boundError]) [_x whenChangeBoundsPropagate:self];
-   //if(![_y bound])      [_y whenChangeBoundsPropagate:self];
+   if(![_y bound])      [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
    if([_x boundError]){
-      //[_y bind:[_x errorValue]];
+      [_y bind:[_x errorValue]];
       [_y updateInterval:[_x minErr] and:[_x maxErr]];
       assignTRInt(&_active, NO, _trail);
       return;
-   }/*else if([_y bound]){
+   }else if([_y bound]){
       [_x bindError:[_y value]];
       assignTRInt(&_active, NO, _trail);
       return;
-   }*/
+   }
    if(isDisjointWithQF(_x,_y)){
       failNow();
    }else{
@@ -80,7 +80,10 @@
 -(void) propagate
 {
    if([_x bound]){
-      [_y bind:[ORRational rationnalWith_d:[_x value]]];
+      
+      ORRational* tmp = [ORRational rationalWith_d:[_x value]];
+      [_y bind:tmp];
+      [tmp release];
       assignTRInt(&_active, NO, _trail);
       return;
    }else if([_y bound]){
@@ -197,6 +200,54 @@
    return [NSString stringWithFormat:@"<%@ == %@>",_x,_c];
 }
 @end
+
+@implementation CPRationalLEQ
+-(id) init:(CPRationalVarI*)x leq:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   [_y whenChangeBoundsPropagate:self];
+   [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if(isIntersectingWithQ(_x,_y)){
+      if([[_x min] gt: [_y min]]){
+         [_y updateMin:[_x min]];
+      }
+      if([[_x max] gt: [_y max]]){
+         [_x updateMax:[_y max]];
+      }
+   }
+   if([_x bound] || [_y bound]){
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <= %@>",_x,_y];
+}
+@end
+
 
 @implementation CPRationalTernaryAdd{
    

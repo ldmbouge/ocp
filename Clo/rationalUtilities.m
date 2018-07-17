@@ -463,7 +463,9 @@
       return 0;
    } else if((_type == r.type) && (_type == -2 || _type == 2)){
       return 0;
-   } else if(_type <= 1 || r.type == 2){
+   } else if(_type == -2){
+      return 1;
+   } else if(_type <= 1 && r.type == 2){
       return 1;
    } else{
       return (mpq_cmp(_rational, r.rational) < 0);
@@ -904,7 +906,7 @@
       return z;
    }
    
-   int changed = 0;
+   z.changed = 0;
    ORRational* o_size = [[ORRational alloc] init: _low.mt];
    ORRational* n_size = [[ORRational alloc] init: _low.mt];
    
@@ -912,25 +914,26 @@
    
    if([_low lt: inf]){
       [z.low set: inf];
-      changed = 1;
+      z.changed = 1;
    }
    
    if([_up gt: sup]){
       [z.up set: sup];
-      changed |= 2;
+      z.changed |= 2;
    }
    
    if([z empty]){
       [z set: self];
+      z.changed = 0;
       return z;
    }
    
-   if(changed){
+   if(z.changed){
       n_size = [[o_size sub: [_up sub: _low]] div: o_size];
       [o_size set_d: 0.05];
       
       if([n_size leq: o_size]){
-         changed = 0;
+         z.changed = 0;
          [z set: self];
       }
    }

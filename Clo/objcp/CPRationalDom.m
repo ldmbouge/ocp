@@ -65,7 +65,10 @@
    if([newMin gt: [self max]])
         failNow();
     updateMinR(&_domain, newMin, _trail);
-    ORBool isBound = [_domain._low eq: _domain._up];
+   ORRational* epsilon = [[ORRational alloc] init];
+   [epsilon set: 1 and: 1073741824];
+   ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
+   [epsilon release];
     // cpjm: so that eo can use this method without propagation
     if (x != NULL) {
         [x changeMinEvtErr: isBound sender:self];
@@ -78,8 +81,10 @@
    if([[self min] gt: newMax])
         failNow();
     updateMaxR(&_domain, newMax, _trail);
-    ORBool isBound = [_domain._low eq: _domain._up];
-    // cpjm: so that eo can use this method without propagation
+   ORRational* epsilon = [[ORRational alloc] init];
+   [epsilon set: 1 and: 1073741824];
+   ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
+   [epsilon release];   // cpjm: so that eo can use this method without propagation
     if (x != NULL) {
         [x changeMaxEvtErr:isBound sender:self];
         if (isBound)
@@ -121,11 +126,11 @@
 }
 -(ORBool) bound
 {
-   /*ORRational* epsilon = [[ORRational alloc] init];
-   [epsilon set: 1 and: 256];
+   ORRational* epsilon = [[ORRational alloc] init];
+   [epsilon set: 1 and: 1073741824];
    BOOL b = [[_domain._up sub: _domain._low] lt: epsilon];
-   [epsilon release];*/
-   return [_domain._up eq: _domain._low];
+   [epsilon release];
+   return b;
 }
 -(ORInterval) bounds
 {

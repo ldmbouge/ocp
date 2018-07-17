@@ -965,6 +965,18 @@
 {
    return (id)[ORFactory exprNegate:self track:t];
 }
+-(id<ORExpr>) error
+{
+   return [ORFactory errorVar:[self tracker] of:self name:@"empty_name"];
+}
+-(id<ORExpr>) channel
+{
+   id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] name:@"channeled"];
+   id<ORConstraint> c = [ORFactory channel:self with:r];
+   [[self tracker] add: c];
+   //[[self tracker] trackObject:c];
+   return r;
+}
 -(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t
 {
    if ([e conformsToProtocol:@protocol(ORExpr)])

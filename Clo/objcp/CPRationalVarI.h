@@ -113,6 +113,10 @@ static inline bool isDisjointWithQ(CPRationalVarI* x, CPRationalVarI* y)
 {
    return isDisjointWithVQ([x min], [x max], [y min], [y max]);
 }
+static inline bool isIntersectingWithQ(CPRationalVarI* x, CPRationalVarI* y)
+{
+   return !isDisjointWithVQ([x min],[x max], [y min], [y max]);
+}
 static inline bool isDisjointWithQF(CPFloatVarI* x, CPRationalVarI* y)
 {
    return isDisjointWithVQ([x minErr], [x maxErr], [y min], [y max]);
