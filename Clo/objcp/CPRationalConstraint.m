@@ -30,7 +30,6 @@
 {
    if([_x boundError]){
       [_y bind:[_x errorValue]];
-      [_y updateInterval:[_x minErr] and:[_x maxErr]];
       assignTRInt(&_active, NO, _trail);
       return;
    }else if([_y bound]){
@@ -201,6 +200,236 @@
 }
 @end
 
+@implementation CPRationalNEqual
+-(id) init:(CPRationalVarI*)x nequals:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+   
+}
+-(void) post
+{
+   [self propagate];
+   [_x whenBindPropagate:self];
+   [_y whenBindPropagate:self];
+}
+-(void) propagate
+{
+/*   if ([_x bound]) {
+      if([_y bound]){
+         if ([[_x min] eq: [_y min]])
+            failNow();
+         else{
+            if([_x min] == [_y min]){
+               [_y updateMin:fp_next_float([_y min])];
+               assignTRInt(&_active, NO, _trail);
+            }
+            if([_x min] == [_y max]) {
+               [_y updateMax:fp_previous_float([_y max])];
+               assignTRInt(&_active, NO, _trail);
+            }
+            if([_x max] == [_y min]){
+               [_y updateMin:fp_next_float([_y max])];
+               assignTRInt(&_active, NO, _trail);
+            }
+            if([_x max] == [_y max]) {
+               [_y updateMax:fp_previous_float([_y max])];
+               assignTRInt(&_active, NO, _trail);
+            }
+         }
+         return;
+      }
+   }else  if([_y bound]){
+      if([_x min] == [_y min]){
+         [_x updateMin:fp_next_float([_x min])];
+         assignTRInt(&_active, NO, _trail);
+      }
+      if([_x min] == [_y max]) {
+         [_x updateMin:fp_next_float([_x min])];
+         assignTRInt(&_active, NO, _trail);
+      }
+      if([_x max] == [_y min]){
+         [_x updateMax:fp_previous_float([_x max])];
+         assignTRInt(&_active, NO, _trail);
+      }
+      if([_x max] == [_y max]) {
+         [_x updateMax:fp_previous_float([_x max])];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }*/
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ != %@>",_x,_y];
+}
+@end
+
+@implementation CPRationalNEqualc
+-(id) init:(CPRationalVarI*)x and:(ORRational*)c
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   [_x whenBindPropagate:self];
+   [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+/*   if ([_x bound]) {
+      if([_x min] == _c)
+         failNow();
+   }else{
+      if([_x min] == _c){
+         [_x updateMin:fp_next_float(_c)];
+         assignTRInt(&_active, NO, _trail);
+      }
+      if([_x max] == _c){
+         [_x updateMax:fp_previous_float(_c)];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }*/
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ != %f>",_x,_c];
+}
+@end
+
+@implementation CPRationalLT
+-(id) init:(CPRationalVarI*)x lt:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   [_y whenChangeBoundsPropagate:self];
+   [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+/*   if(canFollow(_x,_y))
+      failNow();
+   if(isIntersectingWith(_x,_y)){
+      if([_x min] >= [_y min]){
+         ORFloat nmin = fp_next_float([_x min]);
+         [_y updateMin:nmin];
+      }
+      if([_x max] >= [_y max]){
+         ORFloat pmax = fp_previous_float([_y max]);
+         [_x updateMax:pmax];
+      }
+   }
+   if([_x bound] || [_y bound]){
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }*/
+   
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ < %@>",_x,_y];
+}
+@end
+
+@implementation CPRationalGT
+-(id) init:(CPRationalVarI*)x gt:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   [_y whenChangeBoundsPropagate:self];
+   [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+/*   if(canPrecede(_x,_y))
+      failNow();
+   if(isIntersectingWith(_x,_y)){
+      if([_x min] <= [_y min]){
+         ORFloat pmin = fp_next_float([_y min]);
+         [_x updateMin:pmin];
+      }
+      if([_x max] <= [_y max]){
+         ORFloat nmax = fp_previous_float([_x max]);
+         [_y updateMax:nmax];
+      }
+   }
+   if([_x bound] || [_y bound]){
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }*/
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ > %@>",_x,_y];
+}
+@end
+
 @implementation CPRationalLEQ
 -(id) init:(CPRationalVarI*)x leq:(CPRationalVarI*)y
 {
@@ -245,6 +474,53 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ <= %@>",_x,_y];
+}
+@end
+
+@implementation CPRationalGEQ
+-(id) init:(CPRationalVarI*)x geq:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   [_y whenChangeBoundsPropagate:self];
+   [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{   
+   if(isIntersectingWithQ(_x,_y)){
+      if([[_x min] lt: [_y min]]){
+         [_x updateMin:[_y min]];
+      }
+      if([[_x max] lt: [_y max]]){
+         [_y updateMax:[_x max]];
+      }
+   }
+   if([_x bound] || [_y bound]){
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ >= %@>",_x,_y];
 }
 @end
 

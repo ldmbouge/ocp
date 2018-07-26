@@ -31,11 +31,8 @@ void ulp_computation_f(ORRationalInterval* ulp, const float_interval f){
    
     
     if(f.inf == -INFINITY || f.sup == INFINITY){
-       [tmp0 set_d: DBL_MAX];
-       [tmp1 set_d: 2.0];
-       tmp2 = [tmp1 mul: tmp0];
-       [tmp1 set: tmp2];
-       [tmp2 neg];
+       [tmp1 setNegInf];
+       [tmp2 setPosInf];
        [ulp set_q:tmp1 and:tmp2];
     }else if(fabs(f.inf) == DBL_MAX || fabs(f.sup) == DBL_MAX){
        [tmp0 set_d: nextafterf(DBL_MAX, -INFINITY) - DBL_MAX];
@@ -864,8 +861,8 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
         changed |= ez.changed;
 
         // ============================== eo
-        // ez - (ex + ey)
-        eoTemp = [[ez sub: ex] add: ey];
+        // ez - ex - ey
+        eoTemp = [[ez sub: ex] sub: ey];
 
         eo = [eo proj_inter: eoTemp];
         changed |= eo.changed;

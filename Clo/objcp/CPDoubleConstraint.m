@@ -29,13 +29,9 @@ void ulp_computation_d(ORRationalInterval* ulp, const double_interval f){
    ORRational* tmp1 = [[ORRational alloc] init];
    ORRational* tmp2 = [[ORRational alloc] init];
    
-   
    if(f.inf == -INFINITY || f.sup == INFINITY){
-      [tmp0 set_d: DBL_MAX];
-      [tmp1 set_d: 2.0];
-      tmp2 = [tmp1 mul: tmp0];
-      [tmp1 set: tmp2];
-      [tmp2 neg];
+      [tmp1 setNegInf];
+      [tmp2 setPosInf];
       [ulp set_q:tmp1 and:tmp2];
    }else if(fabs(f.inf) == DBL_MAX || fabs(f.sup) == DBL_MAX){
       [tmp0 set_d: nextafter(DBL_MAX, -INFINITY) - DBL_MAX];

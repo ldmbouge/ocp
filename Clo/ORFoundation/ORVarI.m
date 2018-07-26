@@ -646,6 +646,7 @@
 @protected
    id<ORTracker>    _tracker;
    id<ORDoubleRange> _domain;
+   id<ORRationalRange> _domainError;
    BOOL             _hasBounds;
    NSString*         _prettyname;
 }
@@ -671,7 +672,20 @@
    _tracker = track;
    _domain = dom;
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
+   ORRational* low = [[[ORRational alloc] init] setNegInf];
+   ORRational* up = [[[ORRational alloc] init] setPosInf];
+   _domainError = [ORFactory rationalRange:track low:low up:up];
    _prettyname = name;
+   [track trackVariable: self];
+   return self;
+}
+-(ORDoubleVarI*) init: (id<ORTracker>) track domain:(id<ORDoubleRange>)dom domainError:(id<ORRationalRange>)domError
+{
+   self = [super init];
+   _tracker = track;
+   _domain = dom;
+   _domainError = domError;
+   _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
    [track trackVariable: self];
    return self;
 }
@@ -682,6 +696,12 @@
 -(ORDoubleVarI*) init: (id<ORTracker>) track up: (ORDouble) up name:(NSString *)name
 {
    return [self init:track low:-INFINITY up:+INFINITY name:name];
+}
+-(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up elow: (ORRational*) elow eup: (ORRational*) eup name:(NSString*) name
+{
+   self = [self init:track domain:[ORFactory doubleRange:track low:low up:up] domainError:[ORFactory rationalRange:track low:elow up:eup]];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track name:(NSString *)name
 {
@@ -748,6 +768,14 @@
 -(ORDouble) up
 {
    return _domain.up;
+}
+-(ORRational*) elow
+{
+   return _domainError.low;
+}
+-(ORRational*) eup
+{
+   return _domainError.up;
 }
 -(ORDouble) dmin
 {

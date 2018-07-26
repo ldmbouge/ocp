@@ -2411,6 +2411,48 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    }
    return nil;
 }
+-(id<ORLinear>) visitExprGEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = [left fmin] >= [right fmin];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   }else {
+      ORInt length = !lc + !rc;
+      id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
+      id<ORRationalArray> coefs = [ORFactory rationalArray:_model
+                                                  range:RANGE(_model,0,length - 1)
+                                                   with:^ORRational*(ORInt i) {
+                                                      ORRational* coef = [ORRational rationalWith_d:1];
+                                                      [_model trackMutable:coef];
+                                                      return coef;
+                                                }];
+      if(lc){
+         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
+         vars[0] = [ORNormalizer rationalVarIn:linRight for:_model];
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs leq:[left qmin]]];
+         [linRight release];
+      }else if(rc){
+         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
+         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:[right qmin]]];
+         [linLeft release];
+      }else{
+         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
+         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
+         ORRational* zero = [ORRational rationalWith_d:0];
+         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
+         vars[1] = [ORNormalizer rationalVarIn:linRight for:_model];
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:zero]];
+         [zero release];
+         [linLeft release];
+         [linRight release];
+      }
+   }
+   return nil;
+}
 @end
 
 

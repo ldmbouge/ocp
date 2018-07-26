@@ -53,15 +53,16 @@ void check_it_d(double p, double a, double b, double t, double n, double k, doub
 void carbonGas_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-       id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
+        ORRational* zero = [ORRational rationalWith_d:0.0];
+        id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
         id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
         id<ORDoubleVar> b = [ORFactory doubleVar:mdl name:@"b"];
         id<ORDoubleVar> t = [ORFactory doubleVar:mdl name:@"t"];
-        
         id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
         id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
-        id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 name:@"v"];
+        id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 elow:zero eup:zero name:@"v"];
         id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+       [zero release];
         
         //[mdl add:[v set: @(0.5)]];
         [mdl add:[p set: @(3.5e7)]];
@@ -89,8 +90,8 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
         id<ORDoubleVarArray> vs = [mdl doubleVars];
         id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
         
-        [cp setMinErrorDD:v minErrorF:0.0];
-        [cp setMaxErrorDD:v maxErrorF:0.0];
+        //[cp setMinErrorDD:v minErrorF:0.0];
+        //[cp setMaxErrorDD:v maxErrorF:0.0];
         //[cp setMinErrorDD:r minErrorF:nextafter(0.0f, +INFINITY)];
        //[cp setMaxErrorDD:r maxErrorF:next(0.0f, +INFINITY)];
         //[cp setMinErrorDD:r minErrorF:0.0];

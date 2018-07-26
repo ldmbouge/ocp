@@ -1133,12 +1133,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-/*+(id<CPConstraint>) rationalGEQ: (id<CPRationalVar>) x to:(id<CPRationalVar>) y
++(id<CPConstraint>) rationalGEQ: (id<CPRationalVar>) x to:(id<CPRationalVar>) y
 {
    id<CPConstraint> o = [[CPRationalGEQ alloc] init:x geq:y];
    [[x tracker] trackMutable:o];
    return o;
-}*/
+}
 +(id<CPConstraint>) rationalTernaryAdd:(id<CPRationalVar>) x equals:(id<CPRationalVar>) y plus:(id<CPRationalVar>) z annotation:(id<ORAnnotation>) notes
 {
    return [[CPRationalTernaryAdd alloc] init:x equals:y plus:z];
@@ -1289,17 +1289,17 @@
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalLEQ:res to:x[2]];
 }
-/*+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(ORRational)c annotation:(id<ORAnnotation>) notes
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(ORRational*)c annotation:(id<ORAnnotation>) notes
 {
    id<CPEngine> engine = [x[x.low] engine];
    id<CPRationalVar> vc = [self rationalVar:engine value:c];
-   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+   if([x count] == 1 && [[coefs at:coefs.low] isOne]){
       return [self rationalGEQ:x[0] to:vc];
    }else if([x count] == 2){
       if(c == 0)
          return [self rationalGEQ:x[0] to:x[1]];
       id<CPRationalVar> res = [self rationalVar:engine];
-      if([coefs at:1] < 0)
+      if(![[coefs at:1] isOne] && ![[coefs at:1] isZero])
          [CPFactory rationalTernarySub:res equals:x[0] minus:x[1] annotation:notes];
       else
          [CPFactory rationalTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
@@ -1308,13 +1308,13 @@
    assert([x count] <= 3);
    id<CPRationalVar> tmp = [self rationalVar:engine];
    id<CPRationalVar> res = [self rationalVar:engine];
-   if([coefs at:1] < 0)
+   if(![[coefs at:1] isOne] && ![[coefs at:1] isZero])
       [CPFactory rationalTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
    else
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalGEQ:res to:x[2]];
 }
-+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
+/*+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
 {
    id<CPConstraint> o = nil;
    if([notes hasFilteringPercent])

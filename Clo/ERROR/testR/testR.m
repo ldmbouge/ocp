@@ -35,11 +35,11 @@ int main(int argc, const char * argv[]) {
       //[mdl add:[o set: @(2.43f)]];
       //[mdl add:[[x error] leq: [z error]]];
       
-      [mdl add:[[[x channel] plus: [x error]] leq: [z error]]];
+      [mdl add:[[[x channel] plus: [x error]] geq: [z error]]];
 
       //[mdl add:[w set: [x plus: y]]];
       //[mdl add:[u set: [o plus: k]]];
-      [mdl add:[z set: [x sub: y]]];
+      [mdl add:[z set: [x plus: y]]];
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORFloatVarArray> vs = [mdl floatVars];
@@ -49,10 +49,9 @@ int main(int argc, const char * argv[]) {
          [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
             [cp floatSplit:i call:s withVars:x];
          }];
-         NSLog(@"%@",cp);
-         NSLog(@"x : [%8.8e;%8.8e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"x : [%16.16e;%16.16e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
          NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
-         NSLog(@"y : [%8.8e;%8.8e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
+         NSLog(@"y : [%16.16e;%16.16e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
          NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
          //NSLog(@"o : [%8.8e;%8.8e] (%s)",[cp minF:o],[cp maxF:o],[cp bound:o] ? "YES" : "NO");
          //NSLog(@"eo: [%@;%@]",[cp minFQ:o],[cp maxFQ:o]);
@@ -65,6 +64,7 @@ int main(int argc, const char * argv[]) {
          NSLog(@"z : [%8.8e;%8.8e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
          NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp  maxFQ:z]);
         }];
+        NSLog(@"%@",cp);
       //struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
       //return r;
    //}];

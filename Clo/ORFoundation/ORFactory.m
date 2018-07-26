@@ -701,6 +701,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORDoubleVarI alloc]  init: tracker low: low up: up name:name];
 }
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up elow:(ORRational*) elow eup:(ORRational*) eup name:(NSString*) name
+{
+   return [[ORDoubleVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name];
+}
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom name:(NSString*) name
 {
    return [[ORDoubleVarI alloc]  init: tracker domain:dom name:name];

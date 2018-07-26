@@ -163,7 +163,8 @@ static inline bool isIntersectingWithD(CPDoubleVarI* x, CPDoubleVarI* y)
 }
 static inline bool isDisjointWithDR(CPDoubleVarI* x, CPDoubleVarI* y)
 {
-    return isDisjointWithDVR([x minErr], [x maxErr], [y minErr], [y maxErr]);
+    bool b = isDisjointWithDVR([x minErr], [x maxErr], [y minErr], [y maxErr]);
+    return b;
 }
 static inline bool canPrecedeD(CPDoubleVarI* x, CPDoubleVarI* y)
 {

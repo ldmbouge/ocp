@@ -596,7 +596,8 @@
    
    return self;
 }
--(id)set_q:(id<ORRational>)low and:(id<ORRational>)up{
+-(id)set_q:(id<ORRational>)low and:(id<ORRational>)up
+{
    [_low set:low];
    [_up set:up];
    

@@ -121,6 +121,8 @@
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(ORRational*) elow;
+-(ORRational*) eup;
 -(NSString*) prettyname;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
@@ -134,6 +136,7 @@
 -(ORLDoubleVarI*) init: (id<ORTracker>) tracker domain:(id<ORLDoubleRange>) dom;
 -(ORLDoubleVarI*) init: (id<ORTracker>) tracker up: (ORLDouble) up;
 -(ORLDoubleVarI*) init: (id<ORTracker>) tracker low: (ORLDouble) low up: (ORLDouble) up;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up elow: (ORRational*) elow eup: (ORRational*) eup name:(NSString*) name;
 -(ORBool) hasBounds;
 -(ORLDouble) low;
 -(ORLDouble) up;

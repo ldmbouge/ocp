@@ -243,7 +243,7 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [buf appendFormat:@"var<%d>=",_name];
     [buf appendString:[_dom description]];
-    [buf appendString:[_domError description]];
+    [buf appendFormat:@"±%@", [_domError description]];
     return buf;
 }
 -(void)setDelegate:(id<CPDoubleVarNotifier>)delegate

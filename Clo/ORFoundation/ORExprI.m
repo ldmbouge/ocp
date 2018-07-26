@@ -967,13 +967,13 @@
 }
 -(id<ORExpr>) error
 {
-   return [ORFactory errorVar:[self tracker] of:self name:@"empty_name"];
+   return [ORFactory errorVar:[self tracker] of:self name:[self prettyname]];
 }
 -(id<ORExpr>) channel
 {
-   id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] name:@"channeled"];
+   id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] name:[self prettyname]];
    id<ORConstraint> c = [ORFactory channel:self with:r];
-   [[self tracker] add: c];
+   [[self tracker] add:c];
    //[[self tracker] trackObject:c];
    return r;
 }
