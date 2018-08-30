@@ -160,8 +160,8 @@ ab = ['kepler0',
 'runge_kutta_1_2',
 'runge_kutta_1_3',
 'runge_kutta_1_4',
-'runge_kutta_1_5',
-'rumps'
+'runge_kutta_1_5'
+# 'rumps'
 ]
 
 nba = len(sys.argv)
