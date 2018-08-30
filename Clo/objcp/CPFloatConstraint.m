@@ -13,6 +13,7 @@
 #import "CPFloatConstraint.h"
 #import "CPFloatVarI.h"
 #import "ORConstraintI.h"
+#import <fenv.h>
 
 #define PERCENT 5.0
 

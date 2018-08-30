@@ -13,6 +13,7 @@
 #import "CPDoubleConstraint.h"
 #import "CPDoubleVarI.h"
 #import "ORConstraintI.h"
+#import <fenv.h>
 
 #define PERCENT 5.0
 
