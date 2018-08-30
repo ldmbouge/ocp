@@ -1014,4 +1014,8 @@
 {
    return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@)",_name,_vars,_disabled];
 }
+-(ORBool) contains:(id<ORFloatVar>)v
+{
+   return [_vars contains:v];
+}
 @end

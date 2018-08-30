@@ -672,7 +672,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORBindingArrayI alloc] initORBindingArray: nb];
 }
-
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up
 {
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -683,8 +682,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];
-    for(ORInt k=range.low;k <= range.up;k++)
-        [o set:[ORFactory floatVar:tracker] at:k];
+   //[hzi : we should not init var, because it used as storage]
+//    for(ORInt k=range.low;k <= range.up;k++)
+//        [o set:[ORFactory floatVar:tracker] at:k];
     return (id<ORFloatVarArray>)o;
 }
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name

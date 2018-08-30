@@ -35,6 +35,7 @@
 #import <objcp/CPLDoubleVarI.h>
 #import <objcp/CPFloatDom.h>
 #import <objcp/CPDoubleDom.h>
+#import <objcp/CPLDoubleDom.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
 

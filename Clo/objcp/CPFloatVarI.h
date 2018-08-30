@@ -162,11 +162,11 @@ static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
 
 static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x->_dom min] < [y->_dom min] &&  [x->_dom max] < [y->_dom max];
+   return [x->_dom max] < [y->_dom min];
 }
 static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] > [y min] && [x max] > [y max];
+   return [x min] > [y max]; 
 }
 
 static inline double cardinality(CPFloatVarI* x)
