@@ -2214,7 +2214,47 @@
       b(i,s,x);
    }];
 }
--(void) maxAbsorptionSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+-(void) maxAbsorptionSearch:  (id<ORDisabledFloatVarArray>) ovars do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   //[hzi] collect variables leading to an abs. introduced by flattening, construct new a and call maxabsI
+   id<ORFloatVarArray> vars = [_model floatVars];
+   NSMutableArray<ORFloatVar> *keeped = [[NSMutableArray<ORFloatVar> alloc] init];
+   NSSet* cstr = nil;
+   id<CPFloatVar> cx = nil;
+   id<CPFloatVar> v = nil;
+   ORDouble absV = 0.0;
+   for(id<ORFloatVar> x in vars){
+      if([ovars contains:x]){
+         [keeped addObject:x];
+      }else{
+         cx = _gamma[[x getId]];
+         cstr = [cx constraints];
+         for(id<CPConstraint> c in cstr){
+            if([c canLeadToAnAbsorption]){
+               v = [c varSubjectToAbsorption:cx];
+               if(v == nil) continue;
+               absV = [self computeAbsorptionQuantity:v by:x];
+               assert(absV >= 0.0f && absV <= 1.f);
+               if(absV){
+                  [keeped addObject:x];
+               }
+            }
+         }
+         [cstr release];
+      }
+   }
+   id<ORFloatVarArray> ckeeped = [ORFactory floatVarArray:self range:RANGE(self, 0, (ORInt)[keeped count]-1)];
+   ORInt i = 0;
+   for(id<ORFloatVar> x in keeped){
+      ckeeped[i++] = x;
+   }
+   [keeped release];
+   id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine];
+   [self maxAbsorptionSearchI:newX do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+      b(i,s,x);
+   }];
+}
+-(void) maxAbsorptionSearchI:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
@@ -2252,7 +2292,7 @@
          }
          disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(i.index,@selector(maxAbsorptionSearch:do:),x);
+         b(i.index,@selector(maxAbsorptionSearchI:do:),x);
       } while (true);
    }];
 }
