@@ -118,6 +118,9 @@ static inline float minFloatBaseOnExponent(float v){
    float_cast v_cast;
    v_cast.f = v;
    v_cast.parts.mantisa = 1;
+   if(v_cast.f > v){
+      return v;
+   }
    return v_cast.f;
 }
 

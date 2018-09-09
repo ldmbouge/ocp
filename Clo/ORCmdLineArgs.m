@@ -18,7 +18,7 @@
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
    @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
    @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
-   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico"};
+   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens"};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"split3B",@"splitAbs",@"ESplit",@"DSplit"};
 
@@ -1479,6 +1479,11 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                break;
          }
          break;
+      
+      case absDens :
+         [p maxAbsDensSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+            [p float6WaySplit:i call:s withVars:x];
+         }];
       default :
          heuristic = lexico;
          switch (valordering) {

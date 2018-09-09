@@ -2646,6 +2646,64 @@
     } do:b limit:2 restricted:x];
 }
 
+-(void) maxAbsDensSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   @autoreleasepool {
+      SEL s = @selector(maxAbsDensSearch:default:);
+      __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+      __block ORInt switchneeded = false;
+      __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
+      id<ORSelect> select = [ORFactory select: _engine
+                                        range: RANGE(self,[x low],[x up])
+                                     suchThat: ^ORBool(ORInt i) {
+                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        if(![x isEnable:i]){
+                                           if(![v bound]){
+                                              disabled.found = YES;
+                                              disabled.index = i;
+                                           }
+                                           [x enable:i];
+                                           return false;
+                                        }
+                                        return ![v bound];
+                                     }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       LOG(_level,2,@"%@ rate : %16.16e",_gamma[getId(x[i])], [abs[i] quantity]);
+                                       switchneeded = switchneeded || ([abs[i] quantity] == 0.f);
+                                       return [abs[i] quantity];
+                                    }];
+      
+         
+      [[self explorer] applyController:t in:^{
+         do {
+            LOG(_level,2,@"State before selection");
+            ORSelectorResult i = [select max];
+            if(!switchneeded){
+               switchneeded = true;
+               [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                  [self float6WaySplit:i call:s withVars:x];
+               }];
+            }else{
+               if (!i.found){
+                  if(!disabled.found)
+                     break;
+                  i.index = disabled.index;
+                  [x enable:i.index];
+               } else if(_unique){
+                  [x disable:i.index];
+                  disabled.found = NO;
+               }
+               id<CPFloatVar> v = [abs[i.index] bestChoice];
+               LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
+               [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
+               abs = [self computeAbsorptionsQuantities:x];
+               switchneeded = false;
+            }
+         } while (true);
+      }];
+      }
+}
 //-------------------------------------------------
 //Value ordering
 //split until value
