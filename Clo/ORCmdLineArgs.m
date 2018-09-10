@@ -1484,6 +1484,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          [p maxAbsDensSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
             [p float6WaySplit:i call:s withVars:x];
          }];
+         break;
       default :
          heuristic = lexico;
          switch (valordering) {

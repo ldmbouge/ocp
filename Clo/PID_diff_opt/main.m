@@ -52,19 +52,20 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> expr = [ORFactory float:model value:0.01f];
          id<ORExpr> expr_1 = [ORFactory float:model value:0.138012f];
          
-         id<ORFloatVarArray> e = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> p = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> i = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> d = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> r = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> m = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> e_old = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> t = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> m_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> t_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> e_old_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         id<ORFloatVarArray> i_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS)];
-         
+       
+         id<ORFloatVarArray> e = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"e"];
+         id<ORFloatVarArray> p = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"p"];
+         id<ORFloatVarArray> i = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"i"];
+         id<ORFloatVarArray> d = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"d"];
+         id<ORFloatVarArray> r = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"r"];
+         id<ORFloatVarArray> m = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"m"];
+         id<ORFloatVarArray> e_old = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"e_old"];
+         id<ORFloatVarArray> t = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"t"];
+         id<ORFloatVarArray> m_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"m_opt"];
+         id<ORFloatVarArray> t_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"t_opt"];
+         id<ORFloatVarArray> e_old_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"e_old_opt"];
+         id<ORFloatVarArray> i_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"i_opt"];
+          
          //
          //         model.add(*(e[0]) = 0.0f);
          //         model.add(*(p[0]) = 0.0f);

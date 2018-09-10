@@ -149,6 +149,7 @@ static inline double cardinalityV(float xmin, float xmax){
    i_sup.f = xmax;
    if(xmin == xmax) return 1.0;
    if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
+   if(xmin < 0 && xmax > 0 &&  i_sup.parts.exponent == 0 && i_inf.parts.exponent == 0) return i_inf.parts.mantisa + i_sup.parts.mantisa;
    double res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
    return (res < 0) ? -res : res;
 }
@@ -204,10 +205,14 @@ static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
    if(m_cast.parts.mantisa == 0){
       e--;
    }
-   max = floatFromParts(0,e,0);
-   max = nextafterf(max, -INFINITY);
-   min = -max;
-   return makeFloatInterval(min,max);
+   if(e < 0){
+      return makeFloatInterval(0,0);
+   }else{
+      max = floatFromParts(0,e,0);
+      max = nextafterf(max, -INFINITY);
+      min = -max;
+      return makeFloatInterval(min,max);
+   }
 }
 
 static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
