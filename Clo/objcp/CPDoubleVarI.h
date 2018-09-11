@@ -145,7 +145,7 @@ static inline bool isDisjointWithDV(double xmin,double xmax,double ymin, double 
 }
 static inline bool isDisjointWithDVR(ORRational* xmin, ORRational* xmax, ORRational* ymin, ORRational* ymax)
 {
-   return ([xmax leq: ymin]) || ([ymax leq: xmin]);
+   return ([xmax lt: ymin]) || ([ymax lt: xmin]);
 }
 
 static inline bool isIntersectingWithDV(double xmin,double xmax,double ymin, double ymax)
@@ -163,8 +163,7 @@ static inline bool isIntersectingWithD(CPDoubleVarI* x, CPDoubleVarI* y)
 }
 static inline bool isDisjointWithDR(CPDoubleVarI* x, CPDoubleVarI* y)
 {
-    bool b = isDisjointWithDVR([x minErr], [x maxErr], [y minErr], [y maxErr]);
-    return b;
+   return isDisjointWithDVR([x minErr], [x maxErr], [y minErr], [y maxErr]);
 }
 static inline bool canPrecedeD(CPDoubleVarI* x, CPDoubleVarI* y)
 {

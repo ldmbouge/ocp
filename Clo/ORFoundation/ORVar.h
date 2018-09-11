@@ -86,9 +86,13 @@ PORTABLE_BEGIN
 
 @protocol ORDoubleVar <ORExprVar>
 -(id<ORDoubleRange>) domain;
+-(id<ORRationalRange>) domainError;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(ORRational*) elow;
+-(ORRational*) eup;
+-(NSString*) prettyname;
 @end
 
 @protocol ORLDoubleVar <ORExprVar>

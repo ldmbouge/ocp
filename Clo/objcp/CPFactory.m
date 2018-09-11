@@ -162,14 +162,6 @@
    }
    return (id<CPRationalVarArray>)o;
 }
-
-//----------------------------------------
-
-/*+(id<CPRationalVar>) errorVar:(id<CPEngine>)cp bounds:(id<ORRationalRange>) range
-{
-   return [[CPRationalVarI alloc] init:cp low:range.low up:range.up];
-}*/
-
 //----------------------------------------
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp
 {
@@ -182,6 +174,10 @@
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range
 {
     return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up];
+}
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range boundsError:(id<ORRationalRange>) rangeError
+{
+   return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up errLow:rangeError.low errUp:rangeError.up];
 }
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {

@@ -16,8 +16,6 @@
 #import <objcp/CPDoubleDom.h>
 #import <objcp/CPRationalDom.h>
 
-// toto !
-
 @class CPDoubleVarI;
 
 @interface CPDoubleEqual : CPCoreConstraint {

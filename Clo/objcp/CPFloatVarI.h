@@ -162,7 +162,7 @@ static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
 }
 static inline bool isDisjointWithVR(ORRational* xmin, ORRational* xmax, ORRational* ymin, ORRational* ymax)
 {
-   return ([xmax leq: ymin]) || ([ymax leq: xmin]);
+   return ([xmax lt: ymin]) || ([ymax lt: xmin]);
 }
 static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float ymax)
 {

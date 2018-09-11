@@ -139,7 +139,7 @@
 -(void) visitDoubleVar: (id<ORDoubleVar>) v
 {
     if (!_gamma[v.getId])
-        _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain]];
+       _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain] boundsError: [v domainError]];
 }
 
 -(void) visitLDoubleVar: (id<ORLDoubleVar>) v

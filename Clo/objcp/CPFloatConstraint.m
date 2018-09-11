@@ -97,10 +97,10 @@ ORRationalInterval* compute_eo_add(ORRationalInterval* eo, const float_interval 
 
        ulp_computation_f(ulp_q, z);
        eo = [eo proj_inter:ulp_q];
-
+       
        [ulp_q release];
     }
-
+   
     return eo;
 }
 
@@ -323,10 +323,6 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
 @implementation CPFloatAssign{
     int _precision;
     int _rounding;
-    float_interval _xi;
-    float_interval _yi;
-    ORRationalInterval* _exi;
-    ORRationalInterval* _eyi;
 }
 -(id) init:(CPFloatVarI*)x set:(CPFloatVarI*)y
 {
@@ -357,7 +353,7 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
    [ex set_q:[_x minErr] and:[_x maxErr]];
    [ey set_q:[_y minErr] and:[_y maxErr]];
    
-    if(isDisjointWith(_x,_y)){
+   if(isDisjointWith(_x,_y)){
         failNow();
     }else if(isDisjointWithR(_x,_y)){
         failNow();
@@ -368,14 +364,13 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
         inter = intersection(x, xTmp, 0.0f);
         interError = [ex proj_inter:ey];
        
-        
         if(inter.changed)
             [_x updateInterval:inter.result.inf and:inter.result.sup];
         if(interError.changed)
            [_x updateIntervalError:interError.low and:interError.up];
-       if ((_yi.inf != inter.result.inf) || (_yi.sup != inter.result.sup))
+       if ((y.inf != inter.result.inf) || (y.sup != inter.result.sup))
           [_y updateInterval:inter.result.inf and:inter.result.sup];
-       if ([_eyi.low neq: interError.low] || [_eyi.up neq: interError.up])
+       if ([ey.low neq: interError.low] || [ey.up neq: interError.up])
             [_y updateIntervalError:interError.low and:interError.up];
     }
    
@@ -383,7 +378,8 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
    [ey release];
    [interError release];
 }
-- (void)dealloc {
+- (void)dealloc
+{
     [super dealloc];
 }
 
@@ -856,7 +852,6 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
         // ============================== ez
         // ex + ey + eo
         ezTemp = [[ex add: ey] add: eo];
-       
         ez = [ez proj_inter: ezTemp];
         changed |= ez.changed;
 

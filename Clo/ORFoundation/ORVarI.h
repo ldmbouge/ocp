@@ -118,12 +118,15 @@
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom name:(NSString*) name;
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up name:(NSString*) name;
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up name:(NSString*) name;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up  elow: (ORRational*) elow eup: (ORRational*) eup name:(NSString*) name;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
 -(ORRational*) elow;
 -(ORRational*) eup;
 -(NSString*) prettyname;
+-(id<ORDoubleRange>) domain;
+-(id<ORRationalRange>) domainError;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
 -(id) initWithCoder:(NSCoder *)aDecoder;

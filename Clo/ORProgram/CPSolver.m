@@ -184,7 +184,7 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
-   _level = 100;
+   _level = 0;
    _split3Bpercent = 10.f;
    _searchNBFloats = 2;
    _subcut = @selector(float3BSplit:call:withVars:);
@@ -3512,6 +3512,16 @@
 -(NSString*) minFQ:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
+   return [[cx minErr] description];
+}
+-(NSString*) maxDQ:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [[cx maxErr] description];
+}
+-(NSString*) minDQ:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
    return [[cx minErr] description];
 }
 -(ORDouble) minErrorDD:(id<ORVar>)x

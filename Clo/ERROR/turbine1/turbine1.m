@@ -20,38 +20,51 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_turbine1_d(double u, double v, double t, double t1, double z, ORRational ez) {
-   double ct1 = 331.4 + (0.6 * t);
-   double cz = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
-   
-   if (ct1 != t1)
-      printf("WRONG: t1 = % 24.24e while ct1 = % 24.24e\n", t1, ct1);
+void check_it_turbine1_d(double v, double w, double r, double z, ORRational* ez) {
+   double cz = (((3.0 + (2.0 / (r * r))) - (((0.125 * (3.0 - (2.0 * v))) * (((w * w) * r) * r)) / (1.0 - v))) - 4.5);;
    
    if (cz != z)
       printf("WRONG: z  = % 24.24e while cz  = % 24.24e\n", z, cz);
    
    {
-      mpq_t uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2;
+      mpq_t vq, wq, rq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16, tmp17, tmp18, tmp19, tmp20, tmp21;
       
-      mpq_inits(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
-      mpq_set_d(uq, u);
+      mpq_inits(vq, wq, rq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16, tmp17, tmp18, tmp19, tmp20, tmp21, NULL);
       mpq_set_d(vq, v);
-      mpq_set_d(tq, t);
-      mpq_set_d(tmp0, 0.6);
-      mpq_mul(tmp1, tq, tmp0);
-      mpq_set_d(tmp0, 331.4);
-      mpq_add(t1q, tmp0, tmp1);
-      mpq_set_d(tmp0, -1.0);
-      mpq_mul(tmp1, tmp0, t1q);
-      mpq_mul(tmp0, tmp1, vq);
-      mpq_add(zq, t1q, uq);
-      mpq_mul(tmp1, zq, zq);
-      mpq_div(zq, tmp0, tmp1);
+      mpq_set_d(wq, w);
+      mpq_set_d(rq, r);
+      
+      mpq_set_d(tmp1, 3.0);
+      mpq_set_d(tmp2, 2.0);
+      mpq_mul(tmp3, rq, rq);
+      mpq_div(tmp4, tmp2, tmp3);
+      mpq_add(tmp5, tmp1, tmp4);
+      mpq_set_d(tmp6, 0.125);
+      mpq_set_d(tmp7, 3.0);
+      mpq_set_d(tmp8, 2.0);
+      mpq_mul(tmp9, tmp8, vq);
+      mpq_sub(tmp10, tmp7, tmp9);
+      mpq_mul(tmp11, tmp6, tmp10);
+      mpq_mul(tmp12, wq, wq);
+      mpq_mul(tmp13, tmp12, rq);
+      mpq_mul(tmp14, tmp13, rq);
+      mpq_mul(tmp15, tmp11, tmp14);
+      mpq_set_d(tmp16, 1.0);
+      mpq_sub(tmp17, tmp16, vq);
+      mpq_div(tmp18, tmp15, tmp17);
+      mpq_sub(tmp19, tmp5, tmp18);
+      mpq_set_d(tmp20, 4.5);
+      mpq_sub(tmp21, tmp19, tmp20);
+      mpq_set(zq, tmp21);
+
+      
       mpq_set_d(tmp0, z);
       mpq_sub(tmp1, zq, tmp0);
-      if (mpq_cmp(tmp1, ez) != 0)
-         printf("WRONG: ez = % 24.24e while cze = % 24.24e\n", mpq_get_d(ez), mpq_get_d(tmp0));
-      mpq_clears(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
+      if (mpq_cmp(tmp1, ez.rational) != 0){
+         NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
+         NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
+      }
+      mpq_clears(vq, wq, rq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16, tmp17, tmp18, tmp19, tmp20, tmp21, NULL);
    }
    
 }
@@ -59,13 +72,12 @@ void check_it_turbine1_d(double u, double v, double t, double t1, double z, ORRa
 void turbine1_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORDoubleRange> r0 = [ORFactory doubleRange:mdl low:-4.5 up:-0.3];
-      id<ORDoubleRange> r1 = [ORFactory doubleRange:mdl low:0.4 up:0.9];
-      id<ORDoubleRange> r2 = [ORFactory doubleRange:mdl low:3.8 up:7.8];
-      id<ORDoubleVar> v = [ORFactory doubleVar:mdl domain:r0];
-      id<ORDoubleVar> w = [ORFactory doubleVar:mdl domain:r1];
-      id<ORDoubleVar> r = [ORFactory doubleVar:mdl domain:r2];
+      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:-4.5 up:-0.3 elow:zero eup:zero name:@"v"];
+      id<ORDoubleVar> w = [ORFactory doubleVar:mdl low:0.4 up:0.9 elow:zero eup:zero name:@"w"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl low:3.8 up:7.8 elow:zero eup:zero name:@"r"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      [zero release];
       
       [mdl add:[z set: [[[@(3.0) plus: [@(2.0) div: [r mul: r]]] sub: [[[@(0.125) mul: [@(3.0) sub: [@(2.0) mul: v]]] mul: [[[w mul: w] mul: r] mul: r]] div: [@(1.0) sub: v]]] sub: @(4.5)]]];
       
@@ -74,29 +86,17 @@ void turbine1_d(int search, int argc, const char * argv[]) {
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
-      [cp setMaxErrorDD:v maxErrorF:0.0];
-      [cp setMinErrorDD:v minErrorF:0.0];
-      [cp setMaxErrorDD:w maxErrorF:0.0];
-      [cp setMinErrorDD:w minErrorF:0.0];
-      [cp setMaxErrorDD:r maxErrorF:0.0];
-      [cp setMinErrorDD:r minErrorF:0.0];
-      [cp setMinErrorDD:z minErrorF:nextafter(0.0f, +INFINITY)];
-      //[cp setMaxErrorDD:z maxErrorF:0.0];
-      //[cp setMinErrorDD:z minErrorF:0.0];
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                [cp floatSplitD:i call:s withVars:x];
             }];
          NSLog(@"%@",cp);
-         //NSLog(@"%@ (%s)",[p concretize:x],[p bound:x] ? "YES" : "NO");
-         /* format of 8.8e to have the same value displayed as in FLUCTUAT */
-         /* Use printRational(ORRational r) to print a rational inside the solver */
-         printDvar("v", v);
-         printDvar("w", w);
-         printDvar("r", r);
-         printDvar("z", z);
-         //if (search) check_it_turbine3_d(getDmin(u), getDmin(v), getDmin(t), getDmin(t1), getDmin(z), getDminErr(z));
+         NSLog(@"v : [%f;%f]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
+         NSLog(@"w : [%f;%f]±[%@;%@] (%s)",[cp minD:w],[cp maxD:w],[cp minDQ:w],[cp maxDQ:w],[cp bound:w] ? "YES" : "NO");
+         NSLog(@"r : [%f;%f]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_turbine1_d([cp minD:v], [cp minD:w], [cp minD:r], [cp minD:z], [cp minErrorDQ:z]);
       }];
    }
 }

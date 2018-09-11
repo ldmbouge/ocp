@@ -25,7 +25,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_rigidBody1_d(double x1, double x2, double x3, double z, ORRational ez) {
+void check_it_rigidBody1_d(double x1, double x2, double x3, double z, ORRational* ez) {
    double cz = (((-(x1 * x2) - ((2.0 * x2) * x3)) - x1) - x3);
    
    if (cz != z)
@@ -48,8 +48,10 @@ void check_it_rigidBody1_d(double x1, double x2, double x3, double z, ORRational
       mpq_sub(zq, tmp1, x3q);
       mpq_set_d(tmp0, z);
       mpq_sub(tmp1, zq, tmp0);
-      if (mpq_cmp(tmp1, ez) != 0)
-         printf("WRONG: ez = % 24.24e while cze = % 24.24e\n", mpq_get_d(ez), mpq_get_d(tmp0));
+      if (mpq_cmp(tmp1, ez.rational) != 0){
+         NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
+         NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
+      }
       mpq_clears(x1q, x2q, x3q, zq, tmp0, tmp1, tmp2, NULL);
    }
    
@@ -58,10 +60,12 @@ void check_it_rigidBody1_d(double x1, double x2, double x3, double z, ORRational
 void rigidBody1_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORDoubleVar> x1 = [ORFactory doubleVar:mdl low:-15.0 up:15.0];
-      id<ORDoubleVar> x2 = [ORFactory doubleVar:mdl low:-15.0 up:15.0];
-      id<ORDoubleVar> x3 = [ORFactory doubleVar:mdl low:-15.0 up:15.0];
+      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> x1 = [ORFactory doubleVar:mdl low:-15.0 up:15.0 elow:zero eup:zero name:@"x1"];
+      id<ORDoubleVar> x2 = [ORFactory doubleVar:mdl low:-15.0 up:15.0 elow:zero eup:zero name:@"x2"];
+      id<ORDoubleVar> x3 = [ORFactory doubleVar:mdl low:-15.0 up:15.0 elow:zero eup:zero name:@"x3"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      [zero release];
       
       [mdl add:[z set: [[[[@(0.0) sub: [x1 mul: x2]] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
       
@@ -70,28 +74,17 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
-      [cp setMaxErrorDD:x1 maxErrorF:0.0];
-      [cp setMinErrorDD:x1 minErrorF:0.0];
-      [cp setMaxErrorDD:x2 maxErrorF:0.0];
-      [cp setMinErrorDD:x2 minErrorF:0.0];
-      [cp setMaxErrorDD:x3 maxErrorF:0.0];
-      [cp setMinErrorDD:x3 minErrorF:0.0];
-      [cp setMinErrorDD:z minErrorF:nextafter(0.0f, +INFINITY)];
-      //[cp setMinErrorDD:z minErrorF:0.01e-19];
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                [cp floatSplitD:i call:s withVars:x];
             }];
          NSLog(@"%@",cp);
-         //NSLog(@"%@ (%s)",[p concretize:x],[p bound:x] ? "YES" : "NO");
-         /* format of 8.8e to have the same value displayed as in FLUCTUAT */
-         /* Use printRational(ORRational r) to print a rational inside the solver */
-         printDvar("x1", x1);
-         printDvar("x2", x2);
-         printDvar("x3", x3);
-         printDvar("z", z);
-         if (search) check_it_rigidBody1_d(getDmin(x1), getDmin(x2), getDmin(x3), getDmin(z), getDminErr(z));
+         NSLog(@"x1 : [%f;%f]±[%@;%@] (%s)",[cp minD:x1],[cp maxD:x1],[cp minDQ:x1],[cp maxDQ:x1],[cp bound:x1] ? "YES" : "NO");
+         NSLog(@"x2 : [%f;%f]±[%@;%@] (%s)",[cp minD:x2],[cp maxD:x2],[cp minDQ:x2],[cp maxDQ:x2],[cp bound:x2] ? "YES" : "NO");
+         NSLog(@"x3 : [%f;%f]±[%@;%@] (%s)",[cp minD:x3],[cp maxD:x3],[cp minDQ:x3],[cp maxDQ:x3],[cp bound:x3] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_rigidBody1_d(getDmin(x1), getDmin(x2), getDmin(x3), getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }

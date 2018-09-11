@@ -323,22 +323,13 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
 @implementation CPDoubleAssign{
     int _precision;
     int _rounding;
-    double_interval _xi;
-    double_interval _yi;
-   ORRationalInterval* _exi;
-   ORRationalInterval* _eyi;
 }
 -(id) init:(CPDoubleVarI*)x set:(CPDoubleVarI*)y
 {
     self = [super initCPCoreConstraint: [x engine]];
     _x = x;
     _y = y;
-    _xi = makeDoubleInterval(x.min, x.max);
-    _yi = makeDoubleInterval(y.min, y.max);
-   _exi = [[ORRationalInterval alloc] init];
-   _eyi = [[ORRationalInterval alloc] init];
-   [_exi set_q:x.minErr and:x.maxErr];
-   [_eyi set_q:y.minErr and:y.maxErr];    _precision = 1;
+    _precision = 1;
     _rounding = FE_TONEAREST;
     return self;
 }
@@ -350,38 +341,45 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
 }
 -(void) propagate
 {
-   updateDoubleInterval(&_xi,_x);
-   updateDoubleInterval(&_yi,_y);
-   //    updateRationalInterval(_exi,_x);
-   //    updateRationalInterval(_eyi,_y);
+   double_interval x, y;
    intersectionIntervalD inter;
+   ORRationalInterval* ex = [[ORRationalInterval alloc] init];
+   ORRationalInterval* ey = [[ORRationalInterval alloc] init];
    ORRationalInterval* interError = [[ORRationalInterval alloc] init];
+   
+   x = makeDoubleInterval([_x min], [_x max]);
+   y = makeDoubleInterval([_y min], [_y max]);
+   
+   [ex set_q:[_x minErr] and:[_x maxErr]];
+   [ey set_q:[_y minErr] and:[_y maxErr]];
+   
    if(isDisjointWithD(_x,_y)){
       failNow();
    }else if(isDisjointWithDR(_x,_y)){
       failNow();
    }else{
-      double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
-      fpi_set(_precision, _rounding, &xTmp, &_yi);
+      double_interval xTmp = makeDoubleInterval(x.inf, x.sup);
+      fpi_set(_precision, _rounding, &xTmp, &y);
       
-      inter = intersectionD(_xi, xTmp, 0.0f);
-      interError = [_exi proj_inter:_eyi];
+      inter = intersectionD(x, xTmp, 0.0f);
+      interError = [ex proj_inter:ey];
       
       
       if(inter.changed)
          [_x updateInterval:inter.result.inf and:inter.result.sup];
       if(interError.changed)
          [_x updateIntervalError:interError.low and:interError.up];
-      if ((_yi.inf != inter.result.inf) || (_yi.sup != inter.result.sup))
+      if ((y.inf != inter.result.inf) || (y.sup != inter.result.sup))
          [_y updateInterval:inter.result.inf and:inter.result.sup];
-      if ([_eyi.low neq: interError.low] || [_eyi.up neq: interError.up])
+      if ([ey.low neq: interError.low] || [ey.up neq: interError.up])
          [_y updateIntervalError:interError.low and:interError.up];
    }
+   [ex release];
+   [ey release];
    [interError release];
 }
-- (void)dealloc {
-   [_exi release];
-   [_eyi release];
+- (void)dealloc
+{
     [super dealloc];
 }
 -(NSSet*)allVars
@@ -780,7 +778,7 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
     _precision = 1;
     _percent = p;
     _rounding = FE_TONEAREST;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-DBL_MAX upF:+DBL_MAX];
+   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
     return self;
 }
 -(void) post
@@ -857,8 +855,8 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
        changed |= ez.changed;
        
        // ============================== eo
-       // ez - (ex + ey)
-       eoTemp = [[ez sub: ex] add: ey];
+       // ez - ex - ey
+       eoTemp = [[ez sub: ex] sub: ey];
        
        eo = [eo proj_inter: eoTemp];
        changed |= eo.changed;
@@ -890,9 +888,10 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
         [_x updateInterval:x.inf and:x.sup];
         [_y updateInterval:y.inf and:y.sup];
         [_z updateInterval:z.inf and:z.sup];
-       [_x updateIntervalError:(ex.low) and:(ex.low)];
-       [_y updateIntervalError:(ey.low) and:(ey.low)];
-       [_z updateIntervalError:(ez.low) and:(ez.low)];        if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
+       [_x updateIntervalError:(ex.low) and:(ex.up)];
+       [_y updateIntervalError:(ey.low) and:(ey.up)];
+       [_z updateIntervalError:(ez.low) and:(ez.up)];
+       if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
             assignTRInt(&_active, NO, _trail);
     }
     
@@ -956,7 +955,7 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
     _precision = 1;
     _percent = p;
     _rounding = FE_TONEAREST;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-DBL_MAX upF:+DBL_MAX];
+    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y
@@ -1070,9 +1069,10 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
        [_x updateInterval:x.inf and:x.sup];
        [_y updateInterval:y.inf and:y.sup];
        [_z updateInterval:z.inf and:z.sup];
-       [_x updateIntervalError:(ex.low) and:(ex.low)];
-       [_y updateIntervalError:(ey.low) and:(ey.low)];
-       [_z updateIntervalError:(ez.low) and:(ez.low)];        if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
+       [_x updateIntervalError:(ex.low) and:(ex.up)];
+       [_y updateIntervalError:(ey.low) and:(ey.up)];
+       [_z updateIntervalError:(ez.low) and:(ez.up)];
+       if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
             assignTRInt(&_active, NO, _trail);
     }
     
@@ -1135,7 +1135,7 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
     _precision = 1;
     _percent = p;
     _rounding = FE_TONEAREST;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-DBL_MAX upF:+DBL_MAX];
+   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y
@@ -1246,9 +1246,9 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
        [_x updateInterval:x.inf and:x.sup];
        [_y updateInterval:y.inf and:y.sup];
        [_z updateInterval:z.inf and:z.sup];
-       [_x updateIntervalError:(ex.low) and:(ex.low)];
-       [_y updateIntervalError:(ey.low) and:(ey.low)];
-       [_z updateIntervalError:(ez.low) and:(ez.low)];
+       [_x updateIntervalError:(ex.low) and:(ex.up)];
+       [_y updateIntervalError:(ey.low) and:(ey.up)];
+       [_z updateIntervalError:(ez.low) and:(ez.up)];
         if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
             assignTRInt(&_active, NO, _trail);
     }
@@ -1302,7 +1302,7 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
     _precision = 1;
     _percent = p;
     _rounding = FE_TONEAREST;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-DBL_MAX upF:+DBL_MAX];
+   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
     return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y
@@ -1412,9 +1412,9 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
        [_x updateInterval:x.inf and:x.sup];
        [_y updateInterval:y.inf and:y.sup];
        [_z updateInterval:z.inf and:z.sup];
-       [_x updateIntervalError:(ex.low) and:(ex.low)];
-       [_y updateIntervalError:(ey.low) and:(ey.low)];
-       [_z updateIntervalError:(ez.low) and:(ez.low)];
+       [_x updateIntervalError:(ex.low) and:(ex.up)];
+       [_y updateIntervalError:(ey.low) and:(ey.up)];
+       [_z updateIntervalError:(ez.low) and:(ez.up)];
         if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
             assignTRInt(&_active, NO, _trail);
     }

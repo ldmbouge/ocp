@@ -20,12 +20,12 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-/*void check_it_d(double r, double k, double x, double z, ORRational ez) {
+void check_it_d(double r, double k, double x, double z, ORRational* ez) {
     mpq_t qz, qx, tmp0, tmp1, tmp2;
     double cz = ((r*x)*x) / (1.0 + ((x/k)*(x/k)));
     
     if (cz != z)
-        printf("WRONG: cz = % 24.24e != z = % 24.24e\n", cz, z);
+        NSLog(@"WRONG: cz = % 24.24e != z = %24.24e\n", cz, z);
     
     mpq_inits(qz, qx, tmp0, tmp1, tmp2, NULL);
     
@@ -48,18 +48,22 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
     mpq_set_d(tmp0, cz);
     mpq_sub(tmp1, qz, tmp0);
     // La différence vient de ce que minError retourne un flottant au lieu d'un double !
-    if (mpq_cmp(tmp1,ez) != 0)
-        printf("WRONG: Err found = % 24.24e\n         != % 24.24e\n", mpq_get_d(tmp1), mpq_get_d(ez));
+   if (mpq_cmp(tmp1,ez.rational) != 0){
+        NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
+        NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
+   }
     mpq_clears(qz, qx, tmp0, tmp1, tmp2, NULL);
-}*/
+}
 
 void predatorPrey_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        id<ORDoubleVar> r = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> K = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
-        id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3];
+        ORRational* zero = [ORRational rationalWith_d:0.0];
+        id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+        id<ORDoubleVar> K = [ORFactory doubleVar:mdl name:@"K"];
+        id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+        id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
+        [zero release];
         
         [mdl add:[r set: @(4.0)]];
         [mdl add:[K set: @(1.11)]];
@@ -69,29 +73,23 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
         id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
         
-        [cp setMinErrorDD:x minErrorF:0.0];
-        [cp setMaxErrorDD:x maxErrorF:0.0];
-       [cp setMinErrorDD:z minErrorF:nextafter(0.0f, +INFINITY)];
-        //[cp setMinErrorDD:z minErrorF:0.0];
-        //[cp setMaxErrorDD:z maxErrorF:0.0];
         [cp solve:^{
             if (search)
                 [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                     [cp floatSplitD:i call:s withVars:x];
                 }];
-            NSLog(@"%@",cp);
-            /* format of 8.8e to have the same value displayed as in FLUCTUAT */
-            /* Use printRational(ORRational r) to print a rational inside the solver */
-            printDvar("x", x);
-            printDvar("r", r);
-            printDvar("K", K);
-            printDvar("z", z);
-            //if (search) check_it_d(getDmin(r),getDmin(K),getDmin(x),getDmin(z),getDminErr(z));
+           NSLog(@"%@",cp);
+           NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+           NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+           NSLog(@"K : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:K],[cp maxD:K],[cp minDQ:K],[cp maxDQ:K],[cp bound:K] ? "YES" : "NO");
+           NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+
+           if (search) check_it_d(getDmin(r),getDmin(K),getDmin(x),getDmin(z),[cp minErrorDQ:z]);
         }];
     }
 }
 
-/*void check_it_f(float r, float k, float x, float z, ORRational ez) {
+void check_it_f(float r, float k, float x, float z, ORRational* ez) {
     mpq_t qz, qx, tmp0, tmp1, tmp2;
     float cz = ((r*x)*x) / (1.0f + ((x/k)*(x/k)));
     
@@ -119,18 +117,22 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
     mpq_set_d(tmp0, cz);
     mpq_sub(tmp1, qz, tmp0);
     // La différence vient de ce que minError retourne un flottant au lieu d'un double !
-    if (mpq_cmp(tmp1,ez) != 0)
-        printf("WRONG: Err found = % 20.20e\n         != % 20.20e\n", mpq_get_d(tmp1), mpq_get_d(ez));
-    mpq_clears(qz, qx, tmp0, tmp1, tmp2, NULL);
-}*/
+   if (mpq_cmp(tmp1, ez.rational) != 0){
+      NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
+      NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
+   }
+   mpq_clears(qz, qx, tmp0, tmp1, tmp2, NULL);
+}
 
 void predatorPrey_f(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
+        ORRational* zero = [ORRational rationalWith_d:0.0f];
         id<ORFloatVar> r = [ORFactory floatVar:mdl name:@"r"];
         id<ORFloatVar> K = [ORFactory floatVar:mdl];
         id<ORFloatVar> z = [ORFactory floatVar:mdl];
-        id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.1f up:0.3f name:@"x"];
+        id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.1f up:0.3f elow:zero eup:zero name:@"x"];
+        [zero release];
         
         [mdl add:[r set: @(4.0f)]];
         [mdl add:[K set: @(1.11f)]];
@@ -139,10 +141,8 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
         id<ORFloatVarArray> vs = [mdl floatVars];
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
         id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
-        
-        [cp setMinErrorFD:x minErrorF:0.0f];
-        [cp setMaxErrorFD:x maxErrorF:0.0f];
-        [cp solve:^{
+       
+       [cp solve:^{
             if (search)
                 [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                     [cp floatSplit:i call:s withVars:x];
@@ -150,19 +150,19 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
             NSLog(@"%@",cp);
             /* format of 8.8e to have the same value displayed as in FLUCTUAT */
             /* Use printRational(ORRational r) to print a rational inside the solver */
-            printFvar("x", x);
-            printFvar("r", r);
-            printFvar("K", K);
-            printFvar("z", z);
-            //if (search) check_it_f(getFmin(r),getFmin(K),getFmin(x),getFmin(z),getFminErr(z));
+           NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:x],[cp maxF:x],[cp minFQ:x],[cp maxFQ:x],[cp bound:x] ? "YES" : "NO");
+           NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:r],[cp maxF:r],[cp minFQ:r],[cp maxFQ:r],[cp bound:r] ? "YES" : "NO");
+           NSLog(@"K : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:K],[cp maxF:K],[cp minFQ:K],[cp maxFQ:K],[cp bound:K] ? "YES" : "NO");
+           NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:z],[cp maxF:z],[cp minFQ:z],[cp maxFQ:z],[cp bound:z] ? "YES" : "NO");
+            if (search) check_it_f(getFmin(r),getFmin(K),getFmin(x),getFmin(z),[cp minErrorFQ:z]);
         }];
     }
 }
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
-    //predatorPrey_f(1, argc, argv);
-    predatorPrey_d(1, argc, argv);
+    predatorPrey_f(1, argc, argv);
+    //predatorPrey_d(1, argc, argv);
    }
     return 0;
 }

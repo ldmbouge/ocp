@@ -444,25 +444,26 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     [self updateMax:newMax];
 }
 
-- (void)bindError:(ORRational*)valError {
+- (void)bindError:(ORRational*)valError
+{
     [_domError bind:valError for:self];
 }
-
-
-- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError {
+- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError
+{
+    if([newMinError isNAN] || [newMaxError isNAN])
+       failNow();
     if([newMinError gt: newMaxError])
         failNow();
     [self updateMinError:newMinError];
     [self updateMaxError:newMaxError];
 }
-
-
-- (void)updateMaxError:(ORRational*)newMaxError {
+- (void)updateMaxError:(ORRational*)newMaxError
+{
    if([newMaxError lt: [self maxErr]])
         [_domError updateMax:newMaxError for:self];
 }
-
-- (void)updateMinError:(ORRational*)newMinError {
+- (void)updateMinError:(ORRational*)newMinError
+{
     if([newMinError gt: [self minErr]])
         [_domError updateMin:newMinError for:self];
 }
@@ -472,13 +473,13 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    [_domError updateMax:mError for:self];
    [mError release];
 }
-- (void)updateMinErrorF:(ORDouble)newMinError {
+- (void)updateMinErrorF:(ORDouble)newMinError
+{
    ORRational* mError = [[ORRational alloc ] init];
    [mError set_d: newMinError];
    [_domError updateMin:mError for:self];
    [mError release];
 }
-
 -(ORFloat) min
 {
     return [_dom min];

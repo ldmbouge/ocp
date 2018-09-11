@@ -47,13 +47,10 @@
 +(id<CPRationalVarArray>) rationalVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<CPRationalVarArray>) rationalVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPRationalVar>(^)(ORInt)) clo;
 
-// Concrete CPFactory method for creating an errorVar with ORRational values from a ORFloatVar
-//+(id<CPRationalVar>) errorVar:(id<CPEngine>)cp bounds:(id<ORRationalRange>) range;
-//+(id<CPRationalVar>) errorVar:(id<CPEngine>)cp value:(ORRational*) v;
-
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp;
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp value:(ORDouble) v;
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range;
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range boundsError:(id<ORRationalRange>) rangeError;
 +(id<CPLDoubleVar>) ldoubleVar:(id<CPEngine>)cp bounds:(id<ORLDoubleRange>) range;
 
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet;

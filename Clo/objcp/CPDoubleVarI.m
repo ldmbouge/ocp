@@ -441,32 +441,36 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
     [self updateMin:newMin];
     [self updateMax:newMax];
 }
-- (void)bindError:(ORRational*)valError {
+- (void)bindError:(ORRational*)valError
+{
     [_domError bind:valError for:self];
 }
-
-
-- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError {
+- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError
+{
    if([newMinError gt: newMaxError])
         failNow();
     [self updateMinError:newMinError];
     [self updateMaxError:newMaxError];
 }
-- (void)updateMaxError:(ORRational*)newMaxError {
+- (void)updateMaxError:(ORRational*)newMaxError
+{
    if([newMaxError lt: [self maxErr]])
         [_domError updateMax:newMaxError for:self];
 }
-- (void)updateMinError:(ORRational*)newMinError {
+- (void)updateMinError:(ORRational*)newMinError
+{
    if([newMinError gt: [self minErr]])
       [_domError updateMin:newMinError for:self];
 }
-- (void)updateMaxErrorF:(ORDouble)newMaxError {
+- (void)updateMaxErrorF:(ORDouble)newMaxError
+{
    ORRational* mError = [[ORRational alloc ] init];
    [mError set_d: newMaxError];
    [_domError updateMax:mError for:self];
    [mError release];
 }
-- (void)updateMinErrorF:(ORDouble)newMinError {
+- (void)updateMinErrorF:(ORDouble)newMinError
+{
    ORRational* mError = [[ORRational alloc ] init];
    [mError set_d: newMinError];
    [_domError updateMin:mError for:self];
@@ -498,16 +502,20 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
         return [_domError min];
     return _valueError;
 }
-- (ORRational*)maxErr {
+- (ORRational*)maxErr
+{
     return [_domError max];
 }
-- (ORRational*)minErr {
+- (ORRational*)minErr
+{
     return [_domError min];
 }
-- (ORDouble)maxErrF {
+- (ORDouble)maxErrF
+{
     return [[_domError max] get_d];
 }
-- (ORDouble)minErrF {
+- (ORDouble)minErrF
+{
    return [[_domError min] get_d];
 }
 -(id<CPDoubleDom>) domain
@@ -797,26 +805,21 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 }
 - (void)bindError:(ORRational*)valError {
 }
-
-
-- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError {
+- (void)updateIntervalError:(ORRational*)newMinError and:(ORRational*)newMaxError
+{
 }
-
-
-- (void)updateMaxError:(ORRational*)newMaxError {
+- (void)updateMaxError:(ORRational*)newMaxError
+{
 }
-
-
-- (void)updateMinError:(ORRational*)newMinError {
+- (void)updateMinError:(ORRational*)newMinError
+{
 }
-
-- (void)updateMaxErrorF:(ORDouble)newMaxError {
+- (void)updateMaxErrorF:(ORDouble)newMaxError
+{
 }
-
-
-- (void)updateMinErrorF:(ORDouble)newMinError {
+- (void)updateMinErrorF:(ORDouble)newMinError
+{
 }
-
 -(ORDouble) min
 {
     return [_theVar min];
@@ -825,16 +828,20 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 {
     return [_theVar max];
 }
-- (ORRational*)maxErr {
+- (ORRational*)maxErr
+{
    return [[ORRational alloc] init];
 }
-- (ORRational*)minErr {
+- (ORRational*)minErr
+{
    return [[ORRational alloc] init];
 }
-- (ORDouble)maxErrF {
+- (ORDouble)maxErrF
+{
     return [_theVar max];
 }
-- (ORDouble)minErrF {
+- (ORDouble)minErrF
+{
     return [_theVar min];
 }
 -(ORDouble) value
@@ -875,7 +882,6 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
     @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleVar: method domsize  not defined"];
     return 0;
 }
-
 - (id<CPADom>)domain
 {
     return [_theVar flatDomain];
@@ -892,7 +898,6 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 {
     [self updateInterval:[dom min] and:[dom max]];
 }
-
 -(ORDouble) magnitude
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleViewOnIntVarI: magnitude not definied for a view"];
@@ -904,9 +909,8 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
 - (ORRational* )errorValue {
    return [[ORRational alloc] init];
 }
-
 - (void)visit:(ORVisitor *)visitor
-{}
-
+{
+}
 @end
 

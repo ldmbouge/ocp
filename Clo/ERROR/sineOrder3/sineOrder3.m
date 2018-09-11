@@ -20,7 +20,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_sineOrder3_d(double u, double v, double t, double t1, double z, ORRational ez) {
+/*void check_it_sineOrder3_d(double u, double v, double t, double t1, double z, ORRational ez) {
    double ct1 = 331.4 + (0.6 * t);
    double cz = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
    
@@ -54,14 +54,15 @@ void check_it_sineOrder3_d(double u, double v, double t, double t1, double z, OR
       mpq_clears(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
    }
    
-}
+}*/
 
 void sineOrder3_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORDoubleRange> r0 = [ORFactory doubleRange:mdl low:-2 up:2];
-      id<ORDoubleVar> x = [ORFactory doubleVar:mdl domain:r0];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:-2 up:2 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      [zero release];
       
       [mdl add:[z set: [[@(0.954929658551372) mul: x] sub: [@(0.12900613773279798) mul: [[x mul: x] mul: x]]]]];
       
@@ -73,11 +74,6 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
-      [cp setMaxErrorDD:x maxErrorF:0.0];
-      [cp setMinErrorDD:x minErrorF:0.0];
-      [cp setMinErrorDD:z minErrorF:nextafter(0.0f, +INFINITY)];
-      //[cp setMinErrorDD:z minErrorF:-10.0];
-      //[cp setMaxErrorDD:z maxErrorF:-0.99];
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
@@ -87,8 +83,8 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
          //NSLog(@"%@ (%s)",[p concretize:x],[p bound:x] ? "YES" : "NO");
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */
          /* Use printRational(ORRational r) to print a rational inside the solver */
-         printDvar("x", x);
-         printDvar("z", z);
+         NSLog(@"x : [%f;%f]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
          //if (search) check_it_turbine3_d(getDmin(u), getDmin(v), getDmin(t), getDmin(t1), getDmin(z), getDminErr(z));
       }];
    }

@@ -362,12 +362,18 @@
    self = [super init];
    _tracker = track;
    _domain = dom;
-   ORRational* low = [[[ORRational alloc] init] setNegInf];
-   ORRational* up = [[[ORRational alloc] init] setPosInf];
-   _domainError = [ORFactory rationalRange:track low:low up:up];
+   if(_domain.low == _domain.up){
+      ORRational* zero = [ORRational rationalWith_d:0.0f];
+      _domainError = [ORFactory rationalRange:track low:zero up:zero];
+      [zero release];
+   } else {
+      ORRational* low = [ORRational rationalWith_d:-INFINITY];
+      ORRational* up = [ORRational rationalWith_d:+INFINITY];
+      _domainError = [ORFactory rationalRange:track low:low up:up];
+      [low release];
+      [up release];
+   }
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
-   [low release];
-   [up release];
    [track trackVariable: self];
    return self;
 }
@@ -672,9 +678,17 @@
    _tracker = track;
    _domain = dom;
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
-   ORRational* low = [[[ORRational alloc] init] setNegInf];
-   ORRational* up = [[[ORRational alloc] init] setPosInf];
-   _domainError = [ORFactory rationalRange:track low:low up:up];
+   if(_domain.low == _domain.up){
+      ORRational* zero = [ORRational rationalWith_d:0.0f];
+      _domainError = [ORFactory rationalRange:track low:zero up:zero];
+      [zero release];
+   } else {
+      ORRational* low = [ORRational rationalWith_d:-INFINITY];
+      ORRational* up = [ORRational rationalWith_d:+INFINITY];
+      _domainError = [ORFactory rationalRange:track low:low up:up];
+      [low release];
+      [up release];
+   }
    _prettyname = name;
    [track trackVariable: self];
    return self;
@@ -712,6 +726,11 @@
    assert(_domain != NULL);
    return _domain;
 }
+-(id<ORRationalRange>) domainError
+{
+   assert(_domainError != NULL);
+   return _domainError;
+}
 -(void) dealloc
 {
    if(_prettyname != nil)
@@ -745,7 +764,7 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-      return [NSString stringWithFormat:@"%@:%03d(%lf,%lf)",_prettyname,_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@:%03d(%lf,%lf)±(%@,%@)",_prettyname,_name,_domain.low,_domain.up,_domainError.low,_domainError.up];
    else
       return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
 }

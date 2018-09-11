@@ -223,7 +223,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 }
 -(void) printStats:(id<ORGroup>) g model:(id<ORModel>)m program:(id<CPProgram>)p
 {
-#define debug 1
+#define debug 0
 #if debug
    @autoreleasepool{
       id<CPGroup> cg = [p concretize:g];
