@@ -20,41 +20,37 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-/*void check_it_sineOrder3_d(double u, double v, double t, double t1, double z, ORRational ez) {
-   double ct1 = 331.4 + (0.6 * t);
-   double cz = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
-   
-   if (ct1 != t1)
-      printf("WRONG: t1 = % 24.24e while ct1 = % 24.24e\n", t1, ct1);
+void check_it_sineOrder3_d(double x, double z, ORRational* ez) {
+   double cz = ((0.954929658551372 * x) - (0.12900613773279798 * ((x * x) * x)));
    
    if (cz != z)
       printf("WRONG: z  = % 24.24e while cz  = % 24.24e\n", z, cz);
    
    {
-      mpq_t uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2;
+      mpq_t xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
       
-      mpq_inits(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
-      mpq_set_d(uq, u);
-      mpq_set_d(vq, v);
-      mpq_set_d(tq, t);
-      mpq_set_d(tmp0, 0.6);
-      mpq_mul(tmp1, tq, tmp0);
-      mpq_set_d(tmp0, 331.4);
-      mpq_add(t1q, tmp0, tmp1);
-      mpq_set_d(tmp0, -1.0);
-      mpq_mul(tmp1, tmp0, t1q);
-      mpq_mul(tmp0, tmp1, vq);
-      mpq_add(zq, t1q, uq);
-      mpq_mul(tmp1, zq, zq);
-      mpq_div(zq, tmp0, tmp1);
+      mpq_inits(xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, NULL);
+      mpq_set_d(xq, x);
+ 
+      mpq_set_d(tmp1, 0.954929658551372);
+      mpq_mul(tmp2, tmp1, xq);
+      mpq_set_d(tmp3, 0.12900613773279798);
+      mpq_mul(tmp4, xq, xq);
+      mpq_mul(tmp5, tmp4, xq);
+      mpq_mul(tmp6, tmp3, tmp5);
+      mpq_sub(tmp7, tmp2, tmp6);
+      mpq_set(zq, tmp7);
+      
       mpq_set_d(tmp0, z);
       mpq_sub(tmp1, zq, tmp0);
-      if (mpq_cmp(tmp1, ez) != 0)
-         printf("WRONG: ez = % 24.24e while cze = % 24.24e\n", mpq_get_d(ez), mpq_get_d(tmp0));
-      mpq_clears(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
+      if (mpq_cmp(tmp1, ez.rational) != 0){
+         NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
+         NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
+      }
+      mpq_clears(xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, NULL);
    }
    
-}*/
+}
 
 void sineOrder3_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
@@ -80,12 +76,9 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
                [cp floatSplitD:i call:s withVars:x];
             }];
          NSLog(@"%@",cp);
-         //NSLog(@"%@ (%s)",[p concretize:x],[p bound:x] ? "YES" : "NO");
-         /* format of 8.8e to have the same value displayed as in FLUCTUAT */
-         /* Use printRational(ORRational r) to print a rational inside the solver */
          NSLog(@"x : [%f;%f]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
          NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
-         //if (search) check_it_turbine3_d(getDmin(u), getDmin(v), getDmin(t), getDmin(t1), getDmin(z), getDminErr(z));
+         if (search) check_it_sineOrder3_d(getDmin(x), getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }

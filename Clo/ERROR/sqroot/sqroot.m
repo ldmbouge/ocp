@@ -20,38 +20,47 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_sqroot_d(double u, double v, double t, double t1, double z, ORRational ez) {
-   double ct1 = 331.4 + (0.6 * t);
-   double cz = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
-   
-   if (ct1 != t1)
-      printf("WRONG: t1 = % 24.24e while ct1 = % 24.24e\n", t1, ct1);
+void check_it_sqroot_d(double x, double z, ORRational* ez) {
+   double cz = ((((1.0 + (0.5 * x)) - ((0.125 * x) * x)) + (((0.0625 * x) * x) * x)) - ((((0.0390625 * x) * x) * x) * x));
    
    if (cz != z)
       printf("WRONG: z  = % 24.24e while cz  = % 24.24e\n", z, cz);
    
    {
-      mpq_t uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2;
+      mpq_t xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16, tmp17, tmp18, tmp19;
       
-      mpq_inits(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
-      mpq_set_d(uq, u);
-      mpq_set_d(vq, v);
-      mpq_set_d(tq, t);
-      mpq_set_d(tmp0, 0.6);
-      mpq_mul(tmp1, tq, tmp0);
-      mpq_set_d(tmp0, 331.4);
-      mpq_add(t1q, tmp0, tmp1);
-      mpq_set_d(tmp0, -1.0);
-      mpq_mul(tmp1, tmp0, t1q);
-      mpq_mul(tmp0, tmp1, vq);
-      mpq_add(zq, t1q, uq);
-      mpq_mul(tmp1, zq, zq);
-      mpq_div(zq, tmp0, tmp1);
+      mpq_inits(xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16, tmp17, tmp18, tmp19, NULL);
+      
+      mpq_set_d(xq, x);
+      
+      mpq_set_d(tmp1, 1.0);
+      mpq_set_d(tmp2, 0.5);
+      mpq_mul(tmp3, tmp2, xq);
+      mpq_add(tmp4, tmp1, tmp3);
+      mpq_set_d(tmp5, 0.125);
+      mpq_mul(tmp6, tmp5, xq);
+      mpq_mul(tmp7, tmp6, xq);
+      mpq_sub(tmp8, tmp4, tmp7);
+      mpq_set_d(tmp9, 0.0625);
+      mpq_mul(tmp10, tmp9, xq);
+      mpq_mul(tmp11, tmp10, xq);
+      mpq_mul(tmp12, tmp11, xq);
+      mpq_add(tmp13, tmp8, tmp12);
+      mpq_set_d(tmp14, 0.0390625);
+      mpq_mul(tmp15, tmp14, xq);
+      mpq_mul(tmp16, tmp15, xq);
+      mpq_mul(tmp17, tmp16, xq);
+      mpq_mul(tmp18, tmp17, xq);
+      mpq_sub(tmp19, tmp13, tmp18);
+      mpq_set(zq, tmp19);
+      
       mpq_set_d(tmp0, z);
       mpq_sub(tmp1, zq, tmp0);
-      if (mpq_cmp(tmp1, ez) != 0)
-         printf("WRONG: ez = % 24.24e while cze = % 24.24e\n", mpq_get_d(ez), mpq_get_d(tmp0));
-      mpq_clears(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
+      if (mpq_cmp(tmp1, ez.rational) != 0){
+         NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
+         NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
+      }
+      mpq_clears(xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16, tmp17, tmp18, tmp19, NULL);
    }
    
 }
@@ -59,10 +68,10 @@ void check_it_sqroot_d(double u, double v, double t, double t1, double z, ORRati
 void sqroot_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORDoubleRange> r0 = [ORFactory doubleRange:mdl low:0.0 up:1.0];
-      id<ORDoubleVar> x = [ORFactory doubleVar:mdl domain:r0];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
-
+      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.0 up:1.0 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
       //((((1.0 + (0.5 * x)) - ((0.125 * x) * x)) + (((0.0625 * x) * x) * x)) - ((((0.0390625 * x) * x) * x) * x));
       [mdl add:[z set: [[[[@(1.0) plus: [@(0.5) mul: x]] sub: [[@(0.125) mul: x] mul: x]] plus: [[[@(0.0625) mul: x] mul: x] mul: x]] sub: [[[[@(0.0390625) mul: x] mul: x] mul: x] mul: x]]]];
       
@@ -71,28 +80,22 @@ void sqroot_d(int search, int argc, const char * argv[]) {
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
-      [cp setMaxErrorDD:x maxErrorF:0.0];
-      [cp setMinErrorDD:x minErrorF:0.0];
-      [cp setMinErrorDD:z minErrorF:nextafter(0.0f, +INFINITY)];
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                [cp floatSplitD:i call:s withVars:x];
             }];
          NSLog(@"%@",cp);
-         //NSLog(@"%@ (%s)",[p concretize:x],[p bound:x] ? "YES" : "NO");
-         /* format of 8.8e to have the same value displayed as in FLUCTUAT */
-         /* Use printRational(ORRational r) to print a rational inside the solver */
-         printDvar("x", x);
-         printDvar("z", z);
-         //if (search) check_it_turbine3_d(getDmin(u), getDmin(v), getDmin(t), getDmin(t1), getDmin(z), getDminErr(z));
+         NSLog(@"x : [%f;%f]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_sqroot_d(getDmin(x), getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"s"){
-   sqroot_d(1, argc, argv);
+      sqroot_d(1, argc, argv);
    }
    return 0;
 }

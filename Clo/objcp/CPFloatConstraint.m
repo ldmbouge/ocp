@@ -1051,7 +1051,7 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
 
         // ============================== eo
         // ez - (ex - ey)
-       eoTemp = [[ez sub: ex] sub: ey];
+       eoTemp = [ez sub: [ex sub: ey]];
 
        eo = [eo proj_inter: eoTemp];
        changed |= eo.changed;
@@ -1240,7 +1240,7 @@ ORRationalInterval* compute_eo_div(ORRationalInterval* eo, const float_interval 
 
         // ============================== eo
         // ez - (x*ey + y*ex + ex*ey)
-       eoTemp = [[[ez sub: [xr mul: ey]] add: [yr mul: ex]] add: [ex mul: ey]];
+       eoTemp = [ez sub: [[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]]];
 
        eo = [eo proj_inter: eoTemp];
        changed |= eo.changed;

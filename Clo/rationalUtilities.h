@@ -180,6 +180,7 @@ typedef mpq_ptr rational_ptr;
 -(id<ORRationalInterval>)intersection:(id<ORRationalInterval>)ri;
 -(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri;
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup;
+-(id<ORRationalInterval>)proj_inter_op:(id<ORRationalInterval>)ri;
 @end
 
 static inline ORRational* minQ(ORRational* a,ORRational* b) { return [a lt: b] ? a : b;}
