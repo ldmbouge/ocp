@@ -2793,7 +2793,7 @@
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
-   SEL s = @selector(maxAbsDensSearch:default:);
+   SEL s = @selector(maxAbsDensSearchI:default:);
    __block ORInt switchneeded = false;
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
