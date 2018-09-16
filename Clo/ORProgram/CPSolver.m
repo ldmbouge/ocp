@@ -2823,9 +2823,7 @@
          if(!switchneeded){
                            switchneeded = true;
                            [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-//                              [self float6WaySplit:i call:s withVars:x];
-                              
-                              [self floatSplit:i call:s withVars:x];
+                              [self float6WaySplit:i call:s withVars:x];
                            }];
                         }else{
          if (!i.found){
@@ -2839,8 +2837,7 @@
          }
          disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-//          [self float6WaySplit:i.index call:s withVars:x];
-         [self floatSplit:i.index call:s withVars:x];
+          [self float6WaySplit:i.index call:s withVars:x];
          switchneeded = false;
       }
       } while (true);
