@@ -2686,46 +2686,46 @@
     } do:b limit:2 restricted:x];
 }
 
-//-(void) maxAbsDensSearch:  (id<ORDisabledFloatVarArray>) ovars default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
-//{
-//   //[hzi] collect variables leading to an abs. introduced by flattening, construct new a and call maxabsI
-//   id<ORFloatVarArray> vars = [_model floatVars];
-//   NSMutableArray<ORFloatVar> *keeped = [[NSMutableArray<ORFloatVar> alloc] init];
-//   NSSet* cstr = nil;
-//   id<CPFloatVar> cx = nil;
-//   id<CPFloatVar> v = nil;
-//   ORDouble absV = 0.0;
-//   for(id<ORFloatVar> x in vars){
-//      if([ovars contains:x]){
-//         [keeped addObject:x];
-//      }else{
-//         cx = _gamma[[x getId]];
-//         cstr = [cx constraints];
-//         for(id<CPConstraint> c in cstr){
-//            if([c canLeadToAnAbsorption]){
-//               v = [c varSubjectToAbsorption:cx];
-//               if(v == nil) continue;
-//               absV = [self computeAbsorptionQuantity:v by:x];
-//               assert(absV >= 0.0f && absV <= 1.f);
-//               if(absV){
-//                  [keeped addObject:x];
-//               }
-//            }
-//         }
-//         [cstr release];
-//      }
-//   }
-//   id<ORFloatVarArray> ckeeped = [ORFactory floatVarArray:self range:RANGE(self, 0, (ORInt)[keeped count]-1)];
-//   ORInt i = 0;
-//   for(id<ORFloatVar> x in keeped){
-//      ckeeped[i++] = x;
-//   }
-//   [keeped release];
-//   id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine];
-//   [self maxAbsDensSearchI:newX default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-//      b(i,s,x);
-//   }];
-//}
+-(void) maxAbsDensSearch:  (id<ORDisabledFloatVarArray>) ovars default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   //[hzi] collect variables leading to an abs. introduced by flattening, construct new a and call maxabsI
+   id<ORFloatVarArray> vars = [_model floatVars];
+   NSMutableArray<ORFloatVar> *keeped = [[NSMutableArray<ORFloatVar> alloc] init];
+   NSSet* cstr = nil;
+   id<CPFloatVar> cx = nil;
+   id<CPFloatVar> v = nil;
+   ORDouble absV = 0.0;
+   for(id<ORFloatVar> x in vars){
+      if([ovars contains:x]){
+         [keeped addObject:x];
+      }else{
+         cx = _gamma[[x getId]];
+         cstr = [cx constraints];
+         for(id<CPConstraint> c in cstr){
+            if([c canLeadToAnAbsorption]){
+               v = [c varSubjectToAbsorption:cx];
+               if(v == nil) continue;
+               absV = [self computeAbsorptionQuantity:v by:x];
+               assert(absV >= 0.0f && absV <= 1.f);
+               if(absV){
+                  [keeped addObject:x];
+               }
+            }
+         }
+         [cstr release];
+      }
+   }
+   id<ORFloatVarArray> ckeeped = [ORFactory floatVarArray:self range:RANGE(self, 0, (ORInt)[keeped count]-1)];
+   ORInt i = 0;
+   for(id<ORFloatVar> x in keeped){
+      ckeeped[i++] = x;
+   }
+   [keeped release];
+   id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine];
+   [self maxAbsDensSearchI:newX default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+      b(i,s,x);
+   }];
+}
 
 //hzi version splitAbs
 //-(void) maxAbsDensSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
@@ -2789,12 +2789,12 @@
 
 
 
--(void) maxAbsDensSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+-(void) maxAbsDensSearchI: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
-   SEL s = @selector(maxAbsDensSearch:default:);
-   __block ORInt switchneeded = false;
+   SEL s = @selector(maxAbsDensSearchI:default:);
+//   __block ORInt switchneeded = false;
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
@@ -2812,7 +2812,7 @@
                                  orderedBy: ^ORDouble(ORInt i) {
                                     LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     ORDouble res = [self computeAbsorptionRate:x[i]];
-                                     switchneeded = switchneeded || (res == 0.f);
+//                                     switchneeded = switchneeded || (res == 0.f);
                                     return res;
                                  }];
 
@@ -2820,12 +2820,12 @@
       do {
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
-         if(!switchneeded){
-                           switchneeded = true;
-                           [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                              [self float6WaySplit:i call:s withVars:x];
-                           }];
-                        }else{
+//         if(!switchneeded){
+//                           switchneeded = true;
+//                           [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+//                              [self float6WaySplit:i call:s withVars:x];
+//                           }];
+//                        }else{
          if (!i.found){
             if(!disabled.found)
                break;
@@ -2837,9 +2837,10 @@
          }
          disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-          [self float6WaySplit:i.index call:s withVars:x];
-         switchneeded = false;
-      }
+//         [self float6WaySplit:i.index call:s withVars:x];
+         [self floatSplit:i.index call:s withVars:x];
+//         switchneeded = false;
+//      }
       } while (true);
    }];
 }
