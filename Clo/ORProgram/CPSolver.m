@@ -2824,8 +2824,8 @@
          if(!switchneeded){
                            switchneeded = true;
                            [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-//                              [self floatSplit:i call:s withVars:x];
-                              [self float6WaySplit:i call:s withVars:x];
+                              [self floatSplit:i call:s withVars:x];
+//                              [self float6WaySplit:i call:s withVars:x];
                            }];
                         }else{
          if (!i.found){
