@@ -2795,7 +2795,7 @@
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    SEL s = @selector(maxAbsDensSearchI:default:);
-   __block ORInt switchneeded = false;
+   __block ORInt switchneeded = true;
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
@@ -2813,7 +2813,7 @@
                                  orderedBy: ^ORDouble(ORInt i) {
                                     LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     ORDouble res = [self computeAbsorptionRate:x[i]];
-                                     switchneeded = switchneeded || (res == 0.f);
+                                     switchneeded = switchneeded && !(res > 0.f);
                                     return res;
                                  }];
 
@@ -2821,13 +2821,12 @@
       do {
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
-         if(!switchneeded){
-                           switchneeded = true;
-                           [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                              [self floatSplit:i call:s withVars:x];
+         if(switchneeded){
+             [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                [self floatSplit:i call:s withVars:x];
 //                              [self float6WaySplit:i call:s withVars:x];
-                           }];
-                        }else{
+               }];
+            }else{
          if (!i.found){
             if(!disabled.found)
                break;
