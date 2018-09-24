@@ -41,7 +41,7 @@
    }
    return NULL;
 }
--(ORRational*)rationalValue
+-(id<ORRational>)rationalValue
 {
    return [[ORRational alloc] init];
 }
@@ -677,12 +677,12 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "fmax not defined on expression"];
     return 0;
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "qmin not defined on expression"];
    return [[ORRational alloc] init];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "qmax not defined on expression"];
    return [[ORRational alloc] init];
@@ -707,7 +707,7 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
     return 0;
 }
--(ORRational*) rationalValue
+-(id<ORRational>) rationalValue
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "rationalValue not defined on expression"];
    return [[ORRational alloc] init];
@@ -967,14 +967,13 @@
 }
 -(id<ORExpr>) error
 {
-   return [ORFactory errorVar:[self tracker] of:self name:[self prettyname]];
+   return [ORFactory errorVar:[self tracker] of:self];
 }
 -(id<ORExpr>) channel
 {
    id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] name:[self prettyname]];
    id<ORConstraint> c = [ORFactory channel:self with:r];
    [[self tracker] add:c];
-   //[[self tracker] trackObject:c];
    return r;
 }
 -(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t
@@ -1554,20 +1553,20 @@
 {
    return [_index tracker];
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
-   ORRational* minOf = [ORRational rationalWith_d:+INFINITY];
-   ORRational* array_k = [[ORRational alloc] init];
+   id<ORRational> minOf = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> array_k = [[ORRational alloc] init];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
       minOf = [minOf lt: array_k] ? minOf : array_k;
    }
    return minOf;
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
-   ORRational* maxOf = [ORRational rationalWith_d:-INFINITY];
-   ORRational* array_k = [[ORRational alloc] init];
+   id<ORRational> maxOf = [ORRational rationalWith_d:-INFINITY];
+   id<ORRational> array_k = [[ORRational alloc] init];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
       maxOf = [maxOf gt: array_k] ? maxOf : array_k;
@@ -1721,11 +1720,11 @@
 {
    return maxFlt([_left fmax] ,[_right fmax]);
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return minQ([_left qmin],[_right qmin]);
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return maxQ([_left qmax] ,[_right qmax]);
 }
@@ -1792,12 +1791,12 @@
 {
     return [_left fmax] + [_right fmax];
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
 
    return [[_left qmin] add: [_right qmin]];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return  [[_left qmax] add: [_right qmax]];
 }
@@ -1870,11 +1869,11 @@
 {
      return [_left fmax] - [_right fmin];
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return [[_left qmin] sub: [_right qmin]];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return  [[_left qmax] sub: [_right qmax]];
 }
@@ -1941,11 +1940,11 @@
     ORDouble m2 = maxDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
     return maxDbl(m1,m2);
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return minQ(minQ([[_left qmin] mul: [_right qmin]],[[_left qmin] mul: [_right qmax]]),minQ([[_left qmax] mul: [_right qmin]],[[_left qmax] mul: [_right qmax]]));
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return maxQ(maxQ([[_left qmin] mul: [_right qmin]],[[_left qmin] mul: [_right qmax]]),maxQ([[_left qmax] mul: [_right qmin]],[[_left qmax] mul: [_right qmax]]));
 }
@@ -2017,11 +2016,11 @@
     ORDouble m2 = maxDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
     return maxDbl(m1,m2);
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return minQ(minQ([[_left qmin] div: [_right qmin]],[[_left qmin] div: [_right qmax]]),minQ([[_left qmax] div: [_right qmin]],[[_left qmax] div: [_right qmax]]));
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return maxQ(maxQ([[_left qmin] div: [_right qmin]],[[_left qmin] div: [_right qmax]]),maxQ([[_left qmax] div: [_right qmin]],[[_left qmax] div: [_right qmax]]));
 }

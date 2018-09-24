@@ -55,15 +55,15 @@
 
 @protocol CPDoubleVarExtendedItf <CPDoubleVarSubscriber>
 -(void) updateMin: (ORDouble) newMin;
--(void) updateMinError: (ORRational*) newMinError;
+-(void) updateMinError: (id<ORRational>) newMinError;
 -(void) updateMinErrorF: (ORDouble) newMinError;
 -(void) updateMax: (ORDouble) newMax;
--(void) updateMaxError: (ORRational*) newMaxError;
+-(void) updateMaxError: (id<ORRational>) newMaxError;
 -(void) updateMaxErrorF: (ORDouble) newMaxError;
 -(void) updateInterval: (ORDouble) newMin and: (ORDouble)newMax;
--(void) updateIntervalError: (ORRational*) newMinError and: (ORRational*) newMaxError;
+-(void) updateIntervalError: (id<ORRational>) newMinError and: (id<ORRational>) newMaxError;
 -(void) bind: (ORDouble) val;
--(void) bindError: (ORRational*) valError;
+-(void) bindError: (id<ORRational>) valError;
 @end
 
 typedef struct  {
@@ -90,20 +90,20 @@ typedef struct  {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORDouble                 _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-    ORRational*               _valueError;
+    id<ORRational>               _valueError;
     id<CPDoubleDom>          _dom;
     id<CPRationalDom>        _domError;
     CPDoubleEventNetwork     _net;
     CPMultiCast*             _recv;
 }
--(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLow:(ORRational*)elow errUp:(ORRational*) eup;
--(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup;
+-(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup;
+-(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup;
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 -(ORDouble) doubleValue;
--(ORRational*) errorValue;
+-(id<ORRational>) errorValue;
 -(ORLDouble) domwidth;
 -(id<CPDom>) domain;
 -(TRRationalInterval) domainError;
@@ -143,7 +143,7 @@ static inline bool isDisjointWithDV(double xmin,double xmax,double ymin, double 
 {
    return (xmax < ymin) || (ymax < xmin);
 }
-static inline bool isDisjointWithDVR(ORRational* xmin, ORRational* xmax, ORRational* ymin, ORRational* ymax)
+static inline bool isDisjointWithDVR(id<ORRational> xmin, id<ORRational> xmax, id<ORRational> ymin, id<ORRational> ymax)
 {
    return ([xmax lt: ymin]) || ([ymax lt: xmin]);
 }

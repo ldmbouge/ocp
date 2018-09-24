@@ -1883,7 +1883,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 +(void)rationalVar:(id<ORRationalVar>)var equal:(ORRationalLinear*)e for:(id<ORAddToModel>) model
 {
    if (e.size == 0) {
-      ORRational* z = [ORRational rationalWith_d:0.0];
+      id<ORRational> z = [ORRational rationalWith_d:0.0];
       [model addConstraint:[ORFactory rationalEqualc:model var:var eqc:z]];
       [z release];
    } else if (e.size == 1) {
@@ -2340,7 +2340,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
-      ORRational* c = [[ORRational alloc] init];
+      id<ORRational> c = [[ORRational alloc] init];
       if(lc){
          c = [left qmin];
       } else {
@@ -2381,8 +2381,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       id<ORVarArray> vars = [ORFactory rationalVarArray:_model range:RANGE(_model,0,length - 1)];
       id<ORRationalArray> coefs = [ORFactory rationalArray:_model
                                                range:RANGE(_model,0,length - 1)
-                                                with:^ORRational*(ORInt i) {
-                                                      ORRational* coef = [ORRational rationalWith_d:1];
+                                                with:^id<ORRational>(ORInt i) {
+                                                      id<ORRational> coef = [ORRational rationalWith_d:1];
                                                       [_model trackMutable:coef];
                                                    return coef;
                                                 }];
@@ -2399,7 +2399,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       }else{
          id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
          ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
-         ORRational* zero = [ORRational rationalWith_d:0];
+         id<ORRational> zero = [ORRational rationalWith_d:0];
          vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
          vars[1] = [ORNormalizer rationalVarIn:linRight for:_model];
 
@@ -2424,8 +2424,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
       id<ORRationalArray> coefs = [ORFactory rationalArray:_model
                                                   range:RANGE(_model,0,length - 1)
-                                                   with:^ORRational*(ORInt i) {
-                                                      ORRational* coef = [ORRational rationalWith_d:1];
+                                                   with:^id<ORRational>(ORInt i) {
+                                                      id<ORRational> coef = [ORRational rationalWith_d:1];
                                                       [_model trackMutable:coef];
                                                       return coef;
                                                 }];
@@ -2442,7 +2442,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       }else{
          id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
          ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
-         ORRational* zero = [ORRational rationalWith_d:0];
+         id<ORRational> zero = [ORRational rationalWith_d:0];
          vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
          vars[1] = [ORNormalizer rationalVarIn:linRight for:_model];
          [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:zero]];

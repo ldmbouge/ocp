@@ -18,7 +18,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_d(double p, double a, double b, double t, double n, double k, double v, double r, ORRational* er) {
+void check_it_d(double p, double a, double b, double t, double n, double k, double v, double r, id<ORRational> er) {
     double cr = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
     mpq_t pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1;
     
@@ -53,7 +53,7 @@ void check_it_d(double p, double a, double b, double t, double n, double k, doub
 void carbonGas_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        ORRational* zero = [ORRational rationalWith_d:0.0];
+        id<ORRational> zero = [ORRational rationalWith_d:0.0];
         id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
         id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
         id<ORDoubleVar> b = [ORFactory doubleVar:mdl name:@"b"];
@@ -135,7 +135,7 @@ void check_it_f(float p, float a, float b, float t, float n, float k, float v, f
 void carbonGas_f(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        ORRational* zero = [ORRational rationalWith_d:0.0];
+        id<ORRational> zero = [ORRational rationalWith_d:0.0];
         id<ORFloatVar> p = [ORFactory floatVar:mdl name:@"p"];
         id<ORFloatVar> a = [ORFactory floatVar:mdl name:@"a"];
         id<ORFloatVar> b = [ORFactory floatVar:mdl name:@"b"];

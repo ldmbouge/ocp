@@ -19,7 +19,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_d(double u, double v, double t, double t1, double z, ORRational* ez) {
+void check_it_d(double u, double v, double t, double t1, double z, id<ORRational> ez) {
     double ct1 = 331.4 + (0.6 * t);
     double cz = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
     
@@ -60,7 +60,7 @@ void check_it_d(double u, double v, double t, double t1, double z, ORRational* e
 void doppler1_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        ORRational* zero = [ORRational rationalWith_d:0.0];
+        id<ORRational> zero = [ORRational rationalWith_d:0.0];
         id<ORDoubleVar> u = [ORFactory doubleVar:mdl low:-100.0 up:100.0 elow:zero eup:zero name:@"u"];
         id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:20.0 up:20000.0 elow:zero eup:zero name:@"v"];
         id<ORDoubleVar> t = [ORFactory doubleVar:mdl low:-30.0 up:50.0 elow:zero eup:zero name:@"t"];
@@ -93,7 +93,7 @@ void doppler1_d(int search, int argc, const char * argv[]) {
     }
 }
 
-void check_it_f(float u, float v, float t, float t1, float z, ORRational* ez) {
+void check_it_f(float u, float v, float t, float t1, float z, id<ORRational> ez) {
     float ct1 = 331.4f + (0.6f * t);
     float cz = ((-1.0f * t1) * v) / ((t1 + u) * (t1 + u));
     
@@ -134,7 +134,7 @@ void check_it_f(float u, float v, float t, float t1, float z, ORRational* ez) {
 void doppler1_f(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        ORRational* zero = [ORRational rationalWith_d:0.0f];
+        id<ORRational> zero = [ORRational rationalWith_d:0.0f];
         id<ORFloatVar> u = [ORFactory floatVar:mdl low:-100.0f up:100.0f elow:zero eup:zero name:@"u"];
         id<ORFloatVar> v = [ORFactory floatVar:mdl low:20.0f up:20000.0f elow:zero eup:zero name:@"v"];
         id<ORFloatVar> t = [ORFactory floatVar:mdl low:-30.0f up:50.0f elow:zero eup:zero name:@"t"];

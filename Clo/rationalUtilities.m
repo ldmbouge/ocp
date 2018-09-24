@@ -145,12 +145,12 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    //[buf appendFormat:@"%s",[self get_str]];
    /* DEBUG only */
-   [buf appendFormat:@"%s [%d]",[self get_str], _type];
+   [buf appendFormat:@"%20.20e",[self get_d]];
    return buf;
 }
--(id)set:(ORRational*)r
+-(id)set:(id<ORRational>)r
 {
-   mpq_set(_rational, r->_rational);
+   mpq_set(_rational, r.rational);
    _type = r.type;
    return self;
 }
@@ -183,15 +183,15 @@
    s->intVal = _type;
    ++trail->_seg[trail->_cSeg]->top;
 }
-+(ORRational*)rationalWith:(id<ORRational>)r
++(id<ORRational>)rationalWith:(id<ORRational>)r
 {
-   ORRational* result = [[ORRational alloc] init];
+   id<ORRational> result = [[ORRational alloc] init];
    [result set:r];
    return result;
 }
-+(ORRational*)rationalWith_d:(double)d
++(id<ORRational>)rationalWith_d:(double)d
 {
-   ORRational* result = [[ORRational alloc] init];
+   id<ORRational> result = [[ORRational alloc] init];
    [result set_d:d];
    return result;
 }
@@ -262,9 +262,9 @@
          break;
    }
 }
--(id<ORRational>)add:(ORRational*)r
+-(id<ORRational>)add:(id<ORRational>)r
 {
-   ORRational* z = [[ORRational alloc] init: _mt];
+   id<ORRational> z = [[ORRational alloc] init: _mt];
    /* x = NaN || y = NaN */
    if(_type == 3 || r.type == 3){
       /* z = NaN */
@@ -288,13 +288,13 @@
    /* x = Q && y = Q */
    else {
       mpq_add(z.rational, _rational, r.rational);
-      z->_type = mpq_sgn(z.rational);
+      z.type = mpq_sgn(z.rational);
    }
    return z;
 }
--(id<ORRational>)sub:(ORRational*)r
+-(id<ORRational>)sub:(id<ORRational>)r
 {
-   ORRational* z = [[ORRational alloc] init: _mt];
+   id<ORRational> z = [[ORRational alloc] init: _mt];
    /* x = NaN || y = NaN */
    if(_type == 3 || r.type == 3){
       /* z = NaN */
@@ -317,14 +317,14 @@
    }
    /* x = Q && y = Q */
    else {
-      mpq_sub(z->_rational, _rational, r->_rational);
-      z->_type = mpq_sgn(z->_rational);
+      mpq_sub(z.rational, _rational, r.rational);
+      z.type = mpq_sgn(z.rational);
    }
    return z;
 }
--(id<ORRational>)mul:(ORRational*)r
+-(id<ORRational>)mul:(id<ORRational>)r
 {
-   ORRational* z = [[ORRational alloc] init: _mt];
+   id<ORRational> z = [[ORRational alloc] init: _mt];
    /* x = NaN || y = NaN */
    if(_type == 3 || r.type == 3){
       /* z = NaN */
@@ -368,14 +368,14 @@
    }
    /* x = Q && y = Q */
    else {
-      mpq_mul(z->_rational, _rational, r->_rational);
-      z->_type = mpq_sgn(z->_rational);
+      mpq_mul(z.rational, _rational, r.rational);
+      z.type = mpq_sgn(z.rational);
    }
    return z;
 }
--(id<ORRational>)div:(ORRational*)r
+-(id<ORRational>)div:(id<ORRational>)r
 {
-   ORRational* z = [[ORRational alloc] init: _mt];
+   id<ORRational> z = [[ORRational alloc] init: _mt];
    /* x = NaN || y = NaN */
    if(_type == 3 || r.type == 3){
       /* z = NaN */
@@ -419,15 +419,15 @@
    }
    /* x = Q && y = Q */
    else {
-      mpq_div(z->_rational, _rational, r.rational);
-      z->_type = mpq_sgn(z->_rational);
+      mpq_div(z.rational, _rational, r.rational);
+      z.type = mpq_sgn(z.rational);
    }
    return z;
 }
 -(id<ORRational>)neg
 {
    /* z = -x */
-   ORRational* z = [[ORRational alloc] init: _mt];
+   id<ORRational> z = [[ORRational alloc] init: _mt];
    switch (_type) {
       case -2:
          [z setPosInf];
@@ -439,7 +439,7 @@
          [z setNAN];
          break;
       default:
-         mpq_neg(z->_rational, _rational);
+         mpq_neg(z.rational, self.rational);
          z.type = - _type;
          break;
    }
@@ -447,7 +447,7 @@
 }
 -(id<ORRational>)abs
 {
-   ORRational* z = [[ORRational alloc] init: _mt];
+   id<ORRational> z = [[ORRational alloc] init: _mt];
    if(_type == 3){
       [z setNAN];
    } else if(_type == -2){
@@ -455,8 +455,8 @@
    } else if(_type == 2){
       [z setNegInf];
    } else {
-      mpq_abs(z->_rational, _rational);
-      z->_type = mpq_sgn(_rational);
+      mpq_abs(z.rational, self.rational);
+      z.type = mpq_sgn(self.rational);
    }
    return z;
 }
@@ -651,23 +651,23 @@
    [_low setNegInf];
    [_up setNegInf];
 }
--(ORRationalInterval*)add:(ORRationalInterval*)ri
+-(id<ORRationalInterval>)add:(id<ORRationalInterval>)ri
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_low add: ri.low];
    z.up = [_up add: ri.up];
    return z;
 }
--(ORRationalInterval*)sub:(ORRationalInterval*)ri
+-(id<ORRationalInterval>)sub:(id<ORRationalInterval>)ri
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_low sub: ri.up];
    z.up = [_up sub: ri.low];
    return z;
 }
--(ORRationalInterval*)mul:(ORRationalInterval*)ri
+-(id<ORRationalInterval>)mul:(id<ORRationalInterval>)ri
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    if(_low.type >= 0 ) {                            /* A >= 0 */
       if (ri.low.type >= 0) {                          /* B >= 0 */
          z.low = [_low mul: ri.low];
@@ -706,7 +706,7 @@
          z.up = [_low mul: ri.low];
       }
       else {                                              /* 0 in B */
-         ORRationalInterval* tmp = [[ORRationalInterval alloc] init: _low.mt];
+         id<ORRationalInterval> tmp = [[ORRationalInterval alloc] init: _low.mt];
          tmp.low = [_low mul: ri.up];
          tmp.up = [_up mul: ri.low];
          
@@ -728,9 +728,9 @@
    }
    return z;
 }
--(ORRationalInterval*)div:(ORRationalInterval*)ri
+-(id<ORRationalInterval>)div:(id<ORRationalInterval>)ri
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    /* 0 in B */
    if(ri.low.type == 0 || ri.up.type == 0 || (ri.up.type != ri.low.type)){
       if (_low.type > 0) {                            /* A > 0 */
@@ -777,22 +777,6 @@
             z.low = [_up div: ri.up];
             z.up = [_low div: ri.low];
          }
-         //      else {                                                /* 0 in B */
-         //         /* ADD 3 new cases for 0 in B */
-         //         if (ri.up.type == 0 && ri.low.type == 0) {
-         //            [z.low setNegInf];
-         //            [z.up setPosInf];
-         //         } else if (ri.low.type == 0) {
-         //            z.low = [_low div: ri.up];
-         //            [z.up setPosInf];
-         //         } else if (ri.up.type == 0){
-         //            [z.low setNegInf];
-         //            z.up = [_low div: ri.low];
-         //         } else {
-         //            [z.low setNegInf];
-         //            [z.up setPosInf];
-         //         }
-         //      }
       }
       else if (_up.type <= 0) {                            /* A <= 0 */
          if (ri.low.type > 0) {     /* B >  0 */
@@ -803,22 +787,6 @@
             z.low = [_up div: ri.low];
             z.up = [_low div: ri.up];
          }
-         //      else {                                               /* 0 in B */
-         //         /* ADD 3 new cases for 0 in B */
-         //         if (ri.up.type == 0 && ri.low.type == 0) {
-         //            [z.low setNegInf];
-         //            [z.up setPosInf];
-         //         } else if (ri.low.type == 0) {
-         //            [z.low setNegInf];
-         //            z.up = [_up div: ri.up];
-         //         } else if (ri.up.type == 0){
-         //            z.low = [_up div: ri.low];
-         //            [z.up setPosInf];
-         //         } else {
-         //            [z.low setNegInf];
-         //            [z.up setPosInf];
-         //         }
-         //      }
       }
       else {                                                /* 0 in A */
          if (ri.low.type > 0) {     /* B >  0 */
@@ -829,25 +797,21 @@
             z.low = [_up div: ri.up];
             z.up = [_low div: ri.up];
          }
-         //      else {                                              /* 0 in B */
-         //         [z.low setNegInf];
-         //         [z.up setPosInf];
-         //      }
       }
    }
    return z;
 }
--(ORRationalInterval*)neg
+-(id<ORRationalInterval>)neg
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_up neg];
    z.up = [_low neg];
    
    return z;
 }
--(ORRationalInterval*)abs
+-(id<ORRationalInterval>)abs
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_low abs];
    z.up = [_up abs];
    
@@ -891,9 +855,9 @@
 {
    return [_low gt: _up];
 }
--(ORRationalInterval*)union:(ORRationalInterval*)ri
+-(id<ORRationalInterval>)union:(id<ORRationalInterval>)ri
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    if([self empty] || [ri empty]){
       [z setNAN];
    } else {
@@ -923,9 +887,9 @@
    }
    return z;
 }
--(ORRationalInterval*)intersection:(ORRationalInterval*)ri
+-(id<ORRationalInterval>)intersection:(id<ORRationalInterval>)ri
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init: _low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    if([self empty] || [ri empty]){
       [z setNAN];
    } else {
@@ -955,26 +919,15 @@
    }
    return z;
 }
--(ORRationalInterval*)proj_inter:(ORRationalInterval*)ri
+-(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init:_low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init:_low.mt];
    [z set: self];
    z.changed = 0;
    
-   /* check if DISJOINT */
-   if([self.up lt: ri.low] || [ri.up lt: self.low]){
-      [z setNAN];
-      return z;
-   }
-   
-   if([self empty] || [ri empty] || [ri.low isNAN] || [ri.up isNAN]){
-      [z setNAN];
-      return z;
-   }
-   
-   ORRational* plow = [[ORRational alloc] init];
-   ORRational* pup = [[ORRational alloc] init];
-   ORRational* epsilon = [[ORRational alloc] init];
+   id<ORRational> plow = [[ORRational alloc] init];
+   id<ORRational> pup = [[ORRational alloc] init];
+   id<ORRational> epsilon = [[ORRational alloc] init];
    
    if([_low lt: ri.low]){
       [z.low set: ri.low];
@@ -986,50 +939,33 @@
       z.changed |= 2;
    }
    
-   if([z empty]){
-      [z set: self];
-      z.changed = 0;
-      return z;
-   }
-   
-   if(z.changed){
+   if(z.changed && [z.low neq: z.up]){
       int both = 0;
-      plow = [[_low sub:z.low] div:_low];
-      pup = [[_up sub:z.up] div:_up];
+      plow = [[[_low sub:z.low] div:_low] abs];
+      pup = [[[_up sub:z.up] div:_up] abs];
       [epsilon set:5 and:100];
       
-      if([plow leq: epsilon]){
+      if([plow leq: epsilon])
          both++;
+      if([pup leq: epsilon])
+         both++;
+      if(both == 2){
+         z.changed = 0;
          [z.low set: _low];
-      }
-      if([pup leq: epsilon]){
-         both++;
          [z.up set: _up];
       }
-      if(both == 2)
-         z.changed = 0;
+
    }
    [plow release];
    [pup release];
    [epsilon release];
    return z;
 }
--(ORRationalInterval*)proj_inter:(ORRational*)inf and:(ORRational*)sup
+-(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup
 {
-   ORRationalInterval* z = [[ORRationalInterval alloc] init:_low.mt];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init:_low.mt];
    [z set: self];
    z.changed = 0;
-   
-   /* check if DISJOINT */
-   if([self.up lt: inf] || [sup lt: self.low]){
-      [z setNAN];
-      return z;
-   }
-   
-   if([self empty] || [inf isNAN] || [sup isNAN]){
-      [z setNAN];
-      return z;
-   }
    
    if([_low lt: inf]){
       [z.low set: inf];
@@ -1041,97 +977,30 @@
       z.changed |= 2;
    }
    
-   if([z empty]){
-      [z set: self];
-      z.changed = 0;
-      return z;
-   }
-   
-   if(z.changed){
-      ORRational* pup = [[ORRational alloc] init];
-      ORRational* plow = [[ORRational alloc] init];
-      ORRational* epsilon = [[ORRational alloc] init];
+   if(z.changed && [z.low neq: z.up]){
+      id<ORRational> pup = [[ORRational alloc] init];
+      id<ORRational> plow = [[ORRational alloc] init];
+      id<ORRational> epsilon = [[ORRational alloc] init];
       int both = 0;
       
-      plow = [[_low sub: z.low] div: _low];
-      pup = [[_up sub: z.up] div: _up];
+      plow = [[[_low sub: z.low] div: _low] abs];
+      pup = [[[_up sub: z.up] div: _up] abs];
       [epsilon set:5 and:100];
       
-      if([plow leq: epsilon]){
+      if([plow leq: epsilon])
          both++;
+      if([pup leq: epsilon])
+         both++;
+      if(both == 2){
+         z.changed = 0;
          [z.low set: _low];
-      }
-      if([pup leq: epsilon]){
-         both++;
          [z.up set: _up];
       }
-      if(both == 2)
-         z.changed = 0;
       
       [plow release];
       [pup release];
       [epsilon release];
    }
-   return z;
-}
--(ORRationalInterval*)proj_inter_op:(ORRationalInterval*)ri
-{
-   ORRationalInterval* z = [[ORRationalInterval alloc] init:_low.mt];
-   [z set: self];
-   z.changed = 0;
-   
-   /* check if DISJOINT */
-   if([self.up lt: ri.low] || [ri.up lt: self.low]){
-      [z set:ri];
-      z.changed = 1;
-      return z;
-   }
-   
-   if([self empty] || [ri empty] || [ri.low isNAN] || [ri.up isNAN]){
-      [z setNAN];
-      return z;
-   }
-   
-   ORRational* plow = [[ORRational alloc] init];
-   ORRational* pup = [[ORRational alloc] init];
-   ORRational* epsilon = [[ORRational alloc] init];
-   
-   if([_low lt: ri.low]){
-      [z.low set: ri.low];
-      z.changed = 1;
-   }
-   
-   if([_up gt: ri.up]){
-      [z.up set: ri.up];
-      z.changed |= 2;
-   }
-   
-   if([z empty]){
-      [z set: self];
-      z.changed = 0;
-      return z;
-   }
-   
-   if(z.changed){
-      int both = 0;
-      plow = [[_low sub:z.low] div:_low];
-      pup = [[_up sub:z.up] div:_up];
-      [epsilon set:5 and:100];
-      
-      if([plow leq: epsilon]){
-         both++;
-         [z.low set: _low];
-      }
-      if([pup leq: epsilon]){
-         both++;
-         [z.up set: _up];
-      }
-      if(both == 2)
-         z.changed = 0;
-   }
-   [plow release];
-   [pup release];
-   [epsilon release];
    return z;
 }
 @end

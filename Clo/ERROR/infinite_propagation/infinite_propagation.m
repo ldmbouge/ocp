@@ -8,7 +8,7 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
-void check_it_f(float x, float y, float z, ORRational* ez) {
+void check_it_f(float x, float y, float z, id<ORRational> ez) {
    mpq_t qy, qx, tmp0, tmp1;
    float cz = x + y;
    

@@ -20,7 +20,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_turbine2_d(double v, double w, double r, double z, ORRational* ez) {
+void check_it_turbine2_d(double v, double w, double r, double z, id<ORRational> ez) {
    double cz = (((6.0 * v) - (((0.5 * v) * (((w * w) * r) * r)) / (1.0 - v))) - 2.5);
    
    if (cz != z)
@@ -65,7 +65,7 @@ void check_it_turbine2_d(double v, double w, double r, double z, ORRational* ez)
 void turbine2_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:-4.5 up:-0.3 elow:zero eup:zero name:@"v"];
       id<ORDoubleVar> w = [ORFactory doubleVar:mdl low:0.4 up:0.9 elow:zero eup:zero name:@"w"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl low:3.8 up:7.8 elow:zero eup:zero name:@"r"];

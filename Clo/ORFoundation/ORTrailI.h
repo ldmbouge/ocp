@@ -177,7 +177,7 @@ static inline TRLDouble  inline_makeTRLDouble(ORTrailI* trail,long double val)
 {
    return (TRLDouble){val,[trail magic]-1};
 }
-static inline TRRational inline_makeTRRational(ORTrailI* trail, ORRational* val)
+static inline TRRational inline_makeTRRational(ORTrailI* trail, id<ORRational> val)
 {
     return (TRRational){val, [trail magic]-1};
 }

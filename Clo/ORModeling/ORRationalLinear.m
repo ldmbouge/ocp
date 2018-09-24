@@ -17,7 +17,7 @@
    struct CPTerm* _terms;
    ORInt             _nb;
    ORInt            _max;
-   ORRational*          _indep;
+   id<ORRational>          _indep;
 }
 -(ORRationalLinear*)initORRationalLinear:(ORInt)mxs
 {
@@ -51,15 +51,15 @@
    }
    return cf;
 }
--(void)setIndependent:(ORRational*)idp
+-(void)setIndependent:(id<ORRational>)idp
 {
    [_indep set: idp];
 }
--(void)addIndependent:(ORRational*)idp
+-(void)addIndependent:(id<ORRational>)idp
 {
    _indep = [_indep add: idp];
 }
--(ORRational*)independent
+-(id<ORRational>)independent
 {
    return _indep;
 }
@@ -77,7 +77,7 @@
    id<ORRationalRange> dom = [x domain];
    if ([dom.low eq: dom.up] && [dom.up isZero]) return;
    if ([dom.low eq: dom.up]) {
-      ORRational* tmp = [ORRational rationalWith_d:c];
+      id<ORRational> tmp = [ORRational rationalWith_d:c];
       _indep = [_indep add: [dom.low mul: tmp]];
       [tmp release];
       return;
@@ -130,7 +130,7 @@
 }
 -(void)scaleBy:(ORInt)s
 {
-   ORRational* sr = [ORRational rationalWith_d:s];
+   id<ORRational> sr = [ORRational rationalWith_d:s];
    for(ORInt k=0;k<_nb;k++)
       _terms[k]._coef *= s;
    _indep = [_indep mul: sr];
@@ -191,8 +191,8 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return [ORFactory rationalArray: model
                           range: RANGE(model,0,_nb-1)
-                           with: ^ORRational*(ORInt i) {
-                              ORRational* coef = [ORRational rationalWith_d:_terms[i]._coef];
+                           with: ^id<ORRational>(ORInt i) {
+                              id<ORRational> coef = [ORRational rationalWith_d:_terms[i]._coef];
                               [model trackMutable:coef];
                               return coef; }];
 }
@@ -222,11 +222,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return _nb;
 }
--(ORRational*)qmin
+-(id<ORRational>)qmin
 {
-   ORRational* lb = [[ORRational alloc] init];
-   ORRational* cr = [[ORRational alloc] init];
-   ORRational* svlb = [[ORRational alloc] init];
+   id<ORRational> lb = [[ORRational alloc] init];
+   id<ORRational> cr = [[ORRational alloc] init];
+   id<ORRational> svlb = [[ORRational alloc] init];
    [lb set: _indep];
    for(ORInt k=0;k < _nb;k++) {
       ORInt c = _terms[k]._coef;
@@ -243,11 +243,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    [cr release];
    return lb;
 }
--(ORRational*)qmax
+-(id<ORRational>)qmax
 {
-   ORRational* ub = [[ORRational alloc] init];
-   ORRational* cr = [[ORRational alloc] init];
-   ORRational* svub = [[ORRational alloc] init];
+   id<ORRational> ub = [[ORRational alloc] init];
+   id<ORRational> cr = [[ORRational alloc] init];
+   id<ORRational> svub = [[ORRational alloc] init];
    for(ORInt k=0;k < _nb;k++) {
       ORInt c = _terms[k]._coef;
       [cr set_d: c];
@@ -338,11 +338,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return NO;
 }
--(void) setIndependent:(ORRational*)idp
+-(void) setIndependent:(id<ORRational>)idp
 {
    [_real setIndependent:[idp neg]];
 }
--(void) addIndependent:(ORRational*)idp
+-(void) addIndependent:(id<ORRational>)idp
 {
    [_real addIndependent:[idp neg]];
 }
@@ -373,15 +373,15 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return [_real coef:k];
 }
--(ORRational*)qmin
+-(id<ORRational>)qmin
 {
    return [_real qmin];
 }
--(ORRational*)qmax
+-(id<ORRational>)qmax
 {
    return [_real qmax];
 }
--(ORRational*) independent
+-(id<ORRational>) independent
 {
    return [_real independent];
 }

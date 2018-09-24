@@ -1063,7 +1063,7 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(ORRational) c
++(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPConstraint> o = [[CPRationalAssignC alloc] init:x set:c];
    [[x tracker] trackMutable:o];
@@ -1087,13 +1087,13 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(ORRational*) c
++(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPConstraint> o = [[CPRationalEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-/*+(id<CPConstraint>) rationalNEqualc: (id<CPRationalVar>) x to:(ORRational) c
++(id<CPConstraint>) rationalNEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPConstraint> o = [[CPRationalNEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
@@ -1105,12 +1105,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) rationalLTc: (id<CPRationalVar>) x to:(ORRational) c
++(id<CPConstraint>) rationalLTc: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
    return [self rationalLT:x to:cvar];
 }
-+(id<CPConstraint>) rationalGTc: (id<CPRationalVar>) x to:(ORRational) c
++(id<CPConstraint>) rationalGTc: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
    return [self rationalGT:x to:cvar];
@@ -1126,7 +1126,7 @@
    id<CPConstraint> o = [[CPRationalGT alloc] init:x gt:y];
    [[x tracker] trackMutable:o];
    return o;
-}*/
+}
 +(id<CPConstraint>) rationalLEQ: (id<CPRationalVar>) x to:(id<CPRationalVar>) y
 {
    id<CPConstraint> o = [[CPRationalLEQ alloc] init:x leq:y];
@@ -1148,7 +1148,7 @@
 {
    return [[CPRationalTernarySub alloc] init:x equals:y minus:z];
 }
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(ORRational*)c annotation:(id<ORAnnotation>) notes
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(id<ORRational>)c annotation:(id<ORAnnotation>) notes
 {
    // TODO : fix to work with arbitrary coefficient (fraction)
    if([x count] == 1 && [[coefs at:coefs.low] isZero]){
@@ -1264,7 +1264,7 @@
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalGT:res to:x[2]];
 }*/
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs leq:(ORRational*)c annotation:(id<ORAnnotation>) notes
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs leq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes
 {
    id<CPEngine> engine = [x[x.low] engine];
    id<CPRationalVar> vc = [self rationalVar:engine value:c];
@@ -1289,7 +1289,7 @@
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalLEQ:res to:x[2]];
 }
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(ORRational*)c annotation:(id<ORAnnotation>) notes
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes
 {
    id<CPEngine> engine = [x[x.low] engine];
    id<CPRationalVar> vc = [self rationalVar:engine value:c];

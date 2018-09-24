@@ -71,16 +71,16 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
--(ORRational*) elow;
--(ORRational*) eup;
+-(id<ORRational>) elow;
+-(id<ORRational>) eup;
 -(NSString*) prettyname;
 @end
 
 @protocol ORRationalVar <ORExprVar>
 -(id<ORRationalRange>) domain;
 -(ORBool) hasBounds;
--(ORRational*) low;
--(ORRational*) up;
+-(id<ORRational>) low;
+-(id<ORRational>) up;
 -(NSString*) prettyname;
 @end
 
@@ -90,8 +90,8 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
--(ORRational*) elow;
--(ORRational*) eup;
+-(id<ORRational>) elow;
+-(id<ORRational>) eup;
 -(NSString*) prettyname;
 @end
 

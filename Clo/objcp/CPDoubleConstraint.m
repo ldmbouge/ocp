@@ -24,10 +24,10 @@
 #endif
 
 
-void ulp_computation_d(ORRationalInterval* ulp, const double_interval f){
-   ORRational* tmp0 = [[ORRational alloc] init];
-   ORRational* tmp1 = [[ORRational alloc] init];
-   ORRational* tmp2 = [[ORRational alloc] init];
+void ulp_computation_d(id<ORRationalInterval> ulp, const double_interval f){
+   id<ORRational> tmp0 = [[ORRational alloc] init];
+   id<ORRational> tmp1 = [[ORRational alloc] init];
+   id<ORRational> tmp2 = [[ORRational alloc] init];
    
    if(f.inf == -INFINITY || f.sup == INFINITY){
       [tmp1 setNegInf];
@@ -59,12 +59,12 @@ void ulp_computation_d(ORRationalInterval* ulp, const double_interval f){
    [tmp2 release];
 }
 
-ORRationalInterval* compute_eo_add_d(ORRationalInterval* eo, const double_interval x, const double_interval y, const double_interval z){
+id<ORRationalInterval> compute_eo_add_d(id<ORRationalInterval> eo, const double_interval x, const double_interval y, const double_interval z){
    
    /* First, let see if Sterbenz is applicable */
    if (((0.0 <= x.inf) && (y.sup <= 0.0) && (-y.inf/2.0 <= x.inf) && (x.sup <= -2.0*y.sup)) ||
        ((x.sup <= 0.0) && (0.0 <= y.inf) && (y.sup/2.0 <= -x.sup) && (-x.inf <= 2.0*y.inf))) {
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       eo = [eo proj_inter:zero and:zero];
       [zero release];
    } else if ((((double_cast)((z.inf))).parts.exponent <= 1) && (((double_cast)((z.sup))).parts.exponent <= 1)) {
@@ -74,14 +74,14 @@ ORRationalInterval* compute_eo_add_d(ORRationalInterval* eo, const double_interv
        3.4.1a: Let u be the least positive normalized float. If abs(x + y) < 2*u then Round(x + y) = x + y
        Hauser, J. R. 1996. Handling floating-point exceptions in numeric programs. ACM Transactions on Pro-
        gramming Languages and Systems 18, 2, 139–174 */
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       eo = [eo proj_inter:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf + y.inf;
-      ORRational* tmpq = [[ORRational alloc] init];
-      ORRational* xq = [ORRational rationalWith_d:x.inf];
-      ORRational* yq = [ORRational rationalWith_d:y.inf];
+      id<ORRational> tmpq = [[ORRational alloc] init];
+      id<ORRational> xq = [ORRational rationalWith_d:x.inf];
+      id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
       tmpq = [xq add: yq];
       [yq set_d:tmpf];
@@ -93,7 +93,7 @@ ORRationalInterval* compute_eo_add_d(ORRationalInterval* eo, const double_interv
       [yq release];
       [xq release];
    } else {
-      ORRationalInterval* ulp_q = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
       ulp_computation_d(ulp_q, z);
       eo = [eo proj_inter:ulp_q];
@@ -103,12 +103,12 @@ ORRationalInterval* compute_eo_add_d(ORRationalInterval* eo, const double_interv
    return eo;
 }
 
-ORRationalInterval* compute_eo_sub_d(ORRationalInterval* eo, const double_interval x, const double_interval y, const double_interval z){
+id<ORRationalInterval> compute_eo_sub_d(id<ORRationalInterval> eo, const double_interval x, const double_interval y, const double_interval z){
    
    /* First, let see if Sterbenz is applicable (requires gradual underflow (denormalized) or that x-y does not underflow */
    if (((x.inf >= 0.0) && (y.inf >= 0.0) && (y.sup/2.0 <= x.inf) && (x.sup <= 2.0*y.inf)) ||
        ((x.sup <= 0.0) && (y.sup <= 0.0) && (y.inf/2.0 >= x.sup) && (x.inf >= 2.0*y.sup))) {
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       eo = [eo proj_inter:zero and:zero];
       [zero release];
    } else if ((((double_cast)((z.inf))).parts.exponent <= 1) && (((double_cast)((z.sup))).parts.exponent <= 1)) {
@@ -118,14 +118,14 @@ ORRationalInterval* compute_eo_sub_d(ORRationalInterval* eo, const double_interv
        3.4.1a: Let u be the least positive normalized float. If abs(x + y) < 2*u then Round(x + y) = x + y
        Hauser, J. R. 1996. Handling floating-point exceptions in numeric programs. ACM Transactions on Pro-
        gramming Languages and Systems 18, 2, 139–174 */
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       eo = [eo proj_inter:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf - y.inf;
-      ORRational* tmpq = [[ORRational alloc] init];
-      ORRational* xq = [ORRational rationalWith_d:x.inf];
-      ORRational* yq = [ORRational rationalWith_d:y.inf];
+      id<ORRational> tmpq = [[ORRational alloc] init];
+      id<ORRational> xq = [ORRational rationalWith_d:x.inf];
+      id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
       tmpq = [xq sub: yq];
       [yq set_d:tmpf];
@@ -137,7 +137,7 @@ ORRationalInterval* compute_eo_sub_d(ORRationalInterval* eo, const double_interv
       [yq release];
       [xq release];
    } else {
-      ORRationalInterval* ulp_q = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
       ulp_computation_d(ulp_q, z);
       eo = [eo proj_inter:ulp_q];
@@ -147,19 +147,19 @@ ORRationalInterval* compute_eo_sub_d(ORRationalInterval* eo, const double_interv
    return eo;
 }
 
-ORRationalInterval* compute_eo_mul_d(ORRationalInterval* eo, const double_interval x, const double_interval y, const double_interval z){
+id<ORRationalInterval> compute_eo_mul_d(id<ORRationalInterval> eo, const double_interval x, const double_interval y, const double_interval z){
    
    /* Check if its a product by a power of 2 */
    if (((x.inf == x.sup) && (((double_cast)((x.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(x.inf) <= y.inf) && (y.sup <= DBL_MAX/fabs(x.inf))) ||
        ((y.inf == y.sup) && (((double_cast)((y.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(y.inf) <= x.inf) && (x.sup <= DBL_MAX/fabs(y.inf)))) {
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       eo = [eo proj_inter:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf*y.inf;
-      ORRational* tmpq = [[ORRational alloc] init];
-      ORRational* xq = [ORRational rationalWith_d:x.inf];
-      ORRational* yq = [ORRational rationalWith_d:y.inf];
+      id<ORRational> tmpq = [[ORRational alloc] init];
+      id<ORRational> xq = [ORRational rationalWith_d:x.inf];
+      id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
       tmpq = [xq mul: yq];
       [yq set_d:tmpf];
@@ -171,7 +171,7 @@ ORRationalInterval* compute_eo_mul_d(ORRationalInterval* eo, const double_interv
       [yq release];
       [xq release];
    } else {
-      ORRationalInterval* ulp_q = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
       ulp_computation_d(ulp_q, z);
       eo = [eo proj_inter:ulp_q];
@@ -187,20 +187,20 @@ int checkDivPower2d(double x, double y) { // x/y
    return (z.parts.exponent >= 1);
 }
 
-ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interval x, const double_interval y, const double_interval z){
+id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_interval x, const double_interval y, const double_interval z){
    
    /* Check if its a division by a power of 2 */
    if ((y.inf == y.sup) && (((double_cast)(y.inf)).parts.mantissa == 0) &&
        (((-DBL_MAX <= x.inf) && (x.sup < 0.0) && checkDivPower2d(x.sup, y.inf)) || ((0.0 < x.inf) && (x.sup <= DBL_MAX) && checkDivPower2d(x.inf, y.inf)))) {
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       eo = [eo proj_inter:zero and:zero];
       [zero release];
       
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf/y.inf;
-      ORRational* tmpq = [[ORRational alloc] init];
-      ORRational* xq = [ORRational rationalWith_d:x.inf];
-      ORRational* yq = [ORRational rationalWith_d:y.inf];
+      id<ORRational> tmpq = [[ORRational alloc] init];
+      id<ORRational> xq = [ORRational rationalWith_d:x.inf];
+      id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
       tmpq = [xq div: yq];
       [yq set_d:tmpf];
@@ -212,7 +212,7 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
       [yq release];
       [xq release];
    } else {
-      ORRationalInterval* ulp_q = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
       ulp_computation_d(ulp_q, z);
       eo = [eo proj_inter:ulp_q];
@@ -343,9 +343,9 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
 {
    double_interval x, y;
    intersectionIntervalD inter;
-   ORRationalInterval* ex = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ey = [[ORRationalInterval alloc] init];
-   ORRationalInterval* interError = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> interError = [[ORRationalInterval alloc] init];
    
    x = makeDoubleInterval([_x min], [_x max]);
    y = makeDoubleInterval([_y min], [_y max]);
@@ -794,14 +794,14 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
    changed = gchanged = false;
    double_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionIntervalD inter;
-   ORRationalInterval* ex = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ey = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ez = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eo = [[ORRationalInterval alloc] init];
-   ORRationalInterval* exTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eyTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ezTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eoTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
    
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
@@ -976,14 +976,14 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
    changed = gchanged = false;
    double_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionIntervalD inter;
-   ORRationalInterval* ex = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ey = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ez = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eo = [[ORRationalInterval alloc] init];
-   ORRationalInterval* exTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eyTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ezTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eoTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
    y = makeDoubleInterval([_y min],[_y max]);
@@ -1123,9 +1123,7 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
 }
 @end
 
-@implementation CPDoubleTernaryMult {
-   //    rational_interval eo;
-}
+@implementation CPDoubleTernaryMult
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -1155,17 +1153,17 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
    changed = gchanged = false;
    double_interval zTemp, yTemp, xTemp, z, x, y;
    intersectionIntervalD inter;
-   ORRationalInterval* ex = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ey = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ez = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eo = [[ORRationalInterval alloc] init];
-   ORRationalInterval* exTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eyTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ezTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eoTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* xr = [[ORRationalInterval alloc] init];
-   ORRationalInterval* yr = [[ORRationalInterval alloc] init];
-   ORRationalInterval* zr = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xr = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> yr = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> zr = [[ORRationalInterval alloc] init];
    
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
@@ -1175,8 +1173,7 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
    [ey set_q:[_y minErr] and:[_y maxErr]];
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
-   
-   
+      
    do {
       changed = false;
       zTemp = z;
@@ -1232,7 +1229,6 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
       
       ey = [ey proj_inter: eyTemp];
       changed |= ey.changed;
-      
       /* END ERROR PROPAG */
       
       gchanged |= changed;
@@ -1320,17 +1316,17 @@ ORRationalInterval* compute_eo_div_d(ORRationalInterval* eo, const double_interv
    changed = gchanged = false;
    double_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionIntervalD inter;
-   ORRationalInterval* ex = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ey = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ez = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eo = [[ORRationalInterval alloc] init];
-   ORRationalInterval* exTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eyTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ezTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* eoTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* xr = [[ORRationalInterval alloc] init];
-   ORRationalInterval* yr = [[ORRationalInterval alloc] init];
-   ORRationalInterval* zr = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xr = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> yr = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> zr = [[ORRationalInterval alloc] init];
    
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);

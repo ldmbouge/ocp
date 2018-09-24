@@ -10,7 +10,7 @@
 #include "gmp.h"
 #import "rationalUtilities.h"
 
-void check_result(NSString* s, ORRational* r, ORDouble x_){
+void check_result(NSString* s, id<ORRational> r, ORDouble x_){
    ORRational *x = [ORRational rationalWith_d:x_];
    
    if(([r eq: x] && r.type == x.type) || (r.type == x.type && r.type == 3))
@@ -26,8 +26,8 @@ void check_result(NSString* s, ORRational* r, ORDouble x_){
    [x release];
 }
 
-void check_result_interval(NSString* s, ORRationalInterval* r, ORDouble x_i, ORDouble x_s){
-   ORRationalInterval* x = [[ORRationalInterval alloc] init];
+void check_result_interval(NSString* s, id<ORRationalInterval> r, ORDouble x_i, ORDouble x_s){
+   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
    [x set_d:x_i and:x_s];
    
    if(([r eq: x] && r.low.type == x.low.type && r.up.type == x.up.type) ||
@@ -52,15 +52,15 @@ void check_result_interval(NSString* s, ORRationalInterval* r, ORDouble x_i, ORD
 
 void check_addition(){
    NSLog(@"ADDITION");
-   ORRational* neg_inf = [ORRational rationalWith_d: -INFINITY];
-   ORRational* neg_v = [ORRational rationalWith_d: -123.4];
-   ORRational* neg_v2 = [ORRational rationalWith_d: -0.21];
-   ORRational* zero = [ORRational rationalWith_d: 0.0];
-   ORRational* pos_v = [ORRational rationalWith_d: 43.23];
-   ORRational* pos_v2 = [ORRational rationalWith_d: 185.6];
-   ORRational* pos_inf = [ORRational rationalWith_d: +INFINITY];
-   ORRational* nan = [ORRational rationalWith_d: NAN];
-   ORRational* result = [[ORRational alloc] init];
+   id<ORRational> neg_inf = [ORRational rationalWith_d: -INFINITY];
+   id<ORRational> neg_v = [ORRational rationalWith_d: -123.4];
+   id<ORRational> neg_v2 = [ORRational rationalWith_d: -0.21];
+   id<ORRational> zero = [ORRational rationalWith_d: 0.0];
+   id<ORRational> pos_v = [ORRational rationalWith_d: 43.23];
+   id<ORRational> pos_v2 = [ORRational rationalWith_d: 185.6];
+   id<ORRational> pos_inf = [ORRational rationalWith_d: +INFINITY];
+   id<ORRational> nan = [ORRational rationalWith_d: NAN];
+   id<ORRational> result = [[ORRational alloc] init];
    
    /* Addition */
    /* -INF + -INF */
@@ -161,15 +161,15 @@ void check_addition(){
 
 void check_subtraction(){
    NSLog(@"SUBTRACTION");
-   ORRational* neg_inf = [ORRational rationalWith_d: -INFINITY];
-   ORRational* neg_v = [ORRational rationalWith_d: -123.4];
-   ORRational* neg_v2 = [ORRational rationalWith_d: -0.21];
-   ORRational* zero = [ORRational rationalWith_d: 0.0];
-   ORRational* pos_v = [ORRational rationalWith_d: 43.23];
-   ORRational* pos_v2 = [ORRational rationalWith_d: 185.6];
-   ORRational* pos_inf = [ORRational rationalWith_d: +INFINITY];
-   ORRational* nan = [ORRational rationalWith_d: NAN];
-   ORRational* result = [[ORRational alloc] init];
+   id<ORRational> neg_inf = [ORRational rationalWith_d: -INFINITY];
+   id<ORRational> neg_v = [ORRational rationalWith_d: -123.4];
+   id<ORRational> neg_v2 = [ORRational rationalWith_d: -0.21];
+   id<ORRational> zero = [ORRational rationalWith_d: 0.0];
+   id<ORRational> pos_v = [ORRational rationalWith_d: 43.23];
+   id<ORRational> pos_v2 = [ORRational rationalWith_d: 185.6];
+   id<ORRational> pos_inf = [ORRational rationalWith_d: +INFINITY];
+   id<ORRational> nan = [ORRational rationalWith_d: NAN];
+   id<ORRational> result = [[ORRational alloc] init];
    
    /* -INF - -INF */
    result = [neg_inf sub: neg_inf];
@@ -333,15 +333,15 @@ void check_subtraction(){
 void check_multiplication(){
    NSLog(@"MULTIPLICATION");
    
-   ORRational* neg_inf = [ORRational rationalWith_d: -INFINITY];
-   ORRational* neg_v = [ORRational rationalWith_d: -123.4];
-   ORRational* neg_v2 = [ORRational rationalWith_d: -0.21];
-   ORRational* zero = [ORRational rationalWith_d: 0.0];
-   ORRational* pos_v = [ORRational rationalWith_d: 43.23];
-   ORRational* pos_v2 = [ORRational rationalWith_d: 185.6];
-   ORRational* pos_inf = [ORRational rationalWith_d: +INFINITY];
-   ORRational* nan = [ORRational rationalWith_d: NAN];
-   ORRational* result = [[ORRational alloc] init];
+   id<ORRational> neg_inf = [ORRational rationalWith_d: -INFINITY];
+   id<ORRational> neg_v = [ORRational rationalWith_d: -123.4];
+   id<ORRational> neg_v2 = [ORRational rationalWith_d: -0.21];
+   id<ORRational> zero = [ORRational rationalWith_d: 0.0];
+   id<ORRational> pos_v = [ORRational rationalWith_d: 43.23];
+   id<ORRational> pos_v2 = [ORRational rationalWith_d: 185.6];
+   id<ORRational> pos_inf = [ORRational rationalWith_d: +INFINITY];
+   id<ORRational> nan = [ORRational rationalWith_d: NAN];
+   id<ORRational> result = [[ORRational alloc] init];
    
    /* Addition */
    /* -INF * -INF */
@@ -442,15 +442,15 @@ void check_multiplication(){
 
 void check_division(){
    NSLog(@"DIVISION");
-   ORRational* neg_inf = [ORRational rationalWith_d: -INFINITY];
-   ORRational* neg_v = [ORRational rationalWith_d: -123.4];
-   ORRational* neg_v2 = [ORRational rationalWith_d: -0.21];
-   ORRational* zero = [ORRational rationalWith_d: 0.0];
-   ORRational* pos_v = [ORRational rationalWith_d: 43.23];
-   ORRational* pos_v2 = [ORRational rationalWith_d: 185.6];
-   ORRational* pos_inf = [ORRational rationalWith_d: +INFINITY];
-   ORRational* nan = [ORRational rationalWith_d: NAN];
-   ORRational* result = [[ORRational alloc] init];
+   id<ORRational> neg_inf = [ORRational rationalWith_d: -INFINITY];
+   id<ORRational> neg_v = [ORRational rationalWith_d: -123.4];
+   id<ORRational> neg_v2 = [ORRational rationalWith_d: -0.21];
+   id<ORRational> zero = [ORRational rationalWith_d: 0.0];
+   id<ORRational> pos_v = [ORRational rationalWith_d: 43.23];
+   id<ORRational> pos_v2 = [ORRational rationalWith_d: 185.6];
+   id<ORRational> pos_inf = [ORRational rationalWith_d: +INFINITY];
+   id<ORRational> nan = [ORRational rationalWith_d: NAN];
+   id<ORRational> result = [[ORRational alloc] init];
    
    /* -INF / -INF */
    result = [neg_inf div: neg_inf];
@@ -612,14 +612,14 @@ void check_division(){
 }
 
 void check_addition_interval(){
-   ORRationalInterval* ninf_a2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* a1_a2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* a1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_b2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* b1_b2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* b1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* result = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_a2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> a1_a2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> a1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_b2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> b1_b2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> b1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> result = [[ORRationalInterval alloc] init];
    
    
    [ninf_a2 set_d:-INFINITY and:-0.21];
@@ -692,14 +692,14 @@ void check_addition_interval(){
 }
 
 void check_subtraction_interval(){
-   ORRationalInterval* ninf_a2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* a1_a2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* a1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_b2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* b1_b2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* b1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* result = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_a2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> a1_a2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> a1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_b2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> b1_b2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> b1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> result = [[ORRationalInterval alloc] init];
    
    
    [ninf_a2 set_d:-INFINITY and:-0.21];
@@ -772,23 +772,23 @@ void check_subtraction_interval(){
 }
 
 void check_multiplication_interval(){   
-   ORRationalInterval* ninf_na2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_pa2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* a1_na2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* a1_a2_0 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* pa1_a2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* na1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* pa1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_nb2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_pb2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* b1_nb2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* b1_b2_0 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* pb1_b2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* z_z = [[ORRationalInterval alloc] init];
-   ORRationalInterval* nb1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* pb1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* result = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_na2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_pa2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> a1_na2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> a1_a2_0 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> pa1_a2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> na1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> pa1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_nb2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_pb2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> b1_nb2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> b1_b2_0 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> pb1_b2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z_z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> nb1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> pb1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> result = [[ORRationalInterval alloc] init];
    
    [ninf_na2 set_d:-INFINITY and:-2.0];
    [ninf_pa2 set_d:-INFINITY and:2.0];
@@ -1097,20 +1097,20 @@ void check_multiplication_interval(){
 
 void check_division_interval(){
 
-   ORRationalInterval* a1_na2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* a1_a2_0 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* pa1_a2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_na2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_pa2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* na1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* pa1_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* z_z = [[ORRationalInterval alloc] init];
-   ORRationalInterval* b1_z = [[ORRationalInterval alloc] init];
-   ORRationalInterval* z_b2 = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_z = [[ORRationalInterval alloc] init];
-   ORRationalInterval* z_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* ninf_pinf = [[ORRationalInterval alloc] init];
-   ORRationalInterval* result = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> a1_na2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> a1_a2_0 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> pa1_a2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_na2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_pa2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> na1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> pa1_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z_z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> b1_z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z_b2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ninf_pinf = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> result = [[ORRationalInterval alloc] init];
    
    
    [a1_na2 set_d:-6.0 and:-2.0];

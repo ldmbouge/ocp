@@ -6,7 +6,6 @@
 //
 //
 
-//#import <ORFoundation/ORTrail.h>
 #include "gmp.h"
 
 #import <ORFoundation/ORObject.h>
@@ -17,11 +16,14 @@ typedef mpq_ptr rational_ptr;
 @protocol ORTrail;
 @protocol ORVisitor;
 
-@protocol ORRational<NSObject>
+@protocol ORRational<ORObject>
+-(id)init:(id<ORMemoryTrail>) mt;
+-(id)init;
+-(void) visit: (id<ORVisitor>) visitor;
+-(void)dealloc;  // call clear
+-(void)print;
 -(rational_ptr)rational;
 -(int)type;
--(void) visit: (id<ORVisitor>) visitor;
--(void)setType:(int)type;
 -(id<ORMemoryTrail>)mt;
 -(id)setNAN;
 -(id)setZero;
@@ -35,6 +37,8 @@ typedef mpq_ptr rational_ptr;
 -(BOOL)isMinusOne;
 -(BOOL)isPosInf;
 -(BOOL)isNegInf;
+-(void)setType:(int)type;
+-(void)setRational:(rational_t)rational;
 -(id)set:(id<ORRational>)r;
 -(id)set_q:(rational_t)r;
 -(id)set_t:(int)t;
@@ -44,6 +48,9 @@ typedef mpq_ptr rational_ptr;
 +(id<ORRational>)rationalWith_d:(double)d;
 -(id)set_d:(double)d;
 -(id)set:(long)num and:(long)den;
+-(id<ORRational>)get;
+-(char*)get_str;
+-(double)get_d;
 -(id<ORRational>)add:(id<ORRational>)r;
 -(id<ORRational>)sub:(id<ORRational>)r;
 -(id<ORRational>)mul:(id<ORRational>)r;
@@ -60,22 +67,41 @@ typedef mpq_ptr rational_ptr;
 -(BOOL)neq:(id<ORRational>)r;
 @end
 
-@protocol ORRationalInterval
+@protocol ORRationalInterval<ORObject>
+-(id)init:(id<ORMemoryTrail>) mt;
+-(id)init;
+-(void)dealloc;  // call clear
 -(id<ORRational>)low;
 -(id<ORRational>)up;
 -(void)setLow:(id<ORRational>)l;
 -(void)setUp:(id<ORRational>)u;
--(id<ORRationalInterval>)add:(id<ORRationalInterval>)ri;
--(id<ORRationalInterval>)sub:(id<ORRationalInterval>)ri;
--(id<ORRationalInterval>)mul:(id<ORRationalInterval>)ri;
--(id<ORRationalInterval>)div:(id<ORRationalInterval>)ri;
--(int)changed;
 -(void)setChanged:(int)c;
--(BOOL)empty;
+-(int)changed;
+-(id)set:(id<ORRationalInterval>)ri;
+-(id)set_d:(double)low and:(double)up;
+-(id)set_q:(id<ORRational>)low and:(id<ORRational>)up;
 -(void)setNAN;
 -(void)setZero;
 -(void)setPosInf;
 -(void)setNegInf;
+-(id<ORRationalInterval>)add:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)sub:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)mul:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)div:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)neg;
+-(id<ORRationalInterval>)abs;
+-(BOOL)cmp:(id<ORRationalInterval>)ri;
+-(BOOL)lt:(id<ORRationalInterval>)ri;
+-(BOOL)gt:(id<ORRationalInterval>)ri;
+-(BOOL)leq:(id<ORRationalInterval>)ri;
+-(BOOL)geq:(id<ORRationalInterval>)ri;
+-(BOOL)eq:(id<ORRationalInterval>)ri;
+-(BOOL)neq:(id<ORRationalInterval>)ri;
+-(BOOL)empty;
+-(id<ORRationalInterval>)union:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)intersection:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri;
+-(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup;
 @end
 
 @interface ORRational : ORObject <ORRational> {
@@ -141,7 +167,7 @@ typedef mpq_ptr rational_ptr;
 -(BOOL)neq:(id<ORRational>)r;
 @end
 
-@interface ORRationalInterval : NSObject <ORRationalInterval> {
+@interface ORRationalInterval : ORObject <ORRationalInterval> {
    id<ORRational> _low;
    id<ORRational> _up;
    int _changed;
@@ -180,11 +206,10 @@ typedef mpq_ptr rational_ptr;
 -(id<ORRationalInterval>)intersection:(id<ORRationalInterval>)ri;
 -(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri;
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup;
--(id<ORRationalInterval>)proj_inter_op:(id<ORRationalInterval>)ri;
 @end
 
-static inline ORRational* minQ(ORRational* a,ORRational* b) { return [a lt: b] ? a : b;}
-static inline ORRational* maxQ(ORRational* a,ORRational* b) { return [a gt: b] ? a : b;}
+static inline id<ORRational> minQ(id<ORRational> a,id<ORRational> b) { return [a lt: b] ? a : b;}
+static inline id<ORRational> maxQ(id<ORRational> a,id<ORRational> b) { return [a gt: b] ? a : b;}
 static inline void clear_q(rational_t r) { mpq_clear(r); }
 static inline void init_q(rational_t r) { mpq_init(r); }
 static inline void set_q(rational_t r, rational_t s) { mpq_set(r, s); }

@@ -336,7 +336,7 @@ TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
 {
     return (TRFloatInterval){min, max, [trail magic]-1};
 }
-TRRationalInterval makeTRRationalInterval(ORTrailI* trail, ORRational* min, ORRational* max)
+TRRationalInterval makeTRRationalInterval(ORTrailI* trail, id<ORRational> min, id<ORRational> max)
 {
     TRRationalInterval rational_interval;
     rational_interval._low = [ORRational rationalWith:min];
@@ -482,7 +482,7 @@ void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail)
     
 }
 
-void  updateMinR(TRRationalInterval* dom,ORRational* min, id<ORTrail> trail)
+void  updateMinR(TRRationalInterval* dom,id<ORRational> min, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
        dom->_mgc = [trail magic];
@@ -494,7 +494,7 @@ void  updateMinR(TRRationalInterval* dom,ORRational* min, id<ORTrail> trail)
    [dom->_low set: min];
 }
 
-void  updateMaxR(TRRationalInterval* dom,ORRational* max, id<ORTrail> trail)
+void  updateMaxR(TRRationalInterval* dom,id<ORRational> max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
        dom->_mgc = [trail magic];
@@ -517,7 +517,7 @@ void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail
     dom->_up = max;
 }
 
-void  updateTRRationalInterval(TRRationalInterval* dom,ORRational* min,ORRational* max, id<ORTrail> trail)
+void  updateTRRationalInterval(TRRationalInterval* dom,id<ORRational> min,id<ORRational> max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
        dom->_mgc = [trail magic];

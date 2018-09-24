@@ -16,7 +16,7 @@
 
 @implementation CPRationalDom
 
--(id)initCPRationalDom:(id<ORTrail>)trail low:(ORRational*)low up:(ORRational*)up
+-(id)initCPRationalDom:(id<ORTrail>)trail low:(id<ORRational>)low up:(id<ORRational>)up
 {
     self = [super init];
     _trail = trail;
@@ -60,12 +60,12 @@
     [buf appendFormat:@"(%@,%@)",_domain._low,_domain._up];
     return buf;
 }
--(void) updateMin:(ORRational*)newMin for:(id<CPFloatVarRatNotifier>)x
+-(void) updateMin:(id<ORRational>)newMin for:(id<CPFloatVarRatNotifier>)x
 {
    if([newMin gt: [self max]])
         failNow();
     updateMinR(&_domain, newMin, _trail);
-   ORRational* epsilon = [[ORRational alloc] init];
+   id<ORRational> epsilon = [[ORRational alloc] init];
    [epsilon set: 1 and: 1073741824];
    ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
    [epsilon release];
@@ -76,12 +76,12 @@
             [x bindEvtErr:self];
     }
 }
--(void) updateMax:(ORRational*)newMax for:(id<CPFloatVarRatNotifier>)x
+-(void) updateMax:(id<ORRational>)newMax for:(id<CPFloatVarRatNotifier>)x
 {
    if([[self min] gt: newMax])
         failNow();
     updateMaxR(&_domain, newMax, _trail);
-   ORRational* epsilon = [[ORRational alloc] init];
+   id<ORRational> epsilon = [[ORRational alloc] init];
    [epsilon set: 1 and: 1073741824];
    ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
    [epsilon release];   // cpjm: so that eo can use this method without propagation
@@ -91,13 +91,13 @@
             [x bindEvtErr:self];
     }
 }
--(void) updateInterval:(ORRationalInterval*)v for:(id<CPFloatVarRatNotifier>)x;
+-(void) updateInterval:(id<ORRationalInterval>)v for:(id<CPFloatVarRatNotifier>)x;
 {
    [self updateMin:v.low for:x];
    [self updateMax:v.up for:x];
 }
 
--(void) bind:(ORRational*)val  for:(id<CPFloatVarRatNotifier>)x
+-(void) bind:(id<ORRational>)val  for:(id<CPFloatVarRatNotifier>)x
 {
    if (([val gt: _domain._low] || [val eq: _domain._low]) && ([_domain._up gt: val] || [_domain._up eq:val])) {
         [x changeMinEvtErr:YES sender:self];
@@ -108,25 +108,25 @@
     else
         failNow();
 }
--(ORRational*) min
+-(id<ORRational>) min
 {
     return _domain._low;
 }
--(ORRational*) max
+-(id<ORRational>) max
 {
     return _domain._up;
 }
--(ORRational*) imin
+-(id<ORRational>) imin
 {
     return _imin;
 }
--(ORRational*) imax
+-(id<ORRational>) imax
 {
     return _imax;
 }
 -(ORBool) bound
 {
-   /*ORRational* epsilon = [[ORRational alloc] init];
+   /*id<ORRational> epsilon = [[ORRational alloc] init];
    [epsilon set:1 and:562949953421312];
    BOOL b = [[_domain._up sub: _domain._low] lt: epsilon];
    [epsilon release];
@@ -143,7 +143,7 @@
     return _domain;
 }
 
--(ORBool) member:(ORRational*)v
+-(ORBool) member:(id<ORRational>)v
 {
    return [_domain._low leq: v] && [v leq: _domain._low];
 }
@@ -156,7 +156,7 @@
     updateMinR(&_domain, toRestore.min, _trail);
     updateMaxR(&_domain, toRestore.max, _trail);
 }
--(void) restoreValue:(ORRational*)toRestore for:(id<CPFloatVarRatNotifier>)x
+-(void) restoreValue:(id<ORRational>)toRestore for:(id<CPFloatVarRatNotifier>)x
 {
     updateMinR(&_domain, toRestore, _trail);
     updateMaxR(&_domain, toRestore, _trail);
@@ -173,8 +173,8 @@
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
     self = [super init];
-   ORRational* low = [[ORRational alloc] init];
-   ORRational* up = [[ORRational alloc] init];
+   id<ORRational> low = [[ORRational alloc] init];
+   id<ORRational> up = [[ORRational alloc] init];
     [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&low];
     [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&up];
     _domain = makeTRRationalInterval(_trail, low, up);

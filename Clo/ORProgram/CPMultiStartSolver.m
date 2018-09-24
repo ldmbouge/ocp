@@ -556,7 +556,7 @@
 {
    [[self worker] label: var with: val];
 }
--(void) labelRational: (id<ORRationalVar>) var with: (ORRational*) val
+-(void) labelRational: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    [[self worker] labelRational: var with: val];
 }
@@ -842,16 +842,16 @@
 -(void) setMaxErrorFD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError{
     [(id<CPProgram>)[self worker] setMaxErrorFD:x maxErrorF:maxError];
 }
--(ORRational*)maxErrorFQ:(PNONNULL id<ORVar>)x {
+-(id<ORRational>)maxErrorFQ:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] maxErrorFQ:x];
 }
--(ORRational*)minErrorFQ:(PNONNULL id<ORVar>)x {
+-(id<ORRational>)minErrorFQ:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] minErrorFQ:x];
 }
--(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(ORRational*) minError{
+-(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(id<ORRational>) minError{
     [(id<CPProgram>)[self worker] setMinErrorFQ:x minError:minError];
 }
--(void) setMaxErrorFQ:(PNONNULL id<ORVar>)x maxError:(ORRational*) maxError{
+-(void) setMaxErrorFQ:(PNONNULL id<ORVar>)x maxError:(id<ORRational>) maxError{
     [(id<CPProgram>)[self worker] setMaxErrorFQ:x maxError:maxError];
 }
 -(ORDouble)maxD:(PNONNULL id<ORVar>)x {
@@ -890,16 +890,16 @@
 -(void) setMaxErrorDD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError{
     [(id<CPProgram>)[self worker] setMaxErrorDD:x maxErrorF:maxError];
 }
--(ORRational*)maxErrorDQ:(PNONNULL id<ORVar>)x {
+-(id<ORRational>)maxErrorDQ:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] maxErrorDQ:x];
 }
--(ORRational*)minErrorDQ:(PNONNULL id<ORVar>)x {
+-(id<ORRational>)minErrorDQ:(PNONNULL id<ORVar>)x {
     return [(id<CPProgram>)[self worker] minErrorDQ:x];
 }
--(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(ORRational*) minError{
+-(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(id<ORRational>) minError{
     [(id<CPProgram>)[self worker] setMinErrorDQ:x minError:minError];
 }
--(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(ORRational*) maxError{
+-(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(id<ORRational>) maxError{
     [(id<CPProgram>)[self worker] setMaxErrorDQ:x maxError:maxError];
 }
 -(ORBool) bound: (id<ORVar>) x

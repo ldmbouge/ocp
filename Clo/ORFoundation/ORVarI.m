@@ -363,12 +363,12 @@
    _tracker = track;
    _domain = dom;
    if(_domain.low == _domain.up){
-      ORRational* zero = [ORRational rationalWith_d:0.0f];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0f];
       _domainError = [ORFactory rationalRange:track low:zero up:zero];
       [zero release];
    } else {
-      ORRational* low = [ORRational rationalWith_d:-INFINITY];
-      ORRational* up = [ORRational rationalWith_d:+INFINITY];
+      id<ORRational> low = [ORRational rationalWith_d:-INFINITY];
+      id<ORRational> up = [ORRational rationalWith_d:+INFINITY];
       _domainError = [ORFactory rationalRange:track low:low up:up];
       [low release];
       [up release];
@@ -417,7 +417,7 @@
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
--(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up elow: (ORRational*) elow eup: (ORRational*) eup name:(NSString*) name
+-(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name
 {
    self = [self init:track domain:[ORFactory floatRange:track low:low up:up] domainError:[ORFactory rationalRange:track low:elow up:eup]];
    _prettyname = [[NSString alloc] initWithString:name];
@@ -489,11 +489,11 @@
 {
    return _domain.up;
 }
--(ORRational*) elow
+-(id<ORRational>) elow
 {
    return _domainError.low;
 }
--(ORRational*) eup
+-(id<ORRational>) eup
 {
    return _domainError.up;
 }
@@ -505,11 +505,11 @@
 {
    return [_domain up];
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return [_domainError low];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return [_domainError up];
 }
@@ -533,19 +533,19 @@
    self = [super init];
    _tracker = track;
    _domain = dom;
-   ORRational* ninf = [ORRational rationalWith_d:-INFINITY];
-   ORRational* pinf = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> ninf = [ORRational rationalWith_d:-INFINITY];
+   id<ORRational> pinf = [ORRational rationalWith_d:+INFINITY];
    _hasBounds = ([[dom low] neq: ninf] || [[dom up] neq: pinf]);
    [track trackVariable: self];
    return self;
 }
--(ORRationalVarI*) init: (id<ORTracker>) track low: (ORRational*) low up: (ORRational*) up
+-(ORRationalVarI*) init: (id<ORTracker>) track low: (id<ORRational>) low up: (id<ORRational>) up
 {
    return  [self init:track domain:[ORFactory rationalRange:track low:low up:up]];
 }
--(ORRationalVarI*) init: (id<ORTracker>) track up: (ORRational*) up
+-(ORRationalVarI*) init: (id<ORTracker>) track up: (id<ORRational>) up
 {
-   ORRational* zero = [ORRational rationalWith_d:0.0];
+   id<ORRational> zero = [ORRational rationalWith_d:0.0];
    ORRationalVarI* r = [self init:track low:zero up:up];
    return r;
 }
@@ -559,14 +559,14 @@
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
--(ORRationalVarI*) init: (id<ORTracker>) track up: (ORRational*) up name:(NSString*) name
+-(ORRationalVarI*) init: (id<ORTracker>) track up: (id<ORRational>) up name:(NSString*) name
 {
-   ORRational* zero = [ORRational rationalWith_d:0.0];
+   id<ORRational> zero = [ORRational rationalWith_d:0.0];
    self = [self init:track low:zero up:up name:name];
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
--(ORRationalVarI*) init: (id<ORTracker>) track low: (ORRational*) low up: (ORRational*) up name:(NSString*) name
+-(ORRationalVarI*) init: (id<ORTracker>) track low: (id<ORRational>) low up: (id<ORRational>) up name:(NSString*) name
 {
    self = [self init:track domain:[ORFactory rationalRange:track low:low up:up]];
    _prettyname = [[NSString alloc] initWithString:name];
@@ -625,19 +625,19 @@
 {
    return _hasBounds;
 }
--(ORRational*) low
+-(id<ORRational>) low
 {
    return _domain.low;
 }
--(ORRational*) up
+-(id<ORRational>) up
 {
    return _domain.up;
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return [_domain low];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return [_domain up];
 }
@@ -679,12 +679,12 @@
    _domain = dom;
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
    if(_domain.low == _domain.up){
-      ORRational* zero = [ORRational rationalWith_d:0.0f];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0f];
       _domainError = [ORFactory rationalRange:track low:zero up:zero];
       [zero release];
    } else {
-      ORRational* low = [ORRational rationalWith_d:-INFINITY];
-      ORRational* up = [ORRational rationalWith_d:+INFINITY];
+      id<ORRational> low = [ORRational rationalWith_d:-INFINITY];
+      id<ORRational> up = [ORRational rationalWith_d:+INFINITY];
       _domainError = [ORFactory rationalRange:track low:low up:up];
       [low release];
       [up release];
@@ -711,7 +711,7 @@
 {
    return [self init:track low:-INFINITY up:+INFINITY name:name];
 }
--(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up elow: (ORRational*) elow eup: (ORRational*) eup name:(NSString*) name
+-(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name
 {
    self = [self init:track domain:[ORFactory doubleRange:track low:low up:up] domainError:[ORFactory rationalRange:track low:elow up:eup]];
    _prettyname = [[NSString alloc] initWithString:name];
@@ -788,11 +788,11 @@
 {
    return _domain.up;
 }
--(ORRational*) elow
+-(id<ORRational>) elow
 {
    return _domainError.low;
 }
--(ORRational*) eup
+-(id<ORRational>) eup
 {
    return _domainError.up;
 }

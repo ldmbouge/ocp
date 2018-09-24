@@ -1555,7 +1555,7 @@
    }
 }
 //------
--(void) visitRationalAssignC:(id<ORRationalAssignC>) cstr
+/*-(void) visitRationalAssignC:(id<ORRationalAssignC>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> left = [cstr left];
@@ -1564,13 +1564,13 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
+}*/
 -(void) visitRationalEqualc:(id<ORRationalEqualc>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> left = [cstr left];
       [left visit: self];
-      ORRational* cst = [ORRational rationalWith:[cstr cst]];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
       id<CPConstraint> concreteCstr = [CPFactory rationalEqualc:_gamma[left.getId]  to: cst];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -1606,7 +1606,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> left = [cstr left];
       [left visit: self];
-      ORRational* cst = [ORRational rationalWith:[cstr cst]];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
       id<CPConstraint> concreteCstr = [CPFactory rationalNEqualc: _gamma[left.getId]  to: cst];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -1624,7 +1624,7 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitRationalAssign:(id<ORRationalAssign>)cstr
+/*-(void) visitRationalAssign:(id<ORRationalAssign>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> left = [cstr left];
@@ -1635,8 +1635,8 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
--(void) visitRationalLinearNEq:(id<ORRationalLinearNEq>)cstr
+}*/
+/*-(void) visitRationalLinearNEq:(id<ORRationalLinearNEq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORVarArray> av = [cstr vars];
@@ -1646,8 +1646,8 @@
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
--(void) visitRationalLinearLT:(id<ORRationalLinearLT>)cstr
+}*/
+/*-(void) visitRationalLinearLT:(id<ORRationalLinearLT>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORVarArray> av = [cstr vars];
@@ -1657,8 +1657,8 @@
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
--(void) visitRationalLinearGT:(id<ORRationalLinearGT>)cstr
+}*/
+/*-(void) visitRationalLinearGT:(id<ORRationalLinearGT>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORVarArray> av = [cstr vars];
@@ -1668,7 +1668,7 @@
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
+}*/
 -(void) visitRationalLinearLEQ:(id<ORRationalLinearLEQ>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1691,7 +1691,7 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitRationalMult:(id<ORRationalMult>)cstr
+/*-(void) visitRationalMult:(id<ORRationalMult>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> res = [cstr res];
@@ -1708,8 +1708,8 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
--(void) visitRationalDiv:(id<ORRationalDiv>)cstr
+}*/
+/*-(void) visitRationalDiv:(id<ORRationalDiv>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> res = [cstr res];
@@ -1726,14 +1726,13 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
-
--(void) visitRationalReifyEqualc: (id<ORRationalReifyEqualc>) cstr
+}*/
+/*-(void) visitRationalReifyEqualc: (id<ORRationalReifyEqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [ORRational rationalWith:[cstr cst]];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify:(id<CPIntVar>)_gamma[b.getId] with:(id<CPRationalVar>)_gamma[x.getId] eqi: cst];
@@ -1741,8 +1740,8 @@
       _gamma[cstr.getId] = concreteCstr;
       [cst release];
    }
-}
--(void) visitRationalReifyEqual: (id<ORRationalReifyEqual>) cstr
+}*/
+/*-(void) visitRationalReifyEqual: (id<ORRationalReifyEqual>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
@@ -1756,14 +1755,13 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-   
-}
--(void) visitRationalReifyNEqualc: (id<ORRationalReifyNEqualc>) cstr
+}*/
+/*-(void) visitRationalReifyNEqualc: (id<ORRationalReifyNEqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [ORRational rationalWith:[cstr cst]];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] neqi: cst];
@@ -1771,8 +1769,8 @@
       _gamma[cstr.getId] = concreteCstr;
       [cst release];
    }
-}
--(void) visitRationalReifyNEqual: (id<ORRationalReifyNEqual>) cstr
+}*/
+/*-(void) visitRationalReifyNEqual: (id<ORRationalReifyNEqual>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
@@ -1786,13 +1784,13 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
--(void) visitRationalReifyLEqualc: (id<ORRationalReifyLEqualc>) cstr
+}*/
+/*-(void) visitRationalReifyLEqualc: (id<ORRationalReifyLEqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [ORRational rationalWith:[cstr cst]];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
@@ -1800,13 +1798,13 @@
       _gamma[cstr.getId] = concreteCstr;
       [cst release];
    }
-}
--(void) visitRationalReifyLThenc: (id<ORRationalReifyLThenc>) cstr
+}*/
+/*-(void) visitRationalReifyLThenc: (id<ORRationalReifyLThenc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [ORRational rationalWith:[cstr cst]];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] lti: cst];
@@ -1814,8 +1812,8 @@
       _gamma[cstr.getId] = concreteCstr;
       [cst release];
    }
-}
--(void) visitRationalReifyLEqual: (id<ORRationalReifyLEqual>) cstr
+}*/
+/*-(void) visitRationalReifyLEqual: (id<ORRationalReifyLEqual>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> b = [self concreteVar:[cstr b]];
@@ -1825,13 +1823,13 @@
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
--(void) visitRationalReifyGEqualc: (id<ORRationalReifyGEqualc>) cstr
+}*/
+/*-(void) visitRationalReifyGEqualc: (id<ORRationalReifyGEqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [ORRational rationalWith:[cstr cst]];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] geqi: cst];
@@ -1839,13 +1837,13 @@
       _gamma[cstr.getId] = concreteCstr;
       [cst release];
    }
-}
--(void) visitRationalReifyGThenc: (id<ORRationalReifyGThenc>) cstr
+}*/
+/*-(void) visitRationalReifyGThenc: (id<ORRationalReifyGThenc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORRationalVar> x = [cstr x];
-      ORRational* cst = [ORRational rationalWith:[cstr cst]];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
       [b visit: self];
       [x visit: self];
       id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] gti: cst];
@@ -1853,8 +1851,8 @@
       _gamma[cstr.getId] = concreteCstr;
       [cst release];
    }
-}
--(void) visitRationalReifyGEqual: (id<ORRationalReifyGEqual>) cstr
+}*/
+/*-(void) visitRationalReifyGEqual: (id<ORRationalReifyGEqual>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> b = [self concreteVar:[cstr b]];
@@ -1864,9 +1862,8 @@
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
-
--(void) visitRationalReifyLThen: (id<ORRationalReifyLThen>) cstr
+}*/
+/*-(void) visitRationalReifyLThen: (id<ORRationalReifyLThen>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> b = [self concreteVar:[cstr b]];
@@ -1876,9 +1873,8 @@
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
-
--(void) visitRationalReifyGThen: (id<ORRationalReifyGThen>) cstr
+}*/
+/*-(void) visitRationalReifyGThen: (id<ORRationalReifyGThen>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> b = [self concreteVar:[cstr b]];
@@ -1888,7 +1884,7 @@
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}
+}*/
 //------
 
 -(void) visitDoubleAssignC:(id<ORDoubleAssignC>) cstr

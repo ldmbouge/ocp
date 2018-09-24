@@ -35,7 +35,7 @@ int main(int argc, const char * argv[]) {
       [mdl add:[o set: @(2.43f)]];
       [mdl add:[[x error] leq: [z error]]];
       
-      //[mdl add:[[[x channel] plus: [x error]] geq: [z error]]];
+      [mdl add:[[[x channel] plus: [x error]] geq: [z error]]];
 
       [mdl add:[w set: [x plus: y]]];
       [mdl add:[u set: [o plus: k]]];

@@ -19,7 +19,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_doppler2_d(double u, double v, double t, double t1, double z, ORRational* ez) {
+void check_it_doppler2_d(double u, double v, double t, double t1, double z, id<ORRational> ez) {
    double ct1 = 331.4 + (0.6 * t);
    double cz = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
    
@@ -61,7 +61,7 @@ void check_it_doppler2_d(double u, double v, double t, double t1, double z, ORRa
 void doppler2_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       id<ORDoubleVar> u = [ORFactory doubleVar:mdl low:-125.0 up:125.0 elow:zero eup:zero name:@"u"];
       id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:15.0 up:25000.0 elow:zero eup:zero name:@"v"];
       id<ORDoubleVar> t = [ORFactory doubleVar:mdl low:-40.0 up:60.0 elow:zero eup:zero name:@"t"];

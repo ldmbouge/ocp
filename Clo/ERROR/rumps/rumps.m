@@ -15,7 +15,7 @@
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_d(double x, double y, double z, ORRational* ez) {
+void check_it_d(double x, double y, double z, id<ORRational> ez) {
     // 333.75 b^6 + a^2 (11 a^2 b^2 - b^6 - 121 b^4 - 2 ) + 5.5 b^8 + a / (2b)
     mpq_t xq, yq, zq, y2q, y4q, y6q, y8q, x2q, tmp0, tmp1;
     double cz = 333.75*y*y*y*y*y*y + x*x*(11.0*x*x*y*y - y*y*y*y*y*y - 121.0*y*y*y*y - 2.0) + 5.5*y*y*y*y*y*y*y*y + x/(2.0*y);
@@ -63,12 +63,10 @@ void check_it_d(double x, double y, double z, ORRational* ez) {
 void rump_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-        //ORRational* zero;
         id<ORDoubleVar> x_0 = [ORFactory doubleVar:mdl name:@"x"];
         id<ORDoubleVar> y_0 = [ORFactory doubleVar:mdl name:@"y"];
         id<ORDoubleVar> r_0 = [ORFactory doubleVar:mdl];
-        //[zero release];
-        
+       
         [mdl add:[x_0 set: @(77617.0)]];
         [mdl add:[y_0 set: @(33096.0)]];
         [mdl add:[r_0 set: [[[[[[[[[y_0 mul: @(333.75)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0)]]] plus: [[[[[[[[y_0 mul: @(5.5)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.0)]]]]];
@@ -96,7 +94,7 @@ void rump_d(int search, int argc, const char * argv[]) {
     }
 }
 
-void check_it_f(float x, float y, float z, ORRational* ez) {
+void check_it_f(float x, float y, float z, id<ORRational> ez) {
     // 333.75 b^6 + a^2 (11 a^2 b^2 - b^6 - 121 b^4 - 2 ) + 5.5 b^8 + a / (2b)
     mpq_t xq, yq, zq, y2q, y4q, y6q, y8q, x2q, tmp0, tmp1;
     float cz = 333.75f*y*y*y*y*y*y + x*x*(11.0f*x*x*y*y - y*y*y*y*y*y - 121.0f*y*y*y*y - 2.0f) + 5.5f*y*y*y*y*y*y*y*y + x/(2.0f*y);

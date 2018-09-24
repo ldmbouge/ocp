@@ -20,7 +20,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_sqroot_d(double x, double z, ORRational* ez) {
+void check_it_sqroot_d(double x, double z, id<ORRational> ez) {
    double cz = ((((1.0 + (0.5 * x)) - ((0.125 * x) * x)) + (((0.0625 * x) * x) * x)) - ((((0.0390625 * x) * x) * x) * x));
    
    if (cz != z)
@@ -68,7 +68,7 @@ void check_it_sqroot_d(double x, double z, ORRational* ez) {
 void sqroot_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.0 up:1.0 elow:zero eup:zero name:@"x"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       

@@ -21,7 +21,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_d(double x, double r, double k, double z, ORRational* ez) {
+void check_it_d(double x, double r, double k, double z, id<ORRational> ez) {
     double cz = (r*x)/(1+x/k);
     mpq_t xq, rq, kq, zq, errq, tmp0, tmp1;
     
@@ -53,7 +53,7 @@ void check_it_d(double x, double r, double k, double z, ORRational* ez) {
 void verhulst_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-       ORRational* zero = [ORRational rationalWith_d:0.0];
+       id<ORRational> zero = [ORRational rationalWith_d:0.0];
        id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
         id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
         id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
@@ -84,7 +84,7 @@ void verhulst_d(int search, int argc, const char * argv[]) {
     }
 }
 
-void check_it_f(float x, float r, float k, float z, ORRational* ez) {
+void check_it_f(float x, float r, float k, float z, id<ORRational> ez) {
     float cz = (r*x)/(1+x/k);
     mpq_t xq, rq, kq, zq, errq, tmp0, tmp1;
     
@@ -114,7 +114,7 @@ void check_it_f(float x, float r, float k, float z, ORRational* ez) {
 void verhulst_f(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
-       ORRational* zero = [ORRational rationalWith_d:0.0];
+       id<ORRational> zero = [ORRational rationalWith_d:0.0];
        id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
        id<ORFloatVar> r = [ORFactory floatVar:mdl name:@"r"];
        id<ORFloatVar> k = [ORFactory floatVar:mdl name:@"k"];

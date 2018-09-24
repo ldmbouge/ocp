@@ -80,7 +80,7 @@
 {
    if([_x bound]){
       
-      ORRational* tmp = [ORRational rationalWith_d:[_x value]];
+      id<ORRational> tmp = [ORRational rationalWith_d:[_x value]];
       [_y bind:tmp];
       [tmp release];
       assignTRInt(&_active, NO, _trail);
@@ -170,7 +170,7 @@
 @end
 
 @implementation CPRationalEqualc
--(id) init:(CPRationalVarI*)x and:(ORRational*)c
+-(id) init:(CPRationalVarI*)x and:(id<ORRational>)c
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -279,7 +279,7 @@
 @end
 
 @implementation CPRationalNEqualc
--(id) init:(CPRationalVarI*)x and:(ORRational*)c
+-(id) init:(CPRationalVarI*)x and:(id<ORRational>)c
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -322,7 +322,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ != %f>",_x,_c];
+   return [NSString stringWithFormat:@"<%@ != %@>",_x,_c];
 }
 @end
 
@@ -547,12 +547,12 @@
 {
    int gchanged,changed;
    changed = gchanged = false;
-   ORRationalInterval* zTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* yTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* xTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* z = [[ORRationalInterval alloc] init];
-   ORRationalInterval* x = [[ORRationalInterval alloc] init];
-   ORRationalInterval* y = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
 
    [x set_q: [_x min] and:[_x max]];
    [y set_q: [_y min] and:[_y max]];
@@ -643,12 +643,12 @@
    int gchanged,changed;
    changed = gchanged = false;
    
-   ORRationalInterval* zTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* yTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* xTemp = [[ORRationalInterval alloc] init];
-   ORRationalInterval* z = [[ORRationalInterval alloc] init];
-   ORRationalInterval* x = [[ORRationalInterval alloc] init];
-   ORRationalInterval* y = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
    
    [x set_q: [_x min] and:[_x max]];
    [y set_q: [_y min] and:[_y max]];

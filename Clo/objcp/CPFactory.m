@@ -96,6 +96,10 @@
     return [[CPRealParamI alloc] initCPRealParam: cp initialValue: v];
 }
 //--------------
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
+{
+   return [[CPFloatVarI alloc] init:cp low:range.low up:range.up];
+}
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range boundsError:(id<ORRationalRange>) rangeError
 {
    return [[CPFloatVarI alloc] init:cp low:range.low up:range.up errLow:rangeError.low errUp:rangeError.up];
@@ -132,14 +136,14 @@
 {
    return [[CPRationalVarI alloc] init:cp low:range.low up:range.up];
 }
-+(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp value:(ORRational*) v
++(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp value:(id<ORRational>) v
 {
    return [[CPRationalVarI alloc] init:cp low:v up:v];
 }
 +(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp
 {
-   ORRational* low = [[ORRational alloc] init];
-   ORRational* up = [[ORRational alloc] init];
+   id<ORRational> low = [[ORRational alloc] init];
+   id<ORRational> up = [[ORRational alloc] init];
    [low setNegInf];
    [up setPosInf];
    return [[CPRationalVarI alloc] init:cp low:low up:up];

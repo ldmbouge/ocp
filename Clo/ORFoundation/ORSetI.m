@@ -405,10 +405,10 @@
 //-------------------------------------------------
 
 @implementation ORRationalRangeI {
-   ORRational* _low;
-   ORRational* _up;
+   id<ORRational> _low;
+   id<ORRational> _up;
 }
--(id<ORRationalRange>)init:(ORRational*) low up:(ORRational*)up
+-(id<ORRationalRange>)init:(id<ORRational>) low up:(id<ORRational>)up
 {
    self = [super init];
    _low = [ORRational rationalWith:low];
@@ -429,11 +429,11 @@
 {
    return (NSUInteger)[_low get_d] ^ (NSUInteger)[_up get_d];
 }
--(ORRational*)low
+-(id<ORRational>)low
 {
    return _low;
 }
--(ORRational*)up
+-(id<ORRational>)up
 {
    return _up;
 }
@@ -441,7 +441,7 @@
 {
    return [_low leq: _up];
 }
--(ORBool)inRange:(ORRational*)e
+-(ORBool)inRange:(id<ORRational>)e
 {
    return [_low leq: e] && [e leq: _up];
 }

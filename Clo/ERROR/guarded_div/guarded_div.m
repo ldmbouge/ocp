@@ -11,7 +11,7 @@
 for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
 NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
 
-void check_it_f(float x, float y, float r, ORRational* er) {
+void check_it_f(float x, float y, float r, id<ORRational> er) {
    mpq_t qx, qy, tmp0, tmp1;
    float cr = x / y;
    
@@ -45,7 +45,7 @@ void check_it_f(float x, float y, float r, ORRational* er) {
 void guarded_div_f(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      ORRational* zero = [ORRational rationalWith_d:0.0f];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0f];
       id<ORFloatVar> x = [ORFactory floatVar:mdl low:-INFINITY up:+INFINITY elow:zero eup:zero name:@"x"];
       id<ORFloatVar> y = [ORFactory floatVar:mdl low:-INFINITY up:+INFINITY elow:zero eup:zero name:@"x"];
       id<ORFloatVar> t = [ORFactory floatVar:mdl name:@"t"];

@@ -293,34 +293,34 @@
 
 @implementation ORMutableRationalI
 {
-   ORRational*    _value;
+   id<ORRational>    _value;
    id<ORTracker> _tracker;
 }
 
--(ORMutableRationalI*) initORMutableRationalI:(id<ORTracker>)tracker value:(ORRational*) value
+-(ORMutableRationalI*) initORMutableRationalI:(id<ORTracker>)tracker value:(id<ORRational>) value
 {
    self = [super init];
    _value = [ORRational rationalWith:value];
    _tracker = tracker;
    return self;
 }
--(ORRational*) initialValue
+-(id<ORRational>) initialValue
 {
    return _value;
 }
--(ORRational*) value
+-(id<ORRational>) value
 {
    return _value;
 }
--(ORRational*) setValue: (ORRational*) value
+-(id<ORRational>) setValue: (id<ORRational>) value
 {
    return _value = value;
 }
--(ORRational*) value: (id<ORGamma>) solver
+-(id<ORRational>) value: (id<ORGamma>) solver
 {
    return [(ORMutableRationalI*)[solver concretize: self] initialValue];
 }
--(ORRational*) setValue: (ORRational*) value in: (id<ORGamma>) solver
+-(id<ORRational>) setValue: (id<ORRational>) value in: (id<ORGamma>) solver
 {
    return [((ORMutableRationalI*)[solver concretize: self]) setValue: value];
 }
@@ -493,11 +493,11 @@
 
 @implementation ORRationalI
 {
-   ORRational*       _value;
+   id<ORRational>       _value;
    id<ORTracker> _tracker;
 }
 
--(ORRationalI*) init: (id<ORTracker>) tracker value: (ORRational*) value
+-(ORRationalI*) init: (id<ORTracker>) tracker value: (id<ORRational>) value
 {
    self = [super init];
    _value = [ORRational rationalWith:value];
@@ -528,15 +528,15 @@
 {
    return ceil([_value get_d]);
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return _value;
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return _value;
 }
--(ORRational*) value
+-(id<ORRational>) value
 {
    return _value;
 }
@@ -544,7 +544,7 @@
 {
    return (ORInt) [_value get_d];
 }
--(ORRational*) rationalValue
+-(id<ORRational>) rationalValue
 {
    return _value;
 }
@@ -574,12 +574,12 @@
 }
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORRational*) at:_value];
+   [aCoder encodeValueOfObjCType:@encode(id<ORRational>) at:_value];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORRational*) at:_value];
+   [aDecoder decodeValueOfObjCType:@encode(id<ORRational>) at:_value];
    return self;
 }
 -(void) visit: (ORVisitor*) visitor

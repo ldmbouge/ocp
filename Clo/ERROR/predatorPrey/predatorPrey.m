@@ -20,7 +20,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void check_it_d(double r, double k, double x, double z, ORRational* ez) {
+void check_it_d(double r, double k, double x, double z, id<ORRational> ez) {
    mpq_t qz, qx, tmp0, tmp1, tmp2;
    double cz = ((r*x)*x) / (1.0 + ((x/k)*(x/k)));
    
@@ -58,7 +58,7 @@ void check_it_d(double r, double k, double x, double z, ORRational* ez) {
 void predatorPrey_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      ORRational* zero = [ORRational rationalWith_d:0.0];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORDoubleVar> K = [ORFactory doubleVar:mdl name:@"K"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
@@ -88,7 +88,7 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
    }
 }
 
-void check_it_f(float r, float k, float x, float z, ORRational* ez) {
+void check_it_f(float r, float k, float x, float z, id<ORRational> ez) {
    mpq_t qz, qx, tmp0, tmp1, tmp2;
    float cz = ((r*x)*x) / (1.0f + ((x/k)*(x/k)));
    
@@ -126,7 +126,7 @@ void check_it_f(float r, float k, float x, float z, ORRational* ez) {
 void predatorPrey_f(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      ORRational* zero = [ORRational rationalWith_d:0.0f];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0f];
       id<ORFloatVar> r = [ORFactory floatVar:mdl name:@"r"];
       id<ORFloatVar> K = [ORFactory floatVar:mdl];
       id<ORFloatVar> z = [ORFactory floatVar:mdl];

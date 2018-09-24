@@ -10,9 +10,9 @@
 
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
-      ORRational* low = [[ORRational alloc] init];
-      ORRational* low_y = [[ORRational alloc] init];
-      ORRational* up = [[ORRational alloc] init];
+      id<ORRational> low = [[ORRational alloc] init];
+      id<ORRational> low_y = [[ORRational alloc] init];
+      id<ORRational> up = [[ORRational alloc] init];
       [low set: 1 and: 8];
       [low_y set: 1 and: 2];
       [up set: 5 and: 2];

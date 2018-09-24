@@ -47,9 +47,9 @@
 
 @interface CPRationalEqualc : CPCoreConstraint {
    CPRationalVarI* _x;
-   ORRational*      _c;
+   id<ORRational>      _c;
 }
--(id) init:(id)x and:(ORRational*)c;
+-(id) init:(id)x and:(id<ORRational>)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -67,9 +67,9 @@
 
 @interface CPRationalNEqualc : CPCoreConstraint {
    CPRationalVarI* _x;
-   ORRational*      _c;
+   id<ORRational>      _c;
 }
--(id) init:(id)x and:(ORFloat)c;
+-(id) init:(id)x and:(id)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

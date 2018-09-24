@@ -216,6 +216,7 @@
 -(void) visitFloatReifyGThen: (id<ORConstraint>)c;
 -(void) visitRationalEqualc: (id<ORConstraint>)c;
 -(void) visitRationalErrorOf: (id<ORConstraint>)c;
+-(void) visitRationalChannel:(id<ORConstraint>)c;
 -(void) visitRationalAssignC: (id<ORConstraint>)c;
 -(void) visitRationalNEqualc: (id<ORConstraint>)c;
 -(void) visitRationalLinearEq: (id<ORConstraint>) c;
