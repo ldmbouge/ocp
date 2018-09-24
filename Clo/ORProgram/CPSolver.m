@@ -2734,7 +2734,7 @@
 //      SEL s = @selector(maxAbsDensSearchI:default:);
 //      __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
 //      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
-//      __block ORInt switchneeded = false;
+//      __block ORInt switchneeded = true;
 //      __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
 //      id<ORSelect> select = [ORFactory select: _engine
 //                                        range: RANGE(self,[x low],[x up])
@@ -2752,7 +2752,7 @@
 //                                     }
 //                                    orderedBy: ^ORDouble(ORInt i) {
 //                                       LOG(_level,2,@"%@ rate : %16.16e",_gamma[getId(x[i])], [abs[i] quantity]);
-//                                       switchneeded = switchneeded || ([abs[i] quantity] == 0.f);
+//                                       switchneeded = switchneeded && !([abs[i] quantity] > 0.f);
 //                                       return [abs[i] quantity];
 //                                    }];
 //
@@ -2761,8 +2761,7 @@
 //         do {
 //            LOG(_level,2,@"State before selection");
 //            ORSelectorResult i = [select max];
-//            if(!switchneeded){
-//               switchneeded = true;
+//            if(switchneeded){
 //               [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
 ////                                    [self floatSplit:i call:s withVars:x];
 //                                    [self float6WaySplit:i call:s withVars:x];
@@ -2781,7 +2780,7 @@
 //               LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
 //               [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
 //               abs = [self computeAbsorptionsQuantities:x];
-//               switchneeded = false;
+//               switchneeded = true;
 //            }
 //         } while (true);
 //      }];
@@ -2840,7 +2839,7 @@
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
 //         [self float6WaySplit:i.index call:s withVars:x];
          [self floatSplit:i.index call:s withVars:x];
-         switchneeded = false;
+         switchneeded = true;
       }
       } while (true);
    }];
