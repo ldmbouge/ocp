@@ -27,7 +27,7 @@
  
  */
 
-#define NBLOOPS 10
+#define NBLOOPS 9
 
 
 int main(int argc, const char * argv[]) {
@@ -52,6 +52,7 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> expr = [ORFactory float:model value:0.01f];
          id<ORExpr> expr_1 = [ORFactory float:model value:0.138012f];
          
+         
          id<ORFloatVarArray> e = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"e"];
          id<ORFloatVarArray> p = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"p"];
          id<ORFloatVarArray> i = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"i"];
@@ -64,7 +65,6 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVarArray> t_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"t_opt"];
          id<ORFloatVarArray> e_old_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"e_old_opt"];
          id<ORFloatVarArray> i_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"i_opt"];
-         
          //
          //         model.add(*(e[0]) = 0.0f);
          //         model.add(*(p[0]) = 0.0f);
@@ -130,7 +130,7 @@ int main(int argc, const char * argv[]) {
          //         model.add(diff*diff > 0.0622f);
          
          [g add:[diff eq:[m[NBLOOPS] sub:m_opt[NBLOOPS]]]];
-         [g add:[[diff mul:diff] gt:@(0.0622f)]];
+         [g add:[[diff mul:diff] geq:@(0.0f)]];
          [model add:g];
          //         NSLog(@"%@", model);
          id<ORFloatVarArray> vars = [model floatVars];
@@ -144,6 +144,8 @@ int main(int argc, const char * argv[]) {
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];
                found &= [p bound: v];
+               //               NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+               
                NSLog(@"%@",cv);
             }
             [args checkAbsorption:vars solver:cp];
@@ -156,3 +158,5 @@ int main(int argc, const char * argv[]) {
    }
    return 0;
 }
+
+

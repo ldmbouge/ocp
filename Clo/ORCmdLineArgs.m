@@ -300,13 +300,17 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 }
 -(void) checkAbsorption:(id<ORFloatVarArray>)vars solver:(id<CPProgram>)cp
 {
-#define abs 0
+#define abs 1
 #if abs
+   ORInt cpt = 0;
    for(id<ORFloatVar> x in vars){
       ORDouble v = [cp computeAbsorptionRate:x];
-      if(v > 0.0)
+      if(v > 0.0){
          NSLog(@"%@ is involved in abs %f",x,v);
+         cpt++;
+      }
    }
+   NSLog(@"Il y a %d variables impliquees dans une absorption", cpt);
 #endif
 }
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x
