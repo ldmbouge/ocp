@@ -20,11 +20,11 @@ id<ORBitVar> w[16];
 id<ORModel> model;
 id<ORIdArray> ca;
 
-id<ORBitVar> hooka = nil;
-id<ORBitVar> hookb = nil;
-id<ORBitVar> hookc = nil;
-id<ORBitVar> hookd = nil;
-id<ORBitVar> hooke = nil;
+id<ORBitVar> testa = nil;
+id<ORBitVar> testb = nil;
+id<ORBitVar> testc = nil;
+id<ORBitVar> testd = nil;
+id<ORBitVar> teste = nil;
 ORUInt initHash[] = {0,0,0,0,0};
 ORUInt Deltas[100][5];
 ORUInt outputHash[100][5];
@@ -133,11 +133,11 @@ int main(int argc, const char * argv[]) {
         [cp labelBitVarHeuristic:h];
         [cp labelArrayFF: iv];
         NSLog(@"A + B = C (Addition over BitVars)");
-        NSLog(@"%@: A",[cp stringValue: hooka]);
-        NSLog(@"%@: B",[cp stringValue: hookb]);
-        NSLog(@"%@: Carry In",[cp stringValue: hookc]);
-        NSLog(@"%@: C (Result)",[cp stringValue: hookd]);
-        NSLog(@"%@: Carry Out",[cp stringValue: hooke]);
+        NSLog(@"%@: A",[cp stringValue: testa]);
+        NSLog(@"%@: B",[cp stringValue: testb]);
+        NSLog(@"%@: Carry In",[cp stringValue: testc]);
+        NSLog(@"%@: C (Result)",[cp stringValue: testd]);
+        NSLog(@"%@: Carry Out",[cp stringValue: teste]);
         
         NSLog(@"print");
         
@@ -219,7 +219,7 @@ id<ORBitVarArray> SHA1_R(id<ORModel> m, id<ORBitVarArray> input, ORInt round){
      [m add: [ORFactory bit:input[1] from:2 to:31 eq:shiftbtemp2]];
      [m add: [ORFactory bit:shiftatemp concat:shiftatemp2 eq:shifta]];
      [m add: [ORFactory bit:shiftbtemp concat:shiftbtemp2 eq:shiftb]];
-     */
+    */
     
     [m add: [ORFactory bit:input[0] rotateLBy:5 eq:shifta]];
     [m add: [ORFactory bit:input[1] rotateLBy:30 eq:shiftb]];
@@ -245,8 +245,11 @@ id<ORBitVarArray> SHA1_R(id<ORModel> m, id<ORBitVarArray> input, ORInt round){
     
     [ORFactory bit: f plus:input[4] withCarryIn:ci eq:r0 withCarryOut:co];
     if(round == 15){
-        hooka = f; hookb = input[4]; hookc = ci; hookd = r0; hooke = co;
+        testa = f; testb = input[4]; testc = ci; testd = r0; teste = co;
     }
+    
+    ci = [ORFactory bitVar:m low:&MIN up:&CINMAX bitLength:32];
+    co = [ORFactory bitVar:m low:&MIN up:&MAX bitLength:32];
     [ORFactory bit: r0 plus:shifta withCarryIn:ci eq:r1 withCarryOut:co];
     ci = [ORFactory bitVar:m low:&MIN up:&CINMAX bitLength:32];
     co = [ORFactory bitVar:m low:&MIN up:&MAX bitLength:32];
