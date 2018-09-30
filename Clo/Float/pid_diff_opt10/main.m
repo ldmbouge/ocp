@@ -132,7 +132,6 @@ int main(int argc, const char * argv[]) {
          [g add:[diff eq:[m[NBLOOPS] sub:m_opt[NBLOOPS]]]];
          [g add:[[diff mul:diff] geq:@(0.0f)]];
          [model add:g];
-         //         NSLog(@"%@", model);
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          __block bool found = false;
