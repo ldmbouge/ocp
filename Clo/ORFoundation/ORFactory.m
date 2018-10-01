@@ -663,6 +663,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORRationalVarI alloc]  init: tracker name:name];
 }
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker from:(id<ORFloatVar>) f
+{
+   return [[ORRationalVarI alloc]  init: tracker name:[f prettyname]];
+}
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(id<ORRational>) low up: (id<ORRational>) up name:(NSString*) name
 {
    return [[ORRationalVarI alloc]  init: tracker low: low up: up name:name];

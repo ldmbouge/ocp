@@ -971,7 +971,7 @@
 }
 -(id<ORExpr>) channel
 {
-   id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] name:[self prettyname]];
+   id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] from:self];
    id<ORConstraint> c = [ORFactory channel:self with:r];
    [[self tracker] add:c];
    return r;

@@ -151,6 +151,7 @@ PORTABLE_BEGIN
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker;
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(id<ORRational>) low up: (id<ORRational>) up name:(NSString*) name;
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker name:(NSString*) name;
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker from:(id<ORExpr>) f;
 +(id<ORRationalVar>) errorVar: (id<ORTracker>) tracker of:(id<ORExpr>)f;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
