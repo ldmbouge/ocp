@@ -123,15 +123,15 @@ void lock_constructor() {
    [pItf release];
    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
 #if defined(__APPLE__)
-   static OSSpinLock lock = OS_SPINLOCK_INIT;
-   OSSpinLockLock(&lock);
+   static os_unfair_lock lock = (os_unfair_lock){0};
+   os_unfair_lock_lock(&lock);
 #else   
    pthread_spin_lock(&lock);
 #endif
    static ORLong ttl = 0;
    ttl += cpu1.tv_sec*1000 + cpu1.tv_usec/1000;
 #if defined(__APPLE__)
-   OSSpinLockUnlock(&lock);
+   os_unfair_lock_unlock(&lock);
 #else
    pthread_spin_unlock(&lock);
 #endif   
