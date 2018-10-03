@@ -48,17 +48,6 @@ int main(int argc, const char * argv[]) {
       id<ORDoubleVarArray> vs = [mdl doubleVars];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
-      //[cp setMinError:z minError:7.45e-9f];
-      [cp setMinErrorDD:x minErrorF:0.0];
-      [cp setMaxErrorDD:x maxErrorF:0.0];
-      [cp setMinErrorDD:y minErrorF:0.0];
-      [cp setMaxErrorDD:y maxErrorF:0.0];
-      [cp setMinErrorFD:o minErrorF:0.0f];
-      [cp setMaxErrorFD:o maxErrorF:0.0f];
-      [cp setMinErrorFD:k minErrorF:0.0f];
-      [cp setMaxErrorFD:k maxErrorF:0.0f];
-      //[cp setMinErrorFD:z minErrorF:0.0f];
-      //[cp setMaxErrorFD:z maxErrorF:0.0f];
       [cp solve:^{
          [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
             [cp floatSplit:i call:s withVars:x];

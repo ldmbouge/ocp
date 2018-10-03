@@ -1161,9 +1161,10 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xrTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> yrTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> xr = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> yr = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> zr = [[ORRationalInterval alloc] init];
    
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
@@ -1197,7 +1198,6 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       /* ERROR PROPAG */
       [xr set_d:x.inf and:x.sup];
       [yr set_d:y.inf and:y.sup];
-      [zr set_d:z.inf and:z.sup];
       
       eo = compute_eo_mul_d(eo, x, y, z);
       changed |= eo.changed;
@@ -1229,6 +1229,27 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       ey = [ey proj_inter: eyTemp];
       changed |= ey.changed;
+      
+      // ============================== x
+      // (ez - y*ex - ex*ey - eo)/ey
+      xrTemp = [[[[ez sub: [yr mul: ex]] sub: [ex mul: ey]] sub: eo] div: ey];
+      
+      xr = [xr proj_inter:xrTemp];
+      changed |= xr.changed;
+      
+      x.inf = [[xr low] get_d];
+      x.sup = [[xr up] get_d];
+      
+      // ============================== y
+      // (ez - x*ey - ex*ey - eo)/ex
+      yrTemp = [[[[ez sub: [xr mul: ey]] sub: [ex mul: ey]] sub: eo] div: ex];
+      
+      yr = [yr proj_inter:yrTemp];
+      changed |= yr.changed;
+      
+      y.inf = [[yr low] get_d];
+      y.sup = [[yr up] get_d];
+
       /* END ERROR PROPAG */
       
       gchanged |= changed;
@@ -1258,6 +1279,8 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [eyTemp release];
    [ezTemp release];
    [eoTemp release];
+   [xrTemp release];
+   [yrTemp release];
    [xr release];
    [yr release];
 }
@@ -1324,9 +1347,14 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xrTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> yrTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> xr = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> yr = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> zr = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> D = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> d1 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> d2 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> tmp = [[ORRationalInterval alloc] init];
    
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
@@ -1360,7 +1388,6 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       /* ERROR PROPAG */
       [xr set_d:x.inf and:x.sup];
       [yr set_d:y.inf and:y.sup];
-      [zr set_d:z.inf and:z.sup];
       
       eo = compute_eo_div_d(eo, x, y, z);
       changed |= eo.changed;
@@ -1393,6 +1420,44 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       ey = [ey proj_inter: eyTemp];
       changed |= ey.changed;
       
+      // ============================== x
+      // ((eo-ez) * y * (y+ey) + y*ex)/ey
+      xrTemp = [[[[[eo sub: ez] mul: yr] mul: [yr add:ey]] add: [yr mul: ex]] div: ey];
+      
+      xr = [xr proj_inter:xrTemp];
+      changed |= xr.changed;
+      
+      x.inf = [[xr low] get_d];
+      x.sup = [[xr up] get_d];
+      
+      // ============================== y
+      // min(d1, d2), max(d1, d2)
+      // d1 = (ex - (ez - eo)*ey - sqrt(D))/(2*(ez - eo))
+      // d2 = (ex - (ez - eo)*ey + sqrt(D))/(2*(ez - eo))
+      // D = [0, +INF] inter ((ez - eo)*ey - ex)^2 + 4*(ez - eo)*ey*x
+      
+      [tmp set_d:4.0 and:4.0];
+      D = [[[[[ez sub: eo] mul: ey] sub: ex] mul: [[[ez sub: eo] mul: ey] sub: ex]] add: [[[tmp mul: [ez sub: eo]] mul: ey] mul: xr]];
+      [tmp set_d:0.0 and:+INFINITY];
+      D = [tmp proj_inter:D];
+      
+      tmp = [ex sub: [[ez sub: eo] mul: ey]];
+      [D.low set_d: sqrt([D.low get_d])];
+      [D.up set_d: sqrt([D.up get_d])];
+      d1 = [tmp sub: D];
+      d2 = [tmp add: D];
+      [tmp set_d:2.0 and:2.0];
+      tmp = [tmp mul: [ez sub: eo]];
+      d1 = [d1 div: tmp];
+      d2 = [d2 div: tmp];
+      
+      [yrTemp set_q:minQ(d1.low, d2.low) and:maxQ(d1.up, d2.up)];
+      yr = [yr proj_inter:yrTemp];
+      changed |= yr.changed;
+      
+      y.inf = [[yr low] get_d];
+      y.sup = [[yr up] get_d];
+      
       /* END ERROR PROPAG */
       
       gchanged |= changed;
@@ -1422,9 +1487,14 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [eyTemp release];
    [ezTemp release];
    [eoTemp release];
+   [xrTemp release];
+   [yrTemp release];
    [xr release];
    [yr release];
-   
+   [D release];
+   [d1 release];
+   [d2 release];
+   [tmp release];
 }
 - (void)dealloc {
    [super dealloc];
