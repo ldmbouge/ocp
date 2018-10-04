@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>AFA_SHA.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>156</integer>
+		</dict>
 		<key>ATPTW.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -152,7 +157,7 @@
 		<key>Odometrie_1.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>154</integer>
+			<integer>153</integer>
 		</dict>
 		<key>OptimizedHeron.xcscheme</key>
 		<dict>
@@ -322,7 +327,7 @@
 		<key>dummy.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>195</integer>
+			<integer>155</integer>
 		</dict>
 		<key>dxAES.xcscheme</key>
 		<dict>
@@ -762,7 +767,7 @@
 		<key>verifSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>156</integer>
+			<integer>154</integer>
 		</dict>
 		<key>vietnameseSnake.xcscheme_^#shared#^_</key>
 		<dict>
@@ -1268,6 +1273,11 @@
 			<true/>
 		</dict>
 		<key>5BFF681F1860D98E00B50286</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>68D2FB61215D488600276240</key>
 		<dict>
 			<key>primary</key>
 			<true/>
