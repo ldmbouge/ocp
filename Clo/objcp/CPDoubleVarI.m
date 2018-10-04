@@ -11,17 +11,8 @@
 
 #import "CPDoubleVarI.h"
 #import <CPUKernel/CPUKernel.h>
-//#import "CPDoubleDom.h"
 #import <objcp/CPRationalDom.h>
 #import <objcp/CPDoubleDom.h>
-
-
-typedef struct  {
-   TRId           _bindEvt;
-   TRId            _minEvt;
-   TRId            _maxEvt;
-   TRId         _boundsEvt;
-} CPDoubleEventNetwork;
 
 /*****************************************************************************************/
 /*                        CPDoubleVarSnapshot                                              */
@@ -157,9 +148,7 @@ static NSMutableSet* collectConstraints(CPDoubleEventNetwork* net,NSMutableSet* 
     return rv;
 }
 
-@implementation CPDoubleVarI {
-   CPDoubleEventNetwork      _net;
-}
+@implementation CPDoubleVarI
 
 -(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup
 {

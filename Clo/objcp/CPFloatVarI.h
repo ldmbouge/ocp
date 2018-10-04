@@ -18,7 +18,6 @@
 #import <objcp/CPIntVarI.h>
 
 #import <ORFoundation/fpi.h>
-//#include "fpi.h"
 #import "rationalUtilities.h"
 
 #define NB_FLOAT_BY_E (8388608)
@@ -93,7 +92,6 @@ typedef struct  {
    BOOL                     _hasValue;
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    id<ORRational>              _valueError;
-   id<CPFloatDom>            _dom;
    id<CPRationalDom>     _domError;
    CPFloatEventNetwork      _net;
    CPMultiCast*             _recv;
