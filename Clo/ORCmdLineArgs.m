@@ -18,7 +18,7 @@
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
    @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
    @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
-   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico"};
+   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens"};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"split3B",@"splitAbs",@"ESplit",@"DSplit"};
 
@@ -296,6 +296,21 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
       printf("OUT_STAT : %d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%16.16e;%16.16e;%16.16e;%16.16e;%16.16e;%16.16e;%d;%d;%d;%16.16Le;%16.16Le;%16.16Le;%16.16e;%16.16e;%16.16e;%d;%16.16e;%16.16e;%16.16e;%d;%d;%d;%d;%d;%d;%d\n",(ORInt)[[g variables] count],nbInfini,nbABound,[[p engine] nbVars],[[p engine] nbVars]-nbNotBound,nbInfinic,[g size],[cg size],[occs min],[occs max],[occs average],nbocc,[width min],[width max],[width average],[cardinality min],[cardinality max],[cardinality average],[degree min],[degree max],[degree average],[density min],[density max],[density average],minabs,maxabs,(nbabs != 0)?(somme/nbabs):0,nbabs,[cancellation min],[cancellation max],[cancellation average],nbcanc,[nbVarByConstraints min],[nbVarByConstraints max],[nbVarByConstraints average],[nbDistinctVarByConstraints min],[nbDistinctVarByConstraints max],[nbDistinctVarByConstraints average]);
       
    }
+#endif
+}
+-(void) checkAbsorption:(id<ORFloatVarArray>)vars solver:(id<CPProgram>)cp
+{
+#define abs 1
+#if abs
+   ORInt cpt = 0;
+   for(id<ORFloatVar> x in vars){
+      ORDouble v = [cp computeAbsorptionRate:x];
+      if(v > 0.0){
+         NSLog(@"%@ is involved in abs %f",x,v);
+         cpt++;
+      }
+   }
+   NSLog(@"Il y a %d variables impliquees dans une absorption", cpt);
 #endif
 }
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x
@@ -1112,12 +1127,12 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                      break;
                   case split6Way:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatSplit:i call:s withVars:x];
-                     }];
+                        [p floatStatic6WaySplit:i call:s withVars:x];
+                         }];
                      break;
                   case dynamicSplit:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p float6WaySplit:i call:s withVars:x];
+                        [p floatSplit:i call:s withVars:x];
                      }];
                      break;
                   case dynamic3Split:
@@ -1136,6 +1151,16 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   case split3B:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                         [p float3BSplit:i call:s withVars:x];
+                     }];
+                     break;
+                  case Esplit:
+                     [p maxAbsorptionSearch:vars  default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [p floatEWaySplit:i call:s withVars:x];
+                     }];
+                     break;
+                  case Dsplit:
+                     [p maxAbsorptionSearch:vars  default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [p floatDeltaSplit:i call:s withVars:x];
                      }];
                      break;
                   default:
@@ -1457,6 +1482,12 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                }];
                break;
          }
+         break;
+      
+      case absDens :
+         [p maxAbsDensSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+            [p float6WaySplit:i call:s withVars:x];
+         }];
          break;
       default :
          heuristic = lexico;

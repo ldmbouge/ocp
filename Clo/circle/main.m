@@ -38,14 +38,14 @@ int main(int argc, const char * argv[])
                                            suchThat: ^ORBool(ORInt i)    { return ![cp bound:a[i]]; }
                                           orderedBy:^ORDouble(ORInt i) { return [cp domwidth:a[i]];} ];
             do {
-               ORInt i = [select min];
-               if (i == MAXINT)
+               ORSelectorResult i = [select min];
+               if (i.found)
                   break;               
-               ORDouble mid = [cp doubleMin:a[i]] + ([cp doubleMax:a[i]] - [cp doubleMin:a[i]])/2.0;
+               ORDouble mid = [cp doubleMin:a[i.index]] + ([cp doubleMax:a[i.index]] - [cp doubleMin:a[i.index]])/2.0;
                [cp try:^{
-                  [cp realLthen:a[i] with:mid];
+                  [cp realLthen:a[i.index] with:mid];
                } alt:^{
-                  [cp realGthen:a[i] with:mid];
+                  [cp realGthen:a[i.index] with:mid];
                }];
             } while (true);
             nbSol++;

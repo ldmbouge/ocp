@@ -13,6 +13,7 @@
 #import "CPFloatConstraint.h"
 #import "CPFloatVarI.h"
 #import "ORConstraintI.h"
+#import <fenv.h>
 #import "rationalUtilities.h"
 
 #define PERCENT 5.0
@@ -790,6 +791,7 @@ id<ORRationalInterval> compute_eo_div(id<ORRationalInterval> eo, const float_int
    if(![_y bound] || ![_y boundError]) [_y whenChangeBoundsPropagate:self];
    if(![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
 }
+//hzi : _Temps variables are useless ? inter.result ? x is already changed ?
 -(void) propagate
 {
    int gchanged,changed;

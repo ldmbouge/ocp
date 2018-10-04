@@ -344,6 +344,10 @@
 {
     [[self worker] minMagnitudeSearch:x do:b];
 }
+-(void)          maxAbsDensSearch: (id<ORDisabledFloatVarArray>) x  default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   [[self worker] maxAbsDensSearch:x default:b];
+}
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORDisabledFloatVarArray>) x
 {
     [[self worker] floatSplitArrayOrderedByDomSize:x];

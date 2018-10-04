@@ -40,11 +40,11 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> a = [ORFactory floatVar:model low:5.0f up:10.0f];
-         id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f];
-         id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f];
-         id<ORFloatVar> s = [ORFactory floatVar:model];
-         id<ORFloatVar> squared_area = [ORFactory floatVar:model];
+         id<ORFloatVar> a = [ORFactory floatVar:model low:5.0f up:10.0f name:@"a"];
+         id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f name:@"b"];
+         id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f name:@"c"];
+         id<ORFloatVar> s = [ORFactory floatVar:model  name:@"s"];
+         id<ORFloatVar> squared_area = [ORFactory floatVar:model  name:@"aire"];
          id<ORGroup> g = [args makeGroup:model];
          [g add:[a gt:@(0.0f)]];
          [g add:[b gt:@(0.0f)]];
@@ -77,6 +77,8 @@ int main(int argc, const char * argv[]) {
                found &= [p bound: v];
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
+            
+            [args checkAbsorption:vars solver:cp];
             check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);
             
          } withTimeLimit:[args timeOut]];

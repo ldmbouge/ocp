@@ -10,7 +10,7 @@ int main(int argc, const char * argv[]) {
          id<ORModel> model = [ORFactory createModel];
          id<ORDoubleVar> c_0 = [ORFactory doubleVar:model name:@"c"];
          id<ORDoubleVar> r_0 = [ORFactory doubleVar:model name:@"r"];
-         id<ORDoubleVar> a_0 = [ORFactory doubleVar:model name:@"a"];
+         id<ORDoubleVar> a_0 = [ORFactory doubleVar:model  low:10.0 up:20.0 name:@"a"];
          id<ORDoubleVar> Q_0 = [ORFactory doubleVar:model name:@"Q"];
          id<ORDoubleVar> R2_0 = [ORFactory doubleVar:model name:@"R2"];
          id<ORDoubleVar> CR2_0 = [ORFactory doubleVar:model name:@"CR2"];

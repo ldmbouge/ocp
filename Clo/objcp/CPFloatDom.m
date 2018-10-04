@@ -15,7 +15,7 @@
 #import "CPError.h"
 #import "CPFloatVarI.h"
 
-#include <fpi.h>
+#include <ORFoundation/fpi.h>
 
 
 @implementation CPFloatDom

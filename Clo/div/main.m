@@ -1,58 +1,50 @@
-//
-//  main.m
-//  div
-//
-//  Created by Zitoun on 12/02/2018.
-//
+/**
+Benchmark from SMTLIB Griggio
+ **/
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
 
+#define NBLOOPS 20
+#define MAX_VALUE 2.14748e+09f
 #define LARGE_NUMBER 4.0e+14
-#define NBLOOPS 120
 
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
+         fesetround(FE_TONEAREST);
          id<ORModel> model = [ORFactory createModel];
-         id<ORGroup> g = [args makeGroup:model];
-         
-         fesetround(FE_TONEAREST);
+         id<ORFloatVarArray> nextvalues = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS-1) names:@"nextvalues"];
          id<ORFloatVarArray> d = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"d"];
-         id<ORFloatVarArray> nextvalues = [ORFactory floatVarArray:model range:RANGE(model, 0, 0) names:@"nextvalues"];
-         
+         id<ORGroup> g = [args makeGroup:model];
          [g add:[d[0] eq:@(LARGE_NUMBER)]];
-         for (int i = 0; i < NBLOOPS; i++){
-            [g add:[nextvalues[0] geq:@(1.f)]];
-            [g add:[nextvalues[0] gt:@(2.14748e+09f)]];
-            [g add:[d[i+1] eq:[d[i] div:nextvalues[0]]]];
+         for (ORUInt n = 0; n < NBLOOPS; n++) {
+            [g add:[nextvalues[n] geq:@(1.f)]];
+            [g add:[nextvalues[n] lt:@(MAX_VALUE)]];
+            [g add:[d[n+1] eq:[d[n] div:nextvalues[n]]]];
          }
-         
-         [g add:[d[NBLOOPS] lt:@(1.f)]];
+         [g add:[d[NBLOOPS] lt:@(1.0f)]];
          [model add:g];
-         
-         //         NSLog(@"%@", model);
-         //         NSLog(@"---");
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         NSLog(@"%@",g);
+         id<ORFloatVarArray> vars = [model floatVars];
          __block bool found = false;
-         //         checksolution();
-         fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
+            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+            NSLog(@"Valeurs solutions : \n");
+            found=true;
             for(id<ORFloatVar> v in vars){
-               id<CPFloatVar> cv = [cp concretize:v];
                found &= [p bound: v];
-               NSLog(@"%@ = %16.16e (%s)",v,[cv value], [p bound:v] ? "YES" : "NO");
+               NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
-            //            checksolution([p floatValue:y[0]], [p floatValue:y_opt[0]], [p floatValue:y[NBLOOPS]],[p floatValue:y_opt[NBLOOPS]], [p floatValue:diff]);
          } withTimeLimit:[args timeOut]];
-         NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
-         struct ORResult re = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return re;
+         
+         struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
       }];
       
    }
    return 0;
 }
-

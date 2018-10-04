@@ -13,7 +13,7 @@
 #import <ORFoundation/ORParameter.h>
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBitVarHeuristic.h>
-#import <objcp/CPData.h>
+#import <objcp/objcp.h>
 
 @protocol ORModel;
 @protocol ORSearchController;
@@ -82,6 +82,7 @@ PORTABLE_BEGIN
 -(void)          maxCancellationSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          combinedAbsWithDensSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          combinedDensWithAbsSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
+-(void)          maxAbsDensSearch:  (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          switchedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORDisabledFloatVarArray>) x;
 -(void)          lexicalOrderedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;

@@ -10,12 +10,12 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPDoubleDom.h"
+#import <objcp/CPDoubleDom.h>
 //#import "CPEngineI.h"
 #import "CPError.h"
 #import "CPDoubleVarI.h"
 
-#include <fpi.h>
+#import <ORFoundation/fpi.h>
 
 @implementation CPDoubleDom
 

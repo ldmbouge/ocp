@@ -182,7 +182,11 @@
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++) {
          [v[i] visit: self];
-         dx[i] = _gamma[[v[i] getId]];
+         ORInt viid = getId(v[i]);
+         if (viid == -1)
+            dx[i] = v[i];
+         else
+            dx[i] = _gamma[viid];
       }
       _gamma[v.getId] = dx;
    }

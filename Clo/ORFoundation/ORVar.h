@@ -154,6 +154,7 @@ PORTABLE_BEGIN
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
 -(ORBool) isEnable:(ORUInt) index;
+-(ORBool) contains: (id<ORFloatVar>) v;
 @end
 
 

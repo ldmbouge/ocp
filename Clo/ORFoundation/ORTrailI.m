@@ -14,8 +14,8 @@
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORData.h>
-//#import <ORFoundation/ORVisit.h>
-//#import <ORFoundation/ORCommand.h>
+#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORCommand.h>
 #import <assert.h>
 
 //#import "rationalUtilities.h"
@@ -691,8 +691,6 @@ ORInt trailMagic(ORTrailI* trail)
 }
 -(void)comply:(ORMemoryTrailI*)mt upTo:(ORCommandList*)cl
 {
-  //TOFIX
-  /*
    ORInt fh = [cl memoryFrom];
    ORInt th = [cl memoryTo];
    for(ORInt k=fh;k < th;k++) {
@@ -700,7 +698,6 @@ ORInt trailMagic(ORTrailI* trail)
       if (_csz >= _mxs) [self resize];
       _tab[_csz++] = [mt->_tab[k] retain];
    }
-  */
 }
 -(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th
 {

@@ -762,6 +762,19 @@
 -(id<ORDoubleVar>) right;
 @end
 
+@interface ORDoubleAssignC : ORConstraintI<ORDoubleAssignC>
+-(id) initORDoubleAssignC: (id<ORVar>) var to: (ORDouble) c;
+-(id<ORDoubleVar>) left;
+-(ORDouble) cst;
+@end
+
+
+@interface ORDoubleAssign : ORConstraintI<ORDoubleAssign>
+-(id) initORDoubleAssign: (id<ORVar>) x to: (id<ORVar>) y;
+-(id<ORDoubleVar>) left;
+-(id<ORDoubleVar>) right;
+@end
+
 @interface ORDoubleReifyEqualc : ORConstraintI<ORDoubleReifyEqualc>
 -(ORDoubleReifyEqualc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x eqi:(ORDouble)c;
 @end

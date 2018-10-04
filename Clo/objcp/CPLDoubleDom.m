@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPLDoubleDom.h"
+#import <objcp/CPLDoubleDom.h>
 //#import "CPEngineI.h"
 #import "CPError.h"
 #import "CPLDoubleVarI.h"

@@ -17,7 +17,8 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
+//#include "fpi.h"
 #import "rationalUtilities.h"
 
 #define NB_FLOAT_BY_E (8388608)
@@ -96,6 +97,8 @@ typedef struct  {
    id<CPRationalDom>     _domError;
    CPFloatEventNetwork      _net;
    CPMultiCast*             _recv;
+@public
+   id<CPFloatDom>            _dom;
 }
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup;
@@ -115,7 +118,6 @@ typedef struct  {
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
    CPEngineI* _engine;
    CPIntVar* _theVar;
-   CPFloatEventNetwork _net;
 }
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
@@ -196,11 +198,11 @@ static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
 }
 static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] < [y min] &&  [x max] < [y max];
+   return [x->_dom max] < [y->_dom min];
 }
 static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] > [y min ] && [x max] > [y max];
+   return [x min] > [y max]; 
 }
 static inline double cardinality(CPFloatVarI* x)
 {
@@ -232,10 +234,14 @@ static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
    if(m_cast.parts.mantissa == 0){
       e--;
    }
-   max = floatFromParts(0,e,0);
-   max = nextafterf(max, -INFINITY);
-   min = -max;
-   return makeFloatInterval(min,max);
+   if(e < 0){
+      return makeFloatInterval(0,0);
+   }else{
+      max = floatFromParts(0,e,0);
+      max = nextafterf(max, -INFINITY);
+      min = -max;
+      return makeFloatInterval(min,max);
+   }
 }
 static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
 {

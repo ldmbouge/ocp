@@ -11,7 +11,7 @@
 
 import ORProgram
 
-func varPermSym(m: ORModel,_ x : ORIntVarArray,_ p : ORIntMatrix) {
+func varPermSym(_ m: ORModel,_ x : ORIntVarArray,_ p : ORIntMatrix) {
    let l = p.range(0).low()
    let u = p.range(0).up()
    let y = ORFactory.intVarArray(m,range: x.range()) { i in x[i] }
@@ -25,7 +25,7 @@ func varPermSym(m: ORModel,_ x : ORIntVarArray,_ p : ORIntMatrix) {
    }
 }
 
-func varPermSymPairwise(m : ORModel,_ x : ORIntVarArray,_ p1 : ORIntArray,_ p2 : ORIntArray) {
+func varPermSymPairwise(_ m : ORModel,_ x : ORIntVarArray,_ p1 : ORIntArray,_ p2 : ORIntArray) {
    let invp1 = ORFactory.intArray(m,range:x.range()) { j in
       for i in x.range().low()...x.range().up() {
          if (p1.at(i) == j) {
@@ -72,7 +72,7 @@ autoreleasepool {
       for j in 1...R.up() {
          let e1 = exist(model, R, { k in j != k})  { k in filled[i,k]}
          let e2 = exist(model, R, { k in i != k})  { k in filled[k,j]}
-         let e3 = exist(model, range(model,1..<n)) {
+         let e3 = exist(model, range(model,1...n)) {
             k in
             let n = ORInt(n)
             var s : ORRelation? = nil

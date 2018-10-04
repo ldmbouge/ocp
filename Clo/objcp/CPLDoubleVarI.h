@@ -53,13 +53,6 @@
 -(void) bind: (ORLDouble) val;
 @end
 
-typedef struct  {
-    TRId           _bindEvt;
-    TRId            _minEvt;
-    TRId            _maxEvt;
-    TRId         _boundsEvt;
-} CPLDoubleEventNetwork;
-
 @class CPLDoubleVarI;
 @protocol CPLDoubleVarNotifier <NSObject>
 -(CPLDoubleVarI*) findAffine: (ORLDouble) scale shift: (ORLDouble) shift;
@@ -73,7 +66,6 @@ typedef struct  {
     BOOL                     _hasValue;
     ORLDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
     id<CPLDoubleDom>           _dom;
-    CPLDoubleEventNetwork     _net;
     CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORLDouble)low up:(ORLDouble)up;
@@ -87,7 +79,6 @@ typedef struct  {
 @interface CPLDoubleViewOnIntVarI : ORObject<CPLDoubleVar,CPLDoubleVarExtendedItf,CPIntVarNotifier> {
     CPEngineI* _engine;
     CPIntVar* _theVar;
-    CPLDoubleEventNetwork _net;
 }
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;

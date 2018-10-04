@@ -18,7 +18,8 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
+//#include "fpi.h"
 #import "rationalUtilities.h"
 
 #define NB_DOUBLE_BY_E (4.5035996e+15)
@@ -112,7 +113,6 @@ typedef struct  {
 @interface CPDoubleViewOnIntVarI : ORObject<CPDoubleVar,CPDoubleVarExtendedItf,CPIntVarNotifier> {
     CPEngineI* _engine;
     CPIntVar* _theVar;
-    CPDoubleEventNetwork _net;
 }
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
