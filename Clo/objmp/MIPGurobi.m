@@ -12,7 +12,7 @@
 #import <objmp/MIPGurobi.h>
 #import <objmp/MIPType.h>
 #import <objmp/MIPSolverI.h>
-#import <ORProgram/ORSolution.h>
+//#import <ORProgram/ORSolution.h>
 #import <ORFoundation/ORConstraint.h>
 #import "gurobi_c.h"
 
