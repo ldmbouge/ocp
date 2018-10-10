@@ -12,7 +12,7 @@
 #import <objmp/MIPGurobi.h>
 #import <objmp/MIPType.h>
 #import <objmp/MIPSolverI.h>
-#import <ORProgram/ORSolution.h>
+//#import <ORProgram/ORSolution.h>
 #import <ORFoundation/ORConstraint.h>
 #import "gurobi_c.h"
 
@@ -372,7 +372,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
          solution[idx] = val;
       }
       
-      int error = GRBcbsolution(cbdata, solution);
+      int error = GRBcbsolution(cbdata, solution,NULL);
       if (error != 0) assert(NO);
       
       free(solution);

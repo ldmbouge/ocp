@@ -203,7 +203,7 @@ int main(){
     
     ORLong searchStop = [ORRuntimeMonitor wctime];
     ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
-    printf("Choices: (%d / %d) FinishTime(s): %f  Objective: %d",[cp nbChoices], [cp nbFailures], elapsed, [[[cp solutionPool] best] objectiveValue]);
+    printf("Choices: (%d / %d) FinishTime(s): %f  Objective: %d",[cp nbChoices], [cp nbFailures], elapsed, [[[[cp solutionPool] best] objectiveValue] intValue]);
     [cp release];
     
     return 0;
@@ -303,5 +303,3 @@ int calcError(id<CPProgram,CPBV> cp, id<ORBitVar>* states, ORUInt pos, ORUInt ca
     }
     return deviations;
 }
-
-
