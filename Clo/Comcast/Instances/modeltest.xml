@@ -1,4 +1,3 @@
-
 <?xml version="1.0"?>
 <model>
     <maxCONN>1</maxCONN>
@@ -7,28 +6,38 @@
     <vmMEM>50</vmMEM>
     <cnode>
         <id>1</id>
-        <cnodeMemory>1000</cnodeMemory>
+        <cnodeMemory>500</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <cnode>
         <id>2</id>
-        <cnodeMemory>1000</cnodeMemory>
+        <cnodeMemory>500</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <cnode>
         <id>3</id>
-        <cnodeMemory>1000</cnodeMemory>
+        <cnodeMemory>500</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <cnode>
         <id>4</id>
-        <cnodeMemory>1000</cnodeMemory>
+        <cnodeMemory>500</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <cnode>
-       <id>5</id>
-       <cnodeMemory>1000</cnodeMemory>
-       <cnodeBandwidth>169</cnodeBandwidth>
+        <id>5</id>
+        <cnodeMemory>500</cnodeMemory>
+        <cnodeBandwidth>169</cnodeBandwidth>
+    </cnode>
+    <cnode>
+        <id>6</id>
+        <cnodeMemory>500</cnodeMemory>
+        <cnodeBandwidth>169</cnodeBandwidth>
+    </cnode>
+    <cnode>
+        <id>7</id>
+        <cnodeMemory>500</cnodeMemory>
+        <cnodeBandwidth>169</cnodeBandwidth>
     </cnode>
     <service>
         <id>1</id>

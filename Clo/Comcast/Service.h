@@ -21,6 +21,7 @@
 @property double serviceScaledBandwidth;
 @property int serviceZone;
 @property int serviceMaxConn;
+@property int serviceFixCPU;
 
 - (id) initWithId: (int) serviceId
     serviceFixMemory: (int) serviceFixMemory
@@ -28,6 +29,7 @@ serviceScaledMemory: (double) serviceScaledMemory
  serviceFixBandwidth: (int) serviceFixBandwidth
 serviceScaledBandwidth: (double) serviceScaledBandwidth
       serviceZone: (int) serviceZone
-   serviceMaxConn: (int) serviceMaxConn;
+   serviceMaxConn: (int) serviceMaxConn
+serviceFixCPU: (int) serviceFixCPU;
 
 @end

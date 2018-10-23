@@ -14,9 +14,11 @@
 @property int cnodeExtId;
 @property int cnodeMemory; // in MB
 @property int cnodeBandwidth; // in MB/s
+@property int cnodeCPU; // # of CPUs
 
 - (id) initWithId: (int) cnodeExtId
          cnodeMemory: (int) cnodeMemory
-         cnodeBandwidth: (int) cnodeBandwidth;
+         cnodeBandwidth: (int) cnodeBandwidth
+         cnodeCPU: (int) cnodeCPU;
 
 @end

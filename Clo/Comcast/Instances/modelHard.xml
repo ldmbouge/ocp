@@ -1,4 +1,3 @@
-
 <?xml version="1.0"?>
 <model>
     <maxCONN>1</maxCONN>
@@ -7,25 +6,37 @@
     <vmMEM>50</vmMEM>
     <cnode>
         <id>1</id>
-        <cnodeMemory>1000</cnodeMemory>
+        <cnodeMemory>400</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
         <cnodeCPU>100</cnodeCPU>
     </cnode>
     <cnode>
         <id>2</id>
-        <cnodeMemory>1000</cnodeMemory>
+        <cnodeMemory>400</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
         <cnodeCPU>100</cnodeCPU>
     </cnode>
     <cnode>
         <id>3</id>
-        <cnodeMemory>1000</cnodeMemory>
+        <cnodeMemory>400</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
         <cnodeCPU>100</cnodeCPU>
     </cnode>
     <cnode>
         <id>4</id>
-        <cnodeMemory>1000</cnodeMemory>
+        <cnodeMemory>400</cnodeMemory>
+        <cnodeBandwidth>169</cnodeBandwidth>
+        <cnodeCPU>100</cnodeCPU>
+    </cnode>
+    <cnode>
+        <id>5</id>
+        <cnodeMemory>400</cnodeMemory>
+        <cnodeBandwidth>169</cnodeBandwidth>
+        <cnodeCPU>100</cnodeCPU>
+    </cnode>
+    <cnode>
+        <id>6</id>
+        <cnodeMemory>200</cnodeMemory>
         <cnodeBandwidth>169</cnodeBandwidth>
         <cnodeCPU>100</cnodeCPU>
     </cnode>
