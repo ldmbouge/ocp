@@ -107,11 +107,28 @@
 }
 -(ORInt) intValue: (id) var
 {
-  for(id obj in _varShots) {
-    if ([obj getId] == [var getId])
-      return [obj intValue];
-  }
-  return 0;
+    NSUInteger at = [_varShots indexOfObject:var
+                               inSortedRange:NSMakeRange(0,_varShots.count-1)
+                                     options:NSBinarySearchingFirstEqual
+                             usingComparator:^(id obj,id to) {
+                                 int sub =[obj getId] - [to getId];
+                                 if (sub < 0)
+                                    return NSOrderedAscending;
+                                 else if (sub >0)
+                                    return NSOrderedDescending;
+                                 else return NSOrderedSame;
+                             }];
+    if (0 <= at && at < _varShots.count) {
+        id obj = [_varShots objectAtIndex:at];
+        if ([obj getId] == [var getId])
+            return  [obj intValue];
+        else return 0;
+    } else return 0;
+//  for(id obj in _varShots) {
+//    if ([obj getId] == [var getId])
+//      return [obj intValue];
+//  }
+//  return 0;
    // NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
    //    return [obj getId] == [var getId];
    // }];
