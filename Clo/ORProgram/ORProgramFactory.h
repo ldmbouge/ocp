@@ -25,6 +25,7 @@ PORTABLE_BEGIN
  * @param model : an ORModel instance.
  */
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
++(id<CPProgram>) createCPMDDProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPProgramBackjumpingDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (id<ORSearchController>) ctrlProto;
@@ -33,6 +34,7 @@ PORTABLE_BEGIN
 
 // With annotations
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation: (id<ORAnnotation>) notes;
++(id<CPProgram>) createCPMDDProgram: (id<ORModel>) model annotation: (id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model annotation:(id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto;
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k annotation:(id<ORAnnotation>) notes;

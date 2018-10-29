@@ -114,6 +114,7 @@
 -(void) visitRestrictedMDDMISP: (id<ORConstraint>) c;
 -(void) visitRelaxedMDDMISP: (id<ORConstraint>) c;
 -(void) visitRelaxedCustomMDD: (id<ORConstraint>) c;
+-(void) visitRelaxedCustomMDDWithObjective: (id<ORConstraint>) c;
 
 
 -(void) visitRealEqualc: (id<ORRealEqualc>)c;

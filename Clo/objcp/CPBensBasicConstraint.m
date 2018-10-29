@@ -76,7 +76,7 @@
     _isSink = false;
     _isSource = false;
     
-    _weights = NULL;
+    _objectiveValues = NULL;
     _longestPath = makeTRInt(_trail, -32768);
     _longestPathParents = malloc((maxParents) * sizeof(Node*));
     _numLongestPathParents = makeTRInt(_trail, 0);
@@ -89,7 +89,7 @@
     
     return self;
 }
--(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state weights:(int*)weights
+-(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state
 {
     [super init];
     _trail = trail;
@@ -109,14 +109,13 @@
     }
     
     _state = state;
-
+    
     _numChildren = makeTRInt(_trail, 0);
     _parents = malloc((maxParents) * sizeof(Node*));
     _numParents = makeTRInt(_trail, 0);
     _value = value;
     _isSink = false;
     _isSource = false;
-    _weights = weights;
     _longestPath = makeTRInt(_trail, -32768);
     _longestPathParents = malloc((maxParents) * sizeof(Node*));
     _numLongestPathParents = makeTRInt(_trail, 0);
@@ -126,6 +125,12 @@
     
     _reverseLongestPath = makeTRInt(_trail, 0);
     _reverseShortestPath = makeTRInt(_trail, 0);
+    return self;
+}
+-(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues
+{
+    self = [self initNode: trail maxParents:maxParents minChildIndex:minChildIndex maxChildIndex:maxChildIndex value:value state:state];
+    _objectiveValues = objectiveValues;
     return self;
 }
 -(void) dealloc {
@@ -161,8 +166,8 @@
 -(Node**) children {
     return _children;
 }
--(int) getWeightFor: (int)index {
-    return _weights[index];
+-(int) getObjectiveValueFor: (int)index {
+    return _objectiveValues[index];
 }
 -(int) getNodeObjectiveValue: (int)value {
     return _childEdgeWeights[value]._val;
@@ -173,12 +178,16 @@
     }
     _children[index] = child;
     assignTRInt(&_numChildren, _numChildren._val, _trail);
-    assignTRInt(&_childEdgeWeights[index], [self getWeightFor: index], _trail);
+    if (_objectiveValues != nil) {
+        assignTRInt(&_childEdgeWeights[index], [self getObjectiveValueFor: index], _trail);
+    }
 }
 -(void) removeChildAt: (int) index {
     assignTRId(&_children[index], NULL, _trail);
     assignTRInt(&_numChildren, _numChildren._val -1, _trail);
-    assignTRInt(&_childEdgeWeights[index], 0, _trail);
+    if (_objectiveValues != nil) {
+        assignTRInt(&_childEdgeWeights[index], 0, _trail);
+    }
 }
 -(int) findChildIndex: (Node*) child {
     for (int child_index = _minChildIndex; child_index <= _maxChildIndex; child_index++) {
@@ -239,11 +248,11 @@
             int childReverseLongestPath = [_children[child_index] reverseLongestPath];
             int childReverseShortestPath = [_children[child_index] reverseShortestPath];
             
-            if (longest < childReverseLongestPath + [self getWeightFor: child_index]) {
-                longest = childReverseLongestPath + [self getWeightFor: child_index];
+            if (longest < childReverseLongestPath + [self getObjectiveValueFor: child_index]) {
+                longest = childReverseLongestPath + [self getObjectiveValueFor: child_index];
             }
-            if (shortest > childReverseShortestPath + [self getWeightFor: child_index]) {
-                shortest = childReverseShortestPath + [self getWeightFor: child_index];
+            if (shortest > childReverseShortestPath + [self getObjectiveValueFor: child_index]) {
+                shortest = childReverseShortestPath + [self getObjectiveValueFor: child_index];
             }
         }
     }
@@ -261,7 +270,9 @@
 -(void) addParent: (Node*) parent {
     _parents[_numParents._val] = parent;
     assignTRInt(&_numParents,_numParents._val+1,_trail);
-    [self updateBoundsWithParent: parent];
+    if (_objectiveValues != nil) {
+        [self updateBoundsWithParent: parent];
+    }
 }
 -(void) updateBoundsWithParent: (Node*) parent {
     int parentLongestPath = [parent longestPath];
@@ -269,8 +280,8 @@
     
     for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
         if ([parent children][childIndex] == self) {
-            int candidateLongestPath = parentLongestPath + [parent getWeightFor:childIndex];
-            int candidateShortestPath = parentShortestPath + [parent getWeightFor:childIndex];
+            int candidateLongestPath = parentLongestPath + [parent getObjectiveValueFor:childIndex];
+            int candidateShortestPath = parentShortestPath + [parent getObjectiveValueFor:childIndex];
             
             if (candidateLongestPath == _longestPath._val) {
                 _longestPathParents[_numLongestPathParents._val] = parent;
@@ -295,21 +306,23 @@
 -(void) findNewLongestPath {
     assignTRInt(&_longestPath,-32768,_trail);
     
-    for (int parentIndex = 0; parentIndex < _numLongestPathParents._val; parentIndex++) {
-        Node* parent = _longestPathParents[parentIndex];
-        int parentLongestPath = [parent longestPath];
+    if (_numLongestPathParents._val == 0) {
+        for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
+            Node* parent = _parents[parentIndex];
+            int parentLongestPath = [parent longestPath];
         
-        for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
-            if ([parent children][childIndex] == self) {
-                int candidateLongestPath = parentLongestPath + [parent getWeightFor:childIndex];
+            for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
+                if ([parent children][childIndex] == self) {
+                    int candidateLongestPath = parentLongestPath + [parent getObjectiveValueFor:childIndex];
                 
-                if (candidateLongestPath == _longestPath._val) {
-                    _longestPathParents[_numLongestPathParents._val] = parent;
-                    assignTRInt(&_numLongestPathParents,_numLongestPathParents._val+1,_trail);
-                } else if (candidateLongestPath > _longestPath._val) {
-                    assignTRInt(&_longestPath, candidateLongestPath, _trail);
-                    _longestPathParents[0] = parent;
-                    assignTRInt(&_numLongestPathParents,1,_trail);
+                    if (candidateLongestPath == _longestPath._val) {
+                        _longestPathParents[_numLongestPathParents._val] = parent;
+                        assignTRInt(&_numLongestPathParents,_numLongestPathParents._val+1,_trail);
+                    } else if (candidateLongestPath > _longestPath._val) {
+                        assignTRInt(&_longestPath, candidateLongestPath, _trail);
+                        _longestPathParents[0] = parent;
+                        assignTRInt(&_numLongestPathParents,1,_trail);
+                    }
                 }
             }
         }
@@ -323,6 +336,9 @@
                 [child removeLongestPathParent: self];
             }
         }
+    }
+    if (_longestPath._val == -32768) {
+        failNow();
     }
 }
 -(void) removeLongestPathParent:(Node*)parent {
@@ -347,7 +363,7 @@
         
         for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
             if ([parent children][childIndex] == self) {
-                int candidateShortestPath = parentShortestPath + [parent getWeightFor:childIndex];
+                int candidateShortestPath = parentShortestPath + [parent getObjectiveValueFor:childIndex];
                 
                 if (candidateShortestPath == _shortestPath._val) {
                     _shortestPathParents[_numShortestPathParents._val] = parent;
@@ -432,7 +448,7 @@
     }
 }
 -(bool) canChooseValue:(int)value {
-    return [[_state class] canChooseValue:value forVariable:_value givenState:[_state state]];
+    return [_state canChooseValue:value forVariable:_value];
 }
 -(void) mergeStateWith:(Node*)other {
     [_state mergeStateWith: [other getState]];
@@ -465,7 +481,7 @@
 -(bool) stateAllows:(int)variable {
     return true;
 }
--(int*) getWeightsForVariable:(int)variable {
+-(int*) getObjectiveValuesForVariable:(int)variable {
     return NULL;
 }
 @end
@@ -640,6 +656,12 @@
     _stateClass = [GeneralState class];
     return self;
 }
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x stateClass:(Class)stateClass
+{
+    self = [self initCPMDD:engine over:x reduced:true];
+    _stateClass = stateClass;
+    return self;
+}
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass
 {
     self = [self initCPMDD:engine over:x reduced:reduced];
@@ -688,9 +710,11 @@
     }
     [self addPropagationsAndTrimValues];
     
-    for (int layer = (int)[_x count]; layer >= 0; layer--) {
-        for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-            [layers[layer][node_index] updateReversePaths];
+    if (_objective != nil) {
+        for (int layer = (int)[_x count]; layer >= 0; layer--) {
+            for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
+                [layers[layer][node_index] updateReversePaths];
+            }
         }
     }
     return;
@@ -735,9 +759,8 @@
 -(int) variableIndexForLayer:(int)layer {
     return _layer_to_variable[layer];
 }
--(int*) getWeightsForLayer:(int)layer
-{
-    return [_stateClass getWeightsForVariable: [self variableIndexForLayer:layer]];
+-(int*) getObjectiveValuesForLayer:(int)layer {
+    return [_stateClass getObjectiveValuesForVariable: [self variableIndexForLayer:layer]];
 }
 -(void) createRootAndSink
 {
@@ -749,13 +772,24 @@
     _variable_to_layer[[_x low]] = 0;
     _layer_to_variable[0] = [_x low];
     
-    Node* root =[[Node alloc] initNode: _trail
-                            maxParents:(0 * (max_domain_val - min_domain_val +1))
-                         minChildIndex:min_domain_val
-                         maxChildIndex:max_domain_val
-                                 value:[_x low]
-                                 state:state
-                               weights:[self getWeightsForLayer:0]];
+    Node* root;
+    
+    if (_objective != nil) {
+        root =[[Node alloc] initNode: _trail
+                                maxParents:(0 * (max_domain_val - min_domain_val +1))
+                             minChildIndex:min_domain_val
+                            maxChildIndex:max_domain_val
+                                     value:[_x low]
+                                     state:state
+                           objectiveValues:[self getObjectiveValuesForLayer:0]];
+    } else {
+        root =[[Node alloc] initNode: _trail
+                                maxParents:(0 * (max_domain_val - min_domain_val +1))
+                             minChildIndex:min_domain_val
+                             maxChildIndex:max_domain_val
+                                     value:[_x low]
+                                     state:state];
+    }
     [root setIsSource:true];
     [self addNode:root toLayer:0];
     _variableUsed[[_x low]] = true;
@@ -799,14 +833,23 @@
             
             id state = [self generateStateFromParent:parentNode withValue:edgeValue];   //~ 50 CPU
             if (parentLayer != [_x count]-1) {
-                childNode = [[Node alloc] initNode: _trail
-                                        maxParents:(max_layer_size[parentLayer]._val * (max_domain_val - min_domain_val +1))
-                                     minChildIndex:min_domain_val
-                                     maxChildIndex:max_domain_val
-                                             value:[self variableIndexForLayer:parentLayer + 1]
-                                             state:state
-                                           weights:[self getWeightsForLayer:parentLayer+1]];
-                
+                if (_objective != nil) {
+                    childNode = [[Node alloc] initNode: _trail
+                                            maxParents:(max_layer_size[parentLayer]._val * (max_domain_val - min_domain_val +1))
+                                         minChildIndex:min_domain_val
+                                         maxChildIndex:max_domain_val
+                                                 value:[self variableIndexForLayer:parentLayer + 1]
+                                                 state:state
+                                       objectiveValues:[self getObjectiveValuesForLayer:parentLayer+1]];
+                }
+                else {
+                    childNode = [[Node alloc] initNode: _trail
+                                            maxParents:(max_layer_size[parentLayer]._val * (max_domain_val - min_domain_val +1))
+                                         minChildIndex:min_domain_val
+                                         maxChildIndex:max_domain_val
+                                                 value:[self variableIndexForLayer:parentLayer + 1]
+                                                 state:state];
+                }
                 [self addNode:childNode toLayer:parentLayer+1];
             } else {
                 childNode = layers[[_x count]][0];
@@ -867,7 +910,7 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[_stateClass alloc] initState:variableValue];
+    return [[_stateClass alloc] initState:variableValue domainMin: min_domain_val domainMax: max_domain_val];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
@@ -934,7 +977,9 @@
             [self removeChildlessNodeFromMDD: parent trimmingVariables:trimming];
             //parentIndex--;
         } else {
-            [parent updateReversePaths];
+            if (_objective != nil) {
+                [parent updateReversePaths];
+            }
         }
     }
     [self removeNode: node];
@@ -991,7 +1036,9 @@
                     [self removeChildlessNodeFromMDD: node trimmingVariables:true];
                     node_index--;
                 } else {
-                    [node updateReversePaths];
+                    if (_objective != nil) {
+                        [node updateReversePaths];
+                    }
                 }
             }
         }
@@ -1019,7 +1066,7 @@
 -(ORInt) recommendationFor: (ORInt) variableIndex
 {
     if (_objective != NULL) {
-        if (_maximize) {
+        if (_maximize){
             int optimal = [layers[[_x count]][0] longestPathContainingSelf];
             
             int layer_index = [self layerIndexForVariable:variableIndex];
@@ -1029,7 +1076,7 @@
                     Node** children = [node children];
                     for (int child_index = [node minChildIndex]; child_index <= [node maxChildIndex]; child_index++) {
                         Node* child = children[child_index];
-                        if (child != NULL && ([node longestPath] + [node getWeightFor: child_index] + [child reverseLongestPath]) == optimal ) {
+                        if (child != NULL && ([node longestPath] + [node getObjectiveValueFor: child_index] + [child reverseLongestPath]) == optimal ) {
                             return child_index;
                         }
                     }
@@ -1137,6 +1184,12 @@
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize
 {
     self = [super initCPMDD:engine over:x reduced:reduced objective:objective maximize:maximize];
+    relaxed_size = relaxationSize;
+    return self;
+}
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass
+{
+    self = [super initCPMDD:engine over:x stateClass:stateClass];
     relaxed_size = relaxationSize;
     return self;
 }
@@ -1264,20 +1317,20 @@
 @end
 
 @implementation CPExactMDDMISP
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue
 {
     self = [super initCPMDD:engine over:x reduced:reduced objective:objectiveValue maximize:true];
     _adjacencyMatrix = adjacencyMatrix;
-    _weights = weights;
+    _objectiveValues = objectiveValues;
     return self;
 }
--(int*) getWeightsForLayer:(int)layer
+-(int*) getObjectiveValuesForLayer:(int)layer
 {
-    int* weights = malloc(2 * sizeof(int));
-    weights[0] = 0;
-    weights[1] = (int)[_weights[[self variableIndexForLayer:layer]] longValue];
+    int* objectiveValues = malloc(2 * sizeof(int));
+    objectiveValues[0] = 0;
+    objectiveValues[1] = (int)[_objectiveValues[[self variableIndexForLayer:layer]] longValue];
     
-    return weights;
+    return objectiveValues;
 }
 -(id) generateRootState:(int)variableValue
 {
@@ -1298,20 +1351,20 @@
 @end
 
 @implementation CPRestrictedMDDMISP
--(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue
 {
     self = [super initCPMDDRestriction:engine over:x restrictionSize:restrictionSize reduced:reduced objective:objectiveValue maximize:true];
     _adjacencyMatrix = adjacencyMatrix;
-    _weights = weights;
+    _objectiveValues = objectiveValues;
     return self;
 }
--(int*) getWeightsForLayer:(int)layer
+-(int*) getObjectiveValuesForLayer:(int)layer
 {
-    int* weights = malloc(2 * sizeof(int));
-    weights[0] = 0;
-    weights[1] = (int)[_weights[[self variableIndexForLayer:layer]] longValue];
+    int* objectiveValues = malloc(2 * sizeof(int));
+    objectiveValues[0] = 0;
+    objectiveValues[1] = (int)[_objectiveValues[[self variableIndexForLayer:layer]] longValue];
     
-    return weights;
+    return objectiveValues;
 }
 -(id) generateRootState:(int)variableValue
 {
@@ -1332,20 +1385,20 @@
 @end
 
 @implementation CPRelaxedMDDMISP
--(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue
 {
     self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced objective:objectiveValue maximize:true];
     _adjacencyMatrix = adjacencyMatrix;
-    _weights = weights;
+    _objectiveValues = objectiveValues;
     return self;
 }
--(int*) getWeightsForLayer:(int)layer
+-(int*) getObjectiveValuesForLayer:(int)layer
 {
-    int* weights = malloc(2 * sizeof(int));
-    weights[0] = 0;
-    weights[1] = (int)[_weights[[self variableIndexForLayer:layer]] longValue];
+    int* objectiveValues = malloc(2 * sizeof(int));
+    objectiveValues[0] = 0;
+    objectiveValues[1] = (int)[_objectiveValues[[self variableIndexForLayer:layer]] longValue];
     
-    return weights;
+    return objectiveValues;
 }
 -(id) generateRootState:(int)variableValue
 {
@@ -1369,13 +1422,25 @@
 
 
 @implementation CPRelaxedCustomMDD
--(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
+-(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize stateClass:(Class)stateClass
+{
+    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize stateClass:stateClass];
+    return self;
+}
+-(NSString*)description
+{
+    return [NSMutableString stringWithFormat:@"<CPRelaxedCustomMDD:%02d %@>",_name,_x];
+}
+@end
+
+@implementation CPRelaxedCustomMDDWithObjective
+-(id) initCPRelaxedCustomMDDWithObjective: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
     self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:stateClass];
     return self;
 }
 -(NSString*)description
 {
-    return [NSMutableString stringWithFormat:@"<CPRelaxedCustomMDD:%02d %@>",_name,_x];
+    return [NSMutableString stringWithFormat:@"<CPRelaxedCustomMDDWithObjective:%02d %@>",_name,_x];
 }
 @end

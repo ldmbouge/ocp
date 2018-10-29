@@ -456,13 +456,18 @@ enum ORGroupType {
 
 @protocol ORRelaxedCustomMDD <ORConstraint>
 -(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(Class) stateClass;
+@end
+
+@protocol ORRelaxedCustomMDDWithObjective <ORConstraint>
+-(id<ORIntVarArray>) vars;
 -(id<ORIntVar>) objective;
 -(ORInt) relaxationSize;
 -(bool) reduced;
 -(bool) maximize;
 -(Class) stateClass;
 @end
-
 
 @protocol ORRegular<ORConstraint>
 -(id<ORIntVarArray>) array;

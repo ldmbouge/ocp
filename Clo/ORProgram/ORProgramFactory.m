@@ -67,6 +67,13 @@
    [notes release];
    return program;
 }
++(id<CPProgram>) createCPMDDProgram: (id<ORModel>) model
+{
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPMDDProgram:model annotation:notes];
+   [notes release];
+   return program;
+}
 +(id<CPProgram>) createCPProgramBackjumpingDFS: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
@@ -143,6 +150,33 @@
    }];
    return cpprogram;
 }
+
+
+
++(void) createCPMDDProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes
+{
+   //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
+   id<ORAnnotation> ncpy   = [notes copy];
+   id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
+   id<ORModel> mddm = [fm mddify];
+   [self concretizeCP:mddm program:cpprogram annotation:ncpy];
+   [ncpy release];
+}
+
++(id<CPProgram>) createCPMDDProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
+{
+   __block id<CPProgram> cpprogram = [CPSolverFactory solver];
+   [ORFactory createCPMDDProgram: model program: cpprogram annotation:notes];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [cpprogram captureSolution];
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      [sp addSolution: s];
+      [s release];
+   }];
+   return cpprogram;
+}
+
 +(id<CPProgram>) createCPProgramBackjumpingDFS: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {
    id<CPProgram> cpprogram = (id)[CPSolverFactory solverBackjumpingDFS];

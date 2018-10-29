@@ -975,9 +975,21 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 
 
-+(id<ORConstraint>) RelaxedCustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
++(id<ORConstraint>) RelaxedCustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
-    id<ORConstraint> o = [[ORRelaxedCustomMDD alloc] initORRelaxedCustomMDD:x size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:stateClass];
+    id<ORConstraint> o = [[ORRelaxedCustomMDD alloc] initORRelaxedCustomMDD:x size:relaxationSize stateClass:stateClass];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) RelaxedCustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
+{
+    id<ORConstraint> o = [[ORRelaxedCustomMDDWithObjective alloc] initORRelaxedCustomMDDWithObjective:x size:relaxationSize reduced:true objective:objectiveValue maximize:maximize stateClass:stateClass];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) RelaxedCustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
+{
+    id<ORConstraint> o = [[ORRelaxedCustomMDDWithObjective alloc] initORRelaxedCustomMDDWithObjective:x size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:stateClass];
     [model trackObject:o];
     return o;
 }

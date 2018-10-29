@@ -1849,16 +1849,27 @@
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        ORInt relaxationSize   = [cstr relaxationSize];
+        Class stateClass      = [cstr stateClass];
+        id<CPConstraint> concreteCstr = [CPFactory RelaxedCustomMDD:_engine over: a size:relaxationSize stateClass:(Class)stateClass];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+-(void) visitRelaxedCustomMDDWithObjective: (id<ORRelaxedCustomMDDWithObjective>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
         id<CPIntVar> objective = [self concreteVar: [cstr objective]];
         ORInt relaxationSize   = [cstr relaxationSize];
         Class stateClass      = [cstr stateClass];
-        id<CPConstraint> concreteCstr = [CPFactory RelaxedCustomMDD:_engine over: a size:relaxationSize reduced:[cstr reduced] objective:objective maximize:[cstr maximize] stateClass:(Class)stateClass];
+        id<CPConstraint> concreteCstr = [CPFactory RelaxedCustomMDDWithObjective:_engine over: a size:relaxationSize reduced:[cstr reduced] objective:objective maximize:[cstr maximize] stateClass:(Class)stateClass];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
 }
 @end
-
 
 @implementation ORCPSearchConcretizer {
    id<CPEngine>        _engine;
