@@ -371,6 +371,10 @@
 {
     [[self worker] minOccurencesSearch:x do:b];
 }
+-(void)          maxAbsorptionSearchAll: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
+{
+   [[self worker] maxAbsorptionSearchAll:x default:b];
+}
 -(void)          maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 {
     [[self worker] maxAbsorptionSearch:x do:b];

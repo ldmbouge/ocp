@@ -1145,7 +1145,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                         [p float5WaySplit:i call:s withVars:x];
                      }];break;
                   case dynamic6Split:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                     [p maxAbsorptionSearchAll:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                      [p float6WaySplit:i call:s withVars:x];
                      }];
                   case split3B:

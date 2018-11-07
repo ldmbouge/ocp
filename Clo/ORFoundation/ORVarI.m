@@ -947,13 +947,21 @@
 
 @implementation ORDisabledFloatVarArrayI{
    id<ORVarArray>          _vars;
-   id<ORTrailableIntArray>      _disabled;
+   id<ORIntArray>          _initials;
+   id<ORTrailableIntArray>  _disabled;
 }
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
 {
    self = [super init];
    _vars = vars;
+   _initials = [ORFactory intArray:engine range:[vars range] value:1];
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   return self;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia
+{
+   self = [self init:vars engine:engine];
+   _initials = ia;
    return self;
 }
 -(void) dealloc
@@ -1012,10 +1020,30 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@)",_name,_vars,_disabled];
+   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@,i:%@)",_name,_vars,_disabled,_initials];
 }
 -(ORBool) contains:(id<ORFloatVar>)v
 {
    return [_vars contains:v];
+}
+-(ORBool) isInitial:(ORUInt) index
+{
+   return ([_initials at:index] == 1);
+}
+-(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine
+{
+   NSMutableArray<ORVar> *vars = [[NSMutableArray<ORVar> alloc] init];
+   for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i]){
+         [vars addObject:_vars[i]];
+      }
+   }
+   id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, (ORInt)[vars count]-1)];
+   ORUInt i = 0;
+   for(id<ORFloatVar> x in vars){
+      ovars[i++] = x;
+   }
+   [vars release];
+   return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine];
 }
 @end

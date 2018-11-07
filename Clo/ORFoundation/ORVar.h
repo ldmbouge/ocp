@@ -129,7 +129,9 @@ PORTABLE_BEGIN
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
 -(ORBool) isEnable:(ORUInt) index;
--(ORBool) contains: (id<ORFloatVar>) v;
+-(ORBool) contains:(id<ORFloatVar>) v;
+-(ORBool) isInitial:(ORUInt) index;
+-(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine;
 @end
 
 @protocol ORDoubleVarArray <ORVarArray>
