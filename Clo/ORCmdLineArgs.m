@@ -20,8 +20,15 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSea
    @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
    @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens"};
 
+static enum Heuristic hIndex[] = {FF, ABS, IBS, WDEG, DDEG, SDEG,
+   maxWidth, minWidth, maxCard,  minCard,   maxDens,   minDens,   minMagn,   maxMagn,
+   maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens,
+   densWAbs , ref ,lexico,absDens};
+
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"split3B",@"splitAbs",@"ESplit",@"DSplit"};
 
+static enum ValHeuristic valIndex[] =
+{split,split3Way,split5Way,split6Way,dynamicSplit,dynamic3Split,dynamic5Split,dynamic6Split,split3B,splitAbs,Esplit,Dsplit};
 @synthesize size;
 @synthesize restartRate;
 @synthesize timeOut;
@@ -39,6 +46,10 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 @synthesize search3Bpercent;
 @synthesize searchNBFloats;
 @synthesize fName;
+@synthesize rateModel;
+@synthesize grateModel;
+@synthesize rateOther;
+@synthesize grateOther;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -78,6 +89,18 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          nArg = atoi(argv[k]+2);
       else if (strncmp(argv[k], "-h", 2)==0)
          heuristic = atoi(argv[k]+2);
+      else if (strncmp(argv[k], "-var-order", 10)==0){
+         NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
+         int index = 24;
+         for(int i = 0; i < 27;i++){
+            if ([tmp isEqualToString:hName[i]]){
+              index = i;
+              break;
+            }
+         }
+         [tmp release];
+         heuristic = hIndex[index];
+      }
       else if (strncmp(argv[k],"-w",2)==0)
          restartRate = atof(argv[k]+2);
       else if (strncmp(argv[k],"-t",2)==0)
@@ -92,6 +115,18 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          fName = [NSString stringWithCString:argv[k]+2 encoding:NSASCIIStringEncoding];
       else if (strncmp(argv[k],"-vh",3)==0)
          valordering = atoi(argv[k]+3);
+      else if (strncmp(argv[k], "-val-order", 10)==0){
+         NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
+         int index = 4;
+         for(int i = 0; i < 12;i++){
+            if ([tmp isEqualToString:valHName[i]]){
+               index = i;
+               break;
+            }
+         }
+         [tmp release];
+         valordering = valIndex[index];
+      }
       else if (strncmp(argv[k],"-default",8)==0)
          defaultAbsSplit = atoi(argv[k+1]);
       else if (strncmp(argv[k],"-l",2)==0)
@@ -106,6 +141,14 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          subcut = atoi(argv[k+1]);
       else if (strncmp(argv[k],"-search3Bpercent",16)==0)
          search3Bpercent = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-rate-model-limit",17)==0)
+         rateModel = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-globalrate-model-limit",23)==0)
+         grateModel = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-rate-other-limit",17)==0)
+         rateOther = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-globalrate-other-limit",23)==0)
+         grateOther = atof(argv[k+1]);
    }
    return self;
 }
@@ -216,6 +259,8 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          [(CPCoreSolver*)p setSearchNBFloats:searchNBFloats];
          [(CPCoreSolver*)p set3BSplitPercent:search3Bpercent];
          [(CPCoreSolver*)p setSubcut:[self subCutSelector]];
+         [(CPCoreSolver*)p setAbsLimitModelVars:rateModel total:grateModel];
+         [(CPCoreSolver*)p setAbsLimitAdditionalVars:rateModel total:grateModel];
          return p;
       case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];
@@ -333,7 +378,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
    switch (heuristic) {
       case maxWidth :
          switch (valordering) {
-            case dedicatedSplit:
+            case splitAbs:
             case split:
                [p maxWidthSearch:vars do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -393,7 +438,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case minWidth :
          switch (valordering) {
-            case dedicatedSplit:
+            case splitAbs:
             case split:
                [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -453,7 +498,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case maxCard :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -513,7 +558,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case minCard :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -573,7 +618,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case maxDens :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -633,7 +678,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case minDens :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -693,7 +738,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case maxMagn :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -753,7 +798,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case minMagn :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -813,7 +858,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case maxDegree :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -873,7 +918,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case minDegree :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -933,7 +978,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case maxOcc :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -993,7 +1038,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case minOcc :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -1108,7 +1153,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p floatDeltaSplit:i call:s withVars:x];
                }];
                break;
-            case dedicatedSplit:
+            case splitAbs:
                switch(defaultAbsSplit){
                   case split:
                      [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
@@ -1225,7 +1270,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
                   [p float3BSplit:i call:s withVars:x];
                }];
                break;
-            case dedicatedSplit:
+            case splitAbs:
                [p minAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p float6WaySplit:i call:s withVars:x];
                }];
@@ -1245,7 +1290,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case maxCan :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -1305,7 +1350,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case minCan :
          switch (valordering) {
-                case dedicatedSplit:
+                case splitAbs:
             case split:
                [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -1365,7 +1410,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case absWDens :
          switch (valordering) {
-             case dedicatedSplit:
+             case splitAbs:
             case split:
                [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -1425,7 +1470,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
          break;
       case densWAbs :
          switch (valordering) {
-            case dedicatedSplit:
+            case splitAbs:
             case split:
                [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];
@@ -1492,7 +1537,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
       default :
          heuristic = lexico;
          switch (valordering) {
-            case dedicatedSplit:
+            case splitAbs:
             case split:
                [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p floatStaticSplit:i call:s withVars:x];

@@ -54,7 +54,7 @@ enum ValHeuristic
    dynamic5Split = 6,
    dynamic6Split = 7,
    split3B = 8,
-   dedicatedSplit = 9,
+   splitAbs = 9,
    Esplit = 10,
    Dsplit = 11
 };
@@ -85,6 +85,10 @@ struct ORResult {
 @property (nonatomic,readonly) ORInt    nArg;
 @property (nonatomic,readonly) ORInt    level;
 @property (nonatomic,readonly) NSString* fName;
+@property (nonatomic,readonly) ORDouble rateModel;
+@property (nonatomic,readonly) ORDouble grateModel;
+@property (nonatomic,readonly) ORDouble rateOther;
+@property (nonatomic,readonly) ORDouble grateOther;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
