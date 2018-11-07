@@ -150,7 +150,10 @@ static inline double cardinalityV(float xmin, float xmax){
    if(xmin == xmax) return 1.0;
    if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
    if(xmin < 0 && xmax > 0 &&  i_sup.parts.exponent == 0 && i_inf.parts.exponent == 0) return i_inf.parts.mantisa + i_sup.parts.mantisa;
-   double res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
+   double tmp;
+   if(xmax <= 0) tmp = (sign(i_inf) * i_inf.parts.exponent - sign(i_sup) * i_sup.parts.exponent);
+   else tmp = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent);
+   double res = tmp * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
    return (res < 0) ? -res : res;
 }
 
