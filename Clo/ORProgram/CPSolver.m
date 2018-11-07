@@ -188,9 +188,9 @@
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
    _level = 100;
-   _absRateLimitModelVars = 0.0;
-   _absTRateLimitModelVars = 0.0;
-   _absRateLimitAdditionalVars = 0.0;
+   _absRateLimitModelVars = 0.3;
+   _absTRateLimitModelVars = 0.8;
+   _absRateLimitAdditionalVars = 0.91;
    _absTRateLimitAdditionalVars = 0.0;
    _split3Bpercent = 10.f;
    _searchNBFloats = 2;
@@ -2283,7 +2283,7 @@
             }
             if([abs[i.index] quantity] == 0.0){
                _unique = 1;
-               [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+               [self maxOccurencesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [self float6WaySplit:i call:s withVars:x];
                }];
             }else{
