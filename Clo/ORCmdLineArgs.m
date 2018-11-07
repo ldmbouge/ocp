@@ -300,7 +300,7 @@ static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@
 }
 -(void) checkAbsorption:(id<ORFloatVarArray>)vars solver:(id<CPProgram>)cp
 {
-#define abs 1
+#define abs 0
 #if abs
    ORInt cpt = 0;
    for(id<ORFloatVar> x in vars){
