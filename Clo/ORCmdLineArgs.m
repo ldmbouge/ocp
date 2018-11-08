@@ -50,6 +50,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize grateModel;
 @synthesize rateOther;
 @synthesize grateOther;
+@synthesize variationSearch;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -80,6 +81,7 @@ static enum ValHeuristic valIndex[] =
    searchNBFloats=2;
    fName = @"";
    randomized = NO;
+   variationSearch = 2;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : remplace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -158,6 +160,8 @@ static enum ValHeuristic valIndex[] =
          rateOther = atof(argv[k+1]);
       else if (strncmp(argv[k],"-globalrate-other-limit",23)==0)
          grateOther = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-variation",10)==0)
+         variationSearch = atoi(argv[k+1]);
    }
    return self;
 }
@@ -270,6 +274,7 @@ static enum ValHeuristic valIndex[] =
          [(CPCoreSolver*)p setSubcut:[self subCutSelector]];
          [(CPCoreSolver*)p setAbsLimitModelVars:rateModel total:grateModel];
          [(CPCoreSolver*)p setAbsLimitAdditionalVars:rateModel total:grateModel];
+         [(CPCoreSolver*)p setVariation:variationSearch];
          return p;
       case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];

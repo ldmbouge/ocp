@@ -163,6 +163,7 @@
    ORDouble               _absRateLimitAdditionalVars;
    //[hzi] should we remove it ? An additional variable appear only in one wonstraint as operand
    ORDouble               _absTRateLimitAdditionalVars;
+   ORInt                 _variationSearch;
    
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
@@ -190,7 +191,7 @@
    _level = 100;
    _absRateLimitModelVars = 0.3;
    _absTRateLimitModelVars = 0.8;
-   _absRateLimitAdditionalVars = 0.7;
+   _absRateLimitAdditionalVars = 0.8;
    _absTRateLimitAdditionalVars = 0.0;
    _split3Bpercent = 10.f;
    _searchNBFloats = 2;
@@ -357,6 +358,10 @@
 {
    _absRateLimitAdditionalVars = local;
    _absTRateLimitAdditionalVars = global;
+}
+-(void) setVariation:(ORInt) variation
+{
+   _variationSearch = variation;
 }
 -(void) setLevel:(ORInt) level
 {
@@ -2283,9 +2288,33 @@
             }
             if([abs[i.index] quantity] == 0.0){
                _unique = 1;
-               [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [self float6WaySplit:i call:s withVars:x];
-               }];
+               switch (_variationSearch) {
+                  case 0:
+                     [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                                          [self float6WaySplit:i call:s withVars:x];
+                                       }];
+                     break;
+                  case 1:
+                     [self maxDensitySearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                                          [self float6WaySplit:i call:s withVars:x];
+                                       }];
+                     break;
+                  case 2:
+                     [self maxOccurencesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [self float6WaySplit:i call:s withVars:x];
+                     }];
+                  default:
+                     [self maxOccurencesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [self float6WaySplit:i call:s withVars:x];
+                     }];
+               }
+//               [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+//                  [self float6WaySplit:i call:s withVars:x];
+//               }];
+//               [self maxDensitySearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+//                  [self float6WaySplit:i call:s withVars:x];
+//               }];
+              
             }else{
                id<CPFloatVar> v = [abs[i.index] bestChoice];
                LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);

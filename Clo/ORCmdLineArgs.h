@@ -89,6 +89,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORDouble grateModel;
 @property (nonatomic,readonly) ORDouble rateOther;
 @property (nonatomic,readonly) ORDouble grateOther;
+@property (nonatomic,readonly) ORInt variationSearch;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
