@@ -2283,7 +2283,7 @@
             }
             if([abs[i.index] quantity] == 0.0){
                _unique = 1;
-               [self maxOccurencesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+               [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [self float6WaySplit:i call:s withVars:x];
                }];
             }else{
