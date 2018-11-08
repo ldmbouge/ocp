@@ -68,7 +68,7 @@ static enum ValHeuristic valIndex[] =
    heuristic = ref;
    valordering = dynamicSplit;
    subcut = dynamicSplit;
-   defaultAbsSplit = dynamicSplit;
+   defaultAbsSplit = dynamic6Split;
    restartRate = 0;
    timeOut = 60;
    nbThreads = 0;
@@ -81,7 +81,16 @@ static enum ValHeuristic valIndex[] =
    fName = @"";
    randomized = NO;
    for(int k = 1;k< argc;k++) {
-      if (strncmp(argv[k], "-q", 2) == 0)
+      if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
+         printf("-var-order HEURISTIC : remplace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
+         printf("-val-order HEURISTIC : remplace HEURISTIC by one of following split,split3Way,split5Way,split6Way,dynamicSplit,dynamic3Split,dynamic5Split,dynamic6Split,split3B,splitAbs,Esplit,Dsplit\n");
+         printf("-rate-model-limit VALUE : remplace VALUE by a concrete value\n");
+         printf("-globalrate-model-limit VALUE : remplace VALUE by a concrete value\n");
+         printf("-rate-other-limit VALUE : remplace VALUE by a concrete value\n");
+         printf("-globalrate-other-limit VALUE : remplace VALUE by a concrete value\n");
+         exit(1);
+      }
+      else if (strncmp(argv[k], "-q", 2) == 0)
          size = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-nb-floats",10)==0)
          searchNBFloats = atoi(argv[k+1]);
@@ -93,7 +102,7 @@ static enum ValHeuristic valIndex[] =
          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
          int index = 24;
          for(int i = 0; i < 27;i++){
-            if ([tmp isEqualToString:hName[i]]){
+            if ([tmp isEqualToString:hName[i]] || [[tmp lowercaseString] isEqualToString:[hName[i] lowercaseString]]){
               index = i;
               break;
             }
@@ -119,7 +128,7 @@ static enum ValHeuristic valIndex[] =
          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
          int index = 4;
          for(int i = 0; i < 12;i++){
-            if ([tmp isEqualToString:valHName[i]]){
+            if ([tmp isEqualToString:valHName[i]] || [[tmp lowercaseString] isEqualToString:[valHName[i] lowercaseString]]){
                index = i;
                break;
             }
