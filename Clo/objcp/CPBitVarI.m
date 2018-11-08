@@ -115,6 +115,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 //****************************************************
 @implementation CPBitVarI {
+
    ORBool               _learningOn;
    ORUInt*              _bitChanges;
    ORUInt*              _lvls;
@@ -122,7 +123,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    TRUInt               _top;
    ORUInt               _cap;
    ORUInt               _wordLength;
-    ORFloat              _vsids;
+    ORFloat*              _vsids;
 
 
    
@@ -150,10 +151,9 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       _lvls = malloc(sizeof(ORUInt)*_cap);
       _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
       _top = makeTRUInt(_trail, 0);
-//       _vsids = malloc(sizeof(TRDouble*)*len);
-//       for(int i=0;i<len;i++)
-//           _vsids[i] = makeTRDouble(_trail, 0.0);
-       _vsids=0.0;
+       _vsids = calloc(len, sizeof(ORFloat));
+      _scratch = malloc(sizeof(ORUInt*)*_wordLength);
+
     } else {
       _cap = 0;
       _lvls = nil;
@@ -195,10 +195,42 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 }
 -(ORFloat) getVSIDSCount
 {
-    return _vsids;
+   //should return the "activity" of the most active unset bit
+   ORFloat max = 0.0;
+   
+   //find unset bit with maximum activity
+   for(ORUInt i=0;i<_wordLength;i++){
+      //get set/unset bits
+      _scratch[i] = _dom->_low[i]._val ^ _dom->_up[i]._val;
+      while(_scratch[i] != 0){
+         ORUInt index = (i*BITSPERWORD)+__builtin_ffs(_scratch[i]) - 1;
+         if(_vsids[index] > max)
+            max = _vsids[index];
+         _scratch[i] &= ~(0x1 << index);
+         }
+   }
+   //return activity level of most active bit
+   return max;
+}
+-(ORFloat) getVSIDSActivity:(ORUInt)idx
+{
+   return _vsids[idx];
+}
+-(void) incrementActivity:(ORUInt)i
+{
+   if (_learningOn)
+      _vsids[i] += 1.0;
+}
+-(void) incrementActivityAll
+{
+   if (_learningOn) {
+      for(ORUInt i=0;i<[_dom getLength];i++)
+         _vsids[i] += 1.0;
+   }
 }
 -(void) reduceVSIDS{
-    _vsids /= 2.0;
+   for(int i=0;i<[_dom getLength];i++)
+    _vsids[i] /= 2;
 }
 -(id) takeSnapshot: (ORInt) id
 {
@@ -417,17 +449,19 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 //returns a bit mask for bits that had been set with bit at pos or prior to the time when bit at pos was set
 -(void) getState:(ORUInt*)state whenBitSet:(ORUInt)pos
 {
-    ORUInt bitMask = 0x1 << (pos%BITSPERWORD);
+   ORUInt bitMask = 0x1 << (pos%BITSPERWORD);
+   ORUInt wordPosition = pos/BITSPERWORD;
     
     for(ORUInt i=0;i<_wordLength;i++)
         state[i] = 0;
     
-    for(ORUInt i=0; i<_top._val;i++)
-        for(ORUInt j=0;j<_wordLength;j++){
-            state[j] |= _bitChanges[i*_wordLength+j];
-            if(bitMask & _bitChanges[i*_wordLength+(pos/BITSPERWORD)])
-                return;
-        }
+   for(ORUInt i=0; i<_top._val;i++){
+      if(bitMask & state[wordPosition])
+         return;
+     for(ORUInt j=0;j<_wordLength;j++){
+         state[j] |= _bitChanges[i*_wordLength+j];
+     }
+   }
 //    ORUInt i =0;
 //    for(i=0; i<_top._val;i++)
 //        if(bitMask & _bitChanges[pos/BITSPERWORD])
@@ -497,8 +531,6 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 -(void) whenChangePropagate:  (CPCoreConstraint*) c
 {
    hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
-//    if(_learningOn)
-        _vsids += 1.0;
 }
 //-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 //{
@@ -537,7 +569,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
-   id<CPClosureList> mList[7];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
@@ -562,7 +594,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPClosureList> mList[5];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
@@ -580,7 +612,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPClosureList> mList[5];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
@@ -599,7 +631,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPClosureList> mList[5];
+   id<CPClosureList> mList[2];
    ORUInt k = 0;
    mList[k] = _net._bitFixedEvt[0];
    k += mList[k] != NULL;
@@ -678,7 +710,10 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    TRUInt* oldUp = dr._up, *oldLow = dr._low;
    ORUInt bitLength = [_dom getLength];
    ORUInt wordLength = getWordLength(_dom);
-   ORUInt mask = CP_UMASK >> (BITSPERWORD-(bitLength%BITSPERWORD));
+   ORUInt mask = CP_UMASK;
+   
+   if (bitLength%BITSPERWORD != 0)
+      mask >>= (BITSPERWORD-(bitLength%BITSPERWORD));
        
    newUp[wordLength-1]  &= mask;
    newLow[wordLength-1] &= mask;
@@ -693,6 +728,9 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
           //debugging
           if((oldUp[i]._val ^ newUp[i]) & (oldLow[i]._val ^ newLow[i]))
               NSLog(@"Fixed bit flipped in constraint");
+         if(changed[i] & (newLow[i] ^ newUp[i]))
+            NSLog(@"Fixed bit cleared in constraint");
+
          wasChanged |= changed[i];
       }
 
@@ -710,7 +748,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 //             for(int i=0;i<_wordLength;i++)
 //                 for(int j =0;j<BITSPERWORD;j++){
 //                     if(changed[i] & (0x1 << j)){
-//                         NSLog(@"%i:%@[%d] set by %@ %p @ %i",[self getId],self,j, [constraint class],constraint,[(CPLearningEngineI*)_engine getLevel]);
+//                        NSLog(@"%i[%d] set by %@ %xl @ %i",[self getId],j, [constraint class],constraint,[(CPLearningEngineI*)_engine getLevel]);
+//                        NSLog(@"%i:%@[%d] set by %@ %p @ %i",[self getId],self,j, [constraint class],constraint,[(CPLearningEngineI*)_engine getLevel]);
 ////                    printf("\\node[label={\\tiny %i[%i]=%i@%i}] (n%i-%i) at (%i,%i) {};%s %s \n",[self getId],j,(newLow[i]&(0x1<<j))!=0,[(CPLearningEngineI*)_engine getLevel],[self getId], j,[(CPLearningEngineI*)_engine getLevel], [self getId]+(j*2), "%", [[constraint description] cString]);
 //////                    printf("n/n%i-%i\n",[self getId], j);
 //                     }
@@ -785,7 +824,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       _lvls = malloc(sizeof(ORUInt)*_cap);
       _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
       _top = makeTRUInt(_trail, 0);
-       _vsids=0.0;
+      _vsids = calloc(len, sizeof(ORFloat));
        ORUInt boundBits=0;
        for(int i=0;i<_wordLength;i++){
            _bitChanges[i]=~(up[i]^low[i]);
@@ -798,6 +837,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
        _lvls[0] = -1;
        if(boundBits)
            assignTRUInt(&_top, 1, _trail);
+      _scratch = malloc(sizeof(ORUInt*)*_wordLength);
            
    } else {
       _lvls = nil;

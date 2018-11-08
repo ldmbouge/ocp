@@ -160,6 +160,7 @@
 //              if ((jumplevel > 0) && (level < faillevel) && !k.admin){
 //              if (((jumplevel > 0) && (level < faillevel-1)) ||  (lastStatus == ORFailure)){
 //              if ((jumplevel > 0) && (faillevel != jumplevel)) {
+//                 if (jumplevel > 0) {
 //                  [k callInvisible];
 //              }
 //              else

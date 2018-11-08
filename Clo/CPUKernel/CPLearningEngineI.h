@@ -14,7 +14,7 @@
 #import <CPUKernel/CPLEngine.h>
 #import "CPEngineI.h"
 
-//#import <objcp/CPVar.h>
+#import <objcp/CPVar.h>
 //#import <objcp/CPBitConstraint.h>
 //#import <CPUKernel/CPTypes.h>
 //#import <CPUKernel/CPEngine.h>

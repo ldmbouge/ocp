@@ -30,6 +30,8 @@
 
 @interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 @private
+   ORUInt*                          _scratch;
+   
 @protected
     CPEngineI*                       _engine;
     id<ORTrail>                       _trail;
@@ -39,7 +41,6 @@
     CPTriggerMap*                  _triggers;
     CPBitVarMultiCast*                 _recv;
     enum CPVarClass                      _vc;
-//    TRUInt*                          _levels;
 }
 -(CPBitVarI*) initCPBitVarCore:(id<CPEngine>)cp low:(ORUInt*)low up:(ORUInt*)up length:(int) len;
 -(void) dealloc;
@@ -98,6 +99,7 @@
 -(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i;
 -(void) getState:(ORUInt*)state whenBitSet:(ORUInt)pos;
 -(void) getState:(ORUInt*)state afterLevel:(ORUInt)lvl;
+-(void) incrementActivityAll;
 
 // update
 -(ORStatus)     updateMin: (ORULong) newMin;

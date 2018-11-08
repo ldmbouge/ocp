@@ -227,8 +227,10 @@
       [o set:bitVars[k] at:k];
 
    id<CPBitVarHeuristic> h;
+//   h =[cp createBitVarFF];
    h =[cp createBitVarVSIDS];
-   
+//   h =[cp createDDeg];
+
    [cp solve: ^{
       NSLog(@"Search");
       for(int i=0;i<4;i++)

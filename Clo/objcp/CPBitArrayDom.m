@@ -170,7 +170,7 @@ static inline ORULong BAUp(CPBitArrayDom* dom)
 -(ORInt) domsize
 {
    if (_freebits._val <= 31) {
-      ORInt ds = 1 << _freebits._val;
+      ORInt ds = 1 << (unsigned int)_freebits._val;
       return ds;
    } else return 0x7fffffff;
 }

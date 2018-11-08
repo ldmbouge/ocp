@@ -209,7 +209,8 @@
          low[i] = 0;
          up[i] = CP_UMASK;
       }
-      up[0] >>= BITSPERWORD - (size % BITSPERWORD);
+      if (size%BITSPERWORD != 0)
+         up[0] >>= BITSPERWORD - (size % BITSPERWORD);
 
       bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
       [decl setVariable:bv];
@@ -320,7 +321,7 @@
    __block clock_t searchFinish;
    double totalTime, searchTime;
    mallocWatch();
-   
+//
     id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:_model];
 //    id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgram:_model];
    id<ORBitVarArray> o = [ORFactory bitVarArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:(ORUInt)[_declarations count]-1]];
@@ -332,11 +333,11 @@
    }
    
 //    __block id<CPBitVarHeuristic> h =[cp createBitVarFF];
-//            __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
+//   __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
 //        __block id<CPBitVarHeuristic> h =[cp createSDeg];
-//        __block id<CPBitVarHeuristic> h =[cp createDDeg];
+   __block id<CPBitVarHeuristic> h =[cp createDDeg];
 //        __block id<CPBitVarHeuristic> h =[cp createWDeg];
-        __block id<CPBitVarHeuristic> h =[cp createBitVarABS];
+//        __block id<CPBitVarHeuristic> h =[cp createBitVarABS];
 
     __block NSMutableArray* engineVars = [[cp engine] variables];
 //    NSLog(@"%@",engineVars);
@@ -344,259 +345,22 @@
     __block CPBitAntecedents* ants;
     __block CPBitAssignment** vars;
     __block id<CPBVConstraint> c;
+   
 
-    
-    
 
-    [cp solve:^{
-//        //This is the flawed   constraint
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*));
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:1672];
-//        vars[0]->index = 3;
-//        vars[0]->value = false;
-//        vars[1] = malloc(sizeof(CPBitAssignment));
-//        vars[1]->var = [engineVars objectAtIndex:345];
-//        vars[1]->index = 4;
-//        vars[1]->value = false;
-//        vars[2] = malloc(sizeof(CPBitAssignment));
-//        vars[2]->var = [engineVars objectAtIndex:363];
-//        vars[2]->index = 19;
-//        vars[2]->value = false;
-//        vars[3] = malloc(sizeof(CPBitAssignment));
-//        vars[3]->var = [engineVars objectAtIndex:190];
-//        vars[3]->index = 20;
-//        vars[3]->value = true;
-//        vars[4] = malloc(sizeof(CPBitAssignment));
-//        vars[4]->var = [engineVars objectAtIndex:197];
-//        vars[4]->index = 14;
-//        vars[4]->value = false;
-//        vars[5] = malloc(sizeof(CPBitAssignment));
-//        vars[5]->var = [engineVars objectAtIndex:365];
-//        vars[5]->index = 16;
-//        vars[5]->value = false;
-//        vars[6] = malloc(sizeof(CPBitAssignment));
-//        vars[6]->var = [engineVars objectAtIndex:194];
-//        vars[6]->index = 17;
-//        vars[6]->value = false;
-//        vars[7] = malloc(sizeof(CPBitAssignment));
-//        vars[7]->var = [engineVars objectAtIndex:190];
-//        vars[7]->index = 17;
-//        vars[7]->value = true;
-//        vars[8] = malloc(sizeof(CPBitAssignment));
-//        vars[8]->var = [engineVars objectAtIndex:201];
-//        vars[8]->index = 16;
-//        vars[8]->value = false;
-//        vars[9] = malloc(sizeof(CPBitAssignment));
-//        vars[9]->var = [engineVars objectAtIndex:360];
-//        vars[9]->index = 16;
-//        vars[9]->value = false;
-//        vars[10] = malloc(sizeof(CPBitAssignment));
-//        vars[10]->var = [engineVars objectAtIndex:190];
-//        vars[10]->index = 15;
-//        vars[10]->value = true;
-//        vars[11] = malloc(sizeof(CPBitAssignment));
-//        vars[11]->var = [engineVars objectAtIndex:731];
-//        vars[11]->index = 14;
-//        vars[11]->value = false;
-//        vars[12] = malloc(sizeof(CPBitAssignment));
-//        vars[12]->var = [engineVars objectAtIndex:65];
-//        vars[12]->index = 14;
-//        vars[12]->value = false;
-//        vars[13] = malloc(sizeof(CPBitAssignment));
-//        vars[13]->var = [engineVars objectAtIndex:731];
-//        vars[13]->index = 13;
-//        vars[13]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 1;
-//        ants->numAntecedents = 2;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//        NSLog(@"3 %@",[engineVars objectAtIndex:3]);
-//        NSLog(@"87 %@",[engineVars objectAtIndex:87]);
-
-//        NSLog(@"%@", [[cp engine] model]);
-//        NSLog(@"117 %@",[engineVars objectAtIndex:117]);
-        
-        
-//// THis one!
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*1);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:7];
-//        vars[0]->index = 15;vars[0]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 1;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*2);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:86];
-//        vars[0]->index = 14;vars[0]->value = false;
-//        vars[1] = malloc(sizeof(CPBitAssignment));
-//        vars[1]->var = [engineVars objectAtIndex:7];
-//        vars[1]->index = 14;vars[1]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 2;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//// Removing this one alone still fails
-////        ants = malloc(sizeof(CPBitAntecedents));
-////        vars= malloc(sizeof(CPBitAssignment*)*2);
-////        vars[0] = malloc(sizeof(CPBitAssignment));
-////        vars[0]->var = [engineVars objectAtIndex:3];
-////        vars[0]->index = 13;vars[0]->value = true;
-////        vars[1] = malloc(sizeof(CPBitAssignment));
-////        vars[1]->var = [engineVars objectAtIndex:8];
-////        vars[1]->index = 13;vars[1]->value = false;
-////        ants->antecedents = vars;
-////        ants->numAntecedents = 2;
-////        c =  [CPFactory bitConflict:ants];
-////        [[cp engine] add:c];
-//
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*2);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:86];
-//        vars[0]->index = 13;vars[0]->value = false;
-//        vars[1] = malloc(sizeof(CPBitAssignment));
-//        vars[1]->var = [engineVars objectAtIndex:86];
-//        vars[1]->index = 11;vars[1]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 2;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*2);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:86];
-//        vars[0]->index = 11;vars[0]->value = false;
-//        vars[1] = malloc(sizeof(CPBitAssignment));
-//        vars[1]->var = [engineVars objectAtIndex:86];
-//        vars[1]->index = 9;vars[1]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 2;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//
-////this one too
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*3);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:86];
-//        vars[0]->index = 11;vars[0]->value = false;
-//        vars[1] = malloc(sizeof(CPBitAssignment));
-//        vars[1]->var = [engineVars objectAtIndex:84];
-//        vars[1]->index = 9;vars[1]->value = false;
-//        vars[2] = malloc(sizeof(CPBitAssignment));
-//        vars[2]->var = [engineVars objectAtIndex:2];
-//        vars[2]->index = 9;vars[2]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 3;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*1);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:8];
-//        vars[0]->index = 9;vars[0]->value = false;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 1;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-
-        
-        
-        //bench_ab
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*5);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:80];
-//        vars[0]->index = 0;vars[0]->value = true;
-//        vars[1] = malloc(sizeof(CPBitAssignment));
-//        vars[1]->var = [engineVars objectAtIndex:79];
-//        vars[1]->index = 1;vars[1]->value = true;
-//        vars[2] = malloc(sizeof(CPBitAssignment));
-//        vars[2]->var = [engineVars objectAtIndex:78];
-//        vars[2]->index = 0;vars[2]->value = false;
-//        vars[3] = malloc(sizeof(CPBitAssignment));
-//        vars[3]->var = [engineVars objectAtIndex:17];
-//        vars[3]->index = 2;vars[3]->value = true;
-//        vars[4] = malloc(sizeof(CPBitAssignment));
-//        vars[4]->var = [engineVars objectAtIndex:42];
-//        vars[4]->index = 3;vars[4]->value = false;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 5;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*5);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:80];
-//        vars[0]->index = 0;vars[0]->value = true;
-//        vars[1] = malloc(sizeof(CPBitAssignment));
-//        vars[1]->var = [engineVars objectAtIndex:79];
-//        vars[1]->index = 1;vars[1]->value = true;
-//        vars[2] = malloc(sizeof(CPBitAssignment));
-//        vars[2]->var = [engineVars objectAtIndex:78];
-//        vars[2]->index = 0;vars[2]->value = false;
-//        vars[3] = malloc(sizeof(CPBitAssignment));
-//        vars[3]->var = [engineVars objectAtIndex:17];
-//        vars[3]->index = 1;vars[3]->value = true;
-//        vars[4] = malloc(sizeof(CPBitAssignment));
-//        vars[4]->var = [engineVars objectAtIndex:62];
-//        vars[4]->index = 1;vars[4]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 5;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*1);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:80];
-//        vars[0]->index = 3;vars[0]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 1;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*1);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:88];
-//        vars[0]->index = 0;vars[0]->value = true;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 1;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-//
-//        ants = malloc(sizeof(CPBitAntecedents));
-//        vars= malloc(sizeof(CPBitAssignment*)*1);
-//        vars[0] = malloc(sizeof(CPBitAssignment));
-//        vars[0]->var = [engineVars objectAtIndex:116];
-//        vars[0]->index = 2;vars[0]->value = false;
-//        ants->antecedents = vars;
-//        ants->numAntecedents = 1;
-//        c =  [CPFactory bitConflict:ants];
-//        [[cp engine] add:c];
-
-        
+   [cp solve:^{
+      
         //        [cp repeat:^{
-        [cp limitTime:60000 in: ^{
-            //        NSLog(@"%@", [[cp engine] model]);
+//        [cp limitTime:300000 in: ^{
+//                    NSLog(@"%@", [[cp engine] model]);
+//           for (id var in _declarations)
+//              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
 
           searchStart = clock();
         [cp labelBitVarHeuristic:h];
           searchFinish = clock();
            for (id var in _declarations)
-            NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
+             NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
 
           NSString *sep = @" ,";
           char binvalue[512];
@@ -608,15 +372,14 @@
               printf("(assert (= %s (_ bv%ld %d)))\n",[[var description] cString], foo, [[_declarations objectForKey:var]getSize]);
           }
           sat = true;
-        
+       //                    NSLog(@"%@", [[cp engine] model]);
 //      }];
 //        }onRepeat:^{
 //            printf("Restarting...\n");
-        }];
+//        }];
    }];
-   
-   NSLog(@"%@",mallocReport());
    searchFinish = clock();
+   NSLog(@"%@",mallocReport());
    totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
    searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
    NSLog(@"      Search Time (s): %f",searchTime);
@@ -835,7 +598,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(resultSize%BITSPERWORD);
+//   if (size%BITSPERWORD != 0)
+//      up[0] >>= BITSPERWORD-(resultSize%BITSPERWORD);
    result = [ORFactory bitVar:_model low:low up:up bitLength:resultSize];
 //   [_model add:[ORFactory bit:result trueIf:c equals:t zeroIfXEquals:e]];
    [_model add:[ORFactory bit:c then:t else:e result:result]];
@@ -886,7 +650,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 bnot:bv]];
 //   NSLog(@"Added BVNOT Constraint\n");
@@ -903,7 +668,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 band:(id<ORBitVar>)a2 eq:bv]];
@@ -921,7 +687,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[_model add:[ORFactory bit:(id<ORBitVar>)a1 bor:(id<ORBitVar>)a2 eq:bv]]];
@@ -939,7 +706,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 bxor:(id<ORBitVar>)a2 eq:bv]];
@@ -966,7 +734,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[wordlength-1] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftLByBV:(id<ORBitVar>)a2 eq:bv]];
@@ -983,7 +752,7 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+    up[wordlength-1] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftRByBV:(id<ORBitVar>)a2 eq:bv]];
@@ -1000,7 +769,7 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+    up[wordlength-1] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftRAByBV:(id<ORBitVar>)a2 eq:bv]];
@@ -1016,23 +785,78 @@
    return bv;
 }
 -(objcp_expr) objcp_mk_bv_sle:(objcp_context)ctx x:(objcp_expr)x sle:(objcp_expr) y{
-   ORUInt low = 0;
-   ORUInt up = 1;
-
-   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-   [_model add:[ORFactory bit:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
-   return bv;
-}
-
--(objcp_expr) objcp_mk_bv_slt:(objcp_context)ctx x:(objcp_expr)x slt:(objcp_expr) y{
+//   ORUInt low = 0;
+//   ORUInt up = 1;
+//
+//   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+//   [_model add:[ORFactory bit:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
+//   return bv;
+   int size = [(id<ORBitVar>)x bitLength];
+   
    ORUInt low;
    ORUInt up;
    low = 0;
    up = 0x1;
    
    id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-   [_model add:[ORFactory bit:(id<ORBitVar>)x SLT:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
-   return bv;
+   id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> notresult = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   
+   
+   
+   [_model add:[ORFactory bit:(id<ORBitVar>)y LT:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
+   
+   [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:notresult]];
+//   [_model add:[ORFactory bit:(id<ORBitVar>)notresult notb:result]];
+
+   return result;
+}
+
+-(objcp_expr) objcp_mk_bv_slt:(objcp_context)ctx x:(objcp_expr)x slt:(objcp_expr) y{
+//   ORUInt low;
+//   ORUInt up;
+//   low = 0;
+//   up = 0x1;
+//
+//   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+//   [_model add:[ORFactory bit:(id<ORBitVar>)x SLT:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
+//   return bv;
+
+   int size = [(id<ORBitVar>)x bitLength];
+   
+   ORUInt low;
+   ORUInt up;
+   low = 0;
+   up = 0x1;
+
+   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> notresult = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+
+
+   
+   [_model add:[ORFactory bit:(id<ORBitVar>)y LE:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
+
+   [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:result]];
+//   [_model add:[ORFactory bit:(id<ORBitVar>)notresult notb:result]];
+   
+   return result;
 }
 
 //objcp_mk_bv_gt
@@ -1056,7 +880,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 negative:bv]];
@@ -1074,8 +899,10 @@
       low[i] = 0;
       cinUp[i] = up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-    cinUp[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0){
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+      cinUp[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   }
 
    id<ORBitVar> bv;
    id<ORBitVar> cin;
@@ -1114,7 +941,8 @@
       up[i] = CP_UMASK;
    }
    id<ORBitVar> bv;
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
 //   if ((size%BITSPERWORD) == 0) {
       bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
       [_model add:[ORFactory bit:a1 minus:a2 eq:bv]];
@@ -1135,17 +963,22 @@
    int size = [(id<ORBitVar>)a1 bitLength];
    
    ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
-   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
-   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
-   for(int i=0; i< (wordlength);i++){
+   ORUInt zWordlength = ((size * 2)/ BITSPERWORD) + (((size * 2) % BITSPERWORD == 0) ? 0: 1);
+   ORUInt* low = alloca(sizeof(ORUInt)*zWordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*zWordlength);
+   for(int i=0; i< zWordlength;i++){
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   id<ORBitVar> result;
    id<ORBitVar> bv;
 
-      bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-      [_model add:[ORFactory bit:a1 times:a2 eq:bv]];
+   result = [ORFactory bitVar:_model low:low up:up bitLength:(size*2)];
+   bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   [_model add:[ORFactory bit:a1 times:a2 eq:result]];
+   [_model add:[ORFactory bit:result from:0 to:size-1 eq:bv]];
 
    return bv;
 }
@@ -1159,7 +992,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
    id<ORBitVar> q;
    id<ORBitVar> r;
    
@@ -1180,7 +1014,8 @@
         low[i] = 0;
         up[i] = CP_UMASK;
     }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
     id<ORBitVar> q;
     id<ORBitVar> r;
 
@@ -1202,7 +1037,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
    id<ORBitVar> q;
    id<ORBitVar> r;
    
@@ -1223,7 +1059,8 @@
         low[i] = 0;
         up[i] = CP_UMASK;
     }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
     id<ORBitVar> q;
     id<ORBitVar> r;
     
@@ -1244,7 +1081,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv2 = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:bv from:lsb to:msb eq:bv2]];
@@ -1261,7 +1099,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
   [_model add:[ORFactory bit:(id<ORBitVar>)a1 rotateLBy:(ORUInt)a2 eq:bv]];
@@ -1283,7 +1122,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if(size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)arg1 zeroExtendTo:(id<ORBitVar>)bv]];
@@ -1300,7 +1140,8 @@
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[0] >>= BITSPERWORD-(size%BITSPERWORD);
+   if (size%BITSPERWORD != 0)
+      up[0] >>= BITSPERWORD-(size%BITSPERWORD);
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)arg1 signExtendTo:(id<ORBitVar>)bv]];
    return bv;

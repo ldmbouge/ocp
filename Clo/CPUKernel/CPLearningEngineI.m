@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import "CPLearningEngineI.h"
-
 //#import "objcp/CPBitConstraint.h"
 
 @implementation CPLearningEngineI
@@ -47,6 +46,10 @@
    _size++;
    
    _retry = true;
+   
+    NSMutableArray* vars = [self variables];
+        for (id<CPBitVar> var in vars)
+            [var reduceVSIDS];
 }
 -(void) addConstraint:(CPCoreConstraint*) c withJumpLevel:(ORUInt) level
 {
@@ -124,24 +127,5 @@
       return ORFailure;
    });
 }
-
-//-(ORStatus)   close{
-//
-//    NSMutableArray* engineVars = [self variables];
-//    CPBitAntecedents* ants = malloc(sizeof(CPBitAntecedents));
-//    CPBitAssignment** vars;
-//    vars= malloc(sizeof(CPBitAssignment*)*10);
-//    vars[0] = malloc(sizeof(CPBitAssignment));
-//    vars[0]->var = [engineVars objectAtIndex:103];
-//    vars[0]->index = 30;
-//    vars[0]->value = 1;
-//    ants->antecedents = vars;
-//    ants->numAntecedents = 1;
-//    id<CPBVConstraint> c =  [CPFactory bitConflict:ants];
-//    [self addConstraint:c];
-//    
-//    ORStatus s =  [super close];
-//    return s;
-//}
 
 @end

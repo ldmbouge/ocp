@@ -15,8 +15,8 @@
 
 @implementation CPBitVarVSIDS {
    id<CPEngine>    _engine;
-   ORInt          _countMax;
-    
+//   ORInt          _countMax;
+   
 }
 -(CPBitVarVSIDS*)initCPBitVarVSIDS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
@@ -25,8 +25,8 @@
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
-    _countMax = 32;
-    _count = _countMax;
+//    _countMax = 32;
+//    _count = _countMax;
    return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -49,22 +49,22 @@
 
 -(ORFloat)varOrdering:(id<CPBitVar>)x
 {
-   float rv = - (ORFloat)[x getVSIDSCount];
-    id<ORVarArray> vars = (_rvars!=nil ? _rvars : _cvs);
-    if (_count <= 0)
-    {
-        for (id<CPBitVar> var in vars)
-            [var reduceVSIDS];
-        _countMax <<= 1;
-        _count = _countMax;
-    }
-    else
-        _count--;
+   ORFloat rv = - (ORFloat)[x getVSIDSCount];
+//    id<ORVarArray> vars = (_rvars!=nil ? _rvars : _cvs);
+//    if (_count <= 0)
+//    {
+//        for (id<CPBitVar> var in vars)
+//            [var reduceVSIDS];
+//        _countMax <<= 1;
+//        _count = _countMax;
+//    }
+//    else
+//        _count--;
    return rv;
 }
 -(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
 {
-   return -v;
+   return [x getVSIDSActivity:v];
 }
 -(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv
 {
