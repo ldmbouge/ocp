@@ -87,13 +87,25 @@ static enum ValHeuristic valIndex[] =
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
          printf("-val-order HEURISTIC : replace HEURISTIC by one of following split,split3Way,split5Way,split6Way,dynamicSplit,dynamic3Split,dynamic5Split,dynamic6Split,split3B,splitAbs,Esplit,Dsplit\n");
          printf("-rate-model-limit VALUE : replace VALUE by a concrete value\n");
-         printf("-globalrate-model-limit VALUE : replace VALUE by a concrete value\n");
+         printf("-grate-model-limit VALUE : replace VALUE by a concrete value\n");
          printf("-rate-other-limit VALUE : replace VALUE by a concrete value\n");
-         printf("-globalrate-other-limit VALUE : rmplace VALUE by a concrete value\n");
+         printf("-grate-other-limit VALUE : rmplace VALUE by a concrete value\n");
          exit(1);
       }
       else if (strncmp(argv[k], "-q", 2) == 0)
          size = atoi(argv[k]+2);
+      else if (strncmp(argv[k],"-search3Bpercent",16)==0)
+         search3Bpercent = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-rate-model-limit",17)==0)
+         rateModel = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-grate-model-limit",18)==0 || strncmp(argv[k],"-globalrate-model-limit",23)==0 )
+         grateModel = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-rate-other-limit",17)==0)
+         rateOther = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-grate-other-limit",18)==0 || strncmp(argv[k],"-globalrate-other-limit",23)==0)
+         grateOther = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-variation",10)==0)
+         variationSearch = atoi(argv[k+1]);
       else if (strncmp(argv[k],"-nb-floats",10)==0)
          searchNBFloats = atoi(argv[k+1]);
       else if (strncmp(argv[k], "-n", 2)==0)
@@ -148,18 +160,6 @@ static enum ValHeuristic valIndex[] =
          is3Bfiltering=YES;
       else if (strncmp(argv[k],"-subcut",7)==0)
          subcut = atoi(argv[k+1]);
-      else if (strncmp(argv[k],"-search3Bpercent",16)==0)
-         search3Bpercent = atof(argv[k+1]);
-      else if (strncmp(argv[k],"-rate-model-limit",17)==0)
-         rateModel = atof(argv[k+1]);
-      else if (strncmp(argv[k],"-globalrate-model-limit",23)==0)
-         grateModel = atof(argv[k+1]);
-      else if (strncmp(argv[k],"-rate-other-limit",17)==0)
-         rateOther = atof(argv[k+1]);
-      else if (strncmp(argv[k],"-globalrate-other-limit",23)==0)
-         grateOther = atof(argv[k+1]);
-      else if (strncmp(argv[k],"-variation",10)==0)
-         variationSearch = atoi(argv[k+1]);
    }
    return self;
 }
@@ -271,7 +271,7 @@ static enum ValHeuristic valIndex[] =
          [(CPCoreSolver*)p set3BSplitPercent:search3Bpercent];
          [(CPCoreSolver*)p setSubcut:[self subCutSelector]];
          [(CPCoreSolver*)p setAbsLimitModelVars:rateModel total:grateModel];
-         [(CPCoreSolver*)p setAbsLimitAdditionalVars:rateModel total:grateModel];
+         [(CPCoreSolver*)p setAbsLimitAdditionalVars:rateOther total:grateModel];
          [(CPCoreSolver*)p setVariation:variationSearch];
          return p;
       case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];

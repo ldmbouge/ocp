@@ -2287,7 +2287,7 @@
                disabled.found = NO;
             }
             if([abs[i.index] quantity] == 0.0){
-               _unique = 1;
+//               _unique = 1;
                switch (_variationSearch) {
                   case 0:
                      [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
@@ -2305,12 +2305,6 @@
                         [self float6WaySplit:i call:s withVars:x];
                      }];
                }
-//               [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-//                  [self float6WaySplit:i call:s withVars:x];
-//               }];
-//               [self maxDensitySearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-//                  [self float6WaySplit:i call:s withVars:x];
-//               }];
               
             }else{
                id<CPFloatVar> v = [abs[i.index] bestChoice];
