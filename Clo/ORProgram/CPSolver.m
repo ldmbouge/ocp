@@ -2300,9 +2300,6 @@
                                        }];
                      break;
                   case 2:
-                     [self maxOccurencesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [self float6WaySplit:i call:s withVars:x];
-                     }];
                   default:
                      [self maxOccurencesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                         [self float6WaySplit:i call:s withVars:x];
