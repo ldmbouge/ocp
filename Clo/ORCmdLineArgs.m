@@ -109,7 +109,6 @@ static enum ValHeuristic valIndex[] =
               break;
             }
          }
-         [tmp release];
          heuristic = hIndex[index];
       }
       else if (strncmp(argv[k],"-w",2)==0)
@@ -135,7 +134,6 @@ static enum ValHeuristic valIndex[] =
                break;
             }
          }
-         [tmp release];
          valordering = valIndex[index];
       }
       else if (strncmp(argv[k],"-default",8)==0)
