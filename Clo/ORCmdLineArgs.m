@@ -1198,7 +1198,7 @@ static enum ValHeuristic valIndex[] =
                      }];
                      break;
                   case dynamic5Split:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                     [p maxAbsorptionSearchAll:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                         [p float5WaySplit:i call:s withVars:x];
                      }];break;
                   case dynamic6Split:
