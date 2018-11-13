@@ -4583,6 +4583,7 @@
    self = [super init];
    _quantity = quantity;
    _choice = nil;
+   _nb = 0;
    return self;
 }
 -(id) init
@@ -4596,10 +4597,11 @@
 }
 -(ORDouble) quantity
 {
-   return _quantity;
+   return (_nb) ? _quantity/_nb : 0.0;
 }
 -(void) addQuantity:(ORFloat) c
 {
+   _nb = (c > 0.0)? _nb + 1 : _nb;
    _quantity += c;
 }
 -(void) setChoice:(CPFloatVarI*) c
@@ -4612,6 +4614,6 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%lf,%@>",_quantity,_choice];
+   return [NSString stringWithFormat:@"<%lf,%d,%@>",_quantity,_nb,_choice];
 }
 @end

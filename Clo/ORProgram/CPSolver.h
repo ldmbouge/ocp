@@ -184,6 +184,7 @@
 
 @interface ABSElement : ORObject<ORAbsElement> {
    ORDouble _quantity;
+   ORUInt _nb;
    id<CPFloatVar> _choice;
 }
 -(id) init:(ORDouble)quantity;
