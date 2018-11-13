@@ -191,7 +191,7 @@
    _level = 100;
    _absRateLimitModelVars = 0.3;
    _absTRateLimitModelVars = 0.8;
-   _absRateLimitAdditionalVars = 0.8;
+   _absRateLimitAdditionalVars = 0.92;
    _absTRateLimitAdditionalVars = 0.0;
    _split3Bpercent = 10.f;
    _searchNBFloats = 2;
