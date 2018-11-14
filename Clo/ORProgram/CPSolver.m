@@ -2111,8 +2111,13 @@
 -(void) maxOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORUInt sum = 0;
    id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
-      return [self maxOccurences:x[i]];
+      id<CPFloatVar> v = _gamma[getId(x[i])];
+      if([v bound]) return 0;
+      ORUInt nb = [self computeNbOcurrences:x[i]];
+      sum += nb;
+      return nb;
    }];
    __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
@@ -2130,8 +2135,9 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
-                                    return [occ at:i];
+                                    ORDouble res =((ORDouble)[occ at:i]) / sum;
+                                    LOG(_level,2,@"%@ rate(occ) = %16.16e",_gamma[getId(x[i])],res);
+                                    return res;
                                  }];
    
    [[self explorer] applyController:t in:^{
@@ -3721,6 +3727,18 @@
       max = (cur > max) ? cur : max;
    }
    return max;
+}
+
+//[hzi] count the number of occurences of a variable x in the all model
+-(ORUInt) computeNbOcurrences:(id<ORVar>) x
+{
+   NSArray* csts = [_model constraints];
+   ORUInt nb = 0;
+   for (ORInt i = 0; i < [csts count];i++)
+   {
+      nb += [csts[i] nbOccurences:x];
+   }
+   return nb;
 }
 
 -(ORDouble) computeAbsorptionQuantity:(id<CPFloatVar>)y by:(id<ORFloatVar>)x
