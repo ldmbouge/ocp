@@ -1760,9 +1760,9 @@
 
 
 
--(ORInt)  recommendationBy:(id<ORConstraint>) mdd forVariableIndex:(ORInt) variableIndex
+-(ORInt)  MDDRecommendationFor:(ORInt) variableIndex
 {
-   return [((CPMDD*) _gamma[mdd.getId]) recommendationFor: variableIndex];
+   //return [ recommendationFor: variableIndex];
 }
 
 

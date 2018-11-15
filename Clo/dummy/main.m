@@ -551,6 +551,7 @@ int main (int argc, const char * argv[])
     @autoreleasepool {
         
         id<ORModel> mdl = [ORFactory createModel];
+        id<ORAnnotation> notes= [ORFactory annotation];
         id<ORIntRange> R1 = RANGE(mdl, MINVARIABLE, MAXVARIABLE);
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
         id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
@@ -651,9 +652,9 @@ int main (int argc, const char * argv[])
         [cp solve: ^{
             
             [cp labelArray:x];
-            //for (int variableIndex = MINVARIABLE; variableIndex <= MAXVARIABLE; variableIndex++) {
-            //    [cp label: a[variableIndex] with: [cp recommendationBy: mddConstraint forVariableIndex: variableIndex]];
-            //}
+            for (int variableIndex = MINVARIABLE; variableIndex <= MAXVARIABLE; variableIndex++) {
+                [cp label: a[variableIndex] with: [cp MDDRecommendationFor: variableIndex]];
+            }
             
             for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
                 printf("%d  ",[cp intValue: [x at:i]]);

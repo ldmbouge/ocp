@@ -617,7 +617,7 @@
         max_layer_size[layer] = makeTRInt(_trail,1);
     }
     
-    min_domain_val = [_x[[_x low]] min];
+    min_domain_val = [_x[[_x low]] min];    //Not great
     max_domain_val = [_x[[_x low]] max];
     
     layer_variable_count = malloc(([_x count]+1) * sizeof(TRInt*));
