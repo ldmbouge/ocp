@@ -91,6 +91,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORDouble rateOther;
 @property (nonatomic,readonly) ORDouble grateOther;
 @property (nonatomic,readonly) ORInt variationSearch;
+@property (nonatomic,readonly) ORInt splitTest;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;

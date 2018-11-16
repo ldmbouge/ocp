@@ -165,6 +165,7 @@
    //[hzi] should we remove it ? An additional variable appear only in one wonstraint as operand
    ORDouble               _absTRateLimitAdditionalVars;
    ORInt                 _variationSearch;
+   ORInt                 _splitTest;
    
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
@@ -368,6 +369,10 @@
 -(void) setLevel:(ORInt) level
 {
    _level = level;
+}
+-(void) setSplitTest:(ORInt) level
+{
+   _splitTest = level;
 }
 -(void) setChoicesLimit:(ORInt) limit
 {
@@ -2379,7 +2384,11 @@
             }else{
                id<CPFloatVar> v = [abs[i.index] bestChoice];
                LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
-               [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
+               if(_splitTest){
+                  [self floatAbsSplit2:i.index by:v call:s withVars:x default:b];
+               }else{
+                  [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
+               }
                abs = [self computeAbsorptionsQuantities:x];
             }
          } while (true);
@@ -3078,6 +3087,93 @@
          [self floatIntervalImpl:cx low:ip[2*i].inf up:ip[2*i].sup];
          [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
       }];
+   }else{
+      b(i,s,x);
+      //      b(y);
+   }
+}
+-(void) floatAbsSplit2:(ORUInt)i by:(id<CPFloatVar>) y call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   if(y == nil) {
+      b(i,s,x);
+      return;
+   }
+   float_interval interval[18];
+   float_interval interval_x[3];
+   float_interval interval_y[3];
+   ORInt length_x = 0;
+   ORInt length_y = 0;
+   id<CPFloatVar> cx = _gamma[getId(x[i])];
+   if([cx bound] && [y bound]) return;
+   float_interval ax = computeAbsorbingInterval((CPFloatVarI*)cx);
+   float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
+   if(isIntersectingWithV([y min],[y max],ay.inf,ay.sup)){
+      ay.inf = maxFlt(ay.inf, [y min]);
+      ay.sup = minFlt(ay.sup, [y max]);
+      length_y = !([y min] == ay.inf) + !([y max] == ay.sup);
+      interval_y[0] = ay;
+      if(ay.inf > [y min] && [y max] > ay.sup){
+         interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
+         interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [y max]);
+      }
+      else if(ay.inf == [y min]){
+         interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[y max]);
+      }else {
+         interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
+      }
+   }else{
+      interval_y[0] = makeFloatInterval([y min], [y max]);
+      length_y = 0;
+   }
+   length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
+   interval_x[0].inf = maxFlt([cx min],ax.inf);
+   interval_x[0].sup = minFlt([cx max],ax.sup);
+   ORInt i_x = 1;
+   ORFloat xmax = [cx max];
+   if(ax.sup == [cx max]){
+      interval_x[1].inf = minFlt([cx min],fp_next_float(ax.inf));
+      interval_x[1].sup = fp_next_float(ax.inf);
+   }else{
+      if(-ax.sup < [cx max]){
+         interval_x[i_x].inf = -ax.sup;
+         interval_x[i_x].sup = [cx max];
+         xmax = -ax.sup;
+         length_x++;
+         i_x++;
+      }
+      interval_x[i_x].inf = fp_next_float(ax.sup);
+      interval_x[i_x].sup = fp_previous_float(xmax);
+   }
+   if(length_x >= 1 && length_y >= 1){
+      ORInt length = 0;
+      for(ORInt i = 0; i <= length_x;i++){
+         for(ORInt j = 0; j <= length_y;j++){
+            interval[length] = interval_x[i];
+            length++;
+            interval[length] = interval_y[j];
+            length++;
+         }
+      }
+      float_interval* ip = interval;
+      length--;
+      [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt i) {
+         LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]\t y %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
+         [self floatIntervalImpl:cx low:ip[2*i].inf up:ip[2*i].sup];
+         [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
+      }];
+   }else if (length_x > 0 && length_y == 0){
+      float_interval* ip = interval_x;
+      [_search try: ^{
+         LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],cx,ip[0].inf);
+         [self floatGEqualImpl:cx with:ip[0].inf];
+      } alt: ^{
+         LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],cx,ip[0].inf);
+         [self floatLthenImpl:cx with:ip[0].inf];
+      }];
+//       [_search try:RANGE(self,0,length_x) suchThat:nil in:^(ORInt i) {
+//          LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],cx,ip[i].inf,ip[i].sup);
+//          [self floatIntervalImpl:cx low:ip[i].inf up:ip[i].sup];
+//       }];
    }else{
       b(i,s,x);
       //      b(y);
