@@ -2142,7 +2142,7 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     ORDouble res =((ORDouble)[occ at:i]) / sum;
-                                    LOG(_level,2,@"%@ rate(occ) = %16.16e",_gamma[getId(x[i])],res);
+                                    LOG(_level,2,@"%@ rate : occ=%16.16e",_gamma[getId(x[i])],res);
                                     return res;
                                  }];
    
@@ -2304,6 +2304,14 @@
    @autoreleasepool {
       SEL s = @selector(maxAbsorptionSearch:default:);
       __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+      __block ORUInt sum = 0;
+      id<ORIntArray> occ =[ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
+            id<CPFloatVar> v = _gamma[getId(x[i])];
+            if([v bound]) return 0;
+            ORUInt nb = [self computeNbOcurrences:x[i]];
+            sum += nb;
+            return nb;
+         }];
       ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
       __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
       id<ORSelect> select = [ORFactory select: _engine
@@ -2321,7 +2329,7 @@
                                         return ![v bound];
                                      }
                                     orderedBy: ^ORDouble(ORInt i) {
-                                       LOG(_level,2,@"%@ rate : %16.16e",_gamma[getId(x[i])], [abs[i] quantity]);
+                                       LOG(_level,2,@"%@ isInitial ? %s rate : abs=%16.16e  occ=%16.16e",_gamma[getId(x[i])], [x isInitial:i]?"YES":"NO",[abs[i] quantity],((ORDouble)[occ at:i]) / sum);
                                        if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
                                           return [abs[i] quantity];
                                        }else{
