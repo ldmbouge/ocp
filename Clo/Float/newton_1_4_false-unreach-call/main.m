@@ -81,7 +81,7 @@ int main(int argc, const char * argv[]) {
             [args checkAbsorption:vars solver:cp];
             check_solution([p floatValue:vars[0]], [p floatValue:vars[1]]);
          } withTimeLimit:[args timeOut]];
-         NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
+         NSLog(@"nb fail : %d %d",[[cp engine] nbFailures],[[cp explorer] nbFailures]);
          struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];

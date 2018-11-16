@@ -60,6 +60,7 @@
 -(void) setAbsLimitModelVars:(ORDouble)local total:(ORDouble)global;
 -(void) setAbsLimitAdditionalVars:(ORDouble)local total:(ORDouble)global;
 -(void) setLevel:(ORInt) level;
+-(void) setChoicesLimit:(ORInt) limit;
 -(void) setVariation:(ORInt) variation;
 -(void) setUnique:(ORBool) u;
 -(void) set3BSplitPercent:(ORFloat) p;

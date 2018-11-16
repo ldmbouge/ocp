@@ -51,6 +51,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize rateOther;
 @synthesize grateOther;
 @synthesize variationSearch;
+@synthesize choicesLimit;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -82,6 +83,7 @@ static enum ValHeuristic valIndex[] =
    fName = @"";
    randomized = NO;
    variationSearch = 2;
+   choicesLimit = -1;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -94,6 +96,8 @@ static enum ValHeuristic valIndex[] =
       }
       else if (strncmp(argv[k], "-q", 2) == 0)
          size = atoi(argv[k]+2);
+      else if (strncmp(argv[k],"-choices-limit",14)==0)
+         choicesLimit = atoi(argv[k+1]);
       else if (strncmp(argv[k],"-search3Bpercent",16)==0)
          search3Bpercent = atof(argv[k+1]);
       else if (strncmp(argv[k],"-rate-model-limit",17)==0)
@@ -266,6 +270,7 @@ static enum ValHeuristic valIndex[] =
       case 0:
          p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setLevel:level];
+         [(CPCoreSolver*)p setChoicesLimit:choicesLimit];
          [(CPCoreSolver*)p setUnique:unique];
          [(CPCoreSolver*)p setSearchNBFloats:searchNBFloats];
          [(CPCoreSolver*)p set3BSplitPercent:search3Bpercent];

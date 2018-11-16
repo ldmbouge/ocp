@@ -154,6 +154,7 @@
    id<CPPortal>          _portal;
    
    ORInt                  _level;
+   ORInt                  _choicesLimit;
    ORBool                 _unique;
    ORFloat                _split3Bpercent;
    ORInt                  _searchNBFloats;
@@ -189,6 +190,7 @@
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
    _level = 100;
+   _choicesLimit = -1;
    _absRateLimitModelVars = 0.3;
    _absTRateLimitModelVars = 0.8;
    _absRateLimitAdditionalVars = 0.92;
@@ -366,6 +368,10 @@
 -(void) setLevel:(ORInt) level
 {
    _level = level;
+}
+-(void) setChoicesLimit:(ORInt) limit
+{
+   _choicesLimit = limit;
 }
 -(void) setUnique:(ORBool) u
 {
@@ -2108,7 +2114,7 @@
       } while (true);
    }];
 }
--(void) maxOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+-(void) maxOccurencesRatesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    __block ORUInt sum = 0;
@@ -2138,6 +2144,50 @@
                                     ORDouble res =((ORDouble)[occ at:i]) / sum;
                                     LOG(_level,2,@"%@ rate(occ) = %16.16e",_gamma[getId(x[i])],res);
                                     return res;
+                                 }];
+   
+   [[self explorer] applyController:t in:^{
+      do {
+         LOG(_level,2,@"State before selection");
+         ORSelectorResult i = [select max];
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(maxOccurencesSearch:do:),x);
+      } while (true);
+   }];
+}
+-(void) maxOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
+      return [self maxOccurences:x[i]];
+   }];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
+   id<ORSelect> select = [ORFactory select: _engine
+                                     range: RANGE(self,[x low],[x up])
+                                  suchThat: ^ORBool(ORInt i) {
+                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
+                                     return ![v bound];
+                                  }
+                                 orderedBy: ^ORDouble(ORInt i) {
+                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                    return [occ at:i];
                                  }];
    
    [[self explorer] applyController:t in:^{
@@ -2280,6 +2330,9 @@
                                     }];
       
       [[self explorer] applyController:t in:^{
+         [self limitCondition:^ORBool{
+            return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
+         } in:^{
          do {
             LOG(_level,2,@"State before selection");
             ORSelectorResult i = [select max];
@@ -2293,6 +2346,7 @@
                disabled.found = NO;
             }
             if([abs[i.index] quantity] == 0.0){
+               LOG(_level,2,@"current search has switched");
                _unique = 1;
                switch (_variationSearch) {
                   case 0:
@@ -2306,8 +2360,13 @@
                                        }];
                      break;
                   case 2:
-                  default:
                      [self maxOccurencesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [self float6WaySplit:i call:s withVars:x];
+                     }];
+                     break;
+                  case 3:
+                  default:
+                     [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                         [self float6WaySplit:i call:s withVars:x];
                      }];
                }
@@ -2319,6 +2378,8 @@
                abs = [self computeAbsorptionsQuantities:x];
             }
          } while (true);
+      }];
+         
       }];
    }
 }
