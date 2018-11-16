@@ -177,11 +177,16 @@
 }
 -(ORInt) average
 {
-   if(_nb == 0) return 0;
-   ORInt somme = _array[_low];
-   for(int i = _low+1; i <= _up; i++)
+   ORInt s = [self sum];
+  
+   return (s > 0) ? s/_nb : 0;
+}
+-(ORInt) sum
+{
+   ORInt somme = 0;
+   for(int i = _low; i <= _up; i++)
       somme += _array[i];
-   return somme/_nb;
+   return somme;
 }
 -(NSUInteger)count
 {

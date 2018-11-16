@@ -2117,14 +2117,8 @@
 -(void) maxOccurencesRatesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
-   __block ORUInt sum = 0;
-   id<ORIntArray> occ = [ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
-      id<CPFloatVar> v = _gamma[getId(x[i])];
-      if([v bound]) return 0;
-      ORUInt nb = [self computeNbOcurrences:x[i]];
-      sum += nb;
-      return nb;
-   }];
+   id<ORIntArray> occ = [self computeAllOccurrences:x];
+   __block ORUInt sum = [occ sum];
    __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
@@ -2147,6 +2141,10 @@
                                  }];
    
    [[self explorer] applyController:t in:^{
+      
+      [self limitCondition:^ORBool{
+         return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
+      } in:^{
       do {
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
@@ -2160,8 +2158,9 @@
          }
          disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(i.index,@selector(maxOccurencesSearch:do:),x);
+         b(i.index,@selector(maxOccurencesRatesSearch:do:),x);
       } while (true);
+      }];
    }];
 }
 -(void) maxOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
@@ -2191,6 +2190,9 @@
                                  }];
    
    [[self explorer] applyController:t in:^{
+      [self limitCondition:^ORBool{
+         return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
+      } in:^{
       do {
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
@@ -2206,6 +2208,7 @@
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxOccurencesSearch:do:),x);
       } while (true);
+      }];
    }];
 }
 -(void) minOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
@@ -2305,13 +2308,14 @@
       SEL s = @selector(maxAbsorptionSearch:default:);
       __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
       __block ORUInt sum = 0;
-      id<ORIntArray> occ =[ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
-            id<CPFloatVar> v = _gamma[getId(x[i])];
-            if([v bound]) return 0;
-            ORUInt nb = [self computeNbOcurrences:x[i]];
-            sum += nb;
-            return nb;
-         }];
+//      id<ORIntArray> occ =[ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
+//            id<CPFloatVar> v = _gamma[getId(x[i])];
+//            if([v bound]) return 0;
+//            ORUInt nb = [self computeNbOcurrences:x[i]];
+//            sum += nb;
+//            return nb;
+//         }];
+      id<ORIntArray> occ = [self computeAllOccurrences:x];
       ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
       __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
       id<ORSelect> select = [ORFactory select: _engine
@@ -3797,17 +3801,30 @@
    }
    return max;
 }
-
-//[hzi] count the number of occurences of a variable x in the all model
--(ORUInt) computeNbOcurrences:(id<ORVar>) x
+-(id<ORIntArray>) computeAllOccurrences:(id<ORDisabledFloatVarArray>) vars
 {
    NSArray* csts = [_model constraints];
-   ORUInt nb = 0;
-   for (ORInt i = 0; i < [csts count];i++)
-   {
-      nb += [csts[i] nbOccurences:x];
+   ORInt max = 0;
+   for(id<ORVar> v in vars){
+      max = (getId(v) > max) ? [v getId] : max;
    }
-   return nb;
+   id<ORIntArray> occ = [ORFactory intArray:self range:RANGE(self,0,max) value:0];
+   ORInt index = 0;
+   @autoreleasepool {
+      NSArray* vc;
+      for (ORInt i = 0; i < [csts count];i++)
+      {
+         vc = [csts[i] allVarsArray];
+         for(id<ORVar> v in vc){
+            index = getId(v);
+            if(index <= [occ up]){
+               ORInt oldv = [occ at:index];
+               occ[index] = @(oldv+1);
+            }
+         }
+      }
+   }
+   return occ;
 }
 
 -(ORDouble) computeAbsorptionQuantity:(id<CPFloatVar>)y by:(id<ORFloatVar>)x
