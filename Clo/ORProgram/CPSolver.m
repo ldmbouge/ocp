@@ -2307,15 +2307,8 @@
    @autoreleasepool {
       SEL s = @selector(maxAbsorptionSearch:default:);
       __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
-      __block ORUInt sum = 0;
-//      id<ORIntArray> occ =[ORFactory intArray:self range:x.range  with:^ORInt(ORInt i) {
-//            id<CPFloatVar> v = _gamma[getId(x[i])];
-//            if([v bound]) return 0;
-//            ORUInt nb = [self computeNbOcurrences:x[i]];
-//            sum += nb;
-//            return nb;
-//         }];
       id<ORIntArray> occ = [self computeAllOccurrences:x];
+      ORInt sum = [occ sum];
       ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
       __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
       id<ORSelect> select = [ORFactory select: _engine
@@ -3789,6 +3782,7 @@
    [cstr release];
    return cpt;
 }
+//[hzi] not useful any more ?
 -(ORUInt)  maxOccurences:(id<ORVar>) x
 {
    NSArray* csts = [_model constraints];
