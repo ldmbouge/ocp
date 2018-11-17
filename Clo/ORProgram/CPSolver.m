@@ -2146,10 +2146,6 @@
                                  }];
    
    [[self explorer] applyController:t in:^{
-      
-      [self limitCondition:^ORBool{
-         return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
-      } in:^{
       do {
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
@@ -2165,7 +2161,6 @@
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxOccurencesRatesSearch:do:),x);
       } while (true);
-      }];
    }];
 }
 -(void) maxOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
@@ -2195,9 +2190,6 @@
                                  }];
    
    [[self explorer] applyController:t in:^{
-      [self limitCondition:^ORBool{
-         return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
-      } in:^{
       do {
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
@@ -2213,7 +2205,6 @@
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(maxOccurencesSearch:do:),x);
       } while (true);
-      }];
    }];
 }
 -(void) minOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
@@ -2312,6 +2303,7 @@
    @autoreleasepool {
       SEL s = @selector(maxAbsorptionSearch:default:);
       __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+      //[hzi] just for experiments
       id<ORIntArray> occ = [self computeAllOccurrences:x];
       ORInt sum = [occ sum];
       ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
@@ -2356,8 +2348,10 @@
                disabled.found = NO;
             }
             if([abs[i.index] quantity] == 0.0){
-               LOG(_level,2,@"current search has switched");
+               LOG(_level,0,@"current search has switched");
                _unique = 1;
+               //[hzi] just for experiments
+               //after experiments shoulds be cleaner
                switch (_variationSearch) {
                   case 0:
                      [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
@@ -2376,14 +2370,16 @@
                      break;
                   case 3:
                   default:
-                     [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [self float6WaySplit:i call:s withVars:x];
+                     [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
+                        [self float6WaySplit:i call:se withVars:x];
                      }];
                }
               
             }else{
                id<CPFloatVar> v = [abs[i.index] bestChoice];
                LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
+               //[hzi] just for experiments
+               //after experiments shoulds be cleaner
                if(_splitTest){
                   [self floatAbsSplit2:i.index by:v call:s withVars:x default:b];
                }else{
@@ -3163,17 +3159,17 @@
       }];
    }else if (length_x > 0 && length_y == 0){
       float_interval* ip = interval_x;
-      [_search try: ^{
-         LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],cx,ip[0].inf);
-         [self floatGEqualImpl:cx with:ip[0].inf];
-      } alt: ^{
-         LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],cx,ip[0].inf);
-         [self floatLthenImpl:cx with:ip[0].inf];
-      }];
-//       [_search try:RANGE(self,0,length_x) suchThat:nil in:^(ORInt i) {
-//          LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],cx,ip[i].inf,ip[i].sup);
-//          [self floatIntervalImpl:cx low:ip[i].inf up:ip[i].sup];
-//       }];
+//      [_search try: ^{
+//         LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],cx,ip[0].inf);
+//         [self floatGEqualImpl:cx with:ip[0].inf];
+//      } alt: ^{
+//         LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],cx,ip[0].inf);
+//         [self floatLthenImpl:cx with:ip[0].inf];
+//      }];
+       [_search tryall:RANGE(self,0,length_x) suchThat:nil in:^(ORInt i) {
+          LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],cx,ip[i].inf,ip[i].sup);
+          [self floatIntervalImpl:cx low:ip[i].inf up:ip[i].sup];
+       }];
    }else{
       b(i,s,x);
       //      b(y);
