@@ -44,9 +44,7 @@ int main(int argc, const char * argv[]) {
             }
 //            check_solution([p floatValue:x],[p floatValue:y],[p floatValue:z],[p floatValue:t],[p floatValue:w],[p floatValue:a]);
          } withTimeLimit:[args timeOut]];
-         NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
-         NSLog(@"nb choice : %d",[[cp explorer] nbChoices]);
-         struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];
       

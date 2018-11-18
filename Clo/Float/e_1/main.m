@@ -48,7 +48,7 @@ int main(int argc, const char * argv[]) {
             }
          } withTimeLimit:[args timeOut]];
          
-         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
          
       }];
