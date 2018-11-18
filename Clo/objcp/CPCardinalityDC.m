@@ -416,7 +416,7 @@ static void SCCFromVariable(CPCardinalityDC* card,ORInt k)
    ORBounds bx = bounds(x);
    for(ORInt w = bx.min; w <= bx.max; w++) {
       if (varMatch[k] != w) {
-         if (memberBitDom(x,w)) {
+         if (memberDom(x,w)) {
             if (!valDfs[w]) {
                SCCFromValue(card,w);
                if (valHigh[w] > varHigh[k])
