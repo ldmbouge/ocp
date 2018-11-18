@@ -2294,8 +2294,12 @@
    [keeped release];
    [ia release];
    id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine initials:iarray];
-   [self maxAbsorptionSearch:newX default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-      b(i,s,x);
+   [self limitCondition:^ORBool{
+      return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
+   } in:^{
+      [self maxAbsorptionSearch:newX default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+         b(i,s,x);
+      }];
    }];
 }
 -(void) maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
@@ -2332,9 +2336,6 @@
                                     }];
       
       [[self explorer] applyController:t in:^{
-         [self limitCondition:^ORBool{
-            return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
-         } in:^{
          do {
             LOG(_level,2,@"State before selection");
             ORSelectorResult i = [select max];
@@ -2369,9 +2370,13 @@
                      }];
                      break;
                   case 3:
-                  default:
                      [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
                         [self float6WaySplit:i call:se withVars:x];
+                     }];
+                  case 4:
+                  default:
+                     [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
+                        [self float5WaySplit:i call:se withVars:x];
                      }];
                }
               
@@ -2388,8 +2393,6 @@
                abs = [self computeAbsorptionsQuantities:x];
             }
          } while (true);
-      }];
-         
       }];
    }
 }
