@@ -2376,7 +2376,7 @@
                   case 4:
                   default:
                      [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
-                        [self float5WaySplit:i call:se withVars:x];
+                        [self float6WaySplit:i call:se withVars:x];
                      }];
                }
               
