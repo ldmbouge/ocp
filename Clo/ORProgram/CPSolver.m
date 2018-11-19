@@ -2161,7 +2161,8 @@
             [x disable:i.index];
          }
          disabled.found = NO;
-         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+         LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
          b(i.index,@selector(maxOccurencesRatesSearch:do:),x);
       } while (true);
    }];

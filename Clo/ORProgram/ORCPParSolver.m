@@ -363,6 +363,10 @@
 {
     [[self worker] minDegreeSearch:x do:b];
 }
+-(void)          maxOccurencesRatesSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   [[self worker] maxOccurencesRatesSearch:x do:b];
+}
 -(void)          maxOccurencesSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
     [[self worker] maxOccurencesSearch:x do:b];

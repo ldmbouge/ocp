@@ -1033,12 +1033,12 @@ static enum ValHeuristic valIndex[] =
                }];
                break;
             case dynamic5Split:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+               [p maxOccurencesRatesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p float5WaySplit:i call:s withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+               [p maxOccurencesRatesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                   [p float6WaySplit:i call:s withVars:x];
                }];
                break;
