@@ -2190,7 +2190,7 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                    LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max);
+                                    LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] occ=%@",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,occ[i]);
                                     LOG(_level,3,@"%@",_gamma[getId(x[i])]);
                                     return [occ at:i];
                                  }];
@@ -2208,7 +2208,8 @@
             [x disable:i.index];
          }
          disabled.found = NO;
-         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+         LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
          b(i.index,@selector(maxOccurencesSearch:do:),x);
       } while (true);
    }];
@@ -2321,6 +2322,7 @@
                                         range: RANGE(self,[x low],[x up])
                                      suchThat: ^ORBool(ORInt i) {
                                         id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e  occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
                                         if(![x isEnable:i]){
                                            if(![v bound]){
                                               disabled.found = YES;
@@ -2334,7 +2336,7 @@
                                     orderedBy: ^ORDouble(ORInt i) {
                                        id<CPFloatVar> v = _gamma[getId(x[i])];
                                        LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e  occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
-                                       LOG(_level,3,@"%@ isInitial ? %s rate : abs=%16.16e  occ=%16.16e",_gamma[getId(x[i])], [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
+//                                       LOG(_level,3,@"%@ isInitial ? %s rate : abs=%16.16e  occ=%16.16e",_gamma[getId(x[i])], [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
                                        if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
                                           return [abs[i] quantity];
                                        }else{
@@ -3929,14 +3931,18 @@
          vc = [csts[i] allVarsArray];
          for(id<ORVar> v in vc){
             index = getId(v);
-            if(index <= [occ up]){
+            if(index < [occ count]){
                ORInt oldv = [occ at:index];
                occ[index] = @(oldv+1);
             }
          }
       }
    }
-   return occ;
+   id<ORIntArray> res = [ORFactory intArray:self range:vars.range value:0];
+   for(ORInt i = 0; i < [vars count];i++){
+      res[i] = occ[getId(vars[i])];
+   }
+   return res;
 }
 
 -(ORDouble) computeAbsorptionQuantity:(id<CPFloatVar>)y by:(id<ORFloatVar>)x
