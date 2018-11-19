@@ -62,6 +62,7 @@ PORTABLE_BEGIN
 +(id<ORMutableFloat>) mutable: (id<ORTracker>)tracker fvalue: (ORFloat) value;
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORDoubleNumber>) double: (id<ORTracker>) tracker value: (ORDouble) value;
++(id<ORDoubleNumber>) rational: (id<ORTracker>) tracker value: (id<ORRational>) value;
 +(id<ORFloatNumber>) infinityf: (id<ORTracker>) tracker;
 +(id<ORMutableDouble>) mutableDouble: (id<ORTracker>) tracker value: (ORDouble) value;
 +(id<ORMutableId>) mutableId:(id<ORTracker>) tracker value:(PNULLABLE id) value;

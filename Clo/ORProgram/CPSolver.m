@@ -1578,16 +1578,6 @@
 {
    [self diffImpl: _gamma[var.getId] with: val];
 }
-
-/*-(void) labelRational: (id<ORRationalVar>) var by: (ORRational) o
-{
-   id<CPRationalVar> x = _gamma[getId(var)];
-   while (![x bound]) {
-      ORRational val = [self selectValueImplRational: x by: o];
-      [self try: ^() { [self labelRational: var with: val]; }
-            alt: ^() { [self diffRational: var with: val]; }];
-   }
-}*/
 -(void) diffRational: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    [self diffImplRational: _gamma[var.getId] with: val];

@@ -36,6 +36,8 @@
        return [ORFactory ldouble:tracker value:[self ldoubleValue]];*/
    else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
+   else if (strcmp(tt,@encode(ORRational)) == 0)
+      return [ORFactory rational:tracker value:[self rationalValue]];
    else {
       assert(NO);
    }
@@ -905,6 +907,8 @@
       return [ORFactory expr:self equal:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self equal:[e asExpression:t] track:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      return [ORFactory expr:self equal:[ORFactory rational:t value:e] track:t];
    else
       return NULL;   
 }
@@ -914,6 +918,8 @@
       return [ORFactory expr:self neq:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self neq:[e asExpression:t] track:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      return [ORFactory expr:self neq:[ORFactory rational:t value:e] track:t];
    else
       return NULL;   
 }
@@ -923,6 +929,8 @@
       return [ORFactory expr:self leq:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self leq:[e asExpression:t] track:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      return [ORFactory expr:self leq:[ORFactory rational:t value:e] track:t];
    else
       return NULL;
 }
@@ -932,6 +940,8 @@
       return [ORFactory expr:self geq:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self geq:[e asExpression:t] track:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      return [ORFactory expr:self geq:[ORFactory rational:t value:e] track:t];
    else
       return NULL;   
 }
@@ -942,8 +952,10 @@
         re = e;
     else if ([e isKindOfClass:[NSNumber class]])
         re = [e asExpression:t];
+    else if ([e isKindOfClass:[ORRational class]])
+        re = [ORFactory expr:self geq:[ORFactory rational:t value:e] track:t];
     enum ORVType et = [(id<ORExpr>)re vtype];
-   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
+   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble || et == ORTRational)
         return [ORFactory expr:self lt:re track:t];
     else
         return [ORFactory expr:self leq:[re plus:[ORFactory integer:t value:1]] track:t];
@@ -955,8 +967,10 @@
       re = e;
    else if ([e isKindOfClass:[NSNumber class]])
       re = [e asExpression:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      re = [ORFactory expr:self geq:[ORFactory rational:t value:e] track:t];
    enum ORVType et = [(id<ORExpr>)re vtype];
-   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
+   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble || et == ORTRational)
        return [ORFactory expr:self gt:re track:t];
     else
         return [ORFactory expr:self geq:[re plus:[ORFactory integer:t value:1]] track:t];

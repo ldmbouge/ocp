@@ -23,18 +23,20 @@ int main(int argc, const char * argv[]) {
       //id<ORDoubleRange> r1 = [ORFactory doubleRange:mdl low:0.2f up:0.4f];
       id<ORDoubleVar> x = [ORFactory doubleVar:mdl name:@"x"];
       /* Error with low:0.0 up:400.0 on assert(mid != NAN && mid <= xi.max && mid >= xi.min) */
-      id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:0.0 up:400.0 name:@"y"];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:1.3 up:3.4 elow:zero eup:zero name:@"y"];
       id<ORDoubleVar> o = [ORFactory doubleVar:mdl name:@"o"];
-      id<ORDoubleVar> k = [ORFactory doubleVar:mdl low:4.0 up:6.0 name:@"o"];
+      id<ORDoubleVar> k = [ORFactory doubleVar:mdl low:4.0 up:6.0 elow:zero eup:zero name:@"o"];
       id<ORDoubleVar> w = [ORFactory doubleVar:mdl name:@"w"];
       id<ORDoubleVar> u = [ORFactory doubleVar:mdl name:@"u"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      [zero release];
       
       [mdl add:[x set: @(11.34)]];
       [mdl add:[o set: @(2.43)]];
       //[mdl add:[w set: @(0.9f)]];
       [mdl add:[w set: [x plus :y]]];
-      [mdl add:[u set: [o plus: y]]];
+      [mdl add:[u set: [o plus: k]]];
       [mdl add:[z set: [w sub: u]]];
       //[mdl add:[z set: @(5.0e-1)]];
       //[mdl add:[z set: [x plus:[y plus: w]]]];
@@ -50,14 +52,14 @@ int main(int argc, const char * argv[]) {
       
       [cp solve:^{
          [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-            [cp floatSplit:i call:s withVars:x];
+            [cp floatSplitD:i call:s withVars:x];
          }];
          NSLog(@"%@",cp);
          printDvar("x", x);
-         printFvar("y", y);
-         //printFvar("o", o);
-         //printFvar("w", w);
-         //printFvar("u", u);
+         printDvar("y", y);
+         printDvar("o", o);
+         printDvar("w", w);
+         printDvar("u", u);
          printDvar("z", z);
          
       }];

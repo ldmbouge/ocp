@@ -177,8 +177,8 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
            NSLog(@"k : [%8.8e;%8.8e]±[%@;%@] (%s)",[cp minF:k],[cp maxF:k],[cp minFQ:k],[cp maxFQ:k],[cp bound:k] ? "YES" : "NO");
            NSLog(@"v : [%8.8e;%8.8e]±[%@;%@] (%s)",[cp minF:v],[cp maxF:v],[cp minFQ:v],[cp maxFQ:v],[cp bound:v] ? "YES" : "NO");
            NSLog(@"r : [%8.8e;%8.8e]±[%@;%@] (%s)",[cp minF:r],[cp maxF:r],[cp minFQ:r],[cp maxFQ:r],[cp bound:r] ? "YES" : "NO");
-            /*if (search)
-                check_it_f(getFmin(p), getFmin(a), getFmin(b), getFmin(t), getFmin(n), getFmin(k), getFmin(v), getFmin(r), getFminErr(r));*/
+           if (search)
+                check_it_f(getFmin(p), getFmin(a), getFmin(b), getFmin(t), getFmin(n), getFmin(k), getFmin(v), getFmin(r), getFminErr(r));
         }];
     }
 }
