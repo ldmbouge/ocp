@@ -2389,7 +2389,7 @@
                      case 4:
                      default:
                         [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
-                           [self float6WaySplit:i call:se withVars:x];
+                           [self float5WaySplit:i call:se withVars:x];
                         }];
                   }
       
@@ -3401,9 +3401,9 @@
       }
    }
    float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
-      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt index) {
+      LOG(_level,1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[x[i] prettyname],ip[index].inf,ip[index].sup);
+      [self floatIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
    }];
 }
 //split in 6 intervals Once
