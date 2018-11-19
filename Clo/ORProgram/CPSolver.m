@@ -2143,9 +2143,8 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                    LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max);
                                     ORDouble res =((ORDouble)[occ at:i]) / sum;
-                                    LOG(_level,3,@"%@ rate : occ=%16.16e",_gamma[getId(x[i])],res);
+                                    LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,res);
                                     return res;
                                  }];
    
@@ -2362,7 +2361,7 @@
                   disabled.found = NO;
                }
                if([abs[i.index] quantity] == 0.0){
-                  LOG(_level,0,@"current search has switched");
+                  LOG(_level,1,@"current search has switched");
                   _unique = 1;
                   //[hzi] just for experiments
                   //after experiments shoulds be cleaner
