@@ -2322,7 +2322,6 @@
                                         range: RANGE(self,[x low],[x up])
                                      suchThat: ^ORBool(ORInt i) {
                                         id<CPFloatVar> v = _gamma[getId(x[i])];
-                                        LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e  occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
                                         if(![x isEnable:i]){
                                            if(![v bound]){
                                               disabled.found = YES;
