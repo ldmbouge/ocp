@@ -2006,6 +2006,8 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@ [%16.16e,%16.16e]",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],v.min,v.max);
 //                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return (ORDouble)i;
                                  }];
@@ -2140,8 +2142,10 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
+                                    id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max);
                                     ORDouble res =((ORDouble)[occ at:i]) / sum;
-                                    LOG(_level,2,@"%@ rate : occ=%16.16e",_gamma[getId(x[i])],res);
+                                    LOG(_level,3,@"%@ rate : occ=%16.16e",_gamma[getId(x[i])],res);
                                     return res;
                                  }];
    
@@ -2185,7 +2189,9 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                    id<CPFloatVar> v = _gamma[getId(x[i])];
+                                    LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max);
+                                    LOG(_level,3,@"%@",_gamma[getId(x[i])]);
                                     return [occ at:i];
                                  }];
    
@@ -2327,7 +2333,7 @@
                                      }
                                     orderedBy: ^ORDouble(ORInt i) {
                                        id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       LOG(_level,2,@"%@ [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e  occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
+                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e  occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
                                        LOG(_level,3,@"%@ isInitial ? %s rate : abs=%16.16e  occ=%16.16e",_gamma[getId(x[i])], [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
                                        if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
                                           return [abs[i] quantity];
