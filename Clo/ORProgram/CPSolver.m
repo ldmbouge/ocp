@@ -3969,15 +3969,13 @@
 
 -(ORDouble) computeAbsorptionQuantity:(id<CPFloatVar>)y by:(id<ORFloatVar>)x
 {
-   CPFloatVarI* cx = _gamma[getId(x)];
-   CPFloatVarI* cy = (CPFloatVarI*) y;
-   float_interval ax = computeAbsordedInterval(cx);
-   if(isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max])){
-//      NSLog(@"ax.inf : %16.16e\ncy.min:%16.16e\nax.sup : %16.16e\ncy.max:%16.16e\ncard:%16.16e",ax.inf,[cy min],ax.sup,[cy max],cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max])));
-//      NSLog(@"card2:%16.16e",cardinality(cy));
-      return cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max]))/cardinality(cy);
-   }
-   return 0.0;
+      CPFloatVarI* cx = _gamma[getId(x)];
+      CPFloatVarI* cy = (CPFloatVarI*) y;
+      float_interval ax = computeAbsordedInterval(cx);
+      if(isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max]) && [cy min] == [cy max]){
+            return cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max]))/cardinality(cy);
+         }
+      return 0.0;
 }
 
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledFloatVarArray>) vars
