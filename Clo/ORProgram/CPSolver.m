@@ -166,6 +166,7 @@
    ORDouble               _absTRateLimitAdditionalVars;
    ORInt                 _variationSearch;
    ORInt                 _splitTest;
+   ORBool                _tieBreak;
    
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
@@ -373,6 +374,14 @@
 -(void) setSplitTest:(ORInt) level
 {
    _splitTest = level;
+}
+-(void) enableTieBreak
+{
+   _tieBreak = YES;
+}
+-(void) disableTieBreak
+{
+   _tieBreak = NO;
 }
 -(void) setChoicesLimit:(ORInt) limit
 {
@@ -2123,9 +2132,9 @@
 }
 -(void) maxOccurencesRatesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
-   id<ORIntArray> occ = [self computeAllOccurrences:x];
-   __block ORUInt sum = [occ sum];
+   __block id<ORIntArray> occ = nil;
+   __block id<ORIdArray> abs = nil;
+   __block ORUInt sum;
    __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
@@ -2146,15 +2155,27 @@
                                     ORDouble res =((ORDouble)[occ at:i]) / sum;
                                     LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,res);
                                     return res;
-                                 }];
-   
-   [[self explorer] applyController:t in:^{
-      do {
+                                 }
+                          ];
+   if(_tieBreak){
+      [select setTieBreak:^ORDouble(ORInt i){
+//          NSLog(@"tieBreak");
+         return [abs[i] quantity];
+      }];
+   }
+   __block ORBool goon = YES;
+   while(goon) {
+      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+         abs = [self computeAbsorptionsQuantities:x];
+         occ = [self computeAllOccurrences:x];
+         sum = [occ sum];
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
          if (!i.found){
-            if(!disabled.found)
-               break;
+            if(!disabled.found){
+               goon = NO;
+               return;
+            }
             i.index = disabled.index;
             [x enable:i.index];
          } else if(_unique){
@@ -2164,8 +2185,8 @@
          id<CPFloatVar> cx = _gamma[getId(x[i.index])];
          LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
          b(i.index,@selector(maxOccurencesRatesSearch:do:),x);
-      } while (true);
-   }];
+      }];
+   }
 }
 -(void) maxOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
@@ -2315,8 +2336,8 @@
       SEL s = @selector(maxAbsorptionSearch:default:);
       __block id<ORIdArray> abs = nil;
       //[hzi] just for experimentsf
-      __block id<ORIntArray> occ = nil;
-      __block ORInt sum = 0;
+      __block id<ORIntArray> occ;
+      __block ORInt sum;
       __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
       id<ORSelect> select = [ORFactory select: _engine
                                         range: RANGE(self,[x low],[x up])
@@ -2335,13 +2356,19 @@
                                     orderedBy: ^ORDouble(ORInt i) {
                                        id<CPFloatVar> v = _gamma[getId(x[i])];
                                        LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e  occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
-//                                       LOG(_level,3,@"%@ isInitial ? %s rate : abs=%16.16e  occ=%16.16e",_gamma[getId(x[i])], [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
                                        if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
                                           return [abs[i] quantity];
                                        }else{
                                           return 0.0;
                                        }
-                                    }];
+                                    }
+                             ];
+      if(_tieBreak){
+         [select setTieBreak:^ORDouble(ORInt i) {
+//            NSLog(@"tieBreak");
+            return (!sum) ? 0.0 : ((ORDouble)[occ at:i]) / sum;
+         }];
+      }
       __block ORBool goon = YES;
          while(goon) {
             [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
@@ -2365,6 +2392,7 @@
                if([abs[i.index] quantity] == 0.0){
                   LOG(_level,1,@"current search has switched");
                   _unique = 1;
+                  [self disableTieBreak];
                   //[hzi] just for experiments
                   //after experiments shoulds be cleaner
                   switch (_variationSearch) {
@@ -2409,11 +2437,6 @@
                }
              
             }
-//               id<CPFloatVar> cv;
-//               for(id<ORVar> v in x){
-//                  cv = [self concretize:v];
-//                  NSLog(@"%@ = %16.16e (%s)",v,[cv floatValue], [self bound:v] ? "YES" : "NO");
-//               }
             }];
          }
       
@@ -3981,6 +4004,7 @@
             if(v == nil) continue;
             absV = [self computeAbsorptionQuantity:v by:x];
             assert(absV >= 0.0f && absV <= 1.f);
+            //second test can be reduce to !isInitial()
             if(([vars isInitial:i] && absV >= _absRateLimitModelVars) || (![vars isInitial:i] && absV >= _absRateLimitAdditionalVars)){
                [abs[i] addQuantity:absV];
                if(absV > best_rate) [abs[i] setChoice:v];

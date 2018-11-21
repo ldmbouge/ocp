@@ -54,6 +54,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize variationSearch;
 @synthesize choicesLimit;
 @synthesize splitTest;
+@synthesize tiebreak;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -103,6 +104,8 @@ static enum ValHeuristic valIndex[] =
          choicesLimit = atoi(argv[k+1]);
       else if (strncmp(argv[k],"-split-test",11)==0)
          splitTest = atoi(argv[k+1]);
+      else if (strncmp(argv[k],"-tie-break",10)==0  && strlen(argv[k]) == 10)
+         tiebreak = 1;
       else if (strncmp(argv[k],"-search3Bpercent",16)==0)
          search3Bpercent = atof(argv[k+1]);
       else if (strncmp(argv[k],"-rate-model-limit",17)==0)
@@ -134,7 +137,7 @@ static enum ValHeuristic valIndex[] =
       }
       else if (strncmp(argv[k],"-w",2)==0)
          restartRate = atof(argv[k]+2);
-      else if (strncmp(argv[k],"-t",2)==0)
+      else if (strncmp(argv[k],"-t",2)==0 && strlen(argv[k]) == 2)
          timeOut = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-r",2)==0)
          randomized = atoi(argv[k]+2);
@@ -275,6 +278,7 @@ static enum ValHeuristic valIndex[] =
       case 0:
          p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setLevel:level];
+         if(tiebreak) [(CPCoreSolver*)p enableTieBreak];
          [(CPCoreSolver*)p setChoicesLimit:choicesLimit];
          [(CPCoreSolver*)p setUnique:unique];
          [(CPCoreSolver*)p setSearchNBFloats:searchNBFloats];

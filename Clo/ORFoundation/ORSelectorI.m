@@ -24,6 +24,7 @@
    id<ORIntIterable>   _range;
    ORInt2Bool         _filter;
    ORInt2Double         _order;
+   ORInt2Double       _tieBreak;
    ORDouble         _direction;
    BOOL           _randomized;
 }
@@ -33,16 +34,29 @@
    _range = range;
    _filter = [filter copy];
    _order = [order copy];
+   _tieBreak = nil;
    _stream = [[ORRandomStreamI alloc] init];
    _direction = 1;
    _randomized = randomized;
    return self;
 }
 
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order tieBreak: (ORInt2Double) tb
+{
+   self = [self initOROPTSelectWithRange:range suchThat:filter orderedBy:order randomized:NO];
+   _tieBreak = [tb copy];
+   return self;
+}
+-(void) setTieBreak :(ORInt2Double) tb
+{
+   if(_tieBreak != nil) [_tieBreak release];
+   _tieBreak = [tb copy];
+}
 -(void) dealloc
 {
    [_filter release];
    [_order release];
+   if(_tieBreak != nil) [_tieBreak release];
    [_stream release];
    [super dealloc];
 }
@@ -68,20 +82,32 @@
    __block ORLong bestRand = 0x7fffffffffffffff;
    __block ORInt found = 0;
    __block ORInt indexFound = MAXINT;
+   __block ORDouble tbValue = MAXDBL;
    [_range enumerateWithBlock:^(ORInt i) {
        if ((id)_filter==nil || _filter(i)) {
          ORDouble val = _direction * (_order ? _order(i) : 0.0);
          if (val < bestFound || !found) {
             bestFound = val;
             indexFound = i;
-             found = 1;
+            found = 1;
             bestRand = [_stream next];
+            if(_tieBreak != nil)
+               tbValue = _tieBreak(i);
+               
          }
          else if (_randomized && val == bestFound) {
             ORLong r = [_stream next];
             if (r < bestRand) {
                indexFound = i;
                bestRand = r;
+            }
+         }
+         else if (_tieBreak != nil && val == bestFound) {
+            ORDouble tmp = _tieBreak(i);
+            if(tmp > tbValue){
+               indexFound = i;
+               tbValue = tmp;
+               
             }
          }
       }
@@ -100,6 +126,16 @@
    self = [super init];
    _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order randomized: randomized];
    return self;
+}
+-(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order tiebreak: (ORInt2Double) tb
+{
+   self = [super init];
+   _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order tieBreak:tb];
+   return self;
+}
+-(void) setTieBreak :(ORInt2Double) tb
+{
+   [_select setTieBreak:tb];
 }
 -(void) dealloc
 {

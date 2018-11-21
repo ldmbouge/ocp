@@ -61,6 +61,8 @@
 -(void) setAbsLimitAdditionalVars:(ORDouble)local total:(ORDouble)global;
 -(void) setLevel:(ORInt) level;
 -(void) setSplitTest:(ORInt) level;
+-(void) enableTieBreak;
+-(void) disableTieBreak;
 -(void) setChoicesLimit:(ORInt) limit;
 -(void) setVariation:(ORInt) variation;
 -(void) setUnique:(ORBool) u;

@@ -500,7 +500,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackMutable: o];
    return o;
 }
-
++(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order  tiebreak: (ORInt2Double) tb
+{
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range
+                                          suchThat: filter
+                                         orderedBy: order
+                                        tiebreak: tb];
+   [tracker trackMutable: o];
+   return o;
+}
 +(id<ORSelector>) selectMin:(id<ORTracker>)tracker
 {
    id<ORSelector> sweeper = [[ORMinSelector alloc] init];

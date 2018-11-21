@@ -946,6 +946,7 @@
 
 
 @implementation ORDisabledFloatVarArrayI{
+   ORUInt                  _nb;
    id<ORVarArray>          _vars;
    id<ORIntArray>          _initials;
    id<ORTrailableIntArray>  _disabled;
@@ -953,6 +954,7 @@
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
 {
    self = [super init];
+   _nb = 1;
    _vars = vars;
    _initials = [ORFactory intArray:engine range:[vars range] value:1];
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
@@ -962,6 +964,12 @@
 {
    self = [self init:vars engine:engine];
    _initials = ia;
+   return self;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia blocked:(ORUInt) nb
+{
+   self = [self init:vars engine:engine initials:ia];
+   _nb = nb;
    return self;
 }
 -(void) dealloc

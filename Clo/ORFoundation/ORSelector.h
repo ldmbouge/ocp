@@ -18,6 +18,7 @@ typedef struct {
 } ORSelectorResult;
 
 @protocol ORSelect <NSObject>
+-(void) setTieBreak:(ORInt2Double) tb;
 -(ORSelectorResult)              min;
 -(ORSelectorResult)              max;
 -(ORSelectorResult)              any;

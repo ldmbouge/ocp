@@ -119,6 +119,7 @@ PORTABLE_BEGIN
 +(id<IntEnumerator>) intEnumerator: (id<ORTracker>) cp over: (id<ORIntIterable>) r;
 +(id<OROrderedSweep>) orderedSweep: (id<ORTracker>) t over: (id<ORIntIterable>) r filter: (ORInt2Bool) filter orderedBy: (ORInt2Double) o;
 +(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order;
++(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order tiebreak:(ORInt2Double) tb;
 +(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order;
 +(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized:(ORBool)rand;
 +(id<ORSelector>) selectMin:(id<ORTracker>)tracker;
@@ -457,7 +458,7 @@ PORTABLE_END
 #define Or(track,P,R,E)       [ORFactory lor: track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 #define And(track,P,R,E)      [ORFactory land:track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 
-#define LOG(ls,l,fmt, ...)    if(l && l<=ls) NSLog(fmt, ##__VA_ARGS__);
+#define LOG(ls,l,fmt, ...)    if(l<=ls) NSLog(fmt, ##__VA_ARGS__);
 
 // [ldm] To check. Not clear why there is such a macro.
 #define geq(track,x,y,c)      [ORFactory geq: track x: x y: y plus: c]
