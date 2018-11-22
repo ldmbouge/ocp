@@ -311,6 +311,10 @@
    [[self worker] nestedSolveAll: body];
 }
 // ********
+-(void)          specialSearch: (id<ORDisabledFloatVarArray>) x
+{
+   [[self worker] specialSearch:x];
+}
 -(void)          maxWidthSearch: (id<ORDisabledFloatVarArray>) x  do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
     [[self worker] maxWidthSearch:x do:b];

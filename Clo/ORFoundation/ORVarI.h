@@ -170,4 +170,6 @@
 -(ORBool) isFullyDisabled;
 -(ORBool) hasDisabled;
 -(ORInt) indexLastDisabled;
+-(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine;
+-(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end

@@ -138,6 +138,7 @@ PORTABLE_BEGIN
 -(ORBool) hasDisabled;
 -(ORInt) indexLastDisabled;
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine;
+-(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end
 
 @protocol ORDoubleVarArray <ORVarArray>

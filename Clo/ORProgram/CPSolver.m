@@ -2170,6 +2170,45 @@
       } while (true);
    }];
 }
+//----------Special search--------//
+-(void) specialSearch:  (id<ORDisabledFloatVarArray>) x
+{
+   __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+   __block id<ORIntArray> occ = [self computeAllOccurrences:x];
+   __block ORDouble sum = (ORDouble)[occ sum];
+   __block ORDouble ao, aa;
+   ORDouble so = 0.0;
+   ORDouble sa = 0.0;
+   for(ORUInt i = 0; i < [x count]; i++){
+      id<CPFloatVar> v = _gamma[getId(x[i])];
+      if ([v bound]) continue;
+       if([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars){
+          sa += [abs[i] quantity];
+       }
+      so += [occ at:i]/sum;
+      NSLog(@"abs %16.16e s:%16.16e",[abs[i] quantity],sa);
+      NSLog(@"occ %16.16e s:%16.16e",[occ at:i]/sum,so);
+   }
+   ao = so / [x count];
+   aa = sa / [x count];
+   NSLog(@"ao:%16.16e aa:%16.16e",ao,aa);
+   if(ao < 0.1 && aa < 0.1){
+      NSLog(@"search selected : maxDens");
+      [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+         [self float5WaySplit:i call:s withVars:x];
+      }];
+   }else if(ao > aa){
+      NSLog(@"search selected : maxOcc");
+      [self maxOccurencesRatesSearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+         [self float5WaySplit:i call:s withVars:x];
+      }];
+   }else{
+      NSLog(@"search selected : maxAbs");
+      [self maxAbsorptionSearch:x default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+         [self float5WaySplit:i call:s withVars:x];
+      }];
+   }
+}
 //--------- absorption ----------//
 -(void) maxAbsorptionSearchAll:  (id<ORDisabledFloatVarArray>) ovars default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
@@ -2215,15 +2254,15 @@
    [self limitCondition:^ORBool{
       return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
    } in:^{
-      [self maxAbsorptionSearch:newX default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+      [self maxAbsorptionSearchI:newX default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
          b(i,s,x);
       }];
    }];
 }
--(void) maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+-(void) maxAbsorptionSearchI: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    @autoreleasepool {
-      SEL s = @selector(maxAbsorptionSearch:default:);
+      SEL s = @selector(maxAbsorptionSearchI:default:);
       __block id<ORIdArray> abs = nil;
       //[hzi] just for experiments
       __block id<ORIntArray> occ;
@@ -2272,33 +2311,31 @@
                }
                if([abs[i.index] quantity] == 0.0){
                   LOG(_level,1,@"current search has switched");
-                  _unique = 1;
-                  [self disableTieBreak];
                   //[hzi] just for experiments
                   //after experiments shoulds be cleaner
                   switch (_variationSearch) {
                      case 0:
-                        [self lexicalOrderedSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [self lexicalOrderedSearch:[x initialVars:_engine maxFixed:1]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                                           [self float6WaySplit:i call:s withVars:x];
                                        }];
                         break;
                      case 1:
-                        [self maxDensitySearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [self maxDensitySearch:[x initialVars:_engine maxFixed:1]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                                           [self float6WaySplit:i call:s withVars:x];
                                        }];
                         break;
                      case 2:
-                        [self maxOccurencesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+                        [self maxOccurencesSearch:[x initialVars:_engine maxFixed:1]  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
                            [self float6WaySplit:i call:s withVars:x];
                         }];
                         break;
                      case 3:
-                        [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
+                        [self maxOccurencesRatesSearch:[x initialVars:_engine maxFixed:1]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
                            [self float6WaySplit:i call:se withVars:x];
                         }];
                      case 4:
                      default:
-                        [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
+                        [self maxOccurencesRatesSearch:[x initialVars:_engine maxFixed:1]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
                            [self float5WaySplit:i call:se withVars:x];
                         }];
                   }
@@ -2320,7 +2357,70 @@
             }
             }];
          }
-      
+   }
+}
+-(void) maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   @autoreleasepool {
+      SEL s = @selector(maxAbsorptionSearch:default:);
+      __block id<ORIdArray> abs = nil;
+      id<ORSelect> select = [ORFactory select: _engine
+                                        range: RANGE(self,[x low],[x up])
+                                     suchThat: ^ORBool(ORInt i) {
+                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        return ![v bound] && [x isEnabled:i];
+                                     }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       id<CPFloatVar> v = _gamma[getId(x[i])];
+                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity]);
+                                       if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
+                                          return [abs[i] quantity];
+                                       }else{
+                                          return 0.0;
+                                       }
+                                    }
+                             ];
+      __block ORBool goon = YES;
+      while(goon) {
+         [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+            abs = [self computeAbsorptionsQuantities:x];
+           LOG(_level,2,@"State before selection");
+            ORSelectorResult i = [select max];
+            if (!i.found){
+               if(![x hasDisabled]){
+                  goon = NO;
+                  return;
+               }else{
+                  i.index = [x enableFirst];
+               }
+            } else if(_unique){
+               if([x isFullyDisabled]){
+                  [x enableFirst];
+               }
+               [x disable:i.index];
+            }
+            if([abs[i.index] quantity] == 0.0){
+               LOG(_level,1,@"current search has switched");
+                [self maxOccurencesRatesSearch:[x initialVars:_engine]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
+                        [self float5WaySplit:i call:se withVars:x];
+                     }];
+              }else{
+               id<CPFloatVar> v = [abs[i.index] bestChoice];
+               id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+               LOG(_level,3,@"selected variables: %@ and %@",cx,v);
+               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] and %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max);
+               
+               //[hzi] just for experiments
+               //after experiments shoulds be cleaner
+               if(_splitTest){
+                  [self floatAbsSplit2:i.index by:v call:s withVars:x default:b];
+               }else{
+                  [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
+               }
+               
+            }
+         }];
+      }
    }
 }
 -(void) maxAbsorptionSearchAll:  (id<ORDisabledFloatVarArray>) ovars do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b

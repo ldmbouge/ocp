@@ -55,6 +55,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize choicesLimit;
 @synthesize splitTest;
 @synthesize tiebreak;
+@synthesize specialSearch;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -88,6 +89,7 @@ static enum ValHeuristic valIndex[] =
    variationSearch = 100;
    choicesLimit = -1;
    splitTest = 0;
+   specialSearch = NO;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -108,7 +110,13 @@ static enum ValHeuristic valIndex[] =
          tiebreak = 1;
       else if (strncmp(argv[k],"-search3Bpercent",16)==0)
          search3Bpercent = atof(argv[k+1]);
-      else if (strncmp(argv[k],"-rate-model-limit",17)==0)
+      else if(strncmp(argv[k],"-model-limits",13) == 0){
+         rateModel = atof(argv[k+1]);
+         grateModel = atof(argv[k+1]);
+      }else if(strncmp(argv[k],"-other-limits",13) == 0){
+         rateOther = atof(argv[k+1]);
+         grateOther = atof(argv[k+1]);
+      }else if (strncmp(argv[k],"-rate-model-limit",17)==0)
          rateModel = atof(argv[k+1]);
       else if (strncmp(argv[k],"-grate-model-limit",18)==0 || strncmp(argv[k],"-globalrate-model-limit",23)==0 )
          grateModel = atof(argv[k+1]);
@@ -174,15 +182,21 @@ static enum ValHeuristic valIndex[] =
          is3Bfiltering=YES;
       else if (strncmp(argv[k],"-subcut",7)==0)
          subcut = atoi(argv[k+1]);
+      else if (strncmp(argv[k],"-special-search",15)==0){
+         specialSearch = YES;
+         uniqueNB=1;
+      }
    }
    return self;
 }
 -(NSString*)heuristicName
 {
+   if(specialSearch) return @"special";
    return hName[heuristic-4];
 }
 -(NSString*)valueHeuristicName
 {
+   if(specialSearch) return @"special";
    return valHName[valordering];
 }
 -(NSString*)valueDefaultAbsSplitName
@@ -328,6 +342,10 @@ static enum ValHeuristic valIndex[] =
 -(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORVarArray>)vs
 {
    id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
+   if(specialSearch){
+      [p specialSearch:vars];
+      return;
+   }
    switch (heuristic) {
       case maxWidth :
          switch (valordering) {

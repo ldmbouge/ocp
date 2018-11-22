@@ -61,6 +61,7 @@ PORTABLE_BEGIN
 -(void)          floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 
+-(void)          specialSearch: (id<ORDisabledFloatVarArray>) x;
 -(void)          maxWidthSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          minWidthSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          maxCardinalitySearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;

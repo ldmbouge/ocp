@@ -1109,4 +1109,20 @@
    [vars release];
    return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
 }
+
+-(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
+   NSMutableArray<ORVar> *vars = [[NSMutableArray<ORVar> alloc] init];
+   for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i]){
+         [vars addObject:_vars[i]];
+      }
+   }
+   id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, (ORInt)[vars count]-1)];
+   ORUInt i = 0;
+   for(id<ORFloatVar> x in vars){
+      ovars[i++] = x;
+   }
+   [vars release];
+   return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
+}
 @end

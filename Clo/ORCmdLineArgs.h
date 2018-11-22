@@ -93,6 +93,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORInt variationSearch;
 @property (nonatomic,readonly) ORInt splitTest;
 @property (nonatomic,readonly) ORInt tiebreak;
+@property (nonatomic,readonly) ORBool specialSearch;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
