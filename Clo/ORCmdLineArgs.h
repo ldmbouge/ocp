@@ -86,6 +86,8 @@ struct ORResult {
 @property (nonatomic,readonly) ORInt    level;
 @property (nonatomic,readonly) ORInt    choicesLimit;
 @property (nonatomic,readonly) NSString* fName;
+@property (nonatomic,readonly) ORDouble absRate;
+@property (nonatomic,readonly) ORDouble occRate;
 @property (nonatomic,readonly) ORDouble rateModel;
 @property (nonatomic,readonly) ORDouble grateModel;
 @property (nonatomic,readonly) ORDouble rateOther;

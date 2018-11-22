@@ -60,6 +60,8 @@
 -(void) setAbsLimitModelVars:(ORDouble)local total:(ORDouble)global;
 -(void) setAbsLimitAdditionalVars:(ORDouble)local total:(ORDouble)global;
 -(void) setLevel:(ORInt) level;
+-(void) setOccRate:(ORDouble) r;
+-(void) setAbsRate:(ORDouble) r;
 -(void) setSplitTest:(ORInt) level;
 -(void) enableTieBreak;
 -(void) disableTieBreak;

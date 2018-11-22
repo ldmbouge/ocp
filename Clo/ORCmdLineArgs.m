@@ -47,6 +47,8 @@ static enum ValHeuristic valIndex[] =
 @synthesize search3Bpercent;
 @synthesize searchNBFloats;
 @synthesize fName;
+@synthesize absRate;
+@synthesize occRate;
 @synthesize rateModel;
 @synthesize grateModel;
 @synthesize rateOther;
@@ -90,6 +92,8 @@ static enum ValHeuristic valIndex[] =
    choicesLimit = -1;
    splitTest = 0;
    specialSearch = NO;
+   absRate = -1;
+   occRate = -1;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -110,7 +114,11 @@ static enum ValHeuristic valIndex[] =
          tiebreak = 1;
       else if (strncmp(argv[k],"-search3Bpercent",16)==0)
          search3Bpercent = atof(argv[k+1]);
-      else if(strncmp(argv[k],"-model-limits",13) == 0){
+      else if(strncmp(argv[k],"-abs-rate",9) == 0){
+         absRate = atof(argv[k+1]);
+      }else if(strncmp(argv[k],"-occ-rate",9) == 0){
+         occRate = atof(argv[k+1]);
+      }else if(strncmp(argv[k],"-model-limits",13) == 0){
          rateModel = atof(argv[k+1]);
          grateModel = atof(argv[k+1]);
       }else if(strncmp(argv[k],"-other-limits",13) == 0){
@@ -296,6 +304,8 @@ static enum ValHeuristic valIndex[] =
          p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setLevel:level];
          if(tiebreak) [(CPCoreSolver*)p enableTieBreak];
+         if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
+         if(occRate >= 0) [(CPCoreSolver*)p setOccRate:occRate];
          [(CPCoreSolver*)p setChoicesLimit:choicesLimit];
          [(CPCoreSolver*)p setUnique:(uniqueNB>0)];
          [(CPCoreSolver*)p setSearchNBFloats:searchNBFloats];
