@@ -2852,7 +2852,7 @@
    if([cx bound] && [y bound]) return;
    float_interval ax = computeAbsorbingInterval((CPFloatVarI*)cx);
    float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
-   if(! [y bound]) {
+   if(![y bound]) {
       if(isIntersectingWithV([y min],[y max],ay.inf,ay.sup)){
          ay.inf = maxFlt(ay.inf, [y min]);
          ay.sup = minFlt(ay.sup, [y max]);
@@ -3748,7 +3748,8 @@
    CPFloatVarI* cx = _gamma[getId(x)];
    CPFloatVarI* cy = (CPFloatVarI*) y;
    float_interval ax = computeAbsordedInterval(cx);
-   if(![cy bound] && isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max]) && [cy min] == [cy max]){
+    if ([cy min] == [cy max]) return 0.0; // cpjm <======
+   if(![cy bound] && isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max])){
       return cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max]))/cardinality(cy);
    }
    return 0.0;
