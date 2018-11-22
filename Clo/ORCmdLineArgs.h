@@ -78,7 +78,7 @@ struct ORResult {
 @property (nonatomic,readonly) enum ValHeuristic defaultAbsSplit;
 @property (nonatomic,readonly) ORBool is3Bfiltering;
 @property (nonatomic,readonly) ORDouble kbpercent;
-@property (nonatomic,readonly) ORBool unique;
+@property (nonatomic,readonly) ORInt uniqueNB;
 @property (nonatomic,readonly) ORFloat search3Bpercent;
 @property (nonatomic,readonly) ORInt searchNBFloats;
 @property (nonatomic,readonly) ORInt    nbThreads;
@@ -100,7 +100,6 @@ struct ORResult {
 -(id<ORGroup>)makeGroup:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
--(void) printStats:(id<ORGroup>) g model:(id<ORModel>)m program:(id<CPProgram>)p;
 -(void) checkAbsorption:(id<ORFloatVarArray>)vars solver:(id<CPProgram>)p;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 -(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;

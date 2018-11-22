@@ -2211,7 +2211,7 @@
    }
    [keeped release];
    [ia release];
-   id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine initials:iarray];
+   id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine initials:iarray nbFixed:[ovars maxFixed]];
    [self limitCondition:^ORBool{
       return (_choicesLimit >= 0) ? [self nbChoices] == _choicesLimit : false;
    } in:^{

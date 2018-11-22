@@ -126,6 +126,7 @@ PORTABLE_BEGIN
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
+-(ORUInt) maxFixed;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
 -(ORUInt) enableFirst;

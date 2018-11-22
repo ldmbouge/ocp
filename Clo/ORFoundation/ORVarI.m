@@ -1053,6 +1053,10 @@
 {
    return [_vars count];
 }
+-(ORUInt) maxFixed
+{
+   return _nb;
+}
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
                                   objects:(id *)stackbuf
                                     count:(NSUInteger)len
@@ -1099,6 +1103,6 @@
       ovars[i++] = x;
    }
    [vars release];
-   return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine];
+   return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
 }
 @end

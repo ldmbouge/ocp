@@ -150,15 +150,7 @@ int main(int argc, const char * argv[]) {
          fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
             found = true;
-            
-            //            CPGroup* cg = ((CPGroup*)[p concretize:g]);
-            //            NSLog(@"-----------------");
-            //            [cg enumerateWithBlock:^(ORInt i, id<ORConstraint> c) {
-            //               NSLog(@"%@\n",c);
-            //            }];
-            //            NSLog(@"-----------------");
-            [args printStats:g model:model program:cp];
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+           [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];
                found &= [p bound: v];
