@@ -3748,7 +3748,6 @@
    CPFloatVarI* cx = _gamma[getId(x)];
    CPFloatVarI* cy = (CPFloatVarI*) y;
    float_interval ax = computeAbsordedInterval(cx);
-    if ([cy min] == [cy max]) return 0.0; // cpjm <======
    if(![cy bound] && isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max])){
       return cardinalityV(maxFlt(ax.inf, [cy min]),minFlt(ax.sup, [cy max]))/cardinality(cy);
    }
