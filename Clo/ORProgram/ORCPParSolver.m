@@ -347,10 +347,6 @@
 {
    [[self worker] maxAbsDensSearch:x default:b];
 }
--(void)          floatSplitArrayOrderedByDomSize: (id<ORDisabledFloatVarArray>) x
-{
-    [[self worker] floatSplitArrayOrderedByDomSize:x];
-}
 -(void)          lexicalOrderedSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
     [[self worker] lexicalOrderedSearch:x do:b];

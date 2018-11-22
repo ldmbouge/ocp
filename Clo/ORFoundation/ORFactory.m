@@ -717,6 +717,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine initials:iarray];
 }
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine nbFixed:(ORUInt)nb
+{
+   return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine nbFixed:nb];
+}
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
 {
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];

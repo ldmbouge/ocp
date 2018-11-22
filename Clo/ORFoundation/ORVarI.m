@@ -946,30 +946,39 @@
 
 
 @implementation ORDisabledFloatVarArrayI{
-   ORUInt                  _nb;
+   ORInt                  _nb;
+   id<ORTrailableInt>    _current;
+   id<ORTrailableInt>    _start;
    id<ORVarArray>          _vars;
    id<ORIntArray>          _initials;
    id<ORTrailableIntArray>  _disabled;
+   id<ORTrailableIntArray>   _indexDisabled;
 }
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
 {
-   self = [super init];
-   _nb = 1;
-   _vars = vars;
-   _initials = [ORFactory intArray:engine range:[vars range] value:1];
-   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   self = [self init:vars engine:engine nbFixed:1];
    return self;
 }
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia
 {
-   self = [self init:vars engine:engine];
-   _initials = ia;
+   self = [self init:vars engine:engine initials:ia nbFixed:1];
    return self;
 }
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia blocked:(ORUInt) nb
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine  nbFixed:(ORUInt) nb
 {
-   self = [self init:vars engine:engine initials:ia];
-   _nb = nb;
+   self = [self init:vars engine:engine initials:[ORFactory intArray:engine range:[vars range] value:1] nbFixed:nb];
+   return self;
+}
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb
+{
+   self = [super init];
+   _vars = vars;
+   _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
+   _current = [ORFactory trailableInt:engine value:0];
+   _start = [ORFactory trailableInt:engine value:0];
+   _initials = ia;
+   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   _indexDisabled = [ORFactory trailableIntArray:engine range:RANGE(engine,0,_nb-1) value:-1];
    return self;
 }
 -(void) dealloc
@@ -994,15 +1003,39 @@
 }
 -(void) disable:(ORUInt) index
 {
-   [_disabled[index] setValue:1];
+   if([self isEnabled:index]){
+      if([self isFullyDisabled])
+         @throw [[NSException alloc] initWithName:@"Internal Error"
+                                        reason:@"Array is already fully disabled"
+                                      userInfo:nil];
+      [_disabled[index] setValue:1];
+      [_indexDisabled[[_current value]] setValue:index];
+      [_current setValue:(([_current value] + 1) % _nb)];
+   }
 }
 -(void) enable:(ORUInt) index
 {
    [_disabled[index] setValue:0];
 }
--(ORBool) isEnable:(ORUInt) index;
+-(ORUInt) enableFirst
+{
+   if(![self hasDisabled])
+      @throw [[NSException alloc] initWithName:@"Internal Error"
+                                        reason:@"Array is fully enabled"
+                                      userInfo:nil];
+   
+   ORUInt index = [_indexDisabled[[_start value]] value];
+   [self enable:index];
+   [_indexDisabled[[_start value]] setValue:-1];
+   [_start setValue:(([_start value] + 1) % _nb)];
+   return index;
+}
+-(ORBool) isEnabled:(ORUInt) index;
 {
    return ![_disabled[index] value];
+}
+- (ORBool)isDisabled:(ORUInt)index {
+   return [_disabled[index] value];
 }
 -(id<ORIntRange>) range
 {
@@ -1028,7 +1061,7 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@,i:%@)",_name,_vars,_disabled,_initials];
+   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@,index:%@,nb:%d,start:%@,cur:%@,i:%@)",_name,_vars,_disabled,_indexDisabled,_nb,_start,_current,_initials];
 }
 -(ORBool) contains:(id<ORFloatVar>)v
 {
@@ -1037,6 +1070,20 @@
 -(ORBool) isInitial:(ORUInt) index
 {
    return ([_initials at:index] == 1);
+}
+-(ORInt) indexLastDisabled
+{
+   ORInt index = (([_current value]-1)%_nb);
+   if(index < 0) index += _nb;
+   return  [_indexDisabled[index] value];
+}
+-(ORBool) hasDisabled
+{
+   return [self indexLastDisabled] != -1;
+}
+-(ORBool) isFullyDisabled
+{
+   return [_current value] == [_start value] && [self hasDisabled];
 }
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine
 {

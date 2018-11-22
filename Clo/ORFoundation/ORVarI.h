@@ -151,7 +151,9 @@
 
 @interface ORDisabledFloatVarArrayI : ORObject<ORDisabledFloatVarArray>
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine;
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine nbFixed:(ORUInt) nb;
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia;
+-(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb;
 -(id<ORVar>) at: (ORInt) value;
 -(void) set: (id<ORFloatVar>) x at: (ORInt) value;
 -(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
@@ -161,6 +163,10 @@
 -(NSUInteger) count;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
--(ORBool) isEnable:(ORUInt) index;
+-(ORUInt) enableFirst;
+-(ORBool) isEnabled:(ORUInt) index;
 -(ORBool) isInitial:(ORUInt) index;
+-(ORBool) isFullyDisabled;
+-(ORBool) hasDisabled;
+-(ORInt) indexLastDisabled;
 @end

@@ -85,7 +85,6 @@ PORTABLE_BEGIN
 -(void)          combinedDensWithAbsSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          maxAbsDensSearch:  (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          switchedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
--(void)          floatSplitArrayOrderedByDomSize: (id<ORDisabledFloatVarArray>) x;
 -(void)          lexicalOrderedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 
 -(ORDouble)      computeAbsorptionRate:(id<ORFloatVar>) x;

@@ -128,9 +128,14 @@ PORTABLE_BEGIN
 -(NSUInteger) count;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
--(ORBool) isEnable:(ORUInt) index;
+-(ORUInt) enableFirst;
+-(ORBool) isEnabled:(ORUInt) index;
+-(ORBool) isDisabled:(ORUInt) index;
 -(ORBool) contains:(id<ORFloatVar>) v;
 -(ORBool) isInitial:(ORUInt) index;
+-(ORBool) isFullyDisabled;
+-(ORBool) hasDisabled;
+-(ORInt) indexLastDisabled;
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine;
 @end
 
