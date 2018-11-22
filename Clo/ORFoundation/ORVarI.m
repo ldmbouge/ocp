@@ -1077,13 +1077,17 @@
 }
 -(ORInt) indexLastDisabled
 {
-   ORInt index = (([_current value]-1)%_nb);
-   if(index < 0) index += _nb;
-   return  [_indexDisabled[index] value];
+   if(_nb > 0){
+      ORInt index = (([_current value]-1)%_nb);
+      if(index < 0) index += _nb;
+      return  [_indexDisabled[index] value];
+   }else{
+      return 0;
+   }
 }
 -(ORBool) hasDisabled
 {
-   return [self indexLastDisabled] != -1;
+   return _nb > 0 && [self indexLastDisabled] != -1;
 }
 -(ORBool) isFullyDisabled
 {
