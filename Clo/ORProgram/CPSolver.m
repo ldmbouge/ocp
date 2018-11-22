@@ -2879,7 +2879,7 @@
    ORFloat xmax = [cx max];
    if(ax.sup == [cx max]){
       interval_x[1].inf = minFlt([cx min],fp_next_float(ax.inf));
-      interval_x[1].sup = fp_next_float(ax.inf);
+      interval_x[1].sup = fp_previous_float(ax.inf);
    }else{
       if(-ax.sup < [cx max]){
          interval_x[i_x].inf = -ax.sup;
@@ -2903,10 +2903,10 @@
       }
       float_interval* ip = interval;
       length--;
-      [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt i) {
-         LOG(_level,1,@"START #choices:%d x %@ in [%16.16e,%16.16e]\t y %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],cx,ip[2*i].inf,ip[2*i].sup,y,ip[2*i+1].inf,ip[2*i+1].sup);
-         [self floatIntervalImpl:cx low:ip[2*i].inf up:ip[2*i].sup];
-         [self floatIntervalImpl:y low:ip[2*i+1].inf up:ip[2*i+1].sup];
+      [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt index) {
+          LOG(_level,1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i] prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
+         [self floatIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
+         [self floatIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
       }];
    }else{
       b(i,s,x);
