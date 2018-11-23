@@ -154,7 +154,7 @@ static enum ValHeuristic valIndex[] =
       else if (strncmp(argv[k],"-w",2)==0)
          restartRate = atof(argv[k]+2);
       else if (strncmp(argv[k],"-t",2)==0 && strlen(argv[k]) == 2)
-         timeOut = atoi(argv[k]+2);
+         timeOut = atoi(argv[k+1]);
       else if (strncmp(argv[k],"-r",2)==0)
          randomized = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-percent",8)==0)
