@@ -132,9 +132,17 @@ static enum ValHeuristic valIndex[] =
          rateOther = atof(argv[k+1]);
       else if (strncmp(argv[k],"-grate-other-limit",18)==0 || strncmp(argv[k],"-globalrate-other-limit",23)==0)
          grateOther = atof(argv[k+1]);
-      else if (strncmp(argv[k],"-variation",10)==0)
-         variationSearch = atoi(argv[k+1]);
-      else if (strncmp(argv[k],"-nb-floats",10)==0)
+      else if (strncmp(argv[k],"-variation",10)==0){
+      NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
+      int index = 24;
+      for(int i = 0; i < 27;i++){
+         if ([tmp isEqualToString:hName[i]] || [[tmp lowercaseString] isEqualToString:[hName[i] lowercaseString]]){
+            index = i;
+            break;
+         }
+      }
+     variationSearch = hIndex[index];
+      } else if (strncmp(argv[k],"-nb-floats",10)==0)
          searchNBFloats = atoi(argv[k+1]);
       else if (strncmp(argv[k], "-n", 2)==0)
          nArg = atoi(argv[k]+2);
