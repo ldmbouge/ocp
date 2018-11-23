@@ -2338,23 +2338,23 @@ while(goon) {
          }
          so += [occ at:i]/sum;
          nb++;
-         NSLog(@"abs %16.16e s:%16.16e",[abs[i] quantity],sa);
-         NSLog(@"occ %16.16e s:%16.16e",[occ at:i]/sum,so);
+         LOG(_level,2,@"abs %16.16e s:%16.16e",[abs[i] quantity],sa);
+         LOG(_level,2,@"occ %16.16e s:%16.16e",[occ at:i]/sum,so);
       }
       ao = (nb) ? so / nb : 0;
       aa = (nb) ? sa / nb : 0;
-      NSLog(@"ao:%16.16e aa:%16.16e",ao,aa);
+      LOG(_level,2,@"average_occ:%16.16e average_abs:%16.16e",ao,aa);
       LOG(_level,2,@"State before selection");
       ORSelectorResult i;
       if(ao < _occRate && aa < _absRate){
-         NSLog(@"selected search : mincard");
+         LOG(_level,2,@"selected search : mincard");
          i = [select_d max];
       }else if(aa > ao){
-         NSLog(@"selected search : maxAbs");
+         LOG(_level,2,@"selected search : maxAbs");
          i = [select_a max];
          choice = YES;
       }else{
-         NSLog(@"selected search : maxOcc");
+         LOG(_level,2,@"selected search : maxOcc");
          i = [select_o max];
       }
       if (!i.found){
