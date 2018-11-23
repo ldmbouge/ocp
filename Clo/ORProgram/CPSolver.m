@@ -2276,7 +2276,7 @@ id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engi
    __block id<ORIdArray> abs = nil;//[self computeAbsorptionsQuantities:x];
    __block id<ORIntArray> occ = nil;//= [self computeAllOccurrences:x];
    __block ORDouble sum, ao, aa, so, sa;
-   __block ORInt nb;
+   __block ORInt nb,nb2;
 id<ORSelect> select_a = [ORFactory select: _engine
                                   range: x.range
                                suchThat: ^ORBool(ORInt i) {
@@ -2313,9 +2313,9 @@ id<ORSelect> select_d = [ORFactory select: _engine
                                  }
                                 orderedBy: ^ORDouble(ORInt i) {
                                    id<CPFloatVar> v = _gamma[getId(x[i])];
-                                   ORDouble card = [self cardinality:x[i]];
+                                   ORDouble card = [self countMemberedConstraints:x[i]];
                                    LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s fixed:%s  rate : abs=%16.16e  occ=%16.16e card=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum, card);
-                                   return -card;
+                                   return card;
 //                                   return (ORDouble)i;
                                 }
                          ];
@@ -2330,6 +2330,7 @@ while(goon) {
       so = 0.0;
       sa = 0.0;
       nb = 0;
+      nb2 = 0;
       for(ORUInt i = 0; i < [x count]; i++){
          id<CPFloatVar> v = _gamma[getId(x[i])];
          if ([v bound] || [x isDisabled:i]) continue;
@@ -2349,7 +2350,7 @@ while(goon) {
       if(ao < _occRate && aa < _absRate){
          LOG(_level,2,@"selected search : mincard");
          i = [select_d max];
-      }else if(aa > ao){
+      }else if(aa > fp_next_float(ao)){
          LOG(_level,2,@"selected search : maxAbs");
          i = [select_a max];
          choice = YES;
