@@ -2415,7 +2415,11 @@ while(goon) {
       id<CPFloatVar> cx = _gamma[getId(x[i.index])];
       if(choice){
          id<CPFloatVar> v = [abs[i.index] bestChoice];
-         LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
+         if(v != nil){
+            LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
+         }else{
+            LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and no other variable to split with",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO");
+         }
          [self floatAbsSplit:i.index by:v call:@selector(specialSearchDI) withVars:x default:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
             [self float5WaySplit:i call:se withVars:x];
          }];
