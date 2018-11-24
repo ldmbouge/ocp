@@ -2337,7 +2337,7 @@ id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engi
                             ];
 
    __block ORBool goon = YES;
-   __block ORBool choice = NO;
+   __block ORBool choice;
 while(goon) {
    [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
       abs = [self computeAbsorptionsQuantities:x];
@@ -2347,6 +2347,7 @@ while(goon) {
       sa = 0.0;
       nb = 0;
       nb2 = 0;
+      choice = NO;
       LOG(_level,2,@"State before selection");
       for(ORUInt i = 0; i < [x count]; i++){
          id<CPFloatVar> v = _gamma[getId(x[i])];
