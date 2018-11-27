@@ -779,6 +779,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) floatUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatUnaryMinus alloc] init:x eqm:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) floatTernaryAdd:(id<CPFloatVar>) x equals:(id<CPFloatVar>) y plus:(id<CPFloatVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])

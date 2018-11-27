@@ -123,6 +123,7 @@
 +(id<CPConstraint>) floatGTc: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatLT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatGT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
++(id<CPConstraint>) floatUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c annotation:(id<ORAnnotation>) notes;
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs neqi:(ORFloat)c annotation:(id<ORAnnotation>) notes;
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c annotation:(id<ORAnnotation>) notes;

@@ -183,6 +183,7 @@
 -(void) visitRealLinearLeq: (id<ORConstraint>) c;
 -(void) visitRealLinearGeq: (id<ORConstraint>) c;
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
+-(void) visitFloatUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitFloatEqualc: (id<ORConstraint>)c;
 -(void) visitFloatAssignC: (id<ORConstraint>)c;
 -(void) visitFloatNEqualc: (id<ORConstraint>)c;
@@ -241,6 +242,7 @@
 -(void) visitFloat: (id<ORFloatNumber>) e;
 -(void) visitDouble: (id<ORDoubleNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
+-(void) visitExprUnaryMinusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
 -(void) visitExprDivI: (id<ORExpr>) e;

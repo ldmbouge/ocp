@@ -476,6 +476,13 @@
 -(ORFloat) cst;
 @end
 
+@interface ORFloatUnaryMinus : ORConstraintI<ORFloatUnaryMinus>
+-(ORFloatUnaryMinus*)initORFloatUnaryMinus:(id<ORVar>)x eqm:(id<ORVar>)y;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
+
 @interface ORFloatMult : ORConstraintI<ORFloatMult>
 -(ORFloatMult*)initORFloatMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
 -(id<ORVar>) res;

@@ -19,8 +19,8 @@
 
 
 //unary minus constraint
-@implementation CPFloatMinusUOP
--(id) init:(id)x minusOp:(id)y
+@implementation CPFloatUnaryMinus
+-(id) init:(CPFloatVarI*)x eqm:(CPFloatVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -39,13 +39,13 @@
       if([_y bound]){
          assignTRInt(&_active, NO, _trail);
       }else{
-         [_y bind:[_x value]];
+         [_y bind:-[_x value]];
       }
    }else if([_y bound]){
-      [_x bind:[_y value]];
+      [_x bind:-[_y value]];
    }else {
-      ORFloat min = maxFlt([_x min], -[_y min]);
-      ORFloat max = minFlt([_x max], -[_y max]);
+      ORFloat min = maxFlt([_x min], -[_y max]);
+      ORFloat max = minFlt([_x max], -[_y min]);
       [_x updateInterval:min and:max];
       [_y updateInterval:-max and:-min];
    }

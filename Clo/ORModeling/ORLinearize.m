@@ -519,6 +519,9 @@
     id<ORExpr> right = [self linearizeExpr: [binExpr right]];
     _exprResult = [left plus: right];
 }
+-(void) visitExprUnaryMinusI: (id<ORExpr>) e  {
+   _exprResult = e;
+}
 -(void) visitExprMinusI: (id<ORExpr>) e  {
     ORExprBinaryI* binExpr = (ORExprBinaryI*)e;
     id<ORExpr> left = [self linearizeExpr: [binExpr left]];

@@ -20,11 +20,11 @@
 
 
 //unary minus constraint
-@interface CPFloatMinusUOP : CPCoreConstraint {
+@interface CPFloatUnaryMinus : CPCoreConstraint {
    CPFloatVarI* _x;
    CPFloatVarI* _y;
 }
--(id) init:(id)x minusOp:(id)y;
+-(id) init:(id)x eqm:(id)y;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

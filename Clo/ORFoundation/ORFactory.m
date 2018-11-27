@@ -978,6 +978,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [cp trackObject: e];
    return e;   
 }
++(id<ORExpr>) exprUnaryMinus: (id<ORExpr>) right track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprUnaryMinusI alloc] initORExprUnaryMinusI:right];
+   [self validate:o onError:"No CP tracker in Assign Expression" track:t];
+   return o;
+}
 +(id<ORRelation>) expr: (id<ORExpr>) left set: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORRelation> o = [[ORExprAssignI alloc] initORExprAssignI: left and: right];
@@ -1752,6 +1758,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORConstraint> o = [[ORFloatLinearGEQ alloc] initFloatLinearGEQ: x coef: coef cst: c];
     [model trackObject:o];
     return o;
+}
++(id<ORConstraint>) floatUnaryMinus:(id<ORTracker>)model  var: (id<ORFloatVar>)x eqm:(id<ORFloatVar>)y
+{
+   id<ORConstraint> o = [[ORFloatUnaryMinus alloc] initORFloatUnaryMinus:x eqm:y];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {

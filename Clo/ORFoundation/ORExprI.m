@@ -716,6 +716,10 @@
 {
    return [ORFactory exprSquare:self track:[self tracker]];
 }
+-(id<ORExpr>) minus
+{
+   return [ORFactory exprUnaryMinus:self track:[self tracker]];
+}
 -(id<ORRelation>) set: (id) e
 {
    return [self set:e track:[self tracker]];
@@ -1704,6 +1708,67 @@
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"%@ + %@",[_left description],[_right description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprUnaryMinusI
+-(id<ORExpr>) initORExprUnaryMinusI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return -[_op max];
+}
+-(ORInt) max
+{
+   return -[_op min];
+}
+-(ORFloat) fmin
+{
+   return -[_op fmax];
+}
+-(ORFloat) fmax
+{
+   return -[_op fmin];
+}
+-(ORDouble) dmin
+{
+   return -[_op dmax];
+}
+-(ORDouble) dmax
+{
+   return -[_op dmin];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprUnaryMinusI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(- %@)",[_op description]];
    return rv;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder

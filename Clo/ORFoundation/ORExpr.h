@@ -130,6 +130,7 @@ static ORVType lookup_expr_table[][9] = {
 -(ORBool) isVariable;
 -(id<ORExpr>) abs;
 -(id<ORExpr>) square;
+-(id<ORExpr>) minus;
 -(id<ORRelation>) set: (id) e;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;

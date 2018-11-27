@@ -269,6 +269,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "Equalc: visit method not defined"];
 }
+-(void) visitFloatUnaryMinus:(id<ORFloatUnaryMinus>)cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatUnaryMinus: visit method not defined"];
+}
 -(void) visitFloatEqualc: (id<ORFloatEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];
@@ -864,9 +868,13 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprPlusI: visit method not defined"]; 
 }
+-(void) visitExprUnaryMinusI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprUnaryMinusI: visit method not defined"]; 
+}
 -(void) visitExprMinusI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinusI: visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinusI: visit method not defined"];
 }
 -(void) visitExprMulI: (id<ORExpr>) e
 {
@@ -1137,6 +1145,7 @@
 -(void) visitMutableDouble: (id<ORMutableDouble>) e {}
 -(void) visitDouble: (id<ORDoubleNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
+-(void) visitExprUnaryMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMulI: (id<ORExpr>) e  {}
 -(void) visitExprDivI: (id<ORExpr>) e  {}

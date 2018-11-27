@@ -1255,6 +1255,18 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitFloatUnaryMinus:(id<ORFloatUnaryMinus>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      id<ORFloatVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatEqualc:(id<ORFloatEqualc>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
