@@ -150,17 +150,22 @@
 }
 @end
 
-@implementation ORLimitTime
+@implementation ORLimitTime{
+   ORBool _failed;
+}
 
 -(id) initORLimitTime: (ORLong) maxTime
 {
    self = [super initORDefaultController];
    _startTime = [ORRuntimeMonitor cputime];
    _maxTime = _startTime + maxTime;
+   _failed = NO;
    return self;
 }
 -(void) dealloc
 {
+   if(_failed)
+      NSLog(@"Failed because of Timeout\n");
    NSLog(@"ORLimitTime dealloc called...\n");
    [super dealloc];
 }
@@ -173,6 +178,7 @@
    // forever).
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime) {
+      _failed = YES;
       [_controller fail: true];
       return 0;
    } else
@@ -181,26 +187,32 @@
 -(void) startTryLeft
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
-   if (currentTime > _maxTime)
+   if (currentTime > _maxTime){
+      _failed = YES;
       [_controller fail: true];
-   else
+   }else{
       [_controller startTryLeft];
+   }
 }
 -(void) startTryRight
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
-   if (currentTime > _maxTime)
+   if (currentTime > _maxTime){
+      _failed = YES;
       [_controller fail: true];
-   else
+   }else{
       [_controller startTryRight];
+   }
 }
 -(void) startTryallOnFailure
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
-   if (currentTime > _maxTime)
+   if (currentTime > _maxTime){
+      _failed = YES;
       [_controller fail: true];
-   else
+   }else{
       [_controller startTryallOnFailure];
+   }
 }
 - (id)copyWithZone:(NSZone *)zone
 {
@@ -210,6 +222,7 @@
 }
 -(void) fail
 {
+//   NSLog(@"fail");
    [super fail];
 }
 

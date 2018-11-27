@@ -18,6 +18,18 @@
 
 @class CPFloatVarI;
 
+
+//unary minus constraint
+@interface CPFloatMinusUOP : CPCoreConstraint {
+   CPFloatVarI* _x;
+   CPFloatVarI* _y;
+}
+-(id) init:(id)x minusOp:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPFloatEqual : CPCoreConstraint {
     CPFloatVarI* _x;
     CPFloatVarI* _y;
