@@ -361,9 +361,13 @@ static enum ValHeuristic valIndex[] =
 -(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORFloatVarArray>)vs
 {
    id<ORDisabledFloatVarArray> vars;
-   NSArray* absvar = [p collectAllVarWithAbs:vs withLimit:rateOther];
-   vars = [ORFactory disabledFloatVarArray:vs varabs:absvar solver:[p engine] nbFixed:uniqueNB];
-   [absvar release];
+   if(rateOther < 1){
+      NSArray* absvar = [p collectAllVarWithAbs:vs withLimit:rateOther];
+      vars = [ORFactory disabledFloatVarArray:vs varabs:absvar solver:[p engine] nbFixed:uniqueNB];
+      [absvar release];
+   }else{
+      vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
+   }
    [p limitCondition:^ORBool{
       return (choicesLimit >= 0) ? [p nbChoices] == choicesLimit : false;
    } in:^{

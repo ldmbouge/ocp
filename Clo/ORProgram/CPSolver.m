@@ -1936,11 +1936,14 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
-               [x enableFirst];
+                [x enableFirst];
             }
             [x disable:i.index];
          }
@@ -1976,7 +1979,11 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
+            }
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2009,19 +2016,23 @@
    [[self explorer] applyController:t in:^{
       do {
          LOG(_level,2,@"State before selection");
-         if([x isFullyDisabled]){
-            [x enableFirst];
-         }
          ORSelectorResult i = [select min];
          if (!i.found){
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
-         } else if(_unique){
-            [x disable:i.index];
          }
+      } else if(_unique){
+         if([x isFullyDisabled]){
+            [x enableFirst];
+         }
+         [x disable:i.index];
+      }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minDegreeSearch:do:),x);
       } while (true);
@@ -2060,17 +2071,20 @@
          ORSelectorResult i = [select max];
          if (!i.found){
             if(![x hasDisabled]){
-               goon = NO;
-               return;
+               break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
-         } else if(_unique){
-            if([x isFullyDisabled]){
-               [x enableFirst];
-            }
-            [x disable:i.index];
          }
+      } else if(_unique){
+         if([x isFullyDisabled]){
+            [x enableFirst];
+         }
+         [x disable:i.index];
+      }
          id<CPFloatVar> cx = _gamma[getId(x[i.index])];
          LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
          b(i.index,@selector(maxOccurencesRatesSearch:do:),x);
@@ -2107,11 +2121,18 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
-         } else if(_unique){
-            [x disable:i.index];
          }
+      } else if(_unique){
+         if([x isFullyDisabled]){
+            [x enableFirst];
+         }
+         [x disable:i.index];
+      }
          id<CPFloatVar> cx = _gamma[getId(x[i.index])];
          LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
          b(i.index,@selector(maxOccurencesSearch:do:),x);
@@ -2146,11 +2167,18 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
-         } else if(_unique){
-            [x disable:i.index];
          }
+      } else if(_unique){
+         if([x isFullyDisabled]){
+            [x enableFirst];
+         }
+         [x disable:i.index];
+      }
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minOccurencesSearch:do:),x);
       } while (true);
@@ -2331,7 +2359,10 @@
                goon = NO;
                return;
             }else{
+               do{
                i.index = [x enableFirst];
+            } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2399,7 +2430,10 @@
                   goon = NO;
                   return;
                }else{
-                  i.index = [x enableFirst];
+                  do{
+                     i.index = [x enableFirst];
+                  } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+                  if([_gamma[getId(x[i.index])] bound]) break;
                }
             } else if(_unique){
                if([x isFullyDisabled]){
@@ -2530,7 +2564,10 @@
                   goon = NO;
                   return;
                }else{
-                  i.index = [x enableFirst];
+                  do{
+                     i.index = [x enableFirst];
+                  } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+                  if([_gamma[getId(x[i.index])] bound]) break;
                }
             } else if(_unique){
                if([x isFullyDisabled]){
@@ -2586,7 +2623,10 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2622,7 +2662,10 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2660,7 +2703,10 @@
                if(![x hasDisabled]){
                   break;
                }else{
-                  i.index = [x enableFirst];
+                  do{
+                     i.index = [x enableFirst];
+                  } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+                  if([_gamma[getId(x[i.index])] bound]) break;
                }
             } else if(_unique){
                if([x isFullyDisabled]){
@@ -2699,7 +2745,10 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2734,7 +2783,10 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2783,7 +2835,10 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2852,7 +2907,10 @@
             if(![x hasDisabled]){
                break;
             }else{
-               i.index = [x enableFirst];
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2982,7 +3040,10 @@
                   if(![x hasDisabled]){
                      break;
                   }else{
-                     i.index = [x enableFirst];
+                     do{
+                        i.index = [x enableFirst];
+                     } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+                     if([_gamma[getId(x[i.index])] bound]) break;
                   }
                } else if(_unique){
                   if([x isFullyDisabled]){
