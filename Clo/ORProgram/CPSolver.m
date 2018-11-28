@@ -1943,7 +1943,7 @@
             }
          } else if(_unique){
             if([x isFullyDisabled]){
-                [x enableFirst];
+               [x enableFirst];
             }
             [x disable:i.index];
          }
@@ -1984,17 +1984,17 @@
                } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
                if([_gamma[getId(x[i.index])] bound]) break;
             }
-            }
-         } else if(_unique){
-            if([x isFullyDisabled]){
-               [x enableFirst];
-            }
-            [x disable:i.index];
          }
-         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(i.index,@selector(maxDegreeSearch:do:),x);
-      } while (true);
-   }];
+      } else if(_unique){
+         if([x isFullyDisabled]){
+            [x enableFirst];
+         }
+         [x disable:i.index];
+      }
+      LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+      b(i.index,@selector(maxDegreeSearch:do:),x);
+   } while (true);
+    }];
 }
 -(void) minDegreeSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
@@ -2033,10 +2033,10 @@
          }
          [x disable:i.index];
       }
-         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(i.index,@selector(minDegreeSearch:do:),x);
-      } while (true);
-   }];
+      LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+      b(i.index,@selector(minDegreeSearch:do:),x);
+   } while (true);
+    }];
 }
 -(void) maxOccurencesRatesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
@@ -2085,10 +2085,10 @@
          }
          [x disable:i.index];
       }
-         id<CPFloatVar> cx = _gamma[getId(x[i.index])];
-         LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
-         b(i.index,@selector(maxOccurencesRatesSearch:do:),x);
-      }];
+       id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+       LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
+       b(i.index,@selector(maxOccurencesRatesSearch:do:),x);
+       }];
    }
 }
 -(void) maxOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
@@ -2133,11 +2133,11 @@
          }
          [x disable:i.index];
       }
-         id<CPFloatVar> cx = _gamma[getId(x[i.index])];
-         LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
-         b(i.index,@selector(maxOccurencesSearch:do:),x);
-      } while (true);
-   }];
+      id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+      LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
+      b(i.index,@selector(maxOccurencesSearch:do:),x);
+   } while (true);
+    }];
 }
 -(void) minOccurencesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
@@ -2179,10 +2179,10 @@
          }
          [x disable:i.index];
       }
-         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(i.index,@selector(minOccurencesSearch:do:),x);
-      } while (true);
-   }];
+      LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+      b(i.index,@selector(minOccurencesSearch:do:),x);
+   } while (true);
+    }];
 }
 //----------Special search--------//
 -(void) specialSearchStatic:  (id<ORDisabledFloatVarArray>) x
@@ -2360,8 +2360,8 @@
                return;
             }else{
                do{
-               i.index = [x enableFirst];
-            } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
                if([_gamma[getId(x[i.index])] bound]) break;
             }
          } else if(_unique){
