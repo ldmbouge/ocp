@@ -66,7 +66,7 @@
 -(void) enableTieBreak;
 -(void) disableTieBreak;
 -(void) setVariation:(ORInt) variation;
--(void) setUnique:(ORBool) u;
+-(void) setUnique:(ORInt) u;
 -(void) set3BSplitPercent:(ORFloat) p;
 -(void) setSearchNBFloats:(ORInt) p;
 -(void) setSubcut:(SEL)s;

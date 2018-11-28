@@ -94,6 +94,8 @@ static enum ValHeuristic valIndex[] =
    specialSearch = NO;
    absRate = -1;
    occRate = -1;
+   rateOther = 1.1;
+   grateOther = 1.1;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -314,7 +316,7 @@ static enum ValHeuristic valIndex[] =
          if(tiebreak) [(CPCoreSolver*)p enableTieBreak];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
          if(occRate >= 0) [(CPCoreSolver*)p setOccRate:occRate];
-         [(CPCoreSolver*)p setUnique:(uniqueNB>0)];
+         [(CPCoreSolver*)p setUnique:uniqueNB];
          [(CPCoreSolver*)p setSearchNBFloats:searchNBFloats];
          [(CPCoreSolver*)p set3BSplitPercent:search3Bpercent];
          [(CPCoreSolver*)p setSubcut:[self subCutSelector]];
@@ -359,14 +361,9 @@ static enum ValHeuristic valIndex[] =
 -(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORFloatVarArray>)vs
 {
    id<ORDisabledFloatVarArray> vars;
-   if(rateOther || grateOther){
-      NSArray* absvar = [p collectAllVarWithAbs:vs withLimit:rateOther];
-      vars = [ORFactory disabledFloatVarArray:vs varabs:absvar solver:[p engine] nbFixed:uniqueNB];
-      [absvar release];
-      
-   }else{
-       vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
-   }
+   NSArray* absvar = [p collectAllVarWithAbs:vs withLimit:rateOther];
+   vars = [ORFactory disabledFloatVarArray:vs varabs:absvar solver:[p engine] nbFixed:uniqueNB];
+   [absvar release];
    [p limitCondition:^ORBool{
       return (choicesLimit >= 0) ? [p nbChoices] == choicesLimit : false;
    } in:^{
@@ -1535,7 +1532,8 @@ static enum ValHeuristic valIndex[] =
          }];
          break;
       case custom :
-         [p customSearch:[ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:(ORInt)[vs count]]];
+         [vars setMaxFixed:(ORInt)[vars count]];
+         [p customSearch:vars];
          break;
       default :
          heuristic = lexico;

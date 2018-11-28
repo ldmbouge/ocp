@@ -154,7 +154,7 @@
    id<CPPortal>          _portal;
    
    ORInt                  _level;
-   ORBool                 _unique;
+   ORInt                 _unique;
    ORFloat                _split3Bpercent;
    ORInt                  _searchNBFloats;
    SEL                    _subcut;
@@ -200,7 +200,7 @@
    _split3Bpercent = 10.f;
    _searchNBFloats = 2;
    _subcut = @selector(float3BSplit:call:withVars:);
-   _unique = NO;
+   _unique = 0;
    _absRate = 0.1;
    _occRate = 0.1;
    _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
@@ -393,7 +393,7 @@
 {
    _tieBreak = NO;
 }
--(void) setUnique:(ORBool) u
+-(void) setUnique:(ORInt) u
 {
    _unique = u;
 }
@@ -2491,7 +2491,7 @@
                return;
             }
             LOG(_level,1,@"current search has switched");
-            [self maxOccurencesRatesSearch:[x initialVars:_engine maxFixed:1]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
+            [self maxOccurencesRatesSearch:[x initialVars:_engine maxFixed:_unique]  do:^(ORUInt i,SEL se,id<ORDisabledFloatVarArray> x) {
                [self float5WaySplit:i call:se withVars:x];
             }];
          }
@@ -4186,6 +4186,7 @@
    }];
    [_engine open];
 }
+
 @end
 
 /******************************************************************************************/

@@ -973,12 +973,12 @@
 {
    self = [super init];
    _vars = vars;
+   _initials = ia;
    _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
    _current = [ORFactory trailableInt:engine value:0];
    _start = [ORFactory trailableInt:engine value:0];
-   _initials = ia;
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
-   _indexDisabled = [ORFactory trailableIntArray:engine range:RANGE(engine,0,_nb-1) value:-1];
+   _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
    return self;
 }
 -(void) dealloc
@@ -1056,6 +1056,16 @@
 -(ORUInt) maxFixed
 {
    return _nb;
+}
+-(void) setMaxFixed:(ORInt)nb
+{
+   _nb = (nb > [_vars count]) ? (ORInt)[_vars count] : nb;
+   for(ORInt i = 0; i < [_disabled count]; i++){
+      [_disabled[i] setValue:0];
+      [_indexDisabled[i] setValue:-1];
+   }
+   [_current setValue:0];
+   [_start setValue:0];
 }
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
                                   objects:(id *)stackbuf
