@@ -721,6 +721,21 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine nbFixed:nb];
 }
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) ovars varabs:(NSArray *) absvars solver:(id<ORSearchEngine>)p nbFixed:(ORUInt)nb
+{
+   ORInt size = (ORInt)([absvars count] + [ovars count]);
+   id<ORFloatVarArray> keeped = [ORFactory floatVarArray:p range:RANGE(p, 0, size-1)];
+   id<ORIntArray> ia = [ORFactory intArray:p range:keeped.range value:1];
+   ORInt i = 0;
+   for(id<ORFloatVar> x in ovars){
+      keeped[i++] = x;
+   }
+   for(id<ORFloatVar> x in absvars){
+      keeped[i] = x;
+      ia[i++] = @(0);
+   }
+   return [ORFactory disabledFloatVarArray:keeped engine:p initials:ia nbFixed:nb];
+}
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray nbFixed:(ORUInt)nb
 {
    return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine initials:iarray nbFixed:nb];

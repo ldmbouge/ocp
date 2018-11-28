@@ -315,6 +315,10 @@
 {
    [[self worker] specialSearch:x];
 }
+-(void)          customSearch: (id<ORDisabledFloatVarArray>) x
+{
+   [[self worker] customSearch:x];
+}
 -(void)          maxWidthSearch: (id<ORDisabledFloatVarArray>) x  do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
     [[self worker] maxWidthSearch:x do:b];
@@ -1116,7 +1120,12 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
-
+- (NSArray *)collectAllVarWithAbs:(id<ORFloatVarArray>)vs {
+   return [[self worker] collectAllVarWithAbs:vs];
+}
+- (NSArray *)collectAllVarWithAbs:(id<ORFloatVarArray>)vs withLimit:(ORDouble)limit {
+   return [[self worker] collectAllVarWithAbs:vs withLimit:limit];
+}
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];

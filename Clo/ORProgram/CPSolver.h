@@ -65,7 +65,6 @@
 -(void) setSplitTest:(ORInt) level;
 -(void) enableTieBreak;
 -(void) disableTieBreak;
--(void) setChoicesLimit:(ORInt) limit;
 -(void) setVariation:(ORInt) variation;
 -(void) setUnique:(ORBool) u;
 -(void) set3BSplitPercent:(ORFloat) p;

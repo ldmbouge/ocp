@@ -62,6 +62,7 @@ PORTABLE_BEGIN
 -(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 
 -(void)          specialSearch: (id<ORDisabledFloatVarArray>) x;
+-(void)          customSearch: (id<ORDisabledFloatVarArray>) x;
 -(void)          maxWidthSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          minWidthSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          maxCardinalitySearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
@@ -219,6 +220,8 @@ PORTABLE_BEGIN
 -(ORInt)  regret:(id<ORIntVar>)x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
+-(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>)vs;
+-(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>)vs withLimit:(ORDouble) limit;
 -(ORUInt)  maxOccurences:(id<ORVar>) x;
 -(ORLDouble) density: (id<ORFloatVar>) x;
 -(ORDouble) cardinality: (id<ORFloatVar>) x;

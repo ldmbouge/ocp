@@ -182,6 +182,7 @@ PORTABLE_BEGIN
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine;
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray;
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine nbFixed:(ORUInt)nb;
++(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) ovars varabs:(NSArray *) absvars solver:(id<ORSearchEngine>)p nbFixed:(ORUInt)nb;
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray nbFixed:(ORUInt)nb;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;

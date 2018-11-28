@@ -19,12 +19,12 @@
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
    @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
    @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
-   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens"};
+   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens",@"custom"};
 
 static enum Heuristic hIndex[] = {FF, ABS, IBS, WDEG, DDEG, SDEG,
    maxWidth, minWidth, maxCard,  minCard,   maxDens,   minDens,   minMagn,   maxMagn,
    maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens,
-   densWAbs , ref ,lexico,absDens};
+   densWAbs , ref ,lexico,absDens,custom};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"split3B",@"splitAbs",@"ESplit",@"DSplit"};
 
@@ -135,7 +135,7 @@ static enum ValHeuristic valIndex[] =
       else if (strncmp(argv[k],"-variation",10)==0){
       NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
       int index = 24;
-      for(int i = 0; i < 27;i++){
+      for(int i = 0; i < 28;i++){
          if ([tmp isEqualToString:hName[i]] || [[tmp lowercaseString] isEqualToString:[hName[i] lowercaseString]]){
             index = i;
             break;
@@ -151,7 +151,7 @@ static enum ValHeuristic valIndex[] =
       else if (strncmp(argv[k], "-var-order", 10)==0){
          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
          int index = 24;
-         for(int i = 0; i < 27;i++){
+         for(int i = 0; i < 28;i++){
             if ([tmp isEqualToString:hName[i]] || [[tmp lowercaseString] isEqualToString:[hName[i] lowercaseString]]){
               index = i;
               break;
@@ -314,7 +314,6 @@ static enum ValHeuristic valIndex[] =
          if(tiebreak) [(CPCoreSolver*)p enableTieBreak];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
          if(occRate >= 0) [(CPCoreSolver*)p setOccRate:occRate];
-         [(CPCoreSolver*)p setChoicesLimit:choicesLimit];
          [(CPCoreSolver*)p setUnique:(uniqueNB>0)];
          [(CPCoreSolver*)p setSearchNBFloats:searchNBFloats];
          [(CPCoreSolver*)p set3BSplitPercent:search3Bpercent];
@@ -357,9 +356,21 @@ static enum ValHeuristic valIndex[] =
    }
    return h;
 }
--(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORVarArray>)vs
+-(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORFloatVarArray>)vs
 {
-   id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
+   id<ORDisabledFloatVarArray> vars;
+   if(rateOther || grateOther){
+      NSArray* absvar = [p collectAllVarWithAbs:vs withLimit:rateOther];
+      vars = [ORFactory disabledFloatVarArray:vs varabs:absvar solver:[p engine] nbFixed:uniqueNB];
+      [absvar release];
+      
+   }else{
+       vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
+   }
+   [p limitCondition:^ORBool{
+      return (choicesLimit >= 0) ? [p nbChoices] == choicesLimit : false;
+   } in:^{
+      
    if(specialSearch){
       [p specialSearch:vars];
       return;
@@ -1523,6 +1534,9 @@ static enum ValHeuristic valIndex[] =
             [p float6WaySplit:i call:s withVars:x];
          }];
          break;
+      case custom :
+         [p customSearch:[ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:(ORInt)[vs count]]];
+         break;
       default :
          heuristic = lexico;
          switch (valordering) {
@@ -1587,6 +1601,7 @@ static enum ValHeuristic valIndex[] =
          }
          break;
    }
+   }];
 }
 
 

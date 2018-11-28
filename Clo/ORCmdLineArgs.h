@@ -41,7 +41,8 @@ enum Heuristic {
    densWAbs  = 27,
    ref = 28,
    lexico=29,
-   absDens = 30
+   absDens = 30,
+   custom = 31
 };
 enum ValHeuristic
 {
