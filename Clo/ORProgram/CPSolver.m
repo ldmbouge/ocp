@@ -2487,7 +2487,7 @@
             [self floatAbsSplit3:i.index by:v vars:x];
          } else{
             if(nb == 0){
-               goon = YES;
+               goon = NO;
                return;
             }
             LOG(_level,1,@"current search has switched");
