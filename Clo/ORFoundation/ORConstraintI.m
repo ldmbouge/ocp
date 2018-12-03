@@ -4711,6 +4711,10 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_b,_x, nil] autorelease];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
