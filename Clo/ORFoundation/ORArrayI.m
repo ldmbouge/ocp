@@ -821,7 +821,7 @@
    ORDouble somme = _array[_low];
    for(int i = _low+1; i <= _up; i++)
       somme += _array[i];
-   return (ORFloat)(somme/_nb);
+   return (_nb > 0)?(ORFloat)(somme/_nb):0.0f;
 }
 -(NSUInteger)count
 {
