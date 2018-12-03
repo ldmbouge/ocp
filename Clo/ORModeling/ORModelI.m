@@ -194,6 +194,7 @@
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
    NSMutableDictionary*     _cache;
    id<ORModelMappings>      _mappings;  // these are all the mappings for the models
+   id<ORIntArray>           _occurences;
 }
 -(ORModelI*) initORModelI
 {
@@ -205,6 +206,7 @@
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [[ORModelMappings alloc] initORModelMappings];
+   _occurences = nil;
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
    _source = nil;
@@ -228,6 +230,7 @@
    _mStore = [src->_mStore mutableCopy];
    _iStore = [src->_iStore mutableCopy];
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
+   _occurences = src->_occurences;
    _nbObjects = src->_nbObjects;
    _nbImmutables = src->_nbImmutables;
    _objective = src->_objective;
@@ -399,7 +402,29 @@
          rv[k++] = xk;
    return (id<ORBitVarArray>)rv;
 }
-
+-(void) incrOccurences:(id<ORVar>) v
+{
+   if(_occurences == nil)
+   {
+      ORInt maxId = 0;
+      for(id<ORObject> c in _vars){
+         maxId = ([c getId]>maxId)? [c getId] : maxId;
+      }
+      _occurences = [ORFactory intArray:self range:RANGE(self,0,maxId) value:0];
+   }
+   ORInt index = [v getId];
+   ORInt oldv = [_occurences at:index];
+   [_occurences set:oldv+1 at:index];
+}
+-(ORDouble) occurences:(id<ORVar>) v
+{
+   if(_occurences != nil && [v getId] < [_occurences count]) {
+      ORInt index = [v getId];
+      ORDouble s = [_occurences sum];
+      return (s > 0)?[_occurences at:index]/s:0;
+   }
+   return 0.0;
+}
 -(NSArray*) variables
 {
    // [ldm] Why copy them out. NSArray is immutable anyhow.
@@ -656,6 +681,7 @@
    [aCoder encodeObject:_iStore];
    [aCoder encodeObject:_cStore];
    [aCoder encodeObject:_objective];
+   [aCoder encodeObject:_occurences];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -666,6 +692,7 @@
    _iStore = [[aDecoder decodeObject] retain];
    _cStore = [[aDecoder decodeObject] retain];
    _objective = [[aDecoder decodeObject] retain];
+   _occurences = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
@@ -766,6 +793,11 @@
 {
     return [_target maximize: array coef: coef];
 }
+
+- (id<ORFloatVarArray>)floatVars {
+   return [_src floatVars];
+}
+
 -(id) trackObject: (id) obj
 {
    return [_target trackObject:obj];
@@ -789,6 +821,10 @@
 -(id) trackVariable: (id) obj
 {
    return [_target trackVariable: obj];
+}
+-(void) incrOccurences:(id<ORVar>)v
+{
+   [_target incrOccurences:v];
 }
 @end
 
@@ -953,6 +989,9 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
     return [_target maximize: array coef: coef];
 }
 
+- (id<ORFloatVarArray>)floatVars {
+   return [_target floatVars];
+}
 -(id<ORAddToModel>) model
 {
    return _target;
@@ -980,6 +1019,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(id) trackImmutable:(id)obj
 {
    return [_target trackImmutable:obj];
+}
+-(void) incrOccurences:(id<ORVar>)v
+{
+   [_target incrOccurences:v];
 }
 @end
 

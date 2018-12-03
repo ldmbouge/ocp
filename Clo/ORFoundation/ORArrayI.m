@@ -27,6 +27,7 @@
    ORInt             _low;
    ORInt              _up;
    ORInt              _nb;
+   ORInt              _sum;
    id<ORIntRange>  _range;
 }
 
@@ -36,11 +37,14 @@
    _tracker = tracker;
    _array = malloc(nb * sizeof(ORInt));
    _low = 0;
+   _sum = 0;
    _up = nb-1;
    _nb = nb;
    _range = [ORFactory intRange: tracker low: _low up: _up];
-   for (ORInt i=0 ; i < _nb; i++) 
+   for (ORInt i=0 ; i < _nb; i++){
+      _sum += value;
       _array[i] = value;
+   }
    return self;
 }
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb with:(ORInt(^)(ORInt)) clo
@@ -49,11 +53,14 @@
    _tracker = tracker;
    _array = malloc(nb * sizeof(ORInt));
    _low = 0;
+   _sum = 0;
    _up = nb-1;
    _nb = nb;
    _range = [ORFactory intRange: tracker low: _low up: _up];  
-   for (ORInt i=0 ; i < _nb; i++) 
+   for (ORInt i=0 ; i < _nb; i++){
+      _sum += clo(i);
       _array[i] = clo(i);
+   }
    return self;
 }
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
@@ -61,13 +68,16 @@
    self = [super init];
    _tracker = tracker;
    _low = range.low;
+   _sum = 0;
    _up = range.up;
    _nb = _up - _low + 1;
    _range = range;
    _array = malloc(_nb * sizeof(ORInt));
    _array -= _low;
-   for (ORInt i=_low ; i <= _up; i++) 
+   for (ORInt i=_low ; i <= _up; i++){
+      _sum += value;
       _array[i] = value;
+   }
    return self;
 }
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo
@@ -76,12 +86,15 @@
    _tracker = tracker;
    _low = range.low;
    _up = range.up;
+   _sum = 0;
    _nb = _up - _low + 1;
    _range = range;
    _array = malloc(_nb * sizeof(ORInt));
    _array -= _low;
-   for (ORInt i=_low ; i <= _up; i++) 
+   for (ORInt i=_low ; i <= _up; i++){
+      _sum += clo(i);
       _array[i] = clo(i);
+   }
    return self;
 }
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORInt(^)(ORInt,ORInt)) clo
@@ -90,13 +103,16 @@
    _tracker = tracker;
    _nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1);
    _low = 0;
+   _sum = 0;
    _up = _nb-1;
    _range = [ORFactory intRange: tracker low: _low up: _up];
    _array = malloc(_nb * sizeof(ORInt));
    int k = 0;
    for (ORInt i=r1.low ; i <= r1.up; i++) 
-      for (ORInt j=r2.low ; j <= r2.up; j++)         
+      for (ORInt j=r2.low ; j <= r2.up; j++){
+         _sum += clo(i,j);
          _array[k++] = clo(i,j);
+      }
    return self;
 }
 -(id<ORIntRange>) range
@@ -123,6 +139,7 @@
 {
    if (idx < _low || idx > _up)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
+   _sum += (value - _array[idx]);
    _array[idx] = value;
 }
 -(id)objectAtIndexedSubscript: (NSUInteger) key
@@ -135,6 +152,7 @@
 {
    if (idx < _low || idx > _up)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
+   _sum += ([newValue intValue] - _array[idx]);
    _array[idx] = [newValue intValue];
 }
 -(void) enumerateWith: (void(^)(ORInt obj,int idx)) block
@@ -178,15 +196,15 @@
 -(ORInt) average
 {
    ORInt s = [self sum];
-  
    return (s > 0) ? s/_nb : 0;
 }
 -(ORInt) sum
 {
-   ORInt somme = 0;
-   for(int i = _low; i <= _up; i++)
-      somme += _array[i];
-   return somme;
+//   ORInt somme = 0;
+//   for(int i = _low; i <= _up; i++)
+//      somme += _array[i];
+//   assert(somme == _sum);
+   return _sum;
 }
 -(NSUInteger)count
 {

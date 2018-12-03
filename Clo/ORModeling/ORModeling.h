@@ -50,6 +50,8 @@ PORTABLE_BEGIN
 -(id<ORDoubleVarArray>)doubleVars;
 -(id<ORRealVarArray>)realVars;
 -(id<ORBitVarArray>)bitVars;
+-(void) incrOccurences:(id<ORVar>) v;
+-(ORDouble) occurences:(id<ORVar>) v;
 -(ORUInt) nbObjects;
 -(NSArray*) variables;
 -(NSArray*) constraints;
@@ -86,6 +88,8 @@ PORTABLE_BEGIN
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 -(id<ORModelMappings>) modelMappings;
 -(void)setCurrent:(PNULLABLE id<ORConstraint>)cstr;
+-(id<ORFloatVarArray>)floatVars;
+-(void) incrOccurences:(id<ORVar>) v;
 @end
 
 @protocol ORParameterizedModel <ORModel>

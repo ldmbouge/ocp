@@ -56,7 +56,6 @@ static enum ValHeuristic valIndex[] =
 @synthesize variationSearch;
 @synthesize choicesLimit;
 @synthesize splitTest;
-@synthesize tiebreak;
 @synthesize specialSearch;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
@@ -112,8 +111,6 @@ static enum ValHeuristic valIndex[] =
          choicesLimit = atoi(argv[k+1]);
       else if (strncmp(argv[k],"-split-test",11)==0)
          splitTest = atoi(argv[k+1]);
-      else if (strncmp(argv[k],"-tie-break",10)==0  && strlen(argv[k]) == 10)
-         tiebreak = 1;
       else if (strncmp(argv[k],"-search3Bpercent",16)==0)
          search3Bpercent = atof(argv[k+1]);
       else if(strncmp(argv[k],"-abs-rate",9) == 0){
@@ -313,7 +310,6 @@ static enum ValHeuristic valIndex[] =
       case 0:
          p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setLevel:level];
-         if(tiebreak) [(CPCoreSolver*)p enableTieBreak];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
          if(occRate >= 0) [(CPCoreSolver*)p setOccRate:occRate];
          [(CPCoreSolver*)p setUnique:uniqueNB];

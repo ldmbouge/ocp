@@ -63,8 +63,6 @@
 -(void) setOccRate:(ORDouble) r;
 -(void) setAbsRate:(ORDouble) r;
 -(void) setSplitTest:(ORInt) level;
--(void) enableTieBreak;
--(void) disableTieBreak;
 -(void) setVariation:(ORInt) variation;
 -(void) setUnique:(ORInt) u;
 -(void) set3BSplitPercent:(ORFloat) p;

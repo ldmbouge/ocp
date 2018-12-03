@@ -354,7 +354,7 @@
    id<ORTracker>    _tracker;
    id<ORFloatRange> _domain;
    BOOL             _hasBounds;
-   NSString*         _prettyname;
+   NSString*        _prettyname;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track domain:(id<ORFloatRange>)dom
 {

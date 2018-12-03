@@ -167,7 +167,6 @@
    ORDouble               _absTRateLimitAdditionalVars;
    ORInt                 _variationSearch;
    ORInt                 _splitTest;
-   ORBool                _tieBreak;
    
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
@@ -384,14 +383,6 @@
 -(void) setSplitTest:(ORInt) level
 {
    _splitTest = level;
-}
--(void) enableTieBreak
-{
-   _tieBreak = YES;
-}
--(void) disableTieBreak
-{
-   _tieBreak = NO;
 }
 -(void) setUnique:(ORInt) u
 {
@@ -2038,33 +2029,20 @@
 }
 -(void) maxOccurencesRatesSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   __block id<ORIntArray> occ = nil;
-   __block id<ORIdArray> abs = nil;
-   __block ORUInt sum;
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     ORDouble res =((ORDouble)[occ at:i]) / sum;
-                                     LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s fixed:%s occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",res);
+                                     LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s fixed:%s occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[_model occurences:x[i]]);
                                      return ![v bound] && [x isEnabled:i];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    ORDouble res =((ORDouble)[occ at:i]) / sum;
-                                    return res;
+                                    return [_model occurences:x[i]];
                                  }
                           ];
-   if(_tieBreak){
-      [select setTieBreak:^ORDouble(ORInt i){
-         return [abs[i] quantity];
-      }];
-   }
    __block ORBool goon = YES;
    while(goon) {
       [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
-         abs = [self computeAbsorptionsQuantities:x];
-         occ = [self computeAllOccurrences:x];
-         sum = [occ sum];
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select max];
          if (!i.found){
@@ -2414,11 +2392,6 @@
                                        }
                                     }
                              ];
-      if(_tieBreak){
-         [select setTieBreak:^ORDouble(ORInt i) {
-            return (!sum) ? 0.0 : ((ORDouble)[occ at:i]) / sum;
-         }];
-      }
       __block ORBool goon = YES;
       while(goon) {
          [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
@@ -2519,6 +2492,7 @@
          nb = 0;
          ORSelectorResult i = [select_a max];
          if(i.found){
+            LOG(_level,1,@"maxAbs");
             [x disable:i.index];
             id<CPFloatVar> cx = _gamma[getId(x[i.index])];
             id<CPFloatVar> v = [abs[i.index] bestChoice];
@@ -4345,6 +4319,15 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
+
+- (id<ORFloatVarArray>)floatVars {
+   @throw [[ORExecutionError alloc] initORExecutionError: "Not implemented yet"];
+}
+
+- (void)incrOccurences:(nonnull id<ORVar>)v {
+     @throw [[ORExecutionError alloc] initORExecutionError: "Not implemented yet"];
+}
+
 -(id) trackObject: (id) obj
 {
    return [_engine trackObject:obj];

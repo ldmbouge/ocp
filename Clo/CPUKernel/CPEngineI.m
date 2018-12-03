@@ -223,6 +223,16 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    }];
    return iva;
 }
+-(id<ORFloatVarArray>)floatVars
+{
+   ORInt nbVars = (ORInt) [[_engine variables] count];
+   id<ORFloatVarArray> iva = (id<ORFloatVarArray>)[ORFactory idArray:_engine range:RANGE(_engine,0,nbVars-1)];
+   __block ORInt k = 0;
+   [[_engine variables] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      [iva set:obj at:k++];
+   }];
+   return iva;
+}
 -(NSArray*) variables
 {
    return [_engine variables];
