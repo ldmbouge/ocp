@@ -1733,7 +1733,6 @@
 -(void) minDensitySearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
-   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
@@ -1749,14 +1748,22 @@
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = [select min];
          if (!i.found){
-            if(!disabled.found)
+            if(![x hasDisabled]){
                break;
-            i.index = disabled.index;
-            [x enable:i.index];
+            }else{
+               do{
+                  i.index = [x enableFirst];
+               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
+               if([_gamma[getId(x[i.index])] bound]){
+                  break;
+               }
+            }
          } else if(_unique){
+            if([x isFullyDisabled]){
+               [x enableFirst];
+            }
             [x disable:i.index];
          }
-         disabled.found = NO;
          LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
          b(i.index,@selector(minDensitySearch:do:),x);
       } while (true);
