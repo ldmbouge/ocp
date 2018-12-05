@@ -227,14 +227,14 @@ static enum ValHeuristic valIndex[] =
 -(SEL) subCutSelector
 {
    switch (subcut){
-      case split : return @selector(floatStaticSplit:call:withVars:);
-      case split3Way : return @selector(floatStatic3WaySplit:call:withVars:);
-      case split5Way : return @selector(floatStatic5WaySplit:call:withVars:);
-      case split6Way : return @selector(floatStatic6WaySplit:call:withVars:);
-      case dynamicSplit : return @selector(floatSplit:call:withVars:);
-      case dynamic3Split : return @selector(float3WaySplit:call:withVars:);
-      case dynamic5Split : return @selector(float5WaySplit:call:withVars:);
-      case dynamic6Split : return @selector(float6WaySplit:call:withVars:);
+      case split : return @selector(floatStaticSplit:withVars:);
+      case split3Way : return @selector(floatStatic3WaySplit:withVars:);
+      case split5Way : return @selector(floatStatic5WaySplit:withVars:);
+      case split6Way : return @selector(floatStatic6WaySplit:withVars:);
+      case dynamicSplit : return @selector(floatSplit:withVars:);
+      case dynamic3Split : return @selector(float3WaySplit:withVars:);
+      case dynamic5Split : return @selector(float5WaySplit:withVars:);
+      case dynamic6Split : return @selector(float6WaySplit:withVars:);
       case split3B : return @selector(float3BSplit:call:withVars:);
       default:
          return @selector(float3BSplit:call:withVars:);
@@ -377,58 +377,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
             case splitAbs:
             case split:
-               [p maxWidthSearch:vars do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p maxWidthSearch:vars do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i withVars:x];
                }];
                break;
             case split3Way:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i withVars:x];
                }];
                break;
             case split5Way:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(maxWidthSearch:do:)  withVars:x];
                }];
                break;
             case Esplit:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p maxWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p maxWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -437,58 +437,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
             case splitAbs:
             case split:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i call:@selector(minWidthSearch:do:)   withVars:x];
                }];
                break;
             case Esplit:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p minWidthSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p minWidthSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -497,58 +497,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(maxCardinalitySearch:do:)  withVars:x];
                }];
                break;
             case Esplit:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p maxCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p maxCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -557,58 +557,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(minCardinalitySearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p minCardinalitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p minCardinalitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -617,58 +617,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i call:@selector(maxDensitySearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p maxDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p maxDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -677,58 +677,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(minDensitySearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p minDensitySearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p minDensitySearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -737,58 +737,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(maxMagnitudeSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p maxMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p maxMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -797,58 +797,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i   call:@selector(minMagnitudeSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p minMagnitudeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p minMagnitudeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -857,58 +857,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i   call:@selector(maxDegreeSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p maxDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p maxDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -917,58 +917,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(minDegreeSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p minDegreeSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p minDegreeSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -977,58 +977,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p maxOccurencesRatesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p maxOccurencesRatesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxOccurencesRatesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p maxOccurencesRatesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(maxOccurencesSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p maxOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p maxOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -1037,58 +1037,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(minOccurencesSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p minOccurencesSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p minOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -1096,125 +1096,125 @@ static enum ValHeuristic valIndex[] =
       case maxAbs :
          switch (valordering) {
             case split:
-               [p maxAbsorptionSearch:vars do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p maxAbsorptionSearch:vars do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i call:@selector(maxAbsorptionSearch:do:)  withVars:x];
                }];
                break;
             case Esplit:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p maxAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
             case splitAbs:
                switch(defaultAbsSplit){
                   case split:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatStaticSplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p floatStaticSplit:i  withVars:x];
                      }];
                      break;
                   case split3Way:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatStatic3WaySplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p floatStatic3WaySplit:i  withVars:x];
                      }];
                      break;
                   case split5Way:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatStatic5WaySplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p floatStatic5WaySplit:i  withVars:x];
                      }];
                      break;
                   case split6Way:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatStatic6WaySplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p floatStatic6WaySplit:i  withVars:x];
                          }];
                      break;
                   case dynamicSplit:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatSplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p floatSplit:i  withVars:x];
                      }];
                      break;
                   case dynamic3Split:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p float3WaySplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p float3WaySplit:i  withVars:x];
                      }];
                      break;
                   case dynamic5Split:
-                     [p maxAbsorptionSearchAll:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p float5WaySplit:i call:s withVars:x];
+                     [p maxAbsorptionSearchAll:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p float5WaySplit:i  withVars:x];
                      }];break;
                   case dynamic6Split:
-                     [p maxAbsorptionSearchAll:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                     [p float6WaySplit:i call:s withVars:x];
+                     [p maxAbsorptionSearchAll:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                     [p float6WaySplit:i  withVars:x];
                      }];
                   case split3B:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p float3BSplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p float3BSplit:i call:@selector(maxAbsorptionSearch:default:) withVars:x];
                      }];
                      break;
                   case Esplit:
-                     [p maxAbsorptionSearch:vars  default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatEWaySplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars  default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p floatEWaySplit:i  withVars:x];
                      }];
                      break;
                   case Dsplit:
-                     [p maxAbsorptionSearch:vars  default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p floatDeltaSplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars  default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p floatDeltaSplit:i  withVars:x];
                      }];
                      break;
                   default:
-                     [p maxAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                        [p float6WaySplit:i call:s withVars:x];
+                     [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                        [p float6WaySplit:i  withVars:x];
                      }];
                }
                break;
                
             default:
-               [p maxAbsorptionSearch:vars do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxAbsorptionSearch:vars do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
          }
@@ -1223,63 +1223,59 @@ static enum ValHeuristic valIndex[] =
       case minAbs :
          switch (valordering) {
             case split:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
-               }];
-               break;
-            case splitAbs:
-               [p minAbsorptionSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i call:@selector(minAbsorptionSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p minAbsorptionSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+            default:
+               [p minAbsorptionSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
                
@@ -1289,58 +1285,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i call:@selector(maxCancellationSearch:do:)  withVars:x];
                }];
                break;
             case Esplit:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p maxCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p maxCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -1349,58 +1345,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
                 case splitAbs:
             case split:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(minCancellationSearch:do:)  withVars:x];
                }];
                break;
             case Esplit:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p minCancellationSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p minCancellationSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -1409,58 +1405,58 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
              case splitAbs:
             case split:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(combinedAbsWithDensSearch:do:)  withVars:x];
                }];
                break;
             case Esplit:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p combinedAbsWithDensSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
@@ -1469,66 +1465,66 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
             case splitAbs:
             case split:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i  call:@selector(combinedDensWithAbsSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p combinedDensWithAbsSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
          }
          break;
       
       case absDens :
-         [p maxAbsDensSearch:vars default:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-            [p float6WaySplit:i call:s withVars:x];
+         [p maxAbsDensSearch:vars default:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+            [p float6WaySplit:i  withVars:x];
          }];
          break;
       case custom :
@@ -1540,59 +1536,59 @@ static enum ValHeuristic valIndex[] =
          switch (valordering) {
             case splitAbs:
             case split:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStaticSplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStaticSplit:i  withVars:x];
                }];
                break;
             case split3Way:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic3WaySplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic3WaySplit:i  withVars:x];
                }];
                break;
             case split5Way:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic5WaySplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic5WaySplit:i  withVars:x];
                }];
                break;
             case split6Way:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatStatic6WaySplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatStatic6WaySplit:i  withVars:x];
                }];
                break;
             case dynamicSplit:
                heuristic = ref;
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatSplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatSplit:i  withVars:x];
                }];
                break;
             case dynamic3Split:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3WaySplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3WaySplit:i  withVars:x];
                }];
                break;
             case dynamic5Split:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float5WaySplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float5WaySplit:i  withVars:x];
                }];
                break;
             case dynamic6Split:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float6WaySplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float6WaySplit:i  withVars:x];
                }];
                break;
             case split3B:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p float3BSplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p float3BSplit:i call:@selector(lexicalOrderedSearch:do:) withVars:x];
                }];
                break;
             case Esplit:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatEWaySplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatEWaySplit:i  withVars:x];
                }];
                break;
             case Dsplit:
-               [p lexicalOrderedSearch:vars  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
-                  [p floatDeltaSplit:i call:s withVars:x];
+               [p lexicalOrderedSearch:vars  do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+                  [p floatDeltaSplit:i  withVars:x];
                }];
                break;
                
