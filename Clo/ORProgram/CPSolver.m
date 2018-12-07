@@ -1625,25 +1625,13 @@
    [self realGthenImpl: _gamma[var.getId] with: val];
 }
 //-------------------------------------------------------
-
--(void) searchWithCriteria:  (id<ORDisabledFloatVarArray>) x criteria:(ORInt2Double)c do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) genericSearch: (id<ORDisabledFloatVarArray>) x selection:(ORSelectorResult(^)(void)) s do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
 {
-   id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
-                                     LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s fixed:%s occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[_model occurences:x[i]]);
-                                     return ![v bound] && [x isEnabled:i];
-                                  }
-                                 orderedBy: ^ORDouble(ORInt i) {
-                                    return c(i);
-                                 }
-                          ];
    __block ORBool goon = YES;
    while(goon) {
       [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
          LOG(_level,2,@"State before selection");
-         ORSelectorResult i = [select max];
+         ORSelectorResult i = s();
          if (!i.found){
             if(![x hasDisabled]){
                goon = NO;
@@ -1668,6 +1656,37 @@
          b(i.index,x);
       }];
    }
+}
+-(void) searchWithCriteria:  (id<ORDisabledFloatVarArray>) x criteria:(ORInt2Double)crit switchOnCondtion:(ORBool(^)(void))c criteria:(ORInt2Double)crit2 do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+{
+   ORInt2Bool f = ^(ORInt i) {
+      id<CPFloatVar> v = _gamma[getId(x[i])];
+      LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s fixed:%s occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[_model occurences:x[i]]);
+      return (ORBool)(![v bound] && [x isEnabled:i]);
+   };
+   id<ORSelect> select1 = [ORFactory select: _engine range: x.range suchThat: f orderedBy: crit];
+   id<ORSelect> select2 = [ORFactory select: _engine range: x.range suchThat: f orderedBy: crit2];
+   [self genericSearch:x selection:(ORSelectorResult(^)(void))^{
+      return (c()) ? [select2 max] : [select1 max];
+   } do:b];
+}
+
+
+-(void) searchWithCriteria:  (id<ORDisabledFloatVarArray>) x criteria:(ORInt2Double)c do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+{
+   id<ORSelect> select = [ORFactory select: _engine
+                                     range: RANGE(self,[x low],[x up])
+                                  suchThat: ^ORBool(ORInt i) {
+                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s fixed:%s occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[_model occurences:x[i]]);
+                                     return ![v bound] && [x isEnabled:i];
+                                  }
+                                 orderedBy: c
+                          ];
+   [self genericSearch:x selection:(ORSelectorResult(^)(void))^{
+      return [select max];
+   } do:b];
+
 }
 //float search
 -(void) maxCardinalitySearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
@@ -1809,12 +1828,13 @@
    __block id<ORIntArray> occ = nil;
    __block ORDouble sum, ao, aa, so, sa;
    __block ORInt nb,nb2;
-   id<ORSelect> select_a = [ORFactory select: _engine
-                                       range: x.range
-                                    suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       return ![v bound] && [x isEnabled:i];
-                                    }
+   
+   ORInt2Bool f = ^(ORInt i) {
+      id<CPFloatVar> v = _gamma[getId(x[i])];
+      return (ORBool)(![v bound] && [x isEnabled:i]);
+   };
+   
+   id<ORSelect> select_a = [ORFactory select: _engine range: x.range suchThat: f
                                    orderedBy: ^ORDouble(ORInt i) {
                                       if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
                                          return [abs[i] quantity];
@@ -1823,46 +1843,25 @@
                                       }
                                    }
                             ];
-   id<ORSelect> select_o = [ORFactory select: _engine
-                                       range: x.range
-                                    suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       return ![v bound] && [x isEnabled:i];
-                                    }
+   id<ORSelect> select_o = [ORFactory select: _engine range: x.range suchThat: f
                                    orderedBy: ^ORDouble(ORInt i) {
                                       return (!sum) ? 0.0 : ((ORDouble)[occ at:i]) / sum;
                                    }
                             ];
-   id<ORSelect> select_c = [ORFactory select: _engine
-                                       range: x.range
-                                    suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       return ![v bound] && [x isEnabled:i];
-                                    }
+   id<ORSelect> select_c = [ORFactory select: _engine range: x.range suchThat: f
                                    orderedBy: ^ORDouble(ORInt i) {
-                                      //                                   ORDouble card = [self countMemberedConstraints:x[i]];
                                       ORDouble card = [self cardinality:x[i]];
                                       return card;
                                    }
                             ];
    
-   id<ORSelect> select_d = [ORFactory select: _engine
-                                       range: x.range
-                                    suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       return ![v bound] && [x isEnabled:i];
-                                    }
+   id<ORSelect> select_d = [ORFactory select: _engine range: x.range suchThat: f
                                    orderedBy: ^ORDouble(ORInt i) {
                                       ORDouble dens = [self density:x[i]];
                                       return dens;
                                    }
                             ];
-   id<ORSelect> select_l = [ORFactory select: _engine
-                                       range: x.range
-                                    suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       return ![v bound] && [x isEnabled:i];
-                                    }
+   id<ORSelect> select_l = [ORFactory  select: _engine range: x.range suchThat: f
                                    orderedBy: ^ORDouble(ORInt i) {
                                       return i;
                                    }
@@ -3011,7 +3010,7 @@
    }
    float_interval* ip = interval;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"(Deltasplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
+      LOG(_level,1,@"(Dsplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
