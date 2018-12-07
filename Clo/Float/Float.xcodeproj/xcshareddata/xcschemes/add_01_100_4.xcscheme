@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "08A6282B21B8697600C9E273"
-               BuildableName = "add_01_100_3 copy"
-               BlueprintName = "add_01_100_3 copy"
+               BuildableName = "add_01_100_4"
+               BlueprintName = "add_01_100_4"
                ReferencedContainer = "container:Float.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "08A6282B21B8697600C9E273"
-            BuildableName = "add_01_100_3 copy"
-            BlueprintName = "add_01_100_3 copy"
+            BuildableName = "add_01_100_4"
+            BlueprintName = "add_01_100_4"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -56,8 +56,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "08A6282B21B8697600C9E273"
-            BuildableName = "add_01_100_3 copy"
-            BlueprintName = "add_01_100_3 copy"
+            BuildableName = "add_01_100_4"
+            BlueprintName = "add_01_100_4"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,8 +75,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "08A6282B21B8697600C9E273"
-            BuildableName = "add_01_100_3 copy"
-            BlueprintName = "add_01_100_3 copy"
+            BuildableName = "add_01_100_4"
+            BlueprintName = "add_01_100_4"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
