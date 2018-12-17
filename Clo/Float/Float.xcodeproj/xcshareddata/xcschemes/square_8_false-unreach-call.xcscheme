@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order minDens -val-order dynamic5Split -uniques 1 -percent 8"
+            argument = "-var-order absWDens -val-order dynamic5Split -uniques 1 -percent 8"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

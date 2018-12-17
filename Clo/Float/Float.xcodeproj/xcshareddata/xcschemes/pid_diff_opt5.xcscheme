@@ -64,6 +64,10 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-var-order maxAbs -val-order splitAbs -unique -default 6  -variation 2  -rate-model-limit 0.3 -grate-model-limit 0.8 -rate-other-limit 0.91 -grate-other-limit 0.0"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-var-order maxOcc -val-order dynamic5Split -uniques 1 -percent 8"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

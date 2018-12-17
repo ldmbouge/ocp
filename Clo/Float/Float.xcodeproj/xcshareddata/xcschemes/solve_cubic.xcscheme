@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order maxabs -val-order splitabs -default 6 -unique -rate-model-limit 0.3 -grate-model-limit 0.5 -rate-other-limit 0.91 -grate-other-limit 0.0"
+            argument = "-var-order maxOcc -val-order dynamic5Split -uniques 1 -percent 8"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
