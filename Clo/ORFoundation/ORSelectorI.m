@@ -91,7 +91,7 @@
             indexFound = i;
             found = 1;
             bestRand = [_stream next];
-            if(_tieBreak != nil)
+            if((id)_tieBreak!=nil)
                tbValue = _tieBreak(i);
                
          }
