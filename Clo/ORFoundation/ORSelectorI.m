@@ -102,7 +102,7 @@
                bestRand = r;
             }
          }
-         else if (_tieBreak != nil && val == bestFound) {
+         else if ((id)_tieBreak==nil && val == bestFound) {
             ORDouble tmp = _tieBreak(i);
             if(tmp > tbValue){
                indexFound = i;
