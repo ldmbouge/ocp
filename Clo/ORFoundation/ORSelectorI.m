@@ -49,7 +49,7 @@
 }
 -(void) setTieBreak :(ORInt2Double) tb
 {
-   if(_tieBreak != nil) [_tieBreak release];
+   if((id)_tieBreak==nil != nil) [_tieBreak release];
    _tieBreak = [tb copy];
 }
 -(void) dealloc
