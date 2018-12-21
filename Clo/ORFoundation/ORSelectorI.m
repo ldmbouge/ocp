@@ -49,14 +49,14 @@
 }
 -(void) setTieBreak :(ORInt2Double) tb
 {
-   if((id)_tieBreak==nil != nil) [_tieBreak release];
+   if((id)_tieBreak!=nil) [_tieBreak release];
    _tieBreak = [tb copy];
 }
 -(void) dealloc
 {
    [_filter release];
    [_order release];
-   if(_tieBreak != nil) [_tieBreak release];
+   if((id)_tieBreak!=nil) [_tieBreak release];
    [_stream release];
    [super dealloc];
 }
@@ -102,7 +102,7 @@
                bestRand = r;
             }
          }
-         else if ((id)_tieBreak==nil && val == bestFound) {
+         else if ((id)_tieBreak!=nil && val == bestFound) {
             ORDouble tmp = _tieBreak(i);
             if(tmp > tbValue){
                indexFound = i;
