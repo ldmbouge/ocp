@@ -31,7 +31,7 @@ int main(int argc, const char * argv[]) {
 //         id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:dv engine:[cp engine]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            [args printStats:g model:model program:cp];
+            
             [args launchHeuristic:((id<CPProgram>)p) restricted:dv];
 //            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> d) {
 //               [cp floatSplitD:i call:s withVars:d];

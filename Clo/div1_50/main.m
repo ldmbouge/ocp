@@ -31,7 +31,7 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVarArray> vars = [model floatVars];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            [args printStats:g model:model program:cp];
+            
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;
