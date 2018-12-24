@@ -39,6 +39,8 @@
 		0845240221C1612A00D740A1 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF820EFB26700AF6787 /* ORProgram.framework */; };
 		0845240321C1612A00D740A1 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEFA20EFB26700AF6787 /* ORUtilities.framework */; };
 		0845240921C1613C00D740A1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 084523F421C1611A00D740A1 /* main.m */; };
+		08673AC421D050C400D1B14E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0886FCB6215ACF44001FEC1F /* main.m */; };
+		08673AC521D050DA00D1B14E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0886FCC1215ACF55001FEC1F /* main.m */; };
 		08860001215AE6F4001FEC1F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0886FFEC215AE6CC001FEC1F /* main.m */; };
 		08860010215AE706001FEC1F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
 		08860012215AE706001FEC1F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF020EFB26700AF6787 /* CPUKernel.framework */; };
@@ -88,7 +90,6 @@
 		0886FCA8215ACEBE001FEC1F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF820EFB26700AF6787 /* ORProgram.framework */; };
 		0886FCA9215ACEBE001FEC1F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEFA20EFB26700AF6787 /* ORUtilities.framework */; };
 		0886FCAF215ACED3001FEC1F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0886FC9A215ACEB5001FEC1F /* main.m */; };
-		0886FCC8215ACF68001FEC1F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0886FC9A215ACEB5001FEC1F /* main.m */; };
 		0886FCC9215ACF68001FEC1F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
 		0886FCCB215ACF68001FEC1F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF020EFB26700AF6787 /* CPUKernel.framework */; };
 		0886FCCC215ACF68001FEC1F /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF220EFB26700AF6787 /* objcp.framework */; };
@@ -96,7 +97,6 @@
 		0886FCCE215ACF68001FEC1F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF620EFB26700AF6787 /* ORModeling.framework */; };
 		0886FCCF215ACF68001FEC1F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF820EFB26700AF6787 /* ORProgram.framework */; };
 		0886FCD0215ACF68001FEC1F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEFA20EFB26700AF6787 /* ORUtilities.framework */; };
-		0886FCD8215ACF74001FEC1F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0886FC9A215ACEB5001FEC1F /* main.m */; };
 		0886FCD9215ACF74001FEC1F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
 		0886FCDB215ACF74001FEC1F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF020EFB26700AF6787 /* CPUKernel.framework */; };
 		0886FCDC215ACF74001FEC1F /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF220EFB26700AF6787 /* objcp.framework */; };
@@ -9334,7 +9334,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0886FCC8215ACF68001FEC1F /* main.m in Sources */,
+				08673AC421D050C400D1B14E /* main.m in Sources */,
 				0886FCC9215ACF68001FEC1F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9343,7 +9343,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0886FCD8215ACF74001FEC1F /* main.m in Sources */,
+				08673AC521D050DA00D1B14E /* main.m in Sources */,
 				0886FCD9215ACF74001FEC1F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
