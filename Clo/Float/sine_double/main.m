@@ -10,7 +10,7 @@
 #import "ORCmdLineArgs.h"
 #include <fenv.h>
 
-#define VAL 1
+#define VAL 1.0
 void checksolution(float IN,float res){
    if(!(IN >= -1.57079632679f && IN <= 1.57079632679f)) printf("IN n'est pas dans le bon range\n");
    float x = IN;
@@ -37,22 +37,21 @@ int main(int argc, const char * argv[]) {
       
       id<ORGroup> g = [args makeGroup:model];
       
-      [g add:[z eq: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
+//      [g add:[z eq: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
       
       
       [g add:[z lt: @(VAL)]];
-      [g add:[z gt: @(-VAL)]];
+//      [g add:[z gt: @(-VAL)]];
       
       [model add:g];
-      //         NSLog(@"%@",model);
       id<ORDoubleVarArray> vars = [model doubleVars];
       id<CPProgram> cp = [args makeProgram:model];
          id<ORDisabledFloatVarArray> nvars = [ORFactory disabledFloatVarArray:vars engine:[cp engine]];
       __block bool found = false;
       
       [cp solve:^{
-            [cp lexicalOrderedSearch:nvars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-               [cp floatSplitD:i call:s withVars:x];
+            [cp lexicalOrderedSearch:nvars do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+               [cp floatSplitD:i withVars:x];
             }];
          NSLog(@"Valeurs solutions : \n");
          found=true;

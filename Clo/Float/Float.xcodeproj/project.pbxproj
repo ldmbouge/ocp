@@ -711,6 +711,7 @@
 		08A8B4CA2143088500FFB89F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEFA20EFB26700AF6787 /* ORUtilities.framework */; };
 		08A8B4D02143089A00FFB89F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A8B4BB2143087000FFB89F /* main.m */; };
 		08AEEF3E2146AAD100FA24E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 089513012145B9CB00993DE2 /* main.m */; };
+		08B5BD2421D3CD57000992AF /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
 		08C53F8B2140932100A8271C /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
 		08C53F8D2140932100A8271C /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF020EFB26700AF6787 /* CPUKernel.framework */; };
 		08C53F8E2140932100A8271C /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF220EFB26700AF6787 /* objcp.framework */; };
@@ -10081,6 +10082,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08B5BD2421D3CD57000992AF /* ORCmdLineArgs.m in Sources */,
 				08F798FB21C81B2900F0114E /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
