@@ -20,6 +20,7 @@
    id<ORVarArray> _rvars;
    id<CPProgram>     _cp;
 //    ORLong          _count;
+//   ORLong           _countMax;
 }
 -(CPBitVarVSIDS*)initCPBitVarVSIDS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPBitVar>)x;

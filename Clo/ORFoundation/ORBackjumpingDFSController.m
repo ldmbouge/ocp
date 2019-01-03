@@ -126,7 +126,7 @@
    NSCont* k;
    ORInt ofs = _sz-1;
    ORStatus status;
-//    ORStatus lastStatus = ORSuspend;
+    ORStatus lastStatus = ORSuspend;
 
 //    if (jumplevel > 4){
 //        while ((level > jumplevel) && (_sz > 1)){
@@ -158,9 +158,10 @@
 
           if (k &&  (k.admin || status != ORFailure)) {
 //              if ((jumplevel > 0) && (level < faillevel) && !k.admin){
-//              if (((jumplevel > 0) && (level < faillevel-1)) ||  (lastStatus == ORFailure)){
+//              if (((jumplevel > 0) && (level < faillevel-1)) &&  (lastStatus != ORFailure)){
 //              if ((jumplevel > 0) && (faillevel != jumplevel)) {
 //                 if (jumplevel > 0) {
+//             if((jumplevel > 0) && (lastStatus!=ORFailure)){
 //                  [k callInvisible];
 //              }
 //              else

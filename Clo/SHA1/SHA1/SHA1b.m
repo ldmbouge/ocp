@@ -250,7 +250,7 @@
       case BVIBS: h = [cp createBitVarIBS:(id<CPBitVarArray>)o];
          break;
       //case BVFF:   h =[cp createBitVarFF:(id<CPBitVarArray>)o];
-       default:    h =[cp createBitVarVSIDS:o];
+      default:    h =[cp createBitVarVSIDS:o];
 
          break;
    }
