@@ -8,9 +8,9 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> a = [ORFactory floatVar:model low:-10000.0f up:10000.0f];
-         id<ORFloatVar> b = [ORFactory floatVar:model low:-10000.0f up:10000.0f];
-         id<ORFloatVar> c = [ORFactory floatVar:model low:-10000.0f up:10000.0f];
+         id<ORFloatVar> a = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
+         id<ORFloatVar> b = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
+         id<ORFloatVar> c = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
          
          id<ORFloatVar> assoc1 = [ORFactory floatVar:model];
          id<ORFloatVar> assoc2 = [ORFactory floatVar:model];
