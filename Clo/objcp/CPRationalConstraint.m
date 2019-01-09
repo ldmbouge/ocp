@@ -176,7 +176,6 @@
    _x = x;
    _c = [ORRational rationalWith:c];
    return self;
-   
 }
 -(void) post
 {

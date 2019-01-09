@@ -2767,6 +2767,8 @@
 {}
 -(void) visitExprNegateI:(id<ORExpr>) e
 {}
+-(void) visitExprSqrtI:(id<ORExpr>) e
+{}
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {}
 -(void) visitExprCstDoubleSubI:(id<ORExpr>)e

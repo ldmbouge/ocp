@@ -17,7 +17,7 @@
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
 void check_it_f(float x, float y, float o, float k, float w, float u, float z, id<ORRational> ez) {
-   mpq_t qz, qx, qy, qo, qk, qw, qu, tmp0, tmp1, tmp2;
+   mpq_t qz, qx, qy, qo, qk, tmp0, tmp1, tmp2;
    float cw = x + y;
    float cu = o + k;
    float cz = w - u;
@@ -31,7 +31,6 @@ void check_it_f(float x, float y, float o, float k, float w, float u, float z, i
    
    mpq_inits(qz, qx, qy, qo, qk, tmp0, tmp1, tmp2, NULL);
    
-   // ((r*x)*x)
    mpq_set_d(qx, x);
    mpq_set_d(qy, y);
    mpq_set_d(qo, o);
@@ -42,7 +41,6 @@ void check_it_f(float x, float y, float o, float k, float w, float u, float z, i
    
    mpq_set_d(tmp0, cz);
    mpq_sub(tmp1, qz, tmp0);
-   // La différence vient de ce que minError retourne un flottant au lieu d'un double !
    if (mpq_cmp(tmp1, ez.rational) != 0){
       NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
       NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);

@@ -1062,6 +1062,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"]; 
 }
+-(void) visitExprSqrtI:(id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprSqrtI: visit method not defined"];
+}
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstSubI: visit method not defined"]; 
@@ -1293,6 +1297,7 @@
 -(void) visitExprMinI: (id<ORExpr>) e {}
 -(void) visitExprMaxI: (id<ORExpr>) e {}
 -(void) visitExprNegateI:(id<ORExpr>) e  {}
+-(void) visitExprSqrtI:(id<ORExpr>) e  {}
 -(void) visitExprCstSubI: (id<ORExpr>) e  {}
 -(void) visitExprCstDoubleSubI:(id<ORExpr>)e {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e  {}

@@ -803,6 +803,10 @@
 {
    return [ORFactory exprNegate:self track:[self tracker]];
 }
+-(id<ORExpr>)sqrt
+{
+   return [ORFactory exprSqrt:self track:[self tracker]];
+}
 -(id<ORExpr>) land:(id<ORRelation>)e
 {
    if (e == NULL)
@@ -987,7 +991,10 @@
 {
    id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] from:self];
    id<ORConstraint> c = [ORFactory channel:self with:r];
-   [[self tracker] add:c];
+   //[[self tracker] add:c];
+   id<ORTracker> m = self.tracker;
+   [((id<ORModel>)m) add: c];
+
    return r;
 }
 -(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t
@@ -1393,6 +1400,65 @@
 -(void) visit:(ORVisitor*)visitor
 {
    [visitor visitExprNegateI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_op];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _op = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORExprSqrtI
+-(id<ORExpr>) initORSqrtI: (id<ORExpr>) op
+{
+   self = [super init];
+   _op = op;
+   return self;
+}
+-(id<ORTracker>) tracker
+{
+   return [_op tracker];
+}
+-(ORInt) min
+{
+   return 0;
+}
+-(ORInt) max
+{
+   return 1;
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(ORBool) isConstant
+{
+   return [_op isConstant];
+}
+-(enum ORVType) vtype
+{
+   return _op.vtype;
+}
+-(enum ORRelationType) type
+{
+   return ORNeg;
+}
+
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"sqrt(%@)",[_op description]];
+   return rv;
+}
+-(void) visit:(ORVisitor*)visitor
+{
+   [visitor visitExprSqrtI:self];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

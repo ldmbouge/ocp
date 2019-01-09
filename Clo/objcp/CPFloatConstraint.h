@@ -119,6 +119,22 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatSQRT : CPCoreConstraint { // z = sqrt(x)
+   CPFloatVarI* _z;
+   CPFloatVarI* _x;
+   ORInt _precision;
+   ORDouble _percent;
+   ORInt _rounding;
+   // cpjm: Use a trailed object for eo to insure that its value is saved
+   CPRationalDom* _eo;
+}
+-(id) init:(id)z equalsSQRT:(id)x;
+-(id) init:(id)z equalsSQRT:(id)x kbpercent:(ORDouble)p;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 
 @interface CPFloatTernaryAdd : CPCoreConstraint { // z = x + y
     CPFloatVarI* _z;

@@ -35,7 +35,9 @@
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORExpr>) neg;
+-(id<ORExpr>) sqrt;
 -(id<ORExpr>) error;
+-(id<ORExpr>) channel;
 -(id<ORExpr>) land:(id<ORRelation>) e;
 -(id<ORExpr>) lor:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
@@ -487,6 +489,17 @@
    id<ORExpr> _op;
 }
 -(id<ORExpr>)initORNegateI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface ORExprSqrtI : ORExprLogiqueI<ORRelation,NSCoding> {
+   id<ORExpr> _op;
+}
+-(id<ORExpr>)initORSqrtI:(id<ORExpr>)op;
 -(ORInt)min;
 -(ORInt)max;
 -(ORExprI*) operand;

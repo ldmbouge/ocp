@@ -460,6 +460,35 @@
    }
    return z;
 }
+-(id<ORRational>)sqrt
+{
+   id<ORRational> z = [[ORRational alloc] init: _mt];
+   if(_type == 3 || _type == -2 || _type == -1){
+      [z setNAN];
+   } else if(_type == 2){
+      [z setPosInf];
+   } else {
+      mpz_t num, den;
+      mpz_inits(num, den, NULL);
+      mpq_get_num(num, self.rational);
+      mpq_get_den(den, self.rational);
+      if(mpz_perfect_square_p(num) && mpz_perfect_square_p(den)){
+         mpz_sqrt(num, num);
+         mpz_sqrt(den, den);
+         
+         mpq_set_num(z.rational, num);
+         mpq_set_den(z.rational, den);
+      } else {
+         id<ORRational> tmp = [[ORRational alloc] init: _mt];
+         [tmp set_d: sqrt(mpz_get_d(num))];
+         [z set_d: sqrt(mpz_get_d(den))];
+         
+         z = [tmp div: z];
+      }
+      mpz_clears(num, den, NULL);
+   }
+   return z;
+}
 -(BOOL)cmp:(id<ORRational>)r
 {
    if([self eq:r]){
@@ -814,6 +843,14 @@
    id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_low abs];
    z.up = [_up abs];
+   
+   return z;
+}
+-(id<ORRationalInterval>)sqrt
+{
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
+   z.low = [_low sqrt];
+   z.up = [_up sqrt];
    
    return z;
 }

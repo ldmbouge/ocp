@@ -8007,6 +8007,10 @@
 {
    [[e operand] visit:self];
 }
+-(void) visitExprSqrtI:(ORExprSqrtI*)e
+{
+   [[e operand] visit:self];
+}
 -(void) visitExprCstSubI: (ORExprCstSubI*) e
 {
    [[e index] visit:self];

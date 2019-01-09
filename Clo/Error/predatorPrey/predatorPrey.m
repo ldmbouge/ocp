@@ -59,6 +59,7 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
+      ORRational * c = [ORRational rationalWith_d:nextafter(-1.0, +INFINITY)];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORDoubleVar> K = [ORFactory doubleVar:mdl name:@"K"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
@@ -68,11 +69,14 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
       [mdl add:[r set: @(4.0)]];
       [mdl add:[K set: @(1.11)]];
       [mdl add:[z set:[[[r mul: x] mul: x] div: [@(1.0) plus: [[x div: K] mul: [x div: K]]]]]];
+      
+      [mdl add:[[z error] geq:c]];
       NSLog(@"model: %@",mdl);
       id<ORDoubleVarArray> vs = [mdl doubleVars];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
+      [c release];
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
