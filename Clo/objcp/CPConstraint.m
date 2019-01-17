@@ -101,6 +101,10 @@
    return o;
    
 }
++(id<ORConstraint>) among: (id<CPEngine>) engine over: (id<CPIntVarArray>) x values:(id<ORIntSet>)values low:(ORInt)low up:(ORInt)up
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "Among Not Implemented"];
+}
 // cardinality
 +(id<ORConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
@@ -629,13 +633,6 @@
    return o;
 }
 
-+(id<CPConstraint>) fiveGreater:(id<CPIntVar>)x to: (id<CPIntVar>) y
-{
-   id<CPConstraint> o = [[CPFiveGreater alloc] initCPFiveGreater:x and:y];
-   [[x tracker] trackMutable:o];
-   return o;   
-}
-
 +(id<CPConstraint>) ExactMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced
 {
     id<CPConstraint> o = [[CPExactMDDAllDifferent alloc] initCPExactMDDAllDifferent: cp over: x reduced:reduced];
@@ -679,15 +676,15 @@
 }
 
 
-+(id<CPConstraint>) RelaxedCustomMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize stateClass:(Class)stateClass
++(id<CPConstraint>) CustomMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
-    id<CPConstraint> o = [[CPRelaxedCustomMDD alloc] initCPRelaxedCustomMDD: cp over: x size:relaxationSize stateClass:(Class)stateClass];
+    id<CPConstraint> o = [[CPCustomMDD alloc] initCPCustomMDD: cp over: x relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
     [[x tracker] trackMutable:o];
     return o;
 }
-+(id<CPConstraint>) RelaxedCustomMDDWithObjective: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
++(id<CPConstraint>) CustomMDDWithObjective: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
-    id<CPConstraint> o = [[CPRelaxedCustomMDDWithObjective alloc] initCPRelaxedCustomMDDWithObjective: cp over: x size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:(Class)stateClass];
+    id<CPConstraint> o = [[CPCustomMDDWithObjective alloc] initCPCustomMDDWithObjective: cp over: x relaxed:relaxed size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:(Class)stateClass];
     [[x tracker] trackMutable:o];
     return o;
 }

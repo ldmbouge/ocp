@@ -342,6 +342,18 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitAmong: (id<ORAmong>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray> cax = [self concreteArray:(id)[cstr array]];
+        id<ORIntSet> values = [cstr values];
+        ORInt low = [cstr low];
+        ORInt up = [cstr up];
+        id<CPConstraint> concreteCstr = [CPFactory among: _engine over: cax values:values low:low up:up];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 -(void) visitRegular:(id<ORRegular>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"No concretization for regular (it is decomposed)"];
@@ -1760,17 +1772,6 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {}
 
--(void) visitFiveGreater: (id<ORFiveGreater>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<CPIntVar>    a = [self concreteVar:[cstr left]];
-      id<CPIntVar>    b = [self concreteVar:[cstr right]];
-      id<CPConstraint> concreteCstr = [CPFactory fiveGreater:a to:b];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}
-
 -(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1845,26 +1846,28 @@
 
 
 
--(void) visitRelaxedCustomMDD: (id<ORRelaxedCustomMDD>) cstr
+-(void) visitCustomMDD: (id<ORCustomMDD>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        bool relaxed           = [cstr relaxed];
         ORInt relaxationSize   = [cstr relaxationSize];
         Class stateClass      = [cstr stateClass];
-        id<CPConstraint> concreteCstr = [CPFactory RelaxedCustomMDD:_engine over: a size:relaxationSize stateClass:(Class)stateClass];
+        id<CPConstraint> concreteCstr = [CPFactory CustomMDD:_engine over: a relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
 }
 
--(void) visitRelaxedCustomMDDWithObjective: (id<ORRelaxedCustomMDDWithObjective>) cstr
+-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
         id<CPIntVar> objective = [self concreteVar: [cstr objective]];
+        bool relaxed           = [cstr relaxed];
         ORInt relaxationSize   = [cstr relaxationSize];
         Class stateClass      = [cstr stateClass];
-        id<CPConstraint> concreteCstr = [CPFactory RelaxedCustomMDDWithObjective:_engine over: a size:relaxationSize reduced:[cstr reduced] objective:objective maximize:[cstr maximize] stateClass:(Class)stateClass];
+        id<CPConstraint> concreteCstr = [CPFactory CustomMDDWithObjective:_engine over: a relaxed:relaxed size:relaxationSize reduced:[cstr reduced] objective:objective maximize:[cstr maximize] stateClass:(Class)stateClass];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

@@ -15,46 +15,6 @@
 #import "ORConstraintI.h"
 #import "ORParameterI.h"
 
-@implementation ORFiveGreater {
-   id<ORIntVar> _x;
-   id<ORIntVar> _y;
-}
--(ORFiveGreater*)initORFiveGreater:(id<ORIntVar>)x and:(id<ORIntVar>)y
-{
-   self = [super initORConstraintI];
-   _x = x;
-   _y = y;
-   return self;
-}
--(void)dealloc
-{
-   //NSLog(@"OREqualc::dealloc: %p",self);
-   [super dealloc];
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ +5)",[self class],self,_x,_y];
-   return buf;
-}
--(void)visit:(ORVisitor*)v
-{
-   [v visitFiveGreater:self];
-}
--(id<ORIntVar>) left
-{
-   return _x;
-}
--(id<ORIntVar>) right
-{
-   return _y;
-}
--(NSSet*)allVars
-{
-   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
-}
-@end
-
 @implementation ORExactMDDAllDifferent {
    id<ORIntVarArray> _x;
    bool _reduced;
@@ -376,15 +336,17 @@
 
 
 
-@implementation ORRelaxedCustomMDD {
+@implementation ORCustomMDD {
    id<ORIntVarArray> _x;
+   bool _relaxed;
    ORInt _relaxationSize;
    Class _stateClass;
 }
--(ORRelaxedCustomMDD*)initORRelaxedCustomMDD:(id<ORIntVarArray>)x size:(ORInt)relaxationSize stateClass:(Class)stateClass
+-(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
    self = [super initORConstraintI];
    _x = x;
+   _relaxed = relaxed;
    _relaxationSize = relaxationSize;
    _stateClass = stateClass;
    return self;
@@ -402,12 +364,13 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitRelaxedCustomMDD:self];
+   [v visitCustomMDD:self];
 }
 -(id<ORIntVarArray>) vars
 {
    return _x;
 }
+-(bool) relaxed { return _relaxed; }
 -(ORInt) relaxationSize
 {
    return _relaxationSize;
@@ -422,19 +385,21 @@
 }
 @end
 
-@implementation ORRelaxedCustomMDDWithObjective {
+@implementation ORCustomMDDWithObjective {
    id<ORIntVarArray> _x;
    id<ORIntVar> _objective;
+   bool _relaxed;
    ORInt _relaxationSize;
    bool _reduced;
    bool _maximize;
    Class _stateClass;
 }
--(ORRelaxedCustomMDDWithObjective*)initORRelaxedCustomMDDWithObjective:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
+-(ORCustomMDDWithObjective*)initORCustomMDDWithObjective:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
    self = [super initORConstraintI];
    _x = x;
    _objective = objectiveValue;
+   _relaxed = relaxed;
    _relaxationSize = relaxationSize;
    _reduced = reduced;
    _maximize = maximize;
@@ -454,7 +419,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitRelaxedCustomMDDWithObjective:self];
+   [v visitCustomMDDWithObjective:self];
 }
 -(id<ORIntVarArray>) vars
 {
@@ -464,6 +429,7 @@
 {
    return _objective;
 }
+-(bool) relaxed { return _relaxed; }
 -(ORInt) relaxationSize
 {
    return _relaxationSize;
@@ -3501,6 +3467,63 @@
    return _av;
 }
 @end
+
+
+@implementation ORAmongI {
+   id<ORExprArray> _x;
+   NSSet*         _av;
+   
+   id<ORIntSet> _values;
+   ORInt _low, _up;
+}
+-(ORAmongI*) initORAmongI: (id<ORExprArray>) x values:(id<ORIntSet>)values low:(ORInt)low up:(ORInt)up
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _av = nil;
+   _values = values;
+   _low = low;
+   _up = up;
+   return self;
+}
+-(void)dealloc
+{
+   [_av release];
+   [super dealloc];
+}
+-(id<ORExprArray>) array
+{
+   return _x;
+}
+-(id<ORIntSet>) values { return _values; }
+-(ORInt) low { return _low; }
+-(ORInt) up { return _up; }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORAmongI: %p IS [ ",self];
+   for(ORInt i = [_x low];i <= [_x up];i++) {
+      [buf appendFormat:@"%@%c",_x[i],i < [_x up] ? ',' : ' '];
+   }
+   [buf appendString:@"]>"];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitAmong:self];
+}
+-(NSSet*)allVars
+{
+   if (_av == nil) {
+      NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+      for(id<ORExpr> e in _x)
+         [ms addObject:e];
+      _av = [ms retain];
+   }
+   return _av;
+}
+@end
+
 
 @implementation ORRegularI {
    id<ORIntVarArray>    _x;

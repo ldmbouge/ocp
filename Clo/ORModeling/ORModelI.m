@@ -585,13 +585,11 @@
 }
 
 
--(id<ORModel>) mddify {
-   id<ORAnnotation> notes = [ORFactory annotation];
-   
+-(id<ORModel>) mddify:(id<ORAnnotation>)ncpy {
    id<ORModel> mddModel = [ORFactory createModel:_nbObjects mappings:_mappings];
-   id<ORAddToModel> batch = [ORFactory createBatchModel:mddModel source:self annotation: notes];
+   id<ORAddToModel> batch = [ORFactory createBatchModel:mddModel source:self annotation: ncpy];
    id<ORModelTransformation> mdd = [ORFactory createMDDifier:batch];
-   [mdd apply: self with: notes];
+   [mdd apply: self with: ncpy];
    [batch release];
    [mddModel setSource:self];
    [mdd release];

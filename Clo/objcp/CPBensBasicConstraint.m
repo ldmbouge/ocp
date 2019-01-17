@@ -14,52 +14,6 @@
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 
-//I think I'm missing some assignTRIds
-
-@implementation CPFiveGreater
-
--(id) initCPFiveGreater: (id<CPIntVar>) x and: (id<CPIntVar>) y
-{
-   self = [super initCPCoreConstraint: [x engine]];
-   _x = x[0];
-   _y = y[0];
-   return self;
-}
--(NSSet*)allVars
-{
-   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
-}
--(ORUInt)nbUVars
-{
-   return ![_x bound] + ![_y bound];
-}
-
--(void) post
-{
-   if (![_x bound] || ![_y bound]) {
-       [_x whenChangeBoundsPropagate: self];
-       [_y whenChangeBoundsPropagate: self];
-   }
-   [self propagate];
-}
-
--(void) propagate
-{
-    if (bound(_x))
-       bindDom(_y,minDom(_x) - 5);
-    else if (bound(_y))
-       bindDom(_x,minDom(_y) + 5);
-    else {
-       updateMinAndMaxOfDom(_x, minDom(_y)+5, maxDom(_y)+5);
-       updateMinAndMaxOfDom(_y, minDom(_x)-5, maxDom(_x)-5);
-    }
-}
--(NSString*)description
-{
-   return [NSMutableString stringWithFormat:@"<CPFiveGreater:%02d %@ == %@ + 5>",_name,_x,_y];
-}
-@end
-
 @implementation Node
 -(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents
 {
@@ -176,8 +130,7 @@
     if (_children[index] == NULL) {
         [self setNumChildren:_numChildren._val+1];
     }
-    _children[index] = child;
-    assignTRInt(&_numChildren, _numChildren._val, _trail);
+    assignTRId(&_children[index], child, _trail);
     if (_objectiveValues != nil) {
         assignTRInt(&_childEdgeWeights[index], [self getObjectiveValueFor: index], _trail);
     }
@@ -434,6 +387,14 @@
     [self mergeStateWith: other];
     [self takeParentsFrom: other];
 }
+-(bool) hasParent:(Node*)parent {
+    for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
+        if (_parents[parentIndex] == parent) {
+            return true;
+        }
+    }
+    return false;
+}
 -(void) takeParentsFrom:(Node*)other {
     for (int parentIndex = 0; parentIndex < [other numParents]; parentIndex++) {
         Node* parent = [other parents][parentIndex];
@@ -441,10 +402,11 @@
         int child_index = [parent findChildIndex: other];
         while(child_index != -1) {
             [parent addChild: self at:child_index];
-            
             child_index = [parent findChildIndex: other];
         }
-        [self addParent: parent];
+        if (![self hasParent: parent]) {    //Is this needed?  Not sure
+            [self addParent: parent];
+        }
     }
 }
 -(bool) canChooseValue:(int)value {
@@ -694,7 +656,7 @@
     [self createRootAndSink];
     
     for (int layer = 0; layer < [_x count]; layer++) {
-        if (_reduced) {
+        if (!_reduced) {    //Reduction is failing for some reason (relies on stateChar). Need to look into why.  Spent a couple days on it, but prioritising getting un-reduced results first.
             [self reduceLayer: layer];
         }
         [self cleanLayer: layer];
@@ -799,14 +761,14 @@
     
     for (int nodeIndex = 0; nodeIndex < layer_size[layer]._val; nodeIndex++) {
         Node* node= layers[layer][nodeIndex];
-        char* stateChar = [[node getState] stateChar] + [_x low];
+        char* stateChar = [[node getState] stateChar];
         
         NSString* stateKey = [NSString stringWithCString:stateChar encoding:NSASCIIStringEncoding];
-        
         
         if ([foundStates objectForKey:stateKey]) {
             [foundStates[stateKey] takeParentsFrom:node];
             [self removeChildlessNodeFromMDD:node trimmingVariables:false];
+            nodeIndex--;
         } else {
             [foundStates setObject:node forKey:stateKey];
         }
@@ -910,7 +872,7 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[_stateClass alloc] initState:variableValue domainMin: min_domain_val domainMax: max_domain_val];
+    return [[_stateClass alloc] initRootState:variableValue domainMin: min_domain_val domainMax: max_domain_val];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
@@ -948,8 +910,9 @@
             assignTRId(&layer[node_index], layer[finalNodeIndex], _trail);
             assignTRId(&layer[finalNodeIndex], NULL, _trail);
             assignTRInt(&layer_size[node_layer], finalNodeIndex,_trail);
-            node_index--;
-            currentLayerSize--;
+            //node_index--;
+            //currentLayerSize--;
+            return; //Each node sould only be on a given layer once, right?
         }
     }
 }
@@ -1178,31 +1141,51 @@
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced
 {
     self = [super initCPMDD:engine over:x reduced:reduced];
+    _relaxed = true;
     relaxed_size = relaxationSize;
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize
 {
     self = [super initCPMDD:engine over:x reduced:reduced objective:objective maximize:maximize];
+    _relaxed = true;
     relaxed_size = relaxationSize;
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
     self = [super initCPMDD:engine over:x stateClass:stateClass];
+    _relaxed = true;
+    relaxed_size = relaxationSize;
+    return self;
+}
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass
+{
+    self = [super initCPMDD:engine over:x stateClass:stateClass];
+    _relaxed = relaxed;
     relaxed_size = relaxationSize;
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass
 {
     self = [super initCPMDD:engine over:x reduced:reduced objective:objective maximize:maximize stateClass:stateClass];
+    _relaxed = true;
+    relaxed_size = relaxationSize;
+    return self;
+}
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass
+{
+    self = [super initCPMDD:engine over:x reduced:reduced objective:objective maximize:maximize stateClass:stateClass];
+    _relaxed = relaxed;
     relaxed_size = relaxationSize;
     return self;
 }
 -(void) cleanLayer:(int)layer
 {
-    while (layer_size[layer]._val > relaxed_size) {
-        [self mergeTwoNodesOnLayer: layer];
+    if (_relaxed) {
+        while (layer_size[layer]._val > relaxed_size) {
+            [self mergeTwoNodesOnLayer: layer];
+        }
     }
 }
 -(void) mergeTwoNodesOnLayer:(int)layer
@@ -1421,26 +1404,26 @@
 
 
 
-@implementation CPRelaxedCustomMDD
--(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize stateClass:(Class)stateClass
+@implementation CPCustomMDD
+-(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
-    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize stateClass:stateClass];
+    self = [super initCPMDDRelaxation:engine over:x relaxed:relaxed relaxationSize:relaxationSize stateClass:stateClass];
     return self;
 }
 -(NSString*)description
 {
-    return [NSMutableString stringWithFormat:@"<CPRelaxedCustomMDD:%02d %@>",_name,_x];
+    return [NSMutableString stringWithFormat:@"<CPCustomMDD:%02d %@>",_name,_x];
 }
 @end
 
-@implementation CPRelaxedCustomMDDWithObjective
--(id) initCPRelaxedCustomMDDWithObjective: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
+@implementation CPCustomMDDWithObjective
+-(id) initCPCustomMDDWithObjective: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
-    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:stateClass];
+    self = [super initCPMDDRelaxation:engine over:x relaxed:relaxed relaxationSize:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:stateClass];
     return self;
 }
 -(NSString*)description
 {
-    return [NSMutableString stringWithFormat:@"<CPRelaxedCustomMDDWithObjective:%02d %@>",_name,_x];
+    return [NSMutableString stringWithFormat:@"<CPCustomMDDWithObjective:%02d %@>",_name,_x];
 }
 @end

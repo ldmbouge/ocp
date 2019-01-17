@@ -115,11 +115,11 @@
     _result = [_into addConstraint:cstr];
 }
 
--(void) visitRelaxedCustomMDD: (id<ORRelaxedCustomMDD>) cstr
+-(void) visitCustomMDD: (id<ORCustomMDD>) cstr
 {
     _result = [_into addConstraint:cstr];
 }
--(void) visitRelaxedCustomMDDWithObjective: (id<ORRelaxedCustomMDDWithObjective>) cstr
+-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
 {
     _result = [_into addConstraint:cstr];
 }
@@ -241,6 +241,10 @@
       _result = [_into addConstraint:cstr];
    else
       _result = [_into addConstraint:[ORFactory alldifferent:cax]];
+}
+-(void) visitAmong: (id<ORAmong>) cstr
+{
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {

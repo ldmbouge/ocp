@@ -16,11 +16,6 @@
 @implementation ORVisitor
 
 
--(void) visitFiveGreater: (id<ORFiveGreater>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "FiveGreater: visit method not defined"];
-}
-
 -(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExactMDDAllDifferent: visit method not defined"];
@@ -52,13 +47,13 @@
 }
 
 
--(void) visitRelaxedCustomMDD: (id<ORRelaxedCustomMDD>)c
+-(void) visitCustomMDD: (id<ORCustomMDD>)c
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedCustomMDD: visit method not defined"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDD: visit method not defined"];
 }
--(void) visitRelaxedCustomMDDWithObjective: (id<ORRelaxedCustomMDD>)c
+-(void) visitCustomMDDWithObjective: (id<ORCustomMDD>)c
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedCustomMDDWithObjective: visit method not defined"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDDWithObjective: visit method not defined"];
 }
 
 -(void) visitRandomStream:(id) v
@@ -176,6 +171,10 @@
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: visit method not defined"]; 
+}
+-(void) visitAmong: (id<ORAmong>) cstr
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "Among: visit method not defined"];
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {
@@ -806,6 +805,7 @@
 -(void) visitFail:(id<ORFail>)cstr  {}
 -(void) visitRestrict:(id<ORRestrict>)cstr  {}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr  {}
+-(void) visitAmong: (id<ORAmong>) cstr  {}
 -(void) visitRegular:(id<ORRegular>) cstr {}
 -(void) visitCardinality: (id<ORCardinality>) cstr  {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr  {}

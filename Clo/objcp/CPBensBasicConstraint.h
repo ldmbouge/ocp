@@ -21,22 +21,10 @@
 @class CPBitDom;
 @protocol CPIntVarArray;
 
-@interface CPFiveGreater : CPCoreConstraint {
-@private
-   CPIntVar*  _x;
-   CPIntVar*  _y;
-}
--(id) initCPFiveGreater: (id<CPIntVar>) x and: (id<CPIntVar>) y;
--(void) post;
--(void) propagate;
--(NSSet*)allVars;
--(ORUInt)nbUVars;
-@end
-
 @interface Node : NSObject {
 @private
     TRInt* _childEdgeWeights;
-    Node* *_children;
+    TRId* _children;
     TRInt _numChildren;
     int _minChildIndex;
     int _maxChildIndex;
@@ -207,11 +195,14 @@
 
 @interface CPMDDRelaxation : CPMDD {
 @private
+    bool _relaxed;
     int relaxed_size;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass;
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize;
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
 -(void) mergeTwoNodesOnLayer:(int)layer;
 -(void) findNodesToMerge:(int)layer first:(Node**)first second:(Node**)second;
 @end
@@ -255,10 +246,10 @@
 -(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue;
 @end
 
-@interface CPRelaxedCustomMDD : CPMDDRelaxation
--(id) initCPRelaxedCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize stateClass:(Class)stateClass;
+@interface CPCustomMDD : CPMDDRelaxation
+-(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
 @end
 
-@interface CPRelaxedCustomMDDWithObjective : CPMDDRelaxation
--(id) initCPRelaxedCustomMDDWithObjective: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
+@interface CPCustomMDDWithObjective : CPMDDRelaxation
+-(id) initCPCustomMDDWithObjective: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
 @end

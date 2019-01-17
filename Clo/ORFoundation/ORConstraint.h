@@ -404,11 +404,11 @@ enum ORGroupType {
 -(id<ORExprArray>) array;
 @end
 
-
-
-@protocol ORFiveGreater <ORConstraint>
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
+@protocol ORAmong <ORConstraint>
+-(id<ORExprArray>) array;
+-(id<ORIntSet>) values;
+-(ORInt) low;
+-(ORInt) up;
 @end
 
 @protocol ORExactMDDAllDifferent <ORConstraint>
@@ -454,16 +454,18 @@ enum ORGroupType {
 -(id<ORIntArray>) weights;
 @end
 
-@protocol ORRelaxedCustomMDD <ORConstraint>
+@protocol ORCustomMDD <ORConstraint>
 -(id<ORIntVarArray>) vars;
+-(bool) relaxed;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
 @end
 
-@protocol ORRelaxedCustomMDDWithObjective <ORConstraint>
+@protocol ORCustomMDDWithObjective <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(id<ORIntVar>) objective;
 -(ORInt) relaxationSize;
+-(bool) relaxed;
 -(bool) reduced;
 -(bool) maximize;
 -(Class) stateClass;

@@ -18,12 +18,6 @@
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORVisit.h>
 
-@interface ORFiveGreater : ORConstraintI<ORFiveGreater>
--(ORFiveGreater*)initORFiveGreater:(id<ORIntVar>)x and:(id<ORIntVar>)y;
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
-@end
-
 @interface ORExactMDDAllDifferent : ORConstraintI<ORExactMDDAllDifferent>
 -(ORExactMDDAllDifferent*)initORExactMDDAllDifferent:(id<ORIntVarArray>)x reduced:(bool)reduced;
 -(id<ORIntVarArray>) vars;
@@ -75,14 +69,14 @@
 @end
 
 
-@interface ORRelaxedCustomMDD : ORConstraintI<ORRelaxedCustomMDD>
--(ORRelaxedCustomMDD*)initORRelaxedCustomMDD:(id<ORIntVarArray>)x size:(ORInt)relaxationSize stateClass:(Class)stateClass;
+@interface ORCustomMDD : ORConstraintI<ORCustomMDD>
+-(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
 @end
-@interface ORRelaxedCustomMDDWithObjective : ORConstraintI<ORRelaxedCustomMDD>
--(ORRelaxedCustomMDD*)initORRelaxedCustomMDDWithObjective:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
+@interface ORCustomMDDWithObjective : ORConstraintI<ORCustomMDD>
+-(ORCustomMDD*)initORCustomMDDWithObjective:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
 -(id<ORIntVarArray>) vars;
 -(id<ORIntVar>) objective;
 -(ORInt) relaxationSize;
@@ -490,6 +484,11 @@
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x;
+-(id<ORExprArray>) array;
+@end
+
+@interface ORAmongI : ORConstraintI<ORAmong>
+-(ORAmongI*) initORAmongI: (id<ORExprArray>) x values:(id<ORIntSet>) values low: (ORInt) low up: (ORInt) up;
 -(id<ORExprArray>) array;
 @end
 

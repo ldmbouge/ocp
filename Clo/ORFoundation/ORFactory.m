@@ -924,13 +924,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 // =====================================================================================================================
 
 @implementation ORFactory (Constraints)
-+(id<ORConstraint>) fiveGreater:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y
-{
-   id<ORConstraint> o = [[ORFiveGreater alloc] initORFiveGreater:x and:y ];
-   [model trackObject:o];
-   return o;
-}
-
 +(id<ORConstraint>) ExactMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced
 {
     id<ORConstraint> o = [[ORExactMDDAllDifferent alloc] initORExactMDDAllDifferent:x reduced:reduced];
@@ -975,21 +968,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 
 
-+(id<ORConstraint>) RelaxedCustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize stateClass:(Class)stateClass
++(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
-    id<ORConstraint> o = [[ORRelaxedCustomMDD alloc] initORRelaxedCustomMDD:x size:relaxationSize stateClass:stateClass];
+    id<ORConstraint> o = [[ORCustomMDD alloc] initORCustomMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
     [model trackObject:o];
     return o;
 }
-+(id<ORConstraint>) RelaxedCustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
++(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
-    id<ORConstraint> o = [[ORRelaxedCustomMDDWithObjective alloc] initORRelaxedCustomMDDWithObjective:x size:relaxationSize reduced:true objective:objectiveValue maximize:maximize stateClass:stateClass];
-    [model trackObject:o];
-    return o;
-}
-+(id<ORConstraint>) RelaxedCustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
-{
-    id<ORConstraint> o = [[ORRelaxedCustomMDDWithObjective alloc] initORRelaxedCustomMDDWithObjective:x size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:stateClass];
+    id<ORConstraint> o = [[ORCustomMDDWithObjective alloc] initORCustomMDDWithObjective:x relaxed:(bool)relaxed size:relaxationSize reduced:true objective:objectiveValue maximize:maximize stateClass:stateClass];
     [model trackObject:o];
     return o;
 }
@@ -1421,6 +1408,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x];
    [[x tracker] trackObject:o];
    return o;
+}
++(id<ORConstraint>) among: (id<ORExprArray>) x values: (id<ORIntSet>) values low: (ORInt) low up: (ORInt) up
+{
+    id<ORConstraint> o = [[ORAmongI alloc] initORAmongI:x values: values low: low up: up];
+    [[x tracker] trackObject:o];
+    return o;
 }
 +(id<ORConstraint>) regular:(id<ORIntVarArray>) x belongs:(id<ORAutomaton>)a
 {

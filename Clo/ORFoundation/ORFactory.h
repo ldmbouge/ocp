@@ -253,9 +253,8 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
 +(id<ORConstraint>) RestrictedMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
 +(id<ORConstraint>) RelaxedMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
-+(id<ORConstraint>) RelaxedCustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize stateClass:(Class)stateClass;
-+(id<ORConstraint>) RelaxedCustomMDDWithObjective:(id<ORTracker>)model var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize objective:(id<ORIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
-+(id<ORConstraint>) RelaxedCustomMDDWithObjective:(id<ORTracker>)model var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
++(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
++(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
 
 
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
@@ -282,6 +281,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;
 +(id<ORSoftConstraint>) softKnapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c slack: (id<ORVar>) slack;
 +(id<ORConstraint>) alldifferent: (id<ORExprArray>) x;
++(id<ORConstraint>) among: (id<ORExprArray>) x values: (id<ORIntSet>) values low: (ORInt) low up: (ORInt) up;
 +(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
 +(id<ORConstraint>) algebraicConstraint: (id<ORTracker>) model expr: (id<ORRelation>) exp;
 +(id<ORConstraint>) tableConstraint: (id<ORIntVarArray>) x table: (id<ORTable>) table;

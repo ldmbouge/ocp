@@ -54,7 +54,7 @@ PORTABLE_BEGIN
 -(NSArray*) mutables;
 -(NSArray*) immutables;
 // pvh: this should go
--(id<ORModel>) mddify;
+-(id<ORModel>) mddify:(PNULLABLE id<ORAnnotation>)notes;
 -(id<ORModel>) flatten:(PNULLABLE id<ORAnnotation>)notes;
 -(id<ORModel>) lsflatten:(PNULLABLE id<ORAnnotation>)notes;
 -(id<ORModel>) lpflatten:(PNULLABLE id<ORAnnotation>)notes;

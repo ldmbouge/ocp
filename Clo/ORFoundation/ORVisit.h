@@ -25,6 +25,7 @@
 @protocol ORObjectiveFunctionLinear;
 @protocol ORRestrict;
 @protocol ORAlldifferent;
+@protocol ORAmong;
 @protocol ORRegular;
 @protocol ORCardinality;
 @protocol ORAlgebraicConstraint;
@@ -44,7 +45,6 @@
 @protocol ORObjectiveFunction;
 @protocol ORRealEqualc;
 @protocol ORRealRange;
-@protocol ORFiveGreater;
 @protocol ORIntParam;
 @protocol ORRealParam;
 
@@ -81,6 +81,7 @@
 -(void) visitFail:(id<ORFail>)cstr;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
+-(void) visitAmong: (id<ORAmong>) cstr;
 -(void) visitRegular:(id<ORRegular>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
@@ -105,16 +106,14 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 
--(void) visitFiveGreater: (id<ORConstraint>)c;
-
 -(void) visitExactMDDAllDifferent: (id<ORConstraint>) c;
 -(void) visitRestrictedMDDAllDifferent: (id<ORConstraint>) c;
 -(void) visitRelaxedMDDAllDifferent: (id<ORConstraint>) c;
 -(void) visitExactMDDMISP: (id<ORConstraint>) c;
 -(void) visitRestrictedMDDMISP: (id<ORConstraint>) c;
 -(void) visitRelaxedMDDMISP: (id<ORConstraint>) c;
--(void) visitRelaxedCustomMDD: (id<ORConstraint>) c;
--(void) visitRelaxedCustomMDDWithObjective: (id<ORConstraint>) c;
+-(void) visitCustomMDD: (id<ORConstraint>) c;
+-(void) visitCustomMDDWithObjective: (id<ORConstraint>) c;
 
 
 -(void) visitRealEqualc: (id<ORRealEqualc>)c;
