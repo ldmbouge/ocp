@@ -18,6 +18,74 @@
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORVisit.h>
 
+@interface ORExactMDDAllDifferent : ORConstraintI<ORExactMDDAllDifferent>
+-(ORExactMDDAllDifferent*)initORExactMDDAllDifferent:(id<ORIntVarArray>)x reduced:(bool)reduced;
+-(id<ORIntVarArray>) vars;
+-(bool) reduced;
+@end
+
+@interface ORRestrictedMDDAllDifferent : ORConstraintI<ORRestrictedMDDAllDifferent>
+-(ORRestrictedMDDAllDifferent*)initORRestrictedMDDAllDifferent:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced;
+-(id<ORIntVarArray>) vars;
+-(ORInt) restrictionSize;
+-(bool) reduced;
+@end
+
+@interface ORRelaxedMDDAllDifferent : ORConstraintI<ORRelaxedMDDAllDifferent>
+-(ORRelaxedMDDAllDifferent*)initORRelaxedMDDAllDifferent:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced;
+-(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+@end
+
+
+@interface ORExactMDDMISP : ORConstraintI<ORExactMDDMISP>
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
+@end
+
+@interface ORRestrictedMDDMISP : ORConstraintI<ORRestrictedMDDMISP>
+-(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(ORInt) restrictionSize;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
+@end
+
+@interface ORRelaxedMDDMISP : ORConstraintI<ORRelaxedMDDMISP>
+-(ORRelaxedMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
+@end
+
+
+@interface ORCustomMDD : ORConstraintI<ORCustomMDD>
+-(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
+-(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(Class) stateClass;
+@end
+@interface ORCustomMDDWithObjective : ORConstraintI<ORCustomMDD>
+-(ORCustomMDD*)initORCustomMDDWithObjective:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+-(bool) maximize;
+-(Class) stateClass;
+@end
+
+
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)g;
@@ -416,6 +484,11 @@
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x;
+-(id<ORExprArray>) array;
+@end
+
+@interface ORAmongI : ORConstraintI<ORAmong>
+-(ORAmongI*) initORAmongI: (id<ORExprArray>) x values:(id<ORIntSet>) values low: (ORInt) low up: (ORInt) up;
 -(id<ORExprArray>) array;
 @end
 

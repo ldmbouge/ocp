@@ -29,6 +29,7 @@
 #import "CPRealConstraint.h"
 #import "CPIntSetConstraint.h"
 
+#import "CPBensBasicConstraint.h"
 
 @implementation CPFactory (Constraint)
 
@@ -99,6 +100,10 @@
    [[x tracker] trackMutable: o];
    return o;
    
+}
++(id<ORConstraint>) among: (id<CPEngine>) engine over: (id<CPIntVarArray>) x values:(id<ORIntSet>)values low:(ORInt)low up:(ORInt)up
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "Among Not Implemented"];
 }
 // cardinality
 +(id<ORConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
@@ -626,6 +631,62 @@
    id<ORConstraint> o = [[CPRelaxation alloc] initCPRelaxation: mv var: cv relaxation: relaxation];
    [[cv[0] tracker] trackMutable:o];
    return o;
+}
+
++(id<CPConstraint>) ExactMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced
+{
+    id<CPConstraint> o = [[CPExactMDDAllDifferent alloc] initCPExactMDDAllDifferent: cp over: x reduced:reduced];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) RelaxedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced
+{
+    id<CPConstraint> o = [[CPRelaxedMDDAllDifferent alloc] initCPRelaxedMDDAllDifferent:cp over: x relaxationSize:relaxationSize reduced:reduced];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) RestrictedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced
+{
+    id<CPConstraint> o = [[CPRestrictedMDDAllDifferent alloc] initCPRestrictedMDDAllDifferent: cp over: x restrictionSize:restrictionSize reduced:reduced];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) ExactMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue
+{
+    id<CPConstraint> o = [[CPExactMDDMISP alloc] initCPExactMDDMISP: cp over: x reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) RestrictedMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue
+{
+    id<CPConstraint> o = [[CPRestrictedMDDMISP alloc] initCPRestrictedMDDMISP: cp over: x size:restrictionSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
++(id<CPConstraint>) RelaxedMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue
+{
+    id<CPConstraint> o = [[CPRelaxedMDDMISP alloc] initCPRelaxedMDDMISP: cp over: x size:relaxationSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+
+
++(id<CPConstraint>) CustomMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
+{
+    id<CPConstraint> o = [[CPCustomMDD alloc] initCPCustomMDD: cp over: x relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) CustomMDDWithObjective: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
+{
+    id<CPConstraint> o = [[CPCustomMDDWithObjective alloc] initCPCustomMDDWithObjective: cp over: x relaxed:relaxed size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:(Class)stateClass];
+    [[x tracker] trackMutable:o];
+    return o;
 }
 @end
 

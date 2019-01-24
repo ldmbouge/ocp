@@ -926,6 +926,64 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 // =====================================================================================================================
 
 @implementation ORFactory (Constraints)
++(id<ORConstraint>) ExactMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced
+{
+    id<ORConstraint> o = [[ORExactMDDAllDifferent alloc] initORExactMDDAllDifferent:x reduced:reduced];
+    [model trackObject:o];
+    return o;
+}
+
++(id<ORConstraint>) RestrictedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced
+{
+    id<ORConstraint> o = [[ORRestrictedMDDAllDifferent alloc] initORRestrictedMDDAllDifferent:x size: restrictionSize reduced:reduced];
+    [model trackObject:o];
+    return o;
+}
+
++(id<ORConstraint>) RelaxedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced
+{
+    id<ORConstraint> o = [[ORRelaxedMDDAllDifferent alloc] initORRelaxedMDDAllDifferent:x size:relaxationSize reduced:reduced];
+    [model trackObject:o];
+    return o;
+}
+
+
++(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
+{
+    id<ORConstraint> o = [[ORExactMDDMISP alloc] initORExactMDDMISP:x reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
+    [model trackObject:o];
+    return o;
+}
+
++(id<ORConstraint>) RestrictedMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
+{
+    id<ORConstraint> o = [[ORRestrictedMDDMISP alloc] initORRestrictedMDDMISP:x size:restrictionSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
+    [model trackObject:o];
+    return o;
+}
+
++(id<ORConstraint>) RelaxedMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
+{
+    id<ORConstraint> o = [[ORRelaxedMDDMISP alloc] initORRelaxedMDDMISP:x size:relaxationSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
+    [model trackObject:o];
+    return o;
+}
+
+
++(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
+{
+    id<ORConstraint> o = [[ORCustomMDD alloc] initORCustomMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
+{
+    id<ORConstraint> o = [[ORCustomMDDWithObjective alloc] initORCustomMDDWithObjective:x relaxed:(bool)relaxed size:relaxationSize reduced:true objective:objectiveValue maximize:maximize stateClass:stateClass];
+    [model trackObject:o];
+    return o;
+}
+
+
 +(id<ORConstraint>) fail:(id<ORTracker>)model
 {
    id<ORConstraint> o = [[ORFail alloc] init];
@@ -1353,6 +1411,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker] trackObject:o];
    return o;
 }
++(id<ORConstraint>) among: (id<ORExprArray>) x values: (id<ORIntSet>) values low: (ORInt) low up: (ORInt) up
+{
+    id<ORConstraint> o = [[ORAmongI alloc] initORAmongI:x values: values low: low up: up];
+    [[x tracker] trackObject:o];
+    return o;
+}
 +(id<ORConstraint>) regular:(id<ORIntVarArray>) x belongs:(id<ORAutomaton>)a
 {
    id<ORConstraint> o = [[ORRegularI alloc] init:x for:a];
@@ -1696,7 +1760,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker]trackObject:o];
    return o;
 }
-
 @end
 
 

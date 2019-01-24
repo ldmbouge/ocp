@@ -15,6 +15,47 @@
 
 @implementation ORVisitor
 
+
+-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExactMDDAllDifferent: visit method not defined"];
+}
+
+-(void) visitRelaxedMDDAllDifferent: (id<ORRelaxedMDDAllDifferent>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedMDDAllDifferent: visit method not defined"];
+}
+
+-(void) visitRestrictedMDDAllDifferent: (id<ORRestrictedMDDAllDifferent>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "RestrictedMDDAllDifferent: visit method not defined"];
+}
+
+-(void) visitExactMDDMISP: (id<ORExactMDDMISP>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExactMDDMISP: visit method not defined"];
+}
+
+-(void) visitRestrictedMDDMISP: (id<ORRestrictedMDDMISP>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "RestrictedMDDMISP: visit method not defined"];
+}
+
+-(void) visitRelaxedMDDMISP: (id<ORRelaxedMDDMISP>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedMDDMISP: visit method not defined"];
+}
+
+
+-(void) visitCustomMDD: (id<ORCustomMDD>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDD: visit method not defined"];
+}
+-(void) visitCustomMDDWithObjective: (id<ORCustomMDD>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDDWithObjective: visit method not defined"];
+}
+
 -(void) visitRandomStream:(id) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RandomStream: visit method not defined"];
@@ -130,6 +171,10 @@
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: visit method not defined"]; 
+}
+-(void) visitAmong: (id<ORAmong>) cstr
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "Among: visit method not defined"];
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {
@@ -760,6 +805,7 @@
 -(void) visitFail:(id<ORFail>)cstr  {}
 -(void) visitRestrict:(id<ORRestrict>)cstr  {}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr  {}
+-(void) visitAmong: (id<ORAmong>) cstr  {}
 -(void) visitRegular:(id<ORRegular>) cstr {}
 -(void) visitCardinality: (id<ORCardinality>) cstr  {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr  {}
@@ -784,6 +830,7 @@
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e {}
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o {}
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o {}
+
 
 -(void) visitEqualc: (id<OREqualc>)c  {}
 -(void) visitNEqualc: (id<ORNEqualc>)c  {}

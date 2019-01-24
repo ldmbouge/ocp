@@ -22,6 +22,11 @@ typedef enum {
    Default
 } ORCLevel;
 
+typedef enum {
+    DDWidth,
+    DDRelaxed
+} GenericIndex;
+
 @protocol ORAnnotation <NSObject,NSCopying>
 -(ORCLevel) levelFor:(id<ORConstraint>)cstr;
 -(id)copy;
@@ -33,7 +38,10 @@ typedef enum {
 -(id<ORConstraint>) cstr: (id<ORConstraint>) cstr consistency: (ORCLevel) cl;
 -(id<ORConstraint>) hard:(id<ORConstraint>) cstr;
 -(void) alldifferent: (ORCLevel) cl;
+-(void) ddWidth: (ORInt) width;
+-(void) ddRelaxed: (bool) relaxed;
 
+-(ORInt) findGeneric:(GenericIndex) index;
 -(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr;
 -(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) o;
 @end
@@ -52,4 +60,10 @@ typedef enum {
 -(ORCLevel)level;
 @end
 
-
+@interface ORValue : NSObject<ORNote> {
+    ORInt _value;
+}
+-(id)init;
+-(id)initWith:(ORInt)value;
+-(ORInt)value;
+@end

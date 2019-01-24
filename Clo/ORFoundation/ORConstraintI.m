@@ -15,6 +15,444 @@
 #import "ORConstraintI.h"
 #import "ORParameterI.h"
 
+@implementation ORExactMDDAllDifferent {
+   id<ORIntVarArray> _x;
+   bool _reduced;
+}
+-(ORExactMDDAllDifferent*)initORExactMDDAllDifferent:(id<ORIntVarArray>)x reduced:(bool)reduced
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _reduced = reduced;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitExactMDDAllDifferent:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORRestrictedMDDAllDifferent {
+   id<ORIntVarArray> _x;
+   ORInt _restrictionSize;
+   bool _reduced;
+}
+-(ORRestrictedMDDAllDifferent*)initORRestrictedMDDAllDifferent:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _restrictionSize = restrictionSize;
+   _reduced = reduced;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRestrictedMDDAllDifferent:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(ORInt) restrictionSize
+{
+   return _restrictionSize;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORRelaxedMDDAllDifferent {
+   id<ORIntVarArray> _x;
+   ORInt _relaxationSize;
+   bool _reduced;
+}
+-(ORRelaxedMDDAllDifferent*)initORRelaxedMDDAllDifferent:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _relaxationSize = relaxationSize;
+   _reduced = reduced;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRelaxedMDDAllDifferent:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+
+@implementation ORExactMDDMISP {
+   id<ORIntVarArray> _x;
+   id<ORIntVar> _objective;
+   bool _reduced;
+   bool** _adjacencyMatrix;
+   id<ORIntArray> _weights;
+}
+-(ORExactMDDMISP*)initORExactMDDMISP:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _objective = objectiveValue;
+   _reduced = reduced;
+   _adjacencyMatrix = adjacencyMatrix;
+   _weights = weights;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitExactMDDMISP:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(id<ORIntVar>) objective
+{
+   return _objective;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(bool**) adjacencyMatrix
+{
+   return _adjacencyMatrix;
+}
+-(id<ORIntArray>) weights
+{
+   return _weights;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORRestrictedMDDMISP {
+   id<ORIntVarArray> _x;
+   id<ORIntVar> _objective;
+   ORInt _restrictionSize;
+   bool _reduced;
+   bool** _adjacencyMatrix;
+   id<ORIntArray> _weights;
+}
+-(ORRestrictedMDDMISP*)initORRestrictedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _objective = objectiveValue;
+   _restrictionSize = restrictionSize;
+   _reduced = reduced;
+   _adjacencyMatrix = adjacencyMatrix;
+   _weights = weights;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRestrictedMDDMISP:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(id<ORIntVar>) objective
+{
+   return _objective;
+}
+-(ORInt) restrictionSize
+{
+   return _restrictionSize;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(bool**) adjacencyMatrix
+{
+   return _adjacencyMatrix;
+}
+-(id<ORIntArray>) weights
+{
+   return _weights;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORRelaxedMDDMISP {
+   id<ORIntVarArray> _x;
+   id<ORIntVar> _objective;
+   ORInt _relaxationSize;
+   bool _reduced;
+   bool** _adjacencyMatrix;
+   id<ORIntArray> _weights;
+}
+-(ORRelaxedMDDMISP*)initORRelaxedMDDMISP:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<ORIntVar>)objectiveValue
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _objective = objectiveValue;
+   _relaxationSize = relaxationSize;
+   _reduced = reduced;
+   _adjacencyMatrix = adjacencyMatrix;
+   _weights = weights;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRelaxedMDDMISP:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(id<ORIntVar>) objective
+{
+   return _objective;
+}
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(bool**) adjacencyMatrix
+{
+   return _adjacencyMatrix;
+}
+-(id<ORIntArray>) weights
+{
+   return _weights;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+
+
+@implementation ORCustomMDD {
+   id<ORIntVarArray> _x;
+   bool _relaxed;
+   ORInt _relaxationSize;
+   Class _stateClass;
+}
+-(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _relaxed = relaxed;
+   _relaxationSize = relaxationSize;
+   _stateClass = stateClass;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitCustomMDD:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) relaxed { return _relaxed; }
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(Class) stateClass
+{
+   return _stateClass;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORCustomMDDWithObjective {
+   id<ORIntVarArray> _x;
+   id<ORIntVar> _objective;
+   bool _relaxed;
+   ORInt _relaxationSize;
+   bool _reduced;
+   bool _maximize;
+   Class _stateClass;
+}
+-(ORCustomMDDWithObjective*)initORCustomMDDWithObjective:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _objective = objectiveValue;
+   _relaxed = relaxed;
+   _relaxationSize = relaxationSize;
+   _reduced = reduced;
+   _maximize = maximize;
+   _stateClass = stateClass;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitCustomMDDWithObjective:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(id<ORIntVar>) objective
+{
+   return _objective;
+}
+-(bool) relaxed { return _relaxed; }
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(bool) reduced
+{
+   return _reduced;
+}
+-(bool) maximize
+{
+   return _maximize;
+}
+-(Class) stateClass
+{
+   return _stateClass;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+
 
 @interface ORAlphaVisit : ORVisitor {
    id<ORVarArray> _map;
@@ -3029,6 +3467,63 @@
    return _av;
 }
 @end
+
+
+@implementation ORAmongI {
+   id<ORExprArray> _x;
+   NSSet*         _av;
+   
+   id<ORIntSet> _values;
+   ORInt _low, _up;
+}
+-(ORAmongI*) initORAmongI: (id<ORExprArray>) x values:(id<ORIntSet>)values low:(ORInt)low up:(ORInt)up
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _av = nil;
+   _values = values;
+   _low = low;
+   _up = up;
+   return self;
+}
+-(void)dealloc
+{
+   [_av release];
+   [super dealloc];
+}
+-(id<ORExprArray>) array
+{
+   return _x;
+}
+-(id<ORIntSet>) values { return _values; }
+-(ORInt) low { return _low; }
+-(ORInt) up { return _up; }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORAmongI: %p IS [ ",self];
+   for(ORInt i = [_x low];i <= [_x up];i++) {
+      [buf appendFormat:@"%@%c",_x[i],i < [_x up] ? ',' : ' '];
+   }
+   [buf appendString:@"]>"];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitAmong:self];
+}
+-(NSSet*)allVars
+{
+   if (_av == nil) {
+      NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+      for(id<ORExpr> e in _x)
+         [ms addObject:e];
+      _av = [ms retain];
+   }
+   return _av;
+}
+@end
+
 
 @implementation ORRegularI {
    id<ORIntVarArray>    _x;

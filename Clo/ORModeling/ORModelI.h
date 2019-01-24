@@ -69,6 +69,7 @@
 -(id<ORModel>)source;
 
 -(id<ORModel>) relaxConstraints: (NSArray*) cstrs;
+-(id<ORModel>) mddify;
 -(id<ORModel>) flatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) lsflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;

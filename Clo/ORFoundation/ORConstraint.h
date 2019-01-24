@@ -404,6 +404,73 @@ enum ORGroupType {
 -(id<ORExprArray>) array;
 @end
 
+@protocol ORAmong <ORConstraint>
+-(id<ORExprArray>) array;
+-(id<ORIntSet>) values;
+-(ORInt) low;
+-(ORInt) up;
+@end
+
+@protocol ORExactMDDAllDifferent <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(bool) reduced;
+@end
+
+@protocol ORRestrictedMDDAllDifferent <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(ORInt)restrictionSize;
+-(bool) reduced;
+@end
+
+@protocol ORRelaxedMDDAllDifferent <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+@end
+
+@protocol ORExactMDDMISP <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
+@end
+
+@protocol ORRestrictedMDDMISP <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(ORInt) restrictionSize;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
+@end
+
+@protocol ORRelaxedMDDMISP <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(ORInt) relaxationSize;
+-(bool) reduced;
+-(bool**) adjacencyMatrix;
+-(id<ORIntArray>) weights;
+@end
+
+@protocol ORCustomMDD <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(bool) relaxed;
+-(ORInt) relaxationSize;
+-(Class) stateClass;
+@end
+
+@protocol ORCustomMDDWithObjective <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(id<ORIntVar>) objective;
+-(ORInt) relaxationSize;
+-(bool) relaxed;
+-(bool) reduced;
+-(bool) maximize;
+-(Class) stateClass;
+@end
+
 @protocol ORRegular<ORConstraint>
 -(id<ORIntVarArray>) array;
 -(id<ORAutomaton>)automaton;

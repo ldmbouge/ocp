@@ -87,6 +87,44 @@
    }];
 }
 
+-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
+-(void) visitRelaxedMDDAllDifferent: (id<ORRelaxedMDDAllDifferent>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
+-(void) visitRestrictedMDDAllDifferent: (id<ORRestrictedMDDAllDifferent>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
+-(void) visitExactMDDMISP: (id<ORExactMDDMISP>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+-(void) visitRestrictedMDDMISP: (id<ORRestrictedMDDMISP>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+-(void) visitRelaxedMDDMISP: (id<ORRelaxedMDDMISP>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
+-(void) visitCustomMDD: (id<ORCustomMDD>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
+
 -(void) visitIntVar: (id) v
 {
    _result = v;
@@ -203,6 +241,10 @@
       _result = [_into addConstraint:cstr];
    else
       _result = [_into addConstraint:[ORFactory alldifferent:cax]];
+}
+-(void) visitAmong: (id<ORAmong>) cstr
+{
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {

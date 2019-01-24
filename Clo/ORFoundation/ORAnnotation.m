@@ -24,6 +24,7 @@
 @implementation ORAnnotation {
    NSMutableDictionary* _cstr;
    NSMutableDictionary* _classCstr;
+   NSMutableDictionary* _generic;
 }
 
 -(id) init
@@ -31,6 +32,7 @@
    self = [super init];
    _classCstr = [[NSMutableDictionary alloc] initWithCapacity:16];
    _cstr = [[NSMutableDictionary alloc] initWithCapacity:16];
+   _generic = [[NSMutableDictionary alloc] initWithCapacity:16];
    return self;
 }
 
@@ -38,6 +40,7 @@
 {
    [_classCstr release];
    [_cstr release];
+   [_generic release];
    [super dealloc];
 }
 
@@ -56,6 +59,11 @@
    }
    [na addObject: n];
    [k release];
+}
+
+-(void) addGeneric: (GenericIndex) index note: (id<ORNote>) n
+{
+    [_generic setObject:n forKey: [[NSNumber alloc] initWithInt: index]];
 }
 
 -(void) addClassCstr: (id) ocl note: (id<ORNote>) n
@@ -92,6 +100,19 @@
    id<ORNote> n = [[ORConsistency alloc] initWith: cl];
    [self addClassCstr: ocl note: n];
    [n release];
+}
+
+-(void) genericConstraint: (GenericIndex) index value: (ORInt) value
+{
+    id<ORNote> n = [[ORValue alloc] initWith: value];
+    [self addGeneric: index note: n];
+    [n release];
+}
+
+-(ORInt) findGeneric: (GenericIndex) index
+{
+    id<ORNote> genericValue = (id<ORNote>)[_generic objectForKey:[[NSNumber alloc] initWithInt: index]];
+    return [genericValue value];
 }
 
 -(id<ORNote>) findConstraintClassNote: (id<ORConstraint>) cstr ofClass: (Class) nc
@@ -172,6 +193,18 @@
    return [self classNoteConstraint: [ORAlldifferentI class] consistency: cl];
 }
 
+-(void) ddWidth: (ORInt) width
+{
+    GenericIndex index = DDWidth;
+    [self genericConstraint: index value: width];
+}
+
+-(void) ddRelaxed: (bool) relaxed
+{
+    GenericIndex index = DDRelaxed;
+    [self genericConstraint: index value: relaxed];
+}
+
 -(NSString*) description
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
@@ -216,6 +249,33 @@
    static const char* names[] = {"dom","rng","val","relax","hard","soft","def"};
    [buf appendFormat:@"c=%s",names[_cLevel]];
    return buf;
+}
+@end
+
+@implementation ORValue
+-(id)init
+{
+    self = [super init];
+    _value = 0;
+    return self;
+}
+-(id)initWith: (ORInt)value
+{
+    self = [super init];
+    _value = value;
+    return self;
+}
+- (id) copyWithZone: (NSZone *) zone
+{
+    return [[ORValue allocWithZone:zone] initWith: _value];
+}
+-(ORInt) value
+{
+    return _value;
+}
+-(NSString*)description
+{
+    return [NSString stringWithFormat:@"%d", _value];
 }
 @end
 

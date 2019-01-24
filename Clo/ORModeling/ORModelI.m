@@ -20,6 +20,7 @@
 #import "ORFlatten.h"
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
+#import "ORMDDify.h"
 
 #import <objc/runtime.h>
 
@@ -582,6 +583,19 @@
     id<ORModel> relaxation = [[ORModelI alloc] initWithModel: self relax: cstrs];
     return relaxation;
 }
+
+
+-(id<ORModel>) mddify:(id<ORAnnotation>)ncpy {
+   id<ORModel> mddModel = [ORFactory createModel:_nbObjects mappings:_mappings];
+   id<ORAddToModel> batch = [ORFactory createBatchModel:mddModel source:self annotation: ncpy];
+   id<ORModelTransformation> mdd = [ORFactory createMDDifier:batch];
+   [mdd apply: self with: ncpy];
+   [batch release];
+   [mddModel setSource:self];
+   [mdd release];
+   return mddModel;
+}
+
 -(id<ORModel>) flatten:(id<ORAnnotation>)ncpy
 {
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];

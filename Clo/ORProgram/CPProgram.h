@@ -173,6 +173,10 @@ PORTABLE_BEGIN
 -(ORDouble) paramValue: (id<ORRealParam>)p;
 -(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;
 
+
+-(ORInt) MDDRecommendationFor:(ORInt) variableIndex;
+
+
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
 -(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x;

@@ -17,6 +17,7 @@
 #import <objcp/CPBitConstraint.h>
 #import <ORFoundation/ORVisit.h>
 
+
 @implementation ORCPConcretizer
 
 -(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes
@@ -340,6 +341,18 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
+}
+-(void) visitAmong: (id<ORAmong>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray> cax = [self concreteArray:(id)[cstr array]];
+        id<ORIntSet> values = [cstr values];
+        ORInt low = [cstr low];
+        ORInt up = [cstr up];
+        id<CPConstraint> concreteCstr = [CPFactory among: _engine over: cax values:values low:low up:up];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {
@@ -1758,8 +1771,108 @@
 {}
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {}
-@end
 
+-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPConstraint> concreteCstr = [CPFactory ExactMDDAllDifferent:_engine over: a reduced:[cstr reduced]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+-(void) visitRelaxedMDDAllDifferent: (id<ORRelaxedMDDAllDifferent>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPConstraint> concreteCstr = [CPFactory RelaxedMDDAllDifferent:_engine over: a relaxationSize:[cstr relaxationSize] reduced:[cstr reduced]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+-(void) visitRestrictedMDDAllDifferent: (id<ORRestrictedMDDAllDifferent>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        ORInt restrictionSize = [cstr restrictionSize];
+        id<CPConstraint> concreteCstr = [CPFactory RestrictedMDDAllDifferent:_engine over: a restrictionSize:restrictionSize reduced:[cstr reduced]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+
+-(void) visitExactMDDMISP: (id<ORExactMDDMISP>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPIntVar> objective = [self concreteVar: [cstr objective]];
+        bool** adjacencyMatrix = [cstr adjacencyMatrix];
+        id<ORIntArray> weights = [cstr weights];
+        id<CPConstraint> concreteCstr = [CPFactory ExactMDDMISP:_engine over: a reduced:[cstr reduced] adjacencies:adjacencyMatrix weights:weights objective:objective];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitRestrictedMDDMISP: (id<ORRestrictedMDDMISP>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPIntVar> objective = [self concreteVar: [cstr objective]];
+        ORInt restrictionSize = [cstr restrictionSize];
+        bool** adjacencyMatrix = [cstr adjacencyMatrix];
+        id<ORIntArray> weights = [cstr weights];
+        id<CPConstraint> concreteCstr = [CPFactory RestrictedMDDMISP:_engine over: a size:restrictionSize reduced:[cstr reduced] adjacencies:adjacencyMatrix weights:weights objective:objective];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitRelaxedMDDMISP: (id<ORRelaxedMDDMISP>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPIntVar> objective = [self concreteVar: [cstr objective]];
+        ORInt relaxationSize   = [cstr relaxationSize];
+        bool** adjacencyMatrix = [cstr adjacencyMatrix];
+        id<ORIntArray> weights = [cstr weights];
+        id<CPConstraint> concreteCstr = [CPFactory RelaxedMDDMISP:_engine over: a size:relaxationSize reduced:[cstr reduced] adjacencies:adjacencyMatrix weights:weights objective:objective];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+
+
+
+-(void) visitCustomMDD: (id<ORCustomMDD>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        bool relaxed           = [cstr relaxed];
+        ORInt relaxationSize   = [cstr relaxationSize];
+        Class stateClass      = [cstr stateClass];
+        id<CPConstraint> concreteCstr = [CPFactory CustomMDD:_engine over: a relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<CPIntVar> objective = [self concreteVar: [cstr objective]];
+        bool relaxed           = [cstr relaxed];
+        ORInt relaxationSize   = [cstr relaxationSize];
+        Class stateClass      = [cstr stateClass];
+        id<CPConstraint> concreteCstr = [CPFactory CustomMDDWithObjective:_engine over: a relaxed:relaxed size:relaxationSize reduced:[cstr reduced] objective:objective maximize:[cstr maximize] stateClass:(Class)stateClass];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+@end
 
 @implementation ORCPSearchConcretizer {
    id<CPEngine>        _engine;

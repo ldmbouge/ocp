@@ -15,6 +15,7 @@
 #import <ORModeling/ORLPFlatten.h>
 #import <ORModeling/ORMIPFlatten.h>
 #import <ORModeling/ORLinearize.h>
+#import <ORModeling/ORMDDify.h>
 #import <ORModeling/ORModelI.h>
 
 @implementation ORFactory (ORModeling)
@@ -57,6 +58,10 @@
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into
 {
    return [[ORLinearize alloc] initORLinearize:into];
+}
++(id<ORModelTransformation>) createMDDifier:(id<ORAddToModel>)into
+{
+   return [[ORMDDify alloc] initORMDDify:into];
 }
 +(id<ORConstraintSet>) createConstraintSet
 {

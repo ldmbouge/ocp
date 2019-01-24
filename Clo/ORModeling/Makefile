@@ -10,6 +10,7 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 SRCS = ORDecompose.m  ORFlatten.m  ORIntLinear.m  \
 	ORRealLinear.m ORRealDecompose.m  \
 	ORLPFlatten.m ORLSFlatten.m   ORMIPFlatten.m  \
+    ORMDDify.m \
 	ORLinearize.m  ORMIPLinearize.m  \
 	ORSoftify.m \
 	ORModelI.m  ORModelTransformation.m ORModeling.m  
