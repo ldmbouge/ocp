@@ -372,7 +372,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
          solution[idx] = val;
       }
       
-      int error = GRBcbsolution(cbdata, solution,NULL);
+      int error = GRBcbsolution(cbdata, solution);
       if (error != 0) assert(NO);
       
       free(solution);
