@@ -6533,13 +6533,8 @@
 		5B60E5D815AE907E002FF2B3 /* ORUtilities */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
-				F5892AFB16D807DE00A824B0 /* ORMallocWatch.h */,
-				F5892AFC16D807DE00A824B0 /* ORMallocWatch.m */,
-=======
 				5BDE360316D905BE0030559D /* ORMallocWatch.h */,
 				5BDE360416D905BE0030559D /* ORMallocWatch.m */,
->>>>>>> 6ffdc505eb164dbb8e519669c8b6e1a6f4c08f73
 				B149BF5B151E759600FC5887 /* ORCrFactory.h */,
 				B149BF5C151E759600FC5887 /* ORCrFactory.m */,
 				5BE64312139D49610056F448 /* ORTypes.h */,
@@ -8089,11 +8084,7 @@
 				5B60E5EC15AE9136002FF2B3 /* ORConcurrencyI.h in Headers */,
 				5B60E5EF15AE958A002FF2B3 /* ORCrFactory.h in Headers */,
 				5BAEE08915AE99C8006CEE1E /* ORUtilities.h in Headers */,
-<<<<<<< HEAD
-				F5892AFD16D807DE00A824B0 /* ORMallocWatch.h in Headers */,
-=======
 				5BDE360516D905BE0030559D /* ORMallocWatch.h in Headers */,
->>>>>>> 6ffdc505eb164dbb8e519669c8b6e1a6f4c08f73
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9990,11 +9981,7 @@
 				5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */,
 				5B60E5ED15AE913F002FF2B3 /* ORConcurrencyI.m in Sources */,
 				5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */,
-<<<<<<< HEAD
-				F5892AFE16D807DE00A824B0 /* ORMallocWatch.m in Sources */,
-=======
 				5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */,
->>>>>>> 6ffdc505eb164dbb8e519669c8b6e1a6f4c08f73
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

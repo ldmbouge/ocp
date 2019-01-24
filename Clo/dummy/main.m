@@ -1,0 +1,263 @@
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
+
+#import <ORProgram/ORProgram.h>
+#import "ORCmdLineArgs.h"
+#import <objcp/CPConstraint.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
+
+
+
+int MINVARIABLE = 1;
+int MAXVARIABLE = 5;
+int MINVALUE = 0;
+int MAXVALUE = 1;
+
+bool** adjacencies;
+int* bddWeights;
+int* bddValues;
+int maxWeight;
+int maxWeightNumDigits;
+
+double DENSITY = .5;
+
+bool** adjacencyMatrix (NSArray* *edges, bool directed) {
+    bool** adjacencyMatrix;
+    adjacencyMatrix = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool*));
+    adjacencyMatrix -= MINVARIABLE;
+    
+    for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+        adjacencyMatrix[i] = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool));
+        adjacencyMatrix[i] -= MINVARIABLE;
+    }
+    
+    for (NSArray* edge in *edges) {
+        adjacencyMatrix[[[edge objectAtIndex:0] integerValue]][[[edge objectAtIndex:1] integerValue]] = true;
+        if (!directed) {
+            adjacencyMatrix[[[edge objectAtIndex:1] integerValue]][[[edge objectAtIndex:0] integerValue]] = true;
+        }
+    }
+    return adjacencyMatrix;
+}
+
+void decrementSolution(bool* solution, int* numSelected) {
+    int bit = MAXVARIABLE;
+    if (*numSelected == 0) {
+        return;
+    }
+    while (true) {
+        if (solution[bit]) {
+            solution[bit] = false;
+            numSelected[0] = numSelected[0]-1;
+            return;
+        } else {
+            solution[bit] = true;
+            numSelected[0] = numSelected[0]+1;
+            bit--;
+        }
+    }
+}
+
+void findMISP(bool** adjacencies, NSMutableArray* edgeA, NSMutableArray* edgeB) {
+    printf("Verifying answer...\n");
+    
+    bool* solution = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool));
+    solution -= MINVARIABLE;
+    
+    for (int variable = MINVARIABLE; variable <= MAXVARIABLE; variable++) {
+        solution[variable] = true;
+    }
+    
+    int maxNumSelected = 0;
+    int numSelected = MAXVARIABLE-MINVARIABLE+1;
+    
+    while (numSelected != 0) {
+        decrementSolution(solution, &numSelected);
+        if (numSelected > maxNumSelected) {
+            bool quit = false;
+            for (int edgeIndex = 0; edgeIndex < [edgeA count]; edgeIndex++) {
+                int pointA = [[edgeA objectAtIndex: edgeIndex] intValue];
+                int pointB = [[edgeB objectAtIndex: edgeIndex] intValue];
+                if (solution[pointA] && solution[pointB]) {
+                    if (pointA > pointB) {
+                        solution[pointA] = false;
+                        numSelected--;
+                    } else {
+                        solution[pointB] = false;
+                        numSelected--;
+                    }
+                    
+                    if (numSelected <= maxNumSelected) {
+                        quit = true;
+                    }
+                }
+            }
+            if (!quit) {
+                maxNumSelected = numSelected;
+                printf("Possible solution: %d\n", maxNumSelected);
+            }
+        }
+    }
+    printf("Actual best value: %d\n", maxNumSelected);
+}
+
+bool** randomAdjacencyMatrix() {
+    bool** adjacencyMatrix;
+    adjacencyMatrix = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool*));
+    adjacencyMatrix -= MINVARIABLE;
+    
+    for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+        adjacencyMatrix[i] = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool));
+        adjacencyMatrix[i] -= MINVARIABLE;
+    }
+    
+    for (int node1 = MINVARIABLE; node1 < MAXVARIABLE; node1++) {
+        for (int node2 = node1 + 1; node2 <= MAXVARIABLE; node2++) {
+            if (arc4random_uniform(10) < DENSITY*10) {
+                adjacencyMatrix[node1][node2] = true;
+                adjacencyMatrix[node2][node1] = true;
+            }
+        }
+    }
+    return adjacencyMatrix;
+}
+
+int main (int argc, const char * argv[])
+{
+    @autoreleasepool {
+        
+        id<ORModel> mdl = [ORFactory createModel];
+        id<ORAnnotation> notes= [ORFactory annotation];
+        id<ORIntRange> R1 = RANGE(mdl, MINVARIABLE, MAXVARIABLE);
+        id<ORIntRange> R2 = RANGE(mdl, 0, 1);
+        id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
+        id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
+        ORInt layerSize = 10;
+        
+        
+        //MISP
+        /*Class stateClass1 = [CustomMISPState class];
+        adjacencies = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool*));
+        adjacencies -= MINVARIABLE;
+        
+        for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+            adjacencies[i] = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(bool));
+            adjacencies[i] -= MINVARIABLE;
+            for (int j = MINVARIABLE; j <= MAXVARIABLE; j++) {
+                adjacencies[i][j] = false;
+            }
+        }
+        
+        NSMutableArray *edgeA = [[NSMutableArray alloc] init];
+        NSMutableArray *edgeB = [[NSMutableArray alloc] init];
+        
+        NSString *filepath = @"/Users/ben/Downloads/DIMACS_cliques/brock200_1.clq";
+        
+        FILE *file = fopen([filepath UTF8String], "r");
+        char buffer[256];
+        while(fgets(buffer, sizeof(char)*256,file) != NULL) {
+            NSString* line = [NSString stringWithUTF8String:buffer];
+            if([line characterAtIndex:0] == 'e') {
+                line = [line substringFromIndex:2];
+                NSNumber *first = [NSNumber numberWithLong: [[line substringToIndex: [line rangeOfString:@" "].location] integerValue]];
+                line = [line substringFromIndex:[line rangeOfString:@" "].location];
+                NSNumber *second = [NSNumber numberWithLong: [line integerValue]];
+                
+                adjacencies[[first intValue]][[second intValue]] = true;
+                adjacencies[[second intValue]][[first intValue]] = true;
+                [edgeA addObject: first];
+                [edgeB addObject: second];
+            }
+        }
+        int MISPmaxSum = 0;
+        for(int vertex = MINVARIABLE; vertex <= MAXVARIABLE; vertex++) {
+            MISPmaxSum += [stateClass1 maxPossibleObjectiveValueForVariable: vertex];
+        }
+        id<ORIntVar> MISPObjective = [ORFactory intVar: mdl domain: RANGE(mdl, 0, MISPmaxSum)];*/
+        //END MISP
+        
+        
+        
+        //KNAPSACK
+        /*Class stateClass2 = [CustomKnapsackState class];
+        maxWeight = 100;
+        bddWeights = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(int));
+        bddWeights -= MINVARIABLE;
+        for (int variableIndex = MINVARIABLE; variableIndex <= MAXVARIABLE; variableIndex++) {
+            bddWeights[variableIndex] = 1 + arc4random() % 40;
+        }
+        bddValues = malloc((MAXVARIABLE-MINVARIABLE+1) * sizeof(int));
+        bddValues -= MINVARIABLE;
+        for (int variableIndex = MINVARIABLE; variableIndex <= MAXVARIABLE; variableIndex++) {
+            bddValues[variableIndex] = 1 + arc4random() % 40;
+        }
+        
+        maxWeightNumDigits = 0;
+        int tempMaxWeight = maxWeight;
+        while (tempMaxWeight > 0) {
+            maxWeightNumDigits++;
+            tempMaxWeight/=10;
+        }
+        int knapsackMaxSum = 0;
+        for(int vertex = MINVARIABLE; vertex <= MAXVARIABLE; vertex++) {
+            knapsackMaxSum += [stateClass2 maxPossibleObjectiveValueForVariable: vertex];
+        }
+        id<ORIntVar> knapsackObjective = [ORFactory intVar: mdl domain: RANGE(mdl, 0, knapsackMaxSum)];*/
+        //END KNAPSACK
+        
+        
+        
+        
+        id<ORIntVarArray> x  = [ORFactory intVarArray:mdl range:R1 domain: R1];
+        id<ORIntVarArray> y  = [ORFactory intVarArray:mdl range:R1 domain: R1];
+        id<ORIntVarArray> z  = [ORFactory intVarArray: mdl range: RANGE(mdl, 1, 5) with: ^id<ORIntVar>(ORInt i) { if (i < 4) { return [x at: i]; } else { return [y at: i - 1]; }}];
+        
+        [mdl add: [ORFactory alldifferent:x]];
+        //[mdl add: [ORFactory alldifferent:y]];
+        //[mdl add: [ORFactory alldifferent:z]];
+        //[mdl maximize: [x at: 1]];
+
+        NSSet* s = [NSSet setWithObjects:@1,@2,@3, nil];
+        id<ORIntSet> set = [ORFactory intSet: mdl set: s];
+        [mdl add: [ORFactory among: x values: set low: 3 up: 4]];
+        
+        [notes ddWidth: layerSize];
+        [notes ddRelaxed: false];
+        id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
+        //id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];
+        
+        [cp solveAll: ^{
+            
+            [cp labelArray:x];
+            //[cp labelArray:y];
+            
+            for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+                printf("%d  ",[cp intValue: [x at:i]]);
+            }
+            printf("\n");
+            /*for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+                printf("%d  ",[cp intValue: [y at:i]]);
+            }
+            //printf("  |  Objective value: %d", [cp intValue: totalWeight]);
+            printf("\n");
+            */
+            [nbSolutions incr: cp];
+         }
+        ];
+        
+        printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
+        NSLog(@"Solver status: %@\n",cp);
+        NSLog(@"Quitting");
+    }
+
+    return 0;
+}
