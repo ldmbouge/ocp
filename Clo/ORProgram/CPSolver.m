@@ -2107,6 +2107,7 @@
 //            id tmp = [x initialVars:_engine maxFixed:_unique];
             NSLog(@"TATA %@",self);
             [self maxOccurencesRatesSearch:x  do:^(ORUInt i,id<ORDisabledFloatVarArray> x) {
+               NSLog(@"TEEE %@",self);
                [self float5WaySplit:i withVars:x];
             }];
          }
