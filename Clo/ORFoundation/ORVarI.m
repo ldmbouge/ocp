@@ -1131,7 +1131,9 @@
         if([self isInitial:i])
             ovars[i] = _vars[i];
     }
+    id r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
+    
     NSLog(@"x : %@",self);
-    return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
+    return r;
 }
 @end
