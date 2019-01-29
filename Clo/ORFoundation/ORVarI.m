@@ -1120,6 +1120,7 @@
 }
 
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
+    NSLog(@"x : %@",self);
     ORInt cpt = 0;
     for (ORUInt i = 0; i < [_vars count]; i++){
       if([self isInitial:i])
