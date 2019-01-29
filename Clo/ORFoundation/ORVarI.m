@@ -978,10 +978,10 @@
    _current = [ORFactory trailableInt:engine value:0];
    _start = [ORFactory trailableInt:engine value:0];
     _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
-    
-    NSLog(@"TOTU");
-   _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
-   return self;
+    _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
+  
+    NSLog(@"TATU");
+    return self;
 }
 -(void) dealloc
 {
