@@ -1133,18 +1133,18 @@
 }
 
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
-    ORInt cpt = 0;
-    for (ORUInt i = 0; i < [_vars count]; i++){
-      if([self isInitial:i])
-          cpt++;
-   }
-    assert(cpt>0);
-    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
-   for (ORUInt i = 0; i < [_vars count]; i++){
-        if([self isInitial:i])
-            ovars[i] = _vars[i];
-    }
-    id r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
+//    ORInt cpt = 0;
+//    for (ORUInt i = 0; i < [_vars count]; i++){
+//      if([self isInitial:i])
+//          cpt++;
+//   }
+//    assert(cpt>0);
+//    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
+//   for (ORUInt i = 0; i < [_vars count]; i++){
+//        if([self isInitial:i])
+//            ovars[i] = _vars[i];
+//    }
+    id r = [[ORDisabledFloatVarArrayI alloc] init:_vars engine:engine nbFixed:nb];
     NSLog(@"zoo");
     return r;
 }
