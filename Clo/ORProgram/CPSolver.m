@@ -2104,7 +2104,9 @@
             }
             LOG(_level,1,@"current search has switched");
             NSLog(@"x : %@",x);
-            [self maxOccurencesRatesSearch:[x initialVars:_engine maxFixed:_unique]  do:^(ORUInt i,id<ORDisabledFloatVarArray> x) {
+            id tmp = [x initialVars:_engine maxFixed:_unique];
+            NSLog(@"TATA");
+            [self maxOccurencesRatesSearch:tmp  do:^(ORUInt i,id<ORDisabledFloatVarArray> x) {
                [self float5WaySplit:i withVars:x];
             }];
          }
