@@ -1145,7 +1145,7 @@
             ovars[i] = _vars[i];
     }
     id r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
-    NSLog(@"x : %@",self);
+    NSLog(@"zoo");
     return r;
 }
 @end
