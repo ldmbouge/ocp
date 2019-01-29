@@ -1126,14 +1126,14 @@
           cpt++;
    }
     assert(cpt>0);
-    NSLog(@"TOTO");
     id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
    for (ORUInt i = 0; i < [_vars count]; i++){
         if([self isInitial:i])
             ovars[i] = _vars[i];
     }
+   
+    NSLog(@"TOTO");
     id r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
-    
     NSLog(@"x : %@",self);
     return r;
 }
