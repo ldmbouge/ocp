@@ -28,7 +28,7 @@
     TRInt _numChildren;
     int _minChildIndex;
     int _maxChildIndex;
-    Node* *_parents;
+    TRId* *_parents;
     TRInt _numParents;
     int _value;
     bool _isSink;

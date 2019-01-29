@@ -25,6 +25,9 @@
     _minChildIndex = 0;
     _maxChildIndex = 0;
     _parents = malloc((maxParents) * sizeof(Node*));
+    for (int parent = 0; parent <= maxParents; parent++) {
+        _parents[parent] = NULL;
+    }
     _numParents = makeTRInt(_trail, 0);
     _value = -1;
     _isSink = false;
@@ -66,6 +69,9 @@
     
     _numChildren = makeTRInt(_trail, 0);
     _parents = malloc((maxParents) * sizeof(Node*));
+    for (int parent = 0; parent <= maxParents; parent++) {
+        _parents[parent] = NULL;
+    }
     _numParents = makeTRInt(_trail, 0);
     _value = value;
     _isSink = false;
@@ -214,14 +220,14 @@
     assignTRInt(&_reverseLongestPath, longest, _trail);
 }
 
--(Node**) parents {
+-(TRId*) parents {
     return _parents;
 }
 -(int) numParents {
     return _numParents._val;
 }
 -(void) addParent: (Node*) parent {
-    _parents[_numParents._val] = parent;
+    assignTRId(&_parents[_numParents._val], parent,_trail);
     assignTRInt(&_numParents,_numParents._val+1,_trail);
     if (_objectiveValues != nil) {
         [self updateBoundsWithParent: parent];
@@ -261,7 +267,7 @@
     
     if (_numLongestPathParents._val == 0) {
         for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-            Node* parent = _parents[parentIndex];
+            Node* parent = (Node*)_parents[parentIndex];
             int parentLongestPath = [parent longestPath];
         
             for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
@@ -355,9 +361,9 @@
 }
 -(void) removeParentValue: (Node*) parent {
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-        if (_parents[parentIndex] == parent) {
+        if ((Node*)_parents[parentIndex] == parent) {
             assignTRInt(&_numParents,_numParents._val-1,_trail);
-           _parents[parentIndex] = _parents[_numParents._val];
+            assignTRId(&_parents[parentIndex], _parents[_numParents._val],_trail);
             parentIndex--;
         }
     }
@@ -389,7 +395,7 @@
 }
 -(bool) hasParent:(Node*)parent {
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-        if (_parents[parentIndex] == parent) {
+        if ((Node*)_parents[parentIndex] == parent) {
             return true;
         }
     }
@@ -656,7 +662,9 @@
     [self createRootAndSink];
     
     for (int layer = 0; layer < [_x count]; layer++) {
-        if (!_reduced) {    //Reduction is failing for some reason (relies on stateChar). Need to look into why.  Spent a couple days on it, but prioritising getting un-reduced results first.
+        if (_reduced) {    //Reduction is failing for some reason (relies on stateChar). Need to look into why.  Spent a couple days on it, but prioritising getting un-reduced results first.
+            //Update: Reduction seems to be successfully performing the reduction (follows 1-5-10-10-5-1 after reduction for a 5 variable all-different)
+            //So the problem must be in how it performs the trims
             [self reduceLayer: layer];
         }
         [self cleanLayer: layer];
