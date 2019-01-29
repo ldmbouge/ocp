@@ -1629,7 +1629,8 @@
 {
    __block ORBool goon = YES;
    while(goon) {
-      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+//      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+      [_search try:^{
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = s();
          if (!i.found){
@@ -1654,6 +1655,7 @@
          id<CPFloatVar> cx = _gamma[getId(x[i.index])];
          LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
          b(i.index,x);
+      } alt:^{
       }];
    }
 }
