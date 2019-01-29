@@ -976,6 +976,8 @@
    _initials = ia;
    _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
    _current = [ORFactory trailableInt:engine value:0];
+    
+    NSLog(@"TUTU");
    _start = [ORFactory trailableInt:engine value:0];
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
    _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
@@ -1131,8 +1133,6 @@
         if([self isInitial:i])
             ovars[i] = _vars[i];
     }
-   
-    NSLog(@"TOTO");
     id r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
     NSLog(@"x : %@",self);
     return r;
