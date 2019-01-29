@@ -966,8 +966,15 @@
 }
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine  nbFixed:(ORUInt) nb
 {
-   self = [self init:vars engine:engine initials:[ORFactory intArray:engine range:[vars range] value:1] nbFixed:nb];
     
+    self = [super init];
+    _vars = vars;
+    _initials = [ORFactory intArray:engine range:[vars range] value:1];
+    _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
+    _current = [ORFactory trailableInt:engine value:0];
+    _start = [ORFactory trailableInt:engine value:0];
+    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+    _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
     NSLog(@"TITU");
     NSLog(@"%p",self);
     
