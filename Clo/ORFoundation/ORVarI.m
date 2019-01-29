@@ -1144,8 +1144,9 @@
 //        if([self isInitial:i])
 //            ovars[i] = _vars[i];
 //    }
-    id r = [[ORDisabledFloatVarArrayI alloc] init:_vars engine:engine nbFixed:nb];
-    NSLog(@"zoo");
-    return r;
+//    id r = [[ORDisabledFloatVarArrayI alloc] init:_vars engine:engine nbFixed:nb];
+//    NSLog(@"zoo");
+//    return r;
+    return self;
 }
 @end
