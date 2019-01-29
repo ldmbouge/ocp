@@ -2086,7 +2086,7 @@
    __block ORBool goon = YES;
    while(goon) {
       [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
-         NSLog(@"x : %@",x);
+//         NSLog(@"x : %@",x);
          abs = [self computeAbsorptionsQuantities:x];
          nb = 0;
          ORSelectorResult i = [select_a max];
