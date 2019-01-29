@@ -1105,34 +1105,31 @@
 }
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine
 {
-   NSMutableArray<ORVar> *vars = [[NSMutableArray<ORVar> alloc] init];
-   for (ORUInt i = 0; i < [_vars count]; i++){
-      if([self isInitial:i]){
-         [vars addObject:_vars[i]];
-      }
+    ORInt cpt = 0;
+    for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i])
+          cpt++;
    }
-   id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, (ORInt)[vars count]-1)];
-   ORUInt i = 0;
-   for(id<ORFloatVar> x in vars){
-      ovars[i++] = x;
-   }
-   [vars release];
+    assert(cpt>0);
+    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
+    for (ORUInt i = 0; i < [_vars count]; i++){
+        if([self isInitial:i])
+            ovars[i] = _vars[i];
+    }
    return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
 }
 
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
-   NSMutableArray<ORVar> *vars = [[NSMutableArray<ORVar> alloc] init];
+    ORInt cpt = 0;
+    for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i])
+          cpt++;
+   }
+    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
    for (ORUInt i = 0; i < [_vars count]; i++){
-      if([self isInitial:i]){
-         [vars addObject:_vars[i]];
-      }
-   }
-   id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, (ORInt)[vars count]-1)];
-   ORUInt i = 0;
-   for(id<ORFloatVar> x in vars){
-      ovars[i++] = x;
-   }
-   [vars release];
+        if([self isInitial:i])
+            ovars[i] = _vars[i];
+    }
    return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
 }
 @end
