@@ -2086,6 +2086,7 @@
    __block ORBool goon = YES;
    while(goon) {
       [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+         NSLog(@"x : %@",x);
          abs = [self computeAbsorptionsQuantities:x];
          nb = 0;
          ORSelectorResult i = [select_a max];
@@ -2102,6 +2103,7 @@
                return;
             }
             LOG(_level,1,@"current search has switched");
+            NSLog(@"x : %@",x);
             [self maxOccurencesRatesSearch:[x initialVars:_engine maxFixed:_unique]  do:^(ORUInt i,id<ORDisabledFloatVarArray> x) {
                [self float5WaySplit:i withVars:x];
             }];
