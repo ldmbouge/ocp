@@ -3510,7 +3510,7 @@
             }
          }
       }
-      [cstr release];
+//      [cstr release];
       i++;
    }
    return  abs;
