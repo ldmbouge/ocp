@@ -1629,7 +1629,7 @@
 {
    __block ORBool goon = YES;
    while(goon) {
-      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+      [_search try:^{
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = s();
          if (!i.found){
@@ -1654,7 +1654,8 @@
          id<CPFloatVar> cx = _gamma[getId(x[i.index])];
          LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
          b(i.index,x);
-      }];
+      }alt:^{}
+       ];
    }
 }
 -(void) searchWithCriteria:  (id<ORDisabledFloatVarArray>) x criteria:(ORInt2Double)crit switchOnCondtion:(ORBool(^)(void))c criteria:(ORInt2Double)crit2 do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
@@ -2085,7 +2086,7 @@
                             ];
    __block ORBool goon = YES;
    while(goon) {
-      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+      [_search try^{
          abs = [self computeAbsorptionsQuantities:x];
          nb = 0;
          ORSelectorResult i = [select_a max];
@@ -2106,6 +2107,7 @@
                [self float5WaySplit:i withVars:x];
             }];
          }
+      } alt:^{
       }];
    }
 }
@@ -3481,7 +3483,6 @@
             }
          }
       }
-//      [cstr release];
       i++;
    }
    }

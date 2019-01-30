@@ -1116,7 +1116,9 @@
         if([self isInitial:i])
             ovars[i] = _vars[i];
     }
-   return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
+   id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
+    [engine trackObject:r];
+    return r;
 }
 
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
@@ -1130,6 +1132,8 @@
         if([self isInitial:i])
             ovars[i] = _vars[i];
     }
-   return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
+   id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
+    [engine trackObject:r];
+    return r;
 }
 @end
