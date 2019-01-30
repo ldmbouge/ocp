@@ -2106,7 +2106,7 @@
          [_search try:^{
             
             //         NSLog(@"x : %@",x);
-//            abs = [self computeAbsorptionsQuantities:x];
+            abs = [self computeAbsorptionsQuantities:x];
             nb = 0;
             ORSelectorResult i = [select_a max];
             if(i.found){
