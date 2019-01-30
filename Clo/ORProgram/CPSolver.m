@@ -2086,7 +2086,7 @@
                             ];
    __block ORBool goon = YES;
    while(goon) {
-      [_search try^{
+      [_search try:^{
          abs = [self computeAbsorptionsQuantities:x];
          nb = 0;
          ORSelectorResult i = [select_a max];
