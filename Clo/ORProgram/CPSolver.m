@@ -2104,20 +2104,21 @@
 //               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
                 [self float5WaySplit:i.index withVars:x];
 //               [self floatAbsSplit3:i.index by:v vars:x];
-            } else{
-               if(nb == 0){
-                  goon = NO;
-                  return;
-               }
-               LOG(_level,1,@"current search has switched");
-               NSLog(@"x : %@",x);
-               //            id tmp = [x initialVars:_engine maxFixed:_unique];
-               NSLog(@"TATA %@",self);
-//               [self maxOccurencesRatesSearch:x  do:^(ORUInt i,id<ORDisabledFloatVarArray> x) {
-//                  NSLog(@"TEEE %@",self);
-//                  [self float5WaySplit:i withVars:x];
-//               }];
             }
+//            else{
+//               if(nb == 0){
+//                  goon = NO;
+//                  return;
+//               }
+//               LOG(_level,1,@"current search has switched");
+//               NSLog(@"x : %@",x);
+//               //            id tmp = [x initialVars:_engine maxFixed:_unique];
+//               NSLog(@"TATA %@",self);
+////               [self maxOccurencesRatesSearch:x  do:^(ORUInt i,id<ORDisabledFloatVarArray> x) {
+////                  NSLog(@"TEEE %@",self);
+////                  [self float5WaySplit:i withVars:x];
+////               }];
+//            }
          } alt:^{
             
          }];
