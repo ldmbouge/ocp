@@ -1871,7 +1871,7 @@
    __block ORBool goon = YES;
    __block ORBool choice;
    while(goon) {
-      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+      [_search try:^{
          abs = [self computeAbsorptionsQuantities:x];
          occ = [self computeAllOccurrences:x];
          sum = (ORDouble)[occ sum];
@@ -1965,6 +1965,7 @@
             LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO");
             [self float5WaySplit:i.index withVars:x];
          }
+      } alt:^{
       }];
    }
 }
@@ -1993,7 +1994,7 @@
                              ];
       __block ORBool goon = YES;
       while(goon) {
-         [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+         [_search try:^{
             abs = [self computeAbsorptionsQuantities:x];
             occ = [self computeAllOccurrences:x];
             sum = [occ sum];
@@ -2064,7 +2065,7 @@
                }
                
             }
-         }];
+         } alt:^{}];
       }
    }
 }
@@ -2133,7 +2134,7 @@
                              ];
       __block ORBool goon = YES;
       while(goon) {
-         [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+         [_search try:^{
             abs = [self computeAbsorptionsQuantities:x];
             LOG(_level,2,@"State before selection");
             ORSelectorResult i = [select max];
@@ -2176,7 +2177,7 @@
                }
                
             }
-         }];
+         } alt:^{}];
       }
    }
 }
@@ -3453,10 +3454,9 @@
 
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledFloatVarArray>) vars
 {
-   ORInt size = (ORInt)[vars count];
-   id<ORIdArray> abs = [ORFactory idArray:self range:RANGE(self,0,size-1)];
+   id<ORIdArray> abs = [ORFactory idArray:self range:vars.range];
    ORDouble absV;
-   for(ORInt i = 0; i < size; i++){
+   for(ORInt i = 0; i < [abs count]; i++){
       ABSElement* ae = [[ABSElement alloc] init];
       [self trackObject:ae];
       abs[i] = ae;
@@ -3465,7 +3465,6 @@
    CPFloatVarI* cx;
    id<CPFloatVar> v;
    ORDouble best_rate;
-   @autoreleasepool {
    for (id<ORFloatVar> x in vars) {
       cx = _gamma[[x getId]];
       best_rate = 0.0;
@@ -3484,7 +3483,6 @@
          }
       }
       i++;
-   }
    }
    return  abs;
 }
