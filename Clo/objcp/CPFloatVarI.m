@@ -16,47 +16,6 @@
 /*****************************************************************************************/
 /*                        CPFloatVarSnapshot                                              */
 /*****************************************************************************************/
-@interface MySet : NSProxy {
-  id delegate;
-}
--(id)init;
--(MySet*)initWithCapacity:(NSUInteger)c;
-@end
-
-@implementation MySet
--(id)init
-{
-  return self;
-}
--(MySet*)initWithCapacity:(NSUInteger)c
-{
-  delegate = [[NSMutableSet alloc] initWithCapacity:c];
-  NSLog(@"Proxy: %p rc = %d",delegate,(int)[delegate retainCount]);
-  return self;
-}
--(void) dealloc
-{
-  NSLog(@"MySet got deallocated %p",self);
-  NSLog(@"dealloc --> Proxy: %p rc = %d",delegate,(int)[delegate retainCount]);
-  for(id obj in delegate) {
-    NSLog(@"ELT: %p  - %d",obj,[obj retainCount]);
-  }
-  [delegate release];
-  [super dealloc];
-}
-- (void)forwardInvocation:(NSInvocation *)anInvocation
-{
-  [anInvocation setTarget:delegate];
-  [anInvocation invoke];
-  return;
-}
--(NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
-{
-  return [delegate methodSignatureForSelector:aSelector];
-}
-@end
-
-
 
 @interface CPFloatVarSnapshot : NSObject
 {
@@ -206,7 +165,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(NSMutableSet*)constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[[MySet alloc] initWithCapacity:2] autorelease]);
+   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
    return rv;
 }
 -(ORInt)degree
@@ -478,7 +437,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(NSMutableSet*)constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[[MySet alloc] initWithCapacity:2] autorelease]);
+   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
    return rv;
 }
 -(ORInt)degree
