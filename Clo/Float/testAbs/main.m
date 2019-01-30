@@ -9,12 +9,8 @@ int main(int argc, const char * argv[]) {
             
             id<ORModel> model = [ORFactory createModel];
             id<ORFloatVar> a = [ORFactory floatVar:model low:-1000000.0f up:1000000.0f name:@"a"];
-            id<ORFloatVar> b = [ORFactory floatVar:model low:-1000000.0f up:1000000.0f name:@"b"];
+            id<ORFloatVar> b = [ORFactory floatVar:model low:-1000000.0f up:0.0f name:@"b"];
             id<ORFloatVar> c = [ORFactory floatVar:model low:-1000000.0f up:1000000.0f name:@"c"];
-            
-//            id<ORFloatVar> x = [ORFactory floatVar:model low:-1000000.0f up:1000000.0f name:@"x"];
-//            id<ORFloatVar> y = [ORFactory floatVar:model low:-1000000.0f up:1000000.0f name:@"y"];
-//            id<ORFloatVar> z = [ORFactory floatVar:model low:-1000000.0f up:1000000.0f name:@"z"];
             
             id<ORFloatVar> assoc1 = [ORFactory floatVar:model];
             id<ORFloatVar> assoc2 = [ORFactory floatVar:model];
@@ -24,7 +20,7 @@ int main(int argc, const char * argv[]) {
             
             
             id<ORFloatVar> delta = [ORFactory floatVar:model low:0.1f up:0.1f  name:@"delta"];
-            id<ORExpr> epsilon =  [ORFactory float:model value:0.001f];
+            id<ORExpr> epsilon =  [ORFactory float:model value:0.0001f];
             
             
             id<ORExpr> infinity = [ORFactory infinityf:model];
@@ -32,12 +28,6 @@ int main(int argc, const char * argv[]) {
             
             id<ORGroup> g = [args makeGroup:model];
             
-//            7.0022625000000000e+05
-//            [g add:[a eq:@(-7.0022625000000000e+05)]];
-////            -7.0022631250000000e+05
-//            [g add:[b eq:@(-7.0022631250000000e+05)]];
-////            -7.0022631250000000e+05
-//            [g add:[c eq:@(-7.0022631250000000e+05)]];
             
             [g add:[delta gt:@(0.0f)]];
             [g add:[epsilon gt:@(0.0f)]];
@@ -62,12 +52,7 @@ int main(int argc, const char * argv[]) {
             [g add:[assoc2 neq:infinity]];
             [g add:[assoc2 neq:sub_infinity]];
             
-//            [g add:[z eq:[x plus:y]]];
-            
-//            [g add:[[[assoc1 sub:assoc2] gt:epsilon] lor:[z eq:x]]];
             [g add:[[assoc1 sub:assoc2] gt:epsilon]];
-//            [g add:[z eq:x]];
-            
             
             
             
