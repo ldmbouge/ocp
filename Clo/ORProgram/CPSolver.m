@@ -3493,6 +3493,7 @@
    CPFloatVarI* cx;
    id<CPFloatVar> v;
    ORDouble best_rate;
+   @autoreleasepool {
    for (id<ORFloatVar> x in vars) {
       cx = _gamma[[x getId]];
       best_rate = 0.0;
@@ -3512,6 +3513,7 @@
       }
 //      [cstr release];
       i++;
+   }
    }
    return  abs;
 }
