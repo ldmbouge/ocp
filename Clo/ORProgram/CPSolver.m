@@ -2075,16 +2075,29 @@
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
+//   id<ORSelect> select_a = [ORFactory select: _engine
+//                                       range: x.range
+//                                    suchThat: ^ORBool(ORInt i) {
+//                                       id<CPFloatVar> v = _gamma[getId(x[i])];
+//                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
+//                                       nb += ![v bound];
+//                                       return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0;
+//                                    }
+//                                   orderedBy: ^ORDouble(ORInt i) {
+//                                      return [abs[i] quantity];
+//                                   }
+//                            ];
+//
    id<ORSelect> select_a = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
                                        id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
+                           
                                        nb += ![v bound];
-                                       return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0;
+                                       return ![v bound] && [x isEnabled:i] ;
                                     }
                                    orderedBy: ^ORDouble(ORInt i) {
-                                      return [abs[i] quantity];
+                                      return i;
                                    }
                             ];
    __block ORBool goon = YES;
@@ -2093,7 +2106,7 @@
          [_search try:^{
             
             //         NSLog(@"x : %@",x);
-            abs = [self computeAbsorptionsQuantities:x];
+//            abs = [self computeAbsorptionsQuantities:x];
             nb = 0;
             ORSelectorResult i = [select_a max];
             if(i.found){
