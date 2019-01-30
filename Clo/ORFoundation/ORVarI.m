@@ -966,18 +966,7 @@
 }
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine  nbFixed:(ORUInt) nb
 {
-    
-    self = [super init];
-    _vars = vars;
-    _initials = [ORFactory intArray:engine range:[vars range] value:1];
-    _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
-    _current = [ORFactory trailableInt:engine value:0];
-    _start = [ORFactory trailableInt:engine value:0];
-    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
-    _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
-    NSLog(@"TITU");
-    NSLog(@"%p",self);
-    
+   self = [self init:vars engine:engine initials:[ORFactory intArray:engine range:[vars range] value:1] nbFixed:nb];
    return self;
 }
 -(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb
@@ -988,11 +977,9 @@
    _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
    _current = [ORFactory trailableInt:engine value:0];
    _start = [ORFactory trailableInt:engine value:0];
-    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
-    _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
-  
-    NSLog(@"TATU");
-    return self;
+   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
+   return self;
 }
 -(void) dealloc
 {
@@ -1133,20 +1120,16 @@
 }
 
 -(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
-//    ORInt cpt = 0;
-//    for (ORUInt i = 0; i < [_vars count]; i++){
-//      if([self isInitial:i])
-//          cpt++;
-//   }
-//    assert(cpt>0);
-//    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
-//   for (ORUInt i = 0; i < [_vars count]; i++){
-//        if([self isInitial:i])
-//            ovars[i] = _vars[i];
-//    }
-//    id r = [[ORDisabledFloatVarArrayI alloc] init:_vars engine:engine nbFixed:nb];
-//    NSLog(@"zoo");
-//    return r;
-    return self;
+    ORInt cpt = 0;
+    for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i])
+          cpt++;
+   }
+    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
+   for (ORUInt i = 0; i < [_vars count]; i++){
+        if([self isInitial:i])
+            ovars[i] = _vars[i];
+    }
+   return [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
 }
 @end
