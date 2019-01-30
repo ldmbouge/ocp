@@ -165,7 +165,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(NSMutableSet*)constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+   NSMutableSet* rv = collectConstraints(&_net,[[[NSMutableSet alloc] initWithCapacity:2] autorelease]);
    return rv;
 }
 -(ORInt)degree
