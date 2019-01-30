@@ -2075,63 +2075,41 @@
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
-//   id<ORSelect> select_a = [ORFactory select: _engine
-//                                       range: x.range
-//                                    suchThat: ^ORBool(ORInt i) {
-//                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-//                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
-//                                       nb += ![v bound];
-//                                       return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0;
-//                                    }
-//                                   orderedBy: ^ORDouble(ORInt i) {
-//                                      return [abs[i] quantity];
-//                                   }
-//                            ];
-//
    id<ORSelect> select_a = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
                                        id<CPFloatVar> v = _gamma[getId(x[i])];
-                           
+                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
                                        nb += ![v bound];
-                                       return ![v bound] && [x isEnabled:i] ;
+                                       return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0;
                                     }
                                    orderedBy: ^ORDouble(ORInt i) {
-                                      return i;
+                                      return [abs[i] quantity];
                                    }
                             ];
    __block ORBool goon = YES;
    while(goon) {
-//      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
          [_search try:^{
-            
-            //         NSLog(@"x : %@",x);
             abs = [self computeAbsorptionsQuantities:x];
             nb = 0;
             ORSelectorResult i = [select_a max];
             if(i.found){
                LOG(_level,1,@"maxAbs");
                [x disable:i.index];
-//               id<CPFloatVar> cx = _gamma[getId(x[i.index])];
-//               id<CPFloatVar> v = [abs[i.index] bestChoice];
-//               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
-                [self float5WaySplit:i.index withVars:x];
-//               [self floatAbsSplit3:i.index by:v vars:x];
+               id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+               id<CPFloatVar> v = [abs[i.index] bestChoice];
+               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
+               [self floatAbsSplit3:i.index by:v vars:x];
+            }else{
+               if(nb == 0){
+                  goon = NO;
+                  return;
+               }
+               LOG(_level,1,@"current search has switched");
+                 [self maxOccurencesRatesSearch:[x initialVars:_engine maxFixed:_unique]  do:^(ORUInt i,id<ORDisabledFloatVarArray> x) {
+                  [self float5WaySplit:i withVars:x];
+               }];
             }
-//            else{
-//               if(nb == 0){
-//                  goon = NO;
-//                  return;
-//               }
-//               LOG(_level,1,@"current search has switched");
-//               NSLog(@"x : %@",x);
-//               //            id tmp = [x initialVars:_engine maxFixed:_unique];
-//               NSLog(@"TATA %@",self);
-////               [self maxOccurencesRatesSearch:x  do:^(ORUInt i,id<ORDisabledFloatVarArray> x) {
-////                  NSLog(@"TEEE %@",self);
-////                  [self float5WaySplit:i withVars:x];
-////               }];
-//            }
          } alt:^{
             
          }];
