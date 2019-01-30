@@ -1059,7 +1059,7 @@
 }
 -(void) setMaxFixed:(ORInt)nb
 {
-   _nb = (nb > [_vars count]) ? (ORInt)[_vars count] : nb;
+   _nb = min(nb,(ORInt)[_vars count]);
    for(ORInt i = 0; i < [_disabled count]; i++){
       [_disabled[i] setValue:0];
       [_indexDisabled[i] setValue:-1];
@@ -1127,6 +1127,7 @@
       if([self isInitial:i])
           cpt++;
    }
+    assert(cpt>0);
     id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
    for (ORUInt i = 0; i < [_vars count]; i++){
         if([self isInitial:i])
