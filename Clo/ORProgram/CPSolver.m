@@ -1687,7 +1687,7 @@
    [self genericSearch:x selection:(ORSelectorResult(^)(void))^{
       return [select max];
    } do:b];
-
+   
 }
 //float search
 -(void) maxCardinalitySearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
@@ -1863,9 +1863,9 @@
                                    }
                             ];
    id<ORSelect> select_l = [ORFactory  select: _engine range: x.range suchThat: f
-                                   orderedBy: ^ORDouble(ORInt i) {
-                                      return i;
-                                   }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       return i;
+                                    }
                             ];
    
    __block ORBool goon = YES;
@@ -2010,7 +2010,7 @@
                   } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
                   if([_gamma[getId(x[i.index])] bound]){
                      goon = NO;
-                    return;
+                     return;
                   }
                }
             } else if(_unique){
@@ -3465,25 +3465,28 @@
    CPFloatVarI* cx;
    id<CPFloatVar> v;
    ORDouble best_rate;
-   for (id<ORFloatVar> x in vars) {
-      cx = _gamma[[x getId]];
-      best_rate = 0.0;
-      NSMutableSet* cstr = [cx constraints];
-      for(id<CPConstraint> c in cstr){
-         if([c canLeadToAnAbsorption]){
-            v = [c varSubjectToAbsorption:cx];
-            if(v == nil) continue;
-            absV = [self computeAbsorptionQuantity:v by:x];
-            assert(absV >= 0.0f && absV <= 1.f);
-            //second test can be reduce to !isInitial()
-            if(([vars isInitial:i] && absV >= _absRateLimitModelVars) || (![vars isInitial:i] && absV >= _absRateLimitAdditionalVars)){
-               [abs[i] addQuantity:absV];
-               if(absV > best_rate) [abs[i] setChoice:v];
+   @autoreleasepool {
+      for (id<ORFloatVar> x in vars) {
+         cx = _gamma[[x getId]];
+         best_rate = 0.0;
+         NSMutableSet* cstr = [cx constraints];
+         for(id<CPConstraint> c in cstr){
+            if([c canLeadToAnAbsorption]){
+               v = [c varSubjectToAbsorption:cx];
+               if(v == nil) continue;
+               absV = [self computeAbsorptionQuantity:v by:x];
+               assert(absV >= 0.0f && absV <= 1.f);
+               //second test can be reduce to !isInitial()
+               if(([vars isInitial:i] && absV >= _absRateLimitModelVars) || (![vars isInitial:i] && absV >= _absRateLimitAdditionalVars)){
+                  [abs[i] addQuantity:absV];
+                  if(absV > best_rate) [abs[i] setChoice:v];
+               }
             }
          }
+         i++;
       }
-      i++;
    }
+   
    return  abs;
 }
 
@@ -3704,7 +3707,7 @@
 }
 
 - (void)incrOccurences:(nonnull id<ORVar>)v {
-     @throw [[ORExecutionError alloc] initORExecutionError: "Not implemented yet"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Not implemented yet"];
 }
 
 -(id) trackObject: (id) obj
@@ -3785,7 +3788,7 @@
 -(void) add: (id<ORConstraint>) c
 {
    // PVH: Need to flatten/concretize
-   // PVH: Only used	 during search
+   // PVH: Only used    during search
    // LDM: DONE. Have not checked the variable creation/deallocation logic though.
    CPINCModel* trg = [[CPINCModel alloc] init:self];
    ORStatus status = [trg post:c];
@@ -4373,3 +4376,4 @@
    return [NSString stringWithFormat:@"<%lf,%d,%@>",_quantity,_nb,_choice];
 }
 @end
+
