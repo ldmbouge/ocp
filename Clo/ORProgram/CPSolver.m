@@ -3467,6 +3467,7 @@
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledFloatVarArray>) vars
 {
    ORInt size = (ORInt)[vars count];
+   assert(size > 0);
    id<ORIdArray> abs = [ORFactory idArray:self range:RANGE(self,0,size-1)];
    ORDouble absV;
    for(ORInt i = 0; i < size; i++){
@@ -3495,7 +3496,7 @@
             }
          }
       }
-      [cstr release];
+//      [cstr release];
       i++;
    }
    return  abs;
