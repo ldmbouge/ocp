@@ -1,7 +1,7 @@
 all: $(EXE) ../bin/$(EXE)
 	@echo "Done building " $(EXE) "..."
 
-ORCmdLineArgs.m : ../ORCmdLineArgs.m
+ORCmdLineArgs.m : $(LOC)ORCmdLineArgs.m
 	cp $< .
 
 $(EXE): $(OFILES) 

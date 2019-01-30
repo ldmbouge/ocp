@@ -1,4 +1,5 @@
-include ../setup.make
+LOC=../
+include $(LOC)setup.make
 
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES)
 
