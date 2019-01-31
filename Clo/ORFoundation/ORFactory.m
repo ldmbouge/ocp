@@ -711,15 +711,22 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine
 {
-   return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
+    [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
+    id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
+    [engine trackObject: r];
+    return r;
 }
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray
 {
-   return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine initials:iarray];
+    id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine initials:iarray];
+    [engine trackObject: r];
+    return r;
 }
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine nbFixed:(ORUInt)nb
 {
-   return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine nbFixed:nb];
+   id<ORDisabledFloatVarArray> r =  [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine nbFixed:nb];
+    [engine trackObject: r];
+    return r;
 }
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) ovars varabs:(NSArray *) absvars solver:(id<ORSearchEngine>)p nbFixed:(ORUInt)nb
 {
@@ -738,7 +745,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray nbFixed:(ORUInt)nb
 {
-   return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine initials:iarray nbFixed:nb];
+   id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine initials:iarray nbFixed:nb];
+    [engine trackObject: r];
+    return r;
 }
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
 {

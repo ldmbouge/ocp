@@ -724,6 +724,7 @@
    return [self init:z equals:x minus:y kbpercent:PERCENT];
 }
 
+
 -(void) post
 {
    [self propagate];
