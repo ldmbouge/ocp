@@ -141,7 +141,7 @@ int main (int argc, const char * argv[])
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
         id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
-        ORInt layerSize = 10;
+        ORInt layerSize = 8;
         
         
         //MISP
@@ -221,17 +221,22 @@ int main (int argc, const char * argv[])
         id<ORIntVarArray> y  = [ORFactory intVarArray:mdl range:R1 domain: R1];
         id<ORIntVarArray> z  = [ORFactory intVarArray: mdl range: RANGE(mdl, 1, 5) with: ^id<ORIntVar>(ORInt i) { if (i < 4) { return [x at: i]; } else { return [y at: i - 1]; }}];
         
-        [mdl add: [ORFactory alldifferent:x]];
+        //[mdl add: [ORFactory alldifferent:x]];
         //[mdl add: [ORFactory alldifferent:y]];
         //[mdl add: [ORFactory alldifferent:z]];
         //[mdl maximize: [x at: 1]];
 
-        NSSet* s = [NSSet setWithObjects:@1,@2,@3, nil];
-        id<ORIntSet> set = [ORFactory intSet: mdl set: s];
-        [mdl add: [ORFactory among: x values: set low: 3 up: 4]];
+        NSSet* s1 = [NSSet setWithObjects:@1,@2,@3, nil];
+        id<ORIntSet> set1 = [ORFactory intSet: mdl set: s1];
+        [mdl add: [ORFactory among: x values: set1 low: 3 up: 4]];
+        NSSet* s2 = [NSSet setWithObjects:@1,@2, nil];
+        id<ORIntSet> set2 = [ORFactory intSet: mdl set: s2];
+        [mdl add: [ORFactory among: x values: set2 low: 2 up: 3]];
         
         [notes ddWidth: layerSize];
-        [notes ddRelaxed: false];
+        [notes ddRelaxed: true];
+        ORLong startWC  = [ORRuntimeMonitor wctime];
+        ORLong startCPU = [ORRuntimeMonitor cputime];
         id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
         //id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];
         
@@ -240,10 +245,10 @@ int main (int argc, const char * argv[])
             [cp labelArray:x];
             //[cp labelArray:y];
             
-            for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
-                printf("%d  ",[cp intValue: [x at:i]]);
-            }
-            printf("\n");
+            //for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+            //    printf("%d  ",[cp intValue: [x at:i]]);
+            //}
+            //printf("\n");
             /*for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
                 printf("%d  ",[cp intValue: [y at:i]]);
             }
@@ -253,6 +258,11 @@ int main (int argc, const char * argv[])
             [nbSolutions incr: cp];
          }
         ];
+        
+        ORLong endWC  = [ORRuntimeMonitor wctime];
+        ORLong endCPU = [ORRuntimeMonitor cputime];
+        
+        printf("\nTook %lld WC and %lld CPU\n\n",(endWC-startWC),(endCPU-startCPU));
         
         printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
         NSLog(@"Solver status: %@\n",cp);
