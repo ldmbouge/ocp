@@ -2141,7 +2141,7 @@
                                    }
                             ];
    __block ORBool goon = YES;
-   __block ORBool finish = YES;
+   __block ORBool finish = NO;
    while(goon) {
       [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
          abs = [self computeAbsorptionsQuantities:x];
@@ -2156,13 +2156,14 @@
             [self floatAbsSplit3:i.index by:v vars:x];
          } else{
             if(nb == 0){
-               goon = NO;
                finish = YES;
-               return;
             }
+            goon = NO;
+            return;
          }
       }];
    }
+   if(finish) return;
    NSLog(@"First Pass abs done");
    id<ORDisabledFloatVarArray> nx = [x initialVars:_engine maxFixed:_unique];
    [self genericSearch:nx selection:(ORSelectorResult(^)(void))^{
