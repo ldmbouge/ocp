@@ -2112,7 +2112,7 @@
       }];
    }
 }
--(void) customSearch2:  (id<ORDisabledFloatVarArray>) x
+-(void) customSearch:  (id<ORDisabledFloatVarArray>) x
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
