@@ -2140,15 +2140,14 @@
                                       return [_model occurences:x[i]];
                                    }
                             ];
-   __block id<ORSelect> select = select_a;
    __block ORBool goon = YES;
-   __block ORBool isAbs = YES;
+   __block ORBool finish = YES;
    while(goon) {
       [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
          abs = [self computeAbsorptionsQuantities:x];
          nb = 0;
-         ORSelectorResult i = [select max];
-         if(i.found && isAbs){
+         ORSelectorResult i = [select_a max];
+         if(i.found){
             LOG(_level,1,@"maxAbs");
             [x disable:i.index];
             id<CPFloatVar> cx = _gamma[getId(x[i.index])];
@@ -2158,40 +2157,26 @@
          } else{
             if(nb == 0){
                goon = NO;
+               finish = YES;
                return;
             }
-            if(isAbs) {
-               select = select_o;
-               isAbs = NO;
-               [x setMaxFixed:_unique];
-               LOG(_level,1,@"current search has switched");
-               return;
-            }
-            if (!i.found){
-               if(![x hasDisabled]){
-                  goon = NO;
-                  return;
-               }else{
-                  do{
-                     i.index = [x enableFirst];
-                  } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-                  if([_gamma[getId(x[i.index])] bound]){
-                     goon = NO;
-                     return;
-                  }
-               }
-            } else if(_unique){
-               if([x isFullyDisabled]){
-                  [x enableFirst];
-               }
-               [x disable:i.index];
-            }
-            id<CPFloatVar> cx = _gamma[getId(x[i.index])];
-            LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
-            [self float5WaySplit:i.index withVars:x];
          }
       }];
    }
+   NSLog(@"First Pass abs done");
+   [self genericSearch:[x initialVars:_engine maxFixed:_unique] selection:(ORSelectorResult(^)(void))^{
+      abs = [self computeAbsorptionsQuantities:x];
+      ORBool c = NO;
+      for (ORInt i = 0; i < [abs count]; i++) {
+         if(![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0){
+            c = YES;
+            break;
+         }
+      }
+      return (c) ? [select_a max] : [select_o max];
+   } do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+      [p float5WaySplit:i  withVars:x];
+   }];
 }
 -(void) maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
 {
