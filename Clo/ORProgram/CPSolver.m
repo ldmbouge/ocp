@@ -2164,18 +2164,19 @@
       }];
    }
    NSLog(@"First Pass abs done");
-   [self genericSearch:[x initialVars:_engine maxFixed:_unique] selection:(ORSelectorResult(^)(void))^{
+   id<ORDisabledFloatVarArray> nx = [x initialVars:_engine maxFixed:_unique];
+   [self genericSearch:nx selection:(ORSelectorResult(^)(void))^{
       abs = [self computeAbsorptionsQuantities:x];
       ORBool c = NO;
       for (ORInt i = 0; i < [abs count]; i++) {
-         if(![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0){
+         if([nx isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0){
             c = YES;
             break;
          }
       }
       return (c) ? [select_a max] : [select_o max];
    } do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
-      [p float5WaySplit:i  withVars:x];
+      [self float5WaySplit:i  withVars:x];
    }];
 }
 -(void) maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
