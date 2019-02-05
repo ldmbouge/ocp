@@ -306,6 +306,19 @@
    assert(0);
 }
 
+-(void) visitReifyEqualc:(id<ORRealReifyEqualc>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      MIPVariableI* b[1] = { [self concreteVar:[c b]] };
+      MIPVariableI* x[1] = { [self concreteVar:[c x]] };
+      ORDouble cst = [c cst];
+      MIPConstraintI* concreteCstr = nil;
+//      [_MIPsolver createReify: db imply:dx eq:c];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+   }
+}
+
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {

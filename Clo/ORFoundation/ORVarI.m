@@ -35,6 +35,12 @@
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain name:(NSString*) name
+{
+   self = [self initORIntVarI: track bounds:domain];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
+}
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain
 {
    self = [super init];
@@ -252,6 +258,13 @@
    id<ORTracker>    _tracker;
    id<ORRealRange> _domain;
    BOOL             _hasBounds;
+   NSString*        _prettyname;
+}
+-(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up name:(NSString*) name
+{
+   self = [self init:track low:low up:up];
+   _prettyname = name;
+   return self;
 }
 -(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up
 {
@@ -269,6 +282,12 @@
    _domain = [ORFactory realRange:track low:0 up:up];
    _hasBounds = true;
    [track trackVariable: self];
+   return self;
+}
+-(ORRealVarI*) init: (id<ORTracker>) track name:(NSString*) name
+{
+   self = [self init:track];
+   _prettyname = name;
    return self;
 }
 -(ORRealVarI*) init: (id<ORTracker>) track
@@ -316,14 +335,17 @@
 }
 -(NSString*) description
 {
+   NSString* name = [NSString stringWithFormat:@"var<OR>{real}:%03d",_name];
+   if(_prettyname != nil)
+      name = _prettyname;
    if (_domain.low <= - FLT_MAX && _domain.up >= FLT_MAX)
-      return [NSString stringWithFormat:@"var<OR>{real}:%03d(-inf,+inf)",_name];
+      return [NSString stringWithFormat:@"%@(-inf,+inf)",name];
    else if (_domain.low <= - FLT_MAX)
-      return [NSString stringWithFormat:@"var<OR>{real}:%03d(-inf,%f)",_name,_domain.up];
+      return [NSString stringWithFormat:@"%@(-inf,%f)",name,_domain.up];
    else if (_domain.up >= FLT_MAX)
-      return [NSString stringWithFormat:@"var<OR>{real}:%03d(%f,+inf)",_name,_domain.low];
+      return [NSString stringWithFormat:@"%@(%f,+inf)",name,_domain.low];
    else
-      return [NSString stringWithFormat:@"var<OR>{real}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@(%f,%f)",name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -344,6 +366,10 @@
 -(ORDouble) up
 {
    return _domain.up;
+}
+-(NSString*) prettyname
+{
+   return _prettyname;
 }
 @end
 
@@ -597,6 +623,7 @@
    id<ORTracker>    _tracker;
    id<ORLDoubleRange> _domain;
    BOOL             _hasBounds;
+   NSString*        _prettyname;
 }
 -(ORLDoubleVarI*) init: (id<ORTracker>) track low: (ORLDouble) low up: (ORLDouble) up
 {
@@ -687,6 +714,10 @@
 -(ORLDouble) up
 {
    return _domain.up;
+}
+-(NSString*) prettyname
+{
+   return _prettyname;
 }
 @end
 //-------------------------

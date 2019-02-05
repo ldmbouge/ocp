@@ -124,14 +124,21 @@
 -(id) init;
 @end
 
+
+@interface ORTRealHandler : ORVTypeHandler<NSObject>
+-(id) init;
+@end
+
 //TODO should have other ORType
 static inline ORVTypeHandler* vtype2Obj(ORVType type){
-    switch(type){
-       case  ORTBool    : return [[ORTBoolHandler alloc] init];
-       case  ORTInt     : return [[ORTIntHandler alloc] init];
-       case  ORTFloat   : return [[ORTFloatHandler alloc] init];
-       case  ORTDouble   : return [[ORTDoubleHandler alloc] init];
-       default         : return [[ORVTypeHandler alloc] init];
-    }
+   switch(type){
+      case  ORTBool    : return [[ORTBoolHandler alloc] init];
+      case  ORTInt     : return [[ORTIntHandler alloc] init];
+      case  ORTFloat   : return [[ORTFloatHandler alloc] init];
+      case  ORTDouble   : return [[ORTDoubleHandler alloc] init];
+      case  ORTReal   : return [[ORTRealHandler alloc] init];
+      default         : return [[ORVTypeHandler alloc] init];
+   }
 }
+
 

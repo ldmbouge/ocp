@@ -707,6 +707,24 @@ enum ORGroupType {
 -(ORDouble) cst;
 @end
 
+@protocol ORRealReifyEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(id<ORRealVar>)  y;
+@end
+
+@protocol ORRealReifyEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORRealReifyGEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(ORDouble)        cst;
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORExprArray>) array;
 @end

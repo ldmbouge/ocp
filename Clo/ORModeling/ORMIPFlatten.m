@@ -190,9 +190,17 @@ BOOL _alreadyAdded;
 {
     _result = v;
 }
+-(void) visitSumEqualc: (id<ORSumEqc>) c
+{
+   _result = c;
+}
+-(void) visitSumGEqualc: (id<ORSumGEqc>) c
+{
+   _result = c;
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
-    _result = c;
+   _result = c;
 }
 -(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
 {
@@ -233,6 +241,9 @@ BOOL _alreadyAdded;
 {
     ORRealLinear* terms = [ORNormalizer realLinearFrom: [v expr] model: _into];
     _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
+}
+-(void) visitRealLinearEq:(id<ORConstraint>)c {
+   _result = c;
 }
 
 @end

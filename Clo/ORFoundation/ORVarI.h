@@ -21,6 +21,8 @@
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker bounds: (id<ORIntRange>) domain;
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain name:(NSString*) name;
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker bounds: (id<ORIntRange>) domain name:(NSString*) name;
 -(id<ORIntRange>) domain;
 -(ORInt) value;
 -(ORInt)scale;
@@ -54,8 +56,10 @@
 
 @interface ORRealVarI : ORExprI<ORRealVar>
 -(ORRealVarI*) init: (id<ORTracker>) tracker;
+-(ORRealVarI*) init: (id<ORTracker>) tracker name:(NSString*) name;
 -(ORRealVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up;
 -(ORRealVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up;
+-(ORRealVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up name:(NSString*) name;
 -(void)setDomain:(id<ORRealRange>)domain;
 -(ORBool) hasBounds;
 -(ORDouble) low;

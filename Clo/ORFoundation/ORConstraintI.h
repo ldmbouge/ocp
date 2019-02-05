@@ -267,6 +267,19 @@
 -(id<ORRealVar>)     res;
 @end
 
+@interface ORRealReifyEqualc : ORConstraintI<ORRealReifyEqualc>
+-(ORRealReifyEqualc*)initRealReify:(id<ORIntVar>)b equiv:(id<ORRealVar>)x eqi:(ORDouble)c;
+@end
+
+@interface ORRealReifyGEqualc : ORConstraintI<ORRealReifyGEqualc>
+-(ORRealReifyGEqualc*)initRealReify:(id<ORIntVar>)b equiv:(id<ORRealVar>)x geqi:(ORDouble)c;
+@end
+
+@interface ORRealReifyEqual : ORConstraintI<ORRealReifyEqual>
+-(ORRealReifyEqual*)initRealReify:(id<ORIntVar>)b equiv:(id<ORRealVar>)x eq:(id<ORRealVar>)c;
+@end
+
+
 @interface ORImplyEqualc : ORConstraintI<ORImplyEqualc>
 -(ORImplyEqualc*)initImply:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c;
 @end

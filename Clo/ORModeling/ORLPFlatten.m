@@ -199,6 +199,14 @@ static BOOL _alreadyAdded;
 {
    _result = c;
 }
+-(void) visitSumGEqualc: (id<ORSumGEqc>) c
+{
+   _result = c;
+}
+-(void) visitSumEqualc: (id<ORSumEqc>) c
+{
+   _result = c;
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    _result = c;
@@ -211,7 +219,10 @@ static BOOL _alreadyAdded;
 {
    _result = c;
 }
-
+-(void) visitRealLinearEq: (id<ORRealLinearEq>) c
+{
+   _result = c;
+}
 
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

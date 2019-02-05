@@ -537,6 +537,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORIntVarI alloc]  initORIntVarI: tracker domain: RANGE(tracker,value,value)];
 }
++(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r name:(NSString*) name
+{
+   return [[ORIntVarI alloc]  initORIntVarI: model domain: r name:name];
+}
++(id<ORIntVar>) intVar: (id<ORTracker>) model bounds: (id<ORIntRange>) r name:(NSString*) name
+{
+   return [[ORIntVarI alloc]  initORIntVarI: model bounds: r name:name];
+}
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker value: (ORInt) value name:(NSString*) name
+{
+   return [[ORIntVarI alloc]  initORIntVarI: tracker domain: RANGE(tracker,value,value) name:name];
+}
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b
 {
 #if USEVIEWS==1
@@ -593,6 +605,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORIntVarI alloc] initORIntVarI: model domain: RANGE(model,0,1)];
 }
++(id<ORRealVar>) realVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up name:(NSString*) name
+{
+   return [[ORRealVarI alloc]  init: tracker low: low up: up name:name];
+}
 +(id<ORRealVar>) realVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
     return [[ORRealVarI alloc]  init: tracker low: low up: up];
@@ -600,6 +616,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORRealVar>) realVar: (id<ORTracker>) tracker
 {
     return [[ORRealVarI alloc]  init: tracker];
+}
++(id<ORRealVar>) realVar: (id<ORTracker>) tracker name:(NSString*) name
+{
+   return [[ORRealVarI alloc]  init: tracker name:name];
 }
 //-------------------------------
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up
@@ -699,7 +719,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
-      [o set:[ORFactory floatVar:tracker name:[[NSString alloc] initWithFormat:@"%@[%d]",name,k]] at:k];
+      [o set:[ORFactory floatVar:tracker name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
    return (id<ORFloatVarArray>)o;
 }
 +(id<ORFloatVarArray>) floatVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORFloatVar>(^)(ORInt)) clo
@@ -765,7 +785,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
-      [o set:[ORFactory doubleVar:tracker name:[[NSString alloc] initWithFormat:@"%@[%d]",name,k]] at:k];
+      [o set:[ORFactory doubleVar:tracker name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
    return (id<ORDoubleVarArray>)o;
 }
 +(id<ORLDoubleVarArray>) ldoubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORLDouble)low up:(ORLDouble)up
@@ -787,6 +807,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       [o set:[ORFactory realVar:tracker low:low up:up] at:k];
    return (id<ORRealVarArray>)o;
 }
++(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up names:(NSString*) name
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set:[ORFactory realVar:tracker low:low up:up name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
+   return (id<ORRealVarArray>)o;
+}
 +(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range 
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -800,7 +827,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    return (id<ORIntVarArray>)o;
 }
-
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain names:(NSString*) name
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set: [ORFactory intVar: tracker domain:domain name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
+   return (id<ORIntVarArray>)o;
+}
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -1719,6 +1752,23 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORConstraint> o = [[ORRealElementCst alloc]  initORElement:x array:c equal:y];
    [model trackObject:o];
    return o;   
+}
+
++(id<ORConstraint>) realReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRealVar>) x eqi: (ORDouble) i{
+   id<ORConstraint> o = [[ORRealReifyEqualc alloc] initRealReify: b equiv:x eqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) realReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRealVar>) x geqi: (ORDouble) i{
+   id<ORConstraint> o = [[ORRealReifyGEqualc alloc] initRealReify: b equiv:x geqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) realReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRealVar>) x eq: (id<ORRealVar>) y
+{
+   id<ORConstraint> o = [[ORRealReifyEqual alloc] initRealReify: b equiv: x eq: y];
+   [model trackObject:o];
+   return o;
 }
 @end
 

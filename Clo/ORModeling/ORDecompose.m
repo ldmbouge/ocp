@@ -2929,5 +2929,105 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 @end
 
+
+
+
+@implementation ORTRealHandler
+-(id) init
+{
+    self = [super init:ORTReal];
+    return self;
+}
+
+-(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
+{
+   ORDouble ce = [c dmin];
+   id<ORRealLinear> linOther  = [ORNormalizer realLinearFrom:theOther model:_model];
+   id<ORRealVar> theVar = [ORNormalizer realVarIn:linOther for:_model];
+   [_model addConstraint: [ORFactory realReify:_model boolean:rv with:theVar eqi:ce]];
+   [linOther release];
+}
+-(void) reifyGEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
+{
+   ORDouble ce = [c dmin];
+   id<ORRealLinear> linOther  = [ORNormalizer realLinearFrom:theOther model:_model];
+   id<ORRealVar> theVar = [ORNormalizer realVarIn:linOther for:_model];
+   if ([[theVar domain] low] >= ce) {
+      [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
+   } else {
+      [_model addConstraint: [ORFactory realReify:_model boolean:rv with:theVar geqi:ce]];
+   }
+   [linOther release];
+}
+-(void) reifyGEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
+{
+    ORExprI* newleft  = right;
+    ORExprI* newright = left;    // switch side and pretend it is ≤
+    if ([newleft isConstant]) {
+        [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
+    } else if ([newright isConstant]) {
+        [self reifyLEQc:_model boolean:rv other:newleft constant:newright];
+    } else
+        [self reifyLEQ:_model boolean:rv left:newleft right:newright];
+}
+-(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
+{
+    if ([left isConstant]) {
+        [self reifyEQc:_model boolean:rv other:right constant:left];
+    } else if ([right isConstant]) {
+        [self reifyEQc:_model boolean:rv other:left constant:right];
+    } else{
+        id<ORRealLinear> linLeft   = [ORNormalizer realLinearFrom:left model:_model];
+        id<ORRealLinear> linRight  = [ORNormalizer realLinearFrom:right model:_model];
+        id<ORRealVar> varLeft  = [ORNormalizer realVarIn:linLeft for:_model];
+        id<ORRealVar> varRight = [ORNormalizer realVarIn:linRight for:_model];
+        [_model addConstraint: [ORFactory realReify:_model boolean:rv with:varLeft eq:varRight]];
+        [linLeft release];
+        [linRight release];
+    }
+}
+-(id<ORLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = [left dmin] == [right dmin];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      ORDouble c = lc ? [left dmin] : [right dmin];
+      ORExprI* other = lc ? right : left;
+      ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model];
+      [lin addIndependent: - c];
+      return lin;
+   } else {
+      bool lv = [left isVariable];
+      bool rv = [right isVariable];
+      if (lv || rv) {
+         id<ORRealLinear> linLeft  = [ORNormalizer realLinearFrom:left model:_model];
+         ORRealLinear* linRight  = [ORNormalizer realLinearFrom:right model:_model];
+         id<ORVarArray> vars = [ORFactory realVarArray:_model range:RANGE(_model,0,1)];
+         vars[0] = [ORNormalizer realVarIn:linLeft for:_model];
+         vars[1] = [ORNormalizer realVarIn:linRight for:_model];
+         id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
+                                                  range:RANGE(_model,0,1)
+                                                   with:^ORDouble(ORInt i) {
+                                                      return 1.0;
+                                                   }];
+         [_model addConstraint:[ORFactory realSum:_model array:vars coef:coefs eq:0.0]];
+         [linLeft release];
+         [linRight release];
+      } else {
+         ORRealLinear* linLeft = [ORNormalizer realLinearFrom:left model:_model ];
+         ORRealLinearFlip* linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
+         [ORNormalizer addToRealLinear:linRight from:right model:_model];
+         [linRight release];
+         return linLeft;
+      }
+   }
+   return nil;
+}
+@end
+
 //------
 

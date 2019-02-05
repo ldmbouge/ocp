@@ -183,6 +183,9 @@
 -(void) visitRealLinearLeq: (id<ORConstraint>) c;
 -(void) visitRealLinearGeq: (id<ORConstraint>) c;
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
+-(void) visitRealReifyEqual: (id<ORConstraint>) c;
+-(void) visitRealReifyEqualc: (id<ORConstraint>) c;
+-(void) visitRealReifyGEqualc: (id<ORConstraint>) c;
 -(void) visitFloatUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitFloatEqualc: (id<ORConstraint>)c;
 -(void) visitFloatAssignC: (id<ORConstraint>)c;

@@ -680,6 +680,18 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearEq: visit method not defined"]; 
 }
+-(void) visitRealReifyEqual: (id<ORRealReifyEqual>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRealReifyEqual: visit method not defined"];
+}
+-(void) visitRealReifyEqualc: (id<ORRealReifyEqualc>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRealReifyEqualc: visit method not defined"];
+}
+-(void) visitRealReifyGEqualc: (id<ORRealReifyGEqualc>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRealReifyGEqualc: visit method not defined"];
+}
 -(void) visitBitEqualAt:(id<ORConstraint>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitEqualAt: visit method not defined"];

@@ -61,6 +61,7 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(NSString*) prettyname;
 @end
 
 @protocol ORFloatVar <ORExprVar>
@@ -76,6 +77,7 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(NSString*) prettyname;
 @end
 
 @protocol ORLDoubleVar <ORExprVar>
@@ -83,6 +85,7 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORLDouble) low;
 -(ORLDouble) up;
+-(NSString*) prettyname;
 @end
 
 @protocol ORExprArray<ORIdArray>
