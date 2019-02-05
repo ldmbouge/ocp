@@ -95,7 +95,6 @@ ab = [
       'Float/add_01_1_2',
       'Float/add_01_1_3',
       'Float/add_01_1_4',
-      'Float/disabledArray',
       'Float/div1_10',
       'Float/div1_20',
       'Float/div1_3',
