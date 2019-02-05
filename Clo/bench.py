@@ -192,7 +192,6 @@ ab = [
       'Float/runge_kutta_1_3',
       'Float/runge_kutta_1_4',
       'Float/runge_kutta_1_5',
-      'Float/secureapp',
       'Float/sine_1_false-unreach-call',
       'Float/sine_2_false-unreach-call',
       'Float/sine_3_false-unreach-call',
@@ -217,6 +216,7 @@ ab = [
       'Float/square_8_true-unreach-call',
       'Float/testAbs',
       'Float/testMultipleAbs'
+      'Float/secureapp',
 ]
 
 nba = len(sys.argv)
