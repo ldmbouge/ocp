@@ -228,11 +228,11 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
    float m_e = minFloatBaseOnExponent(m);
    float min,max;
    if(m == fabs(tmpMin)){
-      min = -m;
-      max = minFlt(-m_e,[x max]);
+      min = x.min;
+      max = minFlt(-m_e,x.max);
    }else{
-      min = maxFlt(m_e,[x min]);
-      max = m;
+      min = maxFlt(m_e,x.min);
+      max = x.max;
    }
    return makeFloatInterval(min,max);
 }
