@@ -2120,7 +2120,7 @@
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
                                        id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
+                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
                                        nb += ![v bound];
                                        return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0;
                                     }
@@ -2128,18 +2128,7 @@
                                       return [abs[i] quantity];
                                    }
                             ];
-   id<ORSelect> select_o = [ORFactory select: _engine
-                                       range: x.range
-                                    suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
-                                       nb += ![v bound];
-                                       return ![v bound] && [x isEnabled:i];
-                                    }
-                                   orderedBy: ^ORDouble(ORInt i) {
-                                      return [_model occurences:x[i]];
-                                   }
-                            ];
+   
    __block ORBool goon = YES;
    __block ORBool finish = NO;
    while(goon) {
@@ -2166,6 +2155,30 @@
    if(finish) return;
    NSLog(@"First Pass abs done");
    id<ORDisabledFloatVarArray> nx = [x initialVars:_engine maxFixed:_unique];
+   id<ORSelect> select_occ = [ORFactory select: _engine
+                                       range: nx.range
+                                    suchThat: ^ORBool(ORInt i) {
+                                       id<CPFloatVar> v = _gamma[getId(nx[i])];
+                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[nx[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [nx isDisabled:i]?"YES":"NO",[_model occurences:nx[i]],[abs[i] quantity]);
+                                       nb += ![v bound];
+                                       return ![v bound] && [nx isEnabled:i];
+                                    }
+                                   orderedBy: ^ORDouble(ORInt i) {
+                                      return [_model occurences:nx[i]];
+                                   }
+                            ];
+      id<ORSelect> select_abs = [ORFactory select: _engine
+                                       range: nx.range
+                                    suchThat: ^ORBool(ORInt i) {
+                                       id<CPFloatVar> v = _gamma[getId(nx[i])];
+                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[nx[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [nx isDisabled:i]?"YES":"NO",[_model occurences:nx[i]],[abs[i] quantity]);
+                                       nb += ![v bound];
+                                       return ![v bound] && [nx isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0;
+                                    }
+                                   orderedBy: ^ORDouble(ORInt i) {
+                                      return [abs[i] quantity];
+                                   }
+                            ];
    [self genericSearch:nx selection:(ORSelectorResult(^)(void))^{
       abs = [self computeAbsorptionsQuantities:x];
       ORBool c = NO;
@@ -2175,7 +2188,7 @@
             break;
          }
       }
-      return (c) ? [select_a max] : [select_o max];
+      return (c) ? [select_abs max] : [select_occ max];
    } do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
       [self float5WaySplit:i  withVars:x];
    }];
