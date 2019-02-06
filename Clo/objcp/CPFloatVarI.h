@@ -200,8 +200,10 @@ static inline void updateFTWithValues(float_interval * ft,float min, float max)
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 {
    ORFloat m, min, max;
+   float tmpMax = (x.max == +infinityf()) ? maxnormalf() : x.max;
+   float tmpMin = (x.min == -infinityf()) ? -maxnormalf() : x.min;
    ORInt e;
-   m = fmaxFlt([x min],[x max]);
+   m = fmaxFlt(tmpMin,tmpMax);
    float_cast m_cast;
    m_cast.f = m;
    e = m_cast.parts.exponent - S_PRECISION - 1;
@@ -225,7 +227,7 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
    float m = fmaxFlt(tmpMin, tmpMax);
    float m_e = minFloatBaseOnExponent(m);
    float min,max;
-   if(m == fabs([x min])){
+   if(m == fabs(tmpMax)){
       min = -m;
       max = minFlt(-m_e,[x max]);
    }else{
