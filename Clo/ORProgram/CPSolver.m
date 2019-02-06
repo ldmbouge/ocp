@@ -2138,7 +2138,7 @@
          ORSelectorResult i = [select_a max];
          if(i.found){
             LOG(_level,1,@"maxAbs");
-            [x disable:i.index];
+//            [x disable:i.index];
             id<CPFloatVar> cx = _gamma[getId(x[i.index])];
             id<CPFloatVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
@@ -4477,13 +4477,16 @@
 -(ORDouble) quantity
 {
 //   return (_nb) ? _quantity/_nb : 0.0;
+   assert(_quantity < 1.0);
    return _quantity;
 }
 -(void) addQuantity:(ORFloat) c
 {
-   _nb = (c > 0.0)? _nb + 1 : _nb;
-//   _quantity += c;
+   if(c > 0.0 && c < 1.0){
+   _nb++;
+   //   _quantity += c;
    _quantity = fmaxf(c, _quantity);
+   }
 }
 -(void) setChoice:(CPFloatVarI*) c
 {
