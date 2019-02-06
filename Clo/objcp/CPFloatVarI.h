@@ -226,6 +226,9 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
    float tmpMin = (x.min == -infinityf()) ? -maxnormalf() : x.min;
    float m = fmaxFlt(tmpMin, tmpMax);
    float m_e = minFloatBaseOnExponent(m);
+   NSLog(@"tmpMax %16.16e",tmpMax);
+   NSLog(@"tmpMin %16.16e",tmpMin);
+   NSLog(@"m %16.16e",m);
    float min,max;
    if(m == fabs(tmpMin)){
       min = -m;
