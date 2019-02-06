@@ -2138,7 +2138,7 @@
          ORSelectorResult i = [select_a max];
          if(i.found){
             LOG(_level,1,@"maxAbs");
-//            [x disable:i.index];
+            [x disable:i.index];
             id<CPFloatVar> cx = _gamma[getId(x[i.index])];
             id<CPFloatVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
@@ -2793,7 +2793,7 @@
       interval_x[i_x].inf = fp_next_float(ax.sup);
       interval_x[i_x].sup = fp_previous_float(xmax);
    }
-   if(length_x >= 1 && length_y >= 1){
+   if(length_y >= 1){
       ORInt length = 0;
       for(ORInt i = 0; i <= length_x;i++){
          for(ORInt j = 0; j <= length_y;j++){
