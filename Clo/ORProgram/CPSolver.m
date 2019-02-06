@@ -2146,6 +2146,7 @@
          } else{
             if(nb == 0){
                finish = YES;
+               NSLog(@"Stop because all variables are bounds");
             }
             goon = NO;
             return;
@@ -2183,7 +2184,9 @@
       abs = [self computeAbsorptionsQuantities:x];
       ORBool c = NO;
       for (ORInt i = 0; i < [abs count]; i++) {
-         if([nx isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0){
+         id<CPFloatVar> v = _gamma[getId(nx[i])];
+         if(![v bound] && [nx isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0 && [abs[i] quantity] != 1.0){
+            NSLog(@"ICI");
             c = YES;
             break;
          }
@@ -2981,6 +2984,7 @@
    }
    float_interval* ip = interval;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt index) {
+      ORInt c = [[self explorer] nbChoices];
       LOG(_level,1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[x[i] prettyname],ip[index].inf,ip[index].sup);
       [self floatIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
    }];
