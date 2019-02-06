@@ -3584,11 +3584,9 @@
    ORUInt i = 0;
    CPFloatVarI* cx;
    id<CPFloatVar> v;
-   ORDouble best_rate;
    @autoreleasepool {
       for (id<ORFloatVar> x in vars) {
          cx = _gamma[[x getId]];
-         best_rate = 0.0;
          NSMutableSet* cstr = [cx constraints];
          for(id<CPConstraint> c in cstr){
             if([c canLeadToAnAbsorption]){
@@ -3598,8 +3596,7 @@
                assert(absV >= 0.0f && absV <= 1.f);
                //second test can be reduce to !isInitial()
                if(([vars isInitial:i] && absV >= _absRateLimitModelVars) || (![vars isInitial:i] && absV >= _absRateLimitAdditionalVars)){
-                  [abs[i] addQuantity:absV];
-                  if(absV > best_rate) [abs[i] setChoice:v];
+                  [abs[i] addQuantity:absV for:v];
                }
             }
          }
@@ -4485,7 +4482,17 @@
    if(c > 0.0 && c < 1.0){
    _nb++;
    //   _quantity += c;
-   _quantity = fmaxf(c, _quantity);
+   _quantity = maxFlt(c, _quantity);
+   }
+}
+-(void) addQuantity:(ORFloat) c for:(CPFloatVarI*)v
+{
+   if(c > 0.0 && c < 1.0){
+      _nb++;
+      if(c > _quantity){
+         _quantity = c;
+         [self setChoice:v];
+      }
    }
 }
 -(void) setChoice:(CPFloatVarI*) c
