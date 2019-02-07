@@ -2070,7 +2070,7 @@
       }
    }
 }
--(void) customSearch2:  (id<ORDisabledFloatVarArray>) x
+-(void) customSearch:  (id<ORDisabledFloatVarArray>) x
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
@@ -2112,7 +2112,7 @@
       }];
    }
 }
--(void) customSearch:  (id<ORDisabledFloatVarArray>) x
+-(void) customSearch2:  (id<ORDisabledFloatVarArray>) x
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
@@ -2153,7 +2153,7 @@
       }];
    }
    if(finish) return;
-   NSLog(@"First Pass abs done");
+//   NSLog(@"First Pass abs done");
    id<ORDisabledFloatVarArray> nx = [x initialVars:_engine maxFixed:_unique];
    id<ORSelect> select_occ = [ORFactory select: _engine
                                        range: nx.range
@@ -2194,6 +2194,7 @@
          ORSelectorResult i ;
          if(c){
            LOG(_level,1,@"maxAbs");
+            NSLog(@"ICI");
             i = [select_abs max];
          }else{
             LOG(_level,1,@"maxOcc");
@@ -4489,7 +4490,7 @@
 {
    if(c > 0.0 && c < 1.0){
       _nb++;
-      if(c > _quantity){
+      if(c < _quantity || _choice == nil){
          _quantity = c;
          [self setChoice:v];
       }
