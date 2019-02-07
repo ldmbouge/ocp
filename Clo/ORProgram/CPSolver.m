@@ -4490,7 +4490,7 @@
 {
    if(c > 0.0 && c < 1.0){
       _nb++;
-      if(c < _quantity || _choice == nil){
+      if(c > _quantity || _choice == nil){
          _quantity = c;
          [self setChoice:v];
       }
