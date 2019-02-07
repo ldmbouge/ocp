@@ -51,12 +51,15 @@
 -(BOOL)empty;
 @end
 
+
+typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 // This factorizes all the common stuff
 
 @interface CPCoreSolver : ORGamma<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
+-(void) setAbsComputationFunction:(ABS_FUN) f;
 -(void) setAbsLimitModelVars:(ORDouble)local total:(ORDouble)global;
 -(void) setAbsLimitAdditionalVars:(ORDouble)local total:(ORDouble)global;
 -(void) setLevel:(ORInt) level;
@@ -180,7 +183,6 @@
 
 @protocol ORAbsElement <ORObject>
 -(ORDouble) quantity;
--(void) addQuantity:(ORFloat)c;
 -(void) addQuantity:(ORFloat)c for:(id<CPFloatVar>)c;
 -(void) setChoice:(id<CPFloatVar>)c;
 -(id<CPFloatVar>) bestChoice;
@@ -190,14 +192,17 @@
    ORDouble _quantity;
    ORUInt _nb;
    id<CPFloatVar> _choice;
+   ORDouble _min;
+   ORDouble _pquantity;
+   ORDouble _max;
 }
 -(id) init:(ORDouble)quantity;
 -(id) init;
 -(ORDouble) quantity;
--(void) addQuantity:(ORFloat)c;
 -(void) addQuantity:(ORFloat)c for:(id<CPFloatVar>)c;
 -(void) setChoice:(id<CPFloatVar>)c;
 -(id<CPFloatVar>) bestChoice;
 -(NSString*)description;
 -(void) dealloc;
++(void) setFunChoice:(ABS_FUN)nfun;
 @end

@@ -57,6 +57,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize choicesLimit;
 @synthesize splitTest;
 @synthesize specialSearch;
+@synthesize absFunComputation;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -95,6 +96,7 @@ static enum ValHeuristic valIndex[] =
    occRate = -1;
    rateOther = 1.1;
    grateOther = 1.1;
+   absFunComputation = AMEAN;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -115,6 +117,15 @@ static enum ValHeuristic valIndex[] =
          search3Bpercent = atof(argv[k+1]);
       else if(strncmp(argv[k],"-abs-rate",9) == 0){
          absRate = atof(argv[k+1]);
+      }else if(strncmp(argv[k],"-abs-function",13) == 0){
+          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
+         if ([[tmp lowercaseString] isEqualToString:@"min"]) {
+            absFunComputation = MIN;
+         }else if([[tmp lowercaseString] isEqualToString:@"max"]){
+            absFunComputation = MAX;
+         }else if([[tmp lowercaseString] isEqualToString:@"gmean"]){
+            absFunComputation = GMEAN;
+         }
       }else if(strncmp(argv[k],"-occ-rate",9) == 0){
          occRate = atof(argv[k+1]);
       }else if(strncmp(argv[k],"-model-limits",13) == 0){
@@ -310,6 +321,7 @@ static enum ValHeuristic valIndex[] =
       case 0:
          p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setLevel:level];
+         [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
          if(occRate >= 0) [(CPCoreSolver*)p setOccRate:occRate];
          [(CPCoreSolver*)p setUnique:uniqueNB];

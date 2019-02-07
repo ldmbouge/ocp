@@ -354,6 +354,10 @@
       [ORConcurrency pumpEvents];
    }
 }
+-(void) setAbsComputationFunction:(ABS_FUN) f
+{
+   [ABSElement setFunChoice:f];
+}
 -(void) setAbsLimitModelVars:(ORDouble)local total:(ORDouble)global
 {
    _absRateLimitModelVars = local;
@@ -2112,7 +2116,7 @@
       }];
    }
 }
--(void) customSearch2:  (id<ORDisabledFloatVarArray>) x
+-(void) customSearchD:  (id<ORDisabledFloatVarArray>) x
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
@@ -2153,7 +2157,6 @@
       }];
    }
    if(finish) return;
-//   NSLog(@"First Pass abs done");
    id<ORDisabledFloatVarArray> nx = [x initialVars:_engine maxFixed:_unique];
    id<ORSelect> select_occ = [ORFactory select: _engine
                                        range: nx.range
@@ -4452,13 +4455,19 @@
    return [[[CPSemanticSolver alloc] initCPSemanticSolver: ctrlProto] autorelease];
 }
 @end
-//hzi should redefine release
+
+
 @implementation ABSElement
+static ABS_FUN funChoice;
 
 -(id) init:(ORDouble)quantity
 {
    self = [super init];
    _quantity = quantity;
+   _min = 1.0;
+   _pquantity = 1.0;
+   _quantity = quantity;
+   _max = quantity;
    _choice = nil;
    _nb = 0;
    return self;
@@ -4474,28 +4483,23 @@
 }
 -(ORDouble) quantity
 {
-//   return (_nb) ? _quantity/_nb : 0.0;
-//   assert(_quantity < 1.0);
-   return sqrt(_quantity);
-}
--(void) addQuantity:(ORFloat) c
-{
-   if(c > 0.0 && c < 1.0){
-   _nb++;
-   //   _quantity += c;
-   _quantity = maxFlt(c, _quantity);
+   switch(funChoice){
+      case MIN: return _min;
+      case MAX: return _max;
+      case GMEAN: return (_nb > 0)?pow(_pquantity,1./_nb) : 0.0;
+      case AMEAN:
+      default: return (_nb > 0)?(_quantity/_nb) : 0.0;
    }
 }
 -(void) addQuantity:(ORFloat) c for:(CPFloatVarI*)v
 {
    if(c > 0.0 && c < 1.0){
       _nb++;
-      if(_quantity == 0.0){
-         _quantity = 1.0;
-      }
-      _quantity *= c;
-      
-      if(c > _quantity || _choice == nil){
+      _min = minFlt(c,_min);
+      _max = maxFlt(c,_max);
+      _pquantity *= c;
+      _quantity += c;
+      if(c > _quantity){
          [self setChoice:v];
       }
    }
@@ -4507,6 +4511,10 @@
 -(id<CPFloatVar>) bestChoice
 {
    return _choice;
+}
++(void) setFunChoice:(ABS_FUN)nfun
+{
+   funChoice = nfun;
 }
 -(NSString*)description
 {
