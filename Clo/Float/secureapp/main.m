@@ -427,15 +427,6 @@ int main(int argc, const char * argv[]) {
          [model add:[ORFactory realSum:model array:(id<ORRealVarArray>)[ORFactory idArray:model array:l] coef:coefs eq:0.0]];
          [l release];
       }
-//      ORInt loadsz =(ORInt) [load count];
-//      id<ORRealVarArray> squareLoad = [ORFactory realVarArray:model range:RANGE(model, 0, loadsz) low:0.0 up:+INFINITY names:@"squareLoad"];
-//      for (ORInt i = 0; i < [load count]; i++) {
-//         [model add:[squareLoad[i] eq:[load[i] square]]];
-//      }
-//      squareLoad[loadsz] = loadSquareSum;
-//      coefs = [ORFactory doubleArray:model range:RANGE(model, 0, loadsz) value:1];
-//      [coefs set:-1.0 at:loadsz];
-//      [model add:[ORFactory realSum:model array:squareLoad coef:coefs eq:0.0]];
       [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] mul:load[i]]) eq:loadSquareSum]];
       
       for(ORInt i = 0; i < [flowA count]; i++){
