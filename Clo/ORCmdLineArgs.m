@@ -19,12 +19,12 @@
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
    @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
    @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
-   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens",@"custom"};
+   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens",@"custom",@"customD"};
 
 static enum Heuristic hIndex[] = {FF, ABS, IBS, WDEG, DDEG, SDEG,
    maxWidth, minWidth, maxCard,  minCard,   maxDens,   minDens,   minMagn,   maxMagn,
    maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens,
-   densWAbs , ref ,lexico,absDens,custom};
+   densWAbs , ref ,lexico,absDens,custom,customD};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"split3B",@"splitAbs",@"ESplit",@"DSplit"};
 
@@ -161,7 +161,7 @@ static enum ValHeuristic valIndex[] =
       else if (strncmp(argv[k], "-var-order", 10)==0){
          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
          int index = 24;
-         for(int i = 0; i < 28;i++){
+         for(int i = 0; i < 29;i++){
             if ([tmp isEqualToString:hName[i]] || [[tmp lowercaseString] isEqualToString:[hName[i] lowercaseString]]){
               index = i;
               break;
@@ -1542,6 +1542,10 @@ static enum ValHeuristic valIndex[] =
       case custom :
          [vars setMaxFixed:(ORInt)[vars count]];
          [p customSearch:vars];
+         break;
+      case customD :
+         [vars setMaxFixed:(ORInt)[vars count]];
+         [p customSearchD:vars];
          break;
       default :
          heuristic = lexico;

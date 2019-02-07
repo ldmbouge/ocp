@@ -390,6 +390,10 @@
 {
    [[self worker] customSearch:x];
 }
+-(void)          customSearchD: (id<ORDisabledFloatVarArray>) x
+{
+   [[self worker] customSearchD:x];
+}
 -(void) maxWidthSearch:(id<ORDisabledFloatVarArray>)x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
 {
     [[self worker] maxWidthSearch:x do:b];

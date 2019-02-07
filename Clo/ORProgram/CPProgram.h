@@ -63,6 +63,7 @@ PORTABLE_BEGIN
 
 -(void)          specialSearch: (id<ORDisabledFloatVarArray>) x;
 -(void)          customSearch: (id<ORDisabledFloatVarArray>) x;
+-(void)          customSearchD: (id<ORDisabledFloatVarArray>) x;
 -(void)          maxWidthSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b;
 -(void)          minWidthSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b;
 -(void)          maxCardinalitySearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b;
