@@ -181,6 +181,7 @@
 @protocol ORAbsElement <ORObject>
 -(ORDouble) quantity;
 -(void) addQuantity:(ORFloat)c;
+-(void) addQuantity:(ORFloat)c for:(id<CPFloatVar>)c;
 -(void) setChoice:(id<CPFloatVar>)c;
 -(id<CPFloatVar>) bestChoice;
 @end
@@ -194,6 +195,7 @@
 -(id) init;
 -(ORDouble) quantity;
 -(void) addQuantity:(ORFloat)c;
+-(void) addQuantity:(ORFloat)c for:(id<CPFloatVar>)c;
 -(void) setChoice:(id<CPFloatVar>)c;
 -(id<CPFloatVar>) bestChoice;
 -(NSString*)description;
