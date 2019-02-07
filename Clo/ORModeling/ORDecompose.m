@@ -717,7 +717,7 @@ struct CPVarPair {
          [right release];
          [left release];
       } else {
-         //should never append 
+         //should never append
          ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model ];
          ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
          [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
@@ -2186,6 +2186,17 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    self = [super init:ORTBool];
    return self;
 }
+
+-(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
+{
+   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model];
+   id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model];
+   if([c min]){
+      [_model addConstraint:[theVar eq:rv]];
+   }else{
+      [_model addConstraint:[theVar neq:rv]];
+   }
+}
 @end
 
 
@@ -2735,10 +2746,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       ORInt length = !lc + !rc;
       id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,length - 1)];
       id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^ORDouble(ORInt i) {
-                                                   return 1;
-                                                }];
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORDouble(ORInt i) {
+                                                     return 1;
+                                                  }];
       if(lc){
          ORDoubleLinear* linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
          vars[0] = [ORNormalizer doubleVarIn:linRight for:_model];
@@ -2773,10 +2784,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       ORInt length = !lc + !rc;
       id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,length - 1)];
       id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^ORDouble(ORInt i) {
-                                                   return 1;
-                                                }];
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORDouble(ORInt i) {
+                                                     return 1;
+                                                  }];
       if(lc){
          ORDoubleLinear* linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
          vars[0] = [ORNormalizer doubleVarIn:linRight for:_model];
@@ -2812,10 +2823,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       ORInt length = !lc + !rc;
       id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,length - 1)];
       id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^ORDouble(ORInt i) {
-                                                   return 1;
-                                                }];
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORDouble(ORInt i) {
+                                                     return 1;
+                                                  }];
       if(lc){
          ORDoubleLinear* linright  = [ORNormalizer doubleLinearFrom:right model:_model];
          vars[0] = [ORNormalizer doubleVarIn:linright for:_model];
@@ -2850,10 +2861,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       ORInt length = !lc + !rc;
       id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,length - 1)];
       id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^ORDouble(ORInt i) {
-                                                   return 1;
-                                                }];
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORDouble(ORInt i) {
+                                                     return 1;
+                                                  }];
       if(lc){
          ORDoubleLinear* linright  = [ORNormalizer doubleLinearFrom:right model:_model];
          vars[0] = [ORNormalizer doubleVarIn:linright for:_model];
@@ -2901,10 +2912,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          vars[0] = [ORNormalizer doubleVarIn:linLeft for:_model];
          vars[1] = [ORNormalizer doubleVarIn:linRight for:_model];
          id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                                  range:RANGE(_model,0,1)
-                                                   with:^ORDouble(ORInt i) {
-                                                      return 1;
-                                                   }];
+                                                    range:RANGE(_model,0,1)
+                                                     with:^ORDouble(ORInt i) {
+                                                        return 1;
+                                                     }];
          [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs eq:0.0]];
          [linLeft release];
          [linRight release];
@@ -2935,8 +2946,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 @implementation ORTRealHandler
 -(id) init
 {
-    self = [super init:ORTReal];
-    return self;
+   self = [super init:ORTReal];
+   return self;
 }
 
 -(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
@@ -2955,36 +2966,37 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    if ([[theVar domain] low] >= ce) {
       [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
    } else {
-      [_model addConstraint: [ORFactory realReify:_model boolean:rv with:theVar geqi:ce]];
+      [_model addConstraint: [ORFactory expr:[rv neg] lor:[theVar geq:@(ce)] track:_model]];
+      [_model addConstraint: [ORFactory expr:rv lor:[theVar lt:@(ce)] track:_model]];
    }
    [linOther release];
 }
 -(void) reifyGEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
 {
-    ORExprI* newleft  = right;
-    ORExprI* newright = left;    // switch side and pretend it is ≤
-    if ([newleft isConstant]) {
-        [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
-    } else if ([newright isConstant]) {
-        [self reifyLEQc:_model boolean:rv other:newleft constant:newright];
-    } else
-        [self reifyLEQ:_model boolean:rv left:newleft right:newright];
+   ORExprI* newleft  = right;
+   ORExprI* newright = left;    // switch side and pretend it is ≤
+   if ([newleft isConstant]) {
+      [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
+   } else if ([newright isConstant]) {
+      [self reifyLEQc:_model boolean:rv other:newleft constant:newright];
+   } else
+      [self reifyLEQ:_model boolean:rv left:newleft right:newright];
 }
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
 {
-    if ([left isConstant]) {
-        [self reifyEQc:_model boolean:rv other:right constant:left];
-    } else if ([right isConstant]) {
-        [self reifyEQc:_model boolean:rv other:left constant:right];
-    } else{
-        id<ORRealLinear> linLeft   = [ORNormalizer realLinearFrom:left model:_model];
-        id<ORRealLinear> linRight  = [ORNormalizer realLinearFrom:right model:_model];
-        id<ORRealVar> varLeft  = [ORNormalizer realVarIn:linLeft for:_model];
-        id<ORRealVar> varRight = [ORNormalizer realVarIn:linRight for:_model];
-        [_model addConstraint: [ORFactory realReify:_model boolean:rv with:varLeft eq:varRight]];
-        [linLeft release];
-        [linRight release];
-    }
+   if ([left isConstant]) {
+      [self reifyEQc:_model boolean:rv other:right constant:left];
+   } else if ([right isConstant]) {
+      [self reifyEQc:_model boolean:rv other:left constant:right];
+   } else{
+      id<ORRealLinear> linLeft   = [ORNormalizer realLinearFrom:left model:_model];
+      id<ORRealLinear> linRight  = [ORNormalizer realLinearFrom:right model:_model];
+      id<ORRealVar> varLeft  = [ORNormalizer realVarIn:linLeft for:_model];
+      id<ORRealVar> varRight = [ORNormalizer realVarIn:linRight for:_model];
+      [_model addConstraint: [ORFactory realReify:_model boolean:rv with:varLeft eq:varRight]];
+      [linLeft release];
+      [linRight release];
+   }
 }
 -(id<ORLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
@@ -3004,21 +3016,13 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       bool lv = [left isVariable];
       bool rv = [right isVariable];
       if (lv || rv) {
-         id<ORRealLinear> linLeft  = [ORNormalizer realLinearFrom:left model:_model];
-         ORRealLinear* linRight  = [ORNormalizer realLinearFrom:right model:_model];
-         id<ORVarArray> vars = [ORFactory realVarArray:_model range:RANGE(_model,0,1)];
-         vars[0] = [ORNormalizer realVarIn:linLeft for:_model];
-         vars[1] = [ORNormalizer realVarIn:linRight for:_model];
-         id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                                  range:RANGE(_model,0,1)
-                                                   with:^ORDouble(ORInt i) {
-                                                      return 1.0;
-                                                   }];
-         [_model addConstraint:[ORFactory realSum:_model array:vars coef:coefs eq:0.0]];
-         [linLeft release];
-         [linRight release];
+         ORExprI* other = lv ? right : left;
+         ORExprI* var   = lv ? left : right;
+         id<ORRealVar> theVar = [ORNormalizer realVarIn:_model expr:var];
+         ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model equalTo:theVar];
+         [lin release];
       } else {
-         ORRealLinear* linLeft = [ORNormalizer realLinearFrom:left model:_model ];
+         ORRealLinear* linLeft = [ORNormalizer realLinearFrom:left model:_model];
          ORRealLinearFlip* linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
          [ORNormalizer addToRealLinear:linRight from:right model:_model];
          [linRight release];

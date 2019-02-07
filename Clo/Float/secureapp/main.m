@@ -386,8 +386,8 @@ int main(int argc, const char * argv[]) {
       id<ORIntVarArray> pathLensA = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[flowA count]) domain:RANGE(model,0,MAXINT) names:@"pathLensA"];
       id<ORIntVarArray> pathLensB = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[flowA count]) domain:RANGE(model,0,MAXINT) names:@"pathLensB"];
       id<ORIntVar> pathLens = [ORFactory intVar:model domain:RANGE(model, 0, MAXINT) name:@"pathLens"];
-      id<ORRealVarArray> load = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt) [network count]- 1) low:0.0 up:MAXDBL names:@"load"];
-      id<ORRealVar> loadSquareSum = [ORFactory realVar:model name:@"loadSquareSum"];
+      id<ORIntVarArray> load = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt) [network count]- 1) domain:RANGE(model,0,MAXINT) names:@"load"];
+      id<ORIntVar> loadSquareSum = [ORFactory intVar:model  domain:RANGE(model, 0, MAXINT) name:@"loadSquareSum"];
       
       
       for(ORInt i = 0; i < [isFlowA count]; i++){
@@ -427,7 +427,16 @@ int main(int argc, const char * argv[]) {
          [model add:[ORFactory realSum:model array:(id<ORRealVarArray>)[ORFactory idArray:model array:l] coef:coefs eq:0.0]];
          [l release];
       }
-      [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] square]) eq:loadSquareSum]];
+//      ORInt loadsz =(ORInt) [load count];
+//      id<ORRealVarArray> squareLoad = [ORFactory realVarArray:model range:RANGE(model, 0, loadsz) low:0.0 up:+INFINITY names:@"squareLoad"];
+//      for (ORInt i = 0; i < [load count]; i++) {
+//         [model add:[squareLoad[i] eq:[load[i] square]]];
+//      }
+//      squareLoad[loadsz] = loadSquareSum;
+//      coefs = [ORFactory doubleArray:model range:RANGE(model, 0, loadsz) value:1];
+//      [coefs set:-1.0 at:loadsz];
+//      [model add:[ORFactory realSum:model array:squareLoad coef:coefs eq:0.0]];
+      [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] mul:load[i]]) eq:loadSquareSum]];
       
       for(ORInt i = 0; i < [flowA count]; i++){
          [model add:[Sum(model, p, RANGE(model, 0, (ORInt)[flowA[i] count]-1),[flowA[i][p] mul:@([allpathA[i%([desiredFlowsOfA count]/2)][p] count])]) eq:pathLensA[i]]];
@@ -455,7 +464,7 @@ int main(int argc, const char * argv[]) {
          id<ORIntVarArray> equivArray = (id<ORIntVarArray>)[ORFactory idArray:model array:equivlist];
          id<ORIntArray> coefs = [ORFactory intArray:model range:equivArray.range value:1];
          [coefs setObject:@(-1) atIndexedSubscript:([coefs count] - 1)];
-         [model add:[ORFactory sum:model array:equivArray eqi:0]];
+         [model add:[ORFactory sum:model array:equivArray coef:coefs eq:0]];
          [model add:[equiv[index++] geq:@(1)]];
          [equivlist release];
       }
@@ -517,8 +526,7 @@ int main(int argc, const char * argv[]) {
       
       printf("%s", [NSString stringWithFormat: @"%@", [model constraints]].UTF8String);
       
-      
-      //        id<MIPProgram> p = [ORFactory createMIPProgram:model];
+      id<MIPProgram> p = [ORFactory createMIPProgram:model];
       
    }
    return 0;

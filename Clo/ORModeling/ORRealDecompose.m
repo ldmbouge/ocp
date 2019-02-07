@@ -131,7 +131,7 @@
          [left scaleBy:[[e right] min]];
          [_terms addLinear:left];
       } else {
-         id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e];
+         id<ORRealVar> alpha =  [ORNormalizer realVarIn:_model expr:e];
          [_terms addTerm:alpha by:1];
       }
    }

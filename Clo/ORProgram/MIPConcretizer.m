@@ -92,7 +92,7 @@
         }
         mipvar = [_MIPsolver createIntVariable: [av low] up: [av up]];
         _gamma[av.getId] = mipvar;
-        
+       
         MIPVariableI* x[2] = { mipvar, mipbase };
         ORDouble    coef[2] = { 1 , -[av scale] };
         MIPConstraintI* cstr = [_MIPsolver createEQ: 2 var: x coef: coef rhs: [av shift]];
@@ -263,7 +263,7 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-       
+      
       id<ORDoubleArray> fa = [ORFactory doubleArray:[a tracker] range:[a range] with:^ORDouble(ORInt k) {
          return [a at:k];
       }];
@@ -301,21 +301,65 @@
       [_MIPsolver postConstraint:concreteCstr];
    }
 }
+-(void) visitSumEqualc: (id<ORSumEqc>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<MIPVariableArray> x = [self concreteArray:[c vars]];
+      id<ORDoubleArray> fa = [ORFactory doubleArray:_program range:[x range] value:1];
+      MIPConstraintI* concreteCstr = [_MIPsolver createEQ:x coef:fa cst:-[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
+}
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c
+{
+   if (_gamma[c.getId] == NULL) {
+   id<MIPVariableArray> x = [self concreteArray:[c vars]];
+   id<ORDoubleArray> fa = [ORFactory doubleArray:_program range:[x range] value:1];
+   MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:x coef:fa cst:-[c cst]];
+   _gamma[c.getId] = concreteCstr;
+   [_MIPsolver postConstraint:concreteCstr];
+}
+   
+}
 -(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
 {
    assert(0);
 }
 
--(void) visitReifyEqualc:(id<ORRealReifyEqualc>)c
+#warning [hzi] Should build an implication constraint (>>) or rewrite the implication P -> Q as not P or Q
+-(void) visitBinImply: (id<ORBinImply>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      MIPVariableI* l[1] = { [self concreteVar:[c left]] };
+      MIPVariableI* r[1] = { [self concreteVar:[c right]] };
+      MIPConstraintI* concreteCstr = nil;
+      //      [_MIPsolver createImply: l imply:r];
+      //      _gamma[c.getId] = concreteCstr;
+      //      [_MIPsolver postConstraint: concreteCstr];
+   }
+}
+#warning [hzi] In the objective function we need to minimize the sum of load(n)^2 with load(n) \in N
+-(void) visitSquare:(id<ORSquare>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      MIPVariableI* x[1] = { [self concreteVar:[c op]] };
+      MIPVariableI* res[1] = { [self concreteVar:[c res]] };
+      MIPConstraintI* concreteCstr = nil;
+      //      _gamma[c.getId] = concreteCstr;
+      //      [_MIPsolver postConstraint: concreteCstr];
+   }
+}
+#warning [hzi] Implication of kind R0 => R1, where R0 et R1 are relations, are rewritten like b => b' where b <=> R0 and b' <=> R1
+-(void) visitRealReifyEqualc:(id<ORRealReifyEqualc>)c
 {
    if (_gamma[c.getId] == NULL) {
       MIPVariableI* b[1] = { [self concreteVar:[c b]] };
       MIPVariableI* x[1] = { [self concreteVar:[c x]] };
       ORDouble cst = [c cst];
       MIPConstraintI* concreteCstr = nil;
-//      [_MIPsolver createReify: db imply:dx eq:c];
-      _gamma[c.getId] = concreteCstr;
-      [_MIPsolver postConstraint: concreteCstr];
+      //      _gamma[c.getId] = concreteCstr;
+      //      [_MIPsolver postConstraint: concreteCstr];
    }
 }
 
@@ -390,14 +434,14 @@
         MIPVariableI* dx = _gamma[[c x].getId];
         MIPVariableI* dz = _gamma[[c z].getId];
         MIPParameterI* dw = _gamma[[c weight].getId];
-        
+       
         id<ORIntRange> r = RANGE(_MIPsolver, 0, 1);
         id<ORIdArray> vars = [ORFactory idArray: _MIPsolver range: r];
         [vars set: dx at: 0];
         [vars set: dz at: 1];
         ORDouble coefValues[] = { [(id<ORRealParam>)[c weight] initialValue], -1.0 };
         id<ORDoubleArray> coef = [ORFactory doubleArray: _MIPsolver range: r values: coefValues];
-        
+       
         // w * x - z == 0
         MIPConstraintI* concreteCstr = [_MIPsolver createEQ: (id<MIPVariableArray>)vars coef: coef cst: 0];
         _gamma[c.getId] = concreteCstr;
@@ -412,6 +456,6 @@
 }
 -(void) visitMaximize: (id<ORObjectiveFunctionVar>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
 }
 @end
