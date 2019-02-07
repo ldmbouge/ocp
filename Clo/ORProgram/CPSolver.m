@@ -4475,8 +4475,8 @@
 -(ORDouble) quantity
 {
 //   return (_nb) ? _quantity/_nb : 0.0;
-   assert(_quantity < 1.0);
-   return _quantity;
+//   assert(_quantity < 1.0);
+   return sqrt(_quantity);
 }
 -(void) addQuantity:(ORFloat) c
 {
@@ -4490,8 +4490,12 @@
 {
    if(c > 0.0 && c < 1.0){
       _nb++;
+      if(_quantity == 0.0){
+         _quantity = 1.0;
+      }
+      _quantity *= c;
+      
       if(c > _quantity || _choice == nil){
-         _quantity = c;
          [self setChoice:v];
       }
    }
