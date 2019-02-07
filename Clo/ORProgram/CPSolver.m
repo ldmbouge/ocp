@@ -4484,7 +4484,7 @@ static ABS_FUN funChoice;
 -(ORDouble) quantity
 {
    switch(funChoice){
-      case MIN: return _min;
+      case MIN: return (_nb > 0)?_min:0.0;
       case MAX: return _max;
       case GMEAN: return (_nb > 0)?pow(_pquantity,1./_nb) : 0.0;
       case AMEAN:
