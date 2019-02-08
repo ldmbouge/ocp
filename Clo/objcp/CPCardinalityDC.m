@@ -648,3 +648,286 @@ static void prune(CPCardinalityDC* card)
     return 0;
 }
 @end
+
+// ============================================================================================
+
+@implementation CPGeneralizedCardinalityDC {
+    id<CPIntVarArray> _x;
+    id<CPIntVarArray> _count;
+    
+    id<CPIntVar>* _var;
+    int         _nb;
+    int     _varSize;
+    id<CPIntVar>* _vcount;
+    int            _lc;
+    int            _uc;
+    int            _sc;
+    int            _nc;
+    // value
+    int            _min;
+    int            _max;
+    int            _valSize;
+    int*           _low;
+    int*           _up;
+    int*           _flow;
+    // flow
+    int            _sizeFlow;
+    int*           _varMatch;
+    int*           _next;
+    int*           _prev;
+    int*           _valMatch;
+    int*           _varSeen;
+    int*           _valSeen;
+    int            _magic;
+    
+    int            _dfs;
+    int            _component;
+    
+    int*           _varComponent;
+    int*           _varDfs;
+    int*           _varHigh;
+    
+    int*           _valComponent;
+    int*           _valDfs;
+    int*           _valHigh;
+    
+    int            _sinkComponent;
+    int            _sinkDfs;
+    int            _sinkHigh;
+    
+    int*           _stack;
+    int*           _type;
+    int            _top;
+    BOOL        _posted;
+}
+-(CPGeneralizedCardinalityDC*) initCPGeneralizedCardinalityDC:(id<CPIntVarArray>)x
+                                                          occ:(id<CPIntVarArray>)occ
+{
+    self = [super initCPCoreConstraint:[[x at:x.low] engine]];
+    _x = x;
+    _count = occ;
+    _low = _up = _flow = 0;
+    _varMatch = _next = _prev = 0;
+    _valMatch = _varSeen = _valSeen = 0;
+    _varComponent = _varDfs = _varHigh = 0;
+    _valComponent = _valDfs = _valHigh = 0;
+    _sinkComponent = _sinkDfs = _sinkHigh = 0;
+    _stack = _type = 0;
+    return self;
+}
+-(void) dealloc
+{
+    if (_posted) {
+        free(_var);
+        free(_vcount);
+        free(_varMatch);
+        free(_next);
+        free(_prev);
+        free(_varComponent);
+        free(_varDfs);
+        free(_varHigh);
+        
+        _low += _min;
+        _up += _min;
+        _flow += _min;
+        _valFirstMatch += _min;
+        _valComponent += _min;
+        _valDfs += _min;
+        _valHigh += _min;
+        
+        free(_low);
+        free(_up);
+        free(_flow);
+        free(_valComponent);
+        free(_valDfs);
+        free(_valHigh);
+        free(_stack);
+        free(_type);
+        
+    }
+    [super dealloc];
+
+}
+-(void) post
+{
+    int low = _x.range.low;
+    int up  = _x.range.up;
+    _varSize = up - low + 1;
+    _var  = malloc(sizeof(id)*_varSize);
+    _nb = 0;
+    for(int k=low ; k<=up; k++)
+        _var[_nb++] = [_x at:k];
+    
+    _lc = _count.range.low;
+    _uc  = _count.range.up;
+    _sc = _uc - _lc + 1;
+    _vcount  = malloc(sizeof(id)*_sc);
+    _vcount -= _lc;
+    for(int k=_lc ; k<=_uc; k++)
+        _vcount[k] = [_count at:k];
+    
+    if (!self.findValueRange)
+        failNow();
+    allocateFlow();
+    findInitialFlow();
+    if (!findMaximalFlow())
+        failNow();
+    if (!findFeasibleFlow())
+        failNow();
+    allocateSCC();
+    prune();
+    if (!pruneBounds())
+        failNow();
+    for(int k = 0 ; k < _nb; k++)
+        if (!_var[k].bound)
+            [_var[k] whenChangeBoundsPropagate:self];
+    for(int k = _lc ; k <= _uc; k++)
+        if (!_vcount[k].bound)
+            [_vcount[k] whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+    
+}
+
+-(bool)findValueRange
+{
+    _min = _lc;
+    _max = _uc;
+    for(int i = 0; i < _nb; i++) {
+        int m = _var[i].min;
+        int M = _var[i].max;
+        if (m < _min) _min = m;
+        if (M > _max) _max = M;
+    }
+    _valSize = _max - _min + 1;
+    
+    // low
+    _low = malloc(sizeof(int)*_valSize);
+    _low -= _min;
+    for(int k = _min; k <= _max; k++)
+        _low[k] = 0;
+    
+    // up
+    _up = malloc(sizeof(int)*_valSize);
+    _up -= _min;
+    for(int k = _min; k <= _max; k++)
+        _up[k] = _nb;
+    
+    for(int i = _lc ; i <= _uc; i++) {
+        int v = _vcount[i].min;
+        if (v > 0)
+            _low[i] = v;
+        else {
+            ORStatus s = tryfail(^ORStatus{
+                [_vcount[i] updateMin:0];
+                return ORSuspend;
+            }, ^ORStatus{ return ORFailure;});
+            if (s == ORFailure) return false;
+        }
+    }
+
+    for(int i = _lc ; i <= _uc; i++) {
+        int v = _vcount[i].max;
+        if (v < _nb)
+            _up[i] = v;
+        else {
+            ORStatus s = tryfail(^ORStatus{
+                [_vcount updateMax:nb];
+                return ORSuspend;
+            }, ^ORStatus{ return ORFailure;});
+            if (s == ORFailure) return false;
+        }
+    }
+    return true;
+}
+
+-(void)updateBounds
+{
+    for(int i = _lc ; i <= _uc; i++) {
+        if (i >= _min && i <= _max) {
+            int v = _vcount[i].min;
+            if (v > 0)
+                _low[i] = v;
+            else
+                _low[i] = 0;
+        }
+    }
+    for(int i = _lc ; i <= _uc; i++) {
+        if (i >= _min && i <= _max) {
+            int v = _vcount[i].max;
+            if (v < _nb)
+                _up[i] = v;
+            else
+                _up[i] = _nb;
+        }
+    }
+}
+
+-(void)allocateFlow
+{
+    // flow
+    _flow = malloc(sizeof(int)*_valSize);
+    _flow -= _min;
+    for(int k = _min; k <= _max; k++)
+        _flow[k] = 0;
+    
+    // first variable matched
+    _valMatch = malloc(sizeof(int)*_valSize);
+    _valMatch -= _min;
+    for(int k = _min; k <= _max; k++)
+        _valMatch[k] = -MAXINT;  // unmatched
+    
+    // next variable matched
+    _next = malloc(sizeof(int)*_varSize);
+    for(int k = 0; k < _nb; k++)
+        _next[k] = -MAXINT;  // no next
+    
+    // previous variable matched
+    _prev = malloc(sizeof(int)*_varSize);
+    for(int k = 0; k < _nb; k++)
+        _prev[k] = -MAXINT;  // no prev
+    
+    // variable assignment
+    _varMatch = malloc(sizeof(int)*_varSize);
+    for(int k = 0 ; k < _nb; k++)
+        _varMatch[k] = -MAXINT; // unmatched
+    
+    // flag
+    _varSeen = malloc(sizeof(int)*_varSize);
+    for(int k = 0; k < _nb; k++)
+        _varSeen[k] = 0;
+    // flag
+    _valSeen = malloc(sizeof(int)*_valSize);
+    _valSeen -= _min;
+    for(int k = _min; k <= _max; k++)
+        _valSeen[k] = 0;
+    _magic = 0;
+}
+
+
+-(NSSet*) allVars
+{
+    unsigned long nbv = _x.count + _count.count;
+    NSMutableSet* av = [[[NSMutableSet alloc] initWithCapacity:nbv] autorelease];
+    for(id<CPIntVar> xi in _x)
+        [av addObject:xi];
+    for(id<CPIntVar> oi in _count)
+        [av addObject:oi];
+    return av;
+}
+-(ORUInt) nbUVars
+{
+    if (_posted) {
+        ORUInt nb=0;
+        for(ORUInt k=0;k<_varSize;k++)
+            nb += ![_var[k] bound];
+        for(ORUInt k=0;k<_occSize;k++)
+            nb += ![_vcount[k] bound];
+        return nb;
+    }
+    else
+        @throw [[ORExecutionError alloc] initORExecutionError: "GenCardinality: nbUVars called before the constraints is posted"];
+    return 0;
+}
+@end

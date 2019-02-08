@@ -232,8 +232,8 @@ int main (int argc, const char * argv[])
         
         [notes ddWidth: layerSize];
         [notes ddRelaxed: false];
-        id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
-        //id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];
+        //id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
+        id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];
         
         [cp solveAll: ^{
             

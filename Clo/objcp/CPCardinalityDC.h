@@ -21,3 +21,13 @@
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end
+
+@interface CPGeneralizedCardinalityDC : CPCoreConstraint<CPConstraint>
+-(CPGeneralizedCardinalityDC*) initCPGeneralizedCardinalityDC:(id<CPIntVarArray>)x
+                                                          occ:(id<CPIntVarArray>)occ;
+-(void) dealloc;
+-(void) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
