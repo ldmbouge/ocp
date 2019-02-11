@@ -2098,7 +2098,7 @@
          ORSelectorResult i = [select_a max];
          if(i.found){
             LOG(_level,1,@"maxAbs");
-//            [x disable:i.index];
+            [x disable:i.index];
             id<CPFloatVar> cx = _gamma[getId(x[i.index])];
             id<CPFloatVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
