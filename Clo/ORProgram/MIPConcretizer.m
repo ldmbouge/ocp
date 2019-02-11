@@ -80,24 +80,24 @@
 }
 -(void) visitAffineVar:(id<ORIntVar>)v
 {
-    // DAN
-    ORIntVarAffineI* av = (ORIntVarAffineI*)v;
-    MIPIntVariableI* mipvar = _gamma[av.getId];
-    if(mipvar == NULL) {
-        id<ORIntVar> base = [av base];
-        MIPIntVariableI* mipbase = _gamma[base.getId];
-        if (mipbase == NULL) {
-            mipbase = [_MIPsolver createIntVariable: [base low] up: [base up]];
-            _gamma[base.getId] = mipbase;
-        }
-        mipvar = [_MIPsolver createIntVariable: [av low] up: [av up]];
-        _gamma[av.getId] = mipvar;
-       
-        MIPVariableI* x[2] = { mipvar, mipbase };
-        ORDouble    coef[2] = { 1 , -[av scale] };
-        MIPConstraintI* cstr = [_MIPsolver createEQ: 2 var: x coef: coef rhs: [av shift]];
-        [_MIPsolver postConstraint: cstr];
-    }
+   // DAN
+   ORIntVarAffineI* av = (ORIntVarAffineI*)v;
+   MIPIntVariableI* mipvar = _gamma[av.getId];
+   if(mipvar == NULL) {
+      id<ORIntVar> base = [av base];
+      MIPIntVariableI* mipbase = _gamma[base.getId];
+      if (mipbase == NULL) {
+         mipbase = [_MIPsolver createIntVariable: [base low] up: [base up]];
+         _gamma[base.getId] = mipbase;
+      }
+      mipvar = [_MIPsolver createIntVariable: [av low] up: [av up]];
+      _gamma[av.getId] = mipvar;
+      
+      MIPVariableI* x[2] = { mipvar, mipbase };
+      ORDouble    coef[2] = { 1 , -[av scale] };
+      MIPConstraintI* cstr = [_MIPsolver createEQ: 2 var: x coef: coef rhs: [av shift]];
+      [_MIPsolver postConstraint: cstr];
+   }
 }
 -(void) visitRealVar: (id<ORRealVar>) v
 {
@@ -113,11 +113,11 @@
 
 -(void) visitRealParam:(id<ORRealParam>)v
 {
-    if (_gamma[v.getId] == NULL) {
-        MIPParameterI* cv;
-        cv = [_MIPsolver createParameter];
-        _gamma[v.getId] = cv;
-    }
+   if (_gamma[v.getId] == NULL) {
+      MIPParameterI* cv;
+      cv = [_MIPsolver createParameter];
+      _gamma[v.getId] = cv;
+   }
 }
 
 -(void) visitIdArray: (id<ORIdArray>) v
@@ -136,15 +136,15 @@
 }
 -(void) visitIdMatrix:(id<ORIdMatrix>) v
 {
-    if (_gamma[v.getId] == NULL) {
-        ORInt nb = (ORInt) [v count];
-        for(ORInt k = 0; k < nb; k++)
-            [[v flat: k] visit: self];
-        id<ORIdMatrix> n = [ORFactory idMatrix: _MIPsolver with: v];
-        for(ORInt k = 0; k < nb; k++)
-            [n setFlat: _gamma[[[v flat: k] getId]] at: k];
-        _gamma[v.getId] = n;
-    }}
+   if (_gamma[v.getId] == NULL) {
+      ORInt nb = (ORInt) [v count];
+      for(ORInt k = 0; k < nb; k++)
+         [[v flat: k] visit: self];
+      id<ORIdMatrix> n = [ORFactory idMatrix: _MIPsolver with: v];
+      for(ORInt k = 0; k < nb; k++)
+         [n setFlat: _gamma[[[v flat: k] getId]] at: k];
+      _gamma[v.getId] = n;
+   }}
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
@@ -175,48 +175,48 @@
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
-    if (_gamma[obj.getId] == NULL) {
-        id<ORVarArray> x = [obj array];
-        id<ORDoubleArray> a = [obj coef];
-        [x visit: self];
-        id<MIPVariableArray> dx = _gamma[x.getId];
-        MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a];
-        _gamma[obj.getId] = concreteObj;
-        [_MIPsolver postObjective: concreteObj];
-    }
+   if (_gamma[obj.getId] == NULL) {
+      id<ORVarArray> x = [obj array];
+      id<ORDoubleArray> a = [obj coef];
+      [x visit: self];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a];
+      _gamma[obj.getId] = concreteObj;
+      [_MIPsolver postObjective: concreteObj];
+   }
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
-    if (_gamma[obj.getId] == NULL) {
-        id<ORVarArray> x = [obj array];
-        id<ORDoubleArray> a = [obj coef];
-        [x visit: self];
-        id<MIPVariableArray> dx = _gamma[x.getId];
-        MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a];
-        _gamma[obj.getId] = concreteObj;
-        [_MIPsolver postObjective: concreteObj];
-    }
+   if (_gamma[obj.getId] == NULL) {
+      id<ORVarArray> x = [obj array];
+      id<ORDoubleArray> a = [obj coef];
+      [x visit: self];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a];
+      _gamma[obj.getId] = concreteObj;
+      [_MIPsolver postObjective: concreteObj];
+   }
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-    // DAN
-    if (_gamma[c.getId]==NULL) {
-        MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
-        ORDouble    coef[2] = { 1, -1 };
-        MIPConstraintI* concreteCstr = [_MIPsolver createEQ:2 var:x coef:coef rhs:[c cst]];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint:concreteCstr];
-    }
+   // DAN
+   if (_gamma[c.getId]==NULL) {
+      MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
+      ORDouble    coef[2] = { 1, -1 };
+      MIPConstraintI* concreteCstr = [_MIPsolver createEQ:2 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-    if (_gamma[c.getId]==NULL) {
-        MIPVariableI* x[1] = { [self concreteVar:[c left]] };
-        ORDouble    coef[1] = { 1.0 };
-        MIPConstraintI* concreteCstr = [_MIPsolver createEQ: 1 var:x coef:coef rhs:[c cst]];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint:concreteCstr];
-    }
+   if (_gamma[c.getId]==NULL) {
+      MIPVariableI* x[1] = { [self concreteVar:[c left]] };
+      ORDouble    coef[1] = { 1.0 };
+      MIPConstraintI* concreteCstr = [_MIPsolver createEQ: 1 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
@@ -230,33 +230,33 @@
 }
 -(void) visitGEqual: (id<ORLEqual>)c
 {
-    if (_gamma[c.getId]==NULL) {
-        MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
-        ORDouble    coef[2] = { [c coefLeft],- [c coefRight]};
-        MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:2 var:x coef:coef rhs:[c cst]];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint:concreteCstr];
-    }
+   if (_gamma[c.getId]==NULL) {
+      MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
+      ORDouble    coef[2] = { [c coefLeft],- [c coefRight]};
+      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:2 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
 }
 -(void) visitGEqualc:(id<ORGEqualc>)c
 {
-    if (_gamma[c.getId]==NULL) {
-        MIPVariableI* x[1] = { [self concreteVar:[c left]] };
-        ORDouble    coef[1] = { 1.0 };
-        MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: 1 var:x coef:coef rhs:[c cst]];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint:concreteCstr];
-    }
+   if (_gamma[c.getId]==NULL) {
+      MIPVariableI* x[1] = { [self concreteVar:[c left]] };
+      ORDouble    coef[1] = { 1.0 };
+      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: 1 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
 }
 -(void) visitLEqualc:(id<ORGEqualc>)c
 {
-    if (_gamma[c.getId]==NULL) {
-        MIPVariableI* x[1] = { [self concreteVar:[c left]] };
-        ORDouble    coef[1] = { 1.0 };
-        MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: 1 var:x coef:coef rhs:[c cst]];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint:concreteCstr];
-    }
+   if (_gamma[c.getId]==NULL) {
+      MIPVariableI* x[1] = { [self concreteVar:[c left]] };
+      ORDouble    coef[1] = { 1.0 };
+      MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: 1 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
 }
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
@@ -314,12 +314,12 @@
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c
 {
    if (_gamma[c.getId] == NULL) {
-   id<MIPVariableArray> x = [self concreteArray:[c vars]];
-   id<ORDoubleArray> fa = [ORFactory doubleArray:_program range:[x range] value:1];
-   MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:x coef:fa cst:-[c cst]];
-   _gamma[c.getId] = concreteCstr;
-   [_MIPsolver postConstraint:concreteCstr];
-}
+      id<MIPVariableArray> x = [self concreteArray:[c vars]];
+      id<ORDoubleArray> fa = [ORFactory doubleArray:_program range:[x range] value:1];
+      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:x coef:fa cst:-[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
    
 }
 -(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
@@ -327,16 +327,14 @@
    assert(0);
 }
 
-#warning [hzi] Should build an implication constraint (>>) or rewrite the implication P -> Q as not P or Q
 -(void) visitBinImply: (id<ORBinImply>)c
 {
    if (_gamma[c.getId] == NULL) {
-      MIPVariableI* l[1] = { [self concreteVar:[c left]] };
-      MIPVariableI* r[1] = { [self concreteVar:[c right]] };
-      MIPConstraintI* concreteCstr = nil;
-      //      [_MIPsolver createImply: l imply:r];
-      //      _gamma[c.getId] = concreteCstr;
-      //      [_MIPsolver postConstraint: concreteCstr];
+      MIPVariableI* vars[2] = { [self concreteVar:c.right] , [self concreteVar:c.left] };
+      ORDouble coefs[2] = { 1.0 , -1.0 };
+      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: 2 var:vars coef:coefs rhs:0.0];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
    }
 }
 #warning [hzi] In the objective function we need to minimize the sum of load(n)^2 with load(n) \in N
@@ -350,18 +348,7 @@
       //      [_MIPsolver postConstraint: concreteCstr];
    }
 }
-#warning [hzi] Implication of kind R0 => R1, where R0 et R1 are relations, are rewritten like b => b' where b <=> R0 and b' <=> R1
--(void) visitRealReifyEqualc:(id<ORRealReifyEqualc>)c
-{
-   if (_gamma[c.getId] == NULL) {
-      MIPVariableI* b[1] = { [self concreteVar:[c b]] };
-      MIPVariableI* x[1] = { [self concreteVar:[c x]] };
-      ORDouble cst = [c cst];
-      MIPConstraintI* concreteCstr = nil;
-      //      _gamma[c.getId] = concreteCstr;
-      //      [_MIPsolver postConstraint: concreteCstr];
-   }
-}
+
 
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c
 {
@@ -430,25 +417,25 @@
 }
 -(void) visitRealWeightedVar:(id<ORWeightedVar>)c
 {
-    if (_gamma[c.getId] == NULL) {
-        MIPVariableI* dx = _gamma[[c x].getId];
-        MIPVariableI* dz = _gamma[[c z].getId];
-        MIPParameterI* dw = _gamma[[c weight].getId];
-       
-        id<ORIntRange> r = RANGE(_MIPsolver, 0, 1);
-        id<ORIdArray> vars = [ORFactory idArray: _MIPsolver range: r];
-        [vars set: dx at: 0];
-        [vars set: dz at: 1];
-        ORDouble coefValues[] = { [(id<ORRealParam>)[c weight] initialValue], -1.0 };
-        id<ORDoubleArray> coef = [ORFactory doubleArray: _MIPsolver range: r values: coefValues];
-       
-        // w * x - z == 0
-        MIPConstraintI* concreteCstr = [_MIPsolver createEQ: (id<MIPVariableArray>)vars coef: coef cst: 0];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint: concreteCstr];
-        [dw setCstrIdx: [concreteCstr idx]];
-        [dw setCoefIdx: [dx idx]];
-    }
+   if (_gamma[c.getId] == NULL) {
+      MIPVariableI* dx = _gamma[[c x].getId];
+      MIPVariableI* dz = _gamma[[c z].getId];
+      MIPParameterI* dw = _gamma[[c weight].getId];
+      
+      id<ORIntRange> r = RANGE(_MIPsolver, 0, 1);
+      id<ORIdArray> vars = [ORFactory idArray: _MIPsolver range: r];
+      [vars set: dx at: 0];
+      [vars set: dz at: 1];
+      ORDouble coefValues[] = { [(id<ORRealParam>)[c weight] initialValue], -1.0 };
+      id<ORDoubleArray> coef = [ORFactory doubleArray: _MIPsolver range: r values: coefValues];
+      
+      // w * x - z == 0
+      MIPConstraintI* concreteCstr = [_MIPsolver createEQ: (id<MIPVariableArray>)vars coef: coef cst: 0];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+      [dw setCstrIdx: [concreteCstr idx]];
+      [dw setCoefIdx: [dx idx]];
+   }
 }
 -(void) visitMinimize: (id<ORObjectiveFunctionVar>) v
 {
@@ -459,3 +446,4 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
 }
 @end
+
