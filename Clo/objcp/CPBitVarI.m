@@ -229,6 +229,13 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
          _vsids[i] += 1.0;
    }
 }
+-(void) incrementActivityAllBy:(ORFloat)amt
+{
+   if (_learningOn) {
+      for(ORUInt i=0;i<[_dom getLength];i++)
+         _vsids[i] += amt;
+   }
+}
 -(void) incrementActivityBySignificance
 {
    if(_learningOn){
@@ -238,11 +245,15 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 }
 -(void) increaseActivity:(ORUInt)i by:(ORUInt)amt
 {
-   _vsids[i] += amt;
+   if(_learningOn){
+      _vsids[i] += amt;
+//      if(amt > 1)
+//         NSLog(@"");
+   }
 }
 -(void) reduceVSIDS{
    for(int i=0;i<[_dom getLength];i++)
-    _vsids[i] *=0.75;
+    _vsids[i] /=2.0;
 }
 -(id) takeSnapshot: (ORInt) id
 {
@@ -449,10 +460,11 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 }
 -(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i
 {
-   _vsids[i] += 1.0;
+//   _vsids[i] += 1.0;
    if (_learningOn){
       ORUInt mask = 0x1 << i%BITSPERWORD;
       for(int j=0;j<_top._val;j++)
+//         if((_bitChanges[j*_wordLength+(i/BITSPERWORD)] & mask) != 0)
          if((_bitChanges[j*_wordLength+(i/BITSPERWORD)] & mask) != 0)
             return((id<CPBVConstraint>)_constraints[j]);
    }

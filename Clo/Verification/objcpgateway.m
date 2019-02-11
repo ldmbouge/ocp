@@ -348,8 +348,9 @@
    
 
    [cp solve:^{
+      
         //        [cp repeat:^{
-        [cp limitTime:60000 in: ^{
+//        [cp limitTime:30000 in: ^{
 //                    NSLog(@"%@", [[cp engine] model]);
 //           for (id var in _declarations)
 //              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
@@ -371,7 +372,7 @@
           }
           sat = true;
 //                           NSLog(@"%@", [[cp engine] model]);
-      }];
+//      }];
 //        }onRepeat:^{
 //            printf("Restarting...\n");
 //        }];
@@ -783,78 +784,72 @@
    return bv;
 }
 -(objcp_expr) objcp_mk_bv_sle:(objcp_context)ctx x:(objcp_expr)x sle:(objcp_expr) y{
-   ORUInt low = 0;
-   ORUInt up = 1;
-
-   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-   [_model add:[ORFactory bit:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
-   return bv;
-//   int size = [(id<ORBitVar>)x bitLength];
-//
-//   ORUInt low;
-//   ORUInt up;
-//   low = 0;
-//   up = 0x1;
+//   ORUInt low = 0;
+//   ORUInt up = 1;
 //
 //   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> notresult = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//
-//
-//
-//   [_model add:[ORFactory bit:(id<ORBitVar>)y LT:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
-//
-//   [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:notresult]];
-////   [_model add:[ORFactory bit:(id<ORBitVar>)notresult notb:result]];
-//
-//   return result;
-}
+//   [_model add:[ORFactory bit:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
+//   return bv;
+   int size = [(id<ORBitVar>)x bitLength];
 
--(objcp_expr) objcp_mk_bv_slt:(objcp_context)ctx x:(objcp_expr)x slt:(objcp_expr) y{
    ORUInt low;
    ORUInt up;
    low = 0;
    up = 0x1;
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-   [_model add:[ORFactory bit:(id<ORBitVar>)x SLT:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
-   return bv;
+   id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
 
-//   int size = [(id<ORBitVar>)x bitLength];
-//
+   [_model add:[ORFactory bit:(id<ORBitVar>)y LT:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
+
+   [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:result]];
+
+   return result;
+}
+
+-(objcp_expr) objcp_mk_bv_slt:(objcp_context)ctx x:(objcp_expr)x slt:(objcp_expr) y{
 //   ORUInt low;
 //   ORUInt up;
 //   low = 0;
 //   up = 0x1;
 //
 //   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> notresult = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//
-//
-//
-//   [_model add:[ORFactory bit:(id<ORBitVar>)y LE:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
-//
-//   [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:result]];
-////   [_model add:[ORFactory bit:(id<ORBitVar>)notresult notb:result]];
-//
-//   return result;
+//   [_model add:[ORFactory bit:(id<ORBitVar>)x SLT:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
+//   return bv;
+
+   int size = [(id<ORBitVar>)x bitLength];
+
+   ORUInt low;
+   ORUInt up;
+   low = 0;
+   up = 0x1;
+
+   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+
+
+
+   [_model add:[ORFactory bit:(id<ORBitVar>)y LE:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
+
+   [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:result]];
+
+   return result;
 }
 
 //objcp_mk_bv_gt

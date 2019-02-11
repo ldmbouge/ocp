@@ -101,6 +101,8 @@
 -(void) getState:(ORUInt*)state afterLevel:(ORUInt)lvl;
 -(void) incrementActivityAll;
 -(void) incrementActivityBySignificance;
+-(void) increaseActivity:(ORUInt)i by:(ORUInt)amt;
+-(void) incrementActivityAllBy:(ORFloat)amt;
 
 // update
 -(ORStatus)     updateMin: (ORULong) newMin;

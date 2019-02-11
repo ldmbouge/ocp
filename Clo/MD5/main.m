@@ -468,11 +468,11 @@ int main(int argc, const char* argv[])
 //   twoByteSHA1(@"fifteen.txt", BVABS);
 //   twoByteSHA1(@"fifteen.txt", BVIBS);
 
-   twoByteMD4(@"lorem-mssg.txt", BVFF);
+//   twoByteMD4(@"lorem-mssg.txt", BVFF);
    
 //   oneByteMD4(@"lorem-mssg.txt", BVFF);
    
-//   twoByteSHA1(@"lorem-mssg.txt", BVFF);
+   twoByteMD5(@"lorem-mssg.txt", BVFF);
 //   twoByteSHA1(@"lorem-mssg.txt", BVABS);
 //   twoByteSHA1(@"lorem-mssg.txt", BVIBS);
 

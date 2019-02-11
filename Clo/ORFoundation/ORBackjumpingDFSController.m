@@ -126,8 +126,8 @@
    NSCont* k;
    ORInt ofs = _sz-1;
    ORStatus status;
-    ORStatus lastStatus = ORSuspend;
-
+//    ORStatus lastStatus = ORSuspend;
+//
 //    if (jumplevel > 4){
 //        while ((level > jumplevel) && (_sz > 1)){
 //            ofs = _sz-1;
@@ -168,7 +168,7 @@
                   [k call];
 
           } else {
-//              lastStatus = status;
+//            lastStatus = status;
 //            jumplevel = -1;
             if (k==nil)
                @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
