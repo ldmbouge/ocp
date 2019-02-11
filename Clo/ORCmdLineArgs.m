@@ -1544,7 +1544,7 @@ static enum ValHeuristic valIndex[] =
          [p customSearch:vars];
          break;
       case customD :
-         [vars setMaxFixed:(ORInt)[vars count]];
+         [vars setMaxFixed:uniqueNB];
          [p customSearchD:vars];
          break;
       default :
