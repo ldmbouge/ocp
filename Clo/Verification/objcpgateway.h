@@ -29,7 +29,10 @@
 
 @protocol CPProgram;
 
-typedef enum {OR_BOOL, OR_INT, OR_REAL, OR_BV} objcp_var_type;
+typedef enum {OR_BOOL, OR_INT, OR_REAL, OR_BV, OR_FLOAT, OR_DOUBLE} objcp_var_type;
+
+static const char*  typeName[] = {"Bool","Int","Real","BitVec","FloatingPoint"};
+static objcp_var_type  typeObj[] = {OR_BOOL, OR_INT, OR_REAL, OR_BV, OR_FLOAT};
 
 // A context stores a collection of declarations and assertions.
 typedef void* objcp_context;
@@ -76,6 +79,7 @@ typedef int assertion_id;
    id<ORBitVar> _true;
    id<ORBitVar> _false;
 }
++(objcp_var_type) sortName2Type:(const char *) name;
 +(OBJCPGateway*) initOBJCPGateway;
 -(OBJCPGateway*) initExplicitOBJCPGateway;
 -(id<ORModel>) getModel;
@@ -84,6 +88,9 @@ typedef int assertion_id;
 -(void) objcp_del_context:(objcp_context) ctxt;
 
 -(objcp_expr) objcp_mk_app:(objcp_context) ctx expr:(objcp_expr) f args:(objcp_expr*) args num:(unsigned int)n;
+-(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type;
+-(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type args:(id) a0,...;
+-(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type withSize:(unsigned int) size;
 -(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type;
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t;
 -(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name;
@@ -130,6 +137,11 @@ typedef int assertion_id;
 -(ORUInt) objcp_get_unsat_core:(objcp_context) ctx withId:(assertion_id*)a;
 -(ORUInt) objcp_get_unsat_core_size:(objcp_context) ctx;
 -(objcp_expr) objcp_mk_app:(objcp_context)ctx withFun:(objcp_expr)f withArgs:(objcp_expr*)arg andNumArgs:(ORULong)n;
+
++(ORInt) intValue:(objcp_expr) e;
+@end
+
+@interface OBJCPGateway (BV)
 -(objcp_expr) objcp_mk_bv_constant_from_array:(objcp_context) ctx withSize:(ORUInt)size fromArray:(ORUInt*)bv;
 
 -(objcp_expr) objcp_mk_true:(objcp_context)ctx;
@@ -184,5 +196,17 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_bv_rotl:(objcp_context) ctx withArg:(objcp_expr) a1 andAmount:(ORUInt)a2;
 -(objcp_expr) objcp_mk_bv_rotr:(objcp_context) ctx withArg:(objcp_expr) a1 andAmount:(ORUInt)a2;
 -(objcp_expr) objcp_mk_bv_zero_extend:(objcp_context)ctx withArg:(objcp_expr)a1 andAmount:(ORUInt)amt;
+@end
+
+
+@interface OBJCPGateway (ORFloat)
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x lt:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x gt:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x leq:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x geq:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x add:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x sub:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x mul:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x div:(objcp_expr)y;
 @end
 #endif
