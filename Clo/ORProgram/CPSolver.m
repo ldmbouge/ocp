@@ -2148,6 +2148,7 @@
    while(goon) {
       [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
          LOG(_level,2,@"State before selection");
+         abs = [self computeAbsorptionsQuantities:x];
          ORBool c = NO;
          for (ORInt i = 0; i < [abs count]; i++) {
             id<CPFloatVar> v = _gamma[getId(x[i])];
