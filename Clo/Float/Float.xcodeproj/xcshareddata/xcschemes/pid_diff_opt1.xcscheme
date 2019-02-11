@@ -26,7 +26,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
@@ -46,7 +45,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -65,15 +63,15 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-vh11"
+            argument = "-var-order custom -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8 -t 20"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-nb-floats 5"
+            argument = "-debug-level 2"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-h18"
+            argument = " -model-limits 0.85"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

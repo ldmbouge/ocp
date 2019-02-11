@@ -63,19 +63,19 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order maxAbs -val-order splitAbs -default 6  -unique -rate-model-limit 0.8 -grate-model-limit 0.8 -rate-other-limit 1.1  -grate-other-limit 1.1 -variation 4"
+            argument = "-var-order custom -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8 -t 20 -model-limits 0.85"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-choices-limit 5"
+            argument = "-choices-limit 4"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-abs-function gmean"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-debug-level 2"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-split-test 1"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

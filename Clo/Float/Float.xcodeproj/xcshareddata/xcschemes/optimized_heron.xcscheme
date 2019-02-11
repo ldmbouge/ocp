@@ -67,7 +67,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-choices-limit 50"
+            argument = "-choices-limit 4"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -80,14 +80,14 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-uniques 4"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-other-limits 0.0"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-var-order custom -percent 8 "
+            argument = "-var-order custom"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
