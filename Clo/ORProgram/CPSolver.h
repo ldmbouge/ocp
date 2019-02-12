@@ -202,6 +202,7 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(void) addQuantity:(ORFloat)c for:(id<CPFloatVar>)c;
 -(void) setChoice:(id<CPFloatVar>)c;
 -(id<CPFloatVar>) bestChoice;
+-(ORInt) nbAbs;
 -(NSString*)description;
 -(void) dealloc;
 +(void) setFunChoice:(ABS_FUN)nfun;

@@ -337,15 +337,19 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
-#warning [hzi] In the objective function we need to minimize the sum of load(n)^2 with load(n) \in N
+
 -(void) visitSquare:(id<ORSquare>)c
 {
    if (_gamma[c.getId] == NULL) {
-      MIPVariableI* x[1] = { [self concreteVar:[c op]] };
-      MIPVariableI* res[1] = { [self concreteVar:[c res]] };
-      MIPConstraintI* concreteCstr = nil;
-      //      _gamma[c.getId] = concreteCstr;
-      //      [_MIPsolver postConstraint: concreteCstr];
+      MIPVariableI* x[1][2] = {
+         { [self concreteVar:c.op],[self concreteVar:c.op] }
+      };
+      ORDouble coefq[1] = { -1.0 };
+      MIPVariableI* res[1] = { [self concreteVar:c.res] };
+      ORDouble coef[1] = { 1.0 };
+      MIPConstraintI* concreteCstr = [_MIPsolver createQuadEQ:1 var:res coef:coef sizeQ:1 varQ:(MIPVariableI***)x coefQ:coefq rhs:0.0];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
    }
 }
 
