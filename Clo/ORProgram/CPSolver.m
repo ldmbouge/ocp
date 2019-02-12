@@ -2116,7 +2116,7 @@
       }];
    }
 }
--(void) customSearchD2:  (id<ORDisabledFloatVarArray>) x
+-(void) customSearchD:  (id<ORDisabledFloatVarArray>) x
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
@@ -2199,7 +2199,7 @@
    
 }
 
--(void) customSearchD:  (id<ORDisabledFloatVarArray>) x
+-(void) customSearchWeightedD:  (id<ORDisabledFloatVarArray>) x
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
