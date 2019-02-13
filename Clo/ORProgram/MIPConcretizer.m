@@ -342,9 +342,7 @@
 -(void) visitSquare:(id<ORSquare>)c
 {
    if (_gamma[c.getId] == NULL) {
-      MIPVariableI* x[1][2] = {
-         { [self concreteVar:c.op],[self concreteVar:c.op] }
-      };
+      MIPVariableI* x[2] = { [self concreteVar:c.op],[self concreteVar:c.op] };
       ORDouble coefq[1] = { -1.0 };
       MIPVariableI* res[1] = { [self concreteVar:c.res] };
       ORDouble coef[1] = { 1.0 };

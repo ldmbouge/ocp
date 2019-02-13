@@ -56,6 +56,7 @@
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORDouble) low up: (ORDouble) up;
 -(ORBool) isInteger;
 -(ORInt) intValue;
+-(NSString*) description;
 @end
 
 
@@ -99,6 +100,7 @@
    ORDouble*            _coef;
    ORDouble             _rhs;
    
+   bool                 _quad;
    MIPVariableI**       _tmpVar;
    ORDouble*            _tmpCoef;
 }
@@ -115,6 +117,7 @@
 -(ORDouble)             coef: (ORInt) i;
 -(ORDouble)             rhs;
 -(ORInt)               idx;
+-(bool)                isQuad;
 -(void)                setIdx: (ORInt) idx;
 -(void)                del;
 -(void)                delVariable: (MIPVariableI*) var;
@@ -135,21 +138,50 @@
 -(MIPConstraintI*) initMIPConstraintEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
 @end
 
+@interface MIPQuadConstraint : MIPConstraintI
+{
+@protected
+   MIPVariableI***      _qvar;// array of quadratic term ex: x^2 + 2xy : { [x,x], [x,y] }
+   ORDouble*            _qcoef;// array of quadratic coefs ex :         { 1,2}
+   ORInt                _qsize;
+   ORInt*               _qcol;
+   ORInt*               _qrow;
+}
+-(MIPConstraintI*) initMIPQuadConstraint: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs;
+-(ORInt) qSize;
+-(ORDouble*) qCoef;
+-(ORInt*) qCol;
+-(ORInt*) qRow;
+@end
+
+@interface MIPQuadConstraintLEQ : MIPQuadConstraint
+-(MIPConstraintI*) initMIPQuadConstraintLEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs;
+@end
+
+@interface MIPQuadConstraintGEQ : MIPQuadConstraint
+-(MIPConstraintI*) initMIPQuadConstraintGEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs;
+@end
+
+@interface MIPQuadConstraintEQ : MIPQuadConstraint
+-(MIPConstraintI*) initMIPQuadConstraintEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs;
+@end
+
 @interface MIPObjectiveI : NSObject
 {
 @protected
    MIPSolverI*          _solver;
-   int                 _nb;
+   int                  _nb;
    MIPObjectiveType     _type;
-   int                 _size;
-   int                _maxSize;
-   MIPVariableI**        _var;
-   int*                _col;
-   ORDouble*             _coef;
-   ORDouble              _cst;
-   bool                _posted;
+   int                  _size;
+   int                  _maxSize;
+   MIPVariableI**       _var;
+   int*                 _col;
+   ORDouble*            _coef;
+   ORDouble             _cst;
+   
+   bool                 _posted;
    MIPVariableI**       _tmpVar;
-   ORDouble*             _tmpCoef;
+   ORDouble*            _tmpCoef;
 }
 -(MIPObjectiveI*) initMIPObjectiveI: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef cst: (ORDouble) cst;
 -(void) dealloc;
@@ -239,6 +271,11 @@
 -(MIPConstraintI*) createEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
 -(MIPObjectiveI*)  createMinimize: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef;
 -(MIPObjectiveI*)  createMaximize: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef;
+
+-(MIPConstraintI*) createQuadEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (ORDouble*) coefq rhs: (ORDouble) rhs;
+-(MIPConstraintI*) createQuadGEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (ORDouble*) coefq rhs: (ORDouble) rhs;
+-(MIPConstraintI*) createQuadLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (ORDouble*) coefq rhs: (ORDouble) rhs;
+
 
 -(MIPConstraintI*) createLEQ: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
 -(MIPConstraintI*) createGEQ: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;

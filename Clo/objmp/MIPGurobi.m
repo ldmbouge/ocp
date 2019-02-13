@@ -67,7 +67,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    snprintf(buf,sizeof(buf),"x%d",[var idx]+1);
    if ([var isInteger]) {
       if ([var hasBounds])
-        GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_INTEGER,buf);
+         GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_INTEGER,buf);
       else
          GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_INTEGER,buf);
    }
@@ -145,20 +145,20 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 }
 
 -(void) setTimeLimit: (double)limit {
-    struct _GRBenv* env = GRBgetenv(_model);
-    GRBsetdblparam(env, GRB_DBL_PAR_TIMELIMIT, limit);
+   struct _GRBenv* env = GRBgetenv(_model);
+   GRBsetdblparam(env, GRB_DBL_PAR_TIMELIMIT, limit);
 }
 
 -(ORDouble) bestObjectiveBound {
-    ORDouble bnd;
-    GRBgetdblattr(_model, "ObjBound", &bnd);
-    return bnd;
+   ORDouble bnd;
+   GRBgetdblattr(_model, "ObjBound", &bnd);
+   return bnd;
 }
 
 -(ORFloat) dualityGap {
-    ORDouble gap;
-    GRBgetdblattr(_model, "MIPGap", &gap);
-    return gap;
+   ORDouble gap;
+   GRBgetdblattr(_model, "MIPGap", &gap);
+   return gap;
 }
 
 -(MIPOutcome) status
@@ -175,10 +175,10 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 -(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val
 {
-    int error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_LB, [var idx], val);
-    error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_UB, [var idx], val) || error ;
-    GRBupdatemodel(_model);
-    if(error != 0) NSLog(@"err: %i", error);
+   int error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_LB, [var idx], val);
+   error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_UB, [var idx], val) || error ;
+   GRBupdatemodel(_model);
+   if(error != 0) NSLog(@"err: %i", error);
 }
 
 -(ORDouble) doubleValue: (MIPVariableI*) var
@@ -263,24 +263,32 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 -(ORDouble) paramValue: (MIPParameterI*) param
 {
-    ORDouble v;
-    int err = GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
-    if(err != 0) return DBL_MAX;
-    return v;
+   ORDouble v;
+   int err = GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
+   if(err != 0) return DBL_MAX;
+   return v;
 }
 
 -(void) setParam: (MIPParameterI*) param value: (ORDouble)val
 {
-    int cind[] = { [param cstrIdx] };
-    int vind[] = { [param coefIdx] };
-    double v[] = { val };
-    int err = GRBchgcoeffs(_model, 1, cind, vind, v);
-    //    GRBupdatemodel(_model);
-    if(err != 0)
-        NSLog(@"error setting gurobi parameter: %i", err);
+   int cind[] = { [param cstrIdx] };
+   int vind[] = { [param coefIdx] };
+   double v[] = { val };
+   int err = GRBchgcoeffs(_model, 1, cind, vind, v);
+   //    GRBupdatemodel(_model);
+   if(err != 0)
+      NSLog(@"error setting gurobi parameter: %i", err);
 }
 
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr
+{
+   if([cstr isQuad])
+     return [self postQuadConstraint:cstr];
+   else
+      return [self postLinearConstraint:cstr];
+}
+
+-(ORStatus) postLinearConstraint: (MIPConstraintI*) cstr
 {
    char buf[64];
    snprintf(buf,sizeof(buf),"c%d",[cstr idx]+1);
@@ -293,6 +301,27 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
          break;
       case MIPeq:
          GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_EQUAL,[cstr rhs],buf);
+         break;
+      default:
+         break;
+   }
+   return ORSuspend;
+}
+
+-(ORStatus) postQuadConstraint: (MIPConstraintI*) c
+{
+   MIPQuadConstraint* cstr = (MIPQuadConstraint*)c;
+   char buf[64];
+   snprintf(buf,sizeof(buf),"c%d",[cstr idx]+1);
+   switch ([cstr type]) {
+      case MIPleq:
+         GRBaddqconstr(_model,[cstr size],[cstr col],[cstr coef],[cstr qSize],[cstr qRow],[cstr qCol],[cstr qCoef], GRB_LESS_EQUAL,[cstr rhs],buf);
+         break;
+      case MIPgeq:
+         GRBaddqconstr(_model,[cstr size],[cstr col],[cstr coef],[cstr qSize],[cstr qRow],[cstr qCol],[cstr qCoef],GRB_GREATER_EQUAL,[cstr rhs],buf);
+         break;
+      case MIPeq:
+         GRBaddqconstr(_model,[cstr size],[cstr col],[cstr coef],[cstr qSize],[cstr qRow],[cstr qCol],[cstr qCoef],GRB_EQUAL,[cstr rhs],buf);
          break;
       default:
          break;
@@ -404,25 +433,25 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata) {
    }
    if(timeStart == -1) timeStart = [ORRuntimeMonitor wctime];
    
-    MIPGurobiSolver* solver = (MIPGurobiSolver*)usrdata;
-    if(where == GRB_CB_MIPSOL) {
-       ORDouble bnd;
-       GRBcbget(cbdata, where, GRB_CB_MIPSOL_OBJ, (void *) &bnd);
-       solver->_bnd = bnd;
-       [[solver boundInformer] notifyWithFloat: bnd];
-       
-       fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, (ORInt)bnd);
-       fflush(outFile);
-    }
-    else if(where == GRB_CB_MIPNODE) {
-       [solver lazySolutionInject: cbdata];
-       //[solver lazyBoundTighten: cbdata];
-    }
-    else if (where == GRB_CB_POLLING) {
-       [solver pumpEvents];
-       if(solver->_terminate) GRBterminate(model);
-    }
-    return 0;
+   MIPGurobiSolver* solver = (MIPGurobiSolver*)usrdata;
+   if(where == GRB_CB_MIPSOL) {
+      ORDouble bnd;
+      GRBcbget(cbdata, where, GRB_CB_MIPSOL_OBJ, (void *) &bnd);
+      solver->_bnd = bnd;
+      [[solver boundInformer] notifyWithFloat: bnd];
+      
+      fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, (ORInt)bnd);
+      fflush(outFile);
+   }
+   else if(where == GRB_CB_MIPNODE) {
+      [solver lazySolutionInject: cbdata];
+      //[solver lazyBoundTighten: cbdata];
+   }
+   else if (where == GRB_CB_POLLING) {
+      [solver pumpEvents];
+      if(solver->_terminate) GRBterminate(model);
+   }
+   return 0;
 }
 
 
