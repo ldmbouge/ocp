@@ -662,9 +662,7 @@
     [self createRootAndSink];
     
     for (int layer = 0; layer < [_x count]; layer++) {
-        if (_reduced) {    //Reduction is failing for some reason (relies on stateChar). Need to look into why.  Spent a couple days on it, but prioritising getting un-reduced results first.
-            //Update: Reduction seems to be successfully performing the reduction (follows 1-5-10-10-5-1 after reduction for a 5 variable all-different)
-            //So the problem must be in how it performs the trims
+        if (_reduced) {
             [self reduceLayer: layer];
         }
         [self cleanLayer: layer];
@@ -765,7 +763,7 @@
     _variableUsed[[_x low]] = true;
 }
 -(void) reduceLayer:(int)layer {
-    NSMutableDictionary* foundStates = [[NSMutableDictionary alloc] init];
+    /*NSMutableDictionary* foundStates = [[NSMutableDictionary alloc] init];
     
     for (int nodeIndex = 0; nodeIndex < layer_size[layer]._val; nodeIndex++) {
         Node* node= layers[layer][nodeIndex];
@@ -779,6 +777,21 @@
             nodeIndex--;
         } else {
             [foundStates setObject:node forKey:stateKey];
+        }
+    }*/
+    for (int first_node_index = 0; first_node_index < layer_size[layer]._val-1; first_node_index++) {
+        for (int second_node_index = first_node_index+1; second_node_index < layer_size[layer]._val; second_node_index++) {
+            Node* first_node = layers[layer][first_node_index];
+            Node* second_node = layers[layer][second_node_index];
+            
+            id first_node_state = [first_node getState];
+            id second_node_state = [second_node getState];
+            
+            if ([first_node_state equivalentTo: second_node_state]) {
+                [first_node takeParentsFrom:second_node];
+                [self removeChildlessNodeFromMDD:second_node trimmingVariables:false];
+                second_node_index--;
+            }
         }
     }
 }
@@ -1206,33 +1219,54 @@
     [self removeChildlessNodeFromMDD:second_node trimmingVariables:false];
 }
 
-//minLP
 -(void) findNodesToMerge:(int)layer first:(Node**)first second:(Node**)second
 {
-    int first_node_index = 0;
-    int first_node_longest_path = [layers[layer][first_node_index] longestPath];
-    int second_node_index = 1;
-    int second_node_longest_path = [layers[layer][second_node_index] longestPath];
-    for (int node_index = 2; node_index < layer_size[layer]._val; node_index++) {
-        int node_longest_path = [layers[layer][node_index] longestPath];
-        if (node_longest_path < first_node_longest_path && node_longest_path < second_node_longest_path) {
-            if (first_node_longest_path < second_node_longest_path) {
-                second_node_index = node_index;
-                second_node_longest_path = node_longest_path;
-            } else {
+    if (_objective != NULL) {   //merge nodes with worst objective value - keeps added paths from affecting objective by much
+        int first_node_index = 0;
+        int first_node_longest_path = [layers[layer][first_node_index] longestPath];
+        int second_node_index = 1;
+        int second_node_longest_path = [layers[layer][second_node_index] longestPath];
+        for (int node_index = 2; node_index < layer_size[layer]._val; node_index++) {
+            int node_longest_path = [layers[layer][node_index] longestPath];
+            if (node_longest_path < first_node_longest_path && node_longest_path < second_node_longest_path) {
+                if (first_node_longest_path < second_node_longest_path) {
+                    second_node_index = node_index;
+                    second_node_longest_path = node_longest_path;
+                } else {
+                    first_node_index = node_index;
+                    first_node_longest_path = node_longest_path;
+                }
+            } else if (node_longest_path < first_node_longest_path) {
                 first_node_index = node_index;
                 first_node_longest_path = node_longest_path;
+            } else if (node_longest_path < second_node_longest_path) {
+                second_node_index = node_index;
+                second_node_longest_path = node_longest_path;
             }
-        } else if (node_longest_path < first_node_longest_path) {
-            first_node_index = node_index;
-            first_node_longest_path = node_longest_path;
-        } else if (node_longest_path < second_node_longest_path) {
-            second_node_index = node_index;
-            second_node_longest_path = node_longest_path;
         }
+        *first = layers[layer][first_node_index];
+        *second = layers[layer][second_node_index];
+    } else {    //merge nodes with smallest state-difference - keeps relaxation from adding as many paths
+        int first_node_index, second_node_index;
+        int best_first_node_index = 0;
+        int best_second_node_index = 1;
+        int smallest_state_differential = INT_MAX;
+        for (first_node_index = 0; first_node_index < layer_size[layer]._val -1; first_node_index++) {
+            id first_node_state = [layers[layer][first_node_index] getState];
+            for (second_node_index = first_node_index +1; second_node_index < layer_size[layer]._val; second_node_index++) {
+                id second_node_state = [layers[layer][second_node_index] getState];
+                int state_differential = [first_node_state stateDifferential: second_node_state];
+                if (state_differential < smallest_state_differential) {
+                    smallest_state_differential = state_differential;
+                    best_first_node_index = first_node_index;
+                    best_second_node_index = second_node_index;
+                }
+            }
+        }
+        
+        *first = layers[layer][best_first_node_index];
+        *second = layers[layer][best_second_node_index];
     }
-    *first = layers[layer][first_node_index];
-    *second = layers[layer][second_node_index];
 }
 -(NSString*)description
 {

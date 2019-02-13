@@ -112,7 +112,7 @@
 -(ORInt) findGeneric: (GenericIndex) index
 {
     id<ORNote> genericValue = (id<ORNote>)[_generic objectForKey:[[NSNumber alloc] initWithInt: index]];
-    return [genericValue value];
+    return [(ORValue*)genericValue value];
 }
 
 -(id<ORNote>) findConstraintClassNote: (id<ORConstraint>) cstr ofClass: (Class) nc

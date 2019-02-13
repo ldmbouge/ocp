@@ -730,7 +730,6 @@ static void prune(CPCardinalityDC* card)
         _low += _min;
         _up += _min;
         _flow += _min;
-        _valFirstMatch += _min;
         _valComponent += _min;
         _valDfs += _min;
         _valHigh += _min;
@@ -766,17 +765,17 @@ static void prune(CPCardinalityDC* card)
     for(int k=_lc ; k<=_uc; k++)
         _vcount[k] = [_count at:k];
     
-    if (!self.findValueRange)
+    if (![self findValueRange])
         failNow();
-    allocateFlow();
-    findInitialFlow();
-    if (!findMaximalFlow())
+    [self allocateFlow];
+    [self findInitialFlow];
+    if (![self findMaximalFlow])
         failNow();
-    if (!findFeasibleFlow())
+    if (![self findFeasibleFlow])
         failNow();
-    allocateSCC();
-    prune();
-    if (!pruneBounds())
+    [self allocateSCC];
+    [self prune];
+    if (![self pruneBounds])
         failNow();
     for(int k = 0 ; k < _nb; k++)
         if (!_var[k].bound)
@@ -787,7 +786,330 @@ static void prune(CPCardinalityDC* card)
 }
 -(void) propagate
 {
+    [self updateBounds];
+    for(int k = 0; k < _nb; k++) {
+        if (_varMatch[k] != -MAXINT) {
+            if (![_var[k] member:_varMatch[k]]) {
+                [self unassign:k];
+            }
+        }
+    }
+    for(int k = _min; k <= _max; k++)
+        while (_flow[k] > _up[k])
+            [self unassign:_valMatch[k]];
+    if (![self findMaximalFlow]) {
+        failNow();
+    }
+    if (![self findFeasibleFlow]) {
+        failNow();
+    }
+    [self prune];
+    if (![self pruneBounds])
+        failNow();
+}
+
+-(void)prune
+{
+    [self findSCC];
+    for(int k = 0; k < _nb; k++) {
+        id<CPIntVar> x = _var[k];
+        int mx = x.min;
+        int Mx = x.max;
+        for(int w = mx; w <= Mx; w++) {
+            if (_varMatch[k] != w) {
+                if (_varComponent[k] != _valComponent[w]) {
+                    if ([x member:w])
+                        [x remove:w];
+                }
+            }
+        }
+    }
+}
+
+-(bool) pruneBounds
+{
+    for(int i = _lc ; i <= _uc; i++) {
+        if (i >= _min && i <= _max) {
+            int m = _vcount[i].min;
+            int M = _vcount[i].max;
+            if (m != M) {
+                // update the lower bounds
+                _up[i] = m;
+                while (![self decreaseMax:i]) {
+                    _up[i]++;
+                }
+                ORStatus st = tryfail(^ORStatus{
+                    [_vcount[i] updateMin:_up[i]];
+                    return ORSuspend;
+                }, ^ORStatus{
+                    return ORFailure;
+                });
+                if (st == ORFailure)
+                    return false;
+                _up[i] = M;
+            }
+        }
+    }
+    for(int i = _lc ; i <= _uc; i++) {
+        if (i >= _min && i <= _max) {
+            int m = _vcount[i].min;
+            int M = _vcount[i].max;
+            if (m != M) {
+                // update the upper bounds
+                _low[i] = M;
+                while (![self increaseMin:i]) {
+                    _low[i]--;
+                }
+                ORStatus st = tryfail(^ORStatus{
+                    [_vcount[i] updateMax:_low[i]];
+                    return ORSuspend;
+                }, ^ORStatus{
+                    return ORFailure;
+                });
+                if (st == ORFailure)
+                    return false;
+                _low[i] = m;
+            }
+        }
+        else {
+            ORStatus st = tryfail(^ORStatus{
+                [_vcount[i] updateMax:0];
+                return ORSuspend;
+            }, ^ORStatus{
+                return ORFailure;
+            });
+            if (st == ORFailure)
+                return false;
+        }
+    }
+    return true;
+}
+
+
+-(void)allocateSCC
+{
+    _varComponent = malloc(sizeof(int)*_varSize);
+    _varDfs       = malloc(sizeof(int)*_varSize);
+    _varHigh      = malloc(sizeof(int)*_varSize);
     
+    _valComponent = malloc(sizeof(int)*_valSize);
+    _valDfs       = malloc(sizeof(int)*_valSize);
+    _valHigh      = malloc(sizeof(int)*_valSize);
+    _valComponent -= _min;
+    _valDfs       -= _min;
+    _valHigh      -= _min;
+    
+    _stack        = malloc(sizeof(int)*(_varSize+_valSize+1));
+    _type         = malloc(sizeof(int)*(_varSize+_valSize+1));
+}
+
+-(void)assign:(int)k to:(int) v
+{
+    [self unassign:k];
+    // k is now first on the list of v
+    _varMatch[k] = v;
+    _flow[v]++;
+    int nk = _valMatch[v];
+    _next[k] = nk;
+    _prev[k] = -MAXINT;
+    if (nk != -MAXINT)
+        _prev[nk] = k;
+    _valMatch[v] = k;
+    _sizeFlow++;
+}
+
+
+-(void)unassign:(int) k
+{
+    if (_varMatch[k] != -MAXINT) { // this guy is assigned; must be removed
+        _sizeFlow--;
+        int w = _varMatch[k];
+        _flow[w]--;
+        if (_valMatch[w] == k) { // first in the list
+            int nk = _next[k];
+            _valMatch[w] = nk;
+            if (nk != -MAXINT)
+                _prev[nk] = -MAXINT; // nk is now first
+        }
+        else { // not first
+            int pk = _prev[k];
+            int nk = _next[k];
+            _next[pk] = nk;
+            if (nk != -MAXINT)
+                _prev[nk] = pk;
+        }
+        _varMatch[k] = -MAXINT;
+    }
+}
+
+-(void)initSCC
+{
+    for(int k = 0 ; k < _nb; k++) {
+        _varComponent[k] = 0;
+        _varDfs[k] = 0;
+        _varHigh[k] = 0;
+    }
+    for(int k = _min; k <= _max; k++) {
+        _valComponent[k] = 0;
+        _valDfs[k] = 0;
+        _valHigh[k] = 0;
+    }
+    _sinkComponent = 0;
+    _sinkDfs = 0;
+    _sinkHigh = 0;
+    
+    _top = 0;
+    _dfs = _nb + _valSize + 1;
+    _component = 0;
+}
+
+
+-(void)findSCC
+{
+    [self initSCC];
+    for(int k = 0; k < _nb; k++) {
+        if (!_varDfs[k])
+            [self findSCCvar:k];
+    }
+}
+
+-(void)findSCCvar:(int) k
+{
+    _varDfs[k] = _dfs--;
+    _varHigh[k] = _varDfs[k];
+    _stack[_top] = k;
+    _type[_top] = 0;
+    _top++;
+    assert(_top <= _varSize + _valSize + 1);
+    
+    id<CPIntVar> x = _var[k];
+    int mx = x.min,Mx = x.max;
+    for(int w = mx; w <= Mx; w++) {
+        if (_varMatch[k] != w) {
+            if ([x member:w]) {
+                if (!_valDfs[w]) {
+                    [self findSCCval:w];
+                    if (_valHigh[w] > _varHigh[k])
+                        _varHigh[k] = _valHigh[w];
+                }
+                else if ( (_valDfs[w] > _varDfs[k]) && (!_valComponent[w])) {
+                    if (_valDfs[w] > _varHigh[k])
+                        _varHigh[k] = _valDfs[w];
+                }
+            }
+        }
+    }
+    if (_varHigh[k] == _varDfs[k]) {
+        _component++;
+        do {
+            assert(_top > 0);
+            int v = _stack[--_top];
+            int t = _type[_top];
+            if (t == 0)
+                _varComponent[v] = _component;
+            else if (t == 1)
+                _valComponent[v] = _component;
+            else
+                _sinkComponent = _component;
+            if (t == 0 && v == k)
+                break;
+        } while (true);
+    }
+}
+
+-(void)findSCCval:(int) v
+{
+    _valDfs[v] = _dfs--;
+    _valHigh[v] = _valDfs[v];
+    _stack[_top] = v;
+    _type[_top] = 1;
+    _top++;
+    assert(_top <= _varSize + _valSize + 1);
+    
+    // first go to the variables assigned to this value
+    
+    int k = _valMatch[v];
+    while (k != -MAXINT) {
+        if (!_varDfs[k]) {
+            [self findSCCvar:k];
+            if (_varHigh[k] > _valHigh[v])
+                _valHigh[v] = _varHigh[k];
+        }
+        else if ( (_varDfs[k] > _valDfs[v]) && (!_varComponent[k])) {
+            if (_varDfs[k] > _valHigh[v])
+                _valHigh[v] = _varDfs[k];
+        }
+        k = _next[k];
+    }
+    // next try to see if you can go to the sink
+    if (_flow[v] < _up[v]) {
+        // go to the sink
+        if (!_sinkDfs) {
+            [self findSCCsink];
+            if (_sinkHigh > _valHigh[v])
+                _valHigh[v] = _sinkHigh;
+        }
+        else if ( (_sinkDfs > _valDfs[v]) && (!_sinkComponent)) {
+            if (_sinkDfs > _valHigh[v])
+                _valHigh[v] = _sinkDfs;
+        }
+    }
+    if (_valHigh[v] == _valDfs[v]) {
+        _component++;
+        do {
+            assert(_top > 0);
+            int i = _stack[--_top];
+            int t = _type[_top];
+            if (t == 0)
+                _varComponent[i] = _component;
+            else if (t == 1)
+                _valComponent[i] = _component;
+            else
+                _sinkComponent = _component;
+            if (t == 1 && i == v)
+                break;
+        } while (true);
+    }
+}
+
+-(void) findSCCsink
+{
+    _sinkDfs  = _dfs--;
+    _sinkHigh = _sinkDfs;
+    _stack[_top] = -MAXINT;
+    _type[_top] = 2;
+    _top++;
+    assert(_top <= _varSize + _valSize + 1);
+    for(int i = 0; i < _nb; i++) {
+        int w = _varMatch[i];
+        if (_flow[w] > _low[w]) {
+            if (!_valDfs[w]) {
+                [self findSCCval:w];
+                if (_valHigh[w] > _sinkHigh)
+                    _sinkHigh = _valHigh[w];
+            }
+            else if ( (_valDfs[w] > _sinkDfs) && (!_valComponent[w])) {
+                if (_valDfs[w] > _sinkHigh)
+                    _sinkHigh = _valDfs[w];
+            }
+        }
+    }
+    if (_sinkHigh == _sinkDfs) {
+        _component++;
+        do {
+            assert(_top > 0);
+            int i = _stack[--_top];
+            int t = _type[_top];
+            if (t == 0)
+                _varComponent[i] = _component;
+            else if (t == 1)
+                _valComponent[i] = _component;
+            else
+                _sinkComponent = _component;
+            if (t == 2)
+                break;
+        } while (true);
+    }
 }
 
 -(bool)findValueRange
@@ -833,7 +1155,7 @@ static void prune(CPCardinalityDC* card)
             _up[i] = v;
         else {
             ORStatus s = tryfail(^ORStatus{
-                [_vcount updateMax:nb];
+                [_vcount[i] updateMax:_nb];
                 return ORSuspend;
             }, ^ORStatus{ return ORFailure;});
             if (s == ORFailure) return false;
@@ -905,6 +1227,155 @@ static void prune(CPCardinalityDC* card)
     _magic = 0;
 }
 
+-(void)findInitialFlow
+{
+    _sizeFlow = 0;
+    for(int k = 0; k < _nb; k++) {
+        int mx = _var[k].min;
+        int Mx = _var[k].max;
+        for(int i = mx; i <= Mx; i++)
+            if (_flow[i] < _up[i])
+                if ([_var[k] member:i]) {
+                    [self assign:k to:i];
+                    break;
+                }
+    }
+}
+-(bool)findMaximalFlow
+{
+    if (_sizeFlow < _nb) {
+        for(int k = 0; k < _nb; k++) {
+            if (_varMatch[k] == -MAXINT) {
+                _magic++;
+                if (![self findAugmentingPath:k])
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
+-(bool)findAugmentingPath:(int)k
+{
+    if (_varSeen[k] != _magic) {
+        _varSeen[k] = _magic;
+        id<CPIntVar> x = _var[k];
+        int mx = x.min;
+        int Mx = x.max;
+        for(int v = mx; v <= Mx; v++) {
+            if (_varMatch[k] != v) {
+                if ([x member:v]) {
+                    if ([self findAugmentingPathValue:v]) {
+                        [self assign:k to:v];
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+-(bool)findAugmentingPathValue:(int) v
+{
+    if (_valSeen[v] != _magic) {
+        _valSeen[v] = _magic;
+        if (_flow[v] < _up[v])
+            return true;
+        else if (_flow[v] > 0) {
+            int i = _valMatch[v];
+            while (i != -MAXINT) {
+                if ([self findAugmentingPath:i])
+                    return true;
+                i = _next[i];
+            }
+        }
+    }
+    return false;
+}
+
+-(bool) findFeasibleFlow
+{
+    for(int v = _min; v <= _max; v++) {
+        while (_flow[v] < _low[v])
+            if (![self findFeasibleFlowTo:v])
+                return false;
+    }
+    return true;
+}
+
+-(bool) findFeasibleFlowTo:(int) q
+{
+    _magic++;
+    for(int v = _min; v <= _max; v++) {
+        if (_flow[v] > _low[v])
+            if ([self findFeasibleFlowValue:v to:q])
+                return true;
+    }
+    return false;
+}
+
+-(bool) findFeasibleFlowValue:(int) v to:(int) q
+{
+    if (_valSeen[v] != _magic) {
+        _valSeen[v] = _magic;
+        int i = _valMatch[v];
+        while (i != -MAXINT) {
+            if (_varMatch[i] != q && [_var[i] member:q]) {
+                [self assign:i to:q];
+                return true;
+            }
+            i = _next[i];
+        }
+        i = _valMatch[v];
+        while (i != -MAXINT) {
+            if ([self findFeasibleFlowVar: i to:q])
+                return true;
+            i = _next[i];
+        }
+    }
+    return false;
+}
+
+-(bool) findFeasibleFlowVar:(int)k to:(int) q
+{
+    if (_varSeen[k] != _magic) {
+        _varSeen[k] = _magic;
+        id<CPIntVar> x = _var[k];
+        int mx = x.min;
+        int Mx = x.max;
+        for(int v = mx; v <= Mx; v++) {
+            if (q != v &&_varMatch[k] != v) {
+                if ([x member:v]) {
+                    if ([self findFeasibleFlowValue:v to:q]) {
+                        [self assign:k to:v];
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+-(bool) decreaseMax:(int) w
+{
+    while (_flow[w] > _up[w])
+        [self unassign:_valMatch[w]];
+    if (![self findMaximalFlow])
+        return false;
+    if (![self findFeasibleFlow])
+        return false;
+    return true;
+}
+
+-(bool) increaseMin:(int) w
+{
+    while (_flow[w] < _low[w])
+        if (![self findFeasibleFlowTo:w])
+            return false;
+    return true;
+}
 
 -(NSSet*) allVars
 {
@@ -922,8 +1393,11 @@ static void prune(CPCardinalityDC* card)
         ORUInt nb=0;
         for(ORUInt k=0;k<_varSize;k++)
             nb += ![_var[k] bound];
-        for(ORUInt k=0;k<_occSize;k++)
-            nb += ![_vcount[k] bound];
+        for(ORUInt k=_lc;k<=_uc;k++) {
+            id<CPIntVar> vc = _vcount[k];
+            ORBool b = ![vc bound];
+            nb += b;
+        }
         return nb;
     }
     else

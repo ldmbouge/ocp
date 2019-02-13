@@ -1763,6 +1763,8 @@
 -(ORInt)  MDDRecommendationFor:(ORInt) variableIndex
 {
    //return [ recommendationFor: variableIndex];
+   assert(false);
+   return 0;
 }
 
 

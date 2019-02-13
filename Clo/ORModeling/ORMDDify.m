@@ -89,7 +89,7 @@
 @interface CustomState : NSObject {
 @protected
     int _variableIndex;
-    char* _stateChar;
+//    char* _stateChar;
     int _domainMin;
     int _domainMax;
 }
@@ -97,7 +97,7 @@
 -(id) initRootState:(CustomState*)classState variableIndex:(int)variableIndex;
 -(id) initState:(CustomState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex;
 -(id) initState:(CustomState*)parentNodeState variableIndex:(int)variableIndex;
--(char*) stateChar;
+//-(char*) stateChar;
 -(int) variableIndex;
 -(int) domainMin;
 -(int) domainMax;
@@ -106,6 +106,8 @@
 -(NSArray*) tempAlterStateAssigningValue:(int)value withNextVariable:(int)nextVariable;
 -(void) undoChanges:(NSArray*)savedChanges;
 -(bool) canChooseValue:(int)value forVariable:(int)variable;
+-(int) stateDifferential:(CustomState*)other;
+-(bool) equivalentTo:(CustomState*)other;
 @end
 
 @implementation CustomState
@@ -133,7 +135,7 @@
     return self;
 }
 
--(char*) stateChar { return _stateChar; }
+//-(char*) stateChar { return _stateChar; }
 -(int) variableIndex { return _variableIndex; }
 -(int) domainMin { return _domainMin; }
 -(int) domainMax { return _domainMax; }
@@ -163,6 +165,12 @@
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
     return true;
 }
+-(int) stateDifferential:(CustomState*)other {
+    return 1;
+}
+-(bool) equivalentTo:(CustomState*)other {
+    return false;
+}
 @end
 
 @interface CustomBDDState : CustomState {   //A state with a list of booleans corresponding to whether or not each variable can be assigned 1
@@ -177,26 +185,26 @@
     self = [super initRootState:classState variableIndex:variableIndex];
     _state = malloc((_domainMax - _domainMin +1) * sizeof(bool));
     _state -= _domainMin;
-    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
+//    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
     
     for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
         _state[stateIndex] = true;
-        _stateChar[stateIndex - _domainMin] = '1';
+//        _stateChar[stateIndex - _domainMin] = '1';
     }
     return self;
 }
 -(id) initState:(CustomBDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {    //Bad naming I think.  Parent is actually the one assigned that value, not the variableIndex
     self = [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
     bool* parentState = [parentNodeState state];
-    char* parentStateChar = [parentNodeState stateChar];
+//    char* parentStateChar = [parentNodeState stateChar];
     
     for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
         if (stateIndex == [parentNodeState variableIndex]) {
             _state[stateIndex] = false;
-            _stateChar[stateIndex - _domainMin] = '0';
+//            _stateChar[stateIndex - _domainMin] = '0';
         } else {
             _state[stateIndex] = parentState[stateIndex];
-            _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex];
+//            _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex];
         }
     }
     return self;
@@ -280,10 +288,10 @@
         _weightSum = [parent weightSum] + [self getWeightForVariable:variable];
         for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
             _state[stateIndex] = parentState[stateIndex] && ((_weightSum + [self getWeightForVariable:stateIndex]) <= _capacity);
-            _stateChar[stateIndex - _domainMin] = _state[stateIndex] ? '1':'0';
+//            _stateChar[stateIndex - _domainMin] = _state[stateIndex] ? '1':'0';
         }
         for (int digit = 1; digit <= _capacityNumDigits; digit++) {
-            _stateChar[_domainMax + 1 + (_capacityNumDigits - digit) - _domainMin] = (char)((int)(_weightSum/pow(10,digit-1)) % 10 + (int)'0');
+//            _stateChar[_domainMax + 1 + (_capacityNumDigits - digit) - _domainMin] = (char)((int)(_weightSum/pow(10,digit-1)) % 10 + (int)'0');
             
         }
     }
@@ -291,14 +299,14 @@
         _weightSum = [parent weightSum];
         for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
             _state[stateIndex] = parentState[stateIndex];
-            _stateChar[stateIndex - _domainMin] = _state[stateIndex] ? '1':'0';
+//            _stateChar[stateIndex - _domainMin] = _state[stateIndex] ? '1':'0';
         }
         for (int digit = 1; digit <= _capacityNumDigits; digit++) {
-            _stateChar[_domainMax + digit - _domainMin] = [parent stateChar][_domainMax + digit - _domainMin];
+//            _stateChar[_domainMax + digit - _domainMin] = [parent stateChar][_domainMax + digit - _domainMin];
         }
     }
     _state[variable] = false;
-    _stateChar[variable - _domainMin] = '0';
+//    _stateChar[variable - _domainMin] = '0';
 }
 -(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
     if (value == 1 && (_weightSum + [self getWeightForVariable:variable] + [self getWeightForVariable:toVariable]) > _capacity && _state[variable]) {
@@ -313,11 +321,11 @@
         bool* otherState = [other state];
         for (int variable = _domainMin; variable <= _domainMax; variable++) {
             _state[variable] = otherState[variable];
-            _stateChar[variable - _domainMin] = _state[variable - _domainMin] ? '1' : '0';
+//            _stateChar[variable - _domainMin] = _state[variable - _domainMin] ? '1' : '0';
         }
-        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
-            _stateChar[_domainMax + digit - _domainMin] = [other stateChar][_domainMax + digit - _domainMin];
-        }
+//        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
+//            _stateChar[_domainMax + digit - _domainMin] = [other stateChar][_domainMax + digit - _domainMin];
+//        }
     }
 }
 -(int) getWeightForVariable:(int)variable {
@@ -346,28 +354,28 @@
     self = [super initRootState:classState variableIndex:variableIndex];
     _state = malloc((_domainMax - _domainMin +1) * sizeof(bool));
     _state -= _domainMin;
-    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
+//    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
     for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
         _state[stateIndex] = true;
-        _stateChar[stateIndex - _domainMin] = '1';
+//        _stateChar[stateIndex - _domainMin] = '1';
     }
     return self;
 }
 -(id) initState:(AllDifferentMDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
     self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
     bool* parentState = [parentNodeState state];
-    char* parentStateChar = [parentNodeState stateChar];
+//    char* parentStateChar = [parentNodeState stateChar];
     _state = malloc((_domainMax - _domainMin +1) * sizeof(bool));
     _state -= _domainMin;
-    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
+//    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
     
     for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
         if (stateIndex == edgeValue) {
             _state[stateIndex] = false;
-            _stateChar[stateIndex - _domainMin] = '0';
+//            _stateChar[stateIndex - _domainMin] = '0';
         } else {
             _state[stateIndex] = parentState[stateIndex];
-            _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex - _domainMin];
+//            _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex - _domainMin];
         }
     }
     return self;
@@ -375,14 +383,14 @@
 -(id) initState:(AllDifferentMDDState*)parentNodeState variableIndex:(int)variableIndex {
     self = [super initState:parentNodeState variableIndex:variableIndex];
     bool* parentState = [parentNodeState state];
-    char* parentStateChar = [parentNodeState stateChar];
+//    char* parentStateChar = [parentNodeState stateChar];
     _state = malloc((_domainMax - _domainMin +1) * sizeof(bool));
     _state -= _domainMin;
-    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
+//    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
     
     for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
         _state[stateIndex] = parentState[stateIndex];
-        _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex - _domainMin];
+//        _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex - _domainMin];
     }
     return self;
 }
@@ -394,7 +402,7 @@
     
     for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
         _state[stateIndex] = _state[stateIndex] || otherState[stateIndex];
-        _stateChar[stateIndex - _domainMin] = (_state[stateIndex] ? '1' : '0');
+//        _stateChar[stateIndex - _domainMin] = (_state[stateIndex] ? '1' : '0');
     }
 }
 
@@ -411,11 +419,32 @@
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
     return _state[value];
 }
+
+-(int) stateDifferential:(AllDifferentMDDState*)other {
+    int differential = 0;
+    bool* other_state = [other state];
+    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
+        if (_state[stateIndex] != other_state[stateIndex]) {
+            differential++;
+        }
+    }
+    return differential;
+}
+-(bool) equivalentTo:(AllDifferentMDDState*)other {
+    bool* other_state = [other state];
+    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
+        if (_state[stateIndex] != other_state[stateIndex]) {
+            return false;
+        }
+    }
+    return true;
+}
 @end
 
 @interface AmongMDDState : CustomState {
 @protected
-    int _state;
+    int _minState;
+    int _maxState;
     ORInt _lowerBound;
     ORInt _upperBound;
     id<ORIntSet> _set;
@@ -423,7 +452,8 @@
     
     ORInt _upperBoundNumDigits;
 }
--(int)state;
+-(int)minState;
+-(int)maxState;
 -(int)lowerBound;
 -(int)upperBound;
 -(int)numDigits;
@@ -447,33 +477,37 @@
 }
 -(id) initRootState:(AmongMDDState*)classState variableIndex:(int)variableIndex {
     self = [super initRootState:classState variableIndex:variableIndex];
-    _state = 0;
+    _minState = 0;
+    _maxState = 0;
     _lowerBound = [classState lowerBound];
     _upperBound = [classState upperBound];
     _upperBoundNumDigits = [classState numDigits];
     _set = [classState set];
-    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
-    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
-        _stateChar[digitIndex] = '0';
-    }
+//    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
+//    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
+//        _stateChar[digitIndex] = '0';
+//    }
     _numVarsRemaining = [classState numVarsRemaining];
     return self;
 }
 -(id) initState:(AmongMDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
     self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
-    int parentState = [parentNodeState state];
-    char* parentStateChar = [parentNodeState stateChar];
-    _state = parentState;
+    int parentMinState = [parentNodeState minState];
+    int parentMaxState = [parentNodeState maxState];
+//    char* parentStateChar = [parentNodeState stateChar];
+    _minState = parentMinState;
+    _maxState = parentMaxState;
     _lowerBound = [parentNodeState lowerBound];
     _upperBound = [parentNodeState upperBound];
     _upperBoundNumDigits = [parentNodeState numDigits];
     _set = [parentNodeState set];
-    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
+//    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
     
     if ([_set member: edgeValue]) {
-        _state++;
+        _minState++;
+        _maxState++;
     }
-    int temp = _state;
+/*    int temp = _state;
     bool changedDigits = true;
     //stateChar is in reverse order of digits for convenience sake
     for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
@@ -485,29 +519,32 @@
         } else {
             _stateChar[digitIndex] = parentStateChar[digitIndex];
         }
-    }
+    }*/
     _numVarsRemaining = [parentNodeState numVarsRemaining] -1;
     return self;
 }
 -(id) initState:(AmongMDDState*)parentNodeState variableIndex:(int)variableIndex {
     self = [super initState:parentNodeState variableIndex:variableIndex];
-    int parentState = [parentNodeState state];
-    char* parentStateChar = [parentNodeState stateChar];
-    _state = parentState;
+    int parentMinState = [parentNodeState minState];
+    int parentMaxState = [parentNodeState maxState];
+//    char* parentStateChar = [parentNodeState stateChar];
+    _minState = parentMinState;
+    _maxState = parentMaxState;
     _lowerBound = [parentNodeState lowerBound];
     _upperBound = [parentNodeState upperBound];
     _upperBoundNumDigits = [parentNodeState numDigits];
     _set = [parentNodeState set];
-    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
+//    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
     
-    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
-        _stateChar[digitIndex] = parentStateChar[digitIndex];
-    }
+//    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
+//        _stateChar[digitIndex] = parentStateChar[digitIndex];
+//    }
     _numVarsRemaining = [parentNodeState numVarsRemaining] -1;
     return self;
 }
 
--(int) state { return _state; }
+-(int) minState { return _minState; }
+-(int) maxState { return _maxState; }
 -(int) lowerBound { return _lowerBound; }
 -(int) upperBound { return _upperBound; }
 -(int) numDigits { return _upperBoundNumDigits; }
@@ -515,29 +552,74 @@
 -(int) numVarsRemaining { return _numVarsRemaining; }
 
 -(void) mergeStateWith:(AmongMDDState*)other {  //When doing relaxations, will need to complete this.  Need to change class to have the state variable contain its own lower and upper value containing the lowest-most merged value and greatest merged value.  For canChooseValue, compare lowest-most against upperbound and greatest against lower bound to see feasibility
-    int otherState = [other state];
+    int otherMinState = [other minState];
+    int otherMaxState = [other maxState];
     
-    //FINISH THIS
+    _minState = min(_minState, otherMinState);
+    _maxState = max(_maxState, otherMaxState);
 }
 
 -(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
     ORBool contained = [_set member:value];
     NSArray* savedChanges = [[NSArray alloc] initWithObjects:[NSNumber numberWithBool: (contained)], nil];
     if (contained) {
-        _state++;
+        _minState++;
+        _maxState++;
     }
     return savedChanges;
 }
 
 -(void) undoChanges:(NSArray*)savedChanges {
     if ([savedChanges[0] boolValue]) {
-        _state--;
+        _minState--;
+        _maxState--;
     }
 }
 
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
-    int newState = _state + ([_set member:value] ? 1:0);
-    return (newState <= _upperBound) && (newState + _numVarsRemaining -1 >= _lowerBound);
+    int addition = [_set member:value] ? 1:0;
+    return (_minState + addition <= _upperBound) && (_maxState + addition + _numVarsRemaining -1 >= _lowerBound);
+}
+
+-(int) stateDifferential:(AmongMDDState*)other {
+    int minStateDifferential;
+    int maxStateDifferential;
+    int otherMinState = [other minState];
+    int otherMaxState = [other maxState];
+    
+    /*if (max(_minState, otherMinState) + _numVarsRemaining <= _upperBound) {
+        minStateDifferential = 0;
+    } else {
+        int canAdd = _upperBound - _minState;
+        int otherCanAdd = _upperBound - otherMinState;
+        minStateDifferential = abs(canAdd - otherCanAdd);
+    }
+    if (min(_maxState, [other maxState]) >= _lowerBound) {
+        maxStateDifferential = 0;
+    } else {
+        int mustAdd = max(_lowerBound - _maxState, 0);  //Possible that one of the two states doesn't *have* to add any more.  This would cause lb - state to be negative
+        int otherMustAdd = max(_lowerBound - otherMaxState, 0);
+        maxStateDifferential = abs(mustAdd - otherMustAdd);
+    }*/
+    minStateDifferential = abs(_minState - otherMinState)*2;
+    maxStateDifferential = abs(_maxState - otherMaxState)*2;
+    
+    int differential = minStateDifferential + maxStateDifferential + (_maxState - _minState) + (otherMaxState - otherMinState);
+    
+    //could add tie-breakers based on where in potential range the states lie
+    //Example:  If lb is 1 and up is 3, and nodes are compared with states 1, 2, and 3, then depending on numVarsRemaining, it may be preferred to join 1 & 2 vs 2 & 3 despite having the same differential as how it's currently calculated.  If there were only one numVarsRemaining, then 1 & 2 can be combined for free actually.  If there are a lot of variables remaining, it may be better to join 2 & 3. Not positive.
+    
+    return differential;
+}
+-(bool) equivalentTo:(AmongMDDState*)other {
+    int otherMinState = [other minState];
+    int otherMaxState = [other maxState];
+    
+    if ((_minState == otherMinState && _maxState == otherMaxState) || (min(_maxState, otherMaxState) >= _lowerBound && max(_minState, otherMinState) +  _numVarsRemaining <= _upperBound)) {
+        //Either same state OR both states are able to select any subset of subsequent variable due to numVarsRemaining being small enough while already meeting lowerBound
+        return true;
+    }
+    return false;
 }
 @end
 
@@ -617,7 +699,7 @@ static id<ORIntVarArray> _variables;
     return count;
 }
 
--(char*) stateChar {
+/*-(char*) stateChar {
     char** stateChars = malloc([_states count] * sizeof(char*));
     int size = 0;
     
@@ -632,7 +714,7 @@ static id<ORIntVarArray> _variables;
     }
     
     return stateChar;
-}
+}*/
 
 -(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
     NSMutableArray* savedChanges = [[NSMutableArray alloc] init];
@@ -664,6 +746,24 @@ static id<ORIntVarArray> _variables;
             if (![[_states objectAtIndex:stateIndex] canChooseValue:value forVariable:variable]) {
                 return false;
             }
+        }
+    }
+    return true;
+}
+
+-(int) stateDifferential:(JointState*)other {
+    int differential = 0;
+    NSMutableArray* other_states = [other states];
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        differential += [[_states objectAtIndex:stateIndex] stateDifferential:[other_states objectAtIndex:stateIndex]];
+    }
+    return differential;
+}
+-(bool) equivalentTo:(JointState*)other {
+    NSMutableArray* other_states = [other states];
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        if (![[_states objectAtIndex:stateIndex] equivalentTo:[other_states objectAtIndex:stateIndex]]) {
+            return false;
         }
     }
     return true;
@@ -761,7 +861,11 @@ static id<ORIntVarArray> _variables;
 {
     id<ORIntVarArray> cstrVars = (id<ORIntVarArray>)[cstr allVars];
     [_mddConstraints addObject: cstr];
-    [JointState addStateClass: [[KnapsackBDDState alloc] initClassState:[cstrVars low] domainMax: [cstrVars up] capacity:[cstr capacity] weights:[cstr weight]] withVariables:cstrVars]; //minDomain and maxDomain are poor names as shown here
+    [JointState addStateClass: [[KnapsackBDDState alloc] initClassState:[cstrVars low]
+                                                              domainMax: [cstrVars up]
+                                                               capacity:[cstr capacity]
+                                                                weights:[cstr weight]]
+                withVariables:cstrVars]; //minDomain and maxDomain are poor names as shown here
     //why is capacity a variable for ORKnapsack?
     
     if ([_mddConstraints count] == 1) {
@@ -774,7 +878,13 @@ static id<ORIntVarArray> _variables;
 {
     id<ORIntVarArray> cstrVars = (id<ORIntVarArray>)[cstr array];
     [_mddConstraints addObject:cstr];
-    [JointState addStateClass: [[AmongMDDState alloc] initClassState:[cstrVars low] domainMax: [cstrVars up] setValues:[cstr values] lowerBound:[cstr low] upperBound:[cstr up] numVars:[cstrVars count]] withVariables:cstrVars];
+    [JointState addStateClass: [[AmongMDDState alloc] initClassState:[cstrVars low]
+                                                           domainMax: [cstrVars up]
+                                                           setValues:[cstr values]
+                                                          lowerBound:[cstr low]
+                                                          upperBound:[cstr up]
+                                                             numVars:(ORInt)[cstrVars count]]
+                withVariables:cstrVars];
     if ([_mddConstraints count] == 1) {
         _variables = cstrVars;
     } else {

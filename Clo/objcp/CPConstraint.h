@@ -26,6 +26,8 @@
 
 +(id<CPConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
 +(id<CPConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation: (ORCLevel) c;
++(id<ORConstraint>)cardinality:(id<CPIntVarArray>)x occurs:(id<CPIntVarArray>)occ;
+
 
 +(id<CPConstraint>) minimize: (id<CPIntVar>) x;
 +(id<CPConstraint>) maximize: (id<CPIntVar>) x;

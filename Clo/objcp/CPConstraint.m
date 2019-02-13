@@ -101,9 +101,33 @@
    return o;
    
 }
-+(id<ORConstraint>) among: (id<CPEngine>) engine over: (id<CPIntVarArray>) x values:(id<ORIntSet>)values low:(ORInt)low up:(ORInt)up
++(id<ORConstraint>) among: (id<CPEngine>) engine
+                     over: (id<CPIntVarArray>) x
+                   values:(id<ORIntSet>)values
+                      low:(ORInt)low
+                       up:(ORInt)up
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "Among Not Implemented"];
+    ORInt min = MAXINT,max =MININT;
+    for(id<CPIntVar> xk in x) {
+        min = min < xk.min ? min : xk.min;
+        max = max > xk.max ? max : xk.max;
+    }
+    id<CPIntVarArray> occ = [CPFactory intVarArray:engine range:RANGE(engine,min,max)
+                                              with:^id<CPIntVar>(ORInt k) {
+                                                  return [CPFactory intVar:engine
+                                                                    domain:RANGE(engine,0,(ORInt)x.count - 1)];
+                                              }];
+    [engine add:[CPFactory cardinality:x occurs:occ]];
+    id<CPIntVar> sumValue = [CPFactory intVar:engine domain:RANGE(engine,low,up)];
+    id<CPIntVar> negSum   = [CPFactory intVar:sumValue scale:-1];
+    id<CPIntVarArray> arr = [CPFactory intVarArray:engine range:RANGE(engine,0,[values size])];
+    arr[0] = negSum;
+    __block int at = 1;
+    [values enumerateWithBlock:^(ORInt vk) {
+        arr[at++] =occ[vk];
+    }];
+    id<ORConstraint> c = [CPFactory sum:arr eq:0];
+    return c;
 }
 // cardinality
 +(id<ORConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
@@ -128,6 +152,12 @@
           break;
     }
     [[x tracker ] trackMutable: o];
+    return o;
+}
++(id<ORConstraint>)cardinality:(id<CPIntVarArray>)x occurs:(id<CPIntVarArray>)occ
+{
+    id<ORConstraint> o = [[CPGeneralizedCardinalityDC alloc] initCPGeneralizedCardinalityDC:x occ:occ];
+    [[x tracker] trackMutable:o];
     return o;
 }
 
