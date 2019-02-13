@@ -215,12 +215,16 @@ int main (int argc, const char * argv[])
         
         
         
-        /*
+        
         //ALLDIFFERENT
         id<ORIntVarArray> x  = [ORFactory intVarArray:mdl range:R1 domain: R1];
-        id<ORIntVarArray> y  = [ORFactory intVarArray:mdl range:R1 domain: R1];
-        id<ORIntVarArray> z  = [ORFactory intVarArray: mdl range: RANGE(mdl, 1, 5) with: ^id<ORIntVar>(ORInt i) { if (i < 4) { return [x at: i]; } else { return [y at: i - 1]; }}];
-        
+/*        id<ORIntVarArray> y  = [ORFactory intVarArray:mdl range:R1 domain: R1];
+        id<ORIntVarArray> z  = [ORFactory intVarArray: mdl range: RANGE(mdl, 1, 5)
+                                                 with: ^id<ORIntVar>(ORInt i) {
+                                                     if (i < 4) { return [x at: i]; }
+                                                     else { return [y at: i - 1]; }
+                                                 }];
+  */
         //[mdl add: [ORFactory alldifferent:x]];
         //[mdl add: [ORFactory alldifferent:y]];
         //[mdl add: [ORFactory alldifferent:z]];
@@ -233,7 +237,7 @@ int main (int argc, const char * argv[])
         NSSet* s2 = [NSSet setWithObjects:@1,@2, nil];
         id<ORIntSet> set2 = [ORFactory intSet: mdl set: s2];
         [mdl add: [ORFactory among: x values: set2 low: 2 up: 3]];
-        */
+        
         
         
         //Multiple Amongs
@@ -264,31 +268,32 @@ int main (int argc, const char * argv[])
         [notes ddRelaxed: false];
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];
-        id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
-        //id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];
+        //id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
+        id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];
         
         [cp solve: ^{
             
             //[cp labelArray:x];
             //[cp labelArray:y];
-            
-            [cp labelArray:variables];
-            for (int i = 1; i <= 50; i++) {
-                printf("%d ",[cp intValue: [variables at: i]]);
+
+            int nb1 = 0,nb2 = 0;
+            for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+                int vi = [cp intValue: [x at:i]];
+                nb1 += (vi == 1 || vi==2 || vi==3);
+                nb2 += (vi == 1 || vi==2);
+                printf("%d  ",vi);
+                
             }
-            printf("\n");
-            
-            //for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
-            //    printf("%d  ",[cp intValue: [x at:i]]);
-            //}
-            //printf("\n");
-            /*for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
-                printf("%d  ",[cp intValue: [y at:i]]);
-            }
+            assert(3 <= nb1 && nb1 <= 4);
+            assert(2 <= nb2 && nb2 <= 3);
+
+//            printf("\n");
+//            for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
+//                printf("%d  ",[cp intValue: [y at:i]]);
+//            }
             //printf("  |  Objective value: %d", [cp intValue: totalWeight]);
             printf("\n");
-            */
-            //[nbSolutions incr: cp];
+            [nbSolutions incr: cp];
          }
         ];
         

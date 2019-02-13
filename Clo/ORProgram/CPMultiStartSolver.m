@@ -732,12 +732,19 @@
 {
    return (id<ORSolution>) [[self worker] captureSolution];
 }
+
+- (ORInt)MDDRecommendationFor:(ORInt)variableIndex {
+    return [[self worker] MDDRecommendationFor:variableIndex];
+}
+
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
-   return [[self worker] concretize: o];
+    return [[self worker] concretize: o];
 }
 -(id<ORObjectiveValue>) objectiveValue
 {
-   return [[self worker] objectiveValue];
+    return [[self worker] objectiveValue];
 }
+- (void)visit:(ORVisitor *)visitor {}
+
 @end

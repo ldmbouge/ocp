@@ -861,7 +861,11 @@ static id<ORIntVarArray> _variables;
 {
     id<ORIntVarArray> cstrVars = (id<ORIntVarArray>)[cstr allVars];
     [_mddConstraints addObject: cstr];
-    [JointState addStateClass: [[KnapsackBDDState alloc] initClassState:[cstrVars low] domainMax: [cstrVars up] capacity:[cstr capacity] weights:[cstr weight]] withVariables:cstrVars]; //minDomain and maxDomain are poor names as shown here
+    [JointState addStateClass: [[KnapsackBDDState alloc] initClassState:[cstrVars low]
+                                                              domainMax: [cstrVars up]
+                                                               capacity:[cstr capacity]
+                                                                weights:[cstr weight]]
+                withVariables:cstrVars]; //minDomain and maxDomain are poor names as shown here
     //why is capacity a variable for ORKnapsack?
     
     if ([_mddConstraints count] == 1) {
@@ -874,7 +878,13 @@ static id<ORIntVarArray> _variables;
 {
     id<ORIntVarArray> cstrVars = (id<ORIntVarArray>)[cstr array];
     [_mddConstraints addObject:cstr];
-    [JointState addStateClass: [[AmongMDDState alloc] initClassState:[cstrVars low] domainMax: [cstrVars up] setValues:[cstr values] lowerBound:[cstr low] upperBound:[cstr up] numVars:[cstrVars count]] withVariables:cstrVars];
+    [JointState addStateClass: [[AmongMDDState alloc] initClassState:[cstrVars low]
+                                                           domainMax: [cstrVars up]
+                                                           setValues:[cstr values]
+                                                          lowerBound:[cstr low]
+                                                          upperBound:[cstr up]
+                                                             numVars:(ORInt)[cstrVars count]]
+                withVariables:cstrVars];
     if ([_mddConstraints count] == 1) {
         _variables = cstrVars;
     } else {

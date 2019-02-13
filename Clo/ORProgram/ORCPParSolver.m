@@ -904,10 +904,17 @@
 {
     [[self worker] param: _gamma[p.getId] setValue: val];
 }
+
+- (ORInt)MDDRecommendationFor:(ORInt)variableIndex { 
+    return [[self worker] MDDRecommendationFor:variableIndex];
+}
+
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
-   return [[self worker] concretize: o];
+    return [[self worker] concretize: o];
 }
+- (void)visit:(ORVisitor *)visitor {}
+
 @end
 
 
