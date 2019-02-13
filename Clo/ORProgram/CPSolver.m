@@ -2146,7 +2146,9 @@
                             ];
    __block ORBool goon = YES;
    while(goon) {
+#warning [hzi] for ldm
       [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+//      [_search try: ^{
          LOG(_level,2,@"State before selection");
          abs = [self computeAbsorptionsQuantities:x];
          ORBool c = NO;
@@ -2194,7 +2196,8 @@
               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
             [self float5WaySplit:i.index withVars:x];
          }
-      }];
+//      } alt:^{}];
+         }];
    }
    
 }
