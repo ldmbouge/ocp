@@ -77,6 +77,7 @@
 {
    if (_gamma[v.getId] == NULL)
       _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up]];
+   [[v prettyname] hasPrefix:@"load"];
 }
 -(void) visitAffineVar:(id<ORIntVar>)v
 {
@@ -347,7 +348,7 @@
       ORDouble coefq[1] = { -1.0 };
       MIPVariableI* res[1] = { [self concreteVar:c.res] };
       ORDouble coef[1] = { 1.0 };
-      MIPConstraintI* concreteCstr = [_MIPsolver createQuadEQ:1 var:res coef:coef sizeQ:1 varQ:(MIPVariableI***)x coefQ:coefq rhs:0.0];
+      MIPConstraintI* concreteCstr = [_MIPsolver createQuadEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint: concreteCstr];
    }
