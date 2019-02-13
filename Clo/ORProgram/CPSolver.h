@@ -79,6 +79,7 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2;
 -(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 -(void) once: (ORClosure) cl;
+-(void) probe: (ORClosure) cl;
 -(void) try: (ORClosure) left then: (ORClosure) right;
 -(void) limitSolutions: (ORInt) maxSolutions  in: (ORClosure) cl;
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;

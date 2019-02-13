@@ -595,6 +595,10 @@
 {
    [[self worker] once: cl];
 }
+-(void) probe: (ORClosure) cl
+{
+    [[self worker] probe: cl];
+}
 -(void) try: (ORClosure) left then: (ORClosure) right
 {
    [[self worker] try: left then: right];

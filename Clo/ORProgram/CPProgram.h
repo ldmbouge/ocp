@@ -168,6 +168,7 @@ PORTABLE_BEGIN
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)                 try: (ORClosure) body then: (ORClosure) body;
 -(void)                once: (ORClosure) cl;
+-(void)               probe: (ORClosure) cl;
 
 -(void)      nestedOptimize: (ORClosure) body onSolution: (PNULLABLE ORClosure) onSolution onExit: (PNULLABLE ORClosure) onExit  control:(id<ORSearchController>)newCtrl;
 -(void)         nestedSolve: (ORClosure) body onSolution: (PNULLABLE ORClosure) onSolution onExit: (PNULLABLE ORClosure) onExit  control:(id<ORSearchController>)newCtrl;
