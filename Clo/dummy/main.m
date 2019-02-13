@@ -139,7 +139,6 @@ int main (int argc, const char * argv[])
         id<ORAnnotation> notes= [ORFactory annotation];
         id<ORIntRange> R1 = RANGE(mdl, MINVARIABLE, MAXVARIABLE);
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
-        id<ORIntVarArray> a = [ORFactory intVarArray: mdl range: R1 domain: R2];
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
         ORInt layerSize = 8;
         
@@ -216,7 +215,8 @@ int main (int argc, const char * argv[])
         
         
         
-        
+        /*
+        //ALLDIFFERENT
         id<ORIntVarArray> x  = [ORFactory intVarArray:mdl range:R1 domain: R1];
         id<ORIntVarArray> y  = [ORFactory intVarArray:mdl range:R1 domain: R1];
         id<ORIntVarArray> z  = [ORFactory intVarArray: mdl range: RANGE(mdl, 1, 5) with: ^id<ORIntVar>(ORInt i) { if (i < 4) { return [x at: i]; } else { return [y at: i - 1]; }}];
@@ -226,24 +226,57 @@ int main (int argc, const char * argv[])
         //[mdl add: [ORFactory alldifferent:z]];
         //[mdl maximize: [x at: 1]];
 
+        //AMONG
         NSSet* s1 = [NSSet setWithObjects:@1,@2,@3, nil];
         id<ORIntSet> set1 = [ORFactory intSet: mdl set: s1];
         [mdl add: [ORFactory among: x values: set1 low: 3 up: 4]];
         NSSet* s2 = [NSSet setWithObjects:@1,@2, nil];
         id<ORIntSet> set2 = [ORFactory intSet: mdl set: s2];
         [mdl add: [ORFactory among: x values: set2 low: 2 up: 3]];
+        */
         
-        [notes ddWidth: layerSize];
-        [notes ddRelaxed: true];
+        
+        //Multiple Amongs
+        int numConstraints = 5;
+        //1-4 works.  5+ have issues where _x starts to lose its value completely.  Sloppy memory management maybe???
+        
+        NSSet* value1 = [NSSet setWithObjects:@1, nil];
+        id<ORIntSet> setOne = [ORFactory intSet: mdl set: value1];
+        
+        id<ORIntVarArray> variables = [ORFactory intVarArray:mdl range: RANGE(mdl, 1, 50) domain: R2];
+        
+        NSString* fileContents = [NSString stringWithContentsOfFile:@"/Users/ben/objcp-private/Clo/dummy/AmongConstraintVariables.txt" encoding:NSUTF8StringEncoding error:nil];
+        NSArray* allLines = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+        NSMutableArray* lines = [[NSMutableArray alloc] init];
+        
+        for (int constraintNum = 0; constraintNum < numConstraints; constraintNum++) {
+            NSString* line = [allLines objectAtIndex:constraintNum];
+            NSArray* variableArray = [line componentsSeparatedByCharactersInSet:[NSCharacterSet
+                                                                                 characterSetWithCharactersInString:@" "]];
+            [lines setObject:variableArray atIndexedSubscript:constraintNum];
+            
+            id<ORIntVarArray> variableSubset = [ORFactory intVarArray:mdl range: RANGE(mdl, 1, 5) with: ^id<ORIntVar>(ORInt i) { return [variables at: ([[[lines objectAtIndex:constraintNum] objectAtIndex:i-1] intValue])];}];
+            [mdl add: [ORFactory among: variableSubset values: setOne low: 2 up: 3]];
+        }
+        
+        
+        [notes ddWidth: 8];
+        [notes ddRelaxed: false];
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];
         id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
         //id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];
         
-        [cp solveAll: ^{
+        [cp solve: ^{
             
-            [cp labelArray:x];
+            //[cp labelArray:x];
             //[cp labelArray:y];
+            
+            [cp labelArray:variables];
+            for (int i = 1; i <= 50; i++) {
+                printf("%d ",[cp intValue: [variables at: i]]);
+            }
+            printf("\n");
             
             //for (int i = MINVARIABLE; i <= MAXVARIABLE; i++) {
             //    printf("%d  ",[cp intValue: [x at:i]]);
@@ -255,7 +288,7 @@ int main (int argc, const char * argv[])
             //printf("  |  Objective value: %d", [cp intValue: totalWeight]);
             printf("\n");
             */
-            [nbSolutions incr: cp];
+            //[nbSolutions incr: cp];
          }
         ];
         

@@ -450,13 +450,13 @@
     id<ORIntSet> _set;
     int _numVarsRemaining;
     
-    ORInt _upperBoundNumDigits;
+//    ORInt _upperBoundNumDigits;
 }
 -(int)minState;
 -(int)maxState;
 -(int)lowerBound;
 -(int)upperBound;
--(int)numDigits;
+//-(int)numDigits;
 -(id<ORIntSet>)set;
 -(int)numVarsRemaining;
 @end
@@ -466,11 +466,11 @@
     self = [super initClassState:domainMin domainMax:domainMax];
     _lowerBound = lowerBound;
     _upperBound = upperBound;
-    _upperBoundNumDigits = 0;
-    while (upperBound > 0) {
-        _upperBoundNumDigits++;
-        upperBound/=10;
-    }
+//    _upperBoundNumDigits = 0;
+//    while (upperBound > 0) {
+//        _upperBoundNumDigits++;
+//        upperBound/=10;
+//    }
     _set = set;
     _numVarsRemaining = numVars;
     return self;
@@ -481,7 +481,7 @@
     _maxState = 0;
     _lowerBound = [classState lowerBound];
     _upperBound = [classState upperBound];
-    _upperBoundNumDigits = [classState numDigits];
+//    _upperBoundNumDigits = [classState numDigits];
     _set = [classState set];
 //    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
 //    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
@@ -499,7 +499,7 @@
     _maxState = parentMaxState;
     _lowerBound = [parentNodeState lowerBound];
     _upperBound = [parentNodeState upperBound];
-    _upperBoundNumDigits = [parentNodeState numDigits];
+//    _upperBoundNumDigits = [parentNodeState numDigits];
     _set = [parentNodeState set];
 //    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
     
@@ -532,14 +532,14 @@
     _maxState = parentMaxState;
     _lowerBound = [parentNodeState lowerBound];
     _upperBound = [parentNodeState upperBound];
-    _upperBoundNumDigits = [parentNodeState numDigits];
+//    _upperBoundNumDigits = [parentNodeState numDigits];
     _set = [parentNodeState set];
 //    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
     
 //    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
 //        _stateChar[digitIndex] = parentStateChar[digitIndex];
 //    }
-    _numVarsRemaining = [parentNodeState numVarsRemaining] -1;
+    _numVarsRemaining = [parentNodeState numVarsRemaining];
     return self;
 }
 
@@ -547,7 +547,7 @@
 -(int) maxState { return _maxState; }
 -(int) lowerBound { return _lowerBound; }
 -(int) upperBound { return _upperBound; }
--(int) numDigits { return _upperBoundNumDigits; }
+//-(int) numDigits { return _upperBoundNumDigits; }
 -(id<ORIntSet>) set { return _set; }
 -(int) numVarsRemaining { return _numVarsRemaining; }
 
