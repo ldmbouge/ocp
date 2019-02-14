@@ -2,24 +2,14 @@
 #define OBJCPGATEWAY_H
 
 #import <ORUtilities/ORUtilities.h>
-//#import <Foundation/NSData.h>
-//#import <Foundation/NSString.h>
 
-//#import <ORFoundation/ORAVLTree.h>
 #import <ORFoundation/ORFactory.h>
-//#import <ORFoundation/ORSetI.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgramFactory.h>
 #import <ORProgram/CPProgram.h>
-//#import <objcp/CPObjectQueue.h>
 #import <objcp/CPFactory.h>
 
-//#import <objcp/CPConstraint.h>
 #import <objcp/CPBitMacros.h>
-
-//#import <objcp/CPBitArray.h>
-//#import <objcp/CPBitArrayDom.h>
-//#import <objcp/CPBitConstraint.h>
 
 
 
@@ -28,11 +18,18 @@
 
 
 @protocol CPProgram;
+@class OBJCPGateway;
 
+typedef enum {QF_LRA,QF_LIA,QF_RDL,QF_IDL,QF_BV,QF_FP} logic;
 typedef enum {OR_BOOL, OR_INT, OR_REAL, OR_BV, OR_FLOAT, OR_DOUBLE} objcp_var_type;
 
 static const char*  typeName[] = {"Bool","Int","Real","BitVec","FloatingPoint"};
 static objcp_var_type  typeObj[] = {OR_BOOL, OR_INT, OR_REAL, OR_BV, OR_FLOAT};
+#define NB_TYPE 5
+
+static const char* logicString[] = {"QF_LRA","QF_LIA","QF_RDL","QF_IDL","QF_BV","QF_FP"};
+static logic logicObj[] = {QF_LRA,QF_LIA,QF_RDL,QF_IDL,QF_BV,QF_FP};
+#define NB_LOGIC 6
 
 // A context stores a collection of declarations and assertions.
 typedef void* objcp_context;
@@ -69,6 +66,28 @@ typedef void* objcp_expr;
  */
 typedef int assertion_id;
 
+@interface ConstantWrapper : NSObject
+{
+   @package
+   NSString* _strv;
+   ORUInt _width;
+   ORUInt _base;
+   fp_number _value;
+   objcp_var_type _type;
+}
+-(ConstantWrapper*) init:(const char*) strv width:(ORUInt)width base:(ORUInt)base;
+-(ConstantWrapper*) initWithFloat:(float) v;
+-(ConstantWrapper*) initWithDouble:(double) v;
+-(objcp_var_type) type;
+-(ORFloat) floatValue;
+-(ORDouble) doubleValue;
+-(ORInt) intValue;
+-(objcp_expr) makeVariable;
+-(NSString*) description;
++(void)setObjcpGateway:(OBJCPGateway*) obj;
+@end
+
+
 
 @interface OBJCPGateway : NSObject{
 @private
@@ -76,8 +95,7 @@ typedef int assertion_id;
    NSMutableDictionary* _types;
    NSMutableDictionary* _declarations;
    NSMutableDictionary* _instances;
-   id<ORBitVar> _true;
-   id<ORBitVar> _false;
+   logic _logic;
 }
 +(objcp_var_type) sortName2Type:(const char *) name;
 +(OBJCPGateway*) initOBJCPGateway;
@@ -92,14 +110,16 @@ typedef int assertion_id;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type args:(id) a0,...;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type withSize:(unsigned int) size;
 -(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type;
+-(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type  andName:(NSString*) name andSize:(ORUInt) size withValue:(fp_number)value;
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t;
 -(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name;
 -(objcp_expr) objcp_mk_var_from_decl:(objcp_context) ctx withDecl:(objcp_var_decl) d;
 -(void) objcp_set_arith_only:(int) flag;
+-(void) objcp_set_logic:(const char*) logic;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name;
--(objcp_type) objcp_mk_bitvector_type:(objcp_context)ctx withSize:(unsigned int) size;
 -(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range;
 -(int)        objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value;
+-(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size;
 
 /**
  \brief Create a backtracking point in the given logical context.
@@ -137,11 +157,31 @@ typedef int assertion_id;
 -(ORUInt) objcp_get_unsat_core:(objcp_context) ctx withId:(assertion_id*)a;
 -(ORUInt) objcp_get_unsat_core_size:(objcp_context) ctx;
 -(objcp_expr) objcp_mk_app:(objcp_context)ctx withFun:(objcp_expr)f withArgs:(objcp_expr*)arg andNumArgs:(ORULong)n;
+-(objcp_expr) objcp_mk_constant:(objcp_context)ctx fromString:(const char*) rep width:(ORUInt) width base:(ORUInt)base;
+@end
 
-+(ORInt) intValue:(objcp_expr) e;
+
+@interface OBJCPGateway (Int)
+-(id<ORIntVar>) objcp_mk_plus:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right;
+-(id<ORIntVar>) objcp_mk_sub:(objcp_context)ctx left:(id<ORExpr>)left right:(id<ORIntVar>)right;
+-(id<ORIntVar>) objcp_mk_times:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right;
+-(id<ORIntVar>) objcp_mk_div:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right;
+-(id<ORIntVar>) objcp_mk_eq:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right;
+-(id<ORIntVar>) objcp_mk_geq:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right;
+-(id<ORIntVar>) objcp_mk_leq:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right;
+-(id<ORIntVar>) objcp_mk_gt:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right;
+-(id<ORIntVar>) objcp_mk_lt:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right;
+@end
+
+@interface OBJCPGateway (Bool)
+-(id<ORIntVar>) objcp_mk_and:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1;
+-(id<ORIntVar>) objcp_mk_or:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1;
+-(id<ORIntVar>) objcp_mk_not:(objcp_context)ctx b0:(id<ORIntVar>)b0;
 @end
 
 @interface OBJCPGateway (BV)
+-(objcp_type) objcp_mk_bitvector_type:(objcp_context)ctx withSize:(unsigned int) size;
+
 -(objcp_expr) objcp_mk_bv_constant_from_array:(objcp_context) ctx withSize:(ORUInt)size fromArray:(ORUInt*)bv;
 
 -(objcp_expr) objcp_mk_true:(objcp_context)ctx;
@@ -200,6 +240,7 @@ typedef int assertion_id;
 
 
 @interface OBJCPGateway (ORFloat)
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x eq:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x lt:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x gt:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x leq:(objcp_expr)y;
@@ -208,5 +249,12 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x sub:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x mul:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x div:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx neg:(objcp_expr)x;
+-(ConstantWrapper*) objcp_mk_fp_constant:(objcp_expr)ctx s:(ConstantWrapper*)s e:(ConstantWrapper*)e m:(ConstantWrapper*)m;
 @end
+
+
+
+
 #endif
+

@@ -36,7 +36,6 @@
 #include "/usr/local/include/gmp.h"
 #import <Verification/objcpgateway.h>
 
-
 typedef enum {l_false, l_undef, l_true}lbool;
 
 typedef struct smtlib2_objcp_parser {
