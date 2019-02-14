@@ -392,16 +392,14 @@ int main(int argc, const char * argv[]) {
       
       for(ORInt i = 0; i < [isFlowA count]; i++){
          for(ORInt j = 0; j < [isFlowA[i] count]; j++){
-            [model add:[[isFlowA[i][j] eq:@(0)] imply:[flowA[i][j] eq:@(0.0)]]];
-            [model add:[[isFlowA[i][j] eq:@(1)] imply:[flowA[i][j] geq:@(1.0)]]];
+            [model add:[isFlowA[i][j] geq:flowA[i][j]]];
          }
          [model add:[ORFactory sumbool:model array:isFlowA[i] eqi:1]];
       }
       
       for(ORInt i = 0; i < [isFlowB count]; i++){
          for(ORInt j = 0; j < [isFlowB[i] count]; j++){
-            [model add:[[isFlowB[i][j] eq:@(0)] imply:[flowB[i][j] eq:@(0.0)]]];
-            [model add:[[isFlowB[i][j] eq:@(1)] imply:[flowB[i][j] geq:@(1.0)]]];
+            [model add:[isFlowB[i][j] geq:flowB[i][j]]];
          }
          [model add:[ORFactory sumbool:model array:isFlowB[0] eqi:1]];
       }

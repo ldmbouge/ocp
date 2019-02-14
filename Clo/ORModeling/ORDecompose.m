@@ -289,9 +289,10 @@
    _terms = [recVisit visitExprLEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
+#warning [hzi] should be more generic
 -(void) visitExprGEqualI:(ORExprLEqualI*)e
 {
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(e.right.vtype);
    _terms = [recVisit visitExprGEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
@@ -3027,6 +3028,45 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          [ORNormalizer addToRealLinear:linRight from:right model:_model];
          [linRight release];
          return linLeft;
+      }
+   }
+   return nil;
+}
+
+-(id<ORLinear>) visitExprGEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = [left dmin] >= [right dmin];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   }else {
+      ORInt length = !lc + !rc;
+      id<ORVarArray> vars = [ORFactory realVarArray:_model range:RANGE(_model,0,length - 1)];
+      id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
+                                                 range:RANGE(_model,0,length - 1)
+                                                  with:^ORDouble(ORInt i) {
+                                                     return 1;
+                                                  }];
+      if(lc){
+         ORRealLinear* linRight  = [ORNormalizer realLinearFrom:right model:_model];
+         vars[0] = [ORNormalizer realVarIn:linRight for:_model];
+         [_model addConstraint:[ORFactory realSum:_model array:vars coef:coefs leq:[left dmin]]];
+         [linRight release];
+      }else if(rc){
+         id<ORRealLinear> linLeft  = [ORNormalizer realLinearFrom:left model:_model];
+         vars[0] = [ORNormalizer realVarIn:linLeft for:_model];
+         [_model addConstraint:[ORFactory realSum:_model array:vars coef:coefs geq:[right dmin]]];
+         [linLeft release];
+      }else{
+         id<ORRealLinear> linLeft  = [ORNormalizer realLinearFrom:left model:_model];
+         ORRealLinear* linRight  = [ORNormalizer realLinearFrom:right model:_model];
+         vars[0] = [ORNormalizer realVarIn:linLeft for:_model];
+         vars[1] = [ORNormalizer realVarIn:linRight for:_model];
+         [_model addConstraint:[ORFactory realSum:_model array:vars coef:coefs geq:0.f]];
+         [linLeft release];
+         [linRight release];
       }
    }
    return nil;
