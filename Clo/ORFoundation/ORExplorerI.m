@@ -235,6 +235,15 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [_controller exitTryall];
 }
 
+-(void) probe: (ORClosure) cl
+{
+    [self try:^{
+        cl();
+    } alt:^{
+        [self fail];
+    }];
+}
+
 -(void) once: (ORClosure) cl
 {
    [self limitSolutions: 1 in: cl];

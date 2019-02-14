@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order custom -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8 -t 20 -model-limits 0.85"
+            argument = "-var-order customD -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8 -t 20 -model-limits 0.85"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -72,7 +72,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-abs-function gmean"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-debug-level 2"
