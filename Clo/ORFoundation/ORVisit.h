@@ -278,6 +278,7 @@
 -(void) visitExprAssignI:(id<ORExpr>)e;
 
 // Bit
+-(void) visitBitEqBool:(id<ORConstraint>)c;
 -(void) visitBitEqualAt:(id<ORConstraint>)c;
 -(void) visitBitEqualc:(id<ORConstraint>)c;
 -(void) visitBitEqual:(id<ORConstraint>)c;

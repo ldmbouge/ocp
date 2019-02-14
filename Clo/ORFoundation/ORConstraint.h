@@ -895,6 +895,11 @@ enum ORGroupType {
 
 // ====== Bit Constraints =====================================
 
+@protocol ORBitEqBool <ORConstraint>
+-(id<ORBitVar>)x;
+-(id<ORIntVar>)bx;
+@end
+
 @protocol ORBitEqualAt <ORConstraint>
 -(id<ORBitVar>)left;
 -(ORInt)cst;

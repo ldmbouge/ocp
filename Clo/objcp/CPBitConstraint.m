@@ -504,6 +504,12 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPFactory (BitConstraint)
 //Bit Vector Constraints
++(id<CPBVConstraint>) bitEqualBool:(CPBitVarI*)x eq:(CPIntVar*)bx
+{
+   id<CPBVConstraint> o = [[CPBitEqBool alloc] init:x eq:bx];
+   [[x engine] trackMutable:o];
+   return o;
+}
 +(id<CPBVConstraint>) bitEqualAt:(CPBitVarI*)x at:(ORInt)k to:(ORInt)c
 {
    id<CPBVConstraint> o = [[CPBitEqualAt alloc] init:x at:k to:c];
@@ -797,6 +803,46 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment
 {
    return NULL;
+}
+@end
+
+@implementation CPBitEqBool
+-(id)init:(CPBitVarI*)x eq:(CPIntVar*)bx
+{
+   self = [super initCPBitCoreConstraint:[x engine]];
+   _x = x;
+   _bx = bx;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* string = [NSMutableString stringWithString:[super description]];
+   [string appendString:@" with "];
+   [string appendString:[NSString stringWithFormat:@"%@ == %@",_x,_bx]];
+   return string;
+}
+-(NSSet*) allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_bx,nil] autorelease];
+}
+-(void) post
+{
+   [self propagate];
+   if (![_x bound])
+      [_x whenChangePropagate: self];
+   if (![_bx bound])
+      [_bx whenChangePropagate: self];
+}
+-(void) propagate
+{
+   if([_x bound]){
+      [_bx bind:(ORInt)_x.min];
+      assignTRInt(&_active, NO, _trail);
+   }
+   if([_bx bound]){
+      [_x bind:0 to:_bx.min];
+      assignTRInt(&_active, NO, _trail);
+   }
 }
 @end
 

@@ -27,6 +27,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 
 @interface CPFactory (BitConstraint)
 //Bit Constraints
++(id<CPBVConstraint>) bitEqualBool:(id<CPBitVar>)x eq:(id<CPIntVar>)c;
 +(id<CPBVConstraint>) bitEqualAt:(id<CPBitVar>)x at:(ORInt)k to:(ORInt)c;
 +(id<CPBVConstraint>) bitEqualc:(id<CPBitVar>)x to:(ORInt)c;
 +(id<CPBVConstraint>) bitEqual:(id<CPBitVar>)x to:(id<CPBitVar>)y;
@@ -73,6 +74,17 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 -(id)initCPBitCoreConstraint:(id<CPEngine>)engine;
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*)assignment;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment;
+@end
+
+@interface CPBitEqBool : CPBitCoreConstraint<CPBVConstraint> {
+@private
+   CPBitVarI* _x;
+   CPIntVar*  _bx;
+}
+-(id)init:(CPBitVarI*)x eq:(CPIntVar*)boolvar;
+-(NSString*) description;
+-(void) post;
+-(void) propagate;
 @end
 
 @interface CPBitEqualAt : CPBitCoreConstraint<CPBVConstraint> {

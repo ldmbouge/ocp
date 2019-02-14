@@ -7996,6 +7996,46 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 
+@implementation ORBitEqBool {
+   id<ORBitVar>    _x;
+   id<ORIntVar>    _bx;
+}
+-(ORBitEqBool*)init:(id<ORBitVar>)x eq:(id<ORIntVar>)bx
+{
+   self = [super initORConstraintI];
+   _x  = x;
+   _bx  = bx;
+   return self;
+}
+-(id<ORBitVar>)bitvar
+{
+   return _x;
+}
+-(id<ORIntVar>)boolvar
+{
+   return _bx;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %d)",[self class],self,_x,_bx];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitEqBool:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_bx,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_bx,nil] autorelease];
+}
+@end
+
+
 @implementation ORBitEqualAt {
    id<ORBitVar>    _x;
    ORInt         _bit;

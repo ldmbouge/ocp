@@ -2118,6 +2118,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackObject:o];
    return o;
 }
++(id<ORConstraint>) bit:(id<ORBitVar>)x booleq:(id<ORIntVar>)y
+{
+   id<ORConstraint> o = [[ORBitEqBool alloc] init:x eq:y];
+   [[x tracker] trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitEqual alloc] initORBitEqual:x eq:y];
