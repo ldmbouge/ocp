@@ -1283,6 +1283,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x geq: (id<ORIntVar>) y
+{
+   id<ORConstraint> o = [[ORReifyGEqual alloc] initReify: b equiv: x geq: y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x eqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORReifySumBoolEqc alloc] init:b array:x eqi: c];
