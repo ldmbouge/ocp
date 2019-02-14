@@ -8196,8 +8196,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 //   [_z incrementActivityBySignificance];
    [_x incrementActivityAllBy:[_x bitLength]];
    [_y incrementActivityAllBy:[_x bitLength]];
-   [_z increaseActivity:0 by:[_x bitLength]+[_y bitLength]];
-//   [_z incrementActivityAll];
+//   [_z increaseActivity:0 by:[_x bitLength]+[_y bitLength]];
+   [_z incrementActivityAll];
 
 }
 -(void) propagate
@@ -9393,8 +9393,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [_x incrementActivityAllBy:[_x bitLength]];
    [_y incrementActivityAllBy:[_x bitLength]];
 //   [_z incrementActivityAll];
-   [_z increaseActivity:0 by:[_x bitLength]+[_y bitLength]];
-//   [_z incrementActivityAll];
+//   [_z increaseActivity:0 by:[_x bitLength]+[_y bitLength]];
+   [_z incrementActivityAll];
 
 }
 -(void) propagate
