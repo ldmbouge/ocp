@@ -1633,7 +1633,7 @@
 {
    __block ORBool goon = YES;
    while(goon) {
-      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+      [_search probe:^{
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = s();
          if (!i.found){
@@ -2092,7 +2092,7 @@
                             ];
    __block ORBool goon = YES;
    while(goon) {
-      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+      [_search probe:^{
          abs = [self computeAbsorptionsQuantities:x];
          nb = 0;
          ORSelectorResult i = [select_a max];
@@ -2229,7 +2229,7 @@
                               ];
    __block ORBool goon = YES;
    while(goon) {
-      [_search tryall:RANGE(self,0,0) suchThat:nil in:^(ORInt j) {
+      [_search probe:^{
          LOG(_level,2,@"State before selection");
          maxNbAbs = 1;
          abs = [self computeAbsorptionsQuantities:x];
