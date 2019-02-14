@@ -13,7 +13,8 @@
 #import <objcp/CPObjectQueue.h>
 
 #if defined(__APPLE__)
-#include <libkern/OSAtomic.h>
+//#include <libkern/OSAtomic.h>
+#include <os/lock.h>
 #endif
 
 #define SPINLOCK 1
@@ -106,7 +107,7 @@
    ORInt    _nbWWaiting;
    NSCondition*  _avail;
 #if defined(__APPLE__)
-   OSSpinLock    _slock;
+   os_unfair_lock    _slock;
 #endif
    BOOL _pretend;
 }
@@ -122,7 +123,7 @@
    _nbWWaiting = 0;
    _avail = [[NSCondition alloc] init];
 #if defined(__APPLE__) && defined(SPINLOCK)
-   _slock = OS_SPINLOCK_INIT;
+   _slock = (os_unfair_lock){0};
 #endif
    _pretend = NO;
    return self;
@@ -148,7 +149,7 @@
 {
    bool rv;
 #if defined(__APPLE__) && defined(SPINLOCK)
-   OSSpinLockLock(&_slock);
+   os_unfair_lock_lock(&_slock);
 #else
    @synchronized(self) {
 #endif
@@ -156,7 +157,7 @@
 #if !(defined(__APPLE__) && defined(SPINLOCK))
    }
 #else
-   OSSpinLockUnlock(&_slock);
+   os_unfair_lock_unlock(&_slock);
 #endif
    return rv;
 }
@@ -164,7 +165,7 @@
 {
    ORInt rv = 0;
 #if defined(__APPLE__) && defined(SPINLOCK)
-   OSSpinLockLock(&_slock);
+   os_unfair_lock_lock(&_slock);
 #else
    @synchronized(self) {
 #endif
@@ -172,7 +173,7 @@
 #if !(defined(__APPLE__) && defined(SPINLOCK))
    }
 #else
-   OSSpinLockUnlock(&_slock);
+   os_unfair_lock_unlock(&_slock);
 #endif
    return rv;
 }
@@ -198,7 +199,7 @@
    //NSLog(@"ENQUEUE: %16p by %16p",obj,[NSThread currentThread]);
    bool full;
 #if defined(__APPLE__) && defined(SPINLOCK)
-   OSSpinLockLock(&_slock);
+   os_unfair_lock_lock(&_slock);
 #else
    @synchronized(self) {
 #endif
@@ -206,14 +207,14 @@
 #if !(defined(__APPLE__) && defined(SPINLOCK))
    }
 #else
-   OSSpinLockUnlock(&_slock);
+   os_unfair_lock_unlock(&_slock);
 #endif
    if (full) 
       [self resize];   
    _tab[_enter] = [obj retain];
    _enter = (_enter+1) & _mask;
 #if defined(__APPLE__) && defined(SPINLOCK)
-   OSSpinLockLock(&_slock);
+   os_unfair_lock_lock(&_slock);
 #else
    @synchronized(self) {
 #endif
@@ -221,7 +222,7 @@
 #if !(defined(__APPLE__) && defined(SPINLOCK))
    }
 #else
-   OSSpinLockUnlock(&_slock);
+   os_unfair_lock_unlock(&_slock);
 #endif
    [_avail signal];
 }
@@ -236,7 +237,7 @@
    [_avail lock];
    bool loop;
 #if defined(__APPLE__) && defined(SPINLOCK)
-   OSSpinLockLock(&_slock);
+   os_unfair_lock_lock(&_slock);
 #else
    @synchronized(self) {
 #endif
@@ -244,7 +245,7 @@
 #if !(defined(__APPLE__) && defined(SPINLOCK))
    }
 #else
-   OSSpinLockUnlock(&_slock);
+   os_unfair_lock_unlock(&_slock);
 #endif
    while (loop) {
       _nbWWaiting++;
@@ -255,7 +256,7 @@
          [_avail wait];
       _nbWWaiting--;
 #if defined(__APPLE__) && defined(SPINLOCK)
-      OSSpinLockLock(&_slock);
+      os_unfair_lock_lock(&_slock);
 #else
       @synchronized(self) {
 #endif
@@ -263,14 +264,14 @@
 #if !(defined(__APPLE__) && defined(SPINLOCK))
       }
 #else
-      OSSpinLockUnlock(&_slock);
+      os_unfair_lock_unlock(&_slock);
 #endif
    }
    assert(_enter != _exit);
    id rv = _tab[_exit];
    _exit = (_exit+1) & _mask;
 #if defined(__APPLE__) && defined(SPINLOCK)
-   OSSpinLockLock(&_slock);
+   os_unfair_lock_lock(&_slock);
 #else
    @synchronized(self) {
 #endif
@@ -278,7 +279,7 @@
 #if !(defined(__APPLE__) && defined(SPINLOCK))
    }
 #else
-   OSSpinLockUnlock(&_slock);
+   os_unfair_lock_unlock(&_slock);
 #endif
    [rv release];
    //NSLog(@"DEQUEUE: %16p by %16p",rv,[NSThread currentThread]);

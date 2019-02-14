@@ -1243,14 +1243,14 @@
    __block ORInt i ;
    do {
       
-//      select = [ORFactory selectRandom: _engine
-//                                 range: RANGE(_engine,[av low],[av up])
-//                //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
-//                              suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
-//                             orderedBy: ^ORDouble(ORInt i) {
-//                                ORDouble rv = [h varOrdering:av[i]];
-//                                return rv;
-//                             }];
+      select = [ORFactory selectRandom: _engine
+                                 range: RANGE(_engine,[av low],[av up])
+                //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
+                              suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
+                             orderedBy: ^ORDouble(ORInt i) {
+                                ORDouble rv = [h varOrdering:av[i]];
+                                return rv;
+                             }];
       
       id<CPBitVar> x = [last idValue];
 //      NSLog(@"at top: last = %p",x);
@@ -1288,21 +1288,50 @@
          }
       }
 
+//      ULRep xr = getULVarRep(x);
+//      TRUInt *xLow = xr._low, *xUp = xr._up;
+//      ORInt pop=0;
+//      ORInt xWordLength = [(CPBitVarI*)x getWordLength];
+//      ORInt xBitLength = [(CPBitVarI*)x bitLength];
+      
+//      for (ORInt i = 0;i<xWordLength;i++)
+////         pop += __builtin_popcount(xr._low[i]._val);
+//         pop += __builtin_popcount(!xr._up[i]._val);
+//      pop -= xBitLength % BITSPERWORD;
+//
       if (bestIndex != - 1)  {
-         [_search try: ^{
-//            NSLog(@"Setting bit %i of %@ to 0 \n",bestIndex,x);
+////         if (pop < (xBitLength>>1))
+//         if (pop > (xBitLength>>1))
+//            [_search try: ^{
+//   //            NSLog(@"Setting bit %i of %@ to 0 \n",bestIndex,x);
+//
+//   //            NSLog(@"Setting bit %i of %@ to 0 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
+//   //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+//   //            NSLog(@"%@\n",[_engine variables]);
+//               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+//            } alt: ^{
+//   //           NSLog(@"Setting bit %i of %@ to 1 \n",bestIndex,x);
+//   //            NSLog(@"Setting bit %i of %@ to 1 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
+//   //            NSLog(@"%@",[_engine variables]);
+//               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+//   //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+//            }];
+//         else
+            [_search try: ^{
+               //            NSLog(@"Setting bit %i of %@ to 0 \n",bestIndex,x);
 
-//            NSLog(@"Setting bit %i of %@ to 0 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
-//            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
-//            NSLog(@"%@\n",[_engine variables]);
-            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
-         } alt: ^{
-//           NSLog(@"Setting bit %i of %@ to 1 \n",bestIndex,x);
-//            NSLog(@"Setting bit %i of %@ to 1 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
-//            NSLog(@"%@",[_engine variables]);
-            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
-//            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
-         }];
+               //            NSLog(@"Setting bit %i of %@ to 0 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
+               //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+               //            NSLog(@"%@\n",[_engine variables]);
+               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+            } alt: ^{
+               //           NSLog(@"Setting bit %i of %@ to 1 \n",bestIndex,x);
+               //            NSLog(@"Setting bit %i of %@ to 1 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
+               //            NSLog(@"%@",[_engine variables]);
+               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+               //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+            }];
+
       }
    } while (true);
 

@@ -333,9 +333,9 @@
    }
    
 //    __block id<CPBitVarHeuristic> h =[cp createBitVarFF];
-   __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
+//   __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
 //        __block id<CPBitVarHeuristic> h =[cp createSDeg];
-//   __block id<CPBitVarHeuristic> h =[cp createDDeg];
+   __block id<CPBitVarHeuristic> h =[cp createDDeg];
 //        __block id<CPBitVarHeuristic> h =[cp createWDeg];
 //        __block id<CPBitVarHeuristic> h =[cp createBitVarABS];
 
@@ -350,7 +350,7 @@
    [cp solve:^{
       
         //        [cp repeat:^{
-//        [cp limitTime:30000 in: ^{
+        [cp limitTime:30000 in: ^{
 //                    NSLog(@"%@", [[cp engine] model]);
 //           for (id var in _declarations)
 //              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
@@ -372,7 +372,7 @@
           }
           sat = true;
 //                           NSLog(@"%@", [[cp engine] model]);
-//      }];
+      }];
 //        }onRepeat:^{
 //            printf("Restarting...\n");
 //        }];

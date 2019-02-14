@@ -532,7 +532,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       low[i] = 0x00000000;
       up[i] = 0xFFFFFFFF;
    }
-   up[wordLength-1] >>= bLen%32;
+   ORUInt binLW = bLen % 32; // bits in last word
+   ORUInt mask = 0xFFFFFFFF >> (32 - binLW);
+   up[wordLength-1] = 0xFFFFFFFF & mask;
    return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen];
 }
 +(id<ORBindingArray>) bindingArray: (id<ORTracker>) tracker nb: (ORInt) nb
