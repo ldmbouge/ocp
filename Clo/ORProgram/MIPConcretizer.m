@@ -77,7 +77,6 @@
 {
    if (_gamma[v.getId] == NULL)
       _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up]];
-   [[v prettyname] hasPrefix:@"load"];
 }
 -(void) visitAffineVar:(id<ORIntVar>)v
 {

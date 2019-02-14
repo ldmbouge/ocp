@@ -209,24 +209,24 @@ static OBJCPGateway *objcpgw;
    return (i<NB_LOGIC) ? logicObj[i] : 0;
 }
 -(id<ORModel>) getModel{
-   NSLog(@"Model -> %@",_model);
    return _model;
 }
-
+-(assertion_id) objcp_assert_retractable:(objcp_context) ctx withExpr:(objcp_expr) expr
+{
+   NSLog(@"objcp_assert_retractable not implemented");
+   return 0;
+}
 -(objcp_context) objcp_mk_context{
    NSLog(@"Make context not implemented");
    return NULL;
 }
-
 -(void) objcp_del_context:(objcp_context) ctxt{
    NSLog(@"delete context not implemented");
 }
-
 -(objcp_expr) objcp_mk_app:(objcp_context) ctx expr:(objcp_expr) f args:(objcp_expr*) args num:(unsigned int)n{
    NSLog(@"Make app not implemented");
    return NULL;
 }
-
 -(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type
 {
    NSString* nameString =[[NSString alloc] initWithUTF8String:name];
@@ -235,20 +235,16 @@ static OBJCPGateway *objcpgw;
    [_declarations  setObject:d forKey:nameString];
    return (void*)t;
 }
-
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t{
    NSLog(@"Get variable declaration not implemented");
    return NULL;
 }
-
 -(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name{
-   //   NSLog(@"Getting variable declaration from name. Name was %s",name);
    NSString *key = [[NSString alloc] initWithUTF8String:name];
    
    OBJCPDecl* d = [_declarations objectForKey:key];
    return d;
 }
-
 //create or return variable from declaration
 -(objcp_expr) objcp_mk_var_from_decl:(objcp_context) ctx withDecl:(objcp_var_decl) d
 {
@@ -345,14 +341,12 @@ static OBJCPGateway *objcpgw;
 }
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name
 {
-   //   NSLog(@"Make type with name not implemented. Name was %s",name);
    return NULL;
 }
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type
 {
    return [self objcp_mk_type:ctx withType:type withSize:1];
 }
-
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type args:(id) a0,...
 {
    va_list args;
@@ -377,7 +371,7 @@ static OBJCPGateway *objcpgw;
 -(objcp_type) objcp_mk_float_type:(objcp_context)ctx e:(unsigned int)e m:(unsigned int)m
 {
    objcp_var_type type = OR_DOUBLE;
-   if(e == 8 && m == 24)
+   if(e == 8 || m == 24)
       type = OR_FLOAT;
    return [self objcp_mk_type:ctx withType:type];
 }
@@ -392,13 +386,14 @@ static OBJCPGateway *objcpgw;
    [_types setObject:t forKey:(void*)t];
    return (void*)t;
 }
-
--(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range{
+-(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range
+{
    NSLog(@"Make function type not implemented");
    return NULL;
 }
 
 /**
+  [hzi] it is needed ???
  \brief Create a backtracking point in the given logical context.
  
  The logical context can be viewed as a stack of contexts.
@@ -410,6 +405,7 @@ static OBJCPGateway *objcpgw;
 }
 
 /**
+ [hzi] it is needed ???
  \brief Backtrack.
  
  Restores the context from the top of the stack, and pops it off the
@@ -417,42 +413,15 @@ static OBJCPGateway *objcpgw;
  other functions) between the matching #yices_push and #yices_pop
  operators are flushed, and the context is completely restored to
  what it was right before the #yices_push.
- 
- \sa yices_push
  */
 -(void) objcp_pop:(objcp_context) ctx{
    NSLog(@"Pop context not implemented");
 }
 
-
-
-/**
- \brief Assert a constraint that can be later retracted.
- 
- \returns An id that can be used to retract the constraint.
- 
- This is similar to #yices_assert_weighted, but the weight is considered to be infinite.
- 
- \sa yices_retract
- */
--(assertion_id) objcp_assert_retractable:(objcp_context) ctx withExpr:(objcp_expr) expr{
-   NSLog(@"Assert Retractable not implemented");
-   return 0;
-}
-
-/**
- \brief Assert a constraint in the logical context.
- 
- After an assertion, the logical context may become inconsistent.
- The method #yices_inconsistent may be used to check that.
- */
--(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr{
-   //   NSLog(@"Assert not implemented");
-   ORUInt dom = 0x00000001;
-   id<ORBitVar> trueVar = [ORFactory bitVar:_model low:&dom up:&dom bitLength:1];
-   //   [trueVar retain];
-   [_model add:[ORFactory bit:trueVar eq:(id<ORBitVar>)expr]];
-   return;
+-(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr
+{
+   id<ORIntVar> trueVar = [ORFactory intVar:_model value:1];
+   [_model add:[(id<ORIntVar>)expr eq:trueVar]];
 }
 -(id<ORVarArray>) getVariables
 {
@@ -524,66 +493,98 @@ static OBJCPGateway *objcpgw;
 {
    return [[ConstantWrapper alloc] init:rep width:width base:base];
 }
+-(id<ORVar>) getVariable:(objcp_expr)e
+{
+   if([(id)e isKindOfClass:[ConstantWrapper class]])
+      return (id<ORVar>)[(ConstantWrapper*)e makeVariable];
+   return  (id<ORVar>)e;
+}
 @end
 
 @implementation OBJCPGateway (Int)
-
--(id<ORIntVar>) objcp_mk_plus:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
+-(id<ORIntVar>) objcp_mk_eq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
-   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
-   [_model add:[[left plus:right] eq:res]];
-   return res;
-}
--(id<ORIntVar>) objcp_mk_sub:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
-{
-   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
-   [_model add:[[left sub:right] eq:res]];
-   return res;
-}
--(id<ORIntVar>) objcp_mk_times:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
-{
-   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
-   [_model add:[[left mul:right] eq:res]];
-   return res;
-}
--(id<ORExpr>) objcp_mk_div:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
-{
-   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
-   [_model add:[[left div:right] eq:res]];
-   return res;
-}
--(id<ORIntVar>) objcp_mk_eq:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
-{
+   id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
+   id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
+   if([lv vtype] == ORTBit && [rv vtype] == ORTBit)
+      return [self objcp_mk_bv_eq:ctx left:lv right:rv];
    id<ORIntVar> res = [ORFactory boolVar:_model];
    [_model add:[ORFactory reify:_model boolean:res with:left eq:right]];
    return res;
 }
--(id<ORIntVar>) objcp_mk_geq:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
+-(id<ORIntVar>) objcp_mk_minus:(objcp_context)ctx var:(objcp_expr)var
 {
-   id<ORIntVar> res = [ORFactory boolVar:_model];
-   [_model add:[ORFactory reify:_model boolean:res with:left geq:right]];
+   id<ORIntVar> v = (id<ORIntVar>)[self getVariable:var];
+   id<ORIntVar> res = [ORFactory intVar:_model domain:RANGE(_model, -v.up, -v.low)];
+   [_model add:[res eq:[v minus]]];
    return res;
 }
--(id<ORIntVar>) objcp_mk_leq:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
+-(id<ORIntVar>) objcp_mk_plus:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
-   id<ORIntVar> res = [ORFactory boolVar:_model];
-   [_model add:[ORFactory reify:_model boolean:res with:left leq:right]];
+   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
+   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
+   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
+   [_model add:[[lv plus:rv] eq:res]];
    return res;
 }
--(id<ORIntVar>) objcp_mk_gt:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
+-(id<ORIntVar>) objcp_mk_sub:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
-   id<ORIntVar> res = [ORFactory boolVar:_model];
-   id<ORIntVar> nextr = [ORFactory intVar:_model bounds:RANGE(_model, right.low + 1, right.up + 1)];
-   [_model add:[nextr eq:[right plus:@(1)]]];
-   [_model add:[ORFactory reify:_model boolean:res with:left geq:nextr]];
+   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
+   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
+   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
+   [_model add:[[lv sub:rv] eq:res]];
    return res;
 }
--(id<ORIntVar>) objcp_mk_lt:(objcp_context)ctx left:(id<ORIntVar>)left right:(id<ORIntVar>)right
+-(id<ORIntVar>) objcp_mk_times:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
+   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
+   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
+   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
+   [_model add:[[lv mul:rv] eq:res]];
+   return res;
+}
+-(id<ORExpr>) objcp_mk_div:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
+{
+   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
+   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
+   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
+   [_model add:[[lv div:rv] eq:res]];
+   return res;
+}
+-(id<ORIntVar>) objcp_mk_geq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
+{
+   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
+   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
    id<ORIntVar> res = [ORFactory boolVar:_model];
-   id<ORIntVar> nextl = [ORFactory intVar:_model bounds:RANGE(_model, left.low + 1, left.up + 1)];
-   [_model add:[nextl eq:[left plus:@(1)]]];
-   [_model add:[ORFactory reify:_model boolean:res with:left leq:right]];
+   [_model add:[ORFactory reify:_model boolean:res with:lv geq:rv]];
+   return res;
+}
+-(id<ORIntVar>) objcp_mk_leq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
+{
+   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
+   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
+   id<ORIntVar> res = [ORFactory boolVar:_model];
+   [_model add:[ORFactory reify:_model boolean:res with:lv leq:rv]];
+   return res;
+}
+-(id<ORIntVar>) objcp_mk_gt:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
+{
+   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
+   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
+   id<ORIntVar> res = [ORFactory boolVar:_model];
+   id<ORIntVar> nextr = [ORFactory intVar:_model bounds:RANGE(_model, lv.low + 1, rv.up + 1)];
+   [_model add:[nextr eq:[rv plus:@(1)]]];
+   [_model add:[ORFactory reify:_model boolean:res with:lv geq:nextr]];
+   return res;
+}
+-(id<ORIntVar>) objcp_mk_lt:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
+{
+   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
+   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
+   id<ORIntVar> res = [ORFactory boolVar:_model];
+   id<ORIntVar> nextl = [ORFactory intVar:_model bounds:RANGE(_model, lv.low + 1, lv.up + 1)];
+   [_model add:[nextl eq:[lv plus:@(1)]]];
+   [_model add:[ORFactory reify:_model boolean:res with:nextl leq:rv]];
    return res;
 }
 @end
@@ -621,6 +622,17 @@ static OBJCPGateway *objcpgw;
 
 
 @implementation OBJCPGateway (BV)
+
+-(objcp_context) objcp_mk_bv_eq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
+{
+   ORUInt low = 0;   ORUInt up = 1;
+   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
+   [_model add:[ORFactory bit:(id<ORBitVar>)left EQ:(id<ORBitVar>)right eval:(id<ORBitVar>)bv]];
+   id<ORIntVar> res = [ORFactory boolVar:_model];
+   [_model add:[ORFactory bit:bv booleq:res]];
+   return res;
+}
+
 -(objcp_expr) objcp_mk_bv_constant_from_array:(objcp_context) ctx withSize:(ORUInt)size fromArray:(ORUInt*)bv
 {
    ORUInt wordLength = size/BITSPERWORD + ((size % BITSPERWORD ==0) ? 0 : 1);
@@ -899,7 +911,10 @@ static OBJCPGateway *objcpgw;
    return bv;
 }
 
--(objcp_expr) objcp_mk_bv_add:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
+-(objcp_expr) objcp_mk_bv_add:(objcp_context) ctx withArg:(objcp_expr) lv andArg:(objcp_expr)rv
+{
+   id<ORBitVar> a1 = (id<ORBitVar>)[self getVariable:lv];
+   id<ORBitVar> a2 = (id<ORBitVar>)[self getVariable:rv];
    int size = [(id<ORBitVar>)a1 bitLength];
    
    ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);

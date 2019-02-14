@@ -3071,7 +3071,6 @@
    }
    float_interval* ip = interval;
    [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt index) {
-      ORInt c = [[self explorer] nbChoices];
       LOG(_level,1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[x[i] prettyname],ip[index].inf,ip[index].sup);
       [self floatIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
    }];

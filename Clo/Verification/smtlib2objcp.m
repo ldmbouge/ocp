@@ -208,6 +208,7 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new(void)
    smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_IDL", 1);
    smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_BV", 1);
    smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_FP", 1);
+   smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_UF", 1);
    ret->named_terms_ = smtlib2_hashtable_new(smtlib2_hashfun_str,
                                              smtlib2_eqfun_str);
    ret->term_names_ = smtlib2_hashtable_new(NULL, NULL);
@@ -1071,6 +1072,8 @@ SMTLIB2_OBJCP_DECLHANDLER(times)
 }
 SMTLIB2_OBJCP_DECLHANDLER(minus)
 {
+   if(smtlib2_vector_size(args) < 2)
+      return [objcpgw objcp_mk_minus:YCTX(ctx) var:(objcp_expr)smtlib2_vector_at(args, 0)];
    return [objcpgw objcp_mk_sub:YCTX(ctx) left:(objcp_expr)smtlib2_vector_at(args, 0) right:(objcp_expr)smtlib2_vector_at(args, 1)];
 }
 SMTLIB2_OBJCP_DECLHANDLER(leq)

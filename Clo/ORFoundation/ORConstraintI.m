@@ -8007,18 +8007,18 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    _bx  = bx;
    return self;
 }
--(id<ORBitVar>)bitvar
+-(id<ORBitVar>)x
 {
    return _x;
 }
--(id<ORIntVar>)boolvar
+-(id<ORIntVar>)bx
 {
    return _bx;
 }
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ == %d)",[self class],self,_x,_bx];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@)",[self class],self,_x,_bx];
    return buf;
 }
 -(void)visit:(ORVisitor*)v

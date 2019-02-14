@@ -64,7 +64,5 @@ int main(int argc, const char * argv[])
    totalTime =((double)(finish - start))/CLOCKS_PER_SEC;
    NSLog(@"     Overall Time (s): %f\n\n",totalTime);
    report_memory();
-//   NSLog(@"%@",mallocReport());
-
    return 0;
    }
