@@ -2054,6 +2054,57 @@ char *int2bin(int a, char *buffer, int buf_size) {
    
 }
 
+
+-(void) testBitExtract6
+{
+    NSLog(@"Begin Test 6 of bit Extract constraint\n");
+    
+    id<ORModel> m = [ORFactory createModel];
+    unsigned int min[1],max[1];
+    unsigned int yMin[1],yMax[1];
+    
+    min[0] = 0x0;
+    max[0] = 0xFFFFFFFF;
+    yMin[0] = 0x00000000;
+    yMax[0] = 0x1;
+    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+    id<ORBitVar> y = [ORFactory bitVar:m low:yMin up:yMax bitLength:31];
+    
+    NSLog(@"Initial values:");
+    NSLog(@"x = %@\n", x);
+    NSLog(@"y = %@\n", y);
+    
+    [m add:[ORFactory bit:x from:1 to:31 eq:y]];
+    
+    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+    id* gamma = [cp gamma];
+    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:RANGE(m,0,0)];
+    [o set:gamma[y.getId] at:0];
+    id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+    [cp solve: ^(){
+        @try {
+            NSLog(@"After Posting:");
+            NSLog(@"x = %@\n", gamma[x.getId]);
+            NSLog(@"y = %@\n", gamma[y.getId]);
+            [cp labelBitVarHeuristic:h];
+            NSLog(@"Solution Found:");
+            NSLog(@"x = %@\n", gamma[x.getId]);
+            NSLog(@"x = %@\n", [cp stringValue:x]);
+            NSLog(@"y = %@\n", gamma[y.getId]);
+        }
+        @catch (NSException *exception) {
+            NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+        }
+        NSLog(@"x = %@\n", [cp stringValue:x]);
+        NSLog(@"y = %@\n", [cp stringValue:y]);
+    }];
+    XCTAssertTrue([[cp stringValue:x] isEqualToString:@"10110111011110111110111111011111"],
+                  @"testBitORConstraint: Bit Pattern for x is incorrect.");
+    NSLog(@"End Test 1 of bit Extract constraint.\n");
+    
+}
+
+
 //CPBitConcat
 -(void) testBitConcat
 {
