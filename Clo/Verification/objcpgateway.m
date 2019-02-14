@@ -321,7 +321,7 @@
    __block clock_t searchFinish;
    double totalTime, searchTime;
    mallocWatch();
-//
+
     id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:_model];
 //    id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgram:_model];
    id<ORBitVarArray> o = [ORFactory bitVarArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:(ORUInt)[_declarations count]-1]];
@@ -347,11 +347,10 @@
     __block id<CPBVConstraint> c;
    
 
-
    [cp solve:^{
       
         //        [cp repeat:^{
-//        [cp limitTime:300000 in: ^{
+        [cp limitTime:30000 in: ^{
 //                    NSLog(@"%@", [[cp engine] model]);
 //           for (id var in _declarations)
 //              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
@@ -372,8 +371,8 @@
               printf("(assert (= %s (_ bv%ld %d)))\n",[[var description] cString], foo, [[_declarations objectForKey:var]getSize]);
           }
           sat = true;
-       //                    NSLog(@"%@", [[cp engine] model]);
-//      }];
+//                           NSLog(@"%@", [[cp engine] model]);
+      }];
 //        }onRepeat:^{
 //            printf("Restarting...\n");
 //        }];
@@ -792,30 +791,26 @@
 //   [_model add:[ORFactory bit:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
 //   return bv;
    int size = [(id<ORBitVar>)x bitLength];
-   
+
    ORUInt low;
    ORUInt up;
    low = 0;
    up = 0x1;
-   
+
    id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-   id<ORBitVar> notresult = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-   
-   
-   
+
    [_model add:[ORFactory bit:(id<ORBitVar>)y LT:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
-   
+
    [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
    [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
    [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
    [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
-   [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:notresult]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)notresult notb:result]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:result]];
 
    return result;
 }
@@ -831,7 +826,7 @@
 //   return bv;
 
    int size = [(id<ORBitVar>)x bitLength];
-   
+
    ORUInt low;
    ORUInt up;
    low = 0;
@@ -842,11 +837,10 @@
    id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-   id<ORBitVar> notresult = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
 
 
-   
+
    [_model add:[ORFactory bit:(id<ORBitVar>)y LE:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
 
    [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
@@ -854,8 +848,7 @@
    [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
    [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
    [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:result]];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)notresult notb:result]];
-   
+
    return result;
 }
 

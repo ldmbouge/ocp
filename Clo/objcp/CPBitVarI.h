@@ -30,7 +30,7 @@
 
 @interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 @private
-   ORUInt*                          _scratch;
+//   ORUInt*                          _scratch;
    
 @protected
     CPEngineI*                       _engine;
@@ -100,6 +100,9 @@
 -(void) getState:(ORUInt*)state whenBitSet:(ORUInt)pos;
 -(void) getState:(ORUInt*)state afterLevel:(ORUInt)lvl;
 -(void) incrementActivityAll;
+-(void) incrementActivityBySignificance;
+-(void) increaseActivity:(ORUInt)i by:(ORUInt)amt;
+-(void) incrementActivityAllBy:(ORFloat)amt;
 
 // update
 -(ORStatus)     updateMin: (ORULong) newMin;

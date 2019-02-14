@@ -14,12 +14,8 @@
 #import <CPUKernel/CPLEngine.h>
 #import "CPEngineI.h"
 
-#import <objcp/CPVar.h>
-//#import <objcp/CPBitConstraint.h>
-//#import <CPUKernel/CPTypes.h>
-//#import <CPUKernel/CPEngine.h>
-//#import <CPUKernel/CPConstraintI.h>
 
+@protocol CPBitVar;
 @class CPBitConflict;
 
 struct _CPBitAntecedents;

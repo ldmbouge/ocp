@@ -470,9 +470,9 @@ int main(int argc, const char* argv[])
 
 //   twoByteMD4(@"lorem-mssg.txt", BVFF);
    
-   oneByteMD4(@"lorem-mssg.txt", BVFF);
+//   oneByteMD4(@"lorem-mssg.txt", BVFF);
    
-//   twoByteSHA1(@"lorem-mssg.txt", BVFF);
+   twoByteMD5(@"lorem-mssg.txt", BVFF);
 //   twoByteSHA1(@"lorem-mssg.txt", BVABS);
 //   twoByteSHA1(@"lorem-mssg.txt", BVIBS);
 

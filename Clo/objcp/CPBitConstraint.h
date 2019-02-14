@@ -242,10 +242,10 @@ typedef struct _CPBitAntecedents {
    CPBitVarI*      _y;
    CPBitVarI*    _places;
    ORUInt**    _state;
-   ORUInt*  _pUps4X;
-   ORUInt*  _pLows4X;
-   ORUInt*  _pUps4Y;
-   ORUInt*  _pLows4Y;
+   ORUInt  *_pUps4X;
+   ORUInt  *_pLows4X;
+   ORUInt  *_pUps4Y;
+   ORUInt  *_pLows4Y;
 }
 -(id) initCPBitShiftLBV: (CPBitVarI*) x shiftLBy:(CPBitVarI*) places equals: (CPBitVarI*) y;
 -(void) dealloc;
@@ -513,7 +513,7 @@ typedef struct _CPBitAntecedents {
    CPBitVarI* _t;
    CPBitVarI* _e;
    CPBitVarI* _r;
-   ORUInt*  _category;
+   ORUInt*  _iWasSet;
    ORUInt**    _state;
 }
 -(id) initCPBitITE: (CPBitVarI*) i then: (CPBitVarI*) t else: (CPBitVarI*) e result:(CPBitVarI*)r;
@@ -688,6 +688,14 @@ typedef struct _CPBitAntecedents {
 -(void) propagate;
 @end
 
+@interface CPBitDivideComposed : CPBitCoreConstraint<CPBVConstraint>
+-(id) initCPBitDivideComposed: (CPBitVarI*) dividend dividedBy: (CPBitVarI*) divisor  equals: (CPBitVarI*)quotient withRemainder:(CPBitVarI*)remainder;
+-(void) dealloc;
+-(NSString*) description;
+-(void) post;
+-(void) propagate;
+@end
+
 //@interface CPBitMultiply : CPBitCoreConstraint<CPBVConstraint>
 //-(id) initCPBitMultiply: (CPBitVarI*) x times: (CPBitVarI*) y equals: (CPBitVarI*)z;
 //-(void) dealloc;
@@ -748,19 +756,21 @@ typedef struct _CPBitAntecedents {
 //    CPBitVarI* _cin;
 //    CPBitVarI* _cout;
     CPBitVarI* _trueVal;
-    CPBitVarI* _falseVal;
+//    CPBitVarI* _falseVal;
     CPBitVarI* _xSign;
     CPBitVarI* _ySign;
     CPBitVarI* _qSign;
     CPBitVarI* _rSign;
-    CPBitVarI* _sameSign;
-    CPBitVarI* _xlty;
+//    CPBitVarI* _sameSign;
+//    CPBitVarI* _xlty;
 //    CPBitVarI* _qIsPos;
     CPBitVarI* _diffSign;
    
-   CPBitVarI* _zeroBV;
+//   CPBitVarI* _zeroBV;
    CPBitVarI* _xIsZero;
    CPBitVarI* _xNonZero;
+   CPBitVarI* _rIsZero;
+   CPBitVarI* _rNonZero;
 
 }
 -(id) initCPBitDivideSigned: (CPBitVarI*) x dividedby: (CPBitVarI*) y equals: (CPBitVarI*)q rem:(CPBitVarI*)r;

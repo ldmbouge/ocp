@@ -382,16 +382,16 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
       if (freeBits==0) {
          continue;
       }
-      else if (freeBits == 0xFFFFFFFF) {
-         int msfb = wordLengthInBits-((i*32)+1);
-         return msfb;
-      }
-      else if (freeBits & 0x80000000) {
-//         j=__builtin_clz(~freeBits);
+//      else if (freeBits == 0xFFFFFFFF) {
 //         int msfb = wordLengthInBits-((i*32)+1);
 //         return msfb;
-         return (((i+1)*BITSPERWORD)-1);
-      }
+//      }
+//      else if (freeBits & 0x80000000) {
+////         j=__builtin_clz(~freeBits);
+////         int msfb = wordLengthInBits-((i*32)+1);
+////         return msfb;
+//         return (((i+1)*BITSPERWORD)-1);
+//      }
       else{
          j=__builtin_clz(freeBits);
          //int msfb = (wordLengthInBits)-((i*32)+j+1);

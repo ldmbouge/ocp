@@ -228,7 +228,7 @@
 
    id<CPBitVarHeuristic> h;
 //   h =[cp createBitVarFF];
-   h =[cp createBitVarVSIDS];
+   h =[cp createBitVarVSIDS:o];
 //   h =[cp createDDeg];
 
    [cp solve: ^{
