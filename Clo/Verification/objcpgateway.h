@@ -12,11 +12,6 @@
 #import <objcp/CPBitMacros.h>
 
 
-
-#include "/usr/local/include/gmp.h"
-
-
-
 @protocol CPProgram;
 @class OBJCPGateway;
 
@@ -118,7 +113,6 @@ typedef int assertion_id;
 -(void) objcp_set_logic:(const char*) logic;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name;
 -(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range;
--(int)        objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value;
 -(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size;
 
 /**

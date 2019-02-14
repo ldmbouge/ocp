@@ -7,7 +7,7 @@
 //
 
 #import "objcpgateway.h"
-#include "/usr/local/include/gmp.h"
+#include "gmp.h"
 #import "ORCmdLineArgs.h"
 
 @interface OBJCPType : NSObject{

@@ -8,22 +8,8 @@
 #import <mach/mach.h>
 
 #import <Foundation/Foundation.h>
-//#import <ORFoundation/ORFoundation.h>
-//#import <ORFoundation/ORAVLTree.h>
-//#import <ORModeling/ORModeling.h>
-//#import <ORProgram/ORProgram.h>
-//#import <objcp/CPObjectQueue.h>
-//#import <objcp/CPFactory.h>
-
-//#import <objcp/CPConstraint.h>
-//#import <objcp/CPBitMacros.h>
-//#import <objcp/CPBitArray.h>
-//#import <objcp/CPBitArrayDom.h>
-//#import <objcp/CPBitConstraint.h>
-//#include <Verification/objcpgateway.h>
 #import <Verification/Verification.h>
 
-//#import "ORCmdLineArgs.h"
 
 void report_memory(void) {
    struct task_basic_info info;

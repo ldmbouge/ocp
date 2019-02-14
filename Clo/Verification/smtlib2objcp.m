@@ -28,7 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "smtlib2objcp.h"
-#include "/usr/local/include/gmp.h"
 
 OBJCPGateway* objcpgw;
 
