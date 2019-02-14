@@ -140,7 +140,6 @@ int main (int argc, const char * argv[])
         id<ORIntRange> R1 = RANGE(mdl, MINVARIABLE, MAXVARIABLE);
         id<ORIntRange> R2 = RANGE(mdl, 0, 1);
         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
-        ORInt layerSize = 8;
         
         
         //MISP

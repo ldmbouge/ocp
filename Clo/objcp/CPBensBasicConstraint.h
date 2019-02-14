@@ -64,7 +64,7 @@
 -(bool) hasLongestPathParent: (Node*)parent;
 -(int) shortestPath;
 -(bool) hasShortestPathParent: (Node*)parent;
--(Node**) parents;
+-(TRId**) parents;
 -(int) numParents;
 -(void) addParent: (Node*) parent;
 -(void) updateBoundsWithParent: (Node*) parent;
@@ -225,25 +225,25 @@
 @interface CPExactMDDMISP : CPMDD {
 @private
     bool** _adjacencyMatrix;
-    id<ORIntArray> _objectiveValues;
+    id<ORIntArray> _weights;
 }
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue;
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
 @end
 
 @interface CPRestrictedMDDMISP : CPMDDRestriction {
 @private
     bool** _adjacencyMatrix;
-    id<ORIntArray> _objectiveValues;
+    id<ORIntArray> _weights;
 }
--(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue;
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
 @end
 
 @interface CPRelaxedMDDMISP : CPMDDRelaxation {
 @private
     bool** _adjacencyMatrix;
-    id<ORIntArray> _objectiveValues;
+    id<ORIntArray> _weights;
 }
--(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue;
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
 @end
 
 @interface CPCustomMDD : CPMDDRelaxation

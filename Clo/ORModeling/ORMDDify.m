@@ -86,29 +86,7 @@
 }
 @end
 
-@interface CustomState : NSObject {
-@protected
-    int _variableIndex;
-//    char* _stateChar;
-    int _domainMin;
-    int _domainMax;
-}
--(id) initClassState:(int)domainMin domainMax:(int)domainMax;
--(id) initRootState:(CustomState*)classState variableIndex:(int)variableIndex;
--(id) initState:(CustomState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex;
--(id) initState:(CustomState*)parentNodeState variableIndex:(int)variableIndex;
-//-(char*) stateChar;
--(int) variableIndex;
--(int) domainMin;
--(int) domainMax;
--(void) mergeStateWith:(CustomState*)other;
--(int) numPathsWithNextVariable:(int)variable;
--(NSArray*) tempAlterStateAssigningValue:(int)value withNextVariable:(int)nextVariable;
--(void) undoChanges:(NSArray*)savedChanges;
--(bool) canChooseValue:(int)value forVariable:(int)variable;
--(int) stateDifferential:(CustomState*)other;
--(bool) equivalentTo:(CustomState*)other;
-@end
+
 
 @implementation CustomState
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax {
@@ -173,12 +151,6 @@
 }
 @end
 
-@interface CustomBDDState : CustomState {   //A state with a list of booleans corresponding to whether or not each variable can be assigned 1
-@protected
-    bool* _state;
-}
--(bool*) state;
-@end
 
 @implementation CustomBDDState
 -(id) initRootState:(CustomBDDState*)classState variableIndex:(int)variableIndex {
@@ -193,8 +165,8 @@
     }
     return self;
 }
--(id) initState:(CustomBDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {    //Bad naming I think.  Parent is actually the one assigned that value, not the variableIndex
-    self = [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
+-(id) initState:(CustomBDDState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex {    //Bad naming I think.  Parent is actually the one assigned that value, not the variableIndex
+    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:edgeValue];
     bool* parentState = [parentNodeState state];
 //    char* parentStateChar = [parentNodeState stateChar];
     
@@ -234,22 +206,6 @@
 }
 @end
 
-@interface KnapsackBDDState : CustomBDDState {
-@protected
-    int _weightSum;
-    int _capacity;
-    int _capacityNumDigits;
-    id<ORIntArray> _weights;
-}
--(id) initClassState:(int)domainMin domainMax:(int)domainMax capacity:(int)capacity weights:(id<ORIntArray>)weights;
--(int) weightSum;
--(int) getWeightForVariable:(int)variable;
--(int*) getWeightsForVariable:(int)variable;
--(int) capacity;
--(int) capacityNumDigits;
--(id<ORIntArray>) weights;
-@end
-
 @implementation KnapsackBDDState
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax capacity:(int)capacity weights:(id<ORIntArray>)weights {
     self = [super initClassState:domainMin domainMax:domainMax];
@@ -272,8 +228,8 @@
     _weightSum = 0;
     return self;
 }
--(id) initState:(KnapsackBDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
-    self = [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
+-(id) initState:(KnapsackBDDState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex {
+    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
     _capacity = [parentNodeState capacity];
     _capacityNumDigits = [parentNodeState capacityNumDigits];
     _weights = [parentNodeState weights];
@@ -340,13 +296,6 @@
 -(int) capacity { return _capacity; }
 -(int) capacityNumDigits { return _capacityNumDigits; }
 -(id<ORIntArray>) weights { return _weights; }
-@end
-
-@interface AllDifferentMDDState : CustomState {
-@protected
-    bool* _state;
-}
--(bool*) state;
 @end
 
 @implementation AllDifferentMDDState
@@ -439,26 +388,6 @@
     }
     return true;
 }
-@end
-
-@interface AmongMDDState : CustomState {
-@protected
-    int _minState;
-    int _maxState;
-    ORInt _lowerBound;
-    ORInt _upperBound;
-    id<ORIntSet> _set;
-    int _numVarsRemaining;
-    
-//    ORInt _upperBoundNumDigits;
-}
--(int)minState;
--(int)maxState;
--(int)lowerBound;
--(int)upperBound;
-//-(int)numDigits;
--(id<ORIntSet>)set;
--(int)numVarsRemaining;
 @end
 
 @implementation AmongMDDState
@@ -621,14 +550,6 @@
     }
     return false;
 }
-@end
-
-@interface JointState : CustomState {
-@protected
-    NSMutableArray* _states;
-}
-+(void) addStateClass:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables;
-+(void) stateClassesInit;
 @end
 
 @implementation JointState

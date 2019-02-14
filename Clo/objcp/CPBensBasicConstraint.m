@@ -13,6 +13,7 @@
 #import "CPBensBasicConstraint.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
+#import "ORMDDify.h"
 
 @implementation Node
 -(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents
@@ -220,14 +221,14 @@
     assignTRInt(&_reverseLongestPath, longest, _trail);
 }
 
--(TRId*) parents {
+-(TRId**) parents {
     return _parents;
 }
 -(int) numParents {
     return _numParents._val;
 }
 -(void) addParent: (Node*) parent {
-    assignTRId(&_parents[_numParents._val], parent,_trail);
+    assignTRId(_parents[_numParents._val], parent,_trail);
     assignTRInt(&_numParents,_numParents._val+1,_trail);
     if (_objectiveValues != nil) {
         [self updateBoundsWithParent: parent];
@@ -363,7 +364,7 @@
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
         if ((Node*)_parents[parentIndex] == parent) {
             assignTRInt(&_numParents,_numParents._val-1,_trail);
-            assignTRId(&_parents[parentIndex], _parents[_numParents._val],_trail);
+            assignTRId(_parents[parentIndex], *_parents[_numParents._val],_trail);
             parentIndex--;
         }
     }
@@ -403,7 +404,7 @@
 }
 -(void) takeParentsFrom:(Node*)other {
     for (int parentIndex = 0; parentIndex < [other numParents]; parentIndex++) {
-        Node* parent = [other parents][parentIndex];
+        Node* parent = *[other parents][parentIndex];
         
         int child_index = [parent findChildIndex: other];
         while(child_index != -1) {
@@ -449,6 +450,8 @@
 -(bool) stateAllows:(int)variable {
     return true;
 }
+-(int) numPathsForVariable:(int)variable {return 0; }
+-(int) numPathsWithNextVariable:(int)variable {return 0; }
 -(int*) getObjectiveValuesForVariable:(int)variable {
     return NULL;
 }
@@ -943,7 +946,7 @@
     int numParents = [node numParents];
     
     for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
-        Node* parent = [node parents][parentIndex];
+        Node* parent = *[node parents][parentIndex];
         
         parentLayer = [self layerIndexForVariable:[parent value]];
         int child_index = [parent findChildIndex: node];
@@ -1252,9 +1255,9 @@
         int best_second_node_index = 1;
         int smallest_state_differential = INT_MAX;
         for (first_node_index = 0; first_node_index < layer_size[layer]._val -1; first_node_index++) {
-            id first_node_state = [layers[layer][first_node_index] getState];
+            CustomState* first_node_state = [layers[layer][first_node_index] getState];
             for (second_node_index = first_node_index +1; second_node_index < layer_size[layer]._val; second_node_index++) {
-                id second_node_state = [layers[layer][second_node_index] getState];
+                CustomState* second_node_state = [layers[layer][second_node_index] getState];
                 int state_differential = [first_node_state stateDifferential: second_node_state];
                 if (state_differential < smallest_state_differential) {
                     smallest_state_differential = state_differential;
@@ -1342,18 +1345,18 @@
 @end
 
 @implementation CPExactMDDMISP
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
 {
     self = [super initCPMDD:engine over:x reduced:reduced objective:objectiveValue maximize:true];
     _adjacencyMatrix = adjacencyMatrix;
-    _objectiveValues = objectiveValues;
+    _weights = weights;
     return self;
 }
 -(int*) getObjectiveValuesForLayer:(int)layer
 {
     int* objectiveValues = malloc(2 * sizeof(int));
     objectiveValues[0] = 0;
-    objectiveValues[1] = (int)[_objectiveValues[[self variableIndexForLayer:layer]] longValue];
+    objectiveValues[1] = (int)[_weights[[self variableIndexForLayer:layer]] longValue];
     
     return objectiveValues;
 }
@@ -1376,18 +1379,18 @@
 @end
 
 @implementation CPRestrictedMDDMISP
--(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
 {
     self = [super initCPMDDRestriction:engine over:x restrictionSize:restrictionSize reduced:reduced objective:objectiveValue maximize:true];
     _adjacencyMatrix = adjacencyMatrix;
-    _objectiveValues = objectiveValues;
+    _weights = weights;
     return self;
 }
 -(int*) getObjectiveValuesForLayer:(int)layer
 {
     int* objectiveValues = malloc(2 * sizeof(int));
     objectiveValues[0] = 0;
-    objectiveValues[1] = (int)[_objectiveValues[[self variableIndexForLayer:layer]] longValue];
+    objectiveValues[1] = (int)[_weights[[self variableIndexForLayer:layer]] longValue];
     
     return objectiveValues;
 }
@@ -1410,18 +1413,18 @@
 @end
 
 @implementation CPRelaxedMDDMISP
--(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix objectiveValues:(id<ORIntArray>)objectiveValues objective:(id<CPIntVar>)objectiveValue
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue
 {
     self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize reduced:reduced objective:objectiveValue maximize:true];
     _adjacencyMatrix = adjacencyMatrix;
-    _objectiveValues = objectiveValues;
+    _weights = weights;
     return self;
 }
 -(int*) getObjectiveValuesForLayer:(int)layer
 {
     int* objectiveValues = malloc(2 * sizeof(int));
     objectiveValues[0] = 0;
-    objectiveValues[1] = (int)[_objectiveValues[[self variableIndexForLayer:layer]] longValue];
+    objectiveValues[1] = (int)[_weights[[self variableIndexForLayer:layer]] longValue];
     
     return objectiveValues;
 }
