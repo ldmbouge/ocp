@@ -125,11 +125,7 @@ static OBJCPGateway *objcpgw;
 }
 - (void)launchHeuristic
 {
-   [_options launchHeuristic:_program restricted:_vars];
-}
-- (void)launchHeuristic:(id<ORVarArray>)vars
-{
-   [_options launchHeuristic:_program restricted:vars];
+     @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
 }
 - (void)setOptions:(ORCmdLineArgs *)options
 {
@@ -138,9 +134,19 @@ static OBJCPGateway *objcpgw;
 @end
 
 @implementation IntLogicHandler
+-(IntLogicHandler*) init:(id<ORModel>) m withOptions:(ORCmdLineArgs *)options
+{
+   self = [super init:m withOptions:options];
+   _heuristic = [_options makeHeuristic:_program restricted:(id<ORIntVarArray>)[self getVariables]];
+   return self;
+}
 -(id<ORVarArray>) getVariables
 {
    return [_model intVars];
+}
+- (void)launchHeuristic
+{
+   [_program labelHeuristic:_heuristic];
 }
 @end
 
@@ -152,12 +158,26 @@ static OBJCPGateway *objcpgw;
 {
    return [_model floatVars];
 }
+- (void)launchHeuristic
+{
+   [_options launchHeuristic:_program restricted:_vars];
+}
 @end
 
 @implementation BVLogicHandler
+-(BVLogicHandler*) init:(id<ORModel>) m withOptions:(ORCmdLineArgs *)options
+{
+   self = [super init:m withOptions:options];
+   _heuristic = [_program createDDeg];
+   return self;
+}
 -(id<ORVarArray>) getVariables
 {
    return [_model bitVars];
+}
+- (void)launchHeuristic
+{
+   [_program labelHeuristic:_heuristic];
 }
 @end
 
@@ -523,7 +543,6 @@ static OBJCPGateway *objcpgw;
             [lh launchHeuristic];
             NSLog(@"Valeurs solutions : \n");
          } withTimeLimit:[_options timeOut]];
-         
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];
@@ -690,6 +709,15 @@ static OBJCPGateway *objcpgw;
    return res;
 }
 
+-(id<ORIntVar>) objcp_mk_implies:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1
+{
+   id<ORIntVar> res = [ORFactory boolVar:_model];
+   id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
+   bvar[0] = b0;
+   bvar[1] = b1;
+   [_model add:[[b0 imply:b1] eq:res]];
+   return res;
+}
 @end
 
 
@@ -714,9 +742,6 @@ static OBJCPGateway *objcpgw;
    
    for (int i=0; i<size; i++) {
       pattern[wordLength-(i/BITSPERWORD)-1] |= bv[i] << i%BITSPERWORD;
-//      if ((size-i-1 != 0) && ((size-i-1)%BITSPERWORD != 0))
-//         pattern[i/BITSPERWORD] <<= 1;
-//      printf("%i",bv[i]);
    }
    id<ORBitVar> bitv = [ORFactory bitVar:_model low:pattern up:pattern bitLength:size];
    return bitv;

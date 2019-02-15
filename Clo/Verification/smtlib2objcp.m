@@ -1045,11 +1045,21 @@ SMTLIB2_OBJCP_DECLHANDLER(bvsmod) { return NULL; /* TODO */ }
 //----------------------logical BOOL handler--------------------//
 SMTLIB2_OBJCP_DECLHANDLER(and)
 {
-   return [objcpgw objcp_mk_and:YCTX(ctx) b0:(objcp_expr)(smtlib2_vector_at(args, 0)) b1:(objcp_expr)(smtlib2_vector_at(args, 1))];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr expr = (objcp_expr)smtlib2_vector_at(args, 0);
+   for (int i = 1; i < size; i++) {
+      expr = [objcpgw objcp_mk_and:YCTX(ctx) left:expr right:(objcp_expr)smtlib2_vector_at(args, i)];
+   }
+   return expr;
 }
 SMTLIB2_OBJCP_DECLHANDLER(or)
 {
-   return [objcpgw objcp_mk_or:YCTX(ctx) b0:(objcp_expr)(smtlib2_vector_at(args, 0)) b1:(objcp_expr)(smtlib2_vector_at(args, 1))];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr expr = (objcp_expr)smtlib2_vector_at(args, 0);
+   for (int i = 1; i < size; i++) {
+      expr = [objcpgw objcp_mk_or:YCTX(ctx) left:expr right:(objcp_expr)smtlib2_vector_at(args, i)];
+   }
+   return expr;
 }
 SMTLIB2_OBJCP_DECLHANDLER(not)
 {
@@ -1057,16 +1067,12 @@ SMTLIB2_OBJCP_DECLHANDLER(not)
 }
 SMTLIB2_OBJCP_DECLHANDLER(implies)
 {
-   objcp_context yctx = YCTX(ctx);
-   objcp_expr ret = (objcp_expr)smtlib2_vector_last(args);
-   long i;
-   
-   for (i = smtlib2_vector_size(args)-2; i >= 0; --i) {
-      objcp_expr a = (objcp_expr)smtlib2_vector_at(args, i);
-      objcp_expr aa[2] = { [objcpgw objcp_mk_not:yctx withArg:a], ret };
-      ret = [objcpgw objcp_mk_or:yctx withArgs:aa andNumArgs:2];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr expr = (objcp_expr)smtlib2_vector_at(args, 0);
+   for (int i = 1; i < size; i++) {
+      expr = [objcpgw objcp_mk_implies:YCTX(ctx) left:expr right:(objcp_expr)smtlib2_vector_at(args, i)];
    }
-   return ret;
+   return expr;
    
 }
 //----------------------arithmetic handler--------------------//

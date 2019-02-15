@@ -66,7 +66,6 @@ typedef int assertion_id;
 -(id<ORVarArray>) getVariables;
 -(id<CPProgram>) getProgram;
 -(void) launchHeuristic;
--(void) launchHeuristic:(id<ORVarArray>) vars;
 -(void) setOptions:(ORCmdLineArgs*)options;
 @end
 
@@ -83,6 +82,10 @@ typedef int assertion_id;
 @end
 
 @interface IntLogicHandler : AbstractLogicHandler
+{
+   @protected
+   id<CPHeuristic> _heuristic;
+}
 @end
 
 @interface BoolLogicHandler : IntLogicHandler
@@ -92,6 +95,10 @@ typedef int assertion_id;
 @end
 
 @interface BVLogicHandler : AbstractLogicHandler
+{
+@protected
+   id<CPHeuristic> _heuristic;
+}
 @end
 
 @interface ConstantWrapper : NSObject
@@ -174,6 +181,7 @@ typedef int assertion_id;
 @interface OBJCPGateway (Bool)
 -(id<ORIntVar>) objcp_mk_and:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1;
 -(id<ORIntVar>) objcp_mk_or:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1;
+-(id<ORIntVar>) objcp_mk_implies:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1;
 -(id<ORIntVar>) objcp_mk_not:(objcp_context)ctx b0:(id<ORIntVar>)b0;
 @end
 
