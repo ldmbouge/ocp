@@ -121,11 +121,12 @@ typedef int assertion_id;
    NSMutableDictionary* _types;
    NSMutableDictionary* _declarations;
    NSMutableDictionary* _instances;
+   ORCmdLineArgs* _options;
    logic _logic;
 }
 +(objcp_var_type) sortName2Type:(const char *) name;
-+(OBJCPGateway*) initOBJCPGateway;
--(OBJCPGateway*) initExplicitOBJCPGateway;
++(OBJCPGateway*) initOBJCPGateway:(ORCmdLineArgs*)opt;
+-(OBJCPGateway*) initExplicitOBJCPGateway:(ORCmdLineArgs*)opt;
 -(id<ORModel>) getModel;
 -(objcp_context) objcp_mk_context;
 -(void) objcp_del_context:(objcp_context) ctxt;

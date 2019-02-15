@@ -254,16 +254,24 @@ static OBJCPGateway *objcpgw;
 @end
 
 @implementation OBJCPGateway:NSObject
-+(OBJCPGateway*) initOBJCPGateway{
-   OBJCPGateway* x = [[OBJCPGateway alloc] initExplicitOBJCPGateway];
++(OBJCPGateway*) initOBJCPGateway
+{
+   OBJCPGateway* x = [[OBJCPGateway alloc] initExplicitOBJCPGateway:nil];
    return x;
 }
--(OBJCPGateway*) initExplicitOBJCPGateway{
++(OBJCPGateway*) initOBJCPGateway:(ORCmdLineArgs*) opt
+{
+   OBJCPGateway* x = [[OBJCPGateway alloc] initExplicitOBJCPGateway:opt];
+   return x;
+}
+-(OBJCPGateway*) initExplicitOBJCPGateway:(ORCmdLineArgs*) opt
+{
    self = [super init];
    _model = [ORFactory createModel];
    _declarations = [[NSMutableDictionary alloc] initWithCapacity:10];
    _instances = [[NSMutableDictionary alloc] initWithCapacity:10];
    _types = [[NSMutableDictionary alloc] initWithCapacity:10];
+   _options = opt;
    [ConstantWrapper setObjcpGateway:self];
    return self;
 }
@@ -408,6 +416,7 @@ static OBJCPGateway *objcpgw;
 {
    _logic = [OBJCPGateway logicFromString:logic];
 }
+
 +(id<LogicHandler>) logicToHandler:(logic) l withModel:(id<ORModel>) model withOptions:(ORCmdLineArgs*) options
 {
    switch(l){
@@ -505,18 +514,15 @@ static OBJCPGateway *objcpgw;
 -(ORBool) objcp_check:(objcp_context) ctx
 {
    @autoreleasepool {
-      int argc = 2;
-      const char* argv[] = {"","-debug-level","2"};
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:args];
-      [args measure:^struct ORResult(){
+      id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options];
+      [_options measure:^struct ORResult(){
          NSLog(@"%@",_model);
          id<CPProgram> cp = [lh getProgram];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [lh launchHeuristic];
             NSLog(@"Valeurs solutions : \n");
-         } withTimeLimit:[args timeOut]];
+         } withTimeLimit:[_options timeOut]];
          
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;

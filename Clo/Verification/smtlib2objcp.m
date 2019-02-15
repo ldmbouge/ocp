@@ -182,12 +182,17 @@ static bool smtlib2_objcp_parametric_sort_eqfun(intptr_t s1, intptr_t s2);
 
 smtlib2_objcp_parser *smtlib2_objcp_parser_new(void)
 {
-   smtlib2_objcp_parser *ret =
-   (smtlib2_objcp_parser *)malloc(sizeof(smtlib2_objcp_parser));
+   Options opt = (Options){0,NULL};
+   return smtlib2_objcp_parser_new_with_opts(opt);
+}
+
+smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
+{
+   smtlib2_objcp_parser *ret = (smtlib2_objcp_parser *)malloc(sizeof(smtlib2_objcp_parser));
    smtlib2_parser_interface *pi;
    smtlib2_term_parser *tp;
    
-   objcpgw = [OBJCPGateway initOBJCPGateway];
+   objcpgw = [OBJCPGateway initOBJCPGateway:[ORCmdLineArgs newWith:opt.argc argv:opt.argv]];
    
    ret->ctx_ = [objcpgw objcp_mk_context];
    smtlib2_abstract_parser_init((smtlib2_abstract_parser *)ret,

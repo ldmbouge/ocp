@@ -37,6 +37,11 @@
 
 typedef enum {l_false, l_undef, l_true}lbool;
 
+typedef struct {
+   int argc;
+   const char** argv;
+} Options;
+
 typedef struct smtlib2_objcp_parser {
     smtlib2_abstract_parser parent_;
     objcp_context ctx_;
@@ -58,6 +63,7 @@ typedef struct smtlib2_objcp_parser {
 
 
 smtlib2_objcp_parser *smtlib2_objcp_parser_new(void);
+smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt);
 void smtlib2_objcp_parser_delete(smtlib2_objcp_parser *p);
 
 #endif /* SMTLIB2OBJCP_H_INCLUDED */
