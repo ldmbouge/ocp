@@ -41,7 +41,7 @@ static OBJCPGateway *objcpgw;
    _value.llong_nb = strtol(strv, &pEnd, _base);
    switch (base) {
       case 10:
-         _type = OR_INT;
+         _type = (width == 0) ? OR_INT : OR_BV;
          break;
       case 16:
       case 2:
@@ -168,7 +168,17 @@ static OBJCPGateway *objcpgw;
 @implementation BVLogicHandler
 -(BVLogicHandler*) init:(id<ORModel>) m withOptions:(ORCmdLineArgs *)options
 {
-   self = [super init:m withOptions:options];
+   self = [super init];
+   _model = m;
+   _vars = [self getVariables];
+   if(options == nil){
+      int argc = 2;
+      const char* argv[] = {};
+      _options = [ORCmdLineArgs newWith:argc argv:argv];
+   }else{
+      _options = options;
+   }
+   _program = [ORFactory createCPProgramBackjumpingDFS:_model];
    _heuristic = [_program createDDeg];
    return self;
 }
@@ -178,7 +188,7 @@ static OBJCPGateway *objcpgw;
 }
 - (void)launchHeuristic
 {
-   [_program labelHeuristic:_heuristic];
+   [(id<CPSemanticProgram,CPBV>)_program labelBitVarHeuristic:(id<CPBitVarHeuristic>)_heuristic];
 }
 @end
 
