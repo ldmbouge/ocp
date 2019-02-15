@@ -9,6 +9,7 @@
 #import "objcpgateway.h"
 #include "gmp.h"
 
+#include "ORFoundation/ORFoundation.h"
 #include "objcp/CPBitConstraint.h"
 
 @interface OBJCPType : NSObject{
@@ -534,9 +535,9 @@ static OBJCPGateway *objcpgw;
 -(ORBool) objcp_check:(objcp_context) ctx
 {
    @autoreleasepool {
+      NSLog(@"%@",_model);
       id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options];
       [_options measure:^struct ORResult(){
-         NSLog(@"%@",_model);
          id<CPProgram> cp = [lh getProgram];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
@@ -768,15 +769,16 @@ static OBJCPGateway *objcpgw;
    return ret;
 }
 
--(objcp_expr) objcp_mk_true:(objcp_context)ctx{
-   ORUInt dom = 0x00000001;
-   return [ORFactory bitVar:_model low:&dom up:&dom bitLength:1];
+-(objcp_expr) objcp_mk_true:(objcp_context)ctx
+{
+   return [ORFactory intVar:_model value:1];
 }
 
--(objcp_expr) objcp_mk_false:(objcp_context)ctx{
-   ORUInt dom = 0x00000000;
-   return [ORFactory bitVar:_model low:&dom up:&dom bitLength:1];
+-(objcp_expr) objcp_mk_false:(objcp_context)ctx
+{
+   return [ORFactory intVar:_model value:0];
 }
+
 //name it's not correct
 -(objcp_expr) objcp_mk_and:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORULong)numArgs
 {
@@ -796,9 +798,6 @@ static OBJCPGateway *objcpgw;
    return result;
 }
 
-//objcp_mk_sum
-//objcp_mk_mul
-//-(objcp_expr) objcp_mk_sub
 -(objcp_expr) objcp_mk_le:(objcp_context)ctx x:(objcp_expr)x le:(objcp_expr) y{ return NULL;}
 -(objcp_expr) objcp_mk_lt:(objcp_context)ctx x:(objcp_expr)x lt:(objcp_expr) y
 {
@@ -829,23 +828,24 @@ static OBJCPGateway *objcpgw;
 /**
  \brief Return an expression representing <tt>(if c t e)</tt>.
  */
--(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr)c then:(objcp_expr) t else:(objcp_expr)e //{return NULL;}
+-(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr)c then:(objcp_expr) t else:(objcp_expr)e
 {
-   id<ORBitVar> result;
-   ORUInt thenSize = [(id<ORBitVar>)t bitLength];
-   ORUInt elseSize = [(id<ORBitVar>)e bitLength];
-   ORUInt resultSize = max(thenSize, elseSize);
-   ORUInt resultWordLength = resultSize/BITSPERWORD + ((resultSize % BITSPERWORD != 0) ? 1: 0);
-   ORUInt* low = alloca(sizeof(ORUInt)*resultWordLength);
-   ORUInt* up = alloca(sizeof(ORUInt)*resultWordLength);
-   for(int i = 0; i<resultWordLength;i++){
-      low[i] = 0;
-      up[i] = CP_UMASK;
+   id<ORIntVar> b = (id<ORIntVar>)[self getVariable:c];
+   id<ORVar> tv = [self getVariable:t];
+   id<ORVar> ev = [self getVariable:e];
+   id<ORVar> res = nil;
+   if([tv.class conformsToProtocol:@protocol(ORIntVar)]){
+      res = [ORFactory intVar:_model bounds:RANGE(_model, -MAXINT,MAXINT)];
+   }else if([tv.class conformsToProtocol:@protocol(ORFloatVar)]){
+      res = [ORFactory floatVar:_model];
+   }else if([tv.class conformsToProtocol:@protocol(ORDoubleVar)]){
+      res = [ORFactory doubleVar:_model];
+   }else if([tv.class conformsToProtocol:@protocol(ORBitVar)]){
+      res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength], [(id<ORBitVar>)ev bitLength])];
    }
-   
-   result = [ORFactory bitVar:_model low:low up:up bitLength:resultSize];
-   [_model add:[ORFactory bit:c then:t else:e result:result]];
-   return result;
+   [_model add:[b imply:[res eq:tv]]];
+   [_model add:[[b neg] imply:[res eq:ev]]];
+   return res;
 }
 
 //objcp_mk_num_from_string
