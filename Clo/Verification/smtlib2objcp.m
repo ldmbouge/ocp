@@ -1071,21 +1071,41 @@ SMTLIB2_OBJCP_DECLHANDLER(eq)
 }
 SMTLIB2_OBJCP_DECLHANDLER(plus)
 {
-   return [objcpgw objcp_mk_plus:YCTX(ctx) left:(objcp_expr)smtlib2_vector_at(args, 0) right:(objcp_expr)smtlib2_vector_at(args, 1)];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr expr = (objcp_expr)smtlib2_vector_at(args, 0);
+   for (int i = 1; i < size; i++) {
+      expr = [objcpgw objcp_mk_plus:YCTX(ctx) left:expr right:(objcp_expr)smtlib2_vector_at(args, i)];
+   }
+   return expr;
 }
 SMTLIB2_OBJCP_DECLHANDLER(divide)
 {
-    return [objcpgw objcp_mk_div:YCTX(ctx) left:(objcp_expr)smtlib2_vector_at(args, 0) right:(objcp_expr)smtlib2_vector_at(args, 1)];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr expr = (objcp_expr)smtlib2_vector_at(args, 0);
+   for (int i = 1; i < size; i++) {
+      expr = [objcpgw objcp_mk_div:YCTX(ctx) left:expr right:(objcp_expr)smtlib2_vector_at(args, i)];
+   }
+   return expr;
 }
 SMTLIB2_OBJCP_DECLHANDLER(times)
 {
-   return [objcpgw objcp_mk_times:YCTX(ctx) left:(objcp_expr)smtlib2_vector_at(args, 0) right:(objcp_expr)smtlib2_vector_at(args, 1)];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr expr = (objcp_expr)smtlib2_vector_at(args, 0);
+   for (int i = 1; i < size; i++) {
+      expr = [objcpgw objcp_mk_times:YCTX(ctx) left:expr right:(objcp_expr)smtlib2_vector_at(args, i)];
+   }
+   return expr;
 }
 SMTLIB2_OBJCP_DECLHANDLER(minus)
 {
-   if(smtlib2_vector_size(args) < 2)
-      return [objcpgw objcp_mk_minus:YCTX(ctx) var:(objcp_expr)smtlib2_vector_at(args, 0)];
-   return [objcpgw objcp_mk_sub:YCTX(ctx) left:(objcp_expr)smtlib2_vector_at(args, 0) right:(objcp_expr)smtlib2_vector_at(args, 1)];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr expr = (objcp_expr)smtlib2_vector_at(args, 0);
+   if(size < 2)
+      return [objcpgw objcp_mk_minus:YCTX(ctx) var:expr];
+   for (int i = 1; i < size; i++) {
+      expr = [objcpgw objcp_mk_sub:YCTX(ctx) left:expr right:(objcp_expr)smtlib2_vector_at(args, i)];
+   }
+   return expr;
 }
 SMTLIB2_OBJCP_DECLHANDLER(leq)
 {

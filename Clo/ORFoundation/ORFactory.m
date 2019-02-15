@@ -1544,7 +1544,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;   
 }
-
 +(id<ORConstraint>) abs:(id<ORTracker>)model  var: (id<ORIntVar>)x equal:(id<ORIntVar>)y
 {
    id<ORConstraint> o = [[ORAbs alloc] initORAbs:y eqAbs:x];

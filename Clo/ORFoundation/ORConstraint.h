@@ -433,8 +433,6 @@ enum ORGroupType {
 -(id<ORFloatVar>) right;
 @end
 
-
-
 @protocol ORFloatMult <ORConstraint>
 -(id<ORFloatVar>) res;
 -(id<ORFloatVar>) left;

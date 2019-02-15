@@ -38,7 +38,16 @@ static OBJCPGateway *objcpgw;
    _base = base;
    char * pEnd;
    _value.llong_nb = strtol(strv, &pEnd, _base);
-   _type = OR_BV;
+   switch (base) {
+      case 10:
+         _type = OR_INT;
+         break;
+      case 16:
+      case 2:
+      default:
+         _type = OR_BV;
+         break;
+   }
    return self;
 }
 -(NSString*) description

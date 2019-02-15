@@ -1069,6 +1069,17 @@ struct CPVarPair {
    } else
       [_terms addIndependent:[e initialValue]];
 }
+-(void) visitExprUnaryMinusI: (ORExprUnaryMinusI*) e
+{
+   if (_eqto) {
+      id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
 -(void) visitMutableDouble: (id<ORMutableInteger>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a MutableReal"];
@@ -1303,7 +1314,18 @@ struct CPVarPair {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,[e value],[e value])];
    [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e value]]];
 }
-
+-(void) visitExprUnaryMinusI:(ORExprUnaryMinusI*) e
+{
+   id<ORIntLinear> rT = [ORNormalizer intLinearFrom:[e operand] model:_model];
+   id<ORIntVar> rV = [ORNormalizer intVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory intVar:_model domain:RANGE(_model, -rV.up, -rV.low)];
+   }
+   id<ORIntVar> zero = [ORFactory intVar:_model value:0];
+   [_model addConstraint:[ORFactory expr:_rv plus:[zero sub:rV] track:_model]];
+//   [_model addConstraint:[_rv eq:[zero sub:rV]]];
+   [rT release];
+}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    assert(NO);
