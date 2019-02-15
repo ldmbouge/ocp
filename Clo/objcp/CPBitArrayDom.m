@@ -145,6 +145,7 @@ static inline ORULong BAUp(CPBitArrayDom* dom)
 
    if(_wordLength > 1){
       for(int i=_wordLength-2; i>=0;i--){
+          [string appendString:@" "];
       boundLow = (~ _up[i]._val) & (~_low[i]._val);
       boundUp = _up[i]._val & _low[i]._val;
       err = ~_up[i]._val & _low[i]._val;
@@ -169,7 +170,7 @@ static inline ORULong BAUp(CPBitArrayDom* dom)
 -(ORInt) domsize
 {
    if (_freebits._val <= 31) {
-      ORInt ds = 1 << _freebits._val;
+      ORInt ds = 1 << (unsigned int)_freebits._val;
       return ds;
    } else return 0x7fffffff;
 }
@@ -291,6 +292,8 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
       ORUInt boundBits = (dom->_low[i]._val ^ dom->_up[i]._val);
       freeBits += __builtin_popcount(boundBits);
    }
+//    if(freeBits > (dom->_freebits)._val)
+//        NSLog(@"Domain lost assignments?!");
    assignTRUInt(&(dom->_freebits), freeBits, dom->_trail);
 }
 
@@ -305,7 +308,7 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
          SETBITFALSE(idx);
       }
    } else {
-      bool theBit = _low[WORDIDX(idx)]._val  & ONEAT(idx);
+      ORBool theBit = (_low[WORDIDX(idx)]._val  & ONEAT(idx)) != 0;
       if (theBit ^ val)
          failNow();
       else{
@@ -379,16 +382,16 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
       if (freeBits==0) {
          continue;
       }
-      else if (freeBits == 0xFFFFFFFF) {
-         int msfb = wordLengthInBits-((i*32)+1);
-         return msfb;
-      }
-      else if (freeBits & 0x80000000) {
-//         j=__builtin_clz(~freeBits);
+//      else if (freeBits == 0xFFFFFFFF) {
 //         int msfb = wordLengthInBits-((i*32)+1);
 //         return msfb;
-         return (((i+1)*BITSPERWORD)-1);
-      }
+//      }
+//      else if (freeBits & 0x80000000) {
+////         j=__builtin_clz(~freeBits);
+////         int msfb = wordLengthInBits-((i*32)+1);
+////         return msfb;
+//         return (((i+1)*BITSPERWORD)-1);
+//      }
       else{
          j=__builtin_clz(freeBits);
          //int msfb = (wordLengthInBits)-((i*32)+j+1);

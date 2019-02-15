@@ -46,6 +46,11 @@
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
+-(id<ORVarArray>)allBitVars
+{
+    return (id<ORVarArray>) (_rvars!=nil ? _rvars : _cvs);
+}
+
 -(ORDouble)varOrdering: (id<CPIntVar>) ox
 {
    id<CPIntVar> x = (id<CPIntVar>)ox;
@@ -56,6 +61,7 @@
    }
    return h / [x domsize];
 }
+
 -(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    return -v;   

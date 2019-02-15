@@ -2022,11 +2022,7 @@ YY_BUFFER_STATE smtlib2_parser__scan_string (yyconst char * yystr , yyscan_t yys
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to smtlib2_parser_lex() will
- * scan from a @e copy of @a bytes.
- * @param bytes the byte buffer to scan
- * @param len the number of bytes in the buffer pointed to by @a bytes.
- * @param yyscanner The scanner object.
- * @return the newly allocated buffer state object.
+ * scan from a e copy of a bytes.
  */
 YY_BUFFER_STATE smtlib2_parser__scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len , yyscan_t yyscanner)
 {
@@ -2208,10 +2204,7 @@ void smtlib2_parser_set_extra (YY_EXTRA_TYPE  user_defined , yyscan_t yyscanner)
     yyextra = user_defined ;
 }
 
-/** Set the current line number.
- * @param line_number
- * @param yyscanner The scanner object.
- */
+// Set the current line number.
 void smtlib2_parser_set_lineno (int  line_number , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
@@ -2223,10 +2216,7 @@ void smtlib2_parser_set_lineno (int  line_number , yyscan_t yyscanner)
     yylineno = line_number;
 }
 
-/** Set the current column.
- * @param line_number
- * @param yyscanner The scanner object.
- */
+
 void smtlib2_parser_set_column (int  column_no , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;

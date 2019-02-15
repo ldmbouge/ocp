@@ -109,7 +109,19 @@ typedef int assertion_id;
 -(void) objcp_set_logic:(const char*) logic;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name;
 -(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range;
+<<<<<<< HEAD
 -(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size;
+=======
+//-(int)        objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value;
+
+/**
+ \brief Create a backtracking point in the given logical context.
+ 
+ The logical context can be viewed as a stack of contexts.
+ The scope level is the number of elements on this stack. The stack
+ of contexts is simulated using trail (undo) stacks.
+ */
+>>>>>>> master
 -(void) objcp_push:(objcp_context) ctx;
 -(void) objcp_pop:(objcp_context) ctx;
 -(assertion_id) objcp_assert_retractable:(objcp_context) ctx withExpr:(objcp_expr) expr;
@@ -164,6 +176,13 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_bv_le:(objcp_context)ctx x:(objcp_expr)x le:(objcp_expr) y;
 -(objcp_expr) objcp_mk_bv_sle:(objcp_expr)ctx x:(objcp_expr)x sle:(objcp_expr)y;
 -(objcp_expr) objcp_mk_bv_slt:(objcp_expr)ctx x:(objcp_expr)x slt:(objcp_expr)y;
+<<<<<<< HEAD
+=======
+-(objcp_expr) objcp_mk_bv_gt:(objcp_expr)ctx x:(objcp_expr)x gt:(objcp_expr)y;
+-(objcp_expr) objcp_mk_bv_sgt:(objcp_expr)ctx x:(objcp_expr)x sgt:(objcp_expr)y;
+-(objcp_expr) objcp_mk_bv_ge:(objcp_expr)ctx x:(objcp_expr)x ge:(objcp_expr)y;
+-(objcp_expr) objcp_mk_bv_sge:(objcp_expr)ctx x:(objcp_expr)x sge:(objcp_expr)y;
+>>>>>>> master
 -(objcp_expr) objcp_mk_bv_constant:(objcp_context) ctx withSize:(ORUInt)size andValue:(ORUInt)value;
 -(objcp_expr) objcp_mk_bv_minus:(objcp_context) ctx withArg:(objcp_expr) a1;
 -(objcp_expr) objcp_mk_bv_add:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
@@ -171,6 +190,12 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_bv_mul:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 -(objcp_expr) objcp_mk_bv_div:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 -(objcp_expr) objcp_mk_bv_rem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+<<<<<<< HEAD
+=======
+-(objcp_expr) objcp_mk_bv_sdiv:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+-(objcp_expr) objcp_mk_bv_srem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+
+>>>>>>> master
 -(objcp_expr) objcp_mk_bv_extract:(objcp_context)ctx from:(ORUInt)msb downTo:(ORUInt)lsb in:(objcp_expr)a1;
 -(objcp_expr) objcp_mk_bv_sign_extend:(objcp_context)ctx withArg:(objcp_expr)a1 andAmount:(ORUInt)amt;
 -(objcp_expr) objcp_mk_bv_rotl:(objcp_context) ctx withArg:(objcp_expr) a1 andAmount:(ORUInt)a2;

@@ -54,6 +54,7 @@
 -(id)grab;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
+-(ORInt)level;
 -(ORInt)sizeEstimate;
 @end
 
@@ -89,3 +90,9 @@
 -(ORInt)      curNode;
 -(void) fail;
 @end
+//<<<<<<< HEAD
+
+//void logCheckpoint(void);
+//=======
+//>>>>>>> 116184882f379e03de2b0ba0ae0408e9a4959a0b
+
