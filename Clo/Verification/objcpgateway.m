@@ -8,7 +8,6 @@
 
 #import "objcpgateway.h"
 #include "gmp.h"
-#import "ORCmdLineArgs.h"
 
 #include "objcp/CPBitConstraint.h"
 
@@ -83,6 +82,73 @@ static OBJCPGateway *objcpgw;
 +(void) setObjcpGateway:(OBJCPGateway*) obj
 {
    objcpgw = obj;
+}
+@end
+
+@implementation AbstractLogicHandler
+-(AbstractLogicHandler*) init:(id<ORModel>)m
+{
+   self = [self init:m withOptions:nil];
+   return self;
+}
+-(AbstractLogicHandler*) init:(id<ORModel>)m withOptions:(ORCmdLineArgs *)options
+{
+   self = [super init];
+   _model = m;
+   _vars = [self getVariables];
+   if(options == nil){
+      int argc = 2;
+      const char* argv[] = {};
+      _options = [ORCmdLineArgs newWith:argc argv:argv];
+   }else{
+      _options = options;
+   }
+   _program = [_options makeProgram:_model];
+   return self;
+}
+- (id<ORVarArray>)getVariables
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
+}
+-(id<CPProgram>) getProgram
+{
+   return _program;
+}
+- (void)launchHeuristic
+{
+   [_options launchHeuristic:_program restricted:_vars];
+}
+- (void)launchHeuristic:(id<ORVarArray>)vars
+{
+   [_options launchHeuristic:_program restricted:vars];
+}
+- (void)setOptions:(ORCmdLineArgs *)options
+{
+   _options = options;
+}
+@end
+
+@implementation IntLogicHandler
+-(id<ORVarArray>) getVariables
+{
+   return [_model intVars];
+}
+@end
+
+@implementation BoolLogicHandler
+@end
+
+@implementation FloatLogicHandler
+-(id<ORVarArray>) getVariables
+{
+   return [_model floatVars];
+}
+@end
+
+@implementation BVLogicHandler
+-(id<ORVarArray>) getVariables
+{
+   return [_model bitVars];
 }
 @end
 
@@ -212,14 +278,10 @@ static OBJCPGateway *objcpgw;
    }
    return (i<NB_LOGIC) ? logicObj[i] : 0;
 }
--(id<ORModel>) getModel{
+-(id<ORModel>) getModel
+{
    return _model;
 }
-
-
-
-
-
 -(objcp_context) objcp_mk_context{
    NSLog(@"Make context not implemented");
    return NULL;
@@ -277,18 +339,7 @@ static OBJCPGateway *objcpgw;
          break;
       case OR_BV:
       {
-#warning todo
          res = [ORFactory bitVar:_model low:&(value.uint_nb) up:&(value.uint_nb) bitLength:size];
-//         unsigned int wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
-//         ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
-//         ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
-//         for(int i=0; i< wordlength;i++){
-//            low[i] = 0;
-//            up[i] = CP_UMASK;
-//         }
-//          if (size%BITSPERWORD != 0)
-//              up[0] >>= BITSPERWORD - (size % BITSPERWORD);
-//         res = [ORFactory bitVar:_model low:low up:up bitLength:size];
          break;
       }
       case OR_FLOAT:
@@ -347,6 +398,16 @@ static OBJCPGateway *objcpgw;
 -(void) objcp_set_logic:(const char*) logic
 {
    _logic = [OBJCPGateway logicFromString:logic];
+}
++(id<LogicHandler>) logicToHandler:(logic) l withModel:(id<ORModel>) model withOptions:(ORCmdLineArgs*) options
+{
+   switch(l){
+      case  QF_BV    : return [[BVLogicHandler alloc] init:model withOptions:options];
+      case  QF_LIA     : return [[IntLogicHandler alloc] init:model withOptions:options];
+      case  QF_FP     : return [[FloatLogicHandler alloc] init:model withOptions:options];
+      case QF_LRA    : //should return reallogichandler
+      default         : return [[AbstractLogicHandler alloc] init:model withOptions:options];
+   }
 }
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name
 {
@@ -432,32 +493,19 @@ static OBJCPGateway *objcpgw;
    id<ORIntVar> trueVar = [ORFactory intVar:_model value:1];
    [_model add:[(id<ORIntVar>)expr eq:trueVar]];
 }
--(id<ORVarArray>) getVariables
-{
-   switch (_logic) {
-      case QF_FP:
-         return [_model floatVars];
-      case QF_BV:
-         return [_model bitVars];
-      case QF_LIA:
-      default:
-         return [_model intVars];
-   }
-}
-#warning we should have an logic handler
 -(ORBool) objcp_check:(objcp_context) ctx
 {
    @autoreleasepool {
       int argc = 2;
       const char* argv[] = {"","-debug-level","2"};
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:args];
       [args measure:^struct ORResult(){
          NSLog(@"%@",_model);
-         id<ORVarArray> vars = [self getVariables];
-         id<CPProgram> cp = [args makeProgram:_model];
+         id<CPProgram> cp = [lh getProgram];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
+            [lh launchHeuristic];
             NSLog(@"Valeurs solutions : \n");
          } withTimeLimit:[args timeOut]];
          

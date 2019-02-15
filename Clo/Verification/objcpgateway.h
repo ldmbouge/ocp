@@ -8,6 +8,7 @@
 #import <ORProgram/ORProgramFactory.h>
 #import <ORProgram/CPProgram.h>
 #import <objcp/CPFactory.h>
+#import "ORCmdLineArgs.h"
 
 #import <objcp/CPBitMacros.h>
 
@@ -60,6 +61,38 @@ typedef void* objcp_expr;
  \brief Assertion index, to identify retractable assertions.
  */
 typedef int assertion_id;
+
+@protocol LogicHandler <NSObject>
+-(id<ORVarArray>) getVariables;
+-(id<CPProgram>) getProgram;
+-(void) launchHeuristic;
+-(void) launchHeuristic:(id<ORVarArray>) vars;
+-(void) setOptions:(ORCmdLineArgs*)options;
+@end
+
+@interface AbstractLogicHandler : NSObject<LogicHandler>
+{
+@protected
+   id<ORModel>    _model;
+   id<CPProgram>  _program;
+   ORCmdLineArgs* _options;
+   id<ORVarArray> _vars;
+}
+-(AbstractLogicHandler*) init:(id<ORModel>)m;
+-(AbstractLogicHandler*) init:(id<ORModel>)m withOptions:(ORCmdLineArgs*)options;
+@end
+
+@interface IntLogicHandler : AbstractLogicHandler
+@end
+
+@interface BoolLogicHandler : IntLogicHandler
+@end
+
+@interface FloatLogicHandler : AbstractLogicHandler
+@end
+
+@interface BVLogicHandler : AbstractLogicHandler
+@end
 
 @interface ConstantWrapper : NSObject
 {
@@ -198,9 +231,6 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx neg:(objcp_expr)x;
 -(ConstantWrapper*) objcp_mk_fp_constant:(objcp_expr)ctx s:(ConstantWrapper*)s e:(ConstantWrapper*)e m:(ConstantWrapper*)m;
 @end
-
-
-
 
 #endif
 
