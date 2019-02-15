@@ -112,7 +112,6 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size;
 -(void) objcp_push:(objcp_context) ctx;
 -(void) objcp_pop:(objcp_context) ctx;
--(assertion_id) objcp_assert_retractable:(objcp_context) ctx withExpr:(objcp_expr) expr;
 -(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr;
 -(ORBool) objcp_check:(objcp_context) ctx;
 -(objcp_model) objcp_get_model:(objcp_context) ctx;

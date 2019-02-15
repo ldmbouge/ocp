@@ -1383,7 +1383,7 @@
          i = [select max];
          if (!i.found)
             return;
-         x =av[i];
+         x =av[i.index];
 //         NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
 //      } else {
@@ -1516,15 +1516,15 @@
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
-   __block ORInt i ;
+   __block ORSelectorResult i ;
    do {
       id<CPBitVar> x = [last idValue];
       //NSLog(@"at top: last = %p",x);
       if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
          i = [select max];
-         if (i == MAXINT)
+         if (!i.found)
             return;
-         x = av[i];
+         x = av[i.index];
 //                  NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
       } else {
