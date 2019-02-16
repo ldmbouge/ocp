@@ -179,10 +179,10 @@ typedef int assertion_id;
 @end
 
 @interface OBJCPGateway (Bool)
--(id<ORIntVar>) objcp_mk_and:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1;
--(id<ORIntVar>) objcp_mk_or:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1;
--(id<ORIntVar>) objcp_mk_implies:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1;
--(id<ORIntVar>) objcp_mk_not:(objcp_context)ctx b0:(id<ORIntVar>)b0;
+-(id<ORIntVar>) objcp_mk_and:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1;
+-(id<ORIntVar>) objcp_mk_or:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1;
+-(id<ORIntVar>) objcp_mk_implies:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1;
+-(id<ORIntVar>) objcp_mk_not:(objcp_context)ctx expr:(id<ORIntVar>)b0;
 @end
 
 @interface OBJCPGateway (BV)

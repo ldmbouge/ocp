@@ -693,7 +693,7 @@ static OBJCPGateway *objcpgw;
 
 @implementation OBJCPGateway (Bool)
 
--(id<ORIntVar>) objcp_mk_and:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1
+-(id<ORIntVar>) objcp_mk_and:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
 {
    id<ORIntVar> res = [ORFactory boolVar:_model];
    id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
@@ -703,7 +703,7 @@ static OBJCPGateway *objcpgw;
    return res;
 }
 
--(id<ORIntVar>) objcp_mk_or:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1
+-(id<ORIntVar>) objcp_mk_or:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
 {
    id<ORIntVar> res = [ORFactory boolVar:_model];
    id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
@@ -713,19 +713,16 @@ static OBJCPGateway *objcpgw;
    return res;
 }
 
--(id<ORIntVar>) objcp_mk_not:(objcp_context)ctx b0:(id<ORIntVar>)b0
+-(id<ORIntVar>) objcp_mk_not:(objcp_context)ctx expr:(id<ORIntVar>)b0
 {
    id<ORIntVar> res = [ORFactory boolVar:_model];
    [_model add:[[b0 neg] eq:res]];
    return res;
 }
 
--(id<ORIntVar>) objcp_mk_implies:(objcp_context)ctx b0:(id<ORIntVar>)b0 b1:(id<ORIntVar>)b1
+-(id<ORIntVar>) objcp_mk_implies:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
 {
    id<ORIntVar> res = [ORFactory boolVar:_model];
-   id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
-   bvar[0] = b0;
-   bvar[1] = b1;
    [_model add:[[b0 imply:b1] eq:res]];
    return res;
 }
@@ -853,8 +850,8 @@ static OBJCPGateway *objcpgw;
    }else if([tv.class conformsToProtocol:@protocol(ORBitVar)]){
       res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength], [(id<ORBitVar>)ev bitLength])];
    }
-   [_model add:[b imply:[res eq:tv]]];
-   [_model add:[[b neg] imply:[res eq:ev]]];
+   [_model add:[b imply:[self objcp_mk_eq:ctx left:res right:tv]]];
+   [_model add:[[b neg] imply:[self objcp_mk_eq:ctx left:res right:ev]]];
    return res;
 }
 

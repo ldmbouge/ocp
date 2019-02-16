@@ -1063,7 +1063,7 @@ SMTLIB2_OBJCP_DECLHANDLER(or)
 }
 SMTLIB2_OBJCP_DECLHANDLER(not)
 {
-   return [objcpgw objcp_mk_not:YCTX(ctx) b0:(objcp_expr)smtlib2_vector_at(args, 0)];
+   return [objcpgw objcp_mk_not:YCTX(ctx) expr:(objcp_expr)smtlib2_vector_at(args, 0)];
 }
 SMTLIB2_OBJCP_DECLHANDLER(implies)
 {
