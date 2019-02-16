@@ -71,7 +71,7 @@
 -(id)init:(id<CPEngine>)engine low:(ORLDouble)low up:(ORLDouble)up;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 -(ORLDouble) ldoubleValue;
 -(ORLDouble) domwidth;
 @end
@@ -83,5 +83,5 @@
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 @end

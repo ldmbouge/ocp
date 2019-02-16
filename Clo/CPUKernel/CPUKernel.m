@@ -97,11 +97,11 @@ void scanListWithBlock(CPClosureList* cur,ORID2Void block)
    }
 }
 
-void collectList(CPClosureList* list,NSMutableSet* rv)
+void collectList(CPClosureList* list,id<OROSet> rv)
 {
    while(list) {
       CPClosureList* next = list->_node;
-      [rv addObject:list->_cstr];
+      [rv add:list->_cstr];
       list = next;
    }
 }

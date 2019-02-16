@@ -56,7 +56,7 @@
 @optional -(void) addVar:(CPBitVarI*)var;
 -(ORUInt)getId;
 -(enum CPVarClass)varClass;
--(NSMutableSet*)constraints;
+-(id<OROSet>)constraints;
 -(ORBool) tracksLoseEvt:(CPBitArrayDom*)sender;
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;

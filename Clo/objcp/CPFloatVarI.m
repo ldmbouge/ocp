@@ -121,7 +121,7 @@ static void deallocNetwork(CPFloatEventNetwork* net)
    freeList(net->_boundsEvt);
 }
 
-static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* rv)
+static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
 {
    collectList(net->_bindEvt,rv);
    collectList(net->_minEvt,rv);
@@ -163,9 +163,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return [[CPFloatVarSnapshot alloc] init: self name: id];
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+   id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
    return rv;
 }
 -(ORInt)degree
@@ -435,9 +435,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return [_engine tracker];
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+   id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
    return rv;
 }
 -(ORInt)degree

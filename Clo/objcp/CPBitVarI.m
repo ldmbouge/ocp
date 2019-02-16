@@ -55,7 +55,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    freeList(net->_ac5[0]);
 }
 
-static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
+static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
 {
    collectList(net->_bitFixedEvt[0],rv);
    collectList(net->_boundsEvt[0],rv);
@@ -237,12 +237,12 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    }
 }
 
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+   id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
    if (_recv) {
-      NSMutableSet* rc = [_recv constraints];
-      [rv unionSet:rc];
+      id<OROSet> rc = [_recv constraints];
+      [rv addSet:rc];
       [rc release];
    }
    return rv;
@@ -870,12 +870,12 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    }
    assert(nbBare<=1);
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
+   id<OROSet> rv = [ORFactory objectSet];
    for(ORInt i=0;i<_nb;i++) {
-      NSMutableSet* ti = [_tab[i] constraints];
-      [rv unionSet:ti];
+      id<OROSet> ti = [_tab[i] constraints];
+      [rv addSet:ti];
       [ti release];
    }
    return rv;

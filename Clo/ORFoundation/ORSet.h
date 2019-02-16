@@ -60,8 +60,6 @@
 -(NSString*)description;
 @end
 
-
-
 @protocol ORDoubleRange
 -(ORDouble)low;
 -(ORDouble)up;
@@ -69,8 +67,6 @@
 -(ORBool)inRange:(ORDouble)e;
 -(NSString*)description;
 @end
-
-
 
 @protocol ORLDoubleRange
 -(ORLDouble)low;
@@ -80,6 +76,14 @@
 -(NSString*)description;
 @end
 
-
 id<ORIntSet> filterSet(id<ORTracker> t,id<ORIntIterable> s,ORBool(^cond)(ORInt i));
 ORInt sumSet(id<ORIntIterable> s,ORInt(^term)(ORInt i));
+
+@protocol OROSet <NSObject,NSFastEnumeration>
+-(void)add:(id<ORObject>)obj;
+-(void)addSet:(id<OROSet>)set;
+-(NSUInteger)size;
+-(NSUInteger)count;
+-(ORBool)member:(id<ORObject>)obj;
+-(void)clear;
+@end

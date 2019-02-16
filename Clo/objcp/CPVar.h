@@ -32,7 +32,7 @@ enum CPVarClass {
 -(ORUInt) getId;
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
--(NSSet*)constraints;
+-(id<OROSet>)constraints;
 @end
 
 @protocol CPVar <NSObject>
@@ -40,7 +40,7 @@ enum CPVarClass {
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
 -(ORBool) bound;
--(NSSet*)constraints;
+-(id<OROSet>)constraints;
 -(ORInt)degree;
 -(ORBool)vertical;
 -(ORInt) domsize;

@@ -145,7 +145,7 @@ static inline ORUInt getVarWordLength(CPBitVarI* bv)
 -(void) dealloc;
 //-(CPBitVarLiterals*)findLiterals:(CPBitVarI*)ref;
 -(void) addVar:(CPBitVarI*) v;
--(NSMutableSet*)constraints;
+-(id<OROSet>)constraints;
 -(ORStatus) bindEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMinEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;

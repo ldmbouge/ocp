@@ -564,3 +564,87 @@ ORInt sumSet(id<ORIntIterable> s,ORInt(^term)(ORInt i))
    }];
    return ttl;
 }
+
+
+@implementation OROSetI {
+    NSUInteger _mxs;
+    NSUInteger _sz;
+    ORObject** _data;
+}
+-(id<OROSet>)init
+{
+    self = [super init];
+    _mxs = 4;
+    _sz  = 0;
+    _data = calloc(_mxs, sizeof(ORObject*));
+    return self;
+}
+-(void)dealloc
+{
+    //NSLog(@"deallocating... %p",self);
+    free(_data);
+    [super dealloc];
+}
+-(void)clear
+{
+    _sz = 0;
+}
+
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
+                                  objects:(id *)stackbuf
+                                    count:(NSUInteger)len
+{
+    if (state->state >= _sz)
+        return 0;
+    else {
+        state->itemsPtr = _data;
+        state->state = _sz;
+        state->mutationsPtr = (unsigned long *)self;
+        return _sz;
+    }
+}
+-(void)add:(id<ORObject>)obj
+{
+    for(NSUInteger i=0;i < _sz;i++) {
+        ORBool eq = _data[i] == obj;
+        if (eq) return;
+    }
+    if (_sz >= _mxs) {
+        _mxs = _mxs << 1;
+        _data = realloc(_data, _mxs * sizeof(ORObject*));
+    }
+    _data[_sz++] = obj;
+}
+-(void)addSet:(id<OROSet>)set
+{
+    for(id<ORObject> obj in set) {
+        [self add:obj];
+    }
+}
+-(NSUInteger)size
+{
+    return _sz;
+}
+-(NSUInteger)count
+{
+    return _sz;
+}
+-(ORBool)member:(id<ORObject>)obj
+{
+    for(NSUInteger i=0;i < _sz;i++) {
+        ORBool eq = _data[i] == obj;
+        if (eq) return true;
+    }
+    return false;
+}
+-(NSString*)description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"[%ld]{",_sz];
+    for(id<ORObject> x in self) {
+        [rv appendFormat:@"%p ",x];
+    }
+    [rv appendFormat:@"}"];
+    return rv;
+}
+@end

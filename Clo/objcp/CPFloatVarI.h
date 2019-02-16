@@ -77,7 +77,7 @@
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 -(ORFloat) floatValue;
 -(ORLDouble) domwidth;
 -(id<CPDom>) domain;
@@ -90,7 +90,7 @@
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 @end
 
 /*useful struct to get exponent mantissa and sign*/
