@@ -73,6 +73,11 @@
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
+-(id<ORVarArray>)allBitVars
+{
+    return (id<ORVarArray>) (_rvars!=nil ? _rvars : _cvs);
+}
+
 // pvh: see question below for the importance of _cv
 
 -(ORDouble) varOrdering:(id<CPIntVar>)x

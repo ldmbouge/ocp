@@ -731,6 +731,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    _result = [_into addConstraint:c];
 }
 // Bit
+-(void) visitBitEqBool:(id<ORBitEqBool>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitBitEqualAt:(id<ORBitEqualAt>)c
 {
    _result = [_into addConstraint:c];
@@ -806,6 +810,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitBitDivide:(id<ORBitDivide>)c
 {
    _result = [_into addConstraint:c];
+}
+-(void) visitBitDivideSigned:(id<ORBitDivideSigned>)c
+{
+    _result = [_into addConstraint:c];
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {

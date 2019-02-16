@@ -112,6 +112,16 @@ static inline int signD(double_cast p){
    return 1;
 }
 
+
+static inline double doubleFromParts(unsigned int mantissa, unsigned int exponent,unsigned int sign){
+   double_cast f_cast;
+   f_cast.parts.mantisa = mantissa;
+   f_cast.parts.exponent = exponent;
+   f_cast.parts.sign = sign;
+   return f_cast.f;
+}
+
+
 static inline bool isDisjointWithDV(double xmin,double xmax,double ymin, double ymax)
 {
    return (xmax < ymin) || (ymax < xmin);

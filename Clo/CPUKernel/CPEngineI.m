@@ -654,6 +654,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
 -(void) addInternal:(id<ORConstraint>) c
 {
    assert(_state != CPOpen);
+    if (getId(c) == -1)
+        [c setId: _nbCstrs++];
    ORStatus s = [self post:c];
    if (s==ORFailure) {
       failNow();
@@ -776,6 +778,12 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
    return _state == CPClosed;
 }
+
+- (ORUInt)getBackjumpLevel {
+    assert(false);
+    return 0;
+}
+
 
 -(id<ORInformer>) propagateFail
 {

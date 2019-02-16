@@ -176,6 +176,7 @@
 -(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 // Bit
+-(void) visitBitEqBool:(id<ORBitEqBool>)c;
 -(void) visitBitEqualAt:(id<ORBitEqualAt>)c;
 -(void) visitBitEqualc:(id<ORBitEqualc>)c;
 -(void) visitBitEqual:(id<ORBitEqual>)c;
@@ -416,6 +417,10 @@
    }];
 }
 // Bit
+-(void) visitBitEqBool:(id<ORBitEqBool>)c
+{
+   [[c x] visit:self];
+}
 -(void) visitBitEqualAt:(id<ORBitEqualAt>)c
 {
    [[c left] visit:self];

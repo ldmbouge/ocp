@@ -11,8 +11,6 @@
 
 #import "ORBackjumpingDFSController.h"
 
-@class CPLearningEngineI;
-
 @implementation ORBackjumpingDFSController{
 @protected
    NSCont**                  _tab;
@@ -43,10 +41,41 @@
    return [[ORBackjumpingDFSController alloc] initTheController:nil engine:nil posting:nil];
 }
 
+//-(id<ORSearchController>)clone
+//{
+//   ORBackjumpingDFSController* c = [[ORBackjumpingDFSController alloc] initTheController:nil engine:nil posting:nil];
+//   c->_controller = _controller;
+//   return c;
+//}
+-(id<ORSearchController>)clone
+{
+   ORBackjumpingDFSController* c = [[ORBackjumpingDFSController alloc] initTheController:_tracer engine:_engine posting:_model];
+   c->_atRoot = [_atRoot grab];
+   free(c->_tab);
+   free(c->_cpTab);
+   c->_tab = malloc(sizeof(NSCont*)*_mx);
+   c->_cpTab = malloc(sizeof(id<ORCheckpoint>)*_mx);
+   for(ORInt k=0;k<_sz;k++) {
+      c->_tab[k]   = [_tab[k] grab];
+      c->_cpTab[k] = [_cpTab[k] grab];
+   }
+   c->_sz = _sz;
+   c->_mx = _mx;
+   return c;
+}
+
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine pItf:(id<ORPost>)pItf
+{
+   [_tracer release];
+   _tracer = [tracer retain];
+   _engine = engine;
+   _model  = pItf;
+   return self;
+}
 
 - (void) dealloc
 {
-   //NSLog(@"SemDFSController %p dealloc called...\n",self);
+   NSLog(@"BackjumpingDFSController %p dealloc called...\n",self);
    [_tracer release];
    free(_tab);
    for(ORInt i = 0;i  < _sz;i++)
@@ -87,43 +116,58 @@
 }
 -(void) fail
 {
-//   ORUInt faillevel = [_tracer level];
-//   ORUInt level = faillevel;
-//   ORUInt jumplevel = (ORUInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
-   
-//   ORBool retry = (jumplevel != (level - 1));
-//   NSLog(@"Backtracking to level %d from level %d",jumplevel, level);
-//   NSLog(@"fail at level %d", level);
+   ORInt faillevel = (ORInt)[_tracer level];
+   ORInt level = faillevel;
+   ORInt jumplevel = (ORInt)[_engine getBackjumpLevel];
 
+   id<ORCheckpoint> cp;
+   NSCont* k;
+   ORInt ofs = _sz-1;
+   ORStatus status;
+    ORStatus lastStatus = ORSuspend;
+
+    if (jumplevel > 4){
+        while ((level > jumplevel) && (_sz > 1)){
+            ofs = _sz-1;
+            if (ofs >= 0) {
+                cp = _cpTab[ofs];
+                level = [cp level];
+                [cp letgo];
+                [_tab[ofs] letgo];
+                _tab[ofs] = 0;
+                --_sz;
+            }
+        }
+    }
+   
    do {
-      ORInt ofs = _sz-1;
+       ofs = _sz-1;
       
       if (ofs >= 0) {
-         id<ORCheckpoint> cp = _cpTab[ofs];
-         ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
-         //assert(status != ORFailure);
+         cp = _cpTab[ofs];
+         status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
+          level = [cp level];
          [cp letgo];
-         NSCont* k = _tab[ofs];
+         k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
-            
-//         //Jump back if constraint was learned
-//         level = [_tracer level];
-//         if (jumplevel < level) {
-////)            NSLog(@"Jumping over level %d to level %d",level,jumplevel);
-//            [k letgo];
-//            continue;
-//         }
+          
+//          NSLog(@"Jumping from level %i back to level %i",faillevel, level);
 
-         if (k &&  status != ORFailure) {
-////            NSLog(@"Restarting search at level %d",level);
-//            if ((jumplevel != -1) && (level < faillevel-1)){
-////               NSLog(@"Retry search at level %d",level);
-//               [k callInvisible];
-//            }
-//            else
-               [k call];
-         } else {
+          if (k &&  (k.admin || status != ORFailure)) {
+//              if ((jumplevel > 0) && (level < faillevel) && !k.admin){
+//              if (((jumplevel > 0) && (level < faillevel-1)) &&  (lastStatus != ORFailure)){
+              if ((jumplevel > 0) && (faillevel != jumplevel)) {
+//                 if (jumplevel > 0) {
+//             if((jumplevel > 0) && (lastStatus!=ORFailure)){
+                  [k callInvisible];
+              }
+              else
+                  [k call];
+
+          } else {
+            lastStatus = status;
+            jumplevel = -1;
             if (k==nil)
                @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
             else

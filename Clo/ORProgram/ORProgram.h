@@ -27,6 +27,7 @@
 #import <ORProgram/CPBitVarIBS.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPBitVarFirstFail.h>
+#import <ORProgram/CPBitVarVSIDS.h>
 
 #import <ORProgram/CPFDS.h>
 #import <ORProgram/CPFirstFail.h>

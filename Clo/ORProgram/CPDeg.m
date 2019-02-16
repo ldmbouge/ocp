@@ -41,6 +41,10 @@
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
+-(id<ORVarArray>)allBitVars
+{
+    return (id<ORVarArray>) (_rvars!=nil ? _rvars : _cvs);
+}
 -(ORDouble)varOrdering: (id<CPIntVar>)x
 {
    double h = _cv[_map[x.getId]];

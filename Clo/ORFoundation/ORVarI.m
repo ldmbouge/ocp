@@ -32,13 +32,13 @@
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain name:(NSString*) name
 {
    self = [self initORIntVarI: track domain:domain];
-   _prettyname = [[NSString alloc] initWithString:name];
+   _prettyname = (name != nil) ? [NSString stringWithString:name]:nil;
    return self;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain name:(NSString*) name
 {
    self = [self initORIntVarI: track bounds:domain];
-   _prettyname = [[NSString alloc] initWithString:name];
+   _prettyname = (name != nil) ? [NSString stringWithString:name]:nil;
    return self;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain
@@ -55,8 +55,6 @@
 {
    //NSLog(@"ORIntVarI(%p)::dealloc %d\n",self,_name);
    [super dealloc];
-   if(_prettyname != nil)
-      [_prettyname release];
 }
 
 -(void)encodeWithCoder:(NSCoder *)aCoder
@@ -263,7 +261,7 @@
 -(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up name:(NSString*) name
 {
    self = [self init:track low:low up:up];
-   _prettyname = name;
+   _prettyname = (name != nil)?[NSString stringWithString:name]:nil;
    return self;
 }
 -(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up
@@ -287,7 +285,7 @@
 -(ORRealVarI*) init: (id<ORTracker>) track name:(NSString*) name
 {
    self = [self init:track];
-   _prettyname = name;
+   _prettyname = (name != nil)?[NSString stringWithString:name]:nil;
    return self;
 }
 -(ORRealVarI*) init: (id<ORTracker>) track
@@ -406,7 +404,7 @@
 -(ORFloatVarI*) init: (id<ORTracker>) track name:(NSString*) name
 {
    self = [self init:track];
-   _prettyname = [[NSString alloc] initWithString:name];
+   _prettyname = (name != nil) ? [[NSString alloc] initWithString:name]:nil;
    return self;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track up: (ORFloat) up name:(NSString*) name
@@ -418,7 +416,7 @@
 -(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up name:(NSString*) name
 {
    self = [self init:track domain:[ORFactory floatRange:track low:low up:up]];
-   _prettyname = [[NSString alloc] initWithString:name];
+   _prettyname = (name != nil) ? [[NSString alloc] initWithString:name]:nil;
    return self;
 }
 -(id<ORFloatRange>) domain
@@ -428,8 +426,6 @@
 }
 -(void) dealloc
 {
-   if(_prettyname != nil)
-      [_prettyname release];
    [super dealloc];
 }
 -(enum ORVType) vtype
@@ -549,8 +545,6 @@
 }
 -(void) dealloc
 {
-   if(_prettyname != nil)
-      [_prettyname release];
    [super dealloc];
 }
 -(enum ORVType) vtype

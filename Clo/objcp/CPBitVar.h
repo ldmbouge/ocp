@@ -38,6 +38,11 @@
 -(ORBool) member: (unsigned int*) v;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
+
+-(ORFloat) getVSIDSCount;
+-(void) incrementActivity:(ORUInt)i;
+-(void) reduceVSIDS;
+-(ORFloat) getVSIDSActivity:(ORUInt)i;
 @end
 
 @class CPCoreConstraint;

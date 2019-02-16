@@ -7996,6 +7996,46 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 
+@implementation ORBitEqBool {
+   id<ORBitVar>    _x;
+   id<ORIntVar>    _bx;
+}
+-(ORBitEqBool*)init:(id<ORBitVar>)x eq:(id<ORIntVar>)bx
+{
+   self = [super initORConstraintI];
+   _x  = x;
+   _bx  = bx;
+   return self;
+}
+-(id<ORBitVar>)x
+{
+   return _x;
+}
+-(id<ORIntVar>)bx
+{
+   return _bx;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@)",[self class],self,_x,_bx];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitEqBool:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_bx,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_bx,nil] autorelease];
+}
+@end
+
+
 @implementation ORBitEqualAt {
    id<ORBitVar>    _x;
    ORInt         _bit;
@@ -8844,6 +8884,54 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(ORVisitor*)v
 {
    [v visitBitDivide:self];
+}
+@end
+
+@implementation ORBitDivideSigned {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _q;
+   id<ORBitVar> _r;
+}
+-(ORBitDivideSigned*)initORBitDivideSigned: (id<ORBitVar>) x dividedby:(id<ORBitVar>)y eq:(id<ORBitVar>)q rem:(id<ORBitVar>)r
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _q = q;
+   _r = r;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(id<ORBitVar>) res
+{
+   return _q;
+}
+-(id<ORBitVar>) rem
+{
+   return _r;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_q, nil] autorelease];
+}
+
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ / %@ = %@)",[self class],self,_x,_y,_q];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitDivideSigned:self];
 }
 @end
 

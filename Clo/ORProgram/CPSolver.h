@@ -103,6 +103,7 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 //-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
 //-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 //-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarVSIDS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
 -(id<ORSolution>) captureSolution;

@@ -433,8 +433,6 @@ enum ORGroupType {
 -(id<ORFloatVar>) right;
 @end
 
-
-
 @protocol ORFloatMult <ORConstraint>
 -(id<ORFloatVar>) res;
 -(id<ORFloatVar>) left;
@@ -895,6 +893,11 @@ enum ORGroupType {
 
 // ====== Bit Constraints =====================================
 
+@protocol ORBitEqBool <ORConstraint>
+-(id<ORBitVar>)x;
+-(id<ORIntVar>)bx;
+@end
+
 @protocol ORBitEqualAt <ORConstraint>
 -(id<ORBitVar>)left;
 -(ORInt)cst;
@@ -1003,6 +1006,13 @@ enum ORGroupType {
 @end
 
 @protocol  ORBitDivide <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitDivideSigned <ORConstraint>
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) rem;
 -(id<ORBitVar>) left;

@@ -704,7 +704,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       low[i] = 0x00000000;
       up[i] = 0xFFFFFFFF;
    }
-   up[wordLength-1] >>= bLen%32;
+   ORUInt binLW = bLen % 32; // bits in last word
+   ORUInt mask = 0xFFFFFFFF >> (32 - binLW);
+   up[wordLength-1] = 0xFFFFFFFF & mask;
    return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen];
 }
 +(id<ORBindingArray>) bindingArray: (id<ORTracker>) tracker nb: (ORInt) nb
@@ -1294,6 +1296,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x geq: (id<ORIntVar>) y
+{
+   id<ORConstraint> o = [[ORReifyGEqual alloc] initReify: b equiv: x geq: y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x eqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORReifySumBoolEqc alloc] init:b array:x eqi: c];
@@ -1547,7 +1555,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;   
 }
-
 +(id<ORConstraint>) abs:(id<ORTracker>)model  var: (id<ORIntVar>)x equal:(id<ORIntVar>)y
 {
    id<ORConstraint> o = [[ORAbs alloc] initORAbs:y eqAbs:x];
@@ -2123,6 +2130,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackObject:o];
    return o;
 }
++(id<ORConstraint>) bit:(id<ORBitVar>)x booleq:(id<ORIntVar>)y
+{
+   id<ORConstraint> o = [[ORBitEqBool alloc] init:x eq:y];
+   [[x tracker] trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitEqual alloc] initORBitEqual:x eq:y];
@@ -2224,6 +2237,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORConstraint> o = [[ORBitDivide alloc] initORBitDivide:x dividedby:y eq:q rem:r];
    [[x tracker]trackObject:o];
    return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x dividedbysigned:(id<ORBitVar>)y eq:(id<ORBitVar>)q rem:(id<ORBitVar>)r
+{
+    id<ORConstraint> o = [[ORBitDivideSigned alloc] initORBitDivideSigned:x dividedby:y eq:q rem:r];
+    [[x tracker]trackObject:o];
+    return o;
 }
 
 +(id<ORConstraint>) bit:(id<ORBitVar>)w trueIf:(id<ORBitVar>)x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z

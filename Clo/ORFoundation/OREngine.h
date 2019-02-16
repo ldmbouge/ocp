@@ -34,4 +34,5 @@
 -(ORStatus)enforceObjective;
 -(void)tryEnforceObjective;
 -(id<ORObjectiveFunction>)objective;
+-(ORUInt) getBackjumpLevel;
 @end

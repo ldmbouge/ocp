@@ -54,6 +54,7 @@
 -(id)grab;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
+-(ORInt)level;
 -(ORInt)sizeEstimate;
 @end
 
@@ -89,3 +90,4 @@
 -(ORInt)      curNode;
 -(void) fail;
 @end
+
