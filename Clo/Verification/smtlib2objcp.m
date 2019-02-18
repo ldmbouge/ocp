@@ -152,6 +152,7 @@ SMTLIB2_OBJCP_DECLHANDLER(rotate_right);
 
 SMTLIB2_OBJCP_DECLHANDLER(fp);
 SMTLIB2_OBJCP_DECLHANDLER(RNE);
+SMTLIB2_OBJCP_DECLHANDLER(roundNearestTiesToEven);
 SMTLIB2_OBJCP_DECLHANDLER(fp_eq);
 SMTLIB2_OBJCP_DECLHANDLER(fp_lt);
 SMTLIB2_OBJCP_DECLHANDLER(fp_gt);
@@ -303,6 +304,7 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp", fp);
    SMTLIB2_OBJCP_SETHANDLER(tp, "RNE", RNE);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "roundNearestTiesToEven", RNE);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.eq", fp_eq);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.lt", fp_lt);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.gt", fp_gt);
@@ -1398,7 +1400,7 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_div)
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_mul)
 {
-   return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 2) mul:(objcp_expr)smtlib2_vector_at(args, 2)];
+   return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 1) mul:(objcp_expr)smtlib2_vector_at(args, 2)];
 }
 
 /*----------------------------------------------------------------------------*/
