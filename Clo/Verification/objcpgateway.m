@@ -132,6 +132,14 @@ static OBJCPGateway *objcpgw;
 {
    _options = options;
 }
+-(void) printSolutions
+{
+   CPVarI* cv;
+   for(id<ORVar> v in _vars){
+      cv = [_prgram concretize:v];
+      NSLog(@"%@", cv);
+   }
+}
 @end
 
 @implementation IntLogicHandler
@@ -163,6 +171,14 @@ static OBJCPGateway *objcpgw;
 {
    [_options launchHeuristic:_program restricted:_vars];
 }
+-(void) printSolutions
+{
+   CPVarI* cv;
+   for(id<ORVar> v in _vars){
+      cv = [_prgram concretize:v];
+      NSLog(@"%@", cv);
+   }
+}
 @end
 
 @implementation BVLogicHandler
@@ -185,10 +201,6 @@ static OBJCPGateway *objcpgw;
 -(id<ORVarArray>) getVariables
 {
    return [_model bitVars];
-}
-- (void)launchHeuristic
-{
-   [(id<CPSemanticProgram,CPBV>)_program labelBitVarHeuristic:(id<CPBitVarHeuristic>)_heuristic];
 }
 @end
 
@@ -553,6 +565,7 @@ static OBJCPGateway *objcpgw;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [lh launchHeuristic];
             NSLog(@"Valeurs solutions : \n");
+            [lh printSolution];
          } withTimeLimit:[_options timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;

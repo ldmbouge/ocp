@@ -67,6 +67,7 @@ typedef int assertion_id;
 -(id<CPProgram>) getProgram;
 -(void) launchHeuristic;
 -(void) setOptions:(ORCmdLineArgs*)options;
+-(void) printSolutions;
 @end
 
 @interface AbstractLogicHandler : NSObject<LogicHandler>
