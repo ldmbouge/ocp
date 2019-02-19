@@ -45,7 +45,7 @@
     }
 }
 
-
+//This does end up creating sub-VarArrays and adding them to the model along the way.  Is this too costly?  Can it be avoided somehow?
 +(id<ORIntVarArray>) mergeIntVarArray:(id<ORIntVarArray>)x with:(id<ORIntVarArray>)y tracker:(id<ORTracker>) t {
     NSMutableArray<id<ORIntVar>> *mergedTemp = [[NSMutableArray alloc] init];
     NSMutableArray<id<ORIntVar>> *sortedX = [[NSMutableArray alloc] init];
@@ -759,9 +759,10 @@ static id<ORIntVarArray> _variables;
      }
      onConstraints: ^(id<ORConstraint> c) {
         [_into setCurrent:c];
-         if (true) {
-             [c visit: self];
-         }  
+        if (true) { //Should check if c is MDDifiable.  aka if it has a visit function down below
+        [c visit: self];
+        }
+        [_into addConstraint: c];
         [_into setCurrent:nil];
     }
       onObjective: ^(id<ORObjectiveFunction> o) {

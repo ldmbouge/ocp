@@ -240,8 +240,7 @@ int main (int argc, const char * argv[])
         
         
         //Multiple Amongs
-        int numConstraints = 6;
-        //1-4 works.  5+ have issues where _x starts to lose its value completely.  Sloppy memory management maybe???
+        int numConstraints = 10;
         
         NSSet* value1 = [NSSet setWithObjects:@1, nil];
         id<ORIntSet> setOne = [ORFactory intSet: mdl set: value1];
@@ -262,9 +261,10 @@ int main (int argc, const char * argv[])
             [mdl add: [ORFactory among: variableSubset values: setOne low: 2 up: 3]];
         }
         
+        //[mdl add: [variables[1] eq: variables[2]]];
         
-        [notes ddWidth: 32];
-        [notes ddRelaxed: false];
+        [notes ddWidth: 8];
+        [notes ddRelaxed: true];
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];
         id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
@@ -289,9 +289,9 @@ int main (int argc, const char * argv[])
             assert(2 <= nb2 && nb2 <= 3);
 */
 //            printf("\n");
-            //for (int i = 1; i <= 50; i++) {
-            //    printf("%d  ",[cp intValue: [variables at:i]]);
-            //}
+            for (int i = 1; i <= 50; i++) {
+                printf("%d  ",[cp intValue: [variables at:i]]);
+            }
             //printf("  |  Objective value: %d", [cp intValue: totalWeight]);
             //printf("\n");
             [nbSolutions incr: cp];

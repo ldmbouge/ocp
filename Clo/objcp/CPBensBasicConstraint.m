@@ -70,7 +70,7 @@
     
     _numChildren = makeTRInt(_trail, 0);
     _parents = malloc((maxParents) * sizeof(Node*));
-    for (int parent = 0; parent <= maxParents; parent++) {
+    for (int parent = 0; parent < maxParents; parent++) {
         _parents[parent] = NULL;
     }
     _numParents = makeTRInt(_trail, 0);
@@ -1453,6 +1453,7 @@
 -(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
     self = [super initCPMDDRelaxation:engine over:x relaxed:relaxed relaxationSize:relaxationSize stateClass:stateClass];
+    _priority = HIGHEST_PRIO;
     return self;
 }
 -(NSString*)description
