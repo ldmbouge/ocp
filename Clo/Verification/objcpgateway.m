@@ -134,11 +134,6 @@ static OBJCPGateway *objcpgw;
 }
 -(void) printSolutions
 {
-   id<CPVar> cv;
-   for(id<ORVar> v in _vars){
-      cv = [_program concretize:v];
-      NSLog(@"%@", cv);
-   }
 }
 @end
 
@@ -157,6 +152,12 @@ static OBJCPGateway *objcpgw;
 {
    [_program labelHeuristic:_heuristic];
 }
+-(void) printSolutions
+{
+   for(id<ORVar> v in _vars){
+      NSLog(@"%@ : %20.20e (%s) %@",v,[_program intValue:v],[_program bound:v] ? "YES" : "NO",[_program concretize:v]);
+   }
+}
 @end
 
 @implementation BoolLogicHandler
@@ -170,6 +171,12 @@ static OBJCPGateway *objcpgw;
 - (void)launchHeuristic
 {
    [_options launchHeuristic:_program restricted:_vars];
+}
+-(void) printSolutions
+{
+   for(id<ORVar> v in _vars){
+      NSLog(@"%@ : %20.20e (%s)",v,[_program floatValue:v],[_program bound:v] ? "YES" : "NO");
+   }
 }
 @end
 
