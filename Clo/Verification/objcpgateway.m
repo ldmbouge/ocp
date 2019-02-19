@@ -398,7 +398,7 @@ static OBJCPGateway *objcpgw;
          break;
       case OR_BV:
       {
-         res = [ORFactory bitVar:_model low:&(value.uint_nb) up:&(value.uint_nb) bitLength:size];
+         res = [ORFactory bitVar:_model low:&(value.uint_nb) up:&(value.uint_nb) bitLength:size name:name];
          break;
       }
       case OR_FLOAT:
@@ -436,7 +436,7 @@ static OBJCPGateway *objcpgw;
          }
           if (size%BITSPERWORD != 0)
               up[0] >>= BITSPERWORD - (size % BITSPERWORD);
-         res = [ORFactory bitVar:_model low:low up:up bitLength:size];
+         res = [ORFactory bitVar:_model low:low up:up bitLength:size name:name];
          break;
       }
       case OR_FLOAT:
@@ -556,7 +556,7 @@ static OBJCPGateway *objcpgw;
 -(ORBool) objcp_check:(objcp_context) ctx
 {
    @autoreleasepool {
-      NSLog(@"%@",_model);
+      printf("%s",[[NSString stringWithFormat:@"%@",_model] UTF8String]);
       id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options];
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];

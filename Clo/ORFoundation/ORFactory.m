@@ -698,6 +698,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen];
 }
++(id<ORBitVar>) bitVar:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORUInt)bLen name:(NSString*) name
+{
+   return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen name:name];
+}
 +(id<ORBitVar>) bitVar:(id<ORTracker>)tracker withLength:(ORUInt)bLen
 {
    ORUInt wordLength = (bLen / 32) + ((bLen % 32 != 0) ? 1: 0);

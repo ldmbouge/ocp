@@ -728,7 +728,7 @@
    ORUInt*          _up;
    ORUInt           _bLen;
    ORUInt           _nb;
-   
+   NSString*        _prettyname;
 }
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len
 {
@@ -741,6 +741,12 @@
    memcpy(_up,up,sizeof(ORUInt)*_nb);
    _tracker = tracker;
    [tracker trackVariable: self];
+   return self;
+}
+-(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len name:(NSString*) name
+{
+   self = [self initORBitVarI:tracker low:low up:up bitLength:len];
+   _prettyname = name;
    return self;
 }
 -(void)dealloc
@@ -911,11 +917,17 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d",_name];
+   if(_prettyname != nil)
+      return [NSString stringWithFormat:@"%@:(bitvar<OR>{int}):[%u,%u]",_prettyname,*_low,*_up];
+   return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d:[%u,%u]",_name,*_low,*_up];
 }
 -(NSString*)stringValue
 {
    return [self description];
+}
+-(NSString*) prettyname
+{
+   return _prettyname;
 }
 @end
 
