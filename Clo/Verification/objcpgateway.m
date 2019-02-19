@@ -610,6 +610,8 @@ static OBJCPGateway *objcpgw;
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
    if([lv vtype] == ORTBit && [rv vtype] == ORTBit)
       return [self objcp_mk_bv_eq:ctx left:lv right:rv];
+   if([lv vtype] == ORTFloat || [lv vtype] == ORTDouble)
+      return [self objcp_mk_fp:ctx x:lv eq:rv];
    id<ORIntVar> res = [ORFactory boolVar:_model];
    [_model add:[ORFactory reify:_model boolean:res with:left eq:right]];
    return res;

@@ -2251,7 +2251,7 @@
          ORSelectorResult i;
          if(c){
            LOG(_level,1,@"maxAbs");
-            NSLog(@"ICI");
+//            NSLog(@"ICI");
             i = [select_abs max];
          }else{
             LOG(_level,1,@"maxOcc");
@@ -2336,7 +2336,7 @@
          ORSelectorResult i ;
          if(c){
             LOG(_level,1,@"maxAbs");
-            NSLog(@"ICI");
+//            NSLog(@"ICI");
             i = [select_abs max];
          }else{
             LOG(_level,1,@"maxOcc");
