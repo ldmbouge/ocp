@@ -354,7 +354,8 @@
       ORDouble coefq[1] = { -1.0 };
       MIPVariableI* res[1] = { [self concreteVar:c.res] };
       ORDouble coef[1] = { 1.0 };
-      MIPConstraintI* concreteCstr = [_MIPsolver createQuadEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
+//     gurobi handle only <= quadratic consttraint
+      MIPConstraintI* concreteCstr = [_MIPsolver createQuadGEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint: concreteCstr];
    }
