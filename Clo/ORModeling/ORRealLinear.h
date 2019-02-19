@@ -20,6 +20,7 @@
 -(void) addLinear: (id<ORRealLinear>) lts;
 -(void) scaleBy: (ORDouble) s;
 -(ORInt) size;
+-(ORBool) hasBounds;
 -(id<ORVar>) var: (ORInt) k;
 -(ORDouble) coef: (ORInt) k;
 -(ORDouble) independent;

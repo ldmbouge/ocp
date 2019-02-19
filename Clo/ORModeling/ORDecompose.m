@@ -3086,6 +3086,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          ORRealLinear* linRight  = [ORNormalizer realLinearFrom:right model:_model];
          vars[0] = [ORNormalizer realVarIn:linLeft for:_model];
          vars[1] = [ORNormalizer realVarIn:linRight for:_model];
+         coefs[1] = @(-1.0);
          [_model addConstraint:[ORFactory realSum:_model array:vars coef:coefs geq:0.f]];
          [linLeft release];
          [linRight release];

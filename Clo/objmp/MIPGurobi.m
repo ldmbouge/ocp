@@ -64,12 +64,16 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 -(void) addVariable: (MIPVariableI*) var;
 {
    char buf[64];
-   snprintf(buf,sizeof(buf),"x%d",[var idx]+1);
+   if([var getName] != nil)
+      snprintf(buf,sizeof(buf),"%s",[[var getName] UTF8String]);
+   else
+      snprintf(buf,sizeof(buf),"x%d",[var idx]+1);
    if ([var isInteger]) {
+      char type = ([var isBool]) ? GRB_BINARY :GRB_INTEGER;
       if ([var hasBounds])
-        GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_INTEGER,buf);
+        GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],type,buf);
       else
-         GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_INTEGER,buf);
+         GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,type,buf);
    }
    else if ([var hasBounds])
       GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_CONTINUOUS,buf);
@@ -118,7 +122,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    //int error = GRBsetintparam(GRBgetenv(_model), "LazyConstraints", 1); // Enable lazy constraints for bounds update
    //if(error != 0) assert(YES);
    GRBupdatemodel(_model);
-   [self printModelToFile: "/Users/ldm/Desktop/MIPgurobi.lp"];
+   [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.lp"];
+   [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.mps"];
    GRBsetcallbackfunc(_model, &gurobi_callback, self);
    _terminate = NO;
    
@@ -282,6 +287,15 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr
 {
+   if([cstr isQuad])
+      [self postQuadConstraint:(MIPQuadConstraint*)cstr];
+   else
+      [self postLinConstraint:cstr];
+   return ORSuspend;
+}
+
+-(void) postLinConstraint: (MIPConstraintI*) cstr
+{
    char buf[64];
    snprintf(buf,sizeof(buf),"c%d",[cstr idx]+1);
    switch ([cstr type]) {
@@ -297,7 +311,25 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
       default:
          break;
    }
-   return ORSuspend;
+}
+
+-(void) postQuadConstraint: (MIPQuadConstraint *) cstr
+{
+   char buf[64];
+   snprintf(buf,sizeof(buf),"c%d",[cstr idx]+1);
+   switch ([cstr type]) {
+      case MIPleq:
+         GRBaddqconstr(_model,[cstr size],[cstr col],[cstr coef], [cstr qSize], [cstr qRow], [cstr qCol], [cstr qCoef],GRB_LESS_EQUAL,[cstr rhs],buf);
+         break;
+      case MIPgeq:
+         GRBaddqconstr(_model,[cstr size],[cstr col],[cstr coef], [cstr qSize], [cstr qRow], [cstr qCol], [cstr qCoef],GRB_GREATER_EQUAL,[cstr rhs],buf);
+         break;
+      case MIPeq:
+         GRBaddqconstr(_model, [cstr size],[cstr col],[cstr coef], [cstr qSize], [cstr qRow], [cstr qCol], [cstr qCoef],GRB_EQUAL,[cstr rhs],buf);
+         break;
+      default:
+         break;
+   }
 }
 
 -(void) print

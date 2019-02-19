@@ -198,6 +198,10 @@ BOOL _alreadyAdded;
 {
    _result = c;
 }
+-(void) visitSumLEqualc: (id<ORSumLEqc>) c
+{
+   _result = c;
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    _result = c;

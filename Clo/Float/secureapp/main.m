@@ -6,21 +6,8 @@
 //
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgramFactory.h>
-#import <objcp/CPFactory.h>
-//#import "../ORModeling/ORLinearize.h"
-//#import "../ORModeling/ORFlatten.h"
-//#import "ORRunnable.h"
-//#import "ORLogicBenders.h"
-//#import "SSCPLPInstanceParser.h"
-//#import "CPEngineI.h"
-//#import "CPRunnable.h"
-//#import "MIPSolverI.h"
-//#import "MIPRunnable.h"
+#import <ORProgram/ORProgram.h>
 
 #define MAX_PATH 10
 #define alpha0 10
@@ -208,7 +195,7 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       //-----------DEFINITION OF THE INSTANCE----------//
-      NSArray* device = @[@"h8", @"h9", @"h2", @"h3", @"h1", @"h6", @"h7", @"h4", @"h5", @"sa7", @"sa5", @"sa20", @"g2", @"g1", @"sa9", @"sa8", @"sc4", @"sc1", @"sa6", @"sc3", @"sc2", @"h10", @"h11", @"h12", @"h13", @"h14", @"h15", @"h16", @"sa19", @"sa18", @"sa17", @"sa16", @"sa15", @"sa14", @"sa13", @"sa12", @"sa11", @"sa10"];
+      NSArray* device = @[@"h8",  @"h9",  @"h2",  @"h3",  @"h1",  @"h6",  @"h7",  @"h4",  @"h5",  @"sc1",  @"sa5",  @"sa20",  @"g2",  @"g1",  @"sa9",  @"sa8",  @"sc4",  @"sa7",  @"sa6",  @"sc3",  @"sc2",  @"h10",  @"h11",  @"h12",  @"h13",  @"h14",  @"h15",  @"h16",  @"sa19",  @"sa18",  @"sa17",  @"sa16",  @"sa15",  @"sa14",  @"sa13",  @"sa12",  @"sa11"];
       NSMutableDictionary* device2ID = [[NSMutableDictionary alloc] init];
       for(ORInt i = 0; i < [device count];i++){
          [device2ID setObject:@(i) forKey:device[i]];
@@ -263,61 +250,100 @@ int main(int argc, const char * argv[]) {
       [g addAdjacency:@[@8,@5,@14,@37]]; //node 36 ->  { 8 , 5 , 14 , 37 }
       [g addAdjacency:@[@16,@19,@35,@36]]; //node 37 ->  { 16 , 19 , 35 , 36}
       //----------END OF THE INSTANCE-----------//
-      NSLog(@"%@",g);
+      //      NSLog(@"%@",g);
       //all two successive values are src-dst pair
       //Thoses pairs are sorted in increasing order.
       //4-13 pair, means, 13-4 is a desiredFlow too
       //        allpath should be computed for each pair in the desiredFlows
       //        if we compute 4-13, it's easy to get 13-4 because the graph is without direction just reverse the 4-13 it's enought
-      NSArray* desiredFlowsOfA = @[@4,@13,@7,@13,@8,@13,@0,@13,@1,@12,@12,@23,@12,@24,@12,@27,@2,@4,@3,@7,@5,@8,@0,@6,@1,@21,@22,@23,@24,@25,@26,@27];
-      NSArray* desiredFlowsOfB = @[@2,@4,@3,@7,@5,@8,@0,@6,@1,@21,@22,@23,@24,@25,@26,@27,@2,@5,@2,@21,@2,@25,@2,@21,@2,@25,@3,@6,@3,@22,@3,@26];
+      NSArray* desiredFlowsOfA = @[@4,@13,@13,@4,@7,@13,@13,@7,@8,@13,@13,@8,@0,@13,@13,@0,@1,@12,@12,@1,@12,@23,@23,@12,@12,@24,@24,@12,@12,@27,@27,@12,@2,@4,@4,@2,@3,@7,@7,@3,@5,@8,@8,@5,@0,@6,@6,@0,@1,@21,@21,@1,@22,@23,@23,@22,@24,@25,@25,@24,@26,@27,@27,@26];
+      NSArray* desiredFlowsOfB = @[@2,@4,@4,@2,@3,@7,@7,@3,@5,@8,@8,@5,@0,@6,@6,@0,@1,@21,@21,@1,@22,@23,@23,@22,@24,@25,@25,@24,@26,@27,@27,@26,@2,@5,@5,@2,@2,@21,@21,@2,@2,@25,@25,@2,@3,@6,@6,@3,@3,@22,@22,@3,@3,@26,@26,@3];
+      
       NSArray* ec = [Graph getEC:device with:device2ID];
       NSArray* network = [Graph getNetworkDevice:device with:device2ID];
       
       
-      NSMutableArray* allpathA = [[NSMutableArray alloc] init];
-      NSMutableArray* allpathB = [[NSMutableArray alloc] init];
-      
+      //      NSMutableArray* allpathA = [[NSMutableArray alloc] init];
+      NSArray* allpathA = @[ @[ @[@4,@17,@18,@19,@13] , @[@4,@17,@10,@20,@13] , @[@4,@17,@18,@16,@33,@19,@13] , @[@4,@17,@18,@16,@37,@19,@13] , @[@4,@17,@18,@16,@29,@19,@13] , @[@4,@17,@18,@15,@10,@20,@13] , @[@4,@17,@10,@15,@18,@19,@13] , @[@4,@17,@10,@9,@30,@20,@13] , @[@4,@17,@10,@9,@14,@20,@13] , @[@4,@17,@10,@9,@34,@20,@13]  ],@[ @[@13,@19,@18,@17,@4] , @[@13,@20,@10,@17,@4] , @[@13,@19,@29,@16,@18,@17,@4] , @[@13,@19,@33,@16,@18,@17,@4] , @[@13,@19,@18,@15,@10,@17,@4] , @[@13,@19,@37,@16,@18,@17,@4] , @[@13,@20,@14,@9,@10,@17,@4] , @[@13,@20,@30,@9,@10,@17,@4] , @[@13,@20,@34,@9,@10,@17,@4] , @[@13,@20,@10,@15,@18,@17,@4]  ],@[ @[@7,@15,@10,@20,@13] , @[@7,@15,@18,@19,@13] , @[@7,@15,@10,@17,@18,@19,@13] , @[@7,@15,@10,@9,@30,@20,@13] , @[@7,@15,@10,@9,@14,@20,@13] , @[@7,@15,@10,@9,@34,@20,@13] , @[@7,@15,@18,@16,@33,@19,@13] , @[@7,@15,@18,@16,@37,@19,@13] , @[@7,@15,@18,@16,@29,@19,@13] , @[@7,@15,@18,@17,@10,@20,@13]  ],@[ @[@13,@19,@18,@15,@7] , @[@13,@20,@10,@15,@7] , @[@13,@19,@29,@16,@18,@15,@7] , @[@13,@19,@33,@16,@18,@15,@7] , @[@13,@19,@18,@17,@10,@15,@7] , @[@13,@19,@37,@16,@18,@15,@7] , @[@13,@20,@14,@9,@10,@15,@7] , @[@13,@20,@30,@9,@10,@15,@7] , @[@13,@20,@34,@9,@10,@15,@7] , @[@13,@20,@10,@17,@18,@15,@7]  ],@[ @[@8,@36,@14,@20,@13] , @[@8,@36,@37,@19,@13] , @[@8,@36,@14,@9,@30,@20,@13] , @[@8,@36,@14,@9,@34,@20,@13] , @[@8,@36,@14,@9,@10,@20,@13] , @[@8,@36,@14,@35,@37,@19,@13] , @[@8,@36,@37,@16,@33,@19,@13] , @[@8,@36,@37,@16,@18,@19,@13] , @[@8,@36,@37,@16,@29,@19,@13] , @[@8,@36,@37,@35,@14,@20,@13]  ],@[ @[@13,@19,@37,@36,@8] , @[@13,@20,@14,@36,@8] , @[@13,@19,@29,@16,@37,@36,@8] , @[@13,@19,@33,@16,@37,@36,@8] , @[@13,@19,@18,@16,@37,@36,@8] , @[@13,@19,@37,@35,@14,@36,@8] , @[@13,@20,@14,@35,@37,@36,@8] , @[@13,@20,@30,@9,@14,@36,@8] , @[@13,@20,@34,@9,@14,@36,@8] , @[@13,@20,@10,@9,@14,@36,@8]  ],@[ @[@0,@35,@14,@20,@13] , @[@0,@35,@37,@19,@13] , @[@0,@35,@14,@9,@30,@20,@13] , @[@0,@35,@14,@9,@34,@20,@13] , @[@0,@35,@14,@9,@10,@20,@13] , @[@0,@35,@14,@36,@37,@19,@13] , @[@0,@35,@37,@16,@33,@19,@13] , @[@0,@35,@37,@16,@18,@19,@13] , @[@0,@35,@37,@16,@29,@19,@13] , @[@0,@35,@37,@36,@14,@20,@13]  ],@[ @[@13,@19,@37,@35,@0] , @[@13,@20,@14,@35,@0] , @[@13,@19,@29,@16,@37,@35,@0] , @[@13,@19,@33,@16,@37,@35,@0] , @[@13,@19,@18,@16,@37,@35,@0] , @[@13,@19,@37,@36,@14,@35,@0] , @[@13,@20,@14,@36,@37,@35,@0] , @[@13,@20,@30,@9,@14,@35,@0] , @[@13,@20,@34,@9,@14,@35,@0] , @[@13,@20,@10,@9,@14,@35,@0]  ],@[ @[@1,@32,@34,@20,@12] , @[@1,@32,@33,@19,@12] , @[@1,@32,@34,@31,@33,@19,@12] , @[@1,@32,@34,@9,@30,@20,@12] , @[@1,@32,@34,@9,@14,@20,@12] , @[@1,@32,@34,@9,@10,@20,@12] , @[@1,@32,@33,@31,@34,@20,@12] , @[@1,@32,@33,@16,@18,@19,@12] , @[@1,@32,@33,@16,@37,@19,@12] , @[@1,@32,@33,@16,@29,@19,@12]  ],@[ @[@12,@19,@33,@32,@1] , @[@12,@20,@34,@32,@1] , @[@12,@19,@29,@16,@33,@32,@1] , @[@12,@19,@33,@31,@34,@32,@1] , @[@12,@19,@18,@16,@33,@32,@1] , @[@12,@19,@37,@16,@33,@32,@1] , @[@12,@20,@14,@9,@34,@32,@1] , @[@12,@20,@30,@9,@34,@32,@1] , @[@12,@20,@34,@31,@33,@32,@1] , @[@12,@20,@10,@9,@34,@32,@1]  ],@[ @[@23,@31,@33,@19,@12] , @[@23,@31,@34,@20,@12] , @[@23,@31,@33,@32,@34,@20,@12] , @[@23,@31,@33,@16,@18,@19,@12] , @[@23,@31,@33,@16,@37,@19,@12] , @[@23,@31,@33,@16,@29,@19,@12] , @[@23,@31,@34,@32,@33,@19,@12] , @[@23,@31,@34,@9,@30,@20,@12] , @[@23,@31,@34,@9,@14,@20,@12] , @[@23,@31,@34,@9,@10,@20,@12]  ],@[ @[@12,@19,@33,@31,@23] , @[@12,@20,@34,@31,@23] , @[@12,@19,@29,@16,@33,@31,@23] , @[@12,@19,@33,@32,@34,@31,@23] , @[@12,@19,@18,@16,@33,@31,@23] , @[@12,@19,@37,@16,@33,@31,@23] , @[@12,@20,@14,@9,@34,@31,@23] , @[@12,@20,@30,@9,@34,@31,@23] , @[@12,@20,@34,@32,@33,@31,@23] , @[@12,@20,@10,@9,@34,@31,@23]  ],@[ @[@24,@28,@30,@20,@12] , @[@24,@28,@29,@19,@12] , @[@24,@28,@30,@11,@29,@19,@12] , @[@24,@28,@30,@9,@14,@20,@12] , @[@24,@28,@30,@9,@34,@20,@12] , @[@24,@28,@30,@9,@10,@20,@12] , @[@24,@28,@29,@16,@33,@19,@12] , @[@24,@28,@29,@16,@18,@19,@12] , @[@24,@28,@29,@16,@37,@19,@12] , @[@24,@28,@29,@11,@30,@20,@12]  ],@[ @[@12,@19,@29,@28,@24] , @[@12,@20,@30,@28,@24] , @[@12,@19,@29,@11,@30,@28,@24] , @[@12,@19,@33,@16,@29,@28,@24] , @[@12,@19,@18,@16,@29,@28,@24] , @[@12,@19,@37,@16,@29,@28,@24] , @[@12,@20,@14,@9,@30,@28,@24] , @[@12,@20,@30,@11,@29,@28,@24] , @[@12,@20,@34,@9,@30,@28,@24] , @[@12,@20,@10,@9,@30,@28,@24]  ],@[ @[@27,@11,@30,@20,@12] , @[@27,@11,@29,@19,@12] , @[@27,@11,@30,@9,@14,@20,@12] , @[@27,@11,@30,@9,@34,@20,@12] , @[@27,@11,@30,@9,@10,@20,@12] , @[@27,@11,@30,@28,@29,@19,@12] , @[@27,@11,@29,@16,@33,@19,@12] , @[@27,@11,@29,@16,@18,@19,@12] , @[@27,@11,@29,@16,@37,@19,@12] , @[@27,@11,@29,@28,@30,@20,@12]  ],@[ @[@12,@19,@29,@11,@27] , @[@12,@20,@30,@11,@27] , @[@12,@19,@29,@28,@30,@11,@27] , @[@12,@19,@33,@16,@29,@11,@27] , @[@12,@19,@18,@16,@29,@11,@27] , @[@12,@19,@37,@16,@29,@11,@27] , @[@12,@20,@14,@9,@30,@11,@27] , @[@12,@20,@30,@28,@29,@11,@27] , @[@12,@20,@34,@9,@30,@11,@27] , @[@12,@20,@10,@9,@30,@11,@27]  ],@[ @[@4,@17,@2]  ],@[ @[@2,@17,@4]  ],@[ @[@7,@15,@3]  ],@[ @[@3,@15,@7]  ],@[ @[@8,@36,@5]  ],@[ @[@5,@36,@8]  ],@[ @[@0,@35,@6]  ],@[ @[@6,@35,@0]  ], @[ @[@1,@32,@21]  ], @[ @[@21,@32,@1]  ], @[ @[@23,@31,@22]  ], @[ @[@22,@31,@23]  ], @[ @[@24,@28,@25]  ], @[ @[@25,@28,@24]  ], @[ @[@27,@11,@26]  ],@[ @[@26,@11,@27]  ]];
+      //      NSMutableArray* allpathB = [[NSMutableArray alloc] init];
+      NSArray* allpathB = @[ @[ @[@4,@17,@2]  ], @[ @[@2,@17,@4]  ], @[ @[@7,@15,@3]  ], @[ @[@3,@15,@7]  ], @[ @[@8,@36,@5]  ], @[ @[@5,@36,@8]  ], @[ @[@0,@35,@6]  ], @[ @[@6,@35,@0]  ], @[ @[@1,@32,@21]  ], @[ @[@21,@32,@1]  ], @[ @[@23,@31,@22]  ], @[ @[@22,@31,@23]  ], @[ @[@24,@28,@25]  ], @[ @[@25,@28,@24]  ], @[ @[@27,@11,@26]  ], @[ @[@26,@11,@27]  ], @[ @[@2,@17,@18,@16,@37,@36,@5] , @[@2,@17,@18,@19,@37,@36,@5] , @[@2,@17,@10,@9,@14,@36,@5] , @[@2,@17,@10,@20,@14,@36,@5] , @[@2,@17,@18,@16,@33,@19,@37,@36,@5] , @[@2,@17,@18,@16,@37,@35,@14,@36,@5] , @[@2,@17,@18,@16,@29,@19,@37,@36,@5] , @[@2,@17,@18,@15,@10,@9,@14,@36,@5] , @[@2,@17,@18,@15,@10,@20,@14,@36,@5] , @[@2,@17,@18,@19,@29,@16,@37,@36,@5]  ], @[ @[@5,@36,@14,@9,@10,@17,@2] , @[@5,@36,@14,@20,@10,@17,@2] , @[@5,@36,@37,@16,@18,@17,@2] , @[@5,@36,@37,@19,@18,@17,@2] , @[@5,@36,@14,@9,@30,@20,@10,@17,@2] , @[@5,@36,@14,@9,@34,@20,@10,@17,@2] , @[@5,@36,@14,@9,@10,@15,@18,@17,@2] , @[@5,@36,@14,@35,@37,@16,@18,@17,@2] , @[@5,@36,@14,@35,@37,@19,@18,@17,@2] , @[@5,@36,@14,@20,@30,@9,@10,@17,@2]  ], @[ @[@2,@17,@18,@16,@33,@32,@21] , @[@2,@17,@18,@19,@33,@32,@21] , @[@2,@17,@10,@9,@34,@32,@21] , @[@2,@17,@10,@20,@34,@32,@21] , @[@2,@17,@18,@16,@33,@31,@34,@32,@21] , @[@2,@17,@18,@16,@37,@19,@33,@32,@21] , @[@2,@17,@18,@16,@29,@19,@33,@32,@21] , @[@2,@17,@18,@15,@10,@9,@34,@32,@21] , @[@2,@17,@18,@15,@10,@20,@34,@32,@21] , @[@2,@17,@18,@19,@29,@16,@33,@32,@21]  ], @[ @[@21,@32,@34,@9,@10,@17,@2] , @[@21,@32,@34,@20,@10,@17,@2] , @[@21,@32,@33,@19,@18,@17,@2] , @[@21,@32,@33,@16,@18,@17,@2] , @[@21,@32,@34,@31,@33,@19,@18,@17,@2] , @[@21,@32,@34,@31,@33,@16,@18,@17,@2] , @[@21,@32,@34,@9,@30,@20,@10,@17,@2] , @[@21,@32,@34,@9,@14,@20,@10,@17,@2] , @[@21,@32,@34,@9,@10,@15,@18,@17,@2] , @[@21,@32,@34,@20,@14,@9,@10,@17,@2]  ], @[ @[@2,@17,@18,@16,@29,@28,@25] , @[@2,@17,@18,@19,@29,@28,@25] , @[@2,@17,@10,@9,@30,@28,@25] , @[@2,@17,@10,@20,@30,@28,@25] , @[@2,@17,@18,@16,@33,@19,@29,@28,@25] , @[@2,@17,@18,@16,@37,@19,@29,@28,@25] , @[@2,@17,@18,@16,@29,@11,@30,@28,@25] , @[@2,@17,@18,@15,@10,@9,@30,@28,@25] , @[@2,@17,@18,@15,@10,@20,@30,@28,@25] , @[@2,@17,@18,@19,@29,@11,@30,@28,@25]  ], @[ @[@25,@28,@30,@9,@10,@17,@2] , @[@25,@28,@30,@20,@10,@17,@2] , @[@25,@28,@29,@16,@18,@17,@2] , @[@25,@28,@29,@19,@18,@17,@2] , @[@25,@28,@30,@11,@29,@16,@18,@17,@2] , @[@25,@28,@30,@11,@29,@19,@18,@17,@2] , @[@25,@28,@30,@9,@14,@20,@10,@17,@2] , @[@25,@28,@30,@9,@34,@20,@10,@17,@2] , @[@25,@28,@30,@9,@10,@15,@18,@17,@2] , @[@25,@28,@30,@20,@14,@9,@10,@17,@2]  ], @[ @[@3,@15,@10,@9,@14,@35,@6] , @[@3,@15,@10,@20,@14,@35,@6] , @[@3,@15,@18,@16,@37,@35,@6] , @[@3,@15,@18,@19,@37,@35,@6] , @[@3,@15,@10,@17,@18,@16,@37,@35,@6] , @[@3,@15,@10,@17,@18,@19,@37,@35,@6] , @[@3,@15,@10,@9,@30,@20,@14,@35,@6] , @[@3,@15,@10,@9,@14,@36,@37,@35,@6] , @[@3,@15,@10,@9,@34,@20,@14,@35,@6] , @[@3,@15,@10,@20,@14,@36,@37,@35,@6]  ], @[ @[@6,@35,@14,@9,@10,@15,@3] , @[@6,@35,@14,@20,@10,@15,@3] , @[@6,@35,@37,@16,@18,@15,@3] , @[@6,@35,@37,@19,@18,@15,@3] , @[@6,@35,@14,@9,@30,@20,@10,@15,@3] , @[@6,@35,@14,@9,@34,@20,@10,@15,@3] , @[@6,@35,@14,@9,@10,@17,@18,@15,@3] , @[@6,@35,@14,@36,@37,@16,@18,@15,@3] , @[@6,@35,@14,@36,@37,@19,@18,@15,@3] , @[@6,@35,@14,@20,@30,@9,@10,@15,@3]  ], @[ @[@3,@15,@10,@9,@34,@31,@22] , @[@3,@15,@10,@20,@34,@31,@22] , @[@3,@15,@18,@16,@33,@31,@22] , @[@3,@15,@18,@19,@33,@31,@22] , @[@3,@15,@10,@17,@18,@16,@33,@31,@22] , @[@3,@15,@10,@17,@18,@19,@33,@31,@22] , @[@3,@15,@10,@9,@30,@20,@34,@31,@22] , @[@3,@15,@10,@9,@14,@20,@34,@31,@22] , @[@3,@15,@10,@9,@34,@32,@33,@31,@22] , @[@3,@15,@10,@20,@14,@9,@34,@31,@22]  ], @[ @[@22,@31,@33,@19,@18,@15,@3] , @[@22,@31,@33,@16,@18,@15,@3] , @[@22,@31,@34,@9,@10,@15,@3] , @[@22,@31,@34,@20,@10,@15,@3] , @[@22,@31,@33,@32,@34,@9,@10,@15,@3] , @[@22,@31,@33,@32,@34,@20,@10,@15,@3] , @[@22,@31,@33,@19,@29,@16,@18,@15,@3] , @[@22,@31,@33,@19,@18,@17,@10,@15,@3] , @[@22,@31,@33,@19,@37,@16,@18,@15,@3] , @[@22,@31,@33,@16,@18,@17,@10,@15,@3]  ], @[ @[@3,@15,@10,@9,@30,@11,@26] , @[@3,@15,@10,@20,@30,@11,@26] , @[@3,@15,@18,@16,@29,@11,@26] , @[@3,@15,@18,@19,@29,@11,@26] , @[@3,@15,@10,@17,@18,@16,@29,@11,@26] , @[@3,@15,@10,@17,@18,@19,@29,@11,@26] , @[@3,@15,@10,@9,@30,@28,@29,@11,@26] , @[@3,@15,@10,@9,@14,@20,@30,@11,@26] , @[@3,@15,@10,@9,@34,@20,@30,@11,@26] , @[@3,@15,@10,@20,@14,@9,@30,@11,@26]  ], @[ @[@26,@11,@30,@9,@10,@15,@3] , @[@26,@11,@30,@20,@10,@15,@3] , @[@26,@11,@29,@16,@18,@15,@3] , @[@26,@11,@29,@19,@18,@15,@3] , @[@26,@11,@30,@9,@14,@20,@10,@15,@3] , @[@26,@11,@30,@9,@34,@20,@10,@15,@3] , @[@26,@11,@30,@9,@10,@17,@18,@15,@3] , @[@26,@11,@30,@28,@29,@16,@18,@15,@3] , @[@26,@11,@30,@28,@29,@19,@18,@15,@3] , @[@26,@11,@30,@20,@14,@9,@10,@15,@3]  ]];
       ORInt src;
       ORInt dst;
       NSMutableArray* tmp;
       id<ORModel> model = [ORFactory createModel];
       ORInt i = 0;
-      ORInt shift = (ORInt)[desiredFlowsOfA count]/2;
       //Still need to deal with inverse path D-S
-      id<ORIdArray> isFlowA = [ORFactory idArray:model range:RANGE(model, 0, (ORInt)[desiredFlowsOfA count] - 1)];
-      id<ORIdArray> flowA = [ORFactory idArray:model range:RANGE(model, 0, (ORInt)[desiredFlowsOfA count] - 1)];
+      id<ORIdArray> isFlowA = [ORFactory idArray:model range:RANGE(model, 0, ((ORInt)[desiredFlowsOfA count]/2) - 1 )];
+      id<ORIdArray> flowA = [ORFactory idArray:model range:RANGE(model, 0, ((ORInt)[desiredFlowsOfA count]/2) - 1)];
       for(ORInt s = 0,d = s + 1; d < [desiredFlowsOfA count]; s+=2, d+=2){
          src = [desiredFlowsOfA[s] intValue];
          dst = [desiredFlowsOfA[d] intValue];
          tmp = [Graph bfs:g source:src dest:dst maxpaths:MAX_PATH];
-         [allpathA addObject:tmp];
+         //         [allpathA addObject:tmp];
          isFlowA[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) domain:RANGE(model, 0, 1) names:[NSString stringWithFormat:@"isFlowA[%d]",i]];
-         flowA[i] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flowA[%d]",i]];
-         //inverse dst and src
-         isFlowA[i+shift] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) domain:RANGE(model, 0, 1) names:[NSString stringWithFormat:@"isFlowA[%d]",i+shift]];
-         flowA[i+shift] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flowA[%d]",i+shift]];
+         flowA[i] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"FlowA[%d]",i]];
          i++;
       }
       
       i = 0;
-      shift = (ORInt)[desiredFlowsOfB count]/2;
       ORInt nbPathB = 0;
-      id<ORIdArray> isFlowB = [ORFactory idArray:model range:RANGE(model, 0, (ORInt)[desiredFlowsOfB count] - 1)];
-      id<ORIdArray> flowB = [ORFactory idArray:model range:RANGE(model, 0, (ORInt)[desiredFlowsOfB count] - 1)];
+      id<ORIdArray> isFlowB = [ORFactory idArray:model range:RANGE(model, 0, ((ORInt)[desiredFlowsOfB count]/2) - 1)];
+      id<ORIdArray> flowB = [ORFactory idArray:model range:RANGE(model, 0, ((ORInt)[desiredFlowsOfB count]/2) - 1)];
       for(ORInt s = 0,d = s + 1; d < [desiredFlowsOfB count]; s+=2, d+=2){
          src = [desiredFlowsOfB[s] intValue];
          dst = [desiredFlowsOfB[d] intValue];
          tmp = [Graph bfs:g source:src dest:dst maxpaths:MAX_PATH];
          nbPathB += [tmp count] * 2;
-         [allpathB addObject:tmp];
+         //         [allpathB addObject:tmp];
          isFlowB[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) domain:RANGE(model, 0, 1) names:[NSString stringWithFormat:@"isFlowB[%d]",i]];
-         flowB[i] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flowB[%d]",i]];
-         //inverse dst and src
-         isFlowB[i+shift] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) domain:RANGE(model, 0, 1) names:[NSString stringWithFormat:@"isFlowB[%d]",i+shift]];
-         flowB[i+shift] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flowB[%d]",i+shift]];
+         flowB[i] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"FlowB[%d]",i]];
          i++;
       }
+      
+      for(ORInt i = 0; i < [isFlowA count]; i++){
+         for(ORInt j = 0; j < [isFlowA[i] count]; j++){
+            [model add:[isFlowA[i][j] geq:flowA[i][j]]];
+         }
+         [model add:[ORFactory sumbool:model array:isFlowA[i] eqi:1]];
+      }
+      
+      for(ORInt i = 0; i < [isFlowB count]; i++){
+         for(ORInt j = 0; j < [isFlowB[i] count]; j++){
+            [model add:[isFlowB[i][j] geq:flowB[i][j]]];
+         }
+         [model add:[ORFactory sumbool:model array:isFlowB[i] eqi:1]];
+      }
+      
+      id<ORIdArray> equiv = [ORFactory idArray:model range:RANGE(model, 0, (ORInt)([ec count])-1)];
+      id<ORRealVarArray> load = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt) [network count]- 1)];
+      id<ORRealVar> loadSquareSum = [ORFactory realVar:model name:@"loadSquareSum"];
+      for(ORInt i = 0; i < [network count];i++){
+         load[i] = [ORFactory realVar:model name:[NSString stringWithFormat:@"load[%@]",device[[network[i] intValue]]]];
+      }
+      
+      for(ORInt i = 0; i < [ec count]; i++){
+         equiv[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)([network count])-1)];
+         for(ORInt j = 0; j < [network count];j++){
+            equiv[i][j] = [ORFactory intVar:model domain:RANGE(model, 0, MAXINT) name:[NSString stringWithFormat:@"equiv[%@,%@]",device[[ec[i] intValue]],device[[network[j] intValue]]]];
+         }
+      }
+      
+      
+//      [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] square]) eq:loadSquareSum]];
+      
+      //demand constraints
+      //trafic A
+      for(ORInt s = 0, d = s + 1; d < [desiredFlowsOfA count]; s+=2,d+=2){
+         ORInt demand = [[demandA objectForKey:@[desiredFlowsOfA[s],desiredFlowsOfA[d]]] intValue];
+         [model add:[ORFactory sum:model array:flowA[s/2] geqi:demand]];
+      }
+      //demand constraints
+      //trafic B
+      for(ORInt s = 0, d = s + 1; d < [desiredFlowsOfB count]; s+=2,d+=2){
+         ORInt demand = [[demandB objectForKey:@[desiredFlowsOfB[s],desiredFlowsOfB[d]]] intValue];
+         [model add:[ORFactory sum:model array:flowB[s/2] geqi:demand]];
+      }
+      
       
       NSMutableDictionary* P_edgesA = [[NSMutableDictionary alloc] init];
       NSMutableDictionary* P_edgesB = [[NSMutableDictionary alloc] init];
@@ -380,98 +406,7 @@ int main(int argc, const char * argv[]) {
             }
          }
       }
-      
-      id<ORIntVarArray> equiv = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)([ec count] * [network count])) domain:RANGE(model, 0, 1) names:@"equiv"];
-      //        //equivClasses not used in original model
-      id<ORIntVarArray> pathLensA = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[flowA count]) domain:RANGE(model,0,MAXINT) names:@"pathLensA"];
-      id<ORIntVarArray> pathLensB = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[flowA count]) domain:RANGE(model,0,MAXINT) names:@"pathLensB"];
-      id<ORIntVar> pathLens = [ORFactory intVar:model domain:RANGE(model, 0, MAXINT) name:@"pathLens"];
-      id<ORIntVarArray> load = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt) [network count]- 1) domain:RANGE(model,0,MAXINT) names:@"load"];
-      id<ORIntVar> loadSquareSum = [ORFactory intVar:model  domain:RANGE(model, 0, MAXINT) name:@"loadSquareSum"];
-      
-      
-      for(ORInt i = 0; i < [isFlowA count]; i++){
-         for(ORInt j = 0; j < [isFlowA[i] count]; j++){
-            [model add:[isFlowA[i][j] geq:flowA[i][j]]];
-         }
-         [model add:[ORFactory sumbool:model array:isFlowA[i] eqi:1]];
-      }
-      
-      for(ORInt i = 0; i < [isFlowB count]; i++){
-         for(ORInt j = 0; j < [isFlowB[i] count]; j++){
-            [model add:[isFlowB[i][j] geq:flowB[i][j]]];
-         }
-         [model add:[ORFactory sumbool:model array:isFlowB[0] eqi:1]];
-      }
-      NSMutableArray* l;
-      id<ORDoubleArray> coefs;
-      for (ORInt i = 0; i < [network count]; i++){
-         ORInt n = [network[i] intValue];
-         l = [[NSMutableArray alloc] init];
-         for (ORInt path = 0; path < [P_nodesA[n] count]; path++){
-            ORInt r = [P_nodesA[n][path][0] intValue];
-            ORInt c = [P_nodesA[n][path][1] intValue];
-            [l addObject:flowA[r][c]];
-         }
-         for (ORInt path = 0; path < [P_nodesB[n] count]; path++){
-            ORInt r = [P_nodesB[n][path][0] intValue];
-            ORInt c = [P_nodesB[n][path][1] intValue];
-            [l addObject:flowB[r][c]];
-         }
-         coefs = [ORFactory doubleArray:model range:RANGE(model, 0, (ORInt)[l count]) value:1];
-         // little trick to get the sum equals to load[index] rewrite the sum by passing the result in the other side
-         [coefs set:-1.0 at:(ORInt)[l count]];
-         [l addObject:load[i]];
-         [model add:[ORFactory realSum:model array:(id<ORRealVarArray>)[ORFactory idArray:model array:l] coef:coefs eq:0.0]];
-         [l release];
-      }
-      [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] mul:load[i]]) eq:loadSquareSum]];
-      
-      for(ORInt i = 0; i < [flowA count]; i++){
-         [model add:[Sum(model, p, RANGE(model, 0, (ORInt)[flowA[i] count]-1),[flowA[i][p] mul:@([allpathA[i%([desiredFlowsOfA count]/2)][p] count])]) eq:pathLensA[i]]];
-      }
-      for(ORInt i = 0; i < [flowB count]; i++){
-         [model add:[Sum(model, p, RANGE(model, 0, (ORInt)[flowB[i] count]-1),[flowB[i][p] mul:@([allpathB[i%([desiredFlowsOfB count]/2)][p] count])]) eq:pathLensB[i]]];
-      }
-      [model add:[pathLens eq:[Sum(model,i,RANGE(model, 0, (ORInt)[pathLensA count] - 1), pathLensA[i]) plus:Sum(model,i,RANGE(model, 0, (ORInt)[pathLensB count]- 1), pathLensB[i])]]];
-      
-//      # equiv constraints
-      ORInt index=0;
-      NSMutableArray* equivlist;
-      for(ORInt i = 0; i < [ec count]; i++){
-         equivlist = [[NSMutableArray alloc] init];
-         for(ORInt j = 0; j < [network count]; j++){
-            ORInt node = [ec[i] intValue];
-            for(NSMutableArray* path in P_nodesA[node]){
-               ORInt ind0 = [path[0] intValue];
-               ORInt ind1 = [path[1] intValue];
-               [allpathA[ind0][ind1] containsObject:network[j]];
-               [equivlist addObject:isFlowA[ind0][ind1]];
-            }
-         }
-         [equivlist addObject:equiv[index]];
-         id<ORIntVarArray> equivArray = (id<ORIntVarArray>)[ORFactory idArray:model array:equivlist];
-         id<ORIntArray> coefs = [ORFactory intArray:model range:equivArray.range value:1];
-         [coefs setObject:@(-1) atIndexedSubscript:([coefs count] - 1)];
-         [model add:[ORFactory sum:model array:equivArray coef:coefs eq:0]];
-         [model add:[equiv[index++] geq:@(1)]];
-         [equivlist release];
-      }
-      
-      //demand constraints
-      //trafic A
-      for(ORInt s = 0, d = s + 1; d < [desiredFlowsOfA count]; s++,d++){
-         ORInt demand = [[demandA objectForKey:@[desiredFlowsOfA[s],desiredFlowsOfA[d]]] intValue];
-         [model add:[ORFactory sum:model array:flowA[s] eqi:demand]];
-      }
-      //demand constraints
-      //trafic B
-      for(ORInt s = 0, d = s + 1; d < [desiredFlowsOfB count]; s++,d++){
-         ORInt demand = [[demandA objectForKey:@[desiredFlowsOfB[s],desiredFlowsOfB[d]]] intValue];
-         [model add:[ORFactory sum:model array:flowB[s] eqi:demand]];
-      }
-      
-      //arc capacity
+      //capacity flow
       NSMutableArray* adj = nil;
       id<ORIntVarArray> arcFlow;
       ORInt sz = 0;
@@ -495,27 +430,90 @@ int main(int argc, const char * argv[]) {
                   ORInt ind1 = [indexFlow[1] intValue];
                   arcFlow[index++] = flowB[ind0][ind1];
                }
-               [model add:[ORFactory sum:model array:arcFlow geqi:100]];
+               [model add:[ORFactory sum:model array:arcFlow leqi:100]];
             }
          }
       }
       
-      //      NSLog(@"%@",model);
       
-      [allpathA release];
-      [allpathB release];
+      NSMutableArray* equivlist;
+      for(ORInt i = 0; i < [ec count]; i++){
+         ORInt node = [ec[i] intValue];
+         for(ORInt j = 0; j < [network count]; j++){
+            equivlist = [[NSMutableArray alloc] init];
+            for(NSMutableArray* path in P_nodesA[node]){
+               ORInt ind0 = [path[0] intValue];
+               ORInt ind1 = [path[1] intValue];
+               if([allpathA[ind0][ind1] containsObject:network[j]]){
+                  [equivlist addObject:isFlowA[ind0][ind1]];
+               }
+            }
+            for(NSMutableArray* path in P_nodesB[node]){
+               ORInt ind0 = [path[0] intValue];
+               ORInt ind1 = [path[1] intValue];
+               if([allpathB[ind0][ind1] containsObject:network[j]])
+                  [equivlist addObject:isFlowB[ind0][ind1]];
+            }
+            if([equivlist count] > 1){
+               [equivlist addObject:equiv[i][j]];
+               id<ORIntVarArray> equivArray = (id<ORIntVarArray>)[ORFactory idArray:model array:equivlist];
+               id<ORIntArray> coefs = [ORFactory intArray:model range:equivArray.range value:-1];
+               [coefs setObject:@(1) atIndexedSubscript:([coefs count] - 1)];
+//or is an affectation over variables
+               [model add:[ORFactory sum:model array:equivArray coef:coefs eq:0]];
+//               [model add:[equiv[i][j] geq:@(1)]];
+            }
+            [equivlist release];
+         }
+      }
+      
+      NSMutableArray* l;
+      id<ORDoubleArray> coefs;
+      for (ORInt i = 0; i < [network count]; i++){
+         ORInt n = [network[i] intValue];
+         l = [[NSMutableArray alloc] init];
+         for (ORInt path = 0; path < [P_nodesA[n] count]; path++){
+            ORInt r = [P_nodesA[n][path][0] intValue];
+            ORInt c = [P_nodesA[n][path][1] intValue];
+            [l addObject:flowA[r][c]];
+         }
+         for (ORInt path = 0; path < [P_nodesB[n] count]; path++){
+            ORInt r = [P_nodesB[n][path][0] intValue];
+            ORInt c = [P_nodesB[n][path][1] intValue];
+            [l addObject:flowB[r][c]];
+         }
+         coefs = [ORFactory doubleArray:model range:RANGE(model, 0, (ORInt)[l count]) value:-1];
+         // little trick to get the sum equals to load[index] rewrite the sum by passing the result in the other side
+         [coefs set:1.0 at:(ORInt)[l count]];
+         [l addObject:load[i]];
+         [model add:[ORFactory realSum:model array:(id<ORRealVarArray>)[ORFactory idArray:model array:l] coef:coefs eq:0.0]];
+         [l release];
+      }
+      //
+      id<ORExpr> e = Sum(model, p, RANGE(model, 0, (ORInt)[flowA[0] count]-1),[flowA[0][p] mul:@([allpathA[0][p] count] - 1)]);
+      for(ORInt i = 1; i < [flowA count]; i++){
+         e = [e plus:Sum(model, p, RANGE(model, 0, (ORInt)[flowA[i] count]-1),[flowA[i][p] mul:@([allpathA[i][p] count] - 1)])];
+      }
+      for(ORInt i = 0; i < [flowB count]; i++){
+         e = [e plus:Sum(model, p, RANGE(model, 0, (ORInt)[flowB[i] count]-1),[flowB[i][p] mul:@([allpathB[i][p] count] - 1)])];
+      }
+      
+      printf("%s", [NSString stringWithFormat: @"%@", [model constraints]].UTF8String);
+      
+      //            [allpathA release];
+      //            [allpathB release];
       [P_nodesA release];
       [P_nodesB release];
       [demandB release];
       [demandA release];
-      //        [model objective];
+      
+      [model minimize: [[e mul:@(alpha0)] plus:[loadSquareSum mul:@(alpha2)]]];
       
       
-      [model minimize: [[pathLens mul:@(alpha0)] plus:[loadSquareSum mul:@(alpha2)]]];
+      id<MIPProgram> mip = [ORFactory createMIPProgram: model];
+      [mip solve];
       
-      printf("%s", [NSString stringWithFormat: @"%@", [model constraints]].UTF8String);
       
-      id<MIPProgram> p = [ORFactory createMIPProgram:model];
       
    }
    return 0;

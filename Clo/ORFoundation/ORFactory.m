@@ -525,6 +525,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return nil;
 #endif
 }
++(id<ORIntVar>) intVar: (id<ORTracker>) model name:(NSString*) name
+{
+   return [[ORIntVarI alloc]  initORIntVarI: model domain:RANGE(model, 0, MAXINT) name:name];
+}
 +(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
@@ -816,11 +820,16 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       [o set:[ORFactory realVar:tracker low:low up:up name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
    return (id<ORRealVarArray>)o;
 }
-+(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range 
++(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names:(NSString*) name
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
-      [o set:[ORFactory realVar:tracker] at:k];
+      [o set:[ORFactory realVar:tracker name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
+   return (id<ORRealVarArray>)o;
+}
++(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range 
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    return (id<ORRealVarArray>)o;
 }
 
@@ -834,6 +843,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
       [o set: [ORFactory intVar: tracker domain:domain name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
+   return (id<ORIntVarArray>)o;
+}
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names:(NSString*) name
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set: [ORFactory intVar: tracker name:[NSString stringWithFormat:@"%@[%d]",name,k]] at:k];
    return (id<ORIntVarArray>)o;
 }
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain

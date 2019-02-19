@@ -48,6 +48,14 @@
 {
    return _terms[k]._coef;
 }
+-(ORBool) hasBounds
+{
+   for(ORInt k=0;k < _nb;k++) {
+      if(![(id<ORRealVar>)_terms[k]._var hasBounds])
+         return NO;
+   }
+   return YES;
+}
 -(ORDouble) fmin
 {
    ORDouble lb = _indep;
@@ -83,43 +91,14 @@
     return ((FLT_MAX) < ub) ? FLT_MAX : ub;
 }
 
--(void) addTerm: (id<ORVar>) x by: (ORDouble) c
+-(void)addTerm:(id<ORRealVar>)x by:(ORDouble)c
 {
-   if (c==0) return;
-   ORInt low = 0,up=_nb-1,mid=-1,kid;
-   ORInt xid = [x  getId];
-   BOOL found = NO;
-   while (low <= up) {
-      mid = (low+up)/2;
-      kid = [_terms[mid]._var getId];
-      found = kid == xid;
-      if (found)
-         break;
-      else if (xid < kid)
-         up = mid - 1;
-      else
-         low = mid + 1;
+   if (_nb >= _max) {
+      _terms = realloc(_terms, sizeof(struct ORRealTerm)*_max*2);
+      _max <<= 1;
    }
-   if (found) {
-      _terms[mid]._coef += c;
-   } else {
-      if (_nb >= _max) {
-         _terms = realloc(_terms, sizeof(struct ORRealTerm)*_max*2);
-         _max <<= 1;
-      }
-      if (mid==-1)
-         _terms[_nb++] = (struct ORRealTerm){x,c};
-      else {
-         if (xid > kid)
-            mid++;
-         for(int k=_nb-1;k>=mid;--k)
-            _terms[k+1] = _terms[k];
-         _terms[mid] = (struct ORRealTerm){x,c};
-         _nb += 1;
-      }
-   }
+   _terms[_nb++] = (struct ORRealTerm){x,c};
 }
-
 -(void) addLinear: (ORRealLinear*) lts
 {
    for(ORInt k=0;k < lts->_nb;k++) {

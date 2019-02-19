@@ -19,6 +19,7 @@
 
 
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker name:(NSString*) name;
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker bounds: (id<ORIntRange>) domain;
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain name:(NSString*) name;

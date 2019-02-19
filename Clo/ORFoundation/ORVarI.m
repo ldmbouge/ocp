@@ -260,7 +260,11 @@
 }
 -(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up name:(NSString*) name
 {
-   self = [self init:track low:low up:up];
+   self = [super init];
+   _tracker = track;
+   _domain = [ORFactory realRange:track low:low up:up];
+   _hasBounds = true;
+   [track trackVariable: self];
    _prettyname = (name != nil)?[NSString stringWithString:name]:nil;
    return self;
 }
@@ -292,6 +296,7 @@
 {
    self = [super init];
    _tracker = track;
+   _domain = [ORFactory realRange:track low:-INFINITY up:+INFINITY];
    _hasBounds = false;
    [track trackVariable: self];
    return self;
@@ -302,7 +307,7 @@
 }
 -(id<ORRealRange>) domain
 {
-   assert(_domain != NULL);
+//   assert(_domain != NULL);
    return _domain;
 }
 -(void) dealloc
@@ -325,6 +330,7 @@
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(NSString*) at:&_prettyname];
    return self;
 }
 -(ORBool) isVariable

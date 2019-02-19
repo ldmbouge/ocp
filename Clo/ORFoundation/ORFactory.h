@@ -124,6 +124,7 @@ PORTABLE_BEGIN
 +(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized:(ORBool)rand;
 +(id<ORSelector>) selectMin:(id<ORTracker>)tracker;
 +(id<ORIntVar>) reifyView:(id<ORTracker>) tracker var:(id<ORIntVar>) x eqi:(ORInt)c;
++(id<ORIntVar>) intVar: (id<ORTracker>) model name:(NSString*) name;
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker value: (ORInt) value;
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker domain: (id<ORIntRange>) r;
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker bounds: (id<ORIntRange>) r;
@@ -196,6 +197,7 @@ PORTABLE_BEGIN
 +(id<ORLDoubleVarArray>) ldoubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORLDouble)low up:(ORLDouble)up;
 +(id<ORLDoubleVarArray>) ldoubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 
++(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names:(NSString*) name;
 +(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
 +(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up names:(NSString*) name;
 +(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;

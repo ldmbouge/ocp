@@ -76,7 +76,7 @@
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (_gamma[v.getId] == NULL)
-      _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up]];
+      _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up] name:[v prettyname]];
 }
 -(void) visitAffineVar:(id<ORIntVar>)v
 {
@@ -104,9 +104,9 @@
    if (_gamma[v.getId] == NULL) {
       MIPVariableI* cv;
       if ([v hasBounds])
-         cv = [_MIPsolver createVariable: [v low] up: [v up]];
+         cv = [_MIPsolver createVariable: [v low] up: [v up] name:[v prettyname]];
       else
-         cv = [_MIPsolver createVariable];
+         cv = [_MIPsolver createVariableWithName: [v prettyname]];
       _gamma[v.getId] = cv;
    }
 }
@@ -320,7 +320,16 @@
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint:concreteCstr];
    }
-   
+}
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<MIPVariableArray> x = [self concreteArray:[c vars]];
+      id<ORDoubleArray> fa = [ORFactory doubleArray:_program range:[x range] value:1];
+      MIPConstraintI* concreteCstr = [_MIPsolver createLEQ:x coef:fa cst:-[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
 }
 -(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
 {
@@ -349,6 +358,11 @@
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint: concreteCstr];
    }
+}
+
+-(void) visitRealSquare:(id<ORSquare>)c
+{
+   [self visitSquare:c];
 }
 
 

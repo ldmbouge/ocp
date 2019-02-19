@@ -30,15 +30,19 @@
    int*                  _cstrIdx;
    ORDouble*              _coef;
    bool                  _hasBounds;
+   NSString*             _name;
 }
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver;
+-(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver  name:(NSString*) name;
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver low: (ORDouble) low up: (ORDouble) up;
+-(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver low: (ORDouble) low up: (ORDouble) up name:(NSString*)name;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
 
+-(NSString*) getName;
 -(void) addConstraint: (MIPConstraintI*) c coef: (ORDouble) coef;
 -(void) delConstraint: (MIPConstraintI*) c;
 -(void) addObjective: (MIPObjectiveI*) obj coef: (ORDouble) coef;
@@ -49,11 +53,14 @@
 -(ORInt) nb;
 -(NSString*)description;
 -(ORBool) isInteger;
+-(ORBool) isBool;
 @end
 
 @interface MIPIntVariableI : MIPVariableI
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver;
+-(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver name:(NSString*) name;
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORDouble) low up: (ORDouble) up;
+-(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORDouble) low up: (ORDouble) up name:(NSString*) name;
 -(ORBool) isInteger;
 -(ORInt) intValue;
 -(NSString*) description;
@@ -149,6 +156,7 @@
 }
 -(MIPConstraintI*) initMIPQuadConstraint: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs;
 -(ORInt) qSize;
+-(MIPVariableI***) qVar;
 -(ORDouble*) qCoef;
 -(ORInt*) qCol;
 -(ORInt*) qRow;
@@ -260,10 +268,13 @@
 
 +(MIPSolverI*)      create;
 -(MIPVariableI*)    createVariable;
+-(MIPVariableI*) createVariableWithName :(NSString*) name;
 -(MIPVariableI*)    createVariable: (ORDouble) low up: (ORDouble) up;
+-(MIPVariableI*)     createVariable: (ORDouble) low up: (ORDouble) up name:(NSString*) name;
 -(MIPParameterI*) createParameter;
 -(MIPIntVariableI*) createIntVariable;
 -(MIPIntVariableI*) createIntVariable: (ORDouble) low up: (ORDouble) up;
+-(MIPIntVariableI*) createIntVariable: (ORDouble) low up: (ORDouble) up name:(NSString*) name;
 -(MIPLinearTermI*)  createLinearTerm;
 
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
