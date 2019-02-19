@@ -48,16 +48,16 @@
 @interface KnapsackBDDState : CustomBDDState {
 @protected
     int _weightSum;
-    int _capacity;
-    int _capacityNumDigits;
+    id<ORIntVar> _capacity;
+//    int _capacityNumDigits;
     id<ORIntArray> _weights;
 }
--(id) initClassState:(int)domainMin domainMax:(int)domainMax capacity:(int)capacity weights:(id<ORIntArray>)weights;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax capacity:(id<ORIntVar>)capacity weights:(id<ORIntArray>)weights;
 -(int) weightSum;
 -(int) getWeightForVariable:(int)variable;
 -(int*) getWeightsForVariable:(int)variable;
--(int) capacity;
--(int) capacityNumDigits;
+-(id<ORIntVar>) capacity;
+//-(int) capacityNumDigits;
 -(id<ORIntArray>) weights;
 @end
 

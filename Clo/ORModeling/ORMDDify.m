@@ -46,10 +46,39 @@
 }
 
 
-+(id<ORIntVarArray>) mergeIntVarArray:(id<ORIntVarArray>)x with:(id<ORIntVarArray>)y {
++(id<ORIntVarArray>) mergeIntVarArray:(id<ORIntVarArray>)x with:(id<ORIntVarArray>)y tracker:(id<ORTracker>) t {
     NSMutableArray<id<ORIntVar>> *mergedTemp = [[NSMutableArray alloc] init];
     NSMutableArray<id<ORIntVar>> *sortedX = [[NSMutableArray alloc] init];
     NSMutableArray<id<ORIntVar>> *sortedY = [[NSMutableArray alloc] init];
+    ORInt size = 0;
+    
+    if (x == NULL) {
+        for (int i = 1; i <= [y count]; i++) {
+            [sortedY addObject: y[i]];
+        }
+        [self sortIntVarArray:sortedY first:0 last:(ORInt)([y count] - 1)];
+        size = (ORInt)[y count];
+        id<ORIntRange> range = RANGE(t,1,size);
+        id<ORIntVarArray> merged = [ORFactory intVarArray:t range:range];
+        for (int i = 1; i <= size; i++) {
+            [merged setObject:sortedY[i - 1] atIndexedSubscript:i];
+        }
+        return merged;
+    }
+    if (y == NULL) {
+        for (int i = 1; i <= [x count]; i++) {
+            [sortedX addObject: x[i]];
+        }
+        [self sortIntVarArray:sortedX first:0 last:(ORInt)([x count] - 1)];
+        size = (ORInt)[x count];
+        id<ORIntRange> range = RANGE(t,1,size);
+        id<ORIntVarArray> merged = [ORFactory intVarArray:t range:range];
+        for (int i = 1; i <= size; i++) {
+            [merged setObject:sortedX[i - 1] atIndexedSubscript:i];
+        }
+        return merged;
+    }
+    
     for (int i = 1; i <= [x count]; i++) {
         [sortedX addObject: x[i]];
     }
@@ -59,7 +88,7 @@
     [self sortIntVarArray:sortedX first:0 last:(ORInt)([x count] - 1)];
     [self sortIntVarArray:sortedY first:0 last:(ORInt)([y count] - 1)];
     
-    ORInt size = 0, xIndex = 0, yIndex = 0;
+    ORInt xIndex = 0, yIndex = 0;
     
     while (xIndex < [x count] || yIndex < [y count]) {
         if (xIndex < [x count] && (yIndex >= [y count] || sortedX[xIndex] < sortedY[yIndex])) {
@@ -77,8 +106,8 @@
             size++;
         }
     }
-    id<ORIntRange> range = RANGE([x tracker],1,size);
-    id<ORIntVarArray> merged = [ORFactory intVarArray:[x tracker] range:range];
+    id<ORIntRange> range = RANGE(t,1,size);
+    id<ORIntVarArray> merged = [ORFactory intVarArray:t range:range];
     for (int i = 1; i <= size; i++) {
         [merged setObject:mergedTemp[i - 1] atIndexedSubscript:i];
     }
@@ -206,16 +235,16 @@
 }
 @end
 
-@implementation KnapsackBDDState
--(id) initClassState:(int)domainMin domainMax:(int)domainMax capacity:(int)capacity weights:(id<ORIntArray>)weights {
+@implementation KnapsackBDDState    //Not fully implemented yet
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax capacity:(id<ORIntVar>)capacity weights:(id<ORIntArray>)weights {
     self = [super initClassState:domainMin domainMax:domainMax];
     _capacity = capacity;
-    _capacityNumDigits = 0;
-    int tempCapacity = _capacity;
-    while (tempCapacity > 0) {
-        _capacityNumDigits++;
-        tempCapacity/=10;
-    }
+//    _capacityNumDigits = 0;
+//    int tempCapacity = [_capacity up];
+//    while (tempCapacity > 0) {
+//        _capacityNumDigits++;
+//        tempCapacity/=10;
+//    }
     _weights = weights;
     return self;
 }
@@ -223,7 +252,7 @@
 -(id) initRootState:(KnapsackBDDState*)classState variableIndex:(int)variableIndex {
     self = [super initRootState:classState variableIndex:variableIndex];
     _capacity = [classState capacity];
-    _capacityNumDigits = [classState capacityNumDigits];
+//    _capacityNumDigits = [classState capacityNumDigits];
     _weights = [classState weights];
     _weightSum = 0;
     return self;
@@ -231,7 +260,7 @@
 -(id) initState:(KnapsackBDDState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex {
     self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
     _capacity = [parentNodeState capacity];
-    _capacityNumDigits = [parentNodeState capacityNumDigits];
+//    _capacityNumDigits = [parentNodeState capacityNumDigits];
     _weights = [parentNodeState weights];
     [self writeStateFromParent:parentNodeState assigningValue:edgeValue];
     return self;
@@ -243,13 +272,12 @@
     if (value == 1) {
         _weightSum = [parent weightSum] + [self getWeightForVariable:variable];
         for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-            _state[stateIndex] = parentState[stateIndex] && ((_weightSum + [self getWeightForVariable:stateIndex]) <= _capacity);
+            _state[stateIndex] = parentState[stateIndex] && ((_weightSum + [self getWeightForVariable:stateIndex]) <= [_capacity up]);
 //            _stateChar[stateIndex - _domainMin] = _state[stateIndex] ? '1':'0';
         }
-        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
+//        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
 //            _stateChar[_domainMax + 1 + (_capacityNumDigits - digit) - _domainMin] = (char)((int)(_weightSum/pow(10,digit-1)) % 10 + (int)'0');
-            
-        }
+//        }
     }
     else {
         _weightSum = [parent weightSum];
@@ -257,15 +285,15 @@
             _state[stateIndex] = parentState[stateIndex];
 //            _stateChar[stateIndex - _domainMin] = _state[stateIndex] ? '1':'0';
         }
-        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
+//        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
 //            _stateChar[_domainMax + digit - _domainMin] = [parent stateChar][_domainMax + digit - _domainMin];
-        }
+//        }
     }
     _state[variable] = false;
 //    _stateChar[variable - _domainMin] = '0';
 }
 -(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
-    if (value == 1 && (_weightSum + [self getWeightForVariable:variable] + [self getWeightForVariable:toVariable]) > _capacity && _state[variable]) {
+    if (value == 1 && (_weightSum + [self getWeightForVariable:variable] + [self getWeightForVariable:toVariable]) > [_capacity up] && _state[variable]) {
         return [[NSArray alloc] initWithObjects:[NSNumber numberWithInt: variable], nil];
     } else {
         return [[NSArray alloc] init];
@@ -293,8 +321,8 @@
     values[1] = [self getWeightForVariable:variable];
     return values;
 }
--(int) capacity { return _capacity; }
--(int) capacityNumDigits { return _capacityNumDigits; }
+-(id<ORIntVar>) capacity { return _capacity; }
+//-(int) capacityNumDigits { return _capacityNumDigits; }
 -(id<ORIntArray>) weights { return _weights; }
 @end
 
@@ -709,7 +737,7 @@ static id<ORIntVarArray> _variables;
     self = [super init];
     _into = into;
     _mddConstraints = [[NSMutableArray alloc] init];
-    _variables = (id<ORIntVarArray>)[[ORObject alloc] init];
+    _variables = NULL;
     _maximize = false;
     _hasObjective = false;
     return self;
@@ -748,6 +776,7 @@ static id<ORIntVarArray> _variables;
     } else {
         mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:relaxed size:width stateClass:[JointState class]];
     }
+    [_into trackConstraintInGroup: mddConstraint];
     [_into addConstraint: mddConstraint];
     
     //if ([_mddConstraints count] == 1) {
@@ -766,11 +795,7 @@ static id<ORIntVarArray> _variables;
     id<ORIntVarArray> cstrVars = (id<ORIntVarArray>)[cstr array];
     [_mddConstraints addObject: cstr];
     [JointState addStateClass: [[AllDifferentMDDState alloc] initClassState:[cstrVars low] domainMax:[cstrVars up]] withVariables:cstrVars];
-    if ([_mddConstraints count] == 1) {
-        _variables = cstrVars;
-    } else {
-        _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars];
-    }
+    _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker: _into];
     //for (int variableIndex = 1; variableIndex <= [variables count]; variableIndex++) {
     //    id<ORIntVar> variable = (id<ORIntVar>)[variables at: variableIndex];
     //    if (![_variables contains: variable]) {
@@ -789,11 +814,7 @@ static id<ORIntVarArray> _variables;
                 withVariables:cstrVars]; //minDomain and maxDomain are poor names as shown here
     //why is capacity a variable for ORKnapsack?
     
-    if ([_mddConstraints count] == 1) {
-        _variables = cstrVars;
-    } else {
-        _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars];
-    }
+    _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker: _into];
 }
 -(void) visitAmong:(id<ORAmong>)cstr
 {
@@ -806,11 +827,7 @@ static id<ORIntVarArray> _variables;
                                                           upperBound:[cstr up]
                                                              numVars:(ORInt)[cstrVars count]]
                 withVariables:cstrVars];
-    if ([_mddConstraints count] == 1) {
-        _variables = cstrVars;
-    } else {
-        _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars];
-    }
+    _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker: _into];
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {

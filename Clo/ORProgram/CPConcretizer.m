@@ -1849,7 +1849,8 @@
 -(void) visitCustomMDD: (id<ORCustomMDD>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
-        id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
+        id<ORIntVarArray>   or = [cstr vars];
+        id<CPIntVarArray>    a = [self concreteArray: (id)or];
         bool relaxed           = [cstr relaxed];
         ORInt relaxationSize   = [cstr relaxationSize];
         Class stateClass      = [cstr stateClass];

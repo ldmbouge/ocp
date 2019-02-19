@@ -228,7 +228,7 @@
     return _numParents._val;
 }
 -(void) addParent: (Node*) parent {
-    assignTRId(_parents[_numParents._val], parent,_trail);
+    assignTRId(&_parents[_numParents._val], parent,_trail);
     assignTRInt(&_numParents,_numParents._val+1,_trail);
     if (_objectiveValues != nil) {
         [self updateBoundsWithParent: parent];
@@ -364,7 +364,7 @@
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
         if ((Node*)_parents[parentIndex] == parent) {
             assignTRInt(&_numParents,_numParents._val-1,_trail);
-            assignTRId(_parents[parentIndex], *_parents[_numParents._val],_trail);
+            assignTRId(&_parents[parentIndex], _parents[_numParents._val],_trail);
             parentIndex--;
         }
     }
@@ -404,7 +404,7 @@
 }
 -(void) takeParentsFrom:(Node*)other {
     for (int parentIndex = 0; parentIndex < [other numParents]; parentIndex++) {
-        Node* parent = *[other parents][parentIndex];
+        Node* parent = (Node*)[other parents][parentIndex];
         
         int child_index = [parent findChildIndex: other];
         while(child_index != -1) {
@@ -946,7 +946,7 @@
     int numParents = [node numParents];
     
     for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
-        Node* parent = *[node parents][parentIndex];
+        Node* parent = (Node*)[node parents][parentIndex];
         
         parentLayer = [self layerIndexForVariable:[parent value]];
         int child_index = [parent findChildIndex: node];
