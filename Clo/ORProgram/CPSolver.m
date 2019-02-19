@@ -4656,13 +4656,13 @@ static ABS_FUN funChoice;
 {
    if(c > 0.0 && c < 1.0){
       _nb++;
+      if(c > _max){
+         [self setChoice:v];
+      }
       _min = minFlt(c,_min);
       _max = maxFlt(c,_max);
       _pquantity *= c;
       _quantity += c;
-      if(c > _quantity){
-         [self setChoice:v];
-      }
    }
 }
 -(void) setChoice:(CPFloatVarI*) c
