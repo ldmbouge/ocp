@@ -47,6 +47,8 @@ PORTABLE_BEGIN
 +(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) tracker;
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) tracker range: (id<ORIntRange>) r;
 +(id<ORRandomPermutation>) randomPermutation:(id<ORIntIterable>)onSet;
++(id<OROSet>) objectSet;
++(id<OROSet>) objectSet:(id<ORTracker>)tracker;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)guard;
 +(id<ORGroup>)group:(id<ORTracker>)model;

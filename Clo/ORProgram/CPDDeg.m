@@ -55,7 +55,7 @@
 {
    id<CPIntVar> x = (id<CPIntVar>)ox;
    __block double h = 0.0;
-   NSSet* theConstraints = _cv[_map[[x getId]]];   
+   id<OROSet> theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
       h += ([obj nbUVars] - 1 > 0);
    }
@@ -74,7 +74,7 @@
    ORUInt maxID = 0;
    for(int k=0;k<len;k++) 
       maxID = max(maxID,[t at:k].getId);
-   _cv = malloc(sizeof(NSSet*)*len);
+   _cv = malloc(sizeof(id<OROSet>)*len);
    _map = malloc(sizeof(ORUInt)*(maxID+1));
    memset(_cv,sizeof(NSSet*)*len,0);
    memset(_map,sizeof(ORUInt)*(maxID+1),0);   

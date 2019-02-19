@@ -6520,8 +6520,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    //Check to see that upper (zero) bits are not set to 1
    ORUInt xWordLength = [_x getWordLength];
    ORUInt yWordLength = [_y getWordLength];
-   ORUInt xBitLength = [_x bitLength];
-   ORUInt yBitLength = [_y bitLength];
+    //ORUInt xBitLength = [_x bitLength];
+   //ORUInt yBitLength = [_y bitLength];
    //   ORUInt wordDiff = yWordLength - xWordLength;
     
     ULRep xr = getULVarRep(_x);
@@ -8651,7 +8651,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    _x = x;
    _y = y;
    _z = z;
-   ORUInt bitLength= [_x bitLength];
+   //ORUInt bitLength= [_x bitLength];
    ORUInt wordLength = [_x getWordLength];
    _state = malloc(sizeof(ORUInt*)*6);
    _xWhenZSet = malloc(sizeof(ORUInt*)*wordLength);
@@ -9452,7 +9452,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 #endif
    
    ORUInt wordLength = [_x getWordLength];
-   ORUInt bitLength = [_x bitLength];
+   //ORUInt bitLength = [_x bitLength];
    ORUInt zWordLength = [_z getWordLength];
 //   ORUInt zBitLength = [_z bitLength];
    
@@ -14332,7 +14332,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 #endif
     
    ORUInt wordLength = [_x getWordLength];
-   ORUInt bitLength = [_x bitLength];
+   //ORUInt bitLength = [_x bitLength];
    
    ORUInt* newXUp = alloca(sizeof(ORUInt)*wordLength);
    ORUInt* newXLow  = alloca(sizeof(ORUInt)*wordLength);
@@ -14774,7 +14774,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORUInt*   up;
    ORUInt*   low;
-   ORUInt*   one;
+   //ORUInt*   one;
 
    up = alloca(sizeof(ORUInt)*wordLength);
    low = alloca(sizeof(ORUInt)*wordLength);

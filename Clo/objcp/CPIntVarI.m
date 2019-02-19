@@ -149,7 +149,7 @@ static void deallocNetwork(CPEventNetwork* net)
     freeList(net->_valueClosureQueue[0]);
 }
 
-static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
+static id<OROSet> collectConstraints(CPEventNetwork* net,id<OROSet> rv)
 {
    collectList(net->_boundsEvt[0],rv);
    collectList(net->_bindEvt[0],rv);
@@ -309,7 +309,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method updateMin not defined"];
 }
--(NSMutableSet*) constraints
+-(id<OROSet>) constraints
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method constraint not defined"];
    return NULL;
@@ -510,9 +510,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _isBool;
 }
--(NSMutableSet*) constraints
+-(id<OROSet>) constraints
 {
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:2];
+   id<OROSet> rv = [ORFactory objectSet];
    return rv;
 }
 // PVH: I hate these guys; pollute the interface
@@ -773,9 +773,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
    return d;
 }
--(NSMutableSet*) constraints
+-(id<OROSet>) constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[[NSMutableSet alloc] initWithCapacity:2] autorelease]);
+   id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
    return rv;
 }
 -(CPBitDom*) flatDomain
@@ -2271,7 +2271,7 @@ void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender)
    free(_pos);
    [super dealloc];
 }
--(NSMutableSet*) constraints
+-(id<OROSet>) constraints
 {
    assert(FALSE);
    return nil;

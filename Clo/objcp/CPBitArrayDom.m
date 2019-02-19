@@ -374,7 +374,7 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
-   ORInt wordLengthInBits = _wordLength * BITSPERWORD;
+   //ORInt wordLengthInBits = _wordLength * BITSPERWORD;
    
    for(int i=_wordLength-1; i>=0; i--){
       //NSLog(@"%d leading zeroes in %x\n",__builtin_clz((_low[i]._val^_up[i]._val)), (_low[i]._val^_up[i]._val));

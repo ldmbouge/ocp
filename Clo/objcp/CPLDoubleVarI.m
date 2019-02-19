@@ -119,7 +119,7 @@ static void deallocNetwork(CPLDoubleEventNetwork* net)
     freeList(net->_maxEvt);
 }
 
-static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet* rv)
+static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
     collectList(net->_bindEvt,rv);
     collectList(net->_minEvt,rv);
@@ -160,9 +160,9 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     return [[CPLDoubleVarSnapshot alloc] init: self name: id];
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+    id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
     return rv;
 }
 -(ORInt)degree
@@ -429,9 +429,9 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     return [_engine tracker];
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+    id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
     return rv;
 }
 - (ORInt)domsize

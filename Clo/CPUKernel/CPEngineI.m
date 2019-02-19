@@ -779,6 +779,12 @@ ORStatus propagateFDM(CPEngineI* fdm)
    return _state == CPClosed;
 }
 
+- (ORUInt)getBackjumpLevel {
+    assert(false);
+    return 0;
+}
+
+
 -(id<ORInformer>) propagateFail
 {
    if (_propagFail == nil)

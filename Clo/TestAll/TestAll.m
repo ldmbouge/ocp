@@ -258,4 +258,20 @@
       }];
    }
 }
+
+-(void) testObjectSet {
+    @autoreleasepool {
+        id<ORModel> m = [ORFactory createModel];
+        id<OROSet> s = [ORFactory objectSet];
+        id<ORIntVarArray> x = [ORFactory intVarArray:m range:RANGE(m,0,10) domain:RANGE(m,0,10)];
+        for(id<ORIntVar> v in x)
+            [s add:v];
+        NSLog(@"The set: %@",s);
+        for(id<ORIntVar> v in x)
+            [s add:v];
+        NSLog(@"The set: %@",s);
+        for(id<ORObject> o in s)
+            NSLog(@"Element: %@",o);
+    }
+}
 @end

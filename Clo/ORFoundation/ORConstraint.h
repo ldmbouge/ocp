@@ -43,7 +43,7 @@
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
--(NSArray*) constraints;
+-(id<OROSet>) constraints;
 -(NSArray*) mutables;
 -(NSArray*) immutables;
 @end

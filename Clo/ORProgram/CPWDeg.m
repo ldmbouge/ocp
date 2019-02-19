@@ -26,8 +26,8 @@
    ORUInt            _nbc;
    ORUInt            _nbv;
    ORUInt*             _w;
-   NSSet* __strong*   _cv;
-   id*              _vOfC;
+   id<OROSet> __strong*   _cv;
+   id*                  _vOfC;
 }
 -(CPWDeg*)initCPWDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
@@ -83,7 +83,7 @@
 -(ORDouble) varOrdering:(id<CPIntVar>)x
 {
    __block double h = 0.0;
-   NSSet* theConstraints = _cv[_map[x.getId]];
+   id<OROSet> theConstraints = _cv[_map[x.getId]];
    for(id obj in theConstraints) {
       ORInt cid = [obj getId];
       assert(cid >=0 && cid < _nbc);

@@ -219,7 +219,7 @@ void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender);
 @interface CPLiterals : NSObject<CPIntVarNotifier> 
 -(id) initCPLiterals:(CPIntVar*)ref;
 -(void) dealloc;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 -(void) addPositive:(CPEQLitView*)x forValue:(ORInt)value;
 -(CPEQLitView*) positiveForValue:(ORInt)value;
 -(void) bindEvt:(id<CPDom>)sender;

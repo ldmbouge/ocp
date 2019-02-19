@@ -74,9 +74,9 @@ static void deallocNetwork(CPISVNetwork* net)
 {
    return (id)_engine;
 }
--(NSSet*)constraints
+-(id<OROSet>)constraints
 {
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:2];
+   id<OROSet> rv = [ORFactory objectSet];
    return rv;
 }
 -(ORInt)degree

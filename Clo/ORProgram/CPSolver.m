@@ -3643,7 +3643,7 @@
 }
 -(void)  assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
-   [_gamma[x.getId] assignRelaxationValue: f];
+   [(id<CPRealVar>)_gamma[x.getId] assignRelaxationValue: f];
 }
 -(ORBool) bound: (id<ORVar>) x
 {
@@ -3677,7 +3677,7 @@
 -(ORUInt)  countMemberedConstraints:(id<ORVar>) x
 {
    CPFloatVarI* cx = _gamma[[x getId]];
-   NSMutableSet* cstr = [cx constraints];
+   id<OROSet> cstr = [cx constraints];
    ORUInt cpt = (ORUInt) [cstr count];
    [cstr release];
    return cpt;
@@ -3751,7 +3751,7 @@
    @autoreleasepool {
       for (id<ORFloatVar> x in vars) {
          cx = _gamma[[x getId]];
-         NSMutableSet* cstr = [cx constraints];
+         id<OROSet> cstr = [cx constraints];
          for(id<CPConstraint> c in cstr){
             if([c canLeadToAnAbsorption]){
                v = [c varSubjectToAbsorption:cx];
@@ -3765,6 +3765,7 @@
             }
          }
          i++;
+         
       }
    }
    
@@ -3774,7 +3775,7 @@
 -(ORDouble) computeAbsorptionRate:(id<ORVar>) x
 {
    CPFloatVarI* cx = _gamma[[x getId]];
-   NSMutableSet* cstr = [cx constraints];
+   id<OROSet> cstr = [cx constraints];
    ORDouble rate = 0.0;
    id<CPFloatVar> v;
    for(id<CPConstraint> c in cstr){
@@ -3790,7 +3791,7 @@
 -(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>) vs withLimit:(ORDouble) limit
 {
    NSMutableArray *res = [[NSMutableArray alloc] init];
-   NSSet* cstr = nil;
+   id<OROSet> cstr = nil;
    id<CPFloatVar> cx = nil;
    id<CPFloatVar> v = nil;
    ORDouble absV = 0.0;
@@ -3821,7 +3822,7 @@
 -(ORDouble)  cancellationQuantity:(id<ORVar>) x
 {
    CPFloatVarI* cx = _gamma[[x getId]];
-   NSMutableSet* cstr = [cx constraints];
+   id<OROSet> cstr = [cx constraints];
    ORDouble rate = 0.0;
    for(id<CPConstraint> c in cstr){
       if([c canLeadToAnAbsorption]){
@@ -3857,12 +3858,11 @@
    return [((id<CPRealVar>)_gamma[x.getId]) max];
 }
 
--(NSSet*) constraints: (id<ORVar>)x
+-(id<OROSet>) constraints: (id<ORVar>)x
 {
    return [(id<CPVar>)_gamma[x.getId] constraints];
 }
 -(void) incr: (id<ORMutableInteger>) i
-
 {
    [((ORMutableIntegerI*) _gamma[i.getId]) incr];
 }
