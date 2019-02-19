@@ -134,9 +134,9 @@ static OBJCPGateway *objcpgw;
 }
 -(void) printSolutions
 {
-   CPVarI* cv;
+   id<CPVar> cv;
    for(id<ORVar> v in _vars){
-      cv = [_prgram concretize:v];
+      cv = [_program concretize:v];
       NSLog(@"%@", cv);
    }
 }
@@ -170,14 +170,6 @@ static OBJCPGateway *objcpgw;
 - (void)launchHeuristic
 {
    [_options launchHeuristic:_program restricted:_vars];
-}
--(void) printSolutions
-{
-   CPVarI* cv;
-   for(id<ORVar> v in _vars){
-      cv = [_prgram concretize:v];
-      NSLog(@"%@", cv);
-   }
 }
 @end
 
@@ -565,7 +557,7 @@ static OBJCPGateway *objcpgw;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [lh launchHeuristic];
             NSLog(@"Valeurs solutions : \n");
-            [lh printSolution];
+            [lh printSolutions];
          } withTimeLimit:[_options timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;

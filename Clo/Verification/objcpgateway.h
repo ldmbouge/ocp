@@ -80,6 +80,7 @@ typedef int assertion_id;
 }
 -(AbstractLogicHandler*) init:(id<ORModel>)m;
 -(AbstractLogicHandler*) init:(id<ORModel>)m withOptions:(ORCmdLineArgs*)options;
+-(void) printSolutions;
 @end
 
 @interface IntLogicHandler : AbstractLogicHandler
