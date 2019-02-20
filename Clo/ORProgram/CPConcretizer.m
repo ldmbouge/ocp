@@ -1554,7 +1554,7 @@
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPFloatVar> x = [self concreteVar:[cstr x]];
       id<CPFloatVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory floatReify: b with: y gt: x annotation: Default];
+      id<CPConstraint> concreteCstr = [CPFactory floatReify: b with: x gt: y annotation: Default];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

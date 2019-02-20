@@ -116,6 +116,7 @@ typedef int assertion_id;
 -(ConstantWrapper*) initWithFloat:(float) v;
 -(ConstantWrapper*) initWithDouble:(double) v;
 -(objcp_var_type) type;
+-(ORBool) isEqual:(ConstantWrapper*) v;
 -(ORFloat) floatValue;
 -(ORDouble) doubleValue;
 -(ORInt) intValue;

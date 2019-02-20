@@ -1205,8 +1205,18 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {  // YES <=>  x > y
-         [_y updateMax:fp_previous_float([_x max])];
-         [_x updateMin:fp_next_float([_y min])];
+         if(canPrecede(_x,_y))
+            failNow();
+         if(isIntersectingWith(_x,_y)){
+            if([_x min] <= [_y min]){
+               ORFloat pmin = fp_next_float([_y min]);
+               [_x updateMin:pmin];
+            }
+            if([_x max] <= [_y max]){
+               ORFloat nmax = fp_previous_float([_x max]);
+               [_y updateMax:nmax];
+            }
+         }
       } else {            // NO <=> x <= y   ==>  YES <=> x < y
          if ([_x bound]) { // c <= y
             [_y updateMin:[_x min]];
@@ -1235,8 +1245,18 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [_y updateMax:fp_previous_float([_x max])];
-         [_x updateMin:fp_next_float([_y min])];
+         if(canPrecede(_x,_y))
+            failNow();
+         if(isIntersectingWith(_x,_y)){
+            if([_x min] <= [_y min]){
+               ORFloat pmin = fp_next_float([_y min]);
+               [_x updateMin:pmin];
+            }
+            if([_x max] <= [_y max]){
+               ORFloat nmax = fp_previous_float([_x max]);
+               [_y updateMax:nmax];
+            }
+         }
       } else {
          if ([_x bound]) { // c <= y
             [_y updateMin:[_x min]];
@@ -1473,8 +1493,18 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [_x updateMax:fp_previous_float([_y max])];
-         [_y updateMin:fp_next_float([_x min])];
+         if(canFollow(_x,_y))
+            failNow();
+         if(isIntersectingWith(_x,_y)){
+            if([_x min] >= [_y min]){
+               ORFloat nmin = fp_next_float([_x min]);
+               [_y updateMin:nmin];
+            }
+            if([_x max] >= [_y max]){
+               ORFloat pmax = fp_previous_float([_y max]);
+               [_x updateMax:pmax];
+            }
+         }
       } else {
          [_y updateMax:[_x max]];
          [_x updateMin:[_y min]];
