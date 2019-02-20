@@ -73,6 +73,10 @@ static OBJCPGateway *objcpgw;
 {
    return _type;
 }
+-(ORBool) isEqual:(ConstantWrapper*) v
+{
+   return _type == v->_type && _value.int_nb == v->_value.int_nb;
+}
 -(ORFloat) floatValue
 {
    return _value.float_nb;
@@ -155,7 +159,7 @@ static OBJCPGateway *objcpgw;
 -(void) printSolutions
 {
    for(id<ORVar> v in _vars){
-      NSLog(@"%@ : %20.20e (%s) %@",v,[_program intValue:v],[_program bound:v] ? "YES" : "NO",[_program concretize:v]);
+      NSLog(@"%@ : %d (%s) %@",v,[_program intValue:v],[_program bound:v] ? "YES" : "NO",[_program concretize:v]);
    }
 }
 @end
@@ -398,7 +402,7 @@ static OBJCPGateway *objcpgw;
          break;
       case OR_BV:
       {
-         res = [ORFactory bitVar:_model low:&(value.uint_nb) up:&(value.uint_nb) bitLength:size];
+         res = [ORFactory bitVar:_model low:&(value.uint_nb) up:&(value.uint_nb) bitLength:size name:name];
          break;
       }
       case OR_FLOAT:
@@ -417,7 +421,7 @@ static OBJCPGateway *objcpgw;
    objcp_expr res = nil;
    switch (type) {
       case OR_BOOL:
-         res = [ORFactory boolVar:_model];
+         res = [ORFactory intVar:_model domain:RANGE(_model,0,1) name:name];
          break;
       case OR_INT:
          res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT) name:name];
@@ -436,7 +440,7 @@ static OBJCPGateway *objcpgw;
          }
           if (size%BITSPERWORD != 0)
               up[0] >>= BITSPERWORD - (size % BITSPERWORD);
-         res = [ORFactory bitVar:_model low:low up:up bitLength:size];
+         res = [ORFactory bitVar:_model low:low up:up bitLength:size name:name];
          break;
       }
       case OR_FLOAT:
@@ -556,7 +560,7 @@ static OBJCPGateway *objcpgw;
 -(ORBool) objcp_check:(objcp_context) ctx
 {
    @autoreleasepool {
-      NSLog(@"%@",_model);
+      printf("%s",[[NSString stringWithFormat:@"%@",_model] UTF8String]);
       id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options];
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
@@ -618,14 +622,17 @@ static OBJCPGateway *objcpgw;
 @implementation OBJCPGateway (Int)
 -(id<ORIntVar>) objcp_mk_eq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
+   if([(id)left isKindOfClass:[ConstantWrapper class]] && [(id)right isKindOfClass:[ConstantWrapper class]])
+      return [ORFactory intVar:_model value:([(ConstantWrapper*)left isEqual: (ConstantWrapper*)right])];
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
+   if(getId(rv) == getId(lv)) return [ORFactory intVar:_model value:1];
    if([lv vtype] == ORTBit && [rv vtype] == ORTBit)
       return [self objcp_mk_bv_eq:ctx left:lv right:rv];
    if([lv vtype] == ORTFloat || [lv vtype] == ORTDouble)
       return [self objcp_mk_fp:ctx x:lv eq:rv];
    id<ORIntVar> res = [ORFactory boolVar:_model];
-   [_model add:[ORFactory reify:_model boolean:res with:left eq:right]];
+   [_model add:[ORFactory reify:_model boolean:res with:(id<ORIntVar>)lv eq:(id<ORIntVar>)rv]];
    return res;
 }
 -(id<ORIntVar>) objcp_mk_minus:(objcp_context)ctx var:(objcp_expr)var
@@ -785,7 +792,6 @@ static OBJCPGateway *objcpgw;
       mpz_clear(tmp);
       ret = [self objcp_mk_bv_constant_from_array:ctx withSize:c->_width fromArray:bits];
       free(bits);
-      return ret;
    }
    return ret;
 }
@@ -855,8 +861,10 @@ static OBJCPGateway *objcpgw;
    id<ORVar> tv = [self getVariable:t];
    id<ORVar> ev = [self getVariable:e];
    id<ORVar> res = nil;
+   if([b low] == [b up])
+      return ([b low]) ? t : e;
    if([tv.class conformsToProtocol:@protocol(ORIntVar)]){
-      res = [ORFactory intVar:_model bounds:RANGE(_model, -MAXINT,MAXINT)];
+      res = [ORFactory intVar:_model bounds:RANGE(_model, min([(id<ORIntVar>)t low],[(id<ORIntVar>)e low]),max([(id<ORIntVar>)t up], [(id<ORIntVar>)e up]))];
    }else if([tv.class conformsToProtocol:@protocol(ORFloatVar)]){
       res = [ORFactory floatVar:_model];
    }else if([tv.class conformsToProtocol:@protocol(ORDoubleVar)]){

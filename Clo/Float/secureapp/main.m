@@ -195,7 +195,7 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       //-----------DEFINITION OF THE INSTANCE----------//
-      NSArray* device = @[@"h8",  @"h9",  @"h2",  @"h3",  @"h1",  @"h6",  @"h7",  @"h4",  @"h5",  @"sc1",  @"sa5",  @"sa20",  @"g2",  @"g1",  @"sa9",  @"sa8",  @"sc4",  @"sa7",  @"sa6",  @"sc3",  @"sc2",  @"h10",  @"h11",  @"h12",  @"h13",  @"h14",  @"h15",  @"h16",  @"sa19",  @"sa18",  @"sa17",  @"sa16",  @"sa15",  @"sa14",  @"sa13",  @"sa12",  @"sa11"];
+      NSArray* device = @[@"h8",  @"h9",  @"h2",  @"h3",  @"h1",  @"h6",  @"h7",  @"h4",  @"h5",  @"sc1",  @"sa5",  @"sa20",  @"g2",  @"g1",  @"sa9",  @"sa8",  @"sc4",  @"sa7",  @"sa6",  @"sc3",  @"sc2",  @"h10",  @"h11",  @"h12",  @"h13",  @"h14",  @"h15",  @"h16",  @"sa19",  @"sa18",  @"sa17",  @"sa16",  @"sa15",  @"sa14",  @"sa13",  @"sa12",  @"sa11", @"sa10"];
       NSMutableDictionary* device2ID = [[NSMutableDictionary alloc] init];
       for(ORInt i = 0; i < [device count];i++){
          [device2ID setObject:@(i) forKey:device[i]];
@@ -313,7 +313,6 @@ int main(int argc, const char * argv[]) {
          }
          [model add:[ORFactory sumbool:model array:isFlowB[i] eqi:1]];
       }
-      
       id<ORIdArray> equiv = [ORFactory idArray:model range:RANGE(model, 0, (ORInt)([ec count])-1)];
       id<ORRealVarArray> load = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt) [network count]- 1)];
       id<ORRealVar> loadSquareSum = [ORFactory realVar:model name:@"loadSquareSum"];
@@ -327,10 +326,7 @@ int main(int argc, const char * argv[]) {
             equiv[i][j] = [ORFactory intVar:model domain:RANGE(model, 0, MAXINT) name:[NSString stringWithFormat:@"equiv[%@,%@]",device[[ec[i] intValue]],device[[network[j] intValue]]]];
          }
       }
-      
-      
-//      [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] square]) eq:loadSquareSum]];
-      
+      [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] square]) eq:loadSquareSum]];
       //demand constraints
       //trafic A
       for(ORInt s = 0, d = s + 1; d < [desiredFlowsOfA count]; s+=2,d+=2){
@@ -459,9 +455,8 @@ int main(int argc, const char * argv[]) {
                id<ORIntVarArray> equivArray = (id<ORIntVarArray>)[ORFactory idArray:model array:equivlist];
                id<ORIntArray> coefs = [ORFactory intArray:model range:equivArray.range value:-1];
                [coefs setObject:@(1) atIndexedSubscript:([coefs count] - 1)];
-//or is an affectation over variables
+               //or is an affectation over variables
                [model add:[ORFactory sum:model array:equivArray coef:coefs eq:0]];
-//               [model add:[equiv[i][j] geq:@(1)]];
             }
             [equivlist release];
          }
