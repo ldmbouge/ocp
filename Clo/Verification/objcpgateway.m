@@ -792,7 +792,6 @@ static OBJCPGateway *objcpgw;
       mpz_clear(tmp);
       ret = [self objcp_mk_bv_constant_from_array:ctx withSize:c->_width fromArray:bits];
       free(bits);
-      return ret;
    }
    return ret;
 }
