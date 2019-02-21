@@ -1735,7 +1735,7 @@
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPDoubleVar> x = [self concreteVar:[cstr x]];
       id<CPDoubleVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: y lt: x annotation: Default];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: x lt: y annotation: Default];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1747,7 +1747,7 @@
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPDoubleVar> x = [self concreteVar:[cstr x]];
       id<CPDoubleVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: y gt: x annotation: Default];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: x gt: y annotation: Default];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

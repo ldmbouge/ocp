@@ -18,10 +18,10 @@
 /*****************************************************************************************/
 
 typedef struct  {
-   TRId           _bindEvt;
-   TRId            _minEvt;
-   TRId            _maxEvt;
-   TRId         _boundsEvt;
+   TRId           _bindEvt[2];
+   TRId            _minEvt[2];
+   TRId            _maxEvt[2];
+   TRId         _boundsEvt[2];
 } CPLDoubleEventNetwork;
 
 
@@ -107,24 +107,29 @@ typedef struct  {
 
 static void setUpNetwork(CPLDoubleEventNetwork* net,id<ORTrail> t)
 {
-    net->_bindEvt   = makeTRId(t,nil);
-    net->_minEvt    = makeTRId(t,nil);
-    net->_maxEvt    = makeTRId(t,nil);
+   for(int i=0;i<2;i++) {
+      net->_bindEvt[i]   = makeTRId(t,nil);
+      net->_minEvt[i]    = makeTRId(t,nil);
+      net->_maxEvt[i]    = makeTRId(t,nil);
+      net->_boundsEvt[i] = makeTRId(t,nil);
+   }
 }
 
 static void deallocNetwork(CPLDoubleEventNetwork* net)
 {
-    freeList(net->_bindEvt);
-    freeList(net->_minEvt);
-    freeList(net->_maxEvt);
+   freeList(net->_bindEvt[0]);
+   freeList(net->_minEvt[0]);
+   freeList(net->_maxEvt[0]);
+   freeList(net->_boundsEvt[0]);
 }
 
 static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
-    collectList(net->_bindEvt,rv);
-    collectList(net->_minEvt,rv);
-    collectList(net->_maxEvt,rv);
-    return rv;
+   collectList(net->_bindEvt[0],rv);
+   collectList(net->_minEvt[0],rv);
+   collectList(net->_maxEvt[0],rv);
+   collectList(net->_boundsEvt[0],rv);
+   return rv;
 }
 
 @implementation CPLDoubleVarI {
@@ -167,11 +172,12 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 }
 -(ORInt)degree
 {
-    __block ORUInt d = 0;
-    [_net._bindEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
-    [_net._maxEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-    [_net._minEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-    return d;
+   __block ORUInt d = 0;
+   [_net._bindEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._boundsEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   return d;
 }
 -(NSString*)description
 {
@@ -195,19 +201,19 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._bindEvt[0], todo, c, p);
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._minEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._minEvt[0], todo, c, p);
 }
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._maxEvt[0], todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], todo, c, p);
 }
 -(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -228,19 +234,19 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._bindEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._bindEvt[0], nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._minEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._minEvt[0], nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._maxEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._maxEvt[0], nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], nil, c, p);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
@@ -263,7 +269,7 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
-    mList[k] = _net._bindEvt;
+    mList[k] = _net._bindEvt[0];
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -272,11 +278,11 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
-    mList[k] = _net._minEvt;
+    mList[k] = _net._minEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
+    mList[k] = _net._boundsEvt[0];
     k += mList[k] != NULL;
-    mList[k] = bound ? _net._bindEvt : NULL;
+    mList[k] = bound ? _net._bindEvt[0] : NULL;
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -285,11 +291,11 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
-    mList[k] = _net._maxEvt;
+    mList[k] = _net._maxEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
+    mList[k] = _net._boundsEvt[0];
     k += mList[k] != NULL;
-    mList[k] = bound ? _net._bindEvt : NULL;
+    mList[k] = bound ? _net._bindEvt[0] : NULL;
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -441,11 +447,11 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 }
 -(ORInt)degree
 {
-    __block ORUInt d = 0;
-    [_net._bindEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
-    [_net._maxEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-    [_net._minEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-    return d;
+   __block ORUInt d = 0;
+   [_net._bindEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   return d;
 }
 -(NSString*)description
 {
@@ -457,19 +463,19 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 }
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._bindEvt[0], todo, c, p);
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._minEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._minEvt[0], todo, c, p);
 }
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._maxEvt[0], todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], todo, c, p);
 }
 -(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -490,19 +496,19 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._bindEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._bindEvt[0], nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._minEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._minEvt[0], nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._maxEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._maxEvt[0], nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], nil, c, p);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
@@ -552,13 +558,13 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
-    mList[k] = _net._minEvt;
+    mList[k] = _net._minEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._maxEvt;
+    mList[k] = _net._maxEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
+    mList[k] = _net._boundsEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._bindEvt;
+    mList[k] = _net._bindEvt[0];
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -572,11 +578,11 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
-    mList[k] = _net._minEvt;
+    mList[k] = _net._minEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
+    mList[k] = _net._boundsEvt[0];
     k += mList[k] != NULL;
-    mList[k] = (dsz==1) ? _net._bindEvt : NULL;
+    mList[k] = (dsz==1) ? _net._bindEvt[0] : NULL;
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -585,11 +591,11 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
-    mList[k] = _net._maxEvt;
+    mList[k] = _net._maxEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
+    mList[k] = _net._boundsEvt[0];
     k += mList[k] != NULL;
-    mList[k] = (dsz==1) ? _net._bindEvt : NULL;
+    mList[k] = (dsz==1) ? _net._bindEvt[0] : NULL;
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);

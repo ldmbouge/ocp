@@ -37,7 +37,7 @@ int main(int argc, const char * argv[]) {
       
       id<ORGroup> g = [args makeGroup:model];
       
-//      [g add:[z eq: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
+      [g add:[z eq: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
       
       
       [g add:[z lt: @(VAL)]];
@@ -59,9 +59,6 @@ int main(int argc, const char * argv[]) {
             found &= [cp bound: v];
             NSLog(@"%@ : %20.20e (%s) %@",v,[cp floatValue:v],[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
          }
-         
-//         check_solution([p floatValue:vars[0]], [p floatValue:vars[1]]);
-         
       }];
          
          struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
