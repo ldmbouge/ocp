@@ -510,6 +510,11 @@
 -(id<ORVar>) right;
 @end
 
+@interface ORDoubleCast : ORConstraintI<ORDoubleCast>
+-(ORDoubleCast*)init:(id<ORVar>)x eq:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) initial;
+@end
 
 @interface ORFloatReifyEqualc : ORConstraintI<ORFloatReifyEqualc>
 -(ORFloatReifyEqualc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x eqi:(ORFloat)c;

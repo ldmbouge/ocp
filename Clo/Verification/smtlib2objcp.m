@@ -151,8 +151,9 @@ SMTLIB2_OBJCP_DECLHANDLER(rotate_right);
 
 
 SMTLIB2_OBJCP_DECLHANDLER(fp);
+SMTLIB2_OBJCP_DECLHANDLER(to_fp);
 SMTLIB2_OBJCP_DECLHANDLER(RNE);
-SMTLIB2_OBJCP_DECLHANDLER(roundNearestTiesToEven);
+SMTLIB2_OBJCP_DECLHANDLER(fp_inf);
 SMTLIB2_OBJCP_DECLHANDLER(fp_eq);
 SMTLIB2_OBJCP_DECLHANDLER(fp_lt);
 SMTLIB2_OBJCP_DECLHANDLER(fp_gt);
@@ -303,8 +304,10 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    SMTLIB2_OBJCP_SETHANDLER(tp, "rotate_right", rotate_right);
    
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp", fp);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "to_fp", to_fp);
    SMTLIB2_OBJCP_SETHANDLER(tp, "RNE", RNE);
    SMTLIB2_OBJCP_SETHANDLER(tp, "roundNearestTiesToEven", RNE);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "+oo", fp_inf);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.eq", fp_eq);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.lt", fp_lt);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.gt", fp_gt);
@@ -1352,10 +1355,23 @@ SMTLIB2_OBJCP_DECLHANDLER(fp)  {
    return [c makeVariable];
 }
 
+SMTLIB2_OBJCP_DECLHANDLER(to_fp)  {
+   ORInt size = (ORInt) smtlib2_vector_size(args);
+   if(size == 2)
+      return [objcpgw objcp_mk_to_fp:(objcp_expr)smtlib2_vector_at(args, 1)];
+   return NULL;
+}
+
 SMTLIB2_OBJCP_DECLHANDLER(RNE)
 {
    return @"RNE";
 }
+
+SMTLIB2_OBJCP_DECLHANDLER(fp_inf)
+{
+   return [[ConstantWrapper alloc] initWithFloat:(strcmp(symbol, "+oo") == 0)?+INFINITY:-INFINITY];
+}
+
 SMTLIB2_OBJCP_DECLHANDLER(fp_eq)
 {
    return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) eq:(objcp_expr)smtlib2_vector_at(args, 1)];
