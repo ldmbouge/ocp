@@ -1976,6 +1976,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var
+{
+   id<ORConstraint> o = [[ORDoubleCast alloc] init:var eq:x];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORExpr>) expr:(id<ORExpr>) e1 mul:(id<ORVar>) var power:(ORInt) i
 {
    id<ORExpr> r = e1;

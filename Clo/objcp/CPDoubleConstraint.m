@@ -12,10 +12,70 @@
 #import <ORFoundation/ORFoundation.h>
 #import "CPDoubleConstraint.h"
 #import "CPDoubleVarI.h"
+#import "CPFloatVarI.h"
 #import "ORConstraintI.h"
 #import <fenv.h>
 
 #define PERCENT 5.0
+
+@implementation CPDoubleCast : CPCoreConstraint 
+-(id) init:(CPDoubleVarI*)res equals:(CPFloatVarI*)initial
+{
+   self = [super initCPCoreConstraint: [res engine]];
+   _res = res;
+   _initial = initial;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_res bound])        [_res whenChangeBoundsPropagate:self];
+   if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_res bound]){
+      if(is_eq([_res min],-0.0) && is_eq([_res max],+0.0))
+         [_initial updateInterval:[_res min] and:[_res max]];
+      else
+         [_initial bind:[_res value]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if([_initial bound]){
+      if(is_eq([_initial min],-0.0) && is_eq([_initial max],+0.0))
+         [_res updateInterval:[_initial min] and:[_initial max]];
+      else
+         [_res bind:[_initial value]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
+   if(isDisjointWithDV([_res min],[_res max],[_initial min],[_initial max])){
+      failNow();
+   }else{
+      ORDouble min = maxDbl([_res min], [_initial min]);
+      ORDouble max = minDbl([_res max], [_initial max]);
+      [_res updateInterval:min and:max];
+      [_initial updateInterval:min and:max];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_res,_initial,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_res,_initial,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_res bound] + ![_initial bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ castedTo %@>",_initial,_res];
+}
+@end
+
 
 @implementation CPDoubleEqual
 -(id) init:(CPDoubleVarI*)x equals:(CPDoubleVarI*)y

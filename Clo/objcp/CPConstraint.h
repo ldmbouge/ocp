@@ -148,6 +148,7 @@
 @end
 
 @interface CPFactory (ORDouble)
++(id<CPConstraint>) doubleCast: (id<CPDoubleVar>) res eq:(id<CPFloatVar>) initial;
 +(id<CPConstraint>) doubleAssign: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;
 +(id<CPConstraint>) doubleAssignC: (id<CPDoubleVar>) x to:(ORDouble) c;
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;

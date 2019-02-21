@@ -231,6 +231,7 @@ typedef int assertion_id;
 
 
 @interface OBJCPGateway (ORFloat)
+-(id<ORDoubleVar>) objcp_mk_to_fp:(id<ORFloatVar>)var;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x eq:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x lt:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x gt:(objcp_expr)y;

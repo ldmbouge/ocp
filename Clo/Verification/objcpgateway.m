@@ -58,6 +58,8 @@ static OBJCPGateway *objcpgw;
 -(ConstantWrapper*) initWithFloat:(float) v
 {
    self = [super init];
+   _base = 10;
+   _strv = [NSString stringWithFormat:@"%16.16e", v];
    _value.float_nb = v;
    _type = OR_FLOAT;
    return self;
@@ -65,6 +67,8 @@ static OBJCPGateway *objcpgw;
 -(ConstantWrapper*) initWithDouble:(double) v
 {
    self = [super init];
+   _base = 10;
+   _strv = [NSString stringWithFormat:@"%16.16e", v];
    _value.double_nb = v;
    _type = OR_DOUBLE;
    return self;
@@ -870,7 +874,11 @@ static OBJCPGateway *objcpgw;
    }else if([tv.class conformsToProtocol:@protocol(ORDoubleVar)]){
       res = [ORFactory doubleVar:_model];
    }else if([tv.class conformsToProtocol:@protocol(ORBitVar)]){
-      res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength], [(id<ORBitVar>)ev bitLength])];
+      res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength],[(id<ORBitVar>)ev bitLength])];
+      id<ORBitVar> bv = [ORFactory bitVar:_model withLength:1];
+      [_model add:[ORFactory bit:bv booleq:b]];
+      [_model add:[ORFactory bit:bv then:(id<ORBitVar>)tv else:(id<ORBitVar>)ev result:(id<ORBitVar>)res]];
+      return res;
    }
    [_model add:[b imply:[self objcp_mk_eq:ctx left:res right:tv]]];
    [_model add:[[b neg] imply:[self objcp_mk_eq:ctx left:res right:ev]]];
@@ -1471,5 +1479,13 @@ static OBJCPGateway *objcpgw;
       return [[ConstantWrapper alloc] initWithDouble:f];
    }
    return nil;
+}
+-(id<ORDoubleVar>) objcp_mk_to_fp:(id<ORFloatVar>)var
+{
+   id<ORDoubleVar> res = [ORFactory doubleVar:_model low:[var low] up:[var up] name:[NSString stringWithFormat:@"%@D*",[var prettyname]]];
+   if([var low] != [var up]){
+      [_model add:[ORFactory doubleCast:_model from:var res:res]];
+   }
+   return res;
 }
 @end
