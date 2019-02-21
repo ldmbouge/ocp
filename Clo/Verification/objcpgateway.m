@@ -145,6 +145,10 @@ static OBJCPGateway *objcpgw;
    [self printSolutionsI];
    [self checkAllbound];
 }
+-(void) printSolutionsI
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
+}
 -(void) checkAllbound
 {
    NSArray* vars = [_model variables];
@@ -1507,7 +1511,7 @@ static OBJCPGateway *objcpgw;
 }
 -(id<ORDoubleVar>) objcp_mk_to_fp:(id<ORFloatVar>)var
 {
-   id<ORDoubleVar> res = [ORFactory doubleVar:_model low:[var low] up:[var up] name:[NSString stringWithFormat:@"%@D*",[var prettyname]]];
+   id<ORDoubleVar> res = [ORFactory doubleVar:_model low:[var low] up:[var up] name:[NSString stringWithFormat:@"%@D*",([var prettyname] == nil) ? [NSString stringWithFormat:@"var<%d>",getId(var)]:[var prettyname]]];
    if([var low] != [var up]){
       [_model add:[ORFactory doubleCast:_model from:var res:res]];
    }

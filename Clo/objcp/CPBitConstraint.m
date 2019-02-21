@@ -12581,15 +12581,15 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORUInt wordLength = [_x getWordLength];
    ORUInt zWordLength = [_z getWordLength];
-    
-    ULRep xr = getULVarRep(_x);
-    ULRep yr = getULVarRep(_y);
-    ULRep zr = getULVarRep(_z);
-    TRUInt *xLow = xr._low, *xUp = xr._up;
-    TRUInt *yLow = yr._low, *yUp = yr._up;
-    TRUInt *zLow = zr._low, *zUp = zr._up;
-
-    ORUInt one[zWordLength];
+   
+   ULRep xr = getULVarRep(_x);
+   ULRep yr = getULVarRep(_y);
+   ULRep zr = getULVarRep(_z);
+   TRUInt *xLow = xr._low, *xUp = xr._up;
+   TRUInt *yLow = yr._low, *yUp = yr._up;
+   TRUInt *zLow = zr._low, *zUp = zr._up;
+   
+   ORUInt one[zWordLength];
    ORUInt zero[zWordLength];
    for (int i=1; i<zWordLength; i++) {
       one[i] = zero[i] = 0x00000000;
@@ -12599,13 +12599,13 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORUInt* newZUp = alloca(sizeof(ORUInt)*zWordLength);
    ORUInt* newZLow = alloca(sizeof(ORUInt)*zWordLength);
-
+   
    ORUInt* newXUp = alloca(sizeof(ORUInt)*wordLength);
    ORUInt* newXLow = alloca(sizeof(ORUInt)*wordLength);
    ORUInt* newYUp = alloca(sizeof(ORUInt)*wordLength);
    ORUInt* newYLow = alloca(sizeof(ORUInt)*wordLength);
    ORUInt  upXORlow;
-    
+   
    for(int i=0;i<wordLength;i++){
       newXUp[i] = xUp[i]._val;
       newXLow[i] = xLow[i]._val;
@@ -12615,6 +12615,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORUInt different = 0;
    ORUInt makesame = 0;
+   ORUInt makedifferent = 0;
    for (int i=0; i<wordLength; i++) {
       different |= (xLow[i]._val & ~yUp[i]._val);// ^ xLow[i]._val;
       different |= (~xUp[i]._val & yLow[i]._val);// ^ ~xUp[i]._val;
@@ -12624,6 +12625,61 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       newZUp[i] = zUp[i]._val;
       newZLow[i] = zLow[i]._val;
       makesame |= zLow[i]._val;
+      makedifferent |= zUp[i]._val;
+   }
+   
+   if(makedifferent==0){
+      ORUInt* xFreeBits = alloca(sizeof(ORUInt)*wordLength);
+      ORUInt* yFreeBits = alloca(sizeof(ORUInt)*wordLength);
+      ORUInt numXFreeBits = 0;
+      ORUInt numYFreeBits = 0;
+      
+      for(ORUInt i = 0; i<wordLength;i++){
+         xFreeBits[i] = xLow[i]._val ^ xUp[i]._val;
+         yFreeBits[i] = yLow[i]._val ^ yUp[i]._val;
+         numXFreeBits += xFreeBits[i];
+         numYFreeBits += yFreeBits[i];
+      }
+      ORBool justOne = true;
+      if((different == 0) && ((numXFreeBits==0) || (numYFreeBits==0))){
+         if(numXFreeBits==0){
+            numYFreeBits = 0;
+            for(ORUInt i=0;i<wordLength;i++){
+               if(yFreeBits[i] && !(yFreeBits[i] & (yFreeBits[i]-1)))
+                  numYFreeBits++;
+               else if (yFreeBits[i])
+                  justOne = false;
+            }
+            if (justOne && (numYFreeBits==1)){
+               for(ORUInt i=0; i<wordLength;i++)
+                  if(yFreeBits[i]){
+                     if(yFreeBits[i] & xLow[i]._val)
+                        newYUp[i] &= ~yFreeBits[i];
+                     else
+                        newYLow[i] |= yFreeBits[i];
+                  }
+            }
+         }
+         else{
+            numXFreeBits = 0;
+            for(ORUInt i=0;i<wordLength;i++){
+               if(xFreeBits[i] && !(xFreeBits[i] & (xFreeBits[i]-1)))
+                  numXFreeBits++;
+               else if (xFreeBits[i])
+                  justOne = false;
+            }
+            if (justOne && (numXFreeBits==1)){
+               for(ORUInt i=0; i<wordLength;i++)
+                  if(xFreeBits[i]){
+                     if(xFreeBits[i] & yLow[i]._val)
+                        newXUp[i] &= ~xFreeBits[i];
+                     else
+                        newXLow[i] |= xFreeBits[i];
+                  }
+            }
+         }
+      }
+      
    }
    
    if(makesame){
@@ -12632,8 +12688,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          newYUp[i] = newXUp[i];
          newXLow[i] = xLow[i]._val | yLow[i]._val;
          newYLow[i] =  newXLow[i];
-//         upXORlow = up[i] ^ low[i];
-//         if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+         //         upXORlow = up[i] ^ low[i];
+         //         if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
          _state[0] = newXUp;
          _state[1] = newXLow;
          _state[2] = newYUp;
@@ -12641,11 +12697,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          _state[4] = newZUp;
          _state[5] = newZLow;
          
-
+         
          ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
          if (xFail)
             failNow();
-//         }
+         //         }
          [_x setUp:newXUp andLow:newXLow for:self];
          [_y setUp:newYUp andLow:newYLow for:self];
          
@@ -12656,16 +12712,16 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if (different) {
       for (int i=0; i<zWordLength; i++) {
          newZUp[i] = zUp[i]._val & zero[i];
-         newZLow[i] = zLow[i]._val | zero[i];
-//         upXORlow = newZUp[i] ^ newZLow[i];
-//         if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0)
+         //         newZLow[i] = zLow[i]._val | zero[i];
+         //         upXORlow = newZUp[i] ^ newZLow[i];
+         //         if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0)
          _state[0] = newXUp;
          _state[1] = newXLow;
          _state[2] = newYUp;
          _state[3] = newYLow;
          _state[4] = newZUp;
          _state[5] = newZLow;
-
+         
          ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
          if (zFail)
             failNow();
@@ -12674,37 +12730,37 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    }
    else if ([_x bound] && [_y bound]){
       //LSB should be 1
-      newZUp[0] = zUp[0]._val & one[0];
+      //      newZUp[0] = zUp[0]._val & one[0];
       newZLow[0] = zLow[0]._val | one[0];
-      upXORlow = newZUp[0] ^ newZLow[0];
-//      if(((upXORlow & (~newZUp[0])) & (upXORlow & newZLow[0])) != 0)
-//         failNow();
+      //      upXORlow = newZUp[0] ^ newZLow[0];
+      //      if(((upXORlow & (~newZUp[0])) & (upXORlow & newZLow[0])) != 0)
+      //         failNow();
       _state[0] = newXUp;
       _state[1] = newXLow;
       _state[2] = newYUp;
       _state[3] = newYLow;
       _state[4] = newZUp;
       _state[5] = newZLow;
-
+      
       ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
       if (zFail)
          failNow();
-//      [_z setUp:newZUp andLow:newZLow for:self];
+      //      [_z setUp:newZUp andLow:newZLow for:self];
       
       //check the rest of the words in the bitvector if present
       for (int i=1; i<zWordLength; i++) {
          newZUp[i] = zUp[i]._val & zero[i];
-         newZLow[i] = zLow[i]._val | zero[i];
-//         upXORlow = newZUp[i] ^ newZLow[i];
-//         if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0)
-//            failNow();
+         //         newZLow[i] = zLow[i]._val | zero[i];
+         //         upXORlow = newZUp[i] ^ newZLow[i];
+         //         if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0)
+         //            failNow();
          _state[0] = newXUp;
          _state[1] = newXLow;
          _state[2] = newYUp;
          _state[3] = newYLow;
          _state[4] = newZUp;
          _state[5] = newZLow;
-
+         
          ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
          if (zFail)
             failNow();
@@ -12718,11 +12774,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    _state[3] = newYLow;
    _state[4] = newZUp;
    _state[5] = newZLow;
-
+   
    ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
    ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
    ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
-
+   
    if(xFail || yFail || zFail){
       failNow();
    }
@@ -12730,7 +12786,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [_y setUp:newYUp andLow:newYLow for:self];
    [_z setUp:newZUp andLow:newZLow for:self];
    
-
+   
    return;
 }
 @end
