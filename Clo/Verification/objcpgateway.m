@@ -142,6 +142,14 @@ static OBJCPGateway *objcpgw;
 }
 -(void) printSolutions
 {
+   [self printSolutionsI];
+   [self checkAllbound];
+}
+-(void) checkAllbound
+{
+   NSArray* vars = [_model variables];
+   for(id<ORVar> v in vars)
+      assert([_program bound:v]);
 }
 @end
 
@@ -160,7 +168,7 @@ static OBJCPGateway *objcpgw;
 {
    [_program labelHeuristic:_heuristic];
 }
--(void) printSolutions
+-(void) printSolutionsI
 {
    for(id<ORVar> v in _vars){
       NSLog(@"%@ : %d (%s) %@",v,[_program intValue:v],[_program bound:v] ? "YES" : "NO",[_program concretize:v]);
@@ -180,7 +188,7 @@ static OBJCPGateway *objcpgw;
 {
    [_options launchHeuristic:_program restricted:_vars];
 }
--(void) printSolutions
+-(void) printSolutionsI
 {
    for(id<ORVar> v in _vars){
       NSLog(@"%@ : %20.20e (%s)",v,[_program floatValue:v],[_program bound:v] ? "YES" : "NO");
