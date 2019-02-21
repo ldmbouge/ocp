@@ -238,10 +238,10 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x gt:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x leq:(objcp_expr)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x geq:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x add:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x sub:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x mul:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x div:(objcp_expr)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x add:(id<ORExpr>)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x sub:(id<ORExpr>)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x mul:(id<ORExpr>)y;
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x div:(id<ORExpr>)y;
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx neg:(objcp_expr)x;
 -(ConstantWrapper*) objcp_mk_fp_constant:(objcp_expr)ctx s:(ConstantWrapper*)s e:(ConstantWrapper*)e m:(ConstantWrapper*)m;
 @end

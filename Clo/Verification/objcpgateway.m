@@ -1386,89 +1386,106 @@ static OBJCPGateway *objcpgw;
 @implementation OBJCPGateway (ORFloat)
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x eq:(objcp_expr)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
-   [_model add:[ORFactory floatReify:_model boolean:bv with:fpx eq:fpy]];
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x eq:(id<ORFloatVar>)y]];
+   }else{//we must be ordoublevar in this branch
+      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y]];
+   }
    return bv;
 }
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x lt:(objcp_expr)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
-   [_model add:[ORFactory floatReify:_model boolean:bv with:fpx lt:fpy]];
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x lt:(id<ORFloatVar>)y]];
+   }else{//we must be ordoublevar in this branch
+      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x lt:(id<ORDoubleVar>)y]];
+   }
    return bv;
 }
-
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x gt:(objcp_expr)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
-   [_model add:[ORFactory floatReify:_model boolean:bv with:fpx gt:fpy]];
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x gt:(id<ORFloatVar>)y]];
+   }else{//we must be ordoublevar in this branch
+      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x gt:(id<ORDoubleVar>)y]];
+   }
    return bv;
 }
-
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x leq:(objcp_expr)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
-   [_model add:[ORFactory floatReify:_model boolean:bv with:fpx leq:fpy]];
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x leq:(id<ORFloatVar>)y]];
+   }else{//we must be ordoublevar in this branch
+      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x leq:(id<ORDoubleVar>)y]];
+   }
    return bv;
 }
-
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x geq:(objcp_expr)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
-   [_model add:[ORFactory floatReify:_model boolean:bv with:fpx geq:fpy]];
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x geq:(id<ORFloatVar>)y]];
+   }else{//we must be ordoublevar in this branch
+      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x geq:(id<ORDoubleVar>)y]];
+   }
    return bv;
 }
-
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx neg:(objcp_expr)x
 {
    id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> res = [ORFactory floatVar:_model];
+   id<ORFloatVar> res = [ORFactory floatVar:_model]; //should make minus double constraint
    [_model add:[res eq:[fpx minus]]];
    return res;
 }
-
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x add:(objcp_expr)y
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x add:(id<ORExpr>)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
-   id<ORFloatVar> res = [ORFactory floatVar:_model];
-   [_model add:[res eq:[fpx plus:fpy]]];
+   id<ORExpr> res;
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      res = [ORFactory floatVar:_model];
+   }else{//we must be ordoublevar in this branch
+      res = [ORFactory doubleVar:_model];
+   }
+   [_model add:[res eq:[x plus:y]]];
    return res;
 }
 
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x sub:(objcp_expr)y
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x sub:(id<ORExpr>)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
-   id<ORFloatVar> res = [ORFactory floatVar:_model];
-   [_model add:[res eq:[fpx sub:fpy]]];
+   id<ORExpr> res;
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      res = [ORFactory floatVar:_model];
+   }else{//we must be ordoublevar in this branch
+      res = [ORFactory doubleVar:_model];
+   }
+   [_model add:[res eq:[x sub:y]]];
    return res;
 }
 
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x mul:(objcp_expr)y
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x mul:(id<ORExpr>)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
-   id<ORFloatVar> res = [ORFactory floatVar:_model];
-   [_model add:[res eq:[fpx mul:fpy]]];
+   id<ORExpr> res;
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      res = [ORFactory floatVar:_model];
+   }else{//we must be ordoublevar in this branch
+      res = [ORFactory doubleVar:_model];
+   }
+   [_model add:[res eq:[x mul:y]]];
    return res;
 }
 
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x div:(objcp_expr)y
+-(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x div:(id<ORExpr>)y
 {
-   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-   id<ORFloatVar> fpy = (id<ORFloatVar>) y;
-   id<ORFloatVar> res = [ORFactory floatVar:_model];
-   [_model add:[res eq:[fpx div:fpy]]];
+   id<ORExpr> res;
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      res = [ORFactory floatVar:_model];
+   }else{//we must be ordoublevar in this branch
+      res = [ORFactory doubleVar:_model];
+   }
+   [_model add:[res eq:[x div:y]]];
    return res;
 }
 
