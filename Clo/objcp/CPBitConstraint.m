@@ -12569,6 +12569,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORUInt different = 0;
    ORUInt makesame = 0;
+   ORUInt makedifferent = 0;
    for (int i=0; i<wordLength; i++) {
       different |= (xLow[i]._val & ~yUp[i]._val);// ^ xLow[i]._val;
       different |= (~xUp[i]._val & yLow[i]._val);// ^ ~xUp[i]._val;
@@ -12578,8 +12579,63 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       newZUp[i] = zUp[i]._val;
       newZLow[i] = zLow[i]._val;
       makesame |= zLow[i]._val;
+      makedifferent |= zUp[i]._val;
    }
    
+   if(makedifferent==0){
+      ORUInt* xFreeBits = alloca(sizeof(ORUInt)*wordLength);
+      ORUInt* yFreeBits = alloca(sizeof(ORUInt)*wordLength);
+      ORUInt numXFreeBits = 0;
+      ORUInt numYFreeBits = 0;
+
+      for(ORUInt i = 0; i<wordLength;i++){
+         xFreeBits[i] = xLow[i]._val ^ xUp[i]._val;
+         yFreeBits[i] = yLow[i]._val ^ yUp[i]._val;
+         numXFreeBits += xFreeBits[i];
+         numYFreeBits += yFreeBits[i];
+      }
+      ORBool justOne = true;
+      if((different == 0) && ((numXFreeBits==0) || (numYFreeBits==0))){
+         if(numXFreeBits==0){
+            numYFreeBits = 0;
+            for(ORUInt i=0;i<wordLength;i++){
+               if(yFreeBits[i] && !(yFreeBits[i] & (yFreeBits[i]-1)))
+                  numYFreeBits++;
+               else if (yFreeBits[i])
+                  justOne = false;
+            }
+            if (justOne && (numYFreeBits==1)){
+               for(ORUInt i=0; i<wordLength;i++)
+                  if(yFreeBits[i]){
+                     if(yFreeBits[i] & xLow[i]._val)
+                        newYUp[i] &= ~yFreeBits[i];
+                     else
+                        newYLow[i] |= yFreeBits[i];
+                  }
+            }
+         }
+         else{
+            numXFreeBits = 0;
+            for(ORUInt i=0;i<wordLength;i++){
+               if(xFreeBits[i] && !(xFreeBits[i] & (xFreeBits[i]-1)))
+                  numXFreeBits++;
+               else if (xFreeBits[i])
+                  justOne = false;
+            }
+            if (justOne && (numXFreeBits==1)){
+               for(ORUInt i=0; i<wordLength;i++)
+                  if(xFreeBits[i]){
+                     if(xFreeBits[i] & yLow[i]._val)
+                        newXUp[i] &= ~xFreeBits[i];
+                     else
+                        newXLow[i] |= xFreeBits[i];
+                  }
+            }
+         }
+      }
+
+   }
+         
    if(makesame){
       for(int i=0;i<wordLength;i++){
          newXUp[i] = xUp[i]._val & yUp[i]._val;
@@ -12610,7 +12666,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if (different) {
       for (int i=0; i<zWordLength; i++) {
          newZUp[i] = zUp[i]._val & zero[i];
-         newZLow[i] = zLow[i]._val | zero[i];
+//         newZLow[i] = zLow[i]._val | zero[i];
 //         upXORlow = newZUp[i] ^ newZLow[i];
 //         if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0)
          _state[0] = newXUp;
@@ -12628,9 +12684,9 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    }
    else if ([_x bound] && [_y bound]){
       //LSB should be 1
-      newZUp[0] = zUp[0]._val & one[0];
+//      newZUp[0] = zUp[0]._val & one[0];
       newZLow[0] = zLow[0]._val | one[0];
-      upXORlow = newZUp[0] ^ newZLow[0];
+//      upXORlow = newZUp[0] ^ newZLow[0];
 //      if(((upXORlow & (~newZUp[0])) & (upXORlow & newZLow[0])) != 0)
 //         failNow();
       _state[0] = newXUp;
@@ -12648,7 +12704,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       //check the rest of the words in the bitvector if present
       for (int i=1; i<zWordLength; i++) {
          newZUp[i] = zUp[i]._val & zero[i];
-         newZLow[i] = zLow[i]._val | zero[i];
+//         newZLow[i] = zLow[i]._val | zero[i];
 //         upXORlow = newZUp[i] ^ newZLow[i];
 //         if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0)
 //            failNow();
