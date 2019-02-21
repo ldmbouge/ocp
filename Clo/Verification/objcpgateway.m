@@ -564,7 +564,7 @@ static OBJCPGateway *objcpgw;
 -(ORBool) objcp_check:(objcp_context) ctx
 {
    @autoreleasepool {
-      printf("%s",[[NSString stringWithFormat:@"%@",_model] UTF8String]);
+      printf("model : %s",[[NSString stringWithFormat:@"%@",_model] UTF8String]);
       id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options];
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
