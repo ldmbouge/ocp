@@ -413,6 +413,14 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitRationalErrorOf: (id<ORRationalErrorOf>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalChannel: (id<ORRationalChannel>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitAffine: (id<ORAffine>)c
 {
    _result = [_into addConstraint:c];

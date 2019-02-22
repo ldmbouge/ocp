@@ -16,8 +16,6 @@
 #import <objcp/CPDoubleDom.h>
 #import <objcp/CPRationalDom.h>
 
-// toto !
-
 @class CPDoubleVarI;
 
 @interface CPDoubleEqual : CPCoreConstraint {
@@ -130,7 +128,7 @@
     ORDouble _percent;
     ORInt _rounding;
     // cpjm: Use a trailed object for eo to insure that its value is saved
-    CPRationalDom* eo;
+    CPRationalDom* _eo;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
 -(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
@@ -151,7 +149,7 @@
     ORDouble _percent;
     ORInt _rounding;
     // cpjm: Use a trailed object for eo to insure that its value is saved
-    CPRationalDom* eo;
+    CPRationalDom* _eo;
 }
 -(id) init:(id)z equals:(id)x minus:(id)y;
 -(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
@@ -171,7 +169,7 @@
     ORDouble _percent;
     ORInt _rounding;
     // cpjm: Use a trailed object for eo to insure that its value is saved
-    CPRationalDom* eo;
+    CPRationalDom* _eo;
 }
 -(id) init:(id)z equals:(id)x mult:(id)y ;
 -(id) init:(id)z equals:(id)x mult:(id)y kbpercent:(ORDouble) p;
@@ -189,7 +187,7 @@
     ORDouble _percent;
     ORInt _rounding;
     // cpjm: Use a trailed object for eo to insure that its value is saved
-    CPRationalDom* eo;
+    CPRationalDom* _eo;
 }
 -(id) init:(id)z equals:(id)x div:(id)y ;
 -(id) init:(id)z equals:(id)x div:(id)y kbpercent:(ORDouble) p;

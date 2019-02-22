@@ -13,6 +13,7 @@
 
 
 @class CPRationalVarI;
+@class CPFloatVarI;
 
 @interface CPRationalEqual : CPCoreConstraint {
    CPRationalVarI* _x;
@@ -24,11 +25,91 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPRationalErrorOf : CPCoreConstraint {
+   CPFloatVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x is:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalChannel : CPCoreConstraint {
+   CPFloatVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x with:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRationalEqualc : CPCoreConstraint {
    CPRationalVarI* _x;
-   ORRational*      _c;
+   id<ORRational>      _c;
 }
--(id) init:(id)x and:(ORRational*)c;
+-(id) init:(id)x and:(id<ORRational>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalNEqual : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x nequals:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalNEqualc : CPCoreConstraint {
+   CPRationalVarI* _x;
+   id<ORRational>      _c;
+}
+-(id) init:(id)x and:(id)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalLT : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x lt:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalGT : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x gt:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalLEQ : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x leq:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalGEQ : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x geq:(id)y;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

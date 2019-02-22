@@ -203,6 +203,17 @@
         [_terms addTerm:alpha by:1];
     }
 }
+-(void) visitExprSqrtI:(ORExprSqrtI*) e
+{
+   if (_eqto) {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
 @end
 
 @implementation ORFloatSubst

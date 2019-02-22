@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 #import <ORProgram/ORProgram.h>
+#import <objcp/CPBitArrayDom.h>
 
 @interface TestAll : XCTestCase
 
@@ -103,6 +104,65 @@
       printf("Done: %d / %d\n",[cp nbChoices],[cp nbFailures]);
    }
 }
+-(void) testRank {
+   @autoreleasepool {
+      id<ORTrail> trail = [ORFactory trail];
+      id<ORMemoryTrail> mt    = [ORFactory memoryTrail];
+      id<CPEngine> engine = [CPFactory engine: trail memory:mt];
+      CPBitArrayDom* bd = [[CPBitArrayDom alloc] initWithLength:6
+                                                     withEngine:engine
+                                                      withTrail:trail];
+      [bd setBit:0 to:true for:nil];
+      [bd setBit:2 to:true for:nil];
+      [bd setBit:4 to:false for:nil];
+      NSLog(@"d = %@",bd);
+      for(ORInt i=0;i < 8;i++) {
+         ORUInt* s = [bd atRank:i];
+         printf("rank[%d] = ",i);
+         for(ORUInt mask = (0x1 << 5); mask ; mask >>= 1) {
+            BOOL bit = (s[0] & mask) == mask;
+            printf("%c",bit ? '1' : '0');
+         }
+         printf("\n");
+      }
+   }
+}
+-(void) testShiftL {
+   @autoreleasepool {
+      id<ORModel>  m = [ORFactory createModel];
+      id<ORBitVar> x = [ORFactory bitVar:m withLength:8];
+      id<ORBitVar> y = [ORFactory bitVar:m withLength:8];
+      [m add: [ORFactory bit:x shiftLBy:2 eq:y]];
+      id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+      [cp solveAll:^{
+         NSLog(@"x = %@",[cp stringValue:x]);
+         NSLog(@"y = %@",[cp stringValue:y]);
+         [cp labelBit:0 ofVar:x];
+         NSLog(@"x = %@",[cp stringValue:x]);
+         NSLog(@"y = %@",[cp stringValue:y]);
+      }];
+   }
+
+}
+-(void) testShiftL2 {
+   @autoreleasepool {
+      id<ORModel>  m = [ORFactory createModel];
+      id<ORBitVar> x = [ORFactory bitVar:m withLength:8];
+      id<ORBitVar> y = [ORFactory bitVar:m withLength:8];
+      [m add: [ORFactory bit:x shiftLBy:2 eq:y]];
+      id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+      [cp solveAll:^{
+         NSLog(@"x = %@",[cp stringValue:x]);
+         NSLog(@"y = %@",[cp stringValue:y]);
+         [cp labelBV:y at:7 with:YES];
+         NSLog(@"x = %@",[cp stringValue:x]);
+         NSLog(@"y = %@",[cp stringValue:y]);
+         [cp labelBV:y at:6 with:NO];
+         NSLog(@"x = %@",[cp stringValue:x]);
+         NSLog(@"y = %@",[cp stringValue:y]);
+      }];
+   }
+}
 
 -(void) testBitBind {
    @autoreleasepool {
@@ -121,7 +181,7 @@
       }];      
    }
 }
-
+/*
 -(void) testChannel1 {
    @autoreleasepool {
       id<ORModel>  m = [ORFactory createModel];
@@ -142,7 +202,7 @@
       }];
    }
 }
-
+*/
 -(void) testChannel2 {
    @autoreleasepool {
       id<ORModel>  m = [ORFactory createModel];
@@ -160,6 +220,41 @@
          NSLog(@"x  = %@",[cp stringValue:x]);
          NSLog(@"y  = %@",[cp stringValue:y]);
          NSLog(@"yn = %d",[cp intValue:yn]);
+      }];
+   }
+}
+
+-(void) testChannel3 {
+   @autoreleasepool {
+      id<ORModel>  m = [ORFactory createModel];
+      id<ORBitVar> x = [ORFactory bitVar:m withLength:8];
+      id<ORIntVar> y = [ORFactory intVar:m domain:RANGE(m, 0,255)];
+      [m add: [ORFactory bit:x channel:y]];
+      id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+      [cp solveAll:^{
+         [cp labelBits:x withValue:97];
+         NSLog(@"x  = %@",[cp stringValue:x]);
+         NSLog(@"y  = %d",[cp intValue:y]);
+      }];
+   }
+}
+
+-(void) testChannel4 {
+   @autoreleasepool {
+      id<ORModel>  m = [ORFactory createModel];
+      id<ORBitVar> x = [ORFactory bitVar:m withLength:8];
+      id<ORIntVar> y = [ORFactory intVar:m domain:RANGE(m, 0,255)];
+      [m add: [ORFactory bit:x channel:y]];
+      id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+      [cp solveAll:^{
+         ORInt t = 97;
+         ORInt m = 0x1;
+         for(int i=0;i<8;i++) {
+            [cp labelBV:x at:i with: t&m];
+            m <<= 1;
+         }
+         NSLog(@"x  = %@",[cp stringValue:x]);
+         NSLog(@"y  = %d",[cp intValue:y]);
       }];
    }
 }

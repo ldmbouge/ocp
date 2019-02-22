@@ -620,6 +620,9 @@ static __thread id checkPointCache = NULL;
             return s;
       }
       assignTRInt(&_level, acp->_level, _trail);
+      //The line below was removed a while back. The idea (I think) is that the loop above *does* replay the
+      //new suffix and each iteration applies "comply" to the relevant segment, so a global comply is not
+      //needed (or appropriate, it was restoring __too much__.
       //[_mt comply:acp->_mt from:[peekAt(_cmds, getStackSize(_cmds)-1) memoryTo] to:[acp->_mt trailSize]];
       return [engine enforceObjective];
    }

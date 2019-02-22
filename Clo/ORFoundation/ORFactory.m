@@ -17,7 +17,7 @@
 #import "ORConstraintI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
 
 //#import <objcp/CPBitMacros.h>
 
@@ -140,7 +140,7 @@
    ORMutableFloatI* o = [[ORMutableFloatI alloc] initORMutableFloatI: tracker value:value];
    return [tracker trackMutable: o];
 }
-+(id<ORMutableRational>) mutable: (id<ORTracker>)tracker qvalue: (ORRational*) value
++(id<ORMutableRational>) mutable: (id<ORTracker>)tracker qvalue: (id<ORRational>) value
 {
    ORMutableRationalI* o = [[ORMutableRationalI alloc] initORMutableRationalI: tracker value:value];
    return [tracker trackMutable: o];
@@ -155,7 +155,7 @@
     ORFloatI* o = [[ORFloatI alloc] init: tracker value: value];
     return [tracker trackImmutable: o];
 }
-+(id<ORRationalNumber>) rational: (id<ORTracker>) tracker value: (ORRational*) value
++(id<ORRationalNumber>) rational: (id<ORTracker>) tracker value: (id<ORRational>) value
 {
    ORRationalI* o = [[ORRationalI alloc] init: tracker value: value];
    return [tracker trackImmutable: o];
@@ -216,14 +216,14 @@
 }
 +(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker
 {
-   ORRational* ninf = [ORRational rationalWith_d:-INFINITY];
-   ORRational* pinf = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> ninf = [ORRational rationalWith_d:-INFINITY];
+   id<ORRational> pinf = [ORRational rationalWith_d:+INFINITY];
    ORRationalRangeI* o = [[ORRationalRangeI alloc] init:ninf up:pinf];
    [ninf release];
    [pinf release];
    return [tracker trackImmutable:o];
 }
-+(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker low:(ORRational*)low up:(ORRational*) up
++(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker low:(id<ORRational>)low up:(id<ORRational>) up
 {
    ORRationalRangeI* o = [[ORRationalRangeI alloc] init:low up:up];
    return [tracker trackImmutable:o];
@@ -319,9 +319,12 @@
     ORFloatArrayI* o = [[ORFloatArrayI alloc] init: tracker range:range value:0.f];
     return [tracker trackMutable: o];
 }
-+(id<ORRationalArray>) rationalArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORRational*(^)(ORInt)) clo
++(id<ORRationalArray>) rationalArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(id<ORRational>(^)(ORInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   [o.range enumerateWithBlock:^(ORInt k) {
+      [o set:clo(k) at:k];
+   }];
    return (id<ORRationalArray>)o;
 }
 
@@ -640,11 +643,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORFloatVarI alloc]  init: tracker low: low up: up name:name];
 }
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name
+{
+   return [[ORFloatVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name];
+}
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker
 {
    return [[ORFloatVarI alloc]  init: tracker];
 }
-+(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(ORRational*) low up: (ORRational*) up
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(id<ORRational>) low up: (id<ORRational>) up
 {
    return [[ORRationalVarI alloc]  init: tracker low: low up: up];
 }
@@ -656,13 +663,33 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORRationalVarI alloc]  init: tracker name:name];
 }
-+(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(ORRational*) low up: (ORRational*) up name:(NSString*) name
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker from:(id<ORFloatVar>) f
+{
+   return [[ORRationalVarI alloc]  init: tracker name:[f prettyname]];
+}
++(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker low:(id<ORRational>) low up: (id<ORRational>) up name:(NSString*) name
 {
    return [[ORRationalVarI alloc]  init: tracker low: low up: up name:name];
 }
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker
 {
    return [[ORRationalVarI alloc]  init: tracker];
+}
++(id<ORRationalVar>) errorVar: (id<ORTracker>) mdl of:(id<ORFloatVar>)f
+{
+   id<ORRational> low = [ORRational rationalWith_d:-INFINITY];
+   id<ORRational> up = [ORRational rationalWith_d:+INFINITY];
+   ORRationalVarI* r = [[ORRationalVarI alloc] init: mdl
+                                                 low:low
+                                                  up:up
+                                                name:[f prettyname]];
+   id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
+   //[[f tracker] add:c];
+   id<ORTracker> m = f.tracker;
+   [((id<ORModel>)m) add: c];
+   [low release];
+   [up release];
+   return r;
 }
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
@@ -679,6 +706,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up name:(NSString*) name
 {
    return [[ORDoubleVarI alloc]  init: tracker low: low up: up name:name];
+}
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name
+{
+   return [[ORDoubleVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name];
 }
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom name:(NSString*) name
 {
@@ -722,7 +753,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORBindingArrayI alloc] initORBindingArray: nb];
 }
-
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up
 {
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -733,8 +763,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
     id<ORIdArray> o = [ORFactory idArray:tracker range:range];
-    for(ORInt k=range.low;k <= range.up;k++)
-        [o set:[ORFactory floatVar:tracker] at:k];
+   //[hzi : we should not init var, because it used as storage]
+//    for(ORInt k=range.low;k <= range.up;k++)
+//        [o set:[ORFactory floatVar:tracker] at:k];
     return (id<ORFloatVarArray>)o;
 }
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name
@@ -756,7 +787,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
 }
 
-+(id<ORRationalVarArray>) rationalVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORRational*)low up:(ORRational*)up
++(id<ORRationalVarArray>) rationalVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(id<ORRational>)low up:(id<ORRational>)up
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
@@ -1184,7 +1215,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORExpr> o = [[ORExprNegateI alloc] initORNegateI:op];
    return [self validate:o onError:"No CP tracker in negate Expression" track:t];
 }
-
++(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprSqrtI alloc] initORSqrtI:op];
+   return [self validate:o onError:"No CP tracker in negate Expression" track:t];
+}
 +(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    ORExprSumI* o = [[ORExprSumI alloc] init: tracker over: S suchThat: f of: e];
@@ -1931,19 +1966,31 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORRational)
-+(id<ORConstraint>) rationalAssignC: (id<ORTracker>) model var:(id<ORRationalVar>) x to:(ORRational*)c
++(id<ORConstraint>) rationalAssignC: (id<ORTracker>) model var:(id<ORRationalVar>) x to:(id<ORRational>)c
 {
    id<ORConstraint> o = [[ORRationalAssignC alloc] initORRationalAssignC:x to:c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x eqc:(ORRational*)c
++(id<ORConstraint>) rationalEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x eqc:(id<ORRational>)c
 {
    id<ORConstraint> o = [[ORRationalEqualc alloc] initORRationalEqualc:x eqi:c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalNEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x neqc:(ORRational*)c
++(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORFloatVar>) x is: (id<ORRationalVar>) y
+{
+   id<ORConstraint> o = [[ORRationalErrorOf alloc] initORRationalErrorOf:x is:y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) channel:(id<ORFloatVar>)x with:(id<ORRationalVar>)y
+{
+   id<ORConstraint> o = [[ORRationalChannel alloc] initORRationalChannel:x with:y];
+   [[x tracker] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) rationalNEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x neqc:(id<ORRational>)c
 {
    id<ORConstraint> o = [[ORRationalNEqualc alloc] initORRationalNEqualc:x neqi:c];
    [model trackObject:o];
@@ -1955,37 +2002,37 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  eq: (ORRational*) c
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  eq: (id<ORRational>) c
 {
    id<ORConstraint> o = [[ORRationalLinearEq alloc] initRationalLinearEq: x coef: coef cst: c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  neq: (ORRational*) c
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  neq: (id<ORRational>) c
 {
    id<ORConstraint> o = [[ORRationalLinearNEq alloc] initRationalLinearNEq: x coef: coef cst: c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  lt: (ORRational*) c
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  lt: (id<ORRational>) c
 {
    id<ORConstraint> o = [[ORRationalLinearLT alloc] initRationalLinearLT: x coef: coef cst: c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  gt: (ORRational*) c
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  gt: (id<ORRational>) c
 {
    id<ORConstraint> o = [[ORRationalLinearGT alloc] initRationalLinearGT: x coef: coef cst: c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  leq: (ORRational*) c
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  leq: (id<ORRational>) c
 {
    id<ORConstraint> o = [[ORRationalLinearLEQ alloc] initRationalLinearLEQ: x coef: coef cst: c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  geq: (ORRational*) c
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  geq: (id<ORRational>) c
 {
    id<ORConstraint> o = [[ORRationalLinearGEQ alloc] initRationalLinearGEQ: x coef: coef cst: c];
    [model trackObject:o];
@@ -2039,37 +2086,37 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x eqi: (ORRational*) i
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x eqi: (id<ORRational>) i
 {
    id<ORConstraint> o = [[ORRationalReifyEqualc alloc] initRationalReify: b equiv:x eqi: i];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x neqi: (ORRational*) i
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x neqi: (id<ORRational>) i
 {
    id<ORConstraint> o = [[ORRationalReifyNEqualc alloc] initRationalReify: b equiv: x neqi: i];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x leqi: (ORRational*) i
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x leqi: (id<ORRational>) i
 {
    id<ORConstraint> o = [[ORRationalReifyLEqualc alloc] initRationalReify: b equiv: x leqi: i];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x geqi: (ORRational*) i
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x geqi: (id<ORRational>) i
 {
    id<ORConstraint> o = [[ORRationalReifyGEqualc alloc] initRationalReify: b equiv: x geqi: i];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x gti: (ORRational*)c
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x gti: (id<ORRational>)c
 {
    id<ORConstraint> o = [[ORRationalReifyGThenc alloc] initRationalReify: b equiv: x gti: c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x lti: (ORRational*)c
++(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x lti: (id<ORRational>)c
 {
    id<ORConstraint> o = [[ORRationalReifyLThenc alloc] initRationalReify: b equiv: x lti:c];
    [model trackObject:o];

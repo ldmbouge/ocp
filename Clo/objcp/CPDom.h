@@ -91,42 +91,42 @@
 
 @protocol CPFloatVarRatNotifier;
 @protocol CPRationalDom
--(void) updateMin:(ORRational*)newMin for:(id<CPFloatVarRatNotifier>)x;
--(void) updateMax:(ORRational*)newMax for:(id<CPFloatVarRatNotifier>)x;
+-(void) updateMin:(id<ORRational>)newMin for:(id<CPFloatVarRatNotifier>)x;
+-(void) updateMax:(id<ORRational>)newMax for:(id<CPFloatVarRatNotifier>)x;
 -(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarRatNotifier>)x;
--(void) bind:(ORRational*)val  for:(id<CPFloatVarRatNotifier>)x;
--(ORRational*) min;
--(ORRational*) max;
--(ORRational*) imin;
--(ORRational*) imax;
+-(void) bind:(id<ORRational>)val  for:(id<CPFloatVarRatNotifier>)x;
+-(id<ORRational>) min;
+-(id<ORRational>) max;
+-(id<ORRational>) imin;
+-(id<ORRational>) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
 -(TRRationalInterval) domain;
--(ORBool) member:(ORRational*)v;
+-(ORBool) member:(id<ORRational>)v;
 -(NSString*)description;
 -(id) copy;
 -(void) restoreDomain:(id<CPRationalDom>)toRestore;
--(void) restoreValue:(ORRational*)toRestore for:(id<CPFloatVarRatNotifier>)x;
+-(void) restoreValue:(id<ORRational>)toRestore for:(id<CPFloatVarRatNotifier>)x;
 @end
 
 @protocol CPRationalVarNotifier;
 @protocol CPRationalDomN
--(void) updateMin:(ORRational*)newMin for:(id<CPRationalVarNotifier>)x;
--(void) updateMax:(ORRational*)newMax for:(id<CPRationalVarNotifier>)x;
+-(void) updateMin:(id<ORRational>)newMin for:(id<CPRationalVarNotifier>)x;
+-(void) updateMax:(id<ORRational>)newMax for:(id<CPRationalVarNotifier>)x;
 -(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRationalVarNotifier>)x;
--(void) bind:(ORRational*)val  for:(id<CPRationalVarNotifier>)x;
--(ORRational*) min;
--(ORRational*) max;
--(ORRational*) imin;
--(ORRational*) imax;
+-(void) bind:(id<ORRational>)val  for:(id<CPRationalVarNotifier>)x;
+-(id<ORRational>) min;
+-(id<ORRational>) max;
+-(id<ORRational>) imin;
+-(id<ORRational>) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
 -(TRRationalInterval) domain;
--(ORBool) member:(ORRational*)v;
+-(ORBool) member:(id<ORRational>)v;
 -(NSString*)description;
 -(id) copy;
 -(void) restoreDomain:(id<CPRationalDom>)toRestore;
--(void) restoreValue:(ORRational*)toRestore for:(id<CPRationalVarNotifier>)x;
+-(void) restoreValue:(id<ORRational>)toRestore for:(id<CPRationalVarNotifier>)x;
 @end
 
 

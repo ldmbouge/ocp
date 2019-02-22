@@ -67,25 +67,32 @@ PORTABLE_BEGIN
 
 @protocol ORFloatVar <ORExprVar>
 -(id<ORFloatRange>) domain;
+-(id<ORRationalRange>) domainError;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
+-(id<ORRational>) elow;
+-(id<ORRational>) eup;
 -(NSString*) prettyname;
 @end
 
 @protocol ORRationalVar <ORExprVar>
 -(id<ORRationalRange>) domain;
 -(ORBool) hasBounds;
--(ORRational*) low;
--(ORRational*) up;
+-(id<ORRational>) low;
+-(id<ORRational>) up;
 -(NSString*) prettyname;
 @end
 
 @protocol ORDoubleVar <ORExprVar>
 -(id<ORDoubleRange>) domain;
+-(id<ORRationalRange>) domainError;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(id<ORRational>) elow;
+-(id<ORRational>) eup;
+-(NSString*) prettyname;
 @end
 
 @protocol ORLDoubleVar <ORExprVar>
@@ -147,6 +154,7 @@ PORTABLE_BEGIN
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
 -(ORBool) isEnable:(ORUInt) index;
+-(ORBool) contains: (id<ORFloatVar>) v;
 @end
 
 

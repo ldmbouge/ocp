@@ -86,7 +86,7 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-      return [NSString stringWithFormat:@"%@:(%@,%c)",_prettyname,[_domain description],_ba[0] ? 'D':'S'];
+      return [NSString stringWithFormat:@"%@:%03d(%@,%c)",_prettyname,_name,[_domain description],_ba[0] ? 'D':'S'];
    return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_ba[0] ? 'D':'S'];
 }
 -(ORInt) value
@@ -353,6 +353,7 @@
 @protected
    id<ORTracker>    _tracker;
    id<ORFloatRange> _domain;
+   id<ORRationalRange> _domainError;
    BOOL             _hasBounds;
    NSString*         _prettyname;
 }
@@ -361,6 +362,27 @@
    self = [super init];
    _tracker = track;
    _domain = dom;
+   if(_domain.low == _domain.up){
+      id<ORRational> zero = [ORRational rationalWith_d:0.0f];
+      _domainError = [ORFactory rationalRange:track low:zero up:zero];
+      [zero release];
+   } else {
+      id<ORRational> low = [ORRational rationalWith_d:-INFINITY];
+      id<ORRational> up = [ORRational rationalWith_d:+INFINITY];
+      _domainError = [ORFactory rationalRange:track low:low up:up];
+      [low release];
+      [up release];
+   }
+   _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
+   [track trackVariable: self];
+   return self;
+}
+-(ORFloatVarI*) init: (id<ORTracker>) track domain:(id<ORFloatRange>)dom domainError:(id<ORRationalRange>)domError
+{
+   self = [super init];
+   _tracker = track;
+   _domain = dom;
+   _domainError = domError;
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
    [track trackVariable: self];
    return self;
@@ -395,10 +417,21 @@
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
+-(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name
+{
+   self = [self init:track domain:[ORFactory floatRange:track low:low up:up] domainError:[ORFactory rationalRange:track low:elow up:eup]];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
+}
 -(id<ORFloatRange>) domain
 {
    assert(_domain != NULL);
    return _domain;
+}
+-(id<ORRationalRange>) domainError
+{
+   assert(_domainError != NULL);
+   return _domainError;
 }
 -(void) dealloc
 {
@@ -433,8 +466,8 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-      return [NSString stringWithFormat:@"%@:(%f,%f)",_prettyname,_domain.low,_domain.up];
-   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@:%03d(%f,%f)±(%@,%@)",_prettyname,_name,_domain.low,_domain.up,_domainError.low,_domainError.up];
+   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)±(%@,%@)",_name,_domain.low,_domain.up,_domainError.low,_domainError.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -456,6 +489,14 @@
 {
    return _domain.up;
 }
+-(id<ORRational>) elow
+{
+   return _domainError.low;
+}
+-(id<ORRational>) eup
+{
+   return _domainError.up;
+}
 -(ORFloat) fmin
 {
    return [_domain low];
@@ -463,6 +504,14 @@
 -(ORFloat) fmax
 {
    return [_domain up];
+}
+-(id<ORRational>) qmin
+{
+   return [_domainError low];
+}
+-(id<ORRational>) qmax
+{
+   return [_domainError up];
 }
 -(NSString*) prettyname
 {
@@ -484,19 +533,19 @@
    self = [super init];
    _tracker = track;
    _domain = dom;
-   ORRational* ninf = [ORRational rationalWith_d:-INFINITY];
-   ORRational* pinf = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> ninf = [ORRational rationalWith_d:-INFINITY];
+   id<ORRational> pinf = [ORRational rationalWith_d:+INFINITY];
    _hasBounds = ([[dom low] neq: ninf] || [[dom up] neq: pinf]);
    [track trackVariable: self];
    return self;
 }
--(ORRationalVarI*) init: (id<ORTracker>) track low: (ORRational*) low up: (ORRational*) up
+-(ORRationalVarI*) init: (id<ORTracker>) track low: (id<ORRational>) low up: (id<ORRational>) up
 {
    return  [self init:track domain:[ORFactory rationalRange:track low:low up:up]];
 }
--(ORRationalVarI*) init: (id<ORTracker>) track up: (ORRational*) up
+-(ORRationalVarI*) init: (id<ORTracker>) track up: (id<ORRational>) up
 {
-   ORRational* zero = [ORRational rationalWith_d:0.0];
+   id<ORRational> zero = [ORRational rationalWith_d:0.0];
    ORRationalVarI* r = [self init:track low:zero up:up];
    return r;
 }
@@ -510,14 +559,14 @@
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
--(ORRationalVarI*) init: (id<ORTracker>) track up: (ORRational*) up name:(NSString*) name
+-(ORRationalVarI*) init: (id<ORTracker>) track up: (id<ORRational>) up name:(NSString*) name
 {
-   ORRational* zero = [ORRational rationalWith_d:0.0];
+   id<ORRational> zero = [ORRational rationalWith_d:0.0];
    self = [self init:track low:zero up:up name:name];
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
--(ORRationalVarI*) init: (id<ORTracker>) track low: (ORRational*) low up: (ORRational*) up name:(NSString*) name
+-(ORRationalVarI*) init: (id<ORTracker>) track low: (id<ORRational>) low up: (id<ORRational>) up name:(NSString*) name
 {
    self = [self init:track domain:[ORFactory rationalRange:track low:low up:up]];
    _prettyname = [[NSString alloc] initWithString:name];
@@ -561,8 +610,8 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-      return [NSString stringWithFormat:@"%@:(%@,%@)",_prettyname,_domain.low,_domain.up];
-   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%@,%@)",_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@:%03d(%@,%@)",_prettyname,_name,_domain.low,_domain.up];
+   return [NSString stringWithFormat:@"var<OR>{rational}:%03d(%@,%@)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -576,19 +625,19 @@
 {
    return _hasBounds;
 }
--(ORRational*) low
+-(id<ORRational>) low
 {
    return _domain.low;
 }
--(ORRational*) up
+-(id<ORRational>) up
 {
    return _domain.up;
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return [_domain low];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return [_domain up];
 }
@@ -603,6 +652,7 @@
 @protected
    id<ORTracker>    _tracker;
    id<ORDoubleRange> _domain;
+   id<ORRationalRange> _domainError;
    BOOL             _hasBounds;
    NSString*         _prettyname;
 }
@@ -628,7 +678,28 @@
    _tracker = track;
    _domain = dom;
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
+   if(_domain.low == _domain.up){
+      id<ORRational> zero = [ORRational rationalWith_d:0.0f];
+      _domainError = [ORFactory rationalRange:track low:zero up:zero];
+      [zero release];
+   } else {
+      id<ORRational> low = [ORRational rationalWith_d:-INFINITY];
+      id<ORRational> up = [ORRational rationalWith_d:+INFINITY];
+      _domainError = [ORFactory rationalRange:track low:low up:up];
+      [low release];
+      [up release];
+   }
    _prettyname = name;
+   [track trackVariable: self];
+   return self;
+}
+-(ORDoubleVarI*) init: (id<ORTracker>) track domain:(id<ORDoubleRange>)dom domainError:(id<ORRationalRange>)domError
+{
+   self = [super init];
+   _tracker = track;
+   _domain = dom;
+   _domainError = domError;
+   _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
    [track trackVariable: self];
    return self;
 }
@@ -640,6 +711,12 @@
 {
    return [self init:track low:-INFINITY up:+INFINITY name:name];
 }
+-(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name
+{
+   self = [self init:track domain:[ORFactory doubleRange:track low:low up:up] domainError:[ORFactory rationalRange:track low:elow up:eup]];
+   _prettyname = [[NSString alloc] initWithString:name];
+   return self;
+}
 -(ORDoubleVarI*) init: (id<ORTracker>) track name:(NSString *)name
 {
    return [self init:track low:-INFINITY up:+INFINITY name:name];
@@ -648,6 +725,11 @@
 {
    assert(_domain != NULL);
    return _domain;
+}
+-(id<ORRationalRange>) domainError
+{
+   assert(_domainError != NULL);
+   return _domainError;
 }
 -(void) dealloc
 {
@@ -682,8 +764,9 @@
 -(NSString*) description
 {
    if(_prettyname != nil)
-   return [NSString stringWithFormat:@"%@:(%lf,%lf)",_prettyname,_domain.low,_domain.up];
-   return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@:%03d(%lf,%lf)±(%@,%@)",_prettyname,_name,_domain.low,_domain.up,_domainError.low,_domainError.up];
+   else
+      return [NSString stringWithFormat:@"var<OR>{double}:%03d(%lf,%lf)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -704,6 +787,14 @@
 -(ORDouble) up
 {
    return _domain.up;
+}
+-(id<ORRational>) elow
+{
+   return _domainError.low;
+}
+-(id<ORRational>) eup
+{
+   return _domainError.up;
 }
 -(ORDouble) dmin
 {
@@ -1141,6 +1232,10 @@
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@)",_name,_vars,_disabled];
+}
+-(ORBool) contains:(id<ORFloatVar>)v
+{
+   return [_vars contains:v];
 }
 @end
 

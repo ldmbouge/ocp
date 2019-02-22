@@ -10,12 +10,12 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPDoubleDom.h"
+#import <objcp/CPDoubleDom.h>
 //#import "CPEngineI.h"
 #import "CPError.h"
 #import "CPDoubleVarI.h"
 
-#include <fpi.h>
+#import <ORFoundation/fpi.h>
 
 @implementation CPDoubleDom
 
@@ -35,18 +35,12 @@
 -(NSString*) description
 {
    if([self bound] && !(is_eq(_domain._low,-0.0) && is_eq(_domain._up,+0.0))){
-      unsigned int *inf;
-      inf = (unsigned int *)&(_domain._low);
       NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-      [buf appendFormat:@"%20.20e [%4X]",_domain._low,*inf ];
+      [buf appendFormat:@"%20.20e",_domain._low];
       return buf;
    }
-   unsigned int *inf;
-   unsigned int *sup;
-   inf = (unsigned int *)&(_domain._low);
-   sup = (unsigned int *)&(_domain._up);
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",_domain._low,_domain._up,*inf,*sup];
+   [buf appendFormat:@"(%20.20e,%20.20e)",_domain._low,_domain._up];
    return buf;
 }
 -(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x

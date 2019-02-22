@@ -36,7 +36,8 @@
 #import <values.h>
 #endif
 
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
+
 #if __clang_major__<=3 && __clang_minor__<=6
 #define _Nonnull
 #endif
@@ -184,7 +185,7 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
-   _level = 100;
+   _level = 0;
    _split3Bpercent = 10.f;
    _searchNBFloats = 2;
    _subcut = @selector(float3BSplit:call:withVars:);
@@ -643,11 +644,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method diffImpl not implemented"];
 }
--(void) labelImplRational: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) labelImplRational: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelImplRational not implemented"];
 }
--(void) diffImplRational: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) diffImplRational: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method diffImplRational not implemented"];
 }
@@ -679,19 +680,19 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGthenImpl: not implemented"];
 }
--(void) rationalLthenImpl: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) rationalLthenImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method rationalLthenImpl: not implemented"];
 }
--(void) rationalGthenImpl: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) rationalGthenImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method rationalGthenImpl: not implemented"];
 }
--(void) rationalLEqualImpl: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) rationalLEqualImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method rationalLEqualImpl: not implemented"];
 }
--(void) rationalGEqualImpl: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) rationalGEqualImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method rationalGEqualImpl: not implemented"];
 }
@@ -1482,8 +1483,8 @@
 -(void) labelRational: (id<ORRationalVar>) mx
 {
    id<CPRationalVar> x = _gamma[mx.getId];
-   ORRational* mid = [[ORRational alloc] init:_mt];
-   ORRational* two = [[ORRational alloc] init:_mt];
+   id<ORRational> mid = [[ORRational alloc] init:_mt];
+   id<ORRational> two = [[ORRational alloc] init:_mt];
    [two set_d:2];
    while (![x bound]) {
       mid = [[[x min] div: two] add: [[x max] div: two]];
@@ -1569,7 +1570,7 @@
 {
    return [self labelImpl: _gamma[var.getId] with: val];
 }
--(void) labelRational: (id<ORRationalVar>) var with: (ORRational*) val
+-(void) labelRational: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    return [self labelImplRational: _gamma[var.getId] with: val];
 }
@@ -1577,17 +1578,7 @@
 {
    [self diffImpl: _gamma[var.getId] with: val];
 }
-
-/*-(void) labelRational: (id<ORRationalVar>) var by: (ORRational) o
-{
-   id<CPRationalVar> x = _gamma[getId(var)];
-   while (![x bound]) {
-      ORRational val = [self selectValueImplRational: x by: o];
-      [self try: ^() { [self labelRational: var with: val]; }
-            alt: ^() { [self diffRational: var with: val]; }];
-   }
-}*/
--(void) diffRational: (id<ORRationalVar>) var with: (ORRational*) val
+-(void) diffRational: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    [self diffImplRational: _gamma[var.getId] with: val];
 }
@@ -1607,19 +1598,19 @@
 {
    [self gthenImpl: _gamma[var.getId] with: rint(floor(val))];
 }
--(void) rationalLthen: (id<ORRationalVar>) var with: (ORRational*) val
+-(void) rationalLthen: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    [self rationalLthenImpl: _gamma[var.getId] with: val];
 }
--(void) rationalGthen: (id<ORRationalVar>) var with: (ORRational*) val
+-(void) rationalGthen: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    [self rationalGthenImpl: _gamma[var.getId] with: val];
 }
--(void) rationalLEqual: (id<ORRationalVar>) var with: (ORRational*) val
+-(void) rationalLEqual: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    [self rationalLEqualImpl: _gamma[var.getId] with: val];
 }
--(void) rationalGEqual: (id<ORRationalVar>) var with: (ORRational*) val
+-(void) rationalGEqual: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    [self rationalGEqualImpl: _gamma[var.getId] with: val];
 }
@@ -2047,10 +2038,10 @@
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-//                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                   // LOG(_level,2,@"%@",_gamma[getId(x[i])]);
                                     return (ORDouble)i;
                                  }];
-   
+   NSLog(@"%@", [x description]);
    [[self explorer] applyController:t in:^{
       do {
          LOG(_level,2,@"State before selection");
@@ -2070,6 +2061,143 @@
       } while (true);
    }];
    
+}
+//-------------------------------------------------
+// Branch & Bound on error of FloatVar
+-(void) brandAndBoundSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   id<ORRational> lb = [[[ORRational alloc] init] setNegInf];
+   id<ORRational> ub = [[[ORRational alloc] init] setPosInf];
+   /* Array to store boxes b representing domains of variables at a node */
+   /*
+    ORFloatVarArray is good for representing variables domains at one node but we require an array of ORFloatVarArray to represent all nodes ?
+    Or keep an Array of ORTrail node and restore each state corresponding to a node before evaluating ?
+    */
+   id<ORDisabledFloatVarArray> L = x; //[ORFactory idArray:self range:RANGE(self,0,nbfloat-1)];
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
+   id<ORSelect> select = [ORFactory select: _engine
+                                     range: RANGE(self,[x low],[x up])
+                                  suchThat: ^ORBool(ORInt i) {
+                                     id<CPVar> v = _gamma[getId(x[i])];
+                                     LOG(_level,2,@"%@ %s %s",_gamma[getId(x[i])],[x isEnable:i] ? "" : "disabled",([v bound]) ? "b":"");
+                                     if(![x isEnable:i]){
+                                        if(![v bound]){
+                                           disabled.found = YES;
+                                           disabled.index = i;
+                                        }
+                                        [x enable:i];
+                                        return false;
+                                     }
+                                     return ![v bound];
+                                  }
+                                 orderedBy: ^ORDouble(ORInt i) {
+                                    //                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                    return (ORDouble)i;
+                                 }];
+   
+   [[self explorer] applyController:t in:^{
+      do {
+         LOG(_level,2,@"State before selection");
+         ORSelectorResult i = [select min];
+         if (!i.found){
+            if(!disabled.found)
+               break;
+            i.index = disabled.index;
+            [x enable:i.index];
+         } else if(_unique){
+            [x disable:i.index];
+         }
+         disabled.found = NO;
+         assert(![_gamma[getId(x[i.index])] bound]);
+         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         b(i.index,@selector(lexicalOrderedSearch:do:),x);
+         // Branch and bound
+         while([L count] || ([lb neq: ub])) {
+            
+         }
+      } while (true);
+   }];
+   
+//   // init upper and lower bound of solution to variable
+//   id<ORRational> ub = [ORRational rationalWith:[x[[x up]] elow]];
+//   id<ORRational> lb = [ORRational rationalWith:[x[[x up]] elow]];
+//
+//   NSUInteger count = sizeof(objects) / sizeof(id);
+//
+//   // initial split of root node
+//   id<ORFloatVar> r1 = x[[x up]];
+//   id<ORFloatVar> r2 = x[[x up]];
+//   r1.up = (r1.up+r1.low)/2.0f;
+//   r2.low = nextafterf((r1.up+r1.low)/2.0f, +INFINITY);
+//
+//   NSArray* waiting_list = [NSArray arrayWithObjects:r1, r2];
+//
+//   id<ORFloatVar> xi;
+//   while(waiting_list)
+//   {
+//      xi = [waiting_list lastObject];
+//      [waiting_list removeValueAtIndex:0]
+//   }
+//   while (goon) {
+//      [self nestedSolve:^{
+//         [_search applyController:t in:^{
+//            //LOG(_level,1,@"(3Bsplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,[min value],[max value]);
+//            [self floatIntervalImpl:xi low:[min value] up:[max value]];
+//            // The call above triggers propagation. Either this will succeed, suspend or it will fail
+//            // If it fails, there are provably no solution in the slice, so onSolution won't
+//            // be called and onExit will do the right thing.
+//            // If there is a solution, onSolution sets goon = NO and onExit attempts to go
+//            // to the next iteration but the outer loop stops.
+//            // If it suspends, then without branching we can't tell what happening inside the slide.
+//            // So we carry on and reach this point (right here) where we should *BRANCH* on the
+//            // variables in the slide. That is within the nested search and this array of vars
+//            // should be accessible.
+//            // ultimately that nested search will succeed or fail.
+//            // If it succeeds, goon = NO.
+//            // If it fails, onSolution is never called and you can check the depth of the
+//            // search with the controller t.
+//
+//            /*[self performSelector:s withObject:x withObject:^(ORUInt ind, SEL call,id<ORDisabledFloatVarArray> vs){
+//               SELPROTO subcut = (SELPROTO)[self methodForSelector:_subcut];
+//               subcut(self,_subcut,ind,call,vs);
+//            }];*/
+//         }];
+//      } onSolution:^{
+//         LOG(_level,1,@"solution found! in depth %d",[depth intValue]);
+//         if(_oneSol){
+//            goon = NO;
+//         }
+//         [self doOnSolution];
+//      } onExit:^{
+//         LOG(_level,1,@"fail on depth:%d",[depth intValue]);
+//         if (max.value == min.value || [depth intValue] > 1){
+//            goon = NO;
+//            if(d>0){
+//               [max setValue:maxFlt(fp_previous_float([min value]),xi.min)];
+//               [min setValue:xi.min];
+//            }else{
+//               [min setValue:minFlt(fp_next_float([max value]),xi.max)];
+//               [max setValue:xi.max];
+//            }
+//            [self floatIntervalImpl:xi low:min.value up:max.value];
+//         }else{
+//            [depth setValue:0];
+//            t = [[ORTrackDepth alloc] initORTrackDepth:_trail with:depth];
+//            [percent setValue: percent.value * c];
+//            step = size * percent.value / 100;
+//            if(d > 0){ //shave sup side
+//               [max setValue:maxFlt(fp_previous_float([min value]),xi.min)];
+//               [min setValue:([max value] - step > xi.min) ? [max value] - step : xi.max];
+//            }else{
+//               [min setValue:minFlt(fp_next_float([max value]),xi.max)];
+//               [max setValue:([min value] + step < xi.max) ? [min value] + step : xi.max];
+//            }
+//         }
+//      }];
+//   }
+//   LOG(_level,1,@"quit goon on depth %d",[depth intValue]);
+//
 }
 //-------------------------------------------------
 -(void) maxDegreeSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
@@ -2249,6 +2377,86 @@
       } while (true);
    }];
 }
+-(void) maxAbsorptionSearch:  (id<ORDisabledFloatVarArray>) ovars default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+ //[hzi] collect variables leading to an abs. introduced by flattening, construct new a and call maxabsI
+   id<ORFloatVarArray> vars = [_model floatVars];
+   NSMutableArray<ORFloatVar> *keeped = [[NSMutableArray<ORFloatVar> alloc] init];
+   NSSet* cstr = nil;
+   id<CPFloatVar> cx = nil;
+   id<CPFloatVar> v = nil;
+   ORDouble absV = 0.0;
+   for(id<ORFloatVar> x in vars){
+      if([ovars contains:x]){
+         [keeped addObject:x];
+      }else{
+         cx = _gamma[[x getId]];
+         cstr = [cx constraints];
+         for(id<CPConstraint> c in cstr){
+            if([c canLeadToAnAbsorption]){
+               v = [c varSubjectToAbsorption:cx];
+               if(v == nil) continue;
+               absV = [self computeAbsorptionQuantity:v by:x];
+               assert(absV >= 0.0f && absV <= 1.f);
+               if(absV){
+                  [keeped addObject:x];
+               }
+            }
+         }
+         [cstr release];
+      }
+   }
+   id<ORFloatVarArray> ckeeped = [ORFactory floatVarArray:self range:RANGE(self, 0, (ORInt)[keeped count]-1)];
+   ORInt i = 0;
+   for(id<ORFloatVar> x in keeped){
+      ckeeped[i++] = x;
+   }
+   [keeped release];
+   id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine];
+   [self maxAbsorptionSearchI:newX default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+      b(i,s,x);
+   }];
+}
+//-(void) maxAbsorptionSearch:  (id<ORDisabledFloatVarArray>) ovars do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+//{
+//   //[hzi] collect variables leading to an abs. introduced by flattening, construct new a and call maxabsI
+//   id<ORFloatVarArray> vars = [_model floatVars];
+//   NSMutableArray<ORFloatVar> *keeped = [[NSMutableArray<ORFloatVar> alloc] init];
+//   NSSet* cstr = nil;
+//   id<CPFloatVar> cx = nil;
+//   id<CPFloatVar> v = nil;
+//   ORDouble absV = 0.0;
+//   for(id<ORFloatVar> x in vars){
+//      if([ovars contains:x]){
+//         [keeped addObject:x];
+//      }else{
+//         cx = _gamma[[x getId]];
+//         cstr = [cx constraints];
+//         for(id<CPConstraint> c in cstr){
+//            if([c canLeadToAnAbsorption]){
+//               v = [c varSubjectToAbsorption:cx];
+//               if(v == nil) continue;
+//               absV = [self computeAbsorptionQuantity:v by:x];
+//               assert(absV >= 0.0f && absV <= 1.f);
+//               if(absV){
+//                  [keeped addObject:x];
+//               }
+//            }
+//         }
+//         [cstr release];
+//      }
+//   }
+//   id<ORFloatVarArray> ckeeped = [ORFactory floatVarArray:self range:RANGE(self, 0, (ORInt)[keeped count]-1)];
+//   ORInt i = 0;
+//   for(id<ORFloatVar> x in keeped){
+//      ckeeped[i++] = x;
+//   }
+//   [keeped release];
+//   id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine];
+//   [self maxAbsorptionSearchI:newX do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+//      b(i,s,x);
+//   }];
+//}
 -(void) maxAbsorptionSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
@@ -2291,10 +2499,10 @@
       } while (true);
    }];
 }
--(void) maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+-(void) maxAbsorptionSearchI: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
    @autoreleasepool {
-      SEL s = @selector(maxAbsorptionSearch:default:);
+      SEL s = @selector(maxAbsorptionSearchI:default:);
       __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
       ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
       __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
@@ -2313,7 +2521,7 @@
                                         return ![v bound];
                                      }
                                     orderedBy: ^ORDouble(ORInt i) {
-                                       LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                       LOG(_level,2,@"%@ rate : %16.16e",_gamma[getId(x[i])], [abs[i] quantity]);
                                        return [abs[i] quantity];
                                     }];
       
@@ -2681,6 +2889,164 @@
     } do:b limit:2 restricted:x];
 }
 
+-(void) maxAbsDensSearch:  (id<ORDisabledFloatVarArray>) ovars default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   //[hzi] collect variables leading to an abs. introduced by flattening, construct new a and call maxabsI
+   id<ORFloatVarArray> vars = [_model floatVars];
+   NSMutableArray<ORFloatVar> *keeped = [[NSMutableArray<ORFloatVar> alloc] init];
+   NSSet* cstr = nil;
+   id<CPFloatVar> cx = nil;
+   id<CPFloatVar> v = nil;
+   ORDouble absV = 0.0;
+   for(id<ORFloatVar> x in vars){
+      if([ovars contains:x]){
+         [keeped addObject:x];
+      }else{
+         cx = _gamma[[x getId]];
+         cstr = [cx constraints];
+         for(id<CPConstraint> c in cstr){
+            if([c canLeadToAnAbsorption]){
+               v = [c varSubjectToAbsorption:cx];
+               if(v == nil) continue;
+               absV = [self computeAbsorptionQuantity:v by:x];
+               assert(absV >= 0.0f && absV <= 1.f);
+               if(absV){
+                  [keeped addObject:x];
+               }
+            }
+         }
+         [cstr release];
+      }
+   }
+   id<ORFloatVarArray> ckeeped = [ORFactory floatVarArray:self range:RANGE(self, 0, (ORInt)[keeped count]-1)];
+   ORInt i = 0;
+   for(id<ORFloatVar> x in keeped){
+      ckeeped[i++] = x;
+   }
+   [keeped release];
+   id<ORDisabledFloatVarArray> newX = [ORFactory disabledFloatVarArray:ckeeped engine:_engine];
+   [self maxAbsDensSearchI:newX default:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+      b(i,s,x);
+   }];
+}
+
+//hzi version splitAbs
+-(void) maxAbsDensSearchI: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+{
+   @autoreleasepool {
+      SEL s = @selector(maxAbsDensSearchI:default:);
+      __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
+      ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+      __block ORInt switchneeded = true;
+      __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
+      id<ORSelect> select = [ORFactory select: _engine
+                                        range: RANGE(self,[x low],[x up])
+                                     suchThat: ^ORBool(ORInt i) {
+                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        if(![x isEnable:i]){
+                                           if(![v bound]){
+                                              disabled.found = YES;
+                                              disabled.index = i;
+                                           }
+                                           [x enable:i];
+                                           return false;
+                                        }
+                                        return ![v bound];
+                                     }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       LOG(_level,2,@"%@ rate : %16.16e",_gamma[getId(x[i])], [abs[i] quantity]);
+                                       switchneeded = switchneeded && !([abs[i] quantity] > 0.f);
+                                       return [abs[i] quantity];
+                                    }];
+
+
+      [[self explorer] applyController:t in:^{
+         do {
+            LOG(_level,2,@"State before selection");
+            ORSelectorResult i = [select max];
+            if(switchneeded){
+               [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+//                                    [self floatSplit:i call:s withVars:x];
+                                    [self float6WaySplit:i call:s withVars:x];
+               }];
+            }else{
+               if (!i.found){
+                  if(!disabled.found)
+                     break;
+                  i.index = disabled.index;
+                  [x enable:i.index];
+               } else if(_unique){
+                  [x disable:i.index];
+                  disabled.found = NO;
+               }
+               id<CPFloatVar> v = [abs[i.index] bestChoice];
+               LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
+               [self floatAbsSplit:i.index by:v call:s withVars:x default:b];
+               abs = [self computeAbsorptionsQuantities:x];
+               switchneeded = true;
+            }
+         } while (true);
+      }];
+      }
+}
+
+
+//
+//-(void) maxAbsDensSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+//{
+//   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+//   __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
+//   SEL s = @selector(maxAbsDensSearch:default:);
+//   __block ORInt switchneeded = true;
+//   id<ORSelect> select = [ORFactory select: _engine
+//                                     range: RANGE(self,[x low],[x up])
+//                                  suchThat: ^ORBool(ORInt i) {
+//                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+//                                     if(![x isEnable:i]){
+//                                        if(![v bound]){
+//                                           disabled.found = YES;
+//                                           disabled.index = i;
+//                                        }
+//                                        [x enable:i];
+//                                        return false;
+//                                     }
+//                                     return ![v bound];
+//                                  }
+//                                 orderedBy: ^ORDouble(ORInt i) {
+//                                    ORDouble res = [self computeAbsorptionRate:x[i]];
+//                                    LOG(_level,2,@"%@ abs : %16.16e",_gamma[getId(x[i])],res);
+//                                     switchneeded = switchneeded && !(res > 0.f);
+//                                    return res;
+//                                 }];
+//
+//   [[self explorer] applyController:t in:^{
+//      do {
+//         LOG(_level,2,@"State before selection");
+//         ORSelectorResult i = [select max];
+//         if(switchneeded & i.found){
+//             [self maxDensitySearch:x  do:^(ORUInt i,SEL s,id<ORDisabledFloatVarArray> x) {
+////                [self floatSplit:i call:s withVars:x];
+//                              [self float6WaySplit:i call:s withVars:x];
+//               }];
+//            }else{
+//         if (!i.found){
+//            if(!disabled.found)
+//               break;
+//            i.index = disabled.index;
+//            [x enable:i.index];
+//         }
+//         else if(_unique){
+//            [x disable:i.index];
+//         }
+//         disabled.found = NO;
+//         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+////         [self float6WaySplit:i.index call:s withVars:x];
+//         [self floatSplit:i.index call:s withVars:x];
+//         switchneeded = true;
+//      }
+//      } while (true);
+//   }];
+//}
 //-------------------------------------------------
 //Value ordering
 //split until value
@@ -2717,7 +3083,10 @@
 }
 -(void) floatAbsSplit:(ORUInt)i by:(id<CPFloatVar>) y call:(SEL)s withVars:(id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   if(y == nil) b(i,s,x);
+   if(y == nil) {
+      b(i,s,x);
+      return;
+   }
    float_interval interval[18];
    float_interval interval_x[3];
    float_interval interval_y[3];
@@ -3080,8 +3449,8 @@
       ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
       ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
       ORFloat mid = tmpMin/2 + tmpMax/2;
-      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats,mid);
-      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
+      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats- (xi.min == -infinityf()),mid);
+      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats - (xi.max == +infinityf()),fp_next_float(mid));
       updateFTWithValues(&interval[0],xi.min,deltaMin);
       updateFTWithValues(&interval[1],deltaMax,xi.max);
       length++;
@@ -3118,8 +3487,8 @@
       ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
       ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
       ORFloat mid = tmpMin/2 + tmpMax/2;
-      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats,mid);
-      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats,fp_next_float(mid));
+      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats - (xi.min == -infinityf()),mid);
+      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats - (xi.max == +infinityf()),fp_next_float(mid));
       for(ORFloat v = xi.min; v <= deltaMin; v = fp_next_float(v)){
          updateFTWithValues(&interval[length-1], v,v);
          assert(length-1 >= 0 && length-1 < nb);
@@ -3464,22 +3833,22 @@
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMaxErrorF:maxError];
 }
--(ORRational*) minErrorFQ:(id<ORVar>)x
+-(id<ORRational>) minErrorFQ:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx minErr];
 }
--(ORRational*) maxErrorFQ:(id<ORVar>)x
+-(id<ORRational>) maxErrorFQ:(id<ORVar>)x
 {
    CPFloatVarI* cx = _gamma[x.getId];
    return [cx maxErr];
 }
--(void) setMinErrorFQ:(id<ORVar>)x minError:(ORRational*) minError
+-(void) setMinErrorFQ:(id<ORVar>)x minError:(id<ORRational>) minError
 {
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMinError:minError];
 }
--(void) setMaxErrorFQ:(id<ORVar>)x maxError:(ORRational*) maxError
+-(void) setMaxErrorFQ:(id<ORVar>)x maxError:(id<ORRational>) maxError
 {
    CPFloatVarI* cx = _gamma[x.getId];
    [cx updateMaxError:maxError];
@@ -3502,7 +3871,27 @@
 -(NSString*) minQ:(id<ORVar>)x
 {
    CPRationalVarI* cx = _gamma[x.getId];
-   return [[cx max] description];
+   return [[cx min] description];
+}
+-(NSString*) maxFQ:(id<ORVar>)x
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   return [[cx maxErr] description];
+}
+-(NSString*) minFQ:(id<ORVar>)x
+{
+   CPFloatVarI* cx = _gamma[x.getId];
+   return [[cx minErr] description];
+}
+-(NSString*) maxDQ:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [[cx maxErr] description];
+}
+-(NSString*) minDQ:(id<ORVar>)x
+{
+   CPDoubleVarI* cx = _gamma[x.getId];
+   return [[cx minErr] description];
 }
 -(ORDouble) minErrorDD:(id<ORVar>)x
 {
@@ -3524,22 +3913,22 @@
    CPDoubleVarI* cx = _gamma[x.getId];
    [cx updateMaxErrorF:maxError];
 }
--(ORRational*) minErrorDQ:(id<ORVar>)x
+-(id<ORRational>) minErrorDQ:(id<ORVar>)x
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx minErr];
 }
--(ORRational*) maxErrorDQ:(id<ORVar>)x
+-(id<ORRational>) maxErrorDQ:(id<ORVar>)x
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    return [cx maxErr];
 }
--(void) setMinErrorDQ:(id<ORVar>)x minError:(ORRational*) minError
+-(void) setMinErrorDQ:(id<ORVar>)x minError:(id<ORRational>) minError
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    [cx updateMinError:minError];
 }
--(void) setMaxErrorDQ:(id<ORVar>)x maxError:(ORRational*) maxError
+-(void) setMaxErrorDQ:(id<ORVar>)x maxError:(id<ORRational>) maxError
 {
    CPDoubleVarI* cx = _gamma[x.getId];
    [cx updateMaxError:maxError];
@@ -3641,7 +4030,7 @@
             v = [c varSubjectToAbsorption:cx];
             if(v == nil) continue;
             absV = [self computeAbsorptionQuantity:v by:x];
-            assert(absV >= 0.0f && absV <= 1.f && absV != 1.7976931348623157e+308);
+            assert(absV >= 0.0f && absV <= 1.f);
             if(absV){
                [abs[i] addQuantity:absV];
                if(absV > best_rate) [abs[i] setChoice:v];
@@ -3963,7 +4352,7 @@
    }
    [ORConcurrency pumpEvents];
 }
--(void) labelImplRational: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) labelImplRational: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    ORStatus status = [_engine enforce: ^{ [(CPRationalVarI*)var bind:val];}];
    if (status == ORFailure) {
@@ -4066,7 +4455,7 @@
    }
    [ORConcurrency pumpEvents];
 }
--(void) rationalLthenImpl: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) rationalLthenImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    // WRONG: use LEqual
    //ORRational pval = fp_previous_float(val);
@@ -4075,7 +4464,7 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) rationalGthenImpl: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) rationalGthenImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    // WRONG: use GEqual
    //ORFloat nval = fp_next_float(val);
@@ -4084,14 +4473,14 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) rationalLEqualImpl: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) rationalLEqualImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) rationalGEqualImpl: (id<CPRationalVar>) var with: (ORRational*) val
+-(void) rationalGEqualImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
    if (status == ORFailure)
@@ -4276,7 +4665,7 @@
    [self labelImpl: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory equalc:self var:var to: val]];
 }
--(void) labelRational: (id<ORRationalVar>) var with: (ORRational*) val
+-(void) labelRational: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
    [self labelImplRational: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory rationalEqualc:self var:var eqc: val]];

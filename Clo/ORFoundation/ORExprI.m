@@ -36,12 +36,14 @@
        return [ORFactory ldouble:tracker value:[self ldoubleValue]];*/
    else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
+   else if (strcmp(tt,@encode(ORRational)) == 0)
+      return [ORFactory rational:tracker value:[self rationalValue]];
    else {
       assert(NO);
    }
    return NULL;
 }
--(ORRational*)rationalValue
+-(id<ORRational>)rationalValue
 {
    return [[ORRational alloc] init];
 }
@@ -677,12 +679,12 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "fmax not defined on expression"];
     return 0;
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "qmin not defined on expression"];
    return [[ORRational alloc] init];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "qmax not defined on expression"];
    return [[ORRational alloc] init];
@@ -707,7 +709,7 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
     return 0;
 }
--(ORRational*) rationalValue
+-(id<ORRational>) rationalValue
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "rationalValue not defined on expression"];
    return [[ORRational alloc] init];
@@ -800,6 +802,10 @@
 -(id<ORExpr>)neg
 {
    return [ORFactory exprNegate:self track:[self tracker]];
+}
+-(id<ORExpr>)sqrt
+{
+   return [ORFactory exprSqrt:self track:[self tracker]];
 }
 -(id<ORExpr>) land:(id<ORRelation>)e
 {
@@ -905,6 +911,8 @@
       return [ORFactory expr:self equal:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self equal:[e asExpression:t] track:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      return [ORFactory expr:self equal:[ORFactory rational:t value:e] track:t];
    else
       return NULL;   
 }
@@ -914,6 +922,8 @@
       return [ORFactory expr:self neq:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self neq:[e asExpression:t] track:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      return [ORFactory expr:self neq:[ORFactory rational:t value:e] track:t];
    else
       return NULL;   
 }
@@ -923,6 +933,8 @@
       return [ORFactory expr:self leq:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self leq:[e asExpression:t] track:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      return [ORFactory expr:self leq:[ORFactory rational:t value:e] track:t];
    else
       return NULL;
 }
@@ -932,6 +944,8 @@
       return [ORFactory expr:self geq:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self geq:[e asExpression:t] track:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      return [ORFactory expr:self geq:[ORFactory rational:t value:e] track:t];
    else
       return NULL;   
 }
@@ -942,8 +956,10 @@
         re = e;
     else if ([e isKindOfClass:[NSNumber class]])
         re = [e asExpression:t];
+    else if ([e isKindOfClass:[ORRational class]])
+        re = [ORFactory expr:self geq:[ORFactory rational:t value:e] track:t];
     enum ORVType et = [(id<ORExpr>)re vtype];
-   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
+   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble || et == ORTRational)
         return [ORFactory expr:self lt:re track:t];
     else
         return [ORFactory expr:self leq:[re plus:[ORFactory integer:t value:1]] track:t];
@@ -955,8 +971,10 @@
       re = e;
    else if ([e isKindOfClass:[NSNumber class]])
       re = [e asExpression:t];
+   else if ([e isKindOfClass:[ORRational class]])
+      re = [ORFactory expr:self geq:[ORFactory rational:t value:e] track:t];
    enum ORVType et = [(id<ORExpr>)re vtype];
-   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
+   if(et == ORTFloat || et == ORTDouble || et == ORTLDouble || et == ORTRational)
        return [ORFactory expr:self gt:re track:t];
     else
         return [ORFactory expr:self geq:[re plus:[ORFactory integer:t value:1]] track:t];
@@ -964,6 +982,20 @@
 -(id<ORRelation>) negTrack:(id<ORTracker>)t
 {
    return (id)[ORFactory exprNegate:self track:t];
+}
+-(id<ORExpr>) error
+{
+   return [ORFactory errorVar:[self tracker] of:self];
+}
+-(id<ORExpr>) channel
+{
+   id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] from:self];
+   id<ORConstraint> c = [ORFactory channel:self with:r];
+   //[[self tracker] add:c];
+   id<ORTracker> m = self.tracker;
+   [((id<ORModel>)m) add: c];
+
+   return r;
 }
 -(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t
 {
@@ -1382,6 +1414,65 @@
 }
 @end
 
+@implementation ORExprSqrtI
+-(id<ORExpr>) initORSqrtI: (id<ORExpr>) op
+{
+   self = [super init];
+   _op = op;
+   return self;
+}
+-(id<ORTracker>) tracker
+{
+   return [_op tracker];
+}
+-(ORInt) min
+{
+   return 0;
+}
+-(ORInt) max
+{
+   return 1;
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(ORBool) isConstant
+{
+   return [_op isConstant];
+}
+-(enum ORVType) vtype
+{
+   return _op.vtype;
+}
+-(enum ORRelationType) type
+{
+   return ORNeg;
+}
+
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"sqrt(%@)",[_op description]];
+   return rv;
+}
+-(void) visit:(ORVisitor*)visitor
+{
+   [visitor visitExprSqrtI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_op];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _op = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 @implementation ORExprCstSubI
 -(id<ORExpr>) initORExprCstSubI: (id<ORIntArray>) array index:(id<ORExpr>) op
 {
@@ -1463,14 +1554,14 @@
 }
 -(ORFloat) fmin
 {
-    ORFloat minOf = MAXFLOAT;
+    ORFloat minOf = FLT_MAX;
     for(ORInt k=[_array low];k<=[_array up];k++)
         minOf = minOf <[_array at:k] ? minOf : [_array at:k];
     return minOf;
 }
 -(ORFloat) fmax
 {
-    ORFloat maxOf = -MAXFLOAT;
+    ORFloat maxOf = -FLT_MAX;
     for(ORInt k=[_array low];k<=[_array up];k++)
         maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
     return maxOf;
@@ -1542,20 +1633,20 @@
 {
    return [_index tracker];
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
-   ORRational* minOf = [ORRational rationalWith_d:+INFINITY];
-   ORRational* array_k = [[ORRational alloc] init];
+   id<ORRational> minOf = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> array_k = [[ORRational alloc] init];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
       minOf = [minOf lt: array_k] ? minOf : array_k;
    }
    return minOf;
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
-   ORRational* maxOf = [ORRational rationalWith_d:-INFINITY];
-   ORRational* array_k = [[ORRational alloc] init];
+   id<ORRational> maxOf = [ORRational rationalWith_d:-INFINITY];
+   id<ORRational> array_k = [[ORRational alloc] init];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
       maxOf = [maxOf gt: array_k] ? maxOf : array_k;
@@ -1617,14 +1708,14 @@
 }
 -(ORFloat) fmin
 {
-   ORFloat minOf = MAXFLOAT;
+   ORFloat minOf = FLT_MAX;
    for(ORInt k=[_array low];k<=[_array up];k++)
       minOf = minOf <[_array at:k] ? minOf : [_array at:k];
    return minOf;
 }
 -(ORFloat) fmax
 {
-   ORFloat maxOf = -MAXFLOAT;
+   ORFloat maxOf = -FLT_MAX;
    for(ORInt k=[_array low];k<=[_array up];k++)
       maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
    return maxOf;
@@ -1709,11 +1800,11 @@
 {
    return maxFlt([_left fmax] ,[_right fmax]);
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return minQ([_left qmin],[_right qmin]);
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return maxQ([_left qmax] ,[_right qmax]);
 }
@@ -1780,12 +1871,12 @@
 {
     return [_left fmax] + [_right fmax];
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
 
    return [[_left qmin] add: [_right qmin]];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return  [[_left qmax] add: [_right qmax]];
 }
@@ -1858,11 +1949,11 @@
 {
      return [_left fmax] - [_right fmin];
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
    return [[_left qmin] sub: [_right qmin]];
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
    return  [[_left qmax] sub: [_right qmax]];
 }
@@ -1929,55 +2020,13 @@
     ORDouble m2 = maxDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
     return maxDbl(m1,m2);
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
-   // TODO FIX
-   /*ORRational lmin = [_left qmin];
-   ORRational lmax = [_left qmax];
-   ORRational rmin = [_right qmin];
-   ORRational rmax = [_right qmax];
-   ORRational m1, m2, m3;
-   rational_init(&m1);
-   rational_init(&m2);
-   rational_init(&m3);
-   
-   rational_multiplication(&m1, &lmin, &rmin);
-   rational_multiplication(&m2, &lmin, &rmax);
-   m1 = minQ(m1, m2);
-   
-   rational_multiplication(&m3, &lmax, &rmin);
-   rational_multiplication(&m2, &lmax, &rmax);
-   m2 = minQ(m3, m2);
-
-   m3 = minQ(m1,m2);
-   rational_clear(&m1);
-   rational_clear(&m2);*/
-   return [[ORRational alloc] init];
+   return minQ(minQ([[_left qmin] mul: [_right qmin]],[[_left qmin] mul: [_right qmax]]),minQ([[_left qmax] mul: [_right qmin]],[[_left qmax] mul: [_right qmax]]));
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
-   // TODO FIX
-   /*ORRational lmin = [_left qmin];
-   ORRational lmax = [_left qmax];
-   ORRational rmin = [_right qmin];
-   ORRational rmax = [_right qmax];
-   ORRational m1, m2, m3;
-   rational_init(&m1);
-   rational_init(&m2);
-   rational_init(&m3);
-   
-   rational_multiplication(&m1, &lmin, &rmin);
-   rational_multiplication(&m2, &lmin, &rmax);
-   m1 = maxQ(m1, m2);
-   
-   rational_multiplication(&m3, &lmax, &rmin);
-   rational_multiplication(&m2, &lmax, &rmax);
-   m2 = maxQ(m3, m2);
-   
-   m3 = maxQ(m1,m2);
-   rational_clear(&m1);
-   rational_clear(&m2);*/
-   return [[ORRational alloc] init];
+   return maxQ(maxQ([[_left qmin] mul: [_right qmin]],[[_left qmin] mul: [_right qmax]]),maxQ([[_left qmax] mul: [_right qmin]],[[_left qmax] mul: [_right qmax]]));
 }
 -(ORDouble) dmin
 {
@@ -2047,56 +2096,13 @@
     ORDouble m2 = maxDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
     return maxDbl(m1,m2);
 }
--(ORRational*) qmin
+-(id<ORRational>) qmin
 {
-   // TODO FIX
-   /*ORRational lmin = [_left qmin];
-   ORRational lmax = [_left qmax];
-   ORRational rmin = [_right qmin];
-   ORRational rmax = [_right qmax];
-   ORRational m1, m2, m3;
-   rational_init(&m1);
-   rational_init(&m2);
-   rational_init(&m3);
-   
-   rational_division(&m1, &lmin, &rmin);
-   rational_division(&m2, &lmin, &rmax);
-   m1 = minQ(m1, m2);
-   
-   rational_division(&m3, &lmax, &rmin);
-   rational_division(&m2, &lmax, &rmax);
-   m2 = minQ(m3, m2);
-   
-   m3 = minQ(m1,m2);
-   rational_clear(&m1);
-   rational_clear(&m2);*/
-   
-   return [[ORRational alloc] init];
+   return minQ(minQ([[_left qmin] div: [_right qmin]],[[_left qmin] div: [_right qmax]]),minQ([[_left qmax] div: [_right qmin]],[[_left qmax] div: [_right qmax]]));
 }
--(ORRational*) qmax
+-(id<ORRational>) qmax
 {
-   // TODO FIX
-   /*ORRational lmin = [_left qmin];
-   ORRational lmax = [_left qmax];
-   ORRational rmin = [_right qmin];
-   ORRational rmax = [_right qmax];
-   ORRational m1, m2, m3;
-   rational_init(&m1);
-   rational_init(&m2);
-   rational_init(&m3);
-   
-   rational_division(&m1, &lmin, &rmin);
-   rational_division(&m2, &lmin, &rmax);
-   m1 = maxQ(m1, m2);
-   
-   rational_division(&m3, &lmax, &rmin);
-   rational_division(&m2, &lmax, &rmax);
-   m2 = maxQ(m3, m2);
-   
-   m3 = maxQ(m1,m2);
-   rational_clear(&m1);
-   rational_clear(&m2);*/
-   return [[ORRational alloc] init];
+   return maxQ(maxQ([[_left qmin] div: [_right qmin]],[[_left qmin] div: [_right qmax]]),maxQ([[_left qmax] div: [_right qmin]],[[_left qmax] div: [_right qmax]]));
 }
 -(ORDouble) dmin
 {
@@ -2269,6 +2275,56 @@
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprEqualI: self]; 
+}
+// [ldm] causing trouble in MIP/LP
+//-(enum ORVType) vtype
+//{
+//   return ORTBool;
+//}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@ == %@",[_left description],[_right description]];
+   return rv;
+}
+-(enum ORRelationType)type
+{
+   return ORREq;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprErrorOfI
+-(id<ORExpr>) initORExprErrorOfI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprRelationI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   assert([self isConstant]);
+   return [_left min] == [_right min];
+}
+-(ORInt) max
+{
+   assert([self isConstant]);
+   return [_left max] == [_right max];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprErrorOfI: self];
 }
 // [ldm] causing trouble in MIP/LP
 //-(enum ORVType) vtype

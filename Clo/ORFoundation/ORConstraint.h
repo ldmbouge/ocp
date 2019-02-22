@@ -146,17 +146,27 @@ enum ORGroupType {
 
 @protocol  ORRationalNEqualc <ORConstraint>
 -(id<ORRationalVar>) left;
--(ORInt) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol  ORRationalEqualc <ORConstraint>
 -(id<ORRationalVar>) left;
--(ORInt) cst;
+-(id<ORRational>) cst;
 @end
 
 @protocol  ORRationalAssignC <ORConstraint>
 -(id<ORRationalVar>) left;
 -(id<ORRational>) cst;
+@end
+
+@protocol  ORRationalErrorOf <ORConstraint>
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
+@protocol  ORRationalChannel <ORConstraint>
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
 @end
 
 @protocol  ORDoubleNEqualc <ORConstraint>

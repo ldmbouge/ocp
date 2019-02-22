@@ -17,7 +17,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
-#include "fpi.h"
+#import <ORFoundation/fpi.h>
 #import "rationalUtilities.h"
 
 #define NB_FLOAT_BY_E (8388608)
@@ -54,15 +54,15 @@
 
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
 -(void) updateMin: (ORFloat) newMin;
--(void) updateMinError: (ORRational*) newMinError;
+-(void) updateMinError: (id<ORRational>) newMinError;
 -(void) updateMinErrorF: (ORDouble) newMinError;
 -(void) updateMax: (ORFloat) newMax;
--(void) updateMaxError: (ORRational*) newMaxError;
+-(void) updateMaxError: (id<ORRational>) newMaxError;
 -(void) updateMaxErrorF: (ORDouble) newMaxError;
 -(void) updateInterval: (ORFloat) newMin and: (ORFloat)newMax;
--(void) updateIntervalError: (ORRational*) newMinError and: (ORRational*) newMaxError;
+-(void) updateIntervalError: (id<ORRational>) newMinError and: (id<ORRational>) newMaxError;
 -(void) bind: (ORFloat) val;
--(void) bindError: (ORRational*) valError;
+-(void) bindError: (id<ORRational>) valError;
 
 @end
 
@@ -91,30 +91,31 @@ typedef struct  {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-   ORRational*              _valueError;
-   id<CPFloatDom>            _dom;
+   id<ORRational>              _valueError;
    id<CPRationalDom>     _domError;
    CPFloatEventNetwork      _net;
    CPMultiCast*             _recv;
+@public
+   id<CPFloatDom>            _dom;
 }
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
--(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(ORRational*)elow errUp:(ORRational*) eup;
--(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup;
+-(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup;
+-(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup;
 -(id)init:(id<CPEngine>)engine;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 -(ORFloat) floatValue;
--(ORRational*) errorValue;
+-(id<ORRational>) errorValue;
 -(ORLDouble) domwidth;
 -(id<CPDom>) domain;
--(TRRationalInterval) domainError;
+-(id<CPDom>) domainError;
+//-(TRRationalInterval) domainError;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
    CPEngineI* _engine;
    CPIntVar* _theVar;
-   CPFloatEventNetwork _net;
 }
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
@@ -159,9 +160,9 @@ static inline bool isDisjointWithV(float xmin,float xmax,float ymin, float ymax)
 {
    return (xmax < ymin) || (ymax < xmin);
 }
-static inline bool isDisjointWithVR(ORRational* xmin, ORRational* xmax, ORRational* ymin, ORRational* ymax)
+static inline bool isDisjointWithVR(id<ORRational> xmin, id<ORRational> xmax, id<ORRational> ymin, id<ORRational> ymax)
 {
-   return ([xmax leq: ymin]) || ([ymax leq: xmin]);
+   return ([xmax lt: ymin]) || ([ymax lt: xmin]);
 }
 static inline bool isIntersectingWithV(float xmin,float xmax,float ymin, float ymax)
 {
@@ -195,11 +196,11 @@ static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
 }
 static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] < [y min] &&  [x max] < [y max];
+   return [x->_dom max] < [y->_dom min];
 }
 static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] > [y min ] && [x max] > [y max];
+   return [x min] > [y max]; 
 }
 static inline double cardinality(CPFloatVarI* x)
 {
@@ -231,10 +232,14 @@ static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
    if(m_cast.parts.mantissa == 0){
       e--;
    }
-   max = floatFromParts(0,e,0);
-   max = nextafterf(max, -INFINITY);
-   min = -max;
-   return makeFloatInterval(min,max);
+   if(e < 0){
+      return makeFloatInterval(0,0);
+   }else{
+      max = floatFromParts(0,e,0);
+      max = nextafterf(max, -INFINITY);
+      min = -max;
+      return makeFloatInterval(min,max);
+   }
 }
 static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
 {

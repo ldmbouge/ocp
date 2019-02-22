@@ -147,37 +147,38 @@
 @end
 
 @interface CPFactory (ORRational)
-+(id<CPConstraint>) rationalAssign: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
-+(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(ORRational*) c;
+/*+(id<CPConstraint>) rationalAssign: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
++(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(id<ORRational>) c;*/
 +(id<CPConstraint>) rationalEqual: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
-+(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(ORRational*) c;
-+(id<CPConstraint>) rationalNEqualc: (id<CPRationalVar>) x to:(ORRational*) c;
++(id<CPConstraint>) errorOf: (id<CPFloatVar>) x is:(id<CPRationalVar>) y;
++(id<CPConstraint>) channel: (id<CPFloatVar>) x with:(id<CPRationalVar>) y;
++(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c;
++(id<CPConstraint>) rationalNEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c;
 +(id<CPConstraint>) rationalNEqual: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
-+(id<CPConstraint>) rationalLTc: (id<CPRationalVar>) x to:(ORRational*) c;
-+(id<CPConstraint>) rationalGTc: (id<CPRationalVar>) x to:(ORRational*) c;
++(id<CPConstraint>) rationalLTc: (id<CPRationalVar>) x to:(id<ORRational>) c;
++(id<CPConstraint>) rationalGTc: (id<CPRationalVar>) x to:(id<ORRational>) c;
 +(id<CPConstraint>) rationalLT: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
 +(id<CPConstraint>) rationalGT: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(ORRational*)c annotation:(id<ORAnnotation>) notes;
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs neqi:(ORRational*)c annotation:(id<ORAnnotation>) notes;
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs lt:(ORRational*)c annotation:(id<ORAnnotation>) notes;
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs gt:(ORRational*)c annotation:(id<ORAnnotation>) notes;
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs leq:(ORRational*)c annotation:(id<ORAnnotation>) notes;
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(ORRational*)c annotation:(id<ORAnnotation>) notes;
-+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes;
-+(id<CPConstraint>) rationalDiv: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x eq: (id<CPRationalVar>) y annotation:(ORCLevel)c;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x geq: (id<CPRationalVar>) y annotation:(ORCLevel)c;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x neq: (id<CPRationalVar>) y annotation:(ORCLevel)c;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x leq:(id<CPRationalVar>)y annotation:(ORCLevel)c;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x lt:(id<CPRationalVar>)y annotation:(ORCLevel)c;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x gt: (id<CPRationalVar>) y annotation:(ORCLevel)c;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x eqi: (ORRational*) i;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x neqi: (ORRational*) i;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x leqi: (ORRational*) i;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x geqi: (ORRational*) i;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x lti: (ORRational*) i;
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x gti: (ORRational*) i;
-
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
+//+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs neqi:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
+//+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs lt:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
+//+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs gt:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs leq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
+//+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes;
+//+(id<CPConstraint>) rationalDiv: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x eq: (id<CPRationalVar>) y annotation:(ORCLevel)c;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x geq: (id<CPRationalVar>) y annotation:(ORCLevel)c;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x neq: (id<CPRationalVar>) y annotation:(ORCLevel)c;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x leq:(id<CPRationalVar>)y annotation:(ORCLevel)c;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x lt:(id<CPRationalVar>)y annotation:(ORCLevel)c;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x gt: (id<CPRationalVar>) y annotation:(ORCLevel)c;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x eqi: (id<ORRational>) i;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x neqi: (id<ORRational>) i;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x leqi: (id<ORRational>) i;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x geqi: (id<ORRational>) i;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x lti: (id<ORRational>) i;
+//+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x gti: (id<ORRational>) i;
 @end
 
 

@@ -1063,7 +1063,7 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(ORRational) c
++(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPConstraint> o = [[CPRationalAssignC alloc] init:x set:c];
    [[x tracker] trackMutable:o];
@@ -1075,13 +1075,25 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(ORRational*) c
++(id<CPConstraint>) errorOf: (id<CPFloatVar>) x is:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalErrorOf alloc] init:x is:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) channel: (id<CPFloatVar>) x with:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalChannel alloc] init:x with:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPConstraint> o = [[CPRationalEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-/*+(id<CPConstraint>) rationalNEqualc: (id<CPRationalVar>) x to:(ORRational) c
++(id<CPConstraint>) rationalNEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPConstraint> o = [[CPRationalNEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
@@ -1093,12 +1105,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) rationalLTc: (id<CPRationalVar>) x to:(ORRational) c
++(id<CPConstraint>) rationalLTc: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
    return [self rationalLT:x to:cvar];
 }
-+(id<CPConstraint>) rationalGTc: (id<CPRationalVar>) x to:(ORRational) c
++(id<CPConstraint>) rationalGTc: (id<CPRationalVar>) x to:(id<ORRational>) c
 {
    id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
    return [self rationalGT:x to:cvar];
@@ -1126,7 +1138,7 @@
    id<CPConstraint> o = [[CPRationalGEQ alloc] init:x geq:y];
    [[x tracker] trackMutable:o];
    return o;
-}*/
+}
 +(id<CPConstraint>) rationalTernaryAdd:(id<CPRationalVar>) x equals:(id<CPRationalVar>) y plus:(id<CPRationalVar>) z annotation:(id<ORAnnotation>) notes
 {
    return [[CPRationalTernaryAdd alloc] init:x equals:y plus:z];
@@ -1136,68 +1148,34 @@
 {
    return [[CPRationalTernarySub alloc] init:x equals:y minus:z];
 }
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(ORRational*)c annotation:(id<ORAnnotation>) notes
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(id<ORRational>)c annotation:(id<ORAnnotation>) notes
 {
    // TODO : fix to work with arbitrary coefficient (fraction)
-   ORRational* coef = [[ORRational alloc] init];
-   ORRational* coef2 = [[ORRational alloc] init];
-   ORRational* coef3 = [[ORRational alloc] init];
-   coef = [coefs at:coefs.low];
-   if([x count] == 1 && [coef isZero]){
-      [coef release];
-      [coef2 release];
-      [coef3 release];
+   if([x count] == 1 && [[coefs at:coefs.low] isOne]){
       return [self rationalEqualc:x[x.low] to:c];
    }else{
       if([x count] == 2){
-         coef2 = [coefs at:1];
-         if([coef isZero]){
-            [coef release];
-            [coef2 release];
-            [coef3 release];
+         if([[coefs at:coefs.low] isZero]){
             return [self rationalEqualc:x[x.low] to:c];
-         } else if([coef2 isZero]){
-            [coef release];
-            [coef2 release];
-            [coef3 release];
+         } else if([[coefs at:1] isZero]){
             return [self rationalEqualc:x[1] to:c];
-         } else if([coef neq: coef2]){
-            [coef release];
-            [coef2 release];
-            [coef3 release];
+         } else if([[coefs at:coefs.low] neq: [coefs at:1]]){
             return [self rationalEqual:x[0] to:x[1]];
          } else {
-            [coef release];
-            [coef2 release];
-            [coef3 release];
             return [self rationalNEqual:x[0] to:x[1]];
          }
       }else{
          assert([x count] <= 3);
-         coef2 = [coefs at:1];
-         coef3 = [coefs at:2];
-         if([coef isOne] && [coef2 isOne] && [coef3 isMinusOne]){
-            [coef release];
-            [coef2 release];
-            [coef3 release];
+         if([[coefs at:coefs.low] isOne] && [[coefs at:1] isOne] && [[coefs at:2] isMinusOne]){
             return [CPFactory rationalTernaryAdd:x[2] equals:x[0] plus:x[1] annotation:notes];
          }
-         if([coef isOne] && [coef2 isOne] && [coef3 isOne]){
-            [coef release];
-            [coef2 release];
-            [coef3 release];
+         if([[coefs at:coefs.low] isOne] && [[coefs at:1] isOne] && [[coefs at:2] isOne]){
             return [CPFactory rationalTernarySub:x[0] equals:x[1] minus:x[2] annotation:notes];
          }
-         if([coef isOne] && [coef2 isMinusOne] && [coef3 isOne]){
-            [coef release];
-            [coef2 release];
-            [coef3 release];
+         if([[coefs at:coefs.low] isOne] && [[coefs at:1] isMinusOne] && [[coefs at:2] isOne]){
             return [CPFactory rationalTernaryAdd:x[1] equals:x[0] plus:x[2] annotation:notes];
          }
-         if([coef isMinusOne] && [coef2 isOne] && [coef3 isOne]){
-            [coef release];
-            [coef2 release];
-            [coef3 release];
+         if([[coefs at:coefs.low] isMinusOne] && [[coefs at:1] isOne] && [[coefs at:2] isOne]){
             return [CPFactory rationalTernaryAdd:x[0] equals:x[1] plus:x[2] annotation:notes];
          }
       }
@@ -1284,43 +1262,43 @@
    else
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalGT:res to:x[2]];
-}
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs leq:(ORRational)c annotation:(id<ORAnnotation>) notes
+}*/
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs leq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes
 {
    id<CPEngine> engine = [x[x.low] engine];
    id<CPRationalVar> vc = [self rationalVar:engine value:c];
-   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+   if([x count] == 1 && [[coefs at:coefs.low] isOne]){
       return [self rationalLEQ:x[0] to:vc];
    }else if([x count] == 2){
-      if(c == 0)
+      if([c isZero])
          return [self rationalLEQ:x[0] to:x[1]];
       id<CPRationalVar> res = [self rationalVar:engine];
-      if([coefs at:1] < 0)
+      if(![[coefs at:1] isOne] && ![[coefs at:1] isZero])
          [CPFactory rationalTernarySub:res equals:x[0] minus:x[1] annotation:notes];
       else
-         [CPFactory rationalTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
+         [CPFactory rationalTernarySub:res equals:x[0] minus:x[1] annotation:notes];
       return [self rationalLEQ:res to:vc];
    }
    assert([x count] <= 3);
    id<CPRationalVar> tmp = [self rationalVar:engine];
    id<CPRationalVar> res = [self rationalVar:engine];
-   if([coefs at:1] < 0)
+   if(![[coefs at:1] isOne] && ![[coefs at:1] isZero])
       [CPFactory rationalTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
    else
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalLEQ:res to:x[2]];
 }
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(ORRational)c annotation:(id<ORAnnotation>) notes
++(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes
 {
    id<CPEngine> engine = [x[x.low] engine];
    id<CPRationalVar> vc = [self rationalVar:engine value:c];
-   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
+   if([x count] == 1 && [[coefs at:coefs.low] isOne]){
       return [self rationalGEQ:x[0] to:vc];
    }else if([x count] == 2){
       if(c == 0)
          return [self rationalGEQ:x[0] to:x[1]];
       id<CPRationalVar> res = [self rationalVar:engine];
-      if([coefs at:1] < 0)
+      if(![[coefs at:1] isOne] && ![[coefs at:1] isZero])
          [CPFactory rationalTernarySub:res equals:x[0] minus:x[1] annotation:notes];
       else
          [CPFactory rationalTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
@@ -1329,13 +1307,13 @@
    assert([x count] <= 3);
    id<CPRationalVar> tmp = [self rationalVar:engine];
    id<CPRationalVar> res = [self rationalVar:engine];
-   if([coefs at:1] < 0)
+   if(![[coefs at:1] isOne] && ![[coefs at:1] isZero])
       [CPFactory rationalTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
    else
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalGEQ:res to:x[2]];
 }
-+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
+/*+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
 {
    id<CPConstraint> o = nil;
    if([notes hasFilteringPercent])

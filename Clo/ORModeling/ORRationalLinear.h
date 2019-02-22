@@ -21,31 +21,31 @@
 #import <ORModeling/ORLinear.h>
 
 @protocol ORRationalLinear<NSObject,ORLinear>
--(void)setIndependent:(ORRational*)idp;
--(void)addIndependent:(ORRational*)idp;
+-(void)setIndependent:(id<ORRational>)idp;
+-(void)addIndependent:(id<ORRational>)idp;
 -(void)addTerm:(id<ORRationalVar>)x by:(ORInt)c;
 -(void)addLinear:(id<ORRationalLinear>)lts;
 -(void)scaleBy:(ORInt)s;
 -(ORInt)size;
 -(id<ORRationalVar>)var:(ORInt)k;
 -(ORInt)coef:(ORInt)k;
--(ORRational*)independent;
+-(id<ORRational>)independent;
 -(BOOL)isZero;
 -(BOOL)isOne;
 -(BOOL)clausalForm;
--(ORRational*)qmin;
--(ORRational*)qmax;
+-(id<ORRational>)qmin;
+-(id<ORRational>)qmax;
 @end
 
 @interface ORRationalLinear : NSObject<ORRationalLinear>
 -(ORRationalLinear*)initORRationalLinear:(ORInt)mxs;
 -(void)dealloc;
--(void)setIndependent:(ORRational*)idp;
--(void)addIndependent:(ORRational*)idp;
+-(void)setIndependent:(id<ORRational>)idp;
+-(void)addIndependent:(id<ORRational>)idp;
 -(void)addTerm:(id<ORRationalVar>)x by:(ORInt)c;
 -(void)addLinear:(ORRationalLinear*)lts;
 -(void)scaleBy:(ORInt)s;
--(ORRational*)independent;
+-(id<ORRational>)independent;
 -(NSString*)description;
 
 -(id<ORRationalVarArray>) variables: (id<ORAddToModel>) model;
@@ -53,8 +53,8 @@
 //-(id<ORRationalVarArray>)scaledViews:(id<ORAddToModel>)model;
 //-(id<ORRationalVar>)oneView:(id<ORAddToModel>)model;
 -(ORInt)size;
--(ORRational*)qmin;
--(ORRational*)qmax;
+-(id<ORRational>)qmin;
+-(id<ORRational>)qmax;
 -(BOOL)isZero;
 -(BOOL)isOne;
 -(BOOL)clausalForm;
@@ -62,8 +62,8 @@
 
 @interface ORRationalLinearFlip : NSObject<ORRationalLinear>
 -(ORRationalLinearFlip*)initORRationalLinearFlip:(id<ORRationalLinear>)r;
--(void)setIndependent:(ORRational*)idp;
--(void)addIndependent:(ORRational*)idp;
+-(void)setIndependent:(id<ORRational>)idp;
+-(void)addIndependent:(id<ORRational>)idp;
 -(void)addTerm:(id<ORRationalVar>)x by:(ORInt)c;
 -(BOOL)isZero;
 -(BOOL)isOne;

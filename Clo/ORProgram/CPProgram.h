@@ -13,7 +13,7 @@
 #import <ORFoundation/ORParameter.h>
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBitVarHeuristic.h>
-#import <objcp/CPData.h>
+#import <objcp/objcp.h>
 
 @protocol ORModel;
 @protocol ORSearchController;
@@ -51,7 +51,7 @@ PORTABLE_BEGIN
 -(ORBool) ground;
 -(void)                 add: (id<ORConstraint>) c;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
--(void)               labelRational: (id<ORRationalVar>) var with: (ORRational*) val;
+-(void)               labelRational: (id<ORRationalVar>) var with: (id<ORRational>) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               gthen: (id<ORIntVar>) var double: (ORDouble) val;
@@ -82,9 +82,11 @@ PORTABLE_BEGIN
 -(void)          maxCancellationSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          combinedAbsWithDensSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          combinedDensWithAbsSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
+-(void)          maxAbsDensSearch:  (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          switchedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORDisabledFloatVarArray>) x;
 -(void)          lexicalOrderedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
+-(void)          brandAndBoundSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 
 -(ORDouble)      computeAbsorptionRate:(id<ORFloatVar>) x;
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledFloatVarArray>) vars;
@@ -211,20 +213,20 @@ PORTABLE_BEGIN
 -(ORDouble) doubleValue: (id<ORVar>) x;
 -(ORDouble) doubleMin: (id<ORVar>)x;
 -(ORDouble) doubleMax: (id<ORVar>)x;
--(ORRational*) minErrorFQ:(PNONNULL id<ORVar>)x;
--(ORRational*) maxErrorFQ:(PNONNULL id<ORVar>)x;
--(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(ORRational*) minError;
--(void) setMaxErrorFQ:(PNONNULL id<ORVar>)x maxError:(ORRational*) maxError;
+-(id<ORRational>) minErrorFQ:(PNONNULL id<ORVar>)x;
+-(id<ORRational>) maxErrorFQ:(PNONNULL id<ORVar>)x;
+-(void) setMinErrorFQ:(PNONNULL id<ORVar>)x minError:(id<ORRational>) minError;
+-(void) setMaxErrorFQ:(PNONNULL id<ORVar>)x maxError:(id<ORRational>) maxError;
 -(ORDouble) minErrorFD:(PNONNULL id<ORVar>)x;
 -(ORDouble) maxErrorFD:(PNONNULL id<ORVar>)x;
 -(void) setMinErrorFD:(PNONNULL id<ORVar>)x minErrorF:(ORDouble) minError;
 -(void) setMaxErrorFD:(PNONNULL id<ORVar>)x maxErrorF:(ORDouble) maxError;
 -(ORFloat) minF:(PNONNULL id<ORVar>)x;
 -(ORFloat) maxF:(PNONNULL id<ORVar>)x;
--(ORRational*) minErrorDQ:(PNONNULL id<ORVar>)x;
--(ORRational*) maxErrorDQ:(PNONNULL id<ORVar>)x;
--(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(ORRational*) minError;
--(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(ORRational*) maxError;
+-(id<ORRational>) minErrorDQ:(PNONNULL id<ORVar>)x;
+-(id<ORRational>) maxErrorDQ:(PNONNULL id<ORVar>)x;
+-(void) setMinErrorDQ:(PNONNULL id<ORVar>)x minError:(id<ORRational>) minError;
+-(void) setMaxErrorDQ:(PNONNULL id<ORVar>)x maxError:(id<ORRational>) maxError;
 -(ORDouble) minErrorDD:(PNONNULL id<ORVar>)x;
 -(ORDouble) maxErrorDD:(PNONNULL id<ORVar>)x;
 -(void) setMinErrorDD:(PNONNULL id<ORVar>)x minErrorF:(ORDouble) minError;
@@ -233,6 +235,10 @@ PORTABLE_BEGIN
 -(ORDouble) maxD:(PNONNULL id<ORVar>)x;
 -(NSString*) minQ:(PNONNULL id<ORVar>)x;
 -(NSString*) maxQ:(PNONNULL id<ORVar>)x;
+-(NSString*) minFQ:(PNONNULL id<ORVar>)x;
+-(NSString*) maxFQ:(PNONNULL id<ORVar>)x;
+-(NSString*) minDQ:(PNONNULL id<ORVar>)x;
+-(NSString*) maxDQ:(PNONNULL id<ORVar>)x;
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;

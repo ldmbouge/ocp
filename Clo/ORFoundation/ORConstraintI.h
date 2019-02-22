@@ -82,15 +82,27 @@
 @end
 
 @interface ORRationalEqualc : ORConstraintI<ORRationalEqualc>
--(ORRationalEqualc*)initORRationalEqualc:(id<ORRationalVar>)x eqi:(ORRational*)c;
+-(ORRationalEqualc*)initORRationalEqualc:(id<ORRationalVar>)x eqi:(id<ORRational>)c;
 -(id<ORRationalVar>) left;
--(ORRational*) cst;
+-(id<ORRational>) cst;
 @end
 
 @interface ORRationalNEqualc : ORConstraintI<ORRationalNEqualc>
--(ORRationalNEqualc*)initORRationalNEqualc:(id<ORRationalVar>)x neqi:(ORRational*)c;
+-(ORRationalNEqualc*)initORRationalNEqualc:(id<ORRationalVar>)x neqi:(id<ORRational>)c;
 -(id<ORRationalVar>) left;
--(ORRational*) cst;
+-(id<ORRational>) cst;
+@end
+
+@interface ORRationalErrorOf : ORConstraintI<ORRationalErrorOf>
+-(ORRationalErrorOf*)initORRationalErrorOf:(id<ORFloatVar>)f is:(id<ORRationalVar>)r;
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
+@interface ORRationalChannel : ORConstraintI<ORRationalErrorOf>
+-(ORRationalChannel*)initORRationalChannel:(id<ORFloatVar>)f with:(id<ORRationalVar>)r;
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
 @end
 
 @interface ORDoubleEqualc : ORConstraintI<ORDoubleEqualc>
@@ -586,9 +598,9 @@
 
 //------
 @interface ORRationalAssignC : ORConstraintI<ORRationalAssignC>
--(id) initORRationalAssignC: (id<ORVar>) var to: (ORRational*) c;
+-(id) initORRationalAssignC: (id<ORVar>) var to: (id<ORRational>) c;
 -(id<ORRationalVar>) left;
--(ORRational*) cst;
+-(id<ORRational>) cst;
 @end
 
 
@@ -599,45 +611,45 @@
 @end
 
 @interface ORRationalLinearEq : ORConstraintI<ORRationalLinearEq>
--(id) initRationalLinearEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (ORRational*) c;
+-(id) initRationalLinearEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (id<ORRational>) c;
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational*) cst;
+-(id<ORRational>) cst;
 @end
 
 @interface ORRationalLinearLT : ORConstraintI<ORRationalLinearLT>
--(id) initRationalLinearLT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (ORRational*) c;
+-(id) initRationalLinearLT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (id<ORRational>) c;
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational*) cst;
+-(id<ORRational>) cst;
 @end
 
 @interface ORRationalLinearGT : ORConstraintI<ORRationalLinearGT>
--(id) initRationalLinearGT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (ORRational*) c;
+-(id) initRationalLinearGT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (id<ORRational>) c;
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational*) cst;
+-(id<ORRational>) cst;
 @end
 
 @interface ORRationalLinearLEQ : ORConstraintI<ORRationalLinearLEQ>
--(id) initRationalLinearLEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (ORRational*) c;
+-(id) initRationalLinearLEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (id<ORRational>) c;
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational*) cst;
+-(id<ORRational>) cst;
 @end
 
 @interface ORRationalLinearGEQ : ORConstraintI<ORRationalLinearGEQ>
--(id) initRationalLinearGEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (ORRational*) c;
+-(id) initRationalLinearGEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (id<ORRational>) c;
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational*) cst;
+-(id<ORRational>) cst;
 @end
 
 @interface ORRationalLinearNEq : ORConstraintI<ORRationalLinearNEq>
--(id) initRationalLinearNEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (ORRational*) c;
+-(id) initRationalLinearNEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) ca cst: (id<ORRational>) c;
 -(id<ORVarArray>) vars;
 -(id<ORRationalArray>) coefs;
--(ORRational*) cst;
+-(id<ORRational>) cst;
 @end
 
 @interface ORRationalMult : ORConstraintI<ORRationalMult>
@@ -656,14 +668,14 @@
 
 
 @interface ORRationalReifyEqualc : ORConstraintI<ORRationalReifyEqualc>
--(ORRationalReifyEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x eqi:(ORRational*)c;
+-(ORRationalReifyEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x eqi:(id<ORRational>)c;
 @end
 
 @interface ORRationalReifyNEqualc : ORConstraintI<ORRationalReifyNEqualc>
--(ORRationalReifyNEqualc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x neqi:(ORRational*)c;
+-(ORRationalReifyNEqualc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x neqi:(id<ORRational>)c;
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational*)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @interface ORRationalReifyEqual : ORConstraintI<ORRationalReifyEqual>
@@ -681,10 +693,10 @@
 @end
 
 @interface ORRationalReifyLEqualc : ORConstraintI<ORRationalReifyLEqualc>
--(ORRationalReifyLEqualc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x leqi:(ORRational*)y;
+-(ORRationalReifyLEqualc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x leqi:(id<ORRational>)y;
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational*)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @interface ORRationalReifyLEqual : ORConstraintI<ORRationalReifyLEqual>
@@ -702,17 +714,17 @@
 @end
 
 @interface ORRationalReifyLThenc : ORConstraintI<ORRationalReifyLThenc>
--(ORRationalReifyLThenc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x lti:(ORRational*)y;
+-(ORRationalReifyLThenc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x lti:(id<ORRational>)y;
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational*)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @interface ORRationalReifyGEqualc : ORConstraintI<ORRationalReifyGEqualc>
--(ORRationalReifyGEqualc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x geqi:(ORRational*)y;
+-(ORRationalReifyGEqualc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x geqi:(id<ORRational>)y;
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational*)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @interface ORRationalReifyGEqual : ORConstraintI<ORRationalReifyGEqual>
@@ -723,10 +735,10 @@
 @end
 
 @interface ORRationalReifyGThenc : ORConstraintI<ORRationalReifyGThenc>
--(ORRationalReifyGThenc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x gti:(ORRational*)y;
+-(ORRationalReifyGThenc*) initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x gti:(id<ORRational>)y;
 -(id<ORIntVar>) b;
 -(id<ORRationalVar>) x;
--(ORRational*)        cst;
+-(id<ORRational>)        cst;
 @end
 
 @interface ORRationalReifyGThen : ORConstraintI<ORRationalReifyGThen>

@@ -14,8 +14,8 @@
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORData.h>
-//#import <ORFoundation/ORVisit.h>
-//#import <ORFoundation/ORCommand.h>
+#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORCommand.h>
 #import <assert.h>
 
 //#import "rationalUtilities.h"
@@ -134,14 +134,15 @@
    ++_seg[_cSeg]->top;
 }
 
--(void)trailRational:(ORRational*)ptr
+-(void)trailRational:(rational_t)ptr
 {
-    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+    /*if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
     struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
     s->ptr = ptr;
     s->code = TAGRational;
-    s->rationalVal = [ORRational rationalWith:ptr];
-    ++_seg[_cSeg]->top;
+    init_q(s->rationalVal);
+    set_q(s->rationalVal, ptr);
+    ++_seg[_cSeg]->top;*/
 }
 
 -(void)trailDouble:(double*)ptr
@@ -245,8 +246,8 @@
                *((long double*)cs->ptr) = cs->ldVal;
                break;
             case TAGRational:
-               [(ORRational*)cs->ptr set: cs->rationalVal];
-               [cs->rationalVal release];
+               set_q(cs->ptr, cs->rationalVal);
+               clear_q(cs->rationalVal);
                break;
             case TAGPointer:
                *((void**)cs->ptr) = cs->ptrVal;
@@ -335,7 +336,7 @@ TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
 {
     return (TRFloatInterval){min, max, [trail magic]-1};
 }
-TRRationalInterval makeTRRationalInterval(ORTrailI* trail, ORRational* min, ORRational* max)
+TRRationalInterval makeTRRationalInterval(ORTrailI* trail, id<ORRational> min, id<ORRational> max)
 {
     TRRationalInterval rational_interval;
     rational_interval._low = [ORRational rationalWith:min];
@@ -481,22 +482,26 @@ void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail)
     
 }
 
-void  updateMinR(TRRationalInterval* dom,ORRational* min, id<ORTrail> trail)
+void  updateMinR(TRRationalInterval* dom,id<ORRational> min, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
-        dom->_mgc = [trail magic];
-        [trail trailRational:dom->_low];
-        [trail trailRational:dom->_up];
+       dom->_mgc = [trail magic];
+       [dom->_low trailRational:trail];
+       [dom->_up trailRational:trail];
+       [dom->_low trailType:trail];
+       [dom->_up trailType:trail];
     }
    [dom->_low set: min];
 }
 
-void  updateMaxR(TRRationalInterval* dom,ORRational* max, id<ORTrail> trail)
+void  updateMaxR(TRRationalInterval* dom,id<ORRational> max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
-        dom->_mgc = [trail magic];
-        [trail trailRational:dom->_low];
-        [trail trailRational:dom->_up];
+       dom->_mgc = [trail magic];
+       [dom->_low trailRational:trail];
+       [dom->_up trailRational:trail];
+       [dom->_low trailType:trail];
+       [dom->_up trailType:trail];
     }
    [dom->_up set: max];
 }
@@ -512,12 +517,14 @@ void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail
     dom->_up = max;
 }
 
-void  updateTRRationalInterval(TRRationalInterval* dom,ORRational* min,ORRational* max, id<ORTrail> trail)
+void  updateTRRationalInterval(TRRationalInterval* dom,id<ORRational> min,id<ORRational> max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
-        dom->_mgc = [trail magic];
-        [trail trailRational:dom->_low];
-        [trail trailRational:dom->_up];
+       dom->_mgc = [trail magic];
+       [dom->_low trailRational:trail];
+       [dom->_up trailRational:trail];
+       [dom->_low trailType:trail];
+       [dom->_up trailType:trail];
     }
    [dom->_low set: min];
    [dom->_up set: max];
@@ -684,8 +691,6 @@ ORInt trailMagic(ORTrailI* trail)
 }
 -(void)comply:(ORMemoryTrailI*)mt upTo:(ORCommandList*)cl
 {
-  //TOFIX
-  /*
    ORInt fh = [cl memoryFrom];
    ORInt th = [cl memoryTo];
    for(ORInt k=fh;k < th;k++) {
@@ -693,7 +698,6 @@ ORInt trailMagic(ORTrailI* trail)
       if (_csz >= _mxs) [self resize];
       _tab[_csz++] = [mt->_tab[k] retain];
    }
-  */
 }
 -(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th
 {

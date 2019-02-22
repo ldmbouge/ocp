@@ -215,6 +215,8 @@
 -(void) visitFloatReifyGThenc: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThen: (id<ORConstraint>)c;
 -(void) visitRationalEqualc: (id<ORConstraint>)c;
+-(void) visitRationalErrorOf: (id<ORConstraint>)c;
+-(void) visitRationalChannel:(id<ORConstraint>)c;
 -(void) visitRationalAssignC: (id<ORConstraint>)c;
 -(void) visitRationalNEqualc: (id<ORConstraint>)c;
 -(void) visitRationalLinearEq: (id<ORConstraint>) c;
@@ -266,6 +268,7 @@
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitRationalI: (id<ORRational>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitMutableRationalI: (id<ORMutableRational>) e;
@@ -281,6 +284,7 @@
 -(void) visitExprMinI: (id<ORExpr>) e;
 -(void) visitExprMaxI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
+-(void) visitExprErrorOfI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
 -(void) visitExprGEqualI: (id<ORExpr>) e;
@@ -293,6 +297,7 @@
 -(void) visitExprAbsI:(id<ORExpr>) e;
 -(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
+-(void) visitExprSqrtI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprCstFloatSubI: (id<ORExpr>) e;
 -(void) visitExprCstRationalSubI: (id<ORExpr>) e;

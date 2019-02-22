@@ -592,9 +592,9 @@
 
 @implementation ORRationalEqualc {
    id<ORRationalVar> _x;
-   ORRational*        _c;
+   id<ORRational>        _c;
 }
--(ORRationalEqualc*)initORRationalEqualc:(id<ORRationalVar>)x eqi:(ORRational*)c
+-(ORRationalEqualc*)initORRationalEqualc:(id<ORRationalVar>)x eqi:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -619,7 +619,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -642,6 +642,110 @@
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_c];
+   return self;
+}
+@end
+
+@implementation ORRationalErrorOf {
+   id<ORFloatVar> _x;
+   id<ORRationalVar> _y;
+}
+-(id)initORRationalErrorOf:(id<ORFloatVar>)x is:(id<ORRationalVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (error(%@) == %@)",[self class],self,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRationalErrorOf:self];
+}
+-(id<ORVar>) left
+{
+   return _x;
+}
+-(id<ORVar>) right
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, _y,nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORRationalChannel {
+   id<ORFloatVar> _x;
+   id<ORRationalVar> _y;
+}
+-(id)initORRationalChannel:(id<ORFloatVar>)x with:(id<ORRationalVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (F:%@ == Q:%@)",[self class],self,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRationalChannel:self];
+}
+-(id<ORVar>) left
+{
+   return _x;
+}
+-(id<ORVar>) right
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, _y,nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
    return self;
 }
 @end
@@ -965,9 +1069,9 @@
 
 @implementation ORRationalNEqualc {
    id<ORRationalVar> _x;
-   ORRational*        _c;
+   id<ORRational>        _c;
 }
--(ORRationalNEqualc*)initORRationalNEqualc:(id<ORRationalVar>)x neqi:(ORRational*)c
+-(ORRationalNEqualc*)initORRationalNEqualc:(id<ORRationalVar>)x neqi:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -988,7 +1092,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -1018,9 +1122,9 @@
 
 @implementation ORRationalAssignC {
    id<ORRationalVar> _x;
-   ORRational*       _c;
+   id<ORRational>       _c;
 }
--(ORRationalAssignC*)initORRationalAssignC:(id<ORRationalVar>)x to:(ORRational*)c
+-(ORRationalAssignC*)initORRationalAssignC:(id<ORRationalVar>)x to:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -1041,7 +1145,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5195,9 +5299,9 @@
 @implementation ORRationalLinearEq{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational* _c;
+   id<ORRational> _c;
 }
--(ORRationalLinearEq*) initRationalLinearEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
+-(ORRationalLinearEq*) initRationalLinearEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(id<ORRational>) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5224,7 +5328,7 @@
 {
    return _coefs;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5249,9 +5353,9 @@
 @implementation ORRationalLinearNEq{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational* _c;
+   id<ORRational> _c;
 }
--(ORRationalLinearNEq*) initRationalLinearNEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
+-(ORRationalLinearNEq*) initRationalLinearNEq: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(id<ORRational>) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5278,7 +5382,7 @@
 {
    return _coefs;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5303,9 +5407,9 @@
 @implementation ORRationalLinearLT{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational* _c;
+   id<ORRational> _c;
 }
--(ORRationalLinearLT*) initRationalLinearLT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
+-(ORRationalLinearLT*) initRationalLinearLT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(id<ORRational>) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5332,7 +5436,7 @@
 {
    return _coefs;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5357,9 +5461,9 @@
 @implementation ORRationalLinearGT{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational* _c;
+   id<ORRational> _c;
 }
--(ORRationalLinearGT*) initRationalLinearGT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
+-(ORRationalLinearGT*) initRationalLinearGT: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(id<ORRational>) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5386,7 +5490,7 @@
 {
    return _coefs;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5411,9 +5515,9 @@
 @implementation ORRationalLinearGEQ{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational* _c;
+   id<ORRational> _c;
 }
--(ORRationalLinearGEQ*) initRationalLinearGEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
+-(ORRationalLinearGEQ*) initRationalLinearGEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(id<ORRational>) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5440,7 +5544,7 @@
 {
    return _coefs;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5465,9 +5569,9 @@
 @implementation ORRationalLinearLEQ{
    id<ORVarArray> _ia;
    id<ORRationalArray>  _coefs;
-   ORRational* _c;
+   id<ORRational> _c;
 }
--(ORRationalLinearLEQ*) initRationalLinearLEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(ORRational*) c
+-(ORRationalLinearLEQ*) initRationalLinearLEQ: (id<ORVarArray>) ia coef: (id<ORRationalArray>) coefs cst:(id<ORRational>) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -5494,7 +5598,7 @@
 {
    return _coefs;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5519,9 +5623,9 @@
 @implementation ORRationalReifyEqualc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational*       _c;
+   id<ORRational>       _c;
 }
--(ORRationalReifyEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x eqi:(ORRational*)c
+-(ORRationalReifyEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x eqi:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -5547,7 +5651,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5579,9 +5683,9 @@
 @implementation ORRationalReifyNEqualc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational*        _c;
+   id<ORRational>        _c;
 }
--(ORRationalReifyNEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x neqi:(ORRational*)c
+-(ORRationalReifyNEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x neqi:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -5607,7 +5711,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5759,9 +5863,9 @@
 @implementation ORRationalReifyLEqualc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational*        _c;
+   id<ORRational>        _c;
 }
--(ORRationalReifyLEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x leqi:(ORRational*)c
+-(ORRationalReifyLEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x leqi:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -5787,7 +5891,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -5941,9 +6045,9 @@
 @implementation ORRationalReifyLThenc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational*        _c;
+   id<ORRational>        _c;
 }
--(ORRationalReifyLThenc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x lti:(ORRational*)c
+-(ORRationalReifyLThenc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x lti:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -5969,7 +6073,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -6002,9 +6106,9 @@
 @implementation ORRationalReifyGEqualc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational*        _c;
+   id<ORRational>        _c;
 }
--(ORRationalReifyGEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x geqi:(ORRational*)c
+-(ORRationalReifyGEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x geqi:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -6030,7 +6134,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -6181,9 +6285,9 @@
 @implementation ORRationalReifyGThenc {
    id<ORIntVar> _b;
    id<ORRationalVar> _x;
-   ORRational*        _c;
+   id<ORRational>        _c;
 }
--(ORRationalReifyGThenc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x gti:(ORRational*)c
+-(ORRationalReifyGThenc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x gti:(id<ORRational>)c
 {
    self = [super initORConstraintI];
    _b = b;
@@ -6209,7 +6313,7 @@
 {
    return _x;
 }
--(ORRational*) cst
+-(id<ORRational>) cst
 {
    return _c;
 }
@@ -7900,6 +8004,10 @@
    [[e operand] visit:self];
 }
 -(void) visitExprNegateI:(ORExprNegateI*)e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprSqrtI:(ORExprSqrtI*)e
 {
    [[e operand] visit:self];
 }

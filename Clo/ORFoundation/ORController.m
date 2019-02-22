@@ -208,7 +208,7 @@
 }
 -(void)dealloc
 {
-//   NSLog(@"ORNestedController %p dealloc called...\n",self);
+   //NSLog(@"ORNestedController %p dealloc called...\n",self);
    [_parent release];
    [super dealloc];
 }
@@ -312,9 +312,8 @@
    ORDFSController* c = [[ORDFSController alloc] initTheController:_tracer engine:nil posting:nil];
    free(c->_tab);
    c->_tab = malloc(sizeof(NSCont*)*_mx);
-   for(ORInt k=0;k<_sz;k++) {
+   for(ORInt k=0;k<_sz;k++)
       c->_tab[k] = _tab[k];
-   }
    c->_sz = _sz;
    c->_mx = _mx;
    return c;

@@ -72,11 +72,11 @@
 @end
 
 @protocol ORMutableRational <ORObject,ORExpr>
--(ORRational*) initialValue;
--(ORRational*) value;
--(ORRational*) setValue: (ORRational*) value;
--(ORRational*) setValue: (ORRational*) value in: (id<ORGamma>) solver;
--(ORRational*) value: (id<ORGamma>) solver;
+-(id<ORRational>) initialValue;
+-(id<ORRational>) value;
+-(id<ORRational>) setValue: (id<ORRational>) value;
+-(id<ORRational>) setValue: (id<ORRational>) value in: (id<ORGamma>) solver;
+-(id<ORRational>) value: (id<ORGamma>) solver;
 @end
 
 @protocol ORDoubleNumber <ORObject,ORExpr>
@@ -93,9 +93,9 @@
 @end
 
 @protocol ORRationalNumber <ORObject,ORExpr>
--(ORRational*) rationalValue;
--(ORRational*) qmin;
--(ORRational*) value;
+-(id<ORRational>) rationalValue;
+-(id<ORRational>) qmin;
+-(id<ORRational>) value;
 -(ORInt) intValue;
 @end
 

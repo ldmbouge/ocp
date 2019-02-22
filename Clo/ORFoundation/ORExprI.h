@@ -35,6 +35,9 @@
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORExpr>) neg;
+-(id<ORExpr>) sqrt;
+-(id<ORExpr>) error;
+-(id<ORExpr>) channel;
 -(id<ORExpr>) land:(id<ORRelation>) e;
 -(id<ORExpr>) lor:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
@@ -189,8 +192,8 @@
 }
 -(id<ORExpr>) initORExprCstRationalSubI: (id<ORRationalArray>) array index:(id<ORExpr>) op;
 -(id<ORTracker>) tracker;
--(ORRational*) qmin;
--(ORRational*) qmax;
+-(id<ORRational>) qmin;
+-(id<ORRational>) qmax;
 -(NSString *)description;
 -(ORExprI*) index;
 -(id<ORRationalArray>)array;
@@ -303,6 +306,15 @@
 
 @interface ORExprEqualI : ORExprRelationI<ORRelation,NSCoding>
 -(id<ORExpr>) initORExprEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+//-(ORRelationType)type;
+-(void) visit: (ORVisitor*)v;
+@end
+
+@interface ORExprErrorOfI : ORExprRelationI<ORRelation,NSCoding>
+-(id<ORExpr>) initORExprErrorOfI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
@@ -477,6 +489,17 @@
    id<ORExpr> _op;
 }
 -(id<ORExpr>)initORNegateI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface ORExprSqrtI : ORExprLogiqueI<ORRelation,NSCoding> {
+   id<ORExpr> _op;
+}
+-(id<ORExpr>)initORSqrtI:(id<ORExpr>)op;
 -(ORInt)min;
 -(ORInt)max;
 -(ORExprI*) operand;

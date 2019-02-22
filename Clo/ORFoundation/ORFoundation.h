@@ -48,6 +48,7 @@
 #import <ORFoundation/ORSemFDSController.h>
 #import <ORFoundation/ORSemBFSController.h>
 #import <ORFoundation/ORBackjumpingDFSController.h>
+#import <ORFoundation/fpi.h>
 
 
 #if defined(__APPLE__)

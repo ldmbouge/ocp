@@ -16,13 +16,13 @@
 @interface CPRationalVarSnapshot : NSObject
 {
    ORUInt      _name;
-   ORRational* _value;
+   id<ORRational> _value;
    ORBool      _bound;
    ORBool      _boundError;
 }
 -(CPRationalVarSnapshot*) init: (CPRationalVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
--(ORRational*) rationalValue;
+-(id<ORRational>) rationalValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -49,7 +49,7 @@
    [_value release];
    [super dealloc];
 }
--(ORRational*) rationalValue
+-(id<ORRational>) rationalValue
 {
    return _value;
 }
@@ -81,7 +81,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"Rational(%d) : %@",_name,_value];
+   [buf appendFormat:@"var<%d>=Rational(%d) : %@",[self getId],_name,_value];
    return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
@@ -127,7 +127,7 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
 
 @implementation CPRationalVarI
 
--(id)init:(CPEngineI*)engine low:(ORRational*)low up:(ORRational*)up
+-(id)init:(CPEngineI*)engine low:(id<ORRational>)low up:(id<ORRational>)up
 {
    self = [super init];
    _engine = engine;
@@ -200,7 +200,7 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
 {
    return CPVCBare;
 }
--(CPRationalVarI*) findAffine: (ORRational*) scale shift:(ORRational*) shift
+-(CPRationalVarI*) findAffine: (id<ORRational>) scale shift:(id<ORRational>) shift
 {
    return nil;
 }
@@ -323,21 +323,21 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
 }
--(void) bind:(ORRational*) val
+-(void) bind:(id<ORRational>) val
 {
    [_dom bind:val for:self];
 }
--(void) updateMin: (ORRational*) newMin
+-(void) updateMin: (id<ORRational>) newMin
 {
    if([newMin gt: [self min]])
       [_dom updateMin:newMin for:self];
 }
--(void) updateMax: (ORRational*) newMax
+-(void) updateMax: (id<ORRational>) newMax
 {
    if([newMax lt: [self max]])
       [_dom updateMax:newMax for:self];
 }
--(void) updateInterval: (ORRational*) newMin and:(ORRational*)newMax
+-(void) updateInterval: (id<ORRational>) newMin and:(id<ORRational>)newMax
 {
    if([newMin gt: newMax])
       failNow();
@@ -345,32 +345,32 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
    [self updateMax:newMax];
 }
 - (void)updateMaxF:(ORDouble)newMaxError {
-   ORRational* mError = [[ORRational alloc ] init];
+   id<ORRational> mError = [[ORRational alloc ] init];
    [mError set_d: newMaxError];
    [_dom updateMax:mError for:self];
    [mError release];
 }
 - (void)updateMinF:(ORDouble)newMinError {
-   ORRational* mError = [[ORRational alloc ] init];
+   id<ORRational> mError = [[ORRational alloc ] init];
    [mError set_d: newMinError];
    [_dom updateMin:mError for:self];
    [mError release];
 }
--(ORRational*) min
+-(id<ORRational>) min
 {
    return [_dom min];
 }
--(ORRational*) max
+-(id<ORRational>) max
 {
    return [_dom max];
 }
--(ORRational*) value
+-(id<ORRational>) value
 {
    if ([_dom bound])
       return [_dom min];
    return _value;
 }
--(ORRational*) rationalValue
+-(id<ORRational>) rationalValue
 {
    if ([_dom bound])
       return [_dom min];
@@ -380,7 +380,7 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
 {
    return _dom;
 }
--(void) assignRelaxationValue: (ORRational*) f
+-(void) assignRelaxationValue: (id<ORRational>) f
 {
    if ([f lt: [_dom min]] && [f gt: [_dom max]])
       @throw [[ORExecutionError alloc] initORExecutionError: "Assigning a relaxation value outside the bounds"];
@@ -390,7 +390,7 @@ static NSMutableSet* collectConstraints(CPRationalEventNetwork* net,NSMutableSet
 {
    return [_dom bounds];
 }
--(ORBool) member:(ORRational*)v
+-(ORBool) member:(id<ORRational>)v
 {
    return [_dom member:v];
 }
