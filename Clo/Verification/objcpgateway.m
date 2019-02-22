@@ -581,7 +581,7 @@ static OBJCPGateway *objcpgw;
 -(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr
 {
    id<ORIntVar> trueVar = [ORFactory intVar:_model value:1];
-   [_model add:[(id<ORIntVar>)expr eq:trueVar]];
+   [_model add:[(id<ORExpr>)expr eq:trueVar]];
 }
 -(ORBool) objcp_check:(objcp_context) ctx
 {
@@ -744,60 +744,99 @@ static OBJCPGateway *objcpgw;
 
 @implementation OBJCPGateway (Bool)
 
--(id<ORIntVar>) objcp_mk_and:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
+-(objcp_expr) objcp_mk_and:(objcp_context)ctx left:(id<ORExpr>)b0 right:(id<ORExpr>)b1
 {
+   if([b0.class conformsToProtocol:@protocol(ORIntVar)]){
+      if([b1.class conformsToProtocol:@protocol(ORIntVar)]){
+         if([(id<ORIntVar>)b0 low] && [(id<ORIntVar>)b1 low]) return [ORFactory intVar:_model value:1];
+         if(![(id<ORIntVar>)b0 up] || ![(id<ORIntVar>)b1 up]) return [ORFactory intVar:_model value:0];
+      }
+      if([(id<ORIntVar>)b0 low]) return b1;
+   }
+   if([b1.class conformsToProtocol:@protocol(ORIntVar)] && [(id<ORIntVar>)b1 low]){
+      return b0;
+   }
 //   if([b0 low] && [b1 low])
 //      return [ORFactory intVar:_model value:1];
 //   if([b0 low]) return b1;
 //   if([b1 low]) return b0;
-   id<ORIntVar> res;
+//      id<ORIntVar> res;
 //   if(![b0 up] || ![b1 up])
 //      res = [ORFactory intVar:_model value:0];
 //   else
-      res = [ORFactory boolVar:_model];
-   id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
-   bvar[0] = b0;
-   bvar[1] = b1;
-   [_model add:[[b0 land:b1] eq:res]];
-   return res;
+//      res = [ORFactory boolVar:_model];
+//   id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
+//   bvar[0] = b0;
+//   bvar[1] = b1;
+//   [_model add:[[b0 land:b1] eq:res]];
+//   return res;
+   return [b0 land:b1];
 }
 
--(id<ORIntVar>) objcp_mk_or:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
+-(objcp_expr) objcp_mk_or:(objcp_context)ctx left:(id<ORExpr>)b0 right:(id<ORExpr>)b1
 {
-   id<ORIntVar> res;
+   if([b0.class conformsToProtocol:@protocol(ORIntVar)]){
+      if([b1.class conformsToProtocol:@protocol(ORIntVar)]){
+         if([(id<ORIntVar>)b0 low] || [(id<ORIntVar>)b1 low]) return [ORFactory intVar:_model value:1];
+         if(![(id<ORIntVar>)b0 up] && ![(id<ORIntVar>)b1 up]) return [ORFactory intVar:_model value:0];
+      }
+      if([(id<ORIntVar>)b0 low]) return b1;
+   }
+   if([b1.class conformsToProtocol:@protocol(ORIntVar)] && [(id<ORIntVar>)b1 low]){
+      return b0;
+   }
+//   id<ORIntVar> res;
 //   if([b0 low] || [b1 low])
 //      res = [ORFactory intVar:_model value:1];
 //   else if(![b0 up] && ![b1 up])
 //      res = [ORFactory intVar:_model value:0];
 //   else
-      res = [ORFactory boolVar:_model];
-   id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
-   bvar[0] = b0;
-   bvar[1] = b1;
-   [_model add:[[b0 lor:b1] eq:res]];
-   return res;
+//      res = [ORFactory boolVar:_model];
+//   id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
+//   bvar[0] = b0;
+//   bvar[1] = b1;
+//   [_model add:[[b0 lor:b1] eq:res]];
+//   return res;
+   return [b0 lor:b1];
 }
 
--(id<ORIntVar>) objcp_mk_not:(objcp_context)ctx expr:(id<ORIntVar>)b0
+-(objcp_expr) objcp_mk_not:(objcp_context)ctx expr:(id<ORExpr>)b0
 {
+   if([b0.class conformsToProtocol:@protocol(ORIntVar)]){
+         if([(id<ORIntVar>)b0 low]) return [ORFactory intVar:_model value:1];
+         if(![(id<ORIntVar>)b0 up]) return [ORFactory intVar:_model value:0];
+   }
 //   if([b0 low]) return [ORFactory intVar:_model value:0];
 //   if(![b0 up]) return [ORFactory intVar:_model value:1];
-   id<ORIntVar> res = [ORFactory boolVar:_model];
-   [_model add:[[b0 neg] eq:res]];
-   return res;
+//   id<ORIntVar> res = [ORFactory boolVar:_model];
+//   [_model add:[[b0 neg] eq:res]];
+//   return res;
+   return [b0 neg];
 }
 
--(id<ORIntVar>) objcp_mk_implies:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
+-(objcp_expr) objcp_mk_implies:(objcp_context)ctx left:(id<ORExpr>)b0 right:(id<ORExpr>)b1
 {
-   id<ORIntVar> res;
+   if([b0.class conformsToProtocol:@protocol(ORIntVar)]){
+      if([b1.class conformsToProtocol:@protocol(ORIntVar)]){
+         if([(id<ORIntVar>)b0 low] && ![(id<ORIntVar>)b1 up]) return [ORFactory intVar:_model value:0];
+         if(![(id<ORIntVar>)b0 up] || [(id<ORIntVar>)b1 low]) return [ORFactory intVar:_model value:1];
+      }
+      if([(id<ORIntVar>)b0 low]) return b1;
+   }
+   if([b1.class conformsToProtocol:@protocol(ORIntVar)] && [(id<ORIntVar>)b1 low]){
+      return b0;
+   }
+
+//   id<ORIntVar> res;
 //   if(![b0 up] || [b1 low])
 //      res = [ORFactory intVar:_model value:1];
 //   else if([b0 low] && ![b1 up])
 //      res = [ORFactory intVar:_model value:0];
 //   else
-      res = [ORFactory boolVar:_model];
-   [_model add:[[b0 imply:b1] eq:res]];
-   return res;
+//      res = [ORFactory boolVar:_model];
+//   [_model add:[[b0 imply:b1] eq:res]];
+//   return res;
+   return [b0 imply:b1];
 }
 @end
 
@@ -806,6 +845,10 @@ static OBJCPGateway *objcpgw;
 
 -(objcp_context) objcp_mk_bv_eq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
+//   if([(id<ORBitVar>)left low] == [(id<ORBitVar>)left up] && [(id<ORBitVar>)right low] == [(id<ORBitVar>)right up]){
+//      if([(id<ORBitVar>)left low] == [(id<ORBitVar>)right low]) return [ORFactory intVar:_model value:1];
+//      if([(id<ORBitVar>)left low] != [(id<ORBitVar>)right low]) return [ORFactory intVar:_model value:0];
+//   }
    ORUInt low = 0;   ORUInt up = 1;
    id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    [_model add:[ORFactory bit:(id<ORBitVar>)left EQ:(id<ORBitVar>)right eval:(id<ORBitVar>)bv]];
@@ -909,27 +952,34 @@ static OBJCPGateway *objcpgw;
  */
 -(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr)c then:(objcp_expr) t else:(objcp_expr)e
 {
-   id<ORIntVar> b = (id<ORIntVar>)[self getVariable:c];
+//   id<ORIntVar> b = [self getVariable:c];
    id<ORVar> tv = [self getVariable:t];
    id<ORVar> ev = [self getVariable:e];
    id<ORVar> res = nil;
-   if([b low] == [b up])
-      return ([b low]) ? t : e;
-   if([tv.class conformsToProtocol:@protocol(ORIntVar)]){
+//   if([b low] == [b up])
+//      return ([b low]) ? t : e;
+   if([tv.class conformsToProtocol:@protocol(ORIntVar)] && [ev.class conformsToProtocol:@protocol(ORIntVar)]){
       res = [ORFactory intVar:_model bounds:RANGE(_model, min([(id<ORIntVar>)t low],[(id<ORIntVar>)e low]),max([(id<ORIntVar>)t up], [(id<ORIntVar>)e up]))];
-   }else if([tv.class conformsToProtocol:@protocol(ORFloatVar)]){
-      res = [ORFactory floatVar:_model];
-   }else if([tv.class conformsToProtocol:@protocol(ORDoubleVar)]){
-      res = [ORFactory doubleVar:_model];
+   }else if([tv.class conformsToProtocol:@protocol(ORFloatVar)] && [ev.class conformsToProtocol:@protocol(ORFloatVar)]){
+      res = [ORFactory floatVar:_model low:minFlt([(id<ORFloatVar>)t low],[(id<ORFloatVar>)e low]) up:maxFlt([(id<ORFloatVar>)t up],[(id<ORFloatVar>)e up])];
+   }else if([tv.class conformsToProtocol:@protocol(ORDoubleVar)] && [ev.class conformsToProtocol:@protocol(ORDoubleVar)]){
+      res = [ORFactory doubleVar:_model low:minDbl([(id<ORDoubleVar>)t low],[(id<ORDoubleVar>)e low]) up:maxDbl([(id<ORDoubleVar>)t up],[(id<ORDoubleVar>)e up])];
    }else if([tv.class conformsToProtocol:@protocol(ORBitVar)]){
-      res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength],[(id<ORBitVar>)ev bitLength])];
-      id<ORBitVar> bv = [ORFactory bitVar:_model withLength:1];
-      [_model add:[ORFactory bit:bv booleq:b]];
-      [_model add:[ORFactory bit:bv then:(id<ORBitVar>)tv else:(id<ORBitVar>)ev result:(id<ORBitVar>)res]];
-      return res;
-   }
-   [_model add:[b imply:[self objcp_mk_eq:ctx left:res right:tv]]];
-   [_model add:[[b neg] imply:[self objcp_mk_eq:ctx left:res right:ev]]];
+         res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength],[(id<ORBitVar>)ev bitLength])];
+         id<ORBitVar> bv = [ORFactory bitVar:_model withLength:1];
+         if([((id<ORExpr>)c).class conformsToProtocol:@protocol(ORIntVar)])
+            [_model add:[ORFactory bit:bv booleq:(id<ORIntVar>)c]];
+         else {//complex expr
+            id<ORIntVar> b = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+            [_model add:[b eq:c]];
+            [_model add:[ORFactory bit:bv booleq:(id<ORIntVar>)b]];
+         }
+         [_model add:[ORFactory bit:bv then:(id<ORBitVar>)tv else:(id<ORBitVar>)ev result:(id<ORBitVar>)res]];
+         return res;
+      }
+   
+   [_model add:[(id<ORExpr>)c imply:[self objcp_mk_eq:ctx left:res right:tv]]];
+   [_model add:[[(id<ORExpr>)c neg] imply:[self objcp_mk_eq:ctx left:res right:ev]]];
    return res;
 }
 
@@ -1429,8 +1479,10 @@ static OBJCPGateway *objcpgw;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
    if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
       [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x eq:(id<ORFloatVar>)y]];
-   }else{//we must be ordoublevar in this branch
+   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
       [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y]];
+   }else{//expr
+      [_model add:[bv eq:[(id<ORExpr>)x eq:(id<ORExpr>)y]]];
    }
    return bv;
 }
@@ -1439,8 +1491,10 @@ static OBJCPGateway *objcpgw;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
    if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
       [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x lt:(id<ORFloatVar>)y]];
-   }else{//we must be ordoublevar in this branch
+   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
       [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x lt:(id<ORDoubleVar>)y]];
+   }else{
+      [_model add:[bv eq:[(id<ORExpr>)x lt:(id<ORExpr>)y]]];
    }
    return bv;
 }
@@ -1449,8 +1503,10 @@ static OBJCPGateway *objcpgw;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
    if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
       [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x gt:(id<ORFloatVar>)y]];
-   }else{//we must be ordoublevar in this branch
+   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
       [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x gt:(id<ORDoubleVar>)y]];
+   }else{
+      [_model add:[bv eq:[(id<ORExpr>)x gt:(id<ORExpr>)y]]];
    }
    return bv;
 }
@@ -1459,8 +1515,10 @@ static OBJCPGateway *objcpgw;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
    if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
       [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x leq:(id<ORFloatVar>)y]];
-   }else{//we must be ordoublevar in this branch
+   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
       [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x leq:(id<ORDoubleVar>)y]];
+   }else{
+      [_model add:[bv eq:[(id<ORExpr>)x leq:(id<ORExpr>)y]]];
    }
    return bv;
 }
@@ -1469,8 +1527,10 @@ static OBJCPGateway *objcpgw;
    id<ORIntVar> bv = [ORFactory boolVar:_model];
    if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
       [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x geq:(id<ORFloatVar>)y]];
-   }else{//we must be ordoublevar in this branch
+   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
       [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x geq:(id<ORDoubleVar>)y]];
+   }else{
+      [_model add:[bv eq:[(id<ORExpr>)x geq:(id<ORExpr>)y]]];
    }
    return bv;
 }
@@ -1483,50 +1543,54 @@ static OBJCPGateway *objcpgw;
 }
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x add:(id<ORExpr>)y
 {
-   id<ORExpr> res;
-   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-      res = [ORFactory floatVar:_model];
-   }else{//we must be ordoublevar in this branch
-      res = [ORFactory doubleVar:_model];
-   }
-   [_model add:[res eq:[x plus:y]]];
-   return res;
+//   id<ORExpr> res;
+//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+//      res = [ORFactory floatVar:_model];
+//   }else{//we must be ordoublevar in this branch
+//      res = [ORFactory doubleVar:_model];
+//   }
+//   [_model add:[res eq:[x plus:y]]];
+//   return res;
+   return [x plus:y];
 }
 
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x sub:(id<ORExpr>)y
 {
-   id<ORExpr> res;
-   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-      res = [ORFactory floatVar:_model];
-   }else{//we must be ordoublevar in this branch
-      res = [ORFactory doubleVar:_model];
-   }
-   [_model add:[res eq:[x sub:y]]];
-   return res;
+//   id<ORExpr> res;
+//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+//      res = [ORFactory floatVar:_model];
+//   }else{//we must be ordoublevar in this branch
+//      res = [ORFactory doubleVar:_model];
+//   }
+//   [_model add:[res eq:[x sub:y]]];
+//   return res;
+   return [x sub:y];
 }
 
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x mul:(id<ORExpr>)y
 {
-   id<ORExpr> res;
-   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-      res = [ORFactory floatVar:_model];
-   }else{//we must be ordoublevar in this branch
-      res = [ORFactory doubleVar:_model];
-   }
-   [_model add:[res eq:[x mul:y]]];
-   return res;
+//   id<ORExpr> res;
+//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+//      res = [ORFactory floatVar:_model];
+//   }else{//we must be ordoublevar in this branch
+//      res = [ORFactory doubleVar:_model];
+//   }
+//   [_model add:[res eq:[x mul:y]]];
+//   return res;
+   return [x mul:y];
 }
 
 -(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x div:(id<ORExpr>)y
 {
-   id<ORExpr> res;
-   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-      res = [ORFactory floatVar:_model];
-   }else{//we must be ordoublevar in this branch
-      res = [ORFactory doubleVar:_model];
-   }
-   [_model add:[res eq:[x div:y]]];
-   return res;
+//   id<ORExpr> res;
+//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+//      res = [ORFactory floatVar:_model];
+//   }else{//we must be ordoublevar in this branch
+//      res = [ORFactory doubleVar:_model];
+//   }
+//   [_model add:[res eq:[x div:y]]];
+//   return res;
+   return [x div:y];
 }
 
 #warning [hzi] we should define constant for exp width and mantissa
@@ -1545,8 +1609,15 @@ static OBJCPGateway *objcpgw;
    }
    return nil;
 }
--(id<ORDoubleVar>) objcp_mk_to_fp:(id<ORFloatVar>)var
+-(id<ORDoubleVar>) objcp_mk_to_fp:(id<ORFloatVar>)x
 {
+   id<ORFloatVar> var;
+   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
+      var = (id<ORFloatVar>) x;
+   }else{// expr
+      var = [ORFactory floatVar:_model];
+      [_model add:[var eq:x]];
+   }
    id<ORDoubleVar> res = [ORFactory doubleVar:_model low:[var low] up:[var up] name:[NSString stringWithFormat:@"%@D*",([var prettyname] == nil) ? [NSString stringWithFormat:@"var<%d>",getId(var)]:[var prettyname]]];
    if([var low] != [var up]){
       [_model add:[ORFactory doubleCast:_model from:var res:res]];
