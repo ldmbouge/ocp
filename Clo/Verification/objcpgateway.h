@@ -121,6 +121,8 @@ typedef int assertion_id;
 -(ORFloat) floatValue;
 -(ORDouble) doubleValue;
 -(ORInt) intValue;
+-(ORUInt) uintValue;
+-(ORULong) ulongValue;
 -(objcp_expr) makeVariable;
 -(NSString*) description;
 +(void)setObjcpGateway:(OBJCPGateway*) obj;

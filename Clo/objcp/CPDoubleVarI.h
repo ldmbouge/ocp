@@ -113,7 +113,7 @@ static inline int signD(double_cast p){
 }
 
 
-static inline double doubleFromParts(unsigned int mantissa, unsigned int exponent,unsigned int sign){
+static inline double doubleFromParts(unsigned long mantissa, unsigned int exponent,unsigned int sign){
    double_cast f_cast;
    f_cast.parts.mantisa = mantissa;
    f_cast.parts.exponent = exponent;

@@ -93,6 +93,14 @@ static OBJCPGateway *objcpgw;
 {
    return _value.int_nb;
 }
+-(ORUInt) uintValue
+{
+   return _value.uint_nb;
+}
+-(ORLong) ulongValue
+{
+   return _value.ullong_nb;
+}
 -(objcp_expr) makeVariable
 {
    return [objcpgw objcp_mk_var_from_type:_type andName:nil andSize:_width withValue:_value];
@@ -153,7 +161,9 @@ static OBJCPGateway *objcpgw;
 {
    NSArray* vars = [_model variables];
    for(id<ORVar> v in vars)
-      assert([_program bound:v]);
+      if(![_program bound:v])
+         NSLog(@"la variable %@ n'est pas bound : %@",v,[_program concretize:v]);
+//      assert([_program bound:v]);
 }
 @end
 
@@ -647,8 +657,12 @@ static OBJCPGateway *objcpgw;
       return [self objcp_mk_bv_eq:ctx left:lv right:rv];
    if([lv vtype] == ORTFloat || [lv vtype] == ORTDouble)
       return [self objcp_mk_fp:ctx x:lv eq:rv];
+   id<ORIntVar> lvi = (id<ORIntVar>) lv;
+   id<ORIntVar> rvi = (id<ORIntVar>) rv;
+   if([lvi low] == [lvi up] && [rvi low] == [rvi up] && [lvi low] == [rvi low])
+      return [ORFactory intVar:_model value:1];
    id<ORIntVar> res = [ORFactory boolVar:_model];
-   [_model add:[ORFactory reify:_model boolean:res with:(id<ORIntVar>)lv eq:(id<ORIntVar>)rv]];
+   [_model add:[ORFactory reify:_model boolean:res with:lvi eq:rvi]];
    return res;
 }
 -(id<ORIntVar>) objcp_mk_minus:(objcp_context)ctx var:(objcp_expr)var
@@ -732,7 +746,15 @@ static OBJCPGateway *objcpgw;
 
 -(id<ORIntVar>) objcp_mk_and:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
 {
-   id<ORIntVar> res = [ORFactory boolVar:_model];
+//   if([b0 low] && [b1 low])
+//      return [ORFactory intVar:_model value:1];
+//   if([b0 low]) return b1;
+//   if([b1 low]) return b0;
+   id<ORIntVar> res;
+//   if(![b0 up] || ![b1 up])
+//      res = [ORFactory intVar:_model value:0];
+//   else
+      res = [ORFactory boolVar:_model];
    id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
    bvar[0] = b0;
    bvar[1] = b1;
@@ -742,7 +764,13 @@ static OBJCPGateway *objcpgw;
 
 -(id<ORIntVar>) objcp_mk_or:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
 {
-   id<ORIntVar> res = [ORFactory boolVar:_model];
+   id<ORIntVar> res;
+//   if([b0 low] || [b1 low])
+//      res = [ORFactory intVar:_model value:1];
+//   else if(![b0 up] && ![b1 up])
+//      res = [ORFactory intVar:_model value:0];
+//   else
+      res = [ORFactory boolVar:_model];
    id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
    bvar[0] = b0;
    bvar[1] = b1;
@@ -752,6 +780,8 @@ static OBJCPGateway *objcpgw;
 
 -(id<ORIntVar>) objcp_mk_not:(objcp_context)ctx expr:(id<ORIntVar>)b0
 {
+//   if([b0 low]) return [ORFactory intVar:_model value:0];
+//   if(![b0 up]) return [ORFactory intVar:_model value:1];
    id<ORIntVar> res = [ORFactory boolVar:_model];
    [_model add:[[b0 neg] eq:res]];
    return res;
@@ -759,7 +789,13 @@ static OBJCPGateway *objcpgw;
 
 -(id<ORIntVar>) objcp_mk_implies:(objcp_context)ctx left:(id<ORIntVar>)b0 right:(id<ORIntVar>)b1
 {
-   id<ORIntVar> res = [ORFactory boolVar:_model];
+   id<ORIntVar> res;
+//   if(![b0 up] || [b1 low])
+//      res = [ORFactory intVar:_model value:1];
+//   else if([b0 low] && ![b1 up])
+//      res = [ORFactory intVar:_model value:0];
+//   else
+      res = [ORFactory boolVar:_model];
    [_model add:[[b0 imply:b1] eq:res]];
    return res;
 }
@@ -1498,12 +1534,12 @@ static OBJCPGateway *objcpgw;
 {
    assert((e->_width == 8 && m->_width == 23) || (e->_width == 11 && m->_width == 52));
    if(e->_width == 8 && m->_width == 23){
-      float f = floatFromParts([m intValue],[e intValue],[s intValue]);
+      float f = floatFromParts([m uintValue],[e uintValue],[s uintValue]);
       NSLog(@"%16.16e",f);
       return [[ConstantWrapper alloc] initWithFloat:f];
    }
    if(e->_width == 11 && m->_width == 52){
-      double f = doubleFromParts([m intValue],[e intValue],[s intValue]);
+      double f = doubleFromParts([m ulongValue],[e uintValue],[s uintValue]);
       NSLog(@"%16.16e",f);
       return [[ConstantWrapper alloc] initWithDouble:f];
    }
