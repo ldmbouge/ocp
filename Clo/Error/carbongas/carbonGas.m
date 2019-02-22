@@ -100,7 +100,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
     }
 }
 
-void check_it_f(float p, float a, float b, float t, float n, float k, float v, float r, mpq_t er) {
+void check_it_f(float p, float a, float b, float t, float n, float k, float v, float r, id<ORRational> er) {
     float cr = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
     mpq_t pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1;
     
@@ -127,8 +127,8 @@ void check_it_f(float p, float a, float b, float t, float n, float k, float v, f
     mpq_sub(rq, rq, tmp1);
     mpq_set_d(tmp0, r);
     mpq_sub(tmp1, rq, tmp0);
-    if (mpq_cmp(tmp1, er) != 0)
-        printf("WRONG: er = % 20.20e while cer = % 20.20e\n", mpq_get_d(er), mpq_get_d(tmp1));
+    if (mpq_cmp(tmp1, er.rational) != 0)
+        printf("WRONG: er = % 20.20e while cer = % 20.20e\n", mpq_get_d(er.rational), mpq_get_d(tmp1));
     mpq_clears(pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1, NULL);
 }
 
@@ -178,7 +178,7 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
            NSLog(@"v : [%8.8e;%8.8e]±[%@;%@] (%s)",[cp minF:v],[cp maxF:v],[cp minFQ:v],[cp maxFQ:v],[cp bound:v] ? "YES" : "NO");
            NSLog(@"r : [%8.8e;%8.8e]±[%@;%@] (%s)",[cp minF:r],[cp maxF:r],[cp minFQ:r],[cp maxFQ:r],[cp bound:r] ? "YES" : "NO");
            if (search)
-                check_it_f(getFmin(p), getFmin(a), getFmin(b), getFmin(t), getFmin(n), getFmin(k), getFmin(v), getFmin(r), getFminErr(r));
+                check_it_f(getFmin(p), getFmin(a), getFmin(b), getFmin(t), getFmin(n), getFmin(k), getFmin(v), getFmin(r), [cp minErrorFQ:r]);
         }];
     }
 }

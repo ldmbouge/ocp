@@ -86,6 +86,7 @@ PORTABLE_BEGIN
 -(void)          switchedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 -(void)          floatSplitArrayOrderedByDomSize: (id<ORDisabledFloatVarArray>) x;
 -(void)          lexicalOrderedSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
+-(void)          brandAndBoundSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b;
 
 -(ORDouble)      computeAbsorptionRate:(id<ORFloatVar>) x;
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledFloatVarArray>) vars;
