@@ -172,16 +172,16 @@ typedef int assertion_id;
 
 
 @interface OBJCPGateway (Int)
--(id<ORIntVar>) objcp_mk_minus:(objcp_context)ctx var:(objcp_expr)var;
--(id<ORIntVar>) objcp_mk_plus:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
--(id<ORIntVar>) objcp_mk_sub:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
--(id<ORIntVar>) objcp_mk_times:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
--(id<ORIntVar>) objcp_mk_div:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
--(id<ORIntVar>) objcp_mk_eq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
--(id<ORIntVar>) objcp_mk_geq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
--(id<ORIntVar>) objcp_mk_leq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
--(id<ORIntVar>) objcp_mk_gt:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
--(id<ORIntVar>) objcp_mk_lt:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_minus:(objcp_context)ctx var:(objcp_expr)var;
+-(id<ORExpr>) objcp_mk_plus:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_sub:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_times:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_div:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_eq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_geq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_leq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_gt:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
+-(id<ORExpr>) objcp_mk_lt:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right;
 @end
 
 @interface OBJCPGateway (Bool)
@@ -235,16 +235,16 @@ typedef int assertion_id;
 
 @interface OBJCPGateway (ORFloat)
 -(id<ORDoubleVar>) objcp_mk_to_fp:(id<ORFloatVar>)var;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x eq:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x lt:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x gt:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x leq:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(objcp_expr)x geq:(objcp_expr)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x add:(id<ORExpr>)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x sub:(id<ORExpr>)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x mul:(id<ORExpr>)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x div:(id<ORExpr>)y;
--(objcp_expr) objcp_mk_fp:(objcp_expr)ctx neg:(objcp_expr)x;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x eq:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x lt:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x gt:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x leq:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x geq:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x add:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x sub:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x mul:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x div:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx neg:(id<ORExpr>)x;
 -(ConstantWrapper*) objcp_mk_fp_constant:(objcp_expr)ctx s:(ConstantWrapper*)s e:(ConstantWrapper*)e m:(ConstantWrapper*)m;
 @end
 
