@@ -12,10 +12,11 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L$(LOC)Scheduler/CPScheduler -Wl,-rpath=$(realpath $(LOC)Scheduler/CPScheduler) \
 	-L$(LOC)Scheduler/ORSchedulingProgram -Wl,-rpath=$(realpath $(LOC)Scheduler/ORSchedulingProgram) \
 	-L$(LOC)objmp -Wl,-rpath=$(realpath $(LOC)objmp) \
+	-L$(LOC)Verification -Wl,-rpath=$(realpath $(LOC)Verification) \
 	-L/opt/gurobi752/linux64/lib -Wl,-rpath=/opt/gurobi752/linux64/lib \
 	-L$(LOC)$(LOC)lib/linux -Wl \
 	-lORUtilities -lORFoundation -lCPUKernel -lobjcp -lORModeling -lORProgram \
-	-lORScheduler -lCPScheduler -lORSchedulerProgram \
+	-lORScheduler -lCPScheduler -lORSchedulerProgram -lVerification\
 	-lobjmp -lgurobi75 -lfpi -ldispatch \
 	-fobjc-runtime=gnustep
 
