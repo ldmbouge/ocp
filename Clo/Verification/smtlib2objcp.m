@@ -308,6 +308,7 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    SMTLIB2_OBJCP_SETHANDLER(tp, "RNE", RNE);
    SMTLIB2_OBJCP_SETHANDLER(tp, "roundNearestTiesToEven", RNE);
    SMTLIB2_OBJCP_SETHANDLER(tp, "+oo", fp_inf);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "-oo", fp_inf);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.eq", fp_eq);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.lt", fp_lt);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.gt", fp_gt);
@@ -1369,7 +1370,9 @@ SMTLIB2_OBJCP_DECLHANDLER(RNE)
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_inf)
 {
-   return [[ConstantWrapper alloc] initWithFloat:(strcmp(symbol, "+oo") == 0)?+INFINITY:-INFINITY];
+   if((int)smtlib2_vector_at(idx, 0) == 8)
+      return [[[ConstantWrapper alloc] initWithFloat:(strcmp(symbol, "+oo") == 0)?+INFINITY:-INFINITY] makeVariable];
+   return [[[ConstantWrapper alloc] initWithDouble:(strcmp(symbol, "+oo") == 0)?+INFINITY:-INFINITY] makeVariable];
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_eq)
