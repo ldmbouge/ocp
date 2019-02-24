@@ -269,7 +269,7 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "Equalc: visit method not defined"];
 }
--(void) visitFloatUnaryMinus:(id<ORFloatUnaryMinus>)cstr
+-(void) visitFloatUnaryMinus:(id<ORUnaryMinus>)cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatUnaryMinus: visit method not defined"];
 }
@@ -280,6 +280,10 @@
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatAssignc: visit method not defined"];
+}
+-(void) visitDoubleUnaryMinus:(id<ORUnaryMinus>)cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleUnaryMinus: visit method not defined"];
 }
 -(void) visitDoubleEqualc: (id<ORDoubleEqualc>)c
 {

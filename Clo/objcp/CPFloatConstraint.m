@@ -64,7 +64,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ == %@>",_x,_y];
+   return [NSString stringWithFormat:@"<%@ == -%@>",_x,_y];
 }
 @end
 

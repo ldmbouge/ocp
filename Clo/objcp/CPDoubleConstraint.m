@@ -18,6 +18,58 @@
 
 #define PERCENT 5.0
 
+
+//unary minus constraint
+@implementation CPDoubleUnaryMinus
+-(id) init:(CPDoubleVarI*)x eqm:(CPDoubleVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_x bound]){
+      if([_y bound]){
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         [_y bind:-[_x value]];
+      }
+   }else if([_y bound]){
+      [_x bind:-[_y value]];
+   }else {
+      ORDouble min = maxFlt([_x min], -[_y max]);
+      ORDouble max = minFlt([_x max], -[_y min]);
+      [_x updateInterval:min and:max];
+      [_y updateInterval:-max and:-min];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == -%@>",_x,_y];
+}
+@end
+
+
 @implementation CPDoubleCast : CPCoreConstraint 
 -(id) init:(CPDoubleVarI*)res equals:(CPFloatVarI*)initial
 {

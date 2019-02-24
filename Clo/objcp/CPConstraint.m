@@ -1062,6 +1062,12 @@
 
 
 @implementation CPFactory (ORDouble)
++(id<CPConstraint>) doubleUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleUnaryMinus alloc] init:x eqm:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) doubleCast: (id<CPDoubleVar>) res eq:(id<CPFloatVar>) initial
 {
    id<CPConstraint> o = [[CPDoubleCast alloc] init:res equals:initial];

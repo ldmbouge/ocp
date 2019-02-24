@@ -2052,6 +2052,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORConstraint>) doubleUnaryMinus:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eqm:(id<ORDoubleVar>)y
+{
+   id<ORConstraint> o = [[ORDoubleUnaryMinus alloc] initORDoubleUnaryMinus:x eqm:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) doubleMult:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z
 {
     id<ORConstraint> o = [[ORDoubleMult alloc] initORDoubleMult:z eq:x times:y];

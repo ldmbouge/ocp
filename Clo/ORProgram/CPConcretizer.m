@@ -1255,7 +1255,7 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitFloatUnaryMinus:(id<ORFloatUnaryMinus>)cstr
+-(void) visitFloatUnaryMinus:(id<ORUnaryMinus>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORFloatVar> left = [cstr left];
@@ -1573,6 +1573,18 @@
 }
 //------
 
+-(void) visitDoubleUnaryMinus:(id<ORUnaryMinus>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      id<ORFloatVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitDoubleAssignC:(id<ORDoubleAssignC>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

@@ -212,6 +212,7 @@
 -(void) visitFloatReifyGThenc: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThen: (id<ORConstraint>)c;
 -(void) visitDoubleCast: (id<ORConstraint>)c;
+-(void) visitDoubleUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitDoubleEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleNEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleLinearEq: (id<ORConstraint>) c;

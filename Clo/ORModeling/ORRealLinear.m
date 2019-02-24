@@ -293,7 +293,9 @@ static int decCoef(const struct ORRealTerm* t1,const struct ORRealTerm* t2)
 {
    return [_real fmax];
 }
-
+- (ORBool)hasBounds {
+   return [_real hasBounds];
+}
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model
 {
     return [_real postEQZ:model];

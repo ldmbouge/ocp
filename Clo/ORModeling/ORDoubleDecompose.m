@@ -86,6 +86,17 @@
       [_terms addTerm:alpha by:1];
    }
 }
+-(void) visitExprUnaryMinusI: (ORExprUnaryMinusI*) e
+{
+   if (_eqto) {
+      id<ORDoubleVar> alpha = [ORNormalizer doubleVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORDoubleVar> alpha =  [ORNormalizer doubleVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
    if (_eqto) {
@@ -257,6 +268,16 @@
    }];
    [_model addConstraint:[ORFactory doubleSum:_model array:var coef:coefs eq:0.0]];
    [lT release];
+   [rT release];
+}
+-(void) visitExprUnaryMinusI:(ORExprUnaryMinusI*) e
+{
+   id<ORDoubleLinear> rT = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+   id<ORDoubleVar> rV = [ORNormalizer doubleVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory doubleVar:_model];
+   }
+   [_model addConstraint:[ORFactory doubleUnaryMinus:_model var:_rv eqm: rV]];
    [rT release];
 }
 -(void) visitExprMinusI:(ORExprPlusI*) e
