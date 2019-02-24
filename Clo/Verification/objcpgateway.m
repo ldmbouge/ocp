@@ -424,7 +424,7 @@ static OBJCPGateway *objcpgw;
          res = [ORFactory intVar:_model bounds:RANGE(_model,value.int_nb,value.int_nb) name:name];
          break;
       case OR_REAL:
-         res = [ORFactory realVar:_model low:value.double_nb up:value.double_nb name:name];
+         res = [ORFactory double:_model value:value.double_nb];
          break;
       case OR_BV:
       {
@@ -432,16 +432,17 @@ static OBJCPGateway *objcpgw;
          break;
       }
       case OR_FLOAT:
-         res = [ORFactory floatVar:_model low:value.float_nb up:value.float_nb name:name];
+         res = [ORFactory float:_model value:value.float_nb];
          break;
       case OR_DOUBLE:
-         res = [ORFactory doubleVar:_model low:value.double_nb up:value.double_nb  name:name];
+         res = [ORFactory double:_model value:value.double_nb];
          break;
       default:
          break;
    }
    return res;
 }
+
 -(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size
 {
    objcp_expr res = nil;

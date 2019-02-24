@@ -72,6 +72,7 @@ typedef struct timeval ORTimeval;
 -(ORDoubleI*) init: (id<ORTracker>) tracker value: (ORDouble) value;
 -(ORDouble) doubleValue;
 -(ORDouble) value;
+-(ORDouble) dmin;
 -(ORInt) intValue;
 -(id<ORTracker>) tracker;
 @end

@@ -1766,6 +1766,10 @@
 {
    return _op;
 }
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprUnaryMinusI: self];
