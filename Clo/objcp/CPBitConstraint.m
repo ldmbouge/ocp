@@ -8219,9 +8219,9 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 - (void) dealloc
 {
+   if(_state != nil)
+      free(_state);
    [super dealloc];
-    if(_state != nil)
-        free(_state);
 }
 -(ORUInt)nbUVars
 {
