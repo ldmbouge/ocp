@@ -9,9 +9,6 @@
 #import "objcpgateway.h"
 #include "gmp.h"
 
-#include "ORFoundation/ORFoundation.h"
-#include "objcp/CPBitConstraint.h"
-
 @interface OBJCPType : NSObject{
 @private
    NSString* _name;
@@ -26,9 +23,8 @@
 -(NSString*) description;
 @end
 
+
 @implementation ConstantWrapper
-
-
 static OBJCPGateway *objcpgw;
 
 -(ConstantWrapper*) init:(const char*) strv width:(ORUInt)width base:(ORUInt)base

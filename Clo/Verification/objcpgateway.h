@@ -1,16 +1,9 @@
-#ifndef OBJCPGATEWAY_H
-#define OBJCPGATEWAY_H
-
 #import <ORUtilities/ORUtilities.h>
-
-#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgramFactory.h>
-#import <ORProgram/CPProgram.h>
-#import <objcp/CPFactory.h>
+#import <ORProgram/ORProgram.h>
+#import <objcp/objcp.h>
 #import "ORCmdLineArgs.h"
-
-#import <objcp/CPBitMacros.h>
 
 
 @protocol CPProgram;
@@ -247,6 +240,3 @@ typedef int assertion_id;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx neg:(id<ORExpr>)x;
 -(ConstantWrapper*) objcp_mk_fp_constant:(objcp_expr)ctx s:(ConstantWrapper*)s e:(ConstantWrapper*)e m:(ConstantWrapper*)m;
 @end
-
-#endif
-
