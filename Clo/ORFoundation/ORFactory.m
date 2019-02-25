@@ -1976,9 +1976,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var
++(id<ORConstraint>) floatCast:(id<ORTracker>)model from:(id<ORDoubleVar>) x res:(id<ORFloatVar>)var
 {
-   id<ORConstraint> o = [[ORDoubleCast alloc] init:var eq:x];
+   id<ORConstraint> o = [[ORFloatCast alloc] init:var eq:x];
    [model trackObject:o];
    return o;
 }
@@ -1992,6 +1992,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORDouble)
++(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var
+{
+   id<ORConstraint> o = [[ORDoubleCast alloc] init:var eq:x];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) doubleEqualc: (id<ORTracker>) model var:(id<ORDoubleVar>) x eqc:(ORDouble)c
 {
     id<ORConstraint> o = [[ORDoubleEqualc alloc] initORDoubleEqualc:x eqi:c];

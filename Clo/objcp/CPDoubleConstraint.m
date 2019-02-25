@@ -93,7 +93,7 @@ double_interval _yi;
 @end
 
 
-@implementation CPDoubleCast : CPCoreConstraint {
+@implementation CPDoubleCast {
    int _precision;
    int _rounding;
    double_interval _resi;

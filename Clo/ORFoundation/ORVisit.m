@@ -332,9 +332,13 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatAssign: visit method not defined"];
 }
--(void) visitDoubleCast: (id<ORDoubleCast>)c
+-(void) visitDoubleCast: (id<ORCast>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleCast: visit method not defined"];
+}
+-(void) visitFloatCast: (id<ORCast>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatCast: visit method not defined"];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {

@@ -12,11 +12,92 @@
 #import <ORFoundation/ORFoundation.h>
 #import "CPFloatConstraint.h"
 #import "CPFloatVarI.h"
+#import "CPDoubleVarI.h"
 #import "ORConstraintI.h"
 #import <fenv.h>
 
 #define PERCENT 5.0
 
+
+@implementation CPFloatCast{
+   int _precision;
+   int _rounding;
+   float_interval _resi;
+   double_interval _initiali;
+}
+-(id) init:(CPFloatVarI*)res equals:(CPDoubleVarI*)initial
+{
+   self = [super initCPCoreConstraint: [res engine]];
+   _res = res;
+   _initial = initial;
+   _resi = makeFloatInterval(_res.min, _res.max);
+   _initiali = makeDoubleInterval(_initial.min, _initial.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_res bound])        [_res whenChangeBoundsPropagate:self];
+   if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_res bound]){
+      if(is_eqf([_res min],-0.0f) && is_eqf([_res max],+0.0f))
+         [_initial updateInterval:[_res min] and:[_res max]];
+      else
+         [_initial bind:[_res value]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if([_initial bound]){
+      if(is_eqf([_initial min],-0.0f) && is_eqf([_initial max],+0.0f))
+         [_res updateInterval:[_initial min] and:[_initial max]];
+      else
+         [_res bind:[_initial value]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
+   if(isDisjointWithDV([_res min],[_res max],[_initial min],[_initial max])){
+      failNow();
+   }else {
+      updateFloatInterval(&_resi,_res);
+      updateDoubleInterval(&_initiali,_initial);
+      intersectionInterval inter;
+      float_interval resTmp = makeFloatInterval(_resi.inf, _resi.sup);
+      fpi_dtof(_precision, _rounding, &resTmp, &_initiali);
+      inter = intersection(_resi, resTmp, 0.0f);
+      if(inter.changed)
+         [_res updateInterval:inter.result.inf and:inter.result.sup];
+      
+      
+      updateFloatInterval(&_resi,_res);
+      double_interval initialTmp = makeDoubleInterval(_initiali.inf, _initiali.sup);
+      intersectionIntervalD inter2;
+      fpi_dtof_inv(_precision, _rounding, &initialTmp,&_resi);
+      inter2 = intersectionD(_initiali, initialTmp, 0.0f);
+      if(inter2.changed)
+         [_initial updateInterval:inter2.result.inf and:inter2.result.sup];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_res,_initial,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_res,_initial,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_res bound] + ![_initial bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ castedTo %@>",_initial,_res];
+}
+@end
 
 //unary minus constraint
 @implementation CPFloatUnaryMinus{

@@ -1357,10 +1357,11 @@ SMTLIB2_OBJCP_DECLHANDLER(fp)  {
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(to_fp)  {
-   ORInt size = (ORInt) smtlib2_vector_size(args);
-   if(size == 2)
-      return [objcpgw objcp_mk_to_fp:(objcp_expr)smtlib2_vector_at(args, 1)];
-   return NULL;
+   ORInt e = (ORInt)smtlib2_vector_at(idx, 0);
+   ORInt m = (ORInt)smtlib2_vector_at(idx, 1);
+   if(e == 11 && m == 53)
+      return [objcpgw objcp_mk_to_fp:(objcp_expr)smtlib2_vector_at(args, 1) to:OR_DOUBLE];
+   return [objcpgw objcp_mk_to_fp:(objcp_expr)smtlib2_vector_at(args, 1) to:OR_FLOAT];
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(RNE)

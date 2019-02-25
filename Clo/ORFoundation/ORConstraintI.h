@@ -509,8 +509,14 @@
 -(id<ORVar>) right;
 @end
 
-@interface ORDoubleCast : ORConstraintI<ORDoubleCast>
+@interface ORDoubleCast : ORConstraintI<ORCast>
 -(ORDoubleCast*)init:(id<ORVar>)x eq:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) initial;
+@end
+
+@interface ORFloatCast : ORConstraintI<ORCast>
+-(ORFloatCast*)init:(id<ORVar>)x eq:(id<ORVar>)y;
 -(id<ORVar>) res;
 -(id<ORVar>) initial;
 @end

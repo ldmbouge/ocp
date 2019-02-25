@@ -1058,6 +1058,12 @@
    [[x tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>) floatCast: (id<CPFloatVar>) res eq:(id<CPDoubleVar>) initial
+{
+   id<CPConstraint> o = [[CPFloatCast alloc] init:res equals:initial];
+   [[res tracker] trackMutable:o];
+   return o;
+}
 @end
 
 

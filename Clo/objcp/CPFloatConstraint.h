@@ -17,7 +17,18 @@
 
 
 @class CPFloatVarI;
+@class CPDoubleVarI;
 
+
+@interface CPFloatCast : CPCoreConstraint {
+   CPFloatVarI* _res;
+   CPDoubleVarI* _initial;
+}
+-(id) init:(id)x equals:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 //unary minus constraint
 @interface CPFloatUnaryMinus : CPCoreConstraint {

@@ -1403,7 +1403,20 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
--(void) visitDoubleCast: (id<ORDoubleCast>)cstr
+-(void) visitFloatCast: (id<ORCast>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORVar> res = [cstr res];
+      id<ORVar> initial = [cstr initial];
+      [res visit: self];
+      [initial visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatCast:(id<CPFloatVar>) _gamma[res.getId]
+                                                         eq:(id<CPDoubleVar>) _gamma[initial.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleCast: (id<ORCast>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORVar> res = [cstr res];

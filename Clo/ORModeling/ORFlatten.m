@@ -642,6 +642,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatCast: (id<ORConstraint>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitDoubleCast: (id<ORConstraint>)c
 {
    _result = [_into addConstraint:c];

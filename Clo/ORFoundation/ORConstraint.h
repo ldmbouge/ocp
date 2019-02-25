@@ -153,7 +153,7 @@ enum ORGroupType {
 -(ORDouble) cst;
 @end
 
-@protocol ORDoubleCast <ORConstraint>
+@protocol ORCast <ORConstraint>
 -(id<ORVar>) res;
 -(id<ORVar>) initial;
 @end

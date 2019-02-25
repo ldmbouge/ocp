@@ -144,7 +144,7 @@
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geqi: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lti: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gti: (ORFloat) i;
-
++(id<CPConstraint>) floatCast: (id<CPFloatVar>) res eq:(id<CPDoubleVar>) initial;
 @end
 
 @interface CPFactory (ORDouble)

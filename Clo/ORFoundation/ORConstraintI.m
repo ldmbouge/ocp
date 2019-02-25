@@ -4911,6 +4911,58 @@
 }
 @end
 
+@implementation ORFloatCast {
+   id<ORVar> _res;
+   id<ORVar> _initial;
+}
+-(ORFloatCast*)init:(id<ORVar>)res eq:(id<ORVar>)initial
+{
+   self = [super initORConstraintI];
+   _res = res;
+   _initial = initial;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ castTo %@)",[self class],self,_initial,_res];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatCast:self];
+}
+-(id<ORVar>) res
+{
+   return _res;
+}
+-(id<ORVar>) initial
+{
+   return _initial;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_res,_initial, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_res,_initial, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_res];
+   [aCoder encodeObject:_initial];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _res = [aDecoder decodeObject];
+   _initial = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 //------------------
 
 @implementation ORDoubleCast {

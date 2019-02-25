@@ -386,11 +386,12 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x lt: (id<ORFloatVar>) y;
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x gti: (ORFloat) i;
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x lti: (ORFloat) i;
-+(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var;
++(id<ORConstraint>) floatCast:(id<ORTracker>)model from:(id<ORDoubleVar>) x res:(id<ORFloatVar>)var;
 +(id<ORExpr>) expr:(id<ORExpr>) e1 mul:(id<ORVar>) var power:(ORInt) i;
 @end
 
 @interface ORFactory (ORDouble)
++(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var;
 +(id<ORConstraint>) doubleUnaryMinus:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eqm:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleEqualc: (id<ORTracker>) model var: (id<ORDoubleVar>)x eqc:(ORDouble)c;
 +(id<ORConstraint>) doubleNEqualc:(id<ORTracker>) model var: (id<ORDoubleVar>)x neqc:(ORDouble)c;
