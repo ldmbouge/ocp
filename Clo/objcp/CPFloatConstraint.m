@@ -264,8 +264,8 @@
 -(void) post
 {
    [self propagate];
-   [_x whenBindPropagate:self];
-   [_y whenBindPropagate:self];
+   if(![_x bound])[_x whenBindPropagate:self];
+   if(![_y bound])[_y whenBindPropagate:self];
 }
 -(void) propagate
 {
@@ -341,8 +341,10 @@
 -(void) post
 {
    [self propagate];
-   [_x whenBindPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_x bound]){
+      [_x whenBindPropagate:self];
+      [_x whenChangeBoundsPropagate:self];
+   }
 }
 -(void) propagate
 {
@@ -389,8 +391,8 @@
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -441,8 +443,8 @@
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -494,8 +496,8 @@
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -545,8 +547,8 @@
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -1478,9 +1480,9 @@
       if (![_y bound])
          [_y whenChangeBoundsPropagate:self];
    } else {
-      if ([_x max] <= [_y min])
+      if ([_x max] < [_y min])
          [_b bind:YES];
-      else if ([_x min] > [_y max])
+      else if ([_x min] >= [_y max])
          [_b bind:NO];
       else {
          [_x whenChangeBoundsPropagate:self];
@@ -1609,20 +1611,11 @@
 }
 -(void) post
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMax:_c];
-      else
-         [_x updateMin:fp_next_float(_c)];
-   }
-   else if ([_x max] <= _c)
-      [_b bind:YES];
-   else if ([_x min] > _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -1644,7 +1637,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyLThen:%02d %@ <=> (%@ <= %16.16e)>",_name,_b,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLEqualc:%02d %@ <=> (%@ <= %16.16e)>",_name,_b,_x,_c];
 }
 -(NSSet*)allVars
 {
@@ -1672,20 +1665,11 @@
 }
 -(void) post
 {
-   if ([_b bound]) {
-      if ([_b min]) // x < c
-         [_x updateMax:fp_previous_float(_c)];
-      else // x >= c
-         [_x updateMin:_c];
-   }
-   else if ([_x max] < _c)
-      [_b bind:YES];
-   else if ([_x min] >= _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -1696,10 +1680,10 @@
          [_x updateMin:_c];
       assignTRInt(&_active, NO, _trail);
    } else {
-      if ([_x min] >= _c) {
+      if ([_x min] > _c) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b, NO);
-      } else if ([_x max] < _c) {
+      } else if ([_x max] <= _c) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b, YES);
       }
@@ -1790,20 +1774,11 @@
 }
 -(void) post  // b <=>  x >= c
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMin:_c];
-      else
-         [_x updateMax:fp_previous_float(_c)];
-   }
-   else if ([_x min] >= _c)
-      [_b bind:YES];
-   else if ([_x max] < _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -1853,20 +1828,11 @@
 }
 -(void) post  // b <=>  x > c
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMin:fp_next_float(_c)];
-      else // x <= c
-         [_x updateMax:_c];
-   }
-   else if ([_x min] > _c)
-      [_b bind:YES];
-   else if ([_x max] <= _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {

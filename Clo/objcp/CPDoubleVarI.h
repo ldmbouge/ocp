@@ -112,7 +112,6 @@ static inline int signD(double_cast p){
    return 1;
 }
 
-
 static inline double doubleFromParts(unsigned long mantissa, unsigned int exponent,unsigned int sign){
    double_cast f_cast;
    f_cast.parts.mantisa = mantissa;
@@ -120,7 +119,6 @@ static inline double doubleFromParts(unsigned long mantissa, unsigned int expone
    f_cast.parts.sign = sign;
    return f_cast.f;
 }
-
 
 static inline bool isDisjointWithDV(double xmin,double xmax,double ymin, double ymax)
 {
@@ -144,11 +142,11 @@ static inline bool isIntersectingWithD(CPDoubleVarI* x, CPDoubleVarI* y)
 
 static inline bool canPrecedeD(CPDoubleVarI* x, CPDoubleVarI* y)
 {
-   return [x min] < [y min] &&  [x max] < [y max];
+   return [x max] < [y min];
 }
 static inline bool canFollowD(CPDoubleVarI* x, CPDoubleVarI* y)
 {
-   return [x min] > [y min ] && [x max] > [y max];
+    return [x min] > [y max];
 }
 
 static inline double_interval makeDoubleInterval(double min, double max)

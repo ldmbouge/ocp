@@ -103,9 +103,9 @@
    }
    if(isDisjointWithDV([_res min],[_res max],[_initial min],[_initial max])){
       failNow();
-   }else{
-      ORDouble min = maxDbl([_res min], [_initial min]);
-      ORDouble max = minDbl([_res max], [_initial max]);
+   }else {
+      ORFloat min = maxFlt([_res min], [_initial min]);
+      ORFloat max = minFlt([_res max], [_initial max]);
       [_res updateInterval:min and:max];
       [_initial updateInterval:min and:max];
    }
@@ -325,8 +325,8 @@
 -(void) post
 {
    [self propagate];
-   [_x whenBindPropagate:self];
-   [_y whenBindPropagate:self];
+   if(![_x bound])[_x whenBindPropagate:self];
+   if(![_y bound])[_y whenBindPropagate:self];
 }
 -(void) propagate
 {
@@ -402,8 +402,10 @@
 -(void) post
 {
    [self propagate];
-   [_x whenBindPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_x bound]){
+      [_x whenBindPropagate:self];
+      [_x whenChangeBoundsPropagate:self];
+   }
 }
 -(void) propagate
 {
@@ -450,8 +452,8 @@
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -502,8 +504,8 @@
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -555,8 +557,8 @@
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -606,8 +608,8 @@
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -1242,8 +1244,18 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {  // YES <=>  x > y
-         [_y updateMax:fp_previous_double([_x max])];
-         [_x updateMin:fp_next_double([_y min])];
+         if(canPrecedeD(_x,_y))
+            failNow();
+         if(isIntersectingWithD(_x,_y)){
+            if([_x min] <= [_y min]){
+               ORDouble pmin = fp_next_double([_y min]);
+               [_x updateMin:pmin];
+            }
+            if([_x max] <= [_y max]){
+               ORDouble nmax = fp_previous_double([_x max]);
+               [_y updateMax:nmax];
+            }
+         }
       } else {            // NO <=> x <= y   ==>  YES <=> x < y
          if ([_x bound]) { // c <= y
             [_y updateMin:[_x min]];
@@ -1272,8 +1284,18 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [_y updateMax:fp_previous_double([_x max])];
-         [_x updateMin:fp_next_double([_y min])];
+         if(canPrecedeD(_x,_y))
+            failNow();
+         if(isIntersectingWithD(_x,_y)){
+            if([_x min] <= [_y min]){
+               ORDouble pmin = fp_next_double([_y min]);
+               [_x updateMin:pmin];
+            }
+            if([_x max] <= [_y max]){
+               ORDouble nmax = fp_previous_double([_x max]);
+               [_y updateMax:nmax];
+            }
+         }
       } else {
          if ([_x bound]) { // c <= y
             [_y updateMin:[_x min]];
@@ -1495,9 +1517,9 @@
       if (![_y bound])
          [_y whenChangeBoundsPropagate:self];
    } else {
-      if ([_x max] <= [_y min])
+      if ([_x max] < [_y min])
          [_b bind:YES];
-      else if ([_x min] > [_y max])
+      else if ([_x min] >= [_y max])
          [_b bind:NO];
       else {
          [_x whenChangeBoundsPropagate:self];
@@ -1510,17 +1532,27 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [_x updateMax:fp_previous_double([_y max])];
-         [_y updateMin:fp_next_double([_x min])];
+         if(canFollowD(_x,_y))
+            failNow();
+         if(isIntersectingWithD(_x,_y)){
+            if([_x min] >= [_y min]){
+               ORDouble nmin = fp_next_double([_x min]);
+               [_y updateMin:nmin];
+            }
+            if([_x max] >= [_y max]){
+               ORDouble pmax = fp_previous_double([_y max]);
+               [_x updateMax:pmax];
+            }
+         }
       } else {
          [_y updateMax:[_x max]];
          [_x updateMin:[_y min]];
       }
    } else {
-      if ([_x max] <= [_y min]) {
+      if ([_x max] < [_y min]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
-      } else if ([_x min] > [_y max]) {
+      } else if ([_x min] >= [_y max]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,NO);
       }
@@ -1616,20 +1648,11 @@
 }
 -(void) post
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMax:_c];
-      else
-         [_x updateMin:fp_next_double(_c)];
-   }
-   else if ([_x max] <= _c)
-      [_b bind:YES];
-   else if ([_x min] > _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -1679,20 +1702,11 @@
 }
 -(void) post
 {
-   if ([_b bound]) {
-      if ([_b min]) // x < c
-         [_x updateMax:fp_previous_double(_c)];
-      else // x >= c
-         [_x updateMin:_c];
-   }
-   else if ([_x max] < _c)
-      [_b bind:YES];
-   else if ([_x min] >= _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -1797,20 +1811,11 @@
 }
 -(void) post  // b <=>  x >= c
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMin:_c];
-      else
-         [_x updateMax:fp_previous_double(_c)];
-   }
-   else if ([_x min] >= _c)
-      [_b bind:YES];
-   else if ([_x max] < _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -1860,20 +1865,11 @@
 }
 -(void) post  // b <=>  x > c
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMin:fp_next_double(_c)];
-      else // x <= c
-         [_x updateMax:_c];
-   }
-   else if ([_x min] > _c)
-      [_b bind:YES];
-   else if ([_x max] <= _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
