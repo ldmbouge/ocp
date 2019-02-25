@@ -1770,6 +1770,10 @@
 {
    return _tracker;
 }
+-(enum ORVType) vtype
+{
+   return [_op vtype];
+}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprUnaryMinusI: self];
