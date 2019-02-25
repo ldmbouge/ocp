@@ -65,6 +65,7 @@
       if(inter.changed)
          [_y updateInterval:inter.result.inf and:inter.result.sup];
       
+      updateFloatInterval(&_yi,_y);
       float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
       fpi_minusf(_precision,_rounding, &xTmp, &_yi);
       inter = intersection(_xi, xTmp, 0.0f);

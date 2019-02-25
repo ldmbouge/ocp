@@ -66,6 +66,7 @@ double_interval _yi;
       if(inter.changed)
          [_y updateInterval:inter.result.inf and:inter.result.sup];
       
+      updateDoubleInterval(&_yi,_y);
       double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
       fpi_minusd(_precision,_rounding, &xTmp, &_yi);
       inter = intersectionD(_xi, xTmp, 0.0f);
@@ -92,12 +93,21 @@ double_interval _yi;
 @end
 
 
-@implementation CPDoubleCast : CPCoreConstraint 
+@implementation CPDoubleCast : CPCoreConstraint {
+   int _precision;
+   int _rounding;
+   double_interval _resi;
+   float_interval _initiali;
+}
 -(id) init:(CPDoubleVarI*)res equals:(CPFloatVarI*)initial
 {
    self = [super initCPCoreConstraint: [res engine]];
    _res = res;
    _initial = initial;
+   _resi = makeDoubleInterval(_res.min, _res.max);
+   _initiali = makeFloatInterval(_initial.min, _initial.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
    return self;
 }
 -(void) post
@@ -126,11 +136,23 @@ double_interval _yi;
    if(isDisjointWithDV([_res min],[_res max],[_initial min],[_initial max])){
       failNow();
    }else {
-      ORFloat min = maxFlt([_res min], [_initial min]);
-      ORFloat max = minFlt([_res max], [_initial max]);
-      [_res updateInterval:min and:max];
-      [_initial updateInterval:min and:max];
-//      assert((_initial.min >= _res.min && _initial.max <= _res.max) || is_infinity(_initial.min) || is_infinity(_initial.max));
+      updateDoubleInterval(&_resi,_res);
+      updateFloatInterval(&_initiali,_initial);
+      intersectionIntervalD inter;
+      double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
+      fpi_ftod(_precision, _rounding, &resTmp, &_initiali);
+      inter = intersectionD(_resi, resTmp, 0.0f);
+      if(inter.changed)
+         [_res updateInterval:inter.result.inf and:inter.result.sup];
+      
+      
+      updateDoubleInterval(&_resi,_res);
+      float_interval initialTmp = makeFloatInterval(_initiali.inf, _initiali.sup);
+      intersectionInterval inter2;
+      fpi_ftod_inv(_precision, _rounding, &initialTmp,&_resi);
+      inter2 = intersection(_initiali, initialTmp, 0.0f);
+      if(inter2.changed)
+         [_initial updateInterval:inter2.result.inf and:inter2.result.sup];
    }
 }
 -(NSSet*)allVars
