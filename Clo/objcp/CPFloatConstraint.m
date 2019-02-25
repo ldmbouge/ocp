@@ -19,12 +19,21 @@
 
 
 //unary minus constraint
-@implementation CPFloatUnaryMinus
--(id) init:(CPFloatVarI*)x eqm:(CPFloatVarI*)y
+@implementation CPFloatUnaryMinus{
+   int _precision;
+   int _rounding;
+   float_interval _xi;
+   float_interval _yi;
+}
+-(id) init:(CPFloatVarI*)x eqm:(CPFloatVarI*)y //x = -y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   _xi = makeFloatInterval(x.min, x.max);
+   _yi = makeFloatInterval(y.min, y.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
    return self;
 }
 -(void) post
@@ -37,17 +46,30 @@
 {
    if([_x bound]){
       if([_y bound]){
+         if([_x value] != - [_y value]) failNow();
          assignTRInt(&_active, NO, _trail);
       }else{
          [_y bind:-[_x value]];
+         assignTRInt(&_active, NO, _trail);
       }
    }else if([_y bound]){
       [_x bind:-[_y value]];
+      assignTRInt(&_active, NO, _trail);
    }else {
-      ORFloat min = maxFlt([_x min], -[_y max]);
-      ORFloat max = minFlt([_x max], -[_y min]);
-      [_x updateInterval:min and:max];
-      [_y updateInterval:-max and:-min];
+      updateFloatInterval(&_xi,_x);
+      updateFloatInterval(&_yi,_y);
+      intersectionInterval inter;
+      float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+      fpi_minusf(_precision,_rounding, &yTmp, &_xi);
+      inter = intersection(_yi, yTmp, 0.0f);
+      if(inter.changed)
+         [_y updateInterval:inter.result.inf and:inter.result.sup];
+      
+      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+      fpi_minusf(_precision,_rounding, &xTmp, &_yi);
+      inter = intersection(_xi, xTmp, 0.0f);
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
    }
 }
 -(NSSet*)allVars
@@ -1205,43 +1227,13 @@
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x > y
-         if(canPrecede(_x,_y))
-            failNow();
-         if(isIntersectingWith(_x,_y)){
-            if([_x min] <= [_y min]){
-               ORFloat pmin = fp_next_float([_y min]);
-               [_x updateMin:pmin];
-            }
-            if([_x max] <= [_y max]){
-               ORFloat nmax = fp_previous_float([_x max]);
-               [_y updateMax:nmax];
-            }
-         }
-      } else {            // NO <=> x <= y   ==>  YES <=> x < y
-         if ([_x bound]) { // c <= y
-            [_y updateMin:[_x min]];
-         } else {         // x <= y
-            [_y updateMin:[_x min]];
-            [_x updateMax:[_y max]];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_y max] < [_x min])
-         [_b bind:YES];
-      else if ([_x max] <= [_y min])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {
@@ -1307,33 +1299,13 @@
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x >= y
-         [_y updateMax:[_x max]];
-         [_x updateMin:[_y min]];
-      } else {            // NO <=> x <= y   ==>  YES <=> x < y
-         if ([_x bound]) { // c < y
-            [_y updateMax:fp_next_float([_x min])];
-         } else {         // x < y
-            [_y updateMax:fp_next_float([_x max])];
-            [_x updateMin:fp_previous_float([_y min])];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_y max] <= [_x min])
-         [_b bind:YES];
-      else if ([_x min] < [_y max])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {
@@ -1385,33 +1357,13 @@
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x <= y
-         [_x updateMax:[_y max]];
-         [_y updateMin:[_x min]];
-      } else {            // NO <=> x <= y   ==>  YES <=> x > y
-         if ([_x bound]) { // c > y
-            [_y updateMax:fp_previous_float([_x min])];
-         } else {         // x > y
-            [_y updateMax:fp_previous_float([_x max])];
-            [_x updateMin:fp_next_float([_y min])];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_x max] <= [_y min])
-         [_b bind:YES];
-      else if ([_x min] > [_y max])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {
@@ -1463,33 +1415,13 @@
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x < y
-         [_x updateMax:fp_previous_float([_y max])];
-         [_y updateMin:fp_next_float([_x min])];
-      } else {            // NO <=> x <= y   ==>  YES <=> x > y
-         if ([_x bound]) { // c >= y
-            [_y updateMax:[_x min]];
-         } else {         // x >= y
-            [_y updateMax:[_x max]];
-            [_x updateMin:[_y min]];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_x max] < [_y min])
-         [_b bind:YES];
-      else if ([_x min] >= [_y max])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {

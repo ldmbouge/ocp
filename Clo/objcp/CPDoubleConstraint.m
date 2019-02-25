@@ -20,12 +20,21 @@
 
 
 //unary minus constraint
-@implementation CPDoubleUnaryMinus
+@implementation CPDoubleUnaryMinus{
+int _precision;
+int _rounding;
+double_interval _xi;
+double_interval _yi;
+}
 -(id) init:(CPDoubleVarI*)x eqm:(CPDoubleVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   _xi = makeDoubleInterval(x.min, x.max);
+   _yi = makeDoubleInterval(y.min, y.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
    return self;
 }
 -(void) post
@@ -38,17 +47,30 @@
 {
    if([_x bound]){
       if([_y bound]){
+         if([_x value] != - [_y value]) failNow();
          assignTRInt(&_active, NO, _trail);
       }else{
          [_y bind:-[_x value]];
+         assignTRInt(&_active, NO, _trail);
       }
    }else if([_y bound]){
       [_x bind:-[_y value]];
+      assignTRInt(&_active, NO, _trail);
    }else {
-      ORDouble min = maxFlt([_x min], -[_y max]);
-      ORDouble max = minFlt([_x max], -[_y min]);
-      [_x updateInterval:min and:max];
-      [_y updateInterval:-max and:-min];
+      updateDoubleInterval(&_xi,_x);
+      updateDoubleInterval(&_yi,_y);
+      intersectionIntervalD inter;
+      double_interval yTmp = makeDoubleInterval(_yi.inf, _yi.sup);
+      fpi_minusd(_precision,_rounding, &yTmp, &_xi);
+      inter = intersectionD(_yi, yTmp, 0.0f);
+      if(inter.changed)
+         [_y updateInterval:inter.result.inf and:inter.result.sup];
+      
+      double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
+      fpi_minusd(_precision,_rounding, &xTmp, &_yi);
+      inter = intersectionD(_xi, xTmp, 0.0f);
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
    }
 }
 -(NSSet*)allVars
@@ -108,6 +130,7 @@
       ORFloat max = minFlt([_res max], [_initial max]);
       [_res updateInterval:min and:max];
       [_initial updateInterval:min and:max];
+//      assert((_initial.min >= _res.min && _initial.max <= _res.max) || is_infinity(_initial.min) || is_infinity(_initial.max));
    }
 }
 -(NSSet*)allVars
@@ -1500,33 +1523,13 @@
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x < y
-         [_x updateMax:fp_previous_double([_y max])];
-         [_y updateMin:fp_next_double([_x min])];
-      } else {            // NO <=> x <= y   ==>  YES <=> x > y
-         if ([_x bound]) { // c >= y
-            [_y updateMax:[_x min]];
-         } else {         // x >= y
-            [_y updateMax:[_x max]];
-            [_x updateMin:[_y min]];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_x max] < [_y min])
-         [_b bind:YES];
-      else if ([_x min] >= [_y max])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {
@@ -1891,7 +1894,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPDoubleReifyGEqualc:%02d %@ <=> (%@ > %16.16e)>",_name,_b,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPDoubleReifyGEqualc:%02d %@ <=> (%@ >= %16.16e)>",_name,_b,_x,_c];
 }
 -(NSSet*)allVars
 {
