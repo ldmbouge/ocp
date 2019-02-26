@@ -313,6 +313,7 @@
 }
 
 -(ORBool) objcp_check:(objcp_context) ctx{
+   
    clock_t start;
    start = clock();
 
@@ -333,11 +334,11 @@
    }
    
 //    __block id<CPBitVarHeuristic> h =[cp createBitVarFF];
-//   __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
+   __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
 //        __block id<CPBitVarHeuristic> h =[cp createSDeg];
-   __block id<CPBitVarHeuristic> h =[cp createDDeg];
+//   __block id<CPBitVarHeuristic> h =[cp createDDeg];
 //        __block id<CPBitVarHeuristic> h =[cp createWDeg];
-//        __block id<CPBitVarHeuristic> h =[cp createBitVarABS];
+//       __block id<CPBitVarHeuristic> h =[cp createBitVarABS];
 
     __block NSMutableArray* engineVars = [[cp engine] variables];
 //    NSLog(@"%@",engineVars);
