@@ -48,7 +48,7 @@
       id<ORFloatVarArray> va = [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
       id<CPProgram> cp =  [ORFactory createCPProgram:model];
       id<ORFloatVarArray> vs = [model floatVars];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       ORUInt i;
       XCTAssertFalse([vars hasDisabled]);
       XCTAssertFalse([vars isFullyDisabled]);
@@ -71,7 +71,7 @@
       id<ORFloatVarArray> va = [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
       id<CPProgram> cp =  [ORFactory createCPProgram:model];
       id<ORFloatVarArray> vs = [model floatVars];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:2];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:2];
       ORUInt i;
       XCTAssertFalse([vars hasDisabled]);
       XCTAssertFalse([vars isFullyDisabled]);
@@ -115,7 +115,7 @@
       id<ORFloatVarArray> va = [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
       id<CPProgram> cp =  [ORFactory createCPProgram:model];
       id<ORFloatVarArray> vs = [model floatVars];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:10];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:10];
       ORUInt i;
       XCTAssertFalse([vars hasDisabled]);
       XCTAssertFalse([vars isFullyDisabled]);

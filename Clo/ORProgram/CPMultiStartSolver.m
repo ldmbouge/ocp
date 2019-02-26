@@ -382,155 +382,155 @@
 {
    [[self worker] splitArray:x];
 }
--(void)          specialSearch: (id<ORDisabledFloatVarArray>) x
+-(void)          specialSearch: (id<ORDisabledVarArray>) x
 {
    [[self worker] specialSearch:x];
 }
--(void)          customSearch: (id<ORDisabledFloatVarArray>) x
+-(void)          customSearch: (id<ORDisabledVarArray>) x
 {
    [[self worker] customSearch:x];
 }
--(void)          customSearchD: (id<ORDisabledFloatVarArray>) x
+-(void)          customSearchD: (id<ORDisabledVarArray>) x
 {
    [[self worker] customSearchD:x];
 }
--(void)          customSearchWeightedD: (id<ORDisabledFloatVarArray>) x
+-(void)          customSearchWeightedD: (id<ORDisabledVarArray>) x
 {
    [[self worker] customSearchWeightedD:x];
 }
--(void) maxWidthSearch:(id<ORDisabledFloatVarArray>)x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) maxWidthSearch:(id<ORDisabledVarArray>)x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] maxWidthSearch:x do:b];
 }
--(void) minWidthSearch:(id<ORDisabledFloatVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) minWidthSearch:(id<ORDisabledVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minWidthSearch:x do:b];
 }
--(void) maxCardinalitySearch:(id<ORDisabledFloatVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) maxCardinalitySearch:(id<ORDisabledVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] maxCardinalitySearch:x do:b];
 }
--(void) minCardinalitySearch:(id<ORDisabledFloatVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) minCardinalitySearch:(id<ORDisabledVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minCardinalitySearch:x do:b];
 }
--(void) maxDensitySearch:(id<ORDisabledFloatVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) maxDensitySearch:(id<ORDisabledVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] maxDensitySearch:x do:b];
 }
--(void) minDensitySearch:(id<ORDisabledFloatVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) minDensitySearch:(id<ORDisabledVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minDensitySearch:x do:b];
 }
--(void) maxMagnitudeSearch:(id<ORDisabledFloatVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) maxMagnitudeSearch:(id<ORDisabledVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] maxMagnitudeSearch:x do:b];
 }
--(void) minMagnitudeSearch:(id<ORDisabledFloatVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void) minMagnitudeSearch:(id<ORDisabledVarArray>)x  do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minDensitySearch:x do:b];
 }
--(void)          maxAbsDensSearch:  (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          maxAbsDensSearch:  (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] maxAbsDensSearch:x default:b];
 }
--(void)  lexicalOrderedSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)  lexicalOrderedSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] lexicalOrderedSearch:x do:b];
 }
--(void)  maxDegreeSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)  maxDegreeSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] maxDegreeSearch:x do:b];
 }
--(void)  minDegreeSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)  minDegreeSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minDegreeSearch:x do:b];
 }
--(void)          maxOccurencesSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          maxOccurencesSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] maxOccurencesSearch:x do:b];
 }
--(void)          maxOccurencesRatesSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          maxOccurencesRatesSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] maxOccurencesRatesSearch:x do:b];
 }
--(void)          minOccurencesSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          minOccurencesSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minOccurencesSearch:x do:b];
 }
--(void)          maxAbsorptionSearchAll: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          maxAbsorptionSearchAll: (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] maxAbsorptionSearchAll:x default:b];
 }
--(void)          maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          maxAbsorptionSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] maxAbsorptionSearch:x do:b];
 }
--(void)          minAbsorptionSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          minAbsorptionSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minAbsorptionSearch:x do:b];
 }
--(void)          maxAbsorptionSearch: (id<ORDisabledFloatVarArray>) x default:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          maxAbsorptionSearch: (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] maxAbsorptionSearch:x default:b];
 }
--(void)          maxCancellationSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          maxCancellationSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] maxCancellationSearch:x do:b];
 }
--(void)          minCancellationSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          minCancellationSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minCancellationSearch:x do:b];
 }
--(void)          floatStaticSplit: (ORUInt) i withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          floatStaticSplit: (ORUInt) i withVars:(id<ORDisabledVarArray>)x
 {
     [[self worker] floatStaticSplit:i  withVars:x];
 }
--(void)          floatStatic3WaySplit: (ORUInt) i withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          floatStatic3WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>)x
 {
     [[self worker] floatStatic3WaySplit:i  withVars:x];
 }
--(void)          floatStatic5WaySplit: (ORUInt) i withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          floatStatic5WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>)x
 {
     [[self worker] floatStatic5WaySplit:i withVars:x];
 }
--(void)          floatStatic6WaySplit: (ORUInt) i  withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          floatStatic6WaySplit: (ORUInt) i  withVars:(id<ORDisabledVarArray>)x
 {
     [[self worker] floatStatic6WaySplit:i withVars:x];
 }
--(void)          floatAbsSplit: (ORUInt) x by: (id<CPFloatVar>) y withVars:(id<ORDisabledFloatVarArray>)vars default:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+-(void)          floatAbsSplit: (ORUInt) x by: (id<CPFloatVar>) y withVars:(id<ORDisabledVarArray>)vars default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] floatAbsSplit:x by:y withVars:vars default:b];
 }
--(void)          floatSplit: (ORUInt) i  withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          floatSplit: (ORUInt) i  withVars:(id<ORDisabledVarArray>)x
 {
    [[self worker] floatSplit:i withVars:x];
 }
--(void)          float3BSplit:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          float3BSplit:(ORUInt) i call:(SEL)s withVars:(id<ORDisabledVarArray>)x
 {
    [[self worker] float3BSplit:i call:s withVars:x];
 }
--(void)          float3WaySplit: (ORUInt) i withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          float3WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>)x
 {
     [[self worker] float3WaySplit:i withVars:x];
 }
--(void)          float5WaySplit: (ORUInt) i  withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          float5WaySplit: (ORUInt) i  withVars:(id<ORDisabledVarArray>)x
 {
     [[self worker] float5WaySplit:i withVars:x];
 }
--(void)          float6WaySplit: (ORUInt) i withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          float6WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>)x
 {
     [[self worker] float6WaySplit:i withVars:x];
 }
--(void)          floatEWaySplit: (ORUInt) i withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          floatEWaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>)x
 {
    [[self worker] floatEWaySplit:i withVars:x];
 }
--(void)          floatDeltaSplit: (ORUInt) i withVars:(id<ORDisabledFloatVarArray>)x
+-(void)          floatDeltaSplit: (ORUInt) i withVars:(id<ORDisabledVarArray>)x
 {
    [[self worker] floatDeltaSplit:i withVars:x];
 }
--(void)          floatSplitD: (ORUInt) i withVars:(id<ORDisabledFloatVarArray>) vars
+-(void)          floatSplitD: (ORUInt) i withVars:(id<ORDisabledVarArray>) vars
 {
    [[self worker] floatSplitD:i withVars:vars];
 }
@@ -858,7 +858,7 @@
 {
    return [[self worker] max: x];
 }
--(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledFloatVarArray>) vars
+-(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledVarArray>) vars
 {
    return [[self worker] computeAbsorptionsQuantities: vars];
 }
@@ -939,15 +939,15 @@
 {
    return (id<ORSolution>) [[self worker] captureSolution];
 }
-- (void)combinedAbsWithDensSearch:(PNONNULL id<ORDisabledFloatVarArray>)x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+- (void)combinedAbsWithDensSearch:(PNONNULL id<ORDisabledVarArray>)x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] combinedAbsWithDensSearch:x do:b];
 }
-- (void)combinedDensWithAbsSearch:(PNONNULL id<ORDisabledFloatVarArray>)x do:(void(^)(ORUInt,id<ORDisabledFloatVarArray>))b
+- (void)combinedDensWithAbsSearch:(PNONNULL id<ORDisabledVarArray>)x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] combinedDensWithAbsSearch:x do:b];
 }
-- (void)switchedSearch:(PNONNULL id<ORDisabledFloatVarArray>)x do:(void (^ PNONNULL)(ORUInt,id<ORDisabledFloatVarArray>))b
+- (void)switchedSearch:(PNONNULL id<ORDisabledVarArray>)x do:(void (^ PNONNULL)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] switchedSearch:x do:b];
 }

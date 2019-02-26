@@ -651,7 +651,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
 // LDM: addInternal must _raise_ a failure if the post returns a failure status.
 // PVH: This is the case where a constraint adds another constraint
 
--(void) addInternal:(id<ORConstraint>) c
+-(void) addInternal:(id<CPConstraint>) c
 {
    assert(_state != CPOpen);
     if (getId(c) == -1)

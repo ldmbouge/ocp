@@ -46,11 +46,11 @@ int main(int argc, const char * argv[]) {
       [model add:g];
       id<ORDoubleVarArray> vars = [model doubleVars];
       id<CPProgram> cp = [args makeProgram:model];
-         id<ORDisabledFloatVarArray> nvars = [ORFactory disabledFloatVarArray:vars engine:[cp engine]];
+         id<ORDisabledVarArray> nvars = [ORFactory disabledFloatVarArray:vars engine:[cp engine]];
       __block bool found = false;
       
       [cp solve:^{
-            [cp lexicalOrderedSearch:nvars do:^(ORUInt i, id<ORDisabledFloatVarArray> x) {
+            [cp lexicalOrderedSearch:nvars do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplitD:i withVars:x];
             }];
          NSLog(@"Valeurs solutions : \n");

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0910"
+   LastUpgradeVersion = "1010"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "089514392145BFDD00993DE2"
-               BuildableName = "newton_1_6_false-unreach-call"
-               BlueprintName = "newton_1_6_false-unreach-call"
+               BlueprintIdentifier = "0886FF0F215AE32C001FEC1F"
+               BuildableName = "square_1_false-unreach-call"
+               BlueprintName = "square_1_false-unreach-call"
                ReferencedContainer = "container:Float.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "089514392145BFDD00993DE2"
-            BuildableName = "newton_1_6_false-unreach-call"
-            BlueprintName = "newton_1_6_false-unreach-call"
+            BlueprintIdentifier = "0886FF0F215AE32C001FEC1F"
+            BuildableName = "square_1_false-unreach-call"
+            BlueprintName = "square_1_false-unreach-call"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -55,24 +55,20 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "089514392145BFDD00993DE2"
-            BuildableName = "newton_1_6_false-unreach-call"
-            BlueprintName = "newton_1_6_false-unreach-call"
+            BlueprintIdentifier = "0886FF0F215AE32C001FEC1F"
+            BuildableName = "square_1_false-unreach-call"
+            BlueprintName = "square_1_false-unreach-call"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-h22"
+            argument = "-var-order maxocc -val-order dynamic5split"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-v9"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-default 7"
-            isEnabled = "NO">
+            argument = "-debug-level 2"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
@@ -88,9 +84,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "089514392145BFDD00993DE2"
-            BuildableName = "newton_1_6_false-unreach-call"
-            BlueprintName = "newton_1_6_false-unreach-call"
+            BlueprintIdentifier = "0886FF0F215AE32C001FEC1F"
+            BuildableName = "square_1_false-unreach-call"
+            BlueprintName = "square_1_false-unreach-call"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

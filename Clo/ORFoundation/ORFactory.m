@@ -750,26 +750,26 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       [o set:clo(k) at:k];
    return (id<ORFloatVarArray>)o;
 }
-+(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine
++(id<ORDisabledVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine
 {
-    [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
-    id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine];
+    [[ORDisabledVarArrayI alloc] init:vars engine:engine];
+    id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:vars engine:engine];
     [engine trackObject: r];
     return r;
 }
-+(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray
++(id<ORDisabledVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray
 {
-    id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine initials:iarray];
+    id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:vars engine:engine initials:iarray];
     [engine trackObject: r];
     return r;
 }
-+(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine nbFixed:(ORUInt)nb
++(id<ORDisabledVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine nbFixed:(ORUInt)nb
 {
-   id<ORDisabledFloatVarArray> r =  [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine nbFixed:nb];
+   id<ORDisabledVarArray> r =  [[ORDisabledVarArrayI alloc] init:vars engine:engine nbFixed:nb];
     [engine trackObject: r];
     return r;
 }
-+(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) ovars varabs:(NSArray *) absvars solver:(id<ORSearchEngine>)p nbFixed:(ORUInt)nb
++(id<ORDisabledVarArray>) disabledFloatVarArray:(id<ORVarArray>) ovars varabs:(NSArray *) absvars solver:(id<ORSearchEngine>)p nbFixed:(ORUInt)nb
 {
    ORInt size = (ORInt)([absvars count] + [ovars count]);
    id<ORFloatVarArray> keeped = [ORFactory floatVarArray:p range:RANGE(p, 0, size-1)];
@@ -784,9 +784,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    }
    return [ORFactory disabledFloatVarArray:keeped engine:p initials:ia nbFixed:nb];
 }
-+(id<ORDisabledFloatVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray nbFixed:(ORUInt)nb
++(id<ORDisabledVarArray>) disabledFloatVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine initials:(id<ORIntArray>) iarray nbFixed:(ORUInt)nb
 {
-   id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:vars engine:engine initials:iarray nbFixed:nb];
+   id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:vars engine:engine initials:iarray nbFixed:nb];
     [engine trackObject: r];
     return r;
 }

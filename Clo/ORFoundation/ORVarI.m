@@ -988,7 +988,7 @@
 @end
 
 
-@implementation ORDisabledFloatVarArrayI{
+@implementation ORDisabledVarArrayI{
    ORInt                  _nb;
    id<ORTrailableInt>    _current;
    id<ORTrailableInt>    _start;
@@ -997,22 +997,22 @@
    id<ORTrailableIntArray>  _disabled;
    id<ORTrailableIntArray>   _indexDisabled;
 }
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
 {
    self = [self init:vars engine:engine nbFixed:1];
    return self;
 }
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia
 {
    self = [self init:vars engine:engine initials:ia nbFixed:1];
    return self;
 }
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine  nbFixed:(ORUInt) nb
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine  nbFixed:(ORUInt) nb
 {
    self = [self init:vars engine:engine initials:[ORFactory intArray:engine range:[vars range] value:1] nbFixed:nb];
    return self;
 }
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb
 {
    self = [super init];
    _vars = vars;
@@ -1040,7 +1040,7 @@
 {
    return [_vars objectAtIndexedSubscript:key];
 }
--(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx
 {
    [_vars setObject:newValue atIndexedSubscript:idx];
 }
@@ -1120,7 +1120,7 @@
 {
    return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@,index:%@,nb:%d,start:%@,cur:%@,i:%@)",_name,_vars,_disabled,_indexDisabled,_nb,_start,_current,_initials];
 }
--(ORBool) contains:(id<ORFloatVar>)v
+-(ORBool) contains:(id<ORVar>)v
 {
    return [_vars contains:v];
 }
@@ -1146,7 +1146,7 @@
 {
    return [_current value] == [_start value] && [self hasDisabled];
 }
--(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine
 {
     ORInt cpt = 0;
     for (ORUInt i = 0; i < [_vars count]; i++){
@@ -1159,12 +1159,12 @@
         if([self isInitial:i])
             ovars[i] = _vars[i];
     }
-   id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
+   id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
     [engine trackObject:r];
     return r;
 }
 
--(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
     ORInt cpt = 0;
     for (ORUInt i = 0; i < [_vars count]; i++){
       if([self isInitial:i])
@@ -1176,7 +1176,7 @@
         if([self isInitial:i])
             ovars[i] = _vars[i];
     }
-   id<ORDisabledFloatVarArray> r = [[ORDisabledFloatVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
+   id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
     [engine trackObject:r];
     return r;
 }

@@ -323,9 +323,11 @@ int main(int argc, const char * argv[]) {
       for(ORInt i = 0; i < [ec count]; i++){
          equiv[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)([network count])-1)];
          for(ORInt j = 0; j < [network count];j++){
+            //equiv should be a boolean variable and constraint related should be the max (OR)
             equiv[i][j] = [ORFactory intVar:model domain:RANGE(model, 0, MAXINT) name:[NSString stringWithFormat:@"equiv[%@,%@]",device[[ec[i] intValue]],device[[network[j] intValue]]]];
          }
       }
+      //may be ok
       [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] square]) eq:loadSquareSum]];
       //demand constraints
       //trafic A
@@ -507,9 +509,6 @@ int main(int argc, const char * argv[]) {
       
       id<MIPProgram> mip = [ORFactory createMIPProgram: model];
       [mip solve];
-      
-      
-      
    }
    return 0;
 }

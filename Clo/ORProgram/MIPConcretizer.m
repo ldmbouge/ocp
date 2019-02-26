@@ -346,7 +346,7 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
-
+#warning It seems that i have an issue there
 -(void) visitSquare:(id<ORSquare>)c
 {
    if (_gamma[c.getId] == NULL) {
@@ -355,9 +355,11 @@
       MIPVariableI* res[1] = { [self concreteVar:c.res] };
       ORDouble coef[1] = { 1.0 };
 //     gurobi handle only <= quadratic consttraint
-      MIPConstraintI* concreteCstr = [_MIPsolver createQuadGEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
-      _gamma[c.getId] = concreteCstr;
-      [_MIPsolver postConstraint: concreteCstr];
+      MIPConstraintI* cstr = [_MIPsolver createQuadGEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
+//      MIPConstraintI* cstr2 = [_MIPsolver createQuadLEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
+//      [_MIPsolver postConstraint: cstr];
+      _gamma[c.getId] = cstr;
+      [_MIPsolver postConstraint: cstr];
    }
 }
 

@@ -121,11 +121,11 @@ PORTABLE_BEGIN
 -(id<ORASolver>) solver;
 @end
 
-@protocol ORDisabledFloatVarArray <ORObject,NSFastEnumeration>
--(id<ORFloatVar>) at: (ORInt) value;
--(void) set: (id<ORFloatVar>) x at: (ORInt) value;
--(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+@protocol ORDisabledVarArray <ORObject,NSFastEnumeration>
+-(id<ORVar>) at: (ORInt) value;
+-(void) set: (id<ORVar>) x at: (ORInt) value;
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORIntRange>) range;
 -(ORInt) low;
 -(ORInt) up;
@@ -142,8 +142,8 @@ PORTABLE_BEGIN
 -(ORBool) isFullyDisabled;
 -(ORBool) hasDisabled;
 -(ORInt) indexLastDisabled;
--(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine;
--(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end
 
 @protocol ORDoubleVarArray <ORVarArray>

@@ -154,15 +154,15 @@
 @end
 
 
-@interface ORDisabledFloatVarArrayI : ORObject<ORDisabledFloatVarArray>
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine;
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine nbFixed:(ORUInt) nb;
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia;
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb;
+@interface ORDisabledVarArrayI : ORObject<ORDisabledVarArray>
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine;
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine nbFixed:(ORUInt) nb;
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia;
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb;
 -(id<ORVar>) at: (ORInt) value;
--(void) set: (id<ORFloatVar>) x at: (ORInt) value;
+-(void) set: (id<ORVar>) x at: (ORInt) value;
 -(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
@@ -176,6 +176,6 @@
 -(ORBool) isFullyDisabled;
 -(ORBool) hasDisabled;
 -(ORInt) indexLastDisabled;
--(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine;
--(id<ORDisabledFloatVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end
