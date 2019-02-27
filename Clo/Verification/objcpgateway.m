@@ -219,7 +219,10 @@ static OBJCPGateway *objcpgw;
 -(void) printSolutionsI
 {
    for(id<ORVar> v in _vars){
-      NSLog(@"%@ : %20.20e (%s)",v,[_program floatValue:v],[_program bound:v] ? "YES" : "NO");
+      if([v.class conformsToProtocol:@protocol(ORFloatVar)])
+         NSLog(@"%@ : %20.20e (%s)",v,[_program floatValue:v],[_program bound:v] ? "YES" : "NO");
+      else if([v.class conformsToProtocol:@protocol(ORDoubleVar)])
+         NSLog(@"%@ : %20.20e (%s)",v,[_program doubleValue:v],[_program bound:v] ? "YES" : "NO");
    }
 }
 @end
