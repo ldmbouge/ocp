@@ -125,13 +125,6 @@ double_interval _yi;
          [_initial bind:[_res value]];
       assignTRInt(&_active, NO, _trail);
       return;
-   }else if([_initial bound]){
-      if(is_eq([_initial min],-0.0) && is_eq([_initial max],+0.0))
-         [_res updateInterval:[_initial min] and:[_initial max]];
-      else
-         [_res bind:[_initial value]];
-      assignTRInt(&_active, NO, _trail);
-      return;
    }
    if(isDisjointWithDV([_res min],[_res max],[_initial min],[_initial max])){
       failNow();

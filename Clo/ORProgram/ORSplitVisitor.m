@@ -246,6 +246,7 @@
    }
    float_interval* ip = interval;
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+      ORInt c = [[_program explorer] nbChoices];
       LOG([_program debugLevel],1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program floatIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
    }];
@@ -253,38 +254,49 @@
 -(void) applyDoubleSplit :(CPDoubleVarI*) xi
 {
    if([xi bound]) return;
+   double_interval interval[5];
+   ORInt length = 0;
    ORDouble theMax = xi.max;
    ORDouble theMin = xi.min;
    ORDouble mid;
-   ORInt length = 1;
-   double_interval interval[3];
-   if(fp_next_double(theMin) == theMax){
-      interval[0].inf = interval[0].sup = theMin;
-      interval[1].inf = interval[1].sup = theMax;
+   length = 1;
+   interval[0].inf = interval[0].sup = theMax;
+   interval[1].inf = interval[1].sup = theMin;
+   if(fp_next_double(theMin) == fp_previous_double(theMax)){
+      mid = fp_next_double(theMin);
+      interval[2].inf = interval[2].sup = mid;
+      length = 2;
    }else{
       ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
       ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
-         mid = 0.0;
-      else if ((theMin < 1.0) && (1.0 < theMax))
-         mid = 1.0;
-      else if ((theMin < -1.0) && (-1.0 < theMax))
-         mid = -1.0;
+      if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
+         mid = 0.0f;
+      else if ((theMin < 1.0f) && (1.0f < theMax))
+         mid = 1.0f;
+      else if ((theMin < -1.0f) && (-1.0f < theMax))
+         mid = -1.0f;
       else
          mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
-      interval[1].inf  = mid;
-      interval[1].sup = mid;
-      interval[0].inf  = theMin;
-      interval[0].sup = fp_previous_double(mid);
-      interval[2].inf = fp_next_double(mid);
-      interval[2].sup = theMax;
-      length++;
+      //force the interval to right side
+      if(mid == fp_previous_double(theMax)){
+         mid = fp_previous_double(mid);
+      }
+      interval[2].inf = interval[2].sup = mid;
+      interval[3].inf = fp_next_double(mid);
+      interval[3].sup = fp_previous_double(theMax);
+      length = 3;
+      if(fp_next_float(theMin) != mid){
+         interval[4].inf = fp_next_double(theMin);
+         interval[4].sup = fp_previous_double(mid);
+         length++;
+      }
    }
    double_interval* ip = interval;
-   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt i) {
-      LOG([_program debugLevel],1,@"(3split) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[_program explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
-      [_program doubleIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+      ORInt c = [[_program explorer] nbChoices];
+      LOG([_program debugLevel],1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+      [_program doubleIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
    }];
 }
 @end
