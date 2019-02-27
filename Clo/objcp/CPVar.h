@@ -18,6 +18,7 @@
 @protocol CPBitVar;
 @protocol CPADom;
 @protocol ORSplitVisitor;
+@protocol ORAbsVisitor;
 
 enum CPVarClass {
    CPVCBare = 0,
@@ -50,6 +51,7 @@ enum CPVarClass {
 -(void)subsumedByDomain:(id<CPADom>)dom;
 -(ORBool)sameDomain:(id<CPVar>)x;
 -(void)visit:(id<ORSplitVisitor>)visitor;
+-(void)visitAbs:(id<ORAbsVisitor>)visitor;
 @end
 
 

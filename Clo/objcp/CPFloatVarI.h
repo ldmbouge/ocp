@@ -159,12 +159,12 @@ static inline double cardinalityV(float xmin, float xmax){
 
 static inline bool isDisjointWith(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return isDisjointWithV([x min], [x max], [y min], [y max]);
+   return isDisjointWithV(x.min, x.max, y.min, y.max);
 }
 
 static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return !isDisjointWithV([x min],[x max], [y min], [y max]);
+   return !isDisjointWithV(x.min,x.max, y.min, y.max);
 }
 
 static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
@@ -173,12 +173,12 @@ static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
 }
 static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] > [y max]; 
+   return x.min > y.max;
 }
 
 static inline double cardinality(CPFloatVarI* x)
 {
-   return cardinalityV([x min], [x max]);
+   return cardinalityV(x.min, x.max);
 }
 
 static inline float_interval makeFloatInterval(float min, float max)

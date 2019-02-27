@@ -410,6 +410,10 @@ static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
 {
    [(id)visitor applyFloatSplit:self];
 }
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   [(id)visitor applyFloatAbs:self];
+}
 @end
 
 @implementation CPFloatViewOnIntVarI {
@@ -701,10 +705,13 @@ static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
    return 0.0f;
 }
-
 - (void)visit:(id<ORSplitVisitor>)visitor
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: visitSplit not definied for a view"];
 }
-
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+      @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: visitAbs not definied for a view"];
+}
 @end
 

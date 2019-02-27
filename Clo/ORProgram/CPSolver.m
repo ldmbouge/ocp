@@ -3284,17 +3284,20 @@
       abs[i] = ae;
    }
    ORUInt i = 0;
-   CPFloatVarI* cx;
-   id<CPFloatVar> v;
+   id<CPVar> cx;
+   id<CPVar> v;
    @autoreleasepool {
-      for (id<ORFloatVar> x in vars) {
+      for (id<ORVar> x in vars) {
          cx = _gamma[[x getId]];
          id<OROSet> cstr = [cx constraints];
          for(id<CPConstraint> c in cstr){
             if([c canLeadToAnAbsorption]){
                v = [c varSubjectToAbsorption:cx];
                if(v == nil) continue;
-               absV = [self computeAbsorptionQuantity:v by:x];
+               id<ORAbsVisitor> absVisit = [[ORAbsVisitor alloc] init:v];
+               [cx visitAbs:absVisit];
+               absV = [absVisit rate];
+//               absV = [self computeAbsorptionQuantity:v by:x];
                assert(absV >= 0.0f && absV <= 1.f);
                //second test can be reduce to !isInitial()
                if(([vars isInitial:i] && absV >= _absRateLimitModelVars) || (![vars isInitial:i] && absV >= _absRateLimitAdditionalVars)){
@@ -3303,7 +3306,6 @@
             }
          }
          i++;
-         
       }
    }
    
@@ -3315,11 +3317,11 @@
    CPFloatVarI* cx = _gamma[[x getId]];
    id<OROSet> cstr = [cx constraints];
    ORDouble rate = 0.0;
-   id<CPFloatVar> v;
+   id<CPVar> v;
    for(id<CPConstraint> c in cstr){
       if([c canLeadToAnAbsorption]){
          v = [c varSubjectToAbsorption:cx];
-         rate += [self computeAbsorptionQuantity:v by:(id<ORFloatVar>)x];
+         rate += [self computeAbsorptionQuantity:(id<CPFloatVar>)v by:(id<ORFloatVar>)x];
       }
    }
    [cstr release];
@@ -3331,7 +3333,7 @@
    NSMutableArray *res = [[NSMutableArray alloc] init];
    id<OROSet> cstr = nil;
    id<CPFloatVar> cx = nil;
-   id<CPFloatVar> v = nil;
+   id<CPVar> v = nil;
    ORDouble absV = 0.0;
    id<ORFloatVarArray> vars = [_model floatVars];
    for(id<ORFloatVar> x in vars){
@@ -3342,7 +3344,7 @@
          if([c canLeadToAnAbsorption]){
             v = [c varSubjectToAbsorption:cx];
             if(v == nil) continue;
-            absV = [self computeAbsorptionQuantity:v by:x];
+            absV = [self computeAbsorptionQuantity:(CPFloatVarI*)v by:x];
             assert(absV >= 0.0f && absV <= 1.f);
             if(absV > 0.0f && absV >= limit){
                [res addObject:x];

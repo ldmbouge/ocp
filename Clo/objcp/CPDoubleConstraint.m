@@ -779,7 +779,7 @@ double_interval _yi;
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
 }
--(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x
 {
    if([x getId] == [_x getId])
       return _y;
@@ -890,7 +890,7 @@ double_interval _yi;
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
 }
--(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x
 {
    if([x getId] == [_x getId])
       return _y;

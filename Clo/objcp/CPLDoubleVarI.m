@@ -401,8 +401,13 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
    return [_dom domwidth];
 }
-- (void)visit:(ORVisitor *)visitor
+- (void)visit:(id<ORSplitVisitor>)visitor
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVarI: visitSplit not definied for a view"];
+}
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVarI: visitAbs not definied for a view"];
 }
 @end
 
@@ -703,6 +708,12 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 {
    return [self min] > [y min] && [self max] > [y max];
 }
-- (void)visit:(ORVisitor *)visitor
-{}
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVarI: visitSplit not definied for a view"];
+}
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVarI: visitAbs not definied for a view"];
+}
 @end

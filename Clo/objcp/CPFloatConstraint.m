@@ -778,7 +778,7 @@
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
 }
--(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
 {
    if([x getId] == [_x getId])
       return _y;
@@ -901,7 +901,7 @@
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
 }
--(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
 {
    if([x getId] == [_x getId])
       return _y;

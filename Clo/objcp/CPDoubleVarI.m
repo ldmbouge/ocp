@@ -14,6 +14,7 @@
 #import <objcp/CPDoubleDom.h>
 
 @protocol ORSplitVisitor;
+@protocol ORAbsVisitor;
 
 typedef struct  {
    TRId           _bindEvt[2];
@@ -409,6 +410,10 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
 {
    [(id)visitor applyDoubleSplit:self];
 }
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   [(id)visitor applyDoubleAbs:self];
+}
 @end
 
 @implementation CPDoubleViewOnIntVarI {
@@ -701,9 +706,13 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleViewOnIntVarI: magnitude not definied for a view"];
    return 0.0;
 }
-
-- (void)visit:(ORVisitor *)visitor
-{}
-
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleViewOnIntVarI: visitSplit not definied for a view"];
+}
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleViewOnIntVarI: visitAbs not definied for a view"];
+}
 @end
 

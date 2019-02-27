@@ -273,17 +273,6 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
 {
     return _recv;
 }
-//-(void) setDelegate:(id<CPBitVarNotifier>) d
-//{
-//    if (_recv != d) {
-//        if (_recv != self) {
-//            @throw [[NSException alloc] initWithName:@"Internal Error" 
-//                                              reason:@"Trying to set a delegate that already exists" 
-//                                            userInfo:nil];
-//        }
-//        _recv = [d retain];
-//    }
-//}
 -(void) setDelegate:(id<CPBitVarNotifier,NSCoding>) d
 {
    if (_recv != d) {
@@ -487,17 +476,6 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
          state[j] |= _bitChanges[i*_wordLength+j];
      }
    }
-//    ORUInt i =0;
-//    for(i=0; i<_top._val;i++)
-//        if(bitMask & _bitChanges[pos/BITSPERWORD])
-//            break;
-//    for(i+=1;i<_top._val;i++)
-//        for(ORUInt j=0;j<_wordLength;j++){
-//            state[j] |= _bitChanges[i*_wordLength+j];
-//        }
-//    for(ORUInt j=0;j<_wordLength;j++)
-//        state[j] = ~state[j];
-    
 }
 -(void) getState:(ORUInt*)state afterLevel:(ORUInt)lvl
 {
@@ -557,10 +535,6 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
 {
    hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
 }
-//-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
-//{
-//   hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
-//}
 -(void)whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_engine, _net._domEvt, todo, c, p);
@@ -577,12 +551,10 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
 {
    hookupEvent(_engine, _net._maxEvt, todo, c, p);
 }
-
 -(void) whenBitFixed: (CPCoreConstraint*)c at:(ORUInt)p do: (ORClosure) todo
 {
    hookupEvent(_engine, _net._bitFixedEvt, todo, c, p);
 }
-
 -(void) createTriggers
 {
    if (_triggers == nil) {
@@ -591,7 +563,6 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
       _triggers = [CPTriggerMap triggerMapFrom:(ORInt)low to:(ORInt)up dense:(up-low+1)<256];
    }
 }
-
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
    id<CPClosureList> mList[6];
@@ -614,7 +585,6 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
       [_triggers bindEvt:_engine];
    return ORSuspend;
 }
-
 -(ORStatus) changeMinEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
@@ -696,36 +666,11 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
 
 -(void) setLow:(unsigned int *)newLow for:(CPCoreConstraint*) constraint
 {
-//   TRUInt* oldLow = [_dom getLow];
-//   if(_learningOn) {
-//      for (int i=0; i<[_dom getWordLength]; i++) {
-//         ORUInt changedLow = oldLow[i]._val ^ newLow[i];
-//         for(int j=0;j<BITSPERWORD; j++){
-//             if (changedLow & 0x1){
-////               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-////               NSLog(@"%@[%d] set by %@",self,i*BITSPERWORD+j, constraint);
-//             }
-//            changedLow >>= 1;
-//         }
-//      }
-//   }
    [_dom setLow: newLow for:self];
 }
 
 -(void) setUp:(unsigned int *)newUp for:(CPCoreConstraint*) constraint
 {
-//   TRUInt* oldUp = [_dom getUp];
-//   if(_learningOn) {
-//      for (int i=0; i<[_dom getWordLength]; i++) {
-//         ORUInt changedUp = oldUp[i]._val ^ newUp[i];
-//         for(int j=0;j<BITSPERWORD; j++){
-//            if (changedUp & 0x1) {
-//               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-//            }
-//            changedUp >>= 1;
-//         }
-//      }
-//   }
    [_dom setUp: newUp for:self];
 }
 
@@ -808,9 +753,6 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
 
 -(ORStatus) bindUInt64:(ORULong)val
 {
-   //   ORUInt* temp = alloca(sizeof(ORUInt)*2);
-   //   temp[0] = val >> 32;
-   //   temp[1] = val & CP_UMASK;
    return [_dom bind:val for:self];
 }
 
@@ -913,10 +855,14 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
    _recv = [[aDecoder decodeObject] retain];
    return self;
 }
-- (void)visit:(ORVisitor *)visitor
-{   
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method visitSplit not defined"];
 }
-
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method visitAbs not defined"];
+}
 @end
 
 @implementation CPBitVarMultiCast {

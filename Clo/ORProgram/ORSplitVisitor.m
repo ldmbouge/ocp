@@ -855,3 +855,51 @@
    }
 }
 @end
+
+
+@implementation ORAbsVisitor{
+   id<CPVar> _var;
+   ORDouble  _rate;
+}
+-(ORAbsVisitor*) init:(id<CPVar>) v
+{
+   self = [super init];
+   _var = v;
+   _rate = 0.0;
+   return self;
+}
+-(ORDouble) rate
+{
+   return _rate;
+}
+
+- (void)applyDoubleAbs:(id<CPVar>)x
+{
+   CPDoubleVarI* cx = (CPDoubleVarI*) x;
+   CPDoubleVarI* cy = (CPDoubleVarI*)_var;
+   double_interval ax = computeAbsordedIntervalD(cx);
+   if(![cy bound] && isIntersectingWithDV(ax.inf, ax.sup, cy.min, cy.max)){
+      _rate = cardinalityDV(maxDbl(ax.inf,cy.min),minDbl(ax.sup, cy.max))/cardinalityD(cy);
+   }
+}
+
+- (void)applyFloatAbs:(id<CPVar>)x
+{
+   CPFloatVarI* cx = (CPFloatVarI*) x;
+   CPFloatVarI* cy = (CPFloatVarI*)_var;
+   float_interval ax = computeAbsordedInterval(cx);
+   if(![cy bound] && isIntersectingWithV(ax.inf, ax.sup, cy.min, cy.max)){
+      _rate = cardinalityV(maxFlt(ax.inf,cy.min),minFlt(ax.sup, cy.max))/cardinality(cy);
+   }
+}
+
+- (void)applyIntAbs:(id<CPVar>)var
+{
+}
+
+- (void)visit:(ORVisitor *)visitor
+{
+}
+
+@end
+

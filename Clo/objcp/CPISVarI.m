@@ -267,8 +267,12 @@ static void deallocNetwork(CPISVNetwork* net)
 {
    hookupEvent((id)_engine, _net._changeEvt, todo, c, HIGHEST_PRIO);
 }
-- (void)visit:(ORVisitor *)visitor
+- (void)visit:(id<ORSplitVisitor>)visitor
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntSet: visitSplit not definied "];
 }
-
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntSet: visitAbs not definied"];
+}
 @end

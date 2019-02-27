@@ -184,6 +184,10 @@ static id<OROSet> collectConstraints(CPEventNetwork* net,id<OROSet> rv)
 {
    [(id)visitor applyIntSplit:self];
 }
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   [(id)visitor applyIntAbs:self];
+}
 -(id<ORTracker>) tracker
 {
    return _fdm;
@@ -727,6 +731,14 @@ static id<OROSet> collectConstraints(CPEventNetwork* net,id<OROSet> rv)
 {
    if (![S member: _value])
       failNow();
+}
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   [(id)visitor applyIntSplit:self];
+}
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   [(id)visitor applyIntAbs:self];
 }
 @end
 
@@ -1418,6 +1430,14 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    return [super description];
 }
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   [(id)visitor applyIntSplit:self];
+}
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   [(id)visitor applyIntAbs:self];
+}
 @end
 
 // ---------------------------------------------------------------------
@@ -1782,6 +1802,14 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 -(NSString*)description
 {
    return [super description];
+}
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   [(id)visitor applyIntSplit:self];
+}
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   [(id)visitor applyIntAbs:self];
 }
 @end
 

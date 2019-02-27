@@ -21,6 +21,13 @@
 -(void) applyDoubleSplit :(id<CPVar>) var;
 @end
 
+@protocol ORAbsVisitor
+-(void) applyIntAbs:(id<CPVar>) var;
+-(void) applyFloatAbs:(id<CPVar>) var;
+-(void) applyDoubleAbs:(id<CPVar>) var;
+-(ORDouble) rate;
+@end
+
 @interface ORSplitVisitor : ORObject<ORSplitVisitor>
 -(ORSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
 @end
@@ -48,3 +55,8 @@
 @interface ORAbsSplitVisitor : ORObject<ORSplitVisitor>
 -(ORAbsSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v other:(id<CPVar>)o;
 @end
+
+@interface ORAbsVisitor : ORObject<ORAbsVisitor>
+-(ORAbsVisitor*) init:(id<CPVar>) v;
+@end
+

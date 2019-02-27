@@ -170,7 +170,7 @@
    return i;
    }
 }
--(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x
 {
    return nil;
 }
@@ -333,7 +333,7 @@
    }
    return i;
 }
--(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x
 {
    return nil;
 }

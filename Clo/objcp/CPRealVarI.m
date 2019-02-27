@@ -387,11 +387,14 @@ static id<OROSet> collectConstraints(CPRealEventNetwork* net,id<OROSet> rv)
 {
    return [_dom domwidth];
 }
-- (void)visit:(ORVisitor *)visitor
+- (void)visit:(id<ORSplitVisitor>)visitor
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealVarI: method visit not defined"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPRealVarI: method visitSplit not defined"];
 }
-
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPRealVarI: method visitAbs not defined"];
+}
 @end
 
 @implementation CPRealViewOnIntVarI {
@@ -674,9 +677,14 @@ static id<OROSet> collectConstraints(CPRealEventNetwork* net,id<OROSet> rv)
    ORBounds b = [_theVar bounds];
    return b.max - b.min;
 }
-- (void)visit:(ORVisitor *)visitor
-{}
-
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method visitSplit not defined"];
+}
+- (void)visitAbs:(id<ORAbsVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method visitAbs not defined"];
+}
 @end
 
 @implementation CPRealParamI
