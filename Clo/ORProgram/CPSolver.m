@@ -2230,8 +2230,8 @@
    id<ORSelect> select_occ = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
+                                       id<CPVar> v = _gamma[getId(x[i])];
+                                       LOG(_level,2,@"%@ (var<%d>) %@  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
                                        nb += ![v bound];
                                        return ![v bound] && [x isEnabled:i];
                                     }
@@ -2242,8 +2242,8 @@
       id<ORSelect> select_abs = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
-                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
+                                       id<CPVar> v = _gamma[getId(x[i])];
+                                       LOG(_level,2,@"%@ (var<%d>) %@  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
                                        nb += ![v bound];
                                        return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0  && [abs[i] quantity] != 1.0;
                                     }
