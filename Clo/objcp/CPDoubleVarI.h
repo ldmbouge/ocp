@@ -129,7 +129,7 @@ static inline double doubleFromParts(unsigned long mantissa, unsigned int expone
    f_cast.parts.sign = sign;
    return f_cast.f;
 }
-static inline long double cardinalityDV(double xmin, double xmax){
+static inline  double cardinalityDV(double xmin, double xmax){
    double_cast i_inf;
    double_cast i_sup;
    i_inf.f = xmin;
@@ -140,7 +140,7 @@ static inline long double cardinalityDV(double xmin, double xmax){
    long double tmp;
    if(xmax <= 0) tmp = (signD(i_inf) * i_inf.parts.exponent - signD(i_sup) * i_sup.parts.exponent);
    else tmp = (signD(i_sup) * i_sup.parts.exponent - signD(i_inf) * i_inf.parts.exponent);
-   long res = tmp * ((long double) NB_DOUBLE_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
+   long double res = tmp * (NB_DOUBLE_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
    return (res < 0) ? -res : res;
 }
 
