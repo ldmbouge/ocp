@@ -530,10 +530,6 @@
 {
    [[self worker] floatDeltaSplit:i withVars:x];
 }
--(void)          floatSplitD: (ORUInt) i withVars:(id<ORDisabledVarArray>) vars
-{
-   [[self worker] floatSplitD:i withVars:vars];
-}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    [[self worker] labelArray: x];
@@ -630,6 +626,22 @@
 -(void) floatLEqual:(id<ORFloatVar>)var with:(ORFloat)val
 {
     [[self worker] floatLEqual:var with:val];
+}
+-(void) doubleLthen:(id<ORDoubleVar>)var with:(ORDouble)val
+{
+   [[self worker] doubleLthen:var with:val];
+}
+-(void) doubleGthen:(id<ORDoubleVar>)var with:(ORDouble)val
+{
+   [[self worker] doubleGthen:var with:val];
+}
+-(void) doubleGEqual:(id<ORDoubleVar>)var with:(ORDouble)val
+{
+   [[self worker] doubleGEqual:var with:val];
+}
+-(void) doubleLEqual:(id<ORDoubleVar>)var with:(ORDouble)val
+{
+   [[self worker] doubleLEqual:var with:val];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
@@ -862,7 +874,7 @@
 {
    return [[self worker] computeAbsorptionsQuantities: vars];
 }
--(ORDouble) computeAbsorptionRate: (id<ORFloatVar>) x
+-(ORDouble) computeAbsorptionRate: (id<ORVar>) x
 {
    return [[self worker] computeAbsorptionRate: x];
 }
@@ -894,7 +906,7 @@
 {
    return [[self worker] cancellationQuantity: x];
 }
--(ORDouble) fdomwidth:(id<ORFloatVar>) x
+-(ORDouble) fdomwidth:(id<ORVar>) x
 {
    return [[self worker] fdomwidth: x];
 }
@@ -955,13 +967,17 @@
 {
    return [[self worker] countMemberedConstraints:x];
 }
--(ORDouble) cardinality: (id<ORFloatVar>) x
+-(ORDouble) cardinality: (id<ORVar>) x
 {
    return [[self worker] cardinality: x];
 }
 - (ORLDouble)density:(nonnull id<ORFloatVar>)x
 {
    return [[self worker] density:x];
+}
+- (ORInt)debugLevel
+{
+   return [[self worker] debugLevel];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

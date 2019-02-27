@@ -5,9 +5,22 @@
 #import <objcp/objcp.h>
 #import "ORCmdLineArgs.h"
 
+#define E_SIZE 8
+#define M_SIZE 23
+#define ED_SIZE 11
+#define MD_SIZE 52
 
 @protocol CPProgram;
 @class OBJCPGateway;
+
+@protocol LogicHandler <NSObject>
+-(id<ORVarArray>) getVariables;
+-(id<CPProgram>) getProgram;
+-(void) launchHeuristic;
+-(void) setOptions:(ORCmdLineArgs*)options;
+-(void) printSolutions;
+-(ORBool) checkAllbound;
+@end
 
 typedef enum {QF_LRA,QF_LIA,QF_RDL,QF_IDL,QF_BV,QF_FP,QF_UF} logic;
 typedef enum {OR_BOOL, OR_INT, OR_REAL, OR_BV, OR_FLOAT, OR_DOUBLE} objcp_var_type;
@@ -20,48 +33,43 @@ static const char* logicString[] = {"QF_LRA","QF_LIA","QF_RDL","QF_IDL","QF_BV",
 static logic logicObj[] = {QF_LRA,QF_LIA,QF_RDL,QF_IDL,QF_BV,QF_FP,QF_UF};
 #define NB_LOGIC 7
 
-// A context stores a collection of declarations and assertions.
 typedef void* objcp_context;
-
-/**
- \brief Variable declaration
- 
- A declaration consists of a name and a type (such as
- <tt>x::bool</tt>).  An instance of the declaration represents the
- term <tt>x</tt>. Instances are also called name
- expressions. Instances can be created using
- #objcp_mk_bool_var_from_decl or #objcp_mk_var_from_decl.
- */
 typedef void* objcp_var_decl;
-
-// objcp types (abstract syntax tree)
 typedef void* objcp_type;
-
-/**
- \brief Model.
- 
- A model assigns constant values to variables defined in a context.
- The context must be known to be consistent for a model to be available.
- The model is constructed by calling #objcp_check (or its relatives) then
- #objcp_get_model.
- */
 typedef void* objcp_model;
-
-//-(objcp_expr) objcp expressions (abstract syntax tree)
 typedef void* objcp_expr;
-
-/**
- \brief Assertion index, to identify retractable assertions.
- */
 typedef int assertion_id;
 
-@protocol LogicHandler <NSObject>
--(id<ORVarArray>) getVariables;
--(id<CPProgram>) getProgram;
--(void) launchHeuristic;
--(void) setOptions:(ORCmdLineArgs*)options;
--(void) printSolutions;
+@interface OBJCPType : NSObject{
+@private
+   NSString* _name;
+   objcp_var_type _type;
+   ORInt    _size;
+}
+-initExplicit:(NSString*)name withType:(objcp_var_type)type;
+-initExplicitWithName:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size;
+-(NSString*) getName;
+-(objcp_var_type) getType;
+-(id)copyWithZone:(NSZone *)zone;
+-(NSString*) description;
 @end
+
+@interface OBJCPDecl : NSObject{
+@private
+   NSString*   _name;
+   OBJCPType*  _type;
+   ORInt       _size;
+   id<ORVar>   _var;
+}
+-initExplicit:(NSString*)name withType:(OBJCPType*)type;
+-initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size;
+-(NSString*) getName;
+-(OBJCPType*) getType;
+-(ORUInt) getSize;
+-(id<ORVar>) getVariable;
+-(id)copyWithZone:(NSZone *)zone;
+@end
+
 
 @interface AbstractLogicHandler : NSObject<LogicHandler>
 {
@@ -72,7 +80,7 @@ typedef int assertion_id;
    id<ORVarArray> _vars;
 }
 -(AbstractLogicHandler*) init:(id<ORModel>)m;
--(AbstractLogicHandler*) init:(id<ORModel>)m withOptions:(ORCmdLineArgs*)options;
+-(AbstractLogicHandler*) init:(id<ORModel>)m withOptions:(ORCmdLineArgs *)options withDeclaration:(NSMutableDictionary *)decl;
 -(void) printSolutions;
 -(void) printSolutionsI;
 @end

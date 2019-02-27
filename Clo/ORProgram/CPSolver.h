@@ -96,13 +96,6 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
-//-(id<ORSolutionPool>) globalSolutionPool;
-//-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation*)n;
-//-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
-//-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
-//-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
-//-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
-//-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarVSIDS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
@@ -110,38 +103,12 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(ORInt) maxBound:(id<ORIdArray>) x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 -(id<ORIntVar>)smallestDom:(id<ORIdArray>)x;
-
-//-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
-//
-//// pvh: do we have to put these here. Any way to externalize them.
-//-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
-
-// pvh: do we have to put these here. Any way to externalize them.
-//-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createSDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
-
-//-(id<CPHeuristic>) createFF;
-//-(id<CPHeuristic>) createWDeg;
-//-(id<CPHeuristic>) createDDeg;
-//-(id<CPHeuristic>) createSDeg;
-//-(id<CPHeuristic>) createIBS;
-//-(id<CPHeuristic>) createABS;
-
-//=======
-//-(void) addConstraintDuringSearch: (id<ORConstraint>) c;
-//>>>>>>> master
 -(void) defaultSearch;
 -(id<ORMemoryTrail>)memoryTrail;
 -(void)tracer:(id<ORTracer>)tracer;
+-(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up;
+-(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) u;
 @end
 
 // Pure DFS CPSolver
@@ -155,10 +122,7 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
 
 -(id<CPSemanticProgramDFS>) initCPSolverBackjumpingDFS;
-//-(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
-//=======
 -(id<CPSemanticProgram>)    initCPSemanticSolver: (id<ORSearchController>) ctrlProto;
-//>>>>>>> master
 @end
 
 @interface CPSolverFactory : NSObject
@@ -185,15 +149,15 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 
 @protocol ORAbsElement <ORObject>
 -(ORDouble) quantity;
--(void) addQuantity:(ORFloat)c for:(id<CPFloatVar>)c;
--(void) setChoice:(id<CPFloatVar>)c;
--(id<CPFloatVar>) bestChoice;
+-(void) addQuantity:(ORFloat)c for:(id<CPVar>)c;
+-(void) setChoice:(id<CPVar>)c;
+-(id<CPVar>) bestChoice;
 @end
 
 @interface ABSElement : ORObject<ORAbsElement> {
    ORDouble _quantity;
    ORUInt _nb;
-   id<CPFloatVar> _choice;
+   id<CPVar> _choice;
    ORDouble _min;
    ORDouble _pquantity;
    ORDouble _max;
@@ -201,9 +165,9 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(id) init:(ORDouble)quantity;
 -(id) init;
 -(ORDouble) quantity;
--(void) addQuantity:(ORFloat)c for:(id<CPFloatVar>)c;
--(void) setChoice:(id<CPFloatVar>)c;
--(id<CPFloatVar>) bestChoice;
+-(void) addQuantity:(ORFloat)c for:(id<CPVar>)c;
+-(void) setChoice:(id<CPVar>)c;
+-(id<CPVar>) bestChoice;
 -(ORInt) nbAbs;
 -(NSString*)description;
 -(void) dealloc;

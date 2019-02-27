@@ -18,6 +18,7 @@
 PORTABLE_BEGIN
 
 @protocol ORVar <ORObject>
+-(NSString*) prettyname;
 @end
 
 @protocol ORExprVar <ORVar,ORRelation>

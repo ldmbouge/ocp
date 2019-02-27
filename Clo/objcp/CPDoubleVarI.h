@@ -21,6 +21,7 @@
 #import <ORFoundation/fpi.h>
 
 #define NB_DOUBLE_BY_E (4.5035996e+15)
+#define SD_PRECISION 52
 #define ED_MAX (2047)
 
 
@@ -112,6 +113,15 @@ static inline int signD(double_cast p){
    return 1;
 }
 
+static inline float minDoubleBaseOnExponent(double v){
+   double_cast v_cast;
+   v_cast.f = v;
+   v_cast.parts.mantisa = 1;
+   if(v_cast.f > v){
+      return v;
+   }
+   return v_cast.f;
+}
 static inline double doubleFromParts(unsigned long mantissa, unsigned int exponent,unsigned int sign){
    double_cast f_cast;
    f_cast.parts.mantisa = mantissa;
@@ -159,7 +169,11 @@ static inline void updateDoubleInterval(double_interval * ft,CPDoubleVarI* x)
    ft->inf = x.min;
    ft->sup = x.max;
 }
-
+static inline void updateDTWithValues(double_interval * ft,float min, float max)
+{
+   ft->inf = min;
+   ft->sup = max;
+}
 static inline intersectionIntervalD intersectionD(double_interval r, double_interval x, ORDouble percent)
 {
    double reduced = 0;
@@ -172,4 +186,59 @@ static inline intersectionIntervalD intersectionD(double_interval r, double_inte
    if(x.inf > x.sup)
       failNow();
    return (intersectionIntervalD){r,changed};
+}
+
+static inline float next_nb_double(float v, int nb, float def)
+{
+   for(int i = 1; i < nb && v < def; i++)
+      v = fp_next_double(v);
+   return v;
+}
+
+static inline float previous_nb_double(double v, int nb, double def)
+{
+   for(int i = 1; i < nb && v > def; i++)
+      v = fp_previous_double(v);
+   return v;
+}
+
+//hzi : missing denormalised case
+static inline double_interval computeAbsordedIntervalD(CPDoubleVarI* x)
+{
+   ORDouble m, min, max;
+   double tmpMax = (x.max == +infinity()) ? maxnormal() : x.max;
+   double tmpMin = (x.min == -infinity()) ? -maxnormal() : x.min;
+   ORInt e;
+   m = fmaxDbl(tmpMin,tmpMax);
+   double_cast m_cast;
+   m_cast.f = m;
+   e = m_cast.parts.exponent - SD_PRECISION - 1;
+   if(m_cast.parts.mantisa == 0){
+      e--;
+   }
+   if(e < 0){
+      return makeDoubleInterval(0,0);
+   }else{
+      max = doubleFromParts(0,e,0);
+      max = nextafter(max, -INFINITY);
+      min = -max;
+      return makeDoubleInterval(min,max);
+   }
+}
+
+static inline double_interval computeAbsorbingIntervalD(CPDoubleVarI* x)
+{
+   double tmpMax = (x.max == +infinity()) ? maxnormal() : x.max;
+   double tmpMin = (x.min == -infinity()) ? -maxnormal() : x.min;
+   double m = fmaxDbl(tmpMin, tmpMax);
+   double m_e = minDoubleBaseOnExponent(m);
+   double min,max;
+   if(m == fabs(tmpMin)){
+      min = x.min;
+      max = minDbl(-m_e,x.max);
+   }else{
+      min = maxDbl(m_e,x.min);
+      max = x.max;
+   }
+   return makeDoubleInterval(min,max);
 }

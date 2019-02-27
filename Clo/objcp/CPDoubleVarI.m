@@ -13,6 +13,7 @@
 #import <CPUKernel/CPUKernel.h>
 #import <objcp/CPDoubleDom.h>
 
+@protocol ORSplitVisitor;
 
 typedef struct  {
    TRId           _bindEvt[2];
@@ -404,8 +405,10 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
 {
    return [_dom magnitude];
 }
-- (void)visit:(ORVisitor *)visitor
-{}
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   [(id)visitor applyDoubleSplit:self];
+}
 @end
 
 @implementation CPDoubleViewOnIntVarI {

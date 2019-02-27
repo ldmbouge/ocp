@@ -9,21 +9,6 @@
 #import "objcpgateway.h"
 #include "gmp.h"
 
-@interface OBJCPType : NSObject{
-@private
-   NSString* _name;
-   objcp_var_type _type;
-   ORInt    _size;
-}
--initExplicit:(NSString*)name withType:(objcp_var_type)type;
--initExplicitWithName:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size;
--(NSString*) getName;
--(objcp_var_type) getType;
--(id)copyWithZone:(NSZone *)zone;
--(NSString*) description;
-@end
-
-
 @implementation ConstantWrapper
 static OBJCPGateway *objcpgw;
 
@@ -108,15 +93,20 @@ static OBJCPGateway *objcpgw;
 @end
 
 @implementation AbstractLogicHandler
+{
+   @protected
+   NSMutableDictionary* _declarations;
+}
 -(AbstractLogicHandler*) init:(id<ORModel>)m
 {
-   self = [self init:m withOptions:nil];
+   self = [self init:m withOptions:nil withDeclaration:nil];
    return self;
 }
--(AbstractLogicHandler*) init:(id<ORModel>)m withOptions:(ORCmdLineArgs *)options
+-(AbstractLogicHandler*) init:(id<ORModel>)m withOptions:(ORCmdLineArgs *)options withDeclaration:(NSMutableDictionary *)decl
 {
    self = [super init];
    _model = m;
+   _declarations = decl;
    _vars = [self getVariables];
    if(options == nil){
       int argc = 2;
@@ -131,6 +121,10 @@ static OBJCPGateway *objcpgw;
 - (id<ORVarArray>)getVariables
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
+}
+- (NSMutableDictionary*)getDeclarations
+{
+   return _declarations;
 }
 -(id<CPProgram>) getProgram
 {
@@ -153,20 +147,23 @@ static OBJCPGateway *objcpgw;
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
 }
--(void) checkAllbound
+-(ORBool) checkAllbound
 {
+   ORBool res = YES;
    NSArray* vars = [_model variables];
    for(id<ORVar> v in vars)
-      if(![_program bound:v])
+      if(![_program bound:v]){
+         res = NO;
          NSLog(@"la variable %@ n'est pas bound : %@",v,[_program concretize:v]);
-//      assert([_program bound:v]);
+      }
+   return res;
 }
 @end
 
 @implementation IntLogicHandler
 -(IntLogicHandler*) init:(id<ORModel>) m withOptions:(ORCmdLineArgs *)options
 {
-   self = [super init:m withOptions:options];
+   self = [super init:m withOptions:options withDeclaration:nil];
    _heuristic = [_options makeHeuristic:_program restricted:(id<ORIntVarArray>)[self getVariables]];
    return self;
 }
@@ -192,7 +189,29 @@ static OBJCPGateway *objcpgw;
 @implementation FloatLogicHandler
 -(id<ORVarArray>) getVariables
 {
-   return [_model floatVars];
+   if(_vars == nil)
+      [self initVariables];
+   return _vars;
+}
+-(void) initVariables
+{
+   NSMutableDictionary* dict = [self getDeclarations];
+   NSMutableArray* tmp = [[NSMutableArray alloc] initWithCapacity:[dict count]];
+   __block ORInt i = 0;
+   [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+      if([[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORFloatVar)])
+         [tmp addObject:[(OBJCPDecl*)obj getVariable]];
+   }];
+   if([tmp count]){
+      _vars = (id<ORVarArray>)[ORFactory idArray:_model range:RANGE(_model,0,(ORUInt)[tmp count] - 1)];
+      for(i = 0; i <  [tmp count];i++){
+         if(tmp[i] == nil)
+            break;
+         _vars[i] = tmp[i];
+      }
+      [tmp release];
+   }else
+      _vars =  [_model floatVars] ;
 }
 - (void)launchHeuristic
 {
@@ -261,21 +280,6 @@ static OBJCPGateway *objcpgw;
 }
 @end
 
-@interface OBJCPDecl : NSObject{
-@private
-   NSString*   _name;
-   OBJCPType*  _type;
-   ORInt       _size;
-   id<ORVar>   _var;
-}
--initExplicit:(NSString*)name withType:(OBJCPType*)type;
--initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size;
--(NSString*) getName;
--(OBJCPType*) getType;
--(ORUInt) getSize;
--(id)copyWithZone:(NSZone *)zone;
-@end
-
 @implementation OBJCPDecl
 -(OBJCPDecl*)initExplicit:(NSString*)name withType:(OBJCPType*)type{
    self= [ self initExplicitWithSize:name withType:type andSize:1];
@@ -292,7 +296,7 @@ static OBJCPGateway *objcpgw;
 }
 -(NSString*) description
 {
-   NSMutableString* string = [NSMutableString stringWithFormat:@"Objective CP Declaration for %@ to variable %@",_name,_var];
+   NSMutableString* string = [NSMutableString stringWithFormat:@"<OBJCPDecl> [name:%@,var:%@]",_name,_var];
    return string;
 }
 -(NSString*) getName{
@@ -302,7 +306,7 @@ static OBJCPGateway *objcpgw;
 {
    return _type;
 }
--(id<ORVar>) getVar
+-(id<ORVar>) getVariable
 {
    return _var;
 }
@@ -390,9 +394,9 @@ static OBJCPGateway *objcpgw;
    NSLog(@"Get variable declaration not implemented");
    return NULL;
 }
--(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name{
+-(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name
+{
    NSString *key = [[NSString alloc] initWithUTF8String:name];
-   
    OBJCPDecl* d = [_declarations objectForKey:key];
    return d;
 }
@@ -403,7 +407,7 @@ static OBJCPGateway *objcpgw;
    NSString* name = [decl getName];
    ORUInt size = [decl getSize];
    objcp_var_type type = [[decl getType] getType];
-   objcp_expr res = [decl getVar];
+   objcp_expr res = [decl getVariable];
    if(res == nil){
       res = [self objcp_mk_var_from_type:type andName:name andSize:size];
       [decl setVar:res];
@@ -486,14 +490,14 @@ static OBJCPGateway *objcpgw;
    _logic = [OBJCPGateway logicFromString:logic];
 }
 
-+(id<LogicHandler>) logicToHandler:(logic) l withModel:(id<ORModel>) model withOptions:(ORCmdLineArgs*) options
++(id<LogicHandler>) logicToHandler:(logic) l withModel:(id<ORModel>) model withOptions:(ORCmdLineArgs*) options withDeclaration:(NSMutableDictionary*) decl
 {
    switch(l){
-      case  QF_BV    : return [[BVLogicHandler alloc] init:model withOptions:options];
-      case  QF_LIA     : return [[IntLogicHandler alloc] init:model withOptions:options];
-      case  QF_FP     : return [[FloatLogicHandler alloc] init:model withOptions:options];
+      case  QF_BV    : return [[BVLogicHandler alloc] init:model withOptions:options withDeclaration:decl];
+      case  QF_LIA     : return [[IntLogicHandler alloc] init:model withOptions:options  withDeclaration:decl];
+      case  QF_FP     : return [[FloatLogicHandler alloc] init:model withOptions:options withDeclaration:decl];
       case QF_LRA    : //should return reallogichandler
-      default         : return [[AbstractLogicHandler alloc] init:model withOptions:options];
+      default         : return [[AbstractLogicHandler alloc] init:model withOptions:options withDeclaration:decl];
    }
 }
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name
@@ -528,7 +532,7 @@ static OBJCPGateway *objcpgw;
 -(objcp_type) objcp_mk_float_type:(objcp_context)ctx e:(unsigned int)e m:(unsigned int)m
 {
    objcp_var_type type = OR_DOUBLE;
-   if(e == 8 || m == 24)
+   if(e == E_SIZE || m == M_SIZE + 1)
       type = OR_FLOAT;
    return [self objcp_mk_type:ctx withType:type];
 }
@@ -585,7 +589,8 @@ static OBJCPGateway *objcpgw;
    @autoreleasepool {
 //      printf("model : %s",[[NSString stringWithFormat:@"%@",_model] UTF8String]);
       NSLog(@"%@",_model);
-      id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options];
+      id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options withDeclaration:_declarations];
+      __block ORBool isSat;
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
          __block bool found = false;
@@ -593,12 +598,14 @@ static OBJCPGateway *objcpgw;
             [lh launchHeuristic];
             NSLog(@"Valeurs solutions : \n");
             [lh printSolutions];
+            isSat = [lh checkAllbound];
          } withTimeLimit:[_options timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];
+      [lh release];
+      return isSat;
    }
-   return true;
 }
 
 -(objcp_model) objcp_get_model:(objcp_context) ctx{
@@ -661,8 +668,6 @@ static OBJCPGateway *objcpgw;
       if([lvi low] == [lvi up] && [rvi low] == [rvi up] && [lvi low] == [rvi low])
          return [ORFactory intVar:_model value:1];
    }
-//   id<ORIntVar> res = [ORFactory boolVar:_model];
-//   [_model add:[ORFactory reify:_model boolean:res with:lvi eq:rvi]];
    return [lv eq:rv];
 }
 -(id<ORIntVar>) objcp_mk_minus:(objcp_context)ctx var:(objcp_expr)var
@@ -676,80 +681,48 @@ static OBJCPGateway *objcpgw;
 {
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
-//   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
-//   [_model add:[[lv plus:rv] eq:res]];
    return [lv plus:rv];
 }
 -(id<ORExpr>) objcp_mk_sub:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
-//   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
-//   [_model add:[[lv sub:rv] eq:res]];
    return [lv sub:rv];
 }
 -(id<ORExpr>) objcp_mk_times:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
-//   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
-//   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
-//   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
-//   [_model add:[[lv mul:rv] eq:res]];
    return [lv mul:rv];
 }
 -(id<ORExpr>) objcp_mk_div:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
-//   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
-//   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
-//   id<ORIntVar> res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT)];
-//   [_model add:[[lv div:rv] eq:res]];
    return [lv div:rv];
 }
 -(id<ORExpr>) objcp_mk_geq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
-//   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
-//   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
-//   id<ORIntVar> res = [ORFactory boolVar:_model];
-//   [_model add:[ORFactory reify:_model boolean:res with:lv geq:rv]];
    return [lv geq:rv];
 }
 -(id<ORExpr>) objcp_mk_leq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
-//   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
-//   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
-//   id<ORIntVar> res = [ORFactory boolVar:_model];
-//   [_model add:[ORFactory reify:_model boolean:res with:lv leq:rv]];
    return [lv leq:rv];
 }
 -(id<ORExpr>) objcp_mk_gt:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
-//   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
-//   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
-//   id<ORIntVar> res = [ORFactory boolVar:_model];
-//   id<ORIntVar> nextr = [ORFactory intVar:_model bounds:RANGE(_model, lv.low + 1, rv.up + 1)];
-//   [_model add:[nextr eq:[rv plus:@(1)]]];
-//   [_model add:[ORFactory reify:_model boolean:res with:lv geq:nextr]];
    return [lv gt:rv];
 }
 -(id<ORExpr>) objcp_mk_lt:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
-//   id<ORIntVar> lv = (id<ORIntVar>)[self getVariable:left];
-//   id<ORIntVar> rv = (id<ORIntVar>)[self getVariable:right];
-//   id<ORIntVar> res = [ORFactory boolVar:_model];
-//   id<ORIntVar> nextl = [ORFactory intVar:_model bounds:RANGE(_model, lv.low + 1, lv.up + 1)];
-//   [_model add:[nextl eq:[lv plus:@(1)]]];
-//   [_model add:[ORFactory reify:_model boolean:res with:nextl leq:rv]];
    return [lv lt:rv];
 }
 @end
@@ -768,20 +741,6 @@ static OBJCPGateway *objcpgw;
    if([b1.class conformsToProtocol:@protocol(ORIntVar)] && [(id<ORIntVar>)b1 low]){
       return b0;
    }
-//   if([b0 low] && [b1 low])
-//      return [ORFactory intVar:_model value:1];
-//   if([b0 low]) return b1;
-//   if([b1 low]) return b0;
-//      id<ORIntVar> res;
-//   if(![b0 up] || ![b1 up])
-//      res = [ORFactory intVar:_model value:0];
-//   else
-//      res = [ORFactory boolVar:_model];
-//   id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
-//   bvar[0] = b0;
-//   bvar[1] = b1;
-//   [_model add:[[b0 land:b1] eq:res]];
-//   return res;
    return [b0 land:b1];
 }
 
@@ -797,18 +756,6 @@ static OBJCPGateway *objcpgw;
    if([b1.class conformsToProtocol:@protocol(ORIntVar)] && [(id<ORIntVar>)b1 low]){
       return b0;
    }
-//   id<ORIntVar> res;
-//   if([b0 low] || [b1 low])
-//      res = [ORFactory intVar:_model value:1];
-//   else if(![b0 up] && ![b1 up])
-//      res = [ORFactory intVar:_model value:0];
-//   else
-//      res = [ORFactory boolVar:_model];
-//   id<ORIntVarArray> bvar = [ORFactory intVarArray:_model range:RANGE(_model,0,1)];
-//   bvar[0] = b0;
-//   bvar[1] = b1;
-//   [_model add:[[b0 lor:b1] eq:res]];
-//   return res;
    return [b0 lor:b1];
 }
 
@@ -818,11 +765,6 @@ static OBJCPGateway *objcpgw;
          if([(id<ORIntVar>)b0 low]) return [ORFactory intVar:_model value:1];
          if(![(id<ORIntVar>)b0 up]) return [ORFactory intVar:_model value:0];
    }
-//   if([b0 low]) return [ORFactory intVar:_model value:0];
-//   if(![b0 up]) return [ORFactory intVar:_model value:1];
-//   id<ORIntVar> res = [ORFactory boolVar:_model];
-//   [_model add:[[b0 neg] eq:res]];
-//   return res;
    return [b0 neg];
 }
 
@@ -838,16 +780,6 @@ static OBJCPGateway *objcpgw;
    if([b1.class conformsToProtocol:@protocol(ORIntVar)] && [(id<ORIntVar>)b1 low]){
       return b0;
    }
-
-//   id<ORIntVar> res;
-//   if(![b0 up] || [b1 low])
-//      res = [ORFactory intVar:_model value:1];
-//   else if([b0 low] && ![b1 up])
-//      res = [ORFactory intVar:_model value:0];
-//   else
-//      res = [ORFactory boolVar:_model];
-//   [_model add:[[b0 imply:b1] eq:res]];
-//   return res;
    return [b0 imply:b1];
 }
 @end
@@ -857,10 +789,6 @@ static OBJCPGateway *objcpgw;
 
 -(objcp_context) objcp_mk_bv_eq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
-//   if([(id<ORBitVar>)left low] == [(id<ORBitVar>)left up] && [(id<ORBitVar>)right low] == [(id<ORBitVar>)right up]){
-//      if([(id<ORBitVar>)left low] == [(id<ORBitVar>)right low]) return [ORFactory intVar:_model value:1];
-//      if([(id<ORBitVar>)left low] != [(id<ORBitVar>)right low]) return [ORFactory intVar:_model value:0];
-//   }
    ORUInt low = 0;   ORUInt up = 1;
    id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    [_model add:[ORFactory bit:(id<ORBitVar>)left EQ:(id<ORBitVar>)right eval:(id<ORBitVar>)bv]];
@@ -964,12 +892,9 @@ static OBJCPGateway *objcpgw;
  */
 -(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr)c then:(objcp_expr) t else:(objcp_expr)e
 {
-//   id<ORIntVar> b = [self getVariable:c];
    id<ORVar> tv = [self getVariable:t];
    id<ORVar> ev = [self getVariable:e];
    id<ORExpr> res = nil;
-//   if([b low] == [b up])
-//      return ([b low]) ? t : e;
    if([tv.class conformsToProtocol:@protocol(ORIntVar)] && [ev.class conformsToProtocol:@protocol(ORIntVar)]){
       res = [ORFactory intVar:_model bounds:RANGE(_model, min([(id<ORIntVar>)t low],[(id<ORIntVar>)e low]),max([(id<ORIntVar>)t up], [(id<ORIntVar>)e up]))];
    }else if([tv.class conformsToProtocol:@protocol(ORFloatVar)] && [ev.class conformsToProtocol:@protocol(ORFloatVar)]){
@@ -1168,13 +1093,8 @@ static OBJCPGateway *objcpgw;
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftRAByBV:(id<ORBitVar>)a2 eq:bv]];
    return bv;
 }
--(objcp_expr) objcp_mk_bv_sle:(objcp_context)ctx x:(objcp_expr)x sle:(objcp_expr) y{
-//   ORUInt low = 0;
-//   ORUInt up = 1;
-//
-//   id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-//   [_model add:[ORFactory bit:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)bv]];
-//   return bv;
+-(objcp_expr) objcp_mk_bv_sle:(objcp_context)ctx x:(objcp_expr)x sle:(objcp_expr) y
+{
    int size = [(id<ORBitVar>)x bitLength];
 
    ORUInt low;
@@ -1488,133 +1408,57 @@ static OBJCPGateway *objcpgw;
 @implementation OBJCPGateway (ORFloat)
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x eq:(id<ORExpr>)y
 {
-//   id<ORIntVar> bv = [ORFactory boolVar:_model];
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x eq:(id<ORFloatVar>)y]];
-//   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
-//      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y]];
-//   }else{//expr
-//      [_model add:[bv eq:[(id<ORExpr>)x eq:(id<ORExpr>)y]]];
-//   }
    return [x eq:y];
 }
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x lt:(id<ORExpr>)y
 {
-//   id<ORIntVar> bv = [ORFactory boolVar:_model];
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x lt:(id<ORFloatVar>)y]];
-//   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
-//      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x lt:(id<ORDoubleVar>)y]];
-//   }else{
-//      [_model add:[bv eq:[(id<ORExpr>)x lt:(id<ORExpr>)y]]];
-//   }
    return [x lt:y];
 }
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x gt:(id<ORExpr>)y
 {
-//   id<ORIntVar> bv = [ORFactory boolVar:_model];
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x gt:(id<ORFloatVar>)y]];
-//   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
-//      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x gt:(id<ORDoubleVar>)y]];
-//   }else{
-//      [_model add:[bv eq:[(id<ORExpr>)x gt:(id<ORExpr>)y]]];
-//   }
    return [x gt:y];
 }
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x leq:(id<ORExpr>)y
 {
-//   id<ORIntVar> bv = [ORFactory boolVar:_model];
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x leq:(id<ORFloatVar>)y]];
-//   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
-//      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x leq:(id<ORDoubleVar>)y]];
-//   }else{
-//      [_model add:[bv eq:[(id<ORExpr>)x leq:(id<ORExpr>)y]]];
-//   }
    return [x leq:y];
 }
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x geq:(id<ORExpr>)y
 {
-//   id<ORIntVar> bv = [ORFactory boolVar:_model];
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      [_model add:[ORFactory floatReify:_model boolean:bv with:(id<ORFloatVar>)x geq:(id<ORFloatVar>)y]];
-//   }else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
-//      [_model add:[ORFactory doubleReify:_model boolean:bv with:(id<ORDoubleVar>)x geq:(id<ORDoubleVar>)y]];
-//   }else{
-//      [_model add:[bv eq:[(id<ORExpr>)x geq:(id<ORExpr>)y]]];
-//   }
    return [x geq:y];
 }
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx neg:(id<ORExpr>)x
 {
-//   id<ORFloatVar> fpx = (id<ORFloatVar>) x;
-//   id<ORFloatVar> res = [ORFactory floatVar:_model]; //should make minus double constraint
-//   [_model add:[res eq:[fpx minus]]];
    return [x minus];
 }
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x add:(id<ORExpr>)y
 {
-//   id<ORExpr> res;
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      res = [ORFactory floatVar:_model];
-//   }else{//we must be ordoublevar in this branch
-//      res = [ORFactory doubleVar:_model];
-//   }
-//   [_model add:[res eq:[x plus:y]]];
-//   return res;
    return [x plus:y];
 }
 
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x sub:(id<ORExpr>)y
 {
-//   id<ORExpr> res;
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      res = [ORFactory floatVar:_model];
-//   }else{//we must be ordoublevar in this branch
-//      res = [ORFactory doubleVar:_model];
-//   }
-//   [_model add:[res eq:[x sub:y]]];
-//   return res;
    return [x sub:y];
 }
 
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x mul:(id<ORExpr>)y
 {
-//   id<ORExpr> res;
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      res = [ORFactory floatVar:_model];
-//   }else{//we must be ordoublevar in this branch
-//      res = [ORFactory doubleVar:_model];
-//   }
-//   [_model add:[res eq:[x mul:y]]];
-//   return res;
    return [x mul:y];
 }
 
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x div:(id<ORExpr>)y
 {
-//   id<ORExpr> res;
-//   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-//      res = [ORFactory floatVar:_model];
-//   }else{//we must be ordoublevar in this branch
-//      res = [ORFactory doubleVar:_model];
-//   }
-//   [_model add:[res eq:[x div:y]]];
-//   return res;
    return [x div:y];
 }
 
-#warning [hzi] we should define constant for exp width and mantissa
 -(ConstantWrapper*) objcp_mk_fp_constant:(objcp_expr)ctx s:(ConstantWrapper*)s e:(ConstantWrapper*)e m:(ConstantWrapper*)m
 {
-   assert((e->_width == 8 && m->_width == 23) || (e->_width == 11 && m->_width == 52));
-   if(e->_width == 8 && m->_width == 23){
+   assert((e->_width == E_SIZE && m->_width == M_SIZE) || (e->_width == ED_SIZE && m->_width == MD_SIZE));
+   if(e->_width == E_SIZE && m->_width == M_SIZE){
       float f = floatFromParts([m uintValue],[e uintValue],[s uintValue]);
       NSLog(@"%16.16e",f);
       return [[ConstantWrapper alloc] initWithFloat:f];
    }
-   if(e->_width == 11 && m->_width == 52){
+   if(e->_width == ED_SIZE && m->_width == MD_SIZE){
       double f = doubleFromParts([m ulongValue],[e uintValue],[s uintValue]);
       NSLog(@"%16.16e",f);
       return [[ConstantWrapper alloc] initWithDouble:f];

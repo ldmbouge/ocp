@@ -13,6 +13,8 @@
 #import <CPUKernel/CPUKernel.h>
 #import "CPFloatDom.h"
 
+@protocol  ORSplitVisitor;
+
 /*****************************************************************************************/
 /*                        CPFloatVarSnapshot                                              */
 /*****************************************************************************************/
@@ -404,8 +406,10 @@ static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
 {
    return [_dom magnitude];
 }
-- (void)visit:(ORVisitor *)visitor
-{}
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+   [(id)visitor applyFloatSplit:self];
+}
 @end
 
 @implementation CPFloatViewOnIntVarI {
@@ -697,8 +701,10 @@ static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
    return 0.0f;
 }
-- (void)visit:(ORVisitor *)visitor
-{}
+
+- (void)visit:(id<ORSplitVisitor>)visitor
+{
+}
 
 @end
 

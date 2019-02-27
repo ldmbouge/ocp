@@ -559,10 +559,6 @@
 {
    [[self worker] floatDeltaSplit:i withVars:vars];
 }
--(void)          floatSplitD: (ORUInt) i withVars:(id<ORDisabledVarArray>) vars
-{
-   [[self worker] floatSplitD:i withVars:vars];
-}
 -(void) floatLthen:(id<ORFloatVar>)var with:(ORFloat)val
 {
     [[self worker] floatLthen:var with:val];
@@ -578,6 +574,22 @@
 -(void) floatLEqual:(id<ORFloatVar>)var with:(ORFloat)val
 {
     [[self worker] floatLEqual:var with:val];
+}
+-(void) doubleLthen:(id<ORDoubleVar>)var with:(ORDouble)val
+{
+   [[self worker] doubleLthen:var with:val];
+}
+-(void) doubleGthen:(id<ORDoubleVar>)var with:(ORDouble)val
+{
+   [[self worker] doubleGthen:var with:val];
+}
+-(void) doubleGEqual:(id<ORDoubleVar>)var with:(ORDouble)val
+{
+   [[self worker] doubleGEqual:var with:val];
+}
+-(void) doubleLEqual:(id<ORDoubleVar>)var with:(ORDouble)val
+{
+   [[self worker] doubleLEqual:var with:val];
 }
 -(void) fail
 {
@@ -636,7 +648,7 @@
 {
    return [[self worker] computeAbsorptionsQuantities: vars];
 }
--(ORDouble) computeAbsorptionRate:(id<ORFloatVar>) x
+-(ORDouble) computeAbsorptionRate:(id<ORVar>) x
 {
    return [[self worker] computeAbsorptionRate:x];
 }
@@ -656,7 +668,7 @@
 {
    return [[self worker] maxOccurences: x];
 }
--(ORDouble) cardinality: (id<ORFloatVar>) x
+-(ORDouble) cardinality: (id<ORVar>) x
 {
    return [[self worker] cardinality: x];
 }
@@ -664,7 +676,7 @@
 {
    return [[self worker] cancellationQuantity: x];
 }
--(ORLDouble) density: (id<ORFloatVar>) x
+-(ORLDouble) density: (id<ORVar>) x
 {
    return [[self worker] density: x];
 }
@@ -672,7 +684,7 @@
 {
    return [[self worker] countMemberedConstraints: x];
 }
--(ORDouble) fdomwidth:(id<ORFloatVar>) x
+-(ORDouble) fdomwidth:(id<ORVar>) x
 {
    return [[self worker] fdomwidth: x];
 }
@@ -1133,6 +1145,10 @@
 }
 - (NSArray *)collectAllVarWithAbs:(id<ORFloatVarArray>)vs withLimit:(ORDouble)limit {
    return [[self worker] collectAllVarWithAbs:vs withLimit:limit];
+}
+- (ORInt)debugLevel
+{
+   return [[self worker] debugLevel];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

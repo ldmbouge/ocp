@@ -20,6 +20,8 @@
 #import "CPEngineI.h"
 #import "CPEvent.h"
 
+@protocol ORSplitVisitor;
+
 typedef struct  {
    TRId         _boundsEvt[2];
    TRId           _bindEvt[2];
@@ -178,9 +180,9 @@ static id<OROSet> collectConstraints(CPEventNetwork* net,id<OROSet> rv)
 {
    return NO;
 }
-- (void)visit:(ORVisitor *)visitor
+- (void)visit:(id<ORSplitVisitor>)visitor
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: visit method value not defined"];
+   [(id)visitor applyIntSplit:self];
 }
 -(id<ORTracker>) tracker
 {

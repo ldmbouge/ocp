@@ -60,6 +60,10 @@ PORTABLE_BEGIN
 -(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          doubleLthen: (id<ORDoubleVar>) var with: (ORDouble) val;
+-(void)          doubleGthen: (id<ORDoubleVar>) var with: (ORDouble) val;
+-(void)          doubleLEqual: (id<ORDoubleVar>) var with: (ORDouble) val;
+-(void)          doubleGEqual: (id<ORDoubleVar>) var with: (ORDouble) val;
 
 -(void)          specialSearch: (id<ORDisabledVarArray>) x;
 -(void)          customSearch: (id<ORDisabledVarArray>) x;
@@ -90,16 +94,15 @@ PORTABLE_BEGIN
 -(void)          switchedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          lexicalOrderedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 
--(ORDouble)      computeAbsorptionRate:(id<ORFloatVar>) x;
+-(ORDouble)      computeAbsorptionRate:(id<ORVar>) x;
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledVarArray>) vars;
 -(void)          floatStaticSplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          floatStatic3WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          floatStatic5WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          floatStatic6WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
--(void)          floatSplitD: (ORUInt) x   withVars:(id<ORDisabledVarArray>) vars;
 -(void)          floatSplit: (ORUInt) x   withVars:(id<ORDisabledVarArray>) vars;
 -(void)          float3BSplit:(ORUInt) i call:(SEL)s  withVars:(id<ORDisabledVarArray>) x;
--(void)          floatAbsSplit: (ORUInt) x by:(id<CPFloatVar>) y    withVars:(id<ORDisabledVarArray>) vars default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
+-(void)          floatAbsSplit: (ORUInt) x by:(id<CPVar>) y    withVars:(id<ORDisabledVarArray>) vars default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          float3WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          float5WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          float6WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
@@ -209,6 +212,7 @@ PORTABLE_BEGIN
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolution>) captureSolution;
 
+-(ORInt) debugLevel;
 -(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;
 -(ORFloat) floatValue:(id<ORVar>)x;
@@ -225,10 +229,10 @@ PORTABLE_BEGIN
 -(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>)vs;
 -(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>)vs withLimit:(ORDouble) limit;
 -(ORUInt)  maxOccurences:(id<ORVar>) x;
--(ORLDouble) density: (id<ORFloatVar>) x;
--(ORDouble) cardinality: (id<ORFloatVar>) x;
+-(ORLDouble) density: (id<ORVar>) x;
+-(ORDouble) cardinality: (id<ORVar>) x;
 -(ORUInt)  countMemberedConstraints:(id<ORVar>) x;
--(ORDouble) fdomwidth:(id<ORFloatVar>) x;
+-(ORDouble) fdomwidth:(id<ORVar>) x;
 -(ORDouble)  cancellationQuantity:(id<ORVar>) x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;

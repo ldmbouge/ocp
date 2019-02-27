@@ -289,7 +289,6 @@
    _terms = [recVisit visitExprLEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
-#warning [hzi] should be more generic
 -(void) visitExprGEqualI:(ORExprLEqualI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.right.vtype);

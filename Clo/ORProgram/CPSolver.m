@@ -29,6 +29,8 @@
 #import <objcp/CPBitVarI.h>
 #import <objcp/CPFloatVarI.h>
 
+#import "ORSplitVisitor.h"
+
 #if defined(__linux__)
 #import <values.h>
 #endif
@@ -353,6 +355,10 @@
       }
       [ORConcurrency pumpEvents];
    }
+}
+-(ORInt) debugLevel
+{
+   return _level;
 }
 -(void) setAbsComputationFunction:(ABS_FUN) f
 {
@@ -1699,6 +1705,22 @@
 {
    [self floatGEqualImpl: _gamma[var.getId] with: val];
 }
+-(void) doubleLthen: (id<ORDoubleVar>) var with: (ORDouble) val
+{
+   [self doubleLthenImpl: _gamma[var.getId] with: val];
+}
+-(void) doubleGthen: (id<ORDoubleVar>) var with: (ORDouble) val
+{
+   [self doubleGthenImpl: _gamma[var.getId] with: val];
+}
+-(void) doubleLEqual: (id<ORDoubleVar>) var with: (ORDouble) val
+{
+   [self doubleLEqualImpl: _gamma[var.getId] with: val];
+}
+-(void) doubleGEqual: (id<ORDoubleVar>) var with: (ORDouble) val
+{
+   [self doubleGEqualImpl: _gamma[var.getId] with: val];
+}
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [self restrictImpl: _gamma[var.getId] to: S];
@@ -2046,19 +2068,19 @@
             }
             [x disable:i.index];
          }
-         id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+         id<CPVar> cx = _gamma[getId(x[i.index])];
          if(choice){
-            id<CPFloatVar> v = [abs[i.index] bestChoice];
+            id<CPVar> v = [abs[i.index] bestChoice];
             if(v != nil){
-               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
+               LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
             }else{
-               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and no other variable to split with",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO");
+               LOG(_level,2,@"selected variables: %@ %@ bounded:%s and no other variable to split with",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO");
             }
             [self floatAbsSplit:i.index by:v withVars:x default:^(ORUInt i,id<ORDisabledVarArray> x) {
                [self float5WaySplit:i withVars:x];
             }];
          }else{
-            LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO");
+            LOG(_level,2,@"selected variables: %@  %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO");
             [self float5WaySplit:i.index withVars:x];
          }
       } alt:^{
@@ -2147,18 +2169,12 @@
                }
                
             }else{
-               id<CPFloatVar> v = [abs[i.index] bestChoice];
-               id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+               id<CPVar> v = [abs[i.index] bestChoice];
+               id<CPVar> cx = _gamma[getId(x[i.index])];
                LOG(_level,3,@"selected variables: %@ and %@",cx,v);
-               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] and %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max);
+               LOG(_level,2,@"selected variables: %@ %@ and %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,[NSString stringWithFormat:@"var<%d>", [v getId]],v);
                
-               //[hzi] just for experiments
-               //after experiments shoulds be cleaner
-               if(_splitTest){
-                  [self floatAbsSplit2:i.index by:v withVars:x default:b];
-               }else{
-                  [self floatAbsSplit:i.index by:v withVars:x default:b];
-               }
+               [self floatAbsSplit:i.index by:v withVars:x default:b];
                
             }
          } alt:^{}];
@@ -2190,10 +2206,10 @@
          if(i.found){
             LOG(_level,1,@"maxAbs");
             [x disable:i.index];
-            id<CPFloatVar> cx = _gamma[getId(x[i.index])];
-            id<CPFloatVar> v = [abs[i.index] bestChoice];
-            LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
-            [self floatAbsSplit3:i.index by:v vars:x];
+            id<CPVar> cx = _gamma[getId(x[i.index])];
+            id<CPVar> v = [abs[i.index] bestChoice];
+            LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
+            [self floatAbsSplit:i.index by:v vars:x];
          } else{
             if(nb == 0){
                goon = NO;
@@ -2276,13 +2292,13 @@
             }
             [x disable:i.index];
          }
-         id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+         id<CPVar> cx = _gamma[getId(x[i.index])];
          if(c){
-            id<CPFloatVar> v = [abs[i.index] bestChoice];
-            LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
-            [self floatAbsSplit3:i.index by:v vars:x];
+            id<CPVar> v = [abs[i.index] bestChoice];
+            LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
+            [self floatAbsSplit:i.index by:v vars:x];
          }else{
-              LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
+              LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx);
             [self float5WaySplit:i.index withVars:x];
          }
       }];
@@ -2361,13 +2377,13 @@
             }
             [x disable:i.index];
          }
-         id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+         id<CPVar> cx = _gamma[getId(x[i.index])];
          if(c){
-            id<CPFloatVar> v = [abs[i.index] bestChoice];
-            LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] bounded:%s and %@ [%16.16e,%16.16e] bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max,([v bound])?"YES":"NO");
-            [self floatAbsSplit3:i.index by:v vars:x];
+            id<CPVar> v = [abs[i.index] bestChoice];
+            LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
+            [self floatAbsSplit:i.index by:v vars:x];
          }else{
-            LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max);
+            LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx);
             [self float5WaySplit:i.index withVars:x];
          }
       }];
@@ -2425,18 +2441,12 @@
                   [self float5WaySplit:i withVars:x];
                }];
             }else{
-               id<CPFloatVar> v = [abs[i.index] bestChoice];
-               id<CPFloatVar> cx = _gamma[getId(x[i.index])];
+               id<CPVar> v = [abs[i.index] bestChoice];
+               id<CPVar> cx = _gamma[getId(x[i.index])];
                LOG(_level,3,@"selected variables: %@ and %@",cx,v);
-               LOG(_level,2,@"selected variables: %@ [%16.16e,%16.16e] and %@ [%16.16e,%16.16e]",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx.min,cx.max,[NSString stringWithFormat:@"var<%d>", [v getId]],v.min,v.max);
+               LOG(_level,2,@"selected variables: %@ %@ and %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,[NSString stringWithFormat:@"var<%d>", [v getId]],v);
                
-               //[hzi] just for experiments
-               //after experiments shoulds be cleaner
-               if(_splitTest){
-                  [self floatAbsSplit2:i.index by:v withVars:x default:b];
-               }else{
-                  [self floatAbsSplit:i.index by:v withVars:x default:b];
-               }
+               [self floatAbsSplit:i.index by:v withVars:x default:b];
                
             }
          } alt:^{}];
@@ -2678,7 +2688,7 @@
                   }
                   [x disable:i.index];
                }
-               id<CPFloatVar> v = [abs[i.index] bestChoice];
+               id<CPVar> v = [abs[i.index] bestChoice];
                LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
                [self floatAbsSplit:i.index by:v withVars:x default:b];
                abs = [self computeAbsorptionsQuantities:x];
@@ -2723,243 +2733,12 @@
       [self float6WaySplit:i withVars:x];
    }
 }
--(void) floatAbsSplit:(ORUInt)i by:(id<CPFloatVar>) y withVars:(id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+-(void) floatAbsSplit:(ORUInt)i by:(id<CPVar>) y vars:(id<ORDisabledVarArray>) x
 {
-   if(y == nil) {
-      b(i,x);
-      return;
-   }
-   float_interval interval[18];
-   float_interval interval_x[3];
-   float_interval interval_y[3];
-   ORInt length_x = 0;
-   ORInt length_y = 0;
-   id<CPFloatVar> cx = _gamma[getId(x[i])];
-   if([cx bound] && [y bound]) return;
-   float_interval ax = computeAbsorbingInterval((CPFloatVarI*)cx);
-   float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
-   if(![y bound]) {
-      if(isIntersectingWithV([y min],[y max],ay.inf,ay.sup)){
-         ay.inf = maxFlt(ay.inf, [y min]);
-         ay.sup = minFlt(ay.sup, [y max]);
-         length_y = !([y min] == ay.inf) + !([y max] == ay.sup);
-         interval_y[0] = ay;
-         if(ay.inf > [y min] && [y max] > ay.sup){
-            interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
-            interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [y max]);
-         }
-         else if(ay.inf == [y min]){
-            interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[y max]);
-         }else {
-            interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
-         }
-      }else{
-         interval_y[0] = makeFloatInterval([y min], [y max]);
-         length_y = 0;
-      }
-   }
-   length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
-   interval_x[0].inf = maxFlt([cx min],ax.inf);
-   interval_x[0].sup = minFlt([cx max],ax.sup);
-   ORInt i_x = 1;
-   ORFloat xmax = [cx max];
-   if(ax.sup == [cx max]){
-      interval_x[1].inf = minFlt([cx min],fp_next_float(ax.inf));
-      interval_x[1].sup = fp_previous_float(ax.inf);
-   }else{
-      if(-ax.sup < [cx max]){
-         interval_x[i_x].inf = -ax.sup;
-         interval_x[i_x].sup = [cx max];
-         xmax = -ax.sup;
-         length_x++;
-         i_x++;
-      }
-      interval_x[i_x].inf = fp_next_float(ax.sup);
-      interval_x[i_x].sup = fp_previous_float(xmax);
-   }
-   if(length_x >= 1 && length_y >= 1){
-      ORInt length = 0;
-      for(ORInt i = 0; i <= length_x;i++){
-         for(ORInt j = 0; j <= length_y;j++){
-            interval[length] = interval_x[i];
-            length++;
-            interval[length] = interval_y[j];
-            length++;
-         }
-      }
-      float_interval* ip = interval;
-      length--;
-      [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt index) {
-         LOG(_level,1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i] prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
-         [self floatIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
-         [self floatIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
-      }];
-   }else{
-      b(i,x);
-   }
-}
--(void) floatAbsSplit2:(ORUInt)i by:(id<CPFloatVar>) y withVars:(id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   if(y == nil) {
-      b(i,x);
-      return;
-   }
-   float_interval interval[18];
-   float_interval interval_x[3];
-   float_interval interval_y[3];
-   ORInt length_x = 0;
-   ORInt length_y = 0;
-   id<CPFloatVar> cx = _gamma[getId(x[i])];
-   float_interval ax = computeAbsorbingInterval((CPFloatVarI*)cx);
-   float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
-   if(! [y bound]) {
-      if(isIntersectingWithV([y min],[y max],ay.inf,ay.sup)){
-         ay.inf = maxFlt(ay.inf, [y min]);
-         ay.sup = minFlt(ay.sup, [y max]);
-         length_y = !([y min] == ay.inf) + !([y max] == ay.sup);
-         interval_y[0] = ay;
-         if(ay.inf > [y min] && [y max] > ay.sup){
-            interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
-            interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [y max]);
-         }
-         else if(ay.inf == [y min]){
-            interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[y max]);
-         }else {
-            interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
-         }
-      }else{
-         interval_y[0] = makeFloatInterval([y min], [y max]);
-         length_y = 0;
-      }
-   }
-   length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
-   interval_x[0].inf = maxFlt([cx min],ax.inf);
-   interval_x[0].sup = minFlt([cx max],ax.sup);
-   ORInt i_x = 1;
-   ORFloat xmax = [cx max];
-   if(ax.sup == [cx max]){
-      interval_x[1].inf = minFlt([cx min],fp_next_float(ax.inf));
-      interval_x[1].sup = fp_previous_float(ax.inf);
-   }else{
-      if(-ax.sup < [cx max]){
-         interval_x[i_x].inf = -ax.sup;
-         interval_x[i_x].sup = [cx max];
-         xmax = -ax.sup;
-         length_x++;
-         i_x++;
-      }
-      interval_x[i_x].inf = fp_next_float(ax.sup);
-      interval_x[i_x].sup = fp_previous_float(xmax);
-   }
-   if(length_x >= 1 && length_y >= 1){
-      ORInt length = 0;
-      for(ORInt i = 0; i <= length_x;i++){
-         for(ORInt j = 0; j <= length_y;j++){
-            interval[length] = interval_x[i];
-            length++;
-            interval[length] = interval_y[j];
-            length++;
-         }
-      }
-      float_interval* ip = interval;
-      length--;
-      [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt index) {
-         LOG(_level,1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i] prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
-         [self floatIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
-         [self floatIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
-      }];
-   }else if (length_x > 0 && length_y == 0){
-      float_interval* ip = interval_x;
-      //      [_search try: ^{
-      //         LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],cx,ip[0].inf);
-      //         [self floatGEqualImpl:cx with:ip[0].inf];
-      //      } alt: ^{
-      //         LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],cx,ip[0].inf);
-      //         [self floatLthenImpl:cx with:ip[0].inf];
-      //      }];
-      [_search tryall:RANGE(self,0,length_x) suchThat:nil in:^(ORInt index) {
-         LOG(_level,1,@"#choices:%d  %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i] prettyname],ip[index].inf,ip[index].sup);
-         [self floatIntervalImpl:cx low:ip[index].inf up:ip[index].sup];
-      }];
-   }else{
-      b(i,x);
-      //      b(y);
-   }
-}
-
--(void) floatAbsSplit3:(ORUInt)i by:(id<CPFloatVar>) y vars:(id<ORDisabledVarArray>) x
-{
-   float_interval interval[18];
-   float_interval interval_x[3];
-   float_interval interval_y[3];
-   ORInt length_x = 0;
-   ORInt length_y = 0;
-   id<CPFloatVar> cx = _gamma[getId(x[i])];
-   float_interval ax = computeAbsorbingInterval((CPFloatVarI*)cx);
-   float_interval ay = computeAbsordedInterval((CPFloatVarI*)cx);
-   if(! [y bound]) {
-      if(isIntersectingWithV([y min],[y max],ay.inf,ay.sup)){
-         ay.inf = maxFlt(ay.inf, [y min]);
-         ay.sup = minFlt(ay.sup, [y max]);
-         length_y = !([y min] == ay.inf) + !([y max] == ay.sup);
-         interval_y[0] = ay;
-         if(ay.inf > [y min] && [y max] > ay.sup){
-            interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
-            interval_y[2] = makeFloatInterval(fp_next_float(ay.sup), [y max]);
-         }
-         else if(ay.inf == [y min]){
-            interval_y[1] = makeFloatInterval(fp_next_float(ay.sup),[y max]);
-         }else {
-            interval_y[1] = makeFloatInterval([y min],fp_previous_float(ay.inf));
-         }
-      }else{
-         interval_y[0] = makeFloatInterval([y min], [y max]);
-         length_y = 0;
-      }
-   }
-   length_x = !([cx min] == ax.inf) + !([cx max] == ax.sup);
-   interval_x[0].inf = maxFlt([cx min],ax.inf);
-   interval_x[0].sup = minFlt([cx max],ax.sup);
-   ORInt i_x = 1;
-   ORFloat xmax = [cx max];
-   if(ax.sup == [cx max]){
-      interval_x[1].inf = minFlt([cx min],fp_next_float(ax.inf));
-      interval_x[1].sup = fp_previous_float(ax.inf);
-   }else{
-      if(-ax.sup < [cx max]){
-         interval_x[i_x].inf = -ax.sup;
-         interval_x[i_x].sup = [cx max];
-         xmax = -ax.sup;
-         length_x++;
-         i_x++;
-      }
-      interval_x[i_x].inf = fp_next_float(ax.sup);
-      interval_x[i_x].sup = fp_previous_float(xmax);
-   }
-   if(length_y >= 1){
-      ORInt length = 0;
-      for(ORInt i = 0; i <= length_x;i++){
-         for(ORInt j = 0; j <= length_y;j++){
-            interval[length] = interval_x[i];
-            length++;
-            interval[length] = interval_y[j];
-            length++;
-         }
-      }
-      float_interval* ip = interval;
-      length--;
-      [_search tryall:RANGE(self,0,length/2) suchThat:nil in:^(ORInt index) {
-         LOG(_level,1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i] prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
-         [self floatIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
-         [self floatIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
-      }];
-   }else if (length_x > 0 && length_y == 0){
-      float_interval* ip = interval_x;
-      [_search tryall:RANGE(self,0,length_x) suchThat:nil in:^(ORInt index) {
-         LOG(_level,1,@"#choices:%d  %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i] prettyname],ip[index].inf,ip[index].sup);
-         [self floatIntervalImpl:cx low:ip[index].inf up:ip[index].sup];
-      }];
-   }
+   id<CPVar> xi = _gamma[getId(x[i])];
+   id<ORSplitVisitor> splitVisit = [[ORAbsSplitVisitor alloc] initWithProgram:self variable:x[i] other:y];
+   [self trackObject:splitVisit];
+   [xi visit:splitVisit];
 }
 -(void) float3BSplit:(ORUInt)index call:(SEL)s withVars:(id<ORDisabledVarArray>)x
 {
@@ -3069,289 +2848,48 @@
 //split in 2 intervals Once
 -(void) floatSplit:(ORUInt) i  withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
-   if([xi bound]) return;
-   ORFloat theMax = xi.max;
-   ORFloat theMin = xi.min;
-   ORFloat mid = theMin; //force to the left side if next(theMin) == theMax
-   if(fp_next_float(theMin) != theMax){
-      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
-      mid = tmpMin/2 + tmpMax/2;
-   }
-   if(mid == theMax)
-      mid = theMin;
-   assert(mid != NAN && mid <= xi.max && mid >= xi.min);
-   [_search try: ^{
-      LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],xi,mid);
-      [self floatGthenImpl:xi with:mid];
-   } alt: ^{
-      LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],xi,mid);
-      [self floatLEqualImpl:xi with:mid];
-   }
-    ];
+   id<CPVar> xi = _gamma[getId(x[i])];
+   id<ORSplitVisitor> splitVisit = [[ORSplitVisitor alloc] initWithProgram:self variable:x[i]];
+   [self trackObject:splitVisit];
+   [xi visit:splitVisit];
 }
 //split in 3 intervals Once
 -(void) float3WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
-   if([xi bound]) return;
-   ORFloat theMax = xi.max;
-   ORFloat theMin = xi.min;
-   ORFloat mid;
-   ORInt length = 1;
-   float_interval interval[3];
-   if(fp_next_float(theMin) == theMax){
-      interval[0].inf = interval[0].sup = theMin;
-      interval[1].inf = interval[1].sup = theMax;
-   }else{
-      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-      mid = tmpMin/2 + tmpMax/2;
-      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
-      interval[1].inf  = mid;
-      interval[1].sup = mid;
-      interval[0].inf  = theMin;
-      interval[0].sup = fp_previous_float(mid);
-      interval[2].inf = fp_next_float(mid);
-      interval[2].sup = theMax;
-      length++;
-   }
-   float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"(3split) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
-      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
-   }];
+   id<CPVar> xi = _gamma[getId(x[i])];
+   id<ORSplitVisitor> splitVisit = [[OR3WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
+   [self trackObject:splitVisit];
+   [xi visit:splitVisit];
 }
 //split in 5 intervals Once
 -(void) float5WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
-   if([xi bound]) return;
-   float_interval interval[5];
-   ORInt length = 0;
-   ORFloat theMax = xi.max;
-   ORFloat theMin = xi.min;
-   ORFloat mid;
-   length = 1;
-   interval[0].inf = interval[0].sup = theMax;
-   interval[1].inf = interval[1].sup = theMin;
-   if(fp_next_float(theMin) == fp_previous_float(theMax)){
-      mid = fp_next_float(theMin);
-      interval[2].inf = interval[2].sup = mid;
-      length = 2;
-   }else{
-      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-      mid = tmpMin/2 + tmpMax/2;
-      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
-      //force the interval to right side
-      if(mid == fp_previous_float(theMax)){
-         mid = fp_previous_float(mid);
-      }
-      interval[2].inf = interval[2].sup = mid;
-      interval[3].inf = fp_next_float(mid);
-      interval[3].sup = fp_previous_float(theMax);
-      length = 3;
-      if(fp_next_float(theMin) != mid){
-         interval[4].inf = fp_next_float(theMin);
-         interval[4].sup = fp_previous_float(mid);
-         length++;
-      }
-   }
-   float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt index) {
-      LOG(_level,1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[x[i] prettyname],ip[index].inf,ip[index].sup);
-      [self floatIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
-   }];
+   id<CPVar> xi = _gamma[getId(x[i])];
+   id<ORSplitVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
+   [self trackObject:splitVisit];
+   [xi visit:splitVisit];
 }
 //split in 6 intervals Once
 -(void) float6WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
-   if([xi bound]) return;
-   float_interval interval[6];
-   ORFloat theMax = xi.max;
-   ORFloat theMin = xi.min;
-   ORBool minIsInfinity = (theMin == -infinityf()) ;
-   ORBool maxIsInfinity = (theMax == infinityf()) ;
-   ORBool only2float = (fp_next_float(theMin) == theMax);
-   ORBool only3float = (fp_next_float(theMin) == fp_previous_float(theMax));
-   interval[0].inf = interval[0].sup = theMax;
-   ORInt length = 1;
-   if(!(only2float || only3float)){
-      //au moins 4 floatants
-      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-      ORFloat mid = tmpMin/2 + tmpMax/2;
-      
-      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
-      ORFloat midInf = -0.0f;
-      ORFloat midSup = +0.0f;
-      if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
-         midInf = fp_nextafterf(mid,-INFINITY);
-         midSup = mid;
-      }
-      ORFloat midSupNext = nextafterf(midSup,+INFINITY);
-      ORFloat supPrev = nextafterf(theMax,-INFINITY);
-      ORFloat midInfPrev = nextafterf(midInf,-INFINITY);
-      ORFloat infNext = nextafterf(theMin,+INFINITY);
-      
-      interval[2].inf = interval[2].sup = midSup;
-      interval[3].inf = interval[3].sup = midInf;
-      interval[1].inf = interval[1].sup = theMin;
-      length+=3;
-      if(midSupNext != supPrev){
-         interval[length].inf = midSupNext;
-         interval[length].sup = supPrev;
-         length++;
-      }
-      if(midInfPrev != infNext){
-         interval[length].sup = midInfPrev;
-         interval[length].inf = infNext;
-         length++;
-      }
-   }else if(only2float){
-      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
-         interval[1].inf = interval[1].sup = +0.0f;
-         interval[2].inf = interval[2].sup = -0.0f;
-         length += 2;
-      }
-      interval[length].inf = interval[length].sup = theMin;
-      length++;
-   }else{
-      //forcement 3 floattants
-      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
-         interval[1].inf = interval[1].sup = +0.0f;
-         interval[2].inf = interval[2].sup = -0.0f;
-         length += 2;
-      }else{
-         ORFloat mid = nextafterf(theMin,+INFINITY);
-         interval[1].inf = interval[1].sup = mid;
-         length++;
-         
-      }
-      interval[length].inf = interval[length].sup = theMin;
-      length++;
-   }
-   float_interval* ip = interval;
-   length--;
-   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt index) {
-      LOG(_level,1,@"(6split) #choices:%d %@ in [%16.16e,%16.16e]",[[self explorer] nbChoices],([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[x[i] prettyname],ip[index].inf,ip[index].sup);
-      [self floatIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
-   }];
+   id<CPVar> xi = _gamma[getId(x[i])];
+   id<ORSplitVisitor> splitVisit = [[OR6WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
+   [self trackObject:splitVisit];
+   [xi visit:splitVisit];
 }
 -(void) floatDeltaSplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
-   if([xi bound]) return;
-   float_interval interval[5];
-   ORInt length = 1;
-   if(fp_next_float(xi.min) == xi.max){
-      updateFTWithValues(&interval[0], xi.min, xi.min);
-      updateFTWithValues(&interval[1], xi.max, xi.max);
-   }else{
-      ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
-      ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
-      ORFloat mid = tmpMin/2 + tmpMax/2;
-      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats- (xi.min == -infinityf()),mid);
-      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats - (xi.max == +infinityf()),fp_next_float(mid));
-      updateFTWithValues(&interval[0],xi.min,deltaMin);
-      updateFTWithValues(&interval[1],deltaMax,xi.max);
-      length++;
-      if(deltaMin < mid && deltaMax > mid){
-         updateFTWithValues(&interval[2],mid,mid);
-         length++;
-         if(fp_next_float(deltaMin) != fp_previous_float(mid)){
-            updateFTWithValues(&interval[3],fp_next_float(deltaMin),fp_previous_float(mid));
-            length++;
-         }
-         if(deltaMax > fp_next_float(mid)){
-            updateFTWithValues(&interval[4],fp_next_float(mid),fp_previous_float(deltaMax));
-            length++;
-         }
-      }
-   }
-   float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"(Dsplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
-      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
-   }];
+   id<CPVar> xi = _gamma[getId(x[i])];
+   id<ORSplitVisitor> splitVisit = [[ORDeltaSplitVisitor alloc] initWithProgram:self variable:x[i] nb:_searchNBFloats];
+   [self trackObject:splitVisit];
+   [xi visit:splitVisit];
 }
 -(void) floatEWaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
-   if([xi bound]) return;
-   ORInt nb = 2*_searchNBFloats+4;
-   float_interval interval[nb];//to check + assert
-   ORInt length = 1;
-   if(fp_next_float(xi.min) == xi.max){
-      updateFTWithValues(&interval[0], xi.min, xi.min);
-      updateFTWithValues(&interval[1], xi.max, xi.max);
-   }else{
-      ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
-      ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
-      ORFloat mid = tmpMin/2 + tmpMax/2;
-      ORFloat deltaMin = next_nb_float(tmpMin,_searchNBFloats - (xi.min == -infinityf()),mid);
-      ORFloat deltaMax = previous_nb_float(tmpMax,_searchNBFloats - (xi.max == +infinityf()),fp_next_float(mid));
-      for(ORFloat v = xi.min; v <= deltaMin; v = fp_next_float(v)){
-         updateFTWithValues(&interval[length-1], v,v);
-         assert(length-1 >= 0 && length-1 < nb);
-         length++;
-      }
-      for(ORFloat v = xi.max; v >= deltaMax; v = fp_previous_float(v)){
-         updateFTWithValues(&interval[length-1],v,v);
-         assert(length-1 >= 0 && length-1 < nb);
-         length++;
-      }
-      if(deltaMin < mid && deltaMax > mid){
-         updateFTWithValues(&interval[length-1], mid,mid);
-         assert(length-1 >= 0 && length-1 < nb);
-         length++;
-         if(fp_next_float(deltaMin) != fp_previous_float(mid)){
-            updateFTWithValues(&interval[length-1],fp_next_float(deltaMin),fp_previous_float(mid));
-            assert(length-1 >= 0 && length-1 < nb);
-            length++;
-         }
-         if(deltaMax > fp_next_float(mid)){
-            updateFTWithValues(&interval[length-1],fp_next_float(mid),fp_previous_float(deltaMax));
-            assert(length-1 >= 0 && length-1 < nb);
-            length++;
-         }
-      }
-   }
-   float_interval* ip = interval;
-   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-      LOG(_level,1,@"(Esplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[self explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
-      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
-   }];
-}
-
--(void) floatSplitD:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
-{
-   id<CPDoubleVar> xi = _gamma[getId(x[i])];
-   if([xi bound]) return;
-   ORDouble theMax = xi.max;
-   ORDouble theMin = xi.min;
-   ORDouble mid = theMin; //force to the left side if next(theMin) == theMax
-   if(fp_next_double(theMin) != theMax){
-      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
-      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
-      mid = tmpMin/2 + tmpMax/2;
-   }
-   if(mid == theMax)
-      mid = theMin;
-   assert(mid != NAN && mid <= xi.max && mid >= xi.min);
-   [_search try: ^{
-      LOG(_level,1,@"START #choices:%d %@ try x > %16.16e",[[self explorer] nbChoices],xi,mid);
-      [self doubleGthenImpl:xi with:mid];
-   } alt: ^{
-      LOG(_level,1,@"START #choices:%d %@ alt x <= %16.16e",[[self explorer] nbChoices],xi,mid);
-      [self doubleLEqualImpl:xi with:mid];
-   }
-    ];
+   id<CPVar> xi = _gamma[getId(x[i])];
+   id<ORSplitVisitor> splitVisit = [[OREnumSplitVisitor alloc] initWithProgram:self variable:x[i] nb:_searchNBFloats];
+   [self trackObject:splitVisit];
+   [xi visit:splitVisit];
 }
 //----------------------------------------------------------
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
@@ -3374,13 +2912,13 @@
 {
    [_search switchOnDepth: s1 to: s2 limit: depth];
 }
--(void) switchSearchOnDepthUsingProperties:(ORDouble(^)(id<ORFloatVar>)) criteria1 to: (ORDouble(^)(id<ORVar>)) criteria2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b limit: (ORInt) depth restricted:(id<ORDisabledVarArray>) x
+-(void) switchSearchOnDepthUsingProperties:(ORDouble(^)(id<ORVar>)) criteria1 to: (ORDouble(^)(id<ORVar>)) criteria2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b limit: (ORInt) depth restricted:(id<ORDisabledVarArray>) x
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     id<CPVar> v = _gamma[getId(x[i])];
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
@@ -4037,23 +3575,6 @@
    [cFact release];
    return self;
 }
-//-(id<CPProgram>) initCPSolverBackjumpingDFS
-//{
-//   self = [super initCPCoreSolver];
-//   _trail = [ORFactory trail];
-//   _mt    = [ORFactory memoryTrail];
-//   _tracer = [[SemTracer alloc] initSemTracer:_trail memory:_mt];
-////   _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
-//   _engine = [CPFactory learningEngine: _trail memory:_mt tracer:_tracer];
-//   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-////                                                                    rootControllerClass: [ORDFSController class]
-//                                                                    rootControllerClass: [ORSemDFSController class]
-////                                                                  nestedControllerClass: [ORDFSController class]];
-//                                                                  nestedControllerClass: [ORSemDFSController class]];
-//   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
-//   [cFact release];
-//   return self;
-//}
 
 -(void) dealloc
 {
@@ -4497,7 +4018,6 @@
 }
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
-//   ORStatus status = [_engine enforce:^ { [[var domain] setBit:i to:val for:var];}];
    ORStatus status = [_engine enforce:^{ [var bind:i to:val];}];
    if (status == ORFailure) {
       if (_engine.isPropagating)
@@ -4515,10 +4035,8 @@
    if (status == ORFailure) {
       if (_engine.isPropagating)
          failNow();
-      //[_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
-   //[_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
@@ -4529,10 +4047,8 @@
    if (status == ORFailure) {
       if (_engine.isPropagating)
          failNow();
-      //[_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
-   //[_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) realGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
@@ -4543,10 +4059,8 @@
    if (status == ORFailure) {
       if (_engine.isPropagating)
          failNow();
-      //[_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
-   //[_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 @end
@@ -4652,7 +4166,7 @@ static ABS_FUN funChoice;
       default: return (_nb > 0)?(_quantity/_nb) : 0.0;
    }
 }
--(void) addQuantity:(ORFloat) c for:(CPFloatVarI*)v
+-(void) addQuantity:(ORFloat) c for:(id<CPVar>)v
 {
    if(c > 0.0 && c < 1.0){
       _nb++;
@@ -4669,7 +4183,7 @@ static ABS_FUN funChoice;
 {
    _choice = c;
 }
--(id<CPFloatVar>) bestChoice
+-(id<CPVar>) bestChoice
 {
    return _choice;
 }
