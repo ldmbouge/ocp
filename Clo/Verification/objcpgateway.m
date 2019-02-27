@@ -141,7 +141,6 @@ static OBJCPGateway *objcpgw;
 -(void) printSolutions
 {
    [self printSolutionsI];
-   [self checkAllbound];
 }
 -(void) printSolutionsI
 {
@@ -598,6 +597,7 @@ static OBJCPGateway *objcpgw;
             [lh launchHeuristic];
             NSLog(@"Valeurs solutions : \n");
             [lh printSolutions];
+            NSLog(@"======================");
             isSat = [lh checkAllbound];
          } withTimeLimit:[_options timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
