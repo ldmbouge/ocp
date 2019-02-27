@@ -198,7 +198,7 @@ static OBJCPGateway *objcpgw;
    NSMutableArray* tmp = [[NSMutableArray alloc] initWithCapacity:[dict count]];
    __block ORInt i = 0;
    [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-      if([[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORFloatVar)])
+      if([[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORFloatVar)] || [[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORDoubleVar)])
          [tmp addObject:[(OBJCPDecl*)obj getVariable]];
    }];
    if([tmp count]){

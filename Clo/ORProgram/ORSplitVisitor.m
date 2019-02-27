@@ -155,8 +155,8 @@
       interval[0].inf = interval[0].sup = theMin;
       interval[1].inf = interval[1].sup = theMax;
    }else{
-      ORFloat tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
-      ORFloat tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
+      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
+      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
       mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
       interval[1].inf  = mid;
@@ -221,7 +221,14 @@
    }else{
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-      mid = tmpMin/2 + tmpMax/2;
+      if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
+         mid = 0.0f;
+      else if ((theMin < 1.0f) && (1.0f < theMax))
+         mid = 1.0f;
+      else if ((theMin < -1.0f) && (-1.0f < theMax))
+         mid = -1.0f;
+      else
+         mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       //force the interval to right side
       if(mid == fp_previous_float(theMax)){
@@ -255,9 +262,16 @@
       interval[0].inf = interval[0].sup = theMin;
       interval[1].inf = interval[1].sup = theMax;
    }else{
-      ORFloat tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
-      ORFloat tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      mid = tmpMin/2 + tmpMax/2;
+      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
+      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
+      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+         mid = 0.0;
+      else if ((theMin < 1.0) && (1.0 < theMax))
+         mid = 1.0;
+      else if ((theMin < -1.0) && (-1.0 < theMax))
+         mid = -1.0;
+      else
+         mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
       interval[1].inf  = mid;
       interval[1].sup = mid;
@@ -396,8 +410,8 @@
       ORDouble mid = tmpMin/2 + tmpMax/2;
       
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
-      ORDouble midInf = -0.0f;
-      ORDouble midSup = +0.0f;
+      ORDouble midInf = -0.0;
+      ORDouble midSup = +0.0;
       if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
          midInf = fp_nextafter(mid,-INFINITY);
          midSup = mid;
@@ -422,21 +436,21 @@
          length++;
       }
    }else if(only2float){
-      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
-         interval[1].inf = interval[1].sup = +0.0f;
-         interval[2].inf = interval[2].sup = -0.0f;
+      if(is_eq(theMax,+0.0) || is_eq(theMin,-0.0)){
+         interval[1].inf = interval[1].sup = +0.0;
+         interval[2].inf = interval[2].sup = -0.0;
          length += 2;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
    }else{
       //forcement 3 floattants
-      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
-         interval[1].inf = interval[1].sup = +0.0f;
-         interval[2].inf = interval[2].sup = -0.0f;
+      if(is_eq(theMax,+0.0) || is_eq(theMin,-0.0)){
+         interval[1].inf = interval[1].sup = +0.0;
+         interval[2].inf = interval[2].sup = -0.0;
          length += 2;
       }else{
-         ORFloat mid = nextafterf(theMin,+INFINITY);
+         ORDouble mid = nextafter(theMin,+INFINITY);
          interval[1].inf = interval[1].sup = mid;
          length++;
          
@@ -529,19 +543,19 @@
       ORDouble tmpMax = (xi.max == +infinity()) ? maxnormal() : xi.max;
       ORDouble tmpMin = (xi.min == -infinity()) ? -maxnormal() : xi.min;
       ORDouble mid = tmpMin/2 + tmpMax/2;
-      ORDouble deltaMin = next_nb_double(tmpMin,_nb - (xi.min == -infinityf()),mid);
-      ORDouble deltaMax = previous_nb_double(tmpMax,_nb - (xi.max == +infinityf()),fp_next_float(mid));
+      ORDouble deltaMin = next_nb_double(tmpMin,_nb - (xi.min == -infinity()),mid);
+      ORDouble deltaMax = previous_nb_double(tmpMax,_nb - (xi.max == +infinity()),fp_next_double(mid));
       updateDTWithValues(&interval[0],xi.min,deltaMin);
       updateDTWithValues(&interval[1],deltaMax,xi.max);
       length++;
       if(deltaMin < mid && deltaMax > mid){
          updateDTWithValues(&interval[2],mid,mid);
          length++;
-         if(fp_next_float(deltaMin) != fp_previous_double(mid)){
+         if(fp_next_double(deltaMin) != fp_previous_double(mid)){
             updateDTWithValues(&interval[3],fp_next_double(deltaMin),fp_previous_double(mid));
             length++;
          }
-         if(deltaMax > fp_next_float(mid)){
+         if(deltaMax > fp_next_double(mid)){
             updateDTWithValues(&interval[4],fp_next_double(mid),fp_previous_double(deltaMax));
             length++;
          }
@@ -643,8 +657,8 @@
       ORDouble tmpMax = (xi.max == +infinity()) ? maxnormal() : xi.max;
       ORDouble tmpMin = (xi.min == -infinity()) ? -maxnormal() : xi.min;
       ORDouble mid = tmpMin/2 + tmpMax/2;
-      ORDouble deltaMin = next_nb_double(tmpMin,_nb - (xi.min == -infinityf()),mid);
-      ORDouble deltaMax = previous_nb_double(tmpMax,_nb - (xi.max == +infinityf()),fp_next_float(mid));
+      ORDouble deltaMin = next_nb_double(tmpMin,_nb - (xi.min == -infinity()),mid);
+      ORDouble deltaMax = previous_nb_double(tmpMax,_nb - (xi.max == +infinity()),fp_next_double(mid));
       for(ORDouble v = xi.min; v <= deltaMin; v = fp_next_double(v)){
          updateDTWithValues(&interval[length-1], v,v);
          assert(length-1 >= 0 && length-1 < nb);
@@ -659,12 +673,12 @@
          updateDTWithValues(&interval[length-1], mid,mid);
          assert(length-1 >= 0 && length-1 < nb);
          length++;
-         if(fp_next_float(deltaMin) != fp_previous_float(mid)){
+         if(fp_next_double(deltaMin) != fp_previous_double(mid)){
             updateDTWithValues(&interval[length-1],fp_next_double(deltaMin),fp_previous_double(mid));
             assert(length-1 >= 0 && length-1 < nb);
             length++;
          }
-         if(deltaMax > fp_next_float(mid)){
+         if(deltaMax > fp_next_double(mid)){
             updateDTWithValues(&interval[length-1],fp_next_double(mid),fp_previous_double(deltaMax));
             assert(length-1 >= 0 && length-1 < nb);
             length++;
@@ -879,7 +893,7 @@
    CPDoubleVarI* cy = (CPDoubleVarI*)_var;
    double_interval ax = computeAbsordedIntervalD(cx);
    if(![cy bound] && isIntersectingWithDV(ax.inf, ax.sup, cy.min, cy.max)){
-      _rate = cardinalityDV(maxDbl(ax.inf,cy.min),minDbl(ax.sup, cy.max))/cardinalityD(cy);
+      _rate = (ORDouble)(cardinalityDV(maxDbl(ax.inf,cy.min),minDbl(ax.sup, cy.max))/cardinalityD(cy));
    }
 }
 

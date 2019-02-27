@@ -144,7 +144,7 @@ static inline long double cardinalityDV(double xmin, double xmax){
    return (res < 0) ? -res : res;
 }
 
-static inline double cardinalityD(CPDoubleVarI* x)
+static inline long double cardinalityD(CPDoubleVarI* x)
 {
    return cardinalityDV(x.min, x.max);
 }
