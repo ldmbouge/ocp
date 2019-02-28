@@ -13,11 +13,11 @@
 #import <ORProgram/CPSolver.h>
 
 @implementation ORSplitVisitor{
-   CPSolver* _program;
+   CPCoreSolver*   _program;
    id<ORVar>           _variable;
 }
 
--(ORSplitVisitor*) initWithProgram : (CPSolver*) p variable:(id<ORVar>) v
+-(ORSplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v
 {
    self = [super init];
    _program = p;
@@ -55,10 +55,10 @@
    assert(mid != NAN && mid <= xi.max && mid >= xi.min);
    [_program try: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ try x > %16.16e",[[_program explorer] nbChoices],xi,mid);
-      [_program floatGthen:(id<ORFloatVar>)xi with:mid];//CPCommonProgram
+      [_program floatGthenImpl:xi with:mid];//CPCommonProgram
    } alt: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ alt x <= %16.16e",[[_program explorer] nbChoices],xi,mid);
-      [_program floatLEqual:(id<ORFloatVar>)xi with:mid];
+      [_program floatLEqualImpl:xi with:mid];
    }];
 }
 -(void) applyDoubleSplit :(CPDoubleVarI*) xi
@@ -78,10 +78,10 @@
    assert(mid != NAN && mid <= xi.max && mid >= xi.min);
    [_program try: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ try x > %16.16e",[[_program explorer] nbChoices],xi,mid);
-      [_program doubleGthen:(id<ORDoubleVar>)xi with:mid];
+      [_program doubleGthenImpl:xi with:mid];
    } alt: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ alt x <= %16.16e",[[_program explorer] nbChoices],xi,mid);
-      [_program doubleLEqual:(id<ORDoubleVar>)xi with:mid];
+      [_program doubleLEqualImpl:xi with:mid];
    }];
 }
 @end

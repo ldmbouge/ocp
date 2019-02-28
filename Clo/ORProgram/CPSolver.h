@@ -109,6 +109,12 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(void)tracer:(id<ORTracer>)tracer;
 -(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up;
 -(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) u;
+-(void) doubleGthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val;
+-(void) doubleLthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val;
+-(void) floatGEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val;
+-(void) floatLEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val;
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val;
+-(void) doubleLEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val;
 @end
 
 // Pure DFS CPSolver
