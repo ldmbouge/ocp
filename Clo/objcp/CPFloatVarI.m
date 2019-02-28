@@ -324,12 +324,12 @@ static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
 }
 -(void) updateMin: (ORFloat) newMin
 {
-   if(newMin > [self min])
+   if(newMin > [self min] || (is_plus_zerof(newMin) &&  is_minus_zerof([self min])))
       [_dom updateMin:newMin for:self];
 }
 -(void) updateMax: (ORFloat) newMax
 {
-   if(newMax < [self max])
+   if(newMax < [self max] || (is_plus_zerof([self max]) &&  is_minus_zerof(newMax)))
       [_dom updateMax:newMax for:self];
 }
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat)newMax

@@ -104,7 +104,7 @@
 }
 -(ORBool) bound
 {
-   return _domain._low == _domain._up;
+   return _domain._low == _domain._up && !(is_plus_zero(_domain._up) && is_minus_zero(_domain._low));
 }
 -(ORInterval) bounds
 {
