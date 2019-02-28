@@ -1450,7 +1450,6 @@
          [_x updateMin:fp_next_float([_y min])];
          [_y updateMax:fp_previous_float([_x max])];
       }
-      assignTRInt(&_active, NO, _trail);
    } else {
       if ([_x max] <= [_y min]) {
          assignTRInt(&_active, NO, _trail);
