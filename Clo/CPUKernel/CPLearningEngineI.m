@@ -45,10 +45,8 @@
    _size++;
    
    _retry = true;
-   
-    NSMutableArray* vars = [self variables];
-        for (id<CPBitVar> var in vars)
-            [var reduceVSIDS];
+   for (id<CPBitVar> var in self.variables)
+       [var reduceVSIDS];
 }
 -(void) addConstraint:(CPCoreConstraint*) c withJumpLevel:(ORUInt) level
 {

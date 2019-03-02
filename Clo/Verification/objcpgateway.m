@@ -340,12 +340,12 @@
 //        __block id<CPBitVarHeuristic> h =[cp createWDeg];
 //       __block id<CPBitVarHeuristic> h =[cp createBitVarABS];
 
-    __block NSMutableArray* engineVars = [[cp engine] variables];
+//    __block NSMutableArray* engineVars = [[cp engine] variables];
 //    NSLog(@"%@",engineVars);
 
-    __block CPBitAntecedents* ants;
-    __block CPBitAssignment** vars;
-    __block id<CPBVConstraint> c;
+//    __block CPBitAntecedents* ants;
+//    __block CPBitAssignment** vars;
+//    __block id<CPBVConstraint> c;
    
 
    [cp solve:^{
@@ -369,7 +369,7 @@
               NSArray *temp=[[cp stringValue:[[_declarations objectForKey:var] getVariable]] componentsSeparatedByCharactersInSet:set];
               [temp[2] getCString:binvalue maxLength:512 encoding:NSUTF8StringEncoding];
               long int foo = strtol(binvalue,NULL, 2);
-              printf("(assert (= %s (_ bv%ld %d)))\n",[[var description] cString], foo, [[_declarations objectForKey:var]getSize]);
+              printf("(assert (= %s (_ bv%ld %d)))\n",[[var description] cStringUsingEncoding:NSASCIIStringEncoding], foo, [[_declarations objectForKey:var]getSize]);
           }
           sat = true;
 //                           NSLog(@"%@", [[cp engine] model]);
@@ -956,7 +956,7 @@
 -(objcp_expr) objcp_mk_bv_mul:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
    int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
+   //ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
    ORUInt zWordlength = ((size * 2)/ BITSPERWORD) + (((size * 2) % BITSPERWORD == 0) ? 0: 1);
    ORUInt* low = alloca(sizeof(ORUInt)*zWordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*zWordlength);

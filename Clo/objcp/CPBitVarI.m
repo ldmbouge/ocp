@@ -252,7 +252,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    }
 }
 -(void) reduceVSIDS{
-   for(int i=0;i<[_dom getLength];i++)
+   for(int i=0;i<getBitLength(_dom);i++)
     _vsids[i] /=2.0;
 }
 -(id) takeSnapshot: (ORInt) id

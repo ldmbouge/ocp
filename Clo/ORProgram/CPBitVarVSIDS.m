@@ -51,7 +51,7 @@
 -(ORFloat)varOrdering:(id<CPBitVar>)x
 {
    ORFloat rv = - (ORFloat)[x getVSIDSCount];
-    id<ORVarArray> vars = (_rvars!=nil ? _rvars : _cvs);
+    // id<ORVarArray> vars = (_rvars!=nil ? _rvars : _cvs);
 //    if (_count <= 0)
 //    {
 //        for (id<CPBitVar> var in vars)
