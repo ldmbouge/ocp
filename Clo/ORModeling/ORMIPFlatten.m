@@ -214,7 +214,10 @@ BOOL _alreadyAdded;
 {
     _result = v;
 }
-
+-(void) visitSumSquare:(id<ORConstraint>)c
+{
+   _result = c;
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     [_into setCurrent:cstr];
@@ -249,7 +252,14 @@ BOOL _alreadyAdded;
 -(void) visitRealLinearEq:(id<ORConstraint>)c {
    _result = c;
 }
-
+-(void) visitClause:(id<ORClause>)c
+{
+   _result = c;
+}
+-(void) visitRealSquare:(id<ORConstraint>)c
+{
+   _result = c;
+}
 @end
 
 

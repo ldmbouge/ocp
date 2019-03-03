@@ -203,6 +203,7 @@ static inline intersectionIntervalD intersectionD(double_interval r, double_inte
    
    if(x.inf > x.sup)
       failNow();
+   NSLog(@"%16.16e",reduced);
    return (intersectionIntervalD){r,changed};
 }
 

@@ -223,7 +223,10 @@ static BOOL _alreadyAdded;
 {
    _result = c;
 }
-
+-(void) visitSumSquare: (id<ORSumSquare>) c
+{
+   _result = c;
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     _result = [ORLPFlatten flattenExpression:[cstr expr] into: _into];

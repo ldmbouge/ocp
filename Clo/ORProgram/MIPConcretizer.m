@@ -291,6 +291,25 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
+-(void) visitSumSquare: (id<ORSumSquare>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> vars = [c vars];
+      ORInt size = (ORInt)[vars count];
+      MIPVariableI** x = malloc(size*2*sizeof(MIPVariableI*));
+      for (ORInt i = 0; i < size; i++) {
+         x[2*i] = [self concreteVar:vars[i]];
+         x[2*i+1] = [self concreteVar:vars[i]];
+      }
+      id<ORDoubleArray> coefq = [ORFactory doubleArray:_program range:vars.range value:1.0];
+      MIPVariableI* res[1] = { [self concreteVar:c.res] };
+      ORDouble coef[1] = { -1.0 };
+      MIPConstraintI* cstr = [_MIPsolver createQuadEQ:1 var:res coef:coef sizeQ:size varQ:x coefQ:coefq rhs:0.0];
+      free(x);
+      _gamma[c.getId] = cstr;
+      [_MIPsolver postConstraint: cstr];
+   }
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    if (_gamma[c.getId] == NULL) {
@@ -351,13 +370,10 @@
 {
    if (_gamma[c.getId] == NULL) {
       MIPVariableI* x[2] = { [self concreteVar:c.op],[self concreteVar:c.op] };
-      ORDouble coefq[1] = { -1.0 };
+      ORDouble coefq[1] = { 1.0 };
       MIPVariableI* res[1] = { [self concreteVar:c.res] };
-      ORDouble coef[1] = { 1.0 };
-//     gurobi handle only <= quadratic consttraint
-      MIPConstraintI* cstr = [_MIPsolver createQuadGEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
-//      MIPConstraintI* cstr2 = [_MIPsolver createQuadLEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
-//      [_MIPsolver postConstraint: cstr];
+      ORDouble coef[1] = { -1.0 };
+      MIPConstraintI* cstr = [_MIPsolver createQuadEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
       _gamma[c.getId] = cstr;
       [_MIPsolver postConstraint: cstr];
    }
@@ -463,6 +479,20 @@
 -(void) visitMaximize: (id<ORObjectiveFunctionVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
+}
+
+-(void) visitClause:(id<ORClause>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> vars = [c vars];
+      id<ORVar> x = [c targetValue];
+      [vars visit: self];
+      id<MIPVariableArray> dvar = _gamma[vars.getId];
+      MIPVariableI* dx = [self concreteVar:x];
+      MIPConstraintI* concreteCstr = [_MIPsolver createOR:dvar eq:dx];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+   }
 }
 @end
 

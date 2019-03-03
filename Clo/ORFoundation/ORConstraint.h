@@ -728,6 +728,11 @@ enum ORGroupType {
 -(ORDouble)        cst;
 @end
 
+@protocol ORSumSquare <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORVar>) res;
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORExprArray>) array;
 @end

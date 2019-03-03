@@ -133,6 +133,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    switch (status) {
       case GRB_OPTIMAL:
          _status = MIPoptimal;
+         [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.sol"];
          break;
       case GRB_INFEASIBLE:
          _status = MIPinfeasible;
@@ -308,6 +309,9 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
       case MIPeq:
          GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_EQUAL,[cstr rhs],buf);
          break;
+      case MIPor:
+         if([cstr size] > 0)
+            GRBaddgenconstrOr(_model, buf, [[(MIPConstraintOR*)cstr res] idx], [cstr size], [cstr col]);
       default:
          break;
    }

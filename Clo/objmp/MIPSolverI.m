@@ -451,10 +451,27 @@
    [super print: "="];
 }
 @end
+@implementation MIPConstraintOR;
 
+-(MIPConstraintI*) initMIPConstraintOR: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef:(ORDouble*) coef res: (MIPVariableI*) res
+{
+   self = [super initMIPConstraintI: solver size: size var: var coef: coef rhs: 0.0];
+   _type = MIPor;
+   _res = res;
+   return self;
+}
+-(MIPVariableI*) res
+{
+   return _res;
+}
+-(void) print
+{
+   [super print: "OR_"];
+}
+@end
 @implementation MIPQuadConstraint : MIPConstraintI
 #warning [hzi] should add resize and dealloc stuff
--(MIPConstraintI*) initMIPQuadConstraint: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs
+-(MIPConstraintI*) initMIPQuadConstraint: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (id<ORDoubleArray>) coefq rhs: (ORDouble) rhs
 {
    self = [super initMIPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _quad = true;
@@ -472,7 +489,7 @@
    }
    _qcoef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    for(ORInt i = 0; i < _qsize; i++)
-      _qcoef[i] = coefq[i];
+      _qcoef[i] = [coefq[i] doubleValue];
    return self;
 }
 -(ORInt) qSize
@@ -499,7 +516,7 @@
 
 
 @implementation MIPQuadConstraintLEQ : MIPQuadConstraint
--(MIPConstraintI*) initMIPQuadConstraintLEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs
+-(MIPConstraintI*) initMIPQuadConstraintLEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (id<ORDoubleArray>) coefq rhs: (ORDouble) rhs
 {
    self = [super initMIPQuadConstraint:solver sizeLin:size varLin:var coefLin:coef sizeQuad:sizeq varQuad:varq coefQuad:coefq rhs:rhs];
    _type = MIPleq;
@@ -512,7 +529,7 @@
 @end
 
 @implementation MIPQuadConstraintGEQ : MIPQuadConstraint
--(MIPConstraintI*) initMIPQuadConstraintGEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs
+-(MIPConstraintI*) initMIPQuadConstraintGEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (id<ORDoubleArray>) coefq rhs: (ORDouble) rhs
 {
    self = [super initMIPQuadConstraint:solver sizeLin:size varLin:var coefLin:coef sizeQuad:sizeq varQuad:varq coefQuad:coefq rhs:rhs];
    _type = MIPgeq;
@@ -525,7 +542,7 @@
 @end
 
 @implementation MIPQuadConstraintEQ : MIPQuadConstraint
--(MIPConstraintI*) initMIPQuadConstraintEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (ORDouble*) coefq rhs: (ORDouble) rhs
+-(MIPConstraintI*) initMIPQuadConstraintEQ: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (id<ORDoubleArray>) coefq rhs: (ORDouble) rhs
 {
    self = [super initMIPQuadConstraint:solver sizeLin:size varLin:var coefLin:coef sizeQuad:sizeq varQuad:varq coefQuad:coefq rhs:rhs];
    _type = MIPeq;
@@ -1244,6 +1261,15 @@
    }
    return cstr;
 }
+
+-(MIPConstraintI*) createOR:(id<MIPVariableArray>) vars eq:(MIPVariableI*) x
+{
+   MIPLinearTermI* t = [self createLinearTerm];
+   for(ORInt i = vars.low; i <= vars.up; i++)
+      [t add:1 times: vars[i]];
+//   [t add: 1 times:x];
+   return [self createORWithTerm: t eq:x];
+}
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
 {
    MIPLinearTermI* t = [self createLinearTerm];
@@ -1312,22 +1338,20 @@
    return [self createEQ: t rhs: rhs];
 }
 
--(MIPConstraintI*) createQuadEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (ORDouble*) coefq rhs: (ORDouble) rhs
+-(MIPConstraintI*) createQuadEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (id<ORDoubleArray>) coefq rhs: (ORDouble) rhs
 {
    return [[MIPQuadConstraintEQ alloc] initMIPQuadConstraintEQ:self sizeLin:size varLin:var coefLin:coef sizeQuad:sizeq varQuad:varq coefQuad:coefq rhs:rhs];
 }
 
--(MIPConstraintI*) createQuadGEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (ORDouble*) coefq rhs: (ORDouble) rhs
+-(MIPConstraintI*) createQuadGEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (id<ORDoubleArray>) coefq rhs: (ORDouble) rhs
 {
    return [[MIPQuadConstraintGEQ alloc] initMIPQuadConstraintGEQ:self sizeLin:size varLin:var coefLin:coef sizeQuad:sizeq varQuad:varq coefQuad:coefq rhs:rhs];
 }
 
-
--(MIPConstraintI*) createQuadLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (ORDouble*) coefq rhs: (ORDouble) rhs
+-(MIPConstraintI*) createQuadLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef sizeQ:(ORInt) sizeq varQ: (MIPVariableI**) varq coefQ: (id<ORDoubleArray>) coefq rhs: (ORDouble) rhs
 {
    return [[MIPQuadConstraintLEQ alloc] initMIPQuadConstraintLEQ:self sizeLin:size varLin:var coefLin:coef sizeQuad:sizeq varQuad:varq coefQuad:coefq rhs:rhs];
 }
-
 
 -(MIPObjectiveI*) createMinimize: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef
 {
@@ -1378,6 +1402,14 @@
    return [self createMaximize: t];
 }
 
+-(MIPConstraintI*) createORWithTerm: (MIPLinearTermI*) t eq: (MIPVariableI*) x;
+{
+   [t close];
+   MIPConstraintI* c = [[MIPConstraintOR alloc] initMIPConstraintOR:self size: [t size] var: [t var] coef:[t coef] res:x];
+   [c setNb: _createdCstrs++];
+   [self trackMutable: c];
+   return c;
+}
 -(MIPConstraintI*) createLEQ: (MIPLinearTermI*) t rhs: (ORDouble) rhs;
 {
    [t close];

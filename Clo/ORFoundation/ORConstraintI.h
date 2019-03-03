@@ -783,6 +783,13 @@
 -(ORDouble) cst;
 @end
 
+@interface ORSumSquare : ORConstraintI<ORSumSquare>
+-(id) init: (id<ORVarArray>) ia eq: (id<ORVar>) res;
+-(id<ORVarArray>) vars;
+-(id<ORVar>) res;
+@end
+
+
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x;
 -(id<ORExprArray>) array;

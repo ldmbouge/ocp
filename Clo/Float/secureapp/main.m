@@ -259,9 +259,10 @@ int main(int argc, const char * argv[]) {
       NSArray* desiredFlowsOfA = @[@4,@13,@13,@4,@7,@13,@13,@7,@8,@13,@13,@8,@0,@13,@13,@0,@1,@12,@12,@1,@12,@23,@23,@12,@12,@24,@24,@12,@12,@27,@27,@12,@2,@4,@4,@2,@3,@7,@7,@3,@5,@8,@8,@5,@0,@6,@6,@0,@1,@21,@21,@1,@22,@23,@23,@22,@24,@25,@25,@24,@26,@27,@27,@26];
       NSArray* desiredFlowsOfB = @[@2,@4,@4,@2,@3,@7,@7,@3,@5,@8,@8,@5,@0,@6,@6,@0,@1,@21,@21,@1,@22,@23,@23,@22,@24,@25,@25,@24,@26,@27,@27,@26,@2,@5,@5,@2,@2,@21,@21,@2,@2,@25,@25,@2,@3,@6,@6,@3,@3,@22,@22,@3,@3,@26,@26,@3];
       
-      NSArray* ec = [Graph getEC:device with:device2ID];
-      NSArray* network = [Graph getNetworkDevice:device with:device2ID];
-      
+//      NSArray* ec = [Graph getEC:device with:device2ID];
+//      NSArray* network = [Graph getNetworkDevice:device with:device2ID];
+      NSArray* ec = @[@22, @7, @8, @24, @21, @1, @2, @4, @5, @3, @23, @0, @26, @27, @6, @25 ];
+      NSArray* network = @[@31, @12, @36, @35, @15, @11, @13, @17, @37, @18, @20, @29, @28, @19, @16, @34, @10, @33, @9, @14, @32, @30 ];
       
       //      NSMutableArray* allpathA = [[NSMutableArray alloc] init];
       NSArray* allpathA = @[ @[ @[@4,@17,@18,@19,@13] , @[@4,@17,@10,@20,@13] , @[@4,@17,@18,@16,@33,@19,@13] , @[@4,@17,@18,@16,@37,@19,@13] , @[@4,@17,@18,@16,@29,@19,@13] , @[@4,@17,@18,@15,@10,@20,@13] , @[@4,@17,@10,@15,@18,@19,@13] , @[@4,@17,@10,@9,@30,@20,@13] , @[@4,@17,@10,@9,@14,@20,@13] , @[@4,@17,@10,@9,@34,@20,@13]  ],@[ @[@13,@19,@18,@17,@4] , @[@13,@20,@10,@17,@4] , @[@13,@19,@29,@16,@18,@17,@4] , @[@13,@19,@33,@16,@18,@17,@4] , @[@13,@19,@18,@15,@10,@17,@4] , @[@13,@19,@37,@16,@18,@17,@4] , @[@13,@20,@14,@9,@10,@17,@4] , @[@13,@20,@30,@9,@10,@17,@4] , @[@13,@20,@34,@9,@10,@17,@4] , @[@13,@20,@10,@15,@18,@17,@4]  ],@[ @[@7,@15,@10,@20,@13] , @[@7,@15,@18,@19,@13] , @[@7,@15,@10,@17,@18,@19,@13] , @[@7,@15,@10,@9,@30,@20,@13] , @[@7,@15,@10,@9,@14,@20,@13] , @[@7,@15,@10,@9,@34,@20,@13] , @[@7,@15,@18,@16,@33,@19,@13] , @[@7,@15,@18,@16,@37,@19,@13] , @[@7,@15,@18,@16,@29,@19,@13] , @[@7,@15,@18,@17,@10,@20,@13]  ],@[ @[@13,@19,@18,@15,@7] , @[@13,@20,@10,@15,@7] , @[@13,@19,@29,@16,@18,@15,@7] , @[@13,@19,@33,@16,@18,@15,@7] , @[@13,@19,@18,@17,@10,@15,@7] , @[@13,@19,@37,@16,@18,@15,@7] , @[@13,@20,@14,@9,@10,@15,@7] , @[@13,@20,@30,@9,@10,@15,@7] , @[@13,@20,@34,@9,@10,@15,@7] , @[@13,@20,@10,@17,@18,@15,@7]  ],@[ @[@8,@36,@14,@20,@13] , @[@8,@36,@37,@19,@13] , @[@8,@36,@14,@9,@30,@20,@13] , @[@8,@36,@14,@9,@34,@20,@13] , @[@8,@36,@14,@9,@10,@20,@13] , @[@8,@36,@14,@35,@37,@19,@13] , @[@8,@36,@37,@16,@33,@19,@13] , @[@8,@36,@37,@16,@18,@19,@13] , @[@8,@36,@37,@16,@29,@19,@13] , @[@8,@36,@37,@35,@14,@20,@13]  ],@[ @[@13,@19,@37,@36,@8] , @[@13,@20,@14,@36,@8] , @[@13,@19,@29,@16,@37,@36,@8] , @[@13,@19,@33,@16,@37,@36,@8] , @[@13,@19,@18,@16,@37,@36,@8] , @[@13,@19,@37,@35,@14,@36,@8] , @[@13,@20,@14,@35,@37,@36,@8] , @[@13,@20,@30,@9,@14,@36,@8] , @[@13,@20,@34,@9,@14,@36,@8] , @[@13,@20,@10,@9,@14,@36,@8]  ],@[ @[@0,@35,@14,@20,@13] , @[@0,@35,@37,@19,@13] , @[@0,@35,@14,@9,@30,@20,@13] , @[@0,@35,@14,@9,@34,@20,@13] , @[@0,@35,@14,@9,@10,@20,@13] , @[@0,@35,@14,@36,@37,@19,@13] , @[@0,@35,@37,@16,@33,@19,@13] , @[@0,@35,@37,@16,@18,@19,@13] , @[@0,@35,@37,@16,@29,@19,@13] , @[@0,@35,@37,@36,@14,@20,@13]  ],@[ @[@13,@19,@37,@35,@0] , @[@13,@20,@14,@35,@0] , @[@13,@19,@29,@16,@37,@35,@0] , @[@13,@19,@33,@16,@37,@35,@0] , @[@13,@19,@18,@16,@37,@35,@0] , @[@13,@19,@37,@36,@14,@35,@0] , @[@13,@20,@14,@36,@37,@35,@0] , @[@13,@20,@30,@9,@14,@35,@0] , @[@13,@20,@34,@9,@14,@35,@0] , @[@13,@20,@10,@9,@14,@35,@0]  ],@[ @[@1,@32,@34,@20,@12] , @[@1,@32,@33,@19,@12] , @[@1,@32,@34,@31,@33,@19,@12] , @[@1,@32,@34,@9,@30,@20,@12] , @[@1,@32,@34,@9,@14,@20,@12] , @[@1,@32,@34,@9,@10,@20,@12] , @[@1,@32,@33,@31,@34,@20,@12] , @[@1,@32,@33,@16,@18,@19,@12] , @[@1,@32,@33,@16,@37,@19,@12] , @[@1,@32,@33,@16,@29,@19,@12]  ],@[ @[@12,@19,@33,@32,@1] , @[@12,@20,@34,@32,@1] , @[@12,@19,@29,@16,@33,@32,@1] , @[@12,@19,@33,@31,@34,@32,@1] , @[@12,@19,@18,@16,@33,@32,@1] , @[@12,@19,@37,@16,@33,@32,@1] , @[@12,@20,@14,@9,@34,@32,@1] , @[@12,@20,@30,@9,@34,@32,@1] , @[@12,@20,@34,@31,@33,@32,@1] , @[@12,@20,@10,@9,@34,@32,@1]  ],@[ @[@23,@31,@33,@19,@12] , @[@23,@31,@34,@20,@12] , @[@23,@31,@33,@32,@34,@20,@12] , @[@23,@31,@33,@16,@18,@19,@12] , @[@23,@31,@33,@16,@37,@19,@12] , @[@23,@31,@33,@16,@29,@19,@12] , @[@23,@31,@34,@32,@33,@19,@12] , @[@23,@31,@34,@9,@30,@20,@12] , @[@23,@31,@34,@9,@14,@20,@12] , @[@23,@31,@34,@9,@10,@20,@12]  ],@[ @[@12,@19,@33,@31,@23] , @[@12,@20,@34,@31,@23] , @[@12,@19,@29,@16,@33,@31,@23] , @[@12,@19,@33,@32,@34,@31,@23] , @[@12,@19,@18,@16,@33,@31,@23] , @[@12,@19,@37,@16,@33,@31,@23] , @[@12,@20,@14,@9,@34,@31,@23] , @[@12,@20,@30,@9,@34,@31,@23] , @[@12,@20,@34,@32,@33,@31,@23] , @[@12,@20,@10,@9,@34,@31,@23]  ],@[ @[@24,@28,@30,@20,@12] , @[@24,@28,@29,@19,@12] , @[@24,@28,@30,@11,@29,@19,@12] , @[@24,@28,@30,@9,@14,@20,@12] , @[@24,@28,@30,@9,@34,@20,@12] , @[@24,@28,@30,@9,@10,@20,@12] , @[@24,@28,@29,@16,@33,@19,@12] , @[@24,@28,@29,@16,@18,@19,@12] , @[@24,@28,@29,@16,@37,@19,@12] , @[@24,@28,@29,@11,@30,@20,@12]  ],@[ @[@12,@19,@29,@28,@24] , @[@12,@20,@30,@28,@24] , @[@12,@19,@29,@11,@30,@28,@24] , @[@12,@19,@33,@16,@29,@28,@24] , @[@12,@19,@18,@16,@29,@28,@24] , @[@12,@19,@37,@16,@29,@28,@24] , @[@12,@20,@14,@9,@30,@28,@24] , @[@12,@20,@30,@11,@29,@28,@24] , @[@12,@20,@34,@9,@30,@28,@24] , @[@12,@20,@10,@9,@30,@28,@24]  ],@[ @[@27,@11,@30,@20,@12] , @[@27,@11,@29,@19,@12] , @[@27,@11,@30,@9,@14,@20,@12] , @[@27,@11,@30,@9,@34,@20,@12] , @[@27,@11,@30,@9,@10,@20,@12] , @[@27,@11,@30,@28,@29,@19,@12] , @[@27,@11,@29,@16,@33,@19,@12] , @[@27,@11,@29,@16,@18,@19,@12] , @[@27,@11,@29,@16,@37,@19,@12] , @[@27,@11,@29,@28,@30,@20,@12]  ],@[ @[@12,@19,@29,@11,@27] , @[@12,@20,@30,@11,@27] , @[@12,@19,@29,@28,@30,@11,@27] , @[@12,@19,@33,@16,@29,@11,@27] , @[@12,@19,@18,@16,@29,@11,@27] , @[@12,@19,@37,@16,@29,@11,@27] , @[@12,@20,@14,@9,@30,@11,@27] , @[@12,@20,@30,@28,@29,@11,@27] , @[@12,@20,@34,@9,@30,@11,@27] , @[@12,@20,@10,@9,@30,@11,@27]  ],@[ @[@4,@17,@2]  ],@[ @[@2,@17,@4]  ],@[ @[@7,@15,@3]  ],@[ @[@3,@15,@7]  ],@[ @[@8,@36,@5]  ],@[ @[@5,@36,@8]  ],@[ @[@0,@35,@6]  ],@[ @[@6,@35,@0]  ], @[ @[@1,@32,@21]  ], @[ @[@21,@32,@1]  ], @[ @[@23,@31,@22]  ], @[ @[@22,@31,@23]  ], @[ @[@24,@28,@25]  ], @[ @[@25,@28,@24]  ], @[ @[@27,@11,@26]  ],@[ @[@26,@11,@27]  ]];
@@ -300,6 +301,7 @@ int main(int argc, const char * argv[]) {
          i++;
       }
       
+      
       for(ORInt i = 0; i < [isFlowA count]; i++){
          for(ORInt j = 0; j < [isFlowA[i] count]; j++){
             [model add:[isFlowA[i][j] geq:flowA[i][j]]];
@@ -313,22 +315,27 @@ int main(int argc, const char * argv[]) {
          }
          [model add:[ORFactory sumbool:model array:isFlowB[i] eqi:1]];
       }
-      id<ORIdArray> equiv = [ORFactory idArray:model range:RANGE(model, 0, (ORInt)([ec count])-1)];
-      id<ORRealVarArray> load = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt) [network count]- 1)];
-      id<ORRealVar> loadSquareSum = [ORFactory realVar:model name:@"loadSquareSum"];
-      for(ORInt i = 0; i < [network count];i++){
-         load[i] = [ORFactory realVar:model name:[NSString stringWithFormat:@"load[%@]",device[[network[i] intValue]]]];
-      }
       
+      
+      id<ORIdArray> equiv = [ORFactory idArray:model range:RANGE(model, 0, (ORInt)([ec count])-1)];
+   
       for(ORInt i = 0; i < [ec count]; i++){
          equiv[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)([network count])-1)];
          for(ORInt j = 0; j < [network count];j++){
             //equiv should be a boolean variable and constraint related should be the max (OR)
-            equiv[i][j] = [ORFactory intVar:model domain:RANGE(model, 0, MAXINT) name:[NSString stringWithFormat:@"equiv[%@,%@]",device[[ec[i] intValue]],device[[network[j] intValue]]]];
+            equiv[i][j] = [ORFactory intVar:model domain:RANGE(model, 0, 1) name:[NSString stringWithFormat:@"equiv[%@,%@]",device[[ec[i] intValue]],device[[network[j] intValue]]]];
          }
       }
-      //may be ok
-      [model add:[Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] square]) eq:loadSquareSum]];
+      
+      
+      
+      id<ORRealVarArray> load = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt) [network count]- 1)];
+      for(ORInt i = 0; i < [network count];i++){
+         printf("%s\n",[device[[network[i] intValue]] UTF8String]);
+         load[i] = [ORFactory realVar:model name:[NSString stringWithFormat:@"load[%@]",device[[network[i] intValue]]]];
+      }
+      id<ORRealVar> loadSquareSum = [ORFactory realVar:model name:@"loadSquaresSum"];
+      
       //demand constraints
       //trafic A
       for(ORInt s = 0, d = s + 1; d < [desiredFlowsOfA count]; s+=2,d+=2){
@@ -434,36 +441,7 @@ int main(int argc, const char * argv[]) {
       }
       
       
-      NSMutableArray* equivlist;
-      for(ORInt i = 0; i < [ec count]; i++){
-         ORInt node = [ec[i] intValue];
-         for(ORInt j = 0; j < [network count]; j++){
-            equivlist = [[NSMutableArray alloc] init];
-            for(NSMutableArray* path in P_nodesA[node]){
-               ORInt ind0 = [path[0] intValue];
-               ORInt ind1 = [path[1] intValue];
-               if([allpathA[ind0][ind1] containsObject:network[j]]){
-                  [equivlist addObject:isFlowA[ind0][ind1]];
-               }
-            }
-            for(NSMutableArray* path in P_nodesB[node]){
-               ORInt ind0 = [path[0] intValue];
-               ORInt ind1 = [path[1] intValue];
-               if([allpathB[ind0][ind1] containsObject:network[j]])
-                  [equivlist addObject:isFlowB[ind0][ind1]];
-            }
-            if([equivlist count] > 1){
-               [equivlist addObject:equiv[i][j]];
-               id<ORIntVarArray> equivArray = (id<ORIntVarArray>)[ORFactory idArray:model array:equivlist];
-               id<ORIntArray> coefs = [ORFactory intArray:model range:equivArray.range value:-1];
-               [coefs setObject:@(1) atIndexedSubscript:([coefs count] - 1)];
-               //or is an affectation over variables
-               [model add:[ORFactory sum:model array:equivArray coef:coefs eq:0]];
-            }
-            [equivlist release];
-         }
-      }
-      
+   
       NSMutableArray* l;
       id<ORDoubleArray> coefs;
       for (ORInt i = 0; i < [network count]; i++){
@@ -487,6 +465,41 @@ int main(int argc, const char * argv[]) {
          [l release];
       }
       //
+      
+      
+//      printf("%s", [NSString stringWithFormat: @"%@", [model constraints]].UTF8String);
+      
+      
+      
+      NSMutableArray* equivlist;
+      for(ORInt i = 0; i < [ec count]; i++){
+         ORInt node = [ec[i] intValue];
+         for(ORInt j = 0; j < [network count]; j++){
+            equivlist = [[NSMutableArray alloc] init];
+            for(NSMutableArray* path in P_nodesA[node]){
+               ORInt ind0 = [path[0] intValue];
+               ORInt ind1 = [path[1] intValue];
+               if([allpathA[ind0][ind1] containsObject:network[j]]){
+                  [equivlist addObject:isFlowA[ind0][ind1]];
+               }
+            }
+            for(NSMutableArray* path in P_nodesB[node]){
+               ORInt ind0 = [path[0] intValue];
+               ORInt ind1 = [path[1] intValue];
+               if([allpathB[ind0][ind1] containsObject:network[j]])
+                  [equivlist addObject:isFlowB[ind0][ind1]];
+            }
+            if([equivlist count] >= 1){
+               id<ORIntVarArray> equivArray = (id<ORIntVarArray>)[ORFactory idArray:model array:equivlist];
+               [model add:[ORFactory clause:model over:equivArray equal:equiv[i][j]]];
+            }
+            [equivlist release];
+         }
+      }
+      
+      [model add:[ORFactory sumSquare:model array:load eq:loadSquareSum]];
+//      [model add:[loadSquareSum eq: Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] square])]];
+      
       id<ORExpr> e = Sum(model, p, RANGE(model, 0, (ORInt)[flowA[0] count]-1),[flowA[0][p] mul:@([allpathA[0][p] count] - 1)]);
       for(ORInt i = 1; i < [flowA count]; i++){
          e = [e plus:Sum(model, p, RANGE(model, 0, (ORInt)[flowA[i] count]-1),[flowA[i][p] mul:@([allpathA[i][p] count] - 1)])];
@@ -494,21 +507,47 @@ int main(int argc, const char * argv[]) {
       for(ORInt i = 0; i < [flowB count]; i++){
          e = [e plus:Sum(model, p, RANGE(model, 0, (ORInt)[flowB[i] count]-1),[flowB[i][p] mul:@([allpathB[i][p] count] - 1)])];
       }
+//
+      [model minimize: [[e mul:@(alpha0)] plus:[loadSquareSum mul:@(alpha2)]]];
       
-      printf("%s", [NSString stringWithFormat: @"%@", [model constraints]].UTF8String);
+      id<MIPProgram> mip = [ORFactory createMIPProgram: model];
+      OROutcome status = [mip solve];
+      ORInt overlapLimit = 0;
+      ORInt overlapCurrent = 0;
+      ORInt nbBadCuts = 0;
+      ORBool gone = NO;
       
+      if(status == ORerror)  @throw [[ORExecutionError alloc] initORExecutionError:"Error in the model"];
+      
+      while(status == ORinfeasible && !gone){
+         printf("FUNCTIONAL LAYER WAS INFEASIBLE AFTER CUT\n");
+         printf("overlapLimit = %d\n", overlapLimit);
+         printf("overlapCurrent = %d\n", overlapCurrent);
+         overlapLimit++;
+         if(overlapLimit < overlapCurrent){
+            
+         }else if (overlapLimit == overlapCurrent){
+            printf("Removing currentcut as a cut b/c infeasible.");
+            nbBadCuts++;
+            gone = YES;
+         }
+         mip = [ORFactory createMIPProgram: model];
+         status = [mip solve];
+      }
+      
+      if(gone){
+         printf("Functional layer is infeasible.");
+      }else{
+         printf("-----Functional layer-----");
+//         print solution
+         printf("---------------------------");
+      }
       //            [allpathA release];
       //            [allpathB release];
       [P_nodesA release];
       [P_nodesB release];
       [demandB release];
       [demandA release];
-      
-      [model minimize: [[e mul:@(alpha0)] plus:[loadSquareSum mul:@(alpha2)]]];
-      
-      
-      id<MIPProgram> mip = [ORFactory createMIPProgram: model];
-      [mip solve];
    }
    return 0;
 }

@@ -576,6 +576,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Clause: visit method not defined"];
 }
+-(void) visitSumSquare: (id<ORSumSquare>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "SumSquare: visit method not defined"];
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolEqualc: visit method not defined"]; 
@@ -1120,6 +1124,7 @@
 -(void) visitHReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c {}
 -(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c {}
 -(void) visitClause:(id<ORConstraint>)c           {}
+-(void) visitSumSquare: (id<ORSumSquare>) c  {}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c  {}
 -(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c  {}
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c  {}
