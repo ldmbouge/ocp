@@ -150,7 +150,16 @@
    @protected
    MIPVariableI* _res;
 }
--(MIPConstraintI*) initMIPConstraintOR: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var res: (MIPVariableI*) res ;
+-(MIPConstraintI*) initMIPConstraintOR: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef:(ORDouble*) coef res: (MIPVariableI*) res ;
+-(MIPVariableI*) res;
+@end
+
+@interface MIPConstraintMIN : MIPConstraintI
+{
+@protected
+   MIPVariableI* _res;
+}
+-(MIPConstraintI*) initMIPConstraintMIN: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef:(ORDouble*) coef res: (MIPVariableI*) res ;
 -(MIPVariableI*) res;
 @end
 
@@ -301,6 +310,7 @@
 -(MIPConstraintI*) createGEQ: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
 -(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
 -(MIPConstraintI*) createOR:(id<MIPVariableArray>) vars eq:(MIPVariableI*) x;
+-(MIPConstraintI*) createMIN:(id<MIPVariableArray>) vars eq:(MIPVariableI*) x;
 
 
 -(MIPObjectiveI*)  createObjectiveMinimize: (MIPVariableI*) x;

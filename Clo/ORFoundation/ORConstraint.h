@@ -728,6 +728,11 @@ enum ORGroupType {
 -(ORDouble)        cst;
 @end
 
+@protocol ORRealMin <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORVar>) res;
+@end
+
 @protocol ORSumSquare <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORVar>) res;

@@ -18,5 +18,5 @@
 @class MIPParameterI;
 
 typedef enum { MIPinfeasible, MIPoptimal, MIPsuboptimal, MIPunbounded, MIPerror} MIPOutcome;
-typedef enum { MIPgeq, MIPleq, MIPeq,MIPor } MIPConstraintType;
+typedef enum { MIPgeq, MIPleq, MIPeq, MIPor, MIPmin } MIPConstraintType;
 typedef enum { MIPminimize, MIPmaximize } MIPObjectiveType;

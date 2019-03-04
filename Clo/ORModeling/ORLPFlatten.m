@@ -223,6 +223,10 @@ static BOOL _alreadyAdded;
 {
    _result = c;
 }
+-(void) visitRealMin: (id<ORRealMin>) c
+{
+   _result = c;
+}
 -(void) visitSumSquare: (id<ORSumSquare>) c
 {
    _result = c;

@@ -469,6 +469,24 @@
    [super print: "OR_"];
 }
 @end
+@implementation MIPConstraintMIN;
+
+-(MIPConstraintI*) initMIPConstraintMIN: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef:(ORDouble*) coef res: (MIPVariableI*) res
+{
+   self = [super initMIPConstraintI: solver size: size var: var coef: coef rhs: 0.0];
+   _type = MIPmin;
+   _res = res;
+   return self;
+}
+-(MIPVariableI*) res
+{
+   return _res;
+}
+-(void) print
+{
+   [super print: "MIN_"];
+}
+@end
 @implementation MIPQuadConstraint : MIPConstraintI
 #warning [hzi] should add resize and dealloc stuff
 -(MIPConstraintI*) initMIPQuadConstraint: (MIPSolverI*) solver sizeLin: (ORInt) size varLin: (MIPVariableI**) var coefLin: (ORDouble*) coef sizeQuad: (ORInt) sizeq varQuad: (MIPVariableI**) varq coefQuad: (id<ORDoubleArray>) coefq rhs: (ORDouble) rhs
@@ -1262,12 +1280,18 @@
    return cstr;
 }
 
+-(MIPConstraintI*) createMIN:(id<MIPVariableArray>) vars eq:(MIPVariableI*) x
+{
+   MIPLinearTermI* t = [self createLinearTerm];
+   for(ORInt i = vars.low; i <= vars.up; i++)
+      [t add:1 times: vars[i]];
+   return [self createMINWithTerm: t eq:x];
+}
 -(MIPConstraintI*) createOR:(id<MIPVariableArray>) vars eq:(MIPVariableI*) x
 {
    MIPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = vars.low; i <= vars.up; i++)
       [t add:1 times: vars[i]];
-//   [t add: 1 times:x];
    return [self createORWithTerm: t eq:x];
 }
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
@@ -1401,7 +1425,14 @@
       [t add: [coef at: i] times: var[i]];
    return [self createMaximize: t];
 }
-
+-(MIPConstraintI*) createMINWithTerm: (MIPLinearTermI*) t eq: (MIPVariableI*) x;
+{
+   [t close];
+   MIPConstraintI* c = [[MIPConstraintMIN alloc] initMIPConstraintMIN:self size: [t size] var: [t var] coef:[t coef] res:x];
+   [c setNb: _createdCstrs++];
+   [self trackMutable: c];
+   return c;
+}
 -(MIPConstraintI*) createORWithTerm: (MIPLinearTermI*) t eq: (MIPVariableI*) x;
 {
    [t close];

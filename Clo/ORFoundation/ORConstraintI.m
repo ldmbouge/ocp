@@ -6584,6 +6584,55 @@
 }
 @end
 
+@implementation ORRealMin {
+   id<ORVarArray> _ia;
+   id<ORVar>  _res;
+}
+-(ORRealMin*) init: (id<ORVarArray>) ia eq: (id<ORVar>) res
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _res = res;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (min(%@) == %@)",[self class],self,_ia,_res];
+   return buf;
+}
+-(void) visit: (ORVisitor*) v
+{
+   [v visitRealMin: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORVar>) res
+{
+   return _res;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_res];
+   return ms;
+}
+-(NSArray*)allVarsArray
+{
+   NSMutableArray* ms = [[[NSMutableArray alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_res];
+   return ms;
+}
+@end
+
 @implementation ORSumSquare {
    id<ORVarArray> _ia;
    id<ORVar>  _res;

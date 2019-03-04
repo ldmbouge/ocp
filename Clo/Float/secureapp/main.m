@@ -1,193 +1,4 @@
-//
-//  main.m
-//  security_app
-//
-//  Created by zitoun on 1/22/19.
-//
-
-#import <ORFoundation/ORFoundation.h>
-#import <ORProgram/ORProgramFactory.h>
-#import <ORProgram/ORProgram.h>
-
-#define MAX_PATH 10
-#define alpha0 10
-#define alpha1 10
-#define alpha2 0.01
-
-@interface Queue : NSObject  {
-   @package
-   ORInt      _mxs;
-   ORInt*     _tab;
-   ORInt    _enter;
-   ORInt     _exit;
-   ORInt     _mask;
-}
-
--(id) initQueue: (ORInt) sz;
--(ORBool)empty;
--(void)enQueue:(int)obj;
--(id)deQueue;
-@end
-
-@interface NSMutableArray (Queue)
-
-- (void) enqueue: (id)item;
-- (id) dequeue;
-- (BOOL) empty;
-- (id) peek;
-
-@end
-
-@implementation NSMutableArray (Queue)
-
-- (void) enqueue: (id)item {
-   [self addObject:item];
-}
-
-- (id) dequeue {
-   id item = nil;
-   if ([self count] != 0) {
-      item = [[[self objectAtIndex:0] retain] autorelease];
-      [self removeObjectAtIndex:0];
-   }
-   return item;
-}
-
-- (id) peek {
-   id item = nil;
-   if ([self count] != 0) {
-      item = [[[self objectAtIndex:0] retain] autorelease];
-   }
-   return item;
-}
-
-- (BOOL) empty
-{
-   return [self count] == 0;
-}
-@end
-
-
-
-@interface Graph : NSObject
-{
-   ORInt _nodes;
-   NSMutableArray* _lists;
-}
-
-
--(id) initGraph;
--(ORInt) size;
--(void) addAdjacency:(NSArray*)l;
--(void) addAdjacenyWithObject:(id) firstN,...;
-+(NSMutableArray*) bfs : (Graph*) graph source:(ORInt) startVertex dest:(ORInt) destVertex maxpaths:(ORInt) numberPaths;
-@end
-
-
-@implementation Graph
-
--(id) initGraph
-{
-   self = [super init];
-   _nodes = 0;
-   _lists = [[NSMutableArray alloc] init];
-   return self;
-}
--(void) dealloc
-{
-   [_lists release];
-   [super dealloc];
-}
--(ORInt) size
-{
-   return _nodes;
-}
--(NSMutableArray*) edges:(ORInt)node
-{
-   return _lists[node];
-}
--(void) addAdjacency:(NSArray*)l
-{
-   [_lists addObject:l];
-   _nodes++;
-}
--(void) addAdjacenyWithObject:(id) firstN,...
-{
-   NSMutableArray* list = [[NSMutableArray alloc] init];
-   va_list args;
-   va_start(args, firstN);
-   for (id arg = firstN; arg != nil; arg = va_arg(args, id))
-   {
-      [list addObject:arg];
-   }
-   va_end(args);
-   [_lists addObject:list];
-   _nodes++;
-}
--(NSString*)description
-{
-   NSMutableString* res = [NSMutableString stringWithFormat:@"G: #%d [",_nodes];
-   for(ORInt i = 0; i < [_lists count] ; i++){
-      [res appendFormat:@"\n%d : [ ",i];
-      for (ORInt j = 0; j < [_lists[i] count]; j++){
-         [res appendFormat:@"%@ ",[_lists[i] objectAtIndex:j]];
-      }
-      [res appendString:@"]"];
-   }
-   [res appendString:@"]"];
-   return res;
-}
-+(NSMutableArray*) bfs : (Graph*) graph source:(ORInt) startVertex dest:(ORInt) dstVertex maxpaths:(ORInt) nbP
-{
-   NSMutableArray* allpaths = [[NSMutableArray alloc] init];
-   NSMutableArray* q = [[NSMutableArray alloc] init];
-   NSMutableArray* path = [[NSMutableArray alloc] initWithObjects:@(startVertex), nil];
-   
-   [q enqueue:path];
-   while(![q empty]){
-      path = [q dequeue];
-      ORInt last = [[path lastObject] intValue];
-      if(last == dstVertex) {
-         //            NSLog(@"%@",path);
-         [allpaths addObject:path];
-         if([allpaths count] == 10) break;
-      }
-      
-      NSMutableArray* nbhood = graph->_lists[last];
-      for (int i = 0; i < [nbhood count]; i++) {
-         if (![path containsObject:nbhood[i]]) {
-            NSMutableArray* p = [[NSMutableArray alloc] initWithArray:path];
-            [p addObject:nbhood[i]];
-            [q enqueue:p];
-         }
-      }
-   }
-   
-   return allpaths;
-}
-//all device starting by h
-+(NSMutableArray*) getEC:(NSArray*)device with:(NSDictionary*)map
-{
-   NSMutableArray* res = [[NSMutableArray alloc] init];
-   for(ORInt i = 0; i < [device count]; i++){
-      if([device[i] characterAtIndex:0] == 'h'){
-         [res addObject:[map valueForKey:device[i]]];
-      }
-   }
-   return res;
-}
-//all device starting g or s
-+(NSMutableArray*) getNetworkDevice:(NSArray*)device with:(NSDictionary*)map
-{
-   NSMutableArray* res = [[NSMutableArray alloc] init];
-   for(ORInt i = 0; i < [device count]; i++){
-      if([device[i] characterAtIndex:0] == 'g' || [device[i] characterAtIndex:0] == 's' ){
-         [res addObject:[map valueForKey:device[i]]];
-      }
-   }
-   return res;
-}
-@end
+#import "Datastruct.h"
 
 //[hzi] for now I just decompose the different traffic as separate structure,
 //I should aggregate those structure
@@ -197,8 +8,10 @@ int main(int argc, const char * argv[]) {
       //-----------DEFINITION OF THE INSTANCE----------//
       NSArray* device = @[@"h8",  @"h9",  @"h2",  @"h3",  @"h1",  @"h6",  @"h7",  @"h4",  @"h5",  @"sc1",  @"sa5",  @"sa20",  @"g2",  @"g1",  @"sa9",  @"sa8",  @"sc4",  @"sa7",  @"sa6",  @"sc3",  @"sc2",  @"h10",  @"h11",  @"h12",  @"h13",  @"h14",  @"h15",  @"h16",  @"sa19",  @"sa18",  @"sa17",  @"sa16",  @"sa15",  @"sa14",  @"sa13",  @"sa12",  @"sa11", @"sa10"];
       NSMutableDictionary* device2ID = [[NSMutableDictionary alloc] init];
+      NSMutableArray* deviceMemory = [[NSMutableArray alloc] init];
       for(ORInt i = 0; i < [device count];i++){
          [device2ID setObject:@(i) forKey:device[i]];
+         [deviceMemory addObject:@100];
       }
       NSArray* flowWithA = @[@[@21,@1],@[@7,@3],@[@12,@27],@[@2,@4],@[@3,@7],@[@13,@7],@[@6,@0],@[@13,@4],@[@4,@13],@[@7,@13],@[@23,@22],@[@22,@23],@[@23,@12],@[@13,@0],@[@1,@21],@[@27,@12],@[@13,@8],@[@8,@13],@[@4,@2],@[@0,@13],@[@8,@5],@[@24,@12],@[@5,@8],@[@0,@6],@[@27,@26],@[@12,@23],@[@1,@12],@[@26,@27],@[@24,@25],@[@12,@1],@[@25,@24],@[@12,@24]];
       NSArray* flowWithB = @[@[@7,@3],@[@24,@25],@[@8,@5],@[@2,@4],@[@25,@2],@[@2,@21],@[@6,@3],@[@27,@26],@[@22,@23],@[@26,@27],@[@2,@5],@[@23,@22],@[@1,@21],@[@22,@3],@[@3,@7],@[@26,@3],@[@0,@6],@[@3,@6],@[@2,@25],@[@5,@8],@[@6,@0],@[@4,@2],@[@3,@22],@[@5,@2],@[@3,@26],@[@25,@24],@[@21,@1],@[@21,@2]];
@@ -268,6 +81,11 @@ int main(int argc, const char * argv[]) {
       NSArray* allpathA = @[ @[ @[@4,@17,@18,@19,@13] , @[@4,@17,@10,@20,@13] , @[@4,@17,@18,@16,@33,@19,@13] , @[@4,@17,@18,@16,@37,@19,@13] , @[@4,@17,@18,@16,@29,@19,@13] , @[@4,@17,@18,@15,@10,@20,@13] , @[@4,@17,@10,@15,@18,@19,@13] , @[@4,@17,@10,@9,@30,@20,@13] , @[@4,@17,@10,@9,@14,@20,@13] , @[@4,@17,@10,@9,@34,@20,@13]  ],@[ @[@13,@19,@18,@17,@4] , @[@13,@20,@10,@17,@4] , @[@13,@19,@29,@16,@18,@17,@4] , @[@13,@19,@33,@16,@18,@17,@4] , @[@13,@19,@18,@15,@10,@17,@4] , @[@13,@19,@37,@16,@18,@17,@4] , @[@13,@20,@14,@9,@10,@17,@4] , @[@13,@20,@30,@9,@10,@17,@4] , @[@13,@20,@34,@9,@10,@17,@4] , @[@13,@20,@10,@15,@18,@17,@4]  ],@[ @[@7,@15,@10,@20,@13] , @[@7,@15,@18,@19,@13] , @[@7,@15,@10,@17,@18,@19,@13] , @[@7,@15,@10,@9,@30,@20,@13] , @[@7,@15,@10,@9,@14,@20,@13] , @[@7,@15,@10,@9,@34,@20,@13] , @[@7,@15,@18,@16,@33,@19,@13] , @[@7,@15,@18,@16,@37,@19,@13] , @[@7,@15,@18,@16,@29,@19,@13] , @[@7,@15,@18,@17,@10,@20,@13]  ],@[ @[@13,@19,@18,@15,@7] , @[@13,@20,@10,@15,@7] , @[@13,@19,@29,@16,@18,@15,@7] , @[@13,@19,@33,@16,@18,@15,@7] , @[@13,@19,@18,@17,@10,@15,@7] , @[@13,@19,@37,@16,@18,@15,@7] , @[@13,@20,@14,@9,@10,@15,@7] , @[@13,@20,@30,@9,@10,@15,@7] , @[@13,@20,@34,@9,@10,@15,@7] , @[@13,@20,@10,@17,@18,@15,@7]  ],@[ @[@8,@36,@14,@20,@13] , @[@8,@36,@37,@19,@13] , @[@8,@36,@14,@9,@30,@20,@13] , @[@8,@36,@14,@9,@34,@20,@13] , @[@8,@36,@14,@9,@10,@20,@13] , @[@8,@36,@14,@35,@37,@19,@13] , @[@8,@36,@37,@16,@33,@19,@13] , @[@8,@36,@37,@16,@18,@19,@13] , @[@8,@36,@37,@16,@29,@19,@13] , @[@8,@36,@37,@35,@14,@20,@13]  ],@[ @[@13,@19,@37,@36,@8] , @[@13,@20,@14,@36,@8] , @[@13,@19,@29,@16,@37,@36,@8] , @[@13,@19,@33,@16,@37,@36,@8] , @[@13,@19,@18,@16,@37,@36,@8] , @[@13,@19,@37,@35,@14,@36,@8] , @[@13,@20,@14,@35,@37,@36,@8] , @[@13,@20,@30,@9,@14,@36,@8] , @[@13,@20,@34,@9,@14,@36,@8] , @[@13,@20,@10,@9,@14,@36,@8]  ],@[ @[@0,@35,@14,@20,@13] , @[@0,@35,@37,@19,@13] , @[@0,@35,@14,@9,@30,@20,@13] , @[@0,@35,@14,@9,@34,@20,@13] , @[@0,@35,@14,@9,@10,@20,@13] , @[@0,@35,@14,@36,@37,@19,@13] , @[@0,@35,@37,@16,@33,@19,@13] , @[@0,@35,@37,@16,@18,@19,@13] , @[@0,@35,@37,@16,@29,@19,@13] , @[@0,@35,@37,@36,@14,@20,@13]  ],@[ @[@13,@19,@37,@35,@0] , @[@13,@20,@14,@35,@0] , @[@13,@19,@29,@16,@37,@35,@0] , @[@13,@19,@33,@16,@37,@35,@0] , @[@13,@19,@18,@16,@37,@35,@0] , @[@13,@19,@37,@36,@14,@35,@0] , @[@13,@20,@14,@36,@37,@35,@0] , @[@13,@20,@30,@9,@14,@35,@0] , @[@13,@20,@34,@9,@14,@35,@0] , @[@13,@20,@10,@9,@14,@35,@0]  ],@[ @[@1,@32,@34,@20,@12] , @[@1,@32,@33,@19,@12] , @[@1,@32,@34,@31,@33,@19,@12] , @[@1,@32,@34,@9,@30,@20,@12] , @[@1,@32,@34,@9,@14,@20,@12] , @[@1,@32,@34,@9,@10,@20,@12] , @[@1,@32,@33,@31,@34,@20,@12] , @[@1,@32,@33,@16,@18,@19,@12] , @[@1,@32,@33,@16,@37,@19,@12] , @[@1,@32,@33,@16,@29,@19,@12]  ],@[ @[@12,@19,@33,@32,@1] , @[@12,@20,@34,@32,@1] , @[@12,@19,@29,@16,@33,@32,@1] , @[@12,@19,@33,@31,@34,@32,@1] , @[@12,@19,@18,@16,@33,@32,@1] , @[@12,@19,@37,@16,@33,@32,@1] , @[@12,@20,@14,@9,@34,@32,@1] , @[@12,@20,@30,@9,@34,@32,@1] , @[@12,@20,@34,@31,@33,@32,@1] , @[@12,@20,@10,@9,@34,@32,@1]  ],@[ @[@23,@31,@33,@19,@12] , @[@23,@31,@34,@20,@12] , @[@23,@31,@33,@32,@34,@20,@12] , @[@23,@31,@33,@16,@18,@19,@12] , @[@23,@31,@33,@16,@37,@19,@12] , @[@23,@31,@33,@16,@29,@19,@12] , @[@23,@31,@34,@32,@33,@19,@12] , @[@23,@31,@34,@9,@30,@20,@12] , @[@23,@31,@34,@9,@14,@20,@12] , @[@23,@31,@34,@9,@10,@20,@12]  ],@[ @[@12,@19,@33,@31,@23] , @[@12,@20,@34,@31,@23] , @[@12,@19,@29,@16,@33,@31,@23] , @[@12,@19,@33,@32,@34,@31,@23] , @[@12,@19,@18,@16,@33,@31,@23] , @[@12,@19,@37,@16,@33,@31,@23] , @[@12,@20,@14,@9,@34,@31,@23] , @[@12,@20,@30,@9,@34,@31,@23] , @[@12,@20,@34,@32,@33,@31,@23] , @[@12,@20,@10,@9,@34,@31,@23]  ],@[ @[@24,@28,@30,@20,@12] , @[@24,@28,@29,@19,@12] , @[@24,@28,@30,@11,@29,@19,@12] , @[@24,@28,@30,@9,@14,@20,@12] , @[@24,@28,@30,@9,@34,@20,@12] , @[@24,@28,@30,@9,@10,@20,@12] , @[@24,@28,@29,@16,@33,@19,@12] , @[@24,@28,@29,@16,@18,@19,@12] , @[@24,@28,@29,@16,@37,@19,@12] , @[@24,@28,@29,@11,@30,@20,@12]  ],@[ @[@12,@19,@29,@28,@24] , @[@12,@20,@30,@28,@24] , @[@12,@19,@29,@11,@30,@28,@24] , @[@12,@19,@33,@16,@29,@28,@24] , @[@12,@19,@18,@16,@29,@28,@24] , @[@12,@19,@37,@16,@29,@28,@24] , @[@12,@20,@14,@9,@30,@28,@24] , @[@12,@20,@30,@11,@29,@28,@24] , @[@12,@20,@34,@9,@30,@28,@24] , @[@12,@20,@10,@9,@30,@28,@24]  ],@[ @[@27,@11,@30,@20,@12] , @[@27,@11,@29,@19,@12] , @[@27,@11,@30,@9,@14,@20,@12] , @[@27,@11,@30,@9,@34,@20,@12] , @[@27,@11,@30,@9,@10,@20,@12] , @[@27,@11,@30,@28,@29,@19,@12] , @[@27,@11,@29,@16,@33,@19,@12] , @[@27,@11,@29,@16,@18,@19,@12] , @[@27,@11,@29,@16,@37,@19,@12] , @[@27,@11,@29,@28,@30,@20,@12]  ],@[ @[@12,@19,@29,@11,@27] , @[@12,@20,@30,@11,@27] , @[@12,@19,@29,@28,@30,@11,@27] , @[@12,@19,@33,@16,@29,@11,@27] , @[@12,@19,@18,@16,@29,@11,@27] , @[@12,@19,@37,@16,@29,@11,@27] , @[@12,@20,@14,@9,@30,@11,@27] , @[@12,@20,@30,@28,@29,@11,@27] , @[@12,@20,@34,@9,@30,@11,@27] , @[@12,@20,@10,@9,@30,@11,@27]  ],@[ @[@4,@17,@2]  ],@[ @[@2,@17,@4]  ],@[ @[@7,@15,@3]  ],@[ @[@3,@15,@7]  ],@[ @[@8,@36,@5]  ],@[ @[@5,@36,@8]  ],@[ @[@0,@35,@6]  ],@[ @[@6,@35,@0]  ], @[ @[@1,@32,@21]  ], @[ @[@21,@32,@1]  ], @[ @[@23,@31,@22]  ], @[ @[@22,@31,@23]  ], @[ @[@24,@28,@25]  ], @[ @[@25,@28,@24]  ], @[ @[@27,@11,@26]  ],@[ @[@26,@11,@27]  ]];
       //      NSMutableArray* allpathB = [[NSMutableArray alloc] init];
       NSArray* allpathB = @[ @[ @[@4,@17,@2]  ], @[ @[@2,@17,@4]  ], @[ @[@7,@15,@3]  ], @[ @[@3,@15,@7]  ], @[ @[@8,@36,@5]  ], @[ @[@5,@36,@8]  ], @[ @[@0,@35,@6]  ], @[ @[@6,@35,@0]  ], @[ @[@1,@32,@21]  ], @[ @[@21,@32,@1]  ], @[ @[@23,@31,@22]  ], @[ @[@22,@31,@23]  ], @[ @[@24,@28,@25]  ], @[ @[@25,@28,@24]  ], @[ @[@27,@11,@26]  ], @[ @[@26,@11,@27]  ], @[ @[@2,@17,@18,@16,@37,@36,@5] , @[@2,@17,@18,@19,@37,@36,@5] , @[@2,@17,@10,@9,@14,@36,@5] , @[@2,@17,@10,@20,@14,@36,@5] , @[@2,@17,@18,@16,@33,@19,@37,@36,@5] , @[@2,@17,@18,@16,@37,@35,@14,@36,@5] , @[@2,@17,@18,@16,@29,@19,@37,@36,@5] , @[@2,@17,@18,@15,@10,@9,@14,@36,@5] , @[@2,@17,@18,@15,@10,@20,@14,@36,@5] , @[@2,@17,@18,@19,@29,@16,@37,@36,@5]  ], @[ @[@5,@36,@14,@9,@10,@17,@2] , @[@5,@36,@14,@20,@10,@17,@2] , @[@5,@36,@37,@16,@18,@17,@2] , @[@5,@36,@37,@19,@18,@17,@2] , @[@5,@36,@14,@9,@30,@20,@10,@17,@2] , @[@5,@36,@14,@9,@34,@20,@10,@17,@2] , @[@5,@36,@14,@9,@10,@15,@18,@17,@2] , @[@5,@36,@14,@35,@37,@16,@18,@17,@2] , @[@5,@36,@14,@35,@37,@19,@18,@17,@2] , @[@5,@36,@14,@20,@30,@9,@10,@17,@2]  ], @[ @[@2,@17,@18,@16,@33,@32,@21] , @[@2,@17,@18,@19,@33,@32,@21] , @[@2,@17,@10,@9,@34,@32,@21] , @[@2,@17,@10,@20,@34,@32,@21] , @[@2,@17,@18,@16,@33,@31,@34,@32,@21] , @[@2,@17,@18,@16,@37,@19,@33,@32,@21] , @[@2,@17,@18,@16,@29,@19,@33,@32,@21] , @[@2,@17,@18,@15,@10,@9,@34,@32,@21] , @[@2,@17,@18,@15,@10,@20,@34,@32,@21] , @[@2,@17,@18,@19,@29,@16,@33,@32,@21]  ], @[ @[@21,@32,@34,@9,@10,@17,@2] , @[@21,@32,@34,@20,@10,@17,@2] , @[@21,@32,@33,@19,@18,@17,@2] , @[@21,@32,@33,@16,@18,@17,@2] , @[@21,@32,@34,@31,@33,@19,@18,@17,@2] , @[@21,@32,@34,@31,@33,@16,@18,@17,@2] , @[@21,@32,@34,@9,@30,@20,@10,@17,@2] , @[@21,@32,@34,@9,@14,@20,@10,@17,@2] , @[@21,@32,@34,@9,@10,@15,@18,@17,@2] , @[@21,@32,@34,@20,@14,@9,@10,@17,@2]  ], @[ @[@2,@17,@18,@16,@29,@28,@25] , @[@2,@17,@18,@19,@29,@28,@25] , @[@2,@17,@10,@9,@30,@28,@25] , @[@2,@17,@10,@20,@30,@28,@25] , @[@2,@17,@18,@16,@33,@19,@29,@28,@25] , @[@2,@17,@18,@16,@37,@19,@29,@28,@25] , @[@2,@17,@18,@16,@29,@11,@30,@28,@25] , @[@2,@17,@18,@15,@10,@9,@30,@28,@25] , @[@2,@17,@18,@15,@10,@20,@30,@28,@25] , @[@2,@17,@18,@19,@29,@11,@30,@28,@25]  ], @[ @[@25,@28,@30,@9,@10,@17,@2] , @[@25,@28,@30,@20,@10,@17,@2] , @[@25,@28,@29,@16,@18,@17,@2] , @[@25,@28,@29,@19,@18,@17,@2] , @[@25,@28,@30,@11,@29,@16,@18,@17,@2] , @[@25,@28,@30,@11,@29,@19,@18,@17,@2] , @[@25,@28,@30,@9,@14,@20,@10,@17,@2] , @[@25,@28,@30,@9,@34,@20,@10,@17,@2] , @[@25,@28,@30,@9,@10,@15,@18,@17,@2] , @[@25,@28,@30,@20,@14,@9,@10,@17,@2]  ], @[ @[@3,@15,@10,@9,@14,@35,@6] , @[@3,@15,@10,@20,@14,@35,@6] , @[@3,@15,@18,@16,@37,@35,@6] , @[@3,@15,@18,@19,@37,@35,@6] , @[@3,@15,@10,@17,@18,@16,@37,@35,@6] , @[@3,@15,@10,@17,@18,@19,@37,@35,@6] , @[@3,@15,@10,@9,@30,@20,@14,@35,@6] , @[@3,@15,@10,@9,@14,@36,@37,@35,@6] , @[@3,@15,@10,@9,@34,@20,@14,@35,@6] , @[@3,@15,@10,@20,@14,@36,@37,@35,@6]  ], @[ @[@6,@35,@14,@9,@10,@15,@3] , @[@6,@35,@14,@20,@10,@15,@3] , @[@6,@35,@37,@16,@18,@15,@3] , @[@6,@35,@37,@19,@18,@15,@3] , @[@6,@35,@14,@9,@30,@20,@10,@15,@3] , @[@6,@35,@14,@9,@34,@20,@10,@15,@3] , @[@6,@35,@14,@9,@10,@17,@18,@15,@3] , @[@6,@35,@14,@36,@37,@16,@18,@15,@3] , @[@6,@35,@14,@36,@37,@19,@18,@15,@3] , @[@6,@35,@14,@20,@30,@9,@10,@15,@3]  ], @[ @[@3,@15,@10,@9,@34,@31,@22] , @[@3,@15,@10,@20,@34,@31,@22] , @[@3,@15,@18,@16,@33,@31,@22] , @[@3,@15,@18,@19,@33,@31,@22] , @[@3,@15,@10,@17,@18,@16,@33,@31,@22] , @[@3,@15,@10,@17,@18,@19,@33,@31,@22] , @[@3,@15,@10,@9,@30,@20,@34,@31,@22] , @[@3,@15,@10,@9,@14,@20,@34,@31,@22] , @[@3,@15,@10,@9,@34,@32,@33,@31,@22] , @[@3,@15,@10,@20,@14,@9,@34,@31,@22]  ], @[ @[@22,@31,@33,@19,@18,@15,@3] , @[@22,@31,@33,@16,@18,@15,@3] , @[@22,@31,@34,@9,@10,@15,@3] , @[@22,@31,@34,@20,@10,@15,@3] , @[@22,@31,@33,@32,@34,@9,@10,@15,@3] , @[@22,@31,@33,@32,@34,@20,@10,@15,@3] , @[@22,@31,@33,@19,@29,@16,@18,@15,@3] , @[@22,@31,@33,@19,@18,@17,@10,@15,@3] , @[@22,@31,@33,@19,@37,@16,@18,@15,@3] , @[@22,@31,@33,@16,@18,@17,@10,@15,@3]  ], @[ @[@3,@15,@10,@9,@30,@11,@26] , @[@3,@15,@10,@20,@30,@11,@26] , @[@3,@15,@18,@16,@29,@11,@26] , @[@3,@15,@18,@19,@29,@11,@26] , @[@3,@15,@10,@17,@18,@16,@29,@11,@26] , @[@3,@15,@10,@17,@18,@19,@29,@11,@26] , @[@3,@15,@10,@9,@30,@28,@29,@11,@26] , @[@3,@15,@10,@9,@14,@20,@30,@11,@26] , @[@3,@15,@10,@9,@34,@20,@30,@11,@26] , @[@3,@15,@10,@20,@14,@9,@30,@11,@26]  ], @[ @[@26,@11,@30,@9,@10,@15,@3] , @[@26,@11,@30,@20,@10,@15,@3] , @[@26,@11,@29,@16,@18,@15,@3] , @[@26,@11,@29,@19,@18,@15,@3] , @[@26,@11,@30,@9,@14,@20,@10,@15,@3] , @[@26,@11,@30,@9,@34,@20,@10,@15,@3] , @[@26,@11,@30,@9,@10,@17,@18,@15,@3] , @[@26,@11,@30,@28,@29,@16,@18,@15,@3] , @[@26,@11,@30,@28,@29,@19,@18,@15,@3] , @[@26,@11,@30,@20,@14,@9,@10,@15,@3]  ]];
+      
+      NSArray* penality = @[ @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @100, @5 ], @[ @100, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ], @[ @5, @5 ] ];
+      
+      NSArray* risk = @[ @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @50, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @50, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ], @[ @1, @1 ] ];
+      
       ORInt src;
       ORInt dst;
       NSMutableArray* tmp;
@@ -353,64 +171,15 @@ int main(int argc, const char * argv[]) {
       NSMutableDictionary* P_edgesA = [[NSMutableDictionary alloc] init];
       NSMutableDictionary* P_edgesB = [[NSMutableDictionary alloc] init];
       
-      //Just a dictionary to get all paths where a edges belong
-      for(ORInt i = 0; i < [allpathA count]; i++){
-         for(ORInt j = 0; j < [allpathA[i] count]; j++){
-            NSMutableArray* path = allpathA[i][j];
-            for (ORInt s = 0, d = s + 1; d < [path count]; s++, d++) {
-               NSArray* key = @[path[s],path[d]];
-               NSMutableArray* ps = [P_edgesA objectForKey:key];
-               if(ps == nil){
-                  ps = [[NSMutableArray alloc] init];
-               }
-               [ps addObject:@[@(i),@(j)]];
-               [P_edgesA setObject:ps forKey:key];
-            }
-         }
-      }
-      for(ORInt i = 0; i < [allpathB count]; i++){
-         for(ORInt j = 0; j < [allpathB[i] count]; j++){
-            NSMutableArray* path = allpathB[i][j];
-            for (ORInt s = 0, d = s + 1; d < [path count]; s++, d++) {
-               NSArray* key = @[path[s],path[d]];
-               NSMutableArray* ps = [P_edgesB objectForKey:key];
-               if(ps == nil){
-                  ps = [[NSMutableArray alloc] init];
-               }
-               [ps addObject:@[@(i),@(j)]];
-               [P_edgesB setObject:ps forKey:key];
-            }
-         }
-      }
+      mappingEP(P_edgesA, allpathA);
+      mappingEP(P_edgesB, allpathB);
       
-      
-      //        Just an array to get all paths where a node belong Ex: P_nodesA[0] -> [[ind0,ind1],[],[]] will return an array of array of indices
-      //      each array of indices correspond to a path in allPath[ind0][ind1]
+      //        Just an array to get all paths where a node belong Ex: P_nodesA[0] -> [[ind0,ind1],[],[]] will return an array of array of indices each array of indices correspond to a path in allPath[ind0][ind1]
       NSMutableArray* P_nodesA = [[NSMutableArray alloc] initWithCapacity:[g size]];
       NSMutableArray* P_nodesB = [[NSMutableArray alloc] initWithCapacity:[g size]];
-      for(ORInt i = 0; i < [g size]; i++){
-         P_nodesA[i] = [[NSMutableArray alloc] init];
-         P_nodesB[i] = [[NSMutableArray alloc] init];
-      }
-      for(ORInt i = 0; i < [allpathA count]; i++){
-         for(ORInt j = 0; j < [allpathA[i] count]; j++){
-            for(ORInt k = 0; k < [allpathA[i][j] count]; k++){
-               ORInt node = [allpathA[i][j][k] intValue];
-               [P_nodesA[node] addObject:@[@(i),@(j)]];
-            }
-         }
-      }
-      for(ORInt i = 0; i < [allpathB count]; i++){
-         for(ORInt j = 0; j < [allpathB[i] count]; j++){
-            for(ORInt k = 0; k < [allpathB[i][j] count]; k++){
-               ORInt node = [allpathB[i][j][k] intValue];
-               if(P_nodesB[node] == nil){
-                  P_nodesB[node] = [[NSMutableArray alloc] init];
-               }
-               [P_nodesB[node] addObject:@[@(i),@(j)]];
-            }
-         }
-      }
+      mappingNP(P_nodesA, allpathA, [g size]);
+      mappingNP(P_nodesB, allpathB, [g size]);
+      
       //capacity flow
       NSMutableArray* adj = nil;
       id<ORIntVarArray> arcFlow;
@@ -440,8 +209,6 @@ int main(int argc, const char * argv[]) {
          }
       }
       
-      
-   
       NSMutableArray* l;
       id<ORDoubleArray> coefs;
       for (ORInt i = 0; i < [network count]; i++){
@@ -464,12 +231,6 @@ int main(int argc, const char * argv[]) {
          [model add:[ORFactory realSum:model array:(id<ORRealVarArray>)[ORFactory idArray:model array:l] coef:coefs eq:0.0]];
          [l release];
       }
-      //
-      
-      
-//      printf("%s", [NSString stringWithFormat: @"%@", [model constraints]].UTF8String);
-      
-      
       
       NSMutableArray* equivlist;
       for(ORInt i = 0; i < [ec count]; i++){
@@ -498,7 +259,6 @@ int main(int argc, const char * argv[]) {
       }
       
       [model add:[ORFactory sumSquare:model array:load eq:loadSquareSum]];
-//      [model add:[loadSquareSum eq: Sum(model, i,RANGE(model, 0, (ORInt)[load count] - 1),[load[i] square])]];
       
       id<ORExpr> e = Sum(model, p, RANGE(model, 0, (ORInt)[flowA[0] count]-1),[flowA[0][p] mul:@([allpathA[0][p] count] - 1)]);
       for(ORInt i = 1; i < [flowA count]; i++){
@@ -507,7 +267,7 @@ int main(int argc, const char * argv[]) {
       for(ORInt i = 0; i < [flowB count]; i++){
          e = [e plus:Sum(model, p, RANGE(model, 0, (ORInt)[flowB[i] count]-1),[flowB[i][p] mul:@([allpathB[i][p] count] - 1)])];
       }
-//
+
       [model minimize: [[e mul:@(alpha0)] plus:[loadSquareSum mul:@(alpha2)]]];
       
       id<MIPProgram> mip = [ORFactory createMIPProgram: model];
@@ -536,12 +296,205 @@ int main(int argc, const char * argv[]) {
       }
       
       if(gone){
-         printf("Functional layer is infeasible.");
+         printf("Functional layer is infeasible.\n");
       }else{
-         printf("-----Functional layer-----");
-//         print solution
-         printf("---------------------------");
+         printf("-----Functional layer-----\n");
+         
+         id<ORObjectiveValue> obj = [mip objectiveValue];
+         ORDouble objv = [obj doubleValue];
+         printf("Objective value is :%f\n",objv);
+         printf("---------------------------\n");
+         
+         id<ORModel> security = [ORFactory createModel];
+         
+         ORInt piCost = 10;
+         NSArray* fwCost = @[@5,@5,@5,@5,@1];
+         
+         NSMutableArray* flowPathsA = [[NSMutableArray alloc] init];
+         NSMutableArray* flowPathsB = [[NSMutableArray alloc] init];
+         NSMutableArray* penalityPathA = [[NSMutableArray alloc] init];
+         NSMutableArray* penalityPathB = [[NSMutableArray alloc] init];
+         NSMutableArray* flow2AllA = [[NSMutableArray alloc] init];
+         NSMutableArray* flow2AllB = [[NSMutableArray alloc] init];
+         for (ORInt i = 0; i < [isFlowA count]; i++) {
+            for (ORInt j = 0; j < [isFlowA[i] count]; j++) {
+               ORInt v = [mip intValue:isFlowA[i][j]];
+               if(v){
+                  [flow2AllA addObject:@[@(i),@(j)]];
+                  [flowPathsA addObject:allpathA[i][j]];
+                  [penalityPathA addObject:@(max([penality[i][0] intValue], [penality[j][0] intValue]))];
+               }
+            }
+         }
+         for (ORInt i = 0; i < [isFlowB count]; i++) {
+            for (ORInt j = 0; j < [isFlowB[i] count]; j++) {
+               ORInt v = [mip intValue:isFlowB[i][j]];
+               if(v){
+                  [flow2AllB addObject:@[@(i),@(j)]];
+                  [flowPathsB addObject:allpathB[i][j]];
+                  [penalityPathB addObject:@(max([penality[i][1] intValue], [penality[j][1] intValue]))];
+               }
+            }
+         }
+         NSMutableArray* flowRiskA = [[NSMutableArray alloc] initWithCapacity:[flowPathsA count]];
+         NSMutableArray* flowRiskB = [[NSMutableArray alloc] initWithCapacity:[flowPathsB count]];
+         
+         riskCacl(flowRiskA, flowPathsA, risk, 0, [g size]);
+         riskCacl(flowRiskB, flowPathsB, risk, 1, [g size]);
+         
+         ORInt initRisk = 0;
+         for(NSNumber* n in flowRiskA)
+            initRisk += [n intValue];
+         
+         for(NSNumber* n in flowRiskB)
+            initRisk += [n intValue];
+         
+         id<ORIntRange> BINARY = RANGE(security, 0, 1);
+         id<ORIntRange> NODES_R = RANGE(security, 0, (ORInt)[device count] - 1);
+         id<ORIntRange> PATHSA_R = RANGE(security, 0, (ORInt)[flowPathsA count] - 1);
+         id<ORIntRange> PATHSB_R = RANGE(security, 0, (ORInt)[flowPathsB count] - 1);
+         id<ORIntVarArray> pi = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"pi"];
+          id<ORIntVarArray> firewallA = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"firewallA"];
+         id<ORIntVarArray> firewallB = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"firewallB"];
+         id<ORIntVarArray> firewallOther = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"firewall*"];
+         id<ORIntVarArray> fwORA = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"fwORA"];
+         id<ORIntVarArray> fwORB = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"fwORB"];
+         
+         id<ORIntVarArray> fwOnPathA = [ORFactory intVarArray:security range:PATHSA_R domain:BINARY names:@"fwOnPathA"];
+         id<ORRealVarArray> riskFactorA = [ORFactory realVarArray:security range:PATHSA_R low:0. up:1. names:@"fwOnPathA"];
+         
+         id<ORIntVarArray> fwOnPathB = [ORFactory intVarArray:security range:PATHSB_R domain:BINARY names:@"fwOnPathB"];
+         id<ORRealVarArray> riskFactorB = [ORFactory realVarArray:security range:PATHSB_R low:0. up:1. names:@"fwOnPathB"];
+      
+         id<ORIdArray> riskMINfwA = [ORFactory idArray:security range:PATHSA_R];
+         id<ORIdArray> riskMINpiA = [ORFactory idArray:security range:PATHSA_R];
+         
+         id<ORIdArray> riskMINfwB = [ORFactory idArray:security range:PATHSB_R];
+         id<ORIdArray> riskMINpiB = [ORFactory idArray:security range:PATHSB_R];
+         
+         for(ORInt i = 0; i < [flowPathsA count]; i++){
+            riskMINfwA[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsA[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINfwA[%d]",i]];
+             riskMINpiA[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsA[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINpiA[%d]",i]];
+         }
+         
+         for(ORInt i = 0; i < [flowPathsB count]; i++){
+            riskMINfwB[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsB[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINfwB[%d]",i]];
+            riskMINpiB[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsB[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINpiB[%d]",i]];
+         }
+         //respect device memory capacity
+         for(ORInt i = 0; i < [network count]; i++){
+            ORInt n = [network[i] intValue];
+            id<ORExpr> fe = [[[[firewallA[n] mul:fwCost[0]] plus:[firewallB[n] mul:fwCost[1]]] mul:[firewallOther[n] mul:fwCost[4]]] plus:[pi[n] mul:@(piCost)]];
+            [security add:[fe leq:deviceMemory[n]]];
+         }
+         
+         //fwOnPath constraints
+         for (ORInt p = 0; p < [flowPathsA count]; p++){
+            NSMutableArray* arr = [[NSMutableArray alloc] init];
+            for(ORInt i = 0; i < [flowPathsA[p] count]; i++){
+               ORInt n = [flowPathsA[p][i] intValue];
+               if([Graph isNetWorkDevice:device[n]]){
+                  [arr addObject: firewallOther[n]];
+                  [arr addObject: firewallA[n]];
+               }
+            }
+            id<ORIntVarArray> ar = (id<ORIntVarArray>)[ORFactory idArray:security array:arr];
+            [arr release];
+            [security add:[ORFactory clause:security over:ar equal:fwOnPathA[p]]];
+         }
+         
+         for (ORInt p = 0; p < [flowPathsB count]; p++){
+            NSMutableArray* arr = [[NSMutableArray alloc] init];
+            for(ORInt i = 0; i < [flowPathsB[p] count]; i++){
+               ORInt n = [flowPathsB[p][i] intValue];
+               if([Graph isNetWorkDevice:device[n]]){
+                  [arr addObject: firewallOther[n]];
+                  [arr addObject: firewallB[n]];
+               }
+            }
+            id<ORIntVarArray> ar = (id<ORIntVarArray>)[ORFactory idArray:security array:arr];
+            [arr release];
+            [security add:[ORFactory clause:security over:ar equal:fwOnPathB[p]]];
+         }
+         
+//         riskMIN
+         id<ORExpr> c = [ORFactory double:security value:1.0];
+         for(ORInt p = 0; p < [flowPathsA count];p++){
+            for(ORInt i = 0; i < [flowPathsA[p] count]; i++){
+               ORInt n = [flowPathsA[p][i] intValue];
+               if([Graph isNetWorkDevice:device[n]]){
+                  ORDouble f = pow(0.5, i+1);
+                  [security add:[[c sub:[fwORA[n] mul:@(f)]] eq:riskMINfwA[p][i]]];
+                  [security add:[[c sub:[[fwORA[n] mul:@(f)] mul:@(0.1)]] eq:riskMINpiA[p][i]]];
+               }
+            }
+         }
+         
+//         riskFactor
+         for(ORInt p = 0; p < [flowPathsA count]; p++){
+            NSMutableArray* arr = [[NSMutableArray alloc] init];
+            for(ORInt i = 0; i < [flowPathsA[p] count]; i++){
+               ORInt n = [flowPathsA[p][i] intValue];
+               if([Graph isNetWorkDevice:device[n]]){
+                  [arr addObject: riskMINfwA[p][i]];
+                  [arr addObject: riskMINpiA[p][i]];
+               }
+            }
+            id<ORRealVarArray> ar = (id<ORRealVarArray>)[ORFactory idArray:security array:arr];
+            [arr release];
+            [security add:[ORFactory realMin:security array:ar eq:riskFactorA[p]]];
+         }
+         
+         for(ORInt p = 0; p < [flowPathsB count]; p++){
+            NSMutableArray* arr = [[NSMutableArray alloc] init];
+            for(ORInt i = 0; i < [flowPathsB[p] count]; i++){
+               ORInt n = [flowPathsB[p][i] intValue];
+               if([Graph isNetWorkDevice:device[n]]){
+                  [arr addObject: riskMINfwB[p][i]];
+                  [arr addObject: riskMINpiB[p][i]];
+               }
+            }
+            id<ORRealVarArray> ar = (id<ORRealVarArray>)[ORFactory idArray:security array:arr];
+            [arr release];
+            [security add:[ORFactory realMin:security array:ar eq:riskFactorB[p]]];
+         }
+         
+         for (ORInt n = 0; n < [fwORA count]; n++) {
+            id<ORIntVarArray> arr = [ORFactory intVarArray:security range:BINARY];
+            arr[0] = firewallA[n];
+            arr[1] = firewallOther[n];
+            [security add:[ORFactory clause:security over:arr equal:fwORA[n]]];
+         }
+         for (ORInt n = 0; n < [fwORB count]; n++) {
+            id<ORIntVarArray> arr = [ORFactory intVarArray:security range:BINARY];
+            arr[0] = firewallB[n];
+            arr[1] = firewallOther[n];
+            [security add:[ORFactory clause:security over:arr equal:fwORB[n]]];
+         }
+         
+         //objective
+         id<ORExpr> piNum = Sum(security,n,pi.range,pi[n]);
+         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,firewallA[n]) plus:Sum(model,n,firewallB.range,firewallB[n])];
+         id<ORExpr> simplicityMetric = [piNum mul:[fwNum mul:@(10)]];
+         id<ORExpr> flowReduction = Sum(security,n,load.range,[pi[[network[n] intValue]] mul:@([mip doubleValue:load[n]])]);
+         id<ORExpr> goodTrafficBlocked = [[ORFactory sum:security over:fwOnPathA.range suchThat:nil of:^id<ORExpr>(ORInt p){
+            ORInt ind0 = [flow2AllA[p][0] intValue];
+            ORInt ind1 = [flow2AllA[p][1] intValue];
+            return (id<ORExpr>)([[fwOnPathA[p] mul:@([mip doubleValue:flowA[ind0][ind1]])] mul:penalityPathA[p]]);
+         }] plus:[ORFactory sum:security over:fwOnPathB.range suchThat:nil of:^id<ORExpr>(ORInt p){
+            ORInt ind0 = [flow2AllB[p][0] intValue];
+            ORInt ind1 = [flow2AllB[p][1] intValue];
+            return (id<ORExpr>)([[fwOnPathB[p] mul:@([mip doubleValue:flowB[ind0][ind1]])] mul:penalityPathB[p]]);
+         }]];
+         id<ORExpr> networkRisk = [Sum(security,p,riskFactorA.range,[riskFactorA[p] mul:flowRiskA[p]]) plus:Sum(security,p,riskFactorB.range,[riskFactorB[p] mul:flowRiskB[p]])];
+         
+         [security minimize: [[[[simplicityMetric mul:@(beta0)] plus:[flowReduction mul:@(beta1)]] plus:[goodTrafficBlocked mul:@(beta2)]] plus:[networkRisk mul:@(beta3)]]];
+         id<MIPProgram> mipSecurity = [ORFactory createMIPProgram: security];
+         status = [mipSecurity solve];
+   
       }
+      
+      
       //            [allpathA release];
       //            [allpathB release];
       [P_nodesA release];
@@ -551,4 +504,3 @@ int main(int argc, const char * argv[]) {
    }
    return 0;
 }
-

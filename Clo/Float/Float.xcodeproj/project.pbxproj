@@ -2789,6 +2789,7 @@
 		08CBF98A2208BDB0006D79AE /* objmp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = objmp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		08DEE4A7214FFF0B00E867FE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08DEE4BB214FFF1B00E867FE /* sine_double */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sine_double; sourceTree = BUILT_PRODUCTS_DIR; };
+		08E4D820222CEAF000E683B5 /* Datastruct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Datastruct.h; sourceTree = "<group>"; };
 		08EC895C214FA6C3009B4AF7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08EC8970214FA6CF009B4AF7 /* square_8_true-unreach-call */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "square_8_true-unreach-call"; sourceTree = BUILT_PRODUCTS_DIR; };
 		08F63D0721A5E11500985552 /* disabledArray.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = disabledArray.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5491,6 +5492,7 @@
 			isa = PBXGroup;
 			children = (
 				08CBF9752208BD6D006D79AE /* main.m */,
+				08E4D820222CEAF000E683B5 /* Datastruct.h */,
 			);
 			path = secureapp;
 			sourceTree = "<group>";

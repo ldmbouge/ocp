@@ -214,6 +214,10 @@ BOOL _alreadyAdded;
 {
     _result = v;
 }
+-(void) visitRealMin:(id<ORConstraint>)c
+{
+   _result = c;
+}
 -(void) visitSumSquare:(id<ORConstraint>)c
 {
    _result = c;

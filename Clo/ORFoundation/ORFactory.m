@@ -1761,6 +1761,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORReal)
++(id<ORConstraint>) realMin: (id<ORTracker>) model array: (id<ORVarArray>) x eq: (id<ORVar>) res
+{
+   id<ORConstraint> o = [[ORRealMin alloc] init: x eq:res];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) realSquare:(id<ORTracker>)model var:(id<ORRealVar>)x equal:(id<ORRealVar>)res
 {
    id<ORConstraint> o = [[ORRealSquare alloc] init:res square:x];

@@ -291,6 +291,19 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
+-(void) visitRealMin: (id<ORRealMin>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> vars = [c vars];
+      id<ORVar> x = [c res];
+      [vars visit: self];
+      id<MIPVariableArray> dvar = _gamma[vars.getId];
+      MIPVariableI* dx = [self concreteVar:x];
+      MIPConstraintI* concreteCstr = [_MIPsolver createMIN:dvar eq:dx];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+   }
+}
 -(void) visitSumSquare: (id<ORSumSquare>) c
 {
    if (_gamma[c.getId] == NULL) {
@@ -365,12 +378,11 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
-#warning It seems that i have an issue there
 -(void) visitSquare:(id<ORSquare>)c
 {
    if (_gamma[c.getId] == NULL) {
       MIPVariableI* x[2] = { [self concreteVar:c.op],[self concreteVar:c.op] };
-      ORDouble coefq[1] = { 1.0 };
+      id<ORDoubleArray> coefq = [ORFactory doubleArray:_program range:RANGE(_program,0,0) value:1.0];
       MIPVariableI* res[1] = { [self concreteVar:c.res] };
       ORDouble coef[1] = { -1.0 };
       MIPConstraintI* cstr = [_MIPsolver createQuadEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];

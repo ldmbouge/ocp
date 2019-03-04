@@ -684,6 +684,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleDiv: visit method not defined"];
 }
+-(void) visitRealMin: (id<ORRealMin>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealMin: visit method not defined"];
+}
 -(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearLeq: visit method not defined"]; 
@@ -1136,6 +1140,7 @@
 -(void) visitLinearGeq: (id<ORLinearGeq>) c {}
 -(void) visitLinearLeq: (id<ORLinearLeq>) c {}
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
+-(void) visitRealMin: (id<ORRealMin>) c {}
 -(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c {}
 -(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c {}
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c {}
