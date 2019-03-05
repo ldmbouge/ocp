@@ -60,7 +60,7 @@
       intersectionInterval inter;
       float_interval resTmp = makeFloatInterval(_resi.inf, _resi.sup);
       fpi_dtof(_precision, _rounding, &resTmp, &_initiali);
-      inter = intersection(_resi, resTmp, 0.0f);
+      inter = intersection(_res, _resi, resTmp, 0.0f);
       if(inter.changed)
          [_res updateInterval:inter.result.inf and:inter.result.sup];
       
@@ -69,7 +69,7 @@
       double_interval initialTmp = makeDoubleInterval(_initiali.inf, _initiali.sup);
       intersectionIntervalD inter2;
       fpi_dtof_inv(_precision, _rounding, &initialTmp,&_resi);
-      inter2 = intersectionD(_initiali, initialTmp, 0.0f);
+      inter2 = intersectionD(_initial,_initiali, initialTmp, 0.0f);
       if(inter2.changed)
          [_initial updateInterval:inter2.result.inf and:inter2.result.sup];
    }
@@ -135,14 +135,14 @@
       intersectionInterval inter;
       float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
       fpi_minusf(_precision,_rounding, &yTmp, &_xi);
-      inter = intersection(_yi, yTmp, 0.0f);
+      inter = intersection(_y, _yi, yTmp, 0.0f);
       if(inter.changed)
          [_y updateInterval:inter.result.inf and:inter.result.sup];
       
       updateFloatInterval(&_yi,_y);
       float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
       fpi_minusf(_precision,_rounding, &xTmp, &_yi);
-      inter = intersection(_xi, xTmp, 0.0f);
+      inter = intersection(_x, _xi, xTmp, 0.0f);
       if(inter.changed)
          [_x updateInterval:inter.result.inf and:inter.result.sup];
    }
@@ -296,7 +296,7 @@
          float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
          fpi_setf(_precision, _rounding, &xTmp, &_yi);
          
-         inter = intersection(_xi, xTmp, 0.0f);
+         inter = intersection(_x, _xi, xTmp, 0.0f);
          if(inter.changed)
             [_x updateInterval:inter.result.inf and:inter.result.sup];
          if ((_yi.inf != inter.result.inf) || (_yi.sup != inter.result.sup))
@@ -722,35 +722,39 @@
       changed = false;
       zTemp = z;
       fpi_addf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       yTemp = y;
       fpi_add_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_addxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_addyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged){
+   if(gchanged ||
+      (![_z bound] && (*((int32_t *)&(z.inf)) == *((int32_t *)&(z.sup)))) ||
+      (![_x bound] && (*((int32_t *)&(x.inf)) == *((int32_t *)&(x.sup)))) ||
+      (![_y bound] && (*((int32_t *)&(y.inf)) == *((int32_t *)&(y.sup))))) {
+      
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -844,35 +848,38 @@
       changed = false;
       zTemp = z;
       fpi_subf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       yTemp = y;
       fpi_sub_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_subxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_subyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged){
+   if(gchanged ||
+      (![_z bound] && (*((int32_t *)&(z.inf)) == *((int32_t *)&(z.sup)))) ||
+      (![_x bound] && (*((int32_t *)&(x.inf)) == *((int32_t *)&(x.sup)))) ||
+      (![_y bound] && (*((int32_t *)&(y.inf)) == *((int32_t *)&(y.sup))))) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -963,24 +970,27 @@
       changed = false;
       zTemp = z;
       fpi_multf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_multxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_multyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged){
+   if(gchanged ||
+   (![_z bound] && (*((int32_t *)&(z.inf)) == *((int32_t *)&(z.sup)))) ||
+   (![_x bound] && (*((int32_t *)&(x.inf)) == *((int32_t *)&(x.sup)))) ||
+   (![_y bound] && (*((int32_t *)&(y.inf)) == *((int32_t *)&(y.sup))))) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -1047,24 +1057,27 @@
       changed = false;
       zTemp = z;
       fpi_divf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_divxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_divyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged){
+   if(gchanged ||
+      (![_z bound] && (*((int32_t *)&(z.inf)) == *((int32_t *)&(z.sup)))) ||
+      (![_x bound] && (*((int32_t *)&(x.inf)) == *((int32_t *)&(x.sup)))) ||
+      (![_y bound] && (*((int32_t *)&(y.inf)) == *((int32_t *)&(y.sup))))) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];

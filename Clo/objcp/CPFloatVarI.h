@@ -52,6 +52,8 @@
 // Interface for CP extensions
 
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
+-(void) updateMin: (ORFloat) newMin propagate:(ORBool)p;
+-(void) updateMax: (ORFloat) newMax propagate:(ORBool)p;
 -(void) updateMin: (ORFloat) newMin;
 -(void) updateMax: (ORFloat) newMax;
 -(void) updateInterval: (ORFloat) newMin and: (ORFloat)newMax;
@@ -236,7 +238,7 @@ static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
    }
    return makeFloatInterval(min,max);
 }
-static inline intersectionInterval intersection(float_interval r, float_interval x, ORDouble percent)
+static inline intersectionInterval intersection(CPFloatVarI* v, float_interval r, float_interval x, ORDouble percent)
 {
    double reduced = 0;
    int changed = 0;
@@ -247,6 +249,10 @@ static inline intersectionInterval intersection(float_interval r, float_interval
    
    if(x.inf > x.sup)
       failNow();
+   if(!changed && reduced > 0.){
+      [v updateMin:r.inf propagate:NO];
+      [v updateMax:r.sup propagate:NO];
+   }
    return (intersectionInterval){r,changed};
 }
 

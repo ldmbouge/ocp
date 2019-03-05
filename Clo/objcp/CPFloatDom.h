@@ -22,6 +22,8 @@
     TRFloatInterval    _domain;
 }
 -(id)initCPFloatDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up;
+-(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x propagate:(ORBool) p;
+-(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x propagate:(ORBool) p;
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
 -(void) updateInterval:(float_interval)v for:(id<CPFloatVarNotifier>)x;

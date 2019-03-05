@@ -149,8 +149,8 @@ static OBJCPGateway *objcpgw;
 -(ORBool) checkAllbound
 {
    ORBool res = YES;
-//   NSArray* vars = [_model variables];
-   for(id<ORVar> v in _vars)
+   NSArray* vars = [_model variables];
+   for(id<ORVar> v in vars)
       if(![_program bound:v]){
          res = NO;
          NSLog(@"la variable %@ n'est pas bound : %@",v,[_program concretize:v]);

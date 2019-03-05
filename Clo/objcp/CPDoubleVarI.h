@@ -54,6 +54,8 @@
 // Interface for CP extensions
 
 @protocol CPDoubleVarExtendedItf <CPDoubleVarSubscriber>
+-(void) updateMin: (ORDouble) newMin propagate:(ORBool) p;
+-(void) updateMax: (ORDouble) newMax propagate:(ORBool) p;
 -(void) updateMin: (ORDouble) newMin;
 -(void) updateMax: (ORDouble) newMax;
 -(void) updateInterval: (ORDouble) newMin and: (ORDouble)newMax;
@@ -192,7 +194,7 @@ static inline void updateDTWithValues(double_interval * ft,float min, float max)
    ft->inf = min;
    ft->sup = max;
 }
-static inline intersectionIntervalD intersectionD(double_interval r, double_interval x, ORDouble percent)
+static inline intersectionIntervalD intersectionD(CPDoubleVarI* v, double_interval r, double_interval x, ORDouble percent)
 {
    double reduced = 0;
    int changed = 0;
@@ -203,7 +205,10 @@ static inline intersectionIntervalD intersectionD(double_interval r, double_inte
    
    if(x.inf > x.sup)
       failNow();
-//   NSLog(@"%16.16e",reduced);
+   if(!changed && reduced > 0.0){
+      [v updateMin:r.inf propagate:NO];
+      [v updateMax:r.sup propagate:NO];
+   }
    return (intersectionIntervalD){r,changed};
 }
 

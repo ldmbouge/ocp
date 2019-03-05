@@ -22,6 +22,8 @@
 -(id)initCPDoubleDom:(id<ORTrail>)trail low:(ORDouble)low up:(ORDouble)up;
 -(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x;
 -(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x;
+-(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x propagate:(ORBool) p;
+-(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x propagate:(ORBool) p;
 -(void) updateInterval:(double_interval)v for:(id<CPDoubleVarNotifier>)x;
 -(void) bind:(ORDouble)val  for:(id<CPDoubleVarNotifier>)x;
 -(ORDouble) min;
