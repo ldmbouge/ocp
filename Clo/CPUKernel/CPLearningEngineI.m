@@ -45,11 +45,8 @@
    _size++;
    
    _retry = true;
-   
-    NSMutableArray* vars = [self variables];
-   for(ORInt i = 0; i < [vars count]; i++)
-      if([((id<ORVar>)vars[i]).class conformsToProtocol:@protocol(ORBitVar)])
-         [(id<CPBitVar>)vars[i] reduceVSIDS];
+   for (id<CPBitVar> var in self.variables)
+       [var reduceVSIDS];
 }
 -(void) addConstraint:(CPCoreConstraint*) c withJumpLevel:(ORUInt) level
 {

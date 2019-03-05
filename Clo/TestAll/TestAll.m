@@ -259,19 +259,26 @@
    }
 }
 
--(void) testObjectSet {
+-(void)testCast {
     @autoreleasepool {
         id<ORModel> m = [ORFactory createModel];
-        id<OROSet> s = [ORFactory objectSet];
-        id<ORIntVarArray> x = [ORFactory intVarArray:m range:RANGE(m,0,10) domain:RANGE(m,0,10)];
-        for(id<ORIntVar> v in x)
-            [s add:v];
-        NSLog(@"The set: %@",s);
-        for(id<ORIntVar> v in x)
-            [s add:v];
-        NSLog(@"The set: %@",s);
-        for(id<ORObject> o in s)
-            NSLog(@"Element: %@",o);
+        id<ORIntVar> iv = [ORFactory intVar:m bounds:RANGE(m, 0, 1)];
+        id<ORRealVar> rv = [ORFactory realVar:m low:0.0 up:10.0];
+        id<ORExpr> f = [ORFactory double:m value:2.0];
+        [m add:[[f mul:iv] eq:rv]];
+        @try {
+            id<MIPProgram> mp = [ORFactory createMIPProgram: m];
+            OROutcome s = [mp solve];
+            NSLog(@"Solved and got: %d",s);
+        } @catch (NSException *exception) {
+            NSLog(@"Exception was thrown...");
+        } @catch (ORExecutionError* ex) {
+            NSLog(@"ExecutionError was thrown... %@",ex);
+        } @finally {
+            NSLog(@"In finally block...");
+        }
     }
 }
+
 @end
+

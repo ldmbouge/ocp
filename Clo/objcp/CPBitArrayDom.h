@@ -35,8 +35,8 @@ typedef struct ULRep ULRep;
     TRUInt*         _low;
     TRUInt*         _up;
     ORUInt    _wordLength;
-@private
     ORUInt    _bitLength;
+@private
 //    ORBool     _learning;
     TRUInt          _freebits;
     TRUInt*         _min;
@@ -101,6 +101,10 @@ static inline ULRep getULDomRep(CPBitArrayDom* dom)
 static inline ORUInt getWordLength(CPBitArrayDom* dom)
 {
    return dom->_wordLength;
+}
+static inline ORUInt getBitLength(CPBitArrayDom* dom)
+{
+    return dom->_bitLength;
 }
 static inline ORBool DomBitFree(CPBitArrayDom* dom,ORUInt idx)
 {

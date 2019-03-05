@@ -26,8 +26,8 @@
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
-   _countMax = 32;
-   _count = _countMax;
+    _countMax = 32;
+    _count = _countMax;
    return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -51,16 +51,16 @@
 -(ORFloat)varOrdering:(id<CPBitVar>)x
 {
    ORFloat rv = - (ORFloat)[x getVSIDSCount];
-   //id<ORVarArray> vars = (_rvars!=nil ? _rvars : _cvs);
-   //    if (_count <= 0)
-   //    {
-   //        for (id<CPBitVar> var in vars)
-   //            [var reduceVSIDS];
-   ////        _countMax <<= 1;
-   //        _count = _countMax;
-   //    }
-   //    else
-   //        _count--;
+    // id<ORVarArray> vars = (_rvars!=nil ? _rvars : _cvs);
+//    if (_count <= 0)
+//    {
+//        for (id<CPBitVar> var in vars)
+//            [var reduceVSIDS];
+////        _countMax <<= 1;
+//        _count = _countMax;
+//    }
+//    else
+//        _count--;
    return rv;
 }
 -(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
