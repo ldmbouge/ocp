@@ -273,37 +273,37 @@
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    _terms = [recVisit visitExprEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    _terms = [recVisit visitExprNEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    _terms = [recVisit visitExprLEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
 -(void) visitExprGEqualI:(ORExprLEqualI*)e
 {
-   id<TypeNormalizer> recVisit = vtype2Obj(e.right.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    _terms = [recVisit visitExprGEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
 -(void) visitExprLThenI:(ORExprLEqualI*)e
 {
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    _terms = [recVisit visitExprLThenI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
 -(void) visitExprGThenI:(ORExprLEqualI*)e
 {
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    _terms = [recVisit visitExprGThenI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
@@ -1532,7 +1532,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORExprI* left = [e left];
    ORExprI* right = [e right];
-   id<TypeNormalizer> recVisit = vtype2Obj(left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    if(_rv == nil) _rv = [ORFactory boolVar:_model];
    [recVisit reifyEQ:_model boolean:_rv left:left right:right];
    [recVisit release];
@@ -1542,7 +1542,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORExprI* left = [e left];
    ORExprI* right = [e right];
-   id<TypeNormalizer> recVisit = vtype2Obj(left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    if(_rv == nil) _rv = [ORFactory boolVar:_model];
    [recVisit reifyNEQ:_model boolean:_rv left:left right:right];
    [recVisit release];
@@ -1550,8 +1550,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
    ORExprI* left = [e left];
-   ORExprI* right = [e right];
-   id<TypeNormalizer> recVisit = vtype2Obj(left.vtype);
+   ORExprI* right = [e right];id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    if(_rv == nil) _rv = [ORFactory boolVar:_model];
    [recVisit reifyLEQ:_model boolean:_rv left:left right:right];
    [recVisit release];
@@ -1560,7 +1559,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORExprI* left = [e left];
    ORExprI* right = [e right];
-   id<TypeNormalizer> recVisit = vtype2Obj(left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    if(_rv == nil) _rv = [ORFactory boolVar:_model];
    [recVisit reifyGEQ:_model boolean:_rv left:left right:right];
    [recVisit release];
@@ -1570,7 +1569,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORExprI* left = [e left];
    ORExprI* right = [e right];
-   id<TypeNormalizer> recVisit = vtype2Obj(left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    if(_rv == nil) _rv = [ORFactory boolVar:_model];
    [recVisit reifyLT:_model boolean:_rv left:left right:right];
    [recVisit release];
@@ -1579,7 +1578,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORExprI* left = [e left];
    ORExprI* right = [e right];
-   id<TypeNormalizer> recVisit = vtype2Obj(left.vtype);
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
    if(_rv == nil) _rv = [ORFactory boolVar:_model];
    [recVisit reifyGT:_model boolean:_rv left:left right:right];
    [recVisit release];

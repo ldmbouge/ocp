@@ -1285,9 +1285,9 @@
    do {
       id<CPBitVar> x = [last idValue];
       i = [select max];
-      if (i == MAXINT)
+      if (i.found)
          return;
-      x =av[i];
+      x =av[i.index];
       [last setIdValue:x];
       NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
       [failStamp setValue:[self nbFailures]];

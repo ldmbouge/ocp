@@ -81,7 +81,8 @@
 }
 -(void) visitRealVar: (id<ORRealVar>) v
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "RealVar: visit method not defined"];
+
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealVar: visit method not defined"];
 }
 //-------------------------
 -(void) visitFloatVar: (id<ORFloatVar>) v

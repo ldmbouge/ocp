@@ -382,11 +382,11 @@ int main(int argc, const char * argv[]) {
             riskMINpiB[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsB[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINpiB[%d]",i]];
          }
          //respect device memory capacity
-         for(ORInt i = 0; i < [network count]; i++){
-            ORInt n = [network[i] intValue];
-            id<ORExpr> fe = [[[[firewallA[n] mul:fwCost[0]] plus:[firewallB[n] mul:fwCost[1]]] mul:[firewallOther[n] mul:fwCost[4]]] plus:[pi[n] mul:@(piCost)]];
-            [security add:[fe leq:deviceMemory[n]]];
-         }
+//         for(ORInt i = 0; i < [network count]; i++){
+//            ORInt n = [network[i] intValue];
+//            id<ORExpr> fe = [[[[firewallA[n] mul:fwCost[0]] plus:[firewallB[n] mul:fwCost[1]]] mul:[firewallOther[n] mul:fwCost[4]]] plus:[pi[n] mul:@(piCost)]];
+//            [security add:[fe leq:deviceMemory[n]]];
+//         }
          
          //fwOnPath constraints
          for (ORInt p = 0; p < [flowPathsA count]; p++){
@@ -473,22 +473,22 @@ int main(int argc, const char * argv[]) {
          }
          
          //objective
-         id<ORExpr> piNum = Sum(security,n,pi.range,pi[n]);
-         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,firewallA[n]) plus:Sum(model,n,firewallB.range,firewallB[n])];
-         id<ORExpr> simplicityMetric = [piNum mul:[fwNum mul:@(10)]];
-         id<ORExpr> flowReduction = Sum(security,n,load.range,[pi[[network[n] intValue]] mul:@([mip doubleValue:load[n]])]);
-         id<ORExpr> goodTrafficBlocked = [[ORFactory sum:security over:fwOnPathA.range suchThat:nil of:^id<ORExpr>(ORInt p){
-            ORInt ind0 = [flow2AllA[p][0] intValue];
-            ORInt ind1 = [flow2AllA[p][1] intValue];
-            return (id<ORExpr>)([[fwOnPathA[p] mul:@([mip doubleValue:flowA[ind0][ind1]])] mul:penalityPathA[p]]);
-         }] plus:[ORFactory sum:security over:fwOnPathB.range suchThat:nil of:^id<ORExpr>(ORInt p){
-            ORInt ind0 = [flow2AllB[p][0] intValue];
-            ORInt ind1 = [flow2AllB[p][1] intValue];
-            return (id<ORExpr>)([[fwOnPathB[p] mul:@([mip doubleValue:flowB[ind0][ind1]])] mul:penalityPathB[p]]);
-         }]];
-         id<ORExpr> networkRisk = [Sum(security,p,riskFactorA.range,[riskFactorA[p] mul:flowRiskA[p]]) plus:Sum(security,p,riskFactorB.range,[riskFactorB[p] mul:flowRiskB[p]])];
-         
-         [security minimize: [[[[simplicityMetric mul:@(beta0)] plus:[flowReduction mul:@(beta1)]] plus:[goodTrafficBlocked mul:@(beta2)]] plus:[networkRisk mul:@(beta3)]]];
+//         id<ORExpr> piNum = Sum(security,n,pi.range,pi[n]);
+//         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,firewallA[n]) plus:Sum(model,n,firewallB.range,firewallB[n])];
+//         id<ORExpr> simplicityMetric = [piNum mul:[fwNum mul:@(10)]];
+//         id<ORExpr> flowReduction = Sum(security,n,load.range,[pi[[network[n] intValue]] mul:@([mip doubleValue:load[n]])]);
+//         id<ORExpr> goodTrafficBlocked = [[ORFactory sum:security over:fwOnPathA.range suchThat:nil of:^id<ORExpr>(ORInt p){
+//            ORInt ind0 = [flow2AllA[p][0] intValue];
+//            ORInt ind1 = [flow2AllA[p][1] intValue];
+//            return (id<ORExpr>)([[fwOnPathA[p] mul:@([mip doubleValue:flowA[ind0][ind1]])] mul:penalityPathA[p]]);
+//         }] plus:[ORFactory sum:security over:fwOnPathB.range suchThat:nil of:^id<ORExpr>(ORInt p){
+//            ORInt ind0 = [flow2AllB[p][0] intValue];
+//            ORInt ind1 = [flow2AllB[p][1] intValue];
+//            return (id<ORExpr>)([[fwOnPathB[p] mul:@([mip doubleValue:flowB[ind0][ind1]])] mul:penalityPathB[p]]);
+//         }]];
+//         id<ORExpr> networkRisk = [Sum(security,p,riskFactorA.range,[riskFactorA[p] mul:flowRiskA[p]]) plus:Sum(security,p,riskFactorB.range,[riskFactorB[p] mul:flowRiskB[p]])];
+//
+//         [security minimize: [[[[simplicityMetric mul:@(beta0)] plus:[flowReduction mul:@(beta1)]] plus:[goodTrafficBlocked mul:@(beta2)]] plus:[networkRisk mul:@(beta3)]]];
          id<MIPProgram> mipSecurity = [ORFactory createMIPProgram: security];
          status = [mipSecurity solve];
    
