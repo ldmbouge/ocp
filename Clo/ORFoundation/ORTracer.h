@@ -90,4 +90,3 @@
 -(ORInt)      curNode;
 -(void) fail;
 @end
-

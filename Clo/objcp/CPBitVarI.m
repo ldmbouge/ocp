@@ -252,7 +252,7 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
    }
 }
 -(void) reduceVSIDS{
-   for(int i=0;i<[_dom getLength];i++)
+   for(int i=0;i<getBitLength(_dom);i++)
     _vsids[i] /=2.0;
 }
 -(id) takeSnapshot: (ORInt) id

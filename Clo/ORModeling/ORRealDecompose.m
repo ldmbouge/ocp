@@ -312,7 +312,15 @@
    [terms postEQZ:_model];
    [terms release];
 }
-
+-(void) visitExprMulI:(ORExprMulI*)e
+{
+    id<ORRealLinear> terms = [ORNormalizer realLinearFrom:e model:_model];
+    if (_rv==nil)
+        _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
+    [terms addTerm:_rv by:-1];
+    [terms postEQZ:_model];
+    [terms release];
+}
 -(void) visitExprSquareI:(ORExprSquareI *)e
 {
     id<ORRealLinear> lT = [ORNormalizer realLinearFrom:[e operand] model:_model];

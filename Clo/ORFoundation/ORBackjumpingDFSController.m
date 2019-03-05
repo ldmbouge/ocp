@@ -11,6 +11,9 @@
 
 #import "ORBackjumpingDFSController.h"
 
+
+@class CPLearningEngineI;
+
 @implementation ORBackjumpingDFSController{
 @protected
    NSCont**                  _tab;
@@ -118,7 +121,7 @@
 {
    ORInt faillevel = (ORInt)[_tracer level];
    ORInt level = faillevel;
-   ORInt jumplevel = (ORInt)[_engine getBackjumpLevel];
+   ORInt jumplevel = (ORInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
 
    id<ORCheckpoint> cp;
    NSCont* k;
