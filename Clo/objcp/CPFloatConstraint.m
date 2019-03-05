@@ -1261,7 +1261,7 @@
       }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
-      if ([_y bound])
+      if ([_x bound])
          [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x min]]]; // Rewrite as min(x)!=y  (addInternal can throw)
       else if ([_y bound])
          [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]]; // Rewrite as min(y)!=x  (addInternal can throw)
