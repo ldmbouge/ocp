@@ -221,13 +221,13 @@
 }
 -(void) postMinimize: (id<ORAddToModel>) model
 {
-//    [model minimize: [self variables: model] coef: [self coefficients: model]];
-    assert(NO);
+    [model minimize: [self variables: model] coef: [self coefficients: model]];
+//    assert(NO);
 }
 -(void) postMaximize: (id<ORAddToModel>) model
 {
-    //[model maximize: [self variables: model] coef: [self coefficients: model]];
-    assert(NO);
+    [model maximize: [self variables: model] coef: [self coefficients: model]];
+//    assert(NO);
 }
 -(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
 {

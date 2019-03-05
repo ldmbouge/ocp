@@ -120,6 +120,7 @@ PORTABLE_BEGIN
 -(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
 -(void)               labelRational: (id<ORRationalVar>) mx;
+-(void)               labelFloat: (id<ORFloatVar>) mx;
 -(void)               label: (id<ORIntVar>) mx by: (ORInt2Double) o;
 -(void)               label: (id<ORIntVar>) mx by: (ORInt2Double) o1 then: (ORInt2Double) o2;
 

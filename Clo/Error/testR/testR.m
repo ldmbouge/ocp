@@ -70,6 +70,7 @@ void testR(int argc, const char * argv[]) {
       //id<ORFloatVar> w = [ORFactory floatVar:mdl name:@"w"];
       //id<ORFloatVar> u = [ORFactory floatVar:mdl name:@"u"];
       id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory rationalVar:mdl from:z];
       [zero release];
       
       [mdl add:[x set: @(45.0f)]];
@@ -88,9 +89,11 @@ void testR(int argc, const char * argv[]) {
       //[mdl add:[z set: [w sub: u]]];
       [mdl add:[z set: [x plus: y]]];
       
+      [mdl maximize:z];
+      
       NSLog(@"model: %@",mdl);
-//      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController proto]];
+      //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController proto]];
       id<ORFloatVarArray> vs = [mdl floatVars];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
@@ -98,6 +101,7 @@ void testR(int argc, const char * argv[]) {
          [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
             [cp floatSplit:i call:s withVars:x];
          }];
+         /*[cp labelRational:ez];*/
          NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
          //NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
          NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
@@ -134,14 +138,14 @@ void testOptimize(int argc, const char * argv[]) {
       [mdl maximize:z];
       
       NSLog(@"model: %@",mdl);
-         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBDSController proto]];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       
       [cp solve:^{
          [cp label:y];
+         NSLog(@"x : %@",[cp concretize:x]);
+         NSLog(@"y : %@",[cp concretize:y]);
+         NSLog(@"z : %@",[cp concretize:z]);
       }];
-      NSLog(@"x : %@",[cp concretize:x]);
-      NSLog(@"y : %@",[cp concretize:y]);
-      NSLog(@"z : %@",[cp concretize:z]);
       NSLog(@"%@",cp);
    }
 }
@@ -149,6 +153,6 @@ void testOptimize(int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    testR(argc, argv);
-   //testOptimize(argc, argv);
+//   testOptimize(argc, argv);
    return 0;
 }

@@ -971,6 +971,12 @@ enum ORGroupType {
 -(ORDouble)doubleValue;
 @end
 
+@protocol ORObjectiveValueFloat <ORObjectiveValue>
+-(ORFloat) value;
+-(ORFloat) floatValue;
+-(ORDouble)doubleValue;
+@end
+
 @protocol ORObjectiveFunction <ORObject>
 -(id<ORObjectiveValue>) primalValue;
 -(id<ORObjectiveValue>) dualValue;

@@ -1053,6 +1053,18 @@
    [[x tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x
+{
+   id<CPConstraint> o = [[CPFloatVarMinimize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
+}
++(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x
+{
+   id<CPConstraint> o = [[CPFloatVarMaximize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
+}
 @end
 
 

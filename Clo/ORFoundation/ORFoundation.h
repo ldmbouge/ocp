@@ -47,6 +47,7 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemFDSController.h>
 #import <ORFoundation/ORSemBFSController.h>
+#import <ORFoundation/ORSemBBController.h>
 #import <ORFoundation/ORBackjumpingDFSController.h>
 #import <ORFoundation/fpi.h>
 

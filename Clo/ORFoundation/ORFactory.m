@@ -1755,6 +1755,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: v minimize: b];
 }
++(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (ORBool) b
+{
+   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: f minimize: b];
+}
 @end
 
 @implementation ORFactory (ORReal)

@@ -1072,6 +1072,20 @@
 -(NSString*)description;
 @end
 
+@interface ORObjectiveValueFloatI : ORObject<ORObjectiveValueFloat> {
+   ORFloat _value;
+   ORInt _direction;
+   ORInt _pBound;
+}
+-(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b ;
+-(ORFloat)value;
+-(ORFloat)floatValue;
+-(ORDouble)doubleValue;
+-(ORFloat)primal;
+-(ORDouble)key;
+-(NSString*)description;
+@end
+
 
 @interface ORObjectiveFunctionI : ORObject<ORObjectiveFunction>
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI;

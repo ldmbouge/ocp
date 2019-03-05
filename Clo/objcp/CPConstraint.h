@@ -143,7 +143,8 @@
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geqi: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lti: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gti: (ORFloat) i;
-
++(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x;
++(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
 @end
 
 @interface CPFactory (ORRational)

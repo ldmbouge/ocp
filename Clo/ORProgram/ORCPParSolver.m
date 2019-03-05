@@ -436,6 +436,10 @@
 {
    [[self worker] labelRational: mx];
 }
+-(void) labelFloat: (id<ORFloatVar>) mx
+{
+   [[self worker] labelFloat: mx];
+}
 -(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
    [(id<CPBV>)[self worker] labelBV:var at:i with:val];

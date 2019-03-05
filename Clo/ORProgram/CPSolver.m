@@ -1496,6 +1496,19 @@
        ];
    }
 }
+-(void) labelFloat: (id<ORFloatVar>) mx
+{
+   id<CPFloatVar> x = _gamma[mx.getId];
+   while (![x bound]) {
+      ORFloat mid = ([x min] / 2.0) + ([x max] / 2.0);
+      [_search try: ^{
+         [self floatGEqual: mx with: mid];
+      } alt: ^{
+         [self floatLEqual: mx with: mid];
+      }
+       ];
+   }
+}
 -(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o
 {
    return [self selectValueImpl: _gamma[v.getId] by: o];
@@ -4826,6 +4839,69 @@
       [_search fail];
    }
    //[_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORFloat pval = fp_previous_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:pval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORFloat nval = fp_next_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:nval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatLEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatGEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+
+-(void) rationalLthenImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
+{
+   // WRONG: use LEqual
+   //ORRational pval = fp_previous_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) rationalGthenImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
+{
+   // WRONG: use GEqual
+   //ORFloat nval = fp_next_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) rationalLEqualImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) rationalGEqualImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
    [ORConcurrency pumpEvents];
 }
 @end

@@ -360,3 +360,22 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
+-(id) init: (id<CPFloatVar>) x;
+-(void) post;
+-(ORStatus) check;
+-(ORBool) isBound;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+-(id<ORRealVar>) var;
+@end
+
+@interface CPFloatVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
+-(id) init: (id<CPFloatVar>) x;
+-(void) post;
+-(ORStatus) check;
+-(ORBool) isBound;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+-(id<ORRealVar>) var;
+@end

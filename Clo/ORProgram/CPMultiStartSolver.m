@@ -544,6 +544,10 @@
 {
    [[self worker] labelRational: mx];
 }
+-(void) labelFloat: (id<ORFloatVar>) mx
+{
+   [[self worker] labelFloat: mx];
+}
 -(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o
 {
    return [[self worker] selectValue: v by: o];

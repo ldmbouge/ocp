@@ -9053,6 +9053,75 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORObjectiveValueFloatI
+-(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b
+{
+   self = [super init];
+   _value = pb;
+   _pBound = pb;
+   _direction = b ? 1 : -1;
+   return self;
+}
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORDouble) doubleValue
+{
+   return _value;
+}
+-(ORFloat) primal
+{
+   return _pBound;
+}
+-(ORDouble) key
+{
+   return _value * _direction;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"%20.20e",_value];
+   return buf;
+}
+
+-(ORBool)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]]) {
+      return _value == [((ORObjectiveValueFloatI*)object) value];
+   } else return NO;
+}
+
+- (NSUInteger) hash
+{
+   return _value;
+}
+
+-(id<ORObjectiveValue>) best: (ORObjectiveValueFloatI*) other
+{
+   if ([self key] <= [other key])
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _value minimize: _direction == 1];
+   else
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [other value] minimize: _direction == 1];
+}
+
+-(NSComparisonResult) compare: (ORObjectiveValueFloatI*) other
+{
+   ORFloat mykey = [self key];
+   ORFloat okey = [other key];
+   if (mykey < okey)
+      return -1;
+   else if (mykey == okey)
+      return 0;
+   else
+      return 1;
+}
+@end
+
 
 @implementation ORObjectiveFunctionExprI
 -(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) e
