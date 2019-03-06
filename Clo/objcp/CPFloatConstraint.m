@@ -750,10 +750,7 @@
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged ||
-      (![_z bound] && (*((int32_t *)&(z.inf)) == *((int32_t *)&(z.sup)))) ||
-      (![_x bound] && (*((int32_t *)&(x.inf)) == *((int32_t *)&(x.sup)))) ||
-      (![_y bound] && (*((int32_t *)&(y.inf)) == *((int32_t *)&(y.sup))))) {
+   if(gchanged) {
       
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
@@ -876,10 +873,7 @@
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged ||
-      (![_z bound] && (*((int32_t *)&(z.inf)) == *((int32_t *)&(z.sup)))) ||
-      (![_x bound] && (*((int32_t *)&(x.inf)) == *((int32_t *)&(x.sup)))) ||
-      (![_y bound] && (*((int32_t *)&(y.inf)) == *((int32_t *)&(y.sup))))) {
+   if(gchanged) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -987,10 +981,7 @@
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged ||
-   (![_z bound] && (*((int32_t *)&(z.inf)) == *((int32_t *)&(z.sup)))) ||
-   (![_x bound] && (*((int32_t *)&(x.inf)) == *((int32_t *)&(x.sup)))) ||
-   (![_y bound] && (*((int32_t *)&(y.inf)) == *((int32_t *)&(y.sup))))) {
+   if(gchanged) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -1074,10 +1065,7 @@
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged ||
-      (![_z bound] && (*((int32_t *)&(z.inf)) == *((int32_t *)&(z.sup)))) ||
-      (![_x bound] && (*((int32_t *)&(x.inf)) == *((int32_t *)&(x.sup)))) ||
-      (![_y bound] && (*((int32_t *)&(y.inf)) == *((int32_t *)&(y.sup))))) {
+   if(gchanged) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];

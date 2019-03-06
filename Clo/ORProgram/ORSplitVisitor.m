@@ -236,6 +236,8 @@
          mid = fp_previous_float(mid);
       }
       interval[2].inf = interval[2].sup = mid;
+//      if(mid == 0.0f)
+//         interval[2].inf = -0.0;
       interval[3].inf = fp_next_float(mid);
       interval[3].sup = fp_previous_float(theMax);
       length = 3;
@@ -283,6 +285,8 @@
          mid = fp_previous_double(mid);
       }
       interval[2].inf = interval[2].sup = mid;
+//      if(mid == 0.0)
+//         interval[2].inf = -0.0;
       interval[3].inf = fp_next_double(mid);
       interval[3].sup = fp_previous_double(theMax);
       length = 3;

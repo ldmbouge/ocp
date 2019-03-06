@@ -751,10 +751,7 @@ double_interval _yi;
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged ||
-      (![_z bound] && (*((int64_t *)&(z.inf)) == *((int64_t *)&(z.sup)))) ||
-      (![_x bound] && (*((int64_t *)&(x.inf)) == *((int64_t *)&(x.sup)))) ||
-      (![_y bound] && (*((int64_t *)&(y.inf)) == *((int64_t *)&(y.sup))))) {
+   if(gchanged) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -864,10 +861,7 @@ double_interval _yi;
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged ||
-      (![_z bound] && (*((int64_t *)&(z.inf)) == *((int64_t *)&(z.sup)))) ||
-      (![_x bound] && (*((int64_t *)&(x.inf)) == *((int64_t *)&(x.sup)))) ||
-      (![_y bound] && (*((int64_t *)&(y.inf)) == *((int64_t *)&(y.sup))))) {
+   if(gchanged) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -964,10 +958,7 @@ double_interval _yi;
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged ||
-      (![_z bound] && (*((int64_t *)&(z.inf)) == *((int64_t *)&(z.sup)))) ||
-      (![_x bound] && (*((int64_t *)&(x.inf)) == *((int64_t *)&(x.sup)))) ||
-      (![_y bound] && (*((int64_t *)&(y.inf)) == *((int64_t *)&(y.sup))))) {
+   if(gchanged) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
@@ -1051,10 +1042,7 @@ double_interval _yi;
       changed |= inter.changed;
       gchanged |= changed;
    } while(changed);
-   if(gchanged ||
-      (![_z bound] && (*((int64_t *)&(z.inf)) == *((int64_t *)&(z.sup)))) ||
-      (![_x bound] && (*((int64_t *)&(x.inf)) == *((int64_t *)&(x.sup)))) ||
-      (![_y bound] && (*((int64_t *)&(y.inf)) == *((int64_t *)&(y.sup))))) {
+   if(gchanged) {
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
