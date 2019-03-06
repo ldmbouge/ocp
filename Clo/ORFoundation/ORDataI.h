@@ -22,6 +22,10 @@ typedef struct timeval ORTimeval;
 -(ORInt)  value;
 -(ORInt)  min;
 -(ORInt)  max;
+-(ORFloat)  fmin;
+-(ORFloat)  fmax;
+-(ORDouble)  dmin;
+-(ORDouble)  dmax;
 -(id<ORTracker>) tracker;
 @end
 

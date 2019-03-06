@@ -438,10 +438,11 @@ int main(int argc, const char * argv[]) {
 //         riskMIN
          id<ORExpr> c = [ORFactory double:security value:1.0];
          for(ORInt p = 0; p < [flowPathsA count];p++){
+            ORInt pos = 1;
             for(ORInt i = 0; i < [flowPathsA[p] count]; i++){
                ORInt n = [flowPathsA[p][i] intValue];
                if([Graph isNetWorkDevice:device[n]]){
-                  ORDouble f = pow(0.5, i+1);
+                  ORDouble f = pow(0.5, pos++);
                   [security add:[[c sub:[fwORA[n] mul:@(f)]] eq:riskMINfwA[p][i]]];
                   [security add:[[c sub:[[fwORA[n] mul:@(f)] mul:@(0.1)]] eq:riskMINpiA[p][i]]];
                }
@@ -502,9 +503,9 @@ int main(int argc, const char * argv[]) {
          }
          
          //objective
-         id<ORExpr> piNum = Sum(security,n,pi.range,pi[n]);
-         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,firewallA[n]) plus:Sum(model,n,firewallB.range,firewallB[n])];
-         id<ORExpr> simplicityMetric = [piNum mul:[fwNum mul:@(10)]];
+         id<ORExpr> piNum = Sum(security,n,pi.range,([Graph isNetWorkDevice:device[n]])?pi[n]:@(0));
+         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,([Graph isNetWorkDevice:device[n]])?firewallA[n]:@(0)) plus:Sum(model,n,firewallB.range,([Graph isNetWorkDevice:device[n]])?firewallB[n]:@(0))];
+         id<ORExpr> simplicityMetric = [piNum plus:[fwNum mul:@(10)]];
          id<ORExpr> flowReduction = Sum(security,n,load.range,[pi[[network[n] intValue]] mul:@([mip doubleValue:load[n]])]);
          id<ORExpr> goodTrafficBlocked = [[ORFactory sum:security over:fwOnPathA.range suchThat:nil of:^id<ORExpr>(ORInt p){
             ORInt ind0 = [flow2AllA[p][0] intValue];

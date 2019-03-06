@@ -125,10 +125,10 @@
          [_terms addTerm: x by: coef];
       } else if ([[e left] isConstant]) {
          id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:[e right]];
-         [_terms addTerm:alpha by:[[e left] min]];
+         [_terms addTerm:alpha by:[[e left] dmin]];
       } else if ([[e right] isConstant]) {
          id<ORRealLinear> left = [ORNormalizer realLinearFrom:[e left] model:_model];
-         [left scaleBy:[[e right] min]];
+         [left scaleBy:[[e right] dmin]];
          [_terms addLinear:left];
       } else {
          id<ORRealVar> alpha =  [ORNormalizer realVarIn:_model expr:e];

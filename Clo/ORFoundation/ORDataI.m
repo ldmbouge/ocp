@@ -85,6 +85,22 @@
 {
    return _value;
 }
+-(ORFloat) fmin
+{
+   return (ORFloat)_value;
+}
+-(ORFloat) fmax
+{
+   return (ORFloat)_value;
+}
+-(ORDouble) dmin
+{
+   return (ORDouble)_value;
+}
+-(ORDouble) dmax
+{
+   return (ORDouble)_value;
+}
 -(ORBool) isConstant
 {
    return YES;
