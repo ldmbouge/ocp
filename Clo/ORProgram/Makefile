@@ -23,7 +23,7 @@ SRCS = CPABS.m CPConcretizer.m  CPFirstFail.m  CPMultiStartSolver.m  \
 	CPBitVarBaseHeuristic.m CPBitVarFirstFail.m CPBitVarIBS.m CPBitVarABS.m \
 	CPRunnable.m   ORColumnGeneration.m     ORLogicBenders.m        ORRunnable.m \
 	LPRunnable.m   ORLagrangeRelax.m        ORParallelCombinator.m  ORRunnablePiping.m \
-	MIPRunnable.m  ORLagrangianTransform.m  ORParallelRunnable.m    ORSignature.m CPBitVarVSIDS.m
+	MIPRunnable.m  ORLagrangianTransform.m  ORParallelRunnable.m    ORSignature.m CPBitVarVSIDS.m ORSplitVisitor.m
 
 
 OBJEXT=o
