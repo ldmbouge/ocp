@@ -201,9 +201,9 @@ static inline intersectionIntervalD intersectionD(CPDoubleVarI* v, double_interv
    if(percent == 0.0)
       fpi_narrowd(&r, &x, &changed);
    else
-      fpi_narrowpercentd(&r, &x, &changed, percent, &reduced);
+      fpi_narrowpercentboundd(&r, &x, &changed, percent, &reduced);
    
-   if(x.inf > x.sup)
+   if(r.inf > r.sup)
       failNow();
    if(!changed && reduced > 0.0){
       [v updateMin:r.inf propagate:NO];

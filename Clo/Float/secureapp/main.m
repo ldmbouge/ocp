@@ -272,6 +272,8 @@ int main(int argc, const char * argv[]) {
       
       id<MIPProgram> mip = [ORFactory createMIPProgram: model];
       OROutcome status = [mip solve];
+      [mip printModelToFile:"/Users/zitoun/Desktop/functional.lp"];
+      [mip printModelToFile:"/Users/zitoun/Desktop/functional.sol"];
       ORInt overlapLimit = 0;
       ORInt overlapCurrent = 0;
       ORInt nbBadCuts = 0;
@@ -353,40 +355,56 @@ int main(int argc, const char * argv[]) {
          id<ORIntRange> NODES_R = RANGE(security, 0, (ORInt)[device count] - 1);
          id<ORIntRange> PATHSA_R = RANGE(security, 0, (ORInt)[flowPathsA count] - 1);
          id<ORIntRange> PATHSB_R = RANGE(security, 0, (ORInt)[flowPathsB count] - 1);
-         id<ORIntVarArray> pi = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"pi"];
-          id<ORIntVarArray> firewallA = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"firewallA"];
-         id<ORIntVarArray> firewallB = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"firewallB"];
-         id<ORIntVarArray> firewallOther = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"firewall*"];
-         id<ORIntVarArray> fwORA = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"fwORA"];
-         id<ORIntVarArray> fwORB = [ORFactory intVarArray:security range:NODES_R domain:BINARY names:@"fwORB"];
+         id<ORIdArray> pi = [ORFactory idArray:security range:NODES_R];
+         id<ORIdArray> firewallA = [ORFactory idArray:security range:NODES_R];
+         id<ORIdArray> firewallB = [ORFactory idArray:security range:NODES_R];
+         id<ORIdArray> firewallOther = [ORFactory idArray:security range:NODES_R];
+         id<ORIdArray> fwORA = [ORFactory idArray:security range:NODES_R];
+         id<ORIdArray> fwORB = [ORFactory idArray:security range:NODES_R];
+         for(ORInt j = 0; j < [device count];j++){
+            pi[j] = [ORFactory intVar:security domain:BINARY name:[NSString stringWithFormat:@"pi[%@]",device[j]]];
+            firewallA[j] = [ORFactory intVar:security domain:BINARY name:[NSString stringWithFormat:@"firewallA[%@]",device[j]]];
+            firewallB[j] = [ORFactory intVar:security domain:BINARY name:[NSString stringWithFormat:@"firewallB[%@]",device[j]]];
+            firewallOther[j] = [ORFactory intVar:security domain:BINARY name:[NSString stringWithFormat:@"firewall*[%@]",device[j]]];
+            fwORA[j] = [ORFactory intVar:security domain:BINARY name:[NSString stringWithFormat:@"fwORA[%@]",device[j]]];
+            fwORB[j] = [ORFactory intVar:security domain:BINARY name:[NSString stringWithFormat:@"fwORB[%@]",device[j]]];
+         }
          
          id<ORIntVarArray> fwOnPathA = [ORFactory intVarArray:security range:PATHSA_R domain:BINARY names:@"fwOnPathA"];
-         id<ORRealVarArray> riskFactorA = [ORFactory realVarArray:security range:PATHSA_R low:0. up:1. names:@"fwOnPathA"];
-         
-         id<ORIntVarArray> fwOnPathB = [ORFactory intVarArray:security range:PATHSB_R domain:BINARY names:@"fwOnPathB"];
-         id<ORRealVarArray> riskFactorB = [ORFactory realVarArray:security range:PATHSB_R low:0. up:1. names:@"fwOnPathB"];
-      
+         id<ORRealVarArray> riskFactorA = [ORFactory realVarArray:security range:PATHSA_R low:0. up:1. names:@"riskFactorA"];
          id<ORIdArray> riskMINfwA = [ORFactory idArray:security range:PATHSA_R];
          id<ORIdArray> riskMINpiA = [ORFactory idArray:security range:PATHSA_R];
          
+         id<ORIntVarArray> fwOnPathB = [ORFactory intVarArray:security range:PATHSB_R domain:BINARY names:@"fwOnPathB"];
+         id<ORRealVarArray> riskFactorB = [ORFactory realVarArray:security range:PATHSB_R low:0. up:1. names:@"riskFactorB"];
          id<ORIdArray> riskMINfwB = [ORFactory idArray:security range:PATHSB_R];
          id<ORIdArray> riskMINpiB = [ORFactory idArray:security range:PATHSB_R];
          
          for(ORInt i = 0; i < [flowPathsA count]; i++){
-            riskMINfwA[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsA[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINfwA[%d]",i]];
-             riskMINpiA[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsA[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINpiA[%d]",i]];
+            riskMINfwA[i] = [ORFactory idArray:security range:PATHSA_R];
+            riskMINpiA[i] = [ORFactory idArray:security range:PATHSA_R];
+             for(ORInt j = 0; j < [flowPathsA[i] count]; j++){
+                ORInt n = [flowPathsA[i][j] intValue];
+                riskMINfwA[i][j] = [ORFactory realVar:security low:0. up:1. name:[NSString stringWithFormat:@"riskMINfwA[%d][%@]",i,device[n]]];
+                riskMINpiA[i][j] = [ORFactory realVar:security low:0. up:1. name:[NSString stringWithFormat:@"riskMINpiA[%d][%@]",i,device[n]]];
+             }
          }
          
          for(ORInt i = 0; i < [flowPathsB count]; i++){
-            riskMINfwB[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsB[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINfwB[%d]",i]];
-            riskMINpiB[i] = [ORFactory realVarArray:security range:RANGE(security, 0, (ORInt)[flowPathsB[i] count]) low:0. up:1. names:[NSString stringWithFormat:@"riskMINpiB[%d]",i]];
+            riskMINfwB[i] = [ORFactory idArray:security range:PATHSB_R];
+            riskMINpiB[i] = [ORFactory idArray:security range:PATHSB_R];
+            for(ORInt j = 0; j < [flowPathsB[i] count]; j++){
+               ORInt n = [flowPathsB[i][j] intValue];
+               riskMINfwB[i][j] = [ORFactory realVar:security low:0. up:1. name:[NSString stringWithFormat:@"riskMINfwB[%d][%@]",i,device[n]]];
+               riskMINpiB[i][j] = [ORFactory realVar:security low:0. up:1. name:[NSString stringWithFormat:@"riskMINpiB[%d][%@]",i,device[n]]];
+            }
          }
          //respect device memory capacity
-//         for(ORInt i = 0; i < [network count]; i++){
-//            ORInt n = [network[i] intValue];
-//            id<ORExpr> fe = [[[[firewallA[n] mul:fwCost[0]] plus:[firewallB[n] mul:fwCost[1]]] mul:[firewallOther[n] mul:fwCost[4]]] plus:[pi[n] mul:@(piCost)]];
-//            [security add:[fe leq:deviceMemory[n]]];
-//         }
+         for(ORInt i = 0; i < [network count]; i++){
+            ORInt n = [network[i] intValue];
+            id<ORExpr> fe = [[[[firewallA[n] mul:fwCost[0]] plus:[firewallOther[n] mul:fwCost[4]]] plus:[firewallB[n] mul:fwCost[1]]] plus:[pi[n] mul:@(piCost)]];
+            [security add:[fe leq:deviceMemory[n]]];
+         }
          
          //fwOnPath constraints
          for (ORInt p = 0; p < [flowPathsA count]; p++){
@@ -426,6 +444,17 @@ int main(int argc, const char * argv[]) {
                   ORDouble f = pow(0.5, i+1);
                   [security add:[[c sub:[fwORA[n] mul:@(f)]] eq:riskMINfwA[p][i]]];
                   [security add:[[c sub:[[fwORA[n] mul:@(f)] mul:@(0.1)]] eq:riskMINpiA[p][i]]];
+               }
+            }
+         }
+         for(ORInt p = 0; p < [flowPathsB count];p++){
+            ORInt pos = 1;
+            for(ORInt i = 0; i < [flowPathsB[p] count]; i++){
+               ORInt n = [flowPathsB[p][i] intValue];
+               if([Graph isNetWorkDevice:device[n]]){
+                  ORDouble f = pow(0.5, pos++);
+                  [security add:[[c sub:[fwORB[n] mul:@(f)]] eq:riskMINfwB[p][i]]];
+                  [security add:[[c sub:[[fwORB[n] mul:@(f)] mul:@(0.1)]] eq:riskMINpiB[p][i]]];
                }
             }
          }
@@ -473,24 +502,26 @@ int main(int argc, const char * argv[]) {
          }
          
          //objective
-//         id<ORExpr> piNum = Sum(security,n,pi.range,pi[n]);
-//         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,firewallA[n]) plus:Sum(model,n,firewallB.range,firewallB[n])];
-//         id<ORExpr> simplicityMetric = [piNum mul:[fwNum mul:@(10)]];
-//         id<ORExpr> flowReduction = Sum(security,n,load.range,[pi[[network[n] intValue]] mul:@([mip doubleValue:load[n]])]);
-//         id<ORExpr> goodTrafficBlocked = [[ORFactory sum:security over:fwOnPathA.range suchThat:nil of:^id<ORExpr>(ORInt p){
-//            ORInt ind0 = [flow2AllA[p][0] intValue];
-//            ORInt ind1 = [flow2AllA[p][1] intValue];
-//            return (id<ORExpr>)([[fwOnPathA[p] mul:@([mip doubleValue:flowA[ind0][ind1]])] mul:penalityPathA[p]]);
-//         }] plus:[ORFactory sum:security over:fwOnPathB.range suchThat:nil of:^id<ORExpr>(ORInt p){
-//            ORInt ind0 = [flow2AllB[p][0] intValue];
-//            ORInt ind1 = [flow2AllB[p][1] intValue];
-//            return (id<ORExpr>)([[fwOnPathB[p] mul:@([mip doubleValue:flowB[ind0][ind1]])] mul:penalityPathB[p]]);
-//         }]];
-//         id<ORExpr> networkRisk = [Sum(security,p,riskFactorA.range,[riskFactorA[p] mul:flowRiskA[p]]) plus:Sum(security,p,riskFactorB.range,[riskFactorB[p] mul:flowRiskB[p]])];
-//
-//         [security minimize: [[[[simplicityMetric mul:@(beta0)] plus:[flowReduction mul:@(beta1)]] plus:[goodTrafficBlocked mul:@(beta2)]] plus:[networkRisk mul:@(beta3)]]];
+         id<ORExpr> piNum = Sum(security,n,pi.range,pi[n]);
+         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,firewallA[n]) plus:Sum(model,n,firewallB.range,firewallB[n])];
+         id<ORExpr> simplicityMetric = [piNum mul:[fwNum mul:@(10)]];
+         id<ORExpr> flowReduction = Sum(security,n,load.range,[pi[[network[n] intValue]] mul:@([mip doubleValue:load[n]])]);
+         id<ORExpr> goodTrafficBlocked = [[ORFactory sum:security over:fwOnPathA.range suchThat:nil of:^id<ORExpr>(ORInt p){
+            ORInt ind0 = [flow2AllA[p][0] intValue];
+            ORInt ind1 = [flow2AllA[p][1] intValue];
+            return (id<ORExpr>)([[fwOnPathA[p] mul:@([mip doubleValue:flowA[ind0][ind1]])] mul:penalityPathA[p]]);
+         }] plus:[ORFactory sum:security over:fwOnPathB.range suchThat:nil of:^id<ORExpr>(ORInt p){
+            ORInt ind0 = [flow2AllB[p][0] intValue];
+            ORInt ind1 = [flow2AllB[p][1] intValue];
+            return (id<ORExpr>)([[fwOnPathB[p] mul:@([mip doubleValue:flowB[ind0][ind1]])] mul:penalityPathB[p]]);
+         }]];
+         id<ORExpr> networkRisk = [Sum(security,p,riskFactorA.range,[riskFactorA[p] mul:flowRiskA[p]]) plus:Sum(security,p,riskFactorB.range,[riskFactorB[p] mul:flowRiskB[p]])];
+         [security minimize: [[[[simplicityMetric mul:@(beta0)] plus:[flowReduction mul:@(beta1)]] plus:[goodTrafficBlocked mul:@(beta2)]]                               plus:[networkRisk mul:@(beta3)]]];
          id<MIPProgram> mipSecurity = [ORFactory createMIPProgram: security];
          status = [mipSecurity solve];
+         [mipSecurity printModelToFile:"/Users/zitoun/Desktop/security.lp"];
+         if(status == ORerror)
+            printf("error in mip model\n");
    
       }
       

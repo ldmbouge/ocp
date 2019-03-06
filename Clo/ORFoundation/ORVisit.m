@@ -685,6 +685,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORDoubleDiv: visit method not defined"];
 }
+-(void) visitRealMult: (id<ORRealMult>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRealMult: visit method not defined"];
+}
 -(void) visitRealMin: (id<ORRealMin>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealMin: visit method not defined"];

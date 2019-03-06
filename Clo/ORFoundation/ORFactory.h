@@ -347,6 +347,7 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORReal)
++(id<ORConstraint>) realMult:(id<ORTracker>)model  var: (id<ORVar>)x by:(id<ORVar>)y equal:(id<ORVar>)z;
 +(id<ORConstraint>) realMin: (id<ORTracker>) model array: (id<ORVarArray>) x eq: (id<ORVar>) res;
 +(id<ORConstraint>) realSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  eq: (ORDouble) c;
 +(id<ORConstraint>) realSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  leq: (ORDouble) c;

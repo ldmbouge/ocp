@@ -733,6 +733,12 @@ enum ORGroupType {
 -(id<ORVar>) res;
 @end
 
+@protocol ORRealMult <ORConstraint>
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
 @protocol ORSumSquare <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORVar>) res;

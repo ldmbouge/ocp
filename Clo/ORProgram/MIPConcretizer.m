@@ -391,6 +391,19 @@
    }
 }
 
+-(void) visitRealMult:(id<ORRealMult>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      MIPVariableI* x[2] = { [self concreteVar:c.left],[self concreteVar:c.right] };
+      id<ORDoubleArray> coefq = [ORFactory doubleArray:_program range:RANGE(_program,0,0) value:1.0];
+      MIPVariableI* res[1] = { [self concreteVar:c.res] };
+      ORDouble coef[1] = { -1.0 };
+      MIPConstraintI* cstr = [_MIPsolver createQuadEQ:1 var:res coef:coef sizeQ:1 varQ:x coefQ:coefq rhs:0.0];
+      _gamma[c.getId] = cstr;
+      [_MIPsolver postConstraint: cstr];
+   }
+}
+
 -(void) visitRealSquare:(id<ORSquare>)c
 {
    [self visitSquare:c];

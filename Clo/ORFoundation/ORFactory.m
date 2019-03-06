@@ -1791,6 +1791,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORConstraint>) realMult:(id<ORTracker>)model  var: (id<ORVar>)x by:(id<ORVar>)y equal:(id<ORVar>)z
+{
+   id<ORConstraint> o = [[ORRealMult alloc] initORRealMult:z eq:x times:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) realEqualc:(id<ORTracker>)model  var: (id<ORRealVar>) x to:(ORDouble) c
 {
    id<ORConstraint> o = [[ORRealEqualc alloc] init:x eqi:c];

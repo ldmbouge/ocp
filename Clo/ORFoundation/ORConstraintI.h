@@ -762,6 +762,13 @@
 -(id<ORVar>) right;
 @end
 
+@interface ORRealMult : ORConstraintI<ORRealMult>
+-(ORRealMult*)initORRealMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
 @interface ORRealLinearEq : ORConstraintI<ORRealLinearEq>
 -(id) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;

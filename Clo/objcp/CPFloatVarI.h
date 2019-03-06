@@ -245,9 +245,9 @@ static inline intersectionInterval intersection(CPFloatVarI* v, float_interval r
    if(percent == 0.0)
       fpi_narrowf(&r, &x, &changed);
    else
-      fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
+      fpi_narrowpercentboundf(&r, &x, &changed, percent, &reduced);
    
-   if(x.inf > x.sup)
+   if(r.inf > r.sup)
       failNow();
    if(!changed && reduced > 0.){
       [v updateMin:r.inf propagate:NO];

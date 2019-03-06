@@ -19,6 +19,7 @@
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolution>) captureSolution;
 -(id<ORExplorer>)  explorer;
+-(void) printModelToFile: (char*) fileName;
 @end
 
 // MIPSolverFactory

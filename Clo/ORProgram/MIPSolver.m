@@ -135,6 +135,10 @@
 {
    return _sPool;
 }
+-(void) printModelToFile: (char*) fileName
+{
+   [_MIPsolver printModelToFile:fileName];
+}
 @end
 
 @implementation MIPSolverFactory

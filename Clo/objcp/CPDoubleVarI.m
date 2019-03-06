@@ -327,6 +327,11 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    if(newMin > [self min] || (is_plus_zero(newMin) &&  is_minus_zero([self min])))
       [_dom updateMin:newMin for:self propagate:p];
 }
+-(void) updateMax: (ORDouble) newMax propagate:(ORBool) p
+{
+   if(newMax < [self max] || (is_plus_zero([self max]) &&  is_minus_zero(newMax)))
+      [_dom updateMax:newMax for:self propagate:p];
+}
 -(void) updateMin: (ORDouble) newMin
 {
    if(newMin > [self min] || (is_plus_zero(newMin) &&  is_minus_zero([self min])))

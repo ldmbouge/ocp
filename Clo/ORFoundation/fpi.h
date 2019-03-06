@@ -343,6 +343,10 @@ extern void fpi_narrowpercentd(double_interval *Result, double_interval *new_X, 
 extern void fpi_narrowpercentl(ldouble_interval *Result, ldouble_interval *new_X, int *change, double percent, double *reduced_percent);
 
 
+
+extern void fpi_narrowpercentboundf(float_interval *Result, float_interval *new_X, int *change, double percent, double *reduced_percent);
+extern void fpi_narrowpercentboundd(double_interval *Result, double_interval *new_X, int *change, double percent, double *reduced_percent);
+extern void fpi_narrowpercentboundl(ldouble_interval *Result, ldouble_interval *new_X, int *change, double percent, double *reduced_percent);
  
 extern void fpi_equalf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *Y);
 extern void fpi_equald(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *Y);

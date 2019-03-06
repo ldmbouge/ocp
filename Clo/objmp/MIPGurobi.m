@@ -122,8 +122,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    //int error = GRBsetintparam(GRBgetenv(_model), "LazyConstraints", 1); // Enable lazy constraints for bounds update
    //if(error != 0) assert(YES);
    GRBupdatemodel(_model);
-   [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.lp"];
-   [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.mps"];
+//   [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.lp"];
+//   [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.mps"];
    GRBsetcallbackfunc(_model, &gurobi_callback, self);
    _terminate = NO;
    
@@ -133,7 +133,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    switch (status) {
       case GRB_OPTIMAL:
          _status = MIPoptimal;
-         [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.sol"];
+//         [self printModelToFile: "/Users/zitoun/Desktop/MIPgurobi.sol"];
          break;
       case GRB_INFEASIBLE:
          _status = MIPinfeasible;
@@ -312,7 +312,13 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
       case MIPor:
          if([cstr size] > 0)
             GRBaddgenconstrOr(_model, buf, [[(MIPConstraintOR*)cstr res] idx], [cstr size], [cstr col]);
+         break;
+      case MIPmin:
+         if([cstr size] > 0)
+            GRBaddgenconstrMin(_model, buf, [[(MIPConstraintOR*)cstr res] idx], [cstr size], [cstr col],0.0);
+         break;
       default:
+         printf("error type constraint");
          break;
    }
 }

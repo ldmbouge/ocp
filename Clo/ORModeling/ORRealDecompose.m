@@ -124,7 +124,7 @@
          id       x = cv ? [e right] : [e left];
          [_terms addTerm: x by: coef];
       } else if ([[e left] isConstant]) {
-         id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:[e right]];
+         id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:[e right]];
          [_terms addTerm:alpha by:[[e left] min]];
       } else if ([[e right] isConstant]) {
          id<ORRealLinear> left = [ORNormalizer realLinearFrom:[e left] model:_model];
@@ -314,12 +314,16 @@
 }
 -(void) visitExprMulI:(ORExprMulI*)e
 {
-    id<ORRealLinear> terms = [ORNormalizer realLinearFrom:e model:_model];
-    if (_rv==nil)
-        _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
-    [terms addTerm:_rv by:-1];
-    [terms postEQZ:_model];
-    [terms release];
+   id<ORRealLinear> lT = [ORNormalizer realLinearFrom:[e left] model:_model];
+   id<ORRealLinear> rT = [ORNormalizer realLinearFrom:[e right] model:_model];
+   id<ORRealVar> lV = [ORNormalizer realVarIn:lT for:_model];
+   id<ORRealVar> rV = [ORNormalizer realVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory realVar:_model];
+   }
+   [_model addConstraint: [ORFactory realMult:_model var:lV by:rV equal:_rv]];
+   [lT release];
+   [rT release];
 }
 -(void) visitExprSquareI:(ORExprSquareI *)e
 {
