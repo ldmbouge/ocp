@@ -249,10 +249,11 @@ static inline intersectionInterval intersection(CPFloatVarI* v, float_interval r
    
    if(r.inf > r.sup)
       failNow();
-   if(!changed && reduced > 0.){
-      [v updateMin:r.inf propagate:NO];
-      [v updateMax:r.sup propagate:NO];
-   }
+//      to make changes without propage
+//   if(!changed && reduced > 0.){
+//      [v updateMin:r.inf propagate:NO];
+//      [v updateMax:r.sup propagate:NO];
+//   }
    return (intersectionInterval){r,changed};
 }
 

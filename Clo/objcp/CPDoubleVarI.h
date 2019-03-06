@@ -205,10 +205,11 @@ static inline intersectionIntervalD intersectionD(CPDoubleVarI* v, double_interv
    
    if(r.inf > r.sup)
       failNow();
-   if(!changed && reduced > 0.0){
-      [v updateMin:r.inf propagate:NO];
-      [v updateMax:r.sup propagate:NO];
-   }
+//   to make changes without propage
+//   if(!changed && reduced > 0.0){
+//      [v updateMin:r.inf propagate:NO];
+//      [v updateMax:r.sup propagate:NO];
+//   }
    return (intersectionIntervalD){r,changed};
 }
 
