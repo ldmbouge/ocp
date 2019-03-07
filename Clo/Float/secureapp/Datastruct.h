@@ -234,9 +234,12 @@ void riskCacl(NSMutableArray * res, NSArray* flowPath, NSArray* funR, ORInt traf
    for(ORInt i = 0; i < nbNodes; i++){
       neighboors[i] = [[NSMutableSet alloc] init];
    }
+   ORInt u,v;
    for(NSArray* path in flowPath){
       for(ORInt i = 0, j = i + 1; j < [path count]; i++, j++){
-         [neighboors[j] addObject:@(i)];
+         u = [path[i] intValue];
+         v = [path[j] intValue];
+         [neighboors[v] addObject:@(u)];
       }
    }
    NSMutableSet* ns ;

@@ -315,7 +315,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
          break;
       case MIPmin:
          if([cstr size] > 0)
-            GRBaddgenconstrMin(_model, buf, [[(MIPConstraintOR*)cstr res] idx], [cstr size], [cstr col],0.0);
+            GRBaddgenconstrMin(_model, buf, [[(MIPConstraintOR*)cstr res] idx], [cstr size], [cstr col],DBL_MAX);
          break;
       default:
          printf("error type constraint");
