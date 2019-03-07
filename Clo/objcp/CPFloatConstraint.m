@@ -1268,11 +1268,12 @@
          [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]]; // Rewrite as min(y)!=x  (addInternal can throw)
    }
    else {                        // b is unknown
-      if ([_x bound] && [_y bound])
+      if ([_x bound] && [_y bound]) // set is_eq
          [_b bind: [_x min] == [_y min]];
       else if ([_x max] < [_y min] || [_y max] < [_x min])
          [_b bind:NO];
    }
+   if([_b bound] && [_x bound] && [_y bound]) assignTRInt(&_active, 0, _trail);
 }
 -(NSString*)description
 {
@@ -1520,14 +1521,16 @@
          [_x updateMin:[_y min]];
       }
    } else {
-      if ([_x max] <= [_y min]) {
+      if ([_x max] < [_y min]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
-      } else if ([_x min] > [_y max]) {
+      } else if ([_x min] >= [_y max]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,NO);
       }
    }
+   if([_b bound] && [_x bound] && [_y bound])
+      assignTRInt(&_active, NO, _trail);
 }
 -(NSString*)description
 {
