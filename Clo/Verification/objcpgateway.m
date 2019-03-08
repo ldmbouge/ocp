@@ -194,13 +194,22 @@ static OBJCPGateway *objcpgw;
 }
 -(void) initVariables
 {
+   id<ORVarArray> allfpvars = [_model FPVars];
    NSMutableDictionary* dict = [self getDeclarations];
+   NSMutableArray*  dictvars= [[NSMutableArray alloc] initWithCapacity:[dict count]];
    NSMutableArray* tmp = [[NSMutableArray alloc] initWithCapacity:[dict count]];
    __block ORInt i = 0;
    [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-      if([[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORFloatVar)] || [[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORDoubleVar)])
-         [tmp addObject:[(OBJCPDecl*)obj getVariable]];
+         [dictvars addObject:[(OBJCPDecl*)obj getVariable]];
    }];
+   if([dictvars count] > 0){
+      for(id<ORVar> v in allfpvars){
+         if([dictvars containsObject:v]){
+            [tmp addObject:v];
+         }
+      }
+      [dictvars release];
+   }
    if([tmp count]){
       _vars = (id<ORVarArray>)[ORFactory idArray:_model range:RANGE(_model,0,(ORUInt)[tmp count] - 1)];
       for(i = 0; i <  [tmp count];i++){
