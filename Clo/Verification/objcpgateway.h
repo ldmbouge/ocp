@@ -4,7 +4,7 @@
 #import <ORProgram/ORProgram.h>
 #import <objcp/objcp.h>
 #import "ORCmdLineArgs.h"
-#include <stdlib.h>
+#import <math.h>
 
 #define E_SIZE 8
 #define M_SIZE 23

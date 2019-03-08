@@ -241,17 +241,25 @@ static OBJCPGateway *objcpgw;
          char mstr[M_SIZE];
          float_cast f;
          f.f = [_program floatValue:v];
-         i2bs(estr,E_SIZE,f.parts.exponent);
-         i2bs(mstr,M_SIZE,f.parts.mantisa);
-         printf("(assert (= %s #b%d #b%s #b%s))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
+         if(isinff(f.f)){
+            printf("(assert (= %s (_ %soo 8 24)))\n",[[v prettyname] UTF8String], (f.f == +INFINITY) ? "+" : "-");
+         }else{
+            i2bs(estr,E_SIZE,f.parts.exponent);
+            i2bs(mstr,M_SIZE,f.parts.mantisa);
+            printf("(assert (= %s (fp #b%d #b%s #b%s)))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
+         }
       }else if([v.class conformsToProtocol:@protocol(ORDoubleVar)]){
          double_cast f;
          char estr[ED_SIZE];
          char mstr[MD_SIZE];
          f.f = [_program doubleValue:v];
-         i2bs(estr,E_SIZE,f.parts.exponent);
-         i2bs(mstr,M_SIZE,f.parts.mantisa);
-         printf("(assert (= %s #b%d #b%s #b%s))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
+         if(isinf(f.f)){
+            printf("(assert (= %s (_ %soo 11 53)))\n",[[v prettyname] UTF8String], (f.f == +INFINITY) ? "+" : "-");
+         }else{
+            i2bs(estr,E_SIZE,f.parts.exponent);
+            i2bs(mstr,M_SIZE,f.parts.mantisa);
+            printf("(assert (= %s (fp #b%d #b%s #b%s)))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
+         }
       }
    }
 }
