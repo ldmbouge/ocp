@@ -4,6 +4,7 @@
 #import <ORProgram/ORProgram.h>
 #import <objcp/objcp.h>
 #import "ORCmdLineArgs.h"
+#include <stdlib.h>
 
 #define E_SIZE 8
 #define M_SIZE 23
@@ -248,3 +249,10 @@ typedef int assertion_id;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx neg:(id<ORExpr>)x;
 -(ConstantWrapper*) objcp_mk_fp_constant:(objcp_expr)ctx s:(ConstantWrapper*)s e:(ConstantWrapper*)e m:(ConstantWrapper*)m;
 @end
+
+
+static inline void i2bs(char str[], int len, long v){
+   for(int i = 0; i < len; i++, v>>=1)
+      str[i] = (v >> 1 & 1) + '0';
+    str[len] = '\0';
+}

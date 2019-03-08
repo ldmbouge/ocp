@@ -234,6 +234,26 @@ static OBJCPGateway *objcpgw;
       else if([v.class conformsToProtocol:@protocol(ORDoubleVar)])
          NSLog(@"%@ : %20.20e (%s)",v,[_program doubleValue:v],[_program bound:v] ? "YES" : "NO");
    }
+   
+   for(id<ORVar> v in _vars){
+      if([v.class conformsToProtocol:@protocol(ORFloatVar)]){
+         char estr[E_SIZE];
+         char mstr[M_SIZE];
+         float_cast f;
+         f.f = [_program floatValue:v];
+         i2bs(estr,E_SIZE,f.parts.exponent);
+         i2bs(mstr,M_SIZE,f.parts.mantisa);
+         printf("(assert (= %s #b%d #b%s #b%s))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
+      }else if([v.class conformsToProtocol:@protocol(ORDoubleVar)]){
+         double_cast f;
+         char estr[ED_SIZE];
+         char mstr[MD_SIZE];
+         f.f = [_program doubleValue:v];
+         i2bs(estr,E_SIZE,f.parts.exponent);
+         i2bs(mstr,M_SIZE,f.parts.mantisa);
+         printf("(assert (= %s #b%d #b%s #b%s))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
+      }
+   }
 }
 @end
 
