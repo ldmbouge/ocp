@@ -130,11 +130,13 @@ yy_push_state(START_STRING, yyscanner); }
 }
 
 \|              { yylval->buf = smtlib2_charbuf_new();
+   smtlib2_charbuf_push(yylval->buf, yytext[0]);
    yy_push_state(START_QUOTEDSYMBOL, yyscanner); }
 <START_QUOTEDSYMBOL>{
    [^|]        { smtlib2_charbuf_push(yylval->buf, yytext[0]); }
    \|          {
       char *s;
+      smtlib2_charbuf_push(yylval->buf, yytext[0]);
       smtlib2_charbuf_push(yylval->buf, '\0');
       s = smtlib2_charbuf_array_release(yylval->buf);
       smtlib2_charbuf_delete(yylval->buf);
