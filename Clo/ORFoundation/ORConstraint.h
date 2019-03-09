@@ -471,6 +471,16 @@ enum ORGroupType {
 -(Class) stateClass;
 @end
 
+@protocol ORMDDSpecs <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(void)addStateInt:(NSString*)title withDefaultValue:(ORInt)value;
+-(id<ORExpr>)arcExists;
+-(NSMutableDictionary*)transitionFunctions;
+-(NSMutableDictionary*)stateValues;
+-(void)setArcExistsFunction:(id<ORExpr>)arcExists;
+-(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(NSString*)title;
+@end
+
 @protocol ORRegular<ORConstraint>
 -(id<ORIntVarArray>) array;
 -(id<ORAutomaton>)automaton;

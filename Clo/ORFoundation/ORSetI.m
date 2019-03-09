@@ -80,6 +80,11 @@
    return rv;
 }
 
+-(id<ORExpr>)contains:(id<ORExpr>)value
+{
+    return [ORFactory contains:value inSet:self];
+}
+
 -(ORInt) size
 {
     return [_avl size];

@@ -845,6 +845,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
 }
+-(DDClosure)visitClosure: (ORVisitor*)v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
+}
 -(NSSet*)allVars
 {
    ORSweep* sweep = [[ORSweep alloc] init];
@@ -1156,6 +1160,21 @@
 }
 @end
 
+@implementation ORExprSetContainsI
+-(id<ORExpr>) initORExprSetContainsI:(id<ORIntSet>)a value:(id<ORExpr>)value
+{
+    self = [super init];
+    _set = a;
+    _value = value;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprSetContainsI:self];
+}
+-(id<ORIntSet>) set { return _set; }
+-(id<ORExpr>) value { return _value; }
+@end
 
 @implementation ORExprCstDoubleSubI
 -(id<ORExpr>) initORExprCstDoubleSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op
@@ -2468,4 +2487,25 @@
    _i1 = [aDecoder decodeObject];
    return self;
 }
+@end
+
+
+@implementation ORExprValueAssignmentI
+-(id<ORExpr>) initORExprValueAssignmentI
+{
+    self = [super init];
+    return self;
+}
+-(void) visit:(ORVisitor*) v { [v visitExprValueAssignmentI:self]; }
+@end
+
+@implementation ORExprStateValueI
+-(id<ORExpr>)initORExprStateValueI:(NSString*)value
+{
+    self = [super init];
+    _value = value;
+    return self;
+}
+-(NSString*) value { return _value; }
+-(void) visit:(ORVisitor*) v { [v visitExprStateValueI:self]; }
 @end

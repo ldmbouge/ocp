@@ -48,7 +48,6 @@
 @protocol ORIntParam;
 @protocol ORRealParam;
 
-
 @interface ORVisitor : NSObject<NSObject>
 -(void) visitRandomStream:(id) v;
 -(void) visitZeroOneStream:(id) v;
@@ -115,6 +114,7 @@
 -(void) visitCustomMDD: (id<ORConstraint>) c;
 -(void) visitCustomMDDWithObjective: (id<ORConstraint>) c;
 
+-(void) visitMDDSpecs: (id<ORMDDSpecs>)c;
 
 -(void) visitRealEqualc: (id<ORRealEqualc>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;
@@ -199,6 +199,7 @@
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprCstDoubleSubI:(id<ORExpr>)e;
+-(void) visitExprSetContainsI:(id<ORExpr>)e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
@@ -206,6 +207,8 @@
 -(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
+-(void) visitExprValueAssignmentI:(id<ORExpr>)e;
+-(void) visitExprStateValueI:(id<ORExpr>)e;
 // Bit
 -(void) visitBitEqualAt:(id<ORConstraint>)c;
 -(void) visitBitEqualc:(id<ORConstraint>)c;

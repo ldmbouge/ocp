@@ -452,6 +452,68 @@
 }
 @end
 
+@implementation ORMDDSpecs {
+   id<ORIntVarArray> _x;
+   NSMutableDictionary* _stateValues;
+   id<ORExpr> _arcExists;
+   NSMutableDictionary* _transitionFunctions;
+}
+-(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   
+   _stateValues = [[NSMutableDictionary alloc] init];
+   _transitionFunctions = [[NSMutableDictionary alloc] init];
+
+   _arcExists = (id)^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+      return [[NSNumber alloc] initWithBool:true];
+   };
+   return self;
+}
+
+-(void)addStateInt:(NSString*)title withDefaultValue:(ORInt)value
+{
+   [_stateValues setObject:[[NSNumber alloc] initWithInt:value] forKey:title];
+}
+
+-(void)setArcExistsFunction:(id<ORExpr>)arcExists
+{
+   _arcExists = arcExists;
+}
+-(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(NSString*)title
+{
+   [_transitionFunctions setObject:transitionFunction forKey:title];
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitMDDSpecs:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+
+-(id<ORExpr>)arcExists { return _arcExists; }
+-(NSMutableDictionary*)transitionFunctions { return _transitionFunctions; }
+-(NSMutableDictionary*)stateValues { return _stateValues; }
+
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
 
 
 @interface ORAlphaVisit : ORVisitor {

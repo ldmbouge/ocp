@@ -1873,6 +1873,11 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
+
+-(void) visitMDDSpecs: (id<ORMDDSpecs>) cstr
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MDDSpecs constraints"];
+}
 @end
 
 @implementation ORCPSearchConcretizer {

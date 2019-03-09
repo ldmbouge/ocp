@@ -585,6 +585,16 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    }
    return (id<ORIntVarArray>)o;
 }
++(id<ORExpr>) getStateValue:(NSString*)title
+{
+    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:title];
+    return o;
+}
++(id<ORExpr>) valueAssignment
+{
+    id<ORExpr> o = [[ORExprValueAssignmentI alloc] initORExprValueAssignmentI];
+    return o;
+}
 +(id<ORVarArray>) varArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORVar>(^)(ORInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -865,6 +875,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return o;
 }
 
++(id<ORExpr>) contains:(id<ORExpr>) value inSet:(id<ORIntSet>)set
+{
+    id<ORExpr> o = [[ORExprSetContainsI alloc] initORExprSetContainsI: set value:value];
+    return o;
+}
+
 
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t
 {
@@ -979,6 +995,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
     id<ORConstraint> o = [[ORCustomMDDWithObjective alloc] initORCustomMDDWithObjective:x relaxed:(bool)relaxed size:relaxationSize reduced:true objective:objectiveValue maximize:maximize stateClass:stateClass];
+    [model trackObject:o];
+    return o;
+}
+
++(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x
+{
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x];
     [model trackObject:o];
     return o;
 }

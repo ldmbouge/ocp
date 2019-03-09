@@ -85,6 +85,11 @@
 -(Class) stateClass;
 @end
 
+@interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
+-(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>) vars;
+@end
+
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;

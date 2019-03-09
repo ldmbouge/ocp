@@ -240,7 +240,7 @@ int main (int argc, const char * argv[])
         
         
         //Multiple Amongs
-        int numConstraints = 10;
+        /*int numConstraints = 10;
         
         NSSet* value1 = [NSSet setWithObjects:@1, nil];
         id<ORIntSet> setOne = [ORFactory intSet: mdl set: value1];
@@ -259,12 +259,61 @@ int main (int argc, const char * argv[])
             
             id<ORIntVarArray> variableSubset = [ORFactory intVarArray:mdl range: RANGE(mdl, 1, 5) with: ^id<ORIntVar>(ORInt i) { return [variables at: ([[[lines objectAtIndex:constraintNum] objectAtIndex:i-1] intValue])];}];
             [mdl add: [ORFactory among: variableSubset values: setOne low: 2 up: 3]];
-        }
+        }*/
         
-        //[mdl add: [variables[1] eq: variables[2]]];
+        id<ORIntVarArray> variables = [ORFactory intVarArray:mdl range: RANGE(mdl, 1, 50) domain: RANGE(mdl, 1, 5)];
+        NSSet* even = [NSSet setWithObjects:@2, @4, nil];
+        NSSet* five = [NSSet setWithObjects:@5, nil];
+        id<ORIntSet> countedValues1 = [ORFactory intSet: mdl set: even];
+        id<ORIntSet> countedValues2 = [ORFactory intSet: mdl set: five];
+        id<ORInteger> lower1 = [ORFactory integer:mdl value:5];
+        id<ORInteger> upper1 = [ORFactory integer:mdl value:10];
+        id<ORInteger> lower2 = [ORFactory integer:mdl value:2];
+        id<ORInteger> upper2 = [ORFactory integer:mdl value:3];
+        
+        id<ORMDDSpecs> mddStateSpecs = [ORFactory MDDSpecs: mdl variables:variables];
+        [mddStateSpecs addStateInt: @"count" withDefaultValue: 0];
+        [mddStateSpecs addStateInt: @"remaining" withDefaultValue: 50];
+        
+        //(count + (assignedValue in countedValues)) <= upper && (count + (assignedValue in countedValues) + (remaining-1)) >= lower
+        id<ORExpr> arcExists = [[[ORFactory expr: [ORFactory getStateValue: @"count"] plus: [countedValues1 contains:[ORFactory valueAssignment]] track:mdl] leq: upper1 track:mdl]
+                                land:
+                                [[[ORFactory expr: [ORFactory getStateValue: @"count"] plus: [countedValues1 contains:[ORFactory valueAssignment]] track:mdl] plus: [[ORFactory getStateValue: @"remaining"] sub: @1 track: mdl] track: mdl] geq: lower1 track: mdl] track: mdl];
+        
+        [mddStateSpecs setArcExistsFunction: arcExists];
+        
+        //self["count"] = parent["count"] + (parentValue in countedValues)
+        id<ORExpr> countTransitionFunction = [[ORFactory getStateValue: @"count"] plus: [countedValues1 contains:[ORFactory valueAssignment]] track: mdl];
+        //self["remaining"] = parent["remaining"] - 1
+        id<ORExpr> remainingTransitionFunction = [[ORFactory getStateValue: @"remaining"] sub: @1 track: mdl];
+        [mddStateSpecs addTransitionFunction: countTransitionFunction toStateValue: @"count"];
+        [mddStateSpecs addTransitionFunction: remainingTransitionFunction toStateValue: @"remaining"];
+        
+        [mdl add: mddStateSpecs];
+        
+        
+        id<ORMDDSpecs> mddStateSpecs2 = [ORFactory MDDSpecs: mdl variables:variables];
+        [mddStateSpecs2 addStateInt: @"count" withDefaultValue: 0];
+        [mddStateSpecs2 addStateInt: @"remaining" withDefaultValue: 50];
+        
+        //(count + (assignedValue in countedValues)) <= upper && (count + (assignedValue in countedValues) + (remaining-1)) >= lower
+        id<ORExpr> arcExists2 = [[[ORFactory expr: [ORFactory getStateValue: @"count"] plus: [countedValues2 contains:[ORFactory valueAssignment]] track:mdl] leq: upper2 track:mdl]
+                                land:
+                                [[[ORFactory expr: [ORFactory getStateValue: @"count"] plus: [countedValues2 contains:[ORFactory valueAssignment]] track:mdl] plus: [[ORFactory getStateValue: @"remaining"] sub: @1 track: mdl] track: mdl] geq: lower2 track: mdl] track: mdl];
+        
+        [mddStateSpecs2 setArcExistsFunction: arcExists2];
+        
+        //self["count"] = parent["count"] + (parentValue in countedValues)
+        id<ORExpr> countTransitionFunction2 = [[ORFactory getStateValue: @"count"] plus: [countedValues2 contains:[ORFactory valueAssignment]] track: mdl];
+        //self["remaining"] = parent["remaining"] - 1
+        id<ORExpr> remainingTransitionFunction2 = [[ORFactory getStateValue: @"remaining"] sub: @1 track: mdl];
+        [mddStateSpecs2 addTransitionFunction: countTransitionFunction2 toStateValue: @"count"];
+        [mddStateSpecs2 addTransitionFunction: remainingTransitionFunction2 toStateValue: @"remaining"];
+        
+        [mdl add: mddStateSpecs2];
         
         [notes ddWidth: 8];
-        [notes ddRelaxed: true];
+        [notes ddRelaxed: false];
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];
         id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];

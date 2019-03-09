@@ -126,4 +126,8 @@
    }];
    return rv;
 }
+-(id<ORExpr>)contains:(id<ORExpr>)value
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "contains in CPTrainIntSet not implemented"];
+}
 @end

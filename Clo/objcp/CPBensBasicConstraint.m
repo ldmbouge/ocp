@@ -842,7 +842,7 @@
             }
             
             [parentNode addChild:childNode at:edgeValue];
-            [childNode addParent:parentNode];   //~ 45 CPU
+            [childNode addParent:parentNode];
             assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
         }
     }

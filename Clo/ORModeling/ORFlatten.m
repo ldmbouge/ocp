@@ -124,6 +124,11 @@
     _result = [_into addConstraint:cstr];
 }
 
+-(void) visitMDDSpecs: (id<ORMDDSpecs>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+
 
 -(void) visitIntVar: (id) v
 {

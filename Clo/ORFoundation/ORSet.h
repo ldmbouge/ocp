@@ -31,6 +31,7 @@
 -(NSString*) description;
 -(void) copyInto: (id<ORIntSet>) S;
 -(id<ORIntSet>)inter:(id<ORIntSet>)s2;
+-(id<ORExpr>)contains:(id<ORExpr>)value;
 @end
 
 @protocol ORIntRange <ORIntIterable>

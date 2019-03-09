@@ -56,6 +56,11 @@
     @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDDWithObjective: visit method not defined"];
 }
 
+-(void) visitMDDSpecs: (id<ORMDDSpecs>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "MDDSpecs: visit method not defined"];
+}
+
 -(void) visitRandomStream:(id) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RandomStream: visit method not defined"];
@@ -731,6 +736,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstSubI: visit method not defined"]; 
 }
+-(void) visitExprSetContainsI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSetContainsI: visit method not defined"];
+}
 -(void) visitExprCstDoubleSubI:(id<ORExpr>)e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstDoubleSubI: visit method not defined"]; 
@@ -770,6 +779,14 @@
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMatrixVarSubI: visit method not defined"];    
+}
+-(void) visitExprValueAssignmentI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprValueAssignmentI: visit method not defined"];
+}
+-(void) visitExprStateValueI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprStateValueI: visit method not defined"];
 }
 @end
 

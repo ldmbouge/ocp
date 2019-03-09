@@ -61,6 +61,7 @@
 -(void) encodeWithCoder:(NSCoder*) aCoder;
 -(id) initWithCoder:(NSCoder*) aDecoder;
 -(void) visit: (ORVisitor*)v;
+-(DDClosure)visitClosure: (ORVisitor*)v;
 -(ORRelationType) type;
 -(ORVType) vtype;
 -(NSSet*)allVars;
@@ -153,6 +154,15 @@
 -(void) visit:(ORVisitor*) v;
 @end
 
+@interface ORExprSetContainsI : ORExprBinaryI<ORExpr, NSCoding> {
+    id<ORIntSet> _set;
+    id<ORExpr> _value;
+}
+-(id<ORExpr>) initORExprSetContainsI:(id<ORIntSet>)a value:(id<ORExpr>)value;
+-(void) visit:(ORVisitor*) v;
+-(id<ORIntSet>) set;
+-(id<ORExpr>) value;
+@end
 
 @interface ORExprPlusI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprPlusI: (id<ORExpr>) left and: (id<ORExpr>) right;
@@ -392,4 +402,15 @@
 @end
 
 
+@interface ORExprValueAssignmentI : ORExprI<ORExpr, NSCoding>
+-(id<ORExpr>)initORExprValueAssignmentI;
+-(void) visit:(ORVisitor*) v;
+@end
 
+@interface ORExprStateValueI : ORExprI<ORExpr, NSCoding> {
+    NSString* _value;
+}
+-(id<ORExpr>)initORExprStateValueI:(NSString*)value;
+-(NSString*) value;
+-(void) visit:(ORVisitor*) v;
+@end

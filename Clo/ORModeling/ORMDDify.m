@@ -15,6 +15,200 @@
 #import "ORDecompose.h"
 #import "ORRealDecompose.h"
 
+@implementation ORDDClosureGenerator
+-(ORDDClosureGenerator*) initORDDClosureGenerator {
+    self = [super init];
+    return self;
+}
+
+-(DDClosure) computeClosure:(id<ORExpr>)e
+{
+    [e visit: self];
+    return current;
+}
+
+-(DDClosure) recursiveVisitor:(id<ORExpr>)e
+{
+    DDClosure old = current;
+    current = nil;
+    [e visit: self];
+    DDClosure returnedValue = current;
+    current = old;
+    return returnedValue;
+}
+
+-(void) visitIntVar:(id<ORIntVar>)v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "IntVar: visit method not defined"];
+}
+
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+    current = [^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [[NSNumber alloc] initWithLong: [e value]];
+    } copy];
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "MutableInteger: visit method not defined"];
+}
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "MutableDouble: visit method not defined"];
+}
+-(void) visitDouble: (id<ORDoubleNumber>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleNumber: visit method not defined"];
+}
+-(void) visitExprPlusI: (ORExprBinaryI*) e
+{
+    DDClosure left = [self recursiveVisitor:[e left]];
+    DDClosure right = [self recursiveVisitor:[e right]];
+    current = [(id)^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [[NSNumber alloc] initWithLong: [left(state, variable, value) longValue] + [right(state, variable, value) longValue]];  //Only works for ints
+    } copy];
+}
+-(void) visitExprMinusI: (ORExprBinaryI*) e
+{
+    DDClosure left = [self recursiveVisitor:[e left]];
+    DDClosure right = [self recursiveVisitor:[e right]];
+    current = [(id)^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [[NSNumber alloc] initWithLong: [left(state, variable, value) longValue] - [right(state, variable, value) longValue]];  //Only works for ints
+    } copy];
+}
+-(void) visitExprMulI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMulI: visit method not defined"];
+}
+-(void) visitExprDivI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprDivI: visit method not defined"];
+}
+-(void) visitExprModI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprModI: visit method not defined"];
+}
+-(void) visitExprMinI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinI: visit method not defined"];
+}
+-(void) visitExprMaxI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMaxI: visit method not defined"];
+}
+-(void) visitExprEqualI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprEqualI: visit method not defined"];
+}
+-(void) visitExprNEqualI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNEqualI: visit method not defined"];
+}
+-(void) visitExprLEqualI: (ORExprBinaryI*) e
+{
+    DDClosure left = [self recursiveVisitor:[e left]];
+    DDClosure right = [self recursiveVisitor:[e right]];
+    current = [(id)^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [[NSNumber alloc] initWithBool: [left(state, variable, value) longValue] <= [right(state, variable, value) longValue]];  //Only works for ints
+    } copy];
+}
+-(void) visitExprGEqualI: (ORExprBinaryI*) e
+{
+    DDClosure left = [self recursiveVisitor:[e left]];
+    DDClosure right = [self recursiveVisitor:[e right]];
+    current = [(id)^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [[NSNumber alloc] initWithBool: [left(state, variable, value) longValue] >= [right(state, variable, value) longValue]];  //Only works for ints
+    } copy];
+}
+-(void) visitExprSumI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSumI: visit method not defined"];
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprProdI: visit method not defined"];
+}
+-(void) visitExprAggMinI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMinI: visit method not defined"];
+}
+-(void) visitExprAggMaxI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMaxI: visit method not defined"];
+}
+-(void) visitExprAbsI:(id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAbsI: visit method not defined"];
+}
+-(void) visitExprSquareI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSquareI: visit method not defined"];
+}
+-(void) visitExprNegateI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"];
+}
+-(void) visitExprCstSubI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstSubI: visit method not defined"];
+}
+-(void) visitExprCstDoubleSubI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstDoubleSubI: visit method not defined"];
+}
+-(void) visitExprDisjunctI:(id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprDisjunctI: visit method not defined"];
+}
+-(void) visitExprConjunctI: (ORExprBinaryI*) e
+{
+    DDClosure left = [self recursiveVisitor:[e left]];
+    DDClosure right = [self recursiveVisitor:[e right]];
+    current = [(id)^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [[NSNumber alloc] initWithBool: [left(state, variable, value) boolValue] && [right(state, variable, value) boolValue]];
+    } copy];
+}
+-(void) visitExprImplyI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprImplyI: visit method not defined"];
+}
+-(void) visitExprAggOrI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggOrI: visit method not defined"];
+}
+-(void) visitExprAggAndI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggAndI: visit method not defined"];
+}
+-(void) visitExprVarSubI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprVarSubI: visit method not defined"];
+}
+-(void) visitExprMatrixVarSubI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMatrixVarSubI: visit method not defined"];
+}
+-(void) visitExprStateValueI:(ORExprStateValueI*)e
+{
+    current = [^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [state objectForKey: [e value]];
+    } copy];
+}
+-(void) visitExprValueAssignmentI:(id<ORExpr>)e
+{
+    current = [^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [[NSNumber alloc] initWithInt: value];
+    } copy];
+}
+-(void) visitExprSetContainsI:(ORExprSetContainsI*)e
+{
+    DDClosure right = [self recursiveVisitor:[e value]];
+    current = [^(NSMutableDictionary* state, ORInt variable, ORInt value) {
+        return [[NSNumber alloc] initWithBool: [[e set] member: [right(state, variable, value) intValue]]];
+    } copy];
+}
+@end
+
 @implementation ORFactory(MDD)
 +(void) sortIntVarArray:(NSMutableArray*)array first:(ORInt)first last:(ORInt)last {
     ORInt i, j, pivot;
@@ -180,6 +374,100 @@
 }
 @end
 
+@implementation MDDStateSpecification
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(NSMutableDictionary*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(NSMutableDictionary*)transitionFunctions
+{
+    [super initClassState:domainMin domainMax:domainMax];
+    _state = stateValues;
+    _arcExists = arcExists;
+    _transitionFunctions = transitionFunctions;
+    return self;
+}
+-(id) initRootState:(MDDStateSpecification*)classState variableIndex:(int)variableIndex {
+    self = [super initRootState:classState variableIndex:variableIndex];
+    _state = [classState state];
+    _arcExists = [classState arcExistsClosure];
+    _transitionFunctions = [classState transitionFunctions];
+    return self;
+}
+
+-(id) initState:(MDDStateSpecification*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
+    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
+    NSMutableDictionary* parentState = [parentNodeState state];
+    ORInt parentVar = [parentNodeState variableIndex];
+    
+    _state = [[NSMutableDictionary alloc] init];
+    _arcExists = [parentNodeState arcExistsClosure];
+    _transitionFunctions = [parentNodeState transitionFunctions];
+    
+    for (id key in parentState) {
+        DDClosure closure = [_transitionFunctions objectForKey:key];
+        if (closure != NULL) {
+            [_state setObject:closure(parentState, parentVar, edgeValue) forKey:key];
+        }
+    }
+    return self;
+}
+-(id) initState:(MDDStateSpecification*)parentNodeState variableIndex:(int)variableIndex {
+    self = [super initState:parentNodeState variableIndex:variableIndex];
+    NSMutableDictionary* parentState = [parentNodeState state];
+    _state = [[NSMutableDictionary alloc] initWithDictionary:parentState];
+    
+    _arcExists = [parentNodeState arcExistsClosure];
+    _transitionFunctions = [parentNodeState transitionFunctions];
+    return self;
+}
+
+-(bool) canChooseValue:(int)value forVariable:(int)variable {
+    return [_arcExists(_state, variable, value) boolValue];
+}
+-(void) mergeStateWith:(AllDifferentMDDState*)other {
+    return; //Implement once we hit relaxing.  Probably needs to be user defined???
+}
+
+-(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
+    NSMutableArray* savedChanges = [[NSMutableArray alloc] init];
+    for (id key in [_state allKeys]) {
+        DDClosure closure = [_transitionFunctions objectForKey:key];
+        if (closure != NULL) {
+            [savedChanges addObject:@[key,[_state objectForKey:key]]];
+            [_state setObject:closure(_state,variable,value) forKey:key];
+        }
+    }
+    return savedChanges;
+}
+
+-(void) undoChanges:(NSArray*)savedChanges {
+    for (id change in savedChanges) {
+        [_state setObject:change[1] forKey:change[0]];
+    }
+}
+
+-(int) stateDifferential:(MDDStateSpecification*)other {
+    int differential = 0;
+    NSMutableDictionary* other_state = [other state];
+    for (id key in _state) {
+        if ([_state objectForKey:key] != [other_state objectForKey:key]) {
+            differential++;
+        }
+    }
+    return differential;
+}
+-(bool) equivalentTo:(MDDStateSpecification*)other {
+    NSMutableDictionary* other_state = [other state];
+    for (id key in _state) {
+        if ([_state objectForKey:key] != [other_state objectForKey:key]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+-(NSMutableDictionary*) state { return _state; }
+-(DDClosure)arcExistsClosure { return _arcExists; }
+-(NSMutableDictionary*)transitionFunctions { return _transitionFunctions; }
+@end
 
 @implementation CustomBDDState
 -(id) initRootState:(CustomBDDState*)classState variableIndex:(int)variableIndex {
@@ -604,7 +892,7 @@ static id<ORIntVarArray> _variables;
     for (int stateIndex = 0; stateIndex < [_stateClasses count]; stateIndex++) {
         CustomState* stateClass = [_stateClasses objectAtIndex:stateIndex];
         CustomState* state;
-        if ([_stateVariables[stateIndex] contains:[_variables at: [parentNodeState variableIndex]]]) {
+        if ([(id<ORIdArray>)(_stateVariables[stateIndex]) contains:[_variables at: [parentNodeState variableIndex]]]) {
             state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] assigningVariable:variableIndex withValue:edgeValue];
         } else {
             state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] variableIndex:variableIndex];
@@ -670,7 +958,7 @@ static id<ORIntVarArray> _variables;
     
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
         NSArray* stateSavedChanges;
-        if ([_stateVariables[stateIndex] contains:[_variables at: variable]]) {
+        if ([(id<ORIdArray>)_stateVariables[stateIndex] contains:[_variables at: variable]]) {
             stateSavedChanges = [[_states objectAtIndex:stateIndex] tempAlterStateAssigningVariable:variable value:value toTestVariable:toVariable];
         } else {
             stateSavedChanges = [[NSArray alloc] init];
@@ -691,7 +979,7 @@ static id<ORIntVarArray> _variables;
 
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        if ([_stateVariables[stateIndex] contains:[_variables at: variable]]) {
+        if ([(id<ORIdArray>)_stateVariables[stateIndex] contains:[_variables at: variable]]) {
             if (![[_states objectAtIndex:stateIndex] canChooseValue:value forVariable:variable]) {
                 return false;
             }
@@ -762,7 +1050,7 @@ static id<ORIntVarArray> _variables;
         if (true) { //Should check if c is MDDifiable.  aka if it has a visit function down below
         [c visit: self];
         }
-        [_into addConstraint: c];
+        //[_into addConstraint: c];
         [_into setCurrent:nil];
     }
       onObjective: ^(id<ORObjectiveFunction> o) {
@@ -789,6 +1077,23 @@ static id<ORIntVarArray> _variables;
 }
 
 -(id<ORAddToModel>)target { return _into; }
+
+
+-(void) visitMDDSpecs:(id<ORMDDSpecs>)cstr
+{
+    ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
+    id<ORIntVarArray> cstrVars = [cstr vars];
+    id<ORExpr> arcExists = [cstr arcExists];
+    DDClosure arcExistsClosure = [closureVisitor computeClosure:arcExists];
+    NSMutableDictionary* stateValues = [cstr stateValues];
+    NSMutableDictionary* transitionFunctions = [cstr transitionFunctions];
+    for (id key in [transitionFunctions allKeys]) {
+        [transitionFunctions setObject:[closureVisitor computeClosure:[transitionFunctions objectForKey:key]] forKey:key];
+    }
+    [JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[cstrVars low] domainMax:[cstrVars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctions] withVariables:cstrVars];
+     _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker:_into];
+}
+
 
 
 -(void) visitAlldifferent:(id<ORAlldifferent>)cstr

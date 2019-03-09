@@ -14,6 +14,16 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORVisit.h>
 
+@interface ORDDClosureGenerator : ORNOopVisit {
+@protected
+    DDClosure current;
+}
+-(ORDDClosureGenerator*) initORDDClosureGenerator;
+-(DDClosure) computeClosure:(id<ORExpr>)e;
+-(DDClosure) recursiveVisitor:(id<ORExpr>)e;
+@end
+
+
 @interface CustomState : NSObject {
 @protected
     int _variableIndex;
@@ -36,6 +46,18 @@
 -(bool) canChooseValue:(int)value forVariable:(int)variable;
 -(int) stateDifferential:(CustomState*)other;
 -(bool) equivalentTo:(CustomState*)other;
+@end
+
+@interface MDDStateSpecification : CustomState {
+@protected
+    NSMutableDictionary* _state;
+    DDClosure _arcExists;
+    NSMutableDictionary* _transitionFunctions;
+}
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(NSMutableDictionary*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(NSMutableDictionary*)transitionFunctions;
+-(NSMutableDictionary*) state;
+-(DDClosure)arcExistsClosure;
+-(NSMutableDictionary*)transitionFunctions;
 @end
 
 @interface CustomBDDState : CustomState {   //A state with a list of booleans corresponding to whether or not each variable can be assigned 1
