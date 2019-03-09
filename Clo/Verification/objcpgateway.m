@@ -256,8 +256,8 @@ static OBJCPGateway *objcpgw;
          if(isinf(f.f)){
             printf("(assert (= %s (_ %soo 11 53)))\n",[[v prettyname] UTF8String], (f.f == +INFINITY) ? "+" : "-");
          }else{
-            i2bs(estr,E_SIZE,f.parts.exponent);
-            i2bs(mstr,M_SIZE,f.parts.mantisa);
+            i2bs(estr,ED_SIZE,f.parts.exponent);
+            i2bs(mstr,MD_SIZE,f.parts.mantisa);
             printf("(assert (= %s (fp #b%d #b%s #b%s)))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
          }
       }
