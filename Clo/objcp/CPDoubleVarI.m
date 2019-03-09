@@ -13,8 +13,7 @@
 #import <CPUKernel/CPUKernel.h>
 #import <objcp/CPDoubleDom.h>
 
-@protocol ORSplitVisitor;
-@protocol ORAbsVisitor;
+@protocol CPVisitor;
 
 typedef struct  {
    TRId           _bindEvt[2];
@@ -416,13 +415,9 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
 {
    return [_dom magnitude];
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   [(id)visitor applyDoubleSplit:self];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-   [(id)visitor applyDoubleAbs:self];
+   [((id)visitor) applyDoubleVar:self];
 }
 @end
 
@@ -647,6 +642,14 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    [self updateMax:newMax];
    [self updateMin:newMin];
 }
+- (void)updateMax:(ORDouble)newMax propagate:(ORBool)p
+{
+   [self updateMax:newMax];
+}
+- (void)updateMin:(ORDouble)newMin propagate:(ORBool)p
+{
+   [self updateMin:newMin];
+}
 -(ORDouble) min
 {
    return [_theVar min];
@@ -710,19 +713,14 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
 {
    [self updateInterval:[dom min] and:[dom max]];
 }
-
 -(ORDouble) magnitude
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleViewOnIntVarI: magnitude not definied for a view"];
    return 0.0;
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleViewOnIntVarI: visitSplit not definied for a view"];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleViewOnIntVarI: visitAbs not definied for a view"];
+   [((id)visitor) applyDoubleVar:self];
 }
 @end
 

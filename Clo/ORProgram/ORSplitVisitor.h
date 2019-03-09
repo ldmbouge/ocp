@@ -15,48 +15,39 @@
 
 @class CPCoreSolver;
 
-@protocol ORSplitVisitor
--(void) applyIntSplit :(id<CPVar>) var;
--(void) applyFloatSplit :(id<CPVar>) var;
--(void) applyDoubleSplit :(id<CPVar>) var;
+@interface CPVisitorI : ORVisitor<CPVisitor>
 @end
 
-@protocol ORAbsVisitor
--(void) applyIntAbs:(id<CPVar>) var;
--(void) applyFloatAbs:(id<CPVar>) var;
--(void) applyDoubleAbs:(id<CPVar>) var;
--(ORDouble) rate;
-@end
-
-@interface ORSplitVisitor : ORObject<ORSplitVisitor>
+@interface ORSplitVisitor : CPVisitorI<CPVisitor>
 -(ORSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
 @end
 
-@interface OR3WaySplitVisitor : ORObject<ORSplitVisitor>
+@interface OR3WaySplitVisitor : CPVisitorI<CPVisitor>
 -(OR3WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
 @end
 
-@interface OR5WaySplitVisitor : ORObject<ORSplitVisitor>
+@interface OR5WaySplitVisitor : CPVisitorI<CPVisitor>
 -(OR5WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
 @end
 
-@interface OR6WaySplitVisitor : ORObject<ORSplitVisitor>
+@interface OR6WaySplitVisitor : CPVisitorI<CPVisitor>
 -(OR6WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
 @end
 
-@interface ORDeltaSplitVisitor : ORObject<ORSplitVisitor>
+@interface ORDeltaSplitVisitor : CPVisitorI<CPVisitor>
 -(ORDeltaSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v nb:(ORInt) n;
 @end
 
-@interface OREnumSplitVisitor : ORObject<ORSplitVisitor>
+@interface OREnumSplitVisitor : CPVisitorI<CPVisitor>
 -(OREnumSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v nb:(ORInt) n;
 @end
 
-@interface ORAbsSplitVisitor : ORObject<ORSplitVisitor>
+@interface ORAbsSplitVisitor : CPVisitorI<CPVisitor>
 -(ORAbsSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v other:(id<CPVar>)o;
 @end
 
-@interface ORAbsVisitor : ORObject<ORAbsVisitor>
+@interface ORAbsVisitor : CPVisitorI<CPVisitor>
 -(ORAbsVisitor*) init:(id<CPVar>) v;
+-(ORDouble) rate;
 @end
 

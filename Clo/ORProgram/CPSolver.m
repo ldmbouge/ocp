@@ -2618,7 +2618,7 @@
 -(void) floatAbsSplit:(ORUInt)i by:(id<CPVar>) y vars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[getId(x[i])];
-   id<ORSplitVisitor> splitVisit = [[ORAbsSplitVisitor alloc] initWithProgram:self variable:x[i] other:y];
+   id<CPVisitor> splitVisit = [[ORAbsSplitVisitor alloc] initWithProgram:self variable:x[i] other:y];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
@@ -2731,7 +2731,7 @@
 -(void) floatSplit:(ORUInt) i  withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[getId(x[i])];
-   id<ORSplitVisitor> splitVisit = [[ORSplitVisitor alloc] initWithProgram:self variable:x[i]];
+   id<CPVisitor> splitVisit = [[ORSplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
@@ -2739,7 +2739,7 @@
 -(void) float3WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[getId(x[i])];
-   id<ORSplitVisitor> splitVisit = [[OR3WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
+   id<CPVisitor> splitVisit = [[OR3WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
@@ -2747,7 +2747,7 @@
 -(void) float5WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[getId(x[i])];
-   id<ORSplitVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
+   id<CPVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
@@ -2755,21 +2755,21 @@
 -(void) float6WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[getId(x[i])];
-   id<ORSplitVisitor> splitVisit = [[OR6WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
+   id<CPVisitor> splitVisit = [[OR6WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
 -(void) floatDeltaSplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[getId(x[i])];
-   id<ORSplitVisitor> splitVisit = [[ORDeltaSplitVisitor alloc] initWithProgram:self variable:x[i] nb:_searchNBFloats];
+   id<CPVisitor> splitVisit = [[ORDeltaSplitVisitor alloc] initWithProgram:self variable:x[i] nb:_searchNBFloats];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
 -(void) floatEWaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[getId(x[i])];
-   id<ORSplitVisitor> splitVisit = [[OREnumSplitVisitor alloc] initWithProgram:self variable:x[i] nb:_searchNBFloats];
+   id<CPVisitor> splitVisit = [[OREnumSplitVisitor alloc] initWithProgram:self variable:x[i] nb:_searchNBFloats];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
@@ -3176,8 +3176,8 @@
             if([c canLeadToAnAbsorption]){
                v = [c varSubjectToAbsorption:cx];
                if(v == nil) continue;
-               id<ORAbsVisitor> absVisit = [[ORAbsVisitor alloc] init:v];
-               [cx visitAbs:absVisit];
+               ORAbsVisitor* absVisit = [[ORAbsVisitor alloc] init:v];
+               [cx visit:absVisit];
                absV = [absVisit rate];
 //               absV = [self computeAbsorptionQuantity:v by:x];
                assert(absV >= 0.0f && absV <= 1.f);

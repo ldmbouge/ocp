@@ -13,7 +13,7 @@
 #import <CPUKernel/CPUKernel.h>
 #import "CPFloatDom.h"
 
-@protocol  ORSplitVisitor;
+@protocol  CPVisitor;
 
 /*****************************************************************************************/
 /*                        CPFloatVarSnapshot                                              */
@@ -416,13 +416,9 @@ static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
 {
    return [_dom magnitude];
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   [(id)visitor applyFloatSplit:self];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-   [(id)visitor applyFloatAbs:self];
+   [(id)visitor applyFloatVar:self];
 }
 @end
 
@@ -646,6 +642,15 @@ static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
    [self updateMax:newMax];
    [self updateMin:newMin];
 }
+- (void)updateMax:(ORFloat)newMax propagate:(ORBool)p
+{
+   [self updateMax:newMax];
+}
+- (void)updateMin:(ORFloat)newMin propagate:(ORBool)p
+{
+   [self updateMin:newMin];
+}
+
 -(ORFloat) min
 {
    return [_theVar min];
@@ -715,13 +720,9 @@ static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: magnitude not definied for a view"];
    return 0.0f;
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: visitSplit not definied for a view"];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-      @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatViewOnIntVarI: visitAbs not definied for a view"];
+   [(id)visitor applyFloatVar:self];
 }
 @end
 

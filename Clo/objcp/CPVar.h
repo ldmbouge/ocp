@@ -17,8 +17,6 @@
 @protocol ORTracer;
 @protocol CPBitVar;
 @protocol CPADom;
-@protocol ORSplitVisitor;
-@protocol ORAbsVisitor;
 
 enum CPVarClass {
    CPVCBare = 0,
@@ -37,6 +35,12 @@ enum CPVarClass {
 -(id<OROSet>)constraints;
 @end
 
+@protocol CPVisitor
+-(void) applyIntVar:(id<CPVar>) var;
+-(void) applyFloatVar:(id<CPVar>) var;
+-(void) applyDoubleVar:(id<CPVar>) var;
+@end
+
 @protocol CPVar <NSObject>
 -(ORUInt) getId;
 -(id<ORTracker>)tracker;
@@ -50,8 +54,7 @@ enum CPVarClass {
 -(void)subsumedBy:(id<CPVar>)x;
 -(void)subsumedByDomain:(id<CPADom>)dom;
 -(ORBool)sameDomain:(id<CPVar>)x;
--(void)visit:(id<ORSplitVisitor>)visitor;
--(void)visitAbs:(id<ORAbsVisitor>)visitor;
+-(void)visit:(id<CPVisitor>)visitor;
 @end
 
 

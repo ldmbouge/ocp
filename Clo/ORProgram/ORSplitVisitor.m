@@ -12,6 +12,22 @@
 #import "ORSplitVisitor.h"
 #import <ORProgram/CPSolver.h>
 
+@implementation CPVisitorI
+
+-(void) applyIntVar:(id<CPVar>) var
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"CPVisitor is an abstract class : applyIntVar"];
+}
+-(void) applyFloatVar:(id<CPVar>) var
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"CPVisitor is an abstract class : applyFloatVar"];
+}
+-(void) applyDoubleVar:(id<CPVar>) var
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"CPVisitor is an abstract class : applyDoubleVar"];
+}
+@end
+
 @implementation ORSplitVisitor{
    CPCoreSolver*   _program;
    id<ORVar>           _variable;
@@ -25,7 +41,7 @@
    return self;
 }
 
--(void) applyIntSplit :(CPIntVarI*) xi;
+-(void) applyIntVar :(CPIntVarI*) xi;
 {
    if([xi bound]) return;
    ORInt mid = (xi.min + xi.max)/2;
@@ -38,7 +54,7 @@
    }];
    
 }
--(void) applyFloatSplit :(CPFloatVarI*) xi
+-(void) applyFloatVar :(CPFloatVarI*) xi
 {
    if([xi bound]) return;
    ORFloat theMax = xi.max;
@@ -61,7 +77,7 @@
       [_program floatLEqualImpl:xi with:mid];
    }];
 }
--(void) applyDoubleSplit :(CPDoubleVarI*) xi
+-(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
    if([xi bound]) return;
    ORDouble theMax = xi.max;
@@ -100,7 +116,7 @@
    return self;
 }
 
--(void) applyIntSplit :(CPIntVarI*) xi;
+-(void) applyIntVar :(CPIntVarI*) xi;
 {
    if([xi bound]) return;
    ORInt mid = (xi.min + xi.max)/2;
@@ -113,7 +129,7 @@
    }];
    
 }
--(void) applyFloatSplit :(CPFloatVarI*) xi
+-(void) applyFloatVar :(CPFloatVarI*) xi
 {
    if([xi bound]) return;
    ORFloat theMax = xi.max;
@@ -143,7 +159,7 @@
       [_program floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
--(void) applyDoubleSplit :(CPDoubleVarI*) xi
+-(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
    if([xi bound]) return;
    ORDouble theMax = xi.max;
@@ -190,7 +206,7 @@
    return self;
 }
 
--(void) applyIntSplit :(CPIntVarI*) xi;
+-(void) applyIntVar :(CPIntVarI*) xi;
 {
    if([xi bound]) return;
    ORInt mid = (xi.min + xi.max)/2;
@@ -203,7 +219,7 @@
    }];
    
 }
--(void) applyFloatSplit :(CPFloatVarI*) xi
+-(void) applyFloatVar :(CPFloatVarI*) xi
 {
    if([xi bound]) return;
    float_interval interval[5];
@@ -254,7 +270,7 @@
       [_program floatIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
    }];
 }
--(void) applyDoubleSplit :(CPDoubleVarI*) xi
+-(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
    if([xi bound]) return;
    double_interval interval[5];
@@ -320,7 +336,7 @@
    return self;
 }
 
--(void) applyIntSplit :(CPIntVarI*) xi;
+-(void) applyIntVar :(CPIntVarI*) xi;
 {
    if([xi bound]) return;
    ORInt mid = (xi.min + xi.max)/2;
@@ -333,7 +349,7 @@
    }];
    
 }
--(void) applyFloatSplit :(CPFloatVarI*) xi
+-(void) applyFloatVar :(CPFloatVarI*) xi
 {
    if([xi bound]) return;
    float_interval interval[6];
@@ -407,7 +423,7 @@
       [_program floatIntervalImpl:xi low:ip[index].inf up:ip[index].sup];
    }];
 }
--(void) applyDoubleSplit :(CPDoubleVarI*) xi
+-(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
    if([xi bound]) return;
    double_interval interval[6];
@@ -499,7 +515,7 @@
    return self;
 }
 
--(void) applyIntSplit :(CPIntVarI*) xi;
+-(void) applyIntVar :(CPIntVarI*) xi;
 {
    if([xi bound]) return;
    [_program try: ^{
@@ -511,7 +527,7 @@
    }];
    
 }
--(void) applyFloatSplit :(CPFloatVarI*) xi
+-(void) applyFloatVar :(CPFloatVarI*) xi
 {
    if([xi bound]) return;
    float_interval interval[5];
@@ -547,7 +563,7 @@
       [_program floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
--(void) applyDoubleSplit :(CPDoubleVarI*) xi
+-(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
    if([xi bound]) return;
    double_interval interval[5];
@@ -601,7 +617,7 @@
    return self;
 }
 
--(void) applyIntSplit :(CPIntVarI*) xi;
+-(void) applyIntVar :(CPIntVarI*) xi;
 {
    if([xi bound]) return;
    [_program try: ^{
@@ -613,7 +629,7 @@
    }];
    
 }
--(void) applyFloatSplit :(CPFloatVarI*) xi
+-(void) applyFloatVar :(CPFloatVarI*) xi
 {
    if([xi bound]) return;
    ORInt nb = 2*_nb+4;
@@ -660,7 +676,7 @@
       [_program floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
    }];
 }
--(void) applyDoubleSplit :(CPDoubleVarI*) xi
+-(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
    if([xi bound]) return;
    ORInt nb = 2*_nb+4;
@@ -724,7 +740,7 @@
    return self;
 }
 
--(void) applyIntSplit :(CPIntVarI*) xi;
+-(void) applyIntVar :(CPIntVarI*) xi;
 {
    if([xi bound]) return;
    [_program try: ^{
@@ -736,7 +752,7 @@
    }];
    
 }
--(void) applyFloatSplit :(CPFloatVarI*) cx
+-(void) applyFloatVar :(CPFloatVarI*) cx
 {
    float_interval interval[18];
    float_interval interval_x[3];
@@ -810,7 +826,7 @@
       }];
    }
 }
--(void) applyDoubleSplit :(CPDoubleVarI*) cx
+-(void) applyDoubleVar :(CPDoubleVarI*) cx
 {
    double_interval interval[18];
    double_interval interval_x[3];
@@ -903,9 +919,8 @@
    return _rate;
 }
 
-- (void)applyDoubleAbs:(id<CPVar>)x
+- (void)applyDoubleVar:(CPDoubleVarI*)cx
 {
-   CPDoubleVarI* cx = (CPDoubleVarI*) x;
    CPDoubleVarI* cy = (CPDoubleVarI*)_var;
    double_interval ax = computeAbsordedIntervalD(cx);
    if(![cy bound] && isIntersectingWithDV(ax.inf, ax.sup, cy.min, cy.max)){
@@ -913,22 +928,13 @@
    }
 }
 
-- (void)applyFloatAbs:(id<CPVar>)x
+- (void)applyFloatVar:(CPFloatVarI*)cx
 {
-   CPFloatVarI* cx = (CPFloatVarI*) x;
    CPFloatVarI* cy = (CPFloatVarI*)_var;
    float_interval ax = computeAbsordedInterval(cx);
    if(![cy bound] && isIntersectingWithV(ax.inf, ax.sup, cy.min, cy.max)){
       _rate = cardinalityV(maxFlt(ax.inf,cy.min),minFlt(ax.sup, cy.max))/cardinality(cy);
    }
-}
-
-- (void)applyIntAbs:(id<CPVar>)var
-{
-}
-
-- (void)visit:(ORVisitor *)visitor
-{
 }
 
 @end

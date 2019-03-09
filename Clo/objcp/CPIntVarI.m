@@ -20,7 +20,6 @@
 #import "CPEngineI.h"
 #import "CPEvent.h"
 
-@protocol ORSplitVisitor;
 
 typedef struct  {
    TRId         _boundsEvt[2];
@@ -180,13 +179,9 @@ static id<OROSet> collectConstraints(CPEventNetwork* net,id<OROSet> rv)
 {
    return NO;
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   [(id)visitor applyIntSplit:self];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-   [(id)visitor applyIntAbs:self];
+   [(id)visitor applyIntVar:self];
 }
 -(id<ORTracker>) tracker
 {
@@ -732,13 +727,9 @@ static id<OROSet> collectConstraints(CPEventNetwork* net,id<OROSet> rv)
    if (![S member: _value])
       failNow();
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   [(id)visitor applyIntSplit:self];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-   [(id)visitor applyIntAbs:self];
+   [(id)visitor applyIntVar:self];
 }
 @end
 
@@ -1430,13 +1421,9 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    return [super description];
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   [(id)visitor applyIntSplit:self];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-   [(id)visitor applyIntAbs:self];
+   [(id)visitor applyIntVar:self];
 }
 @end
 
@@ -1803,13 +1790,9 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    return [super description];
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   [(id)visitor applyIntSplit:self];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-   [(id)visitor applyIntAbs:self];
+   [(id)visitor applyIntVar:self];
 }
 @end
 

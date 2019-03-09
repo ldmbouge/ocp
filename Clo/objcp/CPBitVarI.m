@@ -855,15 +855,10 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
    _recv = [[aDecoder decodeObject] retain];
    return self;
 }
-- (void)visit:(id<ORSplitVisitor>)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method visitSplit not defined"];
-}
-- (void)visitAbs:(id<ORAbsVisitor>)visitor
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method visitAbs not defined"];
-}
-@end
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method visit not defined"];
+}@end
 
 @implementation CPBitVarMultiCast {
    id<CPBitVarNotifier>*     _tab;
