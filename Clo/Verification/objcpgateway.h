@@ -252,7 +252,8 @@ typedef int assertion_id;
 
 
 static inline void i2bs(char str[], int len, long v){
-   for(int i = 0; i < len; i++, v>>=1)
-      str[i] = (v >> 1 & 1) + '0';
+   for(int i = 0; i < len; i++, v>>=1){
+      str[i] = (v & 1) + '0';
+   }
     str[len] = '\0';
 }
