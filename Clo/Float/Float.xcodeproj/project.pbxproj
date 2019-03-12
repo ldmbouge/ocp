@@ -31,6 +31,8 @@
 		0816C18D2137542000AF3F87 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF820EFB26700AF6787 /* ORProgram.framework */; };
 		0816C18E2137542000AF3F87 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEFA20EFB26700AF6787 /* ORUtilities.framework */; };
 		0816C1942137543000AF3F87 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0816C17F2137541700AF3F87 /* main.m */; };
+		083AF61822374E96005F0436 /* Datastruct.h in Sources */ = {isa = PBXBuildFile; fileRef = 08E4D820222CEAF000E683B5 /* Datastruct.h */; };
+		083AF61A223773D5005F0436 /* main2.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BAB3582236D4BE00B1E546 /* main2.m */; };
 		084523FC21C1612A00D740A1 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
 		084523FE21C1612A00D740A1 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF020EFB26700AF6787 /* CPUKernel.framework */; };
 		084523FF21C1612A00D740A1 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF220EFB26700AF6787 /* objcp.framework */; };
@@ -712,6 +714,7 @@
 		08A8B4D02143089A00FFB89F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A8B4BB2143087000FFB89F /* main.m */; };
 		08AEEF3E2146AAD100FA24E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 089513012145B9CB00993DE2 /* main.m */; };
 		08B5BD2421D3CD57000992AF /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
+		08BAB35B2236D95500B1E546 /* Datastruct.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BAB35A2236D95500B1E546 /* Datastruct.m */; };
 		08C53F8B2140932100A8271C /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
 		08C53F8D2140932100A8271C /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF020EFB26700AF6787 /* CPUKernel.framework */; };
 		08C53F8E2140932100A8271C /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF220EFB26700AF6787 /* objcp.framework */; };
@@ -728,7 +731,6 @@
 		08CBF9832208BDA1006D79AE /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF820EFB26700AF6787 /* ORProgram.framework */; };
 		08CBF9842208BDA1006D79AE /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEFA20EFB26700AF6787 /* ORUtilities.framework */; };
 		08CBF98B2208BDB0006D79AE /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08CBF98A2208BDB0006D79AE /* objmp.framework */; };
-		08CBF98C2208BE5E006D79AE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CBF9752208BD6D006D79AE /* main.m */; };
 		08DEE4AF214FFF1B00E867FE /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
 		08DEE4B1214FFF1B00E867FE /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF020EFB26700AF6787 /* CPUKernel.framework */; };
 		08DEE4B2214FFF1B00E867FE /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF220EFB26700AF6787 /* objcp.framework */; };
@@ -2782,6 +2784,8 @@
 		08A70F43214E8DE900DCA6FE /* e_1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = e_1; sourceTree = BUILT_PRODUCTS_DIR; };
 		08A8B4BB2143087000FFB89F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08A8B4CF2143088500FFB89F /* range_add_mult */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = range_add_mult; sourceTree = BUILT_PRODUCTS_DIR; };
+		08BAB3582236D4BE00B1E546 /* main2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main2.m; sourceTree = "<group>"; };
+		08BAB35A2236D95500B1E546 /* Datastruct.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Datastruct.m; sourceTree = "<group>"; };
 		08C53F83214092F500A8271C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08C53F972140932100A8271C /* testAbs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testAbs; sourceTree = BUILT_PRODUCTS_DIR; };
 		08CBF9752208BD6D006D79AE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -5493,6 +5497,8 @@
 			children = (
 				08CBF9752208BD6D006D79AE /* main.m */,
 				08E4D820222CEAF000E683B5 /* Datastruct.h */,
+				08BAB3582236D4BE00B1E546 /* main2.m */,
+				08BAB35A2236D95500B1E546 /* Datastruct.m */,
 			);
 			path = secureapp;
 			sourceTree = "<group>";
@@ -10112,7 +10118,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				08CBF98C2208BE5E006D79AE /* main.m in Sources */,
+				083AF61A223773D5005F0436 /* main2.m in Sources */,
+				083AF61822374E96005F0436 /* Datastruct.h in Sources */,
+				08BAB35B2236D95500B1E546 /* Datastruct.m in Sources */,
 				08CBF97D2208BDA1006D79AE /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

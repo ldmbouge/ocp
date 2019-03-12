@@ -13,8 +13,6 @@ int main(int argc, const char * argv[]) {
          [device2ID setObject:@(i) forKey:device[i]];
          [deviceMemory addObject:@100];
       }
-      //same as desiredflow but not same format
-//      to clean up !!
       NSArray* flowWithA = @[@[@21,@1],@[@7,@3],@[@12,@27],@[@2,@4],@[@3,@7],@[@13,@7],@[@6,@0],@[@13,@4],@[@4,@13],@[@7,@13],@[@23,@22],@[@22,@23],@[@23,@12],@[@13,@0],@[@1,@21],@[@27,@12],@[@13,@8],@[@8,@13],@[@4,@2],@[@0,@13],@[@8,@5],@[@24,@12],@[@5,@8],@[@0,@6],@[@27,@26],@[@12,@23],@[@1,@12],@[@26,@27],@[@24,@25],@[@12,@1],@[@25,@24],@[@12,@24]];
       NSArray* flowWithB = @[@[@7,@3],@[@24,@25],@[@8,@5],@[@2,@4],@[@25,@2],@[@2,@21],@[@6,@3],@[@27,@26],@[@22,@23],@[@26,@27],@[@2,@5],@[@23,@22],@[@1,@21],@[@22,@3],@[@3,@7],@[@26,@3],@[@0,@6],@[@3,@6],@[@2,@25],@[@5,@8],@[@6,@0],@[@4,@2],@[@3,@22],@[@5,@2],@[@3,@26],@[@25,@24],@[@21,@1],@[@21,@2]];
       NSMutableDictionary* demandA = [[NSMutableDictionary alloc] initWithCapacity:[flowWithA count]];
@@ -93,7 +91,7 @@ int main(int argc, const char * argv[]) {
          tmp = [Graph bfs:g source:src dest:dst maxpaths:MAX_PATH];
          [allpathA addObject:tmp];
          isflowA[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) domain:RANGE(model, 0, 1) names:[NSString stringWithFormat:@"isflowA[%d]",i]];
-         flowA[i] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flowA[%d]",i]];
+         flowA[i] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flow[0][%d]",i]];
          i++;
       }
       
@@ -108,7 +106,7 @@ int main(int argc, const char * argv[]) {
          nbPathB += [tmp count] * 2;
          [allpathB addObject:tmp];
          isflowB[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) domain:RANGE(model, 0, 1) names:[NSString stringWithFormat:@"isflowB[%d]",i]];
-         flowB[i] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flowB[%d]",i]];
+         flowB[i] = [ORFactory realVarArray:model range:RANGE(model, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flow[1][%d]",i]];
          i++;
       }
       
@@ -290,7 +288,12 @@ int main(int argc, const char * argv[]) {
          printf("Functional layer is infeasible.\n");
       }else{
          printf("-----Functional layer-----\n");
-         
+         for (ORInt i = 0; i < [isflowB count]; i++) {
+            for (ORInt j = 0; j < [isflowB[i] count]; j++) {
+               if([mip doubleValue:flowB[i][j]])
+                  printf("[functional add:[%s eq:%f]];\n",[[flowB[i][j] prettyname] UTF8String],[mip doubleValue:flowB[i][j]]);
+            }
+         }
          id<ORObjectiveValue> obj = [mip objectiveValue];
          ORDouble objv = [obj doubleValue];
          printf("Objective value is :%f\n",objv);
@@ -497,7 +500,7 @@ int main(int argc, const char * argv[]) {
          
          //objective
          id<ORExpr> piNum = Sum(security,n,pi.range,([Graph isNetWorkDevice:device[n]])?pi[n]:@(0));
-         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,([Graph isNetWorkDevice:device[n]])?firewallA[n]:@(0)) plus:Sum(model,n,firewallB.range,([Graph isNetWorkDevice:device[n]])?firewallB[n]:@(0))];
+         id<ORExpr> fwNum = [Sum(security,n,firewallA.range,([Graph isNetWorkDevice:device[n]])?firewallA[n]:@(0)) plus:Sum(security,n,firewallB.range,([Graph isNetWorkDevice:device[n]])?firewallB[n]:@(0))];
          id<ORExpr> simplicityMetric = [piNum plus:[fwNum mul:@(10)]];
          id<ORExpr> flowReduction = Sum(security,n,load.range,[pi[[network[n] intValue]] mul:@([mip doubleValue:load[n]])]);
          id<ORExpr> goodTrafficBlocked = [[ORFactory sum:security over:fwOnPathA.range suchThat:nil of:^id<ORExpr>(ORInt p){

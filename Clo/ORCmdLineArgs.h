@@ -103,6 +103,7 @@ struct ORResult {
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
 -(void)measure:(struct ORResult(^)(void))block;
+-(void)measureTime:(void(^)(void))block;
 -(id<ORGroup>)makeGroup:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;

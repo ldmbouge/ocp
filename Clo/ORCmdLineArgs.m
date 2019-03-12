@@ -253,6 +253,25 @@ static enum ValHeuristic valIndex[] =
          return @selector(float3BSplit:call:withVars:);
    }
 }
+-(void)measureTime:(void(^)(void))block
+{
+   ORLong startWC  = [ORRuntimeMonitor wctime];
+   ORLong startCPU = [ORRuntimeMonitor cputime];
+   @autoreleasepool {
+      @try {
+         block();
+      }@catch(ORExecutionError* execError) {
+         NSLog(@"Execution ERROR: %@",execError);
+#if !__has_feature(objc_arc)
+         [execError release];
+#endif
+      }
+   }
+   ORLong endWC  = [ORRuntimeMonitor wctime];
+   ORLong endCPU = [ORRuntimeMonitor cputime];
+   printf("FMT:cpu,wcn\n");
+   printf("OUT:%lld,%lld\n",endCPU - startCPU,endWC - startWC);
+}
 -(void)measure:(struct ORResult(^)(void))block
 {
    //mallocWatch();
