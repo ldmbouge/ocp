@@ -80,22 +80,24 @@ int main(int argc, const char * argv[]) {
          id<ORIntRange> BINARIES = RANGE(functional, 0, 1);
          NSArray* trafics = [n trafics];
          NSMutableDictionary* allpath = [[NSMutableDictionary alloc] init];
-         NSArray* tmp, *desiredFlows;
          id<ORIdArray> isflow = [ORFactory idArray:functional range:RANGE(functional,0,(ORInt)[trafics count] -1)];
          id<ORIdArray> flow = [ORFactory idArray:functional range:RANGE(functional,0,(ORInt)[trafics count] -1)];
-         for(ORInt T = 0; T < [trafics count]; T++){
-            desiredFlows = [n desiredFlows:T];
-            isflow[T] = [ORFactory idArray:functional range:RANGE(functional, 0, ((ORInt)[desiredFlows count]) - 1 )];
-            flow[T] = [ORFactory idArray:functional range:RANGE(functional, 0, ((ORInt)[desiredFlows count]) - 1 )];
-            for(ORInt pair = 0; pair < [desiredFlows count]; pair++){
-               ORInt src = [desiredFlows[pair][0] intValue];
-               ORInt  dst = [desiredFlows[pair][1] intValue];
-               tmp = [Network computePaths:n source:src dest:dst maxpaths:MAX_PATH];
-               [allpath setObject:tmp forKey:desiredFlows[pair]];
-               isflow[T][pair] = [ORFactory intVarArray:functional range:RANGE(functional, 0, (ORInt)[tmp count]- 1) domain:BINARIES names:[NSString stringWithFormat:@"isflow%@[%d]",trafics[T],pair]];
-               flow[T][pair] = [ORFactory realVarArray:functional range:RANGE(functional, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flow%@[%d]",trafics[T],pair]];
+         NSArray* tmp, *desiredFlows;
+            for(ORInt T = 0; T < [trafics count]; T++){
+               desiredFlows = [n desiredFlows:T];
+               isflow[T] = [ORFactory idArray:functional range:RANGE(functional, 0, ((ORInt)[desiredFlows count]) - 1 )];
+               flow[T] = [ORFactory idArray:functional range:RANGE(functional, 0, ((ORInt)[desiredFlows count]) - 1 )];
+               for(ORInt pair = 0; pair < [desiredFlows count]; pair++){
+                  ORInt src = [desiredFlows[pair][0] intValue];
+                  ORInt  dst = [desiredFlows[pair][1] intValue];
+                  @autoreleasepool {
+                     tmp = [Network computePaths:n source:src dest:dst maxpaths:MAX_PATH];
+                  }
+                  [allpath setObject:tmp forKey:desiredFlows[pair]];
+                  isflow[T][pair] = [ORFactory intVarArray:functional range:RANGE(functional, 0, (ORInt)[tmp count]- 1) domain:BINARIES names:[NSString stringWithFormat:@"isflow%@[%d]",trafics[T],pair]];
+                  flow[T][pair] = [ORFactory realVarArray:functional range:RANGE(functional, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flow%@[%d]",trafics[T],pair]];
+               }
             }
-         }
          
          for(ORInt T = 0; T < [trafics count]; T++){
             for(ORInt i = 0; i < [isflow[T] count]; i++){
