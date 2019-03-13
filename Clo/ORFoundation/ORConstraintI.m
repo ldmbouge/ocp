@@ -10081,5 +10081,3 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    return [[[NSArray alloc] initWithObjects:_x,_y,_r, nil] autorelease];
 }
 @end
-
-

@@ -328,4 +328,3 @@
 
 @interface ORNOopVisit : ORVisitor
 @end
-

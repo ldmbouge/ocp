@@ -476,6 +476,8 @@ static void smtlib2_objcp_parser_define_function(smtlib2_parser_interface *p,
    smtlib2_objcp_parser *yp = (smtlib2_objcp_parser *)p;
    smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
    
+//   [objcpgw countUsage:name];
+   
    smtlib2_abstract_parser_define_function(p, name, params, sort, term);
    
    if (ap->response_ != SMTLIB2_RESPONSE_ERROR && smtlib2_vector_size(yp->defines_) > 0) {
@@ -897,37 +899,6 @@ static void smtlib2_objcp_parser_get_value(smtlib2_parser_interface *p,
             } else if (v == l_false) {
                vv = smtlib2_strdup("false");
             }
-            //                if (!vv) {
-            //                   objcp_var_decl d = [objcpgw objcp_get_var_decl:yp->ctx_ withExpr:(objcp_expr)t];
-            //                    /* get the model value for this variable */
-            //                   if (![objcpgw objcp_get_mpq_value:m withDecl:d andRV:ratval]) {
-            //                       lbool v = [objcpgw objcp_get_value:m withVar:d];
-            //                        if (v == l_true) {
-            //                            vv = smtlib2_strdup("true");
-            //                        } else if (v == l_false) {
-            //                            vv = smtlib2_strdup("false");
-            //                        }
-            //                    } else {
-            //                        char *rn = mpz_get_str(NULL, 10, mpq_numref(ratval));
-            //                        if (mpz_cmp_ui(mpq_denref(ratval), 1) == 0) {
-            //                            if (mpq_sgn(ratval) < 0) {
-            //                                vv = smtlib2_sprintf("(- %s)", rn+1);
-            //                            } else {
-            //                                vv = smtlib2_strdup(rn);
-            //                            }
-            //                        } else {
-            //                            char *rd = mpz_get_str(NULL, 10,
-            //                                                   mpq_denref(ratval));
-            //                            if (mpq_sgn(ratval) < 0) {
-            //                                vv = smtlib2_sprintf("(/ (- %s) %s)", rn+1, rd);
-            //                            } else {
-            //                                vv = smtlib2_sprintf("(/ %s %s)", rn, rd);
-            //                            }
-            //                            free(rd);
-            //                        }
-            //                        free(rn);
-            //                    }
-            //                }
             if (vv) {
                char *nn = smtlib2_strdup((char *)n);
                smtlib2_vector_push(ap->response_data_, (intptr_t)nn);
@@ -1084,6 +1055,7 @@ SMTLIB2_OBJCP_DECLHANDLER(implies)
 //----------------------arithmetic handler--------------------//
 SMTLIB2_OBJCP_DECLHANDLER(eq)
 {
+//   [objcpgw analyseExpr:];
    return [objcpgw objcp_mk_eq:YCTX(ctx) left:(objcp_expr)smtlib2_vector_at(args, 0) right:(objcp_expr)smtlib2_vector_at(args, 1)];
 }
 SMTLIB2_OBJCP_DECLHANDLER(plus)

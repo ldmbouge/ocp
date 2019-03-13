@@ -4,6 +4,7 @@
 #import <ORProgram/ORProgram.h>
 #import <objcp/objcp.h>
 #import "ORCmdLineArgs.h"
+#import "ExprSimplifier.h"
 #import <math.h>
 
 #define E_SIZE 8
@@ -135,6 +136,7 @@ typedef int assertion_id;
    id<ORModel> _model;
    NSMutableDictionary* _types;
    NSMutableDictionary* _declarations;
+   NSMutableDictionary* _exprDeclarations;
    NSMutableDictionary* _instances;
    ORCmdLineArgs* _options;
    logic _logic;
@@ -170,6 +172,7 @@ typedef int assertion_id;
 -(ORUInt) objcp_get_unsat_core_size:(objcp_context) ctx;
 -(objcp_expr) objcp_mk_app:(objcp_context)ctx withFun:(objcp_expr)f withArgs:(objcp_expr*)arg andNumArgs:(ORULong)n;
 -(objcp_expr) objcp_mk_constant:(objcp_context)ctx fromString:(const char*) rep width:(ORUInt) width base:(ORUInt)base;
+-(void) countUsage:(const char*) n;
 @end
 
 

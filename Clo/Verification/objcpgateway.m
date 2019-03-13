@@ -622,7 +622,11 @@ static OBJCPGateway *objcpgw;
 -(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr
 {
    id<ORIntVar> trueVar = [ORFactory intVar:_model value:1];
-   [_model add:[(id<ORExpr>)expr eq:trueVar]];
+   id<ORExpr> ne = expr;
+   if([_options variationSearch]){
+      ne = [ExprSimplifier simplify:expr];
+   }
+   [_model add:[ne eq:trueVar]];
 }
 -(ORBool) objcp_check:(objcp_context) ctx
 {
@@ -678,7 +682,17 @@ static OBJCPGateway *objcpgw;
    NSLog(@"Make bitvector not implemented");
    return NULL;
 }
-
+-(void) countUsage:(const char*) n
+{
+   NSString * ns = [NSString stringWithUTF8String:n];
+   ORInt cpt = 0;
+   id obj = [_exprDeclarations objectForKey:ns];
+   if(obj != nil){
+      cpt = [obj intValue] + 1;
+   }
+   [_exprDeclarations setObject:@(cpt) forKey:ns];
+   NSLog(@"<%s:%d>",n,cpt);
+}
 -(objcp_expr) objcp_mk_constant:(objcp_context)ctx fromString:(const char*) rep width:(ORUInt) width base:(ORUInt)base
 {
    return [[ConstantWrapper alloc] init:rep width:width base:base];
@@ -1496,12 +1510,12 @@ static OBJCPGateway *objcpgw;
    assert((e->_width == E_SIZE && m->_width == M_SIZE) || (e->_width == ED_SIZE && m->_width == MD_SIZE));
    if(e->_width == E_SIZE && m->_width == M_SIZE){
       float f = floatFromParts([m uintValue],[e uintValue],[s uintValue]);
-      NSLog(@"%16.16e",f);
+//      NSLog(@"%16.16e",f);
       return [[ConstantWrapper alloc] initWithFloat:f];
    }
    if(e->_width == ED_SIZE && m->_width == MD_SIZE){
       double f = doubleFromParts([m ulongValue],[e uintValue],[s uintValue]);
-      NSLog(@"%16.16e",f);
+//      NSLog(@"%16.16e",f);
       return [[ConstantWrapper alloc] initWithDouble:f];
    }
    return nil;
@@ -1514,8 +1528,12 @@ static OBJCPGateway *objcpgw;
    } else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
       var = (id<ORDoubleVar>) x;
    } else {// expr
+      id<ORExpr> ne = x;
+      if([_options variationSearch]){
+         ne = [ExprSimplifier simplify:x];
+      }
       var = (t == OR_FLOAT) ? (id<ORExpr>)[ORFactory doubleVar:_model] : (id<ORExpr>)[ORFactory floatVar:_model];
-      [_model add:[var eq:x]];
+      [_model add:[var eq:ne]];
    }
    id<ORExpr> res = nil;
    if(t == OR_DOUBLE){

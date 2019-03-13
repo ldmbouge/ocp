@@ -1,12 +1,22 @@
-//
-//  ExprSimplifier.h
-//  Clo
-//
-//  Created by zitoun on 3/13/19.
-//
-
-#ifndef ExprSimplifier_h
-#define ExprSimplifier_h
+#import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModeling.h>
 
 
-#endif /* ExprSimplifier_h */
+@interface ExprCounter : ORNOopVisit {
+   NSMutableDictionary* _theSet;
+}
+-(id)init:(NSMutableDictionary*)theSet;
++(NSDictionary*)count:(id<ORExpr>)e;
+@end
+
+
+@interface ExprSimplifier : ORNOopVisit {
+   NSMutableDictionary* _theSet;
+   NSMutableDictionary* _alphas;
+   id<ORExpr> _rv;
+}
+-(id)init:(NSMutableDictionary*)theSet;
+-(id<ORExpr>) result;
++(id<ORExpr>)simplify:(id<ORExpr>)e;
+@end

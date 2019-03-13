@@ -536,6 +536,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return nil;
 #endif
 }
++(id<ORIntVar>) intVar: (id<ORTracker>) model
+{
+   return [[ORIntVarI alloc]  initORIntVarI: model domain:RANGE(model, 0, MAXINT)];
+}
 +(id<ORIntVar>) intVar: (id<ORTracker>) model name:(NSString*) name
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain:RANGE(model, 0, MAXINT) name:name];

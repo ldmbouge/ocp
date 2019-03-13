@@ -1037,6 +1037,10 @@
 
 
 @implementation ORNOopVisit
+-(void) visitFloatVar: (id<ORFloatVar>) v {}
+-(void) visitDoubleVar: (id<ORDoubleVar>) v {}
+-(void) visitFloat: (id<ORFloatNumber>) e {}
+-(void) visitDouble: (id<ORDoubleNumber>) e {}
 -(void) visitRandomStream:(id) v {}
 -(void) visitZeroOneStream:(id) v {}
 -(void) visitUniformDistribution:(id) v{}
@@ -1191,7 +1195,6 @@
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e  {}
 -(void) visitMutableDouble: (id<ORMutableDouble>) e {}
--(void) visitDouble: (id<ORDoubleNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprUnaryMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
