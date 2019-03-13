@@ -256,8 +256,9 @@ static OBJCPGateway *objcpgw;
          if(isinf(f.f)){
             printf("(assert (= %s (_ %soo 11 53)))\n",[[v prettyname] UTF8String], (f.f == +INFINITY) ? "+" : "-");
          }else{
+            unsigned long m = f.parts.mantisa;
             i2bs(estr,ED_SIZE,f.parts.exponent);
-            i2bs(mstr,MD_SIZE,f.parts.mantisa);
+            i2bs(mstr,MD_SIZE,m);
             printf("(assert (= %s (fp #b%d #b%s #b%s)))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
          }
       }
@@ -1510,12 +1511,12 @@ static OBJCPGateway *objcpgw;
    assert((e->_width == E_SIZE && m->_width == M_SIZE) || (e->_width == ED_SIZE && m->_width == MD_SIZE));
    if(e->_width == E_SIZE && m->_width == M_SIZE){
       float f = floatFromParts([m uintValue],[e uintValue],[s uintValue]);
-//      NSLog(@"%16.16e",f);
+      NSLog(@"%16.16e",f);
       return [[ConstantWrapper alloc] initWithFloat:f];
    }
    if(e->_width == ED_SIZE && m->_width == MD_SIZE){
       double f = doubleFromParts([m ulongValue],[e uintValue],[s uintValue]);
-//      NSLog(@"%16.16e",f);
+      NSLog(@"%20.20e",f);
       return [[ConstantWrapper alloc] initWithDouble:f];
    }
    return nil;
