@@ -585,14 +585,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    }
    return (id<ORIntVarArray>)o;
 }
-+(id<ORExpr>) getStateValue:(NSString*)title
++(id<ORExpr>) getStateValue:(id<ORTracker>)t name:(NSString*)title
 {
-    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:title];
+    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t name:title];
     return o;
 }
-+(id<ORExpr>) valueAssignment
++(id<ORExpr>) valueAssignment:(id<ORTracker>)t
 {
-    id<ORExpr> o = [[ORExprValueAssignmentI alloc] initORExprValueAssignmentI];
+    id<ORExpr> o = [[ORExprValueAssignmentI alloc] initORExprValueAssignmentI:t];
     return o;
 }
 +(id<ORVarArray>) varArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORVar>(^)(ORInt)) clo

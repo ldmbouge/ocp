@@ -402,15 +402,20 @@
 @end
 
 
-@interface ORExprValueAssignmentI : ORExprI<ORExpr, NSCoding>
--(id<ORExpr>)initORExprValueAssignmentI;
+@interface ORExprValueAssignmentI : ORExprI<ORExpr, NSCoding> {
+    id<ORTracker> _t;
+}
+-(id<ORExpr>)initORExprValueAssignmentI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
+-(id<ORTracker>) tracker;
 @end
 
 @interface ORExprStateValueI : ORExprI<ORExpr, NSCoding> {
+    id<ORTracker> _t;
     NSString* _value;
 }
--(id<ORExpr>)initORExprStateValueI:(NSString*)value;
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t name:(NSString*)value;
 -(NSString*) value;
 -(void) visit:(ORVisitor*) v;
+-(id<ORTracker>) tracker;
 @end

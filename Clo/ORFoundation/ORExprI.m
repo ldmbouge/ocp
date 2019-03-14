@@ -2491,21 +2491,25 @@
 
 
 @implementation ORExprValueAssignmentI
--(id<ORExpr>) initORExprValueAssignmentI
+-(id<ORExpr>) initORExprValueAssignmentI:(id<ORTracker>)t
 {
     self = [super init];
+    _t = t;
     return self;
 }
+-(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprValueAssignmentI:self]; }
 @end
 
 @implementation ORExprStateValueI
--(id<ORExpr>)initORExprStateValueI:(NSString*)value
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t name:(NSString*)value
 {
     self = [super init];
+    _t = t;
     _value = value;
     return self;
 }
+-(id<ORTracker>) tracker { return _t;}
 -(NSString*) value { return _value; }
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueI:self]; }
 @end
