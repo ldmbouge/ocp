@@ -26,7 +26,7 @@ autoreleasepool {
     let mdd1 = ORFactory.mddSpecs(m, variables: vars)
     mdd1.state([ "count" : 0,"rem" : vars.size ])
     let cnt = SVal(m,"count"),rem = SVal(m,"rem")
-    mdd1.arc(cnt + SVA(m) ∈ cv1 ≤ 10 && (cnt + SVA(m) ∈ cv1 + rem - 1) ≥ 5)
+    mdd1.arc(cnt + SVA(m) ∈ cv1 ≤ 10 && 5 ≤ (cnt + SVA(m) ∈ cv1 + rem - 1))
     mdd1.transition(["count" : cnt + SVA(m) ∈ cv1,
                      "rem"   : rem - 1])
     m.add(mdd1)
@@ -34,7 +34,7 @@ autoreleasepool {
     let mdd2 = ORFactory.mddSpecs(m, variables: vars)
     mdd2.state([ "count" : 0,"rem" : vars.size ])
     //let cnt = SVal(m,"count"),rem = SVal(m,"rem")  // no need to repeat them. Those are the same
-    mdd2.arc(cnt + SVA(m) ∈ cv2 ≤ 3 && (cnt + SVA(m) ∈ cv2 + rem - 1) ≥ 2)
+    mdd2.arc(cnt + SVA(m) ∈ cv2 ≤ 3 && 2 ≤ (cnt + SVA(m) ∈ cv2 + rem - 1))
     mdd2.transition(["count" : cnt + SVA(m) ∈ cv2,
                      "rem"   : rem - 1])
     m.add(mdd2)

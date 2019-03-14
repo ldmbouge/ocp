@@ -97,6 +97,9 @@ public func ≤(lhs : ORExpr,rhs : Int) -> ORRelation {
 public func ≤(lhs : ORExpr,rhs : Double) -> ORRelation {
    return lhs.leq(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
 }
+public func ≤(lhs : Int,rhs : ORExpr) -> ORRelation {
+    return rhs.geq(ORFactory.integer(rhs.tracker(), value: ORInt(lhs)))
+}
 
 public func !=(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.neq(rhs)
@@ -192,7 +195,7 @@ func packageVoidArray(sz : Int,body : (Int32,UnsafeMutablePointer<VoidPtr>,VoidB
    let ptr = UnsafeMutablePointer<VoidPtr>.allocate(capacity:sz)
    let ta = UnsafeMutableBufferPointer<VoidPtr>(start: ptr, count: sz)
    let rv = body(Int32(sz), ptr,ta)
-   ptr.deallocate(capacity:sz)
+   ptr.deallocate()
    return rv;
 }
 
