@@ -43,14 +43,18 @@ extern void riskCacl(NSMutableArray * res, NSArray* flowPath, NSArray* funR, ORI
 @interface Graph : NSObject
 {
    ORInt _nodes;
+   ORInt _nbEdges;
    NSMutableArray* _lists;
+   NSMutableArray* _in;
    NSMutableArray* _names;
 }
 
 -(id) initGraph;
 -(id) initWithNames:(NSArray*) names andEdges:(NSArray*) edges;
 -(ORInt) size;
+-(int)      nbEdges;
 -(NSArray*) edges:(ORInt)node;
+-(NSArray*) inEdges:(ORInt)node;
 -(void) addAdjacency:(NSArray*)l;
 -(void) addAdjacenyWithObject:(id) firstN,...;
 -(NSString*)   name:(ORInt) node;
@@ -63,7 +67,7 @@ extern void riskCacl(NSMutableArray * res, NSArray* flowPath, NSArray* funR, ORI
 @interface Network : NSObject
 -(Network*) init:(NSArray*) deviceNames memories:(NSArray*) mem links:(NSArray*) lks trafics:(NSArray*) t flows:(NSArray*) df demands:(NSArray*) d penalities:(NSArray*) p risk:(NSArray*) r capacities:(NSArray*) capacities;
 -(int)      size;
-
+-(int)      nbEdges;
 -(NSArray*) trafics;
 -(ORInt) penality:(ORInt) t for:(ORInt)n;
 -(ORInt) memory:(ORInt) node;
@@ -77,5 +81,6 @@ extern void riskCacl(NSMutableArray * res, NSArray* flowPath, NSArray* funR, ORI
 -(NSArray*) desiredFlows:(ORInt) T;
 -(NSString*) name:(ORInt) node;
 -(NSArray*) edges:(ORInt)node;
+-(NSArray*) inEdges:(ORInt)node;
 +(NSMutableArray*) computePaths : (Network*) graph source:(ORInt) startVertex dest:(ORInt) destVertex maxpaths:(ORInt) numberPaths;
 @end

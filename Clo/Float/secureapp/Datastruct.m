@@ -37,20 +37,34 @@
 {
    self = [super init];
    _nodes = 0;
+   _nbEdges = 0;
    _lists = [[NSMutableArray alloc] init];
+   _in = [[NSMutableArray alloc] init];
    return self;
 }
 -(id) initWithNames:(NSArray*) names andEdges:(NSArray*) edges
 {
-   self = [self init];
+   self = [super init];
    _nodes = (ORInt)[names count];
+   _nbEdges = 0;
    _names = [[NSMutableArray alloc] initWithArray:names];
    _lists = [[NSMutableArray alloc] initWithArray:edges];
+   _in = [[NSMutableArray alloc] init];
+   for(ORInt i = 0; i < (ORInt) [_lists count]; i++){
+      [_in addObject:[[NSMutableArray alloc] init]];
+   }
+   for(ORInt i = 0; i < (ORInt) [_lists count]; i++){
+      for(ORInt j = 0; j < (ORInt) [_lists[i] count]; j++){
+         [_in[[_lists[i][j] intValue]] addObject: @(i)];
+         _nbEdges++;
+      }
+   }
    return self;
 }
 -(void) dealloc
 {
    [_lists release];
+   [_in release];
    if(_names != nil) [_names release];
    [super dealloc];
 }
@@ -58,13 +72,26 @@
 {
    return _nodes;
 }
+-(ORInt) nbEdges
+{
+   return _nbEdges;
+}
 -(NSArray*) edges:(ORInt)node
 {
    return _lists[node];
 }
+-(NSArray*) inEdges:(ORInt)node
+{
+   return _in[node];
+}
 -(void) addAdjacency:(NSArray*)l
 {
+   ORInt current = (ORInt)[_lists count];
    [_lists addObject:l];
+   for(id n in l){
+      _in[[n intValue]] = @(current);
+      _nbEdges++;
+   }
    _nodes++;
 }
 -(void) addAdjacenyWithObject:(id) firstN,...
@@ -201,6 +228,10 @@
 {
    return [_graph size];
 }
+-(int)      nbEdges
+{
+   return [_graph nbEdges];
+}
 -(NSArray*) trafics
 {
    return _trafics;
@@ -253,6 +284,10 @@
 -(NSArray*) edges:(ORInt) node
 {
    return [_graph edges:node];
+}
+-(NSArray*) inEdges:(ORInt) node
+{
+   return [_graph inEdges:node];
 }
 +(NSMutableArray*) computePaths:(Network *) n source:(ORInt) startVertex dest:(ORInt) dstVertex maxpaths:(ORInt) nbP
 {
