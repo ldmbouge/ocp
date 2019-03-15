@@ -329,7 +329,7 @@
       _rv = [self simplify:c with:[nL geq:nR]];
    }else _rv = alpha;
 }
--(void) visitExprLThenI: (ORExprLEqualI*) c
+-(void) visitExprLThenI: (ORExprLThenI*) c
 {
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
    if(alpha == nil){
@@ -338,7 +338,7 @@
       _rv = [self simplify:c with:[nL lt:nR]];
    }else _rv = alpha;
 }
--(void) visitExprLGthenI: (ORExprBinaryI*) c
+-(void) visitExprGThenI: (ORExprGThenI*) c
 {
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
    if(alpha == nil){
