@@ -126,8 +126,8 @@ PORTABLE_BEGIN
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range bounds: (id<ORIntRange>) domain;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo;
-+(id<ORExpr>) getStateValue:(int)lookup;
-+(id<ORExpr>) valueAssignment;
++(id<ORExpr>) getStateValue:(id<ORTracker>)t lookup:(int)lookup;
++(id<ORExpr>) valueAssignment:(id<ORTracker>)t;
 +(id<ORExprArray>) arrayORExpr: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORExpr>(^)(ORInt)) clo;
 // Macros friendly
 +(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;

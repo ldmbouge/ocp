@@ -13,10 +13,16 @@ import ORProgram
 
 //infix operator ∨ { associativity left precedence 110 }
 infix operator ∨ : LogicalDisjunctionPrecedence
+infix operator ∋ : MultiplicationPrecedence
+infix operator ∈ : MultiplicationPrecedence
 
 public func ∨(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.lor(rhs)
 }
+public func &&(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
+    return lhs.land(rhs)
+}
+
 prefix func !(lhs : ORExpr) -> ORRelation {
    return lhs.neg();
 }
@@ -91,6 +97,9 @@ public func ≤(lhs : ORExpr,rhs : Int) -> ORRelation {
 public func ≤(lhs : ORExpr,rhs : Double) -> ORRelation {
    return lhs.leq(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
 }
+public func ≤(lhs : Int,rhs : ORExpr) -> ORRelation {
+    return rhs.geq(ORFactory.integer(rhs.tracker(), value: ORInt(lhs)))
+}
 
 public func !=(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.neq(rhs)
@@ -104,7 +113,9 @@ public func ≠(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
 public func ≠(lhs : ORExpr,rhs : Double) -> ORRelation {
    return lhs.neq(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
 }
-
+public func +(lhs: ORExpr,rhs : ORExpr) -> ORExpr {
+    return lhs.plus(rhs)
+}
 public func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.plus(rhs)
 }
@@ -184,7 +195,7 @@ func packageVoidArray(sz : Int,body : (Int32,UnsafeMutablePointer<VoidPtr>,VoidB
    let ptr = UnsafeMutablePointer<VoidPtr>.allocate(capacity:sz)
    let ta = UnsafeMutableBufferPointer<VoidPtr>(start: ptr, count: sz)
    let rv = body(Int32(sz), ptr,ta)
-   ptr.deallocate(capacity:sz)
+   ptr.deallocate()
    return rv;
 }
 
@@ -234,6 +245,14 @@ public func all(_ t : ORTracker,_ r1 : ORIntRange,_ r2 : ORIntRange, body : @esc
    return ORFactory.intVarArray(t, range: r1,r2, with: body)
 }
 
+public func SVal(_ t : ORTracker,_ name : String) -> ORExpr {
+    return ORFactory.getStateValue(t,name:name)
+}
+
+public func SVA(_ t : ORTracker) -> ORExpr {
+    return ORFactory.valueAssignment(t)
+}
+
 extension ORIntVarMatrix {
    subscript(i : ORInt, j : ORInt) -> ORIntVar {
       get {
@@ -273,6 +292,35 @@ extension ORIntMatrix {
    }
 }
 
+public func ∋(_ set: ORIntSet,_ e : ORExpr) -> ORExpr {
+    return set.contains(e)
+}
+public func ∈(_ e : ORExpr,_ set: ORIntSet) -> ORExpr {
+    return set.contains(e)
+}
+
+extension ORMDDSpecs {
+    func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void {
+        for (k,v) in d {
+            self.addStateInt(k as? String, withDefaultValue: (ORInt)( v as! Int))
+        }
+    }
+    func state2<Key,Value>(_ d : Dictionary<Key,Value>) -> [Key] {
+        for (k,v) in d {
+            self.addStateInt(k as? String, withDefaultValue: (ORInt)( v as! Int))
+        }
+        return Array(d.keys)
+    }
+    func arc(_ f : ORExpr) -> Void {
+        self.setArcExistsFunction(f)
+    }
+    func transition<K,V>(_ d : Dictionary<K,V>) -> Void {
+        for (k,v) in d {
+            self.addTransitionFunction(v as? ORExpr, toStateValue: k as? String)
+        }
+    }
+}
+
 extension ORIntVarArray {
    subscript (key: ORInt) -> ORIntVar {
       get {
@@ -290,6 +338,11 @@ extension ORIntVarArray {
          return self.set(newValue, at: ORInt(key))
       }
    }
+    var size : Int {
+        get {
+            return (Int)(self.count())
+        }
+    }
 }
 
 extension ORRealVarArray {
