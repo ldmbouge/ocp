@@ -585,9 +585,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    }
    return (id<ORIntVarArray>)o;
 }
-+(id<ORExpr>) getStateValue:(NSString*)title
++(id<ORExpr>) getStateValue:(int)lookup
 {
-    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:title];
+    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:lookup];
     return o;
 }
 +(id<ORExpr>) valueAssignment
@@ -999,9 +999,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     return o;
 }
 
-+(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x
++(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
-    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x];
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x stateSize:(int)stateSize];
     [model trackObject:o];
     return o;
 }

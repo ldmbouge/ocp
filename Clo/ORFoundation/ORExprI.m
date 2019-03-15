@@ -2500,12 +2500,12 @@
 @end
 
 @implementation ORExprStateValueI
--(id<ORExpr>)initORExprStateValueI:(NSString*)value
+-(id<ORExpr>)initORExprStateValueI:(int)lookup
 {
     self = [super init];
-    _value = value;
+    _lookup = lookup;
     return self;
 }
--(NSString*) value { return _value; }
+-(int) lookup { return _lookup; }
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueI:self]; }
 @end

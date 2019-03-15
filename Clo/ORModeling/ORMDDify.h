@@ -50,14 +50,16 @@
 
 @interface MDDStateSpecification : CustomState {
 @protected
-    NSMutableDictionary* _state;
+    int* _state;
     DDClosure _arcExists;
-    NSMutableDictionary* _transitionFunctions;
+    DDClosure* _transitionFunctions;
+    int _stateSize;
 }
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(NSMutableDictionary*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(NSMutableDictionary*)transitionFunctions;
--(NSMutableDictionary*) state;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
+-(int*) state;
+-(int) stateSize;
 -(DDClosure)arcExistsClosure;
--(NSMutableDictionary*)transitionFunctions;
+-(DDClosure*)transitionFunctions;
 @end
 
 @interface CustomBDDState : CustomState {   //A state with a list of booleans corresponding to whether or not each variable can be assigned 1

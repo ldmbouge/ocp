@@ -86,7 +86,7 @@
 @end
 
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
--(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x;
+-(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize;
 -(id<ORIntVarArray>) vars;
 @end
 

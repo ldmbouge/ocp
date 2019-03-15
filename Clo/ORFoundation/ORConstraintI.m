@@ -454,36 +454,38 @@
 
 @implementation ORMDDSpecs {
    id<ORIntVarArray> _x;
-   NSMutableDictionary* _stateValues;
+   ORInt* _stateValues;
    id<ORExpr> _arcExists;
-   NSMutableDictionary* _transitionFunctions;
+   id<ORExpr>* _transitionFunctions;
+   int _stateSize;
 }
--(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x
+-(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
    self = [super initORConstraintI];
    _x = x;
    
-   _stateValues = [[NSMutableDictionary alloc] init];
-   _transitionFunctions = [[NSMutableDictionary alloc] init];
+   _stateValues = malloc(stateSize * sizeof(ORInt));
+   _transitionFunctions = malloc(stateSize * sizeof(id<ORExpr>));
+   
+   _stateSize = stateSize;
 
-   _arcExists = (id)^(NSMutableDictionary* state, ORInt variable, ORInt value) {
-      return [[NSNumber alloc] initWithBool:true];
-   };
+   _arcExists = NULL;
+   
    return self;
 }
 
--(void)addStateInt:(NSString*)title withDefaultValue:(ORInt)value
+-(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value
 {
-   [_stateValues setObject:[[NSNumber alloc] initWithInt:value] forKey:title];
+   _stateValues[lookup] = value;
 }
 
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists
 {
    _arcExists = arcExists;
 }
--(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(NSString*)title
+-(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup
 {
-   [_transitionFunctions setObject:transitionFunction forKey:title];
+   _transitionFunctions[lookup] = transitionFunction;
 }
 -(void)dealloc
 {
@@ -506,8 +508,9 @@
 }
 
 -(id<ORExpr>)arcExists { return _arcExists; }
--(NSMutableDictionary*)transitionFunctions { return _transitionFunctions; }
--(NSMutableDictionary*)stateValues { return _stateValues; }
+-(id<ORExpr>*)transitionFunctions { return _transitionFunctions; }
+-(int)stateSize { return _stateSize; }
+-(int*)stateValues { return _stateValues; }
 
 -(NSSet*)allVars
 {

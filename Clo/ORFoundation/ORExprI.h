@@ -408,9 +408,9 @@
 @end
 
 @interface ORExprStateValueI : ORExprI<ORExpr, NSCoding> {
-    NSString* _value;
+    int _lookup;
 }
--(id<ORExpr>)initORExprStateValueI:(NSString*)value;
--(NSString*) value;
+-(id<ORExpr>)initORExprStateValueI:(int)lookup;
+-(int) lookup;
 -(void) visit:(ORVisitor*) v;
 @end
