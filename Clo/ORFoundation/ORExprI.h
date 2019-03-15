@@ -411,7 +411,6 @@
 @end
 
 @interface ORExprStateValueI : ORExprI<ORExpr, NSCoding> {
-<<<<<<< HEAD
     id<ORTracker> _t;
     int _lookup;
 }
