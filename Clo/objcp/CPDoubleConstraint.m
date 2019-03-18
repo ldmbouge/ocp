@@ -1817,14 +1817,22 @@ double_interval _yi;
 {
    if([_x bound]){
       if([_res bound]){
-         if(([_res value] < [_x value]) || ([_res value] != -[_x value])) failNow();
+         if(([_res value] !=  -[_x value]) && ([_res value] != [_x value])) failNow();
          assignTRInt(&_active, NO, _trail);
       }else{
          [_res bind:([_x value] >= 0) ? [_x value] : -[_x value]];
          assignTRInt(&_active, NO, _trail);
       }
    }else if([_res bound]){
-      [_x updateInterval:-[_res value] and:[_res value]];
+      if([_x member:-[_res value]]){
+         if([_x member:[_res value]])
+            [_x updateInterval:-[_res value] and:[_res value]];
+         else
+            [_x bind:-[_res value]];
+      }else if([_x member:[_res value]])
+         [_x bind:[_res value]];
+      else
+         failNow();
    }else {
       updateDoubleInterval(&_xi,_x);
       updateDoubleInterval(&_resi,_res);
