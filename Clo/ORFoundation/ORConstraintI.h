@@ -197,11 +197,17 @@
 -(id<ORIntVar>) right;
 @end
 
+@interface ORSqrt : ORConstraintI<ORSqrt>
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+@end
+
 // PVH: should add annotation
 @interface ORAbs : ORConstraintI<ORAbs>
--(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y;
--(id<ORIntVar>) res;
--(id<ORIntVar>) left;
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
 @end
 
 @interface OROr : ORConstraintI<OROr>
@@ -434,6 +440,15 @@
 -(ORInt) cst;
 @end
 
+@interface ORFloatSqrt : ORSqrt<ORSqrt>
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y;
+@end
+
+// PVH: should add annotation
+@interface ORFloatAbs : ORAbs<ORAbs>
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y;
+@end
+
 @interface ORFloatAssignC : ORConstraintI<ORFloatAssignC>
 -(id) initORFloatAssignC: (id<ORVar>) var to: (ORFloat) c;
 -(id<ORFloatVar>) left;
@@ -615,7 +630,6 @@
 -(id<ORDoubleVar>) left;
 -(ORDouble) cst;
 @end
-
 
 @interface ORDoubleAssign : ORConstraintI<ORDoubleAssign>
 -(id) initORDoubleAssign: (id<ORVar>) x to: (id<ORVar>) y;

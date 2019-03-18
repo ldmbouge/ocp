@@ -239,10 +239,14 @@ enum ORGroupType {
 -(id<ORIntVar>) right;
 @end
 
+@protocol ORSqrt <ORConstraint>
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+@end
 
 @protocol ORAbs <ORConstraint>
--(id<ORIntVar>) res;
--(id<ORIntVar>) left;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
 @end
 
 @protocol OROr <ORConstraint>

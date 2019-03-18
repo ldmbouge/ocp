@@ -803,6 +803,31 @@
 @end
 
 
+@implementation ORFloatSqrt
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y
+{
+   self = [super initORSqrt:x eqSqrt:y];
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitFloatSqrt:self];
+}
+@end
+
+@implementation ORFloatAbs
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y
+{
+   self = [super initORAbs:x eqAbs:y];
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitFloatAbs:self];
+}
+@end
+
+
 @implementation ORFloatAssignC {
    id<ORFloatVar> _x;
    ORFloat        _c;
@@ -1831,10 +1856,10 @@
 @end
 
 @implementation ORAbs { // x = |y|
-   id<ORIntVar> _x;
-   id<ORIntVar> _y;
+   id<ORVar> _x;
+   id<ORVar> _y;
 }
--(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y
 {
    self = [super initORConstraintI];
    _x = x;
@@ -1851,11 +1876,50 @@
 {
    [v visitAbs:self];
 }
--(id<ORIntVar>) res
+-(id<ORVar>) res
 {
    return _x;
 }
--(id<ORIntVar>) left
+-(id<ORVar>) left
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+@end
+
+@implementation ORSqrt { // x = sqrt(y)
+   id<ORVar> _x;
+   id<ORVar> _y;
+}
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == sqrt(%@))",[self class],self,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitSqrt:self];
+}
+-(id<ORVar>) res
+{
+   return _x;
+}
+-(id<ORVar>) left
 {
    return _y;
 }

@@ -451,6 +451,10 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitSqrt: (id<ORSqrt>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitOr: (id<OROr>)c
 {
    _result = [_into addConstraint:c];

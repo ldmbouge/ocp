@@ -779,6 +779,18 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) floatAbs:(id<CPFloatVar>) x eq:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatAbs alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatSqrt:(id<CPFloatVar>) x eq:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatSqrt alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) floatUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y
 {
    id<CPConstraint> o = [[CPFloatUnaryMinus alloc] init:x eqm:y];

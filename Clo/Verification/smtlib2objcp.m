@@ -215,6 +215,7 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_IDL", 1);
    smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_BV", 1);
    smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_FP", 1);
+   smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_BVFP", 1);
    smtlib2_hashtable_set(ret->logics_arith_only_, (intptr_t)"QF_UF", 1);
    ret->named_terms_ = smtlib2_hashtable_new(smtlib2_hashfun_str,
                                              smtlib2_eqfun_str);
@@ -525,7 +526,7 @@ static smtlib2_sort smtlib2_objcp_parser_make_sort(smtlib2_parser_interface *p,
          smtlib2_sort ret = NULL;
          smtlib2_objcp_parametric_sort tmp = { (char *)sortname, NULL };
          ap->response_ = SMTLIB2_RESPONSE_SUCCESS;
-         if(strcmp(sortname, "Bool") == 0){
+         if(strcmp(sortname, "Bool") == 0 || strcmp(sortname, "Float32") == 0){
             objcp_type obj = NULL;
             objcp_var_type type = [OBJCPGateway sortName2Type:sortname];
             obj = [objcpgw objcp_mk_type:yp->ctx_ withType:type];

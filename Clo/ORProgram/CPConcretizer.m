@@ -1255,6 +1255,34 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitFloatAbs: (id<ORAbs>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> res = (id<ORFloatVar>)[cstr res];
+      id<ORFloatVar> left = (id<ORFloatVar>)[cstr left];
+      [res visit: self];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatAbs: (id<CPFloatVar>) _gamma[res.getId]
+                                                       eq: (id<CPFloatVar>) _gamma[left.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatSqrt: (id<ORAbs>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> res = (id<ORFloatVar>)[cstr res];
+      id<ORFloatVar> left = (id<ORFloatVar>)[cstr left];
+      [res visit: self];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatSqrt: (id<CPFloatVar>) _gamma[res.getId]
+                                                       eq: (id<CPFloatVar>) _gamma[left.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatUnaryMinus:(id<ORUnaryMinus>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

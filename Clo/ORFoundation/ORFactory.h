@@ -244,6 +244,7 @@ PORTABLE_BEGIN
 +(id<ORExpr>) expr: (id<ORRelation>) left lor: (id<ORRelation>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (PNULLABLE ORInt2Bool) f of: (ORInt2Expr) e;
@@ -362,6 +363,8 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORFloat)
++(id<ORConstraint>) floatAbs:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatSqrt:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
 +(id<ORConstraint>) floatUnaryMinus:(id<ORTracker>)model  var: (id<ORFloatVar>)x eqm:(id<ORFloatVar>)y;
 +(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var: (id<ORFloatVar>)x to:(ORFloat)c;
 +(id<ORConstraint>) floatAssign: (id<ORTracker>) model var: (id<ORFloatVar>)x to: (id<ORFloatVar>)y;

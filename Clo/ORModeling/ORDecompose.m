@@ -2207,17 +2207,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    self = [super init:ORTBool];
    return self;
 }
-
--(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
-{
-   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model];
-   id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model];
-   if([c min]){
-      [_model addConstraint:[theVar eq:rv]];
-   }else{
-      [_model addConstraint:[theVar neq:rv]];
-   }
-}
 @end
 
 

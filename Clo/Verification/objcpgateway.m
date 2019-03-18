@@ -536,6 +536,7 @@ static OBJCPGateway *objcpgw;
    switch(l){
       case  QF_BV    : return [[BVLogicHandler alloc] init:model withOptions:options withDeclaration:decl];
       case  QF_LIA     : return [[IntLogicHandler alloc] init:model withOptions:options  withDeclaration:decl];
+      case QF_BVFP     :
       case  QF_FP     : return [[FloatLogicHandler alloc] init:model withOptions:options withDeclaration:decl];
       case QF_LRA    : //should return reallogichandler
       default         : return [[AbstractLogicHandler alloc] init:model withOptions:options withDeclaration:decl];

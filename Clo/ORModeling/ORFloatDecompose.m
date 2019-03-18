@@ -193,7 +193,6 @@
         [_terms addTerm:alpha by:1];
     }
 }
-
 -(void) visitExprGThenI:(ORExprLEqualI*)e
 {
     if (_eqto) {
@@ -215,6 +214,28 @@
         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
         [_terms addTerm:alpha by:1];
     }
+}
+-(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   if (_eqto) {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
+-(void) visitExprSqrtI:(ORExprSqrtI*) e
+{
+   if (_eqto) {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 @end
 
@@ -317,7 +338,8 @@
     [_model addConstraint: [ORFactory floatDiv:_model var:lV by:rV equal:_rv]];
     [lT release];
     [rT release];
-}-(id<ORFloatVar>)result
+}
+-(id<ORFloatVar>)result
 {
     return _rv;
 }
@@ -474,5 +496,24 @@
 {
     assert(NO);
 }
-
+-(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   id<ORFloatLinear> rT = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+   id<ORFloatVar> rV = [ORNormalizer floatVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory floatVar:_model];
+   }
+   [_model addConstraint:[ORFactory floatAbs:_model var:_rv eq: rV]];
+   [rT release];
+}
+-(void) visitExprSqrtI:(ORExprSqrtI*) e
+{
+   id<ORFloatLinear> rT = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+   id<ORFloatVar> rV = [ORNormalizer floatVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory floatVar:_model];
+   }
+   [_model addConstraint:[ORFactory floatSqrt:_model var:_rv eq: rV]];
+   [rT release];
+}
 @end

@@ -1205,6 +1205,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
    return [self validate:o onError:"No CP tracker in Abs Expression" track:t];
 }
++(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprSqrtI alloc] initORExprSqrtI:op];
+   return [self validate:o onError:"No CP tracker in Abs Expression" track:t];
+}
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprSquareI alloc] initORExprSquareI:op];
@@ -1893,9 +1898,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
-+(id<ORConstraint>) floatUnaryMinus:(id<ORTracker>)model  var: (id<ORFloatVar>)x eqm:(id<ORFloatVar>)y
++(id<ORConstraint>) floatSqrt:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y
 {
-   id<ORConstraint> o = [[ORFloatUnaryMinus alloc] initORFloatUnaryMinus:x eqm:y];
+   id<ORConstraint> o = [[ORFloatSqrt alloc] initORSqrt:x eqSqrt:y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatAbs:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y
+{
+   id<ORConstraint> o = [[ORFloatAbs alloc] initORAbs:x eqAbs:y];
    [model trackObject:o];
    return o;
 }

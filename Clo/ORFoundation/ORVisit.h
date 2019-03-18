@@ -147,6 +147,7 @@
 -(void) visitMin: (id<ORConstraint>)c;
 -(void) visitMax: (id<ORConstraint>)c;
 -(void) visitAbs: (id<ORConstraint>)c;
+-(void) visitSqrt: (id<ORConstraint>)c;
 -(void) visitOr: (id<ORConstraint>)c;
 -(void) visitAnd:( id<ORConstraint>)c;
 -(void) visitImply: (id<ORConstraint>)c;
@@ -189,6 +190,8 @@
 -(void) visitRealReifyEqual: (id<ORConstraint>) c;
 -(void) visitRealReifyEqualc: (id<ORConstraint>) c;
 -(void) visitRealReifyGEqualc: (id<ORConstraint>) c;
+-(void) visitFloatAbs: (id<ORConstraint>)c;
+-(void) visitFloatSqrt: (id<ORConstraint>)c;
 -(void) visitFloatUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitFloatEqualc: (id<ORConstraint>)c;
 -(void) visitFloatAssignC: (id<ORConstraint>)c;

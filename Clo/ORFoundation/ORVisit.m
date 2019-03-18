@@ -379,7 +379,11 @@
 }
 -(void) visitAbs: (id<ORAbs>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Abs: visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "Abs: visit method not defined"];
+}
+-(void) visitSqrt: (id<ORAbs>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Sqrt: visit method not defined"];
 }
 -(void) visitOr: (id<OROr>)c
 {
@@ -468,6 +472,14 @@
 -(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "HReifySumBoolGEqualc: visit method not defined"];
+}
+-(void) visitFloatAbs: (id<ORAbs>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Abs: visit method not defined"];
+}
+-(void) visitFloatSqrt: (id<ORAbs>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Sqrt: visit method not defined"];
 }
 -(void) visitFloatReifyEqualc: (id<ORFloatReifyEqualc>)c
 {
@@ -1115,6 +1127,7 @@
 -(void) visitMin:(id<ORMin>)c  {}
 -(void) visitMax:(id<ORMax>)c  {}
 -(void) visitAbs: (id<ORAbs>)c  {}
+-(void) visitSqrt: (id<ORSqrt>)c  {}
 -(void) visitOr: (id<OROr>)c  {}
 -(void) visitAnd:( id<ORAnd>)c  {}
 -(void) visitImply: (id<ORImply>)c  {}
