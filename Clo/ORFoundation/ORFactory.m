@@ -1898,6 +1898,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORConstraint>) floatUnaryMinus:(id<ORTracker>)model  var: (id<ORFloatVar>)x eqm:(id<ORFloatVar>)y
+{
+   id<ORConstraint> o = [[ORFloatUnaryMinus alloc] initORFloatUnaryMinus:x eqm:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) floatSqrt:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y
 {
    id<ORConstraint> o = [[ORFloatSqrt alloc] initORSqrt:x eqSqrt:y];
