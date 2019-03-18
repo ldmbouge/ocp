@@ -166,7 +166,12 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
     GRBgetdblattr(_model, "MIPGap", &gap);
     return gap;
 }
-
+-(ORDouble) dual: (MIPConstraintI*) cstr
+{
+   ORDouble value;
+   GRBgetdblattrelement(_model,"PI",[cstr idx],&value);
+   return value;
+}
 -(MIPOutcome) status
 {
    return _status;

@@ -2,7 +2,7 @@
 #import <ORProgram/ORProgramFactory.h>
 #import <ORProgram/ORProgram.h>
 
-#define MAX_PATH 10
+#define MAX_PATH 1
 #define alpha0 10
 #define alpha1 10
 #define alpha2 0.01

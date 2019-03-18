@@ -165,8 +165,10 @@
 
 @interface MIPConstraintSnapshot : NSObject  {
    ORUInt    _name;
+   ORDouble   _dual;
 }
 -(MIPConstraintSnapshot*) initMIPConstraintSnapshot: (MIPConstraintI*) cstr name: (ORInt) name;
+-(ORDouble) dual;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -178,11 +180,16 @@
 {
    self = [super init];
    _name = name;
+   _dual = [cstr dual];
    return self;
 }
 -(ORUInt) getId
 {
    return _name;
+}
+-(ORDouble) dual
+{
+   return _dual;
 }
 -(ORBool) isEqual: (id) object
 {
@@ -279,6 +286,10 @@
       _coef = ncoef;
       _maxSize *= 2;
    }
+}
+-(ORDouble) dual
+{
+   return [_solver dual: self];
 }
 -(MIPConstraintType) type
 {
@@ -435,7 +446,6 @@
 {
    [super print: ">="];
 }
-
 @end
 
 @implementation MIPConstraintEQ;
@@ -1581,6 +1591,10 @@
 -(ORFloat) dualityGap
 {
     return [_MIP dualityGap];
+}
+-(ORDouble) dual: (MIPConstraintI*) cstr
+{
+   return [_MIP dual: cstr];
 }
 -(id) inCache:(id)obj
 {

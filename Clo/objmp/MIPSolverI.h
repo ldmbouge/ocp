@@ -124,6 +124,7 @@
 -(ORDouble)             coef: (ORInt) i;
 -(ORDouble)             rhs;
 -(ORInt)               idx;
+-(ORDouble)            dual;
 -(bool)                isQuad;
 -(void)                setIdx: (ORInt) idx;
 -(void)                del;
@@ -336,6 +337,7 @@
 -(void) setTimeLimit: (double)limit;
 -(ORDouble) bestObjectiveBound;
 -(ORFloat) dualityGap;
+-(ORDouble) dual: (MIPConstraintI*) cstr;
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;

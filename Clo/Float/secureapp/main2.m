@@ -67,6 +67,35 @@ Network* makeInstance ()
    return [[Network alloc] init:device memories:deviceMemory links:edges trafics:trafics flows:flows demands:demands penalities:penality risk:risk capacities:capacities];
 }
 
+Network* makeEasyInstance(){
+   NSArray* device = @[@"g8",  @"g9",  @"g2",  @"g3",  @"g1"];
+   NSMutableArray* deviceMemory = [[[NSMutableArray alloc] init] autorelease];
+   for(ORInt i = 0; i < [device count];i++){
+      [deviceMemory addObject:@100];
+   }
+   NSArray* trafics = @[@"A"];
+   NSArray* flows = @[@[@[@0,@4],@[@4,@0]]];
+   NSArray* demands = @[@[ @1,@1] ];
+   NSArray* edges = @[
+                      @[@1,@2,@3],
+                      @[@0,@2],
+                      @[@0,@1,@4],
+                      @[@0,@4],
+                      @[@2,@3]
+                      ];
+   NSMutableArray* capacities = [[[NSMutableArray alloc] init] autorelease];
+   for(ORInt i = 0; i < [edges count]; i++){
+      [capacities addObject:[[[NSMutableArray alloc] init] autorelease]];
+      for(id dst in edges[i]){
+         [capacities[i] addObject:@(100)];
+      }
+   }
+   NSArray* penality = @[ @[ @5, @5 ], @[ @5, @5 ]];
+   NSArray* risk = @[ @[ @5, @5 ], @[ @5, @5 ]];
+   return [[Network alloc] init:device memories:deviceMemory links:edges trafics:trafics flows:flows demands:demands penalities:penality risk:risk capacities:capacities];
+}
+
+
 void generatePath (Network* n)
 {
    NSArray* request = [n desiredFlows:0][0];
@@ -75,7 +104,10 @@ void generatePath (Network* n)
    NSArray* edges,*inEdges;
    for(ORInt i = 0; i < [n size]; i++){
       edges = [n edges:i];
-      x[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[edges count]-1) domain:RANGE(model, 0, 1) names:[NSString stringWithFormat:@"x[%d]",i]];
+      x[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[edges count]-1)];
+      for(ORInt j = 0; j < [edges count]; j++)
+         x[i][j] = [ORFactory intVar:model bounds:RANGE(model, 0, 1) name:[NSString stringWithFormat:@"(%d,%@)",i,edges[j]]];
+//      x[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[edges count]-1) domain:RANGE(model, 0, 1) names:[NSString stringWithFormat:@"x[%d]",i]];
    }
    id<ORIdArray> inX = [ORFactory idArray:model range:RANGE(model,0,[n size] -1)];
    for(ORInt i = 0; i < [n size]; i++){
@@ -98,13 +130,11 @@ void generatePath (Network* n)
    }
    
    for(ORInt i = 0; i < [inX[[request[0] intValue]] count]; i++){
-      for(ORInt j = 0; j < [inX[i] count]; j++)
-         [model add:[inX[i][j] eq:@(0)]];
+         [model add:[inX[[request[0] intValue]][i] eq:@(0)]];
    }
    
    for(ORInt i = 0; i < [x[[request[1] intValue]] count]; i++){
-      for(ORInt j = 0; j < [x[i] count]; j++)
-         [model add:[x[i][j] eq:@(0)]];
+         [model add:[x[[request[1] intValue]][i] eq:@(0)]];
    }
    
    id<ORIntVarArray> xflat = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[n nbEdges]-1)];
@@ -143,11 +173,240 @@ void generatePath (Network* n)
    }];
 }
 
+void testColGen(Network* n)
+{
+   NSArray* allP = @[ @[ @[@0,@1,@2,@4] ], @[ @[@4,@2,@1,@0] ] ];
+   id<ORModel> functional = [ORFactory createModel];
+   id<ORIntRange> BINARIES = RANGE(functional, 0, 1);
+   NSArray* trafics = [n trafics];
+   NSMutableDictionary* allpath = [[NSMutableDictionary alloc] init];
+   id<ORIdArray> isflow = [ORFactory idArray:functional range:RANGE(functional,0,(ORInt)[trafics count] -1)];
+   id<ORIdArray> flow = [ORFactory idArray:functional range:RANGE(functional,0,(ORInt)[trafics count] -1)];
+   NSArray* tmp, *desiredFlows;
+   for(ORInt T = 0; T < [trafics count]; T++){
+      desiredFlows = [n desiredFlows:T];
+      isflow[T] = [ORFactory idArray:functional range:RANGE(functional, 0, ((ORInt)[desiredFlows count]) - 1 )];
+      flow[T] = [ORFactory idArray:functional range:RANGE(functional, 0, ((ORInt)[desiredFlows count]) - 1 )];
+      for(ORInt pair = 0; pair < [desiredFlows count]; pair++){
+         ORInt src = [desiredFlows[pair][0] intValue];
+         ORInt  dst = [desiredFlows[pair][1] intValue];
+         @autoreleasepool {
+            tmp = allP[pair];
+         }
+         [allpath setObject:tmp forKey:desiredFlows[pair]];
+         isflow[T][pair] = [ORFactory intVarArray:functional range:RANGE(functional, 0, (ORInt)[tmp count]- 1) domain:BINARIES names:[NSString stringWithFormat:@"isflow%@[%d]",trafics[T],pair]];
+         flow[T][pair] = [ORFactory realVarArray:functional range:RANGE(functional, 0, (ORInt)[tmp count]- 1) low:0.0 up:100.0 names:[NSString stringWithFormat:@"flow%@[%d]",trafics[T],pair]];
+      }
+   }
+   
+   for(ORInt T = 0; T < [trafics count]; T++){
+      for(ORInt i = 0; i < [isflow[T] count]; i++){
+         for(ORInt j = 0; j < [isflow[T][i] count]; j++){
+            [functional add:[isflow[T][i][j] geq:flow[T][i][j]]];
+         }
+         [functional add:[ORFactory sumbool:functional array:isflow[T][i] eqi:1]];
+      }
+   }
+   
+   NSArray* ec = [n ec];
+   NSArray* network = [n networkDevices];
+   id<ORIdArray> equiv = [ORFactory idArray:functional range:RANGE(functional, 0, (ORInt)[ec count]-1)];
+   for(ORInt i = 0; i < [ec count]; i++){
+      equiv[i] = [ORFactory intVarArray:functional range:RANGE(functional, 0, (ORInt)([network count])-1)];
+      for(ORInt j = 0; j < [network count];j++){
+         //equiv should be a boolean variable and constraint related should be the max (OR)
+         equiv[i][j] = [ORFactory intVar:functional domain:BINARIES name:[NSString stringWithFormat:@"equiv[%@,%@]",[n name:[ec[i] intValue]],[n name:[network[j] intValue]]]];
+      }
+   }
+   
+   id<ORRealVarArray> load = [ORFactory realVarArray:functional range:RANGE(functional, 0, (ORInt) [network count]- 1)];
+   for(ORInt i = 0; i < [network count];i++){
+      load[i] = [ORFactory realVar:functional name:[NSString stringWithFormat:@"load[%@]",[n name:[network[i] intValue]]]];
+   }
+   id<ORRealVar> loadSquareSum = [ORFactory realVar:functional name:@"loadSquaresSum"];
+   
+   //demand constraints
+   NSArray* demand;
+   for(ORInt T = 0; T < [trafics count]; T++){
+      desiredFlows = [n desiredFlows:T];
+      demand = [n demands:T];
+      for(ORInt pair = 0; pair < [desiredFlows count]; pair++){
+         ORInt d = [demand[pair] intValue];
+         [functional add:[ORFactory sum:functional array:flow[T][pair] geqi:d]];
+      }
+   }
+   
+   NSMutableDictionary* P_edges = [[NSMutableDictionary alloc] init];
+   mappingEP2(P_edges, allpath);
+   
+   NSMutableArray* P_nodes = [[NSMutableArray alloc] initWithCapacity:[n size]];
+   mappingNP2(P_nodes, allpath, [n size]);
+   
+   //capacity flow
+   NSArray* adj = nil;
+   NSMutableArray* arcArr;
+   for(ORInt nd = 0; nd < [n size]; nd++){
+      adj = [n edges:nd];
+      for(ORInt i = 0; i < [adj count]; i++){
+         NSArray* key = @[@(nd), adj[i]];
+         NSArray* af = [P_edges objectForKey:key];
+         if([af count] > 0){
+            arcArr = [[NSMutableArray alloc] init];//ORFactory intVarArray:functional range:RANGE(functional, 0,sz)];
+            for(ORInt T = 0; T < [trafics count]; T++){
+               for(NSArray* indexFlow in af){
+                  ORInt pair = (ORInt)[[n desiredFlows:T] indexOfObject:indexFlow[0]];
+                  if(pair >= 0){
+                     ORInt ind1 = [indexFlow[1] intValue];
+                     [arcArr addObject: flow[T][pair][ind1]];
+                  }
+               }
+            }
+            id<ORIntVarArray> arcFlow = (id<ORIntVarArray>)[ORFactory idArray:functional array:arcArr];
+            [functional add:[ORFactory sum:functional array:arcFlow leqi:[n capacity:nd to:[adj[i] intValue]]]];
+            [arcArr release];
+         }
+      }
+   }
+   
+   NSMutableArray* l;
+   id<ORDoubleArray> coefs;
+   for (ORInt i = 0; i < [network count]; i++){
+      ORInt nd = [network[i] intValue];
+      l = [[NSMutableArray alloc] init];
+      for(ORInt T = 0; T < [trafics count]; T++){
+         for (ORInt path = 0; path < [P_nodes[nd] count]; path++){
+            ORInt pair = (ORInt)[[n desiredFlows:T] indexOfObject:P_nodes[nd][path][0]];
+            if(pair >= 0){
+               ORInt c = [P_nodes[nd][path][1] intValue];
+               [l addObject:flow[T][pair][c]];
+            }
+         }
+      }
+      coefs = [ORFactory doubleArray:functional range:RANGE(functional, 0, (ORInt)[l count]) value:-1];
+      // little trick to get the sum equals to load[index] rewrite the sum by passing the result in the other side
+      [coefs set:1.0 at:(ORInt)[l count]];
+      [l addObject:load[i]];
+      [functional add:[ORFactory realSum:functional array:(id<ORRealVarArray>)[ORFactory idArray:functional array:l] coef:coefs eq:0.0]];
+      [l release];
+   }
+   
+   NSMutableArray* equivlist;
+   for(ORInt i = 0; i < [ec count]; i++){
+      ORInt node = [ec[i] intValue];
+      for(ORInt j = 0; j < [network count]; j++){
+         equivlist = [[NSMutableArray alloc] init];
+         for(ORInt T = 0; T < [trafics count]; T++){
+            for(NSMutableArray* path in P_nodes[node]){
+               ORInt ind1 = [path[1] intValue];
+               if([[allpath objectForKey:path[0]][ind1] containsObject:network[j]]){
+                  ORInt ind0 = (ORInt)[[n desiredFlows:T] indexOfObject:path[0]];
+                  if(ind0 >= 0)
+                     [equivlist addObject:isflow[T][ind0][ind1]];
+               }
+            }
+         }
+         if([equivlist count] >= 1){
+            id<ORIntVarArray> equivArray = (id<ORIntVarArray>)[ORFactory idArray:functional array:equivlist];
+            [functional add:[ORFactory clause:functional over:equivArray equal:equiv[i][j]]];
+         }
+         [equivlist release];
+      }
+   }
+   
+   [functional add:[ORFactory sumSquare:functional array:load eq:loadSquareSum]];
+   
+   //sum flow(t)(p) * len(p)
+   id<ORExpr> e = nil;
+   id<ORExpr> e_aux = nil;
+   for(ORInt T = 0; T < [trafics count]; T++){
+      desiredFlows = [n desiredFlows:T];
+      for(ORInt pair = 0; pair < [desiredFlows count]; pair++){
+         e_aux = Sum(functional, p, RANGE(functional, 0,(ORInt)[flow[T][pair] count]-1),[flow[T][pair][p] mul:@([[allpath objectForKey:desiredFlows[pair]][p] count] - 1)]);
+         e = (e == nil) ? e_aux : [e plus:e_aux];
+      }
+   }
+   [functional minimize: [[e mul:@(alpha0)]  plus:[loadSquareSum mul:@(alpha2)]]];
+//   [functional minimize: [e mul:@(alpha0)]];//  plus:[loadSquareSum mul:@(alpha2)]]];
+   
+   
+   id<ORRunnable> mip = [ORFactory MIPRunnable: functional];
+   
+   id<ORRunnable> r = [ORFactory columnGeneration: mip slave:^id<ORDoubleArray>(id<ORDoubleArray> cost) {
+      id<ORModel> model = [ORFactory createModel];
+      id<ORIdArray> x = [ORFactory idArray:model range:RANGE(model,0,[n size] -1)];
+      NSArray* edges,*inEdges;
+      for(ORInt i = 0; i < [n size]; i++){
+         edges = [n edges:i];
+         x[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[edges count]-1)];
+         for(ORInt j = 0; j < [edges count]; j++)
+            x[i][j] = [ORFactory intVar:model bounds:RANGE(model, 0, 1) name:[NSString stringWithFormat:@"(%d,%@)",i,edges[j]]];
+      }
+      id<ORIdArray> inX = [ORFactory idArray:model range:RANGE(model,0,[n size] -1)];
+      for(ORInt i = 0; i < [n size]; i++){
+         inEdges = [n inEdges:i];
+         inX[i] = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[inEdges count]-1)];
+         for(ORInt j = 0; j < [inEdges count]; j++){
+            edges = [n edges:[inEdges[j] intValue]];
+            ORUInt k = (ORUInt)[edges indexOfObject:@(i)];
+            inX[i][j] = x[[inEdges[j] intValue]][k];
+         }
+      }
+      ORInt v;
+      NSArray* request = [n desiredFlows:0][0];
+      for(ORInt i = 0; i < [n size]; i++){
+         v = 0;
+         if(i == [request[0] intValue])
+            v = 1;
+         else if (i == [request[1] intValue])
+            v = -1;
+         [model add:[[Sum(model, p, [(id<ORIntVarArray>)x[i] range],x[i][p]) sub:Sum(model, p, [(id<ORIntVarArray>)inX[i] range],inX[i][p])] eq:@(v)]];
+      }
+      
+      for(ORInt i = 0; i < [inX[[request[0] intValue]] count]; i++){
+         [model add:[inX[[request[0] intValue]][i] eq:@(0)]];
+      }
+      
+      for(ORInt i = 0; i < [x[[request[1] intValue]] count]; i++){
+         [model add:[x[[request[1] intValue]][i] eq:@(0)]];
+      }
+      
+      
+      id<ORIntVarArray> xflat = [ORFactory intVarArray:model range:RANGE(model, 0, (ORInt)[n nbEdges]-1)];
+      ORInt index = 0;
+      for(ORInt i = 0; i < [x count]; i++){
+         for(ORInt j = 0; j < [x[i] count]; j++){
+            xflat[index++] = x[i][j];
+         }
+      }
+      [model minimize:[cost[0] sub: Sum(model,i, xflat.range,xflat[i])]];
+      
+      
+      
+      id<MIPProgram> ip = [ORFactory createMIPProgram: model];
+      [ip solve];
+      id<ORSolution> sol = [[ip solutionPool] best];
+      ORDouble reducedCost = [[sol objectiveValue] doubleValue] + 1;
+      NSLog(@"reduced cost %f", reducedCost);
+      id<ORDoubleArray> col = nil;
+      if(reducedCost < -0.00001) {
+         col = [ORFactory doubleArray: model range: [xflat range] with:^ORDouble(ORInt i) {
+            return [sol intValue: xflat[i]];
+         }];
+      }
+      return col;
+   }];
+   
+   [r run];
+}
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measureTime:^void(){
-         Network* n = makeInstance();
+         Network* n = makeEasyInstance();
+         
+         testColGen(n);
+         
+         return;
 //         generatePath(n);
          id<ORModel> functional = [ORFactory createModel];
          id<ORModel> security = [ORFactory createModel];

@@ -137,7 +137,7 @@
       if(last == dstVertex) {
          //            NSLog(@"%@",path);
          [allpaths addObject:path];
-         if([allpaths count] == 10) break;
+         if([allpaths count] == nbP) break;
       }
       
       NSMutableArray* nbhood = graph->_lists[last];
@@ -302,7 +302,7 @@
       if(last == dstVertex) {
          //            NSLog(@"%@",path);
          [allpaths addObject:path];
-         if([allpaths count] == 10) break;
+         if([allpaths count] == nbP) break;
       }
       
       NSArray* nbhood = [n->_graph edges:last];

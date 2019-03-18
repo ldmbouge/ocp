@@ -72,6 +72,10 @@
 {
    return YES;
 }
+-(ORDouble) dual: (id<ORConstraint>) c
+{
+   return [_MIPsolver dual: [self concretize: c]];
+}
 -(ORDouble) bestObjectiveBound
 {
     return [_MIPsolver bestObjectiveBound];

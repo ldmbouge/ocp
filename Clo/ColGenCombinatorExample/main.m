@@ -31,7 +31,7 @@ int main(int argc, const char * argv[])
         if(i == j) return (ORInt)floor(width / [shelf at: i]);
         return 0.0;
     }];
-    id<ORRealVarArray> cut = [ORFactory realVarArray: master range: shelves low:0 up:[demand max]];
+    id<ORRealVarArray> cut = [ORFactory realVarArray: master range: shelves low:0 up:[demand max] names:@"cut"];
     for(ORInt i = [shelves low]; i <= [shelves up]; i++) {
         [master add: [Sum(master, j, shelves, [cut[j] mul: @([columns at: j * shelfCount + i])]) geq: @([demand at: i])]];
     }

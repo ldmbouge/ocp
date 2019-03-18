@@ -31,6 +31,8 @@
 -(ORDouble) bestObjectiveBound;
 -(ORFloat) dualityGap;
 
+-(ORDouble) dual: (MIPConstraintI*) cstr;
+
 -(MIPOutcome) status;
 -(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORInt) intValue: (MIPIntVariableI*) var;

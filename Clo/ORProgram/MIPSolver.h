@@ -20,6 +20,7 @@
 -(id<ORSolution>) captureSolution;
 -(id<ORExplorer>)  explorer;
 -(void) printModelToFile: (char*) fileName;
+-(ORDouble) dual: (id<ORConstraint>) c;
 @end
 
 // MIPSolverFactory
