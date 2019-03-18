@@ -1080,7 +1080,19 @@
 
 
 @implementation CPFactory (ORDouble)
-+(id<CPConstraint>) doubleUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y
++(id<CPConstraint>) doubleAbs:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleAbs alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleSqrt:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleSqrt alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleUnaryMinus:(id<CPDoubleVar>) x eqm:(id<CPDoubleVar>) y
 {
    id<CPConstraint> o = [[CPDoubleUnaryMinus alloc] init:x eqm:y];
    [[x tracker] trackMutable:o];

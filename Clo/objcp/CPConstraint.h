@@ -150,7 +150,9 @@
 @end
 
 @interface CPFactory (ORDouble)
-+(id<CPConstraint>) doubleUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y;
++(id<CPConstraint>) doubleAbs: (id<CPDoubleVar>)x eq:(id<CPDoubleVar>)y;
++(id<CPConstraint>) doubleSqrt: (id<CPDoubleVar>)x eq:(id<CPDoubleVar>)y;
++(id<CPConstraint>) doubleUnaryMinus:(id<CPDoubleVar>) x eqm:(id<CPDoubleVar>) y;
 +(id<CPConstraint>) doubleCast: (id<CPDoubleVar>) res eq:(id<CPFloatVar>) initial;
 +(id<CPConstraint>) doubleAssign: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;
 +(id<CPConstraint>) doubleAssignC: (id<CPDoubleVar>) x to:(ORDouble) c;

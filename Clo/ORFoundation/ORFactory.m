@@ -2031,6 +2031,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORDouble)
++(id<ORConstraint>) doubleSqrt:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y
+{
+   id<ORConstraint> o = [[ORDoubleSqrt alloc] initORSqrt:x eqSqrt:y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleAbs:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y
+{
+   id<ORConstraint> o = [[ORDoubleAbs alloc] initORAbs:x eqAbs:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var
 {
    id<ORConstraint> o = [[ORDoubleCast alloc] init:var eq:x];

@@ -444,7 +444,6 @@
 -(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y;
 @end
 
-// PVH: should add annotation
 @interface ORFloatAbs : ORAbs<ORAbs>
 -(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y;
 @end
@@ -618,6 +617,14 @@
 @end
 
 //------
+
+@interface ORDoubleSqrt : ORSqrt<ORSqrt>
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y;
+@end
+
+@interface ORDoubleAbs : ORAbs<ORAbs>
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y;
+@end
 
 @interface ORDoubleUnaryMinus : ORConstraintI<ORUnaryMinus>
 -(ORDoubleUnaryMinus*)initORDoubleUnaryMinus:(id<ORVar>)x eqm:(id<ORVar>)y;

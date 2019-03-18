@@ -529,6 +529,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatReifyGThenc: visit method not defined"];
 }
+-(void) visitDoubleAbs: (id<ORAbs>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Abs: visit method not defined"];
+}
+-(void) visitDoubleSqrt: (id<ORAbs>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Sqrt: visit method not defined"];
+}
 -(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyEqualc: visit method not defined"];

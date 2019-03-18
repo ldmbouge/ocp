@@ -932,6 +932,29 @@
 }
 @end
 
+@implementation ORDoubleSqrt
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y
+{
+   self = [super initORSqrt:x eqSqrt:y];
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleSqrt:self];
+}
+@end
+
+@implementation ORDoubleAbs
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y
+{
+   self = [super initORAbs:x eqAbs:y];
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleAbs:self];
+}
+@end
 
 @implementation ORDoubleAssignC {
    id<ORDoubleVar> _x;

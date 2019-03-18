@@ -1789,3 +1789,138 @@ double_interval _yi;
    return ![_x bound] + ![_b bound];
 }
 @end
+
+@implementation CPDoubleAbs{
+   int _precision;
+   int _rounding;
+   double_interval _xi;
+   double_interval _resi;
+}
+-(id) init:(CPDoubleVarI*)res eq:(CPDoubleVarI*)x //res = |x|
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _res = res;
+   _xi = makeDoubleInterval(x.min, x.max);
+   _resi = makeDoubleInterval(res.min, res.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_x bound]){
+      if([_res bound]){
+         if(([_res value] < [_x value]) || ([_res value] != -[_x value])) failNow();
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         [_x bind:([_x value] >= 0) ? [_x value] : -[_x value]];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }else if([_res bound]){
+      [_x updateInterval:-[_res value] and:[_res value]];
+   }else {
+      updateDoubleInterval(&_xi,_x);
+      updateDoubleInterval(&_resi,_res);
+      intersectionIntervalD inter;
+      double_interval resTmp = makeDoubleInterval(_res.min, _res.max);
+      fpi_fabsd(_precision, _rounding, &resTmp, &_xi);
+      inter = intersectionD(_res, _resi, resTmp, 0.0f);
+      if(inter.changed)
+         [_res updateInterval:inter.result.inf and:inter.result.sup];
+      
+      updateDoubleInterval(&_xi,_x);
+      double_interval xTmp = makeDoubleInterval(_x.min, _x.max);
+      fpi_fabs_invd(_precision,_rounding, &xTmp, &_resi);
+      inter = intersectionD(_x, _xi, xTmp, 0.0f);
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_res bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == |%@|>",_res,_x];
+}
+@end
+
+@implementation CPDoubleSqrt{
+   int _precision;
+   int _rounding;
+   double_interval _xi;
+   double_interval _resi;
+}
+-(id) init:(CPDoubleVarI*)res eq:(CPDoubleVarI*)x //res = |x|
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _res = res;
+   _xi = makeDoubleInterval(x.min, x.max);
+   _resi = makeDoubleInterval(res.min, res.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_res bound]){
+      [_x bind:([_res value] * [_res value])];
+      assignTRInt(&_active, NO, _trail);
+   }else {
+      updateDoubleInterval(&_xi,_x);
+      updateDoubleInterval(&_resi,_res);
+      intersectionIntervalD inter;
+      double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
+      fpi_sqrtd(_precision,_rounding, &resTmp, &_xi);
+      inter = intersectionD(_res, _resi, resTmp, 0.0f);
+      if(inter.changed)
+         [_res updateInterval:inter.result.inf and:inter.result.sup];
+      
+      updateDoubleInterval(&_xi,_x);
+      double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
+      fpi_sqrtd_inv(_precision,_rounding, &xTmp, &_resi);
+      inter = intersectionD(_x, _xi, xTmp, 0.0f);
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_res bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == sqrt(%@)>",_res,_x];
+}
+@end

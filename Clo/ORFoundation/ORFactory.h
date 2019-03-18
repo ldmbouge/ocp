@@ -398,6 +398,8 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORDouble)
++(id<ORConstraint>) doubleAbs:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleSqrt:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var;
 +(id<ORConstraint>) doubleUnaryMinus:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eqm:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleEqualc: (id<ORTracker>) model var: (id<ORDoubleVar>)x eqc:(ORDouble)c;
