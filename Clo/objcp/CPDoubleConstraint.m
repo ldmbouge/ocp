@@ -1820,7 +1820,7 @@ double_interval _yi;
          if(([_res value] < [_x value]) || ([_res value] != -[_x value])) failNow();
          assignTRInt(&_active, NO, _trail);
       }else{
-         [_x bind:([_x value] >= 0) ? [_x value] : -[_x value]];
+         [_res bind:([_x value] >= 0) ? [_x value] : -[_x value]];
          assignTRInt(&_active, NO, _trail);
       }
    }else if([_res bound]){
