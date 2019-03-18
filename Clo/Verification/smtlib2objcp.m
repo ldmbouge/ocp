@@ -164,6 +164,8 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_div);
 SMTLIB2_OBJCP_DECLHANDLER(fp_mul);
 SMTLIB2_OBJCP_DECLHANDLER(fp_sub);
 SMTLIB2_OBJCP_DECLHANDLER(fp_neg);
+SMTLIB2_OBJCP_DECLHANDLER(fp_abs);
+SMTLIB2_OBJCP_DECLHANDLER(fp_sqrt);
 
 #define SMTLIB2_OBJCP_SETHANDLER(tp, s, name) \
 smtlib2_term_parser_set_handler(tp, s, smtlib2_objcp_parser_mk_ ## name)
@@ -320,6 +322,8 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.sub", fp_sub);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.add", fp_add);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.mul", fp_mul);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.abs", fp_abs);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.sqrt", fp_sqrt);
    
    /* the built-in sorts */
    smtlib2_hashtable_set(ret->sorts_,
@@ -1374,6 +1378,16 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_geq)
 SMTLIB2_OBJCP_DECLHANDLER(fp_neg)
 {
    return [objcpgw objcp_mk_fp:YCTX(ctx) neg:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(fp_abs)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) abs:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(fp_sqrt)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) sqrt:(objcp_expr)smtlib2_vector_at(args, 0)];
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_add)

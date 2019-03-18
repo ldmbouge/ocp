@@ -1487,6 +1487,14 @@ static OBJCPGateway *objcpgw;
 {
    return [x minus];
 }
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx sqrt:(id<ORExpr>)x
+{
+   return [x sqrt];
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx abs:(id<ORExpr>)x
+{
+   return [x abs];
+}
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x add:(id<ORExpr>)y
 {
    return [x plus:y];
