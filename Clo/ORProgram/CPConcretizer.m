@@ -1617,11 +1617,11 @@
 -(void) visitDoubleAbs: (id<ORAbs>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORDoubleVar> res = (id<ORFloatVar>)[cstr res];
-      id<ORDoubleVar> left = (id<ORFloatVar>)[cstr left];
+      id<ORDoubleVar> res = (id<ORDoubleVar>)[cstr res];
+      id<ORDoubleVar> left = (id<ORDoubleVar>)[cstr left];
       [res visit: self];
       [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory floatAbs: (id<CPDoubleVar>) _gamma[res.getId]
+      id<CPConstraint> concreteCstr = [CPFactory doubleAbs: (id<CPDoubleVar>) _gamma[res.getId]
                                                        eq: (id<CPDoubleVar>) _gamma[left.getId]
                                        ];
       [_engine add: concreteCstr];

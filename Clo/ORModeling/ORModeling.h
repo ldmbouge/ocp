@@ -53,6 +53,7 @@ PORTABLE_BEGIN
 -(id<ORBitVarArray>)bitVars;
 -(void) incrOccurences:(id<ORVar>) v;
 -(ORDouble) occurences:(id<ORVar>) v;
+-(id<ORIntArray>) occurences;
 -(ORUInt) nbObjects;
 -(NSArray*) variables;
 -(NSArray*) constraints;

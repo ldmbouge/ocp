@@ -438,6 +438,10 @@
    }
    return 0.0;
 }
+-(id<ORIntArray>) occurences
+{
+   return _occurences;
+}
 -(NSArray*) variables
 {
    // [ldm] Why copy them out. NSArray is immutable anyhow.
