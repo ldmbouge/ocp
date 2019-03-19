@@ -22,7 +22,11 @@ static OBJCPGateway *objcpgw;
    _value.llong_nb = strtol(strv, &pEnd, _base);
    switch (base) {
       case 10:
-         _type = (width == 0) ? OR_INT : OR_BV;
+         if([_strv containsString:@"."]){
+            _type = OR_DOUBLE;
+            _value.double_nb = atof(strv);
+         }else
+            _type = (width == 0) ? OR_INT : OR_BV;
          break;
       case 16:
       case 2:
@@ -1533,6 +1537,8 @@ static OBJCPGateway *objcpgw;
 -(id<ORExpr>) objcp_mk_to_fp:(id<ORExpr>)x to:(objcp_var_type) t
 {
    id<ORExpr> var;
+   if([(id)x isKindOfClass:[ConstantWrapper class]])
+      x = (id<ORExpr>)[(ConstantWrapper*)x makeVariable];
    if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
       var = (id<ORFloatVar>) x;
    } else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){

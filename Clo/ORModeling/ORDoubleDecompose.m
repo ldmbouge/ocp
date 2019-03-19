@@ -47,6 +47,16 @@
    } else
       [_terms addTerm:e by:1];
 }
+-(void) visitFloatVar: (id<ORFloatVar>) e
+{
+   [_model incrOccurences:e];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory doubleCast:_model from:e res:_eqto]];
+      [_terms addTerm:_eqto by:1];
+      _eqto = nil;
+   } else
+      [_terms addTerm:e by:1];
+}
 -(void) visitDoubleVar: (id<ORDoubleVar>) e
 {
    [_model incrOccurences:e];
