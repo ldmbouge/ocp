@@ -1894,25 +1894,23 @@ double_interval _yi;
 }
 -(void) propagate
 {
-   if([_res bound]){
-      [_x bind:([_res value] * [_res value])];
+   updateDoubleInterval(&_xi,_x);
+   updateDoubleInterval(&_resi,_res);
+   intersectionIntervalD inter;
+   double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
+   fpi_sqrtd(_precision,_rounding, &resTmp, &_xi);
+   inter = intersectionD(_res, _resi, resTmp, 0.0f);
+   if(inter.changed)
+      [_res updateInterval:inter.result.inf and:inter.result.sup];
+   
+   updateDoubleInterval(&_xi,_x);
+   double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
+   fpi_sqrtd_inv(_precision,_rounding, &xTmp, &_resi);
+   inter = intersectionD(_x, _xi, xTmp, 0.0f);
+   if(inter.changed)
+      [_x updateInterval:inter.result.inf and:inter.result.sup];
+   if([_res bound] && [_x bound]){
       assignTRInt(&_active, NO, _trail);
-   }else {
-      updateDoubleInterval(&_xi,_x);
-      updateDoubleInterval(&_resi,_res);
-      intersectionIntervalD inter;
-      double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
-      fpi_sqrtd(_precision,_rounding, &resTmp, &_xi);
-      inter = intersectionD(_res, _resi, resTmp, 0.0f);
-      if(inter.changed)
-         [_res updateInterval:inter.result.inf and:inter.result.sup];
-      
-      updateDoubleInterval(&_xi,_x);
-      double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
-      fpi_sqrtd_inv(_precision,_rounding, &xTmp, &_resi);
-      inter = intersectionD(_x, _xi, xTmp, 0.0f);
-      if(inter.changed)
-         [_x updateInterval:inter.result.inf and:inter.result.sup];
    }
 }
 -(NSSet*)allVars
