@@ -848,8 +848,8 @@
 -(void) visitAbs: (id<ORAbs>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> res = [cstr res];
-      id<ORIntVar> left = [cstr left];
+      id<ORIntVar> res = (id<ORIntVar>)[cstr res];
+      id<ORIntVar> left = (id<ORIntVar>)[cstr left];
       [res visit: self];
       [left visit: self];
       id<CPConstraint> concreteCstr = [CPFactory abs: (id<CPIntVar>) _gamma[left.getId] 
@@ -1286,8 +1286,8 @@
 -(void) visitFloatUnaryMinus:(id<ORUnaryMinus>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORFloatVar> left = [cstr left];
-      id<ORFloatVar> right = [cstr right];
+      id<ORFloatVar> left = (id<ORFloatVar>)[cstr left];
+      id<ORFloatVar> right = (id<ORFloatVar>)[cstr right];
       [left visit: self];
       [right visit: self];
       id<CPConstraint> concreteCstr = [CPFactory floatUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
