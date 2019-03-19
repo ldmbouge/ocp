@@ -1387,7 +1387,7 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_abs)
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_sqrt)
 {
-   return [objcpgw objcp_mk_fp:YCTX(ctx) sqrt:(objcp_expr)smtlib2_vector_at(args, 0)];
+   return [objcpgw objcp_mk_fp:YCTX(ctx) sqrt:(objcp_expr)smtlib2_vector_at(args, 1)];
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_add)
