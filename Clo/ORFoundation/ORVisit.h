@@ -274,6 +274,7 @@
 -(void) visitExprAggMinI: (id<ORExpr>) e;
 -(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprSqrtI:(id<ORExpr>) e;
 -(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;

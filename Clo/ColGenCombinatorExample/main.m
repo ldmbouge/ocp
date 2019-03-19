@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
         [master add: [Sum(master, j, shelves, [cut[j] mul: @([columns at: j * shelfCount + i])]) geq: @([demand at: i])]];
     }
     [master minimize: Sum(master, i, shelves, cut[i])];
-    id<ORRunnable> lp = [ORFactory LPRunnable: master];
+    id<ORRunnable> lp = [ORFactory MIPRunnable: master];
     
     id<ORRunnable> r = [ORFactory columnGeneration: lp slave:^id<ORDoubleArray>(id<ORDoubleArray> cost) {
         id<ORModel> slave = [ORFactory createModel];
