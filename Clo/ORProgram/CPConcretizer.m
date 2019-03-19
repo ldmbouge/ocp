@@ -1635,7 +1635,7 @@
       id<ORDoubleVar> left = (id<ORDoubleVar>)[cstr left];
       [res visit: self];
       [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory floatSqrt: (id<CPDoubleVar>) _gamma[res.getId]
+      id<CPConstraint> concreteCstr = [CPFactory doubleSqrt: (id<CPDoubleVar>) _gamma[res.getId]
                                                         eq: (id<CPDoubleVar>) _gamma[left.getId]
                                        ];
       [_engine add: concreteCstr];
@@ -1645,8 +1645,8 @@
 -(void) visitDoubleUnaryMinus:(id<ORUnaryMinus>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORDoubleVar> left = [cstr left];
-      id<ORDoubleVar> right = [cstr right];
+      id<ORDoubleVar> left = (id<ORDoubleVar>)[cstr left];
+      id<ORDoubleVar> right = (id<ORDoubleVar>) [cstr right];
       [left visit: self];
       [right visit: self];
       id<CPConstraint> concreteCstr = [CPFactory doubleUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
