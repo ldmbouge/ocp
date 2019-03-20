@@ -522,6 +522,7 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
         else {
             cstr->_todo = CPChecked;
             cstr->_propagate(cstr,@selector(propagate));
+//           NSLog(@"%@",cstr);
            //[cstr propagate];
         }
     }
