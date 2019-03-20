@@ -983,7 +983,11 @@
 }
 -(void) visitExprAbsI:(id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ExprAbsI: visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprAbsI: visit method not defined"];
+}
+-(void) visitExprSqrtI:(id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprSqrtI: visit method not defined"];
 }
 -(void) visitExprSquareI:(id<ORExpr>) e
 {

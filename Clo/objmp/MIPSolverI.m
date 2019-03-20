@@ -211,7 +211,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"mip(constraint)(%d) :",_name];
+   [buf appendFormat:@"mip(constraint)(%d) : %16.16e",_name,_dual];
    return buf;
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
@@ -408,6 +408,10 @@
 {
    [self print: "?"];
 }
+-(NSString*) operatorDescription
+{
+   return @"?";
+}
 -(ORInt) nb
 {
    return _nb;
@@ -416,7 +420,19 @@
 {
    _nb = nb;
 }
-
+-(NSString*) description
+{
+   NSMutableString* res = [NSMutableString stringWithFormat:@"%@ ",[[self class] description]];
+   for(ORInt i = 0; i < _size; i++) {
+      [res appendFormat:@"%f x%d",_coef[i],[_var[i] idx]];
+      if (i < _size - 1)
+         [res appendString:@" + "];
+   }
+   [res appendString:@" "];
+   [res appendFormat:@"%@",[self operatorDescription]];
+   [res appendFormat:@" %f\n",_rhs];
+   return res;
+}
 @end
 
 
@@ -432,6 +448,10 @@
 {
    [super print: "<="];
 }
+-(NSString*) operatorDescription
+{
+   return @"<=";
+}
 @end
 
 @implementation MIPConstraintGEQ;
@@ -446,6 +466,10 @@
 {
    [super print: ">="];
 }
+-(NSString*) operatorDescription
+{
+   return @">=";
+}
 @end
 
 @implementation MIPConstraintEQ;
@@ -459,6 +483,10 @@
 -(void) print
 {
    [super print: "="];
+}
+-(NSString*) operatorDescription
+{
+   return @"=";
 }
 @end
 @implementation MIPConstraintOR;
@@ -478,6 +506,10 @@
 {
    [super print: "OR_"];
 }
+-(NSString*) operatorDescription
+{
+   return @"OR";
+}
 @end
 @implementation MIPConstraintMIN;
 
@@ -495,6 +527,10 @@
 -(void) print
 {
    [super print: "MIN_"];
+}
+-(NSString*) operatorDescription
+{
+   return @"MIN";
 }
 @end
 @implementation MIPQuadConstraint : MIPConstraintI
@@ -554,6 +590,10 @@
 {
    [super print: "<="];
 }
+-(NSString*) operatorDescription
+{
+   return @"<=";
+}
 @end
 
 @implementation MIPQuadConstraintGEQ : MIPQuadConstraint
@@ -567,6 +607,10 @@
 {
    [super print: ">="];
 }
+-(NSString*) operatorDescription
+{
+   return @">=";
+}
 @end
 
 @implementation MIPQuadConstraintEQ : MIPQuadConstraint
@@ -579,6 +623,10 @@
 -(void) print
 {
    [super print: "="];
+}
+-(NSString*) operatorDescription
+{
+   return @"=";
 }
 @end
 @implementation MIPObjectiveI;

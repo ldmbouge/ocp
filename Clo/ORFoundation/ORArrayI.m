@@ -427,7 +427,7 @@
     NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [rv appendString:@"["];
     for(ORInt i=_low;i<=_up;i++) {
-        [rv appendFormat:@"%d:%f",i,_array[i]];
+        [rv appendFormat:@"%d:%16.16e",i,_array[i]];
         if (i < _up)
             [rv appendString:@","];
     }

@@ -936,7 +936,7 @@
    if(et == ORTFloat || et == ORTDouble || et == ORTLDouble)
         return [ORFactory expr:self lt:re track:t];
     else
-        return [ORFactory expr:self leq:[re plus:[ORFactory integer:t value:1]] track:t];
+        return [ORFactory expr:self leq:[re sub:[ORFactory integer:t value:1]] track:t];
 }
 -(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t
 {
