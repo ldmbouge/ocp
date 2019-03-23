@@ -54,6 +54,7 @@
 }
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax;
 -(id) initRootState:(CustomState*)classState variableIndex:(int)variableIndex;
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax;
 -(id) initState:(CustomState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex;
 -(id) initState:(CustomState*)parentNodeState variableIndex:(int)variableIndex;
 //-(char*) stateChar;
@@ -67,6 +68,7 @@
 -(bool) canChooseValue:(int)value forVariable:(int)variable;
 -(int) stateDifferential:(CustomState*)other;
 -(bool) equivalentTo:(CustomState*)other;
++(void) setAsOnlyMDDWithClassState:(CustomState*)classState;
 @end
 
 @interface MDDStateSpecification : CustomState {
@@ -140,6 +142,8 @@
 -(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax;
 +(void) addStateClass:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables;
 +(void) stateClassesInit;
++(int) numStates;
++(CustomState*) firstState;
 @end
 
 @interface ORMDDify : ORVisitor<ORModelTransformation>

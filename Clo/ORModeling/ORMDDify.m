@@ -802,6 +802,11 @@
 @end
 
 @implementation MDDStateSpecification
+static int* StateValues;
+static DDClosure ArcExists;
+static DDClosure* TransitionFunctions;
+static int StateSize;
+
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
 {
     [super initClassState:domainMin domainMax:domainMax];
@@ -809,6 +814,16 @@
     _arcExists = arcExists;
     _transitionFunctions = transitionFunctions;
     _stateSize = stateSize;
+    return self;
+}
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax{
+    _variableIndex = variableIndex;
+    _domainMin = domainMin;
+    _domainMax = domainMax;
+    _stateSize = StateSize;
+    _state = StateValues;
+    _arcExists = ArcExists;
+    _transitionFunctions = TransitionFunctions;
     return self;
 }
 -(id) initRootState:(MDDStateSpecification*)classState variableIndex:(int)variableIndex {
@@ -850,6 +865,14 @@
     _arcExists = [parentNodeState arcExistsClosure];
     _transitionFunctions = [parentNodeState transitionFunctions];
     return self;
+}
+
++(void) setAsOnlyMDDWithClassState:(MDDStateSpecification*)classState
+{
+    StateValues = [classState state];
+    ArcExists = [classState arcExistsClosure];
+    TransitionFunctions = [classState transitionFunctions];
+    StateSize = [classState stateSize];
 }
 
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
@@ -1340,6 +1363,8 @@ static id<ORIntVarArray> _variables;
     [_stateClasses addObject:stateClass];
     [_stateVariables addObject:variables];
 }
++(CustomState*) firstState { return [_stateClasses firstObject]; }
++(int) numStates { return (int)[_stateClasses count]; }
 +(void) stateClassesInit { _stateClasses = [[NSMutableArray alloc] init]; _stateVariables = [[NSMutableArray alloc] init]; }
 +(void) setVariables:(id<ORIntVarArray>)variables { _variables = variables; }
 
@@ -1504,7 +1529,13 @@ static id<ORIntVarArray> _variables;
     if (_hasObjective) {
         mddConstraint = [ORFactory CustomMDDWithObjective:m var:_variables relaxed:relaxed size:width objective: _objectiveVar maximize:_maximize stateClass:[JointState class]];
     } else {
-        mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:relaxed size:width stateClass:[JointState class]];
+        if ([JointState numStates] > 1) {
+            mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:relaxed size:width stateClass:[JointState class]];
+        } else {
+            CustomState* onlyState = [JointState firstState];
+            [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
+            mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:relaxed size:width stateClass:[onlyState class]];
+        }
     }
     [_into trackConstraintInGroup: mddConstraint];
     [_into addConstraint: mddConstraint];
