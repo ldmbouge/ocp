@@ -478,7 +478,23 @@
 {
    _stateValues[lookup] = value;
 }
-
+-(void)addStates:(int*)states size:(int)size {
+   int* newStateValues = malloc((_stateSize + size) * sizeof(ORInt));
+   id<ORExpr>* newTransitionFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
+   for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
+      newStateValues[stateIndex] = _stateValues[stateIndex];
+      newTransitionFunctions[stateIndex] = _transitionFunctions[stateIndex];
+   }
+   for (int otherStateIndex = 0; otherStateIndex < size; otherStateIndex++) {
+      newStateValues[_stateSize+otherStateIndex] = states[otherStateIndex];
+   }
+   _stateSize += size;
+   free(_stateValues);
+   _stateValues = newStateValues;
+   
+   free(_transitionFunctions);
+   _transitionFunctions = newTransitionFunctions;
+}
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists
 {
    _arcExists = arcExists;

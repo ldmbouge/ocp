@@ -15,6 +15,403 @@
 #import "ORDecompose.h"
 #import "ORRealDecompose.h"
 
+@implementation ORDDExpressionEquivalenceChecker
+-(ORDDExpressionEquivalenceChecker*) initORDDExpressionEquivalenceChecker
+{
+    self = [super init];
+    return self;
+}
+-(NSArray*) checkEquivalence:(id<ORExpr>)first and:(id<ORExpr>)second
+//If return is NULL, they are not equivalent
+//If return is empty array, they are fully equivalent
+//If return is non-empty array, they are equivalent on the condition the returned mappings are equivalent:
+    //Mappings is an array of arrays of size 2.  The first corresponds to a state value in first, the second to a state value in second.  If all of these are found to be equivalent from other checkEquivalence calls, then first and second are equivalent as well.
+{
+    _currentString = [[NSMutableString alloc] init];
+    _currentGetStates = [[NSMutableArray alloc] init];
+    [first visit:self];
+    _firstString = [_currentString copy];
+    _firstGetStates = [_currentGetStates copy];
+    
+    _currentString = [[NSMutableString alloc] init];
+    _currentGetStates = [[NSMutableArray alloc] init];
+    [second visit:self];
+    _secondString = [_currentString copy];
+    _secondGetStates = [_currentGetStates copy];
+    
+    if (![_firstString isEqualToString: _secondString]) {
+        return NULL;
+    }
+    NSMutableArray* mappings = [[NSMutableArray alloc] init];
+    for (int index = 0; index < [_firstGetStates count]; index++) {
+        [mappings addObject:@[[_firstGetStates objectAtIndex:index],[_secondGetStates objectAtIndex:index]]];
+    }
+    return mappings;
+}
+
+-(void) visitExprStateValueI:(ORExprStateValueI*)e
+{
+    [_currentString appendString:@"StateValue"];
+    [_currentGetStates addObject:[[NSNumber alloc] initWithInt:[e lookup]]];
+}
+
+-(void) visitExprConjunctI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Conjunct("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprDisjunctI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Disjunct("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprImplyI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Imply("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprPlusI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Plus("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprMinusI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Minus("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprMulI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Mul("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprDivI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Div("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprModI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Mod("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprEqualI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Equal("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprNEqualI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"NEqual("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprLEqualI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"LEqual("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprGEqualI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"GEqual("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprMinI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Min("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprMaxI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"Max("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+
+-(void) visitExprSetContainsI:(ORExprSetContainsI*)e
+{
+    [_currentString appendString:@"SetContains("];
+    id<IntEnumerator> setEnum = [[e set] enumerator];
+    while ([setEnum more]) {
+        [_currentString appendString:[NSString stringWithFormat:@"%d,",[setEnum next]]];
+    }
+    [_currentString appendString:@","];
+    [[e value] visit: self];
+    [_currentString appendString:@")"];
+}
+
+-(void) visitExprValueAssignmentI:(ORExprValueAssignmentI*)e
+{
+    [_currentString appendString:@"ValueAssignment"];
+}
+
+-(void) visitIntVar:(id<ORIntVar>)v {
+    @throw [[ORExecutionError alloc] initORExecutionError: "IntVar: visit method not defined"];
+}
+-(void) visitIntegerI: (id<ORInteger>) e {
+    [_currentString appendString:[NSString stringWithFormat:@"%d",[e value]]];
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e {
+    @throw [[ORExecutionError alloc] initORExecutionError: "MutableInteger: visit method not defined"];
+}
+-(void) visitMutableDouble: (id<ORMutableDouble>) e {
+    @throw [[ORExecutionError alloc] initORExecutionError: "MutableDouble: visit method not defined"];
+}
+-(void) visitDouble: (id<ORDoubleNumber>) e {
+    @throw [[ORExecutionError alloc] initORExecutionError: "Double: visit method not defined"];
+}
+
+-(void) visitExprSumI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSumI: visit method not defined"];
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprProdI: visit method not defined"];
+}
+-(void) visitExprAggMinI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMinI: visit method not defined"];
+}
+-(void) visitExprAggMaxI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMaxI: visit method not defined"];
+}
+-(void) visitExprAbsI:(id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAbsI: visit method not defined"];
+}
+-(void) visitExprSquareI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSquareI: visit method not defined"];
+}
+-(void) visitExprNegateI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"];
+}
+-(void) visitExprCstSubI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstSubI: visit method not defined"];
+}
+-(void) visitExprCstDoubleSubI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstDoubleSubI: visit method not defined"];
+}
+-(void) visitExprAggOrI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggOrI: visit method not defined"];
+}
+-(void) visitExprAggAndI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggAndI: visit method not defined"];
+}
+-(void) visitExprVarSubI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprVarSubI: visit method not defined"];
+}
+-(void) visitExprMatrixVarSubI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMatrixVarSubI: visit method not defined"];
+}
+
+@end
+
+@implementation ORDDUpdateSpecs
+-(ORDDUpdateSpecs*) initORDDUpdateSpecs:(NSDictionary*)mapping
+{
+    self = [super init];
+    _mapping = mapping;
+    return self;
+}
+-(void) updateSpecs:(id<ORExpr>)e
+{
+    [e visit: self];
+}
+
+-(void) visitExprStateValueI:(ORExprStateValueI*)e
+{
+    [e setLookup:[[_mapping objectForKey:[[NSNumber alloc] initWithInt: [e lookup]]] intValue]];
+}
+
+-(void) visitExprConjunctI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprDisjunctI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprImplyI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprPlusI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprMinusI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprMulI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprDivI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprModI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprEqualI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprNEqualI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprLEqualI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprGEqualI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprMinI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprMaxI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+
+-(void) visitExprSetContainsI:(ORExprSetContainsI*)e
+{
+    [[e value] visit: self];
+}
+
+-(void) visitIntVar:(id<ORIntVar>)v { return; }
+-(void) visitIntegerI: (id<ORInteger>) e { return; }
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e { return; }
+-(void) visitMutableDouble: (id<ORMutableDouble>) e { return; }
+-(void) visitDouble: (id<ORDoubleNumber>) e { return; }
+-(void) visitExprValueAssignmentI:(id<ORExpr>)e { return; }
+
+-(void) visitExprSumI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSumI: visit method not defined"];
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprProdI: visit method not defined"];
+}
+-(void) visitExprAggMinI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMinI: visit method not defined"];
+}
+-(void) visitExprAggMaxI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMaxI: visit method not defined"];
+}
+-(void) visitExprAbsI:(id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAbsI: visit method not defined"];
+}
+-(void) visitExprSquareI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSquareI: visit method not defined"];
+}
+-(void) visitExprNegateI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"];
+}
+-(void) visitExprCstSubI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstSubI: visit method not defined"];
+}
+-(void) visitExprCstDoubleSubI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstDoubleSubI: visit method not defined"];
+}
+-(void) visitExprAggOrI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggOrI: visit method not defined"];
+}
+-(void) visitExprAggAndI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggAndI: visit method not defined"];
+}
+-(void) visitExprVarSubI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprVarSubI: visit method not defined"];
+}
+-(void) visitExprMatrixVarSubI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMatrixVarSubI: visit method not defined"];
+}
+
+
+@end
+
 @implementation ORDDClosureGenerator
 -(ORDDClosureGenerator*) initORDDClosureGenerator {
     self = [super init];
@@ -1056,6 +1453,8 @@ static id<ORIntVarArray> _variables;
     bool _hasObjective;
     id<ORIntVar> _objectiveVar;
     bool _maximize;
+    
+    NSMutableArray* _mddSpecConstraints;
 }
 
 -(id)initORMDDify: (id<ORAddToModel>) into
@@ -1063,6 +1462,7 @@ static id<ORIntVarArray> _variables;
     self = [super init];
     _into = into;
     _mddConstraints = [[NSMutableArray alloc] init];
+    _mddSpecConstraints = [[NSMutableArray alloc] init];
     _variables = NULL;
     _maximize = false;
     _hasObjective = false;
@@ -1094,6 +1494,8 @@ static id<ORIntVarArray> _variables;
           [o visit: self];
       }];
     
+    [self combineMDDSpecs];
+    
     [JointState setVariables:_variables];
     
     id<ORConstraint> mddConstraint;
@@ -1115,9 +1517,202 @@ static id<ORIntVarArray> _variables;
 
 -(id<ORAddToModel>)target { return _into; }
 
+-(NSDictionary*) checkForStateEquivalences:(id<ORMDDSpecs>)mergeInto and:(id<ORMDDSpecs>)other {
+    NSMutableDictionary* mappings = [[NSMutableDictionary alloc] init];
+    int stateSize1 = [mergeInto stateSize];
+    int stateSize2 = [other stateSize];
+    ORDDExpressionEquivalenceChecker* equivalenceChecker = [[ORDDExpressionEquivalenceChecker alloc] init];
+    
+    int** candidates = malloc(stateSize1 * sizeof(int*));
+    for (int i = 0; i < stateSize1; i++) {
+        candidates[i] = malloc(stateSize2 * sizeof(int));
+        for (int j = 0; j < stateSize2; j++) {
+            candidates[i][j] = true;
+        }
+    }
+    
+    for (int i = 0; i < stateSize1; i++) {
+        for (int j = 0; j < stateSize2; j++) {
+            if (candidates[i][j]) {
+                NSMutableDictionary* dependentMappings = [[NSMutableDictionary alloc] init];
+                if ([self areEquivalent:mergeInto atIndex:i and:other atIndex:j withDependentMapping:dependentMappings andConfirmedMapping:mappings equivalenceVisitor:equivalenceChecker candidates:candidates]) {
+                    [mappings addEntriesFromDictionary:dependentMappings];
+                    NSArray* keys = [dependentMappings allKeys];
+                    for (NSNumber* key in keys) {
+                        int otherIndex = [key intValue];
+                        int mergeIntoIndex = [[dependentMappings objectForKey:key] intValue];
+                        for (int index = i; index < stateSize1; index++) {
+                            candidates[index][otherIndex] = false;
+                        }
+                        for (int index = j; index < stateSize2; index++) {
+                            candidates[mergeIntoIndex][index] = false;
+                        }
+                    }
+                } else {
+                    candidates[i][j] = false;
+                }
+            }
+        }
+    }
+    
+    return mappings;
+}
+
+-(bool) areEquivalent:(id<ORMDDSpecs>)mergeInto atIndex:(int)index1 and:(id<ORMDDSpecs>)other atIndex:(int)index2 withDependentMapping:(NSMutableDictionary*)dependentMappings andConfirmedMapping:(NSMutableDictionary*)confirmedMappings equivalenceVisitor:(ORDDExpressionEquivalenceChecker*)equivalenceChecker candidates:(int**)candidates
+{
+    if ([mergeInto stateValues][index1] != [other stateValues][index2]) {   //Different initial value
+        candidates[index1][index2] = false;
+        return false;
+    }
+    
+    id<ORExpr> mergeIntoTransitionFunction = [mergeInto transitionFunctions][index1];
+    id<ORExpr> otherTransitionFunction = [other transitionFunctions][index2];
+    NSArray* dependencies = [equivalenceChecker checkEquivalence: mergeIntoTransitionFunction and:otherTransitionFunction];
+    if (dependencies == NULL) { //Not the same transition function
+        candidates[index1][index2] = false;
+        return false;
+    }
+    [dependentMappings setObject:[[NSNumber alloc] initWithInt:index1] forKey:[[NSNumber alloc] initWithInt:index2]];
+    for (id dependency in dependencies) {
+        int mergeIntoDependency = [dependency[0] intValue];
+        NSNumber* mergeIntoDependencyObj = [[NSNumber alloc] initWithInt: mergeIntoDependency];
+        int otherDependency = [dependency[1] intValue];
+        NSNumber* otherDependencyObj = [[NSNumber alloc] initWithInt: otherDependency];
+        if (!([confirmedMappings objectForKey:otherDependencyObj] == mergeIntoDependencyObj ||
+              [dependentMappings objectForKey:otherDependencyObj] == mergeIntoDependencyObj)) {
+            //Not already a found mapping
+            if (!candidates[mergeIntoDependency][otherDependency]) {
+                //If already confirmed to not be a mapping
+                return false;
+            }
+            
+            if (![self areEquivalent:mergeInto atIndex:mergeIntoDependency and:other atIndex:otherDependency withDependentMapping:dependentMappings andConfirmedMapping:confirmedMappings equivalenceVisitor:equivalenceChecker candidates:candidates]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+-(void) combineMDDSpecs
+{
+    NSMutableArray* mainMDDSpecList = [[NSMutableArray alloc] initWithObjects:[_mddSpecConstraints objectAtIndex:0],nil];
+
+    
+    for (int mddSpecIndex = 1; mddSpecIndex < [_mddSpecConstraints count]; mddSpecIndex++) {
+        id<ORMDDSpecs> mddSpec = [_mddSpecConstraints objectAtIndex:mddSpecIndex];
+        
+        bool sharedVarList = false;
+        for (id<ORMDDSpecs> mainMDDSpec in mainMDDSpecList) {
+            if ([mainMDDSpec vars] == [mddSpec vars]) {
+                sharedVarList = true;
+                int mainStateSize = [mainMDDSpec stateSize];
+                
+                int* stateValues = [mddSpec stateValues];
+                int stateSize = [mddSpec stateSize];
+                id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
+                
+                NSDictionary* mergeMappings = [self checkForStateEquivalences:mainMDDSpec and:mddSpec];
+                
+                int numShared = (int)[mergeMappings count];
+                int numToAdd = stateSize - numShared;
+                int* separateStatesToAdd = malloc(numToAdd * sizeof(int));
+                int* indicesToAdd = malloc(numToAdd * sizeof(int));
+                
+                NSMutableDictionary* totalMapping = [[NSMutableDictionary alloc] init];
+                int newStateCount = 0;
+                for (int index = 0; index < stateSize; index++) {
+                    NSNumber* mergeMappingValue =[mergeMappings objectForKey:[[NSNumber alloc] initWithInt:index]];
+                    if (mergeMappingValue == nil) {
+                        [totalMapping setObject:[[NSNumber alloc] initWithInt: (newStateCount+mainStateSize)] forKey:[[NSNumber alloc] initWithInt: index]];
+                        separateStatesToAdd[newStateCount] = stateValues[index];
+                        indicesToAdd[newStateCount] = index;
+                        newStateCount++;
+                    }
+                }
+                [totalMapping addEntriesFromDictionary:mergeMappings];
+                
+                [mainMDDSpec addStates:separateStatesToAdd size:numToAdd];
+                
+                ORDDUpdateSpecs* updateFunctions = [[ORDDUpdateSpecs alloc] initORDDUpdateSpecs:totalMapping];
+                
+                for (int i = 0; i < numToAdd; i++) {
+                    int index = indicesToAdd[i];
+                    
+                    [updateFunctions updateSpecs:transitionFunctions[index]];
+                    [mainMDDSpec addTransitionFunction:transitionFunctions[index] toStateValue:(mainStateSize+i)];
+                }
+                id<ORExpr> oldArcExists = [mainMDDSpec arcExists];
+                id<ORExpr> arcExists = [mddSpec arcExists];
+                [updateFunctions updateSpecs:arcExists];
+                id<ORExpr> newArcExists = [oldArcExists land:arcExists];
+                [mainMDDSpec setArcExistsFunction:newArcExists];
+                
+                break;
+                /*
+                NSMutableDictionary* mergeMapping = [[NSMutableDictionary alloc] init];
+                for (int mainStateIndex = 0; mainStateIndex < mainStateSize; mainStateIndex++) {
+                    for (int stateIndex = 0; stateIndex < stateSize; stateIndex++) {
+                        if (mainStateValues[mainStateIndex] == stateValues[stateIndex]) {   //Same initial value
+                            NSArray* dependencies = [equivalenceChecker checkEquivalence: mainTransitionFunctions[mainStateIndex] and:transitionFunctions[stateIndex]];
+                            if (dependencies != NULL) {
+                                if ([dependencies count] == 0) {
+                                    [mergeMapping setObject:[[NSNumber alloc] initWithInt:mainStateIndex] forKey:[[NSNumber alloc] initWithInt:stateIndex]];
+                                } else {
+                                    bool dependenciesAreValid = true;
+                                    for (id dependency in dependencies) {
+                                        int mainStateValue = [dependency[0] intValue];
+                                        int stateValue = [dependency[1] intValue];
+                                        if (mainStateValue < mainStateIndex || (mainStateValue == mainStateIndex && stateValue < stateIndex)) {
+                                            //If we've already checked this potential mapping
+                                            if ([mergeMapping objectForKey:dependency[1]] != dependency[0]) {
+                                                //Mapping has been found to not hold
+                                                dependenciesAreValid = false;
+                                                break;
+                                            }
+                                        } else if (mainStateValue != mainStateIndex || stateValue != stateIndex) {
+                                            //Is not one already checked and isn't just itself
+                                            
+                                            
+                                        }
+                                    }
+                                    if (dependenciesAreValid) {
+                                        [mergeMapping setObject:[[NSNumber alloc] initWithInt:mainStateIndex] forKey:[[NSNumber alloc] initWithInt: stateIndex]];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }*/
+            }
+        }
+        if (!sharedVarList) {
+            [mainMDDSpecList addObject:mddSpec];
+        }
+    }
+    
+    ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
+    for (id<ORMDDSpecs> mddSpec in mainMDDSpecList) {
+        id<ORIntVarArray> vars = [mddSpec vars];
+        id<ORExpr> arcExists = [mddSpec arcExists];
+        DDClosure arcExistsClosure = [closureVisitor computeClosure:arcExists];
+        int* stateValues = [mddSpec stateValues];
+        id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
+        int stateSize = [mddSpec stateSize];
+        DDClosure* transitionFunctionClosures = malloc(stateSize * sizeof(DDClosure));
+        for (int transitionFunctionIndex = 0; transitionFunctionIndex < stateSize; transitionFunctionIndex++) {
+            transitionFunctionClosures[transitionFunctionIndex] = [closureVisitor computeClosure: transitionFunctions[transitionFunctionIndex]];
+        }
+        [JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:vars];
+        _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
+    }
+}
 
 -(void) visitMDDSpecs:(id<ORMDDSpecs>)cstr
 {
+    [_mddSpecConstraints addObject:cstr];
+    
+    /*
     ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
     id<ORIntVarArray> cstrVars = [cstr vars];
     id<ORExpr> arcExists = [cstr arcExists];
@@ -1131,6 +1726,7 @@ static id<ORIntVarArray> _variables;
     }
     [JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[cstrVars low] domainMax:[cstrVars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:cstrVars];
      _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker:_into];
+     */
 }
 
 

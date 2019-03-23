@@ -14,6 +14,27 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORVisit.h>
 
+@interface ORDDExpressionEquivalenceChecker : ORNOopVisit {
+@protected
+    NSString* _firstString;
+    NSArray* _firstGetStates;
+    NSString* _secondString;
+    NSArray* _secondGetStates;
+    NSMutableString* _currentString;
+    NSMutableArray* _currentGetStates;
+}
+-(ORDDExpressionEquivalenceChecker*) initORDDExpressionEquivalenceChecker;
+-(NSArray*) checkEquivalence:(id<ORExpr>)first and:(id<ORExpr>)second;
+@end
+
+@interface ORDDUpdateSpecs : ORNOopVisit {
+@protected
+    NSDictionary* _mapping;
+}
+-(ORDDUpdateSpecs*) initORDDUpdateSpecs:(NSDictionary*)mapping;
+-(void) updateSpecs:(id<ORExpr>)e;
+@end
+
 @interface ORDDClosureGenerator : ORNOopVisit {
 @protected
     DDClosure current;
@@ -124,4 +145,7 @@
 @interface ORMDDify : ORVisitor<ORModelTransformation>
 -(id) initORMDDify: (id<ORAddToModel>) target;
 -(id<ORAddToModel>) target;
+-(NSDictionary*) checkForStateEquivalences:(id<ORMDDSpecs>)mergeInto and:(id<ORMDDSpecs>)other;
+-(bool) areEquivalent:(id<ORMDDSpecs>)mergeInto atIndex:(int)index1 and:(id<ORMDDSpecs>)other atIndex:(int)index2 withDependentMapping:(NSMutableDictionary*)dependentMappings andConfirmedMapping:(NSMutableDictionary*)confirmedMappings equivalenceVisitor:(ORDDExpressionEquivalenceChecker*)equivalenceChecker candidates:(int**)candidates;
+-(void) combineMDDSpecs;
 @end

@@ -28,7 +28,7 @@
     TRInt _numChildren;
     int _minChildIndex;
     int _maxChildIndex;
-    TRId* *_parents;
+    TRId* _parents;
     TRInt _numParents;
     int _value;
     bool _isSink;
@@ -54,7 +54,7 @@
 -(int) value;
 -(int) minChildIndex;
 -(int) maxChildIndex;
--(Node**) children;
+-(TRId*) children;
 -(int) getObjectiveValueFor: (int)index;
 -(int) getNodeObjectiveValue: (int)value;
 -(void) addChild:(Node*)child at:(int)index;
@@ -64,7 +64,7 @@
 -(bool) hasLongestPathParent: (Node*)parent;
 -(int) shortestPath;
 -(bool) hasShortestPathParent: (Node*)parent;
--(TRId**) parents;
+-(TRId*) parents;
 -(int) numParents;
 -(void) addParent: (Node*) parent;
 -(void) updateBoundsWithParent: (Node*) parent;

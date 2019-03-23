@@ -25,9 +25,9 @@
     _numChildren = makeTRInt(_trail, 0);
     _minChildIndex = 0;
     _maxChildIndex = 0;
-    _parents = malloc((maxParents) * sizeof(Node*));
+    _parents = malloc((maxParents) * sizeof(TRId));
     for (int parent = 0; parent <= maxParents; parent++) {
-        _parents[parent] = NULL;
+        _parents[parent] = makeTRId(_trail, nil);
     }
     _numParents = makeTRInt(_trail, 0);
     _value = -1;
@@ -54,10 +54,10 @@
     _minChildIndex = minChildIndex;
     _maxChildIndex = maxChildIndex;
     _value = value;
-    _children = malloc((_maxChildIndex-_minChildIndex +1) * sizeof(Node*));
+    _children = malloc((_maxChildIndex-_minChildIndex +1) * sizeof(TRId));
     _children -= _minChildIndex;
     for (int child = _minChildIndex; child <= maxChildIndex; child++) {
-        _children[child] = NULL;
+        _children[child] = makeTRId(_trail, nil);
     }
     
     _childEdgeWeights = malloc((_maxChildIndex-_minChildIndex +1) * sizeof(TRInt));
@@ -69,9 +69,9 @@
     _state = state;
     
     _numChildren = makeTRInt(_trail, 0);
-    _parents = malloc((maxParents) * sizeof(Node*));
+    _parents = malloc((maxParents) * sizeof(TRId));
     for (int parent = 0; parent < maxParents; parent++) {
-        _parents[parent] = NULL;
+        _parents[parent] = makeTRId(_trail, nil);
     }
     _numParents = makeTRInt(_trail, 0);
     _value = value;
@@ -124,7 +124,7 @@
 -(int) value {
     return _value;
 }
--(Node**) children {
+-(TRId*) children {
     return _children;
 }
 -(int) getObjectiveValueFor: (int)index {
@@ -221,7 +221,7 @@
     assignTRInt(&_reverseLongestPath, longest, _trail);
 }
 
--(TRId**) parents {
+-(TRId*) parents {
     return _parents;
 }
 -(int) numParents {
@@ -579,7 +579,7 @@
     _reduced = reduced;
     _objective = NULL;
     
-    _max_nodes_per_layer = 1000;
+    _max_nodes_per_layer = 500000;
     
     layer_size = malloc(([_x count]+1) * sizeof(TRInt));
     max_layer_size = malloc(([_x count]+1) * sizeof(TRInt));
@@ -817,7 +817,7 @@
         if ([parentNode canChooseValue: edgeValue]) {
             Node* childNode;
             
-            id state = [self generateStateFromParent:parentNode withValue:edgeValue];   //~ 50 CPU
+            id state = [self generateStateFromParent:parentNode withValue:edgeValue];
             if (parentLayer != [_x count]-1) {
                 if (_objective != nil) {
                     childNode = [[Node alloc] initNode: _trail

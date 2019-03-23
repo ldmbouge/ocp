@@ -325,7 +325,7 @@ int main (int argc, const char * argv[])
         
         [mdl add: mddStateSpecs];
         
-        
+        /*
         id<ORMDDSpecs> mddStateSpecs2 = [ORFactory MDDSpecs: mdl variables:variables stateSize:2];
         [mddStateSpecs2 addStateInt: count withDefaultValue: 0];
         [mddStateSpecs2 addStateInt: remaining withDefaultValue: 50];
@@ -379,7 +379,7 @@ int main (int argc, const char * argv[])
         id<ORExpr> remainingTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
         [mddStateSpecs5 addTransitionFunction: countTransitionFunction5 toStateValue: count];
         [mddStateSpecs5 addTransitionFunction: remainingTransitionFunction5 toStateValue: remaining];
-        [mdl add: mddStateSpecs5];
+        [mdl add: mddStateSpecs5];*/
         
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];

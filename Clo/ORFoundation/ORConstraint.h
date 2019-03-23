@@ -474,6 +474,7 @@ enum ORGroupType {
 @protocol ORMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(void)addStateInt:(int)title withDefaultValue:(ORInt)value;
+-(void)addStates:(int*)states size:(int)size;
 -(id<ORExpr>)arcExists;
 -(id<ORExpr>*)transitionFunctions;
 -(int)stateSize;

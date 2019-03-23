@@ -2509,6 +2509,7 @@
     _lookup = lookup;
     return self;
 }
+-(void) setLookup:(int)lookup { _lookup = lookup; }
 -(int) lookup { return _lookup; }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueI:self]; }

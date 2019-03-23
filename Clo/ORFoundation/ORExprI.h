@@ -415,6 +415,7 @@
     int _lookup;
 }
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup;
+-(void) setLookup:(int)lookup;
 -(int) lookup;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
