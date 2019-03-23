@@ -1494,7 +1494,9 @@ static id<ORIntVarArray> _variables;
           [o visit: self];
       }];
     
-    [self combineMDDSpecs];
+    if ([_mddSpecConstraints count] > 0) {
+        [self combineMDDSpecs];
+    }
     
     [JointState setVariables:_variables];
     

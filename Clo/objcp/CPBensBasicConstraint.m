@@ -16,7 +16,7 @@
 #import "ORMDDify.h"
 
 @implementation Node
--(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents
+-(id) initNode: (id<ORTrail>) trail
 {
     [super init];
     _trail = trail;
@@ -25,16 +25,15 @@
     _numChildren = makeTRInt(_trail, 0);
     _minChildIndex = 0;
     _maxChildIndex = 0;
-    _parents = malloc((maxParents) * sizeof(TRId));
-    for (int parent = 0; parent <= maxParents; parent++) {
-        _parents[parent] = makeTRId(_trail, nil);
-    }
+    _maxNumParents = 1;
+    _parents = malloc(_maxNumParents * sizeof(TRId));
     _numParents = makeTRInt(_trail, 0);
     _value = -1;
     _isSink = false;
     _isSource = false;
     
     _objectiveValues = NULL;
+    /*
     _longestPath = makeTRInt(_trail, -32768);
     _longestPathParents = malloc((maxParents) * sizeof(Node*));
     _numLongestPathParents = makeTRInt(_trail, 0);
@@ -43,11 +42,11 @@
     _numShortestPathParents = makeTRInt(_trail, 0);
     
     _reverseLongestPath = makeTRInt(_trail, 0);
-    _reverseShortestPath = makeTRInt(_trail, 0);
+    _reverseShortestPath = makeTRInt(_trail, 0);*/
     
     return self;
 }
--(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state
 {
     [super init];
     _trail = trail;
@@ -60,38 +59,39 @@
         _children[child] = makeTRId(_trail, nil);
     }
     
+    _state = state;
+    
+    _numChildren = makeTRInt(_trail, 0);
+    _maxNumParents = 1;
+    _parents = malloc(_maxNumParents * sizeof(TRId));
+    _numParents = makeTRInt(_trail, 0);
+    _value = value;
+    _isSink = false;
+    _isSource = false;
+    
+    _childEdgeWeights = NULL;
+    _objectiveValues = NULL;
+    return self;
+}
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues
+{
+    self = [self initNode: trail minChildIndex:minChildIndex maxChildIndex:maxChildIndex value:value state:state];
+    _objectiveValues = objectiveValues;
+    
     _childEdgeWeights = malloc((_maxChildIndex-_minChildIndex +1) * sizeof(TRInt));
     _childEdgeWeights -= _minChildIndex;
     for (int child = _minChildIndex; child <= maxChildIndex; child++) {
         _childEdgeWeights[child] = makeTRInt(_trail, 0);
     }
-    
-    _state = state;
-    
-    _numChildren = makeTRInt(_trail, 0);
-    _parents = malloc((maxParents) * sizeof(TRId));
-    for (int parent = 0; parent < maxParents; parent++) {
-        _parents[parent] = makeTRId(_trail, nil);
-    }
-    _numParents = makeTRInt(_trail, 0);
-    _value = value;
-    _isSink = false;
-    _isSource = false;
     _longestPath = makeTRInt(_trail, -32768);
-    _longestPathParents = malloc((maxParents) * sizeof(Node*));
+    _longestPathParents = NULL;
     _numLongestPathParents = makeTRInt(_trail, 0);
     _shortestPath = makeTRInt(_trail, 32767);
-    _shortestPathParents = malloc((maxParents) * sizeof(Node*));
+    _shortestPathParents = NULL;
     _numShortestPathParents = makeTRInt(_trail, 0);
     
     _reverseLongestPath = makeTRInt(_trail, 0);
     _reverseShortestPath = makeTRInt(_trail, 0);
-    return self;
-}
--(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues
-{
-    self = [self initNode: trail maxParents:maxParents minChildIndex:minChildIndex maxChildIndex:maxChildIndex value:value state:state];
-    _objectiveValues = objectiveValues;
     return self;
 }
 -(void) dealloc {
@@ -107,7 +107,7 @@
 }
 -(void) setIsSource: (bool) isSource {
     _isSource = isSource;
-    if (_isSource) {
+    if (_isSource && _objectiveValues != NULL) {
         assignTRInt(&_longestPath, 0, _trail);
         assignTRInt(&_shortestPath, 0, _trail);
     }
@@ -138,14 +138,14 @@
         [self setNumChildren:_numChildren._val+1];
     }
     assignTRId(&_children[index], child, _trail);
-    if (_objectiveValues != nil) {
+    if (_objectiveValues != NULL) {
         assignTRInt(&_childEdgeWeights[index], [self getObjectiveValueFor: index], _trail);
     }
 }
 -(void) removeChildAt: (int) index {
     assignTRId(&_children[index], NULL, _trail);
     assignTRInt(&_numChildren, _numChildren._val -1, _trail);
-    if (_objectiveValues != nil) {
+    if (_objectiveValues != NULL) {
         assignTRInt(&_childEdgeWeights[index], 0, _trail);
     }
 }
@@ -228,9 +228,25 @@
     return _numParents._val;
 }
 -(void) addParent: (Node*) parent {
+    if (_maxNumParents == _numParents._val) {
+        TRId* temp = malloc(_maxNumParents * sizeof(TRId));
+        for (int parent_index = 0; parent_index < _maxNumParents; parent_index++) {
+            assignTRId(&temp[parent_index], _parents[parent_index],_trail);
+        }
+        
+        _maxNumParents *= 2;
+        
+        _parents = malloc(_maxNumParents * sizeof(TRId));
+        for (int parent_index = 0; parent_index < _numParents._val; parent_index++) {
+            assignTRId(&_parents[parent_index],temp[parent_index],_trail);
+        }
+        for (int parent_index = _numParents._val; parent_index < _maxNumParents; parent_index++) {
+            _parents[parent_index] = makeTRId(_trail, NULL);
+        }
+    }
     assignTRId(&_parents[_numParents._val], parent,_trail);
     assignTRInt(&_numParents,_numParents._val+1,_trail);
-    if (_objectiveValues != nil) {
+    if (_objectiveValues != NULL) {
         [self updateBoundsWithParent: parent];
     }
 }
@@ -368,7 +384,7 @@
             parentIndex--;
         }
     }
-    if (![self isNonVitalAndParentless]) {
+    if (![self isNonVitalAndParentless] && _objectiveValues != NULL) {
         if ([self hasLongestPathParent: parent]) {
             [self removeLongestPathParent: parent];
         }
@@ -735,7 +751,7 @@
 }
 -(void) createRootAndSink
 {
-    Node *sink = [[Node alloc] initNode: _trail maxParents:(_max_nodes_per_layer * (max_domain_val - min_domain_val +1))];
+    Node *sink = [[Node alloc] initNode: _trail];
     [sink setIsSink: true];
     [self addNode: sink toLayer:((int)[_x count])];
     
@@ -747,7 +763,6 @@
     
     if (_objective != nil) {
         root =[[Node alloc] initNode: _trail
-                                maxParents:(0 * (max_domain_val - min_domain_val +1))
                              minChildIndex:min_domain_val
                             maxChildIndex:max_domain_val
                                      value:[_x low]
@@ -755,7 +770,6 @@
                            objectiveValues:[self getObjectiveValuesForLayer:0]];
     } else {
         root =[[Node alloc] initNode: _trail
-                                maxParents:(0 * (max_domain_val - min_domain_val +1))
                              minChildIndex:min_domain_val
                              maxChildIndex:max_domain_val
                                      value:[_x low]
@@ -821,7 +835,6 @@
             if (parentLayer != [_x count]-1) {
                 if (_objective != nil) {
                     childNode = [[Node alloc] initNode: _trail
-                                            maxParents:(max_layer_size[parentLayer]._val * (max_domain_val - min_domain_val +1))
                                          minChildIndex:min_domain_val
                                          maxChildIndex:max_domain_val
                                                  value:[self variableIndexForLayer:parentLayer + 1]
@@ -830,7 +843,6 @@
                 }
                 else {
                     childNode = [[Node alloc] initNode: _trail
-                                            maxParents:(max_layer_size[parentLayer]._val * (max_domain_val - min_domain_val +1))
                                          minChildIndex:min_domain_val
                                          maxChildIndex:max_domain_val
                                                  value:[self variableIndexForLayer:parentLayer + 1]
@@ -1007,8 +1019,8 @@
                 [node removeChildAt: value];
                 if ([node findChildIndex:childNode] == -1) {
                     [childNode removeParentValue:node];
-                } else {
-                    if ([childNode hasLongestPathParent: node] && value == 1) {
+                } else if (_objective != NULL) {
+                    if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
                         [childNode removeLongestPathParent: node];
                     }
                     if ([childNode hasShortestPathParent: node] && value == 0) {
@@ -1023,7 +1035,7 @@
                     [self removeChildlessNodeFromMDD: node trimmingVariables:true];
                     node_index--;
                 } else {
-                    if (_objective != nil) {
+                    if (_objective != NULL) {
                         [node updateReversePaths];
                     }
                 }

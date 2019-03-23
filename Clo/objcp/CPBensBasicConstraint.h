@@ -30,6 +30,7 @@
     int _maxChildIndex;
     TRId* _parents;
     TRInt _numParents;
+    int _maxNumParents;
     int _value;
     bool _isSink;
     bool _isSource;
@@ -47,8 +48,9 @@
     
     id _state;
 }
--(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents;
--(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues;
+-(id) initNode: (id<ORTrail>) trail;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues;
 -(void) dealloc;
 -(id) getState;
 -(int) value;
