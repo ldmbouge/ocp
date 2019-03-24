@@ -639,7 +639,13 @@ static OBJCPGateway *objcpgw;
    @autoreleasepool {
 //      printf("model : %s",[[NSString stringWithFormat:@"%@",_model] UTF8String]);
       NSLog(@"%@",_model);
-      id<LogicHandler> lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options withDeclaration:_declarations];
+      id<LogicHandler> lh ;
+      @try {
+         lh = [OBJCPGateway logicToHandler:_logic withModel:_model withOptions:_options withDeclaration:_declarations];
+      } @catch (ORExecutionError *exception) {
+         printf("ERROR : %s\n",[exception msg]);
+         return NO;
+      }
       __block ORBool isSat;
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];

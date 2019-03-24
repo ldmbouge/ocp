@@ -1928,75 +1928,75 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyEQ>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyEQ> with args : [%@] <=> [%@] == [%@]",rv,left,right]];
 }
 -(void) reifyNEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyNEQ>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyNEQ> with args : [%@] <=> [%@] != [%@]",rv,left,right]];
 }
 -(void) reifyLEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyLEQ>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyLEQ> with args : [%@] <=> [%@] <= [%@]",rv,left,right]];
 }
 -(void) reifyGEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyGEQ>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyGEQ> with args : [%@] <=> [%@] >= [%@]",rv,left,right]];
 }
 -(void) reifyLT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyLT>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyLT> with args : [%@] <=> [%@] < [%@]",rv,left,right]];
 }
 -(void) reifyGT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyGT>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyGT> with args : [%@] <=> [%@] > [%@]",rv,left,right]];
 }
 -(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyEQc>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyEQc> with args : [%@] <=> [%@] == [%@]",rv,left,right]];
 }
 -(void) reifyNEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyNEQc>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyNEQc> with args : [%@] <=> [%@] != [%@]",rv,left,right]];
 }
 -(void) reifyLEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyLEQc>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyLEQc> with args : [%@] <=> [%@] <= [%@]",rv,left,right]];
 }
 -(void) reifyGEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyGEQc>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyGEQc> with args : [%@] <=> [%@] >= [%@]",rv,left,right]];
 }
 -(void) reifyLTc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyLTc>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyLTc> with args : [%@] <=> [%@] < [%@]",rv,left,right]];
 }
 -(void) reifyGTc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <reifyGTc>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyGTc> with args : [%@] <=> [%@] > [%@]",rv,left,right]];
 }
 -(id<ORLinear>) visitExprGEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprGEqualI>"];
+    @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprGEqualI> with args : [%@] >= [%@]",left,right]];
 }
 -(id<ORLinear>) visitExprLEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprLEqualI>"];
+    @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprLEqualI> with args : [%@] <= [%@]",left,right]];
 }
 -(id<ORLinear>) visitExprGThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprGThenI>"];
+    @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprGThenI> with args : [%@] > [%@]",left,right]];
 }
 -(id<ORLinear>) visitExprLThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprLThenI>"];
+    @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprLThenI> with args : [%@] < [%@]",left,right]];
 }
 -(id<ORLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprEqualI>"];
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprEqualI> with args : [%@] == [%@]",left,right]];
 }
 -(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprNEqualI>"];
+     @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprNEqualI> with args : [%@] != [%@]",left,right]];
 }
 @end
 

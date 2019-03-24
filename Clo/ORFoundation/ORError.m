@@ -15,9 +15,15 @@
 @implementation ORExecutionError
 -(ORExecutionError*) initORExecutionError: (const char*) msg
 {
-	self = [super init];
-	_message = msg;
-	return self;
+   self = [super init];
+   _message = msg;
+   return self;
+}
+-(ORExecutionError*) initORExecutionErrorString: (NSString*) msg
+{
+   self = [super init];
+   _message = [msg UTF8String];
+   return self;
 }
 -(const char*) msg 
 {
