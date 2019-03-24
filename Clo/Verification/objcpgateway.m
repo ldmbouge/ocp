@@ -964,10 +964,14 @@ static OBJCPGateway *objcpgw;
    id<ORExpr> res = nil;
    if([tv.class conformsToProtocol:@protocol(ORIntVar)] && [ev.class conformsToProtocol:@protocol(ORIntVar)]){
       res = [ORFactory intVar:_model bounds:RANGE(_model, min([(id<ORIntVar>)t low],[(id<ORIntVar>)e low]),max([(id<ORIntVar>)t up], [(id<ORIntVar>)e up]))];
-   }else if([tv.class conformsToProtocol:@protocol(ORFloatVar)] && [ev.class conformsToProtocol:@protocol(ORFloatVar)]){
-      res = [ORFactory floatVar:_model low:minFlt([(id<ORFloatVar>)t low],[(id<ORFloatVar>)e low]) up:maxFlt([(id<ORFloatVar>)t up],[(id<ORFloatVar>)e up])];
-   }else if([tv.class conformsToProtocol:@protocol(ORDoubleVar)] && [ev.class conformsToProtocol:@protocol(ORDoubleVar)]){
-      res = [ORFactory doubleVar:_model low:minDbl([(id<ORDoubleVar>)t low],[(id<ORDoubleVar>)e low]) up:maxDbl([(id<ORDoubleVar>)t up],[(id<ORDoubleVar>)e up])];
+   }else if(([tv.class conformsToProtocol:@protocol(ORFloatNumber)] || [tv.class conformsToProtocol:@protocol(ORFloatVar)])
+            &&
+            ([ev.class conformsToProtocol:@protocol(ORFloatVar)] || [ev.class conformsToProtocol:@protocol(ORFloatNumber)])){
+      res = [ORFactory floatVar:_model low:minFlt([(id<ORExpr>)t fmin],[(id<ORExpr>)e fmin]) up:maxFlt([(id<ORExpr>)t fmax],[(id<ORExpr>)e fmax])];
+   }else if(([tv.class conformsToProtocol:@protocol(ORDoubleNumber)] || [tv.class conformsToProtocol:@protocol(ORDoubleVar)])
+            &&
+            ([ev.class conformsToProtocol:@protocol(ORDoubleVar)] || [ev.class conformsToProtocol:@protocol(ORDoubleNumber)])){
+      res = [ORFactory doubleVar:_model low:minDbl([(id<ORExpr>)t dmin],[(id<ORExpr>)e dmin]) up:maxDbl([(id<ORExpr>)t dmax],[(id<ORExpr>)e dmax])];
    }else if([tv.class conformsToProtocol:@protocol(ORBitVar)]){
          res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength],[(id<ORBitVar>)ev bitLength])];
          id<ORBitVar> bv = [ORFactory bitVar:_model withLength:1];
