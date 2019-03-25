@@ -477,8 +477,8 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
       CPClosureList* list = *mlist;
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
-         bool inQ = list->_trigger == nil && lc->_todo == CPTocheck;
-          if (lc->_active._val && !inQ) {
+//         bool inQ = list->_trigger == nil && lc->_todo == CPTocheck;
+         if (lc->_active._val){// && !inQ) {
             //__active++;
             id<CPGroup> group = lc->_group;
             lc->_todo = CPTocheck;
