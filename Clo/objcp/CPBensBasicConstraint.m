@@ -592,14 +592,15 @@
     self = [super initCPCoreConstraint: engine];
     _trail = [engine trail];
     _x = x;
+    _numVariables = [_x count];
     _reduced = reduced;
     _objective = NULL;
     
     _max_nodes_per_layer = 500000;
     
-    layer_size = malloc(([_x count]+1) * sizeof(TRInt));
-    max_layer_size = malloc(([_x count]+1) * sizeof(TRInt));
-    for (int layer = 0; layer <= [_x count]; layer++) {
+    layer_size = malloc((_numVariables+1) * sizeof(TRInt));
+    max_layer_size = malloc((_numVariables+1) * sizeof(TRInt));
+    for (int layer = 0; layer <= _numVariables; layer++) {
         layer_size[layer] = makeTRInt(_trail,0);
         max_layer_size[layer] = makeTRInt(_trail,1);
     }
@@ -607,8 +608,8 @@
     min_domain_val = [_x[[_x low]] min];    //Not great
     max_domain_val = [_x[[_x low]] max];
     
-    layer_variable_count = malloc(([_x count]+1) * sizeof(TRInt*));
-    for (int layer = 0; layer < [_x count] +1; layer++) {
+    layer_variable_count = malloc((_numVariables+1) * sizeof(TRInt*));
+    for (int layer = 0; layer < _numVariables +1; layer++) {
         layer_variable_count[layer] = malloc((max_domain_val - min_domain_val + 1) * sizeof(TRInt));
         for (int variable = 0; variable <= max_domain_val - min_domain_val; variable++) {
             layer_variable_count[layer][variable] = makeTRInt(_trail,0);
@@ -617,17 +618,17 @@
         layer_variable_count[layer] -= min_domain_val;
     }
 
-    layers = malloc(([_x count]+1) * sizeof(Node**));
-    for (int layer = 0; layer <= [_x count]; layer++) {
+    layers = malloc((_numVariables+1) * sizeof(Node**));
+    for (int layer = 0; layer <= _numVariables; layer++) {
         layers[layer] = malloc(1 * sizeof(Node*));
     }
     
-    _layer_to_variable = malloc(([_x count]+1) * sizeof(int));
-    _variable_to_layer = malloc(([_x count]+1) * sizeof(int));
+    _layer_to_variable = malloc((_numVariables+1) * sizeof(int));
+    _variable_to_layer = malloc((_numVariables+1) * sizeof(int));
     
     _variable_to_layer -= [_x low];
     
-    _variableUsed = malloc([_x count] * sizeof(bool));
+    _variableUsed = malloc(_numVariables * sizeof(bool));
     _variableUsed -= [_x low];
     for (int variableIndex = [_x low]; variableIndex <= [_x up]; variableIndex++) {
         _variableUsed[variableIndex] = false;
@@ -664,7 +665,7 @@
 -(ORUInt)nbUVars
 {
     ORUInt nb = 0;
-    for(ORInt var = 0; var< [_x count]; var++)
+    for(ORInt var = 0; var< _numVariables; var++)
         nb += !bound((CPIntVar*)[_x at: var]);
     return nb;
 }
@@ -680,13 +681,13 @@
 {
     [self createRootAndSink];
     
-    for (int layer = 0; layer < [_x count]; layer++) {
+    for (int layer = 0; layer < _numVariables; layer++) {
         if (_reduced) {
             [self reduceLayer: layer];
         }
         [self cleanLayer: layer];
         
-        if (layer != [_x count] -1) {
+        if (layer != _numVariables -1) {
             int next_variable = [self pickVariableBelowLayer:layer];
         
             _variable_to_layer[next_variable] = layer+1;
@@ -698,7 +699,7 @@
     [self addPropagationsAndTrimValues];
     
     if (_objective != nil) {
-        for (int layer = (int)[_x count]; layer >= 0; layer--) {
+        for (int layer = (int)_numVariables; layer >= 0; layer--) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
                 [layers[layer][node_index] updateReversePaths];
             }
@@ -709,7 +710,7 @@
 -(int) pickVariableBelowLayer:(int)layer {
     int selected_variable;
     
-    int* variableCount = malloc([_x count] * sizeof(int));
+    int* variableCount = malloc(_numVariables * sizeof(int));
     variableCount -= [_x low];
     
     for (int variable_index = [_x low]; variable_index <= [_x up]; variable_index++) {
@@ -753,7 +754,7 @@
 {
     Node *sink = [[Node alloc] initNode: _trail];
     [sink setIsSink: true];
-    [self addNode: sink toLayer:((int)[_x count])];
+    [self addNode: sink toLayer:((int)_numVariables)];
     
     id state = [self generateRootState: [_x low]];
     _variable_to_layer[[_x low]] = 0;
@@ -796,15 +797,21 @@
             [foundStates setObject:node forKey:stateKey];
         }
     }*/
+    
+    id* node_states = malloc((layer_size[layer]._val)*sizeof(id));
+    for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
+        node_states[node_index] = [layers[layer][node_index] getState];
+    }
+    
     for (int first_node_index = 0; first_node_index < layer_size[layer]._val-1; first_node_index++) {
+        Node* first_node = layers[layer][first_node_index];
+        id first_node_state = node_states[first_node_index];
         for (int second_node_index = first_node_index+1; second_node_index < layer_size[layer]._val; second_node_index++) {
-            Node* first_node = layers[layer][first_node_index];
             Node* second_node = layers[layer][second_node_index];
-            
-            id first_node_state = [first_node getState];
-            id second_node_state = [second_node getState];
+            id second_node_state = node_states[second_node_index];
             
             if ([first_node_state equivalentTo: second_node_state]) {
+                node_states[second_node_index] = node_states[layer_size[layer]._val-1];
                 [first_node takeParentsFrom:second_node];
                 [self removeChildlessNodeFromMDD:second_node trimmingVariables:false];
                 second_node_index--;
@@ -832,7 +839,7 @@
             Node* childNode;
             
             id state = [self generateStateFromParent:parentNode withValue:edgeValue];
-            if (parentLayer != [_x count]-1) {
+            if (parentLayer != _numVariables-1) {
                 if (_objective != nil) {
                     childNode = [[Node alloc] initNode: _trail
                                          minChildIndex:min_domain_val
@@ -850,7 +857,7 @@
                 }
                 [self addNode:childNode toLayer:parentLayer+1];
             } else {
-                childNode = layers[[_x count]][0];
+                childNode = layers[_numVariables][0];
             }
             
             [parentNode addChild:childNode at:edgeValue];
@@ -861,14 +868,14 @@
 }
 -(void) addPropagationsAndTrimValues
 {
-    for(ORInt layer = 0; layer < [_x count]; layer++) {
+    for(ORInt layer = 0; layer < _numVariables; layer++) {
         [self trimValuesFromLayer:layer];
         [self addPropagationToLayer: layer];
     }
     
     if (_objective != NULL) {
-        int longestPath = [layers[[_x count]][0] longestPath];
-        int shortestPath = [layers[[_x count]][0] shortestPath];
+        int longestPath = [layers[_numVariables][0] longestPath];
+        int shortestPath = [layers[_numVariables][0] shortestPath];
         
         if (_maximize) {
             if (longestPath < [_objective min]) {
@@ -1044,8 +1051,8 @@
     }
     //[self printGraph];
     if (_objective != NULL) {
-        int longestPath = [layers[[_x count]][0] longestPath];
-        int shortestPath = [layers[[_x count]][0] shortestPath];
+        int longestPath = [layers[_numVariables][0] longestPath];
+        int shortestPath = [layers[_numVariables][0] shortestPath];
     
         if (_maximize) {
             if (longestPath < [_objective min]) {
@@ -1066,7 +1073,7 @@
 {
     if (_objective != NULL) {
         if (_maximize){
-            int optimal = [layers[[_x count]][0] longestPathContainingSelf];
+            int optimal = [layers[_numVariables][0] longestPathContainingSelf];
             
             int layer_index = [self layerIndexForVariable:variableIndex];
             for (int index = 0; index < layer_size[layer_index]._val; index++) {
@@ -1093,7 +1100,7 @@
     
     NSMutableString* output = [NSMutableString stringWithFormat: @"\ndigraph {\n"];
     
-    for (int layer = 0; layer < [_x count]; layer++) {
+    for (int layer = 0; layer < _numVariables; layer++) {
         for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
             Node* node = layers[layer][node_index];
             if (node != nil) {

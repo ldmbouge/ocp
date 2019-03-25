@@ -141,6 +141,7 @@
     int* _layer_to_variable;
     bool* _variableUsed;
     Class _stateClass;
+    NSUInteger _numVariables;
 @protected
     id<CPIntVar> _objective;
     id<CPIntVarArray> _x;
