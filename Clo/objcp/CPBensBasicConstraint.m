@@ -231,14 +231,14 @@
     if (_maxNumParents == _numParents._val) {
         TRId* temp = malloc(_maxNumParents * sizeof(TRId));
         for (int parent_index = 0; parent_index < _maxNumParents; parent_index++) {
-            assignTRId(&temp[parent_index], _parents[parent_index],_trail);
+            temp[parent_index] = makeTRId(_trail, _parents[parent_index]);
         }
         
         _maxNumParents *= 2;
         
         _parents = malloc(_maxNumParents * sizeof(TRId));
         for (int parent_index = 0; parent_index < _numParents._val; parent_index++) {
-            assignTRId(&_parents[parent_index],temp[parent_index],_trail);
+            _parents[parent_index] = makeTRId(_trail,temp[parent_index]);
         }
         for (int parent_index = _numParents._val; parent_index < _maxNumParents; parent_index++) {
             _parents[parent_index] = makeTRId(_trail, NULL);

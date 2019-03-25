@@ -742,6 +742,12 @@
     _domainMax = domainMax;
     return self;
 }
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax {
+    _variableIndex = variableIndex;
+    _domainMin = domainMin;
+    _domainMax = domainMax;
+    return self;
+}
 -(id) initRootState:(CustomState*)classState variableIndex:(int)variableIndex {
     _domainMin = [classState domainMin];
     _domainMax = [classState domainMax];
@@ -759,6 +765,11 @@
     _domainMax = [parentNodeState domainMax];
     _variableIndex = variableIndex;
     return self;
+}
+
++(void) setAsOnlyMDDWithClassState:(CustomState*)classState
+{
+    return;
 }
 
 //-(char*) stateChar { return _stateChar; }
@@ -1165,6 +1176,13 @@ static int StateSize;
 @end
 
 @implementation AmongMDDState
+static int MinState;
+static int MaxState;
+static ORInt LowerBound;
+static ORInt UpperBound;
+static id<ORIntSet> Set;
+static int NumVarsRemaining;
+
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax setValues:(id<ORIntSet>)set lowerBound:(ORInt)lowerBound upperBound:(ORInt)upperBound numVars:(ORInt)numVars {
     self = [super initClassState:domainMin domainMax:domainMax];
     _lowerBound = lowerBound;
@@ -1191,6 +1209,16 @@ static int StateSize;
 //        _stateChar[digitIndex] = '0';
 //    }
     _numVarsRemaining = [classState numVarsRemaining];
+    return self;
+}
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax {
+    self = [super initRootState:variableIndex domainMin:domainMin domainMax:domainMax];
+    _minState = MinState;
+    _maxState = MaxState;
+    _lowerBound = LowerBound;
+    _upperBound = UpperBound;
+    _set = Set;
+    _numVarsRemaining = NumVarsRemaining;
     return self;
 }
 -(id) initState:(AmongMDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
@@ -1244,6 +1272,19 @@ static int StateSize;
 //    }
     _numVarsRemaining = [parentNodeState numVarsRemaining];
     return self;
+}
+
+
++(void) setAsOnlyMDDWithClassState:(AmongMDDState*)classState
+{
+    MinState = [classState minState];
+    MaxState = [classState maxState];
+    LowerBound = [classState lowerBound];
+    UpperBound = [classState upperBound];
+    Set = [classState set];
+    NumVarsRemaining = [classState numVarsRemaining];
+    
+    return;
 }
 
 -(int) minState { return _minState; }
