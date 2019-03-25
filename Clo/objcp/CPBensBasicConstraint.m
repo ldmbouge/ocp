@@ -799,15 +799,16 @@
     }*/
     
     id* node_states = malloc((layer_size[layer]._val)*sizeof(id));
+    Node** layer_nodes = layers[layer];
     for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
         node_states[node_index] = [layers[layer][node_index] getState];
     }
     
     for (int first_node_index = 0; first_node_index < layer_size[layer]._val-1; first_node_index++) {
-        Node* first_node = layers[layer][first_node_index];
+        Node* first_node = layer_nodes[first_node_index];
         id first_node_state = node_states[first_node_index];
         for (int second_node_index = first_node_index+1; second_node_index < layer_size[layer]._val; second_node_index++) {
-            Node* second_node = layers[layer][second_node_index];
+            Node* second_node = layer_nodes[second_node_index];
             id second_node_state = node_states[second_node_index];
             
             if ([first_node_state equivalentTo: second_node_state]) {
@@ -948,7 +949,7 @@
     int currentLayerSize = layer_size[node_layer]._val;
     
     for (int node_index = 0; node_index < currentLayerSize; node_index++) {
-        if (layer[node_index] != NULL && layer[node_index] == node) {
+        if (layer[node_index] == node) {
             int finalNodeIndex = layer_size[node_layer]._val-1;
             assignTRId(&layer[node_index], layer[finalNodeIndex], _trail);
             assignTRId(&layer[finalNodeIndex], NULL, _trail);
