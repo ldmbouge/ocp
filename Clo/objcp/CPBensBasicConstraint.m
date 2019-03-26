@@ -781,23 +781,6 @@
     _variableUsed[[_x low]] = true;
 }
 -(void) reduceLayer:(int)layer {
-    /*NSMutableDictionary* foundStates = [[NSMutableDictionary alloc] init];
-    
-    for (int nodeIndex = 0; nodeIndex < layer_size[layer]._val; nodeIndex++) {
-        Node* node= layers[layer][nodeIndex];
-        char* stateChar = [[node getState] stateChar];
-        
-        NSString* stateKey = [NSString stringWithCString:stateChar encoding:NSASCIIStringEncoding];
-        
-        if ([foundStates objectForKey:stateKey]) {
-            [foundStates[stateKey] takeParentsFrom:node];
-            [self removeChildlessNodeFromMDD:node trimmingVariables:false];
-            nodeIndex--;
-        } else {
-            [foundStates setObject:node forKey:stateKey];
-        }
-    }*/
-    
     id* node_states = malloc((layer_size[layer]._val)*sizeof(id));
     Node** layer_nodes = layers[layer];
     for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
@@ -814,7 +797,7 @@
             if ([first_node_state equivalentTo: second_node_state]) {
                 node_states[second_node_index] = node_states[layer_size[layer]._val-1];
                 [first_node takeParentsFrom:second_node];
-                [self removeChildlessNodeFromMDD:second_node trimmingVariables:false];
+                [self removeNodeAt:second_node_index onLayer:layer];  //Should be both childless (since next layer isn't made yet) and parentless (since it just gave its parents to first_node)
                 second_node_index--;
             }
         }
@@ -942,6 +925,14 @@
     }
     layers[layer_index][layer_size[layer_index]._val] = node;
     assignTRInt(&layer_size[layer_index], layer_size[layer_index]._val+1, _trail);
+}
+-(void) removeNodeAt:(int)index onLayer:(int)layer_index {
+    Node* *layer = layers[layer_index];
+    
+    int finalNodeIndex = layer_size[layer_index]._val-1;
+    assignTRId(&layer[index], layer[finalNodeIndex], _trail);
+    assignTRId(&layer[finalNodeIndex], NULL, _trail);
+    assignTRInt(&layer_size[layer_index], finalNodeIndex,_trail);
 }
 -(void) removeNode: (Node*) node {
     int node_layer = [self layerIndexForVariable:node.value];

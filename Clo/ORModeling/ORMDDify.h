@@ -83,6 +83,7 @@
 -(int) stateSize;
 -(DDClosure)arcExistsClosure;
 -(DDClosure*)transitionFunctions;
+-(bool) equivalentTo:(CustomState *)other;
 @end
 
 @interface CustomBDDState : CustomState {   //A state with a list of booleans corresponding to whether or not each variable can be assigned 1

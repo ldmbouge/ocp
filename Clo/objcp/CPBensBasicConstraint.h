@@ -172,6 +172,7 @@
 -(id) generateRootState:(int)variableValue;
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
+-(void) removeNodeAt:(int)index onLayer:(int)layer_index;
 -(void) removeNode: (Node*) node;
 -(void) removeChildlessNodeFromMDD:(Node*)node trimmingVariables:(bool)trimming;
 -(void) removeParentlessNodeFromMDD:(Node*)node trimmingVariables:(bool)trimming;
