@@ -650,6 +650,7 @@ static OBJCPGateway *objcpgw;
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
          __block bool found = false;
+         isSat = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [lh launchHeuristic];
             NSLog(@"Valeurs solutions : \n");
