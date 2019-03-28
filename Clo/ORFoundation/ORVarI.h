@@ -167,6 +167,7 @@
 -(ORInt) up;
 -(NSUInteger) count;
 -(ORUInt) maxFixed;
+-(ORUInt) maxId;
 -(void) setMaxFixed:(ORInt)nb;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;

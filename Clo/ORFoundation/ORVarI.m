@@ -989,6 +989,7 @@
 
 
 @implementation ORDisabledVarArrayI{
+   ORInt                  _maxId;
    ORInt                  _nb;
    id<ORTrailableInt>    _current;
    id<ORTrailableInt>    _start;
@@ -1017,11 +1018,15 @@
    self = [super init];
    _vars = vars;
    _initials = ia;
+   _maxId = 0;
    _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
    _current = [ORFactory trailableInt:engine value:0];
    _start = [ORFactory trailableInt:engine value:0];
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
    _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
+   for(id<ORVar> v in _vars){
+      _maxId = max(_maxId, v.getId);
+   }
    return self;
 }
 -(void) dealloc
@@ -1034,6 +1039,7 @@
 }
 -(void) set: (id<ORVar>) x at: (ORInt) value
 {
+   _maxId = max(_maxId, x.getId);
    [_vars set:x at:value];
 }
 -(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key
@@ -1042,6 +1048,7 @@
 }
 -(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx
 {
+   _maxId = max(_maxId, newValue.getId);
    [_vars setObject:newValue atIndexedSubscript:idx];
 }
 -(void) disable:(ORUInt) index
@@ -1099,6 +1106,10 @@
 -(ORUInt) maxFixed
 {
    return _nb;
+}
+-(ORUInt) maxId
+{
+   return _maxId;
 }
 -(void) setMaxFixed:(ORInt)nb
 {

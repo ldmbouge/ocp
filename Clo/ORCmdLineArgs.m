@@ -352,7 +352,6 @@ static enum ValHeuristic valIndex[] =
          [(CPCoreSolver*)p setAbsLimitModelVars:rateModel total:grateModel];
          [(CPCoreSolver*)p setAbsLimitAdditionalVars:rateOther total:grateModel];
          [(CPCoreSolver*)p setVariation:variationSearch];
-         [(CPCoreSolver*)p setSplitTest:splitTest];
          return p;
       case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];

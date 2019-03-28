@@ -168,7 +168,7 @@
    //[hzi] should we remove it ? An additional variable appear only in one wonstraint as operand
    ORDouble               _absTRateLimitAdditionalVars;
    ORInt                 _variationSearch;
-   ORInt                 _splitTest;
+   NSMutableArray*       _absconstraints;
    
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _returnLT;
@@ -212,6 +212,7 @@
 -(void) dealloc
 {
    NSLog(@"CPSolver dealloc'd %p",self);
+   if(_absconstraints != nil) [_absconstraints release];
    [_hSet release];
    [_model release];
    [_portal release];
@@ -389,10 +390,6 @@
 -(void) setLevel:(ORInt) level
 {
    _level = level;
-}
--(void) setSplitTest:(ORInt) level
-{
-   _splitTest = level;
 }
 -(void) setUnique:(ORInt) u
 {
@@ -3156,6 +3153,31 @@
    return 0.0;
 }
 
+
+-(void) initializeAbsConstraints:(id<ORDisabledVarArray>) vars
+{
+   if(_absconstraints == nil){
+      ORInt maxId = [vars maxId];
+      _absconstraints = [[NSMutableArray alloc] initWithCapacity:maxId+1];
+      for(ORInt i = 0; i <= maxId; i++){
+         [_absconstraints addObject:[NSNull null]];
+      }
+      id<CPVar> cx;
+      for (id<ORVar> x in vars) {
+         cx = _gamma[[x getId]];
+         id<OROSet> cstr = [cx constraints];
+         id<OROSet> set = [ORFactory objectSet];
+         if([cstr count]){
+            for(id<CPConstraint> c in cstr){
+               if([c canLeadToAnAbsorption]){
+                  [set add:c];
+               }
+            }
+         }
+         _absconstraints[x.getId] = set;
+      }
+   }
+}
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledVarArray>) vars
 {
    id<ORIdArray> abs = [ORFactory idArray:self range:vars.range];
@@ -3168,28 +3190,27 @@
    ORUInt i = 0;
    id<CPVar> cx;
    id<CPVar> v;
+   [self initializeAbsConstraints:vars];
    @autoreleasepool {
       for (id<ORVar> x in vars) {
-         cx = _gamma[[x getId]];
-         id<OROSet> cstr = [cx constraints];
+         cx = _gamma[x.getId];
+         id<OROSet> cstr = _absconstraints[x.getId];
          for(id<CPConstraint> c in cstr){
-            if([c canLeadToAnAbsorption]){
-               v = [c varSubjectToAbsorption:cx];
-               if(v == nil) continue;
-               ORAbsVisitor* absVisit = [[ORAbsVisitor alloc] init:v];
-               [cx visit:absVisit];
-               absV = [absVisit rate];
-               assert(absV >= 0.0f && absV <= 1.f);
-               //second test can be reduce to !isInitial()
-               if(([vars isInitial:i] && absV >= _absRateLimitModelVars) || (![vars isInitial:i] && absV >= _absRateLimitAdditionalVars)){
-                  [abs[i] addQuantity:absV for:v];
-               }
+            v = [c varSubjectToAbsorption:cx];
+            if(v == nil) continue;
+            ORAbsVisitor* absVisit = [[ORAbsVisitor alloc] init:v];
+            [cx visit:absVisit];
+            absV = [absVisit rate];
+            [absVisit release];
+            assert(absV >= 0.0f && absV <= 1.f);
+            //second test can be reduce to !isInitial()
+            if(([vars isInitial:i] && absV >= _absRateLimitModelVars) || (![vars isInitial:i] && absV >= _absRateLimitAdditionalVars)){
+               [abs[i] addQuantity:absV for:v];
             }
          }
          i++;
       }
    }
-   
    return  abs;
 }
 

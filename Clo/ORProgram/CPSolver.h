@@ -65,7 +65,6 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(void) setLevel:(ORInt) level;
 -(void) setOccRate:(ORDouble) r;
 -(void) setAbsRate:(ORDouble) r;
--(void) setSplitTest:(ORInt) level;
 -(void) setVariation:(ORInt) variation;
 -(void) setUnique:(ORInt) u;
 -(void) set3BSplitPercent:(ORFloat) p;
