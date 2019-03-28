@@ -2176,9 +2176,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          ORExprI* other = lv ? right : left;
          ORExprI* var   = lv ? left : right;
          id<ORIntVar> theVar = [ORNormalizer intVarIn:_model expr:var];
-         //            ORIntLinear* lin  = [ORNormalizer intLinearFrom:other model:_model equalTo:theVar];
-         //            [lin release];
-         //            _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
          lin  = [ORNormalizer intLinearFrom:other model:_model];
          [lin addTerm:theVar by:-1];
       } else {
@@ -2545,6 +2542,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       bool lv = [left isVariable];
       bool rv = [right isVariable];
       if (lv || rv) {
+         id<ORVar> var = (id<ORVar>)((lv)?left:right);
+         id<ORExpr> other = (lv)?right:left;
+         [_model addEqualityRelation:var with:other];
          id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:left model:_model];
          ORFloatLinear* linRight  = [ORNormalizer floatLinearFrom:right model:_model];
          id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
@@ -2916,6 +2916,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       bool lv = [left isVariable];
       bool rv = [right isVariable];
       if (lv || rv) {
+         id<ORVar> var = (id<ORVar>)((lv)?left:right);
+         id<ORExpr> other = (lv)?right:left;
+         [_model addEqualityRelation:var with:other];
          id<ORDoubleLinear> linLeft  = [ORNormalizer doubleLinearFrom:left model:_model];
          ORDoubleLinear* linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
          id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,1)];

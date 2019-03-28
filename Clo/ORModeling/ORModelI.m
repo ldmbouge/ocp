@@ -195,6 +195,7 @@
    NSMutableDictionary*     _cache;
    id<ORModelMappings>      _mappings;  // these are all the mappings for the models
    id<ORIntArray>           _occurences;
+   NSMutableArray*          _equalities;
 }
 -(ORModelI*) initORModelI
 {
@@ -206,6 +207,7 @@
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [[ORModelMappings alloc] initORModelMappings];
+   _equalities = nil;
    _occurences = nil;
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
@@ -237,6 +239,7 @@
    _source = [src retain];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [src->_mappings copy];
+   _equalities = src->_equalities;
    return self;
 }
 -(ORModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
@@ -255,6 +258,7 @@
     _source = [src retain];
     _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
     _mappings = [src->_mappings copy];
+   _equalities = src->_equalities;
     return self;
 }
 -(void)setCurrent:(id<ORConstraint>)cstr
@@ -271,7 +275,6 @@
 {
    return _mappings;
 }
-
 -(ORUInt)nbObjects
 {
    return _nbObjects;
@@ -287,6 +290,11 @@
 -(void) dealloc
 {
    //NSLog(@"ORModelI [%p] dealloc called...  source (%p) RC[%lu]\n",self,_source,(unsigned long)[_source retainCount]);
+   if(_equalities != nil){
+      for(NSMutableDictionary* v in _equalities)
+         [v release];
+      [_equalities release];
+   }
    [_source release];
    [_vars release];
    [_mStore release];
@@ -415,6 +423,31 @@
          rv[k++] = xk;
    return (id<ORBitVarArray>)rv;
 }
+-(void) addEqualityRelation:(id<ORVar>) x with:(id<ORExpr>) e
+{
+   if(_equalities == nil){
+      ORInt maxId = 0;
+      ORInt i = 0;
+      _equalities = [[NSMutableArray alloc] init];
+      for(id<ORObject> c in _vars){
+         [_equalities addObject:[NSNull null]];
+         maxId = ([c getId]>maxId)? [c getId] : maxId;
+         i++;
+      }
+      for(; i <= maxId; i++){
+         [_equalities addObject:[NSNull null]];
+      }
+   }
+   if(_equalities[x.getId] == [NSNull null]){
+      NSArray* av = [e allVarsArray];
+      _equalities[x.getId] = [[NSMutableDictionary alloc] init];
+      for(id<ORVar> v in av){
+         ORInt c = [[_equalities[x.getId] objectForKey:@(v.getId)] intValue];
+         c++;
+         _equalities[x.getId][@(v.getId)] = @(c);
+      }
+   }
+}
 -(void) incrOccurences:(id<ORVar>) v
 {
    if(_occurences == nil)
@@ -426,8 +459,22 @@
       _occurences = [ORFactory intArray:self range:RANGE(self,0,maxId) value:0];
    }
    ORInt index = [v getId];
+   if(_equalities[index] != [NSNull null])
+      [self updateOccurencesEqualities:index times:1];
    ORInt oldv = [_occurences at:index];
    [_occurences set:oldv+1 at:index];
+}
+-(void) updateOccurencesEqualities:(ORInt) index times:(ORInt) nb
+{
+   NSMutableDictionary* dict = _equalities[index];
+   for(id key in dict.keyEnumerator){
+      ORInt keyv = [key intValue];
+      if(_equalities[keyv] != [NSNull null]){
+         [self updateOccurencesEqualities:keyv times:nb * [dict[key] intValue]];
+      }
+      ORInt oldv = [_occurences at:keyv];
+      [_occurences set:oldv+nb at:keyv];
+   }
 }
 -(ORDouble) occurences:(id<ORVar>) v
 {
@@ -843,6 +890,10 @@
 {
    [_target incrOccurences:v];
 }
+-(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e
+{
+   [_target addEqualityRelation:v with:e];
+}
 @end
 
 @implementation ORParameterizedModelI
@@ -1040,6 +1091,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(void) incrOccurences:(id<ORVar>)v
 {
    [_target incrOccurences:v];
+}
+-(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e
+{
+   [_target addEqualityRelation:v with:e];
 }
 @end
 

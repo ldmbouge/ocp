@@ -3179,7 +3179,6 @@
                ORAbsVisitor* absVisit = [[ORAbsVisitor alloc] init:v];
                [cx visit:absVisit];
                absV = [absVisit rate];
-//               absV = [self computeAbsorptionQuantity:v by:x];
                assert(absV >= 0.0f && absV <= 1.f);
                //second test can be reduce to !isInitial()
                if(([vars isInitial:i] && absV >= _absRateLimitModelVars) || (![vars isInitial:i] && absV >= _absRateLimitAdditionalVars)){
@@ -3404,15 +3403,18 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
-
-- (id<ORFloatVarArray>)floatVars {
+- (id<ORFloatVarArray>)floatVars
+{
    @throw [[ORExecutionError alloc] initORExecutionError: "Not implemented yet"];
 }
-
-- (void)incrOccurences:(nonnull id<ORVar>)v {
+- (void)incrOccurences:(nonnull id<ORVar>)v
+{
    @throw [[ORExecutionError alloc] initORExecutionError: "Not implemented yet"];
 }
-
+- (void)addEqualityRelation:(id<ORVar>)v with:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Not implemented yet"];
+}
 -(id) trackObject: (id) obj
 {
    return [_engine trackObject:obj];

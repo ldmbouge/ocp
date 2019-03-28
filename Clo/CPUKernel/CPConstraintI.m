@@ -17,7 +17,7 @@
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m
 {
    self = [super init];
-   _todo = CPChecked;
+   _todo = CPTocheck;
    _priority = HIGHEST_PRIO;
    _propagate = (SELPROTO)[self methodForSelector:@selector(propagate)];
    _trail = [[m trail] retain];

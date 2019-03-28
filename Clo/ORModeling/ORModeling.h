@@ -52,6 +52,7 @@ PORTABLE_BEGIN
 -(id<ORRealVarArray>)realVars;
 -(id<ORBitVarArray>)bitVars;
 -(void) incrOccurences:(id<ORVar>) v;
+-(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e;
 -(ORDouble) occurences:(id<ORVar>) v;
 -(id<ORIntArray>) occurences;
 -(ORUInt) nbObjects;
@@ -92,6 +93,7 @@ PORTABLE_BEGIN
 -(void)setCurrent:(PNULLABLE id<ORConstraint>)cstr;
 -(id<ORFloatVarArray>)floatVars;
 -(void) incrOccurences:(id<ORVar>) v;
+-(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e;
 @end
 
 @protocol ORParameterizedModel <ORModel>
