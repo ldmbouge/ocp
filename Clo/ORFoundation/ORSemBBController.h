@@ -10,6 +10,9 @@
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORTracer.h>
 
+extern id<ORRational> GlobalPrimalBound;
+extern id<ORRational> GlobalDualBound;
+
 @interface ORSemBBController : ORDefaultController <NSCopying,ORSearchController,ORStealing>
 +(id<ORSearchController>)proto;
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;

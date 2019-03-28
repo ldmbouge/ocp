@@ -2819,14 +2819,14 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    ORFloat bound = [_x max];
    if (bound > _primalBound)
       _primalBound = bound;
-   NSLog(@"primal bound: %f",_primalBound);
+   NSLog(@"primal bound: %20.20e",_primalBound);
 }
 -(void) updateDualBound
 {
    ORFloat bound = [_x max];
    if (bound < _dualBound)
       _dualBound = bound;
-   NSLog(@"dual bound: %f",_dualBound);
+   NSLog(@"dual bound: %20.20e",_dualBound);
 }
 
 -(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound

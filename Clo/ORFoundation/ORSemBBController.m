@@ -8,12 +8,16 @@
 #import <ORFoundation/ORSemBBController.h>
 #import <ORUtilities/ORPQueue.h>
 
+extern id<ORRational> GlobalPrimalBound;
+extern id<ORRational> GlobalDualBound;
+
 @interface BBKey : NSObject {
 @public
    id<ORObjectiveValue> _v;
    int              _depth;
 }
 -(id)init:(id<ORObjectiveValue>)v withDepth:(int)d;
+-(id<ORObjectiveValue>)getValue;
 -(NSString*)description;
 -(void)dealloc;
 -(id<ORObjectiveValue>)bound;
@@ -43,6 +47,10 @@
    _v = [v retain];
    _depth = d;
    return self;
+}
+-(id<ORObjectiveValue>)getValue
+{
+   return _v;
 }
 -(void)dealloc
 {
@@ -237,27 +245,32 @@ static long __nbPull = 0;
          _k = NULL;
          [back call];
       }
+      
       ORBool isEmpty = [_buf empty];
-      if (!isEmpty) {
+      if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
-         BBNode* nd = [_buf extractBest];
-         
-         ORStatus status = [of tightenDualBound:bestKey.bound];
-         if (status != ORFailure)
-            status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
-         if (__nbPull++ % 100 == 0)
-            NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
-         [nd.cp letgo];
-         NSCont* k = nd.cont;
-         [nd release];
-         [bestKey release];
-         if (k &&  status != ORFailure) {
-            [k call];
-         } else {
-            if (k==nil)
-               @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
-            else [k letgo];
-         }
+         if([GlobalPrimalBound lt: [[bestKey getValue] rationalValue] ]){
+            /*([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]])) {*/
+            BBNode* nd = [_buf extractBest];
+            
+            ORStatus status = [of tightenDualBound:bestKey.bound];
+            if (status != ORFailure)
+               status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
+            if (__nbPull++ % 100 == 0)
+               NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
+            [nd.cp letgo];
+            NSCont* k = nd.cont;
+            [nd release];
+            [bestKey release];
+            if (k &&  status != ORFailure) {
+               [k call];
+            } else {
+               if (k==nil)
+                  @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
+               else [k letgo];
+            }
+         } else
+            return;
       } else
          return;
    } while(true);
@@ -271,8 +284,8 @@ static long __nbPull = 0;
 - (id)copyWithZone:(NSZone *)zone
 {
    ORSemBBController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer
-                                                                            engine:_engine
-                                                                           posting:_model];
+                                                                           engine:_engine
+                                                                          posting:_model];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }

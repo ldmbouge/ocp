@@ -136,3 +136,23 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+@interface CPRationalVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
+-(id) init: (id<CPRationalVar>) x;
+-(void) post;
+-(ORStatus) check;
+-(ORBool) isBound;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+-(id<ORRationalVar>) var;
+@end
+
+@interface CPRationalVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
+-(id) init: (id<CPRationalVar>) x;
+-(void) post;
+-(ORStatus) check;
+-(ORBool) isBound;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+-(id<ORRationalVar>) var;
+@end

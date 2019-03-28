@@ -494,6 +494,7 @@ PORTABLE_BEGIN
 +(id<ORObjectiveValue>) objectiveValueReal: (ORDouble) f minimize: (ORBool) b;
 +(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (ORBool) b;
 +(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) v minimize: (ORBool) b;
++(id<ORObjectiveValue>) objectiveValueRational: (id<ORRational>) v minimize: (ORBool) b;
 @end
 
 PORTABLE_END

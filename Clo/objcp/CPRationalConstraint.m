@@ -715,3 +715,334 @@
    return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
 }
 @end
+
+@implementation CPRationalVarMinimize
+{
+   CPRationalVarI*  _x;
+   id<ORRational>       _primalBound;
+   id<ORRational>       _dualBound;
+}
+-(CPRationalVarMinimize*) init: (CPRationalVarI*) x
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = x;
+   _primalBound = [ORRational rationalWith:[x max]];
+   _dualBound = [ORRational rationalWith:[x min]];
+   return self;
+}
+-(id<CPRationalVar>)var
+{
+   return _x;
+}
+-(void) post
+{
+   if (![_x bound])
+      [_x whenChangeMinDo: ^ {
+         //[_x updateMax: nextafterf(_primalBound,-INFINITY)];
+         [_x updateMax: [_primalBound sub: [ORRational rationalWith_d:1]]];
+      } onBehalf:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return [_x bound] ? 0 : 1;
+}
+-(ORBool)   isMinimization
+{
+   return YES;
+}
+-(void) updatePrimalBound
+{
+   id<ORRational> bound = [_x min];
+   @synchronized(self) {
+      if ([bound lt: _primalBound]){
+         //_primalBound = nextafterf(bound,-INFINITY);
+         _primalBound = [bound sub: [ORRational rationalWith_d:1]];
+         NSLog(@"primal bound: %@",_primalBound);
+      }
+   }
+}
+-(void) updateDualBound
+{
+   id<ORRational> bound = [_x min];
+   @synchronized (self) {
+      if ([bound gt: _dualBound]){
+         //_dualBound = nextafterf(bound,+INFINITY);
+         _dualBound = [bound add: [ORRational rationalWith_d:1]];
+         NSLog(@"dual bound: %@",_dualBound);
+      }
+   }
+}
+-(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
+{
+   @synchronized(self) {
+      if ([[newBound value] lt: _primalBound])
+         _primalBound = [newBound value];
+   }
+}
+-(ORStatus) tightenDualBound:(id<ORObjectiveValueRational>)newBound
+{
+   @synchronized (self) {
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
+         id<ORRational> b = [(id<ORObjectiveValueRational>)newBound value];
+         ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
+         if (ok && [b gt: _dualBound])
+            _dualBound = b;
+         return ok;
+      }
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
+         ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
+         if (ok && [b gt: _dualBound])
+            _dualBound = b;
+         return ok;
+      }
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound value]];
+         ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
+         if (ok && [b gt: _dualBound])
+            _dualBound = b;
+         return ok;
+      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
+         ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
+         if (ok && [b gt: _dualBound])
+            _dualBound = b;
+         return ok;
+      } else return ORFailure;
+   }
+}
+-(void) tightenLocallyWithDualBound: (id) newBound
+{
+   @synchronized(self) {
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
+         id<ORRational> b = [((id<ORObjectiveValueRational>) newBound) value];
+         [_x updateMin: b];
+      }
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueInt>) newBound) value]];
+         [_x updateMin: b];
+      }
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueFloat>) newBound) value]];
+         [_x updateMin: b];
+      }
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueReal>) newBound) value]];
+         [_x updateMin: b];
+      }
+   }
+}
+
+-(id<ORObjectiveValue>) primalValue
+{
+   return [ORFactory objectiveValueRational:[_x value] minimize:YES];
+}
+-(id<ORObjectiveValue>) dualValue
+{
+   return [ORFactory objectiveValueRational:[_x min] minimize:NO];
+   // dual bound ordering is opposite of primal bound. (if we minimize in primal, we maximize in dual).
+}
+-(id<ORObjectiveValue>) primalBound
+{
+   return [ORFactory objectiveValueRational:_primalBound minimize:YES];
+}
+-(id<ORObjectiveValue>) dualBound
+{
+   return [ORFactory objectiveValueRational:_dualBound minimize:YES];
+}
+
+-(ORStatus) check
+{
+   return tryfail(^ORStatus{
+      //[_x updateMax:nextafterf(_primalBound,-INFINITY)];
+      [_x updateMax:[_primalBound sub: [ORRational rationalWith_d:1]]];
+      [_x updateMin:_dualBound];
+      return ORSuspend;
+   }, ^ORStatus{
+      return ORFailure;
+   });
+}
+-(ORBool)   isBound
+{
+   return [_x bound];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"MINIMIZE(%@) with f* = %@  (dual: %@)",[_x description],_primalBound,_dualBound];
+   return buf;
+}
+@end
+
+@implementation CPRationalVarMaximize
+{
+   CPRationalVarI*  _x;
+   id<ORRational>   _primalBound;
+   id<ORRational>   _dualBound;
+}
+
+-(CPRationalVarMaximize*) init: (CPRationalVarI*) x
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = x;
+   _primalBound = [[ORRational alloc] init];
+   _dualBound = [[ORRational alloc] init];
+   [_primalBound setNegInf];//= [ORRational rationalWith:[x min]];
+   [_dualBound set: maxQ([[_x min] abs],[[_x max] abs])]; //[ORRational rationalWith:[x max]];
+
+   return self;
+}
+-(id<CPRationalVar>)var
+{
+   return _x;
+}
+-(ORBool)   isMinimization
+{
+   return NO;
+}
+-(void) post
+{
+   if (![_x bound])
+      [_x whenChangeMaxDo: ^ {
+         //[_x updateMin: nextafterf(_primalBound,+INFINITY)];
+         //[_x updateMin: [_primalBound inc] ];
+         [_x updateMin: _primalBound];
+      } onBehalf:self];
+}
+
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(id<ORObjectiveValue>) primalValue
+{
+   return [ORFactory objectiveValueRational:_x.value minimize:NO];
+}
+-(id<ORObjectiveValue>) dualValue
+{
+   return [ORFactory objectiveValueRational:_x.max minimize:YES];
+}
+
+-(id<ORObjectiveValue>) primalBound
+{
+   return [ORFactory objectiveValueRational:_primalBound minimize:NO];
+}
+-(id<ORObjectiveValue>) dualBound
+{
+   return [ORFactory objectiveValueRational:_dualBound minimize:NO];
+}
+
+-(ORUInt)nbUVars
+{
+   return [_x bound] ? 0 : 1;
+}
+
+-(void) updatePrimalBound
+{
+   id<ORRational>bound = [[ORRational alloc] init];
+   [bound set: maxQ([[_x min] abs],[[_x max] abs])];
+   if ([bound gt: _primalBound]){
+      [_primalBound set: bound];
+      NSLog(@"primal bound: %@",_primalBound);
+   }
+}
+-(void) updateDualBound
+{
+   id<ORRational>bound = [[ORRational alloc] init];
+   [bound set: maxQ([[_x min] abs],[[_x max] abs])];
+   if ([bound lt: _dualBound]){
+      [_dualBound set: bound];
+      NSLog(@"dual bound: %@",_dualBound);
+   }
+}
+
+/*-(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
+{
+   if ([[newBound value] gt: _primalBound])
+      _primalBound = [newBound value];
+}*/
+-(void) tightenPrimalBound: (id<ORRational>) nb
+{
+   id<ORObjectiveValueRational> newBound = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI:nb minimize:NO];
+   if ([[newBound value] gt: _primalBound])
+      [_primalBound set:[newBound value]];
+}
+-(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
+{
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
+      id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
+      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b lt: _dualBound])
+         [_dualBound set: b];
+      return ok;
+   }
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
+      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b lt: _dualBound])
+         [_dualBound set: b];
+      return ok;
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
+      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b lt: _dualBound])
+         [_dualBound set: b];
+      return ok;
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
+      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b lt: _dualBound])
+         [_dualBound set: b];
+      return ok;
+   }  else return ORSuspend;
+}
+
+-(void) tightenLocallyWithDualBound: (id) newBound
+{
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
+      id<ORRational> b = [((id<ORObjectiveValueRational>) newBound) value];
+      [_x updateMax: b];
+   }
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueInt>) newBound) value]];
+      [_x updateMax: b];
+   }
+   else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueFloat>) newBound) value]];
+      [_x updateMax: b];
+   }
+   else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueReal>) newBound) value]];
+      [_x updateMax: b];
+   }
+}
+
+-(ORStatus) check
+{
+   @try {
+      //[_x updateMin:nextafterf(_primalBound,+INFINITY)];
+      [_x updateMin:_primalBound];
+      //[_x updateMax:_dualBound];
+   }
+   @catch (ORFailException* e) {
+      [e release];
+      return ORFailure;
+   }
+   return ORSuspend;
+}
+
+-(ORBool)   isBound
+{
+   return [_x bound];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"MAXIMIZE(%@) with f* = %@  (dual: %@) [thread: %d]",[_x description],_primalBound,_dualBound,[NSThread threadID]];
+   return buf;
+}
+@end

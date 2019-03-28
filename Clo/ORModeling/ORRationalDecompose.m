@@ -91,8 +91,10 @@
       [_terms addTerm:alpha by:1];
       _eqto = nil;
    } else {
-      [[e left] visit:self];
-      [[e right] visit:self];
+      /*[[e left] visit:self];
+      [[e right] visit:self];*/
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
    }
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
@@ -298,6 +300,28 @@
       [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
    else
       _rv = (id)e;
+}
+-(void) visitExprPlusI:(ORExprPlusI*) e
+{
+   id<ORRationalLinear> lT = [ORNormalizer rationalLinearFrom:[e left] model:_model];
+   id<ORRationalLinear> rT = [ORNormalizer rationalLinearFrom:[e right] model:_model];
+   id<ORRationalVar> lV = [ORNormalizer rationalVarIn:lT for:_model];
+   id<ORRationalVar> rV = [ORNormalizer rationalVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory rationalVar:_model];
+   }
+   id<ORVarArray> var = [ORFactory rationalVarArray:_model range:RANGE(_model,0,2)];
+   var[0] = _rv;
+   var[1] = lV;
+   var[2] = rV;
+   id<ORRationalArray> coefs = [ORFactory rationalArray:_model range:RANGE(_model, 0,2) with:^id<ORRational>(ORInt i) {
+      id<ORRational> coef = [ORRational rationalWith_d:1];
+      [_model trackMutable:coef];
+      return coef;
+   }];
+   [_model addConstraint:[ORFactory rationalSum:_model array:var coef:coefs eq:[ORRational rationalWith_d:0]]];
+   [lT release];
+   [rT release];
 }
 -(id<ORRationalVar>)result
 {

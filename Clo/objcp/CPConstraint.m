@@ -1427,6 +1427,18 @@
    [[x tracker] trackMutable: o];
    return o;
 }*/
++(id<CPConstraint>) rationalMinimize: (id<CPRationalVar>) x
+{
+   id<CPConstraint> o = [[CPRationalVarMinimize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
+}
++(id<CPConstraint>) rationalMaximize: (id<CPRationalVar>) x
+{
+   id<CPConstraint> o = [[CPRationalVarMaximize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
+}
 @end
 
 

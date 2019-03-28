@@ -216,8 +216,8 @@
 }
 +(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker
 {
-   id<ORRational> ninf = [ORRational rationalWith_d:-INFINITY];
-   id<ORRational> pinf = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> ninf = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
+   id<ORRational> pinf = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
    ORRationalRangeI* o = [[ORRationalRangeI alloc] init:ninf up:pinf];
    [ninf release];
    [pinf release];
@@ -677,12 +677,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORRationalVar>) errorVar: (id<ORTracker>) mdl of:(id<ORFloatVar>)f
 {
-   id<ORRational> low = [ORRational rationalWith_d:-INFINITY];
-   id<ORRational> up = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> low = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
+   id<ORRational> up =  [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
    ORRationalVarI* r = [[ORRationalVarI alloc] init: mdl
                                                  low:low
                                                   up:up
-                                                name:[f prettyname]];
+                                                name:[NSString stringWithFormat:@"e%@",[f prettyname]]];
    id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
    //[[f tracker] add:c];
    id<ORTracker> m = f.tracker;
@@ -1758,6 +1758,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (ORBool) b
 {
    return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: f minimize: b];
+}
++(id<ORObjectiveValue>) objectiveValueRational: (id<ORRational>) f minimize: (ORBool) b
+{
+   return [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: f minimize: b];
 }
 @end
 

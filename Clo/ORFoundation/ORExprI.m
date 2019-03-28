@@ -1635,7 +1635,7 @@
 }
 -(id<ORRational>) qmin
 {
-   id<ORRational> minOf = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> minOf = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
    id<ORRational> array_k = [[ORRational alloc] init];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];
@@ -1645,7 +1645,7 @@
 }
 -(id<ORRational>) qmax
 {
-   id<ORRational> maxOf = [ORRational rationalWith_d:-INFINITY];
+   id<ORRational> maxOf = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
    id<ORRational> array_k = [[ORRational alloc] init];
    for(ORInt k=[_array low];k<=[_array up];k++){
       array_k = [_array at:k];

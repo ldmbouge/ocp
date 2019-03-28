@@ -1086,6 +1086,19 @@
 -(NSString*)description;
 @end
 
+@interface ORObjectiveValueRationalI : ORObject<ORObjectiveValueRational> {
+   id<ORRational> _value;
+   ORInt _direction;
+   id<ORRational> _pBound;
+}
+-(id) initObjectiveValueRationalI: (id<ORRational>) pb minimize: (ORBool) b ;
+-(id<ORRational>)value;
+-(id<ORRational>)rationalValue;
+-(ORDouble)doubleValue;
+-(id<ORRational>)primal;
+-(id<ORRational>)key;
+-(NSString*)description;
+@end
 
 @interface ORObjectiveFunctionI : ORObject<ORObjectiveFunction>
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI;

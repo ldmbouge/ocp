@@ -58,6 +58,16 @@
 -(BOOL)isZero;
 -(BOOL)isOne;
 -(BOOL)clausalForm;
+-(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postLTZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postGTZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model;
+-(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model;
+-(id<ORConstraint>) postSET: (id<ORAddToModel>) model;
+-(void)  postMinimize: (id<ORAddToModel>) model;
+-(void)  postMaximize: (id<ORAddToModel>) model;
 @end
 
 @interface ORRationalLinearFlip : NSObject<ORRationalLinear>

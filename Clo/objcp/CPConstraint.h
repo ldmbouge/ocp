@@ -180,6 +180,8 @@
 //+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x geqi: (id<ORRational>) i;
 //+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x lti: (id<ORRational>) i;
 //+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x gti: (id<ORRational>) i;
++(id<CPConstraint>) rationalMinimize: (id<CPRationalVar>) x;
++(id<CPConstraint>) rationalMaximize: (id<CPRationalVar>) x;
 @end
 
 

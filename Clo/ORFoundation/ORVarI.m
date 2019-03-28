@@ -367,8 +367,8 @@
       _domainError = [ORFactory rationalRange:track low:zero up:zero];
       [zero release];
    } else {
-      id<ORRational> low = [ORRational rationalWith_d:-INFINITY];
-      id<ORRational> up = [ORRational rationalWith_d:+INFINITY];
+      id<ORRational> low = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
+      id<ORRational> up = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
       _domainError = [ORFactory rationalRange:track low:low up:up];
       [low release];
       [up release];
@@ -533,8 +533,8 @@
    self = [super init];
    _tracker = track;
    _domain = dom;
-   id<ORRational> ninf = [ORRational rationalWith_d:-INFINITY];
-   id<ORRational> pinf = [ORRational rationalWith_d:+INFINITY];
+   id<ORRational> ninf = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
+   id<ORRational> pinf = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
    _hasBounds = ([[dom low] neq: ninf] || [[dom up] neq: pinf]);
    [track trackVariable: self];
    return self;
@@ -683,8 +683,8 @@
       _domainError = [ORFactory rationalRange:track low:zero up:zero];
       [zero release];
    } else {
-      id<ORRational> low = [ORRational rationalWith_d:-INFINITY];
-      id<ORRational> up = [ORRational rationalWith_d:+INFINITY];
+      id<ORRational> low = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
+      id<ORRational> up = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
       _domainError = [ORFactory rationalRange:track low:low up:up];
       [low release];
       [up release];

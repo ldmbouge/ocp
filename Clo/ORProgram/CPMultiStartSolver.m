@@ -416,9 +416,9 @@
 {
     [[self worker] floatSplitArrayOrderedByDomSize:x];
 }
--(void)  brandAndBoundSearch:  (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+-(void)  branchAndBoundSearch:  (id<ORDisabledFloatVarArray>) x out: (id<ORFloatVar>) z do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {
-   [[self worker] brandAndBoundSearch: x do:b];
+   [[self worker] brandAndBoundSearch: x out:z do:b];
 }
 -(void)  lexicalOrderedSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
 {

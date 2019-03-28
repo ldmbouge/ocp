@@ -78,7 +78,7 @@
 -(id)setMinusOne
 {
    mpq_set_si(_rational,-1L,1UL);
-   _type = 1;
+   _type = -1;
    
    return self;
 }
@@ -99,34 +99,52 @@
    
    return self;
 }
+-(id)inc
+{
+   /* approximate result, use with caution */
+   ORLDouble tmp = [self get_d];
+   [self set_d:nextafter(tmp, +INFINITY)];
+   
+   return self;
+}
+-(id)dec
+{
+   /* approximate result, use with caution */
+   ORLDouble tmp = [self get_d];
+   [self set_d:nextafter(tmp, -INFINITY)];
+   
+   return self;
+}
 -(BOOL)isNAN
 {
    return self.type == 3;
 }
 -(BOOL)isZero
 {
-   return [self eq: [ORRational rationalWith_d:0]];
+   //return [self eq: [ORRational rationalWith_d:0]];
+   return self.type == 0;
 }
 -(BOOL)isOne
 {
-   return [self eq: [ORRational rationalWith_d:1]];
+   return ([self eq: [ORRational rationalWith_d:1]] && self.type == 1);
 }
 -(BOOL)isMinusOne
 {
-   return [self eq: [ORRational rationalWith_d:-1]];
+   return ([self eq: [ORRational rationalWith_d:-1]]  && self.type == -1);
 }
 -(BOOL)isPosInf
 {
-   return [self eq: [ORRational rationalWith_d:+INFINITY]];
+   //return [self eq: [ORRational rationalWith_d:+INFINITY]];
+   return self.type == 2;
 }
 -(BOOL)isNegInf
 {
-   return [self eq: [ORRational rationalWith_d:-INFINITY]];
+   //return [self eq: [ORRational rationalWith_d:-INFINITY]];
+   return self.type == -2;
 }
 -(void)setRational:(rational_t)rational
 {
-   mpq_set(_rational, rational);
-   mpq_canonicalize(_rational);
+   [self set_q:rational];
 }
 -(int)type
 {
@@ -138,14 +156,15 @@
 }
 -(void)setType:(int)type
 {
-   _type = type;
+   [self set_t:type];
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    //[buf appendFormat:@"%s",[self get_str]];
+   //[buf appendFormat:@"%20.20e",[self get_d]];
    /* DEBUG only */
-   [buf appendFormat:@"%20.20e",[self get_d]];
+   [buf appendFormat:@"(%20.20e - %d)",[self get_d], _type];
    return buf;
 }
 -(id)set:(id<ORRational>)r
@@ -157,6 +176,16 @@
 -(id)set_q:(rational_t)r
 {
    mpq_set(_rational, r);
+   mpq_canonicalize(_rational);
+   if((mpz_get_ui(mpq_numref(_rational)) == 0UL) && (mpz_get_ui(mpq_denref(_rational)) == 0UL)){
+      _type = 3;
+   } else if((mpz_get_ui(mpq_numref(_rational)) == 1UL) && (mpz_get_ui(mpq_denref(_rational)) == 0UL)){
+      _type = 2;
+   } else if((mpz_get_ui(mpq_numref(_rational)) == 0UL) && (mpz_get_ui(mpq_denref(_rational)) == 1UL)){
+      _type = -2;
+   } else {
+      _type = mpq_sgn(_rational);
+   }
    return self;
 }
 -(id)set_t:(int)t
@@ -197,12 +226,12 @@
 }
 -(id)set_d:(double)d
 {
-   if (d == -INFINITY) {
+   if (isnan(d)){
+      [self setNAN];
+   } else if (d == -INFINITY) {
       [self setNegInf];
    } else if (d == +INFINITY) {
       [self setPosInf];
-   } else if (isnan(d)){
-      [self setNAN];
    } else {
       mpq_set_d(_rational, d);
       _type = mpq_sgn(_rational);
@@ -252,7 +281,7 @@
          return -INFINITY;
          break;
       case 2:
-         return INFINITY;
+         return +INFINITY;
          break;
       case 3:
          return NAN;
@@ -962,10 +991,6 @@
    [z set: self];
    z.changed = 0;
    
-   id<ORRational> plow = [[ORRational alloc] init];
-   id<ORRational> pup = [[ORRational alloc] init];
-   id<ORRational> epsilon = [[ORRational alloc] init];
-   
    if([_low lt: ri.low]){
       [z.low set: ri.low];
       z.changed = 1;
@@ -977,6 +1002,9 @@
    }
    
    if(z.changed && [z.low neq: z.up]){
+      id<ORRational> plow = [[ORRational alloc] init];
+      id<ORRational> pup = [[ORRational alloc] init];
+      id<ORRational> epsilon = [[ORRational alloc] init];
       int both = 0;
       plow = [[[_low sub:z.low] div:_low] abs];
       pup = [[[_up sub:z.up] div:_up] abs];
@@ -992,10 +1020,12 @@
          [z.up set: _up];
       }
 
+      [plow release];
+      [pup release];
+      [epsilon release];
    }
-   [plow release];
-   [pup release];
-   [epsilon release];
+   if([z empty])
+      failNow();
    return z;
 }
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup
@@ -1038,6 +1068,8 @@
       [pup release];
       [epsilon release];
    }
+   if([z empty])
+      failNow();
    return z;
 }
 @end

@@ -958,6 +958,7 @@ enum ORGroupType {
 -(NSComparisonResult) compare: (id<ORObjectiveValue>) other;
 @optional-(ORInt) intValue;
 -(ORDouble) doubleValue;
+-(id<ORRational>) rationalValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
@@ -974,6 +975,12 @@ enum ORGroupType {
 @protocol ORObjectiveValueFloat <ORObjectiveValue>
 -(ORFloat) value;
 -(ORFloat) floatValue;
+-(ORDouble)doubleValue;
+@end
+
+@protocol ORObjectiveValueRational <ORObjectiveValue>
+-(id<ORRational>) value;
+-(id<ORRational>) rationalValue;
 -(ORDouble)doubleValue;
 @end
 

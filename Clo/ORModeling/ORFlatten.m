@@ -13,6 +13,7 @@
 #import <ORModeling/ORFlatten.h>
 #import "ORRealLinear.h"
 #import "ORFloatLinear.h"
+#import "ORRationalLinear.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
 
@@ -993,6 +994,11 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
          _result = [_into minimizeVar:alpha];
       }break;
+      case ORTRational: {
+         ORRationalLinear* terms = [ORNormalizer rationalLinearFrom:[e expr] model:_into];
+         id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:terms for:_into];
+         _result = [_into minimizeVar:alpha];
+      }break;
       default:
          break;
    }
@@ -1013,6 +1019,11 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       case ORTFloat:{
          ORFloatLinear* terms = [ORNormalizer floatLinearFrom:[e expr] model: _into];
          id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+         _result = [_into maximizeVar:alpha];
+      }break;
+      case ORTRational:{
+         ORRationalLinear* terms = [ORNormalizer rationalLinearFrom:[e expr] model: _into];
+         id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:terms for:_into];
          _result = [_into maximizeVar:alpha];
       }break;
       default: break;

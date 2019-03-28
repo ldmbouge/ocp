@@ -594,6 +594,8 @@
          concreteCstr = [CPFactory minimize: _gamma[o.getId]];
       else if ([o conformsToProtocol:@protocol(ORFloatVar)])
          concreteCstr = [CPFactory floatMinimize: _gamma[o.getId]];
+      else if ([o conformsToProtocol:@protocol(ORRationalVar)])
+         concreteCstr = [CPFactory rationalMinimize: _gamma[o.getId]];
       else
          concreteCstr = [CPFactory realMinimize: _gamma[o.getId]];
       _gamma[v.getId] = concreteCstr;
@@ -611,6 +613,8 @@
          concreteCstr = [CPFactory maximize: _gamma[o.getId]];
       else if ([o conformsToProtocol:@protocol(ORFloatVar)])
          concreteCstr = [CPFactory floatMaximize: _gamma[o.getId]];
+      else if ([o conformsToProtocol:@protocol(ORRationalVar)])
+         concreteCstr = [CPFactory rationalMaximize: _gamma[o.getId]];
       else
          concreteCstr = [CPFactory realMaximize: _gamma[o.getId]];
       _gamma[v.getId] = concreteCstr;

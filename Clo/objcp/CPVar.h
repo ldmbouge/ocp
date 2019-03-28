@@ -199,6 +199,8 @@ enum CPVarClass {
 -(void) bind:(ORFloat) val;
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;
+-(void) updateMinError:(id<ORRational>) newMin;
+-(void) updateMaxError:(id<ORRational>) newMax;
 -(void) assignRelaxationValue: (ORFloat) f;
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat) newMax;
 @end

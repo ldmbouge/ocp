@@ -2420,7 +2420,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    }else {
-      ORInt length = !lc + !rc;
+      ORInt length = !lc + !rc;  
       id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
       id<ORRationalArray> coefs = [ORFactory rationalArray:_model
                                                   range:RANGE(_model,0,length - 1)

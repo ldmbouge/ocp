@@ -248,6 +248,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    id<ORRational> ub = [[ORRational alloc] init];
    id<ORRational> cr = [[ORRational alloc] init];
    id<ORRational> svub = [[ORRational alloc] init];
+   [ub set: _indep];
    for(ORInt k=0;k < _nb;k++) {
       ORInt c = _terms[k]._coef;
       [cr set_d: c];
@@ -314,6 +315,14 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 }
 - (id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model {
    return 0;
+}
+-(void) postMinimize: (id<ORAddToModel>) model
+{
+   [model minimize: [self variables: model] coef: [self coefficients: model]];
+}
+-(void) postMaximize: (id<ORAddToModel>) model
+{
+   [model maximize: [self variables: model] coef: [self coefficients: model]];
 }
 @end
 

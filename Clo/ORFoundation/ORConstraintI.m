@@ -9122,6 +9122,77 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORObjectiveValueRationalI
+-(id) initObjectiveValueRationalI: (id<ORRational>) pb minimize: (ORBool) b
+{
+   self = [super init];
+   _value = pb;
+   _pBound = pb;
+   _direction = b ? 1 : -1;
+   return self;
+}
+-(id<ORRational>) value
+{
+   return _value;
+}
+-(id<ORRational>) rationalValue
+{
+   return _value;
+}
+-(ORDouble) doubleValue
+{
+   return [_value get_d];
+}
+-(id<ORRational>) primal
+{
+   return _pBound;
+}
+-(id<ORRational>) key
+{
+   if (_direction)
+      return _value;
+   else
+      return [_value neg];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"%@",_value];
+   return buf;
+}
+
+-(ORBool)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]]) {
+      return [_value eq: [((ORObjectiveValueRationalI*)object) value]];
+   } else return NO;
+}
+
+- (NSUInteger) hash
+{
+   return [_value get_d];
+}
+
+-(id<ORObjectiveValue>) best: (ORObjectiveValueRationalI*) other
+{
+   if ([self key] <= [other key])
+      return [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: _value minimize: _direction == 1];
+   else
+      return [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [other value] minimize: _direction == 1];
+}
+
+-(NSComparisonResult) compare: (ORObjectiveValueRationalI*) other
+{
+   id<ORRational> mykey = [self key];
+   id<ORRational> okey = [other key];
+   if ([mykey lt: okey])
+      return -1;
+   else if ([mykey eq: okey])
+      return 0;
+   else
+      return 1;
+}
+@end
 
 @implementation ORObjectiveFunctionExprI
 -(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) e

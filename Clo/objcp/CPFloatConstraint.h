@@ -367,7 +367,7 @@
 -(ORBool) isBound;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
--(id<ORRealVar>) var;
+-(id<ORFloatVar>) var;
 @end
 
 @interface CPFloatVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
@@ -377,5 +377,5 @@
 -(ORBool) isBound;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
--(id<ORRealVar>) var;
+-(id<ORFloatVar>) var;
 @end
