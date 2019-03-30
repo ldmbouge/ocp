@@ -1681,7 +1681,7 @@
                                  orderedBy: c
                           ];
    [self genericSearch:x selection:(ORSelectorResult(^)(void))^{
-      abs = [self computeAbsorptionsQuantities:x];
+      ONLY_DEBUG(_level,2,abs = [self computeAbsorptionsQuantities:x]);
       return [select max];
    } do:b];
    
