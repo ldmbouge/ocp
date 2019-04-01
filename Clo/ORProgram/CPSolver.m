@@ -713,7 +713,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLEqualImpl: not implemented"];
 }
--(void) errorGEqualImpl: (id<CPFloatVar>) var with: (id<ORRational>) val
+-(ORBool) errorGEqualImpl: (id<CPFloatVar>) var with: (id<ORRational>) val fail: (ORBool) canFail
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGEqualImpl: not implemented"];
 }
@@ -2122,19 +2122,9 @@
                                        }];
          
          [[_engine objective] tightenPrimalBound:GlobalPrimalBound];
-         [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue]];
+         [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:YES];
          
          [[_engine objective] updateDualBound];
-         
-//         if([_gamma[getId(z)] bound]){
-//            id<CPFloatVar> xv = _gamma[getId(x[0])];
-//            id<CPFloatVar> y = _gamma[getId(x[1])];
-//            id<CPFloatVar> zv = _gamma[getId(x[2])];
-//            NSLog(@"%20.20e = %20.20e + %20.20e",[xv min] + [y min], [xv min], [y min]);
-//            NSLog(@"%20.20e = %20.20e + %20.20e",[xv max] + [y max], [xv max], [y max]);
-//            NSLog(@"%20.20e * %20.20e", [zv min], [zv max]);
-//            NSLog(@"not good...");
-//         }
          
          /********** GuessError **********/
          LOG(_level, 2, @"GuessError");
@@ -2161,7 +2151,10 @@
                   if(![currentVar bound]){
                      [currentVar bind:randomValue([currentVar min], [currentVar max])];
                      LOG(_level, 2, @"var fixed at: %@", currentVar);
-                     [self errorGEqualImpl:_gamma[getId(z)] with:GlobalPrimalBound];
+                     [self errorGEqualImpl:_gamma[getId(z)] with:GlobalPrimalBound fail:NO];
+//                        [_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
+//                        break;
+//                     }
                      LOG(_level, 2, @"CSP after filtering");
                      LOG(_level, 2, @"%@", [_engine model]);
                      [[_engine objective] updatePrimalBound];
@@ -4916,11 +4909,14 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) errorGEqualImpl: (id<CPFloatVar>) var with: (id<ORRational>) val
+-(ORBool) errorGEqualImpl: (id<CPFloatVar>) var with: (id<ORRational>) val fail: (ORBool) canFail
 {
    ORStatus status = [_engine enforce:^{ [var updateMinError:val];}];
-   if (status == ORFailure)
-      [_search fail];
+   if(canFail){
+      if (status == ORFailure)
+         [_search fail];
+      return YES;
+   }
    [ORConcurrency pumpEvents];
 }
 

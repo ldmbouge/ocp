@@ -7,6 +7,7 @@
 //
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
+#include "fpi.h"
 #import "ORCmdLineArgs.h"
 
 #define printFvar(name, var) NSLog(@""name" : [%20.20e, %20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [%20.20e, %20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
@@ -68,6 +69,7 @@ void check_it_bb(float x, float y, float z, id<ORRational> ez) {
    mpq_sub(tmp1, qz, tmp0);
          NSLog(@"%s", mpq_get_str(NULL, 10, tmp1));
          NSLog(@"%20.20e", mpq_get_d(tmp1));
+   NSLog(@"%s (%20.20e) | %20.20e (%20.20e)", mpq_get_str(NULL, 10, qz), mpq_get_d(qz), cz, mpq_get_d(tmp0));
 //   if (mpq_cmp(tmp1, ez.rational) != 0){
 //      NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
 //      NSLog(@"Err found: % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
@@ -232,7 +234,27 @@ void testOptimize(int argc, const char * argv[]) {
 
 
 int main(int argc, const char * argv[]) {
-   testR(argc, argv);
+   //testR(argc, argv);
+   
+   float ye = nb_float(3.20000338554382324219e+00f, 3);
+   float_interval z, x, y;
+   z = makeFloatInterval(4.82000007629394531250e+01f,4.82000045776367187500e+01f);
+   x = makeFloatInterval(4.50000000000000000000e+01f,4.50000000000000000000e+01f);
+   y = makeFloatInterval(3.20000338554382324219e+00f,ye);
+   
+   NSLog(@"[%20.20e,%20.20e] = [%20.20e,%20.20e] + [%20.20e,%20.20e]",z.inf, z.sup, x.inf, x.sup, y.inf, y.sup);
+   fpi_addf(0, FE_TONEAREST, &z, &x, &y);
+   NSLog(@"[%20.20e,%20.20e] = [%20.20e,%20.20e] + [%20.20e,%20.20e]",z.inf, z.sup, x.inf, x.sup, y.inf, y.sup);
+   
+   float zr, xr , yr, uz;
+   xr = 4.50000000000000000000e+01f;
+   for (yr = 3.20000338554382324219e+00f; yr <= ye; yr = nextafterf(yr, +INFINITY)) {
+      zr = xr + yr;
+      uz = nextafterf(zr, +INFINITY) - zr;
+      NSLog(@"=== %20.20e = %20.20e + %20.20e   (%20.20e)",zr, xr, yr, uz);
+      check_it_bb(xr, yr, zr, NULL);
+   }
+   
    //testRational(argc, argv);
    //   testOptimize(argc, argv);
    return 0;
