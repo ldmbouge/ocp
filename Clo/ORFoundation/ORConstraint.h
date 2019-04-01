@@ -959,6 +959,7 @@ enum ORGroupType {
 @optional-(ORInt) intValue;
 -(ORDouble) doubleValue;
 -(id<ORRational>) rationalValue;
+-(ORInt) direction;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
@@ -982,6 +983,7 @@ enum ORGroupType {
 -(id<ORRational>) value;
 -(id<ORRational>) rationalValue;
 -(ORDouble)doubleValue;
+-(ORInt) direction;
 @end
 
 @protocol ORObjectiveFunction <ORObject>

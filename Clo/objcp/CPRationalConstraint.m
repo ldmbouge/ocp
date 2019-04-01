@@ -944,7 +944,8 @@
 -(void) updatePrimalBound
 {
    id<ORRational>bound = [[ORRational alloc] init];
-   [bound set: maxQ([[_x min] abs],[[_x max] abs])];
+   //[bound set: maxQ([[_x min] abs],[[_x max] abs])];
+   [bound set: [_x max]];
    if ([bound gt: _primalBound]){
       [_primalBound set: bound];
       NSLog(@"primal bound: %@",_primalBound);
@@ -953,7 +954,8 @@
 -(void) updateDualBound
 {
    id<ORRational>bound = [[ORRational alloc] init];
-   [bound set: maxQ([[_x min] abs],[[_x max] abs])];
+   //[bound set: maxQ([[_x min] abs],[[_x max] abs])];
+   [bound set: [_x max]];
    if ([bound lt: _dualBound]){
       [_dualBound set: bound];
       NSLog(@"dual bound: %@",_dualBound);

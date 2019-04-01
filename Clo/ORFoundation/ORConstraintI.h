@@ -1094,6 +1094,7 @@
 -(id) initObjectiveValueRationalI: (id<ORRational>) pb minimize: (ORBool) b ;
 -(id<ORRational>)value;
 -(id<ORRational>)rationalValue;
+-(ORInt) direction;
 -(ORDouble)doubleValue;
 -(id<ORRational>)primal;
 -(id<ORRational>)key;

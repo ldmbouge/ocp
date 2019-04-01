@@ -9126,8 +9126,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(id) initObjectiveValueRationalI: (id<ORRational>) pb minimize: (ORBool) b
 {
    self = [super init];
-   _value = pb;
-   _pBound = pb;
+   _value = [[ORRational alloc] init];
+   _pBound = [[ORRational alloc] init];
+   [_value set: pb];
+   [_pBound set: pb];
    _direction = b ? 1 : -1;
    return self;
 }
@@ -9138,6 +9140,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(id<ORRational>) rationalValue
 {
    return _value;
+}
+-(ORInt) direction
+{
+   return _direction;
 }
 -(ORDouble) doubleValue
 {
@@ -9183,11 +9189,9 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 
 -(NSComparisonResult) compare: (ORObjectiveValueRationalI*) other
 {
-   id<ORRational> mykey = [self key];
-   id<ORRational> okey = [other key];
-   if ([mykey lt: okey])
+   if ([[self key] lt: [other key]])
       return -1;
-   else if ([mykey eq: okey])
+   else if ([[self key] eq: [other key]])
       return 0;
    else
       return 1;

@@ -162,9 +162,9 @@
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    //[buf appendFormat:@"%s",[self get_str]];
-   //[buf appendFormat:@"%20.20e",[self get_d]];
+   [buf appendFormat:@"%20.20e",[self get_d]];
    /* DEBUG only */
-   [buf appendFormat:@"(%20.20e - %d)",[self get_d], _type];
+   //[buf appendFormat:@"(%20.20e - %d)",[self get_d], _type];
    return buf;
 }
 -(id)set:(id<ORRational>)r

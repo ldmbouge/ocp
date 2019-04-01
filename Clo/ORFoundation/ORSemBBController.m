@@ -7,6 +7,9 @@
 
 #import <ORFoundation/ORSemBBController.h>
 #import <ORUtilities/ORPQueue.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORConstraintI.h>
+
 
 extern id<ORRational> GlobalPrimalBound;
 extern id<ORRational> GlobalDualBound;
@@ -37,7 +40,7 @@ extern id<ORRational> GlobalDualBound;
 +(BBKey*)key:(id<ORObjectiveValue>)v withDepth:(int)d
 {
    BBKey* k = [BBKey alloc];
-   k->_v     = v; // [v retain];
+   k->_v     = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1]; //v; // [v retain];
    k->_depth = d;
    return k;
 }
@@ -269,10 +272,14 @@ static long __nbPull = 0;
                   @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
                else [k letgo];
             }
-         } else
+         } else {
+            NSLog(@"EQUAL BOUND end of program");
             return;
-      } else
+         }
+      } else {
+         NSLog(@"EMPTY QUEUE end of program");
          return;
+      }
    } while(true);
 }
 

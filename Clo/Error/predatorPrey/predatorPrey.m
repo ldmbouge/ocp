@@ -132,24 +132,32 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0f];
       id<ORFloatVar> r = [ORFactory floatVar:mdl name:@"r"];
-      id<ORFloatVar> K = [ORFactory floatVar:mdl];
-      id<ORFloatVar> z = [ORFactory floatVar:mdl];
+      id<ORFloatVar> K = [ORFactory floatVar:mdl name:@"K"];
+      id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
       id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.1f up:0.3f elow:zero eup:zero name:@"x"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       [zero release];
       
       [mdl add:[r set: @(4.0f)]];
       [mdl add:[K set: @(1.11f)]];
       [mdl add:[z set:[[[r mul: x] mul: x]  div: [@(1.0f) plus: [[x div: K] mul:[x div: K]]]]]];
+      
+      [mdl maximize:ez];
+
       NSLog(@"model: %@",mdl);
       id<ORFloatVarArray> vs = [mdl floatVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      //id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
-         if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+         //if (search)
+            [cp branchAndBoundSearch:vars out:z do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                [cp floatSplit:i call:s withVars:x];
             }];
+//            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
+//               [cp floatSplit:i call:s withVars:x];
+//            }];
          NSLog(@"%@",cp);
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */
          /* Use printRational(ORRational r) to print a rational inside the solver */
@@ -164,8 +172,8 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
-      //predatorPrey_f(1, argc, argv);
-      predatorPrey_d(1, argc, argv);
+      predatorPrey_f(1, argc, argv);
+      //predatorPrey_d(1, argc, argv);
    }
    return 0;
 }
