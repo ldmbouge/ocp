@@ -39,7 +39,7 @@ extern id<ORRational> GlobalDualBound;
 
 +(BBKey*)key:(id<ORObjectiveValue>)v withDepth:(int)d
 {
-   BBKey* k = [BBKey alloc];
+   BBKey* k  = [BBKey alloc];
    k->_v     = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1]; //v; // [v retain];
    k->_depth = d;
    return k;
@@ -47,7 +47,7 @@ extern id<ORRational> GlobalDualBound;
 -(BBKey*)init:(id<ORObjectiveValue>)v withDepth:(int)d
 {
    self = [super init];
-   _v = [v retain];
+   _v = [[[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1] retain];
    _depth = d;
    return self;
 }
@@ -70,6 +70,7 @@ extern id<ORRational> GlobalDualBound;
    [buf appendFormat:@"%@ - %d",_v,_depth];
    return buf;
 }
+
 @end
 
 @implementation BBNode
@@ -253,9 +254,10 @@ static long __nbPull = 0;
       }
       
       ORBool isEmpty = [_buf empty];
+      NSLog(@"%@", _buf);
       if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
-         if([GlobalPrimalBound lt: [[bestKey getValue] rationalValue] ]){
+         if([GlobalPrimalBound lt: [[[_engine objective] dualBound] rationalValue] ]){
             /*([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]])) {*/
             BBNode* nd = [_buf extractBest];
             

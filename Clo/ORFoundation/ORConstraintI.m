@@ -9196,6 +9196,12 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    else
       return 1;
 }
+- (void) dealloc
+{
+   [_value release];
+   [_pBound release];
+   [super dealloc];
+}
 @end
 
 @implementation ORObjectiveFunctionExprI

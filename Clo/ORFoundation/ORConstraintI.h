@@ -1099,6 +1099,7 @@
 -(id<ORRational>)primal;
 -(id<ORRational>)key;
 -(NSString*)description;
+-(void)dealloc;
 @end
 
 @interface ORObjectiveFunctionI : ORObject<ORObjectiveFunction>

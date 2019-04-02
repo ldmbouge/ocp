@@ -417,6 +417,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
          [_y updateIntervalError:interError.low and:interError.up];
    }
    
+   fesetround(FE_TONEAREST);
    [ex release];
    [ey release];
    [interError release];
