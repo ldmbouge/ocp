@@ -71,10 +71,10 @@
    assert(mid != NAN && mid <= xi.max && mid >= xi.min);
    [_program try: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ try x > %16.16e",[[_program explorer] nbChoices],xi,mid);
-      [_program floatGthenImpl:xi with:mid];//CPCommonProgram
+      [_program floatGthen:_variable with:mid];//CPCommonProgram
    } alt: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ alt x <= %16.16e",[[_program explorer] nbChoices],xi,mid);
-      [_program floatLEqualImpl:xi with:mid];
+      [_program floatLEqual:_variable with:mid];
    }];
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
