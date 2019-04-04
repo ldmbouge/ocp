@@ -194,8 +194,10 @@
 -(void) visitFloatSqrt: (id<ORConstraint>)c;
 -(void) visitFloatUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitFloatEqualc: (id<ORConstraint>)c;
--(void) visitFloatGThenc: (id<ORFloatGThenc>)c;
+-(void) visitFloatLThenc: (id<ORFloatLThenc>)c;
 -(void) visitFloatLEqualc: (id<ORFloatLEqualc>)c;
+-(void) visitFloatGThenc: (id<ORFloatGThenc>)c;
+-(void) visitFloatGEqualc: (id<ORFloatGEqualc>)c;
 -(void) visitFloatAssignC: (id<ORConstraint>)c;
 -(void) visitFloatNEqualc: (id<ORConstraint>)c;
 -(void) visitFloatLinearEq: (id<ORConstraint>) c;
@@ -225,6 +227,10 @@
 -(void) visitDoubleSqrt: (id<ORConstraint>)c;
 -(void) visitDoubleUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitDoubleEqualc: (id<ORConstraint>)c;
+-(void) visitDoubleLThenc: (id<ORDoubleLThenc>)c;
+-(void) visitDoubleLEqualc: (id<ORDoubleLEqualc>)c;
+-(void) visitDoubleGThenc: (id<ORDoubleGThenc>)c;
+-(void) visitDoubleGEqualc: (id<ORDoubleGEqualc>)c;
 -(void) visitDoubleNEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleLinearEq: (id<ORConstraint>) c;
 -(void) visitDoubleLinearNEq: (id<ORConstraint>) c;

@@ -81,8 +81,20 @@
 -(ORFloat) cst;
 @end
 
+@interface ORFloatLThenc : ORConstraintI<ORFloatLThenc>
+-(ORFloatLThenc*)initORFloatLThenc:(id<ORFloatVar>)x lt:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @interface ORFloatLEqualc : ORConstraintI<ORFloatLEqualc>
 -(ORFloatLEqualc*)initORFloatLEqualc:(id<ORFloatVar>)x leq:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@interface ORFloatGEqualc : ORConstraintI<ORFloatGEqualc>
+-(ORFloatGEqualc*)initORFloatGEqualc:(id<ORFloatVar>)x geq:(ORFloat)c;
 -(id<ORFloatVar>) left;
 -(ORFloat) cst;
 @end
@@ -95,6 +107,30 @@
 
 @interface ORDoubleEqualc : ORConstraintI<ORDoubleEqualc>
 -(ORDoubleEqualc*)initORDoubleEqualc:(id<ORDoubleVar>)x eqi:(ORDouble)c;
+-(id<ORDoubleVar>) left;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleGThenc : ORConstraintI<ORDoubleGThenc>
+-(ORDoubleGThenc*)initORDoubleGThenc:(id<ORDoubleVar>)x gt:(ORDouble)c;
+-(id<ORDoubleVar>) left;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleLThenc : ORConstraintI<ORDoubleLThenc>
+-(ORDoubleLThenc*)initORDoubleLThenc:(id<ORDoubleVar>)x lt:(ORDouble)c;
+-(id<ORDoubleVar>) left;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleLEqualc : ORConstraintI<ORDoubleLEqualc>
+-(ORDoubleLEqualc*)initORDoubleLEqualc:(id<ORDoubleVar>)x leq:(ORDouble)c;
+-(id<ORDoubleVar>) left;
+-(ORDouble) cst;
+@end
+
+@interface ORDoubleGEqualc : ORConstraintI<ORDoubleGEqualc>
+-(ORDoubleGEqualc*)initORDoubleGEqualc:(id<ORDoubleVar>)x geq:(ORDouble)c;
 -(id<ORDoubleVar>) left;
 -(ORDouble) cst;
 @end

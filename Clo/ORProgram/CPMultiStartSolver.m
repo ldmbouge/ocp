@@ -627,6 +627,10 @@
 {
     [[self worker] floatLEqual:var with:val];
 }
+-(void) floatInterval:(id<ORFloatVar>)var low:(ORFloat)val up:(ORFloat)up
+{
+   [[self worker] floatInterval:var low:val up:up];
+}
 -(void) doubleLthen:(id<ORDoubleVar>)var with:(ORDouble)val
 {
    [[self worker] doubleLthen:var with:val];
@@ -642,6 +646,10 @@
 -(void) doubleLEqual:(id<ORDoubleVar>)var with:(ORDouble)val
 {
    [[self worker] doubleLEqual:var with:val];
+}
+-(void) doubleInterval:(id<ORDoubleVar>)var low:(ORDouble)val up:(ORDouble)up
+{
+   [[self worker] doubleInterval:var low:val up:up];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {

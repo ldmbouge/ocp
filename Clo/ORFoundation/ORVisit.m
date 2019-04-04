@@ -282,9 +282,17 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatGThenc: visit method not defined"];
 }
+-(void) visitFloatLThenc: (id<ORFloatLThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatLThenc: visit method not defined"];
+}
 -(void) visitFloatLEqualc: (id<ORFloatLEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLEqualc: visit method not defined"];
+}
+-(void) visitFloatGEqualc: (id<ORFloatGEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatGEqualc: visit method not defined"];
 }
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
 {
@@ -296,7 +304,23 @@
 }
 -(void) visitDoubleEqualc: (id<ORDoubleEqualc>)c
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleEqualc: visit method not defined"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleEqualc: visit method not defined"];
+}
+-(void) visitDoubleGEqualc: (id<ORDoubleGEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleGEqualc: visit method not defined"];
+}
+-(void) visitDoubleLEqualc: (id<ORDoubleLEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleLEqualc: visit method not defined"];
+}
+-(void) visitDoubleGThenc: (id<ORDoubleGThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleGThenc: visit method not defined"];
+}
+-(void) visitDoubleLThenc: (id<ORDoubleLThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleLThenc: visit method not defined"];
 }
 -(void) visitRealEqualc: (id<ORRealEqualc>)c
 {

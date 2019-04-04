@@ -1331,73 +1331,6 @@
                                                   return rv;
                                                }];
    
-   /*************************************************************
-    Apply SAC constraint to all variables
-    ************************************************************/
-   //   NSLog(@"Pruning with SAC constraint.");
-   //
-   //   id<ORTracer> tracer = [self tracer];
-   //   ORStatus oc;
-   //
-   //   ORUInt wordLength;
-   //   TRUInt* up;
-   //   TRUInt* low;
-   //   ORUInt freeBits;
-   //   ORUInt failUp = 0;
-   //   ORUInt failLow = 0;
-   //
-   //   for (int i = [av low]; i<[av up];i++){
-   //      id<CPBitVar>bv = [av at:i];
-   //      wordLength = [(CPBitVarI*)bv getWordLength];
-   //      [(CPBitVarI*)bv getUp:&up andLow:&low];
-   //
-   //      for (int i=0; i<wordLength; i++) {
-   //         freeBits = up[i]._val & ~(low[i]._val);
-   //         for (int j=0; j<32; j++) {
-   //            if (freeBits&1) {
-   //               [tracer pushNode];
-   //               oc = [_engine enforce:^void{[bv bind:j to:true];[ORConcurrency pumpEvents];}];
-   //               if (oc==ORFailure) {
-   //                  NSLog(@"Failure in probing for SAC upon search startup.");
-   //                  failUp &= 1;
-   //                  [tracer popNode];
-   //                  freeBits >>= 1;
-   //                  [bv bind:(i*32)+j to:false];
-   //                  continue;
-   //               }
-   //               [tracer popNode];
-   //
-   //               [tracer pushNode];
-   //               oc = [_engine enforce:^void{[bv bind:j to:false];[ORConcurrency pumpEvents];}];
-   //               if (oc==ORFailure) {
-   //                  NSLog(@"Failure in probing for SAC upon search startup.");
-   //                  failLow &= 1;
-   //                  [tracer popNode];
-   //                  [bv bind:(i*32)+j to:true];
-   //                  freeBits >>= 1;
-   //                  continue;
-   //               }
-   //               [tracer popNode];
-   //            }
-   //            freeBits >>= 1;
-   //         }
-   //         if (failUp & failLow) {
-   //            NSLog(@"Backtracking on SAC constraint.");
-   //            failNow();
-   //         }
-   //         for (int k=31; k>=0; k--) {
-   //            if (failUp & 1) {
-   //               [bv bind:(i*32)+k to:false];
-   //            }
-   //            if (failLow & 1) {
-   //               [bv bind:(i*32)+k to:true];
-   //            }
-   //            failUp >>= 1;
-   //            failLow >>=1;
-   //         }
-   //      }
-   //   }
-   
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
@@ -1571,6 +1504,7 @@
 -(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
 {
    [self floatLthenImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory floatLThenc:self var:var lt: val]];
 }
 -(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
 {
@@ -1585,22 +1519,39 @@
 -(void) floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val
 {
    [self floatGEqualImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory floatGEqualc:self var:var geq: val]];
+}
+-(void) floatInterval: (id<ORFloatVar>) var low: (ORFloat) low up:(ORFloat) up
+{
+   [self floatIntervalImpl: _gamma[var.getId] low: low up:up];
+   [_tracer addCommand: [ORFactory floatLEqualc:self var:var leq: up]];
+   [_tracer addCommand: [ORFactory floatGEqualc:self var:var geq: low]];
 }
 -(void) doubleLthen: (id<ORDoubleVar>) var with: (ORDouble) val
 {
    [self doubleLthenImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory doubleLThenc:self var:var lt: val]];
 }
 -(void) doubleGthen: (id<ORDoubleVar>) var with: (ORDouble) val
 {
    [self doubleGthenImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory doubleGThenc:self var:var gt: val]];
 }
 -(void) doubleLEqual: (id<ORDoubleVar>) var with: (ORDouble) val
 {
    [self doubleLEqualImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory doubleLEqualc:self var:var leq: val]];
 }
 -(void) doubleGEqual: (id<ORDoubleVar>) var with: (ORDouble) val
 {
    [self doubleGEqualImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory doubleGEqualc:self var:var geq: val]];
+}
+-(void) doubleInterval: (id<ORDoubleVar>) var low: (ORDouble) low up:(ORDouble) up
+{
+   [self doubleIntervalImpl: _gamma[var.getId] low: low up:up];
+   [_tracer addCommand: [ORFactory doubleLEqualc:self var:var leq: up]];
+   [_tracer addCommand: [ORFactory doubleGEqualc:self var:var geq: low]];
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
@@ -2233,7 +2184,6 @@
          ORSelectorResult i ;
          if(c){
             LOG(_level,1,@"maxAbs");
-//            NSLog(@"ICI");
             i = [select_abs max];
          }else{
             LOG(_level,1,@"maxOcc");
@@ -3337,6 +3287,7 @@
    }];
    [_engine open];
 }
+
 @end
 
 /******************************************************************************************/

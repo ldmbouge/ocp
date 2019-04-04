@@ -1850,15 +1850,27 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
-+(id<ORConstraint>) floatGThenc: (id<ORTracker>) model var:(id<ORFloatVar>) x gt:(ORFloat)c
++(id<ORConstraint>) floatLThenc: (id<ORTracker>) model var:(id<ORFloatVar>) x lt:(ORFloat)c
 {
-   id<ORConstraint> o = [[ORFloatGThenc alloc] initORFloatGThenc:x gt:c];
+   id<ORConstraint> o = [[ORFloatLThenc alloc] initORFloatLThenc:x lt:c];
    [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) floatLEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x leq:(ORFloat)c
 {
    id<ORConstraint> o = [[ORFloatLEqualc alloc] initORFloatLEqualc:x leq:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatGThenc: (id<ORTracker>) model var:(id<ORFloatVar>) x gt:(ORFloat)c
+{
+   id<ORConstraint> o = [[ORFloatGThenc alloc] initORFloatGThenc:x gt:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatGEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x geq:(ORFloat)c
+{
+   id<ORConstraint> o = [[ORFloatGEqualc alloc] initORFloatGEqualc:x geq:c];
    [model trackObject:o];
    return o;
 }
@@ -2066,6 +2078,30 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORConstraint> o = [[ORDoubleEqualc alloc] initORDoubleEqualc:x eqi:c];
     [model trackObject:o];
     return o;
+}
++(id<ORConstraint>) doubleLThenc: (id<ORTracker>) model var:(id<ORDoubleVar>) x lt:(ORDouble)c
+{
+   id<ORConstraint> o = [[ORDoubleLThenc alloc] initORDoubleLThenc:x lt:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleLEqualc: (id<ORTracker>) model var:(id<ORDoubleVar>) x leq:(ORDouble)c
+{
+   id<ORConstraint> o = [[ORDoubleLEqualc alloc] initORDoubleLEqualc:x leq:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleGThenc: (id<ORTracker>) model var:(id<ORDoubleVar>) x gt:(ORDouble)c
+{
+   id<ORConstraint> o = [[ORDoubleGThenc alloc] initORDoubleGThenc:x gt:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleGEqualc: (id<ORTracker>) model var:(id<ORDoubleVar>) x geq:(ORDouble)c
+{
+   id<ORConstraint> o = [[ORDoubleGEqualc alloc] initORDoubleGEqualc:x geq:c];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) doubleAssignC: (id<ORTracker>) model var:(id<ORDoubleVar>) x to:(ORDouble)c
 {
