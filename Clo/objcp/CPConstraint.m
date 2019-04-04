@@ -755,6 +755,16 @@
    id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
    return [self floatGT:x to:cvar];
 }
++(id<CPConstraint>) floatGEQc: (id<CPFloatVar>) x to:(ORFloat) c
+{
+   id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
+   return [self floatGEQ:x to:cvar];
+}
++(id<CPConstraint>) floatLEQc: (id<CPFloatVar>) x to:(ORFloat) c
+{
+   id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
+   return [self floatLEQ:x to:cvar];
+}
 +(id<CPConstraint>) floatLT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
    id<CPConstraint> o = [[CPFloatLT alloc] init:x lt:y];

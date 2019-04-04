@@ -75,6 +75,18 @@
 -(ORFloat) cst;
 @end
 
+@interface ORFloatGThenc : ORConstraintI<ORFloatGThenc>
+-(ORFloatGThenc*)initORFloatGThenc:(id<ORFloatVar>)x gt:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@interface ORFloatLEqualc : ORConstraintI<ORFloatLEqualc>
+-(ORFloatLEqualc*)initORFloatLEqualc:(id<ORFloatVar>)x leq:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @interface ORFloatNEqualc : ORConstraintI<ORFloatNEqualc>
 -(ORFloatNEqualc*)initORFloatNEqualc:(id<ORFloatVar>)x neqi:(ORFloat)c;
 -(id<ORFloatVar>) left;

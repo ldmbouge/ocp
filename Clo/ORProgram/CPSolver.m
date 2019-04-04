@@ -1575,10 +1575,12 @@
 -(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
 {
    [self floatGthenImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory floatGThenc:self var:var gt: val]];
 }
 -(void) floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val
 {
    [self floatLEqualImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory floatLEqualc:self var:var leq: val]];
 }
 -(void) floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val
 {

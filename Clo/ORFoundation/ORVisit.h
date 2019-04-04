@@ -194,6 +194,8 @@
 -(void) visitFloatSqrt: (id<ORConstraint>)c;
 -(void) visitFloatUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitFloatEqualc: (id<ORConstraint>)c;
+-(void) visitFloatGThenc: (id<ORFloatGThenc>)c;
+-(void) visitFloatLEqualc: (id<ORFloatLEqualc>)c;
 -(void) visitFloatAssignC: (id<ORConstraint>)c;
 -(void) visitFloatNEqualc: (id<ORConstraint>)c;
 -(void) visitFloatLinearEq: (id<ORConstraint>) c;

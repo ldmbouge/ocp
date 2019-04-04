@@ -278,6 +278,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];
 }
+-(void) visitFloatGThenc: (id<ORFloatGThenc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatGThenc: visit method not defined"];
+}
+-(void) visitFloatLEqualc: (id<ORFloatLEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatLEqualc: visit method not defined"];
+}
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatAssignc: visit method not defined"];

@@ -383,7 +383,15 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitNEqualc: (id<ORNEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatNEqualc: (id<ORFloatNEqualc>)c
 {
    _result = [_into addConstraint:c];
 }
@@ -391,7 +399,15 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatLEqualc: (id<ORFloatLEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitGEqualc: (id<ORGEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatGThenc: (id<ORFloatGThenc>)c
 {
    _result = [_into addConstraint:c];
 }

@@ -369,6 +369,8 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var: (id<ORFloatVar>)x to:(ORFloat)c;
 +(id<ORConstraint>) floatAssign: (id<ORTracker>) model var: (id<ORFloatVar>)x to: (id<ORFloatVar>)y;
 +(id<ORConstraint>) floatEqualc: (id<ORTracker>) model var: (id<ORFloatVar>)x eqc:(ORFloat)c;
++(id<ORConstraint>) floatGThenc: (id<ORTracker>) model var:(id<ORFloatVar>) x gt:(ORFloat)c;
++(id<ORConstraint>) floatLEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x leq:(ORFloat)c;
 +(id<ORConstraint>) floatNEqualc:(id<ORTracker>) model var: (id<ORFloatVar>)x neqc:(ORFloat)c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  neq: (ORFloat) c;

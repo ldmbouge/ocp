@@ -1850,6 +1850,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORConstraint>) floatGThenc: (id<ORTracker>) model var:(id<ORFloatVar>) x gt:(ORFloat)c
+{
+   id<ORConstraint> o = [[ORFloatGThenc alloc] initORFloatGThenc:x gt:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatLEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x leq:(ORFloat)c
+{
+   id<ORConstraint> o = [[ORFloatLEqualc alloc] initORFloatLEqualc:x leq:c];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) floatNEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x neqc:(ORFloat)c
 {
     id<ORConstraint> o = [[ORFloatNEqualc alloc]initORFloatNEqualc:x neqi:c];

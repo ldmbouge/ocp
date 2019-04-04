@@ -130,12 +130,22 @@ enum ORGroupType {
 
 @protocol  ORFloatNEqualc <ORConstraint>
 -(id<ORFloatVar>) left;
--(ORInt) cst;
+-(ORFloat) cst;
+@end
+
+@protocol  ORFloatGThenc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@protocol  ORFloatLEqualc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
 @end
 
 @protocol  ORFloatEqualc <ORConstraint>
 -(id<ORFloatVar>) left;
--(ORInt) cst;
+-(ORFloat) cst;
 @end
 
 @protocol  ORFloatAssignC <ORConstraint>

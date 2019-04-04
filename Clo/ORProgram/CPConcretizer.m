@@ -1306,6 +1306,28 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
+-(void) visitFloatGThenc:(id<ORFloatGThenc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORFloat cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatGTc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatLEqualc:(id<ORFloatLEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORFloat cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatLEQc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatNEqualc:(id<ORFloatNEqualc>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -2652,6 +2674,12 @@
       _gamma[v.getId] = [CPFactory realVar: _engine bounds: [v domain]];
 }
 
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+   if (!_gamma[v.getId])
+      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
+}
+
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    if (_gamma[v.getId] == NULL)
@@ -2676,6 +2704,21 @@
       ORInt lit = [v literal];
       _gamma[v.getId] = [CPFactory reifyView:(id<CPIntVar>) _gamma[mBase.getId] eqi:lit];
    }
+}
+-(void) visitFloatLEqualc:(id<ORFloatLEqualc>)cstr
+{
+   id<CPFloatVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMax:cstr.cst];
+   }];
+}
+-(void) visitFloatGThenc:(id<ORFloatGThenc>)cstr
+{
+   ORFloat nval = fp_next_float(cstr.cst);
+   id<CPFloatVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMin:nval];
+   }];
 }
 
 @end
