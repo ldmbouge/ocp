@@ -216,8 +216,7 @@ ab = [
       'Float/square_8_false-unreach-call',
       'Float/square_8_true-unreach-call',
       'Float/testAbs',
-      'Float/testMultipleAbs',
-      'Float/secureapp'
+      'Float/testMultipleAbs'
 ]
 
 nba = len(sys.argv)
