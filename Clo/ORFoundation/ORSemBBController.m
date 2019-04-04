@@ -172,6 +172,7 @@ extern id<ORRational> GlobalDualBound;
    id<ORCheckpoint> cp = [_tracer captureCheckpoint];
    BBNode* node = [[BBNode alloc] init:k checkpoint:cp];
    BBKey* ov    = [BBKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
+   //BBKey* ov    = [BBKey key:[[_engine objective] dualBound] withDepth:[_tracer level]];
    NSLog(@"START NEW Node");
    NSLog(@"%@",ov);
    NSLog(@"%@", [_engine model]);
@@ -257,7 +258,7 @@ static long __nbPull = 0;
       NSLog(@"%@", _buf);
       if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
-         if([GlobalPrimalBound lt: [[[_engine objective] dualBound] rationalValue] ]){
+         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue] ]){
             /*([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]])) {*/
             BBNode* nd = [_buf extractBest];
             
@@ -279,10 +280,12 @@ static long __nbPull = 0;
             }
          } else {
             NSLog(@"EQUAL BOUND end of program");
+            NSLog(@"%@", [_engine objective]);
             return;
          }
       } else {
          NSLog(@"EMPTY QUEUE end of program");
+         NSLog(@"%@", _buf);
          return;
       }
    } while(true);

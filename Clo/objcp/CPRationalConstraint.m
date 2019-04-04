@@ -770,8 +770,7 @@
    id<ORRational> bound = [_x min];
    @synchronized (self) {
       if ([bound gt: _dualBound]){
-         //_dualBound = nextafterf(bound,+INFINITY);
-         _dualBound = [bound add: [ORRational rationalWith_d:1]];
+         [_dualBound set: bound];
          NSLog(@"dual bound: %@",_dualBound);
       }
    }

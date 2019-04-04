@@ -10,7 +10,7 @@
 #include "fpi.h"
 #import "ORCmdLineArgs.h"
 
-int NB_FLOAT = 3;
+int NB_FLOAT = 2;
 
 #define printFvar(name, var) NSLog(@""name" : [%20.20e, %20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [%20.20e, %20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
 #define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
@@ -60,8 +60,8 @@ void check_it_bb(float x, float y, float z, id<ORRational> ez) {
    float cz = x + y;
    NSLog(@"%20.20e = %20.20e + %20.20e", cz, x, y);
    
-//   if (cz != z)
-//      NSLog(@"WRONG: cz = % 20.20e != z = % 20.20e\n", cz, z);
+   //   if (cz != z)
+   //      NSLog(@"WRONG: cz = % 20.20e != z = % 20.20e\n", cz, z);
    
    mpq_inits(qz, qx, qy, tmp0, tmp1, tmp2, NULL);
    
@@ -74,10 +74,10 @@ void check_it_bb(float x, float y, float z, id<ORRational> ez) {
    NSLog(@"Err: %s", mpq_get_str(NULL, 10, tmp1));
    NSLog(@"Err: %20.20e", mpq_get_d(tmp1));
    NSLog(@"%s (%20.20e) | %20.20e (%20.20e)", mpq_get_str(NULL, 10, qz), mpq_get_d(qz), cz, mpq_get_d(tmp0));
-//   if (mpq_cmp(tmp1, ez.rational) != 0){
-//      NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
-//      NSLog(@"Err found: % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
-//   }
+   //   if (mpq_cmp(tmp1, ez.rational) != 0){
+   //      NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
+   //      NSLog(@"Err found: % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
+   //   }
    mpq_clears(qz, qx, qy, tmp0, tmp1, tmp2, NULL);
 }
 
@@ -145,7 +145,7 @@ void testR(int argc, const char * argv[]) {
          id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
          id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
          [zero release];
-
+         
          [mdl add:[x set: @(45.0f)]];
          //[mdl add:[o set: @(2.43f)]];
          
@@ -165,6 +165,11 @@ void testR(int argc, const char * argv[]) {
          
          [mdl maximize:ez];
          
+         
+         for (float yr = 3.2f; yr <= nb_float(3.2f, NB_FLOAT); yr = nextafterf(yr, +INFINITY)) {
+            NSLog(@"@@@@@@@ %20.20e", yr);
+         }
+         
          NSLog(@"model: %@",mdl);
          id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
          id<ORFloatVarArray> vs = [mdl floatVars];
@@ -173,7 +178,6 @@ void testR(int argc, const char * argv[]) {
          [cp solve:^{
             [cp branchAndBoundSearch:vars out:z do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
                [cp floatSplit:i call:s withVars:x];
-               //[cp floatStatic3WaySplit:i call:s withVars:x];
              }];
             NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
             //NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
