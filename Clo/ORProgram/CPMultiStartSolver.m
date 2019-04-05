@@ -434,15 +434,11 @@
 {
    [[self worker] maxAbsDensSearch:x default:b];
 }
--(void)  floatSplitArrayOrderedByDomSize: (id<ORDisabledFloatVarArray>) x
+-(void)  branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORFloatVar>) z do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
-    [[self worker] floatSplitArrayOrderedByDomSize:x];
+   [[self worker] branchAndBoundSearch: x out:z do:b];
 }
--(void)  branchAndBoundSearch:  (id<ORDisabledFloatVarArray>) x out: (id<ORFloatVar>) z do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
-{
-   [[self worker] brandAndBoundSearch: x out:z do:b];
-}
--(void)  lexicalOrderedSearch: (id<ORDisabledFloatVarArray>) x do:(void(^)(ORUInt,SEL,id<ORDisabledFloatVarArray>))b
+-(void)  lexicalOrderedSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] lexicalOrderedSearch:x do:b];
 }

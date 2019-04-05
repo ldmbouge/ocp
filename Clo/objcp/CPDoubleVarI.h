@@ -19,7 +19,6 @@
 #import <objcp/CPIntVarI.h>
 
 #import <ORFoundation/fpi.h>
-//#include "fpi.h"
 #import "rationalUtilities.h"
 
 #define NB_DOUBLE_BY_E (4.5035996e+15)

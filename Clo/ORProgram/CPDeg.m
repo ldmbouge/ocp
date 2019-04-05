@@ -64,8 +64,8 @@
       maxID = max(maxID,t[k].getId);
    _cv = malloc(sizeof(ORInt)*len);
    _map = malloc(sizeof(ORUInt)*(maxID+1));
-   memset(_cv,sizeof(NSSet*)*len,0);
-   memset(_map,sizeof(ORUInt)*(maxID+1),0);
+   memset(_cv,(ORInt) sizeof(NSSet*)*len,(0));
+   memset(_map,(ORInt) sizeof(ORUInt)*(maxID+1),(0));
    ORInt low = [t low],up = [t up];
    for(ORInt k=low;k <= up;k++) {
       _map[_cvs[k].getId] = k - low;
