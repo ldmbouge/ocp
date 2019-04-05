@@ -61,10 +61,12 @@ PORTABLE_BEGIN
 -(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          floatInterval: (id<ORFloatVar>) var low: (ORFloat) val up: (ORFloat) up;
 -(void)          doubleLthen: (id<ORDoubleVar>) var with: (ORDouble) val;
 -(void)          doubleGthen: (id<ORDoubleVar>) var with: (ORDouble) val;
 -(void)          doubleLEqual: (id<ORDoubleVar>) var with: (ORDouble) val;
 -(void)          doubleGEqual: (id<ORDoubleVar>) var with: (ORDouble) val;
+-(void)          doubleInterval: (id<ORDoubleVar>) var low: (ORDouble) val up: (ORDouble) up;
 
 -(void)          specialSearch: (id<ORDisabledVarArray>) x;
 -(void)          customSearch: (id<ORDisabledVarArray>) x;

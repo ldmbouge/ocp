@@ -391,6 +391,8 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatAssign: (id<ORTracker>) model var: (id<ORFloatVar>)x to: (id<ORFloatVar>)y;
 +(id<ORConstraint>) floatEqualc: (id<ORTracker>) model var: (id<ORFloatVar>)x eqc:(ORFloat)c;
 +(id<ORConstraint>) floatGThenc: (id<ORTracker>) model var:(id<ORFloatVar>) x gt:(ORFloat)c;
++(id<ORConstraint>) floatGEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x geq:(ORFloat)c;
++(id<ORConstraint>) floatLThenc: (id<ORTracker>) model var:(id<ORFloatVar>) x lt:(ORFloat)c;
 +(id<ORConstraint>) floatLEqualc: (id<ORTracker>) model var:(id<ORFloatVar>) x leq:(ORFloat)c;
 +(id<ORConstraint>) floatNEqualc:(id<ORTracker>) model var: (id<ORFloatVar>)x neqc:(ORFloat)c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c;
@@ -456,6 +458,10 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var;
 +(id<ORConstraint>) doubleUnaryMinus:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eqm:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleEqualc: (id<ORTracker>) model var: (id<ORDoubleVar>)x eqc:(ORDouble)c;
++(id<ORConstraint>) doubleGThenc: (id<ORTracker>) model var:(id<ORDoubleVar>) x gt:(ORDouble)c;
++(id<ORConstraint>) doubleGEqualc: (id<ORTracker>) model var:(id<ORDoubleVar>) x geq:(ORDouble)c;
++(id<ORConstraint>) doubleLThenc: (id<ORTracker>) model var:(id<ORDoubleVar>) x lt:(ORDouble)c;
++(id<ORConstraint>) doubleLEqualc: (id<ORTracker>) model var:(id<ORDoubleVar>) x leq:(ORDouble)c;
 +(id<ORConstraint>) doubleNEqualc:(id<ORTracker>) model var: (id<ORDoubleVar>)x neqc:(ORDouble)c;
 +(id<ORConstraint>) doubleAssignC: (id<ORTracker>) model var: (id<ORDoubleVar>)x to:(ORDouble)c;
 +(id<ORConstraint>) doubleAssign: (id<ORTracker>) model var:(id<ORDoubleVar>) x to:(id<ORDoubleVar>) y;

@@ -3074,6 +3074,51 @@
       [left updateMin:nval];
    }];
 }
+-(void) visitFloatGEqualc:(id<ORFloatGEqualc>)cstr
+{
+   id<CPFloatVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMin:cstr.cst];
+   }];
+}
+-(void) visitFloatLThenc:(id<ORFloatLThenc>)cstr
+{
+   ORFloat nval = fp_previous_float(cstr.cst);
+   id<CPFloatVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMax:nval];
+   }];
+}
+-(void) visitDoubleLThenc:(id<ORDoubleLThenc>)cstr
+{
+   ORDouble nval = fp_previous_double(cstr.cst);
+   id<CPDoubleVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMax:nval];
+   }];
+}
+-(void) visitDoubleLEqualc:(id<ORDoubleLEqualc>)cstr
+{
+   id<CPDoubleVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMax:cstr.cst];
+   }];
+}
+-(void) visitDoubleGThenc:(id<ORDoubleGThenc>)cstr
+{
+   ORDouble nval = fp_next_double(cstr.cst);
+   id<CPDoubleVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMin:nval];
+   }];
+}
+-(void) visitDoubleGEqualc:(id<ORDoubleGEqualc>)cstr
+{
+   id<CPDoubleVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMin:cstr.cst];
+   }];
+}
 
 @end
 

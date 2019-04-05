@@ -139,7 +139,17 @@ enum ORGroupType {
 -(ORFloat) cst;
 @end
 
+@protocol  ORFloatLThenc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @protocol  ORFloatLEqualc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@protocol  ORFloatGEqualc <ORConstraint>
 -(id<ORFloatVar>) left;
 -(ORFloat) cst;
 @end
@@ -187,6 +197,26 @@ enum ORGroupType {
 @protocol  ORDoubleEqualc <ORConstraint>
 -(id<ORDoubleVar>) left;
 -(ORDouble) cst;
+@end
+
+@protocol  ORDoubleGThenc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@protocol  ORDoubleLThenc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@protocol  ORDoubleLEqualc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@protocol  ORDoubleGEqualc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
 @end
 
 @protocol ORCast <ORConstraint>
