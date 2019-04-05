@@ -213,7 +213,7 @@ PORTABLE_BEGIN
 +(id<ORRationalVarArray>) rationalVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORRationalVarArray>) rationalVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name;
 +(id<ORRationalVarArray>) rationalVarArray:(id<ORTracker>) tracker range: (id<ORIntRange>) range clo:(id<ORRationalVar>(^)(ORInt)) clo;
-+(id<ORDisabledRationalVarArray>) disabledRationalVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine;
+//+(id<ORDisabledRationalVarArray>) disabledRationalVarArray:(id<ORVarArray>) vars engine:(id<ORSearchEngine>) engine;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORDoubleVarArray>) doubleVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range names: (NSString*) name;
@@ -266,7 +266,6 @@ PORTABLE_BEGIN
 +(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t;
-+(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (PNULLABLE ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (PNULLABLE ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
 +(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (PNULLABLE ORInt2Bool) f of: (ORInt2Expr) e;

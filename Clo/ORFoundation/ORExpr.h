@@ -156,7 +156,6 @@ static ORVType lookup_expr_table[][10] = {
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORRelation>) neg;
--(id<ORRelation>) sqrt;
 -(id<ORRelation>) error;
 -(id<ORRelation>) channel;
 -(id<ORRelation>) land: (id) e;

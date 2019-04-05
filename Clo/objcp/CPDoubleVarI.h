@@ -70,16 +70,16 @@
 -(void) bindError: (id<ORRational>) valError;
 @end
 
-typedef struct  {
-    TRId           _bindEvt;
-    TRId            _minEvt;
-    TRId            _maxEvt;
-    TRId         _boundsEvt;
-    TRId        _bindEvtErr;
-    TRId         _maxEvtErr;
-    TRId         _minEvtErr;
-    TRId      _boundsEvtErr;
-} CPDoubleEventNetwork;
+//typedef struct  {
+//    TRId           _bindEvt;
+//    TRId            _minEvt;
+//    TRId            _maxEvt;
+//    TRId         _boundsEvt;
+//    TRId        _bindEvtErr;
+//    TRId         _maxEvtErr;
+//    TRId         _minEvtErr;
+//    TRId      _boundsEvtErr;
+//} CPDoubleEventNetwork;
 
 @class CPDoubleVarI;
 
@@ -97,7 +97,7 @@ typedef struct  {
     id<ORRational>               _valueError;
     id<CPDoubleDom>          _dom;
     id<CPRationalDom>        _domError;
-    CPDoubleEventNetwork     _net;
+    //CPDoubleEventNetwork     _net;
     CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup;
@@ -146,7 +146,7 @@ static inline int signD(double_cast p){
 static inline float minDoubleBaseOnExponent(double v){
    double_cast v_cast;
    v_cast.f = v;
-   v_cast.parts.mantisa = 1;
+   v_cast.parts.mantissa = 1;
    if(v_cast.f > v){
       return v;
    }
@@ -154,7 +154,7 @@ static inline float minDoubleBaseOnExponent(double v){
 }
 static inline double doubleFromParts(unsigned long mantissa, unsigned int exponent,unsigned int sign){
    double_cast f_cast;
-   f_cast.parts.mantisa = mantissa;
+   f_cast.parts.mantissa = mantissa;
    f_cast.parts.exponent = exponent;
    f_cast.parts.sign = sign;
    return f_cast.f;
@@ -166,11 +166,11 @@ static inline  double cardinalityDV(double xmin, double xmax){
    i_sup.f = xmax;
    if(xmin == xmax) return 1.0;
    if(xmin == -infinity() && xmax == infinity()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
-   if(xmin < 0 && xmax > 0 &&  i_sup.parts.exponent == 0 && i_inf.parts.exponent == 0) return i_inf.parts.mantisa + i_sup.parts.mantisa;
+   if(xmin < 0 && xmax > 0 &&  i_sup.parts.exponent == 0 && i_inf.parts.exponent == 0) return i_inf.parts.mantissa + i_sup.parts.mantissa;
    long double tmp;
    if(xmax <= 0) tmp = (signD(i_inf) * i_inf.parts.exponent - signD(i_sup) * i_sup.parts.exponent);
    else tmp = (signD(i_sup) * i_sup.parts.exponent - signD(i_inf) * i_inf.parts.exponent);
-   long double res = tmp * (NB_DOUBLE_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
+   long double res = tmp * (NB_DOUBLE_BY_E) - i_inf.parts.mantissa + i_sup.parts.mantissa;
    return (res < 0) ? -res : res;
 }
 
@@ -270,7 +270,7 @@ static inline double_interval computeAbsordedIntervalD(CPDoubleVarI* x)
    double_cast m_cast;
    m_cast.f = m;
    e = m_cast.parts.exponent - SD_PRECISION - 1;
-   if(m_cast.parts.mantisa == 0){
+   if(m_cast.parts.mantissa == 0){
       e--;
    }
    if(e < 0){

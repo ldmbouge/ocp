@@ -322,7 +322,6 @@
 -(void) visitExprSqrtI:(id<ORExpr>) e;
 -(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
--(void) visitExprSqrtI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprCstFloatSubI: (id<ORExpr>) e;
 -(void) visitExprCstRationalSubI: (id<ORExpr>) e;

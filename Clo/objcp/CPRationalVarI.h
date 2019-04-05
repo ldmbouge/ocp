@@ -60,13 +60,6 @@
 -(void) bind: (id<ORRational>) val;
 @end
 
-typedef struct  {
-   TRId           _bindEvt;
-   TRId            _minEvt;
-   TRId            _maxEvt;
-   TRId         _boundsEvt;
-} CPRationalEventNetwork;
-
 
 @class CPRationalVarI;
 @protocol CPRationalVarNotifier <NSObject>
@@ -81,7 +74,7 @@ typedef struct  {
    BOOL                     _hasValue;
    id<ORRational>              _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    id<CPRationalDomN>       _dom;
-   CPRationalEventNetwork   _net;
+   //CPRationalEventNetwork   _net;
    CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(id<ORRational>)low up:(id<ORRational>)up;

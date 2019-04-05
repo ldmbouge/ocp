@@ -5,39 +5,96 @@
 /*   floating point constraints                 */
 /*                                              */
 /* copyright Claude Michel                      */
-/*                                              */
+/* Improvements: Laurent Michel  ;-)            */
 /************************************************/
 
 
-
-#ifndef _FPI_H
-#define _FPI_H
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <math.h>
-#include <float.h>
-
-#ifdef __APPLE__
-#include <limits.h>
-#else
-#include <fpu_control.h>
-#include <values.h>
+/* Minimum and maximum values a `signed long long int' can hold.  */
+#ifndef LLONG_MAX
+#   define LLONG_MAX    9223372036854775807LL
+#endif
+#ifndef LLONG_MIN
+#   define LLONG_MIN    (-LLONG_MAX - 1LL)
 #endif
 
-#include <fenv.h>
+/* Maximum value an `unsigned long long int' can hold.  (Minimum is 0.)  */
+#ifndef ULLONG_MAX
+#   define ULLONG_MAX   18446744073709551615ULL
+#endif
 
-#include "fpi_types.h"
+typedef union {
+   short short_nb;
+   int int_nb;
+   long long llong_nb;
+   unsigned short ushort_nb;
+   unsigned int uint_nb;
+   unsigned long long ullong_nb;
+   float float_nb;
+   double double_nb;
+   long double ldouble_nb;
+} fp_number;
+
+typedef long double internal_float;
+typedef long double internal_double;
+
+typedef struct {
+   float inf;
+   float sup;
+} float_interval;
+
+typedef struct {
+   internal_float inf;
+   internal_float sup;
+} internal_float_interval;
+
+typedef struct {
+   double inf;
+   double sup;
+} double_interval;
+
+typedef struct {
+   internal_double inf;
+   internal_double sup;
+} internal_double_interval;
+
+typedef struct {
+   long double inf;
+   long double sup;
+} ldouble_interval;
+
+typedef struct {
+   short inf;
+   short sup;
+} short_interval;
+
+typedef struct {
+   unsigned short inf;
+   unsigned short sup;
+} ushort_interval;
+
+typedef struct {
+   int inf;
+   int sup;
+} int_interval;
+
+typedef struct {
+   unsigned int inf;
+   unsigned int sup;
+} uint_interval;
+
+typedef struct {
+   long long inf;
+   long long sup;
+} llong_interval;
+
+typedef struct {
+   unsigned long long inf;
+   unsigned long long sup;
+} ullong_interval;
 
 #ifdef __APPLE__
 #define isinff(x) isinf(x)
 #define isinfl(x) isinf(x)
-#endif
-
-#ifdef __cplusplus
-extern "C"
-{
 #endif
 
 #ifdef _NO_FPI_
@@ -185,14 +242,14 @@ extern int fpu_lsb(double x);
 extern char *fpu_round_to_string(int fpu_rounding);
 extern char *fpu_precision_to_string(int fpu_precision);
 
-extern float fpi_halfpif_inf, fpi_halfpif_sup, fpi_pif_inf, fpi_pif_sup, 
-  fpi_threequaterpif_inf, fpi_threequaterpif_sup, fpi_twopif_inf, fpi_twopif_sup;
+extern float fpi_halfpif_inf, fpi_halfpif_sup, fpi_pif_inf, fpi_pif_sup,
+fpi_threequaterpif_inf, fpi_threequaterpif_sup, fpi_twopif_inf, fpi_twopif_sup;
 
-extern double fpi_halfpid_inf, fpi_halfpid_sup, fpi_pid_inf, fpi_pid_sup, 
-  fpi_threequaterpid_inf, fpi_threequaterpid_sup, fpi_twopid_inf, fpi_twopid_sup;
+extern double fpi_halfpid_inf, fpi_halfpid_sup, fpi_pid_inf, fpi_pid_sup,
+fpi_threequaterpid_inf, fpi_threequaterpid_sup, fpi_twopid_inf, fpi_twopid_sup;
 
-extern long double fpi_halfpil_inf, fpi_halfpil_sup, fpi_pil_inf, fpi_pil_sup, 
-  fpi_threequaterpil_inf, fpi_threequaterpil_sup, fpi_twopil_inf, fpi_twopil_sup;
+extern long double fpi_halfpil_inf, fpi_halfpil_sup, fpi_pil_inf, fpi_pil_sup,
+fpi_threequaterpil_inf, fpi_threequaterpil_sup, fpi_twopil_inf, fpi_twopil_sup;
 
 extern unsigned long long fpi_ScaleTo2Pi(long double *x_base_inf, long double *x_base_sup, long double x);
 extern unsigned long long fpi_GetTanStartPeriod(long double *x_base_inf, long double *x_base_sup, long double x);
@@ -251,9 +308,9 @@ extern double fpi_sqrt_sse(double x);
 /* FP numbers to integer conversions (subject to rounding mode) (use SSE) */
 
 extern short fpi_float_to_short_sse(float x);
-extern unsigned short fpi_float_to_ushort_sse(float x); 
+extern unsigned short fpi_float_to_ushort_sse(float x);
 extern short fpi_double_to_short_sse(double x);
-extern unsigned short fpi_double_to_ushort_sse(double x); 
+extern unsigned short fpi_double_to_ushort_sse(double x);
 extern short fpi_ldouble_to_short_sse(long double x);
 extern unsigned short fpi_ldouble_to_ushort_sse(long double x);
 extern int fpi_float_to_int_sse(float x);
@@ -272,81 +329,85 @@ extern unsigned long long int fpi_ldouble_to_ullong_sse(long double x);
 
 
 
- 
 
 
- 
+
+
 extern void fpi_narrowf(float_interval *Result, float_interval *new_X, int *change);
 extern void fpi_narrowd(double_interval *Result, double_interval *new_X, int *change);
 extern void fpi_narrowl(ldouble_interval *Result, ldouble_interval *new_X, int *change);
 
- 
+
 extern void fpi_narrowpercentf(float_interval *Result, float_interval *new_X, int *change, double percent, double *reduced_percent);
 extern void fpi_narrowpercentd(double_interval *Result, double_interval *new_X, int *change, double percent, double *reduced_percent);
 extern void fpi_narrowpercentl(ldouble_interval *Result, ldouble_interval *new_X, int *change, double percent, double *reduced_percent);
 
 
- 
+
+extern void fpi_narrowpercentboundf(float_interval *Result, float_interval *new_X, int *change, double percent, double *reduced_percent);
+extern void fpi_narrowpercentboundd(double_interval *Result, double_interval *new_X, int *change, double percent, double *reduced_percent);
+extern void fpi_narrowpercentboundl(ldouble_interval *Result, ldouble_interval *new_X, int *change, double percent, double *reduced_percent);
+
 extern void fpi_equalf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *Y);
 extern void fpi_equald(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *Y);
 extern void fpi_equall(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *Y);
 
- 
+
 extern void fpi_lessthanf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *Y);
 extern void fpi_lessthand(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *Y);
 extern void fpi_lessthanl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *Y);
 
- 
+
 extern void fpi_lessthan_invf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X);
 extern void fpi_lessthan_invd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *X);
 extern void fpi_lessthan_invl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *X);
 
- 
+
 extern void fpi_morethanf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *Y);
 extern void fpi_morethand(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *Y);
 extern void fpi_morethanl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *Y);
 
- 
+
 extern void fpi_morethan_invf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X);
 extern void fpi_morethan_invd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *X);
 extern void fpi_morethan_invl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *X);
 
- 
+
 extern void fpi_lesseqf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *Y);
 extern void fpi_lesseqd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *Y);
 extern void fpi_lesseql(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *Y);
 
- 
+
 extern void fpi_lesseq_invf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X);
 extern void fpi_lesseq_invd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *X);
 extern void fpi_lesseq_invl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *X);
 
- 
+
 extern void fpi_moreeqf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *Y);
 extern void fpi_moreeqd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *Y);
 extern void fpi_moreeql(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *Y);
 
- 
+
 extern void fpi_moreeq_invf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X);
 extern void fpi_moreeq_invd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *X);
 extern void fpi_moreeq_invl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *X);
 
- 
+
 extern void fpi_noteqf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X, float_interval *Y);
 extern void fpi_noteqd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *X, double_interval *Y);
 extern void fpi_noteql(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern void fpi_fabsf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X);
 extern void fpi_fabsd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *X);
 extern void fpi_fabsl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *X);
 
- 
+
 extern void fpi_fabs_invf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *Y);
 extern void fpi_fabs_invd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *Y);
 extern void fpi_fabs_invl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *Y);
 
- 
+
 extern void fpi_minusf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X);
 extern void fpi_minusd(int fpu_precision, int fpu_rounding, double_interval *Result, double_interval *X);
 extern void fpi_minusl(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *X);
@@ -354,26 +415,26 @@ extern void fpi_minusl(int fpu_precision, int fpu_rounding, ldouble_interval *Re
 
 
 
- 
 
 
-    
+
+
 extern void fpi_ftod(int fpu_precision, int fpu_rounding, double_interval *Result, float_interval *X);
-extern void fpi_ftod_inv(int fpu_precision, int fpu_rounding, float_interval *Result, double_interval *Y);  
+extern void fpi_ftod_inv(int fpu_precision, int fpu_rounding, float_interval *Result, double_interval *Y);
 extern void fpi_ftol(int fpu_precision, int fpu_rounding, ldouble_interval *Result, float_interval *X);
-extern void fpi_ftol_inv(int fpu_precision, int fpu_rounding, float_interval *Result, ldouble_interval *Y);    
+extern void fpi_ftol_inv(int fpu_precision, int fpu_rounding, float_interval *Result, ldouble_interval *Y);
 extern void fpi_dtof(int fpu_precision, int fpu_rounding, float_interval *Result, double_interval *X);
-extern void fpi_dtof_inv(int fpu_precision, int fpu_rounding, double_interval *Result, float_interval *Y);    
+extern void fpi_dtof_inv(int fpu_precision, int fpu_rounding, double_interval *Result, float_interval *Y);
 extern void fpi_dtol(int fpu_precision, int fpu_rounding, ldouble_interval *Result, double_interval *X);
-extern void fpi_dtol_inv(int fpu_precision, int fpu_rounding, double_interval *Result, ldouble_interval *Y);    
+extern void fpi_dtol_inv(int fpu_precision, int fpu_rounding, double_interval *Result, ldouble_interval *Y);
 extern void fpi_ltof(int fpu_precision, int fpu_rounding, float_interval *Result, ldouble_interval *X);
-extern void fpi_ltof_inv(int fpu_precision, int fpu_rounding, ldouble_interval *Result, float_interval *Y);  
+extern void fpi_ltof_inv(int fpu_precision, int fpu_rounding, ldouble_interval *Result, float_interval *Y);
 extern void fpi_ltod(int fpu_precision, int fpu_rounding, double_interval *Result, ldouble_interval *X);
-extern void fpi_ltod_inv(int fpu_precision, int fpu_rounding, ldouble_interval *Result, double_interval *Y);    
+extern void fpi_ltod_inv(int fpu_precision, int fpu_rounding, ldouble_interval *Result, double_interval *Y);
 
 
 
- 
+
 
 
 
@@ -386,7 +447,7 @@ extern void fpi_float_to_short_inv(int fpu_precision, int fpu_rounding, float_in
 extern void fpi_short_to_float(int fpu_precision, int fpu_rounding, float_interval *Result, short_interval *X);
 
 extern void fpi_short_to_float_inv(int fpu_precision, int fpu_rounding, short_interval *Result, float_interval *Y);
- 
+
 
 
 
@@ -397,7 +458,7 @@ extern void fpi_double_to_short_inv(int fpu_precision, int fpu_rounding, double_
 extern void fpi_short_to_double(int fpu_precision, int fpu_rounding, double_interval *Result, short_interval *X);
 
 extern void fpi_short_to_double_inv(int fpu_precision, int fpu_rounding, short_interval *Result, double_interval *Y);
- 
+
 
 
 
@@ -408,7 +469,7 @@ extern void fpi_ldouble_to_short_inv(int fpu_precision, int fpu_rounding, ldoubl
 extern void fpi_short_to_ldouble(int fpu_precision, int fpu_rounding, ldouble_interval *Result, short_interval *X);
 
 extern void fpi_short_to_ldouble_inv(int fpu_precision, int fpu_rounding, short_interval *Result, ldouble_interval *Y);
- 
+
 
 
 
@@ -419,7 +480,7 @@ extern void fpi_float_to_int_inv(int fpu_precision, int fpu_rounding, float_inte
 extern void fpi_int_to_float(int fpu_precision, int fpu_rounding, float_interval *Result, int_interval *X);
 
 extern void fpi_int_to_float_inv(int fpu_precision, int fpu_rounding, int_interval *Result, float_interval *Y);
- 
+
 
 
 
@@ -430,7 +491,7 @@ extern void fpi_double_to_int_inv(int fpu_precision, int fpu_rounding, double_in
 extern void fpi_int_to_double(int fpu_precision, int fpu_rounding, double_interval *Result, int_interval *X);
 
 extern void fpi_int_to_double_inv(int fpu_precision, int fpu_rounding, int_interval *Result, double_interval *Y);
- 
+
 
 
 
@@ -441,7 +502,7 @@ extern void fpi_ldouble_to_int_inv(int fpu_precision, int fpu_rounding, ldouble_
 extern void fpi_int_to_ldouble(int fpu_precision, int fpu_rounding, ldouble_interval *Result, int_interval *X);
 
 extern void fpi_int_to_ldouble_inv(int fpu_precision, int fpu_rounding, int_interval *Result, ldouble_interval *Y);
- 
+
 
 
 
@@ -452,7 +513,7 @@ extern void fpi_float_to_llong_inv(int fpu_precision, int fpu_rounding, float_in
 extern void fpi_llong_to_float(int fpu_precision, int fpu_rounding, float_interval *Result, llong_interval *X);
 
 extern void fpi_llong_to_float_inv(int fpu_precision, int fpu_rounding, llong_interval *Result, float_interval *Y);
- 
+
 
 
 
@@ -463,7 +524,7 @@ extern void fpi_double_to_llong_inv(int fpu_precision, int fpu_rounding, double_
 extern void fpi_llong_to_double(int fpu_precision, int fpu_rounding, double_interval *Result, llong_interval *X);
 
 extern void fpi_llong_to_double_inv(int fpu_precision, int fpu_rounding, llong_interval *Result, double_interval *Y);
- 
+
 
 
 
@@ -474,7 +535,7 @@ extern void fpi_ldouble_to_llong_inv(int fpu_precision, int fpu_rounding, ldoubl
 extern void fpi_llong_to_ldouble(int fpu_precision, int fpu_rounding, ldouble_interval *Result, llong_interval *X);
 
 extern void fpi_llong_to_ldouble_inv(int fpu_precision, int fpu_rounding, llong_interval *Result, ldouble_interval *Y);
- 
+
 
 
 
@@ -486,7 +547,7 @@ extern void fpi_float_to_ushort_inv(int fpu_precision, int fpu_rounding, float_i
 extern void fpi_ushort_to_float(int fpu_precision, int fpu_rounding, float_interval *Result, ushort_interval *X);
 
 extern void fpi_ushort_to_float_inv(int fpu_precision, int fpu_rounding, ushort_interval *Result, float_interval *Y);
- 
+
 
 
 
@@ -497,7 +558,7 @@ extern void fpi_double_to_ushort_inv(int fpu_precision, int fpu_rounding, double
 extern void fpi_ushort_to_double(int fpu_precision, int fpu_rounding, double_interval *Result, ushort_interval *X);
 
 extern void fpi_ushort_to_double_inv(int fpu_precision, int fpu_rounding, ushort_interval *Result, double_interval *Y);
- 
+
 
 
 
@@ -508,7 +569,7 @@ extern void fpi_ldouble_to_ushort_inv(int fpu_precision, int fpu_rounding, ldoub
 extern void fpi_ushort_to_ldouble(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ushort_interval *X);
 
 extern void fpi_ushort_to_ldouble_inv(int fpu_precision, int fpu_rounding, ushort_interval *Result, ldouble_interval *Y);
- 
+
 
 
 
@@ -519,7 +580,7 @@ extern void fpi_float_to_uint_inv(int fpu_precision, int fpu_rounding, float_int
 extern void fpi_uint_to_float(int fpu_precision, int fpu_rounding, float_interval *Result, uint_interval *X);
 
 extern void fpi_uint_to_float_inv(int fpu_precision, int fpu_rounding, uint_interval *Result, float_interval *Y);
- 
+
 
 
 
@@ -530,7 +591,7 @@ extern void fpi_double_to_uint_inv(int fpu_precision, int fpu_rounding, double_i
 extern void fpi_uint_to_double(int fpu_precision, int fpu_rounding, double_interval *Result, uint_interval *X);
 
 extern void fpi_uint_to_double_inv(int fpu_precision, int fpu_rounding, uint_interval *Result, double_interval *Y);
- 
+
 
 
 
@@ -541,7 +602,7 @@ extern void fpi_ldouble_to_uint_inv(int fpu_precision, int fpu_rounding, ldouble
 extern void fpi_uint_to_ldouble(int fpu_precision, int fpu_rounding, ldouble_interval *Result, uint_interval *X);
 
 extern void fpi_uint_to_ldouble_inv(int fpu_precision, int fpu_rounding, uint_interval *Result, ldouble_interval *Y);
- 
+
 
 
 
@@ -552,7 +613,7 @@ extern void fpi_float_to_ullong_inv(int fpu_precision, int fpu_rounding, float_i
 extern void fpi_ullong_to_float(int fpu_precision, int fpu_rounding, float_interval *Result, ullong_interval *X);
 
 extern void fpi_ullong_to_float_inv(int fpu_precision, int fpu_rounding, ullong_interval *Result, float_interval *Y);
- 
+
 
 
 
@@ -563,7 +624,7 @@ extern void fpi_double_to_ullong_inv(int fpu_precision, int fpu_rounding, double
 extern void fpi_ullong_to_double(int fpu_precision, int fpu_rounding, double_interval *Result, ullong_interval *X);
 
 extern void fpi_ullong_to_double_inv(int fpu_precision, int fpu_rounding, ullong_interval *Result, double_interval *Y);
- 
+
 
 
 
@@ -574,11 +635,11 @@ extern void fpi_ldouble_to_ullong_inv(int fpu_precision, int fpu_rounding, ldoub
 extern void fpi_ullong_to_ldouble(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ullong_interval *X);
 
 extern void fpi_ullong_to_ldouble_inv(int fpu_precision, int fpu_rounding, ullong_interval *Result, ldouble_interval *Y);
- 
 
 
 
- 
+
+
 
 
 
@@ -610,7 +671,7 @@ extern void fpi_cosl_inv(int fpu_precision, int fpu_rounding, ldouble_interval *
 
 
 
- 
+
 
 
 extern void fpi_addf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X, float_interval *Y);
@@ -666,7 +727,7 @@ extern void fpi_divyl_inv(int fpu_precision, int fpu_rounding, ldouble_interval 
 
 
 
- 
+
 
 
 
@@ -694,76 +755,76 @@ extern void fpi_xx_xyl_inv(int fpu_precision, int fpu_rounding, ldouble_interval
 
 
 
- 
 
 
 
- 
+
+
 extern int fpi_is_true_setf(float_interval *X, float_interval *Y);
 extern int fpi_is_true_setd(double_interval *X, double_interval *Y);
 extern int fpi_is_true_setl(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_false_setf(float_interval *X, float_interval *Y);
 extern int fpi_is_false_setd(double_interval *X, double_interval *Y);
 extern int fpi_is_false_setl(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_true_equalf(float_interval *X, float_interval *Y);
 extern int fpi_is_true_equald(double_interval *X, double_interval *Y);
 extern int fpi_is_true_equall(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_false_equalf(float_interval *X, float_interval *Y);
 extern int fpi_is_false_equald(double_interval *X, double_interval *Y);
 extern int fpi_is_false_equall(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_true_lessthanf(float_interval *X, float_interval *Y);
 extern int fpi_is_true_lessthand(double_interval *X, double_interval *Y);
 extern int fpi_is_true_lessthanl(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_false_lessthanf(float_interval *X, float_interval *Y);
 extern int fpi_is_false_lessthand(double_interval *X, double_interval *Y);
 extern int fpi_is_false_lessthanl(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_true_morethanf(float_interval *X, float_interval *Y);
 extern int fpi_is_true_morethand(double_interval *X, double_interval *Y);
 extern int fpi_is_true_morethanl(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_false_morethanf(float_interval *X, float_interval *Y);
 extern int fpi_is_false_morethand(double_interval *X, double_interval *Y);
 extern int fpi_is_false_morethanl(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_true_lesseqf(float_interval *X, float_interval *Y);
 extern int fpi_is_true_lesseqd(double_interval *X, double_interval *Y);
 extern int fpi_is_true_lesseql(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_false_lesseqf(float_interval *X, float_interval *Y);
 extern int fpi_is_false_lesseqd(double_interval *X, double_interval *Y);
 extern int fpi_is_false_lesseql(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_true_moreeqf(float_interval *X, float_interval *Y);
 extern int fpi_is_true_moreeqd(double_interval *X, double_interval *Y);
 extern int fpi_is_true_moreeql(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_false_moreeqf(float_interval *X, float_interval *Y);
 extern int fpi_is_false_moreeqd(double_interval *X, double_interval *Y);
 extern int fpi_is_false_moreeql(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_true_noteqf(float_interval *X, float_interval *Y);
 extern int fpi_is_true_noteqd(double_interval *X, double_interval *Y);
 extern int fpi_is_true_noteql(ldouble_interval *X, ldouble_interval *Y);
 
- 
+
 extern int fpi_is_false_noteqf(float_interval *X, float_interval *Y);
 extern int fpi_is_false_noteqd(double_interval *X, double_interval *Y);
 extern int fpi_is_false_noteql(ldouble_interval *X, ldouble_interval *Y);
@@ -772,7 +833,7 @@ extern int fpi_is_false_noteql(ldouble_interval *X, ldouble_interval *Y);
 
 
 
- 
+
 
 
 extern void fpi_logf(int fpu_precision, int fpu_rounding, float_interval *Result, float_interval *X);
@@ -817,12 +878,12 @@ extern void init_asin(void);
 
 
 
- 
+
 extern float fpi_min_asinf(int fpu_precision, int fpu_rounding);
 extern double fpi_min_asind(int fpu_precision, int fpu_rounding);
 extern long double fpi_min_asinl(int fpu_precision, int fpu_rounding);
-   
- 
+
+
 extern float fpi_max_asinf(int fpu_precision, int fpu_rounding);
 extern double fpi_max_asind(int fpu_precision, int fpu_rounding);
 extern long double fpi_max_asinl(int fpu_precision, int fpu_rounding);
@@ -834,7 +895,7 @@ extern void fpi_asinl_inv(int fpu_precision, int fpu_rounding, ldouble_interval 
 
 
 
- 
+
 
 
 
@@ -857,12 +918,12 @@ extern void init_atan(void);
 
 
 
- 
+
 extern float fpi_min_atanf(int fpu_precision, int fpu_rounding);
 extern double fpi_min_atand(int fpu_precision, int fpu_rounding);
 extern long double fpi_min_atanl(int fpu_precision, int fpu_rounding);
-   
- 
+
+
 extern float fpi_max_atanf(int fpu_precision, int fpu_rounding);
 extern double fpi_max_atand(int fpu_precision, int fpu_rounding);
 extern long double fpi_max_atanl(int fpu_precision, int fpu_rounding);
@@ -871,14 +932,6 @@ extern void fpi_atanf_inv(int fpu_precision, int fpu_rounding, float_interval *R
 extern void fpi_atand_inv(int fpu_precision, int fpu_rounding, double_interval *Result, ldouble_interval *Y);
 extern void fpi_atanl_inv(int fpu_precision, int fpu_rounding, ldouble_interval *Result, ldouble_interval *Y);
 
-
-
 #ifdef _NO_FPI_
 #pragma GCC visibility pop
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
 #endif

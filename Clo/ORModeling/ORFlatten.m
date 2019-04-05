@@ -419,6 +419,10 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatGEqualc: (id<ORFloatGEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitGEqualc: (id<ORGEqualc>)c
 {
    _result = [_into addConstraint:c];

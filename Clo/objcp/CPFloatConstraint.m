@@ -540,7 +540,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       float_interval xTmp = makeFloatInterval(x.inf, x.sup);
       fpi_setf(_precision, _rounding, &xTmp, &y);
       
-      inter = intersection(x, xTmp, 0.0f);
+      inter = intersection(_x, x, xTmp, 0.0f);
       interError = [ex proj_inter:ey];
       
       if(inter.changed)
@@ -1001,13 +1001,13 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       changed = false;
       zTemp = z;
       fpi_sqrtf(_precision, _rounding, &zTemp, &x);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_sqrtf_inv(_precision, _rounding, &xTemp, &z);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       

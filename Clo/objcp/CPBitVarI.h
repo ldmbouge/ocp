@@ -126,6 +126,12 @@
 // Class methods
 +(CPBitVarI*)   initCPBitVar: (id<CPEngine>)cp low:(int)low up:(int)up len:(ORUInt)len;
 +(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)cp withLow:(ORUInt *)low andUp:(ORUInt *)up andLen:(ORUInt)len;
+
+-(ORFloat) getVSIDSCount;
+-(void) incrementActivity:(ORUInt)i;
+-(void) reduceVSIDS;
+-(ORFloat) getVSIDSActivity:(ORUInt)i;
+
 @end
 
 

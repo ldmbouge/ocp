@@ -1347,6 +1347,17 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitFloatGEqualc:(id<ORFloatGEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORFloat cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatGEQc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatNEqualc:(id<ORFloatNEqualc>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {

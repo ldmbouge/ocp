@@ -496,7 +496,7 @@ double_interval _yi;
       double_interval xTmp = makeDoubleInterval(x.inf, x.sup);
       fpi_set(_precision, _rounding, &xTmp, &y);
       
-      inter = intersectionD(x, xTmp, 0.0f);
+      inter = intersectionD(_x, x, xTmp, 0.0f);
       interError = [ex proj_inter:ey];
       
       

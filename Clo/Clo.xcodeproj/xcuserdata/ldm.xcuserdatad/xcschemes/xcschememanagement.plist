@@ -17,11 +17,6 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
-		<key>AFA_SHA.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>156</integer>
-		</dict>
 		<key>ATPTW.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -371,16 +366,6 @@
 			<key>orderHint</key>
 			<integer>120</integer>
 		</dict>
-		<key>TASCA-Keeloq.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>157</integer>
-		</dict>
-		<key>TASCA-Keeloq.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>158</integer>
-		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -726,7 +711,8 @@
 =======
 		<dict>
 			<key>orderHint</key>
-			<integer>155</integer>
+			<integer>195</integer>
+>>>>>>> old_fperror/fperror
 		</dict>
 		<key>dxAES.xcscheme</key>
 		<dict>
@@ -2276,11 +2262,6 @@
 			<true/>
 		</dict>
 		<key>5BFF681F1860D98E00B50286</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>68D2FB61215D488600276240</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -68,16 +68,16 @@
 
 @end
 
-typedef struct  {
-   TRId           _bindEvt;
-   TRId            _minEvt;
-   TRId            _maxEvt;
-   TRId         _boundsEvt;
-   TRId        _bindEvtErr;
-   TRId         _maxEvtErr;
-   TRId         _minEvtErr;
-   TRId      _boundsEvtErr;
-} CPFloatEventNetwork;
+//typedef struct  {
+//   TRId           _bindEvt;
+//   TRId            _minEvt;
+//   TRId            _maxEvt;
+//   TRId         _boundsEvt;
+//   TRId        _bindEvtErr;
+//   TRId         _maxEvtErr;
+//   TRId         _minEvtErr;
+//   TRId      _boundsEvtErr;
+//} CPFloatEventNetwork;
 
 
 @class CPFloatVarI;
@@ -95,7 +95,7 @@ typedef struct  {
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    id<ORRational>              _valueError;
    id<CPRationalDom>     _domError;
-   CPFloatEventNetwork      _net;
+   //CPFloatEventNetwork      _net;
    CPMultiCast*             _recv;
 @public
    id<CPFloatDom>            _dom;
@@ -178,11 +178,11 @@ static inline double cardinalityV(float xmin, float xmax){
    i_sup.f = xmax;
    if(xmin == xmax) return 1.0;
    if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
-   if(xmin < 0 && xmax > 0 &&  i_sup.parts.exponent == 0 && i_inf.parts.exponent == 0) return i_inf.parts.mantisa + i_sup.parts.mantisa;
+   if(xmin < 0 && xmax > 0 &&  i_sup.parts.exponent == 0 && i_inf.parts.exponent == 0) return i_inf.parts.mantissa + i_sup.parts.mantissa;
    double tmp;
    if(xmax <= 0) tmp = (sign(i_inf) * i_inf.parts.exponent - sign(i_sup) * i_sup.parts.exponent);
    else tmp = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent);
-   double res = tmp * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
+   double res = tmp * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantissa + i_sup.parts.mantissa;
    return (res < 0) ? -res : res;
 }
 

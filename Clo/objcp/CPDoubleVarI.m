@@ -21,6 +21,11 @@ typedef struct  {
    TRId            _minEvt[2];
    TRId            _maxEvt[2];
    TRId         _boundsEvt[2];
+   TRId        _bindEvtErr;
+   TRId         _maxEvtErr;
+   TRId         _minEvtErr;
+   TRId      _boundsEvtErr;
+
 } CPDoubleEventNetwork;
 
 /*****************************************************************************************/
@@ -946,12 +951,9 @@ return self;
 - (id<ORRational> )errorValue {
    return [[ORRational alloc] init];
 }
-- (void)visit:(ORVisitor *)visitor
-{
-}
 - (void)visit:(id<CPVisitor>)visitor
 {
-[((id)visitor) applyDoubleVar:self];
+   [((id)visitor) applyDoubleVar:self];
 }
 
 @end

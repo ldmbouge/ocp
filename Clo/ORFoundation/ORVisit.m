@@ -302,6 +302,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLEqualc: visit method not defined"];
 }
+-(void) visitFloatGEqualc: (id<ORFloatGEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatLEqualc: visit method not defined"];
+}
+-(void) c: (id<ORFloatLEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatLEqualc: visit method not defined"];
+}
 -(void) visitRationalEqualc: (id<ORRationalEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RationalEqualc: visit method not defined"];
@@ -1166,10 +1174,6 @@
 -(void) visitExprNegateI:(id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"]; 
-}
--(void) visitExprSqrtI:(id<ORExpr>) e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "ExprSqrtI: visit method not defined"];
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {

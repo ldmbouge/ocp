@@ -1340,11 +1340,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORExpr> o = [[ORExprNegateI alloc] initORNegateI:op];
    return [self validate:o onError:"No CP tracker in negate Expression" track:t];
 }
-+(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t
-{
-   id<ORExpr> o = [[ORExprSqrtI alloc] initORSqrtI:op];
-   return [self validate:o onError:"No CP tracker in negate Expression" track:t];
-}
 +(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    ORExprSumI* o = [[ORExprSumI alloc] init: tracker over: S suchThat: f of: e];

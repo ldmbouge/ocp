@@ -130,8 +130,11 @@ typedef struct  {
    TRId            _minEvt[2];
    TRId            _maxEvt[2];
    TRId         _boundsEvt[2];
+   TRId        _bindEvtErr;
+   TRId         _maxEvtErr;
+   TRId         _minEvtErr;
+   TRId      _boundsEvtErr;
 } CPFloatEventNetwork;
-
 
 static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
 {
@@ -145,10 +148,10 @@ static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
 
 static void deallocNetwork(CPFloatEventNetwork* net)
 {
-    freeList(net->_bindEvt);
-    freeList(net->_minEvt);
-    freeList(net->_maxEvt);
-    freeList(net->_boundsEvt);
+    freeList(net->_bindEvt[0]);
+    freeList(net->_minEvt[0]);
+    freeList(net->_maxEvt[0]);
+    freeList(net->_boundsEvt[0]);
 }
 
 static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
@@ -160,7 +163,9 @@ collectList(net->_boundsEvt[0],rv);
 return rv;
 }
 
-@implementation CPFloatVarI
+@implementation CPFloatVarI{
+   CPFloatEventNetwork      _net;
+}
 
 -(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup
 {

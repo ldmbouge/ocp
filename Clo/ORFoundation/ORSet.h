@@ -61,7 +61,6 @@
 -(NSString*)description;
 @end
 
-<<<<<<< HEAD
 @protocol ORRationalRange
 -(id<ORRational>)low;
 -(id<ORRational>)up;
@@ -70,8 +69,6 @@
 -(NSString*)description;
 @end
 
-=======
->>>>>>> d2922fe381f5746373d3ecaa36db02eaec7077c9
 @protocol ORDoubleRange
 -(ORDouble)low;
 -(ORDouble)up;

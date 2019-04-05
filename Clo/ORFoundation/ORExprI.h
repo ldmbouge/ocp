@@ -528,18 +528,6 @@
 -(void)visit:(ORVisitor*)v;
 @end
 
-@interface ORExprSqrtI : ORExprLogiqueI<ORRelation,NSCoding> {
-   id<ORExpr> _op;
-}
--(id<ORExpr>)initORSqrtI:(id<ORExpr>)op;
--(ORInt)min;
--(ORInt)max;
--(ORExprI*) operand;
--(NSString*)description;
--(void)visit:(ORVisitor*)v;
-@end
-
-
 @interface ORExprVarSubI : ORExprI<ORExpr,NSCoding> {
    id<ORIntVarArray> _array;
    ORExprI*          _index;
