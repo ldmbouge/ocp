@@ -1,4 +1,4 @@
-/************************************************************************
+ /************************************************************************
  Mozilla Public License
  
  Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
@@ -35,13 +35,13 @@ typedef struct ULRep ULRep;
     TRUInt*         _low;
     TRUInt*         _up;
     ORUInt    _wordLength;
-@private
     ORUInt    _bitLength;
-    ORBool     _learning;
+@private
+//    ORBool     _learning;
     TRUInt          _freebits;
     TRUInt*         _min;
     TRUInt*         _max;
-    TRUInt*         _levels;  //tracks at what level in the search that a bit was set
+//    TRUInt*         _levels; //tracks at what level in the search that a bit was set
 }
 -(CPBitArrayDom*)       initWithLength: (int) len withEngine:(id<CPEngine>)engine withTrail:(id<ORTrail>) tr;
 -(CPBitArrayDom*)       initWithBitPat: (int) len withLow: (ORUInt*) low andUp:(ORUInt*) up andEngine:(id<CPEngine>)engine andTrail:(id<ORTrail>)tr;
@@ -101,6 +101,10 @@ static inline ULRep getULDomRep(CPBitArrayDom* dom)
 static inline ORUInt getWordLength(CPBitArrayDom* dom)
 {
    return dom->_wordLength;
+}
+static inline ORUInt getBitLength(CPBitArrayDom* dom)
+{
+    return dom->_bitLength;
 }
 static inline ORBool DomBitFree(CPBitArrayDom* dom,ORUInt idx)
 {

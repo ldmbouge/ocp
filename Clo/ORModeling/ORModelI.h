@@ -50,6 +50,7 @@
                          onObjective:(void(^)(id<ORObject>))doObjective;
 -(id<ORObjectiveFunction>)objective;
 -(id<ORIntVarArray>)intVars;
+-(id<ORFloatVarArray>)floatVars;
 -(id<ORRealVarArray>)realVars;
 -(id<ORBitVarArray>)bitVars;
 -(NSArray*) variables;

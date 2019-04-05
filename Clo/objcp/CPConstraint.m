@@ -756,6 +756,16 @@
    id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
    return [self floatGT:x to:cvar];
 }
++(id<CPConstraint>) floatGEQc: (id<CPFloatVar>) x to:(ORFloat) c
+{
+   id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
+   return [self floatGEQ:x to:cvar];
+}
++(id<CPConstraint>) floatLEQc: (id<CPFloatVar>) x to:(ORFloat) c
+{
+   id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
+   return [self floatLEQ:x to:cvar];
+}
 +(id<CPConstraint>) floatLT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
    id<CPConstraint> o = [[CPFloatLT alloc] init:x lt:y];
@@ -777,6 +787,24 @@
 +(id<CPConstraint>) floatGEQ: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
    id<CPConstraint> o = [[CPFloatGEQ alloc] init:x geq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatAbs:(id<CPFloatVar>) x eq:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatAbs alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatSqrt:(id<CPFloatVar>) x eq:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatSqrt alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatUnaryMinus alloc] init:x eqm:y];
    [[x tracker] trackMutable:o];
    return o;
 }
@@ -1051,6 +1079,12 @@
 {
    id<CPConstraint> o = [[CPFloatReifyLThenc alloc] initCPReifyLThenc: b when: x lti: i];
    [[x tracker] trackMutable: o];
+   return o;
+}
++(id<CPConstraint>) floatCast: (id<CPFloatVar>) res eq:(id<CPDoubleVar>) initial
+{
+   id<CPConstraint> o = [[CPFloatCast alloc] init:res equals:initial];
+   [[res tracker] trackMutable:o];
    return o;
 }
 +(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x
@@ -1443,7 +1477,30 @@
 
 
 @implementation CPFactory (ORDouble)
-
++(id<CPConstraint>) doubleAbs:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleAbs alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleSqrt:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleSqrt alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleUnaryMinus:(id<CPDoubleVar>) x eqm:(id<CPDoubleVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleUnaryMinus alloc] init:x eqm:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleCast: (id<CPDoubleVar>) res eq:(id<CPFloatVar>) initial
+{
+   id<CPConstraint> o = [[CPDoubleCast alloc] init:res equals:initial];
+   [[res tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) doubleAssign: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
    id<CPConstraint> o = [[CPDoubleAssign alloc] init:x set:y];

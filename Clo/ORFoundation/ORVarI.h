@@ -21,6 +21,8 @@
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker bounds: (id<ORIntRange>) domain;
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain name:(NSString*) name;
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker bounds: (id<ORIntRange>) domain name:(NSString*) name;
 -(id<ORIntRange>) domain;
 -(ORInt) value;
 -(ORInt)scale;
@@ -54,8 +56,10 @@
 
 @interface ORRealVarI : ORExprI<ORRealVar>
 -(ORRealVarI*) init: (id<ORTracker>) tracker;
+-(ORRealVarI*) init: (id<ORTracker>) tracker name:(NSString*) name;
 -(ORRealVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up;
 -(ORRealVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up;
+-(ORRealVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up name:(NSString*) name;
 -(void)setDomain:(id<ORRealRange>)domain;
 -(ORBool) hasBounds;
 -(ORDouble) low;
@@ -150,6 +154,7 @@
 //------------------------
 @interface ORBitVarI : ORExprI<ORBitVar>
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len;
+-(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len name:(NSString*) name;
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
@@ -177,18 +182,31 @@
 @end
 
 
-@interface ORDisabledFloatVarArrayI : ORObject<ORDisabledFloatVarArray>
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine;
+@interface ORDisabledVarArrayI : ORObject<ORDisabledVarArray>
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine;
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine nbFixed:(ORUInt) nb;
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia;
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb;
 -(id<ORVar>) at: (ORInt) value;
--(void) set: (id<ORFloatVar>) x at: (ORInt) value;
+-(void) set: (id<ORVar>) x at: (ORInt) value;
 -(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
+-(ORUInt) maxFixed;
+-(ORUInt) maxId;
+-(void) setMaxFixed:(ORInt)nb;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
--(ORBool) isEnable:(ORUInt) index;
+-(ORUInt) enableFirst;
+-(ORBool) isEnabled:(ORUInt) index;
+-(ORBool) isInitial:(ORUInt) index;
+-(ORBool) isFullyDisabled;
+-(ORBool) hasDisabled;
+-(ORInt) indexLastDisabled;
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end
 
 @interface ORDisabledRationalVarArrayI : ORObject<ORDisabledRationalVarArray>

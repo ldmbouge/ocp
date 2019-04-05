@@ -30,6 +30,8 @@
 
 @interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 @private
+//   ORUInt*                          _scratch;
+   
 @protected
     CPEngineI*                       _engine;
     id<ORTrail>                       _trail;
@@ -39,7 +41,6 @@
     CPTriggerMap*                  _triggers;
     CPBitVarMultiCast*                 _recv;
     enum CPVarClass                      _vc;
-    TRUInt*                          _levels;
 }
 -(CPBitVarI*) initCPBitVarCore:(id<CPEngine>)cp low:(ORUInt*)low up:(ORUInt*)up length:(int) len;
 -(void) dealloc;
@@ -96,6 +97,12 @@
 -(ORUInt) getLevelBitWasSet:(ORUInt)bit;
 -(void) bit:(ORUInt)i setAtLevel:(ORUInt)l;
 -(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i;
+-(void) getState:(ORUInt*)state whenBitSet:(ORUInt)pos;
+-(void) getState:(ORUInt*)state afterLevel:(ORUInt)lvl;
+-(void) incrementActivityAll;
+-(void) incrementActivityBySignificance;
+-(void) increaseActivity:(ORUInt)i by:(ORUInt)amt;
+-(void) incrementActivityAllBy:(ORFloat)amt;
 
 // update
 -(ORStatus)     updateMin: (ORULong) newMin;
@@ -145,7 +152,7 @@ static inline ORUInt getVarWordLength(CPBitVarI* bv)
 -(void) dealloc;
 //-(CPBitVarLiterals*)findLiterals:(CPBitVarI*)ref;
 -(void) addVar:(CPBitVarI*) v;
--(NSMutableSet*)constraints;
+-(id<OROSet>)constraints;
 -(ORStatus) bindEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMinEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;

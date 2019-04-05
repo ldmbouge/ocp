@@ -1758,7 +1758,7 @@
 {
    return [var minLockDown];
 }
--(ORDouble) dual: (LPConstraintI*) cstr;
+-(ORDouble) dual: (LPConstraintI*) cstr
 {
    return [_lp dual: cstr];
 }

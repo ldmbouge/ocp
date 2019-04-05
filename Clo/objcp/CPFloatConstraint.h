@@ -17,6 +17,29 @@
 #import <objcp/CPRationalDom.h>
 
 @class CPFloatVarI;
+@class CPDoubleVarI;
+
+
+@interface CPFloatCast : CPCoreConstraint {
+   CPFloatVarI* _res;
+   CPDoubleVarI* _initial;
+}
+-(id) init:(id)x equals:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+//unary minus constraint
+@interface CPFloatUnaryMinus : CPCoreConstraint {
+   CPFloatVarI* _x;
+   CPFloatVarI* _y;
+}
+-(id) init:(id)x eqm:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPFloatEqual : CPCoreConstraint {
     CPFloatVarI* _x;
@@ -378,4 +401,27 @@
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 -(id<ORFloatVar>) var;
+@end
+
+@interface CPFloatAbs : CPCoreConstraint {
+@private
+   CPFloatVarI* _x;
+   CPFloatVarI* _res;
+}
+-(id) init:(id<CPFloatVar>)res eq:(id<CPFloatVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+@interface CPFloatSqrt : CPCoreConstraint {
+@private
+   CPFloatVarI* _x;
+   CPFloatVarI* _res;
+}
+-(id) init:(id<CPFloatVar>)res eq:(id<CPFloatVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
 @end

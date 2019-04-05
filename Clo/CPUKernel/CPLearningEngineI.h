@@ -14,12 +14,8 @@
 #import <CPUKernel/CPLEngine.h>
 #import "CPEngineI.h"
 
-//#import <objcp/CPVar.h>
-//#import <objcp/CPBitConstraint.h>
-//#import <CPUKernel/CPTypes.h>
-//#import <CPUKernel/CPEngine.h>
-//#import <CPUKernel/CPConstraintI.h>
 
+@protocol CPBitVar;
 @class CPBitConflict;
 
 struct _CPBitAntecedents;
@@ -37,7 +33,7 @@ typedef struct CPBVConflict{
    ORUInt                    _capacity;
 //   ORUInt                   _currLevel;
 //   ORUInt                   _baseLevel;
-   ORUInt               _backjumpLevel;
+   ORInt               _backjumpLevel;
    ORBool                       _retry;
    
    SemTracer*                  _tracer;
@@ -50,4 +46,5 @@ typedef struct CPBVConflict{
 -(ORUInt) getBackjumpLevel;
 -(ORBool) retry;
 -(ORStatus) enforceObjective;
+//-(ORStatus)   close;
 @end

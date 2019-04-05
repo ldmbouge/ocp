@@ -199,6 +199,14 @@ static BOOL _alreadyAdded;
 {
    _result = c;
 }
+-(void) visitSumGEqualc: (id<ORSumGEqc>) c
+{
+   _result = c;
+}
+-(void) visitSumEqualc: (id<ORSumEqc>) c
+{
+   _result = c;
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    _result = c;
@@ -211,8 +219,18 @@ static BOOL _alreadyAdded;
 {
    _result = c;
 }
-
-
+-(void) visitRealLinearEq: (id<ORRealLinearEq>) c
+{
+   _result = c;
+}
+-(void) visitRealMin: (id<ORRealMin>) c
+{
+   _result = c;
+}
+-(void) visitSumSquare: (id<ORSumSquare>) c
+{
+   _result = c;
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     _result = [ORLPFlatten flattenExpression:[cstr expr] into: _into];

@@ -71,7 +71,15 @@
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "no concretization of integer variables in linear program"];
+   if([v isBool]){
+      if (_gamma[v.getId] == NULL) {
+         LPVariableI* cv;
+         cv = [_lpsolver createVariable: [v low] up: [v up]];
+         _gamma[v.getId] = cv;
+      }
+   }else{
+      @throw [[ORExecutionError alloc] initORExecutionError: "no concretization of integer variables in linear program"];
+   }
 }
 -(void) visitRealVar: (id<ORRealVar>) v
 {

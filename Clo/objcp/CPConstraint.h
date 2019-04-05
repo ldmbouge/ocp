@@ -113,6 +113,8 @@
 @end
 
 @interface CPFactory (ORFloat)
++(id<CPConstraint>) floatAbs: (id<CPFloatVar>)x eq:(id<CPFloatVar>)y;
++(id<CPConstraint>) floatSqrt: (id<CPFloatVar>)x eq:(id<CPFloatVar>)y;
 +(id<CPConstraint>) floatAssign: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatAssignC: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
@@ -121,8 +123,11 @@
 +(id<CPConstraint>) floatNEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatLTc: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatGTc: (id<CPFloatVar>) x to:(ORFloat) c;
++(id<CPConstraint>) floatLEQc: (id<CPFloatVar>) x to:(ORFloat) c;
++(id<CPConstraint>) floatGEQc: (id<CPFloatVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatLT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatGT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
++(id<CPConstraint>) floatUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y;
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c annotation:(id<ORAnnotation>) notes;
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs neqi:(ORFloat)c annotation:(id<ORAnnotation>) notes;
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c annotation:(id<ORAnnotation>) notes;
@@ -143,6 +148,7 @@
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x geqi: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lti: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gti: (ORFloat) i;
++(id<CPConstraint>) floatCast: (id<CPFloatVar>) res eq:(id<CPDoubleVar>) initial;
 +(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x;
 +(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
 @end
@@ -186,6 +192,10 @@
 
 
 @interface CPFactory (ORDouble)
++(id<CPConstraint>) doubleAbs: (id<CPDoubleVar>)x eq:(id<CPDoubleVar>)y;
++(id<CPConstraint>) doubleSqrt: (id<CPDoubleVar>)x eq:(id<CPDoubleVar>)y;
++(id<CPConstraint>) doubleUnaryMinus:(id<CPDoubleVar>) x eqm:(id<CPDoubleVar>) y;
++(id<CPConstraint>) doubleCast: (id<CPDoubleVar>) res eq:(id<CPFloatVar>) initial;
 +(id<CPConstraint>) doubleAssign: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;
 +(id<CPConstraint>) doubleAssignC: (id<CPDoubleVar>) x to:(ORDouble) c;
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;

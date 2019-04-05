@@ -156,8 +156,12 @@ id<ORMutableInteger> phase;
 int hw_mode[48];
 
 int main(int argc, const char * argv[]) {
+//<<<<<<< HEAD
+   FILE* instance = fopen("/Users/gregjohnson/TA/git/platform/Clo/FanghuiTest/origInstance", "r");
+//=======
   //FILE* instance = fopen("/Users/ldm/work/objcppriv/Clo/FanghuiTest/origInstance", "r");
-   FILE* instance = fopen("origInstance", "r");
+//   FILE* instance = fopen("origInstance", "r");
+//>>>>>>> 116184882f379e03de2b0ba0ae0408e9a4959a0b
    readFile(instance);
    ORCmdLineArgs* cmd = [ORCmdLineArgs newWith:argc argv:argv];
    ORInt kKeys = [cmd size];
@@ -365,9 +369,16 @@ int main(int argc, const char * argv[]) {
    id<ORIntVarArray> iv = [model intVars];
    //id<ORBitVarArray> av = [model bitVars];
    
+<<<<<<< HEAD
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:model];
+//   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
+//   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
+=======
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:[cmd nbThreads] with:[ORSemDFSController proto]];
+>>>>>>> 116184882f379e03de2b0ba0ae0408e9a4959a0b
    generateLists();
    MCFilter();
    printDebug();

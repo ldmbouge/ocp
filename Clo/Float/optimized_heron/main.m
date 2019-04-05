@@ -75,10 +75,10 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> a = [ORFactory floatVar:model low:5.0f up:10.0f];
-         id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f];
-         id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f];
-         id<ORFloatVar> squared_area = [ORFactory floatVar:model];
+         id<ORFloatVar> a = [ORFactory floatVar:model low:5.0f up:10.0f name:@"a"];
+         id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f name:@"b"];
+         id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f name:@"c"];
+         id<ORFloatVar> squared_area = [ORFactory floatVar:model  name:@"squared_area"];
          
          id<ORGroup> g = [args makeGroup:model];
          [g add:[a gt:@(0.0f)]];
@@ -112,7 +112,6 @@ int main(int argc, const char * argv[]) {
          
          
          [cp solveOn:^(id<CPCommonProgram> p) {
-            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;
@@ -121,11 +120,9 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
             check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:squared_area]);
-            
-            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          
-         struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];
    }

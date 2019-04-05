@@ -113,7 +113,7 @@ int main(int argc, const char * argv[])
             }
          }];
          NSLog(@"Solver status: %@\n",cp);
-         struct ORResult res = REPORT(found, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult res = REPORT(found, [[cp engine] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [ORFactory shutdown];
          return res;
       }];

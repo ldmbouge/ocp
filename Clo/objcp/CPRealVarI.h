@@ -73,7 +73,7 @@
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 -(ORDouble) doubleValue;
 -(ORDouble) domwidth;
 @end
@@ -85,7 +85,7 @@
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 @end
 
 @interface CPRealParamI : ORObject<CPRealParam> {
@@ -95,6 +95,6 @@
 -(id)initCPRealParam:(id<CPEngine>)engine initialValue:(ORDouble)v;
 -(CPEngineI*) engine;
 -(CPEngineI*) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 -(ORDouble) value;
 @end

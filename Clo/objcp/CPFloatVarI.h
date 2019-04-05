@@ -53,6 +53,8 @@
 // Interface for CP extensions
 
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
+-(void) updateMin: (ORFloat) newMin propagate:(ORBool)p;
+-(void) updateMax: (ORFloat) newMax propagate:(ORBool)p;
 -(void) updateMin: (ORFloat) newMin;
 -(void) updateMinError: (id<ORRational>) newMinError;
 -(void) updateMinErrorF: (ORDouble) newMinError;
@@ -104,7 +106,7 @@ typedef struct  {
 -(id)init:(id<CPEngine>)engine;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 -(ORFloat) floatValue;
 -(id<ORRational>) errorValue;
 -(ORLDouble) domwidth;
@@ -120,7 +122,7 @@ typedef struct  {
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 @end
 
 /*useful struct to get exponent mantissa and sign*/
@@ -176,13 +178,17 @@ static inline double cardinalityV(float xmin, float xmax){
    i_sup.f = xmax;
    if(xmin == xmax) return 1.0;
    if(xmin == -infinityf() && xmax == infinityf()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
-   double res = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent) * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantissa + i_sup.parts.mantissa;
+   if(xmin < 0 && xmax > 0 &&  i_sup.parts.exponent == 0 && i_inf.parts.exponent == 0) return i_inf.parts.mantisa + i_sup.parts.mantisa;
+   double tmp;
+   if(xmax <= 0) tmp = (sign(i_inf) * i_inf.parts.exponent - sign(i_sup) * i_sup.parts.exponent);
+   else tmp = (sign(i_sup) * i_sup.parts.exponent - sign(i_inf) * i_inf.parts.exponent);
+   double res = tmp * ((double) NB_FLOAT_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
    return (res < 0) ? -res : res;
 }
 
 static inline bool isDisjointWith(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return isDisjointWithV([x min], [x max], [y min], [y max]);
+   return isDisjointWithV(x.min, x.max, y.min, y.max);
 }
 
 static inline bool isDisjointWithR(CPFloatVarI* x, CPFloatVarI* y)
@@ -192,7 +198,7 @@ static inline bool isDisjointWithR(CPFloatVarI* x, CPFloatVarI* y)
 
 static inline bool isIntersectingWith(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return !isDisjointWithV([x min],[x max], [y min], [y max]);
+   return !isDisjointWithV(x.min,x.max, y.min, y.max);
 }
 static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
 {
@@ -200,11 +206,11 @@ static inline bool canPrecede(CPFloatVarI* x, CPFloatVarI* y)
 }
 static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
 {
-   return [x min] > [y max]; 
+   return x.min > y.max;
 }
 static inline double cardinality(CPFloatVarI* x)
 {
-   return cardinalityV([x min], [x max]);
+   return cardinalityV(x.min, x.max);
 }
 static inline float_interval makeFloatInterval(float min, float max)
 {
@@ -224,8 +230,10 @@ static inline void updateFTWithValues(float_interval * ft,float min, float max)
 static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 {
    ORFloat m, min, max;
+   float tmpMax = (x.max == +infinityf()) ? maxnormalf() : x.max;
+   float tmpMin = (x.min == -infinityf()) ? -maxnormalf() : x.min;
    ORInt e;
-   m = fmaxFlt([x min],[x max]);
+   m = fmaxFlt(tmpMin,tmpMax);
    float_cast m_cast;
    m_cast.f = m;
    e = m_cast.parts.exponent - S_PRECISION - 1;
@@ -243,29 +251,36 @@ static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 }
 static inline float_interval computeAbsorbingInterval(CPFloatVarI* x)
 {
-   float m = fmaxFlt([x min], [x max]);
+   float tmpMax = (x.max == +infinityf()) ? maxnormalf() : x.max;
+   float tmpMin = (x.min == -infinityf()) ? -maxnormalf() : x.min;
+   float m = fmaxFlt(tmpMin, tmpMax);
    float m_e = minFloatBaseOnExponent(m);
    float min,max;
-   if(m == fabs([x min])){
-      min = -m;
-      max = minFlt(-m_e,[x max]);
+   if(m == fabs(tmpMin)){
+      min = x.min;
+      max = minFlt(-m_e,x.max);
    }else{
-      min = maxFlt(m_e,[x min]);
-      max = m;
+      min = maxFlt(m_e,x.min);
+      max = x.max;
    }
    return makeFloatInterval(min,max);
 }
-static inline intersectionInterval intersection(float_interval r, float_interval x, ORDouble percent)
+static inline intersectionInterval intersection(CPFloatVarI* v, float_interval r, float_interval x, ORDouble percent)
 {
    double reduced = 0;
    int changed = 0;
    if(percent == 0.0)
       fpi_narrowf(&r, &x, &changed);
    else
-      fpi_narrowpercentf(&r, &x, &changed, percent, &reduced);
+      fpi_narrowpercentboundf(&r, &x, &changed, percent, &reduced);
    
-   if(x.inf > x.sup)
+   if(r.inf > r.sup)
       failNow();
+//      to make changes without propage
+//   if(!changed && reduced > 0.){
+//      [v updateMin:r.inf propagate:NO];
+//      [v updateMax:r.sup propagate:NO];
+//   }
    return (intersectionInterval){r,changed};
 }
 static inline float next_nb_float(float v, int nb, float def)

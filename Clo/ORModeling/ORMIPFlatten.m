@@ -190,9 +190,21 @@ BOOL _alreadyAdded;
 {
     _result = v;
 }
+-(void) visitSumEqualc: (id<ORSumEqc>) c
+{
+   _result = c;
+}
+-(void) visitSumGEqualc: (id<ORSumGEqc>) c
+{
+   _result = c;
+}
+-(void) visitSumLEqualc: (id<ORSumLEqc>) c
+{
+   _result = c;
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
-    _result = c;
+   _result = c;
 }
 -(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
 {
@@ -202,7 +214,14 @@ BOOL _alreadyAdded;
 {
     _result = v;
 }
-
+-(void) visitRealMin:(id<ORConstraint>)c
+{
+   _result = c;
+}
+-(void) visitSumSquare:(id<ORConstraint>)c
+{
+   _result = c;
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     [_into setCurrent:cstr];
@@ -234,7 +253,17 @@ BOOL _alreadyAdded;
     ORRealLinear* terms = [ORNormalizer realLinearFrom: [v expr] model: _into];
     _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
 }
-
+-(void) visitRealLinearEq:(id<ORConstraint>)c {
+   _result = c;
+}
+-(void) visitClause:(id<ORClause>)c
+{
+   _result = c;
+}
+-(void) visitRealSquare:(id<ORConstraint>)c
+{
+   _result = c;
+}
 @end
 
 

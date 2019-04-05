@@ -74,9 +74,9 @@ static void deallocNetwork(CPISVNetwork* net)
 {
    return (id)_engine;
 }
--(NSSet*)constraints
+-(id<OROSet>)constraints
 {
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:2];
+   id<OROSet> rv = [ORFactory objectSet];
    return rv;
 }
 -(ORInt)degree
@@ -267,8 +267,8 @@ static void deallocNetwork(CPISVNetwork* net)
 {
    hookupEvent((id)_engine, _net._changeEvt, todo, c, HIGHEST_PRIO);
 }
-- (void)visit:(ORVisitor *)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntSet: visit not definied "];
 }
-
 @end

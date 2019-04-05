@@ -46,11 +46,16 @@ PORTABLE_BEGIN
        onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
+-(id<ORVarArray>)FPVars;
 -(id<ORFloatVarArray>)floatVars;
 -(id<ORRationalVarArray>)rationalVars;
 -(id<ORDoubleVarArray>)doubleVars;
 -(id<ORRealVarArray>)realVars;
 -(id<ORBitVarArray>)bitVars;
+-(void) incrOccurences:(id<ORVar>) v;
+-(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e;
+-(ORDouble) occurences:(id<ORVar>) v;
+-(id<ORIntArray>) occurences;
 -(ORUInt) nbObjects;
 -(NSArray*) variables;
 -(NSArray*) constraints;
@@ -87,6 +92,9 @@ PORTABLE_BEGIN
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 -(id<ORModelMappings>) modelMappings;
 -(void)setCurrent:(PNULLABLE id<ORConstraint>)cstr;
+-(id<ORFloatVarArray>)floatVars;
+-(void) incrOccurences:(id<ORVar>) v;
+-(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e;
 @end
 
 @protocol ORParameterizedModel <ORModel>

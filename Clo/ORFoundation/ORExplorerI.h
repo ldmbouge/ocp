@@ -41,6 +41,7 @@
 -(void)               fail;
 
 // combinators
+-(void)              probe: (ORClosure) cl;
 -(void)               once: (ORClosure) cl;
 -(void)                try: (ORClosure) left then: (ORClosure) right;
 -(void)     limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;

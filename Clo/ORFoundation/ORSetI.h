@@ -104,3 +104,12 @@
 -(NSString*)description;
 @end
 
+@interface OROSetI : ORObject<OROSet,NSFastEnumeration>
+-(id<OROSet>)init;
+-(void)add:(id<ORObject>)obj;
+-(void)addSet:(id<OROSet>)set;
+-(NSUInteger)size;
+-(NSUInteger)count;
+-(ORBool)member:(id<ORObject>)obj;
+-(void)clear;
+@end

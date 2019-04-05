@@ -1,4 +1,5 @@
-include ../setup.make
+LOC=../
+include $(LOC)setup.make
 
 CFLAGS +=  -I../ORFoundation -I../ORUtilities 
 

@@ -31,9 +31,6 @@
        return [ORFactory float:tracker value:[self floatValue]];
    else if (strcmp(tt,@encode(double))==0 || strcmp(tt,@encode(ORDouble))==0)
        return [ORFactory double:tracker value:[self doubleValue]];
-   //TODO
-   /*else if (strcmp(tt,@encode(long double))==0 || strcmp(tt,@encode(ORLDouble))==0)
-       return [ORFactory ldouble:tracker value:[self ldoubleValue]];*/
    else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
    else if (strcmp(tt,@encode(ORRational)) == 0)
@@ -57,9 +54,6 @@
        return [ORFactory float:tracker value:[self floatValue]];
    } else if (strcmp(tt,@encode(double))==0 || strcmp(tt,@encode(ORDouble))==0)
        return [ORFactory double:tracker value:[self doubleValue]];
-   //TODO
-   /*else if (strcmp(tt,@encode(long double))==0 || strcmp(tt,@encode(ORLDouble))==0)
-       return [ORFactory ldouble:tracker value:[self ldoubleValue]];*/
    else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
    else {
@@ -183,6 +177,7 @@
 -(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 // Bit
+-(void) visitBitEqBool:(id<ORBitEqBool>)c;
 -(void) visitBitEqualAt:(id<ORBitEqualAt>)c;
 -(void) visitBitEqualc:(id<ORBitEqualc>)c;
 -(void) visitBitEqual:(id<ORBitEqual>)c;
@@ -428,6 +423,10 @@
    }];
 }
 // Bit
+-(void) visitBitEqBool:(id<ORBitEqBool>)c
+{
+   [[c x] visit:self];
+}
 -(void) visitBitEqualAt:(id<ORBitEqualAt>)c
 {
    [[c left] visit:self];
@@ -735,6 +734,10 @@
 {
    return ORTNA;
 }
+-(id<ORExpr>) sqrt
+{
+   return [ORFactory exprSqrt:self track:[self tracker]];
+}
 -(id<ORExpr>) abs
 {
    return [ORFactory exprAbs:self track:[self tracker]];
@@ -742,6 +745,10 @@
 -(id<ORExpr>) square
 {
    return [ORFactory exprSquare:self track:[self tracker]];
+}
+-(id<ORExpr>) minus
+{
+   return [ORFactory exprUnaryMinus:self track:[self tracker]];
 }
 -(id<ORRelation>) set: (id) e
 {
@@ -824,6 +831,14 @@
 -(id<ORExpr>) imply:(id<ORRelation>)e
 {
    return [ORFactory expr:(id<ORRelation>)self imply:e track:[self tracker]];
+}
+-(id<ORExpr>) minusTrack:(id<ORTracker>)t
+{
+   return [ORFactory exprUnaryMinus:self track:t];
+}
+-(id<ORExpr>) sqrtTrack:(id<ORTracker>)t
+{
+   return [ORFactory exprSqrt:self track:t];
 }
 -(id<ORExpr>) absTrack:(id<ORTracker>)t
 {
@@ -962,7 +977,7 @@
    if(et == ORTFloat || et == ORTDouble || et == ORTLDouble || et == ORTRational)
         return [ORFactory expr:self lt:re track:t];
     else
-        return [ORFactory expr:self leq:[re plus:[ORFactory integer:t value:1]] track:t];
+        return [ORFactory expr:self leq:[re sub:[ORFactory integer:t value:1]] track:t];
 }
 -(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t
 {
@@ -1060,7 +1075,7 @@
     }
     return i;
 }
--(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x
 {
    return nil;
 }
@@ -1259,6 +1274,21 @@
       return -opMax;
    else 
       return max(-opMin,opMax);
+}
+-(ORFloat) fmin
+{
+   return 0.0f;
+}
+-(ORFloat) fmax
+{
+   ORFloat opMax = [_op fmax];
+   ORFloat opMin = [_op min];
+   if (opMin >=0)
+      return opMax;
+   else if (opMax < 0)
+      return -opMax;
+   else
+      return maxFlt(-opMin,opMax);
 }
 -(ORExprI*) operand
 {
@@ -1910,6 +1940,145 @@
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"%@ + %@",[_left description],[_right description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprUnaryMinusI
+-(id<ORExpr>) initORExprUnaryMinusI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return -[_op max];
+}
+-(ORInt) max
+{
+   return -[_op min];
+}
+-(ORFloat) fmin
+{
+   return -[_op fmax];
+}
+-(ORFloat) fmax
+{
+   return -[_op fmin];
+}
+-(ORDouble) dmin
+{
+   return -[_op dmax];
+}
+-(ORDouble) dmax
+{
+   return -[_op dmin];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return [_op vtype];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprUnaryMinusI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(- %@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+
+@implementation ORExprSqrtI
+-(id<ORExpr>) initORExprSqrtI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return [_op vtype];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprSqrtI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"sqrt(%@)",[_op description]];
    return rv;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder

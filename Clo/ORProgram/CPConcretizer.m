@@ -867,8 +867,8 @@
 -(void) visitAbs: (id<ORAbs>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> res = [cstr res];
-      id<ORIntVar> left = [cstr left];
+      id<ORIntVar> res = (id<ORIntVar>)[cstr res];
+      id<ORIntVar> left = (id<ORIntVar>)[cstr left];
       [res visit: self];
       [left visit: self];
       id<CPConstraint> concreteCstr = [CPFactory abs: (id<CPIntVar>) _gamma[left.getId] 
@@ -1274,6 +1274,46 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitFloatAbs: (id<ORAbs>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> res = (id<ORFloatVar>)[cstr res];
+      id<ORFloatVar> left = (id<ORFloatVar>)[cstr left];
+      [res visit: self];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatAbs: (id<CPFloatVar>) _gamma[res.getId]
+                                                       eq: (id<CPFloatVar>) _gamma[left.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatSqrt: (id<ORAbs>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> res = (id<ORFloatVar>)[cstr res];
+      id<ORFloatVar> left = (id<ORFloatVar>)[cstr left];
+      [res visit: self];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatSqrt: (id<CPFloatVar>) _gamma[res.getId]
+                                                       eq: (id<CPFloatVar>) _gamma[left.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatUnaryMinus:(id<ORUnaryMinus>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = (id<ORFloatVar>)[cstr left];
+      id<ORFloatVar> right = (id<ORFloatVar>)[cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatEqualc:(id<ORFloatEqualc>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1284,6 +1324,28 @@
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
+}
+-(void) visitFloatGThenc:(id<ORFloatGThenc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORFloat cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatGTc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatLEqualc:(id<ORFloatLEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORFloat cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatLEQc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
 -(void) visitFloatNEqualc:(id<ORFloatNEqualc>)cstr
 {
@@ -1410,7 +1472,32 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
-
+-(void) visitFloatCast: (id<ORCast>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORVar> res = [cstr res];
+      id<ORVar> initial = [cstr initial];
+      [res visit: self];
+      [initial visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatCast:(id<CPFloatVar>) _gamma[res.getId]
+                                                         eq:(id<CPDoubleVar>) _gamma[initial.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleCast: (id<ORCast>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORVar> res = [cstr res];
+      id<ORVar> initial = [cstr initial];
+      [res visit: self];
+      [initial visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleCast:(id<CPDoubleVar>) _gamma[res.getId]
+                                                         eq:(id<CPFloatVar>) _gamma[initial.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatReifyEqualc: (id<ORFloatReifyEqualc>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1549,7 +1636,7 @@
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPFloatVar> x = [self concreteVar:[cstr x]];
       id<CPFloatVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory floatReify: b with: y lt: x annotation: Default];
+      id<CPConstraint> concreteCstr = [CPFactory floatReify: b with: x lt: y annotation: Default];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1561,7 +1648,7 @@
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPFloatVar> x = [self concreteVar:[cstr x]];
       id<CPFloatVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory floatReify: b with: y gt: x annotation: Default];
+      id<CPConstraint> concreteCstr = [CPFactory floatReify: b with: x gt: y annotation: Default];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1899,6 +1986,46 @@
 }*/
 //------
 
+-(void) visitDoubleAbs: (id<ORAbs>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> res = (id<ORDoubleVar>)[cstr res];
+      id<ORDoubleVar> left = (id<ORDoubleVar>)[cstr left];
+      [res visit: self];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleAbs: (id<CPDoubleVar>) _gamma[res.getId]
+                                                       eq: (id<CPDoubleVar>) _gamma[left.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleSqrt: (id<ORAbs>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> res = (id<ORDoubleVar>)[cstr res];
+      id<ORDoubleVar> left = (id<ORDoubleVar>)[cstr left];
+      [res visit: self];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleSqrt: (id<CPDoubleVar>) _gamma[res.getId]
+                                                        eq: (id<CPDoubleVar>) _gamma[left.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleUnaryMinus:(id<ORUnaryMinus>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> left = (id<ORDoubleVar>)[cstr left];
+      id<ORDoubleVar> right = (id<ORDoubleVar>) [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitDoubleAssignC:(id<ORDoubleAssignC>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -2061,7 +2188,7 @@
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPDoubleVar> x = [self concreteVar:[cstr x]];
       id<CPDoubleVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: y lt: x annotation: Default];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: x lt: y annotation: Default];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -2073,7 +2200,7 @@
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPDoubleVar> x = [self concreteVar:[cstr x]];
       id<CPDoubleVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: y gt: x annotation: Default];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: b with: x gt: y annotation: Default];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -2233,6 +2360,17 @@
       id<ORDoubleArray> c = [cstr coefs];
       id<CPConstraint> concreteCstr = [CPFactory realSum:x coef:c geqi:[cstr cst]];
       [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitEqBool:(id<ORBitEqBool>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr x]];
+      id<CPIntVar> bx = [self concreteVar:[cstr bx]];
+      id<CPConstraint> concreteCstr = [CPFactory bitEqualBool:x eq:bx];
+      [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
 }
@@ -2489,6 +2627,19 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
+}
+
+-(void) visitBitDivideSigned:(id<ORBitDivideSigned>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPBitVar> x = [self concreteVar:[cstr left]];
+        id<CPBitVar> y = [self concreteVar:[cstr right]];
+        id<CPBitVar> q = [self concreteVar:[cstr res]];
+        id<CPBitVar> r = [self concreteVar: [cstr rem]];
+        id<CPConstraint> concreteCstr = [CPFactory bitDivideSigned:x dividedby:y equals:q rem:r];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 
 -(void) visitBitIf:(id<ORBitIf>)cstr
@@ -2862,8 +3013,6 @@
       [left bind:cstr.bit to:cstr.cst];
    }];
 }
-
-
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (!_gamma[v.getId]) {
@@ -2873,11 +3022,16 @@
          _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
    }
 }
-
 -(void) visitRealVar: (id<ORRealVar>) v
 {
    if (!_gamma[v.getId])
       _gamma[v.getId] = [CPFactory realVar: _engine bounds: [v domain]];
+}
+
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+   if (!_gamma[v.getId])
+      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v
@@ -2904,6 +3058,21 @@
       ORInt lit = [v literal];
       _gamma[v.getId] = [CPFactory reifyView:(id<CPIntVar>) _gamma[mBase.getId] eqi:lit];
    }
+}
+-(void) visitFloatLEqualc:(id<ORFloatLEqualc>)cstr
+{
+   id<CPFloatVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMax:cstr.cst];
+   }];
+}
+-(void) visitFloatGThenc:(id<ORFloatGThenc>)cstr
+{
+   ORFloat nval = fp_next_float(cstr.cst);
+   id<CPFloatVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMin:nval];
+   }];
 }
 
 @end

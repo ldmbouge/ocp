@@ -32,7 +32,13 @@ enum CPVarClass {
 -(ORUInt) getId;
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
--(NSSet*)constraints;
+-(id<OROSet>)constraints;
+@end
+
+@protocol CPVisitor
+-(void) applyIntVar:(id<CPVar>) var;
+-(void) applyFloatVar:(id<CPVar>) var;
+-(void) applyDoubleVar:(id<CPVar>) var;
 @end
 
 @protocol CPVar <NSObject>
@@ -40,7 +46,7 @@ enum CPVarClass {
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
 -(ORBool) bound;
--(NSSet*)constraints;
+-(id<OROSet>)constraints;
 -(ORInt)degree;
 -(ORBool)vertical;
 -(ORInt) domsize;
@@ -48,6 +54,7 @@ enum CPVarClass {
 -(void)subsumedBy:(id<CPVar>)x;
 -(void)subsumedByDomain:(id<CPADom>)dom;
 -(ORBool)sameDomain:(id<CPVar>)x;
+-(void)visit:(id<CPVisitor>)visitor;
 @end
 
 

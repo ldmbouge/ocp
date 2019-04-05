@@ -399,7 +399,15 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitNEqualc: (id<ORNEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatNEqualc: (id<ORFloatNEqualc>)c
 {
    _result = [_into addConstraint:c];
 }
@@ -407,7 +415,15 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatLEqualc: (id<ORFloatLEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitGEqualc: (id<ORGEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatGThenc: (id<ORFloatGThenc>)c
 {
    _result = [_into addConstraint:c];
 }
@@ -472,6 +488,10 @@
    _result = [_into addConstraint:c];
 }
 -(void) visitAbs: (id<ORAbs>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitSqrt: (id<ORSqrt>)c
 {
    _result = [_into addConstraint:c];
 }
@@ -666,6 +686,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatCast: (id<ORConstraint>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleCast: (id<ORConstraint>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitFloatAssignC: (id<ORFloatAssignC>)c
 {
    _result = [_into addConstraint:c];
@@ -812,6 +840,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    _result = [_into addConstraint:c];
 }
 // Bit
+-(void) visitBitEqBool:(id<ORBitEqBool>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitBitEqualAt:(id<ORBitEqualAt>)c
 {
    _result = [_into addConstraint:c];
@@ -887,6 +919,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitBitDivide:(id<ORBitDivide>)c
 {
    _result = [_into addConstraint:c];
+}
+-(void) visitBitDivideSigned:(id<ORBitDivideSigned>)c
+{
+    _result = [_into addConstraint:c];
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {

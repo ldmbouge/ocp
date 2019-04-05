@@ -38,6 +38,11 @@
 -(ORBool) member: (unsigned int*) v;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
+
+-(ORFloat) getVSIDSCount;
+-(void) incrementActivity:(ORUInt)i;
+-(void) reduceVSIDS;
+-(ORFloat) getVSIDSActivity:(ORUInt)i;
 @end
 
 @class CPCoreConstraint;
@@ -56,7 +61,7 @@
 @optional -(void) addVar:(CPBitVarI*)var;
 -(ORUInt)getId;
 -(enum CPVarClass)varClass;
--(NSMutableSet*)constraints;
+-(id<OROSet>)constraints;
 -(ORBool) tracksLoseEvt:(CPBitArrayDom*)sender;
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;

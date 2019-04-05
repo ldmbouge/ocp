@@ -12,18 +12,12 @@
 #import <ORFoundation/ORFoundation.h>
 #import "CPFloatConstraint.h"
 #import "CPFloatVarI.h"
+#import "CPDoubleVarI.h"
 #import "ORConstraintI.h"
 #import <fenv.h>
 #import "rationalUtilities.h"
 
 #define PERCENT 5.0
-
-#if 1
-#define traceQP(body) body
-#else
-#define traceQP(body)
-#endif
-
 
 void ulp_computation_f(id<ORRationalInterval> ulp, const float_interval f){
    id<ORRational> tmp0 = [[ORRational alloc] init];
@@ -266,6 +260,153 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 
 }
 
+
+@implementation CPFloatCast{
+   int _precision;
+   int _rounding;
+   float_interval _resi;
+   double_interval _initiali;
+}
+-(id) init:(CPFloatVarI*)res equals:(CPDoubleVarI*)initial
+{
+   self = [super initCPCoreConstraint: [res engine]];
+   _res = res;
+   _initial = initial;
+   _resi = makeFloatInterval(_res.min, _res.max);
+   _initiali = makeDoubleInterval(_initial.min, _initial.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_res bound])        [_res whenChangeBoundsPropagate:self];
+   if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_initial bound]){
+      if(is_eqf([_initial min],-0.0f) && is_eqf([_initial max],+0.0f))
+         [_res updateInterval:[_initial min] and:[_initial max]];
+      else
+         [_res bind:[_initial value]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
+   if(isDisjointWithDV([_res min],[_res max],[_initial min],[_initial max])){
+      failNow();
+   }else {
+      updateFloatInterval(&_resi,_res);
+      updateDoubleInterval(&_initiali,_initial);
+      intersectionInterval inter;
+      float_interval resTmp = makeFloatInterval(_resi.inf, _resi.sup);
+      fpi_dtof(_precision, _rounding, &resTmp, &_initiali);
+      inter = intersection(_res, _resi, resTmp, 0.0f);
+      if(inter.changed)
+         [_res updateInterval:inter.result.inf and:inter.result.sup];
+      
+      
+      updateFloatInterval(&_resi,_res);
+      double_interval initialTmp = makeDoubleInterval(_initiali.inf, _initiali.sup);
+      intersectionIntervalD inter2;
+      fpi_dtof_inv(_precision, _rounding, &initialTmp,&_resi);
+      inter2 = intersectionD(_initial,_initiali, initialTmp, 0.0f);
+      if(inter2.changed)
+         [_initial updateInterval:inter2.result.inf and:inter2.result.sup];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_res,_initial,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_res,_initial,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_res bound] + ![_initial bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ castedTo %@>",_initial,_res];
+}
+@end
+
+//unary minus constraint
+@implementation CPFloatUnaryMinus{
+   int _precision;
+   int _rounding;
+   float_interval _xi;
+   float_interval _yi;
+}
+-(id) init:(CPFloatVarI*)x eqm:(CPFloatVarI*)y //x = -y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _xi = makeFloatInterval(x.min, x.max);
+   _yi = makeFloatInterval(y.min, y.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_x bound]){
+      if([_y bound]){
+         if([_x value] != - [_y value]) failNow();
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         [_y bind:-[_x value]];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }else if([_y bound]){
+      [_x bind:-[_y value]];
+      assignTRInt(&_active, NO, _trail);
+   }else {
+      updateFloatInterval(&_xi,_x);
+      updateFloatInterval(&_yi,_y);
+      intersectionInterval inter;
+      float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+      fpi_minusf(_precision,_rounding, &yTmp, &_xi);
+      inter = intersection(_y, _yi, yTmp, 0.0f);
+      if(inter.changed)
+         [_y updateInterval:inter.result.inf and:inter.result.sup];
+      
+      updateFloatInterval(&_yi,_y);
+      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+      fpi_minusf(_precision,_rounding, &xTmp, &_yi);
+      inter = intersection(_x, _xi, xTmp, 0.0f);
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == -%@>",_x,_y];
+}
+@end
+
 @implementation CPFloatEqual
 -(id) init:(CPFloatVarI*)x equals:(CPFloatVarI*)y
 {
@@ -283,19 +424,11 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) propagate
 {
    if([_x bound]){
-      //hzi : if x in [-0.0,0.0]f : x is bound, but value return x.min
-      //the domain of y must stay  [-0.0,0.0]f and not just -0.0f
-      if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
-         [_y updateInterval:[_x min] and:[_x max]];
-      else
-         [_y bind:[_x value]];
+      [_y bind:[_x value]];
       assignTRInt(&_active, NO, _trail);
       return;
    }else if([_y bound]){
-      if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
-         [_x updateInterval:[_y min] and:[_y max]];
-      else
-         [_x bind:[_y value]];
+      [_x bind:[_y value]];
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -306,6 +439,9 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       ORFloat max = minFlt([_x max], [_y max]);
       [_x updateInterval:min and:max];
       [_y updateInterval:min and:max];
+      if(_x.min == _x.max && _y.min == _y.max) //to deal with -0,0
+         assignTRInt(&_active, NO, _trail);
+         
    }
 }
 -(NSSet*)allVars
@@ -340,7 +476,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    //hzi : equality constraint is different from assignment constraint for 0.0
    //in case when check equality -0.0f == 0.0f
    //in case of assignement x = -0.0f != from x = 0.0f
-   if(is_eqf(_c,0.f))
+   if(_c == 0.f)
       [_x updateInterval:-0.0f and:+0.0f];
    else
       [_x bind:_c];
@@ -486,14 +622,14 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) post
 {
    [self propagate];
-   [_x whenBindPropagate:self];
-   [_y whenBindPropagate:self];
+   if(![_x bound])[_x whenBindPropagate:self];
+   if(![_y bound])[_y whenBindPropagate:self];
 }
 -(void) propagate
 {
    if ([_x bound]) {
       if([_y bound]){
-         if (is_eqf([_x min],[_y min]))
+         if ([_x min] == [_y min])
             failNow();
          else{
             if([_x min] == [_y min]){
@@ -563,8 +699,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) post
 {
    [self propagate];
-   [_x whenBindPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_x bound]){
+      [_x whenBindPropagate:self];
+      [_x whenChangeBoundsPropagate:self];
+   }
 }
 -(void) propagate
 {
@@ -611,8 +749,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -663,8 +801,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -716,8 +854,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -767,8 +905,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) post
 {
    [self propagate];
-   [_y whenChangeBoundsPropagate:self];
-   [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -1001,30 +1139,30 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       changed = false;
       zTemp = z;
       fpi_addf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       yTemp = y;
       fpi_add_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_addxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_addyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
@@ -1104,7 +1242,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    return ![_x bound] + ![_y bound] + ![_z bound] + ![_x boundError] + ![_y boundError] + ![_z boundError];
 }
--(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
 {
    if([x getId] == [_x getId])
       return _y;
@@ -1193,30 +1331,30 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       changed = false;
       zTemp = z;
       fpi_subf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       yTemp = y;
       fpi_sub_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_subxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_subyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
@@ -1298,7 +1436,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    return ![_x bound] + ![_y bound] + ![_z bound];
 }
--(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
+-(id<CPVar>) varSubjectToAbsorption:(id<CPFloatVar>)x
 {
    if([x getId] == [_x getId])
       return _y;
@@ -1390,19 +1528,19 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       changed = false;
       zTemp = z;
       fpi_multf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_multxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_multyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
@@ -1582,19 +1720,19 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       changed = false;
       zTemp = z;
       fpi_divf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_divxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_divyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       
@@ -1744,65 +1882,35 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {
-         [[_b engine] addInternal: [CPFactory floatNEqual:_x to:_y]];         // Rewrite as x==y  (addInternal can throw)
-         assignTRInt(&_active, NO, _trail);
-         return ;
-      } else {
-         [[_b engine] addInternal: [CPFactory floatEqual:_x to:_y]];     // Rewrite as x==y  (addInternal can throw)
-         assignTRInt(&_active, NO, _trail);
-         return ;
-      }
-   }
-   else if ([_x bound] && [_y bound]) {       //  b <=> c == d =>  b <- c==d
-      [_b bind:[_x min] != [_y min]];
-      assignTRInt(&_active, NO, _trail);
-      return;
-   }else if ([_x bound]) {
-      [[_b engine] addInternal: [CPFactory floatReify:_b with:_y neqi:[_x min]]];
-      return ;
-   }
-   else if ([_y bound]) {
-      [[_b engine] addInternal: [CPFactory floatReify:_b with:_x neqi:[_y min]]];
-      return ;
-   } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = YES
-      if ([_x max] < [_y min] || [_y max] < [_x min])
-         [_b bind:YES];
-      else {   // nobody bound and domains of (x,y) overlap
-         [_b whenBindPropagate:self];
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
-      if ([_x bound]){            // TRUE <=> (y != c)
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x min]]];         // Rewrite as x==y  (addInternal can throw)
+      if ([_x bound] || [_x min] == [_x max]){            // TRUE <=> (y != c)
+         [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x max]]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
-      }else  if ([_y bound]) {     // TRUE <=> (x != c)
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]];         // Rewrite as x==y  (addInternal can throw)
+      }else  if ([_y bound] || [_y min] == [_y max]) {     // TRUE <=> (x != c)
+         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y max]]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
       if ([_x bound]){
-         if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
-            [_y updateInterval:[_x min] and:[_x max]];
-         else
-            [_y bind:[_x min]];
+         [_y bind:[_x min]];
          assignTRInt(&_active, NO, _trail);
          return;
       } else if ([_y bound]){
-         if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
-            [_x updateInterval:[_y min] and:[_y max]];
-         else
-            [_x bind:[_y min]];
+         [_x bind:[_y min]];
          assignTRInt(&_active, NO, _trail);
          return;
       }else {                    // FALSE <=> (x == y)
@@ -1850,35 +1958,13 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {
-         [[_b engine] addInternal: [CPFactory floatEqual:_x to:_y]]; // Rewrite as x==y  (addInternal can throw)
-         return;
-      } else {
-         [[_b engine] addInternal: [CPFactory floatNEqual:_x to:_y]];     // Rewrite as x!=y  (addInternal can throw)
-         return;
-      }
-   }
-   else if ([_x bound] && [_y bound])        //  b <=> c == d =>  b <- c==d
-      [_b bind:[_x min] == [_y min]];
-   else if ([_x bound]) {
-      [[_b engine] add: [CPFactory floatReify:_b with:_y eqi:[_x min]]];
-      assignTRInt(&_active, 0, _trail);
-      return;
-   }
-   else if ([_y bound]) {
-      [[_b engine] add: [CPFactory floatReify:_b with:_x eqi:[_y min]]];
-      assignTRInt(&_active, 0, _trail);
-      return;
-   } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
-      if ([_x max] < [_y min] || [_y max] < [_x min])
-         [_b bind:NO];
-      else {   // nobody bound and domains of (x,y) overlap
-         [_b whenBindPropagate:self];
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 
 -(void)propagate
@@ -1886,33 +1972,28 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    if (minDom(_b)) {            // b is TRUE
       if ([_x bound]) {           // TRUE <=> (y == c)
          assignTRInt(&_active, 0, _trail);
-         if(is_eqf([_x min],-0.0f) && is_eqf([_x max],+0.0f))
-            [_y updateInterval:[_x min] and:[_x max]];
-         else
-            [_y bind:[_x min]];
+         [_y bind:[_x min]];
       }else  if ([_y bound]) {     // TRUE <=> (x == c)
          assignTRInt(&_active, 0, _trail);
-         if(is_eqf([_y min],-0.0f) && is_eqf([_y max],+0.0f))
-            [_x updateInterval:[_y min] and:[_y max]];
-         else
-            [_x bind:[_y min]];
-      } else {                    // TRUE <=> (x == y)
+         [_x bind:[_y min]];
+      } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
       }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
-      if ([_y bound])
+      if ([_x bound] || [_x min] == [_x max] )
          [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x min]]]; // Rewrite as min(x)!=y  (addInternal can throw)
-      else if ([_y bound])
+      else if ([_y bound] || [_y min] == [_y max])
          [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]]; // Rewrite as min(y)!=x  (addInternal can throw)
    }
    else {                        // b is unknown
-      if ([_x bound] && [_y bound])
+      if (([_x bound] && [_y bound]) || ([_x min] == [_x max] &&  [_y min] == [_y max]))
          [_b bind: [_x min] == [_y min]];
       else if ([_x max] < [_y min] || [_y max] < [_x min])
          [_b bind:NO];
    }
+   if(([_b bound] && [_x bound] && [_y bound])  || ([_b bound] && ([_x min] == [_x max] &&  [_y min] == [_y max]))) assignTRInt(&_active, 0, _trail);
 }
 -(NSString*)description
 {
@@ -1943,40 +2024,30 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x > y
-         [_y updateMax:fp_previous_float([_x max])];
-         [_x updateMin:fp_next_float([_y min])];
-      } else {            // NO <=> x <= y   ==>  YES <=> x < y
-         if ([_x bound]) { // c <= y
-            [_y updateMin:[_x min]];
-         } else {         // x <= y
-            [_y updateMin:[_x min]];
-            [_x updateMax:[_y max]];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_y max] < [_x min])
-         [_b bind:YES];
-      else if ([_x max] <= [_y min])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [_y updateMax:fp_previous_float([_x max])];
-         [_x updateMin:fp_next_float([_y min])];
+         if(canPrecede(_x,_y))
+            failNow();
+         if(isIntersectingWith(_x,_y)){
+            if([_x min] <= [_y min]){
+               ORFloat pmin = fp_next_float([_y min]);
+               [_x updateMin:pmin];
+            }
+            if([_x max] <= [_y max]){
+               ORFloat nmax = fp_previous_float([_x max]);
+               [_y updateMax:nmax];
+            }
+         }
       } else {
          if ([_x bound]) { // c <= y
             [_y updateMin:[_x min]];
@@ -2025,33 +2096,13 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x >= y
-         [_y updateMax:[_x max]];
-         [_x updateMin:[_y min]];
-      } else {            // NO <=> x <= y   ==>  YES <=> x < y
-         if ([_x bound]) { // c < y
-            [_y updateMax:fp_next_float([_x min])];
-         } else {         // x < y
-            [_y updateMax:fp_next_float([_x max])];
-            [_x updateMin:fp_previous_float([_y min])];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_y max] <= [_x min])
-         [_b bind:YES];
-      else if ([_x min] < [_y max])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {
@@ -2103,33 +2154,13 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x <= y
-         [_x updateMax:[_y max]];
-         [_y updateMin:[_x min]];
-      } else {            // NO <=> x <= y   ==>  YES <=> x > y
-         if ([_x bound]) { // c > y
-            [_y updateMax:fp_previous_float([_x min])];
-         } else {         // x > y
-            [_y updateMax:fp_previous_float([_x max])];
-            [_x updateMin:fp_next_float([_y min])];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_x max] <= [_y min])
-         [_b bind:YES];
-      else if ([_x min] > [_y max])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {
@@ -2181,53 +2212,45 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post
 {
-   if (bound(_b)) {
-      if (minDom(_b)) {  // YES <=>  x < y
-         [_x updateMax:fp_previous_float([_y max])];
-         [_y updateMin:fp_next_float([_x min])];
-      } else {            // NO <=> x <= y   ==>  YES <=> x > y
-         if ([_x bound]) { // c >= y
-            [_y updateMax:[_x min]];
-         } else {         // x >= y
-            [_y updateMax:[_x max]];
-            [_x updateMin:[_y min]];
-         }
-      }
-      if (![_x bound])
-         [_x whenChangeBoundsPropagate:self];
-      if (![_y bound])
-         [_y whenChangeBoundsPropagate:self];
-   } else {
-      if ([_x max] <= [_y min])
-         [_b bind:YES];
-      else if ([_x min] > [_y max])
-         [_b bind:NO];
-      else {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_b whenBindPropagate:self];
-      }
-   }
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
 }
 -(void)propagate
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [_x updateMax:fp_previous_float([_y max])];
-         [_y updateMin:fp_next_float([_x min])];
+         if(canFollow(_x,_y))
+            failNow();
+         if(isIntersectingWith(_x,_y)){
+            if([_x min] >= [_y min]){
+               ORFloat nmin = fp_next_float([_x min]);
+               [_y updateMin:nmin];
+            }
+            if([_x max] >= [_y max]){
+               ORFloat pmax = fp_previous_float([_y max]);
+               [_x updateMax:pmax];
+            }
+         }
       } else {
          [_y updateMax:[_x max]];
          [_x updateMin:[_y min]];
       }
    } else {
-      if ([_x max] <= [_y min]) {
+      if ([_x max] < [_y min]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
-      } else if ([_x min] > [_y max]) {
+      } else if ([_x min] >= [_y max]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,NO);
       }
    }
+   if([_b bound] && [_x bound] && [_y bound])
+      assignTRInt(&_active, NO, _trail);
 }
 -(NSString*)description
 {
@@ -2319,20 +2342,11 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMax:_c];
-      else
-         [_x updateMin:fp_next_float(_c)];
-   }
-   else if ([_x max] <= _c)
-      [_b bind:YES];
-   else if ([_x min] > _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -2354,7 +2368,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyLThen:%02d %@ <=> (%@ <= %16.16e)>",_name,_b,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyLEqualc:%02d %@ <=> (%@ <= %16.16e)>",_name,_b,_x,_c];
 }
 -(NSSet*)allVars
 {
@@ -2382,20 +2396,11 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post
 {
-   if ([_b bound]) {
-      if ([_b min]) // x < c
-         [_x updateMax:fp_previous_float(_c)];
-      else // x >= c
-         [_x updateMin:_c];
-   }
-   else if ([_x max] < _c)
-      [_b bind:YES];
-   else if ([_x min] >= _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -2406,10 +2411,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
          [_x updateMin:_c];
       assignTRInt(&_active, NO, _trail);
    } else {
-      if ([_x min] >= _c) {
+      if ([_x min] > _c) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b, NO);
-      } else if ([_x max] < _c) {
+      } else if ([_x max] <= _c) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b, YES);
       }
@@ -2500,20 +2505,11 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post  // b <=>  x >= c
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMin:_c];
-      else
-         [_x updateMax:fp_previous_float(_c)];
-   }
-   else if ([_x min] >= _c)
-      [_b bind:YES];
-   else if ([_x max] < _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -2563,20 +2559,11 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) post  // b <=>  x > c
 {
-   if ([_b bound]) {
-      if ([_b min])
-         [_x updateMin:fp_next_float(_c)];
-      else // x <= c
-         [_x updateMax:_c];
-   }
-   else if ([_x min] > _c)
-      [_b bind:YES];
-   else if ([_x max] <= _c)
-      [_b bind:NO];
-   else {
+   [self propagate];
+   if(![_b bound])
       [_b whenBindPropagate:self];
+   if(![_x bound])
       [_x whenChangeBoundsPropagate:self];
-   }
 }
 -(void) propagate
 {
@@ -2896,5 +2883,144 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"MAXIMIZE(%@) with f* = %f  (dual: %f) [thread: %d]",[_x description],_primalBound,_dualBound,[NSThread threadID]];
    return buf;
+}
+@end
+@implementation CPFloatAbs{
+   int _precision;
+   int _rounding;
+   float_interval _xi;
+   float_interval _resi;
+}
+-(id) init:(CPFloatVarI*)res eq:(CPFloatVarI*)x //res = |x|
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _res = res;
+   _xi = makeFloatInterval(x.min, x.max);
+   _resi = makeFloatInterval(res.min, res.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_x bound]){
+      if([_res bound]){
+         if(([_res value] !=  -[_x value]) && ([_res value] != [_x value])) failNow();
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         [_res bind:([_x value] >= 0) ? [_x value] : -[_x value]];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }else if([_res bound]){
+       if([_x member:-[_res value]]){
+         if([_x member:[_res value]])
+            [_x updateInterval:-[_res value] and:[_res value]];
+         else
+            [_x bind:-[_res value]];
+      }else if([_x member:[_res value]])
+         [_x bind:[_res value]];
+      else
+         failNow();
+   }else {
+      updateFloatInterval(&_xi,_x);
+      updateFloatInterval(&_resi,_res);
+      intersectionInterval inter;
+      float_interval resTmp = makeFloatInterval(_resi.inf, _resi.sup);
+      fpi_fabsf(_precision, _rounding, &resTmp, &_xi);
+      inter = intersection(_res, _resi, resTmp, 0.0f);
+      if(inter.changed)
+         [_res updateInterval:inter.result.inf and:inter.result.sup];
+      
+      updateFloatInterval(&_xi,_x);
+      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+      fpi_fabs_invf(_precision,_rounding, &xTmp, &_resi);
+      inter = intersection(_x, _xi, xTmp, 0.0f);
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_res bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == |%@|>",_res,_x];
+}
+@end
+
+@implementation CPFloatSqrt{
+   int _precision;
+   int _rounding;
+   float_interval _xi;
+   float_interval _resi;
+}
+-(id) init:(CPFloatVarI*)res eq:(CPFloatVarI*)x //res = |x|
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _res = res;
+   _xi = makeFloatInterval(x.min, x.max);
+   _resi = makeFloatInterval(res.min, res.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   updateFloatInterval(&_xi,_x);
+   updateFloatInterval(&_resi,_res);
+   intersectionInterval inter;
+   float_interval resTmp = makeFloatInterval(_resi.inf, _resi.sup);
+   fpi_sqrtf(_precision,_rounding, &resTmp, &_xi);
+   inter = intersection(_res, _resi, resTmp, 0.0f);
+   if(inter.changed)
+      [_res updateInterval:inter.result.inf and:inter.result.sup];
+   
+   updateFloatInterval(&_xi,_x);
+   float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+   fpi_sqrtf_inv(_precision,_rounding, &xTmp, &_resi);
+   inter = intersection(_x, _xi, xTmp, 0.0f);
+   if(inter.changed)
+      [_x updateInterval:inter.result.inf and:inter.result.sup];
+   if([_res bound] && [_x bound])
+      assignTRInt(&_active, NO, _trail);
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_res bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == sqrt(%@)>",_res,_x];
 }
 @end

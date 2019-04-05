@@ -70,6 +70,8 @@
 
 @protocol CPFloatVarNotifier;
 @protocol CPFloatDom <CPADom>
+-(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x propagate:(ORBool)p;
+-(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x propagate:(ORBool)p;
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
 -(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
@@ -138,6 +140,8 @@
 
 @protocol CPDoubleVarNotifier;
 @protocol CPDoubleDom <CPADom>
+-(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x propagate:(ORBool) p;
+-(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x propagate:(ORBool) p;
 -(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x;
 -(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x;
 -(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPDoubleVarNotifier>)x;

@@ -48,6 +48,14 @@
 {
    return _terms[k]._coef;
 }
+-(ORBool) hasBounds
+{
+   for(ORInt k=0;k < _nb;k++) {
+      if(![(id<ORRealVar>)_terms[k]._var hasBounds])
+         return NO;
+   }
+   return YES;
+}
 -(ORDouble) fmin
 {
    ORDouble lb = _indep;
@@ -83,7 +91,7 @@
     return ((FLT_MAX) < ub) ? FLT_MAX : ub;
 }
 
--(void) addTerm: (id<ORVar>) x by: (ORDouble) c
+-(void)addTerm:(id<ORRealVar>)x by:(ORDouble)c
 {
    if (c==0) return;
    ORInt low = 0,up=_nb-1,mid=-1,kid;
@@ -119,7 +127,6 @@
       }
    }
 }
-
 -(void) addLinear: (ORRealLinear*) lts
 {
    for(ORInt k=0;k < lts->_nb;k++) {
@@ -314,7 +321,9 @@ static int decCoef(const struct ORRealTerm* t1,const struct ORRealTerm* t2)
 {
    return [_real fmax];
 }
-
+- (ORBool)hasBounds {
+   return [_real hasBounds];
+}
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model
 {
     return [_real postEQZ:model];

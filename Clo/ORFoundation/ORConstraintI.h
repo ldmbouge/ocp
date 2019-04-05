@@ -75,6 +75,18 @@
 -(ORFloat) cst;
 @end
 
+@interface ORFloatGThenc : ORConstraintI<ORFloatGThenc>
+-(ORFloatGThenc*)initORFloatGThenc:(id<ORFloatVar>)x gt:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@interface ORFloatLEqualc : ORConstraintI<ORFloatLEqualc>
+-(ORFloatLEqualc*)initORFloatLEqualc:(id<ORFloatVar>)x leq:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @interface ORFloatNEqualc : ORConstraintI<ORFloatNEqualc>
 -(ORFloatNEqualc*)initORFloatNEqualc:(id<ORFloatVar>)x neqi:(ORFloat)c;
 -(id<ORFloatVar>) left;
@@ -221,11 +233,17 @@
 -(id<ORIntVar>) right;
 @end
 
+@interface ORSqrt : ORConstraintI<ORSqrt>
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+@end
+
 // PVH: should add annotation
 @interface ORAbs : ORConstraintI<ORAbs>
--(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y;
--(id<ORIntVar>) res;
--(id<ORIntVar>) left;
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
 @end
 
 @interface OROr : ORConstraintI<OROr>
@@ -290,6 +308,19 @@
 -(id<ORIntVar>)       idx;
 -(id<ORRealVar>)     res;
 @end
+
+@interface ORRealReifyEqualc : ORConstraintI<ORRealReifyEqualc>
+-(ORRealReifyEqualc*)initRealReify:(id<ORIntVar>)b equiv:(id<ORRealVar>)x eqi:(ORDouble)c;
+@end
+
+@interface ORRealReifyGEqualc : ORConstraintI<ORRealReifyGEqualc>
+-(ORRealReifyGEqualc*)initRealReify:(id<ORIntVar>)b equiv:(id<ORRealVar>)x geqi:(ORDouble)c;
+@end
+
+@interface ORRealReifyEqual : ORConstraintI<ORRealReifyEqual>
+-(ORRealReifyEqual*)initRealReify:(id<ORIntVar>)b equiv:(id<ORRealVar>)x eq:(id<ORRealVar>)c;
+@end
+
 
 @interface ORImplyEqualc : ORConstraintI<ORImplyEqualc>
 -(ORImplyEqualc*)initImply:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c;
@@ -445,6 +476,14 @@
 -(ORInt) cst;
 @end
 
+@interface ORFloatSqrt : ORSqrt<ORSqrt>
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y;
+@end
+
+@interface ORFloatAbs : ORAbs<ORAbs>
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y;
+@end
+
 @interface ORFloatAssignC : ORConstraintI<ORFloatAssignC>
 -(id) initORFloatAssignC: (id<ORVar>) var to: (ORFloat) c;
 -(id<ORFloatVar>) left;
@@ -500,6 +539,12 @@
 -(ORFloat) cst;
 @end
 
+@interface ORFloatUnaryMinus : ORConstraintI<ORUnaryMinus>
+-(ORFloatUnaryMinus*)initORFloatUnaryMinus:(id<ORVar>)x eqm:(id<ORVar>)y;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
 @interface ORFloatMult : ORConstraintI<ORFloatMult>
 -(ORFloatMult*)initORFloatMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
 -(id<ORVar>) res;
@@ -514,6 +559,17 @@
 -(id<ORVar>) right;
 @end
 
+@interface ORDoubleCast : ORConstraintI<ORCast>
+-(ORDoubleCast*)init:(id<ORVar>)x eq:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) initial;
+@end
+
+@interface ORFloatCast : ORConstraintI<ORCast>
+-(ORFloatCast*)init:(id<ORVar>)x eq:(id<ORVar>)y;
+-(id<ORVar>) res;
+-(id<ORVar>) initial;
+@end
 
 @interface ORFloatReifyEqualc : ORConstraintI<ORFloatReifyEqualc>
 -(ORFloatReifyEqualc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x eqi:(ORFloat)c;
@@ -748,13 +804,25 @@
 -(id<ORRationalVar>) y;
 @end
 //------
+@interface ORDoubleSqrt : ORSqrt<ORSqrt>
+-(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y;
+@end
+
+@interface ORDoubleAbs : ORAbs<ORAbs>
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y;
+@end
+
+@interface ORDoubleUnaryMinus : ORConstraintI<ORUnaryMinus>
+-(ORDoubleUnaryMinus*)initORDoubleUnaryMinus:(id<ORVar>)x eqm:(id<ORVar>)y;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
 
 @interface ORDoubleAssignC : ORConstraintI<ORDoubleAssignC>
 -(id) initORDoubleAssignC: (id<ORVar>) var to: (ORDouble) c;
 -(id<ORDoubleVar>) left;
 -(ORDouble) cst;
 @end
-
 
 @interface ORDoubleAssign : ORConstraintI<ORDoubleAssign>
 -(id) initORDoubleAssign: (id<ORVar>) x to: (id<ORVar>) y;
@@ -901,6 +969,13 @@
 -(id<ORVar>) right;
 @end
 
+@interface ORRealMult : ORConstraintI<ORRealMult>
+-(ORRealMult*)initORRealMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
 @interface ORRealLinearEq : ORConstraintI<ORRealLinearEq>
 -(id) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
@@ -920,6 +995,18 @@
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
 -(ORDouble) cst;
+@end
+
+@interface ORRealMin : ORConstraintI<ORRealMin>
+-(id) init: (id<ORVarArray>) ia eq: (id<ORVar>) res;
+-(id<ORVarArray>) vars;
+-(id<ORVar>) res;
+@end
+
+@interface ORSumSquare : ORConstraintI<ORSumSquare>
+-(id) init: (id<ORVarArray>) ia eq: (id<ORVar>) res;
+-(id<ORVarArray>) vars;
+-(id<ORVar>) res;
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
@@ -1160,6 +1247,12 @@
 -(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef;
 @end
 
+@interface ORBitEqBool : ORConstraintI<ORBitEqBool>
+-(ORBitEqBool*)init:(id<ORBitVar>)x eq:(id<ORIntVar>)bx;
+-(id<ORBitVar>)x;
+-(id<ORIntVar>)bx;
+@end
+
 @interface ORBitEqualAt : ORConstraintI<ORBitEqualAt>
 -(ORBitEqualAt*)init:(id<ORBitVar>)x at:(ORInt)k with:(ORInt)c;
 -(id<ORBitVar>)left;
@@ -1286,6 +1379,14 @@
 
 @interface ORBitDivide: ORConstraintI<ORBitDivide>
 -(ORBitDivide*)initORBitDivide: (id<ORBitVar>) x dividedby:(id<ORBitVar>) y eq:(id<ORBitVar>)z rem:(id<ORBitVar>)r;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
+@end
+
+@interface ORBitDivideSigned: ORConstraintI<ORBitDivideSigned>
+-(ORBitDivideSigned*)initORBitDivideSigned: (id<ORBitVar>) x dividedby:(id<ORBitVar>) y eq:(id<ORBitVar>)z rem:(id<ORBitVar>)r;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 -(id<ORBitVar>) res;

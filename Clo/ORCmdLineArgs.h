@@ -41,7 +41,10 @@ enum Heuristic {
    densWAbs  = 27,
    ref = 28,
    lexico=29,
-   absDens = 30
+   absDens = 30,
+   custom = 31,
+   customD = 32,
+   customWD = 33
 };
 enum ValHeuristic
 {
@@ -54,7 +57,7 @@ enum ValHeuristic
    dynamic5Split = 6,
    dynamic6Split = 7,
    split3B = 8,
-   dedicatedSplit = 9,
+   splitAbs = 9,
    Esplit = 10,
    Dsplit = 11
 };
@@ -78,21 +81,32 @@ struct ORResult {
 @property (nonatomic,readonly) enum ValHeuristic defaultAbsSplit;
 @property (nonatomic,readonly) ORBool is3Bfiltering;
 @property (nonatomic,readonly) ORDouble kbpercent;
-@property (nonatomic,readonly) ORBool unique;
+@property (nonatomic,readonly) ORInt uniqueNB;
 @property (nonatomic,readonly) ORFloat search3Bpercent;
 @property (nonatomic,readonly) ORInt searchNBFloats;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
 @property (nonatomic,readonly) ORInt    level;
+@property (nonatomic,readonly) ORInt    choicesLimit;
 @property (nonatomic,readonly) NSString* fName;
+@property (nonatomic,readonly) ORDouble absRate;
+@property (nonatomic,readonly) ORDouble occRate;
+@property (nonatomic,readonly) ORDouble rateModel;
+@property (nonatomic,readonly) ORDouble grateModel;
+@property (nonatomic,readonly) ORDouble rateOther;
+@property (nonatomic,readonly) ORDouble grateOther;
+@property (nonatomic,readonly) ORInt variationSearch;
+@property (nonatomic,readonly) ORInt splitTest;
+@property (nonatomic,readonly) ORBool specialSearch;
+@property (nonatomic,readonly) ABS_FUN absFunComputation;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
 -(void)measure:(struct ORResult(^)(void))block;
+-(void)measureTime:(void(^)(void))block;
 -(id<ORGroup>)makeGroup:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
--(void) printStats:(id<ORGroup>) g model:(id<ORModel>)m program:(id<CPProgram>)p;
 -(void) checkAbsorption:(id<ORFloatVarArray>)vars solver:(id<CPProgram>)p;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 -(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;

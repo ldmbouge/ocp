@@ -121,7 +121,7 @@ static void deallocNetwork(CPRealEventNetwork* net)
    freeList(net->_maxEvt[0]);
 }
 
-static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv)
+static id<OROSet> collectConstraints(CPRealEventNetwork* net,id<OROSet> rv)
 {
    collectList(net->_bindEvt[0],rv);
    collectList(net->_minEvt[0],rv);
@@ -163,9 +163,9 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [[CPRealVarSnapshot alloc] init: self name: id];
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+   id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
    return rv;
 }
 -(ORInt)degree
@@ -387,11 +387,10 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_dom domwidth];
 }
-- (void)visit:(ORVisitor *)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealVarI: method visit not defined"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "CPRealVarI: method visit not defined"];
 }
-
 @end
 
 @implementation CPRealViewOnIntVarI {
@@ -424,9 +423,9 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_engine tracker];
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+   id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
    return rv;
 }
 -(ORInt)degree
@@ -674,9 +673,10 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    ORBounds b = [_theVar bounds];
    return b.max - b.min;
 }
-- (void)visit:(ORVisitor *)visitor
-{}
-
+- (void)visit:(id<CPVisitor>)visitor
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method visit not defined"];
+}
 @end
 
 @implementation CPRealParamI
@@ -695,9 +695,9 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
     return _engine;
 }
--(NSMutableSet*) constraints
+-(id<OROSet>) constraints
 {
-    return [NSMutableSet set];
+    return [ORFactory objectSet];
 }
 -(ORDouble) value
 {

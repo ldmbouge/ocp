@@ -47,7 +47,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 typedef void(^ORID2Void)(id);
 
 void scanListWithBlock(id<CPClosureList> list,ORID2Void block);
-void collectList(id<CPClosureList> list,NSMutableSet* rv);
+void collectList(id<CPClosureList> list,id<OROSet> rv);
 void freeList(id<CPClosureList> list);
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
 

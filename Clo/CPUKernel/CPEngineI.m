@@ -223,6 +223,16 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    }];
    return iva;
 }
+-(id<ORFloatVarArray>)floatVars
+{
+   ORInt nbVars = (ORInt) [[_engine variables] count];
+   id<ORFloatVarArray> iva = (id<ORFloatVarArray>)[ORFactory idArray:_engine range:RANGE(_engine,0,nbVars-1)];
+   __block ORInt k = 0;
+   [[_engine variables] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      [iva set:obj at:k++];
+   }];
+   return iva;
+}
 -(NSArray*) variables
 {
    return [_engine variables];
@@ -467,7 +477,8 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
       CPClosureList* list = *mlist;
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
-         if (lc->_active._val) {
+//         bool inQ = list->_trigger == nil && lc->_todo == CPTocheck;
+         if (lc->_active._val){// && !inQ) {
             //__active++;
             id<CPGroup> group = lc->_group;
             lc->_todo = CPTocheck;
@@ -512,6 +523,7 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
         else {
             cstr->_todo = CPChecked;
             cstr->_propagate(cstr,@selector(propagate));
+//           NSLog(@"%@",cstr);
            //[cstr propagate];
         }
     }
@@ -641,9 +653,11 @@ ORStatus propagateFDM(CPEngineI* fdm)
 // LDM: addInternal must _raise_ a failure if the post returns a failure status.
 // PVH: This is the case where a constraint adds another constraint
 
--(void) addInternal:(id<ORConstraint>) c
+-(void) addInternal:(id<CPConstraint>) c
 {
    assert(_state != CPOpen);
+    if (getId(c) == -1)
+        [c setId: _nbCstrs++];
    ORStatus s = [self post:c];
    if (s==ORFailure) {
       failNow();
@@ -766,6 +780,12 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
    return _state == CPClosed;
 }
+
+- (ORUInt)getBackjumpLevel {
+    assert(false);
+    return 0;
+}
+
 
 -(id<ORInformer>) propagateFail
 {

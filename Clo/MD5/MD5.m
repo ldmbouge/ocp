@@ -189,7 +189,7 @@
    [_m add:[ORFactory bit:digest[3] eq:digestVars[3]]];
    
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 
@@ -212,8 +212,9 @@
                   break;
       case BVIBS: h = [cp createBitVarIBS:(id<CPBitVarArray>)o];
          break;
-      case BVFF:
-      default:    h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+       case BVFF: //h =[cp createBitVarFF];
+                  //break;
+      default:    h =[cp createBitVarVSIDS:o];
                   break;
    }
    

@@ -111,8 +111,6 @@ int main(int argc, const char * argv[]) {
          fesetround(FE_TONEAREST);
          [cp solveOn:^(id<CPCommonProgram> p) {
             found = true;
-            
-            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             for(id<ORFloatVar> v in vars){
                id<CPFloatVar> cv = [cp concretize:v];
@@ -123,7 +121,7 @@ int main(int argc, const char * argv[]) {
             checksolution([p floatValue:y[0]], [p floatValue:y_opt[0]], [p floatValue:y[NBLOOPS]],[p floatValue:y_opt[NBLOOPS]], [p floatValue:diff]);
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
-         struct ORResult re = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult re = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return re;
       }];
       

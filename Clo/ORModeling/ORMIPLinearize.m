@@ -432,6 +432,10 @@
    _result = c;
 }
 // Bit
+-(void) visitBitEqBool:(id<ORBitEqBool>)c
+{
+   _result = c;
+}
 -(void) visitBitEqualAt:(id<ORBitEqualAt>)c
 {
    _result = c;

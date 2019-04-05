@@ -63,6 +63,30 @@
    if (isBound)
       [x bindEvt:self];
 }
+-(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x propagate:(ORBool) p
+{
+   if(newMin > [self max])
+      failNow();
+   updateMinD(&_domain, newMin, _trail);
+   if(p){
+      ORBool isBound = is_eq(_domain._low,_domain._up);
+      [x changeMinEvt: isBound sender:self];
+      if (isBound)
+         [x bindEvt:self];
+   }
+}
+-(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x propagate:(ORBool) p
+{
+   if(newMax < [self min])
+      failNow();
+   updateMaxD(&_domain, newMax, _trail);
+   if(p){
+      ORBool isBound = is_eq(_domain._low,_domain._up);
+      [x changeMaxEvt:isBound sender:self];
+      if (isBound)
+         [x bindEvt:self];
+   }
+}
 -(void) updateInterval:(double_interval)v for:(id<CPDoubleVarNotifier>)x;
 {
    [self updateMin:v.inf for:x];
@@ -98,7 +122,7 @@
 }
 -(ORBool) bound
 {
-   return _domain._low == _domain._up;
+   return is_eq(_domain._low,_domain._up);
 }
 -(ORInterval) bounds
 {

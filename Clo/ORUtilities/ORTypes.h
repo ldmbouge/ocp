@@ -53,6 +53,7 @@ static inline ORLong maxOf(ORLong a,ORLong b) { return a > b ? a : b;}
 
 static inline ORDouble minDbl(ORDouble a,ORDouble b) { return a < b ? a : b;}
 static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
+static inline ORFloat fmaxDbl(ORDouble a,ORDouble b) { return maxDbl(fabs(a), fabs(b));}
 
 static inline ORLDouble minLDbl(ORLDouble a,ORLDouble b) { return a < b ? a : b;}
 static inline ORLDouble maxLDbl(ORLDouble a,ORLDouble b) { return a > b ? a : b;}

@@ -148,11 +148,13 @@
 -(void) visitMult: (id<ORConstraint>)c;
 -(void) visitSquare: (id<ORConstraint>)c;
 -(void) visitRealSquare: (id<ORConstraint>)c;
+-(void) visitRealMult: (id<ORConstraint>) c;
 -(void) visitMod: (id<ORConstraint>)c;
 -(void) visitModc: (id<ORConstraint>)c;
 -(void) visitMin: (id<ORConstraint>)c;
 -(void) visitMax: (id<ORConstraint>)c;
 -(void) visitAbs: (id<ORConstraint>)c;
+-(void) visitSqrt: (id<ORConstraint>)c;
 -(void) visitOr: (id<ORConstraint>)c;
 -(void) visitAnd:( id<ORConstraint>)c;
 -(void) visitImply: (id<ORConstraint>)c;
@@ -176,6 +178,7 @@
 -(void) visitHReifySumBoolEqualc: (id<ORConstraint>) c;
 -(void) visitHReifySumBoolGEqualc: (id<ORConstraint>) c;
 -(void) visitClause:(id<ORConstraint>)c;
+-(void) visitSumSquare:(id<ORConstraint>)c;
 -(void) visitSumBoolEqualc: (id<ORConstraint>) c;
 -(void) visitSumBoolNEqualc: (id<ORConstraint>) c;
 -(void) visitSumBoolLEqualc:(id<ORConstraint>)c;
@@ -187,10 +190,19 @@
 -(void) visitLinearGeq: (id<ORConstraint>) c;
 -(void) visitLinearLeq: (id<ORConstraint>) c;
 -(void) visitLinearEq: (id<ORConstraint>) c;
+-(void) visitRealMin:(id<ORConstraint>)c;
 -(void) visitRealLinearLeq: (id<ORConstraint>) c;
 -(void) visitRealLinearGeq: (id<ORConstraint>) c;
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
+-(void) visitRealReifyEqual: (id<ORConstraint>) c;
+-(void) visitRealReifyEqualc: (id<ORConstraint>) c;
+-(void) visitRealReifyGEqualc: (id<ORConstraint>) c;
+-(void) visitFloatAbs: (id<ORConstraint>)c;
+-(void) visitFloatSqrt: (id<ORConstraint>)c;
+-(void) visitFloatUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitFloatEqualc: (id<ORConstraint>)c;
+-(void) visitFloatGThenc: (id<ORFloatGThenc>)c;
+-(void) visitFloatLEqualc: (id<ORFloatLEqualc>)c;
 -(void) visitFloatAssignC: (id<ORConstraint>)c;
 -(void) visitFloatNEqualc: (id<ORConstraint>)c;
 -(void) visitFloatLinearEq: (id<ORConstraint>) c;
@@ -214,6 +226,7 @@
 -(void) visitFloatReifyGEqual: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThenc: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThen: (id<ORConstraint>)c;
+-(void) visitFloatCast: (id<ORConstraint>)c;
 -(void) visitRationalEqualc: (id<ORConstraint>)c;
 -(void) visitRationalErrorOf: (id<ORConstraint>)c;
 -(void) visitRationalChannel:(id<ORConstraint>)c;
@@ -240,6 +253,10 @@
 -(void) visitRationalReifyGEqual: (id<ORConstraint>)c;
 -(void) visitRationalReifyGThenc: (id<ORConstraint>)c;
 -(void) visitRationalReifyGThen: (id<ORConstraint>)c;
+-(void) visitDoubleCast: (id<ORConstraint>)c;
+-(void) visitDoubleAbs: (id<ORConstraint>)c;
+-(void) visitDoubleSqrt: (id<ORConstraint>)c;
+-(void) visitDoubleUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitDoubleEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleNEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleLinearEq: (id<ORConstraint>) c;
@@ -277,6 +294,7 @@
 -(void) visitRational: (id<ORRationalNumber>) e;
 -(void) visitDouble: (id<ORDoubleNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
+-(void) visitExprUnaryMinusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
 -(void) visitExprDivI: (id<ORExpr>) e;
@@ -295,6 +313,7 @@
 -(void) visitExprAggMinI: (id<ORExpr>) e;
 -(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprSqrtI:(id<ORExpr>) e;
 -(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprSqrtI:(id<ORExpr>)e;
@@ -312,6 +331,7 @@
 -(void) visitExprAssignI:(id<ORExpr>)e;
 
 // Bit
+-(void) visitBitEqBool:(id<ORConstraint>)c;
 -(void) visitBitEqualAt:(id<ORConstraint>)c;
 -(void) visitBitEqualc:(id<ORConstraint>)c;
 -(void) visitBitEqual:(id<ORConstraint>)c;
@@ -330,6 +350,7 @@
 -(void) visitBitSubtract:(id<ORConstraint>)cstr;
 -(void) visitBitMultiply:(id<ORConstraint>)cstr;
 -(void) visitBitDivide:(id<ORConstraint>)cstr;
+-(void) visitBitDivideSigned:(id<ORConstraint>)cstr;
 -(void) visitBitIf:(id<ORConstraint>)cstr;
 -(void) visitBitCount:(id<ORConstraint>)cstr;
 -(void) visitBitChannel:(id<ORBitChannel>)cstr;
@@ -354,4 +375,3 @@
 
 @interface ORNOopVisit : ORVisitor
 @end
-

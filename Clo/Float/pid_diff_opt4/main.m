@@ -138,7 +138,6 @@ int main(int argc, const char * argv[]) {
          __block bool found = false;
          
          [cp solveOn:^(id<CPCommonProgram> p) {
-            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             found=true;
             for(id<ORFloatVar> v in vars){
@@ -148,8 +147,7 @@ int main(int argc, const char * argv[]) {
             }
             [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
-         NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
-         struct ORResult re = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult re = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return re;
       }];
       

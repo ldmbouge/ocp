@@ -72,6 +72,10 @@
 {
    return YES;
 }
+-(ORDouble) dual: (id<ORConstraint>) c
+{
+   return [_MIPsolver dual: [self concretize: c]];
+}
 -(ORDouble) bestObjectiveBound
 {
     return [_MIPsolver bestObjectiveBound];
@@ -134,6 +138,10 @@
 -(id<ORSolutionPool>) solutionPool
 {
    return _sPool;
+}
+-(void) printModelToFile: (char*) fileName
+{
+   [_MIPsolver printModelToFile:fileName];
 }
 @end
 

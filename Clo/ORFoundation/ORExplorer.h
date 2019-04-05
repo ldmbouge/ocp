@@ -49,6 +49,7 @@
 -(void)          portfolio: (ORClosure) s1 then: (ORClosure) s2;
 -(void)      switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 
+-(void)              probe: (ORClosure) cl;
 -(void)               once: (ORClosure) cl;
 -(void)                try: (ORClosure) left then: (ORClosure) right;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;

@@ -33,5 +33,6 @@
 -(id<ORSolution>) captureSolution;
 -(id<ORExplorer>)  explorer;
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
+-(void) printModelToFile: (char*) fileName;
 @end
 

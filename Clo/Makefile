@@ -1,6 +1,6 @@
 LIBS    = ORUtilities ORFoundation CPUKernel objcp objmp ORModeling \
 	ORScheduler CPScheduler ORSchedulerProgram \
-	ORProgram
+	ORProgram Verification
 
 TARGETS = $(LIBS) 
 PAR=2
@@ -41,9 +41,11 @@ ORProgram:
 ORScheduler:
 	make -s -C Scheduler/ORScheduler -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 CPScheduler:
-	make -s -C Scheduler/CPScheduler -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+	make -s -C Scheduler/CPScheduler -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)' 
 ORSchedulerProgram:
 	make -s -C Scheduler/ORSchedulingProgram -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+Verification:
+	make -s -C Verification -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 
 clean:
 	@make -C objcp clean
@@ -55,5 +57,6 @@ clean:
 	@make -C Scheduler/ORScheduler clean
 	@make -C Scheduler/CPScheduler clean
 	@make -C Scheduler/ORSchedulingProgram clean
+	@make -C Verification clean
 	@make -f bench.make clean
 	rm -rf bin

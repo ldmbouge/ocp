@@ -61,14 +61,13 @@ int main(int argc, const char * argv[]) {
          //         [g add:[[result geq:@(0.0f)] land: [result lt:@(VAL)]]];
          [model add:g];
          
-         //         NSLog(@"%@",model);
+                  NSLog(@"%@",model);
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
          
          //         NSLog(@"max = %d nb = %d",max,nb);
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
-            [args printStats:g model:model program:cp];
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;
@@ -81,7 +80,7 @@ int main(int argc, const char * argv[]) {
             check_solution([p floatValue:vars[0]], [p floatValue:vars[1]]);
          } withTimeLimit:[args timeOut]];
          
-         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
          
       }];

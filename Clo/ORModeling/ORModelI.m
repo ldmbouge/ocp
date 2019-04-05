@@ -194,6 +194,8 @@
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
    NSMutableDictionary*     _cache;
    id<ORModelMappings>      _mappings;  // these are all the mappings for the models
+   id<ORIntArray>           _occurences;
+   NSMutableArray*          _equalities;
 }
 -(ORModelI*) initORModelI
 {
@@ -205,6 +207,8 @@
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [[ORModelMappings alloc] initORModelMappings];
+   _equalities = nil;
+   _occurences = nil;
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
    _source = nil;
@@ -228,12 +232,14 @@
    _mStore = [src->_mStore mutableCopy];
    _iStore = [src->_iStore mutableCopy];
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
+   _occurences = src->_occurences;
    _nbObjects = src->_nbObjects;
    _nbImmutables = src->_nbImmutables;
    _objective = src->_objective;
    _source = [src retain];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [src->_mappings copy];
+   _equalities = src->_equalities;
    return self;
 }
 -(ORModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
@@ -252,6 +258,7 @@
     _source = [src retain];
     _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
     _mappings = [src->_mappings copy];
+   _equalities = src->_equalities;
     return self;
 }
 -(void)setCurrent:(id<ORConstraint>)cstr
@@ -268,7 +275,6 @@
 {
    return _mappings;
 }
-
 -(ORUInt)nbObjects
 {
    return _nbObjects;
@@ -284,6 +290,11 @@
 -(void) dealloc
 {
    //NSLog(@"ORModelI [%p] dealloc called...  source (%p) RC[%lu]\n",self,_source,(unsigned long)[_source retainCount]);
+   if(_equalities != nil){
+      for(NSMutableDictionary* v in _equalities)
+         [v release];
+      [_equalities release];
+   }
    [_source release];
    [_vars release];
    [_mStore release];
@@ -354,6 +365,19 @@
    }];
    return rv;
 }
+
+-(id<ORVarArray>)FPVars
+{
+   ORInt k=0,nbfloat = 0;
+   for(id<ORVar> xk in _vars)
+      nbfloat += [xk conformsToProtocol:@protocol(ORFloatVar)] || [xk conformsToProtocol:@protocol(ORDoubleVar)];
+   id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,nbfloat-1)];
+   for(id<ORVar> xk in _vars)
+      if ([xk conformsToProtocol:@protocol(ORFloatVar)] || [xk conformsToProtocol:@protocol(ORDoubleVar)])
+         rv[k++] = xk;
+   return (id<ORVarArray>)rv;
+}
+
 -(id<ORFloatVarArray>)floatVars
 {
    ORInt k=0,nbfloat = 0;
@@ -411,7 +435,72 @@
          rv[k++] = xk;
    return (id<ORBitVarArray>)rv;
 }
-
+-(void) addEqualityRelation:(id<ORVar>) x with:(id<ORExpr>) e
+{
+   if(_equalities == nil){
+      ORInt maxId = 0;
+      ORInt i = 0;
+      _equalities = [[NSMutableArray alloc] init];
+      for(id<ORObject> c in _vars){
+         [_equalities addObject:[NSNull null]];
+         maxId = ([c getId]>maxId)? [c getId] : maxId;
+         i++;
+      }
+      for(; i <= maxId; i++){
+         [_equalities addObject:[NSNull null]];
+      }
+   }
+   if(_equalities[x.getId] == [NSNull null]){
+      NSArray* av = [e allVarsArray];
+      _equalities[x.getId] = [[NSMutableDictionary alloc] init];
+      for(id<ORVar> v in av){
+         ORInt c = [[_equalities[x.getId] objectForKey:@(v.getId)] intValue];
+         c++;
+         _equalities[x.getId][@(v.getId)] = @(c);
+      }
+   }
+}
+-(void) incrOccurences:(id<ORVar>) v
+{
+   if(_occurences == nil)
+   {
+      ORInt maxId = 0;
+      for(id<ORObject> c in _vars){
+         maxId = ([c getId]>maxId)? [c getId] : maxId;
+      }
+      _occurences = [ORFactory intArray:self range:RANGE(self,0,maxId) value:0];
+   }
+   ORInt index = [v getId];
+   if(_equalities[index] != [NSNull null])
+      [self updateOccurencesEqualities:index times:1];
+   ORInt oldv = [_occurences at:index];
+   [_occurences set:oldv+1 at:index];
+}
+-(void) updateOccurencesEqualities:(ORInt) index times:(ORInt) nb
+{
+   NSMutableDictionary* dict = _equalities[index];
+   for(id key in dict.keyEnumerator){
+      ORInt keyv = [key intValue];
+      if(_equalities[keyv] != [NSNull null]){
+         [self updateOccurencesEqualities:keyv times:nb * [dict[key] intValue]];
+      }
+      ORInt oldv = [_occurences at:keyv];
+      [_occurences set:oldv+nb at:keyv];
+   }
+}
+-(ORDouble) occurences:(id<ORVar>) v
+{
+   if(_occurences != nil && [v getId] < [_occurences count]) {
+      ORInt index = [v getId];
+      ORDouble s = [_occurences sum];
+      return (s > 0)?[_occurences at:index]/s:0;
+   }
+   return 0.0;
+}
+-(id<ORIntArray>) occurences
+{
+   return _occurences;
+}
 -(NSArray*) variables
 {
    // [ldm] Why copy them out. NSArray is immutable anyhow.
@@ -668,6 +757,7 @@
    [aCoder encodeObject:_iStore];
    [aCoder encodeObject:_cStore];
    [aCoder encodeObject:_objective];
+   [aCoder encodeObject:_occurences];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -678,6 +768,7 @@
    _iStore = [[aDecoder decodeObject] retain];
    _cStore = [[aDecoder decodeObject] retain];
    _objective = [[aDecoder decodeObject] retain];
+   _occurences = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
@@ -778,6 +869,11 @@
 {
     return [_target maximize: array coef: coef];
 }
+
+- (id<ORFloatVarArray>)floatVars {
+   return [_src floatVars];
+}
+
 -(id) trackObject: (id) obj
 {
    return [_target trackObject:obj];
@@ -801,6 +897,14 @@
 -(id) trackVariable: (id) obj
 {
    return [_target trackVariable: obj];
+}
+-(void) incrOccurences:(id<ORVar>)v
+{
+   [_target incrOccurences:v];
+}
+-(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e
+{
+   [_target addEqualityRelation:v with:e];
 }
 @end
 
@@ -965,6 +1069,9 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
     return [_target maximize: array coef: coef];
 }
 
+- (id<ORFloatVarArray>)floatVars {
+   return [_target floatVars];
+}
 -(id<ORAddToModel>) model
 {
    return _target;
@@ -992,6 +1099,14 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(id) trackImmutable:(id)obj
 {
    return [_target trackImmutable:obj];
+}
+-(void) incrOccurences:(id<ORVar>)v
+{
+   [_target incrOccurences:v];
+}
+-(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e
+{
+   [_target addEqualityRelation:v with:e];
 }
 @end
 

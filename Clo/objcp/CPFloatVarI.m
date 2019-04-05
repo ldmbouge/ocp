@@ -14,6 +14,8 @@
 #import "CPFloatDom.h"
 #import "CPRationalDom.h"
 
+@protocol  CPVisitor;
+
 /*****************************************************************************************/
 /*                        CPFloatVarSnapshot                                              */
 /*****************************************************************************************/
@@ -123,20 +125,22 @@
 }
 @end
 
-/*typedef struct  {
-   TRId           _bindEvt;
-   TRId            _minEvt;
-   TRId            _maxEvt;
-   TRId         _boundsEvt;
-} CPFloatEventNetwork;*/
+typedef struct  {
+   TRId           _bindEvt[2];
+   TRId            _minEvt[2];
+   TRId            _maxEvt[2];
+   TRId         _boundsEvt[2];
+} CPFloatEventNetwork;
 
 
 static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
 {
-    net->_bindEvt   = makeTRId(t,nil);
-    net->_minEvt    = makeTRId(t,nil);
-    net->_maxEvt    = makeTRId(t,nil);
-    net->_boundsEvt    = makeTRId(t,nil);
+    for(int i=0;i < 2;i++) {
+        net->_bindEvt[i]   = makeTRId(t,nil);
+        net->_minEvt[i]    = makeTRId(t,nil);
+        net->_maxEvt[i]    = makeTRId(t,nil);
+        net->_boundsEvt[i] = makeTRId(t,nil);
+    }
 }
 
 static void deallocNetwork(CPFloatEventNetwork* net)
@@ -147,13 +151,13 @@ static void deallocNetwork(CPFloatEventNetwork* net)
     freeList(net->_boundsEvt);
 }
 
-static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* rv)
+static id<OROSet> collectConstraints(CPFloatEventNetwork* net,id<OROSet> rv)
 {
-    collectList(net->_bindEvt,rv);
-    collectList(net->_minEvt,rv);
-    collectList(net->_maxEvt,rv);
-    collectList(net->_boundsEvt,rv);
-    return rv;
+collectList(net->_bindEvt[0],rv);
+collectList(net->_minEvt[0],rv);
+collectList(net->_maxEvt[0],rv);
+collectList(net->_boundsEvt[0],rv);
+return rv;
 }
 
 @implementation CPFloatVarI
@@ -233,19 +237,19 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [[CPFloatVarSnapshot alloc] init: self name: id];
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
-    return rv;
+   id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
+   return rv;
 }
 -(ORInt)degree
 {
-    __block ORUInt d = 0;
-    [_net._bindEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
-    [_net._maxEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-    [_net._minEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-    [_net._boundsEvt scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
-    return d;
+   __block ORUInt d = 0;
+   [_net._bindEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._boundsEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   return d;
 }
 -(NSString*)description
 {
@@ -269,27 +273,27 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._bindEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._bindEvtErr, todo, c, p);
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._minEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._minEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._minEvtErr, todo, c, p);
 }
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._maxEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._maxEvtErr, todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._boundsEvtErr, todo, c, p);
 }
 - (void)whenChangeDo:(ORClosure)todo priority:(ORInt)p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._boundsEvtErr, todo, c, p);
 }
 -(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
@@ -311,27 +315,27 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._bindEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._bindEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._bindEvtErr, nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._minEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._minEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._minEvtErr, nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._maxEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._maxEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._boundsEvtErr, nil, c, p);
 }
 - (void)whenChangePropagate:(CPCoreConstraint*)c priority:(ORInt)p
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._boundsEvtErr, nil, c, p);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
@@ -362,9 +366,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     id<CPClosureList> mList[3];
     ORUInt k = 0;
-    mList[k] = _net._bindEvt;
+    mList[k] = _net._bindEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
+    mList[k] = _net._boundsEvt[0];
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -382,11 +386,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     id<CPClosureList> mList[4];
     ORUInt k = 0;
-    mList[k] = _net._minEvt;
+    mList[k] = _net._minEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
+    mList[k] = _net._boundsEvt[0];
     k += mList[k] != NULL;
-    mList[k] = bound ? _net._bindEvt : NULL;
+    mList[k] = bound ? _net._bindEvt[0] : NULL;
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -408,11 +412,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     id<CPClosureList> mList[4];
     ORUInt k = 0;
-    mList[k] = _net._maxEvt;
+    mList[k] = _net._maxEvt[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
+    mList[k] = _net._boundsEvt[0];
     k += mList[k] != NULL;
-    mList[k] = bound ? _net._bindEvt : NULL;
+    mList[k] = bound ? _net._bindEvt[0] : NULL;
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -434,15 +438,25 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     [_dom bind:val for:self];
 }
+-(void) updateMin: (ORFloat) newMin propagate:(ORBool)p
+{
+   if(newMin > [self min] || (is_plus_zerof(newMin) &&  is_minus_zerof([self min])))
+      [_dom updateMin:newMin for:self propagate:p];
+}
+-(void) updateMax: (ORFloat) newMax propagate:(ORBool)p
+{
+   if(newMax < [self max] || (is_plus_zerof([self max]) &&  is_minus_zerof(newMax)))
+      [_dom updateMax:newMax for:self propagate:p];
+}
 -(void) updateMin: (ORFloat) newMin
 {
-    if(newMin > [self min])
-        [_dom updateMin:newMin for:self];
+   if(newMin > [self min] || (is_plus_zerof(newMin) &&  is_minus_zerof([self min])))
+      [_dom updateMin:newMin for:self];
 }
 -(void) updateMax: (ORFloat) newMax
 {
-    if(newMax < [self max])
-        [_dom updateMax:newMax for:self];
+   if(newMax < [self max] || (is_plus_zerof([self max]) &&  is_minus_zerof(newMax)))
+      [_dom updateMax:newMax for:self];
 }
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat)newMax
 {
@@ -581,9 +595,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom magnitude];
 }
-
-- (void)visit:(ORVisitor *)visitor
-{}
+- (void)visit:(id<CPVisitor>)visitor
+{
+   [(id)visitor applyFloatVar:self];
+}
 @end
 
 @implementation CPFloatViewOnIntVarI {
@@ -615,18 +630,18 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_engine tracker];
 }
--(NSMutableSet*)constraints
+-(id<OROSet>)constraints
 {
-    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
-    return rv;
+   id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
+   return rv;
 }
 -(ORInt)degree
 {
-    __block ORUInt d = 0;
-    [_net._bindEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
-    [_net._maxEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-    [_net._minEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-    return d;
+   __block ORUInt d = 0;
+   [_net._bindEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   return d;
 }
 -(NSString*)description
 {
@@ -638,22 +653,22 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._bindEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._bindEvtErr, todo, c, p);
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._minEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._minEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._minEvtErr, todo, c, p);
 }
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._maxEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._maxEvtErr, todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], todo, c, p);
     hookupEvent((id)_engine, &_net._boundsEvtErr, todo, c, p);
 }
 -(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
@@ -675,22 +690,22 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._bindEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._bindEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._bindEvtErr, nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._minEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._minEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._minEvtErr, nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._maxEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._maxEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvt[0], nil, c, p);
     hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
@@ -752,18 +767,18 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 -(void) bindEvt: (id<CPFloatDom>) sender
 {
-    id<CPClosureList> mList[6];
-    ORUInt k = 0;
-    mList[k] = _net._minEvt;
-    k += mList[k] != NULL;
-    mList[k] = _net._maxEvt;
-    k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
-    k += mList[k] != NULL;
-    mList[k] = _net._bindEvt;
-    k += mList[k] != NULL;
-    mList[k] = NULL;
-    scheduleClosures(_engine,mList);
+   id<CPClosureList> mList[6];
+   ORUInt k = 0;
+   mList[k] = _net._minEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = _net._maxEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = _net._boundsEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = _net._bindEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   scheduleClosures(_engine,mList);
 }
 -(void) domEvt:(id<CPDom>)sender
 {
@@ -772,29 +787,29 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
-    id<CPClosureList> mList[4];
-    ORUInt k = 0;
-    mList[k] = _net._minEvt;
-    k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
-    k += mList[k] != NULL;
-    mList[k] = (dsz==1) ? _net._bindEvt : NULL;
-    k += mList[k] != NULL;
-    mList[k] = NULL;
-    scheduleClosures(_engine,mList);
+   id<CPClosureList> mList[4];
+   ORUInt k = 0;
+   mList[k] = _net._minEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = _net._boundsEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = (dsz==1) ? _net._bindEvt[0] : NULL;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   scheduleClosures(_engine,mList);
 }
 -(void) changeMaxEvt:(ORInt) dsz sender:(id<CPFloatDom>)sender
 {
-    id<CPClosureList> mList[4];
-    ORUInt k = 0;
-    mList[k] = _net._maxEvt;
-    k += mList[k] != NULL;
-    mList[k] = _net._boundsEvt;
-    k += mList[k] != NULL;
-    mList[k] = (dsz==1) ? _net._bindEvt : NULL;
-    k += mList[k] != NULL;
-    mList[k] = NULL;
-    scheduleClosures(_engine,mList);
+   id<CPClosureList> mList[4];
+   ORUInt k = 0;
+   mList[k] = _net._maxEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = _net._boundsEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = (dsz==1) ? _net._bindEvt[0] : NULL;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   scheduleClosures(_engine,mList);
 }
 
 -(void) bind:(ORFloat) val
@@ -814,7 +829,14 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
     [self updateMax:newMax];
     [self updateMin:newMin];
 }
-
+- (void)updateMax:(ORFloat)newMax propagate:(ORBool)p
+{
+[self updateMax:newMax];
+}
+- (void)updateMin:(ORFloat)newMin propagate:(ORBool)p
+{
+[self updateMin:newMin];
+}
 - (void)bindError:(id<ORRational>)valError {
 }
 
@@ -930,9 +952,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return [[ORRational alloc] init];
 }
-- (void)visit:(ORVisitor *)visitor
+- (void)visit:(id<CPVisitor>)visitor
 {
-   
+   [(id)visitor applyFloatVar:self];
 }
 @end
 

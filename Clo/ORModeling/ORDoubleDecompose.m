@@ -39,6 +39,7 @@
 
 -(void) visitIntVar: (id<ORIntVar>) e
 {
+   [_model incrOccurences:e];
    if (_eqto) {
       [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
       [_terms addTerm:_eqto by:1];
@@ -46,9 +47,29 @@
    } else
       [_terms addTerm:e by:1];
 }
-
+-(void) visitFloatVar: (id<ORFloatVar>) e
+{
+   [_model incrOccurences:e];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory doubleCast:_model from:e res:_eqto]];
+      [_terms addTerm:_eqto by:1];
+      _eqto = nil;
+   } else
+      [_terms addTerm:e by:1];
+}
 -(void) visitDoubleVar: (id<ORDoubleVar>) e
 {
+   [_model incrOccurences:e];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+      [_terms addTerm:_eqto by:1];
+      _eqto = nil;
+   } else
+      [_terms addTerm:e by:1];
+}
+-(void) visitRealVar: (id<ORRealVar>) e
+{
+   [_model incrOccurences:e];
    if (_eqto) {
       [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
       [_terms addTerm:_eqto by:1];
@@ -76,6 +97,17 @@
    }
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
+{
+   if (_eqto) {
+      id<ORDoubleVar> alpha = [ORNormalizer doubleVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORDoubleVar> alpha =  [ORNormalizer doubleVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
+-(void) visitExprUnaryMinusI: (ORExprUnaryMinusI*) e
 {
    if (_eqto) {
       id<ORDoubleVar> alpha = [ORNormalizer doubleVarIn:_model expr:e by:_eqto];
@@ -214,6 +246,28 @@
       [_terms addTerm:alpha by:1];
    }
 }
+-(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   if (_eqto) {
+      id<ORDoubleVar> alpha = [ORNormalizer doubleVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORDoubleVar> alpha = [ORNormalizer doubleVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
+-(void) visitExprSqrtI:(ORExprSqrtI*) e
+{
+   if (_eqto) {
+      id<ORDoubleVar> alpha = [ORNormalizer doubleVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORDoubleVar> alpha = [ORNormalizer doubleVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
 @end
 
 @implementation ORDoubleSubst
@@ -257,6 +311,16 @@
    }];
    [_model addConstraint:[ORFactory doubleSum:_model array:var coef:coefs eq:0.0]];
    [lT release];
+   [rT release];
+}
+-(void) visitExprUnaryMinusI:(ORExprUnaryMinusI*) e
+{
+   id<ORDoubleLinear> rT = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+   id<ORDoubleVar> rV = [ORNormalizer doubleVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory doubleVar:_model];
+   }
+   [_model addConstraint:[ORFactory doubleUnaryMinus:_model var:_rv eqm: rV]];
    [rT release];
 }
 -(void) visitExprMinusI:(ORExprPlusI*) e
@@ -462,6 +526,25 @@
 {
    assert(NO);
 }
-
+-(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   id<ORDoubleLinear> rT = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+   id<ORDoubleVar> rV = [ORNormalizer doubleVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory doubleVar:_model];
+   }
+   [_model addConstraint:[ORFactory doubleAbs:_model var:_rv eq: rV]];
+   [rT release];
+}
+-(void) visitExprSqrtI:(ORExprSqrtI*) e
+{
+   id<ORDoubleLinear> rT = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+   id<ORDoubleVar> rV = [ORNormalizer doubleVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory doubleVar:_model];
+   }
+   [_model addConstraint:[ORFactory doubleSqrt:_model var:_rv eq: rV]];
+   [rT release];
+}
 @end
 

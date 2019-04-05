@@ -70,6 +70,30 @@
     [self updateMax:v.sup for:x];
 }
 
+-(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x propagate:(ORBool) p
+{
+   if(newMin > [self max])
+      failNow();
+   updateMin(&_domain, newMin, _trail);
+   if(p){
+      ORBool isBound = is_eqf(_domain._low,_domain._up);
+      [x changeMinEvt: isBound sender:self];
+      if (isBound)
+         [x bindEvt:self];
+   }
+}
+-(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x propagate:(ORBool) p
+{
+   if(newMax < [self min])
+      failNow();
+   updateMax(&_domain, newMax, _trail);
+   if(p){
+      ORBool isBound = is_eqf(_domain._low,_domain._up);
+      [x changeMaxEvt:isBound sender:self];
+      if (isBound)
+         [x bindEvt:self];
+   }
+}
 -(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x
 {
     if (_domain._low <= val && val <= _domain._up) {
@@ -99,7 +123,7 @@
 }
 -(ORBool) bound
 {
-    return _domain._low == _domain._up;
+   return is_eqf(_domain._low,_domain._up);
 }
 -(ORInterval) bounds
 {

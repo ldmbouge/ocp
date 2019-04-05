@@ -17,6 +17,29 @@
 #import <objcp/CPRationalDom.h>
 
 @class CPDoubleVarI;
+@class CPFloatVarI;
+
+//unary minus constraint
+@interface CPDoubleUnaryMinus : CPCoreConstraint {
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) init:(id)x eqm:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleCast : CPCoreConstraint {
+   CPDoubleVarI* _res;
+   CPFloatVarI* _initial;
+}
+-(id) init:(id)x equals:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 
 @interface CPDoubleEqual : CPCoreConstraint {
     CPDoubleVarI* _x;
@@ -339,6 +362,30 @@
     ORDouble      _c;
 }
 -(id) initCPReifyLThenc:(id<CPIntVar>)b when:(id<CPDoubleVar>)x lti:(ORDouble)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+@interface CPDoubleAbs : CPCoreConstraint {
+@private
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _res;
+}
+-(id) init:(id<CPDoubleVar>)res eq:(id<CPDoubleVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+@interface CPDoubleSqrt : CPCoreConstraint {
+@private
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _res;
+}
+-(id) init:(id<CPDoubleVar>)res eq:(id<CPDoubleVar>)x ;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

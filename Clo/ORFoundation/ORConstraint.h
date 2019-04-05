@@ -14,7 +14,7 @@
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORSet.h>
 
-@protocol CPFloatVar;
+@protocol CPVar;
 @protocol ORExpr;
 @protocol OREngine;
 @protocol ORSearchEngine;
@@ -44,7 +44,7 @@
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
--(NSArray*) constraints;
+-(id<OROSet>) constraints;
 -(NSArray*) mutables;
 -(NSArray*) immutables;
 @end
@@ -56,7 +56,7 @@
 -(ORBool) memberVar:(id<ORVar>) x;
 -(ORUInt) nbOccurences:(id<ORVar>)x;
 -(ORBool) canLeadToAnAbsorption;
--(id<CPFloatVar>) varSubjectToAbsorption:(id<CPFloatVar>)x;
+-(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x;
 -(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(void) close;
 @end
@@ -131,12 +131,22 @@ enum ORGroupType {
 
 @protocol  ORFloatNEqualc <ORConstraint>
 -(id<ORFloatVar>) left;
--(ORInt) cst;
+-(ORFloat) cst;
+@end
+
+@protocol  ORFloatGThenc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
+@protocol  ORFloatLEqualc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
 @end
 
 @protocol  ORFloatEqualc <ORConstraint>
 -(id<ORFloatVar>) left;
--(ORInt) cst;
+-(ORFloat) cst;
 @end
 
 @protocol  ORFloatAssignC <ORConstraint>
@@ -177,6 +187,11 @@ enum ORGroupType {
 @protocol  ORDoubleEqualc <ORConstraint>
 -(id<ORDoubleVar>) left;
 -(ORDouble) cst;
+@end
+
+@protocol ORCast <ORConstraint>
+-(id<ORVar>) res;
+-(id<ORVar>) initial;
 @end
 
 @protocol  ORLEqualc <ORConstraint>
@@ -260,10 +275,14 @@ enum ORGroupType {
 -(id<ORIntVar>) right;
 @end
 
+@protocol ORSqrt <ORConstraint>
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+@end
 
 @protocol ORAbs <ORConstraint>
--(id<ORIntVar>) res;
--(id<ORIntVar>) left;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
 @end
 
 @protocol OROr <ORConstraint>
@@ -454,6 +473,10 @@ enum ORGroupType {
 -(id<ORFloatVar>) right;
 @end
 
+@protocol ORUnaryMinus <ORConstraint>
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
 
 @protocol ORFloatMult <ORConstraint>
 -(id<ORFloatVar>) res;
@@ -854,6 +877,40 @@ enum ORGroupType {
 -(ORDouble) cst;
 @end
 
+@protocol ORRealReifyEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(id<ORRealVar>)  y;
+@end
+
+@protocol ORRealReifyEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORRealReifyGEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORRealMin <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORVar>) res;
+@end
+
+@protocol ORRealMult <ORConstraint>
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
+@protocol ORSumSquare <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORVar>) res;
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORExprArray>) array;
 @end
@@ -1039,6 +1096,11 @@ enum ORGroupType {
 
 // ====== Bit Constraints =====================================
 
+@protocol ORBitEqBool <ORConstraint>
+-(id<ORBitVar>)x;
+-(id<ORIntVar>)bx;
+@end
+
 @protocol ORBitEqualAt <ORConstraint>
 -(id<ORBitVar>)left;
 -(ORInt)cst;
@@ -1147,6 +1209,13 @@ enum ORGroupType {
 @end
 
 @protocol  ORBitDivide <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitDivideSigned <ORConstraint>
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) rem;
 -(id<ORBitVar>) left;

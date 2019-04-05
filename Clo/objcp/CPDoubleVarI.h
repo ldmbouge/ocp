@@ -23,6 +23,7 @@
 #import "rationalUtilities.h"
 
 #define NB_DOUBLE_BY_E (4.5035996e+15)
+#define SD_PRECISION 52
 #define ED_MAX (2047)
 
 
@@ -55,6 +56,8 @@
 // Interface for CP extensions
 
 @protocol CPDoubleVarExtendedItf <CPDoubleVarSubscriber>
+-(void) updateMin: (ORDouble) newMin propagate:(ORBool) p;
+-(void) updateMax: (ORDouble) newMax propagate:(ORBool) p;
 -(void) updateMin: (ORDouble) newMin;
 -(void) updateMinError: (id<ORRational>) newMinError;
 -(void) updateMinErrorF: (ORDouble) newMinError;
@@ -102,7 +105,7 @@ typedef struct  {
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 -(ORDouble) doubleValue;
 -(id<ORRational>) errorValue;
 -(ORLDouble) domwidth;
@@ -117,7 +120,7 @@ typedef struct  {
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*) constraints;
+-(id<OROSet>) constraints;
 @end
 
 /*useful struct to get exponent mantissa and sign*/
@@ -138,6 +141,42 @@ typedef struct {
 static inline int signD(double_cast p){
    if(p.parts.sign) return -1;
    return 1;
+}
+
+static inline float minDoubleBaseOnExponent(double v){
+   double_cast v_cast;
+   v_cast.f = v;
+   v_cast.parts.mantisa = 1;
+   if(v_cast.f > v){
+      return v;
+   }
+   return v_cast.f;
+}
+static inline double doubleFromParts(unsigned long mantissa, unsigned int exponent,unsigned int sign){
+   double_cast f_cast;
+   f_cast.parts.mantisa = mantissa;
+   f_cast.parts.exponent = exponent;
+   f_cast.parts.sign = sign;
+   return f_cast.f;
+}
+static inline  double cardinalityDV(double xmin, double xmax){
+   double_cast i_inf;
+   double_cast i_sup;
+   i_inf.f = xmin;
+   i_sup.f = xmax;
+   if(xmin == xmax) return 1.0;
+   if(xmin == -infinity() && xmax == infinity()) return DBL_MAX; // maybe just use -MAXFLT and maxFLT instead ?
+   if(xmin < 0 && xmax > 0 &&  i_sup.parts.exponent == 0 && i_inf.parts.exponent == 0) return i_inf.parts.mantisa + i_sup.parts.mantisa;
+   long double tmp;
+   if(xmax <= 0) tmp = (signD(i_inf) * i_inf.parts.exponent - signD(i_sup) * i_sup.parts.exponent);
+   else tmp = (signD(i_sup) * i_sup.parts.exponent - signD(i_inf) * i_inf.parts.exponent);
+   long double res = tmp * (NB_DOUBLE_BY_E) - i_inf.parts.mantisa + i_sup.parts.mantisa;
+   return (res < 0) ? -res : res;
+}
+
+static inline long double cardinalityD(CPDoubleVarI* x)
+{
+   return cardinalityDV(x.min, x.max);
 }
 static inline bool isDisjointWithDV(double xmin,double xmax,double ymin, double ymax)
 {
@@ -167,11 +206,11 @@ static inline bool isDisjointWithDR(CPDoubleVarI* x, CPDoubleVarI* y)
 }
 static inline bool canPrecedeD(CPDoubleVarI* x, CPDoubleVarI* y)
 {
-   return [x min] < [y min] &&  [x max] < [y max];
+   return [x max] < [y min];
 }
 static inline bool canFollowD(CPDoubleVarI* x, CPDoubleVarI* y)
 {
-   return [x min] > [y min ] && [x max] > [y max];
+    return [x min] > [y max];
 }
 static inline double_interval makeDoubleInterval(double min, double max)
 {
@@ -182,16 +221,81 @@ static inline void updateDoubleInterval(double_interval * ft,CPDoubleVarI* x)
    ft->inf = x.min;
    ft->sup = x.max;
 }
-static inline intersectionIntervalD intersectionD(double_interval r, double_interval x, ORDouble percent)
+static inline void updateDTWithValues(double_interval * ft,float min, float max)
+{
+   ft->inf = min;
+   ft->sup = max;
+}
+static inline intersectionIntervalD intersectionD(CPDoubleVarI* v, double_interval r, double_interval x, ORDouble percent)
 {
    double reduced = 0;
    int changed = 0;
    if(percent == 0.0)
       fpi_narrowd(&r, &x, &changed);
    else
-      fpi_narrowpercentd(&r, &x, &changed, percent, &reduced);
+      fpi_narrowpercentboundd(&r, &x, &changed, percent, &reduced);
    
-   if(x.inf > x.sup)
+   if(r.inf > r.sup)
       failNow();
+//   to make changes without propage
+//   if(!changed && reduced > 0.0){
+//      [v updateMin:r.inf propagate:NO];
+//      [v updateMax:r.sup propagate:NO];
+//   }
    return (intersectionIntervalD){r,changed};
+}
+
+static inline float next_nb_double(float v, int nb, float def)
+{
+   for(int i = 1; i < nb && v < def; i++)
+      v = fp_next_double(v);
+   return v;
+}
+
+static inline float previous_nb_double(double v, int nb, double def)
+{
+   for(int i = 1; i < nb && v > def; i++)
+      v = fp_previous_double(v);
+   return v;
+}
+
+//hzi : missing denormalised case
+static inline double_interval computeAbsordedIntervalD(CPDoubleVarI* x)
+{
+   ORDouble m, min, max;
+   double tmpMax = (x.max == +infinity()) ? maxnormal() : x.max;
+   double tmpMin = (x.min == -infinity()) ? -maxnormal() : x.min;
+   ORInt e;
+   m = fmaxDbl(tmpMin,tmpMax);
+   double_cast m_cast;
+   m_cast.f = m;
+   e = m_cast.parts.exponent - SD_PRECISION - 1;
+   if(m_cast.parts.mantisa == 0){
+      e--;
+   }
+   if(e < 0){
+      return makeDoubleInterval(0,0);
+   }else{
+      max = doubleFromParts(0,e,0);
+      max = nextafter(max, -INFINITY);
+      min = -max;
+      return makeDoubleInterval(min,max);
+   }
+}
+
+static inline double_interval computeAbsorbingIntervalD(CPDoubleVarI* x)
+{
+   double tmpMax = (x.max == +infinity()) ? maxnormal() : x.max;
+   double tmpMin = (x.min == -infinity()) ? -maxnormal() : x.min;
+   double m = fmaxDbl(tmpMin, tmpMax);
+   double m_e = minDoubleBaseOnExponent(m);
+   double min,max;
+   if(m == fabs(tmpMin)){
+      min = x.min;
+      max = minDbl(-m_e,x.max);
+   }else{
+      min = maxDbl(m_e,x.min);
+      max = x.max;
+   }
+   return makeDoubleInterval(min,max);
 }

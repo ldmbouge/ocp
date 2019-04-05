@@ -20,6 +20,7 @@
 PORTABLE_BEGIN
 
 @protocol ORVar <ORObject>
+-(NSString*) prettyname;
 @end
 
 @protocol ORExprVar <ORVar,ORRelation>
@@ -35,6 +36,7 @@ PORTABLE_BEGIN
 -(ORInt) shift;
 -(ORInt) literal;
 -(id<ORIntVar>)base;
+-(NSString*) prettyname;
 @end
 
 @protocol ORBitVar <ORExprVar>
@@ -63,6 +65,7 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(NSString*) prettyname;
 @end
 
 @protocol ORFloatVar <ORExprVar>
@@ -100,6 +103,7 @@ PORTABLE_BEGIN
 -(ORBool) hasBounds;
 -(ORLDouble) low;
 -(ORLDouble) up;
+-(NSString*) prettyname;
 @end
 
 @protocol ORExprArray<ORIdArray>
@@ -142,19 +146,30 @@ PORTABLE_BEGIN
 -(id<ORASolver>) solver;
 @end
 
-@protocol ORDisabledFloatVarArray <ORObject,NSFastEnumeration>
--(id<ORFloatVar>) at: (ORInt) value;
--(void) set: (id<ORFloatVar>) x at: (ORInt) value;
--(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+@protocol ORDisabledVarArray <ORObject,NSFastEnumeration>
+-(id<ORVar>) at: (ORInt) value;
+-(void) set: (id<ORVar>) x at: (ORInt) value;
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORIntRange>) range;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
+-(ORUInt) maxFixed;
+-(ORUInt) maxId;
+-(void) setMaxFixed:(ORInt)nb;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
--(ORBool) isEnable:(ORUInt) index;
--(ORBool) contains: (id<ORFloatVar>) v;
+-(ORUInt) enableFirst;
+-(ORBool) isEnabled:(ORUInt) index;
+-(ORBool) isDisabled:(ORUInt) index;
+-(ORBool) contains:(id<ORFloatVar>) v;
+-(ORBool) isInitial:(ORUInt) index;
+-(ORBool) isFullyDisabled;
+-(ORBool) hasDisabled;
+-(ORInt) indexLastDisabled;
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end
 
 

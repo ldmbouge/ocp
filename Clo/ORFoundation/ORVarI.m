@@ -32,7 +32,13 @@
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain name:(NSString*) name
 {
    self = [self initORIntVarI: track domain:domain];
-   _prettyname = [[NSString alloc] initWithString:name];
+   _prettyname = (name != nil) ? [NSString stringWithString:name]:nil;
+   return self;
+}
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain name:(NSString*) name
+{
+   self = [self initORIntVarI: track bounds:domain];
+   _prettyname = (name != nil) ? [NSString stringWithString:name]:nil;
    return self;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain
@@ -49,8 +55,6 @@
 {
    //NSLog(@"ORIntVarI(%p)::dealloc %d\n",self,_name);
    [super dealloc];
-   if(_prettyname != nil)
-      [_prettyname release];
 }
 
 -(void)encodeWithCoder:(NSCoder *)aCoder
@@ -78,7 +82,7 @@
 }
 -(enum ORVType) vtype
 {
-   if (_domain.low == 0 && _domain.up == 1)
+   if (_domain.low <= 0 && _domain.up <= 1)
       return ORTBool;
    else
       return ORTInt;
@@ -252,6 +256,17 @@
    id<ORTracker>    _tracker;
    id<ORRealRange> _domain;
    BOOL             _hasBounds;
+   NSString*        _prettyname;
+}
+-(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up name:(NSString*) name
+{
+   self = [super init];
+   _tracker = track;
+   _domain = [ORFactory realRange:track low:low up:up];
+   _hasBounds = true;
+   [track trackVariable: self];
+   _prettyname = (name != nil)?[NSString stringWithString:name]:nil;
+   return self;
 }
 -(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up
 {
@@ -271,10 +286,17 @@
    [track trackVariable: self];
    return self;
 }
+-(ORRealVarI*) init: (id<ORTracker>) track name:(NSString*) name
+{
+   self = [self init:track];
+   _prettyname = (name != nil)?[NSString stringWithString:name]:nil;
+   return self;
+}
 -(ORRealVarI*) init: (id<ORTracker>) track
 {
    self = [super init];
    _tracker = track;
+   _domain = [ORFactory realRange:track low:-INFINITY up:+INFINITY];
    _hasBounds = false;
    [track trackVariable: self];
    return self;
@@ -285,7 +307,7 @@
 }
 -(id<ORRealRange>) domain
 {
-   assert(_domain != NULL);
+//   assert(_domain != NULL);
    return _domain;
 }
 -(void) dealloc
@@ -308,6 +330,7 @@
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(NSString*) at:&_prettyname];
    return self;
 }
 -(ORBool) isVariable
@@ -316,14 +339,17 @@
 }
 -(NSString*) description
 {
+   NSString* name = [NSString stringWithFormat:@"var<OR>{real}:%03d",_name];
+   if(_prettyname != nil)
+      name = _prettyname;
    if (_domain.low <= - FLT_MAX && _domain.up >= FLT_MAX)
-      return [NSString stringWithFormat:@"var<OR>{real}:%03d(-inf,+inf)",_name];
+      return [NSString stringWithFormat:@"%@(-inf,+inf)",name];
    else if (_domain.low <= - FLT_MAX)
-      return [NSString stringWithFormat:@"var<OR>{real}:%03d(-inf,%f)",_name,_domain.up];
+      return [NSString stringWithFormat:@"%@(-inf,%f)",name,_domain.up];
    else if (_domain.up >= FLT_MAX)
-      return [NSString stringWithFormat:@"var<OR>{real}:%03d(%f,+inf)",_name,_domain.low];
+      return [NSString stringWithFormat:@"%@(%f,+inf)",name,_domain.low];
    else
-      return [NSString stringWithFormat:@"var<OR>{real}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+      return [NSString stringWithFormat:@"%@(%f,%f)",name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -345,6 +371,10 @@
 {
    return _domain.up;
 }
+-(NSString*) prettyname
+{
+   return _prettyname;
+}
 @end
 
 //-------------------------
@@ -355,7 +385,7 @@
    id<ORFloatRange> _domain;
    id<ORRationalRange> _domainError;
    BOOL             _hasBounds;
-   NSString*         _prettyname;
+   NSString*        _prettyname;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track domain:(id<ORFloatRange>)dom
 {
@@ -402,7 +432,7 @@
 -(ORFloatVarI*) init: (id<ORTracker>) track name:(NSString*) name
 {
    self = [self init:track];
-   _prettyname = [[NSString alloc] initWithString:name];
+   _prettyname = (name != nil) ? [[NSString alloc] initWithString:name]:nil;
    return self;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track up: (ORFloat) up name:(NSString*) name
@@ -414,7 +444,7 @@
 -(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up name:(NSString*) name
 {
    self = [self init:track domain:[ORFactory floatRange:track low:low up:up]];
-   _prettyname = [[NSString alloc] initWithString:name];
+   _prettyname = (name != nil) ? [[NSString alloc] initWithString:name]:nil;
    return self;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name
@@ -435,8 +465,6 @@
 }
 -(void) dealloc
 {
-   if(_prettyname != nil)
-      [_prettyname release];
    [super dealloc];
 }
 -(enum ORVType) vtype
@@ -733,8 +761,6 @@
 }
 -(void) dealloc
 {
-   if(_prettyname != nil)
-      [_prettyname release];
    [super dealloc];
 }
 -(enum ORVType) vtype
@@ -816,6 +842,7 @@
    id<ORTracker>    _tracker;
    id<ORLDoubleRange> _domain;
    BOOL             _hasBounds;
+   NSString*        _prettyname;
 }
 -(ORLDoubleVarI*) init: (id<ORTracker>) track low: (ORLDouble) low up: (ORLDouble) up
 {
@@ -907,6 +934,10 @@
 {
    return _domain.up;
 }
+-(NSString*) prettyname
+{
+   return _prettyname;
+}
 @end
 //-------------------------
 
@@ -916,7 +947,7 @@
    ORUInt*          _up;
    ORUInt           _bLen;
    ORUInt           _nb;
-   
+   NSString*        _prettyname;
 }
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len
 {
@@ -929,6 +960,12 @@
    memcpy(_up,up,sizeof(ORUInt)*_nb);
    _tracker = tracker;
    [tracker trackVariable: self];
+   return self;
+}
+-(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len name:(NSString*) name
+{
+   self = [self initORBitVarI:tracker low:low up:up bitLength:len];
+   _prettyname = name;
    return self;
 }
 -(void)dealloc
@@ -1099,11 +1136,17 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d",_name];
+   if(_prettyname != nil)
+      return [NSString stringWithFormat:@"%@:(bitvar<OR>{int}):[%u,%u]",_prettyname,*_low,*_up];
+   return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d:[%u,%u]",_name,*_low,*_up];
 }
 -(NSString*)stringValue
 {
    return [self description];
+}
+-(NSString*) prettyname
+{
+   return _prettyname;
 }
 @end
 
@@ -1164,15 +1207,45 @@
 @end
 
 
-@implementation ORDisabledFloatVarArrayI{
+@implementation ORDisabledVarArrayI{
+   ORInt                  _maxId;
+   ORInt                  _nb;
+   id<ORTrailableInt>    _current;
+   id<ORTrailableInt>    _start;
    id<ORVarArray>          _vars;
-   id<ORTrailableIntArray>      _disabled;
+   id<ORIntArray>          _initials;
+   id<ORTrailableIntArray>  _disabled;
+   id<ORTrailableIntArray>   _indexDisabled;
 }
--(id<ORDisabledFloatVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
+{
+   self = [self init:vars engine:engine nbFixed:1];
+   return self;
+}
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia
+{
+   self = [self init:vars engine:engine initials:ia nbFixed:1];
+   return self;
+}
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine  nbFixed:(ORUInt) nb
+{
+   self = [self init:vars engine:engine initials:[ORFactory intArray:engine range:[vars range] value:1] nbFixed:nb];
+   return self;
+}
+-(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb
 {
    self = [super init];
    _vars = vars;
+   _initials = ia;
+   _maxId = 0;
+   _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
+   _current = [ORFactory trailableInt:engine value:0];
+   _start = [ORFactory trailableInt:engine value:0];
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
+   _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
+   for(id<ORVar> v in _vars){
+      _maxId = max(_maxId, v.getId);
+   }
    return self;
 }
 -(void) dealloc
@@ -1185,27 +1258,53 @@
 }
 -(void) set: (id<ORVar>) x at: (ORInt) value
 {
+   _maxId = max(_maxId, x.getId);
    [_vars set:x at:value];
 }
 -(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key
 {
    return [_vars objectAtIndexedSubscript:key];
 }
--(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx
 {
+   _maxId = max(_maxId, newValue.getId);
    [_vars setObject:newValue atIndexedSubscript:idx];
 }
 -(void) disable:(ORUInt) index
 {
-   [_disabled[index] setValue:1];
+   if([self isEnabled:index]){
+      if([self isFullyDisabled])
+         @throw [[NSException alloc] initWithName:@"Internal Error"
+                                        reason:@"Array is already fully disabled"
+                                      userInfo:nil];
+      [_disabled[index] setValue:1];
+      [_indexDisabled[[_current value]] setValue:index];
+      [_current setValue:(([_current value] + 1) % _nb)];
+   }
 }
 -(void) enable:(ORUInt) index
 {
    [_disabled[index] setValue:0];
 }
--(ORBool) isEnable:(ORUInt) index;
+-(ORUInt) enableFirst
+{
+   if(![self hasDisabled])
+      @throw [[NSException alloc] initWithName:@"Internal Error"
+                                        reason:@"Array is fully enabled"
+                                      userInfo:nil];
+   
+   ORUInt index = [_indexDisabled[[_start value]] value];
+   [self enable:index];
+   [_indexDisabled[[_start value]] setValue:-1];
+   [_start setValue:(([_start value] + 1) % _nb)];
+   return index;
+}
+-(ORBool) isEnabled:(ORUInt) index;
 {
    return ![_disabled[index] value];
+}
+- (ORBool)isDisabled:(ORUInt)index {
+   return [_disabled[index] value];
 }
 -(id<ORIntRange>) range
 {
@@ -1223,6 +1322,24 @@
 {
    return [_vars count];
 }
+-(ORUInt) maxFixed
+{
+   return _nb;
+}
+-(ORUInt) maxId
+{
+   return _maxId;
+}
+-(void) setMaxFixed:(ORInt)nb
+{
+   _nb = min(nb,(ORInt)[_vars count]);
+   for(ORInt i = 0; i < [_disabled count]; i++){
+      [_disabled[i] setValue:0];
+      [_indexDisabled[i] setValue:-1];
+   }
+   [_current setValue:0];
+   [_start setValue:0];
+}
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
                                   objects:(id *)stackbuf
                                     count:(NSUInteger)len
@@ -1231,11 +1348,67 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@)",_name,_vars,_disabled];
+   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@,index:%@,nb:%d,start:%@,cur:%@,i:%@)",_name,_vars,_disabled,_indexDisabled,_nb,_start,_current,_initials];
 }
--(ORBool) contains:(id<ORFloatVar>)v
+-(ORBool) contains:(id<ORVar>)v
 {
    return [_vars contains:v];
+}
+-(ORBool) isInitial:(ORUInt) index
+{
+   return ([_initials at:index] == 1);
+}
+-(ORInt) indexLastDisabled
+{
+   if(_nb > 0){
+      ORInt index = (([_current value]-1)%_nb);
+      if(index < 0) index += _nb;
+      return  [_indexDisabled[index] value];
+   }else{
+      return 0;
+   }
+}
+-(ORBool) hasDisabled
+{
+   return _nb > 0 && [self indexLastDisabled] != -1;
+}
+-(ORBool) isFullyDisabled
+{
+   return [_current value] == [_start value] && [self hasDisabled];
+}
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine
+{
+    ORInt cpt = 0;
+    for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i])
+          cpt++;
+   }
+    assert(cpt>0);
+    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
+    for (ORUInt i = 0; i < [_vars count]; i++){
+        if([self isInitial:i])
+            ovars[i] = _vars[i];
+    }
+   id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
+    [engine trackObject:r];
+    return r;
+}
+
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
+    ORInt cpt = 0;
+    for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i])
+          cpt++;
+   }
+    assert(cpt>0);
+    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
+   for (ORUInt i = 0; i < [_vars count]; i++){
+        if([self isInitial:i])
+            ovars[i] = _vars[i];
+    }
+   id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
+    [engine trackObject:r];
+    return r;
 }
 @end
 

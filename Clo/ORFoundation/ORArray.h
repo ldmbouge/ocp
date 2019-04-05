@@ -29,6 +29,7 @@ PORTABLE_BEGIN
 -(ORInt) max;
 -(ORInt) min;
 -(ORInt) average;
+-(ORInt) sum;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;

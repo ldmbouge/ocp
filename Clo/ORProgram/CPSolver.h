@@ -53,14 +53,22 @@ extern id<ORRational> GlobalDualBound;
 -(BOOL)empty;
 @end
 
+
+typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 // This factorizes all the common stuff
 
 @interface CPCoreSolver : ORGamma<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
+-(void) setAbsComputationFunction:(ABS_FUN) f;
+-(void) setAbsLimitModelVars:(ORDouble)local total:(ORDouble)global;
+-(void) setAbsLimitAdditionalVars:(ORDouble)local total:(ORDouble)global;
 -(void) setLevel:(ORInt) level;
--(void) setUnique:(ORBool) u;
+-(void) setOccRate:(ORDouble) r;
+-(void) setAbsRate:(ORDouble) r;
+-(void) setVariation:(ORInt) variation;
+-(void) setUnique:(ORInt) u;
 -(void) set3BSplitPercent:(ORFloat) p;
 -(void) setSearchNBFloats:(ORInt) p;
 -(void) setSubcut:(SEL)s;
@@ -72,6 +80,7 @@ extern id<ORRational> GlobalDualBound;
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2;
 -(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 -(void) once: (ORClosure) cl;
+-(void) probe: (ORClosure) cl;
 -(void) try: (ORClosure) left then: (ORClosure) right;
 -(void) limitSolutions: (ORInt) maxSolutions  in: (ORClosure) cl;
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
@@ -88,51 +97,25 @@ extern id<ORRational> GlobalDualBound;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
-//-(id<ORSolutionPool>) globalSolutionPool;
-//-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation*)n;
-//-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
-//-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
-//-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
-//-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
-//-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarVSIDS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
 -(id<ORSolution>) captureSolution;
 -(ORInt) maxBound:(id<ORIdArray>) x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 -(id<ORIntVar>)smallestDom:(id<ORIdArray>)x;
-
-//-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
-//
-//// pvh: do we have to put these here. Any way to externalize them.
-//-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
-
-// pvh: do we have to put these here. Any way to externalize them.
-//-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createSDeg: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
-//-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
-
-//-(id<CPHeuristic>) createFF;
-//-(id<CPHeuristic>) createWDeg;
-//-(id<CPHeuristic>) createDDeg;
-//-(id<CPHeuristic>) createSDeg;
-//-(id<CPHeuristic>) createIBS;
-//-(id<CPHeuristic>) createABS;
-
-//=======
-//-(void) addConstraintDuringSearch: (id<ORConstraint>) c;
-//>>>>>>> master
 -(void) defaultSearch;
 -(id<ORMemoryTrail>)memoryTrail;
 -(void)tracer:(id<ORTracer>)tracer;
+-(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up;
+-(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) u;
+-(void) doubleGthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val;
+-(void) doubleLthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val;
+-(void) floatGEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val;
+-(void) floatLEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val;
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val;
+-(void) doubleLEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val;
 @end
 
 // Pure DFS CPSolver
@@ -146,10 +129,7 @@ extern id<ORRational> GlobalDualBound;
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
 
 -(id<CPSemanticProgramDFS>) initCPSolverBackjumpingDFS;
-//-(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
-//=======
 -(id<CPSemanticProgram>)    initCPSemanticSolver: (id<ORSearchController>) ctrlProto;
-//>>>>>>> master
 @end
 
 @interface CPSolverFactory : NSObject
@@ -176,21 +156,27 @@ extern id<ORRational> GlobalDualBound;
 
 @protocol ORAbsElement <ORObject>
 -(ORDouble) quantity;
--(void) addQuantity:(ORFloat)c;
--(void) setChoice:(id<CPFloatVar>)c;
--(id<CPFloatVar>) bestChoice;
+-(void) addQuantity:(ORFloat)c for:(id<CPVar>)c;
+-(void) setChoice:(id<CPVar>)c;
+-(id<CPVar>) bestChoice;
 @end
 
 @interface ABSElement : ORObject<ORAbsElement> {
    ORDouble _quantity;
-   id<CPFloatVar> _choice;
+   ORUInt _nb;
+   id<CPVar> _choice;
+   ORDouble _min;
+   ORDouble _pquantity;
+   ORDouble _max;
 }
 -(id) init:(ORDouble)quantity;
 -(id) init;
 -(ORDouble) quantity;
--(void) addQuantity:(ORFloat)c;
--(void) setChoice:(id<CPFloatVar>)c;
--(id<CPFloatVar>) bestChoice;
+-(void) addQuantity:(ORFloat)c for:(id<CPVar>)c;
+-(void) setChoice:(id<CPVar>)c;
+-(id<CPVar>) bestChoice;
+-(ORInt) nbAbs;
 -(NSString*)description;
 -(void) dealloc;
++(void) setFunChoice:(ABS_FUN)nfun;
 @end

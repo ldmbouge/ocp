@@ -124,14 +124,14 @@
          id       x = cv ? [e right] : [e left];
          [_terms addTerm: x by: coef];
       } else if ([[e left] isConstant]) {
-         id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:[e right]];
-         [_terms addTerm:alpha by:[[e left] min]];
+         id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:[e right]];
+         [_terms addTerm:alpha by:[[e left] dmin]];
       } else if ([[e right] isConstant]) {
          id<ORRealLinear> left = [ORNormalizer realLinearFrom:[e left] model:_model];
-         [left scaleBy:[[e right] min]];
+         [left scaleBy:[[e right] dmin]];
          [_terms addLinear:left];
       } else {
-         id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e];
+         id<ORRealVar> alpha =  [ORNormalizer realVarIn:_model expr:e];
          [_terms addTerm:alpha by:1];
       }
    }
@@ -279,8 +279,12 @@
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
     id<ORRealLinear> terms = [ORNormalizer realLinearFrom:e model:_model];
-    if (_rv==nil)
+   if (_rv==nil){
+       if([terms hasBounds])
         _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
+      else
+         _rv = [ORFactory realVar:_model];
+   }
     [terms addTerm:_rv by:-1];
     [terms postEQZ:_model];
     [terms release];
@@ -288,8 +292,12 @@
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
     id<ORRealLinear> terms = [ORNormalizer realLinearFrom:e model:_model];
-    if (_rv==nil)
-        _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
+   if (_rv==nil){
+      if([terms hasBounds])
+         _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
+      else
+         _rv = [ORFactory realVar:_model];
+   }
     [terms addTerm:_rv by:-1];
     [terms postEQZ:_model];
     [terms release];
@@ -304,7 +312,19 @@
    [terms postEQZ:_model];
    [terms release];
 }
-
+-(void) visitExprMulI:(ORExprMulI*)e
+{
+   id<ORRealLinear> lT = [ORNormalizer realLinearFrom:[e left] model:_model];
+   id<ORRealLinear> rT = [ORNormalizer realLinearFrom:[e right] model:_model];
+   id<ORRealVar> lV = [ORNormalizer realVarIn:lT for:_model];
+   id<ORRealVar> rV = [ORNormalizer realVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory realVar:_model];
+   }
+   [_model addConstraint: [ORFactory realMult:_model var:lV by:rV equal:_rv]];
+   [lT release];
+   [rT release];
+}
 -(void) visitExprSquareI:(ORExprSquareI *)e
 {
     id<ORRealLinear> lT = [ORNormalizer realLinearFrom:[e operand] model:_model];
@@ -313,8 +333,12 @@
     ORDouble ub = [lT fmax];
     ORDouble nlb = lb < 0 ? 0 : lb*lb;
     ORDouble nub = max(lb*lb, ub*ub);
-    if (_rv == nil)
+   if (_rv==nil){
+      if([lT hasBounds])
         _rv = [ORFactory realVar:_model low:nlb up:nub];
+      else
+         _rv = [ORFactory realVar:_model];
+   }
     [_model addConstraint:[ORFactory realSquare:_model var:oV equal:_rv]];
     [lT release];
 }

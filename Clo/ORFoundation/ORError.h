@@ -23,6 +23,7 @@
 	const char* _message;
 }
 -(ORExecutionError*) initORExecutionError: (const char*) msg;
+-(ORExecutionError*) initORExecutionErrorString: (NSString*) msg;
 -(const char*) msg;
 -(NSString *)description;
 @end 
