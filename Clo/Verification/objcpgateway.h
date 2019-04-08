@@ -134,6 +134,8 @@ typedef int assertion_id;
 @interface OBJCPGateway : NSObject{
 @private
    id<ORModel> _model;
+   NSMutableDictionary* _used;
+   NSMutableDictionary* _alphas;
    NSMutableDictionary* _types;
    NSMutableDictionary* _declarations;
    NSMutableDictionary* _exprDeclarations;

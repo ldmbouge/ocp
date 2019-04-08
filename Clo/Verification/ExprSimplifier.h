@@ -16,7 +16,7 @@
    NSMutableDictionary* _alphas;
    id<ORExpr> _rv;
 }
--(id)init:(NSMutableDictionary*)theSet;
+-(id)init:(NSMutableDictionary*)theSet matching:(NSMutableDictionary*)alpha;
 -(id<ORExpr>) result;
-+(id<ORExpr>)simplify:(id<ORExpr>)e;
++(id<ORExpr>)simplify:(id<ORExpr>)e  used:(NSMutableDictionary*) m matching:(NSMutableDictionary*)alpha;
 @end

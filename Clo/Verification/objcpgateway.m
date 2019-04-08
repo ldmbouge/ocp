@@ -385,6 +385,8 @@ static OBJCPGateway *objcpgw;
 {
    self = [super init];
    _model = [ORFactory createModel];
+   _used = [[NSMutableDictionary alloc] initWithCapacity:10];
+   _alphas = [[NSMutableDictionary alloc] initWithCapacity:10];
    _declarations = [[NSMutableDictionary alloc] initWithCapacity:10];
    _instances = [[NSMutableDictionary alloc] initWithCapacity:10];
    _types = [[NSMutableDictionary alloc] initWithCapacity:10];
@@ -630,7 +632,7 @@ static OBJCPGateway *objcpgw;
    id<ORIntVar> trueVar = [ORFactory intVar:_model value:1];
    id<ORExpr> ne = expr;
    if([_options variationSearch]){
-      ne = [ExprSimplifier simplify:expr];
+      ne = [ExprSimplifier simplify:expr used:_used matching:_alphas];
    }
    [_model add:[ne eq:trueVar]];
 }
@@ -1557,9 +1559,10 @@ static OBJCPGateway *objcpgw;
    } else {// expr
       id<ORExpr> ne = x;
       if([_options variationSearch]){
-         ne = [ExprSimplifier simplify:x];
+         ne = [ExprSimplifier simplify:x used:_used matching:_alphas];
       }
       var = (t == OR_FLOAT) ? (id<ORExpr>)[ORFactory doubleVar:_model] : (id<ORExpr>)[ORFactory floatVar:_model];
+      [_alphas setObject:var forKey:[NSValue valueWithPointer:x]];
       [_model add:[var eq:ne]];
    }
    id<ORExpr> res = nil;

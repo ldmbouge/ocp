@@ -134,32 +134,29 @@
 
 
 @implementation ExprSimplifier
-+(id<ORExpr>)simplify:(id<ORExpr>)e
++(id<ORExpr>)simplify:(id<ORExpr>)e used:(NSMutableDictionary*) used matching:(NSMutableDictionary*) alphas
 {
    id<ORExpr> rv = e;
-   NSMutableDictionary* used = [[NSMutableDictionary alloc] initWithCapacity:4];
    ExprCounter* counter = [[ExprCounter alloc] init:used];
    [e visit:counter];
    [counter release];
    if([used count]){
-      ExprSimplifier* simplifier = [[ExprSimplifier alloc] init:used];
+      ExprSimplifier* simplifier = [[ExprSimplifier alloc] init:used matching:alphas];
       [e visit:simplifier];
       rv = [simplifier result];
       [simplifier release];
    }
-   [used release];
    return rv;
 }
--(id)init:(NSMutableDictionary*)theSet
+-(id)init:(NSMutableDictionary*)theSet matching:(NSMutableDictionary *)alpha
 {
    self = [super init];
    _theSet = theSet;
-   _alphas = [[NSMutableDictionary alloc] init];
+   _alphas = alpha;
    return self;
 }
 -(void) dealloc
 {
-   [_alphas release];
    [super dealloc];
 }
 -(id<ORExpr>) result
@@ -325,6 +322,8 @@
    if(alpha == nil){
       id<ORExpr> nL = [self doIt:c.left];
       id<ORExpr> nR = [self doIt:c.right];
+      if([nL isVariable] && ![nR isVariable])
+         [_alphas setObject:nL forKey:[NSValue valueWithPointer:nR]];
       _rv = [self simplify:c with:[nL eq:nR]];
    }else _rv = alpha;
 }
