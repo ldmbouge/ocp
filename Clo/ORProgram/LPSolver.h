@@ -23,6 +23,7 @@
 -(void) addColumn: (id<LPColumn>) column;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORSolution>) captureSolution;
+-(void) printModelToFile: (char*) fileName;
 @end
 
 @interface LPRelaxation : ORGamma<LPRelaxation>
