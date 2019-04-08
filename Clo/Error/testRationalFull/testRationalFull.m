@@ -17,8 +17,8 @@ int main(int argc, const char * argv[]) {
       [low_y set: 1 and: 2];
       [up set: 5 and: 2];
       id<ORModel> mdl = [ORFactory createModel];
-      //id<ORFloatVar> t = [ORFactory floatVar:mdl low:0.2 up:3.0 name:@"t"];
-      id<ORRationalVar> et = [ORFactory errorVar:mdl of:t name:@"et"];
+      id<ORFloatVar> t = [ORFactory floatVar:mdl low:0.2 up:3.0 name:@"t"];
+      id<ORRationalVar> et = [ORFactory errorVar:mdl of:t];
       id<ORRationalVar> x = [ORFactory rationalVar:mdl low:low up:up name:@"x"];
       id<ORRationalVar> y = [ORFactory rationalVar:mdl low:low_y up:low_y name:@"y"];
       id<ORRationalVar> z = [ORFactory rationalVar:mdl name:@"z"];
@@ -30,7 +30,7 @@ int main(int argc, const char * argv[]) {
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       
-      [mdl maximize:z];
+      //[mdl maximize:z];
       [cp solveAll:^{
          [cp labelRational:x];
          NSLog(@"x : [%@;%@] (%s)",[cp minQ:x],[cp maxQ:x],[cp bound:x] ? "YES" : "NO");

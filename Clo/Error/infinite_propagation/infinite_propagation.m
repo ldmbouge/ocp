@@ -55,12 +55,12 @@ int main(int argc, const char * argv[]) {
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORFloatVarArray> vs = [mdl floatVars];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       //[cp setMinErrorFD:z minErrorF:0.00000000746];
       [cp solve:^{
-         [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-            [cp floatSplit:i call:s withVars:x];
+         [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp floatSplit:i withVars:x];
          }];
          NSLog(@"x : [%16.16e;%16.16e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
          NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);

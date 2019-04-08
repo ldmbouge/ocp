@@ -126,11 +126,11 @@
       [_controller startTryLeft];
       _nbc++;
       left();
-      if([[_engine objective] isBound]){
+      /*if([[_engine objective] isBound]){
          [[_engine objective] updatePrimalBound];
       } else {
          [[_engine objective] updateDualBound];
-      }
+      }*/
 
       [_controller exitTryLeft];
    }
@@ -142,11 +142,11 @@
       [_controller startTryRight];
       [_controller trust];
       right();
-      if([[_engine objective] isBound]){
+      /*if([[_engine objective] isBound]){
          [[_engine objective] updatePrimalBound];
       } else {
          [[_engine objective] updateDualBound];
-      }
+      }*/
       [_controller exitTryRight];
    }
    [_controller exitTry];

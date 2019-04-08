@@ -70,17 +70,17 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
       [mdl add:[K set: @(1.11)]];
       [mdl add:[z set:[[[r mul: x] mul: x] div: [@(1.0) plus: [[x div: K] mul: [x div: K]]]]]];
       
-      [mdl add:[[z error] geq:c]];
+      //[mdl add:[[z error] geq:c]];
       NSLog(@"model: %@",mdl);
       id<ORDoubleVarArray> vs = [mdl doubleVars];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [c release];
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-               [cp floatSplitD:i call:s withVars:x];
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
             }];
          NSLog(@"%@",cp);
          NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
@@ -142,22 +142,18 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
       [mdl add:[K set: @(1.11f)]];
       [mdl add:[z set:[[[r mul: x] mul: x]  div: [@(1.0f) plus: [[x div: K] mul:[x div: K]]]]]];
       
-      [mdl maximize:ez];
+      //[mdl maximize:ez];
 
       NSLog(@"model: %@",mdl);
       id<ORFloatVarArray> vs = [mdl floatVars];
-      //id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
-         //if (search)
-            [cp branchAndBoundSearch:vars out:z do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-               [cp floatSplit:i call:s withVars:x];
+         if (search)
+         [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
             }];
-//            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-//               [cp floatSplit:i call:s withVars:x];
-//            }];
          NSLog(@"%@",cp);
          /* format of 8.8e to have the same value displayed as in FLUCTUAT */
          /* Use printRational(ORRational r) to print a rational inside the solver */
@@ -172,8 +168,8 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
-      predatorPrey_f(1, argc, argv);
-      //predatorPrey_d(1, argc, argv);
+      //predatorPrey_f(1, argc, argv);
+      predatorPrey_d(0, argc, argv);
    }
    return 0;
 }

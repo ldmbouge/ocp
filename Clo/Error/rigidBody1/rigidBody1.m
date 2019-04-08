@@ -72,12 +72,12 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
       NSLog(@"model: %@",mdl);
       id<ORDoubleVarArray> vs = [mdl doubleVars];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-               [cp floatSplitD:i call:s withVars:x];
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
             }];
          NSLog(@"%@",cp);
          NSLog(@"x1 : [%f;%f]±[%@;%@] (%s)",[cp minD:x1],[cp maxD:x1],[cp minDQ:x1],[cp maxDQ:x1],[cp bound:x1] ? "YES" : "NO");
@@ -91,7 +91,7 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
-   rigidBody1_d(1, argc, argv);
+   rigidBody1_d(0, argc, argv);
    }
    return 0;
 }

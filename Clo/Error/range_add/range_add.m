@@ -47,12 +47,12 @@ void range_add_f(int search, int argc, const char * argv[]) {
       NSLog(@"model: %@",mdl);
       id<ORFloatVarArray> vs = [mdl floatVars];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-               [cp floatSplit:i call:s withVars:x];
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
             }];
          NSLog(@"%@",cp);
          NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:x],[cp maxF:x],[cp minFQ:x],[cp maxFQ:x],[cp bound:x] ? "YES" : "NO");
@@ -65,7 +65,7 @@ void range_add_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
-      range_add_f(1, argc, argv);
+      range_add_f(0, argc, argv);
    }
    return 0;
 }

@@ -21,10 +21,10 @@ typedef struct  {
    TRId            _minEvt[2];
    TRId            _maxEvt[2];
    TRId         _boundsEvt[2];
-   TRId        _bindEvtErr;
-   TRId         _maxEvtErr;
-   TRId         _minEvtErr;
-   TRId      _boundsEvtErr;
+   TRId        _bindEvtErr[2];
+   TRId         _maxEvtErr[2];
+   TRId         _minEvtErr[2];
+   TRId      _boundsEvtErr[2];
 
 } CPDoubleEventNetwork;
 
@@ -144,6 +144,10 @@ static void setUpNetwork(CPDoubleEventNetwork* net,id<ORTrail> t)
         net->_minEvt[i]    = makeTRId(t,nil);
         net->_maxEvt[i]    = makeTRId(t,nil);
         net->_boundsEvt[i] = makeTRId(t,nil);
+       net->_bindEvtErr[i]   = makeTRId(t,nil);
+       net->_minEvtErr[i]    = makeTRId(t,nil);
+       net->_maxEvtErr[i]    = makeTRId(t,nil);
+       net->_boundsEvtErr[i] = makeTRId(t,nil);
     }
 }
 
@@ -153,6 +157,10 @@ static void deallocNetwork(CPDoubleEventNetwork* net)
    freeList(net->_minEvt[0]);
    freeList(net->_maxEvt[0]);
    freeList(net->_boundsEvt[0]);
+   freeList(net->_bindEvtErr[0]);
+   freeList(net->_minEvtErr[0]);
+   freeList(net->_maxEvtErr[0]);
+   freeList(net->_boundsEvtErr[0]);
 }
 
 static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
@@ -161,6 +169,10 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    collectList(net->_minEvt[0],rv);
    collectList(net->_maxEvt[0],rv);
    collectList(net->_boundsEvt[0],rv);
+   collectList(net->_bindEvtErr[0],rv);
+   collectList(net->_minEvtErr[0],rv);
+   collectList(net->_maxEvtErr[0],rv);
+   collectList(net->_boundsEvtErr[0],rv);
    return rv;
 }
 
@@ -278,22 +290,22 @@ return self;
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     hookupEvent((id)_engine, &_net._bindEvt[0], todo, c, p);
-    hookupEvent((id)_engine, &_net._bindEvtErr, todo, c, p);
+    hookupEvent((id)_engine, &_net._bindEvtErr[0], todo, c, p);
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     hookupEvent((id)_engine, &_net._minEvt[0], todo, c, p);
-    hookupEvent((id)_engine, &_net._minEvtErr, todo, c, p);
+    hookupEvent((id)_engine, &_net._minEvtErr[0], todo, c, p);
 }
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     hookupEvent((id)_engine, &_net._maxEvt[0], todo, c, p);
-    hookupEvent((id)_engine, &_net._maxEvtErr, todo, c, p);
+    hookupEvent((id)_engine, &_net._maxEvtErr[0], todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     hookupEvent((id)_engine, &_net._boundsEvt[0], todo, c, p);
-    hookupEvent((id)_engine, &_net._boundsEvtErr, todo, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvtErr[0], todo, c, p);
 }
 - (void)whenChangeDo:(ORClosure)todo priority:(ORInt)p onBehalf:(CPCoreConstraint*)c
 {
@@ -319,27 +331,27 @@ return self;
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     hookupEvent((id)_engine, &_net._bindEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._bindEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._bindEvtErr[0], nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     hookupEvent((id)_engine, &_net._minEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._minEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._minEvtErr[0], nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     hookupEvent((id)_engine, &_net._maxEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._maxEvtErr[0], nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     hookupEvent((id)_engine, &_net._boundsEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._boundsEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvtErr[0], nil, c, p);
 }
 - (void)whenChangePropagate:(CPCoreConstraint*)c priority:(ORInt)p
 {
     hookupEvent((id)_engine, &_net._boundsEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._boundsEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvtErr[0], nil, c, p);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
@@ -380,7 +392,7 @@ return self;
 {
     id<CPClosureList> mList[2];
     ORUInt k = 0;
-    mList[k] = _net._bindEvtErr;
+    mList[k] = _net._bindEvtErr[0];
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -402,11 +414,11 @@ return self;
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
-    mList[k] = _net._minEvtErr;
+    mList[k] = _net._minEvtErr[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvtErr;
+    mList[k] = _net._boundsEvtErr[0];
     k += mList[k] != NULL;
-    mList[k] = bound ? _net._bindEvtErr : NULL;
+    mList[k] = bound ? _net._bindEvtErr[0] : NULL;
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -428,11 +440,11 @@ return self;
 {
     id<CPClosureList> mList[6];
     ORUInt k = 0;
-    mList[k] = _net._maxEvtErr;
+    mList[k] = _net._maxEvtErr[0];
     k += mList[k] != NULL;
-    mList[k] = _net._boundsEvtErr;
+    mList[k] = _net._boundsEvtErr[0];
     k += mList[k] != NULL;
-    mList[k] = bound ? _net._bindEvtErr : NULL;
+    mList[k] = bound ? _net._bindEvtErr[0] : NULL;
     k += mList[k] != NULL;
     mList[k] = NULL;
     scheduleClosures(_engine,mList);
@@ -662,22 +674,22 @@ return self;
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     hookupEvent((id)_engine, &_net._bindEvt[0], todo, c, p);
-    hookupEvent((id)_engine, &_net._bindEvtErr, todo, c, p);
+    hookupEvent((id)_engine, &_net._bindEvtErr[0], todo, c, p);
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     hookupEvent((id)_engine, &_net._minEvt[0], todo, c, p);
-    hookupEvent((id)_engine, &_net._minEvtErr, todo, c, p);
+    hookupEvent((id)_engine, &_net._minEvtErr[0], todo, c, p);
 }
 -(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     hookupEvent((id)_engine, &_net._maxEvt[0], todo, c, p);
-    hookupEvent((id)_engine, &_net._maxEvtErr, todo, c, p);
+    hookupEvent((id)_engine, &_net._maxEvtErr[0], todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     hookupEvent((id)_engine, &_net._boundsEvt[0], todo, c, p);
-    hookupEvent((id)_engine, &_net._boundsEvtErr, todo, c, p);
+    hookupEvent((id)_engine, &_net._boundsEvtErr[0], todo, c, p);
 }
 -(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -699,22 +711,22 @@ return self;
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     hookupEvent((id)_engine, &_net._bindEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._bindEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._bindEvtErr[0], nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     hookupEvent((id)_engine, &_net._minEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._minEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._minEvtErr[0], nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     hookupEvent((id)_engine, &_net._maxEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._maxEvtErr[0], nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     hookupEvent((id)_engine, &_net._boundsEvt[0], nil, c, p);
-    hookupEvent((id)_engine, &_net._maxEvtErr, nil, c, p);
+    hookupEvent((id)_engine, &_net._maxEvtErr[0], nil, c, p);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {

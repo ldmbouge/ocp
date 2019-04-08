@@ -74,12 +74,12 @@ void doppler1_d(int search, int argc, const char * argv[]) {
         NSLog(@"model: %@",mdl);
         id<ORDoubleVarArray> vs = [mdl doubleVars];
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-        id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
        
         [cp solve:^{
             if (search)
-                [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-                    [cp floatSplitD:i call:s withVars:x];
+               [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+                    [cp floatSplit:i withVars:x];
                 }];
             NSLog(@"%@",cp);
            NSLog(@"u : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:u],[cp maxD:u],[cp minDQ:u],[cp maxDQ:u],[cp bound:u] ? "YES" : "NO");
@@ -148,12 +148,12 @@ void doppler1_f(int search, int argc, const char * argv[]) {
         NSLog(@"model: %@",mdl);
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
         id<ORFloatVarArray> vs = [mdl floatVars];
-        id<ORDisabledFloatVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
 
         [cp solve:^{
             if (search)
-                [cp lexicalOrderedSearch:vars do:^(ORUInt i, SEL s, id<ORDisabledFloatVarArray> x) {
-                    [cp floatSplit:i call:s withVars:x];
+               [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+                    [cp floatSplit:i withVars:x];
                 }];
             NSLog(@"%@",cp);
            NSLog(@"u : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:u],[cp maxF:u],[cp minFQ:u],[cp maxFQ:u],[cp bound:u] ? "YES" : "NO");
@@ -169,7 +169,7 @@ void doppler1_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"u"){
     //doppler1_f(1, argc, argv);
-    doppler1_d(1, argc, argv);
+    doppler1_d(0, argc, argv);
    }
     return 0;
 }
