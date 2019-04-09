@@ -385,8 +385,7 @@ static OBJCPGateway *objcpgw;
 {
    self = [super init];
    _model = [ORFactory createModel];
-   _used = [[NSMutableDictionary alloc] initWithCapacity:10];
-   _alphas = [[NSMutableDictionary alloc] initWithCapacity:10];
+   _toadd = [[NSMutableArray alloc] init];
    _declarations = [[NSMutableDictionary alloc] initWithCapacity:10];
    _instances = [[NSMutableDictionary alloc] initWithCapacity:10];
    _types = [[NSMutableDictionary alloc] initWithCapacity:10];
@@ -630,16 +629,19 @@ static OBJCPGateway *objcpgw;
 -(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr
 {
    id<ORIntVar> trueVar = [ORFactory intVar:_model value:1];
-   id<ORExpr> ne = expr;
-   if([_options variationSearch]){
-      ne = [ExprSimplifier simplify:expr used:_used matching:_alphas];
+   [_toadd addObject:[(id<ORExpr>)expr eq:trueVar]];
+}
+-(void) addConstraints
+{
+   NSArray* arr = [ExprSimplifier simplifyAll:_toadd];
+   for(id<ORExpr> e in arr){
+      [_model add:e];
    }
-   [_model add:[ne eq:trueVar]];
 }
 -(ORBool) objcp_check:(objcp_context) ctx
 {
+   [self addConstraints];
    @autoreleasepool {
-//      printf("model : %s",[[NSString stringWithFormat:@"%@",_model] UTF8String]);
       NSLog(@"%@",_model);
       id<LogicHandler> lh ;
       @try {

@@ -19,4 +19,5 @@
 -(id)init:(NSMutableDictionary*)theSet matching:(NSMutableDictionary*)alpha;
 -(id<ORExpr>) result;
 +(id<ORExpr>)simplify:(id<ORExpr>)e  used:(NSMutableDictionary*) m matching:(NSMutableDictionary*)alpha;
++(NSArray*)simplifyAll:(NSArray*)e;
 @end

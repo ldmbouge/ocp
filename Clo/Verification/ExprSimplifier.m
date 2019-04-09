@@ -158,6 +158,31 @@
    }
    return rv;
 }
++(NSArray*)simplifyAll:(NSArray*)es
+{
+   NSMutableArray* res = [[NSMutableArray alloc] init];
+   NSMutableDictionary* used = [[NSMutableDictionary alloc] init];
+   ExprCounter* counter = [[ExprCounter alloc] init:used];
+   for(id<ORExpr> e in es){
+      [e visit:counter];
+   }
+   [counter release];
+   if([used count]){
+      ExprSimplifier* simplifier = [[ExprSimplifier alloc] init:used];
+      for(id<ORExpr> e in es){
+         [e visit:simplifier];
+         [res addObject:[simplifier result]];
+         simplifier->_rv = nil;
+      }
+      [simplifier release];
+   }
+   return res;
+}
+-(id) init:(NSMutableDictionary*)theSet
+{
+   self = [self init:theSet matching:[[NSMutableDictionary alloc] init]];
+   return self;
+}
 -(id)init:(NSMutableDictionary*)theSet matching:(NSMutableDictionary *)alpha
 {
    self = [super init];
