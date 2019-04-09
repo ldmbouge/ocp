@@ -1491,7 +1491,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 +(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORDoubleVar>)x
 {
-   ORDoubleSubst* subst = [[ORDoubleSubst alloc] initORDoubleSubst: model];
+   ORDoubleSubst* subst = [[ORDoubleSubst alloc] initORDoubleSubst: model by:x];
    [expr visit:subst];
    id<ORDoubleVar> theVar = [subst result];
    [subst release];
