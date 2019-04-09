@@ -158,6 +158,9 @@
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprSqrtI:(id<ORExpr>) e;
+-(void) visitExprToFloatI:(id<ORExpr>) e;
+-(void) visitExprToDoubleI:(id<ORExpr>) e;
 -(void) visitExprSquareI:(id<ORExpr>) e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
@@ -351,6 +354,18 @@
    [[e expr] visit:self];   
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprSqrtI:(ORExprSqrtI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprToFloatI:(ORExprToFloatI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprToDoubleI:(ORExprToDoubleI*) e
 {
    [[e operand] visit:self];
 }
@@ -711,6 +726,14 @@
 {
    return [ORFactory exprSqrt:self track:[self tracker]];
 }
+-(id<ORExpr>) toFloat
+{
+   return [ORFactory exprToFloat:self track:[self tracker]];
+}
+-(id<ORExpr>) toDouble
+{
+   return [ORFactory exprToDouble:self track:[self tracker]];
+}
 -(id<ORExpr>) abs
 {
    return [ORFactory exprAbs:self track:[self tracker]];
@@ -816,6 +839,14 @@
 -(id<ORExpr>) squareTrack:(id<ORTracker>)t
 {
    return [ORFactory exprSquare:self track:t];
+}
+-(id<ORExpr>) toFloatTrack:(id<ORTracker>)t
+{
+   return [ORFactory exprToFloat:self track:t];
+}
+-(id<ORExpr>) toDoubleTrack:(id<ORTracker>)t
+{
+   return [ORFactory exprToDouble:self track:t];
 }
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t
 {
@@ -1816,6 +1847,143 @@
 }
 @end
 
+@implementation ORExprToFloatI
+-(id<ORExpr>) initORExprToFloatI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprToFloatI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"to_float(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprToDoubleI
+-(id<ORExpr>) initORExprToDoubleI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTDouble;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprToDoubleI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"to_double(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
 
 @implementation ORExprSqrtI
 -(id<ORExpr>) initORExprSqrtI: (id<ORExpr>) right

@@ -1208,7 +1208,17 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprSqrtI alloc] initORExprSqrtI:op];
-   return [self validate:o onError:"No CP tracker in Abs Expression" track:t];
+   return [self validate:o onError:"No CP tracker in sqrt Expression" track:t];
+}
++(id<ORExpr>) exprToFloat: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprToFloatI alloc] initORExprToFloatI:op];
+   return [self validate:o onError:"No CP tracker in to_float Expression" track:t];
+}
++(id<ORExpr>) exprToDouble: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprToDoubleI alloc] initORExprToDoubleI:op];
+   return [self validate:o onError:"No CP tracker in to_double Expression" track:t];
 }
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t
 {

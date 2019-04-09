@@ -1549,36 +1549,11 @@ static OBJCPGateway *objcpgw;
 }
 -(id<ORExpr>) objcp_mk_to_fp:(id<ORExpr>)x to:(objcp_var_type) t
 {
-   id<ORExpr> var;
    if([(id)x isKindOfClass:[ConstantWrapper class]])
       x = (id<ORExpr>)[(ConstantWrapper*)x makeVariable];
-   if([(id)x conformsToProtocol:@protocol(ORFloatVar)]){
-      var = (id<ORFloatVar>) x;
-   } else if([(id)x conformsToProtocol:@protocol(ORDoubleVar)]){
-      var = (id<ORDoubleVar>) x;
-   } else {// expr
-      id<ORExpr> ne = x;
-      if([_options variationSearch]){
-         ne = [ExprSimplifier simplify:x used:_used matching:_alphas];
-      }
-      var = (t == OR_FLOAT) ? (id<ORExpr>)[ORFactory doubleVar:_model] : (id<ORExpr>)[ORFactory floatVar:_model];
-      [_alphas setObject:var forKey:[NSValue valueWithPointer:x]];
-      [_model add:[var eq:ne]];
-   }
-   id<ORExpr> res = nil;
    if(t == OR_DOUBLE){
-      id<ORFloatVar> fvar = (id<ORFloatVar>) var;
-      res = [ORFactory doubleVar:_model low:[fvar low] up:[fvar up] name:[NSString stringWithFormat:@"%@D*",([fvar prettyname] == nil) ? [NSString stringWithFormat:@"var<%d>",getId(fvar)]:[fvar prettyname]]];
-      if([fvar low] != [fvar up]){
-         [_model add:[ORFactory doubleCast:_model from:fvar res:(id<ORDoubleVar>)res]];
-      }
-   }else{
-      id<ORDoubleVar> dvar = (id<ORDoubleVar>) var;
-      res = [ORFactory floatVar:_model low:[dvar low] up:[dvar up] name:[NSString stringWithFormat:@"%@F*",([dvar prettyname] == nil) ? [NSString stringWithFormat:@"var<%d>",getId(dvar)]:[dvar prettyname]]];
-      if([dvar low] != [dvar up]){
-         [_model add:[ORFactory floatCast:_model from:dvar res:(id<ORFloatVar>)res]];
-      }
+      return [x toDouble];
    }
-   return res;
+   return [x toFloat];
 }
 @end

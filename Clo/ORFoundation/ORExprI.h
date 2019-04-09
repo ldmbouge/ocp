@@ -20,6 +20,8 @@
 @interface ORExprI: ORObject<ORExpr,NSCoding>
 -(id<ORExpr>) abs;
 -(id<ORExpr>) square;
+-(id<ORExpr>) toFloat;
+-(id<ORExpr>) toDouble;
 -(id<ORExpr>) set: (id) e;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
@@ -43,6 +45,8 @@
 -(id<ORExpr>) minusTrack:(id<ORTracker>)t;
 -(id<ORExpr>) sqrtTrack:(id<ORTracker>)t;
 -(id<ORExpr>) squareTrack:(id<ORTracker>)t;
+-(id<ORExpr>) toFloatTrack:(id<ORTracker>)t;
+-(id<ORExpr>) toDoubleTrack:(id<ORTracker>)t;
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) sub: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) mul: (id) e  track:(id<ORTracker>)t;
@@ -285,6 +289,34 @@
    id<ORTracker> _tracker;
 }
 -(id<ORExpr>)initORExprUnaryMinusI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface ORExprToFloatI : ORExprI<ORExpr,NSCoding>{
+   ORExprI* _op;
+   id<ORTracker> _tracker;
+}
+-(id<ORExpr>)initORExprToFloatI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface ORExprToDoubleI : ORExprI<ORExpr,NSCoding>{
+   ORExprI* _op;
+   id<ORTracker> _tracker;
+}
+-(id<ORExpr>)initORExprToDoubleI:(id<ORExpr>)op;
 -(ORInt)min;
 -(ORInt)max;
 -(ORFloat) fmin;

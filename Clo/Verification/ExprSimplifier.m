@@ -125,6 +125,16 @@
    [self count:c];
    [[c operand] visit:self];
 }
+-(void) visitExprToFloatI: (ORExprToFloatI*) c
+{
+   [self count:c];
+   [[c operand] visit:self];
+}
+-(void) visitExprToDoubleI: (ORExprToDoubleI*) c
+{
+   [self count:c];
+   [[c operand] visit:self];
+}
 -(void) visitExprAbsI: (ORExprAbsI*) c
 {
    [self count:c];
@@ -270,6 +280,22 @@
    if(alpha == nil){
       id<ORExpr> op = [self doIt:c.operand];
       _rv = [self simplify:_rv with:[op sqrt]];
+   }else _rv = alpha;
+}
+-(void) visitExprToFloatI:  (ORExprToFloatI *) c
+{
+   id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
+   if(alpha == nil){
+      id<ORExpr> op = [self doIt:c.operand];
+      _rv = [self simplify:_rv with:[op toFloat]];
+   }else _rv = alpha;
+}
+-(void) visitExprToDoubleI:  (ORExprToDoubleI *) c
+{
+   id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
+   if(alpha == nil){
+      id<ORExpr> op = [self doIt:c.operand];
+      _rv = [self simplify:_rv with:[op toDouble]];
    }else _rv = alpha;
 }
 -(void) visitExprAbsI:  (ORExprAbsI *) c

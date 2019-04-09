@@ -13,11 +13,11 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORDoubleVar> t = [ORFactory doubleVar:model name:@"t"];
+         id<ORFloatVar> t = [ORFactory floatVar:model name:@"t"];
 //         id<ORFloatVar> x = [ORFactory floatVar :model low:1.e3f up:10e10f name:@"x"];
          id<ORDoubleVar> x = [ORFactory doubleVar:model low:-10e10f up:-1.e3f name:@"x"];
          
-         [model add:[t eq: [x sqrt]]];
+         [model add:[t eq: [x toFloat]]];
          
          id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];

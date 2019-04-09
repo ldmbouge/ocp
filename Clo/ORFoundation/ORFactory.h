@@ -245,6 +245,8 @@ PORTABLE_BEGIN
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprToFloat: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprToDouble: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (PNULLABLE ORInt2Bool) f of: (ORInt2Expr) e;
