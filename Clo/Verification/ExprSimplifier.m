@@ -23,7 +23,7 @@
    _theSet = theSet;
    return self;
 }
--(void) count:(id) c
+-(ORInt) count:(id) c
 {
    ORInt cpt = 0;
    id v = [_theSet objectForKey:[NSValue valueWithPointer:c]];
@@ -31,114 +31,137 @@
       cpt = [v intValue];
    cpt++;
    [_theSet setObject:@(cpt) forKey:[NSValue valueWithPointer:c]];
+   return cpt;
+}
+-(void) visitFloatVar:(id<ORFloatVar>)v
+{
+}
+-(void) visitDoubleVar:(id<ORFloatVar>)v
+{
+}
+-(void) visitIntVar:(id<ORFloatVar>)v
+{
 }
 -(void) visitExprUnaryMinusI:  (ORExprUnaryMinusI *) c
 {
-   [self count:c];
-   [[c operand] visit:self];
+   if([self count:c] < 2)
+      [[c operand] visit:self];
 }
 -(void) visitExprMulI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprDivI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprPlusI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprMinusI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprEqualI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprNotEqualI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprGEqualI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprLThenI: (ORExprLEqualI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprLGthenI: (ORExprBinaryI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprDisjunctI: (ORExprLogiqueI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprConjunctI: (ORExprLogiqueI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprImplyI: (ORExprLogiqueI*) c
 {
-   [self count:c];
-   [[c left] visit:self];
-   [[c right] visit:self];
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
 }
 -(void) visitExprNegateI: (ORExprNegateI*) c
 {
-   [self count:c];
-   [[c operand] visit:self];
+   if([self count:c] < 2)
+      [[c operand] visit:self];
 }
 -(void) visitExprSqrtI: (ORExprSqrtI*) c
 {
-   [self count:c];
-   [[c operand] visit:self];
+   if([self count:c] < 2)
+      [[c operand] visit:self];
 }
 -(void) visitExprToFloatI: (ORExprToFloatI*) c
 {
-   [self count:c];
-   [[c operand] visit:self];
+   if([self count:c] < 2)
+      [[c operand] visit:self];
 }
 -(void) visitExprToDoubleI: (ORExprToDoubleI*) c
 {
-   [self count:c];
-   [[c operand] visit:self];
+   if([self count:c] < 2)
+      [[c operand] visit:self];
 }
 -(void) visitExprAbsI: (ORExprAbsI*) c
 {
-   [self count:c];
-   [[c operand] visit:self];
+   if([self count:c] < 2)
+      [[c operand] visit:self];
 }
 @end
 
@@ -296,7 +319,7 @@
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
    if(alpha == nil){
       id<ORExpr> op = [self doIt:c.operand];
-      _rv = [self simplify:_rv with:[op minus]];
+      _rv = [self simplify:c with:[op minus]];
    }else _rv = alpha;
 }
 -(void) visitExprSqrtI:  (ORExprSqrtI *) c
@@ -304,7 +327,7 @@
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
    if(alpha == nil){
       id<ORExpr> op = [self doIt:c.operand];
-      _rv = [self simplify:_rv with:[op sqrt]];
+      _rv = [self simplify:c with:[op sqrt]];
    }else _rv = alpha;
 }
 -(void) visitExprToFloatI:  (ORExprToFloatI *) c
@@ -312,7 +335,7 @@
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
    if(alpha == nil){
       id<ORExpr> op = [self doIt:c.operand];
-      _rv = [self simplify:_rv with:[op toFloat]];
+      _rv = [self simplify:c with:[op toFloat]];
    }else _rv = alpha;
 }
 -(void) visitExprToDoubleI:  (ORExprToDoubleI *) c
@@ -320,7 +343,7 @@
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
    if(alpha == nil){
       id<ORExpr> op = [self doIt:c.operand];
-      _rv = [self simplify:_rv with:[op toDouble]];
+      _rv = [self simplify:c with:[op toDouble]];
    }else _rv = alpha;
 }
 -(void) visitExprAbsI:  (ORExprAbsI *) c
@@ -328,7 +351,7 @@
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
    if(alpha == nil){
       id<ORExpr> op = [self doIt:c.operand];
-      _rv = [self simplify:_rv with:[op abs]];
+      _rv = [self simplify:c with:[op abs]];
    }else _rv = alpha;
 }
 -(void) visitExprMulI: (ORExprBinaryI*) c
@@ -373,8 +396,11 @@
    if(alpha == nil){
       id<ORExpr> nL = [self doIt:c.left];
       id<ORExpr> nR = [self doIt:c.right];
-      if([nL isVariable] && ![nR isVariable])
-         [_alphas setObject:nL forKey:[NSValue valueWithPointer:nR]];
+      //   [hzi]: I should had a _eq_to in case we have x == expr and expr is already factorized.
+//      if([nL isVariable] && ![nR isVariable])
+//         [_alphas setObject:nL forKey:[NSValue valueWithPointer:c.right]];
+//      else if([nR isVariable] && ![nL isVariable])
+//         [_alphas setObject:nR forKey:[NSValue valueWithPointer:c.left]];
       _rv = [self simplify:c with:[nL eq:nR]];
    }else _rv = alpha;
 }
@@ -460,3 +486,4 @@
 }
 
 @end
+

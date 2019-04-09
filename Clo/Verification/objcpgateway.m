@@ -633,7 +633,10 @@ static OBJCPGateway *objcpgw;
 }
 -(void) addConstraints
 {
-   NSArray* arr = [ExprSimplifier simplifyAll:_toadd];
+   NSArray* arr = _toadd;
+   if([_options variationSearch]){
+      arr = [ExprSimplifier simplifyAll:_toadd];
+   }
    for(id<ORExpr> e in arr){
       [_model add:e];
    }
