@@ -3,7 +3,7 @@
 #import <ORModeling/ORModeling.h>
 
 
-@interface ExprCounter : ORVisitor {
+@interface ExprCounter : ORNOopVisit {
    NSMutableDictionary* _theSet;
 }
 -(id)init:(NSMutableDictionary*)theSet;
@@ -11,7 +11,7 @@
 @end
 
 
-@interface ExprSimplifier : ORVisitor {
+@interface ExprSimplifier : ORNOopVisit {
    NSMutableDictionary* _theSet;
    NSMutableDictionary* _alphas;
    id<ORExpr> _rv;
