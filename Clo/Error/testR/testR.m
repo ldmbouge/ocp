@@ -10,7 +10,7 @@
 #include "fpi.h"
 #import "ORCmdLineArgs.h"
 
-int NB_FLOAT = 2;
+int NB_FLOAT = 11;
 
 #define printFvar(name, var) NSLog(@""name" : [%20.20e, %20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [%20.20e, %20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
 #define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
@@ -56,9 +56,8 @@ void check_it_bb(float x, float y, float z, id<ORRational> ez) {
    mpq_t qz, qx, qy, tmp0, tmp1, tmp2;
    
    fesetround(FE_TONEAREST);
-   NSLog(@"%d - %d", FE_TONEAREST, fegetround());
    float cz = x + y;
-   NSLog(@"%20.20e = %20.20e + %20.20e", cz, x, y);
+   //NSLog(@"%20.20e = %20.20e + %20.20e", cz, x, y);
    
    //   if (cz != z)
    //      NSLog(@"WRONG: cz = % 20.20e != z = % 20.20e\n", cz, z);
@@ -71,9 +70,9 @@ void check_it_bb(float x, float y, float z, id<ORRational> ez) {
    
    mpq_set_d(tmp0, cz);
    mpq_sub(tmp1, qz, tmp0);
-   NSLog(@"Err: %s", mpq_get_str(NULL, 10, tmp1));
+   //NSLog(@"Err: %s", mpq_get_str(NULL, 10, tmp1));
    NSLog(@"Err: %20.20e", mpq_get_d(tmp1));
-   NSLog(@"%s (%20.20e) | %20.20e (%20.20e)", mpq_get_str(NULL, 10, qz), mpq_get_d(qz), cz, mpq_get_d(tmp0));
+   //NSLog(@"%s (%20.20e) | %20.20e (%20.20e)", mpq_get_str(NULL, 10, qz), mpq_get_d(qz), cz, mpq_get_d(tmp0));
    //   if (mpq_cmp(tmp1, ez.rational) != 0){
    //      NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
    //      NSLog(@"Err found: % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
@@ -136,7 +135,7 @@ void testR(int argc, const char * argv[]) {
          //ORRational * tmp = [ORRational rationalWith_d:nextafterf(7.15255737304687500000e-07, +INFINITY)];
          id<ORFloatVar> x = [ORFactory floatVar:mdl name:@"x"];
          // y:  3.2 ; 3.4
-         id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.2f up:nb_float(3.2f, NB_FLOAT) elow:zero eup:zero name:@"y"];
+         id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.2f up:3.4f elow:zero eup:zero name:@"y"];
          //id<ORFloatVar> y = [ORFactory floatVar:mdl low:randomNum up:randomNum elow:zero eup:zero name:@"y"];
          //id<ORFloatVar> o = [ORFactory floatVar:mdl name:@"o"];
          //id<ORFloatVar> k = [ORFactory floatVar:mdl low:2.0f up:3.0f elow:zero eup:zero name:@"k"];
@@ -166,9 +165,9 @@ void testR(int argc, const char * argv[]) {
          [mdl maximize:ez];
          
          
-         for (float yr = 3.2f; yr <= nb_float(3.2f, NB_FLOAT); yr = nextafterf(yr, +INFINITY)) {
+         /*for (float yr = 3.2f; yr <= nb_float(3.2f, NB_FLOAT); yr = nextafterf(yr, +INFINITY)) {
             NSLog(@"@@@@@@@ %20.20e", yr);
-         }
+         }*/
          
          NSLog(@"model: %@",mdl);
          id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
@@ -201,7 +200,7 @@ void testR(int argc, const char * argv[]) {
          return r;
       }];
       //[tmp release];
-      NSLog(@"##################");
+      /*NSLog(@"##################");
       for(int i = 0; i <= NB_FLOAT; i++){
          id<ORRational> tmp = [[ORRational alloc] init];
          [tmp set_d: 0.0f];
@@ -209,7 +208,7 @@ void testR(int argc, const char * argv[]) {
          check_it_bb(45.0f,nb_float(3.2f, i),48.0f,tmp);
          NSLog(@"------------------------------");
       }
-      NSLog(@"##################");
+      NSLog(@"##################");*/
    }
 }
 
@@ -242,26 +241,28 @@ void testOptimize(int argc, const char * argv[]) {
 
 
 int main(int argc, const char * argv[]) {
+//   testIntBFS(argc, argv);
    testR(argc, argv);
    
-   float ye = nb_float(3.2f, NB_FLOAT);
-   float_interval z, x, y;
-   z = makeFloatInterval(4.82000007629394531250e+01f,4.82000045776367187500e+01f);
-   x = makeFloatInterval(4.50000000000000000000e+01f,4.50000000000000000000e+01f);
-   y = makeFloatInterval(3.2f,ye);
+//   float ye = nb_float(3.2f, NB_FLOAT);
+//   float_interval z, x, y;
+//   z = makeFloatInterval(4.82000007629394531250e+01f,4.82000045776367187500e+01f);
+//   x = makeFloatInterval(4.50000000000000000000e+01f,4.50000000000000000000e+01f);
+//   y = makeFloatInterval(3.2f,ye);
    
-   NSLog(@"[%20.20e,%20.20e] = [%20.20e,%20.20e] + [%20.20e,%20.20e]",z.inf, z.sup, x.inf, x.sup, y.inf, y.sup);
-   fpi_addf(0, FE_TONEAREST, &z, &x, &y);
-   NSLog(@"[%20.20e,%20.20e] = [%20.20e,%20.20e] + [%20.20e,%20.20e]",z.inf, z.sup, x.inf, x.sup, y.inf, y.sup);
-   
-   float zr, xr , yr, uz;
-   xr = 4.50000000000000000000e+01f;
-   for (yr = 3.2f; yr <= ye; yr = nextafterf(yr, +INFINITY)) {
-      zr = xr + yr;
-      uz = nextafterf(zr, +INFINITY) - zr;
-      NSLog(@"=== %20.20e = %20.20e + %20.20e   (%20.20e)",zr, xr, yr, uz);
-      check_it_bb(xr, yr, zr, NULL);
-   }
+   //NSLog(@"[%20.20e,%20.20e] = [%20.20e,%20.20e] + [%20.20e,%20.20e]",z.inf, z.sup, x.inf, x.sup, y.inf, y.sup);
+   //fpi_addf(0, FE_TONEAREST, &z, &x, &y);
+   //NSLog(@"[%20.20e,%20.20e] = [%20.20e,%20.20e] + [%20.20e,%20.20e]",z.inf, z.sup, x.inf, x.sup, y.inf, y.sup);
+//
+//   float zr, xr , yr, uz;
+//   xr = 4.50000000000000000000e+01f;
+//   NSLog(@"#############################");
+//   for (yr = 3.2f; yr <= ye; yr = nextafterf(yr, +INFINITY)) {
+//      zr = xr + yr;
+//      uz = nextafterf(zr, +INFINITY) - zr;
+//      //NSLog(@"%20.20e = %20.20e + %20.20e   (%20.20e)",zr, xr, yr, uz);
+//      check_it_bb(xr, yr, zr, NULL);
+//   }
    
    //testRational(argc, argv);
    //   testOptimize(argc, argv);

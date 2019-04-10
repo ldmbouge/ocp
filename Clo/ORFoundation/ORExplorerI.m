@@ -126,12 +126,6 @@
       [_controller startTryLeft];
       _nbc++;
       left();
-      /*if([[_engine objective] isBound]){
-         [[_engine objective] updatePrimalBound];
-      } else {
-         [[_engine objective] updateDualBound];
-      }*/
-
       [_controller exitTryLeft];
    }
    else {
@@ -142,11 +136,6 @@
       [_controller startTryRight];
       [_controller trust];
       right();
-      /*if([[_engine objective] isBound]){
-         [[_engine objective] updatePrimalBound];
-      } else {
-         [[_engine objective] updateDualBound];
-      }*/
       [_controller exitTryRight];
    }
    [_controller exitTry];
@@ -248,11 +237,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) probe: (ORClosure) cl
 {
-    [self try:^{
+    //[self try:^{
         cl();
-    } alt:^{
+    /*} alt:^{
         [self fail];
-    }];
+    }];*/
 }
 
 -(void) once: (ORClosure) cl

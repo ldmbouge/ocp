@@ -196,7 +196,7 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
-   _level = 100;
+   _level = 0;
    _absRateLimitModelVars = 0.3;
    _absTRateLimitModelVars = 0.8;
    _absRateLimitAdditionalVars = 0.92;
@@ -1796,133 +1796,206 @@
 // Branch & Bound on error of FloatVar
 -(void) branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORFloatVar>) z do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
-   //   id<ORRational> eB = [[ORRational alloc] init];
-   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
-   [[self explorer] applyController:t in:^{
-      do {
-         LOG(_level, 2, @"##############################################################");
-         LOG(_level, 2, @"Box at beginning of loop");
-         LOG(_level, 2, @"%@", [_engine model]);
-         __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
-         id<ORSelect> select = [ORFactory select: _engine
-                                           range: RANGE(self,[x low],[x up])
-                                        suchThat: ^ORBool(ORInt i) {
-                                           id<CPVar> v = _gamma[getId(x[i])];
-                                           LOG(_level,2,@"%@ %s %s",_gamma[getId(x[i])],[x isEnable:i] ? "" : "disabled",([v bound]) ? "b":"");
-                                           if(![x isEnable:i]){
-                                              if(![v bound]){
-                                                 disabled.found = YES;
-                                                 disabled.index = i;
-                                              }
-                                              [x enable:i];
-                                              return false;
-                                           }
-                                           return ![v bound];
-                                        }
-                                       orderedBy: ^ORDouble(ORInt i) {
-                                          // LOG(_level,2,@"%@",_gamma[getId(x[i])]);
-                                          return (ORDouble)i;
-                                       }];
-         
-         //         [[_engine objective] tightenPrimalBound:GlobalPrimalBound];
-         //         [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:YES];
-         //
-         //         [[_engine objective] updateDualBound];
-         //
-         //         /********** GuessError **********/
-         //         LOG(_level, 2, @"GuessError");
-         //         [eB setNegInf];
-         //         ORInt iteration = 0;
-         //         ORInt nbIteration = -1;
-         //         id<ORCheckpoint> currentCheckpoint;
-         //         id<ORCheckpoint> solB;
-         //         if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: [[[ORRational alloc] init] setZero]]){
-         //            nbIteration = 5;
-         //         } else {
-         //            nbIteration = 3;
-         //         }
-         //
-         //         //currentCheckpoint = [_tracer captureCheckpoint];
-         //         ORBool isFailed = NO;
-         //         while([[[[_engine objective] primalBound] rationalValue] leq: GlobalPrimalBound] && (iteration < nbIteration)){
-         //            //[_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
-         //            currentCheckpoint = [_tracer captureCheckpoint];
-         //            while(true) {
-         //               ORSelectorResult index = [select min];
-         //               if(index.found){
-         //                  id<CPFloatVar> currentVar = _gamma[getId(x[index.index])];
-         //                  LOG(_level,2, @"Choosen var: %@",currentVar);
-         //                  if(![currentVar bound]){
-         //                     [currentVar bind:randomValue([currentVar min], [currentVar max])];
-         //                     LOG(_level, 2, @"var fixed at: %@", currentVar);
-         //                     isFailed = [self errorGEqualImpl:_gamma[getId(z)] with:GlobalPrimalBound fail:NO];
-         //                     if(isFailed){
-         //                        //[_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
-         //                        break;
-         //                     } else {
-         //                        LOG(_level, 2, @"CSP after filtering");
-         //                        LOG(_level, 2, @"%@", [_engine model]);
-         //                        [[_engine objective] updatePrimalBound];
-         //                     }
-         //                  }
-         //               } else {
-         //                  break;
-         //               }
-         //            }
-         //            if(!isFailed){
-         //               ORBool isBound = true;
-         //               for (id<CPFloatVar> v in [_engine variables]) {
-         //                  isBound &= [v bound];
-         //               }
-         //               if(isBound && [((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) gt: eB]){
-         //                  [eB set: [[[_engine objective] primalBound] rationalValue]];
-         //                  solB = [_tracer captureCheckpoint];
-         //               }
-         //               [_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
-         //            }
-         //            iteration++;
-         //            [_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
-         //         }
-         //         [_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:(id<ORPost>)_model];
-         //         if(!isFailed){
-         //         //[[_engine objective] tightenPrimalBound:eB];
-         //         [GlobalPrimalBound set: eB]; //[[[_engine objective] primalBound] rationalValue]];
-         //         LOG(_level, 2, @"New value of GlobalPrimalBound: %@", GlobalPrimalBound);
-         //         }
-         //
-         //         //   if([[[[_engine objective] primalBound] rationalValue] eq: eB]){
-         //         //      bestSol = solB;
-         //         //   }
-         //
-         //         /******************************/
-         //                        ORBool isBound = true;
-         //                        for (id<CPFloatVar> v in [_engine variables]) {
-         //                           isBound &= [v bound];
-         //                        }
-         //                        if(isBound){
-         //                           [[_engine objective] updatePrimalBound];
-         //                           if([[[[_engine objective] primalBound] rationalValue] gt: GlobalPrimalBound])
-         //                              [GlobalPrimalBound set: [[[_engine objective] primalBound] rationalValue]];
-         //                        }
-         
-         [[_engine objective] updateDualBound];
-         NSLog(@"%@", [x description]);
-         LOG(_level,2,@"State before selection");
-         ORSelectorResult i = [select min];
-         if (!i.found){
-            if(!disabled.found)
+   [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:YES];
+   [[_engine objective] updateDualBound];
+   
+   ORBool isBound = true;
+   for (id<CPFloatVar> v in [_engine variables]) {
+      isBound &= [v bound];
+   }
+   if(isBound){
+      [[_engine objective] updatePrimalBound];
+   } else {
+      __block id<ORIdArray> abs = nil;
+      id<ORSelect> select = [ORFactory select: _engine
+                                        range: RANGE(self,[x low],[x up])
+                                     suchThat: ^ORBool(ORInt i) {
+                                        id<CPVar> v = _gamma[getId(x[i])];
+                                        LOG(_level,2,@"%@ (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
+                                        return ![v bound] && [x isEnabled:i];
+                                     }
+                                    orderedBy: ^ORDouble(ORInt i) {
+                                       return (ORDouble)i;
+                                    }
+                             ];
+      /********** GuessError **********/
+      LOG(_level, 2, @"GuessError");
+      ORInt iteration = 0;
+      ORInt nbIteration = -1;
+      if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: [[[ORRational alloc] init] setZero]]){
+         nbIteration = 5;
+      } else {
+         nbIteration = 3;
+      }
+      
+      ORBool isFailed = NO;
+      while(iteration < nbIteration){
+         [_tracer pushNode];
+         while(true) {
+            ORSelectorResult index = [select min];
+            if(index.found){
+               id<CPFloatVar> currentVar = _gamma[getId(x[index.index])];
+               LOG(_level,2, @"Choosen var: %@",currentVar);
+               if(![currentVar bound]){
+                  [currentVar bind:randomValue([currentVar min], [currentVar max])];
+                  LOG(_level, 2, @"var fixed at: %@", currentVar);
+                  isFailed = [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:NO];
+                  if(isFailed){
+                     break;
+                  }
+               }
+            } else {
                break;
-            i.index = disabled.index;
-            [x enable:i.index];
-         } else if(_unique){
-            [x disable:i.index];
+            }
          }
-         disabled.found = NO;
-         assert(![_gamma[getId(x[i.index])] bound]);
-         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
-         b(i.index,x);
-      } while (true);
-   }];
+         if(!isFailed){
+            isBound = true;
+            for (id<CPFloatVar> v in [_engine variables]) {
+               isBound &= [v bound];
+            }
+               if(isBound && [[[[_engine objective] primalBound] rationalValue] gt: [_gamma[getId(z)] minErr]]){
+                  [[_engine objective] updatePrimalBound];
+                  break;
+               }
+         }
+         iteration++;
+         [_tracer popNode];
+      }
+      
+      /******************************/
+
+      [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
+         return (ORDouble)i;
+      } do:b];
+   }
+   //   id<ORRational> eB = [[ORRational alloc] init];
+   //   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   //   [[self explorer] applyController:t in:^{
+   //      do {
+   //         LOG(_level, 2, @"##############################################################");
+   //         LOG(_level, 2, @"Box at beginning of loop");
+   //         LOG(_level, 2, @"%@", [_engine model]);
+   //         __block ORSelectorResult disabled = (ORSelectorResult) {NO,0};
+   //         id<ORSelect> select = [ORFactory select: _engine
+   //                                           range: RANGE(self,[x low],[x up])
+   //                                        suchThat: ^ORBool(ORInt i) {
+   //                                           id<CPVar> v = _gamma[getId(x[i])];
+   //                                           LOG(_level,2,@"%@ %s %s",_gamma[getId(x[i])],[x isEnable:i] ? "" : "disabled",([v bound]) ? "b":"");
+   //                                           if(![x isEnable:i]){
+   //                                              if(![v bound]){
+   //                                                 disabled.found = YES;
+   //                                                 disabled.index = i;
+   //                                              }
+   //                                              [x enable:i];
+   //                                              return false;
+   //                                           }
+   //                                           return ![v bound];
+   //                                        }
+   //                                       orderedBy: ^ORDouble(ORInt i) {
+   //                                          // LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+   //                                          return (ORDouble)i;
+   //                                       }];
+   
+   //         [[_engine objective] tightenPrimalBound:GlobalPrimalBound];
+   //         [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:YES];
+   //
+   //         [[_engine objective] updateDualBound];
+   //
+   //         /********** GuessError **********/
+   //         LOG(_level, 2, @"GuessError");
+   //         [eB setNegInf];
+   //         ORInt iteration = 0;
+   //         ORInt nbIteration = -1;
+   //         id<ORCheckpoint> currentCheckpoint;
+   //         id<ORCheckpoint> solB;
+   //         if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: [[[ORRational alloc] init] setZero]]){
+   //            nbIteration = 5;
+   //         } else {
+   //            nbIteration = 3;
+   //         }
+   //
+   //         //currentCheckpoint = [_tracer captureCheckpoint];
+   //         ORBool isFailed = NO;
+   //         while([[[[_engine objective] primalBound] rationalValue] leq: GlobalPrimalBound] && (iteration < nbIteration)){
+   //            //[_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
+   //            currentCheckpoint = [_tracer captureCheckpoint];
+   //            while(true) {
+   //               ORSelectorResult index = [select min];
+   //               if(index.found){
+   //                  id<CPFloatVar> currentVar = _gamma[getId(x[index.index])];
+   //                  LOG(_level,2, @"Choosen var: %@",currentVar);
+   //                  if(![currentVar bound]){
+   //                     [currentVar bind:randomValue([currentVar min], [currentVar max])];
+   //                     LOG(_level, 2, @"var fixed at: %@", currentVar);
+   //                     isFailed = [self errorGEqualImpl:_gamma[getId(z)] with:GlobalPrimalBound fail:NO];
+   //                     if(isFailed){
+   //                        //[_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
+   //                        break;
+   //                     } else {
+   //                        LOG(_level, 2, @"CSP after filtering");
+   //                        LOG(_level, 2, @"%@", [_engine model]);
+   //                        [[_engine objective] updatePrimalBound];
+   //                     }
+   //                  }
+   //               } else {
+   //                  break;
+   //               }
+   //            }
+   //            if(!isFailed){
+   //               ORBool isBound = true;
+   //               for (id<CPFloatVar> v in [_engine variables]) {
+   //                  isBound &= [v bound];
+   //               }
+   //               if(isBound && [((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) gt: eB]){
+   //                  [eB set: [[[_engine objective] primalBound] rationalValue]];
+   //                  solB = [_tracer captureCheckpoint];
+   //               }
+   //               [_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
+   //            }
+   //            iteration++;
+   //            [_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:((id<ORPost>)_model)];
+   //         }
+   //         [_tracer restoreCheckpoint:currentCheckpoint inSolver:_engine model:(id<ORPost>)_model];
+   //         if(!isFailed){
+   //         //[[_engine objective] tightenPrimalBound:eB];
+   //         [GlobalPrimalBound set: eB]; //[[[_engine objective] primalBound] rationalValue]];
+   //         LOG(_level, 2, @"New value of GlobalPrimalBound: %@", GlobalPrimalBound);
+   //         }
+   //
+   //         //   if([[[[_engine objective] primalBound] rationalValue] eq: eB]){
+   //         //      bestSol = solB;
+   //         //   }
+   //
+   //         /******************************/
+   //                        ORBool isBound = true;
+   //                        for (id<CPFloatVar> v in [_engine variables]) {
+   //                           isBound &= [v bound];
+   //                        }
+   //                        if(isBound){
+   //                           [[_engine objective] updatePrimalBound];
+   //                           if([[[[_engine objective] primalBound] rationalValue] gt: GlobalPrimalBound])
+   //                              [GlobalPrimalBound set: [[[_engine objective] primalBound] rationalValue]];
+   //                        }
+   
+   //[[_engine objective] updateDualBound];
+   
+   //         NSLog(@"%@", [x description]);
+   //         LOG(_level,2,@"State before selection");
+   //         ORSelectorResult i = [select min];
+   //         if (!i.found){
+   //            if(!disabled.found)
+   //               break;
+   //            i.index = disabled.index;
+   //            [x enable:i.index];
+   //         } else if(_unique){
+   //            [x disable:i.index];
+   //         }
+   //         disabled.found = NO;
+   //         assert(![_gamma[getId(x[i.index])] bound]);
+   //         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+   //         b(i.index,x);
+   //} while (true);
+   //}];
 }
 
 //-------------------------------------------------

@@ -108,6 +108,7 @@ extern id<ORRational> GlobalDualBound;
    _engine = engine;
    _model  = model;
    _k      = NULL;
+   _cp     = NULL;
    _buf    = [[ORPQueue alloc] init:^BOOL(BBKey* a,BBKey* b) {
       NSComparisonResult cr = [a->_v compare:b->_v];
       switch(cr) {
@@ -172,11 +173,10 @@ extern id<ORRational> GlobalDualBound;
    id<ORCheckpoint> cp = [_tracer captureCheckpoint];
    BBNode* node = [[BBNode alloc] init:k checkpoint:cp];
    BBKey* ov    = [BBKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
-   //BBKey* ov    = [BBKey key:[[_engine objective] dualBound] withDepth:[_tracer level]];
-   NSLog(@"START NEW Node");
-   NSLog(@"%@",ov);
-   NSLog(@"%@", [_engine model]);
-   NSLog(@"END Node");
+//   NSLog(@"START NEW Node");
+//   NSLog(@"%@",ov);
+//   NSLog(@"%@", [_engine model]);
+//   NSLog(@"END Node");
    [_buf insertObject:node withKey:ov];
    [ov release];
    [node release];
@@ -196,6 +196,14 @@ extern id<ORRational> GlobalDualBound;
    } else {
       [k letgo];
    }
+}
+-(void)startTryLeft
+{
+   NSLog(@"%@", _cp);
+}
+-(void)startTryRight
+{
+   NSLog(@"%@", _cp);
 }
 -(void)exitTryLeft
 {
@@ -255,11 +263,10 @@ static long __nbPull = 0;
       }
       
       ORBool isEmpty = [_buf empty];
-      NSLog(@"%@", _buf);
+      //NSLog(@"%@", _buf);
       if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
          if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue] ]){
-            /*([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]])) {*/
             BBNode* nd = [_buf extractBest];
             
             ORStatus status = [of tightenDualBound:bestKey.bound];
@@ -279,13 +286,14 @@ static long __nbPull = 0;
                else [k letgo];
             }
          } else {
-            NSLog(@"EQUAL BOUND end of program");
-            NSLog(@"%@", [_engine objective]);
+            NSLog(@"EQUAL BOUND: %@ == %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
+            NSLog(@"QUEUE: %@", _buf);
+            //NSLog(@"%@", [_engine objective]);
             return;
          }
       } else {
-         NSLog(@"EMPTY QUEUE end of program");
-         NSLog(@"%@", _buf);
+         NSLog(@"EMPTY QUEUE: %@", _buf);
+         //NSLog(@"%@", _buf);
          return;
       }
    } while(true);
