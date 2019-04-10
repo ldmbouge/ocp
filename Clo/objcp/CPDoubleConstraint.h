@@ -371,6 +371,16 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPDoubleSquare : CPCoreConstraint {
+@private
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _res;
+}
+-(id) init:(id<CPDoubleVar>)res eq:(id<CPDoubleVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPDoubleSqrt : CPCoreConstraint {
 @private

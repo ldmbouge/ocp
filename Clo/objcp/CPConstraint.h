@@ -113,6 +113,7 @@
 @end
 
 @interface CPFactory (ORFloat)
++(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x eq:(id<CPFloatVar>)y;
 +(id<CPConstraint>) floatAbs: (id<CPFloatVar>)x eq:(id<CPFloatVar>)y;
 +(id<CPConstraint>) floatSqrt: (id<CPFloatVar>)x eq:(id<CPFloatVar>)y;
 +(id<CPConstraint>) floatAssign: (id<CPFloatVar>) x to:(id<CPFloatVar>) y;
@@ -152,6 +153,7 @@
 @end
 
 @interface CPFactory (ORDouble)
++(id<CPConstraint>) doubleSquare:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y;
 +(id<CPConstraint>) doubleAbs: (id<CPDoubleVar>)x eq:(id<CPDoubleVar>)y;
 +(id<CPConstraint>) doubleSqrt: (id<CPDoubleVar>)x eq:(id<CPDoubleVar>)y;
 +(id<CPConstraint>) doubleUnaryMinus:(id<CPDoubleVar>) x eqm:(id<CPDoubleVar>) y;

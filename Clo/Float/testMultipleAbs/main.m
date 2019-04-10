@@ -13,13 +13,13 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> t = [ORFactory floatVar:model name:@"t"];
+         id<ORDoubleVar> t = [ORFactory doubleVar:model name:@"t"];
 //         id<ORFloatVar> x = [ORFactory floatVar :model low:1.e3f up:10e10f name:@"x"];
          id<ORDoubleVar> x = [ORFactory doubleVar:model low:-10e10f up:-1.e3f name:@"x"];
          
-         [model add:[t eq: [x toFloat]]];
+         [model add:[t eq: [x mul:x]]];
          
-         id<ORFloatVarArray> vars = [model floatVars];
+         id<ORVarArray> vars = [model FPVars];
          id<CPProgram> cp = [args makeProgram:model];
          NSLog(@"Model : %@",model);
          __block bool found = false;
@@ -27,9 +27,9 @@ int main(int argc, const char * argv[]) {
             
             
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            for(id<ORFloatVar> v in vars){
+            for(id<ORVar> v in vars){
                found &= [p bound: v];
-               NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
+               NSLog(@"%@ : %16.16e (%s)",v,[p doubleValue:v],[p bound:v] ? "YES" : "NO");
             }
 //            check_solution([p floatValue:x],[p floatValue:y],[p floatValue:z],[p floatValue:t],[p floatValue:w],[p floatValue:a]);
          } withTimeLimit:[args timeOut]];

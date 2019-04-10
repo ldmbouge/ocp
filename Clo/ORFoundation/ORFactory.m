@@ -1952,15 +1952,20 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {
-    id<ORConstraint> o = [[ORFloatMult alloc] initORFloatMult:z eq:x times:y];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o;
+   if ([x getId] == [y getId]) {
+      o = [[ORFloatSquare alloc] init:z square:x];
+   } else {
+      o = [[ORFloatMult alloc] initORFloatMult:z eq:x times:y];
+   }
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {
-    id<ORConstraint> o = [[ORFloatDiv alloc] initORFloatDiv:z eq:x times:y];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o = [[ORFloatDiv alloc] initORFloatDiv:z eq:x times:y];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) phi:(id<ORTracker>)model on:(id<ORExpr>) c  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y or:(id<ORFloatVar>)z
 {
@@ -2175,9 +2180,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) doubleMult:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z
 {
-    id<ORConstraint> o = [[ORDoubleMult alloc] initORDoubleMult:z eq:x times:y];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o;
+   if ([x getId] == [y getId]) {
+      o = [[ORDoubleSquare alloc] init:z square:x];
+   } else {
+      o = [[ORDoubleMult alloc] initORDoubleMult:z eq:x times:y];
+   }
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) doubleDiv:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z
 {

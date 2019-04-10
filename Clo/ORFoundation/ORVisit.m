@@ -391,7 +391,15 @@
 }
 -(void) visitRealSquare:(id<ORSquare>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "RealSquare: visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealSquare: visit method not defined"];
+}
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatSquare: visit method not defined"];
+}
+-(void) visitDoubleSquare:(id<ORSquare>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DiybkeSquare: visit method not defined"];
 }
 -(void) visitMod: (id<ORMod>)c
 {
@@ -1174,6 +1182,8 @@
 -(void) visitMult: (id<ORMult>)c  {}
 -(void) visitSquare:(id<ORSquare>)c {}
 -(void) visitRealSquare:(id<ORSquare>)c {}
+-(void) visitFloatSquare:(id<ORSquare>)c {}
+-(void) visitDoubleSquare:(id<ORSquare>)c {}
 -(void) visitMod: (id<ORMod>)c {}
 -(void) visitModc: (id<ORModc>)c {}
 -(void) visitMin:(id<ORMin>)c  {}

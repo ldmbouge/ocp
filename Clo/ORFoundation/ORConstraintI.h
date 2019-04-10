@@ -214,6 +214,12 @@
 -(id<ORVar>)op;
 @end
 
+@interface ORFloatSquare : ORSquare
+@end
+
+@interface ORDoubleSquare : ORSquare
+@end
+
 @interface ORRealSquare : ORSquare
 @end
 

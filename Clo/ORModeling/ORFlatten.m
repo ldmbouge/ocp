@@ -447,6 +447,14 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleSquare:(id<ORSquare>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitMod: (id<ORMod>)c
 {
    _result = [_into addConstraint:c];

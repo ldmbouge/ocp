@@ -359,6 +359,16 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatSquare : CPCoreConstraint {
+@private
+   CPFloatVarI* _x;
+   CPFloatVarI* _res;
+}
+-(id) init:(id<CPFloatVar>)res eq:(id<CPFloatVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPFloatAbs : CPCoreConstraint {
 @private

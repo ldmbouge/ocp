@@ -1255,6 +1255,20 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitFloatSquare: (id<ORSquare>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> res = (id<ORFloatVar>)[cstr res];
+      id<ORFloatVar> op = (id<ORFloatVar>)[cstr op];
+      [res visit: self];
+      [op visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatSquare: (id<CPFloatVar>) _gamma[res.getId]
+                                                       eq: (id<CPFloatVar>) _gamma[op.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitFloatAbs: (id<ORAbs>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1944,6 +1958,20 @@
         [_engine add:concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
+}
+-(void) visitDoubleSquare: (id<ORSquare>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> res = (id<ORDoubleVar>)[cstr res];
+      id<ORDoubleVar> op = (id<ORDoubleVar>)[cstr op];
+      [res visit: self];
+      [op visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleSquare: (id<ORDoubleVar>) _gamma[res.getId]
+                                                          eq: (id<ORDoubleVar>) _gamma[op.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
 -(void) visitDoubleMult:(id<ORDoubleMult>)cstr
 {

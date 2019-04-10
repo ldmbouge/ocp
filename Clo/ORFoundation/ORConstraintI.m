@@ -2131,6 +2131,20 @@
 }
 @end
 
+@implementation ORFloatSquare
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatSquare:self];
+}
+@end
+
+@implementation ORDoubleSquare
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleSquare:self];
+}
+@end
+
 @implementation ORMod { // z = x MOD y
    id<ORIntVar> _x;
    id<ORIntVar> _y;

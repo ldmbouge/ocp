@@ -207,6 +207,7 @@
 -(void) visitFloatLinearGT: (id<ORConstraint>) c;
 -(void) visitFloatLinearLEQ: (id<ORFloatLinearLEQ>) c;
 -(void) visitFloatLinearGEQ: (id<ORFloatLinearGEQ>) c;
+-(void) visitFloatSquare: (id<ORConstraint>) c;
 -(void) visitFloatMult: (id<ORFloatMult>) c;
 -(void) visitFloatDiv: (id<ORFloatDiv>) c;
 -(void) visitFloatReifyEqualc: (id<ORConstraint>)c;
@@ -238,6 +239,7 @@
 -(void) visitDoubleLinearGT: (id<ORConstraint>) c;
 -(void) visitDoubleLinearLEQ: (id<ORDoubleLinearLEQ>) c;
 -(void) visitDoubleLinearGEQ: (id<ORDoubleLinearGEQ>) c;
+-(void) visitDoubleSquare: (id<ORConstraint>) c;
 -(void) visitDoubleMult: (id<ORDoubleMult>) c;
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c;
 -(void) visitDoubleReifyEqualc: (id<ORConstraint>)c;

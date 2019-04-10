@@ -789,6 +789,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) floatSquare:(id<CPFloatVar>) x eq:(id<CPFloatVar>) y
+{
+   id<CPConstraint> o = [[CPFloatSquare alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) floatAbs:(id<CPFloatVar>) x eq:(id<CPFloatVar>) y
 {
    id<CPConstraint> o = [[CPFloatAbs alloc] init:x eq:y];
@@ -1090,6 +1096,12 @@
 
 
 @implementation CPFactory (ORDouble)
++(id<CPConstraint>) doubleSquare:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y
+{
+   id<CPConstraint> o = [[CPDoubleSquare alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) doubleAbs:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y
 {
    id<CPConstraint> o = [[CPDoubleAbs alloc] init:x eq:y];

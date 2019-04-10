@@ -1818,6 +1818,65 @@
 }
 @end
 
+@implementation CPFloatSquare{
+   int _precision;
+   int _rounding;
+   float_interval _xi;
+   float_interval _resi;
+}
+-(id) init:(CPFloatVarI*)res eq:(CPFloatVarI*)x //res = x^2
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _res = res;
+   _xi = makeFloatInterval(x.min, x.max);
+   _resi = makeFloatInterval(res.min, res.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   updateFloatInterval(&_xi,_x);
+   updateFloatInterval(&_resi,_res);
+   intersectionInterval inter;
+   float_interval resTmp = makeFloatInterval(_resi.inf, _resi.sup);
+   fpi_xxf(_precision, _rounding, &resTmp, &_xi);
+   inter = intersection(_res, _resi, resTmp, 0.0f);
+   if(inter.changed)
+      [_res updateInterval:inter.result.inf and:inter.result.sup];
+   
+   updateFloatInterval(&_xi,_x);
+   float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+   fpi_xxf_inv(_precision,_rounding, &xTmp, &_resi);
+   inter = intersection(_x, _xi, xTmp, 0.0f);
+   if(inter.changed)
+      [_x updateInterval:inter.result.inf and:inter.result.sup];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_res bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == (%@^2)>",_res,_x];
+}
+@end
+
 @implementation CPFloatAbs{
    int _precision;
    int _rounding;
