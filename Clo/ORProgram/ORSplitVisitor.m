@@ -248,18 +248,18 @@
          mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       //force the interval to right side
-      if(mid == fp_previous_float(theMax)){
-         mid = fp_previous_float(mid);
+      if(mid == fp_next_float(theMin)){
+         mid = fp_next_float(mid);
       }
       interval[2].inf = interval[2].sup = mid;
-//      if(mid == 0.0f)
-//         interval[2].inf = -0.0;
-      interval[3].inf = fp_next_float(mid);
-      interval[3].sup = fp_previous_float(theMax);
+      //      if(mid == 0.0)
+      //         interval[2].inf = -0.0;
+      interval[3].inf = fp_next_float(theMin);
+      interval[3].sup = fp_previous_float(mid);
       length = 3;
-      if(fp_next_float(theMin) != mid){
-         interval[4].inf = fp_next_float(theMin);
-         interval[4].sup = fp_previous_float(mid);
+      if(fp_previous_float(theMax) != mid){
+         interval[4].inf = fp_next_float(mid);
+         interval[4].sup = fp_previous_float(theMax);
          length++;
       }
    }
@@ -298,18 +298,18 @@
          mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
       //force the interval to right side
-      if(mid == fp_previous_double(theMax)){
-         mid = fp_previous_double(mid);
+      if(mid == fp_next_double(theMin)){
+         mid = fp_next_double(mid);
       }
       interval[2].inf = interval[2].sup = mid;
 //      if(mid == 0.0)
 //         interval[2].inf = -0.0;
-      interval[3].inf = fp_next_double(mid);
-      interval[3].sup = fp_previous_double(theMax);
+      interval[3].inf = fp_next_double(theMin);
+      interval[3].sup = fp_previous_double(mid);
       length = 3;
-      if(fp_next_float(theMin) != mid){
-         interval[4].inf = fp_next_double(theMin);
-         interval[4].sup = fp_previous_double(mid);
+      if(fp_previous_double(theMax) != mid){
+         interval[4].inf = fp_next_double(mid);
+         interval[4].sup = fp_previous_double(theMax);
          length++;
       }
    }

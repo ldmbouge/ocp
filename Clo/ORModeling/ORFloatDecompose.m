@@ -185,6 +185,7 @@
 }
 -(void) visitFloatVar: (id<ORFloatVar>) e
 {
+   [_model incrOccurences:e];
     if (_rv)
         [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
     else

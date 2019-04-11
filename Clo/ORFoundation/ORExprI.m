@@ -361,6 +361,10 @@
 {
    [[e operand] visit:self];
 }
+-(void) visitExprUnaryMinusI:(ORExprUnaryMinusI*) e
+{
+   [[e operand] visit:self];
+}
 -(void) visitExprToFloatI:(ORExprToFloatI*) e
 {
    [[e operand] visit:self];
