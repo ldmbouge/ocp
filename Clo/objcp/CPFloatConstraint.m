@@ -374,14 +374,6 @@
                [_y updateMax:fp_previous_float([_y max])];
                assignTRInt(&_active, NO, _trail);
             }
-            if([_x max] == [_y min]){
-               [_y updateMin:fp_next_float([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
-            if([_x max] == [_y max]) {
-               [_y updateMax:fp_previous_float([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
          }
          return;
       }
@@ -390,15 +382,7 @@
          [_x updateMin:fp_next_float([_x min])];
          assignTRInt(&_active, NO, _trail);
       }
-      if([_x min] == [_y max]) {
-         [_x updateMin:fp_next_float([_x min])];
-         assignTRInt(&_active, NO, _trail);
-      }
       if([_x max] == [_y min]){
-         [_x updateMax:fp_previous_float([_x max])];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x max] == [_y max]) {
          [_x updateMax:fp_previous_float([_x max])];
          assignTRInt(&_active, NO, _trail);
       }
