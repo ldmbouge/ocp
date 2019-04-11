@@ -633,12 +633,25 @@ static OBJCPGateway *objcpgw;
 }
 -(void) addConstraints
 {
-   NSArray* arr = _toadd;
-   if([_options variationSearch]){
-      arr = [ExprSimplifier simplifyAll:_toadd];
-   }
-   for(id<ORExpr> e in arr){
-      [_model add:e];
+
+   if([_options is3Bfiltering]){
+      NSArray* arr = _toadd;
+      id<ORGroup> g = [ORFactory group:_model type:Group3B];
+      if([_options variationSearch]){
+         arr = [ExprSimplifier simplifyAll:_toadd group:g];
+      }
+      for(id<ORExpr> e in arr){
+         [g add:e];
+      }
+      [_model add:g];
+   }else{
+      NSArray* arr = _toadd;
+      if([_options variationSearch]){
+         arr = [ExprSimplifier simplifyAll:_toadd];
+      }
+      for(id<ORExpr> e in arr){
+         [_model add:e];
+      }
    }
 }
 -(ORBool) objcp_check:(objcp_context) ctx

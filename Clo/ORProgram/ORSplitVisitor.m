@@ -252,8 +252,8 @@
          mid = fp_next_float(mid);
       }
       interval[2].inf = interval[2].sup = mid;
-      //      if(mid == 0.0)
-      //         interval[2].inf = -0.0;
+//            if(mid == 0.0f)
+//               interval[2].inf = -0.0f;
       interval[3].inf = fp_next_float(theMin);
       interval[3].sup = fp_previous_float(mid);
       length = 3;
@@ -288,12 +288,12 @@
    }else{
       ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
       ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
-         mid = 0.0f;
-      else if ((theMin < 1.0f) && (1.0f < theMax))
-         mid = 1.0f;
-      else if ((theMin < -1.0f) && (-1.0f < theMax))
-         mid = -1.0f;
+      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+         mid = 0.0;
+      else if ((theMin < 1.0) && (1.0 < theMax))
+         mid = 1.0;
+      else if ((theMin < -1.0) && (-1.0 < theMax))
+         mid = -1.0;
       else
          mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));

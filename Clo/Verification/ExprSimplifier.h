@@ -15,9 +15,13 @@
    NSMutableDictionary* _theSet;
    NSMutableDictionary* _alphas;
    id<ORExpr> _rv;
+   id<ORGroup> _g;
 }
 -(id)init:(NSMutableDictionary*)theSet matching:(NSMutableDictionary*)alpha;
+-(id)init:(NSMutableDictionary*)theSet;
+-(id)init:(NSMutableDictionary*)theSet group:(id<ORGroup>)g;
 -(id<ORExpr>) result;
 +(id<ORExpr>)simplify:(id<ORExpr>)e  used:(NSMutableDictionary*) m matching:(NSMutableDictionary*)alpha;
 +(NSArray*)simplifyAll:(NSArray*)e;
++(NSArray*)simplifyAll:(NSArray*)e group:(id<ORGroup>) g;
 @end
