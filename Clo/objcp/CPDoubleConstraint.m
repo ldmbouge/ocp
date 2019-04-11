@@ -372,32 +372,16 @@ double_interval _yi;
                [_y updateMax:fp_previous_double([_y max])];
                assignTRInt(&_active, NO, _trail);
             }
-            if([_x max] == [_y min]){
-               [_y updateMin:fp_next_double([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
-            if([_x max] == [_y max]) {
-               [_y updateMax:fp_previous_double([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
          }
          return;
       }
    }else  if([_y bound]){
       if([_x min] == [_y min]){
-         [_x updateMin:fp_next_double([_x min])];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x min] == [_y max]) {
-         [_x updateMin:fp_next_double([_x min])];
+         [_x updateMin:fp_next_double([_y min])];
          assignTRInt(&_active, NO, _trail);
       }
       if([_x max] == [_y min]){
-         [_x updateMax:fp_previous_double([_x max])];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x max] == [_y max]) {
-         [_x updateMax:fp_previous_double([_x max])];
+         [_x updateMax:fp_previous_double([_y max])];
          assignTRInt(&_active, NO, _trail);
       }
    }
