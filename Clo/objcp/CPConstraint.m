@@ -1185,6 +1185,17 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) rationalGEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c
+{
+   id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
+   return [self rationalGEQ:x to:cvar];
+}
++(id<CPConstraint>) rationalAbs:(id<CPRationalVar>) x eq:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalAbs alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) rationalTernaryAdd:(id<CPRationalVar>) x equals:(id<CPRationalVar>) y plus:(id<CPRationalVar>) z annotation:(id<ORAnnotation>) notes
 {
    return [[CPRationalTernaryAdd alloc] init:x equals:y plus:z];

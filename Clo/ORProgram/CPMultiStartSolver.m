@@ -434,9 +434,9 @@
 {
    [[self worker] maxAbsDensSearch:x default:b];
 }
--(void)  branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORFloatVar>) z do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+-(void)  branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
-   [[self worker] branchAndBoundSearch: x out:z do:b];
+   [[self worker] branchAndBoundSearch: x out:ez do:b];
 }
 -(void)  lexicalOrderedSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {

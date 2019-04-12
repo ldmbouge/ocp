@@ -117,6 +117,12 @@
 -(id<ORRational>) cst;
 @end
 
+@interface ORRationalGEqualc : ORConstraintI<ORRationalGEqualc>
+-(ORRationalGEqualc*)initORRationalGEqualc:(id<ORRationalVar>)x geq:(id<ORRational>)c;
+-(id<ORRationalVar>) left;
+-(id<ORRational>) cst;
+@end
+
 @interface ORRationalErrorOf : ORConstraintI<ORRationalErrorOf>
 -(ORRationalErrorOf*)initORRationalErrorOf:(id<ORFloatVar>)f is:(id<ORRationalVar>)r;
 -(id<ORFloatVar>) left;
@@ -758,6 +764,9 @@
 -(id<ORVar>) right;
 @end
 
+@interface ORRationalAbs : ORAbs<ORAbs>
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y;
+@end
 
 @interface ORRationalReifyEqualc : ORConstraintI<ORRationalReifyEqualc>
 -(ORRationalReifyEqualc*)initRationalReify:(id<ORIntVar>)b equiv:(id<ORRationalVar>)x eqi:(id<ORRational>)c;

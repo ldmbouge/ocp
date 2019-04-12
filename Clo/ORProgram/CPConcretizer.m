@@ -1723,6 +1723,18 @@
       [cst release];
    }
 }
+-(void) visitRationalGEqualc:(id<ORRationalGEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORRationalVar> left = [cstr left];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory rationalGEqualc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+      [cst release];
+   }
+}
 -(void) visitRationalLinearEq:(id<ORRationalLinearEq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1798,6 +1810,20 @@
       id<ORRationalArray> c = [cstr coefs];
       id<CPConstraint> concreteCstr = [CPFactory rationalSum:x coef:c geq:[cstr cst] annotation:_notes];
       [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitRationalAbs: (id<ORAbs>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORRationalVar> res = (id<ORRationalVar>)[cstr res];
+      id<ORRationalVar> left = (id<ORRationalVar>)[cstr left];
+      [res visit: self];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory rationalAbs: (id<CPRationalVar>) _gamma[res.getId]
+                                                       eq: (id<CPRationalVar>) _gamma[left.getId]
+                                       ];
+      [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
 }
@@ -3092,12 +3118,20 @@
       [left updateMin:cstr.cst];
    }];
 }
+
 -(void) visitFloatLThenc:(id<ORFloatLThenc>)cstr
 {
    ORFloat nval = fp_previous_float(cstr.cst);
    id<CPFloatVar> left = [self concreteVar:cstr.left];
    [_engine tryEnforce:^{
       [left updateMax:nval];
+   }];
+}
+-(void) visitRationalGEqualc:(id<ORRationalGEqualc>)cstr
+{
+   id<CPRationalVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMin:cstr.cst];
    }];
 }
 -(void) visitDoubleLThenc:(id<ORDoubleLThenc>)cstr

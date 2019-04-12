@@ -166,8 +166,14 @@
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprSquareI:(ORExprSquareI*) e
 {
@@ -326,5 +332,15 @@
 -(id<ORRationalVar>)result
 {
    return _rv;
+}
+-(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   id<ORRationalLinear> rT = [ORNormalizer rationalLinearFrom:[e operand] model:_model];
+   id<ORRationalVar> rV = [ORNormalizer rationalVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory rationalVar:_model];
+   }
+   [_model addConstraint:[ORFactory rationalAbs:_model var:_rv eq: rV]];
+   [rT release];
 }
 @end

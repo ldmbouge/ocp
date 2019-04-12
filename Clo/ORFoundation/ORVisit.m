@@ -314,6 +314,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RationalEqualc: visit method not defined"];
 }
+-(void) visitRationalGEqualc: (id<ORRationalGEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatLEqualc: visit method not defined"];
+}
 -(void) visitRationalErrorOf: (id<ORRationalErrorOf>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RationalErrorOf: visit method not defined"];
@@ -824,6 +828,10 @@
 -(void) visitRationalDiv: (id<ORRationalDiv>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalDiv: visit method not defined"];
+}
+-(void) visitRationalAbs: (id<ORAbs>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Abs: visit method not defined"];
 }
 -(void) visitDoubleLinearEq: (id<ORDoubleLinearEq>) c
 {

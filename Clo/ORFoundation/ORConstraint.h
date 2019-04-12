@@ -169,6 +169,11 @@ enum ORGroupType {
 -(id<ORRational>) cst;
 @end
 
+@protocol  ORRationalGEqualc <ORConstraint>
+-(id<ORRationalVar>) left;
+-(id<ORRational>) cst;
+@end
+
 @protocol  ORRationalEqualc <ORConstraint>
 -(id<ORRationalVar>) left;
 -(id<ORRational>) cst;

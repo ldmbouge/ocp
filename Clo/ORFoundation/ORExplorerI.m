@@ -239,9 +239,9 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
     //[self try:^{
         cl();
-    /*} alt:^{
-        [self fail];
-    }];*/
+//    } alt:^{
+//        [self fail];
+//    }];
 }
 
 -(void) once: (ORClosure) cl

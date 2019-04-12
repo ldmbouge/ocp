@@ -2212,6 +2212,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) rationalGEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x geq:(id<ORRational>)c
+{
+   id<ORConstraint> o = [[ORRationalGEqualc alloc] initORRationalGEqualc:x geq:c];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) rationalAssign: (id<ORTracker>) model var:(id<ORRationalVar>) x to:(id<ORRationalVar>) y
 {
    id<ORConstraint> o = [[ORRationalAssign alloc] initORRationalAssign:x to:y];
@@ -2263,6 +2269,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) rationalDiv:(id<ORTracker>)model  var: (id<ORRationalVar>)x by:(id<ORRationalVar>)y equal:(id<ORRationalVar>)z
 {
    id<ORConstraint> o = [[ORRationalDiv alloc] initORRationalDiv:z eq:x times:y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) rationalAbs:(id<ORTracker>)model  var: (id<ORRationalVar>)x eq:(id<ORRationalVar>)y
+{
+   id<ORConstraint> o = [[ORRationalAbs alloc] initORAbs:x eqAbs:y];
    [model trackObject:o];
    return o;
 }

@@ -909,7 +909,7 @@
       [_x whenChangeMaxDo: ^ {
          //[_x updateMin: nextafterf(_primalBound,+INFINITY)];
          //[_x updateMin: [_primalBound inc] ];
-         [_x updateMin: _primalBound];
+         //[_x updateMin: _primalBound];
       } onBehalf:self];
 }
 
@@ -1047,3 +1047,99 @@
    return buf;
 }
 @end
+
+@implementation CPRationalAbs{
+   id<ORRationalInterval> _xi;
+   id<ORRationalInterval> _resi;
+}
+-(id) init:(CPRationalVarI*)res eq:(CPRationalVarI*)x //res = |x|
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _res = res;
+   _xi = [[ORRationalInterval alloc] init];
+   [_xi set_q:[x min] and:[x max]];
+   _resi = [[ORRationalInterval alloc] init];
+   [_resi set_q:[res min] and:[res max]];
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   id<ORRational> zero = [[ORRational alloc] init];
+   [zero setZero];
+   if([_x bound]){
+      if([_res bound]){
+         if(([[_res value] neq:  [[_x value] neg]]) && ([[_res value] neq: [_x value]])) failNow();
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         [_res bind:([[_x value] gt: zero]) ? [_x value] : [[_x value] neg]];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }else if([_res bound]){
+      if([_x member:[[_res value] neg]]){
+         if([_x member:[_res value]])
+            [_x updateInterval:[[_res value] neg] and:[_res value]];
+         else
+            [_x bind:[[_res value] neg]];
+      }else if([_x member:[_res value]])
+         [_x bind:[_res value]];
+      else
+         failNow();
+   }else {
+      id<ORRational> zero = [[ORRational alloc] init];
+      [zero setZero];
+      [_xi set_q:[_x min] and:[_x max]];
+      [_resi set_q:[_res min] and:[_res max]];
+      id<ORRationalInterval> resTmp = [[ORRationalInterval alloc] init];
+      //[resTmp set_q:_resi.low and:_resi.up];
+      if([_x member: zero]){
+         [resTmp.low set:zero];
+      } else {
+         [resTmp.low set: minQ([_xi.low abs], [_xi.up abs])];
+      }
+      [resTmp.up set: maxQ([_xi.low abs], [_xi.up abs])];
+      //fpi_fabsf(_precision, _rounding, &resTmp, &_xi);
+      _resi = [_resi proj_inter: resTmp];
+      if(_resi.changed)
+         [_res updateInterval:_resi.low and:_resi.up];
+      
+      [_xi set_q:[_x min] and:[_x max]];
+      id<ORRationalInterval> xTmp = [[ORRationalInterval alloc] init];
+      //[xTmp set_q:_xi.low and:_xi.up];
+      if([_resi.low eq: zero]){
+         [xTmp.low set: [_resi.up neg]];
+         [xTmp.up set: _resi.up];
+      } else {
+         [xTmp.low set: minQ(_resi.low, _resi.up)];
+         [xTmp.up set: maxQ(_resi.low, _resi.up)];
+      }
+      //fpi_fabs_invf(_precision,_rounding, &xTmp, &_resi);
+      _xi = [_xi proj_inter: xTmp];
+      if(_xi.changed)
+         [_x updateInterval:_xi.low and:_xi.up];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_res bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == |%@|>",_res,_x];
+}
+@end
+

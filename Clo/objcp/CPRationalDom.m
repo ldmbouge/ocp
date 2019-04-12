@@ -145,7 +145,7 @@
 
 -(ORBool) member:(id<ORRational>)v
 {
-   return [_domain._low leq: v] && [v leq: _domain._low];
+   return [_domain._low leq: v] && [v leq: _domain._up];
 }
 -(id) copy
 {

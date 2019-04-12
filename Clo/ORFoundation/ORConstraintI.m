@@ -814,6 +814,62 @@
 }
 @end
 
+@implementation ORRationalGEqualc {
+   id<ORRationalVar> _x;
+   id<ORRational>        _c;
+}
+-(ORRationalGEqualc*)initORRationalGEqualc:(id<ORRationalVar>)x geq:(id<ORRational>)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = [ORRational rationalWith:c];
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ >= %@)",[self class],self,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRationalGEqualc:self];
+}
+-(id<ORRationalVar>) left
+{
+   return _x;
+}
+-(id<ORRational>) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(id<ORRational>) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(id<ORRational>) at:&_c];
+   return self;
+}
+@end
+
 @implementation ORRationalEqualc {
    id<ORRationalVar> _x;
    id<ORRational>        _c;
@@ -4836,6 +4892,18 @@
    _y = [aDecoder decodeObject];
    _z = [aDecoder decodeObject];
    return self;
+}
+@end
+
+@implementation ORRationalAbs
+-(ORAbs*)initORAbs:(id<ORVar>)x eqAbs:(id<ORVar>)y
+{
+   self = [super initORAbs:x eqAbs:y];
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitRationalAbs:self];
 }
 @end
 

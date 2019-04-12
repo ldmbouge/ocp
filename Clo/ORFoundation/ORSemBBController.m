@@ -199,11 +199,11 @@ extern id<ORRational> GlobalDualBound;
 }
 -(void)startTryLeft
 {
-   NSLog(@"%@", _cp);
+   //NSLog(@"%@", _cp);
 }
 -(void)startTryRight
 {
-   NSLog(@"%@", _cp);
+   //NSLog(@"%@", _cp);
 }
 -(void)exitTryLeft
 {
@@ -287,7 +287,8 @@ static long __nbPull = 0;
             }
          } else {
             NSLog(@"EQUAL BOUND: %@ == %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
-            NSLog(@"QUEUE: %@", _buf);
+            //NSLog(@"%@", [_engine variables]);
+            //NSLog(@"QUEUE: %@", _buf);
             //NSLog(@"%@", [_engine objective]);
             return;
          }

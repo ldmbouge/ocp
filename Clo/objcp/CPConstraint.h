@@ -166,6 +166,8 @@
 +(id<CPConstraint>) rationalGTc: (id<CPRationalVar>) x to:(id<ORRational>) c;
 +(id<CPConstraint>) rationalLT: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
 +(id<CPConstraint>) rationalGT: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
++(id<CPConstraint>) rationalGEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c;
++(id<CPConstraint>) rationalAbs: (id<CPRationalVar>) x eq:(id<CPRationalVar>) c;
 +(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
 //+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs neqi:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
 //+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs lt:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;

@@ -85,23 +85,28 @@ void testRational(int argc, const char * argv[]) {
       id<ORRational> low = [[ORRational alloc] init];
       id<ORRational> low_y = [[ORRational alloc] init];
       id<ORRational> up = [[ORRational alloc] init];
-      [low set_d:1];
-      [up set_d: 5];
+      [low set_d:-2];
+      [up set_d: 3];
       [low_y set_d: 2];
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRationalVar> x = [ORFactory rationalVar:mdl low:low up:up name:@"x"];
       id<ORRationalVar> y = [ORFactory rationalVar:mdl low:low_y up:low_y name:@"y"];
       id<ORRationalVar> z = [ORFactory rationalVar:mdl name:@"z"];
-      [mdl add:[z eq: [x plus: y]]];
+      //[mdl add:[z eq: [x plus: y]]];
+      [up setMinusOne];
+      [low setOne];
+      [mdl add:[z eq: [x abs]]];
+      [mdl add:[x geq: up]];
+      [mdl add:[z leq: low]];
       
-      [mdl maximize:z];
+      //[mdl maximize:z];
       
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       
       [cp solve:^{
-         [cp labelRational:x];
+         //[cp labelRational:x];
          NSLog(@"x : [%@;%@] (%s)",[cp minQ:x],[cp maxQ:x],[cp bound:x] ? "YES" : "NO");
          NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
          NSLog(@"z : [%@;%@] (%s)",[cp minQ:z],[cp maxQ:z],[cp bound:z] ? "YES" : "NO");
@@ -143,6 +148,7 @@ void testR(int argc, const char * argv[]) {
          //id<ORFloatVar> u = [ORFactory floatVar:mdl name:@"u"];
          id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
          id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
          [zero release];
          
          [mdl add:[x set: @(45.0f)]];
@@ -162,8 +168,8 @@ void testR(int argc, const char * argv[]) {
          //[mdl add:[o set: [x div: k]]];
          [mdl add:[z set: [x plus: y]]];
          
-         [mdl maximize:ez];
-         
+         [mdl add: [ezAbs eq: [ez abs]]];
+         [mdl maximize:ezAbs];
          
          /*for (float yr = 3.2f; yr <= nb_float(3.2f, NB_FLOAT); yr = nextafterf(yr, +INFINITY)) {
             NSLog(@"@@@@@@@ %20.20e", yr);
@@ -175,9 +181,10 @@ void testR(int argc, const char * argv[]) {
          id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
          
          [cp solve:^{
-            [cp branchAndBoundSearch:vars out:z do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
              }];
+            NSLog(@"concrete model: %@", [[cp engine] model]);
             NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
             //NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
             NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");

@@ -156,3 +156,14 @@
 -(ORUInt) nbUVars;
 -(id<ORRationalVar>) var;
 @end
+
+@interface CPRationalAbs : CPCoreConstraint {
+@private
+   CPRationalVarI* _x;
+   CPRationalVarI* _res;
+}
+-(id) init:(id<CPRationalVar>)res eq:(id<CPRationalVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
