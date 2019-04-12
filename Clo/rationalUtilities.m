@@ -1024,8 +1024,10 @@
       [pup release];
       [epsilon release];
    }
-   if([z empty])
-      failNow();
+   if([z empty]){
+      [z.low setPosInf];
+      [z.up setNegInf];
+   }
    return z;
 }
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup
@@ -1068,8 +1070,10 @@
       [pup release];
       [epsilon release];
    }
-   if([z empty])
-      failNow();
+   if([z empty]){
+      [z.low setPosInf];
+      [z.up setNegInf];
+   }
    return z;
 }
 @end

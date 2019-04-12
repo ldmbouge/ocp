@@ -731,9 +731,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
                                                   up:up
                                                 name:[NSString stringWithFormat:@"e%@",[f prettyname]]];
    id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
-   //[[f tracker] add:c];
-   id<ORTracker> m = f.tracker;
-   [((id<ORModel>)m) add: c];
+   [((id<ORModel>)mdl) add: c];
    [low release];
    [up release];
    return r;

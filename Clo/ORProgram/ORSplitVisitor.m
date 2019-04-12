@@ -265,7 +265,7 @@
    }
    float_interval* ip = interval;
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
-      ORInt c = [[_program explorer] nbChoices];
+      //ORInt c = [[_program explorer] nbChoices];
       LOG([_program debugLevel],1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
    }];

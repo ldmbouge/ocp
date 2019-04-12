@@ -66,8 +66,8 @@
 -(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model;
 -(id<ORConstraint>) postSET: (id<ORAddToModel>) model;
--(void)  postMinimize: (id<ORAddToModel>) model;
--(void)  postMaximize: (id<ORAddToModel>) model;
+//-(void)  postMinimize: (id<ORAddToModel>) model;
+//-(void)  postMaximize: (id<ORAddToModel>) model;
 @end
 
 @interface ORRationalLinearFlip : NSObject<ORRationalLinear>

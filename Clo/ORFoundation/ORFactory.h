@@ -437,6 +437,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  geq: (id<ORRational>) c;
 +(id<ORConstraint>) rationalMult:(id<ORTracker>)model  var: (id<ORRationalVar>)x by:(id<ORRationalVar>)y equal:(id<ORRationalVar>)z;
 +(id<ORConstraint>) rationalDiv:(id<ORTracker>)model  var: (id<ORRationalVar>)x by:(id<ORRationalVar>)y equal:(id<ORRationalVar>)z;
++(id<ORConstraint>) rationalAbs:(id<ORTracker>)model  var: (id<ORRationalVar>)x eq:(id<ORRationalVar>)y;
 
 +(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x eqi: (id<ORRational>) i;
 +(id<ORConstraint>) rationalReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRationalVar>) x eq: (id<ORRationalVar>) y;

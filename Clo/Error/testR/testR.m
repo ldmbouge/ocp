@@ -10,7 +10,7 @@
 #include "fpi.h"
 #import "ORCmdLineArgs.h"
 
-int NB_FLOAT = 11;
+int NB_FLOAT = 2;
 
 #define printFvar(name, var) NSLog(@""name" : [%20.20e, %20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [%20.20e, %20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
 #define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]

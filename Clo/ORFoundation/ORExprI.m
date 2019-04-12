@@ -1002,7 +1002,6 @@
 {
    id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] from:self];
    id<ORConstraint> c = [ORFactory channel:self with:r];
-   //[[self tracker] add:c];
    id<ORTracker> m = self.tracker;
    [((id<ORModel>)m) add: c];
 

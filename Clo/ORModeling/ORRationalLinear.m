@@ -316,14 +316,14 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 - (id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model {
    return 0;
 }
--(void) postMinimize: (id<ORAddToModel>) model
-{
-   [model minimize: [self variables: model] coef: [self coefficients: model]];
-}
--(void) postMaximize: (id<ORAddToModel>) model
-{
-   [model maximize: [self variables: model] coef: [self coefficients: model]];
-}
+//-(void) postMinimize: (id<ORAddToModel>) model
+//{
+//   [model minimize: [self variables: model] coef: [self coefficients: model]];
+//}
+//-(void) postMaximize: (id<ORAddToModel>) model
+//{
+//   [model maximize: [self variables: model] coef: [self coefficients: model]];
+//}
 @end
 
 @implementation ORRationalLinearFlip {
