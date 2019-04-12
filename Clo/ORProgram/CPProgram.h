@@ -97,6 +97,8 @@ PORTABLE_BEGIN
 -(void)          switchedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          lexicalOrderedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt, id<ORDisabledVarArray>))b;
+-(void)          branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt, id<ORDisabledVarArray>))b;
+
 
 -(ORDouble)      computeAbsorptionRate:(id<ORVar>) x;
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledVarArray>) vars;

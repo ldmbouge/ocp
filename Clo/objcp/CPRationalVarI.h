@@ -16,6 +16,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 #import <objcp/CPFloatVarI.h>
+#import <objcp/CPDoubleVarI.h>
 #include "fpi.h"
 #import "rationalUtilities.h"
 
@@ -115,6 +116,19 @@ static inline bool isDisjointWithQF(CPFloatVarI* x, CPRationalVarI* y)
    return isDisjointWithVQ([x minErr], [x maxErr], [y min], [y max]);
 }
 static inline bool isDisjointWithQFC(CPFloatVarI* x, CPRationalVarI* y)
+{
+   id<ORRational> xminRat = [ORRational rationalWith_d:x.min];
+   id<ORRational> xmaxRat = [ORRational rationalWith_d:x.max];
+   BOOL res = isDisjointWithVQ(xminRat, xmaxRat, [y min], [y max]);
+   [xminRat release];
+   [xmaxRat release];
+   return res;
+}
+static inline bool isDisjointWithQD(CPDoubleVarI* x, CPRationalVarI* y)
+{
+   return isDisjointWithVQ([x minErr], [x maxErr], [y min], [y max]);
+}
+static inline bool isDisjointWithQDC(CPDoubleVarI* x, CPRationalVarI* y)
 {
    id<ORRational> xminRat = [ORRational rationalWith_d:x.min];
    id<ORRational> xmaxRat = [ORRational rationalWith_d:x.max];

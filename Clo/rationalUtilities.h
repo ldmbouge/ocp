@@ -225,3 +225,7 @@ static inline void set_q(rational_t r, rational_t s) { mpq_set(r, s); }
 static inline ORFloat randomValue(ORFloat min, ORFloat max) {
    return (max - min) * ((float)rand() / RAND_MAX) + min;
 }
+static inline ORDouble randomValueD(ORDouble min, ORDouble max) {
+   return (max - min) * ((double)rand() / RAND_MAX) + min;
+}
+

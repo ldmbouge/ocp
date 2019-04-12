@@ -62,6 +62,57 @@
 }
 @end
 
+@implementation CPRationalErrorOfD
+-(id) init:(CPDoubleVarI*)x is:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x boundError]) [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])      [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_x boundError]){
+      [_y bind:[_x errorValue]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if([_y bound]){
+      [_x bindError:[_y value]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
+   if(isDisjointWithQD(_x,_y)){
+      failNow();
+   }else{
+      [_x updateIntervalError:maxQ([_x minErr], [_y min]) and:minQ([_x maxErr], [_y max])];
+      [_y updateInterval:maxQ([_x minErr], [_y min]) and:minQ([_x maxErr], [_y max])];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x boundError] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == %@>",[_x domainError],_y];
+}
+@end
+
+
 @implementation CPRationalChannel
 -(id) init:(CPFloatVarI*)x with:(CPRationalVarI*)y
 {

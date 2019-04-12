@@ -927,10 +927,10 @@
 @end
 
 @implementation ORRationalErrorOf {
-   id<ORFloatVar> _x;
+   id<ORVar> _x;
    id<ORRationalVar> _y;
 }
--(id)initORRationalErrorOf:(id<ORFloatVar>)x is:(id<ORRationalVar>)y
+-(id)initORRationalErrorOf:(id<ORVar>)x is:(id<ORRationalVar>)y
 {
    self = [super initORConstraintI];
    _x = x;

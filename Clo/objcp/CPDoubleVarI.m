@@ -114,7 +114,8 @@ typedef struct  {
 -(NSString*) description
 {
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"Double(%d) : %f±%@",_name,_value,_valueError];
+    //[buf appendFormat:@"Double(%d) : %f±%@",_name,_value,_valueError];
+    [buf appendFormat:@"%20.20e±%@",_value,_valueError];
     return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder

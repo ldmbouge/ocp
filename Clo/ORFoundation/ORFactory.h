@@ -424,7 +424,7 @@ PORTABLE_BEGIN
 @interface ORFactory (ORRational)
 +(id<ORConstraint>) rationalAssignC: (id<ORTracker>) model var: (id<ORRationalVar>)x to:(id<ORRational>)c;
 +(id<ORConstraint>) rationalAssign: (id<ORTracker>) model var: (id<ORRationalVar>)x to: (id<ORRationalVar>)y;
-+(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORFloatVar>) f is: (id<ORRationalVar>) x;
++(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORVar>) f is: (id<ORRationalVar>) x;
 +(id<ORConstraint>) channel:(id<ORExpr>) f with: (id<ORRationalVar>) x;
 +(id<ORConstraint>) rationalEqualc: (id<ORTracker>) model var: (id<ORRationalVar>)x eqc:(id<ORRational>)c;
 +(id<ORConstraint>) rationalNEqualc:(id<ORTracker>) model var: (id<ORRationalVar>)x neqc:(id<ORRational>)c;

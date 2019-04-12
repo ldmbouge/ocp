@@ -1127,6 +1127,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) errorOfD: (id<CPDoubleVar>) x is:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalErrorOfD alloc] init:x is:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) channel: (id<CPFloatVar>) x with:(id<CPRationalVar>) y
 {
    id<CPConstraint> o = [[CPRationalChannel alloc] init:x with:y];

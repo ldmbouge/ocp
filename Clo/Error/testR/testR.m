@@ -185,9 +185,9 @@ void testR(int argc, const char * argv[]) {
                [cp floatSplit:i withVars:x];
              }];
 //            NSLog(@"concrete model: %@", [[cp engine] model]);
-            NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
+//            NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
             //NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
-            NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
+//            NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
             //NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
             //NSLog(@"o : [%20.20e;%20.20e] (%s)",[cp minF:o],[cp maxF:o],[cp bound:o] ? "YES" : "NO");
             //NSLog(@"eo: [%@;%@]",[cp minFQ:o],[cp maxFQ:o]);
@@ -197,10 +197,10 @@ void testR(int argc, const char * argv[]) {
              NSLog(@"ew: [%@;%@]",[cp minFQ:w],[cp maxFQ:w]);
              NSLog(@"u : [%20.20e;%20.20e] (%s)",[cp minF:u],[cp maxF:u],[cp bound:u] ? "YES" : "NO");
              NSLog(@"eu: [%@;%@]",[cp minFQ:u],[cp maxFQ:u]);*/
-            NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
-            NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp  maxFQ:z]);
+//            NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
+//            NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp  maxFQ:z]);
             //check_it_f(getFmin(x),getFmin(y),getFmin(o),getFmin(k),getFmin(w),getFmin(u),getFmin(z),[cp minErrorFQ:z]);
-            check_it_bb(getFmin(x),getFmin(y),getFmin(z),[cp minErrorFQ:z]);
+            //check_it_bb(getFmin(x),getFmin(y),getFmin(z),[cp minErrorFQ:z]);
          }];
          NSLog(@"%@",cp);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
@@ -218,6 +218,45 @@ void testR(int argc, const char * argv[]) {
       NSLog(@"##################");*/
    }
 }
+
+void testRD(int argc, const char * argv[]) {
+   @autoreleasepool {
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORRational> zero = [[[ORRational alloc] init] setZero];
+         id<ORDoubleVar> x = [ORFactory doubleVar:mdl name:@"x"];
+         // y:  3.2 ; 3.4
+         id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:3.2 up:3.4 elow:zero eup:zero name:@"y"];
+         id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+         id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+         [zero release];
+         
+         [mdl add:[x set: @(45.0)]];
+         
+         [mdl add:[z set: [x plus: y]]];
+         
+         [mdl add: [ezAbs eq: [ez abs]]];
+         [mdl maximize:ezAbs];
+         
+         NSLog(@"model: %@",mdl);
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+         id<ORDoubleVarArray> vs = [mdl doubleVars];
+         id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+         
+         [cp solve:^{
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         }];
+         NSLog(@"%@",cp);
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
+      }];
+   }
+}
+
 
 void testOptimize(int argc, const char * argv[]) {
    @autoreleasepool {
@@ -249,7 +288,8 @@ void testOptimize(int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
 //   testIntBFS(argc, argv);
-   testR(argc, argv);
+   //testR(argc, argv);
+   testRD(argc, argv);
    
 //   float ye = nb_float(3.2f, NB_FLOAT);
 //   float_interval z, x, y;

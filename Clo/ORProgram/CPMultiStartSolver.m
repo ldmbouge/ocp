@@ -438,6 +438,10 @@
 {
    [[self worker] branchAndBoundSearch: x out:ez do:b];
 }
+-(void)  branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+{
+   [[self worker] branchAndBoundSearchD: x out:ez do:b];
+}
 -(void)  lexicalOrderedSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] lexicalOrderedSearch:x do:b];

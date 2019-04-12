@@ -1690,7 +1690,7 @@
 -(void) visitRationalErrorOf:(id<ORRationalErrorOf>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORFloatVar> left = [cstr left];
+      id<ORVar> left = [cstr left];
       id<ORRationalVar> right = [cstr right];
       [left visit: self];
       [right visit: self];
@@ -2086,6 +2086,36 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
+}
+-(void) visitDoubleLThenc: (id<ORDoubleLThenc>)c
+{
+   ORDouble nval = fp_previous_double(c.cst);
+   id<CPDoubleVar> left = [self concreteVar:c.left];
+   [_engine tryEnforce:^{
+      [left updateMax:nval];
+   }];
+}
+-(void) visitDoubleLEqualc: (id<ORDoubleLEqualc>)c
+{
+   id<CPDoubleVar> left = [self concreteVar:c.left];
+   [_engine tryEnforce:^{
+      [left updateMax:c.cst];
+   }];
+}
+-(void) visitDoubleGThenc: (id<ORDoubleGThenc>)c
+{
+   ORDouble nval = fp_next_double(c.cst);
+   id<CPDoubleVar> left = [self concreteVar:c.left];
+   [_engine tryEnforce:^{
+      [left updateMin:nval];
+   }];
+}
+-(void) visitDoubleGEqualc: (id<ORDoubleGEqualc>)c
+{
+   id<CPDoubleVar> left = [self concreteVar:c.left];
+   [_engine tryEnforce:^{
+      [left updateMin:c.cst];
+   }];
 }
 -(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>) cstr
 {
@@ -3068,7 +3098,13 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
    if (!_gamma[v.getId])
-      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
+      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain] boundsError: [v domainError]];
+}
+
+-(void) visitDoubleVar: (id<ORDoubleVar>) v
+{
+   if (!_gamma[v.getId])
+      _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain] boundsError: [v domainError]];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v

@@ -722,7 +722,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORRationalVarI alloc]  init: tracker];
 }
-+(id<ORRationalVar>) errorVar: (id<ORTracker>) mdl of:(id<ORFloatVar>)f
++(id<ORRationalVar>) errorVar: (id<ORTracker>) mdl of:(id<ORVar>)f
 {
    id<ORRational> low = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
    id<ORRational> up =  [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
@@ -2192,7 +2192,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORFloatVar>) x is: (id<ORRationalVar>) y
++(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y
 {
    id<ORConstraint> o = [[ORRationalErrorOf alloc] initORRationalErrorOf:x is:y];
    [model trackObject:o];

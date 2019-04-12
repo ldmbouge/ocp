@@ -124,7 +124,7 @@
 @end
 
 @interface ORRationalErrorOf : ORConstraintI<ORRationalErrorOf>
--(ORRationalErrorOf*)initORRationalErrorOf:(id<ORFloatVar>)f is:(id<ORRationalVar>)r;
+-(ORRationalErrorOf*)initORRationalErrorOf:(id<ORVar>)f is:(id<ORRationalVar>)r;
 -(id<ORFloatVar>) left;
 -(id<ORRationalVar>) right;
 @end

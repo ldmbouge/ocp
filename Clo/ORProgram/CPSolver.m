@@ -760,7 +760,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLEqualImpl: not implemented"];
 }
--(ORBool) errorGEqualImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
+-(void) errorGEqualImpl: (id<CPRationalVar>) var with: (id<ORRational>) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGEqualImpl: not implemented"];
 }
@@ -1620,13 +1620,10 @@
    [_tracer addCommand: [ORFactory floatLEqualc:self var:var leq: up]];
    [_tracer addCommand: [ORFactory floatGEqualc:self var:var geq: low]];
 }
--(ORBool) errorGEqual: (id<ORRationalVar>) var with: (id<ORRational>) val fail: (ORBool) canFail
+-(void) errorGEqual: (id<ORRationalVar>) var with: (id<ORRational>) val
 {
-   ORBool hasFailed = [self errorGEqualImpl:_gamma[var.getId] with:val fail:canFail];
-   if(canFail)
-      [_tracer addCommand: [ORFactory rationalGEqualc:self var:var geq:val]];
-   
-   return hasFailed;
+   [self errorGEqualImpl:_gamma[var.getId] with:val];
+   [_tracer addCommand: [ORFactory rationalGEqualc:self var:var geq:val]];
 }
 -(void) doubleLthen: (id<ORDoubleVar>) var with: (ORDouble) val
 {
@@ -1926,9 +1923,140 @@
    //printf("Bye\n");
    //NSLog(@"%@", solution);
    for (id<ORVar> v in [_model variables]) {
-      NSLog(@"%@ === %@", [v prettyname], [solution value:v]);
+      if([v prettyname])
+         NSLog(@"%@: %@", [v prettyname], [solution value:v]);
    }
 }
+
+-(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+{
+   
+   //_level = 8;
+   id<ORSelect> select = [ORFactory select: _engine // need to be out of inner loop to go through all possible variables
+                                     range: RANGE(self,[x low],[x up])
+                                  suchThat: ^ORBool(ORInt i) {
+                                     id<CPDoubleVar> v = _gamma[getId(x[i])];
+                                     LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
+                                     return ![v bound];
+                                  }
+                                 orderedBy: ^ORDouble(ORInt i) {
+                                    return (ORDouble)i;
+                                 }];
+   
+   // To keep the idea that we might have two differents policies
+   id<ORSelect> guess_select = select;
+   
+   id<ORSolution> solution;
+   NSString* solutionS;
+   
+   //id<ORCheckpoint> solution;
+   do {
+      [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
+      [[_engine objective] updateDualBound];
+      
+      ORBool isBound = true;
+      id<CPDoubleVar> xc;
+      for (id<ORDoubleVar> v in x) { // Only check that abstract floating point variables are bound
+         xc = _gamma[v.getId];
+         isBound &= [xc bound];
+      }
+      if(isBound){
+         [[_engine objective] updatePrimalBound];
+         solution = [self captureSolution];  // Keep it as a solution
+         solutionS = [[_engine variables] description];
+         break;
+      } else {
+         
+         /********** GuessError **********/
+         //printf("************* BEGINNING OF GUESS *******************\n");
+         LOG(_level, 2, @"GuessError");
+         ORInt iteration = 0;
+         ORInt nbIteration = -1;
+         if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: [[[ORRational alloc] init] setZero]]){
+            nbIteration = 30;
+         } else {
+            nbIteration = 20;
+         }
+         
+         ORBool isFailed = NO;
+         while(iteration < nbIteration){
+            //printf("Guess iter %d\n", iteration);
+            [_tracer pushNode];
+            while(true) {
+               ORSelectorResult index = [guess_select min];
+               if(index.found){
+                  id<CPDoubleVar> currentVar = _gamma[getId(x[index.index])];
+                  LOG(_level,2, @"Choosen var: %@",currentVar);
+                  if(![currentVar bound]){
+                     ORDouble v = randomValueD([currentVar min], [currentVar max]);
+                     //NSLog(@"la var : %@ est fixe a :%16.16e",currentVar, v);
+                     ORStatus s = [_engine enforce:^{ [currentVar bind:v];}];
+                     isFailed = (s == ORFailure);
+                     /*
+                      printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ STEP 1\n");
+                      [currentVar bind:randomValue([currentVar min], [currentVar max])]; // fail ?
+                      LOG(_level, 2, @"var fixed at: %@", currentVar);
+                      printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ STEP 2\n");
+                      isFailed = [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:NO];
+                      //isFailed = (tryfail(^ORStatus{ [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:YES]; printf("Status OK\n"); return ORSuccess; }, ^ORStatus{ printf("failure\n"); return ORFailure; }) == ORFailure);
+                      printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ STEP 3\n");
+                      */
+                     if(isFailed){
+                        //printf("HAS FAILED %d\n", ORFailure);
+                        break;
+                     }
+                  }
+               } else {
+                  break;
+               }
+            }
+            if(!isFailed){
+               isBound = true;
+               id<CPDoubleVar> xc;
+               for (id<ORDoubleVar> v in x) { // Only check that abstract floating point variables are bound
+                  xc = _gamma[v.getId];
+                  isBound &= [xc bound];
+               }
+               id<CPRationalVar> ezi = _gamma[getId(ez)];
+               if(isBound && [[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]){ // lt (was gt !!!)
+                  // And as updatePrimalBound does test whether the value is actually better or not
+                  // the testing it here is useless
+                  [[_engine objective] updatePrimalBound];
+                  solution = [self captureSolution]; // Keep it as a solution
+                  solutionS = [[_engine variables] description];
+                  [_tracer popNode]; // need to restore initial state before going out of loop !
+                  break;
+               }
+            }
+            iteration++;
+            [_tracer popNode];
+         }
+         //printf("************* END OF GUESS *******************\n");
+         
+         /******************************/
+         
+         ORSelectorResult i = [select min]; //sélectionne la variable minimisant la mesure défini dans le select
+         /*
+          if (!i.found){ // si toutes les variables sont fixé
+           [[_engine objective] updatePrimalBound]; // Should never be reached thanks to the handling following the first propagate
+           break;
+          }
+          */
+         [self floatSplit:i.index withVars:x]; //appel de la strategie de coupe
+      }
+      //printf("Hallo\n");
+   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
+   // Had an issue while using the guess: the loop was going on while the two bounds have reached the same value
+   // Thus, it seems we need to force the end of this loop as soon as the condition is met
+   // Is this the right way to do it ?
+   //printf("Bye\n");
+   //NSLog(@"%@", solution);
+   for (id<ORVar> v in [_model variables]) {
+      if([v prettyname])
+         NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+   }
+}
+
 //-------------------------------------------------
 -(void) maxDegreeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
@@ -4371,6 +4499,43 @@
    [ORConcurrency pumpEvents];
 }
 -(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up
+{
+   ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleLthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORDouble pval = fp_previous_double(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:pval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleGthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORDouble nval = fp_next_double(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:nval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleLEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleGEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) up
 {
    ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
    if (status == ORFailure)
