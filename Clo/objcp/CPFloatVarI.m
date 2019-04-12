@@ -102,7 +102,7 @@
 -(NSString*) description
 {
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"Float(%d) : %f±%@",_name,_value,_valueError];
+    [buf appendFormat:@"Float(%d) : %20.20e±%@",_name,_value,_valueError];
     return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder

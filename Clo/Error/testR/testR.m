@@ -184,7 +184,7 @@ void testR(int argc, const char * argv[]) {
             [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
              }];
-            NSLog(@"concrete model: %@", [[cp engine] model]);
+//            NSLog(@"concrete model: %@", [[cp engine] model]);
             NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
             //NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
             NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
