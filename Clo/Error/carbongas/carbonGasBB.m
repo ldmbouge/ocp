@@ -76,7 +76,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
       [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
       
       [mdl add: [erAbs eq: [er abs]]];
-      [mdl maximize:erAbs];
+      [mdl maximize:er];
 
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
@@ -173,8 +173,8 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"foo"){
-      carbonGas_f(1, argc, argv);
-//      carbonGas_d(1, argc, argv);
+      //carbonGas_f(1, argc, argv);
+      carbonGas_d(1, argc, argv);
    }
    return 0;
 }

@@ -1832,10 +1832,13 @@
          isBound &= [xc bound];
       }
       if(isBound){
-         [[_engine objective] updatePrimalBound];
-         solution = [self captureSolution];  // Keep it as a solution
-         solutionS = [[_engine variables] description];
-         break;
+         id<CPRationalVar> ezi = _gamma[getId(ez)];
+         if([[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]){ // Check that it is a better solution   <=========== !
+            [[_engine objective] updatePrimalBound];
+            solution = [self captureSolution];  // Keep it as a solution
+            solutionS = [[_engine variables] description];
+            break;
+         }
       } else {
          
          /********** GuessError **********/
@@ -1913,7 +1916,7 @@
            break;
           }
           */
-         [self floatSplit:i.index withVars:x]; //appel de la strategie de coupe
+         [self floatSplit:i.index withVars:x]; //call splitting strategy
       }
       //printf("Hallo\n");
    } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
@@ -1922,9 +1925,14 @@
    // Is this the right way to do it ?
    //printf("Bye\n");
    //NSLog(@"%@", solution);
-   for (id<ORVar> v in [_model variables]) {
-      if([v prettyname])
-         NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+   // We migth got out from a leaf that is not a an optimum. Have to check whether this an actual end or not
+   if (([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualBound] rationalValue]])) {
+      NSLog(@"=========================");
+      for (id<ORVar> v in [_model variables]) {
+         if([v prettyname])
+            NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+      }
+      NSLog(@"=========================");
    }
 }
 

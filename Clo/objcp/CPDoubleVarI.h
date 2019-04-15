@@ -109,7 +109,7 @@
 -(id<ORRational>) errorValue;
 -(ORLDouble) domwidth;
 -(id<CPDom>) domain;
--(TRRationalInterval) domainError;
+-(id<CPDom>) domainError;
 @end
 
 @interface CPDoubleViewOnIntVarI : ORObject<CPDoubleVar,CPDoubleVarExtendedItf,CPIntVarNotifier> {

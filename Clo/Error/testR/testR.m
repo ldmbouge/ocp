@@ -83,21 +83,19 @@ void check_it_bb(float x, float y, float z, id<ORRational> ez) {
 void testRational(int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORRational> low = [[ORRational alloc] init];
-      id<ORRational> low_y = [[ORRational alloc] init];
       id<ORRational> up = [[ORRational alloc] init];
-      [low set_d:-2];
+      [low set_d:-7];
       [up set_d: 3];
-      [low_y set_d: 2];
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRationalVar> x = [ORFactory rationalVar:mdl low:low up:up name:@"x"];
-      id<ORRationalVar> y = [ORFactory rationalVar:mdl low:low_y up:low_y name:@"y"];
       id<ORRationalVar> z = [ORFactory rationalVar:mdl name:@"z"];
       //[mdl add:[z eq: [x plus: y]]];
       [up setMinusOne];
-      [low setOne];
+      [low set_d: 2];
       [mdl add:[z eq: [x abs]]];
-      [mdl add:[x geq: up]];
+      [mdl add:[x leq: up]];
       [mdl add:[z leq: low]];
+      //[mdl add:[z leq: low]];
       
       //[mdl maximize:z];
       
@@ -108,7 +106,7 @@ void testRational(int argc, const char * argv[]) {
       [cp solve:^{
          //[cp labelRational:x];
          NSLog(@"x : [%@;%@] (%s)",[cp minQ:x],[cp maxQ:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
+         //NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
          NSLog(@"z : [%@;%@] (%s)",[cp minQ:z],[cp maxQ:z],[cp bound:z] ? "YES" : "NO");
       }];
       NSLog(@"%@",cp);
@@ -148,7 +146,7 @@ void testR(int argc, const char * argv[]) {
          //id<ORFloatVar> u = [ORFactory floatVar:mdl name:@"u"];
          id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
          id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
-         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
          [zero release];
          
          [mdl add:[x set: @(45.0f)]];
@@ -219,6 +217,81 @@ void testR(int argc, const char * argv[]) {
    }
 }
 
+void testRAbs(int argc, const char * argv[]) {
+   @autoreleasepool {
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORRational> zero = [[[ORRational alloc] init] setZero];
+         //ORRational * tmp = [ORRational rationalWith_d:nextafterf(7.15255737304687500000e-07, +INFINITY)];
+         id<ORFloatVar> x = [ORFactory floatVar:mdl low:40.2f up:48.4f elow:zero eup:zero name:@"x"];
+         id<ORFloatVar> x1 = [ORFactory floatVar:mdl low:48.4f up:48.4f elow:zero eup:zero name:@"x1"];
+         id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.2f up:3.4f elow:zero eup:zero name:@"y"];
+         id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
+         id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
+         [zero release];
+         
+         //[mdl add:[x set: @(45.0f)]];
+         //[mdl add:[o set: @(2.43f)]];
+         
+         /*
+          Search for input values such that the error on z is greater or equal than tmp
+          tmp is the float next after the value found without this constraint
+          Bounding the error help find a greater error! (Closer to the maximum)
+          P.S. it doesn't change the output value of z (only k and u slightly change, on value and error)
+          */
+         //[mdl add:[[z error] geq: tmp]];
+         
+         //[mdl add:[w set: [x plus: y]]];
+         //[mdl add:[u set: [o plus: k]]];
+         //[mdl add:[z set: [w sub: u]]];
+         //[mdl add:[o set: [x div: k]]];
+         [mdl add:[z set: [[x mul: x1] plus: y]]];
+         //[mdl add:[z set: [x div: y]]];
+         
+         //[mdl add: [ezAbs eq: [ez abs]]];
+         [mdl maximize:ez];
+         
+         /*for (float yr = 3.2f; yr <= nb_float(3.2f, NB_FLOAT); yr = nextafterf(yr, +INFINITY)) {
+          NSLog(@"@@@@@@@ %20.20e", yr);
+          }*/
+         
+         NSLog(@"model: %@",mdl);
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+         id<ORFloatVarArray> vs = [mdl floatVars];
+         id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+         
+         [cp solve:^{
+            [cp branchAndBoundSearch:vars out:ez do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+            //            NSLog(@"concrete model: %@", [[cp engine] model]);
+            //NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
+            //NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
+            //NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
+            //NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
+            //NSLog(@"o : [%20.20e;%20.20e] (%s)",[cp minF:o],[cp maxF:o],[cp bound:o] ? "YES" : "NO");
+            //NSLog(@"eo: [%@;%@]",[cp minFQ:o],[cp maxFQ:o]);
+            //NSLog(@"k : [%20.20e;%20.20e] (%s)",[cp minF:k],[cp maxF:k],[cp bound:k] ? "YES" : "NO");
+            //NSLog(@"ek: [%@;%@]",[cp minFQ:k],[cp maxFQ:k]);
+            /*NSLog(@"w : [%20.20e;%20.20e] (%s)",[cp minF:w],[cp maxF:w],[cp bound:w] ? "YES" : "NO");
+             NSLog(@"ew: [%@;%@]",[cp minFQ:w],[cp maxFQ:w]);
+             NSLog(@"u : [%20.20e;%20.20e] (%s)",[cp minF:u],[cp maxF:u],[cp bound:u] ? "YES" : "NO");
+             NSLog(@"eu: [%@;%@]",[cp minFQ:u],[cp maxFQ:u]);*/
+            //NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
+            //NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp  maxFQ:z]);
+            //check_it_f(getFmin(x),getFmin(y),getFmin(o),getFmin(k),getFmin(w),getFmin(u),getFmin(z),[cp minErrorFQ:z]);
+            check_it_bb(getFmin(x),getFmin(y),getFmin(z),[cp minErrorFQ:z]);
+         }];
+         NSLog(@"%@",cp);
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
+      }];
+   }
+}
+
 void testRD(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
@@ -230,7 +303,7 @@ void testRD(int argc, const char * argv[]) {
          id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:3.2 up:3.4 elow:zero eup:zero name:@"y"];
          id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
          id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
-         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
          [zero release];
          
          [mdl add:[x set: @(45.0)]];
@@ -289,7 +362,8 @@ void testOptimize(int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
 //   testIntBFS(argc, argv);
    //testR(argc, argv);
-   testRD(argc, argv);
+   //testRD(argc, argv);
+   //testRAbs(argc, argv);
    
 //   float ye = nb_float(3.2f, NB_FLOAT);
 //   float_interval z, x, y;
@@ -311,7 +385,7 @@ int main(int argc, const char * argv[]) {
 //      check_it_bb(xr, yr, zr, NULL);
 //   }
    
-   //testRational(argc, argv);
-   //   testOptimize(argc, argv);
+   testRational(argc, argv);
+   //testOptimize(argc, argv);
    return 0;
 }

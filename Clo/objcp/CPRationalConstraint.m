@@ -781,6 +781,11 @@
    _dualBound = [ORRational rationalWith:[x min]];
    return self;
 }
+- (void)dealloc {
+   [super dealloc];
+   [_primalBound release];
+   [_dualBound release];
+}
 -(id<CPRationalVar>)var
 {
    return _x;
@@ -946,6 +951,11 @@
 
    return self;
 }
+- (void)dealloc {
+   [super dealloc];
+   [_primalBound release];
+   [_dualBound release];
+}
 -(id<CPRationalVar>)var
 {
    return _x;
@@ -995,7 +1005,9 @@
 {
    id<ORRational>bound = [[ORRational alloc] init];
    //[bound set: maxQ([[_x min] abs],[[_x max] abs])];
-   [bound set: [_x max]];
+   //[bound set: [_x max]];
+//   NSLog(@"##### x = [%@, %@] %@", [_x min], [_x max], [[_x min] eq: [_x max]]?@"=":@"!=");
+   [bound set: [_x min]]; // cpjm: always set to min to avoid overestimation of Primal
    if ([bound gt: _primalBound]){
       [_primalBound set: bound];
       NSLog(@"primal bound: %@",_primalBound);
@@ -1122,14 +1134,12 @@
 }
 -(void) propagate
 {
-   id<ORRational> zero = [[ORRational alloc] init];
-   [zero setZero];
    if([_x bound]){
       if([_res bound]){
          if(([[_res value] neq:  [[_x value] neg]]) && ([[_res value] neq: [_x value]])) failNow();
          assignTRInt(&_active, NO, _trail);
       }else{
-         [_res bind:([[_x value] gt: zero]) ? [_x value] : [[_x value] neg]];
+         [_res bind:[[_x value] abs]];
          assignTRInt(&_active, NO, _trail);
       }
    }else if([_res bound]){
@@ -1148,33 +1158,40 @@
       [_xi set_q:[_x min] and:[_x max]];
       [_resi set_q:[_res min] and:[_res max]];
       id<ORRationalInterval> resTmp = [[ORRationalInterval alloc] init];
-      //[resTmp set_q:_resi.low and:_resi.up];
       if([_x member: zero]){
          [resTmp.low set:zero];
       } else {
          [resTmp.low set: minQ([_xi.low abs], [_xi.up abs])];
       }
       [resTmp.up set: maxQ([_xi.low abs], [_xi.up abs])];
-      //fpi_fabsf(_precision, _rounding, &resTmp, &_xi);
       _resi = [_resi proj_inter: resTmp];
       if(_resi.changed)
          [_res updateInterval:_resi.low and:_resi.up];
       
       [_xi set_q:[_x min] and:[_x max]];
       id<ORRationalInterval> xTmp = [[ORRationalInterval alloc] init];
-      //[xTmp set_q:_xi.low and:_xi.up];
-      if([_resi.low eq: zero]){
+      if([_x member: zero]){
          [xTmp.low set: [_resi.up neg]];
          [xTmp.up set: _resi.up];
+      } else if([[_x min] gt: zero]){
+         [xTmp.low set: _resi.low];
+         [xTmp.up set: _resi.up];
       } else {
-         [xTmp.low set: minQ(_resi.low, _resi.up)];
-         [xTmp.up set: maxQ(_resi.low, _resi.up)];
+         [xTmp.low set: [_resi.up neg]];
+         [xTmp.up set: [_resi.low neg]];
       }
-      //fpi_fabs_invf(_precision,_rounding, &xTmp, &_resi);
       _xi = [_xi proj_inter: xTmp];
       if(_xi.changed)
          [_x updateInterval:_xi.low and:_xi.up];
+      [zero release];
+      [resTmp release];
+      [xTmp release];
    }
+}
+- (void)dealloc {
+   [_xi release];
+   [_resi release];
+   [super dealloc];
 }
 -(NSSet*)allVars
 {

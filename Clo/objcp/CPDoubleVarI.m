@@ -564,9 +564,9 @@ return self;
 {
     return [_dom retain];
 }
--(TRRationalInterval) domainError
+-(id<CPRationalDom>) domainError
 {
-    return [_domError domain];
+   return _domError; //[_domError domain];
 }
 -(void) assignRelaxationValue: (ORDouble) f
 {
