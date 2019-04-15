@@ -66,29 +66,26 @@ void doppler1_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> t = [ORFactory doubleVar:mdl low:-30.0 up:50.0 elow:zero eup:zero name:@"t"];
       id<ORDoubleVar> t1 = [ORFactory doubleVar:mdl];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
       
       [mdl add:[t1 set: [@(331.4) plus:[@(0.6) mul: t]]]];
       [mdl add:[z set: [[[@(-1.0) mul: t1] mul: v] div: [[t1 plus: u] mul: [t1 plus: u]]]]];
       
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
       NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
-         NSLog(@"u : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:u],[cp maxD:u],[cp minDQ:u],[cp maxDQ:u],[cp bound:u] ? "YES" : "NO");
-         NSLog(@"v : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
-         NSLog(@"t : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:t],[cp maxD:t],[cp minDQ:t],[cp maxDQ:t],[cp bound:t] ? "YES" : "NO");
-         NSLog(@"t1 : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:t1],[cp maxD:t1],[cp minDQ:t1],[cp maxDQ:t1],[cp bound:t1] ? "YES" : "NO");
-         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
-         
-         if (search) check_it_d(getDmin(u), getDmin(v), getDmin(t), getDmin(t1), getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }
@@ -169,7 +166,7 @@ void doppler1_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"u"){
       //doppler1_f(1, argc, argv);
-      doppler1_d(0, argc, argv);
+      doppler1_d(1, argc, argv);
    }
    return 0;
 }

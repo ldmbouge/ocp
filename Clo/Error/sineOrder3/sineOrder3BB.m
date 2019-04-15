@@ -58,6 +58,8 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
       id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:-2 up:2 elow:zero eup:zero name:@"x"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
       
       [mdl add:[z set: [[@(0.954929658551372) mul: x] sub: [@(0.12900613773279798) mul: [[x mul: x] mul: x]]]]];
@@ -65,20 +67,19 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
       [mdl add:[z lt: @(1.0)]];
       [mdl add:[z gt: @(-1.0)]];
       
-      NSLog(@"model: %@",mdl);
-      id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
       
+      NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
-         NSLog(@"x : [%f;%f]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
-         if (search) check_it_sineOrder3_d(getDmin(x), getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }

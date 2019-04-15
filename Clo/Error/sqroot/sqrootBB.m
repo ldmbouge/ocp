@@ -71,31 +71,33 @@ void sqroot_d(int search, int argc, const char * argv[]) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
       id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.0 up:1.0 elow:zero eup:zero name:@"x"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+      [zero release];
       
       //((((1.0 + (0.5 * x)) - ((0.125 * x) * x)) + (((0.0625 * x) * x) * x)) - ((((0.0390625 * x) * x) * x) * x));
       [mdl add:[z set: [[[[@(1.0) plus: [@(0.5) mul: x]] sub: [[@(0.125) mul: x] mul: x]] plus: [[[@(0.0625) mul: x] mul: x] mul: x]] sub: [[[[@(0.0390625) mul: x] mul: x] mul: x] mul: x]]]];
       
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
       NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               [cp floatSplitD:i withVars:x];
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
-         NSLog(@"x : [%f;%f]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
-         if (search) check_it_sqroot_d(getDmin(x), getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"s"){
-      sqroot_d(0, argc, argv);
+      sqroot_d(1, argc, argv);
    }
    return 0;
 }

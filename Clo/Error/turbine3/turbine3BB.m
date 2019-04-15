@@ -75,33 +75,32 @@ void turbine3_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> w = [ORFactory doubleVar:mdl low:0.4 up:0.9 elow:zero eup:zero name:@"w"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl low:3.8 up:7.8 elow:zero eup:zero name:@"r"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
       
       [mdl add:[z set: [[[@(3.0) sub: [@(2.0) div: [r mul: r]]] sub: [[[@(0.125) mul: [@(1.0) plus: [@(2.0) mul: v]]] mul: [[[w mul: w] mul: r] mul: r]] div: [@(1.0) sub: v]]] sub: @(0.5)]]];
       
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
       NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
-         NSLog(@"v : [%f;%f]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
-         NSLog(@"w : [%f;%f]±[%@;%@] (%s)",[cp minD:w],[cp maxD:w],[cp minDQ:w],[cp maxDQ:w],[cp bound:w] ? "YES" : "NO");
-         NSLog(@"r : [%f;%f]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
-         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
-         if (search) check_it_turbine3_d(getDmin(v), getDmin(w), getDmin(r), getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"l"){
-      turbine3_d(0, argc, argv);
+      turbine3_d(1, argc, argv);
    }
    return 0;
 }

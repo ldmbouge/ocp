@@ -248,11 +248,11 @@ void testRAbs(int argc, const char * argv[]) {
          //[mdl add:[u set: [o plus: k]]];
          //[mdl add:[z set: [w sub: u]]];
          //[mdl add:[o set: [x div: k]]];
-         [mdl add:[z set: [[x mul: x1] plus: y]]];
+         [mdl add:[z set: [[x plus: x1] mul: y]]];
          //[mdl add:[z set: [x div: y]]];
          
-         //[mdl add: [ezAbs eq: [ez abs]]];
-         [mdl maximize:ez];
+         [mdl add: [ezAbs eq: [ez abs]]];
+         [mdl maximize:ezAbs];
          
          /*for (float yr = 3.2f; yr <= nb_float(3.2f, NB_FLOAT); yr = nextafterf(yr, +INFINITY)) {
           NSLog(@"@@@@@@@ %20.20e", yr);
@@ -264,26 +264,9 @@ void testRAbs(int argc, const char * argv[]) {
          id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
          
          [cp solve:^{
-            [cp branchAndBoundSearch:vars out:ez do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-            //            NSLog(@"concrete model: %@", [[cp engine] model]);
-            //NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
-            //NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
-            //NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
-            //NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
-            //NSLog(@"o : [%20.20e;%20.20e] (%s)",[cp minF:o],[cp maxF:o],[cp bound:o] ? "YES" : "NO");
-            //NSLog(@"eo: [%@;%@]",[cp minFQ:o],[cp maxFQ:o]);
-            //NSLog(@"k : [%20.20e;%20.20e] (%s)",[cp minF:k],[cp maxF:k],[cp bound:k] ? "YES" : "NO");
-            //NSLog(@"ek: [%@;%@]",[cp minFQ:k],[cp maxFQ:k]);
-            /*NSLog(@"w : [%20.20e;%20.20e] (%s)",[cp minF:w],[cp maxF:w],[cp bound:w] ? "YES" : "NO");
-             NSLog(@"ew: [%@;%@]",[cp minFQ:w],[cp maxFQ:w]);
-             NSLog(@"u : [%20.20e;%20.20e] (%s)",[cp minF:u],[cp maxF:u],[cp bound:u] ? "YES" : "NO");
-             NSLog(@"eu: [%@;%@]",[cp minFQ:u],[cp maxFQ:u]);*/
-            //NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
-            //NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp  maxFQ:z]);
-            //check_it_f(getFmin(x),getFmin(y),getFmin(o),getFmin(k),getFmin(w),getFmin(u),getFmin(z),[cp minErrorFQ:z]);
-            check_it_bb(getFmin(x),getFmin(y),getFmin(z),[cp minErrorFQ:z]);
          }];
          NSLog(@"%@",cp);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
@@ -363,7 +346,7 @@ int main(int argc, const char * argv[]) {
 //   testIntBFS(argc, argv);
    //testR(argc, argv);
    //testRD(argc, argv);
-   //testRAbs(argc, argv);
+   testRAbs(argc, argv);
    
 //   float ye = nb_float(3.2f, NB_FLOAT);
 //   float_interval z, x, y;
@@ -385,7 +368,7 @@ int main(int argc, const char * argv[]) {
 //      check_it_bb(xr, yr, zr, NULL);
 //   }
    
-   testRational(argc, argv);
+   //testRational(argc, argv);
    //testOptimize(argc, argv);
    return 0;
 }

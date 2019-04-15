@@ -1031,12 +1031,15 @@
 }*/
 -(void) tightenPrimalBound: (id<ORRational>) nb
 {
+      @synchronized (self) {
    id<ORObjectiveValueRational> newBound = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI:nb minimize:NO];
    if ([[newBound value] gt: _primalBound])
       [_primalBound set:[newBound value]];
+      }
 }
 -(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
 {
+      @synchronized (self) {
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
       id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
@@ -1063,6 +1066,7 @@
          [_dualBound set: b];
       return ok;
    }  else return ORSuspend;
+      }
 }
 
 -(void) tightenLocallyWithDualBound: (id) newBound

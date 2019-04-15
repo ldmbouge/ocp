@@ -64,30 +64,29 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> K = [ORFactory doubleVar:mdl name:@"K"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
-      
+      [c release];
+
       [mdl add:[r set: @(4.0)]];
       [mdl add:[K set: @(1.11)]];
       [mdl add:[z set:[[[r mul: x] mul: x] div: [@(1.0) plus: [[x div: K] mul: [x div: K]]]]]];
       
       //[mdl add:[[z error] geq:c]];
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
       NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
-      [c release];
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
-         NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
-         NSLog(@"K : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:K],[cp maxD:K],[cp minDQ:K],[cp maxDQ:K],[cp bound:K] ? "YES" : "NO");
-         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
-         if (search) check_it_d([cp minD:r],[cp minD:K],[cp minD:x],[cp minD:z],[cp minErrorDQ:z]);
       }];
    }
 }
@@ -169,7 +168,7 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
       //predatorPrey_f(1, argc, argv);
-      predatorPrey_d(0, argc, argv);
+      predatorPrey_d(1, argc, argv);
    }
    return 0;
 }

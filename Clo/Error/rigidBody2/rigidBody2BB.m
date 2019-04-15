@@ -69,34 +69,33 @@ void rigidBody2_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> x2 = [ORFactory doubleVar:mdl low:-15.0 up:15.0 elow:zero eup:zero name:@"x2"];
       id<ORDoubleVar> x3 = [ORFactory doubleVar:mdl low:-15.0 up:15.0 elow:zero eup:zero name:@"x3"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
       
       // Plante dans le calcul d'un produit sur le calcul de ex pour lequel il faut faire une division par 0 (y + ey) ...
       [mdl add:[z set: [[[[[[[@(2.0) mul: x1] mul: x2] mul: x3] plus: [[@(3.0) mul: x3] mul: x3]] sub: [[[x2 mul: x1] mul: x2] mul: x3]] plus: [[@(3.0) mul: x3] mul: x3]] sub: x2]]];
       
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
       NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
-         NSLog(@"x1 : [%f;%f]±[%@;%@] (%s)",[cp minD:x1],[cp maxD:x1],[cp minDQ:x1],[cp maxDQ:x1],[cp bound:x1] ? "YES" : "NO");
-         NSLog(@"x2 : [%f;%f]±[%@;%@] (%s)",[cp minD:x2],[cp maxD:x2],[cp minDQ:x2],[cp maxDQ:x2],[cp bound:x2] ? "YES" : "NO");
-         NSLog(@"x3 : [%f;%f]±[%@;%@] (%s)",[cp minD:x3],[cp maxD:x3],[cp minDQ:x3],[cp maxDQ:x3],[cp bound:x3] ? "YES" : "NO");
-         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
-         if (search) check_it_rigidBody2_d(getDmin(x1), getDmin(x2), getDmin(x3), getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"r"){
-      rigidBody2_d(0, argc, argv);
+      rigidBody2_d(1, argc, argv);
    }
    return 0;
 }

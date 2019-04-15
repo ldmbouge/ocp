@@ -58,28 +58,27 @@ void verhulst_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
       
       [mdl add:[r set: @(4.0)]];
       [mdl add:[k set: @(1.11)]];
       [mdl add:[z set:[[r mul: x] div: [@(1.0) plus: [x div: k]]]]];
       
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
       NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
-         NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
-         NSLog(@"k : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:k],[cp maxD:k],[cp minDQ:k],[cp maxDQ:k],[cp bound:k] ? "YES" : "NO");
-         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
-         if (search) check_it_d(getDmin(x),getDmin(r),getDmin(k),getDmin(z), [cp minErrorDQ:z]);
       }];
    }
 }
@@ -148,7 +147,7 @@ void verhulst_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"verhulst"){
       //verhulst_f(1, argc, argv);
-      verhulst_d(0, argc, argv);
+      verhulst_d(1, argc, argv);
    }
    return 0;
 }
