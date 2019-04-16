@@ -60,10 +60,11 @@
    if([newMin gt: [self max]])
       failNow();
    updateMinR(&_domain, newMin, _trail);
-   id<ORRational> epsilon = [[ORRational alloc] init];
-   [epsilon set: 1 and: 1073741824];
-   ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
-   [epsilon release];   // cpjm: so that eo can use this method without propagation
+//   id<ORRational> epsilon = [[ORRational alloc] init];
+//   [epsilon set: 1 and: 1073741824];
+//   ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
+//   [epsilon release];   // cpjm: so that eo can use this method without propagation
+   ORBool isBound = [_domain._up eq: _domain._low];
    if (x != NULL) {
       [x changeMinEvt: isBound sender:self];
       if (isBound)
@@ -74,11 +75,12 @@
 {
    if([[self min] gt: newMax])
       failNow();
-   updateMaxR(&_domain, newMax, _trail);
-   id<ORRational> epsilon = [[ORRational alloc] init];
-   [epsilon set: 1 and: 1073741824];
-   ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
-   [epsilon release];   // cpjm: so that eo can use this method without propagation
+//   updateMaxR(&_domain, newMax, _trail);
+//   id<ORRational> epsilon = [[ORRational alloc] init];
+//   [epsilon set: 1 and: 1073741824];
+//   ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
+//   [epsilon release];   // cpjm: so that eo can use this method without propagation
+   ORBool isBound = [_domain._up eq: _domain._low];
    if (x != NULL) {
       [x changeMaxEvt:isBound sender:self];
       if (isBound)
@@ -120,11 +122,12 @@
 }
 -(ORBool) bound
 {
-   id<ORRational> epsilon = [[ORRational alloc] init];
-   [epsilon set: 1 and: 1073741824];
-   BOOL b = [[_domain._up sub: _domain._low] leq: epsilon];
-   [epsilon release];
-   return b;
+//   id<ORRational> epsilon = [[ORRational alloc] init];
+//   [epsilon set: 1 and: 1073741824];
+//   BOOL b = [[_domain._up sub: _domain._low] leq: epsilon];
+//   [epsilon release];
+   ORBool isBound = [_domain._up eq: _domain._low];
+   return isBound;
 }
 -(ORInterval) bounds
 {
