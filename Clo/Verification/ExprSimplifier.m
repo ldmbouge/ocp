@@ -199,6 +199,7 @@
       }
       [simplifier release];
    }
+   [used release];
    return res;
 }
 +(NSArray*)simplifyAll:(NSArray*)es group:(id<ORGroup>)g
@@ -219,6 +220,7 @@
       }
       [simplifier release];
    }
+   [used release];
    return res;
 }
 -(id) init:(NSMutableDictionary*)theSet
