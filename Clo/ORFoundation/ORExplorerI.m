@@ -466,7 +466,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if ([exit nbCalls]==0) {
       exit.admin = YES;
       [newCtrl setup];
-      [newCtrl addChoice: exit];
+      [_controller addChoice: exit];          // [LDM] FIX: BDS no longer working if we do newCtrl addChoice. 
       [self setController:newCtrl];           // install the new controller
       if (body) body();
       if (onSolution) onSolution();
