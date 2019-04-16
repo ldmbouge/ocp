@@ -75,7 +75,6 @@ void verhulst_d(int search, int argc, const char * argv[]) {
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
-         if (search)
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
@@ -118,28 +117,27 @@ void verhulst_f(int search, int argc, const char * argv[]) {
       id<ORFloatVar> r = [ORFactory floatVar:mdl name:@"r"];
       id<ORFloatVar> k = [ORFactory floatVar:mdl name:@"k"];
       id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
       
       [mdl add:[r set: @(4.0f)]];
       [mdl add:[k set: @(1.11f)]];
       [mdl add:[z set:[[r mul: x] div: [@(1.0f) plus: [x div: k]]]]];
       
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
       NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORFloatVarArray> vs = [mdl floatVars];
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
          if (search)
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
-         NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:x],[cp maxF:x],[cp minFQ:x],[cp maxFQ:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:r],[cp maxF:r],[cp minFQ:r],[cp maxFQ:r],[cp bound:r] ? "YES" : "NO");
-         NSLog(@"k : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:k],[cp maxF:k],[cp minFQ:k],[cp maxFQ:k],[cp bound:k] ? "YES" : "NO");
-         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:z],[cp maxF:z],[cp minFQ:z],[cp maxFQ:z],[cp bound:z] ? "YES" : "NO");
-         if (search) check_it_f(getFmin(x),getFmin(r),getFmin(k),getFmin(z), [cp minErrorFQ:z]);
       }];
    }
 }

@@ -438,7 +438,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
    @catch (ORSearchError* ee) {
       printf("Execution Error: %s \n",[ee msg]);
-   }
+    }
 }
 
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl

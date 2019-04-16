@@ -1694,7 +1694,12 @@
       id<ORRationalVar> right = [cstr right];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory errorOf:_gamma[left.getId] is:_gamma[right.getId]];
+      id<CPConstraint> concreteCstr;
+      if([_gamma[left.getId] class] == [CPFloatVarI class]){
+         concreteCstr = [CPFactory errorOf:_gamma[left.getId] is:_gamma[right.getId]];
+      } else {
+         concreteCstr = [CPFactory errorOfD:_gamma[left.getId] is:_gamma[right.getId]];
+      }
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
