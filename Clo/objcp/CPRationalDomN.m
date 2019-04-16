@@ -75,7 +75,7 @@
 {
    if([[self min] gt: newMax])
       failNow();
-//   updateMaxR(&_domain, newMax, _trail);
+   updateMaxR(&_domain, newMax, _trail);
 //   id<ORRational> epsilon = [[ORRational alloc] init];
 //   [epsilon set: 1 and: 1073741824];
 //   ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
