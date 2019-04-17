@@ -64,6 +64,18 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-t 4000"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-variation 2"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-var-order maxocc"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-percent 3"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

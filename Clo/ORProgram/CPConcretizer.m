@@ -1966,8 +1966,8 @@
       id<ORDoubleVar> op = (id<ORDoubleVar>)[cstr op];
       [res visit: self];
       [op visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory doubleSquare: (id<ORDoubleVar>) _gamma[res.getId]
-                                                          eq: (id<ORDoubleVar>) _gamma[op.getId]
+      id<CPConstraint> concreteCstr = [CPFactory doubleSquare: _gamma[res.getId]
+                                                          eq:  _gamma[op.getId]
                                        ];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;

@@ -439,12 +439,14 @@
       }
    }
    if(_equalities[x.getId] == [NSNull null]){
-      NSArray* av = [e allVarsArray];
-      _equalities[x.getId] = [[NSMutableDictionary alloc] init];
-      for(id<ORVar> v in av){
-         ORInt c = [[_equalities[x.getId] objectForKey:@(v.getId)] intValue];
-         c++;
-         _equalities[x.getId][@(v.getId)] = @(c);
+      @autoreleasepool {
+         NSArray* av = [e allVarsArray];
+         _equalities[x.getId] = [[NSMutableDictionary alloc] init];
+         for(id<ORVar> v in av){
+            ORInt c = [[_equalities[x.getId] objectForKey:@(v.getId)] intValue];
+            c++;
+            _equalities[x.getId][@(v.getId)] = @(c);
+         }
       }
    }
 }
@@ -466,14 +468,16 @@
 }
 -(void) updateOccurencesEqualities:(ORInt) index times:(ORInt) nb
 {
-   NSMutableDictionary* dict = _equalities[index];
-   for(id key in dict.keyEnumerator){
-      ORInt keyv = [key intValue];
-      if(_equalities[keyv] != [NSNull null]){
-         [self updateOccurencesEqualities:keyv times:nb * [dict[key] intValue]];
+   @autoreleasepool {
+      NSMutableDictionary* dict = _equalities[index];
+      for(id key in dict.keyEnumerator){
+         ORInt keyv = [key intValue];
+         if(_equalities[keyv] != [NSNull null]){
+            [self updateOccurencesEqualities:keyv times:nb * [dict[key] intValue]];
+         }
+         ORInt oldv = [_occurences at:keyv];
+         [_occurences set:oldv+nb at:keyv];
       }
-      ORInt oldv = [_occurences at:keyv];
-      [_occurences set:oldv+nb at:keyv];
    }
 }
 -(ORDouble) occurences:(id<ORVar>) v

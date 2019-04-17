@@ -224,12 +224,12 @@
 -(ORInt) addChoice: (NSCont*)k 
 {
    id<ORCheckpoint> snap = [_tracer captureCheckpoint];
-/*
-   if (_nbDisc + 1 < _maxDisc)
-      NSLog(@"adding snaphot to current wave: %@",snap);
-   else
-      NSLog(@"adding snaphot to next    wave: %@",snap);
-*/
+    
+//   if (_nbDisc + 1 < _maxDisc.bound)
+//      NSLog(@"adding snaphot to current wave: %d - %@ - %@",_nbDisc+1,_maxDisc,snap);
+//   else
+//      NSLog(@"adding snaphot to next    wave: %@",snap);
+
    id<ORObjectiveValue> ov = [[_solver objective] primalValue];
    if (_nbDisc + 1 < _maxDisc.bound)
       [_tab  pushCont:k cp:snap discrepancies:_nbDisc+1 ov:ov];
@@ -249,12 +249,13 @@
             _next = tmp;
             [_maxDisc setBound:_maxDisc.bound + 3];
          }
+         //NSLog(@"BDSStack -- fail call -- : %d %d",_tab.size,_next.size);
          struct BDSNode node = [_tab pop];
          _nbDisc = node._disc;
          //NSLog(@"Restoring: %@", node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver model:_model];
          [node._cp letgo];
-         //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
+         //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p admin? %d",status,[NSThread currentThread],node._cont.admin);
          if (node._cont &&  (node._cont.admin || status != ORFailure))
             [node._cont call];
          else

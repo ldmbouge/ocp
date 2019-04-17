@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
 //         id<ORFloatVar> x = [ORFactory floatVar :model low:1.e3f up:10e10f name:@"x"];
          id<ORDoubleVar> x = [ORFactory doubleVar:model low:-10e10f up:-1.e3f name:@"x"];
          
-         [model add:[t eq: [x mul:x]]];
+         [model add:[t eq: [[x plus:@(1.0)] mul:[x plus:@(1.0)]]]];
          
          id<ORVarArray> vars = [model FPVars];
          id<CPProgram> cp = [args makeProgram:model];

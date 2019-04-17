@@ -199,11 +199,39 @@
       }
       [simplifier release];
    }
+   [used release];
+   return res;
+}
++(NSArray*)simplifyAll:(NSArray*)es group:(id<ORGroup>)g
+{
+   NSMutableArray* res = [[NSMutableArray alloc] init];
+   NSMutableDictionary* used = [[NSMutableDictionary alloc] init];
+   ExprCounter* counter = [[ExprCounter alloc] init:used];
+   for(id<ORExpr> e in es){
+      [e visit:counter];
+   }
+   [counter release];
+   if([used count]){
+      ExprSimplifier* simplifier = [[ExprSimplifier alloc] init:used group:g];
+      for(id<ORExpr> e in es){
+         [e visit:simplifier];
+         [res addObject:[simplifier result]];
+         simplifier->_rv = nil;
+      }
+      [simplifier release];
+   }
+   [used release];
    return res;
 }
 -(id) init:(NSMutableDictionary*)theSet
 {
    self = [self init:theSet matching:[[NSMutableDictionary alloc] init]];
+   return self;
+}
+-(id) init:(NSMutableDictionary*)theSet group:(id<ORGroup>)g
+{
+   self = [self init:theSet matching:[[NSMutableDictionary alloc] init]];
+   _g = g;
    return self;
 }
 -(id)init:(NSMutableDictionary*)theSet matching:(NSMutableDictionary *)alpha
@@ -249,8 +277,12 @@
       default:
          break;
    }
-   if(alpha != nil)
-      [((id<ORModel>)[e tracker]) add:[alpha eq:e]];
+   if(alpha != nil){
+      if(_g == nil)
+         [((id<ORModel>)[e tracker]) add:[alpha eq:e]];
+      else
+         [_g add:[alpha eq:e]];
+   }
    return alpha;
 }
 -(id<ORExpr>) simplify:(id<ORExpr>) e with:(id<ORExpr>) ne

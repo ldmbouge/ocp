@@ -40,6 +40,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize defaultAbsSplit;
 @synthesize nbThreads;
 @synthesize nArg;
+@synthesize bds;
 @synthesize level;
 @synthesize uniqueNB;
 @synthesize is3Bfiltering;
@@ -81,6 +82,7 @@ static enum ValHeuristic valIndex[] =
    timeOut = 60;
    nbThreads = 0;
    level = 0;
+   bds = NO;
    uniqueNB = 2;
    is3Bfiltering = NO;
    kbpercent=8;
@@ -109,6 +111,8 @@ static enum ValHeuristic valIndex[] =
          printf("-grate-other-limit VALUE : rmplace VALUE by a concrete value\n");
          exit(1);
       }
+      else if (strncmp(argv[k], "-bds", 4) == 0)
+         bds = YES;
       else if (strncmp(argv[k], "-q", 2) == 0)
          size = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-choices-limit",14)==0)
@@ -340,7 +344,10 @@ static enum ValHeuristic valIndex[] =
    id<CPProgram> p = nil;
    switch(nbThreads) {
       case 0:
-         p = [ORFactory createCPProgram:model annotation:notes];
+         if (bds)
+            p = [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemBDSController proto]];
+         else
+            p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setLevel:level];
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];

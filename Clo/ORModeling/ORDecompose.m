@@ -1712,6 +1712,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyEQc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORIntLinear> linLeft   = [ORNormalizer intLinearFrom:left model:_model];
       id<ORIntLinear> linRight  = [ORNormalizer intLinearFrom:right model:_model];
       id<ORIntVar> varLeft  = [ORNormalizer intVarIn:linLeft for:_model];
@@ -1903,6 +1905,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyLTc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:0]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
@@ -1919,6 +1923,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyGTc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:0]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
@@ -1935,6 +1941,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyLEQc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
@@ -1952,8 +1960,11 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
    } else if ([newright isConstant]) {
       [self reifyLEQc:_model boolean:rv  other:newleft constant:newright];
-   } else
+   } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       [self reifyLEQ:_model boolean:rv  left:newleft right:newright];
+   }
 }
 
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
@@ -1963,6 +1974,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyEQc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
@@ -2267,6 +2280,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyLTc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:0]];
       id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
       id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
       id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
@@ -2283,6 +2298,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyGTc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:0]];
       id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
       id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
       id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
@@ -2299,6 +2316,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyLEQc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
       id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
       id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
@@ -2316,8 +2335,11 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
    } else if ([newright isConstant]) {
       [self reifyLEQc:_model boolean:rv  other:newleft constant:newright];
-   } else
+   } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       [self reifyLEQ:_model boolean:rv  left:newleft right:newright];
+   }
 }
 
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
@@ -2326,7 +2348,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       [self reifyEQc:_model boolean:rv other:right constant:left];
    } else if ([right isConstant]) {
       [self reifyEQc:_model boolean:rv other:left constant:right];
-   } else{
+   }else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
       id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
       id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
