@@ -2068,18 +2068,6 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitDoubleAssignC:(id<ORDoubleAssignC>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORDoubleVar> left = [cstr left];
-      ORDouble cst = [cstr cst];
-      [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory doubleAssignC:_gamma[left.getId]  to: cst];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}
-
 -(void) visitDoubleAssign:(id<ORDoubleAssign>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -2092,35 +2080,60 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitDoubleLThenc: (id<ORDoubleLThenc>)c
+-(void) visitDoubleAssignC:(id<ORDoubleAssignC>) cstr
 {
-   ORDouble nval = fp_previous_double(c.cst);
-   id<CPDoubleVar> left = [self concreteVar:c.left];
-   [_engine tryEnforce:^{
-      [left updateMax:nval];
-   }];
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> left = [cstr left];
+      ORDouble cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleAssignC:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
--(void) visitDoubleLEqualc: (id<ORDoubleLEqualc>)c
+-(void) visitDoubleLThenc: (id<ORDoubleLThenc>)cstr
 {
-   id<CPDoubleVar> left = [self concreteVar:c.left];
-   [_engine tryEnforce:^{
-      [left updateMax:c.cst];
-   }];
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> left = [cstr left];
+      ORDouble cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleLTc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
--(void) visitDoubleGThenc: (id<ORDoubleGThenc>)c
+-(void) visitDoubleLEqualc: (id<ORDoubleLEqualc>)cstr
 {
-   ORDouble nval = fp_next_double(c.cst);
-   id<CPDoubleVar> left = [self concreteVar:c.left];
-   [_engine tryEnforce:^{
-      [left updateMin:nval];
-   }];
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> left = [cstr left];
+      ORDouble cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleLEQc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
--(void) visitDoubleGEqualc: (id<ORDoubleGEqualc>)c
+-(void) visitDoubleGThenc: (id<ORDoubleGThenc>)cstr
 {
-   id<CPDoubleVar> left = [self concreteVar:c.left];
-   [_engine tryEnforce:^{
-      [left updateMin:c.cst];
-   }];
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> left = [cstr left];
+      ORDouble cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleGTc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleGEqualc: (id<ORDoubleGEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORDoubleVar> left = [cstr left];
+      ORDouble cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleGEQc:_gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
 -(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>) cstr
 {
@@ -3175,7 +3188,7 @@
       [left updateMin:cstr.cst];
    }];
 }
--(void) visitDoubleLThenc:(id<ORDoubleLThenc>)cstr
+-(void) visitDoubleLThenc: (id<ORDoubleLThenc>)cstr
 {
    ORDouble nval = fp_previous_double(cstr.cst);
    id<CPDoubleVar> left = [self concreteVar:cstr.left];
@@ -3183,14 +3196,14 @@
       [left updateMax:nval];
    }];
 }
--(void) visitDoubleLEqualc:(id<ORDoubleLEqualc>)cstr
+-(void) visitDoubleLEqualc: (id<ORDoubleLEqualc>)cstr
 {
    id<CPDoubleVar> left = [self concreteVar:cstr.left];
    [_engine tryEnforce:^{
       [left updateMax:cstr.cst];
    }];
 }
--(void) visitDoubleGThenc:(id<ORDoubleGThenc>)cstr
+-(void) visitDoubleGThenc: (id<ORDoubleGThenc>)cstr
 {
    ORDouble nval = fp_next_double(cstr.cst);
    id<CPDoubleVar> left = [self concreteVar:cstr.left];
@@ -3198,13 +3211,12 @@
       [left updateMin:nval];
    }];
 }
--(void) visitDoubleGEqualc:(id<ORDoubleGEqualc>)cstr
+-(void) visitDoubleGEqualc: (id<ORDoubleGEqualc>)cstr
 {
    id<CPDoubleVar> left = [self concreteVar:cstr.left];
    [_engine tryEnforce:^{
       [left updateMin:cstr.cst];
    }];
 }
-
 @end
 

@@ -209,6 +209,8 @@
 +(id<CPConstraint>) doubleGTc: (id<CPDoubleVar>) x to:(ORDouble) c;
 +(id<CPConstraint>) doubleLT: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;
 +(id<CPConstraint>) doubleGT: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y;
++(id<CPConstraint>) doubleLEQc: (id<CPDoubleVar>) x to:(ORDouble) c;
++(id<CPConstraint>) doubleGEQc: (id<CPDoubleVar>) x to:(ORDouble) c;
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c annotation:(id<ORAnnotation>) notes;
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs neqi:(ORDouble)c annotation:(id<ORAnnotation>) notes;
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs lt:(ORDouble)c annotation:(id<ORAnnotation>) notes;

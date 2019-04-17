@@ -344,9 +344,9 @@ void testOptimize(int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
 //   testIntBFS(argc, argv);
-   //testR(argc, argv);
+   testR(argc, argv);
    //testRD(argc, argv);
-   testRAbs(argc, argv);
+   //testRAbs(argc, argv);
    
 //   float ye = nb_float(3.2f, NB_FLOAT);
 //   float_interval z, x, y;

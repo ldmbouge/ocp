@@ -221,7 +221,6 @@ static inline id<ORRational> maxQ(id<ORRational> a,id<ORRational> b) { return [a
 static inline void clear_q(rational_t r) { mpq_clear(r); }
 static inline void init_q(rational_t r) { mpq_init(r); }
 static inline void set_q(rational_t r, rational_t s) { mpq_set(r, s); }
-//static inline ORFloat randomValue(ORFloat min, ORFloat max) { return (((ORFloat)arc4random()/0x100000000)*(max-min)+min); }
 static inline ORFloat randomValue(ORFloat min, ORFloat max) {
    return (max - min) * ((float)rand() / RAND_MAX) + min;
 }

@@ -1834,8 +1834,8 @@
          if([[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]){ // Check that it is a better solution   <=========== !
             [[_engine objective] updatePrimalBound];
             solution = [self captureSolution];  // Keep it as a solution
-            break;
          }
+         break;
       } else {
          
          /********** GuessError **********/
@@ -1967,8 +1967,8 @@
          if([[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]){ // Check that it is a better solution   <=========== !
             [[_engine objective] updatePrimalBound];
             solution = [self captureSolution];  // Keep it as a solution
-            break;
          }
+         break;
       } else {
          
          /********** GuessError **********/

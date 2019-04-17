@@ -1601,7 +1601,16 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-
++(id<CPConstraint>) doubleGEQc: (id<CPDoubleVar>) x to:(ORDouble) c
+{
+   id<CPDoubleVar> cvar = [CPFactory doubleVar:[x engine] value:c];
+   return [self doubleGEQ:x to:cvar];
+}
++(id<CPConstraint>) doubleLEQc: (id<CPDoubleVar>) x to:(ORDouble) c
+{
+   id<CPDoubleVar> cvar = [CPFactory doubleVar:[x engine] value:c];
+   return [self doubleLEQ:x to:cvar];
+}
 +(id<CPConstraint>) doubleSum:(id<CPDoubleVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c annotation:(id<ORAnnotation>) notes
 {
    if([x count] == 1 && [coefs at:coefs.low]==1.0){
