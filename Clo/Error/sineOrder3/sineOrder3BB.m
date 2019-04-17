@@ -86,7 +86,7 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"p"){
-      sineOrder3_d(0, argc, argv);
+      sineOrder3_d(1, argc, argv);
    }
    return 0;
 }

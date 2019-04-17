@@ -1658,7 +1658,12 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       /* Check difference */
       /*[D.low set_d: sqrt([D.low get_d])];
       [D.up set_d: sqrt([D.up get_d])];*/
-      D = [D sqrt];
+      //D = [D sqrt];
+      fesetround(FE_DOWNWARD);
+      [D.low set_d: sqrt([D.low get_d])];
+      fesetround(FE_UPWARD);
+      [D.up set_d: sqrt([D.up get_d])];
+      fesetround(FE_TONEAREST);
       d1 = [tmp sub: D];
       d2 = [tmp add: D];
       [tmp set_d:2.0 and:2.0];

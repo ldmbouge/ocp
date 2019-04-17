@@ -1577,8 +1577,11 @@ double_interval _yi;
       D = [tmp proj_inter:D];
       
       tmp = [ex sub: [[ez sub: eo] mul: ey]];
+      fesetround(FE_DOWNWARD);
       [D.low set_d: sqrt([D.low get_d])];
+      fesetround(FE_UPWARD);
       [D.up set_d: sqrt([D.up get_d])];
+      fesetround(FE_TONEAREST);
       d1 = [tmp sub: D];
       d2 = [tmp add: D];
       [tmp set_d:2.0 and:2.0];
