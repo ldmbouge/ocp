@@ -403,11 +403,23 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitDoubleLEqualc: (id<ORDoubleLEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitGEqualc: (id<ORGEqualc>)c
 {
    _result = [_into addConstraint:c];
 }
 -(void) visitFloatGThenc: (id<ORFloatGThenc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatGEqualc: (id<ORFloatGEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleGEqualc: (id<ORDoubleGEqualc>)c
 {
    _result = [_into addConstraint:c];
 }

@@ -2708,6 +2708,12 @@
       _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
 }
 
+-(void) visitDoubleVar: (id<ORDoubleVar>) v
+{
+   if (!_gamma[v.getId])
+      _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain]];
+}
+
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    if (_gamma[v.getId] == NULL)

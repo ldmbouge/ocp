@@ -1578,7 +1578,7 @@
 {
    __block ORBool goon = YES;
    while(goon) {
-      [_search probe:^{
+//      [_search probe:^{
          LOG(_level,2,@"State before selection");
          ORSelectorResult i = s();
          if (!i.found){
@@ -1603,7 +1603,7 @@
          id<CPVar> cx = _gamma[getId(x[i.index])];
          LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],[cx domain]);
          b(i.index,x);
-      }];
+//      }];
    }
 }
 -(void) searchWithCriteria:  (id<ORDisabledVarArray>) x criteria:(ORInt2Double)crit switchOnCondtion:(ORBool(^)(void))c criteria:(ORInt2Double)crit2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -1912,7 +1912,7 @@
                             ];
    __block ORBool goon = YES;
    while(goon) {
-      //[_search probe: ^{
+//      [_search probe: ^{
          LOG(_level,2,@"State before selection");
          abs = [self computeAbsorptionsQuantities:x];
          ORBool c = NO;
@@ -1952,7 +1952,7 @@
               LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx);
             [self float5WaySplit:i.index withVars:x];
          }
-      //}];
+//      }];
    }
 }
 
@@ -3627,14 +3627,11 @@
    [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
    [_tracer addCommand: [ORFactory bvEqualBit:self var:var bit:i with:val]];
 }
-
 -(void) labelBits:(id<ORBitVar>)x withValue:(ORInt) val
 {
    [self labelBitsImpl: _gamma[x.getId] withValue:val];
    [_tracer addCommand: [ORFactory bvEqualc:self var:x to:val]];
 }
-
-
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^ {
@@ -3740,6 +3737,20 @@
          failNow();
       [_search fail];
    }
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) up
+{
+   ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up
+{
+   ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
+   if (status == ORFailure)
+      [_search fail];
    [ORConcurrency pumpEvents];
 }
 @end

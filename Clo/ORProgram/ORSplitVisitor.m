@@ -815,8 +815,8 @@
       length--;
       [_program tryall:RANGE(_program,0,length/2) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
-         [_program floatIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
-         [_program floatIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
+         [_program floatInterval:(id<ORFloatVar>)_variable low:ip[2*index].inf up:ip[2*index].sup];
+         [_program floatIntervalImpl:_other low:ip[2*index+1].inf up:ip[2*index+1].sup];
       }];
    }else if (length_x > 0 && length_y == 0){
       float_interval* ip = interval_x;
@@ -889,7 +889,7 @@
       length--;
       [_program tryall:RANGE(_program,0,length/2) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
-         [_program doubleIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
+         [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[2*index].inf up:ip[2*index].sup];
          [_program doubleIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
       }];
    }else if (length_x > 0 && length_y == 0){
