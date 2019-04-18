@@ -10,10 +10,6 @@
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORConstraintI.h>
 
-
-extern id<ORRational> GlobalPrimalBound;
-extern id<ORRational> GlobalDualBound;
-
 @interface BBKey : NSObject {
 @public
    id<ORObjectiveValue> _v;
@@ -272,15 +268,18 @@ static long __nbPull = 0;
             ORStatus status = [of tightenDualBound:bestKey.bound];
             if (status != ORFailure)
                status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
-            if (__nbPull++ % 100 == 0)
-               NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
+            /*if (__nbPull++ % 100 == 0)
+               NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);*/
+            //NSLog(@"%@ -- %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             [nd.cp letgo];
             NSCont* k = nd.cont;
             [nd release];
-            [bestKey release];
-            if (k &&  status != ORFailure) {
+            /* do not call continuation if sup of error is less than primalBound */
+            if (k &&  status != ORFailure && [[bestKey.bound rationalValue] gt: [[[_engine objective] primalBound] rationalValue]]) {
+               [bestKey release];
                [k call];
             } else {
+               [bestKey release];
                if (k==nil)
                   @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
                else [k letgo];

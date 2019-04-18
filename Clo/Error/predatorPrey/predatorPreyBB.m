@@ -7,6 +7,9 @@
 
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
+#include <signal.h>
+#include <stdlib.h>
+
 
 #define LOO_MEASURE_TIME(__message) \
 for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
@@ -61,8 +64,8 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORDoubleVar> K = [ORFactory doubleVar:mdl name:@"K"];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
@@ -158,11 +161,18 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 }
 
 
+void exitfunc(int sig)
+{
+   exit(sig);
+}
+
 int main(int argc, const char * argv[]) {
-   LOO_MEASURE_TIME(@"d"){
-      predatorPrey_f(1, argc, argv);
-      //predatorPrey_d(1, argc, argv);
-   }
+   signal(SIGKILL, exitfunc);
+   alarm(60);
+   //   LOO_MEASURE_TIME(@"rigidbody2"){
+      //predatorPrey_f(1, argc, argv);
+      predatorPrey_d(1, argc, argv);
+   //}
    return 0;
 }
 

@@ -12,6 +12,10 @@
 
 int NB_FLOAT = 2;
 
+#define LOO_MEASURE_TIME(__message) \
+for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
+NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
+
 #define printFvar(name, var) NSLog(@""name" : [%20.20e, %20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [%20.20e, %20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
 #define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
 #define getFminErr(var) *[(id<CPFloatVar>)[cp concretize:var] minErr]
@@ -281,7 +285,7 @@ void testRD(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
-         id<ORDoubleVar> x = [ORFactory doubleVar:mdl name:@"x"];
+         id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:3.2 up:3.4 elow:zero eup:zero name:@"x"];
          // y:  3.2 ; 3.4
          id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:3.2 up:3.4 elow:zero eup:zero name:@"y"];
          id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
@@ -289,7 +293,7 @@ void testRD(int argc, const char * argv[]) {
          id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
          [zero release];
          
-         [mdl add:[x set: @(45.0)]];
+         //[mdl add:[x set: @(45.0)]];
          
          [mdl add:[z set: [x plus: y]]];
          
@@ -343,9 +347,10 @@ void testOptimize(int argc, const char * argv[]) {
 
 
 int main(int argc, const char * argv[]) {
+   LOO_MEASURE_TIME(@"testR"){
 //   testIntBFS(argc, argv);
-   testR(argc, argv);
-   //testRD(argc, argv);
+   //testR(argc, argv);
+   testRD(argc, argv);
    //testRAbs(argc, argv);
    
 //   float ye = nb_float(3.2f, NB_FLOAT);
@@ -370,5 +375,6 @@ int main(int argc, const char * argv[]) {
    
    //testRational(argc, argv);
    //testOptimize(argc, argv);
+   }
    return 0;
 }

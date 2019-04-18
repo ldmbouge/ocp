@@ -167,8 +167,6 @@
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto
 {
    id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolver: ctrlProto];
-   GlobalDualBound = [[[ORRational alloc] init] setPosInf];
-   GlobalPrimalBound = [[[ORRational alloc] init] setNegInf];
    [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    return cpprogram;
 }

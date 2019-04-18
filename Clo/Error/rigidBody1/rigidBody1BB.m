@@ -6,6 +6,9 @@
 //
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
+#include <signal.h>
+#include <stdlib.h>
+
 
 #define LOO_MEASURE_TIME(__message) \
 for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
@@ -58,7 +61,7 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> x1 = [ORFactory doubleVar:mdl low:-15.0 up:15.0 elow:zero eup:zero name:@"x1"];
       id<ORDoubleVar> x2 = [ORFactory doubleVar:mdl low:-15.0 up:15.0 elow:zero eup:zero name:@"x2"];
       id<ORDoubleVar> x3 = [ORFactory doubleVar:mdl low:-15.0 up:15.0 elow:zero eup:zero name:@"x3"];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
@@ -82,9 +85,16 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void exitfunc(int sig)
+{
+   exit(sig);
+}
+
 int main(int argc, const char * argv[]) {
-   LOO_MEASURE_TIME(@"d"){
+   signal(SIGKILL, exitfunc);
+   alarm(60);
+   //   LOO_MEASURE_TIME(@"rigidbody2"){
       rigidBody1_d(1, argc, argv);
-   }
+   //}
    return 0;
 }

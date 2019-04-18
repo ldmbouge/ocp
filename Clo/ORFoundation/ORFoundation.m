@@ -12,8 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 
 #if TARGET_OS_IPHONE==0
-id<ORRational> GlobalPrimalBound;
-id<ORRational> GlobalDualBound;
 
 __thread jmp_buf* ptr = 0;
 

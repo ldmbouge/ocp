@@ -51,9 +51,6 @@
 #import <ORFoundation/ORBackjumpingDFSController.h>
 #import <ORFoundation/fpi.h>
 
-extern id<ORRational> GlobalPrimalBound;
-extern id<ORRational> GlobalDualBound;
-
 #if defined(__APPLE__)
 #import "TargetConditionals.h"
 #endif

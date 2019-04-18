@@ -7,6 +7,8 @@
 
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
+#include <signal.h>
+#include <stdlib.h>
 
 #define LOO_MEASURE_TIME(__message) \
 for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
@@ -100,9 +102,16 @@ void turbine1_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void exitfunc(int sig)
+{
+   exit(sig);
+}
+
 int main(int argc, const char * argv[]) {
-   LOO_MEASURE_TIME(@"g"){
+   signal(SIGKILL, exitfunc);
+   alarm(10);
+   //   LOO_MEASURE_TIME(@"rigidbody2"){
       turbine1_d(1, argc, argv);
-   }
+   //}
    return 0;
 }

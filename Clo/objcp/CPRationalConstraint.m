@@ -137,10 +137,10 @@
       assignTRInt(&_active, NO, _trail);
       return;
    }else if([_y bound]){
-     [_x bind:[[_y value] get_d]];
-     assignTRInt(&_active, NO, _trail);
-     return;
-     }
+      [_x bind:[[_y value] get_d]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
    if(isDisjointWithQFC(_x,_y)){
       failNow();
    }else{
@@ -230,7 +230,7 @@
 }
 -(void) post
 {
-      [_x bind:_c];
+   [_x bind:_c];
 }
 -(NSSet*)allVars
 {
@@ -267,48 +267,48 @@
 }
 -(void) propagate
 {
-/*   if ([_x bound]) {
-      if([_y bound]){
-         if ([[_x min] eq: [_y min]])
-            failNow();
-         else{
-            if([_x min] == [_y min]){
-               [_y updateMin:fp_next_float([_y min])];
-               assignTRInt(&_active, NO, _trail);
-            }
-            if([_x min] == [_y max]) {
-               [_y updateMax:fp_previous_float([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
-            if([_x max] == [_y min]){
-               [_y updateMin:fp_next_float([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
-            if([_x max] == [_y max]) {
-               [_y updateMax:fp_previous_float([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
-         }
-         return;
-      }
-   }else  if([_y bound]){
-      if([_x min] == [_y min]){
-         [_x updateMin:fp_next_float([_x min])];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x min] == [_y max]) {
-         [_x updateMin:fp_next_float([_x min])];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x max] == [_y min]){
-         [_x updateMax:fp_previous_float([_x max])];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x max] == [_y max]) {
-         [_x updateMax:fp_previous_float([_x max])];
-         assignTRInt(&_active, NO, _trail);
-      }
-   }*/
+   /*   if ([_x bound]) {
+    if([_y bound]){
+    if ([[_x min] eq: [_y min]])
+    failNow();
+    else{
+    if([_x min] == [_y min]){
+    [_y updateMin:fp_next_float([_y min])];
+    assignTRInt(&_active, NO, _trail);
+    }
+    if([_x min] == [_y max]) {
+    [_y updateMax:fp_previous_float([_y max])];
+    assignTRInt(&_active, NO, _trail);
+    }
+    if([_x max] == [_y min]){
+    [_y updateMin:fp_next_float([_y max])];
+    assignTRInt(&_active, NO, _trail);
+    }
+    if([_x max] == [_y max]) {
+    [_y updateMax:fp_previous_float([_y max])];
+    assignTRInt(&_active, NO, _trail);
+    }
+    }
+    return;
+    }
+    }else  if([_y bound]){
+    if([_x min] == [_y min]){
+    [_x updateMin:fp_next_float([_x min])];
+    assignTRInt(&_active, NO, _trail);
+    }
+    if([_x min] == [_y max]) {
+    [_x updateMin:fp_next_float([_x min])];
+    assignTRInt(&_active, NO, _trail);
+    }
+    if([_x max] == [_y min]){
+    [_x updateMax:fp_previous_float([_x max])];
+    assignTRInt(&_active, NO, _trail);
+    }
+    if([_x max] == [_y max]) {
+    [_x updateMax:fp_previous_float([_x max])];
+    assignTRInt(&_active, NO, _trail);
+    }
+    }*/
 }
 -(NSSet*)allVars
 {
@@ -344,19 +344,19 @@
 }
 -(void) propagate
 {
-/*   if ([_x bound]) {
-      if([_x min] == _c)
-         failNow();
-   }else{
-      if([_x min] == _c){
-         [_x updateMin:fp_next_float(_c)];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x max] == _c){
-         [_x updateMax:fp_previous_float(_c)];
-         assignTRInt(&_active, NO, _trail);
-      }
-   }*/
+   /*   if ([_x bound]) {
+    if([_x min] == _c)
+    failNow();
+    }else{
+    if([_x min] == _c){
+    [_x updateMin:fp_next_float(_c)];
+    assignTRInt(&_active, NO, _trail);
+    }
+    if([_x max] == _c){
+    [_x updateMax:fp_previous_float(_c)];
+    assignTRInt(&_active, NO, _trail);
+    }
+    }*/
 }
 -(NSSet*)allVars
 {
@@ -392,22 +392,22 @@
 }
 -(void) propagate
 {
-/*   if(canFollow(_x,_y))
-      failNow();
-   if(isIntersectingWith(_x,_y)){
-      if([_x min] >= [_y min]){
-         ORFloat nmin = fp_next_float([_x min]);
-         [_y updateMin:nmin];
-      }
-      if([_x max] >= [_y max]){
-         ORFloat pmax = fp_previous_float([_y max]);
-         [_x updateMax:pmax];
-      }
-   }
-   if([_x bound] || [_y bound]){
-      assignTRInt(&_active, NO, _trail);
-      return;
-   }*/
+   /*   if(canFollow(_x,_y))
+    failNow();
+    if(isIntersectingWith(_x,_y)){
+    if([_x min] >= [_y min]){
+    ORFloat nmin = fp_next_float([_x min]);
+    [_y updateMin:nmin];
+    }
+    if([_x max] >= [_y max]){
+    ORFloat pmax = fp_previous_float([_y max]);
+    [_x updateMax:pmax];
+    }
+    }
+    if([_x bound] || [_y bound]){
+    assignTRInt(&_active, NO, _trail);
+    return;
+    }*/
    
 }
 -(NSSet*)allVars
@@ -444,22 +444,22 @@
 }
 -(void) propagate
 {
-/*   if(canPrecede(_x,_y))
-      failNow();
-   if(isIntersectingWith(_x,_y)){
-      if([_x min] <= [_y min]){
-         ORFloat pmin = fp_next_float([_y min]);
-         [_x updateMin:pmin];
-      }
-      if([_x max] <= [_y max]){
-         ORFloat nmax = fp_previous_float([_x max]);
-         [_y updateMax:nmax];
-      }
-   }
-   if([_x bound] || [_y bound]){
-      assignTRInt(&_active, NO, _trail);
-      return;
-   }*/
+   /*   if(canPrecede(_x,_y))
+    failNow();
+    if(isIntersectingWith(_x,_y)){
+    if([_x min] <= [_y min]){
+    ORFloat pmin = fp_next_float([_y min]);
+    [_x updateMin:pmin];
+    }
+    if([_x max] <= [_y max]){
+    ORFloat nmax = fp_previous_float([_x max]);
+    [_y updateMax:nmax];
+    }
+    }
+    if([_x bound] || [_y bound]){
+    assignTRInt(&_active, NO, _trail);
+    return;
+    }*/
 }
 -(NSSet*)allVars
 {
@@ -603,7 +603,7 @@
    id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
-
+   
    [x set_q: [_x min] and:[_x max]];
    [y set_q: [_y min] and:[_y max]];
    [z set_q: [_z min] and:[_z max]];
@@ -630,10 +630,10 @@
       
       y = [y proj_inter: yTemp];
       changed |= y.changed;
-
+      
       gchanged |= changed;
    } while(changed);
-
+   
    if(gchanged){
       [_x updateInterval:x.low and:x.up];
       [_y updateInterval:y.low and:y.up];
@@ -730,7 +730,7 @@
       
       gchanged |= changed;
    } while(changed);
-
+   
    if(gchanged){
       
       [_x updateInterval:x.low and:x.up];
@@ -946,9 +946,9 @@
    _x = x;
    _primalBound = [[ORRational alloc] init];
    _dualBound = [[ORRational alloc] init];
-   [_primalBound setNegInf];//= [ORRational rationalWith:[x min]];
-   [_dualBound set: maxQ([[_x min] abs],[[_x max] abs])]; //[ORRational rationalWith:[x max]];
-
+   [_primalBound setNegInf];
+   [_dualBound set: [_x max]];
+   
    return self;
 }
 - (void)dealloc {
@@ -968,9 +968,7 @@
 {
    if (![_x bound])
       [_x whenChangeMaxDo: ^ {
-         //[_x updateMin: nextafterf(_primalBound,+INFINITY)];
-         //[_x updateMin: [_primalBound inc] ];
-         //[_x updateMin: _primalBound];
+         [_x updateMin: _primalBound];
       } onBehalf:self];
 }
 
@@ -1004,69 +1002,74 @@
 -(void) updatePrimalBound
 {
    id<ORRational>bound = [[ORRational alloc] init];
-   //[bound set: maxQ([[_x min] abs],[[_x max] abs])];
-   //[bound set: [_x max]];
-//   NSLog(@"##### x = [%@, %@] %@", [_x min], [_x max], [[_x min] eq: [_x max]]?@"=":@"!=");
+   //NSLog(@"##### x = [%@, %@] %@", [_x min], [_x max], [[_x min] eq: [_x max]]?@"=":@"!=");
    [bound set: [_x min]]; // cpjm: always set to min to avoid overestimation of Primal
    if ([bound gt: _primalBound]){
       [_primalBound set: bound];
-      NSLog(@"primal bound: %@",_primalBound);
+      //NSLog(@"primal bound: %@",_primalBound);
+      NSLog(@"%@ -- %@", _primalBound, _dualBound);
    }
 }
 -(void) updateDualBound
 {
    id<ORRational>bound = [[ORRational alloc] init];
-   //[bound set: maxQ([[_x min] abs],[[_x max] abs])];
    [bound set: [_x max]];
    if ([bound lt: _dualBound]){
       [_dualBound set: bound];
-      NSLog(@"dual bound: %@",_dualBound);
+      //NSLog(@"dual bound: %@",_dualBound);
+      NSLog(@"%@ -- %@", _primalBound, _dualBound);
    }
 }
 
-/*-(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
+-(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
 {
-   if ([[newBound value] gt: _primalBound])
+   if ([[newBound value] gt: _primalBound]){
       _primalBound = [newBound value];
-}*/
--(void) tightenPrimalBound: (id<ORRational>) nb
-{
-      @synchronized (self) {
-   id<ORObjectiveValueRational> newBound = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI:nb minimize:NO];
-   if ([[newBound value] gt: _primalBound])
-      [_primalBound set:[newBound value]];
-      }
+      //NSLog(@"primal bound: %@",_primalBound);
+      NSLog(@"%@ -- %@", _primalBound, _dualBound);
+   }
 }
 -(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
 {
-      @synchronized (self) {
-   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
-      id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
-      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound])
-         [_dualBound set: b];
-      return ok;
-   }
-   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
-      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound])
-         [_dualBound set: b];
-      return ok;
-   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
-      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound])
-         [_dualBound set: b];
-      return ok;
-   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
-      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound])
-         [_dualBound set: b];
-      return ok;
-   }  else return ORSuspend;
+   @synchronized (self) {
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
+         id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
+         ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+         if (ok && [b lt: _dualBound]){
+            [_dualBound set: b];
+            //NSLog(@"dual bound: %@",_dualBound);
+            NSLog(@"%@ -- %@", _primalBound, _dualBound);
+         }
+         return ok;
       }
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
+         ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+         if (ok && [b lt: _dualBound]){
+            [_dualBound set: b];
+            //NSLog(@"dual bound: %@",_dualBound);
+            NSLog(@"%@ -- %@", _primalBound, _dualBound);
+         }
+         return ok;
+      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
+         ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+         if (ok && [b lt: _dualBound]){
+            [_dualBound set: b];
+            //NSLog(@"dual bound: %@",_dualBound);
+            NSLog(@"%@ -- %@", _primalBound, _dualBound);
+         }
+         return ok;
+      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
+         ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+         if (ok && [b lt: _dualBound]){
+            [_dualBound set: b];
+            //NSLog(@"dual bound: %@",_dualBound);
+            NSLog(@"%@ -- %@", _primalBound, _dualBound);
+         }
+      }  else return ORSuspend;
+   }
 }
 
 -(void) tightenLocallyWithDualBound: (id) newBound
@@ -1092,9 +1095,7 @@
 -(ORStatus) check
 {
    @try {
-      //[_x updateMin:nextafterf(_primalBound,+INFINITY)];
       [_x updateMin:_primalBound];
-      //[_x updateMax:_dualBound];
    }
    @catch (ORFailException* e) {
       [e release];

@@ -20,9 +20,6 @@
 /***************************************************************************/
 /*                  This file should be private                            */
 /***************************************************************************/
-extern id<ORRational> GlobalPrimalBound;
-extern id<ORRational> GlobalDualBound;
-
 @interface ORCPTakeSnapshot  : ORNOopVisit<NSObject>
 {
    id<CPCommonProgram> _solver;
