@@ -148,9 +148,11 @@
    id<ORCheckpoint>   _atRoot;
    id<ORSearchEngine> _solver;
    id<ORPost>          _model;
+   ORInt               _nextD;
+   ORInt               _initD;
 }
 
-- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model withDisc:(ORInt) nb incr:(ORInt) inc
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -159,7 +161,9 @@
    _tab  = [[BDSStack alloc] initBDSStack:32];
    _next = [[BDSStack alloc] initBDSStack:32];
    _nbDisc = 0;
-   _maxDisc = [[ORDiscrepancy alloc] initWith:15];
+   _maxDisc = [[ORDiscrepancy alloc] initWith:nb];
+   _nextD = inc;
+   _initD = inc;
    return self;
 }
 
@@ -172,13 +176,17 @@
    [_maxDisc release];
    [super dealloc];
 }
++(id<ORSearchController>)protoWithDisc:(ORInt) nb times:(ORInt) t
+{
+   return [[ORSemBDSController alloc] initTheController:nil engine:nil posting:nil withDisc:nb incr:t];
+}
 +(id<ORSearchController>)proto
 {
-   return [[ORSemBDSController alloc] initTheController:nil engine:nil posting:nil];
+   return [[ORSemBDSController alloc] initTheController:nil engine:nil posting:nil withDisc:0 incr:2];
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_solver posting:_model];
+   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_solver posting:_model withDisc:_initD incr:_nextD];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
@@ -186,7 +194,7 @@
 // Clone makes a shallow copy (takes a reference) to the bound on the maximum # of discrepancies. That's different from
 // copy makes a deep copy of the bound (good for thread separation). 
 {
-   ORSemBDSController* c = [[ORSemBDSController alloc] initTheController:_tracer engine:_solver posting:_model];
+   ORSemBDSController* c = [[ORSemBDSController alloc] initTheController:_tracer engine:_solver posting:_model withDisc:_initD incr:_nextD];
    c->_atRoot = [_atRoot grab];
    [c->_maxDisc release];
    c->_maxDisc = [_maxDisc retain];  // sharing accross instantiation of this proto.

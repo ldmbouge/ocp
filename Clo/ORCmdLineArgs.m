@@ -342,10 +342,12 @@ static enum ValHeuristic valIndex[] =
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
    id<CPProgram> p = nil;
+   ORInt nb;
    switch(nbThreads) {
       case 0:
+         nb = [[model FPVars] count];
          if (bds)
-            p = [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemBDSController proto]];
+            p = [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemBDSController protoWithDisc:nb times:5]];
          else
             p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setLevel:level];
