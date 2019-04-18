@@ -223,7 +223,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 }
 -(void)dealloc
 {
-   NSLog(@"dealloc checkpoint %p\n",self);
+   //NSLog(@"dealloc checkpoint %p\n",self);
    [_path release];
    [_mt release];
    [super dealloc];

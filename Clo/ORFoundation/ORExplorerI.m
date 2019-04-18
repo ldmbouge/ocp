@@ -174,6 +174,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [_controller startTryall];
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
    struct TAOutput nv;
+   //NSLog(@"ITE allocated: %p",ite);
    while (true) {
       nv = nextTAValue(ite, filter);
       if (!nv.found)
@@ -189,11 +190,12 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       }
       else {
          [k letgo];
-         [_controller trust];
-         [_controller startTryallOnFailure];
-         if (onFailure)
-            onFailure(nv.value);
-         [_controller exitTryallOnFailure];
+          if (onFailure) {
+              [_controller trust];
+              [_controller startTryallOnFailure];
+              onFailure(nv.value);
+              [_controller exitTryallOnFailure];
+          }
       }
    }
    [_controller exitTryall];
