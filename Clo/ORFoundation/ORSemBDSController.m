@@ -159,7 +159,7 @@
    _tab  = [[BDSStack alloc] initBDSStack:32];
    _next = [[BDSStack alloc] initBDSStack:32];
    _nbDisc = 0;
-   _maxDisc = [[ORDiscrepancy alloc] init];
+   _maxDisc = [[ORDiscrepancy alloc] initWith:15];
    return self;
 }
 
@@ -247,7 +247,7 @@
             BDSStack* tmp = _tab;
             _tab = _next;
             _next = tmp;
-            [_maxDisc setBound:_maxDisc.bound + 3];
+            [_maxDisc setBound:_maxDisc.bound * 5];
          }
          //NSLog(@"BDSStack -- fail call -- : %d %d",_tab.size,_next.size);
          struct BDSNode node = [_tab pop];
