@@ -237,11 +237,15 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) probe: (ORClosure) cl
 {
+//    [_tracer pushNode];
+//    cl();
+//    [_tracer popNode];
+ 
     [self try:^{
         cl();
     } alt:^{
         [self fail];
-    }];
+    }];    
 }
 
 -(void) once: (ORClosure) cl

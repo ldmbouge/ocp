@@ -1912,7 +1912,7 @@
                             ];
    __block ORBool goon = YES;
    while(goon) {
-      [_search probe: ^{
+      //[_search probe: ^{
          LOG(_level,2,@"State before selection");
          abs = [self computeAbsorptionsQuantities:x];
          ORBool c = NO;
@@ -1923,7 +1923,7 @@
                break;
             }
          }
-      ORSelectorResult i = (c)?[select_abs max]:[select_occ max];
+         ORSelectorResult i = (c)?[select_abs max]:[select_occ max];
          if (!i.found){
             if(![x hasDisabled]){
                goon = NO;
@@ -1952,7 +1952,7 @@
               LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx);
             [self float5WaySplit:i.index withVars:x];
          }
-      }];
+      //}];
    }
 }
 
