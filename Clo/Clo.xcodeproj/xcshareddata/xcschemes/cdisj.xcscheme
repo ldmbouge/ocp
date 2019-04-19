@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1010"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B89AE071FC337C5001F7619"
+               BlueprintIdentifier = "5B6BCBEF1FB754E50014BAC6"
                BuildableName = "cdisj"
                BlueprintName = "cdisj"
                ReferencedContainer = "container:Clo.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B89AE071FC337C5001F7619"
+            BlueprintIdentifier = "5B6BCBEF1FB754E50014BAC6"
             BuildableName = "cdisj"
             BlueprintName = "cdisj"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -56,7 +56,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B89AE071FC337C5001F7619"
+            BlueprintIdentifier = "5B6BCBEF1FB754E50014BAC6"
             BuildableName = "cdisj"
             BlueprintName = "cdisj"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -75,7 +75,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B89AE071FC337C5001F7619"
+            BlueprintIdentifier = "5B6BCBEF1FB754E50014BAC6"
             BuildableName = "cdisj"
             BlueprintName = "cdisj"
             ReferencedContainer = "container:Clo.xcodeproj">

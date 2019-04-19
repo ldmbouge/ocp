@@ -159,7 +159,7 @@
    _tab  = [[BDSStack alloc] initBDSStack:32];
    _next = [[BDSStack alloc] initBDSStack:32];
    _nbDisc = 0;
-   _maxDisc = [[ORDiscrepancy alloc] init];
+    _maxDisc = [[ORDiscrepancy alloc] initWith:5];
    return self;
 }
 
