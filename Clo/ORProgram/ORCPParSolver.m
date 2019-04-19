@@ -403,14 +403,6 @@
 {
    [[self worker] maxAbsorptionSearch:x default:b];
 }
--(void)          maxCancellationSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-    [[self worker] maxCancellationSearch:x do:b];
-}
--(void)          minCancellationSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-    [[self worker] minCancellationSearch:x do:b];
-}
 -(void) splitArray: (id<ORIntVarArray>) x
 {
    [[self worker] splitArray:x];
@@ -679,10 +671,6 @@
 -(ORDouble) cardinality: (id<ORVar>) x
 {
    return [[self worker] cardinality: x];
-}
--(ORDouble)  cancellationQuantity:(id<ORVar>) x
-{
-   return [[self worker] cancellationQuantity: x];
 }
 -(ORLDouble) density: (id<ORVar>) x
 {

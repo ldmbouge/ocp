@@ -474,14 +474,6 @@
 {
    [[self worker] maxAbsorptionSearch:x default:b];
 }
--(void)          maxCancellationSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-    [[self worker] maxCancellationSearch:x do:b];
-}
--(void)          minCancellationSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-    [[self worker] minCancellationSearch:x do:b];
-}
 -(void)          floatStaticSplit: (ORUInt) i withVars:(id<ORDisabledVarArray>)x
 {
     [[self worker] floatStaticSplit:i  withVars:x];
@@ -910,15 +902,10 @@
 {
    return [[self worker] maxOccurences: x];
 }
--(ORDouble)  cancellationQuantity:(id<ORVar>) x
-{
-   return [[self worker] cancellationQuantity: x];
-}
 -(ORDouble) fdomwidth:(id<ORVar>) x
 {
    return [[self worker] fdomwidth: x];
 }
-
 -(ORDouble) doubleMin:(id<ORRealVar>)x
 {
    return [[self worker] doubleMin:x];

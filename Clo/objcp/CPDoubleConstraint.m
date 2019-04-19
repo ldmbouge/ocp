@@ -817,11 +817,6 @@ double_interval _yi;
 {
    return true;
 }
-//hzi : todo check cancellation for odometrie_10
--(ORDouble) leadToACancellation:(id<ORVar>)x
-{
-   return 0.0;
-}
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
@@ -927,11 +922,7 @@ double_interval _yi;
 -(ORBool) canLeadToAnAbsorption
 {
    return true;
-}
--(ORDouble) leadToACancellation:(id<ORVar>)x
-{
-   return 0.0;
-}
+
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];

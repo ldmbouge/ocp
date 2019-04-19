@@ -1732,7 +1732,7 @@
    } do:b];
 }
 //----------Special search--------//
--(void) specialSearchStatic:  (id<ORDisabledVarArray>) x
+-(void) specialSearch:  (id<ORDisabledVarArray>) x
 {
    __block id<ORIdArray> abs = [self computeAbsorptionsQuantities:x];
    __block id<ORIntArray> occ = [self computeAllOccurrences:x];
