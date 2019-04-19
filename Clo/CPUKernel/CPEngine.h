@@ -31,7 +31,7 @@
 
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>) objective;
--(ORStatus) addInternal: (id<CPConstraint>) c;
+-(void) addInternal: (id<CPConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
 -(ORStatus) enforce: (ORClosure) cl;

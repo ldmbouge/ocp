@@ -94,11 +94,7 @@
       ORStatus status;
       for (int n = 0; n<_size; n++) {
          if (_globalStore[n]->level > currLevel){
-             status = [self addInternal:_globalStore[n]->constraint];
-//            status=[self post:_globalStore[n]->constraint];
-            if(status==ORFailure){
-               return ORFailure;
-            }
+             [self addInternal:_globalStore[n]->constraint];
             _globalStore[n]->level = currLevel;
          }
       }
