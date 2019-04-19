@@ -109,17 +109,5 @@
       return i;
    }
 }
--(ORBool) canLeadToAnAbsorption
-{
-   return false;
-}
--(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x
-{
-   return nil;
-}
--(ORDouble) leadToACancellation:(id<ORVar>)x
-{
-    return 0.0;
-}
 @end
 

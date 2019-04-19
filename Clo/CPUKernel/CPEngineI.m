@@ -800,7 +800,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];

@@ -15,7 +15,6 @@
 #import <objcp/CPVar.h>
 #import <objcp/CPDoubleDom.h>
 
-
 @class CPDoubleVarI;
 @class CPFloatVarI;
 
@@ -143,7 +142,7 @@
 @end
 
 
-@interface CPDoubleTernaryAdd : CPCoreConstraint { // z = x + y
+@interface CPDoubleTernaryAdd : CPCoreConstraint<CPABSConstraint> { // z = x + y
    CPDoubleVarI* _z;
    CPDoubleVarI* _x;
    CPDoubleVarI* _y;
@@ -162,7 +161,7 @@
 @end
 
 
-@interface CPDoubleTernarySub : CPCoreConstraint { // z = x - y
+@interface CPDoubleTernarySub : CPCoreConstraint<CPABSConstraint> { // z = x - y
    CPDoubleVarI* _z;
    CPDoubleVarI* _x;
    CPDoubleVarI* _y;

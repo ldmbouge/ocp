@@ -19,7 +19,7 @@
 -(void)setId:(ORUInt)name;
 -(void) visit: (ORVisitor*) visitor;
 -(ORBool)vertical;
-@end;
+@end
 
 
 @interface ORObject : NSObject<ORObject> {

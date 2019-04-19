@@ -19,6 +19,7 @@
 @interface ORSemBDSController : ORDefaultController<NSCopying,ORSearchController> 
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
 +(id<ORSearchController>)proto;
++(id<ORSearchController>)protoWithDisc:(ORInt) nb times:(ORInt) t;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

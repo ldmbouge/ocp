@@ -56,4 +56,4 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,OR
 +(id<CPEngine>) learningEngine: (id<ORTrail>)trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr;
 +(id<CPGroup>)group:(id<CPEngine>)engine;
 +(id<CPGroup>)bergeGroup:(id<CPEngine>)engine;
-@end;
+@end

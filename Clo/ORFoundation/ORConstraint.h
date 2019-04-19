@@ -54,9 +54,6 @@
 -(NSArray*)allVarsArray;
 -(ORBool) memberVar:(id<ORVar>) x;
 -(ORUInt) nbOccurences:(id<ORVar>)x;
--(ORBool) canLeadToAnAbsorption;
--(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x;
--(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(void) close;
 @end
 

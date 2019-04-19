@@ -16,6 +16,7 @@
 #import <ORModeling/ORModeling.h>
 #import <CPUKernel/CPUKernel.h>
 //#import <objcp/CPVar.h>
+@protocol CPABSConstraint;
 
 /***************************************************************************/
 /*                  This file should be private                            */
@@ -151,6 +152,7 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end
+
 
 @protocol ORAbsElement <ORObject>
 -(ORDouble) quantity;
