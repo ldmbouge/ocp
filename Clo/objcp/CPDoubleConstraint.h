@@ -156,7 +156,6 @@
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
 -(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x;
--(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 
@@ -175,7 +174,6 @@
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
 -(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x;
--(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 
