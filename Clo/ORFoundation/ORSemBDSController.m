@@ -152,6 +152,11 @@
    ORInt               _initD;
 }
 
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
+{
+   return [self initTheController:tracer engine:engine posting:model];
+}
+
 - (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model withDisc:(ORInt) nb incr:(ORInt) inc
 {
    self = [super initORDefaultController];

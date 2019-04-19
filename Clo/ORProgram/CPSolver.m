@@ -1865,7 +1865,7 @@
          if(i.found){
             LOG(_level,1,@"maxAbs");
             [x disable:i.index];
-            id<CPVar> cx = _gamma[getId(x[i.index])];
+            id<CPVar> cx = _gamma[x[i.index].getId];
             id<CPVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
             [self floatAbsSplit:i.index by:v vars:x];
@@ -1889,7 +1889,7 @@
    id<ORSelect> select_occ = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
-                                       id<CPVar> v = _gamma[getId(x[i])];
+                                       id<CPVar> v = _gamma[x[i].getId];
                                        LOG(_level,2,@"%@ (var<%d>) %@  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
                                        nb += ![v bound];
                                        return ![v bound] && [x isEnabled:i];
@@ -1901,7 +1901,7 @@
       id<ORSelect> select_abs = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
-                                       id<CPVar> v = _gamma[getId(x[i])];
+                                       id<CPVar> v = _gamma[x[i].getId];
                                        LOG(_level,2,@"%@ (var<%d>) %@  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
                                        nb += ![v bound];
                                        return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0  && [abs[i] quantity] != 1.0;
@@ -1917,7 +1917,7 @@
          abs = [self computeAbsorptionsQuantities:x];
          ORBool c = NO;
          for (ORInt i = 0; i < [abs count]; i++) {
-            id<CPFloatVar> v = _gamma[getId(x[i])];
+            id<CPVar> v = _gamma[x[i].getId];
             if(![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0 && [abs[i] quantity] != 1.0){
                c = YES;
                break;
@@ -1931,8 +1931,8 @@
             }else{
                do{
                   i.index = [x enableFirst];
-               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-               if([_gamma[getId(x[i.index])] bound]){
+               } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+               if([_gamma[x[i.index].getId] bound]){
                   goon = NO;
                   return;
                }
@@ -1943,7 +1943,7 @@
             }
             [x disable:i.index];
          }
-         id<CPVar> cx = _gamma[getId(x[i.index])];
+         id<CPVar> cx = _gamma[x[i.index].getId];
          if(c){
             id<CPVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
@@ -1964,7 +1964,7 @@
    id<ORSelect> select_occ = [ORFactory select: _engine
                                          range: x.range
                                       suchThat: ^ORBool(ORInt i) {
-                                         id<CPFloatVar> v = _gamma[getId(x[i])];
+                                         id<CPFloatVar> v = _gamma[x[i].getId];
                                          LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
                                          nb += ![v bound];
                                          return ![v bound] && [x isEnabled:i];
@@ -1976,7 +1976,7 @@
    id<ORSelect> select_abs = [ORFactory select: _engine
                                          range: x.range
                                       suchThat: ^ORBool(ORInt i) {
-                                         id<CPFloatVar> v = _gamma[getId(x[i])];
+                                         id<CPFloatVar> v = _gamma[x[i].getId];
                                          LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],([abs[i] quantity] > 0.0)?[abs[i] quantity]*[abs[i] nbAbs]/maxNbAbs:[abs[i] quantity]);
                                          nb += ![v bound];
                                          return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0  && [abs[i] quantity] != 1.0;
@@ -1993,7 +1993,7 @@
          abs = [self computeAbsorptionsQuantities:x];
          ORBool c = NO;
          for (ORInt i = 0; i < [abs count]; i++) {
-            id<CPFloatVar> v = _gamma[getId(x[i])];
+            id<CPVar> v = _gamma[x[i].getId];
             if(![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0 && [abs[i] quantity] != 1.0){
                c = YES;
                maxNbAbs = max(maxNbAbs,[abs[i] nbAbs]);
@@ -2015,8 +2015,8 @@
             }else{
                do{
                   i.index = [x enableFirst];
-               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-               if([_gamma[getId(x[i.index])] bound]){
+               } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+               if([_gamma[x[i.index].getId] bound]){
                   goon = NO;
                   return;
                }
@@ -2027,7 +2027,7 @@
             }
             [x disable:i.index];
          }
-         id<CPVar> cx = _gamma[getId(x[i.index])];
+         id<CPVar> cx = _gamma[x[i.index].getId];
          if(c){
             id<CPVar> v = [abs[i.index] bestChoice];
             LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
@@ -2047,11 +2047,11 @@
       id<ORSelect> select = [ORFactory select: _engine
                                         range: RANGE(self,[x low],[x up])
                                      suchThat: ^ORBool(ORInt i) {
-                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        id<CPFloatVar> v = _gamma[x[i].getId];
                                         return ![v bound] && [x isEnabled:i];
                                      }
                                     orderedBy: ^ORDouble(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
+                                       id<CPFloatVar> v = _gamma[x[i].getId];
                                        LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity]);
                                        if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
                                           return [abs[i] quantity];
@@ -2073,8 +2073,8 @@
                }else{
                   do{
                      i.index = [x enableFirst];
-                  } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-                  if([_gamma[getId(x[i.index])] bound]){
+                  } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+                  if([_gamma[x[i.index].getId] bound]){
                      goon = NO;
                      return;
                   }
@@ -2092,7 +2092,7 @@
                }];
             }else{
                id<CPVar> v = [abs[i.index] bestChoice];
-               id<CPVar> cx = _gamma[getId(x[i.index])];
+               id<CPVar> cx = _gamma[x[i.index].getId];
                LOG(_level,3,@"selected variables: %@ and %@",cx,v);
                LOG(_level,2,@"selected variables: %@ %@ and %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,[NSString stringWithFormat:@"var<%d>", [v getId]],v);
                
@@ -2127,11 +2127,11 @@
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x  up])
                                   suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     id<CPFloatVar> v = _gamma[x[i].getId];
                                      return ![v bound] && [x isEnabled:i];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                    LOG(_level,2,@"%@",_gamma[x[i].getId]);
                                     ORDouble c = [self computeAbsorptionRate:x[i]];
                                     if(c > taux){
                                        [considered set:1 at:i];
@@ -2156,8 +2156,8 @@
             }else{
                do{
                   i.index = [x enableFirst];
-               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-               if([_gamma[getId(x[i.index])] bound]) break;
+               } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+               if([_gamma[x[i.index].getId] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2176,7 +2176,7 @@
             }
             if(val == 1.0) break;//max density is 1
          }
-         LOG(_level,2,@"selected variable: %@",_gamma[getId(x[i.index])]);
+         LOG(_level,2,@"selected variable: %@",_gamma[x[i.index].getId]);
          b(i.index,x);
       } while (true);
    }];
@@ -2192,7 +2192,7 @@
    __block id<CPFloatVar> cv;
    ORDouble d = 0.0;
    for(ORUInt i = 0; i < [x count]; i++){
-      cv = _gamma[getId(x[i])];
+      cv = _gamma[x[i].getId];
       if([cv bound]){
          continue;
       }
