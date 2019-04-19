@@ -145,6 +145,7 @@ static OBJCPGateway *objcpgw;
 -(void) printSolutions
 {
    [self printSolutionsI];
+   NSLog(@"Depth : %d",[[_program tracer] level]);
 }
 -(void) printSolutionsI
 {

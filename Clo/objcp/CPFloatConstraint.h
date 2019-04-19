@@ -143,7 +143,7 @@
 @end
 
 
-@interface CPFloatTernaryAdd : CPCoreConstraint { // z = x + y
+@interface CPFloatTernaryAdd : CPCoreConstraint<CPABSConstraint> { // z = x + y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -162,7 +162,7 @@
 @end
 
 
-@interface CPFloatTernarySub : CPCoreConstraint { // z = x - y
+@interface CPFloatTernarySub : CPCoreConstraint<CPABSConstraint> { // z = x - y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;

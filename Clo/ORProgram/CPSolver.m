@@ -2118,18 +2118,6 @@
       return -[self computeAbsorptionRate:x[i]];
    } do:b];
 }
--(void) maxCancellationSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      return [self cancellationQuantity:x[i]];
-   } do:b];
-}
--(void) minCancellationSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      return -[self cancellationQuantity:x[i]];
-   } do:b];
-}
 -(void) combinedAbsWithDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
@@ -2940,7 +2928,7 @@
          id<OROSet> set = [ORFactory objectSet];
          if([cstr count]){
             for(id<CPConstraint> c in cstr){
-               if([c canLeadToAnAbsorption]){
+               if([c conformsToProtocol:@protocol(CPABSConstraint)]){
                   [set add:c];
                }
             }
@@ -2966,7 +2954,7 @@
       for (id<ORVar> x in vars) {
          cx = _gamma[x.getId];
          id<OROSet> cstr = _absconstraints[x.getId];
-         for(id<CPConstraint> c in cstr){
+         for(id<CPABSConstraint> c in cstr){
             v = [c varSubjectToAbsorption:cx];
             if(v == nil) continue;
             ORAbsVisitor* absVisit = [[ORAbsVisitor alloc] init:v];
@@ -2988,10 +2976,10 @@
 -(ORDouble) computeAbsorptionRate:(id<ORVar>) x
 {
    CPFloatVarI* cx = _gamma[[x getId]];
-   id<OROSet> cstr = [cx constraints];
+   id<OROSet> cstr = _absconstraints[x.getId];
    ORDouble rate = 0.0;
    id<CPVar> v;
-   for(id<CPConstraint> c in cstr){
+   for(id<CPABSConstraint> c in cstr){
       if([c canLeadToAnAbsorption]){
          v = [c varSubjectToAbsorption:cx];
          rate += [self computeAbsorptionQuantity:(id<CPFloatVar>)v by:(id<ORFloatVar>)x];
@@ -3014,8 +3002,8 @@
       cx = _gamma[[x getId]];
       cstr = [cx constraints];
       for(id<CPConstraint> c in cstr){
-         if([c canLeadToAnAbsorption]){
-            v = [c varSubjectToAbsorption:cx];
+         if([c conformsToProtocol:@protocol(CPABSConstraint)] && [(id<CPABSConstraint>)c canLeadToAnAbsorption]){
+            v = [(id<CPABSConstraint>)c varSubjectToAbsorption:cx];
             if(v == nil) continue;
             absV = [self computeAbsorptionQuantity:(CPFloatVarI*)v by:x];
             assert(absV >= 0.0f && absV <= 1.f);
@@ -3031,20 +3019,6 @@
 -(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>) vs
 {
    return [self collectAllVarWithAbs:vs withLimit:0.0f];
-}
--(ORDouble)  cancellationQuantity:(id<ORVar>) x
-{
-   CPFloatVarI* cx = _gamma[[x getId]];
-   id<OROSet> cstr = [cx constraints];
-   ORDouble rate = 0.0;
-   for(id<CPConstraint> c in cstr){
-      if([c canLeadToAnAbsorption]){
-         rate += [c leadToACancellation:x];
-      }
-   }
-   [cstr release];
-   assert(rate != NAN);
-   return rate;
 }
 -(ORInt)  regret:(id<ORIntVar>)x
 {
@@ -3749,6 +3723,66 @@
 -(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up
 {
    ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORFloat pval = fp_previous_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:pval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORFloat nval = fp_next_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:nval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatLEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatGEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleLthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORDouble pval = fp_previous_double(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:pval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleGthenImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORDouble nval = fp_next_double(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:nval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleLEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) doubleGEqualImpl: (id<CPDoubleVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];

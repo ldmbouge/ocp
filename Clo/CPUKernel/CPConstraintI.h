@@ -38,3 +38,9 @@ typedef id (*SELPROTO)(id,SEL,...);
 -(void) toCheck;
 -(ORBool)entailed;
 @end
+
+
+@protocol CPABSConstraint
+-(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x;
+-(ORBool) canLeadToAnAbsorption;
+@end

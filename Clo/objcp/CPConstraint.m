@@ -1430,9 +1430,9 @@
    [[x tracker] trackMutable: o];
    return o;
 }
-+(id<ORConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x eqi: (ORDouble) i
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x eqi: (ORDouble) i
 {
-   id<ORConstraint> o = [[CPDoubleReifyEqualc alloc] initCPReifyEqualc: b when: x eqi: i];
+   id<CPConstraint> o = [[CPDoubleReifyEqualc alloc] initCPReifyEqualc: b when: x eqi: i];
    [[x engine] trackMutable: o];
    return o;
 }
@@ -1444,9 +1444,9 @@
    return o;
 }
 
-+(id<ORConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x leqi: (ORDouble) i
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x leqi: (ORDouble) i
 {
-   id<ORConstraint> o = [[CPDoubleReifyLEqualc alloc] initCPReifyLEqualc: b when: x leqi: i];
+   id<CPConstraint> o = [[CPDoubleReifyLEqualc alloc] initCPReifyLEqualc: b when: x leqi: i];
    [[x tracker] trackMutable: o];
    return o;
 }

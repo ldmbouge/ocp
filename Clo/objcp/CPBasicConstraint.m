@@ -2879,38 +2879,38 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [super post];
 //   hzi : Test on 3B vars we sould reduce the number of vars involved in filtering
 //   uncomment to test new 3B
-   CPFloatVarI* cv = nil;
-   [_vars release];
-   _vars = [[NSMutableSet alloc] init];
-   @autoreleasepool{
-      //hzi : review this code to implicit call to allvars
-      for(id<ORFloatVar> v in _avars){
-         cv = _gamma[v.getId];
-         __block ORBool found = NO;
-         if(![cv bound]){
-            [self enumerateWithBlock:^(ORInt i, id<ORConstraint> c) {
-               if([c nbOccurences:v] > 1){
-                  found = YES;
-//                  [_vars addObject:cv];
-                  [_vars unionSet:[c allVars]];
-               }
-            }];
-            if(!found && [cv degree] > 1){
-               [_vars addObject:cv];
-            }
-         }
-      }
-   }
+//   CPFloatVarI* cv = nil;
+//   [_vars release];
+//   _vars = [[NSMutableSet alloc] init];
+//   @autoreleasepool{
+//      //hzi : review this code to implicit call to allvars
+//      for(id<ORFloatVar> v in _avars){
+//         cv = _gamma[v.getId];
+//         __block ORBool found = NO;
+//         if(![cv bound]){
+//            [self enumerateWithBlock:^(ORInt i, id<ORConstraint> c) {
+//               if([c nbOccurences:v] > 1){
+//                  found = YES;
+////                  [_vars addObject:cv];
+//                  [_vars unionSet:[c allVars]];
+//               }
+//            }];
+//            if(!found && [cv degree] > 1){
+//               [_vars addObject:cv];
+//            }
+//         }
+//      }
+//   }e
    //hzi : remove vars already bound.
-   NSMutableArray *discardedItems = [[NSMutableArray alloc] init];
-   for (CPFloatVarI* cv in _vars) {
-      if([cv bound])
-         [discardedItems addObject:cv];
-   }
-   for(CPFloatVarI* cv in discardedItems){
-      [_vars removeObject:cv];
-   }
-   [discardedItems release];
+//   NSMutableArray *discardedItems = [[NSMutableArray alloc] init];
+//   for (CPFloatVarI* cv in _vars) {
+//      if([cv bound])
+//         [discardedItems addObject:cv];
+//   }
+//   for(CPFloatVarI* cv in discardedItems){
+//      [_vars removeObject:cv];
+//   }
+//   [discardedItems release];
 }
 -(void) propagate
 {

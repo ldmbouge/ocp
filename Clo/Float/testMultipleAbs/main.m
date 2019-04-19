@@ -13,12 +13,15 @@ int main(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORDoubleVar> t = [ORFactory doubleVar:model name:@"t"];
+//         id<ORDoubleVar> t = [ORFactory doubleVar:model name:@"t"];
 //         id<ORFloatVar> x = [ORFactory floatVar :model low:1.e3f up:10e10f name:@"x"];
-         id<ORDoubleVar> x = [ORFactory doubleVar:model low:-10e10f up:-1.e3f name:@"x"];
-         
-         [model add:[t eq: [[x plus:@(1.0)] mul:[x plus:@(1.0)]]]];
-         
+//         id<ORDoubleVar> x = [ORFactory doubleVar:model low:-10e10f up:-1.e3f name:@"x"];
+         id<ORFloatVar> x = [ORFactory floatVar:model low:0.0f up:1.0f  name:@"x"];
+         id<ORFloatVar> z = [ORFactory floatVar:model name:@"z"];
+         id<ORGroup> g = [ORFactory group:model type:Group3B];
+//         [model add:[t eq: [[x plus:@(1.0)] mul:[x plus:@(1.0)]]]];
+         [g add:[z eq: [[[[@(1.0f) plus: [@(0.5f) mul: x]] sub: [[@(0.125f) mul: x] mul: x]] plus: [[[@(0.0625f) mul: x] mul: x] mul: x]] sub: [[[[@(0.0390625f) mul: x] mul: x] mul: x] mul: x]]]];
+         [model add:g];
          id<ORVarArray> vars = [model FPVars];
          id<CPProgram> cp = [args makeProgram:model];
          NSLog(@"Model : %@",model);

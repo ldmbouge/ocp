@@ -123,7 +123,7 @@ static __thread ComListPool* pool = NULL;
 }
 -(void)dealloc
 {
-   NSLog(@"dealloc on CPCommandList %d\n",_ndId);
+//   NSLog(@"dealloc on CPCommandList %d\n",_ndId);
    while (_head) {
       struct CNode* nxt = _head->_next;
       [_head->_c release];

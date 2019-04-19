@@ -63,7 +63,11 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-special-search"
+            argument = "-3B"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-bds"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
