@@ -747,7 +747,7 @@ static OBJCPGateway *objcpgw;
    id<ORExpr> lv = (id<ORExpr>)[self getVariable:left];
    id<ORExpr> rv = (id<ORExpr>)[self getVariable:right];
    if([lv.class conformsToProtocol:@protocol(ORVar)] && [rv.class conformsToProtocol:@protocol(ORVar)]){
-      if(getId(rv) == getId(lv)) return [ORFactory intVar:_model value:1];
+      if(rv.getId == lv.getId) return [ORFactory intVar:_model value:1];
       if([lv vtype] == ORTBit && [rv vtype] == ORTBit)
          return [self objcp_mk_bv_eq:ctx left:lv right:rv];
       if([lv vtype] == ORTFloat || [lv vtype] == ORTDouble)

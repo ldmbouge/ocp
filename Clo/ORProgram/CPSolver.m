@@ -1038,13 +1038,13 @@
       ORDouble ld = FDMAXINT;
       ORInt bi = R.low - 1;
       for(ORInt i=R.low;i <= R.up;i++) {
-         CPIntVar* cxi = _gamma[getId(x[i])];
+         CPIntVar* cxi = _gamma[x[i].getId];
          if (bound(cxi)) continue;
          ORDouble ds = h ? [h varOrdering:cxi] : - [cxi domsize];
          ld = ld < ds ? ld : ds;
          if (ld == ds) bi = i;
       }
-      CPIntVar* bxi = _gamma[getId(x[bi])];
+      CPIntVar* bxi = _gamma[x[bi].getId];
       ORInt lb =bxi.min,ub = bxi.max;
       ORInt mp = lb + (ub - lb)/2;
       [self try: ^{ [self lthen:x[bi] with:mp+1];}
@@ -1054,7 +1054,7 @@
 
 -(void)split:(id<ORIntVar>)x
 {
-   CPIntVar* cx = _gamma[getId(x)];
+   CPIntVar* cx = _gamma[x.getId];
    while (!bound(cx)) {
       ORInt lb =cx.min,ub = cx.max;
       ORInt mp = lb + (ub - lb)/2;
@@ -1068,7 +1068,7 @@
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
-      CPIntVar* xi = _gamma[getId(x[i])];
+      CPIntVar* xi = _gamma[x[i].getId];
       while (!bound(xi)) {
          ORInt m = minDom(xi);
          [_search try: ^{  [self label: x[i] with: m]; }
@@ -1461,7 +1461,7 @@
 
 -(void) label: (id<ORIntVar>) var by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
-   id<CPIntVar> x = _gamma[getId(var)];
+   id<CPIntVar> x = _gamma[var.getId];
    while (![x bound]) {
       ORInt val = [self selectValueImpl: x by: o1 then: o2];
       [self try: ^() { [self label: var with: val]; }
@@ -1470,7 +1470,7 @@
 }
 -(void) label: (id<ORIntVar>) var by: (ORInt2Double) o
 {
-   id<CPIntVar> x = _gamma[getId(var)];
+   id<CPIntVar> x = _gamma[var.getId];
    while (![x bound]) {
       ORInt val = [self selectValueImpl: x by: o];
       [self try: ^() { [self label: var with: val]; }
@@ -1588,8 +1588,8 @@
             }else{
                do{
                   i.index = [x enableFirst];
-               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-               if([_gamma[getId(x[i.index])] bound]){
+               } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+               if([_gamma[x[i.index].getId] bound]){
                   goon = NO;
                   return;
                }
@@ -1600,7 +1600,7 @@
             }
             [x disable:i.index];
          }
-         id<CPVar> cx = _gamma[getId(x[i.index])];
+         id<CPVar> cx = _gamma[x[i.index].getId];
          LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],[cx domain]);
          b(i.index,x);
 //      }];
@@ -1609,7 +1609,7 @@
 -(void) searchWithCriteria:  (id<ORDisabledVarArray>) x criteria:(ORInt2Double)crit switchOnCondtion:(ORBool(^)(void))c criteria:(ORInt2Double)crit2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    ORInt2Bool f = ^(ORInt i) {
-      id<CPVar> v = _gamma[getId(x[i])];
+      id<CPVar> v = _gamma[x[i].getId];
       LOG(_level,2,@"%@ (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[_model occurences:x[i]]);
       return (ORBool)(![v bound] && [x isEnabled:i]);
    };
@@ -1627,7 +1627,7 @@
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
-                                     id<CPVar> v = _gamma[getId(x[i])];
+                                     id<CPVar> v = _gamma[x[i].getId];
                                      LOG(_level,2,@"%@ (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
                                      return ![v bound] && [x isEnabled:i];
                                   }
@@ -1643,14 +1643,14 @@
 -(void) maxCardinalitySearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      CPFloatVarI* v = _gamma[getId(x[i])];
+      CPFloatVarI* v = _gamma[x[i].getId];
       return cardinality(v);
    } do:b];
 }
 -(void) minCardinalitySearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      CPFloatVarI* v = _gamma[getId(x[i])];
+      CPFloatVarI* v = _gamma[x[i].getId];
       return -cardinality(v);
    } do:b];
 }
@@ -1669,28 +1669,28 @@
 -(void) maxWidthSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      id<CPFloatVar> v = _gamma[getId(x[i])];
+      id<CPFloatVar> v = _gamma[x[i].getId];
       return [v domwidth];
    } do:b];
 }
 -(void) minWidthSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      id<CPFloatVar> v = _gamma[getId(x[i])];
+      id<CPFloatVar> v = _gamma[x[i].getId];
       return -[v domwidth];
    } do:b];
 }
 -(void) maxMagnitudeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      id<CPFloatVar> v = _gamma[getId(x[i])];
+      id<CPFloatVar> v = _gamma[x[i].getId];
       return [v magnitude];
    } do:b];
 }
 -(void) minMagnitudeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      id<CPFloatVar> v = _gamma[getId(x[i])];
+      id<CPFloatVar> v = _gamma[x[i].getId];
       return -[v magnitude];
    } do:b];
 }
@@ -1742,7 +1742,7 @@
    ORDouble sa = 0.0;
    ORInt nb = 0;
    for(ORUInt i = 0; i < [x count]; i++){
-      id<CPFloatVar> v = _gamma[getId(x[i])];
+      id<CPFloatVar> v = _gamma[x[i].getId];
       if ([v bound]) continue;
       if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
          sa += [abs[i] quantity];
@@ -1781,11 +1781,11 @@
       id<ORSelect> select = [ORFactory select: _engine
                                         range: RANGE(self,[x low],[x up])
                                      suchThat: ^ORBool(ORInt i) {
-                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        id<CPFloatVar> v = _gamma[x[i].getId];
                                         return ![v bound] && [x isEnabled:i];
                                      }
                                     orderedBy: ^ORDouble(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
+                                       id<CPFloatVar> v = _gamma[x[i].getId];
                                        LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] isInitial ? %s rate : abs=%16.16e  occ=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [x isInitial:i]?"YES":"NO",[abs[i] quantity],(sum==0)? 0.0 : ((ORDouble)[occ at:i]) / sum);
                                        if(([x isInitial:i] && [abs[i] quantity] >= _absTRateLimitModelVars) || (![x isInitial:i] && [abs[i] quantity] >= _absTRateLimitAdditionalVars)){
                                           return [abs[i] quantity];
@@ -1809,8 +1809,8 @@
                }else{
                   do{
                      i.index = [x enableFirst];
-                  } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-                  if([_gamma[getId(x[i.index])] bound]){
+                  } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+                  if([_gamma[x[i.index].getId] bound]){
                      goon = NO;
                      return;
                   }
@@ -1829,7 +1829,7 @@
                
             }else{
                id<CPVar> v = [abs[i.index] bestChoice];
-               id<CPVar> cx = _gamma[getId(x[i.index])];
+               id<CPVar> cx = _gamma[x[i.index].getId];
                LOG(_level,3,@"selected variables: %@ and %@",cx,v);
                LOG(_level,2,@"selected variables: %@ %@ and %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,[NSString stringWithFormat:@"var<%d>", [v getId]],v);
                
@@ -1847,7 +1847,7 @@
    id<ORSelect> select_a = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
-                                       id<CPFloatVar> v = _gamma[getId(x[i])];
+                                       id<CPFloatVar> v = _gamma[x[i].getId];
                                        LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
                                        nb += ![v bound];
                                        return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0;
@@ -2208,11 +2208,11 @@
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x  up])
                                   suchThat: ^ORBool(ORInt i) {
-                                     id<CPFloatVar> v = _gamma[getId(x[i])];
+                                     id<CPFloatVar> v = _gamma[x[i].getId];
                                      return ![v bound] && [x isEnabled:i];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
-                                    LOG(_level,2,@"%@",_gamma[getId(x[i])]);
+                                    LOG(_level,2,@"%@",_gamma[x[i].getId]);
                                     [considered set:([dens at:i] >= mid) at:i];
                                     return [dens at:i];
                                  }];
@@ -2228,8 +2228,8 @@
             }else{
                do{
                   i.index = [x enableFirst];
-               } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-               if([_gamma[getId(x[i.index])] bound]) break;
+               } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+               if([_gamma[x[i.index].getId] bound]) break;
             }
          } else if(_unique){
             if([x isFullyDisabled]){
@@ -2247,12 +2247,12 @@
                i.index = j;
             }
          }
-         LOG(_level,2,@"selected variable : %@",_gamma[getId(x[i.index])]);
+         LOG(_level,2,@"selected variable : %@",_gamma[x[i.index].getId]);
          b(i.index,x);
          ORDouble d = 0.0;
          min = max = 0.0;
          for(ORUInt k = 0; k < [x count]; k++){
-            cv = _gamma[getId(x[k])];
+            cv = _gamma[x[k].getId];
             if([cv bound]){
                [dens set:0.0 at:k];
                continue;
@@ -2275,10 +2275,10 @@
 {
    [self switchSearchOnDepthUsingProperties:
     ^ORDouble(id<ORFloatVar> v) {
-       CPFloatVarI* cv = _gamma[getId(v)];
+       CPFloatVarI* cv = _gamma[v.getId];
        return cardinality(cv);
     } to:^ORDouble(id<ORFloatVar> v) {
-       CPFloatVarI* cv = _gamma[getId(v)];
+       CPFloatVarI* cv = _gamma[v.getId];
        return -cardinality(cv);
     } do:b limit:2 restricted:x];
 }
@@ -2292,11 +2292,11 @@
       id<ORSelect> select = [ORFactory select: _engine
                                         range: RANGE(self,[x low],[x up])
                                      suchThat: ^ORBool(ORInt i) {
-                                        id<CPFloatVar> v = _gamma[getId(x[i])];
+                                        id<CPFloatVar> v = _gamma[x[i].getId];
                                         return ![v bound] && [x isEnabled:i];
                                      }
                                     orderedBy: ^ORDouble(ORInt i) {
-                                       LOG(_level,2,@"%@ rate : %16.16e",_gamma[getId(x[i])], [abs[i] quantity]);
+                                       LOG(_level,2,@"%@ rate : %16.16e",_gamma[x[i].getId], [abs[i] quantity]);
                                        switchneeded = switchneeded && !([abs[i] quantity] > 0.f);
                                        return [abs[i] quantity];
                                     }];
@@ -2317,8 +2317,8 @@
                   }else{
                      do{
                         i.index = [x enableFirst];
-                     } while([x hasDisabled] && [_gamma[getId(x[i.index])] bound]);
-                     if([_gamma[getId(x[i.index])] bound]) break;
+                     } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+                     if([_gamma[x[i.index].getId] bound]) break;
                   }
                } else if(_unique){
                   if([x isFullyDisabled]){
@@ -2327,7 +2327,7 @@
                   [x disable:i.index];
                }
                id<CPVar> v = [abs[i.index] bestChoice];
-               LOG(_level,2,@"selected variables: %@ and %@",_gamma[getId(x[i.index])],v);
+               LOG(_level,2,@"selected variables: %@ and %@",_gamma[x[i.index].getId],v);
                [self floatAbsSplit:i.index by:v withVars:x default:b];
                abs = [self computeAbsorptionsQuantities:x];
                switchneeded = true;
@@ -2342,7 +2342,7 @@
 //split until value
 -(void) floatStaticSplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
+   id<CPFloatVar> xi = _gamma[x[i].getId];
    while (![xi bound]) {
       [self floatSplit:i withVars:x];
    }
@@ -2350,7 +2350,7 @@
 //static 3 split
 -(void) floatStatic3WaySplit: (ORUInt) i  withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
+   id<CPFloatVar> xi = _gamma[x[i].getId];
    while (![xi bound]) {
       [self float3WaySplit:i withVars:x];
    }
@@ -2358,7 +2358,7 @@
 //static split in 5 way until the var is bound
 -(void) floatStatic5WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
+   id<CPFloatVar> xi = _gamma[x[i].getId];
    while (![xi bound]) {
       [self float5WaySplit:i withVars:x];
    }
@@ -2366,21 +2366,21 @@
 //static split in 6 way until the var is bound
 -(void) floatStatic6WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[i])];
+   id<CPFloatVar> xi = _gamma[x[i].getId];
    while (![xi bound]) {
       [self float6WaySplit:i withVars:x];
    }
 }
 -(void) floatAbsSplit:(ORUInt)i by:(id<CPVar>) y vars:(id<ORDisabledVarArray>) x
 {
-   id<CPVar> xi = _gamma[getId(x[i])];
+   id<CPVar> xi = _gamma[x[i].getId];
    id<CPVisitor> splitVisit = [[ORAbsSplitVisitor alloc] initWithProgram:self variable:x[i] other:y];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
 -(void) float3BSplit:(ORUInt)index call:(SEL)s withVars:(id<ORDisabledVarArray>)x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[index])];
+   id<CPFloatVar> xi = _gamma[x[index].getId];
    if([xi bound]) return;
    ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
    ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
@@ -2401,7 +2401,7 @@
 }
 -(void) shave :(ORUInt) index direction:(ORInt) d percent:(ORFloat)p coef:(ORInt)c  call:(SEL)s withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPFloatVar> xi = _gamma[getId(x[index])];
+   id<CPFloatVar> xi = _gamma[x[index].getId];
    if([xi bound]) return;
    ORFloat tmpMax = (xi.max == +infinityf()) ? maxnormalf() : xi.max;
    ORFloat tmpMin = (xi.min == -infinityf()) ? -maxnormalf() : xi.min;
@@ -2486,7 +2486,7 @@
 //split in 2 intervals Once
 -(void) floatSplit:(ORUInt) i  withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPVar> xi = _gamma[getId(x[i])];
+   id<CPVar> xi = _gamma[x[i].getId];
    id<CPVisitor> splitVisit = [[ORSplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
@@ -2494,7 +2494,7 @@
 //split in 3 intervals Once
 -(void) float3WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPVar> xi = _gamma[getId(x[i])];
+   id<CPVar> xi = _gamma[x[i].getId];
    id<CPVisitor> splitVisit = [[OR3WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
@@ -2502,7 +2502,7 @@
 //split in 5 intervals Once
 -(void) float5WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPVar> xi = _gamma[getId(x[i])];
+   id<CPVar> xi = _gamma[x[i].getId];
    id<CPVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
@@ -2510,21 +2510,21 @@
 //split in 6 intervals Once
 -(void) float6WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPVar> xi = _gamma[getId(x[i])];
+   id<CPVar> xi = _gamma[x[i].getId];
    id<CPVisitor> splitVisit = [[OR6WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
 -(void) floatDeltaSplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPVar> xi = _gamma[getId(x[i])];
+   id<CPVar> xi = _gamma[x[i].getId];
    id<CPVisitor> splitVisit = [[ORDeltaSplitVisitor alloc] initWithProgram:self variable:x[i] nb:_searchNBFloats];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
 -(void) floatEWaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
-   id<CPVar> xi = _gamma[getId(x[i])];
+   id<CPVar> xi = _gamma[x[i].getId];
    id<CPVisitor> splitVisit = [[OREnumSplitVisitor alloc] initWithProgram:self variable:x[i] nb:_searchNBFloats];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
@@ -2556,7 +2556,7 @@
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
-                                     id<CPVar> v = _gamma[getId(x[i])];
+                                     id<CPVar> v = _gamma[x[i].getId];
                                      return ![v bound];
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
@@ -2565,7 +2565,7 @@
    id<ORSelect> select2 = [ORFactory select: _engine
                                       range: RANGE(self,[x low],[x up])
                                    suchThat: ^ORBool(ORInt i) {
-                                      id<CPFloatVar> v = _gamma[getId(x[i])];
+                                      id<CPFloatVar> v = _gamma[x[i].getId];
                                       return ![v bound];
                                    }
                                   orderedBy: ^ORDouble(ORInt i) {
@@ -2876,7 +2876,7 @@
    NSArray* csts = [_model constraints];
    ORInt max = 0;
    for(id<ORVar> v in vars){
-      max = (getId(v) > max) ? [v getId] : max;
+      max = (v.getId > max) ? [v getId] : max;
    }
    id<ORIntArray> occ = [ORFactory intArray:self range:RANGE(self,0,max) value:0];
    ORInt index = 0;
@@ -2886,7 +2886,7 @@
       {
          vc = [csts[i] allVarsArray];
          for(id<ORVar> v in vc){
-            index = getId(v);
+            index = v.getId;
             if(index < [occ count]){
                ORInt oldv = [occ at:index];
                occ[index] = @(oldv+1);
@@ -2896,14 +2896,14 @@
    }
    id<ORIntArray> res = [ORFactory intArray:self range:vars.range value:0];
    for(ORInt i = 0; i < [vars count];i++){
-      res[i] = occ[getId(vars[i])];
+      res[i] = occ[vars[i].getId];
    }
    return res;
 }
 
 -(ORDouble) computeAbsorptionQuantity:(id<CPFloatVar>)y by:(id<ORFloatVar>)x
 {
-   CPFloatVarI* cx = _gamma[getId(x)];
+   CPFloatVarI* cx = _gamma[x.getId];
    CPFloatVarI* cy = (CPFloatVarI*) y;
    float_interval ax = computeAbsordedInterval(cx);
    if(![cy bound] && isIntersectingWithV(ax.inf, ax.sup, [cy min], [cy max])){

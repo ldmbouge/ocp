@@ -382,12 +382,12 @@
             id<ORIntArray>    ec = [cstr coefs];
             ORInt c = [cstr cst];
             ORCLevel annotation = [_notes levelFor:cstr];
-            id<CPIntVar> xp = [CPFactory intVar:_gamma[getId(ex[0])] scale:[ec at:0] shift: - c ];
-            id<CPIntVar> yp = [CPFactory intVar:_gamma[getId(ex[1])] scale:[ec at:1] ];
-            id<CPIntVar> zp = [CPFactory intVar:_gamma[getId(ex[2])] scale:-[ec at:2]];
+            id<CPIntVar> xp = [CPFactory intVar:_gamma[ex[0].getId] scale:[ec at:0] shift: - c ];
+            id<CPIntVar> yp = [CPFactory intVar:_gamma[ex[1].getId] scale:[ec at:1] ];
+            id<CPIntVar> zp = [CPFactory intVar:_gamma[ex[2].getId] scale:-[ec at:2]];
             id<CPConstraint> concreteCstr = [CPFactory equal3:zp to:xp plus:yp annotation:annotation];
             [_engine add:concreteCstr];
-            _gamma[getId(cstr)] = concreteCstr;
+            _gamma[cstr.getId] = concreteCstr;
          }break;
          default: {
             id<ORIntVarArray> ex = [cstr vars];
