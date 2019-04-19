@@ -922,7 +922,7 @@ double_interval _yi;
 -(ORBool) canLeadToAnAbsorption
 {
    return true;
-
+}
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
