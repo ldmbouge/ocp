@@ -258,10 +258,10 @@ typedef int assertion_id;
 
 
 static inline void i2bs(char str[], int len, unsigned long v){
-   unsigned long mask = 0x01UL << (len-1);
+   unsigned long mask = 0x01UL << (len-2);
    //printf("size = %lu %lu %X\n", sizeof(unsigned long long), v, v);
-   for (int i = 0; i < len; i++, mask>>=1) {
+   for (int i = 0; i < len-1; i++, mask>>=1) {
       str[i] = ((v & mask) ? 1 : 0) + '0';
    }
-   str[len] = '\0';
+   str[len-1] = '\0';
 }

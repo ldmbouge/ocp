@@ -233,6 +233,14 @@ static OBJCPGateway *objcpgw;
 }
 -(void) printSolutionsI
 {
+   ORInt efsize = E_SIZE+1;
+   ORInt mfsize = M_SIZE+1;
+   ORInt edsize = ED_SIZE+1;
+   ORInt mdsize = MD_SIZE+1;
+   char efstr[efsize];
+   char mfstr[mfsize];
+   char edstr[edsize];
+   char mdstr[mdsize];
    for(id<ORVar> v in _vars){
       if([v.class conformsToProtocol:@protocol(ORFloatVar)])
          NSLog(@"%@ : %20.20e (%s)",v,[_program floatValue:v],[_program bound:v] ? "YES" : "NO");
@@ -242,29 +250,25 @@ static OBJCPGateway *objcpgw;
    
    for(id<ORVar> v in _vars){
       if([v.class conformsToProtocol:@protocol(ORFloatVar)]){
-         char estr[E_SIZE];
-         char mstr[M_SIZE];
          float_cast f;
          f.f = [_program floatValue:v];
          if(isinff(f.f)){
             printf("(assert (= %s (_ %soo 8 24)))\n",[[v prettyname] UTF8String], (f.f == +INFINITY) ? "+" : "-");
          }else{
-            i2bs(estr,E_SIZE,f.parts.exponent);
-            i2bs(mstr,M_SIZE,f.parts.mantisa);
-            printf("(assert (= %s (fp #b%d #b%s #b%s)))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
+            i2bs(efstr,efsize,f.parts.exponent);
+            i2bs(mfstr,mfsize,f.parts.mantisa);
+            printf("(assert (= %s (fp #b%d #b%s #b%s)))\n",[[v prettyname] UTF8String],f.parts.sign,efstr,mfstr);
          }
       }else if([v.class conformsToProtocol:@protocol(ORDoubleVar)]){
          double_cast f;
-         char estr[ED_SIZE];
-         char mstr[MD_SIZE];
          f.f = [_program doubleValue:v];
          if(isinf(f.f)){
             printf("(assert (= %s (_ %soo 11 53)))\n",[[v prettyname] UTF8String], (f.f == +INFINITY) ? "+" : "-");
          }else{
             unsigned long m = f.parts.mantisa;
-            i2bs(estr,ED_SIZE,f.parts.exponent);
-            i2bs(mstr,MD_SIZE,m);
-            printf("(assert (= %s (fp #b%d #b%s #b%s)))\n",[[v prettyname] UTF8String],f.parts.sign,estr,mstr);
+            i2bs(edstr,edsize,f.parts.exponent);
+            i2bs(mdstr,mdsize,m);
+            printf("(assert (= %s (fp #b%d #b%s #b%s)))\n",[[v prettyname] UTF8String],f.parts.sign,edstr,mdstr);
          }
       }
    }

@@ -115,7 +115,7 @@ static enum ValHeuristic valIndex[] =
       }
       else if (strncmp(argv[k], "-bds", 4) == 0)
          bds = YES;
-      else if (strncmp(argv[k], "-ldfs", 4) == 0)
+      else if (strncmp(argv[k], "-ldfs", 5) == 0)
          ldfs = YES;
       else if (strncmp(argv[k], "-q", 2) == 0)
          size = atoi(argv[k]+2);
@@ -401,7 +401,7 @@ static enum ValHeuristic valIndex[] =
    }
    return h;
 }
--(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORFloatVarArray>)vs
+-(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORVarArray>)vs
 {
    id<ORDisabledVarArray> vars;
    if(rateOther < 1){
@@ -412,17 +412,27 @@ static enum ValHeuristic valIndex[] =
       vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
    }
    if(ldfs){
-      __block id<ORMutableInteger> l = [ORFactory mutable:p value:8];
+      ORInt v = (ORInt)[vars count];
+      NSLog(@"increase depth %d",v);
+      
+      id<ORMutableInteger> l = [ORFactory mutable:p value:v];
+      id<ORMutableInteger> STOP = [ORFactory mutable:p value:NO];
       [p repeat:^{
+         [STOP setValue:YES];
          [p limitCondition:^ORBool{
-//            NSLog(@"depth %d limit %d",[[p tracer] level],[l intValue]);
-            return ([[p tracer] level] > [l intValue]);
+            bool r = ([[p tracer] level] > [l intValue]);
+            [STOP setValue:[STOP intValue] && !r];
+            LOG(level,2,@"depth %d limit %d %s",[[p tracer] level],[l intValue],([STOP intValue])?"YES":"NO");
+            return r;
          } in:^{
             [self launchHeuristicImpl:p restricted:vars];
          }];
       } onRepeat:^{
-//         NSLog(@"increase depth %d",[l intValue]);
+         LOG(level,2,@"increase depth %d",[l intValue]);
          [l setValue:([l intValue] * 2)];
+      } until:^ORBool{
+         LOG(level,2,@"STOP = %s",([STOP intValue])?"YES":"NO");
+         return [STOP intValue];
       }];
    }else{
       [p limitCondition:^ORBool{
