@@ -48,8 +48,8 @@ typedef int assertion_id;
    objcp_var_type _type;
    ORInt    _size;
 }
--initExplicit:(NSString*)name withType:(objcp_var_type)type;
--initExplicitWithName:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size;
+-(OBJCPType*)initExplicit:(NSString*)name withType:(objcp_var_type)type;
+-(OBJCPType*)initExplicitWithName:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size;
 -(NSString*) getName;
 -(objcp_var_type) getType;
 -(id)copyWithZone:(NSZone *)zone;
@@ -63,8 +63,8 @@ typedef int assertion_id;
    ORInt       _size;
    id<ORVar>   _var;
 }
--initExplicit:(NSString*)name withType:(OBJCPType*)type;
--initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size;
+-(OBJCPDecl*)initExplicit:(NSString*)name withType:(OBJCPType*)type;
+-(OBJCPDecl*)initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size;
 -(NSString*) getName;
 -(OBJCPType*) getType;
 -(ORUInt) getSize;

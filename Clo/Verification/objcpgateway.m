@@ -295,11 +295,11 @@ static OBJCPGateway *objcpgw;
 @end
 
 @implementation OBJCPType
--initExplicit:(NSString*)name withType:(objcp_var_type)type{
+-(OBJCPType*)initExplicit:(NSString*)name withType:(objcp_var_type)type{
    self = [self initExplicitWithName:name withType:type andSize:1];
    return self;
 }
--initExplicitWithName:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size
+-(OBJCPType*)initExplicitWithName:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size
 {
    self=[super init];
    _name = name;
@@ -425,7 +425,8 @@ static OBJCPGateway *objcpgw;
 -(void) objcp_del_context:(objcp_context) ctxt{
    NSLog(@"delete context not implemented");
 }
--(objcp_expr) objcp_mk_app:(objcp_context) ctx expr:(objcp_expr) f args:(objcp_expr*) args num:(unsigned int)n{
+-(objcp_expr) objcp_mk_app:(objcp_context) ctx expr:(objcp_expr) f args:(objcp_expr*) args num:(unsigned int)n
+{
    NSLog(@"Make app not implemented");
    return NULL;
 }

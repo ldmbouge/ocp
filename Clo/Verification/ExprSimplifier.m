@@ -36,10 +36,10 @@
 -(void) visitFloatVar:(id<ORFloatVar>)v
 {
 }
--(void) visitDoubleVar:(id<ORFloatVar>)v
+-(void) visitDoubleVar:(id<ORDoubleVar>)v
 {
 }
--(void) visitIntVar:(id<ORFloatVar>)v
+-(void) visitIntVar:(id<ORIntVar>)v
 {
 }
 -(void) visitExprUnaryMinusI:  (ORExprUnaryMinusI *) c
