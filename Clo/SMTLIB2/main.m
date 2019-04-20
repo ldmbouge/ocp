@@ -18,7 +18,7 @@ int main(int argc, const char * argv[])
    if (argc > 1){
       fp = fopen(argv[1], "r");
       if (fp==NULL) {
-         printf("Error opening file.\n");
+         printf("Error opening file: %s.\n",argv[1]);
          return false;
       }
    }
