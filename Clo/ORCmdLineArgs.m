@@ -412,10 +412,10 @@ static enum ValHeuristic valIndex[] =
       vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
    }
    if(ldfs){
-      ORInt v = (ORInt)[vars count];
-      NSLog(@"increase depth %d",v);
+//      ORInt v = (ORInt)[vars count];
+//      NSLog(@"initial depth %d",v);
       
-      id<ORMutableInteger> l = [ORFactory mutable:p value:v];
+      id<ORMutableInteger> l = [ORFactory mutable:p value:8];
       id<ORMutableInteger> STOP = [ORFactory mutable:p value:NO];
       [p repeat:^{
          [STOP setValue:YES];
@@ -428,8 +428,8 @@ static enum ValHeuristic valIndex[] =
             [self launchHeuristicImpl:p restricted:vars];
          }];
       } onRepeat:^{
-         LOG(level,2,@"increase depth %d",[l intValue]);
          [l setValue:([l intValue] * 2)];
+         LOG(level,2,@"increase depth %d",[l intValue]);
       } until:^ORBool{
          LOG(level,2,@"STOP = %s",([STOP intValue])?"YES":"NO");
          return [STOP intValue];
