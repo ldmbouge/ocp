@@ -106,6 +106,7 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
 -(void) defaultSearch;
 -(id<ORMemoryTrail>)memoryTrail;
+-(id<ORTracer>) tracer;
 -(void)tracer:(id<ORTracer>)tracer;
 -(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up;
 -(void) doubleIntervalImpl: (id<CPDoubleVar>) var low: (ORDouble) low up:(ORDouble) u;
