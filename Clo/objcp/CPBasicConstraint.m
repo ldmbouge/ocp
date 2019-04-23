@@ -2879,7 +2879,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [super post];
 //   hzi : Test on 3B vars we sould reduce the number of vars involved in filtering
 //   uncomment to test new 3B
-   CPFloatVarI* cv = nil;
+   /*CPFloatVarI* cv = nil;
    [_vars release];
    _vars = [[NSMutableSet alloc] init];
    @autoreleasepool{
@@ -2910,7 +2910,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    for(CPFloatVarI* cv in discardedItems){
       [_vars removeObject:cv];
    }
-   [discardedItems release];
+   [discardedItems release];*/
 }
 -(void) propagate
 {

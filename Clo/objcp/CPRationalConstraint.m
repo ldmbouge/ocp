@@ -1031,7 +1031,6 @@
 }
 -(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
 {
-   @synchronized (self) {
       if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
          id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
@@ -1041,8 +1040,7 @@
             NSLog(@"%@ -- %@", _primalBound, _dualBound);
          }
          return ok;
-      }
-      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
          id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b lt: _dualBound]){
@@ -1068,8 +1066,8 @@
             //NSLog(@"dual bound: %@",_dualBound);
             NSLog(@"%@ -- %@", _primalBound, _dualBound);
          }
-      }  else return ORSuspend;
-   }
+      } //else return ORSuspend;
+   return ORSuspend;
 }
 
 -(void) tightenLocallyWithDualBound: (id) newBound

@@ -257,7 +257,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    }
    
    return eo;
-
+   
 }
 
 
@@ -441,7 +441,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [_y updateInterval:min and:max];
       if(_x.min == _x.max && _y.min == _y.max) //to deal with -0,0
          assignTRInt(&_active, NO, _trail);
-         
+      
    }
 }
 -(NSSet*)allVars
@@ -1446,7 +1446,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       
       xr = [xr proj_inter:xrTemp];
       changed |= xr.changed;
-
+      
       x.inf = [[xr low] get_d];
       x.sup = [[xr up] get_d];
       
@@ -1459,7 +1459,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       
       y.inf = [[yr low] get_d];
       y.sup = [[yr up] get_d];
-
+      
       /* END ERROR PROPAG */
       
       gchanged |= changed;
@@ -1657,7 +1657,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       tmp = [ex sub: [[ez sub: eo] mul: ey]];
       /* Check difference */
       /*[D.low set_d: sqrt([D.low get_d])];
-      [D.up set_d: sqrt([D.up get_d])];*/
+       [D.up set_d: sqrt([D.up get_d])];*/
       //D = [D sqrt];
       fesetround(FE_DOWNWARD);
       [D.low set_d: sqrt([D.low get_d])];
@@ -2523,8 +2523,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound
 {
    @synchronized(self) {
-         if ([newBound value] < _primalBound)
-            _primalBound = [newBound value];
+      if ([newBound value] < _primalBound)
+         _primalBound = [newBound value];
    }
 }
 -(ORStatus) tightenDualBound:(id<ORObjectiveValueFloat>)newBound
@@ -2572,7 +2572,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 
 -(id<ORObjectiveValue>) primalValue
 {
-      return [ORFactory objectiveValueFloat:[_x value] minimize:YES];
+   return [ORFactory objectiveValueFloat:[_x value] minimize:YES];
 }
 -(id<ORObjectiveValue>) dualValue
 {
@@ -2647,7 +2647,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(id<ORObjectiveValue>) primalValue
 {
-      return [ORFactory objectiveValueFloat:_x.value minimize:NO];
+   return [ORFactory objectiveValueFloat:_x.value minimize:NO];
 }
 -(id<ORObjectiveValue>) dualValue
 {
@@ -2686,7 +2686,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound
 {
    if ([newBound value] > _primalBound)
-         _primalBound = [newBound value];
+      _primalBound = [newBound value];
 }
 -(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
 {
@@ -2785,7 +2785,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
          assignTRInt(&_active, NO, _trail);
       }
    }else if([_res bound]){
-       if([_x member:-[_res value]]){
+      if([_x member:-[_res value]]){
          if([_x member:[_res value]])
             [_x updateInterval:-[_res value] and:[_res value]];
          else
@@ -2845,6 +2845,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _resi = makeFloatInterval(res.min, res.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
+   _eo = [[CPRationalDom alloc] initCPRationalDom:[[res engine] trail] lowF:-INFINITY upF:+INFINITY];
    return self;
 }
 -(void) post
@@ -2855,8 +2856,30 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) propagate
 {
+   int gchanged,changed;
+   changed = gchanged = false;
+   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eres = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eresTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> one = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> two = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xq = [[ORRationalInterval alloc] init];
+   
    updateFloatInterval(&_xi,_x);
    updateFloatInterval(&_resi,_res);
+   
+   [one.low setOne];
+   [one.up setOne];
+   [two set_d:2.0 and:2.0];
+   [xq set_d:_xi.inf and:_xi.sup];
+   [ex set_q:[_x minErr] and:[_x maxErr]];
+   [eres set_q:[_res minErr] and:[_res maxErr]];
+   [eo set_q:[_eo min] and:[_eo max]];
+   
+   
    intersectionInterval inter;
    float_interval resTmp = makeFloatInterval(_resi.inf, _resi.sup);
    fpi_sqrtf(_precision,_rounding, &resTmp, &_xi);
@@ -2872,6 +2895,51 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [_x updateInterval:inter.result.inf and:inter.result.sup];
    if([_res bound] && [_x bound])
       assignTRInt(&_active, NO, _trail);
+   
+   /* ERROR PROPAG */
+   do {
+      eo = compute_eo_sqrt(eo, _xi, _resi);
+      changed |= eo.changed;
+      // ============================== ez
+      // sqrt(x) * (sqrt(1 + ex) - 1) + eo
+      eresTemp = [[[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]] add: eo];
+      eres = [eres proj_inter: eresTemp];
+      changed |= eres.changed;
+      
+      // ============================== eo
+      // ez - sqrt(x) * (sqrt(1 + ex) - 1)
+      eoTemp = [eres sub: [[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]]];
+      eo = [eo proj_inter: eoTemp];
+      changed |= eo.changed;
+      
+      // ============================== ex
+      // (eo^2 - 2*eo*ez + ez^2 - 2*eo*sqrt(x) + 2*ez*sqrt(x)) / x
+      exTemp = [[[[[[eo mul: eo] sub: [[two mul: eo] mul: eres]] add: [eres mul: eres]] sub: [[two mul: eo] mul: [xq sqrt]]] add: [[two mul: eres] mul: [xq sqrt]]] div: xq];
+      ex = [ex proj_inter: exTemp];
+      changed |= ex.changed;
+      
+      gchanged |= changed;
+   } while(changed);
+   /* END ERROR PROPAG */
+   if(gchanged){
+      // Cause no propagation on eo is insured
+      [_eo updateMin:(eo.low) for:NULL];
+      [_eo updateMax:(eo.up) for:NULL];
+      
+      [_x updateIntervalError:(ex.low) and:(ex.up)];
+      [_res updateIntervalError:(eres.low) and:(eres.up)];
+      if([_x bound] && [_res bound] && [_x boundError] && [_res boundError])
+         assignTRInt(&_active, NO, _trail);
+   }
+   [ex release];
+   [eres release];
+   [eo release];
+   [exTemp release];
+   [eresTemp release];
+   [eoTemp release];
+   [one release];
+   [two release];
+   [xq release];
 }
 -(NSSet*)allVars
 {
@@ -2890,142 +2958,3 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    return [NSString stringWithFormat:@"<%@ == sqrt(%@)>",_res,_x];
 }
 @end
-
-@implementation CPFloatSQRT{
-   
-}
--(id) init:(CPFloatVarI*)z equalsSQRT:(id)x
-{
-   return [self init:z equalsSQRT:x kbpercent:PERCENT];
-}
--(id) init:(CPFloatVarI*)z equalsSQRT:(CPFloatVarI*)x kbpercent:(ORDouble)p
-{
-   self = [super initCPCoreConstraint: [x engine]];
-   _z = z;
-   _x = x;
-   _precision = 1;
-   _percent = p;
-   _rounding = FE_TONEAREST;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
-   return self;
-}
--(void) post
-{
-   [self propagate];
-   if(![_x bound] || ![_x boundError]) [_x whenChangeBoundsPropagate:self];
-   if(![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
-}
-//hzi : _Temps variables are useless ? inter.result ? x is already changed ?
--(void) propagate
-{
-   int gchanged,changed;
-   changed = gchanged = false;
-   float_interval zTemp,xTemp,z,x;
-   intersectionInterval inter;
-   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> one = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> two = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xq = [[ORRationalInterval alloc] init];
-   [one.low setOne];
-   [one.up setOne];
-   [two set_d:2.0 and:2.0];
-   [xq set_d:x.inf and:x.sup];
-   
-   z = makeFloatInterval([_z min],[_z max]);
-   x = makeFloatInterval([_x min],[_x max]);
-   
-   [ex set_q:[_x minErr] and:[_x maxErr]];
-   [ez set_q:[_z minErr] and:[_z maxErr]];
-   [eo set_q:[_eo min] and:[_eo max]];
-   
-   do {
-      changed = false;
-      zTemp = z;
-      fpi_sqrtf(_precision, _rounding, &zTemp, &x);
-      inter = intersection(_z, z, zTemp,_percent);
-      z = inter.result;
-      changed |= inter.changed;
-      
-      xTemp = x;
-      fpi_sqrtf_inv(_precision, _rounding, &xTemp, &z);
-      inter = intersection(_x, x , xTemp,_percent);
-      x = inter.result;
-      changed |= inter.changed;
-      
-      /* ERROR PROPAG */
-      
-      eo = compute_eo_sqrt(eo, x, z);
-      changed |= eo.changed;
-      // ============================== ez
-      // sqrt(x) * (sqrt(1 + ex) - 1) + eo
-      ezTemp = [[[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]] add: eo];
-      ez = [ez proj_inter: ezTemp];
-      changed |= ez.changed;
-      
-      // ============================== eo
-      // ez - sqrt(x) * (sqrt(1 + ex) - 1)
-      eoTemp = [ez sub: [[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]]];
-      eo = [eo proj_inter: eoTemp];
-      changed |= eo.changed;
-      
-      // ============================== ex
-      // (eo^2 - 2*eo*ez + ez^2 - 2*eo*sqrt(x) + 2*ez*sqrt(x)) / x
-      exTemp = [[[[[[eo mul: eo] sub: [[two mul: eo] mul: ez]] add: [ez mul: ez]] sub: [[two mul: eo] mul: [xq sqrt]]] add: [[two mul: ez] mul: [xq sqrt]]] div: xq];
-      ex = [ex proj_inter: exTemp];
-      changed |= ex.changed;
-      
-      /* END ERROR PROPAG */
-      
-      gchanged |= changed;
-   } while(changed);
-   
-   if(gchanged){
-      // Cause no propagation on eo is insured
-      [_eo updateMin:(eo.low) for:NULL];
-      [_eo updateMax:(eo.up) for:NULL];
-      
-      [_x updateInterval:x.inf and:x.sup];
-      [_z updateInterval:z.inf and:z.sup];
-      [_x updateIntervalError:(ex.low) and:(ex.up)];
-      [_z updateIntervalError:(ez.low) and:(ez.up)];
-      if([_x bound] && [_z bound] && [_x boundError] && [_z boundError])
-         assignTRInt(&_active, NO, _trail);
-   }
-   
-   fesetround(FE_TONEAREST);
-   [ex release];
-   [ez release];
-   [eo release];
-   [exTemp release];
-   [ezTemp release];
-   [eoTemp release];
-   [one release];
-   [two release];
-   [xq release];
-}
-- (void)dealloc {
-   [super dealloc];
-}
--(NSSet*)allVars
-{
-   return [[[NSSet alloc] initWithObjects:_z,_x,nil] autorelease];
-}
--(NSArray*)allVarsArray
-{
-   return [[[NSArray alloc] initWithObjects:_x,_z,nil] autorelease];
-}
--(ORUInt)nbUVars
-{
-   return ![_x bound] + ![_z bound] + ![_x boundError] + ![_z boundError];
-}
--(NSString*)description
-{
-   return [NSString stringWithFormat:@"<%@ = sqrt(%@)>",_z, _x];
-}
-@end
-

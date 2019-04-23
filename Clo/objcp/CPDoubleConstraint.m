@@ -36,12 +36,12 @@ void ulp_computation_d(id<ORRationalInterval> ulp, const double_interval f){
       [tmp2 neg];
       [ulp set_q:tmp2 and:tmp1];
    } else{
-      ORDouble inf, sup;
-      inf = minDbl(nextafter(f.inf, -INFINITY) - f.inf, nextafter(f.sup, -INFINITY) - f.sup);
-      sup = maxDbl(nextafter(f.inf, +INFINITY) - f.inf, nextafter(f.sup, +INFINITY) - f.sup);
+      ORLDouble inf, sup;
+      inf = minLDbl(nextafter(f.inf, -INFINITY) - f.inf, nextafter(f.sup, -INFINITY) - f.sup);
+      sup = maxLDbl(nextafter(f.inf, +INFINITY) - f.inf, nextafter(f.sup, +INFINITY) - f.sup);
       
       [tmp0 set_d: inf];
-      [tmp1 set_d: 2.0];
+      [tmp1 set_d: 1.0L];
       tmp2 = [tmp0 div: tmp1];
       [ulp.low set: tmp2];
       [tmp0 set_d: sup];
@@ -73,7 +73,7 @@ id<ORRationalInterval> compute_eo_add_d(id<ORRationalInterval> eo, const double_
       eo = [eo proj_inter:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
-      ORDouble tmpf = x.inf + y.inf;
+      ORLDouble tmpf = x.inf + y.inf;
       id<ORRational> tmpq = [[ORRational alloc] init];
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
@@ -117,7 +117,7 @@ id<ORRationalInterval> compute_eo_sub_d(id<ORRationalInterval> eo, const double_
       eo = [eo proj_inter:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
-      ORDouble tmpf = x.inf - y.inf;
+      ORLDouble tmpf = x.inf - y.inf;
       id<ORRational> tmpq = [[ORRational alloc] init];
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
@@ -151,7 +151,7 @@ id<ORRationalInterval> compute_eo_mul_d(id<ORRationalInterval> eo, const double_
       eo = [eo proj_inter:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
-      ORDouble tmpf = x.inf*y.inf;
+      ORLDouble tmpf = x.inf*y.inf;
       id<ORRational> tmpq = [[ORRational alloc] init];
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
@@ -192,7 +192,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       [zero release];
       
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
-      ORDouble tmpf = x.inf/y.inf;
+      ORLDouble tmpf = x.inf/y.inf;
       id<ORRational> tmpq = [[ORRational alloc] init];
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];

@@ -878,8 +878,14 @@
 -(id<ORRationalInterval>)sqrt
 {
    id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
-   z.low = [_low sqrt];
-   z.up = [_up sqrt];
+//   z.low = [_low sqrt];
+//   z.up = [_up sqrt];
+   
+   fesetround(FE_DOWNWARD);
+   [z.low set_d: sqrt([_low get_d])];
+   fesetround(FE_UPWARD);
+   [z.up set_d: sqrt([_up get_d])];
+   fesetround(FE_TONEAREST);
    
    return z;
 }
@@ -1024,10 +1030,10 @@
       [pup release];
       [epsilon release];
    }
-   if([z empty]){
-      [z.low setPosInf];
-      [z.up setNegInf];
-   }
+//   if([z empty]){
+//      [z.low setPosInf];
+//      [z.up setNegInf];
+//   }
    return z;
 }
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup
@@ -1070,10 +1076,10 @@
       [pup release];
       [epsilon release];
    }
-   if([z empty]){
-      [z.low setPosInf];
-      [z.up setNegInf];
-   }
+//   if([z empty]){
+//      [z.low setPosInf];
+//      [z.up setNegInf];
+//   }
    return z;
 }
 @end

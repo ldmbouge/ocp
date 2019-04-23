@@ -80,7 +80,8 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
       
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
-      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDoubleVarArray> vs =  [ORFactory doubleVarArray:mdl range:RANGE(mdl, 0, 0)];//[mdl doubleVars];
+      vs[0] = x;
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
@@ -168,7 +169,7 @@ void exitfunc(int sig)
 
 int main(int argc, const char * argv[]) {
    signal(SIGKILL, exitfunc);
-   alarm(60);
+   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       //predatorPrey_f(1, argc, argv);
       predatorPrey_d(1, argc, argv);

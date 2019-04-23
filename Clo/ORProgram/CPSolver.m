@@ -1912,7 +1912,9 @@
            break;
           }
           */
-         [self floatSplit:i.index withVars:x]; //call splitting strategy
+         //[self floatSplit:i.index withVars:x]; //call splitting strategy
+         /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
+         b(i.index,x);
       }
       //printf("Hallo\n");
    } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
@@ -1967,6 +1969,12 @@
          if([[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]){ // Check that it is a better solution   <=========== !
             [[_engine objective] updatePrimalBound];
             solution = [self captureSolution];  // Keep it as a solution
+            NSLog(@"##### START");
+            for (id<ORVar> v in [_model variables]) {
+               if([v prettyname])
+                  NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+            }
+            NSLog(@"##### END");
          }
          break;
       } else {
@@ -2027,6 +2035,12 @@
                   // the testing it here is useless
                   [[_engine objective] updatePrimalBound];
                   solution = [self captureSolution]; // Keep it as a solution
+                  NSLog(@"##### START");
+                  for (id<ORVar> v in [_model variables]) {
+                     if([v prettyname])
+                        NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+                  }
+                  NSLog(@"##### END");
                   [_tracer popNode]; // need to restore initial state before going out of loop !
                   break;
                }
@@ -2045,7 +2059,9 @@
            break;
           }
           */
-         [self floatSplit:i.index withVars:x]; //call splitting strategy
+         //[self floatSplit:i.index withVars:x]; //call splitting strategy
+         /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
+         b(i.index,x);
       }
       //printf("Hallo\n");
    } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);

@@ -7,6 +7,7 @@
 
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
+#import "ORCmdLineArgs.h"
 #include <signal.h>
 #include <stdlib.h>
 
@@ -69,33 +70,78 @@ void check_it_sqroot_d(double x, double z, id<ORRational> ez) {
 
 void sqroot_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
-      id<ORModel> mdl = [ORFactory createModel];
-      id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.0 up:1.0 elow:zero eup:zero name:@"x"];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
-      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
-      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
-      [zero release];
-      
-      //((((1.0 + (0.5 * x)) - ((0.125 * x) * x)) + (((0.0625 * x) * x) * x)) - ((((0.0390625 * x) * x) * x) * x));
-      [mdl add:[z set: [[[[@(1.0) plus: [@(0.5) mul: x]] sub: [[@(0.125) mul: x] mul: x]] plus: [[[@(0.0625) mul: x] mul: x] mul: x]] sub: [[[[@(0.0390625) mul: x] mul: x] mul: x] mul: x]]]];
-      
-      [mdl add: [ezAbs eq: [ez abs]]];
-      [mdl maximize:ezAbs];
-      
-      NSLog(@"model: %@",mdl);
-      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
-      id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
-      
-      [cp solve:^{
-         if (search)
-            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               [cp floatSplit:i withVars:x];
-            }];
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORRational> zero = [ORRational rationalWith_d:0.0];
+         id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.0 up:1.0 elow:zero eup:zero name:@"x"];
+         id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+         id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+         id<ORGroup> g = [args makeGroup:mdl];
+         [zero release];
+         
+         //((((1.0 + (0.5 * x)) - ((0.125 * x) * x)) + (((0.0625 * x) * x) * x)) - ((((0.0390625 * x) * x) * x) * x));
+         [g add:[z set: [[[[@(1.0) plus: [@(0.5) mul: x]] sub: [[@(0.125) mul: x] mul: x]] plus: [[[@(0.0625) mul: x] mul: x] mul: x]] sub: [[[[@(0.0390625) mul: x] mul: x] mul: x] mul: x]]]];
+         
+         [g add: [ezAbs eq: [ez abs]]];
+         [mdl add:g];
+         [mdl maximize:ezAbs];
+
+         NSLog(@"model: %@",mdl);
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+         id<ORDoubleVarArray> vs = [mdl doubleVars];
+         id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+         
+         [cp solve:^{
+            if (search)
+               [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+                  [cp floatSplit:i withVars:x];
+               }];
+         }];
+         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
       }];
    }
 }
+
+void sqroot_f(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORRational> zero = [ORRational rationalWith_d:0.0];
+         id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.0f up:1.0f elow:zero eup:zero name:@"x"];
+         id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
+         id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+         id<ORGroup> g = [ORFactory group:mdl type:Group3B];
+         [zero release];
+         
+         //((((1.0 + (0.5 * x)) - ((0.125 * x) * x)) + (((0.0625 * x) * x) * x)) - ((((0.0390625 * x) * x) * x) * x));
+         [g add:[z set: [[[[@(1.0f) plus: [@(0.5f) mul: x]] sub: [[@(0.125f) mul: x] mul: x]] plus: [[[@(0.0625f) mul: x] mul: x] mul: x]] sub: [[[[@(0.0390625f) mul: x] mul: x] mul: x] mul: x]]]];
+         
+         [g add: [ezAbs eq: [ez abs]]];
+         [mdl add:g];
+         [mdl maximize:ezAbs];
+         
+         NSLog(@"model: %@",mdl);
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+         id<ORFloatVarArray> vs = [mdl floatVars];
+         id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+         
+         [cp solve:^{
+            if (search)
+               [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+                  [cp floatSplit:i withVars:x];
+               }];
+         }];
+         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
+      }];
+   }
+}
+
 
 void exitfunc(int sig)
 {
@@ -103,10 +149,11 @@ void exitfunc(int sig)
 }
 
 int main(int argc, const char * argv[]) {
-   signal(SIGKILL, exitfunc);
-   alarm(60);
+   //signal(SIGKILL, exitfunc);
+   //alarm(60);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
-      sqroot_d(1, argc, argv);
+   //sqroot_d(1, argc, argv);
+   sqroot_f(1, argc, argv);
    //}
    return 0;
 }

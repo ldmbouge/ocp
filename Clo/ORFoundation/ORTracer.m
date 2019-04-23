@@ -457,12 +457,13 @@ static __thread id checkPointCache = NULL;
 }
 -(ORInt) pushNode
 {
+   //NSLog(@"IN: %d - %d", [_cmds size], [_trStack size]);
    assert([_cmds size] == [_trStack size]);
    [_trStack pushNode: _lastNode];
    [_cmds pushList: _lastNode memory:[_mt trailSize]];     // add a list of constraint
    [_trail incMagic];
    _lastNode++;
-
+   
    assert([_cmds size] == [_trStack size]);
    assignTRInt(&_level,_level._val+1,_trail);
    return _lastNode - 1;
