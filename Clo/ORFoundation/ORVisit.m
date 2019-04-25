@@ -1184,6 +1184,8 @@
 -(void) visitRealSquare:(id<ORSquare>)c {}
 -(void) visitFloatSquare:(id<ORSquare>)c {}
 -(void) visitDoubleSquare:(id<ORSquare>)c {}
+-(void) visitExprToFloatI:(id<ORExpr>) e {};
+-(void) visitExprToDoubleI:(id<ORExpr>) e {};
 -(void) visitMod: (id<ORMod>)c {}
 -(void) visitModc: (id<ORModc>)c {}
 -(void) visitMin:(id<ORMin>)c  {}

@@ -346,7 +346,7 @@ static enum ValHeuristic valIndex[] =
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
    id<CPProgram> p = nil;
-   ORInt nb = [[model FPVars] count]/2;
+   ORInt nb = [[model FPVars] count];
    id<ORSearchController> cont = nil;
    if(bds) cont = [ORSemBDSController protoWithDisc:nb times:5];
 //   if(ldfs) cont = [ORDFSController proto];
@@ -415,7 +415,7 @@ static enum ValHeuristic valIndex[] =
 //      ORInt v = (ORInt)[vars count];
 //      NSLog(@"initial depth %d",v);
       
-      id<ORMutableInteger> l = [ORFactory mutable:p value:8];
+      id<ORMutableInteger> l = [ORFactory mutable:p value:16];
       id<ORMutableInteger> STOP = [ORFactory mutable:p value:NO];
       [p repeat:^{
          [STOP setValue:YES];
@@ -429,7 +429,7 @@ static enum ValHeuristic valIndex[] =
          }];
       } onRepeat:^{
          [l setValue:([l intValue] * 2)];
-         LOG(level,2,@"increase depth %d",[l intValue]);
+         LOG(level,0,@"increase depth %d",[l intValue]);
       } until:^ORBool{
          LOG(level,2,@"STOP = %s",([STOP intValue])?"YES":"NO");
          return [STOP intValue];

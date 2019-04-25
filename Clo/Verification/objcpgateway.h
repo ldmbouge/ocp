@@ -265,3 +265,11 @@ static inline void i2bs(char str[], int len, unsigned long v){
    }
    str[len-1] = '\0';
 }
+
+@interface NSMutableArray (Stack)
+
+- (void) push: (id)item;
+- (id) pop;
+- (ORBool) empty;
+
+@end

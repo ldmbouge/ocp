@@ -25,3 +25,10 @@
 +(NSArray*)simplifyAll:(NSArray*)e;
 +(NSArray*)simplifyAll:(NSArray*)e group:(id<ORGroup>) g;
 @end
+
+@interface InequalityConstraintsCollector : ORNOopVisit{
+   NSMutableDictionary* _theSet;
+}
+-(id)init;
++(NSMutableDictionary*) collect:(NSArray*) constraints;
+@end

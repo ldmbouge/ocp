@@ -37,6 +37,8 @@ PORTABLE_BEGIN
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 -(ORInt) sumWith: (ORInt(^)(ORInt value,int idx))block;
+-(void) incrAt:(ORInt) index;
+-(void) decrAt:(ORInt) index;
 @end
 
 @protocol ORFloatArray <ORObject>

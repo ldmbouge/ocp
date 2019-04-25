@@ -9,6 +9,26 @@
 #import "objcpgateway.h"
 #include "gmp.h"
 
+@implementation NSMutableArray (Stack)
+
+- (void) push: (id)item {
+   [self addObject:item];
+}
+
+- (ORBool) empty{
+   return [self count] == 0;
+}
+
+- (id) pop {
+   id item = nil;
+   if ([self count] != 0) {
+      item = [self lastObject];
+      [self removeLastObject];
+   }
+   return item;
+}
+@end
+
 @implementation ConstantWrapper
 static OBJCPGateway *objcpgw;
 
@@ -98,7 +118,7 @@ static OBJCPGateway *objcpgw;
 
 @implementation AbstractLogicHandler
 {
-   @protected
+@protected
    NSMutableDictionary* _declarations;
 }
 -(AbstractLogicHandler*) init:(id<ORModel>)m
@@ -136,7 +156,7 @@ static OBJCPGateway *objcpgw;
 }
 - (void)launchHeuristic
 {
-     @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
 }
 - (void)setOptions:(ORCmdLineArgs *)options
 {
@@ -149,7 +169,7 @@ static OBJCPGateway *objcpgw;
 }
 -(void) printSolutionsI
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
 }
 -(ORBool) checkAllbound
 {
@@ -205,7 +225,7 @@ static OBJCPGateway *objcpgw;
    NSMutableArray* tmp = [[NSMutableArray alloc] initWithCapacity:[dict count]];
    __block ORInt i = 0;
    [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-       if([[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORFloatVar)] || [[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORDoubleVar)])
+      if([[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORFloatVar)] || [[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORDoubleVar)])
          [dictvars addObject:[(OBJCPDecl*)obj getVariable]];
    }];
    if([dictvars count] > 0){
@@ -517,8 +537,8 @@ static OBJCPGateway *objcpgw;
             low[i] = 0;
             up[i] = CP_UMASK;
          }
-          if (size%BITSPERWORD != 0)
-              up[0] >>= BITSPERWORD - (size % BITSPERWORD);
+         if (size%BITSPERWORD != 0)
+            up[0] >>= BITSPERWORD - (size % BITSPERWORD);
          res = [ORFactory bitVar:_model low:low up:up bitLength:size name:name];
          break;
       }
@@ -607,7 +627,7 @@ static OBJCPGateway *objcpgw;
 }
 
 /**
-  [hzi] it is needed ???
+ [hzi] it is needed ???
  \brief Create a backtracking point in the given logical context.
  
  The logical context can be viewed as a stack of contexts.
@@ -639,7 +659,7 @@ static OBJCPGateway *objcpgw;
 }
 -(void) addConstraints
 {
-
+   
    if([_options is3Bfiltering]){
       NSArray* arr = _toadd;
       id<ORGroup> g = [ORFactory group:_model type:Group3B];
@@ -660,6 +680,75 @@ static OBJCPGateway *objcpgw;
       }
    }
 }
+-(ORBool) isCycle:(id<LogicHandler>) lh
+{
+   NSDictionary* dict = [InequalityConstraintsCollector collect:[_model constraints]];
+   __block int maxId = -1;
+   __block int first;
+   NSMutableArray* idarr = [[NSMutableArray alloc] init];
+   [dict enumerateKeysAndObjectsUsingBlock:^(id  key, NSArray* obj, BOOL* stop) {
+      first = [key intValue];
+      maxId = max(first,maxId);
+      [idarr addObject:key];
+      for(ORExprBinaryI* o in obj){
+         if([o getId] == -1)
+            [_model trackImmutable:o];
+         maxId = max([o getId],maxId);
+         maxId = max([[o left] getId],maxId);
+         maxId = max([[o right] getId],maxId);
+      }
+   }];
+   id<ORIntArray> visited = [ORFactory intArray:_model range:RANGE(_model,0,maxId) value:0];
+   id<ORIntArray> recStack = [ORFactory intArray:_model range:RANGE(_model,0,maxId) value:0];
+   NSMutableDictionary* exprVisited = [[NSMutableDictionary alloc] init];
+   for(id v in idarr){
+      if([self isCycleRec:v parent:v graph:dict expr:exprVisited visited:visited recStack:recStack hasStrict:NO])
+         return YES;
+   }
+   [idarr release];
+   [exprVisited release];
+   return NO;
+}
+
+-(ORBool) isCycleRec:(id) v parent:(id)p graph:(NSDictionary*) graph expr:(NSMutableDictionary*) expr visited:(id<ORIntArray>) visited recStack:(id<ORIntArray>) recStack hasStrict:(ORBool) strict
+{
+   ORInt vi = [v intValue];
+   ORInt pi = [p intValue];
+   ORExprBinaryI* se;
+   if(![visited[vi] intValue]){
+      visited[vi] = @(1);
+      recStack[vi] = @(1);
+      se = [expr objectForKey:v];
+//     case we are node expression
+      if(se != nil){
+         ORInt other = [[se right] getId];
+         ORInt next = (other == pi) ? [[se left] getId] : other;
+         ORBool isStrict = ([se isKindOfClass:ORExprGThenI.class] || [se isKindOfClass:ORExprLThenI.class]);
+         if(![visited[next] intValue]){
+            if ([self isCycleRec:@(next) parent:@(next) graph:graph expr:expr visited:visited recStack:recStack hasStrict:(strict || isStrict)])
+               return YES;
+         }else if([recStack[next] intValue] && (strict || isStrict))
+            return YES;
+      }else{
+//      case we are var node
+         NSArray* idarr = [graph objectForKey:@(vi)];
+         ORInt si;
+         for(id e in idarr){
+            se = e;
+            si = [se getId];
+            [expr setObject:e forKey:@(si)];
+            if(![visited[si] intValue]){
+               if([self isCycleRec:@(si) parent:@(vi) graph:graph expr:expr visited:visited recStack:recStack hasStrict:strict])
+                  return YES;
+            }else if([recStack[si] intValue] && strict)
+               return YES;
+         }
+      }
+   }
+   recStack[vi] = @(0);
+   return NO;
+}
+
 -(ORBool) objcp_check:(objcp_context) ctx
 {
    [self addConstraints];
@@ -675,15 +764,20 @@ static OBJCPGateway *objcpgw;
       __block ORBool isSat;
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
+         ORBool hascycle = [self isCycle:lh];
+         NSLog(@"%s",(hascycle)?"YES":"NO");
+         //         id<ORVarArray> vars = [lh getVariables];
          __block bool found = false;
          isSat = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [lh launchHeuristic];
-            NSLog(@"Valeurs solutions : \n");
-            [lh printSolutions];
-            NSLog(@"======================");
-            isSat = [lh checkAllbound];
-         } withTimeLimit:[_options timeOut]];
+         if(!hascycle){
+            [cp solveOn:^(id<CPCommonProgram> p) {
+               [lh launchHeuristic];
+               NSLog(@"Valeurs solutions : \n");
+               [lh printSolutions];
+               NSLog(@"======================");
+               isSat = [lh checkAllbound];
+            } withTimeLimit:[_options timeOut]];
+         }
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];
@@ -856,8 +950,8 @@ static OBJCPGateway *objcpgw;
 -(objcp_expr) objcp_mk_not:(objcp_context)ctx expr:(id<ORExpr>)b0
 {
    if([b0.class conformsToProtocol:@protocol(ORIntVar)]){
-         if([(id<ORIntVar>)b0 low]) return [ORFactory intVar:_model value:1];
-         if(![(id<ORIntVar>)b0 up]) return [ORFactory intVar:_model value:0];
+      if([(id<ORIntVar>)b0 low]) return [ORFactory intVar:_model value:1];
+      if(![(id<ORIntVar>)b0 up]) return [ORFactory intVar:_model value:0];
    }
    return [b0 neg];
 }
@@ -968,18 +1062,18 @@ static OBJCPGateway *objcpgw;
    return bv;
 }
 -(objcp_expr) objcp_mk_bv_ge:(objcp_context)ctx x:(objcp_expr)x ge:(objcp_expr) y{
-    return [self objcp_mk_bv_lt:ctx x:y lt:x];
+   return [self objcp_mk_bv_lt:ctx x:y lt:x];
 }
 -(objcp_expr) objcp_mk_bv_gt:(objcp_context)ctx x:(objcp_expr)x gt:(objcp_expr) y{
-    return [self objcp_mk_bv_le:ctx x:y le:x];
-
+   return [self objcp_mk_bv_le:ctx x:y le:x];
+   
 }
 -(objcp_expr) objcp_mk_bv_sge:(objcp_context)ctx x:(objcp_expr)x sge:(objcp_expr) y{
-    return [self objcp_mk_bv_slt:ctx x:y slt:x];
+   return [self objcp_mk_bv_slt:ctx x:y slt:x];
 }
 -(objcp_expr) objcp_mk_bv_sgt:(objcp_context)ctx x:(objcp_expr)x sgt:(objcp_expr) y{
-    return [self objcp_mk_bv_sle:ctx x:y sle:x];
-    
+   return [self objcp_mk_bv_sle:ctx x:y sle:x];
+   
 }
 /**
  \brief Return an expression representing <tt>(if c t e)</tt>.
@@ -1000,18 +1094,18 @@ static OBJCPGateway *objcpgw;
             ([ev.class conformsToProtocol:@protocol(ORDoubleVar)] || [ev.class conformsToProtocol:@protocol(ORDoubleNumber)])){
       res = [ORFactory doubleVar:_model low:minDbl([(id<ORExpr>)t dmin],[(id<ORExpr>)e dmin]) up:maxDbl([(id<ORExpr>)t dmax],[(id<ORExpr>)e dmax])];
    }else if([tv.class conformsToProtocol:@protocol(ORBitVar)]){
-         res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength],[(id<ORBitVar>)ev bitLength])];
-         id<ORBitVar> bv = [ORFactory bitVar:_model withLength:1];
-         if([((id<ORExpr>)c).class conformsToProtocol:@protocol(ORIntVar)])
-            [_model add:[ORFactory bit:bv booleq:(id<ORIntVar>)c]];
-         else {//complex expr
-            id<ORIntVar> b = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-            [_model add:[b eq:c]];
-            [_model add:[ORFactory bit:bv booleq:(id<ORIntVar>)b]];
-         }
-         [_model add:[ORFactory bit:bv then:(id<ORBitVar>)tv else:(id<ORBitVar>)ev result:(id<ORBitVar>)res]];
-         return res;
+      res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength],[(id<ORBitVar>)ev bitLength])];
+      id<ORBitVar> bv = [ORFactory bitVar:_model withLength:1];
+      if([((id<ORExpr>)c).class conformsToProtocol:@protocol(ORIntVar)])
+         [_model add:[ORFactory bit:bv booleq:(id<ORIntVar>)c]];
+      else {//complex expr
+         id<ORIntVar> b = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+         [_model add:[b eq:c]];
+         [_model add:[ORFactory bit:bv booleq:(id<ORIntVar>)b]];
       }
+      [_model add:[ORFactory bit:bv then:(id<ORBitVar>)tv else:(id<ORBitVar>)ev result:(id<ORBitVar>)res]];
+      return res;
+   }
    
    [_model add:[(id<ORExpr>)c imply:[res eq:tv]]];
    [_model add:[[(id<ORExpr>)c neg] imply:[res eq:ev]]];
@@ -1042,8 +1136,8 @@ static OBJCPGateway *objcpgw;
    for(int i=0; i< wordlength;i++){
       low[i] = 0;
       up[i] = CP_UMASK;
-//      if (i == (wordlength-1)) {
-       if (i == 0) {
+      //      if (i == (wordlength-1)) {
+      if (i == 0) {
          up[i] >>= BITSPERWORD - (size % BITSPERWORD);
       }
    }
@@ -1082,7 +1176,7 @@ static OBJCPGateway *objcpgw;
    }
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 band:(id<ORBitVar>)a2 eq:bv]];
    return bv;
@@ -1100,7 +1194,7 @@ static OBJCPGateway *objcpgw;
    }
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[_model add:[ORFactory bit:(id<ORBitVar>)a1 bor:(id<ORBitVar>)a2 eq:bv]]];
    return bv;
@@ -1118,7 +1212,7 @@ static OBJCPGateway *objcpgw;
    }
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 bxor:(id<ORBitVar>)a2 eq:bv]];
    return bv;
@@ -1154,7 +1248,7 @@ static OBJCPGateway *objcpgw;
    }
    if (size%BITSPERWORD != 0)
       up[wordlength-1] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftLByBV:(id<ORBitVar>)a2 eq:bv]];
    return bv;
@@ -1169,8 +1263,8 @@ static OBJCPGateway *objcpgw;
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[wordlength-1] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   up[wordlength-1] >>= BITSPERWORD-(size%BITSPERWORD);
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftRByBV:(id<ORBitVar>)a2 eq:bv]];
    return bv;
@@ -1185,8 +1279,8 @@ static OBJCPGateway *objcpgw;
       low[i] = 0;
       up[i] = CP_UMASK;
    }
-    up[wordlength-1] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   up[wordlength-1] >>= BITSPERWORD-(size%BITSPERWORD);
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftRAByBV:(id<ORBitVar>)a2 eq:bv]];
    return bv;
@@ -1194,27 +1288,27 @@ static OBJCPGateway *objcpgw;
 -(objcp_expr) objcp_mk_bv_sle:(objcp_context)ctx x:(objcp_expr)x sle:(objcp_expr) y
 {
    int size = [(id<ORBitVar>)x bitLength];
-
+   
    ORUInt low;
    ORUInt up;
    low = 0;
    up = 0x1;
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-
+   
    [_model add:[ORFactory bit:(id<ORBitVar>)y LT:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
-
+   
    [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
    [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
    [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
    [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
    [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:result]];
-
+   
    return result;
 }
 
@@ -1224,24 +1318,24 @@ static OBJCPGateway *objcpgw;
    ORUInt up;
    low = 0;
    up = 0x1;
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> xSign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> ySign = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> temp = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> notbv = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
    id<ORBitVar> result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-
-
-
+   
+   
+   
    [_model add:[ORFactory bit:(id<ORBitVar>)y LE:(id<ORBitVar>)x eval:(id<ORBitVar>)bv]];
-
+   
    [_model add:[ORFactory bit:(id<ORBitVar>)x from:size-1 to:size-1 eq:xSign]];
    [_model add:[ORFactory bit:(id<ORBitVar>)y from:size-1 to:size-1 eq:ySign]];
    [_model add:[ORFactory bit:(id<ORBitVar>)xSign bxor:ySign eq:temp]];
    [_model add:[ORFactory bit:(id<ORBitVar>)bv notb:notbv]];
    [_model add:[ORFactory bit:(id<ORBitVar>)temp bxor:notbv eq:result]];
-
+   
    return result;
 }
 
@@ -1263,7 +1357,7 @@ static OBJCPGateway *objcpgw;
    }
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 negative:bv]];
    return bv;
@@ -1291,11 +1385,11 @@ static OBJCPGateway *objcpgw;
    id<ORBitVar> bv;
    id<ORBitVar> cin;
    id<ORBitVar> cout;
-      bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-      cin = [ORFactory bitVar:_model low:low up:cinUp bitLength:size];
-      cout = [ORFactory bitVar:_model low:low up:up bitLength:size];
-      [_model add:[ORFactory bit:(id<ORBitVar>)a1 plus:a2 withCarryIn:cin eq:bv withCarryOut:cout]];
-
+   bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   cin = [ORFactory bitVar:_model low:low up:cinUp bitLength:size];
+   cout = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   [_model add:[ORFactory bit:(id<ORBitVar>)a1 plus:a2 withCarryIn:cin eq:bv withCarryOut:cout]];
+   
    return bv;
 }
 
@@ -1312,8 +1406,8 @@ static OBJCPGateway *objcpgw;
    id<ORBitVar> bv;
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-      bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-      [_model add:[ORFactory bit:a1 minus:a2 eq:bv]];
+   bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   [_model add:[ORFactory bit:a1 minus:a2 eq:bv]];
    return bv;
 }
 
@@ -1330,12 +1424,12 @@ static OBJCPGateway *objcpgw;
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
    id<ORBitVar> result;
    id<ORBitVar> bv;
-
+   
    result = [ORFactory bitVar:_model low:low up:up bitLength:(size*2)];
    bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:a1 times:a2 eq:result]];
    [_model add:[ORFactory bit:result from:0 to:size-1 eq:bv]];
-
+   
    return bv;
 }
 
@@ -1362,25 +1456,25 @@ static OBJCPGateway *objcpgw;
 }
 
 -(objcp_expr) objcp_mk_bv_sdiv:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
-    int size = [(id<ORBitVar>)a1 bitLength];
-    
-    ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
-    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
-    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
-    for(int i=0; i< wordlength;i++){
-        low[i] = 0;
-        up[i] = CP_UMASK;
-    }
+   int size = [(id<ORBitVar>)a1 bitLength];
+   
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   for(int i=0; i< wordlength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-    id<ORBitVar> q;
-    id<ORBitVar> r;
-
-    q = [ORFactory bitVar:_model low:low up:up bitLength:size];
-    r = [ORFactory bitVar:_model low:low up:up bitLength:size];
-
-    [_model add:[ORFactory bit:a1 dividedbysigned:a2 eq:q rem:r]];
-    return q;
+   id<ORBitVar> q;
+   id<ORBitVar> r;
+   
+   q = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   r = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   
+   [_model add:[ORFactory bit:a1 dividedbysigned:a2 eq:q rem:r]];
+   return q;
 }
 
 -(objcp_expr) objcp_mk_bv_rem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
@@ -1406,25 +1500,25 @@ static OBJCPGateway *objcpgw;
 }
 
 -(objcp_expr) objcp_mk_bv_srem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
-    int size = [(id<ORBitVar>)a1 bitLength];
-    
-    ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
-    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
-    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
-    for(int i=0; i< wordlength;i++){
-        low[i] = 0;
-        up[i] = CP_UMASK;
-    }
+   int size = [(id<ORBitVar>)a1 bitLength];
+   
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   for(int i=0; i< wordlength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-    id<ORBitVar> q;
-    id<ORBitVar> r;
-    
-    q = [ORFactory bitVar:_model low:low up:up bitLength:size];
-    r = [ORFactory bitVar:_model low:low up:up bitLength:size];
-    [_model add:[ORFactory bit:a1 dividedbysigned:a2 eq:q rem:r]];
-    
-    return r;
+   id<ORBitVar> q;
+   id<ORBitVar> r;
+   
+   q = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   r = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   [_model add:[ORFactory bit:a1 dividedbysigned:a2 eq:q rem:r]];
+   
+   return r;
 }
 
 -(objcp_expr) objcp_mk_bv_extract:(objcp_context)ctx from:(ORUInt)msb downTo:(ORUInt)lsb in:(objcp_expr)bv{
@@ -1438,7 +1532,7 @@ static OBJCPGateway *objcpgw;
    }
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   
    id<ORBitVar> bv2 = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:bv from:lsb to:msb eq:bv2]];
    return bv2;
@@ -1456,9 +1550,9 @@ static OBJCPGateway *objcpgw;
    }
    if (size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-  [_model add:[ORFactory bit:(id<ORBitVar>)a1 rotateLBy:(ORUInt)a2 eq:bv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)a1 rotateLBy:(ORUInt)a2 eq:bv]];
    return bv;
 }
 
@@ -1478,7 +1572,7 @@ static OBJCPGateway *objcpgw;
    }
    if(size%BITSPERWORD != 0)
       up[0] >>= BITSPERWORD-(size%BITSPERWORD);
-
+   
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)arg1 zeroExtendTo:(id<ORBitVar>)bv]];
    return bv;
@@ -1581,3 +1675,4 @@ static OBJCPGateway *objcpgw;
    return [x toFloat];
 }
 @end
+
