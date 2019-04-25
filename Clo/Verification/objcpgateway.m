@@ -9,25 +9,6 @@
 #import "objcpgateway.h"
 #include "gmp.h"
 
-@implementation NSMutableArray (Stack)
-
-- (void) push: (id)item {
-   [self addObject:item];
-}
-
-- (ORBool) empty{
-   return [self count] == 0;
-}
-
-- (id) pop {
-   id item = nil;
-   if ([self count] != 0) {
-      item = [self lastObject];
-      [self removeLastObject];
-   }
-   return item;
-}
-@end
 
 @implementation ConstantWrapper
 static OBJCPGateway *objcpgw;
