@@ -349,8 +349,8 @@ void testOptimize(int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"testR"){
 //   testIntBFS(argc, argv);
-   testR(argc, argv);
-   //testRD(argc, argv);
+   //testR(argc, argv);
+   testRD(argc, argv);
    //testRAbs(argc, argv);
    
 //   float ye = nb_float(3.2f, NB_FLOAT);
