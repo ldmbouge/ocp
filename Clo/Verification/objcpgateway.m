@@ -671,11 +671,9 @@ static OBJCPGateway *objcpgw;
       first = [key intValue];
       maxId = max(first,maxId);
       [idarr addObject:key];
-      NSLog(@"idvar : %d",first);
       for(ORExprBinaryI* o in obj){
          if([o getId] == -1)
             [_model trackMutable:o];
-         NSLog(@"ide : %d",[o getId]);
          maxId = max([o getId],maxId);
          maxId = max([[o left] getId],maxId);
          maxId = max([[o right] getId],maxId);
