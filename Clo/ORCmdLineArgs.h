@@ -87,6 +87,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
 @property (nonatomic,readonly) ORBool    bds;
+@property (nonatomic,readonly) ORBool    cycleDetection;
 @property (nonatomic,readonly) ORBool    ldfs;
 @property (nonatomic,readonly) ORInt    level;
 @property (nonatomic,readonly) ORInt    choicesLimit;

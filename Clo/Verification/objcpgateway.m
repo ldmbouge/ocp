@@ -683,7 +683,7 @@ static OBJCPGateway *objcpgw;
    id<ORIntArray> recStack = [ORFactory intArray:_model range:RANGE(_model,0,maxId) value:0];
    NSMutableDictionary* exprVisited = [[NSMutableDictionary alloc] init];
    for(id v in idarr){
-      if([self isCycleRec:v parent:v graph:dict expr:exprVisited visited:visited recStack:recStack hasStrict:NO])
+      if([self isCycleRec:v parent:v graph:dict expr:exprVisited visited:visited recStack:recStack hasStrict:NO depth:1])
          return YES;
    }
    [idarr release];
@@ -691,14 +691,14 @@ static OBJCPGateway *objcpgw;
    return NO;
 }
 
--(ORBool) isCycleRec:(id) v parent:(id)p graph:(NSDictionary*) graph expr:(NSMutableDictionary*) expr visited:(id<ORIntArray>) visited recStack:(id<ORIntArray>) recStack hasStrict:(ORBool) strict
+-(ORBool) isCycleRec:(id) v parent:(id)p graph:(NSDictionary*) graph expr:(NSMutableDictionary*) expr visited:(id<ORIntArray>) visited recStack:(id<ORIntArray>) recStack hasStrict:(ORBool) strict depth:(ORInt) depth
 {
    ORInt vi = [v intValue];
    ORInt pi = [p intValue];
    ORExprBinaryI* se;
    if(![visited[vi] intValue]){
       visited[vi] = @(1);
-      recStack[vi] = @(1);
+      recStack[vi] = @(depth);
       se = [expr objectForKey:v];
 //     case we are node expression
       if(se != nil){
@@ -706,9 +706,9 @@ static OBJCPGateway *objcpgw;
          ORInt next = (other == pi) ? [[se left] getId] : other;
          ORBool isStrict = ([se isKindOfClass:ORExprGThenI.class] || [se isKindOfClass:ORExprLThenI.class]);
          if(![visited[next] intValue]){
-            if ([self isCycleRec:@(next) parent:@(next) graph:graph expr:expr visited:visited recStack:recStack hasStrict:(strict || isStrict)])
+            if ([self isCycleRec:@(next) parent:@(next) graph:graph expr:expr visited:visited recStack:recStack hasStrict:(strict || isStrict) depth:depth+1])
                return YES;
-         }else if([recStack[next] intValue] && (strict || isStrict))
+         }else if([recStack[next] intValue] && [recStack[next] intValue] != depth-1 && (strict || isStrict))
             return YES;
       }else{
 //      case we are var node
@@ -719,9 +719,9 @@ static OBJCPGateway *objcpgw;
             si = [se getId];
             [expr setObject:e forKey:@(si)];
             if(![visited[si] intValue]){
-               if([self isCycleRec:@(si) parent:@(vi) graph:graph expr:expr visited:visited recStack:recStack hasStrict:strict])
+               if([self isCycleRec:@(si) parent:@(vi) graph:graph expr:expr visited:visited recStack:recStack hasStrict:strict depth:depth+1])
                   return YES;
-            }else if([recStack[si] intValue] && strict)
+            }else if([recStack[si] intValue] && [recStack[si] intValue] != depth-1  && strict)
                return YES;
          }
       }
@@ -745,9 +745,11 @@ static OBJCPGateway *objcpgw;
       __block ORBool isSat;
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
-         ORBool hascycle = [self isCycle:lh];
-         NSLog(@"%s",(hascycle)?"YES":"NO");
-         //         id<ORVarArray> vars = [lh getVariables];
+         ORBool hascycle = NO;
+         if([_options cycleDetection]){
+            hascycle = [self isCycle:lh];
+            NSLog(@"%s",(hascycle)?"YES":"NO");
+         }
          __block bool found = false;
          isSat = false;
          if(!hascycle){

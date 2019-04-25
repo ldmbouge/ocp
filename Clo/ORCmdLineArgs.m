@@ -42,6 +42,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize nArg;
 @synthesize bds;
 @synthesize ldfs;
+@synthesize cycleDetection;
 @synthesize level;
 @synthesize uniqueNB;
 @synthesize is3Bfiltering;
@@ -92,6 +93,7 @@ static enum ValHeuristic valIndex[] =
    searchNBFloats=2;
    fName = @"";
    randomized = NO;
+   cycleDetection = NO;
    variationSearch = 0;
    choicesLimit = -1;
    splitTest = 0;
@@ -113,6 +115,8 @@ static enum ValHeuristic valIndex[] =
          printf("-grate-other-limit VALUE : rmplace VALUE by a concrete value\n");
          exit(1);
       }
+      else if (strncmp(argv[k], "-cycle-detection", 16) == 0)
+         cycleDetection = YES;
       else if (strncmp(argv[k], "-bds", 4) == 0)
          bds = YES;
       else if (strncmp(argv[k], "-ldfs", 5) == 0)
