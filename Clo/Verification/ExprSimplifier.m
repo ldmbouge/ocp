@@ -540,13 +540,18 @@
 {
    id<ORExpr> re = (isNegate%2)?ne:e;
    id<ORExpr> key = (isNegate%2)?right:left;
-   id val = [_theSet objectForKey:@(key.getId)];
+   [self doIt:re with:key];
+}
+
+-(void) doIt:(id<ORExpr>) e with:(id<ORExpr>) left
+{
+   id val = [_theSet objectForKey:@(left.getId)];
    if(val == nil){
       val = [[NSMutableArray alloc] init];
-      [val addObject:re];
-      [_theSet setObject:val forKey:@(key.getId)];
+      [val addObject:e];
+      [_theSet setObject:val forKey:@(left.getId)];
    }else
-      [val addObject:re];
+      [val addObject:e];
 }
 -(void) visitAlgebraicConstraint:(id<ORAlgebraicConstraint>)cstr
 {
@@ -604,9 +609,9 @@
 {
    id<ORExpr> l = [e left];
    id<ORExpr> r = [e right];
-   if([r isVariable] && [l isVariable]){
-      [self doIt:e with:l or:r negate:[l neq:r]];
-      [self doIt:e with:r or:l negate:[l neq:r]];
+   if([r isVariable] && [l isVariable] && !(isNegate%2)){
+      [self doIt:e with:l];
+      [self doIt:e with:r];
    }else{
       [l visit:self];
       [r visit:self];
@@ -616,9 +621,9 @@
 {
    id<ORExpr> l = [e left];
    id<ORExpr> r = [e right];
-   if([r isVariable] && [l isVariable]){
-      [self doIt:e with:l or:r negate:[l eq:r]];
-      [self doIt:e with:r or:l negate:[l eq:r]];
+   if([r isVariable] && [l isVariable] && (isNegate%2)){
+      [self doIt:e with:l];
+      [self doIt:e with:r];
    }else{
       [l visit:self];
       [r visit:self];
