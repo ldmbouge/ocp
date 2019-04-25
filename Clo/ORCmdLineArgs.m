@@ -350,7 +350,7 @@ static enum ValHeuristic valIndex[] =
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
    id<CPProgram> p = nil;
-   ORInt nb = [[model FPVars] count];
+   ORInt nb = [[model FPVars] count]/2;
    id<ORSearchController> cont = nil;
    if(bds) cont = [ORSemBDSController protoWithDisc:nb times:5];
 //   if(ldfs) cont = [ORDFSController proto];
