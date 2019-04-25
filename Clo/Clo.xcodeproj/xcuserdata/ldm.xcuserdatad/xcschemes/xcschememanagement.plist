@@ -12,7 +12,7 @@
 		<key>AFA_SHA.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>156</integer>
+			<integer>155</integer>
 		</dict>
 		<key>ATPTW.xcscheme</key>
 		<dict>
@@ -327,12 +327,12 @@
 		<key>dummSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>158</integer>
+			<integer>309</integer>
 		</dict>
 		<key>dummy.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>157</integer>
+			<integer>156</integer>
 		</dict>
 		<key>dxAES.xcscheme</key>
 		<dict>
