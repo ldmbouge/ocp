@@ -41,7 +41,7 @@ void ulp_computation_d(id<ORRationalInterval> ulp, const double_interval f){
       sup = maxDbl(nextafter(f.inf, +INFINITY) - f.inf, nextafter(f.sup, +INFINITY) - f.sup);
       
       [tmp0 set_d: inf];
-      [tmp1 set_d: 1.0];
+      [tmp1 set_d: 2.0];
       tmp2 = [tmp0 div: tmp1];
       [ulp.low set: tmp2];
       [tmp0 set_d: sup];
