@@ -352,7 +352,7 @@ static enum ValHeuristic valIndex[] =
    id<CPProgram> p = nil;
    ORInt nb = [[model FPVars] count];
    id<ORSearchController> cont = nil;
-   if(bds) cont = [ORSemBDSController protoWithDisc:nb times:3];
+   if(bds) cont = [ORSemBDSController protoWithDisc:nb times:4];
 //   if(ldfs) cont = [ORDFSController proto];
    switch(nbThreads) {
       case 0:
