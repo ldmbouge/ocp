@@ -830,6 +830,51 @@
 {
    return (id)[ORFactory expr:(id)self imply:(id)e track:t];
 }
+
+-(id<ORExpr>) contains:(id<ORExpr>)e track:(id<ORTracker>)t
+{
+    return (id)[ORFactory contains:(id)e inExpr:(id)self];
+}
+-(id<ORRelation>) setUnion:(id<ORExpr>)e  track:(id<ORTracker>)t
+{
+    return (id)[ORFactory setUnion:(id)self and:(id)e];
+}
+-(id<ORExpr>) ifthen:(id<ORExpr>)t elseReturn:(id<ORExpr>)e track:(id<ORTracker>)track
+{
+    return (id)[ORFactory ifExpr:(id)self then:(id)t elseReturn:(id)e track:track];
+}
+-(id<ORExpr>) toEachInSetPlus: (id) e  track:(id<ORTracker>)t
+{
+    if ([e conformsToProtocol:@protocol(ORExpr)])
+        return [ORFactory expr:self toEachInSetPlus:e track:t];
+    else if ([e isKindOfClass:[NSNumber class]])
+        return [ORFactory expr:self toEachInSetPlus:[e asExpression:t] track:t];
+    else
+        return NULL;
+}
+-(id<ORExpr>) toEachInSetPlusEachInSet: (id<ORExpr>) e  track:(id<ORTracker>)t
+{
+    return [ORFactory expr:self toEachInSetPlusEachInSet:e track:t];
+}
+-(id<ORRelation>) eachInSetLT:(id)e track:(id<ORTracker>)t
+{
+    id re = NULL;
+    if ([e conformsToProtocol:@protocol(ORExpr)])
+        re = e;
+    else if ([e isKindOfClass:[NSNumber class]])
+        re = [e asExpression:t];
+    return [ORFactory expr:self eachInSetLEQ:[re sub:[ORFactory integer:t value:1] track:t] track:t];
+}
+-(id<ORRelation>) eachInSetGT: (id) e  track:(id<ORTracker>)t
+{
+    id re = NULL;
+    if ([e conformsToProtocol:@protocol(ORExpr)])
+        re = e;
+    else if ([e isKindOfClass:[NSNumber class]])
+        re = [e asExpression:t];
+    return [ORFactory expr:self eachInSetGEQ:[re plus:[ORFactory integer:t value:1] track:t] track:t];
+}
+
 -(void) close
 {
    
@@ -1174,6 +1219,104 @@
 }
 -(id<ORIntSet>) set { return _set; }
 -(id<ORExpr>) value { return _value; }
+@end
+
+@implementation ORExprSetExprContainsI
+-(id<ORExpr>) initORExprSetExprContainsI:(id<ORExpr>)a value:(id<ORExpr>)value
+{
+    self = [super init];
+    _left = a;
+    _right = value;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprSetExprContainsI:self];
+}
+-(id<ORExpr>) set { return _left; }
+-(id<ORExpr>) value { return _right; }
+@end
+@implementation ORExprSetUnionI
+-(id<ORExpr>) initORExprSetUnionI:(id<ORExpr>)left and:(id<ORExpr>)right
+{
+    self = [super init];
+    _left = left;
+    _right = right;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprSetUnionI:self];
+}
+@end
+@implementation ORExprIfThenElseI
+-(id<ORExpr>) initORExprIfThenElseI:(id<ORExpr>)i then:(id<ORExpr>)t elseReturn:(id<ORExpr>)e
+{
+    self = [super init];
+    _if = i;
+    _then = t;
+    _else = e;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprIfThenElseI:self];
+}
+-(id<ORExpr>) ifExpr { return _if; }
+-(id<ORExpr>) thenReturn { return _then; }
+-(id<ORExpr>) elseReturn { return _else; }
+@end
+@implementation ORExprEachInSetPlusI
+-(id<ORExpr>) initORExprEachInSetPlusI:(id<ORExpr>)left and:(id<ORExpr>)right
+{
+    self = [super init];
+    _left = left;
+    _right = right;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprEachInSetPlusI:self];
+}
+@end
+@implementation ORExprEachInSetPlusEachInSetI
+-(id<ORExpr>) initORExprEachInSetPlusEachInSetI:(id<ORExpr>)left and:(id<ORExpr>)right
+{
+    self = [super init];
+    _left = left;
+    _right = right;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprEachInSetPlusEachInSetI:self];
+}
+@end
+@implementation ORExprEachInSetLEQI
+-(id<ORExpr>) initORExprEachInSetLEQI:(id<ORExpr>)left and:(id<ORExpr>)right
+{
+    self = [super init];
+    _left = left;
+    _right = right;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprEachInSetLEQI:self];
+}
+@end
+@implementation ORExprEachInSetGEQI
+-(id<ORExpr>) initORExprEachInSetGEQI:(id<ORExpr>)left and:(id<ORExpr>)right
+{
+    self = [super init];
+    _left = left;
+    _right = right;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprEachInSetGEQI:self];
+}
 @end
 
 @implementation ORExprCstDoubleSubI
@@ -2500,17 +2643,88 @@
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprValueAssignmentI:self]; }
 @end
+@implementation ORExprLayerVariableI
+-(id<ORExpr>) initORExprLayerVariableI:(id<ORTracker>)t
+{
+    self = [super init];
+    _t = t;
+    return self;
+}
+-(id<ORTracker>) tracker { return _t;}
+-(void) visit:(ORVisitor*) v { [v visitExprLayerVariableI:self]; }
+@end
+@implementation ORExprParentInformationI
+-(id<ORExpr>) initORExprParentInformationI:(id<ORTracker>)t
+{
+    self = [super init];
+    _t = t;
+    return self;
+}
+-(id<ORTracker>) tracker { return _t;}
+-(void) visit:(ORVisitor*) v { [v visitExprParentInformationI:self]; }
+@end
+@implementation ORExprChildInformationI
+-(id<ORExpr>) initORExprChildInformationI:(id<ORTracker>)t
+{
+    self = [super init];
+    _t = t;
+    return self;
+}
+-(id<ORTracker>) tracker { return _t;}
+-(void) visit:(ORVisitor*) v { [v visitExprChildInformationI:self]; }
+@end
+@implementation ORExprLeftInformationI
+-(id<ORExpr>) initORExprLeftInformationI:(id<ORTracker>)t
+{
+    self = [super init];
+    _t = t;
+    return self;
+}
+-(void) visit:(ORVisitor*) v { [v visitExprLeftInformationI:self]; }
+-(id<ORTracker>) tracker { return _t;}
+@end
+@implementation ORExprRightInformationI
+-(id<ORExpr>) initORExprRightInformationI:(id<ORTracker>)t
+{
+    self = [super init];
+    _t = t;
+    return self;
+}
+-(void) visit:(ORVisitor*) v { [v visitExprRightInformationI:self]; }
+-(id<ORTracker>) tracker { return _t;}
+@end
+@implementation ORExprSingletonSetI
+-(id<ORExpr>) initORExprSingletonSetI:(id<ORExpr>)value track:(id<ORTracker>)t
+{
+    self = [super init];
+    _value = value;
+    _t = t;
+    return self;
+}
+-(id<ORExpr>) value { return _value;}
+-(id<ORTracker>) tracker { return _t;}
+-(void) visit:(ORVisitor*) v { [v visitExprSingletonSetI:self]; }
+@end
+
 
 @implementation ORExprStateValueI
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup
 {
     self = [super init];
+    _index = 0;
     _t = t;
     _lookup = lookup;
+    return self;
+}
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index
+{
+    [self initORExprStateValueI:t lookup:lookup];
+    _index = index;
     return self;
 }
 -(void) setLookup:(int)lookup { _lookup = lookup; }
 -(int) lookup { return _lookup; }
 -(id<ORTracker>) tracker { return _t;}
+-(int) index { return _index; }
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueI:self]; }
 @end

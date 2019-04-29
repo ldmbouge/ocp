@@ -69,6 +69,12 @@
 @end
 
 
+@interface ORCustomAltMDD : ORConstraintI<ORCustomAltMDD>
+-(ORCustomAltMDD*)initORCustomAltMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
+-(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(Class) stateClass;
+@end
 @interface ORCustomMDD : ORConstraintI<ORCustomMDD>
 -(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
 -(id<ORIntVarArray>) vars;
@@ -87,6 +93,10 @@
 
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize;
+-(id<ORIntVarArray>) vars;
+@end
+@interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
+-(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) vars;
 @end
 

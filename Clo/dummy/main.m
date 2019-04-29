@@ -283,6 +283,7 @@ int main (int argc, const char * argv[])
         id<ORInteger> lower5 = [ORFactory integer:mdl value:11];
         id<ORInteger> upper5 = [ORFactory integer:mdl value:12];
         
+        id<ORInteger> zero = [ORFactory integer:mdl value:0];
         
         /*
         id<ORConstraint> among1 = [ORFactory among:variables values:countedValues1 low:[lower1 value] up:[upper1 value]];
@@ -298,12 +299,368 @@ int main (int argc, const char * argv[])
         [mdl add: among5];
         */
         
+        id<ORInteger> firstVariableIndex = [ORFactory integer:mdl value:1];
+        id<ORInteger> secondVariableIndex = [ORFactory integer:mdl value:2];
         
+        //Equality constraint
+        /*
+        id<ORAltMDDSpecs> mddStateSpecs = [ORFactory AltMDDSpecs: mdl variables: variables];
+        [mddStateSpecs setBottomUpInformationAsSet];
+        [mddStateSpecs setTopDownInformationAsSet];
+        
+
+        
+        //(e is not in Idown(s) and L(s) == j) OR (e is not in Iup(t) and L(s) == i)
+        id<ORExpr> deleteEdgeWhen = [[[[[ORFactory parentInformation:mdl] contains:[ORFactory valueAssignment:mdl] track:mdl] negTrack:mdl] land:[[ORFactory layerVariable: mdl] eq: secondVariableIndex track:mdl] track:mdl] lor:
+                                     [[[[ORFactory childInformation:mdl] contains:[ORFactory valueAssignment:mdl] track:mdl] negTrack:mdl] land:[[ORFactory layerVariable: mdl] eq: firstVariableIndex track:mdl] track:mdl] track:mdl];
+        
+        //If L(s) == i, Idown(s) x e = {e}
+        id<ORExpr> addEdgeToTopDown = [[[ORFactory layerVariable: mdl] eq: firstVariableIndex track:mdl] ifthen:[ORFactory singletonSet:[ORFactory valueAssignment:mdl] track:mdl] elseReturn: [ORFactory parentInformation:mdl] track:mdl];
+        //If L(s) == j, Iup(t) x e = {e}
+        id<ORExpr> addEdgeToBottomUp = [[[ORFactory layerVariable: mdl] eq: secondVariableIndex track:mdl] ifthen:[ORFactory singletonSet:[ORFactory valueAssignment:mdl] track:mdl] elseReturn: [ORFactory parentInformation:mdl] track:mdl];
+        //Possibly should rename parentInformation here.  In theory, can just use same function since when it makes the closures for these, it should just be passing it the 'source' node and an edge.  The source node in top-down is the parent of an edge.  The source node in bottom-up is the child of an edge.
+        
+        [mddStateSpecs setEdgeDeletionCondition: deleteEdgeWhen];
+        [mddStateSpecs setTopDownInfoEdgeAddition: addEdgeToTopDown];
+        [mddStateSpecs setBottomUpInfoEdgeAddition: addEdgeToBottomUp];
+        [mddStateSpecs setInformationMergeToUnion:mdl];
+        
+        [mdl add: mddStateSpecs];*/
+        
+        
+        //Among, all path lengths
+        id<ORAltMDDSpecs> mddStateSpecs1 = [ORFactory AltMDDSpecs: mdl variables: variables];
+        [mddStateSpecs1 setBottomUpInformationAsSet];
+        [mddStateSpecs1 addToBottomUpInfoSet: 0];
+        [mddStateSpecs1 setTopDownInformationAsSet];
+        [mddStateSpecs1 addToTopDownInfoSet: 0];
+        
+        
+        
+        //if for each v in Idown(s), v' in Iup(t), v + e + v' not in [l,u], delete
+        id<ORExpr> deleteEdgeWhen1 = [[[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues1 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetLT:lower1 track:mdl] lor:
+                                      [[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues1 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetGT:upper1 track:mdl] track:mdl];
+        
+        //Add e to each v in Idown(s)
+        id<ORExpr> addEdgeToTopDown1 = [[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues1 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Add e to each v in Iup(t)
+        id<ORExpr> addEdgeToBottomUp1 =[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues1 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Possibly should rename parentInformation here.  In theory, can just use same function since when it makes the closures for these, it should just be passing it the 'source' node and an edge.  The source node in top-down is the parent of an edge.  The source node in bottom-up is the child of an edge.
+        
+        [mddStateSpecs1 setEdgeDeletionCondition: deleteEdgeWhen1];
+        [mddStateSpecs1 setTopDownInfoEdgeAddition: addEdgeToTopDown1];
+        [mddStateSpecs1 setBottomUpInfoEdgeAddition: addEdgeToBottomUp1];
+        [mddStateSpecs1 setInformationMergeToUnion:mdl];
+        
+        [mdl add: mddStateSpecs1];
+        
+        id<ORAltMDDSpecs> mddStateSpecs2 = [ORFactory AltMDDSpecs: mdl variables: variables];
+        [mddStateSpecs2 setBottomUpInformationAsSet];
+        [mddStateSpecs2 addToBottomUpInfoSet: 0];
+        [mddStateSpecs2 setTopDownInformationAsSet];
+        [mddStateSpecs2 addToTopDownInfoSet: 0];
+        
+        
+        
+        //if for each v in Idown(s), v' in Iup(t), v + e + v' not in [l,u], delete
+        id<ORExpr> deleteEdgeWhen2 = [[[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues2 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetLT:lower2 track:mdl] lor:
+                                      [[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues2 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetGT:upper2 track:mdl] track:mdl];
+        
+        //Add e to each v in Idown(s)
+        id<ORExpr> addEdgeToTopDown2 = [[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues2 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Add e to each v in Iup(t)
+        id<ORExpr> addEdgeToBottomUp2 =[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues2 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Possibly should rename parentInformation here.  In theory, can just use same function since when it makes the closures for these, it should just be passing it the 'source' node and an edge.  The source node in top-down is the parent of an edge.  The source node in bottom-up is the child of an edge.
+        
+        [mddStateSpecs2 setEdgeDeletionCondition: deleteEdgeWhen2];
+        [mddStateSpecs2 setTopDownInfoEdgeAddition: addEdgeToTopDown2];
+        [mddStateSpecs2 setBottomUpInfoEdgeAddition: addEdgeToBottomUp2];
+        [mddStateSpecs2 setInformationMergeToUnion:mdl];
+        
+        [mdl add: mddStateSpecs2];
+        /*
+        id<ORAltMDDSpecs> mddStateSpecs3 = [ORFactory AltMDDSpecs: mdl variables: variables];
+        [mddStateSpecs3 setBottomUpInformationAsSet];
+        [mddStateSpecs3 addToBottomUpInfoSet: 0];
+        [mddStateSpecs3 setTopDownInformationAsSet];
+        [mddStateSpecs3 addToTopDownInfoSet: 0];
+        
+        
+        
+        //if for each v in Idown(s), v' in Iup(t), v + e + v' not in [l,u], delete
+        id<ORExpr> deleteEdgeWhen3 = [[[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues3 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetLT:lower3 track:mdl] lor:
+                                      [[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues3 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetGT:upper3 track:mdl] track:mdl];
+        
+        //Add e to each v in Idown(s)
+        id<ORExpr> addEdgeToTopDown3 = [[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues3 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Add e to each v in Iup(t)
+        id<ORExpr> addEdgeToBottomUp3 =[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues3 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Possibly should rename parentInformation here.  In theory, can just use same function since when it makes the closures for these, it should just be passing it the 'source' node and an edge.  The source node in top-down is the parent of an edge.  The source node in bottom-up is the child of an edge.
+        
+        [mddStateSpecs3 setEdgeDeletionCondition: deleteEdgeWhen3];
+        [mddStateSpecs3 setTopDownInfoEdgeAddition: addEdgeToTopDown3];
+        [mddStateSpecs3 setBottomUpInfoEdgeAddition: addEdgeToBottomUp3];
+        [mddStateSpecs3 setInformationMergeToUnion:mdl];
+        
+        [mdl add: mddStateSpecs3];
+        
+        id<ORAltMDDSpecs> mddStateSpecs4 = [ORFactory AltMDDSpecs: mdl variables: variables];
+        [mddStateSpecs4 setBottomUpInformationAsSet];
+        [mddStateSpecs4 addToBottomUpInfoSet: 0];
+        [mddStateSpecs4 setTopDownInformationAsSet];
+        [mddStateSpecs4 addToTopDownInfoSet: 0];
+        
+        
+        
+        //if for each v in Idown(s), v' in Iup(t), v + e + v' not in [l,u], delete
+        id<ORExpr> deleteEdgeWhen4 = [[[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues4 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetLT:lower4 track:mdl] lor:
+                                      [[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues4 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetGT:upper4 track:mdl] track:mdl];
+        
+        //Add e to each v in Idown(s)
+        id<ORExpr> addEdgeToTopDown4 = [[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues4 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Add e to each v in Iup(t)
+        id<ORExpr> addEdgeToBottomUp4 =[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues4 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Possibly should rename parentInformation here.  In theory, can just use same function since when it makes the closures for these, it should just be passing it the 'source' node and an edge.  The source node in top-down is the parent of an edge.  The source node in bottom-up is the child of an edge.
+        
+        [mddStateSpecs4 setEdgeDeletionCondition: deleteEdgeWhen4];
+        [mddStateSpecs4 setTopDownInfoEdgeAddition: addEdgeToTopDown4];
+        [mddStateSpecs4 setBottomUpInfoEdgeAddition: addEdgeToBottomUp4];
+        [mddStateSpecs4 setInformationMergeToUnion:mdl];
+        
+        [mdl add: mddStateSpecs4];
+        
+        id<ORAltMDDSpecs> mddStateSpecs5 = [ORFactory AltMDDSpecs: mdl variables: variables];
+        [mddStateSpecs5 setBottomUpInformationAsSet];
+        [mddStateSpecs5 addToBottomUpInfoSet: 0];
+        [mddStateSpecs5 setTopDownInformationAsSet];
+        [mddStateSpecs5 addToTopDownInfoSet: 0];
+        
+        
+        
+        //if for each v in Idown(s), v' in Iup(t), v + e + v' not in [l,u], delete
+        id<ORExpr> deleteEdgeWhen5 = [[[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues5 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetLT:lower5 track:mdl] lor:
+                                      [[[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues5 contains: [ORFactory valueAssignment:mdl]] track:mdl] toEachInSetPlusEachInSet: [ORFactory childInformation:mdl] track:mdl] eachInSetGT:upper5 track:mdl] track:mdl];
+        
+        //Add e to each v in Idown(s)
+        id<ORExpr> addEdgeToTopDown5 = [[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues5 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Add e to each v in Iup(t)
+        id<ORExpr> addEdgeToBottomUp5 =[[ORFactory parentInformation:mdl] toEachInSetPlus:[countedValues5 contains: [ORFactory valueAssignment:mdl]] track:mdl];
+        //Possibly should rename parentInformation here.  In theory, can just use same function since when it makes the closures for these, it should just be passing it the 'source' node and an edge.  The source node in top-down is the parent of an edge.  The source node in bottom-up is the child of an edge.
+        
+        [mddStateSpecs5 setEdgeDeletionCondition: deleteEdgeWhen5];
+        [mddStateSpecs5 setTopDownInfoEdgeAddition: addEdgeToTopDown5];
+        [mddStateSpecs5 setBottomUpInfoEdgeAddition: addEdgeToBottomUp5];
+        [mddStateSpecs5 setInformationMergeToUnion:mdl];
+        
+        [mdl add: mddStateSpecs5];*/
+        
+        /*
         
         typedef enum {
-            count,
+            minCount,
+            maxCount,
             remaining
         } AmongState;
+        
+        
+        id<ORMDDSpecs> mddStateSpecs = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
+        [mddStateSpecs addStateInt: minCount withDefaultValue: 0];
+        [mddStateSpecs addStateInt: maxCount withDefaultValue: 0];
+        [mddStateSpecs addStateInt: remaining withDefaultValue: 50];
+        
+        id<ORExpr> arcExists = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper1 track:mdl]
+                                land:
+                                [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower1 track: mdl] track: mdl];
+        
+        [mddStateSpecs setArcExistsFunction: arcExists];
+        
+        //self["count"] = parent["count"] + (parentValue in countedValues)
+        id<ORExpr> minCountTransitionFunction = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> maxCountTransitionFunction = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        //self["remaining"] = parent["remaining"] - 1
+        id<ORExpr> remainingTransitionFunction = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
+        [mddStateSpecs addTransitionFunction: minCountTransitionFunction toStateValue: minCount];
+        [mddStateSpecs addTransitionFunction: maxCountTransitionFunction toStateValue: maxCount];
+        [mddStateSpecs addTransitionFunction: remainingTransitionFunction toStateValue: remaining];
+        id<ORExpr> minCountRelaxationFunction = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
+        id<ORExpr> maxCountRelaxationFunction = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
+        id<ORExpr> remainingRelaxationFunction = [ORFactory getLeftStateValue:mdl lookup:remaining];
+        [mddStateSpecs addRelaxationFunction: minCountRelaxationFunction toStateValue: minCount];
+        [mddStateSpecs addRelaxationFunction: maxCountRelaxationFunction toStateValue: maxCount];
+        [mddStateSpecs addRelaxationFunction: remainingRelaxationFunction toStateValue: remaining];
+        
+        //id<ORExpr> minCountStateDifferential = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper1 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper1 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
+        //id<ORExpr> maxCountStateDifferential = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower1 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower1 track:mdl] track:mdl] absTrack:mdl];
+        id<ORExpr> minCountStateDifferential = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
+        id<ORExpr> maxCountStateDifferential = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
+        id<ORExpr> remainingStateDifferential = zero;
+        
+        [mddStateSpecs addStateDifferentialFunction: minCountStateDifferential toStateValue: minCount];
+        [mddStateSpecs addStateDifferentialFunction: maxCountStateDifferential toStateValue: maxCount];
+        [mddStateSpecs addStateDifferentialFunction: remainingStateDifferential toStateValue: remaining];
+        
+        [mdl add: mddStateSpecs];
+        
+        
+        id<ORMDDSpecs> mddStateSpecs2 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
+        [mddStateSpecs2 addStateInt: minCount withDefaultValue: 0];
+        [mddStateSpecs2 addStateInt: maxCount withDefaultValue: 0];
+        [mddStateSpecs2 addStateInt: remaining withDefaultValue: 50];
+        
+        id<ORExpr> arcExists2 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper2 track:mdl]
+                                land:
+                                [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower2 track: mdl] track: mdl];
+        
+        [mddStateSpecs2 setArcExistsFunction: arcExists2];
+        
+        id<ORExpr> minCountTransitionFunction2 = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> maxCountTransitionFunction2 = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> remainingTransitionFunction2 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
+        
+        [mddStateSpecs2 addTransitionFunction: minCountTransitionFunction2 toStateValue: minCount];
+        [mddStateSpecs2 addTransitionFunction: maxCountTransitionFunction2 toStateValue: maxCount];
+        [mddStateSpecs2 addTransitionFunction: remainingTransitionFunction2 toStateValue: remaining];
+        
+        id<ORExpr> minCountRelaxationFunction2 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
+        id<ORExpr> maxCountRelaxationFunction2 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
+        id<ORExpr> remainingRelaxationFunction2 = [ORFactory getLeftStateValue:mdl lookup:remaining];
+        [mddStateSpecs2 addRelaxationFunction: minCountRelaxationFunction2 toStateValue: minCount];
+        [mddStateSpecs2 addRelaxationFunction: maxCountRelaxationFunction2 toStateValue: maxCount];
+        [mddStateSpecs2 addRelaxationFunction: remainingRelaxationFunction2 toStateValue: remaining];
+        
+        //id<ORExpr> minCountStateDifferential2 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper2 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper2 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
+        //id<ORExpr> maxCountStateDifferential2 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower2 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower2 track:mdl] track:mdl] absTrack:mdl];
+        id<ORExpr> minCountStateDifferential2 = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
+        id<ORExpr> maxCountStateDifferential2 = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
+        id<ORExpr> remainingStateDifferential2 = zero;
+        
+        [mddStateSpecs2 addStateDifferentialFunction: minCountStateDifferential2 toStateValue: minCount];
+        [mddStateSpecs2 addStateDifferentialFunction: maxCountStateDifferential2 toStateValue: maxCount];
+        [mddStateSpecs2 addStateDifferentialFunction: remainingStateDifferential2 toStateValue: remaining];
+        
+        [mdl add: mddStateSpecs2];
+        
+
+        
+        id<ORMDDSpecs> mddStateSpecs3 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
+        [mddStateSpecs3 addStateInt: minCount withDefaultValue: 0];
+        [mddStateSpecs3 addStateInt: maxCount withDefaultValue: 0];
+        [mddStateSpecs3 addStateInt: remaining withDefaultValue: 50];
+        
+        id<ORExpr> arcExists3 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper3 track:mdl]
+                                 land:
+                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower3 track: mdl] track: mdl];
+        
+        [mddStateSpecs3 setArcExistsFunction: arcExists3];
+        
+        id<ORExpr> minCountTransitionFunction3 = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> maxCountTransitionFunction3 = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> remainingTransitionFunction3 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
+        
+        [mddStateSpecs3 addTransitionFunction: minCountTransitionFunction3 toStateValue: minCount];
+        [mddStateSpecs3 addTransitionFunction: maxCountTransitionFunction3 toStateValue: maxCount];
+        [mddStateSpecs3 addTransitionFunction: remainingTransitionFunction3 toStateValue: remaining];
+        
+        id<ORExpr> minCountRelaxationFunction3 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
+        id<ORExpr> maxCountRelaxationFunction3 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
+        id<ORExpr> remainingRelaxationFunction3 = [ORFactory getLeftStateValue:mdl lookup:remaining];
+        [mddStateSpecs3 addRelaxationFunction: minCountRelaxationFunction3 toStateValue: minCount];
+        [mddStateSpecs3 addRelaxationFunction: maxCountRelaxationFunction3 toStateValue: maxCount];
+        [mddStateSpecs3 addRelaxationFunction: remainingRelaxationFunction3 toStateValue: remaining];
+        
+        //id<ORExpr> minCountStateDifferential3 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper3 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper3 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
+        //id<ORExpr> maxCountStateDifferential3 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower3 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower3 track:mdl] track:mdl] absTrack:mdl];
+        id<ORExpr> minCountStateDifferential3 = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
+        id<ORExpr> maxCountStateDifferential3 = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
+        id<ORExpr> remainingStateDifferential3 = zero;
+        
+        [mddStateSpecs3 addStateDifferentialFunction: minCountStateDifferential3 toStateValue: minCount];
+        [mddStateSpecs3 addStateDifferentialFunction: maxCountStateDifferential3 toStateValue: maxCount];
+        [mddStateSpecs3 addStateDifferentialFunction: remainingStateDifferential3 toStateValue: remaining];
+        
+        [mdl add: mddStateSpecs3];
+        
+        
+        
+        id<ORMDDSpecs> mddStateSpecs4 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
+        [mddStateSpecs4 addStateInt: minCount withDefaultValue: 0];
+        [mddStateSpecs4 addStateInt: maxCount withDefaultValue: 0];
+        [mddStateSpecs4 addStateInt: remaining withDefaultValue: 50];
+        
+        id<ORExpr> arcExists4 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper4 track:mdl]
+                                 land:
+                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower4 track: mdl] track: mdl];
+        
+        [mddStateSpecs4 setArcExistsFunction: arcExists4];
+        
+        id<ORExpr> minCountTransitionFunction4 = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> maxCountTransitionFunction4 = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> remainingTransitionFunction4 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
+        
+        [mddStateSpecs4 addTransitionFunction: minCountTransitionFunction4 toStateValue: minCount];
+        [mddStateSpecs4 addTransitionFunction: maxCountTransitionFunction4 toStateValue: maxCount];
+        [mddStateSpecs4 addTransitionFunction: remainingTransitionFunction4 toStateValue: remaining];
+        
+        id<ORExpr> minCountRelaxationFunction4 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
+        id<ORExpr> maxCountRelaxationFunction4 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
+        id<ORExpr> remainingRelaxationFunction4 = [ORFactory getLeftStateValue:mdl lookup:remaining];
+        [mddStateSpecs4 addRelaxationFunction: minCountRelaxationFunction4 toStateValue: minCount];
+        [mddStateSpecs4 addRelaxationFunction: maxCountRelaxationFunction4 toStateValue: maxCount];
+        [mddStateSpecs4 addRelaxationFunction: remainingRelaxationFunction4 toStateValue: remaining];
+        
+        //id<ORExpr> minCountStateDifferential4 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper4 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper4 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
+        //id<ORExpr> maxCountStateDifferential4 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower4 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower4 track:mdl] track:mdl] absTrack:mdl];
+        id<ORExpr> minCountStateDifferential4 = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
+        id<ORExpr> maxCountStateDifferential4 = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
+        id<ORExpr> remainingStateDifferential4 = zero;
+        
+        [mddStateSpecs4 addStateDifferentialFunction: minCountStateDifferential4 toStateValue: minCount];
+        [mddStateSpecs4 addStateDifferentialFunction: maxCountStateDifferential4 toStateValue: maxCount];
+        [mddStateSpecs4 addStateDifferentialFunction: remainingStateDifferential4 toStateValue: remaining];
+        
+        [mdl add: mddStateSpecs4];
+        
+        
+        id<ORMDDSpecs> mddStateSpecs5 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
+        [mddStateSpecs5 addStateInt: minCount withDefaultValue: 0];
+        [mddStateSpecs5 addStateInt: maxCount withDefaultValue: 0];
+        [mddStateSpecs5 addStateInt: remaining withDefaultValue: 50];
+        
+        id<ORExpr> arcExists5 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper5 track:mdl]
+                                 land:
+                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower5 track: mdl] track: mdl];
+        
+        [mddStateSpecs5 setArcExistsFunction: arcExists5];
+        
+        id<ORExpr> minCountTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> maxCountTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track: mdl];
+        id<ORExpr> remainingTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
+        
+        [mddStateSpecs5 addTransitionFunction: minCountTransitionFunction5 toStateValue: minCount];
+        [mddStateSpecs5 addTransitionFunction: maxCountTransitionFunction5 toStateValue: maxCount];
+        [mddStateSpecs5 addTransitionFunction: remainingTransitionFunction5 toStateValue: remaining];
+        
+        id<ORExpr> minCountRelaxationFunction5 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
+        id<ORExpr> maxCountRelaxationFunction5 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
+        id<ORExpr> remainingRelaxationFunction5 = [ORFactory getLeftStateValue:mdl lookup:remaining];
+        [mddStateSpecs5 addRelaxationFunction: minCountRelaxationFunction5 toStateValue: minCount];
+        [mddStateSpecs5 addRelaxationFunction: maxCountRelaxationFunction5 toStateValue: maxCount];
+        [mddStateSpecs5 addRelaxationFunction: remainingRelaxationFunction5 toStateValue: remaining];
+        
+        //id<ORExpr> minCountStateDifferential5 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper5 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper5 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
+        //id<ORExpr> maxCountStateDifferential5 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower5 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower5 track:mdl] track:mdl] absTrack:mdl];
+        id<ORExpr> minCountStateDifferential5 = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
+        id<ORExpr> maxCountStateDifferential5 = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
+        id<ORExpr> remainingStateDifferential5 = zero;
+        
+        [mddStateSpecs5 addStateDifferentialFunction: minCountStateDifferential5 toStateValue: minCount];
+        [mddStateSpecs5 addStateDifferentialFunction: maxCountStateDifferential5 toStateValue: maxCount];
+        [mddStateSpecs5 addStateDifferentialFunction: remainingStateDifferential5 toStateValue: remaining];
+        
+        
+        [mdl add: mddStateSpecs5];
+        */
+        /*
         
         id<ORMDDSpecs> mddStateSpecs = [ORFactory MDDSpecs: mdl variables:variables stateSize: 2];
         [mddStateSpecs addStateInt: count withDefaultValue: 0];
@@ -325,7 +682,7 @@ int main (int argc, const char * argv[])
         
         [mdl add: mddStateSpecs];
         
-        /*
+        
         id<ORMDDSpecs> mddStateSpecs2 = [ORFactory MDDSpecs: mdl variables:variables stateSize:2];
         [mddStateSpecs2 addStateInt: count withDefaultValue: 0];
         [mddStateSpecs2 addStateInt: remaining withDefaultValue: 50];
@@ -379,13 +736,13 @@ int main (int argc, const char * argv[])
         id<ORExpr> remainingTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
         [mddStateSpecs5 addTransitionFunction: countTransitionFunction5 toStateValue: count];
         [mddStateSpecs5 addTransitionFunction: remainingTransitionFunction5 toStateValue: remaining];
-        [mdl add: mddStateSpecs5];*/
-        
+        [mdl add: mddStateSpecs5];
+        */
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];
         
-        [notes ddWidth: 8];
-        [notes ddRelaxed: false];
+        [notes ddWidth: 100000];
+        [notes ddRelaxed: true];
         id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
         //id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];
         

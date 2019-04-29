@@ -336,6 +336,54 @@
 
 
 
+@implementation ORCustomAltMDD {
+   id<ORIntVarArray> _x;
+   bool _relaxed;
+   ORInt _relaxationSize;
+   Class _stateClass;
+}
+-(ORCustomAltMDD*)initORCustomAltMDD:(id<ORIntVarArray>)x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _relaxed = relaxed;
+   _relaxationSize = relaxationSize;
+   _stateClass = stateClass;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitCustomAltMDD:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) relaxed { return _relaxed; }
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(Class) stateClass
+{
+   return _stateClass;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
 @implementation ORCustomMDD {
    id<ORIntVarArray> _x;
    bool _relaxed;
@@ -457,6 +505,8 @@
    ORInt* _stateValues;
    id<ORExpr> _arcExists;
    id<ORExpr>* _transitionFunctions;
+   id<ORExpr>* _relaxationFunctions;
+   id<ORExpr>* _differentialFunctions;
    int _stateSize;
 }
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize
@@ -466,6 +516,8 @@
    
    _stateValues = malloc(stateSize * sizeof(ORInt));
    _transitionFunctions = malloc(stateSize * sizeof(id<ORExpr>));
+   _relaxationFunctions = malloc(stateSize * sizeof(id<ORExpr>));
+   _differentialFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    
    _stateSize = stateSize;
 
@@ -481,9 +533,13 @@
 -(void)addStates:(int*)states size:(int)size {
    int* newStateValues = malloc((_stateSize + size) * sizeof(ORInt));
    id<ORExpr>* newTransitionFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
+   id<ORExpr>* newRelaxationFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
+   id<ORExpr>* newDifferentialFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
       newStateValues[stateIndex] = _stateValues[stateIndex];
       newTransitionFunctions[stateIndex] = _transitionFunctions[stateIndex];
+      newRelaxationFunctions[stateIndex] = _relaxationFunctions[stateIndex];
+      newDifferentialFunctions[stateIndex] = _relaxationFunctions[stateIndex];
    }
    for (int otherStateIndex = 0; otherStateIndex < size; otherStateIndex++) {
       newStateValues[_stateSize+otherStateIndex] = states[otherStateIndex];
@@ -494,6 +550,12 @@
    
    free(_transitionFunctions);
    _transitionFunctions = newTransitionFunctions;
+   
+   free(_relaxationFunctions);
+   _relaxationFunctions = newRelaxationFunctions;
+   
+   free(_differentialFunctions);
+   _differentialFunctions = newDifferentialFunctions;
 }
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists
 {
@@ -502,6 +564,14 @@
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup
 {
    _transitionFunctions[lookup] = transitionFunction;
+}
+-(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup
+{
+   _relaxationFunctions[lookup] = relaxationFunction;
+}
+-(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup
+{
+   _differentialFunctions[lookup] = differentialFunction;
 }
 -(void)dealloc
 {
@@ -525,6 +595,8 @@
 
 -(id<ORExpr>)arcExists { return _arcExists; }
 -(id<ORExpr>*)transitionFunctions { return _transitionFunctions; }
+-(id<ORExpr>*)relaxationFunctions { return _relaxationFunctions; }
+-(id<ORExpr>*)differentialFunctions { return _differentialFunctions; }
 -(int)stateSize { return _stateSize; }
 -(int*)stateValues { return _stateValues; }
 
@@ -534,6 +606,79 @@
 }
 @end
 
+@implementation ORAltMDDSpecs {
+   id<ORIntVarArray> _x;
+   id _topDownInformation, _bottomUpInformation;
+   id<ORExpr> _edgeDeletionCondition;
+   id<ORExpr> _topDownInfoEdge, _bottomUpInfoEdge;
+   id<ORExpr> _topDownMergeInfo, _bottomUpMergeInfo;
+}
+-(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x
+{
+   self = [super init];
+   _x = x;
+   return self;
+}
+-(void) setTopDownInformationAsSet
+{
+   _topDownInformation = [[NSMutableSet alloc] init];
+}
+-(void) setBottomUpInformationAsSet
+{
+   _bottomUpInformation = [[NSMutableSet alloc] init];
+}
+-(void) addToTopDownInfoSet:(ORInt)value
+{
+   [_topDownInformation addObject:[[NSNumber alloc] initWithInt:value]];
+}
+-(void) addToBottomUpInfoSet:(ORInt)value
+{
+   [_bottomUpInformation addObject:[[NSNumber alloc] initWithInt:value]];
+}
+-(void) setEdgeDeletionCondition:(id<ORExpr>)deleteWhen
+{
+   _edgeDeletionCondition = deleteWhen;
+}
+-(void) setTopDownInfoEdgeAddition:(id<ORExpr>)topDownInfoEdge
+{
+   _topDownInfoEdge = topDownInfoEdge;
+}
+-(void) setBottomUpInfoEdgeAddition:(id<ORExpr>)bottomUpInfoEdge
+{
+   _bottomUpInfoEdge = bottomUpInfoEdge;
+}
+-(void) setInformationMergeToUnion:(id<ORTracker>)t
+{
+   _topDownMergeInfo = [[ORFactory leftInformation:t] setUnion: [ORFactory rightInformation:t] track:t];
+   _bottomUpMergeInfo = [[ORFactory leftInformation:t] setUnion: [ORFactory rightInformation:t] track:t];
+}
+-(id) topDownInfo { return _topDownInformation; }
+-(id) bottomUpInfo { return _bottomUpInformation; }
+-(id<ORExpr>) edgeDeletionCondition { return _edgeDeletionCondition; }
+-(id<ORExpr>) topDownInfoEdgeAddition { return _topDownInfoEdge; }
+-(id<ORExpr>) bottomUpInfoEdgeAddition { return _bottomUpInfoEdge; }
+-(id<ORExpr>) topDownInfoMerge { return _topDownMergeInfo; }
+-(id<ORExpr>) bottomUpInfoMerge { return _bottomUpMergeInfo; }
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitAltMDDSpecs:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+@end
 
 @interface ORAlphaVisit : ORVisitor {
    id<ORVarArray> _map;

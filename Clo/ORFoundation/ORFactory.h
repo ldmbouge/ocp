@@ -127,7 +127,15 @@ PORTABLE_BEGIN
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range bounds: (id<ORIntRange>) domain;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo;
 +(id<ORExpr>) getStateValue:(id<ORTracker>)t lookup:(int)lookup;
++(id<ORExpr>) getLeftStateValue:(id<ORTracker>)t lookup:(int)lookup;
++(id<ORExpr>) getRightStateValue:(id<ORTracker>)t lookup:(int)lookup;
 +(id<ORExpr>) valueAssignment:(id<ORTracker>)t;
++(id<ORExpr>) layerVariable:(id<ORTracker>)t;
++(id<ORExpr>) parentInformation:(id<ORTracker>)t;
++(id<ORExpr>) childInformation:(id<ORTracker>)t;
++(id<ORExpr>) leftInformation:(id<ORTracker>)t;
++(id<ORExpr>) rightInformation:(id<ORTracker>)t;
++(id<ORExpr>) singletonSet:(id<ORExpr>)value track:(id<ORTracker>)t;
 +(id<ORExprArray>) arrayORExpr: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORExpr>(^)(ORInt)) clo;
 // Macros friendly
 +(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
@@ -196,7 +204,14 @@ PORTABLE_BEGIN
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intVarMatrix: (id<ORIntVarMatrix>) m elt:(id<ORExpr>) e0 elt:(id<ORExpr>)e1;
 +(id<ORExpr>) elt: (id<ORTracker>) tracker doubleArray: (id<ORDoubleArray>) a index: (id<ORExpr>) index;
 
-+(id<ORExpr>) contains:(id<ORExpr>) value inSet:(id<ORIntSet>)iter;
++(id<ORExpr>) contains:(id<ORExpr>) value inSet:(id<ORIntSet>)set;
++(id<ORExpr>) contains:(id<ORExpr>) value inExpr:(id<ORExpr>)set;
++(id<ORExpr>) setUnion:(id<ORExpr>)left and:(id<ORExpr>)right;
++(id<ORExpr>) ifExpr:(id<ORExpr>)i then:(id<ORExpr>)t elseReturn:(id<ORExpr>)e track:(id<ORTracker>)track;
++(id<ORExpr>) expr: (id<ORExpr>) left toEachInSetPlus: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr: (id<ORExpr>) left toEachInSetPlusEachInSet: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORRelation>) expr: (id<ORExpr>) left eachInSetLEQ: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORRelation>) expr: (id<ORExpr>) left eachInSetGEQ: (id<ORExpr>) right track:(id<ORTracker>)t;
 @end
 
 @interface ORFactory (Constraints)
@@ -260,6 +275,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
++(id<ORAltMDDSpecs>) AltMDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x;
 
 
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z;

@@ -454,6 +454,12 @@ enum ORGroupType {
 -(id<ORIntArray>) weights;
 @end
 
+@protocol ORCustomAltMDD <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(bool) relaxed;
+-(ORInt) relaxationSize;
+-(Class) stateClass;
+@end
 @protocol ORCustomMDD <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(bool) relaxed;
@@ -477,10 +483,33 @@ enum ORGroupType {
 -(void)addStates:(int*)states size:(int)size;
 -(id<ORExpr>)arcExists;
 -(id<ORExpr>*)transitionFunctions;
+-(id<ORExpr>*)relaxationFunctions;
+-(id<ORExpr>*)differentialFunctions;
 -(int)stateSize;
 -(int*)stateValues;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
+-(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;
+-(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup;
+@end
+
+@protocol ORAltMDDSpecs <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(void) setTopDownInformationAsSet;
+-(void) setBottomUpInformationAsSet;
+-(void) addToTopDownInfoSet:(ORInt)value;
+-(void) addToBottomUpInfoSet:(ORInt)value;
+-(void) setEdgeDeletionCondition:(id<ORExpr>)deleteWhen;
+-(void) setTopDownInfoEdgeAddition:(id<ORExpr>)topDownInfoEdge;
+-(void) setBottomUpInfoEdgeAddition:(id<ORExpr>)bottomUpInfoEdge;
+-(void) setInformationMergeToUnion:(id<ORTracker>)t;
+-(id) topDownInfo;
+-(id) bottomUpInfo;
+-(id<ORExpr>) edgeDeletionCondition;
+-(id<ORExpr>) topDownInfoEdgeAddition;
+-(id<ORExpr>) bottomUpInfoEdgeAddition;
+-(id<ORExpr>) topDownInfoMerge;
+-(id<ORExpr>) bottomUpInfoMerge;
 @end
 
 @protocol ORRegular<ORConstraint>
