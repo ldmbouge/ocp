@@ -10,10 +10,13 @@
 -(id) initSinkState:(AltCustomState*)classState;
 -(id) initState:(AltCustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue;
 -(id) initState:(AltCustomState*)parentNodeState variableIndex:(int)variableIndex;
+-(void) setTopDownInfo:(id)info;
 -(void) setTopDownInfoFor:(AltCustomState*)parentInfo plusEdge:(int)edgeValue;
 -(void) setBottomUpInfoFor:(AltCustomState*)childInfo plusEdge:(int)edgeValue;
 -(void) mergeTopDownInfoWith:(AltCustomState*)other;
+-(void) mergeTopDownInfoWith:(AltCustomState*)other withEdge:(int)edgeValue onVariable:(int)otherVariable;
 -(void) mergeBottomUpInfoWith:(AltCustomState*)other;
+-(void) mergeBottomUpInfoWith:(AltCustomState*)other withEdge:(int)edgeValue onVariable:(int)otherVariable;
 -(bool) canDeleteChild:(AltCustomState*)child atEdgeValue:(int)edgeValue;
 -(bool) equivalentWithEdge:(int)edgeValue to:(AltCustomState*)other withEdge:(int)otherEdgeValue;
 -(int) variableIndex;

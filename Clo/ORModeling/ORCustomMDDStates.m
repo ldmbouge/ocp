@@ -32,6 +32,10 @@
     _variableIndex = variableIndex;
     return self;
 }
+-(void) setTopDownInfo:(id)info
+{
+    return;
+}
 -(void) setTopDownInfoFor:(AltCustomState*)parentInfo plusEdge:(int)edgeValue
 {
     return;
@@ -44,7 +48,15 @@
 {
     return;
 }
+-(void) mergeTopDownInfoWith:(AltCustomState*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
+{
+    return;
+}
 -(void) mergeBottomUpInfoWith:(AltCustomState*)other
+{
+    return;
+}
+-(void) mergeBottomUpInfoWith:(AltCustomState*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
 {
     return;
 }
@@ -394,6 +406,10 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
     BottomUpMerge = [classState bottomUpMerge];
     EdgeDeletionCheck = [classState edgeDeletionCheck];
 }
+-(void) setTopDownInfo:(id)info
+{
+    _topDownInfo = info;
+}
 -(void) setTopDownInfoFor:(AltMDDStateSpecification*)parentInfo plusEdge:(int)edgeValue {
     _topDownInfo = _topDownEdgeAddition([parentInfo topDownInfo], [parentInfo variableIndex], edgeValue);
 }
@@ -404,9 +420,17 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
 {
     _topDownInfo = _topDownMerge(_topDownInfo,[other topDownInfo],_variableIndex);
 }
+-(void) mergeTopDownInfoWith:(AltMDDStateSpecification*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
+{
+    _topDownInfo = _topDownMerge(_topDownInfo,_topDownEdgeAddition([other topDownInfo],otherVariable,edgeValue),_variableIndex);
+}
 -(void) mergeBottomUpInfoWith:(AltMDDStateSpecification*)other
 {
     _bottomUpInfo = _bottomUpMerge(_bottomUpInfo,[other bottomUpInfo],_variableIndex);
+}
+-(void) mergeBottomUpInfoWith:(AltMDDStateSpecification*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
+{
+    _bottomUpInfo = _bottomUpMerge(_bottomUpInfo,_bottomUpEdgeAddition([other bottomUpInfo],otherVariable,edgeValue),_variableIndex);
 }
 -(bool) canDeleteChild:(AltMDDStateSpecification*)child atEdgeValue:(int)edgeValue
 {
@@ -921,6 +945,12 @@ static id<ORIntVarArray> _variables;
     [_stateClasses addObject:stateClass];
     [_stateVariables addObject:variables];
 }
+-(void) setTopDownInfo:(NSArray*)info
+{
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        [[_states objectAtIndex:stateIndex] setTopDownInfo:[info objectAtIndex: stateIndex]];
+    }
+}
 -(void) setTopDownInfoFor:(AltJointState*)parentInfo plusEdge:(int)edgeValue
 {
     NSArray* parentStates = [parentInfo states];
@@ -942,11 +972,25 @@ static id<ORIntVarArray> _variables;
         [[_states objectAtIndex:stateIndex] mergeTopDownInfoWith:[otherStates objectAtIndex:stateIndex]];
     }
 }
+-(void) mergeTopDownInfoWith:(AltJointState*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
+{
+    NSArray* otherStates = [other states];
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        [[_states objectAtIndex:stateIndex] mergeTopDownInfoWith:[otherStates objectAtIndex:stateIndex] withEdge:edgeValue onVariable:otherVariable];
+    }
+}
 -(void) mergeBottomUpInfoWith:(AltJointState*)other
 {
     NSArray* otherStates = [other states];
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
         [[_states objectAtIndex:stateIndex] mergeBottomUpInfoWith:[otherStates objectAtIndex:stateIndex]];
+    }
+}
+-(void) mergeBottomUpInfoWith:(AltJointState*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
+{
+    NSArray* otherStates = [other states];
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        [[_states objectAtIndex:stateIndex] mergeBottomUpInfoWith:[otherStates objectAtIndex:stateIndex] withEdge:edgeValue onVariable:otherVariable];
     }
 }
 -(bool) canDeleteChild:(AltJointState*)child atEdgeValue:(int)edgeValue

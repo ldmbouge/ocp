@@ -741,7 +741,7 @@ int main (int argc, const char * argv[])
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];
         
-        [notes ddWidth: 100000];
+        [notes ddWidth: 2];
         [notes ddRelaxed: true];
         id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
         //id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];

@@ -248,9 +248,12 @@
 @private
     bool _relaxed;
     int _relaxation_size;
+    TRInt *_layer_relaxed;
+    TRInt **node_relaxed;
 }
 -(id) initCPAltMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
 -(id) initCPAltMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass;
+-(NSArray*) findEquivalenceClassesIntoNode:(int)nodeIndex onLayer:(int)layerIndex;
 -(NSArray*) findEquivalenceClasses:(int)layerIndex;
 @end
 
