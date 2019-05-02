@@ -183,6 +183,7 @@
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
+   NSSet*                _allvars;
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
@@ -209,11 +210,13 @@
    _doOnSolArray     = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnExitArray    = [[NSMutableArray alloc] initWithCapacity: 1];
    _order            = [[NSMutableDictionary alloc] initWithCapacity: 4];
+   _allvars          = [[NSMutableSet alloc] initWithCapacity: 1];
    return self;
 }
 -(void) dealloc
 {
    NSLog(@"CPSolver dealloc'd %p",self);
+   [_allvars release];
    [_order release];
    if(_absconstraints != nil) [_absconstraints release];
    [_hSet release];
@@ -1893,6 +1896,12 @@
 {
    __block id<ORIdArray> abs = nil;
    __block ORInt nb;
+   @autoreleasepool {
+      NSArray* cstr = [_model constraints];
+      for (id<ORConstraint> c in cstr){
+         [_allvars unionSet:[c allVars]];
+      }
+   }
    id<ORSelect> select_occ = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
@@ -2381,7 +2390,15 @@
 -(void) floatAbsSplit:(ORUInt)i by:(id<CPVar>) y vars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[x[i].getId];
-   id<CPVisitor> splitVisit = [[ORAbsSplitVisitor alloc] initWithProgram:self variable:x[i] other:y];
+   id<ORVar> ya = nil;
+   for(id<ORVar> v in _allvars){
+      if(getId(y) == getId(_gamma[getId(v)])){
+         ya = v;
+         break;
+      }
+   }
+   if(ya == nil) @throw [[ORExecutionError alloc] initORExecutionError:"no abstraction for abs concrete var"];
+   id<CPVisitor> splitVisit = [[ORAbsSplitVisitor alloc] initWithProgram:self variable:x[i] other:ya];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }

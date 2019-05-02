@@ -747,15 +747,17 @@
 @implementation ORAbsSplitVisitor{
    CPCoreSolver*           _program;
    id<ORVar>           _variable;
-   id<CPVar>           _other;
+   id<ORVar>           _other;
+   id<CPVar>           _otherC;
 }
 
--(ORAbsSplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v other:(id<CPVar>)other
+-(ORAbsSplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v other:(id<ORVar>)other
 {
    self = [super init];
    _program = p;
    _variable = v;
    _other = other;
+   _otherC = [_program concretize:other];
    return self;
 }
 
@@ -780,8 +782,8 @@
    ORInt length_y = 0;
    float_interval ax = computeAbsorbingInterval(cx);
    float_interval ay = computeAbsordedInterval(cx);
-   CPFloatVarI* y = (CPFloatVarI*)_other;
-   if(! [_other bound]) {
+   CPFloatVarI* y = (CPFloatVarI*)_otherC;
+   if(! [_otherC bound]) {
       if(isIntersectingWithV(y.min,y.max,ay.inf,ay.sup)){
          ay.inf = maxFlt(ay.inf, y.min);
          ay.sup = minFlt(ay.sup, y.max);
@@ -835,7 +837,7 @@
       [_program tryall:RANGE(_program,0,length/2) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
          [_program floatInterval:(id<ORFloatVar>)_variable low:ip[2*index].inf up:ip[2*index].sup];
-         [_program floatIntervalImpl:_other low:ip[2*index+1].inf up:ip[2*index+1].sup];
+         [_program floatInterval:(id<ORFloatVar>)_other low:ip[2*index+1].inf up:ip[2*index+1].sup];
       }];
    }else if (length_x > 0 && length_y == 0){
       float_interval* ip = interval_x;
@@ -854,8 +856,8 @@
    ORInt length_y = 0;
    double_interval ax = computeAbsorbingIntervalD(cx);
    double_interval ay = computeAbsordedIntervalD(cx);
-   CPDoubleVarI* y = (CPDoubleVarI*)_other;
-   if(! [_other bound]) {
+   CPDoubleVarI* y = (CPDoubleVarI*)_otherC;
+   if(! [_otherC bound]) {
       if(isIntersectingWithDV(y.min,y.max,ay.inf,ay.sup)){
          ay.inf = maxDbl(ay.inf, y.min);
          ay.sup = minDbl(ay.sup, y.max);
@@ -909,7 +911,7 @@
       [_program tryall:RANGE(_program,0,length/2) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
          [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[2*index].inf up:ip[2*index].sup];
-         [_program doubleIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
+         [_program doubleInterval:(id<ORDoubleVar>)_other low:ip[2*index+1].inf up:ip[2*index+1].sup];
       }];
    }else if (length_x > 0 && length_y == 0){
       double_interval* ip = interval_x;

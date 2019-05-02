@@ -563,7 +563,7 @@
 {
    int id_x = [((id<ORVar>)x) getId];
    id v = [_hasInequalities objectForKey:@(id_x)];
-   int nv = (type == ORRLEq)? 1 : 2;
+   int nv = (type == ORRLEq || isNegate%2)? 1 : 2;
    int lv = nv;
    switch ([v intValue]) {
       case 0: break;
