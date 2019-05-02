@@ -176,6 +176,7 @@ void check_it_f(float x, float y, float z, id<ORRational> ez) {
     mpq_set_d(tmp0, z);
     mpq_sub(tmp1, zq, tmp0);
    if (mpq_cmp(tmp1, ez.rational) != 0){
+       NSLog(@"%20.20e != %20.20e", cz, mpq_get_d(zq));
        NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
        NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
    }
@@ -190,8 +191,8 @@ void rump_f(int search, int argc, const char * argv[]) {
         id<ORFloatVar> r_0 = [ORFactory floatVar:mdl name:@"r_0"];
         
         
-        [mdl add:[x_0 set: @(77617.f)]];
-        [mdl add:[y_0 set: @(33096.f)]];
+        [mdl add:[x_0 set: @(98304.0078125f)]];
+        [mdl add:[y_0 set: @(131070.9453125f)]];
         [mdl add:[r_0 set: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
         //assert((r_0 >= 0));
         //[mdl add:[r_0 geq:@(0.0f)]];
@@ -204,15 +205,19 @@ void rump_f(int search, int argc, const char * argv[]) {
 
         [cp solve:^{
            if (search)
-              [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+              /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
                  [cp floatSplit:i withVars:x];
-              }];
+              }];*/
             NSLog(@"%@",cp);
            NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:x_0],[cp maxF:x_0],[cp minFQ:x_0],[cp maxFQ:x_0],[cp bound:x_0] ? "YES" : "NO");
            NSLog(@"y : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:y_0],[cp maxF:y_0],[cp minFQ:y_0],[cp maxFQ:y_0],[cp bound:y_0] ? "YES" : "NO");
            NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:r_0],[cp maxF:r_0],[cp minFQ:r_0],[cp maxFQ:r_0],[cp bound:r_0] ? "YES" : "NO");
            check_it_f(getFmin(x_0), getFmin(y_0), getFmin(r_0), [cp minErrorFQ:r_0]);
         }];
+       id<ORRational> z = [ORRational rationalWith_d:1];
+       check_it_f(98304.0078125f, 131070.9453125f, 1, z);
+       [z release];
+
     }
 }
 

@@ -268,8 +268,8 @@ static long __nbPull = 0;
             ORStatus status = [of tightenDualBound:bestKey.bound];
             if (status != ORFailure)
                status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
-            if (__nbPull++ % 100 == 0)
-               NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
+//            if (__nbPull++ % 100 == 0)
+//               NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
             //NSLog(@"%@ -- %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             [nd.cp letgo];
             NSCont* k = nd.cont;

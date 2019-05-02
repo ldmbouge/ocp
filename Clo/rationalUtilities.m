@@ -317,6 +317,7 @@
    /* x = Q && y = Q */
    else {
       mpq_add(z.rational, _rational, r.rational);
+      mpq_canonicalize(z.rational);
       z.type = mpq_sgn(z.rational);
    }
    return z;
@@ -347,6 +348,7 @@
    /* x = Q && y = Q */
    else {
       mpq_sub(z.rational, _rational, r.rational);
+      mpq_canonicalize(z.rational);
       z.type = mpq_sgn(z.rational);
    }
    return z;
@@ -398,6 +400,7 @@
    /* x = Q && y = Q */
    else {
       mpq_mul(z.rational, _rational, r.rational);
+      mpq_canonicalize(z.rational);
       z.type = mpq_sgn(z.rational);
    }
    return z;
@@ -449,6 +452,7 @@
    /* x = Q && y = Q */
    else {
       mpq_div(z.rational, _rational, r.rational);
+      mpq_canonicalize(z.rational);
       z.type = mpq_sgn(z.rational);
    }
    return z;
