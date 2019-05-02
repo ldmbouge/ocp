@@ -526,6 +526,7 @@
 {
    self = [super init];
    _theSet = [[NSMutableDictionary alloc] init];
+   _hasInequalities = [[NSMutableDictionary alloc] init];
    isNegate = 0;
    return self;
 }
@@ -534,6 +535,7 @@
    for(NSMutableArray* s in _theSet)
       [s release];
    [_theSet release];
+   [_hasInequalities release];
    [super dealloc];
 }
 -(void) doIt:(id<ORExpr>) e with:(id<ORExpr>) left or:(id<ORExpr>) right  negate:(id<ORExpr>) ne
@@ -553,6 +555,28 @@
    }else
       [val addObject:e];
 }
+//0-none
+//1-leq
+//2-geq
+//3-both
+-(void) hasIneq:(id<ORExpr>)x with:(ORRelationType) type
+{
+   int id_x = [((id<ORVar>)x) getId];
+   id v = [_hasInequalities objectForKey:@(id_x)];
+   int nv = (type == ORRLEq)? 1 : 2;
+   int lv = nv;
+   switch ([v intValue]) {
+      case 0: break;
+      case 1: lv = (nv == 1) ? 1 : 3;
+         break;
+      case 2: lv = (nv == 2) ? 2 : 3;
+         break;
+      case 3: lv = 3;
+      default:
+         break;
+   }
+   [_hasInequalities setObject:@(lv) forKey:@(id_x)];
+}
 -(void) visitAlgebraicConstraint:(id<ORAlgebraicConstraint>)cstr
 {
    id<ORExpr> e = [cstr expr];
@@ -562,47 +586,48 @@
 {
    id<ORExpr> l = [e left];
    id<ORExpr> r = [e right];
+   if([r isVariable])
+      [self hasIneq:r with:ORRGEq];
+   if([l isVariable])
+      [self hasIneq:l with:ORRLEq];
    if([r isVariable] && [l isVariable]){
       [self doIt:e with:l or:r negate:[l geq:r]];
-   }else{
-      [l visit:self];
-      [r visit:self];
    }
 }
 -(void) visitExprLEqualI:(ORExprBinaryI*)e
 {
    id<ORExpr> l = [e left];
    id<ORExpr> r = [e right];
+   if([r isVariable])
+      [self hasIneq:r with:ORRGEq];
+   if([l isVariable])
+      [self hasIneq:l with:ORRLEq];
    if([r isVariable] && [l isVariable]){
       [self doIt:e with:l or:r negate:[l gt:r]];
-//      [self doIt:e with:r];
-   }else{
-      [l visit:self];
-      [r visit:self];
    }
 }
 -(void) visitExprGThenI:(ORExprBinaryI*)e
 {
    id<ORExpr> l = [e left];
    id<ORExpr> r = [e right];
+   if([r isVariable])
+      [self hasIneq:r with:ORRLEq];
+   if([l isVariable])
+      [self hasIneq:l with:ORRGEq];
    if([r isVariable] && [l isVariable]){
-//      [self doIt:e with:l];
       [self doIt:e with:r or:l negate:[l leq:r]];
-   }else{
-      [l visit:self];
-      [r visit:self];
    }
 }
 -(void) visitExprGEqualI:(ORExprBinaryI*)e
 {
    id<ORExpr> l = [e left];
    id<ORExpr> r = [e right];
+   if([r isVariable])
+      [self hasIneq:r with:ORRGEq];
+   if([l isVariable])
+      [self hasIneq:l with:ORRLEq];
    if([r isVariable] && [l isVariable]){
-//      [self doIt:e with:l];
       [self doIt:e with:r or:l negate:[l lt:r]];
-   }else{
-      [l visit:self];
-      [r visit:self];
    }
 }
 -(void) visitExprEqualI:(ORExprBinaryI*)e
@@ -654,6 +679,10 @@
 {
    return [_theSet copy];
 }
+-(NSDictionary*) hasInequalities
+{
+   return [_hasInequalities copy];
+}
 +(NSDictionary*) collect:(NSArray*) constraints
 {
    InequalityConstraintsCollector* collector = [[InequalityConstraintsCollector alloc] init];
@@ -661,6 +690,16 @@
       [c visit:collector];
    }
    NSDictionary* r = [collector result];
+   [collector release];
+   return r;
+}
++(NSDictionary*) collectKind:(NSArray*) constraints
+{
+   InequalityConstraintsCollector* collector = [[InequalityConstraintsCollector alloc] init];
+   for(id<ORConstraint> c in constraints){
+      [c visit:collector];
+   }
+   NSDictionary* r = [collector hasInequalities];
    [collector release];
    return r;
 }

@@ -28,7 +28,9 @@
 
 @interface InequalityConstraintsCollector : ORNOopVisit{
    NSMutableDictionary* _theSet;
+   NSMutableDictionary* _hasInequalities;
 }
 -(id)init;
 +(NSMutableDictionary*) collect:(NSArray*) constraints;
++(NSDictionary*) collectKind:(NSArray*) constraints;
 @end

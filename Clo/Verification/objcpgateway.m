@@ -745,6 +745,8 @@ static OBJCPGateway *objcpgw;
       __block ORBool isSat;
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
+         NSDictionary* dict = [InequalityConstraintsCollector collectKind:[_model constraints]];
+         [(CPCoreSolver*)cp dynamicVOrder:dict vars:[lh getVariables]];
          ORBool hascycle = NO;
          if([_options cycleDetection]){
             hascycle = [self isCycle:lh];

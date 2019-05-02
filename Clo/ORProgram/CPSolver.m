@@ -155,6 +155,7 @@
    CPHeuristicSet*       _hSet;
    id<CPPortal>          _portal;
    
+   NSMutableDictionary*   _order;
    ORInt                  _level;
    ORInt                 _unique;
    ORFloat                _split3Bpercent;
@@ -207,11 +208,13 @@
    _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnSolArray     = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnExitArray    = [[NSMutableArray alloc] initWithCapacity: 1];
+   _order            = [[NSMutableDictionary alloc] initWithCapacity: 4];
    return self;
 }
 -(void) dealloc
 {
    NSLog(@"CPSolver dealloc'd %p",self);
+   [_order release];
    if(_absconstraints != nil) [_absconstraints release];
    [_hSet release];
    [_model release];
@@ -1731,6 +1734,10 @@
       return -[self maxOccurences:x[i]];
    } do:b];
 }
+-(NSArray*) orderForVar:(id<ORVar>) v
+{
+   return [_order objectForKey:@(v.getId)];
+}
 //----------Special search--------//
 -(void) specialSearch:  (id<ORDisabledVarArray>) x
 {
@@ -3080,7 +3087,28 @@
    }];
    [_engine open];
 }
-
+-(void) dynamicVOrder:(NSDictionary*) dict vars:(id<ORDisabledVarArray>) vars
+{
+   id val;
+   for(id<ORVar> v in vars){
+      val = [dict objectForKey:@(v.getId)];
+      if(val == nil) val = @(0);
+      switch ([val intValue]) {
+         case 1:
+            [_order setObject:@[@1,@2,@0,@3,@4] forKey:@(v.getId)];
+            break;
+         case 2:
+            [_order setObject:@[@0,@2,@1,@4,@3] forKey:@(v.getId)];
+            break;
+         case 3:
+            [_order setObject:@[@2,@0,@1,@3,@4] forKey:@(v.getId)];
+            break;
+         default:
+            [_order setObject:@[@0,@1,@2,@3,@4] forKey:@(v.getId)];
+            break;
+      }
+   }
+}
 @end
 
 /******************************************************************************************/
