@@ -68,11 +68,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-bds"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-uniques 2"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-choices-limit 20"

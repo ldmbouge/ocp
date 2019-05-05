@@ -34,3 +34,10 @@
 +(NSMutableDictionary*) collect:(NSArray*) constraints;
 +(NSDictionary*) collectKind:(NSArray*) constraints;
 @end
+
+@interface VariableCollector : ORNOopVisit{
+   NSMutableSet* _theSet;
+}
+-(id)init;
++(NSMutableSet*) collect:(NSArray*) constraints;
+@end

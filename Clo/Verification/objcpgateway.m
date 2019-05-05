@@ -217,6 +217,11 @@ static OBJCPGateway *objcpgw;
       }
       [dictvars release];
    }
+//   NSSet* varcol = [VariableCollector collect:[_model constraints]];
+//   for(id<ORVar> v in varcol){
+//     if(![tmp containsObject:v] && ([v conformsToProtocol:@protocol(ORFloatVar)] || [v conformsToProtocol:@protocol(ORDoubleVar)]))
+//        [tmp addObject:v];
+//   }
    if([tmp count]){
       _vars = (id<ORVarArray>)[ORFactory idArray:_model range:RANGE(_model,0,(ORUInt)[tmp count] - 1)];
       for(i = 0; i <  [tmp count];i++){
@@ -227,7 +232,9 @@ static OBJCPGateway *objcpgw;
       [tmp release];
    }else
       _vars =  [_model floatVars] ;
+   
 }
+
 - (void)launchHeuristic
 {
    [_options launchHeuristic:_program restricted:_vars];
@@ -242,6 +249,15 @@ static OBJCPGateway *objcpgw;
    char mfstr[mfsize];
    char edstr[edsize];
    char mdstr[mdsize];
+   id<ORVarArray> arr = [_model FPVars];
+   NSLog(@"------------------");
+   for(id<ORVar> v in arr){
+      if([v.class conformsToProtocol:@protocol(ORFloatVar)])
+         NSLog(@"%@ : %20.20e (%s)",v,[_program floatValue:v],[_program bound:v] ? "YES" : "NO");
+      else if([v.class conformsToProtocol:@protocol(ORDoubleVar)])
+         NSLog(@"%@ : %20.20e (%s)",v,[_program doubleValue:v],[_program bound:v] ? "YES" : "NO");
+   }
+   NSLog(@"------------------");
    for(id<ORVar> v in _vars){
       if([v.class conformsToProtocol:@protocol(ORFloatVar)])
          NSLog(@"%@ : %20.20e (%s)",v,[_program floatValue:v],[_program bound:v] ? "YES" : "NO");
@@ -745,8 +761,6 @@ static OBJCPGateway *objcpgw;
       __block ORBool isSat;
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
-         NSDictionary* dict = [InequalityConstraintsCollector collectKind:[_model constraints]];
-         [(CPCoreSolver*)cp dynamicVOrder:dict vars:[lh getVariables]];
          ORBool hascycle = NO;
          if([_options cycleDetection]){
             hascycle = [self isCycle:lh];

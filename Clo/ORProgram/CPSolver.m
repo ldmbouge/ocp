@@ -1721,6 +1721,8 @@
 }
 -(void) maxOccurencesRatesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
+//   NSArray* arr = [_model constraints];
+//   NSLog(@"csts : %@",arr);
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
       return [_model occurences:x[i]];
    } do:b];
@@ -3103,28 +3105,6 @@
       [theTask execute];
    }];
    [_engine open];
-}
--(void) dynamicVOrder:(NSDictionary*) dict vars:(id<ORDisabledVarArray>) vars
-{
-   id val;
-   for(id<ORVar> v in vars){
-      val = [dict objectForKey:@(v.getId)];
-      if(val == nil) val = @(0);
-      switch ([val intValue]) {
-         case 1:
-            [_order setObject:@[@1,@2,@0,@3,@4] forKey:@(v.getId)];
-            break;
-         case 2:
-            [_order setObject:@[@0,@2,@1,@4,@3] forKey:@(v.getId)];
-            break;
-         case 3:
-            [_order setObject:@[@2,@0,@1,@3,@4] forKey:@(v.getId)];
-            break;
-         default:
-            [_order setObject:@[@0,@1,@2,@3,@4] forKey:@(v.getId)];
-            break;
-      }
-   }
 }
 @end
 

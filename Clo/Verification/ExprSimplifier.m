@@ -566,7 +566,6 @@
    int nv = (type == ORRLEq || isNegate%2)? 1 : 2;
    int lv = nv;
    switch ([v intValue]) {
-      case 0: break;
       case 1: lv = (nv == 1) ? 1 : 3;
          break;
       case 2: lv = (nv == 2) ? 2 : 3;
@@ -700,6 +699,85 @@
       [c visit:collector];
    }
    NSDictionary* r = [collector hasInequalities];
+   [collector release];
+   return r;
+}
+@end
+
+@implementation VariableCollector{
+   ORInt isNegate;
+}
+-(InequalityConstraintsCollector*)init
+{
+   self = [super init];
+   _theSet = [[NSMutableSet alloc] init];
+   isNegate = 0;
+   return self;
+}
+-(void) dealloc
+{
+   [_theSet release];
+   [super dealloc];
+}
+-(void) visitAlgebraicConstraint:(id<ORAlgebraicConstraint>)cstr
+{
+   id<ORExpr> e = [cstr expr];
+   [e visit:self];
+}
+-(void) visitExprEqualI:(ORExprBinaryI*)e
+{
+   id<ORExpr> l = [e left];
+   id<ORExpr> r = [e right];
+   if([r isVariable] && !(isNegate%2)){
+      [_theSet addObject:r];
+   }
+   if([l isVariable] && !(isNegate%2)){
+      [_theSet addObject:l];
+   }
+}
+-(void) visitExprNEqualI:(ORExprBinaryI*)e
+{
+   id<ORExpr> l = [e left];
+   id<ORExpr> r = [e right];
+   if([r isVariable] && (isNegate%2)){
+      [_theSet addObject:r];
+   }
+   if([l isVariable] && (isNegate%2)){
+      [_theSet addObject:l];
+   }
+}
+-(void) visitExprNegateI:(ORExprNegateI*)e
+{
+   isNegate++;
+   [[e operand] visit:self];
+   isNegate--;
+}
+-(void) visitExprImplyI:(ORExprLogiqueI*)e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprConjunctI: (ORExprLogiqueI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprDisjonctI: (ORExprLogiqueI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(NSSet*) result
+{
+   return [_theSet copy];
+}
++(NSSet*) collect:(NSArray*) constraints
+{
+   VariableCollector* collector = [[VariableCollector alloc] init];
+   for(id<ORConstraint> c in constraints){
+      [c visit:collector];
+   }
+   NSSet* r = [collector result];
    [collector release];
    return r;
 }
