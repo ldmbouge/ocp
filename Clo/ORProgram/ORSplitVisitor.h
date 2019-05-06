@@ -43,7 +43,7 @@
 @end
 
 @interface ORAbsSplitVisitor : CPVisitorI<CPVisitor>
--(ORAbsSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v other:(id<CPVar>)o;
+-(ORAbsSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v other:(id<ORVar>)o;
 @end
 
 @interface ORAbsVisitor : CPVisitorI<CPVisitor>

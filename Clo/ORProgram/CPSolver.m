@@ -2392,7 +2392,7 @@
    id<CPVar> xi = _gamma[x[i].getId];
    id<ORVar> ya = nil;
    for(id<ORVar> v in _allvars){
-      if(getId(y) == getId(_gamma[getId(v)])){
+      if(y.getId == getId(_gamma[getId(v)])){
          ya = v;
          break;
       }
