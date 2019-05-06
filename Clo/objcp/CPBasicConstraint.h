@@ -424,3 +424,7 @@ typedef int (^intgetter) (void) ;
 -(void) post;
 -(void) propagate;
 @end
+
+@interface CP3BVisitor : NSObject<CPVisitor>
+-(CP3BVisitor*) initWithGroup:(CP3BGroup*) group tracer:(id<ORTracer>) tracer percent:(ORDouble) percent;
+@end

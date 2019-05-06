@@ -13,6 +13,7 @@
 #import "CPBasicConstraint.h"
 #import "CPIntVarI.h"
 #import "CPFloatVarI.h"
+#import "CPDoubleVarI.h"
 #import "CPEngineI.h"
 #import <ORFoundation/fpi.h>
 
@@ -2811,7 +2812,6 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 @end
 
-
 @implementation CP3BGroup {
    id<ORTracer>             _tracer;
    id __unsafe_unretained* _gamma;
@@ -2871,7 +2871,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(void) addVars:(NSSet *)vars
 {
    for(id<CPVar> v in vars)
-      if ([v isKindOfClass:[CPFloatVarI class]] && ![v bound])
+      if (![v bound] && ([v isKindOfClass:[CPFloatVarI class]] || [v isKindOfClass:[CPDoubleVarI class]]))
          [_vars addObject:v];
 }
 -(void) post
@@ -2917,6 +2917,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [super propagate];
    [self propagateSplitting];
    self->_todo = CPChecked;
+}
+-(void) propagate2B
+{
+   [super propagate];
 }
 -(void) propagateShaving
 {
@@ -2980,63 +2984,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 -(void) propagateSplitting
 {
-   ORStatus s;
-   ORLDouble size;
-   ORFloat epsilon;
-   __block ORFloat min,max,mid;
-   for(id<CPFloatVar> v in _vars){
+   for(id<CPVar> v in _vars){
       if([v bound]) continue;
-      s = ORSuccess;
-      size = [v domwidth];
-      epsilon = size * (_percent/100.f);
-      min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
-      mid = max = (v.max == infinityf()) ? maxnormalf() : v.max;
-      while (s==ORSuccess) {
-         mid = (fp_next_float(min) == max)? min : min/2 + max/2;
-         if (mid <= min || (mid - min <= epsilon))
-            break;
-         [_tracer pushNode];
-         s=tryfail(^ORStatus{
-            [v updateMax:mid];
-            [super propagate];
-            return ORSuccess;
-         }, ^ORStatus{
-            min=fp_next_float(mid);
-            return ORFailure;
-         });
-         max=mid;
-         [_tracer popNode];
-      }
-      if(min != v.min){
-         [v updateMin:min];
-         [super propagate];
-       }
-      
-      s = ORSuccess;
-      size = [v domwidth];
-      epsilon = size * (_percent/100.f);
-      min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
-      max = (v.max == infinityf()) ? maxnormalf() : v.max;
-      while (s==ORSuccess) {
-         mid = (fp_next_float(min) == max) ? max : min/2 + max/2;
-         if (mid >= max || (max - mid <= epsilon))
-            break;
-         [_tracer pushNode];
-         s=tryfail(^ORStatus{
-            [v updateMin:mid];
-            [super propagate];
-            return ORSuccess;
-         }, ^ORStatus{
-            max = fp_previous_float(mid);
-            return ORFailure;
-         });
-         min=mid;
-         [_tracer popNode];
-      }
-      if(max != v.max){
-         [v updateMax:max];
-         [super propagate];
-       }
+      id<CPVisitor> visit = [[CP3BVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent];
+      [v visit:visit];
+      [visit release];
    }
 }
 - (void)visit:(ORVisitor *)visitor
@@ -3045,3 +2997,140 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {}
 @end
 
+@implementation CP3BVisitor{
+   ORDouble      _percent;
+   CP3BGroup*    _group;
+   id<ORTracer>  _tracer;
+}
+-(CP3BVisitor*) initWithGroup:(CP3BGroup*) group tracer:(id<ORTracer>) tracer percent:(ORDouble) percent
+{
+   self = [super init];
+   _percent = percent;
+   _tracer = tracer;
+   _group = group;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(void) applyFloatVar:(id<CPVar>)var
+{
+   id<CPFloatVar> v = (id<CPFloatVar>)var;
+   ORStatus s = ORSuccess;
+   ORLDouble size = [v domwidth];
+   ORFloat epsilon = size * (_percent/100.f);
+   __block ORFloat min, max, mid;
+   min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
+   mid = max = (v.max == infinityf()) ? maxnormalf() : v.max;
+   while (s==ORSuccess) {
+      mid = (fp_next_float(min) == max)? min : min/2 + max/2;
+      if (mid <= min || (mid - min <= epsilon))
+         break;
+      [_tracer pushNode];
+      s=tryfail(^ORStatus{
+         [v updateMax:mid];
+         [_group propagate2B];
+         return ORSuccess;
+      }, ^ORStatus{
+         min = fp_next_float(mid);
+         return ORFailure;
+      });
+      max=mid;
+      [_tracer popNode];
+   }
+   if(min != v.min){
+      [v updateMin:min];
+      [_group propagate2B];
+   }
+   
+   s = ORSuccess;
+   size = [v domwidth];
+   epsilon = size * (_percent/100.f);
+   min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
+   max = (v.max == infinityf()) ? maxnormalf() : v.max;
+   while (s==ORSuccess) {
+      mid = (fp_next_float(min) == max) ? max : min/2 + max/2;
+      if (mid >= max || (max - mid <= epsilon))
+         break;
+      [_tracer pushNode];
+      s=tryfail(^ORStatus{
+         [v updateMin:mid];
+         [_group propagate2B];
+         return ORSuccess;
+      }, ^ORStatus{
+         max = fp_previous_float(mid);
+         return ORFailure;
+      });
+      min=mid;
+      [_tracer popNode];
+   }
+   if(max != v.max){
+      [v updateMax:max];
+      [_group propagate2B];
+   }
+}
+
+
+-(void) applyDoubleVar:(id<CPVar>)var
+{
+   id<CPDoubleVar> v = (id<CPDoubleVar>)var;
+   ORStatus s = ORSuccess;
+   ORLDouble size = [v domwidth];
+   ORDouble epsilon = size * (_percent/100.f);
+   __block ORDouble min, mid, max;
+   min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
+   mid = max = (v.max == infinityf()) ? maxnormalf() : v.max;
+   while (s==ORSuccess) {
+      mid = (fp_next_float(min) == max)? min : min/2 + max/2;
+      if (mid <= min || (mid - min <= epsilon))
+         break;
+      [_tracer pushNode];
+      s=tryfail(^ORStatus{
+         [v updateMax:mid];
+         [_group propagate2B];
+         return ORSuccess;
+      }, ^ORStatus{
+         min = fp_next_float(mid);
+         return ORFailure;
+      });
+      max = mid;
+      [_tracer popNode];
+   }
+   if(min != v.min){
+      [v updateMin:min];
+      [_group propagate2B];
+   }
+   
+   s = ORSuccess;
+   size = [v domwidth];
+   epsilon = size * (_percent/100.f);
+   min = (v.min == -infinityf()) ? -maxnormalf() : v.min;
+   max = (v.max == infinityf()) ? maxnormalf() : v.max;
+   while (s==ORSuccess) {
+      mid = (fp_next_float(min) == max) ? max : min/2 + max/2;
+      if (mid >= max || (max - mid <= epsilon))
+         break;
+      [_tracer pushNode];
+      s=tryfail(^ORStatus{
+         [v updateMin:mid];
+         [_group propagate2B];
+         return ORSuccess;
+      }, ^ORStatus{
+         max = fp_previous_float(mid);
+         return ORFailure;
+      });
+      min=mid;
+      [_tracer popNode];
+   }
+   if(max != v.max){
+      [v updateMax:max];
+      [_group propagate2B];
+   }
+}
+
+- (void)applyIntVar:(id<CPVar>)var {
+}
+
+
+@end

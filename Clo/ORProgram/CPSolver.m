@@ -1721,8 +1721,6 @@
 }
 -(void) maxOccurencesRatesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
-//   NSArray* arr = [_model constraints];
-//   NSLog(@"csts : %@",arr);
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
       return [_model occurences:x[i]];
    } do:b];
