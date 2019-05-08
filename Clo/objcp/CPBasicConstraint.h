@@ -428,3 +428,6 @@ typedef int (^intgetter) (void) ;
 @interface CP3BVisitor : NSObject<CPVisitor>
 -(CP3BVisitor*) initWithGroup:(CP3BGroup*) group tracer:(id<ORTracer>) tracer percent:(ORDouble) percent;
 @end
+
+@interface CP3BShavingVisitor : CP3BVisitor
+@end
