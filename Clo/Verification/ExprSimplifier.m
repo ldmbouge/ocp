@@ -576,6 +576,12 @@
    }
    [_hasInequalities setObject:@(lv) forKey:@(id_x)];
 }
+-(void) visitGroup:(id<ORGroup>)g
+{
+   [g enumerateObjectWithBlock:^(id<ORConstraint> c) {
+      [c visit:self];
+   }];
+}
 -(void) visitAlgebraicConstraint:(id<ORAlgebraicConstraint>)cstr
 {
    id<ORExpr> e = [cstr expr];
@@ -707,7 +713,7 @@
 @implementation VariableCollector{
    ORInt isNegate;
 }
--(InequalityConstraintsCollector*)init
+-(VariableCollector*)init
 {
    self = [super init];
    _theSet = [[NSMutableSet alloc] init];
