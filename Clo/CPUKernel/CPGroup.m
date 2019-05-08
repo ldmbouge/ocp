@@ -83,7 +83,7 @@
    return tryfail(^ORStatus{
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       [cstr post];
-      [self propagate];
+      [super propagate];
       [c setGroup:self];
       if (_nbIn >= _max) {
          _inGroup = realloc(_inGroup,sizeof(id<CPConstraint>)* _max * 2);
