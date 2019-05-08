@@ -77,6 +77,34 @@
    [_engine assignIdToConstraint:p];
    return ORSuspend;
 }
+
+-(ORStatus) post: (id<CPConstraint>) c
+{
+   return tryfail(^ORStatus{
+      CPCoreConstraint* cstr = (CPCoreConstraint*) c;
+      [cstr post];
+      [self propagate];
+      [c setGroup:self];
+      if (_nbIn >= _max) {
+         _inGroup = realloc(_inGroup,sizeof(id<CPConstraint>)* _max * 2);
+         _max *= 2;
+      }
+      _inGroup[_nbIn++] = c;
+      return ORSuccess;
+   }, ^ORStatus{
+      [_engine incNbFailures:1];
+      return ORFailure;
+   });
+}
+-(void) addInternal:(id<CPConstraint>) c
+{
+   if (getId(c) == -1)
+      [_engine assignIdToConstraint:c];
+   ORStatus s = [self post:c];
+   if (s==ORFailure) {
+      failNow();
+   }
+}
 -(void)assignIdToConstraint:(id<ORConstraint>)c
 {
    [_engine assignIdToConstraint:c];

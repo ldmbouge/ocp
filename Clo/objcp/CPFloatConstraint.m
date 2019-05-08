@@ -414,6 +414,10 @@
    _c = c;
    return self;
 }
+-(void)dealloc
+{
+   [super dealloc];
+}
 -(void) post
 {
    [self propagate];
@@ -1091,16 +1095,20 @@
    if(![_y bound])
       [_y whenChangeBoundsPropagate:self];
 }
-
+-(void) addConstraint:(id<CPConstraint>) c
+{
+   if(_group == nil)      [[_b engine] addInternal:c];
+   else [_group addInternal:c];
+}
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
       if ([_x bound] || [_x min] == [_x max]){            // TRUE <=> (y != c)
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x max]]];         // Rewrite as x==y  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x max]]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }else  if ([_y bound] || [_y min] == [_y max]) {     // TRUE <=> (x != c)
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y max]]];         // Rewrite as x==y  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:[_y max]]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }
@@ -1167,7 +1175,11 @@
    if(![_y bound])
       [_y whenChangeBoundsPropagate:self];
 }
-
+-(void) addConstraint:(id<CPConstraint>) c
+{
+   if(_group == nil)      [[_b engine] addInternal:c];
+   else [_group addInternal:c];
+}
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
@@ -1184,11 +1196,10 @@
    }
    else if (maxDom(_b)==0) {     // b is FALSE
       if ([_x bound] || [_x min] == [_x max] )
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x min]]]; // Rewrite as min(x)!=y  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]]];
       else if ([_y bound] || [_y min] == [_y max])
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]]; // Rewrite as min(y)!=x  (addInternal can throw)
-   }
-   else {                        // b is unknown
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]]];
+   }else {                        // b is unknown
       if (([_x bound] && [_y bound]) || ([_x min] == [_x max] &&  [_y min] == [_y max]))
          [_b bind: [_x min] == [_y min]];
       else if ([_x max] < [_y min] || [_y max] < [_x min])
@@ -1483,13 +1494,18 @@
    _c = c;
    return self;
 }
+-(void) addConstraint:(id<CPConstraint>) c
+{
+   if(_group == nil)      [[_b engine] addInternal:c];
+   else [_group addInternal:c];
+}
 -(void) post
 {
    if ([_b bound]) {
       if ([_b min] == true)
          [_x bind:_c];
       else
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
    }
    else if ([_x bound])
       [_b bind:[_x min] == _c];
@@ -1497,11 +1513,10 @@
       [_b bind:false];
    else {
       [_b setBindTrigger: ^ {
-         if ([_b min] == true) {
+         if ([_b min] == true)
             [_x bind:_c];
-         } else {
-            [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
-         }
+          else
+            [self addConstraint: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
       } onBehalf:self];
       [_x whenChangeBoundsDo: ^ {
          if ([_x bound])
@@ -1649,11 +1664,16 @@
    _c = c;
    return self;
 }
+-(void) addConstraint:(id<CPConstraint>) c
+{
+   if(_group == nil)      [[_b engine] addInternal:c];
+   else [_group addInternal:c];
+}
 -(void) post
 {
    if ([_b bound]) {
       if ([_b min] == true)
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
       else
          [_x bind:_c];
    }
@@ -1664,7 +1684,7 @@
    else {
       [_b whenBindDo: ^void {
          if ([_b min]==true)
-            [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+            [self addConstraint: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
          else
             [_x bind:_c];
       } onBehalf:self];
