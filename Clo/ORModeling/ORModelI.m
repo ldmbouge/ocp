@@ -448,6 +448,11 @@
             _equalities[x.getId][@(v.getId)] = @(c);
          }
       }
+      
+      ORInt index = [x getId];
+      ORInt oldv = [_occurences at:index];
+      [_occurences set:oldv-1 at:index];
+      [self updateOccurencesEqualities:index times:-1];
    }
 }
 -(void) incrOccurences:(id<ORVar>) v
@@ -476,7 +481,7 @@
             [self updateOccurencesEqualities:keyv times:nb * [dict[key] intValue]];
          }
          ORInt oldv = [_occurences at:keyv];
-         [_occurences set:oldv+nb at:keyv];
+         [_occurences set:oldv+(nb * [dict[key] intValue]) at:keyv];
       }
    }
 }
