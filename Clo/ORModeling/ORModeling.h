@@ -54,7 +54,7 @@ PORTABLE_BEGIN
 -(void) incrOccurences:(id<ORVar>) v;
 -(void) addEqualityRelation:(id<ORVar>) v with:(id<ORExpr>) e;
 -(ORDouble) occurences:(id<ORVar>) v;
--(ORDouble) lOccurences:(id<ORVar>) v;
+-(ORInt) lOccurences:(id<ORVar>) v;
 -(id<ORIntArray>) occurences;
 -(ORUInt) nbObjects;
 -(NSArray*) variables;

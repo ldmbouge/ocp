@@ -67,8 +67,8 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-bds"
-            isEnabled = "NO">
+            argument = "-3B"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-uniques 2"

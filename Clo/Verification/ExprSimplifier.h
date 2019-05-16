@@ -35,9 +35,9 @@
 +(NSDictionary*) collectKind:(NSArray*) constraints;
 @end
 
-@interface VariableCollector : ORNOopVisit{
-   NSMutableSet* _theSet;
+@interface VariableLocalOccCollector : ORNOopVisit{
+   NSMutableDictionary* _theSet;
 }
 -(id)init;
-+(NSMutableSet*) collect:(NSArray*) constraints;
++(id<ORIntArray>) collect:(NSArray*) constraints with:(NSArray*) vars tracker:(id<ORTracker>) tracker;
 @end

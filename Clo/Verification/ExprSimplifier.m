@@ -710,53 +710,110 @@
 }
 @end
 
-@implementation VariableCollector{
-   ORInt isNegate;
+@implementation VariableLocalOccCollector
+{
+   NSMutableDictionary* _rv;
 }
--(VariableCollector*)init
+-(VariableLocalOccCollector*)init
 {
    self = [super init];
-   _theSet = [[NSMutableSet alloc] init];
-   isNegate = 0;
+   _theSet = [[NSMutableDictionary alloc] init];
+   _rv = [[NSMutableDictionary alloc] init];
    return self;
 }
 -(void) dealloc
 {
    [_theSet release];
+   [_rv release];
    [super dealloc];
+}
+
+-(void)doIt:(ORExprBinaryI*)e
+{
+   [_rv removeAllObjects];
+   [[e left] visit:self];
+   [[e right] visit:self];
+   for(id k in [_rv keyEnumerator]){
+      ORInt bd = [_rv[k] intValue];
+      if(_theSet[k] != nil)
+         bd = max(bd, [_theSet[k] intValue]);
+      [_theSet setObject:@(bd) forKey:k];
+   }
 }
 -(void) visitAlgebraicConstraint:(id<ORAlgebraicConstraint>)cstr
 {
    id<ORExpr> e = [cstr expr];
    [e visit:self];
 }
+-(void) visitFloatVar:(id<ORFloatVar>)v
+{
+   ORInt r = 0;
+   if(_rv[@(v.getId)] != nil)
+      r = [_rv[@(v.getId)] intValue];
+   _rv[@(v.getId)] = @(r + 1);
+
+}
+-(void) visitDoubleVar:(id<ORDoubleVar>)v
+{
+   ORInt r = 0;
+   if(_rv[@(v.getId)] != nil)
+      r = [_rv[@(v.getId)] intValue];
+   _rv[@(v.getId)] = @(r + 1);
+}
+-(void) visitIntVar:(id<ORIntVar>)v
+{
+}
+-(void) visitExprUnaryMinusI:  (ORExprUnaryMinusI *) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprMulI: (ORExprBinaryI*) c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitExprDivI: (ORExprBinaryI*) c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitExprPlusI: (ORExprBinaryI*) c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitExprMinusI: (ORExprBinaryI*) c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
 -(void) visitExprEqualI:(ORExprBinaryI*)e
 {
-   id<ORExpr> l = [e left];
-   id<ORExpr> r = [e right];
-   if([r isVariable] && !(isNegate%2)){
-      [_theSet addObject:r];
-   }
-   if([l isVariable] && !(isNegate%2)){
-      [_theSet addObject:l];
-   }
+   [self doIt:e];
 }
 -(void) visitExprNEqualI:(ORExprBinaryI*)e
 {
-   id<ORExpr> l = [e left];
-   id<ORExpr> r = [e right];
-   if([r isVariable] && (isNegate%2)){
-      [_theSet addObject:r];
-   }
-   if([l isVariable] && (isNegate%2)){
-      [_theSet addObject:l];
-   }
+   [self doIt:e];
+}
+-(void) visitExprLEqualI: (ORExprBinaryI*) e
+{
+   [self doIt:e];
+}
+-(void) visitExprGEqualI: (ORExprBinaryI*) e
+{
+   [self doIt:e];
+}
+-(void) visitExprLThenI: (ORExprBinaryI*) e
+{
+   [self doIt:e];
+}
+-(void) visitExprLGthenI: (ORExprBinaryI*) e
+{
+   [self doIt:e];
 }
 -(void) visitExprNegateI:(ORExprNegateI*)e
 {
-   isNegate++;
    [[e operand] visit:self];
-   isNegate--;
 }
 -(void) visitExprImplyI:(ORExprLogiqueI*)e
 {
@@ -773,18 +830,47 @@
    [[e left] visit:self];
    [[e right] visit:self];
 }
--(NSSet*) result
+-(void) visitExprSqrtI: (ORExprSqrtI*) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprToFloatI: (ORExprToFloatI*) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprToDoubleI: (ORExprToDoubleI*) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprAbsI: (ORExprAbsI*) c
+{
+   [[c operand] visit:self];
+}
+-(NSDictionary*) result
 {
    return [_theSet copy];
 }
-+(NSSet*) collect:(NSArray*) constraints
++(id<ORIntArray>) collect:(NSArray*) constraints with:(NSArray*) vars tracker:(id<ORTracker>) tracker
 {
-   VariableCollector* collector = [[VariableCollector alloc] init];
+   VariableLocalOccCollector* collector = [[VariableLocalOccCollector alloc] init];
    for(id<ORConstraint> c in constraints){
       [c visit:collector];
    }
-   NSSet* r = [collector result];
+   NSDictionary* r = [collector result];
+   ORInt maxId = 0;
+   for(id<ORObject> c in vars){
+      maxId = ([c getId]>maxId)? [c getId] : maxId;
+   }
+   id<ORIntArray> _loccurences = [ORFactory intArray:tracker range:RANGE(tracker,0,maxId) value:0];
+   id keys = [r keyEnumerator];
+   for (id k in keys){
+      id v = (0);
+      if(r[k] != nil)
+         v = r[k];
+      _loccurences[[k intValue]] = v;
+   }
    [collector release];
-   return r;
+   [r release];
+   return _loccurences;
 }
 @end

@@ -523,15 +523,14 @@
       [counters release];
    }
 }
--(ORDouble) lOccurences:(id<ORVar>) v
+-(ORInt) lOccurences:(id<ORVar>) v
 {
    if(_loccurences == nil)
       [self initLocalOccurrences];
    
    if([v getId] < [_occurences count]) {
       ORInt index = [v getId];
-      ORDouble s = [_loccurences sum];
-      return (s > 0)?[_loccurences at:index]/s:0;
+      return [_loccurences at:index];
    }
    return 0.0;
 }

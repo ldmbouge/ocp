@@ -184,6 +184,7 @@
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
    NSSet*                _allvars;
+   id<ORIntArray>        _lOccurences;
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
@@ -246,6 +247,10 @@
 {
    [_model release];
    _model = [src retain];
+}
+-(void) setLOcc:(id<ORIntArray>) locc
+{
+   _lOccurences = locc;
 }
 -(id<ORModel>)source
 {
@@ -1728,7 +1733,9 @@
 -(void) maxLOccurencesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      return [_model lOccurences:x[i]];
+       if(_lOccurences == nil)
+          return (ORDouble)[_model lOccurences:x[i]];
+      return [_lOccurences[i] doubleValue];
    } do:b];
 }
 -(void) maxOccurencesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b

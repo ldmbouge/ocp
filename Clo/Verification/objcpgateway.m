@@ -769,6 +769,8 @@ static OBJCPGateway *objcpgw;
          __block bool found = false;
          isSat = false;
          if(!hascycle){
+            id<ORIntArray> locc = [VariableLocalOccCollector collect:[_model constraints] with:[_model variables] tracker:_model];
+            [(CPCoreSolver*)cp setLOcc:locc];
             [cp solveOn:^(id<CPCommonProgram> p) {
                [lh launchHeuristic];
                NSLog(@"Valeurs solutions : \n");
