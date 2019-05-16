@@ -2083,7 +2083,7 @@
 }
 -(NSArray*)allVarsArray
 {
-   return [[[NSArray alloc] initWithObjects:_x,_z, nil] autorelease];
+   return [[[NSArray alloc] initWithObjects:_x,_x,_z, nil] autorelease];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {

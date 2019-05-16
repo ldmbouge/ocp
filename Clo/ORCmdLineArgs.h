@@ -44,7 +44,8 @@ enum Heuristic {
    absDens = 30,
    custom = 31,
    customD = 32,
-   customWD = 33
+   customWD = 33,
+   maxLOcc  = 34,
 };
 enum ValHeuristic
 {

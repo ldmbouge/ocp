@@ -19,12 +19,12 @@
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
    @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
    @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
-   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens",@"custom",@"customD",@"customWD"};
+   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens",@"custom",@"customD",@"customWD",@"maxLOCC"};
 
 static enum Heuristic hIndex[] = {FF, ABS, IBS, WDEG, DDEG, SDEG,
    maxWidth, minWidth, maxCard,  minCard,   maxDens,   minDens,   minMagn,   maxMagn,
    maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens,
-   densWAbs , ref ,lexico,absDens,custom,customD,customWD};
+   densWAbs , ref ,lexico,absDens,custom,customD,customWD,maxLOcc};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"split3B",@"splitAbs",@"ESplit",@"DSplit"};
 
@@ -175,7 +175,7 @@ static enum ValHeuristic valIndex[] =
       else if (strncmp(argv[k], "-var-order", 10)==0){
          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
          int index = 24;
-         for(int i = 0; i < 30;i++){
+         for(int i = 0; i < 31;i++){
             if ([tmp isEqualToString:hName[i]] || [[tmp lowercaseString] isEqualToString:[hName[i] lowercaseString]]){
                index = i;
                break;
@@ -1111,6 +1111,66 @@ case maxOcc :
          break;
    }
    break;
+   case maxLOcc :
+      switch (valordering) {
+         case splitAbs:
+         case split:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatStaticSplit:i  withVars:x];
+            }];
+            break;
+         case split3Way:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatStatic3WaySplit:i  withVars:x];
+            }];
+            break;
+         case split5Way:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatStatic5WaySplit:i  withVars:x];
+            }];
+            break;
+         case split6Way:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatStatic6WaySplit:i  withVars:x];
+            }];
+            break;
+         case dynamicSplit:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatSplit:i  withVars:x];
+            }];
+            break;
+         case dynamic3Split:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p float3WaySplit:i  withVars:x];
+            }];
+            break;
+         case dynamic5Split:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p float5WaySplit:i  withVars:x];
+            }];
+            break;
+         case dynamic6Split:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p float6WaySplit:i  withVars:x];
+            }];
+            break;
+         case split3B:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p float3BSplit:i  call:@selector(maxOccurencesSearch:do:) withVars:x];
+            }];
+            break;
+         case Esplit:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatEWaySplit:i  withVars:x];
+            }];
+            break;
+         case Dsplit:
+            [p maxLOccurencesSearch:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatDeltaSplit:i  withVars:x];
+            }];
+            break;
+      }
+      break;
 case minOcc :
    switch (valordering) {
       case splitAbs:

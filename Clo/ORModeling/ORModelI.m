@@ -195,6 +195,7 @@
    NSMutableDictionary*     _cache;
    id<ORModelMappings>      _mappings;  // these are all the mappings for the models
    id<ORIntArray>           _occurences;
+   id<ORIntArray>           _loccurences;
    NSMutableArray*          _equalities;
 }
 -(ORModelI*) initORModelI
@@ -491,6 +492,46 @@
       ORInt index = [v getId];
       ORDouble s = [_occurences sum];
       return (s > 0)?[_occurences at:index]/s:0;
+   }
+   return 0.0;
+}
+-(void) initLocalOccurrences
+{
+   ORInt maxId = 0;
+   for(id<ORObject> c in _vars){
+      maxId = ([c getId]>maxId)? [c getId] : maxId;
+   }
+   _loccurences = [ORFactory intArray:self range:RANGE(self,0,maxId) value:0];
+   NSMutableDictionary* counters = [[NSMutableDictionary alloc] init];
+   @autoreleasepool {
+      for(id<ORConstraint> e in _cStore){
+         NSArray* av = [e allVarsArray];
+         [counters removeAllObjects];
+         for(id<ORVar> v in av){
+            int c = 0;
+            id o = [counters objectForKey:@(v.getId)];
+            if(o != nil) c = [o intValue] ;
+            c++;
+            [counters setObject:@(c) forKey:@(v.getId)];
+         }
+         for(id<ORVar> v in av){
+         ORInt c = [_loccurences[v.getId] intValue];
+         ORInt curr = [[counters objectForKey:@(v.getId)] intValue];
+         _loccurences[v.getId] = @(max(c,curr));
+         }
+      }
+      [counters release];
+   }
+}
+-(ORDouble) lOccurences:(id<ORVar>) v
+{
+   if(_loccurences == nil)
+      [self initLocalOccurrences];
+   
+   if([v getId] < [_occurences count]) {
+      ORInt index = [v getId];
+      ORDouble s = [_loccurences sum];
+      return (s > 0)?[_loccurences at:index]/s:0;
    }
    return 0.0;
 }
