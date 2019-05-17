@@ -3012,17 +3012,21 @@
 
 -(ORDouble) computeAbsorptionRate:(id<ORVar>) x
 {
-   CPFloatVarI* cx = _gamma[[x getId]];
+   id<CPVar> cx = _gamma[[x getId]];
    id<OROSet> cstr = _absconstraints[x.getId];
    ORDouble rate = 0.0;
    id<CPVar> v;
    for(id<CPABSConstraint> c in cstr){
       if([c canLeadToAnAbsorption]){
          v = [c varSubjectToAbsorption:cx];
-         rate += [self computeAbsorptionQuantity:(id<CPFloatVar>)v by:(id<ORFloatVar>)x];
+         if(v == nil) continue;
+         ORAbsVisitor* absVisit = [[ORAbsVisitor alloc] init:v];
+         [cx visit:absVisit];
+         ORDouble absV = [absVisit rate];
+         [absVisit release];
+         rate += absV;
       }
    }
-   [cstr release];
    return rate;
 }
 //[hzi] collect all additionals variables leading to abs
