@@ -384,7 +384,15 @@
       //au moins 4 floatants
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-      ORFloat mid = tmpMin/2 + tmpMax/2;
+      ORFloat mid;
+      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+         mid = 0.0;
+      else if ((theMin < 1.0) && (1.0 < theMax))
+         mid = 1.0;
+      else if ((theMin < -1.0) && (-1.0 < theMax))
+         mid = -1.0;
+      else
+         mid = tmpMin/2 + tmpMax/2;
       
       assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       ORFloat midInf = -0.0f;
@@ -458,7 +466,15 @@
       //au moins 4 floatants
       ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
       ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      ORDouble mid = tmpMin/2 + tmpMax/2;
+      ORFloat mid;
+      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+         mid = 0.0;
+      else if ((theMin < 1.0) && (1.0 < theMax))
+         mid = 1.0;
+      else if ((theMin < -1.0) && (-1.0 < theMax))
+         mid = -1.0;
+      else
+         mid = tmpMin/2 + tmpMax/2;
       
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
       ORDouble midInf = -0.0;
