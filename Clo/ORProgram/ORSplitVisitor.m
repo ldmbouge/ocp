@@ -466,7 +466,7 @@
       //au moins 4 floatants
       ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
       ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      ORFloat mid;
+      ORDouble mid;
       if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
          mid = 0.0;
       else if ((theMin < 1.0) && (1.0 < theMax))
