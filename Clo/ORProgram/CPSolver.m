@@ -3025,7 +3025,7 @@
          [cx visit:absVisit];
          ORDouble absV = [absVisit rate];
          [absVisit release];
-         rate += absV;
+         rate = maxDbl(absV,rate);
       }
    }
    return rate;
