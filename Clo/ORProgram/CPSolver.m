@@ -2137,14 +2137,14 @@
 -(void) maxAbsorptionSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      return [self computeAbsorptionRate:x[i]];
+      return [self computeAbsorptionRate:x[i] in:x];
    } do:b];
 }
 //------- min ------//
 -(void) minAbsorptionSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      return -[self computeAbsorptionRate:x[i]];
+      return [self computeAbsorptionRate:x[i] in:x];
    } do:b];
 }
 -(void) combinedAbsWithDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -2161,7 +2161,7 @@
                                   }
                                  orderedBy: ^ORDouble(ORInt i) {
                                     LOG(_level,2,@"%@",_gamma[x[i].getId]);
-                                    ORDouble c = [self computeAbsorptionRate:x[i]];
+                                    ORDouble c = [self computeAbsorptionRate:x[i] in:x];
                                     if(c > taux){
                                        [considered set:1 at:i];
                                        found = YES;
@@ -2270,7 +2270,7 @@
          ORDouble val = 0.0;
          for (ORInt j = 0; j < [considered count]; j++) {
             if(!considered[j]) continue;
-            val = [self computeAbsorptionRate:x[j]];
+            val = [self computeAbsorptionRate:x[j] in:x];
             if (val > choosed) {
                choosed = val;
                i.index = j;
@@ -3010,9 +3010,10 @@
    return  abs;
 }
 
--(ORDouble) computeAbsorptionRate:(id<ORVar>) x
+-(ORDouble) computeAbsorptionRate:(id<ORVar>) x in:(id<ORDisabledVarArray>) vars
 {
    id<CPVar> cx = _gamma[[x getId]];
+   [self initializeAbsConstraints:vars];
    id<OROSet> cstr = _absconstraints[x.getId];
    ORDouble rate = 0.0;
    id<CPVar> v;
