@@ -1707,11 +1707,16 @@
 -(void) visitRationalChannel:(id<ORRationalChannel>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORFloatVar> left = [cstr left];
+      id<ORVar> left = [cstr left];
       id<ORRationalVar> right = [cstr right];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory channel:_gamma[left.getId] with:_gamma[right.getId]];
+      id<CPConstraint> concreteCstr;
+      if([_gamma[left.getId] class] == [CPFloatVarI class]){
+         concreteCstr = [CPFactory channel:_gamma[left.getId] with:_gamma[right.getId]];
+      } else {
+         concreteCstr = [CPFactory channelD:_gamma[left.getId] with:_gamma[right.getId]];
+      }
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

@@ -73,12 +73,13 @@ void cav10_d(int search, int argc, const char * argv[]) {
       //srand(time(NULL));
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0 up:100 elow:zero eup:zero name:@"x"];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
-      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
-      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
-      //id<ORRationalVar> zR = [ORFactory rationalVar:mdl name:@"zR"];
-      //id<ORRationalVar> ZR = [ORFactory rationalVar:mdl name:@"ZR"];
+      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0 up:10 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl low:11 up:13 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> y = [ORFactory doubleVar:mdl name:@"y"];
+      id<ORRationalVar> ey = [ORFactory errorVar:mdl of:y];
+      id<ORRationalVar> eyAbs = [ORFactory rationalVar:mdl name:@"eyAbs"];
+      id<ORRationalVar> yR = [ORFactory rationalVar:mdl name:@"yR"];
+      id<ORRationalVar> YR = [ORFactory rationalVar:mdl name:@"YR"];
 
       /*
        def cav10(x: Real): Real = {
@@ -95,13 +96,16 @@ void cav10_d(int search, int argc, const char * argv[]) {
       //[mdl add:[z geq: @(0.0)]];
       //[mdl add:[z leq: @(3.0)]];
       
-      [mdl add:[z set: [[x mul: x] plus: x]]];
-      [mdl add:[z leq: @(1)]];
-      //[mdl add:[ORFactory channel:z with:zR]];
+      [mdl add:[y set: [[x mul: x] sub: z]]];
+      [mdl add:[y geq: @(1.0)]];
+      //[mdl add:[ORFactory channel:y with:yR]];
       
-      [mdl add: [ezAbs eq: [ez abs]]];
-      //[mdl add:[[zR plus: ez] geq: zero]];
-      [mdl maximize:ezAbs];
+      [zero set_d: 1.0];
+      [mdl add: [eyAbs eq: [ey abs]]];
+      
+      //[mdl add:[YR eq: [yR plus: ey]]];
+      //[mdl add:[YR leq: zero]];
+      [mdl maximize:eyAbs];
       
       [zero release];
       NSLog(@"model: %@",mdl);
@@ -111,14 +115,10 @@ void cav10_d(int search, int argc, const char * argv[]) {
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
-         //if (search)
-            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+         if (search)
+            [cp branchAndBoundSearchD:vars out:eyAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"a : [%20.20e;%20.20e] (%s)",[cp minD:x],[cp maxD:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"ea: [%@;%@]",[cp minDQ:x],[cp  maxDQ:x]);
-         NSLog(@"b : [%20.20e;%20.20e] (%s)",[cp minD:z],[cp maxD:z],[cp bound:z] ? "YES" : "NO");
-         NSLog(@"eb: [%@;%@]",[cp minDQ:z],[cp  maxDQ:z]);
       }];
    }
 }
@@ -132,11 +132,8 @@ int main(int argc, const char * argv[]) {
    sranddev();
    //   signal(SIGKILL, exitfunc);
    //   alarm(60);
-      LOO_MEASURE_TIME(@"rigidbody2"){
-   cav10_d(0, argc, argv);
-   //sqroot_f(1, argc, argv);
+      LOO_MEASURE_TIME(@"cav10"){
+   cav10_d(1, argc, argv);
    }
-   ORDouble one = 1.01;
-   NSLog(@"%20.20e", (nextafter(one, +INFINITY) - one)/2);
    return 0;
 }

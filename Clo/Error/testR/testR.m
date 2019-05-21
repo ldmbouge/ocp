@@ -139,10 +139,16 @@ void testR(int argc, const char * argv[]) {
          
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
+         //id<ORRational> low = [[[ORRational alloc] init] set_d: 3.2f];
+         //id<ORRational> up = [[[ORRational alloc] init] set_d: 100.0f];
          //ORRational * tmp = [ORRational rationalWith_d:nextafterf(7.15255737304687500000e-07, +INFINITY)];
-         id<ORFloatVar> x = [ORFactory floatVar:mdl name:@"x"];
+         id<ORFloatVar> x = [ORFactory floatVar:mdl low:20.3f up:45.0f elow:zero eup:zero name:@"x"];
+         id<ORRationalVar> yR = [ORFactory rationalVar:mdl name:@"yR"];
+         id<ORRationalVar> xR = [ORFactory rationalVar:mdl name:@"xR"];
+         id<ORRationalVar> zR = [ORFactory rationalVar:mdl name:@"zR"];
+         id<ORRationalVar> zq = [ORFactory rationalVar:mdl name:@"zq"];
          // y:  3.2 ; 3.4
-         id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.2f up:3.4f elow:zero eup:zero name:@"y"];
+         id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.2f up:100.0f elow:zero eup:zero name:@"y"];
          //id<ORFloatVar> y = [ORFactory floatVar:mdl low:randomNum up:randomNum elow:zero eup:zero name:@"y"];
          //id<ORFloatVar> o = [ORFactory floatVar:mdl name:@"o"];
          //id<ORFloatVar> k = [ORFactory floatVar:mdl low:2.0f up:3.0f elow:zero eup:zero name:@"k"];
@@ -153,7 +159,9 @@ void testR(int argc, const char * argv[]) {
          id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
          [zero release];
          
+         //[low set_d: 45.0f];
          [mdl add:[x set: @(45.0f)]];
+         //[mdl add:[xR eq: low]];
          //[mdl add:[o set: @(2.43f)]];
          
          /*
@@ -169,6 +177,14 @@ void testR(int argc, const char * argv[]) {
          //[mdl add:[z set: [w sub: u]]];
          //[mdl add:[o set: [x div: k]]];
          [mdl add:[z set: [x plus: y]]];
+         [mdl add:[ORFactory channel:x with:xR]];
+         [mdl add:[ORFactory channel:y with:yR]];
+
+         [mdl add:[zR eq: [xR plus: yR]]];
+         
+         [mdl add:[ORFactory channel:z with:zq]];
+         
+         [mdl add:[ez eq:[zR sub: zq]]];
          
          [mdl add: [ezAbs eq: [ez abs]]];
          [mdl maximize:ezAbs];
@@ -220,6 +236,75 @@ void testR(int argc, const char * argv[]) {
       NSLog(@"##################");*/
    }
 }
+
+void testRF(int argc, const char * argv[]) {
+   @autoreleasepool {
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORRational> zero = [[[ORRational alloc] init] setZero];
+         id<ORRational> low = [ORRational rationalWith_d:3.2f];
+         id<ORRational> up = [ORRational rationalWith_d:100.0f];
+         id<ORRationalVar> yR = [ORFactory rationalVar:mdl name:@"yR"];
+         id<ORRationalVar> xR = [ORFactory rationalVar:mdl name:@"xR"];
+         id<ORRationalVar> zR = [ORFactory rationalVar:mdl name:@"zR"];
+         id<ORRationalVar> zq = [ORFactory rationalVar:mdl name:@"zq"];
+         id<ORFloatVar> x = [ORFactory floatVar:mdl name:@"x"];
+         id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.20f up:100.0f elow:zero eup:zero name:@"y"];
+         id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
+         id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
+         [zero release];
+      
+         [up release];
+         
+         [mdl add:[ORFactory channel:x with:xR]];
+         [mdl add:[ORFactory channel:y with:yR]];
+         //[mdl add:[ORFactory channel:z with:zq]];
+
+         [mdl add:[x set: @(45.0f)]];
+
+         //[mdl add:[z set: [x plus: y]]];
+         [mdl add:[zR eq: [xR plus: yR]]];
+         
+         [low set_d: 1];
+         [mdl add:[zR leq: low]];
+         //[mdl add:[ez eq:[zR sub: zq]]];
+         //[mdl add:[z gt:@(1.0000000001f)]];
+         
+//         [mdl add: [ezAbs eq: [ez abs]]];
+//         [mdl maximize:ezAbs];
+         
+                   [low release];
+         NSLog(@"model: %@",mdl);
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+         id<ORFloatVarArray> vs = [mdl floatVars];
+         id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+         
+         [cp solve:^{
+//            [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+//               [cp floatSplit:i withVars:x];
+//            }];
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+                        NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
+            NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
+                        NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
+            NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
+            NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
+            NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp maxFQ:z]);
+
+
+         }];
+         NSLog(@"%@",cp);
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
+      }];
+   }
+}
+
 
 void testRAbs(int argc, const char * argv[]) {
    @autoreleasepool {
@@ -317,6 +402,49 @@ void testRD(int argc, const char * argv[]) {
    }
 }
 
+void testDiscriminant(int argc, const char * argv[]) {
+   @autoreleasepool {
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORRational> zero = [[[ORRational alloc] init] setZero];
+         id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
+         id<ORDoubleVar> b = [ORFactory doubleVar:mdl low:3.24884062356828e+12 up:3.24884062357828e+12 elow:zero eup:zero name:@"b"];
+         id<ORDoubleVar> c = [ORFactory doubleVar:mdl low:1.832918981126891e+16 up:1.832918981126892e+16 elow:zero eup:zero name:@"c"];
+         id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+         id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
+         [zero release];
+         
+         [mdl add: [a set: @(1.43963872E+8)]];
+         //[mdl add: [b set: @(7.0)]];
+         [mdl add:[z set: [[b mul: b] sub: [[@(4.0) mul: a] mul: c] ]]];
+         [mdl add:[z geq: @(0.0)]];
+         
+         [mdl add: [ezAbs eq: [ez abs]]];
+         [mdl maximize:ezAbs];
+         
+         NSLog(@"model: %@",mdl);
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+         id<ORDoubleVarArray> vs = [mdl doubleVars];
+         id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+         
+         [cp solve:^{
+//            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+//               [cp floatSplit:i withVars:x];
+//            }];
+            NSLog(@"a : %@",[cp concretize:a]);
+            NSLog(@"b : %@",[cp concretize:b]);
+            NSLog(@"c : %@",[cp concretize:c]);
+            NSLog(@"z : %@",[cp concretize:z]);
+         }];
+         NSLog(@"%@",cp);
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
+      }];
+   }
+}
+
 
 void testOptimize(int argc, const char * argv[]) {
    @autoreleasepool {
@@ -349,8 +477,10 @@ void testOptimize(int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"testR"){
 //   testIntBFS(argc, argv);
-   //testR(argc, argv);
-   testRD(argc, argv);
+//   testR(argc, argv);
+      testRF(argc, argv);
+   //testRD(argc, argv);
+   //testDiscriminant(argc, argv);
    //testRAbs(argc, argv);
    
 //   float ye = nb_float(3.2f, NB_FLOAT);

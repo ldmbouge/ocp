@@ -112,7 +112,6 @@
 }
 @end
 
-
 @implementation CPRationalChannel
 -(id) init:(CPFloatVarI*)x with:(CPRationalVarI*)y
 {
@@ -147,6 +146,63 @@
       id<ORRational> xminRat = [ORRational rationalWith_d:[_x min]];
       id<ORRational> xmaxRat = [ORRational rationalWith_d:[_x max]];
       [_x updateInterval:maxFlt([_x min], [[_y min] get_d]) and:minFlt([_x max], [[_y max] get_d])];
+      [_y updateInterval:maxQ(xminRat, [_y min]) and:minQ(xmaxRat, [_y max])];
+      [xminRat release];
+      [xmaxRat release];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<F:%@ == Q:%@>",[_x domain],_y];
+}
+@end
+
+@implementation CPRationalChannelD
+-(id) init:(CPDoubleVarI*)x with:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
+   if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_x bound]){
+      
+      id<ORRational> tmp = [ORRational rationalWith_d:[_x value]];
+      [_y bind:tmp];
+      [tmp release];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if([_y bound]){
+      [_x bind:[[_y value] get_d]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
+   if(isDisjointWithQDC(_x,_y)){
+      failNow();
+   }else{
+      id<ORRational> xminRat = [ORRational rationalWith_d:[_x min]];
+      id<ORRational> xmaxRat = [ORRational rationalWith_d:[_x max]];
+      [_x updateInterval:maxDbl([_x min], [[_y min] get_d]) and:minFlt([_x max], [[_y max] get_d])];
       [_y updateInterval:maxQ(xminRat, [_y min]) and:minQ(xmaxRat, [_y max])];
       [xminRat release];
       [xmaxRat release];
@@ -1021,14 +1077,25 @@
    }
 }
 
--(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
+//-(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
+//{
+//   if ([[newBound value] gt: _primalBound]){
+//      _primalBound = [newBound value];
+//      //NSLog(@"primal bound: %@",_primalBound);
+//      NSLog(@"%@ -- %@", _primalBound, _dualBound);
+//   }
+//}
+
+-(void) tightenPrimalBound: (id<ORRational>) bound
 {
-   if ([[newBound value] gt: _primalBound]){
-      _primalBound = [newBound value];
+   //NSLog(@"##### x = [%@, %@] %@", [_x min], [_x max], [[_x min] eq: [_x max]]?@"=":@"!=");
+   if ([bound gt: _primalBound]){
+      [_primalBound set: bound];
       //NSLog(@"primal bound: %@",_primalBound);
       NSLog(@"%@ -- %@", _primalBound, _dualBound);
    }
 }
+
 -(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
 {
       if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {

@@ -262,7 +262,9 @@ static long __nbPull = 0;
       //NSLog(@"%@", _buf);
       if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
-         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue] ]){
+         /* skip box if sup of error is less than primalBound */
+         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] &&
+            [[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]]){
             BBNode* nd = [_buf extractBest];
             
             ORStatus status = [of tightenDualBound:bestKey.bound];
@@ -274,8 +276,7 @@ static long __nbPull = 0;
             [nd.cp letgo];
             NSCont* k = nd.cont;
             [nd release];
-            /* do not call continuation if sup of error is less than primalBound */
-            if (k &&  status != ORFailure && [[bestKey.bound rationalValue] gt: [[[_engine objective] primalBound] rationalValue]]) {
+            if (k &&  status != ORFailure) {
                [bestKey release];
                [k call];
             } else {
@@ -287,7 +288,7 @@ static long __nbPull = 0;
          } else {
             NSLog(@"EQUAL BOUND: %@ == %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             //NSLog(@"%@", [_engine variables]);
-            //NSLog(@"QUEUE: %@", _buf);
+            NSLog(@"QUEUE: %@", _buf);
             //NSLog(@"%@", [_engine objective]);
             return;
          }

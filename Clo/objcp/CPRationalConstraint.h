@@ -56,6 +56,16 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPRationalChannelD : CPCoreConstraint {
+   CPDoubleVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x with:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRationalEqualc : CPCoreConstraint {
    CPRationalVarI* _x;
    id<ORRational>      _c;

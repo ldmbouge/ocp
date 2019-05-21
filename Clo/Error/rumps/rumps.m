@@ -237,7 +237,7 @@ void rump_f_bb(int search, int argc, const char * argv[]) {
       //[mdl add:[y_0 set: @(33096.f)]];
       [mdl add:[r_0 set: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
       //assert((r_0 >= 0));
-      //[mdl add:[r_0 geq:@(0.0f)]];
+      [mdl add:[r_0 geq:@(0.0f)]];
       //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
       
       [mdl add: [erAbs eq: [er abs]]];
@@ -264,10 +264,11 @@ void exitfunc(int sig)
 }
 
 int main(int argc, const char * argv[]) {
+   sranddev();
    signal(SIGKILL, exitfunc);
    alarm(60);
    //rump_f(1, argc, argv);
-   rump_f_bb(1, argc, argv);
+   //rump_f_bb(1, argc, argv);
     //rump_d(0, argc, argv);
     //rump_d_bb(1, argc, argv);
     return 0;

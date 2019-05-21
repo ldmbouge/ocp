@@ -179,6 +179,7 @@ void exitfunc(int sig)
 }
 
 int main(int argc, const char * argv[]) {
+   sranddev();
    signal(SIGKILL, exitfunc);
    alarm(60);
    //   LOO_MEASURE_TIME(@"rigidbody2"){

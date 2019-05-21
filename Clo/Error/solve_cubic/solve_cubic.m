@@ -22,11 +22,11 @@ void solve_cubic(int argc, const char * argv[]) {
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORDoubleVar> Q = [ORFactory doubleVar:mdl name:@"Q"];
       id<ORDoubleVar> R = [ORFactory doubleVar:mdl name:@"R"];
-      //id<ORRationalVar> eQ = [ORFactory errorVar:mdl of:Q];
+      id<ORRationalVar> eQ = [ORFactory errorVar:mdl of:Q];
 //      id<ORRationalVar> eR = [ORFactory errorVar:mdl of:R];
-      //id<ORRationalVar> eQAbs = [ORFactory rationalVar:mdl name:@"eQAbs"];
+      id<ORRationalVar> eQAbs = [ORFactory rationalVar:mdl name:@"eQAbs"];
 //      id<ORRationalVar> eRAbs = [ORFactory rationalVar:mdl name:@"eRAbs"];
-      [zero release];
+      //[zero release];
       
       /* Exact
        [mdl add:[a set:@(15.0)]];
@@ -53,17 +53,19 @@ void solve_cubic(int argc, const char * argv[]) {
       [mdl add:[R eq:@(0.0)]];
       [mdl add:[Q eq:@(0.0)]];
       
-      //[mdl add: [eQAbs eq:[eQ abs]]];
-       
-      //[mdl maximize:eQAbs];
+      [zero set_d:3.15796771448933398412e-15];
+      [mdl add: [eQAbs eq:[eQ abs]]];
+      [mdl add:[eQAbs geq:zero]];
+      
+      [mdl maximize:eQAbs];
       
       //[mdl add:[[R error] geq:tmp]];
       //[mdl add:[[Q error] geq:tmp]];
       
       [tmp release];
       NSLog(@"model: %@",mdl);
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      //id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
@@ -71,9 +73,9 @@ void solve_cubic(int argc, const char * argv[]) {
 //         [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
 //            [cp floatSplit:i withVars:x];
 //         }];
-//         [cp branchAndBoundSearchD:vars out:eQAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-//            [cp floatSplit:i withVars:x];
-//         }];
+         [cp branchAndBoundSearchD:vars out:eQAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            [cp floatSplit:i withVars:x];
+         }];
          NSLog(@"%@",cp);
          NSLog(@"a : [%20.100e;%20.20e] (%s)",[cp minD:a],[cp maxD:a],[cp bound:a] ? "YES" : "NO");
          NSLog(@"ea: [%@;%@]",[cp minDQ:a],[cp  maxDQ:a]);
@@ -95,9 +97,9 @@ void exitfunc(int sig)
 }
 
 int main(int argc, const char * argv[]) {
-   srand(time(NULL));
-   signal(SIGKILL, exitfunc);
-   alarm(60);
+   sranddev();
+   //signal(SIGKILL, exitfunc);
+   //alarm(60);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
    solve_cubic(argc, argv);
    //sqroot_f(1, argc, argv);
