@@ -88,18 +88,21 @@ void testRational(int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORRational> low = [[ORRational alloc] init];
       id<ORRational> up = [[ORRational alloc] init];
-      [low set_d:-7];
-      [up set_d: 3];
+      [low set_d:0];
+      [up set_d: 10];
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRationalVar> x = [ORFactory rationalVar:mdl low:low up:up name:@"x"];
+      id<ORRationalVar> y = [ORFactory rationalVar:mdl name:@"y"];
       id<ORRationalVar> z = [ORFactory rationalVar:mdl name:@"z"];
       //[mdl add:[z eq: [x plus: y]]];
-      [up setMinusOne];
       [low set_d: 2];
-      [mdl add:[z eq: [x abs]]];
-      [mdl add:[x leq: up]];
-      [mdl add:[z leq: low]];
-      //[mdl add:[z leq: low]];
+      [up set_d: 1];
+      [mdl add:[y eq: low]];
+      [mdl add:[z eq: [x plus: y]]];
+      [mdl add:[z leq: up]];
+      
+      [low release];
+      [up release];
       
       //[mdl maximize:z];
       
@@ -108,9 +111,9 @@ void testRational(int argc, const char * argv[]) {
       //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       
       [cp solve:^{
-         //[cp labelRational:x];
+         [cp labelRational:x];
          NSLog(@"x : [%@;%@] (%s)",[cp minQ:x],[cp maxQ:x],[cp bound:x] ? "YES" : "NO");
-         //NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
+         NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
          NSLog(@"z : [%@;%@] (%s)",[cp minQ:z],[cp maxQ:z],[cp bound:z] ? "YES" : "NO");
       }];
       NSLog(@"%@",cp);
@@ -243,17 +246,17 @@ void testRF(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
-         id<ORRational> low = [ORRational rationalWith_d:3.2f];
+         id<ORRational> low = [ORRational rationalWith_d:-100.0f];
          id<ORRational> up = [ORRational rationalWith_d:100.0f];
-         id<ORRationalVar> yR = [ORFactory rationalVar:mdl name:@"yR"];
-         id<ORRationalVar> xR = [ORFactory rationalVar:mdl name:@"xR"];
-         id<ORRationalVar> zR = [ORFactory rationalVar:mdl name:@"zR"];
-         id<ORRationalVar> zq = [ORFactory rationalVar:mdl name:@"zq"];
-         id<ORFloatVar> x = [ORFactory floatVar:mdl name:@"x"];
-         id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.20f up:100.0f elow:zero eup:zero name:@"y"];
-         id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
-         id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
-         id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
+         id<ORRationalVar> yR = [ORFactory rationalVar:mdl low:low up:up name:@"yR"];
+         id<ORRationalVar> xR = [ORFactory rationalVar:mdl low:low up:up name:@"xR"];
+         id<ORRationalVar> zR = [ORFactory rationalVar:mdl low:low up:up name:@"zR"];
+         //id<ORRationalVar> zq = [ORFactory rationalVar:mdl low:low up:up name:@"zq"];
+         id<ORFloatVar> x = [ORFactory floatVar:mdl low:-100.0 up:100.0 elow:zero eup:zero name:@"x"];
+         id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.20f up:20.0f elow:zero eup:zero name:@"y"];
+         id<ORFloatVar> z = [ORFactory floatVar:mdl low:-1000.0 up:1000.0 name:@"z"];
+         //id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+         //id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
          [zero release];
       
          [up release];
@@ -289,9 +292,9 @@ void testRF(int argc, const char * argv[]) {
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-                        NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
+            NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
             NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
-                        NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
+            NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
             NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
             NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
             NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp maxFQ:z]);
@@ -455,13 +458,13 @@ void testOptimize(int argc, const char * argv[]) {
       id<ORIntVar> y = [ORFactory intVar:mdl bounds:r0];
       id<ORIntVar> z = [ORFactory intVar:mdl bounds:r1];
       
-      
       [mdl add:[z eq: [x plus: y]]];
       
-      [mdl maximize:z];
+      //[mdl maximize:z];
       
       NSLog(@"model: %@",mdl);
-      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       
       [cp solve:^{
          [cp label:y];

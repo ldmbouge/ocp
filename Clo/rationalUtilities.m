@@ -457,6 +457,81 @@
    }
    return z;
 }
+-(id<ORRational>)subI:(id<ORRational>)r
+{
+   id<ORRational> z = [[ORRational alloc] init: _mt];
+   id<ORRational> local = [[ORRational alloc] init];
+   id<ORRational> other = [[ORRational alloc] init];
+   if(_type == 2){
+      [local set_d: 10e+20];
+   }
+   else if(_type == -2){
+      [local set_d: -10e+20];
+   }
+   
+   if(r.type == 2){
+      [other set_d: 10e+20];
+   }
+   else if(r.type == -2){
+      [other set_d: -10e+20];
+   }
+   mpq_sub(z.rational, local.rational, other.rational);
+   mpq_canonicalize(z.rational);
+   z.type = mpq_sgn(z.rational);
+   return z;
+}
+-(id<ORRational>)divI:(id<ORRational>)r
+{
+   id<ORRational> z = [[ORRational alloc] init: _mt];
+   /* x = NaN || y = NaN */
+   if(_type == 3 || r.type == 3){
+      /* z = NaN */
+      [z setNAN];
+   }
+   /*
+    (x = -inf  && y = -inf) ||
+    (x = -inf  && y =  inf) ||
+    (x =  inf  && y = -inf) ||
+    (x =  inf  && y =  inf) ||
+    (y =  0)
+    */
+   else if((_type == -2 && r.type ==  2) ||
+           (_type == -2 && r.type == -2) ||
+           (_type ==  2 && r.type ==  2) ||
+           (_type ==  2 && r.type == -2) ||
+           (r.type ==  0)){
+      /* z = NaN */
+      [z setNAN];
+   }
+   /*
+    (x = -inf && y = PR) ||
+    (x =  inf && y = NR)
+    */
+   else if((_type == -2 && r.type == 1) ||
+           (_type == 2 && r.type == -1)){
+      /* z = -inf */
+      [z setNegInf];
+   }
+   /*
+    (x = -inf && y = NR) ||
+    (x =  inf && y = PR)
+    */
+   else if((_type == -2 && r.type == -1) ||
+           (_type ==  2 && r.type ==  1)){
+      /* z = inf */
+      [z setPosInf];
+   } else if(r.type == -2 || r.type == 2) {
+      /* z = 0 */
+      [z setZero];
+   }
+   /* x = Q && y = Q */
+   else {
+      mpq_div(z.rational, _rational, r.rational);
+      mpq_canonicalize(z.rational);
+      z.type = mpq_sgn(z.rational);
+   }
+   return z;
+}
 -(id<ORRational>)neg
 {
    /* z = -x */
@@ -882,8 +957,8 @@
 -(id<ORRationalInterval>)sqrt
 {
    id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
-//   z.low = [_low sqrt];
-//   z.up = [_up sqrt];
+   //   z.low = [_low sqrt];
+   //   z.up = [_up sqrt];
    
    fesetround(FE_DOWNWARD);
    [z.low set_d: sqrt([_low get_d])];
@@ -1011,38 +1086,38 @@
       z.changed |= 2;
    }
    
-   if(0 && z.changed && [z.low neq: z.up]){
+   if(z.changed && [z.low neq: z.up]){
       id<ORRational> plow = [[ORRational alloc] init];
       id<ORRational> pup = [[ORRational alloc] init];
       id<ORRational> epsilon = [[ORRational alloc] init];
-//      int both = 0;
+      //      int both = 0;
       //plow = [[[_low sub:z.low] div:_low] abs];
       //pup = [[[_up sub:z.up] div:_up] abs];
-      plow = [[z.up sub:z.low] div: [_up sub: _low]];
+      plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:50 and:100];
       
       if([plow leq: epsilon]){
          z.changed = 0;
       }
       
-//      if([plow leq: epsilon])
-//         both++;
-//      if([pup leq: epsilon])
-//         both++;
-//      if(both == 2){
-//         z.changed = 0;
-//         [z.low set: _low];
-//         [z.up set: _up];
-//      }
-
+      //      if([plow leq: epsilon])
+      //         both++;
+      //      if([pup leq: epsilon])
+      //         both++;
+      //      if(both == 2){
+      //         z.changed = 0;
+      //         [z.low set: _low];
+      //         [z.up set: _up];
+      //      }
+      
       [plow release];
       [pup release];
       [epsilon release];
    }
-//   if([z empty]){
-//      [z.low setPosInf];
-//      [z.up setNegInf];
-//   }
+   //   if([z empty]){
+   //      [z.low setPosInf];
+   //      [z.up setNegInf];
+   //   }
    
    return z;
 }
@@ -1063,33 +1138,37 @@
    }
    
    if(z.changed && [z.low neq: z.up]){
-      id<ORRational> pup = [[ORRational alloc] init];
       id<ORRational> plow = [[ORRational alloc] init];
+      id<ORRational> pup = [[ORRational alloc] init];
       id<ORRational> epsilon = [[ORRational alloc] init];
-      int both = 0;
+      //      int both = 0;
+      //plow = [[[_low sub:z.low] div:_low] abs];
+      //pup = [[[_up sub:z.up] div:_up] abs];
+      plow = [[z.up subI:z.low] divI: [_up subI: _low]];
+      [epsilon set:50 and:100];
       
-      plow = [[[_low sub: z.low] div: _low] abs];
-      pup = [[[_up sub: z.up] div: _up] abs];
-      [epsilon set:5 and:100];
-      
-      if([plow leq: epsilon])
-         both++;
-      if([pup leq: epsilon])
-         both++;
-      if(both == 2){
+      if([plow leq: epsilon]){
          z.changed = 0;
-         [z.low set: _low];
-         [z.up set: _up];
       }
+      
+      //      if([plow leq: epsilon])
+      //         both++;
+      //      if([pup leq: epsilon])
+      //         both++;
+      //      if(both == 2){
+      //         z.changed = 0;
+      //         [z.low set: _low];
+      //         [z.up set: _up];
+      //      }
       
       [plow release];
       [pup release];
       [epsilon release];
    }
-//   if([z empty]){
-//      [z.low setPosInf];
-//      [z.up setNegInf];
-//   }
+   //   if([z empty]){
+   //      [z.low setPosInf];
+   //      [z.up setNegInf];
+   //   }
    return z;
 }
 @end

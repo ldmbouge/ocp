@@ -673,6 +673,11 @@
       z = [z proj_inter: zTemp];
       changed |= z.changed;
       
+      if([z empty]){
+         gchanged |= true;
+         break;
+      }
+      
       // ============================== ex
       // ez - ey
       xTemp = [z sub: y];
@@ -680,12 +685,22 @@
       x = [x proj_inter: xTemp];
       changed |= x.changed;
       
+      if([x empty]){
+         gchanged |= true;
+         break;
+      }
+      
       // ============================== ey
       // ez - ex
       yTemp = [z sub: x];
       
       y = [y proj_inter: yTemp];
       changed |= y.changed;
+      
+      if([y empty]){
+         gchanged |= true;
+         break;
+      }
       
       gchanged |= changed;
    } while(changed);
