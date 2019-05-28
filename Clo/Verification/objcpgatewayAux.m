@@ -29,7 +29,7 @@
 @end
 
 
-@implementation OBJCPGatewayI (Int)
+@implementation OBJCPGatewayAux (Int)
 -(id<ORExpr>) objcp_mk_eq:(objcp_context)ctx left:(objcp_expr)left right:(objcp_expr)right
 {
    if([(id)left isKindOfClass:[ConstantWrapper class]] && [(id)right isKindOfClass:[ConstantWrapper class]])
@@ -124,7 +124,7 @@
 }
 @end
 
-@implementation OBJCPGatewayI (Bool)
+@implementation OBJCPGatewayAux (Bool)
 
 -(objcp_expr) objcp_mk_and:(objcp_context)ctx left:(id<ORExpr>)b0 right:(id<ORExpr>)b1
 {
