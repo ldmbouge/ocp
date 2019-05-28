@@ -218,6 +218,7 @@
 -(void) visitExprLeftInformationI:(id<ORExpr>)e;
 -(void) visitExprRightInformationI:(id<ORExpr>)e;
 -(void) visitExprSingletonSetI:(id<ORExpr>)e;
+-(void) visitExprMinMaxSetFromI:(id<ORExpr>)e;
 -(void) visitExprStateValueI:(id<ORExpr>)e;
 -(void) visitExprIfThenElseI:(id<ORExpr>)e;
 -(void) visitExprEachInSetPlusI:(id<ORExpr>)e;

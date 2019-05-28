@@ -160,8 +160,8 @@
 -(NSString*) description;
 -(id<CPIntVarArray>) x;
 -(void) post;
--(void) calculateTopDownInfoFor:(Node*)node onLayer:(int)layerIndex;
--(void) calculateBottomUpInfoFor:(Node*)node onLayer:(int)layerIndex;
+-(bool) calculateTopDownInfoFor:(Node*)node onLayer:(int)layerIndex;
+-(bool) calculateBottomUpInfoFor:(Node*)node onLayer:(int)layerIndex;
 -(void) createWidthOneMDD;
 -(void) buildOutMDD;
 -(void) createRootAndSink;

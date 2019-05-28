@@ -652,6 +652,11 @@
    _topDownMergeInfo = [[ORFactory leftInformation:t] setUnion: [ORFactory rightInformation:t] track:t];
    _bottomUpMergeInfo = [[ORFactory leftInformation:t] setUnion: [ORFactory rightInformation:t] track:t];
 }
+-(void) setInformationMergeToMinMaxSet:(id<ORTracker>)t
+{
+   _topDownMergeInfo = [ORFactory generateMinMaxSetFrom: [ORFactory leftInformation:t] and: [ORFactory rightInformation:t] track:t];
+   _bottomUpMergeInfo = [ORFactory generateMinMaxSetFrom: [ORFactory leftInformation:t] and: [ORFactory rightInformation:t] track:t];
+}
 -(id) topDownInfo { return _topDownInformation; }
 -(id) bottomUpInfo { return _bottomUpInformation; }
 -(id<ORExpr>) edgeDeletionCondition { return _edgeDeletionCondition; }

@@ -350,7 +350,8 @@ int main (int argc, const char * argv[])
         [mddStateSpecs1 setEdgeDeletionCondition: deleteEdgeWhen1];
         [mddStateSpecs1 setTopDownInfoEdgeAddition: addEdgeToTopDown1];
         [mddStateSpecs1 setBottomUpInfoEdgeAddition: addEdgeToBottomUp1];
-        [mddStateSpecs1 setInformationMergeToUnion:mdl];
+        //[mddStateSpecs1 setInformationMergeToUnion:mdl];
+        [mddStateSpecs1 setInformationMergeToMinMaxSet:mdl];
         
         [mdl add: mddStateSpecs1];
         
@@ -375,10 +376,11 @@ int main (int argc, const char * argv[])
         [mddStateSpecs2 setEdgeDeletionCondition: deleteEdgeWhen2];
         [mddStateSpecs2 setTopDownInfoEdgeAddition: addEdgeToTopDown2];
         [mddStateSpecs2 setBottomUpInfoEdgeAddition: addEdgeToBottomUp2];
-        [mddStateSpecs2 setInformationMergeToUnion:mdl];
+        //[mddStateSpecs2 setInformationMergeToUnion:mdl];
+        [mddStateSpecs2 setInformationMergeToMinMaxSet:mdl];
         
         [mdl add: mddStateSpecs2];
-        /*
+        
         id<ORAltMDDSpecs> mddStateSpecs3 = [ORFactory AltMDDSpecs: mdl variables: variables];
         [mddStateSpecs3 setBottomUpInformationAsSet];
         [mddStateSpecs3 addToBottomUpInfoSet: 0];
@@ -400,7 +402,8 @@ int main (int argc, const char * argv[])
         [mddStateSpecs3 setEdgeDeletionCondition: deleteEdgeWhen3];
         [mddStateSpecs3 setTopDownInfoEdgeAddition: addEdgeToTopDown3];
         [mddStateSpecs3 setBottomUpInfoEdgeAddition: addEdgeToBottomUp3];
-        [mddStateSpecs3 setInformationMergeToUnion:mdl];
+        //[mddStateSpecs3 setInformationMergeToUnion:mdl];
+        [mddStateSpecs3 setInformationMergeToMinMaxSet:mdl];
         
         [mdl add: mddStateSpecs3];
         
@@ -425,7 +428,8 @@ int main (int argc, const char * argv[])
         [mddStateSpecs4 setEdgeDeletionCondition: deleteEdgeWhen4];
         [mddStateSpecs4 setTopDownInfoEdgeAddition: addEdgeToTopDown4];
         [mddStateSpecs4 setBottomUpInfoEdgeAddition: addEdgeToBottomUp4];
-        [mddStateSpecs4 setInformationMergeToUnion:mdl];
+        //[mddStateSpecs4 setInformationMergeToUnion:mdl];
+        [mddStateSpecs4 setInformationMergeToMinMaxSet:mdl];
         
         [mdl add: mddStateSpecs4];
         
@@ -450,9 +454,10 @@ int main (int argc, const char * argv[])
         [mddStateSpecs5 setEdgeDeletionCondition: deleteEdgeWhen5];
         [mddStateSpecs5 setTopDownInfoEdgeAddition: addEdgeToTopDown5];
         [mddStateSpecs5 setBottomUpInfoEdgeAddition: addEdgeToBottomUp5];
-        [mddStateSpecs5 setInformationMergeToUnion:mdl];
+        //[mddStateSpecs5 setInformationMergeToUnion:mdl];
+        [mddStateSpecs5 setInformationMergeToMinMaxSet:mdl];
         
-        [mdl add: mddStateSpecs5];*/
+        [mdl add: mddStateSpecs5];
         
         /*
         
@@ -741,7 +746,7 @@ int main (int argc, const char * argv[])
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];
         
-        [notes ddWidth: 2];
+        [notes ddWidth:8];
         [notes ddRelaxed: true];
         id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
         //id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation: notes];

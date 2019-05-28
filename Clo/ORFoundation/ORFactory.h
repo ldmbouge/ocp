@@ -136,6 +136,7 @@ PORTABLE_BEGIN
 +(id<ORExpr>) leftInformation:(id<ORTracker>)t;
 +(id<ORExpr>) rightInformation:(id<ORTracker>)t;
 +(id<ORExpr>) singletonSet:(id<ORExpr>)value track:(id<ORTracker>)t;
++(id<ORExpr>) generateMinMaxSetFrom:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)t;
 +(id<ORExprArray>) arrayORExpr: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORExpr>(^)(ORInt)) clo;
 // Macros friendly
 +(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;

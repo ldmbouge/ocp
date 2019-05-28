@@ -2705,6 +2705,18 @@
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprSingletonSetI:self]; }
 @end
+@implementation ORExprMinMaxSetFromI
+-(id<ORExpr>) initORExprMinMaxSetFromI:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)t
+{
+    self = [super init];
+    _left = left;
+    _right = right;
+    _t = t;
+    return self;
+}
+-(id<ORTracker>) tracker { return _t;}
+-(void) visit:(ORVisitor*) v { [v visitExprMinMaxSetFromI:self]; }
+@end
 
 
 @implementation ORExprStateValueI

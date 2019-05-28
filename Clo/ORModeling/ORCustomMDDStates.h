@@ -1,13 +1,14 @@
 @interface AltCustomState : NSObject {
 @protected
+    id<ORTrail> _trail;
     int _variableIndex;
     int _domainMin;
     int _domainMax;
 }
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax;
--(id) initRootState:(AltCustomState*)classState variableIndex:(int)variableIndex;
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax;
--(id) initSinkState:(AltCustomState*)classState;
+-(id) initRootState:(AltCustomState*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail;
+-(id) initSinkState:(AltCustomState*)classState trail:(id<ORTrail>)trail;
 -(id) initState:(AltCustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue;
 -(id) initState:(AltCustomState*)parentNodeState variableIndex:(int)variableIndex;
 -(void) setTopDownInfo:(id)info;
@@ -20,6 +21,7 @@
 -(bool) canDeleteChild:(AltCustomState*)child atEdgeValue:(int)edgeValue;
 -(bool) equivalentWithEdge:(int)edgeValue to:(AltCustomState*)other withEdge:(int)otherEdgeValue;
 -(int) variableIndex;
+-(id<ORTrail>) trail;
 -(int) domainMin;
 -(int) domainMax;
 +(void) setAsOnlyMDDWithClassState:(AltCustomState*)classState;
@@ -73,7 +75,7 @@
 @end
 @interface AltMDDStateSpecification : AltCustomState {
 @protected
-    id _topDownInfo, _bottomUpInfo;
+    TRId _topDownInfo, _bottomUpInfo;
     AltMDDAddEdgeClosure _topDownEdgeAddition, _bottomUpEdgeAddition;
     AltMDDMergeInfoClosure _topDownMerge, _bottomUpMerge;
     AltMDDDeleteEdgeCheckClosure _edgeDeletionCheck;
@@ -145,8 +147,8 @@
 @protected
     NSMutableArray* _states;
 }
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax;
--(id) initSinkState:(int)domainMin domainMax:(int)domainMax;
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail;
+-(id) initSinkState:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail;
 +(void) addStateClass:(AltCustomState*)stateClass withVariables:(id<ORIntVarArray>)variables;
 +(void) stateClassesInit;
 +(int) numStates;

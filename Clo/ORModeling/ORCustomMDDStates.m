@@ -8,25 +8,29 @@
     _domainMax = domainMax;
     return self;
 }
--(id) initRootState:(AltCustomState*)classState variableIndex:(int)variableIndex {
+-(id) initRootState:(AltCustomState*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail {
+    _trail = trail;
     _domainMin = [classState domainMin];
     _domainMax = [classState domainMax];
     _variableIndex = variableIndex;
     return self;
 }
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax {
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail {
+    _trail = trail;
     _variableIndex = variableIndex;
     _domainMin = domainMin;
     _domainMax = domainMax;
     return self;
 }
 -(id) initState:(AltCustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
+    _trail = [parentNodeState trail];
     _domainMin = [parentNodeState domainMin];
     _domainMax = [parentNodeState domainMax];
     _variableIndex = variableIndex;
     return self;
 }
 -(id) initState:(AltCustomState*)parentNodeState variableIndex:(int)variableIndex {
+    _trail = [parentNodeState trail];
     _domainMin = [parentNodeState domainMin];
     _domainMax = [parentNodeState domainMax];
     _variableIndex = variableIndex;
@@ -68,11 +72,13 @@
 {
     return true;
 }
--(id) initSinkState:(AltCustomState *)classState {
+-(id) initSinkState:(AltCustomState *)classState trail:(id<ORTrail>)trail {
+    _trail = trail;
     _domainMin = [classState domainMin];
     _domainMax = [classState domainMax];
     return self;
 }
+-(id<ORTrail>) trail { return _trail; }
 -(int) variableIndex { return _variableIndex; }
 -(int) domainMin { return _domainMin; }
 -(int) domainMax { return _domainMax; }
@@ -351,12 +357,14 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
     _edgeDeletionCheck = edgeDeletionClosure;
     return self;
 }
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax{
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail
+{
+    _trail = trail;
     _variableIndex = variableIndex;
     _domainMin = domainMin;
     _domainMax = domainMax;
-    _topDownInfo = TopDownInfo;
-    _bottomUpInfo = NULL;
+    _topDownInfo = makeTRId(_trail, TopDownInfo);
+    _bottomUpInfo = makeTRId(_trail, NULL);
     _topDownEdgeAddition = TopDownEdgeAddition;
     _bottomUpEdgeAddition = BottomUpEdgeAddition;
     _topDownMerge = TopDownMerge;
@@ -364,10 +372,11 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
     _edgeDeletionCheck = EdgeDeletionCheck;
     return self;
 }
--(id) initRootState:(AltMDDStateSpecification*)classState variableIndex:(int)variableIndex {
-    self = [super initRootState:classState variableIndex:variableIndex];
-    _topDownInfo = [classState topDownInfo];
-    _bottomUpInfo = [classState bottomUpInfo];
+-(id) initRootState:(AltMDDStateSpecification*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail
+{
+    self = [super initRootState:classState variableIndex:variableIndex trail:trail];
+    _topDownInfo = makeTRId(_trail,[classState topDownInfo]);
+    _bottomUpInfo = makeTRId(_trail,[classState bottomUpInfo]);
     _topDownEdgeAddition = [classState topDownEdgeAddition];
     _bottomUpEdgeAddition = [classState bottomUpEdgeAddition];
     _topDownMerge = [classState topDownMerge];
@@ -375,8 +384,10 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
     _edgeDeletionCheck = [classState edgeDeletionCheck];
     return self;
 }
--(id) initSinkState:(AltMDDStateSpecification*)classState {
-    _bottomUpInfo = [classState bottomUpInfo];
+-(id) initSinkState:(AltMDDStateSpecification*)classState trail:(id<ORTrail>)trail {
+    _trail = trail;
+    _topDownInfo = makeTRId(_trail,NULL);
+    _bottomUpInfo = makeTRId(_trail,[classState bottomUpInfo]);
     _topDownEdgeAddition = [classState topDownEdgeAddition];
     _bottomUpEdgeAddition = [classState bottomUpEdgeAddition];
     _topDownMerge = [classState topDownMerge];
@@ -408,29 +419,29 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
 }
 -(void) setTopDownInfo:(id)info
 {
-    _topDownInfo = info;
+    assignTRId(&_topDownInfo,info,_trail);
 }
 -(void) setTopDownInfoFor:(AltMDDStateSpecification*)parentInfo plusEdge:(int)edgeValue {
-    _topDownInfo = _topDownEdgeAddition([parentInfo topDownInfo], [parentInfo variableIndex], edgeValue);
+    assignTRId(&_topDownInfo, _topDownEdgeAddition([parentInfo topDownInfo], [parentInfo variableIndex], edgeValue),_trail);
 }
 -(void) setBottomUpInfoFor:(AltMDDStateSpecification*)childInfo plusEdge:(int)edgeValue {
-    _bottomUpInfo = _bottomUpEdgeAddition([childInfo bottomUpInfo], _variableIndex, edgeValue);
+    assignTRId(&_bottomUpInfo,_bottomUpEdgeAddition([childInfo bottomUpInfo], _variableIndex, edgeValue),_trail);
 }
 -(void) mergeTopDownInfoWith:(AltMDDStateSpecification*)other
 {
-    _topDownInfo = _topDownMerge(_topDownInfo,[other topDownInfo],_variableIndex);
+    assignTRId(&_topDownInfo,_topDownMerge(_topDownInfo,[other topDownInfo],_variableIndex),_trail);
 }
 -(void) mergeTopDownInfoWith:(AltMDDStateSpecification*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
 {
-    _topDownInfo = _topDownMerge(_topDownInfo,_topDownEdgeAddition([other topDownInfo],otherVariable,edgeValue),_variableIndex);
+    assignTRId(&_topDownInfo,_topDownMerge(_topDownInfo,_topDownEdgeAddition([other topDownInfo],otherVariable,edgeValue),_variableIndex),_trail);
 }
 -(void) mergeBottomUpInfoWith:(AltMDDStateSpecification*)other
 {
-    _bottomUpInfo = _bottomUpMerge(_bottomUpInfo,[other bottomUpInfo],_variableIndex);
+    assignTRId(&_bottomUpInfo,_bottomUpMerge(_bottomUpInfo,[other bottomUpInfo],_variableIndex),_trail);
 }
 -(void) mergeBottomUpInfoWith:(AltMDDStateSpecification*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
 {
-    _bottomUpInfo = _bottomUpMerge(_bottomUpInfo,_bottomUpEdgeAddition([other bottomUpInfo],otherVariable,edgeValue),_variableIndex);
+    assignTRId(&_bottomUpInfo,_bottomUpMerge(_bottomUpInfo,_bottomUpEdgeAddition([other bottomUpInfo],otherVariable,edgeValue),_variableIndex),_trail);
 }
 -(bool) canDeleteChild:(AltMDDStateSpecification*)child atEdgeValue:(int)edgeValue
 {
@@ -889,14 +900,16 @@ static NSMutableArray* _stateClasses;
 static NSMutableArray* _stateVariables;
 static id<ORIntVarArray> _variables;
 
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax{
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail
+{
+    _trail = trail;
     _variableIndex = variableIndex;
     _domainMin = domainMin;
     _domainMax = domainMax;
     _states = [[NSMutableArray alloc] init];
     for (int stateIndex = 0; stateIndex < [_stateClasses count]; stateIndex++) {
         AltCustomState* stateClass = [_stateClasses objectAtIndex:stateIndex];
-        AltCustomState* state = [[[stateClass class] alloc] initRootState:stateClass variableIndex:variableIndex];
+        AltCustomState* state = [[[stateClass class] alloc] initRootState:stateClass variableIndex:variableIndex trail:trail];
         [_states addObject: state];
     }
     return self;
@@ -920,6 +933,7 @@ static id<ORIntVarArray> _variables;
 -(id) initState:(AltJointState*)parentNodeState variableIndex:(int)variableIndex
 {
     self = [super initState:parentNodeState variableIndex:variableIndex];
+    _trail = [parentNodeState trail];
     _states = [[NSMutableArray alloc] init];
     NSMutableArray* parentStates = [parentNodeState states];
     for (int stateIndex = 0; stateIndex < [_stateClasses count]; stateIndex++) {
@@ -930,13 +944,15 @@ static id<ORIntVarArray> _variables;
     }
     return self;
 }
--(id) initSinkState:(int)domainMin domainMax:(int)domainMax {
+-(id) initSinkState:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail
+{
+    _trail = trail;
     _domainMin = domainMin;
     _domainMax = domainMax;
     _states = [[NSMutableArray alloc] init];
     for (int stateIndex = 0; stateIndex < [_stateClasses count]; stateIndex++) {
         AltCustomState* stateClass = [_stateClasses objectAtIndex:stateIndex];
-        AltCustomState* state = [[[stateClass class] alloc] initSinkState:stateClass];
+        AltCustomState* state = [[[stateClass class] alloc] initSinkState:stateClass trail:trail];
         [_states addObject: state];
     }
     return self;
@@ -1013,6 +1029,7 @@ static id<ORIntVarArray> _variables;
     }
     return true;
 }
+-(id<ORTrail>) trail { return _trail; }
 +(AltCustomState*) firstState { return [_stateClasses firstObject]; }
 +(int) numStates { return (int)[_stateClasses count]; }
 +(void) stateClassesInit { _stateClasses = [[NSMutableArray alloc] init]; _stateVariables = [[NSMutableArray alloc] init]; }
@@ -1038,8 +1055,16 @@ static id<ORIntVarArray> _variables;
     
     return topDownInfo;
 }
+-(id) bottomUpInfo {
+    NSMutableArray* bottomUpInfo = [[NSMutableArray alloc] init];
+    
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        [bottomUpInfo addObject:[[_states objectAtIndex:stateIndex] bottomUpInfo]];
+    }
+    
+    return bottomUpInfo;
+}
 @end
-
 
 @implementation JointState
 static NSMutableArray* _stateClasses;

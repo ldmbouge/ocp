@@ -449,6 +449,11 @@
 {
     [[e value] visit: self];
 }
+-(void) visitExprMinMaxSetFromI:(ORExprMinMaxSetFromI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
 
 -(void) visitExprSumI: (id<ORExpr>) e
 {
@@ -1574,6 +1579,36 @@
     AltMDDMergeInfoClosure inner = [self recursiveVisitor:[e value]];
     current = [^(id leftParent,id rightParent,ORInt variable) {
         return [[NSSet alloc] initWithObjects:[[NSNumber alloc] initWithInt:(ORInt)inner(leftParent,rightParent,variable)], nil];    //Only works for ints for now
+    } copy];
+}
+-(void) visitExprMinMaxSetFromI:(ORExprMinMaxSetFromI*)e
+{
+    AltMDDMergeInfoClosure left = [self recursiveVisitor:[e left]];
+    AltMDDMergeInfoClosure right = [self recursiveVisitor:[e right]];
+    current = [^(id leftParent,id rightParent,ORInt variable) {
+        NSSet* leftSet = (NSSet*)left(leftParent, rightParent, variable);
+        NSSet* rightSet = (NSSet*)right(leftParent, rightParent, variable);
+        int min = MAXINT;
+        int max = MININT;
+        for (NSNumber* num in leftSet) {
+            int value = [num intValue];
+            if (min > value) {
+                min = value;
+            }
+            if (max < value) {
+                max = value;
+            }
+        }
+        for (NSNumber* num in rightSet) {
+            int value = [num intValue];
+            if (min > value) {
+                min = value;
+            }
+            if (max < value) {
+                max = value;
+            }
+        }
+        return [[NSSet alloc] initWithObjects:[[NSNumber alloc] initWithInt:min],[[NSNumber alloc] initWithInt:max], nil];    //Only works for ints for now
     } copy];
 }
 @end

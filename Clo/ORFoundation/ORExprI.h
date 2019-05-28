@@ -495,6 +495,13 @@
 -(id<ORExpr>) value;
 -(id<ORTracker>) tracker;
 @end
+@interface ORExprMinMaxSetFromI : ORExprBinaryI<ORExpr, NSCoding> {
+    id<ORTracker> _t;
+}
+-(id<ORExpr>)initORExprMinMaxSetFromI:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)t;
+-(void) visit:(ORVisitor*) v;
+-(id<ORTracker>) tracker;
+@end
 
 @interface ORExprStateValueI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;

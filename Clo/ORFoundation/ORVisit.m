@@ -824,6 +824,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprSingletonSetI: visit method not defined"];
 }
+-(void) visitExprMinMaxSetFromI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinMaxSetFromI: visit method not defined"];
+}
 -(void) visitExprStateValueI:(id<ORExpr>)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprStateValueI: visit method not defined"];

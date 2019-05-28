@@ -754,11 +754,11 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[_stateClass alloc] initRootState:variableValue domainMin: min_domain_val domainMax: max_domain_val];
+    return [[_stateClass alloc] initRootState:variableValue domainMin: min_domain_val domainMax: max_domain_val trail:_trail];
 }
 -(id) generateSinkState
 {
-    return [[_stateClass alloc] initSinkState: min_domain_val domainMax: max_domain_val];
+    return [[_stateClass alloc] initSinkState: min_domain_val domainMax: max_domain_val trail:_trail];
 }
 -(void) buildNewLayerUnder:(int)layer
 {
@@ -873,7 +873,7 @@
 -(int) variableIndexForLayer:(int)layer {
     return _layer_to_variable[layer];
 }
--(void) calculateTopDownInfoFor:(Node*)node onLayer:(int)layerIndex
+-(bool) calculateTopDownInfoFor:(Node*)node onLayer:(int)layerIndex
 {
     int parentVarIndex = [self variableIndexForLayer:layerIndex-1];
     Node* *parents = [node parents];
@@ -883,6 +883,7 @@
     }
     bool first = true;
     id state = [node getState];
+    id oldStateInfo = [[state topDownInfo] copy];
     for (Node* parent in uniqueParents) {
         id parentState = [parent getState];
         Node* *children = [parent children];
@@ -902,13 +903,15 @@
             }
         }
     }
+    return ![[state topDownInfo] isEqual: oldStateInfo];
 }
--(void) calculateBottomUpInfoFor:(Node*)node onLayer:(int)layerIndex
+-(bool) calculateBottomUpInfoFor:(Node*)node onLayer:(int)layerIndex
 {
     int varIndex = [self variableIndexForLayer:layerIndex];
     Node* *children = [node children];
     bool first = true;
     id state = [node getState];
+    id oldStateInfo = [[state bottomUpInfo] copy];
     for (int childIndex = [node minChildIndex]; childIndex <= [node maxChildIndex]; childIndex++) {
         if (children[childIndex] != NULL) {
             Node* child = children[childIndex];
@@ -925,6 +928,7 @@
             }
         }
     }
+    return ![[state bottomUpInfo] isEqual: oldStateInfo];
 }
 -(void) addPropagationsAndTrimValues
 {
@@ -1829,7 +1833,88 @@
     }
     return self;
 }
--(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming
+-(void) removeChildlessNodeFromMDD:(Node *)node fromLayer:(int)layer trimmingVariables:(bool)trimming
+{
+    [super removeChildlessNodeFromMDD:node fromLayer:layer trimmingVariables:trimming];
+    if (_relaxed) {
+        if (_layer_relaxed[layer]._val) {
+            assignTRInt(&_layer_relaxed[layer],0,_trail);
+            for (int nodeIndex = 0; nodeIndex < layer_size[layer]._val; nodeIndex++) {
+                if (node_relaxed[layer][nodeIndex]._val) {
+                    assignTRInt(&_layer_relaxed[layer],1,_trail);
+                    break;
+                }
+            }
+        }
+    }
+}
+-(void) removeNode: (Node*) node topDown:(bool**)recalcTopDown bottomUp:(bool**)recalcBottomUp {
+    int node_layer = [self layerIndexForVariable:node.value];
+    Node* *layer = layers[node_layer];
+    int currentLayerSize = layer_size[node_layer]._val;
+    
+    for (int node_index = 0; node_index < currentLayerSize; node_index++) {
+        if (layer[node_index] == node) {
+            int finalNodeIndex = layer_size[node_layer]._val-1;
+            recalcTopDown[node_layer][node_index] = recalcTopDown[node_layer][finalNodeIndex];
+            recalcTopDown[node_layer][finalNodeIndex] = false;
+            
+            [self removeNodeAt:node_index onLayer:node_layer];
+            return;
+        }
+    }
+}
+-(void) removeChildlessNodeFromMDD:(Node *)node fromLayer:(int)layer trimmingVariables:(bool)trimming topDown:(bool**)recalcTopDown bottomUp:(bool**)recalcBottomUp
+{
+    int parentLayer = layer-1;
+    int numParents = [node numParents];
+    Node* *parents = [node parents];
+    
+    for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
+        Node* parent = parents[parentIndex];
+        int child_index = [parent findChildIndex: node];
+        while(child_index != -1) {
+            [parent removeChildAt:child_index];
+            
+            assignTRInt(&layer_variable_count[parentLayer][child_index], layer_variable_count[parentLayer][child_index]._val -1, _trail);
+            if (trimming && !layer_variable_count[parentLayer][child_index]._val) {
+                [_x[[parent value]] remove: child_index];
+            }
+            
+            child_index = [parent findChildIndex: node];
+        }
+        if ([parent isNonVitalAndChildless]) {
+            [self removeChildlessNodeFromMDD:parent fromLayer:parentLayer trimmingVariables:trimming];
+        } else {
+            for (int parent_index = 0; parent_index < layer_size[parentLayer]._val; parent_index++) {
+                if (layers[parentLayer][parent_index] == parent) {
+                    recalcBottomUp[parentLayer][parent_index] = true;
+                    break;
+                }
+            }/*
+            if (_objective != nil) {
+                [parent updateReversePaths];
+            }*/
+        }
+    }
+    [self removeNode: node topDown:recalcTopDown bottomUp:recalcBottomUp];
+    
+    
+    
+    
+    if (_relaxed) {
+        if (_layer_relaxed[layer]._val) {
+            assignTRInt(&_layer_relaxed[layer],0,_trail);
+            for (int nodeIndex = 0; nodeIndex < layer_size[layer]._val; nodeIndex++) {
+                if (node_relaxed[layer][nodeIndex]._val) {
+                    assignTRInt(&_layer_relaxed[layer],1,_trail);
+                    break;
+                }
+            }
+        }
+    }
+}
+-(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming topDown:(bool**)recalcTopDown bottomUp:(bool**)recalcBottomUp
 {
     if (_relaxed) {
         Node* *children = [node children];
@@ -1848,14 +1933,27 @@
             
                 if ([childNode isNonVitalAndParentless]) {
                     [self removeParentlessNodeFromMDD:childNode fromLayer:childLayer trimmingVariables:trimming];
-                }
-            
-                if (childNode != NULL && node_relaxed[childLayer][child_index]._val) {
-                    [self calculateTopDownInfoFor: childNode onLayer: layer+1];
+                } else {
+                    for (int childIndex = 0; childIndex < layer_size[childLayer]._val; childIndex++) {
+                        if (layers[childLayer][childIndex] == childNode) {
+                            recalcTopDown[childLayer][childIndex] = true;
+                            break;
+                        }
+                    }
                 }
             }
         }
-        [self removeNode: node];
+        [self removeNode: node topDown:recalcTopDown bottomUp:recalcBottomUp];
+        
+        if (_layer_relaxed[layer]._val) {
+            assignTRInt(&_layer_relaxed[layer],0,_trail);
+            for (int nodeIndex = 0; nodeIndex < layer_size[layer]._val; nodeIndex++) {
+                if (node_relaxed[layer][nodeIndex]._val) {
+                    assignTRInt(&_layer_relaxed[layer],1,_trail);
+                    break;
+                }
+            }
+        }
     } else {
         [super removeParentlessNodeFromMDD:node fromLayer:layer trimmingVariables:trimming];
     }
@@ -2158,21 +2256,259 @@ typedef struct {
     assignTRInt(&node_relaxed[layer][0],1,_trail);
 }
 
+-(void) trimValueFromLayer:(ORInt)layer_index :(int)value topDown:(bool**)recalcTopDown bottomUp:(bool**)recalcBottomUp
+{
+    Node* *layer = layers[layer_index];
+    Node* *child_layer = layers[layer_index+1];
+    
+    for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
+        Node* node = layer[node_index];
+        Node* childNode = [node children][value];
+        
+        if (childNode != NULL) {
+            [node removeChildAt: value];
+            if ([node findChildIndex:childNode] == -1) {
+                [childNode removeParentValue:node];
+            }/* else if (_objective != NULL) {
+                if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
+                    [childNode removeLongestPathParent: node];
+                }
+                if ([childNode hasShortestPathParent: node] && value == 0) {
+                    [childNode removeShortestPathParent: node];
+                }
+            }*/
+            
+            if ([childNode isNonVitalAndParentless]) {
+                [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1) trimmingVariables:true topDown:recalcTopDown bottomUp:recalcBottomUp];
+            } else {
+                for (int child_index = 0; child_index < layer_size[layer_index+1]._val; child_index++) {
+                    if (child_layer[child_index] == childNode) {
+                        recalcTopDown[layer_index+1][child_index] = true;
+                        break;
+                    }
+                }
+            }
+            if ([node isNonVitalAndChildless]) {
+                [self removeChildlessNodeFromMDD:node fromLayer:layer_index trimmingVariables:true topDown:recalcTopDown bottomUp:recalcBottomUp];
+                node_index--;
+            } else {
+                recalcBottomUp[layer_index][node_index] = true;
+                /*if (_objective != NULL) {
+                    [node updateReversePaths];
+                }*/
+            }
+            
+            /*if (node != NULL) {
+                [self calculateBottomUpInfoFor: node onLayer: layer_index];
+                
+                if (layer_index > 0) {
+                    Node* *parents = [node parents];
+                    NSMutableSet* uniqueParents = [[NSMutableSet alloc] init];   //This is a bad way to do this.
+                    for (int parentIndex = 0; parentIndex < [node numParents]; parentIndex++) {
+                        [uniqueParents addObject:parents[parentIndex]];
+                    }
+                    for (Node* parent in uniqueParents) {
+                        id parentState = [parent getState];
+                        Node* *children = [parent children];
+                        for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
+                            Node* child = children[childIndex];
+                            if (child == node) {
+                                id childState = [child getState];
+                                if ([parentState canDeleteChild:childState atEdgeValue:childIndex]) {
+                                    [parent removeChildAt:childIndex];
+                                    [child removeParentOnce:parent];
+                                    assignTRInt(&layer_variable_count[layer_index-1][childIndex], layer_variable_count[layer_index-1][childIndex]._val-1, _trail);
+                                    if (layer_variable_count[layer_index-1][childIndex]._val == 0) {
+                                        [_x[[self variableIndexForLayer:layer_index-1]] remove: childIndex];
+                                    }
+                                    if ([child isNonVitalAndParentless]) {
+                                        [self removeParentlessNodeFromMDD:child fromLayer:layer_index trimmingVariables:true];
+                                    }
+                                    if ([parent isNonVitalAndChildless]) {
+                                        [self removeChildlessNodeFromMDD:parent fromLayer:layer_index-1 trimmingVariables:true];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (childNode != NULL) {
+                [self calculateTopDownInfoFor: childNode onLayer: layer_index+1];
+                
+                if (layer_index < _numVariables-1) {
+                    Node* parent = childNode;
+                    id parentState = [parent getState];
+                    Node* *children = [parent children];
+                    for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
+                        Node* child = children[childIndex];
+                        if (child != NULL) {
+                            id childState = [child getState];
+                            if ([parentState canDeleteChild:childState atEdgeValue:childIndex]) {
+                                [parent removeChildAt:childIndex];
+                                [child removeParentOnce:parent];
+                                assignTRInt(&layer_variable_count[layer_index+1][childIndex], layer_variable_count[layer_index+1][childIndex]._val-1, _trail);
+                                if (layer_variable_count[layer_index+1][childIndex]._val == 0) {
+                                    [_x[[self variableIndexForLayer:layer_index+1]] remove: childIndex];
+                                }
+                                if ([child isNonVitalAndParentless]) {
+                                    [self removeParentlessNodeFromMDD:child fromLayer:layer_index+2 trimmingVariables:true];
+                                }
+                                if ([parent isNonVitalAndChildless]) {
+                                    [self removeChildlessNodeFromMDD:parent fromLayer:layer_index+1 trimmingVariables:true];
+                                }
+                            }
+                        }
+                    }
+                }
+            }*/
+        }
+    }
+    
+    
+    
+    //Maximize stuff
+}
+
+-(void) recalcAndRemoveEdgesWithTopDown:(bool**)recalcTopDown andBottomUp:(bool**)recalcBottomUp
+{
+    for (int buildingLayer = 1; buildingLayer <= _numVariables; buildingLayer++) {
+        for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
+            if ([self calculateTopDownInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer] && buildingLayer < _numVariables) {
+                Node* node = layers[buildingLayer][nodeIndex];
+                for (int childNodeIndex = 0; childNodeIndex < layer_size[buildingLayer+1]._val; childNodeIndex++) {
+                    if ([node findChildIndex:layers[buildingLayer+1][childNodeIndex]] != -1) {
+                        recalcTopDown[buildingLayer+1][childNodeIndex] = true;
+                    }
+                }
+            }
+        }
+    }
+    for (int buildingLayer = (int)_numVariables; buildingLayer >= 0; buildingLayer--) {
+        for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
+            if ([self calculateBottomUpInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer] && buildingLayer > 0) {
+                Node* node = layers[buildingLayer][nodeIndex];
+                for (int parentNodeIndex = 0; parentNodeIndex < layer_size[buildingLayer-1]._val; parentNodeIndex++) {
+                    if ([node hasParent:layers[buildingLayer-1][parentNodeIndex]]) {
+                        recalcBottomUp[buildingLayer-1][parentNodeIndex] = true;
+                    }
+                }
+            }
+        }
+    }
+    
+    bool** followupRecalcTopDown = malloc((_numVariables+1)*sizeof(bool*));
+    bool** followupRecalcBottomUp = malloc((_numVariables+1)*sizeof(bool*));
+    
+    for (int layerIndex = 0; layerIndex < _numVariables+1; layerIndex++) {
+        followupRecalcTopDown[layerIndex] = malloc(layer_size[layerIndex]._val * sizeof(bool));
+        followupRecalcBottomUp[layerIndex] = malloc(layer_size[layerIndex]._val * sizeof(bool));
+        for (int nodeIndex = 0; nodeIndex < layer_size[layerIndex]._val; nodeIndex++) {
+            followupRecalcTopDown[layerIndex][nodeIndex] = false;
+            followupRecalcBottomUp[layerIndex][nodeIndex] = false;
+        }
+    }
+    
+    bool followupRecalc = false;
+    
+    for (int buildingLayer = 0; buildingLayer < _numVariables; buildingLayer++) {
+        Node* *buildingLayerNodes = layers[buildingLayer];
+        for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
+            Node* parent = buildingLayerNodes[nodeIndex];
+            id parentState = [parent getState];
+            Node* *children = [parent children];
+            for (int value = [parent minChildIndex]; value <= [parent maxChildIndex]; value++) {
+                Node* child = children[value];
+                if (child != NULL) {
+                    id childState = [child getState];
+                    int childLayerIndex;
+                    for (int childNodeIndex = 0; childNodeIndex < layer_size[buildingLayer+1]._val; childNodeIndex++) {
+                        if (layers[buildingLayer+1][childNodeIndex] == child) {
+                            childLayerIndex = childNodeIndex;
+                            break;
+                        }
+                    }
+                    if ((recalcTopDown[buildingLayer][nodeIndex] || recalcBottomUp[buildingLayer+1][childLayerIndex]) && [parentState canDeleteChild:childState atEdgeValue:value]) {
+                        followupRecalc = true;
+                        followupRecalcTopDown[buildingLayer+1][childLayerIndex] = true;
+                        followupRecalcBottomUp[buildingLayer][nodeIndex] = true;
+                        [parent removeChildAt:value];
+                        [child removeParentOnce:parent];
+                        assignTRInt(&layer_variable_count[buildingLayer][value], layer_variable_count[buildingLayer][value]._val-1, _trail);
+                        if (layer_variable_count[buildingLayer][value]._val == 0) {
+                            [_x[[self variableIndexForLayer:buildingLayer]] remove: value];
+                        }
+                        
+                        if ([child isNonVitalAndParentless]) {
+                            [self removeParentlessNodeFromMDD:child fromLayer:buildingLayer+1 trimmingVariables:true topDown:followupRecalcTopDown bottomUp:followupRecalcBottomUp];
+                        }
+                        if ([parent isNonVitalAndChildless]) {
+                            [self removeChildlessNodeFromMDD:parent fromLayer:buildingLayer trimmingVariables:true topDown:followupRecalcTopDown bottomUp:followupRecalcBottomUp];
+                            nodeIndex--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if (followupRecalc) {
+        [self recalcAndRemoveEdgesWithTopDown:followupRecalcTopDown andBottomUp:followupRecalcBottomUp];
+    }
+}
+
 -(void) trimValueFromLayer:(ORInt)layer_index :(int)value
 {
-    [super trimValueFromLayer:layer_index :value];
+    int *old_layer_size = malloc(_numVariables * sizeof(int));   //This is a bad way to do this
+    for (int i = 0; i < _numVariables; i++) {
+        old_layer_size[i] = layer_size[i]._val;
+    }
     
-    if (_relaxed) {
+    bool** recalcTopDown;
+    bool** recalcBottomUp;
+    
+    recalcTopDown = malloc((_numVariables+1)*sizeof(bool*));
+    recalcBottomUp = malloc((_numVariables+1)*sizeof(bool*));
+    
+    for (int layerIndex = 0; layerIndex < _numVariables+1; layerIndex++) {
+        recalcTopDown[layerIndex] = malloc(layer_size[layerIndex]._val * sizeof(bool));
+        recalcBottomUp[layerIndex] = malloc(layer_size[layerIndex]._val * sizeof(bool));
+        for (int nodeIndex = 0; nodeIndex < layer_size[layerIndex]._val; nodeIndex++) {
+            recalcTopDown[layerIndex][nodeIndex] = false;
+            recalcBottomUp[layerIndex][nodeIndex] = false;
+        }
+    }
+    
+    //[super trimValueFromLayer:layer_index :value];
+    [self trimValueFromLayer:layer_index :value topDown:recalcTopDown bottomUp:recalcBottomUp];
+    [self recalcAndRemoveEdgesWithTopDown:recalcTopDown andBottomUp:recalcBottomUp];
+    
+    
+    
+    /*if (_relaxed) {
     id firstTopDown;
     bool* hitMaxWidth = malloc(_numVariables * sizeof(bool));
     hitMaxWidth[0] = false;
     Edge edge;
+        
+        int firstChangedLayer = (int)_numVariables;
+        int lastChangedLayer = -1;
+        
+        
+        for (int i = 0; i < _numVariables; i++) {
+            if (old_layer_size[i] != layer_size[i]._val) {
+                if (firstChangedLayer == _numVariables) {
+                    firstChangedLayer = i;
+                }
+                lastChangedLayer = i;
+            }
+        }
     
     for (int buildingLayer = 1; buildingLayer < _numVariables; buildingLayer++) {
         if (_layer_relaxed[buildingLayer]._val && layer_size[buildingLayer]._val < _relaxation_size) {
-            int variable = [self variableIndexForLayer:layer_index];
+            int variable = [self variableIndexForLayer:buildingLayer];
             hitMaxWidth[buildingLayer] = false;
-            for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
+            for (int node_index = 0; node_index < layer_size[buildingLayer]._val; node_index++) {
                 if (node_relaxed[buildingLayer][node_index]._val) {
                     NSArray* equivalenceClasses = [self findEquivalenceClassesIntoNode:node_index onLayer:buildingLayer];
                     firstTopDown = [[equivalenceClasses objectAtIndex: 0] objectAtIndex: 0];
@@ -2204,6 +2540,7 @@ typedef struct {
                                 assignTRInt(&layer_variable_count[buildingLayer][childIndex],layer_variable_count[buildingLayer][childIndex]._val+1,_trail);
                             }
                         }
+                        [self calculateBottomUpInfoFor:newNode onLayer:buildingLayer];
                     }
                     [self calculateBottomUpInfoFor:layers[buildingLayer][node_index] onLayer:buildingLayer];
                     if (hitMaxWidth[buildingLayer]) {
@@ -2218,9 +2555,29 @@ typedef struct {
                     }
                 }
             }
-            
+            int temp = buildingLayer;
+            bool layerChanged = true;
+            for (buildingLayer = temp; (buildingLayer < _numVariables) && layerChanged; buildingLayer++) {
+                layerChanged = false;
+                for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
+                    if ([self calculateTopDownInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer]) {    //True if changes state
+                        layerChanged = true;
+                    }
+                }
+            }
+            int topDownLastChange = buildingLayer-1;
+            layerChanged = true;
+            for (buildingLayer = (int)temp+1; buildingLayer >= 0 && layerChanged; buildingLayer--) {
+                layerChanged = false;
+                for (int nodeIndex = 0; nodeIndex < (layer_size[buildingLayer]._val); nodeIndex++) {
+                    if ([self calculateBottomUpInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer]) {
+                        layerChanged = true;
+                    }
+                }
+            }
+            int bottomUpLastChange = buildingLayer+1;
+            for (buildingLayer = min(0,bottomUpLastChange); buildingLayer < max(topDownLastChange,bottomUpLastChange); buildingLayer++) {
             Node* *buildingLayerNodes = layers[buildingLayer];
-            bool parentLayerShrunk = false;
             for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
                 Node* parent = buildingLayerNodes[nodeIndex];
                 id parentState = [parent getState];
@@ -2243,22 +2600,75 @@ typedef struct {
                             if ([parent isNonVitalAndChildless]) {
                                 [self removeChildlessNodeFromMDD:parent fromLayer:buildingLayer trimmingVariables:true];
                                 nodeIndex--;
-                                parentLayerShrunk = true;
                             }
                         }
                     }
                 }
             }
-            if (parentLayerShrunk && _layer_relaxed[buildingLayer-1]._val) {
-                buildingLayer-=2;
-                //Parent layer was shrunk after having hit max width.  Try to split on that layer again.  May want to check up even higher?
-            } else if (hitMaxWidth[buildingLayer] && layer_size[buildingLayer]._val < _relaxation_size) {
-                buildingLayer--;
-                //Repeat layer - removing edges made it no longer at max width
+            }
+            buildingLayer = temp;
+            ///*if (layer_size[buildingLayer-1]._val < _relaxation_size && _layer_relaxed[buildingLayer-1]._val) {
+            //    buildingLayer-=2;
+            //    //Parent layer was shrunk after having hit max width.  Try to split on that layer again.  May want to check up even higher?
+            //} else if (hitMaxWidth[buildingLayer] && layer_size[buildingLayer]._val < _relaxation_size) {
+            //    buildingLayer--;
+            //    //Repeat layer - removing edges made it no longer at max width
+            //}
+        }
+    }
+    int lowestChangedLayer = 0;
+    bool layerChanged = true;
+    for (int buildingLayer = firstChangedLayer; (buildingLayer <= _numVariables) && (true || buildingLayer <= lastChangedLayer || layerChanged); buildingLayer++) {
+        layerChanged = false;
+        for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
+            if ([self calculateTopDownInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer]) {    //True if changes state
+                layerChanged = true;
+                lowestChangedLayer = buildingLayer;
             }
         }
     }
+    int highestChangedLayer = (int)_numVariables;
+    layerChanged = true;
+    for (int buildingLayer = (int)_numVariables-1; buildingLayer >= 0 && (true || buildingLayer >= firstChangedLayer || layerChanged); buildingLayer--) {
+        layerChanged = false;
+        for (int nodeIndex = 0; nodeIndex < (layer_size[buildingLayer]._val); nodeIndex++) {
+            if ([self calculateBottomUpInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer]) {
+                layerChanged = true;
+                highestChangedLayer = buildingLayer;
+            }
+        }
     }
+    for (int buildingLayer = min(firstChangedLayer,highestChangedLayer); buildingLayer < max(lastChangedLayer,lowestChangedLayer); buildingLayer++) {
+        Node* *buildingLayerNodes = layers[buildingLayer];
+        for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
+            Node* parent = buildingLayerNodes[nodeIndex];
+            id parentState = [parent getState];
+            Node* *children = [parent children];
+            for (int value = [parent minChildIndex]; value <= [parent maxChildIndex]; value++) {
+                Node* child = children[value];
+                if (child != NULL) {
+                    id childState = [child getState];
+                    if ([parentState canDeleteChild:childState atEdgeValue:value]) {
+                        [parent removeChildAt:value];
+                        [child removeParentOnce:parent];
+                        assignTRInt(&layer_variable_count[buildingLayer][value], layer_variable_count[buildingLayer][value]._val-1, _trail);
+                        if (layer_variable_count[buildingLayer][value]._val == 0) {
+                            [_x[[self variableIndexForLayer:buildingLayer]] remove: value];
+                        }
+                        
+                        if ([child isNonVitalAndParentless]) {
+                            [self removeParentlessNodeFromMDD:child fromLayer:buildingLayer+1 trimmingVariables:true];
+                        }
+                        if ([parent isNonVitalAndChildless]) {
+                            [self removeChildlessNodeFromMDD:parent fromLayer:buildingLayer trimmingVariables:true];
+                            nodeIndex--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    }*/
 }
 -(NSString*)description
 {

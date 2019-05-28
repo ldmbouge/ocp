@@ -503,6 +503,7 @@ enum ORGroupType {
 -(void) setTopDownInfoEdgeAddition:(id<ORExpr>)topDownInfoEdge;
 -(void) setBottomUpInfoEdgeAddition:(id<ORExpr>)bottomUpInfoEdge;
 -(void) setInformationMergeToUnion:(id<ORTracker>)t;
+-(void) setInformationMergeToMinMaxSet:(id<ORTracker>)t;
 -(id) topDownInfo;
 -(id) bottomUpInfo;
 -(id<ORExpr>) edgeDeletionCondition;

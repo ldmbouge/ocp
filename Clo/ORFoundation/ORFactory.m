@@ -636,6 +636,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORExpr> o = [[ORExprSingletonSetI alloc] initORExprSingletonSetI:value track:t];
     return o;
 }
++(id<ORExpr>) generateMinMaxSetFrom:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)t
+{
+    id<ORExpr> o = [[ORExprMinMaxSetFromI alloc] initORExprMinMaxSetFromI:left and:right track:t];
+    return o;
+}
 +(id<ORVarArray>) varArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORVar>(^)(ORInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
