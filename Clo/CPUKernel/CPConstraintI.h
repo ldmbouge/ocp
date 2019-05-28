@@ -14,7 +14,7 @@
 #import <CPUKernel/CPCstr.h>
 
 @class CPEngineI;
-@protocol CPGroup;
+@class CPGroup;
 
 typedef id (*SELPROTO)(id,SEL,...);
 
@@ -25,7 +25,7 @@ typedef id (*SELPROTO)(id,SEL,...);
    SELPROTO     _propagate;
    id<ORTrail>      _trail;
    TRInt           _active;
-   id<CPGroup>      _group;
+   CPGroup*      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
 -(void) post;
