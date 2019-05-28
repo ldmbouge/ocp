@@ -380,21 +380,6 @@ static enum ValHeuristic valIndex[] =
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];
    }
 }
--(void) checkAbsorption:(id<ORFloatVarArray>)vars solver:(id<CPProgram>)cp
-{
-#define abs 0
-#if abs
-   ORInt cpt = 0;
-   for(id<ORFloatVar> x in vars){
-      ORDouble v = [cp computeAbsorptionRate:x];
-      if(v > 0.0){
-         NSLog(@"%@ is involved in abs %f",x,v);
-         cpt++;
-      }
-   }
-   NSLog(@"Il y a %d variables impliquees dans une absorption", cpt);
-#endif
-}
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x
 {
    id<CPHeuristic> h = nil;

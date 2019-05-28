@@ -519,9 +519,9 @@
 {
     [[self worker] floatStatic6WaySplit:i withVars:vars];
 }
--(void)          floatAbsSplit: (ORUInt) i by:(id<CPFloatVar>) y  withVars:(id<ORDisabledVarArray>) x  default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+-(void)          floatAbsSplit:(ORUInt)i by:(id<CPVar>) y vars:(id<ORDisabledVarArray>) x
 {
-   [[self worker] floatAbsSplit:i by:y  withVars:x default:b];
+   [[self worker] floatAbsSplit:i by:y vars:x];
 }
 -(void)          floatSplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) vars
 {
@@ -647,10 +647,6 @@
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledVarArray>) vars
 {
    return [[self worker] computeAbsorptionsQuantities: vars];
-}
--(ORDouble) computeAbsorptionRate:(id<ORVar>) x
-{
-   return [[self worker] computeAbsorptionRate:x];
 }
 -(ORInt)  domsize: (id<ORIntVar>) x
 {

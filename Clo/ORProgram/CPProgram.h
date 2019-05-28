@@ -103,7 +103,7 @@ PORTABLE_BEGIN
 -(void)          floatStatic6WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          floatSplit: (ORUInt) x   withVars:(id<ORDisabledVarArray>) vars;
 -(void)          float3BSplit:(ORUInt) i call:(SEL)s  withVars:(id<ORDisabledVarArray>) x;
--(void)          floatAbsSplit: (ORUInt) x by:(id<CPVar>) y    withVars:(id<ORDisabledVarArray>) vars default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
+-(void)          floatAbsSplit:(ORUInt)i by:(id<CPVar>) y vars:(id<ORDisabledVarArray>) x;
 -(void)          float3WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          float5WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          float6WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
