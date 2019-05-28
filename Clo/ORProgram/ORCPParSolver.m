@@ -359,10 +359,6 @@
 {
     [[self worker] minMagnitudeSearch:x do:b];
 }
--(void)          maxAbsDensSearch: (id<ORDisabledVarArray>) x  default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   [[self worker] maxAbsDensSearch:x default:b];
-}
 -(void)          lexicalOrderedSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] lexicalOrderedSearch:x do:b];
@@ -398,10 +394,6 @@
 -(void)          minAbsorptionSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minAbsorptionSearch:x do:b];
-}
--(void)          maxAbsorptionSearch: (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   [[self worker] maxAbsorptionSearch:x default:b];
 }
 -(void) splitArray: (id<ORIntVarArray>) x
 {
@@ -1144,6 +1136,10 @@
 {
    return [[self worker] debugLevel];
 }
+- (void)maxLOccurencesSearch:(nonnull id<ORDisabledVarArray>)x do:(nonnull void (^)(ORUInt, id<ORDisabledVarArray> _Nonnull))b {
+   [[self worker] maxLOccurencesSearch:x do:b];
+}
+
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];

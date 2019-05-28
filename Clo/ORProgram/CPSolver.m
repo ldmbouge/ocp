@@ -143,7 +143,7 @@
 /*                                 CoreSolver                                             */
 /******************************************************************************************/
 
-@implementation CPCoreSolver {
+ @implementation CPCoreSolver {
 @protected
    id<ORModel>           _model;
    id<CPEngine>          _engine;
@@ -1790,7 +1790,7 @@
       }];
    }else{
       NSLog(@"search selected : maxAbs");
-      [self maxAbsorptionSearch:x default:^(ORUInt i, id<ORDisabledVarArray> x) {
+      [self maxAbsorptionSearch:x  do:^(ORUInt i,id<ORDisabledVarArray> x) {
          [self float5WaySplit:i withVars:x];
       }];
    }

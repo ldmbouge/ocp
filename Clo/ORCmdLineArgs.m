@@ -1277,67 +1277,6 @@ case maxAbs :
          }];
          break;
       case splitAbs:
-         switch(defaultAbsSplit){
-            case split:
-               [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p floatStaticSplit:i  withVars:x];
-               }];
-               break;
-            case split3Way:
-               [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p floatStatic3WaySplit:i  withVars:x];
-               }];
-               break;
-            case split5Way:
-               [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p floatStatic5WaySplit:i  withVars:x];
-               }];
-               break;
-            case split6Way:
-               [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p floatStatic6WaySplit:i  withVars:x];
-               }];
-               break;
-            case dynamicSplit:
-               [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p floatSplit:i  withVars:x];
-               }];
-               break;
-            case dynamic3Split:
-               [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p float3WaySplit:i  withVars:x];
-               }];
-               break;
-            case dynamic5Split:
-               [p maxAbsorptionSearchAll:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p float5WaySplit:i  withVars:x];
-               }];break;
-            case dynamic6Split:
-               [p maxAbsorptionSearchAll:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p float6WaySplit:i  withVars:x];
-               }];
-            case split3B:
-               [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p float3BSplit:i call:@selector(maxAbsorptionSearch:default:) withVars:x];
-               }];
-               break;
-            case Esplit:
-               [p maxAbsorptionSearch:vars  default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p floatEWaySplit:i  withVars:x];
-               }];
-               break;
-            case Dsplit:
-               [p maxAbsorptionSearch:vars  default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p floatDeltaSplit:i  withVars:x];
-               }];
-               break;
-            default:
-               [p maxAbsorptionSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [p float6WaySplit:i  withVars:x];
-               }];
-         }
-         break;
-         
       default:
          [p maxAbsorptionSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
             [p floatEWaySplit:i  withVars:x];
@@ -1529,10 +1468,6 @@ case densWAbs :
    break;
    
 case absDens :
-   [p maxAbsDensSearch:vars default:^(ORUInt i, id<ORDisabledVarArray> x) {
-      [p float6WaySplit:i  withVars:x];
-   }];
-   break;
 case custom :
    [vars setMaxFixed:(ORInt)[vars count]];
    [p customSearch:vars];

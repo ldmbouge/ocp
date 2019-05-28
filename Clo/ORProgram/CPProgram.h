@@ -87,15 +87,12 @@ PORTABLE_BEGIN
 -(void)          minOccurencesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          maxAbsorptionSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          minAbsorptionSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
--(void)          maxAbsorptionSearch: (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          maxAbsorptionSearchAll: (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          combinedAbsWithDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          combinedDensWithAbsSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
--(void)          maxAbsDensSearch:  (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          switchedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          lexicalOrderedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 
--(ORDouble)      computeAbsorptionRate:(id<ORVar>) x;
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledVarArray>) vars;
 -(void)          floatStaticSplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          floatStatic3WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
