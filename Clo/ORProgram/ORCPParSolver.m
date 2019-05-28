@@ -1136,10 +1136,12 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
-- (NSArray *)collectAllVarWithAbs:(id<ORFloatVarArray>)vs {
+- (NSArray *)collectAllVarWithAbs:(id<ORVarArray>)vs
+{
    return [[self worker] collectAllVarWithAbs:vs];
 }
-- (NSArray *)collectAllVarWithAbs:(id<ORFloatVarArray>)vs withLimit:(ORDouble)limit {
+- (NSArray *)collectAllVarWithAbs:(id<ORVarArray>)vs withLimit:(ORDouble)limit
+{
    return [[self worker] collectAllVarWithAbs:vs withLimit:limit];
 }
 - (ORInt)debugLevel

@@ -86,7 +86,7 @@
         }
         [master injectColumn: lpcol];
         [master solver];
-        [[master solver] printModelToFile:"/Users/zitoun/Desktop/master.lp"];
+//        [[master solver] printModelToFile:"/Users/zitoun/Desktop/master.lp"];
     }
 }
 

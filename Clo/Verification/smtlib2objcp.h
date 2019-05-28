@@ -33,7 +33,7 @@
 
 #include "smtlib2abstractparser.h"
 #include "smtlib2abstractparser_private.h"
-#import "objcpgateway.h"
+#import "objcpproxy.h"
 
 typedef enum {l_false, l_undef, l_true}lbool;
 

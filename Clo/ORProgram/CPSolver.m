@@ -183,7 +183,7 @@
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
-   NSSet*                _allvars;
+   NSMutableSet*                _allvars;
    id<ORIntArray>        _lOccurences;
 }
 -(CPCoreSolver*) initCPCoreSolver
@@ -3031,7 +3031,7 @@
    return rate;
 }
 //[hzi] collect all additionals variables leading to abs
--(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>) vs withLimit:(ORDouble) limit
+-(NSArray*)  collectAllVarWithAbs:(id<ORVarArray>) vs withLimit:(ORDouble) limit
 {
    NSMutableArray *res = [[NSMutableArray alloc] init];
    id<OROSet> cstr = nil;
@@ -3058,7 +3058,7 @@
    }
    return res;
 }
--(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>) vs
+-(NSArray*)  collectAllVarWithAbs:(id<ORVarArray>) vs
 {
    return [self collectAllVarWithAbs:vs withLimit:0.0f];
 }

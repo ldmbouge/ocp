@@ -264,15 +264,6 @@
       }
    }
    float_interval* ip = interval;
-//   if(length == 4){
-//      NSArray* ar = [_program orderForVar:_variable];
-//      [_program tryall:RANGE(_program,0,length) suchThat:nil orderedBy:^ORDouble(ORInt i) {
-//         return [ar[i] doubleValue];
-//      } in:^(ORInt index) {
-//         LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
-//         [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
-//      } onFailure:nil];
-//   } else
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
       ORInt c = [[_program explorer] nbChoices];
       LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
@@ -324,15 +315,6 @@
       }
    }
    double_interval* ip = interval;
-//   if(length == 4){
-//      NSArray* ar = [_program orderForVar:_variable];
-//      [_program tryall:RANGE(_program,0,length) suchThat:nil orderedBy:^ORDouble(ORInt i) {
-//         return [ar[i] doubleValue];
-//      } in:^(ORInt index) {
-//         LOG([_program debugLevel],1,@"#depth:%d alt:%d(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
-//         [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
-//      } onFailure:nil];
-//   } else
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
       LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];

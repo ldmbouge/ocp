@@ -227,8 +227,8 @@ PORTABLE_BEGIN
 -(ORInt)  regret:(id<ORIntVar>)x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
--(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>)vs;
--(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>)vs withLimit:(ORDouble) limit;
+-(NSArray*)  collectAllVarWithAbs:(id<ORVarArray>)vs;
+-(NSArray*)  collectAllVarWithAbs:(id<ORVarArray>)vs withLimit:(ORDouble) limit;
 -(ORUInt)  maxOccurences:(id<ORVar>) x;
 -(ORLDouble) density: (id<ORVar>) x;
 -(ORDouble) cardinality: (id<ORVar>) x;

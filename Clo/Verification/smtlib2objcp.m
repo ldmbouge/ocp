@@ -30,7 +30,7 @@
 #include "smtlib2objcp.h"
 #include "gmp.h"
 
-OBJCPGateway* objcpgw;
+id<OBJCPGateway,OBJCPIntGateway,OBJCPBVGateway,OBJCPFloatGateway,OBJCPBoolGateway> objcpgw;
 
 static void smtlib2_objcp_parser_set_logic(smtlib2_parser_interface *p,
                                            const char *logic);
@@ -197,7 +197,7 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    smtlib2_parser_interface *pi;
    smtlib2_term_parser *tp;
    
-   objcpgw = [OBJCPGateway initOBJCPGateway:[ORCmdLineArgs newWith:opt.argc argv:opt.argv]];
+   objcpgw = [OBJCPProxy initOBJCPGateway:[ORCmdLineArgs newWith:opt.argc argv:opt.argv]];
    
    ret->ctx_ = [objcpgw objcp_mk_context];
    smtlib2_abstract_parser_init((smtlib2_abstract_parser *)ret,
@@ -508,7 +508,7 @@ static smtlib2_sort smtlib2_objcp_parser_make_sort(smtlib2_parser_interface *p,
    if (ap->response_ != SMTLIB2_RESPONSE_ERROR) {
       if (index != NULL) {
          objcp_type obj = NULL;
-         objcp_var_type type = [OBJCPGateway sortName2Type:sortname];
+         objcp_var_type type = [OBJCPProxy sortName2Type:sortname];
          int width,e,m;
          switch (smtlib2_vector_size(index)) {
             case 1:
@@ -535,7 +535,7 @@ static smtlib2_sort smtlib2_objcp_parser_make_sort(smtlib2_parser_interface *p,
          ap->response_ = SMTLIB2_RESPONSE_SUCCESS;
          if(strcmp(sortname, "Bool") == 0 || strcmp(sortname, "Float32") == 0){
             objcp_type obj = NULL;
-            objcp_var_type type = [OBJCPGateway sortName2Type:sortname];
+            objcp_var_type type = [OBJCPProxy sortName2Type:sortname];
             obj = [objcpgw objcp_mk_type:yp->ctx_ withType:type];
             return (smtlib2_sort)obj;
          }else if(strcmp(sortname, "RoundingMode") == 0){

@@ -90,6 +90,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORBool    bds;
 @property (nonatomic,readonly) ORBool    cycleDetection;
 @property (nonatomic,readonly) ORBool    ldfs;
+@property (nonatomic,readonly) ORBool    withAux;
 @property (nonatomic,readonly) ORInt    level;
 @property (nonatomic,readonly) ORInt    choicesLimit;
 @property (nonatomic,readonly) NSString* fName;

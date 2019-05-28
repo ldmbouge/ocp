@@ -41,6 +41,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize nbThreads;
 @synthesize nArg;
 @synthesize bds;
+@synthesize withAux;
 @synthesize ldfs;
 @synthesize cycleDetection;
 @synthesize level;
@@ -85,6 +86,7 @@ static enum ValHeuristic valIndex[] =
    nbThreads = 0;
    level = 0;
    bds = NO;
+   withAux = NO;
    ldfs = NO;
    uniqueNB = 2;
    is3Bfiltering = NO;
@@ -117,6 +119,8 @@ static enum ValHeuristic valIndex[] =
       }
       else if (strncmp(argv[k], "-cycle-detection", 16) == 0)
          cycleDetection = YES;
+      else if (strncmp(argv[k], "-with-aux", 9) == 0)
+         withAux = YES;
       else if (strncmp(argv[k], "-bds", 4) == 0)
          bds = YES;
       else if (strncmp(argv[k], "-ldfs", 5) == 0)
@@ -350,9 +354,8 @@ static enum ValHeuristic valIndex[] =
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
    id<CPProgram> p = nil;
-   ORInt nb = [[model FPVars] count];
+   ORInt nb = (ORInt)[[model FPVars] count];
    id<ORSearchController> cont = nil;
-   printf("%d\n",[[model FPVars] count]);
    if(bds) cont = [ORSemBDSController protoWithDisc:nb times:5];
 //   if(ldfs) cont = [ORDFSController proto];
    switch(nbThreads) {
