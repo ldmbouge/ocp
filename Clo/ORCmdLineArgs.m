@@ -42,6 +42,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize nArg;
 @synthesize bds;
 @synthesize withAux;
+@synthesize withReduction;
 @synthesize ldfs;
 @synthesize cycleDetection;
 @synthesize level;
@@ -87,6 +88,7 @@ static enum ValHeuristic valIndex[] =
    level = 0;
    bds = NO;
    withAux = NO;
+   withReduction = NO;
    ldfs = NO;
    uniqueNB = 2;
    is3Bfiltering = NO;
@@ -121,6 +123,8 @@ static enum ValHeuristic valIndex[] =
          cycleDetection = YES;
       else if (strncmp(argv[k], "-with-aux", 9) == 0)
          withAux = YES;
+      else if (strncmp(argv[k], "-with-reduction", 15) == 0)
+         withReduction = YES;
       else if (strncmp(argv[k], "-bds", 4) == 0)
          bds = YES;
       else if (strncmp(argv[k], "-ldfs", 5) == 0)
@@ -357,13 +361,13 @@ static enum ValHeuristic valIndex[] =
    ORInt nb = (ORInt)[[model FPVars] count];
    id<ORSearchController> cont = nil;
    if(bds) cont = [ORSemBDSController protoWithDisc:nb times:5];
-//   if(ldfs) cont = [ORDFSController proto];
    switch(nbThreads) {
       case 0:
          if(cont != nil)
             p = [ORFactory createCPSemanticProgram:model annotation:notes with:cont];
          else
             p = [ORFactory createCPProgram:model annotation:notes];
+         [(CPCoreSolver*)p setWithReduction:withReduction];
          [(CPCoreSolver*)p setLevel:level];
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
@@ -394,7 +398,7 @@ static enum ValHeuristic valIndex[] =
    }
    return h;
 }
--(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORVarArray>)vs
+-(id<ORDisabledVarArray>) makeDisabledArray:(id<CPProgram>)p from:(id<ORVarArray>)vs
 {
    id<ORDisabledVarArray> vars;
    if(rateOther < 1){
@@ -404,29 +408,60 @@ static enum ValHeuristic valIndex[] =
    }else{
       vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
    }
-   if(ldfs){
-//      ORInt v = (ORInt)[vars count];
-//      NSLog(@"initial depth %d",v);
+   
+   if(withReduction){
+      //computation of max Id of concrete var
+      ORInt maxId = 0;
+      id<CPVar> cv = nil;
+      for(id<ORVar> v in vars){
+         cv = [p concretize:v];
+         maxId = max(maxId, cv.getId);
+      }
+      //create InvGamma
+      __block id<ORIntArray> invGamma = [ORFactory intArray:[p tracker] range:RANGE([p tracker], 0, maxId) value:-1];
+      for(id<ORVar> v in vars){
+         cv = [p concretize:v];
+         invGamma[cv.getId] = @([v getId]);
+      }
       
-      id<ORMutableInteger> l = [ORFactory mutable:p value:16];
-      id<ORMutableInteger> STOP = [ORFactory mutable:p value:NO];
-      [p repeat:^{
-         [STOP setValue:YES];
-         [p limitCondition:^ORBool{
-            bool r = ([[p tracer] level] > [l intValue]);
-            [STOP setValue:[STOP intValue] && !r];
-            LOG(level,2,@"depth %d limit %d %s",[[p tracer] level],[l intValue],([STOP intValue])?"YES":"NO");
-            return r;
-         } in:^{
-            [self launchHeuristicImpl:p restricted:vars];
-         }];
-      } onRepeat:^{
-         [l setValue:([l intValue] * 2)];
-         LOG(level,0,@"increase depth %d",[l intValue]);
-      } until:^ORBool{
-         LOG(level,2,@"STOP = %s",([STOP intValue])?"YES":"NO");
-         return [STOP intValue];
+      [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1){
+         if (!(v0.getId > [invGamma count] || v1.getId > [invGamma count])){
+         ORInt idA1 = [invGamma[v0.getId] intValue];
+         ORInt idA2 = [invGamma[v1.getId] intValue];
+         if(idA1 != -1 && idA2 !=  -1)
+            [vars unionSet:idA1 and:idA2];
+         }
       }];
+   }
+   
+   return vars;
+}
+-(void) makeLDSSearch:(id<CPProgram>)p restricted:(id<ORDisabledVarArray>)vars
+{
+   id<ORMutableInteger> l = [ORFactory mutable:p value:16];
+   id<ORMutableInteger> STOP = [ORFactory mutable:p value:NO];
+   [p repeat:^{
+      [STOP setValue:YES];
+      [p limitCondition:^ORBool{
+         bool r = ([[p tracer] level] > [l intValue]);
+         [STOP setValue:[STOP intValue] && !r];
+         LOG(level,2,@"depth %d limit %d %s",[[p tracer] level],[l intValue],([STOP intValue])?"YES":"NO");
+         return r;
+      } in:^{
+         [self launchHeuristicImpl:p restricted:vars];
+      }];
+   } onRepeat:^{
+      [l setValue:([l intValue] * 2)];
+      LOG(level,0,@"increase depth %d",[l intValue]);
+   } until:^ORBool{
+      LOG(level,2,@"STOP = %s",([STOP intValue])?"YES":"NO");
+      return [STOP intValue];
+   }];
+}
+-(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORDisabledVarArray>)vars
+{
+   if(ldfs){
+      [self makeLDSSearch:p restricted:vars];
    }else{
       [p limitCondition:^ORBool{
          return (choicesLimit >= 0) ? [p nbChoices] == choicesLimit : false;

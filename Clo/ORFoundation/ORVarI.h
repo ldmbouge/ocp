@@ -177,6 +177,8 @@
 -(ORBool) isFullyDisabled;
 -(ORBool) hasDisabled;
 -(ORInt) indexLastDisabled;
+-(ORInt) parent:(ORInt) i;
+-(void) unionSet:(ORInt) i and:(ORInt) j;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end

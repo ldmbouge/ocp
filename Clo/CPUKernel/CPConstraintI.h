@@ -15,6 +15,7 @@
 
 @class CPEngineI;
 @class CPGroup;
+@protocol CPEngine;
 
 typedef id (*SELPROTO)(id,SEL,...);
 
@@ -28,6 +29,7 @@ typedef id (*SELPROTO)(id,SEL,...);
    CPGroup*      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
+-(void) addConstraint:(id<CPConstraint>) c engine:(id<CPEngine>)engine;
 -(void) post;
 -(void) propagate;
 -(NSSet*) allVars;

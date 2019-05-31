@@ -301,6 +301,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
    _propagFail = nil;
    _propagDone = nil;
+   _mergedVar = nil;
    _br = RANGE(self, 0, 1);
    _iStat = makeTRInt(_trail,ORSuspend);
    return self;
@@ -320,6 +321,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    [_valueClosureQueue release];
    [_propagFail release];
    [_propagDone release];
+   [_mergedVar release];
    for(ORInt i=0;i<NBPRIORITIES;i++)
       [_closureQueue[i] release];
    [super dealloc];
@@ -793,13 +795,19 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _propagFail = [ORConcurrency  intInformer];
    return _propagFail;
 }
-
 -(id<ORInformer>) propagateDone
 {
    if (_propagDone == nil)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
+-(id<ORIdxIdInformer>) mergedVar
+{
+   if (_mergedVar == nil)
+      _mergedVar = [ORConcurrency idxIdInformer];
+   return _mergedVar;
+}
+
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];

@@ -74,8 +74,9 @@
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-    id<CPDoubleDom>            _dom;
     CPMultiCast*             _recv;
+@public
+   id<CPDoubleDom>            _dom;
 }
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
 -(id<CPEngine>) engine;
@@ -251,6 +252,30 @@ static inline double_interval computeAbsordedIntervalD(CPDoubleVarI* x)
    }
 }
 
+
+static inline double_interval computeAbsordedIntervalDV(ORDouble x)
+{
+   ORDouble m = (x == +infinity()) ? maxnormal() : x;
+   m = (m == -infinity()) ? -maxnormal() : m;
+   ORInt e;
+   ORDouble min, max;
+   double_cast m_cast;
+   m_cast.f = m;
+   e = m_cast.parts.exponent - SD_PRECISION - 1;
+   if(m_cast.parts.mantisa == 0){
+      e--;
+   }
+   if(e < 0){
+      return makeDoubleInterval(0,0);
+   }else{
+      max = doubleFromParts(0,e,0);
+      max = nextafter(max, -INFINITY);
+      min = -max;
+      return makeDoubleInterval(min,max);
+   }
+}
+
+
 static inline double_interval computeAbsorbingIntervalD(CPDoubleVarI* x)
 {
    double tmpMax = (x.max == +infinity()) ? maxnormal() : x.max;
@@ -266,4 +291,33 @@ static inline double_interval computeAbsorbingIntervalD(CPDoubleVarI* x)
       max = x.max;
    }
    return makeDoubleInterval(min,max);
+}
+static inline bool isPositiveD(CPDoubleVarI* cx)
+{
+   return [cx->_dom min] >= 0;
+}
+static inline bool isNegativeD(CPDoubleVarI* cx)
+{
+   return [cx->_dom max] <= 0;
+}
+static inline bool isPositiveOrNegativeD(CPDoubleVarI* cx)
+{
+   return [cx->_dom min] < 0 || [cx->_dom min] > 0;
+}
+static inline bool absorbD(CPDoubleVarI* cx,CPDoubleVarI* cy)
+{
+   ORBool res = NO ;
+   double_interval ax;
+   if(isPositiveOrNegativeD(cx)){
+      ORDouble m = (isPositiveD(cx)) ? [cx->_dom min]: [cx->_dom max];
+      ax = computeAbsordedIntervalDV(m);
+      if([cy bound])
+         res = ([cy doubleValue] <= ax.sup && [cy doubleValue] >= ax.inf);
+      else if(isIntersectingWithDV(ax.inf, ax.sup, cy.min, cy.max)){
+         ORDouble rate = cardinalityDV(maxDbl(ax.inf,cy.min),minDbl(ax.sup, cy.max))/cardinalityD(cy);
+         res = (rate == 1.0);
+      }
+   }
+   if(!res && [cy bound] && [cy doubleValue] == 0.0) res = YES;
+   return res;
 }

@@ -122,7 +122,7 @@ PORTABLE_BEGIN
 -(id<ORASolver>) solver;
 @end
 
-@protocol ORDisabledVarArray <ORObject,NSFastEnumeration>
+@protocol ORDisabledVarArray <ORVarArray>
 -(id<ORVar>) at: (ORInt) value;
 -(void) set: (id<ORVar>) x at: (ORInt) value;
 -(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
@@ -144,6 +144,8 @@ PORTABLE_BEGIN
 -(ORBool) isFullyDisabled;
 -(ORBool) hasDisabled;
 -(ORInt) indexLastDisabled;
+-(ORInt) parent:(ORInt) i;
+-(void) unionSet:(ORInt) i and:(ORInt) j;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end

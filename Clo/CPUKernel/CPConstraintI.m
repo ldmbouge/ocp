@@ -78,6 +78,11 @@
 {
    return _group;
 }
+-(void) addConstraint:(id<CPConstraint>) c engine:(id<CPEngine>)engine
+{
+   if(_group == nil)      [engine addInternal:c];
+   else [_group addInternal:c];
+}
 -(void) toCheck
 {
    _todo = CPTocheck;

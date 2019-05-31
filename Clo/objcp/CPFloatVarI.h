@@ -177,7 +177,6 @@ static inline bool canFollow(CPFloatVarI* x, CPFloatVarI* y)
 {
    return x.min > y.max;
 }
-
 static inline double cardinality(CPFloatVarI* x)
 {
    return cardinalityV(x.min, x.max);
@@ -206,6 +205,29 @@ static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
    float tmpMin = (x.min == -infinityf()) ? -maxnormalf() : x.min;
    ORInt e;
    m = fmaxFlt(tmpMin,tmpMax);
+   float_cast m_cast;
+   m_cast.f = m;
+   e = m_cast.parts.exponent - S_PRECISION - 1;
+   if(m_cast.parts.mantisa == 0){
+      e--;
+   }
+   if(e < 0){
+      return makeFloatInterval(0,0);
+   }else{
+      max = floatFromParts(0,e,0);
+      max = nextafterf(max, -INFINITY);
+      min = -max;
+      return makeFloatInterval(min,max);
+   }
+}
+
+
+static inline float_interval computeAbsordedIntervalV(float x)
+{
+   ORFloat m = (x == -infinityf()) ? -maxnormalf() : x;
+   m = (m == +infinityf()) ? +maxnormalf() : m;
+   ORInt e;
+   ORFloat max, min;
    float_cast m_cast;
    m_cast.f = m;
    e = m_cast.parts.exponent - S_PRECISION - 1;
@@ -269,4 +291,33 @@ static inline float previous_nb_float(float v, int nb, float def)
    for(int i = 1; i < nb && v > def; i++)
       v = fp_previous_float(v);
    return v;
+}
+static inline bool isPositive(CPFloatVarI* cx)
+{
+   return [cx->_dom min] >= 0;
+}
+static inline bool isNegative(CPFloatVarI* cx)
+{
+   return [cx->_dom max] <= 0;
+}
+static inline bool isPositiveOrNegative(CPFloatVarI* cx)
+{
+   return [cx->_dom max] < 0 || [cx->_dom min] > 0;
+}
+static inline bool absorb(CPFloatVarI* cx,CPFloatVarI* cy)
+{
+   ORBool res = NO ;
+   float_interval ax;
+   if(isPositiveOrNegative(cx)){
+      ORFloat m = (isPositive(cx)) ? [cx->_dom min]: [cx->_dom max];
+      ax = computeAbsordedIntervalV(m);
+      if([cy bound])
+         res = ([cy floatValue] <= ax.sup && [cy floatValue] >= ax.inf);
+      else if(isIntersectingWithV(ax.inf, ax.sup, cy.min, cy.max)){
+         ORDouble rate = cardinalityV(maxFlt(ax.inf,cy.min),minFlt(ax.sup, cy.max))/cardinality(cy);
+         res = (rate == 1.0);
+      }
+   }
+   if(!res && [cy bound] && [cy floatValue] == 0.0f) res = YES;
+   return res;
 }

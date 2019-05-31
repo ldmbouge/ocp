@@ -26,6 +26,7 @@
    NSMutableDictionary* _cstr;
    NSMutableDictionary* _classCstr;
    ORDouble _kbpercent;
+   ORBool   _forceEquality;
 }
 
 -(id) init
@@ -35,6 +36,7 @@
    _cstr = [[NSMutableDictionary alloc] initWithCapacity:16];
    _modelVariables = nil;
    _kbpercent = -1;
+   _forceEquality = NO;
    return self;
 }
 
@@ -144,6 +146,14 @@
 -(ORBool) hasFilteringPercent
 {
    return _kbpercent != -1;
+}
+-(void) forceEquality:(ORBool) forced
+{
+   _forceEquality = forced;
+}
+-(ORBool) isEqualityForced
+{
+   return _forceEquality;
 }
 -(ORDouble) kbpercent
 {

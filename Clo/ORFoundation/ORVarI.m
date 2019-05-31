@@ -989,14 +989,16 @@
 
 
 @implementation ORDisabledVarArrayI{
-   ORInt                  _maxId;
-   ORInt                  _nb;
-   id<ORTrailableInt>    _current;
-   id<ORTrailableInt>    _start;
-   id<ORVarArray>          _vars;
-   id<ORIntArray>          _initials;
-   id<ORTrailableIntArray>  _disabled;
-   id<ORTrailableIntArray>   _indexDisabled;
+   ORInt                      _maxId;
+   ORInt                      _nb;
+   id<ORTrailableInt>         _current;
+   id<ORTrailableInt>         _start;
+   id<ORVarArray>             _vars;
+   id<ORIntArray>             _initials;
+   id<ORTrailableIntArray>    _disabled;
+   id<ORTrailableIntArray>    _indexDisabled;
+   id<ORTrailableIntArray>    _parent;
+   
 }
 -(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
 {
@@ -1024,6 +1026,7 @@
    _start = [ORFactory trailableInt:engine value:0];
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
    _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
+   _parent = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
    for(id<ORVar> v in _vars){
       _maxId = max(_maxId, v.getId);
    }
@@ -1066,6 +1069,7 @@
 -(void) enable:(ORUInt) index
 {
    [_disabled[index] setValue:0];
+   
 }
 -(ORUInt) enableFirst
 {
@@ -1190,5 +1194,24 @@
    id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
     [engine trackObject:r];
     return r;
+}
+
+-(ORInt) parent:(ORInt) i
+{
+   ORInt parent = [_parent[i] value];
+   if(parent == -1)
+      return i;
+   ORInt res = [self parent:parent];
+// update of the current parent to speed up the next call
+   [_parent[i] setValue:res];
+   return res;
+   
+}
+-(void) unionSet:(ORInt) i and:(ORInt) j
+{
+   ORInt ip = [self parent:i];
+   ORInt jp = [self parent:j];
+   if(jp != ip)
+      [_parent[ip] setValue:jp];
 }
 @end

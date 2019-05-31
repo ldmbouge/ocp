@@ -41,6 +41,7 @@
    [self propagate];
    if(![_res bound])        [_res whenChangeBoundsPropagate:self];
    if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
+   [[[_res engine] mergedVar] notifyWith:_res andId:_initial];
 }
 -(void) propagate
 {
@@ -115,6 +116,7 @@
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   [[[_x engine] mergedVar] notifyWith:_x andId:_y];
 }
 -(void) propagate
 {
@@ -178,6 +180,7 @@
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   [[[_x engine] mergedVar] notifyWith:_x andId:_y];
 }
 -(void) propagate
 {
@@ -668,12 +671,22 @@
 @end
 
 
-@implementation CPFloatTernaryAdd
+@implementation CPFloatTernaryAdd{
+   ORBool _forced;
+}
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
-   return [self init:z equals:x plus:y kbpercent:PERCENT];
+   return [self init:z equals:x plus:y kbpercent:PERCENT force:NO];
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p
+{
+   return [self init:z equals:x plus:y kbpercent:p force:NO];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y force:(ORBool)f
+{
+   return [self init:z equals:x plus:y kbpercent:PERCENT force:f];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p force:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -682,6 +695,7 @@
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
+   _forced = f;
    return self;
 }
 -(void) post
@@ -734,12 +748,20 @@
       gchanged |= changed;
    } while(changed);
    if(gchanged) {
-      
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([_x bound] && [_y bound] && [_z bound])
+      ORBool absXY = absorb(_x,_y);
+      ORBool absYX = absorb(_y,_x);
+      if(([_x bound] && [_y bound] && [_z bound]))
          assignTRInt(&_active, NO, _trail);
+      if(absXY && ![_y bound]){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatEqual:_z to:_x] engine:[_z engine]];
+      }else if(absYX && ![_x bound]){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatEqual:_z to:_y] engine:[_z engine]];
+      }
    }
    fesetround(FE_TONEAREST);
 }
@@ -790,8 +812,10 @@
 @end
 
 
-@implementation CPFloatTernarySub
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
+@implementation CPFloatTernarySub{
+   ORBool _forced;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p force:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -800,14 +824,21 @@
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
+   _forced = f;
    return self;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
+{
+   return [self init:z equals:x minus:y kbpercent:p force:NO];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y force:(ORBool)f
+{
+   return [self init:z equals:x minus:y kbpercent:PERCENT force:f];
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
 {
-   return [self init:z equals:x minus:y kbpercent:PERCENT];
+   return [self init:z equals:x minus:y kbpercent:PERCENT force:NO];
 }
-
-
 -(void) post
 {
    [self propagate];
@@ -862,6 +893,15 @@
       [_z updateInterval:z.inf and:z.sup];
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
+      ORBool absXY = absorb(_x,_y);
+      ORBool absYX = absorb(_y,_x);
+      if(absXY && ![_y bound]){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatEqual:_z to:_x] engine:[_z engine]];
+      }else if(absYX && ![_x bound]){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatEqual:_z to:_y] engine:[_z engine]];
+      }
    }
    
       fesetround(FE_TONEAREST);
@@ -1095,20 +1135,15 @@
    if(![_y bound])
       [_y whenChangeBoundsPropagate:self];
 }
--(void) addConstraint:(id<CPConstraint>) c
-{
-   if(_group == nil)      [[_b engine] addInternal:c];
-   else [_group addInternal:c];
-}
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
       if ([_x bound] || [_x min] == [_x max]){            // TRUE <=> (y != c)
-         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x max]]];         // Rewrite as x==y  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x max]] engine:[_b engine]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }else  if ([_y bound] || [_y min] == [_y max]) {     // TRUE <=> (x != c)
-         [self addConstraint: [CPFactory floatNEqualc:_x to:[_y max]]];         // Rewrite as x==y  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:[_y max]] engine:[_b engine]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }
@@ -1175,11 +1210,6 @@
    if(![_y bound])
       [_y whenChangeBoundsPropagate:self];
 }
--(void) addConstraint:(id<CPConstraint>) c
-{
-   if(_group == nil)      [[_b engine] addInternal:c];
-   else [_group addInternal:c];
-}
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
@@ -1192,13 +1222,14 @@
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
+         [[[_x engine] mergedVar] notifyWith:_y andId:_x];
       }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
       if ([_x bound] || [_x min] == [_x max] )
-         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]]];
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]] engine:[_b engine]];
       else if ([_y bound] || [_y min] == [_y max])
-         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]]];
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]] engine:[_b engine]];
    }else {                        // b is unknown
       if (([_x bound] && [_y bound]) || ([_x min] == [_x max] &&  [_y min] == [_y max]))
          [_b bind: [_x min] == [_y min]];
@@ -1494,18 +1525,13 @@
    _c = c;
    return self;
 }
--(void) addConstraint:(id<CPConstraint>) c
-{
-   if(_group == nil)      [[_b engine] addInternal:c];
-   else [_group addInternal:c];
-}
 -(void) post
 {
    if ([_b bound]) {
       if ([_b min] == true)
          [_x bind:_c];
       else
-         [self addConstraint: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];    // Rewrite as x!=c  (addInternal can throw)
    }
    else if ([_x bound])
       [_b bind:[_x min] == _c];
@@ -1516,7 +1542,7 @@
          if ([_b min] == true)
             [_x bind:_c];
           else
-            [self addConstraint: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+            [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
       } onBehalf:self];
       [_x whenChangeBoundsDo: ^ {
          if ([_x bound])
@@ -1664,16 +1690,11 @@
    _c = c;
    return self;
 }
--(void) addConstraint:(id<CPConstraint>) c
-{
-   if(_group == nil)      [[_b engine] addInternal:c];
-   else [_group addInternal:c];
-}
 -(void) post
 {
    if ([_b bound]) {
       if ([_b min] == true)
-         [self addConstraint: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
       else
          [_x bind:_c];
    }
@@ -1684,7 +1705,7 @@
    else {
       [_b whenBindDo: ^void {
          if ([_b min]==true)
-            [self addConstraint: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+            [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
          else
             [_x bind:_c];
       } onBehalf:self];

@@ -48,6 +48,7 @@
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+-(id<ORIdxIdInformer>) mergedVar;
 -(id<ORIntRange>)boolRange;
 -(ORBool)holdsVertical;
 @end

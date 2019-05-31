@@ -47,6 +47,7 @@ enum CPEngineState {
    @package
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
+   id<ORIdxIdInformer>      _mergedVar;
    ORFailException*         _fex;
    id<ORIntRange>           _br;
 }
@@ -87,6 +88,7 @@ enum CPEngineState {
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+-(id<ORIdxIdInformer>) mergedVar;
 
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;

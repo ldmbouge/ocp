@@ -42,6 +42,7 @@ double_interval _yi;
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   [[[_x engine] mergedVar] notifyWith:_x andId:_y];
 }
 -(void) propagate
 {
@@ -115,6 +116,7 @@ double_interval _yi;
    [self propagate];
    if(![_res bound])        [_res whenChangeBoundsPropagate:self];
    if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
+   [[[_res engine] mergedVar] notifyWith:_res andId:_initial];
 }
 -(void) propagate
 {
@@ -180,6 +182,7 @@ double_interval _yi;
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   [[[_x engine] mergedVar] notifyWith:_x andId:_y];
 }
 -(void) propagate
 {
@@ -788,8 +791,17 @@ double_interval _yi;
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([_x bound] && [_y bound] && [_z bound])
+      ORBool absXY = absorbD(_x,_y);
+      ORBool absYX = absorbD(_y,_x);
+      if(([_x bound] && [_y bound] && [_z bound]))
          assignTRInt(&_active, NO, _trail);
+      if(absXY && ![_y bound]){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleEqual:_z to:_x] engine:[_x engine]];
+      }else if(absYX && ![_x bound]){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleEqual:_z to:_y] engine:[_x engine]];
+      }
    }
    fesetround(FE_TONEAREST);
 }
@@ -840,7 +852,6 @@ double_interval _yi;
 {
    return [self init:z equals:x minus:y kbpercent:PERCENT];
 }
-
 -(void) post
 {
    [self propagate];
@@ -893,8 +904,17 @@ double_interval _yi;
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([_x bound] && [_y bound] && [_z bound])
+      ORBool absXY = absorbD(_x,_y);
+      ORBool absYX = absorbD(_y,_x);
+      if(([_x bound] && [_y bound] && [_z bound]))
          assignTRInt(&_active, NO, _trail);
+      if(absXY && ![_y bound]){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleEqual:_z to:_x] engine:[_x engine]];
+      }else if(absYX && ![_x bound]){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleEqual:_z to:_y] engine:[_x engine]];
+      }
    }
    
    fesetround(FE_TONEAREST);
@@ -1118,11 +1138,11 @@ double_interval _yi;
 {
    if (minDom(_b)) {            // b is TRUE
       if ([_x bound] || [_x min] == [_x max]){            // TRUE <=> (y != c)
-         [[_b engine] addInternal: [CPFactory doubleNEqualc:_y to:[_x min]]];         // Rewrite as x==y  (addInternal can throw)
+         [self addConstraint:[CPFactory doubleNEqualc:_y to:[_x min]] engine:[_x engine]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }else  if ([_y bound] || [_y min] == [_y max]) {     // TRUE <=> (x != c)
-         [[_b engine] addInternal: [CPFactory doubleNEqualc:_x to:[_y min]]];         // Rewrite as x==y  (addInternal can throw)
+        [self addConstraint: [CPFactory doubleNEqualc:_x to:[_y min]] engine:[_x engine]];        // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }
@@ -1202,13 +1222,14 @@ double_interval _yi;
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
+         [[[_x engine] mergedVar] notifyWith:_x andId:_y];
       }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
       if ([_x bound] || [_x min] == [_x max] )
-         [[_b engine] addInternal: [CPFactory doubleNEqualc:_y to:[_x min]]]; // Rewrite as min(x)!=y  (addInternal can throw)
+         [self addConstraint:[CPFactory doubleNEqualc:_y to:[_x min]] engine:[_b engine]]; // Rewrite as min(x)!=y  (addInternal can throw)
       else if ([_y bound] || [_y min] == [_y max])
-         [[_b engine] addInternal: [CPFactory doubleNEqualc:_x to:[_y min]]]; // Rewrite as min(y)!=x  (addInternal can throw)
+         [self addConstraint:[CPFactory doubleNEqualc:_x to:[_y min]] engine:[_b engine]]; // Rewrite as min(y)!=x  (addInternal can throw)
    }
    else {                        // b is unknown
       if (([_x bound] && [_y bound]) || ([_x min] == [_x max] &&  [_y min] == [_y max]))
@@ -1510,7 +1531,7 @@ double_interval _yi;
       if ([_b min] == true)
          [_x bind:_c];
       else
-         [[_b engine] addInternal: [CPFactory doubleNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+         [self addConstraint:[CPFactory doubleNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
    }
    else if ([_x bound])
       [_b bind:[_x min] == _c];
@@ -1521,7 +1542,7 @@ double_interval _yi;
          if ([_b min] == true) {
             [_x bind:_c];
          } else {
-            [[_b engine] addInternal: [CPFactory doubleNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+            [self addConstraint:[CPFactory doubleNEqualc:_x to:_c] engine:[_b engine]];    // Rewrite as x!=c  (addInternal can throw)
          }
       } onBehalf:self];
       [_x whenChangeBoundsDo: ^ {
@@ -1674,7 +1695,7 @@ double_interval _yi;
 {
    if ([_b bound]) {
       if ([_b min] == true)
-         [[_b engine] addInternal: [CPFactory doubleNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+         [self addConstraint:[CPFactory doubleNEqualc:_x to:_c] engine:[_b engine]];    // Rewrite as x!=c  (addInternal can throw)
       else
          [_x bind:_c];
    }
@@ -1685,7 +1706,7 @@ double_interval _yi;
    else {
       [_b whenBindDo: ^void {
          if ([_b min]==true)
-            [[_b engine] addInternal: [CPFactory doubleNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+            [self addConstraint:[CPFactory doubleNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
          else
             [_x bind:_c];
       } onBehalf:self];

@@ -91,6 +91,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORBool    cycleDetection;
 @property (nonatomic,readonly) ORBool    ldfs;
 @property (nonatomic,readonly) ORBool    withAux;
+@property (nonatomic,readonly) ORBool    withReduction;
 @property (nonatomic,readonly) ORInt    level;
 @property (nonatomic,readonly) ORInt    choicesLimit;
 @property (nonatomic,readonly) NSString* fName;
@@ -112,6 +113,7 @@ struct ORResult {
 -(id<ORGroup>)makeGroup:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
+-(id<ORDisabledVarArray>) makeDisabledArray:(id<CPProgram>)p from:(id<ORVarArray>)vs;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 -(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;
 @end

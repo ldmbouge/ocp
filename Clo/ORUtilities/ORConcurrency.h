@@ -36,6 +36,10 @@
 -(void) notifyWithFloat:(double)a0;
 @end
 
+@protocol ORIdxIdInformer<ORInformer>
+-(void) notifyWith:(id)a0 andId:(id)a1;
+@end
+
 @protocol ORIdxIntInformer<ORInformer>
 -(void) notifyWith:(id)a0 andInt:(ORInt)v;
 @end
@@ -81,6 +85,7 @@
 +(id<ORIdInformer>) idInformer;
 +(id<ORVoidInformer>) voidInformer;
 +(id<ORIdxIntInformer>) idxIntInformer;
++(id<ORIdxIdInformer>) idxIdInformer;
 +(id<ORBarrier>)  barrier: (ORInt) nb;
 +(void) pumpEvents;
 @end

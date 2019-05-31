@@ -143,7 +143,7 @@
 /*                                 CoreSolver                                             */
 /******************************************************************************************/
 
- @implementation CPCoreSolver {
+@implementation CPCoreSolver {
 @protected
    id<ORModel>           _model;
    id<CPEngine>          _engine;
@@ -156,6 +156,7 @@
    id<CPPortal>          _portal;
    
    NSMutableDictionary*   _order;
+   ORBool                  _withParent;
    ORInt                  _level;
    ORInt                 _unique;
    ORFloat                _split3Bpercent;
@@ -197,6 +198,7 @@
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
    _level = 100;
+   _withParent = NO;
    _absRateLimitModelVars = 0.3;
    _absTRateLimitModelVars = 0.8;
    _absRateLimitAdditionalVars = 0.92;
@@ -401,6 +403,10 @@
 -(void) setLevel:(ORInt) level
 {
    _level = level;
+}
+-(void) setWithReduction:(ORBool) p
+{
+   _withParent = p;
 }
 -(void) setUnique:(ORInt) u
 {
@@ -1281,7 +1287,7 @@
 {
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
-                                  suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
+                                        suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
                                        orderedBy: ^ORDouble(ORInt i) {
                                           ORDouble rv = [h varOrdering:av[i]];
                                           return rv;
@@ -1321,11 +1327,11 @@
          }
       }
       if (bestIndex != - 1)  {
-            [_search try: ^{
-               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
-            } alt: ^{
-               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
-            }];
+         [_search try: ^{
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+         } alt: ^{
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+         }];
       }
    } while (true);
 }
@@ -1354,7 +1360,7 @@
          if (!i.found)
             return;
          x = av[i.index];
-//                  NSLog(@"-->Chose variable: %p=%@",x,x);
+         //                  NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
       } else {
          //         NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
@@ -1589,32 +1595,35 @@
 {
    __block ORBool goon = YES;
    while(goon) {
-//      [_search probe:^{
-         LOG(_level,2,@"State before selection");
-         ORSelectorResult i = s();
-         if (!i.found){
-            if(![x hasDisabled]){
+      //      [_search probe:^{
+      LOG(_level,2,@"State before selection");
+      ORSelectorResult i = s();
+      if (!i.found){
+         if(![x hasDisabled]){
+            goon = NO;
+            return;
+         }else{
+            do{
+               i.index = [x enableFirst];
+            } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+            if([_gamma[x[i.index].getId] bound]){
                goon = NO;
                return;
-            }else{
-               do{
-                  i.index = [x enableFirst];
-               } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
-               if([_gamma[x[i.index].getId] bound]){
-                  goon = NO;
-                  return;
-               }
             }
-         } else if(_unique){
-            if([x isFullyDisabled]){
-               [x enableFirst];
-            }
-            [x disable:i.index];
          }
-         id<CPVar> cx = _gamma[x[i.index].getId];
-         LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],[cx domain]);
-         b(i.index,x);
-//      }];
+      } else if(_unique){
+         if([x isFullyDisabled]){
+            [x enableFirst];
+         }
+         [x disable:i.index];
+      }
+      ORInt index = i.index;
+      if (_withParent)
+         index = [x parent:i.index];
+      id<CPVar> cx = _gamma[x[i.index].getId];
+      LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],[cx domain]);
+      b(i.index,x);
+      //      }];
    }
 }
 -(void) searchWithCriteria:  (id<ORDisabledVarArray>) x criteria:(ORInt2Double)crit switchOnCondtion:(ORBool(^)(void))c criteria:(ORInt2Double)crit2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -1639,8 +1648,11 @@
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPVar> v = _gamma[x[i].getId];
-                                     LOG(_level,2,@"%@ (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:i])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
-                                     return ![v bound] && [x isEnabled:i];
+                                     ORInt parent = [x parent:i];
+                                     LOG(_level,2,@"%@ <p:%@> (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],([x[parent] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[parent] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:parent])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
+//                                     return ![v bound] && [x isEnabled:i];
+                                     
+                                     return ![v bound] && [x isEnabled:parent];
                                   }
                                  orderedBy: c
                           ];
@@ -1733,8 +1745,8 @@
 -(void) maxLOccurencesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-       if(_lOccurences == nil)
-          return (ORDouble)[_model lOccurences:x[i]];
+      if(_lOccurences == nil)
+         return (ORDouble)[_model lOccurences:x[i]];
       return [_lOccurences[i] doubleValue];
    } do:b];
 }
@@ -1916,72 +1928,72 @@
       }
    }
    id<ORSelect> select_occ = [ORFactory select: _engine
-                                       range: x.range
-                                    suchThat: ^ORBool(ORInt i) {
-                                       id<CPVar> v = _gamma[x[i].getId];
-                                       LOG(_level,2,@"%@ (var<%d>) %@  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
-                                       nb += ![v bound];
-                                       return ![v bound] && [x isEnabled:i];
-                                    }
-                                   orderedBy: ^ORDouble(ORInt i) {
-                                      return [_model occurences:x[i]];
-                                   }
-                            ];
-      id<ORSelect> select_abs = [ORFactory select: _engine
-                                       range: x.range
-                                    suchThat: ^ORBool(ORInt i) {
-                                       id<CPVar> v = _gamma[x[i].getId];
-                                       LOG(_level,2,@"%@ (var<%d>) %@  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
-                                       nb += ![v bound];
-                                       return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0  && [abs[i] quantity] != 1.0;
-                                    }
-                                   orderedBy: ^ORDouble(ORInt i) {
-                                      return [abs[i] quantity];
-                                   }
-                            ];
+                                         range: x.range
+                                      suchThat: ^ORBool(ORInt i) {
+                                         id<CPVar> v = _gamma[x[i].getId];
+                                         LOG(_level,2,@"%@ (var<%d>) %@  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
+                                         nb += ![v bound];
+                                         return ![v bound] && [x isEnabled:i];
+                                      }
+                                     orderedBy: ^ORDouble(ORInt i) {
+                                        return [_model occurences:x[i]];
+                                     }
+                              ];
+   id<ORSelect> select_abs = [ORFactory select: _engine
+                                         range: x.range
+                                      suchThat: ^ORBool(ORInt i) {
+                                         id<CPVar> v = _gamma[x[i].getId];
+                                         LOG(_level,2,@"%@ (var<%d>) %@  bounded:%s fixed:%s rate : occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
+                                         nb += ![v bound];
+                                         return ![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0  && [abs[i] quantity] != 1.0;
+                                      }
+                                     orderedBy: ^ORDouble(ORInt i) {
+                                        return [abs[i] quantity];
+                                     }
+                              ];
    __block ORBool goon = YES;
    while(goon) {
-//      [_search probe: ^{
-         LOG(_level,2,@"State before selection");
-         abs = [self computeAbsorptionsQuantities:x];
-         ORBool c = NO;
-         for (ORInt i = 0; i < [abs count]; i++) {
-            id<CPVar> v = _gamma[x[i].getId];
-            if(![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0 && [abs[i] quantity] != 1.0){
-               c = YES;
-               break;
-            }
+      //      [_search probe: ^{
+      LOG(_level,2,@"State before selection");
+      abs = [self computeAbsorptionsQuantities:x];
+      ORBool c = NO;
+      for (ORInt i = 0; i < [abs count]; i++) {
+         id<CPVar> v = _gamma[x[i].getId];
+         if(![v bound] && [x isEnabled:i] && [abs[i] quantity] >= _absTRateLimitModelVars && [abs[i] quantity] != 0.0 && [abs[i] quantity] != 1.0){
+            c = YES;
+            break;
          }
-         ORSelectorResult i = (c)?[select_abs max]:[select_occ max];
-         if (!i.found){
-            if(![x hasDisabled]){
+      }
+      ORSelectorResult i = (c)?[select_abs max]:[select_occ max];
+      if (!i.found){
+         if(![x hasDisabled]){
+            goon = NO;
+            return;
+         }else{
+            do{
+               i.index = [x enableFirst];
+            } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+            if([_gamma[x[i.index].getId] bound]){
                goon = NO;
                return;
-            }else{
-               do{
-                  i.index = [x enableFirst];
-               } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
-               if([_gamma[x[i.index].getId] bound]){
-                  goon = NO;
-                  return;
-               }
             }
-         } else if(_unique){
-            if([x isFullyDisabled]){
-               [x enableFirst];
-            }
-            [x disable:i.index];
          }
-         id<CPVar> cx = _gamma[x[i.index].getId];
-         if(c){
-            id<CPVar> v = [abs[i.index] bestChoice];
-            LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
-            [self floatAbsSplit:i.index by:v vars:x];
-         }else{
-              LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx);
-            [self float5WaySplit:i.index withVars:x];
+      } else if(_unique){
+         if([x isFullyDisabled]){
+            [x enableFirst];
          }
-//      }];
+         [x disable:i.index];
+      }
+      id<CPVar> cx = _gamma[x[i.index].getId];
+      if(c){
+         id<CPVar> v = [abs[i.index] bestChoice];
+         LOG(_level,2,@"selected variables: %@ %@ bounded:%s and %@ %@ bounded:%s",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,([cx bound])?"YES":"NO",[NSString stringWithFormat:@"var<%d>", [v getId]],v,([v bound])?"YES":"NO");
+         [self floatAbsSplit:i.index by:v vars:x];
+      }else{
+         LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx);
+         [self float5WaySplit:i.index withVars:x];
+      }
+      //      }];
    }
 }
 
@@ -2598,12 +2610,12 @@
 }
 -(id<CPBitVarHeuristic>) createBitVarVSIDS: (id<ORVarArray>) rvars
 {
-      id<CPBitVarArray> cav = [CPFactory bitVarArray:self range:rvars.range with:^id<CPBitVar>(ORInt i) {
-         CPBitVarI* sv =_gamma[rvars[i].getId];
-         assert([sv isKindOfClass:[CPBitVarI class]]);
-         return sv;
-      }];
-
+   id<CPBitVarArray> cav = [CPFactory bitVarArray:self range:rvars.range with:^id<CPBitVar>(ORInt i) {
+      CPBitVarI* sv =_gamma[rvars[i].getId];
+      assert([sv isKindOfClass:[CPBitVarI class]]);
+      return sv;
+   }];
+   
    id<CPBitVarHeuristic> h = [[CPBitVarVSIDS alloc] initCPBitVarVSIDS:self restricted:cav];
    [self addHeuristic:h];
    return h;
@@ -3259,7 +3271,7 @@
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
    
-//   ORStatus status = [_engine enforce:^{ [[var domain] setBit:i to:val for:var];}];
+   //   ORStatus status = [_engine enforce:^{ [[var domain] setBit:i to:val for:var];}];
    ORStatus status = [_engine enforce:^{ [var bind:i to:val];}];
    if (status == ORFailure ){
       if (_engine.isPropagating)
@@ -3847,4 +3859,5 @@ static ABS_FUN funChoice;
    return [NSString stringWithFormat:@"<%lf,%d,%@>",_quantity,_nb,_choice];
 }
 @end
+
 

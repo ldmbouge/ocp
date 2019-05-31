@@ -25,7 +25,6 @@
    self = [super init];
    _model = m;
    _declarations = decl;
-   _vars = [self getVariables];
    if(options == nil){
       int argc = 2;
       const char* argv[] = {};
@@ -34,6 +33,7 @@
       _options = options;
    }
    _program = [_options makeProgram:_model];
+   _vars = [self getVariables];
    return self;
 }
 - (id<ORVarArray>)getVariables
@@ -109,7 +109,7 @@
 {
    if(_vars == nil)
       [self initVariables];
-   return _vars;
+   return [_options makeDisabledArray:_program from:_vars];
 }
 -(void) initVariables
 {
@@ -210,7 +210,6 @@
 {
    self = [super init];
    _model = m;
-   _vars = [self getVariables];
    if(options == nil){
       int argc = 2;
       const char* argv[] = {};
@@ -219,6 +218,7 @@
       _options = options;
    }
    _program = [ORFactory createCPProgramBackjumpingDFS:_model];
+   _vars = [self getVariables];
    _heuristic = [_program createDDeg];
    return self;
 }

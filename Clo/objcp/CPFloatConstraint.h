@@ -152,6 +152,7 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
+-(id) init:(id)z equals:(id)x plus:(id)y force:(ORBool)f;
 -(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
 -(void) post;
 -(NSSet*)allVars;
@@ -171,6 +172,7 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x minus:(id)y;
+-(id) init:(id)z equals:(id)x minus:(id)y force:(ORBool) f;
 -(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;

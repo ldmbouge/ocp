@@ -817,14 +817,14 @@
 {
    if([notes hasFilteringPercent])
       return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent]];
-   return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z];
+   return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z force:[notes isEqualityForced]];
    
 }
 +(id<CPConstraint>) floatTernarySub:(id<CPFloatVar>) x equals:(id<CPFloatVar>) y minus:(id<CPFloatVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
       return [[CPFloatTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent]];
-   return [[CPFloatTernarySub alloc] init:x equals:y minus:z];
+   return [[CPFloatTernarySub alloc] init:x equals:y minus:z force:[notes isEqualityForced]];
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c annotation:(id<ORAnnotation>) notes
 {
