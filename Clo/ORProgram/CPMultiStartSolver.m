@@ -464,6 +464,10 @@
 {
     [[self worker] maxAbsorptionSearch:x do:b];
 }
+-(void)          maxFullAbsorptionSearch:  (id<ORDisabledVarArray>) x
+{
+   [[self worker] maxFullAbsorptionSearch:x];
+}
 -(void)          minAbsorptionSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minAbsorptionSearch:x do:b];

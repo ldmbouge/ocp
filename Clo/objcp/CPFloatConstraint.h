@@ -152,8 +152,9 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
--(id) init:(id)z equals:(id)x plus:(id)y force:(ORBool)f;
+-(id) init:(id)z equals:(id)x plus:(id)y rewriting:(ORBool)f;
 -(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
+-(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p rewriting:(ORBool) f;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -172,8 +173,9 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x minus:(id)y;
--(id) init:(id)z equals:(id)x minus:(id)y force:(ORBool) f;
+-(id) init:(id)z equals:(id)x minus:(id)y rewriting:(ORBool) f;
 -(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
+-(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble)p rewriting:(ORBool) f;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;

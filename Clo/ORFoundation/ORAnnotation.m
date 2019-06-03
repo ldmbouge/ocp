@@ -26,7 +26,7 @@
    NSMutableDictionary* _cstr;
    NSMutableDictionary* _classCstr;
    ORDouble _kbpercent;
-   ORBool   _forceEquality;
+   ORBool   _rewrite;
 }
 
 -(id) init
@@ -36,7 +36,7 @@
    _cstr = [[NSMutableDictionary alloc] initWithCapacity:16];
    _modelVariables = nil;
    _kbpercent = -1;
-   _forceEquality = NO;
+   _rewrite = NO;
    return self;
 }
 
@@ -147,13 +147,13 @@
 {
    return _kbpercent != -1;
 }
--(void) forceEquality:(ORBool) forced
+-(void) rewriteEq:(ORBool) forced
 {
-   _forceEquality = forced;
+   _rewrite = forced;
 }
--(ORBool) isEqualityForced
+-(ORBool) rewriteEq
 {
-   return _forceEquality;
+   return _rewrite;
 }
 -(ORDouble) kbpercent
 {
@@ -271,6 +271,7 @@
    self = [super init];
    _original = [src retain];
    [super kbpercent:[_original kbpercent]];
+   [super rewriteEq:[_original rewriteEq]];
    _modelVariables = [vars retain];
    return self;
 }
@@ -279,6 +280,7 @@
    self = [super init];
    _original = [src retain];
    [super kbpercent:[_original kbpercent]];
+   [super rewriteEq:[_original rewriteEq]];
    return self;
 }
 -(void) dealloc

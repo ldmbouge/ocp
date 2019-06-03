@@ -251,12 +251,10 @@ static inline double_interval computeAbsordedIntervalD(CPDoubleVarI* x)
       return makeDoubleInterval(min,max);
    }
 }
-
-
 static inline double_interval computeAbsordedIntervalDV(ORDouble x)
 {
-   ORDouble m = (x == +infinity()) ? maxnormal() : x;
-   m = (m == -infinity()) ? -maxnormal() : m;
+   if(x == -infinity() || x == +infinity()) return makeDoubleInterval(-maxnormal(), +maxnormal());
+   ORDouble m = x;
    ORInt e;
    ORDouble min, max;
    double_cast m_cast;

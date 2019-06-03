@@ -224,8 +224,8 @@ static inline float_interval computeAbsordedInterval(CPFloatVarI* x)
 
 static inline float_interval computeAbsordedIntervalV(float x)
 {
-   ORFloat m = (x == -infinityf()) ? -maxnormalf() : x;
-   m = (m == +infinityf()) ? +maxnormalf() : m;
+   if(x == -infinityf() || x == +infinityf()) return makeFloatInterval(-maxnormalf(), +maxnormalf());
+   ORFloat m = x;
    ORInt e;
    ORFloat max, min;
    float_cast m_cast;

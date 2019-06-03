@@ -2893,7 +2893,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    for(id<CPVar> v in _vars){
       if([v bound]) continue;
-      id<CPVisitor> visit = [[CP3BShavingVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent];
+      CP3BShavingVisitor* visit = [[CP3BShavingVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent];
       [v visit:visit];
       [visit release];
    }
@@ -2903,7 +2903,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    for(id<CPVar> v in _vars){
       if([v bound]) continue;
-      id<CPVisitor> visit = [[CP3BVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent];
+      CP3BVisitor* visit = [[CP3BVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent];
       [v visit:visit];
       [visit release];
    }

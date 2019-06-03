@@ -42,7 +42,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize nArg;
 @synthesize bds;
 @synthesize withAux;
-@synthesize withReduction;
+@synthesize withRewritingEq;
 @synthesize ldfs;
 @synthesize cycleDetection;
 @synthesize level;
@@ -88,7 +88,7 @@ static enum ValHeuristic valIndex[] =
    level = 0;
    bds = NO;
    withAux = NO;
-   withReduction = NO;
+   withRewritingEq = NO;
    ldfs = NO;
    uniqueNB = 2;
    is3Bfiltering = NO;
@@ -123,8 +123,8 @@ static enum ValHeuristic valIndex[] =
          cycleDetection = YES;
       else if (strncmp(argv[k], "-with-aux", 9) == 0)
          withAux = YES;
-      else if (strncmp(argv[k], "-with-reduction", 15) == 0)
-         withReduction = YES;
+      else if (strncmp(argv[k], "-with-reduction", 15) == 0 || strncmp(argv[k], "-with-rewriting-eq", 15) == 0)
+         withRewritingEq = YES;
       else if (strncmp(argv[k], "-bds", 4) == 0)
          bds = YES;
       else if (strncmp(argv[k], "-ldfs", 5) == 0)
@@ -340,6 +340,8 @@ static enum ValHeuristic valIndex[] =
 {
    if(kbpercent != -1)
       [notes kbpercent:kbpercent];
+   if(withRewritingEq)
+      [notes rewriteEq:YES];   
    [notes setKBEligebleVars:[model variables]];
 }
 -(id<ORGroup>)makeGroup:(id<ORModel>)model
@@ -367,7 +369,7 @@ static enum ValHeuristic valIndex[] =
             p = [ORFactory createCPSemanticProgram:model annotation:notes with:cont];
          else
             p = [ORFactory createCPProgram:model annotation:notes];
-         [(CPCoreSolver*)p setWithReduction:withReduction];
+         [(CPCoreSolver*)p setWithRewriting:withRewritingEq];
          [(CPCoreSolver*)p setLevel:level];
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
@@ -409,7 +411,7 @@ static enum ValHeuristic valIndex[] =
       vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
    }
    
-   if(withReduction){
+   if(withRewritingEq){
       //computation of max Id of concrete var
       ORInt maxId = 0;
       id<CPVar> cv = nil;
@@ -1312,6 +1314,7 @@ case maxAbs :
          }];
          break;
       case splitAbs:
+         [p maxFullAbsorptionSearch:vars];
       default:
          [p maxAbsorptionSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
             [p floatEWaySplit:i  withVars:x];

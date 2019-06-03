@@ -404,7 +404,7 @@
 {
    _level = level;
 }
--(void) setWithReduction:(ORBool) p
+-(void) setWithRewriting:(ORBool) p
 {
    _withParent = p;
 }
@@ -1766,6 +1766,65 @@
 {
    return [_order objectForKey:@(v.getId)];
 }
+
+
+-(void) maxFullAbsorptionSearch:(id<ORDisabledVarArray>)x
+{
+   @autoreleasepool {
+      NSArray* cstr = [_model constraints];
+      for (id<ORConstraint> c in cstr){
+         [_allvars unionSet:[c allVars]];
+      }
+   }
+   __block id<ORIdArray> abs = nil;
+   __block ORInt nb;
+   id<ORSelect> select_a = [ORFactory select: _engine
+                                       range: x.range
+                                    suchThat: ^ORBool(ORInt i) {
+                                       id<CPFloatVar> v = _gamma[x[i].getId];
+                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
+                                       nb += ![v bound];
+                                       return ![v bound] && [x isEnabled:i] ;
+                                    }
+                                   orderedBy: ^ORDouble(ORInt i) {
+                                      return [abs[i] quantity];
+                                   }
+                            ];
+   __block ORBool goon = YES;
+   while(goon) {
+      LOG(_level,2,@"State before selection");
+      ORSelectorResult i = [select_a max];
+      if (!i.found){
+         if(![x hasDisabled]){
+            goon = NO;
+            return;
+         }else{
+            do{
+               i.index = [x enableFirst];
+            } while([x hasDisabled] && [_gamma[x[i.index].getId] bound]);
+            if([_gamma[x[i.index].getId] bound]){
+               goon = NO;
+               return;
+            }
+         }
+      } else if(_unique){
+         if([x isFullyDisabled]){
+            [x enableFirst];
+         }
+         [x disable:i.index];
+      }
+      id<CPVar> v = [abs[i.index] bestChoice];
+      id<CPVar> cx = _gamma[x[i.index].getId];
+      LOG(_level,3,@"selected variables: %@ and %@",cx,v);
+      LOG(_level,2,@"selected variables: %@ %@ and %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],cx,[NSString stringWithFormat:@"var<%d>", [v getId]],v);
+      [self floatAbsSplit:i.index by:v vars:x];
+   }
+}
+
+
+
+
+
 //----------Special search--------//
 -(void) specialSearch:  (id<ORDisabledVarArray>) x
 {

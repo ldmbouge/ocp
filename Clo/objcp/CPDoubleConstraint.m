@@ -726,9 +726,17 @@ double_interval _yi;
 @implementation CPDoubleTernaryAdd
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x plus:(CPDoubleVarI*)y
 {
-   return [self init:z equals:x plus:y kbpercent:PERCENT];
+   return [self init:z equals:x plus:y kbpercent:PERCENT rewriting:NO];
+}
+-(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x plus:(CPDoubleVarI*)y   rewriting:(ORBool) f
+{
+   return [self init:z equals:x plus:y kbpercent:PERCENT rewriting:f];
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x plus:(CPDoubleVarI*)y kbpercent:(ORDouble)p
+{
+   return [self init:z equals:x plus:y kbpercent:p rewriting:NO];
+}
+-(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x plus:(CPDoubleVarI*)y kbpercent:(ORDouble)p  rewriting:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -737,13 +745,26 @@ double_interval _yi;
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
+   _rewriting = f;
    return self;
 }
 -(void) post
 {
    [self propagate];
-   if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-   if (![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if (![_x bound]) {
+      [_x whenChangeBoundsPropagate:self];
+      if(_rewriting)
+      [_x whenChangeBoundsDo:^{
+         [self propagateFixPoint:_x with:_y];
+      } priority:LOWEST_PRIO onBehalf:self];
+   }
+   if (![_y bound]) {
+      [_y whenChangeBoundsPropagate:self];
+      if(_rewriting)
+      [_y whenChangeBoundsDo:^{
+         [self propagateFixPoint:_y with:_x];
+      } priority:LOWEST_PRIO onBehalf:self];
+   }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
 }
 -(void) propagate
@@ -791,19 +812,17 @@ double_interval _yi;
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      ORBool absXY = absorbD(_x,_y);
-      ORBool absYX = absorbD(_y,_x);
-      if(([_x bound] && [_y bound] && [_z bound]))
+      if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
-      if(absXY && ![_y bound]){
-         assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory doubleEqual:_z to:_x] engine:[_x engine]];
-      }else if(absYX && ![_x bound]){
-         assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory doubleEqual:_z to:_y] engine:[_x engine]];
-      }
    }
    fesetround(FE_TONEAREST);
+}
+-(void) propagateFixPoint:(CPDoubleVarI*) x with:(CPDoubleVarI*) y
+{
+   if(absorbD(x,y)  && [self nbUVars]){
+      assignTRInt(&_active, NO, _trail);
+      [self addConstraint:[CPFactory doubleEqual:_z to:x] engine:[x engine]];
+   }
 }
 -(NSSet*)allVars
 {
@@ -837,7 +856,7 @@ double_interval _yi;
 
 
 @implementation CPDoubleTernarySub
--(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y kbpercent:(ORDouble)p
+-(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y kbpercent:(ORDouble)p rewriting:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -846,18 +865,40 @@ double_interval _yi;
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
+   _rewriting = f;
    return self;
+}
+-(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y kbpercent:(ORDouble)p
+{
+   return [self init:z equals:x minus:y kbpercent:p rewriting:NO];
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y
 {
-   return [self init:z equals:x minus:y kbpercent:PERCENT];
+   return [self init:z equals:x minus:y kbpercent:PERCENT rewriting:NO];
+}
+-(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y rewriting:(ORBool) f
+{
+   return [self init:z equals:x minus:y kbpercent:PERCENT rewriting:f];
 }
 -(void) post
 {
    [self propagate];
-   if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-   if (![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if (![_x bound]) {
+      [_x whenChangeBoundsPropagate:self];
+      if(_rewriting)
+      [_x whenChangeBoundsDo:^{
+         [self propagateFixPoint:_x with:_y];
+      } priority:LOWEST_PRIO onBehalf:self];
+   }
+   if (![_y bound]) {
+      [_y whenChangeBoundsPropagate:self];
+      if(_rewriting)
+      [_y whenChangeBoundsDo:^{
+         [self propagateFixPoint:_y with:_x];
+      } priority:LOWEST_PRIO onBehalf:self];
+   }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+   
 }
 -(void) propagate
 {
@@ -904,20 +945,17 @@ double_interval _yi;
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      ORBool absXY = absorbD(_x,_y);
-      ORBool absYX = absorbD(_y,_x);
-      if(([_x bound] && [_y bound] && [_z bound]))
+      if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
-      if(absXY && ![_y bound]){
-         assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory doubleEqual:_z to:_x] engine:[_x engine]];
-      }else if(absYX && ![_x bound]){
-         assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory doubleEqual:_z to:_y] engine:[_x engine]];
-      }
    }
-   
    fesetround(FE_TONEAREST);
+}
+-(void) propagateFixPoint:(CPDoubleVarI*) x with:(CPDoubleVarI*) y
+{
+   if(absorbD(x,y)  && [self nbUVars]){
+      assignTRInt(&_active, NO, _trail);
+      [self addConstraint:[CPFactory doubleEqual:_z to:x] engine:[x engine]];
+   }
 }
 -(NSSet*)allVars
 {

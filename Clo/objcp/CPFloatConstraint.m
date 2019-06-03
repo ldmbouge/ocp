@@ -672,21 +672,21 @@
 
 
 @implementation CPFloatTernaryAdd{
-   ORBool _forced;
+   ORBool _rewriting;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
-   return [self init:z equals:x plus:y kbpercent:PERCENT force:NO];
+   return [self init:z equals:x plus:y kbpercent:PERCENT rewriting:NO];
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
-   return [self init:z equals:x plus:y kbpercent:p force:NO];
+   return [self init:z equals:x plus:y kbpercent:p rewriting:NO];
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y force:(ORBool)f
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y rewriting:(ORBool)f
 {
-   return [self init:z equals:x plus:y kbpercent:PERCENT force:f];
+   return [self init:z equals:x plus:y kbpercent:PERCENT rewriting:f];
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p force:(ORBool) f
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p rewriting:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -695,15 +695,28 @@
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
-   _forced = f;
+   _rewriting = f;
    return self;
 }
 -(void) post
 {
    [self propagate];
-   if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-   if (![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if (![_x bound]) {
+      [_x whenChangeBoundsPropagate:self];
+      if(_rewriting)
+         [_x whenChangeBoundsDo:^{
+            [self propagateFixPoint:_x with:_y];
+         } priority:LOWEST_PRIO onBehalf:self];
+   }
+   if (![_y bound]) {
+      [_y whenChangeBoundsPropagate:self];
+      if(_rewriting)
+         [_y whenChangeBoundsDo:^{
+            [self propagateFixPoint:_y with:_x];
+         } priority:LOWEST_PRIO onBehalf:self];
+   }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+   
 }
 //hzi : _Temps variables are useless ? inter.result ? x is already changed ?
 -(void) propagate
@@ -751,19 +764,17 @@
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      ORBool absXY = absorb(_x,_y);
-      ORBool absYX = absorb(_y,_x);
-      if(([_x bound] && [_y bound] && [_z bound]))
+      if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
-      if(absXY && ![_y bound]){
-         assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory floatEqual:_z to:_x] engine:[_z engine]];
-      }else if(absYX && ![_x bound]){
-         assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory floatEqual:_z to:_y] engine:[_z engine]];
-      }
    }
    fesetround(FE_TONEAREST);
+}
+-(void) propagateFixPoint:(CPFloatVarI*) x with:(CPFloatVarI*) y
+{
+   if(absorb(x,y)  && [self nbUVars]){
+      assignTRInt(&_active, NO, _trail);
+      [self addConstraint:[CPFactory floatEqual:_z to:x] engine:[x engine]];
+   }
 }
 -(NSSet*)allVars
 {
@@ -813,9 +824,9 @@
 
 
 @implementation CPFloatTernarySub{
-   ORBool _forced;
+   ORBool _rewriting;
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p force:(ORBool) f
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p rewriting:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -824,27 +835,40 @@
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
-   _forced = f;
+   _rewriting = f;
    return self;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
-   return [self init:z equals:x minus:y kbpercent:p force:NO];
+   return [self init:z equals:x minus:y kbpercent:p rewriting:NO];
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y force:(ORBool)f
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y rewriting:(ORBool)f
 {
-   return [self init:z equals:x minus:y kbpercent:PERCENT force:f];
+   return [self init:z equals:x minus:y kbpercent:PERCENT rewriting:f];
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
 {
-   return [self init:z equals:x minus:y kbpercent:PERCENT force:NO];
+   return [self init:z equals:x minus:y kbpercent:PERCENT rewriting:NO];
 }
 -(void) post
 {
    [self propagate];
-   if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-   if (![_y bound]) [_y whenChangeBoundsPropagate:self];
+   if (![_x bound]) {
+      [_x whenChangeBoundsPropagate:self];
+      if(_rewriting)
+         [_x whenChangeBoundsDo:^{
+            [self propagateFixPoint:_x with:_y];
+         } priority:LOWEST_PRIO onBehalf:self];
+   }
+   if (![_y bound]) {
+      [_y whenChangeBoundsPropagate:self];
+      if(_rewriting)
+         [_y whenChangeBoundsDo:^{
+            [self propagateFixPoint:_y with:_x];
+         } priority:LOWEST_PRIO onBehalf:self];
+   }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+   
 }
 -(void) propagate
 {
@@ -891,20 +915,17 @@
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([_x bound] && [_y bound] && [_z bound])
+      if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
-      ORBool absXY = absorb(_x,_y);
-      ORBool absYX = absorb(_y,_x);
-      if(absXY && ![_y bound]){
-         assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory floatEqual:_z to:_x] engine:[_z engine]];
-      }else if(absYX && ![_x bound]){
-         assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory floatEqual:_z to:_y] engine:[_z engine]];
-      }
    }
-   
       fesetround(FE_TONEAREST);
+}
+-(void) propagateFixPoint:(CPFloatVarI*) x with:(CPFloatVarI*) y
+{
+   if(absorb(x,y)  && [self nbUVars]){
+      assignTRInt(&_active, NO, _trail);
+      [self addConstraint:[CPFactory floatEqual:_z to:x] engine:[x engine]];
+   }
 }
 -(NSSet*)allVars
 {

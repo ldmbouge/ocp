@@ -816,15 +816,15 @@
 +(id<CPConstraint>) floatTernaryAdd:(id<CPFloatVar>) x equals:(id<CPFloatVar>) y plus:(id<CPFloatVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
-      return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent]];
-   return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z force:[notes isEqualityForced]];
+      return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent] rewriting:[notes rewriteEq]];
+   return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z rewriting:[notes rewriteEq]];
    
 }
 +(id<CPConstraint>) floatTernarySub:(id<CPFloatVar>) x equals:(id<CPFloatVar>) y minus:(id<CPFloatVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
-      return [[CPFloatTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent]];
-   return [[CPFloatTernarySub alloc] init:x equals:y minus:z force:[notes isEqualityForced]];
+      return [[CPFloatTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent] rewriting:[notes rewriteEq]];
+   return [[CPFloatTernarySub alloc] init:x equals:y minus:z rewriting:[notes rewriteEq]];
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c annotation:(id<ORAnnotation>) notes
 {
@@ -1141,15 +1141,15 @@
 +(id<CPConstraint>) doubleTernaryAdd:(id<CPDoubleVar>) x equals:(id<CPDoubleVar>) y plus:(id<CPDoubleVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
-      return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent]];
-   return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z];
+      return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent] rewriting:[notes rewriteEq]];
+   return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z  rewriting:[notes rewriteEq]];
    
 }
 +(id<CPConstraint>) doubleTernarySub:(id<CPDoubleVar>) x equals:(id<CPDoubleVar>) y minus:(id<CPDoubleVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
-      return [[CPDoubleTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent]];
-   return [[CPDoubleTernarySub alloc] init:x equals:y minus:z];
+      return [[CPDoubleTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent] rewriting:[notes rewriteEq]];
+   return [[CPDoubleTernarySub alloc] init:x equals:y minus:z rewriting:[notes rewriteEq]];
 }
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
