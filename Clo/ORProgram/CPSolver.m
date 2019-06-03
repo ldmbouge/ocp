@@ -1131,6 +1131,10 @@
 {
    [self labelBitVarHeuristicCDCL:h withConcrete:(id)[h allBitVars]];
 }
+-(void) labelBitVarHeuristicVSIDS: (id<CPBitVarHeuristic>) h
+{
+   [self labelBitVarHeuristicVSIDS:h withConcrete:(id)[h allBitVars]];
+}
 -(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h restricted:(id<ORBitVarArray>)av
 {
    id<CPBitVarArray> cav = (id<CPBitVarArray>)[ORFactory varArray:self range:av.range with:^id<ORBitVar>(ORInt k) {
@@ -1243,27 +1247,28 @@
    __block ORInt i ;
    do {
       
-      select = [ORFactory selectRandom: _engine
-                                 range: RANGE(_engine,[av low],[av up])
-                //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
-                              suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
-                             orderedBy: ^ORDouble(ORInt i) {
-                                ORDouble rv = [h varOrdering:av[i]];
-                                return rv;
-                             }];
+//      select = [ORFactory selectRandom: _engine
+//                                 range: RANGE(_engine,[av low],[av up])
+//                //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
+//                              suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
+//                             orderedBy: ^ORDouble(ORInt i) {
+//                                ORDouble rv = [h varOrdering:av[i]];
+////                                NSLog(@"rv: %f",rv);
+//                                return rv;
+//                             }];
       
       id<CPBitVar> x = [last idValue];
 //      NSLog(@"at top: last = %p",x);
-//      if ([failStamp intValue]  == [self nbFailures] || (x == nil )){//} || [x bound])) {
+      if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
          i = [select max];
          if (i == MAXINT)
             return;
          x =av[i];
 //         NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
-//      } else {
+      } /*else {
 ////        NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
-//        }
+        }*/
       NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
       [failStamp setValue:[self nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
@@ -1271,7 +1276,8 @@
       ORInt low = [x lsFreeBit];
       ORInt up  = [x msFreeBit];
       ORInt bestIndex = - 1;
-      for(ORInt v = up;v >= low;v--) {
+
+      for(ORInt v = low;v <= up;v++) {
          if ([x isFree:v]) {
             ORFloat vValue = [h valOrdering:v forVar:x];
             if (vValue > bestValue) {
@@ -1287,52 +1293,28 @@
             }
          }
       }
-
-//      ULRep xr = getULVarRep(x);
-//      TRUInt *xLow = xr._low, *xUp = xr._up;
-//      ORInt pop=0;
-//      ORInt xWordLength = [(CPBitVarI*)x getWordLength];
-//      ORInt xBitLength = [(CPBitVarI*)x bitLength];
-      
-//      for (ORInt i = 0;i<xWordLength;i++)
-////         pop += __builtin_popcount(xr._low[i]._val);
-//         pop += __builtin_popcount(!xr._up[i]._val);
-//      pop -= xBitLength % BITSPERWORD;
-//
-      if (bestIndex != - 1)  {
-////         if (pop < (xBitLength>>1))
-//         if (pop > (xBitLength>>1))
+//      NSLog(@"Best Value %f",bestValue);
+//      assert([(CPBitVarI*)x isFree:bestIndex]);
+//      if (([h isMemberOfClass:[CPBitVarVSIDS class]]) && ![h alternateHeuristic] && (bestIndex != - 1))  {
+//         if(bestIndex%2 == 0)
 //            [_search try: ^{
-//   //            NSLog(@"Setting bit %i of %@ to 0 \n",bestIndex,x);
-//
-//   //            NSLog(@"Setting bit %i of %@ to 0 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
-//   //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
-//   //            NSLog(@"%@\n",[_engine variables]);
-//               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+//               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex/2 with:false];
 //            } alt: ^{
-//   //           NSLog(@"Setting bit %i of %@ to 1 \n",bestIndex,x);
-//   //            NSLog(@"Setting bit %i of %@ to 1 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
-//   //            NSLog(@"%@",[_engine variables]);
-//               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
-//   //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+//               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex/2 with:true];
 //            }];
 //         else
-            [_search try: ^{
-               //            NSLog(@"Setting bit %i of %@ to 0 \n",bestIndex,x);
-
-               //            NSLog(@"Setting bit %i of %@ to 0 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
-               //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
-               //            NSLog(@"%@\n",[_engine variables]);
-               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
-            } alt: ^{
-               //           NSLog(@"Setting bit %i of %@ to 1 \n",bestIndex,x);
-               //            NSLog(@"Setting bit %i of %@ to 1 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
-               //            NSLog(@"%@",[_engine variables]);
-               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
-               //            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
-            }];
-
-      }
+//            [_search try: ^{
+//               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex/2 with:true];
+//            } alt: ^{
+//               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex/2 with:false];
+//            }];
+//      } else
+         if (bestIndex != -1)
+         [_search try: ^{
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+         } alt: ^{
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+         }];
    } while (true);
 
 }
@@ -1469,9 +1451,34 @@
    } while (true);
 }
 
-
-
-
+-(void) labelBitVarHeuristicVSIDS:(id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
+{
+   do{
+      CPBitAssignment* lit = (CPBitAssignment*)[h getNextLiteral];
+      
+      if(!lit)
+         return;
+      
+      CPBitVarI* var = lit->var;
+      ORUInt i = lit->index;
+      ORBool val = lit->value;
+      
+      free(lit);
+      
+      if(var == NULL)
+         return;
+      
+      if(![var isFree:i])
+         continue;//NSLog(@"");
+      
+//      NSLog(@"Setting %@ %d[%d] = %d",var,[var getId],i,val);
+      [_search try: ^{
+         [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:i with:val];
+      } alt: ^{
+         [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:i with:!val];
+      }];
+   } while (true);
+}
 -(void) labelBitVar: (id<ORBitVar>) var at:(ORUInt)idx with: (ORUInt) val
 {
    
@@ -2546,6 +2553,10 @@
 -(id<ORInformer>) propagateDone
 {
    return [[_cp engine] propagateDone];
+}
+-(id<ORInformer>) callingContinuation
+{
+   return [[_cp engine] callingContinuation];
 }
 @end
 

@@ -25,6 +25,7 @@ typedef struct  {
    TRId            _maxEvt[2];
    TRId               _ac5[2];
    TRId       _bitFixedEvt[2];
+   TRId       _noEvent[2];
    ORUInt          _bitLength;
 } CPBitEventNetwork;
 
@@ -54,6 +55,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    freeList(net->_minEvt[0]);
    freeList(net->_maxEvt[0]);
    freeList(net->_ac5[0]);
+   freeList(net->_noEvent[0]);
 }
 
 static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
@@ -65,6 +67,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    collectList(net->_minEvt[0],rv);
    collectList(net->_maxEvt[0],rv);
    collectList(net->_ac5[0],rv);
+   collectList(net->_noEvent[0],rv);
    return rv;
 }
 
@@ -193,72 +196,72 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 //   return d*[self bitLength];
    return d;
 }
--(ORFloat) getVSIDSCount
-{
-   //should return the "activity" of the most active unset bit
-   ORFloat max = 0.0;
-   ORUInt scratch[_wordLength];// = alloca(sizeof(ORUInt*)*_wordLength);
-   
-   //find unset bit with maximum activity
-   for(ORUInt i=0;i<_wordLength;i++){
-      //get set/unset bits
-      scratch[i] = _dom->_low[i]._val ^ _dom->_up[i]._val;
-      while(scratch[i] != 0){
-         ORUInt index = (i*BITSPERWORD)+__builtin_ffs(scratch[i]) - 1;
-         if(_vsids[index] > max)
-            max = _vsids[index];
-         scratch[i] &= ~(0x1 << index);
-         }
-   }
-   //return activity level of most active bit
-   return max;
-}
--(ORFloat) getVSIDSActivity:(ORUInt)idx
-{
-   return _vsids[idx];
-}
--(void) incrementActivity:(ORUInt)i
-{
-   if (_learningOn)
-      _vsids[i] += 1.0;
-}
--(void) incrementActivityAll
-{
-   if (_learningOn) {
-      for(ORUInt i=0;i<[_dom getLength];i++)
-         _vsids[i] += 1.0;
-   }
-}
--(void) incrementActivityAllBy:(ORFloat)amt
-{
-   if (_learningOn) {
-      for(ORUInt i=0;i<[_dom getLength];i++)
-         _vsids[i] += amt;
-   }
-}
--(void) incrementActivityBySignificance
-{
-   if(_learningOn){
-      for(ORUInt i=0;i<[_dom getLength];i++)
-         _vsids[i] += 1.0;
-   }
-}
--(void) increaseActivity:(ORUInt)i by:(ORUInt)amt
-{
-   if(_learningOn){
-      _vsids[i] += amt;
-//      if(amt > 1)
-//         NSLog(@"");
-   }
-}
--(void) reduceVSIDS{
-   for(int i=0;i<[_dom getLength];i++)
-    _vsids[i] /=2.0;
-}
--(id) takeSnapshot: (ORInt) id
-{
-   return [[CPBitVarSnapshot alloc] initCPBitVarSnapshot: self name: id];
-}
+//-(ORFloat) getVSIDSCount
+//{
+//   //should return the "activity" of the most active unset bit
+//   ORFloat max = 0.0;
+//   ORUInt scratch[_wordLength];// = alloca(sizeof(ORUInt*)*_wordLength);
+//
+//   //find unset bit with maximum activity
+//   for(ORUInt i=0;i<_wordLength;i++){
+//      //get set/unset bits
+//      scratch[i] = _dom->_low[i]._val ^ _dom->_up[i]._val;
+//      while(scratch[i] != 0){
+//         ORUInt index = (i*BITSPERWORD)+__builtin_ffs(scratch[i]) - 1;
+//         if(_vsids[index] > max)
+//            max = _vsids[index];
+//         scratch[i] &= ~(0x1 << index);
+//         }
+//   }
+//   //return activity level of most active bit
+//   return max;
+//}
+//-(ORFloat) getVSIDSActivity:(ORUInt)idx
+//{
+//   return _vsids[idx];
+//}
+//-(void) incrementActivity:(ORUInt)i
+//{
+//   if (_learningOn)
+//      _vsids[i] += 1.0;
+//}
+//-(void) incrementActivityAll
+//{
+//   if (_learningOn) {
+//      for(ORUInt i=0;i<[_dom getLength];i++)
+//         _vsids[i] += 1.0;
+//   }
+//}
+//-(void) incrementActivityAllBy:(ORFloat)amt
+//{
+//   if (_learningOn) {
+//      for(ORUInt i=0;i<[_dom getLength];i++)
+//         _vsids[i] += amt;
+//   }
+//}
+//-(void) incrementActivityBySignificance
+//{
+//   if(_learningOn){
+//      for(ORUInt i=0;i<[_dom getLength];i++)
+//         _vsids[i] += 1.0;
+//   }
+//}
+//-(void) increaseActivity:(ORUInt)i by:(ORUInt)amt
+//{
+//   if(_learningOn){
+//      _vsids[i] += amt;
+////      if(amt > 1)
+////         NSLog(@"");
+//   }
+//}
+//-(void) reduceVSIDS{
+//   for(int i=0;i<[_dom getLength];i++)
+//    _vsids[i] /=2.0;
+//}
+//-(id) takeSnapshot: (ORInt) id
+//{
+//   return [[CPBitVarSnapshot alloc] initCPBitVarSnapshot: self name: id];
+//}
 -(id<CPEngine>) engine
 {
     return _engine;
@@ -583,6 +586,10 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    hookupEvent(_engine, _net._bitFixedEvt, todo, c, p);
 }
 
+-(void) whenChangeDoNothing:  (CPCoreConstraint*) c
+{
+//   hookupEvent(_engine, _net._noEvent, nil, c, HIGHEST_PRIO);
+}
 -(void) createTriggers
 {
    if (_triggers == nil) {
@@ -822,6 +829,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
    return [_dom remove:val];
 }
+
+
 -(CPBitVarI*) initCPExplicitBitVar: (id<CPEngine>)engine withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
 {
    [self initCPBitVarCore:engine low:low up:up length:len];

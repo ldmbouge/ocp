@@ -86,6 +86,8 @@ typedef struct _CPBitAntecedents {
 -(id)initCPBitCoreConstraint:(id<CPEngine>)engine;
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*)assignment;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment;
+-(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitEqualAt : CPBitCoreConstraint<CPBVConstraint> {
@@ -101,6 +103,9 @@ typedef struct _CPBitAntecedents {
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state;
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment;
 -(void) post;
+-(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+
 @end
 
 @interface CPBitEqualc : CPBitCoreConstraint<CPBVConstraint> {
@@ -116,6 +121,9 @@ typedef struct _CPBitAntecedents {
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state;
 -(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment;
 -(void) post;
+-(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+
 @end
 
 @interface CPBitEqual : CPBitCoreConstraint<CPBVConstraint> {
@@ -133,6 +141,7 @@ typedef struct _CPBitAntecedents {
 
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitNOT : CPBitCoreConstraint<CPBVConstraint>{
@@ -150,6 +159,7 @@ typedef struct _CPBitAntecedents {
 
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitAND : CPBitCoreConstraint<CPBVConstraint>{
@@ -168,6 +178,7 @@ typedef struct _CPBitAntecedents {
 
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitOR : CPBitCoreConstraint<CPBVConstraint>{
@@ -186,6 +197,7 @@ typedef struct _CPBitAntecedents {
 
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitXOR : CPBitCoreConstraint<CPBVConstraint>{
@@ -204,6 +216,7 @@ typedef struct _CPBitAntecedents {
 
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitIF : CPBitCoreConstraint<CPBVConstraint>{
@@ -220,6 +233,7 @@ typedef struct _CPBitAntecedents {
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitShiftL : CPBitCoreConstraint<CPBVConstraint>{
@@ -234,6 +248,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitShiftLBV : CPBitCoreConstraint<CPBVConstraint>{
@@ -252,6 +267,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 
@@ -268,6 +284,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitShiftRBV : CPBitCoreConstraint<CPBVConstraint>{
@@ -275,15 +292,37 @@ typedef struct _CPBitAntecedents {
    CPBitVarI*      _x;
    CPBitVarI*      _y;
    CPBitVarI*    _places;
-   TRUInt        _placesBound;
+      TRUInt       _placesBound;
    ORUInt**    _state;
+   ORUInt  *_pUps4X;
+   ORUInt  *_pLows4X;
+   ORUInt  *_pUps4Y;
+   ORUInt  *_pLows4Y;
 }
 -(id) initCPBitShiftRBV: (CPBitVarI*) x shiftRBy:(CPBitVarI*) places equals: (CPBitVarI*) y;
 -(void) dealloc;
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
+
+
+//@interface CPBitShiftRBV : CPBitCoreConstraint<CPBVConstraint>{
+//@private
+//   CPBitVarI*      _x;
+//   CPBitVarI*      _y;
+//   CPBitVarI*    _places;
+//   TRUInt        _placesBound;
+//   ORUInt**    _state;
+//}
+//-(id) initCPBitShiftRBV: (CPBitVarI*) x shiftRBy:(CPBitVarI*) places equals: (CPBitVarI*) y;
+//-(void) dealloc;
+//-(NSString*) description;
+//-(void) post;
+//-(void) propagate;
+//-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+//@end
 
 @interface CPBitShiftRA : CPBitCoreConstraint<CPBVConstraint>{
 @private
@@ -297,6 +336,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitShiftRABV : CPBitCoreConstraint<CPBVConstraint>{
@@ -304,15 +344,35 @@ typedef struct _CPBitAntecedents {
    CPBitVarI*      _x;
    CPBitVarI*      _y;
    CPBitVarI*    _places;
-   TRUInt       _placesBound;
    ORUInt**    _state;
+   ORUInt  *_pUps4X;
+   ORUInt  *_pLows4X;
+   ORUInt  *_pUps4Y;
+   ORUInt  *_pLows4Y;
 }
 -(id) initCPBitShiftRABV: (CPBitVarI*) x shiftRBy:(CPBitVarI*) places equals: (CPBitVarI*) y;
 -(void) dealloc;
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
+
+//@interface CPBitShiftRABV : CPBitCoreConstraint<CPBVConstraint>{
+//@private
+//   CPBitVarI*      _x;
+//   CPBitVarI*      _y;
+//   CPBitVarI*    _places;
+//   TRUInt       _placesBound;
+//   ORUInt**    _state;
+//}
+//-(id) initCPBitShiftRABV: (CPBitVarI*) x shiftRBy:(CPBitVarI*) places equals: (CPBitVarI*) y;
+//-(void) dealloc;
+//-(NSString*) description;
+//-(void) post;
+//-(void) propagate;
+//-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+//@end
 
 @interface CPBitRotateL : CPBitCoreConstraint<CPBVConstraint>{
 @private
@@ -326,6 +386,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitADD: CPBitCoreConstraint<CPBVConstraint>
@@ -334,6 +395,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitSum: CPBitCoreConstraint<CPBVConstraint>
@@ -349,6 +411,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitChannel : CPBitCoreConstraint<CPBVConstraint>
@@ -366,6 +429,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitSignExtend : CPBitCoreConstraint<CPBVConstraint> 
@@ -374,6 +438,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitExtract : CPBitCoreConstraint<CPBVConstraint> 
@@ -382,6 +447,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitConcat : CPBitCoreConstraint<CPBVConstraint> {
@@ -396,6 +462,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitLogicalEqual : CPBitCoreConstraint<CPBVConstraint>{
@@ -410,6 +477,62 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+@end
+
+@interface CPBitLTComposed : CPBitCoreConstraint<CPBVConstraint>{
+@private
+   CPBitVarI* _x;
+   CPBitVarI* _y;
+   CPBitVarI* _z;
+}
+-(id) initCPBitLTComposed: (CPBitVarI*) x LT: (CPBitVarI*) y eval: (CPBitVarI*) z;
+-(void) dealloc;
+-(NSString*) description;
+-(void) post;
+-(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+@end
+
+@interface CPBitSLTComposed : CPBitCoreConstraint<CPBVConstraint>{
+@private
+   CPBitVarI* _x;
+   CPBitVarI* _y;
+   CPBitVarI* _z;
+}
+-(id) initCPBitSLTComposed: (CPBitVarI*) x SLT: (CPBitVarI*) y eval: (CPBitVarI*) z;
+-(void) dealloc;
+-(NSString*) description;
+-(void) post;
+-(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+@end
+@interface CPBitLEComposed : CPBitCoreConstraint<CPBVConstraint>{
+@private
+   CPBitVarI* _x;
+   CPBitVarI* _y;
+   CPBitVarI* _z;
+}
+-(id) initCPBitLEComposed: (CPBitVarI*) x LE: (CPBitVarI*) y eval: (CPBitVarI*) z;
+-(void) dealloc;
+-(NSString*) description;
+-(void) post;
+-(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+@end
+
+@interface CPBitSLEComposed : CPBitCoreConstraint<CPBVConstraint>{
+@private
+   CPBitVarI* _x;
+   CPBitVarI* _y;
+   CPBitVarI* _z;
+}
+-(id) initCPBitSLEComposed: (CPBitVarI*) x SLE: (CPBitVarI*) y eval: (CPBitVarI*) z;
+-(void) dealloc;
+-(NSString*) description;
+-(void) post;
+-(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitLT : CPBitCoreConstraint<CPBVConstraint>{
@@ -437,6 +560,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitLE : CPBitCoreConstraint<CPBVConstraint>{
@@ -461,6 +585,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitSLE : CPBitCoreConstraint<CPBVConstraint>{
@@ -483,6 +608,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitSLT : CPBitCoreConstraint<CPBVConstraint>{
@@ -505,6 +631,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitITE : CPBitCoreConstraint<CPBVConstraint>{
@@ -525,6 +652,7 @@ typedef struct _CPBitAntecedents {
 
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitLogicalAnd : CPBitCoreConstraint<CPBVConstraint>{
@@ -542,6 +670,7 @@ typedef struct _CPBitAntecedents {
 
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitLogicalOr : CPBitCoreConstraint<CPBVConstraint>{
@@ -555,6 +684,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitConflict : CPBitCoreConstraint<CPBVConstraint>{
@@ -564,6 +694,8 @@ typedef struct _CPBitAntecedents {
 //   ORUInt*       _conflictValues;
    CPBitAntecedents* _assignments;
    ORUInt**    _state;
+   
+   ULRep* _domainReps;
 }
 //-(id) initCPBitConflict:(id<CPBitVarArray>)vars atBit:(ORUInt)conflictBit withValues:(ORUInt*)values;
 -(id) initCPBitConflict:(CPBitAntecedents*)a;
@@ -572,6 +704,7 @@ typedef struct _CPBitAntecedents {
 -(CPBitAntecedents*) getAssignments;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 
@@ -589,6 +722,7 @@ typedef struct _CPBitAntecedents {
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitNotb : CPBitCoreConstraint<CPBVConstraint>{
@@ -603,6 +737,7 @@ typedef struct _CPBitAntecedents {
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitEqualb : CPBitCoreConstraint<CPBVConstraint>{
@@ -617,6 +752,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 //@interface CPBitInc : CPBitCoreConstraint<CPBVConstraint>{
@@ -629,6 +765,7 @@ typedef struct _CPBitAntecedents {
 //-(NSString*) description;
 //-(void) post;
 //-(void) propagate;
+//-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 //@end
 
 @interface CPBitNegative : CPBitCoreConstraint<CPBVConstraint>{
@@ -646,6 +783,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitSubtract : CPBitCoreConstraint<CPBVConstraint>{
@@ -678,6 +816,7 @@ typedef struct _CPBitAntecedents {
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitMultiplyComposed : CPBitCoreConstraint<CPBVConstraint>
@@ -686,6 +825,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitDivideComposed : CPBitCoreConstraint<CPBVConstraint>
@@ -694,7 +834,9 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
+
 
 //@interface CPBitMultiply : CPBitCoreConstraint<CPBVConstraint>
 //-(id) initCPBitMultiply: (CPBitVarI*) x times: (CPBitVarI*) y equals: (CPBitVarI*)z;
@@ -702,6 +844,7 @@ typedef struct _CPBitAntecedents {
 //-(NSString*) description;
 //-(void) post;
 //-(void) propagate;
+//-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 //@end
 
 @interface CPBitDivide : CPBitCoreConstraint<CPBVConstraint>{
@@ -733,6 +876,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitDivideSigned : CPBitCoreConstraint<CPBVConstraint>{
@@ -756,11 +900,13 @@ typedef struct _CPBitAntecedents {
 //    CPBitVarI* _cin;
 //    CPBitVarI* _cout;
     CPBitVarI* _trueVal;
-//    CPBitVarI* _falseVal;
+    CPBitVarI* _falseVal;
     CPBitVarI* _xSign;
     CPBitVarI* _ySign;
     CPBitVarI* _qSign;
     CPBitVarI* _rSign;
+   CPBitVarI* _negQSign;
+   CPBitVarI* _negRSign;
 //    CPBitVarI* _sameSign;
 //    CPBitVarI* _xlty;
 //    CPBitVarI* _qIsPos;
@@ -769,6 +915,8 @@ typedef struct _CPBitAntecedents {
 //   CPBitVarI* _zeroBV;
    CPBitVarI* _xIsZero;
    CPBitVarI* _xNonZero;
+   CPBitVarI* _qIsZero;
+   CPBitVarI* _qNonZero;
    CPBitVarI* _rIsZero;
    CPBitVarI* _rNonZero;
 
@@ -778,6 +926,7 @@ typedef struct _CPBitAntecedents {
 -(NSString*) description;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 
@@ -795,4 +944,5 @@ typedef struct _CPBitAntecedents {
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
 -(void) post;
 -(void) propagate;
+-(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end

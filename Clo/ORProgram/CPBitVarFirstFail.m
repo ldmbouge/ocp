@@ -50,7 +50,8 @@
 }
 -(ORDouble)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
 {
-   return -v;
+   ORDouble val = (ORDouble)v;
+   return -val;
 }
 -(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv
 {

@@ -781,6 +781,12 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
+-(id<ORInformer>) callingContinuation
+{
+   if (_callingContinuation == nil)
+      _callingContinuation = [ORConcurrency  voidInformer];
+   return _callingContinuation;
+}
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super init];

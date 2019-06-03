@@ -31,12 +31,10 @@ typedef struct CPBVConflict{
    CPBVConflict**         _globalStore;
    ORUInt                        _size;
    ORUInt                    _capacity;
-//   ORUInt                   _currLevel;
-//   ORUInt                   _baseLevel;
-   ORInt               _backjumpLevel;
-   ORBool                       _retry;
-   
+   ORInt                _backjumpLevel;
+//   ORBool                       _retry;
    SemTracer*                  _tracer;
+   ORUInt                 _toIncrement;
 }
 -(CPLearningEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr;
 //-(ORStatus) restoreLostConstraints:(ORUInt) level;
@@ -44,7 +42,8 @@ typedef struct CPBVConflict{
 -(void) addConstraint:(CPCoreConstraint *)c withJumpLevel:(ORUInt) level;
 -(ORUInt) getLevel;
 -(ORUInt) getBackjumpLevel;
--(ORBool) retry;
+//-(ORBool) retry;
 -(ORStatus) enforceObjective;
+-(NSSet*) getNewConstraints;
 //-(ORStatus)   close;
 @end

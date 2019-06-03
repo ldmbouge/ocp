@@ -36,6 +36,7 @@ PORTABLE_BEGIN
 -(id<ORIdxIntInformer>) failGT;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+-(id<ORInformer>) callingContinuation;
 @end
 
 @protocol CPCommonProgram  <ORASearchSolver,ORGamma>
@@ -223,6 +224,7 @@ PORTABLE_BEGIN
 //-(void) labelBitVarsFirstFail: (NSArray*)vars;
 -(void) labelBitVarHeuristic:(id<CPBitVarHeuristic>) h;
 -(void) labelBitVarHeuristicCDCL:(id<CPBitVarHeuristic>) h;
+-(void) labelBitVarsHeuristicVSIDS:(id<CPBitVarHeuristic>) h;
 
 -(id<CPBitVarHeuristic>) createBitVarFF;
 -(id<CPBitVarHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;
