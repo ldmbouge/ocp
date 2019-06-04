@@ -24,7 +24,7 @@
    CPFloatVarI* _res;
    CPDoubleVarI* _initial;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x equals:(id)y  rewrite:(ORBool) rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -35,7 +35,7 @@
    CPFloatVarI* _x;
    CPFloatVarI* _y;
 }
--(id) init:(id)x eqm:(id)y;
+-(id) init:(id)x eqm:(id)y  rewrite:(ORBool) rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -45,7 +45,7 @@
     CPFloatVarI* _x;
     CPFloatVarI* _y;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x equals:(id)y  rewrite:(ORBool) rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -152,9 +152,9 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
--(id) init:(id)z equals:(id)x plus:(id)y rewriting:(ORBool)f;
+-(id) init:(id)z equals:(id)x plus:(id)y rewrite:(ORBool)f;
 -(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
--(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p rewriting:(ORBool) f;
+-(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p rewrite:(ORBool) f;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -173,9 +173,9 @@
     ORInt _rounding;
 }
 -(id) init:(id)z equals:(id)x minus:(id)y;
--(id) init:(id)z equals:(id)x minus:(id)y rewriting:(ORBool) f;
+-(id) init:(id)z equals:(id)x minus:(id)y rewrite:(ORBool) f;
 -(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
--(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble)p rewriting:(ORBool) f;
+-(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble)p rewrite:(ORBool) f;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -259,6 +259,7 @@
     CPFloatVarI* _y;
 }
 -(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(id<CPFloatVar>)c;
+-(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(id<CPFloatVar>)c rewrite:(ORBool) r;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

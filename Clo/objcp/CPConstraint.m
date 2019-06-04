@@ -723,7 +723,19 @@
 }
 +(id<CPConstraint>) floatEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
 {
-   id<CPConstraint> o = [[CPFloatEqual alloc] init:x equals:y];
+   id<CPConstraint> o = [[CPFloatEqual alloc] init:x equals:y rewrite:NO];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y rewrite:(ORBool) r
+{
+   id<CPConstraint> o = [[CPFloatEqual alloc] init:x equals:y rewrite:r];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatEqual: (id<CPFloatVar>) x to:(id<CPFloatVar>) y annotation:(id<ORAnnotation>) notes;
+{
+   id<CPConstraint> o = [[CPFloatEqual alloc] init:x equals:y rewrite:[notes staticRewrite]];
    [[x tracker] trackMutable:o];
    return o;
 }
@@ -807,24 +819,24 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y
++(id<CPConstraint>) floatUnaryMinus:(id<CPFloatVar>) x eqm:(id<CPFloatVar>) y  annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> o = [[CPFloatUnaryMinus alloc] init:x eqm:y];
+   id<CPConstraint> o = [[CPFloatUnaryMinus alloc] init:x eqm:y rewrite:[notes staticRewrite]];
    [[x tracker] trackMutable:o];
    return o;
 }
 +(id<CPConstraint>) floatTernaryAdd:(id<CPFloatVar>) x equals:(id<CPFloatVar>) y plus:(id<CPFloatVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
-      return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent] rewriting:[notes rewriteEq]];
-   return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z rewriting:[notes rewriteEq]];
+      return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent] rewrite:[notes dynRewrite]];
+   return [[CPFloatTernaryAdd alloc] init:x equals:y plus:z rewrite:[notes dynRewrite]];
    
 }
 +(id<CPConstraint>) floatTernarySub:(id<CPFloatVar>) x equals:(id<CPFloatVar>) y minus:(id<CPFloatVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
-      return [[CPFloatTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent] rewriting:[notes rewriteEq]];
-   return [[CPFloatTernarySub alloc] init:x equals:y minus:z rewriting:[notes rewriteEq]];
+      return [[CPFloatTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent] rewrite:[notes dynRewrite]];
+   return [[CPFloatTernarySub alloc] init:x equals:y minus:z rewrite:[notes dynRewrite]];
 }
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c annotation:(id<ORAnnotation>) notes
 {
@@ -835,7 +847,7 @@
          //form x = y + c
          //or   x = y - c
          id<CPFloatVar> z;
-         if(c == 0) return [self floatEqual:x[x.low] to:x[1]];
+         if(c == 0) return [self floatEqual:x[x.low] to:x[1] annotation:notes];
          if(c < 0){
             z = [CPFactory floatVar:[x[x.low] engine] value:-c];
             return [CPFactory floatTernarySub:x[0] equals:x[1] minus:z annotation:notes];
@@ -1039,9 +1051,9 @@
    return o;
 }
 
-+(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eq: (id<CPFloatVar>) y annotation:(ORCLevel)c
++(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eq: (id<CPFloatVar>) y annotation:(id<ORAnnotation>)notes
 {
-   id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y];
+   id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y rewrite:[notes rewrite]];
    [[x tracker] trackMutable: o];
    return o;
 }
@@ -1086,9 +1098,9 @@
    [[x tracker] trackMutable: o];
    return o;
 }
-+(id<CPConstraint>) floatCast: (id<CPFloatVar>) res eq:(id<CPDoubleVar>) initial
++(id<CPConstraint>) floatCast: (id<CPFloatVar>) res eq:(id<CPDoubleVar>) initial annotation:(id<ORAnnotation>)  notes
 {
-   id<CPConstraint> o = [[CPFloatCast alloc] init:res equals:initial];
+   id<CPConstraint> o = [[CPFloatCast alloc] init:res equals:initial rewrite:[notes staticRewrite]];
    [[res tracker] trackMutable:o];
    return o;
 }
@@ -1114,15 +1126,15 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) doubleUnaryMinus:(id<CPDoubleVar>) x eqm:(id<CPDoubleVar>) y
++(id<CPConstraint>) doubleUnaryMinus:(id<CPDoubleVar>) x eqm:(id<CPDoubleVar>) y   annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> o = [[CPDoubleUnaryMinus alloc] init:x eqm:y];
+   id<CPConstraint> o = [[CPDoubleUnaryMinus alloc] init:x eqm:y rewrite:[notes staticRewrite]];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) doubleCast: (id<CPDoubleVar>) res eq:(id<CPFloatVar>) initial
++(id<CPConstraint>) doubleCast: (id<CPDoubleVar>) res eq:(id<CPFloatVar>) initial  annotation:(id<ORAnnotation>) notes
 {
-   id<CPConstraint> o = [[CPDoubleCast alloc] init:res equals:initial];
+   id<CPConstraint> o = [[CPDoubleCast alloc] init:res equals:initial rewrite:[notes staticRewrite]];
    [[res tracker] trackMutable:o];
    return o;
 }
@@ -1141,15 +1153,27 @@
 +(id<CPConstraint>) doubleTernaryAdd:(id<CPDoubleVar>) x equals:(id<CPDoubleVar>) y plus:(id<CPDoubleVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
-      return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent] rewriting:[notes rewriteEq]];
-   return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z  rewriting:[notes rewriteEq]];
+      return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent] rewriting:[notes dynRewrite]];
+   return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z  rewriting:[notes dynRewrite]];
    
 }
 +(id<CPConstraint>) doubleTernarySub:(id<CPDoubleVar>) x equals:(id<CPDoubleVar>) y minus:(id<CPDoubleVar>) z annotation:(id<ORAnnotation>) notes
 {
    if([notes hasFilteringPercent])
-      return [[CPDoubleTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent] rewriting:[notes rewriteEq]];
-   return [[CPDoubleTernarySub alloc] init:x equals:y minus:z rewriting:[notes rewriteEq]];
+      return [[CPDoubleTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent] rewriting:[notes dynRewrite]];
+   return [[CPDoubleTernarySub alloc] init:x equals:y minus:z rewriting:[notes dynRewrite]];
+}
++(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y annotation:(id<ORAnnotation>) notes
+{
+   id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y rewrite:[notes staticRewrite]];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y rewrite:(ORBool)b
+{
+   id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y rewrite:b];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
@@ -1219,7 +1243,7 @@
          //form x = y + c
          //or   x = y - c
          id<CPDoubleVar> z;
-         if(c == 0) return [self doubleEqual:x[x.low] to:x[1]];
+         if(c == 0) return [self doubleEqual:x[x.low] to:x[1] annotation:notes];
          if(c < 0){
             z = [CPFactory doubleVar:[x[x.low] engine] value:-c];
             return [CPFactory doubleTernarySub:x[0] equals:x[1] minus:z annotation:notes];
@@ -1424,9 +1448,9 @@
    return o;
 }
 
-+(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x eq: (id<CPDoubleVar>) y annotation:(ORCLevel)c
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x eq: (id<CPDoubleVar>) y annotation:(id<ORAnnotation>)c
 {
-   id<CPConstraint> o = [[CPDoubleReifyEqual alloc] initCPReifyEqual: b when: x eqi: y];
+   id<CPConstraint> o = [[CPDoubleReifyEqual alloc] initCPReifyEqual: b when: x eqi: y rewrite:[c rewrite]];
    [[x tracker] trackMutable: o];
    return o;
 }

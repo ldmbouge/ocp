@@ -24,8 +24,9 @@
    int _rounding;
    float_interval _resi;
    double_interval _initiali;
+   ORBool _rewrite;
 }
--(id) init:(CPFloatVarI*)res equals:(CPDoubleVarI*)initial
+-(id) init:(CPFloatVarI*)res equals:(CPDoubleVarI*)initial rewrite:(ORBool) rewrite
 {
    self = [super initCPCoreConstraint: [res engine]];
    _res = res;
@@ -34,6 +35,7 @@
    _initiali = makeDoubleInterval(_initial.min, _initial.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
+   _rewrite = rewrite;
    return self;
 }
 -(void) post
@@ -41,8 +43,10 @@
    [self propagate];
    if(![_res bound])        [_res whenChangeBoundsPropagate:self];
    if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
-   [[[_res engine] mergedVar] notifyWith:_res andId:_initial];
-   [[_res engine] incNbRewrites:1];
+   if(_rewrite){
+      [[[_res engine] mergedVar] notifyWith:_res andId:_initial];
+      [[_res engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -100,8 +104,9 @@
    int _rounding;
    float_interval _xi;
    float_interval _yi;
+   ORBool _rewrite;
 }
--(id) init:(CPFloatVarI*)x eqm:(CPFloatVarI*)y //x = -y
+-(id) init:(CPFloatVarI*)x eqm:(CPFloatVarI*)y rewrite:(ORBool) r
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -110,6 +115,7 @@
    _yi = makeFloatInterval(y.min, y.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
+   _rewrite = r;
    return self;
 }
 -(void) post
@@ -117,8 +123,10 @@
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
-   [[[_x engine] mergedVar] notifyWith:_x andId:_y];
-   [[_x engine] incNbRewrites:1];
+   if(_rewrite){
+      [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+      [[_x engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -169,12 +177,15 @@
 }
 @end
 
-@implementation CPFloatEqual
--(id) init:(CPFloatVarI*)x equals:(CPFloatVarI*)y
+@implementation CPFloatEqual{
+   ORBool _rewrite;
+}
+-(id) init:(CPFloatVarI*)x equals:(CPFloatVarI*)y  rewrite:(ORBool) rewrite
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   _rewrite = rewrite;
    return self;
 }
 -(void) post
@@ -182,8 +193,10 @@
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
-   [[[_x engine] mergedVar] notifyWith:_x andId:_y];
-   [[_x engine] incNbRewrites:1];
+   if(_rewrite){
+      [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+      [[_x engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -675,21 +688,21 @@
 
 
 @implementation CPFloatTernaryAdd{
-   ORBool _rewriting;
+   ORBool _rewrite;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
-   return [self init:z equals:x plus:y kbpercent:PERCENT rewriting:NO];
+   return [self init:z equals:x plus:y kbpercent:PERCENT rewrite:NO];
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
-   return [self init:z equals:x plus:y kbpercent:p rewriting:NO];
+   return [self init:z equals:x plus:y kbpercent:p rewrite:NO];
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y rewriting:(ORBool)f
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y rewrite:(ORBool)f
 {
-   return [self init:z equals:x plus:y kbpercent:PERCENT rewriting:f];
+   return [self init:z equals:x plus:y kbpercent:PERCENT rewrite:f];
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p rewriting:(ORBool) f
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p rewrite:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -698,7 +711,7 @@
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
-   _rewriting = f;
+   _rewrite = f;
    return self;
 }
 -(void) post
@@ -706,14 +719,14 @@
    [self propagate];
    if (![_x bound]) {
       [_x whenChangeBoundsPropagate:self];
-      if(_rewriting)
+      if(_rewrite)
          [_x whenChangeBoundsDo:^{
             [self propagateFixPoint:_x with:_y];
          } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_y bound]) {
       [_y whenChangeBoundsPropagate:self];
-      if(_rewriting)
+      if(_rewrite)
          [_y whenChangeBoundsDo:^{
             [self propagateFixPoint:_y with:_x];
          } priority:LOWEST_PRIO onBehalf:self];
@@ -776,7 +789,7 @@
 {
    if(absorb(x,y)  && [self nbUVars]){
       assignTRInt(&_active, NO, _trail);
-      [self addConstraint:[CPFactory floatEqual:_z to:x] engine:[x engine]];
+      [self addConstraint:[CPFactory floatEqual:_z to:x rewrite:YES] engine:[x engine]];
    }
 }
 -(NSSet*)allVars
@@ -827,9 +840,9 @@
 
 
 @implementation CPFloatTernarySub{
-   ORBool _rewriting;
+   ORBool _rewrite;
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p rewriting:(ORBool) f
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p rewrite:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -838,34 +851,34 @@
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
-   _rewriting = f;
+   _rewrite = f;
    return self;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
-   return [self init:z equals:x minus:y kbpercent:p rewriting:NO];
+   return [self init:z equals:x minus:y kbpercent:p rewrite:NO];
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y rewriting:(ORBool)f
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y rewrite:(ORBool)f
 {
-   return [self init:z equals:x minus:y kbpercent:PERCENT rewriting:f];
+   return [self init:z equals:x minus:y kbpercent:PERCENT rewrite:f];
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
 {
-   return [self init:z equals:x minus:y kbpercent:PERCENT rewriting:NO];
+   return [self init:z equals:x minus:y kbpercent:PERCENT rewrite:NO];
 }
 -(void) post
 {
    [self propagate];
    if (![_x bound]) {
       [_x whenChangeBoundsPropagate:self];
-      if(_rewriting)
+      if(_rewrite)
          [_x whenChangeBoundsDo:^{
             [self propagateFixPoint:_x with:_y];
          } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_y bound]) {
       [_y whenChangeBoundsPropagate:self];
-      if(_rewriting)
+      if(_rewrite)
          [_y whenChangeBoundsDo:^{
             [self propagateFixPoint:_y with:_x];
          } priority:LOWEST_PRIO onBehalf:self];
@@ -927,7 +940,7 @@
 {
    if(absorb(x,y)  && [self nbUVars]){
       assignTRInt(&_active, NO, _trail);
-      [self addConstraint:[CPFactory floatEqual:_z to:x] engine:[x engine]];
+      [self addConstraint:[CPFactory floatEqual:_z to:x rewrite:YES] engine:[x engine]];
    }
 }
 -(NSSet*)allVars
@@ -1217,14 +1230,21 @@
 
 @implementation CPFloatReifyEqual{
    ORBool _notified;
+   ORBool _rewrite;
 }
--(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y
+-(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y rewrite:(ORBool) r
 {
    self = [super initCPCoreConstraint:[x engine]];
    _b = b;
    _x = x;
    _y = y;
    _notified = NO;
+   _rewrite = r;
+   return self;
+}
+-(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y
+{
+   self = [self initCPReifyEqual:b when:x eqi:y rewrite:NO];
    return self;
 }
 -(void) post
@@ -1249,7 +1269,7 @@
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
-         if(!_notified){
+         if(!_notified && !_rewrite){
             [[[_x engine] mergedVar] notifyWith:_y andId:_x];
             [[_x engine] incNbRewrites:1];
             _notified = YES;

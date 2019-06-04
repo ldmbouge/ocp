@@ -95,7 +95,9 @@ struct ORResult {
 @property (nonatomic,readonly) ORBool    cycleDetection;
 @property (nonatomic,readonly) ORBool    ldfs;
 @property (nonatomic,readonly) ORBool    withAux;
-@property (nonatomic,readonly) ORBool    withRewritingEq;
+@property (nonatomic,readonly) ORBool    withRewriting;
+@property (nonatomic,readonly) ORBool    withSRewriting;
+@property (nonatomic,readonly) ORBool    withDRewriting;
 @property (nonatomic,readonly) ORInt    level;
 @property (nonatomic,readonly) ORInt    choicesLimit;
 @property (nonatomic,readonly) NSString* fName;

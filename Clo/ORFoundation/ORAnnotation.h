@@ -28,8 +28,11 @@ typedef enum {
 -(ORDouble) kbpercent;
 -(id)copy;
 -(ORBool) hasFilteringPercent;
--(void)   rewriteEq:(ORBool) forced;
--(ORBool) rewriteEq;
+-(void)   staticRewrite:(ORBool) forced;
+-(void)   dynRewrite:(ORBool) forced;
+-(ORBool) staticRewrite;
+-(ORBool) dynRewrite;
+-(ORBool) rewrite;
 -(void) setKBEligebleVars : (NSArray*) vars;
 -(ORInt) isKBEligeble : (id<ORVar>) v;
 -(void) kbpercent:(ORDouble) p;

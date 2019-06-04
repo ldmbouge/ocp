@@ -23,7 +23,7 @@
    CPDoubleVarI* _x;
    CPDoubleVarI* _y;
 }
--(id) init:(id)x eqm:(id)y;
+-(id) init:(id)x eqm:(id)y  rewrite:(ORBool)rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -33,7 +33,7 @@
    CPDoubleVarI* _res;
    CPFloatVarI* _initial;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x equals:(id)y  rewrite:(ORBool)rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -44,7 +44,7 @@
    CPDoubleVarI* _x;
    CPDoubleVarI* _y;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x equals:(id)y rewrite:(ORBool)rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -257,7 +257,7 @@
    CPDoubleVarI* _x;
    CPDoubleVarI* _y;
 }
--(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(id<CPDoubleVar>)c;
+-(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(id<CPDoubleVar>)c  rewrite:(ORBool)rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

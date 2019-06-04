@@ -43,7 +43,9 @@ static enum ValHeuristic valIndex[] =
 @synthesize nArg;
 @synthesize bds;
 @synthesize withAux;
-@synthesize withRewritingEq;
+@synthesize withRewriting;
+@synthesize withDRewriting;
+@synthesize withSRewriting;
 @synthesize ldfs;
 @synthesize cycleDetection;
 @synthesize level;
@@ -89,7 +91,9 @@ static enum ValHeuristic valIndex[] =
    level = 0;
    bds = NO;
    withAux = NO;
-   withRewritingEq = NO;
+   withRewriting = NO;
+   withSRewriting = NO;
+   withDRewriting = NO;
    ldfs = NO;
    uniqueNB = 2;
    is3Bfiltering = NO;
@@ -125,8 +129,13 @@ static enum ValHeuristic valIndex[] =
          cycleDetection = YES;
       else if (strncmp(argv[k], "-with-aux", 9) == 0)
          withAux = YES;
-      else if (strncmp(argv[k], "-with-reduction", 15) == 0 || strncmp(argv[k], "-with-rewriting-eq", 15) == 0)
-         withRewritingEq = YES;
+      else if (strncmp(argv[k], "-with-rewriting-eq", 18) == 0){
+         withSRewriting = YES;
+         withDRewriting = YES;
+      }else if (strncmp(argv[k], "-with-static-rewriting", 22) == 0)
+         withSRewriting = YES;
+      else if (strncmp(argv[k], "-with-dyn-rewriting", 19) == 0)
+         withDRewriting = YES;
       else if (strncmp(argv[k], "-bds", 4) == 0)
          bds = YES;
       else if (strncmp(argv[k], "-ldfs", 5) == 0)
@@ -346,8 +355,15 @@ static enum ValHeuristic valIndex[] =
 {
    if(kbpercent != -1)
       [notes kbpercent:kbpercent];
-   if(withRewritingEq)
-      [notes rewriteEq:YES];   
+   if(withRewriting){
+      [notes staticRewrite:YES];
+      [notes dynRewrite:YES];
+   }else {
+      if(withSRewriting)
+         [notes staticRewrite:YES];
+      if(withDRewriting)
+         [notes dynRewrite:YES];
+   }
    [notes setKBEligebleVars:[model variables]];
 }
 -(id<ORGroup>)makeGroup:(id<ORModel>)model
@@ -375,7 +391,7 @@ static enum ValHeuristic valIndex[] =
             p = [ORFactory createCPSemanticProgram:model annotation:notes with:cont];
          else
             p = [ORFactory createCPProgram:model annotation:notes];
-         [(CPCoreSolver*)p setWithRewriting:withRewritingEq];
+         [(CPCoreSolver*)p setWithRewriting:(withRewriting || withSRewriting || withDRewriting)];
          [(CPCoreSolver*)p setLevel:level];
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
@@ -417,31 +433,29 @@ static enum ValHeuristic valIndex[] =
       vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
    }
    
-   if(withRewritingEq){
-      //computation of max Id of concrete var
-      ORInt maxId = 0;
-      id<CPVar> cv = nil;
-      for(id<ORVar> v in vars){
-         cv = [p concretize:v];
-         maxId = max(maxId, cv.getId);
-      }
-      //create InvGamma
-      __block id<ORIntArray> invGamma = [ORFactory intArray:[p tracker] range:RANGE([p tracker], 0, maxId) value:-1];
-      for(id<ORVar> v in vars){
-         cv = [p concretize:v];
-         invGamma[cv.getId] = @([v getId]);
-      }
-      
-      [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1){
-         if (!(v0.getId > [invGamma count] || v1.getId > [invGamma count])){
-            _nbMerged++;
-            ORInt idA1 = [invGamma[v0.getId] intValue];
-            ORInt idA2 = [invGamma[v1.getId] intValue];
-            if(idA1 != -1 && idA2 !=  -1)
-               [vars unionSet:idA1 and:idA2];
-            }
-      }];
+   //computation of max Id of concrete var
+   ORInt maxId = 0;
+   id<CPVar> cv = nil;
+   for(id<ORVar> v in vars){
+      cv = [p concretize:v];
+      maxId = max(maxId, cv.getId);
    }
+   //create InvGamma
+   __block id<ORIntArray> invGamma = [ORFactory intArray:[p tracker] range:RANGE([p tracker], 0, maxId) value:-1];
+   for(id<ORVar> v in vars){
+      cv = [p concretize:v];
+      invGamma[cv.getId] = @([v getId]);
+   }
+   
+   [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1){
+      if (!(v0.getId > [invGamma count] || v1.getId > [invGamma count])){
+         _nbMerged++;
+         ORInt idA1 = [invGamma[v0.getId] intValue];
+         ORInt idA2 = [invGamma[v1.getId] intValue];
+         if(idA1 != -1 && idA2 !=  -1)
+            [vars unionSet:idA1 and:idA2];
+         }
+   }];
    
    return vars;
 }

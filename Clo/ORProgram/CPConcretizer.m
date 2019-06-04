@@ -1304,7 +1304,7 @@
       id<ORFloatVar> right = (id<ORFloatVar>)[cstr right];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory floatUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory floatUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId] annotation:_notes];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1475,7 +1475,8 @@
       [res visit: self];
       [initial visit: self];
       id<CPConstraint> concreteCstr = [CPFactory floatCast:(id<CPFloatVar>) _gamma[res.getId]
-                                                         eq:(id<CPDoubleVar>) _gamma[initial.getId]];
+                                                         eq:(id<CPDoubleVar>) _gamma[initial.getId]
+                                                         annotation:_notes];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1488,7 +1489,8 @@
       [res visit: self];
       [initial visit: self];
       id<CPConstraint> concreteCstr = [CPFactory doubleCast:(id<CPDoubleVar>) _gamma[res.getId]
-                                                         eq:(id<CPFloatVar>) _gamma[initial.getId]];
+                                                         eq:(id<CPFloatVar>) _gamma[initial.getId]
+                                                         annotation:_notes];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1512,11 +1514,10 @@
         id<ORIntVar> b = [cstr b];
         id<ORFloatVar> x = [cstr x];
         id<ORFloatVar> y = [cstr y];
-        ORCLevel annotation = [_notes levelFor:cstr];
         [b visit: self];
         [x visit: self];
         [y visit: self];
-        id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] eq: _gamma[y.getId] annotation: annotation];
+        id<CPConstraint> concreteCstr = [CPFactory floatReify: _gamma[b.getId] with: _gamma[x.getId] eq: _gamma[y.getId] annotation: _notes];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -1685,7 +1686,7 @@
       id<ORDoubleVar> right = (id<ORDoubleVar>) [cstr right];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory doubleUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId] annotation:_notes];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1733,11 +1734,10 @@
       id<ORIntVar> b = [cstr b];
       id<ORDoubleVar> x = [cstr x];
       id<ORDoubleVar> y = [cstr y];
-      ORCLevel annotation = [_notes levelFor:cstr];
       [b visit: self];
       [x visit: self];
       [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] eq: _gamma[y.getId] annotation: annotation];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] eq: _gamma[y.getId] annotation: _notes];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

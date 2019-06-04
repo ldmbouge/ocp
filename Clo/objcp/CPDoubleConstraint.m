@@ -25,8 +25,9 @@ int _precision;
 int _rounding;
 double_interval _xi;
 double_interval _yi;
+   ORBool _rewrite;
 }
--(id) init:(CPDoubleVarI*)x eqm:(CPDoubleVarI*)y
+-(id) init:(CPDoubleVarI*)x eqm:(CPDoubleVarI*)y  rewrite:(ORBool)rewrite
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -35,6 +36,7 @@ double_interval _yi;
    _yi = makeDoubleInterval(y.min, y.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
+   _rewrite = rewrite;
    return self;
 }
 -(void) post
@@ -42,8 +44,10 @@ double_interval _yi;
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
-   [[[_x engine] mergedVar] notifyWith:_x andId:_y];
-   [[_x engine] incNbRewrites:1];
+   if(_rewrite){
+      [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+      [[_x engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -100,8 +104,9 @@ double_interval _yi;
    int _rounding;
    double_interval _resi;
    float_interval _initiali;
+   ORBool _rewrite;
 }
--(id) init:(CPDoubleVarI*)res equals:(CPFloatVarI*)initial
+-(id) init:(CPDoubleVarI*)res equals:(CPFloatVarI*)initial  rewrite:(ORBool)rewrite
 {
    self = [super initCPCoreConstraint: [res engine]];
    _res = res;
@@ -110,6 +115,7 @@ double_interval _yi;
    _initiali = makeFloatInterval(_initial.min, _initial.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
+   _rewrite = rewrite;
    return self;
 }
 -(void) post
@@ -117,8 +123,10 @@ double_interval _yi;
    [self propagate];
    if(![_res bound])        [_res whenChangeBoundsPropagate:self];
    if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
-   [[[_res engine] mergedVar] notifyWith:_res andId:_initial];
-   [[_res engine] incNbRewrites:1];
+   if(_rewrite){
+      [[[_res engine] mergedVar] notifyWith:_res andId:_initial];
+      [[_res engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -171,12 +179,15 @@ double_interval _yi;
 @end
 
 
-@implementation CPDoubleEqual
--(id) init:(CPDoubleVarI*)x equals:(CPDoubleVarI*)y
+@implementation CPDoubleEqual{
+   ORBool _rewrite;
+}
+-(id) init:(CPDoubleVarI*)x equals:(CPDoubleVarI*)y rewrite:(ORBool)rewrite
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   _rewrite = rewrite;
    return self;
 }
 -(void) post
@@ -184,8 +195,10 @@ double_interval _yi;
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
-   [[[_x engine] mergedVar] notifyWith:_x andId:_y];
-   [[_x engine] incNbRewrites:1];
+   if(_rewrite){
+      [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+      [[_x engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -824,7 +837,7 @@ double_interval _yi;
 {
    if(absorbD(x,y)  && [self nbUVars]){
       assignTRInt(&_active, NO, _trail);
-      [self addConstraint:[CPFactory doubleEqual:_z to:x] engine:[x engine]];
+      [self addConstraint:[CPFactory doubleEqual:_z to:x rewrite:YES] engine:[x engine]];
    }
 }
 -(NSSet*)allVars
@@ -957,7 +970,7 @@ double_interval _yi;
 {
    if(absorbD(x,y)  && [self nbUVars]){
       assignTRInt(&_active, NO, _trail);
-      [self addConstraint:[CPFactory doubleEqual:_z to:x] engine:[x engine]];
+      [self addConstraint:[CPFactory doubleEqual:_z to:x rewrite:YES] engine:[x engine]];
    }
 }
 -(NSSet*)allVars
@@ -1233,14 +1246,16 @@ double_interval _yi;
 
 @implementation CPDoubleReifyEqual{
    ORBool _notified;
+   ORBool _rewrite;
 }
--(id) initCPReifyEqual:(CPIntVar*)b when:(CPDoubleVarI*)x eqi:(CPDoubleVarI*)y
+-(id) initCPReifyEqual:(CPIntVar*)b when:(CPDoubleVarI*)x eqi:(CPDoubleVarI*)y rewrite:(ORBool)rewrite
 {
    self = [super initCPCoreConstraint:[x engine]];
    _b = b;
    _x = x;
    _y = y;
    _notified = NO;
+   _rewrite = rewrite;
    return self;
 }
 -(void) post
@@ -1266,7 +1281,7 @@ double_interval _yi;
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
-         if(!_notified){
+         if(!_notified && _rewrite){
          [[[_x engine] mergedVar] notifyWith:_x andId:_y];
          [[_x engine] incNbRewrites:1];
             _notified = YES;
