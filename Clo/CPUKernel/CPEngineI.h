@@ -39,6 +39,8 @@ enum CPEngineState {
    CPClosureQueue*          _closureQueue[NBPRIORITIES];
    CPValueClosureQueue*     _valueClosureQueue;
    ORInt                    _propagating;
+   ORUInt                   _nbSRewrite;
+   ORUInt                   _nbDRewrite;
    ORUInt                   _nbpropag;
    ORUInt                   _nbFailures;
    TRInt                    _iStat;
@@ -81,6 +83,8 @@ enum CPEngineState {
 -(ORStatus)   close;
 -(ORBool)     closed;
 -(void)       open;
+-(ORUInt) nbStaticRewrites;
+-(ORUInt) nbDynRewrites;
 -(ORUInt) nbFailures;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
@@ -91,6 +95,7 @@ enum CPEngineState {
 -(id<ORIdxIdInformer>) mergedVar;
 
 -(id<ORBasicModel>)model;
+-(void)incNbRewrites:(ORUInt)add;
 -(void)incNbPropagation:(ORUInt)add;
 -(void)incNbFailures:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;

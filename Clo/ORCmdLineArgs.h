@@ -67,9 +67,13 @@ struct ORResult {
    ORInt nbFailures;
    ORInt nbChoices;
    ORInt nbPropagations;
+   ORInt nbSRewrites;
+   ORInt nbDRewrites;
 };
 
 #define REPORT(f,nbf,nbc,nbp) ((struct ORResult){(f),(nbf),(nbc),(nbp)})
+
+#define FULLREPORT(f,nbf,nbc,nbp,nbs,nbd) ((struct ORResult){(f),(nbf),(nbc),(nbp),(nbs),(nbd)})
 
 @interface ORCmdLineArgs : NSObject
 @property (nonatomic,readonly) ORInt size;

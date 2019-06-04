@@ -279,7 +279,9 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 }
 @end
 
-@implementation CPEngineI
+@implementation CPEngineI{
+   ORInt _posting;
+}
 -(CPEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
 {
    self = [super init];
@@ -296,6 +298,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
       _closureQueue[i] = [[CPClosureQueue alloc] initClosureQueue:512];
    _valueClosureQueue = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
    _propagating = 0;
+   _posting = 0;
    _nbpropag = 0;
    _nbFailures = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
@@ -361,6 +364,13 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _last = lastToFail;
    _nbFailures += 1;
 }
+-(void)incNbRewrites:(ORUInt)add
+{
+   if(_posting)
+      _nbSRewrite += add;
+   else
+      _nbDRewrite += add;
+}
 -(void)incNbPropagation:(ORUInt)add
 {
    _nbpropag += add;
@@ -368,6 +378,14 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 -(void)incNbFailures:(ORUInt)add
 {
    _nbFailures += add;
+}
+-(ORUInt) nbStaticRewrites
+{
+   return _nbSRewrite;
+}
+-(ORUInt) nbDynRewrites
+{
+   return _nbDRewrite;
 }
 -(ORUInt) nbFailures
 {
@@ -756,12 +774,14 @@ ORStatus propagateFDM(CPEngineI* fdm)
     if (_state == CPOpen) {
         _state = CPClosing;
         _propagating++;
+       _posting++;
         for(id<ORConstraint> c in _mStore) {
             if ([self post: c] == ORFailure) {
                 _propagating--;
                 return ORFailure;
             }
         }
+       _posting--;
         _propagating--;
         if (propagateFDM(self) == ORFailure)
             return ORFailure;

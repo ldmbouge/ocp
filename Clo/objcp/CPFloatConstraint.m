@@ -42,6 +42,7 @@
    if(![_res bound])        [_res whenChangeBoundsPropagate:self];
    if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
    [[[_res engine] mergedVar] notifyWith:_res andId:_initial];
+   [[_res engine] incNbRewrites:1];
 }
 -(void) propagate
 {
@@ -117,6 +118,7 @@
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
    [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+   [[_x engine] incNbRewrites:1];
 }
 -(void) propagate
 {
@@ -181,6 +183,7 @@
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
    [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+   [[_x engine] incNbRewrites:1];
 }
 -(void) propagate
 {
@@ -1212,13 +1215,16 @@
 }
 @end
 
-@implementation CPFloatReifyEqual
+@implementation CPFloatReifyEqual{
+   ORBool _notified;
+}
 -(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y
 {
    self = [super initCPCoreConstraint:[x engine]];
    _b = b;
    _x = x;
    _y = y;
+   _notified = NO;
    return self;
 }
 -(void) post
@@ -1243,7 +1249,11 @@
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
-         [[[_x engine] mergedVar] notifyWith:_y andId:_x];
+         if(!_notified){
+            [[[_x engine] mergedVar] notifyWith:_y andId:_x];
+            [[_x engine] incNbRewrites:1];
+            _notified = YES;
+         }
       }
    }
    else if (maxDom(_b)==0) {     // b is FALSE

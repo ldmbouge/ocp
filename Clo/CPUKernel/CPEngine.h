@@ -39,7 +39,10 @@
 -(void)  tryAtomic:(ORClosure) cl;
 -(ORStatus) atomic: (ORClosure) cl;
 -(void)incNbFailures:(ORUInt)inc;
+-(void)incNbRewrites:(ORUInt)add;
 -(ORBool) isPropagating;
+-(ORUInt) nbStaticRewrites;
+-(ORUInt) nbDynRewrites;
 -(ORUInt) nbFailures;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
