@@ -1177,7 +1177,7 @@
 }
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y
 {
-   id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y];
+   id<CPConstraint> o = [[CPDoubleEqual alloc] init:x equals:y rewrite:NO];
    [[x tracker] trackMutable:o];
    return o;
 }

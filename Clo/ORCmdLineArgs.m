@@ -43,7 +43,6 @@ static enum ValHeuristic valIndex[] =
 @synthesize nArg;
 @synthesize bds;
 @synthesize withAux;
-@synthesize withRewriting;
 @synthesize withDRewriting;
 @synthesize withSRewriting;
 @synthesize ldfs;
@@ -91,7 +90,6 @@ static enum ValHeuristic valIndex[] =
    level = 0;
    bds = NO;
    withAux = NO;
-   withRewriting = NO;
    withSRewriting = NO;
    withDRewriting = NO;
    ldfs = NO;
@@ -355,15 +353,10 @@ static enum ValHeuristic valIndex[] =
 {
    if(kbpercent != -1)
       [notes kbpercent:kbpercent];
-   if(withRewriting){
+   if(withSRewriting)
       [notes staticRewrite:YES];
+   if(withDRewriting)
       [notes dynRewrite:YES];
-   }else {
-      if(withSRewriting)
-         [notes staticRewrite:YES];
-      if(withDRewriting)
-         [notes dynRewrite:YES];
-   }
    [notes setKBEligebleVars:[model variables]];
 }
 -(id<ORGroup>)makeGroup:(id<ORModel>)model
@@ -391,7 +384,7 @@ static enum ValHeuristic valIndex[] =
             p = [ORFactory createCPSemanticProgram:model annotation:notes with:cont];
          else
             p = [ORFactory createCPProgram:model annotation:notes];
-         [(CPCoreSolver*)p setWithRewriting:(withRewriting || withSRewriting || withDRewriting)];
+         [(CPCoreSolver*)p setWithRewriting:(withSRewriting || withDRewriting)];
          [(CPCoreSolver*)p setLevel:level];
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
@@ -432,31 +425,31 @@ static enum ValHeuristic valIndex[] =
    }else{
       vars = [ORFactory disabledFloatVarArray:vs engine:[p engine] nbFixed:uniqueNB];
    }
-   
-   //computation of max Id of concrete var
-   ORInt maxId = 0;
-   id<CPVar> cv = nil;
-   for(id<ORVar> v in vars){
-      cv = [p concretize:v];
-      maxId = max(maxId, cv.getId);
+   if(withDRewriting || withSRewriting){
+      //computation of max Id of concrete var
+      ORInt maxId = 0;
+      id<CPVar> cv = nil;
+      for(id<ORVar> v in vars){
+         cv = [p concretize:v];
+         maxId = max(maxId, cv.getId);
+      }
+      //create InvGamma
+      __block id<ORIntArray> invGamma = [ORFactory intArray:[p tracker] range:RANGE([p tracker], 0, maxId) value:-1];
+      for(id<ORVar> v in vars){
+         cv = [p concretize:v];
+         invGamma[cv.getId] = @([v getId]);
+      }
+      
+      [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1){
+         if (!(v0.getId > [invGamma count] || v1.getId > [invGamma count])){
+            _nbMerged++;
+            ORInt idA1 = [invGamma[v0.getId] intValue];
+            ORInt idA2 = [invGamma[v1.getId] intValue];
+            if(idA1 != -1 && idA2 !=  -1)
+               [vars unionSet:idA1 and:idA2];
+            }
+      }];
    }
-   //create InvGamma
-   __block id<ORIntArray> invGamma = [ORFactory intArray:[p tracker] range:RANGE([p tracker], 0, maxId) value:-1];
-   for(id<ORVar> v in vars){
-      cv = [p concretize:v];
-      invGamma[cv.getId] = @([v getId]);
-   }
-   
-   [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1){
-      if (!(v0.getId > [invGamma count] || v1.getId > [invGamma count])){
-         _nbMerged++;
-         ORInt idA1 = [invGamma[v0.getId] intValue];
-         ORInt idA2 = [invGamma[v1.getId] intValue];
-         if(idA1 != -1 && idA2 !=  -1)
-            [vars unionSet:idA1 and:idA2];
-         }
-   }];
-   
    return vars;
 }
 -(void) makeLDSSearch:(id<CPProgram>)p restricted:(id<ORDisabledVarArray>)vars

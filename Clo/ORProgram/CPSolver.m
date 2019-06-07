@@ -1595,7 +1595,6 @@
 {
    __block ORBool goon = YES;
    while(goon) {
-      //      [_search probe:^{
       LOG(_level,2,@"State before selection");
       ORSelectorResult i = s();
       if (!i.found){
@@ -1611,19 +1610,19 @@
                return;
             }
          }
-      } else if(_unique){
-         if([x isFullyDisabled]){
-            [x enableFirst];
+      } else{
+         if(_unique){
+            if([x isFullyDisabled]){
+               [x enableFirst];
+            }
+            [x disable:i.index];
          }
-         [x disable:i.index];
       }
-      ORInt index = i.index;
-      if (_withParent)
-         index = [x parent:i.index];
+      //by default parent (x) = x
+      ORInt index = [x parent:i.index];
       id<CPVar> cx = _gamma[x[i.index].getId];
       LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],[cx domain]);
       b(i.index,x);
-      //      }];
    }
 }
 -(void) searchWithCriteria:  (id<ORDisabledVarArray>) x criteria:(ORInt2Double)crit switchOnCondtion:(ORBool(^)(void))c criteria:(ORInt2Double)crit2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -1648,11 +1647,8 @@
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPVar> v = _gamma[x[i].getId];
-                                     ORInt parent = [x parent:i];
-                                     LOG(_level,2,@"%@ <p:%@> (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],([x[parent] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[parent] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:parent])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
-//                                     return ![v bound] && [x isEnabled:i];
-                                     
-                                     return ![v bound] && [x isEnabled:parent];
+                                     LOG(_level,2,@"%@ <p:%@> (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],([x[[x parent:i]] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[[x parent:i]] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:[x parent:i]])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
+                                     return ![v bound] && [x isEnabled:i];
                                   }
                                  orderedBy: c
                           ];
