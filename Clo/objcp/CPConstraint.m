@@ -1053,7 +1053,7 @@
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eq: (id<CPFloatVar>) y annotation:(id<ORAnnotation>)notes
 {
-   id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y rewrite:[notes rewrite]];
+   id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y rewrite:[notes dynRewrite]];
    [[x tracker] trackMutable: o];
    return o;
 }

@@ -1136,7 +1136,7 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(\nvalue:%@,\nd:%@,\nindex:%@,\nnb:%d,\nstart:%@,\ncur:%@,i:%@\n)",_name,_vars,_disabled,_indexDisabled,_nb,_start,_current,_initials];
+   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(\nvalue:%@,\nd:%@,\nindex:%@,\n parent:%@,\nnb:%d,\nstart:%@,\ncur:%@,i:%@\n)",_name,_vars,_disabled,_indexDisabled,_parent,_nb,_start,_current,_initials];
 }
 -(ORBool) contains:(id<ORVar>)v
 {
