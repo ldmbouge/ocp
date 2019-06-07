@@ -448,23 +448,19 @@
 }
 -(void) propagate
 {
-   /*   if(canFollow(_x,_y))
-    failNow();
-    if(isIntersectingWith(_x,_y)){
-    if([_x min] >= [_y min]){
-    ORFloat nmin = fp_next_float([_x min]);
-    [_y updateMin:nmin];
-    }
-    if([_x max] >= [_y max]){
-    ORFloat pmax = fp_previous_float([_y max]);
-    [_x updateMax:pmax];
-    }
-    }
-    if([_x bound] || [_y bound]){
-    assignTRInt(&_active, NO, _trail);
-    return;
-    }*/
-   
+   if([[_x min] gt: [_y    max]])
+      failNow();
+   if(isIntersectingWithQ(_x,_y)){
+      if([[_x min] gt: [_y min]]){
+         [_y updateMin:[_x min]];
+      }
+      if([[_x max] gt: [_y max]]){
+         [_x updateMax:[_y max]];
+      }
+   }
+   if([_x bound] || [_y bound]){
+      assignTRInt(&_active, NO, _trail);
+   }
 }
 -(NSSet*)allVars
 {
@@ -500,22 +496,20 @@
 }
 -(void) propagate
 {
-   /*   if(canPrecede(_x,_y))
-    failNow();
-    if(isIntersectingWith(_x,_y)){
-    if([_x min] <= [_y min]){
-    ORFloat pmin = fp_next_float([_y min]);
-    [_x updateMin:pmin];
-    }
-    if([_x max] <= [_y max]){
-    ORFloat nmax = fp_previous_float([_x max]);
-    [_y updateMax:nmax];
-    }
-    }
-    if([_x bound] || [_y bound]){
-    assignTRInt(&_active, NO, _trail);
-    return;
-    }*/
+   if([[_x max] lt: [_y min]])
+      failNow();
+   if(isIntersectingWithQ(_x,_y)){
+      if([[_x min] lt: [_y min]]){
+         [_x updateMin:[_y min]];
+      }
+      if([[_x max] lt: [_y max]]){
+         [_y updateMax:[_x max]];
+      }
+   }
+   if([_x bound] || [_y bound]){
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
 }
 -(NSSet*)allVars
 {
@@ -552,6 +546,8 @@
 }
 -(void) propagate
 {
+   if([[_x min] gt: [_y    max]])
+      failNow();
    if(isIntersectingWithQ(_x,_y)){
       if([[_x min] gt: [_y min]]){
          [_y updateMin:[_x min]];
@@ -562,7 +558,6 @@
    }
    if([_x bound] || [_y bound]){
       assignTRInt(&_active, NO, _trail);
-      return;
    }
 }
 -(NSSet*)allVars
@@ -598,7 +593,9 @@
    [_x whenChangeBoundsPropagate:self];
 }
 -(void) propagate
-{   
+{
+   if([[_x max] lt: [_y min]])
+      failNow();
    if(isIntersectingWithQ(_x,_y)){
       if([[_x min] lt: [_y min]]){
          [_x updateMin:[_y min]];
@@ -785,6 +782,11 @@
       z = [z proj_inter: zTemp];
       changed |= z.changed;
       
+      if([z empty]){
+         gchanged |= true;
+         break;
+      }
+      
       // ============================== ex
       // ez + ey
       xTemp = [z add: y];
@@ -792,12 +794,22 @@
       x = [x proj_inter: xTemp];
       changed |= x.changed;
       
+      if([x empty]){
+         gchanged |= true;
+         break;
+      }
+      
       // ============================== ey
       // ex - ez
       yTemp = [x sub: z];
       
       y = [y proj_inter: yTemp];
       changed |= y.changed;
+      
+      if([y empty]){
+         gchanged |= true;
+         break;
+      }
       
       gchanged |= changed;
    } while(changed);

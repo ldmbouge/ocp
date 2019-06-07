@@ -246,20 +246,15 @@ void testRF(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
-         id<ORRational> low = [ORRational rationalWith_d:-100.0f];
-         id<ORRational> up = [ORRational rationalWith_d:100.0f];
-         id<ORRationalVar> yR = [ORFactory rationalVar:mdl low:low up:up name:@"yR"];
-         id<ORRationalVar> xR = [ORFactory rationalVar:mdl low:low up:up name:@"xR"];
-         id<ORRationalVar> zR = [ORFactory rationalVar:mdl low:low up:up name:@"zR"];
+         id<ORRationalVar> yR = [ORFactory rationalVar:mdl name:@"yR"];
+         id<ORRationalVar> xR = [ORFactory rationalVar:mdl name:@"xR"];
+         id<ORRationalVar> zR = [ORFactory rationalVar:mdl name:@"zR"];
          //id<ORRationalVar> zq = [ORFactory rationalVar:mdl low:low up:up name:@"zq"];
-         id<ORFloatVar> x = [ORFactory floatVar:mdl low:-100.0 up:100.0 elow:zero eup:zero name:@"x"];
+         id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.0 up:100.0 elow:zero eup:zero name:@"x"];
          id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.20f up:20.0f elow:zero eup:zero name:@"y"];
-         id<ORFloatVar> z = [ORFactory floatVar:mdl low:-1000.0 up:1000.0 name:@"z"];
+         id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
          //id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
          //id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
-         [zero release];
-      
-         [up release];
          
          [mdl add:[ORFactory channel:x with:xR]];
          [mdl add:[ORFactory channel:y with:yR]];
@@ -270,15 +265,11 @@ void testRF(int argc, const char * argv[]) {
          //[mdl add:[z set: [x plus: y]]];
          [mdl add:[zR eq: [xR plus: yR]]];
          
-         [low set_d: 1];
-         [mdl add:[zR leq: low]];
-         //[mdl add:[ez eq:[zR sub: zq]]];
-         //[mdl add:[z gt:@(1.0000000001f)]];
+         [zero set_d: 1];
+         [mdl add:[zR leq: zero]];
          
-//         [mdl add: [ezAbs eq: [ez abs]]];
-//         [mdl maximize:ezAbs];
-         
-                   [low release];
+         [zero release];
+
          NSLog(@"model: %@",mdl);
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
          id<CPProgram> cp = [ORFactory createCPProgram:mdl];
@@ -298,8 +289,6 @@ void testRF(int argc, const char * argv[]) {
             NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
             NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
             NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp maxFQ:z]);
-
-
          }];
          NSLog(@"%@",cp);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
