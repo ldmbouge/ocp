@@ -41,6 +41,7 @@
 -(void)incNbFailures:(ORUInt)inc;
 -(void)incNbRewrites:(ORUInt)add;
 -(ORBool) isPropagating;
+-(ORBool) isPosting;
 -(ORUInt) nbStaticRewrites;
 -(ORUInt) nbDynRewrites;
 -(ORUInt) nbFailures;

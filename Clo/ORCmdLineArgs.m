@@ -15,7 +15,8 @@
 @implementation ORCmdLineArgs {
    int           _argc;
    const char**  _argv;
-   int           _nbMerged;
+   int           _nbDMerged;
+   int           _nbSMerged;
 }
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
    @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
@@ -112,7 +113,8 @@ static enum ValHeuristic valIndex[] =
    rateModel = 0.85;
    grateModel = 0.85;
    absFunComputation = AMEAN;
-   _nbMerged = 0;
+   _nbSMerged = 0;
+   _nbDMerged = 0;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -325,8 +327,8 @@ static enum ValHeuristic valIndex[] =
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];
    NSString* str = mallocReport();
-   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,#uniquesubcut,split3Bpercent#SRewrite,#DRewrite,#Merged\n");
-   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%d,%s,%f,%d,%d,%d\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
+   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,#uniquesubcut,split3Bpercent,#SRewrite,#DRewrite,#SMerged,#DMerged\n");
+   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%d,%s,%f,%d,%d,%d,%d\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           [[self valueHeuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           randomized,
           nbThreads,
@@ -347,7 +349,8 @@ static enum ValHeuristic valIndex[] =
           search3Bpercent,
           run.nbSRewrites,
           run.nbDRewrites,
-          _nbMerged);
+          _nbSMerged,
+          _nbDMerged);
 }
 -(void) updateNotes: (id<ORAnnotation>) notes model:(id<ORModel>) model
 {
@@ -442,7 +445,10 @@ static enum ValHeuristic valIndex[] =
       
       [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1){
          if (!(v0.getId > [invGamma count] || v1.getId > [invGamma count])){
-            _nbMerged++;
+            if([[p engine] isPosting])
+               _nbSMerged++;
+            else
+               _nbDMerged++;
             ORInt idA1 = [invGamma[v0.getId] intValue];
             ORInt idA2 = [invGamma[v1.getId] intValue];
             if(idA1 != -1 && idA2 !=  -1)

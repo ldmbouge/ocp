@@ -619,6 +619,10 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
    return _propagating > 0;
 }
+-(ORBool)isPosting
+{
+   return _posting;
+}
 -(ORStatus) propagate
 {
    return propagateFDM(self);

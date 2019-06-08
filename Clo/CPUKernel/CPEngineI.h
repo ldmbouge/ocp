@@ -101,4 +101,5 @@ enum CPEngineState {
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 -(id<ORIntRange>)boolRange;
 -(ORBool)isPropagating;
+-(ORBool)isPosting;
 @end
