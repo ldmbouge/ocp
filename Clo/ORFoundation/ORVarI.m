@@ -1025,7 +1025,7 @@
    _current = [ORFactory trailableInt:engine value:0];
    _start = [ORFactory trailableInt:engine value:0];
    _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:-1];
-   _indexDisabled = [ORFactory trailableIntArray:engine range:RANGE([vars tracker], 0, (_nb > 0) ? _nb-1 : 0) value:-1];
+   _indexDisabled = [ORFactory trailableIntArray:engine range:vars.range value:-1];
    _parent = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
    for(id<ORVar> v in _vars){
       _maxId = max(_maxId, v.getId);
@@ -1118,14 +1118,15 @@
 {
    return _maxId;
 }
--(void) setMaxFixed:(ORInt)nb
+-(void) setMaxFixed:(ORInt)nb engine:(id<ORSearchEngine>) engine
 {
    _nb = min(nb,(ORInt)[_vars count]);
    for(ORInt i = 0; i < [_disabled count]; i++){
       [_disabled[i] setValue:-1];
-      if(i < nb)
-         [_indexDisabled[i] setValue:-1];
+      [_indexDisabled[i] setValue:-1];
    }
+//   [_indexDisabled release];
+//   _indexDisabled = [ORFactory trailableIntArray:engine range:RANGE(engine, 0, (_nb > 0) ? _nb - 1 : 0) value:-1];
    [_current setValue:0];
    [_start setValue:0];
 }

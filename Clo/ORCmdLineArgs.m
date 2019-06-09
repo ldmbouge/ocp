@@ -1528,15 +1528,15 @@ case densWAbs :
    
 case absDens :
 case custom :
-   [vars setMaxFixed:(ORInt)[vars count]];
+      [vars setMaxFixed:(ORInt)[vars count] engine:[p engine]];
    [p customSearch:vars];
    break;
 case customD :
-   [vars setMaxFixed:uniqueNB];
+   [vars setMaxFixed:uniqueNB  engine:[p engine]];
    [p customSearchD:vars];
    break;
 case customWD :
-   [vars setMaxFixed:uniqueNB];
+   [vars setMaxFixed:uniqueNB  engine:[p engine]];
    [p customSearchWeightedD:vars];
    break;
 default :

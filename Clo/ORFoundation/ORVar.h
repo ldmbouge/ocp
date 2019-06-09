@@ -133,7 +133,7 @@ PORTABLE_BEGIN
 -(NSUInteger) count;
 -(ORUInt) maxFixed;
 -(ORUInt) maxId;
--(void) setMaxFixed:(ORInt)nb;
+-(void) setMaxFixed:(ORInt)nb engine:(id<OREngine>) engine;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
 -(ORUInt) enableFirst;
