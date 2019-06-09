@@ -259,7 +259,7 @@
     CPFloatVarI* _y;
 }
 -(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(id<CPFloatVar>)c;
--(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(id<CPFloatVar>)c rewrite:(ORBool) r;
+-(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(id<CPFloatVar>)c dynRewrite:(ORBool) r staticRewrite:(ORBool) s;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

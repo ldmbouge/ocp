@@ -1246,16 +1246,18 @@ double_interval _yi;
 
 @implementation CPDoubleReifyEqual{
    ORBool _notified;
-   ORBool _rewrite;
+   ORBool _drewrite;
+   ORBool _srewrite;
 }
--(id) initCPReifyEqual:(CPIntVar*)b when:(CPDoubleVarI*)x eqi:(CPDoubleVarI*)y rewrite:(ORBool)rewrite
+-(id) initCPReifyEqual:(CPIntVar*)b when:(CPDoubleVarI*)x eqi:(CPDoubleVarI*)y dynRewrite:(ORBool) r staticRewrite:(ORBool) s
 {
    self = [super initCPCoreConstraint:[x engine]];
    _b = b;
    _x = x;
    _y = y;
    _notified = NO;
-   _rewrite = rewrite;
+   _drewrite = r;
+   _srewrite = s;
    return self;
 }
 -(void) post
@@ -1285,9 +1287,9 @@ double_interval _yi;
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
-         if(!_notified && _rewrite){
-         [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:NO];
-         [[_x engine] incNbRewrites:1];
+         if(!_notified && ((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting]))){
+            [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
+            [[_x engine] incNbRewrites:1];
             _notified = YES;
          }
       }

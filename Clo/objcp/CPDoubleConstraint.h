@@ -257,7 +257,7 @@
    CPDoubleVarI* _x;
    CPDoubleVarI* _y;
 }
--(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(id<CPDoubleVar>)c  rewrite:(ORBool)rewrite;
+-(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(id<CPDoubleVar>)c dynRewrite:(ORBool) r staticRewrite:(ORBool) s;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

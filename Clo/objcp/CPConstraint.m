@@ -1053,7 +1053,7 @@
 
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x eq: (id<CPFloatVar>) y annotation:(id<ORAnnotation>)notes
 {
-   id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y rewrite:[notes dynRewrite]];
+   id<CPConstraint> o = [[CPFloatReifyEqual alloc] initCPReifyEqual: b when: x eqi: y dynRewrite:[notes dynRewrite] staticRewrite:[notes staticRewrite]];
    [[x tracker] trackMutable: o];
    return o;
 }
@@ -1450,7 +1450,7 @@
 
 +(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x eq: (id<CPDoubleVar>) y annotation:(id<ORAnnotation>)c
 {
-   id<CPConstraint> o = [[CPDoubleReifyEqual alloc] initCPReifyEqual: b when: x eqi: y rewrite:[c rewrite]];
+   id<CPConstraint> o = [[CPDoubleReifyEqual alloc] initCPReifyEqual: b when: x eqi: y dynRewrite:[c dynRewrite] staticRewrite:[c staticRewrite]];
    [[x tracker] trackMutable: o];
    return o;
 }

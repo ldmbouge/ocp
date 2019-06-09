@@ -621,7 +621,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
 }
 -(ORBool)isPosting
 {
-   return _posting > 0;
+   return _posting > 0 || _nbpropag == 0;
 }
 -(ORStatus) propagate
 {

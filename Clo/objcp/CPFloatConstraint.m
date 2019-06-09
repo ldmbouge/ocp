@@ -1230,21 +1230,23 @@
 
 @implementation CPFloatReifyEqual{
    ORBool _notified;
-   ORBool _rewrite;
+   ORBool _drewrite;
+   ORBool _srewrite;
 }
--(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y rewrite:(ORBool) r
+-(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y dynRewrite:(ORBool) r staticRewrite:(ORBool) s
 {
    self = [super initCPCoreConstraint:[x engine]];
    _b = b;
    _x = x;
    _y = y;
    _notified = NO;
-   _rewrite = r;
+   _drewrite = r;
+   _srewrite = s;
    return self;
 }
 -(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y
 {
-   self = [self initCPReifyEqual:b when:x eqi:y rewrite:NO];
+   self = [self initCPReifyEqual:b when:x eqi:y dynRewrite:NO staticRewrite:NO];
    return self;
 }
 -(void) post
@@ -1269,8 +1271,8 @@
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
-         if(!_notified && _rewrite){
-            [[[_x engine] mergedVar] notifyWith:_y andId:_x isStatic:NO];
+         if(!_notified && ((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting]))){
+            [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
             [[_x engine] incNbRewrites:1];
             _notified = YES;
          }
