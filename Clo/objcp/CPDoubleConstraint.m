@@ -45,7 +45,7 @@ double_interval _yi;
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
    if(_rewrite){
-      [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+      [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:YES];
       [[_x engine] incNbRewrites:1];
    }
 }
@@ -124,7 +124,7 @@ double_interval _yi;
    if(![_res bound])        [_res whenChangeBoundsPropagate:self];
    if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
    if(_rewrite){
-      [[[_res engine] mergedVar] notifyWith:_res andId:_initial];
+      [[[_res engine] mergedVar] notifyWith:_res andId:_initial isStatic:YES];
       [[_res engine] incNbRewrites:1];
    }
 }
@@ -196,7 +196,7 @@ double_interval _yi;
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
    if(_rewrite){
-      [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+      [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:[[_x engine] isPosting]];
       [[_x engine] incNbRewrites:1];
    }
 }
@@ -1282,7 +1282,7 @@ double_interval _yi;
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
          if(!_notified && _rewrite){
-         [[[_x engine] mergedVar] notifyWith:_x andId:_y];
+         [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:NO];
          [[_x engine] incNbRewrites:1];
             _notified = YES;
          }

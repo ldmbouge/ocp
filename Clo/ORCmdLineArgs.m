@@ -443,9 +443,9 @@ static enum ValHeuristic valIndex[] =
          invGamma[cv.getId] = @([v getId]);
       }
       
-      [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1){
+      [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1,ORBool isStatic){
          if (!(v0.getId > [invGamma count] || v1.getId > [invGamma count])){
-            if([[p engine] isPosting])
+            if(isStatic)
                _nbSMerged++;
             else
                _nbDMerged++;

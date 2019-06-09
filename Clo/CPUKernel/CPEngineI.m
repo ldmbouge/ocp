@@ -621,7 +621,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
 }
 -(ORBool)isPosting
 {
-   return _posting;
+   return _posting > 0;
 }
 -(ORStatus) propagate
 {
@@ -825,10 +825,10 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
--(id<ORIdxIdInformer>) mergedVar
+-(id<ORIdxIdxBoolInformer>) mergedVar
 {
    if (_mergedVar == nil)
-      _mergedVar = [ORConcurrency idxIdInformer];
+      _mergedVar = [ORConcurrency idxIdxBoolInformer];
    return _mergedVar;
 }
 
