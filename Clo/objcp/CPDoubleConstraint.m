@@ -1260,13 +1260,17 @@ double_interval _yi;
 }
 -(void) post
 {
-   [self propagate];
-   if(![_b bound])
-      [_b whenBindPropagate:self];
-   if(![_x bound])
-      [_x whenChangeBoundsPropagate:self];
-   if(![_y bound])
-      [_y whenChangeBoundsPropagate:self];
+   if(getId(_x) == getId(_y)){
+      [_b bind:1];
+   }else{
+      [self propagate];
+      if(![_b bound])
+         [_b whenBindPropagate:self];
+      if(![_x bound])
+         [_x whenChangeBoundsPropagate:self];
+      if(![_y bound])
+         [_y whenChangeBoundsPropagate:self];
+   }
 }
 
 -(void)propagate

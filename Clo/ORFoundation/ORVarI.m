@@ -1123,7 +1123,8 @@
    _nb = min(nb,(ORInt)[_vars count]);
    for(ORInt i = 0; i < [_disabled count]; i++){
       [_disabled[i] setValue:-1];
-      [_indexDisabled[i] setValue:-1];
+      if(i < nb)
+         [_indexDisabled[i] setValue:-1];
    }
    [_current setValue:0];
    [_start setValue:0];

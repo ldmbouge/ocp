@@ -456,6 +456,7 @@ static enum ValHeuristic valIndex[] =
             }
       }];
    }
+   
    return vars;
 }
 -(void) makeLDSSearch:(id<CPProgram>)p restricted:(id<ORDisabledVarArray>)vars
