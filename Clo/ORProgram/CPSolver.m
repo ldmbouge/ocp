@@ -1773,13 +1773,11 @@
       }
    }
    __block id<ORIdArray> abs = nil;
-   __block ORInt nb;
    id<ORSelect> select_a = [ORFactory select: _engine
                                        range: x.range
                                     suchThat: ^ORBool(ORInt i) {
                                        id<CPFloatVar> v = _gamma[x[i].getId];
-                                       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e]  bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max, [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
-                                       nb += ![v bound];
+                                       LOG(_level,2,@"%@ (var<%d>) %@ bounded:%s fixed:%s rate : abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],[v domain], [v bound]?"YES":"NO", [x isDisabled:i]?"YES":"NO",[abs[i] quantity]);
                                        return ![v bound] && [x isEnabled:i] ;
                                     }
                                    orderedBy: ^ORDouble(ORInt i) {
@@ -1789,6 +1787,7 @@
    __block ORBool goon = YES;
    while(goon) {
       LOG(_level,2,@"State before selection");
+      abs = [self computeAbsorptionsQuantities:x];
       ORSelectorResult i = [select_a max];
       if (!i.found){
          if(![x hasDisabled]){

@@ -835,9 +835,14 @@ double_interval _yi;
 }
 -(void) propagateFixPoint:(CPDoubleVarI*) x with:(CPDoubleVarI*) y
 {
-   if(absorbD(x,y)  && [self nbUVars]){
-      assignTRInt(&_active, NO, _trail);
-      [self addConstraint:[CPFactory doubleEqual:_z to:x rewrite:YES] engine:[x engine]];
+   if([self nbUVars]){
+      if(absorbD(x,y)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleEqual:_z to:x rewrite:YES] engine:[x engine]];
+      }else if(absorbD(y,x)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleEqual:_z to:y rewrite:YES] engine:[x engine]];
+      }
    }
 }
 -(NSSet*)allVars
@@ -968,9 +973,14 @@ double_interval _yi;
 }
 -(void) propagateFixPoint:(CPDoubleVarI*) x with:(CPDoubleVarI*) y
 {
-   if(absorbD(x,y)  && [self nbUVars]){
-      assignTRInt(&_active, NO, _trail);
-      [self addConstraint:[CPFactory doubleEqual:_z to:x rewrite:YES] engine:[x engine]];
+   if([self nbUVars]){
+      if(absorbD(x,y)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleEqual:_z to:x rewrite:YES] engine:[x engine]];
+      }else if(absorbD(y,x)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleEqual:_z to:y rewrite:YES] engine:[x engine]];
+      }
    }
 }
 -(NSSet*)allVars
