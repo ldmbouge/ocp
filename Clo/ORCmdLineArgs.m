@@ -438,9 +438,9 @@ static enum ValHeuristic valIndex[] =
       }
       //create InvGamma
       __block id<ORIntArray> invGamma = [ORFactory intArray:[p tracker] range:RANGE([p tracker], 0, maxId) value:-1];
-      for(id<ORVar> v in vars){
-         cv = [p concretize:v];
-         invGamma[cv.getId] = @([v getId]);
+      for(ORInt i = 0; i < [vars count]; i++){
+         cv = [p concretize:vars[i]];
+         invGamma[cv.getId] = @(i);
       }
       
       [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1,ORBool isStatic){

@@ -366,7 +366,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 }
 -(void)incNbRewrites:(ORUInt)add
 {
-   if(_posting)
+   if([self isPosting])
       _nbSRewrite += add;
    else
       _nbDRewrite += add;
