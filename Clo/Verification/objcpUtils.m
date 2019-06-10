@@ -144,7 +144,7 @@
       }
       [tmp release];
    }else
-      _vars =  [_model floatVars] ;
+      _vars =  [_model FPVars] ;
    
 }
 

@@ -721,14 +721,14 @@
       [_x whenChangeBoundsPropagate:self];
       if(_rewrite)
          [_x whenChangeBoundsDo:^{
-            [self propagateFixPoint:_x with:_y];
+            [self propagateFixPoint];
          } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_y bound]) {
       [_y whenChangeBoundsPropagate:self];
       if(_rewrite)
          [_y whenChangeBoundsDo:^{
-            [self propagateFixPoint:_y with:_x];
+            [self propagateFixPoint];
          } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
@@ -785,15 +785,17 @@
    }
    fesetround(FE_TONEAREST);
 }
--(void) propagateFixPoint:(CPFloatVarI*) x with:(CPFloatVarI*) y
+-(void) propagateFixPoint
 {
    if([self nbUVars]){
-      if(absorb(x,y)){
+      if(absorb(_x,_y)){
+         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory floatEqual:_z to:x rewrite:YES] engine:[x engine]];
-      }else if(absorb(y,x) ){
+         [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
+      }else if(absorb(_y,_x) ){
+         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory floatEqual:_z to:y rewrite:YES] engine:[x engine]];
+         [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
    }
 }
@@ -878,14 +880,14 @@
       [_x whenChangeBoundsPropagate:self];
       if(_rewrite)
          [_x whenChangeBoundsDo:^{
-            [self propagateFixPoint:_x with:_y];
+            [self propagateFixPoint];
          } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_y bound]) {
       [_y whenChangeBoundsPropagate:self];
       if(_rewrite)
          [_y whenChangeBoundsDo:^{
-            [self propagateFixPoint:_y with:_x];
+            [self propagateFixPoint];
          } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
@@ -941,15 +943,17 @@
    }
       fesetround(FE_TONEAREST);
 }
--(void) propagateFixPoint:(CPFloatVarI*) x with:(CPFloatVarI*) y
+-(void) propagateFixPoint
 {
    if([self nbUVars]){
-      if(absorb(x,y)){
+      if(absorb(_x,_y)){
+         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory floatEqual:_z to:x rewrite:YES] engine:[x engine]];
-      }else if(absorb(y,x) ){
+         [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
+      }else if(absorb(_y,_x) ){
+         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory floatEqual:_z to:y rewrite:YES] engine:[x engine]];
+         [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
    }
 }

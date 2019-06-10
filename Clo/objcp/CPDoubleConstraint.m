@@ -771,14 +771,14 @@ double_interval _yi;
       [_x whenChangeBoundsPropagate:self];
       if(_rewriting)
       [_x whenChangeBoundsDo:^{
-         [self propagateFixPoint:_x with:_y];
+         [self propagateFixPoint];
       } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_y bound]) {
       [_y whenChangeBoundsPropagate:self];
       if(_rewriting)
       [_y whenChangeBoundsDo:^{
-         [self propagateFixPoint:_y with:_x];
+         [self propagateFixPoint];
       } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
@@ -833,15 +833,17 @@ double_interval _yi;
    }
    fesetround(FE_TONEAREST);
 }
--(void) propagateFixPoint:(CPDoubleVarI*) x with:(CPDoubleVarI*) y
+-(void) propagateFixPoint
 {
    if([self nbUVars]){
-      if(absorbD(x,y)){
+      if(absorbD(_x,_y)){
+         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory doubleEqual:_z to:x rewrite:YES] engine:[x engine]];
-      }else if(absorbD(y,x)){
+         [self addConstraint:[CPFactory doubleEqual:_z to:_x rewrite:YES] engine:[_x engine]];
+      }else if(absorbD(_y,_x)){
+         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory doubleEqual:_z to:y rewrite:YES] engine:[x engine]];
+         [self addConstraint:[CPFactory doubleEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
    }
 }
@@ -908,14 +910,14 @@ double_interval _yi;
       [_x whenChangeBoundsPropagate:self];
       if(_rewriting)
       [_x whenChangeBoundsDo:^{
-         [self propagateFixPoint:_x with:_y];
+         [self propagateFixPoint];
       } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_y bound]) {
       [_y whenChangeBoundsPropagate:self];
       if(_rewriting)
       [_y whenChangeBoundsDo:^{
-         [self propagateFixPoint:_y with:_x];
+         [self propagateFixPoint];
       } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
@@ -971,15 +973,17 @@ double_interval _yi;
    }
    fesetround(FE_TONEAREST);
 }
--(void) propagateFixPoint:(CPDoubleVarI*) x with:(CPDoubleVarI*) y
+-(void) propagateFixPoint
 {
    if([self nbUVars]){
-      if(absorbD(x,y)){
+      if(absorbD(_x,_y)){
+         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory doubleEqual:_z to:x rewrite:YES] engine:[x engine]];
-      }else if(absorbD(y,x)){
+         [self addConstraint:[CPFactory doubleEqual:_z to:_x rewrite:YES] engine:[_x engine]];
+      }else if(absorbD(_y,_x)){
+         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
-         [self addConstraint:[CPFactory doubleEqual:_z to:y rewrite:YES] engine:[x engine]];
+         [self addConstraint:[CPFactory doubleEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
    }
 }
