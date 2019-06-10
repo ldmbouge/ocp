@@ -146,6 +146,7 @@ PORTABLE_BEGIN
 -(ORInt) indexLastDisabled;
 -(ORInt) parent:(ORInt) i;
 -(void) unionSet:(ORInt) i and:(ORInt) j;
+-(void) unionSet:(ORInt) i withConcrete:(id<CPVar>) j;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end

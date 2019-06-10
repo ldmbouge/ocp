@@ -444,18 +444,28 @@ static enum ValHeuristic valIndex[] =
       }
       
       [[[p engine] mergedVar] wheneverNotifiedDo:^(id<CPVar> v0,  id<CPVar> v1,ORBool isStatic){
-         if (v0.getId < [invGamma count] && v1.getId < [invGamma count]){
+         ORInt idA0 = (v0.getId < [invGamma count]) ? [invGamma[v0.getId] intValue] : -1;
+         ORInt idA1 = (v1.getId < [invGamma count]) ? [invGamma[v1.getId] intValue] : -1;
+         if (idA0 > -1){
             if(isStatic)
                _nbSMerged++;
             else{
                NSLog(@" dyn rewrite");
                _nbDMerged++;
             }
-            ORInt idA1 = [invGamma[v0.getId] intValue];
-            ORInt idA2 = [invGamma[v1.getId] intValue];
-            if(idA1 != -1 && idA2 !=  -1)
-               [vars unionSet:idA1 and:idA2];
+            if(idA1 > -1)
+               [vars unionSet:idA0 and:idA1];
+            else
+               [vars unionSet:idA0 withConcrete:v1];
+         }else if(idA1 > -1){
+            if(isStatic)
+               _nbSMerged++;
+            else{
+               NSLog(@" dyn rewrite");
+               _nbDMerged++;
             }
+            [vars unionSet:idA1 withConcrete:v0];
+         }
       }];
    }
    
