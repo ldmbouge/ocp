@@ -999,6 +999,7 @@
    id<ORTrailableIntArray>    _indexDisabled;
    id<ORTrailableIntArray>    _parent;
    NSMutableDictionary*       _parentConcrete;
+   id<ORSearchEngine>         _engine;
    
 }
 -(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
@@ -1019,6 +1020,7 @@
 -(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb
 {
    self = [super init];
+   _engine = [engine retain];
    _vars = vars;
    _initials = ia;
    _maxId = 0;
@@ -1037,6 +1039,7 @@
 -(void) dealloc
 {
    [_parentConcrete release];
+   [_engine release];
    [super dealloc];
 }
 -(id<ORVar>) at: (ORInt) value
@@ -1222,7 +1225,7 @@
    ORInt res = [self parent:[pi intValue]];
    // update of the current parent to speed up the next call
    if([pi intValue] != res)
-      _parentConcrete[@(getId(i))]  = @(res);
+      _parentConcrete[@(getId(i))] = [ORFactory trailableInt:_engine value:res];
    return res;
 }
 -(void) unionSet:(ORInt) j withConcrete:(id<CPVar>) cx
@@ -1230,7 +1233,7 @@
    ORInt ip = [self parentConcrete:cx];
    ORInt jp = [self parent:j];
    if(ip == -1){
-      _parentConcrete[@(getId(cx))] = @(jp);
+      _parentConcrete[@(getId(cx))] = [ORFactory trailableInt:_engine value:jp];
       ip = jp;
    }
    [self unionSet:ip and:jp];

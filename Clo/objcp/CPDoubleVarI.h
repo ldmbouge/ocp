@@ -300,7 +300,7 @@ static inline bool isNegativeD(CPDoubleVarI* cx)
 }
 static inline bool isPositiveOrNegativeD(CPDoubleVarI* cx)
 {
-   return [cx->_dom min] < 0 || [cx->_dom min] > 0;
+   return [cx->_dom min] > 0 || [cx->_dom max] < 0;
 }
 static inline bool absorbD(CPDoubleVarI* cx,CPDoubleVarI* cy)
 {
