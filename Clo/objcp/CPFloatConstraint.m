@@ -789,11 +789,11 @@
 {
    if([self nbUVars]){
       if(absorb(_x,_y)){
-         NSLog(@"Absorb rewriting %@",self);
+//         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
       }else if(absorb(_y,_x) ){
-         NSLog(@"Absorb rewriting %@",self);
+//         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
@@ -947,11 +947,11 @@
 {
    if([self nbUVars]){
       if(absorb(_x,_y)){
-         NSLog(@"Absorb rewriting %@",self);
+//         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
       }else if(absorb(_y,_x) ){
-         NSLog(@"Absorb rewriting %@",self);
+//         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
