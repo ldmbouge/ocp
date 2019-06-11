@@ -1222,10 +1222,11 @@
    id pi = _parentConcrete[@(getId(i))];
    if(pi == nil)
       return -1;
-   ORInt res = [self parent:[pi intValue]];
+   ORInt piv = [(id<ORTrailableInt>)pi value];
+   ORInt res = [self parent:piv];
    // update of the current parent to speed up the next call
-   if([pi intValue] != res)
-      _parentConcrete[@(getId(i))] = [ORFactory trailableInt:_engine value:res];
+   if(piv != res)
+      [(id<ORTrailableInt>)pi setValue:res];
    return res;
 }
 -(void) unionSet:(ORInt) j withConcrete:(id<CPVar>) cx
