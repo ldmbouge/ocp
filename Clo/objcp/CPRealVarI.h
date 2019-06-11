@@ -75,7 +75,6 @@
 -(id<ORTracker>) tracker;
 -(id<OROSet>) constraints;
 -(ORDouble) doubleValue;
--(ORDouble) domwidth;
 @end
 
 @interface CPRealViewOnIntVarI : ORObject<CPRealVar,CPRealVarExtendedItf,CPIntVarNotifier> {

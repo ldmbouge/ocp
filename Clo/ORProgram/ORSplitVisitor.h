@@ -51,3 +51,10 @@
 -(ORDouble) rate;
 @end
 
+@interface CPDensityVisitor : CPVisitorI<CPVisitor>
+-(ORLDouble) result;
+@end
+
+@interface CPCardinalityVisitor : CPVisitorI<CPVisitor>
+-(ORDouble) result;
+@end

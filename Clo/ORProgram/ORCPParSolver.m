@@ -668,10 +668,6 @@
 {
    return [[self worker] density: x];
 }
--(ORUInt)  countMemberedConstraints:(id<ORVar>) x
-{
-   return [[self worker] countMemberedConstraints: x];
-}
 -(ORDouble) fdomwidth:(id<ORVar>) x
 {
    return [[self worker] fdomwidth: x];

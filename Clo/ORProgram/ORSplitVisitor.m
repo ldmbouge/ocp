@@ -958,3 +958,63 @@
 
 @end
 
+
+@implementation CPDensityVisitor{
+   ORLDouble _result;
+}
+
+-(CPDensityVisitor*) init
+{
+   self = [super init];
+   _result = 0;
+   return self;
+}
+
+- (void)applyFloatVar:(CPFloatVarI*)cx
+{
+   ORDouble c = cardinality(cx);
+   ORDouble w = [cx domwidth];
+   _result = (ORLDouble) (c / w);
+}
+
+- (void)applyDoubleVar:(CPDoubleVarI*)cx
+{
+   ORLDouble c = cardinalityD(cx);
+   ORDouble w = [cx domwidth];
+   _result = (c / w);
+}
+
+-(ORLDouble) result
+{
+   return _result;
+}
+@end
+
+
+@implementation CPCardinalityVisitor{
+   ORDouble _result;
+}
+
+-(CPCardinalityVisitor*) init
+{
+   self = [super init];
+   _result = 0;
+   return self;
+}
+
+- (void)applyFloatVar:(CPFloatVarI*)cx
+{
+   _result = cardinality(cx);
+}
+
+- (void)applyDoubleVar:(CPDoubleVarI*)cx
+{
+   _result = (ORDouble) cardinalityD(cx);
+}
+
+-(ORDouble) result
+{
+   return _result;
+}
+@end
+

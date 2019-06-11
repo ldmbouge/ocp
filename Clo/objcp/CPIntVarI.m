@@ -251,6 +251,11 @@ static id<OROSet> collectConstraints(CPEventNetwork* net,id<OROSet> rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method domsize  not defined"];
    return 0;
 }
+-(ORLDouble) domwidth
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method domwidth  not defined"];
+   return 0;
+}
 -(ORInt) regret
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method regret  not defined"];

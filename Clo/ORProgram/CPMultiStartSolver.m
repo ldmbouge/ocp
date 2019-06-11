@@ -952,10 +952,6 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
-- (ORUInt)countMemberedConstraints:(nonnull id<ORVar>)x
-{
-   return [[self worker] countMemberedConstraints:x];
-}
 -(ORDouble) cardinality: (id<ORVar>) x
 {
    return [[self worker] cardinality: x];

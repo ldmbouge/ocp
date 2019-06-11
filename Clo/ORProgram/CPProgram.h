@@ -230,7 +230,6 @@ PORTABLE_BEGIN
 -(ORUInt)  maxOccurences:(id<ORVar>) x;
 -(ORLDouble) density: (id<ORVar>) x;
 -(ORDouble) cardinality: (id<ORVar>) x;
--(ORUInt)  countMemberedConstraints:(id<ORVar>) x;
 -(ORDouble) fdomwidth:(id<ORVar>) x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;

@@ -1620,9 +1620,9 @@
       }
       //by default parent (x) = x
       ORInt index = [x parent:i.index];
-      id<CPVar> cx = _gamma[x[i.index].getId];
-      LOG(_level,2,@"selected variables: %@ %@",([x[i.index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[i.index] prettyname],[cx domain]);
-      b(i.index,x);
+      id<CPVar> cx = _gamma[x[index].getId];
+      LOG(_level,2,@"selected variables: %@ %@",([x[index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[index] prettyname],[cx domain]);
+      b(index,x);
    }
 }
 -(void) searchWithCriteria:  (id<ORDisabledVarArray>) x criteria:(ORInt2Double)crit switchOnCondtion:(ORBool(^)(void))c criteria:(ORInt2Double)crit2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -1662,15 +1662,13 @@
 -(void) maxCardinalitySearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      CPFloatVarI* v = _gamma[x[i].getId];
-      return cardinality(v);
+      return (ORDouble)[self cardinality:x[i]];
    } do:b];
 }
 -(void) minCardinalitySearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      CPFloatVarI* v = _gamma[x[i].getId];
-      return -cardinality(v);
+      return (ORDouble) -[self cardinality:x[i]];
    } do:b];
 }
 -(void) maxDensitySearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -1688,15 +1686,15 @@
 -(void) maxWidthSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      id<CPFloatVar> v = _gamma[x[i].getId];
-      return [v domwidth];
+      id<CPVar> v = _gamma[x[i].getId];
+      return (ORDouble)[v domwidth];
    } do:b];
 }
 -(void) minWidthSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      id<CPFloatVar> v = _gamma[x[i].getId];
-      return -[v domwidth];
+      id<CPVar> v = _gamma[x[i].getId];
+      return (ORDouble)-[v domwidth];
    } do:b];
 }
 -(void) maxMagnitudeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -1723,13 +1721,15 @@
 -(void) maxDegreeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      return (ORDouble)[self countMemberedConstraints:x[i]];
+      id<CPVar> cx = _gamma[x[i].getId];
+      return (ORDouble)[cx degree];
    } do:b];
 }
 -(void) minDegreeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      return (ORDouble)(-[self countMemberedConstraints:x[i]]);
+      id<CPVar> cx = _gamma[x[i].getId];
+      return -(ORDouble)[cx degree];
    } do:b];
 }
 -(void) maxOccurencesRatesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -2822,26 +2822,21 @@
 {
    return [((id<CPVar>) _gamma[x.getId]) domsize];
 }
--(ORDouble) cardinality: (id<ORFloatVar>) x
+-(ORDouble) cardinality: (id<ORVar>) x
 {
-   CPFloatVarI* cx = _gamma[[x getId]];
-   ORDouble c = cardinality(cx);
-   return c;
+   id<CPVar> xi = _gamma[x.getId];
+   CPCardinalityVisitor* visitor = [[CPCardinalityVisitor alloc] init];
+   [self trackObject:visitor];
+   [xi visit:visitor];
+   return [visitor result];
 }
--(ORLDouble) density: (id<ORFloatVar>) x
+-(ORLDouble) density: (id<ORVar>) x
 {
-   CPFloatVarI* cx = _gamma[[x getId]];
-   ORDouble c = cardinality(cx);
-   ORDouble w = [self fdomwidth:x];
-   return (ORLDouble) (c / w);
-}
--(ORUInt)  countMemberedConstraints:(id<ORVar>) x
-{
-   CPFloatVarI* cx = _gamma[[x getId]];
-   id<OROSet> cstr = [cx constraints];
-   ORUInt cpt = (ORUInt) [cstr count];
-   [cstr release];
-   return cpt;
+   id<CPVar> xi = _gamma[x.getId];
+   CPDensityVisitor* visitor = [[CPDensityVisitor alloc] init];
+   [self trackObject:visitor];
+   [xi visit:visitor];
+   return [visitor result];
 }
 //[hzi] not useful any more ?
 -(ORUInt)  maxOccurences:(id<ORVar>) x
@@ -3002,7 +2997,6 @@
             }
          }
       }
-      [cstr release];
    }
    return res;
 }
@@ -3034,7 +3028,6 @@
 {
    return [((id<CPRealVar>)_gamma[x.getId]) max];
 }
-
 -(id<OROSet>) constraints: (id<ORVar>)x
 {
    return [(id<CPVar>)_gamma[x.getId] constraints];

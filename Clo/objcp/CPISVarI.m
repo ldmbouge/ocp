@@ -106,6 +106,11 @@ static void deallocNetwork(CPISVNetwork* net)
    @throw [[ORExecutionError alloc] initORExecutionError:"domsize not supported on int set var"];
    return 0;
 }
+-(ORLDouble) domwidth
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPISVAR: method domwidth  not defined"];
+   return 0;
+}
 - (id<CPADom>)domain
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntSetVar: method domain not defined"];

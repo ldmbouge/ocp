@@ -378,8 +378,12 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 }
 - (ORInt)domsize
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVar: method domsize  not defined"];
-    return 0;
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPLDoubleVar: method domsize  not defined"];
+   return 0;
+}
+- (ORLDouble)domwidth
+{
+   return [_dom domwidth];
 }
 - (id<CPADom>)domain
 {
@@ -396,10 +400,6 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 - (void)subsumedByDomain:(id<CPDom>)dom
 {
    [self updateInterval:[dom min] and:[dom max]];
-}
--(ORLDouble) domwidth
-{
-   return [_dom domwidth];
 }
 - (void)visit:(id<CPVisitor>)visitor
 {
@@ -443,8 +443,8 @@ static id<OROSet> collectConstraints(CPLDoubleEventNetwork* net,id<OROSet> rv)
 }
 - (ORInt)domsize
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
-    return 0;
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
+   return 0;
 }
 -(ORInt)degree
 {
