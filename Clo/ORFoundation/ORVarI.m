@@ -1235,6 +1235,9 @@
    ORInt jp = [self parent:j];
    if(ip == -1){
       _parentConcrete[@(getId(cx))] = [ORFactory trailableInt:_engine value:jp];
+      [[_engine trail] trailClosure:^{
+         _parentConcrete[@(getId(cx))] =  nil;
+      }];
       ip = jp;
    }
    [self unionSet:ip and:jp];

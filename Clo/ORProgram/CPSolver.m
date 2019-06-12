@@ -1762,8 +1762,6 @@
 {
    return [_order objectForKey:@(v.getId)];
 }
-
-
 -(void) maxFullAbsorptionSearch:(id<ORDisabledVarArray>)x
 {
    @autoreleasepool {
@@ -1815,11 +1813,6 @@
       [self floatAbsSplit:i.index by:v vars:x];
    }
 }
-
-
-
-
-
 //----------Special search--------//
 -(void) specialSearch:  (id<ORDisabledVarArray>) x
 {
