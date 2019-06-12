@@ -1236,7 +1236,7 @@
    if(ip == -1){
       _parentConcrete[@(getId(cx))] = [ORFactory trailableInt:_engine value:jp];
       [[_engine trail] trailClosure:^{
-         _parentConcrete[@(getId(cx))] =  nil;
+         [_parentConcrete removeObjectForKey:@(getId(cx))];
       }];
       ip = jp;
    }
