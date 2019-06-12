@@ -13,8 +13,7 @@ SRCS = smtlib2utils.c smtlib2termparser.c smtlib2stream.c \
 	smtlib2scanner.c smtlib2hashtable.c smtlib2flexlexer.c \
 	smtlib2charbuf.c smtlib2bisonparser.c smtlib2abstractparser.c \
 	smtlib2vector.c smtlib2objcp.m ExprSimplifier.m \
-	objcpUtils.m  objcpgateway.m\
-	objcpgatewayI.m  objcpgatewayAux.m\
+	objcpUtils.m objcpgatewayI.m  objcpgatewayAux.m\
 	objcpProxy.m
 
 OBJEXT=o
