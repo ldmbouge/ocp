@@ -1848,6 +1848,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORFloat)
++(id<ORConstraint>) floatEqual:(id<ORTracker>)model  var: (id<ORVar>) x to: (id<ORVar>) y
+{
+   id<ORConstraint> o = [[ORFloatEqual alloc] initOREqual:x eq:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var:(id<ORFloatVar>) x to:(ORFloat)c
 {
    id<ORConstraint> o = [[ORFloatAssignC alloc] initORFloatAssignC:x to:c];
@@ -2070,6 +2076,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORDouble)
++(id<ORConstraint>) doubleEqual:(id<ORTracker>)model  var: (id<ORVar>) x to: (id<ORVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleEqual alloc] initOREqual:x eq:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) doubleSqrt:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y
 {
    id<ORConstraint> o = [[ORDoubleSqrt alloc] initORSqrt:x eqSqrt:y];

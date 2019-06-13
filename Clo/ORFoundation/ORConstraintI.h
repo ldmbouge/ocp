@@ -161,6 +161,14 @@
 -(ORInt) cst;
 @end
 
+@interface ORFloatEqual : OREqual<OREqual>
+-(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y;
+@end
+
+@interface ORDoubleEqual : OREqual<OREqual>
+-(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y;
+@end
+
 @interface ORAffine :ORConstraintI<ORAffine>
 -(ORAffine*)initORAffine: (id<ORIntVar>) y eq:(ORInt)a times:(id<ORIntVar>) x plus: (ORInt) b;
 -(id<ORIntVar>) left;

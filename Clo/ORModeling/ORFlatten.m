@@ -427,6 +427,14 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatEqual: (id<OREqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleEqual: (id<OREqual>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitAffine: (id<ORAffine>)c
 {
    _result = [_into addConstraint:c];

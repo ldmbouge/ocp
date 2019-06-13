@@ -348,7 +348,15 @@
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Equal: visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "Equal: visit method not defined"];
+}
+-(void) visitFloatEqual: (id<OREqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "floatEqual: visit method not defined"];
+}
+-(void) visitDoubleEqual: (id<OREqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "floatEqual: visit method not defined"];
 }
 -(void) visitSoftNEqual: (id<ORSoftNEqual>)c {
     @throw [[ORExecutionError alloc] initORExecutionError: "SoftNEqual: visit method not defined"];
@@ -1175,6 +1183,8 @@
 -(void) visitLEqualc: (id<ORLEqualc>)c  {}
 -(void) visitGEqualc: (id<ORGEqualc>)c  {}
 -(void) visitEqual: (id<OREqual>)c  {}
+-(void) visitFloatEqual: (id<OREqual>)c  {}
+-(void) visitDoubleEqual: (id<OREqual>)c  {}
 -(void) visitAffine: (id<ORAffine>)c  {}
 -(void) visitNEqual: (id<ORNEqual>)c  {}
 -(void) visitLEqual: (id<ORLEqual>)c  {}

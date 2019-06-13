@@ -689,6 +689,30 @@
    }
 }
 
+-(void) visitFloatEqual: (id<OREqual>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPFloatVar> left  = [self concreteVar:[cstr left]];
+      id<CPFloatVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory floatEqual: left
+                                                    to: right annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleEqual: (id<OREqual>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPDoubleVar> left  = [self concreteVar:[cstr left]];
+      id<CPDoubleVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleEqual: left
+                                                         to: right annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+
 -(void) visitAffine: (id<ORAffine>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

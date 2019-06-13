@@ -62,7 +62,7 @@
 {
    [_model incrOccurences:e];
    if (_eqto) {
-      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+      [_model addConstraint:[ORFactory doubleEqual:_model var:e to:_eqto]];
       [_terms addTerm:_eqto by:1];
       _eqto = nil;
    } else
@@ -218,7 +218,7 @@
 {
    [_model incrOccurences:e];
    if (_rv)
-      [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
+      [_model addConstraint:[ORFactory doubleEqual:_model var:_rv to:e]];
    else
       _rv = (id)e;
 }

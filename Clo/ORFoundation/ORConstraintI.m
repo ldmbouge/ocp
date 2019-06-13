@@ -85,6 +85,20 @@
    id<ORTracker> t = [(id)crp tracker];
    _result = [ORFactory equal:t var:clp to:crp plus:c.cst];
 }
+-(void) visitFloatEqual: (id<OREqual>)c
+{
+   id<ORVar> clp = _map[getId(c.left)];
+   id<ORVar> crp = _map[getId(c.right)];
+   id<ORTracker> t = [(id)crp tracker];
+   _result = [ORFactory floatEqual:t var:clp to:crp];
+}
+-(void) visitDoubleEqual: (id<OREqual>)c
+{
+   id<ORVar> clp = _map[getId(c.left)];
+   id<ORVar> crp = _map[getId(c.right)];
+   id<ORTracker> t = [(id)crp tracker];
+   _result = [ORFactory doubleEqual:t var:clp to:crp];
+}
 -(void) visitFloatAssign: (id<ORFloatAssign>)c
 {
    id<ORVar> clp = _map[getId(c.left)];
@@ -1699,6 +1713,31 @@
    _y = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
+}
+@end
+
+
+@implementation ORFloatEqual
+-(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y
+{
+   self = [super initOREqual:x eq:y plus:0];
+   return self;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatEqual:self];
+}
+@end
+
+@implementation ORDoubleEqual
+-(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y
+{
+   self = [super initOREqual:x eq:y plus:0];
+   return self;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitDoubleEqual:self];
 }
 @end
 
