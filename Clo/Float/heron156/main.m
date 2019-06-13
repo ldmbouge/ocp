@@ -64,9 +64,9 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> fc = [ORFactory float:model value:v];
          [g add:[squared_area gt:[fc plus:@(1e-5f)]]];
          [model add:g];
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
-//         NSLog(@"%@",[cp concretize:g]);
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
+         //         NSLog(@"%@",[cp concretize:g]);
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
@@ -77,7 +77,6 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
             
-            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;

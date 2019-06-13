@@ -133,8 +133,8 @@ int main(int argc, const char * argv[]) {
          [g add:[[diff mul:diff] geq:@(0.0f)]];
          [model add:g];
          //         NSLog(@"%@", model);
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          
          [cp solveOn:^(id<CPCommonProgram> p) {
@@ -147,7 +147,6 @@ int main(int argc, const char * argv[]) {
                
                NSLog(@"%@",cv);
             }
-            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          struct ORResult re = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return re;

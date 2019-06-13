@@ -61,8 +61,6 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
             
-//            [args checkAbsorption:vars solver:cp];
-//            check_solution([p floatValue:vars[0]], [p floatValue:vars[1]]);
          } withTimeLimit:[args timeOut]];
          
          struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

@@ -32,8 +32,8 @@ int main(int argc, const char * argv[]) {
          
          //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
          
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             

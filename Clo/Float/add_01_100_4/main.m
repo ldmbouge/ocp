@@ -55,9 +55,8 @@ int main(int argc, const char * argv[]) {
          [g add:[[assoc1 sub:assoc2] gt:epsilon]];
          
          [model add:g];
-         
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];

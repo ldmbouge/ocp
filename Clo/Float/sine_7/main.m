@@ -46,18 +46,17 @@ int main(int argc, const char * argv[]) {
          [g add:[[res lt:@(-VAL)] lor:[res gt:@(VAL)]]];
          
          [model add:g];
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
             NSLog(@"Valeurs solutions : \n");
             found=true;
-            for(id<ORFloatVar> v in vars){
+            for(id<ORVar> v in vars){
                found &= [p bound: v];
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
-            [args checkAbsorption:vars solver:cp];
             checksolution([p floatValue:vars[0]], [p floatValue:vars[1]]);
          } withTimeLimit:[args timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

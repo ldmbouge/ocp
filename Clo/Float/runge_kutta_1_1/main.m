@@ -104,8 +104,8 @@ int main(int argc, const char * argv[]) {
          //         NSLog(@"%@", model);
          
          NSLog(@"%d", [g size]);
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          
          fesetround(FE_TONEAREST);
@@ -118,7 +118,6 @@ int main(int argc, const char * argv[]) {
                found &= [p bound: v];
                NSLog(@"%@ = %16.16e (%s)",v,[cv value], [p bound:v] ? "YES" : "NO");
             }
-            [args checkAbsorption:vars solver:cp];
             checksolution([p floatValue:y[0]], [p floatValue:y_opt[0]], [p floatValue:y[NBLOOPS]],[p floatValue:y_opt[NBLOOPS]], [p floatValue:diff]);
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);

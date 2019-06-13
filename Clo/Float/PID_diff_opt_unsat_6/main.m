@@ -133,8 +133,8 @@ int main(int argc, const char * argv[]) {
          [g add:[[diff mul:diff] gt:@(0.0622f)]];
          [model add:g];
          //         NSLog(@"%@", model);
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          
          [cp solveOn:^(id<CPCommonProgram> p) {

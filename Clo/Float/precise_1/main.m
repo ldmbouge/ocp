@@ -23,8 +23,8 @@ int main(int argc, const char * argv[]) {
          
          //            [model add:[res lt:fc]];
          
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          NSLog(@"%@",[cp concretize:g]);
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {

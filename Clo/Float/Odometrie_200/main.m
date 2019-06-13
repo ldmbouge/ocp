@@ -143,8 +143,8 @@ int main(int argc, const char * argv[]) {
          [g add:[diff eq:[y_opt[NBLOOPS] sub:y[NBLOOPS]]]];
          [g add:[[diff mul:diff] eq:@(0.0f)]];
          [model add:g];
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
 //         NSLog(@"%@",model);
          fesetround(FE_TONEAREST);
@@ -158,7 +158,6 @@ int main(int argc, const char * argv[]) {
             }
             NSLog(@"diff : %16.16f", [p floatValue:y_opt[1]] - [p floatValue:y[1]] );
             
-            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
          struct ORResult re = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

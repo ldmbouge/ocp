@@ -104,8 +104,8 @@ int main(int argc, const char * argv[]) {
          [g add:[res lt:[fc sub:@(1.0f)]]];
          
          [model add:g];
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
@@ -117,7 +117,6 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
             
-            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;

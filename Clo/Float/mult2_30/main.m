@@ -28,9 +28,8 @@ int main(int argc, const char * argv[]) {
          [g add:[d[NBLOOPS] lt:@(1.0e-2f)]];
          
          [model add:g];
-         //         NSLog(@"%@",model);
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];

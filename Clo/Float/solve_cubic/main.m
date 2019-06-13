@@ -96,8 +96,7 @@ int main(int argc, const char * argv[]) {
          
          [model add:g];
          id<CPProgram> cp = [args makeProgram:model];
-         
-         id<ORFloatVarArray> vars = [model floatVars];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
@@ -108,7 +107,6 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
             }
             
-            [args checkAbsorption:vars solver:cp];
             check_solution([p floatValue:a_0],[p floatValue:b_0],[p floatValue:c_0],[p floatValue:r_0],[p floatValue:q_0],[p floatValue:Q_0],[p floatValue:R_0], [p floatValue:R2_0],[p floatValue:Q3_0],[p floatValue:CR2_0],[p floatValue:CQ3_0]);
          } withTimeLimit:[args timeOut]];
          

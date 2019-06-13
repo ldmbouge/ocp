@@ -73,8 +73,8 @@ int main(int argc, const char * argv[]) {
          [g add:[r_0 geq:@(0.1f)]];
          
          [model add:g];
-         id<ORFloatVarArray> vars = [model floatVars];
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             found=true;
@@ -84,7 +84,6 @@ int main(int argc, const char * argv[]) {
                NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
             }
             
-            [args checkAbsorption:vars solver:cp];
          } withTimeLimit:[args timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;

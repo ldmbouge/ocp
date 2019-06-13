@@ -73,13 +73,14 @@ int main(int argc, const char * argv[]) {
          [g add:[r_0 geq:@(0.1f)]];
          
          [model add:g];
-         id<ORFloatVarArray> vars = [model floatVars];
+       
          id<CPProgram> cp = [args makeProgram:model];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             found=true;
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            for(id<ORFloatVar> v in vars){
+            for(id<ORVar> v in vars){
                found &= [p bound: v];
                NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
             }
