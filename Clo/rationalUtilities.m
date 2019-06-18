@@ -483,53 +483,25 @@
 -(id<ORRational>)divI:(id<ORRational>)r
 {
    id<ORRational> z = [[ORRational alloc] init: _mt];
-   /* x = NaN || y = NaN */
-   if(_type == 3 || r.type == 3){
-      /* z = NaN */
-      [z setNAN];
+   id<ORRational> local = [[ORRational alloc] init];
+   id<ORRational> other = [[ORRational alloc] init];
+   if(_type == 2){
+      [local set_d: 10e+20];
    }
-   /*
-    (x = -inf  && y = -inf) ||
-    (x = -inf  && y =  inf) ||
-    (x =  inf  && y = -inf) ||
-    (x =  inf  && y =  inf) ||
-    (y =  0)
-    */
-   else if((_type == -2 && r.type ==  2) ||
-           (_type == -2 && r.type == -2) ||
-           (_type ==  2 && r.type ==  2) ||
-           (_type ==  2 && r.type == -2) ||
-           (r.type ==  0)){
-      /* z = NaN */
-      [z setNAN];
+   else if(_type == -2){
+      [local set_d: -10e+20];
    }
-   /*
-    (x = -inf && y = PR) ||
-    (x =  inf && y = NR)
-    */
-   else if((_type == -2 && r.type == 1) ||
-           (_type == 2 && r.type == -1)){
-      /* z = -inf */
-      [z setNegInf];
+   
+   if(r.type == 2){
+      [other set_d: 10e+20];
    }
-   /*
-    (x = -inf && y = NR) ||
-    (x =  inf && y = PR)
-    */
-   else if((_type == -2 && r.type == -1) ||
-           (_type ==  2 && r.type ==  1)){
-      /* z = inf */
-      [z setPosInf];
-   } else if(r.type == -2 || r.type == 2) {
-      /* z = 0 */
-      [z setZero];
+   else if(r.type == -2){
+      [other set_d: -10e+20];
    }
-   /* x = Q && y = Q */
-   else {
-      mpq_div(z.rational, _rational, r.rational);
-      mpq_canonicalize(z.rational);
-      z.type = mpq_sgn(z.rational);
-   }
+   mpq_div(z.rational, _rational, r.rational);
+   mpq_canonicalize(z.rational);
+   z.type = mpq_sgn(z.rational);
+   
    return z;
 }
 -(id<ORRational>)neg
@@ -1093,12 +1065,12 @@
       //int both = 0;
       //plow = [[[_low sub:z.low] div:_low] abs];
       //pup = [[[_up sub:z.up] div:_up] abs];
-      plow = [[z.up subI:z.low] divI: [_up subI: _low]];
+      //plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:95 and:100];
       
-      if([plow leq: epsilon]){
-         z.changed = 0;
-      }
+//      if([plow leq: epsilon]){
+//         z.changed = 0;
+//      }
       
       //      if([plow leq: epsilon])
       //         both++;
