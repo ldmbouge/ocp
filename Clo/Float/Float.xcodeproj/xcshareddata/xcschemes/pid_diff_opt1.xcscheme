@@ -63,15 +63,15 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order custom -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8 -t 20"
+            argument = "-var-order maxocc -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8 -t 20"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-debug-level 2"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = " -model-limits 0.85"
+            argument = "-bds"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -63,15 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order custom -val-order dynamic5Split -uniques 2 -percent 8  -model-limits 0.75 -other-limits 1.1"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-choices-limit 50"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-debug-level 2"
+            argument = "  -var-order maxDens -val-order dynamic5Split -uniques 3 -percent 3 -variation 2 -bds -cycle-detection  -with-rewriting-eq"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

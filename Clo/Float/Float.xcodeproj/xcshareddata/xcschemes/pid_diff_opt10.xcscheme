@@ -61,6 +61,12 @@
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "  -var-order maxocc -val-order dynamic5Split -uniques 3 -percent 3 -variation 2 -bds -cycle-detection  -with-rewriting-eq"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

@@ -132,6 +132,7 @@ int main(int argc, const char * argv[]) {
          [g add:[diff eq:[m[NBLOOPS] sub:m_opt[NBLOOPS]]]];
          [g add:[[diff mul:diff] geq:@(0.0f)]];
          [model add:g];
+         NSLog(@"%@", model);
          id<CPProgram> cp = [args makeProgram:model];
          id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;

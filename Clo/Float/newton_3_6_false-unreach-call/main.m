@@ -73,6 +73,7 @@ int main(int argc, const char * argv[]) {
          [g add:[r_0 geq:@(0.1f)]];
          
          [model add:g];
+         NSLog(@"%@",model);
          id<CPProgram> cp = [args makeProgram:model];
          id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;

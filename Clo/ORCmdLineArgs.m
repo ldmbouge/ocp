@@ -449,10 +449,8 @@ static enum ValHeuristic valIndex[] =
          if (idA0 > -1){
             if(isStatic)
                _nbSMerged++;
-            else{
-               NSLog(@" dyn rewrite");
+            else
                _nbDMerged++;
-            }
             if(idA1 > -1)
                [vars unionSet:idA0 and:idA1];
             else
@@ -460,10 +458,8 @@ static enum ValHeuristic valIndex[] =
          }else if(idA1 > -1){
             if(isStatic)
                _nbSMerged++;
-            else{
-               NSLog(@" dyn rewrite");
+            else
                _nbDMerged++;
-            }
             [vars unionSet:idA1 withConcrete:v0];
          }
       }];

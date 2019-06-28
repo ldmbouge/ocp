@@ -67,7 +67,8 @@ int main(int argc, const char * argv[]) {
          id<CPProgram> cp = [args makeProgram:model];
          id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          
-         //           NSLog(@"%@", model);
+         
+                    NSLog(@"%@", model);
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {
             [args launchHeuristic:((id<CPProgram>)p) restricted:vars];

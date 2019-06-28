@@ -64,11 +64,15 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-3B"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-var-order maxocc"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-bds"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
