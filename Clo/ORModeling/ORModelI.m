@@ -476,10 +476,6 @@
 }
 -(void) normalizeOcc
 {
-   for(id<ORVar> v in [self FPVars]){
-      if([v getId] < [_occurences count])
-         NSLog(@"occ{%@} : %@",v,_occurences[[v getId]]);
-   }
    _initDone = YES;
    NSNull* null = [NSNull null];
    NSMutableArray* top = [[NSMutableArray alloc] initWithCapacity:[_vars count]];
@@ -497,12 +493,9 @@
          }
       }
    };
-   
    ORInt* visited = (ORInt*)malloc((sizeof(ORInt)*size));
    for(ORInt i = 0; i < size; i++)
       visited[i] = 0;
-   
-   
    for(id<ORVar> v in _vars){
       ORInt index = v.getId;
       if(index < size && !visited[index])
@@ -521,6 +514,7 @@
          }];
       }
    }
+   [top release];
 }
 -(ORDouble) occurences:(id<ORVar>) v
 {
