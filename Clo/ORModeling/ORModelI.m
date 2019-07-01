@@ -196,7 +196,8 @@
    id<ORModelMappings>      _mappings;  // these are all the mappings for the models
    id<ORIntArray>           _occurences;
    id<ORIntArray>           _loccurences;
-   NSMutableArray*          _equalities;
+   NSMutableArray*          _defs;
+   NSMutableArray*          _usages;
    ORBool                   _initDone;
 }
 -(ORModelI*) initORModelI
@@ -209,7 +210,8 @@
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [[ORModelMappings alloc] initORModelMappings];
-   _equalities = nil;
+   _defs = nil;
+   _usages = nil;
    _occurences = nil;
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
@@ -242,7 +244,8 @@
    _source = [src retain];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [src->_mappings copy];
-   _equalities = src->_equalities;
+   _defs = src->_defs;
+   _usages = src->_usages;
    _initDone = NO;
    return self;
 }
@@ -262,7 +265,8 @@
     _source = [src retain];
     _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
     _mappings = [src->_mappings copy];
-   _equalities = src->_equalities;
+   _defs = src->_defs;
+   _usages = src->_usages;
    _initDone = NO;
     return self;
 }
@@ -295,10 +299,11 @@
 -(void) dealloc
 {
    //NSLog(@"ORModelI [%p] dealloc called...  source (%p) RC[%lu]\n",self,_source,(unsigned long)[_source retainCount]);
-   if(_equalities != nil){
-      for(NSMutableDictionary* v in _equalities)
+   if(_defs != nil){
+      for(NSMutableDictionary* v in _defs)
          [v release];
-      [_equalities release];
+      [_defs release];
+      [_usages release];
    }
    [_source release];
    [_vars release];
@@ -430,32 +435,41 @@
 }
 -(void) addEqualityRelation:(id<ORVar>) x with:(id<ORExpr>) e
 {
-   if(_equalities == nil){
+   NSNull* null = [NSNull null];
+   if(_defs == nil){
       ORInt maxId = 0;
       ORInt i = 0;
-      _equalities = [[NSMutableArray alloc] init];
+      _defs = [[NSMutableArray alloc] init];
+      _usages = [[NSMutableArray alloc] init];
       for(id<ORObject> c in _vars){
          ORInt index = [c getId];
-         [_equalities addObject:[NSNull null]];
+         [_usages addObject:null];
+         [_defs addObject:null];
          maxId = ([c getId]>maxId)? index : maxId;
          i++;
       }
       for(; i <= maxId; i++){
-         [_equalities addObject:[NSNull null]];
+         [_defs addObject:null];
+         [_usages addObject:null];
       }
    }
-   if(_equalities[x.getId] == [NSNull null]){
+   if(_defs[x.getId] == null){
       ORInt oldv = [_occurences at:x.getId];
       [_occurences set:oldv-1 at:x.getId];
       @autoreleasepool {
          NSArray* av = [e allVarsArray];
-         _equalities[x.getId] = [[NSMutableDictionary alloc] init];
+         _defs[x.getId] = [[NSMutableDictionary alloc] init];
          for(id<ORVar> v in av){
-            ORInt c = [[_equalities[x.getId] objectForKey:@(v.getId)] intValue];
+            ORInt c = [[_defs[x.getId] objectForKey:@(v.getId)] intValue];
             c++;
-            _equalities[x.getId][@(v.getId)] = @(c);
+            _defs[x.getId][@(v.getId)] = @(c);
             ORInt oldv = [_occurences at:v.getId];
             [_occurences set:oldv-1 at:v.getId];
+            if(v.getId < [_usages count]){
+               if(_usages[v.getId] == null)
+                  _usages[v.getId] = [[NSMutableArray alloc] init];
+               [_usages[v.getId] addObject:x];
+            }
          }
       }
    }
@@ -480,31 +494,36 @@
    NSNull* null = [NSNull null];
    NSMutableArray* top = [[NSMutableArray alloc] initWithCapacity:[_vars count]];
    ORUInt size = (ORUInt)[_occurences count];
-//  ------------------- topological sort
-   void (^__block visit) (ORInt,ORInt*) = ^(ORInt v,ORInt* visited){
-      visited[v] = 1;
-      [top addObject:@(v)];
-      id value = _equalities[v];
-      if(value != null){
-         NSEnumerator* iter = ((NSDictionary*) value).keyEnumerator;
-         for(id k in iter){
-            if(!visited[[k intValue]])
-               visit([k intValue],visited);
+   ORInt* visited = (ORInt*)malloc((sizeof(ORInt)*size));
+   ORPQueue* pqueue = [[ORPQueue alloc] init: ^BOOL(id a, id b) { return [a intValue] <= [b intValue]; }];
+   NSMapTable* locators = [[NSMapTable alloc] init];
+   for(ORInt i = 0; i < size; i++){
+      visited[i] = 0;
+      [locators setObject: [pqueue insertObject: @(i) withKey: @((_usages[i] == null) ? 0 : [_usages[i] count])] forKey: @(i)];
+   }
+   while(![pqueue empty]){
+      id best = [pqueue extractBest];
+      ORInt index = [best intValue];
+      if(!visited[index]){
+         visited[index] = 1;
+         [top addObject:@(index)];
+         id value = _defs[index];
+         if(value != null){
+            NSDictionary* dict = ((NSDictionary*) value);
+            [dict enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+               if(!visited[[key intValue]]){
+                  id<ORLocator> loc = [locators objectForKey:key];
+                  NSNumber* newKey = @([loc.key intValue] - [obj intValue]);
+                  [pqueue update:loc toKey:newKey];
+               }
+            }];
          }
       }
-   };
-   ORInt* visited = (ORInt*)malloc((sizeof(ORInt)*size));
-   for(ORInt i = 0; i < size; i++)
-      visited[i] = 0;
-   for(id<ORVar> v in _vars){
-      ORInt index = v.getId;
-      if(index < size && !visited[index])
-         visit(index,visited);
    }
    free(visited);
-//   -------------------
+   [locators release];
    for(id v in top){
-      id value = _equalities[[v intValue]];
+      id value = _defs[[v intValue]];
       if(value != null){
          ORInt occv = [_occurences[[v intValue]] intValue];
          [((NSDictionary*) value) enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
@@ -829,7 +848,7 @@
    [aCoder encodeObject:_cStore];
    [aCoder encodeObject:_objective];
    [aCoder encodeObject:_occurences];
-   [aCoder encodeObject:_equalities];
+   [aCoder encodeObject:_defs];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -841,7 +860,7 @@
    _cStore = [[aDecoder decodeObject] retain];
    _objective = [[aDecoder decodeObject] retain];
    _occurences = [[aDecoder decodeObject] retain];
-   _equalities = [[aDecoder decodeObject] retain];
+   _defs = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
