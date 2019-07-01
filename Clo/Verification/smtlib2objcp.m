@@ -1359,8 +1359,8 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_inf)
 SMTLIB2_OBJCP_DECLHANDLER(zero)
 {
    if((int)smtlib2_vector_at(idx, 0) == 8)
-      return [[[ConstantWrapper alloc] initWithFloat:(strcmp(symbol, "+zero") == 0)?+INFINITY:-INFINITY] makeVariable];
-   return [[[ConstantWrapper alloc] initWithDouble:(strcmp(symbol, "+zero") == 0)?+INFINITY:-INFINITY] makeVariable];
+      return [[[ConstantWrapper alloc] initWithFloat:(strcmp(symbol, "+zero") == 0)?+0.0f:-0.0f] makeVariable];
+   return [[[ConstantWrapper alloc] initWithDouble:(strcmp(symbol, "+zero") == 0)?+0.0:-0.0] makeVariable];
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_eq)
