@@ -672,14 +672,18 @@
 //}
 -(void) visitExprConjunctI: (ORExprLogiqueI*) e
 {
-   [[e left] visit:self];
-   [[e right] visit:self];
+   if(!(isNegate%2)){
+      [[e left] visit:self];
+      [[e right] visit:self];
+   }
 }
-//-(void) visitExprDisjonctI: (ORExprLogiqueI*) e
-//{
-//   [[e left] visit:self];
-//   [[e right] visit:self];
-//}
+-(void) visitExprDisjunctI: (ORExprLogiqueI*) e
+{
+   if(isNegate%2){
+      [[e left] visit:self];
+      [[e right] visit:self];
+   }
+}
 -(NSDictionary*) result
 {
    return [_theSet copy];
