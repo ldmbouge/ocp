@@ -214,7 +214,7 @@
          break;
        case BVFF: //h =[cp createBitVarFF];
                   //break;
-      default:    h =[cp createBitVarVSIDS:o];
+      default:    h =[cp createBitVarVSIDS];
                   break;
    }
    

@@ -75,19 +75,17 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 
 -(void)call 
 {
+   self->_used++;
 #if defined(__x86_64__)
    register struct Ctx64* ctx = &_target;
    ctx->rax = (long)self;
    restoreCtx(ctx,_start,_data,_length);
 #else
    _used++;
-   _longjmp(_target,(long)self); // dot not save signal mask --> overhead   
+   _longjmp(_target,(long)self); // dot not save signal mask --> overhead
 #endif
 }
-//<<<<<<< HEAD:Clo/ORFoundation/cont.m
-//=======
-//
-//>>>>>>> master:Clo/ORUtilities/cont.m
+
 -(void)callInvisible
 {
 #if defined(__x86_64__)
@@ -99,10 +97,7 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    _longjmp(_target,(long)self); // dot not save signal mask --> overhead
 #endif
 }
-//<<<<<<< HEAD:Clo/ORFoundation/cont.m
-//=======
-//
-//>>>>>>> master:Clo/ORUtilities/cont.m
+
 +(NSCont*)takeContinuation
 {
    NSCont* k = [NSCont new];

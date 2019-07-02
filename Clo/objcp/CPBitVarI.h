@@ -95,6 +95,7 @@
 -(ORBool) member:(ORUInt*)v;
 -(ORBool) getBit:(ORUInt) index;
 -(ORUInt) getLevelBitWasSet:(ORUInt)bit;
+-(ORULong) getPropBitWasSet:(ORUInt)bit;
 -(void) bit:(ORUInt)i setAtLevel:(ORUInt)l;
 -(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i;
 -(void) getState:(ORUInt*)state whenBitSet:(ORUInt)pos;

@@ -122,11 +122,12 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    ORBool               _learningOn;
    ORUInt*              _bitChanges;
    ORUInt*              _lvls;
+   ORUInt*              _props;
    CPCoreConstraint**   _constraints;
    TRUInt               _top;
    ORUInt               _cap;
    ORUInt               _wordLength;
-    ORFloat*              _vsids;
+   ORFloat*              _vsids;
 
 
    
@@ -152,14 +153,16 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       _cap = len;
       _bitChanges = malloc(sizeof(ORUInt)*_wordLength* _cap);
       _lvls = malloc(sizeof(ORUInt)*_cap);
+      _props = malloc(sizeof(ORUInt)*_wordLength);
       _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
       _top = makeTRUInt(_trail, 0);
-       _vsids = calloc(len, sizeof(ORFloat));
+      _vsids = calloc(len, sizeof(ORFloat));
 //      _scratch = malloc(sizeof(ORUInt*)*_wordLength);
 
     } else {
       _cap = 0;
       _lvls = nil;
+      _props = nil;
 //      _implications = nil;
    }
    _vc = CPVCBare;
@@ -448,6 +451,15 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       }
    return -1;
 }
+-(ORULong) getPropBitWasSet:(ORUInt)bit
+{
+   ORUInt mask = 0x1 << bit%BITSPERWORD;
+   for(int i=0;i<_top._val;i++)
+      if((_bitChanges[i*_wordLength+(bit/BITSPERWORD)] & mask) !=0){
+         return(_props[i]);
+      }
+   return 0;
+}
 -(void) bit:(ORUInt)i setAtLevel:(ORUInt)l
 {
    if (_learningOn){
@@ -457,6 +469,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
          _bitChanges[_top._val*_wordLength+j] = 0;
       _bitChanges[_top._val*_wordLength+(i/BITSPERWORD)] = 0x1 << (i%BITSPERWORD);
       _lvls[_top._val] = l;
+      _props[_top._val] = [_engine nbPropagation];
       _constraints[_top._val] = nil;
       assignTRUInt(&_top, _top._val+1,_trail);
    }
@@ -774,6 +787,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
                _bitChanges[_top._val*_wordLength+i] = changed[i];
             _constraints[_top._val]= constraint;
             _lvls[_top._val] = [(CPLearningEngineI*)_engine getLevel];
+            _props[_top._val] = [(CPLearningEngineI*)_engine nbPropagation];
             assignTRUInt(&_top, _top._val+1, _trail);
              //DEBUGGING ONLY
 //             if([(CPLearningEngineI*)_engine closed])
@@ -856,6 +870,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       _cap = len;
       _bitChanges = malloc(sizeof(ORUInt)*_wordLength* _cap);
       _lvls = malloc(sizeof(ORUInt)*_cap);
+      _props = malloc(sizeof(ORUInt)*_cap);
       _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
       _top = makeTRUInt(_trail, 0);
       _vsids = calloc(len, sizeof(ORFloat));
@@ -875,7 +890,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       
    } else {
       _lvls = nil;
-       _constraints = nil;
+      _props=nil;
+      _constraints = nil;
    }
    _recv = nil;
    return self;

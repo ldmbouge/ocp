@@ -348,10 +348,10 @@
    
 
    [cp solve:^{
-      
+      ORUInt timeLimit = 30000;
 //      [cp limitTime:60000 in: ^{
 //      [cp repeat:^{
-        [cp limitTime:30000 in: ^{
+        [cp limitTime:timeLimit in: ^{
 //                    NSLog(@"%@", [[cp engine] model]);
 //           for (id var in _declarations)
 //              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
@@ -374,6 +374,10 @@
           sat = true;
 //                           NSLog(@"%@", [[cp engine] model]);
       }];
+      
+      if(!sat && (searchFinish - searchStart < timeLimit))
+         NSLog(@"Search Failure");
+      
 //        }onRepeat:^{
 //            printf("Restarting...\n");
 //        }];

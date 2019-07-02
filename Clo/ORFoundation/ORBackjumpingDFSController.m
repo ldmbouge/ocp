@@ -133,6 +133,7 @@
             ofs = _sz-1;
             if (ofs >= 0) {
                 cp = _cpTab[ofs];
+//               status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
                 level = [cp level];
                 [cp letgo];
                 [_tab[ofs] letgo];

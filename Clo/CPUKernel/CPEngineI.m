@@ -547,6 +547,10 @@ ORStatus propagateFDM(CPEngineI* fdm)
          while (!done) {
             status = executeClosure(ClosureQueueDequeue(cQueue[p]),last);
             nbp += status !=ORSkip;
+            
+            //Added for testing of tracing bitvector antecedents
+            fdm->_nbpropag += status != ORSkip;
+
             if (ISLOADED(vcQueue))
                break;
             p = HIGHEST_PRIO;
@@ -561,7 +565,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       }
       if (fdm->_propagDone)
          [fdm->_propagDone notify];
-      fdm->_nbpropag += nbp;
+//      fdm->_nbpropag += nbp;
       --fdm->_propagating;
       assignTRInt(&fdm->_iStat, status, fdm->_trail);
    ONFAIL(status);

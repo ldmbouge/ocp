@@ -205,8 +205,8 @@
    [_m add:[ORFactory bit:digest[3] eq:digestVars[3]]];
    
    
-//   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
-    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
+//    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 //   id<ORBasicModel> model = [engine model];
@@ -227,8 +227,8 @@
       [o set:bitVars[k] at:k];
 
    id<CPBitVarHeuristic> h;
-//   h =[cp createBitVarFF];
-   h =[cp createBitVarVSIDS:o];
+   h =[cp createBitVarFF];
+//   h =[cp createBitVarVSIDS];
 //   h =[cp createDDeg];
 
    [cp solve: ^{
@@ -241,6 +241,7 @@
       //      NSLog(@"Message Blocks (With Data Recovered)");
       clock_t searchStart = clock();
       [cp labelBitVarHeuristic:h];
+//      [cp labelBitVarHeuristicVSIDS:h];
       clock_t searchFinish = clock();
       
       for(int j=0;j<16;j++){

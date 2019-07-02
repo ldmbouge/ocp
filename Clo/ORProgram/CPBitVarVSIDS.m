@@ -239,13 +239,13 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    ORDouble count;
 
 //   NSEnumerator *iter = [[_engine variables] objectEnumerator];
-//   CPBitVarI* x;
+   CPBitVarI* x;
 
 //   while((x = [iter nextObject]))
-   for(CPBitVarI* x in [_engine variables])
-//   for(ORInt k=low;k <= up;k++)
+//   for(CPBitVarI* x in [_engine variables])
+   for(ORInt k=low;k <= up;k++)
    {
-//      x=(CPBitVarI*)_cvs[k];
+      x=(CPBitVarI*)_cvs[k];
       if([x bound])
          continue;
       count=0.0;
@@ -355,7 +355,8 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
 //               lit = [[BitLiteral alloc] initBitLiteral:ants->antecedents[i] withCount: count];
               lit = [[BitLiteral alloc] initBitLiteral:a withCount: count];
                [_assignedLiterals addObject:lit];
-               [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key]];
+               [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key]];
+//               [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key]];
                [constraints dealloc];
             }
          }

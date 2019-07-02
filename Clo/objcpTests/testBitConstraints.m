@@ -2844,7 +2844,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [o set:gamma[cout.getId] at:9];
    
    id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
-   [cp solveAll: ^(){
+   [cp solve: ^(){
       @try {
          NSLog(@"After Posting:");
          NSLog(@"%lx x1 = %@\n", gamma[x1.getId], gamma[x1.getId]);
@@ -3004,7 +3004,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [m add:[ORFactory bit:x LT:y eval:r]];
    [m add:[ORFactory bit:y LT:z eval:r]];
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:m];
 
    id* gamma = [cp gamma];
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
@@ -3409,6 +3409,79 @@ char *int2bin(int a, char *buffer, int buf_size) {
    
 }
 
+-(void) testBitMultiply2
+{
+   NSLog(@"Begin Test bit multiply 2 constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   ORUInt min[2];
+   ORUInt min2[1];
+   ORUInt max[2];
+   ORUInt max2[1];
+   ORUInt one[2];
+   ORUInt zero[1];
+   
+   
+   min[0] = 0;
+   min[1] = 0;
+   
+   max[0] = 0xFFFFFFFF;
+   max[1] = 0xFFFFFFFF;
+   
+   min2[0] = 0xEAEAEAEA;
+   max2[0] = 0xAEAEAEAE;
+   one[0] = ONE;
+   one[1] = ONE;
+   zero[0] = ZERO;
+   
+   id<ORBitVar> x = [ORFactory bitVar:m low:max up:max bitLength:32];
+   id<ORBitVar> y = [ORFactory bitVar:m low:zero up:zero bitLength:32];
+   id<ORBitVar> z = [ORFactory bitVar:m low:min up:max bitLength:64];
+   
+   
+   
+   [m add:[ORFactory bit:x times:y eq:z]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:m];
+   
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[x.getId] at:0];
+   [o set:gamma[y.getId] at:1];
+   [o set:gamma[z.getId] at:2];
+   
+   id<CPBitVarHeuristic> h = [cp createBitVarFF];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", [cp stringValue:x]);
+   NSLog(@"y = %@\n", [cp stringValue:y]);
+   NSLog(@"z = %@\n", [cp stringValue:z]);
+   
+   
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", [cp stringValue:x]);
+         NSLog(@"y = %@\n", [cp stringValue:y]);
+         NSLog(@"z = %@\n", [cp stringValue:z]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", [cp stringValue:x]);
+         NSLog(@"y = %@\n", [cp stringValue:y]);
+         NSLog(@"z = %@\n", [cp stringValue:z]);
+         NSLog(@"%@", [cp engine]);
+         NSLog(@"Solver status: %@\n",cp);
+         //XCTAssertTrue([[x7 stringValue] isEqualToString:@"11111111111111111111111111111111"],@"testBitSUMConstraint: Bit Pattern for Cout is incorrect.");
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   
+   
+   NSLog(@"End Test of bit multiply 2 constraint.\n");
+   
+}
 
 
 
