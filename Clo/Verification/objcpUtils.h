@@ -14,9 +14,9 @@
 typedef enum {QF_LRA,QF_LIA,QF_RDL,QF_IDL,QF_BV,QF_FP,QF_UF,QF_BVFP} logic;
 typedef enum {OR_BOOL, OR_INT, OR_REAL, OR_BV, OR_FLOAT, OR_DOUBLE} objcp_var_type;
 
-static const char*  typeName[] = {"Bool","Int","Real","BitVec","FloatingPoint","Float32"};
-static objcp_var_type  typeObj[] = {OR_BOOL, OR_INT, OR_REAL, OR_BV, OR_FLOAT,OR_FLOAT};
-#define NB_TYPE 6
+static const char*  typeName[] = {"Bool","Int","Real","BitVec","FloatingPoint","Float32","Float64"};
+static objcp_var_type  typeObj[] = {OR_BOOL, OR_INT, OR_REAL, OR_BV, OR_FLOAT,OR_FLOAT,OR_DOUBLE};
+#define NB_TYPE 7
 
 static const char* logicString[] = {"QF_LRA","QF_LIA","QF_RDL","QF_IDL","QF_BV","QF_FP","QF_UF","QF_BVFP"};
 static logic logicObj[] = {QF_LRA,QF_LIA,QF_RDL,QF_IDL,QF_BV,QF_FP,QF_UF,QF_BVFP};

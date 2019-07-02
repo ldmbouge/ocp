@@ -65,6 +65,10 @@ static id<OBJCPGateway> objcpgw;
 {
    return _type;
 }
+-(void) setType:(objcp_var_type) t
+{
+   _type = t;
+}
 -(ORBool) isEqual:(ConstantWrapper*) v
 {
    return _type == v->_type && _value.int_nb == v->_value.int_nb;
@@ -1431,11 +1435,14 @@ static id<OBJCPGateway> objcpgw;
 }
 -(id<ORExpr>) objcp_mk_to_fp:(id<ORExpr>)x to:(objcp_var_type) t
 {
-   if([(id)x isKindOfClass:[ConstantWrapper class]])
+   if([(id)x isKindOfClass:[ConstantWrapper class]]){
+      if([(ConstantWrapper*)x type] == OR_BV){
+         [(ConstantWrapper*)x setType:t];
+         return (id<ORExpr>)[(ConstantWrapper*)x makeVariable];
+      }
       x = (id<ORExpr>)[(ConstantWrapper*)x makeVariable];
-   if(t == OR_DOUBLE){
+   }if(t == OR_DOUBLE)
       return [x toDouble];
-   }
    return [x toFloat];
 }
 @end

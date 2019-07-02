@@ -533,7 +533,7 @@ static smtlib2_sort smtlib2_objcp_parser_make_sort(smtlib2_parser_interface *p,
          smtlib2_sort ret = NULL;
          smtlib2_objcp_parametric_sort tmp = { (char *)sortname, NULL };
          ap->response_ = SMTLIB2_RESPONSE_SUCCESS;
-         if(strcmp(sortname, "Bool") == 0 || strcmp(sortname, "Float32") == 0){
+         if(strcmp(sortname, "Bool") == 0 || strcmp(sortname, "Float32") == 0 || strcmp(sortname, "Float64") == 0){
             objcp_type obj = NULL;
             objcp_var_type type = [OBJCPProxy sortName2Type:sortname];
             obj = [objcpgw objcp_mk_type:yp->ctx_ withType:type];
@@ -1339,9 +1339,12 @@ SMTLIB2_OBJCP_DECLHANDLER(fp)  {
 SMTLIB2_OBJCP_DECLHANDLER(to_fp)  {
    ORInt e = (ORInt)smtlib2_vector_at(idx, 0);
    ORInt m = (ORInt)smtlib2_vector_at(idx, 1);
+   objcp_expr expr = (objcp_expr) smtlib2_vector_at(args, 0);
+   if(smtlib2_vector_size(args) > 1)
+      expr = (objcp_expr) smtlib2_vector_at(args, 1);
    if(e == 11 && m == 53)
-      return [objcpgw objcp_mk_to_fp:(objcp_expr)smtlib2_vector_at(args, 1) to:OR_DOUBLE];
-   return [objcpgw objcp_mk_to_fp:(objcp_expr)smtlib2_vector_at(args, 1) to:OR_FLOAT];
+      return [objcpgw objcp_mk_to_fp:expr to:OR_DOUBLE];
+   return [objcpgw objcp_mk_to_fp:expr to:OR_FLOAT];
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(RNE)
