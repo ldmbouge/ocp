@@ -2307,6 +2307,7 @@ double_interval _yi;
    if (bound(_b)) {
       if (minDom(_b)){
          [_x updateInterval:-maxdenormal() and:maxdenormal()];
+         [self addConstraint:[CPFactory doubleNEqualc:_x to:0.0] engine:[_x engine]];
          assignTRInt(&_active, NO, _trail);
       }else{
          if([_x min] >= -maxdenormal()){
@@ -2320,6 +2321,7 @@ double_interval _yi;
       }
    }else{
       if([_x min] >= -maxdenormal() && [_x max] <= maxdenormal()){
+         [self addConstraint:[CPFactory doubleNEqualc:_x to:0.0] engine:[_x engine]];
          [_b bind:1];
          assignTRInt(&_active, NO, _trail);
       }else if([_x max] <= -minnormal() || [_x min] >= minnormal()){

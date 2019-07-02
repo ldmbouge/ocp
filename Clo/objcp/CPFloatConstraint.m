@@ -2348,6 +2348,7 @@
    if (bound(_b)) {
       if (minDom(_b)){
          [_x updateInterval:-maxdenormalf() and:maxdenormalf()];
+         [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
          assignTRInt(&_active, NO, _trail);
       }else{
          if([_x min] >= -maxdenormalf()){
@@ -2361,6 +2362,7 @@
       }
    }else{
       if([_x min] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
+         [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
          [_b bind:1];
          assignTRInt(&_active, NO, _trail);
       }else if([_x max] <= -minnormalf() || [_x min] >= minnormalf()){
