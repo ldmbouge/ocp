@@ -395,3 +395,53 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+@interface CPDoubleIsPositive : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isPositive:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsZero : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isZero:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsInfinite : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isInfinite:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsNormal : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isNormal:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsSubnormal : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isSubnormal:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end

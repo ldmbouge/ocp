@@ -68,14 +68,14 @@ double_interval _yi;
       intersectionIntervalD inter;
       double_interval yTmp = makeDoubleInterval(_yi.inf, _yi.sup);
       fpi_minusd(_precision,_rounding, &yTmp, &_xi);
-      inter = intersectionD(_y,_yi, yTmp, 0.0f);
+      inter = intersectionD(_y,_yi, yTmp, 0.0);
       if(inter.changed)
          [_y updateInterval:inter.result.inf and:inter.result.sup];
       
       updateDoubleInterval(&_yi,_y);
       double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
       fpi_minusd(_precision,_rounding, &xTmp, &_yi);
-      inter = intersectionD(_x,_xi, xTmp, 0.0f);
+      inter = intersectionD(_x,_xi, xTmp, 0.0);
       if(inter.changed)
          [_x updateInterval:inter.result.inf and:inter.result.sup];
    }
@@ -146,7 +146,7 @@ double_interval _yi;
       intersectionIntervalD inter;
       double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
       fpi_ftod(_precision, _rounding, &resTmp, &_initiali);
-      inter = intersectionD(_res, _resi, resTmp, 0.0f);
+      inter = intersectionD(_res, _resi, resTmp, 0.0);
       if(inter.changed)
          [_res updateInterval:inter.result.inf and:inter.result.sup];
       
@@ -710,14 +710,14 @@ double_interval _yi;
    intersectionIntervalD inter;
    double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
    fpi_xxd(_precision, _rounding, &resTmp, &_xi);
-   inter = intersectionD(_res, _resi, resTmp, 0.0f);
+   inter = intersectionD(_res, _resi, resTmp, 0.0);
    if(inter.changed)
       [_res updateInterval:inter.result.inf and:inter.result.sup];
    
    updateDoubleInterval(&_xi,_x);
    double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
    fpi_xxd_inv(_precision,_rounding, &xTmp, &_resi);
-   inter = intersectionD(_x, _xi, xTmp, 0.0f);
+   inter = intersectionD(_x, _xi, xTmp, 0.0);
    if(inter.changed)
       [_x updateInterval:inter.result.inf and:inter.result.sup];
 }
@@ -1976,14 +1976,14 @@ double_interval _yi;
       intersectionIntervalD inter;
       double_interval resTmp = makeDoubleInterval(_res.min, _res.max);
       fpi_fabsd(_precision, _rounding, &resTmp, &_xi);
-      inter = intersectionD(_res, _resi, resTmp, 0.0f);
+      inter = intersectionD(_res, _resi, resTmp, 0.0);
       if(inter.changed)
          [_res updateInterval:inter.result.inf and:inter.result.sup];
       
       updateDoubleInterval(&_xi,_x);
       double_interval xTmp = makeDoubleInterval(_x.min, _x.max);
       fpi_fabs_invd(_precision,_rounding, &xTmp, &_resi);
-      inter = intersectionD(_x, _xi, xTmp, 0.0f);
+      inter = intersectionD(_x, _xi, xTmp, 0.0);
       if(inter.changed)
          [_x updateInterval:inter.result.inf and:inter.result.sup];
    }
@@ -2036,14 +2036,14 @@ double_interval _yi;
    intersectionIntervalD inter;
    double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
    fpi_sqrtd(_precision,_rounding, &resTmp, &_xi);
-   inter = intersectionD(_res, _resi, resTmp, 0.0f);
+   inter = intersectionD(_res, _resi, resTmp, 0.0);
    if(inter.changed)
       [_res updateInterval:inter.result.inf and:inter.result.sup];
    
    updateDoubleInterval(&_xi,_x);
    double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
    fpi_sqrtd_inv(_precision,_rounding, &xTmp, &_resi);
-   inter = intersectionD(_x, _xi, xTmp, 0.0f);
+   inter = intersectionD(_x, _xi, xTmp, 0.0);
    if(inter.changed)
       [_x updateInterval:inter.result.inf and:inter.result.sup];
    if([_res bound] && [_x bound]){
@@ -2065,5 +2065,283 @@ double_interval _yi;
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == sqrt(%@)>",_res,_x];
+}
+@end
+
+@implementation CPDoubleIsPositive
+-(id) init:(CPDoubleVarI*) x isPositive:(CPIntVar*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b))
+         [_x updateMin:+0.0];
+      else
+         [_x updateMax:-0.0];
+   } else {
+      if (is_positive([_x min])) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if (is_negative([_x max])) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isPositive(%@)>",_b,_x];
+}
+@end
+
+@implementation CPDoubleIsZero
+-(id) init:(CPDoubleVarI*) x isZero:(CPIntVar*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b))
+         [_x updateInterval:-0.0 and:+0.0];
+      else
+         [self addConstraint:[CPFactory doubleNEqualc:_x to:0.0] engine:[_x engine]];
+   } else {
+      if ([_x min] == 0 && [_x max] == 0) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x min] > 0 && [_x max] < 0) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isZero(%@)>",_b,_x];
+}
+@end
+
+@implementation CPDoubleIsInfinite
+-(id) init:(CPDoubleVarI*) x isInfinite:(CPIntVar*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b)){
+         if([_x max] < +INFINITY) [_x bind:-INFINITY];
+         if([_x min] > -INFINITY) [_x bind:+INFINITY];
+      }else
+         [_x updateInterval:fp_next_double(-INFINITY) and:fp_previous_double(+INFINITY)];
+   } else {
+      if ([_x max] == -INFINITY || [_x min] == +INFINITY) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x min] > -INFINITY && [_x max] < +INFINITY) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isInfinite(%@)>",_b,_x];
+}
+@end
+
+@implementation CPDoubleIsNormal
+-(id) init:(CPDoubleVarI*)x isNormal:(CPIntVar*)b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)){
+         if([_x min] >= -maxdenormal()){
+            [_x updateMin:minnormal()];
+            assignTRInt(&_active, NO, _trail);
+         }
+         if([_x max] <= maxdenormal()){
+            [_x updateMax:-minnormal()];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }else{
+         [_x updateInterval:-maxdenormal() and:maxdenormal()];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }else{
+      if([_x min] >= -maxdenormal() && [_x max] <= maxdenormal()){
+         [_b bind:0];
+         assignTRInt(&_active, NO, _trail);
+      }else if([_x max] <= -minnormal() || [_x min] >= minnormal()){
+         [_b bind:1];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }
+}
+   
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isNormal(%@)>",_b,_x];
+}
+@end
+
+@implementation CPDoubleIsSubnormal
+-(id) init:(CPDoubleVarI*)x isSubnormal:(CPIntVar*)b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)){
+         [_x updateInterval:-maxdenormal() and:maxdenormal()];
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         if([_x min] >= -maxdenormal()){
+            [_x updateMin:minnormal()];
+            assignTRInt(&_active, NO, _trail);
+         }
+         if([_x max] <= maxdenormal()){
+            [_x updateMax:-minnormal()];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }
+   }else{
+      if([_x min] >= -maxdenormal() && [_x max] <= maxdenormal()){
+         [_b bind:1];
+         assignTRInt(&_active, NO, _trail);
+      }else if([_x max] <= -minnormal() || [_x min] >= minnormal()){
+         [_b bind:0];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isSubnormal(%@)>",_b,_x];
 }
 @end

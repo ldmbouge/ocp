@@ -2108,3 +2108,281 @@
    return [NSString stringWithFormat:@"<%@ == sqrt(%@)>",_res,_x];
 }
 @end
+
+@implementation CPFloatIsPositive
+-(id) init:(CPFloatVarI*) x isPositive:(CPIntVarI*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b))
+         [_x updateMin:+0.0f];
+      else
+         [_x updateMax:-0.0f];
+   } else {
+      if (is_positivef([_x min])) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if (is_negativef([_x max])) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isPositive(%@)>",_b,_x];
+}
+@end
+
+@implementation CPFloatIsZero
+-(id) init:(CPFloatVarI*) x isZero:(CPIntVarI*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b))
+         [_x updateInterval:-0.0f and:+0.0f];
+      else
+         [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
+   } else {
+      if ([_x min] == 0 && [_x max] == 0) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x min] > 0 && [_x max] < 0) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isZero(%@)>",_b,_x];
+}
+@end
+
+@implementation CPFloatIsInfinite
+-(id) init:(CPFloatVarI*) x isInfinite:(CPIntVarI*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b)){
+         if([_x max] < +INFINITY) [_x bind:-INFINITY];
+         if([_x min] > -INFINITY) [_x bind:+INFINITY];
+      }else
+         [_x updateInterval:fp_next_float(-INFINITY) and:fp_previous_float(+INFINITY)];
+   } else {
+      if ([_x max] == -INFINITY || [_x min] == +INFINITY) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x min] > -INFINITY && [_x max] < +INFINITY) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isInfinite(%@)>",_b,_x];
+}
+@end
+
+@implementation CPFloatIsNormal
+-(id) init:(CPFloatVarI*)x isNormal:(CPIntVarI*)b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)){
+         if([_x min] >= -maxdenormalf()){
+            [_x updateMin:minnormalf()];
+            assignTRInt(&_active, NO, _trail);
+         }
+         if([_x max] <= maxdenormalf()){
+            [_x updateMax:-minnormalf()];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }else{
+         [_x updateInterval:-maxdenormalf() and:maxdenormalf()];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }else{
+      if([_x min] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
+         [_b bind:0];
+         assignTRInt(&_active, NO, _trail);
+      }else if([_x max] <= -minnormalf() || [_x min] >= minnormalf()){
+         [_b bind:1];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }
+}
+
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isNormal(%@)>",_b,_x];
+}
+@end
+
+@implementation CPFloatIsSubnormal
+-(id) init:(CPFloatVarI*)x isSubnormal:(CPIntVarI*)b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)){
+         [_x updateInterval:-maxdenormalf() and:maxdenormalf()];
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         if([_x min] >= -maxdenormalf()){
+            [_x updateMin:minnormalf()];
+            assignTRInt(&_active, NO, _trail);
+         }
+         if([_x max] <= maxdenormalf()){
+            [_x updateMax:-minnormalf()];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }
+   }else{
+      if([_x min] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
+         [_b bind:1];
+         assignTRInt(&_active, NO, _trail);
+      }else if([_x max] <= -minnormalf() || [_x min] >= minnormalf()){
+         [_b bind:0];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isSubnormal(%@)>",_b,_x];
+}
+@end
