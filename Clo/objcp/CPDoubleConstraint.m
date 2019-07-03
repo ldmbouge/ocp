@@ -2245,14 +2245,21 @@ double_interval _yi;
 {
    if (bound(_b)) {
       if (minDom(_b)){
+         if([_x bound] && is_infinity([_x min]))
+            failNow();
+         
          if([_x min] >= -maxdenormal()){
             [_x updateMin:minnormal()];
             assignTRInt(&_active, NO, _trail);
-         }
+         }else if(is_infinity([_x min]))
+            [_x updateMin:fp_next_double(-infinity())];
+      
          if([_x max] <= maxdenormal()){
             [_x updateMax:-minnormal()];
             assignTRInt(&_active, NO, _trail);
-         }
+         }else if(is_infinity([_x max]))
+            [_x updateMax:fp_previous_double(infinity())];
+         
       }else{
          [_x updateInterval:-maxdenormal() and:maxdenormal()];
          assignTRInt(&_active, NO, _trail);
@@ -2261,7 +2268,7 @@ double_interval _yi;
       if([_x min] >= -maxdenormal() && [_x max] <= maxdenormal()){
          [_b bind:0];
          assignTRInt(&_active, NO, _trail);
-      }else if([_x max] <= -minnormal() || [_x min] >= minnormal()){
+      }else if(([_x max] <= -minnormal() || [_x min] >= minnormal()) && !is_infinity([_x max]) && !is_infinity([_x min])){
          [_b bind:1];
          assignTRInt(&_active, NO, _trail);
       }

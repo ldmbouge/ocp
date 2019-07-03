@@ -2286,14 +2286,21 @@
 {
    if (bound(_b)) {
       if (minDom(_b)){
+         if([_x bound] && is_infinityf([_x min]))
+            failNow();
+         
          if([_x min] >= -maxdenormalf()){
             [_x updateMin:minnormalf()];
             assignTRInt(&_active, NO, _trail);
-         }
+         }else if(is_infinityf([_x min]))
+            [_x updateMin:fp_next_float(-infinityf())];
+         
          if([_x max] <= maxdenormalf()){
             [_x updateMax:-minnormalf()];
             assignTRInt(&_active, NO, _trail);
-         }
+         }else if(is_infinityf([_x max]))
+            [_x updateMax:fp_previous_float(infinityf())];
+         
       }else{
          [_x updateInterval:-maxdenormalf() and:maxdenormalf()];
          assignTRInt(&_active, NO, _trail);
@@ -2302,7 +2309,7 @@
       if([_x min] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
          [_b bind:0];
          assignTRInt(&_active, NO, _trail);
-      }else if([_x max] <= -minnormalf() || [_x min] >= minnormalf()){
+      }else if(([_x max] <= -minnormalf() || [_x min] >= minnormalf()) && !is_infinityf([_x max]) && !is_infinityf([_x min])){
          [_b bind:1];
          assignTRInt(&_active, NO, _trail);
       }

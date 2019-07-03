@@ -196,6 +196,12 @@
    [_toadd addObject:[res eq:[x eq:y]]];
    return res;
 }
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x assignTo:(id<ORExpr>)y
+{
+   id<ORExpr> res = [ORFactory boolVar:_model];
+   [_toadd addObject:[res eq:[x set:y]]];
+   return res;
+}
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x lt:(id<ORExpr>)y
 {
    id<ORExpr> res = [ORFactory boolVar:_model];

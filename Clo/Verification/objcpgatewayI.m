@@ -1370,6 +1370,10 @@ static id<OBJCPGateway> objcpgw;
 {
    return [x eq:y];
 }
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x assignTo:(id<ORExpr>)y
+{
+   return [x set:y];
+}
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x lt:(id<ORExpr>)y
 {
    return [x lt:y];

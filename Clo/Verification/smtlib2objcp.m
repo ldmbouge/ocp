@@ -357,6 +357,14 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
                          (intptr_t)smtlib2_objcp_parametric_sort_new("FloatingPoint", smtlib2_vector_new()),
                          (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withType:OR_FLOAT]);
    
+   smtlib2_hashtable_set(ret->sorts_,
+                         (intptr_t)smtlib2_objcp_parametric_sort_new("Float32", smtlib2_vector_new()),
+                         (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withType:OR_FLOAT]);
+   
+   smtlib2_hashtable_set(ret->sorts_,
+                         (intptr_t)smtlib2_objcp_parametric_sort_new("Float64", smtlib2_vector_new()),
+                         (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withType:OR_DOUBLE]);
+   
    return ret;
 }
 

@@ -140,6 +140,7 @@ typedef int assertion_id;
 @protocol OBJCPFloatGateway
 -(id<ORExpr>) objcp_mk_to_fp:(id<ORExpr>)var to:(objcp_var_type) t;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x eq:(id<ORExpr>)y;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x assignTo:(id<ORExpr>)y;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x lt:(id<ORExpr>)y;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x gt:(id<ORExpr>)y;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx x:(id<ORExpr>)x leq:(id<ORExpr>)y;

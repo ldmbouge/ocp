@@ -1383,7 +1383,7 @@
 }
 -(void)visit:(ORVisitor *)visitor
 {
-   [visitor visitDoubleIsZero:self];
+   [visitor visitFloatIsZero:self];
 }
 -(id<ORVar>) b
 {
@@ -1408,7 +1408,7 @@
 }
 -(void)visit:(ORVisitor *)visitor
 {
-   [visitor visitDoubleIsPositive:self];
+   [visitor visitFloatIsPositive:self];
 }
 -(id<ORVar>) b
 {

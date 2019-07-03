@@ -75,6 +75,13 @@
       [[c right] visit:self];
    }
 }
+-(void) visitExprAssignI:(ORExprBinaryI*) c
+{
+   if([self count:c] < 2){
+      [[c left] visit:self];
+      [[c right] visit:self];
+   }
+}
 -(void) visitExprEqualI: (ORExprBinaryI*) c
 {
    if([self count:c] < 2){
@@ -487,6 +494,15 @@
       _rv = [self simplify:c with:[nL sub:nR]];
    }else _rv = alpha;
 }
+-(void) visitExprAssignI: (ORExprBinaryI*) c
+{
+   id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
+   if(alpha == nil){
+      id<ORExpr> nL = [self doIt:c.left];
+      id<ORExpr> nR = [self doIt:c.right];
+      _rv = [self simplify:c with:[nL eq:nR]];
+   }else _rv = alpha;
+}
 -(void) visitExprEqualI: (ORExprBinaryI*) c
 {
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
@@ -700,6 +716,18 @@
       [self doIt:e with:r or:l negate:[l lt:r]];
    }
 }
+-(void) visitExprAssignI:(ORExprBinaryI*)e
+{
+   id<ORExpr> l = [e left];
+   id<ORExpr> r = [e right];
+   if([r isVariable] && [l isVariable] && !(isNegate%2)){
+      [self doIt:e with:l];
+      [self doIt:e with:r];
+   }else{
+      [l visit:self];
+      [r visit:self];
+   }
+}
 -(void) visitExprEqualI:(ORExprBinaryI*)e
 {
    id<ORExpr> l = [e left];
@@ -866,6 +894,10 @@
 {
    [[c left] visit:self];
    [[c right] visit:self];
+}
+-(void) visitExprAssignI:(ORExprBinaryI*)e
+{
+   [self doIt:e];
 }
 -(void) visitExprEqualI:(ORExprBinaryI*)e
 {
