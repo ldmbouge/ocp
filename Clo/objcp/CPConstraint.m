@@ -1104,8 +1104,37 @@
    [[res tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) floatIsZero: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPFloatIsZero alloc] init:x isZero:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatIsPositive: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPFloatIsPositive alloc] init:x isPositive:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatIsInfinite: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPFloatIsInfinite alloc] init:x isInfinite:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatIsNormal: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPFloatIsNormal alloc] init:x isNormal:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatIsSubnormal: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPFloatIsSubnormal alloc] init:x isSubnormal:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 @end
-
 
 @implementation CPFactory (ORDouble)
 +(id<CPConstraint>) doubleSquare:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y
@@ -1495,6 +1524,37 @@
    [[x tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>)  doubleIsZero: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPDoubleIsZero alloc] init:x isZero:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleIsPositive: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPDoubleIsPositive alloc] init:x isPositive:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleIsInfinite: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPDoubleIsInfinite alloc] init:x isInfinite:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleIsNormal: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPDoubleIsNormal alloc] init:x isNormal:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) doubleIsSubnormal: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes
+{
+   id<CPConstraint> o = [[CPDoubleIsSubnormal alloc] init:x isSubnormal:b];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
 @end
 
 @implementation CPFactory (ORIntSet)

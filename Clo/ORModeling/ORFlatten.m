@@ -702,6 +702,46 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitFloatIsNormal: (id<ORIsNormal>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatIsZero: (id<ORIsZero>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatIsPositive:(id<ORIsPositive>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatIsInfinite:(id<ORIsInfinite>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatIsSubnormal:(id<ORIsSubnormal>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleIsSubnormal:(id<ORIsSubnormal>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleIsInfinite:(id<ORIsInfinite>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleIsPositive:(id<ORIsPositive>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleIsZero: (id<ORIsZero>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleIsNormal: (id<ORIsNormal>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitDoubleReifyEqualc: (id<ORDoubleReifyEqualc>)c
 {
    _result = [_into addConstraint:c];

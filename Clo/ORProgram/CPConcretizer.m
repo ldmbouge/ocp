@@ -1505,6 +1505,107 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitFloatIsZero:(id<ORIsZero>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPFloatVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory floatIsZero:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatIsPositive:(id<ORIsPositive>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPFloatVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory floatIsPositive:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatIsInfinite:(id<ORIsInfinite>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPFloatVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory floatIsInfinite:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatIsNormal:(id<ORIsNormal>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPFloatVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory floatIsNormal:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+-(void) visitFloatIsSubnormal:(id<ORIsSubnormal>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPFloatVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory floatIsSubnormal:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+
+-(void) visitDoubleIsZero:(id<ORIsZero>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPDoubleVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleIsZero:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleIsPositive:(id<ORIsPositive>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPDoubleVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleIsPositive:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleIsInfinite:(id<ORIsInfinite>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPDoubleVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleIsInfinite:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleIsNormal:(id<ORIsNormal>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPDoubleVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleIsNormal:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
+-(void) visitDoubleIsSubnormal:(id<ORIsSubnormal>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[c b]];
+      id<CPDoubleVar> x = [self concreteVar:[c x]];
+      id<CPConstraint> concreteCstr = [CPFactory doubleIsSubnormal:x when:b annotation:_notes];
+      [_engine add: concreteCstr];
+      _gamma[c.getId] = concreteCstr;
+   }
+}
 -(void) visitDoubleCast: (id<ORCast>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

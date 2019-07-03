@@ -151,6 +151,11 @@ typedef int assertion_id;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx neg:(id<ORExpr>)x;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx abs:(id<ORExpr>)x;
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx sqrt:(id<ORExpr>)x;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isZero:(id<ORExpr>)x;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isPositive:(id<ORExpr>)x;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isInfinite:(id<ORExpr>)x;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isNormal:(id<ORExpr>)x;
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isSubnormal:(id<ORExpr>)x;
 -(ConstantWrapper*) objcp_mk_fp_constant:(objcp_expr)ctx s:(ConstantWrapper*)s e:(ConstantWrapper*)e m:(ConstantWrapper*)m;
 @end
 

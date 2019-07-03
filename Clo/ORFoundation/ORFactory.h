@@ -245,6 +245,11 @@ PORTABLE_BEGIN
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsZero: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsPositive: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsInfinite: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsNormal: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsSubnormal: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprToFloat: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprToDouble: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t;
@@ -369,6 +374,11 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) floatEqual:(id<ORTracker>)model  var: (id<ORVar>) x to: (id<ORVar>) y;
 +(id<ORConstraint>) floatAbs:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
 +(id<ORConstraint>) floatSqrt:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsZero:(id<ORTracker>)model      boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsPositive:(id<ORTracker>)model  boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsInfinite:(id<ORTracker>)model  boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsNormal:(id<ORTracker>)model    boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsSubnormal:(id<ORTracker>)model boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
 +(id<ORConstraint>) floatUnaryMinus:(id<ORTracker>)model  var: (id<ORFloatVar>)x eqm:(id<ORFloatVar>)y;
 +(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var: (id<ORFloatVar>)x to:(ORFloat)c;
 +(id<ORConstraint>) floatAssign: (id<ORTracker>) model var: (id<ORFloatVar>)x to: (id<ORFloatVar>)y;
@@ -409,6 +419,11 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) doubleEqual:(id<ORTracker>)model  var: (id<ORVar>) x to: (id<ORVar>) y;
 +(id<ORConstraint>) doubleAbs:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleSqrt:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsZero:(id<ORTracker>)model      boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsPositive:(id<ORTracker>)model  boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsInfinite:(id<ORTracker>)model  boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsNormal:(id<ORTracker>)model    boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsSubnormal:(id<ORTracker>)model boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var;
 +(id<ORConstraint>) doubleUnaryMinus:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eqm:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleEqualc: (id<ORTracker>) model var: (id<ORDoubleVar>)x eqc:(ORDouble)c;

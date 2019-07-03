@@ -168,6 +168,12 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_neg);
 SMTLIB2_OBJCP_DECLHANDLER(fp_abs);
 SMTLIB2_OBJCP_DECLHANDLER(fp_sqrt);
 
+SMTLIB2_OBJCP_DECLHANDLER(isZero);
+SMTLIB2_OBJCP_DECLHANDLER(isPositive);
+SMTLIB2_OBJCP_DECLHANDLER(isInfinite);
+SMTLIB2_OBJCP_DECLHANDLER(isNormal);
+SMTLIB2_OBJCP_DECLHANDLER(isSubnormal);
+
 #define SMTLIB2_OBJCP_SETHANDLER(tp, s, name) \
 smtlib2_term_parser_set_handler(tp, s, smtlib2_objcp_parser_mk_ ## name)
 
@@ -327,6 +333,12 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.mul", fp_mul);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.abs", fp_abs);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.sqrt", fp_sqrt);
+   
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isZero", isZero);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isPositive", isPositive);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isInfinite", isInfinite);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isNormal", isNormal);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isSubnormal", isSubnormal);
    
    /* the built-in sorts */
    smtlib2_hashtable_set(ret->sorts_,
@@ -1437,6 +1449,30 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_mul)
    return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 1) mul:(objcp_expr)smtlib2_vector_at(args, 2)];
 }
 
+SMTLIB2_OBJCP_DECLHANDLER(isZero)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isZero:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(isPositive)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isPositive:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(isInfinite)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isInfinite:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(isNormal)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isNormal:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(isSubnormal)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isSubnormal:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
 /*----------------------------------------------------------------------------*/
 
 static smtlib2_objcp_parametric_sort *smtlib2_objcp_parametric_sort_new(

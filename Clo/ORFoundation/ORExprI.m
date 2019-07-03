@@ -726,6 +726,26 @@
 {
    return ORTNA;
 }
+-(id<ORExpr>) isZero
+{
+   return [ORFactory exprIsZero:self track:[self tracker]];
+}
+-(id<ORExpr>) isPositive
+{
+   return [ORFactory exprIsPositive:self track:[self tracker]];
+}
+-(id<ORExpr>) isInfinite
+{
+   return [ORFactory exprIsInfinite:self track:[self tracker]];
+}
+-(id<ORExpr>) isNormal
+{
+   return [ORFactory exprIsNormal:self track:[self tracker]];
+}
+-(id<ORExpr>) isSubnormal
+{
+   return [ORFactory exprIsSubnormal:self track:[self tracker]];
+}
 -(id<ORExpr>) sqrt
 {
    return [ORFactory exprSqrt:self track:[self tracker]];
@@ -2033,6 +2053,348 @@
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"sqrt(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprIsZeroI
+-(id<ORExpr>) initORExprIsZeroI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsZeroI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isZero(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprIsPositiveI
+-(id<ORExpr>) initORExprIsPositiveI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsPositiveI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isPositive(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+@implementation ORExprIsInfiniteI
+-(id<ORExpr>) initORExprIsInfiniteI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsInfiniteI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isInfinite(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+@implementation ORExprIsNormalI
+-(id<ORExpr>) initORExprIsNormalI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsNormalI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isNormal(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+@implementation ORExprIsSubnormalI
+-(id<ORExpr>) initORExprIsSubnormalI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsSubnormalI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isSubnormal(%@)",[_op description]];
    return rv;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder

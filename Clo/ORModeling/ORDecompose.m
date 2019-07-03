@@ -876,6 +876,31 @@ struct CPVarPair {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprIsSubnormalI:(ORExprIsSubnormalI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprIsNormalI:(ORExprIsNormalI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprIsZeroI:(ORExprIsZeroI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprIsPositiveI:(ORExprIsPositiveI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprIsInfiniteI:(ORExprIsInfiniteI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
 @end
 
 // ========================================================================================================================
@@ -1382,6 +1407,81 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitExprAggMaxI: (ORExprAggMaxI*) e
 {
    [[e expr] visit:self];
+}
+-(void) visitExprIsSubnormalI:(ORExprIsSubnormalI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsSubnormal:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsSubnormal:_model boolean:_rv eq:v]];
+   }
+}
+-(void) visitExprIsNormalI:(ORExprIsNormalI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsNormal:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsNormal:_model boolean:_rv eq:v]];
+   }
+}
+-(void) visitExprIsZeroI:(ORExprIsZeroI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsZero:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsZero:_model boolean:_rv eq:v]];
+   }
+}
+-(void) visitExprIsPositiveI:(ORExprIsPositiveI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsPositive:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsPositive:_model boolean:_rv eq:v]];
+   }
+}
+-(void) visitExprIsInfiniteI:(ORExprIsInfiniteI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsInfinite:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsInfinite:_model boolean:_rv eq:v]];
+   }
 }
 @end
 

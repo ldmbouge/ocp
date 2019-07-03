@@ -598,6 +598,31 @@ enum ORGroupType {
 -(id<ORFloatVar>) x;
 -(ORFloat)        cst;
 @end
+
+@protocol ORIsZero <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
+
+@protocol ORIsPositive <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
+
+@protocol ORIsInfinite <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
+
+@protocol ORIsNormal <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
+
+@protocol ORIsSubnormal <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
 //-----------
 @protocol ORDoubleReifyEqualc <ORReify>
 -(id<ORIntVar>) b;

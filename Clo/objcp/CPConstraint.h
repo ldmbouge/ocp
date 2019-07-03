@@ -152,6 +152,11 @@
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x lti: (ORFloat) i;
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x gti: (ORFloat) i;
 +(id<CPConstraint>) floatCast: (id<CPFloatVar>) res eq:(id<CPDoubleVar>) initial annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) floatIsZero: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) floatIsPositive: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) floatIsInfinite: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) floatIsNormal: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) floatIsSubnormal: (id<CPFloatVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
 @end
 
 @interface CPFactory (ORDouble)
@@ -192,6 +197,11 @@
 +(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x geqi: (ORDouble) i;
 +(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x lti: (ORDouble) i;
 +(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x gti: (ORDouble) i;
++(id<CPConstraint>)  doubleIsZero: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) doubleIsPositive: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) doubleIsInfinite: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) doubleIsNormal: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
++(id<CPConstraint>) doubleIsSubnormal: (id<CPDoubleVar>) x when:(id<CPIntVar>)b annotation:(id<ORAnnotation>)  notes;
 @end
 
 @interface CPFactory (ORIntSet)

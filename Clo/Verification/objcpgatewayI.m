@@ -1394,6 +1394,26 @@ static id<OBJCPGateway> objcpgw;
 {
    return [x sqrt];
 }
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isZero:(id<ORExpr>)x
+{
+   return [x isZero];
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isPositive:(id<ORExpr>)x
+{
+   return [x isPositive];
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isNormal:(id<ORExpr>)x
+{
+   return [x isNormal];
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isSubnormal:(id<ORExpr>)x
+{
+   return [x isSubnormal];
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isInfinite:(id<ORExpr>)x
+{
+   return [x isInfinite];
+}
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx abs:(id<ORExpr>)x
 {
    return [x abs];

@@ -1210,6 +1210,31 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORExpr> o = [[ORExprSqrtI alloc] initORExprSqrtI:op];
    return [self validate:o onError:"No CP tracker in sqrt Expression" track:t];
 }
++(id<ORExpr>) exprIsZero: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsZeroI alloc] initORExprIsZeroI:op];
+   return [self validate:o onError:"No CP tracker in iszero Expression" track:t];
+}
++(id<ORExpr>) exprIsPositive: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsPositiveI alloc] initORExprIsPositiveI:op];
+   return [self validate:o onError:"No CP tracker in isPositive Expression" track:t];
+}
++(id<ORExpr>) exprIsInfinite: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsInfiniteI alloc] initORExprIsInfiniteI:op];
+   return [self validate:o onError:"No CP tracker in isInfinite Expression" track:t];
+}
++(id<ORExpr>) exprIsNormal: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsNormalI alloc] initORExprIsNormalI:op];
+   return [self validate:o onError:"No CP tracker in isNormal Expression" track:t];
+}
++(id<ORExpr>) exprIsSubnormal: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsSubnormalI alloc] initORExprIsSubnormalI:op];
+   return [self validate:o onError:"No CP tracker in isSubnormal Expression" track:t];
+}
 +(id<ORExpr>) exprToFloat: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprToFloatI alloc] initORExprToFloatI:op];
@@ -1950,6 +1975,36 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) floatIsZero:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsZero alloc] init:x isZero:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatIsPositive:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsPositive alloc] init:x isPositive:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatIsInfinite:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsInfinite alloc] init:x isInfinite:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatIsNormal:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsNormal alloc] init:x isNormal:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatIsSubnormal:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsSubnormal alloc] init:x isSubnormal:b];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) floatAbs:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y
 {
    id<ORConstraint> o = [[ORFloatAbs alloc] initORAbs:x eqAbs:y];
@@ -2085,6 +2140,36 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) doubleSqrt:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y
 {
    id<ORConstraint> o = [[ORDoubleSqrt alloc] initORSqrt:x eqSqrt:y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsZero:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsZero alloc] init:x isZero:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsPositive:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsPositive alloc] init:x isPositive:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsInfinite:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsInfinite alloc] init:x isInfinite:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsNormal:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsNormal alloc] init:x isNormal:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsSubnormal:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsSubnormal alloc] init:x isSubnormal:b];
    [model trackObject:o];
    return o;
 }

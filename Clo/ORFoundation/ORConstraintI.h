@@ -585,6 +585,66 @@
 -(id<ORVar>) right;
 @end
 
+@interface ORFloatIsZero : ORConstraintI <ORIsZero>
+-(ORFloatIsZero*) init:(id<ORVar>) x isZero:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORFloatIsPositive : ORConstraintI <ORIsPositive>
+-(ORFloatIsPositive*) init:(id<ORVar>) x isPositive:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORFloatIsInfinite : ORConstraintI <ORIsInfinite>
+-(ORFloatIsInfinite*) init:(id<ORVar>) x isInfinite:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORFloatIsNormal : ORConstraintI <ORIsNormal>
+-(ORFloatIsNormal*) init:(id<ORVar>) x isNormal:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORFloatIsSubnormal : ORConstraintI <ORIsSubnormal>
+-(ORFloatIsSubnormal*) init:(id<ORVar>) x isSubnormal:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsZero : ORConstraintI <ORIsZero>
+-(ORDoubleIsZero*) init:(id<ORVar>) x isZero:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsPositive : ORConstraintI <ORIsPositive>
+-(ORDoubleIsPositive*) init:(id<ORVar>) x isPositive:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsInfinite : ORConstraintI<ORIsInfinite>
+-(ORDoubleIsInfinite*) init:(id<ORVar>) x isInfinite:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsNormal : ORConstraintI<ORIsNormal>
+-(ORDoubleIsNormal*) init:(id<ORVar>) x isNormal:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsSubnormal : ORConstraintI <ORIsSubnormal>
+-(ORDoubleIsSubnormal*) init:(id<ORVar>) x isSubnormal:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
 @interface ORDoubleCast : ORConstraintI<ORCast>
 -(ORDoubleCast*)init:(id<ORVar>)x eq:(id<ORVar>)y;
 -(id<ORVar>) res;

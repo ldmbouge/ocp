@@ -1370,6 +1370,257 @@
 }
 @end
 
+@implementation ORFloatIsZero{
+   id<ORIntVar>     _b;
+   id<ORFloatVar>  _x;
+}
+-(ORFloatIsZero*) init:(id<ORFloatVar>) x isZero:(id<ORIntVar>) b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleIsZero:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+@implementation ORFloatIsPositive{
+   id<ORIntVar>     _b;
+   id<ORFloatVar>  _x;
+}
+-(ORFloatIsPositive*) init:(id<ORFloatVar>) x isPositive:(id<ORIntVar>) b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleIsPositive:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+@implementation ORFloatIsInfinite{
+   id<ORIntVar>     _b;
+   id<ORFloatVar>  _x;
+}
+-(ORFloatIsInfinite*) init:(id<ORFloatVar>) x isInfinite:(id<ORIntVar>)b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitFloatIsInfinite:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+@implementation ORFloatIsNormal{
+   id<ORIntVar>     _b;
+   id<ORFloatVar>  _x;
+}
+-(ORFloatIsNormal*) init:(id<ORFloatVar>) x isNormal:(id<ORIntVar>) b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitFloatIsNormal:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+@implementation ORFloatIsSubnormal{
+   id<ORIntVar>     _b;
+   id<ORFloatVar>  _x;
+}
+-(ORFloatIsSubnormal*) init:(id<ORFloatVar>) x isSubnormal:(id<ORIntVar>)b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitFloatIsSubnormal:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+
+@implementation ORDoubleIsZero{
+   id<ORIntVar>     _b;
+   id<ORDoubleVar>  _x;
+}
+-(ORDoubleIsZero*) init:(id<ORDoubleVar>) x isZero:(id<ORIntVar>) b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleIsZero:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+@implementation ORDoubleIsPositive{
+   id<ORIntVar>     _b;
+   id<ORDoubleVar>  _x;
+}
+-(ORDoubleIsPositive*) init:(id<ORDoubleVar>) x isPositive:(id<ORIntVar>) b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleIsPositive:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+@implementation ORDoubleIsInfinite{
+   id<ORIntVar>     _b;
+   id<ORDoubleVar>  _x;
+}
+-(ORDoubleIsInfinite*) init:(id<ORDoubleVar>) x isInfinite:(id<ORIntVar>)b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleIsInfinite:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+@implementation ORDoubleIsNormal{
+   id<ORIntVar>     _b;
+   id<ORDoubleVar>  _x;
+}
+-(ORDoubleIsNormal*) init:(id<ORDoubleVar>) x isNormal:(id<ORIntVar>) b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleIsNormal:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
+@implementation ORDoubleIsSubnormal{
+   id<ORIntVar>     _b;
+   id<ORDoubleVar>  _x;
+}
+-(ORDoubleIsSubnormal*) init:(id<ORDoubleVar>) x isSubnormal:(id<ORIntVar>)b
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void)visit:(ORVisitor *)visitor
+{
+   [visitor visitDoubleIsSubnormal:self];
+}
+-(id<ORVar>) b
+{
+   return _b;
+}
+-(id<ORVar>) x
+{
+   return _x;
+}
+@end
+
 @implementation ORDoubleSqrt
 -(ORSqrt*)initORSqrt:(id<ORVar>)x eqSqrt:(id<ORVar>)y
 {

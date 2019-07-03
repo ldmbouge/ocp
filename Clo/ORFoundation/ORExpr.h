@@ -129,6 +129,11 @@ static ORVType lookup_expr_table[][9] = {
 -(ORBool) isConstant;
 -(ORBool) isVariable;
 -(id<ORExpr>) sqrt;
+-(id<ORExpr>) isZero;
+-(id<ORExpr>) isPositive;
+-(id<ORExpr>) isInfinite;
+-(id<ORExpr>) isNormal;
+-(id<ORExpr>) isSubnormal;
 -(id<ORExpr>) abs;
 -(id<ORExpr>) square;
 -(id<ORExpr>) minus;

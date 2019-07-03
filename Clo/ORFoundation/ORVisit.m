@@ -577,6 +577,46 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatReifyGThenc: visit method not defined"];
 }
+-(void) visitFloatIsNormal: (id<ORIsNormal>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsNormal: visit method not defined"];
+}
+-(void) visitFloatIsZero: (id<ORIsZero>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsZero: visit method not defined"];
+}
+-(void) visitFloatIsPositive:(id<ORIsPositive>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsPositive: visit method not defined"];
+}
+-(void) visitFloatIsInfinite:(id<ORIsInfinite>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsInfinite: visit method not defined"];
+}
+-(void) visitFloatIsSubnormal:(id<ORIsSubnormal>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsSubnormal: visit method not defined"];
+}
+-(void) visitDoubleIsSubnormal:(id<ORIsSubnormal>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsSubnormal: visit method not defined"];
+}
+-(void) visitDoubleIsInfinite:(id<ORIsInfinite>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsInfinite: visit method not defined"];
+}
+-(void) visitDoubleIsPositive:(id<ORIsPositive>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsPositive: visit method not defined"];
+}
+-(void) visitDoubleIsZero: (id<ORIsZero>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsZero: visit method not defined"];
+}
+-(void) visitDoubleIsNormal: (id<ORIsNormal>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORIsNormal: visit method not defined"];
+}
 -(void) visitDoubleAbs: (id<ORAbs>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Abs: visit method not defined"];
@@ -1112,6 +1152,27 @@
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMatrixVarSubI: visit method not defined"];    
+}
+
+-(void) visitExprIsZeroI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprIsZeroI: visit method not defined"];
+}
+-(void) visitExprIsPositiveI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprIsPositiveI: visit method not defined"];
+}
+-(void) visitExprIsInfiniteI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprIsInfinite: visit method not defined"];
+}
+-(void) visitExprIsNormalI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprIsNormalI: visit method not defined"];
+}
+-(void) visitExprIsSubnormalI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprIsSubnormalI: visit method not defined"];
 }
 @end
 

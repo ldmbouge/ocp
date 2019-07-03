@@ -242,6 +242,36 @@
    [_toadd addObject:[res eq:[x sqrt]]];
    return res;
 }
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isZero:(id<ORExpr>)x
+{
+   id<ORExpr> res = [ORFactory boolVar:_model];
+   [_toadd addObject:[res eq:[x isZero]]];
+   return res;
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isPositive:(id<ORExpr>)x
+{
+   id<ORExpr> res = [ORFactory boolVar:_model];
+   [_toadd addObject:[res eq:[x isPositive]]];
+   return res;
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isNormal:(id<ORExpr>)x
+{
+   id<ORExpr> res = [ORFactory boolVar:_model];
+   [_toadd addObject:[res eq:[x isNormal]]];
+   return res;
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isSubnormal:(id<ORExpr>)x
+{
+   id<ORExpr> res = [ORFactory boolVar:_model];
+   [_toadd addObject:[res eq:[x isSubnormal]]];
+   return res;
+}
+-(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx isInfinite:(id<ORExpr>)x
+{
+   id<ORExpr> res = [ORFactory boolVar:_model];
+   [_toadd addObject:[res eq:[x isInfinite]]];
+   return res;
+}
 -(id<ORExpr>) objcp_mk_fp:(objcp_expr)ctx abs:(id<ORExpr>)x
 {
    id<ORExpr> res;

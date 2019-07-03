@@ -340,6 +340,76 @@
 -(void)visit:(ORVisitor*)v;
 @end
 
+@interface ORExprIsZeroI : ORExprI<ORExpr,NSCoding>{
+   ORExprI* _op;
+   id<ORTracker> _tracker;
+}
+-(id<ORExpr>)initORExprIsZeroI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface ORExprIsNormalI : ORExprI<ORExpr,NSCoding>{
+   ORExprI* _op;
+   id<ORTracker> _tracker;
+}
+-(id<ORExpr>)initORExprIsNormalI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface ORExprIsPositiveI : ORExprI<ORExpr,NSCoding>{
+   ORExprI* _op;
+   id<ORTracker> _tracker;
+}
+-(id<ORExpr>)initORExprIsPositiveI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface ORExprIsInfiniteI : ORExprI<ORExpr,NSCoding>{
+   ORExprI* _op;
+   id<ORTracker> _tracker;
+}
+-(id<ORExpr>)initORExprIsInfiniteI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface ORExprIsSubnormalI : ORExprI<ORExpr,NSCoding>{
+   ORExprI* _op;
+   id<ORTracker> _tracker;
+}
+-(id<ORExpr>)initORExprIsSubnormalI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
 @interface ORExprMinusI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprMinusI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;

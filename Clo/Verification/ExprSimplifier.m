@@ -148,6 +148,31 @@
    if([self count:c] < 2)
       [[c operand] visit:self];
 }
+-(void) visitExprIsZeroI: (ORExprIsZeroI*) c
+{
+   if([self count:c] < 2)
+      [[c operand] visit:self];
+}
+-(void) visitExprIsPositiveI: (ORExprIsPositiveI*) c
+{
+   if([self count:c] < 2)
+      [[c operand] visit:self];
+}
+-(void) visitExprIsInfiniteI: (ORExprIsInfiniteI*) c
+{
+   if([self count:c] < 2)
+      [[c operand] visit:self];
+}
+-(void) visitExprIsNormalI: (ORExprIsNormalI*) c
+{
+   if([self count:c] < 2)
+      [[c operand] visit:self];
+}
+-(void) visitExprIsSubnormalI: (ORExprIsSubnormalI*) c
+{
+   if([self count:c] < 2)
+      [[c operand] visit:self];
+}
 -(void) visitExprToFloatI: (ORExprToFloatI*) c
 {
    if([self count:c] < 2)
@@ -360,6 +385,46 @@
    if(alpha == nil){
       id<ORExpr> op = [self doIt:c.operand];
       _rv = [self simplify:c with:[op sqrt]];
+   }else _rv = alpha;
+}
+-(void) visitExprIsZeroI: (ORExprIsZeroI*) c
+{
+   id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
+   if(alpha == nil){
+      id<ORExpr> op = [self doIt:c.operand];
+      _rv = [self simplify:c with:[op isZero]];
+   }else _rv = alpha;
+}
+-(void) visitExprIsPositiveI: (ORExprIsPositiveI*) c
+{
+   id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
+   if(alpha == nil){
+      id<ORExpr> op = [self doIt:c.operand];
+      _rv = [self simplify:c with:[op isPositive]];
+   }else _rv = alpha;
+}
+-(void) visitExprIsInfiniteI: (ORExprIsInfiniteI*) c
+{
+   id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
+   if(alpha == nil){
+      id<ORExpr> op = [self doIt:c.operand];
+      _rv = [self simplify:c with:[op isInfinite]];
+   }else _rv = alpha;
+}
+-(void) visitExprIsNormalI: (ORExprIsNormalI*) c
+{
+   id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
+   if(alpha == nil){
+      id<ORExpr> op = [self doIt:c.operand];
+      _rv = [self simplify:c with:[op isNormal]];
+   }else _rv = alpha;
+}
+-(void) visitExprIsSubnormalI: (ORExprIsSubnormalI*) c
+{
+   id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
+   if(alpha == nil){
+      id<ORExpr> op = [self doIt:c.operand];
+      _rv = [self simplify:c with:[op isSubnormal]];
    }else _rv = alpha;
 }
 -(void) visitExprToFloatI:  (ORExprToFloatI *) c
@@ -684,6 +749,17 @@
       [[e right] visit:self];
    }
 }
+-(void) visitExprIsPositiveI:(ORExprIsPositiveI*)c
+{}
+-(void) visitExprIsZeroI:(ORExprIsZeroI*)c
+{}
+-(void) visitExprIsInfiniteI:(ORExprIsInfiniteI*)c
+{}
+-(void) visitExprIsNormalI:(ORExprIsNormalI*)c
+{}
+-(void) visitExprIsSubnormalI:(ORExprIsSubnormalI*)c
+{}
+
 -(NSDictionary*) result
 {
    return [_theSet copy];
@@ -835,6 +911,26 @@
    [[e right] visit:self];
 }
 -(void) visitExprSqrtI: (ORExprSqrtI*) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprIsZeroI: (ORExprIsZeroI*) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprIsPositiveI: (ORExprIsPositiveI*) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprIsInfiniteI: (ORExprIsInfiniteI*) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprIsNormalI: (ORExprIsNormalI*) c
+{
+   [[c operand] visit:self];
+}
+-(void) visitExprIsSubnormalI: (ORExprIsSubnormalI*) c
 {
    [[c operand] visit:self];
 }
