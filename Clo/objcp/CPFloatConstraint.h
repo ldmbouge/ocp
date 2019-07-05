@@ -265,6 +265,18 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatReifyAssign : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   CPFloatVarI* _y;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPFloatVar>)x set:(id<CPFloatVar>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPFloatReifyLEqual : CPCoreConstraint {
 @private
     CPIntVar* _b;

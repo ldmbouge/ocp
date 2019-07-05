@@ -1340,6 +1340,95 @@ double_interval _yi;
 }
 @end
 
+@implementation CPDoubleReifyAssign{
+   ORInt _precision;
+   ORInt _rounding;
+   double_interval _xi;
+   double_interval _yi;
+}
+-(id) initCPReify:(CPIntVar*)b when:(CPDoubleVarI*)x set:(CPDoubleVarI*)y
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _y = y;
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
+}
+-(void)propagate
+{
+   if([_b bound]){
+      if(minDom(_b)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleAssign:_x to:_y] engine:[_x engine]];
+      }else{
+         if ([_x bound]) {
+            if([_y bound]){
+               if (([_x min] == [_y min] && [_x min] != 0.0) ||
+                   (is_plus_zero([_x min]) && is_plus_zero([_y min])) ||
+                   (is_minus_zero([_x min]) && is_minus_zero([_y min])))
+                  failNow();
+               else{
+                  if([_x min] == [_y min]){
+                     [_y updateMin:fp_next_double([_y min])];
+                     assignTRInt(&_active, NO, _trail);
+                  }
+                  if([_x min] == [_y max]) {
+                     [_y updateMax:fp_previous_double([_y max])];
+                     assignTRInt(&_active, NO, _trail);
+                  }
+               }
+            }
+         }else  if([_y bound]){
+            if([_x min] == [_y min]){
+               [_x updateMin:fp_next_double([_x min])];
+               assignTRInt(&_active, NO, _trail);
+            }
+            if([_x max] == [_y min]){
+               [_x updateMax:fp_previous_double([_x max])];
+               assignTRInt(&_active, NO, _trail);
+            }
+         }
+      }
+   }else{
+      if (([_x bound] && [_y bound] && [_x min] == [_y min]) && ([_x min] != 0.0f || (is_plus_zero([_x min]) && is_minus_zero([_y min])) ||
+                                                                 (is_minus_zero([_x min]) && is_plus_zero([_y min]))))
+         [_b bind:YES];
+      else if ([_x max] < [_y min] || [_y max] < [_x min])
+         [_b bind:NO];
+   }
+   if([_b bound] && [_x bound] && [_y bound]) assignTRInt(&_active, 0, _trail);
+}
+
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] +  ![_y bound] + ![_b bound];
+}
+@end
+
 @implementation CPDoubleReifyGThen
 -(id) initCPReifyGThen:(CPIntVar*)b when:(CPDoubleVarI*)x gti:(CPDoubleVarI*)y
 {
@@ -2333,7 +2422,7 @@ double_interval _yi;
       if(([_x min] >= -maxdenormal() && [_x max] <= -mindenormal()) || ([_x min] >= mindenormal() && [_x max] <= maxdenormal())){ //zero
          [_b bind:1];
          assignTRInt(&_active, NO, _trail);
-      }else if([_x max] <= -minnormal() || [_x min] >= minnormal() || ([_x min] == 0.0 && [_x min] == 0.0)){ 
+      }else if([_x max] <= -minnormal() || [_x min] >= minnormal() || ([_x min] == 0.0 && [_x min] == 0.0)){
          [_b bind:0];
          assignTRInt(&_active, NO, _trail);
       }

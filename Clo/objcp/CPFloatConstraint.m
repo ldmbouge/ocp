@@ -319,8 +319,6 @@
    inter = intersection(_x, _xi, xTmp, 0.0f);
    if(inter.changed)
       [_x updateInterval:inter.result.inf and:inter.result.sup];
-   }
-   
 }
 -(NSSet*)allVars
 {
@@ -1328,63 +1326,94 @@
 }
 @end
 
-//@implementation CPFloatReifyAssign{
-//   ORInt _precision;
-//   ORInt _rounding;
-//   float_interval _xi;
-//   float_interval _yi;
-//}
-//-(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y
-//{
-//   self = [super initCPCoreConstraint:[x engine]];
-//   _b = b;
-//   _x = x;
-//   _y = y;
-//   _precision = 1;
-//   _rounding = FE_TONEAREST;
-//   return self;
-//}
-//-(void) post
-//{
-//   [self propagate];
-//   if(![_b bound])
-//      [_b whenBindPropagate:self];
-//   if(![_x bound])
-//      [_x whenChangeBoundsPropagate:self];
-//   if(![_y bound])
-//      [_y whenChangeBoundsPropagate:self];
-//}
-//-(void)propagate
-//{
-//   if([_b bound]){
-//      if(minDom(_b)){
-//         assignTRInt(&_active, NO, _trail);
-//         [self addConstraint:[CPFactory floatAssign:_x to:_y]];
-//      }else{
-//         if([_x bound]){
-//            
-//         }
-//      }
-//   }
-//}
-//}
-//-(NSString*)description
-//{
-//   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
-//}
-//-(NSSet*)allVars
-//{
-//   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
-//}
-//-(NSArray*)allVarsArray
-//{
-//   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
-//}
-//-(ORUInt)nbUVars
-//{
-//   return ![_x bound] +  ![_y bound] + ![_b bound];
-//}
-//@end
+@implementation CPFloatReifyAssign{
+   ORInt _precision;
+   ORInt _rounding;
+   float_interval _xi;
+   float_interval _yi;
+}
+-(id) initCPReify:(CPIntVar*)b when:(CPFloatVarI*)x set:(CPFloatVarI*)y
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _y = y;
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
+}
+-(void)propagate
+{
+   if([_b bound]){
+      if(minDom(_b)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatAssign:_x to:_y] engine:[_x engine]];
+      }else{
+         if ([_x bound]) {
+            if([_y bound]){
+               if (([_x min] == [_y min] && [_x min] != 0.0f) ||
+                   (is_plus_zerof([_x min]) && is_plus_zerof([_y min])) ||
+                   (is_minus_zerof([_x min]) && is_minus_zerof([_y min])))
+                  failNow();
+               else{
+                  if([_x min] == [_y min]){
+                     [_y updateMin:fp_next_float([_y min])];
+                     assignTRInt(&_active, NO, _trail);
+                  }
+                  if([_x min] == [_y max]) {
+                     [_y updateMax:fp_previous_float([_y max])];
+                     assignTRInt(&_active, NO, _trail);
+                  }
+               }
+            }
+         }else  if([_y bound]){
+            if([_x min] == [_y min]){
+               [_x updateMin:fp_next_float([_x min])];
+               assignTRInt(&_active, NO, _trail);
+            }
+            if([_x max] == [_y min]){
+               [_x updateMax:fp_previous_float([_x max])];
+               assignTRInt(&_active, NO, _trail);
+            }
+         }
+      }
+   }else{
+      if (([_x bound] && [_y bound] && [_x min] == [_y min]) && ([_x min] != 0.0f || (is_plus_zerof([_x min]) && is_minus_zerof([_y min])) ||
+          (is_minus_zerof([_x min]) && is_plus_zerof([_y min]))))
+         [_b bind:YES];
+      else if ([_x max] < [_y min] || [_y max] < [_x min])
+         [_b bind:NO];
+   }
+   if([_b bound] && [_x bound] && [_y bound]) assignTRInt(&_active, 0, _trail);
+}
+
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] +  ![_y bound] + ![_b bound];
+}
+@end
 
 @implementation CPFloatReifyGThen
 -(id) initCPReifyGThen:(CPIntVar*)b when:(CPFloatVarI*)x gti:(CPFloatVarI*)y
