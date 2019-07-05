@@ -1413,7 +1413,7 @@ double_interval _yi;
 
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPDoubleReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {
