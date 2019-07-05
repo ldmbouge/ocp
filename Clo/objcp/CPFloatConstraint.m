@@ -301,21 +301,26 @@
 }
 -(void) propagate
 {
-      updateFloatInterval(&_xi,_x);
-      updateFloatInterval(&_yi,_y);
-      intersectionInterval inter;
-      if(isDisjointWith(_x,_y)){
-         failNow();
-      }else{
-         float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
-         fpi_setf(_precision, _rounding, &xTmp, &_yi);
-         
-         inter = intersection(_x, _xi, xTmp, 0.0f);
-         if(inter.changed)
-            [_x updateInterval:inter.result.inf and:inter.result.sup];
-         if ((_yi.inf != inter.result.inf) || (_yi.sup != inter.result.sup))
-            [_y updateInterval:inter.result.inf and:inter.result.sup];
-      }
+   if(isDisjointWith(_x,_y)){
+      failNow();
+   }
+   updateFloatInterval(&_xi,_x);
+   updateFloatInterval(&_yi,_y);
+   intersectionInterval inter;
+   float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+   fpi_setf(_precision,_rounding, &yTmp, &_xi);
+   inter = intersection(_y, _yi, yTmp, 0.0f);
+   if(inter.changed)
+      [_y updateInterval:inter.result.inf and:inter.result.sup];
+   
+   updateFloatInterval(&_yi,_y);
+   float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+   fpi_setf(_precision,_rounding, &xTmp, &_yi);
+   inter = intersection(_x, _xi, xTmp, 0.0f);
+   if(inter.changed)
+      [_x updateInterval:inter.result.inf and:inter.result.sup];
+   }
+   
 }
 -(NSSet*)allVars
 {
@@ -1323,6 +1328,64 @@
 }
 @end
 
+//@implementation CPFloatReifyAssign{
+//   ORInt _precision;
+//   ORInt _rounding;
+//   float_interval _xi;
+//   float_interval _yi;
+//}
+//-(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y
+//{
+//   self = [super initCPCoreConstraint:[x engine]];
+//   _b = b;
+//   _x = x;
+//   _y = y;
+//   _precision = 1;
+//   _rounding = FE_TONEAREST;
+//   return self;
+//}
+//-(void) post
+//{
+//   [self propagate];
+//   if(![_b bound])
+//      [_b whenBindPropagate:self];
+//   if(![_x bound])
+//      [_x whenChangeBoundsPropagate:self];
+//   if(![_y bound])
+//      [_y whenChangeBoundsPropagate:self];
+//}
+//-(void)propagate
+//{
+//   if([_b bound]){
+//      if(minDom(_b)){
+//         assignTRInt(&_active, NO, _trail);
+//         [self addConstraint:[CPFactory floatAssign:_x to:_y]];
+//      }else{
+//         if([_x bound]){
+//            
+//         }
+//      }
+//   }
+//}
+//}
+//-(NSString*)description
+//{
+//   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+//}
+//-(NSSet*)allVars
+//{
+//   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
+//}
+//-(NSArray*)allVarsArray
+//{
+//   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+//}
+//-(ORUInt)nbUVars
+//{
+//   return ![_x bound] +  ![_y bound] + ![_b bound];
+//}
+//@end
+
 @implementation CPFloatReifyGThen
 -(id) initCPReifyGThen:(CPIntVar*)b when:(CPFloatVarI*)x gti:(CPFloatVarI*)y
 {
@@ -2186,10 +2249,10 @@
       else
          [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
    } else {
-      if ([_x min] == 0 && [_x max] == 0) {
+      if ([_x min] == 0.0f && [_x max] == 0.0f) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
-      } else if ([_x min] > 0 && [_x max] < 0) {
+      } else if ([_x min] > 0.0f && [_x max] < 0.0f) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,NO);
       }
@@ -2289,13 +2352,13 @@
          if([_x bound] && is_infinityf([_x min]))
             failNow();
          
-         if([_x min] >= -maxdenormalf()){
+         if([_x min] >= -maxdenormalf() && [_x min] <= maxdenormalf()){
             [_x updateMin:minnormalf()];
             assignTRInt(&_active, NO, _trail);
          }else if(is_infinityf([_x min]))
             [_x updateMin:fp_next_float(-infinityf())];
          
-         if([_x max] <= maxdenormalf()){
+         if([_x max] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
             [_x updateMax:-minnormalf()];
             assignTRInt(&_active, NO, _trail);
          }else if(is_infinityf([_x max]))
@@ -2358,21 +2421,21 @@
          [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
          assignTRInt(&_active, NO, _trail);
       }else{
-         if([_x min] >= -maxdenormalf()){
+         [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
+         if([_x min] >= -maxdenormalf() && [_x min] <= maxdenormalf()){
             [_x updateMin:minnormalf()];
             assignTRInt(&_active, NO, _trail);
          }
-         if([_x max] <= maxdenormalf()){
+         if([_x max] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
             [_x updateMax:-minnormalf()];
             assignTRInt(&_active, NO, _trail);
          }
       }
    }else{
-      if([_x min] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
-         [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
+      if(([_x min] >= -maxdenormalf() && [_x max] <= -mindenormalf()) || ([_x min] >= mindenormalf() && [_x max] <= maxdenormalf())){
          [_b bind:1];
          assignTRInt(&_active, NO, _trail);
-      }else if([_x max] <= -minnormalf() || [_x min] >= minnormalf()){
+      }else if([_x max] <= -minnormalf() || [_x min] >= minnormalf() || ([_x min] == 0.0f && [_x min] == 0.0f)){
          [_b bind:0];
          assignTRInt(&_active, NO, _trail);
       }

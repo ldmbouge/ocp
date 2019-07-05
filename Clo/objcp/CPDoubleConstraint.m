@@ -2145,10 +2145,10 @@ double_interval _yi;
       else
          [self addConstraint:[CPFactory doubleNEqualc:_x to:0.0] engine:[_x engine]];
    } else {
-      if ([_x min] == 0 && [_x max] == 0) {
+      if ([_x min] == 0.0 && [_x max] == 0.0) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
-      } else if ([_x min] > 0 && [_x max] < 0) {
+      } else if ([_x min] > 0.0 && [_x max] < 0.0) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,NO);
       }
@@ -2248,13 +2248,13 @@ double_interval _yi;
          if([_x bound] && is_infinity([_x min]))
             failNow();
          
-         if([_x min] >= -maxdenormal()){
+         if([_x min] >= -maxdenormal() && [_x min] <= maxdenormal()){
             [_x updateMin:minnormal()];
             assignTRInt(&_active, NO, _trail);
          }else if(is_infinity([_x min]))
             [_x updateMin:fp_next_double(-infinity())];
       
-         if([_x max] <= maxdenormal()){
+         if([_x max] >= -maxdenormal() && [_x max] <= maxdenormal()){
             [_x updateMax:-minnormal()];
             assignTRInt(&_active, NO, _trail);
          }else if(is_infinity([_x max]))
@@ -2317,21 +2317,23 @@ double_interval _yi;
          [self addConstraint:[CPFactory doubleNEqualc:_x to:0.0] engine:[_x engine]];
          assignTRInt(&_active, NO, _trail);
       }else{
-         if([_x min] >= -maxdenormal()){
+         
+         [self addConstraint:[CPFactory doubleNEqualc:_x to:0.0] engine:[_x engine]];
+         
+         if([_x min] >= -maxdenormal() && [_x min] <= maxdenormal()){
             [_x updateMin:minnormal()];
             assignTRInt(&_active, NO, _trail);
          }
-         if([_x max] <= maxdenormal()){
+         if([_x max] >= -maxdenormal() && [_x max] <= maxdenormal()){
             [_x updateMax:-minnormal()];
             assignTRInt(&_active, NO, _trail);
          }
       }
    }else{
-      if([_x min] >= -maxdenormal() && [_x max] <= maxdenormal()){
-         [self addConstraint:[CPFactory doubleNEqualc:_x to:0.0] engine:[_x engine]];
+      if(([_x min] >= -maxdenormal() && [_x max] <= -mindenormal()) || ([_x min] >= mindenormal() && [_x max] <= maxdenormal())){ //zero
          [_b bind:1];
          assignTRInt(&_active, NO, _trail);
-      }else if([_x max] <= -minnormal() || [_x min] >= minnormal()){
+      }else if([_x max] <= -minnormal() || [_x min] >= minnormal() || ([_x min] == 0.0 && [_x min] == 0.0)){ 
          [_b bind:0];
          assignTRInt(&_active, NO, _trail);
       }
