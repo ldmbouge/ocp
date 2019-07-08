@@ -661,6 +661,10 @@
 -(ORFloatReifyEqualc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x eqi:(ORFloat)c;
 @end
 
+@interface ORFloatReifyAssignc : ORConstraintI<ORFloatReifyAssignc>
+-(ORFloatReifyAssignc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x set:(ORFloat)c;
+@end
+
 @interface ORFloatReifyNEqualc : ORConstraintI<ORFloatReifyNEqualc>
 -(ORFloatReifyNEqualc*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x neqi:(ORFloat)c;
 -(id<ORIntVar>) b;
@@ -670,6 +674,13 @@
 
 @interface ORFloatReifyEqual : ORConstraintI<ORFloatReifyEqual>
 -(ORFloatReifyEqual*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@interface ORFloatReifyAssign : ORConstraintI<ORFloatReifyAssign>
+-(ORFloatReifyAssign*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x set:(id<ORFloatVar>)y;
 -(id<ORIntVar>) b;
 -(id<ORFloatVar>) x;
 -(id<ORFloatVar>) y;
@@ -782,6 +793,20 @@
 -(id<ORIntVar>) b;
 -(id<ORDoubleVar>) x;
 -(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyAssign : ORConstraintI<ORDoubleReifyAssign>
+-(ORDoubleReifyAssign*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x set:(id<ORDoubleVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyAssignc : ORConstraintI<ORDoubleReifyAssignc>
+-(ORDoubleReifyAssignc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x seti:(ORDouble)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
 @end
 
 @interface ORDoubleReifyNEqual : ORConstraintI<ORDoubleReifyNEqual>

@@ -299,6 +299,18 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPDoubleReifyAssignc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPDoubleVar>)x set:(ORDouble)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPDoubleReifyAssign : CPCoreConstraint {
 @private
    CPIntVar* _b;

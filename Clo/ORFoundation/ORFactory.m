@@ -2045,9 +2045,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x eq: (id<ORFloatVar>) y
 {
-    id<ORConstraint> o = [[ORFloatReifyEqual alloc] initFloatReify: b equiv: x eq: y];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o = [[ORFloatReifyEqual alloc] initFloatReify: b equiv: x eq: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x set: (id<ORFloatVar>) y
+{
+   id<ORConstraint> o = [[ORFloatReifyAssign alloc] initFloatReify: b equiv: x set: y];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x neq: (id<ORFloatVar>) y
 {
@@ -2082,6 +2088,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x eqi: (ORFloat) i
 {
    id<ORConstraint> o = [[ORFloatReifyEqualc alloc] initFloatReify: b equiv:x eqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x seti: (ORFloat) i
+{
+   id<ORConstraint> o = [[ORFloatReifyAssignc alloc] initFloatReify: b equiv:x set: i];
    [model trackObject:o];
    return o;
 }

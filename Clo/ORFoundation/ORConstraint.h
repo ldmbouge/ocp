@@ -545,6 +545,18 @@ enum ORGroupType {
 -(id<ORFloatVar>) y;
 @end
 
+@protocol ORFloatReifyAssignc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@protocol ORFloatReifyAssign <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
 @protocol ORFloatReifyNEqual <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORFloatVar>) x;
@@ -696,6 +708,17 @@ enum ORGroupType {
 -(ORDouble)        cst;
 @end
 
+@protocol ORDoubleReifyAssignc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORDoubleReifyAssign <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
 
 @protocol ORDoubleAssign <ORConstraint>
 -(id<ORDoubleVar>) left;

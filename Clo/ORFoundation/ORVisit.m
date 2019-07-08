@@ -531,11 +531,19 @@
 }
 -(void) visitFloatReifyEqualc: (id<ORFloatReifyEqualc>)c
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyEqualc: visit method not defined"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyEqualc: visit method not defined"];
+}
+-(void) visitFloatReifyAssignc: (id<ORFloatReifyAssignc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyAssignc: visit method not defined"];
 }
 -(void) visitFloatReifyEqual: (id<ORFloatReifyEqual>)c
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyEqual: visit method not defined"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyEqual: visit method not defined"];
+}
+-(void) visitFloatReifyAssign: (id<ORFloatReifyAssign>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatReifyAssign: visit method not defined"];
 }
 -(void) visitFloatReifyNEqualc: (id<ORFloatReifyNEqualc>)c
 {
@@ -629,9 +637,17 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyEqualc: visit method not defined"];
 }
+-(void) visitDoubleReifyAssignc: (id<ORDoubleReifyAssignc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyAssignc: visit method not defined"];
+}
 -(void) visitDoubleReifyEqual: (id<ORDoubleReifyEqual>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyEqual: visit method not defined"];
+}
+-(void) visitDoubleReifyAssign: (id<ORDoubleReifyAssign>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "DoubleReifyAssign: visit method not defined"];
 }
 -(void) visitDoubleReifyNEqualc: (id<ORDoubleReifyNEqualc>)c
 {

@@ -1340,6 +1340,76 @@ double_interval _yi;
 }
 @end
 
+@implementation CPDoubleReifyAssignc{
+   ORInt _precision;
+   ORInt _rounding;
+}
+-(id) initCPReify:(CPIntVar*)b when:(CPDoubleVarI*)x set:(ORDouble)c
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _c = c;
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void)propagate
+{
+   if([_b bound]){
+      if(minDom(_b)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory doubleAssignC:_x to:_c] engine:[_x engine]];
+      }else{
+         if ([_x bound]) {
+            [_x bind:_c];
+            assignTRInt(&_active, NO, _trail);
+         }else{
+            if(_c == [_x min]){
+               [_x updateMin:fp_next_double(_c)];
+               assignTRInt(&_active, NO, _trail);
+            }else if(_c == [_x max]){
+               [_x updateMax:fp_previous_double(_c)];
+               assignTRInt(&_active, NO, _trail);
+            }
+         }
+      }
+   }else{
+      if (([_x bound] && [_x min] == _c) && (_c != 0.0 || (is_plus_zero([_x min]) && is_plus_zero(_c)) ||
+                                             (is_minus_zero([_x min]) && is_minus_zero(_c))))
+         [_b bind:YES];
+      else if ([_x max] < _c || _c < [_x min] || (is_minus_zero(_c) && is_plus_zero([_x min])) || (is_minus_zero([_x max]) && is_plus_zero(_c)))
+         [_b bind:NO];
+   }
+   if([_b bound] && [_x bound]) assignTRInt(&_active, 0, _trail);
+}
+
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPDoubleReifyAssignC:%02d %@ <=> (%@ <- %16.16e)>",_name,_b,_x,_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] +   ![_b bound];
+}
+@end
+
 @implementation CPDoubleReifyAssign{
    ORInt _precision;
    ORInt _rounding;
@@ -1402,10 +1472,10 @@ double_interval _yi;
          }
       }
    }else{
-      if (([_x bound] && [_y bound] && [_x min] == [_y min]) && ([_x min] != 0.0f || (is_plus_zero([_x min]) && is_minus_zero([_y min])) ||
-                                                                 (is_minus_zero([_x min]) && is_plus_zero([_y min]))))
+      if (([_x bound] && [_y bound] && [_x min] == [_y min]) && ([_x min] != 0.0 || (is_plus_zero([_x min]) && is_plus_zero([_y min])) ||
+                                                                 (is_minus_zero([_x min]) && is_minus_zero([_y min]))))
          [_b bind:YES];
-      else if ([_x max] < [_y min] || [_y max] < [_x min])
+      else if ([_x max] < [_y min] || [_y max] < [_x min] || (is_minus_zero([_y max]) && is_plus_zero([_x min])) || (is_minus_zero([_x max]) && is_plus_zero([_x min])))
          [_b bind:NO];
    }
    if([_b bound] && [_x bound] && [_y bound]) assignTRInt(&_active, 0, _trail);
@@ -1413,7 +1483,7 @@ double_interval _yi;
 
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPDoubleReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPDoubleReifyAssign:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {

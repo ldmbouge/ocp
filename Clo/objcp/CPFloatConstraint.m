@@ -1326,6 +1326,76 @@
 }
 @end
 
+@implementation CPFloatReifyAssignc{
+   ORInt _precision;
+   ORInt _rounding;
+}
+-(id) initCPReify:(CPIntVar*)b when:(CPFloatVarI*)x set:(ORFloat)c
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _c = c;
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void)propagate
+{
+   if([_b bound]){
+      if(minDom(_b)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatAssignC:_x to:_c] engine:[_x engine]];
+      }else{
+         if ([_x bound]) {
+            [_x bind:_c];
+            assignTRInt(&_active, NO, _trail);
+         }else{
+            if(_c == [_x min]){
+               [_x updateMin:fp_next_float(_c)];
+               assignTRInt(&_active, NO, _trail);
+            }else if(_c == [_x max]){
+               [_x updateMax:fp_previous_float(_c)];
+               assignTRInt(&_active, NO, _trail);
+            }
+         }
+      }
+   }else{
+      if (([_x bound] && [_x min] == _c) && (_c != 0.0f || (is_plus_zerof([_x min]) && is_plus_zerof(_c)) ||
+                                                                 (is_minus_zerof([_x min]) && is_minus_zerof(_c))))
+         [_b bind:YES];
+      else if ([_x max] < _c || _c < [_x min] || (is_minus_zerof(_c) && is_plus_zerof([_x min])) || (is_minus_zerof([_x max]) && is_plus_zerof(_c)))
+         [_b bind:NO];
+   }
+   if([_b bound] && [_x bound]) assignTRInt(&_active, 0, _trail);
+}
+
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyAssignC:%02d %@ <=> (%@ <- %16.16e)>",_name,_b,_x,_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] +   ![_b bound];
+}
+@end
+
 @implementation CPFloatReifyAssign{
    ORInt _precision;
    ORInt _rounding;
@@ -1338,6 +1408,8 @@
    _b = b;
    _x = x;
    _y = y;
+   _xi = makeFloatInterval(x.min, x.max);
+   _yi = makeFloatInterval(y.min, y.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
    return self;
@@ -1388,10 +1460,10 @@
          }
       }
    }else{
-      if (([_x bound] && [_y bound] && [_x min] == [_y min]) && ([_x min] != 0.0f || (is_plus_zerof([_x min]) && is_minus_zerof([_y min])) ||
-          (is_minus_zerof([_x min]) && is_plus_zerof([_y min]))))
+      if (([_x bound] && [_y bound] && [_x min] == [_y min]) && ([_x min] != 0.0f || (is_plus_zerof([_x min]) && is_plus_zerof([_y min])) ||
+                                                                 (is_minus_zerof([_x min]) && is_minus_zerof([_y min]))))
          [_b bind:YES];
-      else if ([_x max] < [_y min] || [_y max] < [_x min])
+      else if ([_x max] < [_y min] || [_y max] < [_x min] || (is_minus_zerof([_y max]) && is_plus_zerof([_x min])) || (is_minus_zerof([_x max]) && is_plus_zerof([_x min])))
          [_b bind:NO];
    }
    if([_b bound] && [_x bound] && [_y bound]) assignTRInt(&_active, 0, _trail);
@@ -1399,7 +1471,7 @@
 
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyAssign:%02d %@ <=> (%@ <- %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {

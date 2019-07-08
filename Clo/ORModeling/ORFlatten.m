@@ -640,11 +640,19 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 -(void) visitFloatReifyEqualc: (id<ORFloatReifyEqualc>)c
 {
-    _result = [_into addConstraint:c];
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatReifyAssignc: (id<ORFloatReifyAssignc>)c
+{
+   _result = [_into addConstraint:c];
 }
 -(void) visitFloatReifyEqual: (id<ORFloatReifyEqual>)c
 {
-    _result = [_into addConstraint:c];
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatReifyAssign: (id<ORFloatReifyAssign>)c
+{
+   _result = [_into addConstraint:c];
 }
 -(void) visitFloatReifyNEqualc: (id<ORFloatReifyNEqualc>)c
 {

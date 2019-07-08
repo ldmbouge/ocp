@@ -303,11 +303,23 @@
 
 @interface CPFloatReifyEqualc : CPCoreConstraint {
 @private
-    CPIntVar* _b;
-    CPFloatVarI* _x;
-    ORFloat      _c;
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   ORFloat      _c;
 }
 -(id) initCPReifyEqualc:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatReifyAssignc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   ORFloat      _c;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPFloatVar>)x set:(ORFloat)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

@@ -224,6 +224,8 @@
 -(void) visitFloatReifyGEqual: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThenc: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThen: (id<ORConstraint>)c;
+-(void) visitFloatReifyAssignc: (id<ORConstraint>)c;
+-(void) visitFloatReifyAssign: (id<ORConstraint>)c;
 -(void) visitFloatCast: (id<ORConstraint>)c;
 -(void) visitFloatIsZero: (id<ORConstraint>)c;
 -(void) visitFloatIsPositive: (id<ORConstraint>)c;
@@ -256,6 +258,8 @@
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c;
 -(void) visitDoubleReifyEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleReifyEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyAssignc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyAssign: (id<ORConstraint>)c;
 -(void) visitDoubleReifyNEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleReifyNEqual: (id<ORConstraint>)c;
 -(void) visitDoubleReifyLEqualc: (id<ORConstraint>)c;

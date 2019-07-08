@@ -1069,6 +1069,12 @@
    [[x engine] trackMutable: o];
    return o;
 }
++(id<ORConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x seti: (ORFloat) i annotation:(id<ORAnnotation>)notes
+{
+   id<ORConstraint> o = [[CPFloatReifyAssignc alloc] initCPReify: b when: x set: i];
+   [[x engine] trackMutable: o];
+   return o;
+}
 +(id<CPConstraint>) floatReify: (id<CPIntVar>) b with: (id<CPFloatVar>) x neqi: (ORFloat) i
 {
    id<CPConstraint> o = [[CPFloatReifyNotEqualc alloc] initCPReifyNotEqualc: b when: x neqi: i];
@@ -1481,7 +1487,6 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-
 +(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x set: (id<CPDoubleVar>) y annotation:(id<ORAnnotation>)c
 {
    id<CPConstraint> o = [[CPDoubleReifyAssign alloc] initCPReify: b when: x set: y];
@@ -1497,6 +1502,12 @@
 +(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x eqi: (ORDouble) i
 {
    id<CPConstraint> o = [[CPDoubleReifyEqualc alloc] initCPReifyEqualc: b when: x eqi: i];
+   [[x engine] trackMutable: o];
+   return o;
+}
++(id<CPConstraint>) doubleReify: (id<CPIntVar>) b with: (id<CPDoubleVar>) x seti: (ORDouble) i annotation:(id<ORAnnotation>)c
+{
+   id<CPConstraint> o = [[CPDoubleReifyAssignc alloc] initCPReify: b when: x set: i];
    [[x engine] trackMutable: o];
    return o;
 }
