@@ -15,6 +15,7 @@
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORFactory.h>
+#import "fpi.h"
 
 #if __clang_major__==3 && __clang_minor__==6
 #define _Nonnull 
@@ -1670,11 +1671,41 @@
 }
 -(ORInt) min
 {
-   return min([_left min],[_right min]);
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:;
+         ORFloat lv = [_left fmin];
+         ORFloat rv = [_right fmin];
+         return (lv == rv && lv != 0.0f) || (is_plus_zerof(lv) && is_plus_zerof(rv)) || (is_minus_zerof(lv) && is_minus_zerof(rv)) ;
+      case ORTDouble:;
+         ORDouble dlv = [_left dmin];
+         ORDouble drv = [_right dmin];
+         return (dlv == drv && dlv != 0.0) || (is_plus_zero(dlv) && is_plus_zero(drv)) || (is_minus_zero(dlv) && is_minus_zero(drv)) ;
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] == [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
-   return max([_left max],[_right max]);
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:;
+         ORFloat lv = [_left fmax];
+         ORFloat rv = [_right fmax];
+         return (lv == rv && lv != 0.0f) || (is_plus_zerof(lv) && is_plus_zerof(rv)) || (is_minus_zerof(lv) && is_minus_zerof(rv)) ;
+      case ORTDouble:;
+         ORDouble dlv = [_left dmax];
+         ORDouble drv = [_right dmax];
+         return (dlv == drv && dlv != 0.0) || (is_plus_zero(dlv) && is_plus_zero(drv)) || (is_minus_zero(dlv) && is_minus_zero(drv)) ;
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] == [_right max];
+         break;
+   }
 }
 -(ORFloat) fmin
 {
@@ -1696,18 +1727,14 @@
 {
    [visitor visitExprAssignI: self];
 }
--(enum ORVType) vtype
-{
-   return  lookup_expr_table[[_left vtype]][[_right vtype]];
-}
 -(enum ORRelationType)type
 {
-   return ORREq;
+   return ORRSet;
 }
 -(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [rv appendFormat:@"%@ = %@",[_left description],[_right description]];
+   [rv appendFormat:@"%@ <- %@",[_left description],[_right description]];
    return rv;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
@@ -2726,12 +2753,32 @@
 -(ORInt) min 
 {
    assert([self isConstant]);
-   return [_left min] == [_right min];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] == [_right fmin];
+      case ORTDouble:
+         return [_left dmin] == [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] == [_right min];
+         break;
+   }
 }
 -(ORInt) max 
 {
    assert([self isConstant]);
-   return [_left max] == [_right max];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] == [_right fmax];
+      case ORTDouble:
+         return [_left dmax] == [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] == [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2777,12 +2824,32 @@
 -(ORInt) min
 {
    assert([self isConstant]);
-   return [_left min] != [_right min];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] != [_right fmin];
+      case ORTDouble:
+         return [_left dmin] != [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] != [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
    assert([self isConstant]);
-   return [_left max] != [_right max];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] != [_right fmax];
+      case ORTDouble:
+         return [_left dmax] != [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] != [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2822,12 +2889,32 @@
 -(ORInt) min
 {
    assert([self isConstant]);
-   return [_left min] <= [_right min];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] <= [_right fmin];
+      case ORTDouble:
+         return [_left dmin] <= [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] <= [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
    assert([self isConstant]);
-   return [_left max] <= [_right max];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] <= [_right fmax];
+      case ORTDouble:
+         return [_left dmax] <= [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] <= [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2867,12 +2954,32 @@
 -(ORInt) min
 {
    assert([self isConstant]);
-   return [_left min] >= [_right min];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] >= [_right fmin];
+      case ORTDouble:
+         return [_left dmin] >= [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] >= [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
    assert([self isConstant]);
-   return [_left max] >= [_right max];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] >= [_right fmax];
+      case ORTDouble:
+         return [_left dmax] >= [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] >= [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2911,13 +3018,33 @@
 }
 -(ORInt) min
 {
-    assert([self isConstant]);
-    return [_left min] < [_right min];
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] < [_right fmin];
+      case ORTDouble:
+         return [_left dmin] < [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] < [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
-    assert([self isConstant]);
-    return [_left max] < [_right max];
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] < [_right fmax];
+      case ORTDouble:
+         return [_left dmax] < [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] < [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2956,13 +3083,33 @@
 }
 -(ORInt) min
 {
-    assert([self isConstant]);
-    return [_left min] > [_right min];
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] > [_right fmin];
+      case ORTDouble:
+         return [_left dmin] > [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] > [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
-    assert([self isConstant]);
-    return [_left max] > [_right max];
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] > [_right fmax];
+      case ORTDouble:
+         return [_left dmax] > [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] > [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {

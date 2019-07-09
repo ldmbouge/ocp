@@ -496,7 +496,7 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] == [[e right] fmin];
+      bool isOk = [[e left] fmin] == [[e right] fmin]; //bug
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {

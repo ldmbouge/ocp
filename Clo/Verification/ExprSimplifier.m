@@ -500,7 +500,7 @@
    if(alpha == nil){
       id<ORExpr> nL = [self doIt:c.left];
       id<ORExpr> nR = [self doIt:c.right];
-      _rv = [self simplify:c with:[nL eq:nR]];
+      _rv = [self simplify:c with:[nL set:nR]];
    }else _rv = alpha;
 }
 -(void) visitExprEqualI: (ORExprBinaryI*) c
