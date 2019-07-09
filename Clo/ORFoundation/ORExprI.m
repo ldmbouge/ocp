@@ -1673,14 +1673,10 @@
 {
    assert([self isConstant]);
    switch ([_left vtype]) {
-      case ORTFloat:;
-         ORFloat lv = [_left fmin];
-         ORFloat rv = [_right fmin];
-         return (lv == rv && lv != 0.0f) || (is_plus_zerof(lv) && is_plus_zerof(rv)) || (is_minus_zerof(lv) && is_minus_zerof(rv)) ;
-      case ORTDouble:;
-         ORDouble dlv = [_left dmin];
-         ORDouble drv = [_right dmin];
-         return (dlv == drv && dlv != 0.0) || (is_plus_zero(dlv) && is_plus_zero(drv)) || (is_minus_zero(dlv) && is_minus_zero(drv)) ;
+      case ORTFloat:
+         return is_eqf([_left fmin], [_right fmin]);
+      case ORTDouble:
+         return is_eqf([_left dmin], [_right dmin]);
       case ORTBool:
       case ORTInt:
       default:
@@ -1692,14 +1688,10 @@
 {
    assert([self isConstant]);
    switch ([_left vtype]) {
-      case ORTFloat:;
-         ORFloat lv = [_left fmax];
-         ORFloat rv = [_right fmax];
-         return (lv == rv && lv != 0.0f) || (is_plus_zerof(lv) && is_plus_zerof(rv)) || (is_minus_zerof(lv) && is_minus_zerof(rv)) ;
-      case ORTDouble:;
-         ORDouble dlv = [_left dmax];
-         ORDouble drv = [_right dmax];
-         return (dlv == drv && dlv != 0.0) || (is_plus_zero(dlv) && is_plus_zero(drv)) || (is_minus_zero(dlv) && is_minus_zero(drv)) ;
+      case ORTFloat:
+         return is_eqf([_left fmax], [_right fmax]);
+      case ORTDouble:
+         return is_eqf([_left dmax], [_right dmax]);
       case ORTBool:
       case ORTInt:
       default:

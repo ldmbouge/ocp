@@ -277,6 +277,12 @@
    _terms = [recVisit visitExprEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
+-(void) visitExprAssignI:(ORExprAssignI*)e
+{
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
+   _terms = [recVisit visitExprAssignI:_model left:[e left] right:[e right]];
+   [recVisit release];
+}
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
@@ -496,7 +502,7 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] == [[e right] fmin]; //bug
+      bool isOk = is_eqf([[e left] fmin],[[e right] fmin]);
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
@@ -549,11 +555,11 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] == [[e right] fmin];
+      bool isOk = is_eq([[e left] dmin],[[e right] dmin]);
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
-      ORDouble c = lc ? [[e left] fmin] : [[e right] fmin];
+      ORDouble c = lc ? [[e left] dmin] : [[e right] dmin];
       ORExprI* other = lc ? [e right] : [e left];
       ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:other model:_model];
       id<ORDoubleVar> x = [ORNormalizer doubleVarIn:lin for:_model];
@@ -1712,6 +1718,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprEqualI> with args : [%@] == [%@]",left,right]];
 }
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprAssignI> with args : [%@] <- [%@]",left,right]];
+}
 -(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
      @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprNEqualI> with args : [%@] != [%@]",left,right]];
@@ -1906,6 +1916,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       }
    }
    return lin;
+}
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   return [self visitExprEqualI:_model left:left right:right];
 }
 -(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
