@@ -2310,6 +2310,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x set: (id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleReifyAssign alloc] initDoubleReify: b equiv: x set: y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x neq: (id<ORDoubleVar>) y
 {
    id<ORConstraint> o = [[ORDoubleReifyNEqual alloc] initDoubleReify: b equiv: x neq: y];
@@ -2343,6 +2349,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eqi: (ORDouble) i
 {
    id<ORConstraint> o = [[ORDoubleReifyEqualc alloc] initDoubleReify: b equiv:x eqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x seti: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORDoubleReifyAssignc alloc] initDoubleReify: b equiv:x seti: i];
    [model trackObject:o];
    return o;
 }
