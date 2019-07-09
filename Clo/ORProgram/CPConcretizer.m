@@ -1907,6 +1907,21 @@
    }
    
 }
+-(void) visitDoubleReifyAssign: (id<ORDoubleReifyAssign>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> b = [cstr b];
+      id<ORDoubleVar> x = [cstr x];
+      id<ORDoubleVar> y = [cstr y];
+      [b visit: self];
+      [x visit: self];
+      [y visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory doubleReify: _gamma[b.getId] with: _gamma[x.getId] set: _gamma[y.getId] annotation: _notes];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+   
+}
 -(void) visitDoubleReifyNEqualc: (id<ORDoubleReifyNEqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
