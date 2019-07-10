@@ -13,6 +13,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
+#import "ExprSimplifier.h"
 
 enum Heuristic {
    FF = 0,
@@ -122,4 +123,5 @@ struct ORResult {
 -(id<ORDisabledVarArray>) makeDisabledArray:(id<CPProgram>)p from:(id<ORVarArray>)vs;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 -(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;
+-(ORBool) isCycle:(id<ORModel>) model;
 @end

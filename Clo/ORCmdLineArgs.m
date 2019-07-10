@@ -489,6 +489,81 @@ static enum ValHeuristic valIndex[] =
       return [STOP intValue];
    }];
 }
+-(ORBool) isCycle:(id<ORModel>) model
+{
+   NSDictionary* dict = [InequalityConstraintsCollector collect:[model constraints]];
+   __block int maxId = -1;
+   __block int first;
+   NSMutableArray* idarr = [[NSMutableArray alloc] init];
+   [dict enumerateKeysAndObjectsUsingBlock:^(id  key, NSArray* obj, BOOL* stop) {
+      first = [key intValue];
+      maxId = max(first,maxId);
+      [idarr addObject:key];
+      for(ORExprBinaryI* o in obj){
+         if([o getId] == -1)
+            [model trackMutable:o];
+         maxId = max([o getId],maxId);
+         maxId = max([[o left] getId],maxId);
+         maxId = max([[o right] getId],maxId);
+      }
+   }];
+   id<ORIntArray> visited = [ORFactory intArray:model range:RANGE(model,0,maxId) value:0];
+   id<ORIntArray> recStack = [ORFactory intArray:model range:RANGE(model,0,maxId) value:0];
+   NSMutableDictionary* exprVisited = [[NSMutableDictionary alloc] init];
+   for(id v in idarr){
+      if([self isCycleRec:v parent:v graph:dict expr:exprVisited visited:visited recStack:recStack hasStrict:NO depth:1])
+         return YES;
+   }
+   [idarr release];
+   [exprVisited release];
+   return NO;
+}
+
+-(ORBool) isCycleRec:(id) v parent:(id)p graph:(NSDictionary*) graph expr:(NSMutableDictionary*) expr visited:(id<ORIntArray>) visited recStack:(id<ORIntArray>) recStack hasStrict:(ORBool) strict depth:(ORInt) depth
+{
+   ORInt vi = [v intValue];
+   ORInt pi = [p intValue];
+   ORExprBinaryI* se;
+   if(![visited[vi] intValue]){
+      visited[vi] = @(1);
+      recStack[vi] = @(depth);
+      se = [expr objectForKey:v];
+      //     case we are node expression
+      if(se != nil){
+         ORInt other = [[se right] getId];
+         ORInt next = (other == pi) ? [[se left] getId] : other;
+         ORBool isStrict = ([se isKindOfClass:ORExprGThenI.class] || [se isKindOfClass:ORExprLThenI.class]);
+         if(![visited[next] intValue]){
+            if ([self isCycleRec:@(next) parent:@(next) graph:graph expr:expr visited:visited recStack:recStack hasStrict:(strict || isStrict) depth:depth+1])
+               return YES;
+         }else if([recStack[next] intValue] && [recStack[next] intValue] != depth-1 && (strict || isStrict))
+            return YES;
+      }else{
+         //      case we are var node
+         NSArray* idarr = [graph objectForKey:@(vi)];
+         ORInt si;
+         for(id e in idarr){
+            se = e;
+            si = [se getId];
+            [expr setObject:e forKey:@(si)];
+            if(![visited[si] intValue]){
+               if([self isCycleRec:@(si) parent:@(vi) graph:graph expr:expr visited:visited recStack:recStack hasStrict:strict depth:depth+1])
+                  return YES;
+            }else if([recStack[si] intValue] && [recStack[si] intValue] != depth-1  && strict)
+               return YES;
+         }
+      }
+   }
+   recStack[vi] = @(0);
+   return NO;
+}
+
+
+
+
+
+
+
 -(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORDisabledVarArray>)vars
 {
    if(ldfs){
