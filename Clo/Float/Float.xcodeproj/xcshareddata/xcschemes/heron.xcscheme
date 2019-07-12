@@ -64,18 +64,10 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-var-order custom -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8 -t 15"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-abs-function min"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-debug-level 2"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-model-limits 0.85"
+            argument = "-var-order maxocc -uniques 2 - variation 2"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

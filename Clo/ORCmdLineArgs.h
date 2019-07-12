@@ -117,9 +117,12 @@ struct ORResult {
 -(NSString*)heuristicName;
 -(void)measure:(struct ORResult(^)(void))block;
 -(void)measureTime:(void(^)(void))block;
+-(ORBool) checkAllbound:(id<ORModel>) model with:(id<CPProgram>) cp;
+-(void) printSolution:(id<ORModel>) model with:(id<CPProgram>) cp;
 -(id<ORGroup>)makeGroup:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
+-(id<CPProgram>) makeProgramWithSimplification:(id<ORModel>)model constraints:(NSArray*) toadd;
 -(id<ORDisabledVarArray>) makeDisabledArray:(id<CPProgram>)p from:(id<ORVarArray>)vs;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 -(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;

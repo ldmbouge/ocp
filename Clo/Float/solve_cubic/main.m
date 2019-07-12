@@ -55,7 +55,6 @@ void check_solution(float a,float b, float c, float r, float q, float Q, float R
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          fesetround(FE_TONEAREST);
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> c_0 = [ORFactory floatVar:model name:@"c"];
@@ -69,52 +68,58 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> R_0 = [ORFactory floatVar:model name:@"R"];
          id<ORFloatVar> q_0 = [ORFactory floatVar:model name:@"q"];
          id<ORFloatVar> b_0 = [ORFactory floatVar:model name:@"b"];
-         id<ORGroup> g = [args makeGroup:model];
-         [g add:[q_0 eq: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
          
-         [g add:[r_0 eq: [[[[[a_0 mul:@(2.f)] mul: a_0] mul: a_0] sub: [[a_0 mul:@(9.f)] mul: b_0]] plus: [c_0 mul:@(27.f)]]]];
+         NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
          
-         [g add:[Q_0 eq: [q_0 div:@(9.f)]]];
+         [toadd addObject:[q_0 eq: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
          
-         [g add:[R_0 eq: [r_0 div:@(54.f)]]];
-         
-         
-         [g add:[Q3_0 eq: [[Q_0 mul:Q_0] mul:Q_0]]];
-         
-         [g add:[R2_0 eq: [R_0 mul:R_0]]];
+         [toadd addObject:[r_0 eq: [[[[[a_0 mul:@(2.f)] mul: a_0] mul: a_0] sub: [[a_0 mul:@(9.f)] mul: b_0]] plus: [c_0 mul:@(27.f)]]]];
          
          
-         [g add:[CR2_0 eq: [[r_0 mul:@(729.f)] mul: r_0]]];
+         [toadd addObject:[Q_0 eq: [q_0 div:@(9.f)]]];
          
-         [g add:[CQ3_0 eq: [[[q_0 mul:@(2916.f)] mul: q_0] mul: q_0]]];
+         [toadd addObject:[R_0 eq: [r_0 div:@(54.f)]]];
+         
+         
+         [toadd addObject:[Q3_0 eq: [[Q_0 mul:Q_0] mul:Q_0]]];
+         
+         [toadd addObject:[R2_0 eq: [R_0 mul:R_0]]];
+         
+         
+         [toadd addObject:[CR2_0 eq: [[r_0 mul:@(729.f)] mul: r_0]]];
+         
+         [toadd addObject:[CQ3_0 eq: [[[q_0 mul:@(2916.f)] mul: q_0] mul: q_0]]];
          
          //assert(!(R == 0 && Q == 0));
-         [g add:[R_0 eq:@(0.0f)]];
-         [g add:[Q_0 eq:@(0.0f)]];
-         //         [g add:[a_0 eq:@(15.0f)]];
+         [toadd addObject:[R_0 eq:@(0.0f)]];
+         [toadd addObject:[Q_0 eq:@(0.0f)]];
+         //         [toadd add:[a_0 eq:@(15.0f)]];
          
-         [model add:g];
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            NSLog(@"Valeurs solutions : \n");
-            found=true;
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-            }
-            
-            check_solution([p floatValue:a_0],[p floatValue:b_0],[p floatValue:c_0],[p floatValue:r_0],[p floatValue:q_0],[p floatValue:Q_0],[p floatValue:R_0], [p floatValue:R2_0],[p floatValue:Q3_0],[p floatValue:CR2_0],[p floatValue:CQ3_0]);
-         } withTimeLimit:[args timeOut]];
-         
-         struct ORResult r = REPORT(found,[[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+     
+      id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+      id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
+      NSLog(@"%@",model);
+      __block ORBool isSat;
+      [args measure:^struct ORResult(){
+         ORBool hascycle = NO;
+         if([args cycleDetection]){
+            hascycle = [args isCycle:model];
+            NSLog(@"%s",(hascycle)?"YES":"NO");
+         }
+         isSat = false;
+         if(!hascycle){
+            id<ORIntArray> locc = [VariableLocalOccCollector collect:[model constraints] with:[model variables] tracker:model];
+            [(CPCoreSolver*)cp setLOcc:locc];
+            [cp solveOn:^(id<CPCommonProgram> p) {
+               [args launchHeuristic:cp restricted:vars];
+               //               check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);
+               isSat = [args checkAllbound:model with:cp];
+            } withTimeLimit:[args timeOut]];
+         }
+         struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites]);
          return r;
       }];
-      
+      return 0;
    }
-   return 0;
 }
-

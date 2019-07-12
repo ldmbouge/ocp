@@ -375,6 +375,32 @@ static enum ValHeuristic valIndex[] =
    [self updateNotes:notes model:model];
    return [self makeProgram:model annotation:notes];
 }
+
+-(id<CPProgram>) makeProgramWithSimplification:(id<ORModel>)model constraints:(NSArray*) toadd
+{
+   if([self is3Bfiltering]){
+      NSArray* arr = toadd;
+      id<ORGroup> g = [ORFactory group:model type:Group3B];
+      if([self variationSearch]){
+         arr = [ExprSimplifier simplifyAll:toadd group:g];
+      }
+      for(id<ORExpr> e in arr){
+         [g add:e];
+      }
+      [model add:g];
+   }else{
+      NSArray* arr = toadd;
+      if([self variationSearch]){
+         arr = [ExprSimplifier simplifyAll:toadd];
+      }
+      for(id<ORExpr> e in arr){
+         [model add:e];
+      }
+   }
+   return [self makeProgram:model];
+}
+
+
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
    id<CPProgram> p = nil;
@@ -404,6 +430,27 @@ static enum ValHeuristic valIndex[] =
       default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];
    }
 }
+
+-(ORBool) checkAllbound:(id<ORModel>) model with:(id<CPProgram>) cp
+{
+   ORBool res = YES;
+   NSArray* vars = [model variables];
+   for(id<ORVar> v in vars)
+      if(![cp bound:v]){
+         res = NO;
+         NSLog(@"la variable %@ n'est pas bound : %@",v,[cp concretize:v]);
+      }
+   return res;
+}
+
+-(void) printSolution:(id<ORModel>) model with:(id<CPProgram>) cp
+{
+   NSArray* vars = [model variables];
+   for(id<ORVar> v in vars){
+      NSLog(@"%@ : (%s) %@",v,[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
+   }
+}
+
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x
 {
    id<CPHeuristic> h = nil;
