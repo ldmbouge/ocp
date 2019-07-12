@@ -75,7 +75,7 @@ ab = [
       'Float/solve_cubic',
       'Float/inv_square_int_true_unreach-call',
       'Float/float_int_inv_square_false-unreach-call',
-      'Float/slope16-1'
+      'Float/slope26-1'
 #      'Float/Odometrie_1',
 #      'Float/Odometrie_10',
 #      'Float/Odometrie_100',
