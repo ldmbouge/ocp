@@ -67,8 +67,15 @@ import json
 
 ab = [
         'SMTLIB2'
-#      ,
-#      'Float/MullerKahan',
+      ,
+      'Float/heron',
+      'Float/heron156',
+      'Float/optimized_heron',
+      'Float/optimized_heron_156',
+      'Float/solve_cubic',
+      'Float/inv_square_int_true_unreach-call',
+      'Float/float_int_inv_square_false-unreach-call',
+      'Float/slope16-1'
 #      'Float/Odometrie_1',
 #      'Float/Odometrie_10',
 #      'Float/Odometrie_100',

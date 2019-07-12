@@ -26,6 +26,9 @@ all: $(LIBNAME)
 	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
 	fi
 
+ExprSimplifier.m : $(LOC)ExprSimplifier.m
+	cp $< .
+
 $(LIBNAME): $(OFILES)
 	@echo "Linking..." $^
 	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
