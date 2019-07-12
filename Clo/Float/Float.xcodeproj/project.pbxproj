@@ -70,6 +70,7 @@
 		0816C18D2137542000AF3F87 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEF820EFB26700AF6787 /* ORProgram.framework */; };
 		0816C18E2137542000AF3F87 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BD8BEFA20EFB26700AF6787 /* ORUtilities.framework */; };
 		0816C1942137543000AF3F87 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0816C17F2137541700AF3F87 /* main.m */; };
+		082E61E022D8DFEA0046EFAF /* ExprSimplifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 0814B88D22D7D80300A6BE44 /* ExprSimplifier.m */; };
 		083AF61822374E96005F0436 /* Datastruct.h in Sources */ = {isa = PBXBuildFile; fileRef = 08E4D820222CEAF000E683B5 /* Datastruct.h */; };
 		083AF61A223773D5005F0436 /* main2.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BAB3582236D4BE00B1E546 /* main2.m */; };
 		084523FC21C1612A00D740A1 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD8BEFC20EFB2DA00AF6787 /* ORCmdLineArgs.m */; };
@@ -9889,6 +9890,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				082E61E022D8DFEA0046EFAF /* ExprSimplifier.m in Sources */,
 				0886FE62215ADE96001FEC1F /* main.m in Sources */,
 				0886FE55215ADE88001FEC1F /* ORCmdLineArgs.m in Sources */,
 			);

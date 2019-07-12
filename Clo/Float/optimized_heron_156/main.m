@@ -122,6 +122,7 @@ int main(int argc, const char * argv[]) {
                [args launchHeuristic:cp restricted:vars];
                //               check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);
                isSat = [args checkAllbound:model with:cp];
+               NSLog(@"Depth : %d",[[cp tracer] level]);
             } withTimeLimit:[args timeOut]];
          }
          struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites]);

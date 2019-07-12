@@ -64,8 +64,8 @@ int main(int argc, const char * argv[]) {
       
       [toadd addObject:[squared_area lt:@(1e-5f)]]; /* */
       
-      NSLog(@"%@",model);
       id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+      NSLog(@"%@",model);
       id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
       __block ORBool isSat;
       [args measure:^struct ORResult(){
@@ -82,6 +82,7 @@ int main(int argc, const char * argv[]) {
                [args launchHeuristic:cp restricted:vars];
                check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);
                isSat = [args checkAllbound:model with:cp];
+               NSLog(@"Depth : %d",[[cp tracer] level]);
             } withTimeLimit:[args timeOut]];
          }
          struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites]);
