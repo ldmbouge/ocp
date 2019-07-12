@@ -124,6 +124,7 @@ int main(int argc, const char * argv[]) {
             } withTimeLimit:[args timeOut]];
          }
          struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites]);
+         printf("%s\n",(isSat)?"sat":"unsat");
          return r;
       }];
       return 0;

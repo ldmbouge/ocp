@@ -79,6 +79,7 @@ int main(int argc, const char * argv[]) {
             
          } withTimeLimit:[args timeOut]];
          struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         printf("%s\n",(isSat)?"sat":"unsat");
          return r;
       }];
       
