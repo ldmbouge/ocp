@@ -238,13 +238,13 @@
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
 //      todo decomment when bugs are fixed
-//      if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
-//         mid = 0.0f;
-//      else if ((theMin < 1.0f) && (1.0f < theMax))
-//         mid = 1.0f;
-//      else if ((theMin < -1.0f) && (-1.0f < theMax))
-//         mid = -1.0f;
-//      else
+      if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
+         mid = 0.0f;
+      else if ((theMin < 1.0f) && (1.0f < theMax))
+         mid = 1.0f;
+      else if ((theMin < -1.0f) && (-1.0f < theMax))
+         mid = -1.0f;
+      else
          mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
       //force the interval to right side
@@ -289,13 +289,13 @@
    }else{
       ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
       ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-//      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
-//         mid = 0.0;
-//      else if ((theMin < 1.0) && (1.0 < theMax))
-//         mid = 1.0;
-//      else if ((theMin < -1.0) && (-1.0 < theMax))
-//         mid = -1.0;
-//      else
+      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+         mid = 0.0;
+      else if ((theMin < 1.0) && (1.0 < theMax))
+         mid = 1.0;
+      else if ((theMin < -1.0) && (-1.0 < theMax))
+         mid = -1.0;
+      else
          mid = tmpMin/2 + tmpMax/2;
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
       //force the interval to right side
@@ -367,13 +367,13 @@
       ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
       ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
       ORFloat mid;
-//      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
-//         mid = 0.0;
-//      else if ((theMin < 1.0) && (1.0 < theMax))
-//         mid = 1.0;
-//      else if ((theMin < -1.0) && (-1.0 < theMax))
-//         mid = -1.0;
-//      else
+      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+         mid = 0.0;
+      else if ((theMin < 1.0) && (1.0 < theMax))
+         mid = 1.0;
+      else if ((theMin < -1.0) && (-1.0 < theMax))
+         mid = -1.0;
+      else
          mid = tmpMin/2 + tmpMax/2;
       
       assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
@@ -449,13 +449,13 @@
       ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
       ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
       ORDouble mid;
-//      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
-//         mid = 0.0;
-//      else if ((theMin < 1.0) && (1.0 < theMax))
-//         mid = 1.0;
-//      else if ((theMin < -1.0) && (-1.0 < theMax))
-//         mid = -1.0;
-//      else
+      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+         mid = 0.0;
+      else if ((theMin < 1.0) && (1.0 < theMax))
+         mid = 1.0;
+      else if ((theMin < -1.0) && (-1.0 < theMax))
+         mid = -1.0;
+      else
          mid = tmpMin/2 + tmpMax/2;
       
       assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
