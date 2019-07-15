@@ -240,6 +240,7 @@ void testR(int argc, const char * argv[]) {
    }
 }
 
+
 void testRF(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
@@ -248,8 +249,10 @@ void testRF(int argc, const char * argv[]) {
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
          id<ORRationalVar> yR = [ORFactory rationalVar:mdl name:@"yR"];
          id<ORRationalVar> xR = [ORFactory rationalVar:mdl name:@"xR"];
+
          id<ORRationalVar> zR = [ORFactory rationalVar:mdl name:@"zR"];
-         //id<ORRationalVar> zq = [ORFactory rationalVar:mdl low:low up:up name:@"zq"];
+         id<ORRationalVar> zq = [ORFactory rationalVar:mdl name:@"zq"];
+         id<ORRationalVar> errorZ = [ORFactory rationalVar:mdl name:@"errorZ"];
          id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.0 up:100.0 elow:zero eup:zero name:@"x"];
          id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.20f up:20.0f elow:zero eup:zero name:@"y"];
          id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
@@ -258,28 +261,29 @@ void testRF(int argc, const char * argv[]) {
          
          [mdl add:[ORFactory channel:x with:xR]];
          [mdl add:[ORFactory channel:y with:yR]];
-         //[mdl add:[ORFactory channel:z with:zq]];
-
+         [mdl add:[ORFactory channel:z with:zq]];
+         
          [mdl add:[x set: @(45.0f)]];
-
-         //[mdl add:[z set: [x plus: y]]];
-         [mdl add:[zR eq: [xR plus: yR]]];
+         
+         [mdl add:[z set: [x sub: y]]];
+         [mdl add:[zR eq: [xR sub: yR]]];
+         [mdl add:[errorZ eq: [zR sub: zq]]];
          
          [zero set_d: 1];
-         [mdl add:[zR leq: zero]];
+         //[mdl add:[zR leq: zero]];
          
          [zero release];
-
+         
          NSLog(@"model: %@",mdl);
-         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+         //id<CPProgram> cp = [ORFactory createCŒORPSemanticProgram:mdl with:[ORSemBBController proto]];
          id<CPProgram> cp = [ORFactory createCPProgram:mdl];
          id<ORFloatVarArray> vs = [mdl floatVars];
          id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
          
          [cp solve:^{
-//            [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-//               [cp floatSplit:i withVars:x];
-//            }];
+            //            [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            //               [cp floatSplit:i withVars:x];
+            //            }];
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
@@ -288,7 +292,15 @@ void testRF(int argc, const char * argv[]) {
             NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
             NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
             NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
+            NSLog(@"zq : [%@;%@]",[cp minQ:zq],[cp maxQ:zq]);
             NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp maxFQ:z]);
+            NSLog(@"");
+            NSLog(@"xR: [%@;%@]",[cp minQ:xR],[cp maxQ:xR]);
+            NSLog(@"yR: [%@;%@]",[cp minQ:yR],[cp maxQ:yR]);
+            NSLog(@"zR: [%@;%@]",[cp minQ:zR],[cp maxQ:zR]);
+            NSLog(@"");
+            NSLog(@"errorZ: [%@;%@]",[cp minQ:errorZ],[cp maxQ:errorZ]);
+            
          }];
          NSLog(@"%@",cp);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
@@ -296,7 +308,6 @@ void testRF(int argc, const char * argv[]) {
       }];
    }
 }
-
 
 void testRAbs(int argc, const char * argv[]) {
    @autoreleasepool {

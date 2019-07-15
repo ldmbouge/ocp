@@ -54,8 +54,8 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
         id<ORRational> zero = [ORRational rationalWith_d:0.0];
-        id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
         id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
+        id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
         id<ORDoubleVar> b = [ORFactory doubleVar:mdl name:@"b"];
         id<ORDoubleVar> t = [ORFactory doubleVar:mdl name:@"t"];
         id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
@@ -64,8 +64,8 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
         id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
        [zero release];
         
-        [mdl add:[p set: @(3.5e7)]];
         [mdl add:[a set: @(0.401)]];
+       [mdl add:[p set: @(3.5e7)]];
         [mdl add:[b set: @(42.7e-6)]];
         [mdl add:[t set: @(300.0)]];
         [mdl add:[n set: @(1000.0)]];

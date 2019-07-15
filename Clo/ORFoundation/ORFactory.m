@@ -338,7 +338,15 @@
    }];
    return (id<ORRationalArray>)o;
 }
-
++(id<ORRationalArray>) rationalArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+   id<ORRational> zero = [[ORRational alloc] init];
+   [zero setZero];
+   id<ORRationalArray> o = [[ORRationalArrayI alloc] init: tracker range:range value:zero];
+   return [tracker trackMutable: o];
+   //id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   //return (id<ORRationalArray>)o;
+}
 +(ORLDoubleArrayI*) ldoubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORLDouble(^)(ORInt)) clo
 {
    ORLDoubleArrayI* o = [[ORLDoubleArrayI alloc] init: tracker range:range with:clo];
