@@ -97,6 +97,7 @@ PORTABLE_BEGIN
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range:(id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo;
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORRationalArray>) rationalArray: (id<ORTracker>) tracker range:(id<ORIntRange>) range with:(id<ORRational>(^)(ORInt)) clo;
++(id<ORRationalArray>) rationalArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORLDoubleArray>) ldoubleArray: (id<ORTracker>) tracker range:(id<ORIntRange>) range with:(ORLDouble(^)(ORInt)) clo;
 +(id<ORLDoubleArray>) ldoubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array;
