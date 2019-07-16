@@ -63,17 +63,24 @@
 -(struct BDSNode)pop
 {
    ORInt index = 0;
+   ORBool found = NO;
    for(ORInt i = index; i < _sz; i++){
       if (!_tab[i]._cont.admin){
          index = i;
+         found = YES;
          break;
       }
    }
+   if(found){
    struct BDSNode res = _tab[index];
-   for(ORInt i=index;i < _sz;i++)
+   for(ORInt i=index;i < _sz-1;i++)
       _tab[i] = _tab[i+1];
    _sz--;
    return res;
+   }else{
+      _sz = 0;
+      return  (struct BDSNode){nil,nil,0,nil};
+   }
    
 //   return _tab[--_sz];
 }
