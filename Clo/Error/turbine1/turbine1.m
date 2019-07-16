@@ -103,7 +103,7 @@ void turbine1_d(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"g"){
-   turbine1_d(0, argc, argv);
+   turbine1_d(1, argc, argv);
    }
    return 0;
 }

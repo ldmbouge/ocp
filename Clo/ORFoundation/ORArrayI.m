@@ -1170,7 +1170,7 @@
 {
    if (value < _low || value > _up)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
-   [_array[value] set: x];
+   _array[value] = x;
 }
 -(ORInt) low
 {
