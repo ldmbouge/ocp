@@ -940,8 +940,10 @@
    _range = range;
    _array = malloc(_nb * sizeof(id<ORRational>));
    _array -= _low;
-   for (ORInt i=_low ; i <= _up; i++)
-      _array[i] = clo(i);
+   for (ORInt i=_low ; i <= _up; i++){
+      _array[i] = [[ORRational alloc] init];
+      [_array[i] set: clo(i)];
+   }
    return self;
 }
 -(ORRationalArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(id<ORRational>(^)(ORInt,ORInt)) clo
