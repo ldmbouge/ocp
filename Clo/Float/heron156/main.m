@@ -80,6 +80,7 @@ int main(int argc, const char * argv[]) {
             [(CPCoreSolver*)cp setLOcc:locc];
             [cp solveOn:^(id<CPCommonProgram> p) {
                [args launchHeuristic:cp restricted:vars];
+               [args printSolution:model with:p];
                check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);
                isSat = [args checkAllbound:model with:cp];
                NSLog(@"Depth : %d",[[cp tracer] level]);

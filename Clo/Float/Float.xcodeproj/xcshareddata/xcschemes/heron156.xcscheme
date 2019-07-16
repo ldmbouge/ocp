@@ -71,10 +71,6 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-uniques 6"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "-var-order maxLocc -val-order dynamic5split"
             isEnabled = "YES">
          </CommandLineArgument>

@@ -133,6 +133,7 @@
 -(id<ORSearchController>) makeNestedController
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+//   return [[_nestedProto clone] tuneWith:_solver pItf:pItf];
    return [[_nestedProto clone] tuneWith:[_solver tracer] engine:[_solver engine] pItf:pItf];
    //   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
 }

@@ -787,6 +787,8 @@
 {}
 -(void) visitExprIsSubnormalI:(ORExprIsSubnormalI*)c
 {}
+-(void) visitExprSqrtI:(ORExprIsSubnormalI*)c
+{}
 
 -(NSDictionary*) result
 {

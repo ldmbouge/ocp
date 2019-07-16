@@ -1394,32 +1394,40 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_lt)
 {
    int size = (int)smtlib2_vector_size(args);
    objcp_expr res = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) lt:(objcp_expr)smtlib2_vector_at(args, 1)];
-   for(ORInt i = 2; i < size; i++)
-      res = [objcpgw objcp_mk_fp:YCTX(ctx) x:res lt:(objcp_expr)smtlib2_vector_at(args,i)];
+   for(ORInt i = 2; i < size; i++){
+      objcp_expr next = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, i-1) lt:(objcp_expr)smtlib2_vector_at(args,i)];
+      res = [objcpgw objcp_mk_and:YCTX(ctx) left:res right:next];
+   }
    return res;
 }
 SMTLIB2_OBJCP_DECLHANDLER(fp_gt)
 {
    int size = (int)smtlib2_vector_size(args);
    objcp_expr res = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) gt:(objcp_expr)smtlib2_vector_at(args, 1)];
-   for(ORInt i = 2; i < size; i++)
-      res = [objcpgw objcp_mk_fp:YCTX(ctx) x:res gt:(objcp_expr)smtlib2_vector_at(args,i)];
+   for(ORInt i = 2; i < size; i++){
+      objcp_expr next = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, i-1) gt:(objcp_expr)smtlib2_vector_at(args,i)];
+      res = [objcpgw objcp_mk_and:YCTX(ctx) left:res right:next];
+   }
    return res;
 }
 SMTLIB2_OBJCP_DECLHANDLER(fp_leq)
 {
    int size = (int)smtlib2_vector_size(args);
    objcp_expr res = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) leq:(objcp_expr)smtlib2_vector_at(args, 1)];
-   for(ORInt i = 2; i < size; i++)
-      res = [objcpgw objcp_mk_fp:YCTX(ctx) x:res leq:(objcp_expr)smtlib2_vector_at(args,i)];
+   for(ORInt i = 2; i < size; i++){
+      objcp_expr next = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, i-1) leq:(objcp_expr)smtlib2_vector_at(args,i)];
+      res = [objcpgw objcp_mk_and:YCTX(ctx) left:res right:next];
+   }
    return res;
 }
 SMTLIB2_OBJCP_DECLHANDLER(fp_geq)
 {
    int size = (int)smtlib2_vector_size(args);
    objcp_expr res =  [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) geq:(objcp_expr)smtlib2_vector_at(args, 1)];
-   for(ORInt i = 2; i < size; i++)
-      res = [objcpgw objcp_mk_fp:YCTX(ctx) x:res geq:(objcp_expr)smtlib2_vector_at(args,i)];
+   for(ORInt i = 2; i < size; i++){
+      objcp_expr next = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, i-1) geq:(objcp_expr)smtlib2_vector_at(args,i)];
+      res = [objcpgw objcp_mk_and:YCTX(ctx) left:res right:next];
+   }
    return res;
 }
 SMTLIB2_OBJCP_DECLHANDLER(fp_neg)

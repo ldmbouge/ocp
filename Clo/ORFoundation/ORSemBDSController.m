@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORSemBDSController.h>
+@class CPEngineI;
 
 @interface BDSStack : NSObject {
    struct BDSNode {
@@ -61,7 +62,20 @@
 }
 -(struct BDSNode)pop
 {
-   return _tab[--_sz];
+   ORInt index = 0;
+   for(ORInt i = index; i < _sz; i++){
+      if (!_tab[i]._cont.admin){
+         index = i;
+         break;
+      }
+   }
+   struct BDSNode res = _tab[index];
+   for(ORInt i=index;i < _sz;i++)
+      _tab[i] = _tab[i+1];
+   _sz--;
+   return res;
+   
+//   return _tab[--_sz];
 }
 -(struct BDSNode)steal
 {
@@ -205,6 +219,12 @@
    c->_maxDisc = [_maxDisc retain];  // sharing accross instantiation of this proto.
    return c;
 }
+//-(id<ORSearchController>)tuneWith:(id<ORASolver>)solver pItf:(id<ORPost>)pItf
+//{
+//   self = [self tuneWith:[solver tracer] engine:[solver engine] pItf:pItf];
+//   _realSolver = solver;
+//   return self;
+//}
 -(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine pItf:(id<ORPost>)pItf
 {
    [_tracer release];
@@ -256,7 +276,8 @@
          return;  // Nothing left to process. Go back!
       else {
          if ([_tab empty]) {
-            NSLog(@"**************************** next wave: [%d]",[_next size]);
+            NSLog(@"**************************** next wave: [%d] #failure [%d]",[_next size], [((CPEngineI*)_solver) nbFailures]);
+//            NSLog(@"**************************** next wave: [%d]",[_next size]);
             BDSStack* tmp = _tab;
             _tab = _next;
             _next = tmp;
