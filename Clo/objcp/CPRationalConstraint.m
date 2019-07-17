@@ -850,6 +850,231 @@
 }
 @end
 
+@implementation CPRationalTernaryMult{
+   
+}
+-(id) init:(CPRationalVarI*)z equals:(CPRationalVarI*)x mult:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _z = z;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   int gchanged,changed;
+   changed = gchanged = false;
+   
+   id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
+   
+   [x set_q: [_x min] and:[_x max]];
+   [y set_q: [_y min] and:[_y max]];
+   [z set_q: [_z min] and:[_z max]];
+   
+   do {
+      changed = false;
+      
+      // ============================== ez
+      // ex * ey
+      zTemp = [x mul: y];
+      
+      z = [z proj_inter: zTemp];
+      changed |= z.changed;
+      
+      if([z empty]){
+         gchanged |= true;
+         break;
+      }
+      
+      // ============================== ex
+      // ez + ey
+      xTemp = [z div: y];
+      
+      x = [x proj_inter: xTemp];
+      changed |= x.changed;
+      
+      if([x empty]){
+         gchanged |= true;
+         break;
+      }
+      
+      // ============================== ey
+      // ex - ez
+      yTemp = [z div: x];
+      
+      y = [y proj_inter: yTemp];
+      changed |= y.changed;
+      
+      if([y empty]){
+         gchanged |= true;
+         break;
+      }
+      
+      gchanged |= changed;
+   } while(changed);
+   
+   if(gchanged){
+      
+      [_x updateInterval:x.low and:x.up];
+      [_y updateInterval:y.low and:y.up];
+      [_z updateInterval:z.low and:z.up];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
+   }
+   [x release];
+   [y release];
+   [z release];
+   [xTemp release];
+   [yTemp release];
+   [zTemp release];
+}
+- (void)dealloc {
+   [super dealloc];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_z bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
+}
+@end
+
+@implementation CPRationalTernaryDiv{
+   
+}
+-(id) init:(CPRationalVarI*)z equals:(CPRationalVarI*)x div:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _z = z;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   if (![_z bound]) [_z whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   int gchanged,changed;
+   changed = gchanged = false;
+   
+   id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
+   
+   [x set_q: [_x min] and:[_x max]];
+   [y set_q: [_y min] and:[_y max]];
+   [z set_q: [_z min] and:[_z max]];
+   
+   do {
+      changed = false;
+      
+      // ============================== ez
+      // ex / ey
+      zTemp = [x div: y];
+      
+      z = [z proj_inter: zTemp];
+      changed |= z.changed;
+      
+      if([z empty]){
+         gchanged |= true;
+         break;
+      }
+      
+      // ============================== ex
+      // ez * ey
+      xTemp = [z mul: y];
+      
+      x = [x proj_inter: xTemp];
+      changed |= x.changed;
+      
+      if([x empty]){
+         gchanged |= true;
+         break;
+      }
+      
+      // ============================== ey
+      // ex - ez
+      yTemp = [x div: z];
+      
+      y = [y proj_inter: yTemp];
+      changed |= y.changed;
+      
+      if([y empty]){
+         gchanged |= true;
+         break;
+      }
+      
+      gchanged |= changed;
+   } while(changed);
+   
+   if(gchanged){
+      
+      [_x updateInterval:x.low and:x.up];
+      [_y updateInterval:y.low and:y.up];
+      [_z updateInterval:z.low and:z.up];
+      if([_x bound] && [_y bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
+   }
+   [x release];
+   [y release];
+   [z release];
+   [xTemp release];
+   [yTemp release];
+   [zTemp release];
+}
+- (void)dealloc {
+   [super dealloc];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_z,_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_z bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
+}
+@end
+
+
 @implementation CPRationalVarMinimize
 {
    CPRationalVarI*  _x;

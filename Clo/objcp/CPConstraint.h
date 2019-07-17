@@ -176,8 +176,8 @@
 //+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs gt:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
 +(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs leq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
 +(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs geq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes;
-//+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes;
-//+(id<CPConstraint>) rationalDiv: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes;
++(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes;
++(id<CPConstraint>) rationalDiv: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes;
 //+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x eq: (id<CPRationalVar>) y annotation:(ORCLevel)c;
 //+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x geq: (id<CPRationalVar>) y annotation:(ORCLevel)c;
 //+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x neq: (id<CPRationalVar>) y annotation:(ORCLevel)c;

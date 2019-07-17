@@ -247,8 +247,6 @@ void testRF(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
-         id<ORRational> low = [ORRational rationalWith_d:-500.0f];
-         id<ORRational> up = [ORRational rationalWith_d:500.0f];
          id<ORRationalVar> yR = [ORFactory rationalVar:mdl name:@"yR"];
          id<ORRationalVar> xR = [ORFactory rationalVar:mdl name:@"xR"];
 
@@ -267,8 +265,8 @@ void testRF(int argc, const char * argv[]) {
          
          [mdl add:[x set: @(45.0f)]];
          
-         [mdl add:[z set: [x sub: y]]];
-         [mdl add:[zR eq: [xR sub: yR]]];
+         [mdl add:[z set: [x mul: y]]];
+         [mdl add:[zR eq: [xR mul: yR]]];
          [mdl add:[errorZ eq: [zR sub: zq]]];
          
          //[zero set_d: 1];
@@ -277,7 +275,7 @@ void testRF(int argc, const char * argv[]) {
          [zero release];
          
          NSLog(@"model: %@",mdl);
-         //id<CPProgram> cp = [ORFactory createCŒORPSemanticProgram:mdl with:[ORSemBBController proto]];
+         //id<CPProgram> cp = [ORFactory createSemanticProgram:mdl with:[ORSemBBController proto]];
          id<CPProgram> cp = [ORFactory createCPProgram:mdl];
          id<ORFloatVarArray> vs = [mdl floatVars];
          id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
@@ -286,9 +284,9 @@ void testRF(int argc, const char * argv[]) {
             //            [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
             //               [cp floatSplit:i withVars:x];
             //            }];
-            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               [cp floatSplit:i withVars:x];
-            }];
+//            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+//               [cp floatSplit:i withVars:x];
+//            }];
             NSLog(@"x : [%20.20e;%20.20e] (%s)",[cp minF:x],[cp maxF:x],[cp bound:x] ? "YES" : "NO");
             NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
             NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");

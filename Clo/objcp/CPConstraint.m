@@ -1202,6 +1202,26 @@
    id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
    return [self rationalGEQ:x to:cvar];
 }
++(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
+{
+   id<CPConstraint> o = nil;
+//   if([notes hasFilteringPercent])
+//      o = [[CPRationalTernaryMult alloc] init:z equals:x mult:y kbpercent:[notes kbpercent]];
+//   else
+      o = [[CPRationalTernaryMult alloc] init:z equals:x mult:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) rationalDiv: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
+{
+   id<CPConstraint> o = nil;
+//   if([notes hasFilteringPercent])
+//      o = [[CPRationalTernaryDiv alloc] init:z equals:x div:y kbpercent:[notes kbpercent]];
+//   else
+      o = [[CPRationalTernaryDiv alloc] init:z equals:x div:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) rationalAbs:(id<CPRationalVar>) x eq:(id<CPRationalVar>) y
 {
    id<CPConstraint> o = [[CPRationalAbs alloc] init:x eq:y];

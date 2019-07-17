@@ -364,6 +364,32 @@
    [lT release];
    [rT release];
 }
+-(void) visitExprMulI: (ORExprMulI*) e
+{
+   id<ORRationalLinear> lT = [ORNormalizer rationalLinearFrom:[e left] model:_model];
+   id<ORRationalLinear> rT = [ORNormalizer rationalLinearFrom:[e right] model:_model];
+   id<ORRationalVar> lV = [ORNormalizer rationalVarIn:lT for:_model];
+   id<ORRationalVar> rV = [ORNormalizer rationalVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory rationalVar:_model];
+   }
+   [_model addConstraint: [ORFactory rationalMult:_model var:lV by:rV equal:_rv]];
+   [lT release];
+   [rT release];
+}
+-(void) visitExprDivI: (ORExprDivI*) e
+{
+   id<ORRationalLinear> lT = [ORNormalizer rationalLinearFrom:[e left] model:_model];
+   id<ORRationalLinear> rT = [ORNormalizer rationalLinearFrom:[e right] model:_model];
+   id<ORRationalVar> lV = [ORNormalizer rationalVarIn:lT for:_model];
+   id<ORRationalVar> rV = [ORNormalizer rationalVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory rationalVar:_model];
+   }
+   [_model addConstraint: [ORFactory rationalDiv:_model var:lV by:rV equal:_rv]];
+   [lT release];
+   [rT release];
+}
 -(id<ORRationalVar>)result
 {
    return _rv;

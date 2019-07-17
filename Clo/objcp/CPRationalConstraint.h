@@ -158,6 +158,28 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPRationalTernaryMult : CPCoreConstraint { // z = x * y
+   CPRationalVarI* _z;
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)z equals:(id)x mult:(id)y ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalTernaryDiv : CPCoreConstraint { // z = x / y
+   CPRationalVarI* _z;
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)z equals:(id)x div:(id)y ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRationalVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
 -(id) init: (id<CPRationalVar>) x;
 -(void) post;

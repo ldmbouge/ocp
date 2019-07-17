@@ -1823,6 +1823,43 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitRationalMult:(id<ORRationalMult>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORRationalVar> res = [cstr res];
+      id<ORRationalVar> left = [cstr left];
+      id<ORRationalVar> right = [cstr right];
+      [res visit: self];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory rationalMult: (id<CPRationalVar>)_gamma[left.getId]
+                                                        by: (id<CPRationalVar>) _gamma[right.getId]
+                                                     equal: (id<CPRationalVar>) _gamma[res.getId]
+                                                annotation:_notes
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitRationalDiv:(id<ORRationalDiv>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORRationalVar> res = [cstr res];
+      id<ORRationalVar> left = [cstr left];
+      id<ORRationalVar> right = [cstr right];
+      [res visit: self];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory rationalDiv: (id<CPRationalVar>) _gamma[left.getId]
+                                                       by: (id<CPRationalVar>) _gamma[right.getId]
+                                                    equal: (id<CPRationalVar>) _gamma[res.getId]
+                                               annotation:_notes
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitRationalAbs: (id<ORAbs>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
