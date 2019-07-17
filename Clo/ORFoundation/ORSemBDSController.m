@@ -53,6 +53,7 @@
 }
 -(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d ov:(id<ORObjectiveValue>)ov
 {
+   NSLog(@"push size: %d cp : %@",_sz,cp);
    if (_sz >= _mx) {
       _mx <<= 1;      
       _tab = realloc(_tab,sizeof(struct BDSNode)* _mx);
@@ -62,26 +63,27 @@
 }
 -(struct BDSNode)pop
 {
-   ORInt index = 0;
-   ORBool found = NO;
-   for(ORInt i = index; i < _sz; i++){
-      if (!_tab[i]._cont.admin){
-         index = i;
-         found = YES;
+   // we pick the first checkpoint + continuation
+   // the continuation should not be administrative one
+   // pack the tab again and return the node.
+   ORInt selection = -1;
+   for(ORInt i=0;i<_sz;i++) {
+      if (!_tab[i]._cont.admin) {
+         selection = i;
          break;
       }
    }
-   if(found){
-   struct BDSNode res = _tab[index];
-   for(ORInt i=index;i < _sz-1;i++)
-      _tab[i] = _tab[i+1];
-   _sz--;
-   return res;
-   }else{
-      _sz = 0;
-      return  (struct BDSNode){nil,nil,0,nil};
+   if (selection != -1) {
+      struct BDSNode stolen = _tab[selection];
+      _sz--;
+      NSLog(@"pop size: %d cp : %@",_sz,stolen._cp);
+      for(ORInt i=selection;i < _sz;i++)
+         _tab[i] = _tab[i+1];
+      return stolen;
+   } else {
+      struct BDSNode stolen = {nil,nil,0,nil};
+      return stolen;
    }
-   
 //   return _tab[--_sz];
 }
 -(struct BDSNode)steal
@@ -226,12 +228,6 @@
    c->_maxDisc = [_maxDisc retain];  // sharing accross instantiation of this proto.
    return c;
 }
-//-(id<ORSearchController>)tuneWith:(id<ORASolver>)solver pItf:(id<ORPost>)pItf
-//{
-//   self = [self tuneWith:[solver tracer] engine:[solver engine] pItf:pItf];
-//   _realSolver = solver;
-//   return self;
-//}
 -(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine pItf:(id<ORPost>)pItf
 {
    [_tracer release];
