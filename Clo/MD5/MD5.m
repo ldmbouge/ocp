@@ -226,7 +226,7 @@
          NSLog(@"%@\n\n",[cp stringValue:digestVars[i]]);
       }
       clock_t searchStart = clock();
-      [cp labelBitVarHeuristic:h];
+      [cp labelBitVarHeuristicVSIDS:h];
       clock_t searchFinish = clock();
 
       for(int j=0;j<16;j++){

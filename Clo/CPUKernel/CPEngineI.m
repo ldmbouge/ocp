@@ -361,7 +361,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 {
    return _nbFailures;
 }
--(ORUInt) nbPropagation
+-(ORULong) nbPropagation
 {
    return _nbpropag;
 }

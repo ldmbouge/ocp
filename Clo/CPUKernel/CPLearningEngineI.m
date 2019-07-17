@@ -59,14 +59,12 @@
    return [_tracer level];
 }
 
--(ORUInt) getBackjumpLevel
+-(ORInt) getBackjumpLevel
 {
-   ORUInt tmp = _backjumpLevel;
+   ORInt tmp = _backjumpLevel;
    _backjumpLevel = -1;
    return tmp;
 }
-
-
 
 -(NSSet*) getNewConstraints
 {

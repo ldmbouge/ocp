@@ -81,7 +81,7 @@ void heapSiftDown(BitLiteral** heap, ORUInt index, ORUInt size)
       heap[leftChild] = tempLiteral;
       heapSiftDown(heap, leftChild, size);
    }
-   if(rightBigger && (!leftBigger || heap[rightChild]->_count >= heap[leftChild]->_count)){
+   else if(rightBigger && (!leftBigger || heap[rightChild]->_count >= heap[leftChild]->_count)){
       tempLiteral = heap[index];
       heap[index] = heap[rightChild];
       heap[rightChild] = tempLiteral;
@@ -107,8 +107,6 @@ void heapSiftUp(BitLiteral** heap, ORUInt index){
    heapSiftUp(heap,parent);
 }
 
-
-//Should be giving CPBitCounter to the heap? Otherwise, the count in the heap is always 1 for all literals
 BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral* assign)
 {
    BitLiteral** h=heap;
@@ -145,7 +143,7 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
-   _countMax = 8;
+   _countMax = 16;
    _count = _countMax;
    _alternateHeuristic = false;
    
@@ -166,7 +164,7 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
 }
 -(void)dealloc
 {
-   NSLog(@"Tracking %d literals at finish",[_countedBits count]);
+   NSLog(@"Tracking %ld literals at finish",(unsigned long)[_countedBits count]);
    [_countedBits dealloc];
    free(_heap);
    //Dealloc DDeg state
@@ -271,7 +269,8 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
             a->var = x;
             a->index = i;
             a->value = true;
-            lit = [[BitLiteral alloc] initBitLiteral:a withCount:count+tBoost];
+            lit = [[BitLiteral alloc] initBitLiteral:a withCount:(count+tBoost)/log2([(CPBitVarI*)x domsize])];
+//            lit = [[BitLiteral alloc] initBitLiteral:a withCount:count+tBoost];
             [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key+1]];
             heapInsert(_heap, &_heapSize, &_heapCap, lit);
 
@@ -279,7 +278,8 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
             a->var = x;
             a->index = i;
             a->value = false;
-            lit = [[BitLiteral alloc] initBitLiteral:a withCount:count+fBoost];
+            lit = [[BitLiteral alloc] initBitLiteral:a withCount:(count+fBoost)/log2([(CPBitVarI*)x domsize])];
+//            lit = [[BitLiteral alloc] initBitLiteral:a withCount:count+fBoost];
             [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key]];
             heapInsert(_heap, &_heapSize, &_heapCap, lit);
          }
@@ -287,7 +287,7 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
       [constraints dealloc];
    }
    
-   NSLog(@"Tracking %d literals at start",[_countedBits count]);
+   NSLog(@"Tracking %ld literals at start",(unsigned long)[_countedBits count]);
 
    [[_engine callingContinuation] wheneverNotifiedDo:^{
 //      _heapSize = 0;
@@ -333,7 +333,8 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
             BitLiteral* lit = (BitLiteral*)[_countedBits objectForKey:[NSNumber numberWithUnsignedLong:key]];
             
             if(lit){
-               (lit->_count) += 1.0;
+               (lit->_count) += (1.0 + [constraint nbUVars])/log2([lit->_a->var domsize]);
+//               (lit->_count) += 1.0 + [constraint prefer:lit->_a->var at:lit->_a->index with:lit->_a->value];
             }
             //any unlocated literal counts should be for bits set before search started when branching on concrete variables,
             // must add if branching on model variables
@@ -351,7 +352,7 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
                for(id obj in constraints) {
                      count += [obj prefer:a->var at:a->index with:a->value];
                }
-
+               count /= log2([a->var domsize]);
 //               lit = [[BitLiteral alloc] initBitLiteral:ants->antecedents[i] withCount: count];
               lit = [[BitLiteral alloc] initBitLiteral:a withCount: count];
                [_assignedLiterals addObject:lit];

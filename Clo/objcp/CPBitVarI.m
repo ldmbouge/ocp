@@ -428,9 +428,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
     if(_learningOn && [_dom isFree:bit]){
       [self bit:bit setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
     }
-   ORStatus s = [_dom setBit:bit to:value for:self];
-   
-   return s;
+   return [_dom setBit:bit to:value for:self];
 }
 -(ORBool)member:(unsigned int*)v
 {

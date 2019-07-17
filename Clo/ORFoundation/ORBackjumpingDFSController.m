@@ -120,7 +120,7 @@
 {
    ORInt faillevel = (ORInt)[_tracer level];
    ORInt level = faillevel;
-   ORInt jumplevel = (ORInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
+   ORInt jumplevel = (ORInt)[((CPLearningEngineI*)_engine) getBackjumpLevel];
 
    id<ORCheckpoint> cp;
    NSCont* k;
@@ -165,7 +165,7 @@
 //              if (((jumplevel > 0) && (level < faillevel-1)) &&  (lastStatus != ORFailure)){
              
               if ((jumplevel > 0) && (faillevel != jumplevel)) {
-             
+
 //                 if (jumplevel > 0) {
 //             if((jumplevel > 0) && (lastStatus!=ORFailure)){
                   [k callInvisible];
