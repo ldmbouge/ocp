@@ -26,6 +26,7 @@
 }
 -(id)initBDSStack:(ORInt)mx;
 -(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d ov:(id<ORObjectiveValue>)ov;
+-(void)push:(struct BDSNode)n;
 -(struct BDSNode)pop;
 -(struct BDSNode)steal;
 -(ORInt)size;
@@ -53,7 +54,7 @@
 }
 -(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d ov:(id<ORObjectiveValue>)ov
 {
-   NSLog(@"push size: %d cp : %@",_sz,cp);
+   //NSLog(@"push size: %d cp : %@",_sz,cp);
    if (_sz >= _mx) {
       _mx <<= 1;      
       _tab = realloc(_tab,sizeof(struct BDSNode)* _mx);
@@ -61,12 +62,21 @@
    _tab[_sz] = (struct BDSNode){k,cp,d,ov};
    ++_sz;
 }
+-(void)push:(struct BDSNode)n
+{
+    if (_sz >= _mx) {
+        _mx <<= 1;
+        _tab = realloc(_tab,sizeof(struct BDSNode)* _mx);
+    }
+    _tab[_sz++] = n;
+}
+
 -(struct BDSNode)pop
 {
    // we pick the first checkpoint + continuation
    // the continuation should not be administrative one
    // pack the tab again and return the node.
-   ORInt selection = -1;
+/*   ORInt selection = -1;
    for(ORInt i=0;i<_sz;i++) {
       if (!_tab[i]._cont.admin) {
          selection = i;
@@ -76,15 +86,15 @@
    if (selection != -1) {
       struct BDSNode stolen = _tab[selection];
       _sz--;
-      NSLog(@"pop size: %d cp : %@",_sz,stolen._cp);
+      //NSLog(@"pop size: %d cp : %@",_sz,stolen._cp);
       for(ORInt i=selection;i < _sz;i++)
          _tab[i] = _tab[i+1];
       return stolen;
    } else {
       struct BDSNode stolen = {nil,nil,0,nil};
       return stolen;
-   }
-//   return _tab[--_sz];
+ } */
+    return _tab[--_sz];
 }
 -(struct BDSNode)steal
 {
@@ -281,9 +291,12 @@
          if ([_tab empty]) {
             NSLog(@"**************************** next wave: [%d] #failure [%d]",[_next size], [((CPEngineI*)_solver) nbFailures]);
 //            NSLog(@"**************************** next wave: [%d]",[_next size]);
-            BDSStack* tmp = _tab;
+/*            BDSStack* tmp = _tab;
             _tab = _next;
             _next = tmp;
+ */
+             while (_next.size > 0)
+                 [_tab push:_next.pop];
             [_maxDisc setBound:_maxDisc.bound * 5];
          }
          //NSLog(@"BDSStack -- fail call -- : %d %d",_tab.size,_next.size);
