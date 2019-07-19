@@ -92,6 +92,71 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void predatorPrey_d_QF(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
+      ORRational * c = [ORRational rationalWith_d:nextafter(-1.0, +INFINITY)];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORDoubleVar> K = [ORFactory doubleVar:mdl name:@"K"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
+      
+      id<ORRationalVar> rQ = [ORFactory rationalVar:mdl name:@"rQ"];
+      id<ORRationalVar> KQ = [ORFactory rationalVar:mdl name:@"KQ"];
+      id<ORRationalVar> zQ = [ORFactory rationalVar:mdl name:@"zQ"];
+      id<ORRationalVar> xQ = [ORFactory rationalVar:mdl name:@"xQ"];
+      id<ORRationalVar> zq = [ORFactory rationalVar:mdl name:@"zq"];
+      id<ORRationalVar> ez = [ORFactory rationalVar:mdl name:@"ez"];
+      [zero set_d: 1.0];
+      id<ORRationalVar> one = [ORFactory rationalVar:mdl low:zero up:zero name:@"one"];
+
+      [mdl add:[ORFactory channel:r with:rQ]];
+      [mdl add:[ORFactory channel:K with:KQ]];
+      [mdl add:[ORFactory channel:z with:zq]];
+      [mdl add:[ORFactory channel:x with:xQ]];
+
+      [zero release];
+      
+      [mdl add:[r set: @(4.0)]];
+      [mdl add:[K set: @(1.11)]];
+      [mdl add:[z set:[[[r mul: x] mul: x] div: [@(1.0) plus: [[x div: K] mul: [x div: K]]]]]];
+      
+      [mdl add:[zQ eq:[[[rQ mul: xQ] mul: xQ] div: [one plus: [[xQ div: KQ] mul: [xQ div: KQ]]]]]];
+      
+      [mdl add:[ez eq: [zQ sub: zq]]];
+
+
+      
+      //[mdl add:[[z error] geq:c]];
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [c release];
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+         NSLog(@"K : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:K],[cp maxD:K],[cp minDQ:K],[cp maxDQ:K],[cp bound:K] ? "YES" : "NO");
+         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         NSLog(@"");
+         NSLog(@"xQ: [%@;%@] (%s)",[cp minQ:xQ],[cp maxQ:xQ],[cp bound:xQ] ? "YES" : "NO");
+         NSLog(@"rQ: [%@;%@] (%s)",[cp minQ:rQ],[cp maxQ:rQ],[cp bound:rQ] ? "YES" : "NO");
+         NSLog(@"KQ: [%@;%@] (%s)",[cp minQ:KQ],[cp maxQ:KQ],[cp bound:KQ] ? "YES" : "NO");
+         NSLog(@"zQ: [%@;%@] (%s)",[cp minQ:zQ],[cp maxQ:zQ],[cp bound:zQ] ? "YES" : "NO");
+         NSLog(@"ez: [%@;%@] (%s)",[cp minQ:ez],[cp maxQ:ez],[cp bound:ez] ? "YES" : "NO");
+
+         if (search) check_it_d([cp minD:r],[cp minD:K],[cp minD:x],[cp minD:z],[cp minErrorDQ:z]);
+      }];
+   }
+}
+
 void check_it_f(float r, float k, float x, float z, id<ORRational> ez) {
    mpq_t qz, qx, tmp0, tmp1, tmp2;
    float cz = ((r*x)*x) / (1.0f + ((x/k)*(x/k)));
@@ -167,9 +232,10 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   LOO_MEASURE_TIME(@"d"){
+   LOO_MEASURE_TIME(@"predPrey"){
       //predatorPrey_f(1, argc, argv);
-      predatorPrey_d(0, argc, argv);
+      //predatorPrey_d(0, argc, argv);
+      predatorPrey_d_QF(1, argc, argv);
    }
    return 0;
 }

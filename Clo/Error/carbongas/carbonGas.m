@@ -100,6 +100,93 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
     }
 }
 
+void carbonGas_d_QF(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
+      id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
+      id<ORDoubleVar> b = [ORFactory doubleVar:mdl name:@"b"];
+      id<ORDoubleVar> t = [ORFactory doubleVar:mdl name:@"t"];
+      id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
+      id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
+      id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 elow:zero eup:zero name:@"v"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      
+      id<ORRationalVar> aQ = [ORFactory rationalVar:mdl name:@"aQ"];
+      id<ORRationalVar> pQ = [ORFactory rationalVar:mdl name:@"pQ"];
+      id<ORRationalVar> bQ = [ORFactory rationalVar:mdl name:@"bQ"];
+      id<ORRationalVar> tQ = [ORFactory rationalVar:mdl name:@"tQ"];
+      id<ORRationalVar> nQ = [ORFactory rationalVar:mdl name:@"nQ"];
+      id<ORRationalVar> kQ = [ORFactory rationalVar:mdl name:@"kQ"];
+      id<ORRationalVar> vQ = [ORFactory rationalVar:mdl name:@"vQ"];
+      id<ORRationalVar> rQ = [ORFactory rationalVar:mdl name:@"rQ"];
+      id<ORRationalVar> rq = [ORFactory rationalVar:mdl name:@"rq"];
+      id<ORRationalVar> er = [ORFactory rationalVar:mdl name:@"er"];
+      [zero release];
+      
+      [mdl add:[ORFactory channel:a with:aQ]];
+      [mdl add:[ORFactory channel:p with:pQ]];
+      [mdl add:[ORFactory channel:b with:bQ]];
+      [mdl add:[ORFactory channel:t with:tQ]];
+      [mdl add:[ORFactory channel:n with:nQ]];
+      [mdl add:[ORFactory channel:k with:kQ]];
+      [mdl add:[ORFactory channel:v with:vQ]];
+      [mdl add:[ORFactory channel:r with:rq]];
+
+      
+      [mdl add:[a set: @(0.401)]];
+      [mdl add:[p set: @(3.5e7)]];
+      [mdl add:[b set: @(42.7e-6)]];
+      [mdl add:[t set: @(300.0)]];
+      [mdl add:[n set: @(1000.0)]];
+      [mdl add:[k set: @(1.3806503e-23)]];
+      
+      [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
+      
+      [mdl add:[rQ eq: [[[pQ plus: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]]];
+      
+      [mdl add:[er eq: [rQ sub: rq]]];
+
+      
+      NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         /* format of 8.8e to have the same value displayed as in FLUCTUAT */
+         /* Use printRational(ORRational r) to print a rational inside the solver */
+         NSLog(@"p : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:p],[cp maxD:p],[cp minDQ:p],[cp maxDQ:p],[cp bound:p] ? "YES" : "NO");
+         NSLog(@"a : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:a],[cp maxD:a],[cp minDQ:a],[cp maxDQ:a],[cp bound:a] ? "YES" : "NO");
+         NSLog(@"b : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:b],[cp maxD:b],[cp minDQ:b],[cp maxDQ:b],[cp bound:b] ? "YES" : "NO");
+         NSLog(@"t : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:t],[cp maxD:t],[cp minDQ:t],[cp maxDQ:t],[cp bound:t] ? "YES" : "NO");
+         NSLog(@"n : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:n],[cp maxD:n],[cp minDQ:n],[cp maxDQ:n],[cp bound:n] ? "YES" : "NO");
+         NSLog(@"k : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:k],[cp maxD:k],[cp minDQ:k],[cp maxDQ:k],[cp bound:k] ? "YES" : "NO");
+         NSLog(@"v : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
+         NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+         NSLog(@"");
+         NSLog(@"pQ: [%@;%@] (%s)",[cp minQ:pQ],[cp maxQ:pQ],[cp bound:pQ] ? "YES" : "NO");
+         NSLog(@"aQ: [%@;%@] (%s)",[cp minQ:aQ],[cp maxQ:aQ],[cp bound:aQ] ? "YES" : "NO");
+         NSLog(@"bQ: [%@;%@] (%s)",[cp minQ:bQ],[cp maxQ:bQ],[cp bound:bQ] ? "YES" : "NO");
+         NSLog(@"tQ: [%@;%@] (%s)",[cp minQ:tQ],[cp maxQ:tQ],[cp bound:tQ] ? "YES" : "NO");
+         NSLog(@"nQ: [%@;%@] (%s)",[cp minQ:nQ],[cp maxQ:nQ],[cp bound:nQ] ? "YES" : "NO");
+         NSLog(@"kQ: [%@;%@] (%s)",[cp minQ:kQ],[cp maxQ:kQ],[cp bound:kQ] ? "YES" : "NO");
+         NSLog(@"vQ: [%@;%@] (%s)",[cp minQ:vQ],[cp maxQ:vQ],[cp bound:vQ] ? "YES" : "NO");
+         NSLog(@"rQ: [%@;%@] (%s)",[cp minQ:rQ],[cp maxQ:rQ],[cp bound:rQ] ? "YES" : "NO");
+         NSLog(@"er: [%@;%@] (%s)",[cp minQ:er],[cp maxQ:er],[cp bound:rQ] ? "YES" : "NO");
+
+         if (search)
+            check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
+      }];
+   }
+}
+
 void check_it_f(float p, float a, float b, float t, float n, float k, float v, float r, id<ORRational> er) {
     float cr = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
     mpq_t pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1;
@@ -186,7 +273,8 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"foo"){
       //carbonGas_f(0, argc, argv);
-      carbonGas_d(0, argc, argv);
+      //carbonGas_d(1, argc, argv);
+      carbonGas_d_QF(1, argc, argv);
    }
     return 0;
 }

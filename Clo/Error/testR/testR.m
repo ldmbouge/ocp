@@ -247,27 +247,30 @@ void testRF(int argc, const char * argv[]) {
       [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
-         id<ORRationalVar> yR = [ORFactory rationalVar:mdl name:@"yR"];
-         id<ORRationalVar> xR = [ORFactory rationalVar:mdl name:@"xR"];
+         id<ORRationalVar> yQ = [ORFactory rationalVar:mdl name:@"yQ"];
+         id<ORRationalVar> xQ = [ORFactory rationalVar:mdl name:@"xQ"];
+         id<ORRationalVar> wQ = [ORFactory rationalVar:mdl name:@"wQ"];
 
-         id<ORRationalVar> zR = [ORFactory rationalVar:mdl name:@"zR"];
+         id<ORRationalVar> zQ = [ORFactory rationalVar:mdl name:@"zQ"];
          id<ORRationalVar> zq = [ORFactory rationalVar:mdl name:@"zq"];
          id<ORRationalVar> errorZ = [ORFactory rationalVar:mdl name:@"errorZ"];
          id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.0 up:100.0 elow:zero eup:zero name:@"x"];
          id<ORFloatVar> y = [ORFactory floatVar:mdl low:3.20f up:4.0f elow:zero eup:zero name:@"y"];
+         id<ORFloatVar> w = [ORFactory floatVar:mdl low:-1.0f up:2.4f elow:zero eup:zero name:@"w"];
          id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
          //id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
          //id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
          
-         [mdl add:[ORFactory channel:x with:xR]];
-         [mdl add:[ORFactory channel:y with:yR]];
+         [mdl add:[ORFactory channel:x with:xQ]];
+         [mdl add:[ORFactory channel:y with:yQ]];
+         [mdl add:[ORFactory channel:w with:wQ]];
          [mdl add:[ORFactory channel:z with:zq]];
          
          [mdl add:[x set: @(45.0f)]];
          
-         [mdl add:[z set: [x mul: y]]];
-         [mdl add:[zR eq: [xR mul: yR]]];
-         [mdl add:[errorZ eq: [zR sub: zq]]];
+         [mdl add:[z set: [[x mul: y] sub: w]]];
+         [mdl add:[zQ eq: [[xQ mul: yQ] sub: wQ]]];
+         [mdl add:[errorZ eq: [zQ sub: zq]]];
          
          //[zero set_d: 1];
          //[mdl add:[zR leq: zero]];
@@ -291,13 +294,16 @@ void testRF(int argc, const char * argv[]) {
             NSLog(@"ex: [%@;%@]",[cp minFQ:x],[cp maxFQ:x]);
             NSLog(@"y : [%20.20e;%20.20e] (%s)",[cp minF:y],[cp maxF:y],[cp bound:y] ? "YES" : "NO");
             NSLog(@"ey: [%@;%@]",[cp minFQ:y],[cp maxFQ:y]);
+            NSLog(@"w : [%20.20e;%20.20e] (%s)",[cp minF:w],[cp maxF:w],[cp bound:w] ? "YES" : "NO");
+            NSLog(@"ew: [%@;%@]",[cp minFQ:w],[cp maxFQ:w]);
             NSLog(@"z : [%20.20e;%20.20e] (%s)",[cp minF:z],[cp maxF:z],[cp bound:z] ? "YES" : "NO");
-            NSLog(@"zq : [%@;%@]",[cp minQ:zq],[cp maxQ:zq]);
+            NSLog(@"zq: [%@;%@] (%s)",[cp minQ:zq],[cp maxQ:zq],[cp bound:z] ? "YES" : "NO");
             NSLog(@"ez: [%@;%@]",[cp minFQ:z],[cp maxFQ:z]);
             NSLog(@"");
-            NSLog(@"xR: [%@;%@]",[cp minQ:xR],[cp maxQ:xR]);
-            NSLog(@"yR: [%@;%@]",[cp minQ:yR],[cp maxQ:yR]);
-            NSLog(@"zR: [%@;%@]",[cp minQ:zR],[cp maxQ:zR]);
+            NSLog(@"xR: [%@;%@] (%s)",[cp minQ:xQ],[cp maxQ:xQ],[cp bound:xQ] ? "YES" : "NO");
+            NSLog(@"yR: [%@;%@] (%s)",[cp minQ:yQ],[cp maxQ:yQ],[cp bound:yQ] ? "YES" : "NO");
+            NSLog(@"wR: [%@;%@] (%s)",[cp minQ:wQ],[cp maxQ:wQ],[cp bound:wQ] ? "YES" : "NO");
+            NSLog(@"zR: [%@;%@] (%s)",[cp minQ:zQ],[cp maxQ:zQ],[cp bound:zQ] ? "YES" : "NO");
             NSLog(@"");
             NSLog(@"errorZ: [%@;%@]",[cp minQ:errorZ],[cp maxQ:errorZ]);
             

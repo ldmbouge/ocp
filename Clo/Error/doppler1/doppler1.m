@@ -93,6 +93,79 @@ void doppler1_d(int search, int argc, const char * argv[]) {
     }
 }
 
+void doppler1_d_QF(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> u = [ORFactory doubleVar:mdl low:-100.0 up:100.0 elow:zero eup:zero name:@"u"];
+      id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:20.0 up:20000.0 elow:zero eup:zero name:@"v"];
+      id<ORDoubleVar> t = [ORFactory doubleVar:mdl low:-30.0 up:50.0 elow:zero eup:zero name:@"t"];
+      id<ORDoubleVar> t1 = [ORFactory doubleVar:mdl];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      
+      id<ORRationalVar> uQ = [ORFactory rationalVar:mdl name:@"uQ"];
+      id<ORRationalVar> vQ = [ORFactory rationalVar:mdl name:@"vQ"];
+      id<ORRationalVar> tQ = [ORFactory rationalVar:mdl name:@"tQ"];
+      id<ORRationalVar> t1Q = [ORFactory rationalVar:mdl name:@"t1Q"];
+      id<ORRationalVar> zQ = [ORFactory rationalVar:mdl name:@"zQ"];
+      id<ORRationalVar> zq = [ORFactory rationalVar:mdl name:@"zq"];
+      id<ORRationalVar> ez = [ORFactory rationalVar:mdl name:@"ez"];
+      [zero set_d:331.4];
+      id<ORRationalVar> tmp1 = [ORFactory rationalVar:mdl low:zero up:zero name:@"tmp1"];
+      [zero set_d:0.6];
+      id<ORRationalVar> tmp2 = [ORFactory rationalVar:mdl low:zero up:zero name:@"tmp2"];
+      [zero set_d:-1.0];
+      id<ORRationalVar> tmp3 = [ORFactory rationalVar:mdl low:zero up:zero name:@"tmp3"];
+      
+      [zero release];
+      
+      [mdl add:[ORFactory channel:u with:uQ]];
+      [mdl add:[ORFactory channel:v with:vQ]];
+      [mdl add:[ORFactory channel:t with:tQ]];
+      [mdl add:[ORFactory channel:t1 with:t1Q]];
+      [mdl add:[ORFactory channel:z with:zq]];
+
+      
+      [mdl add:[t1 set: [@(331.4) plus:[@(0.6) mul: t]]]];
+      [mdl add:[z set: [[[@(-1.0) mul: t1] mul: v] div: [[t1 plus: u] mul: [t1 plus: u]]]]];
+      
+      [mdl add:[t1Q eq: [tmp1 plus:[tmp2 mul: tQ]]]];
+      [mdl add:[zQ eq: [[[tmp3 mul: t1Q] mul: vQ] div: [[t1Q plus: uQ] mul: [t1Q plus: uQ]]]]];
+      
+      [mdl add:[ez eq:[zQ sub: zq]]];
+      
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"u : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:u],[cp maxD:u],[cp minDQ:u],[cp maxDQ:u],[cp bound:u] ? "YES" : "NO");
+         NSLog(@"v : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
+         NSLog(@"t : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:t],[cp maxD:t],[cp minDQ:t],[cp maxDQ:t],[cp bound:t] ? "YES" : "NO");
+         NSLog(@"t1 : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:t1],[cp maxD:t1],[cp minDQ:t1],[cp maxDQ:t1],[cp bound:t1] ? "YES" : "NO");
+         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         NSLog(@"");
+         NSLog(@"uQ: [%@;%@] (%s)",[cp minQ:uQ],[cp maxQ:uQ],[cp bound:uQ] ? "YES" : "NO");
+         NSLog(@"vQ: [%@;%@] (%s)",[cp minQ:vQ],[cp maxQ:uQ],[cp bound:vQ] ? "YES" : "NO");
+         NSLog(@"tQ: [%@;%@] (%s)",[cp minQ:tQ],[cp maxQ:tQ],[cp bound:tQ] ? "YES" : "NO");
+         NSLog(@"t1Q: [%@;%@] (%s)",[cp minQ:t1Q],[cp maxQ:t1Q],[cp bound:t1Q] ? "YES" : "NO");
+         NSLog(@"zQ: [%@;%@] (%s)",[cp minQ:zQ],[cp maxQ:zQ],[cp bound:zQ] ? "YES" : "NO");
+         NSLog(@"ez: [%@;%@] (%s)",[cp minQ:ez],[cp maxQ:ez],[cp bound:ez] ? "YES" : "NO");
+
+
+         
+         if (search) check_it_d(getDmin(u), getDmin(v), getDmin(t), getDmin(t1), getDmin(z), [cp minErrorDQ:z]);
+      }];
+   }
+}
+
+
 void check_it_f(float u, float v, float t, float t1, float z, id<ORRational> ez) {
     float ct1 = 331.4f + (0.6f * t);
     float cz = ((-1.0f * t1) * v) / ((t1 + u) * (t1 + u));
@@ -169,7 +242,9 @@ void doppler1_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"u"){
     //doppler1_f(1, argc, argv);
-    doppler1_d(0, argc, argv);
+//    doppler1_d(0, argc, argv);
+      doppler1_d_QF(1, argc, argv);
+
    }
     return 0;
 }

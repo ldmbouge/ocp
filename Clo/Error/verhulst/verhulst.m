@@ -145,10 +145,72 @@ void verhulst_f(int search, int argc, const char * argv[]) {
    }
 }
 
+void verhulst_d_QF(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      id<ORRationalVar> xQ = [ORFactory rationalVar:mdl name:@"xQ"];
+      id<ORRationalVar> rQ = [ORFactory rationalVar:mdl name:@"rQ"];
+      id<ORRationalVar> kQ = [ORFactory rationalVar:mdl name:@"kQ"];
+      id<ORRationalVar> zQ = [ORFactory rationalVar:mdl name:@"zQ"];
+      id<ORRationalVar> zq = [ORFactory rationalVar:mdl name:@"zq"];
+      id<ORRationalVar> ez = [ORFactory rationalVar:mdl name:@"ez"];
+      [zero set_d: 1.0];
+      id<ORRationalVar> one = [ORFactory rationalVar:mdl low:zero up:zero name:@"one"];
+      
+      [mdl add:[ORFactory channel:x with:xQ]];
+      [mdl add:[ORFactory channel:r with:rQ]];
+      [mdl add:[ORFactory channel:k with:kQ]];
+      [mdl add:[ORFactory channel:z with:zq]];
+
+      
+      [mdl add:[r set: @(4.0)]];
+      [mdl add:[k set: @(1.11)]];
+      [mdl add:[z set:[[r mul: x] div: [@(1.0) plus: [x div: k]]]]];
+      
+      [mdl add:[zQ eq:[[rQ mul: xQ] div: [one plus: [xQ div: kQ]]]]];
+      
+      [mdl add:[ez eq: [zQ sub: zq]]];
+
+      [zero release];
+
+      
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+         NSLog(@"k : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:k],[cp maxD:k],[cp minDQ:k],[cp maxDQ:k],[cp bound:k] ? "YES" : "NO");
+         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         NSLog(@"");
+         NSLog(@"xQ: [%@;%@] (%s)",[cp minQ:xQ],[cp maxQ:xQ],[cp bound:xQ] ? "YES" : "NO");
+         NSLog(@"rQ: [%@;%@] (%s)",[cp minQ:rQ],[cp maxQ:rQ],[cp bound:rQ] ? "YES" : "NO");
+         NSLog(@"kQ: [%@;%@] (%s)",[cp minQ:kQ],[cp maxQ:kQ],[cp bound:kQ] ? "YES" : "NO");
+         NSLog(@"zQ: [%@;%@] (%s)",[cp minQ:zQ],[cp maxQ:zQ],[cp bound:zQ] ? "YES" : "NO");
+         NSLog(@"ez: [%@;%@] (%s)",[cp minQ:ez],[cp maxQ:ez],[cp bound:ez] ? "YES" : "NO");
+         if (search) check_it_d(getDmin(x),getDmin(r),getDmin(k),getDmin(z), [cp minErrorDQ:z]);
+      }];
+   }
+}
+
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"verhulst"){
       //verhulst_f(1, argc, argv);
-      verhulst_d(0, argc, argv);
+      //verhulst_d(0, argc, argv);
+      verhulst_d_QF(1, argc, argv);
    }
    return 0;
 }
