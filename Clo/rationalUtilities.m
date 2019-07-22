@@ -467,6 +467,8 @@
    }
    else if(_type == -2){
       [local set_d: -10e+20];
+   } else {
+      [local set: self];
    }
    
    if(r.type == 2){
@@ -474,6 +476,8 @@
    }
    else if(r.type == -2){
       [other set_d: -10e+20];
+   } else {
+      [other set: r];
    }
    mpq_sub(z.rational, local.rational, other.rational);
    mpq_canonicalize(z.rational);
@@ -490,6 +494,8 @@
    }
    else if(_type == -2){
       [local set_d: -10e+20];
+   } else {
+      [local set: self];
    }
    
    if(r.type == 2){
@@ -497,8 +503,10 @@
    }
    else if(r.type == -2){
       [other set_d: -10e+20];
+   } else {
+      [other set: r];
    }
-   mpq_div(z.rational, _rational, r.rational);
+   mpq_div(z.rational, local.rational, other.rational);
    mpq_canonicalize(z.rational);
    z.type = mpq_sgn(z.rational);
    
@@ -1065,13 +1073,13 @@
       //int both = 0;
       //plow = [[[_low sub:z.low] div:_low] abs];
       //pup = [[[_up sub:z.up] div:_up] abs];
-      //plow = [[z.up subI:z.low] divI: [_up subI: _low]];
+      plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:95 and:100];
       
-//      if([plow leq: epsilon]){
-//         z.changed = 0;
-//      }
-      
+      if([plow leq: epsilon]){
+         z.changed = 0;
+      }
+      //NSLog(@"%@ : %@", self, ri);
       //      if([plow leq: epsilon])
       //         both++;
       //      if([pup leq: epsilon])
@@ -1113,11 +1121,11 @@
       id<ORRational> plow = [[ORRational alloc] init];
       id<ORRational> pup = [[ORRational alloc] init];
       id<ORRational> epsilon = [[ORRational alloc] init];
-      //      int both = 0;
+      //int both = 0;
       //plow = [[[_low sub:z.low] div:_low] abs];
       //pup = [[[_up sub:z.up] div:_up] abs];
       plow = [[z.up subI:z.low] divI: [_up subI: _low]];
-      [epsilon set:50 and:100];
+      [epsilon set:95 and:100];
       
       if([plow leq: epsilon]){
          z.changed = 0;

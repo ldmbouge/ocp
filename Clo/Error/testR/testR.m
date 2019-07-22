@@ -273,7 +273,7 @@ void testRF(int argc, const char * argv[]) {
          [mdl add:[errorZ eq: [zQ sub: zq]]];
          
          //[zero set_d: 1];
-         //[mdl add:[zR leq: zero]];
+         //[mdl add:[zQ leq: zero]];
          
          [zero release];
          

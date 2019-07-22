@@ -134,6 +134,8 @@ void doppler1_d_QF(int search, int argc, const char * argv[]) {
       
       [mdl add:[ez eq:[zQ sub: zq]]];
       
+      
+      
       NSLog(@"model: %@",mdl);
       id<ORDoubleVarArray> vs = [mdl doubleVars];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];

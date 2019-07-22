@@ -65,7 +65,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
        [zero release];
         
         [mdl add:[a set: @(0.401)]];
-       [mdl add:[p set: @(3.5e7)]];
+        [mdl add:[p set: @(3.5e7)]];
         [mdl add:[b set: @(42.7e-6)]];
         [mdl add:[t set: @(300.0)]];
         [mdl add:[n set: @(1000.0)]];
@@ -123,7 +123,7 @@ void carbonGas_d_QF(int search, int argc, const char * argv[]) {
       id<ORRationalVar> rQ = [ORFactory rationalVar:mdl name:@"rQ"];
       id<ORRationalVar> rq = [ORFactory rationalVar:mdl name:@"rq"];
       id<ORRationalVar> er = [ORFactory rationalVar:mdl name:@"er"];
-      [zero release];
+      id<ORRationalVar> eR = [ORFactory errorVar:mdl of:r];
       
       [mdl add:[ORFactory channel:a with:aQ]];
       [mdl add:[ORFactory channel:p with:pQ]];
@@ -148,6 +148,10 @@ void carbonGas_d_QF(int search, int argc, const char * argv[]) {
       
       [mdl add:[er eq: [rQ sub: rq]]];
 
+      [zero set_d:0];
+      [mdl add:[er geq:zero]];
+      [zero release];
+      
       
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
