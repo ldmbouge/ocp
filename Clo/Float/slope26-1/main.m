@@ -123,7 +123,8 @@ int main(int argc, const char * argv[]) {
                [args printSolution:model with:cp];
             } withTimeLimit:[args timeOut]];
          }
-         struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites]);
+         
+         struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[model variables] count], [[model constraints] count]);
          printf("%s\n",(isSat)?"sat":"unsat");
          return r;
       }];
