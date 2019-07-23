@@ -78,6 +78,11 @@ int main(int argc, const char * argv[]) {
          if(!hascycle){
             id<ORIntArray> locc = [VariableLocalOccCollector collect:[model constraints] with:[model variables] tracker:model];
             [(CPCoreSolver*)cp setLOcc:locc];
+            if([args occDetails]){
+               [_options printOccurences:_model with:cp];
+               [_options printMaxGOccurences:_model with:cp n:5];
+               [_options printMaxLOccurences:_model with:cp n:5];
+            }
             [cp solveOn:^(id<CPCommonProgram> p) {
                [args launchHeuristic:cp restricted:vars];
                check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);

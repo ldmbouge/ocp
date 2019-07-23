@@ -457,6 +457,11 @@ static id<OBJCPGateway> objcpgw;
          if(!hascycle){
             id<ORIntArray> locc = [VariableLocalOccCollector collect:[_model constraints] with:[_model variables] tracker:_model];
             [(CPCoreSolver*)cp setLOcc:locc];
+            if([_options occDetails]){
+               [_options printOccurences:_model with:cp];
+               [_options printMaxGOccurences:_model with:cp n:5];
+               [_options printMaxLOccurences:_model with:cp n:5];
+            }
             [cp solveOn:^(id<CPCommonProgram> p) {
                [lh launchHeuristic];
                NSLog(@"Valeurs solutions : \n");

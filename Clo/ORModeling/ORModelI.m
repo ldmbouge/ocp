@@ -535,6 +535,10 @@
    }
    [top release];
 }
+-(void) setLocc:(id<ORIntArray>) locc
+{
+   _loccurences = locc;
+}
 -(ORDouble) occurences:(id<ORVar>) v
 {
    if(_occurences != nil && [v getId] < [_occurences count]) {
@@ -590,6 +594,12 @@
    if(!_initDone)
       [self normalizeOcc];
    return _occurences;
+}
+-(id<ORIntArray>) loccurences
+{
+   if(_loccurences == nil)
+      [self initLocalOccurrences];
+   return _loccurences;
 }
 -(NSArray*) variables
 {

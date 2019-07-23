@@ -66,6 +66,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize splitTest;
 @synthesize specialSearch;
 @synthesize absFunComputation;
+@synthesize occDetails;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -115,6 +116,7 @@ static enum ValHeuristic valIndex[] =
    absFunComputation = AMEAN;
    _nbSMerged = 0;
    _nbDMerged = 0;
+   occDetails = NO;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -161,6 +163,8 @@ static enum ValHeuristic valIndex[] =
          }
       }else if(strncmp(argv[k],"-occ-rate",9) == 0){
          occRate = atof(argv[k+1]);
+      }else if(strncmp(argv[k],"-occ-details",12) == 0){
+         occDetails = YES;
       }else if(strncmp(argv[k],"-model-limits",13) == 0){
          rateModel = atof(argv[k+1]);
          grateModel = atof(argv[k+1]);
@@ -451,6 +455,62 @@ static enum ValHeuristic valIndex[] =
    for(id<ORVar> v in vars){
       NSLog(@"%@ : (%s) %@",v,[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
    }
+}
+-(void) printOccurences:(id<ORModel>) model with:(id<CPProgram>) cp
+{
+   NSArray* vars = [model variables];
+   id<ORIntArray> occ = [[cp source] occurences];
+   id<ORIntArray> locc = [[cp source] loccurences];
+   
+   NSLog(@"------------------");
+   NSLog(@"Local and global occurences :");
+   for(id<ORVar> v in vars){
+      ORInt index = [v getId];
+      NSLog(@"%@ : g %@ l %@",v,occ[index],locc[index]);
+   }
+   
+   NSLog(@"------------------\n");
+}
+
+-(void) printMaxLOccurences:(id<ORModel>) model with:(id<CPProgram>) cp n:(ORInt) n
+{
+   NSArray* vars = [model variables];
+   id<ORIntArray> occ = [[cp source] loccurences];
+   NSMutableArray* sortedArray = [[NSMutableArray alloc] initWithCapacity:[occ count]];
+   for(id<ORVar> v in vars){
+      ORInt index = [v getId];
+      [sortedArray addObject:occ[index]];
+   }
+   [sortedArray sortUsingComparator:^NSComparisonResult(NSNumber* obj1, NSNumber* obj2) {
+      return [obj1 intValue] < [obj2 intValue];
+   }];
+   NSLog(@"------------------");
+   NSLog(@"%d max local occurences :",n);
+   for(ORInt i = 0; i < [sortedArray count] && i < n; i++)
+      NSLog(@"%d MAX_LOCC : %d",i,[sortedArray[i] intValue]);
+   NSLog(@"------------------\n");
+   [sortedArray release];
+}
+
+
+-(void) printMaxGOccurences:(id<ORModel>) model with:(id<CPProgram>) cp n:(ORInt) n
+{
+   NSArray* vars = [model variables];
+   id<ORIntArray> occ = [[cp source] occurences];
+   NSMutableArray* sortedArray = [[NSMutableArray alloc] initWithCapacity:[occ count]];
+   for(id<ORVar> v in vars){
+      ORInt index = [v getId];
+      [sortedArray addObject:occ[index]];
+   }
+   [sortedArray sortUsingComparator:^NSComparisonResult(NSNumber* obj1, NSNumber* obj2) {
+      return [obj1 intValue] < [obj2 intValue];
+   }];
+   NSLog(@"------------------");
+   NSLog(@"%d max global occurences :",n);
+   for(ORInt i = 0; i < [sortedArray count] && i < n; i++)
+      NSLog(@"%d MAX_OCC : %d",i,[sortedArray[i] intValue]);
+   NSLog(@"------------------\n");
+   [sortedArray release];
 }
 
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x

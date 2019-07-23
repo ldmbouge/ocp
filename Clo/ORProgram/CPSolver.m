@@ -254,6 +254,7 @@
 -(void) setLOcc:(id<ORIntArray>) locc
 {
    _lOccurences = locc;
+   [_model setLocc:locc];
 }
 -(id<ORModel>)source
 {
