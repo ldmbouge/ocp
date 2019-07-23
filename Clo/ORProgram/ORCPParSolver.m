@@ -1136,10 +1136,14 @@
 {
    return [[self worker] debugLevel];
 }
-- (void)maxLOccurencesSearch:(nonnull id<ORDisabledVarArray>)x do:(nonnull void (^)(ORUInt, id<ORDisabledVarArray> _Nonnull))b {
+- (void)maxLOccurencesSearch:(nonnull id<ORDisabledVarArray>)x do:(nonnull void (^)(ORUInt, id<ORDisabledVarArray> _Nonnull))b
+{
    [[self worker] maxLOccurencesSearch:x do:b];
 }
-
+- (void)maxOccDensSearch:(nonnull id<ORDisabledVarArray>)x do:(nonnull void (^)(ORUInt, id<ORDisabledVarArray> _Nonnull))b
+{
+   [[self worker] maxOccDensSearch:x do:b];
+}
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];

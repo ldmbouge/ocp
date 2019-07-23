@@ -327,8 +327,8 @@ static enum ValHeuristic valIndex[] =
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];
    NSString* str = mallocReport();
-   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,#uniquesubcut,split3Bpercent,#SRewrite,#DRewrite,#SMerged,#DMerged\n");
-   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%d,%s,%f,%d,%d,%d,%d\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
+   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,#uniquesubcut,split3Bpercent,#SRewrite,#DRewrite,#SMerged,#DMerged,#VAR,#CST\n");
+   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%d,%s,%f,%d,%d,%d,%d,%d,%d\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           [[self valueHeuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           randomized,
           nbThreads,
@@ -350,7 +350,9 @@ static enum ValHeuristic valIndex[] =
           run.nbSRewrites,
           run.nbDRewrites,
           _nbSMerged,
-          _nbDMerged);
+          _nbDMerged,
+          (ORInt)(run.nbVariables),
+          (ORInt)(run.nbConstraints));
 }
 -(void) updateNotes: (id<ORAnnotation>) notes model:(id<ORModel>) model
 {

@@ -967,6 +967,11 @@
 - (void)maxLOccurencesSearch:(nonnull id<ORDisabledVarArray>)x do:(nonnull void (^)(ORUInt, id<ORDisabledVarArray> _Nonnull))b {
    [[self worker] maxLOccurencesSearch:x do:b];
 }
+
+-(void) maxOccDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+{
+   [[self worker] maxOccDensSearch:x do:b];
+}
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];

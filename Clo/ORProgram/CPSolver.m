@@ -1759,6 +1759,14 @@
       return -[self maxOccurences:x[i]];
    } do:b];
 }
+-(void) maxOccDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+{
+   [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
+      if([_model occurences:x[i]] == 1)
+         return [self density:x[i]];
+      return [_model occurences:x[i]];
+   } do:b];
+}
 -(NSArray*) orderForVar:(id<ORVar>) v
 {
    return [_order objectForKey:@(v.getId)];
