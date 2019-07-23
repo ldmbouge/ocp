@@ -21,12 +21,12 @@
 static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg",//intSearch
    @"maxWidth",@"minWidth",@"maxCard",@"minCard",@"maxDens",@"minDens",@"minMagn",@"maxMagn",
    @"maxDegree",@"minDegree",@"maxOcc",@"minOcc",@"maxAbs",@"minAbs",@"maxCan",
-   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens",@"custom",@"customD",@"customWD",@"maxLOCC"};
+   @"minCan",@"absWDens", @"densWAbs", @"ref",@"lexico",@"absDens",@"custom",@"customD",@"customWD",@"maxLOCC,occdens"};
 
 static enum Heuristic hIndex[] = {FF, ABS, IBS, WDEG, DDEG, SDEG,
    maxWidth, minWidth, maxCard,  minCard,   maxDens,   minDens,   minMagn,   maxMagn,
    maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens,
-   densWAbs , ref ,lexico,absDens,custom,customD,customWD,maxLOcc};
+   densWAbs , ref ,lexico,absDens,custom,customD,customWD,maxLOcc,occdens};
 
 static NSString* valHName[] = {@"split",@"split3Way",@"split5Way",@"split6Way",@"dynamicSplit",@"dynamic3Split",@"dynamic5Split",@"dynamic6Split",@"split3B",@"splitAbs",@"ESplit",@"DSplit"};
 
@@ -1349,6 +1349,66 @@ case maxOcc :
             break;
       }
       break;
+   case occdens :
+      switch (valordering) {
+         case splitAbs:
+         case split:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatStaticSplit:i  withVars:x];
+            }];
+            break;
+         case split3Way:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatStatic3WaySplit:i  withVars:x];
+            }];
+            break;
+         case split5Way:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatStatic5WaySplit:i  withVars:x];
+            }];
+            break;
+         case split6Way:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatStatic6WaySplit:i  withVars:x];
+            }];
+            break;
+         case dynamicSplit:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatSplit:i  withVars:x];
+            }];
+            break;
+         case dynamic3Split:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p float3WaySplit:i  withVars:x];
+            }];
+            break;
+         case dynamic5Split:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p float5WaySplit:i  withVars:x];
+            }];
+            break;
+         case dynamic6Split:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p float6WaySplit:i  withVars:x];
+            }];
+            break;
+         case split3B:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p float3BSplit:i  call:@selector(maxOccurencesSearch:do:) withVars:x];
+            }];
+            break;
+         case Esplit:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatEWaySplit:i  withVars:x];
+            }];
+            break;
+         case Dsplit:
+            [p maxOccDens:vars  do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [p floatDeltaSplit:i  withVars:x];
+            }];
+            break;
+      }
+      break;
 case minOcc :
    switch (valordering) {
       case splitAbs:
@@ -1671,6 +1731,7 @@ case customWD :
    [vars setMaxFixed:uniqueNB  engine:[p engine]];
    [p customSearchWeightedD:vars];
    break;
+      
 default :
    heuristic = lexico;
    switch (valordering) {
