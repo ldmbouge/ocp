@@ -458,9 +458,9 @@ static id<OBJCPGateway> objcpgw;
             id<ORIntArray> locc = [VariableLocalOccCollector collect:[_model constraints] with:[_model variables] tracker:_model];
             [(CPCoreSolver*)cp setLOcc:locc];
             if([_options occDetails]){
-               [_options printOccurences:_model with:cp];
-               [_options printMaxGOccurences:_model with:cp n:5];
-               [_options printMaxLOccurences:_model with:cp n:5];
+               [_options printOccurences:_model with:cp restricted:[lh getVariables]];
+//               [_options printMaxGOccurences:_model with:cp n:5];
+//               [_options printMaxLOccurences:_model with:cp n:5];
             }
             [cp solveOn:^(id<CPCommonProgram> p) {
                [lh launchHeuristic];
@@ -470,7 +470,7 @@ static id<OBJCPGateway> objcpgw;
                isSat = [lh checkAllbound];
             } withTimeLimit:[_options timeOut]];
          }
-         struct ORResult r = FULLREPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[_model variables] count], [[_model constraints] count]);
+         struct ORResult r = FULLREPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[lh getVariables] count], [[_model constraints] count]);
          return r;
       }];
       [lh release];

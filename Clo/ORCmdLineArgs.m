@@ -456,19 +456,19 @@ static enum ValHeuristic valIndex[] =
       NSLog(@"%@ : (%s) %@",v,[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
    }
 }
--(void) printOccurences:(id<ORModel>) model with:(id<CPProgram>) cp
+-(void) printOccurences:(id<ORModel>) model with:(id<CPProgram>) cp restricted:(id<ORVarArray>) vars
 {
-   NSArray* vars = [model variables];
    id<ORIntArray> occ = [[cp source] occurences];
    id<ORIntArray> locc = [[cp source] loccurences];
-   
    NSLog(@"------------------");
    NSLog(@"Local and global occurences :");
    for(id<ORVar> v in vars){
       ORInt index = [v getId];
       NSLog(@"%@ : g %@ l %@",v,occ[index],locc[index]);
    }
-   
+   ORInt occsum = [occ sum];
+   ORInt loccsum = [locc sum];
+   NSLog(@"gsum : %d lsum:%d",occsum,loccsum);
    NSLog(@"------------------\n");
 }
 

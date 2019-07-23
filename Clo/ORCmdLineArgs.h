@@ -131,7 +131,7 @@ struct ORResult {
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 -(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;
 -(ORBool) isCycle:(id<ORModel>) model;
--(void) printOccurences:(id<ORModel>) model with:(id<CPProgram>) cp;
+-(void) printOccurences:(id<ORModel>) model with:(id<CPProgram>) cp restricted:(id<ORVarArray>) vars;
 -(void) printMaxGOccurences:(id<ORModel>) model with:(id<CPProgram>) cp n:(ORInt) n;
 -(void) printMaxLOccurences:(id<ORModel>) model with:(id<CPProgram>) cp n:(ORInt) n;
 @end

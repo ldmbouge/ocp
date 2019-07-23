@@ -119,9 +119,9 @@ int main(int argc, const char * argv[]) {
             id<ORIntArray> locc = [VariableLocalOccCollector collect:[model constraints] with:[model variables] tracker:model];
             [(CPCoreSolver*)cp setLOcc:locc];
             if([args occDetails]){
-               [_options printOccurences:_model with:cp];
-               [_options printMaxGOccurences:_model with:cp n:5];
-               [_options printMaxLOccurences:_model with:cp n:5];
+               [_options printOccurences:_model with:cp restricted:vars];
+               //               [_options printMaxGOccurences:_model with:cp n:5];
+               //               [_options printMaxLOccurences:_model with:cp n:5];
             }
             [cp solveOn:^(id<CPCommonProgram> p) {
                [args launchHeuristic:cp restricted:vars];
