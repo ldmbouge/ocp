@@ -69,7 +69,7 @@ int main(int argc, const char * argv[]) {
          id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          if([args occDetails]){
-            [args printOccurences:_model with:cp restricted:vars];
+            [args printOccurences:model with:cp restricted:vars];
 //            [_options printMaxGOccurences:_model with:cp n:5];
 //            [_options printMaxLOccurences:_model with:cp n:5];
          }
