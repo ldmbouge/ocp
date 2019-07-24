@@ -148,7 +148,8 @@ void carbonGas_d_QF(int search, int argc, const char * argv[]) {
       
       [mdl add:[er eq: [rQ sub: rq]]];
 
-      [zero set_d:0];
+      [zero set_d:2.72e-9];
+      [mdl add:[er eq:eR]];
       [mdl add:[er geq:zero]];
       [zero release];
       
@@ -278,7 +279,7 @@ int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"foo"){
       //carbonGas_f(0, argc, argv);
       //carbonGas_d(1, argc, argv);
-      carbonGas_d_QF(1, argc, argv);
+      carbonGas_d_QF(0, argc, argv);
    }
     return 0;
 }

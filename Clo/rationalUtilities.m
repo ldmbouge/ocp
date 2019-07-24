@@ -503,13 +503,15 @@
    }
    else if(r.type == -2){
       [other set_d: -10e+20];
+   } else if(r.type == 0){
+      [other set_d: DBL_MIN];
    } else {
       [other set: r];
    }
    mpq_div(z.rational, local.rational, other.rational);
    mpq_canonicalize(z.rational);
    z.type = mpq_sgn(z.rational);
-   
+      
    return z;
 }
 -(id<ORRational>)neg
@@ -1068,36 +1070,18 @@
    
    if(z.changed && [z.low neq: z.up]){
       id<ORRational> plow = [[ORRational alloc] init];
-      id<ORRational> pup = [[ORRational alloc] init];
       id<ORRational> epsilon = [[ORRational alloc] init];
-      //int both = 0;
-      //plow = [[[_low sub:z.low] div:_low] abs];
-      //pup = [[[_up sub:z.up] div:_up] abs];
+
       plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:95 and:100];
       
-      if([plow leq: epsilon]){
+      if([plow leq: epsilon] && (![_up isPosInf] || ![_low isNegInf])){
          z.changed = 0;
       }
-      //NSLog(@"%@ : %@", self, ri);
-      //      if([plow leq: epsilon])
-      //         both++;
-      //      if([pup leq: epsilon])
-      //         both++;
-      //      if(both == 2){
-      //         z.changed = 0;
-      //         [z.low set: _low];
-      //         [z.up set: _up];
-      //      }
       
       [plow release];
-      [pup release];
       [epsilon release];
    }
-   //   if([z empty]){
-   //      [z.low setPosInf];
-   //      [z.up setNegInf];
-   //   }
    
    return z;
 }
@@ -1119,36 +1103,18 @@
    
    if(z.changed && [z.low neq: z.up]){
       id<ORRational> plow = [[ORRational alloc] init];
-      id<ORRational> pup = [[ORRational alloc] init];
       id<ORRational> epsilon = [[ORRational alloc] init];
-      //int both = 0;
-      //plow = [[[_low sub:z.low] div:_low] abs];
-      //pup = [[[_up sub:z.up] div:_up] abs];
       plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:95 and:100];
       
-      if([plow leq: epsilon]){
+      if([plow leq: epsilon] && (![_up isPosInf] || ![_low isNegInf])){
          z.changed = 0;
       }
       
-      //      if([plow leq: epsilon])
-      //         both++;
-      //      if([pup leq: epsilon])
-      //         both++;
-      //      if(both == 2){
-      //         z.changed = 0;
-      //         [z.low set: _low];
-      //         [z.up set: _up];
-      //      }
-      
       [plow release];
-      [pup release];
       [epsilon release];
    }
-   //   if([z empty]){
-   //      [z.low setPosInf];
-   //      [z.up setNegInf];
-   //   }
+
    return z;
 }
 @end
