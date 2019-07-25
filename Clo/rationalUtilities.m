@@ -1075,7 +1075,7 @@
       plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:95 and:100];
       
-      if([plow leq: epsilon] && (![_up isPosInf] || ![_low isNegInf])){
+      if([plow leq: epsilon] && ![_up isPosInf] && ![_low isNegInf]){
          z.changed = 0;
       }
       
