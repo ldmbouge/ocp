@@ -12,6 +12,8 @@ int main(int argc, const char * argv[]) {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       
          id<ORModel> model = [ORFactory createModel];
+      NSMutableArray* toadd = [[NSMutableArray alloc] init];
+      
 //         id<ORDoubleVar> t = [ORFactory doubleVar:model name:@"t"];
 //         id<ORFloatVar> x = [ORFactory floatVar :model low:1.e3f up:10e10f name:@"x"];
 //         id<ORDoubleVar> x = [ORFactory doubleVar:model low:-10e10f up:-1.e3f name:@"x"];
