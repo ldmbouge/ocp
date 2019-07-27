@@ -53,7 +53,6 @@ void checksolution(float sl){
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
        NSMutableArray* toadd = [[NSMutableArray alloc] init];
          

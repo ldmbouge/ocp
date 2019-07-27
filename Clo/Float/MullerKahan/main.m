@@ -313,7 +313,8 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> expr_1 = [ORFactory float:model value:1130.f];
          id<ORExpr> expr_2 = [ORFactory float:model value:3000.f];
          
-         id<ORGroup> g =  [args makeGroup:model];
+      
+      NSMutableArray* toadd = [[NSMutableArray alloc] init];
          ORFloat v0 = (11.0f / 2.0f);
          ORFloat v1 = (61.0f / 11.0f);
          

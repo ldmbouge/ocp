@@ -99,10 +99,7 @@ int main(int argc, const char * argv[]) {
          [toadd addObject:[diff eq:[y[NBLOOPS] sub:y_opt[NBLOOPS]]]];
          [toadd addObject:[[diff mul:diff] gt:@(0.0f)]];
          
-         
-         //         NSLog(@"%@", model);
-         
-         NSLog(@"%d", [g size]);
+      
          id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
          [ORCmdLineArgs defaultRunner:args model:model program:cp];
       

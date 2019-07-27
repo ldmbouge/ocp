@@ -14,8 +14,9 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> fx1 = [ORFactory floatVar:model];
          id<ORFloatVar> fx2 = [ORFactory floatVar:model];
          id<ORFloatVar> res = [ORFactory floatVar:model];
-         id<ORGroup> g =[args makeGroup:model];
-         //x0 = 13
+      
+      NSMutableArray* toadd = [[NSMutableArray alloc] init];
+      //x0 = 13
          [toadd addObject:[x0 eq:@(13.0f)]];
          //x1 = x0 + h
          [toadd addObject:[x1 eq:[x0 plus:h]]];

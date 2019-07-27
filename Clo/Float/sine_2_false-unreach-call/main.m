@@ -48,6 +48,7 @@ int main(int argc, const char * argv[]) {
          
          id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
           [ORCmdLineArgs defaultRunner:args model:model program:cp];
+   }
    return 0;
 }
 

@@ -30,7 +30,6 @@ int main(int argc, const char * argv[]) {
 //         [toadd addObject:[[res lt: @(0.0f)] lor: [res gt: @(360.0f)]]];
          
          
-         NSLog(@"%@",g);
          id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
          [ORCmdLineArgs defaultRunner:args model:model program:cp];
          

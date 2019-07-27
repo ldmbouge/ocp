@@ -19,15 +19,14 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> y_0 = [ORFactory floatVar:model name:@"y_0"];
          id<ORFloatVar> r_0 = [ORFactory floatVar:model name:@"r_0"];
          id<ORFloatVar> x_0 = [ORFactory floatVar:model name:@"x_0"];
+      
+      NSMutableArray* toadd = [[NSMutableArray alloc] init];
+      
          
-//         [model add:[x_0 eq: @(77617.f)]];
-//         [model add:[y_0 eq: @(33096.f)]];
-         
-         
-         [model add:[r_0 eq: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
+         [toadd addObject:[r_0 eq: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
          
          //assert((r >= 0));
-         [model add:[r_0 geq:@(10e8f)]];
+         [toadd addObject:[r_0 geq:@(10e8f)]];
          
          //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
          
