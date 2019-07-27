@@ -69,10 +69,12 @@ static enum ValHeuristic valIndex[] =
 @synthesize specialSearch;
 @synthesize absFunComputation;
 @synthesize occDetails;
-+(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp
+
+
++(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restrict:(id<ORVarArray>) vars
 {
    fesetround(FE_TONEAREST);
-   id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
+//   NSLog(@"model : %@",model);
    [args measure:^struct ORResult(){
       ORBool hascycle = NO;
       if([args cycleDetection]){
@@ -99,6 +101,12 @@ static enum ValHeuristic valIndex[] =
       printf("%s\n",(isSat)?"sat":"unsat");
       return r;
    }];
+}
+
++(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp
+{
+   id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
+   [ORCmdLineArgs defaultRunner:args model:model program:cp restrict:vars];
 }
 
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv

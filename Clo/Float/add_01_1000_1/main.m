@@ -7,18 +7,18 @@ int main(int argc, const char * argv[]) {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> a = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
-         id<ORFloatVar> b = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
-         id<ORFloatVar> c = [ORFactory floatVar:model low:-1000.0f up:1000.0f];
+      id<ORFloatVar> a = [ORFactory floatVar:model low:-1000.0f up:1000.0f name:@"a"];
+         id<ORFloatVar> b = [ORFactory floatVar:model low:-1000.0f up:1000.0f name:@"b"];
+         id<ORFloatVar> c = [ORFactory floatVar:model low:-1000.0f up:1000.0f name:@"c"];
          
-         id<ORFloatVar> assoc1 = [ORFactory floatVar:model];
-         id<ORFloatVar> assoc2 = [ORFactory floatVar:model];
-         id<ORFloatVar> diffab = [ORFactory floatVar:model];
-         id<ORFloatVar> diffac = [ORFactory floatVar:model];
-         id<ORFloatVar> diffbc = [ORFactory floatVar:model];
+         id<ORFloatVar> assoc1 = [ORFactory floatVar:model name:@"assoc1"];
+         id<ORFloatVar> assoc2 = [ORFactory floatVar:model name:@"assoc2"];
+         id<ORFloatVar> diffab = [ORFactory floatVar:model name:@"diffab"];
+         id<ORFloatVar> diffac = [ORFactory floatVar:model name:@"diffac"];
+         id<ORFloatVar> diffbc = [ORFactory floatVar:model  name:@"diffbc"];
          
          
-         id<ORFloatVar> delta = [ORFactory floatVar:model low:0.1f up:0.1f];
+         id<ORFloatVar> delta = [ORFactory floatVar:model low:0.1f up:0.1f  name:@"delta"];
          id<ORExpr> epsilon =  [ORFactory float:model value:1000.f];
          
          id<ORExpr> infinity = [ORFactory infinityf:model];
@@ -54,8 +54,11 @@ int main(int argc, const char * argv[]) {
          
          
          id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-        
-         [ORCmdLineArgs defaultRunner:args model:model program:cp];
+      NSArray* searchvars = [[NSArray alloc] initWithObjects:a,b,c, nil];
+         id<ORVarArray> vs =(id<ORVarArray>) [ORFactory idArray:model array:searchvars];
+         id<ORVarArray> vars =  [args makeDisabledArray:cp from:vs];
+      [ORCmdLineArgs defaultRunner:args model:model program:cp restrict:vars];
+      [searchvars release];
       
    }
    return 0;

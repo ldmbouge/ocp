@@ -51,11 +51,12 @@ int main(int argc, const char * argv[]) {
          
          [toadd addObject:[[assoc1 sub:assoc2] gt:epsilon]];
          
-         
-         
-         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-       
-         [ORCmdLineArgs defaultRunner:args model:model program:cp];
+      id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+      NSArray* searchvars = [[NSArray alloc] initWithObjects:a,b,c, nil];
+      id<ORVarArray> vs =(id<ORVarArray>) [ORFactory idArray:model array:searchvars];
+      id<ORVarArray> vars =  [args makeDisabledArray:cp from:vs];
+      [ORCmdLineArgs defaultRunner:args model:model program:cp restrict:vars];
+      [searchvars release];
    }
    return 0;
 }
