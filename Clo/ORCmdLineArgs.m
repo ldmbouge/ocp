@@ -10,6 +10,8 @@
  ***********************************************************************/
 
 #import "ORCmdLineArgs.h"
+#include <fenv.h>
+
 
 
 @implementation ORCmdLineArgs {
