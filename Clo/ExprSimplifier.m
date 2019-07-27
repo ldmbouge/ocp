@@ -89,7 +89,7 @@
       [[c right] visit:self];
    }
 }
--(void) visitExprNotEqualI: (ORExprBinaryI*) c
+-(void) visitExprNEqualI: (ORExprBinaryI*) c
 {
    if([self count:c] < 2){
       [[c left] visit:self];
@@ -517,7 +517,7 @@
       _rv = [self simplify:c with:[nL eq:nR]];
    }else _rv = alpha;
 }
--(void) visitExprNotEqualI: (ORExprBinaryI*) c
+-(void) visitExprNEqualI: (ORExprBinaryI*) c
 {
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
    if(alpha == nil){

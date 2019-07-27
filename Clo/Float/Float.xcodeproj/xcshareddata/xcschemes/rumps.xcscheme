@@ -63,8 +63,8 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-h30"
-            isEnabled = "NO">
+            argument = "-var-order maxDens &#10;-val-order dynamic5Split -uniques 2 -percent 3 -variation 2&#xa0; -bds &#10;-cycle-detection&#xa0; -with-rewriting-eq "
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

@@ -63,12 +63,8 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order custom"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-t 1"
-            isEnabled = "NO">
+            argument = "-var-order maxDens &#10;-val-order dynamic5Split -uniques 6 -percent 3 -variation 2 &#10;-cycle-detection&#xa0; -with-rewriting-eq "
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
