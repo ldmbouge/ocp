@@ -13,7 +13,6 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> x = [ORFactory floatVar:model low:-1.0f up:1.0f];
@@ -23,36 +22,20 @@ int main(int argc, const char * argv[]) {
          
          id<ORExpr> fc = [ORFactory float:model value:-0.25f];
          id<ORExpr> fc2 = [ORFactory float:model value:1.0e-3];
-         id<ORGroup> g = [args makeGroup:model];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
          
-         [g add:[res eq:[[x mul:x] plus:x]]];
+         [toadd addObject:[res eq:[[x mul:x] plus:x]]];
          
-         [g add:[res lt:[fc sub:fc2]]];
-         [model add:g];
+         [toadd addObject:[res lt:[fc sub:fc2]]];
+         
          
          //            [model add:[res lt:fc]];
          
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         NSLog(@"%@",[cp concretize:g]);
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            NSLog(@"Valeurs solutions : \n");
-            found=true;
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-            }
-         } withTimeLimit:[args timeOut]];
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
          
-         struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
          
-      }];
-      
-      
    }
    return 0;
 }

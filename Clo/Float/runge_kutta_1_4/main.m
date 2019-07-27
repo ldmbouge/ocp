@@ -51,9 +51,8 @@ void checksolution(float yi, float yi_opt, float yl, float yl_opt, float diff)
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         id<ORGroup> g = [args makeGroup:model];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
          fesetround(FE_TONEAREST);
          id<ORFloatVar> diff = [ORFactory floatVar:model name:@"diff"];
@@ -74,10 +73,10 @@ int main(int argc, const char * argv[]) {
          
          id<ORFloatVarArray> y_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"yn_opt"];
          
-         [g add:[y[0] geq:@(-10.1f)]];
-         [g add:[y[0] leq:@(10.1f)]];
-         [g add:[y_opt[0] geq:@(-10.1f)]];
-         [g add:[y_opt[0] leq:@(10.1f)]];
+         [toadd addObject:[y[0] geq:@(-10.1f)]];
+         [toadd addObject:[y[0] leq:@(10.1f)]];
+         [toadd addObject:[y_opt[0] geq:@(-10.1f)]];
+         [toadd addObject:[y_opt[0] leq:@(10.1f)]];
          
          
          
@@ -86,44 +85,26 @@ int main(int argc, const char * argv[]) {
             //            k2 = k * (c -(yn + (0.5 * h * k1))) * (c - (yn + (0.5 * h * k1)));
             //            yn+1 = yn + h * k2;
             //            yn = yn+1;
-            [g add:[k1[n] eq:[[k mul:[c sub: y[n]]] mul: [c sub:y[n]]]]];
-            [g add:[k2[n] eq:[[k mul:[c sub:[y[n] plus:[[c1 mul:h] mul:k1[n]]]]] mul: [c sub:[y[n] plus:[[c1 mul:h] mul:k1[n]]]]]]];
-            [g add:[y[n+1] eq:[y[n] plus:[h mul:k2[n]]]]];
+            [toadd addObject:[k1[n] eq:[[k mul:[c sub: y[n]]] mul: [c sub:y[n]]]]];
+            [toadd addObject:[k2[n] eq:[[k mul:[c sub:[y[n] plus:[[c1 mul:h] mul:k1[n]]]]] mul: [c sub:[y[n] plus:[[c1 mul:h] mul:k1[n]]]]]]];
+            [toadd addObject:[y[n+1] eq:[y[n] plus:[h mul:k2[n]]]]];
             
             //            yn+1 = (yn + (( 1.2 * (10.1 -  ((((1.2 * (10.1 -  yn)) * (10.1 - yn))
             //                                             * 0.005) + yn))) * (10.1 -  ((((1.2 * (10.1 -  yn)) * (10.1 -  yn))
             //                                                                           * 0.005) + yn))));
-            [g add:[y_opt[n+1] eq:[y_opt[n] plus:[[k mul:[c3 sub:[[[[k mul:[c3 sub:y_opt[n]]] mul:[c3 sub:y_opt[n]]] mul:c4] plus:y_opt[n]]]] mul:[c3 sub:[[[[k mul:[c3 sub:y_opt[n]]] mul:[c3 sub:y_opt[n]]] mul:c4] plus:y_opt[n]]]]]]];
+            [toadd addObject:[y_opt[n+1] eq:[y_opt[n] plus:[[k mul:[c3 sub:[[[[k mul:[c3 sub:y_opt[n]]] mul:[c3 sub:y_opt[n]]] mul:c4] plus:y_opt[n]]]] mul:[c3 sub:[[[[k mul:[c3 sub:y_opt[n]]] mul:[c3 sub:y_opt[n]]] mul:c4] plus:y_opt[n]]]]]]];
             
          }
          
-         [g add:[diff eq:[y[NBLOOPS] sub:y_opt[NBLOOPS]]]];
-         [g add:[[diff mul:diff] gt:@(0.0f)]];
-         [model add:g];
+         [toadd addObject:[diff eq:[y[NBLOOPS] sub:y_opt[NBLOOPS]]]];
+         [toadd addObject:[[diff mul:diff] gt:@(0.0f)]];
+         
          
          //         NSLog(@"%@", model);
          
          NSLog(@"%d", [g size]);
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         __block bool found = false;
-         
-         fesetround(FE_TONEAREST);
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            found = true;
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            for(id<ORFloatVar> v in vars){
-               id<CPFloatVar> cv = [cp concretize:v];
-               found &= [p bound: v];
-               NSLog(@"%@ = %16.16e (%s)",v,[cv value], [p bound:v] ? "YES" : "NO");
-            }
-            checksolution([p floatValue:y[0]], [p floatValue:y_opt[0]], [p floatValue:y[NBLOOPS]],[p floatValue:y_opt[NBLOOPS]], [p floatValue:diff]);
-         } withTimeLimit:[args timeOut]];
-         NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
-         struct ORResult re = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return re;
-      }];
-      
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
    }
    return 0;
 }

@@ -67,6 +67,38 @@ static enum ValHeuristic valIndex[] =
 @synthesize specialSearch;
 @synthesize absFunComputation;
 @synthesize occDetails;
++(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp
+{
+   fesetround(FE_TONEAREST);
+   id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
+   [args measure:^struct ORResult(){
+      ORBool hascycle = NO;
+      if([args cycleDetection]){
+         hascycle = [args isCycle:model];
+         NSLog(@"%s",(hascycle)?"YES":"NO");
+      }
+      __block ORBool isSat = false;
+      if(!hascycle){
+         id<ORIntArray> locc = [VariableLocalOccCollector collect:[model constraints] with:[model variables] tracker:model];
+         [(CPCoreSolver*)cp setLOcc:locc];
+         if([args occDetails]){
+            [args printOccurences:model with:cp restricted:vars];
+            //               [_options printMaxGOccurences:_model with:cp n:5];
+            //               [_options printMaxLOccurences:_model with:cp n:5];
+         }
+         [cp solveOn:^(id<CPCommonProgram> p) {
+            [args launchHeuristic:cp restricted:vars];
+            isSat = [args checkAllbound:model with:cp];
+            NSLog(@"Depth : %d",[[cp tracer] level]);
+         } withTimeLimit:[args timeOut]];
+      }
+      
+      struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[model variables] count], [[model constraints] count]);
+      printf("%s\n",(isSat)?"sat":"unsat");
+      return r;
+   }];
+}
+
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];

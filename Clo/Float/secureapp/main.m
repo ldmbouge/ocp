@@ -24,44 +24,44 @@ int main(int argc, const char * argv[]) {
          [demandB setObject:@(1) forKey:flow];
       }
       Graph *g = [[Graph alloc] initGraph];
-      [g addAdjacency:@[@35]]; //node 0 -> 35
-      [g addAdjacency:@[@32]]; //node 1 -> 32
-      [g addAdjacency:@[@17]]; //node 2 -> 17
-      [g addAdjacency:@[@15]]; //node 3 -> 15
-      [g addAdjacency:@[@17]]; //node 4 -> 17
-      [g addAdjacency:@[@36]]; //node 5 -> 36
-      [g addAdjacency:@[@35]]; //node 6 -> 35
-      [g addAdjacency:@[@15]]; //node 7 -> 15
-      [g addAdjacency:@[@36]]; //node 8 -> 36
-      [g addAdjacency:@[@10,@30,@34,@14]]; //node 9 -> { 10 , 30 , 34 , 14 }
-      [g addAdjacency:@[@9,@15,@20,@17]]; //node 10 -> { 9 , 15 , 20 , 17 }
-      [g addAdjacency:@[@26,@27,@29,@30]]; //node 11 -> { 26 , 27 , 29 , 30 }
-      [g addAdjacency:@[@19,@20]]; //node 12 ->  { 19 , 20 }
-      [g addAdjacency:@[@19,@20]]; //node 13 ->  { 19 , 20 }
-      [g addAdjacency:@[@9,@35,@20,@36]]; //node 14 ->  { 9, 35 , 20 , 36 }
-      [g addAdjacency:@[@18,@3,@10,@7]]; //node 15 -> { 18 , 3 , 10 , 7}
-      [g addAdjacency:@[@33,@18,@37,@29]]; //node 16 -> { 33 , 18 , 37 , 29 }
-      [g addAdjacency:@[@10,@18,@4,@2]]; //node 17 -> { 10 , 18 , 4 , 2  }
-      [g addAdjacency:@[@16,@17,@19,@15]]; //node 18 -> { 16 , 17 , 19 , 15 }
-      [g addAdjacency:@[@33,@37,@12,@13,@18,@29]]; //node 19 -> { 33 , 37 , 12 , 13 , 18 , 29 }
-      [g addAdjacency:@[@34,@10,@12,@13,@14,@30]]; //node 20 -> { 34 , 10 , 12 , 13 , 18 , 30 }
-      [g addAdjacency:@[@32]]; //node 21 -> 32
-      [g addAdjacency:@[@31]]; //node 22 -> 31
-      [g addAdjacency:@[@31]]; //node 23 -> 31
-      [g addAdjacency:@[@28]]; //node 24 -> 28
-      [g addAdjacency:@[@28]]; //node 25 -> 28
-      [g addAdjacency:@[@11]]; //node 26 -> 11
-      [g addAdjacency:@[@11]]; //node 27 -> 11
-      [g addAdjacency:@[@24,@25,@29,@30]]; //node 28 -> { 24 , 25 , 29 , 30 }
-      [g addAdjacency:@[@11,@16,@19,@28]]; //node 29 -> { 11 , 16 , 19 , 28 }
-      [g addAdjacency:@[@20,@11,@28,@9]]; //node 30 -> { 20 , 11 , 28 , 9 }
-      [g addAdjacency:@[@33,@34,@22,@23]]; //node 31 -> { 33 , 34 , 22 , 23 }
-      [g addAdjacency:@[@1,@34,@21,@33]]; //node 32 -> { 1 , 34 , 21 , 33 }
-      [g addAdjacency:@[@32,@16,@19,@31]]; //node 33 -> { 32 , 16 , 19 , 31 }
-      [g addAdjacency:@[@32,@9,@20,@31]]; //node 34 -> { 32 , 9 , 20 , 31 }
-      [g addAdjacency:@[@0,@6,@37,@14]]; //node 35 ->  { 0 , 6 , 37 , 14 }
-      [g addAdjacency:@[@8,@5,@14,@37]]; //node 36 ->  { 8 , 5 , 14 , 37 }
-      [g addAdjacency:@[@16,@19,@35,@36]]; //node 37 ->  { 16 , 19 , 35 , 36}
+      [toadd addObjectAdjacency:@[@35]]; //node 0 -> 35
+      [toadd addObjectAdjacency:@[@32]]; //node 1 -> 32
+      [toadd addObjectAdjacency:@[@17]]; //node 2 -> 17
+      [toadd addObjectAdjacency:@[@15]]; //node 3 -> 15
+      [toadd addObjectAdjacency:@[@17]]; //node 4 -> 17
+      [toadd addObjectAdjacency:@[@36]]; //node 5 -> 36
+      [toadd addObjectAdjacency:@[@35]]; //node 6 -> 35
+      [toadd addObjectAdjacency:@[@15]]; //node 7 -> 15
+      [toadd addObjectAdjacency:@[@36]]; //node 8 -> 36
+      [toadd addObjectAdjacency:@[@10,@30,@34,@14]]; //node 9 -> { 10 , 30 , 34 , 14 }
+      [toadd addObjectAdjacency:@[@9,@15,@20,@17]]; //node 10 -> { 9 , 15 , 20 , 17 }
+      [toadd addObjectAdjacency:@[@26,@27,@29,@30]]; //node 11 -> { 26 , 27 , 29 , 30 }
+      [toadd addObjectAdjacency:@[@19,@20]]; //node 12 ->  { 19 , 20 }
+      [toadd addObjectAdjacency:@[@19,@20]]; //node 13 ->  { 19 , 20 }
+      [toadd addObjectAdjacency:@[@9,@35,@20,@36]]; //node 14 ->  { 9, 35 , 20 , 36 }
+      [toadd addObjectAdjacency:@[@18,@3,@10,@7]]; //node 15 -> { 18 , 3 , 10 , 7}
+      [toadd addObjectAdjacency:@[@33,@18,@37,@29]]; //node 16 -> { 33 , 18 , 37 , 29 }
+      [toadd addObjectAdjacency:@[@10,@18,@4,@2]]; //node 17 -> { 10 , 18 , 4 , 2  }
+      [toadd addObjectAdjacency:@[@16,@17,@19,@15]]; //node 18 -> { 16 , 17 , 19 , 15 }
+      [toadd addObjectAdjacency:@[@33,@37,@12,@13,@18,@29]]; //node 19 -> { 33 , 37 , 12 , 13 , 18 , 29 }
+      [toadd addObjectAdjacency:@[@34,@10,@12,@13,@14,@30]]; //node 20 -> { 34 , 10 , 12 , 13 , 18 , 30 }
+      [toadd addObjectAdjacency:@[@32]]; //node 21 -> 32
+      [toadd addObjectAdjacency:@[@31]]; //node 22 -> 31
+      [toadd addObjectAdjacency:@[@31]]; //node 23 -> 31
+      [toadd addObjectAdjacency:@[@28]]; //node 24 -> 28
+      [toadd addObjectAdjacency:@[@28]]; //node 25 -> 28
+      [toadd addObjectAdjacency:@[@11]]; //node 26 -> 11
+      [toadd addObjectAdjacency:@[@11]]; //node 27 -> 11
+      [toadd addObjectAdjacency:@[@24,@25,@29,@30]]; //node 28 -> { 24 , 25 , 29 , 30 }
+      [toadd addObjectAdjacency:@[@11,@16,@19,@28]]; //node 29 -> { 11 , 16 , 19 , 28 }
+      [toadd addObjectAdjacency:@[@20,@11,@28,@9]]; //node 30 -> { 20 , 11 , 28 , 9 }
+      [toadd addObjectAdjacency:@[@33,@34,@22,@23]]; //node 31 -> { 33 , 34 , 22 , 23 }
+      [toadd addObjectAdjacency:@[@1,@34,@21,@33]]; //node 32 -> { 1 , 34 , 21 , 33 }
+      [toadd addObjectAdjacency:@[@32,@16,@19,@31]]; //node 33 -> { 32 , 16 , 19 , 31 }
+      [toadd addObjectAdjacency:@[@32,@9,@20,@31]]; //node 34 -> { 32 , 9 , 20 , 31 }
+      [toadd addObjectAdjacency:@[@0,@6,@37,@14]]; //node 35 ->  { 0 , 6 , 37 , 14 }
+      [toadd addObjectAdjacency:@[@8,@5,@14,@37]]; //node 36 ->  { 8 , 5 , 14 , 37 }
+      [toadd addObjectAdjacency:@[@16,@19,@35,@36]]; //node 37 ->  { 16 , 19 , 35 , 36}
       //        allpath should be computed for each pair in the desiredFlows
       //        if we compute 4-13, it's easy to get 13-4 because the graph is without direction just reverse the 4-13 it's enought
       NSArray* desiredFlowsOfA = @[@4,@13,@13,@4,@7,@13,@13,@7,@8,@13,@13,@8,@0,@13,@13,@0,@1,@12,@12,@1,@12,@23,@23,@12,@12,@24,@24,@12,@12,@27,@27,@12,@2,@4,@4,@2,@3,@7,@7,@3,@5,@8,@8,@5,@0,@6,@6,@0,@1,@21,@21,@1,@22,@23,@23,@22,@24,@25,@25,@24,@26,@27,@27,@26];

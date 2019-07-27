@@ -27,45 +27,23 @@ void checksolution(float IN,float res){
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
-         //normalisation transform constraints as Integer ones
-         //should not happen !
-         
+      
       id<ORModel> model = [ORFactory createModel];
       id<ORDoubleVar> x = [ORFactory doubleVar:model low:-1.57079632679 up:1.57079632679 name:@"x"];
       id<ORDoubleVar> z = [ORFactory doubleVar:model name:@"z"];
       
-      id<ORGroup> g = [args makeGroup:model];
+    NSMutableArray* toadd = [[NSMutableArray alloc] init];
       
-      [g add:[z eq: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
+      [toadd addObject:[z eq: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
       
       
-      [g add:[z lt: @(VAL)]];
-//      [g add:[z gt: @(-VAL)]];
+      [toadd addObject:[z lt: @(VAL)]];
+//      [toadd addObject:[z gt: @(-VAL)]];
       
-      [model add:g];
-      id<ORDoubleVarArray> vars = [model doubleVars];
-      id<CPProgram> cp = [args makeProgram:model];
-         id<ORDisabledVarArray> nvars = [ORFactory disabledFloatVarArray:vars engine:[cp engine]];
-      __block bool found = false;
       
-      [cp solve:^{
-            [cp lexicalOrderedSearch:nvars do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               [cp floatSplitD:i withVars:x];
-            }];
-         NSLog(@"Valeurs solutions : \n");
-         found=true;
-         for(id<ORFloatVar> v in nvars){
-            found &= [cp bound: v];
-            NSLog(@"%@ : %20.20e (%s) %@",v,[cp floatValue:v],[cp bound:v] ? "YES" : "NO",[cp concretize:v]);
-         }
-      }];
-         
-         struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-         
-      }];
-      
+      id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+     
+      [ORCmdLineArgs defaultRunner:args model:model program:cp];
       
    }
    return 0;

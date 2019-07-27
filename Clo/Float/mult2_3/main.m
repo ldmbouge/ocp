@@ -8,43 +8,29 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
          
          id<ORFloatVarArray> d = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"m"];
          id<ORFloatVarArray> nextValue = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS-1) names:@"nextValue"];
          
-         id<ORGroup> g = [args makeGroup:model];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
-         [g add:[d[0] eq:@(2.f)]];
+         [toadd addObject:[d[0] eq:@(2.f)]];
          
          for(ORInt i = 0; i < NBLOOPS; i++){
-            [g add:[nextValue[i] lt:@(1.f)]];
-            [g add:[nextValue[i] gt:@(1.0e-1f)]];
-            [g add:[d[i+1] eq:[d[i] mul:nextValue[i]]]];
+            [toadd addObject:[nextValue[i] lt:@(1.f)]];
+            [toadd addObject:[nextValue[i] gt:@(1.0e-1f)]];
+            [toadd addObject:[d[i+1] eq:[d[i] mul:nextValue[i]]]];
          }
          
-         [g add:[d[NBLOOPS] lt:@(1.0e-2f)]];
+         [toadd addObject:[d[NBLOOPS] lt:@(1.0e-2f)]];
          
-         [model add:g];
-         //         NSLog(@"%@",model);
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            found = true;
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-            }
-         } withTimeLimit:[args timeOut]];
-         NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
-         struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-      }];
-      
+         
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+         
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
+         
    }
    return 0;
 }

@@ -14,7 +14,6 @@ void check(float x, float y, float r_c){
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> y_0 = [ORFactory floatVar:model name:@"y_0"];
@@ -32,22 +31,9 @@ int main(int argc, const char * argv[]) {
          
          //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
          
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            
-            
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-            }
-            check([p floatValue:x_0],[p floatValue:y_0],[p floatValue:r_0]);
-         } withTimeLimit:[args timeOut]];
-         struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-      }];
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
+         
       
    }
    return 0;

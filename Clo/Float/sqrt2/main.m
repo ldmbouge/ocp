@@ -74,26 +74,10 @@ int main(int argc, const char * argv[]) {
          //         vars[2] = b46;
          //         vars[1] = b106;
          //         vars[0] = b116;
-         id<CPProgram> cp = [args makeProgram:model];
-         NSLog(@"model : %@",model);
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            NSLog(@"Valeurs solutions : \n");
-            found=true;
-            for(id<ORVar> v in vars){
-               found &= [p bound: v];
-               if([v conformsToProtocol:@protocol(ORFloatVar)])
-                  NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-               else
-                  NSLog(@"%@ : %20.20e (%s) %@",v,[p doubleValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-            }
-         } withTimeLimit:[args timeOut]];
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
          
-         struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
          
-      }];
       
       
    }

@@ -41,7 +41,6 @@ void check_solution(float IN, float res){
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> x = [ORFactory floatVar:model low:-VAL up:VAL];
          id<ORFloatVar> r_0 = [ORFactory floatVar:model];
@@ -50,38 +49,23 @@ int main(int argc, const char * argv[]) {
          
          
          id<ORExpr> fc = [ORFactory float:model value:1.0f];
-         id<ORGroup> g = [args makeGroup:model];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
-         [g add:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
+         [toadd addObject:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
                          plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
          
          
-         [g add:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
+         [toadd addObject:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
                           plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
          
-         [g add:[r_0 eq:[x sub:[f_x div:fp_x]]]];
+         [toadd addObject:[r_0 eq:[x sub:[f_x div:fp_x]]]];
          
          
-         [g add:[r_0 geq:@(0.1f)]];
-         [model add:g];
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
+         [toadd addObject:[r_0 geq:@(0.1f)]];
          
-         //           NSLog(@"%@", model);
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            found = true;
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-            }
-            
-            check_solution([p floatValue:vars[0]], [p floatValue:vars[1]]);
-         } withTimeLimit:[args timeOut]];
-         struct ORResult r = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-      }];
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
+         
       
    }
    return 0;

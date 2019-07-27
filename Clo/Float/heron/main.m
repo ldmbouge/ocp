@@ -44,7 +44,7 @@ int main(int argc, const char * argv[]) {
       id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f name:@"c"];
       id<ORFloatVar> s = [ORFactory floatVar:model name:@"s"];
       id<ORFloatVar> squared_area = [ORFactory floatVar:model name:@"squared_area"];
-      //         id<ORGroup> g = [args makeGroup:model];
+      //       NSMutableArray* toadd = [[NSMutableArray alloc] init];
       NSMutableArray* toadd = [[NSMutableArray alloc] init];
       [toadd addObject:[a gt:@(0.0f)]];
       [toadd addObject:[b gt:@(0.0f)]];
@@ -65,36 +65,7 @@ int main(int argc, const char * argv[]) {
       [toadd addObject:[squared_area lt:@(1e-5f)]]; /* */
       
       id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-      NSLog(@"%@",model);
-      id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-      __block ORBool isSat;
-      [args measure:^struct ORResult(){
-         ORBool hascycle = NO;
-         if([args cycleDetection]){
-            hascycle = [args isCycle:model];
-            NSLog(@"%s",(hascycle)?"YES":"NO");
-         }
-         isSat = false;
-         if(!hascycle){
-            id<ORIntArray> locc = [VariableLocalOccCollector collect:[model constraints] with:[model variables] tracker:model];
-            [(CPCoreSolver*)cp setLOcc:locc];
-            if([args occDetails]){
-               [args printOccurences:model with:cp restricted:vars];
-               //               [_options printMaxGOccurences:_model with:cp n:5];
-               //               [_options printMaxLOccurences:_model with:cp n:5];
-            }
-            [cp solveOn:^(id<CPCommonProgram> p) {
-               [args launchHeuristic:cp restricted:vars];
-               check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);
-               isSat = [args checkAllbound:model with:cp];
-               NSLog(@"Depth : %d",[[cp tracer] level]);
-            } withTimeLimit:[args timeOut]];
-         }
-        
-         struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[model variables] count], [[model constraints] count]);
-         printf("%s\n",(isSat)?"sat":"unsat");
-         return r;
-      }];
+      [ORCmdLineArgs defaultRunner:args model:model program:cp];
       return 0;
    }
 }

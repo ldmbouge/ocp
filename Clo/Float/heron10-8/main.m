@@ -37,58 +37,36 @@ float check_solution(float a, float b, float c, float c_s, float c_aire) {
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
-         
+      
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> a = [ORFactory floatVar:model low:5.0f up:10.0f name:@"a"];
          id<ORFloatVar> b = [ORFactory floatVar:model low:0.0f up:5.0f name:@"b"];
          id<ORFloatVar> c = [ORFactory floatVar:model low:0.0f up:5.0f name:@"c"];
          id<ORFloatVar> s = [ORFactory floatVar:model  name:@"s"];
          id<ORFloatVar> squared_area = [ORFactory floatVar:model  name:@"aire"];
-         id<ORGroup> g = [args makeGroup:model];
-         [g add:[a gt:@(0.0f)]];
-         [g add:[b gt:@(0.0f)]];
-         [g add:[c gt:@(0.0f)]];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
+         [toadd addObject:[a gt:@(0.0f)]];
+         [toadd addObject:[b gt:@(0.0f)]];
+         [toadd addObject:[c gt:@(0.0f)]];
          
-         [g add:[[a plus:c] gt:b]];
-         [g add:[[a plus:b] gt:c]];
-         [g add:[[b plus:c] gt:a]];
-         
-         
-         [g add:[a gt:b]];
-         [g add:[b gt:c]];
+         [toadd addObject:[[a plus:c] gt:b]];
+         [toadd addObject:[[a plus:b] gt:c]];
+         [toadd addObject:[[b plus:c] gt:a]];
          
          
-         [g add:[s eq: [[[a plus:b] plus:c] div:@(2.0f)]]];
-         [g add:[squared_area eq: [[[s mul:[s sub:a]] mul:[s sub:b]] mul:[s sub:c]]]];
-         [g add:[squared_area neq:@(0.0f)]];
-         [g add:[squared_area lt:@(1e-10f)]]; /* */
+         [toadd addObject:[a gt:b]];
+         [toadd addObject:[b gt:c]];
          
-         [model add:g];
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         __block bool found = false;
-         if([args occDetails]){
-            [args printOccurences:model with:cp restricted:vars];
-//            [_options printMaxGOccurences:_model with:cp n:5];
-//            [_options printMaxLOccurences:_model with:cp n:5];
-         }
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            NSLog(@"Valeurs solutions : \n");
-            found=true;
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-            }
-            
-            check_solution([p floatValue:a], [p floatValue:b], [p floatValue:c], [p floatValue:s], [p floatValue:squared_area]);
-            
-         } withTimeLimit:[args timeOut]];
-         struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[model variables] count], [[model constraints] count]);
-         printf("%s\n",(isSat)?"sat":"unsat");
-         return r;
-      }];
+         
+         [toadd addObject:[s eq: [[[a plus:b] plus:c] div:@(2.0f)]]];
+         [toadd addObject:[squared_area eq: [[[s mul:[s sub:a]] mul:[s sub:b]] mul:[s sub:c]]]];
+         [toadd addObject:[squared_area neq:@(0.0f)]];
+         [toadd addObject:[squared_area lt:@(1e-10f)]]; /* */
+         
+         
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+      [ORCmdLineArgs defaultRunner:args model:model program:cp];
+      
    }
    return 0;
 }

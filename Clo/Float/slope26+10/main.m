@@ -5,7 +5,6 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> x0 = [ORFactory floatVar:model];
@@ -17,43 +16,28 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> res = [ORFactory floatVar:model];
          id<ORGroup> g =[args makeGroup:model];
          //x0 = 13
-         [g add:[x0 eq:@(13.0f)]];
+         [toadd addObject:[x0 eq:@(13.0f)]];
          //x1 = x0 + h
-         [g add:[x1 eq:[x0 plus:h]]];
+         [toadd addObject:[x1 eq:[x0 plus:h]]];
          //x2 = x0 - h
-         [g add:[x2 eq:[x0 sub:h]]];
+         [toadd addObject:[x2 eq:[x0 sub:h]]];
          //fx1 = x1*x1
-         [g add:[fx1 eq:[x1 mul:x1]]];
+         [toadd addObject:[fx1 eq:[x1 mul:x1]]];
          
          //fx2 = x2*x2
-         [g add:[fx2 eq:[x2 mul:x2]]];
+         [toadd addObject:[fx2 eq:[x2 mul:x2]]];
          
          //res = (fx1 - fx2) / (2.0*h)
-         [g add:[ res eq:[[fx1 sub:fx2] div:[h mul:@(2.0f)]]]];
+         [toadd addObject:[ res eq:[[fx1 sub:fx2] div:[h mul:@(2.0f)]]]];
          
          //res > 26.0f + 10.0f
          float v = 26.0f;
          id<ORExpr> fc = [ORFactory float:model value:v];
-         [g add:[res gt:[fc sub:@(10.0f)]]];
-         [model add:g];
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
+         [toadd addObject:[res gt:[fc sub:@(10.0f)]]];
          
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            NSLog(@"Valeurs solutions : \n");
-            found=true;
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-            }
-         } withTimeLimit:[args timeOut]];
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
          
-         struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[model variables] count], [[model constraints] count]);
-         printf("%s\n",(isSat)?"sat":"unsat");
-         return r;
-      }];
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
    }
    return 0;
 }

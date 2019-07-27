@@ -23,7 +23,6 @@
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> x = [ORFactory floatVar:model low:-VAL up:VAL];
@@ -41,53 +40,41 @@ int main(int argc, const char * argv[]) {
          
          
          id<ORExpr> fc = [ORFactory float:model value:1.0f];
-         id<ORGroup> g = [args makeGroup:model];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
-         [g add:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
+         [toadd addObject:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
                          plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
          
          
-         [g add:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
+         [toadd addObject:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
                           plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
          
-         [g add:[x2 eq:[x sub:[f_x div:fp_x]]]];
+         [toadd addObject:[x2 eq:[x sub:[f_x div:fp_x]]]];
          
-         [g add:[f_x2 eq:[[[x2 sub:[[[x2 mul:x2] mul:x2] div:@(6.0f)]] plus:[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] div:@(120.0f)]]
+         [toadd addObject:[f_x2 eq:[[[x2 sub:[[[x2 mul:x2] mul:x2] div:@(6.0f)]] plus:[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] div:@(120.0f)]]
                           plus:[[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(5040.0f)]]]];
          
          
-         [g add:[fp_x2 eq:[[[fc sub:[[x2 mul:x2] div:@(2.0f)]] plus:[[[[x2 mul:x2] mul:x2] mul:x2] div:@(24.0f)]]
+         [toadd addObject:[fp_x2 eq:[[[fc sub:[[x2 mul:x2] div:@(2.0f)]] plus:[[[[x2 mul:x2] mul:x2] mul:x2] div:@(24.0f)]]
                            plus:[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(720.0f)]]]];
          
-         [g add:[x3 eq:[x2 sub:[f_x2 div:fp_x2]]]];
+         [toadd addObject:[x3 eq:[x2 sub:[f_x2 div:fp_x2]]]];
          
-         [g add:[f_x3 eq:[[[x3 sub:[[[x3 mul:x3] mul:x3] div:@(6.0f)]] plus:[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] div:@(120.0f)]]
+         [toadd addObject:[f_x3 eq:[[[x3 sub:[[[x3 mul:x3] mul:x3] div:@(6.0f)]] plus:[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] div:@(120.0f)]]
                           plus:[[[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] div:@(5040.0f)]]]];
          
          
-         [g add:[fp_x3 eq:[[[fc sub:[[x3 mul:x3] div:@(2.0f)]] plus:[[[[x3 mul:x3] mul:x3] mul:x3] div:@(24.0f)]]
+         [toadd addObject:[fp_x3 eq:[[[fc sub:[[x3 mul:x3] div:@(2.0f)]] plus:[[[[x3 mul:x3] mul:x3] mul:x3] div:@(24.0f)]]
                            plus:[[[[[[x3 mul:x3] mul:x3] mul:x3] mul:x3] mul:x3] div:@(720.0f)]]]];
          
-         [g add:[r_0 eq:[x3 sub:[f_x3 div:fp_x3]]]];
+         [toadd addObject:[r_0 eq:[x3 sub:[f_x3 div:fp_x3]]]];
          
-         [g add:[r_0 geq:@(0.1f)]];
+         [toadd addObject:[r_0 geq:@(0.1f)]];
          
-         [model add:g];
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            found=true;
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            for(id<ORVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %16.16e (%s)",v,[p floatValue:v],[p bound:v] ? "YES" : "NO");
-            }
-         } withTimeLimit:[args timeOut]];
-         struct ORResult r = REPORT(found, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-      }];
       
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
+         
    }
    return 0;
 }

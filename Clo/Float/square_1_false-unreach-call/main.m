@@ -41,7 +41,6 @@ void check_solution(float IN, float res){
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
          fesetround(FE_TONEAREST);
          id<ORModel> model = [ORFactory createModel];
          id<ORFloatVar> IN = [ORFactory floatVar:model low:0.0f up:1.f];
@@ -52,37 +51,18 @@ int main(int argc, const char * argv[]) {
          id<ORExpr> fc3 = [ORFactory float:model value:0.125f];
          id<ORExpr> fc4 = [ORFactory float:model value:0.0625f];
          id<ORExpr> fc5 = [ORFactory float:model value:0.0390625f];
-         id<ORGroup> g = [args makeGroup:model];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
-         [g add:[IN lt:@(1.0f)]];
-         [g add:[result eq:[[[[fc plus:[fc2 mul:IN]] sub: [[fc3 mul:IN ] mul:IN]] plus: [[[fc4 mul:IN] mul:IN] mul:IN]] sub:[[[[fc5 mul:IN] mul:IN] mul:IN] mul:IN]]]];
+         [toadd addObject:[IN lt:@(1.0f)]];
+         [toadd addObject:[result eq:[[[[fc plus:[fc2 mul:IN]] sub: [[fc3 mul:IN ] mul:IN]] plus: [[[fc4 mul:IN] mul:IN] mul:IN]] sub:[[[[fc5 mul:IN] mul:IN] mul:IN] mul:IN]]]];
          
-         [g add:[[result lt:@(0.0f)] lor: [result geq:@(VAL)]]];
-         //         [g add:[[result geq:@(0.0f)] land: [result lt:@(VAL)]]];
-         [model add:g];
+         [toadd addObject:[[result lt:@(0.0f)] lor: [result geq:@(VAL)]]];
+         //         [toadd addObject:[[result geq:@(0.0f)] land: [result lt:@(VAL)]]];
+         
          
                   NSLog(@"%@",model);
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         
-         //         NSLog(@"max = %d nb = %d",max,nb);
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            NSLog(@"Valeurs solutions : \n");
-            found=true;
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-            }
-            
-            check_solution([p floatValue:vars[0]], [p floatValue:vars[1]]);
-         } withTimeLimit:[args timeOut]];
-         
-         struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-         
-      }];
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+          [ORCmdLineArgs defaultRunner:args model:model program:cp];
       
       
    }

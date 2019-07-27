@@ -15,21 +15,21 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVarArray> d = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"d"];
          id<ORFloatVarArray> nextValue = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS-1) names:@"nextValue"];
          
-         id<ORGroup> g = [args makeGroup:model];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
-         [g add:[d[0] eq:@(LARGE_NUMBER)]];
+         [toadd addObject:[d[0] eq:@(LARGE_NUMBER)]];
          
          for(ORInt i = 0; i < NBLOOPS; i++){
-            [g add:[nextValue[i] lt:@(2.14748e+09f)]];
-            [g add:[nextValue[i] geq:@(1.f)]];
-            [g add:[d[i+1] eq:[d[i] div:nextValue[i]]]];
+            [toadd addObject:[nextValue[i] lt:@(2.14748e+09f)]];
+            [toadd addObject:[nextValue[i] geq:@(1.f)]];
+            [toadd addObject:[d[i+1] eq:[d[i] div:nextValue[i]]]];
          }
          
-         [g add:[d[NBLOOPS] lt:@(1.f)]];
+         [toadd addObject:[d[NBLOOPS] lt:@(1.f)]];
          
-         [model add:g];
+         
          //         NSLog(@"%@",model);
-         id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
          id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
          __block bool found = false;
          [cp solveOn:^(id<CPCommonProgram> p) {

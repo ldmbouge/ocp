@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         id<ORGroup> g = [args makeGroup:model];
+       NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
          fesetround(FE_TONEAREST);
          id<ORFloatVar> diff = [ORFactory floatVar:model name:@"diff"];
@@ -95,74 +95,58 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVarArray> theta_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"theta_opt"];
          
          
-         [g add:[theta[0] eq:@(0.0f)]];
-         [g add:[x[0] eq:@(0.0f)]];
-         [g add:[y[0] eq:@(0.0f)]];
+         [toadd addObject:[theta[0] eq:@(0.0f)]];
+         [toadd addObject:[x[0] eq:@(0.0f)]];
+         [toadd addObject:[y[0] eq:@(0.0f)]];
          
-         [g add:[theta_opt[0] eq:@(0.0f)]];
-         [g add:[x_opt[0] eq:@(0.0f)]];
-         [g add:[y_opt[0] eq:@(0.0f)]];
+         [toadd addObject:[theta_opt[0] eq:@(0.0f)]];
+         [toadd addObject:[x_opt[0] eq:@(0.0f)]];
+         [toadd addObject:[y_opt[0] eq:@(0.0f)]];
          
-         [g add:[delta_dl eq:[c mul:sl]]];
-         [g add:[delta_dr eq:[c mul:sr]]];
-         [g add:[delta_d eq:[[delta_dl plus:delta_dr] mul:expr_3]]];
-         [g add:[delta_theta eq:[[delta_dr sub:delta_dl] mul:inv_l]]];
+         [toadd addObject:[delta_dl eq:[c mul:sl]]];
+         [toadd addObject:[delta_dr eq:[c mul:sr]]];
+         [toadd addObject:[delta_d eq:[[delta_dl plus:delta_dr] mul:expr_3]]];
+         [toadd addObject:[delta_theta eq:[[delta_dr sub:delta_dl] mul:inv_l]]];
          
-         [g add:[TMP_6 eq:[expr_2 mul:[expr_3 mul:[expr_4 sub:[c mul: sl]]]]]];
+         [toadd addObject:[TMP_6 eq:[expr_2 mul:[expr_3 mul:[expr_4 sub:[c mul: sl]]]]]];
          
          for (ORUInt n = 0; n < NBLOOPS; n++) {
             
-            [g add:[arg[n] eq:[theta[n] plus:[delta_theta mul:expr_3]]]];
-            [g add:[cos[n] eq:[[expr_1 sub:[[arg[n] mul:arg[n]] mul:expr_3]] plus:[[[[arg[n] mul:arg[n]] mul:arg[n]] mul:arg[n]] div:@(24.0f)]]]];
-            [g add:[x[n+1] eq:[x[n] plus:[delta_d mul:cos[n]]]]];
-            [g add:[sin[n] eq:[[arg[n] sub:[[[arg[n] mul:arg[n]] mul:arg[n]] div:@(6.0f)]] plus:[[[[[arg[n] mul:arg[n]] mul:arg[n]] mul:arg[n]] mul:arg[n]] div:@(120.f)]]]];
+            [toadd addObject:[arg[n] eq:[theta[n] plus:[delta_theta mul:expr_3]]]];
+            [toadd addObject:[cos[n] eq:[[expr_1 sub:[[arg[n] mul:arg[n]] mul:expr_3]] plus:[[[[arg[n] mul:arg[n]] mul:arg[n]] mul:arg[n]] div:@(24.0f)]]]];
+            [toadd addObject:[x[n+1] eq:[x[n] plus:[delta_d mul:cos[n]]]]];
+            [toadd addObject:[sin[n] eq:[[arg[n] sub:[[[arg[n] mul:arg[n]] mul:arg[n]] div:@(6.0f)]] plus:[[[[[arg[n] mul:arg[n]] mul:arg[n]] mul:arg[n]] mul:arg[n]] div:@(120.f)]]]];
             
-            [g add:[y[n+1] eq:[y[n] plus:[delta_d mul:sin[n]]]]];
-            [g add:[theta[n+1] eq:[theta[n] plus:delta_theta]]];
+            [toadd addObject:[y[n+1] eq:[y[n] plus:[delta_d mul:sin[n]]]]];
+            [toadd addObject:[theta[n+1] eq:[theta[n] plus:delta_theta]]];
             
-            [g add:[TMP_23[n] eq:[[theta_opt[n] plus:[[[expr_4 sub:[sl mul: c]] mul: expr_2] mul: expr_3]] mul: [theta_opt[n] plus: [[[expr_4 sub: [sl mul: c]] mul: expr_2] mul: expr_3]]]]];
+            [toadd addObject:[TMP_23[n] eq:[[theta_opt[n] plus:[[[expr_4 sub:[sl mul: c]] mul: expr_2] mul: expr_3]] mul: [theta_opt[n] plus: [[[expr_4 sub: [sl mul: c]] mul: expr_2] mul: expr_3]]]]];
             
-            [g add:[TMP_25[n] eq:[[[theta_opt[n] plus:TMP_6] mul:[theta_opt[n] plus:TMP_6]] mul:[theta_opt[n] plus:[[[expr_4 sub:[sl mul:c]] mul:expr_2] mul:expr_3]]]]];
-            [g add:[TMP_26[n] eq:[theta_opt[n] plus:TMP_6]]];
+            [toadd addObject:[TMP_25[n] eq:[[[theta_opt[n] plus:TMP_6] mul:[theta_opt[n] plus:TMP_6]] mul:[theta_opt[n] plus:[[[expr_4 sub:[sl mul:c]] mul:expr_2] mul:expr_3]]]]];
+            [toadd addObject:[TMP_26[n] eq:[theta_opt[n] plus:TMP_6]]];
             
-            [g add:[x_opt[n+1] eq:[[expr_3 mul:[[[expr_1 sub:[TMP_23[n] mul:expr_3]] plus:[[TMP_25[n] mul:TMP_26[n]] div:@(24.0f)]] mul:[[c mul: sl] plus:expr_4]]] plus:x_opt[n]]]];
-            
-            
-            [g add:[TMP_27[n] eq:[[TMP_26[n] mul: TMP_26[n]] mul:[theta_opt[n] plus:[[[expr_4 sub:[sl mul:c]] mul:expr_2] mul: expr_3]]]]];
+            [toadd addObject:[x_opt[n+1] eq:[[expr_3 mul:[[[expr_1 sub:[TMP_23[n] mul:expr_3]] plus:[[TMP_25[n] mul:TMP_26[n]] div:@(24.0f)]] mul:[[c mul: sl] plus:expr_4]]] plus:x_opt[n]]]];
             
             
-            [g add:[TMP_29[n] eq:[[[TMP_26[n] mul: TMP_26[n]] mul: TMP_26[n]] mul:[theta_opt[n] plus:[[[expr_4 sub:[sl mul:c]] mul:expr_2] mul:expr_3]]]]];
+            [toadd addObject:[TMP_27[n] eq:[[TMP_26[n] mul: TMP_26[n]] mul:[theta_opt[n] plus:[[[expr_4 sub:[sl mul:c]] mul:expr_2] mul: expr_3]]]]];
             
             
-            [g add:[y_opt[n+1] eq:[[[expr_4 plus:[c mul: sl]] mul:[[[TMP_26[n] sub: [TMP_27[n] div:@(6.0f)]] plus:[[TMP_29[n] mul: TMP_26[n]] div: @(120.0f)]] mul:expr_3]] plus: y_opt[n]]]] ;
+            [toadd addObject:[TMP_29[n] eq:[[[TMP_26[n] mul: TMP_26[n]] mul: TMP_26[n]] mul:[theta_opt[n] plus:[[[expr_4 sub:[sl mul:c]] mul:expr_2] mul:expr_3]]]]];
             
-            [g add:[theta_opt[n+1] eq:[theta_opt[n] plus:[expr_2 mul:[expr_4 sub:[c mul: sl]]]]]];
+            
+            [toadd addObject:[y_opt[n+1] eq:[[[expr_4 plus:[c mul: sl]] mul:[[[TMP_26[n] sub: [TMP_27[n] div:@(6.0f)]] plus:[[TMP_29[n] mul: TMP_26[n]] div: @(120.0f)]] mul:expr_3]] plus: y_opt[n]]]] ;
+            
+            [toadd addObject:[theta_opt[n+1] eq:[theta_opt[n] plus:[expr_2 mul:[expr_4 sub:[c mul: sl]]]]]];
             
          }
          
-         [g add:[diff eq:[y_opt[NBLOOPS] sub:y[NBLOOPS]]]];
-         [g add:[[diff mul:diff] eq:@(0.0f)]];
-         [model add:g];
-         id<CPProgram> cp = [args makeProgram:model];
-         id<ORVarArray> vars =  [args makeDisabledArray:cp from:[model FPVars]];
-         __block bool found = false;
+         [toadd addObject:[diff eq:[y_opt[NBLOOPS] sub:y[NBLOOPS]]]];
+         [toadd addObject:[[diff mul:diff] eq:@(0.0f)]];
          
-         fesetround(FE_TONEAREST);
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            found = true;
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            for(id<ORFloatVar> v in vars){
-               id<CPFloatVar> cv = [cp concretize:v];
-               found &= [p bound: v];
-               NSLog(@"%@ = %16.16e (%s)",v,[cv value], [p bound:v] ? "YES" : "NO");
-            }
-            NSLog(@"diff : %16.16f", [p floatValue:y_opt[1]] - [p floatValue:y[1]] );
-            
-         } withTimeLimit:[args timeOut]];
-         NSLog(@"nb fail : %d",[[cp engine] nbFailures]);
-         struct ORResult re = REPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return re;
-      }];
+         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+         
+        
+         [ORCmdLineArgs defaultRunner:args model:model program:cp];
       
    }
    return 0;

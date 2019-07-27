@@ -39,14 +39,14 @@
       id<ORFloatVar> x1 = [ORFactory floatVar:model name:@"x1"];
       id<ORFloatVar> x2 = [ORFactory floatVar:model name:@"x2"];
       
-      [g add:[x0 eq:[x1 plus:x1]]];
-      [g add:[x1 eq:[x2 plus:x2]]];
+      [toadd addObject:[x0 eq:[x1 plus:x1]]];
+      [toadd addObject:[x1 eq:[x2 plus:x2]]];
       
-      [g add:[[x0 plus:x1] gt:@(4.f)]];
-      [g add:[[x0 plus:x2] gt:@(4.f)]];
-      [g add:[[x1 plus:x2] gt:@(4.f)]];
+      [toadd addObject:[[x0 plus:x1] gt:@(4.f)]];
+      [toadd addObject:[[x0 plus:x2] gt:@(4.f)]];
+      [toadd addObject:[[x1 plus:x2] gt:@(4.f)]];
       
-      [model add:g];
+      
       NSLog(@"%@", model);
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       id<ORIntArray> occ = [[cp source] occurences];
@@ -69,16 +69,16 @@
       id<ORFloatVar> x4 = [ORFactory floatVar:model name:@"x4"];
       id<ORFloatVar> x5 = [ORFactory floatVar:model name:@"x5"];
       
-      [g add:[x0 eq:[x1 plus:x2]]];
-      [g add:[x1 eq:[x3 plus:x3]]];
-      [g add:[x2 eq:[x4 plus:x3]]];
-      [g add:[x4 eq:[x5 plus:@(2.f)]]];
+      [toadd addObject:[x0 eq:[x1 plus:x2]]];
+      [toadd addObject:[x1 eq:[x3 plus:x3]]];
+      [toadd addObject:[x2 eq:[x4 plus:x3]]];
+      [toadd addObject:[x4 eq:[x5 plus:@(2.f)]]];
       
-      [g add:[[x0 plus:x1] gt:@(4.f)]];
-      [g add:[[x0 plus:x2] gt:@(4.f)]];
-      [g add:[[x1 plus:x2] gt:@(4.f)]];
+      [toadd addObject:[[x0 plus:x1] gt:@(4.f)]];
+      [toadd addObject:[[x0 plus:x2] gt:@(4.f)]];
+      [toadd addObject:[[x1 plus:x2] gt:@(4.f)]];
       
-      [model add:g];
+      
       NSLog(@"%@", model);
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       id<ORIntArray> occ = [[cp source] occurences];
