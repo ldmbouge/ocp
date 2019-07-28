@@ -218,7 +218,8 @@ ab = [
       'Float/square_8_false-unreach-call',
       'Float/square_8_true-unreach-call',
       'Float/testAbs',
-      'Float/testMultipleAbs'
+      'Float/testMultipleAbs',
+      'Float/MullerKahan'
 ]
 
 nba = len(sys.argv)

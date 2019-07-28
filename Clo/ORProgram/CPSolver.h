@@ -65,6 +65,7 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(void) setAbsLimitAdditionalVars:(ORDouble)local total:(ORDouble)global;
 -(void) setLOcc:(id<ORIntArray>) occ;
 -(void) setLevel:(ORInt) level;
+-(void) setMiddle:(ORBool) b;
 -(void) setWithRewriting:(ORBool) p;
 -(void) setOccRate:(ORDouble) r;
 -(void) setAbsRate:(ORDouble) r;

@@ -12,7 +12,65 @@
 #import "ORSplitVisitor.h"
 #import <ORProgram/CPSolver.h>
 
-@implementation CPVisitorI
+@implementation CPVisitorI{
+   ORBool _middle;
+}
+
+-(CPVisitorI*) init
+{
+   self = [super init];
+   _middle = NO;
+   return self;
+}
+
+-(CPVisitorI*) initWithMiddle:(ORBool) middle
+{
+   self = [super init];
+   _middle = middle;
+   return self;
+}
+
+-(ORDouble) doubleMiddle:(CPDoubleVarI*) xi
+{
+   ORDouble theMax = xi.max;
+   ORDouble theMin = xi.min;
+   ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
+   ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
+   if(!_middle)
+      return tmpMin/2 + tmpMax/2;
+   ORDouble mid;
+   if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+      mid = 0.0;
+   else if ((theMin < 1.0) && (1.0 < theMax))
+      mid = 1.0;
+   else if ((theMin < -1.0) && (-1.0 < theMax))
+      mid = -1.0;
+   else
+      mid = tmpMin/2 + tmpMax/2;
+   assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
+   return mid;
+}
+
+-(ORFloat) floatMiddle:(CPFloatVarI*) xi
+{
+   ORFloat theMax = xi.max;
+   ORFloat theMin = xi.min;
+   ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
+   ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
+   if(!_middle)
+      return tmpMin/2 + tmpMax/2;
+   ORFloat mid;
+   if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
+      mid = 0.0f;
+   else if ((theMin < 1.0f) && (1.0f < theMax))
+      mid = 1.0f;
+   else if ((theMin < -1.0f) && (-1.0f < theMax))
+      mid = -1.0f;
+   else
+      mid = tmpMin/2 + tmpMax/2;
+   assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
+   return mid;
+}
 
 -(void) applyIntVar:(id<CPVar>) var
 {
@@ -32,6 +90,7 @@
    CPCoreSolver*   _program;
    id<ORVar>           _variable;
 }
+
 
 -(ORSplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v
 {
@@ -198,9 +257,9 @@
    id<ORVar>           _variable;
 }
 
--(OR5WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v
+-(OR5WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle
 {
-   self = [super init];
+   self = [super initWithMiddle:middle];
    _program = p;
    _variable = v;
    return self;
@@ -235,18 +294,7 @@
       interval[2].inf = interval[2].sup = mid;
       length = 2;
    }else{
-      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-//      todo decomment when bugs are fixed
-//      if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
-//         mid = 0.0f;
-//      else if ((theMin < 1.0f) && (1.0f < theMax))
-//         mid = 1.0f;
-//      else if ((theMin < -1.0f) && (-1.0f < theMax))
-//         mid = -1.0f;
-//      else
-         mid = tmpMin/2 + tmpMax/2;
-      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
+      ORFloat mid = [self floatMiddle:xi];
       //force the interval to right side
       if(mid == fp_next_float(theMin)){
          mid = fp_next_float(mid);
@@ -287,17 +335,7 @@
       interval[2].inf = interval[2].sup = mid;
       length = 2;
    }else{
-      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
-      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-//      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
-//         mid = 0.0;
-//      else if ((theMin < 1.0) && (1.0 < theMax))
-//         mid = 1.0;
-//      else if ((theMin < -1.0) && (-1.0 < theMax))
-//         mid = -1.0;
-//      else
-         mid = tmpMin/2 + tmpMax/2;
-      assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
+      ORDouble mid = [self doubleMiddle:xi];
       //force the interval to right side
       if(mid == fp_next_double(theMin)){
          mid = fp_next_double(mid);
@@ -329,9 +367,9 @@
    id<ORVar>           _variable;
 }
 
--(OR6WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v
+-(OR6WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v middle:(ORBool)middle
 {
-   self = [super init];
+   self = [super initWithMiddle:middle];
    _program = p;
    _variable = v;
    return self;
@@ -364,19 +402,7 @@
    ORInt length = 1;
    if(!(only2float || only3float)){
       //au moins 4 floatants
-      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-      ORFloat mid;
-//      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
-//         mid = 0.0;
-//      else if ((theMin < 1.0) && (1.0 < theMax))
-//         mid = 1.0;
-//      else if ((theMin < -1.0) && (-1.0 < theMax))
-//         mid = -1.0;
-//      else
-         mid = tmpMin/2 + tmpMax/2;
-      
-      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
+      ORFloat mid = [self floatMiddle:xi];
       ORFloat midInf = -0.0f;
       ORFloat midSup = +0.0f;
       if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
@@ -446,19 +472,7 @@
    ORInt length = 1;
    if(!(only2float || only3float)){
       //au moins 4 floatants
-      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
-      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      ORDouble mid;
-//      if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
-//         mid = 0.0;
-//      else if ((theMin < 1.0) && (1.0 < theMax))
-//         mid = 1.0;
-//      else if ((theMin < -1.0) && (-1.0 < theMax))
-//         mid = -1.0;
-//      else
-         mid = tmpMin/2 + tmpMax/2;
-      
-      assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
+      ORDouble mid = [self doubleMiddle:xi];
       ORDouble midInf = -0.0;
       ORDouble midSup = +0.0;
       if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){

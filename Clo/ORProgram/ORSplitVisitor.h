@@ -27,11 +27,11 @@
 @end
 
 @interface OR5WaySplitVisitor : CPVisitorI<CPVisitor>
--(OR5WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
+-(OR5WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle;
 @end
 
 @interface OR6WaySplitVisitor : CPVisitorI<CPVisitor>
--(OR6WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
+-(OR6WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle;
 @end
 
 @interface ORDeltaSplitVisitor : CPVisitorI<CPVisitor>

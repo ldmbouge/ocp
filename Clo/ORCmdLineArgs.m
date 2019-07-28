@@ -70,6 +70,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize absFunComputation;
 @synthesize occDetails;
 @synthesize restricted;
+@synthesize middle;
 
 
 +(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restrict:(id<ORVarArray>) vars
@@ -173,6 +174,7 @@ static enum ValHeuristic valIndex[] =
    _nbSMerged = 0;
    _nbDMerged = 0;
    occDetails = NO;
+   middle = YES;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -236,7 +238,9 @@ static enum ValHeuristic valIndex[] =
       else if (strncmp(argv[k],"-grate-other-limit",18)==0 || strncmp(argv[k],"-globalrate-other-limit",23)==0)
          grateOther = atof(argv[k+1]);
       else if (strncmp(argv[k],"-restrict",9)==0)
-            restricted = YES;
+         restricted = YES;
+      else if (strncmp(argv[k],"-no-middle",9)==0)
+         middle = NO;
       else if (strncmp(argv[k],"-variation",10)==0){
          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
          int index = 24;
@@ -479,6 +483,7 @@ static enum ValHeuristic valIndex[] =
             p = [ORFactory createCPProgram:model annotation:notes];
          [(CPCoreSolver*)p setWithRewriting:(withSRewriting || withDRewriting)];
          [(CPCoreSolver*)p setLevel:level];
+         [(CPCoreSolver*)p setMiddle:middle];
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
          if(occRate >= 0) [(CPCoreSolver*)p setOccRate:occRate];

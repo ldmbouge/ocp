@@ -117,6 +117,7 @@ struct ORResult {
 @property (nonatomic,readonly) ABS_FUN absFunComputation;
 @property (nonatomic,readonly) ORBool occDetails;
 @property (nonatomic,readonly) ORBool restricted;
+@property (nonatomic,readonly) ORBool middle;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;

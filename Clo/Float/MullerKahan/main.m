@@ -621,10 +621,7 @@ int main(int argc, const char * argv[]) {
          [toadd addObject:[x0_100 eq: x1_99]];
          [toadd addObject:[x1_100 eq: x2_99]];
          
-         
-         
          id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-        
          [ORCmdLineArgs defaultRunner:args model:model program:cp];
    }
    return 0;

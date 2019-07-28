@@ -158,6 +158,7 @@
    
    NSMutableDictionary*   _order;
    ORBool                  _withParent;
+   ORBool                  _middle;
    ORInt                  _level;
    ORInt                 _unique;
    ORFloat                _split3Bpercent;
@@ -199,6 +200,7 @@
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
    _level = 100;
+   _middle = YES;
    _withParent = NO;
    _absRateLimitModelVars = 0.3;
    _absTRateLimitModelVars = 0.8;
@@ -405,6 +407,10 @@
 -(void) setLevel:(ORInt) level
 {
    _level = level;
+}
+-(void) setMiddle:(ORBool) b
+{
+   _middle = b;
 }
 -(void) setWithRewriting:(ORBool) p
 {
@@ -2491,7 +2497,7 @@
 -(void) float5WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[x[i].getId];
-   id<CPVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
+   id<CPVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i] middle:_middle];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
@@ -2499,7 +2505,7 @@
 -(void) float6WaySplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[x[i].getId];
-   id<CPVisitor> splitVisit = [[OR6WaySplitVisitor alloc] initWithProgram:self variable:x[i]];
+   id<CPVisitor> splitVisit = [[OR6WaySplitVisitor alloc] initWithProgram:self variable:x[i] middle:_middle];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }
