@@ -116,6 +116,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORBool specialSearch;
 @property (nonatomic,readonly) ABS_FUN absFunComputation;
 @property (nonatomic,readonly) ORBool occDetails;
+@property (nonatomic,readonly) ORBool restricted;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
@@ -136,4 +137,5 @@ struct ORResult {
 -(void) printMaxLOccurences:(id<ORModel>) model with:(id<CPProgram>) cp n:(ORInt) n;
 +(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp;
 +(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restrict:(id<ORVarArray>) vars;
++(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restricted:(NSArray*) vars;
 @end

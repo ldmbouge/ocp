@@ -69,6 +69,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize specialSearch;
 @synthesize absFunComputation;
 @synthesize occDetails;
+@synthesize restricted;
 
 
 +(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restrict:(id<ORVarArray>) vars
@@ -109,6 +110,18 @@ static enum ValHeuristic valIndex[] =
    [ORCmdLineArgs defaultRunner:args model:model program:cp restrict:vars];
 }
 
++(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restricted:(NSArray*) vars
+{
+   id<ORVarArray> searchvars;
+   if([args restricted]){
+      searchvars =(id<ORVarArray>) [ORFactory idArray:model array:vars];
+   }else{
+      searchvars =  [model FPVars];
+   }
+   id<ORVarArray> vs =  [args makeDisabledArray:cp from:searchvars];
+   [ORCmdLineArgs defaultRunner:args model:model program:cp restrict:vs];
+}
+
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -122,6 +135,7 @@ static enum ValHeuristic valIndex[] =
    self = [super init];
    _argc = argc;
    _argv = argv;
+   restricted = NO;
    size = 4;
    nArg = 0;
    heuristic = customD;
@@ -221,6 +235,8 @@ static enum ValHeuristic valIndex[] =
          rateOther = atof(argv[k+1]);
       else if (strncmp(argv[k],"-grate-other-limit",18)==0 || strncmp(argv[k],"-globalrate-other-limit",23)==0)
          grateOther = atof(argv[k+1]);
+      else if (strncmp(argv[k],"-restrict",9)==0)
+            restricted = YES;
       else if (strncmp(argv[k],"-variation",10)==0){
          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
          int index = 24;
