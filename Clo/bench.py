@@ -178,6 +178,7 @@ ab = [
       'Float/newton_3_7_false-unreach-call',
       'Float/newton_3_8_false-unreach-call',
       'Float/optimized_heron',
+      'Float/optimized_heron_156',
       'Float/pid_diff_opt1',
       'Float/pid_diff_opt10',
       'Float/pid_diff_opt4',
