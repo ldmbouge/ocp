@@ -27,10 +27,9 @@ int main(int argc, const char * argv[]) {
          [toadd addObject:[d[NBLOOPS] lt:@(1.f)]];
          
          
-         //         NSLog(@"%@",model);
-         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-         
-         [ORCmdLineArgs defaultRunner:args model:model program:cp];
+      
+      id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+      [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[d[0]]];
          
    }
    return 0;
