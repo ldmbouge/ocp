@@ -53,8 +53,7 @@ int main(int argc, const char * argv[]) {
          
          [toadd addObject:[[assoc1 sub:assoc2] gt:epsilon]];
       id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-      [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:[[NSArray alloc] initWithObjects:a,b,c, nil]];
-      
+      [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[a,b,c]];
    }
    return 0;
 }

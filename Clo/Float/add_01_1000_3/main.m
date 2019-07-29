@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
          
 
       id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-      [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:[[NSArray alloc] initWithObjects:a,b,c, nil]];
+      [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[a,b,c]];
       
       
    }
