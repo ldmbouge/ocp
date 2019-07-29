@@ -67,7 +67,15 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-uniques 0"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-no-middle"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-var-order maxocc"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

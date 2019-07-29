@@ -152,7 +152,7 @@ static enum ValHeuristic valIndex[] =
    withSRewriting = NO;
    withDRewriting = NO;
    ldfs = NO;
-   uniqueNB = 2;
+   uniqueNB = 0;
    is3Bfiltering = NO;
    kbpercent=8;
    search3Bpercent=10;
@@ -487,7 +487,7 @@ static enum ValHeuristic valIndex[] =
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
          if(occRate >= 0) [(CPCoreSolver*)p setOccRate:occRate];
-         [(CPCoreSolver*)p setUnique:uniqueNB];
+         if(uniqueNB > 0) [(CPCoreSolver*)p setUnique:uniqueNB];
          [(CPCoreSolver*)p setSearchNBFloats:searchNBFloats];
          [(CPCoreSolver*)p set3BSplitPercent:search3Bpercent];
          [(CPCoreSolver*)p setSubcut:[self subCutSelector]];
