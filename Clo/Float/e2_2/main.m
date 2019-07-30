@@ -8,29 +8,29 @@
 //should be with double but error
 
 int main(int argc, const char * argv[]) {
-   @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      
-         id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> x = [ORFactory floatVar:model low:-1e20 up:1e20 name:@"x"];
-         
-         //         id<ORDoubleVar> y = [ORFactory doubleVar:model name:@"y"];
-         //         id<ORDoubleVar> p4 = [ORFactory doubleVar:model low:-1.0 up:1.0 name:@"p4"];
-         
-       NSMutableArray* toadd = [[NSMutableArray alloc] init];
-         
-         
-         [toadd addObject:[x leq:@(p1)]];
-         [toadd addObject:[[x plus:@(p2)] gt: @(p3)]];
-         
-         
-         
-         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-         
-         [ORCmdLineArgs defaultRunner:args model:model program:cp];
-         
-      
-   }
-   return 0;
+  @autoreleasepool {
+    ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+    
+    id<ORModel> model = [ORFactory createModel];
+    id<ORFloatVar> x = [ORFactory floatVar:model low:-1e20 up:1e20 name:@"x"];
+    
+    //         id<ORDoubleVar> y = [ORFactory doubleVar:model name:@"y"];
+    //         id<ORDoubleVar> p4 = [ORFactory doubleVar:model low:-1.0 up:1.0 name:@"p4"];
+    
+    NSMutableArray* toadd = [[NSMutableArray alloc] init];
+    
+    
+    [toadd addObject:[x leq:@(p1)]];
+    [toadd addObject:[[x plus:@(p2)] gt: @(p3)]];
+    
+    
+    
+    id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+    
+    [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[x]];
+    
+    
+  }
+  return 0;
 }
 

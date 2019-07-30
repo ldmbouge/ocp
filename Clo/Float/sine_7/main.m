@@ -16,41 +16,41 @@
 
 
 void checksolution(float IN,float res){
-   if(!(IN >= -1.57079632679f && IN <= 1.57079632679f)) printf("IN n'est pas dans le bon range\n");
-   float x = IN;
-   
-   float result = x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
-   if(res != result) printf("Erreur %16.16e != %16.16e\n",res,result);
-   else if(res <= VAL && res >= -VAL) printf("Erreur resultat incorrect\n");
-   else printf("resultat oK\n");
+  if(!(IN >= -1.57079632679f && IN <= 1.57079632679f)) printf("IN n'est pas dans le bon range\n");
+  float x = IN;
+  
+  float result = x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
+  if(res != result) printf("Erreur %16.16e != %16.16e\n",res,result);
+  else if(res <= VAL && res >= -VAL) printf("Erreur resultat incorrect\n");
+  else printf("resultat oK\n");
 }
 
 
 int main(int argc, const char * argv[]) {
-   @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-         
-         fesetround(FE_TONEAREST);
-         id<ORModel> model = [ORFactory createModel];
-         
-         id<ORFloatVar> x = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
-         id<ORFloatVar> res = [ORFactory floatVar:model];
-         
-       NSMutableArray* toadd = [[NSMutableArray alloc] init];
-         [toadd addObject:[res eq:[[[x sub:
-                           [[x mul:[x mul:x]] div:@(6.0f)]] plus:
-                          [[x mul:[x mul:[x mul:[x mul:x]]]] div:@(120.0f)]] plus:
-                         [[x mul:[x mul:[x mul:[x mul:[x mul:[x mul:x]]]]]] div:@(5040.0f)]]]];
-         
-         [toadd addObject:[[res lt:@(-VAL)] lor:[res gt:@(VAL)]]];
-         
-         
-         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-         
-         [ORCmdLineArgs defaultRunner:args model:model program:cp];
-         
-   }
-   return 0;
+  @autoreleasepool {
+    ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+    
+    fesetround(FE_TONEAREST);
+    id<ORModel> model = [ORFactory createModel];
+    
+    id<ORFloatVar> x = [ORFactory floatVar:model low:-1.57079632f up:1.57079632f];
+    id<ORFloatVar> res = [ORFactory floatVar:model];
+    
+    NSMutableArray* toadd = [[NSMutableArray alloc] init];
+    [toadd addObject:[res eq:[[[x sub:
+                                [[x mul:[x mul:x]] div:@(6.0f)]] plus:
+                               [[x mul:[x mul:[x mul:[x mul:x]]]] div:@(120.0f)]] plus:
+                              [[x mul:[x mul:[x mul:[x mul:[x mul:[x mul:x]]]]]] div:@(5040.0f)]]]];
+    
+    [toadd addObject:[[res lt:@(-VAL)] lor:[res gt:@(VAL)]]];
+    
+    
+    id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+    
+    [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[x]];
+    
+  }
+  return 0;
 }
 
 

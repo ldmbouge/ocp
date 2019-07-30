@@ -11,31 +11,31 @@
 
 
 int main(int argc, const char * argv[]) {
-   @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-         
-         id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> x = [ORFactory floatVar:model low:-1.0f up:1.0f];
-         id<ORFloatVar> res = [ORFactory floatVar:model];
-         
-         
-         
-         id<ORExpr> fc = [ORFactory float:model value:-0.25f];
-       NSMutableArray* toadd = [[NSMutableArray alloc] init];
-         
-         
-         [toadd addObject:[res eq:[[x mul:x] plus:x]]];
-         
-         [toadd addObject:[res lt:fc]];
-         
-         
-         //            [model add:[res lt:fc]];
-         
-         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-         
-         [ORCmdLineArgs defaultRunner:args model:model program:cp];
-         
-   }
-   return 0;
+  @autoreleasepool {
+    ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+    
+    id<ORModel> model = [ORFactory createModel];
+    id<ORFloatVar> x = [ORFactory floatVar:model low:-1.0f up:1.0f];
+    id<ORFloatVar> res = [ORFactory floatVar:model];
+    
+    
+    
+    id<ORExpr> fc = [ORFactory float:model value:-0.25f];
+    NSMutableArray* toadd = [[NSMutableArray alloc] init];
+    
+    
+    [toadd addObject:[res eq:[[x mul:x] plus:x]]];
+    
+    [toadd addObject:[res lt:fc]];
+    
+    
+    //            [model add:[res lt:fc]];
+    
+    id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+    
+    [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[x]];
+    
+  }
+  return 0;
 }
 

@@ -22,52 +22,52 @@
 
 float f(float x)
 {
-   return x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
+  return x - (x*x*x)/6.0f + (x*x*x*x*x)/120.0f + (x*x*x*x*x*x*x)/5040.0f;
 }
 
 float fp(float x)
 {
-   return 1 - (x*x)/2.0f + (x*x*x*x)/24.0f + (x*x*x*x*x*x)/720.0f;
+  return 1 - (x*x)/2.0f + (x*x*x*x)/24.0f + (x*x*x*x*x*x)/720.0f;
 }
 
 void check_solution(float IN, float res){
-   if(IN < -VAL || IN > VAL) printf("ERREUR : pas le bon range\n");
-   float result = IN - f(IN)/fp(IN);
-   if(res != result) printf("ERREUR %16.16e != %16.16e\n",res,result);
-   else if (res < 0.1f) printf("ERREUR %16.16e < 0.1",res);
-   else printf("result is ok\n");
+  if(IN < -VAL || IN > VAL) printf("ERREUR : pas le bon range\n");
+  float result = IN - f(IN)/fp(IN);
+  if(res != result) printf("ERREUR %16.16e != %16.16e\n",res,result);
+  else if (res < 0.1f) printf("ERREUR %16.16e < 0.1",res);
+  else printf("result is ok\n");
 }
 
 int main(int argc, const char * argv[]) {
-   @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-         id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> x = [ORFactory floatVar:model low:-VAL up:VAL];
-         id<ORFloatVar> r_0 = [ORFactory floatVar:model];
-         id<ORFloatVar> f_x = [ORFactory floatVar:model];
-         id<ORFloatVar> fp_x = [ORFactory floatVar:model];
-         
-         
-         id<ORExpr> fc = [ORFactory float:model value:1.0f];
-       NSMutableArray* toadd = [[NSMutableArray alloc] init];
-         
-         [toadd addObject:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
-                         plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
-         
-         
-         [toadd addObject:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
-                          plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
-         
-         [toadd addObject:[r_0 eq:[x sub:[f_x div:fp_x]]]];
-         
-         
-         [toadd addObject:[r_0 geq:@(0.1f)]];
-         
-         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-         [ORCmdLineArgs defaultRunner:args model:model program:cp];
-         
-   }
-   return 0;
+  @autoreleasepool {
+    ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+    id<ORModel> model = [ORFactory createModel];
+    id<ORFloatVar> x = [ORFactory floatVar:model low:-VAL up:VAL];
+    id<ORFloatVar> r_0 = [ORFactory floatVar:model];
+    id<ORFloatVar> f_x = [ORFactory floatVar:model];
+    id<ORFloatVar> fp_x = [ORFactory floatVar:model];
+    
+    
+    id<ORExpr> fc = [ORFactory float:model value:1.0f];
+    NSMutableArray* toadd = [[NSMutableArray alloc] init];
+    
+    [toadd addObject:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
+                              plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
+    
+    
+    [toadd addObject:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
+                               plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
+    
+    [toadd addObject:[r_0 eq:[x sub:[f_x div:fp_x]]]];
+    
+    
+    [toadd addObject:[r_0 geq:@(0.1f)]];
+    
+    id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+    [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[x]];
+    
+  }
+  return 0;
 }
 
 
