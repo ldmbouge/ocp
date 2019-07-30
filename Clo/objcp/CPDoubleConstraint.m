@@ -1372,8 +1372,8 @@ double_interval _yi;
       xr = [xr proj_inter:xrTemp];
       changed |= xr.changed;
       
-      x.inf = [[xr low] get_d];
-      x.sup = [[xr up] get_d];
+      x.inf = [[xr low] get_sup_d];
+      x.sup = [[xr up] get_inf_d];
       
       // ============================== y
       // (ez - x*ey - ex*ey - eo)/ex
@@ -1382,8 +1382,8 @@ double_interval _yi;
       yr = [yr proj_inter:yrTemp];
       changed |= yr.changed;
       
-      y.inf = [[yr low] get_d];
-      y.sup = [[yr up] get_d];
+      y.inf = [[yr low] get_sup_d];
+      y.sup = [[yr up] get_inf_d];
 
       /* END ERROR PROPAG */
       
@@ -1562,8 +1562,8 @@ double_interval _yi;
       xr = [xr proj_inter:xrTemp];
       changed |= xr.changed;
       
-      x.inf = [[xr low] get_d];
-      x.sup = [[xr up] get_d];
+      x.inf = [[xr low] get_sup_d];
+      x.sup = [[xr up] get_inf_d];
       
       // ============================== y
       // min(d1, d2), max(d1, d2)
@@ -1578,9 +1578,9 @@ double_interval _yi;
       
       tmp = [ex sub: [[ez sub: eo] mul: ey]];
       fesetround(FE_DOWNWARD);
-      [D.low set_d: sqrt([D.low get_d])];
+      [D.low set_d: sqrt([D.low get_sup_d])];
       fesetround(FE_UPWARD);
-      [D.up set_d: sqrt([D.up get_d])];
+      [D.up set_d: sqrt([D.up get_inf_d])];
       fesetround(FE_TONEAREST);
       d1 = [tmp sub: D];
       d2 = [tmp add: D];
@@ -1593,8 +1593,8 @@ double_interval _yi;
       yr = [yr proj_inter:yrTemp];
       changed |= yr.changed;
       
-      y.inf = [[yr low] get_d];
-      y.sup = [[yr up] get_d];
+      y.inf = [[yr low] get_sup_d];
+      y.sup = [[yr up] get_inf_d];
       
       /* END ERROR PROPAG */
       

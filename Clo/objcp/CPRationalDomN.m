@@ -145,7 +145,7 @@
 }
 -(id) copy
 {
-   return [[CPRationalDomN alloc] initCPRationalDom:_trail lowF:[_imin get_d] upF:[_imax get_d]];
+   return [[CPRationalDomN alloc] initCPRationalDom:_trail low:_imin up:_imax];
 }
 -(void) restoreDomain:(id<CPRationalDom>)toRestore
 {

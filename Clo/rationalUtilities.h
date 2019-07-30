@@ -7,6 +7,7 @@
 //
 
 #include "gmp.h"
+#include <mpfr.h>
 
 #import <ORFoundation/ORObject.h>
 typedef mpq_t rational_t;
@@ -53,6 +54,10 @@ typedef mpq_ptr rational_ptr;
 -(id<ORRational>)get;
 -(char*)get_str;
 -(double)get_d;
+-(float)get_inf_f;
+-(float)get_sup_f;
+-(double)get_inf_d;
+-(double)get_sup_d;
 -(id<ORRational>)add:(id<ORRational>)r;
 -(id<ORRational>)sub:(id<ORRational>)r;
 -(id<ORRational>)mul:(id<ORRational>)r;
@@ -159,6 +164,10 @@ typedef mpq_ptr rational_ptr;
 -(id<ORRational>)get;
 -(char*)get_str;
 -(double)get_d;
+-(float)get_inf_f;
+-(float)get_sup_f;
+-(double)get_inf_d;
+-(double)get_sup_d;
 -(id<ORRational>)add:(id<ORRational>)r;
 -(id<ORRational>)sub:(id<ORRational>)r;
 -(id<ORRational>)mul:(id<ORRational>)r;

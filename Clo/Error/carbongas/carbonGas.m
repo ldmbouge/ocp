@@ -148,9 +148,9 @@ void carbonGas_d_QF(int search, int argc, const char * argv[]) {
       
       [mdl add:[er eq: [rQ sub: rq]]];
 
-      [zero set_d:2.74e-9];
+      [zero set_d:2.54e-9];
       [mdl add:[er eq:eR]];
-      [mdl add:[[er abs] geq:zero]];
+      [mdl add:[[er abs] leq:zero]];
       [zero release];
       
       
@@ -184,7 +184,7 @@ void carbonGas_d_QF(int search, int argc, const char * argv[]) {
          NSLog(@"kQ: [%@;%@] (%s)",[cp minQ:kQ],[cp maxQ:kQ],[cp bound:kQ] ? "YES" : "NO");
          NSLog(@"vQ: [%@;%@] (%s)",[cp minQ:vQ],[cp maxQ:vQ],[cp bound:vQ] ? "YES" : "NO");
          NSLog(@"rQ: [%@;%@] (%s)",[cp minQ:rQ],[cp maxQ:rQ],[cp bound:rQ] ? "YES" : "NO");
-         NSLog(@"er: [%@;%@] (%s)",[cp minQ:er],[cp maxQ:er],[cp bound:rQ] ? "YES" : "NO");
+         NSLog(@"er: [%@;%@] (%s)",[cp minQ:er],[cp maxQ:er],[cp bound:er] ? "YES" : "NO");
 
          if (search)
             check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);

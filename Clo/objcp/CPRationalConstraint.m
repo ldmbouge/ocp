@@ -145,7 +145,7 @@
    }else{
       id<ORRational> xminRat = [ORRational rationalWith_d:[_x min]];
       id<ORRational> xmaxRat = [ORRational rationalWith_d:[_x max]];
-      [_x updateInterval:maxFlt([_x min], [[_y min] get_d]) and:minFlt([_x max], [[_y max] get_d])];
+      [_x updateInterval:maxFlt([_x min], [[_y min] get_sup_f]) and:minFlt([_x max], [[_y max] get_inf_f])];
       [_y updateInterval:maxQ(xminRat, [_y min]) and:minQ(xmaxRat, [_y max])];
       [xminRat release];
       [xmaxRat release];
@@ -202,7 +202,7 @@
    }else{
       id<ORRational> xminRat = [ORRational rationalWith_d:[_x min]];
       id<ORRational> xmaxRat = [ORRational rationalWith_d:[_x max]];
-      [_x updateInterval:maxDbl([_x min], [[_y min] get_d]) and:minFlt([_x max], [[_y max] get_d])];
+      [_x updateInterval:maxDbl([_x min], [[_y min] get_sup_d]) and:minDbl([_x max], [[_y max] get_inf_d])];
       [_y updateInterval:maxQ(xminRat, [_y min]) and:minQ(xmaxRat, [_y max])];
       [xminRat release];
       [xmaxRat release];

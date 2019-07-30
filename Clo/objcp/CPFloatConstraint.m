@@ -1447,8 +1447,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       xr = [xr proj_inter:xrTemp];
       changed |= xr.changed;
       
-      x.inf = [[xr low] get_d];
-      x.sup = [[xr up] get_d];
+      x.inf = [[xr low] get_sup_f];
+      x.sup = [[xr up] get_inf_f];
       
       // ============================== y
       // (ez - x*ey - ex*ey - eo)/ex
@@ -1457,8 +1457,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       yr = [yr proj_inter:yrTemp];
       changed |= yr.changed;
       
-      y.inf = [[yr low] get_d];
-      y.sup = [[yr up] get_d];
+      y.inf = [[yr low] get_sup_f];
+      y.sup = [[yr up] get_inf_f];
       
       /* END ERROR PROPAG */
       
@@ -1640,8 +1640,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       xr = [xr proj_inter:xrTemp];
       changed |= xr.changed;
       
-      x.inf = [[xr low] get_d];
-      x.sup = [[xr up] get_d];
+      x.inf = [[xr low] get_sup_f];
+      x.sup = [[xr up] get_inf_f];
       
       // ============================== y
       // min(d1, d2), max(d1, d2)
@@ -1655,14 +1655,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       D = [tmp proj_inter:D];
       
       tmp = [ex sub: [[ez sub: eo] mul: ey]];
-      /* Check difference */
-      /*[D.low set_d: sqrt([D.low get_d])];
-       [D.up set_d: sqrt([D.up get_d])];*/
-      //D = [D sqrt];
       fesetround(FE_DOWNWARD);
-      [D.low set_d: sqrt([D.low get_d])];
+      [D.low set_d: sqrt([D.low get_sup_d])];
       fesetround(FE_UPWARD);
-      [D.up set_d: sqrt([D.up get_d])];
+      [D.up set_d: sqrt([D.up get_inf_d])];
       fesetround(FE_TONEAREST);
       d1 = [tmp sub: D];
       d2 = [tmp add: D];
@@ -1675,8 +1671,8 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       yr = [yr proj_inter:yrTemp];
       changed |= yr.changed;
       
-      y.inf = [[yr low] get_d];
-      y.sup = [[yr up] get_d];
+      y.inf = [[yr low] get_sup_f];
+      y.sup = [[yr up] get_inf_f];
       
       /* END ERROR PROPAG */
       

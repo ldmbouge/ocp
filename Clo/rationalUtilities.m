@@ -291,6 +291,106 @@
          break;
    }
 }
+-(float)get_inf_f
+{
+   switch (_type) {
+      case -2:
+         return -INFINITY;
+         break;
+      case 2:
+         return +INFINITY;
+         break;
+      case 3:
+         return NAN;
+         break;
+      default:
+      {
+         float value;
+         mpfr_t x;
+         mpfr_init2(x, 128);
+         mpfr_set_q(x, _rational, MPFR_RNDD);
+         value = mpfr_get_flt(x, MPFR_RNDD);
+         mpfr_clear(x);
+         return value;
+      }
+         break;
+   }
+}
+-(float)get_sup_f
+{
+   switch (_type) {
+      case -2:
+         return -INFINITY;
+         break;
+      case 2:
+         return +INFINITY;
+         break;
+      case 3:
+         return NAN;
+         break;
+      default:
+      {
+         float value;
+         mpfr_t x;
+         mpfr_init2(x, 128);
+         mpfr_set_q(x, _rational, MPFR_RNDU);
+         value = mpfr_get_flt(x, MPFR_RNDU);
+         mpfr_clear(x);
+         return value;
+      }
+         break;
+   }
+}
+-(double)get_inf_d
+{
+   switch (_type) {
+      case -2:
+         return -INFINITY;
+         break;
+      case 2:
+         return +INFINITY;
+         break;
+      case 3:
+         return NAN;
+         break;
+      default:
+      {
+         double value;
+         mpfr_t x;
+         mpfr_init2(x, 128);
+         mpfr_set_q(x, _rational, MPFR_RNDD);
+         value = mpfr_get_d(x, MPFR_RNDD);
+         mpfr_clear(x);
+         return value;
+      }
+         break;
+   }
+}
+-(double)get_sup_d
+{
+   switch (_type) {
+      case -2:
+         return -INFINITY;
+         break;
+      case 2:
+         return +INFINITY;
+         break;
+      case 3:
+         return NAN;
+         break;
+      default:
+      {
+         double value;
+         mpfr_t x;
+         mpfr_init2(x, 128);
+         mpfr_set_q(x, _rational, MPFR_RNDU);
+         value = mpfr_get_d(x, MPFR_RNDU);
+         mpfr_clear(x);
+         return value;
+      }
+         break;
+   }
+}
 -(id<ORRational>)add:(id<ORRational>)r
 {
    id<ORRational> z = [[ORRational alloc] init: _mt];
@@ -1075,7 +1175,7 @@
       plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:95 and:100];
       
-      if([plow leq: epsilon] && ![_up isPosInf] && ![_low isNegInf]){
+      if([plow geq: epsilon] && ![_up isPosInf] && ![_low isNegInf]){
          z.changed = 0;
       }
       
@@ -1107,7 +1207,7 @@
       plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:95 and:100];
       
-      if([plow leq: epsilon] && (![_up isPosInf] || ![_low isNegInf])){
+      if([plow geq: epsilon] && (![_up isPosInf] || ![_low isNegInf])){
          z.changed = 0;
       }
       

@@ -47,7 +47,7 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail lowF:[_imin get_d] upF:[_imax get_d]];
+   return [[CPRationalDom allocWithZone:zone] initCPRationalDom:_trail low:_imin up:_imax];
 }
 -(NSString*) description
 {
@@ -151,7 +151,7 @@
 }
 -(id) copy
 {
-    return [[CPRationalDom alloc] initCPRationalDom:_trail lowF:[_imin get_d] upF:[_imax get_d]];
+    return [[CPRationalDom alloc] initCPRationalDom:_trail low:_imin up:_imax];
 }
 -(void) restoreDomain:(id<CPRationalDom>)toRestore
 {
