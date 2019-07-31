@@ -26,11 +26,12 @@ int main(int argc, const char * argv[]) {
          
          [toadd addObject:[d[NBLOOPS] gt:@(LARGE_NUMBER)]];
          
-         
-         //         NSLog(@"%@",model);
-         id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-         
-         [ORCmdLineArgs defaultRunner:args model:model program:cp];
+      NSMutableArray* arr = [[[NSMutableArray alloc] initWithObjects:d[0], nil] autorelease];
+      for(ORInt i = 0; i < NBLOOPS; i++)
+         [arr addObject:nextValue[i]];
+      
+      id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+      [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:arr];
          
       
    }
