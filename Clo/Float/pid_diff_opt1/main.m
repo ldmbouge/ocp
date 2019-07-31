@@ -132,8 +132,7 @@ int main(int argc, const char * argv[]) {
     [toadd addObject:[[diff mul:diff] gt:@(0.0622f)]];
     
     id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-    NSLog(@"%@", model);
-    [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[m_init, ki, kp, kd, c]];
+     [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[m_init]];
     
     
   }

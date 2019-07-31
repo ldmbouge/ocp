@@ -131,10 +131,10 @@ int main(int argc, const char * argv[]) {
     [toadd addObject:[diff eq:[m[NBLOOPS] sub:m_opt[NBLOOPS]]]];
     [toadd addObject:[[diff mul:diff] geq:@(0.0f)]];
     
-    NSLog(@"%@", model);
+//    NSLog(@"%@", model);
     id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-    [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[m_init, ki, kp, kd, c]];
     
+     [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[m_init]];
     
   }
   return 0;

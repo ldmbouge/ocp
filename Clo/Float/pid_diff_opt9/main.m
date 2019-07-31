@@ -133,8 +133,8 @@ int main(int argc, const char * argv[]) {
     
     //         NSLog(@"%@", model);
     id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
-    [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[m_init, ki, kp, kd, c]];
     
+     [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[m_init]];
     
   }
   return 0;
