@@ -211,7 +211,7 @@
    return [model addConstraint:[ORFactory floatSum:model
                                              array:[self variables:model]
                                               coef:[self coefficients:model]
-                                               neq:-_indep]];
+                                               set:-_indep]];
 }
 //TODO need to be filled
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model

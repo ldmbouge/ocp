@@ -1929,9 +1929,22 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
 {
-    id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  set: (ORFloat) c
+{
+   if([x count] <= 1){
+      id<ORConstraint> o = [[ORFloatAssignC alloc] initORFloatAssignC:x[0] to:c];
+      [model trackObject:o];
+      return o;
+   }else if([x count] == 2){
+      id<ORConstraint> o = [[ORFloatAssign alloc] initORFloatAssign:x[0] to:x[1]];
+      [model trackObject:o];
+      return o;
+   }else
+   assert(NO);
 }
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  neq: (ORFloat) c
 {

@@ -63,15 +63,19 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order maxAbs -val-order splitAbs -default 6  -rate-model-limit 0.83 -grate-model-limit 0.83 -rate-other-limit 1.1"
+            argument = "-var-order maxocc -val-order dynamic5Split -uniques 2  -percent 3"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-choices-limit 1"
+            argument = "-print-solution"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-split-test 1"
+            argument = "-restrict"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-bds"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
