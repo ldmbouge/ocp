@@ -148,9 +148,9 @@ void carbonGas_d_QF(int search, int argc, const char * argv[]) {
       
       [mdl add:[er eq: [rQ sub: rq]]];
 
-      [zero set_d:2.54e-9];
+      [zero set_d:2.70e-9];
       [mdl add:[er eq:eR]];
-      [mdl add:[[er abs] leq:zero]];
+      [mdl add:[[er abs] geq:zero]];
       [zero release];
       
       
