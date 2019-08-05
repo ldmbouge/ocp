@@ -63,11 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order maxOcc -val-order dynamic5Split -uniques 1 -percent 8"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-print-solution"
+            argument = "-var-order occTBdens -val-order dynamic5Split -percent 3 -no-middle -print-solution"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

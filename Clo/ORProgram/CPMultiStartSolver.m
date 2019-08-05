@@ -972,6 +972,10 @@
 {
    [[self worker] maxOccDensSearch:x do:b];
 }
+-(void) maxOccTBDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+{
+   [[self worker] maxOccTBDensSearch:x do:b];
+}
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];

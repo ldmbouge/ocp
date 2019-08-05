@@ -1646,9 +1646,11 @@
       return (c()) ? [select2 max] : [select1 max];
    } do:b];
 }
-
-
 -(void) searchWithCriteria:  (id<ORDisabledVarArray>) x criteria:(ORInt2Double)c do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+{
+   [self searchWithCriteria:x criteria:c tiebreak:nil do:b];
+}
+-(void) searchWithCriteria:  (id<ORDisabledVarArray>) x criteria:(ORInt2Double)c tiebreak:(ORInt2Double)tb do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    __block id<ORIdArray> abs = nil;
    id<ORSelect> select = [ORFactory select: _engine
@@ -1659,12 +1661,12 @@
                                      return ![v bound] && [x isEnabled:i];
                                   }
                                  orderedBy: c
+                                 tiebreak:tb
                           ];
    [self genericSearch:x selection:(ORSelectorResult(^)(void))^{
       ONLY_DEBUG(_level,2,abs = [self computeAbsorptionsQuantities:x]);
       return [select max];
    } do:b];
-   
 }
 //float search
 -(void) maxCardinalitySearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
@@ -1772,6 +1774,16 @@
       if([_model occurences:x[i]] == 1)
          return [self density:x[i]];
       return [_model occurences:x[i]];
+   } do:b];
+}
+-(void) maxOccTBDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+{
+   [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
+      if([_model occurences:x[i]] == 1)
+         return [self density:x[i]];
+      return [_model occurences:x[i]];
+   } tiebreak:^ORDouble(ORInt i) {
+        return [self density:x[i]];
    } do:b];
 }
 -(NSArray*) orderForVar:(id<ORVar>) v

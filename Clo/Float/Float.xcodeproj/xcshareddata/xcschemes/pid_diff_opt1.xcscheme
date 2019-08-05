@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order maxocc -val-order dynamic5Split -uniques 2  -percent 3"
+            argument = "-var-order maxocc -val-order dynamic5Split -no-middle  -percent 3"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -72,11 +72,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-restrict"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-bds"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
