@@ -63,7 +63,11 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order occTBdens -val-order dynamic5Split -percent 3 -no-middle -print-solution"
+            argument = "-var-order occTBdens -val-order dynamicSplit -uniques 1 -percent 3  -print-solution"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-debug-level 2"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

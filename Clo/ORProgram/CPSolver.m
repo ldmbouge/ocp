@@ -1657,7 +1657,7 @@
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPVar> v = _gamma[x[i].getId];
-                                     LOG(_level,2,@"%@ <p:%@> (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],([x[[x parent:i]] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[[x parent:i]] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:[x parent:i]])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity]);
+                                     LOG(_level,2,@"%@ <p:%@> (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e dens=%16.16Le ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],([x[[x parent:i]] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[[x parent:i]] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:[x parent:i]])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity],[self density:x[i]]);
                                      return ![v bound] && [x isEnabled:i];
                                   }
                                  orderedBy: c
@@ -1779,8 +1779,6 @@
 -(void) maxOccTBDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      if([_model occurences:x[i]] == 1)
-         return [self density:x[i]];
       return [_model occurences:x[i]];
    } tiebreak:^ORDouble(ORInt i) {
         return [self density:x[i]];
