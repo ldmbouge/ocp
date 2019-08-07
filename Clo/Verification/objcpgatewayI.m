@@ -471,7 +471,7 @@ static id<OBJCPGateway> objcpgw;
                isSat = [lh checkAllbound];
             } withTimeLimit:[_options timeOut]];
          }
-         struct ORResult r = FULLREPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[lh getVariables] count], [[_model constraints] count]);
+         struct ORResult r = FULLREPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[lh getVariables] count], [[_model constraints] count],[[lh getVariables] count]);
          return r;
       }];
       [lh release];
