@@ -103,7 +103,7 @@ static enum ValHeuristic valIndex[] =
          } withTimeLimit:[args timeOut]];
       }
       
-      struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[model variables] count], [[model constraints] count]);
+      struct ORResult r = FULLREPORT(isSat, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[model variables] count], [[model constraints] count],[vars count]);
       printf("%s\n",(isSat)?"sat":"unsat");
       return r;
    }];
@@ -400,8 +400,8 @@ static enum ValHeuristic valIndex[] =
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];
    NSString* str = mallocReport();
-   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,#uniquesubcut,split3Bpercent,#SRewrite,#DRewrite,#SMerged,#DMerged,#VAR,#CST\n");
-   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%d,%s,%f,%d,%d,%d,%d,%d,%d\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
+   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,#uniquesubcut,split3Bpercent,#SRewrite,#DRewrite,#SMerged,#DMerged,#VAR,#CST,#varRestrict\n");
+   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%d,%s,%f,%d,%d,%d,%d,%d,%d,%d\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           [[self valueHeuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           randomized,
           nbThreads,
@@ -425,7 +425,8 @@ static enum ValHeuristic valIndex[] =
           _nbSMerged,
           _nbDMerged,
           (ORInt)(run.nbVariables),
-          (ORInt)(run.nbConstraints));
+          (ORInt)(run.nbConstraints),
+          (ORInt)(run.restrictVar));
 }
 -(void) updateNotes: (id<ORAnnotation>) notes model:(id<ORModel>) model
 {

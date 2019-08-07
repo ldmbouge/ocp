@@ -74,11 +74,12 @@ struct ORResult {
    ORInt nbDRewrites;
    NSUInteger nbVariables;
    NSUInteger nbConstraints;
+   NSUInteger restrictVar;
 };
 
 #define REPORT(f,nbf,nbc,nbp) ((struct ORResult){(f),(nbf),(nbc),(nbp)})
 
-#define FULLREPORT(f,nbf,nbc,nbp,nbs,nbd,nbv,nbcst) ((struct ORResult){(f),(nbf),(nbc),(nbp),(nbs),(nbd),(nbv),(nbcst)})
+#define FULLREPORT(f,nbf,nbc,nbp,nbs,nbd,nbv,nbcst,rstSet) ((struct ORResult){(f),(nbf),(nbc),(nbp),(nbs),(nbd),(nbv),(nbcst),(rstSet)})
 
 @interface ORCmdLineArgs : NSObject
 @property (nonatomic,readonly) ORInt size;
