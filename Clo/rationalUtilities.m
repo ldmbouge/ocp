@@ -1171,7 +1171,6 @@
    if(z.changed && [z.low neq: z.up]){
       id<ORRational> plow = [[ORRational alloc] init];
       id<ORRational> epsilon = [[ORRational alloc] init];
-
       plow = [[z.up subI:z.low] divI: [_up subI: _low]];
       [epsilon set:95 and:100];
       

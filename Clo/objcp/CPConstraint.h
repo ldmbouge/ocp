@@ -154,8 +154,8 @@
 @end
 
 @interface CPFactory (ORRational)
-/*+(id<CPConstraint>) rationalAssign: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
-+(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(id<ORRational>) c;*/
++(id<CPConstraint>) rationalAssign: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
++(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(id<ORRational>) c;
 +(id<CPConstraint>) rationalEqual: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
 +(id<CPConstraint>) errorOf: (id<CPFloatVar>) x is:(id<CPRationalVar>) y;
 +(id<CPConstraint>) errorOfD: (id<CPDoubleVar>) x is:(id<CPRationalVar>) y;

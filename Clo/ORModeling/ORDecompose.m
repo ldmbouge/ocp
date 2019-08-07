@@ -431,6 +431,44 @@ struct CPVarPair {
    _terms = [recVisit visitExprErrorOfI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
+-(void) visitExprAssignI:(ORExprAssignI*)e
+{
+   bool lc = [[e left] isConstant];
+   bool rc = [[e right] isConstant];
+   if (lc && rc) {
+      bool isOk = [[[e left] qmin] eq: [[e right] qmin]];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      id<ORRational> c = [[ORRational alloc] init];
+      [c set:lc ? [[e left] qmin] : [[e right] qmin]];
+      ORExprI* other = lc ? [e right] : [e left];
+      ORRationalLinear* lin  = [ORNormalizer rationalLinearFrom:other model:_model];
+      id<ORRationalVar> x = [ORNormalizer rationalVarIn:lin for:_model];
+      [_model addConstraint:[ORFactory rationalAssignC:_model var:x to:c]];
+      [lin release];
+   } else {
+      bool lv = [[e left] isVariable];
+      bool rv = [[e right] isVariable];
+      if (lv || rv) {
+         id<ORRationalLinear> left  = [ORNormalizer rationalLinearFrom:[e left] model:_model];
+         ORRationalLinear* right  = [ORNormalizer rationalLinearFrom:[e right] model:_model];
+         id<ORRationalVar> x = [ORNormalizer rationalVarIn:left for:_model];
+         id<ORRationalVar> y = [ORNormalizer rationalVarIn:right for:_model];
+         [_model addConstraint:[ORFactory rationalAssign:_model var:x to:y]];
+         [right release];
+         [left release];
+      } else {
+         //should never append
+         ORRationalLinear* linLeft = [ORNormalizer rationalLinearFrom:[e left] model:_model ];
+         ORRationalLinearFlip* linRight = [[ORRationalLinearFlip alloc] initORRationalLinearFlip: linLeft];
+         [ORNormalizer addToRationalLinear:linRight from:[e right] model:_model];
+         [linRight release];
+         [linRight release];
+         _terms = linLeft;
+      }
+   }
+}
 @end
 // ========================================================================================================================
 // Real Normalizer

@@ -306,6 +306,101 @@
 }
 @end
 
+@implementation CPRationalAssign{
+   int _precision;
+   int _rounding;
+}
+-(id) init:(CPRationalVarI*)x set:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> inter = [[ORRationalInterval alloc] init];
+   
+   
+   [x set_q:[_x min] and:[_x max]];
+   [y set_q:[_y min] and:[_y max]];
+   
+   if(isDisjointWithQ(_x,_y)){
+      failNow();
+   }else{
+      inter = [x proj_inter:y];
+   
+      if(inter.changed)
+         [_x updateInterval:inter.low and:inter.up];
+      if (([y.low neq: inter.low]) || ([y.up neq: inter.up]))
+         [_y updateInterval:inter.low and:inter.up];
+   }
+   
+   fesetround(FE_TONEAREST);
+   [x release];
+   [y release];
+   [inter release];
+}
+- (void)dealloc
+{
+   [super dealloc];
+}
+
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ = %@>",_x,_y];
+}
+@end
+
+@implementation CPRationalAssignC
+-(id) init:(CPRationalVarI*)x set:(id<ORRational>)c
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _c = c;
+   return self;
+   
+}
+-(void) post
+{
+   [_x bind:_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ = %@>",_x,_c];
+}
+@end
+
 @implementation CPRationalNEqual
 -(id) init:(CPRationalVarI*)x nequals:(CPRationalVarI*)y
 {

@@ -2255,6 +2255,19 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  set: (id<ORRational>) c
+{
+   if([x count] <= 1){
+      id<ORConstraint> o = [[ORRationalAssignC alloc] initORRationalAssignC:x[0] to:c];
+      [model trackObject:o];
+      return o;
+   }else if([x count] == 2){
+      id<ORConstraint> o = [[ORRationalAssign alloc] initORRationalAssign:x[0] to:x[1]];
+      [model trackObject:o];
+      return o;
+   }else
+      assert(NO);
+}
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  lt: (id<ORRational>) c
 {
    id<ORConstraint> o = [[ORRationalLinearLT alloc] initRationalLinearLT: x coef: coef cst: c];
@@ -2449,6 +2462,19 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORConstraint> o = [[ORDoubleLinearNEq alloc] initDoubleLinearNEq: x coef: coef cst: c];
     [model trackObject:o];
     return o;
+}
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  set: (ORDouble) c
+{
+   if([x count] <= 1){
+      id<ORConstraint> o = [[ORDoubleAssignC alloc] initORDoubleAssignC:x[0] to:c];
+      [model trackObject:o];
+      return o;
+   }else if([x count] == 2){
+      id<ORConstraint> o = [[ORDoubleAssign alloc] initORDoubleAssign:x[0] to:x[1]];
+      [model trackObject:o];
+      return o;
+   }else
+      assert(NO);
 }
 +(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  lt: (ORDouble) c
 {

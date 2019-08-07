@@ -76,6 +76,26 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPRationalAssign : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x set:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalAssignC : CPCoreConstraint {
+   CPRationalVarI* _x;
+   id<ORRational>  _c;
+}
+-(id) init:(id)x set:(id<ORRational>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRationalNEqual : CPCoreConstraint {
    CPRationalVarI* _x;
    CPRationalVarI* _y;

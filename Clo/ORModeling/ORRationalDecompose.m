@@ -172,6 +172,17 @@
    id<ORRationalVar> alpha =  [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprAssignI:(ORExprAssignI*) e
+{
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
    if (_eqto) {

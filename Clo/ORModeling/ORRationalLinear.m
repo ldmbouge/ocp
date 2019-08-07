@@ -307,7 +307,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    return [model addConstraint:[ORFactory rationalSum:model
                                              array:[self variables:model]
                                               coef:[self coefficients:model]
-                                               neq:[_indep neg]]];
+                                               set:[_indep neg]]];
 }
 
 - (id<ORConstraint>)postDISJ:(id<ORAddToModel>)model {

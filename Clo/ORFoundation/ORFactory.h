@@ -433,6 +433,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) rationalGEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x geq:(id<ORRational>)c;
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  eq: (id<ORRational>) c;
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  neq: (id<ORRational>) c;
++(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  set: (id<ORRational>) c;
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  lt: (id<ORRational>) c;
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  gt: (id<ORRational>) c;
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  leq: (id<ORRational>) c;
@@ -470,6 +471,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) doubleAssign: (id<ORTracker>) model var:(id<ORDoubleVar>) x to:(id<ORDoubleVar>) y;
 +(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  eq: (ORDouble) c;
 +(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  neq: (ORDouble) c;
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  set: (ORDouble) c;
 +(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  lt: (ORDouble) c;
 +(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  gt: (ORDouble) c;
 +(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  leq: (ORDouble) c;

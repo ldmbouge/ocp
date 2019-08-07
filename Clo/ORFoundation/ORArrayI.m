@@ -890,7 +890,7 @@
 {
    self = [super init];
    _tracker = tracker;
-   _array = malloc(nb * sizeof(ORFloat));
+   _array = malloc(nb * sizeof(id<ORRational>));
    _low = 0;
    _up = nb-1;
    _nb = nb;
@@ -901,11 +901,11 @@
    }
    return self;
 }
-/*-(ORRationalArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with:(id<ORRational>(^)(ORInt)) clo
+-(ORRationalArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with:(id<ORRational>(^)(ORInt)) clo
 {
    self = [super init];
    _tracker = tracker;
-   _array = malloc(nb * sizeof(ORFloat));
+   _array = malloc(nb * sizeof(id<ORRational>));
    _low = 0;
    _up = nb-1;
    _nb = nb;
@@ -913,7 +913,7 @@
    for (ORInt i=0 ; i < _nb; i++)
       _array[i] = clo(i);
    return self;
-}*/
+}
 -(ORRationalArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (id<ORRational>) value
 {
    self = [super init];
@@ -984,12 +984,13 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORRationalArrayElement"];
    [_array[idx] set: value];
 }
-/*-(id)objectAtIndexedSubscript: (NSUInteger) key
+-(id)objectAtIndexedSubscript: (NSUInteger) key
 {
    if (key < _low || key > _up)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORRationalArrayElement"];
-   return [NSNumber numberWithFloat:_array[key]];
-}*/
+   //return [NSNumber numberWithFloat:_array[key]];
+   return _array[key];
+}
 -(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSUInteger) idx
 {
    if (idx < _low || idx > _up)
@@ -1001,13 +1002,13 @@
    for(ORInt i=_low;i<=_up;i++)
       block(_array[i],i);
 }
-/*-(ORFloat) sumWith: (ORFloat(^)(ORFloat value,int idx))block {
-   __block ORFloat sum = 0.0;
+-(id<ORRational>) sumWith: (id<ORRational>(^)(id<ORRational> value,int idx))block {
+   __block id<ORRational> sum = [[ORRational alloc] init];
    [self enumerateWith:^(id<ORRational> obj, int idx) {
-      sum += block(obj, idx);
+      [sum set: [sum add: block(obj, idx)]];
    }];
    return sum;
-}*/
+}
 -(ORInt) low
 {
    return _low;

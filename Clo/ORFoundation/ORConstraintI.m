@@ -78,6 +78,12 @@
    id<ORTracker> t = [(id)clp tracker];
    _result = [ORFactory doubleAssignC:t var:(id<ORDoubleVar>)clp to:c.cst];
 }
+-(void) visitRationalAssignC: (id<ORRationalAssignC>)c
+{
+   id<ORVar> clp = _map[getId(c.left)];
+   id<ORTracker> t = [(id)clp tracker];
+   _result = [ORFactory rationalAssignC:t var:(id<ORRationalVar>)clp to:c.cst];
+}
 -(void) visitEqual: (id<OREqual>)c
 {
    id<ORVar> clp = _map[getId(c.left)];
@@ -99,6 +105,13 @@
    id<ORVar> crp = _map[getId(c.right)];
    id<ORTracker> t = [(id)crp tracker];
    _result = [ORFactory doubleAssign:t var:(id<ORDoubleVar>)clp to:(id<ORDoubleVar>)crp];
+}
+-(void) visitRationalAssign: (id<ORRationalAssign>)c
+{
+   id<ORVar> clp = _map[getId(c.left)];
+   id<ORVar> crp = _map[getId(c.right)];
+   id<ORTracker> t = [(id)crp tracker];
+   _result = [ORFactory rationalAssign:t var:(id<ORRationalVar>)clp to:(id<ORRationalVar>)crp];
 }
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>)c
 {

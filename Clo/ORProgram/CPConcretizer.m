@@ -1665,7 +1665,7 @@
    }
 }
 //------
-/*-(void) visitRationalAssignC:(id<ORRationalAssignC>) cstr
+-(void) visitRationalAssignC:(id<ORRationalAssignC>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> left = [cstr left];
@@ -1674,7 +1674,7 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}*/
+}
 -(void) visitRationalEqualc:(id<ORRationalEqualc>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1756,7 +1756,7 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
-/*-(void) visitRationalAssign:(id<ORRationalAssign>)cstr
+-(void) visitRationalAssign:(id<ORRationalAssign>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORRationalVar> left = [cstr left];
@@ -1767,7 +1767,7 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
-}*/
+}
 /*-(void) visitRationalLinearNEq:(id<ORRationalLinearNEq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

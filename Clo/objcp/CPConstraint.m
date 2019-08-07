@@ -1103,7 +1103,7 @@
 
 
 @implementation CPFactory (ORRational)
-/*+(id<CPConstraint>) rationalAssign: (id<CPRationalVar>) x to:(id<CPRationalVar>) y
++(id<CPConstraint>) rationalAssign: (id<CPRationalVar>) x to:(id<CPRationalVar>) y
 {
    id<CPConstraint> o = [[CPRationalAssign alloc] init:x set:y];
    [[x tracker] trackMutable:o];
@@ -1114,7 +1114,7 @@
    id<CPConstraint> o = [[CPRationalAssignC alloc] init:x set:c];
    [[x tracker] trackMutable:o];
    return o;
-}*/
+}
 +(id<CPConstraint>) rationalEqual: (id<CPRationalVar>) x to:(id<CPRationalVar>) y
 {
    id<CPConstraint> o = [[CPRationalEqual alloc] init:x equals:y];

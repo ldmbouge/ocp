@@ -213,8 +213,12 @@
 //TODO need to be filled
 -(id<ORConstraint>)postSET:(id<ORAddToModel>)model
 {
-   assert(NO);
-   return nil;
+   return [model addConstraint:[ORFactory doubleSum:model
+                                             array:[self variables:model]
+                                              coef:[self coefficients:model]
+                                               set:-_indep]];
+   /*assert(NO);
+   return nil;*/
 }
 -(void) postMinimize: (id<ORAddToModel>) model
 {
