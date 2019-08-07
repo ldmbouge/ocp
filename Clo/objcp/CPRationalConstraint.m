@@ -327,29 +327,21 @@
 }
 -(void) propagate
 {
-   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> inter = [[ORRationalInterval alloc] init];
-   
-   
-   [x set_q:[_x min] and:[_x max]];
-   [y set_q:[_y min] and:[_y max]];
-   
+   if([_x bound]){
+      [_y bind:[_x value]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }else if([_y bound]){
+      [_x bind:[_y value]];
+      assignTRInt(&_active, NO, _trail);
+      return;
+   }
    if(isDisjointWithQ(_x,_y)){
       failNow();
    }else{
-      inter = [x proj_inter:y];
-   
-      if(inter.changed)
-         [_x updateInterval:inter.low and:inter.up];
-      if (([y.low neq: inter.low]) || ([y.up neq: inter.up]))
-         [_y updateInterval:inter.low and:inter.up];
+      [_x updateInterval:maxQ([_x min], [_y min]) and:minQ([_x max], [_y max])];
+      [_y updateInterval:maxQ([_x min], [_y min]) and:minQ([_x max], [_y max])];
    }
-   
-   fesetround(FE_TONEAREST);
-   [x release];
-   [y release];
-   [inter release];
 }
 - (void)dealloc
 {
