@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order customWD -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8  -model-limits 0.7"
+            argument = "-var-order lexico -val-order dynamic5Split -uniques 2 -other-limits 1.1 -percent 8  -model-limits 0.7"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -76,7 +76,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-debug-level 2"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

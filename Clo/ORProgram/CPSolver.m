@@ -1724,7 +1724,7 @@
 -(void) lexicalOrderedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      return (ORDouble)i;
+      return -(ORDouble)i;
    } do:b];
 }
 //-------------------------------------------------
