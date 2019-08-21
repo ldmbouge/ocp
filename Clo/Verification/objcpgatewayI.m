@@ -1396,11 +1396,14 @@ static id<OBJCPGateway> objcpgw;
 -(id<ORExpr>) objcp_mk_to_fp:(id<ORExpr>)x to:(objcp_var_type) t
 {
    if([(id)x isKindOfClass:[ConstantWrapper class]]){
-      if([(ConstantWrapper*)x type] == OR_BV){
+      objcp_var_type tp = [(ConstantWrapper*)x type];
+      if(tp == OR_BV){
          [(ConstantWrapper*)x setType:t];
          return (id<ORExpr>)[(ConstantWrapper*)x makeVariable];
       }
       x = (id<ORExpr>)[(ConstantWrapper*)x makeVariable];
+      if(tp == t)
+         return x;
    }if(t == OR_DOUBLE)
       return [x toDouble];
    return [x toFloat];

@@ -403,12 +403,14 @@
    if(!(only2float || only3float)){
       //au moins 4 floatants
       ORFloat mid = [self floatMiddle:xi];
-      ORFloat midInf = -0.0f;
-      ORFloat midSup = +0.0f;
-      if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
-         midInf = fp_nextafterf(mid,-INFINITY);
-         midSup = mid;
+      ORFloat midInf = fp_nextafterf(mid,-INFINITY);
+      ORFloat midSup = fp_nextafterf(mid,+INFINITY);
+      
+      if(midInf == theMin){
+         midSup = fp_next_float(mid);
+         midInf = mid;
       }
+      
       ORFloat midSupNext = nextafterf(midSup,+INFINITY);
       ORFloat supPrev = nextafterf(theMax,-INFINITY);
       ORFloat midInfPrev = nextafterf(midInf,-INFINITY);
@@ -473,12 +475,12 @@
    if(!(only2float || only3float)){
       //au moins 4 floatants
       ORDouble mid = [self doubleMiddle:xi];
-      ORDouble midInf = -0.0;
-      ORDouble midSup = +0.0;
-      if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
-         midInf = fp_nextafter(mid,-INFINITY);
-         midSup = mid;
+      
+      if(midInf == theMin){
+         midSup = fp_next_double(mid);
+         midInf = mid;
       }
+      
       ORDouble midSupNext = nextafter(midSup,+INFINITY);
       ORDouble supPrev = nextafter(theMax,-INFINITY);
       ORDouble midInfPrev = nextafter(midInf,-INFINITY);
