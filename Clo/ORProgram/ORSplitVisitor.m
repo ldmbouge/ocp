@@ -341,8 +341,6 @@
          mid = fp_next_double(mid);
       }
       interval[2].inf = interval[2].sup = mid;
-//      if(mid == 0.0)
-//         interval[2].inf = -0.0;
       interval[3].inf = fp_next_double(theMin);
       interval[3].sup = fp_previous_double(mid);
       length = 3;
@@ -394,8 +392,6 @@
    float_interval interval[6];
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORBool minIsInfinity = (theMin == -infinityf()) ;
-   ORBool maxIsInfinity = (theMax == infinityf()) ;
    ORBool only2float = (fp_next_float(theMin) == theMax);
    ORBool only3float = (fp_next_float(theMin) == fp_previous_float(theMax));
    interval[0].inf = interval[0].sup = theMax;
@@ -404,7 +400,7 @@
       //au moins 4 floatants
       ORFloat mid = [self floatMiddle:xi];
       ORFloat midInf = fp_nextafterf(mid,-INFINITY);
-      ORFloat midSup = fp_nextafterf(mid,+INFINITY);
+      ORFloat midSup = mid;
       
       if(midInf == theMin){
          midSup = fp_next_float(mid);
@@ -431,24 +427,27 @@
          length++;
       }
    }else if(only2float){
-      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
+      if(is_eqf(theMax,+0.0f)){
+         interval[1].inf = interval[1].sup = -0.0f;
+         length++;
+      }else if(is_eqf(theMin,-0.0f)){
          interval[1].inf = interval[1].sup = +0.0f;
-         interval[2].inf = interval[2].sup = -0.0f;
-         length += 2;
+         length++;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
    }else{
       //forcement 3 floattants
-      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
-         interval[1].inf = interval[1].sup = +0.0f;
+      mid = nextafterf(theMin,+INFINITY);
+      interval[1].inf = interval[1].sup = mid;
+      length++;
+      
+      if(is_eq(theMax,+0.0f)){
          interval[2].inf = interval[2].sup = -0.0f;
-         length += 2;
-      }else{
-         ORFloat mid = nextafterf(theMin,+INFINITY);
-         interval[1].inf = interval[1].sup = mid;
          length++;
-         
+      }else if(is_eq(theMin,-0.0f)){
+         interval[2].inf = interval[2].sup = +0.0f;
+         length++;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
@@ -466,8 +465,6 @@
    double_interval interval[6];
    ORDouble theMax = xi.max;
    ORDouble theMin = xi.min;
-   ORBool minIsInfinity = (theMin == -infinity()) ;
-   ORBool maxIsInfinity = (theMax == infinity()) ;
    ORBool only2float = (fp_next_double(theMin) == theMax);
    ORBool only3float = (fp_next_double(theMin) == fp_previous_double(theMax));
    interval[0].inf = interval[0].sup = theMax;
@@ -475,6 +472,8 @@
    if(!(only2float || only3float)){
       //au moins 4 floatants
       ORDouble mid = [self doubleMiddle:xi];
+      ORDouble midInf = fp_nextafter(mid,-INFINITY);
+      ORDouble midSup = mid;
       
       if(midInf == theMin){
          midSup = fp_next_double(mid);
@@ -501,24 +500,27 @@
          length++;
       }
    }else if(only2float){
-      if(is_eq(theMax,+0.0) || is_eq(theMin,-0.0)){
+      if(is_eq(theMax,+0.0)){
+         interval[1].inf = interval[1].sup = -0.0;
+         length++;
+      }else if(is_eq(theMin,-0.0)){
          interval[1].inf = interval[1].sup = +0.0;
-         interval[2].inf = interval[2].sup = -0.0;
-         length += 2;
+         length++;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
    }else{
       //forcement 3 floattants
-      if(is_eq(theMax,+0.0) || is_eq(theMin,-0.0)){
-         interval[1].inf = interval[1].sup = +0.0;
+      mid = nextafter(theMin,+INFINITY);
+      interval[1].inf = interval[1].sup = mid;
+      length++;
+      
+      if(is_eq(theMax,+0.0)){
          interval[2].inf = interval[2].sup = -0.0;
-         length += 2;
-      }else{
-         ORDouble mid = nextafter(theMin,+INFINITY);
-         interval[1].inf = interval[1].sup = mid;
          length++;
-         
+      }else if(is_eq(theMin,-0.0)){
+         interval[2].inf = interval[2].sup = +0.0;
+         length++;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
