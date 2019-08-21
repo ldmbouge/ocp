@@ -438,7 +438,7 @@
       length++;
    }else{
       //forcement 3 floattants
-      mid = nextafterf(theMin,+INFINITY);
+      ORDouble mid  = nextafterf(theMin,+INFINITY);
       interval[1].inf = interval[1].sup = mid;
       length++;
       
@@ -511,7 +511,7 @@
       length++;
    }else{
       //forcement 3 floattants
-      mid = nextafter(theMin,+INFINITY);
+      ORDouble mid  = nextafter(theMin,+INFINITY);
       interval[1].inf = interval[1].sup = mid;
       length++;
       
