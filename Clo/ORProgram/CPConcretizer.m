@@ -173,12 +173,14 @@
       ORInt low = R.low;
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++) {
+         if(v[i] != nil){
          [v[i] visit: self];
-         ORInt viid = getId(v[i]);
-         if (viid == -1)
-            dx[i] = v[i];
-         else
-            dx[i] = _gamma[viid];
+            ORInt viid = getId(v[i]);
+            if (viid == -1)
+               dx[i] = v[i];
+            else
+               dx[i] = _gamma[viid];
+         }
       }
       _gamma[v.getId] = dx;
    }
