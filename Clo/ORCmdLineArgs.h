@@ -121,6 +121,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORBool restricted;
 @property (nonatomic,readonly) ORBool middle;
 @property (nonatomic,readonly) ORBool printSolution;
+@property (nonatomic,readonly) ORBool printModel;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;

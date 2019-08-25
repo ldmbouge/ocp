@@ -72,13 +72,15 @@ static enum ValHeuristic valIndex[] =
 @synthesize restricted;
 @synthesize middle;
 @synthesize printSolution;
+@synthesize printModel;
 
 
 
 +(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restrict:(id<ORVarArray>) vars
 {
    fesetround(FE_TONEAREST);
-//   NSLog(@"model : %@",model);
+   if([args  printModel])
+      NSLog(@"model : %@",model);
    [args measure:^struct ORResult(){
       ORBool hascycle = NO;
       if([args cycleDetection]){
@@ -180,6 +182,7 @@ static enum ValHeuristic valIndex[] =
    occDetails = NO;
    middle = YES;
    printSolution = NO;
+   printModel = NO;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -247,7 +250,9 @@ static enum ValHeuristic valIndex[] =
       else if (strncmp(argv[k],"-no-middle",9)==0)
          middle = NO;
       else if (strncmp(argv[k],"-print-solution",15)==0)
-            printSolution = YES;
+         printSolution = YES;
+      else if (strncmp(argv[k],"-print-model",12)==0)
+         printModel = YES;
       else if (strncmp(argv[k],"-variation",10)==0){
          NSString *tmp = [NSString stringWithCString:argv[k+1] encoding:NSASCIIStringEncoding];
          int index = 24;
