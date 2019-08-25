@@ -154,6 +154,34 @@
       _result = [ORFactory floatSum:t array:vars coef:[c coefs] lt:[c cst]];
    }
 }
+
+-(void) visitFloatLinearGT: (id<ORFloatLinearGT>) c
+{
+   @autoreleasepool {
+      NSArray* vs = [c allVarsArray];
+      id<ORTracker> t = [(id)_map[getId(vs[0])] tracker];
+      ORInt size = (ORInt)[vs count];
+      id<ORVarArray> vars = (id<ORVarArray>)[ORFactory idArray:t range:RANGE(t,0,size-1)];
+      for(ORUInt i = 0; i < size;i++){
+         vars[i] = _map[getId(vs[i])];
+      }
+      _result = [ORFactory floatSum:t array:vars coef:[c coefs] gt:[c cst]];
+   }
+}
+
+-(void) visitFloatLinearLEQ: (id<ORFloatLinearLEQ>) c
+{
+   @autoreleasepool {
+      NSArray* vs = [c allVarsArray];
+      id<ORTracker> t = [(id)_map[getId(vs[0])] tracker];
+      ORInt size = (ORInt)[vs count];
+      id<ORVarArray> vars = (id<ORVarArray>)[ORFactory idArray:t range:RANGE(t,0,size-1)];
+      for(ORUInt i = 0; i < size;i++){
+         vars[i] = _map[getId(vs[i])];
+      }
+      _result = [ORFactory floatSum:t array:vars coef:[c coefs] leq:[c cst]];
+   }
+}
 @end
 
 @implementation ORConstraintI

@@ -2705,6 +2705,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       }else  if ([_origs[i] conformsToProtocol:@protocol(CPFloatVar)]) {
          id<CPFloatVar> oi = (id)_origs[i];
          [oi whenChangePropagate:self];
+      }else  if ([_origs[i] conformsToProtocol:@protocol(CPDoubleVar)]) {
+         id<CPDoubleVar> oi = (id)_origs[i];
+         [oi whenChangePropagate:self];
       }
    }
    [self propagate];
@@ -2724,7 +2727,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       ORStatus s = ORSuspend;
       for(ORInt i=_origs.range.low;i <= _origs.range.up && s != ORFailure;i++) {
          id<CPVar> oVar = _origs[i];
-         if (vc.range.low <= oVar.getId && oVar.getId <= vc.range.up && vc[oVar.getId]!=nil) {
+         if (vc != nil && vc.range.low <= oVar.getId && oVar.getId <= vc.range.up && vc[oVar.getId]!=nil) {
             id<CPVar> cVar = vc[oVar.getId];
             // cVar subseteq oVar
             s = tryfail(^ORStatus{
@@ -2757,11 +2760,13 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       ORBool allSame = true;
       for(ORInt j=_origs.range.low;j <= _origs.range.up && allSame;j++) {
          id<CPVar> original = _origs[j];
-         ORInt oid = original.getId;
-         if (vmc.range.low <= oid && oid <= vmc.range.up && vmc[oid]!=nil) {
-            id<CPVar> renamed = vmc[oid]; // ok, now we have the original and the renamed one. Check equality
-            ORBool same = [original sameDomain:renamed];
-            allSame = allSame && same;
+         if(original != nil){
+            ORInt oid = original.getId;
+            if (vmc.range.low <= oid && oid <= vmc.range.up && vmc[oid]!=nil) {
+               id<CPVar> renamed = vmc[oid]; // ok, now we have the original and the renamed one. Check equality
+               ORBool same = [original sameDomain:renamed];
+               allSame = allSame && same;
+            }
          }
       }
       if (allSame) {
@@ -2771,7 +2776,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    }
    // Still go on to propagate the effect of the entailed clause back up to the original vars.
    for(ORInt j=_origs.range.low;j <= _origs.range.up;j++) {
-      id<CPIntVar> oi = (id)_origs[j];
+      id<CPVar> oi = (id)_origs[j];
+      if(oi == nil) continue;
       ORInt oiId = oi.getId;
       id<CPDom> uDom = nil;
       for(ORInt c=0;c < _nbIn;c++) {

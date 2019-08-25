@@ -204,7 +204,7 @@ enum CPVarClass {
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat) newMax;
 @end
 
-@protocol CPDoubleVar<CPVar>
+@protocol CPDoubleVar<CPVar,CPNumVarSubscriber>
 -(ORDouble) min;
 -(ORDouble) max;
 -(ORDouble) value;
