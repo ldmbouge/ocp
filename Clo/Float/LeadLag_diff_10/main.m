@@ -38,7 +38,7 @@
  }
  */
 
-#define NBLOOPS 1
+#define NBLOOPS 10
 
 int main(int argc, const char * argv[]) {
    @autoreleasepool {
