@@ -378,6 +378,18 @@
 {
    _rv = v;
 }
+-(void) visitGroup:(id<ORGroup>)g
+{
+   [g enumerateObjectWithBlock:^(id<ORConstraint> c) {
+      [c visit:self];
+   }];
+}
+-(void) visitCDGroup:(id<ORGroup>)g
+{
+   [g enumerateObjectWithBlock:^(id<ORConstraint> c) {
+      [c visit:self];
+   }];
+}
 -(void) visitExprUnaryMinusI:  (ORExprUnaryMinusI *) c
 {
    id<ORExpr> alpha = [_alphas objectForKey:[NSValue valueWithPointer:c]];
