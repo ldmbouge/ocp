@@ -38,7 +38,7 @@
  }
  */
 
-#define NBLOOPS 7
+#define NBLOOPS 10
 
 int main1(int argc, const char * argv[]) { // if vs 1
    @autoreleasepool {
@@ -131,8 +131,8 @@ int main(int argc, const char * argv[]) {
     4: Guarded, combined
     *: Guarded, separated ifs
     */
-   int first_if = 4;
-   int second_if = 4;
+   int first_if = 3;
+   int second_if = 3;
    
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
