@@ -319,6 +319,9 @@
    inter = intersection(_x, _xi, xTmp, 0.0f);
    if(inter.changed)
       [_x updateInterval:inter.result.inf and:inter.result.sup];
+   
+   if([_x bound] && [_y bound])
+      assignTRInt(&_active, NO, _trail);
 }
 -(NSSet*)allVars
 {

@@ -272,7 +272,7 @@
    id<ORCheckpoint> snap = [_tracer captureCheckpoint];
     
 //   if (_nbDisc + 1 < _maxDisc.bound)
-//      NSLog(@"adding snaphot to current wave: %d - %@ - %@",_nbDisc+1,_maxDisc,snap);
+      NSLog(@"adding snaphot to current wave: %d - %@ - %@",_nbDisc+1,_maxDisc,snap);
 //   else
 //      NSLog(@"adding snaphot to next    wave: %@",snap);
 
@@ -299,13 +299,13 @@
                  [_tab push:_next.pop];
             [_maxDisc setBound:_maxDisc.bound * 5];
          }
-         //NSLog(@"BDSStack -- fail call -- : %d %d",_tab.size,_next.size);
+         NSLog(@"BDSStack -- fail call -- : %d %d",_tab.size,_next.size);
          struct BDSNode node = [_tab pop];
          _nbDisc = node._disc;
-         //NSLog(@"Restoring: %@", node._cp);
+         NSLog(@"Restoring: %@", node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver model:_model];
          [node._cp letgo];
-         //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p admin? %d",status,[NSThread currentThread],node._cont.admin);
+         NSLog(@"BDS restoreCheckpoint status is: %d for thread %p admin? %d",status,[NSThread currentThread],node._cont.admin);
          if (node._cont &&  (node._cont.admin || status != ORFailure))
             [node._cont call];
          else

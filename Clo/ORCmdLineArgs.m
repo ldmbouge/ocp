@@ -80,7 +80,7 @@ static enum ValHeuristic valIndex[] =
 {
    fesetround(FE_TONEAREST);
    if([args  printModel])
-      NSLog(@"model : %@",model);
+      printf("model : %s\n",[[model description] UTF8String]);
    [args measure:^struct ORResult(){
       ORBool hascycle = NO;
       if([args cycleDetection]){

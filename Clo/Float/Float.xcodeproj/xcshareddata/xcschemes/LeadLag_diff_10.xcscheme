@@ -64,10 +64,22 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = " -print-solution"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-restrict"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-debug-level 1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-bds"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-var-order maxOcc -print-model -print-solution"
+            argument = "-var-order maxOcc -val-order dynamic5Split -percent 3 -print-model -print-solution"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -2767,7 +2767,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       for(ORInt j=_origs.range.low;j <= _origs.range.up && allSame;j++) {
          id<CPVar> original = _origs[j];
          if(original != nil){
-            ORInt oid = original.getId;
+            ORInt oid = j;
             if (vmc.range.low <= oid && oid <= vmc.range.up && vmc[oid]!=nil) {
                id<CPVar> renamed = vmc[oid]; // ok, now we have the original and the renamed one. Check equality
                ORBool same = [original sameDomain:renamed];
@@ -2784,7 +2784,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    for(ORInt j=_origs.range.low;j <= _origs.range.up;j++) {
       id<CPVar> oi = (id)_origs[j];
       if(oi == nil) continue;
-      ORInt oiId = oi.getId;
+      ORInt oiId = j;
       id<CPDom> uDom = nil;
       for(ORInt c=0;c < _nbIn;c++) {
          if (getTRIntArray(_cStat, c) == ORFailure || (entailedAndMatching && getTRIntArray(_cStat, c)!=ORSuccess))

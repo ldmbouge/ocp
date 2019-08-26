@@ -30,7 +30,10 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   return [[CPDoubleDom allocWithZone:zone] initCPDoubleDom:_trail low:_imin up:_imax];
+   CPDoubleDom* res = [[CPDoubleDom allocWithZone:zone] initCPDoubleDom:_trail low:_imin up:_imax];
+   res->_imax = _imax;
+   res->_imin = _imin;
+   return res;
 }
 -(NSString*) description
 {
@@ -200,5 +203,9 @@
 {
    updateMinD(&_domain, minFlt(_imin,d->_imin), _trail);
    updateMaxD(&_domain, maxFlt(_imax,d->_imax), _trail);
+}
+-(BOOL) isEqual:(CPDoubleDom*)d
+{
+   return (is_eq(_domain._low,d->_domain._low) && is_eq(_domain._up,d->_domain._up));
 }
 @end
