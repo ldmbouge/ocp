@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "08FE8FAE2312EE76004F59C2"
-               BuildableName = "LeadLag_diff_10"
-               BlueprintName = "LeadLag_diff_10"
+               BlueprintIdentifier = "08A6297621B8994200C9E273"
+               BuildableName = "newton_2_5_true-unreach-call"
+               BlueprintName = "newton_2_5_true-unreach-call"
                ReferencedContainer = "container:Float.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "08FE8FAE2312EE76004F59C2"
-            BuildableName = "LeadLag_diff_10"
-            BlueprintName = "LeadLag_diff_10"
+            BlueprintIdentifier = "08A6297621B8994200C9E273"
+            BuildableName = "newton_2_5_true-unreach-call"
+            BlueprintName = "newton_2_5_true-unreach-call"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -55,34 +55,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "08FE8FAE2312EE76004F59C2"
-            BuildableName = "LeadLag_diff_10"
-            BlueprintName = "LeadLag_diff_10"
+            BlueprintIdentifier = "08A6297621B8994200C9E273"
+            BuildableName = "newton_2_5_true-unreach-call"
+            BlueprintName = "newton_2_5_true-unreach-call"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = " -print-solution"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-restrict"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-debug-level 1"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-bds"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-var-order maxOcc -val-order dynamic5Split -percent 3 -print-model -print-solution"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -96,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "08FE8FAE2312EE76004F59C2"
-            BuildableName = "LeadLag_diff_10"
-            BlueprintName = "LeadLag_diff_10"
+            BlueprintIdentifier = "08A6297621B8994200C9E273"
+            BuildableName = "newton_2_5_true-unreach-call"
+            BlueprintName = "newton_2_5_true-unreach-call"
             ReferencedContainer = "container:Float.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
