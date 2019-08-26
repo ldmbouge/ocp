@@ -2710,6 +2710,12 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          [oi whenChangePropagate:self];
       }
    }
+   for(id<CPVarArray> vc in _vm){
+      for(ORInt i = vc.range.low; i <= vc.range.up; i++){
+         if(vc[i] != nil)
+            [vc[i] whenChangePropagate:self];
+      }
+   }
    [self propagate];
 }
 -(void) propagate
@@ -2727,8 +2733,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       ORStatus s = ORSuspend;
       for(ORInt i=_origs.range.low;i <= _origs.range.up && s != ORFailure;i++) {
          id<CPVar> oVar = _origs[i];
-         if (vc != nil && vc.range.low <= oVar.getId && oVar.getId <= vc.range.up && vc[oVar.getId]!=nil) {
-            id<CPVar> cVar = vc[oVar.getId];
+         if (vc != nil && vc.range.low <= i && i <= vc.range.up && vc[i]!=nil) {
+            id<CPVar> cVar = vc[i];
             // cVar subseteq oVar
             s = tryfail(^ORStatus{
                [cVar subsumedBy:oVar];

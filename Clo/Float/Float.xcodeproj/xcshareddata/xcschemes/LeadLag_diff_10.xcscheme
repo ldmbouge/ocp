@@ -64,11 +64,11 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = " -print-solution"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-var-order maxOcc -print-model -print-solution"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

@@ -153,12 +153,14 @@ int main(int argc, const char * argv[]) { // if vs 2
       // Local vars
       id<ORFloatVarArray> yc0 = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"yc0"];
       id<ORFloatVarArray> yc1 = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"yc1"];
+      id<ORFloatVarArray> yc2 = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"yc2"];
       id<ORFloatVarArray> xc0 = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"xc0"];
       id<ORFloatVarArray> xc1 = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"xc1"];
       id<ORFloatVarArray> u   = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"u"];
       
       id<ORFloatVarArray> yc0_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"yc0_opt"];
       id<ORFloatVarArray> yc1_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"yc1_opt"];
+      id<ORFloatVarArray> yc2_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"yc2_opt"];
       id<ORFloatVarArray> xc0_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"xc0_opt"];
       id<ORFloatVarArray> xc1_opt = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"xc1_opt"];
       id<ORFloatVarArray> u_opt   = [ORFactory floatVarArray:model range:RANGE(model, 0, NBLOOPS) names:@"u_opt"];
@@ -171,26 +173,52 @@ int main(int argc, const char * argv[]) { // if vs 2
       [toadd addObject:[xc1_opt[0] set: @(0.0f)]];
       for (ORUInt n = 1; n <= NBLOOPS; n++) {
          [toadd addObject:[yc0[n] set:[y sub:yd]]];
+         /* Doesn't work
+          {
+          id<ORGroup> if_grp_1 = [args makeGroup:model];
+          id<ORGroup> if_grp_2 = [args makeGroup:model];
+          id<ORGroup> else_grp = [args makeGroup:model];
+          
+          [if_grp_1 add:[yc0[n] lt: @(-1.0f)]];
+          [if_grp_1 add:[yc1[n] set: @(-1.0f)]];
+          
+          [if_grp_2 add:[yc0[n] gt: @(1.0f)]];
+          [if_grp_2 add:[yc1[n] set: @(1.0f)]];
+          
+          [else_grp add:[yc0[n] geq: @(-1.0f)]];
+          [else_grp add:[yc0[n] leq: @(1.0f)]];
+          [else_grp add:[yc1[n] set: yc0[n]]];
+          
+          [toadd addObject:[ORFactory cdisj:model clauses:@[if_grp_1,if_grp_2,else_grp]]];
+          }
+          */
          {
-            id<ORGroup> if_grp_1 = [args makeGroup:model];
-            id<ORGroup> if_grp_2 = [args makeGroup:model];
+            id<ORGroup> if_grp   =[args makeGroup:model];
             id<ORGroup> else_grp = [args makeGroup:model];
             
-            [if_grp_1 add:[yc0[n] lt: @(-1.0f)]];
-            [if_grp_1 add:[yc1[n] set: @(-1.0f)]];
-            
-            [if_grp_2 add:[yc0[n] gt: @(1.0f)]];
-            [if_grp_2 add:[yc1[n] set: @(1.0f)]];
+            [if_grp add:[yc0[n] lt: @(-1.0f)]];
+            [if_grp add:[yc1[n] set: @(-1.0f)]];
             
             [else_grp add:[yc0[n] geq: @(-1.0f)]];
-            [else_grp add:[yc0[n] leq: @(1.0f)]];
             [else_grp add:[yc1[n] set: yc0[n]]];
             
-            [toadd addObject:[ORFactory cdisj:model clauses:@[if_grp_1,if_grp_2,else_grp]]];
+            [toadd addObject:[ORFactory cdisj:model clauses:@[if_grp,else_grp]]];
          }
-         [toadd addObject:[xc0[n] set: [[xc0[n-1] mul: Ac00] plus:[[xc1[n-1] mul: Ac01] plus: [yc1[n] mul: Bc0]]]]];
-         [toadd addObject:[xc1[n] set: [[xc0[n] mul: Ac10] plus:[[xc1[n-1] mul: Ac11] plus: [yc1[n] mul: Bc1]]]]];
-         [toadd addObject:[u[n] set: [[xc0[n] mul: Cc0] plus:[[xc1[n] mul: Cc1] plus: [yc1[n] mul: Dc]]]]];
+         {
+            id<ORGroup> if_grp   = [args makeGroup:model];
+            id<ORGroup> else_grp = [args makeGroup:model];
+            
+            [if_grp add:[yc1[n] gt: @(1.0f)]];
+            [if_grp add:[yc2[n] set: @(1.0f)]];
+            
+            [else_grp add:[yc1[n] leq: @(1.0f)]];
+            [else_grp add:[yc2[n] set: yc1[n]]];
+            
+            [toadd addObject:[ORFactory cdisj:model clauses:@[if_grp,else_grp]]];
+         }
+         [toadd addObject:[xc0[n] set: [[xc0[n-1] mul: Ac00] plus:[[xc1[n-1] mul: Ac01] plus: [yc2[n] mul: Bc0]]]]];
+         [toadd addObject:[xc1[n] set: [[xc0[n] mul: Ac10] plus:[[xc1[n-1] mul: Ac11] plus: [yc2[n] mul: Bc1]]]]];
+         [toadd addObject:[u[n] set: [[xc0[n] mul: Cc0] plus:[[xc1[n] mul: Cc1] plus: [yc2[n] mul: Dc]]]]];
          
          [toadd addObject:[yc0_opt[n] set:[y plus: @(-5.0f)]]];
          [toadd addObject:[[[yc0_opt[n] lt: @(-1.0f)] land: [yc1_opt[n] set: @(-1.0f)]] lor:
