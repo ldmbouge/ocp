@@ -44,7 +44,7 @@
  
  */
 
-#define NBLOOPS 10
+#define NBLOOPS 40
 
 int main(int argc, const char * argv[]) {
    
