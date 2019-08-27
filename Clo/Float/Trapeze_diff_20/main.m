@@ -35,7 +35,7 @@
  
  */
 
-#define NBLOOPS 10
+#define NBLOOPS 20
 
 void check(float u) {
    float xa = 0.25f;
