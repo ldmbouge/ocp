@@ -88,18 +88,16 @@ void testRational(int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORRational> low = [[ORRational alloc] init];
       id<ORRational> up = [[ORRational alloc] init];
-      [low set_d:0];
-      [up set_d: 10];
+      [low set_d:2];
+      [up set_d: 2];
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRationalVar> x = [ORFactory rationalVar:mdl low:low up:up name:@"x"];
-      id<ORRationalVar> y = [ORFactory rationalVar:mdl name:@"y"];
+      //id<ORRationalVar> y = [ORFactory rationalVar:mdl name:@"y"];
       id<ORRationalVar> z = [ORFactory rationalVar:mdl name:@"z"];
       //[mdl add:[z eq: [x plus: y]]];
-      [low set_d: 2];
-      [up set_d: 1];
-      [mdl add:[y eq: low]];
-      [mdl add:[z eq: [x plus: y]]];
-      [mdl add:[z leq: up]];
+      //[mdl add:[y eq: low]];
+      [mdl add:[z set: [x minus]]];//[x plus: y]]];
+      //[mdl add:[z leq: up]];
       
       [low release];
       [up release];
@@ -111,9 +109,9 @@ void testRational(int argc, const char * argv[]) {
       //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       
       [cp solve:^{
-         [cp labelRational:x];
+         //[cp labelRational:x];
          NSLog(@"x : [%@;%@] (%s)",[cp minQ:x],[cp maxQ:x],[cp bound:x] ? "YES" : "NO");
-         NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
+         //NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
          NSLog(@"z : [%@;%@] (%s)",[cp minQ:z],[cp maxQ:z],[cp bound:z] ? "YES" : "NO");
       }];
       NSLog(@"%@",cp);
@@ -487,7 +485,7 @@ int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"testR"){
 //   testIntBFS(argc, argv);
 //   testR(argc, argv);
-      testRF(argc, argv);
+      //testRF(argc, argv);
    //testRD(argc, argv);
    //testDiscriminant(argc, argv);
    //testRAbs(argc, argv);
@@ -512,7 +510,7 @@ int main(int argc, const char * argv[]) {
 //      check_it_bb(xr, yr, zr, NULL);
 //   }
    
-   //testRational(argc, argv);
+   testRational(argc, argv);
    //testOptimize(argc, argv);
    }
    return 0;

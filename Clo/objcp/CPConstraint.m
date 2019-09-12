@@ -1228,6 +1228,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) rationalUnaryMinus:(id<CPRationalVar>) x eqm:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalUnaryMinus alloc] init:x eqm:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) rationalTernaryAdd:(id<CPRationalVar>) x equals:(id<CPRationalVar>) y plus:(id<CPRationalVar>) z annotation:(id<ORAnnotation>) notes
 {
    return [[CPRationalTernaryAdd alloc] init:x equals:y plus:z];

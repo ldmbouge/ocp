@@ -154,6 +154,7 @@
 @end
 
 @interface CPFactory (ORRational)
++(id<CPConstraint>) rationalUnaryMinus:(id<CPRationalVar>) x eqm:(id<CPRationalVar>) y;
 +(id<CPConstraint>) rationalAssign: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
 +(id<CPConstraint>) rationalAssignC: (id<CPRationalVar>) x to:(id<ORRational>) c;
 +(id<CPConstraint>) rationalEqual: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;

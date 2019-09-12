@@ -240,8 +240,8 @@ double_interval _yi;
 -(void) post
 {
    [self propagate];
-   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
-   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -251,27 +251,47 @@ double_interval _yi;
          assignTRInt(&_active, NO, _trail);
       }else{
          [_y bind:-[_x value]];
+         [_y bindError:[[_x errorValue] neg]];
          assignTRInt(&_active, NO, _trail);
       }
    }else if([_y bound]){
       [_x bind:-[_y value]];
+      [_x bindError:[[_y errorValue] neg]];
       assignTRInt(&_active, NO, _trail);
    }else {
       updateDoubleInterval(&_xi,_x);
       updateDoubleInterval(&_yi,_y);
       intersectionIntervalD inter;
+      id<ORRationalInterval> interError = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
+      [ex set_q:[_x minErr] and:[_x maxErr]];
+      [ey set_q:[_y minErr] and:[_y maxErr]];
+      
       double_interval yTmp = makeDoubleInterval(_yi.inf, _yi.sup);
       fpi_minusd(_precision,_rounding, &yTmp, &_xi);
       inter = intersectionD(_y,_yi, yTmp, 0.0f);
+      interError = [ey proj_inter:[ex neg]];
       if(inter.changed)
          [_y updateInterval:inter.result.inf and:inter.result.sup];
+      if(interError.changed)
+         [_y updateIntervalError:interError.low and:interError.up];
       
       updateDoubleInterval(&_yi,_y);
+      [ex set_q:[_x minErr] and:[_x maxErr]];
+      [ey set_q:[_y minErr] and:[_y maxErr]];
       double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
       fpi_minusd(_precision,_rounding, &xTmp, &_yi);
       inter = intersectionD(_x,_xi, xTmp, 0.0f);
+      interError = [ex proj_inter:[ey neg]];
       if(inter.changed)
          [_x updateInterval:inter.result.inf and:inter.result.sup];
+      if(interError.changed)
+         [_x updateIntervalError:interError.low and:interError.up];
+      
+      [interError release];
+      [ex release];
+      [ey release];
    }
 }
 -(NSSet*)allVars

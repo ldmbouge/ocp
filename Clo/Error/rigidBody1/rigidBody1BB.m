@@ -66,7 +66,10 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
       
-      [mdl add:[z set: [[[[@(0.0) sub: [x1 mul: x2]] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+      //[mdl add:[z set: [[[[@(0.0) sub: [x1 mul: x2]] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+      
+      [mdl add:[z set: [[[[[x1 mul: x2] minus] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+
       
       [mdl add: [ezAbs eq: [ez abs]]];
       [mdl maximize:ezAbs];
@@ -92,7 +95,7 @@ void exitfunc(int sig)
 
 int main(int argc, const char * argv[]) {
    signal(SIGKILL, exitfunc);
-   alarm(60);
+   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       rigidBody1_d(1, argc, argv);
    //}

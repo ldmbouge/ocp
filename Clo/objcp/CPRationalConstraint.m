@@ -1620,3 +1620,83 @@
 }
 @end
 
+@implementation CPRationalUnaryMinus{
+   int _precision;
+   int _rounding;
+   id<ORRationalInterval> _xi;
+   id<ORRationalInterval> _yi;
+}
+-(id) init:(CPRationalVarI*)x eqm:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _xi = [[ORRationalInterval alloc] init];
+   [_xi set_q:[x min] and:[x max]];
+   _yi = [[ORRationalInterval alloc] init];
+   [_yi set_q:[y min] and:[y max]];
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if([_x bound]){
+      if([_y bound]){
+         if([[_x value] neq: [[_y value] neg]]) failNow();
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         [_y bind:[[_x value] neg]];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }else if([_y bound]){
+      [_x bind:[[_y value] neg]];
+      assignTRInt(&_active, NO, _trail);
+   }else {
+      [_xi set_q:[_x min] and:[_x max]];
+      [_yi set_q:[_y min] and:[_y max]];
+      id<ORRationalInterval> inter;
+      
+      
+      inter = [_yi proj_inter:[_xi neg]];
+      if(inter.changed)
+         [_y updateInterval:inter.low and:inter.up];
+      
+      [_yi set_q:[_y min] and:[_y max]];
+      inter = [_xi proj_inter:[_yi neg]];
+      if(inter.changed)
+         [_x updateInterval:inter.low and:inter.up];
+      
+      [inter release];
+   }
+}
+
+-(void) dealloc
+{
+   [_xi release];
+   [_yi release];
+   [super dealloc];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == -%@>",_x,_y];
+}
+@end

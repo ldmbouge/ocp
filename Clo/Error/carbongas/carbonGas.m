@@ -144,11 +144,11 @@ void carbonGas_d_QF(int search, int argc, const char * argv[]) {
       
       [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
       
-      [mdl add:[rQ eq: [[[pQ plus: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]]];
+      [mdl add:[rQ set: [[[pQ plus: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]]];
       
-      [mdl add:[er eq: [rQ sub: rq]]];
+      [mdl add:[er set: [rQ sub: rq]]];
 
-      [zero set_d:2.70e-9];
+      [zero set_d:0];
       [mdl add:[er eq:eR]];
       [mdl add:[[er abs] geq:zero]];
       [zero release];

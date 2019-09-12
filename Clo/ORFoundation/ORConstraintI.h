@@ -750,6 +750,12 @@
 -(id<ORRational>) cst;
 @end
 
+@interface ORRationalUnaryMinus : ORConstraintI<ORUnaryMinus>
+-(ORRationalUnaryMinus*)initORRationalUnaryMinus:(id<ORVar>)x eqm:(id<ORVar>)y;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
+@end
+
 @interface ORRationalMult : ORConstraintI<ORRationalMult>
 -(ORRationalMult*)initORRationalMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
 -(id<ORVar>) res;

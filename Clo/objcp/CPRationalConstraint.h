@@ -230,3 +230,13 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+@interface CPRationalUnaryMinus : CPCoreConstraint {
+   CPRationalVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x eqm:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end

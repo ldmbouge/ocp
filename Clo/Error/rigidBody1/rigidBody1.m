@@ -67,7 +67,9 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
       [zero release];
       
-      [mdl add:[z set: [[[[@(0.0) sub: [x1 mul: x2]] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+      //[mdl add:[z set: [[[[@(0.0) sub: [x1 mul: x2]] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+      
+      [mdl add:[z set: [[[[[x1 mul: x2] minus] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
       
       NSLog(@"model: %@",mdl);
       id<ORDoubleVarArray> vs = [mdl doubleVars];
@@ -152,8 +154,8 @@ void rigidBody1_d_QF(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
-   //rigidBody1_d(0, argc, argv);
-   rigidBody1_d_QF(1, argc, argv);
+   rigidBody1_d(0, argc, argv);
+   //rigidBody1_d_QF(1, argc, argv);
    }
    return 0;
 }

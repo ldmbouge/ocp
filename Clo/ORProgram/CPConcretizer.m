@@ -1675,6 +1675,18 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitRationalUnaryMinus:(id<ORUnaryMinus>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORRationalVar> left = (id<ORRationalVar>)[cstr left];
+      id<ORRationalVar> right = (id<ORRationalVar>)[cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory rationalUnaryMinus:_gamma[left.getId]  eqm: _gamma[right.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitRationalEqualc:(id<ORRationalEqualc>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

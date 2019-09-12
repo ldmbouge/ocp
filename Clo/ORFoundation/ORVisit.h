@@ -229,6 +229,7 @@
 -(void) visitFloatReifyGThenc: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThen: (id<ORConstraint>)c;
 -(void) visitFloatCast: (id<ORConstraint>)c;
+-(void) visitRationalUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitRationalEqualc: (id<ORConstraint>)c;
 -(void) visitRationalErrorOf: (id<ORConstraint>)c;
 -(void) visitRationalChannel:(id<ORConstraint>)c;

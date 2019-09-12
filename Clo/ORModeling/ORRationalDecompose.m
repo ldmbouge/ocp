@@ -97,20 +97,19 @@
       [_terms addTerm:alpha by:1];
    }
 }
+-(void) visitExprUnaryMinusI: (ORExprUnaryMinusI*) e
+{
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha =  [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
+}
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
-//   if (_eqto) {
-//      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-//      [_terms addTerm:alpha by:1];
-//      _eqto = nil;
-//   } else {
-//      [[e left] visit:self];
-//      id<ORRationalLinear> old = _terms;
-//      _terms = [[ORRationalLinearFlip alloc] initORRationalLinearFlip: _terms];
-//      [[e right] visit:self];
-//      [_terms release];
-//      _terms = old;
-//   }
    if (_eqto) {
       id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
       [_terms addTerm:alpha by:1];
@@ -346,6 +345,16 @@
    }];
    [_model addConstraint:[ORFactory rationalSum:_model array:var coef:coefs eq:[ORRational rationalWith_d:0]]];
    [lT release];
+   [rT release];
+}
+-(void) visitExprUnaryMinusI:(ORExprUnaryMinusI*) e
+{
+   id<ORRationalLinear> rT = [ORNormalizer rationalLinearFrom:[e operand] model:_model];
+   id<ORRationalVar> rV = [ORNormalizer rationalVarIn:rT for:_model];
+   if (_rv==nil){
+      _rv = [ORFactory rationalVar:_model];
+   }
+   [_model addConstraint:[ORFactory rationalUnaryMinus:_model var:_rv eqm: rV]];
    [rT release];
 }
 -(void) visitExprMinusI:(ORExprMinusI*) e
