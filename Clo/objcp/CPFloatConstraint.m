@@ -2353,7 +2353,10 @@
       else
          [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
    } else {
-      if ([_x min] == 0.0f && [_x max] == 0.0f) {
+      if([_x bound]){
+         bindDom(_b, [_x min] == 0.0f);
+         assignTRInt(&_active, NO, _trail);
+      }else if ([_x min] == 0.0f && [_x max] == 0.0f) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
       } else if ([_x min] > 0.0f && [_x max] < 0.0f) {
