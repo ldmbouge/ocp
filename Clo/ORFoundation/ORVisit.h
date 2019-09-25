@@ -111,10 +111,12 @@
 -(void) visitExactMDDMISP: (id<ORConstraint>) c;
 -(void) visitRestrictedMDDMISP: (id<ORConstraint>) c;
 -(void) visitRelaxedMDDMISP: (id<ORConstraint>) c;
+-(void) visitCustomAltMDD: (id<ORConstraint>) c;
 -(void) visitCustomMDD: (id<ORConstraint>) c;
 -(void) visitCustomMDDWithObjective: (id<ORConstraint>) c;
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>)c;
+-(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>)c;
 
 -(void) visitRealEqualc: (id<ORRealEqualc>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;
@@ -200,6 +202,8 @@
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprCstDoubleSubI:(id<ORExpr>)e;
 -(void) visitExprSetContainsI:(id<ORExpr>)e;
+-(void) visitExprSetExprContainsI:(id<ORExpr>)e;
+-(void) visitExprSetUnionI:(id<ORExpr>)e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
@@ -208,7 +212,29 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e;
+-(void) visitExprLayerVariableI:(id<ORExpr>)e;
+-(void) visitExprSizeOfArrayI:(id<ORExpr>)e;
+-(void) visitExprParentInformationI:(id<ORExpr>)e;
+-(void) visitExprChildInformationI:(id<ORExpr>)e;
+-(void) visitExprMinParentInformationI:(id<ORExpr>)e;
+-(void) visitExprMaxParentInformationI:(id<ORExpr>)e;
+-(void) visitExprMinChildInformationI:(id<ORExpr>)e;
+-(void) visitExprMaxChildInformationI:(id<ORExpr>)e;
+-(void) visitExprLeftInformationI:(id<ORExpr>)e;
+-(void) visitExprRightInformationI:(id<ORExpr>)e;
+-(void) visitExprSingletonSetI:(id<ORExpr>)e;
+-(void) visitExprMinMaxSetFromI:(id<ORExpr>)e;
 -(void) visitExprStateValueI:(id<ORExpr>)e;
+-(void) visitExprIfThenElseI:(id<ORExpr>)e;
+-(void) visitExprArrayIndexI:(id<ORExpr>)e;
+-(void) visitExprAppendToArrayI:(id<ORExpr>)e;
+-(void) visitExprMinBetweenArraysI:(id<ORExpr>)e;
+-(void) visitExprMaxBetweenArraysI:(id<ORExpr>)e;
+-(void) visitExprEachInSetPlusI:(id<ORExpr>)e;
+-(void) visitExprEachInSetPlusEachInSetI:(id<ORExpr>)e;
+-(void) visitExprEachInSetLEQI:(id<ORExpr>)e;
+-(void) visitExprEachInSetGEQI:(id<ORExpr>)e;
+
 // Bit
 -(void) visitBitEqualAt:(id<ORConstraint>)c;
 -(void) visitBitEqualc:(id<ORConstraint>)c;

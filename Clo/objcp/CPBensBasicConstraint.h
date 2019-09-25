@@ -28,8 +28,9 @@
     TRInt _numChildren;
     int _minChildIndex;
     int _maxChildIndex;
-    TRId* *_parents;
+    TRId* _parents;
     TRInt _numParents;
+    int _maxNumParents;
     int _value;
     bool _isSink;
     bool _isSource;
@@ -45,16 +46,19 @@
     TRInt _reverseLongestPath;
     TRInt _reverseShortestPath;
     
+    bool _isRelaxed;
+    
     id _state;
 }
--(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents;
--(id) initNode: (id<ORTrail>) trail maxParents:(int)maxParents minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues;
+-(id) initNode: (id<ORTrail>) trail;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues;
 -(void) dealloc;
 -(id) getState;
 -(int) value;
 -(int) minChildIndex;
 -(int) maxChildIndex;
--(Node**) children;
+-(TRId*) children;
 -(int) getObjectiveValueFor: (int)index;
 -(int) getNodeObjectiveValue: (int)value;
 -(void) addChild:(Node*)child at:(int)index;
@@ -64,7 +68,7 @@
 -(bool) hasLongestPathParent: (Node*)parent;
 -(int) shortestPath;
 -(bool) hasShortestPathParent: (Node*)parent;
--(TRId**) parents;
+-(TRId*) parents;
 -(int) numParents;
 -(void) addParent: (Node*) parent;
 -(void) updateBoundsWithParent: (Node*) parent;
@@ -78,6 +82,8 @@
 -(void) takeParentsFrom:(Node*)other;
 -(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(Node*)other;
+-(void) setRelaxed:(bool)relaxed;
+-(bool) isRelaxed;
 @end
 
 @interface GeneralState : NSObject {
@@ -129,24 +135,67 @@
 -(bool) stateAllows:(int)variable;
 @end
 
-@interface CPMDD : CPCoreConstraint {
+@interface CPAltMDD : CPCoreConstraint {
 @private
-    TRInt **layer_variable_count;
-    int _max_nodes_per_layer;
-    bool _reduced;
     bool _maximize;
+@protected
+    Class _stateClass;
+    TRInt **layer_variable_count;
     int* _variable_to_layer;
     int* _layer_to_variable;
     bool* _variableUsed;
-    Class _stateClass;
-@protected
-    id<CPIntVar> _objective;
+    bool _hasObjective;
     id<CPIntVarArray> _x;
     TRInt *layer_size;
     TRInt *max_layer_size;
-    Node* **layers;
+    TRId **layers;
     int min_domain_val;
     int max_domain_val;
+    NSUInteger _numVariables;
+}
+-(id) initCPAltMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
+-(id) initCPAltMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x stateClass:(Class)stateClass;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+-(NSString*) description;
+-(id<CPIntVarArray>) x;
+-(void) post;
+-(bool) calculateTopDownInfoFor:(Node*)node onLayer:(int)layerIndex;
+-(bool) calculateBottomUpInfoFor:(Node*)node onLayer:(int)layerIndex;
+-(void) createWidthOneMDD;
+-(void) buildOutMDD;
+-(void) createRootAndSink;
+-(void) buildNewLayerUnder:(int)layer;
+-(void) addNode:(Node*)node toLayer:(int)layer_index;
+-(int) layerIndexForVariable:(int)variableIndex;
+-(int) variableIndexForLayer:(int)layer;
+-(int) pickVariableBelowLayer:(int)layer;
+-(void) removeNodeAt:(int)index onLayer:(int)layer_index;
+-(void) removeNode: (Node*) node;
+-(void) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming;
+-(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming;
+-(void) addPropagationsAndTrimValues;
+-(void) trimValuesFromLayer:(ORInt)layer;
+-(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
+@end
+@interface CPMDD : CPCoreConstraint {
+@private
+    bool _maximize;
+    Class _stateClass;
+@protected
+    TRInt **layer_variable_count;
+    int* _variable_to_layer;
+    int* _layer_to_variable;
+    bool* _variableUsed;
+    id<CPIntVar> _objective;
+    id<CPIntVarArray> _x;
+    bool _reduced;
+    TRInt *layer_size;
+    TRInt *max_layer_size;
+    TRId **layers;
+    int min_domain_val;
+    int max_domain_val;
+    NSUInteger _numVariables;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x reduced:(bool)reduced;
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize;
@@ -158,6 +207,7 @@
 -(void) post;
 -(int) layerIndexForVariable:(int)variableIndex;
 -(int) variableIndexForLayer:(int)layer;
+-(int) pickVariableBelowLayer:(int)layer;
 -(int*) getObjectiveValuesForLayer:(int)layer;
 -(void) createRootAndSink;
 -(void) cleanLayer:(int)layer;
@@ -169,9 +219,10 @@
 -(id) generateRootState:(int)variableValue;
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
+-(void) removeNodeAt:(int)index onLayer:(int)layer_index;
 -(void) removeNode: (Node*) node;
--(void) removeChildlessNodeFromMDD:(Node*)node trimmingVariables:(bool)trimming;
--(void) removeParentlessNodeFromMDD:(Node*)node trimmingVariables:(bool)trimming;
+-(void) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming;
+-(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
 
 -(ORInt) recommendationFor: (ORInt) variableIndex;
@@ -193,10 +244,24 @@
 -(Node*) findNodeToRemove:(int)layer;
 @end
 
+@interface CPAltMDDRelaxation : CPAltMDD {
+@private
+    bool _relaxed;
+    int _relaxation_size;
+    TRInt *_layer_relaxed;
+    TRInt **node_relaxed;
+}
+-(id) initCPAltMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
+-(id) initCPAltMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass;
+-(NSArray*) findEquivalenceClassesIntoNode:(int)nodeIndex onLayer:(int)layerIndex;
+-(NSArray*) findEquivalenceClasses:(int)layerIndex;
+@end
+
 @interface CPMDDRelaxation : CPMDD {
 @private
     bool _relaxed;
-    int relaxed_size;
+    int _relaxation_size;
+    TRInt _first_relaxed_layer;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass;
@@ -205,6 +270,7 @@
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
 -(void) mergeTwoNodesOnLayer:(int)layer;
 -(void) findNodesToMerge:(int)layer first:(Node**)first second:(Node**)second;
+//-(void) splitNodes:(int)layer;
 @end
 
 
@@ -246,6 +312,9 @@
 -(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
 @end
 
+@interface CPCustomAltMDD : CPAltMDDRelaxation
+-(id) initCPCustomAltMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
+@end
 @interface CPCustomMDD : CPMDDRelaxation
 -(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
 @end

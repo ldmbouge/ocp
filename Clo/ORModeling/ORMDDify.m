@@ -14,228 +14,8 @@
 #import "ORVarI.h"
 #import "ORDecompose.h"
 #import "ORRealDecompose.h"
-
-@implementation ORDDClosureGenerator
--(ORDDClosureGenerator*) initORDDClosureGenerator {
-    self = [super init];
-    return self;
-}
-
--(DDClosure) computeClosure:(id<ORExpr>)e
-{
-    [e visit: self];
-    return current;
-}
-
--(DDClosure) recursiveVisitor:(id<ORExpr>)e
-{
-    DDClosure old = current;
-    current = nil;
-    [e visit: self];
-    DDClosure returnedValue = current;
-    current = old;
-    return returnedValue;
-}
-
--(void) visitIntVar:(id<ORIntVar>)v
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "IntVar: visit method not defined"];
-}
-
--(void) visitIntegerI: (id<ORInteger>) e
-{
-    current = [^(int* state, ORInt variable, ORInt value) {
-        return [e value];
-    } copy];
-}
--(void) visitMutableIntegerI: (id<ORMutableInteger>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "MutableInteger: visit method not defined"];
-}
--(void) visitMutableDouble: (id<ORMutableDouble>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "MutableDouble: visit method not defined"];
-}
--(void) visitDouble: (id<ORDoubleNumber>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleNumber: visit method not defined"];
-}
--(void) visitExprPlusI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) + (int)right(state, variable, value);  //Only works for ints
-    } copy];
-}
--(void) visitExprMinusI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) - (int)right(state, variable, value);  //Only works for ints
-    } copy];
-}
--(void) visitExprMulI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) * (int)right(state, variable, value);  //Only works for ints
-    } copy];
-}
--(void) visitExprDivI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) / (int)right(state, variable, value);  //Only works for ints
-    } copy];
-}
--(void) visitExprModI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) % (int)right(state, variable, value);  //Only works for ints
-    } copy];
-}
--(void) visitExprMinI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinI: visit method not defined"];
-}
--(void) visitExprMaxI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMaxI: visit method not defined"];
-}
--(void) visitExprEqualI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return left(state, variable, value) == right(state, variable, value);
-    } copy];
-}
--(void) visitExprNEqualI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return left(state, variable, value) != right(state, variable, value);
-    } copy];
-}
--(void) visitExprLEqualI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) <= (int)right(state, variable, value);  //Only works for ints
-    } copy];
-}
--(void) visitExprGEqualI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) >= (int)right(state, variable, value);  //Only works for ints
-    } copy];
-}
--(void) visitExprSumI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSumI: visit method not defined"];
-}
--(void) visitExprProdI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprProdI: visit method not defined"];
-}
--(void) visitExprAggMinI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMinI: visit method not defined"];
-}
--(void) visitExprAggMaxI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMaxI: visit method not defined"];
-}
--(void) visitExprAbsI:(id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAbsI: visit method not defined"];
-}
--(void) visitExprSquareI:(id<ORExpr>)e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSquareI: visit method not defined"];
-}
--(void) visitExprNegateI:(id<ORExpr>)e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"];
-}
--(void) visitExprCstSubI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstSubI: visit method not defined"];
-}
--(void) visitExprCstDoubleSubI:(id<ORExpr>)e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstDoubleSubI: visit method not defined"];
-}
--(void) visitExprDisjunctI:(ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return left(state, variable, value) || right(state, variable, value);
-    } copy];
-}
--(void) visitExprConjunctI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return left(state, variable, value) && right(state, variable, value);
-    } copy];
-}
--(void) visitExprImplyI: (ORExprBinaryI*) e
-{
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return !left(state, variable, value) || right(state, variable, value);
-    } copy];
-}
--(void) visitExprAggOrI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggOrI: visit method not defined"];
-}
--(void) visitExprAggAndI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggAndI: visit method not defined"];
-}
--(void) visitExprVarSubI: (id<ORExpr>) e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprVarSubI: visit method not defined"];
-}
--(void) visitExprMatrixVarSubI:(id<ORExpr>)e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMatrixVarSubI: visit method not defined"];
-}
--(void) visitExprStateValueI:(ORExprStateValueI*)e
-{
-    current = [^(int* state, ORInt variable, ORInt value) {
-        return state[[e lookup]];
-    } copy];
-}
--(void) visitExprValueAssignmentI:(id<ORExpr>)e
-{
-    current = [^(int* state, ORInt variable, ORInt value) {
-        return value;
-    } copy];
-}
--(void) visitExprSetContainsI:(ORExprSetContainsI*)e
-{
-    DDClosure right = [self recursiveVisitor:[e value]];
-    current = [^(int* state, ORInt variable, ORInt value) {
-        return [[e set] member: (int)right(state, variable, value)];
-    } copy];
-}
-@end
+#import "ORMDDVisitors.h"
+#import "ORCustomMDDStates.h"
 
 @implementation ORFactory(MDD)
 +(void) sortIntVarArray:(NSMutableArray*)array first:(ORInt)first last:(ORInt)last {
@@ -337,715 +117,7 @@
 }
 @end
 
-
-
-@implementation CustomState
--(id) initClassState:(int)domainMin domainMax:(int)domainMax {
-    _domainMin = domainMin;
-    _domainMax = domainMax;
-    return self;
-}
--(id) initRootState:(CustomState*)classState variableIndex:(int)variableIndex {
-    _domainMin = [classState domainMin];
-    _domainMax = [classState domainMax];
-    _variableIndex = variableIndex;
-    return self;
-}
--(id) initState:(CustomState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex {
-    _domainMin = [parentNodeState domainMin];
-    _domainMax = [parentNodeState domainMax];
-    _variableIndex = variableIndex;
-    return self;
-}
--(id) initState:(CustomState*)parentNodeState variableIndex:(int)variableIndex {
-    _domainMin = [parentNodeState domainMin];
-    _domainMax = [parentNodeState domainMax];
-    _variableIndex = variableIndex;
-    return self;
-}
-
-//-(char*) stateChar { return _stateChar; }
--(int) variableIndex { return _variableIndex; }
--(int) domainMin { return _domainMin; }
--(int) domainMax { return _domainMax; }
--(void) mergeStateWith:(CustomState *)other {
-    return;
-}
--(int) numPathsWithNextVariable:(int)variable {
-    int count = 0;
-    /*
-    for (int fromValue = _domainMin; fromValue <= _domainMax; fromValue++) {
-        if ([self canChooseValue:fromValue forVariable:_variableIndex]) {
-            NSArray* savedChanges = [self tempAlterStateAssigningValue:fromValue withNextVariable:variable];
-            for (int toValue = _domainMin; toValue <= _domainMax; toValue++) {
-                if ([self canChooseValue:toValue forVariable:variable]) {
-                    count++;
-                }
-            }
-            [self undoChanges:savedChanges];
-        }
-    }
-     */
-    return count;
-}
--(NSArray*) tempAlterStateAssigningValue:(int)value withNextVariable:(int)nextVariable {
-    return [[NSArray alloc] init];
-}
--(void) undoChanges:(NSArray*)savedChanges { return; }
-
--(bool) canChooseValue:(int)value forVariable:(int)variable {
-    return true;
-}
--(int) stateDifferential:(CustomState*)other {
-    return 1;
-}
--(bool) equivalentTo:(CustomState*)other {
-    return false;
-}
-@end
-
-@implementation MDDStateSpecification
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
-{
-    [super initClassState:domainMin domainMax:domainMax];
-    _state = stateValues;
-    _arcExists = arcExists;
-    _transitionFunctions = transitionFunctions;
-    _stateSize = stateSize;
-    return self;
-}
--(id) initRootState:(MDDStateSpecification*)classState variableIndex:(int)variableIndex {
-    self = [super initRootState:classState variableIndex:variableIndex];
-    _stateSize = [classState stateSize];
-    _state = [classState state];
-    _arcExists = [classState arcExistsClosure];
-    _transitionFunctions = [classState transitionFunctions];
-    return self;
-}
-
--(id) initState:(MDDStateSpecification*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
-    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
-    _stateSize = [parentNodeState stateSize];
-    int* parentState = [parentNodeState state];
-    ORInt parentVar = [parentNodeState variableIndex];
-    
-    _state = malloc(_stateSize * sizeof(int));
-    _arcExists = [parentNodeState arcExistsClosure];
-    _transitionFunctions = [parentNodeState transitionFunctions];
-    
-    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        DDClosure transitionFunction = _transitionFunctions[stateIndex];
-        if (transitionFunction != NULL) {
-            _state[stateIndex] = transitionFunction(parentState, parentVar, edgeValue);
-        }
-    }
-    return self;
-}
--(id) initState:(MDDStateSpecification*)parentNodeState variableIndex:(int)variableIndex {
-    self = [super initState:parentNodeState variableIndex:variableIndex];
-    int* parentState = [parentNodeState state];
-    _stateSize = [parentNodeState stateSize];
-    _state = malloc(_stateSize * sizeof(int));
-    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        _state[stateIndex] = parentState[stateIndex];
-    }
-    
-    _arcExists = [parentNodeState arcExistsClosure];
-    _transitionFunctions = [parentNodeState transitionFunctions];
-    return self;
-}
-
--(bool) canChooseValue:(int)value forVariable:(int)variable {
-    return _arcExists(_state, variable, value);
-}
--(void) mergeStateWith:(AllDifferentMDDState*)other {
-    return; //Implement once we hit relaxing.  Probably needs to be user defined???
-}
-
--(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
-    NSMutableArray* savedChanges = [[NSMutableArray alloc] init];
-    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        DDClosure transitionFunction = _transitionFunctions[stateIndex];
-        [savedChanges addObject: [[NSNumber alloc] initWithInt: _state[stateIndex]]];
-        if (transitionFunction != NULL) {
-            _state[stateIndex] = transitionFunction(_state,variable,value);
-        }
-    }
-    return savedChanges;
-}
-
--(void) undoChanges:(NSArray*)savedChanges {
-    for (int savedChangeIndex = 0; savedChangeIndex < [savedChanges count]; savedChangeIndex++) {
-        _state[savedChangeIndex] = [[savedChanges objectAtIndex: savedChangeIndex] intValue];
-    }
-}
-
--(int) stateDifferential:(MDDStateSpecification*)other {
-    int differential = 0;
-    int* other_state = [other state];
-    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        if (_state[stateIndex] != other_state[stateIndex]) {
-            differential++;
-        }
-    }
-    return differential;
-}
--(bool) equivalentTo:(MDDStateSpecification*)other {
-    int* other_state = [other state];
-    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        if (_state[stateIndex] != other_state[stateIndex]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-
--(int*) state { return _state; }
--(int) stateSize { return _stateSize; }
--(DDClosure)arcExistsClosure { return _arcExists; }
--(DDClosure*)transitionFunctions { return _transitionFunctions; }
-@end
-
-@implementation CustomBDDState
--(id) initRootState:(CustomBDDState*)classState variableIndex:(int)variableIndex {
-    self = [super initRootState:classState variableIndex:variableIndex];
-    _state = malloc((_domainMax - _domainMin +1) * sizeof(bool));
-    _state -= _domainMin;
-//    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
-    
-    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-        _state[stateIndex] = true;
-//        _stateChar[stateIndex - _domainMin] = '1';
-    }
-    return self;
-}
--(id) initState:(CustomBDDState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex {    //Bad naming I think.  Parent is actually the one assigned that value, not the variableIndex
-    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:edgeValue];
-    bool* parentState = [parentNodeState state];
-//    char* parentStateChar = [parentNodeState stateChar];
-    
-    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-        if (stateIndex == [parentNodeState variableIndex]) {
-            _state[stateIndex] = false;
-//            _stateChar[stateIndex - _domainMin] = '0';
-        } else {
-            _state[stateIndex] = parentState[stateIndex];
-//            _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex];
-        }
-    }
-    return self;
-}
-
--(bool*) state {
-    return _state;
-}
-
--(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
-    if (_state[variable] != value) {
-        _state[variable] = value;
-        return [[NSArray alloc] initWithObjects:[NSNumber numberWithInt: variable], nil];
-    } else {
-        return [[NSArray alloc] init];
-    }
-}
-
--(bool) canChooseValue:(int)value forVariable:(int)variable {
-    if (value == 0) return true;
-    return _state[variable];
-}
--(void) undoChanges:(NSArray*)savedChanges {
-    for (int index = 0; index < [savedChanges count]; index++) {
-        _state[[savedChanges[index] intValue]] = !(_state[[savedChanges[index] intValue]]);
-    }
-}
-@end
-
-@implementation KnapsackBDDState    //Not fully implemented yet
--(id) initClassState:(int)domainMin domainMax:(int)domainMax capacity:(id<ORIntVar>)capacity weights:(id<ORIntArray>)weights {
-    self = [super initClassState:domainMin domainMax:domainMax];
-    _capacity = capacity;
-//    _capacityNumDigits = 0;
-//    int tempCapacity = [_capacity up];
-//    while (tempCapacity > 0) {
-//        _capacityNumDigits++;
-//        tempCapacity/=10;
-//    }
-    _weights = weights;
-    return self;
-}
-
--(id) initRootState:(KnapsackBDDState*)classState variableIndex:(int)variableIndex {
-    self = [super initRootState:classState variableIndex:variableIndex];
-    _capacity = [classState capacity];
-//    _capacityNumDigits = [classState capacityNumDigits];
-    _weights = [classState weights];
-    _weightSum = 0;
-    return self;
-}
--(id) initState:(KnapsackBDDState*)parentNodeState assignedValue:(int)edgeValue variableIndex:(int)variableIndex {
-    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
-    _capacity = [parentNodeState capacity];
-//    _capacityNumDigits = [parentNodeState capacityNumDigits];
-    _weights = [parentNodeState weights];
-    [self writeStateFromParent:parentNodeState assigningValue:edgeValue];
-    return self;
-}
--(int) weightSum { return _weightSum; }
--(void) writeStateFromParent:(KnapsackBDDState*)parent assigningValue:(int)value {
-    int variable = [parent variableIndex];
-    bool* parentState = [parent state];
-    if (value == 1) {
-        _weightSum = [parent weightSum] + [self getWeightForVariable:variable];
-        for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-            _state[stateIndex] = parentState[stateIndex] && ((_weightSum + [self getWeightForVariable:stateIndex]) <= [_capacity up]);
-//            _stateChar[stateIndex - _domainMin] = _state[stateIndex] ? '1':'0';
-        }
-//        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
-//            _stateChar[_domainMax + 1 + (_capacityNumDigits - digit) - _domainMin] = (char)((int)(_weightSum/pow(10,digit-1)) % 10 + (int)'0');
-//        }
-    }
-    else {
-        _weightSum = [parent weightSum];
-        for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-            _state[stateIndex] = parentState[stateIndex];
-//            _stateChar[stateIndex - _domainMin] = _state[stateIndex] ? '1':'0';
-        }
-//        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
-//            _stateChar[_domainMax + digit - _domainMin] = [parent stateChar][_domainMax + digit - _domainMin];
-//        }
-    }
-    _state[variable] = false;
-//    _stateChar[variable - _domainMin] = '0';
-}
--(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
-    if (value == 1 && (_weightSum + [self getWeightForVariable:variable] + [self getWeightForVariable:toVariable]) > [_capacity up] && _state[variable]) {
-        return [[NSArray alloc] initWithObjects:[NSNumber numberWithInt: variable], nil];
-    } else {
-        return [[NSArray alloc] init];
-    }
-}
--(void) mergeStateWith:(KnapsackBDDState*)other {
-    if (_weightSum < [other weightSum]) {
-        _weightSum = [other weightSum];
-        bool* otherState = [other state];
-        for (int variable = _domainMin; variable <= _domainMax; variable++) {
-            _state[variable] = otherState[variable];
-//            _stateChar[variable - _domainMin] = _state[variable - _domainMin] ? '1' : '0';
-        }
-//        for (int digit = 1; digit <= _capacityNumDigits; digit++) {
-//            _stateChar[_domainMax + digit - _domainMin] = [other stateChar][_domainMax + digit - _domainMin];
-//        }
-    }
-}
--(int) getWeightForVariable:(int)variable {
-    return [_weights at: variable];
-}
--(int*) getWeightsForVariable:(int)variable {
-    int* values = malloc(2 * sizeof(int));
-    values[0] = 0;
-    values[1] = [self getWeightForVariable:variable];
-    return values;
-}
--(id<ORIntVar>) capacity { return _capacity; }
-//-(int) capacityNumDigits { return _capacityNumDigits; }
--(id<ORIntArray>) weights { return _weights; }
-@end
-
-@implementation AllDifferentMDDState
--(id) initRootState:(AllDifferentMDDState*)classState variableIndex:(int)variableIndex {
-    self = [super initRootState:classState variableIndex:variableIndex];
-    _state = malloc((_domainMax - _domainMin +1) * sizeof(bool));
-    _state -= _domainMin;
-//    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
-    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-        _state[stateIndex] = true;
-//        _stateChar[stateIndex - _domainMin] = '1';
-    }
-    return self;
-}
--(id) initState:(AllDifferentMDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
-    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
-    bool* parentState = [parentNodeState state];
-//    char* parentStateChar = [parentNodeState stateChar];
-    _state = malloc((_domainMax - _domainMin +1) * sizeof(bool));
-    _state -= _domainMin;
-//    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
-    
-    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-        if (stateIndex == edgeValue) {
-            _state[stateIndex] = false;
-//            _stateChar[stateIndex - _domainMin] = '0';
-        } else {
-            _state[stateIndex] = parentState[stateIndex];
-//            _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex - _domainMin];
-        }
-    }
-    return self;
-}
--(id) initState:(AllDifferentMDDState*)parentNodeState variableIndex:(int)variableIndex {
-    self = [super initState:parentNodeState variableIndex:variableIndex];
-    bool* parentState = [parentNodeState state];
-//    char* parentStateChar = [parentNodeState stateChar];
-    _state = malloc((_domainMax - _domainMin +1) * sizeof(bool));
-    _state -= _domainMin;
-//    _stateChar = malloc((_domainMax - _domainMin +1) * sizeof(char));
-    
-    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-        _state[stateIndex] = parentState[stateIndex];
-//        _stateChar[stateIndex - _domainMin] = parentStateChar[stateIndex - _domainMin];
-    }
-    return self;
-}
-
--(bool*) state { return _state; }
-
--(void) mergeStateWith:(AllDifferentMDDState*)other {
-    bool* otherState = [other state];
-    
-    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-        _state[stateIndex] = _state[stateIndex] || otherState[stateIndex];
-//        _stateChar[stateIndex - _domainMin] = (_state[stateIndex] ? '1' : '0');
-    }
-}
-
--(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
-    NSArray* savedChanges = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt: value], nil];
-    _state[value] = false;
-    return savedChanges;
-}
-
--(void) undoChanges:(NSArray*)savedChanges {
-    _state[[savedChanges[0] integerValue]] = true;
-}
-
--(bool) canChooseValue:(int)value forVariable:(int)variable {
-    return _state[value];
-}
-
--(int) stateDifferential:(AllDifferentMDDState*)other {
-    int differential = 0;
-    bool* other_state = [other state];
-    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-        if (_state[stateIndex] != other_state[stateIndex]) {
-            differential++;
-        }
-    }
-    return differential;
-}
--(bool) equivalentTo:(AllDifferentMDDState*)other {
-    bool* other_state = [other state];
-    for (int stateIndex = _domainMin; stateIndex <= _domainMax; stateIndex++) {
-        if (_state[stateIndex] != other_state[stateIndex]) {
-            return false;
-        }
-    }
-    return true;
-}
-@end
-
-@implementation AmongMDDState
--(id) initClassState:(int)domainMin domainMax:(int)domainMax setValues:(id<ORIntSet>)set lowerBound:(ORInt)lowerBound upperBound:(ORInt)upperBound numVars:(ORInt)numVars {
-    self = [super initClassState:domainMin domainMax:domainMax];
-    _lowerBound = lowerBound;
-    _upperBound = upperBound;
-//    _upperBoundNumDigits = 0;
-//    while (upperBound > 0) {
-//        _upperBoundNumDigits++;
-//        upperBound/=10;
-//    }
-    _set = set;
-    _numVarsRemaining = numVars;
-    return self;
-}
--(id) initRootState:(AmongMDDState*)classState variableIndex:(int)variableIndex {
-    self = [super initRootState:classState variableIndex:variableIndex];
-    _minState = 0;
-    _maxState = 0;
-    _lowerBound = [classState lowerBound];
-    _upperBound = [classState upperBound];
-//    _upperBoundNumDigits = [classState numDigits];
-    _set = [classState set];
-//    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
-//    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
-//        _stateChar[digitIndex] = '0';
-//    }
-    _numVarsRemaining = [classState numVarsRemaining];
-    return self;
-}
--(id) initState:(AmongMDDState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
-    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
-    int parentMinState = [parentNodeState minState];
-    int parentMaxState = [parentNodeState maxState];
-//    char* parentStateChar = [parentNodeState stateChar];
-    _minState = parentMinState;
-    _maxState = parentMaxState;
-    _lowerBound = [parentNodeState lowerBound];
-    _upperBound = [parentNodeState upperBound];
-//    _upperBoundNumDigits = [parentNodeState numDigits];
-    _set = [parentNodeState set];
-//    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
-    
-    if ([_set member: edgeValue]) {
-        _minState++;
-        _maxState++;
-    }
-/*    int temp = _state;
-    bool changedDigits = true;
-    //stateChar is in reverse order of digits for convenience sake
-    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
-        if (changedDigits) {
-            _stateChar[digitIndex] = (char) ((int)'0' + temp % 10);
-            if (temp % 10 != 0) {
-                changedDigits = false;
-            }
-        } else {
-            _stateChar[digitIndex] = parentStateChar[digitIndex];
-        }
-    }*/
-    _numVarsRemaining = [parentNodeState numVarsRemaining] -1;
-    return self;
-}
--(id) initState:(AmongMDDState*)parentNodeState variableIndex:(int)variableIndex {
-    self = [super initState:parentNodeState variableIndex:variableIndex];
-    int parentMinState = [parentNodeState minState];
-    int parentMaxState = [parentNodeState maxState];
-//    char* parentStateChar = [parentNodeState stateChar];
-    _minState = parentMinState;
-    _maxState = parentMaxState;
-    _lowerBound = [parentNodeState lowerBound];
-    _upperBound = [parentNodeState upperBound];
-//    _upperBoundNumDigits = [parentNodeState numDigits];
-    _set = [parentNodeState set];
-//    _stateChar = malloc((_upperBoundNumDigits) * sizeof(char));
-    
-//    for (int digitIndex = 0; digitIndex < _upperBoundNumDigits; digitIndex++) {
-//        _stateChar[digitIndex] = parentStateChar[digitIndex];
-//    }
-    _numVarsRemaining = [parentNodeState numVarsRemaining];
-    return self;
-}
-
--(int) minState { return _minState; }
--(int) maxState { return _maxState; }
--(int) lowerBound { return _lowerBound; }
--(int) upperBound { return _upperBound; }
-//-(int) numDigits { return _upperBoundNumDigits; }
--(id<ORIntSet>) set { return _set; }
--(int) numVarsRemaining { return _numVarsRemaining; }
-
--(void) mergeStateWith:(AmongMDDState*)other {  //When doing relaxations, will need to complete this.  Need to change class to have the state variable contain its own lower and upper value containing the lowest-most merged value and greatest merged value.  For canChooseValue, compare lowest-most against upperbound and greatest against lower bound to see feasibility
-    int otherMinState = [other minState];
-    int otherMaxState = [other maxState];
-    
-    _minState = min(_minState, otherMinState);
-    _maxState = max(_maxState, otherMaxState);
-}
-
--(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
-    ORBool contained = [_set member:value];
-    NSArray* savedChanges = [[NSArray alloc] initWithObjects:[NSNumber numberWithBool: (contained)], nil];
-    if (contained) {
-        _minState++;
-        _maxState++;
-    }
-    return savedChanges;
-}
-
--(void) undoChanges:(NSArray*)savedChanges {
-    if ([savedChanges[0] boolValue]) {
-        _minState--;
-        _maxState--;
-    }
-}
-
--(bool) canChooseValue:(int)value forVariable:(int)variable {
-    int addition = [_set member:value] ? 1:0;
-    return (_minState + addition <= _upperBound) && (_maxState + addition + _numVarsRemaining -1 >= _lowerBound);
-}
-
--(int) stateDifferential:(AmongMDDState*)other {
-    int minStateDifferential;
-    int maxStateDifferential;
-    int otherMinState = [other minState];
-    int otherMaxState = [other maxState];
-    
-    /*if (max(_minState, otherMinState) + _numVarsRemaining <= _upperBound) {
-        minStateDifferential = 0;
-    } else {
-        int canAdd = _upperBound - _minState;
-        int otherCanAdd = _upperBound - otherMinState;
-        minStateDifferential = abs(canAdd - otherCanAdd);
-    }
-    if (min(_maxState, [other maxState]) >= _lowerBound) {
-        maxStateDifferential = 0;
-    } else {
-        int mustAdd = max(_lowerBound - _maxState, 0);  //Possible that one of the two states doesn't *have* to add any more.  This would cause lb - state to be negative
-        int otherMustAdd = max(_lowerBound - otherMaxState, 0);
-        maxStateDifferential = abs(mustAdd - otherMustAdd);
-    }*/
-    minStateDifferential = abs(_minState - otherMinState)*2;
-    maxStateDifferential = abs(_maxState - otherMaxState)*2;
-    
-    int differential = minStateDifferential + maxStateDifferential + (_maxState - _minState) + (otherMaxState - otherMinState);
-    
-    //could add tie-breakers based on where in potential range the states lie
-    //Example:  If lb is 1 and up is 3, and nodes are compared with states 1, 2, and 3, then depending on numVarsRemaining, it may be preferred to join 1 & 2 vs 2 & 3 despite having the same differential as how it's currently calculated.  If there were only one numVarsRemaining, then 1 & 2 can be combined for free actually.  If there are a lot of variables remaining, it may be better to join 2 & 3. Not positive.
-    
-    return differential;
-}
--(bool) equivalentTo:(AmongMDDState*)other {
-    int otherMinState = [other minState];
-    int otherMaxState = [other maxState];
-    
-    if ((_minState == otherMinState && _maxState == otherMaxState) || (min(_maxState, otherMaxState) >= _lowerBound && max(_minState, otherMinState) +  _numVarsRemaining <= _upperBound)) {
-        //Either same state OR both states are able to select any subset of subsequent variable due to numVarsRemaining being small enough while already meeting lowerBound
-        return true;
-    }
-    return false;
-}
-@end
-
-@implementation JointState
-static NSMutableArray* _stateClasses;
-static NSMutableArray* _stateVariables;
-static id<ORIntVarArray> _variables;
-
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax{
-    _variableIndex = variableIndex;
-    _domainMin = domainMin;
-    _domainMax = domainMax;
-    _states = [[NSMutableArray alloc] init];
-    for (int stateIndex = 0; stateIndex < [_stateClasses count]; stateIndex++) {
-        CustomState* stateClass = [_stateClasses objectAtIndex:stateIndex];
-        CustomState* state = [[[stateClass class] alloc] initRootState:stateClass variableIndex:variableIndex];
-        [_states addObject: state];
-    }
-    return self;
-}
--(id) initState:(JointState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
-    self = [super initState:parentNodeState assignedValue:edgeValue variableIndex:variableIndex];
-    _states = [[NSMutableArray alloc] init];
-    NSMutableArray* parentStates = [parentNodeState states];
-    for (int stateIndex = 0; stateIndex < [_stateClasses count]; stateIndex++) {
-        CustomState* stateClass = [_stateClasses objectAtIndex:stateIndex];
-        CustomState* state;
-        if ([(id<ORIdArray>)(_stateVariables[stateIndex]) contains:[_variables at: [parentNodeState variableIndex]]]) {
-            state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] assigningVariable:variableIndex withValue:edgeValue];
-        } else {
-            state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] variableIndex:variableIndex];
-        }
-        [_states addObject: state];
-    }
-    return self;
-}
-+(void) addStateClass:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables {
-    [_stateClasses addObject:stateClass];
-    [_stateVariables addObject:variables];
-}
-+(void) stateClassesInit { _stateClasses = [[NSMutableArray alloc] init]; _stateVariables = [[NSMutableArray alloc] init]; }
-+(void) setVariables:(id<ORIntVarArray>)variables { _variables = variables; }
-
--(NSMutableArray*) states { return _states; }
-
--(void) mergeStateWith:(JointState*)other {
-    NSMutableArray* otherStates = [other states];
-    
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        CustomState* myState = [_states objectAtIndex:stateIndex];
-        CustomState* otherState = [otherStates objectAtIndex:stateIndex];
-        [myState mergeStateWith:otherState];
-    }
-}
-
--(int) numPathsWithNextVariable:(int)variable {
-    int count = 0;
-    /*for (int fromValue = _domainMin; fromValue <= _domainMax; fromValue++) {
-        if ([self canChooseValue:fromValue forVariable:_variableIndex]) {
-            NSArray* savedChanges = [self tempAlterStateAssigningVariable:_variableIndex value:fromValue toTestVariable:variable];
-            for (int toValue = _domainMin; toValue <= _domainMax; toValue++) {
-                if ([self canChooseValue:toValue forVariable:variable]) {
-                    count++;
-                }
-            }
-            [self undoChanges:savedChanges];
-        }
-    }*/
-    return count;
-}
-
-/*-(char*) stateChar {
-    char** stateChars = malloc([_states count] * sizeof(char*));
-    int size = 0;
-    
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        stateChars[stateIndex] = [[_states objectAtIndex:stateIndex] stateChar];
-        size += strlen(stateChars[stateIndex]);
-    }
-    char* stateChar = malloc(size);
-    strcpy(stateChar, stateChars[0]);
-    for (int stateIndex = 1; stateIndex < [_states count]; stateIndex++) {
-        strcat(stateChar, stateChars[stateIndex]);
-    }
-    
-    return stateChar;
-}*/
-
--(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
-    NSMutableArray* savedChanges = [[NSMutableArray alloc] init];
-    
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        NSArray* stateSavedChanges;
-        if ([(id<ORIdArray>)_stateVariables[stateIndex] contains:[_variables at: variable]]) {
-            stateSavedChanges = [[_states objectAtIndex:stateIndex] tempAlterStateAssigningVariable:variable value:value toTestVariable:toVariable];
-        } else {
-            stateSavedChanges = [[NSArray alloc] init];
-        }
-        
-        [savedChanges addObject:stateSavedChanges];
-    }
-    return savedChanges;
-}
-
--(void) undoChanges:(NSArray*)savedChanges {
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        if ([[savedChanges objectAtIndex:stateIndex] count] > 0) {
-            [[_states objectAtIndex: stateIndex] undoChanges: [savedChanges objectAtIndex:stateIndex]];
-        }
-    }
-}
-
--(bool) canChooseValue:(int)value forVariable:(int)variable {
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        if ([(id<ORIdArray>)_stateVariables[stateIndex] contains:[_variables at: variable]]) {
-            if (![[_states objectAtIndex:stateIndex] canChooseValue:value forVariable:variable]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
--(int) stateDifferential:(JointState*)other {
-    int differential = 0;
-    NSMutableArray* other_states = [other states];
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        differential += [[_states objectAtIndex:stateIndex] stateDifferential:[other_states objectAtIndex:stateIndex]];
-    }
-    return differential;
-}
--(bool) equivalentTo:(JointState*)other {
-    NSMutableArray* other_states = [other states];
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        if (![[_states objectAtIndex:stateIndex] equivalentTo:[other_states objectAtIndex:stateIndex]]) {
-            return false;
-        }
-    }
-    return true;
-}
-@end
-
-
+ 
 @implementation ORMDDify {
 @protected
     id<ORAddToModel> _into;
@@ -1056,6 +128,9 @@ static id<ORIntVarArray> _variables;
     bool _hasObjective;
     id<ORIntVar> _objectiveVar;
     bool _maximize;
+    bool _relaxed;
+    
+    NSMutableArray* _mddSpecConstraints;
 }
 
 -(id)initORMDDify: (id<ORAddToModel>) into
@@ -1063,6 +138,7 @@ static id<ORIntVarArray> _variables;
     self = [super init];
     _into = into;
     _mddConstraints = [[NSMutableArray alloc] init];
+    _mddSpecConstraints = [[NSMutableArray alloc] init];
     _variables = NULL;
     _maximize = false;
     _hasObjective = false;
@@ -1072,7 +148,7 @@ static id<ORIntVarArray> _variables;
 -(void) apply:(id<ORModel>) m with:(id<ORAnnotation>)notes {
     _notes = notes;
     ORInt width = [_notes findGeneric: DDWidth];
-    bool relaxed = [_notes findGeneric: DDRelaxed];
+    _relaxed = [_notes findGeneric: DDRelaxed];
     [JointState stateClassesInit];
     [m applyOnVar: ^(id<ORVar> x) {
         [_into addVariable:x];
@@ -1094,14 +170,37 @@ static id<ORIntVarArray> _variables;
           [o visit: self];
       }];
     
-    [JointState setVariables:_variables];
+    if ([_mddSpecConstraints count] > 0) {
+        [self combineMDDSpecs];
+    }
     
     id<ORConstraint> mddConstraint;
-    if (_hasObjective) {
-        mddConstraint = [ORFactory CustomMDDWithObjective:m var:_variables relaxed:relaxed size:width objective: _objectiveVar maximize:_maximize stateClass:[JointState class]];
-    } else {
-        mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:relaxed size:width stateClass:[JointState class]];
-    }
+    
+    /*if ([AltJointState numStates] > 0) {
+        [AltJointState setVariables:_variables];
+        //if ([AltJointState numStates] > 1) {
+            mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[AltJointState class]];
+        //} else {
+        //    CustomState* onlyState = [JointState firstState];
+        //    [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
+        //    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class]];
+        //}
+    } else {*/
+        [JointState setVariables:_variables];
+        
+        if (_hasObjective) {
+            mddConstraint = [ORFactory CustomMDDWithObjective:m var:_variables relaxed:_relaxed size:width objective: _objectiveVar maximize:_maximize stateClass:[JointState class]];
+        } else {
+            if ([JointState numStates] > 1) {
+                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[JointState class]];
+            } else {
+                CustomState* onlyState = [JointState firstState];
+                [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
+                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class]];
+            }
+        }
+    //}
+    
     [_into trackConstraintInGroup: mddConstraint];
     [_into addConstraint: mddConstraint];
     
@@ -1115,9 +214,243 @@ static id<ORIntVarArray> _variables;
 
 -(id<ORAddToModel>)target { return _into; }
 
+-(NSDictionary*) checkForStateEquivalences:(id<ORMDDSpecs>)mergeInto and:(id<ORMDDSpecs>)other {
+    NSMutableDictionary* mappings = [[NSMutableDictionary alloc] init];
+    return mappings;
+    int stateSize1 = [mergeInto stateSize];
+    int stateSize2 = [other stateSize];
+    ORDDExpressionEquivalenceChecker* equivalenceChecker = [[ORDDExpressionEquivalenceChecker alloc] init];
+    
+    int** candidates = malloc(stateSize1 * sizeof(int*));
+    for (int i = 0; i < stateSize1; i++) {
+        candidates[i] = malloc(stateSize2 * sizeof(int));
+        for (int j = 0; j < stateSize2; j++) {
+            candidates[i][j] = true;
+        }
+    }
+    
+    for (int i = 0; i < stateSize1; i++) {
+        for (int j = 0; j < stateSize2; j++) {
+            if (candidates[i][j]) {
+                NSMutableDictionary* dependentMappings = [[NSMutableDictionary alloc] init];
+                if ([self areEquivalent:mergeInto atIndex:i and:other atIndex:j withDependentMapping:dependentMappings andConfirmedMapping:mappings equivalenceVisitor:equivalenceChecker candidates:candidates]) {
+                    [mappings addEntriesFromDictionary:dependentMappings];
+                    NSArray* keys = [dependentMappings allKeys];
+                    for (NSNumber* key in keys) {
+                        int otherIndex = [key intValue];
+                        int mergeIntoIndex = [[dependentMappings objectForKey:key] intValue];
+                        for (int index = i; index < stateSize1; index++) {
+                            candidates[index][otherIndex] = false;
+                        }
+                        for (int index = j; index < stateSize2; index++) {
+                            candidates[mergeIntoIndex][index] = false;
+                        }
+                    }
+                } else {
+                    candidates[i][j] = false;
+                }
+            }
+        }
+    }
+    
+    return mappings;
+}
+
+-(bool) areEquivalent:(id<ORMDDSpecs>)mergeInto atIndex:(int)index1 and:(id<ORMDDSpecs>)other atIndex:(int)index2 withDependentMapping:(NSMutableDictionary*)dependentMappings andConfirmedMapping:(NSMutableDictionary*)confirmedMappings equivalenceVisitor:(ORDDExpressionEquivalenceChecker*)equivalenceChecker candidates:(int**)candidates
+{
+    if (![[mergeInto stateValues][index1] isEqual: [other stateValues][index2]]) {   //Different initial value
+        //TODO: Does this need to be updated?
+        candidates[index1][index2] = false;
+        return false;
+    }
+    
+    id<ORExpr> mergeIntoTransitionFunction = [mergeInto transitionFunctions][index1];
+    id<ORExpr> otherTransitionFunction = [other transitionFunctions][index2];
+    NSMutableArray* dependencies = [equivalenceChecker checkEquivalence: mergeIntoTransitionFunction and:otherTransitionFunction];
+    id<ORExpr> mergeIntoRelaxationFunction = [mergeInto relaxationFunctions][index1];
+    id<ORExpr> otherRelaxationFunction = [other relaxationFunctions][index2];
+    NSArray* relaxationDependencies = [equivalenceChecker checkEquivalence:mergeIntoRelaxationFunction and:otherRelaxationFunction];
+    id<ORExpr> mergeIntoDifferentialFunction = [mergeInto differentialFunctions][index1];
+    id<ORExpr> otherDifferentialFunction = [other differentialFunctions][index2];
+    NSArray* differentialDependencies = [equivalenceChecker checkEquivalence:mergeIntoDifferentialFunction and:otherDifferentialFunction];
+    [dependencies addObjectsFromArray:relaxationDependencies];
+    [dependencies addObjectsFromArray:differentialDependencies];
+    if (dependencies == NULL) { //Transition, relaxation, or differential function is different
+        candidates[index1][index2] = false;
+        return false;
+    }
+    [dependentMappings setObject:[[NSNumber alloc] initWithInt:index1] forKey:[[NSNumber alloc] initWithInt:index2]];
+    for (id dependency in dependencies) {
+        int mergeIntoDependency = [dependency[0] intValue];
+        NSNumber* mergeIntoDependencyObj = [[NSNumber alloc] initWithInt: mergeIntoDependency];
+        int otherDependency = [dependency[1] intValue];
+        NSNumber* otherDependencyObj = [[NSNumber alloc] initWithInt: otherDependency];
+        if (!([confirmedMappings objectForKey:otherDependencyObj] == mergeIntoDependencyObj ||
+              [dependentMappings objectForKey:otherDependencyObj] == mergeIntoDependencyObj)) {
+            //Not already a found mapping
+            if (!candidates[mergeIntoDependency][otherDependency]) {
+                //If already confirmed to not be a mapping
+                return false;
+            }
+            
+            if (![self areEquivalent:mergeInto atIndex:mergeIntoDependency and:other atIndex:otherDependency withDependentMapping:dependentMappings andConfirmedMapping:confirmedMappings equivalenceVisitor:equivalenceChecker candidates:candidates]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+-(void) combineMDDSpecs
+{
+    NSMutableArray* mainMDDSpecList = [[NSMutableArray alloc] initWithObjects:[_mddSpecConstraints objectAtIndex:0],nil];
+
+    
+    for (int mddSpecIndex = 1; mddSpecIndex < [_mddSpecConstraints count]; mddSpecIndex++) {
+        id<ORMDDSpecs> mddSpec = [_mddSpecConstraints objectAtIndex:mddSpecIndex];
+        
+        bool sharedVarList = false;
+        for (id<ORMDDSpecs> mainMDDSpec in mainMDDSpecList) {
+            if ([mainMDDSpec vars] == [mddSpec vars]) {
+                sharedVarList = true;
+                int mainStateSize = [mainMDDSpec stateSize];
+                
+                id* stateValues = [mddSpec stateValues];
+                int stateSize = [mddSpec stateSize];
+                id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
+                id<ORExpr>* relaxationFunctions = [mddSpec relaxationFunctions];
+                id<ORExpr>* differentialFunctions = [mddSpec differentialFunctions];
+                
+                NSDictionary* mergeMappings = [self checkForStateEquivalences:mainMDDSpec and:mddSpec];
+                
+                int numShared = (int)[mergeMappings count];
+                int numToAdd = stateSize - numShared;
+                id* separateStatesToAdd = malloc(numToAdd * sizeof(id));
+                int* indicesToAdd = malloc(numToAdd * sizeof(int));
+                
+                NSMutableDictionary* totalMapping = [[NSMutableDictionary alloc] init];
+                int newStateCount = 0;
+                for (int index = 0; index < stateSize; index++) {
+                    NSNumber* mergeMappingValue =[mergeMappings objectForKey:[[NSNumber alloc] initWithInt:index]];
+                    if (mergeMappingValue == nil) {
+                        [totalMapping setObject:[[NSNumber alloc] initWithInt: (newStateCount+mainStateSize)] forKey:[[NSNumber alloc] initWithInt: index]];
+                        separateStatesToAdd[newStateCount] = stateValues[index];
+                        indicesToAdd[newStateCount] = index;
+                        newStateCount++;
+                    }
+                }
+                [totalMapping addEntriesFromDictionary:mergeMappings];
+                
+                [mainMDDSpec addStates:separateStatesToAdd size:numToAdd];
+                
+                ORDDUpdateSpecs* updateFunctions = [[ORDDUpdateSpecs alloc] initORDDUpdateSpecs:totalMapping];
+                
+                for (int i = 0; i < numToAdd; i++) {
+                    int index = indicesToAdd[i];
+                    
+                    [updateFunctions updateSpecs:transitionFunctions[index]];
+                    [mainMDDSpec addTransitionFunction:transitionFunctions[index] toStateValue:(mainStateSize+i)];
+                    
+                    [updateFunctions updateSpecs:differentialFunctions[index]];
+                    [mainMDDSpec addStateDifferentialFunction:differentialFunctions[index] toStateValue:(mainStateSize+i)];
+                }
+                if (_relaxed) {
+                    for  (int i = 0; i < numToAdd; i++) {
+                        int index = indicesToAdd[i];
+                    
+                        [updateFunctions updateSpecs:relaxationFunctions[index]];
+                        [mainMDDSpec addRelaxationFunction:relaxationFunctions[index] toStateValue:(mainStateSize+i)];
+                    }
+                }
+                id<ORExpr> oldArcExists = [mainMDDSpec arcExists];
+                id<ORExpr> arcExists = [mddSpec arcExists];
+                [updateFunctions updateSpecs:arcExists];
+                id<ORExpr> newArcExists = [oldArcExists land:arcExists];
+                [mainMDDSpec setArcExistsFunction:newArcExists];
+                
+                break;
+                /*
+                NSMutableDictionary* mergeMapping = [[NSMutableDictionary alloc] init];
+                for (int mainStateIndex = 0; mainStateIndex < mainStateSize; mainStateIndex++) {
+                    for (int stateIndex = 0; stateIndex < stateSize; stateIndex++) {
+                        if (mainStateValues[mainStateIndex] == stateValues[stateIndex]) {   //Same initial value
+                            NSArray* dependencies = [equivalenceChecker checkEquivalence: mainTransitionFunctions[mainStateIndex] and:transitionFunctions[stateIndex]];
+                            if (dependencies != NULL) {
+                                if ([dependencies count] == 0) {
+                                    [mergeMapping setObject:[[NSNumber alloc] initWithInt:mainStateIndex] forKey:[[NSNumber alloc] initWithInt:stateIndex]];
+                                } else {
+                                    bool dependenciesAreValid = true;
+                                    for (id dependency in dependencies) {
+                                        int mainStateValue = [dependency[0] intValue];
+                                        int stateValue = [dependency[1] intValue];
+                                        if (mainStateValue < mainStateIndex || (mainStateValue == mainStateIndex && stateValue < stateIndex)) {
+                                            //If we've already checked this potential mapping
+                                            if ([mergeMapping objectForKey:dependency[1]] != dependency[0]) {
+                                                //Mapping has been found to not hold
+                                                dependenciesAreValid = false;
+                                                break;
+                                            }
+                                        } else if (mainStateValue != mainStateIndex || stateValue != stateIndex) {
+                                            //Is not one already checked and isn't just itself
+                                            
+                                            
+                                        }
+                                    }
+                                    if (dependenciesAreValid) {
+                                        [mergeMapping setObject:[[NSNumber alloc] initWithInt:mainStateIndex] forKey:[[NSNumber alloc] initWithInt: stateIndex]];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }*/
+            }
+        }
+        if (!sharedVarList) {
+            [mainMDDSpecList addObject:mddSpec];
+        }
+    }
+    
+    ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
+    ORDDMergeClosureGenerator *mergeClosureVisitor = [[ORDDMergeClosureGenerator alloc] init];
+    for (id<ORMDDSpecs> mddSpec in mainMDDSpecList) {
+        id<ORIntVarArray> vars = [mddSpec vars];
+        id<ORExpr> arcExists = [mddSpec arcExists];
+        DDClosure arcExistsClosure = [closureVisitor computeClosure:arcExists];
+        id* stateValues = [mddSpec stateValues];
+        id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
+        id<ORExpr>* relaxationFunctions = [mddSpec relaxationFunctions];
+        id<ORExpr>* differentialFunctions = [mddSpec differentialFunctions];
+        int stateSize = [mddSpec stateSize];
+        DDClosure* transitionFunctionClosures = malloc(stateSize * sizeof(DDClosure));
+        DDMergeClosure* differentialFunctionClosures = malloc(stateSize * sizeof(DDMergeClosure));
+        for (int transitionFunctionIndex = 0; transitionFunctionIndex < stateSize; transitionFunctionIndex++) {
+            transitionFunctionClosures[transitionFunctionIndex] = [closureVisitor computeClosure: transitionFunctions[transitionFunctionIndex]];
+            differentialFunctionClosures[transitionFunctionIndex] = [mergeClosureVisitor computeClosure: differentialFunctions[transitionFunctionIndex]];
+        }
+        
+        if (_relaxed) {
+            DDMergeClosure* relaxationFunctionClosures = malloc(stateSize * sizeof(DDMergeClosure));
+            for (int relaxationFunctionIndex = 0; relaxationFunctionIndex < stateSize; relaxationFunctionIndex++) {
+                relaxationFunctionClosures[relaxationFunctionIndex] = [mergeClosureVisitor computeClosure: relaxationFunctions[relaxationFunctionIndex]];
+            }
+            [JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize] withVariables:vars];
+        } else {
+            [JointState addStateClass:[[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:vars];
+        }
+        if ([_variables count] == 0) {
+            _variables = vars;
+        } else {
+            _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
+        }
+    }
+}
 
 -(void) visitMDDSpecs:(id<ORMDDSpecs>)cstr
 {
+    [_mddSpecConstraints addObject:cstr];
+    
+    /*
     ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
     id<ORIntVarArray> cstrVars = [cstr vars];
     id<ORExpr> arcExists = [cstr arcExists];
@@ -1131,8 +464,61 @@ static id<ORIntVarArray> _variables;
     }
     [JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[cstrVars low] domainMax:[cstrVars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:cstrVars];
      _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker:_into];
+     */
 }
-
+-(void) visitAltMDDSpecs:(id<ORAltMDDSpecs>)cstr
+{
+    id<ORIntVarArray> cstrVars = [cstr vars];
+    id<ORExpr> edgeDeletionCondition = [cstr edgeDeletionCondition];
+    bool objective = [cstr objective];
+    
+    ORAltMDDParentChildEdgeClosureGenerator* parentChildEdgeClosureVisitor = [[ORAltMDDParentChildEdgeClosureGenerator alloc] init];
+    ORAltMDDLeftRightClosureGenerator* leftRightClosureVisitor = [[ORAltMDDLeftRightClosureGenerator alloc] init];
+    ORAltMDDParentEdgeClosureGenerator* parentEdgeClosureVisitor = [[ORAltMDDParentEdgeClosureGenerator alloc] init];
+    
+    AltMDDDeleteEdgeCheckClosure edgeDeletionClosure = [parentChildEdgeClosureVisitor computeClosure: edgeDeletionCondition];
+    
+    if ([cstr isMinMaxTopDownInfo]) {
+        id minTopDownInfo = [cstr minTopDownInfo];
+        id maxTopDownInfo = [cstr maxTopDownInfo];
+        id minBottomUpInfo = [cstr minBottomUpInfo];
+        id maxBottomUpInfo = [cstr maxBottomUpInfo];
+        id<ORExpr> minTopDownInfoEdgeAddition = [cstr minTopDownInfoEdgeAddition];
+        id<ORExpr> maxTopDownInfoEdgeAddition = [cstr maxTopDownInfoEdgeAddition];
+        id<ORExpr> minBottomUpInfoEdgeAddition = [cstr minBottomUpInfoEdgeAddition];
+        id<ORExpr> maxBottomUpInfoEdgeAddition = [cstr maxBottomUpInfoEdgeAddition];
+        AltMDDAddEdgeClosure minTopDownInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: minTopDownInfoEdgeAddition];
+        AltMDDAddEdgeClosure maxTopDownInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: maxTopDownInfoEdgeAddition];
+        AltMDDAddEdgeClosure minBottomUpInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: minBottomUpInfoEdgeAddition];
+        AltMDDAddEdgeClosure maxBottomUpInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: maxBottomUpInfoEdgeAddition];
+        id<ORExpr> minTopDownInfoMerge = [cstr minTopDownInfoMerge];
+        id<ORExpr> maxTopDownInfoMerge = [cstr maxTopDownInfoMerge];
+        id<ORExpr> minBottomUpInfoMerge = [cstr minBottomUpInfoMerge];
+        id<ORExpr> maxBottomUpInfoMerge = [cstr maxBottomUpInfoMerge];
+        AltMDDMergeInfoClosure minTopDownMergeClosure = [leftRightClosureVisitor computeClosure: minTopDownInfoMerge];
+        AltMDDMergeInfoClosure maxTopDownMergeClosure = [leftRightClosureVisitor computeClosure: maxTopDownInfoMerge];
+        AltMDDMergeInfoClosure minBottomUpMergeClosure = [leftRightClosureVisitor computeClosure: minBottomUpInfoMerge];
+        AltMDDMergeInfoClosure maxBottomUpMergeClosure = [leftRightClosureVisitor computeClosure: maxBottomUpInfoMerge];
+        [AltJointState addStateClass: [[AltMDDStateSpecification alloc] initMinMaxClassState:[cstrVars low] domainMax:[cstrVars up] minTopDownInfo:minTopDownInfo maxTopDownInfo:maxTopDownInfo minbottomUpInfo:minBottomUpInfo maxBottomUpInfo:maxBottomUpInfo minTopDownEdgeAddition:minTopDownInfoEdgeAdditionClosure maxTopDownEdgeAddition:maxTopDownInfoEdgeAdditionClosure minBottomUpEdgeAddition:minBottomUpInfoEdgeAdditionClosure maxBottomUpEdgeAddition:maxBottomUpInfoEdgeAdditionClosure minTopDownMerge:minTopDownMergeClosure maxTopDownMerge:maxTopDownMergeClosure minBottomUpMerge:minBottomUpMergeClosure maxBottomUpMerge:maxBottomUpMergeClosure edgeDeletion:edgeDeletionClosure objective:(bool)objective] withVariables:cstrVars];
+    } else {
+        id topDownInfo = [cstr topDownInfo];
+        id bottomUpInfo = [cstr bottomUpInfo];
+        id<ORExpr> topDownInfoEdgeAddition = [cstr topDownInfoEdgeAddition];
+        id<ORExpr> bottomUpInfoEdgeAddition = [cstr bottomUpInfoEdgeAddition];
+        AltMDDAddEdgeClosure topDownInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: topDownInfoEdgeAddition];
+        AltMDDAddEdgeClosure bottomUpInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: bottomUpInfoEdgeAddition];
+        id<ORExpr> topDownInfoMerge = [cstr topDownInfoMerge];
+        id<ORExpr> bottomUpInfoMerge = [cstr bottomUpInfoMerge];
+        AltMDDMergeInfoClosure topDownMergeClosure = [leftRightClosureVisitor computeClosure: topDownInfoMerge];
+        AltMDDMergeInfoClosure bottomUpMergeClosure = [leftRightClosureVisitor computeClosure: bottomUpInfoMerge];
+        [AltJointState addStateClass: [[AltMDDStateSpecification alloc] initClassState:[cstrVars low] domainMax:[cstrVars up] topDownInfo:topDownInfo bottomUpInfo:bottomUpInfo topDownEdgeAddition:topDownInfoEdgeAdditionClosure bottomUpEdgeAddition:bottomUpInfoEdgeAdditionClosure topDownMerge:topDownMergeClosure bottomUpMerge:bottomUpMergeClosure edgeDeletion:edgeDeletionClosure objective:objective] withVariables:cstrVars];
+    }
+    if ([_variables count] == 0) {
+        _variables= cstrVars;
+    } else {
+        //_variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker:_into];
+    }
+}
 
 
 -(void) visitAlldifferent:(id<ORAlldifferent>)cstr

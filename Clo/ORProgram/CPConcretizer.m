@@ -1846,6 +1846,19 @@
 
 
 
+-(void) visitCustomAltMDD: (id<ORCustomAltMDD>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVarArray>   or = [cstr vars];
+        id<CPIntVarArray>    a = [self concreteArray: (id)or];
+        bool relaxed           = [cstr relaxed];
+        ORInt relaxationSize   = [cstr relaxationSize];
+        Class stateClass      = [cstr stateClass];
+        id<CPConstraint> concreteCstr = [CPFactory CustomAltMDD:_engine over: a relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 -(void) visitCustomMDD: (id<ORCustomMDD>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1877,6 +1890,10 @@
 -(void) visitMDDSpecs: (id<ORMDDSpecs>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MDDSpecs constraints"];
+}
+-(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>) cstr
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for AltMDDSpecs constraints"];
 }
 @end
 

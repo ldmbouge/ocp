@@ -706,6 +706,12 @@
 }
 
 
++(id<CPConstraint>) CustomAltMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
+{
+    id<CPConstraint> o = [[CPCustomAltMDD alloc] initCPCustomAltMDD: cp over: x relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
+    [[x tracker] trackMutable:o];
+    return o;
+}
 +(id<CPConstraint>) CustomMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
     id<CPConstraint> o = [[CPCustomMDD alloc] initCPCustomMDD: cp over: x relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
