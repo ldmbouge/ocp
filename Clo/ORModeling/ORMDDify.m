@@ -176,7 +176,7 @@
     
     id<ORConstraint> mddConstraint;
     
-    if ([AltJointState numStates] > 0) {
+    /*if ([AltJointState numStates] > 0) {
         [AltJointState setVariables:_variables];
         //if ([AltJointState numStates] > 1) {
             mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[AltJointState class]];
@@ -185,7 +185,7 @@
         //    [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
         //    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class]];
         //}
-    } else {
+    } else {*/
         [JointState setVariables:_variables];
         
         if (_hasObjective) {
@@ -199,7 +199,7 @@
                 mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class]];
             }
         }
-    }
+    //}
     
     [_into trackConstraintInGroup: mddConstraint];
     [_into addConstraint: mddConstraint];
@@ -216,6 +216,7 @@
 
 -(NSDictionary*) checkForStateEquivalences:(id<ORMDDSpecs>)mergeInto and:(id<ORMDDSpecs>)other {
     NSMutableDictionary* mappings = [[NSMutableDictionary alloc] init];
+    return mappings;
     int stateSize1 = [mergeInto stateSize];
     int stateSize2 = [other stateSize];
     ORDDExpressionEquivalenceChecker* equivalenceChecker = [[ORDDExpressionEquivalenceChecker alloc] init];
@@ -257,7 +258,8 @@
 
 -(bool) areEquivalent:(id<ORMDDSpecs>)mergeInto atIndex:(int)index1 and:(id<ORMDDSpecs>)other atIndex:(int)index2 withDependentMapping:(NSMutableDictionary*)dependentMappings andConfirmedMapping:(NSMutableDictionary*)confirmedMappings equivalenceVisitor:(ORDDExpressionEquivalenceChecker*)equivalenceChecker candidates:(int**)candidates
 {
-    if ([mergeInto stateValues][index1] != [other stateValues][index2]) {   //Different initial value
+    if (![[mergeInto stateValues][index1] isEqual: [other stateValues][index2]]) {   //Different initial value
+        //TODO: Does this need to be updated?
         candidates[index1][index2] = false;
         return false;
     }
@@ -313,7 +315,7 @@
                 sharedVarList = true;
                 int mainStateSize = [mainMDDSpec stateSize];
                 
-                int* stateValues = [mddSpec stateValues];
+                id* stateValues = [mddSpec stateValues];
                 int stateSize = [mddSpec stateSize];
                 id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
                 id<ORExpr>* relaxationFunctions = [mddSpec relaxationFunctions];
@@ -323,7 +325,7 @@
                 
                 int numShared = (int)[mergeMappings count];
                 int numToAdd = stateSize - numShared;
-                int* separateStatesToAdd = malloc(numToAdd * sizeof(int));
+                id* separateStatesToAdd = malloc(numToAdd * sizeof(id));
                 int* indicesToAdd = malloc(numToAdd * sizeof(int));
                 
                 NSMutableDictionary* totalMapping = [[NSMutableDictionary alloc] init];
@@ -415,7 +417,7 @@
         id<ORIntVarArray> vars = [mddSpec vars];
         id<ORExpr> arcExists = [mddSpec arcExists];
         DDClosure arcExistsClosure = [closureVisitor computeClosure:arcExists];
-        int* stateValues = [mddSpec stateValues];
+        id* stateValues = [mddSpec stateValues];
         id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
         id<ORExpr>* relaxationFunctions = [mddSpec relaxationFunctions];
         id<ORExpr>* differentialFunctions = [mddSpec differentialFunctions];
@@ -467,24 +469,50 @@
 -(void) visitAltMDDSpecs:(id<ORAltMDDSpecs>)cstr
 {
     id<ORIntVarArray> cstrVars = [cstr vars];
-    id topDownInfo = [cstr topDownInfo];
-    id bottomUpInfo = [cstr bottomUpInfo];
     id<ORExpr> edgeDeletionCondition = [cstr edgeDeletionCondition];
-    id<ORExpr> topDownInfoEdgeAddition = [cstr topDownInfoEdgeAddition];
-    id<ORExpr> bottomUpInfoEdgeAddition = [cstr bottomUpInfoEdgeAddition];
-    id<ORExpr> topDownInfoMerge = [cstr topDownInfoMerge];
-    id<ORExpr> bottomUpInfoMerge = [cstr bottomUpInfoMerge];
+    bool objective = [cstr objective];
     
     ORAltMDDParentChildEdgeClosureGenerator* parentChildEdgeClosureVisitor = [[ORAltMDDParentChildEdgeClosureGenerator alloc] init];
     ORAltMDDLeftRightClosureGenerator* leftRightClosureVisitor = [[ORAltMDDLeftRightClosureGenerator alloc] init];
     ORAltMDDParentEdgeClosureGenerator* parentEdgeClosureVisitor = [[ORAltMDDParentEdgeClosureGenerator alloc] init];
     
     AltMDDDeleteEdgeCheckClosure edgeDeletionClosure = [parentChildEdgeClosureVisitor computeClosure: edgeDeletionCondition];
-    AltMDDAddEdgeClosure topDownInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: topDownInfoEdgeAddition];
-    AltMDDAddEdgeClosure bottomUpInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: bottomUpInfoEdgeAddition];
-    AltMDDMergeInfoClosure topDownMergeClosure = [leftRightClosureVisitor computeClosure: topDownInfoMerge];
-    AltMDDMergeInfoClosure bottomUpMergeClosure = [leftRightClosureVisitor computeClosure: bottomUpInfoMerge];
-    [AltJointState addStateClass: [[AltMDDStateSpecification alloc] initClassState:[cstrVars low] domainMax:[cstrVars up] topDownInfo:topDownInfo bottomUpInfo:bottomUpInfo topDownEdgeAddition:topDownInfoEdgeAdditionClosure bottomUpEdgeAddition:bottomUpInfoEdgeAdditionClosure topDownMerge:topDownMergeClosure bottomUpMerge:bottomUpMergeClosure edgeDeletion:edgeDeletionClosure] withVariables:cstrVars];
+    
+    if ([cstr isMinMaxTopDownInfo]) {
+        id minTopDownInfo = [cstr minTopDownInfo];
+        id maxTopDownInfo = [cstr maxTopDownInfo];
+        id minBottomUpInfo = [cstr minBottomUpInfo];
+        id maxBottomUpInfo = [cstr maxBottomUpInfo];
+        id<ORExpr> minTopDownInfoEdgeAddition = [cstr minTopDownInfoEdgeAddition];
+        id<ORExpr> maxTopDownInfoEdgeAddition = [cstr maxTopDownInfoEdgeAddition];
+        id<ORExpr> minBottomUpInfoEdgeAddition = [cstr minBottomUpInfoEdgeAddition];
+        id<ORExpr> maxBottomUpInfoEdgeAddition = [cstr maxBottomUpInfoEdgeAddition];
+        AltMDDAddEdgeClosure minTopDownInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: minTopDownInfoEdgeAddition];
+        AltMDDAddEdgeClosure maxTopDownInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: maxTopDownInfoEdgeAddition];
+        AltMDDAddEdgeClosure minBottomUpInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: minBottomUpInfoEdgeAddition];
+        AltMDDAddEdgeClosure maxBottomUpInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: maxBottomUpInfoEdgeAddition];
+        id<ORExpr> minTopDownInfoMerge = [cstr minTopDownInfoMerge];
+        id<ORExpr> maxTopDownInfoMerge = [cstr maxTopDownInfoMerge];
+        id<ORExpr> minBottomUpInfoMerge = [cstr minBottomUpInfoMerge];
+        id<ORExpr> maxBottomUpInfoMerge = [cstr maxBottomUpInfoMerge];
+        AltMDDMergeInfoClosure minTopDownMergeClosure = [leftRightClosureVisitor computeClosure: minTopDownInfoMerge];
+        AltMDDMergeInfoClosure maxTopDownMergeClosure = [leftRightClosureVisitor computeClosure: maxTopDownInfoMerge];
+        AltMDDMergeInfoClosure minBottomUpMergeClosure = [leftRightClosureVisitor computeClosure: minBottomUpInfoMerge];
+        AltMDDMergeInfoClosure maxBottomUpMergeClosure = [leftRightClosureVisitor computeClosure: maxBottomUpInfoMerge];
+        [AltJointState addStateClass: [[AltMDDStateSpecification alloc] initMinMaxClassState:[cstrVars low] domainMax:[cstrVars up] minTopDownInfo:minTopDownInfo maxTopDownInfo:maxTopDownInfo minbottomUpInfo:minBottomUpInfo maxBottomUpInfo:maxBottomUpInfo minTopDownEdgeAddition:minTopDownInfoEdgeAdditionClosure maxTopDownEdgeAddition:maxTopDownInfoEdgeAdditionClosure minBottomUpEdgeAddition:minBottomUpInfoEdgeAdditionClosure maxBottomUpEdgeAddition:maxBottomUpInfoEdgeAdditionClosure minTopDownMerge:minTopDownMergeClosure maxTopDownMerge:maxTopDownMergeClosure minBottomUpMerge:minBottomUpMergeClosure maxBottomUpMerge:maxBottomUpMergeClosure edgeDeletion:edgeDeletionClosure objective:(bool)objective] withVariables:cstrVars];
+    } else {
+        id topDownInfo = [cstr topDownInfo];
+        id bottomUpInfo = [cstr bottomUpInfo];
+        id<ORExpr> topDownInfoEdgeAddition = [cstr topDownInfoEdgeAddition];
+        id<ORExpr> bottomUpInfoEdgeAddition = [cstr bottomUpInfoEdgeAddition];
+        AltMDDAddEdgeClosure topDownInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: topDownInfoEdgeAddition];
+        AltMDDAddEdgeClosure bottomUpInfoEdgeAdditionClosure = [parentEdgeClosureVisitor computeClosure: bottomUpInfoEdgeAddition];
+        id<ORExpr> topDownInfoMerge = [cstr topDownInfoMerge];
+        id<ORExpr> bottomUpInfoMerge = [cstr bottomUpInfoMerge];
+        AltMDDMergeInfoClosure topDownMergeClosure = [leftRightClosureVisitor computeClosure: topDownInfoMerge];
+        AltMDDMergeInfoClosure bottomUpMergeClosure = [leftRightClosureVisitor computeClosure: bottomUpInfoMerge];
+        [AltJointState addStateClass: [[AltMDDStateSpecification alloc] initClassState:[cstrVars low] domainMax:[cstrVars up] topDownInfo:topDownInfo bottomUpInfo:bottomUpInfo topDownEdgeAddition:topDownInfoEdgeAdditionClosure bottomUpEdgeAddition:bottomUpInfoEdgeAdditionClosure topDownMerge:topDownMergeClosure bottomUpMerge:bottomUpMergeClosure edgeDeletion:edgeDeletionClosure objective:objective] withVariables:cstrVars];
+    }
     if ([_variables count] == 0) {
         _variables= cstrVars;
     } else {

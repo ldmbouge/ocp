@@ -82,6 +82,7 @@
 -(int) variableIndex { return _variableIndex; }
 -(int) domainMin { return _domainMin; }
 -(int) domainMax { return _domainMax; }
+-(bool) isObjective { return _objective; }
 +(void) setAsOnlyMDDWithClassState:(AltCustomState*)classState
 {
     return;
@@ -165,14 +166,14 @@
 @end
 
 @implementation MDDStateSpecification
-static int* StateValues;
+static id* StateValues;
 static DDClosure ArcExists;
 static DDClosure* TransitionFunctions;
 static DDMergeClosure* RelaxationFunctions;
 static DDMergeClosure* DifferentialFunctions;
 static int StateSize;
 
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
 {
     [super initClassState:domainMin domainMax:domainMax];
     _state = stateValues;
@@ -181,7 +182,7 @@ static int StateSize;
     _stateSize = stateSize;
     return self;
 }
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions stateSize:(int)stateSize;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions stateSize:(int)stateSize;
 {
     [super initClassState:domainMin domainMax:domainMax];
     _state = stateValues;
@@ -191,7 +192,7 @@ static int StateSize;
     _stateSize = stateSize;
     return self;
 }
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions stateSize:(int)stateSize;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions stateSize:(int)stateSize;
 {
     [super initClassState:domainMin domainMax:domainMax];
     _state = stateValues;
@@ -203,7 +204,7 @@ static int StateSize;
     return self;
 }
 
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax{
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail{
     _variableIndex = variableIndex;
     _domainMin = domainMin;
     _domainMax = domainMax;
@@ -229,10 +230,10 @@ static int StateSize;
 -(id) initState:(MDDStateSpecification*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
     self = [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
     _stateSize = [parentNodeState stateSize];
-    int* parentState = [parentNodeState state];
+    id* parentState = [parentNodeState state];
     ORInt parentVar = [parentNodeState variableIndex];
     
-    _state = malloc(_stateSize * sizeof(int));
+    _state = malloc(_stateSize * sizeof(id));
     _arcExists = [parentNodeState arcExistsClosure];
     _transitionFunctions = [parentNodeState transitionFunctions];
     _relaxationFunctions = [parentNodeState relaxationFunctions];
@@ -248,9 +249,9 @@ static int StateSize;
 }
 -(id) initState:(MDDStateSpecification*)parentNodeState variableIndex:(int)variableIndex {
     self = [super initState:parentNodeState variableIndex:variableIndex];
-    int* parentState = [parentNodeState state];
+    id* parentState = [parentNodeState state];
     _stateSize = [parentNodeState stateSize];
-    _state = malloc(_stateSize * sizeof(int));
+    _state = malloc(_stateSize * sizeof(id));
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         _state[stateIndex] = parentState[stateIndex];
     }
@@ -273,7 +274,7 @@ static int StateSize;
 }
 
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
-    return _arcExists(_state, variable, value);
+    return [_arcExists(_state, variable, value) boolValue];
 }
 -(void) mergeStateWith:(MDDStateSpecification*)other {
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
@@ -288,7 +289,7 @@ static int StateSize;
     NSMutableArray* savedChanges = [[NSMutableArray alloc] init];
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         DDClosure transitionFunction = _transitionFunctions[stateIndex];
-        [savedChanges addObject: [[NSNumber alloc] initWithInt: _state[stateIndex]]];
+        [savedChanges addObject: _state[stateIndex]];
         if (transitionFunction != NULL) {
             _state[stateIndex] = transitionFunction(_state,variable,value);
         }
@@ -298,27 +299,27 @@ static int StateSize;
 
 -(void) undoChanges:(NSArray*)savedChanges {
     for (int savedChangeIndex = 0; savedChangeIndex < [savedChanges count]; savedChangeIndex++) {
-        _state[savedChangeIndex] = [[savedChanges objectAtIndex: savedChangeIndex] intValue];
+        _state[savedChangeIndex] = [savedChanges objectAtIndex: savedChangeIndex];
     }
 }
 
 -(int) stateDifferential:(MDDStateSpecification*)other {
     int differential = 0;
-    int* other_state = [other state];
+    id* other_state = [other state];
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         /*if (_differentialFunctions[stateIndex] != NULL) {
          differential += _differentialFunctions[stateIndex](_state,other_state);
          }*/
         
         //differential += pow(_state[stateIndex] - other_state[stateIndex],2);
-        if (_state[stateIndex] != other_state[stateIndex]) {
+        if (![_state[stateIndex] isEqual: other_state[stateIndex]]) {
             differential++;
         }
     }
     return differential;
 }
 -(bool) equivalentTo:(MDDStateSpecification*)other {
-    int* other_state = [other state];
+    id* other_state = [other state];
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         if (_state[stateIndex] != other_state[stateIndex]) {
             return false;
@@ -328,7 +329,7 @@ static int StateSize;
 }
 
 
--(int*) state { return _state; }
+-(id*) state { return _state; }
 -(int) stateSize { return _stateSize; }
 -(DDClosure)arcExistsClosure { return _arcExists; }
 -(DDClosure*)transitionFunctions { return _transitionFunctions; }
@@ -340,12 +341,21 @@ static int StateSize;
 static id TopDownInfo;
 static id BottomUpInfo;
 static AltMDDAddEdgeClosure TopDownEdgeAddition;
+static AltMDDAddEdgeClosure MinTopDownEdgeAddition;
+static AltMDDAddEdgeClosure MaxTopDownEdgeAddition;
 static AltMDDAddEdgeClosure BottomUpEdgeAddition;
+static AltMDDAddEdgeClosure MinBottomUpEdgeAddition;
+static AltMDDAddEdgeClosure MaxBottomUpEdgeAddition;
 static AltMDDMergeInfoClosure TopDownMerge;
+static AltMDDMergeInfoClosure MinTopDownMerge;
+static AltMDDMergeInfoClosure MaxTopDownMerge;
 static AltMDDMergeInfoClosure BottomUpMerge;
+static AltMDDMergeInfoClosure MinBottomUpMerge;
+static AltMDDMergeInfoClosure MaxBottomUpMerge;
 static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
+static bool MinMaxState;
 
--(id) initClassState:(int)domainMin domainMax:(int)domainMax topDownInfo:(id)topDownInfo bottomUpInfo:(id)bottomUpInfo topDownEdgeAddition:(AltMDDAddEdgeClosure)topDownInfoEdgeAdditionClosure bottomUpEdgeAddition:(AltMDDAddEdgeClosure)bottomUpInfoEdgeAdditionClosure topDownMerge:(AltMDDMergeInfoClosure)topDownMergeClosure bottomUpMerge:(AltMDDMergeInfoClosure)bottomUpMergeClosure edgeDeletion:(AltMDDDeleteEdgeCheckClosure)edgeDeletionClosure
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax topDownInfo:(id)topDownInfo bottomUpInfo:(id)bottomUpInfo topDownEdgeAddition:(AltMDDAddEdgeClosure)topDownInfoEdgeAdditionClosure bottomUpEdgeAddition:(AltMDDAddEdgeClosure)bottomUpInfoEdgeAdditionClosure topDownMerge:(AltMDDMergeInfoClosure)topDownMergeClosure bottomUpMerge:(AltMDDMergeInfoClosure)bottomUpMergeClosure edgeDeletion:(AltMDDDeleteEdgeCheckClosure)edgeDeletionClosure objective:(bool)objective
 {
     [super initClassState:domainMin domainMax:domainMax];
     _topDownInfo = topDownInfo;
@@ -355,6 +365,28 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
     _topDownMerge = topDownMergeClosure;
     _bottomUpMerge = bottomUpMergeClosure;
     _edgeDeletionCheck = edgeDeletionClosure;
+    _objective = objective;
+    
+    _minMaxState = false;
+    return self;
+}
+-(id) initMinMaxClassState:(int)domainMin domainMax:(int)domainMax minTopDownInfo:(id)minTopDownInfo maxTopDownInfo:(id)maxTopDownInfo minbottomUpInfo:(id)minBottomUpInfo maxBottomUpInfo:(id)maxBottomUpInfo minTopDownEdgeAddition:(AltMDDAddEdgeClosure)minTopDownInfoEdgeAdditionClosure maxTopDownEdgeAddition:(AltMDDAddEdgeClosure)maxTopDownInfoEdgeAdditionClosure minBottomUpEdgeAddition:(AltMDDAddEdgeClosure)minBottomUpInfoEdgeAdditionClosure maxBottomUpEdgeAddition:(AltMDDAddEdgeClosure)maxBottomUpInfoEdgeAdditionClosure minTopDownMerge:(AltMDDMergeInfoClosure)minTopDownMergeClosure maxTopDownMerge:(AltMDDMergeInfoClosure)maxTopDownMergeClosure minBottomUpMerge:(AltMDDMergeInfoClosure)minBottomUpMergeClosure maxBottomUpMerge:(AltMDDMergeInfoClosure)maxBottomUpMergeClosure edgeDeletion:(AltMDDDeleteEdgeCheckClosure)edgeDeletionClosure objective:(bool)objective
+{
+    [super initClassState:domainMin domainMax:domainMax];
+    _topDownInfo = [[NSArray alloc] initWithObjects:minTopDownInfo, maxTopDownInfo, nil];
+    _bottomUpInfo = [[NSArray alloc] initWithObjects:minBottomUpInfo, maxBottomUpInfo, nil];
+    _minTopDownEdgeAddition = minTopDownInfoEdgeAdditionClosure;
+    _maxTopDownEdgeAddition = maxTopDownInfoEdgeAdditionClosure;
+    _minBottomUpEdgeAddition = minBottomUpInfoEdgeAdditionClosure;
+    _maxBottomUpEdgeAddition = maxBottomUpInfoEdgeAdditionClosure;
+    _minTopDownMerge = minTopDownMergeClosure;
+    _maxTopDownMerge = maxTopDownMergeClosure;
+    _minBottomUpMerge = minBottomUpMergeClosure;
+    _maxBottomUpMerge = maxBottomUpMergeClosure;
+    _edgeDeletionCheck = edgeDeletionClosure;
+    _objective = objective;
+    
+    _minMaxState = true;
     return self;
 }
 -(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail
@@ -365,96 +397,202 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
     _domainMax = domainMax;
     _topDownInfo = makeTRId(_trail, TopDownInfo);
     _bottomUpInfo = makeTRId(_trail, NULL);
-    _topDownEdgeAddition = TopDownEdgeAddition;
-    _bottomUpEdgeAddition = BottomUpEdgeAddition;
-    _topDownMerge = TopDownMerge;
-    _bottomUpMerge = BottomUpMerge;
+    _minMaxState = MinMaxState;
+    if (_minMaxState) {
+        _minTopDownEdgeAddition = MinTopDownEdgeAddition;
+        _maxTopDownEdgeAddition = MaxTopDownEdgeAddition;
+        _minBottomUpEdgeAddition = MinBottomUpEdgeAddition;
+        _maxBottomUpEdgeAddition = MaxBottomUpEdgeAddition;
+        _minTopDownMerge = MinTopDownMerge;
+        _maxTopDownMerge = MaxTopDownMerge;
+        _minBottomUpMerge = MinBottomUpMerge;
+        _maxBottomUpMerge = MaxBottomUpMerge;
+    } else {
+        _topDownEdgeAddition = TopDownEdgeAddition;
+        _bottomUpEdgeAddition = BottomUpEdgeAddition;
+        _topDownMerge = TopDownMerge;
+        _bottomUpMerge = BottomUpMerge;
+    }
     _edgeDeletionCheck = EdgeDeletionCheck;
     return self;
 }
 -(id) initRootState:(AltMDDStateSpecification*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail
 {
     self = [super initRootState:classState variableIndex:variableIndex trail:trail];
+    
+    _minMaxState = [classState minMaxState];
     _topDownInfo = makeTRId(_trail,[classState topDownInfo]);
     _bottomUpInfo = makeTRId(_trail,[classState bottomUpInfo]);
-    _topDownEdgeAddition = [classState topDownEdgeAddition];
-    _bottomUpEdgeAddition = [classState bottomUpEdgeAddition];
-    _topDownMerge = [classState topDownMerge];
-    _bottomUpMerge = [classState bottomUpMerge];
+    if (_minMaxState) {
+        _minTopDownEdgeAddition = [classState minTopDownEdgeAddition];
+        _maxTopDownEdgeAddition = [classState maxTopDownEdgeAddition];
+        _minBottomUpEdgeAddition = [classState minBottomUpEdgeAddition];
+        _maxBottomUpEdgeAddition = [classState maxBottomUpEdgeAddition];
+        _minTopDownMerge = [classState minTopDownMerge];
+        _maxTopDownMerge = [classState maxTopDownMerge];
+        _minBottomUpMerge = [classState minBottomUpMerge];
+        _maxBottomUpMerge = [classState maxBottomUpMerge];
+    } else {
+        _topDownEdgeAddition = [classState topDownEdgeAddition];
+        _bottomUpEdgeAddition = [classState bottomUpEdgeAddition];
+        _topDownMerge = [classState topDownMerge];
+        _bottomUpMerge = [classState bottomUpMerge];
+    }
     _edgeDeletionCheck = [classState edgeDeletionCheck];
+    _objective = [classState isObjective];
     return self;
 }
 -(id) initSinkState:(AltMDDStateSpecification*)classState trail:(id<ORTrail>)trail {
     _trail = trail;
+    
+    _minMaxState = [classState minMaxState];
     _topDownInfo = makeTRId(_trail,NULL);
     _bottomUpInfo = makeTRId(_trail,[classState bottomUpInfo]);
-    _topDownEdgeAddition = [classState topDownEdgeAddition];
-    _bottomUpEdgeAddition = [classState bottomUpEdgeAddition];
-    _topDownMerge = [classState topDownMerge];
-    _bottomUpMerge = [classState bottomUpMerge];
+    if (_minMaxState) {
+        _minTopDownEdgeAddition = [classState minTopDownEdgeAddition];
+        _maxTopDownEdgeAddition = [classState maxTopDownEdgeAddition];
+        _minBottomUpEdgeAddition = [classState minBottomUpEdgeAddition];
+        _maxBottomUpEdgeAddition = [classState maxBottomUpEdgeAddition];
+        _minTopDownMerge = [classState minTopDownMerge];
+        _maxTopDownMerge = [classState maxTopDownMerge];
+        _minBottomUpMerge = [classState minBottomUpMerge];
+        _maxBottomUpMerge = [classState maxBottomUpMerge];
+    } else {
+        _topDownEdgeAddition = [classState topDownEdgeAddition];
+        _bottomUpEdgeAddition = [classState bottomUpEdgeAddition];
+        _topDownMerge = [classState topDownMerge];
+        _bottomUpMerge = [classState bottomUpMerge];
+    }
     _edgeDeletionCheck = [classState edgeDeletionCheck];
+    _objective = [classState isObjective];
     return self;
 }
 -(id) initState:(AltMDDStateSpecification*)parentNodeState variableIndex:(int)variableIndex {
     self = [super initState:parentNodeState variableIndex:variableIndex];
+    
+    _minMaxState = [parentNodeState minMaxState];
     _topDownInfo = [parentNodeState topDownInfo];
     _bottomUpInfo = [parentNodeState bottomUpInfo];
-    _topDownEdgeAddition = [parentNodeState topDownEdgeAddition];
-    _bottomUpEdgeAddition = [parentNodeState bottomUpEdgeAddition];
-    _topDownMerge = [parentNodeState topDownMerge];
-    _bottomUpMerge = [parentNodeState bottomUpMerge];
+    if (_minMaxState) {
+        _minTopDownEdgeAddition = [parentNodeState minTopDownEdgeAddition];
+        _maxTopDownEdgeAddition = [parentNodeState maxTopDownEdgeAddition];
+        _minBottomUpEdgeAddition = [parentNodeState minBottomUpEdgeAddition];
+        _maxBottomUpEdgeAddition = [parentNodeState maxBottomUpEdgeAddition];
+        _minTopDownMerge = [parentNodeState minTopDownMerge];
+        _maxTopDownMerge = [parentNodeState maxTopDownMerge];
+        _minBottomUpMerge = [parentNodeState minBottomUpMerge];
+        _maxBottomUpMerge = [parentNodeState maxBottomUpMerge];
+    } else {
+        _topDownEdgeAddition = [parentNodeState topDownEdgeAddition];
+        _bottomUpEdgeAddition = [parentNodeState bottomUpEdgeAddition];
+        _topDownMerge = [parentNodeState topDownMerge];
+        _bottomUpMerge = [parentNodeState bottomUpMerge];
+    }
     _edgeDeletionCheck = [parentNodeState edgeDeletionCheck];
+    _objective = [parentNodeState isObjective];
     return self;
 }
 //Going to need to evaluate how this will be built.  Is the RootState creation any different than another state?  Not really.  All of them should be made the same way, but then just call functions that calculate and set the topDownInfo and bottomUpInfo sequentially through the tree.
 +(void) setAsOnlyMDDWithClassState:(AltMDDStateSpecification*)classState
 {
+    MinMaxState = [classState minMaxState];
     TopDownInfo = [classState topDownInfo];
     BottomUpInfo = [classState bottomUpInfo];
-    TopDownEdgeAddition = [classState topDownEdgeAddition];
-    BottomUpEdgeAddition = [classState bottomUpEdgeAddition];
-    TopDownMerge = [classState topDownMerge];
-    BottomUpMerge = [classState bottomUpMerge];
+    if (MinMaxState) {
+        MinTopDownEdgeAddition = [classState minTopDownEdgeAddition];
+        MaxTopDownEdgeAddition = [classState maxTopDownEdgeAddition];
+        MinBottomUpEdgeAddition = [classState minBottomUpEdgeAddition];
+        MaxBottomUpEdgeAddition = [classState maxBottomUpEdgeAddition];
+        MinTopDownMerge = [classState minTopDownMerge];
+        MaxTopDownMerge = [classState maxTopDownMerge];
+        MinBottomUpMerge = [classState minBottomUpMerge];
+        MaxBottomUpMerge = [classState maxBottomUpMerge];
+    } else {
+        TopDownEdgeAddition = [classState topDownEdgeAddition];
+        BottomUpEdgeAddition = [classState bottomUpEdgeAddition];
+        TopDownMerge = [classState topDownMerge];
+        BottomUpMerge = [classState bottomUpMerge];
+    }
     EdgeDeletionCheck = [classState edgeDeletionCheck];
 }
+
 -(void) setTopDownInfo:(id)info
 {
     assignTRId(&_topDownInfo,info,_trail);
 }
 -(void) setTopDownInfoFor:(AltMDDStateSpecification*)parentInfo plusEdge:(int)edgeValue {
-    assignTRId(&_topDownInfo, _topDownEdgeAddition([parentInfo topDownInfo], [parentInfo variableIndex], edgeValue),_trail);
+    if (_minMaxState) {
+        assignTRId(&_topDownInfo, [[NSArray alloc] initWithObjects:_minTopDownEdgeAddition([[parentInfo topDownInfo] objectAtIndex:0], [parentInfo variableIndex], edgeValue),_maxTopDownEdgeAddition([[parentInfo topDownInfo] objectAtIndex:1], [parentInfo variableIndex], edgeValue), nil],_trail);
+    } else {
+        assignTRId(&_topDownInfo, _topDownEdgeAddition([parentInfo topDownInfo], [parentInfo variableIndex], edgeValue),_trail);
+    }
 }
 -(void) setBottomUpInfoFor:(AltMDDStateSpecification*)childInfo plusEdge:(int)edgeValue {
-    assignTRId(&_bottomUpInfo,_bottomUpEdgeAddition([childInfo bottomUpInfo], _variableIndex, edgeValue),_trail);
+    if (_minMaxState) {
+        assignTRId(&_bottomUpInfo, [[NSArray alloc] initWithObjects:_minBottomUpEdgeAddition([[childInfo bottomUpInfo] objectAtIndex:0], [childInfo variableIndex], edgeValue),_maxBottomUpEdgeAddition([[childInfo bottomUpInfo] objectAtIndex:1], [childInfo variableIndex], edgeValue), nil],_trail);
+    } else {
+        assignTRId(&_bottomUpInfo, _bottomUpEdgeAddition([childInfo bottomUpInfo], [childInfo variableIndex], edgeValue),_trail);
+    }
 }
 -(void) mergeTopDownInfoWith:(AltMDDStateSpecification*)other
 {
-    assignTRId(&_topDownInfo,_topDownMerge(_topDownInfo,[other topDownInfo],_variableIndex),_trail);
+    if (_minMaxState) {
+        assignTRId(&_topDownInfo, [[NSArray alloc] initWithObjects:_minTopDownMerge([_topDownInfo objectAtIndex:0], [[other topDownInfo] objectAtIndex:0], _variableIndex),_maxTopDownMerge([_topDownInfo objectAtIndex:1], [[other topDownInfo] objectAtIndex:1], _variableIndex), nil],_trail);
+    } else {
+        assignTRId(&_topDownInfo,_topDownMerge(_topDownInfo,[other topDownInfo],_variableIndex),_trail);
+    }
 }
 -(void) mergeTopDownInfoWith:(AltMDDStateSpecification*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
 {
-    assignTRId(&_topDownInfo,_topDownMerge(_topDownInfo,_topDownEdgeAddition([other topDownInfo],otherVariable,edgeValue),_variableIndex),_trail);
+    if (_minMaxState) {
+        assignTRId(&_topDownInfo, [[NSArray alloc] initWithObjects:_minTopDownMerge([_topDownInfo objectAtIndex:0], _minTopDownEdgeAddition([[other topDownInfo] objectAtIndex:0],otherVariable,edgeValue), _variableIndex),_maxTopDownMerge([_topDownInfo objectAtIndex:1], _maxTopDownEdgeAddition([[other topDownInfo] objectAtIndex:1],otherVariable, edgeValue), _variableIndex), nil],_trail);
+    } else {
+        assignTRId(&_topDownInfo,_topDownMerge(_topDownInfo,_topDownEdgeAddition([other topDownInfo],otherVariable,edgeValue),_variableIndex),_trail);
+    }
 }
 -(void) mergeBottomUpInfoWith:(AltMDDStateSpecification*)other
 {
-    assignTRId(&_bottomUpInfo,_bottomUpMerge(_bottomUpInfo,[other bottomUpInfo],_variableIndex),_trail);
+    if (_minMaxState) {
+        assignTRId(&_bottomUpInfo, [[NSArray alloc] initWithObjects:_minBottomUpMerge([_bottomUpInfo objectAtIndex:0], [[other bottomUpInfo] objectAtIndex:0], _variableIndex),_maxBottomUpMerge([_bottomUpInfo objectAtIndex:1], [[other bottomUpInfo] objectAtIndex:1], _variableIndex), nil],_trail);
+    } else {
+        assignTRId(&_bottomUpInfo,_bottomUpMerge(_bottomUpInfo,[other bottomUpInfo],_variableIndex),_trail);
+    }
 }
 -(void) mergeBottomUpInfoWith:(AltMDDStateSpecification*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
 {
-    assignTRId(&_bottomUpInfo,_bottomUpMerge(_bottomUpInfo,_bottomUpEdgeAddition([other bottomUpInfo],otherVariable,edgeValue),_variableIndex),_trail);
+    if (_minMaxState) {
+        assignTRId(&_bottomUpInfo, [[NSArray alloc] initWithObjects:_minBottomUpMerge([_bottomUpInfo objectAtIndex:0], _minBottomUpEdgeAddition([[other bottomUpInfo] objectAtIndex:0],otherVariable,edgeValue), _variableIndex),_maxBottomUpMerge([_bottomUpInfo objectAtIndex:1], _maxBottomUpEdgeAddition([[other bottomUpInfo] objectAtIndex:1],otherVariable, edgeValue), _variableIndex), nil],_trail);
+    } else {
+        assignTRId(&_bottomUpInfo,_bottomUpMerge(_bottomUpInfo,_bottomUpEdgeAddition([other bottomUpInfo],otherVariable,edgeValue),_variableIndex),_trail);
+    }
 }
 -(bool) canDeleteChild:(AltMDDStateSpecification*)child atEdgeValue:(int)edgeValue
 {
-    return _edgeDeletionCheck(_topDownInfo, [child bottomUpInfo], _variableIndex, edgeValue);
+    //if (_objective) {
+    //    return false;
+    //}
+    return [_edgeDeletionCheck(_topDownInfo, [child bottomUpInfo], _variableIndex, edgeValue) boolValue];
 }
 -(bool) equivalentWithEdge:(int)edgeValue to:(AltMDDStateSpecification*)other withEdge:(int)otherEdgeValue
 {
-    id selfInfo = _topDownEdgeAddition(_topDownInfo, _variableIndex, edgeValue);
-    id otherInfo = _topDownEdgeAddition([other topDownInfo], _variableIndex, otherEdgeValue);
-    if ([selfInfo class] == [NSMutableArray class]) {
-        return [selfInfo isEqualToArray:otherInfo];
+    if (_minMaxState) {
+        id minSelfInfo = _minTopDownEdgeAddition([_topDownInfo objectAtIndex:0], _variableIndex, edgeValue);
+        id maxSelfInfo = _maxTopDownEdgeAddition([_topDownInfo objectAtIndex:1], _variableIndex, edgeValue);
+        id minOtherInfo = _minTopDownEdgeAddition([[other topDownInfo] objectAtIndex:0], _variableIndex, otherEdgeValue);
+        id maxOtherInfo = _maxTopDownEdgeAddition([[other topDownInfo] objectAtIndex:1], _variableIndex, otherEdgeValue);
+        if ([minSelfInfo class] == [NSMutableArray class]) {
+            return [minSelfInfo isEqualToArray:minOtherInfo] && [maxSelfInfo isEqualToArray:maxOtherInfo];
+        } else {
+            return minSelfInfo == minOtherInfo && maxSelfInfo == maxOtherInfo;
+        }
     } else {
-        return selfInfo == otherInfo;
+        id selfInfo = _topDownEdgeAddition(_topDownInfo, _variableIndex, edgeValue);
+        id otherInfo = _topDownEdgeAddition([other topDownInfo], _variableIndex, otherEdgeValue);
+        if ([selfInfo class] == [NSMutableArray class]) {
+            return [selfInfo isEqualToArray:otherInfo];
+        } else {
+            return selfInfo == otherInfo;
+        }
     }
 }
 -(id) topDownInfo { return _topDownInfo; }
@@ -463,7 +601,16 @@ static AltMDDDeleteEdgeCheckClosure EdgeDeletionCheck;
 -(AltMDDAddEdgeClosure) bottomUpEdgeAddition { return _bottomUpEdgeAddition; }
 -(AltMDDMergeInfoClosure) topDownMerge { return _topDownMerge; }
 -(AltMDDMergeInfoClosure) bottomUpMerge { return _bottomUpMerge; }
+-(AltMDDAddEdgeClosure) minTopDownEdgeAddition { return _minTopDownEdgeAddition; }
+-(AltMDDAddEdgeClosure) maxTopDownEdgeAddition { return _maxTopDownEdgeAddition; }
+-(AltMDDAddEdgeClosure) minBottomUpEdgeAddition { return _minBottomUpEdgeAddition; }
+-(AltMDDAddEdgeClosure) maxBottomUpEdgeAddition { return _maxBottomUpEdgeAddition; }
+-(AltMDDMergeInfoClosure) minTopDownMerge { return _minTopDownMerge; }
+-(AltMDDMergeInfoClosure) maxTopDownMerge { return _maxTopDownMerge; }
+-(AltMDDMergeInfoClosure) minBottomUpMerge { return _minBottomUpMerge; }
+-(AltMDDMergeInfoClosure) maxBottomUpMerge { return _maxBottomUpMerge; }
 -(AltMDDDeleteEdgeCheckClosure) edgeDeletionCheck { return _edgeDeletionCheck; }
+-(bool) minMaxState { return _minMaxState; }
 @end
 
 @implementation CustomBDDState
@@ -899,6 +1046,7 @@ static int NumVarsRemaining;
 static NSMutableArray* _stateClasses;
 static NSMutableArray* _stateVariables;
 static id<ORIntVarArray> _variables;
+static bool _hasObjective = false;
 
 -(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail
 {
@@ -960,6 +1108,9 @@ static id<ORIntVarArray> _variables;
 +(void) addStateClass:(AltCustomState*)stateClass withVariables:(id<ORIntVarArray>)variables {
     [_stateClasses addObject:stateClass];
     [_stateVariables addObject:variables];
+    if ([stateClass isObjective]) {
+        _hasObjective = true;
+    }
 }
 -(void) setTopDownInfo:(NSArray*)info
 {
@@ -1034,6 +1185,7 @@ static id<ORIntVarArray> _variables;
 +(int) numStates { return (int)[_stateClasses count]; }
 +(void) stateClassesInit { _stateClasses = [[NSMutableArray alloc] init]; _stateVariables = [[NSMutableArray alloc] init]; }
 +(void) setVariables:(id<ORIntVarArray>)variables { _variables = variables; }
++(bool) hasObjective { return _hasObjective; }
 
 -(NSMutableArray*) states { return _states; }
 
@@ -1071,7 +1223,7 @@ static NSMutableArray* _stateClasses;
 static NSMutableArray* _stateVariables;
 static id<ORIntVarArray> _variables;
 
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax{
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail{
     _variableIndex = variableIndex;
     _domainMin = domainMin;
     _domainMax = domainMax;

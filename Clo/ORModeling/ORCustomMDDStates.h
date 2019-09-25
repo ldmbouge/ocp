@@ -4,6 +4,7 @@
     int _variableIndex;
     int _domainMin;
     int _domainMax;
+    bool _objective;
 }
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax;
 -(id) initRootState:(AltCustomState*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
@@ -24,6 +25,7 @@
 -(id<ORTrail>) trail;
 -(int) domainMin;
 -(int) domainMax;
+-(bool) isObjective;
 +(void) setAsOnlyMDDWithClassState:(AltCustomState*)classState;
 @end
 
@@ -55,17 +57,17 @@
 
 @interface MDDStateSpecification : CustomState {
 @protected
-    int* _state;
+    id* _state;
     DDClosure _arcExists;
     DDClosure* _transitionFunctions;
     DDMergeClosure* _relaxationFunctions;
     DDMergeClosure* _differentialFunctions;
     int _stateSize;
 }
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions stateSize:(int)stateSize;
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(int*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions stateSize:(int)stateSize;
--(int*) state;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions stateSize:(int)stateSize;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions stateSize:(int)stateSize;
+-(id*) state;
 -(int) stateSize;
 -(DDClosure)arcExistsClosure;
 -(DDClosure*)transitionFunctions;
@@ -77,19 +79,36 @@
 @protected
     TRId _topDownInfo, _bottomUpInfo;
     AltMDDAddEdgeClosure _topDownEdgeAddition, _bottomUpEdgeAddition;
+    AltMDDAddEdgeClosure _minTopDownEdgeAddition, _minBottomUpEdgeAddition;
+    AltMDDAddEdgeClosure _maxTopDownEdgeAddition, _maxBottomUpEdgeAddition;
     AltMDDMergeInfoClosure _topDownMerge, _bottomUpMerge;
+    AltMDDMergeInfoClosure _minTopDownMerge, _minBottomUpMerge;
+    AltMDDMergeInfoClosure _maxTopDownMerge, _maxBottomUpMerge;
     AltMDDDeleteEdgeCheckClosure _edgeDeletionCheck;
+    bool _minMaxState;
 }
--(id) initClassState:(int)domainMin domainMax:(int)domainMax topDownInfo:(id)topDownInfo bottomUpInfo:(id)bottomUpInfo topDownEdgeAddition:(AltMDDAddEdgeClosure)topDownInfoEdgeAdditionClosure bottomUpEdgeAddition:(AltMDDAddEdgeClosure)bottomUpInfoEdgeAdditionClosure topDownMerge:(AltMDDMergeInfoClosure)topDownMergeClosure bottomUpMerge:(AltMDDMergeInfoClosure)bottomUpMergeClosure edgeDeletion:(AltMDDDeleteEdgeCheckClosure)edgeDeletionClosure;
--(id) initRootState:(AltMDDStateSpecification*)classState variableIndex:(int)variableIndex;
--(id) initSinkState:(AltMDDStateSpecification*)classState;
+-(id) initClassState:(int)domainMin domainMax:(int)domainMax topDownInfo:(id)topDownInfo bottomUpInfo:(id)bottomUpInfo topDownEdgeAddition:(AltMDDAddEdgeClosure)topDownInfoEdgeAdditionClosure bottomUpEdgeAddition:(AltMDDAddEdgeClosure)bottomUpInfoEdgeAdditionClosure topDownMerge:(AltMDDMergeInfoClosure)topDownMergeClosure bottomUpMerge:(AltMDDMergeInfoClosure)bottomUpMergeClosure edgeDeletion:(AltMDDDeleteEdgeCheckClosure)edgeDeletionClosure objective:(bool)objective;
+-(id) initRootState:(AltMDDStateSpecification*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail;
+-(id) initSinkState:(AltMDDStateSpecification*)classState trail:(id<ORTrail>)trail;
+-(id) initState:(AltMDDStateSpecification*)parentNodeState variableIndex:(int)variableIndex;
+-(id) initMinMaxClassState:(int)domainMin domainMax:(int)domainMax minTopDownInfo:(id)minTopDownInfo maxTopDownInfo:(id)maxTopDownInfo minbottomUpInfo:(id)minBottomUpInfo maxBottomUpInfo:(id)maxBottomUpInfo minTopDownEdgeAddition:(AltMDDAddEdgeClosure)minTopDownInfoEdgeAdditionClosure maxTopDownEdgeAddition:(AltMDDAddEdgeClosure)maxTopDownInfoEdgeAdditionClosure minBottomUpEdgeAddition:(AltMDDAddEdgeClosure)minBottomUpInfoEdgeAdditionClosure maxBottomUpEdgeAddition:(AltMDDAddEdgeClosure)maxBottomUpInfoEdgeAdditionClosure minTopDownMerge:(AltMDDMergeInfoClosure)minTopDownMergeClosure maxTopDownMerge:(AltMDDMergeInfoClosure)maxTopDownMergeClosure minBottomUpMerge:(AltMDDMergeInfoClosure)minBottomUpMergeClosure maxBottomUpMerge:(AltMDDMergeInfoClosure)maxBottomUpMergeClosure edgeDeletion:(AltMDDDeleteEdgeCheckClosure)edgeDeletionClosure objective:(bool)objective;
 -(id) topDownInfo;
 -(id) bottomUpInfo;
 -(AltMDDAddEdgeClosure) topDownEdgeAddition;
 -(AltMDDAddEdgeClosure) bottomUpEdgeAddition;
 -(AltMDDMergeInfoClosure) topDownMerge;
 -(AltMDDMergeInfoClosure) bottomUpMerge;
+-(AltMDDAddEdgeClosure) minTopDownEdgeAddition;
+-(AltMDDAddEdgeClosure) maxTopDownEdgeAddition;
+-(AltMDDAddEdgeClosure) minBottomUpEdgeAddition;
+-(AltMDDAddEdgeClosure) maxBottomUpEdgeAddition;
+-(AltMDDMergeInfoClosure) minTopDownMerge;
+-(AltMDDMergeInfoClosure) maxTopDownMerge;
+-(AltMDDMergeInfoClosure) minBottomUpMerge;
+-(AltMDDMergeInfoClosure) maxBottomUpMerge;
 -(AltMDDDeleteEdgeCheckClosure) edgeDeletionCheck;
+-(bool) minMaxState;
 @end
 
 @interface CustomBDDState : CustomState {   //A state with a list of booleans corresponding to whether or not each variable can be assigned 1
@@ -155,13 +174,14 @@
 +(AltCustomState*) firstState;
 -(NSMutableArray*) states;
 +(void) setVariables:(id<ORIntVarArray>)variables;
++(bool) hasObjective;
 @end
 
 @interface JointState : CustomState {
 @protected
     NSMutableArray* _states;
 }
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax;
+-(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail;
 +(void) addStateClass:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables;
 +(void) stateClassesInit;
 +(int) numStates;

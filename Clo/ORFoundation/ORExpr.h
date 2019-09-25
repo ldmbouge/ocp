@@ -130,6 +130,10 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
 -(id<ORExpr>) contains:(id<ORExpr>)e track:(id<ORTracker>)t;
 -(id<ORExpr>) setUnion:(id<ORExpr>)e track:(id<ORTracker>)t;
 -(id<ORExpr>) ifthen:(id<ORExpr>)t elseReturn:(id<ORExpr>)e track:(id<ORTracker>)track;
+-(id<ORExpr>) appendToArray:(id)e track:(id<ORTracker>)t;
+-(id<ORExpr>) minBetweenArrays:(id<ORExpr>)e  track:(id<ORTracker>)t;
+-(id<ORExpr>) maxBetweenArrays:(id<ORExpr>)e  track:(id<ORTracker>)t;
+-(id<ORExpr>) arrayIndex:(id)e track:(id<ORTracker>)t;
 -(id<ORExpr>) toEachInSetPlus:(id)e track:(id<ORTracker>)t;
 -(id<ORExpr>) toEachInSetPlusEachInSet:(id<ORExpr>)e track:(id<ORTracker>)t;
 -(id<ORRelation>) eachInSetLT:(id)e track:(id<ORTracker>)t;

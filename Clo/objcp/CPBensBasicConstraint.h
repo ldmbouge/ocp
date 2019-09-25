@@ -144,7 +144,7 @@
     int* _variable_to_layer;
     int* _layer_to_variable;
     bool* _variableUsed;
-    id<CPIntVar> _objective;
+    bool _hasObjective;
     id<CPIntVarArray> _x;
     TRInt *layer_size;
     TRInt *max_layer_size;

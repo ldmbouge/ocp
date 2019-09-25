@@ -479,14 +479,15 @@ enum ORGroupType {
 
 @protocol ORMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
--(void)addStateInt:(int)title withDefaultValue:(ORInt)value;
--(void)addStates:(int*)states size:(int)size;
+-(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value;
+-(void)addStateIntArray:(int)lookup withDefaultValues:(ORInt)value;
+-(void)addStates:(id*)states size:(int)size;
 -(id<ORExpr>)arcExists;
 -(id<ORExpr>*)transitionFunctions;
 -(id<ORExpr>*)relaxationFunctions;
 -(id<ORExpr>*)differentialFunctions;
 -(int)stateSize;
--(int*)stateValues;
+-(id*)stateValues;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;
@@ -495,22 +496,50 @@ enum ORGroupType {
 
 @protocol ORAltMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
+-(void) setAsMaximize;
+-(void) setAsMinimize;
 -(void) setTopDownInformationAsSet;
 -(void) setBottomUpInformationAsSet;
+-(void) setTopDownInformationAsInt;
+-(void) setBottomUpInformationAsInt;
+-(void) setTopDownInformationAsArrayWithSize:(int)size andDefaultValue:(int)value;
+-(void) setBottomUpInformationAsArrayWithSize:(int)size andDefaultValue:(int)value;
+-(void) setTopDownInformationAsMinMaxArrayWithSize:(int)size andDefaultValue:(int)value;
+-(void) setBottomUpInformationAsMinMaxArrayWithSize:(int)size andDefaultValue:(int)value;
 -(void) addToTopDownInfoSet:(ORInt)value;
 -(void) addToBottomUpInfoSet:(ORInt)value;
 -(void) setEdgeDeletionCondition:(id<ORExpr>)deleteWhen;
 -(void) setTopDownInfoEdgeAddition:(id<ORExpr>)topDownInfoEdge;
 -(void) setBottomUpInfoEdgeAddition:(id<ORExpr>)bottomUpInfoEdge;
+-(void) setTopDownInfoEdgeAdditionMin:(id<ORExpr>)minTopDownInfoEdge max:(id<ORExpr>)maxTopDownInfoEdge;
+-(void) setBottomUpInfoEdgeAdditionMin:(id<ORExpr>)minBottomUpInfoEdge max:(id<ORExpr>)maxBottomUpInfoEdge;
 -(void) setInformationMergeToUnion:(id<ORTracker>)t;
+-(void) setInformationMergeToMax:(id<ORTracker>)t;
+-(void) setInformationMergeToMin:(id<ORTracker>)t;
 -(void) setInformationMergeToMinMaxSet:(id<ORTracker>)t;
+-(void) setInformationMergeToMinAndMaxArrays:(id<ORTracker>)t;
+-(bool) isMinMaxTopDownInfo;
+-(bool) isMinMaxBottomUpInfo;
 -(id) topDownInfo;
+-(id) minTopDownInfo;
+-(id) maxTopDownInfo;
 -(id) bottomUpInfo;
+-(id) minBottomUpInfo;
+-(id) maxBottomUpInfo;
 -(id<ORExpr>) edgeDeletionCondition;
 -(id<ORExpr>) topDownInfoEdgeAddition;
 -(id<ORExpr>) bottomUpInfoEdgeAddition;
+-(id<ORExpr>) minTopDownInfoEdgeAddition;
+-(id<ORExpr>) maxTopDownInfoEdgeAddition;
+-(id<ORExpr>) minBottomUpInfoEdgeAddition;
+-(id<ORExpr>) maxBottomUpInfoEdgeAddition;
 -(id<ORExpr>) topDownInfoMerge;
 -(id<ORExpr>) bottomUpInfoMerge;
+-(id<ORExpr>) minTopDownInfoMerge;
+-(id<ORExpr>) maxTopDownInfoMerge;
+-(id<ORExpr>) minBottomUpInfoMerge;
+-(id<ORExpr>) maxBottomUpInfoMerge;
+-(bool) objective;
 @end
 
 @protocol ORRegular<ORConstraint>

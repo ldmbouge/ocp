@@ -618,7 +618,7 @@
     _trail = [engine trail];
     _x = x;
     _numVariables = [_x count];
-    _objective = NULL;
+    _hasObjective = false;
     
     layer_size = malloc((_numVariables+1) * sizeof(TRInt));
     max_layer_size = malloc((_numVariables+1) * sizeof(TRInt));
@@ -663,6 +663,7 @@
 {
     self = [self initCPAltMDD:engine over:x];
     _stateClass = stateClass;
+    _hasObjective = [stateClass hasObjective];
     return self;
 }
 -(NSSet*)allVars
@@ -689,7 +690,7 @@
     [self createWidthOneMDD];
     [self buildOutMDD];
     
-    if (_objective != nil) {
+    if (_hasObjective) {
         for (int layer = (int)_numVariables; layer >= 0; layer--) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
                 [layers[layer][node_index] updateReversePaths];
@@ -937,11 +938,11 @@
         [self addPropagationToLayer: layer];
     }
     
-    if (_objective != NULL) {
+    if (_hasObjective) {
         int longestPath = [layers[_numVariables][0] longestPath];
         int shortestPath = [layers[_numVariables][0] shortestPath];
         
-        if (_maximize) {
+        /*if (_maximize) {
             if (longestPath < [_objective min]) {
                 failNow();
             }
@@ -956,7 +957,7 @@
         }
         if ([_objective min] < shortestPath) {
             [_objective updateMin: shortestPath];
-        }
+        }*/
     }
 }
 -(void) trimValuesFromLayer:(ORInt)layer
@@ -989,13 +990,13 @@
             [node removeChildAt: value];
             if ([node findChildIndex:childNode] == -1) {
                 [childNode removeParentValue:node];
-            } else if (_objective != NULL) {
-                if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
+            } else if (_hasObjective) {
+                /*if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
                     [childNode removeLongestPathParent: node];
                 }
                 if ([childNode hasShortestPathParent: node] && value == 0) {
                     [childNode removeShortestPathParent: node];
-                }
+                }*/
             }
             
             if ([childNode isNonVitalAndParentless]) {
@@ -1005,7 +1006,7 @@
                 [self removeChildlessNodeFromMDD:node fromLayer:layer_index trimmingVariables:true];
                 node_index--;
             } else {
-                if (_objective != NULL) {
+                if (_hasObjective) {
                     [node updateReversePaths];
                 }
             }
@@ -1077,23 +1078,29 @@
         }
     }
     //[self printGraph];
-    if (_objective != NULL) {
+    if (_hasObjective) {
         int longestPath = [layers[_numVariables][0] longestPath];
         int shortestPath = [layers[_numVariables][0] shortestPath];
         
         if (_maximize) {
-            if (longestPath < [_objective min]) {
+            /*if (longestPath < [_objective min]) {
                 failNow();
-            }
+            }*/
         } else {
-            if (shortestPath > [_objective max]) {
+            /*if (shortestPath > [_objective max]) {
                 failNow();
-            }
+            }*/
         }
         if (shortestPath == longestPath) {
-            [_objective bind:shortestPath];
+            //[_objective bind:shortestPath];
         }
     }
+    /*
+     TODO:
+        Make it bind the min/max path whenever paths get removed
+        Make it fail when no longer able to surpass current best (should be semi-functional above)
+        Make way of retrieving the objective value from the specifications
+     */
 }
 -(void) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming
 {
@@ -1117,7 +1124,7 @@
         if ([parent isNonVitalAndChildless]) {
             [self removeChildlessNodeFromMDD:parent fromLayer:parentLayer trimmingVariables:trimming];
         } else {
-            if (_objective != nil) {
+            if (_hasObjective) {
                 [parent updateReversePaths];
             }
         }
@@ -1512,7 +1519,7 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[_stateClass alloc] initRootState:variableValue domainMin: min_domain_val domainMax: max_domain_val];
+    return [[_stateClass alloc] initRootState:variableValue domainMin: min_domain_val domainMax: max_domain_val trail:_trail];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
@@ -2607,7 +2614,7 @@ typedef struct {
             }
             }
             buildingLayer = temp;
-            ///*if (layer_size[buildingLayer-1]._val < _relaxation_size && _layer_relaxed[buildingLayer-1]._val) {
+            //if (layer_size[buildingLayer-1]._val < _relaxation_size && _layer_relaxed[buildingLayer-1]._val) {
             //    buildingLayer-=2;
             //    //Parent layer was shrunk after having hit max width.  Try to split on that layer again.  May want to check up even higher?
             //} else if (hitMaxWidth[buildingLayer] && layer_size[buildingLayer]._val < _relaxation_size) {
@@ -2724,7 +2731,9 @@ typedef struct {
     _relaxation_size = relaxationSize;
     _first_relaxed_layer = makeTRInt(_trail, INT_MAX);
     return self;
-}/*
+}
+/* A different attempt at this method where instead of building a new layer and shrinking it, it splits a layer out from a single node
+  
 -(void) post
 {
     [self createRootAndSink];
@@ -2805,7 +2814,7 @@ typedef struct {
             }
         }
     }
-}
+}*/
 -(void) addPropagationsAndTrimValues
 {
     [super addPropagationsAndTrimValues];
@@ -2876,7 +2885,7 @@ typedef struct {
         }
     }
     return;
-}*/
+}
 -(void) cleanLayer:(int)layer
 {
     if (_relaxed) {
@@ -2893,14 +2902,14 @@ typedef struct {
     Node* first_node;
     Node* second_node;
     //Heuristic 1 - First two nodes
-    //first_node = layers[layer][0];
-    //second_node = layers[layer][1];
+    first_node = layers[layer][0];
+    second_node = layers[layer][1];
     
     //Heuristic 2 - Last two nodes
     //first_node = layers[layer][layer_size[layer]._val-2];
     //second_node = layers[layer][layer_size[layer]._val-1];
     
-    [self findNodesToMerge:layer first:&first_node second:&second_node];
+    //[self findNodesToMerge:layer first:&first_node second:&second_node];
     
     [first_node mergeWith: second_node];
     [self removeNode:second_node];

@@ -804,13 +804,33 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprLayerVariableI: visit method not defined"];
 }
--(void) visitExprParentInformation:(id<ORExpr>)e
+-(void) visitExprSizeOfArrayI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprSizeOfArrayI: visit method not defined"];
+}
+-(void) visitExprParentInformationI:(id<ORExpr>)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprParentInformationI: visit method not defined"];
+}
+-(void) visitExprMinParentInformationI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinParentInformationI: visit method not defined"];
+}
+-(void) visitExprMaxParentInformationI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMaxParentInformationI: visit method not defined"];
 }
 -(void) visitExprChildInformationI:(id<ORExpr>)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprChildInformationI: visit method not defined"];
+}
+-(void) visitExprMinChildInformationI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMaxChildInformationI: visit method not defined"];
+}
+-(void) visitExprMaxChildInformationI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMaxChildInformationI: visit method not defined"];
 }
 -(void) visitExprLeftInformationI:(id<ORExpr>)e
 {
@@ -832,13 +852,25 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprStateValueI: visit method not defined"];
 }
--(void) visitExprParentInformationI:(id<ORExpr>)e
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprParentInformationI: visit method not defined"];
-}
 -(void) visitExprIfThenElseI: (id<ORExpr>) e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprIfThenElseI: visit method not defined"];
+}
+-(void) visitExprArrayIndexI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprArrayIndexI: visit method not defined"];
+}
+-(void) visitExprAppendToArrayI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprAppendToArrayI: visit method not defined"];
+}
+-(void) visitExprMinBetweenArraysI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinBetweenArraysI: visit method not defined"];
+}
+-(void) visitExprMaxBetweenArraysI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprMaxBetweenArraysI: visit method not defined"];
 }
 -(void) visitExprEachInSetPlusI: (id<ORExpr>) e
 {

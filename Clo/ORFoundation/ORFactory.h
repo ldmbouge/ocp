@@ -127,12 +127,18 @@ PORTABLE_BEGIN
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range bounds: (id<ORIntRange>) domain;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo;
 +(id<ORExpr>) getStateValue:(id<ORTracker>)t lookup:(int)lookup;
++(id<ORExpr>) getStateValue:(id<ORTracker>)t lookup:(int)lookup arrayIndex:(id<ORInteger>)arrayIndex;
 +(id<ORExpr>) getLeftStateValue:(id<ORTracker>)t lookup:(int)lookup;
 +(id<ORExpr>) getRightStateValue:(id<ORTracker>)t lookup:(int)lookup;
 +(id<ORExpr>) valueAssignment:(id<ORTracker>)t;
 +(id<ORExpr>) layerVariable:(id<ORTracker>)t;
++(id<ORExpr>) sizeOfArray:(id<ORExpr>)array track:(id<ORTracker>)t;
 +(id<ORExpr>) parentInformation:(id<ORTracker>)t;
++(id<ORExpr>) minParentInformation:(id<ORTracker>)t;
++(id<ORExpr>) maxParentInformation:(id<ORTracker>)t;
 +(id<ORExpr>) childInformation:(id<ORTracker>)t;
++(id<ORExpr>) minChildInformation:(id<ORTracker>)t;
++(id<ORExpr>) maxChildInformation:(id<ORTracker>)t;
 +(id<ORExpr>) leftInformation:(id<ORTracker>)t;
 +(id<ORExpr>) rightInformation:(id<ORTracker>)t;
 +(id<ORExpr>) singletonSet:(id<ORExpr>)value track:(id<ORTracker>)t;
@@ -208,11 +214,15 @@ PORTABLE_BEGIN
 +(id<ORExpr>) contains:(id<ORExpr>) value inSet:(id<ORIntSet>)set;
 +(id<ORExpr>) contains:(id<ORExpr>) value inExpr:(id<ORExpr>)set;
 +(id<ORExpr>) setUnion:(id<ORExpr>)left and:(id<ORExpr>)right;
++(id<ORExpr>) expr: (id<ORExpr>) left appendToArray: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORExpr>) array:(id<ORExpr>)array atIndex:(id<ORExpr>)index track:(id<ORTracker>)t;
 +(id<ORExpr>) ifExpr:(id<ORExpr>)i then:(id<ORExpr>)t elseReturn:(id<ORExpr>)e track:(id<ORTracker>)track;
 +(id<ORExpr>) expr: (id<ORExpr>) left toEachInSetPlus: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left toEachInSetPlusEachInSet: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORRelation>) expr: (id<ORExpr>) left eachInSetLEQ: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORRelation>) expr: (id<ORExpr>) left eachInSetGEQ: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORExpr>) minBetweenArrays:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)track;
++(id<ORExpr>) maxBetweenArrays:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)track;
 @end
 
 @interface ORFactory (Constraints)

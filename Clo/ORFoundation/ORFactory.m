@@ -591,6 +591,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:lookup];
     return o;
 }
++(id<ORExpr>) getStateValue:(id<ORTracker>)t lookup:(int)lookup arrayIndex:(id<ORInteger>)arrayIndex
+{
+    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:lookup arrayIndex:arrayIndex];
+    return o;
+}
 +(id<ORExpr>) getLeftStateValue:(id<ORTracker>)t lookup:(int)lookup
 {
     id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:lookup index:0];
@@ -611,14 +616,39 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORExpr> o = [[ORExprLayerVariableI alloc] initORExprLayerVariableI:t];
     return o;
 }
++(id<ORExpr>) sizeOfArray:(id<ORExpr>)array track:(id<ORTracker>)t
+{
+    id<ORExpr> o = [[ORExprSizeOfArrayI alloc] initORExprSizeOfArrayI:array track:t];
+    return o;
+}
 +(id<ORExpr>) parentInformation:(id<ORTracker>)t
 {
     id<ORExpr> o = [[ORExprParentInformationI alloc] initORExprParentInformationI:t];
     return o;
 }
++(id<ORExpr>) minParentInformation:(id<ORTracker>)t
+{
+    id<ORExpr> o = [[ORExprMinParentInformationI alloc] initORExprMinParentInformationI:t];
+    return o;
+}
++(id<ORExpr>) maxParentInformation:(id<ORTracker>)t
+{
+    id<ORExpr> o = [[ORExprMaxParentInformationI alloc] initORExprMaxParentInformationI:t];
+    return o;
+}
 +(id<ORExpr>) childInformation:(id<ORTracker>)t
 {
     id<ORExpr> o = [[ORExprChildInformationI alloc] initORExprChildInformationI:t];
+    return o;
+}
++(id<ORExpr>) minChildInformation:(id<ORTracker>)t
+{
+    id<ORExpr> o = [[ORExprMinChildInformationI alloc] initORExprMinChildInformationI:t];
+    return o;
+}
++(id<ORExpr>) maxChildInformation:(id<ORTracker>)t
+{
+    id<ORExpr> o = [[ORExprMaxChildInformationI alloc] initORExprMaxChildInformationI:t];
     return o;
 }
 +(id<ORExpr>) leftInformation:(id<ORTracker>)t
@@ -943,10 +973,32 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [track trackObject:o];
     return o;
 }
++(id<ORExpr>) array:(id<ORExpr>)array atIndex:(id<ORExpr>)index track:(id<ORTracker>)t
+{
+    id<ORExpr> o = [[ORExprArrayIndexI alloc] initORExprArrayIndexI:array index:index];
+    return [self validate:o onError:"No CP tracker in Add Expression" track:t];
+}
++(id<ORExpr>) expr: (id<ORExpr>) left appendToArray: (id<ORExpr>) right track:(id<ORTracker>)t
+{
+    id<ORExpr> o = [[ORExprAppendToArrayI alloc] initORExprAppendToArrayI:left value: right];
+    return [self validate:o onError:"No CP tracker in Add Expression" track:t];
+}
 +(id<ORExpr>) expr: (id<ORExpr>) left toEachInSetPlus: (id<ORExpr>) right track:(id<ORTracker>)t
 {
     id<ORExpr> o = [[ORExprEachInSetPlusI alloc] initORExprEachInSetPlusI: left and: right];
     return [self validate:o onError:"No CP tracker in Add Expression" track:t];
+}
++(id<ORExpr>) minBetweenArrays:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)track
+{
+    id<ORExpr> o = [[ORExprMinBetweenArraysI alloc] initORExprMinBetweenArrays:left and:right];
+    [track trackObject:o];
+    return o;
+}
++(id<ORExpr>) maxBetweenArrays:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)track
+{
+    id<ORExpr> o = [[ORExprMaxBetweenArraysI alloc] initORExprMaxBetweenArrays:left and:right];
+    [track trackObject:o];
+    return o;
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left toEachInSetPlusEachInSet: (id<ORExpr>) right track:(id<ORTracker>)track
 {
@@ -1077,9 +1129,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORConstraint> o;
     //AltCustomState* altClass = [[AltCustomState alloc] init];
     //if (stateClass == [altClass class]) {
-        o = [[ORCustomAltMDD alloc] initORCustomAltMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
+        //o = [[ORCustomAltMDD alloc] initORCustomAltMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
     //} else {
-    //    o = [[ORCustomMDD alloc] initORCustomMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
+        o = [[ORCustomMDD alloc] initORCustomMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
     //}
     [model trackObject:o];
     return o;

@@ -203,6 +203,38 @@
     [[e right] visit: self];
     [_currentString appendString:@")"];
 }
+-(void) visitExprArrayIndexI:(ORExprArrayIndexI*)e
+{
+    [_currentString appendString:@"ArrayIndex("];
+    [[e array] visit: self];
+    [_currentString appendString:@","];
+    [[e index] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprAppendToArrayI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"AppendToArray("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprMinBetweenArraysI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"MinBetweenArrays("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprMaxBetweenArraysI:(ORExprBinaryI*)e
+{
+    [_currentString appendString:@"MaxBetweenArrays("];
+    [[e left] visit: self];
+    [_currentString appendString:@","];
+    [[e right] visit: self];
+    [_currentString appendString:@")"];
+}
 -(void) visitExprEachInSetPlusEachInSetI:(ORExprBinaryI*)e
 {
     [_currentString appendString:@"EachInSetPlusEachInSet("];
@@ -235,6 +267,30 @@
 -(void) visitExprLayerVariable:(ORExprLayerVariableI*)e
 {
     [_currentString appendString:@"LayerVariable"];
+}
+-(void) visitExprParentInformationI:(id<ORExpr>)e
+{
+    [_currentString appendString:@"ParentInformation"];
+}
+-(void) visitExprMinParentInformationI:(id<ORExpr>)e
+{
+    [_currentString appendString:@"MinParentInformation"];
+}
+-(void) visitExprMaxParentInformationI:(id<ORExpr>)e
+{
+    [_currentString appendString:@"MaxParentInformation"];
+}
+-(void) visitExprChildInformationI:(id<ORExpr>)e
+{
+    [_currentString appendString:@"ChildInformation"];
+}
+-(void) visitExprMinChildInformationI:(id<ORExpr>)e
+{
+    [_currentString appendString:@"MinChildInformation"];
+}
+-(void) visitExprMaxChildInformationI:(id<ORExpr>)e
+{
+    [_currentString appendString:@"MaxChildInformation"];
 }
 
 -(void) visitIntVar:(id<ORIntVar>)v {
@@ -413,6 +469,26 @@
     [[e thenReturn] visit: self];
     [[e elseReturn] visit: self];
 }
+-(void) visitExprArrayIndexI:(ORExprArrayIndexI*)e
+{
+    [[e array] visit: self];
+    [[e index] visit: self];
+}
+-(void) visitExprAppendToArrayI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprMinBetweenArraysI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
+-(void) visitExprMaxBetweenArraysI:(ORExprBinaryI*)e
+{
+    [[e left] visit: self];
+    [[e right] visit: self];
+}
 -(void) visitExprEachInSetPlusI:(ORExprBinaryI*)e
 {
     [[e left] visit: self];
@@ -441,8 +517,13 @@
 -(void) visitDouble: (id<ORDoubleNumber>) e { return; }
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e { return; }
 -(void) visitExprLayerVariableI:(id<ORExpr>)e { return; }
+-(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e { [[e array] visit: self]; }
 -(void) visitExprParentInformationI:(id<ORExpr>)e { return; }
+-(void) visitExprMinParentInformationI:(id<ORExpr>)e { return; }
+-(void) visitExprMaxParentInformationI:(id<ORExpr>)e { return; }
 -(void) visitExprChildInformationI:(id<ORExpr>)e { return; }
+-(void) visitExprMinChildInformationI:(id<ORExpr>)e { return; }
+-(void) visitExprMaxChildInformationI:(id<ORExpr>)e { return; }
 -(void) visitExprLeftInformationI:(id<ORExpr>)e { return; }
 -(void) visitExprRightInformationI:(id<ORExpr>)e { return; }
 -(void) visitExprSingletonSetI:(ORExprSingletonSetI*)e
@@ -541,7 +622,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e
 {
     current = [^(int* state, ORInt variable, ORInt value) {
-        return [e value];
+        return [NSNumber numberWithInt: [e value]];
     } copy];
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
@@ -560,40 +641,40 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) + (int)right(state, variable, value);  //Only works for ints
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithInt: ([left(state, variable, value) intValue] + [right(state, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprMinusI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) - (int)right(state, variable, value);  //Only works for ints
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithInt: [left(state, variable, value) intValue] - [right(state, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprMulI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) * (int)right(state, variable, value);  //Only works for ints
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithInt: ([left(state, variable, value) intValue] * [right(state, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprDivI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) / (int)right(state, variable, value);  //Only works for ints
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithInt: ([left(state, variable, value) intValue] / [right(state, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprModI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) % (int)right(state, variable, value);  //Only works for ints
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithInt: ([left(state, variable, value) intValue] % [right(state, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprMinI: (id<ORExpr>) e
@@ -608,32 +689,32 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return left(state, variable, value) == right(state, variable, value);
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool: ([left(state, variable, value) intValue] == [right(state, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprNEqualI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return left(state, variable, value) != right(state, variable, value);
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool: ([left(state, variable, value) intValue] != [right(state, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) <= (int)right(state, variable, value);  //Only works for ints
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool: ([left(state, variable, value) intValue] <= [right(state, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprGEqualI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return (int)left(state, variable, value) >= (int)right(state, variable, value);  //Only works for ints
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool: ([left(state, variable, value) intValue] >= [right(state, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprSumI: (id<ORExpr>) e
@@ -676,24 +757,24 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return left(state, variable, value) || right(state, variable, value);
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool: ([left(state, variable, value) boolValue] || [right(state, variable, value) boolValue])];
     } copy];
 }
 -(void) visitExprConjunctI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return left(state, variable, value) && right(state, variable, value);
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool: ([left(state, variable, value) boolValue] && [right(state, variable, value) boolValue])];
     } copy];
 }
 -(void) visitExprImplyI: (ORExprBinaryI*) e
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state, ORInt variable, ORInt value) {
-        return !left(state, variable, value) || right(state, variable, value);
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool: ((![left(state, variable, value) boolValue]) || [right(state, variable, value) boolValue])];
     } copy];
 }
 -(void) visitExprAggOrI: (id<ORExpr>) e
@@ -714,27 +795,37 @@
 }
 -(void) visitExprStateValueI:(ORExprStateValueI*)e
 {
-    current = [^(int* state, ORInt variable, ORInt value) {
+    current = [^(id* state, ORInt variable, ORInt value) {
+        if ([e isArray]) {
+            return state[[e lookup]][[e arrayIndex]];
+        }
         return state[[e lookup]];
     } copy];
 }
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
 {
-    current = [^(int* state, ORInt variable, ORInt value) {
-        return value;
+    current = [^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithInt: value];
     } copy];
 }
 -(void) visitExprLayerVariableI:(id<ORExpr>)e
 {
-    current = [^(int* state, ORInt variable, ORInt value) {
+    current = [^(id* state, ORInt variable, ORInt value) {
         return variable;
+    } copy];
+}
+-(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
+{
+    DDClosure array = [self recursiveVisitor:[e array]];
+    current = [^(id* state, ORInt variable, ORInt value) {
+        return [array(state, variable, value) count];
     } copy];
 }
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
     DDClosure right = [self recursiveVisitor:[e value]];
-    current = [^(int* state, ORInt variable, ORInt value) {
-        return [[e set] member: (int)right(state, variable, value)];
+    current = [^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool:[[e set] member: [right(state, variable, value) intValue]]];
     } copy];
 }
 -(void) visitExprSetExprContainsI:(ORExprSetExprContainsI*)e
@@ -773,7 +864,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e
 {
     current = [^(int* state1, int* state2) {
-        return [e value];
+        return [NSNumber numberWithInt: [e value]];
     } copy];
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
@@ -792,88 +883,88 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return (int)left(state1, state2) + (int)right(state1, state2);  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithInt: ([left(state1, state2) intValue] + [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprMinusI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return (int)left(state1, state2) - (int)right(state1, state2);  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithInt: ([left(state1, state2) intValue] - [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprMulI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return (int)left(state1, state2) * (int)right(state1, state2);  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithInt: ([left(state1, state2) intValue] * [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprDivI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return (int)left(state1, state2) / (int)right(state1, state2);  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithInt: ([left(state1, state2) intValue] / [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprModI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return (int)left(state1, state2) % (int)right(state1, state2);  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithInt: ([left(state1, state2) intValue] % [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprMinI: (ORExprMinI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [^(int* state1, int* state2) {
-        return min((int)left(state1, state2), (int)right(state1, state2));  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithInt: min([left(state1, state2) intValue], [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprMaxI: (ORExprMaxI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [^(int* state1, int* state2) {
-        return max((int)left(state1, state2), (int)right(state1, state2));  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithInt: max([left(state1, state2) intValue], [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprEqualI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return left(state1, state2) == right(state1, state2);
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithBool: ([left(state1, state2) intValue] == [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprNEqualI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return left(state1, state2) != right(state1, state2);
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithBool: ([left(state1, state2) intValue] != [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return (int)left(state1, state2) <= (int)right(state1, state2);  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithBool: ([left(state1, state2) intValue] <= [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprGEqualI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return (int)left(state1, state2) >= (int)right(state1, state2);  //Only works for ints
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithBool: ([left(state1, state2) intValue] >= [right(state1, state2) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprSumI: (id<ORExpr>) e
@@ -895,8 +986,8 @@
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
     DDMergeClosure inner = [self recursiveVisitor:[e operand]];
-    current = [^(int* state1, int* state2) {
-        return abs((int)inner(state1,state2));
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithInt: abs([inner(state1, state2) intValue])];
     } copy];
 }
 -(void) visitExprSquareI:(id<ORExpr>)e
@@ -919,24 +1010,24 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return left(state1, state2) || right(state1, state2);
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithBool: ([left(state1, state2) boolValue] || [right(state1, state2) boolValue])];
     } copy];
 }
 -(void) visitExprConjunctI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return left(state1, state2) && right(state1, state2);
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithBool: ([left(state1, state2) boolValue] && [right(state1, state2) boolValue])];
     } copy];
 }
 -(void) visitExprImplyI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(int* state1, int* state2) {
-        return !left(state1, state2) || right(state1, state2);
+    current = [(id)^(id* state1, id* state2) {
+        return [NSNumber numberWithBool: (!([left(state1, state2) boolValue]) || [right(state1, state2) boolValue])];
     } copy];
 }
 -(void) visitExprAggOrI: (id<ORExpr>) e
@@ -957,7 +1048,7 @@
 }
 -(void) visitExprStateValueI:(ORExprStateValueI*)e
 {
-    current = [^(int* state1, int* state2) {
+    current = [^(id* state1, id* state2) {
         if ([e index] == 0) {
             return state1[[e lookup]];
         }
@@ -972,11 +1063,18 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprLayerVariableI: visit method not defined"];
 }
+-(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
+{
+    DDMergeClosure array = [self recursiveVisitor:[e array]];
+    current = [^(id* state1, id* state2) {
+        return [array(state1, state2) count];
+    } copy];
+}
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
     DDMergeClosure right = [self recursiveVisitor:[e value]];
-    current = [^(int* state1, int* state2) {
-        return [[e set] member: (int)right(state1, state2)];
+    current = [^(id* state1, id* state2) {
+        return [NSNumber numberWithBool:[[e set] member: [right(state1, state2) intValue]]];
     } copy];
 }
 -(void) visitExprSetExprContainsI:(id<ORExpr>)e
@@ -1015,7 +1113,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e
 {
     current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
-        return [e value];
+        return [NSNumber numberWithInt:[e value]];
     } copy];
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
@@ -1035,7 +1133,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return (int)left(parent, child, variable, value) + (int)right(parent, child, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, child, variable, value) intValue] + [right(parent, child, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprMinusI: (ORExprBinaryI*) e
@@ -1043,7 +1141,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return (int)left(parent, child, variable, value) - (int)right(parent, child, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, child, variable, value) intValue] - [right(parent, child, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprMulI: (ORExprBinaryI*) e
@@ -1051,7 +1149,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return (int)left(parent, child, variable, value) * (int)right(parent, child, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, child, variable, value) intValue] * [right(parent, child, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprDivI: (ORExprBinaryI*) e
@@ -1059,7 +1157,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return (int)left(parent, child, variable, value) / (int)right(parent, child, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, child, variable, value) intValue] / [right(parent, child, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprModI: (ORExprBinaryI*) e
@@ -1067,7 +1165,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return (int)left(parent, child, variable, value) % (int)right(parent, child, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, child, variable, value) intValue] % [right(parent, child, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprMinI: (ORExprMinI*) e
@@ -1075,7 +1173,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return min((int)left(parent, child, variable, value), (int)right(parent, child, variable, value));  //Only works for ints
+        return [NSNumber numberWithInt:min([left(parent, child, variable, value) intValue], [right(parent, child, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprMaxI: (ORExprMaxI*) e
@@ -1083,7 +1181,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return max((int)left(parent, child, variable, value), (int)right(parent, child, variable, value));  //Only works for ints
+        return [NSNumber numberWithInt:max([left(parent, child, variable, value) intValue], [right(parent, child, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprEqualI: (ORExprBinaryI*) e
@@ -1091,7 +1189,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return left(parent, child, variable, value) == right(parent, child, variable, value);
+        return [NSNumber numberWithBool:[left(parent, child, variable, value) boolValue] == [right(parent, child, variable, value) boolValue]];
     } copy];
 }
 -(void) visitExprNEqualI: (ORExprBinaryI*) e
@@ -1099,7 +1197,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return left(parent, child, variable, value) != right(parent, child, variable, value);
+        return [NSNumber numberWithBool:[left(parent, child, variable, value) boolValue] != [right(parent, child, variable, value) boolValue]];
     } copy];
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) e
@@ -1107,7 +1205,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return (int)left(parent, child, variable, value) <= (int)right(parent, child, variable, value);  //Only works for ints
+        return [NSNumber numberWithBool:[left(parent, child, variable, value) intValue] <= [right(parent, child, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprGEqualI: (ORExprBinaryI*) e
@@ -1115,7 +1213,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return (int)left(parent, child, variable, value) >= (int)right(parent, child, variable, value);  //Only works for ints
+        return [NSNumber numberWithBool:[left(parent, child, variable, value) intValue] >= [right(parent, child, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprSumI: (id<ORExpr>) e
@@ -1138,7 +1236,7 @@
 {
     AltMDDDeleteEdgeCheckClosure inner = [self recursiveVisitor:[e operand]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return abs((int)inner(parent, child, variable, value));
+        return [NSNumber numberWithInt:abs([inner(parent, child, variable, value) intValue])];
     } copy];
 }
 -(void) visitExprSquareI:(id<ORExpr>)e
@@ -1149,7 +1247,7 @@
 {
     AltMDDDeleteEdgeCheckClosure inner = [self recursiveVisitor:[e operand]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return !((bool)inner(parent, child, variable, value));
+        return [NSNumber numberWithBool:!([inner(parent, child, variable, value) boolValue])];
     } copy];
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e
@@ -1165,7 +1263,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return left(parent, child, variable, value) || right(parent, child, variable, value);
+        return [NSNumber numberWithBool:[left(parent, child, variable, value) boolValue] || [right(parent, child, variable, value) boolValue]];
     } copy];
 }
 -(void) visitExprConjunctI: (ORExprBinaryI*) e
@@ -1173,7 +1271,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return left(parent, child, variable, value) && right(parent, child, variable, value);
+        return [NSNumber numberWithBool:[left(parent, child, variable, value) boolValue] && [right(parent, child, variable, value) boolValue]];
     } copy];
 }
 -(void) visitExprImplyI: (ORExprBinaryI*) e
@@ -1181,7 +1279,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return !left(parent, child, variable, value) || right(parent, child, variable, value);
+        return [NSNumber numberWithBool:![left(parent, child, variable, value) boolValue] || [right(parent, child, variable, value) boolValue]];
     } copy];
 }
 -(void) visitExprAggOrI: (id<ORExpr>) e
@@ -1207,20 +1305,35 @@
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
 {
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return value;
+        return [NSNumber numberWithInt:value];
     } copy];
 }
 -(void) visitExprLayerVariableI:(id<ORExpr>)e
 {
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return variable;
+        return [NSNumber numberWithInt:variable];
+    } copy];
+}
+-(void) visitExprArrayIndexI:(ORExprArrayIndexI*)e
+{
+    AltMDDDeleteEdgeCheckClosure array = [self recursiveVisitor:[e array]];
+    AltMDDDeleteEdgeCheckClosure index = [self recursiveVisitor:[e index]];
+    current = [^(id parent, id child, ORInt variable, ORInt value) {
+        return [array(parent, child, variable, value) objectAtIndex:[index(parent,child,variable,value) intValue]];
+    } copy];
+}
+-(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
+{
+    AltMDDDeleteEdgeCheckClosure array = [self recursiveVisitor:[e array]];
+    current = [^(id parent, id child, ORInt variable, ORInt value) {
+        return [NSNumber numberWithInt:(int)[array(parent, child, variable, value) count]];
     } copy];
 }
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e value]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return [[e set] member: (int)right(parent, child, variable, value)];
+        return [NSNumber numberWithBool:[[e set] member: [right(parent, child, variable, value) intValue]]];
     } copy];
 }
 -(void) visitExprSetExprContainsI:(ORExprBinaryI*)e
@@ -1228,7 +1341,7 @@
     AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
     AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,id child,ORInt variable,ORInt value) {
-        return [(NSSet*)left(parent,child,variable,value) member: [[NSNumber alloc] initWithInt: (int)right(parent, child, variable, value)]];
+        return [NSNumber numberWithBool:[(ORIntSetI*)left(parent,child,variable,value) member:[right(parent, child, variable, value) intValue]]];
     } copy];
 }
 //I think the problem is everything is expected to return ints.  Try chaning everything to id and using NSBool or something when needed?
@@ -1238,10 +1351,46 @@
         return parent;
     } copy];
 }
+-(void) visitExprMinParentInformationI:(id<ORExpr>)e
+{
+    current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
+        return [parent objectAtIndex:0];
+    } copy];
+}
+-(void) visitExprMaxParentInformationI:(id<ORExpr>)e
+{
+    current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
+        return [parent objectAtIndex:1];
+    } copy];
+}
 -(void) visitExprChildInformationI:(id<ORExpr>)e
 {
     current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
         return child;
+    } copy];
+}
+-(void) visitExprMinChildInformationI:(id<ORExpr>)e
+{
+    current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
+        return [child objectAtIndex:0];
+    } copy];
+}
+-(void) visitExprMaxChildInformationI:(id<ORExpr>)e
+{
+    current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
+        return [child objectAtIndex:1];
+    } copy];
+}
+-(void) visitExprAppendToArrayI:(ORExprBinaryI*)e
+{
+    AltMDDDeleteEdgeCheckClosure left = [self recursiveVisitor:[e left]];
+    AltMDDDeleteEdgeCheckClosure right = [self recursiveVisitor:[e right]];
+    current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
+        NSArray* leftArray = (NSArray*)left(parent,child,variable,value);
+        NSMutableArray* newArray = [[NSMutableArray alloc] initWithArray:leftArray];
+        id objectToAppend = right(parent,child,variable,value);
+        [newArray addObject:objectToAppend];
+        return newArray;
     } copy];
 }
 -(void) visitExprEachInSetPlusI:(ORExprBinaryI*)e
@@ -1284,10 +1433,10 @@
         int upper = (int)right(parent,child,variable,value);
         for (NSNumber* item in set) {
             if ([item intValue] > upper) {
-                return false;
+                return [NSNumber numberWithBool:false];
             }
         }
-        return true;
+        return [NSNumber numberWithBool:true];
     } copy];
 }
 -(void) visitExprEachInSetGEQI:(ORExprBinaryI*)e
@@ -1299,10 +1448,10 @@
         int lower = (int)right(parent,child,variable,value);
         for (NSNumber* item in set) {
             if ([item intValue] < lower) {
-                return false;
+                return [NSNumber numberWithBool:false];
             }
         }
-        return true;
+        return [NSNumber numberWithBool:true];
     } copy];
 }
 @end
@@ -1521,12 +1670,60 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprStateValueI: visit method not defined"];
 }
+-(void) visitExprMinBetweenArraysI:(ORExprBinaryI*)e
+{
+    AltMDDMergeInfoClosure left = [self recursiveVisitor:[e left]];
+    AltMDDMergeInfoClosure right = [self recursiveVisitor:[e right]];
+    current = [^(id leftParent,id rightParent,ORInt variable) {
+        NSArray* leftArray = left(leftParent, rightParent, variable);
+        NSArray* rightArray = right(leftParent, rightParent, variable);
+        int leftArrayCount = (int)[leftArray count];
+        int rightArrayCount = (int)[rightArray count];
+        NSMutableArray* minArray = [[NSMutableArray alloc] initWithArray:leftArray];
+        for (int index = 0; index < leftArrayCount; index++) {
+            id rightObject = [rightArray objectAtIndex:index];
+            if ([[minArray objectAtIndex:index] intValue] > [rightObject intValue]) {
+                [minArray setObject:rightObject atIndexedSubscript:index];
+            }
+        }
+        if (rightArrayCount > leftArrayCount) {
+            for (int index = leftArrayCount; index < rightArrayCount; index++) {
+                [minArray addObject:[rightArray objectAtIndex:index]];
+            }
+        }
+        return minArray;
+    } copy];
+}
+-(void) visitExprMaxBetweenArraysI:(ORExprBinaryI*)e
+{
+    AltMDDMergeInfoClosure left = [self recursiveVisitor:[e left]];
+    AltMDDMergeInfoClosure right = [self recursiveVisitor:[e right]];
+    current = [^(id leftParent,id rightParent,ORInt variable) {
+        NSArray* leftArray = left(leftParent, rightParent, variable);
+        NSArray* rightArray = right(leftParent, rightParent, variable);
+        int leftArrayCount = (int)[leftArray count];
+        int rightArrayCount = (int)[rightArray count];
+        NSMutableArray* maxArray = [[NSMutableArray alloc] initWithArray:leftArray];
+        for (int index = 0; index < leftArrayCount; index++) {
+            id rightObject = [rightArray objectAtIndex:index];
+            if ([[maxArray objectAtIndex:index] intValue] < [rightObject intValue]) {
+                [maxArray setObject:rightObject atIndexedSubscript:index];
+            }
+        }
+        if (rightArrayCount > leftArrayCount) {
+            for (int index = leftArrayCount; index < rightArrayCount; index++) {
+                [maxArray addObject:[rightArray objectAtIndex:index]];
+            }
+        }
+        return maxArray;
+    } copy];
+}
 -(void) visitExprSetExprContainsI:(ORExprBinaryI*)e
 {
     AltMDDMergeInfoClosure left = [self recursiveVisitor:[e left]];
     AltMDDMergeInfoClosure right = [self recursiveVisitor:[e right]];
     current = [^(id leftParent,id rightParent,ORInt variable) {
-        return [(NSSet*)left(leftParent, rightParent, variable) member: [[NSNumber alloc] initWithInt: (int)right(leftParent, rightParent, variable)]];
+        return [NSNumber numberWithBool:[(ORIntSetI*)left(leftParent, rightParent, variable) member:[right(leftParent, rightParent, variable) intValue]]];
     } copy];
 }
 -(void) visitExprSetUnionI:(ORExprBinaryI*)e
@@ -1547,11 +1744,26 @@
         return variable;
     } copy];
 }
+-(void) visitExprArrayIndexI:(ORExprArrayIndexI*)e
+{
+    AltMDDMergeInfoClosure array = [self recursiveVisitor:[e array]];
+    AltMDDMergeInfoClosure index = [self recursiveVisitor:[e index]];
+    current = [^(id leftParent, id rightParent, ORInt variable) {
+        return [array(leftParent, rightParent, variable) objectAtIndex:[index(leftParent,rightParent,variable) intValue]];
+    } copy];
+}
+-(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
+{
+    AltMDDMergeInfoClosure array = [self recursiveVisitor:[e array]];
+    current = [^(id leftParent, id rightParent, ORInt variable) {
+        return [array(leftParent, rightParent, variable) count];
+    } copy];
+}
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
     AltMDDMergeInfoClosure right = [self recursiveVisitor:[e value]];
     current = [(id)^(id leftParent,id rightParent,ORInt variable) {
-        return [[e set] member: (int)right(leftParent, rightParent, variable)];
+        return [NSNumber numberWithBool:[[e set] member: [right(leftParent, rightParent, variable) intValue]]];
     } copy];
 }
 -(void) visitExprParentInformationI:(id<ORExpr>)e
@@ -1661,7 +1873,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return (int)left(parent, variable, value) + (int)right(parent, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] + [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprMinusI: (ORExprBinaryI*) e
@@ -1669,7 +1881,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return (int)left(parent, variable, value) - (int)right(parent, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] - [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprMulI: (ORExprBinaryI*) e
@@ -1677,7 +1889,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return (int)left(parent, variable, value) * (int)right(parent, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] * [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprDivI: (ORExprBinaryI*) e
@@ -1685,7 +1897,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return (int)left(parent, variable, value) / (int)right(parent, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] / [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprModI: (ORExprBinaryI*) e
@@ -1693,7 +1905,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return (int)left(parent, variable, value) % (int)right(parent, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] % [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprMinI: (ORExprMinI*) e
@@ -1701,7 +1913,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return min((int)left(parent, variable, value), (int)right(parent, variable, value));  //Only works for ints
+        return [NSNumber numberWithInt:min([left(parent, variable, value) intValue], [right(parent, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprMaxI: (ORExprMaxI*) e
@@ -1709,7 +1921,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return max((int)left(parent, variable, value), (int)right(parent, variable, value));  //Only works for ints
+        return [NSNumber numberWithInt:max([left(parent, variable, value) intValue], [right(parent, variable, value) intValue])];  //Only works for ints
     } copy];
 }
 -(void) visitExprEqualI: (ORExprBinaryI*) e
@@ -1717,7 +1929,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return left(parent, variable, value) == right(parent, variable, value);
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] == [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprNEqualI: (ORExprBinaryI*) e
@@ -1725,7 +1937,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return left(parent, variable, value) != right(parent, variable, value);
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] != [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) e
@@ -1733,7 +1945,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return (int)left(parent, variable, value) <= (int)right(parent, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] <= [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprGEqualI: (ORExprBinaryI*) e
@@ -1741,7 +1953,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return (int)left(parent, variable, value) >= (int)right(parent, variable, value);  //Only works for ints
+        return [NSNumber numberWithInt:[left(parent, variable, value) intValue] >= [right(parent, variable, value) intValue]];  //Only works for ints
     } copy];
 }
 -(void) visitExprSumI: (id<ORExpr>) e
@@ -1764,7 +1976,7 @@
 {
     AltMDDAddEdgeClosure inner = [self recursiveVisitor:[e operand]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return abs((int)inner(parent, variable, value));
+        return [NSNumber numberWithInt:abs([inner(parent, variable, value) intValue])];
     } copy];
 }
 -(void) visitExprSquareI:(id<ORExpr>)e
@@ -1788,7 +2000,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return left(parent, variable, value) || right(parent, variable, value);
+        return [NSNumber numberWithBool:[left(parent, variable, value) boolValue] || [right(parent, variable, value) boolValue]];
     } copy];
 }
 -(void) visitExprConjunctI: (ORExprBinaryI*) e
@@ -1796,7 +2008,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return left(parent, variable, value) && right(parent, variable, value);
+        return [NSNumber numberWithBool:[left(parent, variable, value) boolValue] && [right(parent, variable, value) boolValue]];
     } copy];
 }
 -(void) visitExprImplyI: (ORExprBinaryI*) e
@@ -1804,7 +2016,7 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return !left(parent, variable, value) || right(parent, variable, value);
+        return [NSNumber numberWithBool:![left(parent, variable, value) boolValue] || [right(parent, variable, value) boolValue]];
     } copy];
 }
 -(void) visitExprAggOrI: (id<ORExpr>) e
@@ -1832,26 +2044,41 @@
     AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
     current = [^(id parent,ORInt variable,ORInt value) {
-        return [(NSSet*)left(parent,variable,value) member: [[NSNumber alloc] initWithInt: (int)right(parent, variable, value)]];
+        return [NSNumber numberWithBool:[(ORIntSetI*)left(parent,variable,value) member:[right(parent, variable, value) intValue]]];
     } copy];
 }
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
 {
     current = [^(id parent,ORInt variable,ORInt value) {
-        return value;
+        return [NSNumber numberWithInt: value];
     } copy];
 }
 -(void) visitExprLayerVariableI:(id<ORExpr>)e
 {
     current = [^(id parent,ORInt variable,ORInt value) {
-        return variable;
+        return [NSNumber numberWithInt: variable];
+    } copy];
+}
+-(void) visitExprArrayIndexI:(ORExprArrayIndexI*)e
+{
+    AltMDDAddEdgeClosure array = [self recursiveVisitor:[e array]];
+    AltMDDAddEdgeClosure index = [self recursiveVisitor:[e index]];
+    current = [^(id parent, ORInt variable, ORInt value) {
+        return [array(parent, variable, value) objectAtIndex:[index(parent,variable,value) intValue]];
+    } copy];
+}
+-(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
+{
+    AltMDDAddEdgeClosure array = [self recursiveVisitor:[e array]];
+    current = [^(id parent, ORInt variable, ORInt value) {
+        return [NSNumber numberWithInt:(int)[array(parent, variable, value) count]];
     } copy];
 }
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
     AltMDDAddEdgeClosure right = [self recursiveVisitor:[e value]];
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return [[e set] member: (int)right(parent, variable, value)];
+        return [NSNumber numberWithBool:[[e set] member: (int)[right(parent, variable, value) intValue]]];
     } copy];
 }
 -(void) visitExprParentInformationI:(id<ORExpr>)e
@@ -1883,6 +2110,18 @@
         } else {
             return elseClosure(parent,variable,value);
         }
+    } copy];
+}
+-(void) visitExprAppendToArrayI:(ORExprBinaryI*)e
+{
+    AltMDDAddEdgeClosure left = [self recursiveVisitor:[e left]];
+    AltMDDAddEdgeClosure right = [self recursiveVisitor:[e right]];
+    current = [(id)^(id parent,ORInt variable,ORInt value) {
+        NSArray* leftArray = (NSArray*)left(parent,variable,value);
+        NSMutableArray* newArray = [[NSMutableArray alloc] initWithArray:leftArray];
+        id objectToAppend = right(parent,variable,value);
+        [newArray addObject:objectToAppend];
+        return newArray;
     } copy];
 }
 -(void) visitExprEachInSetPlusI:(ORExprBinaryI*)e
@@ -1925,10 +2164,10 @@
         int upper = (int)right(parent,variable,value);
         for (NSNumber* item in set) {
             if ([item intValue] > upper) {
-                return false;
+                return [NSNumber numberWithBool:false];
             }
         }
-        return true;
+        return [NSNumber numberWithBool:true];
     } copy];
 }
 -(void) visitExprEachInSetGEQI:(ORExprBinaryI*)e
@@ -1940,10 +2179,10 @@
         int lower = (int)right(parent,variable,value);
         for (NSNumber* item in set) {
             if ([item intValue] < lower) {
-                return false;
+                return [NSNumber numberWithBool:false];
             }
         }
-        return true;
+        return [NSNumber numberWithBool:true];
     } copy];
 }
 @end

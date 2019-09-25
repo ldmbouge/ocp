@@ -502,7 +502,8 @@
 
 @implementation ORMDDSpecs {
    id<ORIntVarArray> _x;
-   ORInt* _stateValues;
+   //ORInt* _stateValues;
+   id* _stateValues;
    id<ORExpr> _arcExists;
    id<ORExpr>* _transitionFunctions;
    id<ORExpr>* _relaxationFunctions;
@@ -514,7 +515,7 @@
    self = [super initORConstraintI];
    _x = x;
    
-   _stateValues = malloc(stateSize * sizeof(ORInt));
+   _stateValues = malloc(stateSize * sizeof(id));
    _transitionFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    _relaxationFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    _differentialFunctions = malloc(stateSize * sizeof(id<ORExpr>));
@@ -528,10 +529,15 @@
 
 -(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value
 {
-   _stateValues[lookup] = value;
+   _stateValues[lookup] = [NSNumber numberWithInt: value];
 }
--(void)addStates:(int*)states size:(int)size {
-   int* newStateValues = malloc((_stateSize + size) * sizeof(ORInt));
+-(void)addStateIntArray:(int)lookup withDefaultValues:(ORInt)value
+{
+   NSMutableArray* integerList = [[NSMutableArray alloc] init];
+   _stateValues[lookup] = integerList;
+}
+-(void)addStates:(id*)states size:(int)size {
+   id* newStateValues = malloc((_stateSize + size) * sizeof(id));
    id<ORExpr>* newTransitionFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
    id<ORExpr>* newRelaxationFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
    id<ORExpr>* newDifferentialFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
@@ -598,7 +604,7 @@
 -(id<ORExpr>*)relaxationFunctions { return _relaxationFunctions; }
 -(id<ORExpr>*)differentialFunctions { return _differentialFunctions; }
 -(int)stateSize { return _stateSize; }
--(int*)stateValues { return _stateValues; }
+-(id*)stateValues { return _stateValues; }
 
 -(NSSet*)allVars
 {
@@ -608,32 +614,94 @@
 
 @implementation ORAltMDDSpecs {
    id<ORIntVarArray> _x;
-   id _topDownInformation, _bottomUpInformation;
+   id _minTopDownInformation, _minBottomUpInformation;
+   id _maxTopDownInformation, _maxBottomUpInformation;
    id<ORExpr> _edgeDeletionCondition;
-   id<ORExpr> _topDownInfoEdge, _bottomUpInfoEdge;
-   id<ORExpr> _topDownMergeInfo, _bottomUpMergeInfo;
+   id<ORExpr> _minTopDownInfoEdge, _maxTopDownInfoEdge;
+   id<ORExpr> _minBottomUpInfoEdge, _maxBottomUpInfoEdge;
+   id<ORExpr> _minTopDownMergeInfo, _minBottomUpMergeInfo;
+   id<ORExpr> _maxTopDownMergeInfo, _maxBottomUpMergeInfo;
+   bool _objective, _maximize;
+   bool _minMaxTopDown, _minMaxBottomUp;
 }
 -(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x
 {
    self = [super init];
    _x = x;
+   _objective = false;
+   _minMaxTopDown = false;
+   _minMaxBottomUp = false;
+   _objective = false;
+   _maximize = false;
    return self;
+}
+-(void) setAsMaximize
+{
+   _objective = true;
+   _maximize = true;
+}
+-(void) setAsMinimize
+{
+   _objective = true;
+   _maximize = false;
 }
 -(void) setTopDownInformationAsSet
 {
-   _topDownInformation = [[NSMutableSet alloc] init];
+   _minTopDownInformation = [[NSMutableSet alloc] init];
 }
 -(void) setBottomUpInformationAsSet
 {
-   _bottomUpInformation = [[NSMutableSet alloc] init];
+   _minBottomUpInformation = [[NSMutableSet alloc] init];
+}
+-(void) setTopDownInformationAsInt
+{
+   _minTopDownInformation = [[NSNumber alloc] initWithInteger:0];
+}
+-(void) setBottomUpInformationAsInt
+{
+   _minBottomUpInformation = [[NSNumber alloc] initWithInteger:0];
+}
+-(void) setTopDownInformationAsArrayWithSize:(int)size andDefaultValue:(int)value
+{
+   _minTopDownInformation = [[NSMutableArray alloc] init];
+   for (int index = 0; index < size; index++) {
+      [_minTopDownInformation addObject:[NSNumber numberWithInt:value]];
+   }
+}
+-(void) setTopDownInformationAsMinMaxArrayWithSize:(int)size andDefaultValue:(int)value
+{
+   _minMaxTopDown = true;
+   _minTopDownInformation = [[NSMutableArray alloc] init];
+   _maxTopDownInformation = [[NSMutableArray alloc] init];
+   for (int index = 0; index < size; index++) {
+      [_minTopDownInformation addObject:[NSNumber numberWithInt:value]];
+      [_maxTopDownInformation addObject:[NSNumber numberWithInt:value]];
+   }
+}
+-(void) setBottomUpInformationAsArrayWithSize:(int)size andDefaultValue:(int)value
+{
+   _minBottomUpInformation = [[NSMutableArray alloc] init];
+   for (int index = 0; index < size; index++) {
+      [_minBottomUpInformation addObject:[NSNumber numberWithInt:value]];
+   }
+}
+-(void) setBottomUpInformationAsMinMaxArrayWithSize:(int)size andDefaultValue:(int)value
+{
+   _minMaxBottomUp = true;
+   _minBottomUpInformation = [[NSMutableArray alloc] init];
+   _maxBottomUpInformation = [[NSMutableArray alloc] init];
+   for (int index = 0; index < size; index++) {
+      [_minBottomUpInformation addObject:[NSNumber numberWithInt:value]];
+      [_maxBottomUpInformation addObject:[NSNumber numberWithInt:value]];
+   }
 }
 -(void) addToTopDownInfoSet:(ORInt)value
 {
-   [_topDownInformation addObject:[[NSNumber alloc] initWithInt:value]];
+   [_minTopDownInformation addObject:[[NSNumber alloc] initWithInt:value]];
 }
 -(void) addToBottomUpInfoSet:(ORInt)value
 {
-   [_bottomUpInformation addObject:[[NSNumber alloc] initWithInt:value]];
+   [_minBottomUpInformation addObject:[[NSNumber alloc] initWithInt:value]];
 }
 -(void) setEdgeDeletionCondition:(id<ORExpr>)deleteWhen
 {
@@ -641,29 +709,71 @@
 }
 -(void) setTopDownInfoEdgeAddition:(id<ORExpr>)topDownInfoEdge
 {
-   _topDownInfoEdge = topDownInfoEdge;
+   _minTopDownInfoEdge = topDownInfoEdge;
+}
+-(void) setTopDownInfoEdgeAdditionMin:(id<ORExpr>)minTopDownInfoEdge max:(id<ORExpr>)maxTopDownInfoEdge
+{
+   _minTopDownInfoEdge = minTopDownInfoEdge;
+   _maxTopDownInfoEdge = maxTopDownInfoEdge;
 }
 -(void) setBottomUpInfoEdgeAddition:(id<ORExpr>)bottomUpInfoEdge
 {
-   _bottomUpInfoEdge = bottomUpInfoEdge;
+   _minBottomUpInfoEdge = bottomUpInfoEdge;
+}
+-(void) setBottomUpInfoEdgeAdditionMin:(id<ORExpr>)minBottomUpInfoEdge max:(id<ORExpr>)maxBottomUpInfoEdge
+{
+   _minBottomUpInfoEdge = minBottomUpInfoEdge;
+   _maxBottomUpInfoEdge = maxBottomUpInfoEdge;
 }
 -(void) setInformationMergeToUnion:(id<ORTracker>)t
 {
-   _topDownMergeInfo = [[ORFactory leftInformation:t] setUnion: [ORFactory rightInformation:t] track:t];
-   _bottomUpMergeInfo = [[ORFactory leftInformation:t] setUnion: [ORFactory rightInformation:t] track:t];
+   _minTopDownMergeInfo = [[ORFactory leftInformation:t] setUnion: [ORFactory rightInformation:t] track:t];
+   _minBottomUpMergeInfo = [[ORFactory leftInformation:t] setUnion: [ORFactory rightInformation:t] track:t];
+}
+-(void) setInformationMergeToMax:(id<ORTracker>)t
+{
+   _minTopDownMergeInfo = [[ORFactory leftInformation:t] max: [ORFactory rightInformation:t] track:t];
+   _minBottomUpMergeInfo = [[ORFactory leftInformation:t] max: [ORFactory rightInformation:t] track:t];
+}
+-(void) setInformationMergeToMin:(id<ORTracker>)t
+{
+   _minTopDownMergeInfo = [[ORFactory leftInformation:t] min: [ORFactory rightInformation:t] track:t];
+   _minBottomUpMergeInfo = [[ORFactory leftInformation:t] min: [ORFactory rightInformation:t] track:t];
+}
+-(void) setInformationMergeToMinAndMaxArrays:(id<ORTracker>)t
+{
+   _minTopDownMergeInfo = [[ORFactory leftInformation:t] minBetweenArrays: [ORFactory rightInformation:t] track:t];
+   _minBottomUpMergeInfo = [[ORFactory leftInformation:t] minBetweenArrays: [ORFactory rightInformation:t] track:t];
+   _maxTopDownMergeInfo = [[ORFactory leftInformation:t] maxBetweenArrays: [ORFactory rightInformation:t] track:t];
+   _maxBottomUpMergeInfo = [[ORFactory leftInformation:t] maxBetweenArrays: [ORFactory rightInformation:t] track:t];
 }
 -(void) setInformationMergeToMinMaxSet:(id<ORTracker>)t
 {
-   _topDownMergeInfo = [ORFactory generateMinMaxSetFrom: [ORFactory leftInformation:t] and: [ORFactory rightInformation:t] track:t];
-   _bottomUpMergeInfo = [ORFactory generateMinMaxSetFrom: [ORFactory leftInformation:t] and: [ORFactory rightInformation:t] track:t];
+   _minTopDownMergeInfo = [ORFactory generateMinMaxSetFrom: [ORFactory leftInformation:t] and: [ORFactory rightInformation:t] track:t];
+   _minBottomUpMergeInfo = [ORFactory generateMinMaxSetFrom: [ORFactory leftInformation:t] and: [ORFactory rightInformation:t] track:t];
 }
--(id) topDownInfo { return _topDownInformation; }
--(id) bottomUpInfo { return _bottomUpInformation; }
+-(bool) isMinMaxTopDownInfo { return _minMaxTopDown; }
+-(bool) isMinMaxBottomUpInfo { return _minMaxBottomUp; }
+-(id) topDownInfo { return _minTopDownInformation; }
+-(id) bottomUpInfo { return _minBottomUpInformation; }
+-(id) minTopDownInfo { return _minTopDownInformation; }
+-(id) maxTopDownInfo { return _maxTopDownInformation; }
+-(id) minBottomUpInfo { return _minBottomUpInformation; }
+-(id) maxBottomUpInfo { return _maxBottomUpInformation; }
 -(id<ORExpr>) edgeDeletionCondition { return _edgeDeletionCondition; }
--(id<ORExpr>) topDownInfoEdgeAddition { return _topDownInfoEdge; }
--(id<ORExpr>) bottomUpInfoEdgeAddition { return _bottomUpInfoEdge; }
--(id<ORExpr>) topDownInfoMerge { return _topDownMergeInfo; }
--(id<ORExpr>) bottomUpInfoMerge { return _bottomUpMergeInfo; }
+-(id<ORExpr>) topDownInfoEdgeAddition { return _minTopDownInfoEdge; }
+-(id<ORExpr>) bottomUpInfoEdgeAddition { return _minBottomUpInfoEdge; }
+-(id<ORExpr>) minTopDownInfoEdgeAddition { return _minTopDownInfoEdge; }
+-(id<ORExpr>) maxTopDownInfoEdgeAddition { return _maxTopDownInfoEdge; }
+-(id<ORExpr>) minBottomUpInfoEdgeAddition { return _minBottomUpInfoEdge; }
+-(id<ORExpr>) maxBottomUpInfoEdgeAddition { return _maxBottomUpInfoEdge; }
+-(id<ORExpr>) topDownInfoMerge { return _minTopDownMergeInfo; }
+-(id<ORExpr>) bottomUpInfoMerge { return _minBottomUpMergeInfo; }
+-(id<ORExpr>) minTopDownInfoMerge { return _minTopDownMergeInfo; }
+-(id<ORExpr>) maxTopDownInfoMerge { return _maxTopDownMergeInfo; }
+-(id<ORExpr>) minBottomUpInfoMerge { return _minBottomUpMergeInfo; }
+-(id<ORExpr>) maxBottomUpInfoMerge { return _maxBottomUpMergeInfo; }
+-(bool) objective { return _objective; }
 -(void)dealloc
 {
    //NSLog(@"OREqualc::dealloc: %p",self);
