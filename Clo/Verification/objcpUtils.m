@@ -165,10 +165,17 @@
    id<ORVarArray> arr = [_model FPVars];
    NSLog(@"------------------");
    for(id<ORVar> v in arr){
-      if([v.class conformsToProtocol:@protocol(ORFloatVar)])
-         NSLog(@"%@ : %20.20e (%s)",v,[_program floatValue:v],[_program bound:v] ? "YES" : "NO");
-      else if([v.class conformsToProtocol:@protocol(ORDoubleVar)])
-         NSLog(@"%@ : %20.20e (%s)",v,[_program doubleValue:v],[_program bound:v] ? "YES" : "NO");
+      if([_program bound:v]){
+         if([v.class conformsToProtocol:@protocol(ORFloatVar)])
+            NSLog(@"%@ : %20.20e (YES)",v,[_program floatValue:v]);
+         else if([v.class conformsToProtocol:@protocol(ORDoubleVar)])
+            NSLog(@"%@ : %20.20e (YES)",v,[_program doubleValue:v]);
+      }else{
+         if([v.class conformsToProtocol:@protocol(ORFloatVar)])
+            NSLog(@"%@ : %@ (NO)",v,[_program concretize:v]);
+         else if([v.class conformsToProtocol:@protocol(ORDoubleVar)])
+            NSLog(@"%@ : %@ (NO)",v,[_program concretize:v]);
+      }
    }
    NSLog(@"------------------");
    for(id<ORVar> v in _vars){

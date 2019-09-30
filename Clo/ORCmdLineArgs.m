@@ -73,6 +73,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize middle;
 @synthesize printSolution;
 @synthesize printModel;
+@synthesize noSearch;
 
 
 
@@ -183,6 +184,7 @@ static enum ValHeuristic valIndex[] =
    middle = YES;
    printSolution = NO;
    printModel = NO;
+   noSearch = NO;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -197,6 +199,8 @@ static enum ValHeuristic valIndex[] =
          cycleDetection = YES;
       else if (strncmp(argv[k], "-with-aux", 9) == 0)
          withAux = YES;
+      else if (strncmp(argv[k], "-no-search", 10) == 0)
+         noSearch = YES;
       else if (strncmp(argv[k], "-with-rewriting-eq", 18) == 0){
          withSRewriting = YES;
          withDRewriting = YES;

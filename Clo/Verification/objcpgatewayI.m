@@ -464,7 +464,9 @@ static id<OBJCPGateway> objcpgw;
 //               [_options printMaxLOccurences:_model with:cp n:5];
             }
             [cp solveOn:^(id<CPCommonProgram> p) {
-               [lh launchHeuristic];
+               if(![_options noSearch]){
+                  [lh launchHeuristic];
+               }
                NSLog(@"Valeurs solutions : \n");
                [lh printSolutions];
                NSLog(@"======================");
