@@ -135,7 +135,7 @@
    //     if(![tmp containsObject:v] && ([v conformsToProtocol:@protocol(ORFloatVar)] || [v conformsToProtocol:@protocol(ORDoubleVar)]))
    //        [tmp addObject:v];
    //   }
-   if([tmp count]){
+   if([tmp count] && [_options restricted]){
       _vars = (id<ORVarArray>)[ORFactory idArray:_model range:RANGE(_model,0,(ORUInt)[tmp count] - 1)];
       for(i = 0; i <  [tmp count];i++){
          if(tmp[i] == nil)
