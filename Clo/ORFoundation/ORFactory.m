@@ -2294,6 +2294,19 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  set: (ORDouble) c
+{
+   if([x count] <= 1){
+      id<ORConstraint> o = [[ORDoubleAssignC alloc] initORDoubleAssignC:x[0] to:c];
+      [model trackObject:o];
+      return o;
+   }else if([x count] == 2){
+      id<ORConstraint> o = [[ORDoubleAssign alloc] initORDoubleAssign:x[0] to:x[1]];
+      [model trackObject:o];
+      return o;
+   }else
+   assert(NO);
+ }
 +(id<ORConstraint>) doubleUnaryMinus:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eqm:(id<ORDoubleVar>)y
 {
    id<ORConstraint> o = [[ORDoubleUnaryMinus alloc] initORDoubleUnaryMinus:x eqm:y];
