@@ -839,11 +839,11 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] == [[e right] fmin];
+      bool isOk = [[e left] dmin] == [[e right] dmin];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
-      ORDouble c = lc ? [[e left] fmin] : [[e right] fmin];
+      ORDouble c = lc ? [[e left] dmin] : [[e right] dmin];
       ORExprI* other = lc ? [e right] : [e left];
       ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:other model:_model];
       [lin addIndependent: - c];
@@ -862,7 +862,7 @@ struct CPVarPair {
                                                      with:^ORDouble(ORInt i) {
                                                         return 1;
                                                      }];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs eq:0.f]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs eq:0.0]];
          [right release];
          [left release];
       } else {
@@ -881,7 +881,7 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] > [[e right] fmin];
+      bool isOk = [[e left] dmin] > [[e right] dmin];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
       return;
@@ -896,19 +896,19 @@ struct CPVarPair {
       if(lc){
          ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:[[e left] fmin]]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:[[e left] dmin]]];
          [right release];
       }else if(rc){
          id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:[[e right] fmin]]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:[[e right] dmin]]];
          [left release];
       }else{
          id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
          ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:left for:_model];
          vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:0.f]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:0.0]];
          [left release];
          [right release];
       }
@@ -919,7 +919,7 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] < [[e right] fmin];
+      bool isOk = [[e left] dmin] < [[e right] dmin];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    }else {
@@ -933,19 +933,19 @@ struct CPVarPair {
       if(lc){
          ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:[[e left] fmin]]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:[[e left] dmin]]];
          [right release];
       }else if(rc){
          id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:[[e right] fmin]]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:[[e right] dmin]]];
          [left release];
       }else{
          id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
          ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:left for:_model];
          vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:0.f]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:0.0]];
          [left release];
          [right release];
       }
@@ -956,7 +956,7 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] <= [[e right] fmin];
+      bool isOk = [[e left] dmin] <= [[e right] dmin];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    }else {
@@ -970,19 +970,19 @@ struct CPVarPair {
       if(lc){
          ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:[[e left] fmin]]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:[[e left] dmin]]];
          [right release];
       }else if(rc){
          id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:[[e right] fmin]]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:[[e right] dmin]]];
          [left release];
       }else{
          id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
          ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:left for:_model];
          vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:0.f]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:0.0]];
          [left release];
          [right release];
       }
@@ -993,7 +993,7 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] >= [[e right] fmin];
+      bool isOk = [[e left] dmin] >= [[e right] dmin];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    }else {
@@ -1007,19 +1007,19 @@ struct CPVarPair {
       if(lc){
          ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:[[e left] fmin]]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:[[e left] dmin]]];
          [right release];
       }else if(rc){
          id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:[[e right] fmin]]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:[[e right] dmin]]];
          [left release];
       }else{
          id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
          ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
          vars[0] = [ORNormalizer doubleVarIn:left for:_model];
          vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:0.f]];
+         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:0.0]];
          [left release];
          [right release];
       }
@@ -1038,11 +1038,11 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] == [[e right] fmin];
+      bool isOk = [[e left] dmin] == [[e right] dmin];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
-      ORDouble c = lc ? [[e left] fmin] : [[e right] fmin];
+      ORDouble c = lc ? [[e left] dmin] : [[e right] dmin];
       ORExprI* other = lc ? [e right] : [e left];
       ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:other model:_model];
       id<ORDoubleVar> x = [ORNormalizer doubleVarIn:lin for:_model];
