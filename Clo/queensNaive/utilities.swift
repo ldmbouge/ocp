@@ -125,6 +125,9 @@ public func +(lhs: ORExpr,rhs : Int) -> ORExpr {
 public func +(lhs: ORExpr,rhs : ORInt) -> ORExpr {
    return lhs.plus(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
 }
+public func -(lhs: ORExpr,rhs : ORExpr) -> ORExpr {
+    return lhs.sub(rhs)
+}
 public func -(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.sub(rhs)
 }
@@ -147,13 +150,35 @@ public func *(lhs: ORExpr, rhs : Double) -> ORExpr {
    return lhs.mul(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
 }
 public func /(lhs: ORExpr, rhs : ORExpr) -> ORExpr {
-   return lhs.div(rhs)
+    return lhs.div(rhs)
 }
 public func /(lhs: ORExpr, rhs : Int) -> ORExpr {
-   return lhs.div(rhs)
+    return lhs.div(rhs)
 }
 public func /(lhs: ORExpr, rhs : ORInt) -> ORExpr {
-   return lhs.div(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+    return lhs.div(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+
+public func min(_ lhs: ORExpr, _ rhs : ORExpr) -> ORExpr {
+    return lhs.min(rhs)
+}
+public func min(_ lhs: ORExpr, _ rhs : Int) -> ORExpr {
+    return lhs.min(rhs)
+}
+public func min(_ lhs: ORExpr, _ rhs : ORInt) -> ORExpr {
+    return lhs.min(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func max(_ lhs: ORExpr,_ rhs : ORExpr) -> ORExpr {
+    return lhs.max(rhs)
+}
+public func max(_ lhs: ORExpr,_ rhs : Int) -> ORExpr {
+    return lhs.max(rhs)
+}
+public func max(_ lhs: ORExpr,_ rhs : ORInt) -> ORExpr {
+    return lhs.max(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func abs(_ op : ORExpr) -> ORExpr {
+    return op.abs()
 }
 
 func convertArray(s : [UnsafeMutablePointer<Any>]) -> [AnyObject] {
@@ -245,8 +270,12 @@ public func all(_ t : ORTracker,_ r1 : ORIntRange,_ r2 : ORIntRange, body : @esc
    return ORFactory.intVarArray(t, range: r1,r2, with: body)
 }
 
-public func SVal(_ t : ORTracker,_ name : String) -> ORExpr {
-    return ORFactory.getStateValue(t,name:name)
+public func SVal(_ t : ORTracker,_ name : Int32) -> ORExpr {
+    return ORFactory.getStateValue(t,lookup:name)
+}
+
+public func SVal(_ t : ORTracker,_ name : Int) -> ORExpr {
+    return ORFactory.getStateValue(t,lookup:Int32(name))
 }
 
 public func SVA(_ t : ORTracker) -> ORExpr {
@@ -300,23 +329,33 @@ public func ∈(_ e : ORExpr,_ set: ORIntSet) -> ORExpr {
 }
 
 extension ORMDDSpecs {
-    func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void {
+    func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void where Key : BinaryInteger,Value : BinaryInteger {
         for (k,v) in d {
-            self.addStateInt(k as? String, withDefaultValue: (ORInt)( v as! Int))
+            self.addStateInt(ORInt(k), withDefaultValue: ORInt(v))
         }
     }
-    func state2<Key,Value>(_ d : Dictionary<Key,Value>) -> [Key] {
+    func state2<Key,Value>(_ d : Dictionary<Key,Value>) -> [Key] where Key : BinaryInteger {
         for (k,v) in d {
-            self.addStateInt(k as? String, withDefaultValue: (ORInt)( v as! Int))
+            self.addStateInt(k as! Int32, withDefaultValue: (ORInt)( v as! Int))
         }
         return Array(d.keys)
     }
     func arc(_ f : ORExpr) -> Void {
         self.setArcExistsFunction(f)
     }
-    func transition<K,V>(_ d : Dictionary<K,V>) -> Void {
+    func transition<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
-            self.addTransitionFunction(v as? ORExpr, toStateValue: k as? String)
+            self.addTransitionFunction(v as? ORExpr, toStateValue: k as! Int32)
+        }
+    }
+    func relaxation<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
+        for (k,v) in d {
+            self.addRelaxationFunction(v as? ORExpr, toStateValue: k as! Int32)
+        }
+    }
+    func similarity<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
+        for (k,v) in d {
+            self.addStateDifferentialFunction(v as? ORExpr, toStateValue: k as! Int32)
         }
     }
 }

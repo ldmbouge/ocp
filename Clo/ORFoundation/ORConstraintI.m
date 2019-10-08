@@ -527,11 +527,11 @@
    return self;
 }
 
--(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value
+-(void)addStateInt:(ORInt)lookup withDefaultValue:(ORInt)value
 {
    _stateValues[lookup] = [NSNumber numberWithInt: value];
 }
--(void)addStateIntArray:(int)lookup withDefaultValues:(ORInt)value
+-(void)addStateIntArray:(ORInt)lookup withDefaultValues:(ORInt)value
 {
    NSMutableArray* integerList = [[NSMutableArray alloc] init];
    _stateValues[lookup] = integerList;
