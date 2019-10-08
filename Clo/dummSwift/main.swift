@@ -31,14 +31,15 @@ autoreleasepool {
         func right(_ t : ORTracker)  -> ORExpr { return ORFactory.getRightStateValue(t,lookup:Int32(self.rawValue)) }
     }
     let minCnt = SVal(m,Prop.minC.value),maxCnt = SVal(m,Prop.maxC.value), rem = SVal(m,Prop.rem.value)
-/*    let mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: 3)
+/*
+    let mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: 3)
     mdd1.state([ Prop.minC.value : 0,Prop.maxC.value : 0, Prop.rem.value : vars.size ])
     mdd1.arc(minCnt + SVA(m) ∈ cv1 ≤ 10 && 5 ≤ (maxCnt + SVA(m) ∈ cv1 + rem - 1))
     mdd1.transition([Prop.minC.value : minCnt + SVA(m) ∈ cv1,
                      Prop.maxC.value : maxCnt + SVA(m) ∈ cv1,
                      Prop.rem.value  : rem - 1])
     mdd1.relaxation([Prop.minC.value : min(Prop.minC.left(m),Prop.minC.right(m)),
-                     Prop.maxC.value : max(Prop.minC.left(m),Prop.minC.right(m)),
+                     Prop.maxC.value : max(Prop.maxC.left(m),Prop.maxC.right(m)),
                      Prop.rem.value  : rem])
     mdd1.similarity([Prop.minC.value : abs(Prop.minC.left(m) - Prop.minC.right(m)),
                      Prop.maxC.value : abs(Prop.maxC.left(m) - Prop.maxC.right(m)),
@@ -48,11 +49,11 @@ autoreleasepool {
     let mdd2 = ORFactory.mddSpecs(m, variables: vars, stateSize: 3)
     mdd2.state([ Prop.minC.value : 0,Prop.maxC.value : 0,Prop.rem.value : vars.size ])
     mdd2.arc(minCnt + SVA(m) ∈ cv2 ≤ 3 && 2 ≤ (maxCnt + SVA(m) ∈ cv2 + rem - 1))
-    mdd2.transition([Prop.minC.value : minCnt + SVA(m) ∈ cv1,
-                     Prop.maxC.value : maxCnt + SVA(m) ∈ cv1,
+    mdd2.transition([Prop.minC.value : minCnt + SVA(m) ∈ cv2,
+                     Prop.maxC.value : maxCnt + SVA(m) ∈ cv2,
                      Prop.rem.value  : rem - 1])
     mdd2.relaxation([Prop.minC.value : min(Prop.minC.left(m),Prop.minC.right(m)),
-                     Prop.maxC.value : max(Prop.minC.left(m),Prop.minC.right(m)),
+                     Prop.maxC.value : max(Prop.maxC.left(m),Prop.maxC.right(m)),
                      Prop.rem.value  : rem])
     mdd2.similarity([Prop.minC.value : abs(Prop.minC.left(m) - Prop.minC.right(m)),
                      Prop.maxC.value : abs(Prop.maxC.left(m) - Prop.maxC.right(m)),
