@@ -277,10 +277,11 @@ static int StateSize;
     return [_arcExists(_state, variable, value) boolValue];
 }
 -(void) mergeStateWith:(MDDStateSpecification*)other {
+    id* ptrOS = other.state;
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         DDMergeClosure relaxationFunction = _relaxationFunctions[stateIndex];
         if (relaxationFunction != NULL) {
-            _state[stateIndex] = relaxationFunction(_state, [other state]);
+            _state[stateIndex] = relaxationFunction(_state, ptrOS);
         }
     }
 }

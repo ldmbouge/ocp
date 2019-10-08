@@ -12,7 +12,7 @@
 		<key>AFA_SHA.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>156</integer>
+			<integer>155</integer>
 		</dict>
 		<key>ATPTW.xcscheme</key>
 		<dict>
@@ -244,6 +244,11 @@
 			<key>orderHint</key>
 			<integer>4</integer>
 		</dict>
+		<key>amongSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>159</integer>
+		</dict>
 		<key>assignmentProblem.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -332,7 +337,7 @@
 		<key>dummy.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>157</integer>
+			<integer>156</integer>
 		</dict>
 		<key>dxAES.xcscheme</key>
 		<dict>
@@ -1022,6 +1027,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5B6E1A82234D11F900CF2585</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5B6E891F1379D3E9005DB4CA</key>
 		<dict>
 			<key>primary</key>
@@ -1213,6 +1223,11 @@
 			<true/>
 		</dict>
 		<key>5BCCC4021417F8CE0079E833</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BD06BA7223A9EC300036FD8</key>
 		<dict>
 			<key>primary</key>
 			<true/>

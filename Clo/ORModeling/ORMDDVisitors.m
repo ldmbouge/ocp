@@ -1048,12 +1048,17 @@
 }
 -(void) visitExprStateValueI:(ORExprStateValueI*)e
 {
-    current = [^(id* state1, id* state2) {
-        if ([e index] == 0) {
-            return state1[[e lookup]];
-        }
-        return state2[[e lookup]];
-    } copy];
+    const int idx = e->_stateIndex;
+    const int look = e->_lookup;
+    if (idx == 0)
+        current = [^(id* state1, id* state2) {
+                return state1[look];
+        } copy];
+    else {
+        current = [^(id* state1, id* state2) {
+            return state2[look];
+        } copy];
+    }
 }
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
 {
