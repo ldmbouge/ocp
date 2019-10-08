@@ -477,292 +477,9 @@ int main (int argc, const char * argv[])
         //[mdl add: mddStateSpecs5];
         
         */
-    /*
-        typedef enum {
-            minCount,
-            maxCount,
-            remaining
-        } AmongState;
-        
-        
-        id<ORMDDSpecs> mddStateSpecs = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
-        [mddStateSpecs addStateInt: minCount withDefaultValue: 0];
-        [mddStateSpecs addStateInt: maxCount withDefaultValue: 0];
-        [mddStateSpecs addStateInt: remaining withDefaultValue: 50];
-        
-        id<ORExpr> arcExists = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper1 track:mdl]
-                                land:
-                                [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower1 track: mdl] track: mdl];
-        
-        [mddStateSpecs setArcExistsFunction: arcExists];
-        
-        //self["count"] = parent["count"] + (parentValue in countedValues)
-        id<ORExpr> minCountTransitionFunction = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> maxCountTransitionFunction = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        //self["remaining"] = parent["remaining"] - 1
-        id<ORExpr> remainingTransitionFunction = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        [mddStateSpecs addTransitionFunction: minCountTransitionFunction toStateValue: minCount];
-        [mddStateSpecs addTransitionFunction: maxCountTransitionFunction toStateValue: maxCount];
-        [mddStateSpecs addTransitionFunction: remainingTransitionFunction toStateValue: remaining];
-        id<ORExpr> minCountRelaxationFunction = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
-        id<ORExpr> maxCountRelaxationFunction = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
-        id<ORExpr> remainingRelaxationFunction = [ORFactory getLeftStateValue:mdl lookup:remaining];
-        [mddStateSpecs addRelaxationFunction: minCountRelaxationFunction toStateValue: minCount];
-        [mddStateSpecs addRelaxationFunction: maxCountRelaxationFunction toStateValue: maxCount];
-        [mddStateSpecs addRelaxationFunction: remainingRelaxationFunction toStateValue: remaining];
-        
-        //id<ORExpr> minCountStateDifferential = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper1 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper1 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
-        //id<ORExpr> maxCountStateDifferential = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower1 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower1 track:mdl] track:mdl] absTrack:mdl];
-        id<ORExpr> minCountStateDifferential = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
-        id<ORExpr> maxCountStateDifferential = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
-        id<ORExpr> remainingStateDifferential = zero;
-        
-        [mddStateSpecs addStateDifferentialFunction: minCountStateDifferential toStateValue: minCount];
-        [mddStateSpecs addStateDifferentialFunction: maxCountStateDifferential toStateValue: maxCount];
-        [mddStateSpecs addStateDifferentialFunction: remainingStateDifferential toStateValue: remaining];
-        
-        [mdl add: mddStateSpecs];
-        
-        
-        id<ORMDDSpecs> mddStateSpecs2 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
-        [mddStateSpecs2 addStateInt: minCount withDefaultValue: 0];
-        [mddStateSpecs2 addStateInt: maxCount withDefaultValue: 0];
-        [mddStateSpecs2 addStateInt: remaining withDefaultValue: 50];
-        
-        id<ORExpr> arcExists2 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper2 track:mdl]
-                                land:
-                                [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower2 track: mdl] track: mdl];
-        
-        [mddStateSpecs2 setArcExistsFunction: arcExists2];
-        
-        id<ORExpr> minCountTransitionFunction2 = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> maxCountTransitionFunction2 = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> remainingTransitionFunction2 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        
-        [mddStateSpecs2 addTransitionFunction: minCountTransitionFunction2 toStateValue: minCount];
-        [mddStateSpecs2 addTransitionFunction: maxCountTransitionFunction2 toStateValue: maxCount];
-        [mddStateSpecs2 addTransitionFunction: remainingTransitionFunction2 toStateValue: remaining];
-        
-        id<ORExpr> minCountRelaxationFunction2 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
-        id<ORExpr> maxCountRelaxationFunction2 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
-        id<ORExpr> remainingRelaxationFunction2 = [ORFactory getLeftStateValue:mdl lookup:remaining];
-        [mddStateSpecs2 addRelaxationFunction: minCountRelaxationFunction2 toStateValue: minCount];
-        [mddStateSpecs2 addRelaxationFunction: maxCountRelaxationFunction2 toStateValue: maxCount];
-        [mddStateSpecs2 addRelaxationFunction: remainingRelaxationFunction2 toStateValue: remaining];
-        
-        id<ORExpr> minCountStateDifferential2 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper2 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper2 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
-        id<ORExpr> maxCountStateDifferential2 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower2 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower2 track:mdl] track:mdl] absTrack:mdl];
-        //id<ORExpr> minCountStateDifferential2 = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
-        //id<ORExpr> maxCountStateDifferential2 = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
-        id<ORExpr> remainingStateDifferential2 = zero;
-        
-        [mddStateSpecs2 addStateDifferentialFunction: minCountStateDifferential2 toStateValue: minCount];
-        [mddStateSpecs2 addStateDifferentialFunction: maxCountStateDifferential2 toStateValue: maxCount];
-        [mddStateSpecs2 addStateDifferentialFunction: remainingStateDifferential2 toStateValue: remaining];
-        
-        [mdl add: mddStateSpecs2];
-    
-        
-        id<ORMDDSpecs> mddStateSpecs3 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
-        [mddStateSpecs3 addStateInt: minCount withDefaultValue: 0];
-        [mddStateSpecs3 addStateInt: maxCount withDefaultValue: 0];
-        [mddStateSpecs3 addStateInt: remaining withDefaultValue: 50];
-        
-        id<ORExpr> arcExists3 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper3 track:mdl]
-                                 land:
-                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower3 track: mdl] track: mdl];
-        
-        [mddStateSpecs3 setArcExistsFunction: arcExists3];
-        
-        id<ORExpr> minCountTransitionFunction3 = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> maxCountTransitionFunction3 = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> remainingTransitionFunction3 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        
-        [mddStateSpecs3 addTransitionFunction: minCountTransitionFunction3 toStateValue: minCount];
-        [mddStateSpecs3 addTransitionFunction: maxCountTransitionFunction3 toStateValue: maxCount];
-        [mddStateSpecs3 addTransitionFunction: remainingTransitionFunction3 toStateValue: remaining];
-        
-        id<ORExpr> minCountRelaxationFunction3 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
-        id<ORExpr> maxCountRelaxationFunction3 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
-        id<ORExpr> remainingRelaxationFunction3 = [ORFactory getLeftStateValue:mdl lookup:remaining];
-        [mddStateSpecs3 addRelaxationFunction: minCountRelaxationFunction3 toStateValue: minCount];
-        [mddStateSpecs3 addRelaxationFunction: maxCountRelaxationFunction3 toStateValue: maxCount];
-        [mddStateSpecs3 addRelaxationFunction: remainingRelaxationFunction3 toStateValue: remaining];
-        
-        //id<ORExpr> minCountStateDifferential3 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper3 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper3 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
-        //id<ORExpr> maxCountStateDifferential3 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower3 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower3 track:mdl] track:mdl] absTrack:mdl];
-        id<ORExpr> minCountStateDifferential3 = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
-        id<ORExpr> maxCountStateDifferential3 = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
-        id<ORExpr> remainingStateDifferential3 = zero;
-        
-        [mddStateSpecs3 addStateDifferentialFunction: minCountStateDifferential3 toStateValue: minCount];
-        [mddStateSpecs3 addStateDifferentialFunction: maxCountStateDifferential3 toStateValue: maxCount];
-        [mddStateSpecs3 addStateDifferentialFunction: remainingStateDifferential3 toStateValue: remaining];
-        
-        [mdl add: mddStateSpecs3];
-        
-        
-        
-        id<ORMDDSpecs> mddStateSpecs4 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
-        [mddStateSpecs4 addStateInt: minCount withDefaultValue: 0];
-        [mddStateSpecs4 addStateInt: maxCount withDefaultValue: 0];
-        [mddStateSpecs4 addStateInt: remaining withDefaultValue: 50];
-        
-        id<ORExpr> arcExists4 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper4 track:mdl]
-                                 land:
-                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower4 track: mdl] track: mdl];
-        
-        [mddStateSpecs4 setArcExistsFunction: arcExists4];
-        
-        id<ORExpr> minCountTransitionFunction4 = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> maxCountTransitionFunction4 = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> remainingTransitionFunction4 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        
-        [mddStateSpecs4 addTransitionFunction: minCountTransitionFunction4 toStateValue: minCount];
-        [mddStateSpecs4 addTransitionFunction: maxCountTransitionFunction4 toStateValue: maxCount];
-        [mddStateSpecs4 addTransitionFunction: remainingTransitionFunction4 toStateValue: remaining];
-        
-        id<ORExpr> minCountRelaxationFunction4 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
-        id<ORExpr> maxCountRelaxationFunction4 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
-        id<ORExpr> remainingRelaxationFunction4 = [ORFactory getLeftStateValue:mdl lookup:remaining];
-        [mddStateSpecs4 addRelaxationFunction: minCountRelaxationFunction4 toStateValue: minCount];
-        [mddStateSpecs4 addRelaxationFunction: maxCountRelaxationFunction4 toStateValue: maxCount];
-        [mddStateSpecs4 addRelaxationFunction: remainingRelaxationFunction4 toStateValue: remaining];
-        
-        //id<ORExpr> minCountStateDifferential4 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper4 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper4 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
-        //id<ORExpr> maxCountStateDifferential4 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower4 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower4 track:mdl] track:mdl] absTrack:mdl];
-        id<ORExpr> minCountStateDifferential4 = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
-        id<ORExpr> maxCountStateDifferential4 = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
-        id<ORExpr> remainingStateDifferential4 = zero;
-        
-        [mddStateSpecs4 addStateDifferentialFunction: minCountStateDifferential4 toStateValue: minCount];
-        [mddStateSpecs4 addStateDifferentialFunction: maxCountStateDifferential4 toStateValue: maxCount];
-        [mddStateSpecs4 addStateDifferentialFunction: remainingStateDifferential4 toStateValue: remaining];
-        
-        [mdl add: mddStateSpecs4];
-        
-        
-        id<ORMDDSpecs> mddStateSpecs5 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
-        [mddStateSpecs5 addStateInt: minCount withDefaultValue: 0];
-        [mddStateSpecs5 addStateInt: maxCount withDefaultValue: 0];
-        [mddStateSpecs5 addStateInt: remaining withDefaultValue: 50];
-        
-        id<ORExpr> arcExists5 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper5 track:mdl]
-                                 land:
-                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower5 track: mdl] track: mdl];
-        
-        [mddStateSpecs5 setArcExistsFunction: arcExists5];
-        
-        id<ORExpr> minCountTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:minCount] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> maxCountTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:maxCount] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> remainingTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        
-        [mddStateSpecs5 addTransitionFunction: minCountTransitionFunction5 toStateValue: minCount];
-        [mddStateSpecs5 addTransitionFunction: maxCountTransitionFunction5 toStateValue: maxCount];
-        [mddStateSpecs5 addTransitionFunction: remainingTransitionFunction5 toStateValue: remaining];
-        
-        id<ORExpr> minCountRelaxationFunction5 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] min:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl];
-        id<ORExpr> maxCountRelaxationFunction5 = [ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] max:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl];
-        id<ORExpr> remainingRelaxationFunction5 = [ORFactory getLeftStateValue:mdl lookup:remaining];
-        [mddStateSpecs5 addRelaxationFunction: minCountRelaxationFunction5 toStateValue: minCount];
-        [mddStateSpecs5 addRelaxationFunction: maxCountRelaxationFunction5 toStateValue: maxCount];
-        [mddStateSpecs5 addRelaxationFunction: remainingRelaxationFunction5 toStateValue: remaining];
-        
-        //id<ORExpr> minCountStateDifferential5 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:minCount] max:[upper5 sub:[ORFactory getLeftStateValue:mdl lookup:remaining] track:mdl] track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:minCount] max:[upper5 sub:[ORFactory getRightStateValue:mdl lookup:remaining] track:mdl] track:mdl] track:mdl] absTrack:mdl];
-        //id<ORExpr> maxCountStateDifferential5 = [[[ORFactory expr: [ORFactory getLeftStateValue:mdl lookup:maxCount] min:lower5 track:mdl] sub: [ORFactory expr: [ORFactory getRightStateValue:mdl lookup:maxCount] min: lower5 track:mdl] track:mdl] absTrack:mdl];
-        id<ORExpr> minCountStateDifferential5 = [[[ORFactory getLeftStateValue:mdl lookup:minCount] sub:[ORFactory getRightStateValue:mdl lookup:minCount] track:mdl] absTrack:mdl];
-        id<ORExpr> maxCountStateDifferential5 = [[[ORFactory getLeftStateValue:mdl lookup:maxCount] sub:[ORFactory getRightStateValue:mdl lookup:maxCount] track:mdl] absTrack:mdl];
-        id<ORExpr> remainingStateDifferential5 = zero;
-        
-        [mddStateSpecs5 addStateDifferentialFunction: minCountStateDifferential5 toStateValue: minCount];
-        [mddStateSpecs5 addStateDifferentialFunction: maxCountStateDifferential5 toStateValue: maxCount];
-        [mddStateSpecs5 addStateDifferentialFunction: remainingStateDifferential5 toStateValue: remaining];
-        
-        
-        [mdl add: mddStateSpecs5];
-        */
-        /*
-        
-        id<ORMDDSpecs> mddStateSpecs = [ORFactory MDDSpecs: mdl variables:variables stateSize: 2];
-        [mddStateSpecs addStateInt: count withDefaultValue: 0];
-        [mddStateSpecs addStateInt: remaining withDefaultValue: 50];
-        
-        //(count + (assignedValue in countedValues)) <= upper && (count + (assignedValue in countedValues) + (remaining-1)) >= lower
-        id<ORExpr> arcExists = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:count] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper1 track:mdl]
-                                land:
-                                [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:count] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower1 track: mdl] track: mdl];
-        
-        [mddStateSpecs setArcExistsFunction: arcExists];
-        
-        //self["count"] = parent["count"] + (parentValue in countedValues)
-        id<ORExpr> countTransitionFunction = [[ORFactory getStateValue:mdl lookup:count] plus: [countedValues1 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        //self["remaining"] = parent["remaining"] - 1
-        id<ORExpr> remainingTransitionFunction = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        [mddStateSpecs addTransitionFunction: countTransitionFunction toStateValue: count];
-        [mddStateSpecs addTransitionFunction: remainingTransitionFunction toStateValue: remaining];
-        
-        [mdl add: mddStateSpecs];
-        
-        
-        id<ORMDDSpecs> mddStateSpecs2 = [ORFactory MDDSpecs: mdl variables:variables stateSize:2];
-        [mddStateSpecs2 addStateInt: count withDefaultValue: 0];
-        [mddStateSpecs2 addStateInt: remaining withDefaultValue: 50];
-        id<ORExpr> arcExists2 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:count] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper2 track:mdl]
-                                land:
-                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:count] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower2 track: mdl] track: mdl];
-        [mddStateSpecs2 setArcExistsFunction: arcExists2];
-        id<ORExpr> countTransitionFunction2 = [[ORFactory getStateValue:mdl lookup:count] plus: [countedValues2 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> remainingTransitionFunction2 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        [mddStateSpecs2 addTransitionFunction: countTransitionFunction2 toStateValue: count];
-        [mddStateSpecs2 addTransitionFunction: remainingTransitionFunction2 toStateValue: remaining];
-        [mdl add: mddStateSpecs2];
-        
-        
-        id<ORMDDSpecs> mddStateSpecs3 = [ORFactory MDDSpecs: mdl variables:variables stateSize:2];
-        [mddStateSpecs3 addStateInt: count withDefaultValue: 0];
-        [mddStateSpecs3 addStateInt: remaining withDefaultValue: 50];
-        id<ORExpr> arcExists3 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:count] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper3 track:mdl]
-                                 land:
-                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:count] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower3 track: mdl] track: mdl];
-        [mddStateSpecs3 setArcExistsFunction: arcExists3];
-        id<ORExpr> countTransitionFunction3 = [[ORFactory getStateValue:mdl lookup:count] plus: [countedValues3 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> remainingTransitionFunction3 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        [mddStateSpecs3 addTransitionFunction: countTransitionFunction3 toStateValue: count];
-        [mddStateSpecs3 addTransitionFunction: remainingTransitionFunction3 toStateValue: remaining];
-        [mdl add: mddStateSpecs3];
-        
-        
-        id<ORMDDSpecs> mddStateSpecs4 = [ORFactory MDDSpecs: mdl variables:variables stateSize:2];
-        [mddStateSpecs4 addStateInt: count withDefaultValue: 0];
-        [mddStateSpecs4 addStateInt: remaining withDefaultValue: 50];
-        id<ORExpr> arcExists4 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup: count] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper4 track:mdl]
-                                 land:
-                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup: count] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower4 track: mdl] track: mdl];
-        [mddStateSpecs4 setArcExistsFunction: arcExists4];
-        id<ORExpr> countTransitionFunction4 = [[ORFactory getStateValue:mdl lookup:count] plus: [countedValues4 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> remainingTransitionFunction4 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        [mddStateSpecs4 addTransitionFunction: countTransitionFunction4 toStateValue: count];
-        [mddStateSpecs4 addTransitionFunction: remainingTransitionFunction4 toStateValue: remaining];
-        [mdl add: mddStateSpecs4];
-        
-        
-        id<ORMDDSpecs> mddStateSpecs5 = [ORFactory MDDSpecs: mdl variables:variables stateSize:2];
-        [mddStateSpecs5 addStateInt: count withDefaultValue: 0];
-        [mddStateSpecs5 addStateInt: remaining withDefaultValue: 50];
-        id<ORExpr> arcExists5 = [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:count] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track:mdl] leq: upper5 track:mdl]
-                                 land:
-                                 [[[ORFactory expr: [ORFactory getStateValue:mdl lookup:count] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track:mdl] plus: [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl] track: mdl] geq: lower5 track: mdl] track: mdl];
-        [mddStateSpecs5 setArcExistsFunction: arcExists5];
-        id<ORExpr> countTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:count] plus: [countedValues5 contains:[ORFactory valueAssignment:mdl]] track: mdl];
-        id<ORExpr> remainingTransitionFunction5 = [[ORFactory getStateValue:mdl lookup:remaining] sub: @1 track: mdl];
-        [mddStateSpecs5 addTransitionFunction: countTransitionFunction5 toStateValue: count];
-        [mddStateSpecs5 addTransitionFunction: remainingTransitionFunction5 toStateValue: remaining];
-        [mdl add: mddStateSpecs5];
-        */
-        
         
         //Sequence Constraint, MDD
-        id<ORIntVarArray> variables = [ORFactory intVarArray:mdl range: RANGE(mdl, 1, 20) domain: RANGE(mdl, 0, 20)];
+        /*id<ORIntVarArray> variables = [ORFactory intVarArray:mdl range: RANGE(mdl, 1, 20) domain: RANGE(mdl, 0, 20)];
         
         struct SequenceInfo {
             int length;
@@ -866,7 +583,7 @@ int main (int argc, const char * argv[])
             }
         
             [mdl add: mddStateSpecs];
-        }
+        }*/
         
         /*//Sequence using an NSMutableArray
         typedef enum {
@@ -903,9 +620,9 @@ int main (int argc, const char * argv[])
         //AltMDD Sequence (that is, creating the sequence constraint via topdown and bottomup info
         
         
-        /*
-         id<ORIntVarArray> variables = [ORFactory intVarArray:mdl range: RANGE(mdl, 1, 10) domain: RANGE(mdl, 1, 5)];
-         id<ORAltMDDSpecs> mddStateSpecs = [ORFactory AltMDDSpecs: mdl variables: variables];
+        
+        id<ORIntVarArray> variables = [ORFactory intVarArray:mdl range: RANGE(mdl, 1, 10) domain: RANGE(mdl, 1, 5)];
+        id<ORAltMDDSpecs> mddStateSpecs = [ORFactory AltMDDSpecs: mdl variables: variables];
         id<ORInteger> sequenceSize = [ORFactory integer:mdl value:5];
         [mddStateSpecs setBottomUpInformationAsMinMaxArrayWithSize:1 andDefaultValue:0];
         [mddStateSpecs setTopDownInformationAsMinMaxArrayWithSize:1 andDefaultValue:0];
@@ -927,7 +644,9 @@ int main (int argc, const char * argv[])
         id<ORExpr> lowerMinusEdge = [lower1 sub:valueIsCounted track:mdl];
         id<ORExpr> upperMinusEdge = [upper1 sub:valueIsCounted track:mdl];
         
-        for (int amountOfSequenceInTopDown = 0; amountOfSequenceInTopDown < [sequenceSize value]; amountOfSequenceInTopDown++) {
+        
+        //This is overkill.  Only need to check at 'end' of each sequence
+        for (int amountOfSequenceInTopDown = [sequenceSize value] -1; amountOfSequenceInTopDown < [sequenceSize value]; amountOfSequenceInTopDown++) {
             id<ORExpr> amountOfSequenceInTopDownExpr = [ORFactory integer:mdl value:amountOfSequenceInTopDown];
             id<ORExpr> a = [[sizeOfTopDownArray sub:amountOfSequenceInTopDownExpr track:mdl] sub:one];
             id<ORExpr> c = [[sizeOfBottomUpArray sub:sequenceSize track:mdl] plus:amountOfSequenceInTopDownExpr track:mdl];
@@ -959,7 +678,7 @@ int main (int argc, const char * argv[])
         [mddStateSpecs setBottomUpInfoEdgeAdditionMin:addEdgeToArray max:addEdgeToArray];
         [mddStateSpecs setInformationMergeToMinAndMaxArrays:mdl];
         
-        [mdl add: mddStateSpecs];*/
+        [mdl add: mddStateSpecs];
         
         /*
          This was a different attempt of how to write deleteEdgeWhen.  Definitely worse than what's above.
