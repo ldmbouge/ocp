@@ -531,12 +531,13 @@
 {
    _stateValues[lookup] = [NSNumber numberWithInt: value];
 }
--(void)addStateIntArray:(int)lookup withDefaultValues:(ORInt)value
+-(void)addStateIntArray:(int)lookup
 {
    NSMutableArray* integerList = [[NSMutableArray alloc] init];
    _stateValues[lookup] = integerList;
 }
 -(void)addStates:(id*)states size:(int)size {
+   //I think this is deprecated?
    id* newStateValues = malloc((_stateSize + size) * sizeof(id));
    id<ORExpr>* newTransitionFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
    id<ORExpr>* newRelaxationFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
