@@ -165,7 +165,7 @@ int main (int argc, const char * argv[])
          [mddStateSpecs3 addStateDifferentialFunction: maxCountStateDifferential3 toStateValue: maxCount];
          [mddStateSpecs3 addStateDifferentialFunction: remainingStateDifferential3 toStateValue: remaining];
          
-         [mdl add: mddStateSpecs3];
+         //[mdl add: mddStateSpecs3];
          
          
          
@@ -203,7 +203,7 @@ int main (int argc, const char * argv[])
          [mddStateSpecs4 addStateDifferentialFunction: maxCountStateDifferential4 toStateValue: maxCount];
          [mddStateSpecs4 addStateDifferentialFunction: remainingStateDifferential4 toStateValue: remaining];
          
-         [mdl add: mddStateSpecs4];
+         //[mdl add: mddStateSpecs4];
          
          
          id<ORMDDSpecs> mddStateSpecs5 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
@@ -241,7 +241,7 @@ int main (int argc, const char * argv[])
          [mddStateSpecs5 addStateDifferentialFunction: remainingStateDifferential5 toStateValue: remaining];
          
          
-         [mdl add: mddStateSpecs5];
+         //[mdl add: mddStateSpecs5];
         
         
         ORLong startWC  = [ORRuntimeMonitor wctime];

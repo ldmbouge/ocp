@@ -13,9 +13,8 @@
 #import "ORCmdLineArgs.h"
 #import <objcp/CPConstraint.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORSchedulingProgram/ORSchedulingProgram.h>
 
-int main (int argc, const char * argv[])
+int mainAmongAltMDD (int argc, const char * argv[])
 {
     @autoreleasepool {
         
