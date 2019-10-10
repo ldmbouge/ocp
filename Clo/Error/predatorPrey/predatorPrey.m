@@ -234,8 +234,8 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"predPrey"){
       //predatorPrey_f(1, argc, argv);
-      //predatorPrey_d(0, argc, argv);
-      predatorPrey_d_QF(1, argc, argv);
+      predatorPrey_d(0, argc, argv);
+      //predatorPrey_d_QF(0, argc, argv);
    }
    return 0;
 }

@@ -1834,10 +1834,15 @@
          if([[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]){ // Check that it is a better solution   <=========== !
             [[_engine objective] updatePrimalBound];
             solution = [self captureSolution];  // Keep it as a solution
+            NSLog(@"##### START");
+            for (id<ORVar> v in [_model variables]) {
+               if([v prettyname])
+                  NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+            }
+            NSLog(@"##### END");
          }
          break;
       } else {
-         
          /********** GuessError **********/
          //printf("************* BEGINNING OF GUESS *******************\n");
          LOG(_level, 2, @"GuessError");
@@ -1859,19 +1864,10 @@
                   id<CPFloatVar> currentVar = _gamma[getId(x[index.index])];
                   LOG(_level,2, @"Choosen var: %@",currentVar);
                   if(![currentVar bound]){
-                     ORFloat v = randomValue([currentVar min], [currentVar max]);
+                     ORDouble v = randomValue([currentVar min], [currentVar max]);
                      //NSLog(@"la var : %@ est fixe a :%16.16e",currentVar, v);
                      ORStatus s = [_engine enforce:^{ [currentVar bind:v];}];
                      isFailed = (s == ORFailure);
-                     /*
-                      printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ STEP 1\n");
-                      [currentVar bind:randomValue([currentVar min], [currentVar max])]; // fail ?
-                      LOG(_level, 2, @"var fixed at: %@", currentVar);
-                      printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ STEP 2\n");
-                      isFailed = [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:NO];
-                      //isFailed = (tryfail(^ORStatus{ [self errorGEqualImpl:_gamma[getId(z)] with:[[[_engine objective] primalBound] rationalValue] fail:YES]; printf("Status OK\n"); return ORSuccess; }, ^ORStatus{ printf("failure\n"); return ORFailure; }) == ORFailure);
-                      printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ STEP 3\n");
-                      */
                      if(isFailed){
                         //printf("HAS FAILED %d\n", ORFailure);
                         break;
@@ -1889,14 +1885,87 @@
                   isBound &= [xc bound];
                }
                id<CPRationalVar> ezi = _gamma[getId(ez)];
-               if(isBound && [[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]){ // lt (was gt !!!)
-                  // And as updatePrimalBound does test whether the value is actually better or not
-                  // the testing it here is useless
-                  [[_engine objective] updatePrimalBound];
-                  solution = [self captureSolution]; // Keep it as a solution
-                  [_tracer popNode]; // need to restore initial state before going out of loop !
-                  break;
+               /* START NEW GUESS */
+               if(isBound) {
+                  if (0) {
+                     /*** BEGIN: Attempt to improve the error ***/
+                     id<ORSolution> tmp_solution = [self captureSolution];
+                     bool improved = FALSE, improved_var = FALSE;
+                     int nvar = 0, nv, nbiter = 0;
+                     int direction = 1;
+                     ORStatus s;
+                     while (nbiter < 200) {
+                        [_tracer popNode];
+                        [_tracer pushNode];
+                        nbiter++; //printf("nb iter = %d\n", nbiter);
+                        if (nvar == 0) {
+                           nv = 0; for (id<ORFloatVar> v in x) { xc = _gamma[v.getId]; nv++; if (! [xc bound]) { nvar = nv; break; }}
+                           if (nvar == 0) break;
+                        }
+                        nv = 0;
+                        for (id<ORVar> v in x) {
+                           xc = _gamma[v.getId]; nv++;
+                           if (! [xc bound]) {
+                              float value = [[tmp_solution value:v] floatValue];
+                              if (nv == nvar) value = nextafterf(value, (direction == 1)?(+INFINITY):(-INFINITY));
+                              s = [_engine enforce:^{ [xc bind:value];}];
+                              if (s == ORFailure) break;
+                           }
+                        }
+                        if ((s != ORFailure) && ([[[tmp_solution value:ez] rationalValue] lt: [ezi min]])) { // Better err
+                           tmp_solution = [self captureSolution];
+                           improved_var = TRUE;
+                           improved = TRUE;
+                        } else {
+                           if ((! improved_var) && (direction == 1)) {
+                              direction = -1;
+                           } else {
+                              direction = 1;
+                              improved_var = FALSE;
+                              nv = 0;
+                              int old_nvar = nvar;
+                              for (id<ORFloatVar> v in x) {
+                                 xc = _gamma[v.getId]; nv++;
+                                 if ((nv > nvar) && (! [xc bound])) { nvar = nv; break; }
+                              }
+                              if (nvar == old_nvar) break;
+                           }
+                        }
+                     }
+                     /*** END: Attempt to improve the error ***/
+                     if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) { // lt (was gt !!!)
+                        // And as updatePrimalBound does test whether the value is actually better or not
+                        // the testing it here is useless
+                        printf("*** nb iter = %d\n", nbiter);
+                        [[_engine objective] tightenPrimalBound:[[tmp_solution value:ez] rationalValue]];
+                        solution = tmp_solution; // Keep it as a solution
+                        NSLog(@"##### START G");
+                        for (id<ORVar> v in [_model variables]) {
+                           if([v prettyname])
+                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+                        }
+                        NSLog(@"##### END G");
+                        [_tracer popNode]; // need to restore initial state before going out of loop !
+                        break;
+                     }
+                  } else {
+                     if ([[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]) { // lt (was gt !!!)
+                        // And as updatePrimalBound does test whether the value is actually better or not
+                        // the testing it here is useless
+                        [[_engine objective] updatePrimalBound];
+                        solution = [self captureSolution]; // Keep it as a solution
+                        NSLog(@"##### START G");
+                        for (id<ORVar> v in [_model variables]) {
+                           if([v prettyname])
+                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+                        }
+                        NSLog(@"##### END G");
+                        [_tracer popNode]; // need to restore initial state before going out of loop !
+                        break;
+                     }
+                  }
                }
+               /* END NEW GUESS */
             }
             iteration++;
             [_tracer popNode];

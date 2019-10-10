@@ -244,8 +244,8 @@ void doppler1_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"u"){
     //doppler1_f(1, argc, argv);
-//    doppler1_d(0, argc, argv);
-      doppler1_d_QF(0, argc, argv);
+    doppler1_d(0, argc, argv);
+      //doppler1_d_QF(0, argc, argv);
 
    }
     return 0;

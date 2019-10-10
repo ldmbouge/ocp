@@ -88,6 +88,41 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
    }
 }
 
+
+void rigidBody1_f(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0f];
+      id<ORFloatVar> x1 = [ORFactory floatVar:mdl low:-15.0f up:15.0f elow:zero eup:zero name:@"x1"];
+      id<ORFloatVar> x2 = [ORFactory floatVar:mdl low:-15.0f up:15.0f elow:zero eup:zero name:@"x2"];
+      id<ORFloatVar> x3 = [ORFactory floatVar:mdl low:-15.0f up:15.0f elow:zero eup:zero name:@"x3"];
+      id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+      [zero release];
+      
+      //[mdl add:[z set: [[[[@(0.0) sub: [x1 mul: x2]] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+      
+      [mdl add:[z set: [[[[[x1 mul: x2] minus] sub: [[@(2.0f) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+
+      
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
+      NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl floatVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+      }];
+   }
+}
+
 void exitfunc(int sig)
 {
    exit(sig);
@@ -97,7 +132,8 @@ int main(int argc, const char * argv[]) {
    signal(SIGKILL, exitfunc);
    alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
-      rigidBody1_d(1, argc, argv);
+//      rigidBody1_d(1, argc, argv);
+   rigidBody1_f(1, argc, argv);
    //}
    return 0;
 }

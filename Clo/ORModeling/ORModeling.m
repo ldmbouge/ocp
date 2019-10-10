@@ -20,6 +20,8 @@
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
+   //@TODO Rémy: bouger srand?
+   srand48(time(0));
    return [[[ORModelI alloc] initORModelI] autorelease];
 }
 +(id<ORModel>) createModel: (ORUInt) nbo mappings: (id<ORModelMappings>) mappings

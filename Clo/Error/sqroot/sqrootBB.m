@@ -156,8 +156,8 @@ void exitfunc(int sig)
 
 int main(int argc, const char * argv[]) {
    sranddev();
-//   signal(SIGKILL, exitfunc);
-//   alarm(60);
+   signal(SIGKILL, exitfunc);
+   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
    sqroot_d(1, argc, argv);
    //sqroot_f(1, argc, argv);

@@ -200,7 +200,7 @@ void sine_f(int search, int argc, const char * argv[]) {
 }
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"p"){
-      sine_d(1, argc, argv);
+      sine_d(0, argc, argv);
    }
    return 0;
 }

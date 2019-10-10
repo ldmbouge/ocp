@@ -179,9 +179,9 @@ void exitfunc(int sig)
 }
 
 int main(int argc, const char * argv[]) {
-   sranddev();
+   //sranddev();
    signal(SIGKILL, exitfunc);
-   alarm(60);
+   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       //carbonGas_f(1, argc, argv);
       carbonGas_d(1, argc, argv);

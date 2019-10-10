@@ -209,8 +209,8 @@ void verhulst_d_QF(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"verhulst"){
       //verhulst_f(1, argc, argv);
-      //verhulst_d(0, argc, argv);
-      verhulst_d_QF(1, argc, argv);
+      verhulst_d(0, argc, argv);
+      //verhulst_d_QF(0, argc, argv);
    }
    return 0;
 }

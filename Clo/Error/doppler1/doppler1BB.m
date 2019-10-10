@@ -172,7 +172,7 @@ void exitfunc(int sig)
 
 int main(int argc, const char * argv[]) {
    signal(SIGKILL, exitfunc);
-   alarm(60);
+   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       //doppler1_f(1, argc, argv);
       doppler1_d(1, argc, argv);

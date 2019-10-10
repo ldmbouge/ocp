@@ -91,6 +91,40 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void rigidBody1_f(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0f];
+      id<ORFloatVar> x1 = [ORFactory floatVar:mdl low:-15.0f up:15.0f elow:zero eup:zero name:@"x1"];
+      id<ORFloatVar> x2 = [ORFactory floatVar:mdl low:-15.0f up:15.0f elow:zero eup:zero name:@"x2"];
+      id<ORFloatVar> x3 = [ORFactory floatVar:mdl low:-15.0f up:15.0f elow:zero eup:zero name:@"x3"];
+      id<ORFloatVar> z = [ORFactory floatVar:mdl];
+      [zero release];
+      
+      //[mdl add:[z set: [[[[@(0.0) sub: [x1 mul: x2]] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+      
+      [mdl add:[z set: [[[[[x1 mul: x2] minus] sub: [[@(2.0f) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+      
+      NSLog(@"model: %@",mdl);
+      id<ORFloatVarArray> vs = [mdl floatVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x1 : [%f;%f]±[%@;%@] (%s)",[cp minF:x1],[cp maxF:x1],[cp minFQ:x1],[cp maxFQ:x1],[cp bound:x1] ? "YES" : "NO");
+         NSLog(@"x2 : [%f;%f]±[%@;%@] (%s)",[cp minF:x2],[cp maxF:x2],[cp minFQ:x2],[cp maxFQ:x2],[cp bound:x2] ? "YES" : "NO");
+         NSLog(@"x3 : [%f;%f]±[%@;%@] (%s)",[cp minF:x3],[cp maxF:x3],[cp minFQ:x3],[cp maxFQ:x3],[cp bound:x3] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minF:z],[cp maxF:z],[cp minFQ:z],[cp maxFQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_rigidBody1_d(getFmin(x1), getFmin(x2), getFmin(x3), getFmin(z), [cp minErrorFQ:z]);
+      }];
+   }
+}
+
 void rigidBody1_d_QF(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
@@ -155,6 +189,7 @@ void rigidBody1_d_QF(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
    rigidBody1_d(0, argc, argv);
+   //rigidBody1_f(0, argc, argv);
    //rigidBody1_d_QF(1, argc, argv);
    }
    return 0;

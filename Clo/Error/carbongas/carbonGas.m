@@ -278,8 +278,8 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"foo"){
       //carbonGas_f(0, argc, argv);
-      //carbonGas_d(1, argc, argv);
-      carbonGas_d_QF(1, argc, argv);
+      carbonGas_d(0, argc, argv);
+      //carbonGas_d_QF(1, argc, argv);
    }
     return 0;
 }
