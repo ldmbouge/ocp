@@ -588,6 +588,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORExpr>) getStateValue:(id<ORTracker>)t lookup:(int)lookup
 {
+    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:[ORFactory integer:t value:lookup]];
+    return o;
+}
++(id<ORExpr>) getStateValue:(id<ORTracker>)t lookupExpr:(id<ORExpr>)lookup
+{
     id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:lookup];
     return o;
 }
@@ -598,10 +603,20 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORExpr>) getLeftStateValue:(id<ORTracker>)t lookup:(int)lookup
 {
+    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:[ORFactory integer:t value:lookup] index:0];
+    return o;
+}
++(id<ORExpr>) getLeftStateValue:(id<ORTracker>)t lookup:(id<ORExpr>)lookup
+{
     id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:lookup index:0];
     return o;
 }
 +(id<ORExpr>) getRightStateValue:(id<ORTracker>)t lookup:(int)lookup
+{
+    id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:[ORFactory integer:t value:lookup] index:1];
+    return o;
+}
++(id<ORExpr>) getRightStateValue:(id<ORTracker>)t lookupExpr:(id<ORExpr>)lookup
 {
     id<ORExpr> o = [[ORExprStateValueI alloc] initORExprStateValueI:t lookup:lookup index:1];
     return o;

@@ -536,6 +536,18 @@
    NSMutableArray* integerList = [[NSMutableArray alloc] init];
    _stateValues[lookup] = integerList;
 }
+-(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value
+{
+   _stateValues[lookup] = [NSNumber numberWithBool: value];
+}
+-(void)addStateBoolArrayDefaultFalse:(int)lookup withSize:(ORInt)size
+{
+   NSMutableArray* boolList = [[NSMutableArray alloc] init];
+   for (int i = 0; i < size; i++) {
+      [boolList addObject:[NSNumber numberWithBool:false]];
+   }
+   _stateValues[lookup] = boolList;
+}
 -(void)addStates:(id*)states size:(int)size {
    //I think this is deprecated?
    id* newStateValues = malloc((_stateSize + size) * sizeof(id));

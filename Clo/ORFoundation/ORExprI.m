@@ -2849,7 +2849,7 @@
 
 
 @implementation ORExprStateValueI
--(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup
 {
     self = [super init];
     _stateIndex = 0;
@@ -2858,13 +2858,13 @@
     _arrayIndex = [ORFactory integer:t value:-1];
     return self;
 }
--(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup arrayIndex:(id<ORInteger>)arrayIndex
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup arrayIndex:(id<ORInteger>)arrayIndex
 {
     [self initORExprStateValueI:t lookup:lookup];
     _arrayIndex = arrayIndex;
     return self;
 }
--(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup index:(int)index
 {
     [self initORExprStateValueI:t lookup:lookup];
     _stateIndex = index;
@@ -2873,7 +2873,7 @@
 -(void) setLookup:(int)lookup { _lookup = lookup; }
 -(int) lookup { return _lookup; }
 -(id<ORTracker>) tracker { return _t;}
--(int) index { return _stateIndex; }
+-(id<ORExpr>) index { return _stateIndex; }
 -(int) arrayIndex { return [_arrayIndex value]; }
 -(bool) isArray { return [_arrayIndex value] >= 0; }
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueI:self]; }

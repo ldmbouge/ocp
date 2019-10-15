@@ -563,7 +563,7 @@
 
 @interface ORExprStateValueI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
-    @public int _lookup;
+    @public id<ORExpr> _lookup;
     @public int _stateIndex;
     id<ORInteger> _arrayIndex;
 }
@@ -571,8 +571,8 @@
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup arrayIndex:(id<ORInteger>)arrayIndex;
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index;
 -(void) setLookup:(int)lookup;
--(int) lookup;
--(int) index;
+-(id<ORExpr>) lookup;
+-(id<ORExpr>) index;
 -(int) arrayIndex;
 -(bool) isArray;
 -(void) visit:(ORVisitor*) v;

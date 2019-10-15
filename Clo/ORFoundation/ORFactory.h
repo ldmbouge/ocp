@@ -127,9 +127,12 @@ PORTABLE_BEGIN
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range bounds: (id<ORIntRange>) domain;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo;
 +(id<ORExpr>) getStateValue:(id<ORTracker>)t lookup:(int)lookup;
++(id<ORExpr>) getStateValue:(id<ORTracker>)t lookupExpr:(id<ORExpr>)lookup;
 +(id<ORExpr>) getStateValue:(id<ORTracker>)t lookup:(int)lookup arrayIndex:(id<ORInteger>)arrayIndex;
 +(id<ORExpr>) getLeftStateValue:(id<ORTracker>)t lookup:(int)lookup;
++(id<ORExpr>) getLeftStateValue:(id<ORTracker>)t lookupExpr:(id<ORExpr>)lookup;
 +(id<ORExpr>) getRightStateValue:(id<ORTracker>)t lookup:(int)lookup;
++(id<ORExpr>) getRightStateValue:(id<ORTracker>)t lookupExpr:(id<ORExpr>)lookup;
 +(id<ORExpr>) valueAssignment:(id<ORTracker>)t;
 +(id<ORExpr>) layerVariable:(id<ORTracker>)t;
 +(id<ORExpr>) sizeOfArray:(id<ORExpr>)array track:(id<ORTracker>)t;
