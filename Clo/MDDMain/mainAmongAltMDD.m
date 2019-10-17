@@ -14,7 +14,7 @@
 #import <objcp/CPConstraint.h>
 #import <ORFoundation/ORFoundation.h>
 
-int mainAmongAltMDD (int argc, const char * argv[])
+int main (int argc, const char * argv[])
 {
     @autoreleasepool {
         
@@ -192,7 +192,7 @@ int mainAmongAltMDD (int argc, const char * argv[])
         
         [notes ddWidth:4];
         [notes ddRelaxed: true];
-        id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
+        id<CPProgram> cp = [ORFactory createCPAltMDDProgram:mdl annotation: notes];
         
         [cp solve: ^{
             [cp labelArray: variables];

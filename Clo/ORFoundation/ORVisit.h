@@ -225,6 +225,7 @@
 -(void) visitExprSingletonSetI:(id<ORExpr>)e;
 -(void) visitExprMinMaxSetFromI:(id<ORExpr>)e;
 -(void) visitExprStateValueI:(id<ORExpr>)e;
+-(void) visitExprStateValueExprI:(id<ORExpr>)e;
 -(void) visitExprIfThenElseI:(id<ORExpr>)e;
 -(void) visitExprArrayIndexI:(id<ORExpr>)e;
 -(void) visitExprAppendToArrayI:(id<ORExpr>)e;

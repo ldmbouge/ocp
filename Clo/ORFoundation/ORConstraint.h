@@ -482,6 +482,7 @@ enum ORGroupType {
 -(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addStateIntArray:(int)lookup;
 -(void)addStateBoolArrayDefaultFalse:(int)lookup withSize:(ORInt)size;
+-(void)addStateBoolArrayDefaultTrue:(int)lookup withSize:(ORInt)size;
 -(void)addStates:(id*)states size:(int)size;
 -(id<ORExpr>)arcExists;
 -(id<ORExpr>*)transitionFunctions;
