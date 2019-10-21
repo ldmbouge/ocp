@@ -68,15 +68,15 @@ int main (int argc, const char * argv[])
             id<ORExpr> cValueInMinBottomUp = [[ORFactory minChildInformation:mdl] arrayIndex:c track:mdl];
             
             //Edge Is Used when  a and c are in the scope of array AND the size of the highest possible seuqence count using this edge and those a,b values is greater than lower bound AND the size of the lowest possible sequence count using this edge and those a,b values is less then upper bound
-            if (amountOfSequenceInTopDown == 0) {
+            //if (amountOfSequenceInTopDown == 0) {
                 edgeIsUsed = [[[a geq:zero track:mdl] land: [c geq:zero track:mdl] track:mdl] land:
                               [[[[lastValueInMaxTopDown sub:aValueInMinTopDown track:mdl] plus: [lastValueInMaxBottomUp sub:cValueInMinBottomUp track:mdl] track:mdl] geq:lowerMinusEdge track:mdl] land:
                                [[[lastValueInMinTopDown sub:aValueInMaxTopDown track:mdl] plus: [lastValueInMinBottomUp sub:cValueInMaxBottomUp track:mdl] track:mdl] leq:upperMinusEdge track:mdl]                                                                                                                                                                                                               track:mdl] track:mdl];
-            } else {
+            /*} else {
                 edgeIsUsed = [edgeIsUsed lor:[[[a geq:zero track:mdl] land: [c geq:zero track:mdl] track:mdl] land:
                                               [[[[lastValueInMaxTopDown sub:aValueInMinTopDown track:mdl] plus: [lastValueInMaxBottomUp sub:cValueInMinBottomUp track:mdl] track:mdl] geq:lowerMinusEdge track:mdl] land:
                                                [[[lastValueInMinTopDown sub:aValueInMaxTopDown track:mdl] plus: [lastValueInMinBottomUp sub:cValueInMaxBottomUp track:mdl] track:mdl] leq:upperMinusEdge track:mdl]                                                                                                                                                                                                               track:mdl] track:mdl] track:mdl];
-            }
+            }*/
         }
         
         id<ORExpr> deleteEdgeWhen = [edgeIsUsed negTrack:mdl];
