@@ -32,7 +32,7 @@ int main (int argc, const char * argv[])
         for (int index = 0; index < (maxDomain-minDomain+1); index++) {
             [mddStateSpecs addStateBool:index withDefaultValue:true];
             
-            id<ORExpr> transitionFunction = [[ORFactory getStateValue:mdl lookup:index] land: [[ORFactory valueAssignment:mdl] eq:@(index+minDomain)] track: mdl];
+            id<ORExpr> transitionFunction = [[ORFactory getStateValue:mdl lookup:index] land: [[[ORFactory valueAssignment:mdl] eq:@(index+minDomain)] negTrack:mdl] track: mdl];
             [mddStateSpecs addTransitionFunction: transitionFunction toStateValue: index];
             
             id<ORExpr> relaxationFunction = [ORFactory expr: [[ORFactory getLeftStateValue:mdl lookup:index] eq:@true track:mdl] lor:[[ORFactory getRightStateValue:mdl lookup:index] eq:@true track:mdl] track:mdl];

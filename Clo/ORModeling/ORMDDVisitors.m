@@ -1054,9 +1054,12 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprSquareI: visit method not defined"];
 }
--(void) visitExprNegateI:(id<ORExpr>)e
+-(void) visitExprNegateI:(ORExprNegateI*)e
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"];
+    DDClosure op = [self recursiveVisitor:[e operand]];
+    current = [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool: ![op(state, variable, value) boolValue]];
+    } copy];
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {
