@@ -1240,6 +1240,12 @@
 }
 -(id<ORIntSet>) set { return _set; }
 -(id<ORExpr>) value { return _value; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(%@ contains: %@)",[_left description],[_right description]];
+    return rv;
+}
 @end
 
 @implementation ORExprSetExprContainsI
@@ -1256,6 +1262,12 @@
 }
 -(id<ORExpr>) set { return _left; }
 -(id<ORExpr>) value { return _right; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(%@ contains %@)",[_left description],[_right description]];
+    return rv;
+}
 @end
 @implementation ORExprSetUnionI
 -(id<ORExpr>) initORExprSetUnionI:(id<ORExpr>)left and:(id<ORExpr>)right
@@ -1268,6 +1280,12 @@
 -(void) visit:(ORVisitor*) visitor
 {
     [visitor visitExprSetUnionI:self];
+}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(%@ U %@)",[_left description],[_right description]];
+    return rv;
 }
 @end
 @implementation ORExprIfThenElseI
@@ -1286,6 +1304,12 @@
 -(id<ORExpr>) ifExpr { return _if; }
 -(id<ORExpr>) thenReturn { return _then; }
 -(id<ORExpr>) elseReturn { return _else; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(if: %@ then: %@ else: %@)",[_if description],[_then description],[_else description]];
+    return rv;
+}
 @end
 @implementation ORExprArrayIndexI
 -(id<ORExpr>) initORExprArrayIndexI:(id<ORExpr>)array index:(id<ORExpr>)index
@@ -1301,6 +1325,12 @@
 }
 -(id<ORExpr>) array { return _array; }
 -(id<ORExpr>) index { return _index; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(%@ atIndex: %@)",[_array description],[_index description]];
+    return rv;
+}
 @end
 @implementation ORExprAppendToArrayI
 -(id<ORExpr>) initORExprAppendToArrayI:(id<ORExpr>)left value:(id<ORExpr>)right
@@ -1313,6 +1343,12 @@
 -(void) visit:(ORVisitor*) visitor
 {
     [visitor visitExprAppendToArrayI:self];
+}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(%@ append: %@)",[_left description],[_right description]];
+    return rv;
 }
 @end
 
@@ -1328,6 +1364,12 @@
 {
     [visitor visitExprMinBetweenArraysI:self];
 }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"MinPerIndex(%@,%@)",[_left description],[_right description]];
+    return rv;
+}
 @end
 @implementation ORExprMaxBetweenArraysI
 -(id<ORExpr>) initORExprMaxBetweenArrays:(id<ORExpr>)left and:(id<ORExpr>)right
@@ -1340,6 +1382,12 @@
 -(void) visit:(ORVisitor*) visitor
 {
     [visitor visitExprMaxBetweenArraysI:self];
+}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"MaxPerIndex(%@,%@)",[_left description],[_right description]];
+    return rv;
 }
 @end
 
@@ -1355,6 +1403,12 @@
 {
     [visitor visitExprEachInSetPlusI:self];
 }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(Each in %@ + %@",[_left description],[_right description]];
+    return rv;
+}
 @end
 @implementation ORExprEachInSetPlusEachInSetI
 -(id<ORExpr>) initORExprEachInSetPlusEachInSetI:(id<ORExpr>)left and:(id<ORExpr>)right
@@ -1367,6 +1421,12 @@
 -(void) visit:(ORVisitor*) visitor
 {
     [visitor visitExprEachInSetPlusEachInSetI:self];
+}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(Each in %@ + Each In %@)",[_left description],[_right description]];
+    return rv;
 }
 @end
 @implementation ORExprEachInSetLEQI
@@ -1381,6 +1441,12 @@
 {
     [visitor visitExprEachInSetLEQI:self];
 }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(Each in %@ <= Each In %@)",[_left description],[_right description]];
+    return rv;
+}
 @end
 @implementation ORExprEachInSetGEQI
 -(id<ORExpr>) initORExprEachInSetGEQI:(id<ORExpr>)left and:(id<ORExpr>)right
@@ -1393,6 +1459,12 @@
 -(void) visit:(ORVisitor*) visitor
 {
     [visitor visitExprEachInSetGEQI:self];
+}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(Each in %@ >= Each In %@)",[_left description],[_right description]];
+    return rv;
 }
 @end
 
@@ -2719,6 +2791,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprValueAssignmentI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"ValueAssignment"];
+    return rv;
+}
 @end
 @implementation ORExprLayerVariableI
 -(id<ORExpr>) initORExprLayerVariableI:(id<ORTracker>)t
@@ -2729,6 +2807,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprLayerVariableI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"LayerVariable"];
+    return rv;
+}
 @end
 @implementation ORExprSizeOfArrayI
 -(id<ORExpr>) initORExprSizeOfArrayI:(id<ORExpr>)array track:(id<ORTracker>)t
@@ -2741,6 +2825,12 @@
 -(id<ORTracker>) tracker { return _t;}
 -(id<ORExpr>) array { return _array; }
 -(void) visit:(ORVisitor*) v { [v visitExprSizeOfArrayI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"len(%@)",[_array description]];
+    return rv;
+}
 @end
 @implementation ORExprParentInformationI
 -(id<ORExpr>) initORExprParentInformationI:(id<ORTracker>)t
@@ -2751,6 +2841,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprParentInformationI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"ParentInformation"];
+    return rv;
+}
 @end
 @implementation ORExprMinParentInformationI
 -(id<ORExpr>) initORExprMinParentInformationI:(id<ORTracker>)t
@@ -2761,6 +2857,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprMinParentInformationI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"MinParentInformation"];
+    return rv;
+}
 @end
 @implementation ORExprMaxParentInformationI
 -(id<ORExpr>) initORExprMaxParentInformationI:(id<ORTracker>)t
@@ -2771,6 +2873,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprMaxParentInformationI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"MaxParentInformation"];
+    return rv;
+}
 @end
 @implementation ORExprChildInformationI
 -(id<ORExpr>) initORExprChildInformationI:(id<ORTracker>)t
@@ -2791,6 +2899,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprMinChildInformationI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"MinChildInformation"];
+    return rv;
+}
 @end
 @implementation ORExprMaxChildInformationI
 -(id<ORExpr>) initORExprMaxChildInformationI:(id<ORTracker>)t
@@ -2801,6 +2915,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprMaxChildInformationI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"MaxChildInformation"];
+    return rv;
+}
 @end
 @implementation ORExprLeftInformationI
 -(id<ORExpr>) initORExprLeftInformationI:(id<ORTracker>)t
@@ -2811,6 +2931,12 @@
 }
 -(void) visit:(ORVisitor*) v { [v visitExprLeftInformationI:self]; }
 -(id<ORTracker>) tracker { return _t;}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"LeftInformation"];
+    return rv;
+}
 @end
 @implementation ORExprRightInformationI
 -(id<ORExpr>) initORExprRightInformationI:(id<ORTracker>)t
@@ -2821,6 +2947,12 @@
 }
 -(void) visit:(ORVisitor*) v { [v visitExprRightInformationI:self]; }
 -(id<ORTracker>) tracker { return _t;}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"RightInformation"];
+    return rv;
+}
 @end
 @implementation ORExprSingletonSetI
 -(id<ORExpr>) initORExprSingletonSetI:(id<ORExpr>)value track:(id<ORTracker>)t
@@ -2833,6 +2965,12 @@
 -(id<ORExpr>) value { return _value;}
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprSingletonSetI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"SetOf(%@)",[_value description]];
+    return rv;
+}
 @end
 @implementation ORExprMinMaxSetFromI
 -(id<ORExpr>) initORExprMinMaxSetFromI:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)t
@@ -2845,6 +2983,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprMinMaxSetFromI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"MinMaxSetFrom(%@, %@)",[_left description],[_right description]];
+    return rv;
+}
 @end
 
 
@@ -2885,6 +3029,12 @@
 -(int) arrayIndex { return [_arrayIndex value]; }
 -(bool) isArray { return [_arrayIndex value] >= 0; }
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"StateValueExpr(StateLookup:%d, left vs right index:%d, arrayIndex:%@)",_lookup,_stateIndex,_arrayIndex];
+    return rv;
+}
 @end
 
 
@@ -2927,5 +3077,11 @@
 -(NSDictionary*) mapping { return _mapping; }
 -(bool) isArray { return [_arrayIndex value] >= 0; }
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueExprI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"StateValueExpr(StateLookup:%@, left vs right index:%d, arrayIndex:%@)",[_lookup description],_stateIndex,_arrayIndex];
+    return rv;
+}
 @end
 
