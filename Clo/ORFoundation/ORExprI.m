@@ -2889,6 +2889,12 @@
 }
 -(id<ORTracker>) tracker { return _t;}
 -(void) visit:(ORVisitor*) v { [v visitExprChildInformationI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"ChildInformation"];
+    return rv;
+}
 @end
 @implementation ORExprMinChildInformationI
 -(id<ORExpr>) initORExprMinChildInformationI:(id<ORTracker>)t
