@@ -94,7 +94,7 @@ void kepler0_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   LOO_MEASURE_TIME(@"p"){
+   LOO_MEASURE_TIME(@"kepler0"){
    kepler0_d(0, argc, argv);
    }
    return 0;

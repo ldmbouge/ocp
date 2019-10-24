@@ -78,7 +78,7 @@ void turbine1_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:-4.5 up:-0.3 elow:zero eup:zero name:@"v"];
       id<ORDoubleVar> w = [ORFactory doubleVar:mdl low:0.4 up:0.9 elow:zero eup:zero name:@"w"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl low:3.8 up:7.8 elow:zero eup:zero name:@"r"];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
@@ -102,14 +102,7 @@ void turbine1_d(int search, int argc, const char * argv[]) {
    }
 }
 
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 int main(int argc, const char * argv[]) {
-   signal(SIGKILL, exitfunc);
-   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       turbine1_d(1, argc, argv);
    //}

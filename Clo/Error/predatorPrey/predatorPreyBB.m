@@ -138,14 +138,17 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
       id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.1f up:0.3f elow:zero eup:zero name:@"x"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
-      [zero release];
+      //[zero release];
       
       [mdl add:[r set: @(4.0f)]];
       [mdl add:[K set: @(1.11f)]];
       [mdl add:[z set:[[[r mul: x] mul: x]  div: [@(1.0f) plus: [[x div: K] mul:[x div: K]]]]]];
       
       [mdl add: [ezAbs eq: [ez abs]]];
+      //[zero set_d:9.9e-17];
+      //[mdl add: [ez geq:zero]];
       [mdl maximize:ezAbs];
+      [zero release];
       
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
@@ -161,15 +164,7 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
    }
 }
 
-
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 int main(int argc, const char * argv[]) {
-   signal(SIGKILL, exitfunc);
-   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       //predatorPrey_f(1, argc, argv);
       predatorPrey_d(1, argc, argv);

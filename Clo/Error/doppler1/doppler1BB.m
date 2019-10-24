@@ -165,19 +165,10 @@ void doppler1_f(int search, int argc, const char * argv[]) {
    }
 }
 
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 int main(int argc, const char * argv[]) {
-   signal(SIGKILL, exitfunc);
-   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       //doppler1_f(1, argc, argv);
       doppler1_d(1, argc, argv);
    //}
    return 0;
 }
-
-

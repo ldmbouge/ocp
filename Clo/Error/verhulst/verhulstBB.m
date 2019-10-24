@@ -144,15 +144,7 @@ void verhulst_f(int search, int argc, const char * argv[]) {
    }
 }
 
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 int main(int argc, const char * argv[]) {
-   sranddev();
-   signal(SIGKILL, exitfunc);
-   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       //verhulst_f(1, argc, argv);
       verhulst_d(1, argc, argv);

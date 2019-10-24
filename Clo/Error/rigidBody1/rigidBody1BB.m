@@ -111,7 +111,7 @@ void rigidBody1_f(int search, int argc, const char * argv[]) {
       
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
-      id<ORDoubleVarArray> vs = [mdl floatVars];
+      id<ORFloatVarArray> vs = [mdl floatVars];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
@@ -123,17 +123,10 @@ void rigidBody1_f(int search, int argc, const char * argv[]) {
    }
 }
 
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 int main(int argc, const char * argv[]) {
-   signal(SIGKILL, exitfunc);
-   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
-//      rigidBody1_d(1, argc, argv);
-   rigidBody1_f(1, argc, argv);
+   rigidBody1_d(1, argc, argv);
+   //rigidBody1_f(1, argc, argv);
    //}
    return 0;
 }

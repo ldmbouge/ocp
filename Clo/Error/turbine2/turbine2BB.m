@@ -95,14 +95,7 @@ void turbine2_d(int search, int argc, const char * argv[]) {
    }
 }
 
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 int main(int argc, const char * argv[]) {
-   signal(SIGKILL, exitfunc);
-   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       turbine2_d(1, argc, argv);
    //}

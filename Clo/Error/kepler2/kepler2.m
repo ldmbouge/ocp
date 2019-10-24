@@ -52,7 +52,7 @@ void check_it_kepler0_d(double x, double z, id<ORRational> ez) {
    
 }
 
-void kepler0_d(int search, int argc, const char * argv[]) {
+void kepler2_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
@@ -94,8 +94,8 @@ void kepler0_d(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   LOO_MEASURE_TIME(@"p"){
-   kepler0_d(0, argc, argv);
+   LOO_MEASURE_TIME(@"kepler2"){
+   kepler2_d(0, argc, argv);
    }
    return 0;
 }

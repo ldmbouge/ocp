@@ -101,7 +101,7 @@ void sqroot_d(int search, int argc, const char * argv[]) {
          [cp solve:^{
             if (search)
                [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [cp floatSplit:i withVars:x];
+                  [cp float6WaySplit:i withVars:x];
                }];
          }];
          struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
@@ -139,7 +139,7 @@ void sqroot_f(int search, int argc, const char * argv[]) {
          [cp solve:^{
             if (search)
                [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [cp floatSplit:i withVars:x];
+                  [cp float3WaySplit:i withVars:x];
                }];
          }];
          struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
@@ -148,16 +148,7 @@ void sqroot_f(int search, int argc, const char * argv[]) {
    }
 }
 
-
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 int main(int argc, const char * argv[]) {
-   sranddev();
-   signal(SIGKILL, exitfunc);
-   alarm(10);
    //   LOO_MEASURE_TIME(@"rigidbody2"){
    sqroot_d(1, argc, argv);
    //sqroot_f(1, argc, argv);
