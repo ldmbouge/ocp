@@ -168,12 +168,13 @@
 {
    id<ORCheckpoint> cp = [_tracer captureCheckpoint];
    BBNode* node = [[BBNode alloc] init:k checkpoint:cp];
-   BBKey* ov    = [BBKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
-//   NSLog(@"START NEW Node");
-//   NSLog(@"%@",ov);
-//   NSLog(@"%@", [_engine model]);
-//   NSLog(@"END Node");
+   //ORInt depth;
+   //ORInt primalBound = 1000 * frexp([[[[_engine objective] primalBound] rationalValue] get_d], &depth);
+   //BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:primalBound];
+   BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
    [_buf insertObject:node withKey:ov];
+   NSLog(@"BUF: %d", [_buf size]);
+   //NSLog(@"_buf: %@", _buf);
    [ov release];
    [node release];
 }
@@ -214,6 +215,7 @@
       _k  = NULL;
       [back call];
    } else {
+      NSLog(@"ETL");
       [k letgo];
    }
 }
@@ -224,6 +226,7 @@
       [self makeAndRecordNode:k];
       [self fail];
    } else {
+      NSLog(@"ETR");
       [k letgo];
    }
 }
@@ -243,7 +246,7 @@ NSString * const ORStatus_toString_BB[] = {
    [ORNoop   ] = @"noop"
 };
 
-static long __nbPull = 0;
+//static long __nbPull = 0;
 
 -(void) fail
 {
@@ -266,12 +269,13 @@ static long __nbPull = 0;
          if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] &&
             [[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]]){
             BBNode* nd = [_buf extractBest];
+            //NSLog(@"BUF: %d", [_buf size]);
             
             ORStatus status = [of tightenDualBound:bestKey.bound];
             if (status != ORFailure)
                status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
-            if (__nbPull++ % 100 == 0)
-               NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
+            //if (__nbPull++ % 100 == 0)
+               //NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
             //NSLog(@"%@ -- %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             [nd.cp letgo];
             NSCont* k = nd.cont;
@@ -288,7 +292,7 @@ static long __nbPull = 0;
          } else {
             NSLog(@"EQUAL BOUND: %@ == %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             //NSLog(@"%@", [_engine variables]);
-            NSLog(@"QUEUE: %@", _buf);
+            //NSLog(@"QUEUE: %@", _buf);
             //NSLog(@"%@", [_engine objective]);
             return;
          }

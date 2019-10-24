@@ -14,6 +14,15 @@
 typedef mpq_t rational_t;
 typedef mpq_ptr rational_ptr;
 
+extern int nbBoxGenerated;
+extern int nbBoxExplored;
+extern int stoppingTime;
+extern NSDate *branchAndBoundStart;
+extern NSDate *branchAndBoundTime;
+
+extern void exitfunc(int sig);
+
+
 @protocol ORMemoryTrail;
 @protocol ORTrail;
 @protocol ORVisitor;

@@ -72,9 +72,11 @@
    [_program try: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ try x > %16.16e",[[_program explorer] nbChoices],xi,mid);
       [_program floatGthen:(id<ORFloatVar>)_variable with:mid];//CPCommonProgram
+      nbBoxGenerated++;
    } alt: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ alt x <= %16.16e",[[_program explorer] nbChoices],xi,mid);
       [_program floatLEqual:(id<ORFloatVar>)_variable with:mid];
+      nbBoxGenerated++;
    }];
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
@@ -95,9 +97,11 @@
    [_program try: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ try x > %16.16e",[[_program explorer] nbChoices],xi,mid);
       [_program doubleGthen:(id<ORDoubleVar>)_variable with:mid];
+      nbBoxGenerated++;
    } alt: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ alt x <= %16.16e",[[_program explorer] nbChoices],xi,mid);
       [_program doubleLEqual:(id<ORDoubleVar>)_variable with:mid];
+      nbBoxGenerated++;
    }];
 }
 @end

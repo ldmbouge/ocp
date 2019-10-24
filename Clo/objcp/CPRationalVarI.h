@@ -83,6 +83,7 @@
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
+-(ORLDouble) domwidth;
 -(id<ORRational>) rationalValue;
 -(id<CPDom>) domain;
 @end

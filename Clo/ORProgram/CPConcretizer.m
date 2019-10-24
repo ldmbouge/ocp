@@ -3272,5 +3272,12 @@
       [left updateMin:cstr.cst];
    }];
 }
+-(void) visitDoubleEqualc:(id<ORDoubleEqualc>)cstr
+{
+    id<CPDoubleVar> left = [self concreteVar:[cstr left]];
+    [_engine tryEnforce:^{
+       [left bind:[cstr cst]];
+    }];
+}
 @end
 

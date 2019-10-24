@@ -18,6 +18,16 @@
 #define R_IS_STRICTLY_POSITIVE(Q) ((0 < (*(Q).rational->_mp_num._mp_size))?1:0)
 #define R_IS_STRICTLY_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) < 0)?1:0)
 
+int nbBoxGenerated = 1;
+int nbBoxExplored = 0;
+int stoppingTime = 10;
+NSDate *branchAndBoundStart = NULL;
+NSDate *branchAndBoundTime = NULL;
+
+void exitfunc(int sig)
+{
+   exit(sig);
+}
 
 @implementation ORRational
 -(id)init:(id<ORMemoryTrail>) mt
@@ -161,7 +171,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%20.20e",[self get_d]];
+   [buf appendFormat:@"%1.2e",[self get_d]];
    /* DEBUG only */
    //[buf appendFormat:@"%s",[self get_str]];
    //[buf appendFormat:@"(%20.20e - %d)",[self get_d], _type];

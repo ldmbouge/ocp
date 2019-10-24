@@ -430,4 +430,9 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
 - (void)visit:(ORVisitor *)visitor
 {}
 
+-(ORLDouble) domwidth
+{
+    return -1.0;
+}
+
 @end
