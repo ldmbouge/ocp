@@ -439,6 +439,10 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitDoubleGEqualc: (id<ORDoubleGEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitEqual: (id<OREqual>)c
 {
    _result = [_into addConstraint:c];
