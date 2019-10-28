@@ -164,6 +164,7 @@
 -(void) visit:(ORVisitor*) v;
 -(id<ORIntSet>) set;
 -(id<ORExpr>) value;
+-(NSString *)description;
 @end
 @interface ORExprSetExprContainsI : ORExprBinaryI<ORExpr, NSCoding> {
     id<ORExpr> _set;
@@ -173,10 +174,12 @@
 -(void) visit:(ORVisitor*) v;
 -(id<ORExpr>) set;
 -(id<ORExpr>) value;
+-(NSString *)description;
 @end
 @interface ORExprSetUnionI : ORExprBinaryI<ORExpr, NSCoding>
 -(id<ORExpr>) initORExprSetUnionI:(id<ORExpr>)left and:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;
+-(NSString *)description;
 @end
 @interface ORExprIfThenElseI : ORExprI<ORExpr, NSCoding> {
     id<ORExpr> _if;
@@ -188,6 +191,7 @@
 -(id<ORExpr>) ifExpr;
 -(id<ORExpr>) thenReturn;
 -(id<ORExpr>) elseReturn;
+-(NSString *)description;
 @end
 @interface ORExprArrayIndexI : ORExprI<ORExpr, NSCoding> {
     id<ORExpr> _array;
@@ -197,34 +201,42 @@
 -(void) visit:(ORVisitor*) v;
 -(id<ORExpr>) array;
 -(id<ORExpr>) index;
+-(NSString *)description;
 @end
 @interface ORExprAppendToArrayI : ORExprBinaryI<ORExpr, NSCoding>
 -(id<ORExpr>) initORExprAppendToArrayI:(id<ORExpr>)left value:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;
+-(NSString *)description;
 @end
 @interface ORExprEachInSetPlusI : ORExprBinaryI<ORExpr, NSCoding>
 -(id<ORExpr>) initORExprEachInSetPlusI:(id<ORExpr>)left and:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;
+-(NSString *)description;
 @end
 @interface ORExprMinBetweenArraysI : ORExprBinaryI<ORExpr, NSCoding>
 -(id<ORExpr>) initORExprMinBetweenArrays:(id<ORExpr>)left and:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;
+-(NSString *)description;
 @end
 @interface ORExprMaxBetweenArraysI : ORExprBinaryI<ORExpr, NSCoding>
 -(id<ORExpr>) initORExprMaxBetweenArrays:(id<ORExpr>)left and:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;
+-(NSString *)description;
 @end
 @interface ORExprEachInSetPlusEachInSetI : ORExprBinaryI<ORExpr, NSCoding>
 -(id<ORExpr>) initORExprEachInSetPlusEachInSetI:(id<ORExpr>)left and:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;
+-(NSString *)description;
 @end
 @interface ORExprEachInSetLEQI: ORExprBinaryI<ORRelation, NSCoding>
 -(id<ORExpr>) initORExprEachInSetLEQI:(id<ORExpr>)left and:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;
+-(NSString *)description;
 @end
 @interface ORExprEachInSetGEQI : ORExprBinaryI<ORRelation, NSCoding>
 -(id<ORExpr>) initORExprEachInSetGEQI:(id<ORExpr>)left and:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;
+-(NSString *)description;
 @end
 
 @interface ORExprPlusI : ORExprBinaryI<ORExpr,NSCoding> 
@@ -471,6 +483,7 @@
 -(id<ORExpr>)initORExprValueAssignmentI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprLayerVariableI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -478,6 +491,7 @@
 -(id<ORExpr>)initORExprLayerVariableI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprSizeOfArrayI : ORExprI<ORExpr, NSCoding> {
     id<ORExpr> _array;
@@ -487,6 +501,7 @@
 -(void) visit:(ORVisitor*) v;
 -(id<ORExpr>) array;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprParentInformationI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -494,6 +509,7 @@
 -(id<ORExpr>)initORExprParentInformationI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprMinParentInformationI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -501,6 +517,7 @@
 -(id<ORExpr>)initORExprMinParentInformationI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprMaxParentInformationI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -508,6 +525,7 @@
 -(id<ORExpr>)initORExprMaxParentInformationI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprChildInformationI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -515,6 +533,7 @@
 -(id<ORExpr>)initORExprChildInformationI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprMinChildInformationI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -522,6 +541,7 @@
 -(id<ORExpr>)initORExprMinChildInformationI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprMaxChildInformationI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -529,6 +549,7 @@
 -(id<ORExpr>)initORExprMaxChildInformationI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprLeftInformationI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -536,6 +557,7 @@
 -(id<ORExpr>)initORExprLeftInformationI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprRightInformationI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -543,6 +565,7 @@
 -(id<ORExpr>)initORExprRightInformationI:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprSingletonSetI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -552,6 +575,7 @@
 -(void) visit:(ORVisitor*) v;
 -(id<ORExpr>) value;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 @interface ORExprMinMaxSetFromI : ORExprBinaryI<ORExpr, NSCoding> {
     id<ORTracker> _t;
@@ -559,24 +583,47 @@
 -(id<ORExpr>)initORExprMinMaxSetFromI:(id<ORExpr>)left and:(id<ORExpr>)right track:(id<ORTracker>)t;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 
 @interface ORExprStateValueI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
     @public int _lookup;
     @public int _stateIndex;
-    id<ORInteger> _arrayIndex;
+    @public id<ORInteger> _arrayIndex;
 }
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup;
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup arrayIndex:(id<ORInteger>)arrayIndex;
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index;
--(void) setLookup:(int)lookup;
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index arrayIndex:(int)arrayIndex;
 -(int) lookup;
 -(int) index;
 -(int) arrayIndex;
 -(bool) isArray;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;
+-(NSString *)description;
+@end
+
+@interface ORExprStateValueExprI : ORExprI<ORExpr, NSCoding> {
+    id<ORTracker> _t;
+    id<ORExpr> _lookup;
+@public int _stateIndex;
+    id<ORInteger> _arrayIndex;
+    NSDictionary* _mapping;
+}
+-(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup;
+-(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup arrayIndex:(id<ORInteger>)arrayIndex;
+-(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup index:(int)index;
+-(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup index:(int)index arrayIndex:(int)arrayIndex mapping:(NSDictionary*) mapping;
+-(id<ORExpr>) lookup;
+-(int) index;
+-(int) arrayIndex;
+-(NSDictionary*) mapping;
+-(bool) isArray;
+-(void) visit:(ORVisitor*) v;
+-(id<ORTracker>) tracker;
+-(NSString *)description;
 @end
 
 //int getStateValueIndex(ORExprStateValueI* sv) { return sv->_stateIndex;}

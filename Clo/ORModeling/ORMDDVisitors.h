@@ -24,6 +24,16 @@
 -(void) updateSpecs:(id<ORExpr>)e;
 @end
 
+@interface ORDDUpdatedSpecs : ORNOopVisit {
+@protected
+    NSDictionary* _mapping;
+    id<ORExpr> current;
+}
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(NSDictionary*)mapping;
+-(id<ORExpr>) updatedSpecs:(id<ORExpr>)e;
+-(id<ORExpr>) recursiveVisitor:(id<ORExpr>)e;
+@end
+
 @interface ORDDClosureGenerator : ORNOopVisit {
 @protected
     DDClosure current;

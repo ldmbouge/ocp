@@ -943,7 +943,7 @@
         //int shortestPath = [layers[_numVariables][0] shortestPath];
         
         /*if (_maximize) {
-            if (longestPath < [_objective min]) {
+            if (longestPath < [_objective   min]) {
                 failNow();
             }
         } else {

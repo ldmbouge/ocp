@@ -129,11 +129,12 @@
     id<ORIntVar> _objectiveVar;
     bool _maximize;
     bool _relaxed;
+    bool _topDown;
     
     NSMutableArray* _mddSpecConstraints;
 }
 
--(id)initORMDDify: (id<ORAddToModel>) into
+-(id)initORMDDify: (id<ORAddToModel>) into isTopDown:(bool)isTopDown
 {
     self = [super init];
     _into = into;
@@ -142,6 +143,7 @@
     _variables = NULL;
     _maximize = false;
     _hasObjective = false;
+    _topDown = isTopDown;
     return self;
 }
 
@@ -176,30 +178,30 @@
     
     id<ORConstraint> mddConstraint;
     
-    /*if ([AltJointState numStates] > 0) {
+    if (!_topDown) {
         [AltJointState setVariables:_variables];
         //if ([AltJointState numStates] > 1) {
-            mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[AltJointState class]];
+        mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[AltJointState class] topDown:_topDown];
         //} else {
         //    CustomState* onlyState = [JointState firstState];
         //    [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
         //    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class]];
         //}
-    } else {*/
+    } else {
         [JointState setVariables:_variables];
         
         if (_hasObjective) {
             mddConstraint = [ORFactory CustomMDDWithObjective:m var:_variables relaxed:_relaxed size:width objective: _objectiveVar maximize:_maximize stateClass:[JointState class]];
         } else {
             if ([JointState numStates] > 1) {
-                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[JointState class]];
+                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[JointState class] topDown:_topDown];
             } else {
                 CustomState* onlyState = [JointState firstState];
                 [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
-                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class]];
+                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class] topDown:_topDown];
             }
         }
-    //}
+    }
     
     [_into trackConstraintInGroup: mddConstraint];
     [_into addConstraint: mddConstraint];
@@ -345,29 +347,29 @@
                 
                 [mainMDDSpec addStates:separateStatesToAdd size:numToAdd];
                 
-                ORDDUpdateSpecs* updateFunctions = [[ORDDUpdateSpecs alloc] initORDDUpdateSpecs:totalMapping];
+                ORDDUpdatedSpecs* updatedFunctions = [[ORDDUpdatedSpecs alloc] initORDDUpdatedSpecs:totalMapping];
                 
                 for (int i = 0; i < numToAdd; i++) {
                     int index = indicesToAdd[i];
                     
-                    [updateFunctions updateSpecs:transitionFunctions[index]];
-                    [mainMDDSpec addTransitionFunction:transitionFunctions[index] toStateValue:(mainStateSize+i)];
+                    id<ORExpr> newTransitionFunction = [updatedFunctions updatedSpecs:transitionFunctions[index]];
+                    [mainMDDSpec addTransitionFunction:newTransitionFunction toStateValue:(mainStateSize+i)];
                     
-                    [updateFunctions updateSpecs:differentialFunctions[index]];
-                    [mainMDDSpec addStateDifferentialFunction:differentialFunctions[index] toStateValue:(mainStateSize+i)];
+                    id<ORExpr> newStateDifferentialFunction = [updatedFunctions updatedSpecs:differentialFunctions[index]];
+                    [mainMDDSpec addStateDifferentialFunction:newStateDifferentialFunction toStateValue:(mainStateSize+i)];
                 }
                 if (_relaxed) {
                     for  (int i = 0; i < numToAdd; i++) {
                         int index = indicesToAdd[i];
                     
-                        [updateFunctions updateSpecs:relaxationFunctions[index]];
-                        [mainMDDSpec addRelaxationFunction:relaxationFunctions[index] toStateValue:(mainStateSize+i)];
+                        id<ORExpr> newRelaxationFunction = [updatedFunctions updatedSpecs:relaxationFunctions[index]];
+                        [mainMDDSpec addRelaxationFunction:newRelaxationFunction toStateValue:(mainStateSize+i)];
                     }
                 }
                 id<ORExpr> oldArcExists = [mainMDDSpec arcExists];
                 id<ORExpr> arcExists = [mddSpec arcExists];
-                [updateFunctions updateSpecs:arcExists];
-                id<ORExpr> newArcExists = [oldArcExists land:arcExists];
+                id<ORExpr> updatedArcExists = [updatedFunctions updatedSpecs:arcExists];
+                id<ORExpr> newArcExists = [oldArcExists land:updatedArcExists];
                 [mainMDDSpec setArcExistsFunction:newArcExists];
                 
                 break;

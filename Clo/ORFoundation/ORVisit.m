@@ -852,6 +852,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprStateValueI: visit method not defined"];
 }
+-(void) visitExprStateValueExprI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprStateValueExprI: visit method not defined"];
+}
 -(void) visitExprIfThenElseI: (id<ORExpr>) e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprIfThenElseI: visit method not defined"];
