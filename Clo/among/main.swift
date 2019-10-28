@@ -22,7 +22,7 @@ autoreleasepool {
     let vars = ORFactory.intVarArray(m, range: R0, domain: R1)
     let cv1 = ORFactory.intSet(m, set: [2,4]),
         cv2 = ORFactory.intSet(m, set: [5])
-    //m.add(ORFactory.among(vars, values: cv1, low: 5, up: 10))
+    m.add(ORFactory.among(vars, values: cv1, low: 5, up: 5))
     m.add(ORFactory.among(vars, values: cv2, low: 2, up: 3))
 
     let cp = ORFactory.createCPProgram(m, annotation: notes)

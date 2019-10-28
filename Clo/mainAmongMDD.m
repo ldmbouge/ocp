@@ -27,24 +27,24 @@ int main (int argc, const char * argv[])
         
         NSSet* even = [NSSet setWithObjects:@2, @4, nil];
         NSSet* five = [NSSet setWithObjects:@5, nil];
-        NSSet* middle = [NSSet setWithObjects:@2, @3, @4, nil];
-        NSSet* ends = [NSSet setWithObjects:@1, @5, nil];
-        NSSet* onetwo = [NSSet setWithObjects:@1, @2, nil];
+//        NSSet* middle = [NSSet setWithObjects:@2, @3, @4, nil];
+//        NSSet* ends = [NSSet setWithObjects:@1, @5, nil];
+//        NSSet* onetwo = [NSSet setWithObjects:@1, @2, nil];
         id<ORIntSet> countedValues1 = [ORFactory intSet: mdl set: even];
         id<ORIntSet> countedValues2 = [ORFactory intSet: mdl set: five];
-        id<ORIntSet> countedValues3 = [ORFactory intSet: mdl set: middle];
-        id<ORIntSet> countedValues4 = [ORFactory intSet: mdl set: ends];
-        id<ORIntSet> countedValues5 = [ORFactory intSet: mdl set: onetwo];
+//        id<ORIntSet> countedValues3 = [ORFactory intSet: mdl set: middle];
+//        id<ORIntSet> countedValues4 = [ORFactory intSet: mdl set: ends];
+//        id<ORIntSet> countedValues5 = [ORFactory intSet: mdl set: onetwo];
         id<ORInteger> lower1 = [ORFactory integer:mdl value:5];
         id<ORInteger> upper1 = [ORFactory integer:mdl value:5];
         id<ORInteger> lower2 = [ORFactory integer:mdl value:2];
         id<ORInteger> upper2 = [ORFactory integer:mdl value:3];
-        id<ORInteger> lower3 = [ORFactory integer:mdl value:30];
-        id<ORInteger> upper3 = [ORFactory integer:mdl value:40];
-        id<ORInteger> lower4 = [ORFactory integer:mdl value:5];
-        id<ORInteger> upper4 = [ORFactory integer:mdl value:15];
-        id<ORInteger> lower5 = [ORFactory integer:mdl value:11];
-        id<ORInteger> upper5 = [ORFactory integer:mdl value:12];
+//        id<ORInteger> lower3 = [ORFactory integer:mdl value:30];
+//        id<ORInteger> upper3 = [ORFactory integer:mdl value:40];
+//        id<ORInteger> lower4 = [ORFactory integer:mdl value:5];
+//        id<ORInteger> upper4 = [ORFactory integer:mdl value:15];
+//        id<ORInteger> lower5 = [ORFactory integer:mdl value:11];
+//        id<ORInteger> upper5 = [ORFactory integer:mdl value:12];
         
         id<ORInteger> zero = [ORFactory integer:mdl value:0];
         
@@ -130,7 +130,7 @@ int main (int argc, const char * argv[])
          
          [mdl add: mddStateSpecs2];
          
-         
+         /*
          id<ORMDDSpecs> mddStateSpecs3 = [ORFactory MDDSpecs: mdl variables:variables stateSize: 3];
          [mddStateSpecs3 addStateInt: minCount withDefaultValue: 0];
          [mddStateSpecs3 addStateInt: maxCount withDefaultValue: 0];
@@ -243,12 +243,12 @@ int main (int argc, const char * argv[])
          
          //[mdl add: mddStateSpecs5];
         
-        
+        */
         ORLong startWC  = [ORRuntimeMonitor wctime];
         ORLong startCPU = [ORRuntimeMonitor cputime];
         
         [notes ddWidth:4];
-        [notes ddRelaxed: true];
+        [notes ddRelaxed: false];
         id<CPProgram> cp = [ORFactory createCPMDDProgram:mdl annotation: notes];
         
         [cp solve: ^{

@@ -939,8 +939,8 @@
     }
     
     if (_hasObjective) {
-        int longestPath = [layers[_numVariables][0] longestPath];
-        int shortestPath = [layers[_numVariables][0] shortestPath];
+        //int longestPath = [layers[_numVariables][0] longestPath];
+        //int shortestPath = [layers[_numVariables][0] shortestPath];
         
         /*if (_maximize) {
             if (longestPath < [_objective min]) {

@@ -181,6 +181,10 @@ public func abs(_ op : ORExpr) -> ORExpr {
     return op.abs()
 }
 
+public func literal(_ t : ORTracker,_ op : Int) -> ORExpr {
+    return ORFactory.integer(t, value: ORInt(op))
+}
+
 func convertArray(s : [UnsafeMutablePointer<Any>]) -> [AnyObject] {
    return s.map({v  in Unmanaged<AnyObject>.fromOpaque(v).takeUnretainedValue() })
 }

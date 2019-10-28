@@ -217,6 +217,7 @@
 -(NSDictionary*) checkForStateEquivalences:(id<ORMDDSpecs>)mergeInto and:(id<ORMDDSpecs>)other {
     NSMutableDictionary* mappings = [[NSMutableDictionary alloc] init];
     return mappings;
+    /*
     int stateSize1 = [mergeInto stateSize];
     int stateSize2 = [other stateSize];
     ORDDExpressionEquivalenceChecker* equivalenceChecker = [[ORDDExpressionEquivalenceChecker alloc] init];
@@ -254,6 +255,7 @@
     }
     
     return mappings;
+     */
 }
 
 -(bool) areEquivalent:(id<ORMDDSpecs>)mergeInto atIndex:(int)index1 and:(id<ORMDDSpecs>)other atIndex:(int)index2 withDependentMapping:(NSMutableDictionary*)dependentMappings andConfirmedMapping:(NSMutableDictionary*)confirmedMappings equivalenceVisitor:(ORDDExpressionEquivalenceChecker*)equivalenceChecker candidates:(int**)candidates
