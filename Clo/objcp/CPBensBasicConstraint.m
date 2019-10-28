@@ -26,7 +26,7 @@
     _minChildIndex = 0;
     _maxChildIndex = 0;
     _maxNumParents = 1;
-    _parents = malloc(_maxNumParents * sizeof(TRId));
+    _parents = calloc(_maxNumParents,sizeof(TRId));
     _numParents = makeTRInt(_trail, 0);
     _value = -1;
     _isSink = false;
@@ -54,7 +54,7 @@
     _minChildIndex = minChildIndex;
     _maxChildIndex = maxChildIndex;
     _value = value;
-    _children = malloc((_maxChildIndex-_minChildIndex +1) * sizeof(TRId));
+    _children = calloc((_maxChildIndex-_minChildIndex +1) , sizeof(TRId));
     _children -= _minChildIndex;
     for (int child = _minChildIndex; child <= maxChildIndex; child++) {
         _children[child] = makeTRId(_trail, nil);
@@ -64,7 +64,7 @@
     
     _numChildren = makeTRInt(_trail, 0);
     _maxNumParents = 1;
-    _parents = malloc(_maxNumParents * sizeof(TRId));
+    _parents = calloc(_maxNumParents , sizeof(TRId));
     _numParents = makeTRInt(_trail, 0);
     _value = value;
     _isSink = false;
@@ -80,7 +80,7 @@
     self = [self initNode: trail minChildIndex:minChildIndex maxChildIndex:maxChildIndex value:value state:state];
     _objectiveValues = objectiveValues;
     
-    _childEdgeWeights = malloc((_maxChildIndex-_minChildIndex +1) * sizeof(TRInt));
+    _childEdgeWeights = calloc((_maxChildIndex-_minChildIndex +1) , sizeof(TRInt));
     _childEdgeWeights -= _minChildIndex;
     for (int child = _minChildIndex; child <= maxChildIndex; child++) {
         _childEdgeWeights[child] = makeTRInt(_trail, 0);
@@ -232,14 +232,14 @@
 }
 -(void) addParent: (Node*) parent {
     if (_maxNumParents == _numParents._val) {
-        TRId* temp = malloc(_maxNumParents * sizeof(TRId));
+        TRId* temp = calloc(_maxNumParents , sizeof(TRId));
         for (int parent_index = 0; parent_index < _maxNumParents; parent_index++) {
             temp[parent_index] = makeTRId(_trail, _parents[parent_index]);
         }
         
         _maxNumParents *= 2;
         
-        _parents = malloc(_maxNumParents * sizeof(TRId));
+        _parents = calloc(_maxNumParents , sizeof(TRId));
         for (int parent_index = 0; parent_index < _numParents._val; parent_index++) {
             _parents[parent_index] = makeTRId(_trail,temp[parent_index]);
         }
@@ -548,9 +548,9 @@
     _maxValue = maxValue;
     _adjacencyMatrix = adjacencyMatrix;
     
-    _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
+    _state = calloc((_maxValue - _minValue +1) , sizeof(bool));
     _state -= _minValue;
-    _stateChar = malloc((_maxValue - _minValue +1) * sizeof(char));
+    _stateChar = calloc((_maxValue - _minValue +1) , sizeof(char));
     _stateChar -= _minValue;
     for (int stateValue = _minValue; stateValue <= _maxValue; stateValue++) {
         _state[stateValue] = true;
@@ -565,12 +565,12 @@
     _maxValue = maxValue;
     _adjacencyMatrix = adjacencyMatrix;
     
-    _state = malloc((_maxValue - _minValue +1) * sizeof(bool));
+    _state = calloc((_maxValue - _minValue +1) , sizeof(bool));
     _state -= _minValue;
     bool* parentState = [parentNodeState state];
     int parentVariable = [parentNodeState variableIndex];
     bool* parentAdjacencies = adjacencyMatrix[parentVariable];
-    _stateChar = malloc((_maxValue - _minValue +1) * sizeof(char));
+    _stateChar = calloc((_maxValue - _minValue +1) , sizeof(char));
     _stateChar -= _minValue;
     if (edgeValue == 1) {
         for (int stateIndex = _minValue; stateIndex <= _maxValue; stateIndex++) {
@@ -620,8 +620,8 @@
     _numVariables = [_x count];
     _hasObjective = false;
     
-    layer_size = malloc((_numVariables+1) * sizeof(TRInt));
-    max_layer_size = malloc((_numVariables+1) * sizeof(TRInt));
+    layer_size = calloc((_numVariables+1) , sizeof(TRInt));
+    max_layer_size = calloc((_numVariables+1) , sizeof(TRInt));
     for (int layer = 0; layer <= _numVariables; layer++) {
         layer_size[layer] = makeTRInt(_trail,0);
         max_layer_size[layer] = makeTRInt(_trail,1);
@@ -630,9 +630,9 @@
     min_domain_val = [_x[[_x low]] min];    //Not great
     max_domain_val = [_x[[_x low]] max];
     
-    layer_variable_count = malloc((_numVariables+1) * sizeof(TRInt*));
+    layer_variable_count = calloc((_numVariables+1) , sizeof(TRInt*));
     for (int layer = 0; layer < _numVariables +1; layer++) {
-        layer_variable_count[layer] = malloc((max_domain_val - min_domain_val + 1) * sizeof(TRInt));
+        layer_variable_count[layer] = calloc((max_domain_val - min_domain_val + 1) , sizeof(TRInt));
         for (int variable = 0; variable <= max_domain_val - min_domain_val; variable++) {
             layer_variable_count[layer][variable] = makeTRInt(_trail,0);
         }
@@ -640,18 +640,18 @@
         layer_variable_count[layer] -= min_domain_val;
     }
     
-    layers = malloc((_numVariables+1) * sizeof(TRId*));
+    layers = calloc((_numVariables+1) , sizeof(TRId*));
     for (int layer = 0; layer <= _numVariables; layer++) {
-        layers[layer] = malloc(1 * sizeof(TRId));
+        layers[layer] = calloc(1 , sizeof(TRId));
         layers[layer][0] = makeTRId(_trail, nil);
     }
     
-    _layer_to_variable = malloc((_numVariables+1) * sizeof(int));
-    _variable_to_layer = malloc((_numVariables+1) * sizeof(int));
+    _layer_to_variable = calloc((_numVariables+1) , sizeof(int));
+    _variable_to_layer = calloc((_numVariables+1) , sizeof(int));
     
     _variable_to_layer -= [_x low];
     
-    _variableUsed = malloc(_numVariables * sizeof(bool));
+    _variableUsed = calloc(_numVariables , sizeof(bool));
     _variableUsed -= [_x low];
     for (int variableIndex = [_x low]; variableIndex <= [_x up]; variableIndex++) {
         _variableUsed[variableIndex] = false;
@@ -1161,13 +1161,13 @@
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
     if (max_layer_size[layer_index]._val == layer_size[layer_index]._val) {
-        TRId *temp = malloc(layer_size[layer_index]._val * sizeof(TRId));
+        TRId *temp = calloc(layer_size[layer_index]._val , sizeof(TRId));
         for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
             temp[node_index] = makeTRId(_trail, layers[layer_index][node_index]);
         }
         
         assignTRInt(&max_layer_size[layer_index], max_layer_size[layer_index]._val*2, _trail);
-        layers[layer_index] = malloc(max_layer_size[layer_index]._val * sizeof(TRId*));
+        layers[layer_index] = calloc(max_layer_size[layer_index]._val , sizeof(TRId*));
         for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
             layers[layer_index][node_index] = makeTRId(_trail, temp[node_index]);
         }
@@ -1212,8 +1212,8 @@
     _reduced = reduced;
     _objective = NULL;
     
-    layer_size = malloc((_numVariables+1) * sizeof(TRInt));
-    max_layer_size = malloc((_numVariables+1) * sizeof(TRInt));
+    layer_size = calloc((_numVariables+1) , sizeof(TRInt));
+    max_layer_size = calloc((_numVariables+1) , sizeof(TRInt));
     for (int layer = 0; layer <= _numVariables; layer++) {
         layer_size[layer] = makeTRInt(_trail,0);
         max_layer_size[layer] = makeTRInt(_trail,1);
@@ -1222,9 +1222,9 @@
     min_domain_val = [_x[[_x low]] min];    //Not great
     max_domain_val = [_x[[_x low]] max];
     
-    layer_variable_count = malloc((_numVariables+1) * sizeof(TRInt*));
+    layer_variable_count = calloc((_numVariables+1) , sizeof(TRInt*));
     for (int layer = 0; layer < _numVariables +1; layer++) {
-        layer_variable_count[layer] = malloc((max_domain_val - min_domain_val + 1) * sizeof(TRInt));
+        layer_variable_count[layer] = calloc((max_domain_val - min_domain_val + 1) , sizeof(TRInt));
         for (int variable = 0; variable <= max_domain_val - min_domain_val; variable++) {
             layer_variable_count[layer][variable] = makeTRInt(_trail,0);
         }
@@ -1232,9 +1232,9 @@
         layer_variable_count[layer] -= min_domain_val;
     }
     
-    layers = malloc((_numVariables+1) * sizeof(TRId*));
+    layers = calloc((_numVariables+1) , sizeof(TRId*));
     for (int layer = 0; layer <= _numVariables; layer++) {
-        layers[layer] = malloc(1 * sizeof(TRId));
+        layers[layer] = calloc(1 , sizeof(TRId));
         layers[layer][0] = makeTRId(_trail, nil);
     }
     
