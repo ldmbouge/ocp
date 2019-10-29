@@ -16,6 +16,9 @@ infix operator ∨ : LogicalDisjunctionPrecedence
 infix operator ∋ : MultiplicationPrecedence
 infix operator ∈ : MultiplicationPrecedence
 
+public func ||(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
+   return lhs.lor(rhs)
+}
 public func ∨(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.lor(rhs)
 }
@@ -28,6 +31,9 @@ prefix func !(lhs : ORExpr) -> ORRelation {
 }
 public func ==(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.eq(rhs)
+}
+public func ==(lhs : ORExpr,rhs : Bool) -> ORRelation {
+    return lhs.eq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs ? 1 : 0)))
 }
 public func ==(lhs : ORExpr,rhs : Int) -> ORRelation {
    return lhs.eq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
@@ -104,6 +110,10 @@ public func ≤(lhs : Int,rhs : ORExpr) -> ORRelation {
 public func !=(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.neq(rhs)
 }
+public func !=(lhs : ORExpr,rhs : Int) -> ORRelation {
+   return lhs.neq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+
 //infix operator ≠ { associativity left precedence 130 }
 infix operator ≠ : ComparisonPrecedence
 
@@ -132,7 +142,7 @@ public func -(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.sub(rhs)
 }
 public func -(lhs: ORExpr,rhs : Int) -> ORExpr {
-   return lhs.sub(rhs)
+   return lhs.sub(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
 }
 public func -(lhs: ORExpr,rhs : ORInt) -> ORExpr {
    return lhs.sub(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
@@ -278,6 +288,10 @@ public func SVal(_ t : ORTracker,_ name : Int32) -> ORExpr {
     return ORFactory.getStateValue(t,lookup:name)
 }
 
+public func SVal(_ t : ORTracker,_ name : ORExpr) -> ORExpr {
+    return ORFactory.getStateValue(t,lookupExpr:name)
+}
+
 public func SVal(_ t : ORTracker,_ name : Int) -> ORExpr {
     return ORFactory.getStateValue(t,lookup:Int32(name))
 }
@@ -336,6 +350,11 @@ extension ORMDDSpecs {
     func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void where Key : BinaryInteger,Value : BinaryInteger {
         for (k,v) in d {
             self.addStateInt(ORInt(k), withDefaultValue: ORInt(v))
+        }
+    }
+    func state<Key>(_ d : Dictionary<Key,Bool>) -> Void where Key : BinaryInteger {
+        for (k,v) in d {
+            self.addStateBool(ORInt(k), withDefaultValue: v)
         }
     }
     func state2<Key,Value>(_ d : Dictionary<Key,Value>) -> [Key] where Key : BinaryInteger {
