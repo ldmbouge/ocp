@@ -349,17 +349,17 @@ extension ORMDDSpecs {
     }
     func transition<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
-            self.addTransitionFunction(v as? ORExpr, toStateValue: k as! Int32)
+            self.addTransitionFunction(v as? ORExpr, toStateValue: Int32(k))
         }
     }
     func relaxation<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
-            self.addRelaxationFunction(v as? ORExpr, toStateValue: k as! Int32)
+            self.addRelaxationFunction(v as? ORExpr, toStateValue: Int32(k))
         }
     }
     func similarity<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
-            self.addStateDifferentialFunction(v as? ORExpr, toStateValue: k as! Int32)
+            self.addStateDifferentialFunction(v as? ORExpr, toStateValue: Int32(k))
         }
     }
 }
@@ -405,4 +405,28 @@ extension ORRealVarArray {
          return self.set(newValue, at: ORInt(key))
       }
    }
+}
+
+
+// MDD constraints
+
+
+public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
+    let minC = 0,maxC = 1,rem = 2
+    func left(_ t : ORTracker,_ v : Int)   -> ORExpr { return ORFactory.getLeftStateValue(t,lookup:Int32(v)) }
+    func right(_ t : ORTracker,_ v : Int)  -> ORExpr { return ORFactory.getRightStateValue(t,lookup:Int32(v)) }
+    let minCnt = SVal(m,minC),maxCnt = SVal(m,maxC), remVal = SVal(m,rem)
+    let mdd1 = ORFactory.mddSpecs(m, variables: x, stateSize: 3)
+    mdd1.state([ minC : 0,maxC : 0, rem : x.size ])
+    mdd1.arc(minCnt + SVA(m) ∈ values ≤ ub && lb ≤ (maxCnt + SVA(m) ∈ values + remVal - 1))
+    mdd1.transition([minC : minCnt + SVA(m) ∈ values,
+                     maxC : maxCnt + SVA(m) ∈ values,
+                     rem  : remVal - 1])
+    mdd1.relaxation([minC : min(left(m,minC),right(m,minC)),
+                     maxC : max(left(m,maxC),right(m,maxC)),
+                     rem  : remVal])
+    mdd1.similarity([minC : abs(left(m,minC) - right(m,minC)),
+                     maxC : abs(left(m,maxC) - right(m,maxC)),
+                     rem  : literal(m, 0)])
+    return mdd1
 }
