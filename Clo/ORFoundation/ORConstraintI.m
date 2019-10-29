@@ -557,7 +557,6 @@
    _stateValues[lookup] = boolList;
 }
 -(void)addStates:(id*)states size:(int)size {
-   //I think this is deprecated?
    id* newStateValues = malloc((_stateSize + size) * sizeof(id));
    id<ORExpr>* newTransitionFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
    id<ORExpr>* newRelaxationFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
@@ -566,7 +565,7 @@
       newStateValues[stateIndex] = _stateValues[stateIndex];
       newTransitionFunctions[stateIndex] = _transitionFunctions[stateIndex];
       newRelaxationFunctions[stateIndex] = _relaxationFunctions[stateIndex];
-      newDifferentialFunctions[stateIndex] = _relaxationFunctions[stateIndex];
+      newDifferentialFunctions[stateIndex] = _differentialFunctions[stateIndex];
    }
    for (int otherStateIndex = 0; otherStateIndex < size; otherStateIndex++) {
       newStateValues[_stateSize+otherStateIndex] = states[otherStateIndex];
