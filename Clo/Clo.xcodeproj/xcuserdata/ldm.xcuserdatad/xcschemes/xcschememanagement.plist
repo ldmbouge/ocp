@@ -12,7 +12,7 @@
 		<key>ADMDDSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>165</integer>
+			<integer>160</integer>
 		</dict>
 		<key>AFA_SHA.xcscheme</key>
 		<dict>
@@ -247,7 +247,7 @@
 		<key>allDiffMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>164</integer>
+			<integer>165</integer>
 		</dict>
 		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
@@ -257,12 +257,12 @@
 		<key>amongAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>161</integer>
+			<integer>162</integer>
 		</dict>
 		<key>amongMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>160</integer>
+			<integer>161</integer>
 		</dict>
 		<key>amongSwift.xcscheme_^#shared#^_</key>
 		<dict>
@@ -692,12 +692,12 @@
 		<key>sequenceAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>162</integer>
+			<integer>163</integer>
 		</dict>
 		<key>sequenceMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>163</integer>
+			<integer>164</integer>
 		</dict>
 		<key>shiploading.xcscheme_^#shared#^_</key>
 		<dict>
