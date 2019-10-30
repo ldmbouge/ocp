@@ -284,16 +284,14 @@ public func all(_ t : ORTracker,_ r1 : ORIntRange,_ r2 : ORIntRange, body : @esc
    return ORFactory.intVarArray(t, range: r1,r2, with: body)
 }
 
-public func SVal(_ t : ORTracker,_ name : Int32) -> ORExpr {
+public func Prop(_ t : ORTracker,_ name : Int32) -> ORExpr {
     return ORFactory.getStateValue(t,lookup:name)
 }
-
-public func SVal(_ t : ORTracker,_ name : ORExpr) -> ORExpr {
-    return ORFactory.getStateValue(t,lookupExpr:name)
-}
-
-public func SVal(_ t : ORTracker,_ name : Int) -> ORExpr {
+public func Prop(_ t : ORTracker,_ name : Int) -> ORExpr {
     return ORFactory.getStateValue(t,lookup:Int32(name))
+}
+public func Prop(_ t : ORTracker,_ name : ORExpr) -> ORExpr {
+    return ORFactory.getStateValue(t,lookupExpr:name)
 }
 
 public func SVA(_ t : ORTracker) -> ORExpr {
@@ -426,15 +424,27 @@ extension ORRealVarArray {
    }
 }
 
+public func left(_ t : ORTracker,_ v : Int)   -> ORExpr { return ORFactory.getLeftStateValue(t,lookup:Int32(v)) }
+public func right(_ t : ORTracker,_ v : Int)  -> ORExpr { return ORFactory.getRightStateValue(t,lookup:Int32(v)) }
 
+public func arrayDomains(_ t : ORIntVarArray) -> ORIntRange {
+    var low = MAXINT,up = -ORInt(0x7FFFFFFF)
+    for i in t.range().low() ... t.range().up() {
+        low = min(t[i].domain().low() ,low)
+        up  = max(t[i].domain().up(),up)
+    }
+    return ORFactory.intRange(t.tracker(), low: low, up: up)
+}
+
+// -----------------------------------------------------------------------------------------------------------------
 // MDD constraints
-
+// -----------------------------------------------------------------------------------------------------------------
 
 public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
     let minC = 0,maxC = 1,rem = 2
     func left(_ t : ORTracker,_ v : Int)   -> ORExpr { return ORFactory.getLeftStateValue(t,lookup:Int32(v)) }
     func right(_ t : ORTracker,_ v : Int)  -> ORExpr { return ORFactory.getRightStateValue(t,lookup:Int32(v)) }
-    let minCnt = SVal(m,minC),maxCnt = SVal(m,maxC), remVal = SVal(m,rem)
+    let minCnt = Prop(m,minC),maxCnt = Prop(m,maxC), remVal = Prop(m,rem)
     let mdd1 = ORFactory.mddSpecs(m, variables: x, stateSize: 3)
     mdd1.state([ minC : 0,maxC : 0, rem : x.size ])
     mdd1.arc(minCnt + SVA(m) ∈ values ≤ ub && lb ≤ (maxCnt + SVA(m) ∈ values + remVal - 1))
@@ -447,5 +457,27 @@ public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values :
     mdd1.similarity([minC : abs(left(m,minC) - right(m,minC)),
                      maxC : abs(left(m,maxC) - right(m,maxC)),
                      rem  : literal(m, 0)])
+    return mdd1
+}
+
+public func allDiffMDD(_ vars : ORIntVarArray) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        adom = arrayDomains(vars),
+        minDom = Int(adom.low()),
+        mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(adom.size()))
+    
+    mdd1.state(toDict(adom) { (i : Int) -> (key: Int, value: Bool) in
+        return (key : i,value:true)
+    })
+    mdd1.arc(Prop(m,SVA(m) - minDom))
+    mdd1.transition(toDict(adom) { (i : Int) -> (key : Int,value : ORExpr) in
+        return (key : i,Prop(m,i) && SVA(m) != i + minDom)
+    })
+    mdd1.relaxation(toDict(adom) {  (i : Int) -> (key : Int,value : ORExpr) in
+        return (key : i,left(m,i) || right(m,i))
+    })
+    mdd1.similarity(toDict(adom) {  (i : Int) -> (key : Int,value : ORExpr) in
+        return (key :i,abs(left(m,i) - right(m,i)))
+    })
     return mdd1
 }

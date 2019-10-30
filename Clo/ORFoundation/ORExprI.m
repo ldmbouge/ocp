@@ -2794,7 +2794,7 @@
 -(NSString*) description
 {
     NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [rv appendFormat:@"ValueAssignment"];
+    [rv appendFormat:@"mddVA"];
     return rv;
 }
 @end
@@ -3038,7 +3038,7 @@
 -(NSString*) description
 {
     NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [rv appendFormat:@"StateValueExpr(StateLookup:%d, left vs right index:%d, arrayIndex:%@)",_lookup,_stateIndex,_arrayIndex];
+    [rv appendFormat:@"mddProp(l:%d,s:%d,i:%@)",_lookup,_stateIndex,_arrayIndex];
     return rv;
 }
 @end
@@ -3086,7 +3086,7 @@
 -(NSString*) description
 {
     NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [rv appendFormat:@"StateValueExpr(StateLookup:%@, left vs right index:%d, arrayIndex:%@)",[_lookup description],_stateIndex,_arrayIndex];
+    [rv appendFormat:@"mddProp(l:%@,s:%d,i:%@)",[_lookup description],_stateIndex,_arrayIndex];
     return rv;
 }
 @end

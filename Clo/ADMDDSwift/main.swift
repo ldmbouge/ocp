@@ -11,43 +11,26 @@
 
 import ORProgram
 
-func toDict<V>(_ array: Range<Int>, map: (Int) -> (key: Int, value: V)?) -> [Int : V] {
+func toDict<V>(_ r: ORIntRange, map: (Int) -> (key: Int, value: V)) -> [Int : V] {
     var dict = [Int : V]()
-    for element in array {
-        if let (key, value) = map(element) {
-            dict[key] = value
-        }
+    for element in 0 ..< r.size() {
+        let (key, value) = map(Int(element))
+        dict[key] = value
     }
     return dict
 }
 
-func left(_ t : ORTracker,_ v : Int)   -> ORExpr { return ORFactory.getLeftStateValue(t,lookup:Int32(v)) }
-func right(_ t : ORTracker,_ v : Int)  -> ORExpr { return ORFactory.getRightStateValue(t,lookup:Int32(v)) }
-
 autoreleasepool {
     let m  = ORFactory.createModel(),
-        minDom = 1,maxDom = 10,sz = maxDom  - minDom + 1,
+        minDom = 1,maxDom = 10,
         R0 = range(m, minDom...maxDom),
         notes = ORFactory.annotation(),
         nbSol = ORFactory.mutable(m, value: 0)
     let t0    = ORRuntimeMonitor.cputime()
 
     let vars = ORFactory.intVarArray(m, range: R0, domain: R0)
-    let mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(maxDom - minDom + 1))
-    mdd1.state(toDict(0..<sz) { (i : Int) -> ((key: Int, value: Bool)?) in
-        return (key : i,value:true)
-    })
-    mdd1.arc(SVal(m,SVA(m) - minDom))
-    mdd1.transition(toDict(0..<sz) { (i : Int) -> ((key : Int,value : ORExpr)?) in
-        return (key : i,SVal(m,i) && !(SVA(m) == i + minDom))
-    })
-    mdd1.relaxation(toDict(0..<sz) {  (i : Int) -> ((key : Int,value : ORExpr)?) in
-        return (key : i,left(m,i) || right(m,i))
-    })
-    mdd1.similarity(toDict(0..<sz) {  (i : Int) -> ((key : Int,value : ORExpr)?) in
-        return (key :i,abs(left(m,i) - right(m,i)))
-    })
-    m.add(mdd1)
+
+    m.add(allDiffMDD(vars))
 
     notes.ddWidth(4)
     notes.ddRelaxed(false)
