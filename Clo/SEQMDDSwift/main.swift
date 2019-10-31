@@ -35,7 +35,7 @@ autoreleasepool {
         m.add(seqMDD(vars,len: sc.len,lb:sc.lower,ub:sc.upper,values:sc.cv))
     }
 
-    notes.ddWidth(4)
+    notes.ddWidth(10)
     notes.ddRelaxed(true)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
     cp.search {

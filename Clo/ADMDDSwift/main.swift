@@ -11,15 +11,6 @@
 
 import ORProgram
 
-func toDict<V>(_ r: ORIntRange, map: (Int) -> (key: Int, value: V)) -> [Int : V] {
-    var dict = [Int : V]()
-    for element in 0 ..< r.size() {
-        let (key, value) = map(Int(element))
-        dict[key] = value
-    }
-    return dict
-}
-
 autoreleasepool {
     let m  = ORFactory.createModel(),
         minDom = 1,maxDom = 10,
