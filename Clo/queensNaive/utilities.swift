@@ -100,6 +100,9 @@ public func ≤(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
 public func ≤(lhs : ORExpr,rhs : Int) -> ORRelation {
    return lhs.leq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
 }
+public func ≤(lhs : ORExpr,rhs : Int32) -> ORRelation {
+   return lhs.leq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
 public func ≤(lhs : ORExpr,rhs : Double) -> ORRelation {
    return lhs.leq(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
 }
@@ -271,6 +274,9 @@ public func sum(_ tracker : ORTracker,R : ORIntRange,b : @escaping (ORInt) -> OR
 public func range(_ tracker : ORTracker,_ r : CountableClosedRange<Int>) -> ORIntRange {
    return ORFactory.intRange(tracker, low: ORInt(r.lowerBound), up: ORInt(r.upperBound))
 }
+public func range(_ tracker : ORTracker,low  : Int,up : Int) -> ORIntRange {
+   return ORFactory.intRange(tracker, low: ORInt(low), up: ORInt(up))
+}
 
 public func Σ(_ tracker : ORTracker,R : ORIntRange,b : @escaping (ORInt) -> ORExpr) -> ORExpr {
    return ORFactory.sum(tracker, over: R, suchThat: nil, of: b)
@@ -436,6 +442,25 @@ public func arrayDomains(_ t : ORIntVarArray) -> ORIntRange {
     return ORFactory.intRange(t.tracker(), low: low, up: up)
 }
 
+public func toDict<V>(_ r: ORIntRange, map: (Int) -> (key: Int, value: V)) -> [Int : V] {
+    var dict = [Int : V]()
+    for element in 0 ..< r.size() {
+        let (key, value) = map(Int(element))
+        dict[key] = value
+    }
+    return dict
+}
+
+public func toDict<V>(_ low: Int,_ up : Int, map: (Int) -> (key: Int, value: V)) -> [Int : V] {
+    var dict = [Int : V]()
+    for element in low ..< up {
+        let (key, value) = map(Int(element))
+        dict[key] = value
+    }
+    return dict
+}
+
+
 // -----------------------------------------------------------------------------------------------------------------
 // MDD constraints
 // -----------------------------------------------------------------------------------------------------------------
@@ -480,4 +505,34 @@ public func allDiffMDD(_ vars : ORIntVarArray) -> ORMDDSpecs {
         return (key :i,abs(left(m,i) - right(m,i)))
     })
     return mdd1
+}
+
+public func seqMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        minFIdx = 0,minLIdx = len-1,
+        maxFIdx = len,maxLIdx = len*2-1,
+        theValues = ORFactory.intSet(m, set: values)
+    let mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(len*2))
+    var sd : [Int:Int] = [minLIdx:0,maxLIdx:0]
+    for i in minFIdx...maxLIdx-1 {
+        if (i != minLIdx) {
+            sd[i] = -1
+        }
+    }
+    mdd1.state(sd)
+    mdd1.arc(Prop(m,1) == literal(m,-1) ||
+        (Prop(m,maxLIdx)-Prop(m,minFIdx) + SVA(m) ∈ theValues ≥ lb &&
+         Prop(m,minLIdx)-Prop(m,maxFIdx) + SVA(m) ∈ theValues ≤ ub)
+    )
+    // transitions
+    mdd1.transition(toDict(minFIdx,minLIdx) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,Prop(m,i+1)) })
+    mdd1.transition(toDict(maxFIdx,maxLIdx) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,Prop(m,i+1)) })
+    mdd1.addTransitionFunction(Prop(m,minLIdx) + SVA(m) ∈ theValues, toStateValue: Int32(minLIdx))
+    mdd1.addTransitionFunction(Prop(m,maxLIdx) + SVA(m) ∈ theValues, toStateValue: Int32(maxLIdx))
+    // relaxation
+    mdd1.relaxation(toDict(minFIdx,minLIdx+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,min(left(m,i),right(m,i))) })
+    mdd1.relaxation(toDict(maxFIdx,maxLIdx+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,max(left(m,i),right(m,i))) })
+    // similarity
+    mdd1.similarity(toDict(minFIdx,maxLIdx+1) { (i : Int) -> (key:Int,value:ORExpr) in return (key:i,value:abs(left(m,i)-right(m,i))) })
+    return mdd1;
 }

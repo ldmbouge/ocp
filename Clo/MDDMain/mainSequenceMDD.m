@@ -170,6 +170,7 @@ int main (int argc, const char * argv[])
             for (int i = 1; i <= [variables count]; i++) {
                 printf("%d  ",[cp intValue: [variables at:i]]);
             }
+            printf("\n");
             [nbSolutions incr: cp];
         }
          ];

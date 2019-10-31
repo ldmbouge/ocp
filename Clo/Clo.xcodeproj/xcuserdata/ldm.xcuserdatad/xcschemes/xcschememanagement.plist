@@ -179,6 +179,11 @@
 			<key>orderHint</key>
 			<integer>148</integer>
 		</dict>
+		<key>SEQMDDSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>166</integer>
+		</dict>
 		<key>SMTLIB2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -1148,6 +1153,11 @@
 			<true/>
 		</dict>
 		<key>5BA3457B1680B7BD00485366</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BA6E4E6236B505C0076F322</key>
 		<dict>
 			<key>primary</key>
 			<true/>

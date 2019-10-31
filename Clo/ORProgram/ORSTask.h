@@ -23,6 +23,7 @@
 void* PNONNULL equal(PNONNULL id<CPCommonProgram> solver,PNONNULL id<ORIntVar> x,ORInt v);
 void* PNONNULL diff(PNONNULL id<CPCommonProgram> solver,PNONNULL id<ORIntVar> x,ORInt v);
 void* PNONNULL firstFail(PNONNULL id<CPCommonProgram> solver,PNONNULL id<ORIntVarArray> x);
+void* PNONNULL labelArray(PNONNULL id<CPCommonProgram> solver,PNONNULL id<ORIntVarArray> x);
 void* PNONNULL sequence(PNONNULL id<CPCommonProgram> solver,int n,void* PNONNULL*PNONNULL s);
 void* PNONNULL alts(PNONNULL id<CPCommonProgram> solver,int n,void*PNONNULL* PNONNULL s);
 void* PNONNULL whileDo(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,

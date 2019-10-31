@@ -35,6 +35,14 @@
 -(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x;
 @end
 
+@interface ORSLabelTask : ORObject<ORSTask> {
+   id<ORIntVarArray> _vars;
+   id<CPCommonProgram> _solver;
+}
+-(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x;
+@end
+
+
 @interface ORSDo : ORObject<ORSTask> {
    id<CPCommonProgram> _solver;
    void(^_body)(void);
@@ -180,6 +188,42 @@
          }];
          xb = [cx[sdk] bounds];
       }
+   } while (true);
+}
+@end
+
+@implementation ORSLabelTask
+-(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x
+{
+   self = [super init];
+   _solver = solver;
+   _vars = x;
+   return self;
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
+}
+-(void)execute
+{
+   const ORInt sz  = _vars.range.size;
+   const ORInt low = _vars.range.low;
+   id<CPIntVar> cx[sz];
+   for(ORInt i=0;i < sz;i++)
+       cx[i]  = [_solver concretize:_vars[i + low]];
+   do {
+       ORInt sdk = 0;
+       while (cx[sdk].bound && sdk < sz) sdk++;
+       if (sdk >= sz) break;
+       ORBounds xb = [cx[sdk] bounds];
+       while (xb.min != xb.max) {
+          [_solver try:^{
+             [_solver label:_vars[sdk + low] with:xb.min];
+          } alt:^{
+             [_solver diff:_vars[sdk + low] with:xb.min];
+          }];
+          xb = [cx[sdk] bounds];
+       }
    } while (true);
 }
 @end
@@ -362,6 +406,12 @@ void* firstFail(id<CPCommonProgram> solver,id<ORIntVarArray> x)
    ORSFFTask* task = [[ORSFFTask alloc] initWith:solver vars:x];
    [solver trackObject:task];
    return task;
+}
+void* labelArray(id<CPCommonProgram> solver,id<ORIntVarArray> x)
+{
+    ORSLabelTask* task = [[ORSLabelTask alloc] initWith:solver vars:x];
+    [solver trackObject:task];
+    return task;
 }
 
 void* sequence(id<CPCommonProgram> solver,int n,void** s)
