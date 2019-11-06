@@ -157,7 +157,11 @@
 {
    //just to force vars to be recompute.
    _vars = [self getVariables];
+   printf("--------------------\n");
    printf("|vars|=%lu |restrict|=%d |full-r|=%lu\n",(unsigned long)[[_model FPVars] count],_declSize,(unsigned long)[_vars count]);
+   for (id<ORVar> v in _vars)
+      printf("%s\n",[[v description] UTF8String]);
+   printf("--------------------\n");
    [_options launchHeuristic:_program restricted:_vars];
 }
 -(void) printSolutionsI
