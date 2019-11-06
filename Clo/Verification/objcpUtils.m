@@ -52,6 +52,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "AbstractLogicHandler is an abstract class"];
 }
+-(ORInt) declSize
+{
+   return 0;
+}
 - (void)setOptions:(ORCmdLineArgs *)options
 {
    _options = options;
@@ -104,7 +108,9 @@
 @implementation BoolLogicHandler
 @end
 
-@implementation FloatLogicHandler
+@implementation FloatLogicHandler{
+   ORInt _declSize;
+}
 -(id<ORVarArray>) getVariables
 {
    if(_vars == nil)
@@ -122,6 +128,7 @@
       if([[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORFloatVar)] || [[(OBJCPDecl*)obj getVariable] conformsToProtocol:@protocol(ORDoubleVar)])
          [dictvars addObject:[(OBJCPDecl*)obj getVariable]];
    }];
+   _declSize = (ORInt)[dictvars count];
    if([dictvars count] > 0){
       for(id<ORVar> v in allfpvars){
          if([dictvars containsObject:v]){
@@ -130,12 +137,7 @@
       }
       [dictvars release];
    }
-   //   NSSet* varcol = [VariableCollector collect:[_model constraints]];
-   //   for(id<ORVar> v in varcol){
-   //     if(![tmp containsObject:v] && ([v conformsToProtocol:@protocol(ORFloatVar)] || [v conformsToProtocol:@protocol(ORDoubleVar)]))
-   //        [tmp addObject:v];
-   //   }
-   if([tmp count] && [_options restricted]){
+   if([tmp count] && ([_options restricted] || [_options fullRestrict])){
       _vars = (id<ORVarArray>)[ORFactory idArray:_model range:RANGE(_model,0,(ORUInt)[tmp count] - 1)];
       for(i = 0; i <  [tmp count];i++){
          if(tmp[i] == nil)
@@ -147,9 +149,15 @@
       _vars =  [_model FPVars] ;
    
 }
-
+-(ORInt) declSize
+{
+   return _declSize;
+}
 - (void)launchHeuristic
 {
+   //just to force vars to be recompute.
+   _vars = [self getVariables];
+   printf("|vars|=%lu |restrict|=%d |full-r|=%lu\n",(unsigned long)[[_model FPVars] count],_declSize,(unsigned long)[_vars count]);
    [_options launchHeuristic:_program restricted:_vars];
 }
 -(void) printSolutionsI

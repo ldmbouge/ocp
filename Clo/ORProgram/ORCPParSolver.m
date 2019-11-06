@@ -1124,6 +1124,10 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
+- (void)collectInputVar:(id<ORVarArray>)vs res:(NSMutableArray *)ar
+{
+   return [[self worker] collectInputVar:vs res:ar];
+}
 - (NSArray *)collectAllVarWithAbs:(id<ORVarArray>)vs
 {
    return [[self worker] collectAllVarWithAbs:vs];

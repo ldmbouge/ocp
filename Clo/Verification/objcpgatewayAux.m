@@ -41,7 +41,7 @@
       if([lv vtype] == ORTBit && [rv vtype] == ORTBit)
          return [self objcp_mk_bv_eq:ctx left:lv right:rv];
       if([lv vtype] == ORTFloat || [lv vtype] == ORTDouble)
-         return [self objcp_mk_fp:ctx x:lv eq:rv];
+         return [self objcp_mk_fp:ctx x:lv assignTo:rv];
       id<ORIntVar> lvi = (id<ORIntVar>) lv;
       id<ORIntVar> rvi = (id<ORIntVar>) rv;
       if([lvi low] == [lvi up] && [rvi low] == [rvi up] && [lvi low] == [rvi low])

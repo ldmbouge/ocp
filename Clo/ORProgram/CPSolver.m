@@ -3023,6 +3023,23 @@
 {
    return [self collectAllVarWithAbs:vs withLimit:0.0f];
 }
+-(void) collectInputVar:(id<ORVarArray>) vs res:(NSMutableArray*) res;
+{
+   id<OROSet> cstr = nil;
+   id<CPVar> cx = nil;
+   for(id<ORVar> v in vs){
+      ORBool conform = YES;
+      cx = _gamma[getId(v)];
+      cstr = [cx constraints];
+      for(id<CPConstraint> c in cstr){
+         if([c conformsToProtocol:@protocol(CPArithmConstraint)] && [(id<CPArithmConstraint>) c result] == cx){
+            conform = NO;
+            break;
+         }
+      }
+      if(conform) [res addObject:v];
+   }
+}
 -(ORInt)  regret:(id<ORIntVar>)x
 {
    return [((id<CPIntVar>) _gamma[x.getId]) regret];

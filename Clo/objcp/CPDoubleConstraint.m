@@ -96,6 +96,10 @@ double_interval _yi;
 {
    return [NSString stringWithFormat:@"<%@ == -%@>",_x,_y];
 }
+- (id<CPVar>)result
+{
+   return _x;
+}
 @end
 
 
@@ -175,6 +179,10 @@ double_interval _yi;
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ castedTo %@>",_initial,_res];
+}
+- (id<CPVar>)result
+{
+   return _res;
 }
 @end
 
@@ -331,6 +339,10 @@ double_interval _yi;
 {
    return [NSString stringWithFormat:@"<%@ = %@>",_x,_y];
 }
+- (id<CPVar>)result
+{
+   return _x;
+}
 @end
 
 @implementation CPDoubleAssignC
@@ -358,8 +370,11 @@ double_interval _yi;
 {
    return [NSString stringWithFormat:@"<%@ = %16.16e>",_x,_c];
 }
+- (id<CPVar>)result
+{
+   return _x;
+}
 @end
-
 
 @implementation CPDoubleNEqual
 -(id) init:(CPDoubleVarI*)x nequals:(CPDoubleVarI*)y
@@ -737,6 +752,10 @@ double_interval _yi;
 {
    return [NSString stringWithFormat:@"<%@ == (%@^2)>",_res,_x];
 }
+- (id<CPVar>)result
+{
+   return _res;
+}
 @end
 
 @implementation CPDoubleTernaryAdd
@@ -874,6 +893,10 @@ double_interval _yi;
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -1014,6 +1037,10 @@ double_interval _yi;
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -1178,6 +1205,10 @@ double_interval _yi;
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ / %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -2163,6 +2194,10 @@ double_interval _yi;
 {
    return [NSString stringWithFormat:@"<%@ == |%@|>",_res,_x];
 }
+- (id<CPVar>)result
+{
+   return _res;
+}
 @end
 
 @implementation CPDoubleSqrt{
@@ -2224,6 +2259,10 @@ double_interval _yi;
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == sqrt(%@)>",_res,_x];
+}
+- (id<CPVar>)result
+{
+   return _res;
 }
 @end
 

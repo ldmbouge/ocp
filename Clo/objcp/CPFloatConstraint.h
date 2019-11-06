@@ -20,7 +20,7 @@
 @class CPDoubleVarI;
 
 
-@interface CPFloatCast : CPCoreConstraint {
+@interface CPFloatCast : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _res;
    CPDoubleVarI* _initial;
 }
@@ -31,7 +31,7 @@
 @end
 
 //unary minus constraint
-@interface CPFloatUnaryMinus : CPCoreConstraint {
+@interface CPFloatUnaryMinus : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    CPFloatVarI* _y;
 }
@@ -61,7 +61,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatAssign : CPCoreConstraint {
+@interface CPFloatAssign : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    CPFloatVarI* _y;
 }
@@ -71,7 +71,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatAssignC : CPCoreConstraint {
+@interface CPFloatAssignC : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    ORFloat      _c;
 }
@@ -143,7 +143,7 @@
 @end
 
 
-@interface CPFloatTernaryAdd : CPCoreConstraint<CPABSConstraint> { // z = x + y
+@interface CPFloatTernaryAdd : CPCoreConstraint<CPABSConstraint,CPArithmConstraint> { // z = x + y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -164,7 +164,7 @@
 @end
 
 
-@interface CPFloatTernarySub : CPCoreConstraint<CPABSConstraint> { // z = x - y
+@interface CPFloatTernarySub : CPCoreConstraint<CPABSConstraint,CPArithmConstraint> { // z = x - y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -184,7 +184,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatTernaryMult : CPCoreConstraint { // z = x * y
+@interface CPFloatTernaryMult : CPCoreConstraint<CPArithmConstraint> { // z = x * y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -200,7 +200,7 @@
 @end
 
 
-@interface CPFloatTernaryDiv : CPCoreConstraint { // z = x / y
+@interface CPFloatTernaryDiv : CPCoreConstraint<CPArithmConstraint> { // z = x / y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -386,7 +386,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatSquare : CPCoreConstraint {
+@interface CPFloatSquare : CPCoreConstraint<CPArithmConstraint> {
 @private
    CPFloatVarI* _x;
    CPFloatVarI* _res;
@@ -397,7 +397,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatAbs : CPCoreConstraint {
+@interface CPFloatAbs : CPCoreConstraint<CPArithmConstraint> {
 @private
    CPFloatVarI* _x;
    CPFloatVarI* _res;
@@ -409,7 +409,7 @@
 @end
 
 
-@interface CPFloatSqrt : CPCoreConstraint {
+@interface CPFloatSqrt : CPCoreConstraint<CPArithmConstraint> {
 @private
    CPFloatVarI* _x;
    CPFloatVarI* _res;

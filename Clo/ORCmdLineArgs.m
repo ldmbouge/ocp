@@ -70,6 +70,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize absFunComputation;
 @synthesize occDetails;
 @synthesize restricted;
+@synthesize fullRestrict;
 @synthesize middle;
 @synthesize printSolution;
 @synthesize printModel;
@@ -127,6 +128,7 @@ static enum ValHeuristic valIndex[] =
       searchvars =  [model FPVars];
    }
    id<ORVarArray> vs =  [args makeDisabledArray:cp from:searchvars];
+   printf("|VAR| = %lu |restrict| = %lu |fullrestrict|=%lu\n",(unsigned long)[[model FPVars] count],[vars count],[vs count]);
    [ORCmdLineArgs defaultRunner:args model:model program:cp restrict:vs];
 }
 
@@ -250,7 +252,9 @@ static enum ValHeuristic valIndex[] =
       else if (strncmp(argv[k],"-grate-other-limit",18)==0 || strncmp(argv[k],"-globalrate-other-limit",23)==0)
          grateOther = atof(argv[k+1]);
       else if (strncmp(argv[k],"-restrict",9)==0)
-         restricted = YES;
+          restricted = YES;
+      else if (strncmp(argv[k],"-full-restrict",14)==0)
+          fullRestrict = YES;
       else if (strncmp(argv[k],"-no-middle",9)==0)
          middle = NO;
       else if (strncmp(argv[k],"-print-solution",15)==0)
@@ -610,6 +614,12 @@ static enum ValHeuristic valIndex[] =
 -(id<ORDisabledVarArray>) makeDisabledArray:(id<CPProgram>)p from:(id<ORVarArray>)vs
 {
    id<ORDisabledVarArray> vars;
+   if (fullRestrict){
+      NSMutableArray* nvs = [[NSMutableArray alloc] initWithCapacity:[vs count]];
+      [p collectInputVar:vs res:nvs];
+      vs = (id<ORVarArray>)[ORFactory idArray:p array:nvs];
+      [nvs release];
+   }
    if(rateOther < 1){
       NSArray* absvar = [p collectAllVarWithAbs:vs withLimit:rateOther];
       vars = [ORFactory disabledFloatVarArray:vs varabs:absvar solver:[p engine] nbFixed:uniqueNB];

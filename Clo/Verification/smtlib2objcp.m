@@ -1388,7 +1388,7 @@ SMTLIB2_OBJCP_DECLHANDLER(zero)
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_eq)
 {
-   return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) assignTo:(objcp_expr)smtlib2_vector_at(args, 1)];
+   return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) eq:(objcp_expr)smtlib2_vector_at(args, 1)];
 }
 SMTLIB2_OBJCP_DECLHANDLER(fp_lt)
 {

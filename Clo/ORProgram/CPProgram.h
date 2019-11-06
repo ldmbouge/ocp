@@ -229,6 +229,7 @@ PORTABLE_BEGIN
 -(NSSet*) constraints: (id<ORVar>)x;
 -(NSArray*)  collectAllVarWithAbs:(id<ORVarArray>)vs;
 -(NSArray*)  collectAllVarWithAbs:(id<ORVarArray>)vs withLimit:(ORDouble) limit;
+-(void)      collectInputVar:(id<ORVarArray>) vs res:(NSMutableArray*) ar;
 -(ORUInt)  maxOccurences:(id<ORVar>) x;
 -(ORLDouble) density: (id<ORVar>) x;
 -(ORDouble) cardinality: (id<ORVar>) x;

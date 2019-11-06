@@ -96,6 +96,10 @@
 {
    return [NSString stringWithFormat:@"<%@ castedTo %@>",_initial,_res];
 }
+- (id<CPVar>)result
+{
+   return _res;
+}
 @end
 
 //unary minus constraint
@@ -174,6 +178,10 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == -%@>",_x,_y];
+}
+- (id<CPVar>)result
+{
+   return _x;
 }
 @end
 
@@ -339,6 +347,10 @@
 {
    return [NSString stringWithFormat:@"<%@ = %@>",_x,_y];
 }
+- (id<CPVar>)result
+{
+   return _x;
+}
 @end
 
 @implementation CPFloatAssignC
@@ -365,6 +377,10 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %16.16e>",_x,_c];
+}
+- (id<CPVar>)result
+{
+   return _x;
 }
 @end
 
@@ -849,6 +865,10 @@
 {
    return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
 }
+- (id<CPVar>)result
+{
+   return _z;
+}
 @end
 
 
@@ -1006,6 +1026,10 @@
 {
    return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
 }
+- (id<CPVar>)result
+{
+   return _z;
+}
 @end
 
 @implementation CPFloatTernaryMult
@@ -1078,7 +1102,7 @@
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
 }
--(id<CPFloatVar>) result
+-(id<CPVar>) result
 {
    return _z;
 }
@@ -1169,6 +1193,10 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ / %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -2134,6 +2162,10 @@
 {
    return [NSString stringWithFormat:@"<%@ == (%@^2)>",_res,_x];
 }
+- (id<CPVar>)result
+{
+   return _res;
+}
 @end
 
 @implementation CPFloatAbs{
@@ -2213,6 +2245,10 @@
 {
    return [NSString stringWithFormat:@"<%@ == |%@|>",_res,_x];
 }
+- (id<CPVar>)result
+{
+   return _res;
+}
 @end
 
 @implementation CPFloatSqrt{
@@ -2273,6 +2309,10 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == sqrt(%@)>",_res,_x];
+}
+- (id<CPVar>)result
+{
+   return _res;
 }
 @end
 

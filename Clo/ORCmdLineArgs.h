@@ -119,6 +119,7 @@ struct ORResult {
 @property (nonatomic,readonly) ABS_FUN absFunComputation;
 @property (nonatomic,readonly) ORBool occDetails;
 @property (nonatomic,readonly) ORBool restricted;
+@property (nonatomic,readonly) ORBool fullRestrict;
 @property (nonatomic,readonly) ORBool middle;
 @property (nonatomic,readonly) ORBool printSolution;
 @property (nonatomic,readonly) ORBool printModel;

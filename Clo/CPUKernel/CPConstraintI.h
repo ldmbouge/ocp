@@ -46,3 +46,7 @@ typedef id (*SELPROTO)(id,SEL,...);
 -(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x;
 -(ORBool) canLeadToAnAbsorption;
 @end
+
+@protocol CPArithmConstraint
+-(id<CPVar>) result;
+@end

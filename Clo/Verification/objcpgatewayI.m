@@ -473,7 +473,7 @@ static id<OBJCPGateway> objcpgw;
                isSat = [lh checkAllbound];
             } withTimeLimit:[_options timeOut]];
          }
-         struct ORResult r = FULLREPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[lh getVariables] count], [[_model constraints] count],[[lh getVariables] count]);
+         struct ORResult r = FULLREPORT(found, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation],[[cp engine] nbStaticRewrites],[[cp engine] nbDynRewrites],[[_model FPVars] count], [[_model constraints] count],[lh declSize]);
          return r;
       }];
       [lh release];
@@ -556,12 +556,14 @@ static id<OBJCPGateway> objcpgw;
       if([lv vtype] == ORTBit && [rv vtype] == ORTBit)
          return [self objcp_mk_bv_eq:ctx left:lv right:rv];
       if([lv vtype] == ORTFloat || [lv vtype] == ORTDouble)
-         return [self objcp_mk_fp:ctx x:lv eq:rv];
+         return [self objcp_mk_fp:ctx x:lv assignTo:rv];
       id<ORIntVar> lvi = (id<ORIntVar>) lv;
       id<ORIntVar> rvi = (id<ORIntVar>) rv;
       if([lvi low] == [lvi up] && [rvi low] == [rvi up] && [lvi low] == [rvi low])
          return [ORFactory intVar:_model value:1];
    }
+   if([lv vtype] == ORTFloat || [lv vtype] == ORTDouble)
+      return [lv set:rv];
    return [lv eq:rv];
 }
 -(id<ORIntVar>) objcp_mk_minus:(objcp_context)ctx var:(objcp_expr)var

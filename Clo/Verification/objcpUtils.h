@@ -30,6 +30,7 @@ static logic logicObj[] = {QF_LRA,QF_LIA,QF_RDL,QF_IDL,QF_BV,QF_FP,QF_UF,QF_BVFP
 -(void) setOptions:(ORCmdLineArgs*)options;
 -(void) printSolutions;
 -(ORBool) checkAllbound;
+-(ORInt) declSize;
 @end
 
 @interface AbstractLogicHandler : NSObject<LogicHandler>
