@@ -19,6 +19,11 @@ extern int nbBoxExplored;
 extern int stoppingTime;
 extern NSDate *branchAndBoundStart;
 extern NSDate *branchAndBoundTime;
+extern double boxCardinality;
+extern int limitCounter;
+extern int nbConstraint;
+extern int nbBoxDone;
+extern int RUN_IMPROVE_GUESS;
 
 extern void exitfunc(int sig);
 
@@ -251,3 +256,12 @@ static inline ORDouble randomValueD(ORDouble min, ORDouble max) {
    return (max - min) * (drand48()) + min;
 }
 
+static inline ORDouble next_power_of_two(ORDouble value, ORInt next) {
+    ORInt exp;
+    frexp(value, &exp);
+    if(next){
+            return ldexp(1, exp);
+    } else {
+            return ldexp(1, exp-1);
+    }
+}

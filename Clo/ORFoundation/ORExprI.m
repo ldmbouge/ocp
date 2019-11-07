@@ -1002,8 +1002,8 @@
 {
    id<ORRationalVar> r = [ORFactory rationalVar:[self tracker] from:self];
    id<ORConstraint> c = [ORFactory channel:self with:r];
-   id<ORTracker> m = self.tracker;
-   [((id<ORModel>)m) add: c];
+   #warning [rg] find a way to suppress warning below (casting to id<ORModel> does not work)
+   [self.tracker add: c];
 
    return r;
 }

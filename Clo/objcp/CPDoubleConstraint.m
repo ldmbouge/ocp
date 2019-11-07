@@ -221,10 +221,10 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
 
 //unary minus constraint
 @implementation CPDoubleUnaryMinus{
-int _precision;
-int _rounding;
-double_interval _xi;
-double_interval _yi;
+   int _precision;
+   int _rounding;
+   double_interval _xi;
+   double_interval _yi;
 }
 -(id) init:(CPDoubleVarI*)x eqm:(CPDoubleVarI*)y
 {
@@ -920,7 +920,9 @@ double_interval _yi;
 @end
 
 
-@implementation CPDoubleTernaryAdd
+@implementation CPDoubleTernaryAdd {
+   ORBool _limit;
+}
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x plus:(CPDoubleVarI*)y
 {
    return [self init:z equals:x plus:y kbpercent:PERCENT];
@@ -935,6 +937,8 @@ double_interval _yi;
    _percent = p;
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _limit = TRUE;
+   nbConstraint++;
    return self;
 }
 -(void) post
@@ -1003,6 +1007,16 @@ double_interval _yi;
       
       eo = compute_eo_add_d(eo, x, y, z);
       changed |= eo.changed;
+      
+      if(_limit && (z.inf <= z.sup)){
+         if(
+            ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
+            ((z.sup < 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent))
+            ){
+            limitCounter++;
+            _limit = FALSE;
+         }
+      }
       // ============================== ez
       // ex + ey + eo
       ezTemp = [[ex add: ey] add: eo];
@@ -1100,7 +1114,9 @@ double_interval _yi;
 @end
 
 
-@implementation CPDoubleTernarySub
+@implementation CPDoubleTernarySub {
+   ORBool _limit;
+}
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -1111,6 +1127,8 @@ double_interval _yi;
    _percent = p;
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _limit = TRUE;
+   nbConstraint++;
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y
@@ -1183,6 +1201,15 @@ double_interval _yi;
       eo = compute_eo_sub_d(eo, x, y, z);
       changed |= eo.changed;
       
+      if(_limit && (z.inf <= z.sup)){
+         if(
+            ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
+            ((z.sup < 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent))
+            ){
+            limitCounter++;
+            _limit = FALSE;
+         }
+      }
       // ============================== ez
       // ex - ey + eo
       ezTemp = [[ex sub: ey] add: eo];
@@ -1278,7 +1305,9 @@ double_interval _yi;
 }
 @end
 
-@implementation CPDoubleTernaryMult
+@implementation CPDoubleTernaryMult{
+   ORBool _limit;
+}
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -1289,6 +1318,8 @@ double_interval _yi;
    _percent = p;
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _limit = TRUE;
+   nbConstraint++;
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y
@@ -1329,7 +1360,7 @@ double_interval _yi;
    [ey set_q:[_y minErr] and:[_y maxErr]];
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
-      
+   
    do {
       changed = false;
       zTemp = z;
@@ -1357,6 +1388,15 @@ double_interval _yi;
       eo = compute_eo_mul_d(eo, x, y, z);
       changed |= eo.changed;
       
+      if(_limit && (z.inf <= z.sup)){
+         if(
+            ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
+            ((z.sup < 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent))
+            ){
+            limitCounter++;
+            _limit = FALSE;
+         }
+      }
       // ============================== ez
       // x*ey + y*ex + ex*ey + eo
       ezTemp = [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo];
@@ -1404,7 +1444,7 @@ double_interval _yi;
       
       y.inf = [[yr low] get_sup_d];
       y.sup = [[yr up] get_inf_d];
-
+      
       /* END ERROR PROPAG */
       
       gchanged |= changed;
@@ -1464,7 +1504,9 @@ double_interval _yi;
 }
 @end
 
-@implementation CPDoubleTernaryDiv
+@implementation CPDoubleTernaryDiv {
+   ORBool _limit;
+}
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -1475,6 +1517,8 @@ double_interval _yi;
    _percent = p;
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _limit = TRUE;
+   nbConstraint++;
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y
@@ -1507,6 +1551,8 @@ double_interval _yi;
    id<ORRationalInterval> xr = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> yr = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> D = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> D1 = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> D2 = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> d1 = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> d2 = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> tmp = [[ORRationalInterval alloc] init];
@@ -1547,6 +1593,15 @@ double_interval _yi;
       eo = compute_eo_div_d(eo, x, y, z);
       changed |= eo.changed;
       
+      if(_limit && (z.inf <= z.sup)){
+         if(
+            ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
+            ((z.sup < 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent))
+            ){
+            limitCounter++;
+            _limit = FALSE;
+         }
+      }
       // ============================== ez
       // (y*ex - x*ey)/(y*(y + ey)) + eo
       ezTemp = [[[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]] add: eo];
@@ -1591,31 +1646,31 @@ double_interval _yi;
       // d2 = (ex - (ez - eo)*ey + sqrt(D))/(2*(ez - eo))
       // D = [0, +INF] inter ((ez - eo)*ey - ex)^2 + 4*(ez - eo)*ey*x
       
-      [tmp set_d:4.0 and:4.0];
-      D = [[[[[ez sub: eo] mul: ey] sub: ex] mul: [[[ez sub: eo] mul: ey] sub: ex]] add: [[[tmp mul: [ez sub: eo]] mul: ey] mul: xr]];
-      [tmp set_d:0.0 and:+INFINITY];
-      D = [tmp proj_inter:D];
-      
-      tmp = [ex sub: [[ez sub: eo] mul: ey]];
-      fesetround(FE_DOWNWARD);
-      [D.low set_d: sqrt([D.low get_sup_d])];
-      fesetround(FE_UPWARD);
-      [D.up set_d: sqrt([D.up get_inf_d])];
-      fesetround(FE_TONEAREST);
-      d1 = [tmp sub: D];
-      d2 = [tmp add: D];
-      [tmp set_d:2.0 and:2.0];
-      tmp = [tmp mul: [ez sub: eo]];
-      d1 = [d1 div: tmp];
-      d2 = [d2 div: tmp];
-      
-      [yrTemp set_q:minQ(d1.low, d2.low) and:maxQ(d1.up, d2.up)];
-      yr = [yr proj_inter:yrTemp];
-      changed |= yr.changed;
-      
-      y.inf = [[yr low] get_sup_d];
-      y.sup = [[yr up] get_inf_d];
-      
+      //      [tmp set_d:4.0 and:4.0];
+      //      D = [[[[[ez sub: eo] mul: ey] sub: ex] mul: [[[ez sub: eo] mul: ey] sub: ex]] add: [[[tmp mul: [ez sub: eo]] mul: ey] mul: xr]];
+      //      [tmp set_d:0.0 and:+INFINITY];
+      //      D1 = [tmp proj_inter:D];
+      //      if(![D1 empty]){
+      //         tmp = [ex sub: [[ez sub: eo] mul: ey]];
+      //         fesetround(FE_DOWNWARD);
+      //         [D2.low set_d: sqrt([D1.low get_sup_d])];
+      //         fesetround(FE_UPWARD);
+      //         [D2.up set_d: sqrt([D1.up get_inf_d])];
+      //         fesetround(FE_TONEAREST);
+      //         d1 = [tmp sub: D2];
+      //         d2 = [tmp add: D2];
+      //         [tmp set_d:2.0 and:2.0];
+      //         tmp = [tmp mul: [ez sub: eo]];
+      //         d1 = [d1 div: tmp];
+      //         d2 = [d2 div: tmp];
+      //
+      //         [yrTemp set_q:minQ(d1.low, d2.low) and:maxQ(d1.up, d2.up)];
+      //         yr = [yr proj_inter:yrTemp];
+      //         changed |= yr.changed;
+      //
+      //         y.inf = [[yr low] get_sup_d];
+      //         y.sup = [[yr up] get_inf_d];
+      //      }
       /* END ERROR PROPAG */
       
       gchanged |= changed;
@@ -1650,6 +1705,8 @@ double_interval _yi;
    [xr release];
    [yr release];
    [D release];
+   [D1 release];
+   [D2 release];
    [d1 release];
    [d2 release];
    [tmp release];

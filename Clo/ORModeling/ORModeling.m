@@ -20,7 +20,7 @@
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
-   //@TODO Rémy: bouger srand?
+   #warning [rg] move srand elsewhere?
    srand48(time(0));
    return [[[ORModelI alloc] initORModelI] autorelease];
 }

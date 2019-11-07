@@ -239,6 +239,7 @@ enum CPVarClass {
 -(ORBool) boundError;
 -(ORBool) member:(ORDouble)v;
 -(ORBool) bound;
+-(ORBool) isInputVar;
 -(ORLDouble) domwidth;
 -(ORDouble) magnitude;
 -(void) bind:(ORDouble) val;

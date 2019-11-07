@@ -310,6 +310,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLEqualc: visit method not defined"];
 }
+-(void) visitRationalUnaryMinus:(id<ORConstraint>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalUnaryMinus: visit method not defined"];
+}
 -(void) visitRationalEqualc: (id<ORRationalEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RationalEqualc: visit method not defined"];

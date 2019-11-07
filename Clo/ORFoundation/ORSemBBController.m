@@ -13,9 +13,11 @@
 @interface BBKey : NSObject {
 @public
    id<ORObjectiveValue> _v;
-   int              _depth;
+   //int              _depth;
+   double           _depth;
 }
--(id)init:(id<ORObjectiveValue>)v withDepth:(int)d;
+//-(id)init:(id<ORObjectiveValue>)v withDepth:(int)d;
+-(id)init:(id<ORObjectiveValue>)v withDepth:(double)d;
 -(id<ORObjectiveValue>)getValue;
 -(NSString*)description;
 -(void)dealloc;
@@ -33,14 +35,28 @@
 
 @implementation BBKey
 
-+(BBKey*)key:(id<ORObjectiveValue>)v withDepth:(int)d
+//+(BBKey*)key:(id<ORObjectiveValue>)v withDepth:(int)d
+//{
+//   BBKey* k  = [BBKey alloc];
+//   k->_v     = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1]; //v; // [v retain];
+//   k->_depth = d;
+//   return k;
+//}
++(BBKey*)key:(id<ORObjectiveValue>)v withDepth:(double)d
 {
    BBKey* k  = [BBKey alloc];
    k->_v     = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1]; //v; // [v retain];
    k->_depth = d;
    return k;
 }
--(BBKey*)init:(id<ORObjectiveValue>)v withDepth:(int)d
+//-(BBKey*)init:(id<ORObjectiveValue>)v withDepth:(int)d
+//{
+//   self = [super init];
+//   _v = [[[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1] retain];
+//   _depth = d;
+//   return self;
+//}
+-(BBKey*)init:(id<ORObjectiveValue>)v withDepth:(double)d
 {
    self = [super init];
    _v = [[[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1] retain];
@@ -63,7 +79,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%@ - %d",_v,_depth];
+   [buf appendFormat:@"%@ - %f",_v,_depth];
    return buf;
 }
 
@@ -170,10 +186,11 @@
    BBNode* node = [[BBNode alloc] init:k checkpoint:cp];
    //ORInt depth;
    //ORInt primalBound = 1000 * frexp([[[[_engine objective] primalBound] rationalValue] get_d], &depth);
-   //BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:primalBound];
-   BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
+   //BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
+   BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:boxCardinality];
    [_buf insertObject:node withKey:ov];
-   NSLog(@"BUF: %d", [_buf size]);
+   //NSLog(@"%@ -- %@", node, ov);
+   //NSLog(@"BUF: %d", [_buf size]);
    //NSLog(@"_buf: %@", _buf);
    [ov release];
    [node release];
@@ -196,17 +213,17 @@
 }
 -(void)startTryLeft
 {
-   //NSLog(@"%@", _cp);
 }
 -(void)startTryRight
 {
-   //NSLog(@"%@", _cp);
 }
 -(void)exitTryLeft
 {
    NSCont* k = [NSCont takeContinuation];
    if ([k nbCalls] == 0) {
+      if(limitCounter < nbConstraint){
       [self makeAndRecordNode:k];
+      }
       NSCont* back = _k;
       _k = NULL;
       [_tracer restoreCheckpoint:_cp inSolver:_engine model:_model];
@@ -215,7 +232,6 @@
       _k  = NULL;
       [back call];
    } else {
-      NSLog(@"ETL");
       [k letgo];
    }
 }
@@ -223,10 +239,13 @@
 {
    NSCont* k = [NSCont takeContinuation];
    if ([k nbCalls] == 0) {
+      if(limitCounter < nbConstraint){
+         [self fail];
+      } else {
       [self makeAndRecordNode:k];
       [self fail];
+      }
    } else {
-      NSLog(@"ETR");
       [k letgo];
    }
 }
@@ -250,6 +269,7 @@ NSString * const ORStatus_toString_BB[] = {
 
 -(void) fail
 {
+   /* tightenDualBound in fail disabled - no need for of variable right now */
    id<ORSearchObjectiveFunction> of = (id)_engine.objective;
    do {
       if (_k != NULL) {
@@ -276,7 +296,6 @@ NSString * const ORStatus_toString_BB[] = {
                status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
             //if (__nbPull++ % 100 == 0)
                //NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
-            //NSLog(@"%@ -- %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             [nd.cp letgo];
             NSCont* k = nd.cont;
             [nd release];

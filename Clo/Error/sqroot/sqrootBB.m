@@ -101,7 +101,7 @@ void sqroot_d(int search, int argc, const char * argv[]) {
          [cp solve:^{
             if (search)
                [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-                  [cp float6WaySplit:i withVars:x];
+                  [cp floatSplit:i withVars:x];
                }];
          }];
          struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

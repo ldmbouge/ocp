@@ -61,5 +61,13 @@ int main(int argc, const char * argv[]) {
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       kepler0_d(1, argc, argv);
    //}
+   // (1.60000000000000000000e+01) -> 1.91346646275158036588e+01 -> 2.87019969412737054881e+01 -> (3.20000000000000000000e+01)
+  // ORDouble zinf = -2.87019969412737054881e+01;
+  // ORDouble zsup = -1.91346646275158036588e+01;
+//   if(((double_cast)(zinf)).parts.mantissa == 0){
+//      NSLog(@"%.20e -> %.20e -> (%.20e)", zinf, zsup, -next_power_of_two(zsup, 0));
+//   } else {
+      //NSLog(@"(%.20e) -> %.20e -> %.20e -> (%.20e)", -next_power_of_two(zinf, 1), zinf, zsup, -next_power_of_two(zsup, 0));
+//   }
    return 0;
 }

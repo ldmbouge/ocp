@@ -487,7 +487,7 @@
                   onSolution: ^{ [self doOnSolution];}
                       onExit: ^{ [self doOnExit];}
        ];
-      NSLog(@"Optimal Solution: %@ thread:%d\n",[_objective primalBound],[NSThread threadID]);
+      NSLog(@"Optimal Solution: %@ (%@) thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    }
    else {
       _oneSol = YES;
@@ -1887,7 +1887,7 @@ onFailure: (ORInt2Void) onFailure
                id<CPRationalVar> ezi = _gamma[getId(ez)];
                /* START NEW GUESS */
                if(isBound) {
-                  if (0) {
+                  if (RUN_IMPROVE_GUESS) {
                      /*** BEGIN: Attempt to improve the error ***/
                      id<ORSolution> tmp_solution = [self captureSolution];
                      bool improved = FALSE, improved_var = FALSE;
@@ -1937,7 +1937,8 @@ onFailure: (ORInt2Void) onFailure
                         // And as updatePrimalBound does test whether the value is actually better or not
                         // the testing it here is useless
                         printf("*** nb iter = %d\n", nbiter);
-                        [[_engine objective] tightenPrimalBound:[[tmp_solution value:ez] rationalValue]];
+                        id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
+                        [[_engine objective] tightenPrimalBound:objv];
                         solution = tmp_solution; // Keep it as a solution
                         NSLog(@"##### START G");
                         for (id<ORVar> v in [_model variables]) {
@@ -2005,8 +2006,8 @@ onFailure: (ORInt2Void) onFailure
 
 -(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
-   signal(SIGKILL, exitfunc);
-   alarm(stoppingTime);
+   //signal(SIGKILL, exitfunc);
+   //alarm(stoppingTime);
    
    branchAndBoundStart = [NSDate date];
    //_level = 8;
@@ -2015,15 +2016,15 @@ onFailure: (ORInt2Void) onFailure
                                   suchThat: ^ORBool(ORInt i) {
       id<CPDoubleVar> v = _gamma[getId(x[i])];
       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
-      return ![v bound];
+      return ![v bound] && [v isInputVar];
    }
                                  orderedBy:
+//                                                    ^ORDouble(ORInt i) {
+//                                return (ORDouble)i;
+//                             }
                           ^ORDouble(ORInt i) {
-      return (ORDouble)i;
+      return [self density:x[i]];
    }
-//                          ^ORDouble(ORInt i) {
-//      return [self density:x[i]];
-//   }
                           ];
    
    // To keep the idea that we might have two differents policies
@@ -2033,16 +2034,22 @@ onFailure: (ORInt2Void) onFailure
    
    do {
       nbBoxExplored++;
-      NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
+      limitCounter = 0;
+      //nbConstraint = 0;
+      //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
       [[_engine objective] updateDualBound];
       
-      for (id<ORVar> v in [_model variables]) {
-         if([v prettyname]){
-            NSLog(@"BX %@: %@ (%f)", [v prettyname], _gamma[getId(v)], [self cardinalityD:v]);
-         }
+      if(limitCounter >= nbConstraint){
+         nbBoxDone++;
       }
+      
+      //      for (id<ORVar> v in [_model variables]) {
+      //         if([v prettyname]){
+      //            NSLog(@"BX %@: %@ (%f)", [v prettyname], _gamma[getId(v)], [self cardinalityD:v]);
+      //         }
+      //      }
       //NSLog(@"LOCAL: %@", _gamma[getId(ez)]);
       
       ORBool isBound = true;
@@ -2110,7 +2117,7 @@ onFailure: (ORInt2Void) onFailure
                id<CPRationalVar> ezi = _gamma[getId(ez)];
                /* START NEW GUESS */
                if(isBound) {
-                  if (0) {
+                  if (RUN_IMPROVE_GUESS) {
                      /*** BEGIN: Attempt to improve the error ***/
                      id<ORSolution> tmp_solution = [self captureSolution];
                      bool improved = FALSE, improved_var = FALSE;
@@ -2156,11 +2163,12 @@ onFailure: (ORInt2Void) onFailure
                         }
                      }
                      /*** END: Attempt to improve the error ***/
-                     if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) { // lt (was gt !!!)
+                     if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) {
                         // And as updatePrimalBound does test whether the value is actually better or not
                         // the testing it here is useless
                         printf("*** nb iter = %d\n", nbiter);
-                        [[_engine objective] tightenPrimalBound:[[tmp_solution value:ez] rationalValue]];
+                        id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
+                        [[_engine objective] tightenPrimalBound:objv];
                         solution = tmp_solution; // Keep it as a solution
                         NSLog(@"#####");
                         NSLog(@"[GuessError]");
@@ -2178,13 +2186,13 @@ onFailure: (ORInt2Void) onFailure
                         // the testing it here is useless
                         [[_engine objective] updatePrimalBound];
                         solution = [self captureSolution]; // Keep it as a solution
-                        NSLog(@"#####");
-                        NSLog(@"GuessError");
-                        for (id<ORVar> v in [_model variables]) {
-                           if([v prettyname])
-                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-                        }
-                        NSLog(@"#####");
+                        //                        NSLog(@"#####");
+                        //                        NSLog(@"GuessError");
+                        //                        for (id<ORVar> v in [_model variables]) {
+                        //                           if([v prettyname])
+                        //                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+                        //                        }
+                        //                        NSLog(@"#####");
                         [_tracer popNode]; // need to restore initial state before going out of loop !
                         break;
                      }
@@ -2198,18 +2206,17 @@ onFailure: (ORInt2Void) onFailure
          //printf("************* END OF GUESS *******************\n");
          
          /******************************/
-         
          ORSelectorResult i = [select min]; //sélectionne la variable minimisant la mesure défini dans le select
          /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
-         b(i.index,x);
-         branchAndBoundTime = [NSDate date];
-         NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
+            b(i.index,x);
+         //branchAndBoundTime = [NSDate date];
+         //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       }
-   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
+      //NSLog(@"%d -- %d/%d", nbBoxDone, nbBoxExplored, nbBoxGenerated);
+   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);// && nbBoxDone < nbBoxGenerated);
    // Had an issue while using the guess: the loop was going on while the two bounds have reached the same value
    // Thus, it seems we need to force the end of this loop as soon as the condition is met
    // Is this the right way to do it ?
-   //printf("Bye\n");
    //NSLog(@"%@", solution);
    // We migth got out from a leaf that is not a an optimum. Have to check whether this an actual end or not
    if (([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualBound] rationalValue]])) {

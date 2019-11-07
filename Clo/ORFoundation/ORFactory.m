@@ -732,14 +732,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORRationalVar>) errorVar: (id<ORTracker>) mdl of:(id<ORVar>)f
 {
-   id<ORRational> low = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
-   id<ORRational> up =  [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
+   id<ORRational> low = [[[ORRational alloc] init] setNegInf];
+   id<ORRational> up =  [[[ORRational alloc] init] setPosInf];
    ORRationalVarI* r = [[ORRationalVarI alloc] init: mdl
                                                  low:low
                                                   up:up
                                                 name:[NSString stringWithFormat:@"e%@",[f prettyname]]];
    id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
-   [((id<ORModel>)mdl) add: c];
+   #warning [rg] find a way to suppress warning below (casting to id<ORModel> does not work)
+   [mdl add: c];
    [low release];
    [up release];
    return r;
