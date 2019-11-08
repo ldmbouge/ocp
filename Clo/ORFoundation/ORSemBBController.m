@@ -223,7 +223,7 @@
    if ([k nbCalls] == 0) {
       if(limitCounter < nbConstraint){
       [self makeAndRecordNode:k];
-      }
+      //}
       NSCont* back = _k;
       _k = NULL;
       [_tracer restoreCheckpoint:_cp inSolver:_engine model:_model];
@@ -231,6 +231,7 @@
       _cp = NULL;
       _k  = NULL;
       [back call];
+      }
    } else {
       [k letgo];
    }
@@ -310,14 +311,10 @@ NSString * const ORStatus_toString_BB[] = {
             }
          } else {
             NSLog(@"EQUAL BOUND: %@ == %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
-            //NSLog(@"%@", [_engine variables]);
-            //NSLog(@"QUEUE: %@", _buf);
-            //NSLog(@"%@", [_engine objective]);
             return;
          }
       } else {
-         NSLog(@"EMPTY QUEUE: %@", _buf);
-         //NSLog(@"%@", _buf);
+         NSLog(@"EMPTY QUEUE %@", _buf);
          return;
       }
    } while(true);

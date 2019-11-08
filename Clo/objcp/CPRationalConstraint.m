@@ -1426,7 +1426,8 @@
    if ([[newBound value] gt: _primalBound]){
       nbPrimalUpdate++;
       [_primalBound set: [newBound value]];
-      NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
+      //branchAndBoundTime = [NSDate date];
+      //NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
 }
 

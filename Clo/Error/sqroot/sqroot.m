@@ -83,7 +83,7 @@ void sqroot_d(int search, int argc, const char * argv[]) {
       [cp solve:^{
          if (search)
             [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               [cp floatSplitD:i withVars:x];
+               [cp floatSplit:i withVars:x];
             }];
          NSLog(@"%@",cp);
          NSLog(@"x : [%f;%f]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");

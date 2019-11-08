@@ -487,6 +487,7 @@
                   onSolution: ^{ [self doOnSolution];}
                       onExit: ^{ [self doOnExit];}
        ];
+      branchAndBoundTime = [NSDate date];
       NSLog(@"Optimal Solution: %@ (%@) thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    }
    else {
@@ -2010,7 +2011,7 @@ onFailure: (ORInt2Void) onFailure
    //alarm(stoppingTime);
    
    branchAndBoundStart = [NSDate date];
-   //_level = 8;
+
    id<ORSelect> select = [ORFactory select: _engine // need to be out of inner loop to go through all possible variables
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
@@ -2036,14 +2037,15 @@ onFailure: (ORInt2Void) onFailure
       nbBoxExplored++;
       limitCounter = 0;
       //nbConstraint = 0;
+      //branchAndBoundTime = [NSDate date];
       //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
       [[_engine objective] updateDualBound];
       
-      if(limitCounter >= nbConstraint){
-         nbBoxDone++;
-      }
+//      if(limitCounter >= nbConstraint){
+//         nbBoxDone++;
+//      }
       
       //      for (id<ORVar> v in [_model variables]) {
       //         if([v prettyname]){
