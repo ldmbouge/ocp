@@ -2835,14 +2835,19 @@ typedef struct {
     for(ORInt layer = 0; layer < _numVariables; layer++) {
         int variableIndex = [self variableIndexForLayer:layer];
         [_x[variableIndex] whenBindDo:^() {
-            if (_first_relaxed_layer._val == layer+1) {
-                if ([layers[_first_relaxed_layer._val][0] isRelaxed]) {
+            int startingLayer = _first_relaxed_layer._val-1;
+            if (startingLayer <= _numVariables) {
+                assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
+                [self rebuildFromLayer: startingLayer];
+            }
+            /*if (_first_relaxed_layer._val == layer+1) {
+                //if ([layers[_first_relaxed_layer._val][0] isRelaxed]) {
                     assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
                     [self rebuildFromLayer: layer];
-                } else {
-                    assignTRInt(&_first_relaxed_layer, _first_relaxed_layer._val +1, _trail);
-                }
-            }
+                //} else {
+                //    assignTRInt(&_first_relaxed_layer, _first_relaxed_layer._val +1, _trail);
+                //}
+            }*/
             //if (_first_relaxed_layer._val == layer+1) {
             //    assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
             //    [self rebuildFromLayer: layer];
