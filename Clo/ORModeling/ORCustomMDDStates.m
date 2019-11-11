@@ -525,14 +525,18 @@ static bool MinMaxState;
     if (_minMaxState) {
         assignTRId(&_topDownInfo, [[NSArray alloc] initWithObjects:_minTopDownEdgeAddition([[parentInfo topDownInfo] objectAtIndex:0], [parentInfo variableIndex], edgeValue),_maxTopDownEdgeAddition([[parentInfo topDownInfo] objectAtIndex:1], [parentInfo variableIndex], edgeValue), nil],_trail);
     } else {
-        assignTRId(&_topDownInfo, _topDownEdgeAddition([parentInfo topDownInfo], [parentInfo variableIndex], edgeValue),_trail);
+        id newValue = _topDownEdgeAddition([[parentInfo topDownInfo] retain], [parentInfo variableIndex], edgeValue);
+        assignTRId(&_topDownInfo,newValue ,_trail);
+        assert([newValue retainCount] == 2);
+        //[newValue release];
     }
 }
 -(void) setBottomUpInfoFor:(AltMDDStateSpecification*)childInfo plusEdge:(int)edgeValue {
     if (_minMaxState) {
         assignTRId(&_bottomUpInfo, [[NSArray alloc] initWithObjects:_minBottomUpEdgeAddition([[childInfo bottomUpInfo] objectAtIndex:0], [childInfo variableIndex], edgeValue),_maxBottomUpEdgeAddition([[childInfo bottomUpInfo] objectAtIndex:1], [childInfo variableIndex], edgeValue), nil],_trail);
     } else {
-        assignTRId(&_bottomUpInfo, _bottomUpEdgeAddition([childInfo bottomUpInfo], [childInfo variableIndex], edgeValue),_trail);
+        id newValue =  _bottomUpEdgeAddition([[childInfo bottomUpInfo] retain], [childInfo variableIndex], edgeValue);
+        assignTRId(&_bottomUpInfo,newValue,_trail);
     }
 }
 -(void) mergeTopDownInfoWith:(AltMDDStateSpecification*)other
@@ -546,9 +550,16 @@ static bool MinMaxState;
 -(void) mergeTopDownInfoWith:(AltMDDStateSpecification*)other withEdge:(int)edgeValue onVariable:(int)otherVariable
 {
     if (_minMaxState) {
-        assignTRId(&_topDownInfo, [[NSArray alloc] initWithObjects:_minTopDownMerge([_topDownInfo objectAtIndex:0], _minTopDownEdgeAddition([[other topDownInfo] objectAtIndex:0],otherVariable,edgeValue), _variableIndex),_maxTopDownMerge([_topDownInfo objectAtIndex:1], _maxTopDownEdgeAddition([[other topDownInfo] objectAtIndex:1],otherVariable, edgeValue), _variableIndex), nil],_trail);
+        assignTRId(&_topDownInfo, [[NSArray alloc] initWithObjects:
+                                   _minTopDownMerge([_topDownInfo objectAtIndex:0], _minTopDownEdgeAddition([[other topDownInfo] objectAtIndex:0],otherVariable,edgeValue), _variableIndex),
+                                   _maxTopDownMerge([_topDownInfo objectAtIndex:1], _maxTopDownEdgeAddition([[other topDownInfo] objectAtIndex:1],otherVariable,edgeValue), _variableIndex), nil],_trail);
     } else {
-        assignTRId(&_topDownInfo,_topDownMerge(_topDownInfo,_topDownEdgeAddition([other topDownInfo],otherVariable,edgeValue),_variableIndex),_trail);
+        id newValue = _topDownMerge([_topDownInfo retain],
+                                    _topDownEdgeAddition([other.topDownInfo retain],otherVariable,edgeValue),_variableIndex);
+        //NSLog(@"RC: %lu",(unsigned long)[newValue retainCount]);
+        assignTRId(&_topDownInfo,newValue,_trail);
+        assert([newValue retainCount] == 2);
+        //[newValue release];
     }
 }
 -(void) mergeBottomUpInfoWith:(AltMDDStateSpecification*)other
@@ -1123,7 +1134,7 @@ static bool _hasObjective = false;
 {
     NSArray* parentStates = [parentInfo states];
     for (int stateIndex = 0; stateIndex < [parentStates count]; stateIndex++) {
-        [[_states objectAtIndex:stateIndex] setTopDownInfoFor:[parentStates objectAtIndex: stateIndex] plusEdge:edgeValue];
+        [_states[stateIndex] setTopDownInfoFor:parentStates[stateIndex] plusEdge:edgeValue];
     }
 }
 -(void) setBottomUpInfoFor:(AltJointState*)childInfo plusEdge:(int)edgeValue
@@ -1144,7 +1155,7 @@ static bool _hasObjective = false;
 {
     NSArray* otherStates = [other states];
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        [[_states objectAtIndex:stateIndex] mergeTopDownInfoWith:[otherStates objectAtIndex:stateIndex] withEdge:edgeValue onVariable:otherVariable];
+        [_states[stateIndex] mergeTopDownInfoWith:otherStates[stateIndex] withEdge:edgeValue onVariable:otherVariable];
     }
 }
 -(void) mergeBottomUpInfoWith:(AltJointState*)other
@@ -1164,8 +1175,8 @@ static bool _hasObjective = false;
 -(bool) canDeleteChild:(AltJointState*)child atEdgeValue:(int)edgeValue
 {
     NSArray* childStates = [child states];
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        if ([[_states objectAtIndex: stateIndex] canDeleteChild:[childStates objectAtIndex:stateIndex] atEdgeValue:edgeValue]) {
+    for (int stateIndex = 0; stateIndex < _states.count; stateIndex++) {
+        if ([_states[stateIndex] canDeleteChild:childStates[stateIndex] atEdgeValue:edgeValue]) {
             return true;
         }
     }

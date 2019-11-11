@@ -714,7 +714,9 @@
             _layer_to_variable[layer+1] = next_variable;
             _variableUsed[next_variable] = true;
         }
-        [self buildNewLayerUnder:layer];
+        @autoreleasepool {
+            [self buildNewLayerUnder:layer];
+        }
     }
     [self setBottomUpInfoWidthOne];
 }
@@ -884,7 +886,7 @@
     }
     bool first = true;
     id state = [node getState];
-    id oldStateInfo = [[state topDownInfo] copy];
+    id oldStateInfo = [state topDownInfo];
     for (Node* parent in uniqueParents) {
         id parentState = [parent getState];
         Node* *children = [parent children];
@@ -904,7 +906,11 @@
             }
         }
     }
-    return ![[state topDownInfo] isEqual: oldStateInfo];
+    id newState = [state topDownInfo];
+    ORBool res = ![newState isEqual: oldStateInfo];
+    [oldStateInfo release];
+    [newState release];
+    return res;
 }
 -(bool) calculateBottomUpInfoFor:(Node*)node onLayer:(int)layerIndex
 {
@@ -912,7 +918,8 @@
     Node* *children = [node children];
     bool first = true;
     id state = [node getState];
-    id oldStateInfo = [[state bottomUpInfo] copy];
+//    id oldStateInfo = [[state bottomUpInfo] copy];
+    id oldStateInfo = [state bottomUpInfo]; // that is a fresh copy anway. No need to copy it!
     for (int childIndex = [node minChildIndex]; childIndex <= [node maxChildIndex]; childIndex++) {
         if (children[childIndex] != NULL) {
             Node* child = children[childIndex];
@@ -929,7 +936,11 @@
             }
         }
     }
-    return ![[state bottomUpInfo] isEqual: oldStateInfo];
+    id newState = [state bottomUpInfo];
+    ORBool res =  ![newState isEqual: oldStateInfo];
+    [oldStateInfo release];
+    [newState release];
+    return res;
 }
 -(void) addPropagationsAndTrimValues
 {
@@ -971,11 +982,13 @@
 }
 -(void) addPropagationToLayer:(ORInt)layer
 {
-    int variableIndex = [self variableIndexForLayer:layer];
-    if (!bound((CPIntVar*)_x[variableIndex])) {
-        [_x[variableIndex] whenLoseValue:self do:^(ORInt value) {
-            [self trimValueFromLayer: layer :value ];
-        }];
+    @autoreleasepool {
+        int variableIndex = [self variableIndexForLayer:layer];
+        if (!bound((CPIntVar*)_x[variableIndex])) {
+            [_x[variableIndex] whenLoseValue:self do:^(ORInt value) {
+                [self trimValueFromLayer: layer :value ];
+            }];
+        }
     }
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value

@@ -66,8 +66,8 @@ autoreleasepool {
     m.add(amongMDD(m: m, x: vars, lb: 5, ub: 5, values: cv1))
     m.add(amongMDD(m: m, x: vars, lb: 2, ub: 3, values: cv2))
     //m.add(amongMDD(m: m, x: vars, lb: 2, ub: 3, values: cv2))  // [Becca: If you uncomment this one, the whole thing blows up. Should have no effect of course!]
-    notes.ddWidth(4)
-    notes.ddRelaxed(false)
+    notes.ddWidth(32)
+    notes.ddRelaxed(true)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
     cp.search {
         firstFail(cp, vars)

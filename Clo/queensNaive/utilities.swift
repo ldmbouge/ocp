@@ -467,8 +467,6 @@ public func toDict<V>(_ low: Int,_ up : Int, map: (Int) -> (key: Int, value: V))
 
 public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
     let minC = 0,maxC = 1,rem = 2
-    func left(_ t : ORTracker,_ v : Int)   -> ORExpr { return ORFactory.getLeftStateValue(t,lookup:Int32(v)) }
-    func right(_ t : ORTracker,_ v : Int)  -> ORExpr { return ORFactory.getRightStateValue(t,lookup:Int32(v)) }
     let minCnt = Prop(m,minC),maxCnt = Prop(m,maxC), remVal = Prop(m,rem)
     let mdd1 = ORFactory.mddSpecs(m, variables: x, stateSize: 3)
     mdd1.state([ minC : 0,maxC : 0, rem : x.size ])

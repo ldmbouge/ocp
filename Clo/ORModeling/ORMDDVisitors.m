@@ -1728,37 +1728,37 @@
 -(void) visitExprParentInformationI:(id<ORExpr>)e
 {
     current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
-        return parent;
+        return [parent retain];
     } copy];
 }
 -(void) visitExprMinParentInformationI:(id<ORExpr>)e
 {
     current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
-        return [parent objectAtIndex:0];
+        return [[parent objectAtIndex:0] retain];
     } copy];
 }
 -(void) visitExprMaxParentInformationI:(id<ORExpr>)e
 {
     current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
-        return [parent objectAtIndex:1];
+        return [[parent objectAtIndex:1] retain];
     } copy];
 }
 -(void) visitExprChildInformationI:(id<ORExpr>)e
 {
     current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
-        return child;
+        return [child retain];
     } copy];
 }
 -(void) visitExprMinChildInformationI:(id<ORExpr>)e
 {
     current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
-        return [child objectAtIndex:0];
+        return [[child objectAtIndex:0] retain];
     } copy];
 }
 -(void) visitExprMaxChildInformationI:(id<ORExpr>)e
 {
     current = [(id)^(id parent,id child,ORInt variable,ORInt value) {
-        return [child objectAtIndex:1];
+        return [[child objectAtIndex:1] retain];
     } copy];
 }
 -(void) visitExprAppendToArrayI:(ORExprBinaryI*)e
@@ -1784,6 +1784,7 @@
         for (NSNumber* item in set) {
             [newSet addObject:[[NSNumber alloc] initWithInt:[item intValue]+addition]];
         }
+        [set release];
         return newSet;
     } copy];
 }
@@ -1801,6 +1802,8 @@
                 [newSet addObject:[[NSNumber alloc] initWithInt:(num1+[item2 intValue])]];
             }
         }
+        [set1 release];
+        [set2 release];
         return newSet;
     } copy];
 }
@@ -1813,9 +1816,11 @@
         int upper = [right(parent,child,variable,value) intValue];
         for (NSNumber* item in set) {
             if ([item intValue] > upper) {
+                [set release];
                 return [NSNumber numberWithBool:false];
             }
         }
+        [set release];
         return [NSNumber numberWithBool:true];
     } copy];
 }
@@ -1828,9 +1833,11 @@
         int lower = [right(parent,child,variable,value) intValue];
         for (NSNumber* item in set) {
             if ([item intValue] < lower) {
+                [set release];
                 return [NSNumber numberWithBool:false];
             }
         }
+        [set release];
         return [NSNumber numberWithBool:true];
     } copy];
 }
@@ -2115,7 +2122,12 @@
     AltMDDMergeInfoClosure left = [self recursiveVisitor:[e left]];
     AltMDDMergeInfoClosure right = [self recursiveVisitor:[e right]];
     current = [^(id leftParent,id rightParent,ORInt variable) {
-        return [[[NSSet alloc] initWithSet:(NSSet*)left(leftParent, rightParent, variable)] setByAddingObjectsFromSet:(NSSet*)right(leftParent, rightParent, variable)];
+        NSSet* l = (NSSet*)left(leftParent, rightParent, variable);
+        NSSet* r = (NSSet*)right(leftParent, rightParent, variable);
+        NSSet* retVal = [[[NSSet alloc] initWithSet:l] setByAddingObjectsFromSet:r];
+        [l release];
+        [r release];
+        return retVal;
     } copy];
 }
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
@@ -2472,7 +2484,7 @@
 -(void) visitExprParentInformationI:(id<ORExpr>)e
 {
     current = [(id)^(id parent,ORInt variable,ORInt value) {
-        return parent;
+        return [parent retain];
     } copy];
 }
 -(void) visitExprChildInformationI:(id<ORExpr>)e
@@ -2523,6 +2535,7 @@
         for (NSNumber* item in set) {
             [newSet addObject:[[NSNumber alloc] initWithInt:[item intValue]+addition]];
         }
+        [set release];
         return newSet;
     } copy];
 }
@@ -2540,6 +2553,8 @@
                 [newSet addObject:[[NSNumber alloc] initWithInt:(num1+[item2 intValue])]];
             }
         }
+        [set1 release];
+        [set2 release];
         return newSet;
     } copy];
 }
@@ -2555,6 +2570,7 @@
                 return [NSNumber numberWithBool:false];
             }
         }
+        [set release];
         return [NSNumber numberWithBool:true];
     } copy];
 }
@@ -2570,6 +2586,7 @@
                 return [NSNumber numberWithBool:false];
             }
         }
+        [set release];
         return [NSNumber numberWithBool:true];
     } copy];
 }

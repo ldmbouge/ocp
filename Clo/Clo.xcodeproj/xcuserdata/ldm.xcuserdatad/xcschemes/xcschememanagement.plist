@@ -182,7 +182,7 @@
 		<key>SEQMDDSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>166</integer>
+			<integer>161</integer>
 		</dict>
 		<key>SMTLIB2.xcscheme</key>
 		<dict>
@@ -252,7 +252,7 @@
 		<key>allDiffMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>165</integer>
+			<integer>166</integer>
 		</dict>
 		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
@@ -262,12 +262,12 @@
 		<key>amongAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>162</integer>
+			<integer>163</integer>
 		</dict>
 		<key>amongMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>161</integer>
+			<integer>162</integer>
 		</dict>
 		<key>amongSwift.xcscheme_^#shared#^_</key>
 		<dict>
@@ -697,12 +697,12 @@
 		<key>sequenceAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>163</integer>
+			<integer>164</integer>
 		</dict>
 		<key>sequenceMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>164</integer>
+			<integer>165</integer>
 		</dict>
 		<key>shiploading.xcscheme_^#shared#^_</key>
 		<dict>
@@ -1478,6 +1478,11 @@
 			<true/>
 		</dict>
 		<key>B1F531D715AED4B100E89F98</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B55E44D6234E5AF600CF6CC0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
