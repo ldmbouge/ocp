@@ -1429,12 +1429,14 @@
 }
 -(void) buildNewLayerUnder:(int)layer
 {
+    NSMutableDictionary* nodeHashes = [[NSMutableDictionary alloc] init];
     for (int parentNodeIndex = 0; parentNodeIndex < layer_size[layer]._val; parentNodeIndex++) {
         Node* parentNode = layers[layer][parentNodeIndex];
-        [self createChildrenForNode:parentNode];
+        [self createChildrenForNode:parentNode nodeHashes:nodeHashes];
     }
+    [nodeHashes release];
 }
--(void) createChildrenForNode:(Node*)parentNode
+-(void) createChildrenForNode:(Node*)parentNode nodeHashes:(NSMutableDictionary*)nodeHashes
 {
     int parentValue = [parentNode value];
     int parentLayer = [self layerIndexForVariable:parentValue];
@@ -1444,22 +1446,29 @@
             
             id state = [self generateStateFromParent:parentNode withValue:edgeValue];
             if (parentLayer != _numVariables-1) {
-                if (_objective != nil) {
-                    childNode = [[Node alloc] initNode: _trail
-                                         minChildIndex:min_domain_val
-                                         maxChildIndex:max_domain_val
-                                                 value:[self variableIndexForLayer:parentLayer + 1]
-                                                 state:state
-                                       objectiveValues:[self getObjectiveValuesForLayer:parentLayer+1]];
+                NSUInteger hashValue = [state hash];
+                Node* existingNode = [nodeHashes objectForKey:[[NSNumber alloc] initWithUnsignedInteger: hashValue]];
+                if (existingNode == nil) {
+                    if (_objective != nil) {
+                        childNode = [[Node alloc] initNode: _trail
+                                             minChildIndex:min_domain_val
+                                             maxChildIndex:max_domain_val
+                                                     value:[self variableIndexForLayer:parentLayer + 1]
+                                                     state:state
+                                           objectiveValues:[self getObjectiveValuesForLayer:parentLayer+1]];
+                    }
+                    else {
+                        childNode = [[Node alloc] initNode: _trail
+                                             minChildIndex:min_domain_val
+                                             maxChildIndex:max_domain_val
+                                                     value:[self variableIndexForLayer:parentLayer + 1]
+                                                     state:state];
+                    }
+                    [self addNode:childNode toLayer:parentLayer+1];
+                    [nodeHashes setObject:childNode forKey:[[NSNumber alloc] initWithUnsignedInteger: hashValue]];
+                } else {
+                    childNode = existingNode;
                 }
-                else {
-                    childNode = [[Node alloc] initNode: _trail
-                                         minChildIndex:min_domain_val
-                                         maxChildIndex:max_domain_val
-                                                 value:[self variableIndexForLayer:parentLayer + 1]
-                                                 state:state];
-                }
-                [self addNode:childNode toLayer:parentLayer+1];
             } else {
                 childNode = layers[_numVariables][0];
             }
@@ -1636,6 +1645,7 @@
             
         if (childNode != NULL) {
             [node removeChildAt: value];
+            assignTRInt(&layer_variable_count[layer_index][value], layer_variable_count[layer_index][value]._val -1, _trail);
             if ([node findChildIndex:childNode] == -1) {
                 [childNode removeParentValue:node];
             } else if (_objective != NULL) {
@@ -2846,6 +2856,55 @@ typedef struct {
         } onBehalf:self];
     }
 }
+
+-(void) trimValueFromLayer: (ORInt) layer_index :(int) value
+{
+    Node* *layer = layers[layer_index];
+    bool removedNode = false;
+    
+    for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
+        Node* node = layer[node_index];
+        Node* childNode = [node children][value];
+            
+        if (childNode != NULL) {
+            [node removeChildAt: value];
+            assignTRInt(&layer_variable_count[layer_index][value], layer_variable_count[layer_index][value]._val -1, _trail);
+            
+            if ([node findChildIndex:childNode] == -1) {
+                [childNode removeParentValue:node];
+            } else if (_objective != NULL) {
+                if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
+                    [childNode removeLongestPathParent: node];
+                }
+                if ([childNode hasShortestPathParent: node] && value == 0) {
+                    [childNode removeShortestPathParent: node];
+                }
+            }
+                
+            if ([childNode isNonVitalAndParentless]) {
+                [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1) trimmingVariables:true];
+                removedNode = true;
+            }
+            if ([node isNonVitalAndChildless]) {
+                [self removeChildlessNodeFromMDD:node fromLayer:layer_index trimmingVariables:true];
+                removedNode = true;
+                node_index--;
+            } else {
+                if (_objective != NULL) {
+                    [node updateReversePaths];
+                }
+            }
+        }
+    }
+    if (removedNode && ![_x[[self variableIndexForLayer:layer_index]] bound]) {
+        if (_first_relaxed_layer._val <= _numVariables) {
+            if (layer_size[_first_relaxed_layer._val]._val < _relaxation_size) {
+                [self rebuildFromLayer:layer_index];
+            }
+        }
+    }
+}
+
 -(void) rebuildFromLayer:(int)startingLayer
 {
     //for (int variableIndex = [_x low]; variableIndex <= [_x up]; variableIndex++) {
@@ -2860,6 +2919,7 @@ typedef struct {
     //assignTRInt(&layer_size[startingLayer+1], 0, _trail);
     //[self buildNewLayerUnder:startingLayer];
   
+    
     for (int layer = startingLayer+1; layer < _numVariables; layer++) {
         assignTRInt(&layer_size[layer], 0, _trail);
         for (int variable = min_domain_val; variable <= max_domain_val; variable++) {
@@ -2877,19 +2937,65 @@ typedef struct {
         [self cleanLayer: layer];
         
         [self buildNewLayerUnder:layer];
+        //[self splitNodesOnLayer:layer+1];
     }
     for(ORInt layer = startingLayer+1; layer < _numVariables; layer++) {
         [self trimValuesFromLayer:layer];
     }
-    
-    if (_objective != nil) {
-        for (int layer = (int)_numVariables; layer >= 0; layer--) {
-            for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-                [layers[layer][node_index] updateReversePaths];
+    return;
+}
+-(void) splitNodesOnLayer:(int)layer
+{
+    int initial_layer_size = layer_size[layer]._val;
+    for (int node_index = 0; node_index < initial_layer_size; node_index++) {
+        Node* node = layers[layer][node_index];
+        if ([node isRelaxed]) { //Find a relaxed node to split
+            Node** oldNodeChildren = [node children];
+            Node** parents = [node parents];
+            int numParents = [node numParents];
+            for (int parent_index = 0; parent_index < numParents; parent_index++) { //All edges going into this node should be examined.  To get these edges, look at the parents
+                Node* parent = parents[parent_index];
+                Node** parentsChildren = [parent children];
+                for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
+                    Node* parentsChild = parentsChildren[child_index];
+                    if ([node isEqual:parentsChild]) { //Found an edge that was going into a relaxed node.  Recreate a node for it.
+                        Node* newNode;
+                        id state = [self generateStateFromParent:parent withValue:child_index];
+                        if (_objective != nil) {
+                            newNode = [[Node alloc] initNode: _trail
+                                                    minChildIndex:min_domain_val
+                                                    maxChildIndex:max_domain_val
+                                                            value:[self variableIndexForLayer:layer]
+                                                            state:state
+                                                  objectiveValues:[self getObjectiveValuesForLayer:layer]];
+                        }
+                        else {
+                            newNode = [[Node alloc] initNode: _trail
+                                                    minChildIndex:min_domain_val
+                                                    maxChildIndex:max_domain_val
+                                                            value:[self variableIndexForLayer:layer]
+                                                                 state:state];
+                        }
+                        [self addNode:newNode toLayer:layer];
+                        [parent addChild:newNode at:child_index];
+                        [newNode addParent:parent];
+                        for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+                            Node* oldNodeChild = oldNodeChildren[domain_val];
+                            if (oldNodeChild != NULL) {
+                                [newNode addChild:oldNodeChild at:domain_val];
+                                [oldNodeChild removeParentOnce:node];
+                                [oldNodeChild addParent: newNode];
+                            }
+                        }
+                    }
+                }
             }
+            //Delete this old node
+            [self removeNodeAt:node_index onLayer:layer];
+            
+            //In theory, this could be done only until it hits the max width (assuming we reduce).  The question is if it's better to only de-split some nodes to not have to re-relax or if it would be better to re-relax this layer to have a potentially better relaxation.
         }
     }
-    return;
 }
 -(void) cleanLayer:(int)layer
 {
@@ -2914,11 +3020,87 @@ typedef struct {
     //first_node = layers[layer][layer_size[layer]._val-2];
     //second_node = layers[layer][layer_size[layer]._val-1];
     
+    //Heuristic 3 - Similarity measure
     //[self findNodesToMerge:layer first:&first_node second:&second_node];
     
+    
+    /*
     [first_node mergeWith: second_node];
     [self removeNode:second_node];
     [first_node setRelaxed:true];
+    */
+    
+    //Heuristic 3' - Similarity measure w/ similarity matrix
+    int** similarityMatrix = [self findSimilarityMatrix:layer];
+    
+    while (layer_size[layer]._val  > _relaxation_size) {
+        int best_similarity = similarityMatrix[0][1];
+        int first_node_index, second_node_index;
+        int best_first_node_index = 0, best_second_node_index = 1;
+        for (first_node_index = 0; first_node_index < layer_size[layer]._val-1; first_node_index++) {
+            for (second_node_index = first_node_index +1; second_node_index < layer_size[layer]._val; second_node_index++) {
+                if (similarityMatrix[first_node_index][second_node_index] < best_similarity) {
+                    best_first_node_index = first_node_index;
+                    best_second_node_index = second_node_index;
+                }
+            }
+        }
+        first_node = layers[layer][best_first_node_index];
+        second_node = layers[layer][best_second_node_index];
+        [first_node mergeWith: second_node];
+        [self removeNode:second_node];
+        [first_node setRelaxed:true];
+        
+        if (layer_size[layer]._val > _relaxation_size) {
+            CustomState* first_node_state = [layers[layer][first_node_index] getState];
+            
+            for (second_node_index = 0; second_node_index <= layer_size[layer]._val; second_node_index++) {
+                CustomState* second_node_state = [layers[layer][second_node_index] getState];
+                int newSimilarity = [first_node_state stateDifferential: second_node_state];
+                
+                if (second_node_index < best_first_node_index) {
+                    similarityMatrix[second_node_index][best_first_node_index] = newSimilarity;
+                } else {
+                    similarityMatrix[best_first_node_index][second_node_index] = newSimilarity;
+                }
+            }
+            
+            for (first_node_index = best_second_node_index; first_node_index < layer_size[layer]._val; first_node_index++) {
+                for (second_node_index = 0; second_node_index < layer_size[layer]._val; second_node_index++) {
+                    similarityMatrix[first_node_index][second_node_index] = similarityMatrix[first_node_index][second_node_index+1];
+                }
+            }
+            for (second_node_index = best_second_node_index; second_node_index < layer_size[layer]._val; second_node_index++) {
+                for (first_node_index = 0; first_node_index < layer_size[layer]._val; first_node_index++) {
+                    similarityMatrix[first_node_index][second_node_index] = similarityMatrix[first_node_index][second_node_index+1];
+                }
+            }
+        }
+    }
+    free(similarityMatrix);
+}
+
+-(int**) findSimilarityMatrix:(int)layer
+{
+    int ls = layer_size[layer]._val;
+    int** similarityMatrix = malloc(ls * sizeof(int*));
+    for (int i = 0; i < ls; i++) {
+        similarityMatrix[i] = malloc(ls * sizeof(int));
+        for (int j = 0; j < ls; j++) {
+            similarityMatrix[i][j] = INT_MAX;
+        }
+    }
+    
+    int first_node_index, second_node_index;
+    for (first_node_index = 0; first_node_index < ls-1; first_node_index++) {
+        CustomState* first_node_state = [layers[layer][first_node_index] getState];
+        for (second_node_index = first_node_index +1; second_node_index < ls; second_node_index++) {
+            CustomState* second_node_state = [layers[layer][second_node_index] getState];
+            int state_differential = [first_node_state stateDifferential: second_node_state];
+            similarityMatrix[first_node_index][second_node_index] = state_differential;
+        }
+    }
+    return similarityMatrix;
 }
 
 -(void) findNodesToMerge:(int)layer first:(Node**)first second:(Node**)second

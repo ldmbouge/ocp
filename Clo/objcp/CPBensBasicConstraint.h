@@ -212,7 +212,7 @@
 -(void) createRootAndSink;
 -(void) cleanLayer:(int)layer;
 -(void) buildNewLayerUnder:(int)layer;
--(void) createChildrenForNode:(Node*)parentNode;
+-(void) createChildrenForNode:(Node*)parentNode hashValues:(NSMutableDictionary*)hashValues;
 -(void) addPropagationsAndTrimValues;
 -(void) trimValuesFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;

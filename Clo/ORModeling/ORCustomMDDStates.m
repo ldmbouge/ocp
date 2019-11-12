@@ -308,14 +308,14 @@ static int StateSize;
     int differential = 0;
     id* other_state = [other state];
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        /*if (_differentialFunctions[stateIndex] != NULL) {
-         differential += _differentialFunctions[stateIndex](_state,other_state);
-         }*/
+        if (_differentialFunctions[stateIndex] != NULL) {
+            differential += [_differentialFunctions[stateIndex](_state,other_state) intValue];
+         }
         
         //differential += pow(_state[stateIndex] - other_state[stateIndex],2);
-        if (![_state[stateIndex] isEqual: other_state[stateIndex]]) {
-            differential++;
-        }
+        //if (![_state[stateIndex] isEqual: other_state[stateIndex]]) {
+        //    differential++;
+        //}
     }
     return differential;
 }
@@ -329,7 +329,14 @@ static int StateSize;
     return true;
 }
 
-
+-(NSUInteger) hash {
+    int prime = 31;
+    int hashValue = 1;
+    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
+        hashValue = hashValue * prime + [_state[stateIndex] hash];
+    }
+    return hashValue;
+}
 -(id*) state { return _state; }
 -(int) stateSize { return _stateSize; }
 -(DDClosure)arcExistsClosure { return _arcExists; }
