@@ -1405,19 +1405,19 @@
    if ([bound gt: _primalBound]){
       nbPrimalUpdate++;
       [_primalBound set: bound];
-      //branchAndBoundTime = [NSDate date];
-      //NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
+      branchAndBoundTime = [NSDate date];
+      NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
 }
 -(void) updateDualBound
 {
    id<ORRational>bound = [[ORRational alloc] init];
    [bound set: [_x max]];
-   if ([bound lt: _dualBound]){
+   if ([bound lt: _dualBound] && [bound gt: boundDiscardedBoxes]){
       nbDualUpdate++;
       [_dualBound set: bound];
-      //branchAndBoundTime = [NSDate date];
-      //NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+      branchAndBoundTime = [NSDate date];
+      NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
    }
 }
 
@@ -1426,8 +1426,8 @@
    if ([[newBound value] gt: _primalBound]){
       nbPrimalUpdate++;
       [_primalBound set: [newBound value]];
-      //branchAndBoundTime = [NSDate date];
-      //NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
+      branchAndBoundTime = [NSDate date];
+      NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
 }
 
@@ -1436,41 +1436,41 @@
       if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
          id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b lt: _dualBound]){
+         if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
             [_dualBound set: b];
             nbDualUpdate++;
-            //branchAndBoundTime = [NSDate date];
-            //NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+            branchAndBoundTime = [NSDate date];
+            NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
          }
          return ok;
       } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
          id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b lt: _dualBound]){
+         if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
             [_dualBound set: b];
             nbDualUpdate++;
-            //branchAndBoundTime = [NSDate date];
-            //NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+            branchAndBoundTime = [NSDate date];
+            NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
          }
          return ok;
       } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
          id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b lt: _dualBound]){
+         if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
             [_dualBound set: b];
             nbDualUpdate++;
-            //branchAndBoundTime = [NSDate date];
-            //NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+            branchAndBoundTime = [NSDate date];
+            NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
          }
          return ok;
       } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
          id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b lt: _dualBound]){
+         if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
             [_dualBound set: b];
             nbDualUpdate++;
-            //branchAndBoundTime = [NSDate date];
-            //NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+            branchAndBoundTime = [NSDate date];
+            NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
          }
       }
    return ORSuspend;

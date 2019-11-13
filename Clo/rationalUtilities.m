@@ -28,6 +28,7 @@ int limitCounter = 0;
 int nbConstraint = 0;
 int nbBoxDone = 0;
 int RUN_IMPROVE_GUESS = 0;
+bool newBox = TRUE;
 
 void exitfunc(int sig)
 {
@@ -1232,3 +1233,5 @@ void exitfunc(int sig)
    return z;
 }
 @end
+
+id<ORRational> boundDiscardedBoxes = NULL;

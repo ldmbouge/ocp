@@ -220,10 +220,10 @@
 -(void)exitTryLeft
 {
    NSCont* k = [NSCont takeContinuation];
+   NSLog(@"L: %d/%d", limitCounter, nbConstraint);
    if ([k nbCalls] == 0) {
       if(limitCounter < nbConstraint){
       [self makeAndRecordNode:k];
-      //}
       NSCont* back = _k;
       _k = NULL;
       [_tracer restoreCheckpoint:_cp inSolver:_engine model:_model];
@@ -231,7 +231,12 @@
       _cp = NULL;
       _k  = NULL;
       [back call];
-      }
+      }  else {
+         nbBoxDone++;
+         if([[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes])
+            [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
+         [k letgo];
+        }
    } else {
       [k letgo];
    }
@@ -239,12 +244,16 @@
 -(void)exitTryRight
 {
    NSCont* k = [NSCont takeContinuation];
+   NSLog(@"R: %d/%d", limitCounter, nbConstraint);
    if ([k nbCalls] == 0) {
       if(limitCounter < nbConstraint){
+         [self makeAndRecordNode:k];
          [self fail];
       } else {
-      [self makeAndRecordNode:k];
-      [self fail];
+         nbBoxDone++;
+         if([[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes])
+            [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
+         [self fail];
       }
    } else {
       [k letgo];
@@ -270,7 +279,6 @@ NSString * const ORStatus_toString_BB[] = {
 
 -(void) fail
 {
-   /* tightenDualBound in fail disabled - no need for of variable right now */
    id<ORSearchObjectiveFunction> of = (id)_engine.objective;
    do {
       if (_k != NULL) {
@@ -283,14 +291,13 @@ NSString * const ORStatus_toString_BB[] = {
       }
       
       ORBool isEmpty = [_buf empty];
-      //NSLog(@"%@", _buf);
       if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
          /* skip box if sup of error is less than primalBound */
          if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] &&
-            [[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]]){
+            ([[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]] ||
+             [boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]])){
             BBNode* nd = [_buf extractBest];
-            //NSLog(@"BUF: %d", [_buf size]);
             
             ORStatus status = [of tightenDualBound:bestKey.bound];
             if (status != ORFailure)
@@ -310,7 +317,9 @@ NSString * const ORStatus_toString_BB[] = {
                else [k letgo];
             }
          } else {
-            NSLog(@"EQUAL BOUND: %@ == %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
+            NSLog(@"EQUAL BOUND: %@ < %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
+            NSLog(@"           : %@ >= %@", [bestKey.bound rationalValue], [[_engine objective] primalBound]);
+            NSLog(@"           : %@ >= %@", boundDiscardedBoxes, [[_engine objective] primalBound]);
             return;
          }
       } else {

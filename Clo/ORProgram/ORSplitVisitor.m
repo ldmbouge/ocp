@@ -96,12 +96,18 @@
    assert(mid != NAN && mid <= xi.max && mid >= xi.min);
    [_program try: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ try x > %16.16e",[[_program explorer] nbChoices],xi,mid);
+      limitCounter = 0;
+      newBox = TRUE;
       [_program doubleGthen:(id<ORDoubleVar>)_variable with:mid];
+      newBox = FALSE;
       nbBoxGenerated++;
       boxCardinality = cardinalityDV(xi.min, xi.max);
    } alt: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ alt x <= %16.16e",[[_program explorer] nbChoices],xi,mid);
+      limitCounter = 0;
+      newBox = TRUE;
       [_program doubleLEqual:(id<ORDoubleVar>)_variable with:mid];
+      newBox = FALSE;
       nbBoxGenerated++;
       boxCardinality = cardinalityDV(xi.min, xi.max);
    }];

@@ -922,6 +922,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
 
 @implementation CPDoubleTernaryAdd {
    ORBool _limit;
+   ORBool _done;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x plus:(CPDoubleVarI*)y
 {
@@ -938,6 +939,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    _limit = TRUE;
+   _done = TRUE;
    nbConstraint++;
    return self;
 }
@@ -1008,6 +1010,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       eo = compute_eo_add_d(eo, x, y, z);
       changed |= eo.changed;
       
+      if(newBox && _done){
+         _limit = TRUE;
+         _done = FALSE;
+      }
+      
       if(_limit && (z.inf <= z.sup)){
          if(
             ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
@@ -1049,7 +1056,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
-   
+   _done = TRUE;
    if(gchanged){
       // Cause no propagation on eo is insured
       [_eo updateMin:(eo.low) for:NULL];
@@ -1116,6 +1123,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
 
 @implementation CPDoubleTernarySub {
    ORBool _limit;
+   ORBool _done;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1128,6 +1136,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    _limit = TRUE;
+   _done = TRUE;
    nbConstraint++;
    return self;
 }
@@ -1201,6 +1210,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       eo = compute_eo_sub_d(eo, x, y, z);
       changed |= eo.changed;
       
+      if(newBox && _done){
+         _limit = TRUE;
+         _done = FALSE;
+      }
+      
       if(_limit && (z.inf <= z.sup)){
          if(
             ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
@@ -1242,7 +1256,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
-   
+   _done = TRUE;
    if(gchanged){
       // Cause no propagation on eo is insured
       [_eo updateMin:(eo.low) for:NULL];
@@ -1307,6 +1321,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
 
 @implementation CPDoubleTernaryMult{
    ORBool _limit;
+   ORBool _done;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1319,6 +1334,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    _limit = TRUE;
+   _done = TRUE;
    nbConstraint++;
    return self;
 }
@@ -1388,6 +1404,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       eo = compute_eo_mul_d(eo, x, y, z);
       changed |= eo.changed;
       
+      if(newBox && _done){
+         _limit = TRUE;
+         _done = FALSE;
+      }
+      
       if(_limit && (z.inf <= z.sup)){
          if(
             ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
@@ -1449,7 +1470,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
-   
+   _done = TRUE;
    if(gchanged){
       // Cause no propagation on eo is insured
       [_eo updateMin:(eo.low) for:NULL];
@@ -1506,6 +1527,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
 
 @implementation CPDoubleTernaryDiv {
    ORBool _limit;
+   ORBool _done;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1518,6 +1540,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    _limit = TRUE;
+   _done = TRUE;
    nbConstraint++;
    return self;
 }
@@ -1592,6 +1615,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       eo = compute_eo_div_d(eo, x, y, z);
       changed |= eo.changed;
+      
+      if(newBox && _done){
+         _limit = TRUE;
+         _done = FALSE;
+      }
       
       if(_limit && (z.inf <= z.sup)){
          if(
@@ -1675,7 +1703,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
-   
+   _done = TRUE;
    if(gchanged){
       // Cause no propagation on eo is insured
       [_eo updateMin:(eo.low) for:NULL];

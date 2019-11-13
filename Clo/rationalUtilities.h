@@ -24,6 +24,7 @@ extern int limitCounter;
 extern int nbConstraint;
 extern int nbBoxDone;
 extern int RUN_IMPROVE_GUESS;
+extern bool newBox;
 
 extern void exitfunc(int sig);
 
@@ -265,3 +266,5 @@ static inline ORDouble next_power_of_two(ORDouble value, ORInt next) {
             return ldexp(1, exp-1);
     }
 }
+
+extern id<ORRational> boundDiscardedBoxes;

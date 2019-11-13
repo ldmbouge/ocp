@@ -2009,8 +2009,10 @@ onFailure: (ORInt2Void) onFailure
 {
    //signal(SIGKILL, exitfunc);
    //alarm(stoppingTime);
+   TRInt _index;
    
    branchAndBoundStart = [NSDate date];
+   boundDiscardedBoxes = [[[ORRational alloc] init] setNegInf];
 
    id<ORSelect> select = [ORFactory select: _engine // need to be out of inner loop to go through all possible variables
                                      range: RANGE(self,[x low],[x up])
@@ -2032,11 +2034,9 @@ onFailure: (ORInt2Void) onFailure
    id<ORSelect> guess_select = select;
    
    id<ORSolution> solution;
-   
+   assignTRInt(&_index, [select min].index, _trail);
    do {
       nbBoxExplored++;
-      limitCounter = 0;
-      //nbConstraint = 0;
       //branchAndBoundTime = [NSDate date];
       //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       
@@ -2167,18 +2167,18 @@ onFailure: (ORInt2Void) onFailure
                      /*** END: Attempt to improve the error ***/
                      if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) {
                         // And as updatePrimalBound does test whether the value is actually better or not
-                        // the testing it here is useless
+                        // testing it here is useless
                         printf("*** nb iter = %d\n", nbiter);
                         id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
                         [[_engine objective] tightenPrimalBound:objv];
                         solution = tmp_solution; // Keep it as a solution
-                        NSLog(@"#####");
-                        NSLog(@"[GuessError]");
-                        //                        for (id<ORVar> v in [_model variables]) {
-                        //                           if([v prettyname])
-                        //                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-                        //                        }
-                        NSLog(@"#####");
+//                        NSLog(@"#####");
+//                        NSLog(@"[GuessError]");
+//                        for (id<ORVar> v in [_model variables]) {
+//                           if([v prettyname])
+//                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+//                        }
+//                        NSLog(@"#####");
                         [_tracer popNode]; // need to restore initial state before going out of loop !
                         break;
                      }
@@ -2188,13 +2188,13 @@ onFailure: (ORInt2Void) onFailure
                         // the testing it here is useless
                         [[_engine objective] updatePrimalBound];
                         solution = [self captureSolution]; // Keep it as a solution
-                        //                        NSLog(@"#####");
-                        //                        NSLog(@"GuessError");
-                        //                        for (id<ORVar> v in [_model variables]) {
-                        //                           if([v prettyname])
-                        //                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-                        //                        }
-                        //                        NSLog(@"#####");
+//                        NSLog(@"#####");
+//                        NSLog(@"GuessError");
+//                        for (id<ORVar> v in [_model variables]) {
+//                           if([v prettyname])
+//                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+//                        }
+//                        NSLog(@"#####");
                         [_tracer popNode]; // need to restore initial state before going out of loop !
                         break;
                      }
@@ -2209,26 +2209,35 @@ onFailure: (ORInt2Void) onFailure
          
          /******************************/
          ORSelectorResult i = [select min]; //sélectionne la variable minimisant la mesure défini dans le select
+//         ORSelectorResult I = [select max];
+//         if(i.index == I.index){
+//            b(i.index,x);
+//         } else {
+//            b((((_index._val - i.index) % (I.index - i.index)) + i.index), x);
+//            assignTRInt(&_index, _index._val+1, _trail);
+//         }
+
          /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
-            b(i.index,x);
+         b(i.index,x);
+         
          //branchAndBoundTime = [NSDate date];
          //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       }
       //NSLog(@"%d -- %d/%d", nbBoxDone, nbBoxExplored, nbBoxGenerated);
-   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);// && nbBoxDone < nbBoxGenerated);
+   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
    // Had an issue while using the guess: the loop was going on while the two bounds have reached the same value
    // Thus, it seems we need to force the end of this loop as soon as the condition is met
    // Is this the right way to do it ?
    //NSLog(@"%@", solution);
    // We migth got out from a leaf that is not a an optimum. Have to check whether this an actual end or not
-   if (([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualBound] rationalValue]])) {
+   //if (([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualBound] rationalValue]])) {
       NSLog(@"=========================");
       for (id<ORVar> v in [_model variables]) {
          if([v prettyname])
             NSLog(@"%@: %@", [v prettyname], [solution value:v]);
       }
       NSLog(@"=========================");
-   }
+   //}
 }
 
 //-------------------------------------------------
@@ -3219,6 +3228,7 @@ onFailure: (ORInt2Void) onFailure
 //split in 2 intervals Once
 -(void) floatSplit:(ORUInt) i  withVars:(id<ORDisabledVarArray>) x
 {
+   //NSLog(@"CHOOSE: %@", [x[i] prettyname]);
    id<CPVar> xi = _gamma[getId(x[i])];
    id<CPVisitor> splitVisit = [[ORSplitVisitor alloc] initWithProgram:self variable:x[i]];
    [self trackObject:splitVisit];

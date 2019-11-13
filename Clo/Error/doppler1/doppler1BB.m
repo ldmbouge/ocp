@@ -66,8 +66,8 @@ void doppler1_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> u = [ORFactory doubleVar:mdl low:-100.0 up:100.0 elow:zero eup:zero name:@"u"];
       id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:20.0 up:20000.0 elow:zero eup:zero name:@"v"];
       id<ORDoubleVar> t = [ORFactory doubleVar:mdl low:-30.0 up:50.0 elow:zero eup:zero name:@"t"];
-      id<ORDoubleVar> t1 = [ORFactory doubleVar:mdl];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      id<ORDoubleVar> t1 = [ORFactory doubleVar:mdl name:@"t1"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
