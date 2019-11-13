@@ -182,6 +182,11 @@ static inline double cardinality(CPFloatVarI* x)
    return cardinalityV(x.min, x.max);
 }
 
+static inline bool isInfinity(CPFloatVarI* x)
+{
+   return x.min == -infinityf() && x.max == infinityf();
+}
+
 static inline float_interval makeFloatInterval(float min, float max)
 {
    return (float_interval){min,max};

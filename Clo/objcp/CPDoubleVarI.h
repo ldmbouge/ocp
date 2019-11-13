@@ -151,6 +151,10 @@ static inline long double cardinalityD(CPDoubleVarI* x)
 {
    return cardinalityDV(x.min, x.max);
 }
+static inline bool isInfinityD(CPDoubleVarI* x)
+{
+   return x.min == -infinity() && x.max == infinity();
+}
 static inline bool isDisjointWithDV(double xmin,double xmax,double ymin, double ymax)
 {
    return (xmax < ymin) || (ymax < xmin);

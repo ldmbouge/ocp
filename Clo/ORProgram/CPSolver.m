@@ -160,7 +160,8 @@
    ORBool                  _withParent;
    ORBool                  _middle;
    ORInt                  _level;
-   ORInt                 _unique;
+   ORBool                 _pause;
+   ORInt                  _unique;
    ORFloat                _split3Bpercent;
    ORInt                  _searchNBFloats;
    SEL                    _subcut;
@@ -201,6 +202,7 @@
    _oneSol = YES;
    _level = 100;
    _middle = YES;
+   _pause = NO;
    _withParent = NO;
    _absRateLimitModelVars = 0.3;
    _absTRateLimitModelVars = 0.8;
@@ -411,6 +413,10 @@
 -(void) setMiddle:(ORBool) b
 {
    _middle = b;
+}
+-(void) setPause:(ORBool) b
+{
+   _pause = b;
 }
 -(void) setWithRewriting:(ORBool) p
 {
@@ -1630,6 +1636,10 @@
       ORInt index = [x parent:i.index];
       id<CPVar> cx = _gamma[x[index].getId];
       LOG(_level,2,@"selected variables: %@ %@",([x[index] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[x[index] prettyname],[cx domain]);
+      if(_pause) {
+         printf("Press a key to continue...\n");
+         scanf("c");
+      }
       b(index,x);
    }
 }
@@ -1771,8 +1781,8 @@
 -(void) maxOccDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [self searchWithCriteria:x criteria:^ORDouble(ORInt i) {
-      if([_model occurences:x[i]] == 1)
-         return [self density:x[i]];
+      return [self density:x[i]];
+   } tiebreak:^ORDouble(ORInt i) {
       return [_model occurences:x[i]];
    } do:b];
 }
@@ -3027,10 +3037,20 @@
 {
    id<OROSet> cstr = nil;
    id<CPVar> cx = nil;
+   if (_level >0) {
+      NSLog(@"-----------");
+      NSLog(@"FULL-RESTRICT");
+      NSLog(@"-----------");
+   }
    for(id<ORVar> v in vs){
       ORBool conform = YES;
       cx = _gamma[getId(v)];
       cstr = [cx constraints];
+      if([cstr count] > 0 && _level){
+         NSLog(@"\n%@",v);
+         for(id c in cstr)
+            printf("%s\n",[[c  description] UTF8String]);
+      }
       for(id<CPConstraint> c in cstr){
          if([c conformsToProtocol:@protocol(CPArithmConstraint)] && [(id<CPArithmConstraint>) c result] == cx){
             conform = NO;
@@ -3039,6 +3059,8 @@
       }
       if(conform) [res addObject:v];
    }
+   if (_level)
+      NSLog(@"-----------");
 }
 -(ORInt)  regret:(id<ORIntVar>)x
 {

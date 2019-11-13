@@ -1386,25 +1386,28 @@
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatAssignC:_x to:_c] engine:[_x engine]];
       }else{
-         if ([_x bound]) {
-            [_x bind:_c];
-            assignTRInt(&_active, NO, _trail);
+         if ([_x bound]){
+            if(is_eqf([_x min],_c)) failNow();
          }else{
-            if(_c == [_x min]){
+            if(is_eqf([_x min],_c)){
                [_x updateMin:fp_next_float(_c)];
                assignTRInt(&_active, NO, _trail);
-            }else if(_c == [_x max]){
+            }else if(is_eqf([_x max],_c)){
                [_x updateMax:fp_previous_float(_c)];
                assignTRInt(&_active, NO, _trail);
             }
          }
       }
    }else{
-      if (([_x bound] && [_x min] == _c) && (_c != 0.0f || (is_plus_zerof([_x min]) && is_plus_zerof(_c)) ||
-                                                                 (is_minus_zerof([_x min]) && is_minus_zerof(_c))))
-         [_b bind:YES];
-      else if ([_x max] < _c || _c < [_x min] || (is_minus_zerof(_c) && is_plus_zerof([_x min])) || (is_minus_zerof([_x max]) && is_plus_zerof(_c)))
-         [_b bind:NO];
+      if ([_x bound]) {
+         [_b bind:is_eqf([_x min],_c)];
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         if([_x min] > _c || [_x max] < _c){
+            [_b bind:NO];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }
    }
    if([_b bound] && [_x bound]) assignTRInt(&_active, 0, _trail);
 }
@@ -1464,38 +1467,32 @@
       }else{
          if ([_x bound]) {
             if([_y bound]){
-               if (([_x min] == [_y min] && [_x min] != 0.0f) ||
-                   (is_plus_zerof([_x min]) && is_plus_zerof([_y min])) ||
-                   (is_minus_zerof([_x min]) && is_minus_zerof([_y min])))
+               if (is_eqf([_x min],[_y min]))
                   failNow();
-               else{
-                  if([_x min] == [_y min]){
+            }else{
+                  if(is_eqf([_x min],[_y min])){
                      [_y updateMin:fp_next_float([_y min])];
                      assignTRInt(&_active, NO, _trail);
                   }
-                  if([_x min] == [_y max]) {
+                  if(is_eqf([_x min],[_y max])) {
                      [_y updateMax:fp_previous_float([_y max])];
                      assignTRInt(&_active, NO, _trail);
                   }
                }
-            }
          }else  if([_y bound]){
-            if([_x min] == [_y min]){
+            if(is_eqf([_x min],[_y min])){
                [_x updateMin:fp_next_float([_x min])];
                assignTRInt(&_active, NO, _trail);
             }
-            if([_x max] == [_y min]){
+            if(is_eqf([_x max],[_y min])){
                [_x updateMax:fp_previous_float([_x max])];
                assignTRInt(&_active, NO, _trail);
             }
          }
       }
    }else{
-      if (([_x bound] && [_y bound] && [_x min] == [_y min]) && ([_x min] != 0.0f || (is_plus_zerof([_x min]) && is_plus_zerof([_y min])) ||
-                                                                 (is_minus_zerof([_x min]) && is_minus_zerof([_y min]))))
-         [_b bind:YES];
-      else if ([_x max] < [_y min] || [_y max] < [_x min] || (is_minus_zerof([_y max]) && is_plus_zerof([_x min])) || (is_minus_zerof([_x max]) && is_plus_zerof([_x min])))
-         [_b bind:NO];
+      if ([_x bound] && [_y bound])
+         [_b bind:is_eqf([_x min], [_y min])];
    }
    if([_b bound] && [_x bound] && [_y bound]) assignTRInt(&_active, 0, _trail);
 }

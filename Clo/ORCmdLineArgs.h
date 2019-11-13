@@ -121,6 +121,7 @@ struct ORResult {
 @property (nonatomic,readonly) ORBool restricted;
 @property (nonatomic,readonly) ORBool fullRestrict;
 @property (nonatomic,readonly) ORBool middle;
+@property (nonatomic,readonly) ORBool paused;
 @property (nonatomic,readonly) ORBool printSolution;
 @property (nonatomic,readonly) ORBool printModel;
 @property (nonatomic,readonly) ORBool noSearch;

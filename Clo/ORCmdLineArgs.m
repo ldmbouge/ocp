@@ -72,6 +72,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize restricted;
 @synthesize fullRestrict;
 @synthesize middle;
+@synthesize paused;
 @synthesize printSolution;
 @synthesize printModel;
 @synthesize noSearch;
@@ -184,6 +185,7 @@ static enum ValHeuristic valIndex[] =
    _nbDMerged = 0;
    occDetails = NO;
    middle = YES;
+   paused = NO;
    printSolution = NO;
    printModel = NO;
    noSearch = NO;
@@ -257,6 +259,8 @@ static enum ValHeuristic valIndex[] =
           fullRestrict = YES;
       else if (strncmp(argv[k],"-no-middle",9)==0)
          middle = NO;
+      else if (strncmp(argv[k],"-debug-pause",12)==0)
+         paused = YES;
       else if (strncmp(argv[k],"-print-solution",15)==0)
          printSolution = YES;
       else if (strncmp(argv[k],"-print-model",12)==0)
@@ -505,6 +509,7 @@ static enum ValHeuristic valIndex[] =
          [(CPCoreSolver*)p setWithRewriting:(withSRewriting || withDRewriting)];
          [(CPCoreSolver*)p setLevel:level];
          [(CPCoreSolver*)p setMiddle:middle];
+         [(CPCoreSolver*)p setPause:paused];
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
          if(occRate >= 0) [(CPCoreSolver*)p setOccRate:occRate];
@@ -614,7 +619,7 @@ static enum ValHeuristic valIndex[] =
 -(id<ORDisabledVarArray>) makeDisabledArray:(id<CPProgram>)p from:(id<ORVarArray>)vs
 {
    id<ORDisabledVarArray> vars;
-   if (fullRestrict){
+   if (fullRestrict && [[p engine] nbPropagation]){
       NSMutableArray* nvs = [[NSMutableArray alloc] initWithCapacity:[vs count]];
       [p collectInputVar:vs res:nvs];
       vs = (id<ORVarArray>)[ORFactory idArray:p array:nvs];

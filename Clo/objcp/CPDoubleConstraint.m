@@ -21,10 +21,10 @@
 
 //unary minus constraint
 @implementation CPDoubleUnaryMinus{
-int _precision;
-int _rounding;
-double_interval _xi;
-double_interval _yi;
+   int _precision;
+   int _rounding;
+   double_interval _xi;
+   double_interval _yi;
    ORBool _rewrite;
 }
 -(id) init:(CPDoubleVarI*)x eqm:(CPDoubleVarI*)y  rewrite:(ORBool)rewrite
@@ -789,16 +789,16 @@ double_interval _yi;
    if (![_x bound]) {
       [_x whenChangeBoundsPropagate:self];
       if(_rewriting)
-      [_x whenChangeBoundsDo:^{
-         [self propagateFixPoint];
-      } priority:LOWEST_PRIO onBehalf:self];
+         [_x whenChangeBoundsDo:^{
+            [self propagateFixPoint];
+         } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_y bound]) {
       [_y whenChangeBoundsPropagate:self];
       if(_rewriting)
-      [_y whenChangeBoundsDo:^{
-         [self propagateFixPoint];
-      } priority:LOWEST_PRIO onBehalf:self];
+         [_y whenChangeBoundsDo:^{
+            [self propagateFixPoint];
+         } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
 }
@@ -856,11 +856,11 @@ double_interval _yi;
 {
    if([self nbUVars]){
       if(absorbD(_x,_y)){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory doubleEqual:_z to:_x rewrite:YES] engine:[_x engine]];
       }else if(absorbD(_y,_x)){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory doubleEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
@@ -932,16 +932,16 @@ double_interval _yi;
    if (![_x bound]) {
       [_x whenChangeBoundsPropagate:self];
       if(_rewriting)
-      [_x whenChangeBoundsDo:^{
-         [self propagateFixPoint];
-      } priority:LOWEST_PRIO onBehalf:self];
+         [_x whenChangeBoundsDo:^{
+            [self propagateFixPoint];
+         } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_y bound]) {
       [_y whenChangeBoundsPropagate:self];
       if(_rewriting)
-      [_y whenChangeBoundsDo:^{
-         [self propagateFixPoint];
-      } priority:LOWEST_PRIO onBehalf:self];
+         [_y whenChangeBoundsDo:^{
+            [self propagateFixPoint];
+         } priority:LOWEST_PRIO onBehalf:self];
    }
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
    
@@ -1000,11 +1000,11 @@ double_interval _yi;
 {
    if([self nbUVars]){
       if(absorbD(_x,_y)){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory doubleEqual:_z to:_x rewrite:YES] engine:[_x engine]];
       }else if(absorbD(_y,_x)){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory doubleEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
@@ -1241,7 +1241,7 @@ double_interval _yi;
          assignTRInt(&_active, NO, _trail);
          return;
       }else  if ([_y bound] || [_y min] == [_y max]) {     // TRUE <=> (x != c)
-        [self addConstraint: [CPFactory doubleNEqualc:_x to:[_y min]] engine:[_x engine]];        // Rewrite as x==y  (addInternal can throw)
+         [self addConstraint: [CPFactory doubleNEqualc:_x to:[_y min]] engine:[_x engine]];        // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }
@@ -1400,25 +1400,28 @@ double_interval _yi;
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory doubleAssignC:_x to:_c] engine:[_x engine]];
       }else{
-         if ([_x bound]) {
-            [_x bind:_c];
-            assignTRInt(&_active, NO, _trail);
+         if ([_x bound]){
+            if(is_eq([_x min],_c)) failNow();
          }else{
-            if(_c == [_x min]){
+            if(is_eq([_x min],_c)){
                [_x updateMin:fp_next_double(_c)];
                assignTRInt(&_active, NO, _trail);
-            }else if(_c == [_x max]){
+            }else if(is_eq([_x max],_c)){
                [_x updateMax:fp_previous_double(_c)];
                assignTRInt(&_active, NO, _trail);
             }
          }
       }
    }else{
-      if (([_x bound] && [_x min] == _c) && (_c != 0.0 || (is_plus_zero([_x min]) && is_plus_zero(_c)) ||
-                                             (is_minus_zero([_x min]) && is_minus_zero(_c))))
-         [_b bind:YES];
-      else if ([_x max] < _c || _c < [_x min] || (is_minus_zero(_c) && is_plus_zero([_x min])) || (is_minus_zero([_x max]) && is_plus_zero(_c)))
-         [_b bind:NO];
+      if ([_x bound]) {
+         [_b bind:is_eq([_x min],_c)];
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         if([_x min] > _c || [_x max] < _c){
+            [_b bind:NO];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }
    }
    if([_b bound] && [_x bound]) assignTRInt(&_active, 0, _trail);
 }
@@ -1476,38 +1479,32 @@ double_interval _yi;
       }else{
          if ([_x bound]) {
             if([_y bound]){
-               if (([_x min] == [_y min] && [_x min] != 0.0) ||
-                   (is_plus_zero([_x min]) && is_plus_zero([_y min])) ||
-                   (is_minus_zero([_x min]) && is_minus_zero([_y min])))
+               if (is_eq([_x min],[_y min]))
                   failNow();
-               else{
-                  if([_x min] == [_y min]){
-                     [_y updateMin:fp_next_double([_y min])];
-                     assignTRInt(&_active, NO, _trail);
-                  }
-                  if([_x min] == [_y max]) {
-                     [_y updateMax:fp_previous_double([_y max])];
-                     assignTRInt(&_active, NO, _trail);
-                  }
+            }else{
+               if(is_eq([_x min],[_y min])){
+                  [_y updateMin:fp_next_double([_y min])];
+                  assignTRInt(&_active, NO, _trail);
+               }
+               if(is_eq([_x min],[_y max])) {
+                  [_y updateMax:fp_previous_double([_y max])];
+                  assignTRInt(&_active, NO, _trail);
                }
             }
          }else  if([_y bound]){
-            if([_x min] == [_y min]){
+            if(is_eq([_x min],[_y min])){
                [_x updateMin:fp_next_double([_x min])];
                assignTRInt(&_active, NO, _trail);
             }
-            if([_x max] == [_y min]){
+            if(is_eq([_x max],[_y min])){
                [_x updateMax:fp_previous_double([_x max])];
                assignTRInt(&_active, NO, _trail);
             }
          }
       }
    }else{
-      if (([_x bound] && [_y bound] && [_x min] == [_y min]) && ([_x min] != 0.0 || (is_plus_zero([_x min]) && is_plus_zero([_y min])) ||
-                                                                 (is_minus_zero([_x min]) && is_minus_zero([_y min]))))
-         [_b bind:YES];
-      else if ([_x max] < [_y min] || [_y max] < [_x min] || (is_minus_zero([_y max]) && is_plus_zero([_x min])) || (is_minus_zero([_x max]) && is_plus_zero([_x min])))
-         [_b bind:NO];
+      if ([_x bound] && [_y bound])
+         [_b bind:is_eq([_x min], [_y min])];
    }
    if([_b bound] && [_x bound] && [_y bound]) assignTRInt(&_active, 0, _trail);
 }
@@ -2451,7 +2448,7 @@ double_interval _yi;
             assignTRInt(&_active, NO, _trail);
          }else if(is_infinity([_x min]))
             [_x updateMin:fp_next_double(-infinity())];
-      
+         
          if([_x max] >= -maxdenormal() && [_x max] <= maxdenormal()){
             [_x updateMax:-minnormal()];
             assignTRInt(&_active, NO, _trail);
@@ -2472,7 +2469,7 @@ double_interval _yi;
       }
    }
 }
-   
+
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];

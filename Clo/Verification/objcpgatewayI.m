@@ -436,8 +436,8 @@ static id<OBJCPGateway> objcpgw;
 {
    [self addConstraints];
    @autoreleasepool {
-      printf("%s",[[_model description] UTF8String]);
-//      NSLog(@"%@",_model);
+      if([_options printModel])
+         printf("%s",[[_model description] UTF8String]);
       id<LogicHandler> lh ;
       @try {
          lh = [OBJCPGatewayI logicToHandler:_logic withModel:_model withOptions:_options withDeclaration:_declarations];
