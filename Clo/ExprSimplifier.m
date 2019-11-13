@@ -313,7 +313,7 @@
       if(_g == nil)
          [((id<ORModel>)[e tracker]) add:[alpha eq:e]];
       else
-         [_g add:[alpha eq:e]];
+         [_g add:[alpha set:e]];
    }
    return alpha;
 }
