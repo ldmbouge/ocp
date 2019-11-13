@@ -2565,9 +2565,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) reifyAssign:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
 {
    if ([left isConstant]) {
-      [self reifyEQc:_model boolean:rv other:right constant:left];
+      [self reifyAssignc:_model boolean:rv other:right constant:left];
    } else if ([right isConstant]) {
-      [self reifyEQc:_model boolean:rv other:left constant:right];
+      [self reifyAssignc:_model boolean:rv other:left constant:right];
    }else{
       if ([left isVariable] && [right isVariable] && left.getId == right.getId)
          [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
