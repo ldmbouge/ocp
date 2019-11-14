@@ -527,6 +527,7 @@ PORTABLE_END
 #define And(track,P,R,E)      [ORFactory land:track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 
 #define LOG(ls,l,fmt, ...)    if(l<=ls) NSLog(fmt, ##__VA_ARGS__);
+#define LOGSTRICT(ls,l,fmt, ...)    if(l==ls) NSLog(fmt, ##__VA_ARGS__);
 #define ONLY_DEBUG(ls,l,B)    if(l<=ls) B;
 
 // [ldm] To check. Not clear why there is such a macro.

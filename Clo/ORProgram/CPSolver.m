@@ -1610,6 +1610,13 @@
    __block ORBool goon = YES;
    while(goon) {
       LOG(_level,2,@"State before selection");
+      if(_level > 2){
+         id<ORVarArray> vx = [_model FPVars];
+         for(ORInt i = 0; i < [vx count]; i++){
+            id<CPVar> cx = (id<CPVar>)_gamma[getId(vx[i])];
+         LOG(_level,3,@"%@ %@ bounded:%s search:%s dens=%16.16Le ",([vx[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[vx[i] prettyname],[cx domain],([cx bound])?"YES":"NO",([x contains:vx[i]])?"YES":"NO",[self density:vx[i]]);
+         }  
+      }
       ORSelectorResult i = s();
       if (!i.found){
          if(![x hasDisabled]){
@@ -1667,7 +1674,7 @@
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
                                      id<CPVar> v = _gamma[x[i].getId];
-                                     LOG(_level,2,@"%@ <p:%@> (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e dens=%16.16Le ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],([x[[x parent:i]] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[[x parent:i]] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:[x parent:i]])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity],[self density:x[i]]);
+                                     LOGSTRICT(_level,2,@"%@ <p:%@> (var<%d>) %@ bounded:%s fixed:%s occ=%16.16e abs=%16.16e dens=%16.16Le ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],([x[[x parent:i]] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[[x parent:i]] prettyname],[v getId],[v domain],([v bound])?"YES":"NO",([x isDisabled:[x parent:i]])?"YES":"NO",[_model occurences:x[i]],[abs[i] quantity],[self density:x[i]]);
                                      return ![v bound] && [x isEnabled:i];
                                   }
                                  orderedBy: c
