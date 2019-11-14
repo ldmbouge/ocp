@@ -139,7 +139,7 @@ PORTABLE_BEGIN
 -(ORUInt) enableFirst;
 -(ORBool) isEnabled:(ORUInt) index;
 -(ORBool) isDisabled:(ORUInt) index;
--(ORBool) contains:(id<ORFloatVar>) v;
+-(ORBool) contains:(id<ORVar>) v;
 -(ORBool) isInitial:(ORUInt) index;
 -(ORBool) isFullyDisabled;
 -(ORBool) hasDisabled;
