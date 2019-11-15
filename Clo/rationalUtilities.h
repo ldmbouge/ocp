@@ -9,10 +9,15 @@
 #include "gmp.h"
 #include <stdlib.h>
 #include <mpfr.h>
-
 #import <ORFoundation/ORObject.h>
+
 typedef mpq_t rational_t;
 typedef mpq_ptr rational_ptr;
+
+typedef struct {
+   int    _val;   // TRInt should be a 32-bit wide trailable signed integer
+   ORUInt _mgc;
+} TRInt;
 
 extern int nbBoxGenerated;
 extern int nbBoxExplored;
@@ -20,7 +25,7 @@ extern int stoppingTime;
 extern NSDate *branchAndBoundStart;
 extern NSDate *branchAndBoundTime;
 extern double boxCardinality;
-extern int limitCounter;
+extern TRInt limitCounter;
 extern int nbConstraint;
 extern int nbBoxDone;
 extern int RUN_IMPROVE_GUESS;

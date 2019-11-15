@@ -45,10 +45,10 @@
 -(void)reload:(id<ORMemoryTrail>)t;
 @end
 
-typedef struct {
+/*typedef struct {
    int    _val;   // TRInt should be a 32-bit wide trailable signed integer
    ORUInt _mgc;
-} TRInt;
+} TRInt;*/
 
 typedef struct {
    unsigned  _val;   // TRUInt should be a 32-bit wide trailable unsigned integer

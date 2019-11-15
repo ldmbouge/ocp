@@ -2007,9 +2007,10 @@ onFailure: (ORInt2Void) onFailure
 
 -(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
-   //signal(SIGKILL, exitfunc);
-   //alarm(stoppingTime);
    TRInt _index;
+   TRInt limitCounter;
+   
+   assignTRInt(&limitCounter, 0, _trail);
    
    branchAndBoundStart = [NSDate date];
    boundDiscardedBoxes = [[[ORRational alloc] init] setNegInf];
@@ -2022,9 +2023,9 @@ onFailure: (ORInt2Void) onFailure
       return ![v bound] && [v isInputVar];
    }
                                  orderedBy:
-//                                                    ^ORDouble(ORInt i) {
-//                                return (ORDouble)i;
-//                             }
+//                          ^ORDouble(ORInt i) {
+//      return (ORDouble)i;
+//   }
                           ^ORDouble(ORInt i) {
       return [self density:x[i]];
    }
@@ -2042,17 +2043,6 @@ onFailure: (ORInt2Void) onFailure
       
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
       [[_engine objective] updateDualBound];
-      
-//      if(limitCounter >= nbConstraint){
-//         nbBoxDone++;
-//      }
-      
-      //      for (id<ORVar> v in [_model variables]) {
-      //         if([v prettyname]){
-      //            NSLog(@"BX %@: %@ (%f)", [v prettyname], _gamma[getId(v)], [self cardinalityD:v]);
-      //         }
-      //      }
-      //NSLog(@"LOCAL: %@", _gamma[getId(ez)]);
       
       ORBool isBound = true;
       id<CPDoubleVar> xc;

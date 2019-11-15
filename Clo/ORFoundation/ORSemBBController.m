@@ -220,9 +220,8 @@
 -(void)exitTryLeft
 {
    NSCont* k = [NSCont takeContinuation];
-   NSLog(@"L: %d/%d", limitCounter, nbConstraint);
    if ([k nbCalls] == 0) {
-      if(limitCounter < nbConstraint){
+      if(limitCounter._val < nbConstraint){
       [self makeAndRecordNode:k];
       NSCont* back = _k;
       _k = NULL;
@@ -244,9 +243,8 @@
 -(void)exitTryRight
 {
    NSCont* k = [NSCont takeContinuation];
-   NSLog(@"R: %d/%d", limitCounter, nbConstraint);
    if ([k nbCalls] == 0) {
-      if(limitCounter < nbConstraint){
+      if(limitCounter._val < nbConstraint){
          [self makeAndRecordNode:k];
          [self fail];
       } else {

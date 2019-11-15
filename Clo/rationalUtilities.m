@@ -24,7 +24,7 @@ int stoppingTime = 10;
 NSDate *branchAndBoundStart = NULL;
 NSDate *branchAndBoundTime = NULL;
 double boxCardinality = -1;
-int limitCounter = 0;
+TRInt limitCounter;
 int nbConstraint = 0;
 int nbBoxDone = 0;
 int RUN_IMPROVE_GUESS = 0;
