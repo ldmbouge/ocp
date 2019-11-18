@@ -153,6 +153,10 @@
 {
    return [ORFactory elt: _tracker intArray: self index: idx];
 }
+-(id<ORExpr>)atIndex:(id<ORExpr>)idx
+{
+   return [ORFactory arrayIndex:_tracker array:self indexExpr: idx];
+}
 -(ORInt) low
 {
    return _low;

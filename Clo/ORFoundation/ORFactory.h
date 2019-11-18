@@ -214,6 +214,9 @@ PORTABLE_BEGIN
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intVarMatrix: (id<ORIntVarMatrix>) m elt:(id<ORExpr>) e0 elt:(id<ORExpr>)e1;
 +(id<ORExpr>) elt: (id<ORTracker>) tracker doubleArray: (id<ORDoubleArray>) a index: (id<ORExpr>) index;
 
++(id<ORExpr>) arrayIndex: (id<ORTracker>) tracker array: (id<ORIntArray>) a indexExpr: (id<ORExpr>) index;
++(id<ORExpr>) dictionaryValue: (id<ORTracker>) tracker dictionary: (NSDictionary*)dict key: (id<ORExpr>)key;
+
 +(id<ORExpr>) contains:(id<ORExpr>) value inSet:(id<ORIntSet>)set;
 +(id<ORExpr>) contains:(id<ORExpr>) value inExpr:(id<ORExpr>)set;
 +(id<ORExpr>) setUnion:(id<ORExpr>)left and:(id<ORExpr>)right;

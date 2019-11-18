@@ -18,13 +18,17 @@
 {
     _currentString = [[NSMutableString alloc] init];
     _currentGetStates = [[NSMutableArray alloc] init];
-    [first visit:self];
+    if (first != NULL) {
+        [first visit:self];
+    }
     _firstString = [_currentString copy];
     _firstGetStates = [_currentGetStates copy];
     
     _currentString = [[NSMutableString alloc] init];
     _currentGetStates = [[NSMutableArray alloc] init];
-    [second visit:self];
+    if (second != NULL) {
+        [second visit:self];
+    }
     _secondString = [_currentString copy];
     _secondGetStates = [_currentGetStates copy];
     
@@ -216,6 +220,22 @@
     [[e array] visit: self];
     [_currentString appendString:@","];
     [[e index] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprIntArrayIndexI:(ORExprIntArrayIndexI*)e
+{
+    [_currentString appendString:@"IntArrayIndex("];
+    [_currentString appendString:[[e array] description]];
+    [_currentString appendString:@","];
+    [[e index] visit: self];
+    [_currentString appendString:@")"];
+}
+-(void) visitExprDictionaryValueI:(ORExprDictionaryValueI*)e
+{
+    [_currentString appendString:@"DictionaryValue("];
+    [_currentString appendString:[[e dict] description]];
+    [_currentString appendString:@","];
+    [[e key] visit: self];
     [_currentString appendString:@")"];
 }
 -(void) visitExprAppendToArrayI:(ORExprBinaryI*)e
@@ -485,6 +505,14 @@
     [[e array] visit: self];
     [[e index] visit: self];
 }
+-(void) visitExprIntArrayIndexI:(ORExprIntArrayIndexI*)e
+{
+    [[e index] visit: self];
+}
+-(void) visitExprDictionaryValueI:(ORExprDictionaryValueI*)e
+{
+    [[e key] visit: self];
+}
 -(void) visitExprAppendToArrayI:(ORExprBinaryI*)e
 {
     [[e left] visit: self];
@@ -611,8 +639,11 @@
 }
 -(id<ORExpr>) updatedSpecs:(id<ORExpr>)e
 {
-    [e visit: self];
-    return current;
+    if (e != NULL) {
+        [e visit: self];
+        return current;
+    }
+    return NULL;
 }
 -(id<ORExpr>) recursiveVisitor:(id<ORExpr>)e
 {
@@ -747,6 +778,18 @@
     id<ORExpr> array = [self recursiveVisitor:[e array]];
     id<ORExpr> index = [self recursiveVisitor:[e index]];
     current = [array arrayIndex:index track:[e tracker]];
+}
+-(void) visitExprIntArrayIndexI:(ORExprIntArrayIndexI*)e
+{
+    id<ORIntArray> array = [e array];
+    id<ORExpr> index = [self recursiveVisitor:[e index]];
+    current = [array atIndex:index];
+}
+-(void) visitExprDictionaryValueI:(ORExprDictionaryValueI*)e
+{
+    NSDictionary* dict = [e dict];
+    id<ORExpr> key = [self recursiveVisitor:[e key]];
+    current = [ORFactory dictionaryValue:[e tracker] dictionary:dict key:key];
 }
 -(void) visitExprAppendToArrayI:(ORExprBinaryI*)e
 {
@@ -1178,6 +1221,14 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprSetExprContainsI: visit method not defined"];
 }
+-(void) visitExprDictionaryValueI:(ORExprDictionaryValueI*)e
+{
+    NSDictionary* dict = [e dict];
+    DDClosure key = [self recursiveVisitor:[e key]];
+    current = [^(id* state, ORInt variable, ORInt value) {
+        return [dict objectForKey:key(state,variable,value)];
+    } copy];
+}
 @end
 
 @implementation ORDDMergeClosureGenerator
@@ -1188,8 +1239,11 @@
 
 -(DDMergeClosure) computeClosure:(id<ORExpr>)e
 {
-    [e visit: self];
-    return current;
+    if (e != NULL) {
+        [e visit: self];
+        return current;
+    }
+    return NULL;
 }
 
 -(DDMergeClosure) recursiveVisitor:(id<ORExpr>)e

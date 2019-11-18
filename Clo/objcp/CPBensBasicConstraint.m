@@ -33,7 +33,7 @@
     _isSource = false;
     
     _objectiveValues = NULL;
-    _isRelaxed = false;
+    _isRelaxed = makeTRInt(_trail, 0);
     /*
     _longestPath = makeTRInt(_trail, -32768);
     _longestPathParents = malloc((maxParents) * sizeof(Node*));
@@ -60,7 +60,7 @@
         _children[child] = makeTRId(_trail, nil);
     }
     
-    _state = state;
+    _state = makeTRId(_trail, state);
     
     _numChildren = makeTRInt(_trail, 0);
     _maxNumParents = 1;
@@ -72,7 +72,7 @@
     
     _childEdgeWeights = NULL;
     _objectiveValues = NULL;
-    _isRelaxed = false;
+    _isRelaxed = makeTRInt(_trail, 0);
     return self;
 }
 -(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues
@@ -94,7 +94,7 @@
     
     _reverseLongestPath = makeTRInt(_trail, 0);
     _reverseShortestPath = makeTRInt(_trail, 0);
-    _isRelaxed = false;
+    _isRelaxed = makeTRInt(_trail, 0);
     return self;
 }
 -(void) dealloc {
@@ -384,7 +384,6 @@
         if ((Node*)_parents[parentIndex] == parent) {
             assignTRInt(&_numParents,_numParents._val-1,_trail);
             assignTRId(&_parents[parentIndex], _parents[_numParents._val],_trail);
-            parentIndex--;
             break;
         }
     }
@@ -427,9 +426,17 @@
     return !(_numParents._val || [self isVital]);
 }
 
--(void) mergeWith:(Node*)other {
+-(void) mergeWith:(Node *)other
+{
+    [self mergeWith:other inPlace:false layerVariableCount:nil layer:-1];
+}
+-(void) mergeWith:(Node*)other inPlace:(bool)inPlace layerVariableCount:(TRInt**)layerVariableCount layer:(int)layer {
     [self mergeStateWith: other];
     [self takeParentsFrom: other];
+    if (inPlace) {
+        [self mergeChildrenWith:other layerVariableCount:layerVariableCount layer:layer];
+    }
+    assignTRInt(&_isRelaxed, 1, _trail);
 }
 -(bool) hasParent:(Node*)parent {
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
@@ -446,10 +453,31 @@
         int child_index = [parent findChildIndex: other];
         while(child_index != -1) {
             [parent addChild: self at:child_index];
+            [self addParent: parent];
             child_index = [parent findChildIndex: other];
         }
-        if (![self hasParent: parent]) {    //Is this needed?  Not sure
-            [self addParent: parent];
+        //if (![self hasParent: parent]) {    //Is this needed?  Not sure
+        //        [self addParent: parent];
+        //}
+    }
+}
+-(void) mergeChildrenWith:(Node*)other layerVariableCount:(TRInt**)layerVariableCount layer:(int)layer {
+    Node** otherChildren = [other children];
+    for (int childIndex = _minChildIndex; childIndex <= _maxChildIndex; childIndex++) {
+        Node* selfChild = _children[childIndex];
+        Node* otherChild = otherChildren[childIndex];
+        if (otherChild != nil) {
+            if (selfChild == nil) {
+                [self addChild:otherChild at:childIndex];
+                [otherChild addParent:self];
+            } else {
+                assignTRInt(&layerVariableCount[layer][childIndex], layerVariableCount[layer][childIndex]._val-1, _trail);
+                if (![selfChild isEqual:otherChild]) {
+                    [selfChild mergeWith:otherChild inPlace:true layerVariableCount:layerVariableCount layer:layer+1];
+                }
+            }
+            [other removeChildAt:childIndex];
+            [otherChild removeParentValue:other];
         }
     }
 }
@@ -460,9 +488,9 @@
     [_state mergeStateWith: [other getState]];
 }
 -(void) setRelaxed:(bool)relaxed {
-    _isRelaxed = relaxed;
+    assignTRInt(&_isRelaxed, relaxed, _trail);
 }
--(bool) isRelaxed { return _isRelaxed; }
+-(bool) isRelaxed { return _isRelaxed._val; }
 @end
 
 @implementation GeneralState
@@ -1249,6 +1277,8 @@
         _variableUsed[variableIndex] = false;
     }
     _stateClass = NULL;
+    
+    _hashTableSize = 100;
     return self;
 }
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize
@@ -1300,7 +1330,7 @@
     
     for (int layer = 0; layer < _numVariables; layer++) {
         if (_reduced) {
-            [self reduceLayer: layer];
+            //[self reduceLayer: layer];
         }
         [self cleanLayer: layer];
         
@@ -1400,6 +1430,9 @@
     _variableUsed[[_x low]] = true;
 }
 -(void) reduceLayer:(int)layer {
+    [self reduceLayer:layer inPlace:false];
+}
+-(void) reduceLayer:(int)layer inPlace:(bool)inPlace {
     int size_of_layer = layer_size[layer]._val;
     id* node_states = malloc(size_of_layer*sizeof(id));
     Node** layer_nodes = layers[layer];
@@ -1416,7 +1449,11 @@
             if ([first_node_state equivalentTo: second_node_state]) {
                 node_states[second_node_index] = node_states[size_of_layer-1];
                 [first_node takeParentsFrom:layer_nodes[second_node_index]];
-                [self removeNodeAt:second_node_index onLayer:layer];  //Should be both childless (since next layer isn't made yet) and parentless (since it just gave its parents to first_node)
+                if (inPlace) {
+                    [self removeParentlessNodeFromMDD:layer_nodes[second_node_index] fromLayer:layer trimmingVariables:true];
+                } else {
+                    [self removeNodeAt:second_node_index onLayer:layer];
+                }
                 second_node_index--;
                 size_of_layer--;
             }
@@ -1430,6 +1467,7 @@
 -(void) buildNewLayerUnder:(int)layer
 {
     NSMutableDictionary* nodeHashes = [[NSMutableDictionary alloc] init];
+    
     for (int parentNodeIndex = 0; parentNodeIndex < layer_size[layer]._val; parentNodeIndex++) {
         Node* parentNode = layers[layer][parentNodeIndex];
         [self createChildrenForNode:parentNode nodeHashes:nodeHashes];
@@ -1440,15 +1478,28 @@
 {
     int parentValue = [parentNode value];
     int parentLayer = [self layerIndexForVariable:parentValue];
+    bool parentRelaxed = [parentNode isRelaxed];
     for (int edgeValue = [parentNode minChildIndex]; edgeValue <= [parentNode maxChildIndex]; edgeValue++) {
         if ([_x[parentValue] member: edgeValue] && [parentNode canChooseValue: edgeValue]) {
-            Node* childNode;
+            Node* childNode = nil;
             
             id state = [self generateStateFromParent:parentNode withValue:edgeValue];
             if (parentLayer != _numVariables-1) {
-                NSUInteger hashValue = [state hash];
-                Node* existingNode = [nodeHashes objectForKey:[[NSNumber alloc] initWithUnsignedInteger: hashValue]];
-                if (existingNode == nil) {
+                NSUInteger hashValue = [state hashWithWidth:_hashTableSize numVariables:_numVariables];
+                NSMutableArray* bucket = [nodeHashes objectForKey:[NSNumber numberWithUnsignedLong:hashValue]];
+                if (bucket == NULL) {
+                    bucket = [[NSMutableArray alloc] init];
+                    [nodeHashes setObject:bucket forKey:[NSNumber numberWithUnsignedLong:hashValue]];
+                } else {
+                    for (int bucket_index = 0; bucket_index < [bucket count]; bucket_index++) {
+                        id bucketObjectState = [bucket[bucket_index] getState];
+                        if ([bucketObjectState equivalentTo:state]) {
+                            childNode = bucket[bucket_index];
+                            break;
+                        }
+                    }
+                }
+                if (childNode == nil) {
                     if (_objective != nil) {
                         childNode = [[Node alloc] initNode: _trail
                                              minChildIndex:min_domain_val
@@ -1464,10 +1515,11 @@
                                                      value:[self variableIndexForLayer:parentLayer + 1]
                                                      state:state];
                     }
+                    if (parentRelaxed) {
+                        [childNode setRelaxed:true];
+                    }
                     [self addNode:childNode toLayer:parentLayer+1];
-                    [nodeHashes setObject:childNode forKey:[[NSNumber alloc] initWithUnsignedInteger: hashValue]];
-                } else {
-                    childNode = existingNode;
+                    [bucket addObject:childNode];
                 }
             } else {
                 childNode = layers[_numVariables][0];
@@ -1522,7 +1574,9 @@
     int variableIndex = [self variableIndexForLayer:layer];
     if (!bound((CPIntVar*)_x[variableIndex])) {
         [_x[variableIndex] whenLoseValue:self do:^(ORInt value) {
+            [self DEBUGTestLayerVariableCountCorrectness];
             [self trimValueFromLayer: layer :value ];
+            [self DEBUGTestLayerVariableCountCorrectness];
         }];
     }
 }
@@ -1561,6 +1615,7 @@
 -(void) removeNodeAt:(int)index onLayer:(int)layer_index {
     Node* *layer = layers[layer_index];
     
+    //[layer[index] release];
     int finalNodeIndex = layer_size[layer_index]._val-1;
     assignTRId(&layer[index], layer[finalNodeIndex], _trail);
     assignTRId(&layer[finalNodeIndex], NULL, _trail);
@@ -1592,13 +1647,15 @@
     for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
         Node* parent = parents[parentIndex];
         int child_index = [parent findChildIndex: node];
-        while(child_index != -1) {
+        while(child_index != -1) {  //This is bad.  We don't support negative domains.  Could be a problem down the line, but is easy to fix.
             [parent removeChildAt:child_index];
+            [node removeParentOnce:parent];
             
             assignTRInt(&layer_variable_count[parentLayer][child_index], layer_variable_count[parentLayer][child_index]._val -1, _trail);
             if (trimming && !layer_variable_count[parentLayer][child_index]._val) {
                 [_x[[parent value]] remove: child_index];
             }
+            [self DEBUGTestLayerVariableCountCorrectness];
             
             child_index = [parent findChildIndex: node];
         }
@@ -1751,6 +1808,27 @@
     }
     
     [output writeToFile: [NSString stringWithFormat: @"/Users/ben/graphs/%d.dot", numBound] atomically: YES encoding:NSUTF8StringEncoding error: nil];
+}
+
+-(void) DEBUGTestLayerVariableCountCorrectness
+{
+    //DEBUG code:  Checks if layer_variable_count correctly represents the edges on the layer.
+    for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
+        for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+            int count = 0;
+            for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
+                Node* node = layers[layer_index][node_index];
+                Node** children = [node children];
+                
+                if (children[domain_val] != NULL) {
+                    count++;
+                }
+            }
+            if (layer_variable_count[layer_index][domain_val]._val != count) {
+                int i =0;
+            }
+        }
+    }
 }
 @end
 
@@ -2700,6 +2778,9 @@ typedef struct {
     _relaxed = true;
     _relaxation_size = relaxationSize;
     _first_relaxed_layer = makeTRInt(_trail, INT_MAX);
+    if (_relaxed) {
+        _hashTableSize = _relaxation_size * 2;
+    }
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize
@@ -2708,6 +2789,9 @@ typedef struct {
     _relaxed = true;
     _relaxation_size = relaxationSize;
     _first_relaxed_layer = makeTRInt(_trail, INT_MAX);
+    if (_relaxed) {
+        _hashTableSize = _relaxation_size * 2;
+    }
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass
@@ -2716,6 +2800,9 @@ typedef struct {
     _relaxed = true;
     _relaxation_size = relaxationSize;
     _first_relaxed_layer = makeTRInt(_trail, INT_MAX);
+    if (_relaxed) {
+        _hashTableSize = _relaxation_size * 2;
+    }
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass
@@ -2724,6 +2811,9 @@ typedef struct {
     _relaxed = relaxed;
     _relaxation_size = relaxationSize;
     _first_relaxed_layer = makeTRInt(_trail, INT_MAX);
+    if (_relaxed) {
+        _hashTableSize = _relaxation_size * 2;
+    }
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass
@@ -2732,6 +2822,9 @@ typedef struct {
     _relaxed = true;
     _relaxation_size = relaxationSize;
     _first_relaxed_layer = makeTRInt(_trail, INT_MAX);
+    if (_relaxed) {
+        _hashTableSize = _relaxation_size * 2;
+    }
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass
@@ -2740,6 +2833,9 @@ typedef struct {
     _relaxed = relaxed;
     _relaxation_size = relaxationSize;
     _first_relaxed_layer = makeTRInt(_trail, INT_MAX);
+    if (_relaxed) {
+        _hashTableSize = _relaxation_size * 2;
+    }
     return self;
 }
 /* A different attempt at this method where instead of building a new layer and shrinking it, it splits a layer out from a single node
@@ -2837,6 +2933,8 @@ typedef struct {
                 assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
                 [self rebuildFromLayer: startingLayer];
             }
+            
+            
             /*if (_first_relaxed_layer._val == layer+1) {
                 //if ([layers[_first_relaxed_layer._val][0] isRelaxed]) {
                     assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
@@ -2863,6 +2961,7 @@ typedef struct {
     bool removedNode = false;
     
     for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
+        [self DEBUGTestLayerVariableCountCorrectness];
         Node* node = layer[node_index];
         Node* childNode = [node children][value];
             
@@ -2870,9 +2969,9 @@ typedef struct {
             [node removeChildAt: value];
             assignTRInt(&layer_variable_count[layer_index][value], layer_variable_count[layer_index][value]._val -1, _trail);
             
-            if ([node findChildIndex:childNode] == -1) {
-                [childNode removeParentValue:node];
-            } else if (_objective != NULL) {
+            [childNode removeParentOnce:node];
+            
+            if (_objective != NULL) {
                 if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
                     [childNode removeLongestPathParent: node];
                 }
@@ -2886,7 +2985,9 @@ typedef struct {
                 removedNode = true;
             }
             if ([node isNonVitalAndChildless]) {
+                [self DEBUGTestLayerVariableCountCorrectness];
                 [self removeChildlessNodeFromMDD:node fromLayer:layer_index trimmingVariables:true];
+                [self DEBUGTestLayerVariableCountCorrectness];
                 removedNode = true;
                 node_index--;
             } else {
@@ -2896,12 +2997,15 @@ typedef struct {
             }
         }
     }
-    if (removedNode && ![_x[[self variableIndexForLayer:layer_index]] bound]) {
+    if (![_x[[self variableIndexForLayer:layer_index]] bound]) {
         if (_first_relaxed_layer._val <= _numVariables) {
-            if (layer_size[_first_relaxed_layer._val]._val < _relaxation_size) {
+            //if (layer_size[_first_relaxed_layer._val]._val < _relaxation_size) {
                 [self rebuildFromLayer:layer_index];
-            }
+            //}
         }
+    }
+    if (_first_relaxed_layer._val > layer_index && layer_index != 0) {
+        assignTRInt(&_first_relaxed_layer, layer_index, _trail);
     }
 }
 
@@ -2920,41 +3024,53 @@ typedef struct {
     //[self buildNewLayerUnder:startingLayer];
   
     
-    for (int layer = startingLayer+1; layer < _numVariables; layer++) {
+    /*for (int layer = startingLayer+1; layer < _numVariables; layer++) {
         assignTRInt(&layer_size[layer], 0, _trail);
         for (int variable = min_domain_val; variable <= max_domain_val; variable++) {
             assignTRInt(&layer_variable_count[layer][variable], 0, _trail);
         }
+    }*/
+    if (layer_size[startingLayer]._val == 0) {
+        failNow();
     }
-    
-    for (int layer = startingLayer; layer < _numVariables; layer++) {
+    if (_reduced) {
+        [self reduceLayer: startingLayer inPlace:true];
+    }
+    [self cleanLayer: startingLayer inPlace:true];
+    for (int layer = startingLayer+1; layer < _numVariables; layer++) {
+        //[self buildNewLayerUnder:layer];
+        //if (layer_size[layer+1]._val < _relaxation_size) {
+            [self splitNodesOnLayer:layer];
+        //}
+        
         if (layer_size[layer]._val == 0) {
             failNow();
         }
         if (_reduced) {
-            [self reduceLayer: layer];
+            [self reduceLayer: layer inPlace:true];
         }
-        [self cleanLayer: layer];
-        
-        [self buildNewLayerUnder:layer];
-        //[self splitNodesOnLayer:layer+1];
+        [self cleanLayer: layer inPlace:true];
     }
-    for(ORInt layer = startingLayer+1; layer < _numVariables; layer++) {
+    for(ORInt layer = startingLayer; layer < _numVariables; layer++) {
         [self trimValuesFromLayer:layer];
     }
     return;
 }
+
 -(void) splitNodesOnLayer:(int)layer
 {
     int initial_layer_size = layer_size[layer]._val;
+    bool firstNewNode;
     for (int node_index = 0; node_index < initial_layer_size; node_index++) {
         Node* node = layers[layer][node_index];
         if ([node isRelaxed]) { //Find a relaxed node to split
+            firstNewNode = true;
             Node** oldNodeChildren = [node children];
             Node** parents = [node parents];
             int numParents = [node numParents];
             for (int parent_index = 0; parent_index < numParents; parent_index++) { //All edges going into this node should be examined.  To get these edges, look at the parents
                 Node* parent = parents[parent_index];
+                bool parentIsRelaxed = [parent isRelaxed];
                 Node** parentsChildren = [parent children];
                 for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
                     Node* parentsChild = parentsChildren[child_index];
@@ -2976,45 +3092,98 @@ typedef struct {
                                                             value:[self variableIndexForLayer:layer]
                                                                  state:state];
                         }
+                        if (parentIsRelaxed) {
+                            [newNode setRelaxed:true];
+                        }
+
+                        
                         [self addNode:newNode toLayer:layer];
                         [parent addChild:newNode at:child_index];
                         [newNode addParent:parent];
+                        
                         for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
                             Node* oldNodeChild = oldNodeChildren[domain_val];
                             if (oldNodeChild != NULL) {
-                                [newNode addChild:oldNodeChild at:domain_val];
-                                [oldNodeChild removeParentOnce:node];
-                                [oldNodeChild addParent: newNode];
+                                if (firstNewNode) {
+                                    assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val-1, _trail);
+                                }
+                                if ([newNode canChooseValue: domain_val]) {
+                                    //Check if this arc should exist from the old state
+                                    [newNode addChild:oldNodeChild at:domain_val];
+                                    [oldNodeChild addParent: newNode];
+                                    assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val+1, _trail);
+                                }
+                                [oldNodeChild removeParentValue:node];
                             }
                         }
+                        firstNewNode = false;
                     }
                 }
             }
+            if (firstNewNode) { //If the node was relaxed, but should be removed without any new nodes, need to decrement the for-loop counter
+                for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+                    if (oldNodeChildren[domain_val] != NULL) {
+                        assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val-1, _trail);
+                        Node* oldNodeChild = oldNodeChildren[domain_val];
+                        [node removeChildAt:domain_val];
+                        [oldNodeChild removeParentOnce:node];
+                    }
+                }
+                [self removeNodeAt:node_index onLayer:layer];
+                node_index--;
+                initial_layer_size--;
+            } else {
+                [self removeNodeAt:node_index onLayer:layer];
+            }
+            
             //Delete this old node
-            [self removeNodeAt:node_index onLayer:layer];
             
             //In theory, this could be done only until it hits the max width (assuming we reduce).  The question is if it's better to only de-split some nodes to not have to re-relax or if it would be better to re-relax this layer to have a potentially better relaxation.
+        }
+    }
+
+    for (int layer_index = 0; layer_index < layer_size[layer+1]._val; layer_index++) {
+        Node* node = layers[layer+1][layer_index];
+        if ([node isNonVitalAndParentless]) {
+            [self removeParentlessNodeFromMDD:node fromLayer:layer+1 trimmingVariables:true];
+            layer_index--;
         }
     }
 }
 -(void) cleanLayer:(int)layer
 {
+    [self cleanLayer:layer inPlace:false];
+}
+-(void) cleanLayer:(int)layer inPlace:(bool)inPlace
+{
     if (_relaxed) {
         if (layer_size[layer]._val > _relaxation_size && layer < _first_relaxed_layer._val) {
             assignTRInt(&_first_relaxed_layer, layer, _trail);
+        } else if (inPlace && layer_size[layer]._val == _relaxation_size && _first_relaxed_layer._val > layer) {
+            TRId* l = layers[layer];
+            for (int node_index = 0; node_index < _relaxation_size; node_index++) {
+                if ([l[node_index] isRelaxed]) {
+                    assignTRInt(&_first_relaxed_layer, layer, _trail);
+                    break;
+                }
+            }
         }
         while (layer_size[layer]._val > _relaxation_size) {
-            [self mergeTwoNodesOnLayer: layer];
+            [self mergeTwoNodesOnLayer: layer inPlace:true];
         }
     }
 }
 -(void) mergeTwoNodesOnLayer:(int)layer
 {
+    [self mergeTwoNodesOnLayer:layer inPlace:false];
+}
+-(void) mergeTwoNodesOnLayer:(int)layer inPlace:(bool)inPlace
+{
     Node* first_node;
     Node* second_node;
     //Heuristic 1 - First two nodes
-    first_node = layers[layer][0];
-    second_node = layers[layer][1];
+    //first_node = layers[layer][0];
+    //second_node = layers[layer][1];
     
     //Heuristic 2 - Last two nodes
     //first_node = layers[layer][layer_size[layer]._val-2];
@@ -3047,9 +3216,14 @@ typedef struct {
         }
         first_node = layers[layer][best_first_node_index];
         second_node = layers[layer][best_second_node_index];
-        [first_node mergeWith: second_node];
-        [self removeNode:second_node];
-        [first_node setRelaxed:true];
+
+        [first_node mergeWith: second_node inPlace:true layerVariableCount:layer_variable_count layer:layer];
+        
+        if (inPlace) {
+            [self removeParentlessNodeFromMDD:second_node fromLayer:layer trimmingVariables:true];
+        } else {
+            [self removeNode:second_node];
+        }
         
         if (layer_size[layer]._val > _relaxation_size) {
             CustomState* first_node_state = [layers[layer][first_node_index] getState];

@@ -1332,6 +1332,48 @@
     return rv;
 }
 @end
+@implementation ORExprIntArrayIndexI
+-(id<ORExpr>) initORExprIntArrayIndexI:(id<ORIntArray>)array index:(id<ORExpr>)index
+{
+    self = [super init];
+    _array = array;
+    _index = index;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprIntArrayIndexI:self];
+}
+-(id<ORIntArray>) array { return _array; }
+-(id<ORExpr>) index { return _index; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(%@ atIndex: %@)",[_array description],[_index description]];
+    return rv;
+}
+@end
+@implementation ORExprDictionaryValueI
+-(id<ORExpr>) initORExprDictionaryValueI:(NSDictionary*)dict key:(id<ORExpr>)key
+{
+    self = [super init];
+    _dict = [NSDictionary dictionaryWithDictionary: dict];
+    _key = key;
+    return self;
+}
+-(void) visit:(ORVisitor*) visitor
+{
+    [visitor visitExprDictionaryValueI:self];
+}
+-(NSDictionary*) dict { return _dict; }
+-(id<ORExpr>) key { return _key; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"(%@ atKey: %@)",[_dict description],[_key description]];
+    return rv;
+}
+@end
 @implementation ORExprAppendToArrayI
 -(id<ORExpr>) initORExprAppendToArrayI:(id<ORExpr>)left value:(id<ORExpr>)right
 {

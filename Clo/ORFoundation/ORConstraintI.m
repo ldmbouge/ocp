@@ -519,6 +519,9 @@
    _transitionFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    _relaxationFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    _differentialFunctions = malloc(stateSize * sizeof(id<ORExpr>));
+   for (int index = 0; index < stateSize; index++) {
+      _differentialFunctions[index] = NULL;
+   }
    
    _stateSize = stateSize;
 

@@ -864,6 +864,14 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprArrayIndexI: visit method not defined"];
 }
+-(void) visitExprIntArrayIndexI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprIntArrayIndexI: visit method not defined"];
+}
+-(void) visitExprDictionaryValueI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprIntDictionaryValueI: visit method not defined"];
+}
 -(void) visitExprAppendToArrayI: (id<ORExpr>) e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprAppendToArrayI: visit method not defined"];

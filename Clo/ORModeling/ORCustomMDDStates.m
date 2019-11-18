@@ -329,13 +329,16 @@ static int StateSize;
     return true;
 }
 
--(NSUInteger) hash {
-    int prime = 31;
-    int hashValue = 1;
+//Use size of sequence as 'prime' multiplier here.
+//Use a number for the hash table size (to modulo by) that is twice the width of MDD
+//Set up these hash tables for each layer
+//Afterwards, should these hash tables be kept after creation?
+-(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables {
+    NSUInteger hashValue = 1;
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        hashValue = hashValue * prime + [_state[stateIndex] hash];
+        hashValue = hashValue * numVariables + [_state[stateIndex] hash];
     }
-    return hashValue;
+    return (hashValue % (mddWidth * 2));
 }
 -(id*) state { return _state; }
 -(int) stateSize { return _stateSize; }

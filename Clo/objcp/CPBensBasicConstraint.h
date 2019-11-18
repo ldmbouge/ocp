@@ -46,9 +46,9 @@
     TRInt _reverseLongestPath;
     TRInt _reverseShortestPath;
     
-    bool _isRelaxed;
+    TRInt _isRelaxed;
     
-    id _state;
+    TRId _state;
 }
 -(id) initNode: (id<ORTrail>) trail;
 -(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state;
@@ -183,6 +183,7 @@
     bool _maximize;
     Class _stateClass;
 @protected
+    int _hashTableSize;
     TRInt **layer_variable_count;
     int* _variable_to_layer;
     int* _layer_to_variable;
@@ -212,7 +213,7 @@
 -(void) createRootAndSink;
 -(void) cleanLayer:(int)layer;
 -(void) buildNewLayerUnder:(int)layer;
--(void) createChildrenForNode:(Node*)parentNode hashValues:(NSMutableDictionary*)hashValues;
+-(void) createChildrenForNode:(Node*)parentNode nodeHashes:(NSDictionary*)hashValues;
 -(void) addPropagationsAndTrimValues;
 -(void) trimValuesFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
@@ -224,6 +225,7 @@
 -(void) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming;
 -(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
+-(void) DEBUGTestLayerVariableCountCorrectness;
 
 -(ORInt) recommendationFor: (ORInt) variableIndex;
 
