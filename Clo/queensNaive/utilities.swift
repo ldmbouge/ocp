@@ -542,7 +542,6 @@ public func seqMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : S
         sd[i] = (i - maxLIdx)
     }
     mdd1.state(sd)
-    //Note to self:  We can make this better (we have the technology).  Just because it's not yet at the point where you have a full sequence length, doesn't mean that it hasn't already failed to meet the upper-bound or has exceeded the lower-bound.
     mdd1.arc((Prop(m,0) < literal(m,0) &&
                 (Prop(m,maxLIdx)-Prop(m,minFIdx) + SVA(m) ∈ theValues ≥ lb) &&
                 (Prop(m,minLIdx) + SVA(m) ∈ theValues ≤ ub)) ||
