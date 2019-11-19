@@ -76,7 +76,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize printSolution;
 @synthesize printModel;
 @synthesize noSearch;
-
+@synthesize _restrictRequired;
 
 
 +(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restrict:(id<ORVarArray>) vars
@@ -129,7 +129,8 @@ static enum ValHeuristic valIndex[] =
       searchvars =  [model FPVars];
    }
    id<ORVarArray> vs =  [args makeDisabledArray:cp from:searchvars];
-   printf("|VAR| = %lu |restrict| = %lu |fullrestrict|=%lu\n",(unsigned long)[[model FPVars] count],[vars count],[vs count]);
+   if(! [args _restrictRequired])
+     printf("|VAR| = %lu |restrict| = %lu |fullrestrict|=%lu\n",(unsigned long)[[model FPVars] count],[vars count],[vs count]);
    [ORCmdLineArgs defaultRunner:args model:model program:cp restrict:vs];
 }
 
@@ -183,6 +184,7 @@ static enum ValHeuristic valIndex[] =
    absFunComputation = AMEAN;
    _nbSMerged = 0;
    _nbDMerged = 0;
+   _restrictRequired = 1;
    occDetails = NO;
    middle = YES;
    paused = NO;
@@ -619,7 +621,8 @@ static enum ValHeuristic valIndex[] =
 -(id<ORDisabledVarArray>) makeDisabledArray:(id<CPProgram>)p from:(id<ORVarArray>)vs
 {
    id<ORDisabledVarArray> vars;
-   if (fullRestrict && [[p engine] nbPropagation]){
+   _restrictRequired = fullRestrict ^ [[p engine] closed];
+   if (fullRestrict && [[p engine] closed]){
       NSMutableArray* nvs = [[NSMutableArray alloc] initWithCapacity:[vs count]];
       [p collectInputVar:vs res:nvs];
       vs = (id<ORVarArray>)[ORFactory idArray:p array:nvs];
@@ -761,15 +764,17 @@ static enum ValHeuristic valIndex[] =
    recStack[vi] = @(0);
    return NO;
 }
-
-
-
-
-
-
-
 -(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORDisabledVarArray>)vars
 {
+   if(_restrictRequired){
+      vars = [self makeDisabledArray:p from:[[p source] FPVars]];
+      printf("--------------------\n");
+      printf("full-r = %lu\n",(unsigned long)[vars count]);
+      printf("--------------------\n");
+       for (id<ORVar> v in vars)
+          printf("%s\n",[[v description] UTF8String]);
+       printf("--------------------\n");
+   }
    if(ldfs){
       [self makeLDSSearch:p restricted:vars];
    }else{

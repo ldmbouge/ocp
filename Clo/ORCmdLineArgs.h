@@ -120,11 +120,13 @@ struct ORResult {
 @property (nonatomic,readonly) ORBool occDetails;
 @property (nonatomic,readonly) ORBool restricted;
 @property (nonatomic,readonly) ORBool fullRestrict;
+@property (nonatomic,readonly) ORBool _restrictRequired;
 @property (nonatomic,readonly) ORBool middle;
 @property (nonatomic,readonly) ORBool paused;
 @property (nonatomic,readonly) ORBool printSolution;
 @property (nonatomic,readonly) ORBool printModel;
 @property (nonatomic,readonly) ORBool noSearch;
+
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;

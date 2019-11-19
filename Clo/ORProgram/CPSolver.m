@@ -3052,6 +3052,7 @@
    for(id<ORVar> v in vs){
       ORBool conform = YES;
       cx = _gamma[getId(v)];
+      if([cx bound]) continue;
       cstr = [cx constraints];
       if([cstr count] > 0 && _level){
          NSLog(@"\n%@",v);
