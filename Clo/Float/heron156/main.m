@@ -57,8 +57,8 @@ int main(int argc, const char * argv[]) {
     [toadd addObject:[a gt:b]];
     [toadd addObject:[b gt:c]];
     
-    [toadd addObject:[s eq: [[[a plus:b] plus:c] div:@(2.0f)]]];
-    [toadd addObject:[squared_area eq: [[[s mul:[s sub:a]] mul:[s sub:b]] mul:[s sub:c]]]];
+    [toadd addObject:[s set: [[[a plus:b] plus:c] div:@(2.0f)]]];
+    [toadd addObject:[squared_area set: [[[s mul:[s sub:a]] mul:[s sub:b]] mul:[s sub:c]]]];
     
     float v = 156.25f;
     id<ORExpr> fc = [ORFactory float:model value:v];

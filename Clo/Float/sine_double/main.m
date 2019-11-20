@@ -34,7 +34,7 @@ int main(int argc, const char * argv[]) {
     
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
     
-    [toadd addObject:[z eq: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
+    [toadd addObject:[z set: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
     
     
     [toadd addObject:[z lt: @(VAL)]];

@@ -78,25 +78,25 @@ int main(int argc, const char * argv[]) {
     [toadd addObject:[y_opt[0] geq:@(-10.1f)]];
     [toadd addObject:[y_opt[0] leq:@(10.1f)]];
     
-    [toadd addObject:[y[0] eq:y_opt[0]]];
+    [toadd addObject:[y[0] set:y_opt[0]]];
     
     for (ORUInt n = 0; n < NBLOOPS; n++) {
       //            k1 = k * (c - yn) * (c - yn);
       //            k2 = k * (c -(yn + (0.5 * h * k1))) * (c - (yn + (0.5 * h * k1)));
       //            yn+1 = yn + h * k2;
       //            yn = yn+1;
-      [toadd addObject:[k1[n] eq:[[k mul:[c sub: y[n]]] mul: [c sub:y[n]]]]];
-      [toadd addObject:[k2[n] eq:[[k mul:[c sub:[y[n] plus:[[c1 mul:h] mul:k1[n]]]]] mul: [c sub:[y[n] plus:[[c1 mul:h] mul:k1[n]]]]]]];
-      [toadd addObject:[y[n+1] eq:[y[n] plus:[h mul:k2[n]]]]];
+      [toadd addObject:[k1[n] set:[[k mul:[c sub: y[n]]] mul: [c sub:y[n]]]]];
+      [toadd addObject:[k2[n] set:[[k mul:[c sub:[y[n] plus:[[c1 mul:h] mul:k1[n]]]]] mul: [c sub:[y[n] plus:[[c1 mul:h] mul:k1[n]]]]]]];
+      [toadd addObject:[y[n+1] set:[y[n] plus:[h mul:k2[n]]]]];
       
       //            yn+1 = (yn + (( 1.2 * (10.1 -  ((((1.2 * (10.1 -  yn)) * (10.1 - yn))
       //                                             * 0.005) + yn))) * (10.1 -  ((((1.2 * (10.1 -  yn)) * (10.1 -  yn))
       //                                                                           * 0.005) + yn))));
-      [toadd addObject:[y_opt[n+1] eq:[y_opt[n] plus:[[k mul:[c3 sub:[[[[k mul:[c3 sub:y_opt[n]]] mul:[c3 sub:y_opt[n]]] mul:c4] plus:y_opt[n]]]] mul:[c3 sub:[[[[k mul:[c3 sub:y_opt[n]]] mul:[c3 sub:y_opt[n]]] mul:c4] plus:y_opt[n]]]]]]];
+      [toadd addObject:[y_opt[n+1] set:[y_opt[n] plus:[[k mul:[c3 sub:[[[[k mul:[c3 sub:y_opt[n]]] mul:[c3 sub:y_opt[n]]] mul:c4] plus:y_opt[n]]]] mul:[c3 sub:[[[[k mul:[c3 sub:y_opt[n]]] mul:[c3 sub:y_opt[n]]] mul:c4] plus:y_opt[n]]]]]]];
       
     }
     
-    [toadd addObject:[diff eq:[y[NBLOOPS] sub:y_opt[NBLOOPS]]]];
+    [toadd addObject:[diff set:[y[NBLOOPS] sub:y_opt[NBLOOPS]]]];
     [toadd addObject:[[diff mul:diff] gt:@(0.0f)]];
     
     id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];

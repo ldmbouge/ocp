@@ -37,7 +37,7 @@ int main(int argc, const char * argv[]) {
     id<ORFloatVar> res = [ORFactory floatVar:model];
     
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
-    [toadd addObject:[res eq:[[[x sub:
+    [toadd addObject:[res set:[[[x sub:
                                 [[x mul:[x mul:x]] div:@(6.0f)]] plus:
                                [[x mul:[x mul:[x mul:[x mul:x]]]] div:@(120.0f)]] plus:
                               [[x mul:[x mul:[x mul:[x mul:[x mul:[x mul:x]]]]]] div:@(5040.0f)]]]];

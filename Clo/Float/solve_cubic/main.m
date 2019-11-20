@@ -72,29 +72,29 @@ int main(int argc, const char * argv[]) {
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
     
     
-    [toadd addObject:[q_0 eq: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
+    [toadd addObject:[q_0 set: [[a_0 mul: a_0] sub: [b_0 mul:@(3.f)]]]];
     
-    [toadd addObject:[r_0 eq: [[[[[a_0 mul:@(2.f)] mul: a_0] mul: a_0] sub: [[a_0 mul:@(9.f)] mul: b_0]] plus: [c_0 mul:@(27.f)]]]];
-    
-    
-    [toadd addObject:[Q_0 eq: [q_0 div:@(9.f)]]];
-    
-    [toadd addObject:[R_0 eq: [r_0 div:@(54.f)]]];
+    [toadd addObject:[r_0 set: [[[[[a_0 mul:@(2.f)] mul: a_0] mul: a_0] sub: [[a_0 mul:@(9.f)] mul: b_0]] plus: [c_0 mul:@(27.f)]]]];
     
     
-    [toadd addObject:[Q3_0 eq: [[Q_0 mul:Q_0] mul:Q_0]]];
+    [toadd addObject:[Q_0 set: [q_0 div:@(9.f)]]];
     
-    [toadd addObject:[R2_0 eq: [R_0 mul:R_0]]];
+    [toadd addObject:[R_0 set: [r_0 div:@(54.f)]]];
     
     
-    [toadd addObject:[CR2_0 eq: [[r_0 mul:@(729.f)] mul: r_0]]];
+    [toadd addObject:[Q3_0 set: [[Q_0 mul:Q_0] mul:Q_0]]];
     
-    [toadd addObject:[CQ3_0 eq: [[[q_0 mul:@(2916.f)] mul: q_0] mul: q_0]]];
+    [toadd addObject:[R2_0 set: [R_0 mul:R_0]]];
+    
+    
+    [toadd addObject:[CR2_0 set: [[r_0 mul:@(729.f)] mul: r_0]]];
+    
+    [toadd addObject:[CQ3_0 set: [[[q_0 mul:@(2916.f)] mul: q_0] mul: q_0]]];
     
     //assert(!(R == 0 && Q == 0));
-    [toadd addObject:[R_0 eq:@(0.0f)]];
-    [toadd addObject:[Q_0 eq:@(0.0f)]];
-    //         [toadd add:[a_0 eq:@(15.0f)]];
+    [toadd addObject:[R_0 set:@(0.0f)]];
+    [toadd addObject:[Q_0 set:@(0.0f)]];
+    //         [toadd add:[a_0 set:@(15.0f)]];
     
     
     id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];

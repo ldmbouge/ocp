@@ -22,9 +22,9 @@ int main(int argc, const char * argv[]) {
          id<ORFloatVar> epsilon = [ORFactory floatVar:model low:10.f up:10.f];
          //            id<ORExpr> epsilon =  [ORFactory float:model value:10.f];
          
-         [model add:[diffab eq:[a sub:b]]];
-         [model add:[diffac eq:[a sub:c]]];
-         [model add:[diffbc eq:[b sub:c]]];
+         [model add:[diffab set:[a sub:b]]];
+         [model add:[diffac set:[a sub:c]]];
+         [model add:[diffbc set:[b sub:c]]];
          
          id<ORExpr> infinity = [ORFactory infinityf:model];
          id<ORExpr> sub_infinity = [ORFactory float:model value:-INFINITY];
@@ -41,11 +41,11 @@ int main(int argc, const char * argv[]) {
          [toadd addObject:[diffac leq:delta]];
          [toadd addObject:[diffbc leq:delta]];
          
-         [toadd addObject:[diffab eq:[a sub:b]]];
-         [toadd addObject:[diffac eq:[a sub:c]]];
-         [toadd addObject:[diffbc eq:[b sub:c]]];
-         [toadd addObject:[assoc1 eq:[[a plus:b] plus:c]]];
-         [toadd addObject:[assoc2 eq:[a plus:[b plus:c]]]];
+         [toadd addObject:[diffab set:[a sub:b]]];
+         [toadd addObject:[diffac set:[a sub:c]]];
+         [toadd addObject:[diffbc set:[b sub:c]]];
+         [toadd addObject:[assoc1 set:[[a plus:b] plus:c]]];
+         [toadd addObject:[assoc2 set:[a plus:[b plus:c]]]];
          
          [toadd addObject:[assoc1 neq:infinity]];
          [toadd addObject:[assoc1 neq:sub_infinity]];

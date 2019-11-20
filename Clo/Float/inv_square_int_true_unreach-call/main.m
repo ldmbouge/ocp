@@ -13,11 +13,11 @@ int main(int argc, const char * argv[]) {
     
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
     
-    [toadd addObject:[y eq:[[x mul:x] sub:@(2.f)]]];
+    [toadd addObject:[y set:[[x mul:x] sub:@(2.f)]]];
     
-    [toadd addObject:[y eq:@(0.0f)]]; /* */
+    [toadd addObject:[y set:@(0.0f)]]; /* */
     
-    [toadd addObject:[z eq:[@(1.f) div:y]]];
+    [toadd addObject:[z set:[@(1.f) div:y]]];
     
     
     id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];

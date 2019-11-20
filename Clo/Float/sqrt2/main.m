@@ -28,33 +28,33 @@ int main(int argc, const char * argv[]) {
     
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
 
-    [toadd addObject:[xf012 eq:[b39 div:b41]]];
-    [toadd addObject:[xf014 eq:[xf012 plus:[[[[b39 plus:[[xf012 mul:xf012] minus]] toDouble] div:[[xf012 toDouble] mul:b55]] toFloat]]]];
+    [toadd addObject:[xf012 set:[b39 div:b41]]];
+    [toadd addObject:[xf014 set:[xf012 plus:[[[[b39 plus:[[xf012 mul:xf012] minus]] toDouble] div:[[xf012 toDouble] mul:b55]] toFloat]]]];
     
-    [toadd addObject:[xf016 eq:[[b39 plus:[[xf014 mul:xf014] minus]] toDouble]]];
-    [toadd addObject:[b189 eq:[[xf016 toFloat] minus]]];
+    [toadd addObject:[xf016 set:[[b39 plus:[[xf014 mul:xf014] minus]] toDouble]]];
+    [toadd addObject:[b189 set:[[xf016 toFloat] minus]]];
     
-    [toadd addObject:[xf020 eq:[xf014 plus:[[xf016 div:[b55 mul:[xf014 toDouble]]] toFloat]]]];
-    [toadd addObject:[b179 eq:[[[[b39 plus:[[xf020 mul:xf020] minus]] toDouble] toFloat] minus]]];
+    [toadd addObject:[xf020 set:[xf014 plus:[[xf016 div:[b55 mul:[xf014 toDouble]]] toFloat]]]];
+    [toadd addObject:[b179 set:[[[[b39 plus:[[xf020 mul:xf020] minus]] toDouble] toFloat] minus]]];
     
-    [toadd addObject:[b174 eq:[[b106 toFloat] minus]]];
+    [toadd addObject:[b174 set:[[b106 toFloat] minus]]];
     
     [toadd addObject:[b174 neq:@(0.0)]];
     [toadd addObject:[b179 neq:@(0.0)]];
     [toadd addObject:[b189 neq:@(0.0)]];
     
-    //         [toadd addObject:[[xf018 eq:b189] neg]];
-    //         [toadd addObject:[[xf022 eq:b179] neg]];
-    //         [toadd addObject:[[xf024 eq:b174] neg]];
-    [toadd addObject:[[b39 eq:b46] neg]];
+    //         [toadd addObject:[[xf018 set:b189] neg]];
+    //         [toadd addObject:[[xf022 set:b179] neg]];
+    //         [toadd addObject:[[xf024 set:b174] neg]];
+    [toadd addObject:[[b39 set:b46] neg]];
     [toadd addObject:[b46 leq:b39]];
     [toadd addObject:[[b46 leq:[b174 minus]] neg]];
-    //         [toadd addObject:[b174 eq:[xf024 minus]]];
+    //         [toadd addObject:[b174 set:[xf024 minus]]];
     [toadd addObject:[[b46 leq:[b179 minus]] neg]];
-    //         [toadd addObject:[b179 eq:[xf022 minus]]];
+    //         [toadd addObject:[b179 set:[xf022 minus]]];
     [toadd addObject:[[[b189 toDouble] leq:b44] neg]];
     [toadd addObject:[[b46 leq:[b189 minus]] neg] ];
-    //         [toadd addObject:[b189 eq:[xf018 minus]]];
+    //         [toadd addObject:[b189 set:[xf018 minus]]];
     [toadd addObject:[[b174 leq:b116] neg]];
     
     /*

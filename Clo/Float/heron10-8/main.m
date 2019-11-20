@@ -58,8 +58,8 @@ int main(int argc, const char * argv[]) {
     [toadd addObject:[b gt:c]];
     
     
-    [toadd addObject:[s eq: [[[a plus:b] plus:c] div:@(2.0f)]]];
-    [toadd addObject:[squared_area eq: [[[s mul:[s sub:a]] mul:[s sub:b]] mul:[s sub:c]]]];
+    [toadd addObject:[s set: [[[a plus:b] plus:c] div:@(2.0f)]]];
+    [toadd addObject:[squared_area set: [[[s mul:[s sub:a]] mul:[s sub:b]] mul:[s sub:c]]]];
     [toadd addObject:[squared_area neq:@(0.0f)]];
     [toadd addObject:[squared_area lt:@(1e-10f)]]; /* */
     

@@ -93,7 +93,7 @@ int main(int argc, const char * argv[]) {
     [toadd addObject:[b gt:c]];
     
     //squared_area = (((a+(b+c))*(c-(a-b))*(c+(a-b))*(a+(b-c)))/16.0f)
-    [toadd addObject:[squared_area eq:[[
+    [toadd addObject:[squared_area set:[[
                                         [[
                                           [a plus:[b plus:c]]
                                           mul:[c sub:[a sub:b]]]

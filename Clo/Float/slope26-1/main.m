@@ -84,19 +84,19 @@ int main(int argc, const char * argv[]) {
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
     
     //x0 = 13
-    [toadd addObject:[x0 eq:@(13.0f)]];
+    [toadd addObject:[x0 set:@(13.0f)]];
     //x1 = x0 + h
-    [toadd addObject:[x1 eq:[x0 plus:h]]];
+    [toadd addObject:[x1 set:[x0 plus:h]]];
     //x2 = x0 - h
-    [toadd addObject:[x2 eq:[x0 sub:h]]];
+    [toadd addObject:[x2 set:[x0 sub:h]]];
     //fx1 = x1*x1
-    [toadd addObject:[fx1 eq:[x1 mul:x1]]];
+    [toadd addObject:[fx1 set:[x1 mul:x1]]];
     
     //fx2 = x2*x2
-    [toadd addObject:[fx2 eq:[x2 mul:x2]]];
+    [toadd addObject:[fx2 set:[x2 mul:x2]]];
     
     //res = (fx1 - fx2) / (2.0*h)
-    [toadd addObject:[ res eq:[[fx1 sub:fx2] div:[h mul:@(2.0f)]]]];
+    [toadd addObject:[ res set:[[fx1 sub:fx2] div:[h mul:@(2.0f)]]]];
     
     //res < 26.0f - 1.0f
     float v = 26.0f;

@@ -15,7 +15,7 @@ int main(int argc, const char * argv[]) {
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
     
     
-    [toadd addObject:[z eq:[x mul:y]]];
+    [toadd addObject:[z set:[x mul:y]]];
     
     [toadd addObject:[[z lt:@(3.39999)] lor:[z gt:@(4.00001)]]];
     

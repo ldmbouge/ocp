@@ -21,7 +21,7 @@ int main(int argc, const char * argv[]) {
     
     [toadd addObject:[x leq:@(p1)]];
     [toadd addObject:[[x plus:p4] gt: @(p1)]];
-    [toadd addObject:[p4 eq:@(1.0e-7)]];
+    [toadd addObject:[p4 set:@(1.0e-7)]];
     
     
     

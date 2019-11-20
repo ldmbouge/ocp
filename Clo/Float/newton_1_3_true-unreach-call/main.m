@@ -51,14 +51,14 @@ int main(int argc, const char * argv[]) {
     id<ORExpr> fc = [ORFactory float:model value:1.0f];
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
     
-    [toadd addObject:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
+    [toadd addObject:[f_x set:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
                               plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
     
     
-    [toadd addObject:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
+    [toadd addObject:[fp_x set:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
                                plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
     
-    [toadd addObject:[r_0 eq:[x sub:[f_x div:fp_x]]]];
+    [toadd addObject:[r_0 set:[x sub:[f_x div:fp_x]]]];
     
     
     [toadd addObject:[r_0 geq:@(0.1f)]];

@@ -95,11 +95,11 @@ int main(int argc, const char * argv[]) {
 //    [toadd addObject:[diffac leq:delta]];
 //    [toadd addObject:[diffbc leq:delta]];
 //
-//    [toadd addObject:[diffab eq:[a sub:b]]];
-//    [toadd addObject:[diffac eq:[a sub:c]]];
-//    [toadd addObject:[diffbc eq:[b sub:c]]];
-//    [toadd addObject:[assoc1 eq:[[a plus:b] plus:c]]];
-//    [toadd addObject:[assoc2 eq:[a plus:[b plus:c]]]];
+//    [toadd addObject:[diffab set:[a sub:b]]];
+//    [toadd addObject:[diffac set:[a sub:c]]];
+//    [toadd addObject:[diffbc set:[b sub:c]]];
+//    [toadd addObject:[assoc1 set:[[a plus:b] plus:c]]];
+//    [toadd addObject:[assoc2 set:[a plus:[b plus:c]]]];
 //
 //    [toadd addObject:[assoc1 neq:infinity]];
 //    [toadd addObject:[assoc1 neq:sub_infinity]];

@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
       NSMutableArray* toadd = [[NSMutableArray alloc] init];
       
       
-      [toadd addObject:[r_0 eq: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
+      [toadd addObject:[r_0 set: [[[[[[[[[y_0 mul: @(333.75f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0f)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0f)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0f)]]] plus: [[[[[[[[y_0 mul: @(5.5f)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.f)]]]]];
       
       //assert((r >= 0));
       [toadd addObject:[r_0 geq:@(10e8f)]];
@@ -33,8 +33,8 @@ int main(int argc, const char * argv[]) {
       
       // if  version 1
       /*
-       [toadd addObject:[[[r_0 geq:@(10e8f)] land: [r_1 eq:@(3.0f)]] lor:
-       [[r_0 lt:@(10e8f)] land: [r_1 eq:@(2.0f)]]]];
+       [toadd addObject:[[[r_0 geq:@(10e8f)] land: [r_1 set:@(3.0f)]] lor:
+       [[r_0 lt:@(10e8f)] land: [r_1 set:@(2.0f)]]]];
        */
       
        // if version 2
@@ -43,10 +43,10 @@ int main(int argc, const char * argv[]) {
        id<ORGroup> NCE = [args makeGroup:model];
        
        [CT add:[r_0 geq:@(10e8f)]];
-       [CT add:[r_1 eq:@(3.0f)]];
+       [CT add:[r_1 set:@(3.0f)]];
        
        [NCE add:[r_0 lt:@(10e8f)]];
-       [NCE add:[r_1 eq:@(2.0f)]];
+       [NCE add:[r_1 set:@(2.0f)]];
        
        [toadd addObject:[ORFactory cdisj:model clauses:@[CT,NCE]]];
        }
@@ -60,16 +60,16 @@ int main(int argc, const char * argv[]) {
          [toadd addObject: [[ifCond neg] eq: elseGuard]];
          
          id<ORGroup> thenGroup = [ORFactory group:model guard:thenGuard];
-         [thenGroup add: [r_1 eq:@(3.0f)]];
+         [thenGroup add: [r_1 set:@(3.0f)]];
          [toadd addObject:thenGroup];
          
          id<ORGroup> elseGroup = [ORFactory group:model guard:elseGuard];
-         [elseGroup add: [r_1 eq:@(2.0f)]];
+         [elseGroup add: [r_1 set:@(2.0f)]];
          [toadd addObject:elseGroup];
       }
       
       
-      [toadd addObject:[r_2 eq:[r_1 mul: @(2.0f)]]];
+      [toadd addObject:[r_2 set:[r_1 mul: @(2.0f)]]];
       
       //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
       

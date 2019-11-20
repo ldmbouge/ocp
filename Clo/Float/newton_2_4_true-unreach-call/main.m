@@ -38,23 +38,23 @@ int main(int argc, const char * argv[]) {
     id<ORExpr> fc = [ORFactory float:model value:1.0f];
     NSMutableArray* toadd = [[NSMutableArray alloc] init];
     
-    [toadd addObject:[f_x eq:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
+    [toadd addObject:[f_x set:[[[x sub:[[[x mul:x] mul:x] div:@(6.0f)]] plus:[[[[[x mul:x] mul:x] mul:x] mul:x] div:@(120.0f)]]
                               plus:[[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] mul:x] div:@(5040.0f)]]]];
     
     
-    [toadd addObject:[fp_x eq:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
+    [toadd addObject:[fp_x set:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
                                plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
     
-    [toadd addObject:[x2 eq:[x sub:[f_x div:fp_x]]]];
+    [toadd addObject:[x2 setset:[x sub:[f_x div:fp_x]]]];
     
-    [toadd addObject:[f_x2 eq:[[[x2 sub:[[[x2 mul:x2] mul:x2] div:@(6.0f)]] plus:[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] div:@(120.0f)]]
+    [toadd addObject:[f_x2 set:[[[x2 sub:[[[x2 mul:x2] mul:x2] div:@(6.0f)]] plus:[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] div:@(120.0f)]]
                                plus:[[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(5040.0f)]]]];
     
     
-    [toadd addObject:[fp_x2 eq:[[[fc sub:[[x2 mul:x2] div:@(2.0f)]] plus:[[[[x2 mul:x2] mul:x2] mul:x2] div:@(24.0f)]]
+    [toadd addObject:[fp_x2 set:[[[fc sub:[[x2 mul:x2] div:@(2.0f)]] plus:[[[[x2 mul:x2] mul:x2] mul:x2] div:@(24.0f)]]
                                 plus:[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(720.0f)]]]];
     
-    [toadd addObject:[r_0 eq:[x2 sub:[f_x2 div:fp_x2]]]];
+    [toadd addObject:[r_0 set:[x2 sub:[f_x2 div:fp_x2]]]];
     
     [toadd addObject:[r_0 geq:@(0.1f)]];
     

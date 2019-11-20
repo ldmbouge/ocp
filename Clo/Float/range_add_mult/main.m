@@ -24,7 +24,7 @@ int main(int argc, const char * argv[]) {
     
     [toadd addObject:[[x plus: y] geq: @(0.0f)]];
     
-    [toadd addObject:[res eq: [x plus: [y mul: z]]]];
+    [toadd addObject:[res set: [x plus: [y mul: z]]]];
     
     [toadd addObject:[res lt: @(0.0f)]];
     //         [toadd addObject:[[res lt: @(0.0f)] lor: [res gt: @(360.0f)]]];

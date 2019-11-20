@@ -16,12 +16,12 @@ int main(int argc, const char * argv[]) {
          
        NSMutableArray* toadd = [[NSMutableArray alloc] init];
          
-         [toadd addObject:[d[0] eq:@(1.f)]];
+         [toadd addObject:[d[0] set:@(1.f)]];
          
          for(ORInt i = 0; i < NBLOOPS; i++){
             [toadd addObject:[nextValue[i] lt:@(25.f)]];
             [toadd addObject:[nextValue[i] gt:@(0.f)]];
-            [toadd addObject:[d[i+1] eq:[d[i] mul:nextValue[i]]]];
+            [toadd addObject:[d[i+1] set:[d[i] mul:nextValue[i]]]];
          }
          
          [toadd addObject:[d[NBLOOPS] gt:@(LARGE_NUMBER)]];

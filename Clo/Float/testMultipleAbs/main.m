@@ -20,8 +20,8 @@ int main(int argc, const char * argv[]) {
     id<ORFloatVar> x = [ORFactory floatVar:model low:0.0f up:1.0f  name:@"x"];
     id<ORFloatVar> z = [ORFactory floatVar:model name:@"z"];
     id<ORGroup> g = [ORFactory group:model type:Group3B];
-    //         [model add:[t eq: [[x plus:@(1.0)] mul:[x plus:@(1.0)]]]];
-    [toadd addObject:[z eq: [[[[@(1.0f) plus: [@(0.5f) mul: x]] sub: [[@(0.125f) mul: x] mul: x]] plus: [[[@(0.0625f) mul: x] mul: x] mul: x]] sub: [[[[@(0.0390625f) mul: x] mul: x] mul: x] mul: x]]]];
+    //         [model add:[t set: [[x plus:@(1.0)] mul:[x plus:@(1.0)]]]];
+    [toadd addObject:[z set: [[[[@(1.0f) plus: [@(0.5f) mul: x]] sub: [[@(0.125f) mul: x] mul: x]] plus: [[[@(0.0625f) mul: x] mul: x] mul: x]] sub: [[[[@(0.0390625f) mul: x] mul: x] mul: x] mul: x]]]];
     
     id<ORVarArray> vars = [model FPVars];
     id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];

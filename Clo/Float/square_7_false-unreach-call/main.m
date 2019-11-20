@@ -41,7 +41,7 @@ int main(int argc, const char * argv[]) {
     
     [toadd addObject:[IN lt:@(1.0f)]];
     
-    [toadd addObject:[result eq:[[[[fc plus:[fc2 mul:IN]] sub: [[fc3 mul:IN ] mul:IN]] plus: [[[fc4 mul:IN] mul:IN] mul:IN]] sub:[[[[fc5 mul:IN] mul:IN] mul:IN] mul:IN]]]];
+    [toadd addObject:[result set:[[[[fc plus:[fc2 mul:IN]] sub: [[fc3 mul:IN ] mul:IN]] plus: [[[fc4 mul:IN] mul:IN] mul:IN]] sub:[[[[fc5 mul:IN] mul:IN] mul:IN] mul:IN]]]];
     
     [toadd addObject:[[result geq:@(0.0f)] land: [result lt:@(VAL)]]];
     //         [toadd addObject:[[result lt:@(0.0f)] lor: [result geq:@(VAL)]]];
