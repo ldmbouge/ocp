@@ -387,6 +387,12 @@ extension ORMDDSpecs {
     }
 }
 
+extension ORIntArray {
+    subscript (key : ORExpr) -> ORExpr {
+        return self.elt(key)
+    }
+}
+
 extension ORIntVarArray {
    subscript (key: ORInt) -> ORIntVar {
       get {
