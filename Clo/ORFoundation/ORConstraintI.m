@@ -10426,7 +10426,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void)dealloc
 {
-   [_value release];
+   //[_value release];
    [_pBound release];
    [super dealloc];
 }

@@ -465,7 +465,7 @@
 }
 -(void) dealloc
 {
-   [_domainError release];
+   //[_domainError release];
    [super dealloc];
 }
 -(enum ORVType) vtype
@@ -614,7 +614,7 @@
 {
    if(_prettyname != nil)
       [_prettyname release];
-   [_domain release];
+   //[_domain release];
    [super dealloc];
 }
 -(enum ORVType) vtype
@@ -767,7 +767,7 @@
 }
 -(void) dealloc
 {
-   [_domainError release];
+   //[_domainError release];
    [super dealloc];
 }
 -(enum ORVType) vtype

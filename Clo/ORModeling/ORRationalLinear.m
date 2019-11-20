@@ -76,17 +76,17 @@
    if (c==0) return;
    id<ORRationalRange> dom = [x domain];
    if ([dom.low eq: dom.up] && [dom.up isZero]) {
-      [dom release];
+      //[dom release];
       return;
    }
    if ([dom.low eq: dom.up]) {
       id<ORRational> tmp = [ORRational rationalWith_d:c];
       _indep = [_indep add: [dom.low mul: tmp]];
-      [dom release];
+      //[dom release];
       [tmp release];
       return;
    }
-   [dom release];
+   //[dom release];
    ORInt low = 0,up=_nb-1,mid=-1,kid;
    ORInt xid = [x  getId];
    BOOL found = NO;
@@ -243,11 +243,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          svlb = [d.up mul: cr];
       }
       lb = [lb add: svlb];
+      //[d release];
    }
    [svlb release];
    [cr release];
    [lb autorelease];
-   [d release];
    return lb;
 }
 -(id<ORRational>)qmax
@@ -266,11 +266,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          svub = [d.low mul: cr];
       }
       ub = [ub add: svub];
+      //[d release];
    }
    [cr release];
    [svub release];
    [ub autorelease];
-   [d release];
    return ub;
 }
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model

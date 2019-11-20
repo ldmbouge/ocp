@@ -1928,7 +1928,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 +(id<ORRationalVar>)rationalVarIn:(ORRationalLinear*)e for:(id<ORAddToModel>)model
 {
    id<ORRationalRange> r = [ORFactory rationalRange:model low:[e qmin] up:[e qmax]];
-   [r autorelease];
+   //[r autorelease];
    if ([e size] == 0) {
       id<ORRationalVar> xv = [ORFactory rationalVar: model domain:r];
       return xv;

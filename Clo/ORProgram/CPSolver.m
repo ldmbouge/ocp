@@ -2025,12 +2025,12 @@ onFailure: (ORInt2Void) onFailure
       return ![v bound] && [v isInputVar];
    }
                                  orderedBy:
-//                          ^ORDouble(ORInt i) {
-//      return (ORDouble)i;
-//   }
                           ^ORDouble(ORInt i) {
-      return [self density:x[i]];
+      return (ORDouble)i;
    }
+//                          ^ORDouble(ORInt i) {
+//      return [self density:x[i]];
+//   }
                           ];
    
    // To keep the idea that we might have two differents policies
@@ -2073,9 +2073,9 @@ onFailure: (ORInt2Void) onFailure
          ORInt iteration = 0;
          ORInt nbIteration = -1;
          if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: [[[ORRational alloc] init] setZero]]){
-            nbIteration = 1100;
+            nbIteration = 110;
          } else {
-            nbIteration = 1000;
+            nbIteration = 100;
          }
          
          ORBool isFailed = NO;
@@ -2201,16 +2201,16 @@ onFailure: (ORInt2Void) onFailure
          
          /******************************/
          ORSelectorResult i = [select min]; //sélectionne la variable minimisant la mesure défini dans le select
-//         ORSelectorResult I = [select max];
-//         if(i.index == I.index){
-//            b(i.index,x);
-//         } else {
-//            b((((_index._val - i.index) % (I.index - i.index + 1)) + i.index), x);
-//            assignTRInt(&_index, _index._val+1, _trail);
-//         }
+         ORSelectorResult I = [select max];
+         if(i.index == I.index){
+            b(i.index,x);
+         } else {
+            b((((_index._val - i.index) % (I.index - i.index + 1)) + i.index), x);
+            assignTRInt(&_index, _index._val+1, _trail);
+         }
 
          /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
-         b(i.index,x);
+         //b(i.index,x);
          
          //branchAndBoundTime = [NSDate date];
          //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
