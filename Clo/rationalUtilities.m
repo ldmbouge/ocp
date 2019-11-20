@@ -89,7 +89,6 @@ void exitfunc(int sig)
    _type = 1;
    
    return self;
-   
 }
 -(id)setMinusOne
 {
@@ -105,7 +104,6 @@ void exitfunc(int sig)
    _type = 2;
    
    return self;
-   
 }
 -(id)setNegInf
 {
@@ -137,25 +135,22 @@ void exitfunc(int sig)
 }
 -(BOOL)isZero
 {
-   //return [self eq: [ORRational rationalWith_d:0]];
    return self.type == 0;
 }
 -(BOOL)isOne
 {
-   return ([self eq: [ORRational rationalWith_d:1]] && self.type == 1);
+   return ([self get_d] == 1 && self.type == 1);
 }
 -(BOOL)isMinusOne
 {
-   return ([self eq: [ORRational rationalWith_d:-1]]  && self.type == -1);
+   return ([self get_d] == -1  && self.type == -1);
 }
 -(BOOL)isPosInf
 {
-   //return [self eq: [ORRational rationalWith_d:+INFINITY]];
    return self.type == 2;
 }
 -(BOOL)isNegInf
 {
-   //return [self eq: [ORRational rationalWith_d:-INFINITY]];
    return self.type == -2;
 }
 -(void)setRational:(rational_t)rational
@@ -232,12 +227,14 @@ void exitfunc(int sig)
 {
    id<ORRational> result = [[ORRational alloc] init];
    [result set:r];
+   [result autorelease];
    return result;
 }
 +(id<ORRational>)rationalWith_d:(double)d
 {
    id<ORRational> result = [[ORRational alloc] init];
    [result set_d:d];
+   [result autorelease];
    return result;
 }
 -(id)set_d:(double)d
@@ -436,6 +433,7 @@ void exitfunc(int sig)
       mpq_canonicalize(z.rational);
       z.type = mpq_sgn(z.rational);
    }
+   [z autorelease];
    return z;
 }
 -(id<ORRational>)sub:(id<ORRational>)r
@@ -467,6 +465,8 @@ void exitfunc(int sig)
       mpq_canonicalize(z.rational);
       z.type = mpq_sgn(z.rational);
    }
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRational>)mul:(id<ORRational>)r
@@ -519,6 +519,8 @@ void exitfunc(int sig)
       mpq_canonicalize(z.rational);
       z.type = mpq_sgn(z.rational);
    }
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRational>)div:(id<ORRational>)r
@@ -571,6 +573,8 @@ void exitfunc(int sig)
       mpq_canonicalize(z.rational);
       z.type = mpq_sgn(z.rational);
    }
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRational>)subI:(id<ORRational>)r
@@ -598,6 +602,10 @@ void exitfunc(int sig)
    mpq_sub(z.rational, local.rational, other.rational);
    mpq_canonicalize(z.rational);
    z.type = mpq_sgn(z.rational);
+   
+   [z autorelease];
+   [local release];
+   [other release];
    return z;
 }
 -(id<ORRational>)divI:(id<ORRational>)r
@@ -627,7 +635,10 @@ void exitfunc(int sig)
    mpq_div(z.rational, local.rational, other.rational);
    mpq_canonicalize(z.rational);
    z.type = mpq_sgn(z.rational);
-      
+   
+   [z autorelease];
+   [local release];
+   [other release];
    return z;
 }
 -(id<ORRational>)neg
@@ -649,6 +660,8 @@ void exitfunc(int sig)
          z.type = - _type;
          break;
    }
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRational>)abs
@@ -664,6 +677,8 @@ void exitfunc(int sig)
       mpq_abs(z.rational, self.rational);
       z.type = mpq_sgn(self.rational);
    }
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRational>)sqrt
@@ -693,6 +708,8 @@ void exitfunc(int sig)
       }
       mpz_clears(num, den, NULL);
    }
+   
+   [z autorelease];
    return z;
 }
 -(BOOL)cmp:(id<ORRational>)r
@@ -891,6 +908,8 @@ void exitfunc(int sig)
    id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_low add: ri.low];
    z.up = [_up add: ri.up];
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)sub:(id<ORRationalInterval>)ri
@@ -898,6 +917,8 @@ void exitfunc(int sig)
    id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
    z.low = [_low sub: ri.up];
    z.up = [_up sub: ri.low];
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)mul:(id<ORRationalInterval>)ri
@@ -959,8 +980,11 @@ void exitfunc(int sig)
          } else {
             [z.up set: tmp.up];
          }
+         [tmp release];
       }
    }
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)div:(id<ORRationalInterval>)ri
@@ -1034,6 +1058,8 @@ void exitfunc(int sig)
          }
       }
    }
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)neg
@@ -1042,6 +1068,8 @@ void exitfunc(int sig)
    z.low = [_up neg];
    z.up = [_low neg];
    
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)abs
@@ -1050,13 +1078,13 @@ void exitfunc(int sig)
    z.low = [_low abs];
    z.up = [_up abs];
    
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)sqrt
 {
    id<ORRationalInterval> z = [[ORRationalInterval alloc] init: _low.mt];
-   //   z.low = [_low sqrt];
-   //   z.up = [_up sqrt];
    
    fesetround(FE_DOWNWARD);
    [z.low set_d: sqrt([_low get_d])];
@@ -1064,6 +1092,8 @@ void exitfunc(int sig)
    [z.up set_d: sqrt([_up get_d])];
    fesetround(FE_TONEAREST);
    
+   
+   [z autorelease];
    return z;
 }
 -(BOOL)cmp:(id<ORRationalInterval>)ri
@@ -1134,6 +1164,9 @@ void exitfunc(int sig)
       if([z empty])
          [z setNAN];
    }
+   
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)intersection:(id<ORRationalInterval>)ri
@@ -1166,6 +1199,9 @@ void exitfunc(int sig)
       if([z empty])
          [z setNAN];
    }
+   
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri
@@ -1198,6 +1234,8 @@ void exitfunc(int sig)
       [epsilon release];
    }
    
+   
+   [z autorelease];
    return z;
 }
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup
@@ -1230,6 +1268,8 @@ void exitfunc(int sig)
       [epsilon release];
    }
 
+   
+   [z autorelease];
    return z;
 }
 @end
