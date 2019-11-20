@@ -146,6 +146,8 @@
    id<ORRational> up = [[ORRational alloc] init];
    [low setNegInf];
    [up setPosInf];
+   [low autorelease];
+   [up autorelease];
    return [[CPRationalVarI alloc] init:cp low:low up:up];
 }
 +(id<CPRationalVar>) rationalVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x

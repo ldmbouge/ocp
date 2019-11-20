@@ -1455,6 +1455,8 @@ onFailure: (ORInt2Void) onFailure
    [two set_d:2];
    while (![x bound]) {
       mid = [[[x min] div: two] add: [[x max] div: two]];
+      [two release];
+      [mid autorelease];
       [_search try: ^{
          [self rationalGEqual: mx with: mid];
       } alt: ^{
@@ -2071,9 +2073,9 @@ onFailure: (ORInt2Void) onFailure
          ORInt iteration = 0;
          ORInt nbIteration = -1;
          if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: [[[ORRational alloc] init] setZero]]){
-            nbIteration = 30;
+            nbIteration = 1100;
          } else {
-            nbIteration = 20;
+            nbIteration = 1000;
          }
          
          ORBool isFailed = NO;
@@ -2116,7 +2118,7 @@ onFailure: (ORInt2Void) onFailure
                      int nvar = 0, nv, nbiter = 0;
                      int direction = 1;
                      ORStatus s;
-                     while (nbiter < 200) {
+                     while (nbiter < 2000) {
                         [_tracer popNode];
                         [_tracer pushNode];
                         nbiter++; //printf("nb iter = %d\n", nbiter);
@@ -2203,7 +2205,7 @@ onFailure: (ORInt2Void) onFailure
 //         if(i.index == I.index){
 //            b(i.index,x);
 //         } else {
-//            b((((_index._val - i.index) % (I.index - i.index)) + i.index), x);
+//            b((((_index._val - i.index) % (I.index - i.index + 1)) + i.index), x);
 //            assignTRInt(&_index, _index._val+1, _trail);
 //         }
 

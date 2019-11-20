@@ -1265,8 +1265,10 @@
          //or   x = y - z
          id<ORRational> zero = [ORRational rationalWith_d:0.0];
          if([[coefs at:2] lt: zero]){
+            [zero release];
             return [CPFactory rationalTernarySub:x[0] equals:x[1] minus:x[2] annotation:notes];
          } else {
+            [zero release];
             return [CPFactory rationalTernaryAdd:x[0] equals:x[1] plus:x[2] annotation:notes];
          }
       }

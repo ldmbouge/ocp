@@ -397,8 +397,8 @@
       _domainError = [ORFactory rationalRange:track low:zero up:zero];
       [zero release];
    } else {
-      id<ORRational> low = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
-      id<ORRational> up = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
+      id<ORRational> low = [[[ORRational alloc] init] setNegInf];
+      id<ORRational> up = [[[ORRational alloc] init] setPosInf];
       _domainError = [ORFactory rationalRange:track low:low up:up];
       [low release];
       [up release];
@@ -465,6 +465,7 @@
 }
 -(void) dealloc
 {
+   [_domainError release];
    [super dealloc];
 }
 -(enum ORVType) vtype
@@ -561,10 +562,12 @@
    self = [super init];
    _tracker = track;
    _domain = dom;
-   id<ORRational> ninf = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
-   id<ORRational> pinf = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
+   id<ORRational> ninf = [[[ORRational alloc] init] setNegInf];
+   id<ORRational> pinf = [[[ORRational alloc] init] setPosInf];
    _hasBounds = ([[dom low] neq: ninf] || [[dom up] neq: pinf]);
    [track trackVariable: self];
+   [ninf release];
+   [pinf release];
    return self;
 }
 -(ORRationalVarI*) init: (id<ORTracker>) track low: (id<ORRational>) low up: (id<ORRational>) up
@@ -575,6 +578,7 @@
 {
    id<ORRational> zero = [ORRational rationalWith_d:0.0];
    ORRationalVarI* r = [self init:track low:zero up:up];
+   [zero release];
    return r;
 }
 -(ORRationalVarI*) init: (id<ORTracker>) track
@@ -592,6 +596,7 @@
    id<ORRational> zero = [ORRational rationalWith_d:0.0];
    self = [self init:track low:zero up:up name:name];
    _prettyname = [[NSString alloc] initWithString:name];
+   [zero release];
    return self;
 }
 -(ORRationalVarI*) init: (id<ORTracker>) track low: (id<ORRational>) low up: (id<ORRational>) up name:(NSString*) name
@@ -609,6 +614,7 @@
 {
    if(_prettyname != nil)
       [_prettyname release];
+   [_domain release];
    [super dealloc];
 }
 -(enum ORVType) vtype
@@ -711,8 +717,8 @@
       _domainError = [ORFactory rationalRange:track low:zero up:zero];
       [zero release];
    } else {
-      id<ORRational> low = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
-      id<ORRational> up = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
+      id<ORRational> low = [[[ORRational alloc] init] setNegInf];
+      id<ORRational> up = [[[ORRational alloc] init] setPosInf];
       _domainError = [ORFactory rationalRange:track low:low up:up];
       [low release];
       [up release];
@@ -761,6 +767,7 @@
 }
 -(void) dealloc
 {
+   [_domainError release];
    [super dealloc];
 }
 -(enum ORVType) vtype

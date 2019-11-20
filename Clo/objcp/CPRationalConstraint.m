@@ -284,6 +284,11 @@
    _c = [ORRational rationalWith:c];
    return self;
 }
+-(void) dealloc
+{
+   [_c release];
+   [super dealloc];
+}
 -(void) post
 {
    [_x bind:_c];
@@ -374,6 +379,11 @@
    _c = c;
    return self;
    
+}
+-(void) dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(void) post
 {
@@ -478,6 +488,11 @@
    _x = x;
    _c = c;
    return self;
+}
+-(void) dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(void) post
 {
@@ -1177,9 +1192,9 @@
    return self;
 }
 - (void)dealloc {
-   [super dealloc];
    [_primalBound release];
    [_dualBound release];
+   [super dealloc];
 }
 -(id<CPRationalVar>)var
 {
@@ -1215,6 +1230,7 @@
          NSLog(@"primal bound: %@",_primalBound);
       }
    }
+   [bound release];
 }
 -(void) updateDualBound
 {
@@ -1225,6 +1241,7 @@
          NSLog(@"dual bound: %@",_dualBound);
       }
    }
+   [bound release];
 }
 -(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
 {
@@ -1241,6 +1258,7 @@
          ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b gt: _dualBound])
             _dualBound = b;
+         [b release];
          return ok;
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
@@ -1248,6 +1266,7 @@
          ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b gt: _dualBound])
             _dualBound = b;
+         [b release];
          return ok;
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
@@ -1255,12 +1274,14 @@
          ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b gt: _dualBound])
             _dualBound = b;
+         [b release];
          return ok;
       } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
          id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
          ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b gt: _dualBound])
             _dualBound = b;
+         [b release];
          return ok;
       } else return ORFailure;
    }
@@ -1271,18 +1292,22 @@
       if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
          id<ORRational> b = [((id<ORObjectiveValueRational>) newBound) value];
          [_x updateMin: b];
+         [b release];
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
          id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueInt>) newBound) value]];
          [_x updateMin: b];
+         [b release];
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
          id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueFloat>) newBound) value]];
          [_x updateMin: b];
+         [b release];
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
          id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueReal>) newBound) value]];
          [_x updateMin: b];
+         [b release];
       }
    }
 }
@@ -1351,9 +1376,9 @@
    return self;
 }
 - (void)dealloc {
-   [super dealloc];
    [_primalBound release];
    [_dualBound release];
+   [super dealloc];
 }
 -(id<CPRationalVar>)var
 {
@@ -1408,6 +1433,7 @@
       branchAndBoundTime = [NSDate date];
       NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
+   [bound release];
 }
 -(void) updateDualBound
 {
@@ -1419,6 +1445,7 @@
       branchAndBoundTime = [NSDate date];
       NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
    }
+   [bound release];
 }
 
 -(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
@@ -1438,6 +1465,7 @@
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
             [_dualBound set: b];
+            [b release];
             nbDualUpdate++;
             branchAndBoundTime = [NSDate date];
             NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1448,6 +1476,7 @@
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
             [_dualBound set: b];
+            [b release];
             nbDualUpdate++;
             branchAndBoundTime = [NSDate date];
             NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1458,6 +1487,7 @@
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
             [_dualBound set: b];
+            [b release];
             nbDualUpdate++;
             branchAndBoundTime = [NSDate date];
             NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1468,6 +1498,7 @@
          ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
          if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
             [_dualBound set: b];
+            [b release];
             nbDualUpdate++;
             branchAndBoundTime = [NSDate date];
             NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1481,18 +1512,22 @@
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
       id<ORRational> b = [((id<ORObjectiveValueRational>) newBound) value];
       [_x updateMax: b];
+      [b release];
    }
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
       id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueInt>) newBound) value]];
       [_x updateMax: b];
+      [b release];
    }
    else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
       id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueFloat>) newBound) value]];
       [_x updateMax: b];
+      [b release];
    }
    else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
       id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueReal>) newBound) value]];
       [_x updateMax: b];
+      [b release];
    }
 }
 

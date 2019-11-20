@@ -415,6 +415,12 @@
    _up = [ORRational rationalWith:up];
    return self;
 }
+-(void)dealloc
+{
+   [_low release];
+   [_up release];
+   [super dealloc];
+}
 -(id)copyWithZone:(NSZone *)zone
 {
    return [[ORRationalRangeI allocWithZone:zone] init:_low up:_up];

@@ -256,6 +256,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
 -(void)dealloc
 {
    deallocNetwork(&_net);
+   [_valueError release];
    [super dealloc];
 }
 -(CPEngineI*) engine
@@ -905,11 +906,15 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
 }
 - (id<ORRational>)maxErr
 {
-   return [[ORRational alloc] init];
+   id<ORRational> maxErr = [[ORRational alloc] init];
+   [maxErr autorelease];
+   return maxErr;
 }
 - (id<ORRational>)minErr
 {
-   return [[ORRational alloc] init];
+   id<ORRational> minErr = [[ORRational alloc] init];
+   [minErr autorelease];
+   return minErr;
 }
 - (ORDouble)maxErrF
 {
@@ -986,8 +991,10 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    return FALSE;
 }
 
-- (id<ORRational> )errorValue {
-   return [[ORRational alloc] init];
+- (id<ORRational>)errorValue {
+   id<ORRational> errorValue = [[ORRational alloc] init];
+   [errorValue autorelease];
+   return errorValue;
 }
 - (void)visit:(id<CPVisitor>)visitor
 {

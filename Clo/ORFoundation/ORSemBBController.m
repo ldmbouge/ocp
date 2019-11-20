@@ -220,6 +220,8 @@
 -(void)exitTryLeft
 {
    NSCont* k = [NSCont takeContinuation];
+   branchAndBoundTime = [NSDate date];
+   NSLog(@"L: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    if ([k nbCalls] == 0) {
       if(limitCounter._val < nbConstraint){
       [self makeAndRecordNode:k];
@@ -243,6 +245,8 @@
 -(void)exitTryRight
 {
    NSCont* k = [NSCont takeContinuation];
+   branchAndBoundTime = [NSDate date];
+   NSLog(@"R: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    if ([k nbCalls] == 0) {
       if(limitCounter._val < nbConstraint){
          [self makeAndRecordNode:k];
@@ -292,9 +296,9 @@ NSString * const ORStatus_toString_BB[] = {
       if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
          /* skip box if sup of error is less than primalBound */
-         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] &&
-            ([[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]] ||
-             [boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]])){
+         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]){ //&&
+            //([[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]] ||
+             //[boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]])){
             BBNode* nd = [_buf extractBest];
             
             ORStatus status = [of tightenDualBound:bestKey.bound];
@@ -315,7 +319,7 @@ NSString * const ORStatus_toString_BB[] = {
                else [k letgo];
             }
          } else {
-            NSLog(@"EQUAL BOUND: %@ < %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
+            NSLog(@"EQUAL BOUND: %@ <  %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             NSLog(@"           : %@ >= %@", [bestKey.bound rationalValue], [[_engine objective] primalBound]);
             NSLog(@"           : %@ >= %@", boundDiscardedBoxes, [[_engine objective] primalBound]);
             return;

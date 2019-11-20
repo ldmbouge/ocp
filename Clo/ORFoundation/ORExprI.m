@@ -42,7 +42,9 @@
 }
 -(id<ORRational>)rationalValue
 {
-   return [[ORRational alloc] init];
+   id<ORRational> rV = [[ORRational alloc] init];
+   [rV autorelease];
+   return rV;
 }
 #else
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
@@ -1601,22 +1603,26 @@
 }
 -(id<ORRational>) qmin
 {
-   id<ORRational> minOf = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
+   id<ORRational> minOf = [[[ORRational alloc] init] setPosInf];
    id<ORRational> array_k = [[ORRational alloc] init];
    for(ORInt k=[_array low];k<=[_array up];k++){
-      array_k = [_array at:k];
-      minOf = [minOf lt: array_k] ? minOf : array_k;
+      [array_k set: [_array at:k]];
+      [minOf set: ([minOf lt: array_k] ? minOf : array_k)];
    }
+   [array_k release];
+   [minOf autorelease];
    return minOf;
 }
 -(id<ORRational>) qmax
 {
-   id<ORRational> maxOf = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
+   id<ORRational> maxOf = [[[ORRational alloc] init] setNegInf];
    id<ORRational> array_k = [[ORRational alloc] init];
    for(ORInt k=[_array low];k<=[_array up];k++){
-      array_k = [_array at:k];
-      maxOf = [maxOf gt: array_k] ? maxOf : array_k;
+      [array_k set: [_array at:k]];
+      [maxOf set: ([maxOf gt: array_k] ? maxOf : array_k)];
    }
+   [array_k release];
+   [maxOf autorelease];
    return maxOf;
 }
 -(NSString *)description

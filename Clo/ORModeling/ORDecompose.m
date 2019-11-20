@@ -446,6 +446,7 @@ struct CPVarPair {
       ORRationalLinear* lin  = [ORNormalizer rationalLinearFrom:other model:_model];
       id<ORRationalVar> x = [ORNormalizer rationalVarIn:lin for:_model];
       [_model addConstraint:[ORFactory rationalAssignC:_model var:x to:c]];
+      [c release];
       [lin release];
    } else {
       bool lv = [[e left] isVariable];
@@ -1927,6 +1928,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 +(id<ORRationalVar>)rationalVarIn:(ORRationalLinear*)e for:(id<ORAddToModel>)model
 {
    id<ORRationalRange> r = [ORFactory rationalRange:model low:[e qmin] up:[e qmax]];
+   [r autorelease];
    if ([e size] == 0) {
       id<ORRationalVar> xv = [ORFactory rationalVar: model domain:r];
       return xv;
@@ -1942,7 +1944,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 +(void)rationalVar:(id<ORRationalVar>)var equal:(ORRationalLinear*)e for:(id<ORAddToModel>) model
 {
    if (e.size == 0) {
-      id<ORRational> z = [ORRational rationalWith_d:0.0];
+      id<ORRational> z = [[ORRational alloc] init];
+      [z setZero];
       [model addConstraint:[ORFactory rationalEqualc:model var:var eqc:z]];
       [z release];
    } else if (e.size == 1) {

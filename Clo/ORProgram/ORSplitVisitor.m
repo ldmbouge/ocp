@@ -105,7 +105,8 @@
       nbBoxGenerated++;
       boxCardinality = cardinalityDV(xi.min, xi.max);
    }];
-   //NSLog(@"%d/%d", nbBoxDone, nbBoxGenerated);
+   branchAndBoundTime = [NSDate date];
+   NSLog(@"%d/%d -- %.3fs", nbBoxDone, nbBoxGenerated, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
 }
 @end
 

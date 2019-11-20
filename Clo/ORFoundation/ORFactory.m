@@ -227,16 +227,18 @@
 }
 +(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker
 {
-   id<ORRational> ninf = [[[ORRational alloc] init] setNegInf];//[ORRational rationalWith_d:-INFINITY];
-   id<ORRational> pinf = [[[ORRational alloc] init] setPosInf];//[ORRational rationalWith_d:+INFINITY];
+   id<ORRational> ninf = [[[ORRational alloc] init] setNegInf];
+   id<ORRational> pinf = [[[ORRational alloc] init] setPosInf];
    ORRationalRangeI* o = [[ORRationalRangeI alloc] init:ninf up:pinf];
    [ninf release];
    [pinf release];
+   [o autorelease];
    return [tracker trackImmutable:o];
 }
 +(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker low:(id<ORRational>)low up:(id<ORRational>) up
 {
    ORRationalRangeI* o = [[ORRationalRangeI alloc] init:low up:up];
+   [o autorelease];
    return [tracker trackImmutable:o];
 }
 +(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker
@@ -343,9 +345,8 @@
    id<ORRational> zero = [[ORRational alloc] init];
    [zero setZero];
    id<ORRationalArray> o = [[ORRationalArrayI alloc] init: tracker range:range value:zero];
+   [zero release];
    return [tracker trackMutable: o];
-   //id<ORIdArray> o = [ORFactory idArray:tracker range:range];
-   //return (id<ORRationalArray>)o;
 }
 +(ORLDoubleArrayI*) ldoubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORLDouble(^)(ORInt)) clo
 {

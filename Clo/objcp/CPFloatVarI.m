@@ -230,6 +230,7 @@ return rv;
 -(void)dealloc
 {
     deallocNetwork(&_net);
+   [_valueError release];
     [super dealloc];
 }
 -(CPEngineI*) engine
@@ -876,11 +877,15 @@ return rv;
     return [_theVar max];
 }
 - (id<ORRational>)maxErr { // Probably wrong (cpjm)
-    return [[ORRational alloc] init];
+   id<ORRational> maxErr = [[ORRational alloc] init];
+   [maxErr autorelease];
+    return maxErr;
 }
 - (id<ORRational>)minErr
 {
-    return [[ORRational alloc] init];
+    id<ORRational> minErr = [[ORRational alloc] init];
+    [minErr autorelease];
+     return minErr;
 }
 - (ORDouble)maxErrF
 {
@@ -957,7 +962,10 @@ return rv;
 }
 - (id<ORRational>)errorValue
 {
-   return [[ORRational alloc] init];
+   id<ORRational> errorValue = [[ORRational alloc] init];
+   [errorValue autorelease];
+    return errorValue;
+   
 }
 - (void)visit:(id<CPVisitor>)visitor
 {

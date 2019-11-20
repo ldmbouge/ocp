@@ -320,6 +320,11 @@
    _tracker = tracker;
    return self;
 }
+-(void)dealloc
+{
+   [_value release];
+   [super dealloc];
+}
 -(id<ORRational>) initialValue
 {
    return _value;
@@ -330,7 +335,7 @@
 }
 -(id<ORRational>) setValue: (id<ORRational>) value
 {
-   return _value = value;
+   return [_value set: value];
 }
 -(id<ORRational>) value: (id<ORGamma>) solver
 {
@@ -519,6 +524,11 @@
    _value = [ORRational rationalWith:value];
    _tracker = tracker;
    return self;
+}
+-(void)dealloc
+{
+   [_value release];
+   [super dealloc];
 }
 -(id)copyWithZone:(NSZone *)zone
 {

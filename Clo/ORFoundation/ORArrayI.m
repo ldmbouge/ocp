@@ -967,6 +967,9 @@
 }
 -(void) dealloc
 {
+   for (ORInt i=_low ; i <= _up; i++){
+      [_array[i] release];
+   }
    _array += _low;
    free(_array);
    [super dealloc];
@@ -1007,6 +1010,7 @@
    [self enumerateWith:^(id<ORRational> obj, int idx) {
       [sum set: [sum add: block(obj, idx)]];
    }];
+   [sum autorelease];
    return sum;
 }
 -(ORInt) low
@@ -1026,6 +1030,7 @@
    [v set: _array[_low]];
    for(int i = _low+1; i <= _up; i++)
       if([_array[i] gt: v]) [v set: _array[i]];
+   [v autorelease];
    return v;
 }
 -(id<ORRational>) min {
@@ -1033,6 +1038,7 @@
    [v set: _array[_low]];
    for(int i = _low+1; i <= _up; i++)
       if([_array[i] lt: v]) [v set: _array[i]];
+   [v autorelease];
    return v;
 }
 -(id<ORRational>) average {

@@ -65,10 +65,6 @@
    if([newMin gt: [self max]])
         failNow();
     updateMinR(&_domain, newMin, _trail);
-   //id<ORRational> epsilon = [[ORRational alloc] init];
-   //[epsilon set: 1 and: 1073741824];
-   //ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
-   //[epsilon release];
    ORBool isBound = [_domain._up eq: _domain._low];
     // cpjm: so that eo can use this method without propagation
     if (x != NULL) {
@@ -82,10 +78,7 @@
    if([[self min] gt: newMax])
         failNow();
     updateMaxR(&_domain, newMax, _trail);
-//   id<ORRational> epsilon = [[ORRational alloc] init];
-//   [epsilon set: 1 and: 1073741824];
-//   ORBool isBound = [[_domain._up sub: _domain._low] lt: epsilon];
-//   [epsilon release];   // cpjm: so that eo can use this method without propagation
+   // cpjm: so that eo can use this method without propagation
    ORBool isBound = [_domain._up eq: _domain._low];
     if (x != NULL) {
         [x changeMaxEvtErr:isBound sender:self];
@@ -128,11 +121,6 @@
 }
 -(ORBool) bound
 {
-   /*id<ORRational> epsilon = [[ORRational alloc] init];
-   [epsilon set:1 and:562949953421312];
-   BOOL b = [[_domain._up sub: _domain._low] lt: epsilon];
-   [epsilon release];
-   return b;*/
    return [_domain._up eq: _domain._low];
 }
 -(ORInterval) bounds
@@ -174,17 +162,17 @@
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
-    self = [super init];
+   self = [super init];
    id<ORRational> low = [[ORRational alloc] init];
    id<ORRational> up = [[ORRational alloc] init];
-    [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&low];
-    [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&up];
-    _domain = makeTRRationalInterval(_trail, low, up);
+   [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&low];
+   [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&up];
+   _domain = makeTRRationalInterval(_trail, low, up);
    [low release];
    [up release];
-    [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_imin];
-    [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_imax];
-    return self;
+   [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_imin];
+   [aDecoder decodeValueOfObjCType:@encode(ORRational) at:&_imax];
+   return self;
 }
 @end
 

@@ -840,6 +840,7 @@
 }
 -(void)dealloc
 {
+   [_c release];
    [super dealloc];
 }
 -(NSString*) description
@@ -896,6 +897,7 @@
 }
 -(void)dealloc
 {
+   [_c release];
    [super dealloc];
 }
 -(NSString*) description
@@ -1649,6 +1651,11 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ != %@)",[self class],self,_x,_c];
    return buf;
 }
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
+}
 -(void)visit:(ORVisitor*)v
 {
    [v visitRationalNEqualc:self];
@@ -1695,6 +1702,11 @@
    _x = x;
    _c = [ORRational rationalWith:c];
    return self;
+}
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -6188,6 +6200,11 @@
    _c = [ORRational rationalWith:c];
    return self;
 }
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -6241,6 +6258,11 @@
    _coefs = coefs;
    _c = [ORRational rationalWith:c];
    return self;
+}
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -6296,6 +6318,11 @@
    _c = [ORRational rationalWith:c];
    return self;
 }
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -6349,6 +6376,11 @@
    _coefs = coefs;
    _c = [ORRational rationalWith:c];
    return self;
+}
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -6404,6 +6436,11 @@
    _c = [ORRational rationalWith:c];
    return self;
 }
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -6458,6 +6495,11 @@
    _c = [ORRational rationalWith:c];
    return self;
 }
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -6511,6 +6553,11 @@
    _x = x;
    _c = [ORRational rationalWith:c];
    return self;
+}
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -6571,6 +6618,11 @@
    _x = x;
    _c = [ORRational rationalWith:c];
    return self;
+}
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -6751,6 +6803,11 @@
    _x = x;
    _c = [ORRational rationalWith:c];
    return self;
+}
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -6934,6 +6991,11 @@
    _c = [ORRational rationalWith:c];
    return self;
 }
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -6994,6 +7056,11 @@
    _x = x;
    _c = [ORRational rationalWith:c];
    return self;
+}
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -7173,6 +7240,11 @@
    _x = x;
    _c = [ORRational rationalWith:c];
    return self;
+}
+-(void)dealloc
+{
+   [_c release];
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -10352,6 +10424,12 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    _direction = b ? 1 : -1;
    return self;
 }
+-(void)dealloc
+{
+   [_value release];
+   [_pBound release];
+   [super dealloc];
+}
 -(id<ORRational>) value
 {
    return _value;
@@ -10414,12 +10492,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
       return 0;
    else
       return 1;
-}
-- (void) dealloc
-{
-   [_value release];
-   [_pBound release];
-   [super dealloc];
 }
 @end
 
