@@ -28,7 +28,7 @@
     TRInt _numChildren;
     int _minChildIndex;
     int _maxChildIndex;
-    TRId* _parents;
+    TRId _parents;
     TRInt _numParents;
     int _maxNumParents;
     int _value;
@@ -182,6 +182,7 @@
 @private
     bool _maximize;
     Class _stateClass;
+    int _nextVariable;
 @protected
     int _hashTableSize;
     TRInt **layer_variable_count;
