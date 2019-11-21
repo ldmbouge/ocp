@@ -372,6 +372,10 @@
 {
    return [[self worker] collectInputVar:vs res:ar];
 }
+-(NSMutableArray*) collectInputVariables
+{
+    return [[self worker] collectInputVariables];
+}
 - (NSArray *)collectAllVarWithAbs:(id<ORVarArray>)vs
 {
    return [[self worker] collectAllVarWithAbs:vs];

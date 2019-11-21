@@ -3040,7 +3040,7 @@
 {
    return [self collectAllVarWithAbs:vs withLimit:0.0f];
 }
--(NSMutableArray*) collectVariables
+-(NSMutableArray*) collectInputVariables
 {
    NSArray* cstr = [[self source] constraints];
    void (^__block collect) (id<CPConstraint>,NSMutableDictionary*) = ^(id<CPConstraint> cx, NSMutableDictionary* vs) {

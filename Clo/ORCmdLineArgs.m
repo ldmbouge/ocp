@@ -624,7 +624,7 @@ static enum ValHeuristic valIndex[] =
    _restrictRequired = fullRestrict ^ [[p engine] closed];
    if (fullRestrict && [[p engine] closed]){
       @autoreleasepool {
-         NSArray* arr = [((CPCoreSolver*)p) collectVariables];
+         NSArray* arr = [p collectInputVariables];
          vs = (id<ORVarArray>)[ORFactory idArray:p array:arr];
       }
 //      NSMutableArray* nvs = [[NSMutableArray alloc] initWithCapacity:[vs count]];
