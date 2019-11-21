@@ -296,9 +296,9 @@ NSString * const ORStatus_toString_BB[] = {
       if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
          /* skip box if sup of error is less than primalBound */
-         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]){ //&&
-            //([[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]] ||
-             //[boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]])){
+         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] &&
+            ([[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]] ||
+             [boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]])){
             BBNode* nd = [_buf extractBest];
             
             ORStatus status = [of tightenDualBound:bestKey.bound];

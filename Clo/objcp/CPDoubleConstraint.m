@@ -33,7 +33,7 @@ void ulp_computation_d(id<ORRationalInterval> ulp, const double_interval f){
       [tmp1 set_d: 2.0];
       tmp2 = [tmp0 div: tmp1];
       [tmp1 set: tmp2];
-      [tmp2 neg];
+      tmp2 = [tmp2 neg];
       [ulp set_q:tmp2 and:tmp1];
    } else{
       ORDouble inf, sup;
@@ -972,6 +972,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
+   //@autoreleasepool {
+      //[ex retain];
+      //[ey retain];
+      //[ez retain];
+      //[eo retain];
    do {
       changed = false;
       zTemp = z;
@@ -1049,6 +1054,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
+   //}
    
    if(gchanged){
       // Cause no propagation on eo is insured
@@ -1166,6 +1172,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
+//   @autoreleasepool {
+//      [ex retain];
+//      [ey retain];
+//      [ez retain];
+//      [eo retain];
    do {
       changed = false;
       zTemp = z;
@@ -1242,6 +1253,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
+   //}
 
    if(gchanged){
       // Cause no propagation on eo is insured
@@ -1361,6 +1373,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
+//   @autoreleasepool {
+//      [ex retain];
+//      [ey retain];
+//      [ez retain];
+//      [eo retain];
    do {
       changed = false;
       zTemp = z;
@@ -1449,6 +1466,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
+   //}
 
    if(gchanged){
       // Cause no propagation on eo is insured
@@ -1566,6 +1584,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
+//   @autoreleasepool {
+//      [ex retain];
+//      [ey retain];
+//      [ez retain];
+//      [eo retain];
    do {
       changed = false;
       zTemp = z;
@@ -1675,6 +1698,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
+   //}
    
    if(gchanged){
       // Cause no propagation on eo is insured

@@ -2073,9 +2073,9 @@ onFailure: (ORInt2Void) onFailure
          ORInt iteration = 0;
          ORInt nbIteration = -1;
          if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: [[[ORRational alloc] init] setZero]]){
-            nbIteration = 110;
+            nbIteration = 30;
          } else {
-            nbIteration = 100;
+            nbIteration = 20;
          }
          
          ORBool isFailed = NO;

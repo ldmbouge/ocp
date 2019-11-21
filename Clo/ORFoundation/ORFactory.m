@@ -232,13 +232,13 @@
    ORRationalRangeI* o = [[ORRationalRangeI alloc] init:ninf up:pinf];
    [ninf release];
    [pinf release];
-   [o autorelease];
+   //[o autorelease];
    return [tracker trackImmutable:o];
 }
 +(id<ORRationalRange>) rationalRange: (id<ORTracker>) tracker low:(id<ORRational>)low up:(id<ORRational>) up
 {
    ORRationalRangeI* o = [[ORRationalRangeI alloc] init:low up:up];
-   [o autorelease];
+   //[o autorelease];
    return [tracker trackImmutable:o];
 }
 +(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker

@@ -335,7 +335,7 @@
 }
 -(id<ORRational>) setValue: (id<ORRational>) value
 {
-   return [_value set: value];
+   return _value = value;
 }
 -(id<ORRational>) value: (id<ORGamma>) solver
 {

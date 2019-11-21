@@ -952,6 +952,10 @@
    _y = y;
    return self;
 }
+-(void)dealloc
+{
+   [super dealloc];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -1003,6 +1007,10 @@
    _x = x;
    _y = y;
    return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -1759,6 +1767,10 @@
    _x = x;
    _y = y;
    return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
 }
 -(NSString*) description
 {
@@ -6202,6 +6214,7 @@
 }
 -(void)dealloc
 {
+   [_coefs release];
    [_c release];
    [super dealloc];
 }
@@ -6261,6 +6274,7 @@
 }
 -(void)dealloc
 {
+   [_coefs release];
    [_c release];
    [super dealloc];
 }
@@ -6320,6 +6334,7 @@
 }
 -(void)dealloc
 {
+   [_coefs release];
    [_c release];
    [super dealloc];
 }
@@ -6379,6 +6394,7 @@
 }
 -(void)dealloc
 {
+   [_coefs release];
    [_c release];
    [super dealloc];
 }
@@ -6438,6 +6454,7 @@
 }
 -(void)dealloc
 {
+   [_coefs release];
    [_c release];
    [super dealloc];
 }
@@ -6497,6 +6514,7 @@
 }
 -(void)dealloc
 {
+   [_coefs release];
    [_c release];
    [super dealloc];
 }
@@ -10426,8 +10444,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void)dealloc
 {
-   //[_value release];
-   [_pBound release];
    [super dealloc];
 }
 -(id<ORRational>) value
