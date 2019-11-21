@@ -320,6 +320,29 @@ ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,ORTrailI* trail)
    return ei->_val = val;
 }
 
+void resizeTRIdArray(TRIdArray a,int nb,ORTrailI* trail)
+{
+    TRId* oldArray = a._entries;
+    oldArray += a._low;
+    TRId* newArray = malloc(sizeof(TRId)*nb);
+    for(int i = 0; i < a._nb; i++)
+       newArray[i] = makeTRId(trail,oldArray[i]);
+    for (int i = a._nb; i < nb; i++)
+       newArray[i] = makeTRId(trail,NULL);
+    newArray -= a._low;
+    
+    //Need to reassign a._entries to newArray
+    //Need to call trailFree on newArray
+}
+
+void assignTRIdArray(TRIdArray a,int i,id val,ORTrailI* trail)
+{
+   TRId* ei = a._entries + i;
+   [trail trailId:ei];
+   [*ei release];
+   *ei = [val retain];
+}
+
 void trailIntFun(ORTrailI* t,int* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
@@ -416,6 +439,10 @@ void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
 ORInt getTRIntArray(TRIntArray a,int i)
 {
    return a._entries[i]._val;
+}
+id getTRIdArray(TRIdArray a,int i)
+{
+   return a._entries[i];
 }
 
 FXInt makeFXInt(ORTrailI* trail)
@@ -638,6 +665,21 @@ TRIntArray makeTRIntArray(ORTrailI* trail,int nb,int low)
    return x;
 }
 void freeTRIntArray(TRIntArray a)
+{
+   a._entries += a._low;
+   free(a._entries);
+}
+
+TRIdArray makeTRIdArray(ORTrailI* trail,int nb,int low)
+{
+   TRIdArray x = {nb,low,NULL};
+   x._entries = malloc(sizeof(TRId)*nb);
+   for(int i = 0; i < nb; i++)
+      x._entries[i] = makeTRId(trail,NULL);
+   x._entries -= low;
+   return x;
+}
+void freeTRIdArray(TRIdArray a)
 {
    a._entries += a._low;
    free(a._entries);

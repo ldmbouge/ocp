@@ -25,8 +25,8 @@
     _numChildren = makeTRInt(_trail, 0);
     _minChildIndex = 0;
     _maxChildIndex = 0;
-    _maxNumParents = 1;
-    _parents = makeTRId(_trail, calloc(_maxNumParents,sizeof(TRId)));
+    _maxNumParents = makeTRInt(_trail,1);
+    _parents = makeTRIdArray(_trail, _maxNumParents._val, 0);
     _numParents = makeTRInt(_trail, 0);
     _value = -1;
     _isSink = false;
@@ -63,8 +63,8 @@
     _state = makeTRId(_trail, state);
     
     _numChildren = makeTRInt(_trail, 0);
-    _maxNumParents = 1;
-    _parents = makeTRId(_trail, calloc(_maxNumParents , sizeof(TRId)));
+    _maxNumParents = makeTRInt(_trail,1);
+    _parents = makeTRIdArray(_trail,_maxNumParents._val,0);
     _numParents = makeTRInt(_trail, 0);
     _value = value;
     _isSink = false;
@@ -224,30 +224,18 @@
     assignTRInt(&_reverseLongestPath, longest, _trail);
 }
 
--(TRId*) parents {
-    return (&_parents);
+-(TRIdArray) parents {
+    return _parents;
 }
 -(int) numParents {
     return _numParents._val;
 }
 -(void) addParent: (Node*) parent {
-    if (_maxNumParents == _numParents._val) {
-        TRId* temp = calloc(_maxNumParents , sizeof(TRId));
-        for (int parent_index = 0; parent_index < _maxNumParents; parent_index++) {
-            temp[parent_index] = makeTRId(_trail, _parents[parent_index]);
-        }
-        
-        _maxNumParents *= 2;
-        
-        assignTRId(&_parents, calloc(_maxNumParents , sizeof(TRId)),_trail);
-        for (int parent_index = 0; parent_index < _numParents._val; parent_index++) {
-            _parents[parent_index] = makeTRId(_trail,temp[parent_index]);
-        }
-        for (int parent_index = _numParents._val; parent_index < _maxNumParents; parent_index++) {
-            _parents[parent_index] = makeTRId(_trail, NULL);
-        }
+    if (_maxNumParents._val == _numParents._val) {
+        assignTRInt(&_maxNumParents, _maxNumParents._val * 2, _trail);
+        resizeTRIdArray(_parents, _maxNumParents._val, _trail);
     }
-    assignTRId(&(&_parents)[_numParents._val], parent,_trail);
+    assignTRIdArray(_parents, _numParents._val, parent, _trail);
     assignTRInt(&_numParents,_numParents._val+1,_trail);
     if (_objectiveValues != NULL) {
         [self updateBoundsWithParent: parent];
@@ -283,7 +271,7 @@
     }
 }
 -(void) findNewLongestPath {
-    assignTRInt(&_longestPath,-32768,_trail);
+/*    assignTRInt(&_longestPath,-32768,_trail);
     
     if (_numLongestPathParents._val == 0) {
         for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
@@ -318,7 +306,7 @@
     }
     if (_longestPath._val == -32768) {
         failNow();
-    }
+    }*/
 }
 -(void) removeLongestPathParent:(Node*)parent {
     for (int parentIndex = 0; parentIndex < _numLongestPathParents._val; parentIndex++) {
@@ -381,9 +369,9 @@
 }
 -(void) removeParentOnce: (Node*) parent {
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-        if ((Node*)_parents[parentIndex] == parent) {
+        if ((Node*)getTRIdArray(_parents, parentIndex) == parent) {
             assignTRInt(&_numParents,_numParents._val-1,_trail);
-            assignTRId(&(&_parents)[parentIndex], _parents[_numParents._val],_trail);
+            assignTRIdArray(_parents, parentIndex, getTRIdArray(_parents, _numParents._val), _trail);
             break;
         }
     }
@@ -398,9 +386,9 @@
 }
 -(void) removeParentValue: (Node*) parent {
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-        if ((Node*)_parents[parentIndex] == parent) {
+        if ((Node*)getTRIdArray(_parents, parentIndex) == parent) {
             assignTRInt(&_numParents,_numParents._val-1,_trail);
-            assignTRId(&(&_parents)[parentIndex], _parents[_numParents._val],_trail);
+            assignTRIdArray(_parents, parentIndex, getTRIdArray(_parents, _numParents._val), _trail);
             parentIndex--;
         }
     }
@@ -440,7 +428,7 @@
 }
 -(bool) hasParent:(Node*)parent {
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-        if ((Node*)_parents[parentIndex] == parent) {
+        if ((Node*)getTRIdArray(_parents, parentIndex) == parent) {
             return true;
         }
     }
@@ -449,7 +437,7 @@
 -(int) countForParent:(Node*)parent {
     int count = 0;
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-        if ((Node*)_parents[parentIndex] == parent) {
+        if ((Node*)getTRIdArray(_parents, parentIndex) == parent) {
             count++;
         }
     }
@@ -457,7 +445,7 @@
 }
 -(void) takeParentsFrom:(Node*)other {
     for (int parentIndex = 0; parentIndex < [other numParents]; parentIndex++) {
-        Node* parent = (Node*)[other parents][parentIndex];
+        Node* parent = (Node*)getTRIdArray([other parents], parentIndex);
         
         int child_index = [parent findChildIndex: other];
         while(child_index != -1) {
@@ -913,7 +901,7 @@
 }
 -(bool) calculateTopDownInfoFor:(Node*)node onLayer:(int)layerIndex
 {
-    int parentVarIndex = [self variableIndexForLayer:layerIndex-1];
+/*    int parentVarIndex = [self variableIndexForLayer:layerIndex-1];
     Node* *parents = [node parents];
     NSMutableSet* uniqueParents = [[NSMutableSet alloc] init];   //This is a bad way to do this.
     for (int parentIndex = 0; parentIndex < [node numParents]; parentIndex++) {
@@ -941,7 +929,8 @@
             }
         }
     }
-    return ![[state topDownInfo] isEqual: oldStateInfo];
+    return ![[state topDownInfo] isEqual: oldStateInfo];*/
+    return false;
 }
 -(bool) calculateBottomUpInfoFor:(Node*)node onLayer:(int)layerIndex
 {
@@ -1017,6 +1006,7 @@
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
+    /*
     Node* *layer = layers[layer_index];
     
     for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
@@ -1028,12 +1018,12 @@
             if ([node findChildIndex:childNode] == -1) {
                 [childNode removeParentValue:node];
             } else if (_hasObjective) {
-                /*if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
+                if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
                     [childNode removeLongestPathParent: node];
                 }
                 if ([childNode hasShortestPathParent: node] && value == 0) {
                     [childNode removeShortestPathParent: node];
-                }*/
+                }
             }
             
             if ([childNode isNonVitalAndParentless]) {
@@ -1120,27 +1110,29 @@
         int shortestPath = [layers[_numVariables][0] shortestPath];
         
         if (_maximize) {
-            /*if (longestPath < [_objective min]) {
+            if (longestPath < [_objective min]) {
                 failNow();
-            }*/
+            }
         } else {
-            /*if (shortestPath > [_objective max]) {
+            if (shortestPath > [_objective max]) {
                 failNow();
-            }*/
+            }
         }
         if (shortestPath == longestPath) {
             //[_objective bind:shortestPath];
         }
-    }
+    }*/
     /*
      TODO:
         Make it bind the min/max path whenever paths get removed
         Make it fail when no longer able to surpass current best (should be semi-functional above)
         Make way of retrieving the objective value from the specifications
      */
+
 }
 -(void) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming
 {
+    /*
     int parentLayer = layer-1;
     int numParents = [node numParents];
     Node* *parents = [node parents];
@@ -1171,6 +1163,7 @@
         }
     }
     [self removeNode: node];
+     */
 }
 -(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming
 {
@@ -1659,10 +1652,10 @@
 {
     int parentLayer = layer-1;
     int numParents = [node numParents];
-    Node* *parents = [node parents];
+    TRIdArray parents = [node parents];
     
     for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
-        Node* parent = parents[parentIndex];
+        Node* parent = getTRIdArray(parents, parentIndex);
         int child_index = [parent findChildIndex: node];
         while(child_index != -1) {  //This is bad.  We don't support negative domains.  Could be a problem down the line, but is easy to fix.
             [parent removeChildAt:child_index];
@@ -2036,10 +2029,10 @@
 {
     int parentLayer = layer-1;
     int numParents = [node numParents];
-    Node* *parents = [node parents];
+    TRIdArray parents = [node parents];
     
     for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
-        Node* parent = parents[parentIndex];
+        Node* parent = getTRIdArray(parents, parentIndex);
         int child_index = [parent findChildIndex: node];
         while(child_index != -1) {
             [parent removeChildAt:child_index];
@@ -2169,7 +2162,7 @@ typedef struct {
     Node* child;
     Node* parentA;
     Node* parentB;
-    Node* *parents;
+    TRIdArray parents;
     int numParents;
     int nextLayerIndex = layerIndex+1;
     Node* *nextLayer = layers[nextLayerIndex];
@@ -2178,9 +2171,9 @@ typedef struct {
         numParents = [child numParents];
         parents = [child parents];
         for (int parentAIndex = 0; parentAIndex < numParents-1; parentAIndex++) {
-            parentA = parents[parentAIndex];
+            parentA = getTRIdArray(parents, parentAIndex);
             for (int parentBIndex = parentAIndex+1; parentBIndex < numParents; parentBIndex++) {
-                parentB = parents[parentBIndex];
+                parentB = getTRIdArray(parents, parentBIndex);
                 for (int parentAValue = [parentA minChildIndex]; parentAValue <= [parentA maxChildIndex]; parentAValue++) {
                     if (parentA == parentB) {
                         for (int parentBValue = parentAValue+1; parentBValue <= [parentB maxChildIndex]; parentBValue++) {
@@ -3141,10 +3134,10 @@ typedef struct {
         if ([node isRelaxed]) { //Find a relaxed node to split
             firstNewNode = true;
             Node** oldNodeChildren = [node children];
-            Node** parents = [node parents];
+            TRIdArray parents = [node parents];
             int numParents = [node numParents];
             for (int parent_index = 0; parent_index < numParents; parent_index++) { //All edges going into this node should be examined.  To get these edges, look at the parents
-                Node* parent = parents[parent_index];
+                Node* parent = getTRIdArray(parents, parent_index);
                 bool parentIsRelaxed = [parent isRelaxed];
                 Node** parentsChildren = [parent children];
                 for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
