@@ -3040,7 +3040,35 @@
 {
    return [self collectAllVarWithAbs:vs withLimit:0.0f];
 }
--(void) collectInputVar:(id<ORVarArray>) vs res:(NSMutableArray*) res;
+-(NSMutableArray*) collectVariables
+{
+   NSArray* cstr = [[self source] constraints];
+   void (^__block collect) (id<CPConstraint>,NSMutableDictionary*) = ^(id<CPConstraint> cx, NSMutableDictionary* vs) {
+      if([cx isKindOfClass:[CPGroup class]]){
+         CPGroup* g = ((CPGroup*)cx) ;
+         [g enumerateWithBlock:^(ORInt i, id<CPConstraint> ci) {
+            collect(ci,vs);
+         }];
+      }else if([cx conformsToProtocol:@protocol(CPArithmConstraint)]){
+         id<CPVar> vx = [(id<CPArithmConstraint>)cx result];
+         vs[@([vx getId])] = @1;
+      }
+   };
+   NSMutableDictionary* collector = [[NSMutableDictionary alloc] initWithCapacity:32];
+   for(id<ORConstraint> c in cstr){
+      id<CPConstraint> cx = [self concretize:c];
+      collect(cx,collector);
+   }
+   NSMutableArray* arr = [NSMutableArray arrayWithArray:[[[self source] FPVars] toNSArray]];
+   for (NSInteger i = arr.count - 1; i >= 0; i--) {
+      id<CPVar> cv = [self concretize:arr[i]];
+      if([collector objectForKey:@([cv getId])] != nil || [cv bound]) {
+          [arr removeObjectAtIndex:i];
+      }
+   }
+   return arr;
+}
+-(void) collectInputVar:(id<ORVarArray>) vs res:(NSMutableArray*) res
 {
    id<OROSet> cstr = nil;
    id<CPVar> cx = nil;
