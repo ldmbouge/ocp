@@ -91,8 +91,8 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
                [cp floatSplit:i withVars:x];
             }];
          NSLog(@"%@",cp);
-         if (search)
-            check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
+         //if (search)
+            //check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
       }];
    }
 }
@@ -173,10 +173,48 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
    }
 }
 
+
+void testMemory_d(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORRational> zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
+      id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 elow:zero eup:zero name:@"v"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
+      id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"erAbs"];
+      [zero release];
+      
+      [mdl add:[p set: @(3.5e7)]];
+      
+      [mdl add:[r set: [[v plus: p] sub: p]]];
+      
+      [mdl add: [erAbs eq: [er abs]]];
+      [mdl maximize:erAbs];
+
+      NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         //if (search)
+            //check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       //carbonGas_f(1, argc, argv);
       carbonGas_d(1, argc, argv);
+      //testMemory_d(1,argc,argv);
    //}
    return 0;
 }
