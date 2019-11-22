@@ -320,29 +320,6 @@ ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,ORTrailI* trail)
    return ei->_val = val;
 }
 
-void resizeTRIdArray(TRIdArray a,int nb,ORTrailI* trail)
-{
-    TRId* oldArray = a._entries;
-    oldArray += a._low;
-    TRId* newArray = malloc(sizeof(TRId)*nb);
-    for(int i = 0; i < a._nb; i++)
-       newArray[i] = makeTRId(trail,oldArray[i]);
-    for (int i = a._nb; i < nb; i++)
-       newArray[i] = makeTRId(trail,NULL);
-    newArray -= a._low;
-    
-    //Need to reassign a._entries to newArray
-    //Need to call trailFree on newArray
-}
-
-void assignTRIdArray(TRIdArray a,int i,id val,ORTrailI* trail)
-{
-   TRId* ei = a._entries + i;
-   [trail trailId:ei];
-   [*ei release];
-   *ei = [val retain];
-}
-
 void trailIntFun(ORTrailI* t,int* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
@@ -439,10 +416,6 @@ void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
 ORInt getTRIntArray(TRIntArray a,int i)
 {
    return a._entries[i]._val;
-}
-id getTRIdArray(TRIdArray a,int i)
-{
-   return a._entries[i];
 }
 
 FXInt makeFXInt(ORTrailI* trail)
@@ -670,21 +643,6 @@ void freeTRIntArray(TRIntArray a)
    free(a._entries);
 }
 
-TRIdArray makeTRIdArray(ORTrailI* trail,int nb,int low)
-{
-   TRIdArray x = {nb,low,NULL};
-   x._entries = malloc(sizeof(TRId)*nb);
-   for(int i = 0; i < nb; i++)
-      x._entries[i] = makeTRId(trail,NULL);
-   x._entries -= low;
-   return x;
-}
-void freeTRIdArray(TRIdArray a)
-{
-   a._entries += a._low;
-   free(a._entries);
-}
-
 @implementation ORTrailableIntI
 {
    TRInt    _trint;
@@ -818,6 +776,104 @@ void freeTRIdArray(TRIdArray a)
    for(ORInt i=_low;i<=_up;i++) {
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_array[i]._val];
       [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_array[i]._mgc];
+   }
+   return self;
+}
+@end
+
+@implementation ORTRIdArrayI
+-(ORTRIdArrayI*) initORTRIdArray: (ORTrailI*) trail low:(ORInt)low size:(ORInt)size
+{
+   self = [super init];
+    _trail = trail;
+   _low = makeTRInt(_trail, low);
+   _up = makeTRInt(_trail, _low._val + size-1);
+   _nb = makeTRInt(_trail, size);
+   _array = malloc(_nb._val * sizeof(TRId));
+   _array -= _low._val;
+   for(ORInt i = _low._val; i <= _up._val; i++)
+      _array[i] = makeTRId(_trail,0);
+   return self;
+}
+-(void) dealloc
+{
+   _array += _low._val;
+   free(_array);
+   [super dealloc];
+}
+
+-(id) at: (ORInt) value
+{
+   if (value < _low._val || value > _up._val)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
+   return _array[value];
+}
+
+-(void) set: (id) value at: (ORInt) idx
+{
+   if (idx < _low._val || idx > _up._val)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
+    assignTRId(&_array[idx], value, _trail);
+}
+
+-(void) resize:(int)newSize
+{
+    _array += _low._val;
+    TRId* newArray = malloc(sizeof(TRId)*newSize);
+    for(int i = 0; i < _nb._val; i++)
+       newArray[i] = makeTRId(_trail,_array[i]);
+    for (int i = _nb._val; i < newSize; i++)
+       newArray[i] = makeTRId(_trail,NULL);
+    newArray -= _low._val;
+    assignTRInt(&_nb, newSize, _trail);
+    
+    //Need to reassign a._entries to newArray
+    //Need to call trailFree on newArray
+}
+-(ORInt) low
+{
+   return _low._val;
+}
+-(ORInt) up
+{
+   return _up._val;
+}
+-(NSUInteger)count
+{
+   return _nb._val;
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendString:@"["];
+   for(ORInt i=_low._val;i<=_up._val;i++) {
+      [rv appendFormat:@"%d:",i];
+       [rv appendString:[_array[i] description]];
+      if (i < _up._val)
+         [rv appendString:@","];
+   }
+   [rv appendString:@"]"];
+   return rv;
+}
+- (void) encodeWithCoder: (NSCoder *)aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low._val];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up._val];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb._val];
+   for(ORInt i=_low._val;i<=_up._val;i++) {
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_array[i]];
+   }
+}
+-(id) initWithCoder: (NSCoder*) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb._val];
+   _array =  malloc(sizeof(TRId)*_nb._val);
+   _array -= _low._val;
+   for(ORInt i=_low._val;i<=_up._val;i++) {
+      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_array[i]];
    }
    return self;
 }

@@ -83,12 +83,6 @@ typedef struct {
 } TRDoubleArray;
 
 typedef struct {
-   int        _nb;
-   int        _low;
-   TRId*      _entries;
-} TRIdArray;
-
-typedef struct {
    int    _val;
    ORUInt _mgc;
 } FXInt;
@@ -109,8 +103,6 @@ TRIntArray makeTRIntArray(id<ORTrail> trail,int nb,int low);
 void  freeTRIntArray(TRIntArray a);
 TRDoubleArray makeTRDoubleArray(id<ORTrail> trail,int nb,int low);
 void  freeTRDoubleArray(TRDoubleArray a);
-TRIdArray makeTRIdArray(id<ORTrail> trail,int nb,int low);
-void  freeTRIdArray(TRIdArray a);
 
 void  assignTRInt(TRInt* v,int val,id<ORTrail> trail);
 void  assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail);
@@ -123,9 +115,6 @@ ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail);
 ORInt getTRIntArray(TRIntArray a,int i);
 ORDouble assignTRDoubleArray(TRIntArray a,int i,ORDouble val,id<ORTrail> trail);
 ORInt getTRDoubleArray(TRDoubleArray a,int i);
-void assignTRIdArray(TRIdArray a,int i,id val,id<ORTrail> trail);
-id getTRIdArray(TRIdArray a,int i);
-void resizeTRIdArray(TRIdArray a,int nb,id<ORTrail> trail);
 
 FXInt makeFXInt(id<ORTrail> trail);
 void  incrFXInt(FXInt* v,id<ORTrail> trail);

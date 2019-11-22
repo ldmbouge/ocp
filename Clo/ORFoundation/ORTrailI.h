@@ -382,3 +382,24 @@ static inline V* get##T(T* v) { return v->_val;}
 -(id) initWithCoder: (NSCoder*) aDecoder;
 @end
 
+
+@interface ORTRIdArrayI : NSObject<ORTRIdArray> {
+   @package
+   ORTrailI*    _trail;
+   __strong TRId*    _array;
+   TRInt        _low;
+   TRInt        _up;
+   TRInt        _nb;
+}
+-(ORTRIdArrayI*) initORTRIdArray: (ORTrailI*)t low:(ORInt)low size:(ORInt)size;
+-(void) dealloc;
+-(id) at: (ORInt) value;
+-(void) set: (id) value at: (ORInt) idx;
+-(ORInt) low;
+-(ORInt) up;
+-(void) resize:(int)newSize;
+-(NSUInteger) count;
+-(NSString*) description;
+- (void) encodeWithCoder:(NSCoder *) aCoder;
+- (id) initWithCoder:(NSCoder *) aDecoder;
+@end

@@ -28,7 +28,7 @@
     TRInt _numChildren;
     int _minChildIndex;
     int _maxChildIndex;
-    TRIdArray _parents;
+    ORTRIdArrayI* _parents;
     TRInt _numParents;
     TRInt _maxNumParents;
     int _value;
@@ -68,7 +68,7 @@
 -(bool) hasLongestPathParent: (Node*)parent;
 -(int) shortestPath;
 -(bool) hasShortestPathParent: (Node*)parent;
--(TRIdArray) parents;
+-(ORTRIdArrayI*) parents;
 -(int) numParents;
 -(void) addParent: (Node*) parent;
 -(void) updateBoundsWithParent: (Node*) parent;
