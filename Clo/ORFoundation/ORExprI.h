@@ -203,6 +203,26 @@
 -(id<ORExpr>) index;
 -(NSString *)description;
 @end
+@interface ORExprIntArrayIndexI : ORExprI<ORExpr, NSCoding> {
+    id<ORIntArray> _array;
+    id<ORExpr> _index;
+}
+-(id<ORExpr>) initORExprIntArrayIndexI:(id<ORIntArray>)array index:(id<ORExpr>)index;
+-(void) visit:(ORVisitor*) v;
+-(id<ORIntArray>) array;
+-(id<ORExpr>) index;
+-(NSString *)description;
+@end
+@interface ORExprDictionaryValueI : ORExprI<ORExpr, NSCoding> {
+    NSDictionary* _dict;
+    id<ORExpr> _key;
+}
+-(id<ORExpr>) initORExprDictionaryValueI:(NSDictionary*)dict key:(id<ORExpr>)key;
+-(void) visit:(ORVisitor*) v;
+-(NSDictionary*) dict;
+-(id<ORExpr>) key;
+-(NSString *)description;
+@end
 @interface ORExprAppendToArrayI : ORExprBinaryI<ORExpr, NSCoding>
 -(id<ORExpr>) initORExprAppendToArrayI:(id<ORExpr>)left value:(id<ORExpr>)right;
 -(void) visit:(ORVisitor*) v;

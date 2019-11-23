@@ -32,6 +32,7 @@ PORTABLE_BEGIN
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(id<ORExpr>) atIndex: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 -(ORInt) sumWith: (ORInt(^)(ORInt value,int idx))block;
 @end

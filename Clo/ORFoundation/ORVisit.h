@@ -228,6 +228,8 @@
 -(void) visitExprStateValueExprI:(id<ORExpr>)e;
 -(void) visitExprIfThenElseI:(id<ORExpr>)e;
 -(void) visitExprArrayIndexI:(id<ORExpr>)e;
+-(void) visitExprIntArrayIndexI:(id<ORExpr>)e;
+-(void) visitExprDictionaryValueI:(id<ORExpr>)e;
 -(void) visitExprAppendToArrayI:(id<ORExpr>)e;
 -(void) visitExprMinBetweenArraysI:(id<ORExpr>)e;
 -(void) visitExprMaxBetweenArraysI:(id<ORExpr>)e;

@@ -304,6 +304,14 @@ public func SVA(_ t : ORTracker) -> ORExpr {
     return ORFactory.valueAssignment(t)
 }
 
+extension Dictionary {
+    subscript(t : ORTracker, i : ORExpr) -> ORExpr {
+        get {
+            return ORFactory.dictionaryValue(t, dictionary:self, key:i)
+        }
+    }
+}
+
 extension ORIntVarMatrix {
    subscript(i : ORInt, j : ORInt) -> ORIntVar {
       get {
@@ -349,6 +357,14 @@ public func ∋(_ set: ORIntSet,_ e : ORExpr) -> ORExpr {
 public func ∈(_ e : ORExpr,_ set: ORIntSet) -> ORExpr {
     return set.contains(e)
 }
+
+//extension ORIntArray {
+//    subscript(index:ORExpr) -> ORExpr {
+//        get {
+//            return self.atIndex(index)
+//        }
+//    }
+//}
 
 extension ORMDDSpecs {
     func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void where Key : BinaryInteger,Value : BinaryInteger {
@@ -517,16 +533,24 @@ public func seqMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : S
         maxFIdx = len,maxLIdx = len*2-1,
         theValues = ORFactory.intSet(m, set: values)
     let mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(len*2))
-    var sd : [Int:Int] = [minLIdx:0,maxLIdx:0]
-    for i in minFIdx...maxLIdx-1 {
+    var sd : [Int:Int] = [:]
+    /*for i in minFIdx...maxLIdx-1 {
         if (i != minLIdx) {
             sd[i] = -1
         }
+    }*/
+    for i in minFIdx...minLIdx {
+        sd[i] = (i - minLIdx)
+    }
+    for i in maxFIdx...maxLIdx {
+        sd[i] = (i - maxLIdx)
     }
     mdd1.state(sd)
-    mdd1.arc(Prop(m,1) == literal(m,-1) ||
-        (Prop(m,maxLIdx)-Prop(m,minFIdx) + SVA(m) ∈ theValues ≥ lb &&
-         Prop(m,minLIdx)-Prop(m,maxFIdx) + SVA(m) ∈ theValues ≤ ub)
+    mdd1.arc((Prop(m,0) < literal(m,0) &&
+                (Prop(m,maxLIdx)-Prop(m,minFIdx) + SVA(m) ∈ theValues ≥ lb) &&
+                (Prop(m,minLIdx) + SVA(m) ∈ theValues ≤ ub)) ||
+             (Prop(m,maxLIdx)-Prop(m,minFIdx) + SVA(m) ∈ theValues ≥ lb &&
+              Prop(m,minLIdx)-Prop(m,maxFIdx) + SVA(m) ∈ theValues ≤ ub)
     )
     // transitions
     mdd1.transition(toDict(minFIdx,minLIdx) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,Prop(m,i+1)) })
@@ -538,5 +562,37 @@ public func seqMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : S
     mdd1.relaxation(toDict(maxFIdx,maxLIdx+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,max(left(m,i),right(m,i))) })
     // similarity
     mdd1.similarity(toDict(minFIdx,maxLIdx+1) { (i : Int) -> (key:Int,value:ORExpr) in return (key:i,value:abs(left(m,i)-right(m,i))) })
+    return mdd1;
+}
+
+public func gccMDD(_ vars : ORIntVarArray, ub : [Int:Int]) -> ORMDDSpecs  {
+    let m = vars.tracker(),
+        adom = arrayDomains(vars),
+        domsize = Int(adom.size()),
+        minFDom = 0,minLDom = Int(domsize-1),
+        maxFDom = Int(domsize),maxLDom = Int(domsize*2-1),
+        minDom = Int(adom.low()),
+        mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(domsize*2))
+    
+    var sd : [Int:Int] = [:]
+    for i in minFDom...maxLDom {
+        sd[i] = 0
+    }
+    mdd1.state(sd)
+    
+    mdd1.arc(Prop(m,SVA(m) - minDom) < ub[m,SVA(m)])
+    
+    let SVAInDom = SVA(m) - minDom
+    
+    mdd1.transition(toDict(minFDom,minLDom+1) { (i:Int) -> (key:Int,value:ORExpr)
+                in return (key:i,Prop(m,i) + (SVAInDom == i)) })
+    mdd1.transition(toDict(maxFDom,maxLDom+1) { (i:Int) -> (key:Int,value:ORExpr)
+                in return (key:i,Prop(m,i) + (SVAInDom == (i-domsize))) })
+    
+    mdd1.relaxation(toDict(minFDom,minLDom+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,min(left(m,i),right(m,i))) })
+    mdd1.relaxation(toDict(maxFDom,maxLDom+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,max(left(m,i),right(m,i))) })
+    
+    mdd1.similarity(toDict(minFDom,minLDom+1) { (i : Int) -> (key:Int,value:ORExpr) in return (key:i,value:min(left(m,i),right(m,i))) })
+    
     return mdd1;
 }

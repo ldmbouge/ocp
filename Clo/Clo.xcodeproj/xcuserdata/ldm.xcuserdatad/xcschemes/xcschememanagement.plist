@@ -89,6 +89,11 @@
 			<key>orderHint</key>
 			<integer>34</integer>
 		</dict>
+		<key>GCCMDDSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>168</integer>
+		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -267,7 +272,7 @@
 		<key>amongMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>164</integer>
+			<integer>165</integer>
 		</dict>
 		<key>amongSwift.xcscheme_^#shared#^_</key>
 		<dict>
@@ -697,12 +702,12 @@
 		<key>sequenceAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>165</integer>
+			<integer>166</integer>
 		</dict>
 		<key>sequenceMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>166</integer>
+			<integer>164</integer>
 		</dict>
 		<key>shiploading.xcscheme_^#shared#^_</key>
 		<dict>

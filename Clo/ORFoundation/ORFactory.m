@@ -966,6 +966,19 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return o;
 }
 
++(id<ORExpr>) arrayIndex: (id<ORTracker>) tracker array: (id<ORIntArray>) a indexExpr: (id<ORExpr>) index
+{
+   id<ORExpr> o = [[ORExprIntArrayIndexI alloc] initORExprIntArrayIndexI:a index:index];
+   [tracker trackObject: o];
+   return o;
+}
+
++(id<ORExpr>) dictionaryValue: (id<ORTracker>) tracker dictionary: (NSDictionary*)dict key: (id<ORExpr>)key {
+    id<ORExpr> o = [[ORExprDictionaryValueI alloc] initORExprDictionaryValueI:dict key:key];
+    [tracker trackObject:o];
+    return o;
+}
+
 +(id<ORExpr>) contains:(id<ORExpr>) value inSet:(id<ORIntSet>)set
 {
     id<ORExpr> o = [[ORExprSetContainsI alloc] initORExprSetContainsI: set value:value];

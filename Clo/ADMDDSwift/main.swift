@@ -27,7 +27,7 @@ autoreleasepool {
     notes.ddRelaxed(false)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
     cp.search {
-        firstFail(cp, vars)
+        labelArray(cp, vars)
             »
             Do(cp) {
                 let qs = (1...10).map { i in cp.intValue(vars[ORInt(i)]) }

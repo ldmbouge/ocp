@@ -308,14 +308,14 @@ static int StateSize;
     int differential = 0;
     id* other_state = [other state];
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        /*if (_differentialFunctions[stateIndex] != NULL) {
-         differential += _differentialFunctions[stateIndex](_state,other_state);
-         }*/
+        if (_differentialFunctions[stateIndex] != NULL) {
+            differential += [_differentialFunctions[stateIndex](_state,other_state) intValue];
+         }
         
         //differential += pow(_state[stateIndex] - other_state[stateIndex],2);
-        if (![_state[stateIndex] isEqual: other_state[stateIndex]]) {
-            differential++;
-        }
+        //if (![_state[stateIndex] isEqual: other_state[stateIndex]]) {
+        //    differential++;
+        //}
     }
     return differential;
 }
@@ -329,7 +329,17 @@ static int StateSize;
     return true;
 }
 
-
+//Use size of sequence as 'prime' multiplier here.
+//Use a number for the hash table size (to modulo by) that is twice the width of MDD
+//Set up these hash tables for each layer
+//Afterwards, should these hash tables be kept after creation?
+-(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables {
+    NSUInteger hashValue = 1;
+    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
+        hashValue = hashValue * numVariables + [_state[stateIndex] hash];
+    }
+    return (hashValue % (mddWidth * 2));
+}
 -(id*) state { return _state; }
 -(int) stateSize { return _stateSize; }
 -(DDClosure)arcExistsClosure { return _arcExists; }
