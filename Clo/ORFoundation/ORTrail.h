@@ -132,6 +132,15 @@ ORInt trailMagic(id<ORTrail> trail);
 -(NSString*) description;
 @end
 
+@protocol ORTRIdArray <NSObject>
+-(id)  at: (ORInt) value;
+-(void)  set: (id) value at: (ORInt) index;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger) count;
+-(NSString*) description;
+@end
+
 // Struct-Based matrix of trailable Integers
 @protocol ORTRIntMatrix <NSObject>
 -(ORInt) at: (ORInt) i1 : (ORInt) i2;

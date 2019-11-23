@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5BFD594215A3ACA500825BC3"
-               BuildableName = "ORFoundation.framework"
-               BlueprintName = "ORFoundation"
+               BlueprintIdentifier = "5BB38F9F237B33D300D3DD81"
+               BuildableName = "workForceSwift"
+               BlueprintName = "workForceSwift"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -40,15 +40,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5BFD594215A3ACA500825BC3"
-            BuildableName = "ORFoundation.framework"
-            BlueprintName = "ORFoundation"
+            BlueprintIdentifier = "5BB38F9F237B33D300D3DD81"
+            BuildableName = "workForceSwift"
+            BlueprintName = "workForceSwift"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -56,6 +57,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5BB38F9F237B33D300D3DD81"
+            BuildableName = "workForceSwift"
+            BlueprintName = "workForceSwift"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -781,9 +781,84 @@ void freeTRIntArray(TRIntArray a)
 }
 @end
 
-/*********************************************************************************/
-/*             Multi-Dimensional Matrix of Trailable Int                         */
-/*********************************************************************************/
+@implementation ORTRIdArrayI
+-(ORTRIdArrayI*) initORTRIdArray: (ORTrailI*) trail low:(ORInt)low size:(ORInt)size
+{
+   self = [super init];
+    _trail = trail;
+   _low = low;
+   _up = makeTRInt(_trail, _low + size - 1);
+   _array = malloc(size * sizeof(TRId));
+   _array -= _low;
+   for(ORInt i = _low; i <= _up._val; i++)
+      _array[i] = makeTRId(_trail,0);
+   return self;
+}
+-(void) dealloc
+{
+   _array += _low;
+   free(_array);
+   [super dealloc];
+}
+
+-(id) at: (ORInt) value
+{
+   if (value < _low || value > _up._val)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
+   return _array[value];
+}
+
+-(void) set: (id) value at: (ORInt) idx
+{
+   if (idx < _low || idx > _up._val)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
+    assignTRId(&_array[idx], value, _trail);
+}
+
+-(void) resize:(int)newSize
+{
+    const ORInt oldSize = _up._val - _low + 1;
+    _array += _low;
+    TRId* newArray = malloc(sizeof(TRId)*newSize);
+    for(int i = 0; i < oldSize; i++)
+       newArray[i] = makeTRId(_trail,_array[i]); // copy the old entries
+    for (int i = oldSize; i < newSize; i++)
+       newArray[i] = makeTRId(_trail,NULL);      // init the new entries
+    [_trail trailFree:newArray];    // remember that we may have to delete newArray on backtrack
+    [_trail trailPointer:(void**)&_array];  // remember where the original array was 
+    newArray -= _low;               // shift the base
+    _array = newArray;              // install newly minted _array in place.
+}
+-(ORInt) low
+{
+   return _low;
+}
+-(ORInt) up
+{
+   return _up._val;
+}
+-(NSUInteger)count
+{
+   return _up._val - _low + 1;
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendString:@"["];
+   for(ORInt i=_low;i<=_up._val;i++) {
+      [rv appendFormat:@"%d:",i];
+       [rv appendString:[_array[i] description]];
+      if (i < _up._val)
+         [rv appendString:@","];
+   }
+   [rv appendString:@"]"];
+   return rv;
+}
+@end
+
+/**
+             Multi-Dimensional Matrix of Trailable Int
+***************************************************************************** **/
 
 @implementation ORTRIntMatrixI {
 @private

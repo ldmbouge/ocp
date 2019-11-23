@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5BFD594215A3ACA500825BC3"
-               BuildableName = "ORFoundation.framework"
-               BlueprintName = "ORFoundation"
+               BlueprintIdentifier = "B55E44D6234E5AF600CF6CC0"
+               BuildableName = "amongAltMDD"
+               BlueprintName = "amongAltMDD"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -40,22 +40,33 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5BFD594215A3ACA500825BC3"
-            BuildableName = "ORFoundation.framework"
-            BlueprintName = "ORFoundation"
+            BlueprintIdentifier = "B55E44D6234E5AF600CF6CC0"
+            BuildableName = "amongAltMDD"
+            BlueprintName = "amongAltMDD"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B55E44D6234E5AF600CF6CC0"
+            BuildableName = "amongAltMDD"
+            BlueprintName = "amongAltMDD"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
