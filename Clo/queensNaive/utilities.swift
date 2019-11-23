@@ -490,41 +490,33 @@ public func toDict<V>(_ low: Int,_ up : Int, map: (Int) -> (key: Int, value: V))
 public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
     let minC = 0,maxC = 1,rem = 2
     let minCnt = Prop(m,minC),maxCnt = Prop(m,maxC), remVal = Prop(m,rem)
-    let mdd1 = ORFactory.mddSpecs(m, variables: x, stateSize: 3)
-    mdd1.state([ minC : 0,maxC : 0, rem : x.size ])
-    mdd1.arc(minCnt + SVA(m) ∈ values ≤ ub && lb ≤ (maxCnt + SVA(m) ∈ values + remVal - 1))
-    mdd1.transition([minC : minCnt + SVA(m) ∈ values,
+    let mdd = ORFactory.mddSpecs(m, variables: x, stateSize: 3)
+    mdd.state([ minC : 0,maxC : 0, rem : x.size ])
+    mdd.arc(minCnt + SVA(m) ∈ values ≤ ub && lb ≤ (maxCnt + SVA(m) ∈ values + remVal - 1))
+    mdd.transition([minC : minCnt + SVA(m) ∈ values,
                      maxC : maxCnt + SVA(m) ∈ values,
                      rem  : remVal - 1])
-    mdd1.relaxation([minC : min(left(m,minC),right(m,minC)),
+    mdd.relaxation([minC : min(left(m,minC),right(m,minC)),
                      maxC : max(left(m,maxC),right(m,maxC)),
                      rem  : remVal])
-    mdd1.similarity([minC : abs(left(m,minC) - right(m,minC)),
+    mdd.similarity([minC : abs(left(m,minC) - right(m,minC)),
                      maxC : abs(left(m,maxC) - right(m,maxC)),
                      rem  : literal(m, 0)])
-    return mdd1
+    return mdd
 }
 
 public func allDiffMDD(_ vars : ORIntVarArray) -> ORMDDSpecs {
     let m = vars.tracker(),
-        adom = arrayDomains(vars),
-        minDom = Int(adom.low()),
-        mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(adom.size()))
+        udom = arrayDomains(vars),
+        minDom = Int(udom.low()),
+        mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(udom.size()))
     
-    mdd1.state(toDict(adom) { (i : Int) -> (key: Int, value: Bool) in
-        return (key : i,value:true)
-    })
-    mdd1.arc(Prop(m,SVA(m) - minDom))
-    mdd1.transition(toDict(adom) { (i : Int) -> (key : Int,value : ORExpr) in
-        return (key : i,Prop(m,i) && SVA(m) != i + minDom)
-    })
-    mdd1.relaxation(toDict(adom) {  (i : Int) -> (key : Int,value : ORExpr) in
-        return (key : i,left(m,i) || right(m,i))
-    })
-    mdd1.similarity(toDict(adom) {  (i : Int) -> (key : Int,value : ORExpr) in
-        return (key :i,abs(left(m,i) - right(m,i)))
-    })
-    return mdd1
+    mdd.state(toDict(udom) { i in (key : i,value:true) })
+    mdd.arc(Prop(m,SVA(m) - minDom))
+    mdd.transition(toDict(udom) { i in (key : i,Prop(m,i) && SVA(m) != i + minDom) })
+    mdd.relaxation(toDict(udom) { i in (key : i,left(m,i) || right(m,i)) })
+    mdd.similarity(toDict(udom) { i in (key :i,abs(left(m,i) - right(m,i))) })
+    return mdd
 }
 
 public func seqMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
@@ -532,67 +524,55 @@ public func seqMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : S
         minFIdx = 0,minLIdx = len-1,
         maxFIdx = len,maxLIdx = len*2-1,
         theValues = ORFactory.intSet(m, set: values)
-    let mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(len*2))
+    let mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(len*2))
     var sd : [Int:Int] = [:]
-    /*for i in minFIdx...maxLIdx-1 {
-        if (i != minLIdx) {
-            sd[i] = -1
-        }
-    }*/
     for i in minFIdx...minLIdx {
         sd[i] = (i - minLIdx)
     }
     for i in maxFIdx...maxLIdx {
         sd[i] = (i - maxLIdx)
     }
-    mdd1.state(sd)
-    mdd1.arc((Prop(m,0) < literal(m,0) &&
+    mdd.state(sd)
+    mdd.arc((Prop(m,0) < literal(m,0) &&
                 (Prop(m,maxLIdx)-Prop(m,minFIdx) + SVA(m) ∈ theValues ≥ lb) &&
                 (Prop(m,minLIdx) + SVA(m) ∈ theValues ≤ ub)) ||
              (Prop(m,maxLIdx)-Prop(m,minFIdx) + SVA(m) ∈ theValues ≥ lb &&
               Prop(m,minLIdx)-Prop(m,maxFIdx) + SVA(m) ∈ theValues ≤ ub)
     )
     // transitions
-    mdd1.transition(toDict(minFIdx,minLIdx) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,Prop(m,i+1)) })
-    mdd1.transition(toDict(maxFIdx,maxLIdx) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,Prop(m,i+1)) })
-    mdd1.addTransitionFunction(Prop(m,minLIdx) + SVA(m) ∈ theValues, toStateValue: Int32(minLIdx))
-    mdd1.addTransitionFunction(Prop(m,maxLIdx) + SVA(m) ∈ theValues, toStateValue: Int32(maxLIdx))
+    mdd.transition(toDict(minFIdx,minLIdx) { i in return (key:i,Prop(m,i+1)) })
+    mdd.transition(toDict(maxFIdx,maxLIdx) { i in return (key:i,Prop(m,i+1)) })
+    mdd.addTransitionFunction(Prop(m,minLIdx) + SVA(m) ∈ theValues, toStateValue: Int32(minLIdx))
+    mdd.addTransitionFunction(Prop(m,maxLIdx) + SVA(m) ∈ theValues, toStateValue: Int32(maxLIdx))
     // relaxation
-    mdd1.relaxation(toDict(minFIdx,minLIdx+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,min(left(m,i),right(m,i))) })
-    mdd1.relaxation(toDict(maxFIdx,maxLIdx+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,max(left(m,i),right(m,i))) })
+    mdd.relaxation(toDict(minFIdx,minLIdx+1) { i in return (key:i,min(left(m,i),right(m,i))) })
+    mdd.relaxation(toDict(maxFIdx,maxLIdx+1) { i in return (key:i,max(left(m,i),right(m,i))) })
     // similarity
-    mdd1.similarity(toDict(minFIdx,maxLIdx+1) { (i : Int) -> (key:Int,value:ORExpr) in return (key:i,value:abs(left(m,i)-right(m,i))) })
-    return mdd1;
+    mdd.similarity(toDict(minFIdx,maxLIdx+1) { i in return (key:i,value:abs(left(m,i)-right(m,i))) })
+    return mdd;
 }
 
 public func gccMDD(_ vars : ORIntVarArray, ub : [Int:Int]) -> ORMDDSpecs  {
     let m = vars.tracker(),
-        adom = arrayDomains(vars),
-        domsize = Int(adom.size()),
+        udom = arrayDomains(vars),
+        domsize = Int(udom.size()),
         minFDom = 0,minLDom = Int(domsize-1),
         maxFDom = Int(domsize),maxLDom = Int(domsize*2-1),
-        minDom = Int(adom.low()),
-        mdd1 = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(domsize*2))
+        minDom = Int(udom.low()),
+        mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(domsize*2))
     
     var sd : [Int:Int] = [:]
     for i in minFDom...maxLDom {
         sd[i] = 0
     }
-    mdd1.state(sd)
+    mdd.state(sd)
     
-    mdd1.arc(Prop(m,SVA(m) - minDom) < ub[m,SVA(m)])
-    
+    mdd.arc(Prop(m,SVA(m) - minDom) < ub[m,SVA(m)])
     let SVAInDom = SVA(m) - minDom
-    
-    mdd1.transition(toDict(minFDom,minLDom+1) { (i:Int) -> (key:Int,value:ORExpr)
-                in return (key:i,Prop(m,i) + (SVAInDom == i)) })
-    mdd1.transition(toDict(maxFDom,maxLDom+1) { (i:Int) -> (key:Int,value:ORExpr)
-                in return (key:i,Prop(m,i) + (SVAInDom == (i-domsize))) })
-    
-    mdd1.relaxation(toDict(minFDom,minLDom+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,min(left(m,i),right(m,i))) })
-    mdd1.relaxation(toDict(maxFDom,maxLDom+1) { (i:Int) -> (key:Int,value:ORExpr) in return (key:i,max(left(m,i),right(m,i))) })
-    
-    mdd1.similarity(toDict(minFDom,minLDom+1) { (i : Int) -> (key:Int,value:ORExpr) in return (key:i,value:min(left(m,i),right(m,i))) })
-    
-    return mdd1;
+    mdd.transition(toDict(minFDom,minLDom+1) { i in (key:i,Prop(m,i) + (SVAInDom == i)) })
+    mdd.transition(toDict(maxFDom,maxLDom+1) { i in (key:i,Prop(m,i) + (SVAInDom == (i-domsize))) })
+    mdd.relaxation(toDict(minFDom,minLDom+1) { i in (key:i,min(left(m,i),right(m,i))) })
+    mdd.relaxation(toDict(maxFDom,maxLDom+1) { i in (key:i,max(left(m,i),right(m,i))) })
+    mdd.similarity(toDict(minFDom,minLDom+1) { i in (key:i,value:min(left(m,i),right(m,i))) })    
+    return mdd;
 }
