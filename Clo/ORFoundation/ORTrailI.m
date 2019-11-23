@@ -825,7 +825,8 @@ void freeTRIntArray(TRIntArray a)
     for (int i = oldSize; i < newSize; i++)
        newArray[i] = makeTRId(_trail,NULL);      // init the new entries
     [_trail trailFree:newArray];    // remember that we may have to delete newArray on backtrack
-    [_trail trailPointer:(void**)&_array];  // remember where the original array was 
+    [_trail trailPointer:(void**)&_array];  // remember where the original array was
+    assignTRInt(&_up, _low + newSize - 1, _trail);
     newArray -= _low;               // shift the base
     _array = newArray;              // install newly minted _array in place.
 }
