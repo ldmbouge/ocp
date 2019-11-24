@@ -1353,8 +1353,8 @@
             }
         }
     }
-    [self DEBUGTestParentChildParity];
-    [self DEBUGTestLayerVariableCountCorrectness];
+    //[self DEBUGTestParentChildParity];
+    //[self DEBUGTestLayerVariableCountCorrectness];
     return;
 }
 -(int) pickVariableBelowLayer:(int)layer {
@@ -1578,11 +1578,11 @@
     int variableIndex = [self variableIndexForLayer:layer];
     if (!bound((CPIntVar*)_x[variableIndex])) {
         [_x[variableIndex] whenLoseValue:self do:^(ORInt value) {
-            [self DEBUGTestLayerVariableCountCorrectness];
-            [self DEBUGTestParentChildParity];
+            //[self DEBUGTestLayerVariableCountCorrectness];
+            //[self DEBUGTestParentChildParity];
             [self trimValueFromLayer: layer :value ];
-            [self DEBUGTestLayerVariableCountCorrectness];
-            [self DEBUGTestParentChildParity];
+            //[self DEBUGTestLayerVariableCountCorrectness];
+            //[self DEBUGTestParentChildParity];
         }];
     }
 }
@@ -1650,7 +1650,7 @@
             if (trimming && !layer_variable_count[parentLayer][child_index]._val) {
                 [_x[[parent value]] remove: child_index];
             }
-            [self DEBUGTestLayerVariableCountCorrectness];
+            //[self DEBUGTestLayerVariableCountCorrectness];
             
             child_index = [parent findChildIndex: node];
         }
@@ -2979,13 +2979,13 @@ typedef struct {
     for(ORInt layer = 0; layer < _numVariables; layer++) {
         int variableIndex = [self variableIndexForLayer:layer];
         [_x[variableIndex] whenBindDo:^() {
-            [self DEBUGTestParentChildParity];
+            //[self DEBUGTestParentChildParity];
             int startingLayer = _first_relaxed_layer._val-1;
             if (startingLayer <= _numVariables) {
                 assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
                 [self rebuildFromLayer: startingLayer];
             }
-            [self DEBUGTestParentChildParity];
+            //[self DEBUGTestParentChildParity];
             
             
             /*if (_first_relaxed_layer._val == layer+1) {
@@ -3040,9 +3040,9 @@ typedef struct {
                 removedNode = true;
             }
             if ([node isNonVitalAndChildless]) {
-                [self DEBUGTestLayerVariableCountCorrectness];
+                //[self DEBUGTestLayerVariableCountCorrectness];
                 [self removeChildlessNodeFromMDD:node fromLayer:layer_index trimmingVariables:true];
-                [self DEBUGTestLayerVariableCountCorrectness];
+                //[self DEBUGTestLayerVariableCountCorrectness];
                 removedNode = true;
                 node_index--;
             } else {
@@ -3171,10 +3171,7 @@ typedef struct {
                                     [newNode addChild:oldNodeChild at:domain_val];
                                     [oldNodeChild addParent: newNode];
                                     assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val+1, _trail);
-                                } else {
-                                    [node removeChildAt:domain_val];
                                 }
-                                [oldNodeChild removeParentValue:node];
                             }
                         }
                         firstNewNode = false;
@@ -3183,9 +3180,9 @@ typedef struct {
             }
             if (firstNewNode) { //If the node was relaxed, but should be removed without any new nodes, need to decrement the for-loop counter
                 for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
-                    if (oldNodeChildren[domain_val] != NULL) {
+                    Node* oldNodeChild = oldNodeChildren[domain_val];
+                    if (oldNodeChild != NULL) {
                         assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val-1, _trail);
-                        Node* oldNodeChild = oldNodeChildren[domain_val];
                         [node removeChildAt:domain_val];
                         [oldNodeChild removeParentOnce:node];
                     }
@@ -3194,6 +3191,13 @@ typedef struct {
                 node_index--;
                 initial_layer_size--;
             } else {
+                for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+                    Node* oldNodeChild = oldNodeChildren[domain_val];
+                    if (oldNodeChild != NULL) {
+                        [node removeChildAt:domain_val];
+                        [oldNodeChild removeParentOnce:node];
+                    }
+                }
                 [self removeNodeAt:node_index onLayer:layer];
             }
             
