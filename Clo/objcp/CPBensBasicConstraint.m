@@ -665,10 +665,9 @@
         layer_variable_count[layer] -= min_domain_val;
     }
     
-    layers = calloc((_numVariables+1) , sizeof(TRId*));
+    layers = calloc((_numVariables+1) , sizeof(ORTRIdArrayI*));
     for (int layer = 0; layer <= _numVariables; layer++) {
-        layers[layer] = calloc(1 , sizeof(TRId));
-        layers[layer][0] = makeTRId(_trail, nil);
+        layers[layer] = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:1];
     }
     
     _layer_to_variable = calloc((_numVariables+1) , sizeof(int));
@@ -718,7 +717,7 @@
     if (_hasObjective) {
         for (int layer = (int)_numVariables; layer >= 0; layer--) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-                [layers[layer][node_index] updateReversePaths];
+                [[layers[layer] at: node_index] updateReversePaths];
             }
         }
     }
@@ -790,7 +789,7 @@
 }
 -(void) buildNewLayerUnder:(int)layer
 {
-    Node* parentNode = layers[layer][0];
+    Node* parentNode = [layers[layer] at: 0];
     int parentValue = [parentNode value];
     
     Node* childNode;
@@ -802,7 +801,7 @@
         childNode = [[Node alloc] initNode:_trail minChildIndex:min_domain_val maxChildIndex:max_domain_val value:variableIndex state:state];
         [self addNode:childNode toLayer:layer+1];
     } else {
-        childNode = layers[_numVariables][0];
+        childNode = [layers[_numVariables] at:0];
     }
     
     bool first = true;
@@ -833,9 +832,9 @@
 }
 -(void) setBottomUpInfoWidthOneFromLayer:(int)layer
 {
-    Node* childNode = layers[layer][0];
+    Node* childNode = [layers[layer] at: 0];
     id childState = [childNode getState];
-    Node* parentNode = layers[layer-1][0];
+    Node* parentNode = [layers[layer-1] at: 0];
     id parentState = [parentNode getState];
     int parentValue = [parentNode value];
     
@@ -880,7 +879,7 @@
     /*for (int variable_index = [_x low]; variable_index <= [_x up]; variable_index++) {
         if (!_variableUsed[variable_index]) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-                Node* node = layers[layer][node_index];
+                Node* node = [layers[layer] at: node_index];
                 id state = [node getState];
                 
                 //variableCount[variable_index] += [state numPathsForVariable:variable_index];
@@ -972,8 +971,8 @@
     }
     
     if (_hasObjective) {
-        //int longestPath = [layers[_numVariables][0] longestPath];
-        //int shortestPath = [layers[_numVariables][0] shortestPath];
+        //int longestPath = [[layers[_numVariables] at: 0] longestPath];
+        //int shortestPath = [[layers[_numVariables] at: 0] shortestPath];
         
         /*if (_maximize) {
             if (longestPath < [_objective   min]) {
@@ -1016,10 +1015,10 @@
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
     /*
-    Node* *layer = layers[layer_index];
+    ORTRIDArray* layer = layers[layer_index];
     
     for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-        Node* node = layer[node_index];
+        Node* node = [layer at: node_index];
         Node* childNode = [node children][value];
         
         if (childNode != NULL) {
@@ -1115,8 +1114,8 @@
     }
     //[self printGraph];
     if (_hasObjective) {
-        int longestPath = [layers[_numVariables][0] longestPath];
-        int shortestPath = [layers[_numVariables][0] shortestPath];
+        int longestPath = [[layers[_numVariables] at: 0] longestPath];
+        int shortestPath = [[layers[_numVariables] at: 0] shortestPath];
         
         if (_maximize) {
             if (longestPath < [_objective min]) {
@@ -1200,38 +1199,27 @@
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
     if (max_layer_size[layer_index]._val == layer_size[layer_index]._val) {
-        TRId *temp = calloc(layer_size[layer_index]._val , sizeof(TRId));
-        for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-            temp[node_index] = makeTRId(_trail, layers[layer_index][node_index]);
-        }
-        
         assignTRInt(&max_layer_size[layer_index], max_layer_size[layer_index]._val*2, _trail);
-        layers[layer_index] = calloc(max_layer_size[layer_index]._val , sizeof(TRId*));
-        for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-            layers[layer_index][node_index] = makeTRId(_trail, temp[node_index]);
-        }
-        for (int node_index = layer_size[layer_index]._val; node_index < max_layer_size[layer_index]._val; node_index++) {
-            layers[layer_index][node_index] = makeTRId(_trail, NULL);
-        }
+        [layers[layer_index] resize: max_layer_size[layer_index]._val];
     }
-    assignTRId(&layers[layer_index][layer_size[layer_index]._val], node,_trail);
+    [layers[layer_index] set:node at:layer_size[layer_index]._val];
     assignTRInt(&layer_size[layer_index], layer_size[layer_index]._val+1, _trail);
 }
 -(void) removeNodeAt:(int)index onLayer:(int)layer_index {
-    Node* *layer = layers[layer_index];
+    ORTRIdArrayI* layer = layers[layer_index];
     
     int finalNodeIndex = layer_size[layer_index]._val-1;
-    assignTRId(&layer[index], layer[finalNodeIndex], _trail);
-    assignTRId(&layer[finalNodeIndex], NULL, _trail);
+    [layer set:[layer at: finalNodeIndex] at:index];
+    [layer set:NULL at:finalNodeIndex];
     assignTRInt(&layer_size[layer_index], finalNodeIndex,_trail);
 }
 -(void) removeNode: (Node*) node {
     int node_layer = [self layerIndexForVariable:node.value];
-    Node* *layer = layers[node_layer];
+    ORTRIdArrayI* layer = layers[node_layer];
     int currentLayerSize = layer_size[node_layer]._val;
     
     for (int node_index = 0; node_index < currentLayerSize; node_index++) {
-        if (layer[node_index] == node) {
+        if ([layer at: node_index] == node) {
             [self removeNodeAt:node_index onLayer:node_layer];
             //node_index--;
             //currentLayerSize--;
@@ -1271,10 +1259,9 @@
         layer_variable_count[layer] -= min_domain_val;
     }
     
-    layers = calloc((_numVariables+1) , sizeof(TRId*));
+    layers = calloc((_numVariables+1) , sizeof(ORTRIdArrayI*));
     for (int layer = 0; layer <= _numVariables; layer++) {
-        layers[layer] = calloc(1 , sizeof(TRId));
-        layers[layer][0] = makeTRId(_trail, nil);
+        layers[layer] = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:1];
     }
     
     _layer_to_variable = malloc((_numVariables+1) * sizeof(int));
@@ -1362,7 +1349,7 @@
     if (_objective != nil) {
         for (int layer = (int)_numVariables; layer >= 0; layer--) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-                [layers[layer][node_index] updateReversePaths];
+                [[layers[layer] at: node_index] updateReversePaths];
             }
         }
     }
@@ -1390,7 +1377,7 @@
     for (int variable_index = [_x low]; variable_index <= [_x up]; variable_index++) {
         if (!_variableUsed[variable_index]) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-                Node* node = layers[layer][node_index];
+                Node* node = [layers[layer] at: node_index];
                 id state = [node getState];
     
                 //variableCount[variable_index] += [state numPathsForVariable:variable_index];
@@ -1452,22 +1439,22 @@
 -(void) reduceLayer:(int)layer inPlace:(bool)inPlace {
     int size_of_layer = layer_size[layer]._val;
     id* node_states = malloc(size_of_layer*sizeof(id));
-    Node** layer_nodes = layers[layer];
+    ORTRIdArrayI* layer_nodes = layers[layer];
     for (int node_index = 0; node_index < size_of_layer; node_index++) {
-        node_states[node_index] = [layer_nodes[node_index] getState];
+        node_states[node_index] = [[layer_nodes at: node_index] getState];
     }
     
     for (int first_node_index = 0; first_node_index < size_of_layer-1; first_node_index++) {
-        Node* first_node = layer_nodes[first_node_index];
+        Node* first_node = [layer_nodes at: first_node_index];
         id first_node_state = node_states[first_node_index];
         for (int second_node_index = first_node_index+1; second_node_index < size_of_layer; second_node_index++) {
             id second_node_state = node_states[second_node_index];
             
             if ([first_node_state equivalentTo: second_node_state]) {
                 node_states[second_node_index] = node_states[size_of_layer-1];
-                [first_node takeParentsFrom:layer_nodes[second_node_index]];
+                [first_node takeParentsFrom:[layer_nodes at: second_node_index]];
                 if (inPlace) {
-                    [self removeParentlessNodeFromMDD:layer_nodes[second_node_index] fromLayer:layer trimmingVariables:true];
+                    [self removeParentlessNodeFromMDD:[layer_nodes at: second_node_index] fromLayer:layer trimmingVariables:true];
                 } else {
                     [self removeNodeAt:second_node_index onLayer:layer];
                 }
@@ -1486,7 +1473,7 @@
     NSMutableDictionary* nodeHashes = [[NSMutableDictionary alloc] init];
     
     for (int parentNodeIndex = 0; parentNodeIndex < layer_size[layer]._val; parentNodeIndex++) {
-        Node* parentNode = layers[layer][parentNodeIndex];
+        Node* parentNode = [layers[layer] at: parentNodeIndex];
         [self createChildrenForNode:parentNode nodeHashes:nodeHashes];
     }
     [nodeHashes release];
@@ -1539,7 +1526,7 @@
                     [bucket addObject:childNode];
                 }
             } else {
-                childNode = layers[_numVariables][0];
+                childNode = [layers[_numVariables] at: 0];
             }
             
             [parentNode addChild:childNode at:edgeValue];
@@ -1556,8 +1543,8 @@
     }
     
     if (_objective != NULL) {
-        int longestPath = [layers[_numVariables][0] longestPath];
-        int shortestPath = [layers[_numVariables][0] shortestPath];
+        int longestPath = [[layers[_numVariables] at: 0] longestPath];
+        int shortestPath = [[layers[_numVariables] at: 0] shortestPath];
         
         if (_maximize) {
             if (longestPath < [_objective min]) {
@@ -1614,42 +1601,31 @@
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
     if (max_layer_size[layer_index]._val == layer_size[layer_index]._val) {
-        TRId *temp = malloc(layer_size[layer_index]._val * sizeof(TRId));
-        for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-            temp[node_index] = makeTRId(_trail, layers[layer_index][node_index]);
-        }
-        
         assignTRInt(&max_layer_size[layer_index], max_layer_size[layer_index]._val*2, _trail);
-        layers[layer_index] = malloc(max_layer_size[layer_index]._val * sizeof(TRId*));
-        for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-            layers[layer_index][node_index] = makeTRId(_trail, temp[node_index]);
-        }
-        for (int node_index = layer_size[layer_index]._val; node_index < max_layer_size[layer_index]._val; node_index++) {
-            layers[layer_index][node_index] = makeTRId(_trail, NULL);
-        }
+        [layers[layer_index] resize:max_layer_size[layer_index]._val];
     }
-    assignTRId(&layers[layer_index][layer_size[layer_index]._val], node,_trail);
+    [layers[layer_index] set:node at:layer_size[layer_index]._val];
     assignTRInt(&layer_size[layer_index], layer_size[layer_index]._val+1, _trail);
 }
 -(void) removeNodeAt:(int)index onLayer:(int)layer_index {
-    Node* *layer = layers[layer_index];
+    ORTRIdArrayI* layer = layers[layer_index];
     
     //[layer[index] release];
     int finalNodeIndex = layer_size[layer_index]._val-1;
-    assignTRId(&layer[index], layer[finalNodeIndex], _trail);
-    assignTRId(&layer[finalNodeIndex], NULL, _trail);
+    [layer set:[layer at:finalNodeIndex] at:index];
+    [layer set:NULL at: finalNodeIndex];
     assignTRInt(&layer_size[layer_index], finalNodeIndex,_trail);
 }
 -(void) removeNode: (Node*) node {
     int node_layer = [self layerIndexForVariable:node.value];
-    Node* *layer = layers[node_layer];
+    ORTRIdArrayI* layer = layers[node_layer];
     int currentLayerSize = layer_size[node_layer]._val;
     
     for (int node_index = 0; node_index < currentLayerSize; node_index++) {
-        if (layer[node_index] == node) {
+        if ([layer at: node_index] == node) {
             int finalNodeIndex = layer_size[node_layer]._val-1;
-            assignTRId(&layer[node_index], layer[finalNodeIndex], _trail);
-            assignTRId(&layer[finalNodeIndex], NULL, _trail);
+            [layer set:[layer at:finalNodeIndex] at:node_index];
+            [layer set:NULL at:finalNodeIndex];
             assignTRInt(&layer_size[node_layer], finalNodeIndex,_trail);
             //node_index--;
             //currentLayerSize--;
@@ -1713,10 +1689,10 @@
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
-    Node* *layer = layers[layer_index];
+    ORTRIdArrayI* layer = layers[layer_index];
     
     for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-        Node* node = layer[node_index];
+        Node* node = [layer at: node_index];
         Node* childNode = [node children][value];
             
         if (childNode != NULL) {
@@ -1748,8 +1724,8 @@
     }
     //[self printGraph];
     if (_objective != NULL) {
-        int longestPath = [layers[_numVariables][0] longestPath];
-        int shortestPath = [layers[_numVariables][0] shortestPath];
+        int longestPath = [[layers[_numVariables] at: 0] longestPath];
+        int shortestPath = [[layers[_numVariables] at: 0] shortestPath];
     
         if (_maximize) {
             if (longestPath < [_objective min]) {
@@ -1770,11 +1746,11 @@
 {
     if (_objective != NULL) {
         if (_maximize){
-            int optimal = [layers[_numVariables][0] longestPathContainingSelf];
+            int optimal = [[layers[_numVariables] at: 0] longestPathContainingSelf];
             
             int layer_index = [self layerIndexForVariable:variableIndex];
             for (int index = 0; index < layer_size[layer_index]._val; index++) {
-                Node* node = layers[layer_index][index];
+                Node* node = [layers[layer_index] at: index];
                 if ([node longestPathContainingSelf] == optimal) {
                     Node** children = [node children];
                     for (int child_index = [node minChildIndex]; child_index <= [node maxChildIndex]; child_index++) {
@@ -1799,7 +1775,7 @@
     
     for (int layer = 0; layer < _numVariables; layer++) {
         for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-            Node* node = layers[layer][node_index];
+            Node* node = [layers[layer] at: node_index];
             if (node != nil) {
                 for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
                     Node* child = [node children][child_index];
@@ -1836,7 +1812,7 @@
         for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
             int count = 0;
             for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-                Node* node = layers[layer_index][node_index];
+                Node* node = [layers[layer_index] at: node_index];
                 Node** children = [node children];
                 
                 if (children[domain_val] != NULL) {
@@ -1858,7 +1834,7 @@
     for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
         for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
             NSMutableDictionary* nodeHashes = [[NSMutableDictionary alloc] init];
-            Node* node = layers[layer_index][node_index];
+            Node* node = [layers[layer_index] at: node_index];
             Node** children = [node children];
             for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
                 bool added = false;
@@ -1936,16 +1912,16 @@
 -(Node*) findNodeToRemove:(int)layer
 {
     int remove_index = 0;
-    int remove_longestPath = [layers[layer][remove_index] longestPath];
+    int remove_longestPath = [[layers[layer] at: remove_index] longestPath];
     for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-        int node_longestPath = [layers[layer][node_index] longestPath];
+        int node_longestPath = [[layers[layer] at: node_index] longestPath];
         
         if (node_longestPath < remove_longestPath) {
             remove_index = node_index;
             remove_longestPath = node_longestPath;
         }
     }
-    Node* node = layers[layer][remove_index];
+    Node* node = [layers[layer] at: remove_index];
     return node;
 }
 -(NSString*)description
@@ -2020,11 +1996,11 @@
 }
 -(void) removeNode: (Node*) node topDown:(bool**)recalcTopDown bottomUp:(bool**)recalcBottomUp {
     int node_layer = [self layerIndexForVariable:node.value];
-    Node* *layer = layers[node_layer];
+    ORTRIdArrayI* layer = layers[node_layer];
     int currentLayerSize = layer_size[node_layer]._val;
     
     for (int node_index = 0; node_index < currentLayerSize; node_index++) {
-        if (layer[node_index] == node) {
+        if ([layer at: node_index] == node) {
             int finalNodeIndex = layer_size[node_layer]._val-1;
             recalcTopDown[node_layer][node_index] = recalcTopDown[node_layer][finalNodeIndex];
             recalcTopDown[node_layer][finalNodeIndex] = false;
@@ -2057,7 +2033,7 @@
             [self removeChildlessNodeFromMDD:parent fromLayer:parentLayer trimmingVariables:trimming];
         } else {
             for (int parent_index = 0; parent_index < layer_size[parentLayer]._val; parent_index++) {
-                if (layers[parentLayer][parent_index] == parent) {
+                if ([layers[parentLayer] at: parent_index] == parent) {
                     recalcBottomUp[parentLayer][parent_index] = true;
                     break;
                 }
@@ -2105,7 +2081,7 @@
                     [self removeParentlessNodeFromMDD:childNode fromLayer:childLayer trimmingVariables:trimming];
                 } else {
                     for (int childIndex = 0; childIndex < layer_size[childLayer]._val; childIndex++) {
-                        if (layers[childLayer][childIndex] == childNode) {
+                        if ([layers[childLayer] at: childIndex] == childNode) {
                             recalcTopDown[childLayer][childIndex] = true;
                             break;
                         }
@@ -2174,9 +2150,9 @@ typedef struct {
     ORTRIdArrayI* parents;
     int numParents;
     int nextLayerIndex = layerIndex+1;
-    Node* *nextLayer = layers[nextLayerIndex];
+    ORTRIdArrayI* nextLayer = layers[nextLayerIndex];
     for (int nodeIndex = 0; nodeIndex < layer_size[nextLayerIndex]._val; nodeIndex++) {
-        child = nextLayer[nodeIndex];
+        child = [nextLayer at: nodeIndex];
         numParents = [child numParents];
         parents = [child parents];
         for (int parentAIndex = 0; parentAIndex < numParents-1; parentAIndex++) {
@@ -2224,10 +2200,10 @@ typedef struct {
 {
     NSMutableArray* equivalenceClasses = [[NSMutableArray alloc] init];
     int parentLayerIndex = layerIndex-1;
-    Node* *parentLayer = layers[parentLayerIndex];
+    ORTRIdArrayI* parentLayer = layers[parentLayerIndex];
     int childLayerIndex = layerIndex;
-    Node* *childLayer = layers[childLayerIndex];
-    Node* child = childLayer[nodeIndex];
+    ORTRIdArrayI* childLayer = layers[childLayerIndex];
+    Node* child = [childLayer at: nodeIndex];
     int variableIndex = [self variableIndexForLayer:childLayerIndex];
     Node* parent;
     id parentState;
@@ -2235,7 +2211,7 @@ typedef struct {
     Node* testChild;
     
     for (int parentIndex = 0; parentIndex < layer_size[parentLayerIndex]._val; parentIndex++) {
-        parent = parentLayer[parentIndex];
+        parent = [parentLayer at: parentIndex];
         parentState = [parent getState];
         children = [parent children];
         
@@ -2275,11 +2251,11 @@ typedef struct {
     Node* parent;
     Node* *children;
     int nextLayerIndex = layerIndex+1;
-    Node* *layer = layers[layerIndex];
+    ORTRIdArrayI* layer = layers[layerIndex];
     int variableIndex = [self variableIndexForLayer:nextLayerIndex];
     id parentState;
     for (int nodeIndex = 0; nodeIndex < layer_size[layerIndex]._val; nodeIndex++) {
-        parent = layer[nodeIndex];
+        parent = [layer at: nodeIndex];
         parentState = [parent getState];
         children = [parent children];
         for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
@@ -2318,8 +2294,8 @@ typedef struct {
     bool* hitMaxWidth = malloc(_numVariables * sizeof(bool));
     hitMaxWidth[0] = false;
     int lastRowToSplit = (int)_numVariables -1;
-    Node* *layer;
-    Node* *nextLayer;
+    ORTRIdArrayI* layer;
+    ORTRIdArrayI* nextLayer;
     Edge edge;
     NSMutableArray* *equivalenceClassesIsolated = malloc(_numVariables * sizeof(NSMutableArray*));
     for (int layerIndex = 0; layerIndex < _numVariables; layerIndex++) {
@@ -2346,7 +2322,7 @@ typedef struct {
                 NSArray* equivalenceClass = [equivalenceClasses objectAtIndex:equivalenceClassIndex];
                 id topDownInfo = [equivalenceClass objectAtIndex: 0];
                 if (![isolated containsObject:topDownInfo]) {
-                    id state = [[_stateClass alloc] initState:[layer[0] getState] variableIndex:variable];
+                    id state = [[_stateClass alloc] initState:[[layer at: 0] getState] variableIndex:variable];
                     [state setTopDownInfo:topDownInfo];
                     Node* newNode = [[Node alloc] initNode:_trail minChildIndex:min_domain_val maxChildIndex:max_domain_val value:variable state:state];
                     [self addNode:newNode toLayer:nextLayerIndex];
@@ -2371,17 +2347,17 @@ typedef struct {
         }
         nextLayer = layers[nextLayerIndex];
         for (int nodeIndex = 0; nodeIndex < layer_size[nextLayerIndex]._val; nodeIndex++) {
-            [self calculateBottomUpInfoFor:nextLayer[nodeIndex] onLayer:nextLayerIndex];
+            [self calculateBottomUpInfoFor:[nextLayer at: nodeIndex] onLayer:nextLayerIndex];
         }
         if (hitMaxWidth[nextLayerIndex]) {
             assignTRInt(&node_relaxed[nextLayerIndex][0], 1, _trail);
-            [self calculateTopDownInfoFor:nextLayer[0] onLayer:nextLayerIndex]; //If isn't exact, need to recalc the top-down for the relaxed node(s).
+            [self calculateTopDownInfoFor:[nextLayer at: 0] onLayer:nextLayerIndex]; //If isn't exact, need to recalc the top-down for the relaxed node(s).
         } else {
             assignTRInt(&node_relaxed[nextLayerIndex][0], 0, _trail);
-            [[nextLayer[0] getState] setTopDownInfo:firstTopDown];
+            [[[nextLayer at: 0] getState] setTopDownInfo:firstTopDown];
         }
         for (int nodeIndex = 0; nodeIndex < layer_size[layerIndex]._val; nodeIndex++) {
-            Node* parent = layer[nodeIndex];
+            Node* parent = [layer at: nodeIndex];
             id parentState = [parent getState];
             Node* *children = [parent children];
             for (int value = [parent minChildIndex]; value <= [parent maxChildIndex]; value++) {
@@ -2428,11 +2404,11 @@ typedef struct {
 
 -(void) trimValueFromLayer:(ORInt)layer_index :(int)value topDown:(bool**)recalcTopDown bottomUp:(bool**)recalcBottomUp
 {
-    Node* *layer = layers[layer_index];
-    Node* *child_layer = layers[layer_index+1];
+    ORTRIdArrayI* layer = layers[layer_index];
+    ORTRIdArrayI* child_layer = layers[layer_index+1];
     
     for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-        Node* node = layer[node_index];
+        Node* node = [layer at: node_index];
         Node* childNode = [node children][value];
         
         if (childNode != NULL) {
@@ -2452,7 +2428,7 @@ typedef struct {
                 [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1) trimmingVariables:true topDown:recalcTopDown bottomUp:recalcBottomUp];
             } else {
                 for (int child_index = 0; child_index < layer_size[layer_index+1]._val; child_index++) {
-                    if (child_layer[child_index] == childNode) {
+                    if ([child_layer at: child_index] == childNode) {
                         recalcTopDown[layer_index+1][child_index] = true;
                         break;
                     }
@@ -2544,10 +2520,10 @@ typedef struct {
 {
     for (int buildingLayer = 1; buildingLayer <= _numVariables; buildingLayer++) {
         for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
-            if ([self calculateTopDownInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer] && buildingLayer < _numVariables) {
-                Node* node = layers[buildingLayer][nodeIndex];
+            if ([self calculateTopDownInfoFor:[layers[buildingLayer] at: nodeIndex] onLayer:buildingLayer] && buildingLayer < _numVariables) {
+                Node* node = [layers[buildingLayer] at: nodeIndex];
                 for (int childNodeIndex = 0; childNodeIndex < layer_size[buildingLayer+1]._val; childNodeIndex++) {
-                    if ([node findChildIndex:layers[buildingLayer+1][childNodeIndex]] != -1) {
+                    if ([node findChildIndex:[layers[buildingLayer+1] at: childNodeIndex]] != -1) {
                         recalcTopDown[buildingLayer+1][childNodeIndex] = true;
                     }
                 }
@@ -2556,10 +2532,10 @@ typedef struct {
     }
     for (int buildingLayer = (int)_numVariables; buildingLayer >= 0; buildingLayer--) {
         for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
-            if ([self calculateBottomUpInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer] && buildingLayer > 0) {
-                Node* node = layers[buildingLayer][nodeIndex];
+            if ([self calculateBottomUpInfoFor:[layers[buildingLayer] at: nodeIndex] onLayer:buildingLayer] && buildingLayer > 0) {
+                Node* node = [layers[buildingLayer] at: nodeIndex];
                 for (int parentNodeIndex = 0; parentNodeIndex < layer_size[buildingLayer-1]._val; parentNodeIndex++) {
-                    if ([node hasParent:layers[buildingLayer-1][parentNodeIndex]]) {
+                    if ([node hasParent:[layers[buildingLayer-1] at: parentNodeIndex]]) {
                         recalcBottomUp[buildingLayer-1][parentNodeIndex] = true;
                     }
                 }
@@ -2582,9 +2558,9 @@ typedef struct {
     bool followupRecalc = false;
     
     for (int buildingLayer = 0; buildingLayer < _numVariables; buildingLayer++) {
-        Node* *buildingLayerNodes = layers[buildingLayer];
+        ORTRIdArrayI* buildingLayerNodes = layers[buildingLayer];
         for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
-            Node* parent = buildingLayerNodes[nodeIndex];
+            Node* parent = [buildingLayerNodes at: nodeIndex];
             id parentState = [parent getState];
             Node* *children = [parent children];
             for (int value = [parent minChildIndex]; value <= [parent maxChildIndex]; value++) {
@@ -2593,7 +2569,7 @@ typedef struct {
                     id childState = [child getState];
                     int childLayerIndex;
                     for (int childNodeIndex = 0; childNodeIndex < layer_size[buildingLayer+1]._val; childNodeIndex++) {
-                        if (layers[buildingLayer+1][childNodeIndex] == child) {
+                        if ([layers[buildingLayer+1] at: childNodeIndex] == child) {
                             childLayerIndex = childNodeIndex;
                             break;
                         }
@@ -2690,7 +2666,7 @@ typedef struct {
                         }
                         NSArray* equivalenceClass = [equivalenceClasses objectAtIndex:equivalenceClassIndex];
                         id topDownInfo = [equivalenceClass objectAtIndex: 0];
-                        id state = [[_stateClass alloc] initState:[layers[buildingLayer-1][0] getState] variableIndex:variable];
+                        id state = [[_stateClass alloc] initState:[[layers[buildingLayer-1] at: 0] getState] variableIndex:variable];
                         [state setTopDownInfo:topDownInfo];
                         Node* newNode = [[Node alloc] initNode:_trail minChildIndex:min_domain_val maxChildIndex:max_domain_val value:variable state:state];
                         [self addNode:newNode toLayer:buildingLayer];
@@ -2712,16 +2688,16 @@ typedef struct {
                         }
                         [self calculateBottomUpInfoFor:newNode onLayer:buildingLayer];
                     }
-                    [self calculateBottomUpInfoFor:layers[buildingLayer][node_index] onLayer:buildingLayer];
+                    [self calculateBottomUpInfoFor:[layers[buildingLayer] at: node_index] onLayer:buildingLayer];
                     if (hitMaxWidth[buildingLayer]) {
                         assignTRInt(&node_relaxed[buildingLayer][node_index], 1, _trail);
-                        [self calculateTopDownInfoFor:layers[buildingLayer][node_index] onLayer:buildingLayer]; //If isn't exact, need to recalc the top-down for the relaxed node
+                        [self calculateTopDownInfoFor:[layers[buildingLayer] at: node_index] onLayer:buildingLayer]; //If isn't exact, need to recalc the top-down for the relaxed node
                         assignTRInt(&_layer_relaxed[buildingLayer],1,_trail);
                         break;
                     } else {
                         assignTRInt(&node_relaxed[buildingLayer][node_index], 0, _trail);
                         assignTRInt(&_layer_relaxed[buildingLayer],0,_trail);
-                        [[layers[buildingLayer][node_index] getState] setTopDownInfo:firstTopDown];
+                        [[[layers[buildingLayer] at: node_index] getState] setTopDownInfo:firstTopDown];
                     }
                 }
             }
@@ -2730,7 +2706,7 @@ typedef struct {
             for (buildingLayer = temp; (buildingLayer < _numVariables) && layerChanged; buildingLayer++) {
                 layerChanged = false;
                 for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
-                    if ([self calculateTopDownInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer]) {    //True if changes state
+                    if ([self calculateTopDownInfoFor:[layers[buildingLayer] at: nodeIndex] onLayer:buildingLayer]) {    //True if changes state
                         layerChanged = true;
                     }
                 }
@@ -2740,16 +2716,16 @@ typedef struct {
             for (buildingLayer = (int)temp+1; buildingLayer >= 0 && layerChanged; buildingLayer--) {
                 layerChanged = false;
                 for (int nodeIndex = 0; nodeIndex < (layer_size[buildingLayer]._val); nodeIndex++) {
-                    if ([self calculateBottomUpInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer]) {
+                    if ([self calculateBottomUpInfoFor:[layers[buildingLayer] at: nodeIndex] onLayer:buildingLayer]) {
                         layerChanged = true;
                     }
                 }
             }
             int bottomUpLastChange = buildingLayer+1;
             for (buildingLayer = min(0,bottomUpLastChange); buildingLayer < max(topDownLastChange,bottomUpLastChange); buildingLayer++) {
-            Node* *buildingLayerNodes = layers[buildingLayer];
+            ORTRIdArray* buildingLayerNodes = layers[buildingLayer];
             for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
-                Node* parent = buildingLayerNodes[nodeIndex];
+                Node* parent = [buildingLayerNodes at: nodeIndex];
                 id parentState = [parent getState];
                 Node* *children = [parent children];
                 for (int value = [parent minChildIndex]; value <= [parent maxChildIndex]; value++) {
@@ -2791,7 +2767,7 @@ typedef struct {
     for (int buildingLayer = firstChangedLayer; (buildingLayer <= _numVariables) && (true || buildingLayer <= lastChangedLayer || layerChanged); buildingLayer++) {
         layerChanged = false;
         for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
-            if ([self calculateTopDownInfoFor:layers[buildingLayer][nodeIndex] onLayer:buildingLayer]) {    //True if changes state
+            if ([self calculateTopDownInfoFor:[layers[buildingLayer] at: nodeIndex] onLayer:buildingLayer]) {    //True if changes state
                 layerChanged = true;
                 lowestChangedLayer = buildingLayer;
             }
@@ -2809,9 +2785,9 @@ typedef struct {
         }
     }
     for (int buildingLayer = min(firstChangedLayer,highestChangedLayer); buildingLayer < max(lastChangedLayer,lowestChangedLayer); buildingLayer++) {
-        Node* *buildingLayerNodes = layers[buildingLayer];
+        ORTRIdArray* buildingLayerNodes = layers[buildingLayer];
         for (int nodeIndex = 0; nodeIndex < layer_size[buildingLayer]._val; nodeIndex++) {
-            Node* parent = buildingLayerNodes[nodeIndex];
+            Node* parent = [buildingLayerNodes at: nodeIndex];
             id parentState = [parent getState];
             Node* *children = [parent children];
             for (int value = [parent minChildIndex]; value <= [parent maxChildIndex]; value++) {
@@ -2940,7 +2916,7 @@ typedef struct {
     if (_objective != nil) {
         for (int layer = (int)_numVariables; layer >= 0; layer--) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-                [layers[layer][node_index] updateReversePaths];
+                [[layers[layer] at: node_index] updateReversePaths];
             }
         }
     }
@@ -2963,7 +2939,7 @@ typedef struct {
                                              state:state];
                 [self addNode:childNode toLayer:parentLayer+1];
             } else {
-                childNode = layers[_numVariables][0];
+                childNode = [layers[_numVariables] at: 0];
             }
             
             [parentNode addChild:childNode at:edgeValue];
@@ -2974,10 +2950,10 @@ typedef struct {
 }
 -(void) splitNodes:(int)layer
 {
-    TRId *parent_layer = layers[layer-1];
+    ORTRIdArray* parent_layer = layers[layer-1];
     int variable_index = [self variableIndexForLayer:layer];
     for (int parent_index = 0; parent_index < layer_size[layer-1]._val; parent_index++) {
-        Node* parent = parent_layer[parent_index];
+        Node* parent = [parent_layer at: parent_index];
         Node* *children = [parent children];
         for (int child_index = [parent minChildIndex]; child_index < [parent maxChildIndex]; child_index++) {
             Node* child = children[child_index];
@@ -3013,7 +2989,7 @@ typedef struct {
             
             
             /*if (_first_relaxed_layer._val == layer+1) {
-                //if ([layers[_first_relaxed_layer._val][0] isRelaxed]) {
+                //if ([[layers[_first_relaxed_layer._val] at: 0] isRelaxed]) {
                     assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
                     [self rebuildFromLayer: layer];
                 //} else {
@@ -3034,11 +3010,14 @@ typedef struct {
 
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
-    Node* *layer = layers[layer_index];
+    if (layer_index == 11 && value == 3) {
+        int i =0;
+    }
+    ORTRIdArrayI* layer = layers[layer_index];
     bool removedNode = false;
     
     for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-        Node* node = layer[node_index];
+        Node* node = [layer at: node_index];
         Node* childNode = [node children][value];
             
         if (childNode != NULL) {
@@ -3136,10 +3115,13 @@ typedef struct {
 
 -(void) splitNodesOnLayer:(int)layer
 {
+    if (layer == 15) {
+        int i =0;
+    }
     int initial_layer_size = layer_size[layer]._val;
     bool firstNewNode;
     for (int node_index = 0; node_index < initial_layer_size; node_index++) {
-        Node* node = layers[layer][node_index];
+        Node* node = [layers[layer] at: node_index];
         if ([node isRelaxed]) { //Find a relaxed node to split
             firstNewNode = true;
             Node** oldNodeChildren = [node children];
@@ -3222,7 +3204,7 @@ typedef struct {
     }
 
     for (int layer_index = 0; layer_index < layer_size[layer+1]._val; layer_index++) {
-        Node* node = layers[layer+1][layer_index];
+        Node* node = [layers[layer+1] at: layer_index];
         if ([node isNonVitalAndParentless]) {
             [self removeParentlessNodeFromMDD:node fromLayer:layer+1 trimmingVariables:true];
             layer_index--;
@@ -3239,9 +3221,9 @@ typedef struct {
         if (layer_size[layer]._val > _relaxation_size && layer < _first_relaxed_layer._val) {
             assignTRInt(&_first_relaxed_layer, layer, _trail);
         } else if (inPlace && layer_size[layer]._val == _relaxation_size && _first_relaxed_layer._val > layer) {
-            TRId* l = layers[layer];
+            ORTRIdArrayI* l = layers[layer];
             for (int node_index = 0; node_index < _relaxation_size; node_index++) {
-                if ([l[node_index] isRelaxed]) {
+                if ([[l at: node_index] isRelaxed]) {
                     assignTRInt(&_first_relaxed_layer, layer, _trail);
                     break;
                 }
@@ -3261,12 +3243,12 @@ typedef struct {
     Node* first_node;
     Node* second_node;
     //Heuristic 1 - First two nodes
-    //first_node = layers[layer][0];
-    //second_node = layers[layer][1];
+    //first_node = [layers[layer] at: 0];
+    //second_node = [layers[layer] at: 1];
     
     //Heuristic 2 - Last two nodes
-    //first_node = layers[layer][layer_size[layer]._val-2];
-    //second_node = layers[layer][layer_size[layer]._val-1];
+    //first_node = [layers[layer] at: layer_size[layer]._val-2];
+    //second_node = [layers[layer] at: layer_size[layer]._val-1];
     
     //Heuristic 3 - Similarity measure
     //[self findNodesToMerge:layer first:&first_node second:&second_node];
@@ -3293,8 +3275,8 @@ typedef struct {
                 }
             }
         }
-        first_node = layers[layer][best_first_node_index];
-        second_node = layers[layer][best_second_node_index];
+        first_node = [layers[layer] at: best_first_node_index];
+        second_node = [layers[layer] at: best_second_node_index];
 
         [first_node mergeWith: second_node inPlace:true layerVariableCount:layer_variable_count layer:layer];
         
@@ -3305,10 +3287,10 @@ typedef struct {
         }
         
         if (layer_size[layer]._val > _relaxation_size) {
-            CustomState* first_node_state = [layers[layer][first_node_index] getState];
+            CustomState* first_node_state = [[layers[layer] at: first_node_index] getState];
             
             for (second_node_index = 0; second_node_index <= layer_size[layer]._val; second_node_index++) {
-                CustomState* second_node_state = [layers[layer][second_node_index] getState];
+                CustomState* second_node_state = [[layers[layer] at: second_node_index] getState];
                 int newSimilarity = [first_node_state stateDifferential: second_node_state];
                 
                 if (second_node_index < best_first_node_index) {
@@ -3346,9 +3328,9 @@ typedef struct {
     
     int first_node_index, second_node_index;
     for (first_node_index = 0; first_node_index < ls-1; first_node_index++) {
-        CustomState* first_node_state = [layers[layer][first_node_index] getState];
+        CustomState* first_node_state = [[layers[layer] at: first_node_index] getState];
         for (second_node_index = first_node_index +1; second_node_index < ls; second_node_index++) {
-            CustomState* second_node_state = [layers[layer][second_node_index] getState];
+            CustomState* second_node_state = [[layers[layer] at: second_node_index] getState];
             int state_differential = [first_node_state stateDifferential: second_node_state];
             similarityMatrix[first_node_index][second_node_index] = state_differential;
         }
@@ -3360,11 +3342,11 @@ typedef struct {
 {
     if (_objective != NULL) {   //merge nodes with worst objective value - keeps added paths from affecting objective by much
         int first_node_index = 0;
-        int first_node_longest_path = [layers[layer][first_node_index] longestPath];
+        int first_node_longest_path = [[layers[layer] at: first_node_index] longestPath];
         int second_node_index = 1;
-        int second_node_longest_path = [layers[layer][second_node_index] longestPath];
+        int second_node_longest_path = [[layers[layer] at: second_node_index] longestPath];
         for (int node_index = 2; node_index < layer_size[layer]._val; node_index++) {
-            int node_longest_path = [layers[layer][node_index] longestPath];
+            int node_longest_path = [[layers[layer] at: node_index] longestPath];
             if (node_longest_path < first_node_longest_path && node_longest_path < second_node_longest_path) {
                 if (first_node_longest_path < second_node_longest_path) {
                     second_node_index = node_index;
@@ -3381,17 +3363,17 @@ typedef struct {
                 second_node_longest_path = node_longest_path;
             }
         }
-        *first = layers[layer][first_node_index];
-        *second = layers[layer][second_node_index];
+        *first = [layers[layer] at: first_node_index];
+        *second = [layers[layer] at: second_node_index];
     } else {    //merge nodes with smallest state-difference - keeps relaxation from adding as many paths
         int first_node_index, second_node_index;
         int best_first_node_index = 0;
         int best_second_node_index = 1;
         int smallest_state_differential = INT_MAX;
         for (first_node_index = 0; first_node_index < layer_size[layer]._val -1; first_node_index++) {
-            CustomState* first_node_state = [layers[layer][first_node_index] getState];
+            CustomState* first_node_state = [[layers[layer] at: first_node_index] getState];
             for (second_node_index = first_node_index +1; second_node_index < layer_size[layer]._val; second_node_index++) {
-                CustomState* second_node_state = [layers[layer][second_node_index] getState];
+                CustomState* second_node_state = [[layers[layer] at: second_node_index] getState];
                 int state_differential = [first_node_state stateDifferential: second_node_state];
                 if (state_differential < smallest_state_differential) {
                     smallest_state_differential = state_differential;
@@ -3407,8 +3389,8 @@ typedef struct {
             }
         }
         
-        *first = layers[layer][best_first_node_index];
-        *second = layers[layer][best_second_node_index];
+        *first = [layers[layer] at: best_first_node_index];
+        *second = [layers[layer] at: best_second_node_index];
     }
 }
 -(NSString*)description
