@@ -272,7 +272,7 @@
 		<key>amongMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>164</integer>
+			<integer>167</integer>
 		</dict>
 		<key>amongSwift.xcscheme_^#shared#^_</key>
 		<dict>
@@ -702,7 +702,7 @@
 		<key>sequenceAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>167</integer>
+			<integer>164</integer>
 		</dict>
 		<key>sequenceMDD.xcscheme_^#shared#^_</key>
 		<dict>
