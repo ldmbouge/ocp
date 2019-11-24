@@ -81,10 +81,10 @@
         return merged;
     }
     
-    for (int i = 1; i <= [x count]; i++) {
+    for (int i = [x low]; i <= [x up]; i++) {
         [sortedX addObject: x[i]];
     }
-    for (int i = 1; i <= [y count]; i++) {
+    for (int i = [y low]; i <= [y up]; i++) {
         [sortedY addObject: y[i]];
     }
     [self sortIntVarArray:sortedX first:0 last:(ORInt)([x count] - 1)];
@@ -163,7 +163,7 @@
      }
      onConstraints: ^(id<ORConstraint> c) {
         [_into setCurrent:c];
-        if (true) { //Should check if c is MDDifiable.  aka if it has a visit function down below
+        if ([c conformsToProtocol:@protocol(ORMDDSpecs)]) { //Should check if c is MDDifiable.  aka if it has a visit function down below
         [c visit: self];
         }
         [_into setCurrent:nil];

@@ -1285,6 +1285,7 @@
 {
     self = [self initCPMDD:engine over:x reduced:reduced];
     _objective = objective;
+    _objective = NULL;  //Just for now.  Objective stuff doesn't work yet.
     _maximize = maximize;
     _stateClass = NULL;
     return self;
@@ -1299,6 +1300,7 @@
 {
     self = [self initCPMDD:engine over:x reduced:reduced];
     _objective = objective;
+    _objective = NULL; //Just for now.  Objective stuff doesn't work yet.
     _maximize = maximize;
     _stateClass = stateClass;
     return self;
@@ -3010,9 +3012,6 @@ typedef struct {
 
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
-    if (layer_index == 11 && value == 3) {
-        int i =0;
-    }
     ORTRIdArrayI* layer = layers[layer_index];
     bool removedNode = false;
     
@@ -3115,9 +3114,6 @@ typedef struct {
 
 -(void) splitNodesOnLayer:(int)layer
 {
-    if (layer == 15) {
-        int i =0;
-    }
     int initial_layer_size = layer_size[layer]._val;
     bool firstNewNode;
     for (int node_index = 0; node_index < initial_layer_size; node_index++) {
