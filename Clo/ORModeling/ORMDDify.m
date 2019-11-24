@@ -570,9 +570,10 @@
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
     [_into minimizeVar:[v var]];
+    /*
     _objectiveVar = [v var];
     _maximize = false;
-    _hasObjective = true;
+    _hasObjective = true;*/
 }
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
