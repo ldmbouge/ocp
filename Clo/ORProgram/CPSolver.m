@@ -1455,8 +1455,6 @@ onFailure: (ORInt2Void) onFailure
    [two set_d:2];
    while (![x bound]) {
       mid = [[[x min] div: two] add: [[x max] div: two]];
-      [two release];
-      [mid autorelease];
       [_search try: ^{
          [self rationalGEqual: mx with: mid];
       } alt: ^{
@@ -2009,7 +2007,6 @@ onFailure: (ORInt2Void) onFailure
 
 -(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
-   /* remove comment */
    TRInt _index;
    TRInt limitCounter;
    
@@ -2119,7 +2116,7 @@ onFailure: (ORInt2Void) onFailure
                      int nvar = 0, nv, nbiter = 0;
                      int direction = 1;
                      ORStatus s;
-                     while (nbiter < 2000) {
+                     while (nbiter < 200) {
                         [_tracer popNode];
                         [_tracer pushNode];
                         nbiter++; //printf("nb iter = %d\n", nbiter);
@@ -2206,7 +2203,7 @@ onFailure: (ORInt2Void) onFailure
          if(i.index == I.index){
             b(i.index,x);
          } else {
-            b((((_index._val - i.index) % (I.index - i.index + 1)) + i.index), x);
+            b((((_index._val - i.index) % (I.index - i.index)) + i.index), x);
             assignTRInt(&_index, _index._val+1, _trail);
          }
 

@@ -19,10 +19,12 @@
 
 #define PERCENT 5.0
 
-void ulp_computation_d(id<ORRationalInterval> ulp, const double_interval f){
+id<ORRationalInterval> ulp_computation_d(const double_interval f){
+   id<ORRationalInterval> ulp = [[ORRationalInterval alloc] init];
    id<ORRational> tmp0 = [[ORRational alloc] init];
    id<ORRational> tmp1 = [[ORRational alloc] init];
    id<ORRational> tmp2 = [[ORRational alloc] init];
+   id<ORRational> tmp3 = [[ORRational alloc] init];
    
    if(f.inf == -INFINITY || f.sup == INFINITY){
       [tmp1 setNegInf];
@@ -31,10 +33,11 @@ void ulp_computation_d(id<ORRationalInterval> ulp, const double_interval f){
    }else if(fabs(f.inf) == DBL_MAX || fabs(f.sup) == DBL_MAX){
       [tmp0 set_d: nextafter(DBL_MAX, -INFINITY) - DBL_MAX];
       [tmp1 set_d: 2.0];
-      tmp2 = [tmp0 div: tmp1];
-      [tmp1 set: tmp2];
-      tmp2 = [tmp2 neg];
-      [ulp set_q:tmp2 and:tmp1];
+      [tmp2 set: [tmp0 div: tmp1]];
+      [tmp3 set: [tmp0 div: tmp1]];
+      //[tmp1 set: tmp2];
+      //[tmp2 set: [tmp2 neg]];
+      [ulp set_q:[tmp2 neg] and:tmp3];
    } else{
       ORDouble inf, sup;
       inf = minDbl(nextafter(f.inf, -INFINITY) - f.inf, nextafter(f.sup, -INFINITY) - f.sup);
@@ -42,25 +45,30 @@ void ulp_computation_d(id<ORRationalInterval> ulp, const double_interval f){
       
       [tmp0 set_d: inf];
       [tmp1 set_d: 2.0];
-      tmp2 = [tmp0 div: tmp1];
-      [ulp.low set: tmp2];
-      [tmp0 set_d: sup];
-      tmp2 = [tmp0 div: tmp1];
-      [ulp.up set: tmp2];
+      [ulp.low set: [tmp0 div: tmp1]];
+      //[ulp.low set: tmp2];
+      [tmp3 set_d: sup];
+      [ulp.up set: [tmp3 div: tmp1]];
+      //[ulp.up set: tmp3];
    }
    
    [tmp0 release];
    [tmp1 release];
    [tmp2 release];
+   [tmp3 release];
+   [ulp autorelease];
+   
+   return ulp;
 }
 
-id<ORRationalInterval> compute_eo_add_d(id<ORRationalInterval> eo, const double_interval x, const double_interval y, const double_interval z){
-   
+id<ORRationalInterval> compute_eo_add_d(const double_interval x, const double_interval y, const double_interval z)
+{
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
    /* First, let see if Sterbenz is applicable */
    if (((0.0 <= x.inf) && (y.sup <= 0.0) && (-y.inf/2.0 <= x.inf) && (x.sup <= -2.0*y.sup)) ||
        ((x.sup <= 0.0) && (0.0 <= y.inf) && (y.sup/2.0 <= -x.sup) && (-x.inf <= 2.0*y.inf))) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if ((((double_cast)((z.inf))).parts.exponent <= 1) && (((double_cast)((z.sup))).parts.exponent <= 1)) {
       /* Hauser theorems:
@@ -70,7 +78,7 @@ id<ORRationalInterval> compute_eo_add_d(id<ORRationalInterval> eo, const double_
        Hauser, J. R. 1996. Handling floating-point exceptions in numeric programs. ACM Transactions on Pro-
        gramming Languages and Systems 18, 2, 139–174 */
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf + y.inf;
@@ -78,11 +86,11 @@ id<ORRationalInterval> compute_eo_add_d(id<ORRationalInterval> eo, const double_
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
-      tmpq = [xq add: yq];
+      [tmpq set: [xq add: yq]];
       [yq set_d:tmpf];
-      tmpq = [tmpq sub: yq];
+      [tmpq set: [tmpq sub: yq]];
       
-      eo = [eo proj_inter:tmpq and:tmpq];
+      [eo set_q:tmpq and:tmpq];
       
       [tmpq release];
       [yq release];
@@ -90,21 +98,22 @@ id<ORRationalInterval> compute_eo_add_d(id<ORRationalInterval> eo, const double_
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_d(ulp_q, z);
-      eo = [eo proj_inter:ulp_q];
+      [ulp_q set: ulp_computation_d(z)];
+      [eo set: ulp_q];
       [ulp_q release];
    }
-   
+   [eo autorelease];
    return eo;
 }
 
-id<ORRationalInterval> compute_eo_sub_d(id<ORRationalInterval> eo, const double_interval x, const double_interval y, const double_interval z){
-   
+id<ORRationalInterval> compute_eo_sub_d(const double_interval x, const double_interval y, const double_interval z)
+{
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
    /* First, let see if Sterbenz is applicable (requires gradual underflow (denormalized) or that x-y does not underflow */
    if (((x.inf >= 0.0) && (y.inf >= 0.0) && (y.sup/2.0 <= x.inf) && (x.sup <= 2.0*y.inf)) ||
        ((x.sup <= 0.0) && (y.sup <= 0.0) && (y.inf/2.0 >= x.sup) && (x.inf >= 2.0*y.sup))) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if ((((double_cast)((z.inf))).parts.exponent <= 1) && (((double_cast)((z.sup))).parts.exponent <= 1)) {
       /* Hauser theorems:
@@ -114,7 +123,7 @@ id<ORRationalInterval> compute_eo_sub_d(id<ORRationalInterval> eo, const double_
        Hauser, J. R. 1996. Handling floating-point exceptions in numeric programs. ACM Transactions on Pro-
        gramming Languages and Systems 18, 2, 139–174 */
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf - y.inf;
@@ -122,11 +131,11 @@ id<ORRationalInterval> compute_eo_sub_d(id<ORRationalInterval> eo, const double_
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
-      tmpq = [xq sub: yq];
+      [tmpq set: [xq sub: yq]];
       [yq set_d:tmpf];
-      tmpq = [tmpq sub: yq];
+      [tmpq set: [tmpq sub: yq]];
       
-      eo = [eo proj_inter:tmpq and:tmpq];
+      [eo set_q:tmpq and:tmpq];
       
       [tmpq release];
       [yq release];
@@ -134,21 +143,22 @@ id<ORRationalInterval> compute_eo_sub_d(id<ORRationalInterval> eo, const double_
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_d(ulp_q, z);
-      eo = [eo proj_inter:ulp_q];
+      [ulp_q set: ulp_computation_d(z)];
+      [eo set:ulp_q];
       [ulp_q release];
    }
-   
+   [eo autorelease];
    return eo;
 }
 
-id<ORRationalInterval> compute_eo_mul_d(id<ORRationalInterval> eo, const double_interval x, const double_interval y, const double_interval z){
-   
+id<ORRationalInterval> compute_eo_mul_d(const double_interval x, const double_interval y, const double_interval z)
+{
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
    /* Check if its a product by a power of 2 */
    if (((x.inf == x.sup) && (((double_cast)((x.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(x.inf) <= y.inf) && (y.sup <= DBL_MAX/fabs(x.inf))) ||
        ((y.inf == y.sup) && (((double_cast)((y.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(y.inf) <= x.inf) && (x.sup <= DBL_MAX/fabs(y.inf)))) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf*y.inf;
@@ -156,11 +166,11 @@ id<ORRationalInterval> compute_eo_mul_d(id<ORRationalInterval> eo, const double_
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
-      tmpq = [xq mul: yq];
+      [tmpq set: [xq mul: yq]];
       [yq set_d:tmpf];
-      tmpq = [tmpq sub: yq];
+      [tmpq set: [tmpq sub: yq]];
       
-      eo = [eo proj_inter:tmpq and:tmpq];
+      [eo set_q:tmpq and:tmpq];
       
       [tmpq release];
       [yq release];
@@ -168,11 +178,11 @@ id<ORRationalInterval> compute_eo_mul_d(id<ORRationalInterval> eo, const double_
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_d(ulp_q, z);
-      eo = [eo proj_inter:ulp_q];
+      [ulp_q set: ulp_computation_d(z)];
+      [eo set:ulp_q];
       [ulp_q release];
    }
-   
+   [eo autorelease];
    return eo;
 }
 
@@ -182,13 +192,14 @@ int checkDivPower2d(double x, double y) { // x/y
    return (z.parts.exponent >= 1);
 }
 
-id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_interval x, const double_interval y, const double_interval z){
-   
+id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_interval y, const double_interval z)
+{
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
    /* Check if its a division by a power of 2 */
    if ((y.inf == y.sup) && (((double_cast)(y.inf)).parts.mantissa == 0) &&
        (((-DBL_MAX <= x.inf) && (x.sup < 0.0) && checkDivPower2d(x.sup, y.inf)) || ((0.0 < x.inf) && (x.sup <= DBL_MAX) && checkDivPower2d(x.inf, y.inf)))) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
       
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
@@ -197,11 +208,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
-      tmpq = [xq div: yq];
+      [tmpq set: [xq div: yq]];
       [yq set_d:tmpf];
-      tmpq = [tmpq sub: yq];
+      [tmpq set: [tmpq sub: yq]];
       
-      eo = [eo proj_inter:tmpq and:tmpq];
+      [eo set_q:tmpq and:tmpq];
       
       [tmpq release];
       [yq release];
@@ -209,11 +220,11 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_d(ulp_q, z);
-      eo = [eo proj_inter:ulp_q];
+      [ulp_q set: ulp_computation_d(z)];
+      [eo set:ulp_q];
       [ulp_q release];
    }
-   
+   [eo autorelease];
    return eo;
 }
 
@@ -245,6 +256,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
 }
 -(void) propagate
 {
+   @autoreleasepool {
    if([_x bound]){
       if([_y bound]){
          if([_x value] != - [_y value]) failNow();
@@ -271,7 +283,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       double_interval yTmp = makeDoubleInterval(_yi.inf, _yi.sup);
       fpi_minusd(_precision,_rounding, &yTmp, &_xi);
       inter = intersectionD(_y,_yi, yTmp, 0.0f);
-      interError = [ey proj_inter:[ex neg]];
+      [interError set: [ey proj_inter:[ex neg]]];
       if(inter.changed)
          [_y updateInterval:inter.result.inf and:inter.result.sup];
       if(interError.changed)
@@ -283,7 +295,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
       fpi_minusd(_precision,_rounding, &xTmp, &_yi);
       inter = intersectionD(_x,_xi, xTmp, 0.0f);
-      interError = [ex proj_inter:[ey neg]];
+      [interError set: [ex proj_inter:[ey neg]]];
       if(inter.changed)
          [_x updateInterval:inter.result.inf and:inter.result.sup];
       if(interError.changed)
@@ -292,6 +304,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       [interError release];
       [ex release];
       [ey release];
+   }
    }
 }
 -(NSSet*)allVars
@@ -972,11 +985,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
-   //@autoreleasepool {
-      //[ex retain];
-      //[ey retain];
-      //[ez retain];
-      //[eo retain];
+   @autoreleasepool {
    do {
       changed = false;
       zTemp = z;
@@ -1010,7 +1019,8 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       /* ERROR PROPAG */
       
-      eo = compute_eo_add_d(eo, x, y, z);
+      [eoTemp set: compute_eo_add_d(x, y, z)];
+      [eo set: [eo proj_inter:eoTemp]];
       changed |= eo.changed;
       
       if(_limit._val && (z.inf <= z.sup)){
@@ -1024,37 +1034,37 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       }
       // ============================== ez
       // ex + ey + eo
-      ezTemp = [[ex add: ey] add: eo];
+      [ezTemp set: [[ex add: ey] add: eo]];
       
-      ez = [ez proj_inter: ezTemp];
+      [ez set: [ez proj_inter: ezTemp]];
       changed |= ez.changed;
       
       // ============================== eo
       // ez - ex - ey
-      eoTemp = [[ez sub: ex] sub: ey];
+      [eoTemp set: [[ez sub: ex] sub: ey]];
       
-      eo = [eo proj_inter: eoTemp];
+      [eo set: [eo proj_inter: eoTemp]];
       changed |= eo.changed;
       
       // ============================== ex
       // ez - ey - eo
-      exTemp = [[ez sub: ey] sub: eo];
+      [exTemp set: [[ez sub: ey] sub: eo]];
       
-      ex = [ex proj_inter: exTemp];
+      [ex set: [ex proj_inter: exTemp]];
       changed |= ex.changed;
       
       // ============================== ey
       // ez - ex - eo
-      eyTemp = [[ez sub: ex] sub: eo];
+      [eyTemp set: [[ez sub: ex] sub: eo]];
       
-      ey = [ey proj_inter: eyTemp];
+      [ey set: [ey proj_inter: eyTemp]];
       changed |= ey.changed;
       
       /* END ERROR PROPAG */
       
       gchanged |= changed;
    } while(changed);
-   //}
+   }
    
    if(gchanged){
       // Cause no propagation on eo is insured
@@ -1172,11 +1182,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
-//   @autoreleasepool {
-//      [ex retain];
-//      [ey retain];
-//      [ez retain];
-//      [eo retain];
+   @autoreleasepool {
    do {
       changed = false;
       zTemp = z;
@@ -1209,7 +1215,8 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       changed |= inter.changed;
       
       /* ERROR PROPAG */
-      eo = compute_eo_sub_d(eo, x, y, z);
+      [eoTemp set: compute_eo_sub_d(x, y, z)];
+      [eo set: [eo proj_inter:eoTemp]];
       changed |= eo.changed;
       
       if(_limit._val && (z.inf <= z.sup)){
@@ -1223,37 +1230,37 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       }
       // ============================== ez
       // ex - ey + eo
-      ezTemp = [[ex sub: ey] add: eo];
+      [ezTemp set: [[ex sub: ey] add: eo]];
       
-      ez = [ez proj_inter: ezTemp];
+      [ez set: [ez proj_inter: ezTemp]];
       changed |= ez.changed;
       
       // ============================== eo
       // ez - (ex - ey)
-      eoTemp = [ez sub: [ex sub: ey]];
+      [eoTemp set: [ez sub: [ex sub: ey]]];
       
-      eo = [eo proj_inter: eoTemp];
+      [eo set: [eo proj_inter: eoTemp]];
       changed |= eo.changed;
       
       // ============================== ex
       // ez + ey - eo
-      exTemp = [[ez add: ey] sub: eo];
+      [exTemp set: [[ez add: ey] sub: eo]];
       
-      ex = [ex proj_inter: exTemp];
+      [ex set: [ex proj_inter: exTemp]];
       changed |= ex.changed;
       
       // ============================== ey
       // ex - ez + eo
-      eyTemp = [[ex sub: ez] add: eo];
+      [eyTemp set: [[ex sub: ez] add: eo]];
       
-      ey = [ey proj_inter: eyTemp];
+      [ey set: [ey proj_inter: eyTemp]];
       changed |= ey.changed;
       
       /* END ERROR PROPAG */
       
       gchanged |= changed;
    } while(changed);
-   //}
+   }
 
    if(gchanged){
       // Cause no propagation on eo is insured
@@ -1373,11 +1380,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
-//   @autoreleasepool {
-//      [ex retain];
-//      [ey retain];
-//      [ez retain];
-//      [eo retain];
+   @autoreleasepool {
    do {
       changed = false;
       zTemp = z;
@@ -1402,7 +1405,8 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       [xr set_d:x.inf and:x.sup];
       [yr set_d:y.inf and:y.sup];
       
-      eo = compute_eo_mul_d(eo, x, y, z);
+      [eoTemp set: compute_eo_mul_d(x, y, z)];
+      [eo set: [eo proj_inter:eoTemp]];
       changed |= eo.changed;
       
       if(_limit._val && (z.inf <= z.sup)){
@@ -1416,37 +1420,37 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       }
       // ============================== ez
       // x*ey + y*ex + ex*ey + eo
-      ezTemp = [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo];
+      [ezTemp set: [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo]];
       
-      ez = [ez proj_inter: ezTemp];
+      [ez set: [ez proj_inter: ezTemp]];
       changed |= ez.changed;
       
       // ============================== eo
       // ez - (x*ey + y*ex + ex*ey)
-      eoTemp = [ez sub: [[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]]];
+      [eoTemp set: [ez sub: [[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]]]];
       
-      eo = [eo proj_inter: eoTemp];
+      [eo set: [eo proj_inter: eoTemp]];
       changed |= eo.changed;
       
       // ============================== ex
       // (ez - x*ey - eo)/(y + ey)
-      exTemp = [[[ez sub: [xr mul: ey]] sub: eo] div: [yr add: ey]];
+      [exTemp set: [[[ez sub: [xr mul: ey]] sub: eo] div: [yr add: ey]]];
       
-      ex = [ex proj_inter: exTemp];
+      [ex set: [ex proj_inter: exTemp]];
       changed |= ex.changed;
       
       // ============================== ey
       // (ez - y*ex - eo)/(x + ex)
-      eyTemp = [[[ez sub: [yr mul: ex]] sub: eo] div: [xr add: ex]];
+      [eyTemp set: [[[ez sub: [yr mul: ex]] sub: eo] div: [xr add: ex]]];
       
-      ey = [ey proj_inter: eyTemp];
+      [ey set: [ey proj_inter: eyTemp]];
       changed |= ey.changed;
       
       // ============================== x
       // (ez - y*ex - ex*ey - eo)/ey
-      xrTemp = [[[[ez sub: [yr mul: ex]] sub: [ex mul: ey]] sub: eo] div: ey];
+      [xrTemp set: [[[[ez sub: [yr mul: ex]] sub: [ex mul: ey]] sub: eo] div: ey]];
       
-      xr = [xr proj_inter:xrTemp];
+      [xr set: [xr proj_inter:xrTemp]];
       changed |= xr.changed;
       
       x.inf = [[xr low] get_sup_d];
@@ -1454,9 +1458,9 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       // ============================== y
       // (ez - x*ey - ex*ey - eo)/ex
-      yrTemp = [[[[ez sub: [xr mul: ey]] sub: [ex mul: ey]] sub: eo] div: ex];
+      [yrTemp set: [[[[ez sub: [xr mul: ey]] sub: [ex mul: ey]] sub: eo] div: ex]];
       
-      yr = [yr proj_inter:yrTemp];
+      [yr set: [yr proj_inter:yrTemp]];
       changed |= yr.changed;
       
       y.inf = [[yr low] get_sup_d];
@@ -1466,7 +1470,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
-   //}
+   }
 
    if(gchanged){
       // Cause no propagation on eo is insured
@@ -1584,11 +1588,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
-//   @autoreleasepool {
-//      [ex retain];
-//      [ey retain];
-//      [ez retain];
-//      [eo retain];
+   @autoreleasepool {
    do {
       changed = false;
       zTemp = z;
@@ -1613,7 +1613,8 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       [xr set_d:x.inf and:x.sup];
       [yr set_d:y.inf and:y.sup];
       
-      eo = compute_eo_div_d(eo, x, y, z);
+      [eoTemp set: compute_eo_div_d(x, y, z)];
+      [eo set: [eo proj_inter:eoTemp]];
       changed |= eo.changed;
       
       if(_limit._val && (z.inf <= z.sup)){
@@ -1627,37 +1628,37 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       }
       // ============================== ez
       // (y*ex - x*ey)/(y*(y + ey)) + eo
-      ezTemp = [[[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]] add: eo];
+      [ezTemp set: [[[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]] add: eo]];
       
-      ez = [ez proj_inter: ezTemp];
+      [ez set: [ez proj_inter: ezTemp]];
       changed |= ez.changed;
       
       // ============================== eo
       // ez - (y*ex - x*ey)/(y*(y + ey))
-      eoTemp = [ez sub: [[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]]];
+      [eoTemp set: [ez sub: [[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]]]];
       
-      eo = [eo proj_inter: eoTemp];
+      [eo set: [eo proj_inter: eoTemp]];
       changed |= eo.changed;
       
       // ============================== ex
       // (ez - eo)*(y + ey) + (x*ey)/y
-      exTemp = [[[ez sub: eo] mul: [yr add: ey]] add: [[xr mul: ey] div: yr]];
+      [exTemp set: [[[ez sub: eo] mul: [yr add: ey]] add: [[xr mul: ey] div: yr]]];
       
-      ex = [ex proj_inter: exTemp];
+      [ex set: [ex proj_inter: exTemp]];
       changed |= ex.changed;
       
       // ============================== ey
       // (ex - ez*y + eo*y)/(ez - eo + (x/y))
-      eyTemp = [[[ex sub: [ez mul: yr]] add: [eo mul: yr]] div: [[ez sub: eo] add: [xr div: yr]]];
+      [eyTemp set: [[[ex sub: [ez mul: yr]] add: [eo mul: yr]] div: [[ez sub: eo] add: [xr div: yr]]]];
       
-      ey = [ey proj_inter: eyTemp];
+      [ey set: [ey proj_inter: eyTemp]];
       changed |= ey.changed;
       
       // ============================== x
       // ((eo-ez) * y * (y+ey) + y*ex)/ey
-      xrTemp = [[[[[eo sub: ez] mul: yr] mul: [yr add:ey]] add: [yr mul: ex]] div: ey];
+      [xrTemp set: [[[[[eo sub: ez] mul: yr] mul: [yr add:ey]] add: [yr mul: ex]] div: ey]];
       
-      xr = [xr proj_inter:xrTemp];
+      [xr set: [xr proj_inter:xrTemp]];
       changed |= xr.changed;
       
       x.inf = [[xr low] get_sup_d];
@@ -1698,7 +1699,7 @@ id<ORRationalInterval> compute_eo_div_d(id<ORRationalInterval> eo, const double_
       
       gchanged |= changed;
    } while(changed);
-   //}
+   }
    
    if(gchanged){
       // Cause no propagation on eo is insured
