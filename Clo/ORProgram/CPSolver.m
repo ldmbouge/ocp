@@ -2009,6 +2009,7 @@ onFailure: (ORInt2Void) onFailure
 
 -(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
+   /* remove comment */
    TRInt _index;
    TRInt limitCounter;
    
