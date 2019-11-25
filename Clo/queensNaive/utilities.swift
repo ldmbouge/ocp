@@ -162,6 +162,12 @@ public func *(lhs: ORExpr, rhs : ORInt) -> ORExpr {
 public func *(lhs: ORExpr, rhs : Double) -> ORExpr {
    return lhs.mul(ORFactory.double(lhs.tracker(), value: ORDouble(rhs)))
 }
+public func *(lhs: ORInt, rhs : Int) -> ORInt {
+   return lhs * ORInt(rhs)
+}
+public func *(lhs: Int, rhs : ORInt) -> ORInt {
+   return ORInt(lhs) * rhs
+}
 public func /(lhs: ORExpr, rhs : ORExpr) -> ORExpr {
     return lhs.div(rhs)
 }
@@ -304,6 +310,22 @@ public func SVA(_ t : ORTracker) -> ORExpr {
     return ORFactory.valueAssignment(t)
 }
 
+public func intArray(_ t : ORTracker, range : ORIntRange, body  : @escaping (Int) -> Int) -> ORIntArray
+{
+    let m = ORFactory.intArray(t, range: range) { i in ORInt(body(Int(i))) }
+    return m
+}
+public func intMatrix(_ t : ORTracker, r1 : ORIntRange,_ r2 : ORIntRange, body : (Int,Int) -> Int) -> ORIntMatrix
+{
+    let m = ORFactory.intMatrix(t, range: r1, r2)
+    for i in r1.low() ... r1.up() {
+        for j in r2.low() ... r2.up() {
+           m[i,j] = ORInt(body(Int(i),Int(j)))
+        }
+    }
+    return m
+}
+
 extension Dictionary {
     subscript(t : ORTracker, i : ORExpr) -> ORExpr {
         get {
@@ -404,6 +426,9 @@ extension ORMDDSpecs {
 }
 
 extension ORIntArray {
+    subscript (key : Int) -> ORInt {
+        return self.at(ORInt(key))
+    }
     subscript (key : ORExpr) -> ORExpr {
         return self.elt(key)
     }

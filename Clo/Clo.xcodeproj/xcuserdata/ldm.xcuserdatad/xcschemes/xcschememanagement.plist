@@ -92,7 +92,7 @@
 		<key>GCCMDDSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>168</integer>
+			<integer>169</integer>
 		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
@@ -308,6 +308,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>12</integer>
+		</dict>
+		<key>carSeqSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>170</integer>
 		</dict>
 		<key>cdisj.xcscheme_^#shared#^_</key>
 		<dict>
@@ -1333,6 +1338,11 @@
 			<true/>
 		</dict>
 		<key>5BF9F38C186353450022C300</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BFAD777238AE2FA00078552</key>
 		<dict>
 			<key>primary</key>
 			<true/>
