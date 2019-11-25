@@ -90,12 +90,11 @@ func all(_ t : ORTracker,_ over : Set<Int>,_ mf : (Int) -> ORIntVar) -> ORIntVar
 }
 
 autoreleasepool {
-    var jbs = csv(filePath: "/Users/rebeccagentzel/Downloads/workforce9-jobs.csv")
+    var jbs = csv(filePath: "/Users/ldm/Desktop/workforce9-jobs.csv")
     jbs.removeFirst() // get rid of heading row
-    jbs.removeLast()
     let AJ = jbs.map { job in Job(job[0],job[1],job[2]) }
     let nbE = AJ.count
-    let compat = csv(filePath: "/Users/rebeccagentzel/Downloads/workforce9.csv")
+    let compat = csv(filePath: "/Users/ldm/Desktop/workforce9.csv")
     
     let cliques = sweep(AJ)
     
@@ -111,18 +110,22 @@ autoreleasepool {
     for i in 0..<AJ.count {
         for j in i+1 ..< AJ.count {
             if (overlap(AJ[i],AJ[j])) {
-                m.add(emp[i]  != emp[j]);
+                //m.add(emp[i]  != emp[j]);
             }
         }
     }
     for c in cliques {
         m.add(allDiffMDD(all(m,c) { i in emp[i]}))
+        //m.add(ORFactory.alldifferent(all(m,c) { i in emp[i]}))
     }
     m.minimize(sum(m, R: JR) { i in
         let t = ORFactory.intArray(m, range: ER) { j in ORInt(compat[Int(i)][Int(j)]) }
         return t[emp[i]]
     })
+    notes.ddWidth(4)
+    notes.ddRelaxed(true)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
+    //let cp = ORFactory.createCPProgram(m, annotation: notes)
     cp.search {
         firstFail(cp, emp)
             »

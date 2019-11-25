@@ -164,7 +164,9 @@
      onConstraints: ^(id<ORConstraint> c) {
         [_into setCurrent:c];
         if ([c conformsToProtocol:@protocol(ORMDDSpecs)]) { //Should check if c is MDDifiable.  aka if it has a visit function down below
-        [c visit: self];
+            [c visit: self];
+        } else {
+            [_into addConstraint:c];
         }
         [_into setCurrent:nil];
     }
@@ -176,7 +178,7 @@
         [self combineMDDSpecs];
     }
     
-    id<ORConstraint> mddConstraint;
+    id<ORConstraint> mddConstraint =nil;
     
     if (!_topDown) {
         [AltJointState setVariables:_variables];
@@ -197,14 +199,17 @@
                 mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[JointState class] topDown:_topDown];
             } else {
                 CustomState* onlyState = [JointState firstState];
-                [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
-                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class] topDown:_topDown];
+                if (onlyState != nil) {
+                    [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
+                    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class] topDown:_topDown];
+                }
             }
         }
     }
-    
-    [_into trackConstraintInGroup: mddConstraint];
-    [_into addConstraint: mddConstraint];
+    if (mddConstraint != nil) {
+        [_into trackConstraintInGroup: mddConstraint];
+        [_into addConstraint: mddConstraint];
+    }
     
     //if ([_mddConstraints count] == 1) {
     //    id<ORConstraint> preMDDConstraint = _mddConstraints[0];

@@ -92,7 +92,7 @@
 		<key>GCCMDDSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>169</integer>
+			<integer>168</integer>
 		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
@@ -312,7 +312,7 @@
 		<key>carSeqSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>170</integer>
+			<integer>169</integer>
 		</dict>
 		<key>cdisj.xcscheme_^#shared#^_</key>
 		<dict>
@@ -843,6 +843,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>136</integer>
+		</dict>
+		<key>workForceMDDSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>170</integer>
 		</dict>
 		<key>workForceSwift.xcscheme_^#shared#^_</key>
 		<dict>
