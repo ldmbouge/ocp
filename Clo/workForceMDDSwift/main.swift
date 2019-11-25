@@ -90,11 +90,18 @@ func all(_ t : ORTracker,_ over : Set<Int>,_ mf : (Int) -> ORIntVar) -> ORIntVar
 }
 
 autoreleasepool {
-    var jbs = csv(filePath: "/Users/ldm/Desktop/workforce9-jobs.csv")
+    //let jobsFile = "/Users/rebeccagentzel/Downloads/workforce9-jobs.csv"
+    //let compatFile = "/Users/rebeccagentzel/Downloads/workforce9.csv"
+    //let relaxationSize = Int32(4)
+    let jobsFile = CommandLine.arguments[1]
+    let compatFile = CommandLine.arguments[2]
+    let relaxationSize = Int32(CommandLine.arguments[3])
+    
+    var jbs = csv(filePath: jobsFile)
     jbs.removeFirst() // get rid of heading row
     let AJ = jbs.map { job in Job(job[0],job[1],job[2]) }
-    let nbE = AJ.count
-    let compat = csv(filePath: "/Users/ldm/Desktop/workforce9.csv")
+    let compat = csv(filePath: compatFile)
+    let nbE = compat[0].count
     
     let cliques = sweep(AJ)
     
@@ -122,7 +129,7 @@ autoreleasepool {
         let t = ORFactory.intArray(m, range: ER) { j in ORInt(compat[Int(i)][Int(j)]) }
         return t[emp[i]]
     })
-    notes.ddWidth(4)
+    notes.ddWidth(relaxationSize!)
     notes.ddRelaxed(true)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
     //let cp = ORFactory.createCPProgram(m, annotation: notes)
