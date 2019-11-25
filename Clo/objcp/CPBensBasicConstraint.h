@@ -148,7 +148,7 @@
     id<CPIntVarArray> _x;
     TRInt *layer_size;
     TRInt *max_layer_size;
-    TRId **layers;
+    ORTRIdArrayI* *layers;
     int min_domain_val;
     int max_domain_val;
     NSUInteger _numVariables;
@@ -194,7 +194,7 @@
     bool _reduced;
     TRInt *layer_size;
     TRInt *max_layer_size;
-    TRId **layers;
+    ORTRIdArrayI* *layers;
     int min_domain_val;
     int max_domain_val;
     NSUInteger _numVariables;

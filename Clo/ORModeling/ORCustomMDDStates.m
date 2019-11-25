@@ -1379,4 +1379,15 @@ static id<ORIntVarArray> _variables;
     }
     return true;
 }
+
+-(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables {
+    NSUInteger hashValue = 0;
+    int numStateProperties = 0;
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        id state = [_states objectAtIndex:stateIndex];
+        hashValue = hashValue + pow(numVariables,numStateProperties) * [state hashWithWidth:mddWidth numVariables:numVariables];
+        numStateProperties += [state stateSize];
+    }
+    return (hashValue % (mddWidth * 2));
+}
 @end
