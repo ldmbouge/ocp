@@ -627,10 +627,10 @@ static enum ValHeuristic valIndex[] =
          NSArray* arr = [p collectInputVariables];
          vs = (id<ORVarArray>)[ORFactory idArray:p array:arr];
       }
-//      NSMutableArray* nvs = [[NSMutableArray alloc] initWithCapacity:[vs count]];
-//      [p collectInputVar:vs res:nvs];
-//      vs = (id<ORVarArray>)[ORFactory idArray:p array:nvs];
-//      [nvs release];
+      NSMutableArray* nvs = [[NSMutableArray alloc] initWithCapacity:[vs count]];
+      [p collectInputVar:vs res:nvs];
+      vs = (id<ORVarArray>)[ORFactory idArray:p array:nvs];
+      [nvs release];
    }
    if(rateOther < 1){
       NSArray* absvar = [p collectAllVarWithAbs:vs withLimit:rateOther];
