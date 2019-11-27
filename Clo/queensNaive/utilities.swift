@@ -309,6 +309,9 @@ public func Prop(_ t : ORTracker,_ name : ORExpr) -> ORExpr {
 public func SVA(_ t : ORTracker) -> ORExpr {
     return ORFactory.valueAssignment(t)
 }
+public func VariableIndex(_ t : ORTracker) -> ORExpr {
+    return ORFactory.layerVariable(t)
+}
 
 public func intArray(_ t : ORTracker, range : ORIntRange, body  : @escaping (Int) -> Int) -> ORIntArray
 {
@@ -544,17 +547,27 @@ public func allDiffMDD(_ vars : ORIntVarArray) -> ORMDDSpecs {
     return mdd
 }
 
-public func knapsackMDD(_ vars : ORIntVarArray,weight : ORIntArray,capacity : Int) -> ORMDDSpecs {
-    let m = vars.tracker(),
-        udom = arrayDomains(vars),
-        minDom = Int(udom.low()),
-        mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(udom.size()))
+public func knapsackMDD(_ vars : ORIntVarArray,weights : ORIntArray,capacity : ORInt) -> ORMDDSpecs {
+    let m = vars.tracker()
+    let minRemainingCapacityIndex = 0, maxRemainingCapacityIndex = 1, remainingWeightsIndex = 2
+    let minRemainingCapacity = Prop(m,minRemainingCapacityIndex), maxRemainingCapacity = Prop(m,maxRemainingCapacityIndex), remainingWeights = Prop(m,remainingWeightsIndex)
+    let variableWeight = weights.elt(VariableIndex(m))
+    let addedWeight = SVA(m) * variableWeight,
+        mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: 3)
     
-    mdd.state(toDict(udom) { i in (key : i,value:true) })
-    mdd.arc(Prop(m,SVA(m) - minDom))
-    mdd.transition(toDict(udom) { i in (key : i,Prop(m,i) && SVA(m) != i + minDom) })
-    mdd.relaxation(toDict(udom) { i in (key : i,left(m,i) || right(m,i)) })
-    mdd.similarity(toDict(udom) { i in (key :i,abs(left(m,i) - right(m,i))) })
+    let sumOfWeights : ORInt = weights.sum({(value : ORInt, idx : Int32)->ORInt in return value; })
+    
+    mdd.state([minRemainingCapacityIndex : capacity, maxRemainingCapacityIndex : capacity, remainingWeightsIndex : sumOfWeights])
+    mdd.arc((maxRemainingCapacity - addedWeight ≥ 0) &&
+            (minRemainingCapacity ≤ (remainingWeights + ((SVA(m) - 1) * variableWeight))))
+    mdd.transition([minRemainingCapacityIndex : minRemainingCapacity - addedWeight,
+                    maxRemainingCapacityIndex : maxRemainingCapacity - addedWeight,
+                    remainingWeightsIndex : remainingWeights - variableWeight])
+    mdd.relaxation([minRemainingCapacityIndex : min(left(m,minRemainingCapacityIndex),right(m,minRemainingCapacityIndex)),
+                    maxRemainingCapacityIndex : max(left(m,maxRemainingCapacityIndex),right(m,maxRemainingCapacityIndex)),
+                    remainingWeightsIndex : remainingWeights])
+    mdd.similarity([minRemainingCapacityIndex : abs(left(m,minRemainingCapacityIndex) - right(m,minRemainingCapacityIndex)),
+                    maxRemainingCapacityIndex : abs(left(m,maxRemainingCapacityIndex) - right(m,maxRemainingCapacityIndex))])
     return mdd
 }
 
