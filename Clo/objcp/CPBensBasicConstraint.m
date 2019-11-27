@@ -3026,8 +3026,8 @@ typedef struct {
                 assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
                 [self rebuildFromLayer: startingLayer];
             }
-            [self DEBUGTestParentChildParity];
-            [self DEBUGTestLayerVariableCountCorrectness];
+            //[self DEBUGTestParentChildParity];
+            //[self DEBUGTestLayerVariableCountCorrectness];
             
             /*if (_first_relaxed_layer._val == layer+1) {
                 //if ([[layers[_first_relaxed_layer._val] at: 0] isRelaxed]) {
@@ -3132,7 +3132,7 @@ typedef struct {
     if (_reduced) {
         //[self reduceLayer: startingLayer inPlace:true];
     }
-    [self cleanLayer: startingLayer inPlace:true];
+    //[self cleanLayer: startingLayer inPlace:true];
     for (int layer = startingLayer+1; layer < _numVariables; layer++) {
         //[self buildNewLayerUnder:layer];
         //if (layer_size[layer]._val < _relaxation_size) {
@@ -3179,7 +3179,7 @@ typedef struct {
                 Node* parent = [parents at:0];
                 bool parentIsRelaxed = [parent isRelaxed];
                 Node** parentsChildren = [parent children];
-                for (int child_index = min_domain_val; child_index <= max_domain_val && layer_size[layer]._val < _relaxation_size; child_index++) {
+                for (int child_index = min_domain_val; child_index <= max_domain_val && [node numParents] && layer_size[layer]._val < _relaxation_size; child_index++) {
                     Node* parentsChild = parentsChildren[child_index];
                     if ([node isEqual:parentsChild]) { //Found an edge that was going into a relaxed node.  Recreate a node for it.
                         Node* newNode = NULL;
@@ -3256,6 +3256,7 @@ typedef struct {
                     if (oldNodeChild != NULL) {
                         [node removeChildAt:domain_val];
                         [oldNodeChild removeParentOnce:node];
+                        assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val-1, _trail);
                     }
                 }
                 [self removeNodeAt:node_index onLayer:layer];
