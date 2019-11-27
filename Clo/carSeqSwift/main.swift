@@ -98,6 +98,34 @@ func all(_ t : ORTracker,_ over : Set<Int>,_ mf : (Int) -> ORIntVar) -> ORIntVar
     return cv
 }
 
+func buildPrefix(from : Int,to : Int,S : Set<Int>,NS : Set<Int>,cs : [Int],k : Int,l : Int,u : Int,states : inout Set<[Int]>) {
+    let rem = to - from + 1
+    if (k > u || k+rem < l) {
+        return
+    } else {
+        states.insert(cs)
+    }
+    if (from < to) {
+        for v in NS {
+            var n0 = cs
+            n0.append(v)
+            buildPrefix(from: from + 1, to: to,S:S,NS:NS, cs: n0, k:k,l:l, u:u, states: &states)
+        }
+        for v in S {
+            var n0 = cs
+            n0.append(v)
+            buildPrefix(from: from + 1, to: to,S:S,NS:NS, cs: n0, k:k+1,l:l, u:u, states: &states)
+        }
+    }
+}
+
+func sequence(x : ORIntVarArray,S : Set<Int>,len : Int,l : Int,u : Int) {
+    var states : Set<[Int]> = [[]]
+    var NS : Set<Int> = [0]
+    buildPrefix(from :0,to : len-1,S : S,NS : NS,cs: [],k:0,l:l,u:u,states: &states)
+    print(states)
+}
+
 autoreleasepool {
     let m  = ORFactory.createModel()
     let carI = readData(filePath: "/Users/ldm/Desktop/datao")!
@@ -115,6 +143,8 @@ autoreleasepool {
 
     let line  = ORFactory.intVarArray(m, range: CR, domain: CF),
         setup = ORFactory.boolVarMatrix(m, range: OR, CR)
+    
+    sequence(x: line, S: [1], len: 4, l: 2, u: 2)
     
     m.add(ORFactory.cardinality(line, low: demand, up: demand))
     for o in 0 ..< carI.nbOpts {
