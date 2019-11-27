@@ -866,6 +866,7 @@ void exitfunc(int sig)
 -(id)set:(id<ORRationalInterval>)ri
 {
    [self set_q:ri.low and:ri.up];
+   _changed = ri.changed;
    
    return self;
 }
@@ -1219,6 +1220,8 @@ void exitfunc(int sig)
       [epsilon release];
    }
    
+   [z autorelease];
+   
    return z;
 }
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup
@@ -1251,6 +1254,8 @@ void exitfunc(int sig)
       [epsilon release];
    }
 
+   [z autorelease];
+   
    return z;
 }
 @end

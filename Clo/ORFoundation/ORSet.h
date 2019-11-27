@@ -61,12 +61,13 @@
 -(NSString*)description;
 @end
 
-@protocol ORRationalRange
+@protocol ORRationalRange <ORObject>
 -(id<ORRational>)low;
 -(id<ORRational>)up;
 -(ORBool)isDefined;
 -(ORBool)inRange:(id<ORRational>)e;
 -(NSString*)description;
+-(void)dealloc;
 @end
 
 @protocol ORDoubleRange

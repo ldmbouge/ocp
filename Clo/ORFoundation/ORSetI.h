@@ -84,6 +84,7 @@
 -(ORBool)isDefined;
 -(ORBool)inRange:(id<ORRational>)e;
 -(NSString*)description;
+-(void)dealloc;
 @end
 
 @interface ORDoubleRangeI : ORObject<ORDoubleRange,NSCopying>

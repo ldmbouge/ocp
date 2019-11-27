@@ -91,8 +91,6 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
                [cp floatSplit:i withVars:x];
             }];
          NSLog(@"%@",cp);
-         //if (search)
-            //check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
       }];
    }
 }

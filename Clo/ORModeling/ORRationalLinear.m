@@ -238,11 +238,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       [cr set_d: c];
       id<ORRationalRange> d = [_terms[k]._var domain];
       if(c > 0){
-         svlb = [d.low mul: cr];
+         [svlb set: [d.low mul: cr]];
       } else {
-         svlb = [d.up mul: cr];
+         [svlb set: [d.up mul: cr]];
       }
-      lb = [lb add: svlb];
+      [lb set: [lb add: svlb]];
       //[d release];
    }
    [svlb release];
@@ -261,11 +261,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       [cr set_d: c];
       id<ORRationalRange> d = [_terms[k]._var domain];
       if(c > 0){
-         svub = [d.up mul: cr];
+         [svub set: [d.up mul: cr]];
       } else {
-         svub = [d.low mul: cr];
+         [svub set: [d.low mul: cr]];
       }
-      ub = [ub add: svub];
+      [ub set: [ub add: svub]];
       //[d release];
    }
    [cr release];

@@ -2200,13 +2200,21 @@ onFailure: (ORInt2Void) onFailure
          /******************************/
          ORSelectorResult i = [select min]; //sélectionne la variable minimisant la mesure défini dans le select
          ORSelectorResult I = [select max];
-         if(i.index == I.index){
-            b(i.index,x);
-         } else {
-            b((((_index._val - i.index) % (I.index - i.index)) + i.index), x);
-            assignTRInt(&_index, _index._val+1, _trail);
-         }
-
+         //NSLog(@"%@ -- %@",x[i.index],x[I.index]);
+//         if(i.index == I.index){
+//            NSLog(@"%@",x[i.index]);
+//            b(i.index,x);
+//         } else {
+//            NSLog(@"%@",x[(((_index._val - i.index) % (I.index - i.index)) + i.index)]);
+//            b((((_index._val - i.index) % (I.index - i.index)) + i.index), x);
+//            assignTRInt(&_index, _index._val+1, _trail);
+            //NSLog(@"%@", x[_index._val]);
+            b(_index._val, x);
+            if (_index._val + 1 > I.index)
+              assignTRInt(&_index, i.index, _trail);
+            else
+              assignTRInt(&_index, _index._val+1, _trail);
+         
          /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
          //b(i.index,x);
          

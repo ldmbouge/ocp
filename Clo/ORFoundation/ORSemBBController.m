@@ -221,7 +221,7 @@
 {
    NSCont* k = [NSCont takeContinuation];
    branchAndBoundTime = [NSDate date];
-   NSLog(@"L: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
+   //NSLog(@"L: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    if ([k nbCalls] == 0) {
       if(limitCounter._val < nbConstraint){
       [self makeAndRecordNode:k];
@@ -246,7 +246,7 @@
 {
    NSCont* k = [NSCont takeContinuation];
    branchAndBoundTime = [NSDate date];
-   NSLog(@"R: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
+   //NSLog(@"R: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    if ([k nbCalls] == 0) {
       if(limitCounter._val < nbConstraint){
          [self makeAndRecordNode:k];

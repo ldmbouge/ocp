@@ -1,3 +1,4 @@
+
 //
 //  CPRationalConstraint.m
 //  objcp
@@ -502,19 +503,19 @@
 }
 -(void) propagate
 {
-   /*   if ([_x bound]) {
-    if([_x min] == _c)
-    failNow();
-    }else{
-    if([_x min] == _c){
-    [_x updateMin:fp_next_float(_c)];
-    assignTRInt(&_active, NO, _trail);
-    }
-    if([_x max] == _c){
-    [_x updateMax:fp_previous_float(_c)];
-    assignTRInt(&_active, NO, _trail);
-    }
-    }*/
+   /*if ([_x bound]) {
+      if([_x min] == _c)
+         failNow();
+   }else{
+      if([_x min] == _c){
+         [_x updateMin:fp_next_float(_c)];
+         assignTRInt(&_active, NO, _trail);
+      }
+      if([_x max] == _c){
+         [_x updateMax:fp_previous_float(_c)];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }*/
 }
 -(NSSet*)allVars
 {
@@ -763,46 +764,48 @@
    [y set_q: [_y min] and:[_y max]];
    [z set_q: [_z min] and:[_z max]];
    
-   do {
-      changed = false;
-      // ============================== ez
-      // ex + ey
-      zTemp = [x add: y];
-      
-      z = [z proj_inter: zTemp];
-      changed |= z.changed;
-      
-      if([z empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      // ============================== ex
-      // ez - ey
-      xTemp = [z sub: y];
-      
-      x = [x proj_inter: xTemp];
-      changed |= x.changed;
-      
-      if([x empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      // ============================== ey
-      // ez - ex
-      yTemp = [z sub: x];
-      
-      y = [y proj_inter: yTemp];
-      changed |= y.changed;
-      
-      if([y empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      gchanged |= changed;
-   } while(changed);
+   @autoreleasepool {
+      do {
+         changed = false;
+         // ============================== z
+         // x + y
+         [zTemp set: [x add: y]];
+         
+         [z set: [z proj_inter: zTemp]];
+         changed |= z.changed;
+         
+         if([z empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== x
+         // z - y
+         [xTemp set: [z sub: y]];
+         
+         [x set: [x proj_inter: xTemp]];
+         changed |= x.changed;
+         
+         if([x empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== y
+         // z - x
+         [yTemp set: [z sub: x]];
+         
+         [y set: [y proj_inter: yTemp]];
+         changed |= y.changed;
+         
+         if([y empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         gchanged |= changed;
+      } while(changed);
+   }
    
    if(gchanged){
       [_x updateInterval:x.low and:x.up];
@@ -874,47 +877,49 @@
    [y set_q: [_y min] and:[_y max]];
    [z set_q: [_z min] and:[_z max]];
    
-   do {
-      changed = false;
-      
-      // ============================== ez
-      // ex - ey
-      zTemp = [x sub: y];
-      
-      z = [z proj_inter: zTemp];
-      changed |= z.changed;
-      
-      if([z empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      // ============================== ex
-      // ez + ey
-      xTemp = [z add: y];
-      
-      x = [x proj_inter: xTemp];
-      changed |= x.changed;
-      
-      if([x empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      // ============================== ey
-      // ex - ez
-      yTemp = [x sub: z];
-      
-      y = [y proj_inter: yTemp];
-      changed |= y.changed;
-      
-      if([y empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      gchanged |= changed;
-   } while(changed);
+   @autoreleasepool {
+      do {
+         changed = false;
+         
+         // ============================== z
+         // x - y
+         [zTemp set: [x sub: y]];
+         
+         [z set: [z proj_inter: zTemp]];
+         changed |= z.changed;
+         
+         if([z empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== x
+         // z + y
+         [xTemp set: [z add: y]];
+         
+         [x set: [x proj_inter: xTemp]];
+         changed |= x.changed;
+         
+         if([x empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== y
+         // x - z
+         [yTemp set: [x sub: z]];
+         
+         [y set: [y proj_inter: yTemp]];
+         changed |= y.changed;
+         
+         if([y empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         gchanged |= changed;
+      } while(changed);
+   }
    
    if(gchanged){
       
@@ -986,47 +991,49 @@
    [y set_q: [_y min] and:[_y max]];
    [z set_q: [_z min] and:[_z max]];
    
-   do {
-      changed = false;
-      
-      // ============================== ez
-      // ex * ey
-      zTemp = [x mul: y];
-      
-      z = [z proj_inter: zTemp];
-      changed |= z.changed;
-      
-      if([z empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      // ============================== ex
-      // ez + ey
-      xTemp = [z div: y];
-      
-      x = [x proj_inter: xTemp];
-      changed |= x.changed;
-      
-      if([x empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      // ============================== ey
-      // ex - ez
-      yTemp = [z div: x];
-      
-      y = [y proj_inter: yTemp];
-      changed |= y.changed;
-      
-      if([y empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      gchanged |= changed;
-   } while(changed);
+   @autoreleasepool {
+      do {
+         changed = false;
+         
+         // ============================== z
+         // x * y
+         [zTemp set: [x mul: y]];
+         
+         [z set: [z proj_inter: zTemp]];
+         changed |= z.changed;
+         
+         if([z empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== x
+         // z + y
+         [xTemp set: [z div: y]];
+         
+         [x set: [x proj_inter: xTemp]];
+         changed |= x.changed;
+         
+         if([x empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== y
+         // x - z
+         [yTemp set: [z div: x]];
+         
+         [y set: [y proj_inter: yTemp]];
+         changed |= y.changed;
+         
+         if([y empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         gchanged |= changed;
+      } while(changed);
+   }
    
    if(gchanged){
       
@@ -1098,47 +1105,49 @@
    [y set_q: [_y min] and:[_y max]];
    [z set_q: [_z min] and:[_z max]];
    
-   do {
-      changed = false;
-      
-      // ============================== ez
-      // ex / ey
-      zTemp = [x div: y];
-      
-      z = [z proj_inter: zTemp];
-      changed |= z.changed;
-      
-      if([z empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      // ============================== ex
-      // ez * ey
-      xTemp = [z mul: y];
-      
-      x = [x proj_inter: xTemp];
-      changed |= x.changed;
-      
-      if([x empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      // ============================== ey
-      // ex - ez
-      yTemp = [x div: z];
-      
-      y = [y proj_inter: yTemp];
-      changed |= y.changed;
-      
-      if([y empty]){
-         gchanged |= true;
-         break;
-      }
-      
-      gchanged |= changed;
-   } while(changed);
+   @autoreleasepool {
+      do {
+         changed = false;
+         
+         // ============================== z
+         // x / y
+         [zTemp set: [x div: y]];
+         
+         [z set: [z proj_inter: zTemp]];
+         changed |= z.changed;
+         
+         if([z empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== x
+         // z * y
+         [xTemp set: [z mul: y]];
+         
+         [x set: [x proj_inter: xTemp]];
+         changed |= x.changed;
+         
+         if([x empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== y
+         // x - z
+         [yTemp set: [x div: z]];
+         
+         [y set: [y proj_inter: yTemp]];
+         changed |= y.changed;
+         
+         if([y empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         gchanged |= changed;
+      } while(changed);
+   }
    
    if(gchanged){
       
@@ -1182,13 +1191,20 @@
    CPRationalVarI*  _x;
    id<ORRational>       _primalBound;
    id<ORRational>       _dualBound;
+   ORInt nbPrimalUpdate;
+   ORInt nbDualUpdate;
 }
 -(CPRationalVarMinimize*) init: (CPRationalVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
-   _primalBound = [ORRational rationalWith:[x max]];
-   _dualBound = [ORRational rationalWith:[x min]];
+   _primalBound = [[ORRational alloc] init];
+   _dualBound = [[ORRational alloc] init];
+   [_primalBound set: [_x max]];
+   [_dualBound setNegInf];
+   nbPrimalUpdate = 0;
+   nbDualUpdate = 0;
+   
    return self;
 }
 - (void)dealloc {
@@ -1200,91 +1216,121 @@
 {
    return _x;
 }
+-(ORBool) isMinimization
+{
+   return YES;
+}
 -(void) post
 {
    if (![_x bound])
       [_x whenChangeMinDo: ^ {
-         //[_x updateMax: nextafterf(_primalBound,-INFINITY)];
-         [_x updateMax: [_primalBound sub: [ORRational rationalWith_d:1]]];
+         [_x updateMax: _primalBound];
       } onBehalf:self];
 }
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+-(id<ORObjectiveValue>) primalValue
+{
+   return [ORFactory objectiveValueRational:_x.value minimize:YES];
+}
+-(id<ORObjectiveValue>) dualValue
+{
+   return [ORFactory objectiveValueRational:_x.min minimize:NO];
+}
+-(id<ORObjectiveValue>) primalBound
+{
+   return [ORFactory objectiveValueRational:_primalBound minimize:YES];
+}
+-(id<ORObjectiveValue>) dualBound
+{
+   return [ORFactory objectiveValueRational:_dualBound minimize:YES];
+}
 -(ORUInt)nbUVars
 {
    return [_x bound] ? 0 : 1;
 }
--(ORBool)   isMinimization
-{
-   return YES;
-}
 -(void) updatePrimalBound
 {
-   id<ORRational> bound = [_x min];
-   @synchronized(self) {
-      if ([bound lt: _primalBound]){
-         //_primalBound = nextafterf(bound,-INFINITY);
-         _primalBound = [bound sub: [ORRational rationalWith_d:1]];
-         NSLog(@"primal bound: %@",_primalBound);
-      }
+   id<ORRational>bound = [[ORRational alloc] init];
+   [bound set: [_x max]]; // cpjm: always set to min to avoid overestimation of Primal
+   if ([bound lt: _primalBound]){
+      nbPrimalUpdate++;
+      [_primalBound set: bound];
+      branchAndBoundTime = [NSDate date];
+      NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
    [bound release];
 }
 -(void) updateDualBound
 {
-   id<ORRational> bound = [_x min];
-   @synchronized (self) {
-      if ([bound gt: _dualBound]){
-         [_dualBound set: bound];
-         NSLog(@"dual bound: %@",_dualBound);
-      }
+   id<ORRational>bound = [[ORRational alloc] init];
+   [bound set: [_x min]];
+   if ([bound gt: _dualBound] && [bound lt: boundDiscardedBoxes]){
+      nbDualUpdate++;
+      [_dualBound set: bound];
+      branchAndBoundTime = [NSDate date];
+      NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
    }
    [bound release];
 }
 -(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
 {
-   @synchronized(self) {
-      if ([[newBound value] lt: _primalBound])
-         _primalBound = [newBound value];
+   if ([[newBound value] lt: _primalBound]){
+      nbPrimalUpdate++;
+      [_primalBound set: [newBound value]];
+      branchAndBoundTime = [NSDate date];
+      NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
 }
 -(ORStatus) tightenDualBound:(id<ORObjectiveValueRational>)newBound
 {
-   @synchronized (self) {
-      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
-         id<ORRational> b = [(id<ORObjectiveValueRational>)newBound value];
-         ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b gt: _dualBound])
-            _dualBound = b;
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
+      id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
+      ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes]){
+         [_dualBound set: b];
          [b release];
-         return ok;
+         nbDualUpdate++;
+         branchAndBoundTime = [NSDate date];
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
-      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
-         ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b gt: _dualBound])
-            _dualBound = b;
+      return ok;
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
+      ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes]){
+         [_dualBound set: b];
          [b release];
-         return ok;
+         nbDualUpdate++;
+         branchAndBoundTime = [NSDate date];
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
-      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound value]];
-         ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b gt: _dualBound])
-            _dualBound = b;
+      return ok;
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
+      ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes]){
+         [_dualBound set: b];
          [b release];
-         return ok;
-      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
-         ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b gt: _dualBound])
-            _dualBound = b;
+         nbDualUpdate++;
+         branchAndBoundTime = [NSDate date];
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+      }
+      return ok;
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
+      ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes]){
+         [_dualBound set: b];
          [b release];
-         return ok;
-      } else return ORFailure;
+         nbDualUpdate++;
+         branchAndBoundTime = [NSDate date];
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+      }
    }
+   return ORSuspend;
 }
 -(void) tightenLocallyWithDualBound: (id) newBound
 {
@@ -1311,30 +1357,10 @@
       }
    }
 }
-
--(id<ORObjectiveValue>) primalValue
-{
-   return [ORFactory objectiveValueRational:[_x value] minimize:YES];
-}
--(id<ORObjectiveValue>) dualValue
-{
-   return [ORFactory objectiveValueRational:[_x min] minimize:NO];
-   // dual bound ordering is opposite of primal bound. (if we minimize in primal, we maximize in dual).
-}
--(id<ORObjectiveValue>) primalBound
-{
-   return [ORFactory objectiveValueRational:_primalBound minimize:YES];
-}
--(id<ORObjectiveValue>) dualBound
-{
-   return [ORFactory objectiveValueRational:_dualBound minimize:YES];
-}
-
 -(ORStatus) check
 {
    return tryfail(^ORStatus{
-      //[_x updateMax:nextafterf(_primalBound,-INFINITY)];
-      [_x updateMax:[_primalBound sub: [ORRational rationalWith_d:1]]];
+      [_x updateMax:_primalBound];
       [_x updateMin:_dualBound];
       return ORSuspend;
    }, ^ORStatus{
@@ -1348,7 +1374,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"MINIMIZE(%@) with f* = %@  (dual: %@)",[_x description],_primalBound,_dualBound];
+   [buf appendFormat:@"MINIMIZE(%@) with f* = %@  (dual: %@) [thread: %d]",[_x description],_primalBound,_dualBound,[NSThread threadID]];
    return buf;
 }
 @end
@@ -1395,7 +1421,6 @@
          [_x updateMin: _primalBound];
       } onBehalf:self];
 }
-
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
@@ -1417,12 +1442,10 @@
 {
    return [ORFactory objectiveValueRational:_dualBound minimize:NO];
 }
-
 -(ORUInt)nbUVars
 {
    return [_x bound] ? 0 : 1;
 }
-
 -(void) updatePrimalBound
 {
    id<ORRational>bound = [[ORRational alloc] init];
@@ -1460,50 +1483,50 @@
 
 -(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
 {
-      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
-         id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
-         ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
-            [_dualBound set: b];
-            [b release];
-            nbDualUpdate++;
-            branchAndBoundTime = [NSDate date];
-            NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
-         }
-         return ok;
-      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
-         ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
-            [_dualBound set: b];
-            [b release];
-            nbDualUpdate++;
-            branchAndBoundTime = [NSDate date];
-            NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
-         }
-         return ok;
-      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
-         ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
-            [_dualBound set: b];
-            [b release];
-            nbDualUpdate++;
-            branchAndBoundTime = [NSDate date];
-            NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
-         }
-         return ok;
-      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
-         ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-         if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
-            [_dualBound set: b];
-            [b release];
-            nbDualUpdate++;
-            branchAndBoundTime = [NSDate date];
-            NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
-         }
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
+      id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
+      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
+         [_dualBound set: b];
+         [b release];
+         nbDualUpdate++;
+         branchAndBoundTime = [NSDate date];
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
+      return ok;
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
+      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
+         [_dualBound set: b];
+         [b release];
+         nbDualUpdate++;
+         branchAndBoundTime = [NSDate date];
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+      }
+      return ok;
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
+      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
+         [_dualBound set: b];
+         [b release];
+         nbDualUpdate++;
+         branchAndBoundTime = [NSDate date];
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+      }
+      return ok;
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
+      ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
+         [_dualBound set: b];
+         [b release];
+         nbDualUpdate++;
+         branchAndBoundTime = [NSDate date];
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+      }
+   }
    return ORSuspend;
 }
 
@@ -1578,58 +1601,60 @@
 }
 -(void) propagate
 {
-   if([_x bound]){
-      if([_res bound]){
-         if(([[_res value] neq:  [[_x value] neg]]) && ([[_res value] neq: [_x value]])) failNow();
-         assignTRInt(&_active, NO, _trail);
-      }else{
-         [_res bind:[[_x value] abs]];
-         assignTRInt(&_active, NO, _trail);
-      }
-   }else if([_res bound]){
-      if([_x member:[[_res value] neg]]){
-         if([_x member:[_res value]])
-            [_x updateInterval:[[_res value] neg] and:[_res value]];
+   @autoreleasepool {
+      if([_x bound]){
+         if([_res bound]){
+            if(([[_res value] neq:  [[_x value] neg]]) && ([[_res value] neq: [_x value]])) failNow();
+            assignTRInt(&_active, NO, _trail);
+         }else{
+            [_res bind:[[_x value] abs]];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }else if([_res bound]){
+         if([_x member:[[_res value] neg]]){
+            if([_x member:[_res value]])
+               [_x updateInterval:[[_res value] neg] and:[_res value]];
+            else
+               [_x bind:[[_res value] neg]];
+         }else if([_x member:[_res value]])
+            [_x bind:[_res value]];
          else
-            [_x bind:[[_res value] neg]];
-      }else if([_x member:[_res value]])
-         [_x bind:[_res value]];
-      else
-         failNow();
-   }else {
-      id<ORRational> zero = [[ORRational alloc] init];
-      [zero setZero];
-      [_xi set_q:[_x min] and:[_x max]];
-      [_resi set_q:[_res min] and:[_res max]];
-      id<ORRationalInterval> resTmp = [[ORRationalInterval alloc] init];
-      if([_x member: zero]){
-         [resTmp.low set:zero];
-      } else {
-         [resTmp.low set: minQ([_xi.low abs], [_xi.up abs])];
+            failNow();
+      }else {
+         id<ORRational> zero = [[ORRational alloc] init];
+         [zero setZero];
+         [_xi set_q:[_x min] and:[_x max]];
+         [_resi set_q:[_res min] and:[_res max]];
+         id<ORRationalInterval> resTmp = [[ORRationalInterval alloc] init];
+         if([_x member: zero]){
+            [resTmp.low set:zero];
+         } else {
+            [resTmp.low set: minQ([_xi.low abs], [_xi.up abs])];
+         }
+         [resTmp.up set: maxQ([_xi.low abs], [_xi.up abs])];
+         [_resi set: [_resi proj_inter: resTmp]];
+         if(_resi.changed)
+            [_res updateInterval:_resi.low and:_resi.up];
+         
+         [_xi set_q:[_x min] and:[_x max]];
+         id<ORRationalInterval> xTmp = [[ORRationalInterval alloc] init];
+         if([_x member: zero]){
+            [xTmp.low set: [_resi.up neg]];
+            [xTmp.up set: _resi.up];
+         } else if([[_x min] gt: zero]){
+            [xTmp.low set: _resi.low];
+            [xTmp.up set: _resi.up];
+         } else {
+            [xTmp.low set: [_resi.up neg]];
+            [xTmp.up set: [_resi.low neg]];
+         }
+         [_xi set: [_xi proj_inter: xTmp]];
+         if(_xi.changed)
+            [_x updateInterval:_xi.low and:_xi.up];
+         [zero release];
+         [resTmp release];
+         [xTmp release];
       }
-      [resTmp.up set: maxQ([_xi.low abs], [_xi.up abs])];
-      _resi = [_resi proj_inter: resTmp];
-      if(_resi.changed)
-         [_res updateInterval:_resi.low and:_resi.up];
-      
-      [_xi set_q:[_x min] and:[_x max]];
-      id<ORRationalInterval> xTmp = [[ORRationalInterval alloc] init];
-      if([_x member: zero]){
-         [xTmp.low set: [_resi.up neg]];
-         [xTmp.up set: _resi.up];
-      } else if([[_x min] gt: zero]){
-         [xTmp.low set: _resi.low];
-         [xTmp.up set: _resi.up];
-      } else {
-         [xTmp.low set: [_resi.up neg]];
-         [xTmp.up set: [_resi.low neg]];
-      }
-      _xi = [_xi proj_inter: xTmp];
-      if(_xi.changed)
-         [_x updateInterval:_xi.low and:_xi.up];
-      [zero release];
-      [resTmp release];
-      [xTmp release];
    }
 }
 - (void)dealloc {
@@ -1682,33 +1707,35 @@
 }
 -(void) propagate
 {
-   if([_x bound]){
-      if([_y bound]){
-         if([[_x value] neq: [[_y value] neg]]) failNow();
+   @autoreleasepool {
+      if([_x bound]){
+         if([_y bound]){
+            if([[_x value] neq: [[_y value] neg]]) failNow();
+            assignTRInt(&_active, NO, _trail);
+         }else{
+            [_y bind:[[_x value] neg]];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }else if([_y bound]){
+         [_x bind:[[_y value] neg]];
          assignTRInt(&_active, NO, _trail);
-      }else{
-         [_y bind:[[_x value] neg]];
-         assignTRInt(&_active, NO, _trail);
+      }else {
+         [_xi set_q:[_x min] and:[_x max]];
+         [_yi set_q:[_y min] and:[_y max]];
+         id<ORRationalInterval> inter = [[ORRationalInterval alloc] init];
+         
+         
+         [inter set: [_yi proj_inter:[_xi neg]]];
+         if(inter.changed)
+            [_y updateInterval:inter.low and:inter.up];
+         
+         [_yi set_q:[_y min] and:[_y max]];
+         [inter set: [_xi proj_inter:[_yi neg]]];
+         if(inter.changed)
+            [_x updateInterval:inter.low and:inter.up];
+         
+         [inter release];
       }
-   }else if([_y bound]){
-      [_x bind:[[_y value] neg]];
-      assignTRInt(&_active, NO, _trail);
-   }else {
-      [_xi set_q:[_x min] and:[_x max]];
-      [_yi set_q:[_y min] and:[_y max]];
-      id<ORRationalInterval> inter;
-      
-      
-      inter = [_yi proj_inter:[_xi neg]];
-      if(inter.changed)
-         [_y updateInterval:inter.low and:inter.up];
-      
-      [_yi set_q:[_y min] and:[_y max]];
-      inter = [_xi proj_inter:[_yi neg]];
-      if(inter.changed)
-         [_x updateInterval:inter.low and:inter.up];
-      
-      [inter release];
    }
 }
 
