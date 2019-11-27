@@ -213,7 +213,7 @@
        cx[i]  = [_solver concretize:_vars[i + low]];
    do {
        ORInt sdk = 0;
-       while (cx[sdk].bound && sdk < sz) sdk++;
+       while (sdk < sz &&  cx[sdk].bound) sdk++;
        if (sdk >= sz) break;
        ORBounds xb = [cx[sdk] bounds];
        while (xb.min != xb.max) {

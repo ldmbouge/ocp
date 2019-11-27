@@ -63,6 +63,7 @@
     DDMergeClosure* _relaxationFunctions;
     DDMergeClosure* _differentialFunctions;
     int _stateSize;
+    id<ORTrail> _trail;
 }
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions stateSize:(int)stateSize;
@@ -70,6 +71,7 @@
 -(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables;
 -(id*) state;
 -(int) stateSize;
+-(id<ORTrail>) trail;
 -(DDClosure)arcExistsClosure;
 -(DDClosure*)transitionFunctions;
 -(DDMergeClosure*) relaxationFunctions;

@@ -465,6 +465,8 @@ enum ORGroupType {
 -(bool) relaxed;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
+-(id) classState;
+-(bool) usingClassState;
 @end
 
 @protocol ORCustomMDDWithObjective <ORConstraint>

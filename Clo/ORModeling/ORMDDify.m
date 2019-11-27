@@ -130,6 +130,7 @@
     bool _maximize;
     bool _relaxed;
     bool _topDown;
+    int _width;
     
     NSMutableArray* _mddSpecConstraints;
 }
@@ -149,7 +150,7 @@
 
 -(void) apply:(id<ORModel>) m with:(id<ORAnnotation>)notes {
     _notes = notes;
-    ORInt width = [_notes findGeneric: DDWidth];
+    _width = [_notes findGeneric: DDWidth];
     _relaxed = [_notes findGeneric: DDRelaxed];
     [JointState stateClassesInit];
     [m applyOnVar: ^(id<ORVar> x) {
@@ -175,7 +176,7 @@
       }];
     
     if ([_mddSpecConstraints count] > 0) {
-        [self combineMDDSpecs];
+        [self combineMDDSpecs:m];
     }
     
     id<ORConstraint> mddConstraint =nil;
@@ -183,33 +184,33 @@
     if (!_topDown) {
         [AltJointState setVariables:_variables];
         //if ([AltJointState numStates] > 1) {
-        mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[AltJointState class] topDown:_topDown];
+        mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[AltJointState class] topDown:_topDown];
         //} else {
         //    CustomState* onlyState = [JointState firstState];
         //    [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
-        //    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class]];
+        //    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[onlyState class]];
         //}
     } else {
-        [JointState setVariables:_variables];
+        //[JointState setVariables:_variables];
         
         if (_hasObjective) {
-            mddConstraint = [ORFactory CustomMDDWithObjective:m var:_variables relaxed:_relaxed size:width objective: _objectiveVar maximize:_maximize stateClass:[JointState class]];
+            mddConstraint = [ORFactory CustomMDDWithObjective:m var:_variables relaxed:_relaxed size:_width objective: _objectiveVar maximize:_maximize stateClass:[JointState class]];
         } else {
-            if ([JointState numStates] > 1) {
-                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[JointState class] topDown:_topDown];
+            /*if ([JointState numStates] > 1) {
+                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[JointState class] topDown:_topDown];
             } else {
                 CustomState* onlyState = [JointState firstState];
                 if (onlyState != nil) {
                     [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
-                    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:width stateClass:[onlyState class] topDown:_topDown];
+                    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[onlyState class] topDown:_topDown];
                 }
-            }
+            }*/
         }
     }
-    if (mddConstraint != nil) {
+    /*if (mddConstraint != nil) {
         [_into trackConstraintInGroup: mddConstraint];
         [_into addConstraint: mddConstraint];
-    }
+    }*/
     
     //if ([_mddConstraints count] == 1) {
     //    id<ORConstraint> preMDDConstraint = _mddConstraints[0];
@@ -310,7 +311,7 @@
     return true;
 }
 
--(void) combineMDDSpecs
+-(void) combineMDDSpecs:(id<ORModel>)m
 {
     NSMutableArray* mainMDDSpecList = [[NSMutableArray alloc] initWithObjects:[_mddSpecConstraints objectAtIndex:0],nil];
 
@@ -443,15 +444,20 @@
             for (int relaxationFunctionIndex = 0; relaxationFunctionIndex < stateSize; relaxationFunctionIndex++) {
                 relaxationFunctionClosures[relaxationFunctionIndex] = [mergeClosureVisitor computeClosure: relaxationFunctions[relaxationFunctionIndex]];
             }
-            [JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize] withVariables:vars];
+            MDDStateSpecification* classState = [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize];
+            
+            id<ORConstraint> mddConstraint = [ORFactory CustomMDD:m var:vars relaxed:_relaxed size:_width classState:classState topDown:_topDown];
+            [_into trackConstraintInGroup:mddConstraint];
+            [_into addConstraint:mddConstraint];
+            //[JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize] withVariables:vars];
         } else {
             [JointState addStateClass:[[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:vars];
         }
-        if ([_variables count] == 0) {
-            _variables = vars;
-        } else {
-            _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
-        }
+        //if ([_variables count] == 0) {
+        //    _variables = vars;
+        //} else {
+        //    _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
+        //}
     }
 }
 

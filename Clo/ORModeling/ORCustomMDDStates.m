@@ -214,12 +214,18 @@ static int StateSize;
     _transitionFunctions = TransitionFunctions;
     _relaxationFunctions = RelaxationFunctions;
     _differentialFunctions = DifferentialFunctions;
+    _trail = trail;
     return self;
 }
--(id) initRootState:(MDDStateSpecification*)classState variableIndex:(int)variableIndex {
+-(id) initRootState:(MDDStateSpecification*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail {
     self = [super initRootState:classState variableIndex:variableIndex];
     _stateSize = [classState stateSize];
-    _state = [classState state];
+    _state = calloc(_stateSize, sizeof(TRId));
+    id* classStateState = [classState state];
+    _trail = trail;
+    for (int i = 0; i < _stateSize; i++) {
+        _state[i] = makeTRId(_trail, classStateState[i]);
+    }
     _arcExists = [classState arcExistsClosure];
     _transitionFunctions = [classState transitionFunctions];
     _relaxationFunctions = [classState relaxationFunctions];
@@ -233,7 +239,8 @@ static int StateSize;
     id* parentState = [parentNodeState state];
     ORInt parentVar = [parentNodeState variableIndex];
     
-    _state = malloc(_stateSize * sizeof(id));
+    _trail = [parentNodeState trail];
+    _state = malloc(_stateSize * sizeof(TRId));
     _arcExists = [parentNodeState arcExistsClosure];
     _transitionFunctions = [parentNodeState transitionFunctions];
     _relaxationFunctions = [parentNodeState relaxationFunctions];
@@ -242,7 +249,7 @@ static int StateSize;
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         DDClosure transitionFunction = _transitionFunctions[stateIndex];
         if (transitionFunction != NULL) {
-            _state[stateIndex] = transitionFunction(parentState, parentVar, edgeValue);
+            _state[stateIndex] = makeTRId(_trail, transitionFunction(parentState, parentVar, edgeValue));
         }
     }
     return self;
@@ -250,10 +257,11 @@ static int StateSize;
 -(id) initState:(MDDStateSpecification*)parentNodeState variableIndex:(int)variableIndex {
     self = [super initState:parentNodeState variableIndex:variableIndex];
     id* parentState = [parentNodeState state];
+    _trail = [parentNodeState trail];
     _stateSize = [parentNodeState stateSize];
     _state = malloc(_stateSize * sizeof(id));
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        _state[stateIndex] = parentState[stateIndex];
+        _state[stateIndex] = makeTRId(_trail, [parentState[stateIndex] copy]);
     }
     
     _arcExists = [parentNodeState arcExistsClosure];
@@ -281,18 +289,19 @@ static int StateSize;
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         DDMergeClosure relaxationFunction = _relaxationFunctions[stateIndex];
         if (relaxationFunction != NULL) {
-            _state[stateIndex] = relaxationFunction(_state, ptrOS);
+            assignTRId(&_state[stateIndex], relaxationFunction(_state, ptrOS), _trail);
         }
     }
 }
 
+//I don't think I use this and undoChanges now?  I hope I don't...
 -(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
     NSMutableArray* savedChanges = [[NSMutableArray alloc] init];
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         DDClosure transitionFunction = _transitionFunctions[stateIndex];
         [savedChanges addObject: _state[stateIndex]];
         if (transitionFunction != NULL) {
-            _state[stateIndex] = transitionFunction(_state,variable,value);
+            assignTRId(&_state[stateIndex], transitionFunction(_state,variable,value),_trail);
         }
     }
     return savedChanges;
@@ -300,7 +309,7 @@ static int StateSize;
 
 -(void) undoChanges:(NSArray*)savedChanges {
     for (int savedChangeIndex = 0; savedChangeIndex < [savedChanges count]; savedChangeIndex++) {
-        _state[savedChangeIndex] = [savedChanges objectAtIndex: savedChangeIndex];
+        assignTRId(&_state[savedChangeIndex], [savedChanges objectAtIndex: savedChangeIndex], _trail);
     }
 }
 
@@ -322,7 +331,7 @@ static int StateSize;
 -(bool) equivalentTo:(MDDStateSpecification*)other {
     id* other_state = [other state];
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        if (_state[stateIndex] != other_state[stateIndex]) {
+        if (![_state[stateIndex] isEqual: other_state[stateIndex]]) {
             return false;
         }
     }
@@ -342,6 +351,7 @@ static int StateSize;
 }
 -(id*) state { return _state; }
 -(int) stateSize { return _stateSize; }
+-(id<ORTrail>) trail { return _trail; }
 -(DDClosure)arcExistsClosure { return _arcExists; }
 -(DDClosure*)transitionFunctions { return _transitionFunctions; }
 -(DDMergeClosure*)relaxationFunctions { return _relaxationFunctions; }

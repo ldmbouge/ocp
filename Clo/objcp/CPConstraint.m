@@ -718,6 +718,12 @@
     [[x tracker] trackMutable:o];
     return o;
 }
++(id<CPConstraint>) CustomMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize classState:(id)classState
+{
+    id<CPConstraint> o = [[CPCustomMDD alloc] initCPCustomMDD: cp over: x relaxed:relaxed size:relaxationSize classState:classState];
+    [[x tracker] trackMutable:o];
+    return o;
+}
 +(id<CPConstraint>) CustomMDDWithObjective: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
     id<CPConstraint> o = [[CPCustomMDDWithObjective alloc] initCPCustomMDDWithObjective: cp over: x relaxed:relaxed size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:(Class)stateClass];

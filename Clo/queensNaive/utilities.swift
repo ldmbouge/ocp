@@ -544,6 +544,20 @@ public func allDiffMDD(_ vars : ORIntVarArray) -> ORMDDSpecs {
     return mdd
 }
 
+public func knapsackMDD(_ vars : ORIntVarArray,weight : ORIntArray,capacity : Int) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        udom = arrayDomains(vars),
+        minDom = Int(udom.low()),
+        mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(udom.size()))
+    
+    mdd.state(toDict(udom) { i in (key : i,value:true) })
+    mdd.arc(Prop(m,SVA(m) - minDom))
+    mdd.transition(toDict(udom) { i in (key : i,Prop(m,i) && SVA(m) != i + minDom) })
+    mdd.relaxation(toDict(udom) { i in (key : i,left(m,i) || right(m,i)) })
+    mdd.similarity(toDict(udom) { i in (key :i,abs(left(m,i) - right(m,i))) })
+    return mdd
+}
+
 public func seqMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
     let m = vars.tracker(),
         minFIdx = 0,minLIdx = len-1,

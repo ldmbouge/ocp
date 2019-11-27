@@ -1164,6 +1164,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState topDown:(bool)topDown
+{
+    id<ORConstraint> o;
+    //AltCustomState* altClass = [[AltCustomState alloc] init];
+    //if (!topDown) {
+        //o = [[ORCustomAltMDD alloc] initORCustomAltMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
+    //} else {
+        o = [[ORCustomMDD alloc] initORCustomMDD:x relaxed:relaxed size:relaxationSize classState:classState];
+    //}
+    [model trackObject:o];
+    return o;
+}
 +(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
     id<ORConstraint> o = [[ORCustomMDDWithObjective alloc] initORCustomMDDWithObjective:x relaxed:(bool)relaxed size:relaxationSize reduced:true objective:objectiveValue maximize:maximize stateClass:stateClass];

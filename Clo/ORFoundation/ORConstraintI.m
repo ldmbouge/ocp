@@ -389,6 +389,8 @@
    bool _relaxed;
    ORInt _relaxationSize;
    Class _stateClass;
+   id _classState;
+   bool _usingClassState;
 }
 -(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
@@ -397,6 +399,17 @@
    _relaxed = relaxed;
    _relaxationSize = relaxationSize;
    _stateClass = stateClass;
+   _usingClassState = false;
+   return self;
+}
+-(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool) relaxed size:(ORInt)relaxationSize classState:(id)classState
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _relaxed = relaxed;
+   _relaxationSize = relaxationSize;
+   _classState = classState;
+   _usingClassState = true;
    return self;
 }
 -(void)dealloc
@@ -426,6 +439,14 @@
 -(Class) stateClass
 {
    return _stateClass;
+}
+-(id) classState
+{
+   return _classState;
+}
+-(bool) usingClassState
+{
+   return _usingClassState;
 }
 -(NSSet*)allVars
 {

@@ -77,9 +77,12 @@
 @end
 @interface ORCustomMDD : ORConstraintI<ORCustomMDD>
 -(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
+-(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
+-(id) classState;
+-(bool) usingClassState;
 @end
 @interface ORCustomMDDWithObjective : ORConstraintI<ORCustomMDD>
 -(ORCustomMDD*)initORCustomMDDWithObjective:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
