@@ -184,8 +184,6 @@
 {
    id<ORCheckpoint> cp = [_tracer captureCheckpoint];
    BBNode* node = [[BBNode alloc] init:k checkpoint:cp];
-   //ORInt depth;
-   //ORInt primalBound = 1000 * frexp([[[[_engine objective] primalBound] rationalValue] get_d], &depth);
    //BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
    BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:boxCardinality];
    [_buf insertObject:node withKey:ov];
@@ -223,7 +221,7 @@
    branchAndBoundTime = [NSDate date];
    //NSLog(@"L: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    if ([k nbCalls] == 0) {
-      if(limitCounter._val < nbConstraint){
+      if(limitCounter._val < nbConstraint  && [[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualValue] rationalValue]]){
       [self makeAndRecordNode:k];
       NSCont* back = _k;
       _k = NULL;
@@ -248,7 +246,7 @@
    branchAndBoundTime = [NSDate date];
    //NSLog(@"R: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    if ([k nbCalls] == 0) {
-      if(limitCounter._val < nbConstraint){
+      if(limitCounter._val < nbConstraint && [[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualValue] rationalValue]]){
          [self makeAndRecordNode:k];
          [self fail];
       } else {

@@ -2020,7 +2020,7 @@ onFailure: (ORInt2Void) onFailure
                                   suchThat: ^ORBool(ORInt i) {
       id<CPDoubleVar> v = _gamma[getId(x[i])];
       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
-      return ![v bound] && [v isInputVar];
+      return ![v bound];// && [v isInputVar];
    }
                                  orderedBy:
                           ^ORDouble(ORInt i) {
