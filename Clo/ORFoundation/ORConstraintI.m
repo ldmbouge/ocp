@@ -564,6 +564,10 @@
 {
    _stateValues[lookup] = [NSNumber numberWithBool: value];
 }
+-(void)addStateSet:(ORInt)lookup withDefaultValue:(NSSet*)value
+{
+   _stateValues[lookup] = [NSSet setWithSet:value];
+}
 -(void)addStateBoolArrayDefaultFalse:(int)lookup withSize:(ORInt)size
 {
    NSMutableArray* boolList = [[NSMutableArray alloc] init];

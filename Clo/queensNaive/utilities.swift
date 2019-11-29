@@ -402,6 +402,11 @@ extension ORMDDSpecs {
             self.addStateBool(ORInt(k), withDefaultValue: v)
         }
     }
+    func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void where Key : BinaryInteger,Value : NSSet {
+        for (k,v) in d {
+            self.addStateSet(ORInt(k), withDefaultValue: v)
+        }
+    }
     func state2<Key,Value>(_ d : Dictionary<Key,Value>) -> [Key] where Key : BinaryInteger {
         for (k,v) in d {
             self.addStateInt(k as! Int32, withDefaultValue: (ORInt)( v as! Int))

@@ -482,6 +482,7 @@ enum ORGroupType {
 @protocol ORMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value;
+-(void)addStateSet:(int)lookup withDefaultValue:(NSSet*)value;
 -(void)addStateIntArray:(int)lookup;
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
 -(void)addStateBoolArrayDefaultFalse:(int)lookup withSize:(ORInt)size;

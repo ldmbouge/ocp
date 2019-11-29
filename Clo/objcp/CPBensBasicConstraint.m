@@ -25,7 +25,7 @@
     _numChildren = makeTRInt(_trail, 0);
     _minChildIndex = 0;
     _maxChildIndex = 0;
-    _maxNumParents = makeTRInt(_trail,1);
+    _maxNumParents = makeTRInt(_trail,10);
     _parents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumParents._val];
     _numParents = makeTRInt(_trail, 0);
     _value = -1;
@@ -64,7 +64,7 @@
     _state = makeTRId(_trail, state);
     
     _numChildren = makeTRInt(_trail, 0);
-    _maxNumParents = makeTRInt(_trail,1);
+    _maxNumParents = makeTRInt(_trail,(_maxChildIndex-_minChildIndex+1));
     _parents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumParents._val];
     _numParents = makeTRInt(_trail, 0);
     _value = value;
@@ -1255,7 +1255,7 @@
     max_layer_size = calloc((_numVariables+1) , sizeof(TRInt));
     for (int layer = 0; layer <= _numVariables; layer++) {
         layer_size[layer] = makeTRInt(_trail,0);
-        max_layer_size[layer] = makeTRInt(_trail,1);
+        max_layer_size[layer] = makeTRInt(_trail,10);
     }
     
     min_domain_val = [_x[[_x low]] min];    //Not great
@@ -1273,7 +1273,7 @@
     
     layers = calloc((_numVariables+1) , sizeof(ORTRIdArrayI*));
     for (int layer = 0; layer <= _numVariables; layer++) {
-        layers[layer] = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:1];
+        layers[layer] = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:max_layer_size[layer]._val];
     }
     
     _layer_to_variable = malloc((_numVariables+1) * sizeof(int));
@@ -3013,7 +3013,29 @@ typedef struct {
         }
     }
 }*/
--(void) addPropagationsAndTrimValues
+-(void) addPropagationToLayer:(ORInt)layer
+{
+    int variableIndex = [self variableIndexForLayer:layer];
+    if (!bound((CPIntVar*)_x[variableIndex])) {
+        [_x[variableIndex] whenChangeDo:^() {
+            for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+                if (![_x[variableIndex] member:domain_val] && layer_variable_count[layer][domain_val]._val) {
+                    [self trimValueFromLayer: layer :domain_val ];
+                }
+            }
+            //if (_first_relaxed_layer._val <= _numVariables) {
+                //Not sure, but may be good to re-add this if-statement.  Why are we only starting from layer_index... maybe we should start at first_relaxed?  Or from the highest layer that was affected by this (see:  how high removeParentlessNode went)
+                //if (layer_size[_first_relaxed_layer._val]._val < _relaxation_size) {
+                    [self rebuildFromLayer:layer];
+                //}
+            //}
+            /*if (_first_relaxed_layer._val > layer_index && layer_index != 0) {
+                assignTRInt(&_first_relaxed_layer, layer_index, _trail);
+            }*/
+        } onBehalf:self];
+    }
+}
+/*-(void) addPropagationsAndTrimValues
 {
     [super addPropagationsAndTrimValues];
     
@@ -3029,14 +3051,14 @@ typedef struct {
             //[self DEBUGTestParentChildParity];
             //[self DEBUGTestLayerVariableCountCorrectness];
             
-            /*if (_first_relaxed_layer._val == layer+1) {
+            if (_first_relaxed_layer._val == layer+1) {
                 //if ([[layers[_first_relaxed_layer._val] at: 0] isRelaxed]) {
                     assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
                     [self rebuildFromLayer: layer];
                 //} else {
                 //    assignTRInt(&_first_relaxed_layer, _first_relaxed_layer._val +1, _trail);
                 //}
-            }*/
+            }
             //if (_first_relaxed_layer._val == layer+1) {
             //    assignTRInt(&_first_relaxed_layer, INT_MAX, _trail);
             //    [self rebuildFromLayer: layer];
@@ -3047,7 +3069,7 @@ typedef struct {
             //}
         } onBehalf:self];
     }
-}
+}*/
 
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
@@ -3091,17 +3113,6 @@ typedef struct {
                 }
             }
         }
-    }
-    if (![_x[[self variableIndexForLayer:layer_index]] bound]) {
-        if (_first_relaxed_layer._val <= _numVariables) {
-            //Not sure, but may be good to re-add this if-statement.  Why are we only starting from layer_index... maybe we should start at first_relaxed?  Or from the highest layer that was affected by this (see:  how high removeParentlessNode went)
-            //if (layer_size[_first_relaxed_layer._val]._val < _relaxation_size) {
-                [self rebuildFromLayer:layer_index];
-            //}
-        }
-    }
-    if (_first_relaxed_layer._val > layer_index && layer_index != 0) {
-        assignTRInt(&_first_relaxed_layer, layer_index, _trail);
     }
 }
 
@@ -3730,13 +3741,13 @@ typedef struct {
 -(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
 {
     self = [super initCPMDDRelaxation:engine over:x relaxed:relaxed relaxationSize:relaxationSize stateClass:stateClass];
-    _priority = HIGHEST_PRIO;
+    //_priority = HIGHEST_PRIO;
     return self;
 }
 -(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(CustomState*)classState
 {
     self = [super initCPMDDRelaxation:engine over:x relaxed:relaxed relaxationSize:relaxationSize classState:classState];
-    _priority = HIGHEST_PRIO;
+    //_priority = HIGHEST_PRIO;
     return self;
 }
 -(NSString*)description
