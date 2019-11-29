@@ -183,12 +183,20 @@
 @interface JointState : CustomState {
 @protected
     NSMutableArray* _states;
+    NSMutableArray* _stateVars;
+    id<ORIntVarArray> _vars;
 }
 -(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail;
+-(id) initClassState;
 +(void) addStateClass:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables;
+-(void) addClassState:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables;
 +(void) stateClassesInit;
 +(int) numStates;
+-(int) numStates;
+-(NSMutableArray*) stateVars;
+-(id<ORIntVarArray>) vars;
 +(CustomState*) firstState;
 -(NSMutableArray*) states;
 +(void) setVariables:(id<ORIntVarArray>)variables;
+-(void) setVariables:(id<ORIntVarArray>)variables;
 @end

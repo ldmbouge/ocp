@@ -133,6 +133,8 @@
     int _width;
     
     NSMutableArray* _mddSpecConstraints;
+    
+    JointState* _jointState;
 }
 
 -(id)initORMDDify: (id<ORAddToModel>) into isTopDown:(bool)isTopDown
@@ -141,6 +143,7 @@
     _into = into;
     _mddConstraints = [[NSMutableArray alloc] init];
     _mddSpecConstraints = [[NSMutableArray alloc] init];
+    _jointState = [[JointState alloc] initClassState];
     _variables = NULL;
     _maximize = false;
     _hasObjective = false;
@@ -191,26 +194,26 @@
         //    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[onlyState class]];
         //}
     } else {
-        //[JointState setVariables:_variables];
+        [_jointState setVariables:_variables];
         
         if (_hasObjective) {
             mddConstraint = [ORFactory CustomMDDWithObjective:m var:_variables relaxed:_relaxed size:_width objective: _objectiveVar maximize:_maximize stateClass:[JointState class]];
         } else {
-            /*if ([JointState numStates] > 1) {
-                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[JointState class] topDown:_topDown];
+            if ([_jointState numStates] > 1) {
+                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width classState:_jointState topDown:_topDown];
             } else {
                 CustomState* onlyState = [JointState firstState];
                 if (onlyState != nil) {
                     [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
                     mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[onlyState class] topDown:_topDown];
                 }
-            }*/
+            }
         }
     }
-    /*if (mddConstraint != nil) {
+    if (mddConstraint != nil) {
         [_into trackConstraintInGroup: mddConstraint];
         [_into addConstraint: mddConstraint];
-    }*/
+    }
     
     //if ([_mddConstraints count] == 1) {
     //    id<ORConstraint> preMDDConstraint = _mddConstraints[0];
@@ -446,18 +449,18 @@
             }
             MDDStateSpecification* classState = [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize];
             
-            id<ORConstraint> mddConstraint = [ORFactory CustomMDD:m var:vars relaxed:_relaxed size:_width classState:classState topDown:_topDown];
-            [_into trackConstraintInGroup:mddConstraint];
-            [_into addConstraint:mddConstraint];
-            //[JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize] withVariables:vars];
+            //id<ORConstraint> mddConstraint = [ORFactory CustomMDD:m var:vars relaxed:_relaxed size:_width classState:classState topDown:_topDown];
+            //[_into trackConstraintInGroup:mddConstraint];
+            //[_into addConstraint:mddConstraint];
+            [_jointState addClassState: classState withVariables:vars];
         } else {
             [JointState addStateClass:[[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:vars];
         }
-        //if ([_variables count] == 0) {
-        //    _variables = vars;
-        //} else {
-        //    _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
-        //}
+        if ([_variables count] == 0) {
+            _variables = vars;
+        } else {
+            _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
+        }
     }
 }
 

@@ -1255,6 +1255,12 @@ static NSMutableArray* _stateClasses;
 static NSMutableArray* _stateVariables;
 static id<ORIntVarArray> _variables;
 
+-(id) initClassState
+{
+    _states = [[NSMutableArray alloc] init];
+    _stateVars = [[NSMutableArray alloc] init];
+    return self;
+}
 -(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail{
     _variableIndex = variableIndex;
     _domainMin = domainMin;
@@ -1267,14 +1273,31 @@ static id<ORIntVarArray> _variables;
     }
     return self;
 }
+-(id) initRootState:(JointState*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail {
+    _variableIndex = variableIndex;
+    _domainMin = [classState domainMin];
+    _domainMax = [classState domainMax];
+    _states = [[NSMutableArray alloc] init];
+    _stateVars = [classState stateVars];
+    _vars = [classState vars];
+    NSArray* classStateArray = [classState states];
+    for (int stateIndex = 0; stateIndex < [classState numStates]; stateIndex++) {
+        CustomState* stateClass = [classStateArray objectAtIndex:stateIndex];
+        MDDStateSpecification* state = [[[stateClass class] alloc] initRootState:stateClass variableIndex:variableIndex trail:trail];
+        [_states addObject: state];
+    }
+    return self;
+}
 -(id) initState:(JointState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
     self = [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
     _states = [[NSMutableArray alloc] init];
+    _stateVars = [parentNodeState stateVars];
+    _vars = [parentNodeState vars];
     NSMutableArray* parentStates = [parentNodeState states];
-    for (int stateIndex = 0; stateIndex < [_stateClasses count]; stateIndex++) {
-        CustomState* stateClass = [_stateClasses objectAtIndex:stateIndex];
+    for (int stateIndex = 0; stateIndex < [parentStates count]; stateIndex++) {
+        CustomState* stateClass = [parentStates objectAtIndex:stateIndex];
         CustomState* state;
-        if ([(id<ORIdArray>)(_stateVariables[stateIndex]) contains:[_variables at: [parentNodeState variableIndex]]]) {
+        if ([(id<ORIdArray>)(_stateVars[stateIndex]) contains:[_vars at: [parentNodeState variableIndex]]]) {
             state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] assigningVariable:variableIndex withValue:edgeValue];
         } else {
             state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] variableIndex:variableIndex];
@@ -1287,10 +1310,18 @@ static id<ORIntVarArray> _variables;
     [_stateClasses addObject:stateClass];
     [_stateVariables addObject:variables];
 }
+-(void) addClassState:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables {
+    [_states addObject:stateClass];
+    [_stateVars addObject:variables];
+}
 +(CustomState*) firstState { return [_stateClasses firstObject]; }
 +(int) numStates { return (int)[_stateClasses count]; }
+-(int) numStates { return (int)[_states count]; }
+-(NSMutableArray*) stateVars { return _stateVars; }
+-(id<ORIntVarArray>) vars { return _vars; }
 +(void) stateClassesInit { _stateClasses = [[NSMutableArray alloc] init]; _stateVariables = [[NSMutableArray alloc] init]; }
 +(void) setVariables:(id<ORIntVarArray>)variables { _variables = variables; }
+-(void) setVariables:(id<ORIntVarArray>)variables { _vars = variables; }
 
 -(NSMutableArray*) states { return _states; }
 
@@ -1342,7 +1373,7 @@ static id<ORIntVarArray> _variables;
     
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
         NSArray* stateSavedChanges;
-        if ([(id<ORIdArray>)_stateVariables[stateIndex] contains:[_variables at: variable]]) {
+        if ([(id<ORIdArray>)_stateVariables[stateIndex] contains:[_vars at: variable]]) {
             stateSavedChanges = [[_states objectAtIndex:stateIndex] tempAlterStateAssigningVariable:variable value:value toTestVariable:toVariable];
         } else {
             stateSavedChanges = [[NSArray alloc] init];
@@ -1363,7 +1394,7 @@ static id<ORIntVarArray> _variables;
 
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        if ([(id<ORIdArray>)_stateVariables[stateIndex] contains:[_variables at: variable]]) {
+        if ([(id<ORIdArray>)_stateVars[stateIndex] contains:[_vars at: variable]]) {
             if (![[_states objectAtIndex:stateIndex] canChooseValue:value forVariable:variable]) {
                 return false;
             }
