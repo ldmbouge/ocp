@@ -185,6 +185,7 @@
     NSMutableArray* _states;
     NSMutableArray* _stateVars;
     id<ORIntVarArray> _vars;
+    NSMutableSet* *_statesForVariables;
 }
 -(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail;
 -(id) initClassState;
@@ -194,6 +195,7 @@
 +(int) numStates;
 -(int) numStates;
 -(NSMutableArray*) stateVars;
+-(NSMutableSet**) statesForVariables;
 -(id<ORIntVarArray>) vars;
 +(CustomState*) firstState;
 -(NSMutableArray*) states;

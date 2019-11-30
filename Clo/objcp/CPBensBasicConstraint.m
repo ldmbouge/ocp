@@ -20,7 +20,7 @@
 {
     [super init];
     _trail = trail;
-    _childEdgeWeights = NULL;
+    //_childEdgeWeights = NULL;
     _children = NULL;
     _numChildren = makeTRInt(_trail, 0);
     _minChildIndex = 0;
@@ -32,7 +32,7 @@
     _isSink = false;
     _isSource = false;
     
-    _objectiveValues = NULL;
+    //_objectiveValues = NULL;
     _isRelaxed = makeTRInt(_trail, 0);
     _recalcRequired = makeTRInt(_trail, 0);
     /*
@@ -71,8 +71,8 @@
     _isSink = false;
     _isSource = false;
     
-    _childEdgeWeights = NULL;
-    _objectiveValues = NULL;
+    //_childEdgeWeights = NULL;
+    //_objectiveValues = NULL;
     _isRelaxed = makeTRInt(_trail, 0);
     _recalcRequired = makeTRInt(_trail, 0);
     return self;
@@ -80,7 +80,7 @@
 -(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state objectiveValues:(int*)objectiveValues
 {
     self = [self initNode: trail minChildIndex:minChildIndex maxChildIndex:maxChildIndex value:value state:state];
-    _objectiveValues = objectiveValues;
+    /*_objectiveValues = objectiveValues;
     
     _childEdgeWeights = calloc((_maxChildIndex-_minChildIndex +1) , sizeof(TRInt));
     _childEdgeWeights -= _minChildIndex;
@@ -95,7 +95,7 @@
     _numShortestPathParents = makeTRInt(_trail, 0);
     
     _reverseLongestPath = makeTRInt(_trail, 0);
-    _reverseShortestPath = makeTRInt(_trail, 0);
+    _reverseShortestPath = makeTRInt(_trail, 0);*/
     _isRelaxed = makeTRInt(_trail, 0);
     _recalcRequired = makeTRInt(_trail, 0);
     return self;
@@ -116,10 +116,10 @@
 }
 -(void) setIsSource: (bool) isSource {
     _isSource = isSource;
-    if (_isSource && _objectiveValues != NULL) {
+    /*if (_isSource && _objectiveValues != NULL) {
         assignTRInt(&_longestPath, 0, _trail);
         assignTRInt(&_shortestPath, 0, _trail);
-    }
+    }*/
 }
 -(void) setNumChildren: (int) numChildren {
     assignTRInt(&_numChildren, numChildren, _trail);
@@ -143,26 +143,28 @@
     assignTRInt(&_recalcRequired, value, _trail);
 }
 -(int) getObjectiveValueFor: (int)index {
-    return _objectiveValues[index];
+    return 0;
+    //return _objectiveValues[index];
 }
 -(int) getNodeObjectiveValue: (int)value {
-    return _childEdgeWeights[value]._val;
+    return 0;
+    //return _childEdgeWeights[value]._val;
 }
 -(void) addChild:(Node*)child at:(int)index {
     if (_children[index] == NULL) {
         [self setNumChildren:_numChildren._val+1];
     }
     assignTRId(&_children[index], child, _trail);
-    if (_objectiveValues != NULL) {
-        assignTRInt(&_childEdgeWeights[index], [self getObjectiveValueFor: index], _trail);
-    }
+    //if (_objectiveValues != NULL) {
+    //    assignTRInt(&_childEdgeWeights[index], [self getObjectiveValueFor: index], _trail);
+    //}
 }
 -(void) removeChildAt: (int) index {
     assignTRId(&_children[index], NULL, _trail);
     assignTRInt(&_numChildren, _numChildren._val -1, _trail);
-    if (_objectiveValues != NULL) {
+    /*if (_objectiveValues != NULL) {
         assignTRInt(&_childEdgeWeights[index], 0, _trail);
-    }
+    }*/
 }
 -(int) findChildIndex: (Node*) child {
     for (int child_index = _minChildIndex; child_index <= _maxChildIndex; child_index++) {
@@ -173,44 +175,51 @@
     return -1;
 }
 -(int) longestPath {
-    return _longestPath._val;
+    return 0;
+    //return _longestPath._val;
 }
 -(bool) hasLongestPathParent: (Node*)parent {
-    for (int parentIndex = 0; parentIndex < _numLongestPathParents._val; parentIndex++) {
+    /*for (int parentIndex = 0; parentIndex < _numLongestPathParents._val; parentIndex++) {
         if (_longestPathParents[parentIndex] == parent) {
             return true;
         }
-    }
+    }*/
     return false;
 }
 
 -(int) longestPathContainingSelf {
-    return _longestPath._val + _reverseLongestPath._val;
+    return 0;
+    //return _longestPath._val + _reverseLongestPath._val;
 }
 
 -(int) shortestPath {
-    return _shortestPath._val;
+    return 0;
+    //return _shortestPath._val;
 }
 -(bool) hasShortestPathParent:(Node *)parent {
-    for (int parentIndex = 0; parentIndex < _numShortestPathParents._val; parentIndex++) {
+    /*for (int parentIndex = 0; parentIndex < _numShortestPathParents._val; parentIndex++) {
         if (_shortestPathParents[parentIndex] == parent) {
             return true;
         }
-    }
+    }*/
     return false;
 }
 
 -(int) shortestPathContainingSelf {
-    return _shortestPath._val + _reverseShortestPath._val;
+    return 0;
+    //return _shortestPath._val + _reverseShortestPath._val;
 }
 
 -(int) reverseLongestPath {
-    return _reverseLongestPath._val;
+    return 0;
+    //return _reverseLongestPath._val;
 }
 -(int) reverseShortestPath {
-    return _reverseShortestPath._val;
+    return 0;
+    //return _reverseShortestPath._val;
 }
 -(void) updateReversePaths {
+    /*
     if (_isSink) {
         assignTRInt(&_reverseShortestPath, 0, _trail);
         assignTRInt(&_reverseLongestPath, 0, _trail);
@@ -234,6 +243,7 @@
     
     assignTRInt(&_reverseShortestPath, shortest, _trail);
     assignTRInt(&_reverseLongestPath, longest, _trail);
+     */
 }
 
 -(ORTRIdArrayI*) parents {
@@ -249,11 +259,12 @@
     }
     [_parents set:parent at:_numParents._val];
     assignTRInt(&_numParents,_numParents._val+1,_trail);
-    if (_objectiveValues != NULL) {
+    /*if (_objectiveValues != NULL) {
         [self updateBoundsWithParent: parent];
-    }
+    }*/
 }
 -(void) updateBoundsWithParent: (Node*) parent {
+    /*
     int parentLongestPath = [parent longestPath];
     int parentShortestPath = [parent shortestPath];
     
@@ -281,6 +292,7 @@
             }
         }
     }
+     */
 }
 -(void) findNewLongestPath {
 /*    assignTRInt(&_longestPath,-32768,_trail);
@@ -321,6 +333,7 @@
     }*/
 }
 -(void) removeLongestPathParent:(Node*)parent {
+    /*
     for (int parentIndex = 0; parentIndex < _numLongestPathParents._val; parentIndex++) {
         if (_longestPathParents[parentIndex] == parent) {
             assignTRInt(&_numLongestPathParents,_numLongestPathParents._val-1,_trail);
@@ -332,8 +345,10 @@
     if (_numLongestPathParents._val == 0) {
         [self findNewLongestPath];
     }
+     */
 }
 -(void) findNewShortestPath {
+    /*
     assignTRInt(&_shortestPath,32767,_trail);
     
     for (int parentIndex = 0; parentIndex < _numShortestPathParents._val; parentIndex++) {
@@ -365,8 +380,10 @@
             }
         }
     }
+     */
 }
 -(void) removeShortestPathParent:(Node*)parent {
+    /*
     for (int parentIndex = 0; parentIndex < _numShortestPathParents._val; parentIndex++) {
         if (_shortestPathParents[parentIndex] == parent) {
             assignTRInt(&_numShortestPathParents,_numShortestPathParents._val-1,_trail);
@@ -377,7 +394,7 @@
     
     if (_numShortestPathParents._val == 0) {
         [self findNewShortestPath];
-    }
+    }*/
 }
 -(void) removeParentOnce: (Node*) parent {
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
@@ -387,14 +404,14 @@
             break;
         }
     }
-    if (![self isNonVitalAndParentless] && _objectiveValues != NULL) {
+    /*if (![self isNonVitalAndParentless] && _objectiveValues != NULL) {
         if ([self hasLongestPathParent: parent]) {
             [self removeLongestPathParent: parent];
         }
         if ([self hasShortestPathParent: parent]) {
             [self removeShortestPathParent: parent];
         }
-    }
+    }*/
 }
 -(void) removeParentValue: (Node*) parent {
     for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
@@ -404,14 +421,14 @@
             parentIndex--;
         }
     }
-    if (![self isNonVitalAndParentless] && _objectiveValues != NULL) {
+    /*if (![self isNonVitalAndParentless] && _objectiveValues != NULL) {
         if ([self hasLongestPathParent: parent]) {
             [self removeLongestPathParent: parent];
         }
         if ([self hasShortestPathParent: parent]) {
             [self removeShortestPathParent: parent];
         }
-    }
+    }*/
 }
 
 -(bool) isVital {
@@ -1512,8 +1529,8 @@
         if ([_x[parentValue] member: edgeValue] && [parentNode canChooseValue: edgeValue]) {
             Node* childNode = nil;
             
-            id state = [self generateStateFromParent:parentNode withValue:edgeValue];
             if (parentLayer != _numVariables-1) {
+                id state = [self generateStateFromParent:parentNode withValue:edgeValue];
                 NSUInteger hashValue = [state hashWithWidth:_hashTableSize numVariables:_numVariables];
                 NSMutableArray* bucket = [nodeHashes objectForKey:[NSNumber numberWithUnsignedLong:hashValue]];
                 if (bucket == NULL) {
