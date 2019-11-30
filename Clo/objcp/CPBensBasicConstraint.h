@@ -23,7 +23,7 @@
 
 @interface Node : NSObject {
 @private
-    TRInt* _childEdgeWeights;
+    //TRInt* _childEdgeWeights;
     TRId* _children;
     TRInt _numChildren;
     int _minChildIndex;
@@ -35,6 +35,8 @@
     bool _isSink;
     bool _isSource;
     id<ORTrail> _trail;
+    
+    /*
     int* _objectiveValues;
     TRInt _longestPath;
     Node* *_longestPathParents;
@@ -44,7 +46,7 @@
     TRInt _numShortestPathParents;
     
     TRInt _reverseLongestPath;
-    TRInt _reverseShortestPath;
+    TRInt _reverseShortestPath;*/
     
     TRInt _isRelaxed;
     

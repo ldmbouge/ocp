@@ -1280,6 +1280,7 @@ static id<ORIntVarArray> _variables;
     _states = [[NSMutableArray alloc] init];
     _stateVars = [classState stateVars];
     _vars = [classState vars];
+    _statesForVariables = [classState statesForVariables];
     NSArray* classStateArray = [classState states];
     for (int stateIndex = 0; stateIndex < [classState numStates]; stateIndex++) {
         CustomState* stateClass = [classStateArray objectAtIndex:stateIndex];
@@ -1293,11 +1294,14 @@ static id<ORIntVarArray> _variables;
     _states = [[NSMutableArray alloc] init];
     _stateVars = [parentNodeState stateVars];
     _vars = [parentNodeState vars];
+    _statesForVariables = [parentNodeState statesForVariables];
     NSMutableArray* parentStates = [parentNodeState states];
+    NSMutableSet* statesForVariable = _statesForVariables[[parentNodeState variableIndex]];
     for (int stateIndex = 0; stateIndex < [parentStates count]; stateIndex++) {
         CustomState* stateClass = [parentStates objectAtIndex:stateIndex];
         CustomState* state;
-        if ([(id<ORIdArray>)(_stateVars[stateIndex]) contains:[_vars at: [parentNodeState variableIndex]]]) {
+        //if ([(id<ORIdArray>)(_stateVars[stateIndex]) contains:[_vars at: [parentNodeState variableIndex]]]) {
+        if ([statesForVariable containsObject:[NSNumber numberWithInt:stateIndex]]) {
             state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] assigningVariable:variableIndex withValue:edgeValue];
         } else {
             state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] variableIndex:variableIndex];
@@ -1318,10 +1322,43 @@ static id<ORIntVarArray> _variables;
 +(int) numStates { return (int)[_stateClasses count]; }
 -(int) numStates { return (int)[_states count]; }
 -(NSMutableArray*) stateVars { return _stateVars; }
+-(NSMutableSet**) statesForVariables { return _statesForVariables; }
 -(id<ORIntVarArray>) vars { return _vars; }
 +(void) stateClassesInit { _stateClasses = [[NSMutableArray alloc] init]; _stateVariables = [[NSMutableArray alloc] init]; }
 +(void) setVariables:(id<ORIntVarArray>)variables { _variables = variables; }
--(void) setVariables:(id<ORIntVarArray>)variables { _vars = variables; }
+-(void) setVariables:(id<ORIntVarArray>)variables {
+    _vars = variables;
+    /*ORUInt low = INT_MAX;
+    ORUInt up = INT_MIN;
+    for (id<ORIntVar> x in _vars) {
+        ORUInt xId = [x getId];
+        if (low > xId) {
+            low = xId;
+        }
+        if (up < xId) {
+            up = xId;
+        }
+    }
+    _statesForVariables = malloc((up - low + 1) * sizeof(NSMutableSet*));
+    */
+    _statesForVariables = malloc([_vars count] * sizeof(NSMutableSet*));
+     _statesForVariables -= [_vars low];
+    for (int varIndex = [_vars low]; varIndex <= [_vars up]; varIndex++) {
+        NSMutableSet* stateSet = [[NSMutableSet alloc] init];
+        for (int stateVarsIndex = 0; stateVarsIndex < [_stateVars count]; stateVarsIndex++) {
+            if ([[_stateVars objectAtIndex:stateVarsIndex] contains:[_vars objectAtIndexedSubscript:varIndex]]) {
+                [stateSet addObject:[NSNumber numberWithInt:stateVarsIndex]];
+            }
+        }
+        _statesForVariables[varIndex] = stateSet;
+    }/*
+    for (int stateVarsIndex = 0; stateVarsIndex < [_stateVars count]; stateVarsIndex++) {
+        id<ORIntVarArray> stateVarList = [_stateVars objectAtIndex:stateVarsIndex];
+        for (id<ORIntVar> x in stateVarList) {
+            [_statesForVariables[[x getId]] addObject:[NSNumber numberWithInt:stateVarsIndex]];
+        }
+    }*/
+}
 
 -(NSMutableArray*) states { return _states; }
 
@@ -1369,7 +1406,7 @@ static id<ORIntVarArray> _variables;
  }*/
 
 -(NSArray*) tempAlterStateAssigningVariable:(int)variable value:(int)value toTestVariable:(int)toVariable {
-    NSMutableArray* savedChanges = [[NSMutableArray alloc] init];
+    /*NSMutableArray* savedChanges = [[NSMutableArray alloc] init];
     
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
         NSArray* stateSavedChanges;
@@ -1381,18 +1418,30 @@ static id<ORIntVarArray> _variables;
         
         [savedChanges addObject:stateSavedChanges];
     }
-    return savedChanges;
+    return savedChanges;*/
+    return nil;
 }
 
 -(void) undoChanges:(NSArray*)savedChanges {
+    /*
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
         if ([[savedChanges objectAtIndex:stateIndex] count] > 0) {
             [[_states objectAtIndex: stateIndex] undoChanges: [savedChanges objectAtIndex:stateIndex]];
         }
-    }
+    }*/
 }
 
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
+    NSSet* statesForVariable = _statesForVariables[variable];
+    for (NSNumber* number in statesForVariable) {
+        int stateIndex = [number intValue];
+        if (![[_states objectAtIndex:stateIndex] canChooseValue:value forVariable:variable]) {
+            return false;
+        }
+    }
+    return true;
+    
+    /*
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
         if ([(id<ORIdArray>)_stateVars[stateIndex] contains:[_vars at: variable]]) {
             if (![[_states objectAtIndex:stateIndex] canChooseValue:value forVariable:variable]) {
@@ -1400,7 +1449,7 @@ static id<ORIntVarArray> _variables;
             }
         }
     }
-    return true;
+    return true;*/
 }
 
 -(int) stateDifferential:(JointState*)other {
