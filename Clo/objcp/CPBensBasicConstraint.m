@@ -1711,7 +1711,9 @@
             if ([childNode isNonVitalAndParentless]) {
                 [self removeParentlessNodeFromMDD:childNode fromLayer:childLayer trimmingVariables:trimming];
             } else {
-                [childNode setRecalcRequired:true];
+                if ([childNode isRelaxed]) {
+                    [childNode setRecalcRequired:true];
+                }
             }
         }
     }
@@ -1832,7 +1834,7 @@
         numBound += [_x[var_index] bound];
     }
     
-    [output writeToFile: [NSString stringWithFormat: @"/Users/ben/graphs/%d.dot", numBound] atomically: YES encoding:NSUTF8StringEncoding error: nil];
+    [output writeToFile: [NSString stringWithFormat: @"/Users/rebeccagentzel/graphs/%d.dot", numBound] atomically: YES encoding:NSUTF8StringEncoding error: nil];
 }
 
 -(void) DEBUGTestLayerVariableCountCorrectness
@@ -3099,7 +3101,9 @@ typedef struct {
                 [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1) trimmingVariables:true];
                 removedNode = true;
             } else {
-                [childNode setRecalcRequired:true];
+                if ([childNode isRelaxed]) {
+                    [childNode setRecalcRequired:true];
+                }
             }
             if ([node isNonVitalAndChildless]) {
                 //[self DEBUGTestLayerVariableCountCorrectness];
@@ -3147,7 +3151,9 @@ typedef struct {
     for (int layer = startingLayer+1; layer < _numVariables; layer++) {
         //[self buildNewLayerUnder:layer];
         //if (layer_size[layer]._val < _relaxation_size) {
+        if (_relaxed) {
             [self splitNodesOnLayer:layer];
+        }
         //}
         //[self DEBUGTestParentChildParity];
         //[self DEBUGTestLayerVariableCountCorrectness];
@@ -3286,7 +3292,8 @@ typedef struct {
         }
     }
     
-    for (int layer_index = layer; layer_index < _numVariables; layer_index++) {
+    //for (int layer_index = layer; layer_index < _numVariables; layer_index++) {
+    int layer_index = layer;
         ORInt variableIndex = [self variableIndexForLayer:layer_index];
         ORTRIdArrayI* layerArray = layers[layer_index];
         for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
@@ -3360,7 +3367,7 @@ typedef struct {
                 [nodeHashes release];
             }
         }
-    }
+    //}
     
     //[self DEBUGTestParentChildParity];
     [nodeHashes release];
