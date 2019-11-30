@@ -98,7 +98,7 @@
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize;
 -(id<ORIntVarArray>) vars;
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
--(void)addStateSet:(ORInt)lookup withDefaultValue:(NSSet*)value;
+-(void)addStateSet:(ORInt)lookup withDefaultValue:(NSSet<id>*)value;
 @end
 @interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
 -(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x;

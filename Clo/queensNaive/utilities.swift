@@ -402,7 +402,7 @@ extension ORMDDSpecs {
             self.addStateBool(ORInt(k), withDefaultValue: v)
         }
     }
-    func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void where Key : BinaryInteger,Value : NSSet {
+    func state<Key>(_ d : Dictionary<Key,Set<AnyHashable>?>) -> Void where Key : BinaryInteger {
         for (k,v) in d {
             self.addStateSet(ORInt(k), withDefaultValue: v)
         }
