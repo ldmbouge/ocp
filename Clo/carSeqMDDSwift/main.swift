@@ -125,8 +125,8 @@ autoreleasepool {
     let relaxationSize = Int32(CommandLine.arguments[2])
     let carI = readData(filePath: fileName)!
     */
-    let relaxationSize = Int32(1)
-    let carI = readData(filePath: "/Users/rebeccagentzel/Downloads/carseq_small")!
+    let relaxationSize = Int32(32)
+    let carI = readData(filePath: "/Users/ldm/Desktop/datao")!
     let options = carI.options()
     let cars =  carI.cars(),
         CR = range(m, low: 0,up: cars.count - 1),

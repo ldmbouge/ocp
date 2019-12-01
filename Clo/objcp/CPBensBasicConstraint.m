@@ -3043,6 +3043,9 @@ typedef struct {
     int variableIndex = [self variableIndexForLayer:layer];
     if (!bound((CPIntVar*)_x[variableIndex])) {
         [_x[variableIndex] whenChangeDo:^() {
+            if (![_x[variableIndex] bound]) {
+                NSLog(@"Not bound ???? ");
+            }
             bool layerChanged = false;
             for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
                 if (![_x[variableIndex] member:domain_val] && layer_variable_count[layer][domain_val]._val) {

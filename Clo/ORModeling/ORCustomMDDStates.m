@@ -270,6 +270,11 @@ static int StateSize;
     _differentialFunctions = [parentNodeState differentialFunctions];
     return self;
 }
+-(void)dealloc
+{
+    free(_state);
+    [super dealloc];
+}
 
 +(void) setAsOnlyMDDWithClassState:(MDDStateSpecification*)classState
 {
@@ -1260,6 +1265,11 @@ static id<ORIntVarArray> _variables;
     _states = [[NSMutableArray alloc] init];
     _stateVars = [[NSMutableArray alloc] init];
     return self;
+}
+-(void)dealloc
+{
+    [_states release];
+    [super dealloc];
 }
 -(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail{
     _variableIndex = variableIndex;
