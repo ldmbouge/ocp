@@ -1302,19 +1302,19 @@ static id<ORIntVarArray> _variables;
 -(id) initState:(JointState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
     self = [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
     _states = [[NSMutableArray alloc] init];
-    _stateVars = [parentNodeState stateVars];
-    _vars = [parentNodeState vars];
-    _statesForVariables = [parentNodeState statesForVariables];
-    NSMutableArray* parentStates = [parentNodeState states];
+    _stateVars = parentNodeState->_stateVars; //[parentNodeState stateVars];
+    _vars = parentNodeState->_vars;//[parentNodeState vars];
+    _statesForVariables = parentNodeState->_statesForVariables;//[parentNodeState statesForVariables];
+    NSMutableArray* parentStates = parentNodeState->_states;//[parentNodeState states];
     NSMutableSet* statesForVariable = _statesForVariables[[parentNodeState variableIndex]];
     for (int stateIndex = 0; stateIndex < [parentStates count]; stateIndex++) {
-        CustomState* stateClass = [parentStates objectAtIndex:stateIndex];
+        CustomState* stateClass = parentStates[stateIndex];
         CustomState* state;
         //if ([(id<ORIdArray>)(_stateVars[stateIndex]) contains:[_vars at: [parentNodeState variableIndex]]]) {
         if ([statesForVariable containsObject:[NSNumber numberWithInt:stateIndex]]) {
-            state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] assigningVariable:variableIndex withValue:edgeValue];
+            state = [[[stateClass class] alloc] initState:stateClass assigningVariable:variableIndex withValue:edgeValue];
         } else {
-            state = [[[stateClass class] alloc] initState:[parentStates objectAtIndex:stateIndex] variableIndex:variableIndex];
+            state = [[[stateClass class] alloc] initState:stateClass variableIndex:variableIndex];
         }
         [_states addObject: state];
     }
@@ -1338,25 +1338,12 @@ static id<ORIntVarArray> _variables;
 +(void) setVariables:(id<ORIntVarArray>)variables { _variables = variables; }
 -(void) setVariables:(id<ORIntVarArray>)variables {
     _vars = variables;
-    /*ORUInt low = INT_MAX;
-    ORUInt up = INT_MIN;
-    for (id<ORIntVar> x in _vars) {
-        ORUInt xId = [x getId];
-        if (low > xId) {
-            low = xId;
-        }
-        if (up < xId) {
-            up = xId;
-        }
-    }
-    _statesForVariables = malloc((up - low + 1) * sizeof(NSMutableSet*));
-    */
     _statesForVariables = malloc([_vars count] * sizeof(NSMutableSet*));
      _statesForVariables -= [_vars low];
     for (int varIndex = [_vars low]; varIndex <= [_vars up]; varIndex++) {
         NSMutableSet* stateSet = [[NSMutableSet alloc] init];
         for (int stateVarsIndex = 0; stateVarsIndex < [_stateVars count]; stateVarsIndex++) {
-            if ([[_stateVars objectAtIndex:stateVarsIndex] contains:[_vars objectAtIndexedSubscript:varIndex]]) {
+            if ([_stateVars[stateVarsIndex] contains:_vars[varIndex]]) {
                 [stateSet addObject:[NSNumber numberWithInt:stateVarsIndex]];
             }
         }
@@ -1450,43 +1437,41 @@ static id<ORIntVarArray> _variables;
         }
     }
     return true;
-    
-    /*
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        if ([(id<ORIdArray>)_stateVars[stateIndex] contains:[_vars at: variable]]) {
-            if (![[_states objectAtIndex:stateIndex] canChooseValue:value forVariable:variable]) {
-                return false;
-            }
-        }
-    }
-    return true;*/
 }
 
 -(int) stateDifferential:(JointState*)other {
     int differential = 0;
-    NSMutableArray* other_states = [other states];
+    NSMutableArray* other_states = other->_states;
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        differential += [[_states objectAtIndex:stateIndex] stateDifferential:[other_states objectAtIndex:stateIndex]];
+        differential += [_states[stateIndex] stateDifferential:other_states[stateIndex]];
     }
     return differential;
 }
 -(bool) equivalentTo:(JointState*)other {
-    NSMutableArray* other_states = [other states];
+    NSMutableArray* other_states = other->_states;
     for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        if (![[_states objectAtIndex:stateIndex] equivalentTo:[other_states objectAtIndex:stateIndex]]) {
+        if (![_states[stateIndex] equivalentTo:other_states[stateIndex]]) {
             return false;
         }
     }
     return true;
 }
 
+NSUInteger ipow(NSUInteger base,NSUInteger p) {
+    if (p==0)
+        return 1;
+    else {
+        NSUInteger r = ipow(base,p>>1);
+        return r * r * (p & 1 ? base : 1);
+    }
+}
+
 -(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables {
     NSUInteger hashValue = 0;
     int numStateProperties = 0;
-    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
-        id state = [_states objectAtIndex:stateIndex];
-        hashValue = hashValue + pow(numVariables,numStateProperties) * [state hashWithWidth:mddWidth numVariables:numVariables];
-        numStateProperties += [state stateSize];
+    for(id state in _states) {
+        hashValue = hashValue + ipow(numVariables,numStateProperties) * [state hashWithWidth:mddWidth numVariables:numVariables];
+        numStateProperties += 1;
     }
     return (hashValue % (mddWidth * 2));
 }
