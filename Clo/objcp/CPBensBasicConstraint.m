@@ -3125,14 +3125,14 @@ typedef struct {
             
             [childNode removeParentOnce:node];
             
-            if (_objective != NULL) {
+            /*if (_objective != NULL) {
                 if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
                     [childNode removeLongestPathParent: node];
                 }
                 if ([childNode hasShortestPathParent: node] && value == 0) {
                     [childNode removeShortestPathParent: node];
                 }
-            }
+            }*/
                 
             if ([childNode isNonVitalAndParentless]) {
                 [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1) trimmingVariables:true];
@@ -3148,11 +3148,11 @@ typedef struct {
                 //[self DEBUGTestLayerVariableCountCorrectness];
                 removedNode = true;
                 node_index--;
-            } else {
+            }/* else {
                 if (_objective != NULL) {
                     [node updateReversePaths];
                 }
-            }
+            }*/
         }
     }
 }
@@ -3203,6 +3203,8 @@ typedef struct {
     for(ORInt layer = startingLayer; layer < _numVariables; layer++) {
         [self trimValuesFromLayer:layer];
     }
+    //[self DEBUGTestParentChildParity];
+    //[self DEBUGTestLayerVariableCountCorrectness];
     return;
 }
 
@@ -3248,6 +3250,7 @@ typedef struct {
                                 id bucketObjectState = [bucket[bucket_index] getState];
                                 if ([bucketObjectState equivalentTo:state]) {
                                     newNode = bucket[bucket_index];
+                                    [state release];
                                     break;
                                 }
                             }
@@ -3413,7 +3416,7 @@ typedef struct {
     //}
     
     //[self DEBUGTestParentChildParity];
-    free(nodeHashes);
+    [nodeHashes release];
 }
 -(void) cleanLayer:(int)layer
 {
