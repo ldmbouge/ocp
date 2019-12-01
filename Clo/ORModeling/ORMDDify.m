@@ -437,15 +437,15 @@
         int stateSize = [mddSpec stateSize];
         DDClosure* transitionFunctionClosures = malloc(stateSize * sizeof(DDClosure));
         DDMergeClosure* differentialFunctionClosures = malloc(stateSize * sizeof(DDMergeClosure));
-        for (int transitionFunctionIndex = 0; transitionFunctionIndex < stateSize; transitionFunctionIndex++) {
-            transitionFunctionClosures[transitionFunctionIndex] = [closureVisitor computeClosure: transitionFunctions[transitionFunctionIndex]];
-            differentialFunctionClosures[transitionFunctionIndex] = [mergeClosureVisitor computeClosure: differentialFunctions[transitionFunctionIndex]];
+        for (int tfi = 0; tfi < stateSize; tfi++) {
+            transitionFunctionClosures[tfi] = [closureVisitor computeClosure: transitionFunctions[tfi]];
+            differentialFunctionClosures[tfi] = [mergeClosureVisitor computeClosure: differentialFunctions[tfi]];
         }
         
         if (_relaxed) {
             DDMergeClosure* relaxationFunctionClosures = malloc(stateSize * sizeof(DDMergeClosure));
-            for (int relaxationFunctionIndex = 0; relaxationFunctionIndex < stateSize; relaxationFunctionIndex++) {
-                relaxationFunctionClosures[relaxationFunctionIndex] = [mergeClosureVisitor computeClosure: relaxationFunctions[relaxationFunctionIndex]];
+            for (int rfi = 0; rfi < stateSize; rfi++) {
+                relaxationFunctionClosures[rfi] = [mergeClosureVisitor computeClosure: relaxationFunctions[rfi]];
             }
             MDDStateSpecification* classState = [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize];
             
