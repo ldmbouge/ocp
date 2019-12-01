@@ -15,6 +15,7 @@ import ORProgram
 infix operator ∨ : LogicalDisjunctionPrecedence
 infix operator ∋ : MultiplicationPrecedence
 infix operator ∈ : MultiplicationPrecedence
+infix operator ∉ : MultiplicationPrecedence
 
 public func ||(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.lor(rhs)
@@ -115,6 +116,10 @@ public func !=(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
 }
 public func !=(lhs : ORExpr,rhs : Int) -> ORRelation {
    return lhs.neq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+
+public func ∉(lhs : ORExpr,rhs : ORExpr) -> ORExpr {
+    return ORFactory.exprNegate(rhs.contains(lhs, track: lhs.tracker()), track: lhs.tracker())
 }
 
 //infix operator ≠ { associativity left precedence 130 }
@@ -551,6 +556,25 @@ public func allDiffMDD(_ vars : ORIntVarArray) -> ORMDDSpecs {
     mdd.similarity(toDict(udom) { i in (key :i,abs(left(m,i) - right(m,i))) })
     return mdd
 }
+/*public func allDiffMDDWithSets(_ vars : ORIntVarArray) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        all = 0, some = 1, numAssigned = 2,
+        udom = arrayDomains(vars),
+        minDom = Int(udom.low()),
+        mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: Int32(udom.size()))
+    
+    mdd.state([all : Set<Int>(), some : Set<Int>(), ])
+    mdd.arc((SVA(m) ∉ Prop(m,all)) && (count(Prop(m,sum) > numAssigned) || (SVA(m) ∉ Prop(m,sum))))
+    mdd.transition([all : Prop(m,all) ∪ SVA(m),
+                    some : Prop(m,some) ∪ SVA(m),
+                    numAssigned : Prop(m,numAssigned) + 1])
+    mdd.relaxation([all : left(m,all) ∩ right(m,all),
+                   some : left(m,some) ∪ right(m,some),
+            numAssigned : left(m,numAssigned)])
+    mdd.similarity([all : count(left(m,all) - right(m,all)) + count(right(m,all) - left(m,all)),
+                   some : count(left(m,some) - right(m,some)) + count(right(m,some) - left(m,some))])
+    return mdd
+}*/
 
 public func knapsackMDD(_ vars : ORIntVarArray,weights : ORIntArray,capacity : ORInt) -> ORMDDSpecs {
     let m = vars.tracker()

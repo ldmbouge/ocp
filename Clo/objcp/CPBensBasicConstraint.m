@@ -1387,13 +1387,13 @@
     }
     [self addPropagationsAndTrimValues];
     
-    if (_objective != nil) {
+    /*if (_objective != nil) {
         for (int layer = (int)_numVariables; layer >= 0; layer--) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
                 [[layers[layer] at: node_index] updateReversePaths];
             }
         }
-    }
+    }*/
     //[self printGraph];
     //[self DEBUGTestParentChildParity];
     //[self DEBUGTestLayerVariableCountCorrectness];
@@ -1518,7 +1518,7 @@
         Node* parentNode = [layers[layer] at: parentNodeIndex];
         [self createChildrenForNode:parentNode nodeHashes:nodeHashes];
     }
-    [nodeHashes release];
+    free(nodeHashes);
 }
 -(void) createChildrenForNode:(Node*)parentNode nodeHashes:(NSMutableDictionary*)nodeHashes
 {
@@ -3043,15 +3043,29 @@ typedef struct {
     int variableIndex = [self variableIndexForLayer:layer];
     if (!bound((CPIntVar*)_x[variableIndex])) {
         [_x[variableIndex] whenChangeDo:^() {
+            bool layerChanged = false;
             for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
                 if (![_x[variableIndex] member:domain_val] && layer_variable_count[layer][domain_val]._val) {
                     [self trimValueFromLayer: layer :domain_val ];
+                    layerChanged = true;
                 }
+            }
+            
+            if (layerChanged) {
+                for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
+                    int variableForTrimming = [self variableIndexForLayer:layer_index];
+                    for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+                        if (![_x[variableForTrimming] member:domain_val] && layer_variable_count[layer_index][domain_val]._val) {
+                            [self trimValueFromLayer: layer_index :domain_val ];
+                        }
+                    }
+                }
+                [self rebuildFromLayer:0];
             }
             //if (_first_relaxed_layer._val <= _numVariables) {
                 //Not sure, but may be good to re-add this if-statement.  Why are we only starting from layer_index... maybe we should start at first_relaxed?  Or from the highest layer that was affected by this (see:  how high removeParentlessNode went)
                 //if (layer_size[_first_relaxed_layer._val]._val < _relaxation_size) {
-                    [self rebuildFromLayer:layer];
+                //    [self rebuildFromLayer:layer];
                 //}
             //}
             /*if (_first_relaxed_layer._val > layer_index && layer_index != 0) {
@@ -3111,14 +3125,14 @@ typedef struct {
             
             [childNode removeParentOnce:node];
             
-            if (_objective != NULL) {
+            /*if (_objective != NULL) {
                 if ([childNode hasLongestPathParent: node] && value == 1) { //I think the 1/0 here is hardcoded for one objective.  Need to fix.
                     [childNode removeLongestPathParent: node];
                 }
                 if ([childNode hasShortestPathParent: node] && value == 0) {
                     [childNode removeShortestPathParent: node];
                 }
-            }
+            }*/
                 
             if ([childNode isNonVitalAndParentless]) {
                 [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1) trimmingVariables:true];
@@ -3134,11 +3148,11 @@ typedef struct {
                 //[self DEBUGTestLayerVariableCountCorrectness];
                 removedNode = true;
                 node_index--;
-            } else {
+            }/* else {
                 if (_objective != NULL) {
                     [node updateReversePaths];
                 }
-            }
+            }*/
         }
     }
 }
@@ -3189,6 +3203,8 @@ typedef struct {
     for(ORInt layer = startingLayer; layer < _numVariables; layer++) {
         [self trimValuesFromLayer:layer];
     }
+    //[self DEBUGTestParentChildParity];
+    //[self DEBUGTestLayerVariableCountCorrectness];
     return;
 }
 
@@ -3234,26 +3250,29 @@ typedef struct {
                                 id bucketObjectState = [bucket[bucket_index] getState];
                                 if ([bucketObjectState equivalentTo:state]) {
                                     newNode = bucket[bucket_index];
+                                    [state release];
                                     break;
                                 }
                             }
                         }
                         if (newNode == NULL) {
-                            if (_objective != nil) {
+                            /*if (_objective != nil) {
                                 newNode = [[Node alloc] initNode: _trail
                                                         minChildIndex:min_domain_val
                                                         maxChildIndex:max_domain_val
                                                                 value:[self variableIndexForLayer:layer]
                                                                 state:state
                                                       objectiveValues:[self getObjectiveValuesForLayer:layer]];
-                            }
-                            else {
+                            }*/
+                            //else {
                                 newNode = [[Node alloc] initNode: _trail
                                                         minChildIndex:min_domain_val
                                                         maxChildIndex:max_domain_val
                                                                 value:[self variableIndexForLayer:layer]
                                                                      state:state];
-                            }
+                            [_trail trailRelease:newNode];
+                                
+                            //}
                             if (parentIsRelaxed) {
                                 [newNode setRelaxed:true];
                             }
@@ -3354,6 +3373,7 @@ typedef struct {
                                 } else {
                                     id tempState = [self generateStateFromParent:parent withValue:child_index];
                                     [newState mergeStateWith:tempState];
+                                    [tempState release];
                                 }
                             }
                         }
@@ -3361,6 +3381,7 @@ typedef struct {
                 }
                 if (![[node getState] equivalentTo:newState]) {
                     [node setState:newState];
+                    [_trail trailRelease:newState];
                     [node setRecalcRequired:false];
                     Node* *children = [node children];
                     for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
@@ -3381,10 +3402,12 @@ typedef struct {
                             }
                         }
                     }
-
+/*
                     if ([node isNonVitalAndChildless]) {
                         //Can remove node.  Not sure if this will happen?
-                    }
+                    }*/
+                } else {
+                    free(newState);
                 }
                 
                 [nodeHashes release];
@@ -3777,7 +3800,7 @@ typedef struct {
 -(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(CustomState*)classState
 {
     self = [super initCPMDDRelaxation:engine over:x relaxed:relaxed relaxationSize:relaxationSize classState:classState];
-    //_priority = HIGHEST_PRIO;
+    _priority = LOWEST_PRIO;
     return self;
 }
 -(NSString*)description
