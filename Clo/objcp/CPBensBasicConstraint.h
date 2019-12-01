@@ -22,7 +22,7 @@
 @protocol CPIntVarArray;
 
 @interface Node : NSObject {
-@private
+@public
     //TRInt* _childEdgeWeights;
     TRId* _children;
     TRInt _numChildren;
@@ -92,6 +92,7 @@
 -(void) setRelaxed:(bool)relaxed;
 -(bool) isRelaxed;
 @end
+static inline id getState(Node* n) { return n->_state;}
 
 @interface GeneralState : NSObject {
 @private

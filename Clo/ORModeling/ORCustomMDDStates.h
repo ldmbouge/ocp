@@ -198,7 +198,7 @@
 -(NSMutableSet**) statesForVariables;
 -(id<ORIntVarArray>) vars;
 +(CustomState*) firstState;
--(NSMutableArray*) states;
+//-(NSMutableArray*) states;
 +(void) setVariables:(id<ORIntVarArray>)variables;
 -(void) setVariables:(id<ORIntVarArray>)variables;
 @end

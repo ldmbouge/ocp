@@ -511,7 +511,7 @@
     return [_state canChooseValue:value forVariable:_value];
 }
 -(void) mergeStateWith:(Node*)other {
-    [_state mergeStateWith: [other getState]];
+    [_state mergeStateWith: getState(other)];
 }
 -(void) setRelaxed:(bool)relaxed {
     assignTRInt(&_isRelaxed, relaxed, _trail);
@@ -822,7 +822,7 @@
     int parentValue = [parentNode value];
     
     Node* childNode;
-    id parentState = [parentNode getState];
+    id parentState = getState(parentNode);
     
     if (layer != _numVariables-1) {
         int variableIndex = [self variableIndexForLayer:layer+1];
@@ -834,7 +834,7 @@
     }
     
     bool first = true;
-    id childState = [childNode getState];
+    id childState = getState(childNode);
     for (int edgeValue = [parentNode minChildIndex]; edgeValue <= [parentNode maxChildIndex]; edgeValue++) {
         if ([_x[parentValue] member: edgeValue]) {
             if (first) {
@@ -862,9 +862,9 @@
 -(void) setBottomUpInfoWidthOneFromLayer:(int)layer
 {
     Node* childNode = [layers[layer] at: 0];
-    id childState = [childNode getState];
+    id childState = getState(childNode);
     Node* parentNode = [layers[layer-1] at: 0];
-    id parentState = [parentNode getState];
+    id parentState = getState(parentNode);
     int parentValue = [parentNode value];
     
     bool first = true;
@@ -967,13 +967,13 @@
     int varIndex = [self variableIndexForLayer:layerIndex];
     Node* *children = [node children];
     bool first = true;
-    id state = [node getState];
+    id state = getState(node);
 //    id oldStateInfo = [[state bottomUpInfo] copy];
     id oldStateInfo = [state bottomUpInfo]; // that is a fresh copy anway. No need to copy it!
     for (int childIndex = [node minChildIndex]; childIndex <= [node maxChildIndex]; childIndex++) {
         if (children[childIndex] != NULL) {
             Node* child = children[childIndex];
-            id childState = [child getState];
+            id childState = getState(child);
             if (first) {
                 [state setBottomUpInfoFor:childState plusEdge:childIndex];
                 first = false;
@@ -1420,7 +1420,7 @@
         if (!_variableUsed[variable_index]) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
                 Node* node = [layers[layer] at: node_index];
-                id state = [node getState];
+                id state = getState(node);
     
                 //variableCount[variable_index] += [state numPathsForVariable:variable_index];
                 variableCount[variable_index] += [state numPathsWithNextVariable:variable_index];
@@ -1483,7 +1483,7 @@
     id* node_states = malloc(size_of_layer*sizeof(id));
     ORTRIdArrayI* layer_nodes = layers[layer];
     for (int node_index = 0; node_index < size_of_layer; node_index++) {
-        node_states[node_index] = [[layer_nodes at: node_index] getState];
+        node_states[node_index] = getState([layer_nodes at: node_index]);
     }
     
     for (int first_node_index = 0; first_node_index < size_of_layer-1; first_node_index++) {
@@ -1638,9 +1638,9 @@
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
-    id parentState = [parentNode getState];
-    int parentLayer = [self layerIndexForVariable: [parentState variableIndex]];
-    int variableIndex = [self variableIndexForLayer:parentLayer+1];
+    id parentState = getState(parentNode);
+    int parentLayer = _variable_to_layer[[parentState variableIndex]];//   [self layerIndexForVariable: [parentState variableIndex]];
+    int variableIndex = _layer_to_variable[parentLayer+1]; // [self variableIndexForLayer:parentLayer+1];
     
     return [[_stateClass alloc] initState:parentState assigningVariable:variableIndex withValue:value];
 }
@@ -2217,7 +2217,7 @@ typedef struct {
                 for (int parentAValue = [parentA minChildIndex]; parentAValue <= [parentA maxChildIndex]; parentAValue++) {
                     if (parentA == parentB) {
                         for (int parentBValue = parentAValue+1; parentBValue <= [parentB maxChildIndex]; parentBValue++) {
-                            if (![[parentA getState] equivalentWithEdge:parentAValue to:[parentB getState] withEdge:parentBValue]) { //Ends up calculating the same addEdge thing to get equivalence many times.  Could save time by just doing each once.
+                            if (![getState(parentA) equivalentWithEdge:parentAValue to:getState(parentB) withEdge:parentBValue]) { //Ends up calculating the same addEdge thing to get equivalence many times.  Could save time by just doing each once.
                                 CandidateSplit split;
                                 split.parentA = parentA;
                                 split.parentB = parentB;
@@ -2229,7 +2229,7 @@ typedef struct {
                         }
                     } else {
                         for (int parentBValue = [parentB minChildIndex]; parentBValue <= [parentB maxChildIndex]; parentBValue++) {
-                            if (![[parentA getState] equivalentWithEdge:parentAValue to:[parentB getState] withEdge:parentBValue]) { //Ends up calculating the same addEdge thing to get equivalence many times.  Could save time by just doing each once.
+                            if (![getState(parentA) equivalentWithEdge:parentAValue to:getState(parentB) withEdge:parentBValue]) { //Ends up calculating the same addEdge thing to get equivalence many times.  Could save time by just doing each once.
                                 CandidateSplit split;
                                 split.parentA = parentA;
                                 split.parentB = parentB;
@@ -2267,7 +2267,7 @@ typedef struct {
     
     for (int parentIndex = 0; parentIndex < layer_size[parentLayerIndex]._val; parentIndex++) {
         parent = [parentLayer at: parentIndex];
-        parentState = [parent getState];
+        parentState = getState(parent);
         children = [parent children];
         
         for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
@@ -2311,7 +2311,7 @@ typedef struct {
     id parentState;
     for (int nodeIndex = 0; nodeIndex < layer_size[layerIndex]._val; nodeIndex++) {
         parent = [layer at: nodeIndex];
-        parentState = [parent getState];
+        parentState = getState(parent);
         children = [parent children];
         for (int childIndex = [parent minChildIndex]; childIndex <= [parent maxChildIndex]; childIndex++) {
             child = children[childIndex];
@@ -3065,6 +3065,7 @@ typedef struct {
                 }
                 [self rebuildFromLayer:0];
             }
+            //_todo = CPChecked;
             //if (_first_relaxed_layer._val <= _numVariables) {
                 //Not sure, but may be good to re-add this if-statement.  Why are we only starting from layer_index... maybe we should start at first_relaxed?  Or from the highest layer that was affected by this (see:  how high removeParentlessNode went)
                 //if (layer_size[_first_relaxed_layer._val]._val < _relaxation_size) {
@@ -3188,11 +3189,13 @@ typedef struct {
         //[self reduceLayer: startingLayer inPlace:true];
     }
     //[self cleanLayer: startingLayer inPlace:true];
+    void(*mth)(id,SEL,int) = [self methodForSelector:@selector(splitNodesOnLayer:)];
     for (int layer = startingLayer+1; layer < _numVariables; layer++) {
         //[self buildNewLayerUnder:layer];
         //if (layer_size[layer]._val < _relaxation_size) {
         if (_relaxed) {
-            [self splitNodesOnLayer:layer];
+            mth(self,@selector(splitNodesOnLayer:),layer);
+            //[self splitNodesOnLayer:layer];
         }
         //}
         //[self DEBUGTestParentChildParity];
@@ -3349,7 +3352,7 @@ typedef struct {
                 ORTRIdArrayI* parents = [node parents];
                 for (int parent_index = 0; parent_index < [node numParents]; parent_index++) {
                     Node* parent = [parents at:parent_index];
-                    id parentState = [parent getState];
+                    id parentState = getState(parent);
                     bool alreadyAddedParentEdges = false;
                     NSUInteger hashValue = [parentState hashWithWidth:_hashTableSize numVariables:_numVariables];
                     NSMutableArray* bucket = [nodeHashes objectForKey:[NSNumber numberWithUnsignedLong:hashValue]];
@@ -3382,7 +3385,7 @@ typedef struct {
                         }
                     }
                 }
-                if (![[node getState] equivalentTo:newState]) {
+                if (![getState(node) equivalentTo:newState]) {
                     [node setState:newState];
                     [_trail trailRelease:newState];
                     [node setRecalcRequired:false];
