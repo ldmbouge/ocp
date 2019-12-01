@@ -3043,15 +3043,29 @@ typedef struct {
     int variableIndex = [self variableIndexForLayer:layer];
     if (!bound((CPIntVar*)_x[variableIndex])) {
         [_x[variableIndex] whenChangeDo:^() {
+            bool layerChanged = false;
             for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
                 if (![_x[variableIndex] member:domain_val] && layer_variable_count[layer][domain_val]._val) {
                     [self trimValueFromLayer: layer :domain_val ];
+                    layerChanged = true;
                 }
+            }
+            
+            if (layerChanged) {
+                for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
+                    int variableForTrimming = [self variableIndexForLayer:layer_index];
+                    for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+                        if (![_x[variableForTrimming] member:domain_val] && layer_variable_count[layer_index][domain_val]._val) {
+                            [self trimValueFromLayer: layer_index :domain_val ];
+                        }
+                    }
+                }
+                [self rebuildFromLayer:0];
             }
             //if (_first_relaxed_layer._val <= _numVariables) {
                 //Not sure, but may be good to re-add this if-statement.  Why are we only starting from layer_index... maybe we should start at first_relaxed?  Or from the highest layer that was affected by this (see:  how high removeParentlessNode went)
                 //if (layer_size[_first_relaxed_layer._val]._val < _relaxation_size) {
-                    [self rebuildFromLayer:layer];
+                //    [self rebuildFromLayer:layer];
                 //}
             //}
             /*if (_first_relaxed_layer._val > layer_index && layer_index != 0) {
