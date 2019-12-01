@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]) {
     [toadd addObject:[fp_x set:[[[fc sub:[[x mul:x] div:@(2.0f)]] plus:[[[[x mul:x] mul:x] mul:x] div:@(24.0f)]]
                                plus:[[[[[[x mul:x] mul:x] mul:x] mul:x] mul:x] div:@(720.0f)]]]];
     
-    [toadd addObject:[x2 setset:[x sub:[f_x div:fp_x]]]];
+    [toadd addObject:[x2 set:[x sub:[f_x div:fp_x]]]];
     
     [toadd addObject:[f_x2 set:[[[x2 sub:[[[x2 mul:x2] mul:x2] div:@(6.0f)]] plus:[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] div:@(120.0f)]]
                                plus:[[[[[[[x2 mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] mul:x2] div:@(5040.0f)]]]];
