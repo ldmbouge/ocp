@@ -15,6 +15,7 @@
 @interface ORFloatLinearizer : ORVisitor<NSObject>
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model;
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x;
+-(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model setTo:(id<ORFloatVar>)x;
 @end
 
 @interface ORFloatSubst   : ORVisitor<NSObject> {

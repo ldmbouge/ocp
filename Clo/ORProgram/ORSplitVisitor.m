@@ -255,13 +255,15 @@
 @implementation OR5WaySplitVisitor{
    CPCoreSolver*       _program;
    id<ORVar>           _variable;
+   NSMutableArray*     _path;
 }
 
--(OR5WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle
+-(OR5WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle withPath:(NSMutableArray *)path
 {
    self = [super initWithMiddle:middle];
    _program = p;
    _variable = v;
+   _path  = path;
    return self;
 }
 
@@ -312,11 +314,19 @@
       }
    }
    float_interval* ip = interval;
-   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+   [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
       ORInt c = [[_program explorer] nbChoices];
+      [_path addObject:[NSString stringWithFormat:@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup]];
       LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
+   } onFailure:^(ORInt index) {
+      [_path removeLastObject];
    }];
+//   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+//      ORInt c = [[_program explorer] nbChoices];
+//      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+//      [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
+//   }];
       
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
@@ -351,9 +361,17 @@
       }
    }
    double_interval* ip = interval;
-   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
-      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
-      [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
+//   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+//      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+//      [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
+//   }];
+   
+   [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
+      [_path addObject:[NSString stringWithFormat:@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup]];
+       LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+           [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
+   } onFailure:^(ORInt index) {
+      [_path removeLastObject];
    }];
 }
 @end

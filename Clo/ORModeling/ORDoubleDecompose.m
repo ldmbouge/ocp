@@ -21,12 +21,14 @@
    id<ORDoubleLinear>   _terms;
    id<ORAddToModel>    _model;
    id<ORDoubleVar>       _eqto;
+   ORBool                _isSet;
 }
 -(id) init: (id<ORDoubleLinear>) t model: (id<ORAddToModel>) model
 {
    self = [super init];
    _terms = t;
    _model = model;
+   _isSet = NO;
    return self;
 }
 -(id) init: (id<ORDoubleLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORDoubleVar>)x
@@ -35,6 +37,16 @@
    _terms = t;
    _model = model;
    _eqto  = x;
+   _isSet = NO;
+   return self;
+}
+-(id) init: (id<ORDoubleLinear>) t model: (id<ORAddToModel>) model setTo:(id<ORDoubleVar>)x
+{
+   self = [super init];
+   _terms = t;
+   _model = model;
+   _eqto  = x;
+   _isSet = YES;
    return self;
 }
 
@@ -45,6 +57,7 @@
       [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
       [_terms addTerm:_eqto by:1];
       _eqto = nil;
+      _isSet = NO;
    } else
       [_terms addTerm:e by:1];
 }
@@ -62,9 +75,13 @@
 {
    [_model incrOccurences:e];
    if (_eqto) {
-      [_model addConstraint:[ORFactory doubleEqual:_model var:e to:_eqto]];
+      if(_isSet)
+         [_model addConstraint:[ORFactory doubleAssign:_model var:_eqto to:e]];
+      else
+         [_model addConstraint:[ORFactory doubleEqual:_model var:e to:_eqto]];
       [_terms addTerm:_eqto by:1];
       _eqto = nil;
+      _isSet = NO;
    } else
       [_terms addTerm:e by:1];
 }

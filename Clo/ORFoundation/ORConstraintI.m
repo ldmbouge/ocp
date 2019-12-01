@@ -1387,7 +1387,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ = %@)",[self class],self,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <- %@)",[self class],self,_x,_y];
    return buf;
 }
 -(void)visit:(ORVisitor*)v

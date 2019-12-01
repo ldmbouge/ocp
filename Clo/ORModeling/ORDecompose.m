@@ -1519,6 +1519,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    [v release];
    return rv;
 }
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model setTo:(id<ORFloatVar>)x
+{
+   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model setTo:x];
+   [e visit:v];
+   [v release];
+   return rv;
+}
 +(id<ORFloatLinear>)addToFloatLinear:(id<ORFloatLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
 {
    ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: terms model: model];
@@ -1585,6 +1593,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    ORDoubleLinear* rv = [[ORDoubleLinear alloc] initORDoubleLinear:4];
    ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: rv model: model equalTo:x];
+   [e visit:v];
+   [v release];
+   return rv;
+}
++(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model setTo:(id<ORDoubleVar>)x
+{
+   ORDoubleLinear* rv = [[ORDoubleLinear alloc] initORDoubleLinear:4];
+   ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: rv model: model setTo:x];
    [e visit:v];
    [v release];
    return rv;
@@ -2377,7 +2393,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          id<ORExpr> other = (lv)?right:left;
          id<ORFloatVar> theVar  = [ORNormalizer floatVarIn:_model expr:var];
          [_model addEqualityRelation:theVar with:other];
-         ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:right model:_model equalTo:theVar];
+         ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:right model:_model setTo:theVar];
          [lin release];
       } else {
          assert(NO);
@@ -2807,7 +2823,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          id<ORExpr> other = (lv)?right:left;
          id<ORDoubleVar> theVar  = [ORNormalizer doubleVarIn:_model expr:var];
          [_model addEqualityRelation:theVar with:other];
-         ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:right model:_model equalTo:theVar];
+         ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:right model:_model setTo:theVar];
          [lin release];
       } else {
          assert(NO);

@@ -21,12 +21,14 @@
     id<ORFloatLinear>   _terms;
     id<ORAddToModel>    _model;
     id<ORFloatVar>       _eqto;
+   ORBool               _isSet;
 }
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model
 {
     self = [super init];
     _terms = t;
     _model = model;
+   _isSet = NO;
     return self;
 }
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x
@@ -35,6 +37,16 @@
     _terms = t;
     _model = model;
     _eqto  = x;
+    _isSet = NO;
+    return self;
+}
+-(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model setTo:(id<ORFloatVar>)x
+{
+    self = [super init];
+    _terms = t;
+    _model = model;
+    _eqto  = x;
+    _isSet = YES;
     return self;
 }
 -(void) visitIntVar: (id<ORIntVar>) e
@@ -52,10 +64,14 @@
 {
    [_model incrOccurences:e];
     if (_eqto) {
+       if(_isSet)
+          [_model addConstraint:[ORFactory floatAssign:_model var:_eqto to:e]];
+       else
         [_model addConstraint:[ORFactory floatEqual:_model var:e to:_eqto]];
         [_terms addTerm:_eqto by:1];
         _eqto = nil;
-    } else
+        _isSet = NO;
+    }else
         [_terms addTerm:e by:1];
 }
 -(void) visitFloat: (id<ORFloatNumber>) e

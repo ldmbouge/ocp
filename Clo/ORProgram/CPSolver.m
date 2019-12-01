@@ -188,6 +188,7 @@
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
    NSMutableSet*                _allvars;
+   NSMutableArray*       _path;
    id<ORIntArray>        _lOccurences;
 }
 -(CPCoreSolver*) initCPCoreSolver
@@ -219,13 +220,16 @@
    _doOnExitArray    = [[NSMutableArray alloc] initWithCapacity: 1];
    _order            = [[NSMutableDictionary alloc] initWithCapacity: 4];
    _allvars          = [[NSMutableSet alloc] initWithCapacity: 1];
+   _path             = [[NSMutableArray alloc] initWithCapacity: 32];
    return self;
 }
 -(void) dealloc
 {
+   printf("PATH : %s\n",[[_path description] UTF8String]);
    NSLog(@"CPSolver dealloc'd %p",self);
    [_allvars release];
    [_order release];
+   [_path release];
    if(_absconstraints != nil) [_absconstraints release];
    [_hSet release];
    [_model release];
@@ -1630,6 +1634,7 @@
                goon = NO;
                return;
             }
+            [x disable:i.index];
          }
       } else{
          if(_unique){
@@ -2524,7 +2529,7 @@
 -(void) float5WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[x[i].getId];
-   id<CPVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i] middle:_middle];
+   id<CPVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i] middle:_middle withPath:_path];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }

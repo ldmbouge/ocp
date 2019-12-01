@@ -27,7 +27,7 @@
 @end
 
 @interface OR5WaySplitVisitor : CPVisitorI<CPVisitor>
--(OR5WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle;
+-(OR5WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle withPath:(NSMutableArray*) path;
 @end
 
 @interface OR6WaySplitVisitor : CPVisitorI<CPVisitor>

@@ -15,6 +15,7 @@
 @interface ORDoubleLinearizer : ORVisitor<NSObject>
 -(id) init: (id<ORDoubleLinear>) t model: (id<ORAddToModel>) model;
 -(id) init: (id<ORDoubleLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORDoubleVar>)x;
+-(id) init: (id<ORDoubleLinear>) t model: (id<ORAddToModel>) model setTo:(id<ORDoubleVar>)x;
 @end
 
 @interface ORDoubleSubst   : ORVisitor<NSObject> {
