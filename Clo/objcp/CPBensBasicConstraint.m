@@ -1387,13 +1387,13 @@
     }
     [self addPropagationsAndTrimValues];
     
-    if (_objective != nil) {
+    /*if (_objective != nil) {
         for (int layer = (int)_numVariables; layer >= 0; layer--) {
             for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
                 [[layers[layer] at: node_index] updateReversePaths];
             }
         }
-    }
+    }*/
     //[self printGraph];
     //[self DEBUGTestParentChildParity];
     //[self DEBUGTestLayerVariableCountCorrectness];
@@ -1518,7 +1518,7 @@
         Node* parentNode = [layers[layer] at: parentNodeIndex];
         [self createChildrenForNode:parentNode nodeHashes:nodeHashes];
     }
-    [nodeHashes release];
+    free(nodeHashes);
 }
 -(void) createChildrenForNode:(Node*)parentNode nodeHashes:(NSMutableDictionary*)nodeHashes
 {
@@ -3239,21 +3239,23 @@ typedef struct {
                             }
                         }
                         if (newNode == NULL) {
-                            if (_objective != nil) {
+                            /*if (_objective != nil) {
                                 newNode = [[Node alloc] initNode: _trail
                                                         minChildIndex:min_domain_val
                                                         maxChildIndex:max_domain_val
                                                                 value:[self variableIndexForLayer:layer]
                                                                 state:state
                                                       objectiveValues:[self getObjectiveValuesForLayer:layer]];
-                            }
-                            else {
+                            }*/
+                            //else {
                                 newNode = [[Node alloc] initNode: _trail
                                                         minChildIndex:min_domain_val
                                                         maxChildIndex:max_domain_val
                                                                 value:[self variableIndexForLayer:layer]
                                                                      state:state];
-                            }
+                            [_trail trailRelease:newNode];
+                                
+                            //}
                             if (parentIsRelaxed) {
                                 [newNode setRelaxed:true];
                             }
@@ -3354,6 +3356,7 @@ typedef struct {
                                 } else {
                                     id tempState = [self generateStateFromParent:parent withValue:child_index];
                                     [newState mergeStateWith:tempState];
+                                    [tempState release];
                                 }
                             }
                         }
@@ -3361,6 +3364,7 @@ typedef struct {
                 }
                 if (![[node getState] equivalentTo:newState]) {
                     [node setState:newState];
+                    [_trail trailRelease:newState];
                     [node setRecalcRequired:false];
                     Node* *children = [node children];
                     for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
@@ -3381,10 +3385,12 @@ typedef struct {
                             }
                         }
                     }
-
+/*
                     if ([node isNonVitalAndChildless]) {
                         //Can remove node.  Not sure if this will happen?
-                    }
+                    }*/
+                } else {
+                    free(newState);
                 }
                 
                 [nodeHashes release];
@@ -3393,7 +3399,7 @@ typedef struct {
     //}
     
     //[self DEBUGTestParentChildParity];
-    [nodeHashes release];
+    free(nodeHashes);
 }
 -(void) cleanLayer:(int)layer
 {
@@ -3777,7 +3783,7 @@ typedef struct {
 -(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(CustomState*)classState
 {
     self = [super initCPMDDRelaxation:engine over:x relaxed:relaxed relaxationSize:relaxationSize classState:classState];
-    //_priority = HIGHEST_PRIO;
+    _priority = LOWEST_PRIO;
     return self;
 }
 -(NSString*)description
