@@ -36,6 +36,9 @@
     bool _isSource;
     id<ORTrail> _trail;
     
+    ORTRIdArrayI* _uniqueParents;
+    ORTRIdArrayI* _parentCounts;
+    
     /*
     int* _objectiveValues;
     TRInt _longestPath;
@@ -272,6 +275,7 @@
     bool _relaxed;
     int _relaxation_size;
     TRInt _first_relaxed_layer;
+    int _firstChangedLayer, _lastChangedLayer;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass;
