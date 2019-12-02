@@ -30,6 +30,7 @@ extern int nbConstraint;
 extern int nbBoxDone;
 extern int RUN_IMPROVE_GUESS;
 extern bool newBox;
+extern bool initLimitCounter;
 
 extern void exitfunc(int sig);
 

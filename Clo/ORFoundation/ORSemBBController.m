@@ -219,9 +219,7 @@
 {
    NSCont* k = [NSCont takeContinuation];
    branchAndBoundTime = [NSDate date];
-   //NSLog(@"L: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    if ([k nbCalls] == 0) {
-      if(limitCounter._val < nbConstraint  && [[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualValue] rationalValue]]){
       [self makeAndRecordNode:k];
       NSCont* back = _k;
       _k = NULL;
@@ -230,12 +228,6 @@
       _cp = NULL;
       _k  = NULL;
       [back call];
-      }  else {
-         nbBoxDone++;
-         if([[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes])
-            [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
-         [k letgo];
-        }
    } else {
       [k letgo];
    }
@@ -244,17 +236,9 @@
 {
    NSCont* k = [NSCont takeContinuation];
    branchAndBoundTime = [NSDate date];
-   //NSLog(@"R: %d/%d -- %.3fs", limitCounter._val, nbConstraint, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
    if ([k nbCalls] == 0) {
-      if(limitCounter._val < nbConstraint && [[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualValue] rationalValue]]){
          [self makeAndRecordNode:k];
          [self fail];
-      } else {
-         nbBoxDone++;
-         if([[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes])
-            [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
-         [self fail];
-      }
    } else {
       [k letgo];
    }

@@ -29,6 +29,7 @@ int nbConstraint = 0;
 int nbBoxDone = 0;
 int RUN_IMPROVE_GUESS = 0;
 bool newBox = TRUE;
+bool initLimitCounter = TRUE;
 
 void exitfunc(int sig)
 {
