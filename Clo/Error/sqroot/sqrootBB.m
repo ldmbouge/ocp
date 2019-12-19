@@ -71,9 +71,8 @@ void check_it_sqroot_d(double x, double z, id<ORRational> ez) {
 
 void sqroot_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
-      //srand(time(NULL));
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
+//      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+//      [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [ORRational rationalWith_d:0.0];
          id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.0 up:1.0 elow:zero eup:zero name:@"x"];
@@ -104,9 +103,9 @@ void sqroot_d(int search, int argc, const char * argv[]) {
                   [cp floatSplit:i withVars:x];
                }];
          }];
-         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-      }];
+//         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+//         return r;
+//      }];
    }
 }
 

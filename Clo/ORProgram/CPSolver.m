@@ -2206,17 +2206,14 @@ onFailure: (ORInt2Void) onFailure
             ORSelectorResult i = [select min]; //sélectionne la variable minimisant la mesure défini dans le select
             ORSelectorResult I = [select max];
             ORInt savenbBoxDone = nbBoxDone;
+         /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
             b(_index._val, x);
             if (_index._val + 1 > I.index)
                assignTRInt(&_index, i.index, _trail);
             else
                assignTRInt(&_index, _index._val+1, _trail);
-            
-            /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
-            //b(i.index,x);
-         //}  else {
-            //nbBoxDone+=2;
-         if(nbBoxDone == savenbBoxDone+1 && [[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes]){
+         
+         if(nbBoxDone > savenbBoxDone && [[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes]){
                [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
             break;
          }
