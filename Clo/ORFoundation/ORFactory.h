@@ -165,6 +165,7 @@ PORTABLE_BEGIN
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker name:(NSString*) name;
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker from:(id<ORExpr>) f;
 +(id<ORRationalVar>) errorVar: (id<ORTracker>) tracker of:(id<ORExpr>)f;
++(id<ORRationalVar>) ulpVar: (id<ORTracker>) tracker of:(id<ORExpr>)f;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker;
@@ -427,6 +428,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) rationalAssignC: (id<ORTracker>) model var: (id<ORRationalVar>)x to:(id<ORRational>)c;
 +(id<ORConstraint>) rationalAssign: (id<ORTracker>) model var: (id<ORRationalVar>)x to: (id<ORRationalVar>)y;
 +(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORVar>) f is: (id<ORRationalVar>) x;
++(id<ORConstraint>) ulpOf:(id<ORTracker>)model  var:(id<ORVar>) f is: (id<ORRationalVar>) x;
 +(id<ORConstraint>) channel:(id<ORExpr>) f with: (id<ORRationalVar>) x;
 +(id<ORConstraint>) rationalEqualc: (id<ORTracker>) model var: (id<ORRationalVar>)x eqc:(id<ORRational>)c;
 +(id<ORConstraint>) rationalNEqualc:(id<ORTracker>) model var: (id<ORRationalVar>)x neqc:(id<ORRational>)c;

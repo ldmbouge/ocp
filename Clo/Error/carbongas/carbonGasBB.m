@@ -65,6 +65,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 elow:zero eup:zero name:@"v"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
+      id<ORRationalVar> ulp_r = [ORFactory ulpVar:mdl of:r];
       id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"erAbs"];
       [zero release];
       
@@ -77,6 +78,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
       
       [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
       
+      [mdl add: [er leq: ulp_r]];
       [mdl add: [erAbs eq: [er abs]]];
       [mdl maximize:erAbs];
 
@@ -90,7 +92,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }];
-         NSLog(@"%@",cp);
+         //NSLog(@"%@",cp);
       }];
    }
 }

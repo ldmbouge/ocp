@@ -232,6 +232,7 @@
 -(void) visitRationalUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitRationalEqualc: (id<ORConstraint>)c;
 -(void) visitRationalErrorOf: (id<ORConstraint>)c;
+-(void) visitRationalUlpOf: (id<ORConstraint>)c;
 -(void) visitRationalChannel:(id<ORConstraint>)c;
 -(void) visitRationalAssignC: (id<ORConstraint>)c;
 -(void) visitRationalNEqualc: (id<ORConstraint>)c;
@@ -312,6 +313,7 @@
 -(void) visitExprMaxI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprErrorOfI: (id<ORExpr>) e;
+-(void) visitExprUlpOfI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
 -(void) visitExprGEqualI: (id<ORExpr>) e;

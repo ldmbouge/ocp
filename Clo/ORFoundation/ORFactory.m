@@ -746,6 +746,21 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [up release];
    return r;
 }
++(id<ORRationalVar>) ulpVar: (id<ORTracker>) mdl of:(id<ORVar>)f
+{
+   id<ORRational> low = [[[ORRational alloc] init] setNegInf];
+   id<ORRational> up =  [[[ORRational alloc] init] setPosInf];
+   ORRationalVarI* r = [[ORRationalVarI alloc] init: mdl
+                                                 low:low
+                                                  up:up
+                                                name:[NSString stringWithFormat:@"ulp(%@)",[f prettyname]]];
+   id<ORConstraint> c = [ORFactory ulpOf:mdl var:f is:r];
+   #warning [rg] find a way to suppress warning below (casting to id<ORModel> does not work)
+   [mdl add: c];
+   [low release];
+   [up release];
+   return r;
+}
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
     return [[ORDoubleVarI alloc]  init: tracker low: low up: up];
@@ -2218,6 +2233,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y
 {
    id<ORConstraint> o = [[ORRationalErrorOf alloc] initORRationalErrorOf:x is:y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) ulpOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y
+{
+   id<ORConstraint> o = [[ORRationalUlpOf alloc] initORRationalUlpOf:x is:y];
    [model trackObject:o];
    return o;
 }

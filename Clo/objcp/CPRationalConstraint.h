@@ -46,6 +46,26 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPRationalUlpOf : CPCoreConstraint {
+   CPFloatVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x is:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRationalUlpOfD : CPCoreConstraint {
+   CPDoubleVarI* _x;
+   CPRationalVarI* _y;
+}
+-(id) init:(id)x is:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRationalChannel : CPCoreConstraint {
    CPFloatVarI* _x;
    CPRationalVarI* _y;

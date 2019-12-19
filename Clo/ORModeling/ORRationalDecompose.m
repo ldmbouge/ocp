@@ -213,6 +213,11 @@
    id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprUlpOfI:(ORExprUlpOfI*)e
+{
+   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
    id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];

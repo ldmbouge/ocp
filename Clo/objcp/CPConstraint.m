@@ -1133,6 +1133,18 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) ulpOf: (id<CPFloatVar>) x is:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalUlpOf alloc] init:x is:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) ulpOfD: (id<CPDoubleVar>) x is:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalUlpOfD alloc] init:x is:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) channel: (id<CPFloatVar>) x with:(id<CPRationalVar>) y
 {
    id<CPConstraint> o = [[CPRationalChannel alloc] init:x with:y];

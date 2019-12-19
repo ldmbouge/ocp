@@ -300,6 +300,12 @@
    _terms = [recVisit visitExprErrorOfI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
+-(void) visitExprUlpOfI:(ORExprUlpOfI*)e
+{
+   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   _terms = [recVisit visitExprUlpOfI:_model left:[e left] right:[e right]];
+   [recVisit release];
+}
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
    id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
@@ -429,6 +435,12 @@ struct CPVarPair {
 {
    id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
    _terms = [recVisit visitExprErrorOfI:_model left:[e left] right:[e right]];
+   [recVisit release];
+}
+-(void) visitExprUlpOfI:(ORExprUlpOfI*)e
+{
+   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   _terms = [recVisit visitExprUlpOfI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
 -(void) visitExprAssignI:(ORExprAssignI*)e
@@ -2170,6 +2182,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(id<ORLinear>) visitExprErrorOfI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprErrorOfI>"];
+}
+-(id<ORLinear>) visitExprUlpOfI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprUlpOfI>"];
 }
 -(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {

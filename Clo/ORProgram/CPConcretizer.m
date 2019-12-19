@@ -1716,6 +1716,23 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitRationalUlpOf:(id<ORRationalUlpOf>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORVar> left = [cstr left];
+      id<ORRationalVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr;
+      if([_gamma[left.getId] class] == [CPFloatVarI class]){
+         concreteCstr = [CPFactory ulpOf:_gamma[left.getId] is:_gamma[right.getId]];
+      } else {
+         concreteCstr = [CPFactory ulpOfD:_gamma[left.getId] is:_gamma[right.getId]];
+      }
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitRationalChannel:(id<ORRationalChannel>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

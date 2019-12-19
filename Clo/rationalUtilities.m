@@ -184,7 +184,7 @@ void exitfunc(int sig)
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%1.5e",[self get_d]];
+   [buf appendFormat:@"%1.2e",[self get_d]];
    /* DEBUG only */
    //[buf appendFormat:@"%s",[self get_str]];
    //[buf appendFormat:@"(%20.20e - %d)",[self get_d], _type];

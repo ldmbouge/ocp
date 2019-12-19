@@ -113,6 +113,146 @@
 }
 @end
 
+@implementation CPRationalUlpOf
+-(id) init:(CPFloatVarI*)x is:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
+   //if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   id<ORRationalInterval> ulp = [[ORRationalInterval alloc] init];
+   float_interval x = makeFloatInterval([_x min], [_x max]);
+   id<ORRational> tmp0 = [[ORRational alloc] init];
+   id<ORRational> tmp1 = [[ORRational alloc] init];
+   id<ORRational> tmp2 = [[ORRational alloc] init];
+   
+   if(x.inf == -INFINITY || x.sup == INFINITY){
+      [tmp1 setNegInf];
+      [tmp2 setPosInf];
+      [ulp set_q:tmp1 and:tmp2];
+   }else if(fabs(x.inf) == DBL_MAX || fabs(x.sup) == DBL_MAX){
+      [tmp0 set_d: nextafterf(DBL_MAX, -INFINITY) - DBL_MAX];
+      [tmp1 set_d: 2.0];
+      tmp2 = [tmp0 div: tmp1];
+      [tmp1 set: tmp2];
+      [tmp2 neg];
+      [ulp set_q:tmp2 and:tmp1];
+   } else{
+      ORDouble inf, sup;
+      inf = minDbl(nextafterf(x.inf, -INFINITY) - x.inf, nextafterf(x.sup, -INFINITY) - x.sup);
+      sup = maxDbl(nextafterf(x.inf, +INFINITY) - x.inf, nextafterf(x.sup, +INFINITY) - x.sup);
+      
+      [tmp0 set_d: inf];
+      [tmp1 set_d: 2.0];
+      [ulp.low set: [tmp0 div: tmp1]];
+      [tmp0 set_d: sup];
+      [ulp.up set: [tmp0 div: tmp1]];
+   }
+   
+   [_y updateInterval:ulp.low and:ulp.up];
+
+   [tmp0 release];
+   [tmp1 release];
+   [tmp2 release];
+   [ulp release];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == ulp(%@)>",[_x domain],_y];
+}
+@end
+
+@implementation CPRationalUlpOfD
+-(id) init:(CPDoubleVarI*)x is:(CPRationalVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
+   //if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   id<ORRationalInterval> ulp = [[ORRationalInterval alloc] init];
+   double_interval x = makeDoubleInterval([_x min], [_x max]);
+   id<ORRational> tmp0 = [[ORRational alloc] init];
+   id<ORRational> tmp1 = [[ORRational alloc] init];
+   id<ORRational> tmp2 = [[ORRational alloc] init];
+   
+   if(x.inf == -INFINITY || x.sup == INFINITY){
+      [tmp1 setNegInf];
+      [tmp2 setPosInf];
+      [ulp set_q:tmp1 and:tmp2];
+   }else if(fabs(x.inf) == DBL_MAX || fabs(x.sup) == DBL_MAX){
+      [tmp0 set_d: nextafter(DBL_MAX, -INFINITY) - DBL_MAX];
+      [tmp1 set_d: 2.0];
+      tmp2 = [tmp0 div: tmp1];
+      [tmp1 set: tmp2];
+      [tmp2 neg];
+      [ulp set_q:tmp2 and:tmp1];
+   } else{
+      ORDouble inf, sup;
+      inf = minDbl(nextafter(x.inf, -INFINITY) - x.inf, nextafter(x.sup, -INFINITY) - x.sup);
+      sup = maxDbl(nextafter(x.inf, +INFINITY) - x.inf, nextafter(x.sup, +INFINITY) - x.sup);
+      
+      [tmp0 set_d: inf];
+      [tmp1 set_d: 2.0];
+      [ulp.low set: [tmp0 div: tmp1]];
+      [tmp0 set_d: sup];
+      [ulp.up set: [tmp0 div: tmp1]];
+   }
+   
+   [_y updateInterval:ulp.low and:ulp.up];
+
+   [tmp0 release];
+   [tmp1 release];
+   [tmp2 release];
+   [ulp release];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == ulp(%@)>",[_x domain],_y];
+}
+@end
+
 @implementation CPRationalChannel
 -(id) init:(CPFloatVarI*)x with:(CPRationalVarI*)y
 {

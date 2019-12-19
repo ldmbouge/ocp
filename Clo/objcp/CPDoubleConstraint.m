@@ -89,7 +89,6 @@ id<ORRationalInterval> compute_eo_add_d(const double_interval x, const double_in
       [tmpq set: [xq add: yq]];
       [yq set_d:tmpf];
       [tmpq set: [tmpq sub: yq]];
-      
       [eo set_q:tmpq and:tmpq];
       
       [tmpq release];

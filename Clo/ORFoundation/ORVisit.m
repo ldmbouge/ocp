@@ -326,6 +326,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RationalErrorOf: visit method not defined"];
 }
+-(void) visitRationalUlpOf: (id<ORRationalUlpOf>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RationalUlpOf: visit method not defined"];
+}
 -(void) visitRationalChannel: (id<ORRationalChannel>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RationalChannel: visit method not defined"];
@@ -1131,6 +1135,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprErrorOfI: visit method not defined"];
 }
+-(void) visitExprUlpOfI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprUlpOfI: visit method not defined"];
+}
 -(void) visitExprNEqualI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNEqualI: visit method not defined"]; 
@@ -1311,7 +1319,8 @@
 -(void) visitGEqualc: (id<ORGEqualc>)c  {}
 -(void) visitEqual: (id<OREqual>)c  {}
 -(void) visitRationalErrorOf: (id<ORRationalErrorOf>)c  {}
--(void) visitRationalChannel: (id<ORRationalErrorOf>)c  {}
+-(void) visitRationalUlpOf: (id<ORRationalUlpOf>)c  {}
+-(void) visitRationalChannel: (id<ORRationalChannel>)c  {}
 -(void) visitAffine: (id<ORAffine>)c  {}
 -(void) visitNEqual: (id<ORNEqual>)c  {}
 -(void) visitLEqual: (id<ORLEqual>)c  {}
@@ -1413,6 +1422,7 @@
 -(void) visitExprDivI: (id<ORExpr>) e  {}
 -(void) visitExprEqualI: (id<ORExpr>) e  {}
 -(void) visitExprErrorOfI: (id<ORExpr>) e  {}
+-(void) visitExprUlpOfI: (id<ORExpr>) e  {}
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}
 -(void) visitExprGEqualI: (id<ORExpr>) e  {}

@@ -129,7 +129,13 @@
 -(id<ORRationalVar>) right;
 @end
 
-@interface ORRationalChannel : ORConstraintI<ORRationalErrorOf>
+@interface ORRationalUlpOf : ORConstraintI<ORRationalUlpOf>
+-(ORRationalUlpOf*)initORRationalUlpOf:(id<ORVar>)f is:(id<ORRationalVar>)r;
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
+@interface ORRationalChannel : ORConstraintI<ORRationalChannel>
 -(ORRationalChannel*)initORRationalChannel:(id<ORFloatVar>)f with:(id<ORRationalVar>)r;
 -(id<ORFloatVar>) left;
 -(id<ORRationalVar>) right;

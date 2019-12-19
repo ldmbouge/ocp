@@ -2463,6 +2463,56 @@
 }
 @end
 
+@implementation ORExprUlpOfI
+-(id<ORExpr>) initORExprUlpOfI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprRelationI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   assert([self isConstant]);
+   return [_left min] == [_right min];
+}
+-(ORInt) max
+{
+   assert([self isConstant]);
+   return [_left max] == [_right max];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprUlpOfI: self];
+}
+// [ldm] causing trouble in MIP/LP
+//-(enum ORVType) vtype
+//{
+//   return ORTBool;
+//}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@ == %@",[_left description],[_right description]];
+   return rv;
+}
+-(enum ORRelationType)type
+{
+   return ORREq;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
 
 @implementation ORExprNotEqualI
 -(id<ORExpr>) initORExprNotEqualI: (id<ORExpr>) left and: (id<ORExpr>) right

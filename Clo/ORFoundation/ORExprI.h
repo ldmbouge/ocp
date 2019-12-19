@@ -354,6 +354,15 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
+@interface ORExprUlpOfI : ORExprRelationI<ORRelation,NSCoding>
+-(id<ORExpr>) initORExprUlpOfI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+//-(ORRelationType)type;
+-(void) visit: (ORVisitor*)v;
+@end
+
 @interface ORExprNotEqualI : ORExprRelationI<ORRelation,NSCoding>
 -(id<ORExpr>) initORExprNotEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;

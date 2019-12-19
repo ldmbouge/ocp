@@ -160,6 +160,8 @@
 +(id<CPConstraint>) rationalEqual: (id<CPRationalVar>) x to:(id<CPRationalVar>) y;
 +(id<CPConstraint>) errorOf: (id<CPFloatVar>) x is:(id<CPRationalVar>) y;
 +(id<CPConstraint>) errorOfD: (id<CPDoubleVar>) x is:(id<CPRationalVar>) y;
++(id<CPConstraint>) ulpOf: (id<CPFloatVar>) x is:(id<CPRationalVar>) y;
++(id<CPConstraint>) ulpOfD: (id<CPDoubleVar>) x is:(id<CPRationalVar>) y;
 +(id<CPConstraint>) channel: (id<CPFloatVar>) x with:(id<CPRationalVar>) y;
 +(id<CPConstraint>) channelD: (id<CPDoubleVar>) x with:(id<CPRationalVar>) y;
 +(id<CPConstraint>) rationalEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c;

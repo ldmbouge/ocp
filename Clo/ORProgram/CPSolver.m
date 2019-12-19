@@ -2162,14 +2162,14 @@ onFailure: (ORInt2Void) onFailure
                         id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
                         [[_engine objective] tightenPrimalBound:objv];
                         [objv release];
-                        //solution = tmp_solution; // Keep it as a solution
-                        //                        NSLog(@"#####");
-                        //                        NSLog(@"[GuessError]");
-                        //                        for (id<ORVar> v in [_model variables]) {
-                        //                           if([v prettyname])
-                        //                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-                        //                        }
-                        //                        NSLog(@"#####");
+                        solution = tmp_solution; // Keep it as a solution
+                                                NSLog(@"#####");
+                                                NSLog(@"[GuessError]");
+                                                for (id<ORVar> v in [_model variables]) {
+                                                   if([v prettyname])
+                                                      NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+                                                }
+                                                NSLog(@"#####");
                         [_tracer popNode]; // need to restore initial state before going out of loop !
                         break;
                      }
@@ -2179,13 +2179,13 @@ onFailure: (ORInt2Void) onFailure
                         // the testing it here is useless
                         [[_engine objective] updatePrimalBound];
                         solution = [self captureSolution]; // Keep it as a solution
-                        //                        NSLog(@"#####");
-                        //                        NSLog(@"GuessError");
-                        //                        for (id<ORVar> v in [_model variables]) {
-                        //                           if([v prettyname])
-                        //                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-                        //                        }
-                        //                        NSLog(@"#####");
+                                                NSLog(@"#####");
+                                                NSLog(@"GuessError");
+                                                for (id<ORVar> v in [_model variables]) {
+                                                   if([v prettyname])
+                                                      NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+                                                }
+                                                NSLog(@"#####");
                         [_tracer popNode]; // need to restore initial state before going out of loop !
                         break;
                      }
@@ -2229,14 +2229,14 @@ onFailure: (ORInt2Void) onFailure
    // Is this the right way to do it ?
    //NSLog(@"%@", solution);
    // We migth got out from a leaf that is not a an optimum. Have to check whether this an actual end or not
-   //if (([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualBound] rationalValue]])) {
-   //      NSLog(@"=========================");
-   //      for (id<ORVar> v in [_model variables]) {
-   //         if([v prettyname])
-   //            NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-   //      }
-   //      NSLog(@"=========================");
-   //}
+   if (([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualBound] rationalValue]])) {
+         NSLog(@"=========================");
+         for (id<ORVar> v in [_model variables]) {
+            if([v prettyname])
+               NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+         }
+         NSLog(@"=========================");
+   }
 }
 
 //-------------------------------------------------

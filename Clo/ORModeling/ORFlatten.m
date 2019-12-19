@@ -451,6 +451,10 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitRationalUlpOf: (id<ORRationalUlpOf>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitRationalChannel: (id<ORRationalChannel>)c
 {
    _result = [_into addConstraint:c];

@@ -189,6 +189,11 @@ enum ORGroupType {
 -(id<ORRationalVar>) right;
 @end
 
+@protocol  ORRationalUlpOf <ORConstraint>
+-(id<ORFloatVar>) left;
+-(id<ORRationalVar>) right;
+@end
+
 @protocol  ORRationalChannel <ORConstraint>
 -(id<ORFloatVar>) left;
 -(id<ORRationalVar>) right;
