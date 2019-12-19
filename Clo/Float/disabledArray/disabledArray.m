@@ -270,7 +270,12 @@
       id<ORFloatVarArray> vs = [model floatVars];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:2];
       
+      NSLog(@"%@",vars);
       [vars disable:0];
+      NSLog(@"%@",vars);
+      [[cp explorer] fail];
+      [[cp explorer] fail];
+      NSLog(@"%@",vars);
       [vars disable:5];
       [vars enable:5];
    }
