@@ -2163,13 +2163,13 @@ onFailure: (ORInt2Void) onFailure
                         [[_engine objective] tightenPrimalBound:objv];
                         [objv release];
                         solution = tmp_solution; // Keep it as a solution
-                                                NSLog(@"#####");
-                                                NSLog(@"[GuessError]");
-                                                for (id<ORVar> v in [_model variables]) {
-                                                   if([v prettyname])
-                                                      NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-                                                }
-                                                NSLog(@"#####");
+                        NSLog(@"#####");
+                        NSLog(@"[GuessError]");
+                        for (id<ORVar> v in [_model variables]) {
+                           if([v prettyname])
+                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+                        }
+                        NSLog(@"#####");
                         [_tracer popNode]; // need to restore initial state before going out of loop !
                         break;
                      }
@@ -2179,13 +2179,12 @@ onFailure: (ORInt2Void) onFailure
                         // the testing it here is useless
                         [[_engine objective] updatePrimalBound];
                         solution = [self captureSolution]; // Keep it as a solution
-                                                NSLog(@"#####");
-                                                NSLog(@"GuessError");
-                                                for (id<ORVar> v in [_model variables]) {
-                                                   if([v prettyname])
-                                                      NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-                                                }
-                                                NSLog(@"#####");
+                        NSLog(@"#####");
+                        NSLog(@"GuessError");
+                        for (id<ORVar> v in [_model variables]) {
+                           if([v prettyname])
+                              NSLog(@"%@: %@", [v prettyname], _gamma[[v getId]]);//[solution value:v]);
+                        }
                         [_tracer popNode]; // need to restore initial state before going out of loop !
                         break;
                      }
