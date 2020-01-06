@@ -204,6 +204,7 @@ enum CPVarClass {
 -(ORLDouble) domwidth;
 -(ORFloat) magnitude;
 -(void) bind:(ORFloat) val;
+-(void) bindError:(id<ORRational>) error;
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;
 -(void) updateMinError:(id<ORRational>) newMin;
@@ -243,6 +244,7 @@ enum CPVarClass {
 -(ORLDouble) domwidth;
 -(ORDouble) magnitude;
 -(void) bind:(ORDouble) val;
+-(void) bindError:(id<ORRational>) error;
 -(void) updateMin:(ORDouble) newMin;
 -(void) updateMax:(ORDouble) newMax;
 -(void) assignRelaxationValue: (ORDouble) f;

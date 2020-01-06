@@ -144,10 +144,49 @@ void verhulst_f(int search, int argc, const char * argv[]) {
    }
 }
 
+void verhulst_d_test(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORRational> zero = [ORRational rationalWith_d:0.1];
+      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 name:@"x"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ex = [ORFactory errorVar:mdl of:x];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+      id<ORRationalVar> ulp_x = [ORFactory ulpVar:mdl of:x];
+      [zero release];
+      
+      [mdl add:[r set: @(4.0)]];
+      [mdl add:[k set: @(1.11)]];
+      [mdl add:[z set:[[r mul: x] div: [@(1.0) plus: [x div: k]]]]];
+      
+      [mdl add: [ex geq: ulp_x]];
+      //[mdl add: [ex leq: ulp_x]];
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
+      [zero release];
+      NSLog(@"model: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
    //   LOO_MEASURE_TIME(@"rigidbody2"){
       //verhulst_f(1, argc, argv);
-      verhulst_d(1, argc, argv);
+      //verhulst_d(1, argc, argv);
+   verhulst_d_test(1, argc, argv);
    //}
    return 0;
 }

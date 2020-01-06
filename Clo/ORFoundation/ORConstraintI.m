@@ -6511,7 +6511,7 @@
 }
 -(void)dealloc
 {
-   [_coefs release];
+   //[_coefs release];
    [_c release];
    [super dealloc];
 }
@@ -6571,7 +6571,8 @@
 }
 -(void)dealloc
 {
-   [_coefs release];
+   // Remove _coefs release already taken care of before arriving here
+   //[_coefs release];
    [_c release];
    [super dealloc];
 }

@@ -2009,6 +2009,8 @@ onFailure: (ORInt2Void) onFailure
 {
    TRInt _index;
    TRInt limitCounter;
+   id<ORRational> zero = [[ORRational alloc] init];
+   [zero setZero];
    
    assignTRInt(&limitCounter, 0, _trail);
    
@@ -2089,6 +2091,7 @@ onFailure: (ORInt2Void) onFailure
                      ORDouble v = randomValueD([currentVar min], [currentVar max]);
                      //NSLog(@"la var : %@ est fixe a :%16.16e",currentVar, v);
                      ORStatus s = [_engine enforce:^{ [currentVar bind:v];}];
+                     if([currentVar isInputVar]) s |= [_engine enforce:^{ [currentVar bindError:zero];}];
                      isFailed = (s == ORFailure);
                      if(isFailed){
                         //printf("HAS FAILED %d\n", ORFailure);
@@ -2236,6 +2239,7 @@ onFailure: (ORInt2Void) onFailure
          }
          NSLog(@"=========================");
    }
+   //[zero release];
 }
 
 //-------------------------------------------------

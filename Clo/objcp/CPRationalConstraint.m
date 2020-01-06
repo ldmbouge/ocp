@@ -59,7 +59,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ == %@>",[_x domainError],_y];
+   return [NSString stringWithFormat:@"<%@ == error[%@]>", _y,_x];
 }
 @end
 
@@ -109,7 +109,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ == %@>",[_x domainError],_y];
+   return [NSString stringWithFormat:@"<%@ == error[%@]>", _y,_x];
 }
 @end
 
@@ -124,8 +124,8 @@
 -(void) post
 {
    [self propagate];
-   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
-   //if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   [_x whenChangeBoundsPropagate:self];
+   [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -179,7 +179,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ == ulp(%@)>",[_x domain],_y];
+   return [NSString stringWithFormat:@"<%@ == ulp[%@]>",_y,_x];
 }
 @end
 
@@ -194,8 +194,8 @@
 -(void) post
 {
    [self propagate];
-   if(![_x bound]) [_x whenChangeBoundsPropagate:self];
-   //if(![_y bound]) [_y whenChangeBoundsPropagate:self];
+   [_x whenChangeBoundsPropagate:self];
+   [_y whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
@@ -229,7 +229,7 @@
    }
    
    [_y updateInterval:ulp.low and:ulp.up];
-
+   
    [tmp0 release];
    [tmp1 release];
    [tmp2 release];
@@ -249,7 +249,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ == ulp(%@)>",[_x domain],_y];
+   return [NSString stringWithFormat:@"<%@ == ulp[%@]>",_y,_x];
 }
 @end
 
@@ -306,7 +306,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<F:%@ == Q:%@>",[_x domain],_y];
+   return [NSString stringWithFormat:@"<F[%@] == Q[%@]>",[_x domain],_y];
 }
 @end
 
@@ -363,7 +363,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<F:%@ == Q:%@>",[_x domain],_y];
+   return [NSString stringWithFormat:@"<F[%@] == Q[%@]>",[_x domain],_y];
 }
 @end
 

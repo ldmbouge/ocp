@@ -487,18 +487,19 @@ void testUlp(int argc, const char * argv[]) {
       //[args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
-         id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:-200.0 up:200.0 elow:zero eup:zero name:@"x"];
-         id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:-200.0 up:200.0 elow:zero eup:zero name:@"y"];
+         id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:-200000.0 up:200000.0 name:@"x"];
+         id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:-200000.0 up:200000.0 elow:zero eup:zero name:@"y"];
          id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
          id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
-         id<ORRationalVar> ulp_z = [ORFactory ulpVar:mdl of:z];
+         id<ORRationalVar> ex = [ORFactory errorVar:mdl of:x];
+         id<ORRationalVar> ulp_x = [ORFactory ulpVar:mdl of:x];
          id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
          [zero release];
          
          [mdl add:[z set: [x plus: y]]];
          [mdl add: [z eq: @(0.0)]];
          
-         [mdl add: [ez leq: ulp_z]];
+         [mdl add: [ex leq: ulp_x]];
          [mdl add: [ezAbs eq: [ez abs]]];
          [mdl maximize:ezAbs];
          
