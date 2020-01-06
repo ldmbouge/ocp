@@ -432,6 +432,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) channel:(id<ORExpr>) f with: (id<ORRationalVar>) x;
 +(id<ORConstraint>) rationalEqualc: (id<ORTracker>) model var: (id<ORRationalVar>)x eqc:(id<ORRational>)c;
 +(id<ORConstraint>) rationalNEqualc:(id<ORTracker>) model var: (id<ORRationalVar>)x neqc:(id<ORRational>)c;
++(id<ORConstraint>) rationalLEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x leq:(id<ORRational>)c;
 +(id<ORConstraint>) rationalGEqualc: (id<ORTracker>) model var:(id<ORRationalVar>) x geq:(id<ORRational>)c;
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  eq: (id<ORRational>) c;
 +(id<ORConstraint>) rationalSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORRationalArray>) coef  neq: (id<ORRational>) c;

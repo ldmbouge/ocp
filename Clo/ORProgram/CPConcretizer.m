@@ -1756,7 +1756,19 @@
       id<ORRationalVar> left = [cstr left];
       [left visit: self];
       id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
-      id<CPConstraint> concreteCstr = [CPFactory rationalNEqualc: _gamma[left.getId]  to: cst];
+      id<CPConstraint> concreteCstr = [CPFactory rationalNEqualc: _gamma[left.getId] to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+      [cst release];
+   }
+}
+-(void) visitRationalLEqualc:(id<ORRationalLEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORRationalVar> left = [cstr left];
+      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory rationalLEqualc:_gamma[left.getId] to: cst];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
       [cst release];
@@ -3250,6 +3262,13 @@
    id<CPFloatVar> left = [self concreteVar:cstr.left];
    [_engine tryEnforce:^{
       [left updateMax:nval];
+   }];
+}
+-(void) visitRationalLEqualc:(id<ORRationalLEqualc>)cstr
+{
+   id<CPRationalVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left updateMax:cstr.cst];
    }];
 }
 -(void) visitRationalGEqualc:(id<ORRationalGEqualc>)cstr

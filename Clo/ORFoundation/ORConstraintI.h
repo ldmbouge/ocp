@@ -117,6 +117,12 @@
 -(id<ORRational>) cst;
 @end
 
+@interface ORRationalLEqualc : ORConstraintI<ORRationalLEqualc>
+-(ORRationalLEqualc*)initORRationalLEqualc:(id<ORRationalVar>)x leq:(id<ORRational>)c;
+-(id<ORRationalVar>) left;
+-(id<ORRational>) cst;
+@end
+
 @interface ORRationalGEqualc : ORConstraintI<ORRationalGEqualc>
 -(ORRationalGEqualc*)initORRationalGEqualc:(id<ORRationalVar>)x geq:(id<ORRational>)c;
 -(id<ORRationalVar>) left;

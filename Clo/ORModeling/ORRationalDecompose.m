@@ -91,8 +91,6 @@
       [_terms addTerm:alpha by:1];
       _eqto = nil;
    } else {
-      /*[[e left] visit:self];
-      [[e right] visit:self];*/
       id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
       [_terms addTerm:alpha by:1];
    }
@@ -158,19 +156,35 @@
 }
 -(void) visitExprModI: (ORExprModI*) e
 {
-   id<ORRationalVar> alpha =  [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprMinI: (ORExprMinI*) e
 {
-   id<ORRationalVar> alpha =  [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
-}
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }}
 -(void) visitExprMaxI: (ORExprMaxI*) e
 {
-   id<ORRationalVar> alpha =  [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
-}
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }}
 -(void) visitExprAssignI:(ORExprAssignI*) e
 {
    if (_eqto) {
@@ -195,68 +209,140 @@
 }
 -(void) visitExprSquareI:(ORExprSquareI*) e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
-}
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }}
 -(void) visitExprNegateI:(ORExprNegateI*) e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
-}
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }}
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
-}
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }}
 -(void) visitExprErrorOfI:(ORExprErrorOfI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
-}
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }}
 -(void) visitExprUlpOfI:(ORExprUlpOfI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
-}
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }}
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
-}
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }}
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprGEqualI:(ORExprGEqualI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprLThenI:(ORExprLThenI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprGThenI:(ORExprGThenI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprSumI: (ORExprSumI*) e
 {
@@ -284,26 +370,36 @@
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
-/*-(void) visitExprCstDoubleSubI:(id<ORExpr>)e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError:"Cannot take a Real-var within an integer context without a cast"];
-}
--(void) visitExprCstLDoubleSubI:(id<ORExpr>)e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError:"Cannot take a Real-var within an integer context without a cast"];
-}*/
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 -(void) visitExprMatrixVarSubI:(ORExprMatrixVarSubI*)e
 {
-   id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+   if (_eqto) {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      id<ORRationalVar> alpha = [ORNormalizer rationalVarIn:_model expr:e];
+      [_terms addTerm:alpha by:1];
+   }
 }
 @end
 
@@ -414,6 +510,14 @@
    [_model addConstraint: [ORFactory rationalDiv:_model var:lV by:rV equal:_rv]];
    [lT release];
    [rT release];
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   assert(NO);
+}
+-(void) visitExprLEqualI:(ORExprGEqualI*)e
+{
+   assert(NO);
 }
 -(id<ORRationalVar>)result
 {

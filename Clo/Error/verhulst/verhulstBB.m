@@ -156,14 +156,14 @@ void verhulst_d_test(int search, int argc, const char * argv[]) {
       id<ORRationalVar> ex = [ORFactory errorVar:mdl of:x];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       id<ORRationalVar> ulp_x = [ORFactory ulpVar:mdl of:x];
-      [zero release];
+      //[zero release];
       
       [mdl add:[r set: @(4.0)]];
       [mdl add:[k set: @(1.11)]];
       [mdl add:[z set:[[r mul: x] div: [@(1.0) plus: [x div: k]]]]];
       
       [mdl add: [ex geq: ulp_x]];
-      //[mdl add: [ex leq: ulp_x]];
+      [mdl add: [ex leq: ulp_x]];
       [mdl add: [ezAbs eq: [ez abs]]];
       [mdl maximize:ezAbs];
       

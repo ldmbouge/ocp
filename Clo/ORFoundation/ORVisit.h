@@ -236,6 +236,7 @@
 -(void) visitRationalChannel:(id<ORConstraint>)c;
 -(void) visitRationalAssignC: (id<ORConstraint>)c;
 -(void) visitRationalNEqualc: (id<ORConstraint>)c;
+-(void) visitRationalLEqualc: (id<ORRationalLEqualc>)c;
 -(void) visitRationalGEqualc: (id<ORRationalGEqualc>)c;
 -(void) visitRationalLinearEq: (id<ORConstraint>) c;
 -(void) visitRationalAssign: (id<ORConstraint>)c;

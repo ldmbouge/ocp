@@ -1626,6 +1626,11 @@ onFailure: (ORInt2Void) onFailure
    [self errorGEqualImpl:_gamma[var.getId] with:val];
    [_tracer addCommand: [ORFactory rationalGEqualc:self var:var geq:val]];
 }
+-(void) errorLEqual: (id<ORRationalVar>) var with: (id<ORRational>) val
+{
+   [self errorLEqualImpl:_gamma[var.getId] with:val];
+   [_tracer addCommand: [ORFactory rationalLEqualc:self var:var leq:val]];
+}
 -(void) doubleLthen: (id<ORDoubleVar>) var with: (ORDouble) val
 {
    [self doubleLthenImpl: _gamma[var.getId] with: val];

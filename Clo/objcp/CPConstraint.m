@@ -1101,7 +1101,6 @@
 }
 @end
 
-
 @implementation CPFactory (ORRational)
 +(id<CPConstraint>) rationalAssign: (id<CPRationalVar>) x to:(id<CPRationalVar>) y
 {
@@ -1214,23 +1213,22 @@
    id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
    return [self rationalGEQ:x to:cvar];
 }
++(id<CPConstraint>) rationalLEqualc: (id<CPRationalVar>) x to:(id<ORRational>) c
+{
+   id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
+   return [self rationalLEQ:x to:cvar];
+}
 +(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
 {
    id<CPConstraint> o = nil;
-//   if([notes hasFilteringPercent])
-//      o = [[CPRationalTernaryMult alloc] init:z equals:x mult:y kbpercent:[notes kbpercent]];
-//   else
-      o = [[CPRationalTernaryMult alloc] init:z equals:x mult:y];
+   o = [[CPRationalTernaryMult alloc] init:z equals:x mult:y];
    [[x tracker] trackMutable:o];
    return o;
 }
 +(id<CPConstraint>) rationalDiv: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
 {
    id<CPConstraint> o = nil;
-//   if([notes hasFilteringPercent])
-//      o = [[CPRationalTernaryDiv alloc] init:z equals:x div:y kbpercent:[notes kbpercent]];
-//   else
-      o = [[CPRationalTernaryDiv alloc] init:z equals:x div:y];
+   o = [[CPRationalTernaryDiv alloc] init:z equals:x div:y];
    [[x tracker] trackMutable:o];
    return o;
 }
@@ -1285,38 +1283,6 @@
          }
       }
    }
-   
-   // TODO : fix to work with arbitrary coefficient (fraction)
-//   if([x count] == 1 && [[coefs at:coefs.low] isOne]){
-//      return [self rationalEqualc:x[x.low] to:c];
-//   }else{
-//      if([x count] == 2){
-//         if([[coefs at:coefs.low] isZero]){
-//            return [self rationalEqualc:x[x.low] to:c];
-//         } else if([[coefs at:1] isZero]){
-//            return [self rationalEqualc:x[1] to:c];
-//         } else if([[coefs at:coefs.low] neq: [coefs at:1]]){
-//            return [self rationalEqual:x[0] to:x[1]];
-//         } else {
-//            return [self rationalNEqual:x[0] to:x[1]];
-//         }
-//      }else{
-//         assert([x count] <= 3);
-//         if([[coefs at:coefs.low] isOne] && [[coefs at:1] isOne] && [[coefs at:2] isMinusOne]){
-//            return [CPFactory rationalTernaryAdd:x[2] equals:x[0] plus:x[1] annotation:notes];
-//         }
-//         if([[coefs at:coefs.low] isOne] && [[coefs at:1] isOne] && [[coefs at:2] isOne]){
-//            return [CPFactory rationalTernarySub:x[0] equals:x[1] minus:x[2] annotation:notes];
-//         }
-//         if([[coefs at:coefs.low] isOne] && [[coefs at:1] isMinusOne] && [[coefs at:2] isOne]){
-//            return [CPFactory rationalTernaryAdd:x[1] equals:x[0] plus:x[2] annotation:notes];
-//         }
-//         if([[coefs at:coefs.low] isMinusOne] && [[coefs at:1] isOne] && [[coefs at:2] isOne]){
-//            return [CPFactory rationalTernaryAdd:x[0] equals:x[1] plus:x[2] annotation:notes];
-//         }
-//      }
-//   }
-//   return [CPFactory rationalTernaryAdd:x[0] equals:x[1] plus:x[2] annotation:notes];
 }
 /*+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs neqi:(ORRational)c annotation:(id<ORAnnotation>) notes
 {
@@ -1431,7 +1397,7 @@
    if([x count] == 1 && [[coefs at:coefs.low] isOne]){
       return [self rationalGEQ:x[0] to:vc];
    }else if([x count] == 2){
-      if(c == 0)
+      if([c isZero])
          return [self rationalGEQ:x[0] to:x[1]];
       id<CPRationalVar> res = [self rationalVar:engine];
       if(![[coefs at:1] isOne] && ![[coefs at:1] isZero])
@@ -1449,108 +1415,6 @@
       [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self rationalGEQ:res to:x[2]];
 }
-/*+(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
-{
-   id<CPConstraint> o = nil;
-   if([notes hasFilteringPercent])
-      o = [[CPRationalTernaryMult alloc] init:z equals:x mult:y kbpercent:[notes kbpercent]];
-   else
-      o = [[CPRationalTernaryMult alloc] init:z equals:x mult:y];
-   [[x tracker] trackMutable:o];
-   return o;
-}
-+(id<CPConstraint>) rationalDiv: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
-{
-   id<CPConstraint> o = nil;
-   if([notes hasFilteringPercent])
-      o = [[CPRationalTernaryDiv alloc] init:z equals:x div:y kbpercent:[notes kbpercent]];
-   else
-      o = [[CPRationalTernaryDiv alloc] init:z equals:x div:y];
-   [[x tracker] trackMutable:o];
-   return o;
-}
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x neq: (id<CPRationalVar>) y annotation:(ORCLevel)c
-{
-   id<CPConstraint> o = [[CPRationalReifyNEqual alloc] initCPReify:b when:x neq:y];
-   [[x tracker] trackMutable:o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x leq:(id<CPRationalVar>)y annotation:(ORCLevel)c
-{
-   id<CPConstraint> o = [[CPRationalReifyLEqual alloc] initCPReifyLEqual:b when:x leqi:y];
-   [[x tracker] trackMutable:o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x geq:(id<CPRationalVar>)y annotation:(ORCLevel)c
-{
-   id<CPConstraint> o = [[CPRationalReifyGEqual alloc] initCPReifyGEqual:b when:x geqi:y];
-   [[x tracker] trackMutable:o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x lt:(id<CPRationalVar>)y annotation:(ORCLevel)c
-{
-   id<CPConstraint> o = [[CPRationalReifyLThen alloc] initCPReifyLThen:b when:x lti:y];
-   [[x tracker] trackMutable:o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x gt:(id<CPRationalVar>)y annotation:(ORCLevel)c
-{
-   id<CPConstraint> o = [[CPRationalReifyGThen alloc] initCPReifyGThen:b when:x gti:y];
-   [[x tracker] trackMutable:o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x eq: (id<CPRationalVar>) y annotation:(ORCLevel)c
-{
-   id<CPConstraint> o = [[CPRationalReifyEqual alloc] initCPReifyEqual: b when: x eqi: y];
-   [[x tracker] trackMutable: o];
-   return o;
-}
-+(id<ORConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x eqi: (ORRational) i
-{
-   id<ORConstraint> o = [[CPRationalReifyEqualc alloc] initCPReifyEqualc: b when: x eqi: i];
-   [[x engine] trackMutable: o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x neqi: (ORRational) i
-{
-   id<CPConstraint> o = [[CPRationalReifyNotEqualc alloc] initCPReifyNotEqualc: b when: x neqi: i];
-   [[x tracker] trackMutable: o];
-   return o;
-}
-
-+(id<ORConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x leqi: (ORRational) i
-{
-   id<ORConstraint> o = [[CPRationalReifyLEqualc alloc] initCPReifyLEqualc: b when: x leqi: i];
-   [[x tracker] trackMutable: o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x geqi: (ORRational) i
-{
-   id<CPConstraint> o = [[CPRationalReifyGEqualc alloc] initCPReifyGEqualc: b when: x geqi: i];
-   [[x tracker] trackMutable: o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x gti: (ORRational) i
-{
-   id<CPConstraint> o = [[CPRationalReifyGThenc alloc] initCPReifyGThenc: b when: x gti: i];
-   [[x tracker] trackMutable: o];
-   return o;
-}
-
-+(id<CPConstraint>) rationalReify: (id<CPIntVar>) b with: (id<CPRationalVar>) x lti: (ORRational) i
-{
-   id<CPConstraint> o = [[CPRationalReifyLThenc alloc] initCPReifyLThenc: b when: x lti: i];
-   [[x tracker] trackMutable: o];
-   return o;
-}*/
 +(id<CPConstraint>) rationalMinimize: (id<CPRationalVar>) x
 {
    id<CPConstraint> o = [[CPRationalVarMinimize alloc] init: x];
@@ -1564,7 +1428,6 @@
    return o;
 }
 @end
-
 
 @implementation CPFactory (ORDouble)
 +(id<CPConstraint>) doubleAbs:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y

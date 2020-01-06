@@ -789,7 +789,7 @@
 }
 -(void) propagate
 {
-   if([[_x min] gt: [_y    max]])
+   if([[_x min] gt: [_y max]])
       failNow();
    if(isIntersectingWithQ(_x,_y)){
       if([[_x min] gt: [_y min]]){

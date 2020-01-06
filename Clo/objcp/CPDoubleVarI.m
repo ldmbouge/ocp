@@ -613,7 +613,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
 }
 - (ORInt)domsize
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleVar: method domsize  not defined"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPDoubleVar: method domsize not defined"];
    return 0;
 }
 - (ORBool)sameDomain:(CPDoubleVarI*)x
