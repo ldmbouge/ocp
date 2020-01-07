@@ -25,7 +25,8 @@
    _max   = mxs;
    _terms = malloc(sizeof(struct CPTerm)*_max);
    _nb    = 0;
-   _indep = [ORRational rationalWith_d:0.0];
+   _indep = [[ORRational alloc] init];
+   [_indep setZero];
    return self;
 }
 -(void)dealloc
@@ -57,7 +58,7 @@
 }
 -(void)addIndependent:(id<ORRational>)idp
 {
-   _indep = [_indep add: idp];
+   [_indep set: [_indep add: idp]];
 }
 -(id<ORRational>)independent
 {
@@ -81,7 +82,7 @@
    }
    if ([dom.low eq: dom.up]) {
       id<ORRational> tmp = [ORRational rationalWith_d:c];
-      _indep = [_indep add: [dom.low mul: tmp]];
+      [_indep set: [_indep add: [dom.low mul: tmp]]];
       //[dom release];
       [tmp release];
       return;
@@ -138,7 +139,7 @@
    id<ORRational> sr = [ORRational rationalWith_d:s];
    for(ORInt k=0;k<_nb;k++)
       _terms[k]._coef *= s;
-   _indep = [_indep mul: sr];
+   [_indep set: [_indep mul: sr]];
    [sr release];
 }
 -(ORBool)allPositive

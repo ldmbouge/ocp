@@ -65,6 +65,7 @@ extern void exitfunc(int sig);
 -(void)setType:(int)type;
 -(void)setRational:(rational_t)rational;
 -(id)set:(id<ORRational>)r;
+-(id)set_str:(char*)str;
 -(id)set_q:(rational_t)r;
 -(id)set_t:(int)t;
 -(void)trailRational:(id<ORTrail>)trail;

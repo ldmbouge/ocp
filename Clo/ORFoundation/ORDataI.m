@@ -514,20 +514,20 @@
 
 @implementation ORRationalI
 {
-   id<ORRational>       _value;
-   id<ORTracker> _tracker;
+   id<ORRational> _value;
+   id<ORTracker>  _tracker;
 }
 
 -(ORRationalI*) init: (id<ORTracker>) tracker value: (id<ORRational>) value
 {
    self = [super init];
-   _value = [ORRational rationalWith:value];
+   _value = [[ORRational alloc] init];
+   [_value set:value];
    _tracker = tracker;
    return self;
 }
 -(void)dealloc
 {
-   [_value release];
    [super dealloc];
 }
 -(id)copyWithZone:(NSZone *)zone

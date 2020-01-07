@@ -146,35 +146,49 @@ void verhulst_f(int search, int argc, const char * argv[]) {
 
 void verhulst_d_test(int search, int argc, const char * argv[]) {
    @autoreleasepool {
+      /* Creation of model */
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORRational> zero = [ORRational rationalWith_d:0.1];
-      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 name:@"x"];
+      
+      /* Declaration of rational numbers */
+      id<ORRational> zero = [[ORRational alloc] init];
+      
+      /* Initialization of rational numbers */
+      [zero setZero];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.1 up:0.3 name:@"x"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
-      id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
+      id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.11 string:@"111/100" name:@"k"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
-      id<ORRationalVar> ex = [ORFactory errorVar:mdl of:x];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
-      id<ORRationalVar> ulp_x = [ORFactory ulpVar:mdl of:x];
-      //[zero release];
       
+      /* Initialization of constants */
       [mdl add:[r set: @(4.0)]];
-      [mdl add:[k set: @(1.11)]];
+      
+      /* Declaration of constraints */
       [mdl add:[z set:[[r mul: x] div: [@(1.0) plus: [x div: k]]]]];
       
-      [mdl add: [ex geq: ulp_x]];
-      [mdl add: [ex leq: ulp_x]];
+      /* Declaration of constraints over errors */
       [mdl add: [ezAbs eq: [ez abs]]];
       [mdl maximize:ezAbs];
       
+      /* Memory release of rational numbers */
       [zero release];
+      
+      /* Display model */
       NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
       id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
+      /* Solving */
       [cp solve:^{
+            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               /* Split strategy */
                [cp floatSplit:i withVars:x];
             }];
       }];
@@ -183,10 +197,8 @@ void verhulst_d_test(int search, int argc, const char * argv[]) {
 
 
 int main(int argc, const char * argv[]) {
-   //   LOO_MEASURE_TIME(@"rigidbody2"){
-      //verhulst_f(1, argc, argv);
-      //verhulst_d(1, argc, argv);
+   //verhulst_f(1, argc, argv);
+   //verhulst_d(1, argc, argv);
    verhulst_d_test(1, argc, argv);
-   //}
    return 0;
 }

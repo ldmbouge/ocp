@@ -196,6 +196,21 @@ void exitfunc(int sig)
    _type = r.type;
    return self;
 }
+-(id)set_str:(char*)str
+{
+   mpq_set_str(_rational, str, 10);
+   mpq_canonicalize(_rational);
+   if((mpz_get_ui(mpq_numref(_rational)) == 0UL) && (mpz_get_ui(mpq_denref(_rational)) == 0UL)){
+      _type = 3;
+   } else if((mpz_get_ui(mpq_numref(_rational)) == 1UL) && (mpz_get_ui(mpq_denref(_rational)) == 0UL)){
+      _type = 2;
+   } else if((mpz_get_ui(mpq_numref(_rational)) == 0UL) && (mpz_get_ui(mpq_denref(_rational)) == 1UL)){
+      _type = -2;
+   } else {
+      _type = mpq_sgn(_rational);
+   }
+   return self;
+}
 -(id)set_q:(rational_t)r
 {
    mpq_set(_rational, r);

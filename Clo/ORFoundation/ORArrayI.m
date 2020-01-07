@@ -859,7 +859,7 @@
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-    _array =  malloc(sizeof(ORDouble)*_nb);
+    _array =  malloc(sizeof(ORFloat)*_nb);
     _array -= _low;
     for(ORInt i=_low;i<=_up;i++)
         [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
@@ -1085,7 +1085,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   _array =  malloc(sizeof(ORDouble)*_nb);
+   _array =  malloc(sizeof(id<ORRational>)*_nb);
    _array -= _low;
    for(ORInt i=_low;i<=_up;i++)
       [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];

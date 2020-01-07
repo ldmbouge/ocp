@@ -692,7 +692,7 @@
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up
 {
-   return [self init:track domain:[ORFactory doubleRange:track low:low up:up] name:nil];
+   return [self init:track domain:[ORFactory doubleRange:track low:low up:up] name:_prettyname];
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track up: (ORDouble) up
 {
@@ -704,7 +704,7 @@
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track domain:(id<ORDoubleRange>)dom
 {
-   return [self init:track domain:dom name:nil];
+   return [self init:track domain:dom name:_prettyname];
 }
 -(ORDoubleVarI*) init: (id<ORTracker>) track domain:(id<ORDoubleRange>)dom name:(NSString *)name
 {

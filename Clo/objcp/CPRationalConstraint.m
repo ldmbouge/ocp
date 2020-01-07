@@ -892,7 +892,7 @@
 -(void) propagate
 {
    int gchanged,changed;
-   changed = gchanged = false;
+   gchanged = false;
    id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
@@ -1004,7 +1004,7 @@
 -(void) propagate
 {
    int gchanged,changed;
-   changed = gchanged = false;
+   gchanged = false;
    
    id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
@@ -1118,7 +1118,7 @@
 -(void) propagate
 {
    int gchanged,changed;
-   changed = gchanged = false;
+   gchanged = false;
    
    id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
@@ -1232,7 +1232,7 @@
 -(void) propagate
 {
    int gchanged,changed;
-   changed = gchanged = false;
+   gchanged = false;
    
    id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
    id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];

@@ -97,6 +97,111 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void carbonGas_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of rational numbers */
+      id<ORRational> zero = [[ORRational alloc] init];
+      id<ORRational> negInf = [[ORRational alloc] init];
+      id<ORRational> posInf = [[ORRational alloc] init];
+      id<ORRational> aQ = [[ORRational alloc] init];
+      id<ORRational> bQ = [[ORRational alloc] init];
+      id<ORRational> kQ = [[ORRational alloc] init];
+      id<ORRational> aF = [[ORRational alloc] init];
+      id<ORRational> bF = [[ORRational alloc] init];
+      id<ORRational> kF = [[ORRational alloc] init];
+      id<ORRational> eaQ = [[ORRational alloc] init];
+      id<ORRational> ebQ = [[ORRational alloc] init];
+      id<ORRational> ekQ = [[ORRational alloc] init];
+
+      /* Initialization of rational numbers */
+      [negInf setNegInf];
+      [posInf setPosInf];
+      [zero setZero];
+      [aQ set_str:"401/1000"];
+      [bQ set_str:"427/10000000"];
+      [kQ set_str:"13806503/1000000000000000000000000000000"];
+      [aF set_d:0.401];
+      [bF set_d:42.7e-6];
+      [kF set_d:1.3806503e-23];
+      
+      /* Exact computation of rounding error on k */
+      [eaQ set:[aQ sub: aF]];
+      [ebQ set:[bQ sub: bF]];
+      [ekQ set:[kQ sub: kF]];
+
+      /* Declaration of model variables */
+      id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 name:@"v"];
+      id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
+      id<ORDoubleVar> a = [ORFactory doubleVar:mdl low:0.401 up:0.401 elow:negInf eup:posInf name:@"a"];
+      id<ORDoubleVar> b = [ORFactory doubleVar:mdl low:42.7e-6 up:42.7e-6 elow:negInf eup:posInf name:@"b"];
+      id<ORDoubleVar> t = [ORFactory doubleVar:mdl name:@"t"];
+      id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
+      id<ORDoubleVar> k = [ORFactory doubleVar:mdl low:1.3806503e-23 up:1.3806503e-23 elow:negInf eup:posInf name:@"k"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORRationalVar> ea = [ORFactory errorVar:mdl of:a];
+      id<ORRationalVar> eb = [ORFactory errorVar:mdl of:b];
+      id<ORRationalVar> ek = [ORFactory errorVar:mdl of:k];
+      id<ORRationalVar> ev = [ORFactory errorVar:mdl of:v];
+      id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
+      id<ORRationalVar> ulp_v = [ORFactory ulpVar:mdl of:v];
+      id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"erAbs"];
+      
+      /* Initialization of constants */
+      [mdl add:[p set: @(3.5e7)]];
+      //[mdl add:[a set: @(0.401)]];
+      //[mdl add:[b set: @(42.7e-6)]];
+      [mdl add:[t set: @(300.0)]];
+      [mdl add:[n set: @(1000.0)]];
+      //[mdl add:[k set: @(1.3806503e-23)]];
+      [mdl add:[ea eq:eaQ]];
+      [mdl add:[eb eq:ebQ]];
+      [mdl add:[ek eq:ekQ]];
+      
+      /* Declaration of constraints */
+      [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
+      
+      /* Declaration of constraints over errors */
+      [mdl add: [ev geq: ulp_v]];
+      [mdl add: [ev leq: ulp_v]];
+      [mdl add: [erAbs eq: [er abs]]];
+      [mdl maximize:erAbs];
+      
+      /* Memory release of rational numbers */
+      [zero release];
+      [negInf release];
+      [posInf release];
+      [aQ release];
+      [bQ release];
+      [kQ release];
+      [aF release];
+      [bF release];
+      [kF release];
+      [eaQ release];
+      [ebQ release];
+      [ekQ release];
+
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      /* Solving */
+      [cp solve:^{
+            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+            [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               /* Split strategy */
+               [cp floatSplit:i withVars:x];
+            }];
+      }];
+   }
+}
+
 void check_it_f(float p, float a, float b, float t, float n, float k, float v, float r, id<ORRational> er) {
    float cr = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
    mpq_t pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1;
@@ -211,10 +316,9 @@ void testMemory_d(int search, int argc, const char * argv[]) {
 
 
 int main(int argc, const char * argv[]) {
-   //   LOO_MEASURE_TIME(@"rigidbody2"){
-      //carbonGas_f(1, argc, argv);
-      carbonGas_d(1, argc, argv);
-      //testMemory_d(1,argc,argv);
-   //}
+   //carbonGas_f(1, argc, argv);
+   //carbonGas_d(1, argc, argv);
+   carbonGas_d_c(1, argc, argv);
+   //testMemory_d(1,argc,argv)
    return 0;
 }
