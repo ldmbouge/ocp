@@ -253,7 +253,7 @@ func packageVoidArray(sz : Int,body : (Int32,UnsafeMutablePointer<VoidPtr>,VoidB
 }
 
 public func »(a : UnsafeMutableRawPointer, b : UnsafeMutableRawPointer) -> UnsafeMutableRawPointer {
-   return packageVoidArray(sz:2) { n,base,ptr in
+    return packageVoidArray(sz:2) { n,base,ptr in
       let tracker = getSolver(a)
       ptr[0] = a
       ptr[1] = b
