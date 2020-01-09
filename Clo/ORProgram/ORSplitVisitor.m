@@ -301,17 +301,21 @@
       if(mid == fp_next_float(theMin)){
          mid = fp_next_float(mid);
       }
-      interval[2].inf = interval[2].sup = mid;
-//            if(mid == 0.0f)
-//               interval[2].inf = -0.0f;
-      interval[3].inf = fp_next_float(theMin);
-      interval[3].sup = fp_previous_float(mid);
-      length = 3;
-      if(fp_previous_float(theMax) != mid){
-         interval[4].inf = fp_next_float(mid);
-         interval[4].sup = fp_previous_float(theMax);
-         length++;
+      ++length;
+      if(mid != 0.0f){
+         interval[length].inf = interval[length].sup = mid;
+         ++length;
       }
+      interval[length].inf = fp_next_float(theMin);
+      interval[length++].sup = fp_previous_float(mid);
+      if(fp_previous_float(theMax) != mid){
+         interval[length].inf = fp_next_float(mid);
+         interval[length++].sup = fp_previous_float(theMax);
+      }
+      if(mid == 0.0f)
+         interval[length].inf = interval[length].sup = mid;
+      else
+         length--;
    }
    float_interval* ip = interval;
    [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
@@ -350,15 +354,21 @@
       if(mid == fp_next_double(theMin)){
          mid = fp_next_double(mid);
       }
-      interval[2].inf = interval[2].sup = mid;
-      interval[3].inf = fp_next_double(theMin);
-      interval[3].sup = fp_previous_double(mid);
-      length = 3;
-      if(fp_previous_double(theMax) != mid){
-         interval[4].inf = fp_next_double(mid);
-         interval[4].sup = fp_previous_double(theMax);
+      ++length;
+      if(mid != 0.0){
+         interval[length].inf = interval[length].sup = mid;
          length++;
       }
+      interval[length].inf = fp_next_double(theMin);
+      interval[length++].sup = fp_previous_double(mid);
+      if(fp_previous_double(theMax) != mid){
+         interval[length].inf = fp_next_double(mid);
+         interval[length++].sup = fp_previous_double(theMax);
+      }
+      if(mid == 0.0)
+         interval[length].inf = interval[length].sup = mid;
+      else
+         length--;
    }
    double_interval* ip = interval;
 //   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
