@@ -135,31 +135,44 @@
    id<ORRational> tmp1 = [[ORRational alloc] init];
    id<ORRational> tmp2 = [[ORRational alloc] init];
    
-   if(x.inf == -INFINITY || x.sup == INFINITY){
-      [tmp1 setNegInf];
-      [tmp2 setPosInf];
-      [ulp set_q:tmp1 and:tmp2];
-   }else if(fabs(x.inf) == DBL_MAX || fabs(x.sup) == DBL_MAX){
-      [tmp0 set_d: nextafterf(DBL_MAX, -INFINITY) - DBL_MAX];
-      [tmp1 set_d: 2.0];
-      tmp2 = [tmp0 div: tmp1];
-      [tmp1 set: tmp2];
-      [tmp2 neg];
-      [ulp set_q:tmp2 and:tmp1];
-   } else{
+   if([_x bound])
+   {
       ORDouble inf, sup;
-      inf = minDbl(nextafterf(x.inf, -INFINITY) - x.inf, nextafterf(x.sup, -INFINITY) - x.sup);
-      sup = maxDbl(nextafterf(x.inf, +INFINITY) - x.inf, nextafterf(x.sup, +INFINITY) - x.sup);
+      inf = nextafterf(x.inf, -INFINITY) - x.inf;
+      sup = nextafterf(x.inf, +INFINITY) - x.inf;
       
       [tmp0 set_d: inf];
       [tmp1 set_d: 2.0];
       [ulp.low set: [tmp0 div: tmp1]];
       [tmp0 set_d: sup];
       [ulp.up set: [tmp0 div: tmp1]];
+   } else {
+      if(x.inf == -INFINITY || x.sup == INFINITY){
+         [tmp1 setNegInf];
+         [tmp2 setPosInf];
+         [ulp set_q:tmp1 and:tmp2];
+      }else if(fabs(x.inf) == DBL_MAX || fabs(x.sup) == DBL_MAX){
+         [tmp0 set_d: nextafterf(DBL_MAX, -INFINITY) - DBL_MAX];
+         [tmp1 set_d: 2.0];
+         tmp2 = [tmp0 div: tmp1];
+         [tmp1 set: tmp2];
+         [tmp2 neg];
+         [ulp set_q:tmp2 and:tmp1];
+      } else{
+         ORDouble inf, sup;
+         inf = minDbl(nextafterf(x.inf, -INFINITY) - x.inf, nextafterf(x.sup, -INFINITY) - x.sup);
+         sup = maxDbl(nextafterf(x.inf, +INFINITY) - x.inf, nextafterf(x.sup, +INFINITY) - x.sup);
+         
+         [tmp0 set_d: inf];
+         [tmp1 set_d: 2.0];
+         [ulp.low set: [tmp0 div: tmp1]];
+         [tmp0 set_d: sup];
+         [ulp.up set: [tmp0 div: tmp1]];
+      }
    }
    
    [_y updateInterval:ulp.low and:ulp.up];
-
+   
    [tmp0 release];
    [tmp1 release];
    [tmp2 release];
@@ -644,18 +657,18 @@
 -(void) propagate
 {
    /*if ([_x bound]) {
-      if([_x min] == _c)
-         failNow();
-   }else{
-      if([_x min] == _c){
-         [_x updateMin:fp_next_float(_c)];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x max] == _c){
-         [_x updateMax:fp_previous_float(_c)];
-         assignTRInt(&_active, NO, _trail);
-      }
-   }*/
+    if([_x min] == _c)
+    failNow();
+    }else{
+    if([_x min] == _c){
+    [_x updateMin:fp_next_float(_c)];
+    assignTRInt(&_active, NO, _trail);
+    }
+    if([_x max] == _c){
+    [_x updateMax:fp_previous_float(_c)];
+    assignTRInt(&_active, NO, _trail);
+    }
+    }*/
 }
 -(NSSet*)allVars
 {

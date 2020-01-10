@@ -190,6 +190,8 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    _recv = nil;
    _hasValue = false;
    _value = 0.0;
+   _valueError = [[ORRational alloc] init];
+   [_valueError setZero];
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
@@ -208,6 +210,8 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    _recv = nil;
    _hasValue = false;
    _value = 0.0;
+   _valueError = [[ORRational alloc] init];
+   [_valueError setZero];
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
@@ -229,6 +233,8 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    _recv = nil;
    _hasValue = false;
    _value = 0.0;
+   _valueError = [[ORRational alloc] init];
+   [_valueError setZero];
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
@@ -246,6 +252,8 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    _recv = nil;
    _hasValue = false;
    _value = 0.0;
+   _valueError = [[ORRational alloc] init];
+   [_valueError setZero];
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    

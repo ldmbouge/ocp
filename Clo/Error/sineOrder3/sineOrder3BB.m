@@ -86,9 +86,50 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void sineOrder3_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:-2 up:2 name:@"x"];
+      id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.954929658551372 string:@"238732414637843/250000000000000" name:@"a"];
+      id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:0.12900613773279798 string:@"6450306886639899/50000000000000000" name:@"b"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+      
+      /* Declaration of constraints */
+      [mdl add:[z set: [[a mul: x] sub: [b mul: [[x mul: x] mul: x]]]]];
+      
+      [mdl add:[z lt: @(1.0)]];
+      [mdl add:[z gt: @(-1.0)]];
+      
+      /* Declaration of constraints over errors */
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      /* Solving */
+      [cp solve:^{
+            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               /* Split strategy */
+               [cp floatSplit:i withVars:x];
+            }];
+      }];
+   }
+}
+
 int main(int argc, const char * argv[]) {
-   //   LOO_MEASURE_TIME(@"rigidbody2"){
-      sineOrder3_d(1, argc, argv);
-   //}
+   //sineOrder3_d(1, argc, argv);
+   sineOrder3_d_c(1, argc, argv);
    return 0;
 }

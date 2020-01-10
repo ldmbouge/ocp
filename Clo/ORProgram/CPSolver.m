@@ -2116,72 +2116,73 @@ onFailure: (ORInt2Void) onFailure
                }
                id<CPRationalVar> ezi = _gamma[getId(ez)];
                /* START NEW GUESS */
-               if(isBound) {
-                  if (RUN_IMPROVE_GUESS) {
-                     /*** BEGIN: Attempt to improve the error ***/
-                     id<ORSolution> tmp_solution = [self captureSolution];
-                     bool improved = FALSE, improved_var = FALSE;
-                     int nvar = 0, nv, nbiter = 0;
-                     int direction = 1;
-                     ORStatus s;
-                     while (nbiter < 200) {
-                        [_tracer popNode];
-                        [_tracer pushNode];
-                        nbiter++; //printf("nb iter = %d\n", nbiter);
-                        if (nvar == 0) {
-                           nv = 0; for (id<ORDoubleVar> v in x) { xc = _gamma[v.getId]; nv++; if (! [xc bound]) { nvar = nv; break; }}
-                           if (nvar == 0) break;
+               if (RUN_IMPROVE_GUESS) {
+                  /* BEGIN: Attempt to improve the error */
+                  id<ORSolution> tmp_solution = [self captureSolution];
+                  bool improved = FALSE, improved_var = FALSE;
+                  int nvar = 0, nv, nbiter = 0;
+                  int direction = 1;
+                  ORStatus s;
+                  while (nbiter < 200) {
+                     [_tracer popNode];
+                     [_tracer pushNode];
+                     nbiter++; //printf("nb iter = %d\n", nbiter);
+                     if (nvar == 0) {
+                        nv = 0; for (id<ORDoubleVar> v in x) { xc = _gamma[v.getId]; nv++; if (! [xc bound]) { nvar = nv; break; }}
+                        if (nvar == 0) break;
+                     }
+                     nv = 0;
+                     for (id<ORVar> v in x) {
+                        xc = _gamma[v.getId]; nv++;
+                        if (! [xc bound]) {
+                           double value = [[tmp_solution value:v] doubleValue];
+                           if (nv == nvar) value = nextafter(value, (direction == 1)?(+INFINITY):(-INFINITY));
+                           s = [_engine enforce:^{ [xc bind:value];}];
+                           if (s == ORFailure) break;
                         }
-                        nv = 0;
-                        for (id<ORVar> v in x) {
-                           xc = _gamma[v.getId]; nv++;
-                           if (! [xc bound]) {
-                              double value = [[tmp_solution value:v] doubleValue];
-                              if (nv == nvar) value = nextafter(value, (direction == 1)?(+INFINITY):(-INFINITY));
-                              s = [_engine enforce:^{ [xc bind:value];}];
-                              if (s == ORFailure) break;
-                           }
-                        }
-                        if ((s != ORFailure) && ([[[tmp_solution value:ez] rationalValue] lt: [ezi min]])) { // Better err
-                           tmp_solution = [self captureSolution];
-                           improved_var = TRUE;
-                           improved = TRUE;
+                     }
+                     if ((s != ORFailure) && ([[[tmp_solution value:ez] rationalValue] lt: [ezi min]])) { // Better err
+                        tmp_solution = [self captureSolution];
+                        improved_var = TRUE;
+                        improved = TRUE;
+                     } else {
+                        if ((! improved_var) && (direction == 1)) {
+                           direction = -1;
                         } else {
-                           if ((! improved_var) && (direction == 1)) {
-                              direction = -1;
-                           } else {
-                              direction = 1;
-                              improved_var = FALSE;
-                              nv = 0;
-                              int old_nvar = nvar;
-                              for (id<ORDoubleVar> v in x) {
-                                 xc = _gamma[v.getId]; nv++;
-                                 if ((nv > nvar) && (! [xc bound])) { nvar = nv; break; }
-                              }
-                              if (nvar == old_nvar) break;
+                           direction = 1;
+                           improved_var = FALSE;
+                           nv = 0;
+                           int old_nvar = nvar;
+                           for (id<ORDoubleVar> v in x) {
+                              xc = _gamma[v.getId]; nv++;
+                              if ((nv > nvar) && (! [xc bound])) { nvar = nv; break; }
                            }
+                           if (nvar == old_nvar) break;
                         }
                      }
-                     /*** END: Attempt to improve the error ***/
-                     if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) {
-                        // And as updatePrimalBound does test whether the value is actually better or not
-                        // testing it here is useless
-                        printf("*** nb iter = %d\n", nbiter);
-                        id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
-                        [[_engine objective] tightenPrimalBound:objv];
-                        [objv release];
-                        solution = tmp_solution; // Keep it as a solution
-                        NSLog(@"#####");
-                        NSLog(@"[GuessError]");
-                        for (id<ORVar> v in [_model variables]) {
-                           if([v prettyname])
-                              NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-                        }
-                        NSLog(@"#####");
-                        [_tracer popNode]; // need to restore initial state before going out of loop !
-                        break;
+                  }
+                  /* END: Attempt to improve the error */
+                  if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) {
+                     // And as updatePrimalBound does test whether the value is actually better or not
+                     // testing it here is useless
+                     printf("*** nb iter = %d\n", nbiter);
+                     id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
+                     [[_engine objective] tightenPrimalBound:objv];
+                     [objv release];
+                     solution = tmp_solution; // Keep it as a solution
+                     NSLog(@"#####");
+                     NSLog(@"[GuessError]");
+                     for (id<ORVar> v in [_model variables]) {
+                        if([v prettyname])
+                           NSLog(@"%@: %@", [v prettyname], [solution value:v]);
                      }
-                  } else {
+                     NSLog(@"#####");
+                     [_tracer popNode]; // need to restore initial state before going out of loop !
+                     break;
+                  }
+                  /* END: NEW GUESS */
+               } else {
+                  if(isBound) {
                      if ([[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]) { // lt (was gt !!!)
                         // And as updatePrimalBound does test whether the value is actually better or not
                         // the testing it here is useless
@@ -2193,12 +2194,12 @@ onFailure: (ORInt2Void) onFailure
                            if([v prettyname])
                               NSLog(@"%@: %@", [v prettyname], _gamma[[v getId]]);//[solution value:v]);
                         }
+                        NSLog(@"#####");
                         [_tracer popNode]; // need to restore initial state before going out of loop !
                         break;
                      }
                   }
                }
-               /* END NEW GUESS */
             }
             iteration++;
             [_tracer popNode];
@@ -2210,18 +2211,18 @@ onFailure: (ORInt2Void) onFailure
              [[[[_engine objective] dualValue] rationalValue] leq: boundDiscardedBoxes]) break;
          
          //if(limitCounter._val < nbConstraint){
-            ORSelectorResult i = [select min]; //sélectionne la variable minimisant la mesure défini dans le select
-            ORSelectorResult I = [select max];
-            ORInt savenbBoxDone = nbBoxDone;
+         ORSelectorResult i = [select min]; //sélectionne la variable minimisant la mesure défini dans le select
+         ORSelectorResult I = [select max];
+         ORInt savenbBoxDone = nbBoxDone;
          /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
-            b(_index._val, x);
-            if (_index._val + 1 > I.index)
-               assignTRInt(&_index, i.index, _trail);
-            else
-               assignTRInt(&_index, _index._val+1, _trail);
+         b(_index._val, x);
+         if (_index._val + 1 > I.index)
+            assignTRInt(&_index, i.index, _trail);
+         else
+            assignTRInt(&_index, _index._val+1, _trail);
          
          if(nbBoxDone > savenbBoxDone && [[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes]){
-               [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
+            [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
             break;
          }
          
@@ -2237,12 +2238,12 @@ onFailure: (ORInt2Void) onFailure
    //NSLog(@"%@", solution);
    // We migth got out from a leaf that is not a an optimum. Have to check whether this an actual end or not
    if (([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualBound] rationalValue]])) {
-         NSLog(@"=========================");
-         for (id<ORVar> v in [_model variables]) {
-            if([v prettyname])
-               NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-         }
-         NSLog(@"=========================");
+      NSLog(@"=========================");
+      for (id<ORVar> v in [_model variables]) {
+         if([v prettyname])
+            NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+      }
+      NSLog(@"=========================");
    }
    //[zero release];
 }

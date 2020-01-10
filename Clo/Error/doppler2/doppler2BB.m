@@ -74,7 +74,7 @@ void doppler2_d(int search, int argc, const char * argv[]) {
       [zero release];
       
       [mdl add:[t1 set: [@(331.4) plus:[@(0.6) mul: t]]]];
-      [mdl add:[z set: [[[@(-1.0) mul: t1] mul: v] div: [[t1 plus: u] mul: [t1 plus: u]]]]];
+      [mdl add:[z set: [[[t1 minus] mul: v] div: [[t1 plus: u] mul: [t1 plus: u]]]]];
       
       [mdl add: [ezAbs eq: [ez abs]]];
       [mdl maximize:ezAbs];
@@ -93,9 +93,51 @@ void doppler2_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void doppler2_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> u = [ORFactory doubleInputVar:mdl low:-125.0 up:125.0 name:@"u"];
+      id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:15.0 up:25000.0 name:@"v"];
+      id<ORDoubleVar> t = [ORFactory doubleInputVar:mdl low:-40.0 up:60.0 name:@"t"];
+      id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:331.4 string:@"1657/5" name:@"a"];
+      id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:0.6 string:@"3/5" name:@"b"];
+      id<ORDoubleVar> t1 = [ORFactory doubleVar:mdl name:@"t1"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+      
+      /* Declaration of constraints */
+      [mdl add:[t1 set: [a plus:[b mul: t]]]];
+      [mdl add:[z set: [[[t1 minus] mul: v] div: [[t1 plus: u] mul: [t1 plus: u]]]]];
+      
+      /* Declaration of constraints over errors */
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      /* Solving */
+      [cp solve:^{
+            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               /* Split strategy */
+               [cp floatSplit:i withVars:x];
+            }];
+      }];
+   }
+}
+
 int main(int argc, const char * argv[]) {
-   //   LOO_MEASURE_TIME(@"rigidbody2"){
-      doppler2_d(1, argc, argv);
-   //}
+   //doppler2_d(1, argc, argv);
+   doppler2_d_c(1, argc, argv);
    return 0;
 }

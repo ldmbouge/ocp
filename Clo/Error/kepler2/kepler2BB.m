@@ -22,7 +22,7 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
-void kepler0_d(int search, int argc, const char * argv[]) {
+void kepler2_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
@@ -59,9 +59,53 @@ void kepler0_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void kepler2_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x1 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x1"];
+      id<ORDoubleVar> x2 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x2"];
+      id<ORDoubleVar> x3 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x3"];
+      id<ORDoubleVar> x4 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x4"];
+      id<ORDoubleVar> x5 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x5"];
+      id<ORDoubleVar> x6 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x6"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+
+      /* Declaration of constraints */
+      // x1*x4(-x1+x2+x3-x4+x5+x6) + x2*x5(x1-x2+x3+x4-x5+x6) + x3*x6(x1+x2-x3+x4+x5-x6) - x2*x3*x4 - x1*x3*x5 - x1*x2*x6 - x4*x5*x6
+      [mdl add:[z set: [[[[[[[[x1 mul: x4] mul: [[[[[[x1 minus] plus: x2] plus: x3] sub: x4] plus: x5] plus: x6] ] plus: [[x2 mul: x5] mul:[[[[[x1 sub: x2] plus: x3] plus: x4] sub: x5] plus: x6]]] plus: [[x3 mul: x6] mul: [[[[[x1 plus: x2] sub: x3] plus: x4] plus: x5] sub: x6]]] sub: [[x2 mul: x3] mul: x4]] sub: [[x1 mul: x3] mul: x5]] sub: [[x1 mul: x2] mul: x6]] sub: [[x4 mul: x5] mul: x6]]]];
+
+      /* Declaration of constraints over errors */
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      /* Solving */
+      [cp solve:^{
+            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               /* Split strategy */
+               [cp floatSplit:i withVars:x];
+            }];
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
-   //   LOO_MEASURE_TIME(@"rigidbody2"){
-      kepler0_d(1, argc, argv);
-   //}
+   //
+kepler2_d(1, argc, argv);
+   kepler2_d_c(1, argc, argv);
    return 0;
 }

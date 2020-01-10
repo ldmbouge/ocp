@@ -256,20 +256,22 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 -(void) propagate
 {
    @autoreleasepool {
-      if([_x bound]){
+      /*if([_x bound]){
          if([_y bound]){
             if([_x value] != - [_y value]) failNow();
             assignTRInt(&_active, NO, _trail);
          } else{
             [_y bind:-[_x value]];
-            [_y bindError:[[_x errorValue] neg]];
+            //[_y bindError:[[_x errorValue] neg]];
+            [_y updateIntervalError:[[_x maxErr] neg] and:[[_x minErr] neg]];
             assignTRInt(&_active, NO, _trail);
          }
       } else if([_y bound]){
          [_x bind:-[_y value]];
-         [_x bindError:[[_y errorValue] neg]];
+         //[_x bindError:[[_y errorValue] neg]];
+         [_x updateIntervalError:[[_y maxErr] neg] and:[[_y minErr] neg]];
          assignTRInt(&_active, NO, _trail);
-      } else {
+      } else {*/
          updateDoubleInterval(&_xi,_x);
          updateDoubleInterval(&_yi,_y);
          intersectionIntervalD inter;
@@ -305,7 +307,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          [interError release];
          [ex release];
          [ey release];
-      }
+      //}
    }
 }
 -(NSSet*)allVars
