@@ -771,7 +771,7 @@ static enum ValHeuristic valIndex[] =
 -(void)launchHeuristic:(id<CPProgram>)p restricted:(id<ORDisabledVarArray>)vars
 {
    if(_restrictRequired){
-      vars = [self makeDisabledArray:p from:[[p source] FPVars]];
+//      vx = [self makeDisabledArray:p from:[[p source] FPVars]];
       printf("--------------------\n");
       printf("full-r = %lu\n",(unsigned long)[vars count]);
       printf("--------------------\n");
