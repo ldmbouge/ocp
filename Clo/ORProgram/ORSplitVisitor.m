@@ -302,20 +302,15 @@
          mid = fp_next_float(mid);
       }
       ++length;
-      if(mid != 0.0f){
-         interval[length].inf = interval[length].sup = mid;
-         ++length;
-      }
+      interval[length].inf = interval[length].sup = mid;
+      ++length;
       interval[length].inf = fp_next_float(theMin);
       interval[length++].sup = fp_previous_float(mid);
       if(fp_previous_float(theMax) != mid){
          interval[length].inf = fp_next_float(mid);
          interval[length++].sup = fp_previous_float(theMax);
       }
-      if(mid == 0.0f)
-         interval[length].inf = interval[length].sup = mid;
-      else
-         length--;
+      length--;
    }
    float_interval* ip = interval;
    [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
@@ -355,20 +350,15 @@
          mid = fp_next_double(mid);
       }
       ++length;
-      if(mid != 0.0){
-         interval[length].inf = interval[length].sup = mid;
-         length++;
-      }
+      interval[length].inf = interval[length].sup = mid;
+      length++;
       interval[length].inf = fp_next_double(theMin);
       interval[length++].sup = fp_previous_double(mid);
       if(fp_previous_double(theMax) != mid){
          interval[length].inf = fp_next_double(mid);
          interval[length++].sup = fp_previous_double(theMax);
       }
-      if(mid == 0.0)
-         interval[length].inf = interval[length].sup = mid;
-      else
-         length--;
+      length--;
    }
    double_interval* ip = interval;
 //   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
