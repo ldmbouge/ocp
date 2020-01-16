@@ -144,7 +144,7 @@ int main(int argc, const char * argv[]) {
     
     id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
     
-     [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[theta[0],x[0],y[0],theta_opt[0],x_opt[0],y_opt[0]]];
+     [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[sl]];
   }
   return 0;
 }
