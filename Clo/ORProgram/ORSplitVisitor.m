@@ -50,7 +50,6 @@
    assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
    return mid;
 }
-
 -(ORFloat) floatMiddle:(CPFloatVarI*) xi
 {
    ORFloat theMax = xi.max;
@@ -70,6 +69,68 @@
       mid = tmpMin/2 + tmpMax/2;
    assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
    return mid;
+}
+//middle cardinality
+-(ORDouble) doubleRMid:(CPDoubleVarI*) xi
+{
+   uint64_t inf_i, sup_i, mid_i;
+   double inf = [xi min];
+   double sup = [xi max];
+   if (*((uint64_t *)&sup) & 0x8000000000000000) {
+      inf = -inf;
+      sup = -sup;
+      inf_i = *((uint64_t *)&inf);
+      sup_i = *((uint64_t *)&sup);
+      mid_i = (sup_i + inf_i)/2;
+      return -*((double *)&mid_i);
+   } else if (! (*((uint64_t *)&inf) & 0x8000000000000000)) {
+      inf_i = *((uint64_t *)&inf);
+      sup_i = *((uint64_t *)&sup);
+      mid_i = (sup_i + inf_i)/2;
+      return *((double *)&mid_i);
+   } else {
+      inf = -inf;
+      inf_i = *((uint64_t *)&inf);
+      sup_i = *((uint64_t *)&sup);
+      if (inf_i <= sup_i) {
+         mid_i = (sup_i - inf_i)/2;
+         return *((double *)&mid_i);
+      } else {
+         mid_i = (inf_i - sup_i)/2;
+         return -*((double *)&mid_i);
+      }
+   }
+}
+//middle cardinality
+-(ORFloat) floatRMid:(CPFloatVarI*) xi
+{
+   uint32_t inf_i, sup_i, mid_i;
+   float inf = [xi min];
+   float sup = [xi max];
+   if (*((uint32_t *)&sup) & 0x80000000) {
+      inf = -inf;
+      sup = -sup;
+      inf_i = *((uint32_t *)&inf);
+      sup_i = *((uint32_t *)&sup);
+      mid_i = (sup_i + inf_i)/2;
+      return -*((float *)&mid_i);
+   } else if (! (*((uint64_t *)&inf) & 0x80000000)) {
+      inf_i = *((uint32_t *)&inf);
+      sup_i = *((uint32_t *)&sup);
+      mid_i = (sup_i + inf_i)/2;
+      return *((float *)&mid_i);
+   } else {
+      inf = -inf;
+      inf_i = *((uint32_t *)&inf);
+      sup_i = *((uint32_t *)&sup);
+      if (inf_i <= sup_i) {
+         mid_i = (sup_i - inf_i)/2;
+         return *((float *)&mid_i);
+      } else {
+         mid_i = (inf_i - sup_i)/2;
+         return -*((float *)&mid_i);
+      }
+   }
 }
 
 -(void) applyIntVar:(id<CPVar>) var
@@ -302,15 +363,20 @@
          mid = fp_next_float(mid);
       }
       ++length;
-      interval[length].inf = interval[length].sup = mid;
-      ++length;
+      if(mid != 0.0f){
+         interval[length].inf = interval[length].sup = mid;
+         ++length;
+      }
       interval[length].inf = fp_next_float(theMin);
       interval[length++].sup = fp_previous_float(mid);
       if(fp_previous_float(theMax) != mid){
          interval[length].inf = fp_next_float(mid);
          interval[length++].sup = fp_previous_float(theMax);
       }
-      length--;
+      if(mid == 0.0f)
+         interval[length].inf = interval[length].sup = mid;
+      else
+         length--;
    }
    float_interval* ip = interval;
    [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
@@ -321,12 +387,12 @@
    } onFailure:^(ORInt index) {
       [_path removeLastObject];
    }];
-//   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
-//      ORInt c = [[_program explorer] nbChoices];
-//      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
-//      [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
-//   }];
-      
+   //   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+   //      ORInt c = [[_program explorer] nbChoices];
+   //      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+   //      [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
+   //   }];
+   
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
@@ -350,26 +416,31 @@
          mid = fp_next_double(mid);
       }
       ++length;
-      interval[length].inf = interval[length].sup = mid;
-      length++;
+      if(mid != 0.0){
+         interval[length].inf = interval[length].sup = mid;
+         length++;
+      }
       interval[length].inf = fp_next_double(theMin);
       interval[length++].sup = fp_previous_double(mid);
       if(fp_previous_double(theMax) != mid){
          interval[length].inf = fp_next_double(mid);
          interval[length++].sup = fp_previous_double(theMax);
       }
-      length--;
+      if(mid == 0.0)
+         interval[length].inf = interval[length].sup = mid;
+      else
+         length--;
    }
    double_interval* ip = interval;
-//   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
-//      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
-//      [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
-//   }];
+   //   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+   //      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+   //      [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
+   //   }];
    
    [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
       [_path addObject:[NSString stringWithFormat:@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup]];
-       LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
-           [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
+      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+      [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
    } onFailure:^(ORInt index) {
       [_path removeLastObject];
    }];
