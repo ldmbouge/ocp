@@ -367,18 +367,18 @@
       if(mid == fp_next_float(theMin)){
          mid = fp_next_float(mid);
       }
-       interval[2].inf = interval[2].sup = mid;
+      interval[2].inf = interval[2].sup = mid;
       //            if(mid == 0.0f)
       //               interval[2].inf = -0.0f;
-            interval[3].inf = fp_next_float(theMin);
-            interval[3].sup = fp_previous_float(mid);
-            length = 3;
-            if(fp_previous_float(theMax) != mid){
-               interval[4].inf = fp_next_float(mid);
-               interval[4].sup = fp_previous_float(theMax);
-               length++;
-            }
-         }
+      interval[3].inf = fp_next_float(theMin);
+      interval[3].sup = fp_previous_float(mid);
+      length = 3;
+      if(fp_previous_float(theMax) != mid){
+         interval[4].inf = fp_next_float(mid);
+         interval[4].sup = fp_previous_float(theMax);
+         length++;
+      }
+   }
    float_interval* ip = interval;
    [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
       ORInt c = [[_program explorer] nbChoices];
@@ -416,15 +416,15 @@
       if(mid == fp_next_double(theMin)){
          mid = fp_next_double(mid);
       }
-       interval[2].inf = interval[2].sup = mid;
-           interval[3].inf = fp_next_double(theMin);
-           interval[3].sup = fp_previous_double(mid);
-           length = 3;
-           if(fp_previous_double(theMax) != mid){
-              interval[4].inf = fp_next_double(mid);
-              interval[4].sup = fp_previous_double(theMax);
-              length++;
-           }
+      interval[2].inf = interval[2].sup = mid;
+      interval[3].inf = fp_next_double(theMin);
+      interval[3].sup = fp_previous_double(mid);
+      length = 3;
+      if(fp_previous_double(theMax) != mid){
+         interval[4].inf = fp_next_double(mid);
+         interval[4].sup = fp_previous_double(theMax);
+         length++;
+      }
    }
    double_interval* ip = interval;
    //   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
