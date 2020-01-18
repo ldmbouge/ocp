@@ -159,6 +159,7 @@
    NSMutableDictionary*   _order;
    ORBool                  _withParent;
    ORBool                  _middle;
+   ORBool                  _cardMid;
    ORInt                  _level;
    ORBool                 _pause;
    ORInt                  _unique;
@@ -203,6 +204,7 @@
    _oneSol = YES;
    _level = 100;
    _middle = YES;
+   _cardMid = NO;
    _pause = NO;
    _withParent = NO;
    _absRateLimitModelVars = 0.3;
@@ -417,6 +419,10 @@
 -(void) setMiddle:(ORBool) b
 {
    _middle = b;
+}
+-(void) setCardMiddle:(ORBool) b
+{
+   _cardMid = b;
 }
 -(void) setPause:(ORBool) b
 {
@@ -2529,7 +2535,7 @@
 -(void) float5WaySplit:(ORUInt) i withVars:(id<ORDisabledVarArray>) x
 {
    id<CPVar> xi = _gamma[x[i].getId];
-   id<CPVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i] middle:_middle withPath:_path];
+   id<CPVisitor> splitVisit = [[OR5WaySplitVisitor alloc] initWithProgram:self variable:x[i] middle:_middle card:_cardMid withPath:_path];
    [self trackObject:splitVisit];
    [xi visit:splitVisit];
 }

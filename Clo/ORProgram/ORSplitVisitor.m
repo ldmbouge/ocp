@@ -14,19 +14,22 @@
 
 @implementation CPVisitorI{
    ORBool _middle;
+   ORBool _rmiddle;
 }
 
 -(CPVisitorI*) init
 {
    self = [super init];
    _middle = NO;
+   _rmiddle = NO;
    return self;
 }
 
--(CPVisitorI*) initWithMiddle:(ORBool) middle
+-(CPVisitorI*) initWithMiddle:(ORBool) middle cardinalityMid:(ORBool) real
 {
    self = [super init];
    _middle = middle;
+   _rmiddle = real;
    return self;
 }
 
@@ -45,6 +48,8 @@
       mid = 1.0;
    else if ((theMin < -1.0) && (-1.0 < theMax))
       mid = -1.0;
+   else if(_rmiddle)
+      mid = [self doubleRMid:xi];
    else
       mid = tmpMin/2 + tmpMax/2;
    assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
@@ -65,6 +70,8 @@
       mid = 1.0f;
    else if ((theMin < -1.0f) && (-1.0f < theMax))
       mid = -1.0f;
+   else if(_rmiddle)
+      mid = [self floatRMid:xi];
    else
       mid = tmpMin/2 + tmpMax/2;
    assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
@@ -311,17 +318,15 @@
 }
 @end
 
-
-
 @implementation OR5WaySplitVisitor{
    CPCoreSolver*       _program;
    id<ORVar>           _variable;
    NSMutableArray*     _path;
 }
 
--(OR5WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle withPath:(NSMutableArray *)path
+-(OR5WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle  card:(ORBool) realM withPath:(NSMutableArray *)path
 {
-   self = [super initWithMiddle:middle];
+   self = [super initWithMiddle:middle cardinalityMid:realM];
    _program = p;
    _variable = v;
    _path  = path;

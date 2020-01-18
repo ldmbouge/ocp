@@ -72,6 +72,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize restricted;
 @synthesize fullRestrict;
 @synthesize middle;
+@synthesize cardMid;
 @synthesize paused;
 @synthesize printSolution;
 @synthesize printModel;
@@ -187,6 +188,7 @@ static enum ValHeuristic valIndex[] =
    _restrictRequired = 1;
    occDetails = NO;
    middle = YES;
+   cardMid = NO;
    paused = NO;
    printSolution = NO;
    printModel = NO;
@@ -261,6 +263,8 @@ static enum ValHeuristic valIndex[] =
           fullRestrict = YES;
       else if (strncmp(argv[k],"-no-middle",9)==0)
          middle = NO;
+      else if (strncmp(argv[k],"-card-middle",11)==0)
+         cardMid = YES;
       else if (strncmp(argv[k],"-debug-pause",12)==0)
          paused = YES;
       else if (strncmp(argv[k],"-print-solution",15)==0)
@@ -511,6 +515,7 @@ static enum ValHeuristic valIndex[] =
          [(CPCoreSolver*)p setWithRewriting:(withSRewriting || withDRewriting)];
          [(CPCoreSolver*)p setLevel:level];
          [(CPCoreSolver*)p setMiddle:middle];
+         [(CPCoreSolver*)p setCardMiddle:cardMid];
          [(CPCoreSolver*)p setPause:paused];
          [(CPCoreSolver*)p setAbsComputationFunction:absFunComputation];
          if(absRate >= 0) [(CPCoreSolver*)p setAbsRate:absRate];
