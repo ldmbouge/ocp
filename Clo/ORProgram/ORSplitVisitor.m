@@ -33,6 +33,13 @@
    return self;
 }
 
+-(CPVisitorI*) initWithMiddle:(ORBool) middle
+{
+   self = [super init];
+   _middle = middle;
+   return self;
+}
+
 -(ORDouble) doubleMiddle:(CPDoubleVarI*) xi
 {
    ORDouble theMax = xi.max;
