@@ -18,6 +18,10 @@
 #define R_IS_STRICTLY_POSITIVE(Q) ((0 < (*(Q).rational->_mp_num._mp_size))?1:0)
 #define R_IS_STRICTLY_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) < 0)?1:0)
 
+int RUN_IMPROVE_GUESS = 0;
+/* Discard box if half-ulp limit is reached on all constraints */
+int RUN_DISCARDED_BOX = 1;
+
 int nbBoxGenerated = 1;
 int nbBoxExplored = 0;
 int stoppingTime = 10;
@@ -27,7 +31,6 @@ double boxCardinality = -1;
 TRInt limitCounter;
 int nbConstraint = 0;
 int nbBoxDone = 0;
-int RUN_IMPROVE_GUESS = 0;
 bool newBox = TRUE;
 bool initLimitCounter = TRUE;
 

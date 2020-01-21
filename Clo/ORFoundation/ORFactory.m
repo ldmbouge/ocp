@@ -778,6 +778,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    
    return x;
 }
++(id<ORDoubleVar>) doubleInputVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name
+{
+   return [[ORDoubleVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name];
+}
 +(id<ORFloatVar>) floatConstantVar: (id<ORTracker>) tracker value:(ORFloat) v string:(NSString*) vs name:(NSString*) name
 {
    id<ORRational> xQ = [[ORRational alloc] init];
@@ -809,6 +813,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [posInf release];
    
    return x;
+}
++(id<ORFloatVar>) floatInputVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name
+{
+   return [[ORFloatVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name];
 }
 +(id<ORRationalVar>) ulpVar: (id<ORTracker>) mdl of:(id<ORVar>)f
 {

@@ -167,8 +167,10 @@ PORTABLE_BEGIN
 +(id<ORRationalVar>) errorVar: (id<ORTracker>) tracker of:(id<ORExpr>)f;
 +(id<ORDoubleVar>) doubleConstantVar: (id<ORTracker>) tracker value: (ORDouble) v string:(NSString*) vs name:(NSString*) name;
 +(id<ORDoubleVar>) doubleInputVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up name:(NSString*) name;
++(id<ORDoubleVar>) doubleInputVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name;
 +(id<ORFloatVar>) floatConstantVar: (id<ORTracker>) tracker value: (ORFloat) v string:(NSString*) vs name:(NSString*) name;
 +(id<ORFloatVar>) floatInputVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up name:(NSString*) name;
++(id<ORFloatVar>) floatInputVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name;
 +(id<ORRationalVar>) ulpVar: (id<ORTracker>) tracker of:(id<ORExpr>)f;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;

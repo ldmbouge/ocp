@@ -19,6 +19,9 @@ typedef struct {
    ORUInt _mgc;
 } TRInt;
 
+extern int RUN_IMPROVE_GUESS;
+extern int RUN_DISCARDED_BOX;
+
 extern int nbBoxGenerated;
 extern int nbBoxExplored;
 extern int stoppingTime;
@@ -28,7 +31,6 @@ extern double boxCardinality;
 extern TRInt limitCounter;
 extern int nbConstraint;
 extern int nbBoxDone;
-extern int RUN_IMPROVE_GUESS;
 extern bool newBox;
 extern bool initLimitCounter;
 

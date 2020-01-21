@@ -540,7 +540,7 @@ void test_d_c(int search, int argc, const char * argv[]) {
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       
       /* Initialization of constants */
-      [mdl add:[k set: @(1.5)]];
+      [mdl add:[k set: @(0.99)]];
 
       /* Declaration of constraints */
       [mdl add:[z set: [k mul: x]]];

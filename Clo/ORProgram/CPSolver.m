@@ -2241,11 +2241,13 @@ onFailure: (ORInt2Void) onFailure
          /******************************/
          
          /* When a new box is discarded, boundDiscardedBoxes is updated with the maximal error upper bound of all discarded boxes */
-         if(limitCounter._val >= nbConstraint){
-            if([[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes])
-               [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
-            
-            break;
+         if(RUN_DISCARDED_BOX){
+            if(limitCounter._val >= nbConstraint){
+               if([[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes])
+                  [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
+               
+               break;
+            }
          }
          
          /* Do not split current box if primalBound is greater than or equal to its local error upper bound or if local error upper bound is less than or equal to the maximal error upper bound of discarded boxes
