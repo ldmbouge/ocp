@@ -32,6 +32,17 @@ extern int RUN_IMPROVE_GUESS;
 extern bool newBox;
 extern bool initLimitCounter;
 
+extern ORBool previousGuessFailed;
+extern ORBool repeatOnce;
+extern ORBool dirHalfUlp;
+extern ORInt indexCurrentVar;
+extern ORInt nbVarSet;
+extern NSMutableArray *arrayValue;
+extern NSMutableArray *arrayError;
+extern id<ORSolution> solution;
+
+
+
 extern void exitfunc(int sig);
 
 
@@ -275,3 +286,71 @@ static inline ORDouble next_power_of_two(ORDouble value, ORInt next) {
 }
 
 extern id<ORRational> boundDiscardedBoxes;
+
+
+///* START NEW GUESS */
+//if (RUN_IMPROVE_GUESS) {
+//   /* BEGIN: Attempt to improve the error */
+//   id<ORSolution> tmp_solution = [self captureSolution];
+//   bool improved = FALSE, improved_var = FALSE;
+//   int nvar = 0, nv, nbiter = 0;
+//   int direction = 1;
+//   ORStatus s;
+//   while (nbiter < 200) {
+//      [_tracer popNode];
+//      [_tracer pushNode];
+//      nbiter++; //printf("nb iter = %d\n", nbiter);
+//      if (nvar == 0) {
+//         nv = 0; for (id<ORDoubleVar> v in x) { xc = _gamma[v.getId]; nv++; if (! [xc bound]) { nvar = nv; break; }}
+//         if (nvar == 0) break;
+//      }
+//      nv = 0;
+//      for (id<ORVar> v in x) {
+//         xc = _gamma[v.getId]; nv++;
+//         if (! [xc bound]) {
+//            double value = [[tmp_solution value:v] doubleValue];
+//            if (nv == nvar) value = nextafter(value, (direction == 1)?(+INFINITY):(-INFINITY));
+//            s = [_engine enforce:^{ [xc bind:value];}];
+//            if (s == ORFailure) break;
+//         }
+//      }
+//      if ((s != ORFailure) && ([[[tmp_solution value:ez] rationalValue] lt: [ezi min]])) { // Better err
+//         tmp_solution = [self captureSolution];
+//         improved_var = TRUE;
+//         improved = TRUE;
+//      } else {
+//         if ((! improved_var) && (direction == 1)) {
+//            direction = -1;
+//         } else {
+//            direction = 1;
+//            improved_var = FALSE;
+//            nv = 0;
+//            int old_nvar = nvar;
+//            for (id<ORDoubleVar> v in x) {
+//               xc = _gamma[v.getId]; nv++;
+//               if ((nv > nvar) && (! [xc bound])) { nvar = nv; break; }
+//            }
+//            if (nvar == old_nvar) break;
+//         }
+//      }
+//   }
+//   /* END: Attempt to improve the error */
+//   if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) {
+//      // And as updatePrimalBound does test whether the value is actually better or not
+//      // testing it here is useless
+//      printf("*** nb iter = %d\n", nbiter);
+//      id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
+//      [[_engine objective] tightenPrimalBound:objv];
+//      [objv release];
+//      solution = tmp_solution; // Keep it as a solution
+//      NSLog(@"#####");
+//      NSLog(@"[GuessError]");
+//      for (id<ORVar> v in [_model variables]) {
+//         if([v prettyname])
+//            NSLog(@"%@: %@", [v prettyname], [solution value:v]);
+//      }
+//      NSLog(@"#####");
+//      [_tracer popNode]; // need to restore initial state before going out of loop !
+//      break;
+//   }
+//   /* END: NEW GUESS */

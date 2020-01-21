@@ -13,10 +13,8 @@
 @interface BBKey : NSObject {
 @public
    id<ORObjectiveValue> _v;
-   //int              _depth;
    double           _depth;
 }
-//-(id)init:(id<ORObjectiveValue>)v withDepth:(int)d;
 -(id)init:(id<ORObjectiveValue>)v withDepth:(double)d;
 -(id<ORObjectiveValue>)getValue;
 -(NSString*)description;
@@ -34,32 +32,17 @@
 @end
 
 @implementation BBKey
-
-//+(BBKey*)key:(id<ORObjectiveValue>)v withDepth:(int)d
-//{
-//   BBKey* k  = [BBKey alloc];
-//   k->_v     = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1]; //v; // [v retain];
-//   k->_depth = d;
-//   return k;
-//}
 +(BBKey*)key:(id<ORObjectiveValue>)v withDepth:(double)d
 {
    BBKey* k  = [BBKey alloc];
-   k->_v     = [[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1]; //v; // [v retain];
+   k->_v     = [[[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1] retain];
    k->_depth = d;
    return k;
 }
-//-(BBKey*)init:(id<ORObjectiveValue>)v withDepth:(int)d
-//{
-//   self = [super init];
-//   _v = [[[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1] retain];
-//   _depth = d;
-//   return self;
-//}
 -(BBKey*)init:(id<ORObjectiveValue>)v withDepth:(double)d
 {
-   self = [super init];
-   _v = [[[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1] retain];
+   self   = [super init];
+   _v     = [[[ORObjectiveValueRationalI alloc] initObjectiveValueRationalI: [v rationalValue] minimize: [v direction] == 1] retain];
    _depth = d;
    return self;
 }
@@ -82,15 +65,14 @@
    [buf appendFormat:@"%@ - %f",_v,_depth];
    return buf;
 }
-
 @end
 
 @implementation BBNode
 -(id)init:(NSCont*)k checkpoint:(id<ORCheckpoint>)cp
 {
    self = [super init];
-   _k = k;
-   _cp = cp;
+   _k   = k;
+   _cp  = cp;
    return self;
 }
 -(NSCont*)cont
@@ -130,7 +112,6 @@
             return a->_depth > b->_depth;
          }
       }
-      //return [a->_v compare:b->_v] == NSOrderedDescending; // GOOD
    }];
    return self;
 }
@@ -184,7 +165,6 @@
 {
    id<ORCheckpoint> cp = [_tracer captureCheckpoint];
    BBNode* node = [[BBNode alloc] init:k checkpoint:cp];
-   //BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
    BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:boxCardinality];
    [_buf insertObject:node withKey:ov];
    //NSLog(@"%@ -- %@", node, ov);
@@ -301,9 +281,11 @@ NSString * const ORStatus_toString_BB[] = {
                else [k letgo];
             }
          } else {
-            NSLog(@"EQUAL BOUND: %@ <  %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
-            NSLog(@"           : %@ >= %@", [bestKey.bound rationalValue], [[_engine objective] primalBound]);
-            NSLog(@"           : %@ >= %@", boundDiscardedBoxes, [[_engine objective] primalBound]);
+            NSLog(@"EQUAL BOUND");
+            NSLog(@"    primalBound <=               dualBound: %@ <= %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
+            NSLog(@"    primalBound <=        dualBoundNextBox: %@ <= %@", [[_engine objective] primalBound], [bestKey.bound rationalValue]);
+            if(![boundDiscardedBoxes isNegInf])
+               NSLog(@"    primalBound <= dualBoundDiscardedBoxes: %@ >= %@", boundDiscardedBoxes, [[_engine objective] primalBound]);
             return;
          }
       } else {

@@ -778,6 +778,38 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    
    return x;
 }
++(id<ORFloatVar>) floatConstantVar: (id<ORTracker>) tracker value:(ORFloat) v string:(NSString*) vs name:(NSString*) name
+{
+   id<ORRational> xQ = [[ORRational alloc] init];
+   id<ORRational> xF = [[ORRational alloc] init];
+   id<ORRational> ex = [[ORRational alloc] init];
+   [xQ set_str:(char*)[vs UTF8String]];
+   [xF set_d:v];
+   [ex set:[xQ sub: xF]];
+   
+   id<ORFloatVar> x = [ORFactory floatVar:tracker low:v up:v elow:ex eup:ex name:name];
+   [xQ release];
+   [xF release];
+   [ex release];
+   
+   return x;
+}
++(id<ORFloatVar>) floatInputVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up name:(NSString*) name
+{
+   id<ORRational> negInf = [[ORRational alloc] init];
+   id<ORRational> posInf = [[ORRational alloc] init];
+   [negInf setNegInf];
+   [posInf setPosInf];
+   id<ORFloatVar> x = [[ORFloatVarI alloc]  init: tracker low: low up: up elow: negInf eup: posInf name:name];
+   id<ORRationalVar> ex = [ORFactory errorVar:tracker of:x];
+   id<ORRationalVar> ulp = [ORFactory ulpVar:tracker of:x];
+   [tracker add:[ex leq:ulp]];
+   [tracker add:[ex geq:ulp]];
+   [negInf release];
+   [posInf release];
+   
+   return x;
+}
 +(id<ORRationalVar>) ulpVar: (id<ORTracker>) mdl of:(id<ORVar>)f
 {
    id<ORRational> low = [[[ORRational alloc] init] setNegInf];

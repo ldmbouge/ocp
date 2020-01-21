@@ -77,7 +77,7 @@ void kepler0_d_c(int search, int argc, const char * argv[]) {
 
       /* Declaration of constraints */
       //(x2*x5) + (x3*x6) - (x2*x3) - (x5*x6) + (x1* (-x1+x2+x3-x4+x5+x6))
-      [mdl add:[z set:  [[[[[x2 mul: x5] plus: [x3 mul: x6]] sub: [x2 mul: x3]] sub: [x5 mul: x6]] plus: [x1 mul: [[[[[[x1 minus] plus: x2] plus: x3] sub: x4] plus: x5] plus: x6]]]]];
+      [mdl add:[z set: [[[[[x2 mul: x5] plus: [x3 mul: x6]] sub: [x2 mul: x3]] sub: [x5 mul: x6]] plus: [x1 mul: [[[[[[x1 minus] plus: x2] plus: x3] sub: x4] plus: x5] plus: x6]]]]];
 
       /* Declaration of constraints over errors */
       [mdl add: [ezAbs eq: [ez abs]]];

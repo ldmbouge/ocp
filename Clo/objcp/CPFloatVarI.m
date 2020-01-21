@@ -167,6 +167,7 @@ return rv;
 
 @implementation CPFloatVarI{
    CPFloatEventNetwork      _net;
+   ORBool _inputVar;
 }
 
 -(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup
@@ -177,9 +178,15 @@ return rv;
     _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail] low:elow up:eup];
     _recv = nil;
     _hasValue = false;
-    _value = 0.0;
+    _value = 0.0f;
+   _valueError = [[ORRational alloc] init];
+   [_valueError setZero];
     setUpNetwork(&_net, [engine trail]);
     [_engine trackVariable: self];
+   
+   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
+      _inputVar = TRUE;
+
     return self;
 }
 
@@ -191,9 +198,15 @@ return rv;
     _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail] lowF:elow upF:eup];
     _recv = nil;
     _hasValue = false;
-    _value = 0.0;
+    _value = 0.0f;
+   _valueError = [[ORRational alloc] init];
+   [_valueError setZero];
     setUpNetwork(&_net, [engine trail]);
     [_engine trackVariable: self];
+   
+   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
+      _inputVar = TRUE;
+
     return self;
 }
 
@@ -208,9 +221,15 @@ return rv;
         _domError = [[CPRationalDom alloc] initCPRationalDom:[engine trail]];
     _recv = nil;
     _hasValue = false;
-    _value = 0.0;
+    _value = 0.0f;
+   _valueError = [[ORRational alloc] init];
+   [_valueError setZero];
     setUpNetwork(&_net, [engine trail]);
     [_engine trackVariable: self];
+   
+   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
+      _inputVar = TRUE;
+
     return self;
 }
 
@@ -223,8 +242,14 @@ return rv;
     _recv = nil;
     _hasValue = false;
     _value = 0.0f;
+   _valueError = [[ORRational alloc] init];
+   [_valueError setZero];
     setUpNetwork(&_net, [engine trail]);
     [_engine trackVariable: self];
+   
+   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
+      _inputVar = TRUE;
+
     return self;
 }
 -(void)dealloc
@@ -577,6 +602,10 @@ return rv;
 -(ORBool) boundError
 {
     return [_domError bound];
+}
+-(ORBool) isInputVar
+{
+   return _inputVar;
 }
 - (ORInt)domsize
 {
@@ -960,12 +989,14 @@ return rv;
 {
    return [_theVar bound];
 }
+- (ORBool)isInputVar {
+   return FALSE;
+}
 - (id<ORRational>)errorValue
 {
    id<ORRational> errorValue = [[ORRational alloc] init];
    [errorValue autorelease];
     return errorValue;
-   
 }
 - (void)visit:(id<CPVisitor>)visitor
 {

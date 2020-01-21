@@ -520,12 +520,65 @@ void testUlp(int argc, const char * argv[]) {
    }
 }
 
+void test_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of rational numbers */
+      id<ORRational> zero = [[ORRational alloc] init];
+
+      /* Initialization of rational numbers */
+      [zero setZero];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:-2.0 up:2.0 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
+      //id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.1 string:@"11/10" name:@"a"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+      
+      /* Initialization of constants */
+      [mdl add:[k set: @(1.5)]];
+
+      /* Declaration of constraints */
+      [mdl add:[z set: [k mul: x]]];
+      //[mdl add:[z eq: x]];
+      
+      /* Declaration of constraints over errors */
+      [mdl add: [ezAbs eq: [ez abs]]];
+      [mdl maximize:ezAbs];
+      
+      /* Memory release of rational numbers */
+      [zero release];
+
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      /* Solving */
+      [cp solve:^{
+            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               /* Split strategy */
+               [cp floatSplit:i withVars:x];
+            }];
+      }];
+   }
+}
+
+
 
 int main(int argc, const char * argv[]) {
-   LOO_MEASURE_TIME(@"testR"){
       //   testIntBFS(argc, argv);
       //testR(argc, argv);
-      testUlp(argc, argv);
+      //testUlp(argc, argv);
+      test_d_c(0, argc, argv);
       //testRF(argc, argv);
       //testRD(argc, argv);
       //testDiscriminant(argc, argv);
@@ -553,6 +606,5 @@ int main(int argc, const char * argv[]) {
       
       //testRational(argc, argv);
       //testOptimize(argc, argv);
-   }
    return 0;
 }

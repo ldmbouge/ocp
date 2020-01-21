@@ -6323,12 +6323,12 @@
    self = [super initORConstraintI];
    _ia = ia;
    _coefs = coefs;
-   _c = [ORRational rationalWith:c];
+   _c = [[ORRational alloc] init];
+   [_c set:c];
    return self;
 }
 -(void)dealloc
 {
-   //[_coefs release];
    [_c release];
    [super dealloc];
 }

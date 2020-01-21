@@ -834,9 +834,10 @@
          if(c < 0){
             z = [CPFactory floatVar:[x[x.low] engine] value:-c];
             return [CPFactory floatTernarySub:x[0] equals:x[1] minus:z annotation:notes];
-         }else
+         }else{
             z = [CPFactory floatVar:[x[x.low] engine] value:c];
          return [CPFactory floatTernaryAdd:x[0] equals:x[1] plus:z annotation:notes];
+         }
       }else{ // [x count] = 3
          assert([x count] <= 3);
          //form x = y + z
@@ -1255,25 +1256,33 @@
 }
 +(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs eqi:(id<ORRational>)c annotation:(id<ORAnnotation>) notes
 {
+   id<ORRational> zero = [[ORRational alloc] init];
+   [zero setZero];
    if([x count] == 1 && [[coefs at:coefs.low] isOne]){
+      [zero release];
       return [self rationalEqualc:x[x.low] to:c];
    }else{
       if([x count] == 2){
          //form x = y + c
          //or   x = y - c
          id<CPRationalVar> z;
-         if(c == 0) return [self rationalEqual:x[x.low] to:x[1]];
-         if(c < 0){
+         if([c isZero]) {
+            [zero release];
+            return [self rationalEqual:x[x.low] to:x[1]];
+         }
+         if([c lt: zero]){
             z = [CPFactory rationalVar:[x[x.low] engine] value:[c neg]];
+            [zero release];
             return [CPFactory rationalTernarySub:x[0] equals:x[1] minus:z annotation:notes];
-         }else
+         }else{
             z = [CPFactory rationalVar:[x[x.low] engine] value:c];
-         return [CPFactory rationalTernaryAdd:x[0] equals:x[1] plus:z annotation:notes];
+            [zero release];
+            return [CPFactory rationalTernaryAdd:x[0] equals:x[1] plus:z annotation:notes];
+         }
       }else{ // [x count] = 3
          assert([x count] <= 3);
          //form x = y + z
          //or   x = y - z
-         id<ORRational> zero = [ORRational rationalWith_d:0.0];
          if([[coefs at:2] lt: zero]){
             [zero release];
             return [CPFactory rationalTernarySub:x[0] equals:x[1] minus:x[2] annotation:notes];
@@ -1560,9 +1569,10 @@
          if(c < 0){
             z = [CPFactory doubleVar:[x[x.low] engine] value:-c];
             return [CPFactory doubleTernarySub:x[0] equals:x[1] minus:z annotation:notes];
-         }else
+         }else{
             z = [CPFactory doubleVar:[x[x.low] engine] value:c];
-         return [CPFactory doubleTernaryAdd:x[0] equals:x[1] plus:z annotation:notes];
+            return [CPFactory doubleTernaryAdd:x[0] equals:x[1] plus:z annotation:notes];
+         }
       }else{ // [x count] = 3
          assert([x count] <= 3);
          //form x = y + z

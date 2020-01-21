@@ -106,7 +106,7 @@ void turbine2_d_c(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> r = [ORFactory doubleInputVar:mdl low:3.8 up:7.8 name:@"r"];
       id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.5 string:@"1/2" name:@"a"];
       id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:2.5 string:@"5/2" name:@"b"];
-      id<ORDoubleVar> z = [ORFactory doubleVar:mdl];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       

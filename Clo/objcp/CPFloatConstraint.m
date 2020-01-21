@@ -360,20 +360,6 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) propagate
 {
-   if([_x bound]){
-      if([_y bound]){
-         if(([_x value] != - [_y value]) && [[_x errorValue] neq: [[_y errorValue] neg]]) failNow();
-         assignTRInt(&_active, NO, _trail);
-      }else{
-         [_y bind:-[_x value]];
-         [_y bindError:[[_x errorValue] neg]];
-         assignTRInt(&_active, NO, _trail);
-      }
-   }else if([_y bound]){
-      [_x bind:-[_y value]];
-      [_x bindError:[[_y errorValue] neg]];
-      assignTRInt(&_active, NO, _trail);
-   }else {
       updateFloatInterval(&_xi,_x);
       updateFloatInterval(&_yi,_y);
       intersectionInterval inter;
@@ -407,7 +393,6 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [interError release];
       [ex release];
       [ey release];
-   }
 }
 -(NSSet*)allVars
 {

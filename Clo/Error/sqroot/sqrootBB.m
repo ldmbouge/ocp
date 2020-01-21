@@ -111,6 +111,8 @@ void sqroot_d(int search, int argc, const char * argv[]) {
 
 void sqroot_d_c(int search, int argc, const char * argv[]) {
    @autoreleasepool {
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
       /* Creation of model */
       id<ORModel> mdl = [ORFactory createModel];
       
@@ -148,6 +150,9 @@ void sqroot_d_c(int search, int argc, const char * argv[]) {
                [cp floatSplit:i withVars:x];
             }];
       }];
+         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
+      }];
    }
 }
 
@@ -183,8 +188,8 @@ void sqroot_f(int search, int argc, const char * argv[]) {
                   [cp float3WaySplit:i withVars:x];
                }];
          }];
-         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
+         struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return result;
       }];
    }
 }

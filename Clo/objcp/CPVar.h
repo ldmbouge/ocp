@@ -200,6 +200,7 @@ enum CPVarClass {
 -(ORInterval) bounds;
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
+-(ORBool) isInputVar;
 -(ORBool) boundError;
 -(ORLDouble) domwidth;
 -(ORFloat) magnitude;
@@ -249,6 +250,7 @@ enum CPVarClass {
 -(void) updateMax:(ORDouble) newMax;
 -(void) assignRelaxationValue: (ORDouble) f;
 -(void) updateInterval: (ORDouble) newMin and:(ORDouble) newMax;
+-(void) updateIntervalError: (id<ORRational>) newMin and:(id<ORRational>) newMax;
 @end
 
 @protocol CPLDoubleVar<CPVar>

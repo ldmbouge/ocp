@@ -31,6 +31,15 @@ int RUN_IMPROVE_GUESS = 0;
 bool newBox = TRUE;
 bool initLimitCounter = TRUE;
 
+ORBool previousGuessFailed = FALSE;
+ORBool repeatOnce = TRUE;
+ORBool dirHalfUlp = FALSE;
+ORInt indexCurrentVar = 0;
+ORInt nbVarSet = 0;
+NSMutableArray *arrayValue = NULL;
+NSMutableArray *arrayError = NULL;
+id<ORSolution> solution = NULL;
+
 void exitfunc(int sig)
 {
    exit(sig);

@@ -82,13 +82,6 @@
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
    if([xi bound]) return;
-   if(limitCounter._val >= nbConstraint)
-   {
-      // Current box cannot be improved without enumeration.
-      // Do not split box and return.
-      nbBoxDone++;
-      return;
-   }
    ORDouble theMax = xi.max;
    ORDouble theMin = xi.min;
    ORDouble mid = theMin; //force to the left side if next(theMin) == theMax
