@@ -16,14 +16,6 @@
 -(NSMutableArray*) checkEquivalence:(id<ORExpr>)first and:(id<ORExpr>)second;
 @end
 
-@interface ORDDUpdateSpecs : ORNOopVisit {
-@protected
-    NSDictionary* _mapping;
-}
--(ORDDUpdateSpecs*) initORDDUpdateSpecs:(NSDictionary*)mapping;
--(void) updateSpecs:(id<ORExpr>)e;
-@end
-
 @interface ORDDUpdatedSpecs : ORNOopVisit {
 @protected
     NSDictionary* _mapping;
