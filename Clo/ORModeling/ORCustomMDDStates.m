@@ -132,6 +132,9 @@
 -(void) mergeStateWith:(CustomState *)other {
     return;
 }
+-(void) replaceStateWith:(CustomState *)other {
+    return;
+}
 -(int) numPathsWithNextVariable:(int)variable {
     int count = 0;
     /*
@@ -261,6 +264,12 @@
         if (relaxationFunction != NULL) {
             assignTRId(&_state[stateIndex], (id)relaxationFunction(_state, ptrOS), _trail);
         }
+    }
+}
+-(void) replaceStateWith:(MDDStateSpecification*)other {
+    id* ptrOS = other.state;
+    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
+        assignTRId(&_state[stateIndex], ptrOS[stateIndex], _trail);
     }
 }
 
@@ -1308,6 +1317,15 @@ static bool _hasObjective = false;
         CustomState* myState = [_states objectAtIndex:stateIndex];
         CustomState* otherState = [otherStates objectAtIndex:stateIndex];
         [myState mergeStateWith:otherState];
+    }
+}
+-(void) replaceStateWith:(JointState*)other {
+    NSMutableArray* otherStates = [other states];
+    
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        CustomState* myState = [_states objectAtIndex:stateIndex];
+        CustomState* otherState = [otherStates objectAtIndex:stateIndex];
+        [myState replaceStateWith:otherState];
     }
 }
 

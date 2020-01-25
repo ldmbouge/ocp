@@ -32,11 +32,8 @@
     int _minChildIndex;
     int _maxChildIndex;
     
-    ORTRIdArrayI* _parents;
     ORTRIdArrayI* _uniqueParents;
     ORTRIntArrayI* _parentCounts;
-    TRInt _numParents;
-    TRInt _maxNumParents;
     TRInt _numUniqueParents;
     TRInt _maxNumUniqueParents;
     
@@ -50,7 +47,6 @@
 -(TRId) getState;
 -(int) value;
 -(bool) isRelaxed;
--(int) DEBUGConfirmNumParentsEqualsSumOfParentCount;
 -(bool) recalcRequired;
 -(void) setRecalcRequired:(bool)recalcRequired;
 -(bool) isVital;
@@ -61,15 +57,16 @@
 -(int) minChildIndex;
 -(int) maxChildIndex;
 -(TRId*) children;
+-(int) numChildren;
 -(void) addChild:(Node*)child at:(int)index;
 -(void) removeChildAt: (int) index;
--(int) findChildIndex: (Node*) child;
--(ORTRIdArrayI*) parents;
--(int) numParents;
+-(void) removeChild:(Node*)child numTimes:(int)childCount updating:(TRInt*)variable_count;
+-(void) replaceChild:(Node*)oldChild with:(Node*)newChild numTimes:(int)childCount;
+-(bool) hasParents;
 -(void) addParent: (Node*) parent;
--(void) addParentToNonUniqueList:(Node*) parent;
 -(bool) hasParent:(Node*)parent;
 -(int) countForParent:(Node*)parent;
+-(int) countForParentIndex:(int)parent_index;
 -(void) removeParentOnce: (Node*) parent;
 -(void) removeParentValue: (Node*) parent;
 -(void) mergeWith:(Node*)other inPlace:(bool)inPlace layerVariableCount:(TRInt**)layerVariableCount layer:(int)layer;
@@ -129,8 +126,8 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
 -(void) removeNodeAt:(int)index onLayer:(int)layer_index;
 -(void) removeNode: (Node*) node;
--(void) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming;
--(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming;
+-(int) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer;
+-(int) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
 -(void) DEBUGTestLayerVariableCountCorrectness;
 -(void) DEBUGTestParentChildParity;

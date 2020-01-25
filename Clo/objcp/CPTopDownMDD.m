@@ -52,12 +52,9 @@
     _numChildren = makeTRInt(_trail, 0);
     _minChildIndex = 0;
     _maxChildIndex = 0;
-    _maxNumParents = makeTRInt(_trail,10);
     _maxNumUniqueParents = makeTRInt(_trail,10);
-    _parents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumParents._val];
     _uniqueParents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumUniqueParents._val];
     _parentCounts = [[ORTRIntArrayI alloc] initORTRIntArrayWithTrail:_trail range:[[ORIntRangeI alloc] initORIntRangeI:0 up:_maxNumUniqueParents._val]];
-    _numParents = makeTRInt(_trail, 0);
     _numUniqueParents = makeTRInt(_trail, 0);
     _value = -1;
     _isSink = false;
@@ -84,12 +81,9 @@
     _state = makeTRId(_trail, state);
     
     _numChildren = makeTRInt(_trail, 0);
-    _maxNumParents = makeTRInt(_trail,(_maxChildIndex-_minChildIndex+1));
     _maxNumUniqueParents = makeTRInt(_trail,(maxChildIndex-minChildIndex+1));
-    _parents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumParents._val];
     _uniqueParents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumUniqueParents._val];
     _parentCounts = [[ORTRIntArrayI alloc] initORTRIntArrayWithTrail:_trail range:[[ORIntRangeI alloc] initORIntRangeI:0 up:_maxNumUniqueParents._val]];
-    _numParents = makeTRInt(_trail, 0);
     _numUniqueParents = makeTRInt(_trail, 0);
     _value = value;
     _isSink = false;
@@ -106,7 +100,6 @@
     return self;
 }
 -(void) dealloc {
-    [_parents dealloc];
     [_uniqueParents dealloc];
     [_parentCounts dealloc];
     [super dealloc];
@@ -115,9 +108,8 @@
 -(TRId) getState {
     return _state;
 }
-//TODO: Don't allow setting of state like this.  Instead, needs to copy the values into the old state so only one state is used per node
 -(void) setState:(id)newState {
-    assignTRId(&_state, newState, _trail);
+    [_state replaceStateWith:newState];
 }
 -(void) setIsSink: (bool) isSink {
     _isSink = isSink;
@@ -137,6 +129,9 @@
 -(TRId*) children {
     return _children;
 }
+-(int) numChildren {
+    return _numChildren._val;
+}
 -(bool) recalcRequired {
     return _recalcRequired._val;
 }
@@ -153,16 +148,15 @@
     assignTRId(&_children[index], NULL, _trail);
     assignTRInt(&_numChildren, _numChildren._val -1, _trail);
 }
--(int) findChildIndex: (Node*) child {
-    for (int child_index = _minChildIndex; child_index <= _maxChildIndex; child_index++) {
+-(void) removeChild:(Node*)child numTimes:(int)childCount updating:(TRInt*)variable_count {
+    assignTRInt(&_numChildren, _numChildren._val - childCount, _trail);
+    for (int child_index = _minChildIndex; childCount > 0; child_index++) {
         if (_children[child_index] == child) {
-            return child_index;
+            assignTRId(&_children[child_index], NULL, _trail);
+            assignTRInt(&variable_count[child_index], variable_count[child_index]._val, _trail);
+            childCount--;
         }
     }
-    return _minChildIndex-1;
-}
--(ORTRIdArrayI*) parents {
-    return _parents;
 }
 -(ORTRIdArrayI*) uniqueParents {
     return _uniqueParents;
@@ -170,23 +164,17 @@
 -(ORTRIntArrayI*) parentCounts {
     return _parentCounts;
 }
--(int) numParents {
-    return _numParents._val;
+-(bool) hasParents {
+    return _numUniqueParents._val;
 }
 -(int) numUniqueParents {
     return _numUniqueParents._val;
 }
 -(void) addParent: (Node*) parent {
-    if (_maxNumParents._val == _numParents._val) {
-        assignTRInt(&_maxNumParents, _maxNumParents._val * 2, _trail);
-        [_parents resize:_maxNumParents._val];
-    }
-    [_parents set:parent at:_numParents._val];
-    assignTRInt(&_numParents,_numParents._val+1,_trail);
-    
-    if([self hasParent:parent]) {
+    int countForParent = [self countForParent:parent];
+    if(countForParent) {
         int parentIndex = [self findUniqueParentIndexFor:parent];
-        [_parentCounts set:([_parentCounts at:parentIndex]+1) at:parentIndex];
+        [_parentCounts set:(countForParent+1) at:parentIndex];
     } else {
         if (_maxNumUniqueParents._val == _numUniqueParents._val) {
             assignTRInt(&_maxNumUniqueParents, _maxNumUniqueParents._val * 2, _trail);
@@ -198,18 +186,11 @@
         assignTRInt(&_numUniqueParents,_numUniqueParents._val+1,_trail);
     }
 }
--(void) addParentToNonUniqueList:(Node*) parent {
-    if (_maxNumParents._val == _numParents._val) {
-        assignTRInt(&_maxNumParents, _maxNumParents._val * 2, _trail);
-        [_parents resize:_maxNumParents._val];
-    }
-    [_parents set:parent at:_numParents._val];
-    assignTRInt(&_numParents,_numParents._val+1,_trail);
-}
 -(void) addParent: (Node*) parent count:(int)count {
-    if([self hasParent:parent]) {
+    int countForParent = [self countForParent:parent];
+    if(countForParent) {
         int parentIndex = [self findUniqueParentIndexFor:parent];
-        [_parentCounts set:([_parentCounts at:parentIndex]+count) at:parentIndex];
+        [_parentCounts set:(countForParent + count) at:parentIndex];
     } else {
         if (_maxNumUniqueParents._val == _numUniqueParents._val) {
             assignTRInt(&_maxNumUniqueParents, _maxNumUniqueParents._val * 2, _trail);
@@ -222,18 +203,8 @@
     }
 }
 -(void) removeParentOnce: (Node*) parent {
-    int removed = false;
-    for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-        if ((Node*)[_parents at:parentIndex] == parent) {
-            assignTRInt(&_numParents,_numParents._val-1,_trail);
-            [_parents set:[_parents at:_numParents._val] at:parentIndex];
-            removed = true;
-            break;
-        }
-    }
-    
-    if (removed) {
-        int parentIndex = [self findUniqueParentIndexFor:parent];
+    int parentIndex = [self findUniqueParentIndexFor:parent];
+    if (parentIndex >= 0) {
         [_parentCounts set:([_parentCounts at:parentIndex]-1) at:parentIndex];
         if (![_parentCounts at:parentIndex]) {
             assignTRInt(&_numUniqueParents,_numUniqueParents._val-1,_trail);
@@ -243,18 +214,8 @@
     }
 }
 -(void) removeParentValue: (Node*) parent {
-    int removed = false;
-    for (int parentIndex = 0; parentIndex < _numParents._val; parentIndex++) {
-        if ((Node*)[_parents at:parentIndex] == parent) {
-            assignTRInt(&_numParents,_numParents._val-1,_trail);
-            [_parents set:[_parents at:_numParents._val] at:parentIndex];
-            parentIndex--;
-            removed = true;
-        }
-    }
-    
-    if (removed) {
-        int parentIndex = [self findUniqueParentIndexFor:parent];
+    int parentIndex = [self findUniqueParentIndexFor:parent];
+    if (parentIndex >= 0) {
         assignTRInt(&_numUniqueParents,_numUniqueParents._val-1,_trail);
         [_uniqueParents set:[_uniqueParents at:_numUniqueParents._val] at:parentIndex];
         [_parentCounts set:[_parentCounts at:_numUniqueParents._val] at:parentIndex];
@@ -297,24 +258,25 @@
     }
     return 0;
 }
+-(int) countForParentIndex:(int)parent_index {
+    return [_parentCounts at:parent_index];
+}
 -(void) takeParentsFrom:(Node*)other {
-    ORTRIdArrayI* otherParents = [other parents];
-    for (int parentIndex = 0; parentIndex < [other numParents]; parentIndex++) {
-        Node* parent = (Node*)[otherParents at:parentIndex];
-        
-        int child_index = [parent findChildIndex: other];
-        while(child_index >= _minChildIndex) {
-            [parent addChild: self at:child_index];
-            [self addParentToNonUniqueList: parent];
-            child_index = [parent findChildIndex: other];
-        }
-    }
-    
-    //Once the above section is removed (if that happens), need to move the [parent addChild] to the following.
+    ORTRIdArrayI* otherParents = [other uniqueParents];
+    ORTRIntArrayI* otherParentCounts = [other parentCounts];
     for (int parentIndex = 0; parentIndex < [other numUniqueParents]; parentIndex++) {
-        Node* parent = (Node*)[[other uniqueParents] at:parentIndex];
-        int count = [[other parentCounts] at:parentIndex];
+        Node* parent = (Node*)[otherParents at:parentIndex];
+        int count = [otherParentCounts at:parentIndex];
         [self addParent:parent count:count];
+        [parent replaceChild:other with:self numTimes:count];
+    }
+}
+-(void) replaceChild:(Node*)oldChild with:(Node*)newChild numTimes:(int)childCount {
+    for (int child_index = _minChildIndex; childCount; child_index++) {
+        if (_children[child_index] == oldChild) {
+            assignTRId(&_children[child_index], newChild, _trail);
+            childCount--;
+        }
     }
 }
 -(void) mergeChildrenWith:(Node*)other layerVariableCount:(TRInt**)layerVariableCount layer:(int)layer {
@@ -357,17 +319,6 @@
     [_state mergeStateWith: getState(other)];
 }
 -(bool) isRelaxed { return _isRelaxed._val; }
-
--(int) DEBUGConfirmNumParentsEqualsSumOfParentCount {
-    int countForUniqueParents = 0;
-    for (int uniqueParentIndex = 0; uniqueParentIndex < _numUniqueParents._val; uniqueParentIndex++) {
-        countForUniqueParents += [_parentCounts at:uniqueParentIndex];
-    }
-    if (countForUniqueParents != _numParents._val) {
-        int i = 0;
-    }
-    return countForUniqueParents;
-}
 @end
 
 @implementation CPMDD
@@ -588,82 +539,83 @@
         }
     }
 }
--(void) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming
-{
+-(int) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer {
     int parentLayer = layer-1;
     int numUniqueParents = [node numUniqueParents];
-    ORTRIdArrayI* parents = [node parents];
+    ORTRIdArrayI* parents = [node uniqueParents];
+    int highestLayerChanged = parentLayer;
     
     for (int parentIndex = 0; parentIndex < numUniqueParents; parentIndex++) {
         Node* parent = [parents at: parentIndex];
-        int child_index = [parent findChildIndex: node];
-        while(child_index >= min_domain_val) {
-            [parent removeChildAt:child_index];
-            [node removeParentOnce:parent];
-            
-            assignTRInt(&layer_variable_count[parentLayer][child_index], layer_variable_count[parentLayer][child_index]._val -1, _trail);
-            if (trimming && !layer_variable_count[parentLayer][child_index]._val) {
-                [_x[[parent value]] remove: child_index];
-            }
-            
-            child_index = [parent findChildIndex: node];
+        int countForParent = [node countForParentIndex:parentIndex];
+        [parent removeChild:node numTimes:countForParent updating:layer_variable_count[parentLayer]];
+        if (countForParent == [parent numChildren]) {
+            highestLayerChanged = [self removeChildlessNodeFromMDD:parent fromLayer:parentLayer];
         }
-        if ([parent isNonVitalAndChildless]) {
-            [self removeChildlessNodeFromMDD:parent fromLayer:parentLayer trimmingVariables:trimming];
-        } 
     }
     [self removeNode: node];
+    return highestLayerChanged;
 }
--(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer trimmingVariables:(bool)trimming
-{
+-(int) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer {
+    //TODO: Improve this function (may be improved with using real edges?).  Ideally only iterate over actual children.  Currently has to iterate over all domain vals, then for each domain val with a child, need to iterate over all of that child's parents
     Node* *children = [node children];
     int childLayer = layer+1;
-    for(int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
+    int numChildren = [node numChildren];
+    int lowestLayerChanged = childLayer;
+    
+    for (int child_index = min_domain_val; numChildren; child_index++) {
         Node* childNode = children[child_index];
-        
         if (childNode != NULL) {
             [node removeChildAt: child_index];
             [childNode removeParentValue: node];
-            
             assignTRInt(&layer_variable_count[layer][child_index], layer_variable_count[layer][child_index]._val -1, _trail);
-            if (trimming & !layer_variable_count[layer][child_index]._val) {
-                [_x[[node value]] remove: child_index];
-            }
-            
             if ([childNode isNonVitalAndParentless]) {
-                [self removeParentlessNodeFromMDD:childNode fromLayer:childLayer trimmingVariables:trimming];
+                lowestLayerChanged = [self removeParentlessNodeFromMDD:childNode fromLayer:childLayer];
             } else {
                 if ([childNode isRelaxed]) {
                     [childNode setRecalcRequired:true];
                 }
             }
+            numChildren--;
         }
     }
     [self removeNode: node];
+    return lowestLayerChanged;
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
     ORTRIdArrayI* layer = layers[layer_index];
+    int numEdgesToDelete = layer_variable_count[layer_index][value]._val;
+    int highestLayerChanged = layer_index;
+    int lowestLayerChanged = layer_index;
     
-    for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
+    for (int node_index = 0; numEdgesToDelete; node_index++) {
         Node* node = [layer at: node_index];
         Node* childNode = [node children][value];
-            
         if (childNode != NULL) {
             [node removeChildAt: value];
-            assignTRInt(&layer_variable_count[layer_index][value], layer_variable_count[layer_index][value]._val -1, _trail);
-            if ([node findChildIndex:childNode] >= min_domain_val) {
-                [childNode removeParentValue:node];
-            }
+            [childNode removeParentOnce:node];
             if ([childNode isNonVitalAndParentless]) {
-                [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1) trimmingVariables:true];
+                lowestLayerChanged = [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1)];
             }
             if ([node isNonVitalAndChildless]) {
-                [self removeChildlessNodeFromMDD:node fromLayer:layer_index trimmingVariables:true];
+                highestLayerChanged = [self removeChildlessNodeFromMDD:node fromLayer:layer_index];
                 node_index--;
+            }
+            numEdgesToDelete--;
+        }
+    }
+    for (int i = highestLayerChanged; i < lowestLayerChanged; i++) {
+        int variable_index = [self variableIndexForLayer:i];
+        id<CPIntVar> variable = _x[variable_index];
+        TRInt* variable_count = layer_variable_count[i];
+        for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+            if ([variable member:domain_val] && !variable_count[domain_val]._val) {
+                [variable remove: domain_val];
             }
         }
     }
+    assignTRInt(&layer_variable_count[layer_index][value], 0, _trail);
 }
 
 -(ORInt) recommendationFor: (ORInt) variableIndex
@@ -805,7 +757,7 @@
 -(void) removeANodeFromLayer:(int)layer
 {
     Node* node = [self findNodeToRemove:layer];
-    [self removeChildlessNodeFromMDD:node fromLayer:layer trimmingVariables:false];
+    [self removeChildlessNodeFromMDD:node fromLayer:layer];
 }
 -(Node*) findNodeToRemove:(int)layer
 {
@@ -869,6 +821,8 @@
 {
     ORTRIdArrayI* layer = layers[layer_index];
     int numEdgesToDelete = layer_variable_count[layer_index][value]._val;
+    int highestLayerChanged = layer_index;
+    int lowestLayerChanged = layer_index;
     
     for (int node_index = 0; numEdgesToDelete; node_index++) {
         Node* node = [layer at: node_index];
@@ -877,17 +831,27 @@
             [node removeChildAt: value];
             [childNode removeParentOnce:node];
             if ([childNode isNonVitalAndParentless]) {
-                [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1) trimmingVariables:true];
+                lowestLayerChanged = [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1)];
             } else {
                 if ([childNode isRelaxed]) {
                     [childNode setRecalcRequired:true];
                 }
             }
             if ([node isNonVitalAndChildless]) {
-                [self removeChildlessNodeFromMDD:node fromLayer:layer_index trimmingVariables:true];
+                highestLayerChanged = [self removeChildlessNodeFromMDD:node fromLayer:layer_index];
                 node_index--;
             }
             numEdgesToDelete--;
+        }
+    }
+    for (int i = highestLayerChanged; i < lowestLayerChanged; i++) { //Should this be changed to skip layer_index?  I think so
+        int variable_index = [self variableIndexForLayer:i];
+        id<CPIntVar> variable = _x[variable_index];
+        TRInt* variable_count = layer_variable_count[i];
+        for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+            if ([variable member:domain_val] && !variable_count[domain_val]._val) {
+                [variable remove: domain_val];
+            }
         }
     }
     assignTRInt(&layer_variable_count[layer_index][value], 0, _trail);
@@ -923,12 +887,12 @@
             firstNewNode = true;
             Node** oldNodeChildren = [node children];
             ORTRIdArrayI* parents = [node uniqueParents];
-            while (layer_size[layer]._val < _relaxation_size && [node numParents]) {
+            while (layer_size[layer]._val < _relaxation_size && [node hasParents]) {
                 //All edges going into this node should be examined.  To get these edges, look at the parents
                 Node* parent = [parents at:0];
                 bool parentIsRelaxed = [parent isRelaxed];
                 Node** parentsChildren = [parent children];
-                for (int child_index = min_domain_val; child_index <= max_domain_val && [node numParents] && layer_size[layer]._val < _relaxation_size; child_index++) {
+                for (int child_index = min_domain_val; child_index <= max_domain_val && [node hasParents] && layer_size[layer]._val < _relaxation_size; child_index++) {
                     Node* parentsChild = parentsChildren[child_index];
                     if ([node isEqual:parentsChild]) { //Found an edge that was going into a relaxed node.  Recreate a node for it.
                         Node* newNode = NULL;
@@ -1008,7 +972,7 @@
     for (int node_index = 0; node_index < layer_size[layer+1]._val; node_index++) {
         Node* node = [layers[layer+1] at: node_index];
         if ([node isNonVitalAndParentless]) {
-            [self removeParentlessNodeFromMDD:node fromLayer:layer+1 trimmingVariables:true];
+            [self removeParentlessNodeFromMDD:node fromLayer:layer+1];
             node_index--;
         }
     }
@@ -1043,7 +1007,8 @@
     for (int parent_index = 0; parent_index < [node numUniqueParents]; parent_index++) {
         Node* parent = [parents at:parent_index];
         TRId* children = [parent children];
-        for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
+        int countForParent = [node countForParentIndex:parent_index];
+        for (int child_index = min_domain_val; countForParent > 0; child_index++) {
             Node* child = children[child_index];
             if ([child isEqual:node]) {
                 if (newState == NULL) {
@@ -1053,6 +1018,7 @@
                     [newState mergeStateWith:tempState];
                     [tempState release];
                 }
+                countForParent--;
             }
         }
     }
@@ -1074,7 +1040,7 @@
                     [_x[variableIndex] remove: child_index];
                 }
                 if ([child isNonVitalAndParentless]) {
-                    [self removeParentlessNodeFromMDD:child fromLayer:layer_index+1 trimmingVariables:true];
+                    [self removeParentlessNodeFromMDD:child fromLayer:layer_index+1];
                 }
             }
         }

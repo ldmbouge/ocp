@@ -46,6 +46,7 @@
 -(int) domainMin;
 -(int) domainMax;
 -(void) mergeStateWith:(CustomState*)other;
+-(void) replaceStateWith:(CustomState*)other;
 -(int) numPathsWithNextVariable:(int)variable;
 -(NSArray*) tempAlterStateAssigningValue:(int)value withNextVariable:(int)nextVariable;
 -(void) undoChanges:(NSArray*)savedChanges;
