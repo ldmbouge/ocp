@@ -105,18 +105,18 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 
--(void) visitExactMDDAllDifferent: (id<ORConstraint>) c;
+/*-(void) visitExactMDDAllDifferent: (id<ORConstraint>) c;
 -(void) visitRestrictedMDDAllDifferent: (id<ORConstraint>) c;
 -(void) visitRelaxedMDDAllDifferent: (id<ORConstraint>) c;
 -(void) visitExactMDDMISP: (id<ORConstraint>) c;
 -(void) visitRestrictedMDDMISP: (id<ORConstraint>) c;
 -(void) visitRelaxedMDDMISP: (id<ORConstraint>) c;
--(void) visitCustomAltMDD: (id<ORConstraint>) c;
+-(void) visitCustomAltMDD: (id<ORConstraint>) c;*/
 -(void) visitCustomMDD: (id<ORConstraint>) c;
--(void) visitCustomMDDWithObjective: (id<ORConstraint>) c;
+//-(void) visitCustomMDDWithObjective: (id<ORConstraint>) c;
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>)c;
--(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>)c;
+//-(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>)c;
 
 -(void) visitRealEqualc: (id<ORRealEqualc>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;

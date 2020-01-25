@@ -13,24 +13,28 @@ import ORProgram
 
 autoreleasepool {
     let m  = ORFactory.createModel(),
-        minDom = 1,maxDom = 10,
+        minDom = 0,maxDom = 74,
+        minVar = 0,maxVar = 17,
         R0 = range(m, minDom...maxDom),
+        R1 = range(m, minVar...maxVar),
         notes = ORFactory.annotation(),
         nbSol = ORFactory.mutable(m, value: 0)
     let t0    = ORRuntimeMonitor.cputime()
 
-    let vars = ORFactory.intVarArray(m, range: R0, domain: R0)
+    let vars = ORFactory.intVarArray(m, range: R1, domain: R0)
 
     m.add(allDiffMDD(vars))
+    //m.add(ORFactory.alldifferent(vars))
 
     notes.ddWidth(4)
-    notes.ddRelaxed(false)
+    notes.ddRelaxed(true)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
+    //let cp = ORFactory.createCPProgram(m)
     cp.search {
         labelArray(cp, vars)
             »
             Do(cp) {
-                let qs = (1...10).map { i in cp.intValue(vars[ORInt(i)]) }
+                let qs = (minVar...maxVar).map { i in cp.intValue(vars[ORInt(i)]) }
                 print("sol is: \(qs)")
                 nbSol.incr(cp)
             }

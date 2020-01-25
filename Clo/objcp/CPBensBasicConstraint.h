@@ -20,7 +20,7 @@
 @class CPEngine;
 @class CPBitDom;
 @protocol CPIntVarArray;
-
+//Generic MDD node (should be separated out better)
 @interface Node : NSObject {
 @public
     //TRInt* _childEdgeWeights;
@@ -94,6 +94,7 @@
 @end
 static inline id getState(Node* n) { return n->_state;}
 
+//GeneralState literally isn't used right now.  Can delete?
 @interface GeneralState : NSObject {
 @private
     int _variableIndex;
@@ -110,6 +111,7 @@ static inline id getState(Node* n) { return n->_state;}
 -(int) numPathsWithNextVariable:(int)variable;
 @end
 
+//Hard-coded stuff.  Separate these into another file.
 @interface AllDifferentState : NSObject {
 @private
     NSMutableArray* _state;
@@ -123,7 +125,6 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) mergeStateWith:(AllDifferentState*)other;
 -(bool) stateAllows:(int)variable;
 @end
-
 @interface MISPState : NSObject {
 @private
     bool* _state;
@@ -142,7 +143,44 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) mergeStateWith:(MISPState*)other;
 -(bool) stateAllows:(int)variable;
 @end
+@interface CPExactMDDAllDifferent : CPMDD
+-(id) initCPExactMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced;
+@end
 
+@interface CPRestrictedMDDAllDifferent : CPMDDRestriction
+-(id) initCPRestrictedMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced;
+@end
+
+@interface CPRelaxedMDDAllDifferent : CPMDDRelaxation
+-(id) initCPRelaxedMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
+@end
+
+@interface CPExactMDDMISP : CPMDD {
+@private
+    bool** _adjacencyMatrix;
+    id<ORIntArray> _weights;
+}
+-(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
+@end
+
+@interface CPRestrictedMDDMISP : CPMDDRestriction {
+@private
+    bool** _adjacencyMatrix;
+    id<ORIntArray> _weights;
+}
+-(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
+@end
+
+@interface CPRelaxedMDDMISP : CPMDDRelaxation {
+@private
+    bool** _adjacencyMatrix;
+    id<ORIntArray> _weights;
+}
+-(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
+@end
+
+
+//Separate IR MDD classes
 @interface CPAltMDD : CPCoreConstraint {
 @private
     bool _maximize;
@@ -186,6 +224,25 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) trimValuesFromLayer:(ORInt)layer;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
 @end
+@interface CPAltMDDRelaxation : CPAltMDD {
+@private
+    bool _relaxed;
+    int _relaxation_size;
+    TRInt *_layer_relaxed;
+    TRInt **node_relaxed;
+}
+-(id) initCPAltMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
+-(id) initCPAltMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass;
+-(NSArray*) findEquivalenceClassesIntoNode:(int)nodeIndex onLayer:(int)layerIndex;
+-(NSArray*) findEquivalenceClasses:(int)layerIndex;
+@end
+@interface CPCustomAltMDD : CPAltMDDRelaxation
+-(id) initCPCustomAltMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
+@end
+
+
+
+//This should "stay", but better file name needed
 @interface CPMDD : CPCoreConstraint {
 @private
     bool _maximize;
@@ -238,16 +295,12 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
 -(void) DEBUGTestLayerVariableCountCorrectness;
 -(void) DEBUGTestParentChildParity;
-
 -(ORInt) recommendationFor: (ORInt) variableIndex;
-
 -(void) printGraph;
 @end
-
 @interface CPMDDReduction : CPMDD
 -(id) initCPMDDReduction: (id<CPEngine>) engine over: (id<CPIntVarArray>) x;
 @end
-
 @interface CPMDDRestriction : CPMDD {
 @private
     int restricted_size;
@@ -257,26 +310,13 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) removeANodeFromLayer:(int)layer;
 -(Node*) findNodeToRemove:(int)layer;
 @end
-
-@interface CPAltMDDRelaxation : CPAltMDD {
-@private
-    bool _relaxed;
-    int _relaxation_size;
-    TRInt *_layer_relaxed;
-    TRInt **node_relaxed;
-}
--(id) initCPAltMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
--(id) initCPAltMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass;
--(NSArray*) findEquivalenceClassesIntoNode:(int)nodeIndex onLayer:(int)layerIndex;
--(NSArray*) findEquivalenceClasses:(int)layerIndex;
-@end
-
 @interface CPMDDRelaxation : CPMDD {
 @private
     bool _relaxed;
     int _relaxation_size;
     TRInt _first_relaxed_layer;
     int _firstChangedLayer, _lastChangedLayer;
+    
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize stateClass:(Class)stateClass;
@@ -288,54 +328,12 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) findNodesToMerge:(int)layer first:(Node**)first second:(Node**)second;
 //-(void) splitNodes:(int)layer;
 @end
-
-
-
-
-@interface CPExactMDDAllDifferent : CPMDD
--(id) initCPExactMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced;
-@end
-
-@interface CPRestrictedMDDAllDifferent : CPMDDRestriction
--(id) initCPRestrictedMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced;
-@end
-
-@interface CPRelaxedMDDAllDifferent : CPMDDRelaxation
--(id) initCPRelaxedMDDAllDifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
-@end
-
-@interface CPExactMDDMISP : CPMDD {
-@private
-    bool** _adjacencyMatrix;
-    id<ORIntArray> _weights;
-}
--(id) initCPExactMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
-@end
-
-@interface CPRestrictedMDDMISP : CPMDDRestriction {
-@private
-    bool** _adjacencyMatrix;
-    id<ORIntArray> _weights;
-}
--(id) initCPRestrictedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
-@end
-
-@interface CPRelaxedMDDMISP : CPMDDRelaxation {
-@private
-    bool** _adjacencyMatrix;
-    id<ORIntArray> _weights;
-}
--(id) initCPRelaxedMDDMISP: (id<CPEngine>) engine over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<CPIntVar>)objectiveValue;
-@end
-
-@interface CPCustomAltMDD : CPAltMDDRelaxation
--(id) initCPCustomAltMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
-@end
 @interface CPCustomMDD : CPMDDRelaxation
 -(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
 -(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState;
 @end
 
+//Separate this for now?  Objective stuff isn't working yet.
 @interface CPCustomMDDWithObjective : CPMDDRelaxation
 -(id) initCPCustomMDDWithObjective: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
 @end

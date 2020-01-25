@@ -16,7 +16,7 @@
 @implementation ORVisitor
 
 
--(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>)c
+/*-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExactMDDAllDifferent: visit method not defined"];
 }
@@ -50,24 +50,24 @@
 -(void) visitCustomAltMDD: (id<ORCustomAltMDD>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "CustomAltMDD: visit method not defined"];
-}
+}*/
 -(void) visitCustomMDD: (id<ORCustomMDD>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDD: visit method not defined"];
-}
+}/*
 -(void) visitCustomMDDWithObjective: (id<ORCustomMDD>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDDWithObjective: visit method not defined"];
-}
+}*/
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "MDDSpecs: visit method not defined"];
 }
--(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>)c
+/*-(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "AltMDDSpecs: visit method not defined"];
-}
+}*/
 
 -(void) visitRandomStream:(id) v
 {

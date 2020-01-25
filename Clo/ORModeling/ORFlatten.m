@@ -87,7 +87,7 @@
    }];
 }
 
--(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
+/*-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
 {
     _result = [_into addConstraint:cstr];
 }
@@ -118,24 +118,24 @@
 -(void) visitCustomAltMDD: (id<ORCustomAltMDD>) cstr
 {
     _result = [_into addConstraint:cstr];
-}
+}*/
 -(void) visitCustomMDD: (id<ORCustomMDD>) cstr
 {
     _result = [_into addConstraint:cstr];
 }
--(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
+/*-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
 {
     _result = [_into addConstraint:cstr];
-}
+}*/
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>) cstr
 {
     _result = [_into addConstraint:cstr];
 }
--(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>) cstr
+/*-(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>) cstr
 {
     _result = [_into addConstraint:cstr];
-}
+}*/
 
 
 -(void) visitIntVar: (id) v

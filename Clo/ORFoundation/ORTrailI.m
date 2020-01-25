@@ -697,17 +697,21 @@ void freeTRIntArray(TRIntArray a)
 
 
 @implementation ORTRIntArrayI
--(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail range: (id<ORIntRange>) R
 {
    self = [super init];
-   _trail = (ORTrailI*)[engine trail];
+   _trail = trail;
    _low = [R low];
-   _up = [R up];
-   _nb = (_up - _low + 1);
-   _array = malloc(_nb * sizeof(TRInt));
+   _up = makeTRInt(_trail, [R up]);
+   _array = malloc((_up._val - _low + 1) * sizeof(TRInt));
    _array -= _low;
-   for(ORInt i = _low; i <= _up; i++)
+   for(ORInt i = _low; i <= _up._val; i++)
       _array[i] = makeTRInt(_trail,0);
+   return self;
+}
+-(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R
+{
+   self = [self initORTRIntArrayWithTrail:(ORTrailI*)[engine trail] range:R];
    return self;
 }
 -(void) dealloc
@@ -719,14 +723,14 @@ void freeTRIntArray(TRIntArray a)
 
 -(ORInt) at: (ORInt) value
 {
-   if (value < _low || value > _up)
+   if (value < _low || value > _up._val)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIntArrayElement"];
    return _array[value]._val;
 }
 
 -(void) set: (ORInt) value at: (ORInt) idx
 {
-   if (idx < _low || idx > _up)
+   if (idx < _low || idx > _up._val)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIntArrayElement"];
    inline_assignTRInt(_array + idx,value,_trail);
 }
@@ -737,19 +741,34 @@ void freeTRIntArray(TRIntArray a)
 }
 -(ORInt) up
 {
-   return _up;
+   return _up._val;
 }
 -(NSUInteger)count
 {
-   return _nb;
+    return _up._val - _low + 1;
+}
+-(void) resize:(int)newSize
+{
+    const ORInt oldSize = _up._val - _low + 1;
+    _array += _low;
+    TRInt* newArray = malloc(sizeof(TRInt)*newSize);
+    for(int i = 0; i < oldSize; i++)
+       newArray[i] = makeTRInt(_trail,_array[i]._val); // copy the old entries
+    for (int i = oldSize; i < newSize; i++)
+       newArray[i] = makeTRInt(_trail,-1);      // init the new entries
+    [_trail trailFree:newArray];    // remember that we may have to delete newArray on backtrack
+    [_trail trailPointer:(void**)&_array];  // remember where the original array was
+    assignTRInt(&_up, _low + newSize - 1, _trail);
+    newArray -= _low;               // shift the base
+    _array = newArray;              // install newly minted _array in place.
 }
 -(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendString:@"["];
-   for(ORInt i=_low;i<=_up;i++) {
+   for(ORInt i=_low;i<=_up._val;i++) {
       [rv appendFormat:@"%d:%d",i,_array[i]._val];
-      if (i < _up)
+      if (i < _up._val)
          [rv appendString:@","];
    }
    [rv appendString:@"]"];
@@ -759,8 +778,7 @@ void freeTRIntArray(TRIntArray a)
 {
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   for(ORInt i=_low;i<=_up;i++) {
+   for(ORInt i=_low;i<=_up._val;i++) {
       [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_array[i]._val];
       [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_array[i]._mgc];
    }
@@ -770,10 +788,8 @@ void freeTRIntArray(TRIntArray a)
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   _array =  malloc(sizeof(TRInt)*_nb);
    _array -= _low;
-   for(ORInt i=_low;i<=_up;i++) {
+   for(ORInt i=_low;i<=_up._val;i++) {
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_array[i]._val];
       [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_array[i]._mgc];
    }

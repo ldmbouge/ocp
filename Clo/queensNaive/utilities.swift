@@ -648,8 +648,8 @@ public func gccMDD(_ vars : ORIntVarArray, ub : [Int:Int]) -> ORMDDSpecs  {
     }
     mdd.state(sd)
     
-    mdd.arc(Prop(m,SVA(m) - minDom) < ub[m,SVA(m)])
     let SVAInDom = SVA(m) - minDom
+    mdd.arc(Prop(m,SVAInDom) < ub[m,SVA(m)])
     mdd.transition(toDict(minFDom,minLDom+1) { i in (key:i,Prop(m,i) + (SVAInDom == i)) })
     mdd.transition(toDict(maxFDom,maxLDom+1) { i in (key:i,Prop(m,i) + (SVAInDom == (i-domsize))) })
     mdd.relaxation(toDict(minFDom,minLDom+1) { i in (key:i,min(left(m,i),right(m,i))) })

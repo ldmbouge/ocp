@@ -155,7 +155,6 @@
     _notes = notes;
     _width = [_notes findGeneric: DDWidth];
     _relaxed = [_notes findGeneric: DDRelaxed];
-    [JointState stateClassesInit];
     [m applyOnVar: ^(id<ORVar> x) {
         [_into addVariable:x];
     }
@@ -180,47 +179,16 @@
     
     if ([_mddSpecConstraints count] > 0) {
         [self combineMDDSpecs:m];
-    }
-    
-    id<ORConstraint> mddConstraint =nil;
-    
-    if (!_topDown) {
-        [AltJointState setVariables:_variables];
-        //if ([AltJointState numStates] > 1) {
-        mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[AltJointState class] topDown:_topDown];
-        //} else {
-        //    CustomState* onlyState = [JointState firstState];
-        //    [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
-        //    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[onlyState class]];
-        //}
-    } else {
-        [_jointState setVariables:_variables];
-        
-        if (_hasObjective) {
-            mddConstraint = [ORFactory CustomMDDWithObjective:m var:_variables relaxed:_relaxed size:_width objective: _objectiveVar maximize:_maximize stateClass:[JointState class]];
-        } else {
-            if ([_jointState numStates] > 1) {
-                mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width classState:_jointState topDown:_topDown];
-            } else {
-                CustomState* onlyState = [JointState firstState];
-                if (onlyState != nil) {
-                    [[onlyState class] setAsOnlyMDDWithClassState: onlyState];
-                    mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width stateClass:[onlyState class] topDown:_topDown];
-                }
-            }
+        id<ORConstraint> mddConstraint = nil;
+        if ([_jointState numStates] > 1) {
+            mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width classState:_jointState topDown:_topDown];
+        } else {    //If only one MDDSpec in JointState (meaning all MDDSpecs shared the same variable set), then can use the MDDSpec directly rather than a JointState
+            MDDStateSpecification* onlyState = [_jointState firstState];
+            mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width classState:onlyState topDown:_topDown];
         }
-    }
-    if (mddConstraint != nil) {
         [_into trackConstraintInGroup: mddConstraint];
         [_into addConstraint: mddConstraint];
     }
-    
-    //if ([_mddConstraints count] == 1) {
-    //    id<ORConstraint> preMDDConstraint = _mddConstraints[0];
-    //
-    //    id<ORConstraint> mddConstraint = [ORFactory RelaxedCustomMDD:m var:_variables size: 15 stateClass:[AllDifferentMDDState class]];
-    //    [_into addConstraint: mddConstraint];
-    //}
 }
 
 -(id<ORAddToModel>)target { return _into; }
@@ -317,17 +285,14 @@
 -(void) combineMDDSpecs:(id<ORModel>)m
 {
     NSMutableArray* mainMDDSpecList = [[NSMutableArray alloc] initWithObjects:[_mddSpecConstraints objectAtIndex:0],nil];
-
-    
+    //This for loop will iterate over every MDDSpec and combine any that have identical variable sets.
     for (int mddSpecIndex = 1; mddSpecIndex < [_mddSpecConstraints count]; mddSpecIndex++) {
         id<ORMDDSpecs> mddSpec = [_mddSpecConstraints objectAtIndex:mddSpecIndex];
-        
         bool sharedVarList = false;
         for (id<ORMDDSpecs> mainMDDSpec in mainMDDSpecList) {
             if ([mainMDDSpec vars] == [mddSpec vars]) {
                 sharedVarList = true;
                 int mainStateSize = [mainMDDSpec stateSize];
-                
                 id* stateValues = [mddSpec stateValues];
                 int stateSize = [mddSpec stateSize];
                 id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
@@ -335,44 +300,39 @@
                 id<ORExpr>* differentialFunctions = [mddSpec differentialFunctions];
                 
                 NSDictionary* mergeMappings = [self checkForStateEquivalences:mainMDDSpec and:mddSpec];
-                
                 int numShared = (int)[mergeMappings count];
                 int numToAdd = stateSize - numShared;
-                id* separateStatesToAdd = malloc(numToAdd * sizeof(id));
+                id* statesToAdd = malloc(numToAdd * sizeof(id));
                 int* indicesToAdd = malloc(numToAdd * sizeof(int));
                 
                 NSMutableDictionary* totalMapping = [[NSMutableDictionary alloc] init];
                 int newStateCount = 0;
                 for (int index = 0; index < stateSize; index++) {
-                    NSNumber* mergeMappingValue =[mergeMappings objectForKey:[[NSNumber alloc] initWithInt:index]];
+                    NSNumber* mergeMappingValue = [mergeMappings objectForKey:[[NSNumber alloc] initWithInt:index]];
                     if (mergeMappingValue == nil) {
                         [totalMapping setObject:[[NSNumber alloc] initWithInt: (newStateCount+mainStateSize)] forKey:[[NSNumber alloc] initWithInt: index]];
-                        separateStatesToAdd[newStateCount] = stateValues[index];
+                        statesToAdd[newStateCount] = stateValues[index];
                         indicesToAdd[newStateCount] = index;
                         newStateCount++;
                     }
                 }
                 [totalMapping addEntriesFromDictionary:mergeMappings];
                 
-                [mainMDDSpec addStates:separateStatesToAdd size:numToAdd];
+                [mainMDDSpec addStates:statesToAdd size:numToAdd];
                 
                 ORDDUpdatedSpecs* updatedFunctions = [[ORDDUpdatedSpecs alloc] initORDDUpdatedSpecs:totalMapping];
-                
                 for (int i = 0; i < numToAdd; i++) {
                     int index = indicesToAdd[i];
-                    
                     id<ORExpr> newTransitionFunction = [updatedFunctions updatedSpecs:transitionFunctions[index]];
                     [mainMDDSpec addTransitionFunction:newTransitionFunction toStateValue:(mainStateSize+i)];
-                    
-                    id<ORExpr> newStateDifferentialFunction = [updatedFunctions updatedSpecs:differentialFunctions[index]];
-                    [mainMDDSpec addStateDifferentialFunction:newStateDifferentialFunction toStateValue:(mainStateSize+i)];
                 }
                 if (_relaxed) {
                     for  (int i = 0; i < numToAdd; i++) {
                         int index = indicesToAdd[i];
-                    
                         id<ORExpr> newRelaxationFunction = [updatedFunctions updatedSpecs:relaxationFunctions[index]];
                         [mainMDDSpec addRelaxationFunction:newRelaxationFunction toStateValue:(mainStateSize+i)];
+                        id<ORExpr> newStateDifferentialFunction = [updatedFunctions updatedSpecs:differentialFunctions[index]];
+                        [mainMDDSpec addStateDifferentialFunction:newStateDifferentialFunction toStateValue:(mainStateSize+i)];
                     }
                 }
                 id<ORExpr> oldArcExists = [mainMDDSpec arcExists];
@@ -424,12 +384,14 @@
         }
     }
     
+    //The following for loop takes the specs obtained above, converts expressions into closures, and stores them all in a single JointState
+    //TODO: Look into having multiple JointStates based on optimal variable overlapping to improve performance
     ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
     ORDDMergeClosureGenerator *mergeClosureVisitor = [[ORDDMergeClosureGenerator alloc] init];
     for (id<ORMDDSpecs> mddSpec in mainMDDSpecList) {
         id<ORIntVarArray> vars = [mddSpec vars];
         id<ORExpr> arcExists = [mddSpec arcExists];
-        DDClosure arcExistsClosure = [closureVisitor computeClosure:arcExists];
+        DDClosure arcExistsClosure = [closureVisitor computeClosureAsBoolean:arcExists];
         id* stateValues = [mddSpec stateValues];
         id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
         id<ORExpr>* relaxationFunctions = [mddSpec relaxationFunctions];
@@ -438,30 +400,30 @@
         DDClosure* transitionFunctionClosures = malloc(stateSize * sizeof(DDClosure));
         DDMergeClosure* differentialFunctionClosures = malloc(stateSize * sizeof(DDMergeClosure));
         for (int tfi = 0; tfi < stateSize; tfi++) {
-            transitionFunctionClosures[tfi] = [closureVisitor computeClosure: transitionFunctions[tfi]];
-            differentialFunctionClosures[tfi] = [mergeClosureVisitor computeClosure: differentialFunctions[tfi]];
+            transitionFunctionClosures[tfi] = [closureVisitor computeClosureAsInteger: transitionFunctions[tfi]];
         }
-        
+
+        MDDStateSpecification* classState;
         if (_relaxed) {
             DDMergeClosure* relaxationFunctionClosures = malloc(stateSize * sizeof(DDMergeClosure));
             for (int rfi = 0; rfi < stateSize; rfi++) {
-                relaxationFunctionClosures[rfi] = [mergeClosureVisitor computeClosure: relaxationFunctions[rfi]];
+                relaxationFunctionClosures[rfi] = [mergeClosureVisitor computeClosureAsInteger: relaxationFunctions[rfi]];
+                if (differentialFunctions[rfi] != NULL) {
+                    differentialFunctionClosures[rfi] = [mergeClosureVisitor computeClosureAsInteger: differentialFunctions[rfi]];
+                }
             }
-            MDDStateSpecification* classState = [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize];
-            
-            //id<ORConstraint> mddConstraint = [ORFactory CustomMDD:m var:vars relaxed:_relaxed size:_width classState:classState topDown:_topDown];
-            //[_into trackConstraintInGroup:mddConstraint];
-            //[_into addConstraint:mddConstraint];
-            [_jointState addClassState: classState withVariables:vars];
+            classState = [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize];
         } else {
-            [JointState addStateClass:[[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:vars];
+            classState = [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize];
         }
+        [_jointState addClassState:classState withVariables:vars];
         if ([_variables count] == 0) {
             _variables = vars;
         } else {
             _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
         }
     }
+    [_jointState setVariables:_variables];  //If we change this to use multiple JointStates (either set by user OR based on heuristic that groups SpecStates toegether), then setVariables to the union of variables for that JointState
 }
 
 -(void) visitMDDSpecs:(id<ORMDDSpecs>)cstr
@@ -484,7 +446,10 @@
      _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker:_into];
      */
 }
--(void) visitAltMDDSpecs:(id<ORAltMDDSpecs>)cstr
+/*
+ These are either iterative-refinement (AltMDD) functions or hard-coded MDDs.  The way they were last written no longer works, so need to rewrite these if we want to use them in the future.
+ 
+ -(void) visitAltMDDSpecs:(id<ORAltMDDSpecs>)cstr
 {
     id<ORIntVarArray> cstrVars = [cstr vars];
     id<ORExpr> edgeDeletionCondition = [cstr edgeDeletionCondition];
@@ -581,13 +546,13 @@
     _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker: _into];
     [_into addConstraint: cstr];
 }
+ */
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
     [_into minimizeVar:[v var]];
-    /*
     _objectiveVar = [v var];
     _maximize = false;
-    _hasObjective = true;*/
+    _hasObjective = true;
 }
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {

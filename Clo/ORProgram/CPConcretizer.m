@@ -1772,7 +1772,7 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {}
 
--(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
+/*-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
@@ -1858,7 +1858,7 @@
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
-}
+}*/
 -(void) visitCustomMDD: (id<ORCustomMDD>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1866,21 +1866,15 @@
         id<CPIntVarArray>    a = [self concreteArray: (id)or];
         bool relaxed           = [cstr relaxed];
         ORInt relaxationSize   = [cstr relaxationSize];
-        bool usingClassState = [cstr usingClassState];
         id<CPConstraint> concreteCstr;
-        if (usingClassState) {
-            id classState = [cstr classState];
-            concreteCstr = [CPFactory CustomMDD:_engine over: a relaxed:relaxed size:relaxationSize classState:classState];
-        } else {
-            Class stateClass      = [cstr stateClass];
-            concreteCstr = [CPFactory CustomMDD:_engine over: a relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
-        }
+        id classState = [cstr classState];
+        concreteCstr = [CPFactory CustomMDD:_engine over: a relaxed:relaxed size:relaxationSize classState:classState];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
 }
 
--(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
+/*-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
@@ -1892,16 +1886,16 @@
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
-}
+}*/
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MDDSpecs constraints"];
 }
--(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>) cstr
+/*-(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for AltMDDSpecs constraints"];
-}
+}*/
 @end
 
 @implementation ORCPSearchConcretizer {

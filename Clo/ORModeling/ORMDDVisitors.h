@@ -40,6 +40,8 @@
 }
 -(ORDDClosureGenerator*) initORDDClosureGenerator;
 -(DDClosure) computeClosure:(id<ORExpr>)e;
+-(DDClosure) computeClosureAsInteger:(id<ORExpr>)e;
+-(DDClosure) computeClosureAsBoolean:(id<ORExpr>)e;
 -(DDClosure) recursiveVisitor:(id<ORExpr>)e;
 @end
 
@@ -49,6 +51,7 @@
 }
 -(ORDDMergeClosureGenerator*) initORDDMergeClosureGenerator;
 -(DDMergeClosure) computeClosure:(id<ORExpr>)e;
+-(DDMergeClosure) computeClosureAsInteger:(id<ORExpr>)e;
 -(DDMergeClosure) recursiveVisitor:(id<ORExpr>)e;
 @end
 
