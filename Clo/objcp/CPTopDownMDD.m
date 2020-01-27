@@ -24,9 +24,11 @@
 }
 -(NSMutableArray*) findBucketForStateHash:(NSUInteger)stateHash
 {
-    NSMutableArray* bucket = [nodeHashes objectForKey:[NSNumber numberWithUnsignedLong:stateHash]];
+    NSNumber* key = [NSNumber numberWithUnsignedLong:stateHash];
+    NSMutableArray* bucket = [nodeHashes objectForKey:key];
     if (bucket == NULL) {
         bucket = [[NSMutableArray alloc] init];
+        [nodeHashes setObject:bucket forKey:key];
     }
     return bucket;
 }
@@ -34,7 +36,7 @@
     for (int bucket_index = 0; bucket_index < [bucket count]; bucket_index++) {
         Node* bucketNode = bucket[bucket_index];
         id bucketState = [bucketNode getState];
-        if ([state isEqual:bucketState]) {
+        if ([state equivalentTo:bucketState]) {
             return bucketNode;
         }
     }
@@ -153,7 +155,7 @@
     for (int child_index = _minChildIndex; childCount > 0; child_index++) {
         if (_children[child_index] == child) {
             assignTRId(&_children[child_index], NULL, _trail);
-            assignTRInt(&variable_count[child_index], variable_count[child_index]._val, _trail);
+            assignTRInt(&variable_count[child_index], variable_count[child_index]._val-1, _trail);
             childCount--;
         }
     }
@@ -432,9 +434,14 @@
 -(void) buildNewLayerUnder:(int)layer
 {
     NodeHashTable* nodeHashTable = [[NodeHashTable alloc] initNodeHashTable];
+    ORTRIdArrayI* layerNodes = layers[layer];
     for (int parentNodeIndex = 0; parentNodeIndex < layer_size[layer]._val; parentNodeIndex++) {
-        Node* parentNode = [layers[layer] at: parentNodeIndex];
+        Node* parentNode = [layerNodes at: parentNodeIndex];
         [self createChildrenForNode:parentNode nodeHashes:nodeHashTable];
+        if ([parentNode isNonVitalAndChildless]) {
+            [self removeChildlessNodeFromMDD:parentNode fromLayer:layer];
+            parentNodeIndex--;
+        }
     }
     [nodeHashTable release];
 }
@@ -549,7 +556,7 @@
         Node* parent = [parents at: parentIndex];
         int countForParent = [node countForParentIndex:parentIndex];
         [parent removeChild:node numTimes:countForParent updating:layer_variable_count[parentLayer]];
-        if (countForParent == [parent numChildren]) {
+        if ([parent isNonVitalAndChildless]) {
             highestLayerChanged = [self removeChildlessNodeFromMDD:parent fromLayer:parentLayer];
         }
     }
