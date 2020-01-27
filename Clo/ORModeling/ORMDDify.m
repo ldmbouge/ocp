@@ -412,9 +412,9 @@
                     differentialFunctionClosures[rfi] = [mergeClosureVisitor computeClosureAsInteger: differentialFunctions[rfi]];
                 }
             }
-            classState = [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize];
+            classState = [[MDDStateSpecification alloc] initClassState:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures stateSize:stateSize];
         } else {
-            classState = [[MDDStateSpecification alloc] initClassState:[vars low] domainMax:[vars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize];
+            classState = [[MDDStateSpecification alloc] initClassState:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize];
         }
         [_jointState addClassState:classState withVariables:vars];
         if ([_variables count] == 0) {
@@ -442,10 +442,25 @@
     for (int transitionFunctionIndex = 0; transitionFunctionIndex < stateSize; transitionFunctionIndex++) {
         transitionFunctionClosures[transitionFunctionIndex] = [closureVisitor computeClosure: transitionFunctions[transitionFunctionIndex]];
     }
-    [JointState addStateClass: [[MDDStateSpecification alloc] initClassState:[cstrVars low] domainMax:[cstrVars up] state:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:cstrVars];
+    [JointState addStateClass: [[MDDStateSpecification alloc] initClassState:stateValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures stateSize:stateSize] withVariables:cstrVars];
      _variables = [ORFactory mergeIntVarArray:_variables with:cstrVars tracker:_into];
      */
 }
+-(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
+{
+    [_into minimizeVar:[v var]];
+    _objectiveVar = [v var];
+    _maximize = false;
+    _hasObjective = true;
+}
+-(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
+{
+    [_into maximizeVar:[v var]];
+    _objectiveVar = [v var];
+    _maximize = true;
+    _hasObjective = true;
+}
+
 /*
  These are either iterative-refinement (AltMDD) functions or hard-coded MDDs.  The way they were last written no longer works, so need to rewrite these if we want to use them in the future.
  
@@ -547,18 +562,4 @@
     [_into addConstraint: cstr];
 }
  */
--(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
-{
-    [_into minimizeVar:[v var]];
-    _objectiveVar = [v var];
-    _maximize = false;
-    _hasObjective = true;
-}
--(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
-{
-    [_into maximizeVar:[v var]];
-    _objectiveVar = [v var];
-    _maximize = true;
-    _hasObjective = true;
-}
 @end
