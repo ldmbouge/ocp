@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPBensBasicConstraint.h"
+#import "CPTopDownMDD.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 #import "ORMDDify.h"
@@ -101,6 +101,7 @@
     return self;
 }
 -(void) dealloc {
+    [_parents dealloc];
     [super dealloc];
 }
 
@@ -1326,7 +1327,7 @@
     _stateClass = stateClass;
     return self;
 }
--(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x classState:(CustomState*)classState
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x classState:(id)classState
 {
     self = [self initCPMDD:engine over:x reduced:true];
     _usingClassState = true;

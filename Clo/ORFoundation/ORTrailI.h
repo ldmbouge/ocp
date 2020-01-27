@@ -351,9 +351,10 @@ static inline V* get##T(T* v) { return v->_val;}
    ORTrailI*    _trail;
    TRInt*       _array;
    ORInt        _low;
-   ORInt        _up;
+   TRInt        _up;
    ORInt        _nb;
 }
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail range: (id<ORIntRange>) R;
 -(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
 -(ORInt) at: (ORInt) value;
@@ -361,6 +362,7 @@ static inline V* get##T(T* v) { return v->_val;}
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
+-(void) resize:(int)newSize;
 -(NSString*) description;
 - (void) encodeWithCoder:(NSCoder *) aCoder;
 - (id) initWithCoder:(NSCoder *) aDecoder;

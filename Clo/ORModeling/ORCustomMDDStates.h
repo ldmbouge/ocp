@@ -46,6 +46,7 @@
 -(int) domainMin;
 -(int) domainMax;
 -(void) mergeStateWith:(CustomState*)other;
+-(void) replaceStateWith:(CustomState*)other;
 -(int) numPathsWithNextVariable:(int)variable;
 -(NSArray*) tempAlterStateAssigningValue:(int)value withNextVariable:(int)nextVariable;
 -(void) undoChanges:(NSArray*)savedChanges;
@@ -66,7 +67,6 @@
     id<ORTrail> _trail;
 }
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions stateSize:(int)stateSize;
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions stateSize:(int)stateSize;
 -(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables;
 -(id*) state;
@@ -165,7 +165,7 @@
 -(int)numVarsRemaining;
 @end
 
-@interface AltJointState : AltCustomState{
+/*@interface AltJointState : AltCustomState{
 @protected
     NSMutableArray* _states;
 }
@@ -178,7 +178,7 @@
 -(NSMutableArray*) states;
 +(void) setVariables:(id<ORIntVarArray>)variables;
 +(bool) hasObjective;
-@end
+@end*/
 
 @interface JointState : CustomState {
 @protected
@@ -187,18 +187,14 @@
     id<ORIntVarArray> _vars;
     NSMutableSet* *_statesForVariables;
 }
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail;
+-(id) initRootState:(JointState*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
 -(id) initClassState;
-+(void) addStateClass:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables;
 -(void) addClassState:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables;
-+(void) stateClassesInit;
-+(int) numStates;
 -(int) numStates;
 -(NSMutableArray*) stateVars;
 -(NSMutableSet**) statesForVariables;
 -(id<ORIntVarArray>) vars;
-+(CustomState*) firstState;
-//-(NSMutableArray*) states;
-+(void) setVariables:(id<ORIntVarArray>)variables;
+-(CustomState*) firstState;
+-(NSMutableArray*) states;
 -(void) setVariables:(id<ORIntVarArray>)variables;
 @end

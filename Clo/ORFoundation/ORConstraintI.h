@@ -68,15 +68,14 @@
 -(id<ORIntArray>) weights;
 @end
 
-
+/*
 @interface ORCustomAltMDD : ORConstraintI<ORCustomAltMDD>
 -(ORCustomAltMDD*)initORCustomAltMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
-@end
+@end*/
 @interface ORCustomMDD : ORConstraintI<ORCustomMDD>
--(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
 -(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
@@ -84,6 +83,7 @@
 -(id) classState;
 -(bool) usingClassState;
 @end
+/*
 @interface ORCustomMDDWithObjective : ORConstraintI<ORCustomMDD>
 -(ORCustomMDD*)initORCustomMDDWithObjective:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
 -(id<ORIntVarArray>) vars;
@@ -92,7 +92,7 @@
 -(bool) reduced;
 -(bool) maximize;
 -(Class) stateClass;
-@end
+@end*/
 
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize;
@@ -100,10 +100,10 @@
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
 -(void)addStateSet:(ORInt)lookup withDefaultValue:(NSSet<id>*)value;
 @end
-@interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
+/*@interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
 -(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) vars;
-@end
+@end*/
 
 
 @interface ORGroupI : ORObject<ORGroup>

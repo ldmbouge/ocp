@@ -454,22 +454,20 @@ enum ORGroupType {
 -(id<ORIntArray>) weights;
 @end
 
-@protocol ORCustomAltMDD <ORConstraint>
+/*@protocol ORCustomAltMDD <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(bool) relaxed;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
-@end
+@end*/
 @protocol ORCustomMDD <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(bool) relaxed;
 -(ORInt) relaxationSize;
--(Class) stateClass;
 -(id) classState;
--(bool) usingClassState;
 @end
 
-@protocol ORCustomMDDWithObjective <ORConstraint>
+/*@protocol ORCustomMDDWithObjective <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(id<ORIntVar>) objective;
 -(ORInt) relaxationSize;
@@ -477,7 +475,7 @@ enum ORGroupType {
 -(bool) reduced;
 -(bool) maximize;
 -(Class) stateClass;
-@end
+@end*/
 
 @protocol ORMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
@@ -500,7 +498,7 @@ enum ORGroupType {
 -(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup;
 @end
 
-@protocol ORAltMDDSpecs <ORConstraint>
+/*@protocol ORAltMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(void) setAsMaximize;
 -(void) setAsMinimize;
@@ -546,7 +544,7 @@ enum ORGroupType {
 -(id<ORExpr>) minBottomUpInfoMerge;
 -(id<ORExpr>) maxBottomUpInfoMerge;
 -(bool) objective;
-@end
+@end*/
 
 @protocol ORRegular<ORConstraint>
 -(id<ORIntVarArray>) array;

@@ -15,7 +15,7 @@
 #import "ORConstraintI.h"
 #import "ORParameterI.h"
 
-@implementation ORExactMDDAllDifferent {
+/*@implementation ORExactMDDAllDifferent {
    id<ORIntVarArray> _x;
    bool _reduced;
 }
@@ -383,7 +383,7 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
-@end
+@end*/
 @implementation ORCustomMDD {
    id<ORIntVarArray> _x;
    bool _relaxed;
@@ -391,16 +391,6 @@
    Class _stateClass;
    id _classState;
    bool _usingClassState;
-}
--(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
-{
-   self = [super initORConstraintI];
-   _x = x;
-   _relaxed = relaxed;
-   _relaxationSize = relaxationSize;
-   _stateClass = stateClass;
-   _usingClassState = false;
-   return self;
 }
 -(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool) relaxed size:(ORInt)relaxationSize classState:(id)classState
 {
@@ -454,7 +444,7 @@
 }
 @end
 
-@implementation ORCustomMDDWithObjective {
+/*@implementation ORCustomMDDWithObjective {
    id<ORIntVarArray> _x;
    id<ORIntVar> _objective;
    bool _relaxed;
@@ -519,7 +509,7 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
-@end
+@end*/
 
 @implementation ORMDDSpecs {
    id<ORIntVarArray> _x;
@@ -660,7 +650,7 @@
 }
 @end
 
-@implementation ORAltMDDSpecs {
+/*@implementation ORAltMDDSpecs {
    id<ORIntVarArray> _x;
    id _minTopDownInformation, _minBottomUpInformation;
    id _maxTopDownInformation, _maxBottomUpInformation;
@@ -841,7 +831,7 @@
 {
    return _x;
 }
-@end
+@end*/
 
 @interface ORAlphaVisit : ORVisitor {
    id<ORVarArray> _map;

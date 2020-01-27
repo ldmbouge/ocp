@@ -132,6 +132,9 @@
 -(void) mergeStateWith:(CustomState *)other {
     return;
 }
+-(void) replaceStateWith:(CustomState *)other {
+    return;
+}
 -(int) numPathsWithNextVariable:(int)variable {
     int count = 0;
     /*
@@ -166,55 +169,30 @@
 @end
 
 @implementation MDDStateSpecification
-static id* StateValues;
-static DDClosure ArcExists;
-static DDClosure* TransitionFunctions;
-static DDMergeClosure* RelaxationFunctions;
-static DDMergeClosure* DifferentialFunctions;
-static int StateSize;
-
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
 {
     [super initClassState:domainMin domainMax:domainMax];
-    _state = stateValues;
+    _stateSize = stateSize;
+    _state = calloc(_stateSize, sizeof(TRId));
+    for (int i = 0; i < _stateSize; i++) {
+        _state[i] = makeTRId(_trail, [stateValues[i] copy]);
+    }
     _arcExists = arcExists;
     _transitionFunctions = transitionFunctions;
-    _stateSize = stateSize;
-    return self;
-}
--(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions stateSize:(int)stateSize;
-{
-    [super initClassState:domainMin domainMax:domainMax];
-    _state = stateValues;
-    _arcExists = arcExists;
-    _transitionFunctions = transitionFunctions;
-    _relaxationFunctions = relaxationFunctions;
-    _stateSize = stateSize;
     return self;
 }
 -(id) initClassState:(int)domainMin domainMax:(int)domainMax state:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions stateSize:(int)stateSize;
 {
     [super initClassState:domainMin domainMax:domainMax];
-    _state = stateValues;
+    _stateSize = stateSize;
+    _state = calloc(_stateSize, sizeof(TRId));
+    for (int i = 0; i < _stateSize; i++) {
+        _state[i] = makeTRId(_trail, [stateValues[i] copy]);
+    }
     _arcExists = arcExists;
     _transitionFunctions = transitionFunctions;
     _relaxationFunctions = relaxationFunctions;
     _differentialFunctions = differentialFunctions;
-    _stateSize = stateSize;
-    return self;
-}
-
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail{
-    _variableIndex = variableIndex;
-    _domainMin = domainMin;
-    _domainMax = domainMax;
-    _stateSize = StateSize;
-    _state = StateValues;
-    _arcExists = ArcExists;
-    _transitionFunctions = TransitionFunctions;
-    _relaxationFunctions = RelaxationFunctions;
-    _differentialFunctions = DifferentialFunctions;
-    _trail = trail;
     return self;
 }
 -(id) initRootState:(MDDStateSpecification*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail {
@@ -249,7 +227,7 @@ static int StateSize;
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         DDClosure transitionFunction = _transitionFunctions[stateIndex];
         if (transitionFunction != NULL) {
-            _state[stateIndex] = makeTRId(_trail, transitionFunction(parentState, parentVar, edgeValue));
+            _state[stateIndex] = makeTRId(_trail, (id)transitionFunction(parentState, parentVar, edgeValue));
         }
     }
     return self;
@@ -272,30 +250,26 @@ static int StateSize;
 }
 -(void)dealloc
 {
-    free(_state);
+    //free(_state);
     [super dealloc];
 }
 
-+(void) setAsOnlyMDDWithClassState:(MDDStateSpecification*)classState
-{
-    StateValues = [classState state];
-    ArcExists = [classState arcExistsClosure];
-    TransitionFunctions = [classState transitionFunctions];
-    RelaxationFunctions = [classState relaxationFunctions];
-    DifferentialFunctions = [classState differentialFunctions];
-    StateSize = [classState stateSize];
-}
-
 -(bool) canChooseValue:(int)value forVariable:(int)variable {
-    return [_arcExists(_state, variable, value) boolValue];
+    return [(id)_arcExists(_state, variable, value) boolValue];
 }
 -(void) mergeStateWith:(MDDStateSpecification*)other {
     id* ptrOS = other.state;
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         DDMergeClosure relaxationFunction = _relaxationFunctions[stateIndex];
         if (relaxationFunction != NULL) {
-            assignTRId(&_state[stateIndex], relaxationFunction(_state, ptrOS), _trail);
+            assignTRId(&_state[stateIndex], (id)relaxationFunction(_state, ptrOS), _trail);
         }
+    }
+}
+-(void) replaceStateWith:(MDDStateSpecification*)other {
+    id* ptrOS = other.state;
+    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
+        assignTRId(&_state[stateIndex], ptrOS[stateIndex], _trail);
     }
 }
 
@@ -306,7 +280,7 @@ static int StateSize;
         DDClosure transitionFunction = _transitionFunctions[stateIndex];
         [savedChanges addObject: _state[stateIndex]];
         if (transitionFunction != NULL) {
-            assignTRId(&_state[stateIndex], transitionFunction(_state,variable,value),_trail);
+            assignTRId(&_state[stateIndex], (id)transitionFunction(_state,variable,value),_trail);
         }
     }
     return savedChanges;
@@ -323,7 +297,7 @@ static int StateSize;
     id* other_state = [other state];
     for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
         if (_differentialFunctions[stateIndex] != NULL) {
-            differential += [_differentialFunctions[stateIndex](_state,other_state) intValue];
+            differential += [(id)_differentialFunctions[stateIndex](_state,other_state) intValue];
          }
         
         //differential += pow(_state[stateIndex] - other_state[stateIndex],2);
@@ -1079,7 +1053,7 @@ static int NumVarsRemaining;
 }
 @end
 
-@implementation AltJointState
+/*@implementation AltJointState
 static NSMutableArray* _stateClasses;
 static NSMutableArray* _stateVariables;
 static id<ORIntVarArray> _variables;
@@ -1098,7 +1072,7 @@ static bool _hasObjective = false;
         [_states addObject: state];
     }
     return self;
-}/*
+}
 -(id) initState:(AltJointState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
     self = [super initState:parentNodeState assigningVariable:variableIndex withValue:edgeValue];
     _states = [[NSMutableArray alloc] init];
@@ -1114,7 +1088,7 @@ static bool _hasObjective = false;
         [_states addObject: state];
     }
     return self;
-}*/
+}
 -(id) initState:(AltJointState*)parentNodeState variableIndex:(int)variableIndex
 {
     self = [super initState:parentNodeState variableIndex:variableIndex];
@@ -1253,13 +1227,9 @@ static bool _hasObjective = false;
     
     return bottomUpInfo;
 }
-@end
+@end*/
 
 @implementation JointState
-static NSMutableArray* _stateClasses;
-static NSMutableArray* _stateVariables;
-static id<ORIntVarArray> _variables;
-
 -(id) initClassState
 {
     _states = [[NSMutableArray alloc] init];
@@ -1271,18 +1241,6 @@ static id<ORIntVarArray> _variables;
     [_states release];
     [super dealloc];
 }
--(id) initRootState:(int)variableIndex domainMin:(int)domainMin domainMax:(int)domainMax trail:(id<ORTrail>)trail{
-    _variableIndex = variableIndex;
-    _domainMin = domainMin;
-    _domainMax = domainMax;
-    _states = [[NSMutableArray alloc] init];
-    for (int stateIndex = 0; stateIndex < [_stateClasses count]; stateIndex++) {
-        CustomState* stateClass = [_stateClasses objectAtIndex:stateIndex];
-        CustomState* state = [[[stateClass class] alloc] initRootState:stateClass variableIndex:variableIndex];
-        [_states addObject: state];
-    }
-    return self;
-}
 -(id) initRootState:(JointState*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail {
     _variableIndex = variableIndex;
     _domainMin = [classState domainMin];
@@ -1293,8 +1251,8 @@ static id<ORIntVarArray> _variables;
     _statesForVariables = [classState statesForVariables];
     NSArray* classStateArray = [classState states];
     for (int stateIndex = 0; stateIndex < [classState numStates]; stateIndex++) {
-        CustomState* stateClass = [classStateArray objectAtIndex:stateIndex];
-        MDDStateSpecification* state = [[[stateClass class] alloc] initRootState:stateClass variableIndex:variableIndex trail:trail];
+        MDDStateSpecification* stateClass = [classStateArray objectAtIndex:stateIndex];
+        MDDStateSpecification* state = [[MDDStateSpecification alloc] initRootState:stateClass variableIndex:variableIndex trail:trail];
         [_states addObject: state];
     }
     return self;
@@ -1320,22 +1278,15 @@ static id<ORIntVarArray> _variables;
     }
     return self;
 }
-+(void) addStateClass:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables {
-    [_stateClasses addObject:stateClass];
-    [_stateVariables addObject:variables];
-}
 -(void) addClassState:(CustomState*)stateClass withVariables:(id<ORIntVarArray>)variables {
     [_states addObject:stateClass];
     [_stateVars addObject:variables];
 }
-+(CustomState*) firstState { return [_stateClasses firstObject]; }
-+(int) numStates { return (int)[_stateClasses count]; }
+-(CustomState*) firstState { return [_states firstObject]; }
 -(int) numStates { return (int)[_states count]; }
 -(NSMutableArray*) stateVars { return _stateVars; }
 -(NSMutableSet**) statesForVariables { return _statesForVariables; }
 -(id<ORIntVarArray>) vars { return _vars; }
-+(void) stateClassesInit { _stateClasses = [[NSMutableArray alloc] init]; _stateVariables = [[NSMutableArray alloc] init]; }
-+(void) setVariables:(id<ORIntVarArray>)variables { _variables = variables; }
 -(void) setVariables:(id<ORIntVarArray>)variables {
     _vars = variables;
     _statesForVariables = malloc([_vars count] * sizeof(NSMutableSet*));
@@ -1366,6 +1317,15 @@ static id<ORIntVarArray> _variables;
         CustomState* myState = [_states objectAtIndex:stateIndex];
         CustomState* otherState = [otherStates objectAtIndex:stateIndex];
         [myState mergeStateWith:otherState];
+    }
+}
+-(void) replaceStateWith:(JointState*)other {
+    NSMutableArray* otherStates = [other states];
+    
+    for (int stateIndex = 0; stateIndex < [_states count]; stateIndex++) {
+        CustomState* myState = [_states objectAtIndex:stateIndex];
+        CustomState* otherState = [otherStates objectAtIndex:stateIndex];
+        [myState replaceStateWith:otherState];
     }
 }
 

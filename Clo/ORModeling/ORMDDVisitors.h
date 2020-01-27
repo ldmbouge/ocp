@@ -16,14 +16,6 @@
 -(NSMutableArray*) checkEquivalence:(id<ORExpr>)first and:(id<ORExpr>)second;
 @end
 
-@interface ORDDUpdateSpecs : ORNOopVisit {
-@protected
-    NSDictionary* _mapping;
-}
--(ORDDUpdateSpecs*) initORDDUpdateSpecs:(NSDictionary*)mapping;
--(void) updateSpecs:(id<ORExpr>)e;
-@end
-
 @interface ORDDUpdatedSpecs : ORNOopVisit {
 @protected
     NSDictionary* _mapping;
@@ -40,6 +32,8 @@
 }
 -(ORDDClosureGenerator*) initORDDClosureGenerator;
 -(DDClosure) computeClosure:(id<ORExpr>)e;
+-(DDClosure) computeClosureAsInteger:(id<ORExpr>)e;
+-(DDClosure) computeClosureAsBoolean:(id<ORExpr>)e;
 -(DDClosure) recursiveVisitor:(id<ORExpr>)e;
 @end
 
@@ -49,6 +43,7 @@
 }
 -(ORDDMergeClosureGenerator*) initORDDMergeClosureGenerator;
 -(DDMergeClosure) computeClosure:(id<ORExpr>)e;
+-(DDMergeClosure) computeClosureAsInteger:(id<ORExpr>)e;
 -(DDMergeClosure) recursiveVisitor:(id<ORExpr>)e;
 @end
 
