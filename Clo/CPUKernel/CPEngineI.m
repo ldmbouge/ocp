@@ -753,6 +753,9 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
     if (_state == CPOpen) {
         _state = CPClosing;
+        [_trail trailClosure:^{
+           _state = CPOpen;
+        }];
         _propagating++;
         for(id<ORConstraint> c in _mStore) {
             if ([self post: c] == ORFailure) {

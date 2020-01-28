@@ -146,6 +146,31 @@
 /*                                 CoreSolver                                             */
 /******************************************************************************************/
 
+@interface SolWrapper : NSObject {
+   id<ORSolution> _sol;
+}
+-(id)init:(id<ORSolution>)s;
+-(void)set:(id<ORSolution>)s;
+-(id<ORSolution>)get;
+@end
+
+@implementation SolWrapper
+-(id)init:(id<ORSolution>)s
+{
+   self = [super init];
+   _sol = s;
+   return self;
+}
+-(void)set:(id<ORSolution>)s
+{
+   _sol = s;
+}
+-(id<ORSolution>)get
+{
+   return _sol;
+}
+@end
+
 @implementation CPCoreSolver {
 @protected
    id<ORModel>           _model;
@@ -2069,8 +2094,7 @@ onFailure: (ORInt2Void) onFailure
    
    /* Variables used in nestedSolve of GuessError */
    
-   id<ORSolution> tmp_solution = [self captureSolution];
-   id<ORSolution>* tmp_solution_ptr = &tmp_solution;
+   SolWrapper* tmp_solution = [[SolWrapper alloc] init:[self captureSolution]];
    NSMutableArray* arrayVarValueMin = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarValueMax = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
@@ -2200,8 +2224,8 @@ onFailure: (ORInt2Void) onFailure
                } while(index.found);
                [currentVarError release];
                
-               if((isFailed != ORFailure) && [[[[[cpGuessError engine] objective] primalValue] rationalValue] gt: [[*tmp_solution_ptr value:ez] rationalValue]]){
-                  *tmp_solution_ptr = [cpGuessError captureSolution];
+               if((isFailed != ORFailure) && [[[[[cpGuessError engine] objective] primalValue] rationalValue] gt: [[[tmp_solution get] value:ez] rationalValue]]){
+                  [tmp_solution set: [cpGuessError captureSolution]];
                   NSLog(@"IMPROVE tmp");
                } else {
                   NSLog(@"isFailed");
@@ -2214,10 +2238,10 @@ onFailure: (ORInt2Void) onFailure
          [arrayVarValueMax removeAllObjects];
          [arrayVarError removeAllObjects];
          
-         if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) {
-            id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
+         if ([[[[_engine objective] primalBound] rationalValue] lt: [[[tmp_solution get] value:ez] rationalValue]]) {
+            id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[[tmp_solution get] value:ez] rationalValue] minimize:FALSE];
             [[_engine objective] tightenPrimalBound:objv];
-            solution = tmp_solution;
+            solution = [tmp_solution get];
          }
          
          /*ORInt iteration = 0;
