@@ -144,7 +144,7 @@ autoreleasepool {
     let line  = ORFactory.intVarArray(m, range: CR, domain: CF),
         setup = ORFactory.boolVarMatrix(m, range: OR, CR)
     
-    sequence(x: line, S: [1], len: 4, l: 2, u: 2)
+    //sequence(x: line, S: [1], len: 4, l: 2, u: 2)
     
     m.add(ORFactory.cardinality(line, low: demand, up: demand))
     for o in 0 ..< carI.nbOpts {
