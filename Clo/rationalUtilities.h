@@ -21,6 +21,7 @@ typedef struct {
 
 extern int RUN_IMPROVE_GUESS;
 extern int RUN_DISCARDED_BOX;
+extern int INSIDE_GUESS_ERROR;
 
 extern int nbBoxGenerated;
 extern int nbBoxExplored;

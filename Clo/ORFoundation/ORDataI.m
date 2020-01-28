@@ -363,7 +363,7 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"%s",[_value get_str]];
+   return [NSString stringWithFormat:@"%@",_value];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -596,7 +596,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"%s",[_value get_str]];
+   return [NSString stringWithFormat:@"%@",_value];
 }
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {

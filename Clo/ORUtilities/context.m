@@ -139,6 +139,8 @@ char* getContBase(void)
 __attribute__((noinline)) void initContinuationLibrary(int *base)
 {
    int x;
+   if(baseStack)
+      return;
    while ((long)base & 0x7)
       ++base;  // widen & align
    baseStack = (char*)base;

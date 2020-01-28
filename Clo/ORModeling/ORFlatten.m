@@ -718,7 +718,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
-
 -(void) visitRationalReifyEqualc: (id<ORRationalReifyEqualc>)c
 {
    _result = [_into addConstraint:c];
@@ -772,6 +771,58 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    _result = [_into addConstraint:c];
 }
 -(void) visitRationalAssignC: (id<ORRationalAssignC>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalUnaryMinus:(id<ORConstraint>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalEqualc: (id<ORRationalEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalLEqualc: (id<ORRationalLEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalGEqualc: (id<ORRationalGEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalLinearEq: (id<ORRationalLinearEq>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalLinearNEq: (id<ORRationalLinearNEq>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalLinearLT: (id<ORRationalLinearLT>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalLinearGT: (id<ORRationalLinearGT>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalLinearLEQ: (id<ORRationalLinearLEQ>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalLinearGEQ: (id<ORRationalLinearGEQ>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalMult: (id<ORRationalMult>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalDiv: (id<ORRationalDiv>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitRationalAbs: (id<ORAbs>)c
 {
    _result = [_into addConstraint:c];
 }
@@ -830,6 +881,50 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitDoubleAssignC: (id<ORDoubleAssignC>)c
 {
    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleEqualc: (id<ORDoubleEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleLThenc: (id<ORDoubleLThenc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitDoubleNEqualc: (id<ORDoubleNEqualc>)c
+{
+    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleLinearEq: (id<ORDoubleLinearEq>) c
+{
+    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleLinearNEq: (id<ORDoubleLinearNEq>) c
+{
+    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleLinearLT: (id<ORDoubleLinearLT>) c
+{
+    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleLinearGT: (id<ORDoubleLinearGT>) c
+{
+    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleLinearLEQ: (id<ORDoubleLinearLEQ>) c
+{
+    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleLinearGEQ: (id<ORDoubleLinearGEQ>) c
+{
+    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleMult: (id<ORDoubleMult>) c
+{
+    _result = [_into addConstraint:c];
+}
+-(void) visitDoubleDiv: (id<ORDoubleDiv>) c
+{
+    _result = [_into addConstraint:c];
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {

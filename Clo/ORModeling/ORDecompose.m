@@ -2474,7 +2474,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       }else{
          id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
          ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
-         id<ORRational> zero = [ORRational rationalWith_d:0];
+         id<ORRational> zero = [[ORRational alloc] init];
+         [zero setZero];
          vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
          vars[1] = [ORNormalizer rationalVarIn:linRight for:_model];
 

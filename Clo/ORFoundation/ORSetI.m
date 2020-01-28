@@ -454,7 +454,7 @@
 -(NSString*)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [rv appendFormat:@"[%s,%s]",[_low get_str],[_up get_str]];
+   [rv appendFormat:@"[%@,%@]",_low,_up];
    return rv;
 }
 -(void)visit:(ORVisitor*)v

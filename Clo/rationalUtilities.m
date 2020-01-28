@@ -15,18 +15,19 @@
 #define R_IS_NONZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?0:1)
 #define R_IS_POSITIVE(Q) ((0 <= (*(Q).rational->_mp_num._mp_size))?1:0)
 #define R_IS_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) <= 0)?1:0)
-#define R_IS_STRICTLY_POSITIVE(Q) ((0 < (*(Q).rational->_mp_num._mp_size))?1:0)
+#define R_IS_STRICTLY_POSITIVE(Q) (( 0 < (*(Q).rational->_mp_num._mp_size))?1:0)
 #define R_IS_STRICTLY_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) < 0)?1:0)
 
 int RUN_IMPROVE_GUESS = 0;
 /* Discard box if half-ulp limit is reached on all constraints */
 int RUN_DISCARDED_BOX = 1;
+int INSIDE_GUESS_ERROR = 0;
 
 int nbBoxGenerated = 1;
 int nbBoxExplored = 0;
 int stoppingTime = 10;
-NSDate *branchAndBoundStart = NULL;
-NSDate *branchAndBoundTime = NULL;
+NSDate *branchAndBoundStart = nil;
+NSDate *branchAndBoundTime = nil;
 double boxCardinality = -1;
 TRInt limitCounter;
 int nbConstraint = 0;
@@ -39,9 +40,9 @@ ORBool repeatOnce = TRUE;
 ORBool dirHalfUlp = FALSE;
 ORInt indexCurrentVar = 0;
 ORInt nbVarSet = 0;
-NSMutableArray *arrayValue = NULL;
-NSMutableArray *arrayError = NULL;
-id<ORSolution> solution = NULL;
+NSMutableArray *arrayValue = nil;
+NSMutableArray *arrayError = nil;
+id<ORSolution> solution = nil;
 
 void exitfunc(int sig)
 {
@@ -196,9 +197,11 @@ void exitfunc(int sig)
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   /* Show floating-point approximation form of rational */
    [buf appendFormat:@"%1.2e",[self get_d]];
-   /* DEBUG only */
+   /* Show exact fraction form of rational */
    //[buf appendFormat:@"%s",[self get_str]];
+   /* DEBUG only */
    //[buf appendFormat:@"(%20.20e - %d)",[self get_d], _type];
    return buf;
 }
@@ -1288,4 +1291,4 @@ void exitfunc(int sig)
 }
 @end
 
-id<ORRational> boundDiscardedBoxes = NULL;
+id<ORRational> boundDiscardedBoxes = nil;
