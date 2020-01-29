@@ -19,9 +19,9 @@ typedef struct {
    ORUInt _mgc;
 } TRInt;
 
-extern int RUN_IMPROVE_GUESS;
-extern int RUN_DISCARDED_BOX;
-extern int INSIDE_GUESS_ERROR;
+extern bool RUN_IMPROVE_GUESS;
+extern bool RUN_DISCARDED_BOX;
+extern bool IS_GUESS_ERROR_SOLVER;
 
 extern int nbBoxGenerated;
 extern int nbBoxExplored;
@@ -40,8 +40,6 @@ extern ORBool repeatOnce;
 extern ORBool dirHalfUlp;
 extern ORInt indexCurrentVar;
 extern ORInt nbVarSet;
-extern NSMutableArray *arrayValue;
-extern NSMutableArray *arrayError;
 extern id<ORSolution> solution;
 
 

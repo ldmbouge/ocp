@@ -428,11 +428,13 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller cleanup];
          [_controller release];
          _controller = nil;
-         NSLog(@"top-level success");
+         if(!IS_GUESS_ERROR_SOLVER)
+            NSLog(@"top-level success");
          //[exit letgo];
       }
       else {
-         NSLog(@"top-level fail");
+         if(!IS_GUESS_ERROR_SOLVER)
+            NSLog(@"top-level fail");
          [exit letgo];
       }
    }

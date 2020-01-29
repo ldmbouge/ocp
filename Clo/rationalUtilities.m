@@ -18,10 +18,10 @@
 #define R_IS_STRICTLY_POSITIVE(Q) (( 0 < (*(Q).rational->_mp_num._mp_size))?1:0)
 #define R_IS_STRICTLY_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) < 0)?1:0)
 
-int RUN_IMPROVE_GUESS = 0;
+bool RUN_IMPROVE_GUESS = false;
 /* Discard box if half-ulp limit is reached on all constraints */
-int RUN_DISCARDED_BOX = 1;
-int INSIDE_GUESS_ERROR = 0;
+bool RUN_DISCARDED_BOX = true;
+bool IS_GUESS_ERROR_SOLVER = false;
 
 int nbBoxGenerated = 1;
 int nbBoxExplored = 0;
@@ -40,8 +40,6 @@ ORBool repeatOnce = TRUE;
 ORBool dirHalfUlp = FALSE;
 ORInt indexCurrentVar = 0;
 ORInt nbVarSet = 0;
-NSMutableArray *arrayValue = nil;
-NSMutableArray *arrayError = nil;
 id<ORSolution> solution = nil;
 
 void exitfunc(int sig)

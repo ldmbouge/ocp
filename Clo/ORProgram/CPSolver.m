@@ -513,6 +513,7 @@
                       onExit: ^{ [self doOnExit];}
        ];
       branchAndBoundTime = [NSDate date];
+      if(!IS_GUESS_ERROR_SOLVER){
       NSLog(@"Input Values:");
       for (id<ORVar> v in [_model variables]) {
          if([v prettyname] &&
@@ -520,6 +521,7 @@
             NSLog(@"    %@: %@", [v prettyname], [solution value:v]);
       }
       NSLog(@"Optimal Solution: %@ (%@) thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
+      }
    }
    else {
       _oneSol = YES;
@@ -2084,36 +2086,33 @@ onFailure: (ORInt2Void) onFailure
 -(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    TRInt _index;
-   id<ORRational> zero = [[ORRational alloc] init];
    id<ORRational> tmp0 = [[ORRational alloc] init];
    id<ORRational> tmp1 = [[ORRational alloc] init];
    id<ORRational> tmp2 = [[ORRational alloc] init];
    id<ORRational> halfulp = [[ORRational alloc] init];
-   [zero setZero];
-   [zero autorelease];
+   [tmp0 autorelease];
+   [tmp1 autorelease];
+   [tmp2 autorelease];
+   [halfulp autorelease];
+
    
-   /* Variables used in nestedSolve of GuessError */
-   
+   /* Variables used in GuessError */
    SolWrapper* tmp_solution = [[SolWrapper alloc] init:[self captureSolution]];
    NSMutableArray* arrayVarValueMin = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarValueMax = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
    
-   
    id<CPProgram> cpGuessError = [ORFactory createCPProgram:_model];
    
    boundDiscardedBoxes = [[[ORRational alloc] init] setNegInf];
-   arrayValue = [[NSMutableArray alloc] initWithCapacity:0];
-   arrayError = [[NSMutableArray alloc] initWithCapacity:0];
    branchAndBoundStart = [NSDate date];
-   
    
    id<ORSelect> select = [ORFactory select: _engine // need to be out of inner loop to go through all possible variables
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^ORBool(ORInt i) {
       id<CPDoubleVar> v = _gamma[getId(x[i])];
       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
-      return ![v bound]; //&& [v isInputVar];
+      return ![v bound];
    }
                                  orderedBy:
                           ^ORDouble(ORInt i) {
@@ -2126,7 +2125,7 @@ onFailure: (ORInt2Void) onFailure
                                         suchThat: ^ORBool(ORInt i) {
       id<CPDoubleVar> v = [cpGuessError concretize:x[i]];
       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
-      return ![v bound]; //&& [v isInputVar];
+      return ![v bound];
    }
                                        orderedBy:
                                 ^ORDouble(ORInt i) {
@@ -2180,14 +2179,13 @@ onFailure: (ORInt2Void) onFailure
             nbIteration = 20;
          }
          
+         IS_GUESS_ERROR_SOLVER = true;
          while(iteration < nbIteration){
-            NSLog(@"New iteration");
             [cpGuessError solve:^()
              {
                ORStatus isFailed = ORSuccess;
                ORSelectorResult index = [guess_select min];
                id<ORRationalInterval> currentVarError = [[ORRationalInterval alloc] init];
-               NSLog(@"======= START Solve");
                do {
                   id<CPDoubleVar> currentVar = [cpGuessError concretize:x[index.index]];
                   ORDouble currentVarMin = [[arrayVarValueMin objectAtIndex:index.index] doubleValue];
@@ -2226,14 +2224,17 @@ onFailure: (ORInt2Void) onFailure
                
                if((isFailed != ORFailure) && [[[[[cpGuessError engine] objective] primalValue] rationalValue] gt: [[[tmp_solution get] value:ez] rationalValue]]){
                   [tmp_solution set: [cpGuessError captureSolution]];
-                  NSLog(@"IMPROVE tmp");
-               } else {
-                  NSLog(@"isFailed");
+                  NSLog(@"GuessError %d/%d", iteration, nbIteration);
+                  for (id<ORVar> v in [_model variables]) {
+                     if([v prettyname] &&
+                        ([NSStringFromClass([v class]) isEqualToString: @"ORDoubleVarI"] || [NSStringFromClass([v class]) isEqualToString: @"ORFloatVarI"]))
+                        NSLog(@"    %@: %@", [v prettyname], [[tmp_solution get] value:v]);
+                  }
                }
             }];
-            NSLog(@"======= EXIT Solve");
             iteration++;
          }
+         IS_GUESS_ERROR_SOLVER = false;
          [arrayVarValueMin removeAllObjects];
          [arrayVarValueMax removeAllObjects];
          [arrayVarError removeAllObjects];
@@ -2243,121 +2244,6 @@ onFailure: (ORInt2Void) onFailure
             [[_engine objective] tightenPrimalBound:objv];
             solution = [tmp_solution get];
          }
-         
-         /*ORInt iteration = 0;
-          ORInt nbIteration = -1;
-          if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: [[[ORRational alloc] init] setZero]]){
-          nbIteration = 30;
-          } else {
-          nbIteration = 20;
-          }
-          
-          ORBool isFailed = NO;
-          while(iteration < nbIteration){
-          [_tracer pushNode];
-          while(true) {
-          ORSelectorResult index = [guess_select min];
-          if(index.found){
-          id<CPDoubleVar> currentVar = _gamma[getId(x[index.index])];
-          LOG(_level,2, @"Choosen var: %@",currentVar);
-          if(![currentVar bound]){
-          ORDouble v;
-          if(previousGuessFailed && indexCurrentVar < nbVarSet) {
-          v = [[arrayValue objectAtIndex:indexCurrentVar] doubleValue];
-          if([currentVar isInputVar]) {
-          [halfulp set: [arrayError objectAtIndex:indexCurrentVar]];
-          }
-          indexCurrentVar++;
-          } else {
-          v = randomValueD([currentVar min], [currentVar max]);
-          if([currentVar isInputVar]) {
-          [tmp0 set_d: nextafter(v, +INFINITY) - v];
-          [tmp1 set_d: 2.0];
-          [tmp2 set: [tmp0 div: tmp1]];
-          if(previousGuessFailed){
-          if(dirHalfUlp) {
-          [halfulp set: [tmp2 neg]];
-          dirHalfUlp = FALSE;
-          } else {
-          [halfulp set: tmp2];
-          dirHalfUlp = TRUE;
-          }
-          } else {
-          if (drand48() < 0.5) {
-          [halfulp set:[tmp2 neg]];
-          dirHalfUlp = FALSE;
-          } else {
-          [halfulp set:tmp2];
-          dirHalfUlp = TRUE;
-          }
-          }
-          if ([halfulp lt: [currentVar minErr]])
-          [halfulp set: [currentVar minErr]];
-          if ([halfulp gt: [currentVar maxErr]])
-          [halfulp set: [currentVar maxErr]];
-          [arrayError addObject:halfulp];
-          }
-          [arrayValue addObject:[NSNumber numberWithDouble:v]];
-          nbVarSet++;
-          }
-          if([currentVar isInputVar])
-          isFailed = ([_engine enforce:^{ [currentVar bind:v]; [currentVar bindError:halfulp];}] == ORFailure);
-          else
-          isFailed = ([_engine enforce:^{ [currentVar bind:v];}] == ORFailure);
-          
-          if(isFailed){
-          if(repeatOnce){
-          previousGuessFailed = TRUE;
-          repeatOnce = FALSE;
-          } else {
-          previousGuessFailed = FALSE;
-          repeatOnce = TRUE;
-          dirHalfUlp = FALSE;
-          indexCurrentVar = 0;
-          nbVarSet = 0;
-          [arrayValue removeAllObjects];
-          [arrayError removeAllObjects];
-          }
-          break;
-          }
-          }
-          } else {
-          break;
-          }
-          }*/
-         //            if(!isFailed){
-         //               isBound = true;
-         //               id<CPDoubleVar> xc;
-         //               for (id<ORDoubleVar> v in x) { // Only check that abstract floating point variables are bound
-         //                  xc = _gamma[v.getId];
-         //                  isBound &= [xc bound];
-         //               }
-         //               id<CPRationalVar> ezi = _gamma[getId(ez)];
-         //               /* NEW GUESS */
-         //               //} else {
-         //               if(isBound) {
-         //                  if ([[[[_engine objective] primalBound] rationalValue] lt: [ezi min]]) { // lt (was gt !!!)
-         //                     // And as updatePrimalBound does test whether the value is actually better or not
-         //                     // the testing it here is useless
-         //                     [[_engine objective] updatePrimalBound];
-         //                     solution = [self captureSolution]; // Keep it as a solution
-         //                     //NSLog(@"#####");
-         //                     NSLog(@"GuessError Solution");
-         //                     for (id<ORVar> v in [_model variables]) {
-         //                        if([v prettyname])
-         //                           NSLog(@"    %@: %@", [v prettyname], [solution value:v]);
-         //                     }
-         //                     //NSLog(@"#####");
-         //                     [_tracer popNode]; // need to restore initial state before going out of loop !
-         //                     break;
-         //                  }
-         //               }
-         //               //}
-         //            }
-         //            iteration++;
-         //            [_tracer popNode];
-         //         }
-         
          
          LOG(_level, 2, @"Ending GuessError");
          /******************************/
@@ -2382,7 +2268,6 @@ onFailure: (ORInt2Void) onFailure
          ORSelectorResult i = [select min]; // select variable minimizing criteria from defined in select
          ORSelectorResult I = [select max]; // select variable maximizing criteria from defined in select
          
-         NSLog(@"SELECT: %d, %d", i.index, I.index);
          b(_index._val, x);
          
          /* update index of variable chosen for splitting */

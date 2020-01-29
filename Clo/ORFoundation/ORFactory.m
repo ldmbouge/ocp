@@ -740,7 +740,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
                                                   up:up
                                                 name:[NSString stringWithFormat:@"e%@",[f prettyname]]];
    id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
-   #warning [rg] find a way to suppress warning below (casting to id<ORModel> does not work)
    [mdl add: c];
    [low release];
    [up release];
@@ -827,7 +826,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
                                                   up:up
                                                 name:[NSString stringWithFormat:@"ulp(%@)",[f prettyname]]];
    id<ORConstraint> c = [ORFactory ulpOf:mdl var:f is:r];
-   #warning [rg] find a way to suppress warning below (casting to id<ORModel> does not work)
    [mdl add: c];
    [low release];
    [up release];

@@ -19,6 +19,9 @@
 -(id) trackVariable: (id) obj;    // for variable
 -(id) trackObjective:(id) obj;
 -(id) trackConstraintInGroup:(id) obj;
+// Declaration of @optional add here to suppress warnings
+// in ORFactory errorVar, ulpVar, and channel variables constructors
+@optional-(id) add:(id<ORConstraint>) c;
 @optional-(id) inCache:(id)obj;
 @optional-(id) addToCache:(id)obj;
 @optional-(id)memoize:(id) obj;
