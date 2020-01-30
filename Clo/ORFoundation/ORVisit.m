@@ -1075,10 +1075,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntegerI: visit method not defined"]; 
 }
--(void) visitRationalI: (id<ORRational>) e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "RationalI: visit method not defined"];
-}
+//-(void) visitRationalI: (id<ORRational>) e
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "RationalI: visit method not defined"];
+//}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "MutableIntegerI: visit method not defined"]; 

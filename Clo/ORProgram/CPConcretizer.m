@@ -3044,8 +3044,8 @@
 
 -(void) visitIntegerI: (id<ORInteger>) e
 {}
--(void) visitRationalI: (id<ORRational>) v
-{}
+//-(void) visitRationalI: (id<ORRational>) v
+//{}
 //
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {

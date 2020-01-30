@@ -16,6 +16,7 @@
 #import <ORFoundation/ORSolver.h>
 
 #import "rationalUtilities.h"
+#import "branchAndBoundUtilities.h"
 
 PORTABLE_BEGIN
 

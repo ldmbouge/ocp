@@ -77,7 +77,8 @@
 -(void) trailId:(id*) ptr;
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
--(void) trailRational:(rational_t)ptr;
+-(void) trailRational:(id<ORRational>)ptr;
+-(void) trailRationalType:(id<ORRational>)ptr;
 -(void) trailDouble:(double*) ptr;
 -(void) trailLDouble:(long double*)ptr;
 -(void) trailPointer:(void**) ptr;

@@ -296,7 +296,7 @@
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
--(void) visitRationalI: (id<ORRational>) e;
+//-(void) visitRationalI: (id<ORRational>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitMutableRationalI: (id<ORMutableRational>) e;

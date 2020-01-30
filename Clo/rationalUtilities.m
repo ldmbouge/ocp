@@ -7,9 +7,6 @@
 //
 
 #import "rationalUtilities.h"
-#import <ORFoundation/ORTrail.h>
-#import <ORFoundation/ORTrailI.h>
-#import <ORFoundation/ORVisit.h>
 
 #define R_IS_ZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?1:0)
 #define R_IS_NONZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?0:1)
@@ -18,55 +15,13 @@
 #define R_IS_STRICTLY_POSITIVE(Q) (( 0 < (*(Q).rational->_mp_num._mp_size))?1:0)
 #define R_IS_STRICTLY_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) < 0)?1:0)
 
-bool RUN_IMPROVE_GUESS = false;
-/* Discard box if half-ulp limit is reached on all constraints */
-bool RUN_DISCARDED_BOX = true;
-bool IS_GUESS_ERROR_SOLVER = false;
-
-int nbBoxGenerated = 1;
-int nbBoxExplored = 0;
-int stoppingTime = 10;
-NSDate *branchAndBoundStart = nil;
-NSDate *branchAndBoundTime = nil;
-double boxCardinality = -1;
-TRInt limitCounter;
-int nbConstraint = 0;
-int nbBoxDone = 0;
-bool newBox = TRUE;
-bool initLimitCounter = TRUE;
-
-ORBool previousGuessFailed = FALSE;
-ORBool repeatOnce = TRUE;
-ORBool dirHalfUlp = FALSE;
-ORInt indexCurrentVar = 0;
-ORInt nbVarSet = 0;
-id<ORSolution> solution = nil;
-
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 @implementation ORRational
--(id)init:(id<ORMemoryTrail>) mt
-{
-   self = [super init];
-   mpq_init(_rational);
-   _type = 0;
-   _mt = mt;
-   [_mt track:self];
-   return self;
-}
 -(id)init
 {
    self = [super init];
    mpq_init(_rational);
    _type = 0;
    return self;
-}
--(void) visit: (ORVisitor*) visitor
-{
-   [visitor visitRationalI: self];
 }
 -(void)dealloc
 {
@@ -184,9 +139,9 @@ void exitfunc(int sig)
 {
    return _type;
 }
--(id<ORMemoryTrail>)mt
+-(int*)type_ptr
 {
-   return _mt;
+   return &_type;
 }
 -(void)setType:(int)type
 {
@@ -243,25 +198,6 @@ void exitfunc(int sig)
 {
    _type = t;
    return self;
-}
--(void)trailRational:(ORTrailI*)trail
-{
-   if (trail->_seg[trail->_cSeg]->top >= NBSLOT-1) [trail resize];
-   struct Slot* s = trail->_seg[trail->_cSeg]->tab + trail->_seg[trail->_cSeg]->top;
-   s->ptr = &_rational;
-   s->code = TAGRational;
-   init_q(s->rationalVal);
-   set_q(s->rationalVal, _rational);
-   ++trail->_seg[trail->_cSeg]->top;
-}
--(void)trailType:(ORTrailI*)trail
-{
-   if (trail->_seg[trail->_cSeg]->top >= NBSLOT-1) [trail resize];
-   struct Slot* s = trail->_seg[trail->_cSeg]->tab + trail->_seg[trail->_cSeg]->top;
-   s->ptr = &_type;
-   s->code = TAGInt;
-   s->intVal = _type;
-   ++trail->_seg[trail->_cSeg]->top;
 }
 +(id<ORRational>)rationalWith:(id<ORRational>)r
 {
@@ -842,13 +778,6 @@ void exitfunc(int sig)
 @end
 
 @implementation ORRationalInterval
--(id)init:(id<ORMemoryTrail>) mt
-{
-   self = [super init];
-   _low = [[ORRational alloc] init: mt];
-   _up = [[ORRational alloc] init: mt];
-   return self;
-}
 -(id)init
 {
    self = [super init];
