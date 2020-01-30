@@ -18,10 +18,13 @@
 
 @interface ORDDUpdatedSpecs : ORNOopVisit {
 @protected
-    NSDictionary* _mapping;
+    int* _variableMapping;
+    int* _stateMapping;
+    int _stateSize;
     id<ORExpr> current;
 }
--(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(NSDictionary*)mapping;
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping;
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping stateSize:(int)stateSize variableMapping:(int*)variableMapping;
 -(id<ORExpr>) updatedSpecs:(id<ORExpr>)e;
 -(id<ORExpr>) recursiveVisitor:(id<ORExpr>)e;
 @end

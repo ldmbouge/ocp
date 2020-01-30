@@ -14,6 +14,7 @@
 #import <CPUKernel/CPGroup.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
+#import "ORCustomMDDStates.h"
 
 @class CPIntVar;
 @class ORIntSetI;
@@ -23,6 +24,7 @@
 @interface Node : NSObject {
 @public
     int _value;
+    int _variableId;
     bool _isSink;
     bool _isSource;
     id<ORTrail> _trail;
@@ -42,11 +44,12 @@
     TRInt _recalcRequired;
 }
 -(id) initNode: (id<ORTrail>) trail;
--(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(MDDStateValues*)state;
 -(void) dealloc;
 -(TRId) getState;
 -(int) value;
 -(bool) isRelaxed;
+-(void) setRelaxed:(bool)relaxed;
 -(bool) recalcRequired;
 -(void) setRecalcRequired:(bool)recalcRequired;
 -(bool) isVital;
@@ -69,10 +72,7 @@
 -(int) countForParentIndex:(int)parent_index;
 -(void) removeParentOnce: (Node*) parent;
 -(void) removeParentValue: (Node*) parent;
--(void) mergeWith:(Node*)other inPlace:(bool)inPlace layerVariableCount:(TRInt**)layerVariableCount layer:(int)layer;
--(void) mergeChildrenWith:(Node*)other layerVariableCount:(TRInt**)layerVariableCount layer:(int)layer;
 -(void) takeParentsFrom:(Node*)other;
--(bool) canChooseValue:(int)value;
 -(void) mergeStateWith:(Node*)other;
 @end
 static inline id getState(Node* n) { return n->_state;}
@@ -94,7 +94,7 @@ static inline id getState(Node* n) { return n->_state;}
     NSUInteger _numVariables;
     int min_domain_val;
     int max_domain_val;
-    id _classState;
+    MDDStateSpecification* _spec;
     
     ORTRIdArrayI* *layers;
     TRInt **layer_variable_count;
@@ -105,8 +105,8 @@ static inline id getState(Node* n) { return n->_state;}
     
     int _hashTableSize;
 }
--(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x reduced:(bool)reduced;
--(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x classState:(id)classState;
+-(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(NSString*) description;
@@ -116,6 +116,7 @@ static inline id getState(Node* n) { return n->_state;}
 -(int) variableIndexForLayer:(int)layer;
 -(void) createRootAndSink;
 -(void) cleanLayer:(int)layer;
+-(void) afterPropagation;
 -(void) buildNewLayerUnder:(int)layer;
 -(void) createChildrenForNode:(Node*)parentNode nodeHashes:(NodeHashTable*)nodeHashTable;
 -(void) addPropagationsAndTrimValues;
@@ -138,20 +139,19 @@ static inline id getState(Node* n) { return n->_state;}
 @private
     int restricted_size;
 }
--(id) initCPMDDRestriction: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced;
+-(id) initCPMDDRestriction: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize;
 -(void) removeANodeFromLayer:(int)layer;
 -(Node*) findNodeToRemove:(int)layer;
 @end
 @interface CPMDDRelaxation : CPMDD {
 @private
-    bool _relaxed;
     int _relaxation_size;
     TRInt _first_relaxed_layer;
     int _firstChangedLayer, _lastChangedLayer;
     
 }
--(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
--(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize classState:(id)classState;
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec;
 -(void) rebuildFromLayer:(int)startingLayer;
 -(void) splitNodesOnLayer:(int)layer;
 -(void) recalcNodesOnLayer:(int)layer_index;
@@ -160,7 +160,4 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) mergeNodesToWidthOnLayer:(int)layer;
 -(int**) findSimilarityMatrix:(int)layer;
 -(void) updateSimilarityMatrix:(int**)similarityMatrix afterMerging:(int)best_second_node_index into:(int)best_first_node_index onLayer:(int)layer;
-@end
-@interface CPCustomMDD : CPMDDRelaxation
--(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState;
 @end

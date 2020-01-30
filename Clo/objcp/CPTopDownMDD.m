@@ -67,7 +67,7 @@
     
     return self;
 }
--(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(MDDStateValues*)state
 {
     [super init];
     _trail = trail;
@@ -95,7 +95,7 @@
     _recalcRequired = makeTRInt(_trail, 0);
     return self;
 }
--(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(id)state relaxed:(bool)relaxed
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(MDDStateValues*)state relaxed:(bool)relaxed
 {
     [self initNode:trail minChildIndex:minChildIndex maxChildIndex:maxChildIndex value:value state:state];
     assignTRInt(&_isRelaxed, relaxed, _trail);
@@ -232,14 +232,6 @@
 -(bool) isNonVitalAndParentless {
     return !(_numUniqueParents._val || [self isVital]);
 }
--(void) mergeWith:(Node*)other inPlace:(bool)inPlace layerVariableCount:(TRInt**)layerVariableCount layer:(int)layer {
-    [self mergeStateWith: other];
-    [self takeParentsFrom: other];
-    if (inPlace) {
-        [self mergeChildrenWith:other layerVariableCount:layerVariableCount layer:layer];
-    }
-    assignTRInt(&_isRelaxed, 1, _trail);
-}
 -(bool) hasParent:(Node*)parent {
     //This should be changed to use a hashtable
     
@@ -281,26 +273,6 @@
         }
     }
 }
--(void) mergeChildrenWith:(Node*)other layerVariableCount:(TRInt**)layerVariableCount layer:(int)layer {
-    Node** otherChildren = [other children];
-    for (int childIndex = _minChildIndex; childIndex <= _maxChildIndex; childIndex++) {
-        Node* selfChild = _children[childIndex];
-        Node* otherChild = otherChildren[childIndex];
-        if (otherChild != nil) {
-            if (selfChild == nil) {
-                [self addChild:otherChild at:childIndex];
-                [otherChild addParent:self];
-            } else {
-                assignTRInt(&layerVariableCount[layer][childIndex], layerVariableCount[layer][childIndex]._val-1, _trail);
-                if (![selfChild isEqual:otherChild]) {
-                    [selfChild mergeWith:otherChild inPlace:true layerVariableCount:layerVariableCount layer:layer+1];
-                }
-            }
-            [other removeChildAt:childIndex];
-            [otherChild removeParentValue:other];
-        }
-    }
-}
 -(int) findUniqueParentIndexFor:(Node*) parent {
     /*Need to use a hash table.
      In hash table would be nodes (parents).  Possibly actually pairs of (parent_node, count)
@@ -314,17 +286,15 @@
     }
     return -1;
 }
--(bool) canChooseValue:(int)value {
-    return [_state canChooseValue:value forVariable:_value];
-}
 -(void) mergeStateWith:(Node*)other {
     [_state mergeStateWith: getState(other)];
 }
 -(bool) isRelaxed { return _isRelaxed._val; }
+-(void) setRelaxed:(bool)relaxed { assignTRInt(&_isRelaxed, relaxed, _trail); }
 @end
 
 @implementation CPMDD
--(id) initCPMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x reduced:(bool)reduced
+-(id) initCPMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x
 {
     self = [super initCPCoreConstraint: engine];
     _trail = [engine trail];
@@ -355,17 +325,14 @@
     
     _variable_to_layer -= [_x low];
     
-    _stateClass = NULL;
     _hashTableSize = 100;
     _nextVariable = [_x low];
     
     return self;
 }
--(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x classState:(CustomState*)classState
-{
-    self = [self initCPMDD:engine over:x reduced:true];
-    _stateClass = [classState class];
-    _classState = classState;
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec {
+    self = [self initCPMDD:engine over:x];
+    _spec = spec;
     return self;
 }
 -(NSSet*)allVars
@@ -414,7 +381,7 @@
     [sink setIsSink: true];
     [self addNode: sink toLayer:((int)_numVariables)];
     
-    id state = [self generateRootState: [_x low]];
+    id state = [self generateRootState:_nextVariable];
     _variable_to_layer[_nextVariable] = 0;
     _layer_to_variable[0] = _nextVariable;
     _nextVariable++;
@@ -427,10 +394,8 @@
     [root setIsSource:true];
     [self addNode:root toLayer:0];
 }
--(void) cleanLayer:(int)layer
-{
-    return;
-}
+-(void) cleanLayer:(int)layer { return; }
+-(void) afterPropagation { return; }
 -(void) buildNewLayerUnder:(int)layer
 {
     NodeHashTable* nodeHashTable = [[NodeHashTable alloc] initNodeHashTable];
@@ -448,14 +413,15 @@
 -(void) createChildrenForNode:(Node*)parentNode nodeHashes:(NodeHashTable*)nodeHashTable
 {
     int parentValue = [parentNode value];
+    MDDStateValues* parentState = [parentNode getState];
     int parentLayer = [self layerIndexForVariable:parentValue];
     bool lastLayer = (parentLayer == _numVariables-1);
     bool parentRelaxed = [parentNode isRelaxed];
     for (int edgeValue = [parentNode minChildIndex]; edgeValue <= [parentNode maxChildIndex]; edgeValue++) {
-        if ([_x[parentValue] member: edgeValue] && [parentNode canChooseValue: edgeValue]) {
+        if ([_x[parentValue] member: edgeValue] && [_spec canChooseValue:edgeValue forVariable:parentValue withState:parentState]) {
             Node* childNode = nil;
             if (!lastLayer) {
-                id state = [self generateStateFromParent:parentNode withValue:edgeValue];
+                MDDStateValues* state = [self generateStateFromParent:parentNode withValue:edgeValue];
                 NSUInteger hashValue = [state hashWithWidth:_hashTableSize numVariables:(max_domain_val-min_domain_val+1)];
                 NSMutableArray* bucket = [nodeHashTable findBucketForStateHash:hashValue];
                 childNode = [nodeHashTable nodeWithState:state inBucket:bucket];
@@ -498,21 +464,37 @@
 {
     int variableIndex = [self variableIndexForLayer:layer];
     if (!bound((CPIntVar*)_x[variableIndex])) {
-        [_x[variableIndex] whenLoseValue:self do:^(ORInt value) {
-            [self trimValueFromLayer: layer :value ];
-        }];
+        [_x[variableIndex] whenChangeDo:^() {
+            bool layerChanged = false;
+            for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+                if (![_x[variableIndex] member:domain_val] && layer_variable_count[layer][domain_val]._val) {
+                    [self trimValueFromLayer: layer :domain_val ];
+                    layerChanged = true;
+                }
+            }
+            if (layerChanged) {
+                for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
+                    int variableForTrimming = [self variableIndexForLayer:layer_index];
+                    for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
+                        if (![_x[variableForTrimming] member:domain_val] && layer_variable_count[layer_index][domain_val]._val) {
+                            [self trimValueFromLayer: layer_index :domain_val ];
+                        }
+                    }
+                }
+                [self afterPropagation];
+            }
+            //_todo = CPChecked;
+        } onBehalf:self];
     }
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[_stateClass alloc] initRootState:_classState variableIndex:variableValue trail:_trail];
+    return [[MDDStateValues alloc] initRootState:_spec variableIndex:variableValue trail:_trail];
 }
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
     id parentState = getState(parentNode);
-    int parentLayer = _variable_to_layer[[parentState variableIndex]];
-    int variableIndex = _layer_to_variable[parentLayer+1];
-    return [[_stateClass alloc] initState:parentState assigningVariable:variableIndex withValue:value];
+    return [_spec createStateFrom:parentState assigningVariable:[parentNode value] withValue:value];
 }
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
@@ -749,9 +731,9 @@
 @end
 
 @implementation CPMDDRestriction
--(id) initCPMDDRestriction: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced
+-(id) initCPMDDRestriction: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize
 {
-    self = [super initCPMDD:engine over:x reduced:reduced];
+    self = [super initCPMDD:engine over:x];
     restricted_size = restrictionSize;
     return self;
 }
@@ -777,52 +759,18 @@
 @end
 
 @implementation CPMDDRelaxation
--(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize
 {
-    self = [super initCPMDD:engine over:x reduced:reduced];
-    _relaxed = true;
+    self = [super initCPMDD:engine over:x];
     _relaxation_size = relaxationSize;
-    if (_relaxed) {
-        _hashTableSize = _relaxation_size * 2;
-    }
+    _hashTableSize = _relaxation_size * 2;
     return self;
 }
--(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed relaxationSize:(ORInt)relaxationSize classState:(CustomState*)classState
-{
-    self = [super initCPMDD:engine over:x classState:classState];
-    _relaxed = relaxed;
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec {
+    self = [super initCPMDD:engine over:x spec:spec];
     _relaxation_size = relaxationSize;
-    if (_relaxed) {
-        _hashTableSize = _relaxation_size * 2;
-    }
+    _hashTableSize = _relaxation_size * 2;
     return self;
-}
--(void) addPropagationToLayer:(ORInt)layer
-{
-    int variableIndex = [self variableIndexForLayer:layer];
-    if (!bound((CPIntVar*)_x[variableIndex])) {
-        [_x[variableIndex] whenChangeDo:^() {
-            bool layerChanged = false;
-            for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
-                if (![_x[variableIndex] member:domain_val] && layer_variable_count[layer][domain_val]._val) {
-                    [self trimValueFromLayer: layer :domain_val ];
-                    layerChanged = true;
-                }
-            }
-            if (layerChanged) {
-                for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
-                    int variableForTrimming = [self variableIndexForLayer:layer_index];
-                    for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
-                        if (![_x[variableForTrimming] member:domain_val] && layer_variable_count[layer_index][domain_val]._val) {
-                            [self trimValueFromLayer: layer_index :domain_val ];
-                        }
-                    }
-                }
-                [self rebuildFromLayer:0];
-            }
-            //_todo = CPChecked;
-        } onBehalf:self];
-    }
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
@@ -863,6 +811,9 @@
     }
     assignTRInt(&layer_variable_count[layer_index][value], 0, _trail);
 }
+-(void) afterPropagation {
+    [self rebuildFromLayer:0];
+}
 -(void) rebuildFromLayer:(int)startingLayer
 {
     if (layer_size[startingLayer]._val == 0) {
@@ -870,9 +821,7 @@
     }
     void(*mth)(id,SEL,int) = [self methodForSelector:@selector(splitNodesOnLayer:)];
     for (int layer = startingLayer+1; layer < _numVariables; layer++) {
-        if (_relaxed) {
-            mth(self,@selector(splitNodesOnLayer:),layer);
-        }
+        mth(self,@selector(splitNodesOnLayer:),layer);
         if (layer_size[layer]._val == 0) {
             failNow();
         }
@@ -931,7 +880,7 @@
                             for (int domain_val = min_domain_val; domain_val <= max_domain_val; domain_val++) {
                                 Node* oldNodeChild = oldNodeChildren[domain_val];
                                 if (oldNodeChild != NULL) {
-                                    if ([newNode canChooseValue: domain_val]) {
+                                    if ([_spec canChooseValue:domain_val forVariable:[self variableIndexForLayer:layer] withState:[newNode getState]]) {
                                         //Check if this arc should exist from the old state
                                         [newNode addChild:oldNodeChild at:domain_val];
                                         [oldNodeChild addParent: newNode];
@@ -997,7 +946,7 @@
         if ([node recalcRequired]) {
             id newState = [self calculateStateFromParents:node];
             if (![getState(node) equivalentTo:newState]) {
-                [node setState:newState];
+                [_spec replaceStateWith:[node getState] with:newState];
                 [_trail trailRelease:newState];
                 [node setRecalcRequired:false];
                 [self reevaluateChildrenAfterParentStateChange:node onLayer:layer_index andVariable:variableIndex];
@@ -1022,7 +971,7 @@
                     newState = [self generateStateFromParent:parent withValue:child_index];
                 } else {
                     id tempState = [self generateStateFromParent:parent withValue:child_index];
-                    [newState mergeStateWith:tempState];
+                    [_spec mergeState:newState with:tempState];
                     [tempState release];
                 }
                 countForParent--;
@@ -1037,7 +986,7 @@
     for (int child_index = min_domain_val; child_index <= max_domain_val; child_index++) {
         Node* child = children[child_index];
         if (child != NULL) {
-            if ([node canChooseValue:child_index]) {
+            if ([_spec canChooseValue:child_index forVariable:variableIndex withState:[node getState]]) {
                 [child setRecalcRequired:true];
             } else {
                 [node removeChildAt:child_index];
@@ -1055,9 +1004,7 @@
 }
 -(void) cleanLayer:(int)layer
 {
-    if (_relaxed) {
-        [self mergeNodesToWidthOnLayer: layer];
-    }
+    [self mergeNodesToWidthOnLayer: layer];
 }
 -(void) mergeNodesToWidthOnLayer:(int)layer
 {
@@ -1077,7 +1024,9 @@
         }
         Node* first_node = [layerNodes at: best_first_node_index];
         Node* second_node = [layerNodes at: best_second_node_index];
-        [first_node mergeWith: second_node inPlace:true layerVariableCount:layer_variable_count layer:layer];
+        [_spec mergeState:[first_node getState] with:[second_node getState]];
+        [first_node takeParentsFrom:second_node];
+        [first_node setRelaxed:true];
         [self removeNode:second_node];
         if (layer_size[layer]._val > _relaxation_size) {
             //free(similarityMatrix);
@@ -1099,10 +1048,10 @@
     }
     int first_node_index, second_node_index;
     for (first_node_index = 0; first_node_index < ls-1; first_node_index++) {
-        CustomState* first_node_state = [[layers[layer] at: first_node_index] getState];
+        MDDStateValues* first_node_state = [[layers[layer] at: first_node_index] getState];
         for (second_node_index = first_node_index +1; second_node_index < ls; second_node_index++) {
-            CustomState* second_node_state = [[layers[layer] at: second_node_index] getState];
-            int state_differential = [first_node_state stateDifferential: second_node_state];
+            MDDStateValues* second_node_state = [[layers[layer] at: second_node_index] getState];
+            int state_differential = [_spec stateDifferential:first_node_state with:second_node_state];
             similarityMatrix[first_node_index][second_node_index] = state_differential;
         }
     }
@@ -1110,10 +1059,10 @@
 }
 -(void) updateSimilarityMatrix:(int**)similarityMatrix afterMerging:(int)best_second_node_index into:(int)best_first_node_index onLayer:(int)layer
 {
-    CustomState* first_node_state = [[layers[layer] at: best_first_node_index] getState];
+    MDDStateValues* first_node_state = [[layers[layer] at: best_first_node_index] getState];
     for (int second_node_index = 0; second_node_index < layer_size[layer]._val; second_node_index++) {
-        CustomState* second_node_state = [[layers[layer] at: second_node_index] getState];
-        int newSimilarity = [first_node_state stateDifferential: second_node_state];
+        MDDStateValues* second_node_state = [[layers[layer] at: second_node_index] getState];
+        int newSimilarity = [_spec stateDifferential:first_node_state with:second_node_state];
         if (second_node_index < best_first_node_index) {
             similarityMatrix[second_node_index][best_first_node_index] = newSimilarity;
         } else {
@@ -1134,18 +1083,5 @@
 -(NSString*)description
 {
     return [NSMutableString stringWithFormat:@"<CPMDDRelaxation:%02d %@>",_name,_x];
-}
-@end
-
-@implementation CPCustomMDD
--(id) initCPCustomMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(CustomState*)classState
-{
-    self = [super initCPMDDRelaxation:engine over:x relaxed:relaxed relaxationSize:relaxationSize classState:classState];
-    _priority = LOWEST_PRIO;
-    return self;
-}
--(NSString*)description
-{
-    return [NSMutableString stringWithFormat:@"<CPCustomMDD:%02d %@>",_name,_x];
 }
 @end

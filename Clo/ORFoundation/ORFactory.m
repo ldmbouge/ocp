@@ -626,6 +626,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<ORExpr> o = [[ORExprValueAssignmentI alloc] initORExprValueAssignmentI:t];
     return o;
 }
++(id<ORExpr>) variableIndex:(id<ORTracker>)t index:(ORInt)index
+{
+    id<ORExpr> o = [[ORExprVariableIndexI alloc] initORExprVariableIndexI:t index:index];
+    return o;
+}
 +(id<ORExpr>) layerVariable:(id<ORTracker>)t
 {
     id<ORExpr> o = [[ORExprLayerVariableI alloc] initORExprLayerVariableI:t];
@@ -1108,6 +1113,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 // =====================================================================================================================
 
 @implementation ORFactory (Constraints)
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specifications topDown:(bool)topDown
+{
+    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x relaxed:relaxed size:relaxationSize specs:specifications];
+    [model trackObject:o];
+    return o;
+}
 /*+(id<ORConstraint>) ExactMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced
 {
     id<ORConstraint> o = [[ORExactMDDAllDifferent alloc] initORExactMDDAllDifferent:x reduced:reduced];
@@ -1163,7 +1174,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     //}
     [model trackObject:o];
     return o;
-}*/
+}
 +(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState topDown:(bool)topDown
 {
     id<ORConstraint> o;
@@ -1176,7 +1187,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
-/*+(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
++(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
 {
     id<ORConstraint> o = [[ORCustomMDDWithObjective alloc] initORCustomMDDWithObjective:x relaxed:(bool)relaxed size:relaxationSize reduced:true objective:objectiveValue maximize:maximize stateClass:stateClass];
     [model trackObject:o];

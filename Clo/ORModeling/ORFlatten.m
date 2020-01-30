@@ -118,15 +118,19 @@
 -(void) visitCustomAltMDD: (id<ORCustomAltMDD>) cstr
 {
     _result = [_into addConstraint:cstr];
-}*/
+}
 -(void) visitCustomMDD: (id<ORCustomMDD>) cstr
 {
     _result = [_into addConstraint:cstr];
 }
-/*-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
+-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
 {
     _result = [_into addConstraint:cstr];
 }*/
+-(void) visitMDDStateSpecification: (id<ORMDDStateSpecification>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>) cstr
 {

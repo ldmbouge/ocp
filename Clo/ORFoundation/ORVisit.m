@@ -50,15 +50,19 @@
 -(void) visitCustomAltMDD: (id<ORCustomAltMDD>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "CustomAltMDD: visit method not defined"];
-}*/
+}
 -(void) visitCustomMDD: (id<ORCustomMDD>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDD: visit method not defined"];
-}/*
+}
 -(void) visitCustomMDDWithObjective: (id<ORCustomMDD>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDDWithObjective: visit method not defined"];
 }*/
+-(void) visitMDDStateSpecification:(id<ORConstraint>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateSpecification: visit method not defined"];
+}
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>)c
 {
@@ -799,6 +803,10 @@
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprValueAssignmentI: visit method not defined"];
+}
+-(void) visitExprVariableIndexI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprVariableIndexI: visit method not defined"];
 }
 -(void) visitExprLayerVariableI:(id<ORExpr>)e
 {

@@ -410,7 +410,7 @@ enum ORGroupType {
 -(ORInt) low;
 -(ORInt) up;
 @end
-
+/*
 @protocol ORExactMDDAllDifferent <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(bool) reduced;
@@ -452,6 +452,13 @@ enum ORGroupType {
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
 -(id<ORIntArray>) weights;
+@end*/
+
+@protocol ORMDDStateSpecification <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(bool) relaxed;
+-(ORInt) relaxationSize;
+-(id) specs;
 @end
 
 /*@protocol ORCustomAltMDD <ORConstraint>
@@ -459,15 +466,14 @@ enum ORGroupType {
 -(bool) relaxed;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
-@end*/
+@end
 @protocol ORCustomMDD <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(bool) relaxed;
 -(ORInt) relaxationSize;
 -(id) classState;
 @end
-
-/*@protocol ORCustomMDDWithObjective <ORConstraint>
+@protocol ORCustomMDDWithObjective <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(id<ORIntVar>) objective;
 -(ORInt) relaxationSize;

@@ -291,7 +291,11 @@
 {
     [_currentString appendString:@"ValueAssignment"];
 }
--(void) visitExprLayerVariable:(ORExprLayerVariableI*)e
+-(void) visitExprVariableIndexI:(ORExprVariableIndexI*)e
+{
+    [_currentString appendFormat:@"VariableIndex(%d)",[e index]];
+}
+-(void) visitExprLayerVariableI:(ORExprLayerVariableI*)e
 {
     [_currentString appendString:@"LayerVariable"];
 }
@@ -394,10 +398,16 @@
 @end
 
 @implementation ORDDUpdatedSpecs
--(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(NSDictionary*)mapping
-{
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping {
     self = [super init];
-    _mapping = mapping;
+    _stateMapping = stateMapping;
+    return self;
+}
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping stateSize:(int)stateSize variableMapping:(int*)variableMapping {
+    self = [super init];
+    _stateMapping = stateMapping;
+    _stateSize = stateSize;
+    _variableMapping = variableMapping;
     return self;
 }
 -(id<ORExpr>) updatedSpecs:(id<ORExpr>)e
@@ -420,16 +430,30 @@
 
 -(void) visitExprStateValueI:(ORExprStateValueI*)e
 {
-    int lookup = [[_mapping objectForKey:[[NSNumber alloc] initWithInt: [e lookup]]] intValue];
     int index = [e index];
     int arrayIndex = [e arrayIndex];
+    int lookup = [e lookup];
+    if (_stateMapping != NULL) {
+        lookup = _stateMapping[lookup];
+    }
     current = [[ORExprStateValueI alloc] initORExprStateValueI:[e tracker] lookup:lookup index:index arrayIndex:arrayIndex];
 }
 -(void) visitExprStateValueExprI:(ORExprStateValueExprI*)e
 {
     id<ORExpr> lookup = [self recursiveVisitor:[e lookup]];
-    
-    current = [[ORExprStateValueExprI alloc] initORExprStateValueExprI:[e tracker] lookup:lookup index:[e index] arrayIndex:[e arrayIndex] mapping:_mapping];
+    if (_stateMapping == NULL) {
+        current = [[ORExprStateValueExprI alloc] initORExprStateValueExprI:[e tracker] lookup:lookup index:[e index] arrayIndex:[e arrayIndex] mapping:[e mapping]];
+    } else if ([e mapping] == NULL) {
+        current = [[ORExprStateValueExprI alloc] initORExprStateValueExprI:[e tracker] lookup:lookup index:[e index] arrayIndex:[e arrayIndex] mapping:_stateMapping];
+    } else {
+        //If there was already a mapping for the states and there's a new one, need to combine the two mappings
+        int* sumOfMappings = calloc(_stateSize, sizeof(int));
+        int* oldMapping = [e mapping];
+        for (int i = 0; i < _stateSize; i++) {
+            sumOfMappings[i] = _stateMapping[oldMapping[i]];
+        }
+        current = [[ORExprStateValueExprI alloc] initORExprStateValueExprI:[e tracker] lookup:lookup index:[e index] arrayIndex:[e arrayIndex] mapping:sumOfMappings];
+    }
 }
 
 -(void) visitExprConjunctI:(ORExprBinaryI*)e
@@ -606,9 +630,21 @@
 {
     current = [ORFactory valueAssignment:[e tracker]];
 }
--(void) visitExprLayerVariableI:(id<ORExpr>)e
+-(void) visitExprVariableIndexI:(ORExprVariableIndexI*)e
 {
-    current = [ORFactory layerVariable:[e tracker]];
+    if (_variableMapping == NULL) {
+        current = [ORFactory variableIndex:[e tracker] index:[e index]];
+    } else {
+        current = [ORFactory variableIndex:[e tracker] index:_variableMapping[[e index]]];
+    }
+}
+-(void) visitExprLayerVariableI:(ORExprLayerVariableI*)e
+{
+    if (_variableMapping == NULL) {
+        current = [ORFactory layerVariable:[e tracker]];
+    } else {
+        current = [[ORExprLayerVariableI alloc] initORExprLayerVariableI:[e tracker] mapping:_variableMapping];
+    }
 }
 -(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
 {
@@ -724,17 +760,29 @@
 }
 -(DDClosure) computeClosureAsInteger:(id<ORExpr>)e
 {
-    DDClosure innerFunction = [self recursiveVisitor: e];
+    [e visit: self];
+    DDClosure innerFunction = current;
+    current = nil;
     return [(id)^(id* state, ORInt variable, ORInt value) {
         return [NSNumber numberWithInt:(int)innerFunction(state, variable, value)];
     } copy];
+    //DDClosure innerFunction = [self recursiveVisitor: e];
+    //return [(id)^(id* state, ORInt variable, ORInt value) {
+    //    return [NSNumber numberWithInt:(int)innerFunction(state, variable, value)];
+    //} copy];
 }
 -(DDClosure) computeClosureAsBoolean:(id<ORExpr>)e
 {
-    DDClosure innerFunction = [self recursiveVisitor: e];
+    [e visit: self];
+    DDClosure innerFunction = current;
+    current = nil;
     return [(id)^(id* state, ORInt variable, ORInt value) {
         return [NSNumber numberWithBool:(bool)innerFunction(state, variable, value)];
     } copy];
+    /*DDClosure innerFunction = [self recursiveVisitor: e];
+    return [(id)^(id* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool:(bool)innerFunction(state, variable, value)];
+    } copy];*/
 }
 
 -(DDClosure) recursiveVisitor:(id<ORExpr>)e
@@ -946,24 +994,30 @@
 -(void) visitExprStateValueExprI:(ORExprStateValueExprI*)e
 {
     DDClosure lookup = [self recursiveVisitor:[e lookup]];
+    const int arrayIndex = [e->_arrayIndex value];
+    const int* stateMapping = [e mapping];
     
-    if ([e isArray]) {
+    if ([e isArray] && stateMapping != nil) {
         current = [^(id* state, ORInt variable, ORInt value) {
-            NSNumber* lookupValue = [NSNumber numberWithLong: lookup(state, variable, value)];
-            if ([e mapping] != nil) {
-                int mappedLookupValue = [[[e mapping] objectForKey:lookupValue] intValue];
-                return (long)[state[mappedLookupValue][[e arrayIndex]] intValue];
-            }
-            return (long)[state[[lookupValue intValue]][[e arrayIndex]] intValue];
+            long lookupValue = lookup(state, variable, value);
+            int mappedLookupValue = stateMapping[lookupValue];
+            return (long)[state[mappedLookupValue][arrayIndex] intValue];
+        } copy];
+    } else if ([e isArray]) {
+        current = [^(id* state, ORInt variable, ORInt value) {
+            long lookupValue = lookup(state, variable, value);
+            return (long)[state[lookupValue][arrayIndex] intValue];
+        } copy];
+    } else if (stateMapping != nil) {
+        current = [^(id* state, ORInt variable, ORInt value) {
+            long lookupValue = lookup(state, variable, value);
+            int mappedLookupValue = stateMapping[lookupValue];
+            return (long)[state[mappedLookupValue] intValue];
         } copy];
     } else {
         current = [^(id* state, ORInt variable, ORInt value) {
-            NSNumber* lookupValue = [NSNumber numberWithLong: lookup(state, variable, value)];
-            if ([e mapping] != nil) {
-                int mappedLookupValue = [[[e mapping] objectForKey:lookupValue] intValue];
-                return (long)[state[mappedLookupValue] intValue];
-            }
-            return (long)[state[[lookupValue longValue]] intValue];
+            long lookupValue = lookup(state, variable, value);
+            return (long)[state[lookupValue] intValue];
         } copy];
     }
 }
@@ -973,10 +1027,19 @@
         return (long)value;
     } copy];
 }
--(void) visitExprLayerVariableI:(id<ORExpr>)e
+-(void) visitExprVariableIndexI:(ORExprVariableIndexI*)e
 {
     current = [^(id* state, ORInt variable, ORInt value) {
-        return (long)variable;
+        return (long)[e index];
+    } copy];
+}
+-(void) visitExprLayerVariableI:(ORExprLayerVariableI*)e
+{
+    current = [^(id* state, ORInt variable, ORInt value) {
+        if ([e mapping] != nil) {
+            return (long)variable;
+        }
+        return (long)[e mapping][variable];
     } copy];
 }
 -(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
@@ -1023,7 +1086,9 @@
 }
 -(DDMergeClosure) computeClosureAsInteger:(id<ORExpr>)e
 {
-    DDMergeClosure innerFunction = [self recursiveVisitor: e];
+    [e visit: self];
+    DDMergeClosure innerFunction = current;
+    current = nil;
     return [(id)^(id* state1, id* state2) {
         return [NSNumber numberWithInt:(int)innerFunction(state1, state2)];
     } copy];
@@ -1250,27 +1315,31 @@
     
     if (idx == 0)
         current = [^(id* state1, id* state2) {
-            NSNumber* lookupValue = [NSNumber numberWithLong: lookup(state1, state2) ];
+            long lookupValue = lookup(state1, state2);
             if ([e mapping] != nil) {
-                int mappedLookupValue = [[[e mapping] objectForKey:lookupValue] intValue];
+                int mappedLookupValue = [e mapping][lookupValue];
                 return (long)[state1[mappedLookupValue][[e arrayIndex]] intValue];
             }
-            return (long)[state1[[lookupValue intValue]][[e arrayIndex]] intValue];
+            return (long)[state1[lookupValue][[e arrayIndex]] intValue];
         } copy];
     else {
         current = [^(id* state1, id* state2) {
-            NSNumber* lookupValue = [NSNumber numberWithLong: lookup(state1, state2)];
+            long lookupValue = lookup(state1, state2);
             if ([e mapping] != nil) {
-                int mappedLookupValue = [[[e mapping] objectForKey:lookupValue] intValue];
+                int mappedLookupValue = [e mapping][lookupValue];
                 return (long)[state2[mappedLookupValue] intValue];
             }
-            return (long)[state2[[lookupValue intValue]] intValue];
+            return (long)[state2[lookupValue] intValue];
         } copy];
     }
 }
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprValueAssignmentI: visit method not defined"];
+}
+-(void) visitExprVariableIndexI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprVariableIndexI: visit method not defined"];
 }
 -(void) visitExprLayerVariableI:(id<ORExpr>)e
 {

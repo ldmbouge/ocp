@@ -14,7 +14,7 @@
 -(int) stateDifferential:(CustomState*)other;
 -(bool) equivalentTo:(CustomState*)other;
 @end
-
+/*
 @interface MDDStateSpecification : CustomState {
 @protected
     id* _state;
@@ -36,26 +36,37 @@
 -(DDMergeClosure*) relaxationFunctions;
 -(DDMergeClosure*) differentialFunctions;
 -(bool) equivalentTo:(CustomState *)other;
-@end
+@end*/
 
 @class MDDStateValues;
-@interface NEWMDDStateSpecification : CustomState {
+@interface MDDStateSpecification : NSObject {
 @protected
     id* _rootValues;
-    DDClosure _arcExists;
+    DDClosure* _arcExists;
     DDClosure* _transitionFunctions;
     DDMergeClosure* _relaxationFunctions;
     DDMergeClosure* _differentialFunctions;
-    int _stateSize;
     id<ORTrail> _trail;
+    bool _relaxed;
+    
+    bool** _stateValueIndicesForVariable; //Used to know which properties require transition function for a given variable assignment
+    NSMutableArray** _arcExistsIndicesForVariable;   //Used to know which arc exist functions must be called to test a given variable assignment
+    
+    int _numPropertiesAdded;
+    int _numSpecsAdded;
+    
+    int _minVar;
 }
--(id) initMDDStateSpecification:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
--(id) initMDDStateSpecification:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions stateSize:(int)stateSize;
+-(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars;
+-(void) addMDDSpec:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
+-(void) addMDDSpec:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
 -(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(void) replaceStateWith:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
+-(int) numProperties;
+-(id*) rootValues;
 @end
     
 
@@ -65,11 +76,12 @@
     int _variableIndex;
     int _stateSize;
 }
--(id) initRootState:(MDDStateSpecification*)stateSpecs variableIndex:(int)variableIndex;
+-(id) initRootState:(MDDStateSpecification*)stateSpecs variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
 -(id) initState:(id*)stateValues stateSize:(int)size variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
 -(int) variableIndex;
 -(id*) state;
 -(bool) equivalentTo:(MDDStateValues*)other;
+-(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables;
 @end
 
 @interface JointState : CustomState {

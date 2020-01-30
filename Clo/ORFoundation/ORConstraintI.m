@@ -15,6 +15,55 @@
 #import "ORConstraintI.h"
 #import "ORParameterI.h"
 
+
+@implementation ORMDDStateSpecification {
+   id<ORIntVarArray> _x;
+   bool _relaxed;
+   ORInt _relaxationSize;
+   MDDStateSpecification* _specs;
+}
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specs {
+   self = [super initORConstraintI];
+   _x = x;
+   _relaxed = relaxed;
+   _relaxationSize = relaxationSize;
+   _specs = specs;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitMDDStateSpecification:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) relaxed { return _relaxed; }
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(MDDStateSpecification*) specs
+{
+   return _specs;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
 /*@implementation ORExactMDDAllDifferent {
    id<ORIntVarArray> _x;
    bool _reduced;
@@ -383,7 +432,7 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
-@end*/
+@end
 @implementation ORCustomMDD {
    id<ORIntVarArray> _x;
    bool _relaxed;
@@ -444,7 +493,7 @@
 }
 @end
 
-/*@implementation ORCustomMDDWithObjective {
+@implementation ORCustomMDDWithObjective {
    id<ORIntVarArray> _x;
    id<ORIntVar> _objective;
    bool _relaxed;

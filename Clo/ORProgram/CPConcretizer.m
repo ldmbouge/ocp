@@ -16,6 +16,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>
 #import <ORFoundation/ORVisit.h>
+#import "ORCustomMDDStates.h"
 
 
 @implementation ORCPConcretizer
@@ -1858,7 +1859,7 @@
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
-}*/
+}
 -(void) visitCustomMDD: (id<ORCustomMDD>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
@@ -1873,8 +1874,7 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
-
-/*-(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
+ -(void) visitCustomMDDWithObjective: (id<ORCustomMDDWithObjective>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
         id<CPIntVarArray>    a = [self concreteArray: [cstr vars]];
@@ -1887,6 +1887,20 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }*/
+-(void) visitMDDStateSpecification: (id<ORMDDStateSpecification>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVarArray>   or = [cstr vars];
+        id<CPIntVarArray>    a = [self concreteArray: (id)or];
+        bool relaxed           = [cstr relaxed];
+        ORInt relaxationSize   = [cstr relaxationSize];
+        id<CPConstraint> concreteCstr;
+        MDDStateSpecification* spec = [cstr specs];
+        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a relaxed:relaxed size:relaxationSize spec:spec];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>) cstr
 {
