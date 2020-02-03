@@ -855,6 +855,10 @@ enum ORGroupType {
 @end
 
 //---------
+@protocol ORDoubleUnaryMinus <ORConstraint>
+-(id<ORDoubleVar>) left;
+-(id<ORDoubleVar>) right;
+@end
 @protocol ORDoubleMult <ORConstraint>
 -(id<ORDoubleVar>) res;
 -(id<ORDoubleVar>) left;

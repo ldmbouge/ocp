@@ -922,6 +922,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
     _result = [_into addConstraint:c];
 }
+-(void) visitDoubleUnaryMinus: (id<ORDoubleUnaryMinus>) c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c
 {
     _result = [_into addConstraint:c];
