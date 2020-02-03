@@ -2016,7 +2016,9 @@ onFailure: (ORInt2Void) onFailure
    NSMutableArray* arrayVarValueMax = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
    
+   IS_GUESS_ERROR_SOLVER = true;
    id<CPProgram> cpGuessError = [ORFactory createCPProgram:_model];
+   IS_GUESS_ERROR_SOLVER = false;
    
    boundDiscardedBoxes = [[[ORRational alloc] init] setNegInf];
    branchAndBoundStart = [NSDate date];
@@ -2094,6 +2096,7 @@ onFailure: (ORInt2Void) onFailure
          while(iteration < nbIteration){
             [cpGuessError solve:^()
              {
+               id<ORSolution> tmp_solution_improve;
                ORStatus isFailed = ORSuccess;
                ORSelectorResult index = [guess_select min];
                id<ORRationalInterval> currentVarError = [[ORRationalInterval alloc] init];
@@ -2113,7 +2116,7 @@ onFailure: (ORInt2Void) onFailure
                         [tmp0 set: [tmp0 sub: tmp1]];
                         [tmp1 set_d: 2.0];
                         [tmp2 set: [tmp0 div: tmp1]];
-                        if (drand48() < 0.5) {
+                        if (drand48() < 0.4) {
                            [halfulp set:[tmp2 neg]];
                         } else {
                            [halfulp set:tmp2];
@@ -2131,12 +2134,10 @@ onFailure: (ORInt2Void) onFailure
                   index = [guess_select min];
                } while(index.found);
                
-               id<ORSolution> tmp_solution_improve;
                if (RUN_IMPROVE_GUESS) {
-                  id<CPDoubleVar> xc;
                   tmp_solution_improve = [cpGuessError captureSolution];
                   [[cpGuessError tracer] popNode];
-                  id<CPRationalVar> ezi = [cpGuessError concretize:ez];
+                  id<CPDoubleVar> xc;
                   ORBool improved = FALSE, improved_var = FALSE;
                   ORInt nvar = 0, nv, nbiter = 0;
                   ORInt direction = 1;
@@ -2144,19 +2145,6 @@ onFailure: (ORInt2Void) onFailure
                   while (nbiter < 200) {
                      [[cpGuessError tracer] pushNode];
                      nbiter++;
-                     if (nvar == 0) {
-                        nv = 0;
-                        for (id<ORDoubleVar> v in x) {
-                           xc = [cpGuessError concretize:v];
-                           nv++;
-                           if (![xc bound]) {
-                              nvar = nv;
-                              break;
-                           }
-                        }
-                        if (nvar == 0)
-                           break;
-                     }
                      nv = 0;
                      index = [guess_select min];
                      do {
@@ -2174,10 +2162,10 @@ onFailure: (ORInt2Void) onFailure
                               [tmp0 set: [tmp0 sub: tmp1]];
                               [tmp1 set_d: 2.0];
                               [tmp2 set: [tmp0 div: tmp1]];
-                              if (direction) {
-                                 [halfulp set:[tmp2 neg]];
-                              } else {
+                              if (drand48() < 0.4) {
                                  [halfulp set:tmp2];
+                              } else {
+                                 [halfulp set:[tmp2 neg]];
                               }
                               if ([halfulp lt: [currentVarError low]])
                                  [halfulp set: [currentVarError low]];
@@ -2193,6 +2181,7 @@ onFailure: (ORInt2Void) onFailure
                         }
                         index = [guess_select min];
                      } while(index.found);
+                     id<CPRationalVar> ezi = [cpGuessError concretize:ez];
                      if ((s != ORFailure) && ([[[tmp_solution_improve value:ez] rationalValue] lt: [ezi min]])) { // Better err
                         tmp_solution_improve = [cpGuessError captureSolution];
                         improved_var = TRUE;

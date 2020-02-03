@@ -151,7 +151,7 @@
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    /* Show floating-point approximation form of rational */
-   [buf appendFormat:@"%1.2e",[self get_d]];
+   [buf appendFormat:@"%1.5e",[self get_d]];
    /* Show exact fraction form of rational */
    //[buf appendFormat:@"%s",[self get_str]];
    /* DEBUG only */
