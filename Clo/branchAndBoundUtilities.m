@@ -53,4 +53,4 @@ TRInt limitCounter;
 int nbConstraint = 0;
 
 /* Global solution to output input values exercising the primal bound */
-SolWrapper* solution = nil;
+SolWrapper* solution;

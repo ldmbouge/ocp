@@ -2010,6 +2010,9 @@ onFailure: (ORInt2Void) onFailure
    [tmp2 autorelease];
    [halfulp autorelease];
    
+   /* Init global solution */
+   solution = [[SolWrapper alloc] init:[self captureSolution]];
+   
    /* Variables used in GuessError */
    SolWrapper* tmp_solution = [[SolWrapper alloc] init:[self captureSolution]];
    NSMutableArray* arrayVarValueMin = [[NSMutableArray alloc] initWithCapacity:0];
