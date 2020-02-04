@@ -1065,7 +1065,10 @@
     NSDictionary* dict = [e dict];
     DDClosure key = [self recursiveVisitor:[e key]];
     current = [^(id* state, ORInt variable, ORInt value) {
-        return [[dict objectForKey:[NSNumber numberWithLong: key(state,variable,value)]] longValue];
+        NSNumber* keyObj = [NSNumber numberWithLong:key(state,variable,value)];
+        long valueFromDict = [[dict objectForKey:keyObj] longValue];
+        [keyObj release];
+        return valueFromDict;
     } copy];
 }
 @end

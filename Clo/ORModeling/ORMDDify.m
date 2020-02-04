@@ -241,8 +241,9 @@
             returnedMapping[index] = -1;
         }
     }
-    
-    return (int)[mappings count];
+    int numMappings = (int)[mappings count];
+    [mappings release];
+    return numMappings;
 }
 
 -(bool) areEquivalent:(id<ORMDDSpecs>)mergeInto atIndex:(int)index1 and:(id<ORMDDSpecs>)other atIndex:(int)index2 withDependentMapping:(NSMutableDictionary*)dependentMappings andConfirmedMapping:(NSMutableDictionary*)confirmedMappings equivalenceVisitor:(ORDDExpressionEquivalenceChecker*)equivalenceChecker candidates:(int**)candidates

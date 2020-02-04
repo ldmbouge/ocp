@@ -697,22 +697,29 @@ void freeTRIntArray(TRIntArray a)
 
 
 @implementation ORTRIntArrayI
--(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail range: (id<ORIntRange>) R
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail low:(ORInt)low up:(ORInt)up defaultValue:(int)defaultValue
 {
    self = [super init];
    _trail = trail;
-   _low = [R low];
-   _up = makeTRInt(_trail, [R up]);
+   _low = low;
+   _up = makeTRInt(_trail, up);
    _array = malloc((_up._val - _low + 1) * sizeof(TRInt));
    _array -= _low;
    for(ORInt i = _low; i <= _up._val; i++)
-      _array[i] = makeTRInt(_trail,0);
+      _array[i] = makeTRInt(_trail,defaultValue);
    return self;
+}
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail low:(ORInt)low up:(ORInt)up
+{
+    return [self initORTRIntArrayWithTrail:trail low:low up:up defaultValue:0];
+}
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail range: (id<ORIntRange>) R
+{
+   return [self initORTRIntArrayWithTrail:trail low:[R low] up:[R up]];
 }
 -(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R
 {
-   self = [self initORTRIntArrayWithTrail:(ORTrailI*)[engine trail] range:R];
-   return self;
+   return [self initORTRIntArrayWithTrail:(ORTrailI*)[engine trail] range:R];
 }
 -(void) dealloc
 {
@@ -812,6 +819,9 @@ void freeTRIntArray(TRIntArray a)
 }
 -(void) dealloc
 {
+    for (int i = _low; i <= _up._val; i++) {
+        [_array[i] release];
+    }
    _array += _low;
    free(_array);
    [super dealloc];

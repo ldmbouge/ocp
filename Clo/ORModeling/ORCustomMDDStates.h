@@ -1,3 +1,5 @@
+#import <ORFoundation/ORTrailI.h>
+
 @interface CustomState : NSObject {
 @protected
     int _variableIndex;
@@ -56,32 +58,42 @@
     int _numSpecsAdded;
     
     int _minVar;
+    int _numVars;
+    int _hashWidth;
 }
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars;
 -(void) addMDDSpec:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
 -(void) addMDDSpec:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
 -(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
--(void) replaceStateWith:(MDDStateValues*)left with:(MDDStateValues*)right;
+-(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(int) numProperties;
 -(id*) rootValues;
+-(void) setTrail:(id<ORTrail>)trail;
+-(void) setHashWidth:(int)width;
+-(int) hashWidth;
 @end
     
 
 @interface MDDStateValues : NSObject {
 @protected
-    id* _state;
+    TRId* _state;
     int _variableIndex;
     int _stateSize;
+    TRInt _hashValue;
+    ORUInt _magic;
 }
 -(id) initRootState:(MDDStateSpecification*)stateSpecs variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
--(id) initState:(id*)stateValues stateSize:(int)size variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
+-(id) initState:(TRId*)stateValues stateSize:(int)size variableIndex:(int)variableIndex hashWidth:(int)width numVariables:(int)numVariables trail:(id<ORTrail>)trail;
 -(int) variableIndex;
--(id*) state;
+-(TRId*) state;
 -(bool) equivalentTo:(MDDStateValues*)other;
--(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables;
+-(int) hashValue;
+-(int) calcHash:(int)width numVariables:(NSUInteger)numVariables;
+-(void) setHash:(int)width numVariables:(NSUInteger)numVariables trail:(id<ORTrail>)trail;
+-(void) recalcHash:(int)width numVariables:(NSUInteger)numVariables trail:(id<ORTrail>)trail;
 @end
 
 @interface JointState : CustomState {
