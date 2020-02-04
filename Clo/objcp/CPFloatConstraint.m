@@ -19,11 +19,12 @@
 
 #define PERCENT 5.0
 
-void ulp_computation_f(id<ORRationalInterval> ulp, const float_interval f){
+id<ORRationalInterval> ulp_computation_f(const float_interval f){
+   id<ORRationalInterval> ulp = [[ORRationalInterval alloc] init];
    id<ORRational> tmp0 = [[ORRational alloc] init];
    id<ORRational> tmp1 = [[ORRational alloc] init];
    id<ORRational> tmp2 = [[ORRational alloc] init];
-   
+   id<ORRational> tmp3 = [[ORRational alloc] init];
    
    if(f.inf == -INFINITY || f.sup == INFINITY){
       [tmp1 setNegInf];
@@ -32,10 +33,9 @@ void ulp_computation_f(id<ORRationalInterval> ulp, const float_interval f){
    }else if(fabs(f.inf) == DBL_MAX || fabs(f.sup) == DBL_MAX){
       [tmp0 set_d: nextafterf(DBL_MAX, -INFINITY) - DBL_MAX];
       [tmp1 set_d: 2.0];
-      tmp2 = [tmp0 div: tmp1];
-      [tmp1 set: tmp2];
-      [tmp2 neg];
-      [ulp set_q:tmp2 and:tmp1];
+      [tmp2 set: [tmp0 div: tmp1]];
+      [tmp3 set: [tmp0 div: tmp1]];
+      [ulp set_q:[tmp2 neg] and:tmp3];
    } else{
       ORDouble inf, sup;
       inf = minDbl(nextafterf(f.inf, -INFINITY) - f.inf, nextafterf(f.sup, -INFINITY) - f.sup);
@@ -43,24 +43,28 @@ void ulp_computation_f(id<ORRationalInterval> ulp, const float_interval f){
       
       [tmp0 set_d: inf];
       [tmp1 set_d: 2.0];
-      tmp2 = [tmp0 div: tmp1];
-      [ulp.low set: tmp2];
-      [tmp0 set_d: sup];
-      tmp2 = [tmp0 div: tmp1];
-      [ulp.up set: tmp2];
+      [ulp.low set: [tmp0 div: tmp1]];
+      [tmp3 set_d: sup];
+      [ulp.up set: [tmp3 div: tmp1]];
    }
    
    [tmp0 release];
    [tmp1 release];
    [tmp2 release];
+   [tmp3 release];
+   [ulp autorelease];
+   
+   return ulp;
 }
 
-id<ORRationalInterval> compute_eo_add(id<ORRationalInterval> eo, const float_interval x, const float_interval y, const float_interval z){
+id<ORRationalInterval> compute_eo_add_f(const float_interval x, const float_interval y, const float_interval z)
+{
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
    /* First, let see if Sterbenz is applicable */
    if (((0.0 <= x.inf) && (y.sup <= 0.0) && (-y.inf/2.0 <= x.inf) && (x.sup <= -2.0*y.sup)) ||
        ((x.sup <= 0.0) && (0.0 <= y.inf) && (y.sup/2.0 <= -x.sup) && (-x.inf <= 2.0*y.inf))) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if ((((float_cast)((z.inf))).parts.exponent <= 1) && (((float_cast)((z.sup))).parts.exponent <= 1)) {
       /* Hauser theorems:
@@ -70,7 +74,7 @@ id<ORRationalInterval> compute_eo_add(id<ORRationalInterval> eo, const float_int
        Hauser, J. R. 1996. Handling floating-point exceptions in numeric programs. ACM Transactions on Pro-
        gramming Languages and Systems 18, 2, 139–174 */
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf + y.inf;
@@ -78,11 +82,10 @@ id<ORRationalInterval> compute_eo_add(id<ORRationalInterval> eo, const float_int
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
-      tmpq = [xq add: yq];
+      [tmpq set: [xq add: yq]];
       [yq set_d:tmpf];
-      tmpq = [tmpq sub: yq];
-      
-      eo = [eo proj_inter:tmpq and:tmpq];
+      [tmpq set: [tmpq sub: yq]];
+      [eo set_q:tmpq and:tmpq];
       
       [tmpq release];
       [yq release];
@@ -90,22 +93,22 @@ id<ORRationalInterval> compute_eo_add(id<ORRationalInterval> eo, const float_int
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_f(ulp_q, z);
-      eo = [eo proj_inter:ulp_q];
-      
+      [ulp_q set: ulp_computation_f(z)];
+      [eo set: ulp_q];
       [ulp_q release];
    }
-   
+   [eo autorelease];
    return eo;
 }
 
-id<ORRationalInterval> compute_eo_sub(id<ORRationalInterval> eo, const float_interval x, const float_interval y, const float_interval z){
-   
+id<ORRationalInterval> compute_eo_sub_f(const float_interval x, const float_interval y, const float_interval z)
+{
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
    /* First, let see if Sterbenz is applicable (requires gradual underflow (denormalized) or that x-y does not underflow */
    if (((x.inf >= 0.0) && (y.inf >= 0.0) && (y.sup/2.0 <= x.inf) && (x.sup <= 2.0*y.inf)) ||
        ((x.sup <= 0.0) && (y.sup <= 0.0) && (y.inf/2.0 >= x.sup) && (x.inf >= 2.0*y.sup))) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if ((((float_cast)((z.inf))).parts.exponent <= 1) && (((float_cast)((z.sup))).parts.exponent <= 1)) {
       /* Hauser theorems:
@@ -115,7 +118,7 @@ id<ORRationalInterval> compute_eo_sub(id<ORRationalInterval> eo, const float_int
        Hauser, J. R. 1996. Handling floating-point exceptions in numeric programs. ACM Transactions on Pro-
        gramming Languages and Systems 18, 2, 139–174 */
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf - y.inf;
@@ -123,11 +126,11 @@ id<ORRationalInterval> compute_eo_sub(id<ORRationalInterval> eo, const float_int
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
-      tmpq = [xq sub: yq];
+      [tmpq set: [xq sub: yq]];
       [yq set_d:tmpf];
-      tmpq = [tmpq sub: yq];
+      [tmpq set: [tmpq sub: yq]];
       
-      eo = [eo proj_inter:tmpq and:tmpq];
+      [eo set_q:tmpq and:tmpq];
       
       [tmpq release];
       [yq release];
@@ -135,21 +138,23 @@ id<ORRationalInterval> compute_eo_sub(id<ORRationalInterval> eo, const float_int
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_f(ulp_q, z);
-      eo = [eo proj_inter:ulp_q];
+      [ulp_q set: ulp_computation_f(z)];
+      [eo set:ulp_q];
       [ulp_q release];
    }
-   
+   [eo autorelease];
    return eo;
 }
 
-id<ORRationalInterval> compute_eo_mul(id<ORRationalInterval> eo, const float_interval x, const float_interval y, const float_interval z){
-   
+
+id<ORRationalInterval> compute_eo_mul_f(const float_interval x, const float_interval y, const float_interval z)
+{
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
    /* Check if its a product by a power of 2 */
    if (((x.inf == x.sup) && (((float_cast)((x.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(x.inf) <= y.inf) && (y.sup <= DBL_MAX/fabs(x.inf))) ||
        ((y.inf == y.sup) && (((float_cast)((y.inf))).parts.mantissa == 0) && (-DBL_MAX/fabs(y.inf) <= x.inf) && (x.sup <= DBL_MAX/fabs(y.inf)))) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
       ORDouble tmpf = x.inf*y.inf;
@@ -157,11 +162,11 @@ id<ORRationalInterval> compute_eo_mul(id<ORRationalInterval> eo, const float_int
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
-      tmpq = [xq mul: yq];
+      [tmpq set: [xq mul: yq]];
       [yq set_d:tmpf];
-      tmpq = [tmpq sub: yq];
+      [tmpq set: [tmpq sub: yq]];
       
-      eo = [eo proj_inter:tmpq and:tmpq];
+      [eo set_q:tmpq and:tmpq];
       
       [tmpq release];
       [yq release];
@@ -169,11 +174,11 @@ id<ORRationalInterval> compute_eo_mul(id<ORRationalInterval> eo, const float_int
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_f(ulp_q, z);
-      eo = [eo proj_inter:ulp_q];
+      [ulp_q set: ulp_computation_f(z)];
+      [eo set:ulp_q];
       [ulp_q release];
    }
-   
+   [eo autorelease];
    return eo;
 }
 
@@ -183,13 +188,14 @@ int checkDivPower2f(float x, float y) { // x/y
    return (z.parts.exponent >= 1);
 }
 
-id<ORRationalInterval> compute_eo_div(id<ORRationalInterval> eo, const float_interval x, const float_interval y, const float_interval z){
-   
+id<ORRationalInterval> compute_eo_div_f(const float_interval x, const float_interval y, const float_interval z)
+{
+   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
    /* Check if its a division by a power of 2 */
    if ((y.inf == y.sup) && (((float_cast)(y.inf)).parts.mantissa == 0) &&
        (((-DBL_MAX <= x.inf) && (x.sup < 0.0) && checkDivPower2f(x.sup, y.inf)) || ((0.0 < x.inf) && (x.sup <= DBL_MAX) && checkDivPower2f(x.inf, y.inf)))) {
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      eo = [eo proj_inter:zero and:zero];
+      [eo set_q:zero and:zero];
       [zero release];
       
    } else if((x.inf == x.sup) && (y.inf == y.sup)){
@@ -198,11 +204,11 @@ id<ORRationalInterval> compute_eo_div(id<ORRationalInterval> eo, const float_int
       id<ORRational> xq = [ORRational rationalWith_d:x.inf];
       id<ORRational> yq = [ORRational rationalWith_d:y.inf];
       
-      tmpq = [xq div: yq];
+      [tmpq set: [xq div: yq]];
       [yq set_d:tmpf];
-      tmpq = [tmpq sub: yq];
+      [tmpq set: [tmpq sub: yq]];
       
-      eo = [eo proj_inter:tmpq and:tmpq];
+      [eo set_q:tmpq and:tmpq];
       
       [tmpq release];
       [yq release];
@@ -210,14 +216,13 @@ id<ORRationalInterval> compute_eo_div(id<ORRationalInterval> eo, const float_int
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_f(ulp_q, z);
-      eo = [eo proj_inter:ulp_q];
+      [ulp_q set: ulp_computation_f(z)];
+      [eo set:ulp_q];
       [ulp_q release];
    }
-   
+   [eo autorelease];
    return eo;
 }
-
 int checkPerfectSquare(const float x)
 {
    float sx = sqrtf(x);
@@ -251,7 +256,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    } else {
       id<ORRationalInterval> ulp_q = [[ORRationalInterval alloc] init];
       
-      ulp_computation_f(ulp_q, z);
+      [ulp_q set: ulp_computation_f(z)];
       eo = [eo proj_inter:ulp_q];
       [ulp_q release];
    }
@@ -951,7 +956,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 @end
 
 @implementation CPFloatTernaryAdd{
-   
+   TRInt _limit;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
@@ -967,6 +972,9 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _percent = p;
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   assignTRInt(&_limit, YES, _trail);
+   if(!IS_GUESS_ERROR_SOLVER)
+      nbConstraint++;
    return self;
 }
 -(void) post
@@ -1034,33 +1042,46 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       
       /* ERROR PROPAG */
       
-      eo = compute_eo_add(eo, x, y, z);
+      [eoTemp set: compute_eo_add_f(x, y, z)];
+      [eo set: [eo proj_inter:eoTemp]];
       changed |= eo.changed;
+      
+      if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
+         if(
+            ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
+            ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
+            ){
+            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+            assignTRInt(&_limit, NO, _trail);
+         }
+      }
+
       // ============================== ez
       // ex + ey + eo
-      ezTemp = [[ex add: ey] add: eo];
-      ez = [ez proj_inter: ezTemp];
+      [ezTemp set: [[ex add: ey] add: eo]];
+      
+      [ez set: [ez proj_inter: ezTemp]];
       changed |= ez.changed;
       
       // ============================== eo
       // ez - ex - ey
-      eoTemp = [[ez sub: ex] sub: ey];
+      [eoTemp set: [[ez sub: ex] sub: ey]];
       
-      eo = [eo proj_inter: eoTemp];
+      [eo set: [eo proj_inter: eoTemp]];
       changed |= eo.changed;
       
       // ============================== ex
       // ez - ey - eo
-      exTemp = [[ez sub: ey] sub: eo];
+      [exTemp set: [[ez sub: ey] sub: eo]];
       
-      ex = [ex proj_inter: exTemp];
+      [ex set: [ex proj_inter: exTemp]];
       changed |= ex.changed;
       
       // ============================== ey
       // ez - ex - eo
-      eyTemp = [[ez sub: ex] sub: eo];
+      [eyTemp set: [[ez sub: ex] sub: eo]];
       
-      ey = [ey proj_inter: eyTemp];
+      [ey set: [ey proj_inter: eyTemp]];
       changed |= ey.changed;
       
       /* END ERROR PROPAG */
@@ -1144,7 +1165,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 
 
 @implementation CPFloatTernarySub{
-   
+   TRInt _limit;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
 {
@@ -1160,6 +1181,9 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _percent = p;
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   assignTRInt(&_limit, YES, _trail);
+   if(!IS_GUESS_ERROR_SOLVER)
+      nbConstraint++;
    return self;
 }
 -(void) post
@@ -1225,36 +1249,46 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       changed |= inter.changed;
       
       /* ERROR PROPAG */
-      eo = compute_eo_sub(eo, x, y, z);
+      [eoTemp set: compute_eo_sub_f(x, y, z)];
+      [eo set: [eo proj_inter:eoTemp]];
       changed |= eo.changed;
       
+      if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
+         if(
+            ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
+            ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
+            ){
+            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+            assignTRInt(&_limit, NO, _trail);
+         }
+      }
       
       // ============================== ez
       // ex - ey + eo
-      ezTemp = [[ex sub: ey] add: eo];
+      [ezTemp set: [[ex sub: ey] add: eo]];
       
-      ez = [ez proj_inter: ezTemp];
+      [ez set: [ez proj_inter: ezTemp]];
       changed |= ez.changed;
       
       // ============================== eo
       // ez - (ex - ey)
-      eoTemp = [ez sub: [ex sub: ey]];
+      [eoTemp set: [ez sub: [ex sub: ey]]];
       
-      eo = [eo proj_inter: eoTemp];
+      [eo set: [eo proj_inter: eoTemp]];
       changed |= eo.changed;
       
       // ============================== ex
       // ez + ey - eo
-      exTemp = [[ez add: ey] sub: eo];
+      [exTemp set: [[ez add: ey] sub: eo]];
       
-      ex = [ex proj_inter: exTemp];
+      [ex set: [ex proj_inter: exTemp]];
       changed |= ex.changed;
       
       // ============================== ey
       // ex - ez + eo
-      eyTemp = [[ex sub: ez] add: eo];
+      [eyTemp set: [[ex sub: ez] add: eo]];
       
-      ey = [ey proj_inter: eyTemp];
+      [ey set: [ey proj_inter: eyTemp]];
       changed |= ey.changed;
       
       /* END ERROR PROPAG */
@@ -1336,7 +1370,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 @end
 
 @implementation CPFloatTernaryMult{
-   
+   TRInt _limit;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y
 {
@@ -1352,6 +1386,9 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _percent = p;
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   assignTRInt(&_limit, YES, _trail);
+   if(!IS_GUESS_ERROR_SOLVER)
+      nbConstraint++;
    return self;
 }
 -(void) post
@@ -1414,56 +1451,67 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [xr set_d:x.inf and:x.sup];
       [yr set_d:y.inf and:y.sup];
       
-      eo = compute_eo_mul(eo, x, y, z);
+      [eoTemp set: compute_eo_mul_f(x, y, z)];
+      [eo set: [eo proj_inter:eoTemp]];
       changed |= eo.changed;
       
+      if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
+         if(
+            ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
+            ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
+            ){
+            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+            assignTRInt(&_limit, NO, _trail);
+         }
+      }
       // ============================== ez
       // x*ey + y*ex + ex*ey + eo
-      ezTemp = [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo];
+      [ezTemp set: [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo]];
       
-      ez = [ez proj_inter: ezTemp];
+      [ez set: [ez proj_inter: ezTemp]];
       changed |= ez.changed;
       
       // ============================== eo
       // ez - (x*ey + y*ex + ex*ey)
-      eoTemp = [ez sub: [[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]]];
+      [eoTemp set: [ez sub: [[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]]]];
       
-      eo = [eo proj_inter: eoTemp];
+      [eo set: [eo proj_inter: eoTemp]];
       changed |= eo.changed;
       
       // ============================== ex
       // (ez - x*ey - eo)/(y + ey)
-      exTemp = [[[ez sub: [xr mul: ey]] sub: eo] div: [yr add: ey]];
+      [exTemp set: [[[ez sub: [xr mul: ey]] sub: eo] div: [yr add: ey]]];
       
-      ex = [ex proj_inter: exTemp];
+      [ex set: [ex proj_inter: exTemp]];
       changed |= ex.changed;
       
       // ============================== ey
       // (ez - y*ex - eo)/(x + ex)
-      eyTemp = [[[ez sub: [yr mul: ex]] sub: eo] div: [xr add: ex]];
+      [eyTemp set: [[[ez sub: [yr mul: ex]] sub: eo] div: [xr add: ex]]];
       
-      ey = [ey proj_inter: eyTemp];
+      [ey set: [ey proj_inter: eyTemp]];
       changed |= ey.changed;
       
       // ============================== x
       // (ez - y*ex - ex*ey - eo)/ey
-      xrTemp = [[[[ez sub: [yr mul: ex]] sub: [ex mul: ey]] sub: eo] div: ey];
+      [xrTemp set: [[[[ez sub: [yr mul: ex]] sub: [ex mul: ey]] sub: eo] div: ey]];
       
-      xr = [xr proj_inter:xrTemp];
+      [xr set: [xr proj_inter:xrTemp]];
       changed |= xr.changed;
       
-      x.inf = [[xr low] get_sup_f];
-      x.sup = [[xr up] get_inf_f];
+      x.inf = [[xr low] get_sup_d];
+      x.sup = [[xr up] get_inf_d];
+
       
       // ============================== y
       // (ez - x*ey - ex*ey - eo)/ex
-      yrTemp = [[[[ez sub: [xr mul: ey]] sub: [ex mul: ey]] sub: eo] div: ex];
+      [yrTemp set: [[[[ez sub: [xr mul: ey]] sub: [ex mul: ey]] sub: eo] div: ex]];
       
-      yr = [yr proj_inter:yrTemp];
+      [yr set: [yr proj_inter:yrTemp]];
       changed |= yr.changed;
       
-      y.inf = [[yr low] get_sup_f];
-      y.sup = [[yr up] get_inf_f];
+      y.inf = [[yr low] get_sup_d];
+      y.sup = [[yr up] get_inf_d];
       
       /* END ERROR PROPAG */
       
@@ -1525,7 +1573,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 @end
 
 @implementation CPFloatTernaryDiv{
-   
+   TRInt _limit;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x div:(CPFloatVarI*)y
 {
@@ -1541,6 +1589,9 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _percent = p;
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   assignTRInt(&_limit, YES, _trail);
+   if(!IS_GUESS_ERROR_SOLVER)
+      nbConstraint++;
    return self;
 }
 -(void) post
@@ -1606,79 +1657,88 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [xr set_d:x.inf and:x.sup];
       [yr set_d:y.inf and:y.sup];
       
-      eo = compute_eo_div(eo, x, y, z);
+      [eoTemp set: compute_eo_div_f(x, y, z)];
+      [eo set: [eo proj_inter:eoTemp]];
       changed |= eo.changed;
       
-      
+      if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
+         if(
+            ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
+            ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
+            ){
+            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+            assignTRInt(&_limit, NO, _trail);
+         }
+      }
       // ============================== ez
       // (y*ex - x*ey)/(y*(y + ey)) + eo
-      ezTemp = [[[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]] add: eo];
+      [ezTemp set: [[[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]] add: eo]];
       
-      ez = [ez proj_inter: ezTemp];
+      [ez set: [ez proj_inter: ezTemp]];
       changed |= ez.changed;
-      
+
       // ============================== eo
       // ez - (y*ex - x*ey)/(y*(y + ey))
-      eoTemp = [ez sub: [[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]]];
+      [eoTemp set: [ez sub: [[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]]]];
       
-      eo = [eo proj_inter: eoTemp];
+      [eo set: [eo proj_inter: eoTemp]];
       changed |= eo.changed;
-      
+
       // ============================== ex
       // (ez - eo)*(y + ey) + (x*ey)/y
-      exTemp = [[[ez sub: eo] mul: [yr add: ey]] add: [[xr mul: ey] div: yr]];
+      [exTemp set: [[[ez sub: eo] mul: [yr add: ey]] add: [[xr mul: ey] div: yr]]];
       
-      ex = [ex proj_inter: exTemp];
+      [ex set: [ex proj_inter: exTemp]];
       changed |= ex.changed;
-      
+
       // ============================== ey
       // (ex - ez*y + eo*y)/(ez - eo + (x/y))
-      eyTemp = [[[ex sub: [ez mul: yr]] add: [eo mul: yr]] div: [[ez sub: eo] add: [xr div: yr]]];
+      [eyTemp set: [[[ex sub: [ez mul: yr]] add: [eo mul: yr]] div: [[ez sub: eo] add: [xr div: yr]]]];
       
-      ey = [ey proj_inter: eyTemp];
+      [ey set: [ey proj_inter: eyTemp]];
       changed |= ey.changed;
-      
+
       // ============================== x
       // ((eo-ez) * y * (y+ey) + y*ex)/ey
-      xrTemp = [[[[[eo sub: ez] mul: yr] mul: [yr add:ey]] add: [yr mul: ex]] div: ey];
+      [xrTemp set: [[[[[eo sub: ez] mul: yr] mul: [yr add:ey]] add: [yr mul: ex]] div: ey]];
       
-      xr = [xr proj_inter:xrTemp];
+      [xr set: [xr proj_inter:xrTemp]];
       changed |= xr.changed;
       
-      x.inf = [[xr low] get_sup_f];
-      x.sup = [[xr up] get_inf_f];
-      
+      x.inf = [[xr low] get_sup_d];
+      x.sup = [[xr up] get_inf_d];
+
       // ============================== y
       // min(d1, d2), max(d1, d2)
       // d1 = (ex - (ez - eo)*ey - sqrt(D))/(2*(ez - eo))
       // d2 = (ex - (ez - eo)*ey + sqrt(D))/(2*(ez - eo))
       // D = [0, +INF] inter ((ez - eo)*ey - ex)^2 + 4*(ez - eo)*ey*x
       
-      [tmp set_d:4.0 and:4.0];
-      D = [[[[[ez sub: eo] mul: ey] sub: ex] mul: [[[ez sub: eo] mul: ey] sub: ex]] add: [[[tmp mul: [ez sub: eo]] mul: ey] mul: xr]];
-      [tmp set_d:0.0 and:+INFINITY];
-      D = [tmp proj_inter:D];
-      
-      tmp = [ex sub: [[ez sub: eo] mul: ey]];
-      fesetround(FE_DOWNWARD);
-      [D.low set_d: sqrt([D.low get_sup_d])];
-      fesetround(FE_UPWARD);
-      [D.up set_d: sqrt([D.up get_inf_d])];
-      fesetround(FE_TONEAREST);
-      d1 = [tmp sub: D];
-      d2 = [tmp add: D];
-      [tmp set_d:2.0 and:2.0];
-      tmp = [tmp mul: [ez sub: eo]];
-      d1 = [d1 div: tmp];
-      d2 = [d2 div: tmp];
-      
-      [yrTemp set_q:minQ(d1.low, d2.low) and:maxQ(d1.up, d2.up)];
-      yr = [yr proj_inter:yrTemp];
-      changed |= yr.changed;
-      
-      y.inf = [[yr low] get_sup_f];
-      y.sup = [[yr up] get_inf_f];
-      
+      //      [tmp set_d:4.0 and:4.0];
+      //      D = [[[[[ez sub: eo] mul: ey] sub: ex] mul: [[[ez sub: eo] mul: ey] sub: ex]] add: [[[tmp mul: [ez sub: eo]] mul: ey] mul: xr]];
+      //      [tmp set_d:0.0 and:+INFINITY];
+      //      D1 = [tmp proj_inter:D];
+      //      if(![D1 empty]){
+      //         tmp = [ex sub: [[ez sub: eo] mul: ey]];
+      //         fesetround(FE_DOWNWARD);
+      //         [D2.low set_d: sqrt([D1.low get_sup_d])];
+      //         fesetround(FE_UPWARD);
+      //         [D2.up set_d: sqrt([D1.up get_inf_d])];
+      //         fesetround(FE_TONEAREST);
+      //         d1 = [tmp sub: D2];
+      //         d2 = [tmp add: D2];
+      //         [tmp set_d:2.0 and:2.0];
+      //         tmp = [tmp mul: [ez sub: eo]];
+      //         d1 = [d1 div: tmp];
+      //         d2 = [d2 div: tmp];
+      //
+      //         [yrTemp set_q:minQ(d1.low, d2.low) and:maxQ(d1.up, d2.up)];
+      //         yr = [yr proj_inter:yrTemp];
+      //         changed |= yr.changed;
+      //
+      //         y.inf = [[yr low] get_sup_d];
+      //         y.sup = [[yr up] get_inf_d];
+      //      }
       /* END ERROR PROPAG */
       
       gchanged |= changed;
@@ -2859,26 +2919,26 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    int gchanged,changed;
    changed = gchanged = false;
-   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eres = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eresTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> one = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> two = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xq = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> eres = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> eresTemp = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> one = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> two = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> xq = [[ORRationalInterval alloc] init];
    
    updateFloatInterval(&_xi,_x);
    updateFloatInterval(&_resi,_res);
    
-   [one.low setOne];
-   [one.up setOne];
-   [two set_d:2.0 and:2.0];
-   [xq set_d:_xi.inf and:_xi.sup];
-   [ex set_q:[_x minErr] and:[_x maxErr]];
-   [eres set_q:[_res minErr] and:[_res maxErr]];
-   [eo set_q:[_eo min] and:[_eo max]];
+//   [one.low setOne];
+//   [one.up setOne];
+//   [two set_d:2.0 and:2.0];
+//   [xq set_d:_xi.inf and:_xi.sup];
+//   [ex set_q:[_x minErr] and:[_x maxErr]];
+//   [eres set_q:[_res minErr] and:[_res maxErr]];
+//   [eo set_q:[_eo min] and:[_eo max]];
    
    
    intersectionInterval inter;
@@ -2898,49 +2958,49 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       assignTRInt(&_active, NO, _trail);
    
    /* ERROR PROPAG */
-   do {
-      eo = compute_eo_sqrt(eo, _xi, _resi);
-      changed |= eo.changed;
-      // ============================== ez
-      // sqrt(x) * (sqrt(1 + ex) - 1) + eo
-      eresTemp = [[[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]] add: eo];
-      eres = [eres proj_inter: eresTemp];
-      changed |= eres.changed;
-      
-      // ============================== eo
-      // ez - sqrt(x) * (sqrt(1 + ex) - 1)
-      eoTemp = [eres sub: [[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]]];
-      eo = [eo proj_inter: eoTemp];
-      changed |= eo.changed;
-      
-      // ============================== ex
-      // (eo^2 - 2*eo*ez + ez^2 - 2*eo*sqrt(x) + 2*ez*sqrt(x)) / x
-      exTemp = [[[[[[eo mul: eo] sub: [[two mul: eo] mul: eres]] add: [eres mul: eres]] sub: [[two mul: eo] mul: [xq sqrt]]] add: [[two mul: eres] mul: [xq sqrt]]] div: xq];
-      ex = [ex proj_inter: exTemp];
-      changed |= ex.changed;
-      
-      gchanged |= changed;
-   } while(changed);
+//   do {
+//      eo = compute_eo_sqrt(eo, _xi, _resi);
+//      changed |= eo.changed;
+//      // ============================== ez
+//      // sqrt(x) * (sqrt(1 + ex) - 1) + eo
+//      eresTemp = [[[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]] add: eo];
+//      eres = [eres proj_inter: eresTemp];
+//      changed |= eres.changed;
+//
+//      // ============================== eo
+//      // ez - sqrt(x) * (sqrt(1 + ex) - 1)
+//      eoTemp = [eres sub: [[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]]];
+//      eo = [eo proj_inter: eoTemp];
+//      changed |= eo.changed;
+//
+//      // ============================== ex
+//      // (eo^2 - 2*eo*ez + ez^2 - 2*eo*sqrt(x) + 2*ez*sqrt(x)) / x
+//      exTemp = [[[[[[eo mul: eo] sub: [[two mul: eo] mul: eres]] add: [eres mul: eres]] sub: [[two mul: eo] mul: [xq sqrt]]] add: [[two mul: eres] mul: [xq sqrt]]] div: xq];
+//      ex = [ex proj_inter: exTemp];
+//      changed |= ex.changed;
+//
+//      gchanged |= changed;
+//   } while(changed);
    /* END ERROR PROPAG */
-   if(gchanged){
+   //if(gchanged){
       // Cause no propagation on eo is insured
-      [_eo updateMin:(eo.low) for:NULL];
-      [_eo updateMax:(eo.up) for:NULL];
+      //[_eo updateMin:(eo.low) for:NULL];
+      //[_eo updateMax:(eo.up) for:NULL];
       
-      [_x updateIntervalError:(ex.low) and:(ex.up)];
-      [_res updateIntervalError:(eres.low) and:(eres.up)];
-      if([_x bound] && [_res bound] && [_x boundError] && [_res boundError])
-         assignTRInt(&_active, NO, _trail);
-   }
-   [ex release];
-   [eres release];
-   [eo release];
-   [exTemp release];
-   [eresTemp release];
-   [eoTemp release];
-   [one release];
-   [two release];
-   [xq release];
+      //[_x updateIntervalError:(ex.low) and:(ex.up)];
+      //[_res updateIntervalError:(eres.low) and:(eres.up)];
+//      if([_x bound] && [_res bound] && [_x boundError] && [_res boundError])
+//         assignTRInt(&_active, NO, _trail);
+//   }
+//   [ex release];
+//   [eres release];
+//   [eo release];
+//   [exTemp release];
+//   [eresTemp release];
+//   [eoTemp release];
+//   [one release];
+//   [two release];
+//   [xq release];
 }
 -(NSSet*)allVars
 {

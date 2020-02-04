@@ -1217,5 +1217,3 @@
    return z;
 }
 @end
-
-id<ORRational> boundDiscardedBoxes = nil;

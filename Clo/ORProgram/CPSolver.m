@@ -489,7 +489,8 @@
        ];
       branchAndBoundTime = [NSDate date];
       if(!IS_GUESS_ERROR_SOLVER){
-         [solution print:_model for:@"Input Values:"];
+         SolWrapper* s = [[SolWrapper alloc] init:[_sPool objectAtIndexedSubscript:[_sPool count] - 1]];
+         [s print:[_model variables] for:@"Input Values:"];
          NSLog(@"Optimal Solution: %@ (%@) thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       }
    }
@@ -1860,10 +1861,6 @@ onFailure: (ORInt2Void) onFailure
    
    assignTRInt(&_index, [select min].index, _trail);
    do {
-      //nbBoxExplored++;
-      //branchAndBoundTime = [NSDate date];
-      //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
-      
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
       [[_engine objective] updateDualBound];
       
@@ -1876,8 +1873,8 @@ onFailure: (ORInt2Void) onFailure
       if(isBound){
          if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] primalValue] rationalValue]]){ // Check that it is a better solution   <=========== !
             [[_engine objective] updatePrimalBound];
-            [solution set:[self captureSolution]];  // Keep it as a solution
-            [solution print:_model for:@"Bounded Box"];
+            [_sPool addSolution:[self captureSolution]]; // Keep it as a solution
+            [tmp_solution print:[_model variables] with:[_sPool objectAtIndexedSubscript:[_sPool count] - 1] for:@"Bounded Box"];
          }
          break;
       } else {
@@ -1943,7 +1940,7 @@ onFailure: (ORInt2Void) onFailure
                
                if((isFailed != ORFailure) && [[[[[cpGuessError engine] objective] primalValue] rationalValue] gt: [[[tmp_solution get] value:ez] rationalValue]]){
                   [tmp_solution set: [cpGuessError captureSolution]];
-                  [tmp_solution print:_model for:[NSString stringWithFormat:@"GuessError %d/%d", iteration, nbIteration]];
+                  [tmp_solution print:[_model variables] for:[NSString stringWithFormat:@"GuessError %d/%d", iteration, nbIteration]];
                }
             }];
             iteration++;
@@ -1956,7 +1953,7 @@ onFailure: (ORInt2Void) onFailure
          if ([[[[_engine objective] primalBound] rationalValue] lt: [[[tmp_solution get] value:ez] rationalValue]]) {
             id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[[tmp_solution get] value:ez] rationalValue] minimize:FALSE];
             [[_engine objective] tightenPrimalBound:objv];
-            [solution set: [tmp_solution get]];
+            [_sPool addSolution:[tmp_solution get]];
          }
          
          LOG(_level, 2, @"Ending GuessError");
@@ -1989,11 +1986,7 @@ onFailure: (ORInt2Void) onFailure
             assignTRInt(&_index, i.index, _trail);
          else
             assignTRInt(&_index, _index._val+1, _trail);
-         
-         //branchAndBoundTime = [NSDate date];
-         //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       }
-      //NSLog(@"%d -- %d/%d", nbBoxDone, nbBoxExplored, nbBoxGenerated);
    } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
    
 }
@@ -2009,9 +2002,6 @@ onFailure: (ORInt2Void) onFailure
    [tmp1 autorelease];
    [tmp2 autorelease];
    [halfulp autorelease];
-   
-   /* Init global solution */
-   solution = [[SolWrapper alloc] init:[self captureSolution]];
    
    /* Variables used in GuessError */
    SolWrapper* tmp_solution = [[SolWrapper alloc] init:[self captureSolution]];
@@ -2054,10 +2044,6 @@ onFailure: (ORInt2Void) onFailure
    
    assignTRInt(&_index, [select min].index, _trail);
    do {
-      //nbBoxExplored++;
-      //branchAndBoundTime = [NSDate date];
-      //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
-      
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
       [[_engine objective] updateDualBound];
       
@@ -2071,8 +2057,8 @@ onFailure: (ORInt2Void) onFailure
       if(isBound){
          if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] primalValue] rationalValue]]){
             [[_engine objective] updatePrimalBound];
-            [solution set:[self captureSolution]];
-            [solution print:_model for:@"Bounded Box"];
+            [_sPool addSolution:[self captureSolution]]; // Keep it as a solution
+            [tmp_solution print:[_model variables] with:[_sPool objectAtIndexedSubscript:[_sPool count] - 1] for:@"Bounded Box"];
          }
          break; // branch-and-bound stop exploring current box
       } else {
@@ -2166,9 +2152,9 @@ onFailure: (ORInt2Void) onFailure
                               [tmp1 set_d: 2.0];
                               [tmp2 set: [tmp0 div: tmp1]];
                               if (drand48() < 0.4) {
-                                 [halfulp set:tmp2];
-                              } else {
                                  [halfulp set:[tmp2 neg]];
+                              } else {
+                                 [halfulp set:tmp2];
                               }
                               if ([halfulp lt: [currentVarError low]])
                                  [halfulp set: [currentVarError low]];
@@ -2217,7 +2203,7 @@ onFailure: (ORInt2Void) onFailure
                
                if((isFailed != ORFailure) && [[[tmp_solution_improve value:ez] rationalValue] gt: [[[tmp_solution get] value:ez] rationalValue]]){
                   [tmp_solution set: tmp_solution_improve];
-                  [tmp_solution print:_model for:[NSString stringWithFormat:@"GuessError %d/%d", iteration, nbIteration]];
+                  [tmp_solution print:[_model variables] for:[NSString stringWithFormat:@"GuessError %d/%d", iteration, nbIteration]];
                }
                [currentVarError release];
             }];
@@ -2231,7 +2217,8 @@ onFailure: (ORInt2Void) onFailure
          if ([[[[_engine objective] primalBound] rationalValue] lt: [[[tmp_solution get] value:ez] rationalValue]]) {
             id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[[tmp_solution get] value:ez] rationalValue] minimize:FALSE];
             [[_engine objective] tightenPrimalBound:objv];
-            [solution set: [tmp_solution get]];
+            //[solution set: [tmp_solution get]];
+            [_sPool addSolution:[tmp_solution get]];
          }
          
          LOG(_level, 2, @"Ending GuessError");
@@ -2264,11 +2251,7 @@ onFailure: (ORInt2Void) onFailure
             assignTRInt(&_index, i.index, _trail);
          else
             assignTRInt(&_index, _index._val+1, _trail);
-         
-         //branchAndBoundTime = [NSDate date];
-         //NSLog(@"BOX: %d/%d (%d%%) -- %.3fs", nbBoxExplored, nbBoxGenerated, (ORInt)(floor(((ORDouble)(nbBoxExplored)/(ORDouble)(nbBoxGenerated))*100)),[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       }
-      //NSLog(@"%d -- %d/%d", nbBoxDone, nbBoxExplored, nbBoxGenerated);
    } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
 }
 

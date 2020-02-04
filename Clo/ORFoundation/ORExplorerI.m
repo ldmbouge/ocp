@@ -512,8 +512,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self push: controller];
       [controller release];
       if (search) search();
-#warning [rg] Change if conditional! Do not specialize function for branch-and-bound
-      if ([solver ground] && !IS_GUESS_ERROR_SOLVER) {
+      if (!IS_GUESS_ERROR_SOLVER && [solver ground]) {
          [obj updatePrimalBound];
          if (onSolution) onSolution();
       }

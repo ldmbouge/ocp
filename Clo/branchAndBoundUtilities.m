@@ -7,6 +7,7 @@
 
 #import "rationalUtilities.h"
 #import "branchAndBoundUtilities.h"
+#import <ORFoundation/ORFoundation.h>
 
 @implementation SolWrapper
 -(id)init:(id<ORSolution>)s
@@ -23,34 +24,40 @@
 {
    return _sol;
 }
--(void)print:(id<ORModel>)m for:(NSString*)title
+-(void)print:(NSArray*)variables for:(NSString*)title
 {
    NSLog(@"%@", title);
-#warning [rg] Instance method not found: cannot add #import <ORModeling/ORModeling.h> because of cycle dependency. (Work at runtime)
-   for (id<ORVar> v in [m variables]) {
+   for (id<ORVar> v in variables) {
       if([v prettyname] &&
          ([NSStringFromClass([v class]) isEqualToString: @"ORDoubleVarI"] || [NSStringFromClass([v class]) isEqualToString: @"ORFloatVarI"]))
          NSLog(@"    %@: %@", [v prettyname], [_sol value:v]);
-   }}
+   }
+}
+-(void)print:(NSArray*)variables with:(id<ORSolution>)s for:(NSString*)title
+{
+   NSLog(@"%@", title);
+   for (id<ORVar> v in variables) {
+      if([v prettyname] &&
+         ([NSStringFromClass([v class]) isEqualToString: @"ORDoubleVarI"] || [NSStringFromClass([v class]) isEqualToString: @"ORFloatVarI"]))
+         NSLog(@"    %@: %@", [v prettyname], [s value:v]);
+   }
+}
 @end
 
 /* Try to improve computed error in GuessError, once all variables are set */
-bool RUN_IMPROVE_GUESS = true;
+ORBool RUN_IMPROVE_GUESS = true;
 /* Discard box if half-ulp limit is reached on all constraints */
-bool RUN_DISCARDED_BOX = true;
-/* INTERNAL - DO NOT CHANGE HERE - Disable solver output when in sub-solver for GuessError */
-bool IS_GUESS_ERROR_SOLVER = false;
+ORBool RUN_DISCARDED_BOX = true;
+/* DO NOT CHANGE HERE - Disable solver output when in sub-solver for GuessError */
+ORBool IS_GUESS_ERROR_SOLVER = false;
 
-/* Global variables used to compute metrics about solver exploration */
-int nbBoxGenerated = 1;
-int nbBoxExplored = 0;
+/* Global variables used to compute branch-and-bound running time */
 NSDate *branchAndBoundStart = nil;
 NSDate *branchAndBoundTime = nil;
 
 /* Global variables to compute when a box can be discarded */
-double boxCardinality = -1;
+ORDouble boxCardinality = -1;
 TRInt limitCounter;
-int nbConstraint = 0;
+ORInt nbConstraint = 0;
 
-/* Global solution to output input values exercising the primal bound */
-SolWrapper* solution;
+id<ORRational> boundDiscardedBoxes = nil;

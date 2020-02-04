@@ -35,8 +35,6 @@ id<ORRationalInterval> ulp_computation_d(const double_interval f){
       [tmp1 set_d: 2.0];
       [tmp2 set: [tmp0 div: tmp1]];
       [tmp3 set: [tmp0 div: tmp1]];
-      //[tmp1 set: tmp2];
-      //[tmp2 set: [tmp2 neg]];
       [ulp set_q:[tmp2 neg] and:tmp3];
    } else{
       ORDouble inf, sup;
@@ -46,10 +44,8 @@ id<ORRationalInterval> ulp_computation_d(const double_interval f){
       [tmp0 set_d: inf];
       [tmp1 set_d: 2.0];
       [ulp.low set: [tmp0 div: tmp1]];
-      //[ulp.low set: tmp2];
       [tmp3 set_d: sup];
       [ulp.up set: [tmp3 div: tmp1]];
-      //[ulp.up set: tmp3];
    }
    
    [tmp0 release];
