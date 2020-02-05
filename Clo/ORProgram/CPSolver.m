@@ -2058,7 +2058,7 @@ onFailure: (ORInt2Void) onFailure
          if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] primalValue] rationalValue]]){
             [[_engine objective] updatePrimalBound];
             [_sPool addSolution:[self captureSolution]]; // Keep it as a solution
-            [tmp_solution print:[_model variables] with:[_sPool objectAtIndexedSubscript:[_sPool count] - 1] for:@"Bounded Box"];
+            //[tmp_solution print:[_model variables] with:[_sPool objectAtIndexedSubscript:[_sPool count] - 1] for:@"Bounded Box"];
          }
          break; // branch-and-bound stop exploring current box
       } else {
@@ -2123,11 +2123,12 @@ onFailure: (ORInt2Void) onFailure
                   index = [guess_select min];
                } while(index.found);
                
+               tmp_solution_improve = [cpGuessError captureSolution];
+               [[cpGuessError tracer] popNode];
+
                if (RUN_IMPROVE_GUESS) {
-                  tmp_solution_improve = [cpGuessError captureSolution];
-                  [[cpGuessError tracer] popNode];
                   id<CPDoubleVar> xc;
-                  ORBool improved = FALSE, improved_var = FALSE;
+                  ORBool improved_var = false;
                   ORInt nvar = 0, nv, nbiter = 0;
                   ORInt direction = 1;
                   ORStatus s;
@@ -2142,7 +2143,7 @@ onFailure: (ORInt2Void) onFailure
                         nv++;
                         if (![xc bound]) {
                            ORDouble value = [[tmp_solution_improve value:v] doubleValue];
-                           [currentVarError set_q:[_gamma[v.getId] minErr] and:[_gamma[v.getId] maxErr]];
+                           [currentVarError set:[arrayVarError objectAtIndex:index.index]];
                            if (nv == nvar)
                               value = nextafter(value, (direction == 1) ? (+INFINITY) : (-INFINITY));
                            if([xc isInputVar]){
@@ -2151,10 +2152,10 @@ onFailure: (ORInt2Void) onFailure
                               [tmp0 set: [tmp0 sub: tmp1]];
                               [tmp1 set_d: 2.0];
                               [tmp2 set: [tmp0 div: tmp1]];
-                              if (drand48() < 0.4) {
-                                 [halfulp set:[tmp2 neg]];
-                              } else {
+                              if (drand48() < 0.5) {
                                  [halfulp set:tmp2];
+                              } else {
+                                 [halfulp set:[tmp2 neg]];
                               }
                               if ([halfulp lt: [currentVarError low]])
                                  [halfulp set: [currentVarError low]];
@@ -2173,14 +2174,15 @@ onFailure: (ORInt2Void) onFailure
                      id<CPRationalVar> ezi = [cpGuessError concretize:ez];
                      if ((s != ORFailure) && ([[[tmp_solution_improve value:ez] rationalValue] lt: [ezi min]])) { // Better err
                         tmp_solution_improve = [cpGuessError captureSolution];
-                        improved_var = TRUE;
-                        improved = TRUE;
+                        improved_var = true;
+                        [[cpGuessError tracer] popNode];
                      } else {
+                        [[cpGuessError tracer] popNode];
                         if ((!improved_var) && (direction == 1)) {
                            direction = -1;
                         } else {
                            direction = 1;
-                           improved_var = FALSE;
+                           improved_var = false;
                            nv = 0;
                            ORInt old_nvar = nvar;
                            for (id<ORDoubleVar> v in x) {
@@ -2195,15 +2197,12 @@ onFailure: (ORInt2Void) onFailure
                               break;
                         }
                      }
-                     [[cpGuessError tracer] popNode];
                   }
-               } else {
-                  tmp_solution_improve = [cpGuessError captureSolution];
                }
-               
+
                if((isFailed != ORFailure) && [[[tmp_solution_improve value:ez] rationalValue] gt: [[[tmp_solution get] value:ez] rationalValue]]){
                   [tmp_solution set: tmp_solution_improve];
-                  [tmp_solution print:[_model variables] for:[NSString stringWithFormat:@"GuessError %d/%d", iteration, nbIteration]];
+                  //[tmp_solution print:[_model variables] for:[NSString stringWithFormat:@"GuessError %d/%d", iteration, nbIteration]];
                }
                [currentVarError release];
             }];
@@ -2217,7 +2216,6 @@ onFailure: (ORInt2Void) onFailure
          if ([[[[_engine objective] primalBound] rationalValue] lt: [[[tmp_solution get] value:ez] rationalValue]]) {
             id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[[tmp_solution get] value:ez] rationalValue] minimize:FALSE];
             [[_engine objective] tightenPrimalBound:objv];
-            //[solution set: [tmp_solution get]];
             [_sPool addSolution:[tmp_solution get]];
          }
          
@@ -2236,8 +2234,10 @@ onFailure: (ORInt2Void) onFailure
          
          /* Do not split current box if primalBound is greater than or equal to its local error upper bound or if local error upper bound is less than or equal to the maximal error upper bound of discarded boxes
           */
-         if ([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualValue] rationalValue]]) break;
-         if (RUN_DISCARDED_BOX && ![boundDiscardedBoxes isNegInf] && [[[[_engine objective] dualValue] rationalValue] lt: boundDiscardedBoxes]) break;
+         if ([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualValue] rationalValue]])
+            break;
+         if (RUN_DISCARDED_BOX && [[[[_engine objective] dualValue] rationalValue] leq: boundDiscardedBoxes])
+            break;
          
          
          /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
