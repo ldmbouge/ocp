@@ -489,8 +489,8 @@
        ];
       branchAndBoundTime = [NSDate date];
       if(!IS_GUESS_ERROR_SOLVER){
-         SolWrapper* s = [[SolWrapper alloc] init:[_sPool objectAtIndexedSubscript:[_sPool count] - 1]];
-         [s print:[_model variables] for:@"Input Values:"];
+         //SolWrapper* s = [[SolWrapper alloc] init:[_sPool objectAtIndexedSubscript:[_sPool count] - 1]];
+         //[s print:[_model variables] for:@"Input Values:"];
          NSLog(@"Optimal Solution: %@ (%@) thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       }
    }
@@ -1991,6 +1991,36 @@ onFailure: (ORInt2Void) onFailure
    
 }
 
+ORDouble verhulst_f(NSMutableArray* arrayValue)
+{
+   ORDouble r = 4.0;
+   ORDouble k = 1.11;
+   ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+   ORDouble z = ((r * x) / (1.0 + (x / k)));;
+   return z;
+}
+
+id<ORRational> verhulst_r(NSMutableArray* arrayValue)
+{
+   id<ORRational> one = [[ORRational alloc] init];
+   id<ORRational> r = [[ORRational alloc] init];
+   id<ORRational> k = [[ORRational alloc] init];
+   id<ORRational> x = [arrayValue objectAtIndex:0];
+   id<ORRational> z = [[[ORRational alloc] init] autorelease];
+   [one setOne];
+   [r set_d:4.0];
+   [k set_d: 1.11];
+   
+   [z set: [[r mul: x] div: [one add: [x div: k]]]];
+   
+   [one release];
+   [r release];
+   [k release];
+   [x release];
+   
+   return z;
+}
+
 -(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    TRInt _index;
@@ -2002,16 +2032,8 @@ onFailure: (ORInt2Void) onFailure
    [tmp1 autorelease];
    [tmp2 autorelease];
    [halfulp autorelease];
-   
-   /* Variables used in GuessError */
-   SolWrapper* tmp_solution = [[SolWrapper alloc] init:[self captureSolution]];
-   NSMutableArray* arrayVarValueMin = [[NSMutableArray alloc] initWithCapacity:0];
-   NSMutableArray* arrayVarValueMax = [[NSMutableArray alloc] initWithCapacity:0];
-   NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
-   
-   IS_GUESS_ERROR_SOLVER = true;
-   id<CPProgram> cpGuessError = [ORFactory createCPProgram:_model];
-   IS_GUESS_ERROR_SOLVER = false;
+   NSMutableArray* arrayVarValueF = [[NSMutableArray alloc] initWithCapacity:0];
+   NSMutableArray* arrayVarValueR = [[NSMutableArray alloc] initWithCapacity:0];
    
    boundDiscardedBoxes = [[[ORRational alloc] init] setNegInf];
    branchAndBoundStart = [NSDate date];
@@ -2029,21 +2051,9 @@ onFailure: (ORInt2Void) onFailure
    }
                           ];
    
-   id<ORSelect> guess_select = [ORFactory select: [cpGuessError engine] // need to be out of inner loop to go through all possible variables
-                                           range: RANGE(self,[x low],[x up])
-                                        suchThat: ^ORBool(ORInt i) {
-      id<CPDoubleVar> v = [cpGuessError concretize:x[i]];
-      LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
-      return ![v bound];
-   }
-                                       orderedBy:
-                                ^ORDouble(ORInt i) {
-      return (ORDouble)i;
-   }
-                                ];
-   
    assignTRInt(&_index, [select min].index, _trail);
    do {
+      nbBoxExplored++;
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
       [[_engine objective] updateDualBound];
       
@@ -2064,14 +2074,6 @@ onFailure: (ORInt2Void) onFailure
       } else {
          /* ********* GuessError ********* */
          LOG(_level, 2, @"Starting GuessError");
-         for(id<ORDoubleVar> v in x){
-            id<CPDoubleVar> vC = _gamma[[v getId]];
-            [arrayVarValueMin addObject:[NSNumber numberWithDouble:[vC min]]];
-            [arrayVarValueMax addObject:[NSNumber numberWithDouble:[vC max]]];
-            id<ORRationalInterval> vError = [[ORRationalInterval alloc] init];
-            [vError set_q:[vC minErr] and:[vC maxErr]];
-            [arrayVarError addObject:vError];
-         }
          
          ORInt iteration = 0;
          ORInt nbIteration = -1;
@@ -2082,141 +2084,46 @@ onFailure: (ORInt2Void) onFailure
          }
          
          IS_GUESS_ERROR_SOLVER = true;
+         id<ORRational> guess_error = [[ORRational alloc] init];
+         id<ORRational> tmp_error = [[ORRational alloc] init];
+         id<CPDoubleVar> currentVar;
+         id<ORRational> zR = [[ORRational alloc] init];
+         id<ORRational> zF = [[ORRational alloc] init];
+         id<ORRational> valueR = [[ORRational alloc] init];
+         ORDouble value;
+         [guess_error set: [[[_engine objective] primalBound] rationalValue]];
          while(iteration < nbIteration){
-            [cpGuessError solve:^()
-             {
-               id<ORSolution> tmp_solution_improve;
-               ORStatus isFailed = ORSuccess;
-               ORSelectorResult index = [guess_select min];
-               id<ORRationalInterval> currentVarError = [[ORRationalInterval alloc] init];
-               [[cpGuessError tracer] pushNode];
-               do {
-                  id<CPDoubleVar> currentVar = [cpGuessError concretize:x[index.index]];
-                  ORDouble currentVarMin = [[arrayVarValueMin objectAtIndex:index.index] doubleValue];
-                  ORDouble currentVarMax = [[arrayVarValueMax objectAtIndex:index.index] doubleValue];
-                  [currentVarError set:[arrayVarError objectAtIndex:index.index]];
-                  LOG(_level,2, @"Choosen var: %@",currentVar);
-                  if(![currentVar bound]){
-                     ORDouble v;
-                     v = randomValueD(currentVarMin, currentVarMax);
-                     if([currentVar isInputVar]) {
-                        [tmp0 set_d: nextafter(v, +INFINITY)];
-                        [tmp1 set_d: v];
-                        [tmp0 set: [tmp0 sub: tmp1]];
-                        [tmp1 set_d: 2.0];
-                        [tmp2 set: [tmp0 div: tmp1]];
-                        if (drand48() < 0.4) {
-                           [halfulp set:[tmp2 neg]];
-                        } else {
-                           [halfulp set:tmp2];
-                        }
-                        if ([halfulp lt: [currentVarError low]])
-                           [halfulp set: [currentVarError low]];
-                        if ([halfulp gt: [currentVarError up]])
-                           [halfulp set: [currentVarError up]];
-                     }
-                     if([currentVar isInputVar])
-                        isFailed = [[cpGuessError engine] enforce:^{ [currentVar bind:v]; [currentVar bindError:halfulp];}];
-                     else
-                        isFailed = [[cpGuessError engine] enforce:^{ [currentVar bind:v];}];
-                  }
-                  index = [guess_select min];
-               } while(index.found);
-               
-               tmp_solution_improve = [cpGuessError captureSolution];
-               [[cpGuessError tracer] popNode];
-
-               if (RUN_IMPROVE_GUESS) {
-                  id<CPDoubleVar> xc;
-                  ORBool improved_var = false;
-                  ORInt nvar = 0, nv, nbiter = 0;
-                  ORInt direction = 1;
-                  ORStatus s;
-                  while (nbiter < 200) {
-                     [[cpGuessError tracer] pushNode];
-                     nbiter++;
-                     nv = 0;
-                     index = [guess_select min];
-                     do {
-                        id<ORDoubleVar> v = (id<ORDoubleVar>) x[index.index];
-                        xc = [cpGuessError concretize:v];
-                        nv++;
-                        if (![xc bound]) {
-                           ORDouble value = [[tmp_solution_improve value:v] doubleValue];
-                           [currentVarError set:[arrayVarError objectAtIndex:index.index]];
-                           if (nv == nvar)
-                              value = nextafter(value, (direction == 1) ? (+INFINITY) : (-INFINITY));
-                           if([xc isInputVar]){
-                              [tmp0 set_d: nextafter(value, +INFINITY)];
-                              [tmp1 set_d: value];
-                              [tmp0 set: [tmp0 sub: tmp1]];
-                              [tmp1 set_d: 2.0];
-                              [tmp2 set: [tmp0 div: tmp1]];
-                              if (drand48() < 0.5) {
-                                 [halfulp set:tmp2];
-                              } else {
-                                 [halfulp set:[tmp2 neg]];
-                              }
-                              if ([halfulp lt: [currentVarError low]])
-                                 [halfulp set: [currentVarError low]];
-                              if ([halfulp gt: [currentVarError up]])
-                                 [halfulp set: [currentVarError up]];
-                              
-                              s = [[cpGuessError engine] enforce:^{ [xc bind:value];  [xc bindError:halfulp];}];
-                           } else {
-                              s = [[cpGuessError engine] enforce:^{ [xc bind:value];}];
-                           }
-                           if (s == ORFailure)
-                              break;
-                        }
-                        index = [guess_select min];
-                     } while(index.found);
-                     id<CPRationalVar> ezi = [cpGuessError concretize:ez];
-                     if ((s != ORFailure) && ([[[tmp_solution_improve value:ez] rationalValue] lt: [ezi min]])) { // Better err
-                        tmp_solution_improve = [cpGuessError captureSolution];
-                        improved_var = true;
-                        [[cpGuessError tracer] popNode];
-                     } else {
-                        [[cpGuessError tracer] popNode];
-                        if ((!improved_var) && (direction == 1)) {
-                           direction = -1;
-                        } else {
-                           direction = 1;
-                           improved_var = false;
-                           nv = 0;
-                           ORInt old_nvar = nvar;
-                           for (id<ORDoubleVar> v in x) {
-                              xc = [cpGuessError concretize:v];
-                              nv++;
-                              if ((nv > nvar) && (![xc bound])) {
-                                 nvar = nv;
-                                 break;
-                              }
-                           }
-                           if (nvar == old_nvar)
-                              break;
-                        }
-                     }
-                  }
+            for(id<ORDoubleVar> v in x){
+               /* Compute an error directly from expression */
+               currentVar = _gamma[[v getId]];
+               if(![currentVar bound] && [currentVar isInputVar]){
+                  value = randomValueD([currentVar min], [currentVar max]);
+                  [valueR set_d:value];
+                  [arrayVarValueF addObject:[NSNumber numberWithDouble:value]];
+                  [arrayVarValueR addObject:valueR];
                }
+            }
+            
+            /* Compute Primal error: f(R) - f(F) */
+            
+            [zR set: verhulst_r(arrayVarValueR)];
+            [zF set_d: verhulst_f(arrayVarValueF)];
+            [tmp_error set: [[zR sub: zF] abs]];
+            
+            /* Update GuessError error if better than the previous one */
+            if([tmp_error gt: guess_error]){
+               [guess_error set: tmp_error];
+            }
+            
+            /* Try to improve computed error */
 
-               if((isFailed != ORFailure) && [[[tmp_solution_improve value:ez] rationalValue] gt: [[[tmp_solution get] value:ez] rationalValue]]){
-                  [tmp_solution set: tmp_solution_improve];
-                  //[tmp_solution print:[_model variables] for:[NSString stringWithFormat:@"GuessError %d/%d", iteration, nbIteration]];
-               }
-               [currentVarError release];
-            }];
+            /* End of improvement */
             iteration++;
          }
-         IS_GUESS_ERROR_SOLVER = false;
-         [arrayVarValueMin removeAllObjects];
-         [arrayVarValueMax removeAllObjects];
-         [arrayVarError removeAllObjects];
          
-         if ([[[[_engine objective] primalBound] rationalValue] lt: [[[tmp_solution get] value:ez] rationalValue]]) {
-            id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[[tmp_solution get] value:ez] rationalValue] minimize:FALSE];
+         if([[[[_engine objective] primalBound] rationalValue] lt: guess_error]){
+            id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:guess_error minimize:FALSE];
             [[_engine objective] tightenPrimalBound:objv];
-            [_sPool addSolution:[tmp_solution get]];
          }
          
          LOG(_level, 2, @"Ending GuessError");
@@ -2245,6 +2152,8 @@ onFailure: (ORInt2Void) onFailure
          ORSelectorResult I = [select max]; // select variable maximizing criteria from defined in select
          
          b(_index._val, x);
+         nbBoxGenerated += 2;
+         
          
          /* update index of variable chosen for splitting */
          if (_index._val + 1 > I.index)

@@ -60,4 +60,8 @@ ORDouble boxCardinality = -1;
 TRInt limitCounter;
 ORInt nbConstraint = 0;
 
+ORInt nbBoxExplored = 0;
+ORInt nbBoxGenerated = 1;
+
+
 id<ORRational> boundDiscardedBoxes = nil;

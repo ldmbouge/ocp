@@ -33,6 +33,9 @@ extern ORDouble boxCardinality;
 extern TRInt limitCounter;
 extern ORInt nbConstraint;
 
+extern ORInt nbBoxExplored;
+extern ORInt nbBoxGenerated;
+
 static inline ORFloat randomValue(ORFloat min, ORFloat max)
 {
    return (max - min) * ((ORFloat)drand48()) + min;
