@@ -292,8 +292,6 @@
     int parentIndex = [self findUniqueParentIndexFor:parent addToHash:false];
     if (parentIndex >= 0) {
         [self removeParentAt:parentIndex];
-    } else {
-        int i =0;
     }
 }
 -(bool) isVital {
@@ -401,9 +399,8 @@
 }
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec {
     self = [self initCPMDD:engine over:x];
-    _spec = spec;
-    [_spec setTrail:_trail];
-    [_spec setHashWidth:100];
+    _spec = [spec retain];
+    [_spec finalizeSpec:_trail hashWidth:100];
     return self;
 }
 -(NSSet*)allVars
@@ -469,7 +466,7 @@
     Node* root = [[Node alloc] initNode: _trail
                           minChildIndex:_min_domain_for_layer[0]
                           maxChildIndex:_max_domain_for_layer[0]
-                                  value:_nextVariable
+                                  value:[self variableIndexForLayer:0]
                                   state:state
                               hashWidth:[_spec hashWidth]];
     [root setIsSource:true];
@@ -608,12 +605,17 @@
 }
 -(id) generateRootState:(int)variableValue
 {
-    return [[MDDStateValues alloc] initRootState:_spec variableIndex:variableValue trail:_trail];
+    return [_spec createRootState:variableValue];
 }
 -(MDDStateValues*) generateStateFromParent:(Node*)parentNode withValue:(int)value
 {
     MDDStateValues* parentState = getState(parentNode);
     return [_spec createStateFrom:parentState assigningVariable:[parentNode value] withValue:value];
+}
+-(MDDStateValues*) generateTempStateFromParent:(Node*)parentNode withValue:(int)value
+{
+    MDDStateValues* parentState = getState(parentNode);
+    return [_spec createTempStateFrom:parentState assigningVariable:[parentNode value] withValue:value];
 }
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
@@ -686,7 +688,7 @@
         Node* childNode = children[child_index];
         if (childNode != NULL) {
             [node removeChildAt: child_index];
-            [childNode removeParentValue: node]; //"Should" be removeParentOnce, but since it will ultimately remove them all, this saves some work
+            [childNode removeParentOnce: node];
             _changesToLayerVariableCount[layer][child_index] -= 1;
             if ([childNode isNonVitalAndParentless]) {
                 lowestLayerChanged = [self removeParentlessNodeFromMDD:childNode fromLayer:childLayer];
@@ -707,9 +709,6 @@
     int numEdgesToDelete = [self modifiedLayerVariableCount:layer_index value:value];
     int highestLayerChanged = layer_index;
     int lowestLayerChanged = layer_index;
-    if (numEdgesToDelete > layer_variable_count[layer_index][value]._val) {
-        int i =0;
-    }
     for (int node_index = 0; numEdgesToDelete; node_index++) {
         Node* node = [layer at: node_index];
         Node* childNode = [node children][value];
@@ -745,6 +744,7 @@
     free(_variable_to_layer);
     free(_min_domain_for_layer);
     free(_max_domain_for_layer);
+    [_spec release];
     [super dealloc];
 }
 
@@ -906,9 +906,10 @@
     return self;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec {
-    self = [super initCPMDD:engine over:x spec:spec];
+    self = [super initCPMDD:engine over:x];
+    _spec = [spec retain];
     _relaxation_size = relaxationSize;
-    [_spec setHashWidth:_relaxation_size*2];
+    [_spec finalizeSpec:_trail hashWidth:relaxationSize*2];
     return self;
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
@@ -1074,8 +1075,6 @@
             if (![getState(node) equivalentTo:newState]) {
                 [_spec replaceState:[node getState] with:newState];
                 [self reevaluateChildrenAfterParentStateChange:node onLayer:layer_index andVariable:variableIndex];
-            } else {
-                [self reevaluateChildrenAfterParentStateChange2:node onLayer:layer_index andVariable:variableIndex];
             }
             [node setRecalcRequired:false];
             [newState release];
@@ -1095,9 +1094,9 @@
             Node* child = children[child_index];
             if ([child isEqual:node]) {
                 if (newState == nil) {
-                    newState = [self generateStateFromParent:parent withValue:child_index];
+                    newState = [self generateTempStateFromParent:parent withValue:child_index];
                 } else {
-                    MDDStateValues* tempState = [self generateStateFromParent:parent withValue:child_index];
+                    MDDStateValues* tempState = [self generateTempStateFromParent:parent withValue:child_index];
                     if (![newState equivalentTo:tempState]) {
                         *isMergedNode = true;
                         [_spec mergeState:newState with:tempState];
@@ -1111,25 +1110,6 @@
     return newState;
 }
 -(void) reevaluateChildrenAfterParentStateChange:(Node*)node onLayer:(int)layer_index andVariable:(int)variableIndex
-{
-    Node* *children = [node children];
-    for (int child_index = _min_domain_for_layer[layer_index]; child_index <= _max_domain_for_layer[layer_index]; child_index++) {
-        Node* child = children[child_index];
-        if (child != NULL) {
-            if ([_spec canChooseValue:child_index forVariable:variableIndex withState:[node getState]]) {
-                [child setRecalcRequired:true];
-            } else {
-                [node removeChildAt:child_index];
-                [child removeParentOnce:node];
-                _changesToLayerVariableCount[layer_index][child_index] -= 1;
-                if ([child isNonVitalAndParentless]) {
-                    [self removeParentlessNodeFromMDD:child fromLayer:layer_index+1];
-                }
-            }
-        }
-    }
-}
--(void) reevaluateChildrenAfterParentStateChange2:(Node*)node onLayer:(int)layer_index andVariable:(int)variableIndex
 {
     Node* *children = [node children];
     for (int child_index = _min_domain_for_layer[layer_index]; child_index <= _max_domain_for_layer[layer_index]; child_index++) {

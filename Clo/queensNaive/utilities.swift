@@ -399,7 +399,7 @@ public func ∈(_ e : ORExpr,_ set: ORIntSet) -> ORExpr {
 extension ORMDDSpecs {
     func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void where Key : BinaryInteger,Value : BinaryInteger {
         for (k,v) in d {
-            self.addStateInt(ORInt(k), withDefaultValue: ORInt(v))
+            self.addStateCounter(ORInt(k), withDefaultValue: ORInt(v))
         }
     }
     func state<Key>(_ d : Dictionary<Key,Bool>) -> Void where Key : BinaryInteger {
@@ -407,14 +407,14 @@ extension ORMDDSpecs {
             self.addStateBool(ORInt(k), withDefaultValue: v)
         }
     }
-    func state<Key>(_ d : Dictionary<Key,Set<AnyHashable>?>) -> Void where Key : BinaryInteger {
+    /*func state<Key>(_ d : Dictionary<Key,Set<AnyHashable>?>) -> Void where Key : BinaryInteger {
         for (k,v) in d {
             self.addStateSet(ORInt(k), withDefaultValue: v)
         }
-    }
+    }*/
     func state2<Key,Value>(_ d : Dictionary<Key,Value>) -> [Key] where Key : BinaryInteger {
         for (k,v) in d {
-            self.addStateInt(k as! Int32, withDefaultValue: (ORInt)( v as! Int))
+            self.addStateCounter(k as! Int32, withDefaultValue: (ORInt)( v as! Int))
         }
         return Array(d.keys)
     }

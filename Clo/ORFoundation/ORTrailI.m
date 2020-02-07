@@ -62,6 +62,15 @@
       _seg[_cSeg] = malloc(sizeof(struct Segment));
    _seg[_cSeg]->top = 0;
 }
+-(void)trailShort:(ORShort*)ptr
+{
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGShort;
+   s->shortVal = *ptr;
+   ++_seg[_cSeg]->top;
+}
 -(void)trailInt:(ORInt*)ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
@@ -201,7 +210,7 @@
       while (cs != target) {
          switch ((--cs)->code) {
             case TAGShort:
-               *((short*)cs->ptr) = cs->intVal;
+               *((short*)cs->ptr) = cs->shortVal;
                break;
             case TAGInt:
                *((int*)cs->ptr) = cs->intVal;

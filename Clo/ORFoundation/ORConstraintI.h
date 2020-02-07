@@ -17,7 +17,7 @@
 #import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORVisit.h>
-#import "ORCustomMDDStates.h"
+#import "ORMDDProperties.h"
 
 /*@interface ORExactMDDAllDifferent : ORConstraintI<ORExactMDDAllDifferent>
 -(ORExactMDDAllDifferent*)initORExactMDDAllDifferent:(id<ORIntVarArray>)x reduced:(bool)reduced;
@@ -70,10 +70,10 @@
 @end
 */
 @interface ORMDDStateSpecification : ORConstraintI<ORMDDStateSpecification>
--(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specs;
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
--(MDDStateSpecification*) specs;
+-(id) specs;
 @end
 
 /*
@@ -102,11 +102,11 @@
 -(Class) stateClass;
 @end*/
 
+
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize;
 -(id<ORIntVarArray>) vars;
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
--(void)addStateSet:(ORInt)lookup withDefaultValue:(NSSet<id>*)value;
 @end
 /*@interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
 -(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x;

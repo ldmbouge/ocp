@@ -2,6 +2,7 @@
 #import <ORFoundation/ORVisit.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORVisit.h>
+#import "ORMDDProperties.h"
 
 @interface ORDDExpressionEquivalenceChecker : ORNOopVisit {
 @protected
@@ -20,11 +21,15 @@
 @protected
     int* _variableMapping;
     int* _stateMapping;
+    bool _variableMappingUsed;
+    bool _stateMappingUsed;
     int _stateSize;
+    int _minVar;
     id<ORExpr> current;
+    MDDStateDescriptor* _stateDescriptor;
 }
 -(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping;
--(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping stateSize:(int)stateSize variableMapping:(int*)variableMapping;
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping stateSize:(int)stateSize variableMapping:(int*)variableMapping minVar:(int)minVar stateDescriptor:(MDDStateDescriptor*)stateDescriptor;
 -(id<ORExpr>) updatedSpecs:(id<ORExpr>)e;
 -(id<ORExpr>) recursiveVisitor:(id<ORExpr>)e;
 @end

@@ -41,6 +41,7 @@
       void*               ptr;
       unsigned short     code;
       union {
+         ORShort     shortVal;          // 2-bytes
          ORInt         intVal;          // 4-bytes
          ORUInt       uintVal;          // 4-bytes
          ORLong       longVal;          // 8-bytes
@@ -66,6 +67,7 @@
 -(ORInt) trailSize;
 -(void) resize;
 -(void) incMagic;
+-(void) trailShort:(ORShort*) ptr;
 -(void) trailInt:(ORInt*) ptr;
 -(void) trailUnsigned:(ORUInt*) ptr;
 -(void) trailLong:(ORLong*) ptr;

@@ -20,19 +20,19 @@
    id<ORIntVarArray> _x;
    bool _relaxed;
    ORInt _relaxationSize;
-   MDDStateSpecification* _specs;
+   id _specs;
 }
--(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specs {
-   self = [super initORConstraintI];
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs {
+   self = [super init];
    _x = x;
    _relaxed = relaxed;
    _relaxationSize = relaxationSize;
-   _specs = specs;
+   _specs = [specs retain];
    return self;
 }
 -(void)dealloc
 {
-   //NSLog(@"OREqualc::dealloc: %p",self);
+   [_specs release];
    [super dealloc];
 }
 -(NSString*) description
@@ -54,7 +54,7 @@
 {
    return _relaxationSize;
 }
--(MDDStateSpecification*) specs
+-(id) specs
 {
    return _specs;
 }
@@ -563,19 +563,20 @@
 @implementation ORMDDSpecs {
    id<ORIntVarArray> _x;
    //ORInt* _stateValues;
-   id* _stateValues;
+   MDDPropertyDescriptor** _stateProperties;
    id<ORExpr> _arcExists;
    id<ORExpr>* _transitionFunctions;
    id<ORExpr>* _relaxationFunctions;
    id<ORExpr>* _differentialFunctions;
-   int _stateSize;
+   int _numProperties;
+   int _numBits;
 }
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
    self = [super initORConstraintI];
    _x = x;
    
-   _stateValues = malloc(stateSize * sizeof(id));
+   _stateProperties = malloc(stateSize * sizeof(MDDPropertyDescriptor*));
    _transitionFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    _relaxationFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    _differentialFunctions = malloc(stateSize * sizeof(id<ORExpr>));
@@ -583,63 +584,47 @@
       _differentialFunctions[index] = NULL;
    }
    
-   _stateSize = stateSize;
+   _numProperties = stateSize;
+   _numBits = 0;
 
    _arcExists = NULL;
    
    return self;
 }
 
+-(void)addStateCounter:(ORInt)lookup withDefaultValue:(ORInt)value
+{
+   if ([_x count] < 32767) {
+      _stateProperties[lookup] = [[MDDPShort alloc] initMDDPShort:lookup initialValue:value];
+   } else {
+      _stateProperties[lookup] = [[MDDPInt alloc] initMDDPInt:lookup initialValue:value];
+   }
+}
 -(void)addStateInt:(ORInt)lookup withDefaultValue:(ORInt)value
 {
-   _stateValues[lookup] = [NSNumber numberWithInt: value];
-}
--(void)addStateIntArray:(int)lookup
-{
-   NSMutableArray* integerList = [[NSMutableArray alloc] init];
-   _stateValues[lookup] = integerList;
+   _stateProperties[lookup] = [[MDDPInt alloc] initMDDPInt:lookup initialValue:value];
 }
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value
 {
-   _stateValues[lookup] = [NSNumber numberWithBool: value];
-}
--(void)addStateSet:(ORInt)lookup withDefaultValue:(NSSet<id>*)value
-{
-   _stateValues[lookup] = [NSSet setWithSet:value];
-}
--(void)addStateBoolArrayDefaultFalse:(int)lookup withSize:(ORInt)size
-{
-   NSMutableArray* boolList = [[NSMutableArray alloc] init];
-   for (int i = 0; i < size; i++) {
-      [boolList addObject:[NSNumber numberWithBool:false]];
-   }
-   _stateValues[lookup] = boolList;
-}
--(void)addStateBoolArrayDefaultTrue:(int)lookup withSize:(ORInt)size
-{
-   NSMutableArray* boolList = [[NSMutableArray alloc] init];
-   for (int i = 0; i < size; i++) {
-      [boolList addObject:[NSNumber numberWithBool:true]];
-   }
-   _stateValues[lookup] = boolList;
+   _stateProperties[lookup] = [[MDDPBit alloc] initMDDPBit:lookup initialValue:value];
 }
 -(void)addStates:(id*)states size:(int)size {
-   id* newStateValues = malloc((_stateSize + size) * sizeof(id));
-   id<ORExpr>* newTransitionFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
-   id<ORExpr>* newRelaxationFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
-   id<ORExpr>* newDifferentialFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
-   for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-      newStateValues[stateIndex] = _stateValues[stateIndex];
+   MDDPropertyDescriptor** newStateValues = malloc((_numProperties + size) * sizeof(MDDPropertyDescriptor*));
+   id<ORExpr>* newTransitionFunctions = malloc((_numProperties + size) * sizeof(id<ORExpr>));
+   id<ORExpr>* newRelaxationFunctions = malloc((_numProperties + size) * sizeof(id<ORExpr>));
+   id<ORExpr>* newDifferentialFunctions = malloc((_numProperties + size) * sizeof(id<ORExpr>));
+   for (int stateIndex = 0; stateIndex < _numProperties; stateIndex++) {
+      newStateValues[stateIndex] = (id)_stateProperties[stateIndex];
       newTransitionFunctions[stateIndex] = _transitionFunctions[stateIndex];
       newRelaxationFunctions[stateIndex] = _relaxationFunctions[stateIndex];
       newDifferentialFunctions[stateIndex] = _differentialFunctions[stateIndex];
    }
    for (int otherStateIndex = 0; otherStateIndex < size; otherStateIndex++) {
-      newStateValues[_stateSize+otherStateIndex] = states[otherStateIndex];
+      newStateValues[_numProperties+otherStateIndex] = [states[otherStateIndex] retain];
    }
-   _stateSize += size;
-   free(_stateValues);
-   _stateValues = newStateValues;
+   _numProperties += size;
+   free(_stateProperties);
+   _stateProperties = (MDDPropertyDescriptor**)newStateValues;
    
    free(_transitionFunctions);
    _transitionFunctions = newTransitionFunctions;
@@ -668,7 +653,13 @@
 }
 -(void)dealloc
 {
-   //NSLog(@"OREqualc::dealloc: %p",self);
+   free(_transitionFunctions);
+   free(_relaxationFunctions);
+   free(_differentialFunctions);
+   for (int i = 0; i < _numProperties; i++) {
+      [_stateProperties[i] release];
+   }
+   free(_stateProperties);
    [super dealloc];
 }
 -(NSString*) description
@@ -690,8 +681,8 @@
 -(id<ORExpr>*)transitionFunctions { return _transitionFunctions; }
 -(id<ORExpr>*)relaxationFunctions { return _relaxationFunctions; }
 -(id<ORExpr>*)differentialFunctions { return _differentialFunctions; }
--(int)stateSize { return _stateSize; }
--(id*)stateValues { return _stateValues; }
+-(int)numProperties { return _numProperties; }
+-(id*)stateProperties { return _stateProperties; }
 
 -(NSSet*)allVars
 {

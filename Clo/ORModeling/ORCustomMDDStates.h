@@ -1,4 +1,5 @@
 #import <ORFoundation/ORTrailI.h>
+#import "ORMDDProperties.h"
 
 @interface CustomState : NSObject {
 @protected
@@ -43,7 +44,7 @@
 @class MDDStateValues;
 @interface MDDStateSpecification : NSObject {
 @protected
-    id* _rootValues;
+    MDDStateDescriptor* _stateDescriptor;
     DDClosure* _arcExists;
     DDClosure* _transitionFunctions;
     DDMergeClosure* _relaxationFunctions;
@@ -56,44 +57,48 @@
     
     int _numPropertiesAdded;
     int _numSpecsAdded;
+    size_t _numBytes;
     
     int _minVar;
     int _numVars;
     int _hashWidth;
 }
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars;
--(void) addMDDSpec:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
--(void) addMDDSpec:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
+-(MDDStateValues*) createRootState:(int)variable;
 -(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
+-(MDDStateValues*) createTempStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
+-(char*) computeStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(int) numProperties;
--(id*) rootValues;
--(void) setTrail:(id<ORTrail>)trail;
--(void) setHashWidth:(int)width;
+-(size_t) numBytes;
+-(MDDStateDescriptor*) stateDescriptor;
+-(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width;
 -(int) hashWidth;
 @end
     
 
 @interface MDDStateValues : NSObject {
 @protected
-    TRId* _state;
-    int _variableIndex;
-    int _stateSize;
+    char* _state;
+    ORUInt* _magic;
+    size_t _numBytes;
     TRInt _hashValue;
-    ORUInt _magic;
+    bool _tempState;
 }
--(id) initRootState:(MDDStateSpecification*)stateSpecs variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
--(id) initState:(TRId*)stateValues stateSize:(int)size variableIndex:(int)variableIndex hashWidth:(int)width numVariables:(int)numVariables trail:(id<ORTrail>)trail;
--(int) variableIndex;
--(TRId*) state;
+-(id) initState:(char*)stateValues numBytes:(size_t)numBytes;
+-(id) initState:(char*)stateValues numBytes:(size_t)numBytes hashWidth:(int)width trail:(id<ORTrail>)trail;
+-(char*) state;
+-(void) trailByte:(size_t)byteOffset trail:(id<ORTrail>)trail;
 -(bool) equivalentTo:(MDDStateValues*)other;
 -(int) hashValue;
--(int) calcHash:(int)width numVariables:(NSUInteger)numVariables;
--(void) setHash:(int)width numVariables:(NSUInteger)numVariables trail:(id<ORTrail>)trail;
--(void) recalcHash:(int)width numVariables:(NSUInteger)numVariables trail:(id<ORTrail>)trail;
+-(int) calcHash:(int)width;
+-(void) setHash:(int)width trail:(id<ORTrail>)trail;
+-(void) recalcHash:(int)width trail:(id<ORTrail>)trail;
 @end
 
 @interface JointState : CustomState {

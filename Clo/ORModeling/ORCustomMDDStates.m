@@ -2,6 +2,8 @@
 
 #import "ORCustomMDDStates.h"
 
+const short BytesPerMagic = 4;
+
 @implementation CustomState
 -(id) initClassState {
     return self;
@@ -187,7 +189,7 @@
 @implementation MDDStateSpecification
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars {
     _relaxed = relaxed;
-    _rootValues = malloc(numProperties * sizeof(TRId));
+    _stateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor:numProperties];
     _arcExists = malloc(numSpecs * sizeof(DDClosure));
     _transitionFunctions = calloc(numProperties, sizeof(DDClosure));
     if (_relaxed) {
@@ -211,17 +213,18 @@
 -(void) dealloc {
     _stateValueIndicesForVariable += _minVar;
     _arcExistsIndicesForVariable += _minVar;
-    for (int i = 0; i < _numPropertiesAdded; i++) {
+    for (int i = 0; i < _numVars; i++) {
         free(_stateValueIndicesForVariable[i]);
         [_arcExistsIndicesForVariable[i] release];
     }
     free(_arcExistsIndicesForVariable);
+    [_stateDescriptor release];
     [super dealloc];
 }
 
--(void) addMDDSpec:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
     for (int i = 0; i < numProperties; i++) {
-        _rootValues[_numPropertiesAdded] = makeTRId(_trail, [rootValues[i] copy]);  //Trail should actually be null right now, but that doesn't seem to be a problem?
+        [_stateDescriptor addStateProperty:stateProperties[i]];
         _transitionFunctions[_numPropertiesAdded] = transitionFunctions[i];
         for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
             _stateValueIndicesForVariable[mapping[varIndex]][_numPropertiesAdded] = true;
@@ -235,9 +238,9 @@
     }
     _numSpecsAdded++;
 }
--(void) addMDDSpec:(id*)rootValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
     for (int i = 0; i < numProperties; i++) {
-        _rootValues[_numPropertiesAdded] = makeTRId(_trail, [rootValues[i] copy]);
+        [_stateDescriptor addStateProperty:stateProperties[i]];
         _transitionFunctions[_numPropertiesAdded] = transitionFunctions[i];
         _relaxationFunctions[_numPropertiesAdded] = relaxationFunctions[i];
         _differentialFunctions[_numPropertiesAdded] = differentialFunctions[i];
@@ -253,46 +256,60 @@
     }
     _numSpecsAdded++;
 }
+-(MDDStateValues*) createRootState:(int)variable {
+    char* rootState = malloc(_numBytes * sizeof(char));
+    [_stateDescriptor initializeState:rootState];
+    return [[MDDStateValues alloc] initState:rootState numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
+}
 -(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
-    id* parentState = parent.state;
-    id* newState = malloc(_numPropertiesAdded * sizeof(TRId));
-    for (int stateIndex = 0; stateIndex < _numPropertiesAdded; stateIndex++) {
-        if (_stateValueIndicesForVariable[variable][stateIndex]) {
-            newState[stateIndex] = makeTRId(_trail, (id)_transitionFunctions[stateIndex](parentState, variable, value));
+    return [[MDDStateValues alloc] initState:[self computeStateFrom:parent assigningVariable:variable withValue:value] numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
+}
+-(MDDStateValues*) createTempStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
+    return [[MDDStateValues alloc] initState:[self computeStateFrom:parent assigningVariable:variable withValue:value] numBytes:_numBytes];
+}
+-(char*) computeStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
+    char* parentState = parent.state;
+    char* newState = malloc(_numBytes * sizeof(char));
+    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+        int newValue;
+        if (_stateValueIndicesForVariable[variable][propertyIndex]) {
+            newValue = (int)_transitionFunctions[propertyIndex](parentState, variable, value);
         } else {
-            newState[stateIndex] = makeTRId(_trail, [parentState[stateIndex] copy]);
+            newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
         }
+        [_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
     }
-    return [[MDDStateValues alloc] initState:newState stateSize:_numPropertiesAdded variableIndex:variable hashWidth:_hashWidth numVariables:_numVars trail:_trail];
+    return newState;
 }
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right {
-    id* leftState = left.state;
-    id* rightState = right.state;
-    for (int stateIndex = 0; stateIndex < _numPropertiesAdded; stateIndex++) {
-        assignTRId(&leftState[stateIndex], (id)_relaxationFunctions[stateIndex](leftState, rightState), _trail);
-        //[leftState[stateIndex] release];
-        //[_trail trailRelease:leftState[stateIndex]];
-    }
-    [left recalcHash:_hashWidth numVariables:_numVars trail:_trail];
-}
--(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right {
-    TRId* leftState = left.state;
-    TRId* rightState = right.state;
-    for (int stateIndex = 0; stateIndex < _numPropertiesAdded; stateIndex++) {
-        if (leftState[stateIndex] != rightState[stateIndex]) {
-            assignTRId(&leftState[stateIndex], rightState[stateIndex], _trail);
+    char* leftState = left.state;
+    char* rightState = right.state;
+    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+        int mergedValue =(int)_relaxationFunctions[propertyIndex](leftState, rightState);
+        if ([_stateDescriptor getProperty:propertyIndex forState:leftState] != mergedValue) {
+            [left trailByte:[_stateDescriptor byteOffsetForProperty:propertyIndex] trail:_trail];
+            [_stateDescriptor setProperty:propertyIndex to:mergedValue forState:leftState];
         }
     }
-    [left recalcHash:_hashWidth numVariables:_numVars trail:_trail];
+    [left recalcHash:_hashWidth trail:_trail];
+}
+-(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right {
+    char* leftState = left.state;
+    char* rightState = right.state;
+    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+        int rightValue = [_stateDescriptor getProperty:propertyIndex forState:rightState];
+        if ([_stateDescriptor getProperty:propertyIndex forState:leftState] != rightValue) {
+            [left trailByte:[_stateDescriptor byteOffsetForProperty:propertyIndex] trail:_trail];
+            [_stateDescriptor setProperty:propertyIndex to:rightValue forState:leftState];
+        }
+    }
+    [left recalcHash:_hashWidth trail:_trail];
 }
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues {
     NSArray* arcExistIndices = _arcExistsIndicesForVariable[variable];
-    id* state = [stateValues state];
+    char* state = [stateValues state];
     for (NSNumber* arcExistIndex in arcExistIndices) {
-        NSNumber* arcExistResultObj = (id)_arcExists[[arcExistIndex intValue]](state,variable,value);
-        bool arcExistResult = [arcExistResultObj boolValue];
-        [arcExistResultObj release];
-        if (!arcExistResult) {
+        if (!_arcExists[[arcExistIndex intValue]](state,variable,value)) {
             return false;
         }
     }
@@ -300,81 +317,98 @@
 }
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right {
     int differential = 0;
-    id* leftState = left.state;
-    id* rightState = right.state;
+    char* leftState = left.state;
+    char* rightState = right.state;
     for (int stateIndex = 0; stateIndex < _numPropertiesAdded; stateIndex++) {
         DDMergeClosure differentialFunction = _differentialFunctions[stateIndex];
         if (differentialFunction != nil) {
-            differential += [(id)differentialFunction(leftState,rightState) intValue];
+            differential += (int)differentialFunction(leftState,rightState);
          }
     }
     return differential;
 }
 -(int) numProperties { return _numPropertiesAdded; }
--(id*) rootValues { return _rootValues; }
--(void) setTrail:(id<ORTrail>) trail { _trail = trail; }
--(void) setHashWidth:(int) width { _hashWidth = width; }
+-(size_t) numBytes { return _numBytes; }
+-(MDDStateDescriptor*) stateDescriptor { return _stateDescriptor; }
+-(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width {
+    _trail = trail;
+    _hashWidth = width;
+    _numBytes = [_stateDescriptor numBytes];
+    short extraBytes = _numBytes % BytesPerMagic;
+    if (extraBytes) {
+        _numBytes = _numBytes - extraBytes + BytesPerMagic;
+    }
+}
 -(int) hashWidth { return _hashWidth; }
 @end
 
 @implementation MDDStateValues
-static int _count;
-+(int) count { return _count; }
-+(int) setCount:(int)count { return _count = count; }
--(id) initRootState:(MDDStateSpecification*)stateSpecs variableIndex:(int)variableIndex trail:(id<ORTrail>)trail {
-    _stateSize = [stateSpecs numProperties];
-    _variableIndex = variableIndex;
-    id* rootState = [stateSpecs rootValues];
-    _state = calloc(_stateSize, sizeof(TRId));
-    for (int i = 0; i < _stateSize; i++) {
-        _state[i] = makeTRId(trail, rootState[i]);
-    }
+-(id) initState:(char*)stateValues numBytes:(size_t)numBytes {
+    self = [super init];
+    _numBytes = numBytes;
+    _state = stateValues;
+    _tempState = true;
     return self;
 }
--(id) initState:(TRId*)stateValues stateSize:(int)size variableIndex:(int)variableIndex hashWidth:(int)width numVariables:(int)numVars trail:(id<ORTrail>)trail {
-    self = [super init];
-    _stateSize = size;
-    _variableIndex = variableIndex;
-    _state = stateValues;   //This is only called from MDDStateSpecification which creates a wholly new id* which it passes to this.  No need to copy it all over and no danger of it being changed, deleted, or reused elsewhere.
-    [self setHash:width numVariables:numVars trail:trail];
+-(id) initState:(char*)stateValues numBytes:(size_t)numBytes hashWidth:(int)width trail:(id<ORTrail>)trail {
+    [self setHash:width trail:trail];
+    _numBytes = numBytes;
+    _state = stateValues;
+    _magic = malloc(_numBytes/BytesPerMagic * sizeof(ORUInt));
+    for (int i = 0; i < (_numBytes/BytesPerMagic); i++) {
+        _magic[i] = [trail magic];
+    }
+    _tempState = false;
     return self;
 }
 -(void) dealloc {
-    for (int i = 0; i < _stateSize; i++) {
-        [_state[i] release];
-    }
+    free(_state);
     [super dealloc];
 }
--(int) variableIndex { return _variableIndex; }
--(TRId*) state { return _state; }
+-(void) trailByte:(size_t)byteOffset trail:(id<ORTrail>)trail {
+    if (!_tempState) {
+        ORUInt magic = [trail magic];
+        size_t magicIndex = byteOffset/BytesPerMagic;
+        if (magic != _magic[magicIndex]) {
+            switch (BytesPerMagic) {
+                case 2:
+                    [trail trailShort:(short*)&_state[magicIndex*BytesPerMagic]];
+                    break;
+                case 4:
+                    [trail trailInt:(int*)&_state[magicIndex*BytesPerMagic]];
+                    break;
+                default:
+                    @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateValues: Method trailState not implemented for given BytesPerMagic"];
+            }
+            _magic[magicIndex] = magic;
+        }
+    }
+}
+-(char*) state { return _state; }
 -(bool) equivalentTo:(MDDStateValues*)other {
-    id* other_state = [other state];
-    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        if (![_state[stateIndex] isEqual: other_state[stateIndex]]) {
+    char* other_state = [other state];
+    for (int byteIndex = 0; byteIndex < _numBytes; byteIndex++) {
+        if (_state[byteIndex] != other_state[byteIndex]) {
             return false;
         }
     }
     return true;
 }
 -(int) hashValue { return _hashValue._val; }
--(int) calcHash:(int)width numVariables:(NSUInteger)numVariables {
+-(int) calcHash:(int)width {
     NSUInteger hashValue = 1;
-    for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-        hashValue = hashValue * numVariables + [_state[stateIndex] hash];
+    for (int byteIndex = 0; byteIndex < _numBytes; byteIndex++) {
+        hashValue = hashValue * 256 + (int)_state[byteIndex];
     }
     return (int)(hashValue % width);
 }
--(void) setHash:(int)width numVariables:(NSUInteger)numVariables trail:(id<ORTrail>)trail {
-    _hashValue = makeTRInt(trail, [self calcHash:width numVariables:numVariables]);
+-(void) setHash:(int)width trail:(id<ORTrail>)trail {
+    _hashValue = makeTRInt(trail, [self calcHash:width]);
 }
--(void) recalcHash:(int)width numVariables:(NSUInteger)numVariables trail:(id<ORTrail>)trail {
-    assignTRInt(&_hashValue, [self calcHash:width numVariables:numVariables], trail);
-    if (_magic == [trail magic]) {
-        MDDStateValues.count += 1;
-    } else if (_magic != 0) {
-        int i = 0;
+-(void) recalcHash:(int)width trail:(id<ORTrail>)trail {
+    if (!_tempState) {
+        assignTRInt(&_hashValue, [self calcHash:width], trail);
     }
-    _magic = [trail magic];
 }
 @end
 /*

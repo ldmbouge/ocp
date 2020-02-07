@@ -113,6 +113,9 @@
     for (int i = 1; i <= size; i++) {
         [merged setObject:mergedTemp[i - 1] atIndexedSubscript:i];
     }
+    [mergedTemp release];
+    [sortedX release];
+    [sortedY release];
     return merged;
 }
 @end
@@ -124,7 +127,6 @@
     id<ORAnnotation> _notes;
     id<ORIntVarArray> _variables;
     
-    NSMutableArray* _mddConstraints;
     bool _hasObjective;
     id<ORIntVar> _objectiveVar;
     bool _maximize;
@@ -141,7 +143,6 @@
 {
     self = [super init];
     _into = into;
-    _mddConstraints = [[NSMutableArray alloc] init];
     _mddSpecConstraints = [[NSMutableArray alloc] init];
     //_jointState = [[JointState alloc] initClassState];
     _variables = NULL;
@@ -149,6 +150,11 @@
     _hasObjective = false;
     _topDown = isTopDown;
     return self;
+}
+-(void) dealloc {
+    [_mddSpecConstraints release];
+    [_mddSpecification release];
+    [super dealloc];
 }
 
 -(void) apply:(id<ORModel>) m with:(id<ORAnnotation>)notes {
@@ -233,7 +239,7 @@
     }
      */
     
-    for (int index = 0; index < [other stateSize]; index++) {
+    for (int index = 0; index < [other numProperties]; index++) {
         NSNumber* mappedValue = [mappings objectForKey:[NSNumber numberWithInt:index]];
         if ([mappings objectForKey:mappedValue]) {
             returnedMapping[index] = [mappedValue intValue];
@@ -248,8 +254,7 @@
 
 -(bool) areEquivalent:(id<ORMDDSpecs>)mergeInto atIndex:(int)index1 and:(id<ORMDDSpecs>)other atIndex:(int)index2 withDependentMapping:(NSMutableDictionary*)dependentMappings andConfirmedMapping:(NSMutableDictionary*)confirmedMappings equivalenceVisitor:(ORDDExpressionEquivalenceChecker*)equivalenceChecker candidates:(int**)candidates
 {
-    if (![[mergeInto stateValues][index1] isEqual: [other stateValues][index2]]) {   //Different initial value
-        //TODO: Does this need to be updated?
+    if ([((MDDPropertyDescriptor**)[mergeInto stateProperties])[index1] initialValue] != [((MDDPropertyDescriptor**)[other stateProperties])[index2] initialValue]) { //Different initial value
         candidates[index1][index2] = false;
         return false;
     }
@@ -295,7 +300,7 @@
     id<ORMDDSpecs> firstSpec = [_mddSpecConstraints firstObject];
     NSMutableArray* MDDSpecsByVariableSet = [[NSMutableArray alloc] initWithObjects:firstSpec,nil];
     _variables = [firstSpec vars];
-    int numProperties = [firstSpec stateSize];
+    int totalNumProperties = [firstSpec numProperties];
     //First, loop over every MDDSpec and combine any that have identical variable sets (this is where we would check if any state properties can be combined.
     for (int mddSpecIndex = 1; mddSpecIndex < [_mddSpecConstraints count]; mddSpecIndex++) {
         id<ORMDDSpecs> mddSpec = [_mddSpecConstraints objectAtIndex:mddSpecIndex];
@@ -304,44 +309,44 @@
         for (id<ORMDDSpecs> existingMDDSpec in MDDSpecsByVariableSet) {
             if ([existingMDDSpec vars] == vars) {
                 sharedVarList = true;
-                int existingMDDStateSize = [existingMDDSpec stateSize];
-                id* stateValues = [mddSpec stateValues];
-                int stateSize = [mddSpec stateSize];
+                int existingMDDNumProperties = [existingMDDSpec numProperties];
+                MDDPropertyDescriptor** stateProperties = (MDDPropertyDescriptor**)[mddSpec stateProperties];
+                int numProperties = [mddSpec numProperties];
                 id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
                 id<ORExpr>* relaxationFunctions = [mddSpec relaxationFunctions];
                 id<ORExpr>* differentialFunctions = [mddSpec differentialFunctions];
                 
-                int* stateMapping = calloc(stateSize, sizeof(int));
+                int* stateMapping = calloc(numProperties, sizeof(int));
                 int numShared = [self checkForStateEquivalences:existingMDDSpec and:mddSpec returnedMapping:stateMapping];
-                int numToAdd = stateSize - numShared;
-                id* statesToAdd = malloc(numToAdd * sizeof(id));
+                int numToAdd = numProperties - numShared;
+                MDDPropertyDescriptor** propertiesToAdd = malloc(numToAdd * sizeof(MDDPropertyDescriptor*));
                 int* indicesToAdd = malloc(numToAdd * sizeof(int));
                 
                 int newStateCount = 0;
-                for (int index = 0; index < stateSize; index++) {
+                for (int index = 0; index < numProperties; index++) {
                     if (stateMapping[index] < 0) {
-                        stateMapping[index] = newStateCount+existingMDDStateSize;
-                        statesToAdd[newStateCount] = stateValues[index];
+                        stateMapping[index] = newStateCount+existingMDDNumProperties;
+                        propertiesToAdd[newStateCount] = stateProperties[index];
                         indicesToAdd[newStateCount] = index;
                         newStateCount++;
                     }
                 }
-                [existingMDDSpec addStates:statesToAdd size:numToAdd];
-                numProperties += numToAdd;
+                [existingMDDSpec addStates:propertiesToAdd size:numToAdd];
+                totalNumProperties += numToAdd;
                 
                 ORDDUpdatedSpecs* updateStateMapping = [[ORDDUpdatedSpecs alloc] initORDDUpdatedSpecs:stateMapping];
                 for (int i = 0; i < numToAdd; i++) {
                     int index = indicesToAdd[i];
                     id<ORExpr> newTransitionFunction = [updateStateMapping updatedSpecs:transitionFunctions[index]];
-                    [existingMDDSpec addTransitionFunction:newTransitionFunction toStateValue:(existingMDDStateSize+i)];
+                    [existingMDDSpec addTransitionFunction:newTransitionFunction toStateValue:(existingMDDNumProperties+i)];
                 }
                 if (_relaxed) {
                     for  (int i = 0; i < numToAdd; i++) {
                         int index = indicesToAdd[i];
                         id<ORExpr> newRelaxationFunction = [updateStateMapping updatedSpecs:relaxationFunctions[index]];
-                        [existingMDDSpec addRelaxationFunction:newRelaxationFunction toStateValue:(existingMDDStateSize+i)];
+                        [existingMDDSpec addRelaxationFunction:newRelaxationFunction toStateValue:(existingMDDNumProperties+i)];
                         id<ORExpr> newStateDifferentialFunction = [updateStateMapping updatedSpecs:differentialFunctions[index]];
-                        [existingMDDSpec addStateDifferentialFunction:newStateDifferentialFunction toStateValue:(existingMDDStateSize+i)];
+                        [existingMDDSpec addStateDifferentialFunction:newStateDifferentialFunction toStateValue:(existingMDDNumProperties+i)];
                     }
                 }
                 id<ORExpr> oldArcExists = [existingMDDSpec arcExists];
@@ -349,6 +354,8 @@
                 id<ORExpr> updatedArcExists = [updateStateMapping updatedSpecs:arcExists];
                 id<ORExpr> newArcExists = [oldArcExists land:updatedArcExists];
                 [existingMDDSpec setArcExistsFunction:newArcExists];
+                free(propertiesToAdd);
+                [updateStateMapping release];
                 
                 break;
                 /*
@@ -391,56 +398,62 @@
         if (!sharedVarList) {
             [MDDSpecsByVariableSet addObject:mddSpec];
             _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
-            numProperties += [mddSpec stateSize];
+            totalNumProperties += [mddSpec numProperties];
+        } else {
+            [mddSpec release];
         }
     }
     
     //TODO: Look into having multiple MDDStateSpecifications based on optimal variable overlapping to improve performance
     //Next, take the remaining MDDSpecs (each with a unique variable set) and combine into one MDDSpecification.
-    MDDStateSpecification* finalMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[MDDSpecsByVariableSet count] numProperties:numProperties relaxed:_relaxed vars:_variables];
+    MDDStateSpecification* finalMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[MDDSpecsByVariableSet count] numProperties:totalNumProperties relaxed:_relaxed vars:_variables];
     ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
     ORDDMergeClosureGenerator *mergeClosureVisitor = [[ORDDMergeClosureGenerator alloc] init];
     int numPropertiesAdded = 0;
     for (id<ORMDDSpecs> mddSpec in MDDSpecsByVariableSet) {
         id<ORIntVarArray> vars = [mddSpec vars];
-        int stateSize = [mddSpec stateSize];
+        int numProperties = [mddSpec numProperties];
         int* variableMapping = [self findVariableMappingFrom:vars to:_variables];
-        int* stateMapping = calloc(stateSize, sizeof(int));
-        for (int stateIndex = 0; stateIndex < stateSize; stateIndex++) {
+        int* stateMapping = calloc(numProperties, sizeof(int));
+        for (int stateIndex = 0; stateIndex < numProperties; stateIndex++) {
             stateMapping[stateIndex] = stateIndex + numPropertiesAdded;
         }
-        ORDDUpdatedSpecs* updateMappings = [[ORDDUpdatedSpecs alloc] initORDDUpdatedSpecs:stateMapping stateSize:stateSize variableMapping:variableMapping];
+        ORDDUpdatedSpecs* updateMappings = [[ORDDUpdatedSpecs alloc] initORDDUpdatedSpecs:stateMapping stateSize:numProperties variableMapping:variableMapping minVar:[vars low] stateDescriptor:[finalMDDSpec stateDescriptor]];
 
         id<ORExpr> arcExists = [mddSpec arcExists];
         id<ORExpr> arcExistsUpdatedMappings = [updateMappings updatedSpecs:arcExists];
-        DDClosure arcExistsClosure = [closureVisitor computeClosureAsBoolean:arcExistsUpdatedMappings];
-        id* rootValues = [mddSpec stateValues];
+        DDClosure arcExistsClosure = [closureVisitor computeClosure:arcExistsUpdatedMappings];
+        MDDPropertyDescriptor** stateProperties = [mddSpec stateProperties];
         id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
         id<ORExpr>* relaxationFunctions = [mddSpec relaxationFunctions];
         id<ORExpr>* differentialFunctions = [mddSpec differentialFunctions];
-        DDClosure* transitionFunctionClosures = malloc(stateSize * sizeof(DDClosure));
-        DDMergeClosure* differentialFunctionClosures = malloc(stateSize * sizeof(DDMergeClosure));
-        for (int tfi = 0; tfi < stateSize; tfi++) {
+        DDClosure* transitionFunctionClosures = malloc(numProperties * sizeof(DDClosure));
+        DDMergeClosure* differentialFunctionClosures = malloc(numProperties * sizeof(DDMergeClosure));
+        for (int tfi = 0; tfi < numProperties; tfi++) {
             id<ORExpr> transitionFunctionUpdatedMappings = [updateMappings updatedSpecs:transitionFunctions[tfi]];
-            transitionFunctionClosures[tfi] = [closureVisitor computeClosureAsInteger: transitionFunctionUpdatedMappings];
+            transitionFunctionClosures[tfi] = [closureVisitor computeClosure: transitionFunctionUpdatedMappings];
         }
         if (_relaxed) {
-            DDMergeClosure* relaxationFunctionClosures = malloc(stateSize * sizeof(DDMergeClosure));
-            for (int rfi = 0; rfi < stateSize; rfi++) {
+            DDMergeClosure* relaxationFunctionClosures = malloc(numProperties * sizeof(DDMergeClosure));
+            for (int rfi = 0; rfi < numProperties; rfi++) {
                 id<ORExpr> relaxationFunctionUpdatedMappings = [updateMappings updatedSpecs:relaxationFunctions[rfi]];
-                relaxationFunctionClosures[rfi] = [mergeClosureVisitor computeClosureAsInteger: relaxationFunctionUpdatedMappings];
+                relaxationFunctionClosures[rfi] = [mergeClosureVisitor computeClosure: relaxationFunctionUpdatedMappings];
                 if (differentialFunctions[rfi] != NULL) {
                     id<ORExpr> differentialFunctionUpdatedMappings = [updateMappings updatedSpecs:differentialFunctions[rfi]];
-                    differentialFunctionClosures[rfi] = [mergeClosureVisitor computeClosureAsInteger: differentialFunctionUpdatedMappings];
+                    differentialFunctionClosures[rfi] = [mergeClosureVisitor computeClosure: differentialFunctionUpdatedMappings];
                 }
             }
-            [finalMDDSpec addMDDSpec:rootValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures numProperties:stateSize variables:vars mapping:variableMapping];
+            [finalMDDSpec addMDDSpec:stateProperties arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures numProperties:numProperties variables:vars mapping:variableMapping];
         } else {
-            [finalMDDSpec addMDDSpec:rootValues arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures numProperties:stateSize variables:vars mapping:variableMapping];
+            [finalMDDSpec addMDDSpec:stateProperties arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures numProperties:numProperties variables:vars mapping:variableMapping];
         }
-        variableMapping += [vars low];
-        numPropertiesAdded += stateSize;
+        numPropertiesAdded += numProperties;
+        [mddSpec release];
+        [updateMappings release];
     }
+    [MDDSpecsByVariableSet release];
+    [closureVisitor release];
+    [mergeClosureVisitor release];
     _mddSpecification = finalMDDSpec;
     
     
@@ -501,7 +514,7 @@
 
 -(void) visitMDDSpecs:(id<ORMDDSpecs>)cstr
 {
-    [_mddSpecConstraints addObject:cstr];
+    [_mddSpecConstraints addObject:[cstr retain]];
     
     /*
     ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];

@@ -16,6 +16,7 @@
 
 
 @protocol ORTrail <NSObject>
+-(void) trailShort:(ORShort*) ptr;
 -(void) trailInt:(ORInt*) ptr;
 -(void) trailUnsigned:(ORUInt*) ptr;
 -(void) trailLong:(ORLong*) ptr;

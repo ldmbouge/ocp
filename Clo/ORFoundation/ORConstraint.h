@@ -486,22 +486,19 @@ enum ORGroupType {
 @protocol ORMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value;
--(void)addStateSet:(int)lookup withDefaultValue:(NSSet<id>*)value;
--(void)addStateIntArray:(int)lookup;
+-(void)addStateCounter:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
--(void)addStateBoolArrayDefaultFalse:(int)lookup withSize:(ORInt)size;
--(void)addStateBoolArrayDefaultTrue:(int)lookup withSize:(ORInt)size;
--(void)addStates:(id*)states size:(int)size;
 -(id<ORExpr>)arcExists;
 -(id<ORExpr>*)transitionFunctions;
 -(id<ORExpr>*)relaxationFunctions;
 -(id<ORExpr>*)differentialFunctions;
--(int)stateSize;
--(id*)stateValues;
+-(int)numProperties;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;
 -(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup;
+-(id*)stateProperties;
+-(void)addStates:(id*)states size:(int)size;
 @end
 
 /*@protocol ORAltMDDSpecs <ORConstraint>

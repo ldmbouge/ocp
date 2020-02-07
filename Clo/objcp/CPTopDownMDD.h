@@ -136,6 +136,7 @@ static inline id getState(Node* n) { return n->_state;}
 -(int) modifiedLayerVariableCount:(int)layer value:(int)value;
 -(id) generateRootState:(int)variableValue;
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value;
+-(id) generateTempStateFromParent:(Node*)parentNode withValue:(int)value;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
 -(void) removeNodeAt:(int)index onLayer:(int)layer_index;
 -(void) removeNode: (Node*) node;
