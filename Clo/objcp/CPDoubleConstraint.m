@@ -954,8 +954,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
-   if(!IS_GUESS_ERROR_SOLVER)
-      nbConstraint++;
+   nbConstraint++;
    return self;
 }
 -(void) post
@@ -1027,7 +1026,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          [eo set: [eo proj_inter:eoTemp]];
          changed |= eo.changed;
          
-         if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
+         if(_limit._val && (z.inf <= z.sup)){
             if(
                ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
                ((z.sup < 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent))
@@ -1148,8 +1147,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
-   if(!IS_GUESS_ERROR_SOLVER)
-      nbConstraint++;
+   nbConstraint++;
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y
@@ -1224,7 +1222,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          [eo set: [eo proj_inter:eoTemp]];
          changed |= eo.changed;
          
-         if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
+         if(_limit._val && (z.inf <= z.sup)){
             if(
                ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
                ((z.sup < 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent))
@@ -1343,8 +1341,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
-   if(!IS_GUESS_ERROR_SOLVER)
-      nbConstraint++;
+   nbConstraint++;
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y
@@ -1415,7 +1412,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          [eo set: [eo proj_inter:eoTemp]];
          changed |= eo.changed;
          
-         if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
+         if(_limit._val && (z.inf <= z.sup)){
             if(
                ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
                ((z.sup < 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent))
@@ -1546,8 +1543,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
-   if(!IS_GUESS_ERROR_SOLVER)
-      nbConstraint++;
+   nbConstraint++;
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y
@@ -1624,7 +1620,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          [eo set: [eo proj_inter:eoTemp]];
          changed |= eo.changed;
          
-         if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
+         if(_limit._val && (z.inf <= z.sup)){
             if(
                ((z.inf >= 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent)) ||
                ((z.sup < 0) && (((double_cast)(z.inf)).parts.exponent == ((double_cast)(z.sup)).parts.exponent))

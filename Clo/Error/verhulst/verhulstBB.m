@@ -161,7 +161,6 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
          /* Declaration of model variables */
          id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.1 up:0.3 name:@"x"];
          id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
-         id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
          id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.11 string:@"111/100" name:@"k"];
          id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
          id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
@@ -169,11 +168,9 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
          
          /* Initialization of constants */
          [mdl add:[r set: @(4.0)]];
-         [mdl add:[a set: @(40000.0)]];
          
          /* Declaration of constraints */
          [mdl add:[z set:[[r mul: x] div: [@(1.0) plus: [x div: k]]]]];
-         [mdl add:[z leq: a]];
          
          /* Declaration of constraints over errors */
          [mdl add: [ezAbs eq: [ez abs]]];
