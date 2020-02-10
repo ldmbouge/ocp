@@ -98,6 +98,8 @@ PORTABLE_BEGIN
 -(void)          lexicalOrderedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt, id<ORDisabledVarArray>))b;
 -(void)          branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt, id<ORDisabledVarArray>))b;
+-(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b compute:(id<ORRational>(^)(NSMutableArray*))errorComputed;
+
 
 
 -(ORDouble)      computeAbsorptionRate:(id<ORVar>) x;

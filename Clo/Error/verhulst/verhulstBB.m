@@ -80,6 +80,36 @@ void verhulst_d(int search, int argc, const char * argv[]) {
       [cp solve:^{
          [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
             [cp floatSplit:i withVars:x];
+         }
+                           compute:^(NSMutableArray* arrayValue){
+            ORDouble r = 4.0;
+            ORDouble k = 1.11;
+            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+            
+            id<ORRational> oneQ = [[ORRational alloc] init];
+            id<ORRational> rQ = [[ORRational alloc] init];
+            id<ORRational> kQ = [[ORRational alloc] init];
+            id<ORRational> xQ = [[ORRational alloc] init];
+            id<ORRational> zQ = [[[ORRational alloc] init] autorelease];
+            id<ORRational> zF = [[ORRational alloc] init];
+            [oneQ setOne];
+            [rQ set_d:4.0];
+            [kQ set_d: 1.11];
+            [xQ set_d:[[arrayValue objectAtIndex:0] doubleValue]];
+            
+            ORDouble z = ((r * x) / (1.0 + (x / k)));
+            [zF set_d:z];
+            
+            [zQ set: [[rQ mul: xQ] div: [oneQ add: [xQ div: kQ]]]];
+            
+            [zQ set: [zQ sub: zF]];
+            
+            [oneQ release];
+            [rQ release];
+            [kQ release];
+            [xQ release];
+            [zF release];
+            return zQ;
          }];
       }];
    }
@@ -194,7 +224,37 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                /* Split strategy */
                [cp floatSplit:i withVars:x];
-            }];
+            }
+                               compute:^(NSMutableArray* arrayValue){
+                ORDouble r = 4.0;
+                ORDouble k = 1.11;
+                ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+                
+                id<ORRational> oneQ = [[ORRational alloc] init];
+                id<ORRational> rQ = [[ORRational alloc] init];
+                id<ORRational> kQ = [[ORRational alloc] init];
+                id<ORRational> xQ = [[ORRational alloc] init];
+                id<ORRational> zQ = [[[ORRational alloc] init] autorelease];
+                id<ORRational> zF = [[ORRational alloc] init];
+                [oneQ setOne];
+                [rQ set_d:4.0];
+                [kQ set_d: 1.11];
+                [xQ set_d:[[arrayValue objectAtIndex:0] doubleValue]];
+                
+                ORDouble z = ((r * x) / (1.0 + (x / k)));
+                [zF set_d:z];
+                
+                [zQ set: [[rQ mul: xQ] div: [oneQ add: [xQ div: kQ]]]];
+                
+                [zQ set: [zQ sub: zF]];
+                
+                [oneQ release];
+                [rQ release];
+                [kQ release];
+                [xQ release];
+                [zF release];
+                return zQ;
+             }];
          }];
          struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return result;
@@ -205,7 +265,7 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //verhulst_f(1, argc, argv);
-   //verhulst_d(1, argc, argv);
-   verhulst_d_c(1, argc, argv);
+   verhulst_d(1, argc, argv);
+   //verhulst_d_c(1, argc, argv);
    return 0;
 }
