@@ -351,6 +351,7 @@ const short BytesPerMagic = 4;
     return self;
 }
 -(id) initState:(char*)stateValues numBytes:(size_t)numBytes hashWidth:(int)width trail:(id<ORTrail>)trail {
+    self = [super init];
     [self setHash:width trail:trail];
     _numBytes = numBytes;
     _state = stateValues;
@@ -363,6 +364,9 @@ const short BytesPerMagic = 4;
 }
 -(void) dealloc {
     free(_state);
+    if (!_tempState) {
+        free(_magic);
+    }
     [super dealloc];
 }
 -(void) trailByte:(size_t)byteOffset trail:(id<ORTrail>)trail {

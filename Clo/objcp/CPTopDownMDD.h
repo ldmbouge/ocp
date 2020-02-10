@@ -79,7 +79,6 @@
 -(int) numChildren;
 -(void) addChild:(Node*)child at:(int)index;
 -(void) removeChildAt: (int) index;
--(void) removeChild:(Node*)child numTimes:(int)childCount updating:(int*)variable_count;
 -(void) removeChild:(Node*)child numTimes:(int)childCount updatingLVC:(TRInt*)variable_count;
 -(void) replaceChild:(Node*)oldChild with:(Node*)newChild numTimes:(int)childCount;
 -(bool) hasParents;
@@ -114,6 +113,8 @@ static inline id getState(Node* n) { return n->_state;}
     int* _layer_to_variable;
     int* _min_domain_for_layer;
     int* _max_domain_for_layer;
+    int _highestLayerChanged;
+    int _lowestLayerChanged;
     int** _changesToLayerVariableCount;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
@@ -165,7 +166,7 @@ static inline id getState(Node* n) { return n->_state;}
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec;
--(void) rebuildFromLayer:(int)startingLayer;
+-(void) rebuild;
 -(void) splitNodesOnLayer:(int)layer;
 -(void) recalcNodesOnLayer:(int)layer_index;
 -(MDDStateValues*) calculateStateFromParentsOf:(Node*)node onLayer:(int)layer isMerged:(bool*)isMerged;

@@ -206,16 +206,6 @@
     assignTRId(&_children[index], NULL, _trail);
     assignTRInt(&_numChildren, _numChildren._val -1, _trail);
 }
--(void) removeChild:(Node*)child numTimes:(int)childCount updating:(int*)variable_count {
-    assignTRInt(&_numChildren, _numChildren._val - childCount, _trail);
-    for (int child_index = _minChildIndex; childCount > 0; child_index++) {
-        if (_children[child_index] == child) {
-            assignTRId(&_children[child_index], NULL, _trail);
-            variable_count[child_index] -= 1;
-            childCount--;
-        }
-    }
-}
 -(void) removeChild:(Node*)child numTimes:(int)childCount updatingLVC:(TRInt*)variable_count {
     assignTRInt(&_numChildren, _numChildren._val - childCount, _trail);
     for (int child_index = _minChildIndex; childCount > 0; child_index++) {
@@ -490,6 +480,9 @@
             parentNodeIndex--;
         }
     }
+    if (!layer_size[layer]._val) {
+        failNow();
+    }
     [nodeHashTable release];
 }
 -(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer nodeHashes:(NodeHashTable*)nodeHashTable
@@ -550,32 +543,17 @@
         }
     }
 }
--(int) modifiedLayerVariableCount:(int)layer value:(int)value {
-    return layer_variable_count[layer][value]._val + _changesToLayerVariableCount[layer][value];
-}
--(void) applyChangesToLayerVariableCount {
-    for (int layer = 0; layer < _numVariables; layer++) {
-        for (int value = _min_domain_for_layer[layer]; value <= _max_domain_for_layer[layer]; value++) {
-            if (_changesToLayerVariableCount[layer][value]) {
-                assignTRInt(&layer_variable_count[layer][value], [self modifiedLayerVariableCount:layer value:value],_trail);
-            }
-        }
-    }
-}
 -(void) addPropagationToLayer:(ORInt)layer
 {
     int variableIndex = [self variableIndexForLayer:layer];
     if (!bound((CPIntVar*)_x[variableIndex])) {
         [_x[variableIndex] whenChangeDo:^() {
-            _changesToLayerVariableCount = malloc(_numVariables*sizeof(int*));
-            for (int i = 0; i < _numVariables; i++) {
-                _changesToLayerVariableCount[i] = calloc((_max_domain_for_layer[i] - _min_domain_for_layer[i] + 1), sizeof(int));
-                _changesToLayerVariableCount[i] -= _min_domain_for_layer[i];
-            }
+            _highestLayerChanged = (int)_numVariables+1;
+            _lowestLayerChanged = 0;
             
             bool layerChanged = false;
             for (int domain_val = _min_domain_for_layer[layer]; domain_val <= _max_domain_for_layer[layer]; domain_val++) {
-                if (![_x[variableIndex] member:domain_val] && [self modifiedLayerVariableCount:layer value:domain_val]) {
+                if (![_x[variableIndex] member:domain_val] && layer_variable_count[layer][domain_val]._val) {
                     [self trimValueFromLayer: layer :domain_val ];
                     layerChanged = true;
                 }
@@ -584,18 +562,13 @@
                 for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
                     int variableForTrimming = [self variableIndexForLayer:layer_index];
                     for (int domain_val = _min_domain_for_layer[layer]; domain_val <= _max_domain_for_layer[layer]; domain_val++) {
-                        if (![_x[variableForTrimming] member:domain_val] && [self modifiedLayerVariableCount:layer_index value:domain_val]) {
+                        if (![_x[variableForTrimming] member:domain_val] && layer_variable_count[layer_index][domain_val]._val) {
                             [self trimValueFromLayer: layer_index :domain_val ];
                         }
                     }
                 }
                 [self afterPropagation];
-                [self applyChangesToLayerVariableCount];
-                for (int i = 0; i < _numVariables; i++) {
-                    _changesToLayerVariableCount[i] += _min_domain_for_layer[i];
-                    free(_changesToLayerVariableCount[i]);
-                }
-                for (int i = 0; i < _numVariables; i++) {
+                for (int i = _highestLayerChanged; i < _numVariables; i++) {
                     [self trimDomainsFromLayer:i];
                 }
             }
@@ -665,11 +638,7 @@
     for (int parentIndex = 0; parentIndex < numUniqueParents; parentIndex++) {
         Node* parent = [parents at: parentIndex];
         int countForParent = [node countForParentIndex:parentIndex];
-        if (inPost) {
-            [parent removeChild:node numTimes:countForParent updatingLVC:layer_variable_count[parentLayer]];
-        } else {
-            [parent removeChild:node numTimes:countForParent updating:_changesToLayerVariableCount[parentLayer]];
-        }
+        [parent removeChild:node numTimes:countForParent updatingLVC:layer_variable_count[parentLayer]];
         if ([parent isNonVitalAndChildless]) {
             highestLayerChanged = [self removeChildlessNodeFromMDD:parent fromLayer:parentLayer inPost:inPost];
         }
@@ -689,7 +658,7 @@
         if (childNode != NULL) {
             [node removeChildAt: child_index];
             [childNode removeParentOnce: node];
-            _changesToLayerVariableCount[layer][child_index] -= 1;
+            assignTRInt(&layer_variable_count[layer][child_index], layer_variable_count[layer][child_index]._val-1, _trail);
             if ([childNode isNonVitalAndParentless]) {
                 lowestLayerChanged = [self removeParentlessNodeFromMDD:childNode fromLayer:childLayer];
             } else {
@@ -706,7 +675,7 @@
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
     ORTRIdArrayI* layer = layers[layer_index];
-    int numEdgesToDelete = [self modifiedLayerVariableCount:layer_index value:value];
+    int numEdgesToDelete = layer_variable_count[layer_index][value]._val;
     int highestLayerChanged = layer_index;
     int lowestLayerChanged = layer_index;
     for (int node_index = 0; numEdgesToDelete; node_index++) {
@@ -724,10 +693,9 @@
             numEdgesToDelete--;
         }
     }
-    /*for (int i = highestLayerChanged; i < lowestLayerChanged; i++) {
-        [self trimDomainsFromLayer:i];
-    }*/
-    _changesToLayerVariableCount[layer_index][value] = -layer_variable_count[layer_index][value]._val;
+    _highestLayerChanged = min(_highestLayerChanged,highestLayerChanged);
+    _lowestLayerChanged = max(_lowestLayerChanged,lowestLayerChanged);
+    assignTRInt(&layer_variable_count[layer_index][value], 0, _trail);
 }
 -(void) dealloc {
     for (int i = 0; i < _numVariables; i++) {
@@ -915,7 +883,7 @@
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
     ORTRIdArrayI* layer = layers[layer_index];
-    int numEdgesToDelete = [self modifiedLayerVariableCount:layer_index value:value];
+    int numEdgesToDelete = layer_variable_count[layer_index][value]._val;
     int highestLayerChanged = layer_index;
     int lowestLayerChanged = layer_index;
     
@@ -939,29 +907,22 @@
             numEdgesToDelete--;
         }
     }
-    /*for (int i = highestLayerChanged; i < lowestLayerChanged; i++) { //Should this be changed to skip layer_index?  I think so
-        [self trimDomainsFromLayer:i];
-    }*/
-    _changesToLayerVariableCount[layer_index][value] = -layer_variable_count[layer_index][value]._val;
+    _highestLayerChanged = min(_highestLayerChanged,highestLayerChanged);
+    _lowestLayerChanged = max(_lowestLayerChanged,lowestLayerChanged);
+    assignTRInt(&layer_variable_count[layer_index][value],0, _trail);
 }
 -(void) afterPropagation {
-    [self rebuildFromLayer:0];
+    [self rebuild];
 }
--(void) rebuildFromLayer:(int)startingLayer
+-(void) rebuild
 {
-    if (layer_size[startingLayer]._val == 0) {
-        failNow();
-    }
     void(*mth)(id,SEL,int) = [self methodForSelector:@selector(splitNodesOnLayer:)];
-    for (int layer = startingLayer+1; layer < _numVariables; layer++) {
+    for (int layer = _highestLayerChanged; layer < _numVariables; layer++) {
         mth(self,@selector(splitNodesOnLayer:),layer);
-        if (layer_size[layer]._val == 0) {
+        if (layer_size[layer+1]._val == 0) {
             failNow();
         }
-    }/*
-    for(ORInt layer = startingLayer; layer < _numVariables; layer++) {
-        [self trimDomainsFromLayer:layer];
-    }*/
+    }
     return;
 }
 -(void) splitNodesOnLayer:(int)layer
@@ -969,7 +930,6 @@
     NodeHashTable* nodeHashTable = [[NodeHashTable alloc] initNodeHashTable:[_spec hashWidth]];
     int minDomain = _min_domain_for_layer[layer];
     int maxDomain = _max_domain_for_layer[layer];
-    
     int initial_layer_size = layer_size[layer]._val;
     bool addedNewNode;
     for (int node_index = 0; node_index < initial_layer_size && layer_size[layer]._val < _relaxation_size; node_index++) {
@@ -1007,7 +967,7 @@
                                         //Check if this arc should exist from the old state
                                         [newNode addChild:oldNodeChild at:domain_val];
                                         [oldNodeChild addParent: newNode];
-                                        _changesToLayerVariableCount[layer][domain_val] += 1;
+                                        assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val+1, _trail);
                                         [oldNodeChild setRecalcRequired:true];
                                     }
                                 }
@@ -1025,7 +985,7 @@
                 for (int domain_val = _min_domain_for_layer[layer]; domain_val <= _max_domain_for_layer[layer]; domain_val++) {
                     Node* oldNodeChild = oldNodeChildren[domain_val];
                     if (oldNodeChild != NULL) {
-                        _changesToLayerVariableCount[layer][domain_val] -= 1;
+                        assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val-1, _trail);
                         [node removeChildAt:domain_val];
                         [oldNodeChild removeParentOnce:node];
                     }
@@ -1039,7 +999,7 @@
                     if (oldNodeChild != NULL) {
                         [node removeChildAt:domain_val];
                         [oldNodeChild removeParentOnce:node];
-                        _changesToLayerVariableCount[layer][domain_val] -= 1;
+                        assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val-1, _trail);
                     }
                 }
                 [self removeNodeAt:node_index onLayer:layer];
@@ -1120,7 +1080,7 @@
             } else {
                 [node removeChildAt:child_index];
                 [child removeParentOnce:node];
-                _changesToLayerVariableCount[layer_index][child_index] -= 1;
+                assignTRInt(&layer_variable_count[layer_index][child_index], layer_variable_count[layer_index][child_index]._val-1, _trail);
                 if ([child isNonVitalAndParentless]) {
                     [self removeParentlessNodeFromMDD:child fromLayer:layer_index+1];
                 }
