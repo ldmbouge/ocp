@@ -195,7 +195,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
+   if([_dom min] != -INFINITY && [_dom max] != +INFINITY && [_dom min] != [_dom max])
       _inputVar = TRUE;
    
    return self;
@@ -215,7 +215,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
+   if([_dom min] != -INFINITY && [_dom max] != +INFINITY && [_dom min] != [_dom max])
       _inputVar = TRUE;
    
    return self;
@@ -238,7 +238,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
+   if([_dom min] != -INFINITY && [_dom max] != +INFINITY && [_dom min] != [_dom max])
       _inputVar = TRUE;
    
    return self;
