@@ -116,7 +116,7 @@
    /* Choose seed for random generation of numbers here - used to compute a random value
       in domains of variables for GuessError procedure in branch-and-bound search
     */
-   srand48(time(0));
+   srand48(time(nil));
    return self;
 }
 - (void) dealloc
