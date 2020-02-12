@@ -2085,7 +2085,6 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          
          IS_GUESS_ERROR_SOLVER = true;
          id<ORRational> guess_error = [[ORRational alloc] init];
-         id<ORRational> best_error = [[ORRational alloc] init];
          id<ORRational> tmp_error = [[ORRational alloc] init];
          id<ORRational> zR = [[ORRational alloc] init];
          id<ORRational> zF = [[ORRational alloc] init];
@@ -2182,7 +2181,6 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
    /* GuessError variables */
    id<ORRational> halfUlp = [[[ORRational alloc] init] autorelease];
    id<ORRational> guess_error = [[[ORRational alloc] init] autorelease];
-   id<ORRational> best_error = [[[ORRational alloc] init] autorelease];
    id<ORRational> tmp_error = [[[ORRational alloc] init] autorelease];
    id<CPDoubleVar> currentVar;
    NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
@@ -2238,40 +2236,29 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          }
          
          ORDouble value;
-         [best_error setNegInf];
          while(iteration < nbIteration){
-            [guess_error setNegInf];
-            ORInt i = 0;
             for(id<ORDoubleVar> v in x){
                /* Compute an error directly from expression */
                currentVar = _gamma[[v getId]];
-               if(![currentVar bound]){
-                  value = randomValueD([currentVar min], [currentVar max]);
-                  [arrayVarValue insertObject:[NSNumber numberWithDouble:value] atIndex:i];
-               } else {
-                  [arrayVarValue insertObject:[NSNumber numberWithDouble:[currentVar min]] atIndex:i];
-               }
                if([currentVar isInputVar]){
+                  if(![currentVar bound]){
+                     value = randomValueD([currentVar min], [currentVar max]);
+                     [arrayVarValue addObject:[NSNumber numberWithDouble:value]];
+                  } else {
+                     [arrayVarValue addObject:[NSNumber numberWithDouble:[currentVar min]]];
+                  }
                   halfUlp = halfUlpOfD(value);
                   [halfUlp set:((drand48() < 0.4) ? [halfUlp neg] : halfUlp)];
                   if ([halfUlp lt: [currentVar minErr]])
                      [halfUlp set: [currentVar minErr]];
                   if ([halfUlp gt: [currentVar maxErr]])
                      [halfUlp set: [currentVar maxErr]];
-                  [arrayVarError insertObject:halfUlp atIndex:i];
-               } else {
-                  [arrayVarError insertObject:zero atIndex:i];
+                  [arrayVarError addObject:halfUlp];
                }
-               i++;
             }
             
             /* Compute Primal error: f(R) - f(F) */
-            [tmp_error set: [errorComputed(arrayVarValue, arrayVarError) abs]];
-            
-            /* Update GuessError error if better than the previous one */
-            if([tmp_error gt: guess_error]){
-               [guess_error set: tmp_error];
-            }
+            [guess_error set: [errorComputed(arrayVarValue, arrayVarError) abs]];
             
             /* Try to improve computed error */
             if (RUN_IMPROVE_GUESS) {
@@ -2285,27 +2272,25 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
                   for(id<ORDoubleVar> v in x){
                      /* Compute an error directly from expression */
                      currentVar = _gamma[[v getId]];
-                     if(![currentVar bound]){
-                        if(nv == nvar){
-                           value = nextafter([[arrayVarValue objectAtIndex:nv] doubleValue], (direction == 1) ? (+INFINITY) : (-INFINITY));
-                           [arrayVarValue insertObject:[NSNumber numberWithDouble:value]
-                                               atIndex:nv];
-
-                        }
-                     } else {
-                        [arrayVarValue insertObject:[NSNumber numberWithDouble:[currentVar min]] atIndex:nv];
-                     }
                      if([currentVar isInputVar]){
+                        if(![currentVar bound]){
+                           if(nv == nvar){
+                              value = nextafter([[arrayVarValue objectAtIndex:nv] doubleValue], (direction == 1) ? (+INFINITY) : (-INFINITY));
+                              [arrayVarValue replaceObjectAtIndex:nv withObject:[NSNumber numberWithDouble:value]];
+                              
+                           }
+                        } else {
+                           [arrayVarValue replaceObjectAtIndex:nv withObject:[NSNumber numberWithDouble:[currentVar min]]];
+                        }
+                        if(nv == nvar){
                         halfUlp = halfUlpOfD(value);
                         [halfUlp set:((direction) ? [halfUlp neg] : halfUlp)];
                         if ([halfUlp lt: [currentVar minErr]])
                            [halfUlp set: [currentVar minErr]];
                         if ([halfUlp gt: [currentVar maxErr]])
                            [halfUlp set: [currentVar maxErr]];
-                        [arrayVarError insertObject:halfUlp
-                                            atIndex:nv];
-                     } else {
-                        [arrayVarError insertObject:zero atIndex:i];
+                        [arrayVarError replaceObjectAtIndex:nv withObject:halfUlp];
+                        }
                      }
                      nv++;
                   }
@@ -2340,15 +2325,15 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
             }
             /* End of improvement */
             iteration++;
-            if([guess_error gt: best_error])
-               [best_error set: guess_error];
+            [arrayVarValue removeAllObjects];
+            [arrayVarError removeAllObjects];
          }
          LOG(_level, 2, @"Ending GuessError");
          /* ********* End GuessError ********* */
          
          /* Update Primal bound */
-         if([[[[_engine objective] primalBound] rationalValue] lt: best_error]){
-            id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:best_error minimize:FALSE];
+         if([[[[_engine objective] primalBound] rationalValue] lt: guess_error]){
+            id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:guess_error minimize:FALSE];
             [[_engine objective] tightenPrimalBound:objv];
          }
          

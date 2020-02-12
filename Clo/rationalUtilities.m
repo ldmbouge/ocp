@@ -179,6 +179,26 @@
    }
    return self;
 }
+-(id)setConstant:(double)d and:(char*)s
+{
+   id<ORRational> q = [[ORRational alloc] init];
+   id<ORRational> f = [[ORRational alloc] init];
+   [q set_str:s];
+   [f set_d:d];
+   [self set:[f add: [q sub: f]]];
+   
+   [q release];
+   [f release];
+   
+   return self;
+}
+-(id)setInput:(double)d with:(id<ORRational>)e
+{
+   [self set_d:d];
+   [self set: [self add:e]];
+   
+   return self;
+}
 -(id)set_q:(rational_t)r
 {
    mpq_set(_rational, r);

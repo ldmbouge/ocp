@@ -82,7 +82,42 @@ void sine_d_c(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                /* Split strategy */
                [cp floatSplit:i withVars:x];
-            }];
+            }
+                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+                ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+                ORDouble a = 6.0;
+                ORDouble b = 120.0;
+                ORDouble c = 5040.0;
+               
+                id<ORRational> xQ = [[ORRational alloc] init];
+               id<ORRational> aQ = [[ORRational alloc] init];
+               id<ORRational> bQ = [[ORRational alloc] init];
+               id<ORRational> cQ = [[ORRational alloc] init];
+                id<ORRational> zQ = [[ORRational alloc] init];
+                id<ORRational> zF = [[ORRational alloc] init];
+                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+                
+                [xQ setInput:x with:[arrayError objectAtIndex:0]];
+                [aQ set_d:a];
+                [bQ set_d:b];
+                [cQ set_d:c];
+                
+                ORDouble z = x - (x*x*x)/a + (x*x*x*x*x)/b - (x*x*x*x*x*x*x)/c;
+                
+                [zF set_d:z];
+                
+                [zQ set:[[[xQ sub: [ [[xQ mul: xQ] mul: xQ] div: aQ]] add: [[[[[xQ mul: xQ] mul: xQ] mul: xQ] mul: xQ] div: bQ]] sub: [[[[[[[xQ mul: xQ] mul: xQ] mul: xQ] mul: xQ] mul: xQ] mul: xQ] div: cQ]]];
+                
+                [ez set: [zQ sub: zF]];
+                
+                [xQ release];
+                [aQ release];
+                [bQ release];
+                [cQ release];
+                [zQ release];
+                [zF release];
+                return ez;
+             }];
       }];
 
    }

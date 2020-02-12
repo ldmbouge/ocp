@@ -233,21 +233,15 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
                id<ORRational> oneQ = [[ORRational alloc] init];
                id<ORRational> rQ = [[ORRational alloc] init];
                id<ORRational> kQ = [[ORRational alloc] init];
-               id<ORRational> ek = [[ORRational alloc] init];
                id<ORRational> xQ = [[ORRational alloc] init];
                id<ORRational> zQ = [[ORRational alloc] init];
                id<ORRational> zF = [[ORRational alloc] init];
                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+               
                [oneQ setOne];
                [rQ set_d:4.0];
-               
-               [kQ set:111 and:100];
-               [ek set_d: k];
-               [ek set: [kQ sub: ek]];
-               [kQ set: [kQ add: ek]];
-               
-               [xQ set_d:[[arrayValue objectAtIndex:0] doubleValue]];
-               [xQ set: [xQ add: [arrayError objectAtIndex:0]]];
+               [kQ setConstant:k and:"111/100"];
+               [xQ setInput:x with:[arrayError objectAtIndex:0]];
                
                ORDouble z = ((r * x) / (1.0 + (x / k)));
                [zF set_d:z];

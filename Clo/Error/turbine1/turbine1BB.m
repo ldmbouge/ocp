@@ -138,7 +138,54 @@ void turbine1_d_c(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                /* Split strategy */
                [cp floatSplit:i withVars:x];
-            }];
+            }
+                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+                ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+                ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
+                ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
+                ORDouble a = 0.125;
+                ORDouble b = 4.5;
+                
+                id<ORRational> one = [[ORRational alloc] init];
+               id<ORRational> two = [[ORRational alloc] init];
+               id<ORRational> three = [[ORRational alloc] init];
+                id<ORRational> vQ = [[ORRational alloc] init];
+                id<ORRational> wQ = [[ORRational alloc] init];
+                id<ORRational> rQ = [[ORRational alloc] init];
+                id<ORRational> aQ = [[ORRational alloc] init];
+                id<ORRational> bQ = [[ORRational alloc] init];
+                id<ORRational> zQ = [[ORRational alloc] init];
+                id<ORRational> zF = [[ORRational alloc] init];
+                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+                
+                [one setOne];
+                [two set_d:2.0];
+                [three set_d:3.0];
+                [vQ setInput:v with:[arrayError objectAtIndex:0]];
+                [wQ setInput:w with:[arrayError objectAtIndex:1]];
+                [rQ setInput:r with:[arrayError objectAtIndex:2]];
+                [aQ setConstant:a and:"1/8"];
+                [bQ setConstant:b and:"9/2"];
+                
+                ORDouble z = (((3.0 + (2.0 / (r * r))) - (((a * (3.0 - (2.0 * v))) * (((w * w) * r) * r)) / (1.0 - v))) - b);
+                [zF set_d:z];
+                
+                [zQ set:[[[three add: [two div: [rQ mul: rQ]]] sub: [[[aQ mul: [three sub: [two mul: vQ]]] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
+                
+                [ez set: [zQ sub: zF]];
+                
+                [one release];
+               [two release];
+               [three release];
+                [vQ release];
+                [wQ release];
+                [rQ release];
+                [aQ release];
+                [bQ release];
+                [zQ release];
+                [zF release];
+                return ez;
+             }];
       }];
    }
 }

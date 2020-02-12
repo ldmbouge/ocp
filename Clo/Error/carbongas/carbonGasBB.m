@@ -52,7 +52,7 @@ void check_it_d(double p, double a, double b, double t, double n, double k, doub
    mpq_clears(pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1, NULL);
 }
 
-void carbonGas_d(int search, int argc, const char * argv[]) {
+void carbonGas_d_discrete(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
@@ -81,7 +81,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
       [mdl add: [er leq: ulp_r]];
       [mdl add: [erAbs eq: [er abs]]];
       [mdl maximize:erAbs];
-
+      
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
@@ -97,14 +97,14 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
    }
 }
 
-void carbonGas_d_c(int search, int argc, const char * argv[]) {
+void carbonGas_d(bool continuous, int argc, const char * argv[]) {
    @autoreleasepool {
       /* Creation of model */
       id<ORModel> mdl = [ORFactory createModel];
       
       /* Declaration of rational numbers */
       id<ORRational> zero = [[ORRational alloc] init];
-
+      
       /* Initialization of rational numbers */
       [zero setZero];
       
@@ -124,7 +124,7 @@ void carbonGas_d_c(int search, int argc, const char * argv[]) {
       [mdl add:[p set: @(3.5e7)]];
       [mdl add:[t set: @(300.0)]];
       [mdl add:[n set: @(1000.0)]];
-
+      
       /* Declaration of constraints */
       [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
       
@@ -134,8 +134,8 @@ void carbonGas_d_c(int search, int argc, const char * argv[]) {
       
       /* Memory release of rational numbers */
       [zero release];
-
-
+      
+      
       /* Display model */
       NSLog(@"model: %@",mdl);
       
@@ -146,11 +146,58 @@ void carbonGas_d_c(int search, int argc, const char * argv[]) {
       
       /* Solving */
       [cp solve:^{
-            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
-            [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               /* Split strategy */
-               [cp floatSplit:i withVars:x];
-            }];
+         /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+         [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            /* Split strategy */
+            [cp floatSplit:i withVars:x];
+         }
+                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+            ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+            ORDouble p = 3.5e7;
+            ORDouble a = 0.401;
+            ORDouble b = 42.7e-6;
+            ORDouble t = 300.0;
+            ORDouble n = 1000.0;
+            ORDouble k = 1.3806503e-23;
+            
+            id<ORRational> vQ = [[ORRational alloc] init];
+            id<ORRational> pQ = [[ORRational alloc] init];
+            id<ORRational> aQ = [[ORRational alloc] init];
+            id<ORRational> bQ = [[ORRational alloc] init];
+            id<ORRational> tQ = [[ORRational alloc] init];
+            id<ORRational> nQ = [[ORRational alloc] init];
+            id<ORRational> kQ = [[ORRational alloc] init];
+            id<ORRational> zQ = [[ORRational alloc] init];
+            id<ORRational> zF = [[ORRational alloc] init];
+            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+            
+            [vQ setInput:v with:[arrayError objectAtIndex:0]];
+            [pQ set_d:3.5e7];
+            [aQ setConstant:a and:"401/1000"];
+            [bQ setConstant:b and:"427/10000000"];
+            [tQ set_d:300.0];
+            [nQ set_d:1000.0];
+            [kQ setConstant:k and:"13806503/1000000000000000000000000000000"];
+            
+            ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
+            [zF set_d:z];
+            
+            [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
+            
+            [ez set: [zQ sub: zF]];
+            
+            [vQ release];
+            [pQ release];
+            [aQ release];
+            [bQ release];
+            [tQ release];
+            [nQ release];
+            [kQ release];
+            [zQ release];
+            [zF release];
+            return ez;
+         }];
+         
       }];
    }
 }
@@ -231,47 +278,9 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
    }
 }
 
-
-void testMemory_d(int search, int argc, const char * argv[]) {
-   @autoreleasepool {
-      id<ORModel> mdl = [ORFactory createModel];
-      id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
-      id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 elow:zero eup:zero name:@"v"];
-      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
-      id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
-      id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"erAbs"];
-      [zero release];
-      
-      [mdl add:[p set: @(3.5e7)]];
-      
-      [mdl add:[r set: [[v plus: p] sub: p]]];
-      
-      [mdl add: [erAbs eq: [er abs]]];
-      [mdl maximize:erAbs];
-
-      NSLog(@"model: %@",mdl);
-      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
-      id<ORDoubleVarArray> vs = [mdl doubleVars];
-      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
-      
-      [cp solve:^{
-         if (search)
-            [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               [cp floatSplit:i withVars:x];
-            }];
-         NSLog(@"%@",cp);
-         //if (search)
-            //check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
-      }];
-   }
-}
-
-
 int main(int argc, const char * argv[]) {
    //carbonGas_f(1, argc, argv);
    //carbonGas_d(1, argc, argv);
-   carbonGas_d_c(1, argc, argv);
-   //testMemory_d(1,argc,argv)
+   carbonGas_d(1, argc, argv);
    return 0;
 }

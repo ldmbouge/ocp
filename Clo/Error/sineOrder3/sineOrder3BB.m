@@ -119,11 +119,42 @@ void sineOrder3_d_c(int search, int argc, const char * argv[]) {
       
       /* Solving */
       [cp solve:^{
-            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
-            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               /* Split strategy */
-               [cp floatSplit:i withVars:x];
-            }];
+         /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+         [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            /* Split strategy */
+            [cp floatSplit:i withVars:x];
+         }
+                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+            ORDouble a = 0.954929658551372;
+            ORDouble b = 0.12900613773279798;
+            
+            id<ORRational> xQ = [[ORRational alloc] init];
+            id<ORRational> aQ = [[ORRational alloc] init];
+            id<ORRational> bQ = [[ORRational alloc] init];
+            id<ORRational> zQ = [[ORRational alloc] init];
+            id<ORRational> zF = [[ORRational alloc] init];
+            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+            
+            [xQ setInput:x with:[arrayError objectAtIndex:0]];
+            [aQ setConstant:a and:"238732414637843/250000000000000"];
+            [bQ setConstant:b and:"6450306886639899/50000000000000000"];
+            
+            ORDouble z = a * x - b*(x*x*x);
+            
+            [zF set_d:z];
+            
+            [zQ set:[[aQ mul: xQ] sub: [bQ mul: [[xQ mul: xQ] mul: xQ]]]];
+            
+            [ez set: [zQ sub: zF]];
+            
+            [xQ release];
+            [aQ release];
+            [bQ release];
+            [zQ release];
+            [zF release];
+            return ez;
+         }];
       }];
    }
 }
