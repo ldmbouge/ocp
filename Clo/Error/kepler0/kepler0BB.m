@@ -116,12 +116,12 @@ void kepler0_d_c(int search, int argc, const char * argv[]) {
             id<ORRational> zF = [[ORRational alloc] init];
             id<ORRational> ez = [[[ORRational alloc] init] autorelease];
             
-            [x1Q setInput:x1Q with:[arrayError objectAtIndex:0]];
-            [x2Q setInput:x2Q with:[arrayError objectAtIndex:1]];
-            [x3Q setInput:x3Q with:[arrayError objectAtIndex:2]];
-            [x4Q setInput:x4Q with:[arrayError objectAtIndex:3]];
-            [x5Q setInput:x5Q with:[arrayError objectAtIndex:4]];
-            [x6Q setInput:x6Q with:[arrayError objectAtIndex:5]];
+            [x1Q setInput:x1 with:[arrayError objectAtIndex:0]];
+            [x2Q setInput:x2 with:[arrayError objectAtIndex:1]];
+            [x3Q setInput:x3 with:[arrayError objectAtIndex:2]];
+            [x4Q setInput:x4 with:[arrayError objectAtIndex:3]];
+            [x5Q setInput:x5 with:[arrayError objectAtIndex:4]];
+            [x6Q setInput:x6 with:[arrayError objectAtIndex:5]];
             
             ORDouble z = x2 * x5 + x3 * x6 - x2 * x3 - x5 * x6 + x1 * (-x1 + x2 + x3 - x4 + x5 + x6);;
             [zF set_d:z];

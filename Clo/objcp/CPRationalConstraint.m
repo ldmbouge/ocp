@@ -1619,7 +1619,7 @@
       nbDualUpdate++;
       [_dualBound set: bound];
       branchAndBoundTime = [NSDate date];
-      //NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+      NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
    }
    [bound release];
 }
@@ -1630,7 +1630,7 @@
       nbPrimalUpdate++;
       [_primalBound set: [newBound value]];
       branchAndBoundTime = [NSDate date];
-      //NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
+      NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
 }
 
@@ -1644,7 +1644,7 @@
          [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
-         //NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
+         NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
       return ok;
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {

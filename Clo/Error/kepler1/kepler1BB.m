@@ -72,8 +72,8 @@ void kepler1_d_c(int search, int argc, const char * argv[]) {
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       
       /* Declaration of constraints */
-      //x1*x4(-x1+x2+x3-x4) + x2*(x1-x2+x3+x4) + x3*(x1+x2-x3+x4) - x2*x3*x4 - x1*x3 - x1*x2 - x4
-      [mdl add:[z set: [[[[[[[[x1 mul: x4] mul:[[[[x1 minus] plus: x2] plus: x3] sub: x4]] plus: [x2 mul: [[[x1 sub: x2] plus: x3] sub: x4]]] plus: [x3 mul:[[[x1 plus: x2] sub: x3] plus: x4]]] sub: [[x2 mul: x3] mul: x4]] sub: [x1 mul: x3]] sub: [x1 mul: x2]] sub: x4] ]];
+      //x1*x4*(-x1+x2+x3-x4) + x2*(x1-x2+x3+x4) + x3*(x1+x2-x3+x4) - x2*x3*x4 - x1*x3 - x1*x2 - x4
+      [mdl add:[z set: [[[[[[[[x1 mul: x4] mul:[[[[x1 minus] plus: x2] plus: x3] sub: x4]] plus: [x2 mul: [[[x1 sub: x2] plus: x3] sub: x4]]] plus: [x3 mul:[[[x1 plus: x2] sub: x3] plus: x4]]] sub: [[x2 mul: x3] mul: x4]] sub: [x1 mul: x3]] sub: [x1 mul: x2]] sub: x4]]];
 
       /* Declaration of constraints over errors */
       [mdl add: [ezAbs eq: [ez abs]]];
@@ -93,7 +93,41 @@ void kepler1_d_c(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                /* Split strategy */
                [cp floatSplit:i withVars:x];
-            }];
+            }
+                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+                ORDouble x1 = [[arrayValue objectAtIndex:0] doubleValue];
+                ORDouble x2 = [[arrayValue objectAtIndex:1] doubleValue];
+                ORDouble x3 = [[arrayValue objectAtIndex:2] doubleValue];
+                ORDouble x4 = [[arrayValue objectAtIndex:3] doubleValue];
+                
+                id<ORRational> x1Q = [[ORRational alloc] init];
+                id<ORRational> x2Q = [[ORRational alloc] init];
+                id<ORRational> x3Q = [[ORRational alloc] init];
+                id<ORRational> x4Q = [[ORRational alloc] init];
+                id<ORRational> zQ = [[ORRational alloc] init];
+                id<ORRational> zF = [[ORRational alloc] init];
+                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+                
+                [x1Q setInput:x1 with:[arrayError objectAtIndex:0]];
+                [x2Q setInput:x2 with:[arrayError objectAtIndex:1]];
+                [x3Q setInput:x3 with:[arrayError objectAtIndex:2]];
+                [x4Q setInput:x4 with:[arrayError objectAtIndex:3]];
+                
+                ORDouble z = x1*x4*(-x1+x2+x3-x4) + x2*(x1-x2+x3+x4) + x3*(x1+x2-x3+x4) - x2*x3*x4 - x1*x3 - x1*x2 - x4;
+                [zF set_d:z];
+                
+               [zQ set: [[[[[[[[x1Q mul: x4Q] mul:[[[[x1Q neg] add: x2Q] add: x3Q] sub: x4Q]] add: [x2Q mul: [[[x1Q sub: x2Q] add: x3Q] sub: x4Q]]] add: [x3Q mul:[[[x1Q add: x2Q] sub: x3Q] add: x4Q]]] sub: [[x2Q mul: x3Q] mul: x4Q]] sub: [x1Q mul: x3Q]] sub: [x1Q mul: x2Q]] sub: x4Q]];
+                
+                [ez set: [zQ sub: zF]];
+                
+                [x1Q release];
+                [x2Q release];
+                [x3Q release];
+                [x4Q release];
+                [zQ release];
+                [zF release];
+                return ez;
+             }];
       }];
    }
 }

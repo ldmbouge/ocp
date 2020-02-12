@@ -97,7 +97,50 @@ void kepler2_d_c(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                /* Split strategy */
                [cp floatSplit:i withVars:x];
-            }];
+            }
+                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+                ORDouble x1 = [[arrayValue objectAtIndex:0] doubleValue];
+                ORDouble x2 = [[arrayValue objectAtIndex:1] doubleValue];
+                ORDouble x3 = [[arrayValue objectAtIndex:2] doubleValue];
+                ORDouble x4 = [[arrayValue objectAtIndex:3] doubleValue];
+                ORDouble x5 = [[arrayValue objectAtIndex:4] doubleValue];
+                ORDouble x6 = [[arrayValue objectAtIndex:5] doubleValue];
+                
+                id<ORRational> x1Q = [[ORRational alloc] init];
+                id<ORRational> x2Q = [[ORRational alloc] init];
+                id<ORRational> x3Q = [[ORRational alloc] init];
+                id<ORRational> x4Q = [[ORRational alloc] init];
+                id<ORRational> x5Q = [[ORRational alloc] init];
+                id<ORRational> x6Q = [[ORRational alloc] init];
+                id<ORRational> zQ = [[ORRational alloc] init];
+                id<ORRational> zF = [[ORRational alloc] init];
+                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+                
+                [x1Q setInput:x1 with:[arrayError objectAtIndex:0]];
+                [x2Q setInput:x2 with:[arrayError objectAtIndex:1]];
+                [x3Q setInput:x3 with:[arrayError objectAtIndex:2]];
+                [x4Q setInput:x4 with:[arrayError objectAtIndex:3]];
+                [x5Q setInput:x5 with:[arrayError objectAtIndex:4]];
+                [x6Q setInput:x6 with:[arrayError objectAtIndex:5]];
+                
+                ORDouble z = x1*x4*(-x1+x2+x3-x4+x5+x6) + x2*x5*(x1-x2+x3+x4-x5+x6) + x3*x6*(x1+x2-x3+x4+x5-x6) - x2*x3*x4 - x1*x3*x5 - x1*x2*x6 - x4*x5*x6;
+                [zF set_d:z];
+                
+                [zQ set: [[[[[[[[x1Q mul: x4Q] mul: [[[[[[x1Q neg] add: x2Q] add: x3Q] sub: x4Q] add: x5Q] add: x6Q] ] add: [[x2Q mul: x5Q] mul:[[[[[x1Q sub: x2Q] add: x3Q] add: x4Q] sub: x5Q] add: x6Q]]] add: [[x3Q mul: x6Q] mul: [[[[[x1Q add: x2Q] sub: x3Q] add: x4Q] add: x5Q] sub: x6Q]]] sub: [[x2Q mul: x3Q] mul: x4Q]] sub: [[x1Q mul: x3Q] mul: x5Q]] sub: [[x1Q mul: x2Q] mul: x6Q]] sub: [[x4Q mul: x5Q] mul: x6Q]]
+                 ];
+                
+                [ez set: [zQ sub: zF]];
+                
+                [x1Q release];
+                [x2Q release];
+                [x3Q release];
+                [x4Q release];
+                [x5Q release];
+                [x6Q release];
+                [zQ release];
+                [zF release];
+                return ez;
+             }];
       }];
    }
 }
