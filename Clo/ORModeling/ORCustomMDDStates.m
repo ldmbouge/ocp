@@ -315,6 +315,17 @@ const short BytesPerMagic = 4;
     }
     return true;
 }
+-(bool) canCreateState:(MDDStateValues**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value {
+    NSArray* arcExistIndices = _arcExistsIndicesForVariable[variable];
+    char* parState = [parentState state];
+    for (NSNumber* arcExistIndex in arcExistIndices) {
+        if (!_arcExists[[arcExistIndex intValue]](parState,variable,value)) {
+            return false;
+        }
+    }
+    *newState = [self createStateFrom:parentState assigningVariable:variable withValue:value];
+    return true;
+}
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right {
     int differential = 0;
     char* leftState = left.state;
@@ -352,9 +363,9 @@ const short BytesPerMagic = 4;
 }
 -(id) initState:(char*)stateValues numBytes:(size_t)numBytes hashWidth:(int)width trail:(id<ORTrail>)trail {
     self = [super init];
-    [self setHash:width trail:trail];
     _numBytes = numBytes;
     _state = stateValues;
+    [self setHash:width trail:trail];
     _magic = malloc(_numBytes/BytesPerMagic * sizeof(ORUInt));
     for (int i = 0; i < (_numBytes/BytesPerMagic); i++) {
         _magic[i] = [trail magic];
@@ -389,22 +400,63 @@ const short BytesPerMagic = 4;
     }
 }
 -(char*) state { return _state; }
--(bool) equivalentTo:(MDDStateValues*)other {
-    char* other_state = [other state];
+-(BOOL) isEqual:(MDDStateValues*)other {
+    /*if (other == self) return YES;
+    if (!other || ![other isKindOfClass:[self class]]) return NO;
+    return [self isEqualToMDDStateValues:other];*/
+    return memcmp(_state, other.state, _numBytes) == 0;
+    /*char* other_state = [other state];
     for (int byteIndex = 0; byteIndex < _numBytes; byteIndex++) {
         if (_state[byteIndex] != other_state[byteIndex]) {
             return false;
         }
     }
-    return true;
+    return true;*/
 }
--(int) hashValue { return _hashValue._val; }
+-(BOOL) isEqualToMDDStateValues:(MDDStateValues*)other {
+    char* other_state = [other state];
+    return memcmp(_state, other_state, _numBytes);
+    /*for (int byteIndex = 0; byteIndex < _numBytes; byteIndex++) {
+        if (_state[byteIndex] != other_state[byteIndex]) {
+            return false;
+        }
+    }
+    return true;*/
+}
+-(id) copyWithZone:(NSZone*) zone {
+    char* newState = malloc(_numBytes * sizeof(char));
+    memcpy(newState, _state, _numBytes);
+    MDDStateValues* copy = [[MDDStateValues alloc] initState:newState numBytes:_numBytes];
+    return copy;
+}
+-(NSUInteger) hash { return _hashValue._val; }
 -(int) calcHash:(int)width {
-    NSUInteger hashValue = 1;
+    const size_t numGroups = _numBytes/BytesPerMagic;
+    int hashValue = 0;
+    switch (BytesPerMagic) {
+        case 2:
+            for (size_t s = 0; s < numGroups; s++) {
+                hashValue = hashValue * 15 + *(short*)&_state[s*BytesPerMagic];
+            }
+            break;
+        case 4:
+            for (size_t s = 0; s < numGroups; s++) {
+                hashValue = hashValue * 255 + *(int*)&_state[s*BytesPerMagic];
+            }
+            break;
+        default:
+            @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateValues: Method calcHash not implemented for given BytesPerMagic"];
+            break;
+    }
+    hashValue = hashValue % width;
+    if (hashValue < 0) hashValue += width;
+    return hashValue;
+
+    /*NSUInteger hashValue = 1;
     for (int byteIndex = 0; byteIndex < _numBytes; byteIndex++) {
         hashValue = hashValue * 256 + (int)_state[byteIndex];
     }
-    return (int)(hashValue % width);
+    return (int)(hashValue % width);*/
 }
 -(void) setHash:(int)width trail:(id<ORTrail>)trail {
     _hashValue = makeTRInt(trail, [self calcHash:width]);
@@ -414,6 +466,8 @@ const short BytesPerMagic = 4;
         assignTRInt(&_hashValue, [self calcHash:width], trail);
     }
 }
+-(void) setNode:(Node*)node { _node = node; }
+-(Node*) node { return _node; }
 @end
 /*
 @implementation JointState

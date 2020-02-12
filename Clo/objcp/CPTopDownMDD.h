@@ -17,6 +17,18 @@
 #import "ORCustomMDDStates.h"
 
 @class Node;
+@interface BetterNodeHashTable : NSObject {
+    //NSMutableArray<MDDStateValues*>** _nodeHashes;
+    MDDStateValues** *_stateLists;
+    int* _numPerHash;
+    int* _maxPerHash;
+    int _width;
+    NSUInteger _lastCheckedHash;
+}
+-(id) initBetterNodeHashTable:(int)width;
+-(bool) hasNodeWithState:(MDDStateValues*)state node:(Node**)existingNode;
+-(void) addState:(MDDStateValues*)state;
+@end
 @interface NodeHashTable : NSObject {
     NSMutableArray** _nodeHashes;
     int _width;
@@ -39,62 +51,6 @@
 -(void) remove:(int)index withHash:(NSUInteger)hash;
 @end
 
-@interface Node : NSObject {
-@public
-    int _value;
-    bool _isSink;
-    bool _isSource;
-    id<ORTrail> _trail;
-    
-    TRId* _children;
-    TRInt _numChildren;
-    int _minChildIndex;
-    int _maxChildIndex;
-    
-    ORTRIdArrayI* _uniqueParents;
-    ORTRIntArrayI* _parentCounts;
-    TRInt _numUniqueParents;
-    TRInt _maxNumUniqueParents;
-    NodeIndexHashTable* _parentLookup;
-    
-    MDDStateValues* _state;
-    TRInt _isMergedNode;
-    TRInt _recalcRequired;
-}
--(id) initNode: (id<ORTrail>) trail hashWidth:(int)hashWidth;
--(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(MDDStateValues*)state hashWidth:(int)hashWidth;
--(void) dealloc;
--(TRId) getState;
--(int) value;
--(bool) isMergedNode;
--(void) setIsMergedNode:(bool)isMergedNode;
--(bool) recalcRequired;
--(void) setRecalcRequired:(bool)recalcRequired;
--(bool) isVital;
--(void) setIsSource:(bool)isSource;
--(void) setIsSink:(bool)isSink;
--(bool) isNonVitalAndChildless;
--(bool) isNonVitalAndParentless;
--(TRId*) children;
--(int) numChildren;
--(void) addChild:(Node*)child at:(int)index;
--(void) removeChildAt: (int) index;
--(void) removeChild:(Node*)child numTimes:(int)childCount updatingLVC:(TRInt*)variable_count;
--(void) replaceChild:(Node*)oldChild with:(Node*)newChild numTimes:(int)childCount;
--(bool) hasParents;
--(void) addParent: (Node*) parent;
--(bool) hasParent:(Node*)parent;
--(int) countForParent:(Node*)parent;
--(int) countForParentIndex:(int)parent_index;
--(int) findUniqueParentIndexFor:(Node*) parent addToHash:(bool)addToHash;
--(void) removeParentAt:(int)index;
--(void) removeParentOnce: (Node*) parent;
--(void) removeParentValue: (Node*) parent;
--(void) takeParentsFrom:(Node*)other;
--(int) hashValue;
-@end
-static inline id getState(Node* n) { return n->_state;}
-
 @interface CPMDD : CPCoreConstraint {
 @private
     Class _stateClass;
@@ -115,7 +71,6 @@ static inline id getState(Node* n) { return n->_state;}
     int* _max_domain_for_layer;
     int _highestLayerChanged;
     int _lowestLayerChanged;
-    int** _changesToLayerVariableCount;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec;
@@ -130,11 +85,12 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) cleanLayer:(int)layer;
 -(void) afterPropagation;
 -(void) buildLayer:(int)layer;
--(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer nodeHashes:(NodeHashTable*)nodeHashTable;
+-(void) buildLayerByValue:(int)layer;
+-(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer nodeHashTable:(BetterNodeHashTable*)nodeHashTable;
+//-(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer stateToNodeDict:(NSMutableDictionary<MDDStateValues*,Node*>*)stateToNodeDict;
 -(void) addPropagationsAndTrimDomains;
 -(void) trimDomainsFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
--(int) modifiedLayerVariableCount:(int)layer value:(int)value;
 -(id) generateRootState:(int)variableValue;
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value;
 -(id) generateTempStateFromParent:(Node*)parentNode withValue:(int)value;

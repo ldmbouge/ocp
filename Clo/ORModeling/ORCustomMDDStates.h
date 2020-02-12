@@ -1,6 +1,61 @@
 #import <ORFoundation/ORTrailI.h>
 #import "ORMDDProperties.h"
 
+@class MDDStateValues;
+@interface Node : NSObject {
+@public
+    int _value;
+    bool _isSink;
+    bool _isSource;
+    id<ORTrail> _trail;
+    
+    TRId* _children;
+    TRInt _numChildren;
+    int _minChildIndex;
+    int _maxChildIndex;
+    
+    ORTRIdArrayI* _uniqueParents;
+    ORTRIntArrayI* _parentCounts;
+    TRInt _numUniqueParents;
+    TRInt _maxNumUniqueParents;
+    
+    MDDStateValues* _state;
+    TRInt _isMergedNode;
+    bool _recalcRequired;
+}
+-(id) initNode: (id<ORTrail>) trail hashWidth:(int)hashWidth;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(MDDStateValues*)state hashWidth:(int)hashWidth;
+-(void) dealloc;
+-(TRId) getState;
+-(int) value;
+-(bool) isMergedNode;
+-(void) setIsMergedNode:(bool)isMergedNode;
+-(bool) recalcRequired;
+-(void) setRecalcRequired:(bool)recalcRequired;
+-(bool) isVital;
+-(void) setIsSource:(bool)isSource;
+-(void) setIsSink:(bool)isSink;
+-(bool) isNonVitalAndChildless;
+-(bool) isNonVitalAndParentless;
+-(TRId*) children;
+-(int) numChildren;
+-(void) addChild:(Node*)child at:(int)index;
+-(void) removeChildAt: (int) index;
+-(void) removeChild:(Node*)child numTimes:(int)childCount updatingLVC:(TRInt*)variable_count;
+-(void) replaceChild:(Node*)oldChild with:(Node*)newChild numTimes:(int)childCount;
+-(bool) hasParents;
+-(void) addParent: (Node*) parent;
+-(bool) hasParent:(Node*)parent;
+-(int) countForParent:(Node*)parent;
+-(int) countForParentIndex:(int)parent_index;
+-(int) findUniqueParentIndexFor:(Node*) parent addToHash:(bool)addToHash;
+-(void) removeParentAt:(int)index;
+-(void) removeParentOnce: (Node*) parent;
+-(void) removeParentValue: (Node*) parent;
+-(void) takeParentsFrom:(Node*)other;
+@end
+static inline id getState(Node* n) { return n->_state;}
+
 @interface CustomState : NSObject {
 @protected
     int _variableIndex;
@@ -41,7 +96,6 @@
 -(bool) equivalentTo:(CustomState *)other;
 @end*/
 
-@class MDDStateValues;
 @interface MDDStateSpecification : NSObject {
 @protected
     MDDStateDescriptor* _stateDescriptor;
@@ -73,6 +127,7 @@
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
+-(bool) canCreateState:(MDDStateValues**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value;
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(int) numProperties;
 -(size_t) numBytes;
@@ -82,23 +137,26 @@
 @end
     
 
-@interface MDDStateValues : NSObject {
+@interface MDDStateValues : NSObject<NSCopying> {
 @protected
     char* _state;
     ORUInt* _magic;
     size_t _numBytes;
     TRInt _hashValue;
     bool _tempState;
+    Node* _node;
 }
 -(id) initState:(char*)stateValues numBytes:(size_t)numBytes;
 -(id) initState:(char*)stateValues numBytes:(size_t)numBytes hashWidth:(int)width trail:(id<ORTrail>)trail;
 -(char*) state;
+-(BOOL) isEqual:(MDDStateValues*)other;
 -(void) trailByte:(size_t)byteOffset trail:(id<ORTrail>)trail;
--(bool) equivalentTo:(MDDStateValues*)other;
--(int) hashValue;
+-(BOOL) isEqualToMDDStateValues:(MDDStateValues*)other;
 -(int) calcHash:(int)width;
 -(void) setHash:(int)width trail:(id<ORTrail>)trail;
 -(void) recalcHash:(int)width trail:(id<ORTrail>)trail;
+-(void) setNode:(Node*)node;
+-(Node*) node;
 @end
 
 @interface JointState : CustomState {

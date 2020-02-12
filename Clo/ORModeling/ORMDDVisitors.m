@@ -732,9 +732,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprSquareI: visit method not defined"];
 }
--(void) visitExprNegateI:(id<ORExpr>)e
+-(void) visitExprNegateI:(ORExprNegateI*)e
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"];
+    id<ORExpr> inner = [self recursiveVisitor:[e operand]];
+    current = [ORFactory exprNegate:inner track:[e tracker]];
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {
