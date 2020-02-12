@@ -210,7 +210,6 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
          [zero release];
          
          /* Display model */
-         
          NSLog(@"model: %@",mdl);
          
          /* Construction of solver */
@@ -230,7 +229,7 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
                ORDouble k = 1.11;
                ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
                
-               id<ORRational> oneQ = [[ORRational alloc] init];
+               id<ORRational> one = [[ORRational alloc] init];
                id<ORRational> rQ = [[ORRational alloc] init];
                id<ORRational> kQ = [[ORRational alloc] init];
                id<ORRational> xQ = [[ORRational alloc] init];
@@ -238,7 +237,7 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
                id<ORRational> zF = [[ORRational alloc] init];
                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
                
-               [oneQ setOne];
+               [one setOne];
                [rQ set_d:4.0];
                [kQ setConstant:k and:"111/100"];
                [xQ setInput:x with:[arrayError objectAtIndex:0]];
@@ -246,14 +245,13 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
                ORDouble z = ((r * x) / (1.0 + (x / k)));
                [zF set_d:z];
                
-               [zQ set: [[rQ mul: xQ] div: [oneQ add: [xQ div: kQ]]]];
+               [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
                
                [ez set: [zQ sub: zF]];
                
-               [oneQ release];
+               [one release];
                [rQ release];
                [kQ release];
-               [ek release];
                [xQ release];
                [zQ release];
                [zF release];
