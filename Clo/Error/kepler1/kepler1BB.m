@@ -38,7 +38,7 @@ void kepler1_d(int search, int argc, const char * argv[]) {
       
       //x1*x4(-x1+x2+x3-x4) + x2*(x1-x2+x3+x4) + x3*(x1+x2-x3+x4) - x2*x3*x4 - x1*x3 - x1*x2 - x4
       
-      [mdl add:[z set: [[[[[[[[x1 mul: x4] mul:[[[[x1 minus] plus: x2] plus: x3] sub: x4]] plus: [x2 mul: [[[x1 sub: x2] plus: x3] sub: x4]]] plus: [x3 mul:[[[x1 plus: x2] sub: x3] plus: x4]]] sub: [[x2 mul: x3] mul: x4]] sub: [x1 mul: x3]] sub: [x1 mul: x2]] sub: x4] ]];
+      [mdl add:[z set: [[[[[[[[x1 mul: x4] mul:[[[[x1 minus] plus: x2] plus: x3] sub: x4]] plus: [x2 mul: [[[x1 sub: x2] plus: x3] plus: x4]]] plus: [x3 mul:[[[x1 plus: x2] sub: x3] plus: x4]]] sub: [[x2 mul: x3] mul: x4]] sub: [x1 mul: x3]] sub: [x1 mul: x2]] sub: x4]]];
 
       [mdl add: [ezAbs eq: [ez abs]]];
       [mdl maximize:ezAbs];
@@ -73,7 +73,7 @@ void kepler1_d_c(int search, int argc, const char * argv[]) {
       
       /* Declaration of constraints */
       //x1*x4*(-x1+x2+x3-x4) + x2*(x1-x2+x3+x4) + x3*(x1+x2-x3+x4) - x2*x3*x4 - x1*x3 - x1*x2 - x4
-      [mdl add:[z set: [[[[[[[[x1 mul: x4] mul:[[[[x1 minus] plus: x2] plus: x3] sub: x4]] plus: [x2 mul: [[[x1 sub: x2] plus: x3] sub: x4]]] plus: [x3 mul:[[[x1 plus: x2] sub: x3] plus: x4]]] sub: [[x2 mul: x3] mul: x4]] sub: [x1 mul: x3]] sub: [x1 mul: x2]] sub: x4]]];
+      [mdl add:[z set: [[[[[[[[x1 mul: x4] mul:[[[[x1 minus] plus: x2] plus: x3] sub: x4]] plus: [x2 mul: [[[x1 sub: x2] plus: x3] plus: x4]]] plus: [x3 mul:[[[x1 plus: x2] sub: x3] plus: x4]]] sub: [[x2 mul: x3] mul: x4]] sub: [x1 mul: x3]] sub: [x1 mul: x2]] sub: x4]]];
 
       /* Declaration of constraints over errors */
       [mdl add: [ezAbs eq: [ez abs]]];
@@ -116,7 +116,7 @@ void kepler1_d_c(int search, int argc, const char * argv[]) {
                 ORDouble z = x1*x4*(-x1+x2+x3-x4) + x2*(x1-x2+x3+x4) + x3*(x1+x2-x3+x4) - x2*x3*x4 - x1*x3 - x1*x2 - x4;
                 [zF set_d:z];
                 
-               [zQ set: [[[[[[[[x1Q mul: x4Q] mul:[[[[x1Q neg] add: x2Q] add: x3Q] sub: x4Q]] add: [x2Q mul: [[[x1Q sub: x2Q] add: x3Q] sub: x4Q]]] add: [x3Q mul:[[[x1Q add: x2Q] sub: x3Q] add: x4Q]]] sub: [[x2Q mul: x3Q] mul: x4Q]] sub: [x1Q mul: x3Q]] sub: [x1Q mul: x2Q]] sub: x4Q]];
+               [zQ set: [[[[[[[[x1Q mul: x4Q] mul:[[[[x1Q neg] add: x2Q] add: x3Q] sub: x4Q]] add: [x2Q mul: [[[x1Q sub: x2Q] add: x3Q] add: x4Q]]] add: [x3Q mul:[[[x1Q add: x2Q] sub: x3Q] add: x4Q]]] sub: [[x2Q mul: x3Q] mul: x4Q]] sub: [x1Q mul: x3Q]] sub: [x1Q mul: x2Q]] sub: x4Q]];
                 
                 [ez set: [zQ sub: zF]];
                 
