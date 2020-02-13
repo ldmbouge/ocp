@@ -210,6 +210,29 @@ const short BytesPerMagic = 4;
     _numVars = (int)[vars count];
     return self;
 }
+-(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars stateDescriptor:(MDDStateDescriptor*)stateDescriptor {
+    _relaxed = relaxed;
+    _stateDescriptor = stateDescriptor;
+    _arcExists = malloc(numSpecs * sizeof(DDClosure));
+    _transitionFunctions = calloc(numProperties, sizeof(DDClosure));
+    if (_relaxed) {
+        _relaxationFunctions = calloc(numProperties, sizeof(DDMergeClosure));
+        _differentialFunctions = calloc(numProperties, sizeof(DDMergeClosure));
+    }
+    _numPropertiesAdded = 0;
+    _numSpecsAdded = 0;
+    _stateValueIndicesForVariable = malloc([vars count] * sizeof(bool*));
+    _stateValueIndicesForVariable -= [vars low];
+    _arcExistsIndicesForVariable = malloc([vars count] * sizeof(NSMutableArray*));
+    _arcExistsIndicesForVariable -= [vars low];
+    for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
+        _stateValueIndicesForVariable[varIndex] = calloc(numProperties, sizeof(bool));
+        _arcExistsIndicesForVariable[varIndex] = [[NSMutableArray alloc] init];
+    }
+    _minVar = [vars low];
+    _numVars = (int)[vars count];
+    return self;
+}
 -(void) dealloc {
     _stateValueIndicesForVariable += _minVar;
     _arcExistsIndicesForVariable += _minVar;
@@ -252,6 +275,30 @@ const short BytesPerMagic = 4;
     _arcExists[_numSpecsAdded] = arcExists;
     NSNumber* arcExistsIndex = [NSNumber numberWithInt:_numSpecsAdded];
     for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
+        [_arcExistsIndicesForVariable[mapping[varIndex]] addObject:arcExistsIndex];
+    }
+    _numSpecsAdded++;
+}
+-(void) addMDDSpec:(ORMDDSpecs*)MDDSpec mapping:(int*)mapping {
+    DDClosure* newTransitionClosures = [MDDSpec transitionClosures];
+    DDMergeClosure* newRelaxationClosures = [MDDSpec relaxationClosures];
+    DDMergeClosure* newDifferentialClosures = [MDDSpec differentialClosures];
+    int numNewProperties = [MDDSpec numProperties];
+    id<ORIntVarArray> otherVars = [MDDSpec vars];
+    for (int i = 0; i < numNewProperties; i++) {
+        _transitionFunctions[_numPropertiesAdded] = newTransitionClosures[i];
+        if (_relaxed) {
+            _relaxationFunctions[_numPropertiesAdded] = newRelaxationClosures[i];
+            _differentialFunctions[_numPropertiesAdded] = newDifferentialClosures[i];
+        }
+        for (int varIndex = [otherVars low]; varIndex <= [otherVars up]; varIndex++) {
+            _stateValueIndicesForVariable[mapping[varIndex]][_numPropertiesAdded] = true;
+        }
+        _numPropertiesAdded++;
+    }
+    _arcExists[_numSpecsAdded] = [MDDSpec arcExistsClosure];
+    NSNumber* arcExistsIndex = [NSNumber numberWithInt:_numSpecsAdded];
+    for (int varIndex = [otherVars low]; varIndex <= [otherVars up]; varIndex++) {
         [_arcExistsIndicesForVariable[mapping[varIndex]] addObject:arcExistsIndex];
     }
     _numSpecsAdded++;

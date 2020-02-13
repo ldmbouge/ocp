@@ -301,6 +301,63 @@
     NSMutableArray* MDDSpecsByVariableSet = [[NSMutableArray alloc] initWithObjects:firstSpec,nil];
     _variables = [firstSpec vars];
     int totalNumProperties = [firstSpec numProperties];
+
+    //Currently implemented as all-or-nothing as far as whether the functions are defined as closures or ORExpr
+    if ([firstSpec closuresDefined]) {
+        //Combine specs with shared variable lists, obtain total variable list, and count total number of properties
+        for (int mddSpecIndex = 1; mddSpecIndex < [_mddSpecConstraints count]; mddSpecIndex++) {
+            id<ORMDDSpecs> mddSpec = [_mddSpecConstraints objectAtIndex:mddSpecIndex];
+            id<ORIntVarArray> vars = [mddSpec vars];
+            bool sharedVarList = false;
+            for (id<ORMDDSpecs> existingMDDSpec in MDDSpecsByVariableSet) {
+                if ([existingMDDSpec vars] == vars) {
+                    sharedVarList = true;
+                    int existingMDDNumProperties = [existingMDDSpec numProperties];
+                    int numProperties = [mddSpec numProperties];
+                    DDClosure* transitionClosures = [mddSpec transitionClosures];
+                    DDMergeClosure* relaxationClosures = [mddSpec relaxationClosures];
+                    DDMergeClosure* differentialClosures = [mddSpec differentialClosures];
+                    [existingMDDSpec addStatesWithClosures:numProperties];
+                    totalNumProperties += numProperties;
+                    for (int i = 0; i < numProperties; i++) {
+                        [existingMDDSpec addTransitionClosure:transitionClosures[i] toStateValue:(existingMDDNumProperties+i)];
+                    }
+                    if (_relaxed) {
+                        for  (int i = 0; i < numProperties; i++) {
+                            [existingMDDSpec addRelaxationClosure:relaxationClosures[i] toStateValue:(existingMDDNumProperties+i)];
+                            [existingMDDSpec addStateDifferentialClosure:differentialClosures[i] toStateValue:(existingMDDNumProperties+i)];
+                        }
+                    }
+                    DDClosure oldArcExists = [existingMDDSpec arcExistsClosure];
+                    DDClosure arcExists = [mddSpec arcExistsClosure];
+                    DDClosure newArcExists = [^(char* state, ORInt variable, ORInt value) {
+                        return oldArcExists(state,variable,value) && arcExists(state,variable,value);
+                    } copy];
+                    [existingMDDSpec setArcExistsClosure:newArcExists];
+                }
+            }
+            if (!sharedVarList) {
+                [MDDSpecsByVariableSet addObject:mddSpec];
+                _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
+                totalNumProperties += [mddSpec numProperties];
+            } else {
+                [mddSpec release];
+            }
+        }
+        
+        MDDStateDescriptor* stateDescriptor = [firstSpec stateDescriptor];
+        MDDStateSpecification* finalMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[MDDSpecsByVariableSet count] numProperties:totalNumProperties relaxed:_relaxed vars:_variables stateDescriptor:stateDescriptor];
+        for (ORMDDSpecs* mddSpec in MDDSpecsByVariableSet) {
+            id<ORIntVarArray> vars = [mddSpec vars];
+            int* variableMapping = [self findVariableMappingFrom:vars to:_variables];
+            [finalMDDSpec addMDDSpec:mddSpec mapping:variableMapping];
+            [mddSpec release];
+        }
+        [MDDSpecsByVariableSet release];
+        _mddSpecification = finalMDDSpec;
+        return;
+    }
+    
     //First, loop over every MDDSpec and combine any that have identical variable sets (this is where we would check if any state properties can be combined.
     for (int mddSpecIndex = 1; mddSpecIndex < [_mddSpecConstraints count]; mddSpecIndex++) {
         id<ORMDDSpecs> mddSpec = [_mddSpecConstraints objectAtIndex:mddSpecIndex];

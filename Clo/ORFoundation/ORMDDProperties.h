@@ -36,10 +36,13 @@
 @interface MDDStateDescriptor : NSObject {
 @protected
     MDDPropertyDescriptor** _properties;
+    int _currentPropertyIndex;
     int _numProperties;
     size_t _currentOffset;
 }
+-(id) initMDDStateDescriptor;
 -(id) initMDDStateDescriptor:(int)numProperties;
+-(void) addNewProperties:(int)num;
 -(void) addStateProperty:(MDDPropertyDescriptor*)property;
 -(void) initializeState:(char*)state;
 -(int) getProperty:(int)propertyIndex forState:(char*)state;

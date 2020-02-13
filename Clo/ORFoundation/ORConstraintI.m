@@ -564,12 +564,17 @@
    id<ORIntVarArray> _x;
    //ORInt* _stateValues;
    MDDPropertyDescriptor** _stateProperties;
+   bool _closuresDefined;
    id<ORExpr> _arcExists;
+   DDClosure _arcExistsClosure;
    id<ORExpr>* _transitionFunctions;
+   DDClosure* _transitionClosures;
    id<ORExpr>* _relaxationFunctions;
+   DDMergeClosure* _relaxationClosures;
    id<ORExpr>* _differentialFunctions;
+   DDMergeClosure* _differentialClosures;
+   MDDStateDescriptor* _stateDescriptor;
    int _numProperties;
-   int _numBits;
 }
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
@@ -583,30 +588,68 @@
    for (int index = 0; index < stateSize; index++) {
       _differentialFunctions[index] = NULL;
    }
+   _closuresDefined = false;
    
    _numProperties = stateSize;
-   _numBits = 0;
 
    _arcExists = NULL;
+   _stateDescriptor = nil;
    
    return self;
 }
+-(ORMDDSpecs*)initORMDDSpecsUsingClosures:(id<ORIntVarArray>)x stateSize:(int)stateSize
+{
+   self = [super initORConstraintI];
+   _x = x;
+   
+   _transitionClosures = malloc(stateSize * sizeof(DDClosure));
+   _relaxationClosures = malloc(stateSize * sizeof(DDMergeClosure));
+   _differentialClosures = malloc(stateSize * sizeof(DDMergeClosure));
+   for (int index = 0; index < stateSize; index++) {
+      _differentialClosures[index] = NULL;
+   }
+   _closuresDefined = true;
+   
+   _numProperties = stateSize;
 
+   _arcExists = NULL;
+   _stateDescriptor = nil;
+   
+   return self;
+}
+-(id<MDDStateDescriptor>)stateDescriptor { return (id)_stateDescriptor; }
+-(void)setStateDescriptor:(id<MDDStateDescriptor>)stateDesc { _stateDescriptor = stateDesc; }
 -(void)addStateCounter:(ORInt)lookup withDefaultValue:(ORInt)value
 {
-   if ([_x count] < 32767) {
-      _stateProperties[lookup] = [[MDDPShort alloc] initMDDPShort:lookup initialValue:value];
+   if (_closuresDefined) {
+      if ([_x count] < 32767) {
+         [_stateDescriptor addStateProperty:[[MDDPShort alloc] initMDDPShort:lookup initialValue:value]];
+      } else {
+         [_stateDescriptor addStateProperty:[[MDDPInt alloc] initMDDPInt:lookup initialValue:value]];
+      }
    } else {
-      _stateProperties[lookup] = [[MDDPInt alloc] initMDDPInt:lookup initialValue:value];
+      if ([_x count] < 32767) {
+         _stateProperties[lookup] = [[MDDPShort alloc] initMDDPShort:lookup initialValue:value];
+      } else {
+         _stateProperties[lookup] = [[MDDPInt alloc] initMDDPInt:lookup initialValue:value];
+      }
    }
 }
 -(void)addStateInt:(ORInt)lookup withDefaultValue:(ORInt)value
 {
-   _stateProperties[lookup] = [[MDDPInt alloc] initMDDPInt:lookup initialValue:value];
+   if (_closuresDefined) {
+      [_stateDescriptor addStateProperty:[[MDDPInt alloc] initMDDPInt:lookup initialValue:value]];
+   } else {
+      _stateProperties[lookup] = [[MDDPInt alloc] initMDDPInt:lookup initialValue:value];
+   }
 }
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value
 {
-   _stateProperties[lookup] = [[MDDPBit alloc] initMDDPBit:lookup initialValue:value];
+   if (_closuresDefined) {
+      [_stateDescriptor addStateProperty:[[MDDPBit alloc] initMDDPBit:lookup initialValue:value]];
+   } else {
+      _stateProperties[lookup] = [[MDDPBit alloc] initMDDPBit:lookup initialValue:value];
+   }
 }
 -(void)addStates:(id*)states size:(int)size {
    MDDPropertyDescriptor** newStateValues = malloc((_numProperties + size) * sizeof(MDDPropertyDescriptor*));
@@ -635,31 +678,69 @@
    free(_differentialFunctions);
    _differentialFunctions = newDifferentialFunctions;
 }
+-(void)addStatesWithClosures:(int)size {
+   DDClosure* newTransitionClosures = malloc((_numProperties + size) * sizeof(DDClosure));
+   DDMergeClosure* newRelaxationClosures = malloc((_numProperties + size) * sizeof(DDMergeClosure));
+   DDMergeClosure* newDifferentialClosures = malloc((_numProperties + size) * sizeof(DDMergeClosure));
+   for (int stateIndex = 0; stateIndex < _numProperties; stateIndex++) {
+      newTransitionClosures[stateIndex] = _transitionClosures[stateIndex];
+      newRelaxationClosures[stateIndex] = _relaxationClosures[stateIndex];
+      newDifferentialClosures[stateIndex] = _differentialClosures[stateIndex];
+   }
+   _numProperties += size;
+   
+   free(_transitionClosures);
+   _transitionClosures = newTransitionClosures;
+   
+   free(_relaxationClosures);
+   _relaxationClosures = newRelaxationClosures;
+   
+   free(_differentialClosures);
+   _differentialClosures = newDifferentialClosures;
+}
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists
 {
    _arcExists = arcExists;
+}
+-(void)setArcExistsClosure:(DDClosure)arcExists
+{
+   _arcExistsClosure = [arcExists copy];
 }
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup
 {
    _transitionFunctions[lookup] = transitionFunction;
 }
+-(void)addTransitionClosure:(DDClosure)transitionClosure toStateValue:(int)lookup
+{
+   _transitionClosures[lookup] = [transitionClosure copy];
+}
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup
 {
    _relaxationFunctions[lookup] = relaxationFunction;
 }
+-(void)addRelaxationClosure:(DDMergeClosure)relaxationClosure toStateValue:(int)lookup
+{
+   _relaxationClosures[lookup] = [relaxationClosure copy];
+}
 -(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup
 {
    _differentialFunctions[lookup] = differentialFunction;
+}
+-(void)addStateDifferentialClosure:(DDMergeClosure)differentialClosure toStateValue:(int)lookup
+{
+   _differentialClosures[lookup] = [differentialClosure copy];
 }
 -(void)dealloc
 {
    free(_transitionFunctions);
    free(_relaxationFunctions);
    free(_differentialFunctions);
-   for (int i = 0; i < _numProperties; i++) {
-      [_stateProperties[i] release];
+   if (!_closuresDefined) {
+      for (int i = 0; i < _numProperties; i++) {
+         [_stateProperties[i] release];
+      }
+      free(_stateProperties);
    }
-   free(_stateProperties);
    [super dealloc];
 }
 -(NSString*) description
@@ -677,10 +758,15 @@
    return _x;
 }
 
+-(bool)closuresDefined{ return _closuresDefined; }
 -(id<ORExpr>)arcExists { return _arcExists; }
+-(DDClosure)arcExistsClosure { return _arcExistsClosure; }
 -(id<ORExpr>*)transitionFunctions { return _transitionFunctions; }
+-(DDClosure*)transitionClosures { return _transitionClosures; }
 -(id<ORExpr>*)relaxationFunctions { return _relaxationFunctions; }
+-(DDMergeClosure*)relaxationClosures { return _relaxationClosures; }
 -(id<ORExpr>*)differentialFunctions { return _differentialFunctions; }
+-(DDMergeClosure*)differentialClosures { return _differentialClosures; }
 -(int)numProperties { return _numProperties; }
 -(id*)stateProperties { return _stateProperties; }
 

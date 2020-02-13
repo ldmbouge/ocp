@@ -86,13 +86,32 @@
     self = [super init];
     _properties = malloc(numProperties * sizeof(MDDPropertyDescriptor*));
     _currentOffset = 0;
+    _numProperties = numProperties;
+    _currentPropertyIndex = 0;
+    return self;
+}
+-(id) initMDDStateDescriptor {
+    self = [super init];
+    _properties = nil;
+    _currentOffset = 0;
+    _currentPropertyIndex = 0;
     _numProperties = 0;
     return self;
 }
+-(size_t) numProperties { return _numProperties; }
+-(void) addNewProperties:(int)num {
+    MDDPropertyDescriptor** newProperties = malloc((_numProperties+num) * sizeof(MDDPropertyDescriptor*));
+    for (int i = 0; i < _numProperties; i++) {
+        newProperties[i] = _properties[i];
+    }
+    free(_properties);
+    _properties = newProperties;
+    _numProperties += num;
+}
 -(void) addStateProperty:(MDDPropertyDescriptor*)property {
     _currentOffset = [property setOffset:_currentOffset];
-    _properties[_numProperties] = [property retain];
-    _numProperties++;
+    _properties[_currentPropertyIndex] = [property retain];
+    _currentPropertyIndex++;
 }
 -(void) initializeState:(char*)state {
     for (int i = 0; i < _numProperties; i++) {

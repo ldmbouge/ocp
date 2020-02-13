@@ -483,22 +483,46 @@ enum ORGroupType {
 -(Class) stateClass;
 @end*/
 
+@protocol MDDStateDescriptor <NSObject>
+-(id) initMDDStateDescriptor;
+-(id) initMDDStateDescriptor:(int)numProperties;
+-(void) addNewProperties:(int)num;
+-(size_t) numProperties;
+-(void) initializeState:(char*)state;
+-(int) getProperty:(int)propertyIndex forState:(char*)state;
+-(void) setProperty:(int)propertyIndex to:(int)value forState:(char*)state;
+-(size_t) byteOffsetForProperty:(int)propertyIndex;
+-(size_t) numBytes;
+@end
+
 @protocol ORMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addStateCounter:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
+-(void)setStateDescriptor:(id<MDDStateDescriptor>)stateDesc;
+-(id<MDDStateDescriptor>)stateDescriptor;
+-(bool)closuresDefined;
 -(id<ORExpr>)arcExists;
+-(DDClosure)arcExistsClosure;
 -(id<ORExpr>*)transitionFunctions;
+-(DDClosure*)transitionClosures;
 -(id<ORExpr>*)relaxationFunctions;
+-(DDMergeClosure*)relaxationClosures;
 -(id<ORExpr>*)differentialFunctions;
+-(DDMergeClosure*)differentialClosures;
 -(int)numProperties;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
+-(void)setArcExistsClosure:(DDClosure)arcExists;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
+-(void)addTransitionClosure:(DDClosure)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;
+-(void)addRelaxationClosure:(DDMergeClosure)relaxationFunction toStateValue:(int)lookup;
 -(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup;
+-(void)addStateDifferentialClosure:(DDMergeClosure)differentialFunction toStateValue:(int)lookup;
 -(id*)stateProperties;
 -(void)addStates:(id*)states size:(int)size;
+-(void)addStatesWithClosures:(int)size;
 @end
 
 /*@protocol ORAltMDDSpecs <ORConstraint>

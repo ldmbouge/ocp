@@ -1200,6 +1200,16 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
++(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize
+{
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecsUsingClosures:x stateSize:(int)stateSize];
+    [model trackObject:o];
+    return o;
+}
++(id<MDDStateDescriptor>) MDDStateDescriptor {
+    id<MDDStateDescriptor> o = (id)[[MDDStateDescriptor alloc] initMDDStateDescriptor];
+    return o;
+}
 /*+(id<ORAltMDDSpecs>) AltMDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x
 {
     id<ORAltMDDSpecs> o = [[ORAltMDDSpecs alloc] initORAltMDDSpecs:x];

@@ -1,5 +1,6 @@
 #import <ORFoundation/ORTrailI.h>
 #import "ORMDDProperties.h"
+#import "ORConstraintI.h"
 
 @class MDDStateValues;
 @interface Node : NSObject {
@@ -118,8 +119,10 @@ static inline id getState(Node* n) { return n->_state;}
     int _hashWidth;
 }
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars;
+-(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars stateDescriptor:(MDDStateDescriptor*)stateDescriptor;
 -(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
 -(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
+-(void) addMDDSpec:(ORMDDSpecs*)MDDSpec mapping:(int*)mapping;
 -(MDDStateValues*) createRootState:(int)variable;
 -(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
 -(MDDStateValues*) createTempStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;

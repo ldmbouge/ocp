@@ -295,6 +295,8 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs topDown:(bool)topDown;
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
++(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
++(id<MDDStateDescriptor>) MDDStateDescriptor;
 //+(id<ORAltMDDSpecs>) AltMDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x;
 
 
