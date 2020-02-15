@@ -487,7 +487,7 @@ enum ORGroupType {
 -(id) initMDDStateDescriptor;
 -(id) initMDDStateDescriptor:(int)numProperties;
 -(void) addNewProperties:(int)num;
--(size_t) numProperties;
+-(int) numProperties;
 -(void) initializeState:(char*)state;
 -(int) getProperty:(int)propertyIndex forState:(char*)state;
 -(void) setProperty:(int)propertyIndex to:(int)value forState:(char*)state;
@@ -514,6 +514,9 @@ enum ORGroupType {
 -(int)numProperties;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
 -(void)setArcExistsClosure:(DDClosure)arcExists;
+-(void)setAsAmongConstraint:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void)setAmongArc:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void)setAmongTransitions:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range values:(id<ORIntSet>)values;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
 -(void)addTransitionClosure:(DDClosure)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;

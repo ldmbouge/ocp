@@ -704,7 +704,87 @@
 }
 -(void)setArcExistsClosure:(DDClosure)arcExists
 {
-   _arcExistsClosure = [arcExists copy];
+   _arcExistsClosure = [arcExists retain];
+}
+-(void)setAsAmongConstraint:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values {
+   ORInt minDom = [range low];
+   int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
+   int minCount = 0 + fpi,
+          maxCount = 1 + fpi,
+          rem = 2 + fpi;
+   MDDPropertyDescriptor** properties = [stateDesc properties];
+   MDDPropertyDescriptor* minCProp = properties[minCount];
+   MDDPropertyDescriptor* maxCProp = properties[maxCount];
+   MDDPropertyDescriptor* remProp = properties[rem];
+   
+   bool* valueInSetLookup = calloc([range size], sizeof(bool));
+   [values enumerateWithBlock:^(ORInt value) {
+      valueInSetLookup[value - minDom] = true;
+   }];
+   
+   _arcExistsClosure = [(id)^(char* state, ORInt variable, ORInt value) {
+      ORInt index = value - minDom;
+      int valueInSet = valueInSetLookup[index];
+      return ([minCProp get:state] + valueInSet <= ub) &&
+      (lb <= [maxCProp  get:state] + valueInSet + [remProp get:state] - 1);
+   } copy];
+   _transitionClosures[0] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [minCProp get:state] + valueInSetLookup[value-minDom];
+   } copy];
+   _transitionClosures[1] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [maxCProp get:state] + valueInSetLookup[value-minDom];
+   } copy];
+   _transitionClosures[2] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [remProp get:state] - 1;
+   } copy];
+}
+-(void)setAmongArc:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values {
+   ORInt minDom = [range low];
+   int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
+   int minCount = 0 + fpi,
+          maxCount = 1 + fpi,
+          rem = 2 + fpi;
+   MDDPropertyDescriptor** properties = [stateDesc properties];
+   MDDPropertyDescriptor* minCProp = properties[minCount];
+   MDDPropertyDescriptor* maxCProp = properties[maxCount];
+   MDDPropertyDescriptor* remProp = properties[rem];
+   
+   bool* valueInSetLookup = calloc([range size], sizeof(bool));
+   [values enumerateWithBlock:^(ORInt value) {
+      valueInSetLookup[value - minDom] = true;
+   }];
+   
+   _arcExistsClosure = [(id)^(char* state, ORInt variable, ORInt value) {
+      ORInt index = value - minDom;
+      int valueInSet = valueInSetLookup[index];
+      return ([minCProp get:state] + valueInSet <= ub) &&
+      (lb <= [maxCProp  get:state] + valueInSet + [remProp get:state] - 1);
+   } copy];
+}
+-(void)setAmongTransitions:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range values:(id<ORIntSet>)values {
+   ORInt minDom = [range low];
+   int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
+   int minCount = 0 + fpi,
+          maxCount = 1 + fpi,
+          rem = 2 + fpi;
+   bool* valueInSetLookup = calloc([range size], sizeof(bool));
+   [values enumerateWithBlock:^(ORInt value) {
+      valueInSetLookup[value - minDom] = true;
+   }];
+   MDDPropertyDescriptor** properties = [stateDesc properties];
+   MDDPropertyDescriptor* minCProp = properties[minCount];
+   MDDPropertyDescriptor* maxCProp = properties[maxCount];
+   MDDPropertyDescriptor* remProp = properties[rem];
+   
+   _transitionClosures[0] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [minCProp get:state] + valueInSetLookup[value-minDom];
+   } copy];
+   _transitionClosures[1] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [maxCProp get:state] + valueInSetLookup[value-minDom];
+   } copy];
+   _transitionClosures[2] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [remProp get:state] - 1;
+   } copy];
 }
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup
 {
@@ -712,7 +792,7 @@
 }
 -(void)addTransitionClosure:(DDClosure)transitionClosure toStateValue:(int)lookup
 {
-   _transitionClosures[lookup] = [transitionClosure copy];
+   _transitionClosures[lookup] = [transitionClosure retain];
 }
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup
 {

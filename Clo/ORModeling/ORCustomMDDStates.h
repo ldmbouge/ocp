@@ -6,8 +6,7 @@
 @interface Node : NSObject {
 @public
     int _value;
-    bool _isSink;
-    bool _isSource;
+    TRInt _layerIndex;
     id<ORTrail> _trail;
     
     TRId* _children;
@@ -27,24 +26,25 @@
 -(id) initNode: (id<ORTrail>) trail hashWidth:(int)hashWidth;
 -(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(MDDStateValues*)state hashWidth:(int)hashWidth;
 -(void) dealloc;
+-(int) layerIndex;
+-(void) setInitialLayerIndex:(int)index;
+-(void) updateLayerIndex:(int)index;
 -(TRId) getState;
 -(int) value;
 -(bool) isMergedNode;
 -(void) setIsMergedNode:(bool)isMergedNode;
 -(bool) recalcRequired;
 -(void) setRecalcRequired:(bool)recalcRequired;
--(bool) isVital;
--(void) setIsSource:(bool)isSource;
--(void) setIsSink:(bool)isSink;
--(bool) isNonVitalAndChildless;
--(bool) isNonVitalAndParentless;
+-(bool) isChildless;
+-(bool) isParentless;
 -(TRId*) children;
 -(int) numChildren;
--(void) addChild:(Node*)child at:(int)index;
+-(void) addChild:(Node*)child at:(int)index inPost:(bool)inPost;
 -(void) removeChildAt: (int) index;
 -(void) removeChild:(Node*)child numTimes:(int)childCount updatingLVC:(TRInt*)variable_count;
 -(void) replaceChild:(Node*)oldChild with:(Node*)newChild numTimes:(int)childCount;
 -(bool) hasParents;
+-(void) addFirstParent: (Node*) parent;
 -(void) addParent: (Node*) parent;
 -(bool) hasParent:(Node*)parent;
 -(int) countForParent:(Node*)parent;
@@ -125,17 +125,21 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) addMDDSpec:(ORMDDSpecs*)MDDSpec mapping:(int*)mapping;
 -(MDDStateValues*) createRootState:(int)variable;
 -(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
+-(MDDStateValues*) createStateWith:(char*)stateProperties;
 -(MDDStateValues*) createTempStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
 -(char*) computeStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
+-(char*) computeStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value;
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
--(bool) canCreateState:(MDDStateValues**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value;
+-(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state;
+-(bool) canCreateState:(char**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value;
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(int) numProperties;
 -(size_t) numBytes;
 -(MDDStateDescriptor*) stateDescriptor;
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width;
+-(NSUInteger) hashValueFor:(char*)stateProperties;
 -(int) hashWidth;
 @end
     
@@ -154,6 +158,7 @@ static inline id getState(Node* n) { return n->_state;}
 -(char*) state;
 -(BOOL) isEqual:(MDDStateValues*)other;
 -(void) trailByte:(size_t)byteOffset trail:(id<ORTrail>)trail;
+-(BOOL) isEqualToStateProperties:(char*)other;
 -(BOOL) isEqualToMDDStateValues:(MDDStateValues*)other;
 -(int) calcHash:(int)width;
 -(void) setHash:(int)width trail:(id<ORTrail>)trail;

@@ -11,7 +11,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import ORProgram
 
-var _stateDescriptor : MDDStateDescriptor = ORFactory.mddStateDescriptor()
+let _stateDescriptor : MDDStateDescriptor = ORFactory.mddStateDescriptor()
 
 //infix operator ∨ { associativity left precedence 110 }
 infix operator ∨ : LogicalDisjunctionPrecedence
@@ -313,6 +313,9 @@ public func Prop(_ t : ORTracker,_ name : ORExpr) -> ORExpr {
     return ORFactory.getStateValue(t,lookupExpr:name)
 }
 
+public func StateProp(_ s : Optional<UnsafeMutablePointer<Int8>>,_ p : Int,_ fpi : Int,_ stateDesc : MDDStateDescriptor) -> Int {
+    return Int(stateDesc.getProperty(Int32(p + fpi), forState: s))
+}
 public func StateProp(_ s : Optional<UnsafeMutablePointer<Int8>>,_ p : Int,_ fpi : Int) -> Int {
     return Int(_stateDescriptor.getProperty(Int32(p + fpi), forState: s))
 }
@@ -341,19 +344,28 @@ public func intMatrix(_ t : ORTracker, r1 : ORIntRange,_ r2 : ORIntRange, body :
 }
 
 public func minClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
-    return { (left : Optional<UnsafeMutablePointer<Int8>>,right : Optional<UnsafeMutablePointer<Int8>>) -> Int in
+    let minClosure : DDMergeClosure = { (left,right) in
         return min(StateProp(left, p, fpi),StateProp(right, p, fpi))
     }
+    return minClosure
 }
 public func maxClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
-    return { (left : Optional<UnsafeMutablePointer<Int8>>,right : Optional<UnsafeMutablePointer<Int8>>) -> Int in
+    let maxClosure : DDMergeClosure = { (left,right) in
         return max(StateProp(left, p, fpi),StateProp(right, p, fpi))
     }
+    return maxClosure
+}
+public func leftClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
+    let leftClosure : DDMergeClosure = { (left,right) in
+        return StateProp(left, p, fpi)
+    }
+    return leftClosure
 }
 public func differenceClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
-    return { (left : Optional<UnsafeMutablePointer<Int8>>,right : Optional<UnsafeMutablePointer<Int8>>) -> Int in
+    let diffClosure : DDMergeClosure = { (left,right) in
         return abs(StateProp(left, p, fpi) - StateProp(right, p, fpi))
     }
+    return diffClosure
 }
 
 extension Dictionary {
@@ -456,6 +468,15 @@ extension ORMDDSpecs {
     func arc(_ f : @escaping DDClosure) -> Void {
         self.setArcExistsClosure(f)
     }
+    func setAsAmong(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
+        self.setAsAmongConstraint(stateDesc,domainRange: domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
+    }
+    func amongArc(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) -> Void {
+        self.setAmongArc(stateDesc, domainRange: domainRange, lb: Int32(lb), ub: Int32(ub), values: values)
+    }
+    func amongTransitions(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ values : ORIntSet!) -> Void {
+        self.setAmongTransitions(stateDesc, domainRange: domainRange, values: values)
+    }
     func transition<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
             self.addTransitionFunction(v as? ORExpr, toStateValue: Int32(k))
@@ -481,6 +502,9 @@ extension ORMDDSpecs {
     }
     func addRelaxationAsMax(_ p : Int, _ fpi : Int) -> Void {
         self.addRelaxationClosure(maxClosure(p,fpi), toStateValue: Int32(p))
+    }
+    func addRelaxationAsLeft(_ p : Int, _ fpi : Int) -> Void {
+        self.addRelaxationClosure(leftClosure(p,fpi), toStateValue: Int32(p))
     }
     func similarity<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
@@ -607,39 +631,66 @@ public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values :
                      rem  : literal(m, 0)])
     return mdd
 }
+/*class amongClosures {
+    let stateDescriptor : MDDStateDescriptor
+    let fpi : Int  //First Property Index
+    var valueInSetLookup : [Bool]
+    var lb : Int = 0
+    var ub : Int = 0
+    var minDom : Int = 0
+    let minC = 0, maxC = 1, rem = 2
+    init(_ stateDesc : MDDStateDescriptor,_ x : ORIntVarArray, _ lb : Int, _ ub : Int, _ values : ORIntSet) {
+        let udom = arrayDomains(x),
+            domSize = Int(udom.size())
+        self.minDom = Int(udom.low())
+        self.lb = lb
+        self.ub = ub
+        self.stateDescriptor = stateDesc
+        self.fpi = stateDesc.numProperties()
+        self.valueInSetLookup = Array(repeating:false, count:domSize)
+        values.enumerate({ [unowned self] (value : ORInt) in
+            self.valueInSetLookup[Int(value) - self.minDom] = true
+        })
+        stateDesc.addNewProperties(3)
+    }
+    lazy var arcExists : DDClosure =  { [unowned self](state,variable,value) in
+        unowned var sd = self.stateDescriptor
+            let index = Int(value)-self.minDom
+            let valueInSetBool = self.valueInSetLookup[index]
+            let valueInSet = valueInSetBool.intValue
+            if (StateProp(state, self.minC, self.fpi, sd) + valueInSet > self.ub) {
+                return 0
+            }
+            return (self.lb <= StateProp(state, self.maxC, self.fpi, sd) + valueInSet +
+                               StateProp(state, self.rem, self.fpi, sd) - 1).intValue
+        }
+    lazy var minCountTransition : DDClosure = { (state,variable,value) in
+        return StateProp(state, self.minC, self.fpi, self.stateDescriptor) + self.valueInSetLookup[Int(value)-self.minDom].intValue
+    }
+    lazy var maxCountTransition : DDClosure  = { (state,variable,value) in
+        return StateProp(state, self.maxC, self.fpi, self.stateDescriptor) + self.valueInSetLookup[Int(value)-self.minDom].intValue
+    }
+    lazy var remTransition : DDClosure = { (state,variable,value) in
+        return StateProp(state, self.rem, self.fpi, self.stateDescriptor) - 1
+    }
+}*/
 public func amongMDDClosures(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
-    let fpi = _stateDescriptor.numProperties()  //First Property Index
-    _stateDescriptor.addNewProperties(3)
+    let fpi = _stateDescriptor.numProperties()
     let minC = 0,maxC = 1,rem = 2
+    let udom = arrayDomains(x)
     let mdd = ORFactory.mddSpecs(withClosures: m, variables: x, stateSize: 3)
     mdd.setStateDescriptor(_stateDescriptor)
-    mdd.state([(minC, 0),(maxC, 0), (rem, x.size)])
+    _stateDescriptor.addNewProperties(3)
+    mdd.state([(minC, 0),(maxC, 0)
+        , (rem, x.size)])
     //Need this to be ordered so the properties are indexed correctly.
     
-    mdd.arc( { (state : Optional<UnsafeMutablePointer<Int8>>,variable : ORInt,value : ORInt) -> Int in
-        let valueInSet = values.member(value).intValue
-        return ((StateProp(state, minC, fpi) + valueInSet <= ub) && (lb <= StateProp(state, maxC, fpi) + valueInSet + StateProp(state, rem, fpi) - 1)).intValue
-    })
-    let minCountTransitionClosure = { (state : Optional<UnsafeMutablePointer<Int8>>,variable : ORInt,value : ORInt) -> Int in
-        return StateProp(state, minC, fpi) + values.member(value).intValue
-    }
-    let maxCountTransitionClosure = { (state : Optional<UnsafeMutablePointer<Int8>>,variable : ORInt,value : ORInt) -> Int in
-        return StateProp(state, maxC, fpi) + values.member(value).intValue
-    }
-    let remTransitionClosure = { (state : Optional<UnsafeMutablePointer<Int8>>,variable : ORInt,value : ORInt) -> Int in
-        return StateProp(state, rem, fpi) - 1
-    }
-    mdd.transitionClosures([minC : minCountTransitionClosure,
-                            maxC : maxCountTransitionClosure,
-                             rem : remTransitionClosure])
-    let remRelaxationClosure = { (left : Optional<UnsafeMutablePointer<Int8>>,right : Optional<UnsafeMutablePointer<Int8>>) -> Int in
-        return StateProp(left, rem, fpi)
-    }
-    mdd.addRelaxationAsMin(minC, fpi)
-    mdd.addRelaxationAsMax(maxC, fpi)
-    mdd.addRelaxationClosure(remRelaxationClosure, toStateValue: Int32(rem))
-    mdd.addSimilarityAsDifference(minC, fpi)
-    mdd.addSimilarityAsDifference(maxC, fpi)
+    mdd.setAsAmong(_stateDescriptor,udom,lb,ub,values)
+    mdd.addRelaxationAsMin(minC, Int(fpi))
+    mdd.addRelaxationAsMax(maxC, Int(fpi))
+    mdd.addRelaxationAsLeft(rem, Int(fpi))
+    mdd.addSimilarityAsDifference(minC, Int(fpi))
+    mdd.addSimilarityAsDifference(maxC, Int(fpi))
     return mdd
 }
 

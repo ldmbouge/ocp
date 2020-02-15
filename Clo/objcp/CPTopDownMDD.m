@@ -25,6 +25,18 @@
     _maxPerHash = calloc(_width, sizeof(int));
     return self;
 }
+-(bool) hasNodeWithStateProperties:(char*)stateProperties hash:(NSUInteger)hash node:(Node**)existingNode {
+    _lastCheckedHash = hash;
+    if (_numPerHash[_lastCheckedHash] == 0) return false;
+    MDDStateValues** stateList = _stateLists[_lastCheckedHash];
+    for (int i = 0; i < _numPerHash[_lastCheckedHash]; i++) {
+        if ([stateList[i] isEqualToStateProperties:stateProperties]) {
+            *existingNode = [stateList[i] node];
+            return true;
+        }
+    }
+    return false;
+}
 -(bool) hasNodeWithState:(MDDStateValues*)state node:(Node**)existingNode {
     _lastCheckedHash = [state hash];
     if (_numPerHash[_lastCheckedHash] == 0) return false;
@@ -209,8 +221,6 @@
     //_parentLookup = [[NodeIndexHashTable alloc] initNodeIndexHashTable:hashWidth trail:_trail];
     //Does parentLookup need to initialize all bucket values as ORTRIntArrayI at this point?  Does the whole NodeHashTable's array need to be trailable?  I think this ends up being too costly.
     _value = -1;
-    _isSink = false;
-    _isSource = false;
     
     _isMergedNode = makeTRInt(_trail, 0);
     _recalcRequired = false;
@@ -239,8 +249,6 @@
     _numUniqueParents = makeTRInt(_trail, 0);
     //_parentLookup = [[NodeIndexHashTable alloc] initNodeIndexHashTable:hashWidth trail:_trail];
     _value = value;
-    _isSink = false;
-    _isSource = false;
     
     _isMergedNode = makeTRInt(_trail, 0);
     _recalcRequired = false;
@@ -262,14 +270,15 @@
     [super dealloc];
 }
 
+-(int) layerIndex { return _layerIndex._val; }
+-(void) setInitialLayerIndex:(int)index {
+    _layerIndex = makeTRInt(_trail, index);
+}
+-(void) updateLayerIndex:(int)index {
+    assignTRInt(&_layerIndex,index,_trail);
+}
 -(TRId) getState {
     return _state;
-}
--(void) setIsSink: (bool) isSink {
-    _isSink = isSink;
-}
--(void) setIsSource: (bool) isSource {
-    _isSource = isSource;
 }
 -(int) value {
     return _value;
@@ -286,11 +295,16 @@
 -(void) setRecalcRequired:(bool)value {
     _recalcRequired = value;
 }
--(void) addChild:(Node*)child at:(int)index {
-    if (_children[index] == NULL) {
+-(void) addChild:(Node*)child at:(int)index inPost:(bool)inPost {
+    if (inPost) {
         assignTRInt(&_numChildren, _numChildren._val +1, _trail);
+        _children[index] = makeTRId(_trail, child);
+    } else {
+        if (_children[index] == NULL) {
+            assignTRInt(&_numChildren, _numChildren._val +1, _trail);
+        }
+        assignTRId(&_children[index], child, _trail);
     }
-    assignTRId(&_children[index], child, _trail);
 }
 -(void) removeChildAt: (int) index {
     assignTRId(&_children[index], NULL, _trail);
@@ -317,6 +331,11 @@
 }
 -(int) numUniqueParents {
     return _numUniqueParents._val;
+}
+-(void) addFirstParent:(Node*)parent {
+    [_uniqueParents set:parent at:0];
+    [_parentCounts set:1 at:0];
+    assignTRInt(&_numUniqueParents,1,_trail);
 }
 -(void) addParent: (Node*) parent {
     int parentIndex = [self findUniqueParentIndexFor:parent addToHash:true];
@@ -374,14 +393,11 @@
         [self removeParentAt:parentIndex];
     }
 }
--(bool) isVital {
-    return _isSource || _isSink;
+-(bool) isChildless {
+    return !_numChildren._val;
 }
--(bool) isNonVitalAndChildless {
-    return !(_numChildren._val || [self isVital]);
-}
--(bool) isNonVitalAndParentless {
-    return !(_numUniqueParents._val || [self isVital]);
+-(bool) isParentless {
+    return !_numUniqueParents._val;
 }
 -(bool) hasParent:(Node*)parent {
     return [self findUniqueParentIndexFor:parent addToHash:false] >= 0;
@@ -501,6 +517,7 @@
 }
 -(void) post
 {
+    _inPost = true;
     [self createRootAndSink];
     for (int layer = 1; layer < _numVariables; layer++) {
         [self assignVariableToLayer:layer];
@@ -508,9 +525,10 @@
         //[self buildLayer:layer];
         [self cleanLayer: layer];
     }
-    [self buildLayerByValue:(int)_numVariables];
+    [self buildLastLayer];
     //[self buildLayer:(int)_numVariables];
     [self addPropagationsAndTrimDomains];
+    _inPost = false;
     return;
 }
 -(void) assignVariableToLayer:(int)layer {
@@ -537,7 +555,6 @@
 -(void) createRootAndSink
 {
     Node *sink = [[Node alloc] initNode: _trail hashWidth:[_spec hashWidth]];
-    [sink setIsSink: true];
     [self addNode: sink toLayer:((int)_numVariables)];
     
     id state = [self generateRootState:_nextVariable];
@@ -548,7 +565,6 @@
                                   value:[self variableIndexForLayer:0]
                                   state:state
                               hashWidth:[_spec hashWidth]];
-    [root setIsSource:true];
     [self addNode:root toLayer:0];
     [state release];
     [root release];
@@ -556,7 +572,7 @@
 }
 -(void) cleanLayer:(int)layer { return; }
 -(void) afterPropagation { return; }
--(void) buildLayer:(int)layer
+/*-(void) buildLayer:(int)layer
 {
     int parentLayer = layer-1;
     //NSMutableDictionary<MDDStateValues*,Node*> *stateToNodeDict = [[NSMutableDictionary alloc] init];
@@ -576,6 +592,37 @@
     }
     //[stateToNodeDict release];
     [nodeHashTable release];
+}*/
+-(void) buildLastLayer {
+    int parentLayer = (int)_numVariables-1;
+    int minDomain = _min_domain_for_layer[parentLayer];
+    int maxDomain = _max_domain_for_layer[parentLayer];
+    int parentVariableIndex = _layer_to_variable[parentLayer];
+    int parentLayerSize = layer_size[parentLayer]._val;
+    id<CPIntVar> parentVariable = _x[parentVariableIndex];
+    ORTRIdArrayI* parentNodes = layers[parentLayer];
+    Node* sink = [layers[_numVariables] at: 0];
+    for (int edgeValue = minDomain; edgeValue <= maxDomain; edgeValue++) {
+        if ([parentVariable member: edgeValue]) {
+            for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
+                Node* parentNode = [parentNodes at: parentNodeIndex];
+                MDDStateValues* parentState = getState(parentNode);
+                if([_spec canChooseValue:edgeValue forVariable:parentVariableIndex withState:parentState]) {
+                    [sink addParent:parentNode];
+                    [parentNode addChild:sink at:edgeValue inPost:_inPost];
+                    assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
+                }
+            }
+        }
+    }
+    for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
+        Node* parentNode = [parentNodes at: parentNodeIndex];
+        if ([parentNode isChildless]) {
+            [self removeChildlessNodeFromMDDAtIndex:parentNodeIndex fromLayer:parentLayer];
+            parentNodeIndex--;
+            parentLayerSize--;
+        }
+    }
 }
 -(void) buildLayerByValue:(int)layer {
     int parentLayer = layer-1;
@@ -584,13 +631,9 @@
     int minDomain = _min_domain_for_layer[parentLayer];
     int maxDomain = _max_domain_for_layer[parentLayer];
     int parentLayerSize = layer_size[parentLayer]._val;
-    int childMinDomain, childMaxDomain;
     int hashWidth = [_spec hashWidth];
-    bool lastLayer = (layer == _numVariables);
-    if (!lastLayer) {
-        childMinDomain = _min_domain_for_layer[parentLayer+1];
-        childMaxDomain = _max_domain_for_layer[parentLayer+1];
-    }
+    int childMinDomain = _min_domain_for_layer[parentLayer+1];
+    int childMaxDomain = _max_domain_for_layer[parentLayer+1];
     id<CPIntVar> parentVariable = _x[parentVariableIndex];
     BetterNodeHashTable* nodeHashTable = [[BetterNodeHashTable alloc] initBetterNodeHashTable:[_spec hashWidth]];
     //NSMapTable<MDDStateValues*,Node*> *stateToNodeMap = [[NSMapTable alloc] init];
@@ -599,33 +642,35 @@
         if ([parentVariable member: edgeValue]) {
             for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
                 Node* parentNode = [parentNodes at: parentNodeIndex];
-                MDDStateValues* parentState = [parentNode getState];
-                MDDStateValues* newState;
-                bool canCreateState = [_spec canCreateState:&newState fromParent:parentState assigningVariable:parentVariableIndex toValue:edgeValue];
-                if (canCreateState) {
-                    Node* childNode = nil;
-                    if (!lastLayer) {
-                        bool nodeExists = [nodeHashTable hasNodeWithState:newState node:&childNode];
-                        //childNode = [stateToNodeMap objectForKey:newState];
-                        if (!nodeExists) {
-                            childNode = [[Node alloc] initNode: _trail
-                                                 minChildIndex:childMinDomain
-                                                 maxChildIndex:childMaxDomain
-                                                         value:childVariableIndex
-                                                         state:newState
-                                                     hashWidth:hashWidth];
-                            [self addNode:childNode toLayer:layer];
-                            [nodeHashTable addState:newState];
-                            //[stateToNodeMap setObject:childNode forKey:newState];
-                            [childNode release];
-                        }
+                MDDStateValues* parentState = getState(parentNode);
+                char* newStateProperties;
+                if ([_spec canCreateState:&newStateProperties fromParent:parentState assigningVariable:parentVariableIndex toValue:edgeValue]) {
+                    NSUInteger hashValue = [_spec hashValueFor:newStateProperties];
+                    Node* childNode;
+                    bool nodeExists = [nodeHashTable hasNodeWithStateProperties:newStateProperties hash:hashValue node:&childNode];
+                    //childNode = [stateToNodeMap objectForKey:newState];
+                    if (!nodeExists) {
+                        MDDStateValues* newState = [_spec createStateWith:newStateProperties];
+                        childNode = [[Node alloc] initNode: _trail
+                                             minChildIndex:childMinDomain
+                                             maxChildIndex:childMaxDomain
+                                                     value:childVariableIndex
+                                                     state:newState
+                                                 hashWidth:hashWidth];
+                        [self addNode:childNode toLayer:layer];
+                        [nodeHashTable addState:newState];
+                        //[stateToNodeMap setObject:childNode forKey:newState];
+                        [childNode addFirstParent:parentNode];
+                        [parentNode addChild:childNode at:edgeValue inPost:_inPost];
+                        assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
+                        [newState release];
+                        [childNode release];
                     } else {
-                        childNode = [layers[_numVariables] at: 0];
+                        free(newStateProperties);
+                        [childNode addParent:parentNode];
+                        [parentNode addChild:childNode at:edgeValue inPost:_inPost];
+                        assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
                     }
-                    [newState release];
-                    [parentNode addChild:childNode at:edgeValue];
-                    [childNode addParent:parentNode];
-                    assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
                 }
             }
         }
@@ -635,16 +680,19 @@
     }
     [nodeHashTable release];
     //[stateToNodeMap release];
-    for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
-        Node* parentNode = [parentNodes at: parentNodeIndex];
-        if ([parentNode isNonVitalAndChildless]) {
-            [self removeChildlessNodeFromMDD:parentNode fromLayer:parentLayer inPost:true];
-            parentNodeIndex--;
+    if (layer != 1) {
+        for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
+            Node* parentNode = [parentNodes at: parentNodeIndex];
+            if ([parentNode isChildless]) {
+                [self removeChildlessNodeFromMDDAtIndex:parentNodeIndex fromLayer:parentLayer];
+                parentNodeIndex--;
+                parentLayerSize--;
+            }
         }
     }
 }
 //-(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer stateToNodeDict:(NSMutableDictionary<MDDStateValues*,Node*>*)stateToNodeDict
--(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer nodeHashTable:(BetterNodeHashTable*)nodeHashTable
+/*-(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer nodeHashTable:(BetterNodeHashTable*)nodeHashTable
 {
     int minDomain = _min_domain_for_layer[parentLayer];
     int maxDomain = _max_domain_for_layer[parentLayer];
@@ -687,7 +735,7 @@
             }
         }
     }
-}
+}*/
 -(void) addPropagationsAndTrimDomains
 {
     for(ORInt layer = 0; layer < _numVariables; layer++) {
@@ -754,62 +802,59 @@
 }
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
-    if (max_layer_size[layer_index]._val == layer_size[layer_index]._val) {
+    int layerSize = layer_size[layer_index]._val;
+    if (max_layer_size[layer_index]._val == layerSize) {
         assignTRInt(&max_layer_size[layer_index], max_layer_size[layer_index]._val*2, _trail);
         [layers[layer_index] resize:max_layer_size[layer_index]._val];
     }
-    [layers[layer_index] set:node at:layer_size[layer_index]._val];
-    assignTRInt(&layer_size[layer_index], layer_size[layer_index]._val+1, _trail);
+    [node setInitialLayerIndex:layerSize];
+    [layers[layer_index] set:node at:layerSize];
+    assignTRInt(&layer_size[layer_index], layerSize+1, _trail);
 }
--(void) removeNodeAt:(int)index onLayer:(int)layer_index {
-    ORTRIdArrayI* layer = layers[layer_index];
-    
-    int finalNodeIndex = layer_size[layer_index]._val-1;
-    [layer set:[layer at:finalNodeIndex] at:index];
-    [layer set:NULL at: finalNodeIndex];
-    assignTRInt(&layer_size[layer_index], finalNodeIndex,_trail);
+-(void) removeNode:(Node*)node onLayer:(int)node_layer {
+    [self removeNodeAt:[node layerIndex] onLayer:node_layer];
 }
--(void) removeNode: (Node*) node {
-    int node_layer = [self layerIndexForVariable:node.value];
+-(void) removeNodeAt:(int)index onLayer:(int)node_layer {
     ORTRIdArrayI* layer = layers[node_layer];
-    int currentLayerSize = layer_size[node_layer]._val;
-    int finalNodeIndex = currentLayerSize-1;
     
-    for (int node_index = 0; node_index < finalNodeIndex; node_index++) {
-        if ([layer at: node_index] == node) {
-            [layer set:[layer at:finalNodeIndex] at:node_index];
-            [layer set:NULL at:finalNodeIndex];
-            assignTRInt(&layer_size[node_layer], finalNodeIndex,_trail);
-            return;
-        }
+    int finalNodeIndex = layer_size[node_layer]._val-1;
+    if (index != finalNodeIndex) {
+        Node* movedNode = [layer at:finalNodeIndex];
+        [movedNode updateLayerIndex:index];
+        [layer set:movedNode at:index];
     }
-    if ([layer at:finalNodeIndex] == node) {
-        [layer set:NULL at:finalNodeIndex];
-        assignTRInt(&layer_size[node_layer], finalNodeIndex,_trail);
-    }
+    [layer set:NULL at:finalNodeIndex];
+    assignTRInt(&layer_size[node_layer], finalNodeIndex,_trail);
+}
+-(int) removeChildlessNodeFromMDDAtIndex:(int)nodeIndex fromLayer:(int)layer {
+    int highestLayerChanged = [self checkParentsOfChildlessNode:[layers[layer] at:nodeIndex] parentLayer:layer-1];
+    [self removeNodeAt: nodeIndex onLayer:layer];
+    return highestLayerChanged;
 }
 -(int) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer {
-    return [self removeChildlessNodeFromMDD:node fromLayer:layer inPost:false];
+    if (layer == 0) { failNow(); }
+    int highestLayerChanged = [self checkParentsOfChildlessNode:node parentLayer:layer-1];
+    [self removeNode: node onLayer:layer];
+    return highestLayerChanged;
 }
--(int) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer inPost:(bool)inPost {
-    int parentLayer = layer-1;
+-(int) checkParentsOfChildlessNode:(Node*)node parentLayer:(int)layer {
     int numUniqueParents = [node numUniqueParents];
     ORTRIdArrayI* parents = [node uniqueParents];
-    int highestLayerChanged = parentLayer;
+    int highestLayerChanged = layer;
     
     for (int parentIndex = 0; parentIndex < numUniqueParents; parentIndex++) {
         Node* parent = [parents at: parentIndex];
         int countForParent = [node countForParentIndex:parentIndex];
-        [parent removeChild:node numTimes:countForParent updatingLVC:layer_variable_count[parentLayer]];
-        if ([parent isNonVitalAndChildless]) {
-            highestLayerChanged = min(highestLayerChanged,[self removeChildlessNodeFromMDD:parent fromLayer:parentLayer inPost:inPost]);
+        [parent removeChild:node numTimes:countForParent updatingLVC:layer_variable_count[layer]];
+        if ([parent isChildless]) {
+            highestLayerChanged = min(highestLayerChanged,[self removeChildlessNodeFromMDD:parent fromLayer:layer]);
         }
     }
-    [self removeNode: node];
     return highestLayerChanged;
 }
 -(int) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer {
     //TODO: Improve this function (may be improved with using real edges?).  Ideally only iterate over actual children.  Currently has to iterate over all domain vals, then for each domain val with a child, need to iterate over all of that child's parents
+    if (layer == _numVariables) { failNow(); }
     Node* *children = [node children];
     int childLayer = layer+1;
     int numChildren = [node numChildren];
@@ -821,7 +866,7 @@
             [node removeChildAt: child_index];
             [childNode removeParentOnce: node];
             assignTRInt(&layer_variable_count[layer][child_index], layer_variable_count[layer][child_index]._val-1, _trail);
-            if ([childNode isNonVitalAndParentless]) {
+            if ([childNode isParentless]) {
                 lowestLayerChanged = max(lowestLayerChanged, [self removeParentlessNodeFromMDD:childNode fromLayer:childLayer]);
             } else {
                 if ([childNode isMergedNode]) {
@@ -832,7 +877,7 @@
             numChildren--;
         }
     }
-    [self removeNode: node];
+    [self removeNode: node onLayer:layer];
     return lowestLayerChanged;
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
@@ -846,10 +891,10 @@
         Node* childNode = [node children][value];
         if (childNode != NULL) {
             [childNode removeParentOnce:node];
-            if ([childNode isNonVitalAndParentless]) {
+            if ([childNode isParentless]) {
                 lowestLayerChanged = max(lowestLayerChanged, [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1)]);
             }
-            if ([node isNonVitalAndChildless]) {
+            if ([node isChildless]) {
                 highestLayerChanged = max(highestLayerChanged, [self removeChildlessNodeFromMDD:node fromLayer:layer_index]);
                 node_index--;
             }
@@ -1056,7 +1101,7 @@
         if (childNode != NULL) {
             [node removeChildAt: value];
             [childNode removeParentOnce:node];
-            if ([childNode isNonVitalAndParentless]) {
+            if ([childNode isParentless]) {
                 lowestLayerChanged = max(lowestLayerChanged, [self removeParentlessNodeFromMDD:childNode fromLayer:(layer_index+1)]);
             } else {
                 if ([childNode isMergedNode]) {
@@ -1064,7 +1109,7 @@
                     [childNode setRecalcRequired:true];
                 }
             }
-            if ([node isNonVitalAndChildless]) {
+            if ([node isChildless]) {
                 highestLayerChanged = min(highestLayerChanged, [self removeChildlessNodeFromMDD:node fromLayer:layer_index]);
                 node_index--;
             }
@@ -1129,7 +1174,7 @@
                                 if (oldNodeChild != NULL) {
                                     if ([_spec canChooseValue:domain_val forVariable:[self variableIndexForLayer:layer] withState:state]) {
                                         //Check if this arc should exist from the old state
-                                        [newNode addChild:oldNodeChild at:domain_val];
+                                        [newNode addChild:oldNodeChild at:domain_val inPost:_inPost];
                                         [oldNodeChild addParent: newNode];
                                         assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val+1, _trail);
                                         [oldNodeChild setRecalcRequired:true];
@@ -1140,7 +1185,7 @@
                             addedNewNode = true;
                             [bucket addObject:newNode];
                         }
-                        [parent addChild:newNode at:child_index];
+                        [parent addChild:newNode at:child_index inPost:_inPost];
                         [newNode addParent:parent];
                         [node removeParentOnce:parent];
                     }
@@ -1158,7 +1203,7 @@
                 [self removeNodeAt:node_index onLayer:layer];
                 node_index--;
                 initial_layer_size--;
-            } else if ([node isNonVitalAndParentless]) {
+            } else if ([node isParentless]) {
                 for (int domain_val = _min_domain_for_layer[layer]; domain_val <= _max_domain_for_layer[layer]; domain_val++) {
                     Node* oldNodeChild = oldNodeChildren[domain_val];
                     if (oldNodeChild != NULL) {
@@ -1177,7 +1222,7 @@
     //Does it actually have to check this so thoroughly each time?
     for (int node_index = 0; node_index < layer_size[layer+1]._val; node_index++) {
         Node* node = [layers[layer+1] at: node_index];
-        if ([node isNonVitalAndParentless]) {
+        if ([node isParentless]) {
             _lowestLayerChanged = max(_lowestLayerChanged,[self removeParentlessNodeFromMDD:node fromLayer:layer+1]);
             node_index--;
         }
@@ -1249,7 +1294,7 @@
                 [node removeChildAt:child_index];
                 [child removeParentOnce:node];
                 assignTRInt(&layer_variable_count[layer_index][child_index], layer_variable_count[layer_index][child_index]._val-1, _trail);
-                if ([child isNonVitalAndParentless]) {
+                if ([child isParentless]) {
                     [self removeParentlessNodeFromMDD:child fromLayer:layer_index+1];
                 }
             }
@@ -1282,7 +1327,7 @@
         [_spec mergeState:getState(first_node) with:getState(second_node)];
         [first_node takeParentsFrom:second_node];
         [first_node setIsMergedNode:true];
-        [self removeNode:second_node];
+        [self removeNode:second_node onLayer:layer];
         if (layer_size[layer]._val > _relaxation_size) {
             //free(similarityMatrix);
             //similarityMatrix = [self findSimilarityMatrix:layer];

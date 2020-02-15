@@ -311,6 +311,9 @@ const short BytesPerMagic = 4;
 -(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
     return [[MDDStateValues alloc] initState:[self computeStateFrom:parent assigningVariable:variable withValue:value] numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
 }
+-(MDDStateValues*) createStateWith:(char*)stateProperties {
+    return [[MDDStateValues alloc] initState:stateProperties numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
+}
 -(MDDStateValues*) createTempStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
     return [[MDDStateValues alloc] initState:[self computeStateFrom:parent assigningVariable:variable withValue:value] numBytes:_numBytes];
 }
@@ -325,6 +328,20 @@ const short BytesPerMagic = 4;
             newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
         }
         [_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
+    }
+    return newState;
+}
+-(char*) computeStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value {
+    char* newState = malloc(_numBytes * sizeof(char));
+    MDDPropertyDescriptor** properties = [_stateDescriptor properties];
+    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+        int newValue;
+        if (_stateValueIndicesForVariable[variable][propertyIndex]) {
+            newValue = (int)_transitionFunctions[propertyIndex](parentState, variable, value);
+        } else {
+            newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
+        }
+        [properties[propertyIndex] set:newValue forState:newState];
     }
     return newState;
 }
@@ -362,7 +379,16 @@ const short BytesPerMagic = 4;
     }
     return true;
 }
--(bool) canCreateState:(MDDStateValues**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value {
+-(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state {
+    NSArray* arcExistIndices = _arcExistsIndicesForVariable[variable];
+    for (NSNumber* arcExistIndex in arcExistIndices) {
+        if (!_arcExists[[arcExistIndex intValue]](state,variable,value)) {
+            return false;
+        }
+    }
+    return true;
+}
+-(bool) canCreateState:(char**)newStateProperties fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value {
     NSArray* arcExistIndices = _arcExistsIndicesForVariable[variable];
     char* parState = [parentState state];
     for (NSNumber* arcExistIndex in arcExistIndices) {
@@ -370,7 +396,8 @@ const short BytesPerMagic = 4;
             return false;
         }
     }
-    *newState = [self createStateFrom:parentState assigningVariable:variable withValue:value];
+    *newStateProperties = [self computeStateFromProperties:parState assigningVariable:variable withValue:value];
+    //*newState = [self createStateFrom:parentState assigningVariable:variable withValue:value];
     return true;
 }
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right {
@@ -396,6 +423,29 @@ const short BytesPerMagic = 4;
     if (extraBytes) {
         _numBytes = _numBytes - extraBytes + BytesPerMagic;
     }
+}
+-(NSUInteger) hashValueFor:(char*)stateProperties {
+    //TODO: The following is currently in two places which isn't good practice.  Look into how MDDStateValues can use this function.
+    const size_t numGroups = _numBytes/BytesPerMagic;
+    int hashValue = 0;
+    switch (BytesPerMagic) {
+        case 2:
+            for (size_t s = 0; s < numGroups; s++) {
+                hashValue = hashValue * 15 + *(short*)&stateProperties[s*BytesPerMagic];
+            }
+            break;
+        case 4:
+            for (size_t s = 0; s < numGroups; s++) {
+                hashValue = hashValue * 255 + *(int*)&stateProperties[s*BytesPerMagic];
+            }
+            break;
+        default:
+            @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateValues: Method calcHash not implemented for given BytesPerMagic"];
+            break;
+    }
+    hashValue = hashValue % _hashWidth;
+    if (hashValue < 0) hashValue += _hashWidth;
+    return hashValue;
 }
 -(int) hashWidth { return _hashWidth; }
 @end
@@ -447,6 +497,9 @@ const short BytesPerMagic = 4;
     }
 }
 -(char*) state { return _state; }
+-(BOOL) isEqualToStateProperties:(char*)other {
+    return memcmp(_state, other, _numBytes) == 0;
+}
 -(BOOL) isEqual:(MDDStateValues*)other {
     /*if (other == self) return YES;
     if (!other || ![other isKindOfClass:[self class]]) return NO;

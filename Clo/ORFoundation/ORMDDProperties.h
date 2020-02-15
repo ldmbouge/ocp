@@ -45,8 +45,10 @@
 -(void) addNewProperties:(int)num;
 -(void) addStateProperty:(MDDPropertyDescriptor*)property;
 -(void) initializeState:(char*)state;
+-(MDDPropertyDescriptor**) properties;
 -(int) getProperty:(int)propertyIndex forState:(char*)state;
 -(void) setProperty:(int)propertyIndex to:(int)value forState:(char*)state;
 -(size_t) byteOffsetForProperty:(int)propertyIndex;
 -(size_t) numBytes;
+-(int) numProperties;
 @end

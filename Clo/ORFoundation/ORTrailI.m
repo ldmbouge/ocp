@@ -873,6 +873,10 @@ void freeTRIntArray(TRIntArray a)
 {
    return _up._val;
 }
+-(TRId*)array
+{
+    return _array;
+}
 -(NSUInteger)count
 {
    return _up._val - _low + 1;

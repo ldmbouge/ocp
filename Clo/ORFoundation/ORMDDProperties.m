@@ -98,7 +98,7 @@
     _numProperties = 0;
     return self;
 }
--(size_t) numProperties { return _numProperties; }
+-(int) numProperties { return _numProperties; }
 -(void) addNewProperties:(int)num {
     MDDPropertyDescriptor** newProperties = malloc((_numProperties+num) * sizeof(MDDPropertyDescriptor*));
     for (int i = 0; i < _numProperties; i++) {
@@ -117,6 +117,9 @@
     for (int i = 0; i < _numProperties; i++) {
         [_properties[i] initializeState:state];
     }
+}
+-(MDDPropertyDescriptor**) properties {
+    return _properties;
 }
 -(int) getProperty:(int)propertyIndex forState:(char*)state {
     return [_properties[propertyIndex] get:state];

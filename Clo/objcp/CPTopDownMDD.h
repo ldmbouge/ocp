@@ -26,6 +26,7 @@
     NSUInteger _lastCheckedHash;
 }
 -(id) initBetterNodeHashTable:(int)width;
+-(bool) hasNodeWithStateProperties:(char*)stateProperties hash:(NSUInteger)hash node:(Node**)existingNode;
 -(bool) hasNodeWithState:(MDDStateValues*)state node:(Node**)existingNode;
 -(void) addState:(MDDStateValues*)state;
 @end
@@ -71,6 +72,7 @@
     int* _max_domain_for_layer;
     int _highestLayerChanged;
     int _lowestLayerChanged;
+    bool _inPost;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec;
@@ -84,9 +86,10 @@
 -(void) createRootAndSink;
 -(void) cleanLayer:(int)layer;
 -(void) afterPropagation;
--(void) buildLayer:(int)layer;
+-(void) buildLastLayer;
+//-(void) buildLayer:(int)layer;
 -(void) buildLayerByValue:(int)layer;
--(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer nodeHashTable:(BetterNodeHashTable*)nodeHashTable;
+//-(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer nodeHashTable:(BetterNodeHashTable*)nodeHashTable;
 //-(void) createChildrenForNode:(Node*)parentNode parentLayer:(int)parentLayer stateToNodeDict:(NSMutableDictionary<MDDStateValues*,Node*>*)stateToNodeDict;
 -(void) addPropagationsAndTrimDomains;
 -(void) trimDomainsFromLayer:(ORInt)layer;
@@ -95,10 +98,11 @@
 -(id) generateStateFromParent:(Node*)parentNode withValue:(int)value;
 -(id) generateTempStateFromParent:(Node*)parentNode withValue:(int)value;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
--(void) removeNodeAt:(int)index onLayer:(int)layer_index;
--(void) removeNode: (Node*) node;
+-(void) removeNodeAt:(int)index onLayer:(int)node_layer;
+-(void) removeNode: (Node*) node onLayer:(int)node_layer;
+-(int) removeChildlessNodeFromMDDAtIndex:(int)nodeIndex fromLayer:(int)layer;
 -(int) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer;
--(int) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer inPost:(bool)inPost;
+-(int) checkParentsOfChildlessNode:(Node*)node parentLayer:(int)layer;
 -(int) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
 -(void) DEBUGTestLayerVariableCountCorrectness;

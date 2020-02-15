@@ -331,7 +331,7 @@
                     DDClosure oldArcExists = [existingMDDSpec arcExistsClosure];
                     DDClosure arcExists = [mddSpec arcExistsClosure];
                     DDClosure newArcExists = [^(char* state, ORInt variable, ORInt value) {
-                        return oldArcExists(state,variable,value) && arcExists(state,variable,value);
+                        return arcExists(state,variable,value) && oldArcExists(state,variable,value);
                     } copy];
                     [existingMDDSpec setArcExistsClosure:newArcExists];
                 }

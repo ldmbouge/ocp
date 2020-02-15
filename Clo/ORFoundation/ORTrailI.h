@@ -404,5 +404,6 @@ static inline V* get##T(T* v) { return v->_val;}
 -(ORInt) up;
 -(void) resize:(int)newSize;
 -(NSUInteger) count;
+-(TRId*) array;
 -(NSString*) description;
 @end
