@@ -5,7 +5,6 @@
 @class MDDStateValues;
 @interface Node : NSObject {
 @public
-    int _value;
     TRInt _layerIndex;
     id<ORTrail> _trail;
     
@@ -24,13 +23,12 @@
     bool _recalcRequired;
 }
 -(id) initNode: (id<ORTrail>) trail hashWidth:(int)hashWidth;
--(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex value:(int) value state:(MDDStateValues*)state hashWidth:(int)hashWidth;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex state:(MDDStateValues*)state hashWidth:(int)hashWidth;
 -(void) dealloc;
 -(int) layerIndex;
 -(void) setInitialLayerIndex:(int)index;
 -(void) updateLayerIndex:(int)index;
 -(TRId) getState;
--(int) value;
 -(bool) isMergedNode;
 -(void) setIsMergedNode:(bool)isMergedNode;
 -(bool) recalcRequired;
@@ -100,6 +98,7 @@ static inline id getState(Node* n) { return n->_state;}
 @interface MDDStateSpecification : NSObject {
 @protected
     MDDStateDescriptor* _stateDescriptor;
+    MDDPropertyDescriptor** _properties;
     DDClosure* _arcExists;
     DDClosure* _transitionFunctions;
     DDMergeClosure* _relaxationFunctions;
@@ -108,7 +107,7 @@ static inline id getState(Node* n) { return n->_state;}
     bool _relaxed;
     
     bool** _stateValueIndicesForVariable; //Used to know which properties require transition function for a given variable assignment
-    NSMutableArray** _arcExistsIndicesForVariable;   //Used to know which arc exist functions must be called to test a given variable assignment
+    DDClosure* _arcExistsForVariable;
     
     int _numPropertiesAdded;
     int _numSpecsAdded;

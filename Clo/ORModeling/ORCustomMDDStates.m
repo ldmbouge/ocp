@@ -188,6 +188,8 @@ const short BytesPerMagic = 4;
 
 @implementation MDDStateSpecification
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars {
+    _minVar = [vars low];
+    _numVars = (int)[vars count];
     _relaxed = relaxed;
     _stateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor:numProperties];
     _arcExists = malloc(numSpecs * sizeof(DDClosure));
@@ -199,18 +201,17 @@ const short BytesPerMagic = 4;
     _numPropertiesAdded = 0;
     _numSpecsAdded = 0;
     _stateValueIndicesForVariable = malloc([vars count] * sizeof(bool*));
-    _stateValueIndicesForVariable -= [vars low];
-    _arcExistsIndicesForVariable = malloc([vars count] * sizeof(NSMutableArray*));
-    _arcExistsIndicesForVariable -= [vars low];
-    for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
+    _stateValueIndicesForVariable -= _minVar;
+    for (int varIndex = _minVar; varIndex <= [vars up]; varIndex++) {
         _stateValueIndicesForVariable[varIndex] = calloc(numProperties, sizeof(bool));
-        _arcExistsIndicesForVariable[varIndex] = [[NSMutableArray alloc] init];
     }
-    _minVar = [vars low];
-    _numVars = (int)[vars count];
+    _arcExistsForVariable = calloc(_numVars, sizeof(DDClosure));
+    _arcExistsForVariable -= _minVar;
     return self;
 }
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars stateDescriptor:(MDDStateDescriptor*)stateDescriptor {
+    _minVar = [vars low];
+    _numVars = (int)[vars count];
     _relaxed = relaxed;
     _stateDescriptor = stateDescriptor;
     _arcExists = malloc(numSpecs * sizeof(DDClosure));
@@ -223,24 +224,20 @@ const short BytesPerMagic = 4;
     _numSpecsAdded = 0;
     _stateValueIndicesForVariable = malloc([vars count] * sizeof(bool*));
     _stateValueIndicesForVariable -= [vars low];
-    _arcExistsIndicesForVariable = malloc([vars count] * sizeof(NSMutableArray*));
-    _arcExistsIndicesForVariable -= [vars low];
     for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
         _stateValueIndicesForVariable[varIndex] = calloc(numProperties, sizeof(bool));
-        _arcExistsIndicesForVariable[varIndex] = [[NSMutableArray alloc] init];
     }
-    _minVar = [vars low];
-    _numVars = (int)[vars count];
+    _arcExistsForVariable = calloc(_numVars, sizeof(DDClosure));
+    _arcExistsForVariable -= _minVar;
     return self;
 }
 -(void) dealloc {
     _stateValueIndicesForVariable += _minVar;
-    _arcExistsIndicesForVariable += _minVar;
     for (int i = 0; i < _numVars; i++) {
         free(_stateValueIndicesForVariable[i]);
-        [_arcExistsIndicesForVariable[i] release];
     }
-    free(_arcExistsIndicesForVariable);
+    _arcExistsForVariable += _minVar;
+    free(_arcExistsForVariable);
     [_stateDescriptor release];
     [super dealloc];
 }
@@ -254,10 +251,16 @@ const short BytesPerMagic = 4;
         }
         _numPropertiesAdded++;
     }
-    _arcExists[_numSpecsAdded] = arcExists;
-    NSNumber* arcExistsIndex = [NSNumber numberWithInt:_numSpecsAdded];
     for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
-        [_arcExistsIndicesForVariable[mapping[varIndex]] addObject:arcExistsIndex];
+        int mappedVarIndex = mapping[varIndex];
+        if (_arcExistsForVariable[mappedVarIndex] == nil) {
+            _arcExistsForVariable[mappedVarIndex] = arcExists;
+        } else {
+            DDClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
+            _arcExistsForVariable[mappedVarIndex] = [(id)^(char* state,ORInt variable, ORInt value) {
+                return arcExists(state,variable,value) && oldClosure(state,variable,value);
+            } copy];
+        }
     }
     _numSpecsAdded++;
 }
@@ -272,10 +275,16 @@ const short BytesPerMagic = 4;
         }
         _numPropertiesAdded++;
     }
-    _arcExists[_numSpecsAdded] = arcExists;
-    NSNumber* arcExistsIndex = [NSNumber numberWithInt:_numSpecsAdded];
     for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
-        [_arcExistsIndicesForVariable[mapping[varIndex]] addObject:arcExistsIndex];
+        int mappedVarIndex = mapping[varIndex];
+        if (_arcExistsForVariable[mappedVarIndex] == nil) {
+            _arcExistsForVariable[mappedVarIndex] = arcExists;
+        } else {
+            DDClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
+            _arcExistsForVariable[mappedVarIndex] = [(id)^(char* state,ORInt variable, ORInt value) {
+                return arcExists(state,variable,value) && oldClosure(state,variable,value);
+            } copy];
+        }
     }
     _numSpecsAdded++;
 }
@@ -296,11 +305,21 @@ const short BytesPerMagic = 4;
         }
         _numPropertiesAdded++;
     }
-    _arcExists[_numSpecsAdded] = [MDDSpec arcExistsClosure];
-    NSNumber* arcExistsIndex = [NSNumber numberWithInt:_numSpecsAdded];
+    //_arcExists[_numSpecsAdded] = [MDDSpec arcExistsClosure];
+    //NSNumber* arcExistsIndex = [NSNumber numberWithInt:_numSpecsAdded];
+    DDClosure newArcExistsClosure = [MDDSpec arcExistsClosure];
     for (int varIndex = [otherVars low]; varIndex <= [otherVars up]; varIndex++) {
-        [_arcExistsIndicesForVariable[mapping[varIndex]] addObject:arcExistsIndex];
+        int mappedVarIndex = mapping[varIndex];
+        if (_arcExistsForVariable[mappedVarIndex] == nil) {
+            _arcExistsForVariable[mappedVarIndex] = newArcExistsClosure;
+        } else {
+            DDClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
+            _arcExistsForVariable[mappedVarIndex] = [(id)^(char* state,ORInt variable, ORInt value) {
+                return newArcExistsClosure(state,variable,value) && oldClosure(state,variable,value);
+            } copy];
+        }
     }
+    
     _numSpecsAdded++;
 }
 -(MDDStateValues*) createRootState:(int)variable {
@@ -320,28 +339,33 @@ const short BytesPerMagic = 4;
 -(char*) computeStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
     char* parentState = parent.state;
     char* newState = malloc(_numBytes * sizeof(char));
+    int newValue;
     for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        int newValue;
+        MDDPropertyDescriptor* property = _properties[propertyIndex];
         if (_stateValueIndicesForVariable[variable][propertyIndex]) {
             newValue = (int)_transitionFunctions[propertyIndex](parentState, variable, value);
         } else {
-            newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
+            newValue = [property get:parentState];
+            //newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
         }
-        [_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
+        [property set:newValue forState:newState];
+        //[_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
     }
     return newState;
 }
 -(char*) computeStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value {
     char* newState = malloc(_numBytes * sizeof(char));
-    MDDPropertyDescriptor** properties = [_stateDescriptor properties];
+    int newValue;
     for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        int newValue;
+        //MDDPropertyDescriptor* property = _properties[propertyIndex];
         if (_stateValueIndicesForVariable[variable][propertyIndex]) {
             newValue = (int)_transitionFunctions[propertyIndex](parentState, variable, value);
         } else {
-            newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
+            newValue = [_properties[propertyIndex] get:parentState];
+            //newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
         }
-        [properties[propertyIndex] set:newValue forState:newState];
+        [_properties[propertyIndex] set:newValue forState:newState];
+        //[_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
     }
     return newState;
 }
@@ -370,34 +394,31 @@ const short BytesPerMagic = 4;
     [left recalcHash:_hashWidth trail:_trail];
 }
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues {
-    NSArray* arcExistIndices = _arcExistsIndicesForVariable[variable];
-    char* state = [stateValues state];
-    for (NSNumber* arcExistIndex in arcExistIndices) {
-        if (!_arcExists[[arcExistIndex intValue]](state,variable,value)) {
-            return false;
-        }
-    }
-    return true;
+    return _arcExistsForVariable[variable]([stateValues state],variable,value);
 }
 -(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state {
-    NSArray* arcExistIndices = _arcExistsIndicesForVariable[variable];
-    for (NSNumber* arcExistIndex in arcExistIndices) {
-        if (!_arcExists[[arcExistIndex intValue]](state,variable,value)) {
-            return false;
-        }
-    }
-    return true;
+    return _arcExistsForVariable[variable](state,variable,value);
 }
 -(bool) canCreateState:(char**)newStateProperties fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value {
-    NSArray* arcExistIndices = _arcExistsIndicesForVariable[variable];
     char* parState = [parentState state];
-    for (NSNumber* arcExistIndex in arcExistIndices) {
-        if (!_arcExists[[arcExistIndex intValue]](parState,variable,value)) {
-            return false;
-        }
+    
+    if (!_arcExistsForVariable[variable](parState,variable,value)) {
+        return false;
     }
-    *newStateProperties = [self computeStateFromProperties:parState assigningVariable:variable withValue:value];
-    //*newState = [self createStateFrom:parentState assigningVariable:variable withValue:value];
+    
+    *newStateProperties = malloc(_numBytes * sizeof(char));
+    int newValue;
+    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+        //MDDPropertyDescriptor* property = _properties[propertyIndex];
+        if (_stateValueIndicesForVariable[variable][propertyIndex]) {
+            newValue = (int)_transitionFunctions[propertyIndex](parState, variable, value);
+        } else {
+            newValue = [_properties[propertyIndex] get:parState];
+            //newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
+        }
+        [_properties[propertyIndex] set:newValue forState:*newStateProperties];
+        //[_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
+    }
     return true;
 }
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right {
@@ -423,6 +444,7 @@ const short BytesPerMagic = 4;
     if (extraBytes) {
         _numBytes = _numBytes - extraBytes + BytesPerMagic;
     }
+    _properties = [_stateDescriptor properties];
 }
 -(NSUInteger) hashValueFor:(char*)stateProperties {
     //TODO: The following is currently in two places which isn't good practice.  Look into how MDDStateValues can use this function.
