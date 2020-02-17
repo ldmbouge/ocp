@@ -123,8 +123,8 @@ void turbine1_d(int search, int argc, const char * argv[]) {
                [vQ setInput:v with:[arrayError objectAtIndex:0]];
                [wQ setInput:w with:[arrayError objectAtIndex:1]];
                [rQ setInput:r with:[arrayError objectAtIndex:2]];
-               [aQ setConstant:a and:"1/8"];
-               [bQ setConstant:b and:"9/2"];
+               [aQ set_d:a];
+               [bQ set_d:b];
                
                ORDouble z = (((3.0 + (2.0 / (r * r))) - (((a * (3.0 - (2.0 * v))) * (((w * w) * r) * r)) / (1.0 - v))) - b);
                [zF set_d:z];

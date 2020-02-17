@@ -110,8 +110,8 @@ void doppler3_d(int search, int argc, const char * argv[]) {
                [uQ setInput:u with:[arrayError objectAtIndex:0]];
                [vQ setInput:v with:[arrayError objectAtIndex:1]];
                [tQ setInput:t with:[arrayError objectAtIndex:2]];
-               [aQ setConstant:a and:"1657/5"];
-               [bQ setConstant:b and:"3/5"];
+               [aQ set_d:a];
+               [bQ set_d:b];
                
                ORDouble t1 = 331.4 + (0.6 * t);
                ORDouble z = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));

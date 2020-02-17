@@ -114,11 +114,11 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
                 
                 [vQ setInput:v with:[arrayError objectAtIndex:0]];
                 [pQ set_d:3.5e7];
-                [aQ setConstant:a and:"401/1000"];
-                [bQ setConstant:b and:"427/10000000"];
+               [aQ set_d:a];
+               [bQ set_d:b];
                 [tQ set_d:300.0];
                 [nQ set_d:1000.0];
-                [kQ setConstant:k and:"13806503/1000000000000000000000000000000"];
+               [kQ set_d:k];
                 
                 ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
                 [zF set_d:z];

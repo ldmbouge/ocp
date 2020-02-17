@@ -95,8 +95,8 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
                
                [xQ setInput:x with:[arrayError objectAtIndex:0]];
-               [aQ setConstant:a and:"238732414637843/250000000000000"];
-               [bQ setConstant:b and:"6450306886639899/50000000000000000"];
+               [aQ set_d:a];
+               [bQ set_d:b];
                
                ORDouble z = a * x - b*(x*x*x);
                

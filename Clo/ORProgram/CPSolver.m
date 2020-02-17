@@ -2359,6 +2359,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          ORSelectorResult I = [select max]; // select variable maximizing criteria from defined in select
          
          b(_index._val, x);
+         nbBoxGenerated += 2;
          
          /* update index of variable chosen for splitting */
          if (_index._val + 1 > I.index)

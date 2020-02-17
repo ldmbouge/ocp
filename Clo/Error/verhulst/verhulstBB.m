@@ -96,7 +96,7 @@ void verhulst_d(int search, int argc, const char * argv[]) {
             
             [one setOne];
             [rQ set_d:4.0];
-            [kQ setConstant:k and:"111/100"];
+            [kQ set_d:k];
             [xQ setInput:x with:[arrayError objectAtIndex:0]];
             
             ORDouble z = ((r * x) / (1.0 + (x / k)));
