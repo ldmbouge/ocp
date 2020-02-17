@@ -69,7 +69,7 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       [zero release];
-
+      
       [mdl add:[r set: @(4.0)]];
       [mdl add:[K set: @(1.11)]];
       [mdl add:[z set:[[[r mul: x] mul: x] div: [@(1.0) plus: [[x div: K] mul: [x div: K]]]]]];
@@ -86,6 +86,40 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
          if (search)
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
+            }
+                              compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+               ORDouble r = 4.0;
+               ORDouble k = 1.11;
+               ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+               
+               id<ORRational> oneQ = [[ORRational alloc] init];
+               id<ORRational> rQ = [[ORRational alloc] init];
+               id<ORRational> kQ = [[ORRational alloc] init];
+               id<ORRational> xQ = [[ORRational alloc] init];
+               id<ORRational> zQ = [[ORRational alloc] init];
+               id<ORRational> zF = [[ORRational alloc] init];
+               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+               
+               [oneQ setOne];
+               [rQ set_d:4.0];
+               [kQ setConstant:k and:"111/100"];
+               [xQ setInput:x with:[arrayError objectAtIndex:0]];
+               
+               ORDouble z = ((r*x)*x) / (1.0 + ((x/k)*(x/k)));
+               
+               [zF set_d:z];
+               
+               [zQ set:[[[rQ mul: xQ] mul: xQ] div: [oneQ add: [[xQ div: kQ] mul: [xQ div: kQ]]]]];
+               
+               [ez set: [zQ sub: zF]];
+               
+               [oneQ release];
+               [rQ release];
+               [kQ release];
+               [xQ release];
+               [zQ release];
+               [zF release];
+               return ez;
             }];
       }];
    }
@@ -250,8 +284,8 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //predatorPrey_f(1, argc, argv);
-   //predatorPrey_d(1, argc, argv);
-   predatorPrey_d_c(1, argc, argv);
+   predatorPrey_d(1, argc, argv);
+   //predatorPrey_d_c(1, argc, argv);
    return 0;
 }
 

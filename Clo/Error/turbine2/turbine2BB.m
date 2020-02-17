@@ -90,6 +90,50 @@ void turbine2_d(int search, int argc, const char * argv[]) {
          if (search)
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
+            }
+                              compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+               ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+               ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
+               ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
+               ORDouble a = 0.5;
+               ORDouble b = 2.5;
+               
+               id<ORRational> one = [[ORRational alloc] init];
+               id<ORRational> six = [[ORRational alloc] init];
+               id<ORRational> vQ = [[ORRational alloc] init];
+               id<ORRational> wQ = [[ORRational alloc] init];
+               id<ORRational> rQ = [[ORRational alloc] init];
+               id<ORRational> aQ = [[ORRational alloc] init];
+               id<ORRational> bQ = [[ORRational alloc] init];
+               id<ORRational> zQ = [[ORRational alloc] init];
+               id<ORRational> zF = [[ORRational alloc] init];
+               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+               
+               [one setOne];
+               [six set_d:6.0];
+               [vQ setInput:v with:[arrayError objectAtIndex:0]];
+               [wQ setInput:w with:[arrayError objectAtIndex:1]];
+               [rQ setInput:r with:[arrayError objectAtIndex:2]];
+               [aQ setConstant:a and:"1/2"];
+               [bQ setConstant:b and:"5/2"];
+               
+               ORDouble z = (((6.0 * v) - (((a * v) * (((w * w) * r) * r)) / (1.0 - v))) - b);
+               [zF set_d:z];
+               
+               [zQ set:[[[six mul: vQ] sub: [[[aQ mul: vQ] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
+               
+               [ez set: [zQ sub: zF]];
+               
+               [one release];
+               [six release];
+               [vQ release];
+               [wQ release];
+               [rQ release];
+               [aQ release];
+               [bQ release];
+               [zQ release];
+               [zF release];
+               return ez;
             }];
       }];
    }
@@ -116,7 +160,7 @@ void turbine2_d_c(int search, int argc, const char * argv[]) {
       /* Declaration of constraints over errors */
       [mdl add: [ezAbs eq: [ez abs]]];
       [mdl maximize:ezAbs];
-
+      
       /* Display model */
       NSLog(@"model: %@",mdl);
       
@@ -127,62 +171,62 @@ void turbine2_d_c(int search, int argc, const char * argv[]) {
       
       /* Solving */
       [cp solve:^{
-            /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
-            [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               /* Split strategy */
-               [cp floatSplit:i withVars:x];
-            }
-                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-                ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-                ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
-                ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
-                ORDouble a = 0.5;
-                ORDouble b = 2.5;
-                
-                id<ORRational> one = [[ORRational alloc] init];
-               id<ORRational> six = [[ORRational alloc] init];
-                id<ORRational> vQ = [[ORRational alloc] init];
-                id<ORRational> wQ = [[ORRational alloc] init];
-                id<ORRational> rQ = [[ORRational alloc] init];
-                id<ORRational> aQ = [[ORRational alloc] init];
-                id<ORRational> bQ = [[ORRational alloc] init];
-                id<ORRational> zQ = [[ORRational alloc] init];
-                id<ORRational> zF = [[ORRational alloc] init];
-                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-                
-                [one setOne];
-                [six set_d:6.0];
-                [vQ setInput:v with:[arrayError objectAtIndex:0]];
-                [wQ setInput:w with:[arrayError objectAtIndex:1]];
-                [rQ setInput:r with:[arrayError objectAtIndex:2]];
-                [aQ setConstant:a and:"1/2"];
-                [bQ setConstant:b and:"5/2"];
-                
-                ORDouble z = (((6.0 * v) - (((a * v) * (((w * w) * r) * r)) / (1.0 - v))) - b);
-                [zF set_d:z];
-                
-                [zQ set:[[[six mul: vQ] sub: [[[aQ mul: vQ] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
-                
-                [ez set: [zQ sub: zF]];
-                
-                [one release];
-               [six release];
-                [vQ release];
-                [wQ release];
-                [rQ release];
-                [aQ release];
-                [bQ release];
-                [zQ release];
-                [zF release];
-                return ez;
-             }];
+         /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+         [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            /* Split strategy */
+            [cp floatSplit:i withVars:x];
+         }
+                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+            ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+            ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
+            ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
+            ORDouble a = 0.5;
+            ORDouble b = 2.5;
+            
+            id<ORRational> one = [[ORRational alloc] init];
+            id<ORRational> six = [[ORRational alloc] init];
+            id<ORRational> vQ = [[ORRational alloc] init];
+            id<ORRational> wQ = [[ORRational alloc] init];
+            id<ORRational> rQ = [[ORRational alloc] init];
+            id<ORRational> aQ = [[ORRational alloc] init];
+            id<ORRational> bQ = [[ORRational alloc] init];
+            id<ORRational> zQ = [[ORRational alloc] init];
+            id<ORRational> zF = [[ORRational alloc] init];
+            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+            
+            [one setOne];
+            [six set_d:6.0];
+            [vQ setInput:v with:[arrayError objectAtIndex:0]];
+            [wQ setInput:w with:[arrayError objectAtIndex:1]];
+            [rQ setInput:r with:[arrayError objectAtIndex:2]];
+            [aQ setConstant:a and:"1/2"];
+            [bQ setConstant:b and:"5/2"];
+            
+            ORDouble z = (((6.0 * v) - (((a * v) * (((w * w) * r) * r)) / (1.0 - v))) - b);
+            [zF set_d:z];
+            
+            [zQ set:[[[six mul: vQ] sub: [[[aQ mul: vQ] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
+            
+            [ez set: [zQ sub: zF]];
+            
+            [one release];
+            [six release];
+            [vQ release];
+            [wQ release];
+            [rQ release];
+            [aQ release];
+            [bQ release];
+            [zQ release];
+            [zF release];
+            return ez;
+         }];
       }];
    }
 }
 
 
 int main(int argc, const char * argv[]) {
-   //turbine2_d(1, argc, argv);
-   turbine2_d_c(1, argc, argv);
+   turbine2_d(1, argc, argv);
+   //turbine2_d_c(1, argc, argv);
    return 0;
 }

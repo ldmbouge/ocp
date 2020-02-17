@@ -86,30 +86,33 @@ void verhulst_d(int search, int argc, const char * argv[]) {
             ORDouble k = 1.11;
             ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
             
-            id<ORRational> oneQ = [[ORRational alloc] init];
+            id<ORRational> one = [[ORRational alloc] init];
             id<ORRational> rQ = [[ORRational alloc] init];
             id<ORRational> kQ = [[ORRational alloc] init];
             id<ORRational> xQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[[ORRational alloc] init] autorelease];
+            id<ORRational> zQ = [[ORRational alloc] init];
             id<ORRational> zF = [[ORRational alloc] init];
-            [oneQ setOne];
+            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+            
+            [one setOne];
             [rQ set_d:4.0];
-            [kQ set_d: 1.11];
-            [xQ set_d:[[arrayValue objectAtIndex:0] doubleValue]];
+            [kQ setConstant:k and:"111/100"];
+            [xQ setInput:x with:[arrayError objectAtIndex:0]];
             
             ORDouble z = ((r * x) / (1.0 + (x / k)));
             [zF set_d:z];
             
-            [zQ set: [[rQ mul: xQ] div: [oneQ add: [xQ div: kQ]]]];
+            [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
             
-            [zQ set: [zQ sub: zF]];
+            [ez set: [zQ sub: zF]];
             
-            [oneQ release];
+            [one release];
             [rQ release];
             [kQ release];
             [xQ release];
+            [zQ release];
             [zF release];
-            return zQ;
+            return ez;
          }];
       }];
    }
@@ -267,7 +270,7 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //verhulst_f(1, argc, argv);
-   //verhulst_d(1, argc, argv);
-   verhulst_d_c(1, argc, argv);
+   verhulst_d(1, argc, argv);
+   //verhulst_d_c(1, argc, argv);
    return 0;
 }
