@@ -400,6 +400,7 @@ static inline V* get##T(T* v) { return v->_val;}
 -(void) dealloc;
 -(id) at: (ORInt) value;
 -(void) set: (id) value at: (ORInt) idx;
+-(void) set: (id) value at: (ORInt) idx inPost:(bool)inPost;
 -(ORInt) low;
 -(ORInt) up;
 -(void) resize:(int)newSize;

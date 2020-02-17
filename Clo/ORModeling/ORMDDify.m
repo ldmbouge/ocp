@@ -133,6 +133,7 @@
     bool _relaxed;
     bool _topDown;
     int _width;
+    bool _usingArcs;
     
     NSMutableArray* _mddSpecConstraints;
     MDDStateSpecification* _mddSpecification;
@@ -161,6 +162,7 @@
     _notes = notes;
     _width = [_notes findGeneric: DDWidth];
     _relaxed = [_notes findGeneric: DDRelaxed];
+    _usingArcs = [_notes findGeneric: DDWithArcs];
     [m applyOnVar: ^(id<ORVar> x) {
         [_into addVariable:x];
     }
@@ -185,7 +187,7 @@
     
     if ([_mddSpecConstraints count] > 0) {
         [self combineMDDSpecs:m];
-        id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables relaxed:_relaxed size:_width specs:_mddSpecification topDown:_topDown];
+        id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables relaxed:_relaxed size:_width specs:_mddSpecification topDown:_topDown usingArcs:_usingArcs];
         /*if ([_jointState numStates] > 1) {
             mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width classState:_jointState topDown:_topDown];
         } else {    //If only one MDDSpec in JointState (meaning all MDDSpecs shared the same variable set), then can use the MDDSpec directly rather than a JointState
@@ -312,6 +314,13 @@
             for (id<ORMDDSpecs> existingMDDSpec in MDDSpecsByVariableSet) {
                 if ([existingMDDSpec vars] == vars) {
                     sharedVarList = true;
+                    
+                    
+                    [MDDSpecsByVariableSet addObject:mddSpec];;
+                    totalNumProperties += [mddSpec numProperties];
+                    break;
+                    
+                    
                     int existingMDDNumProperties = [existingMDDSpec numProperties];
                     int numProperties = [mddSpec numProperties];
                     DDClosure* transitionClosures = [mddSpec transitionClosures];
@@ -341,7 +350,7 @@
                 _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
                 totalNumProperties += [mddSpec numProperties];
             } else {
-                [mddSpec release];
+                //[mddSpec release];
             }
         }
         

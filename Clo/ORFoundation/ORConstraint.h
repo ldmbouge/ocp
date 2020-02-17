@@ -459,6 +459,7 @@ enum ORGroupType {
 -(bool) relaxed;
 -(ORInt) relaxationSize;
 -(id) specs;
+-(bool) usingArcs;
 @end
 
 /*@protocol ORCustomAltMDD <ORConstraint>

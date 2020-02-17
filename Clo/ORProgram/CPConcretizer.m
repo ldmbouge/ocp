@@ -1894,9 +1894,10 @@
         id<CPIntVarArray>    a = [self concreteArray: (id)or];
         bool relaxed           = [cstr relaxed];
         ORInt relaxationSize   = [cstr relaxationSize];
+        bool usingArcs         = [cstr usingArcs];
         id<CPConstraint> concreteCstr;
         MDDStateSpecification* spec = [cstr specs];
-        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a relaxed:relaxed size:relaxationSize spec:spec];
+        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a relaxed:relaxed size:relaxationSize spec:spec usingArcs:usingArcs];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

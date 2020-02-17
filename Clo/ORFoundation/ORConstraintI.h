@@ -70,10 +70,11 @@
 @end
 */
 @interface ORMDDStateSpecification : ORConstraintI<ORMDDStateSpecification>
--(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs;
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs usingArcs:(bool)usingArcs;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
 -(id) specs;
+-(bool) usingArcs;
 @end
 
 /*

@@ -820,10 +820,10 @@ void freeTRIntArray(TRIntArray a)
     _trail = trail;
    _low = low;
    _up = makeTRInt(_trail, _low + size - 1);
-   _array = malloc(size * sizeof(TRId));
+   _array = calloc(size, sizeof(TRId));
    _array -= _low;
-   for(ORInt i = _low; i <= _up._val; i++)
-      _array[i] = makeTRId(_trail,0);
+   //for(ORInt i = _low; i <= _up._val; i++)
+   //   _array[i] = makeTRId(_trail,0);
    return self;
 }
 -(void) dealloc
@@ -848,6 +848,16 @@ void freeTRIntArray(TRIntArray a)
    if (idx < _low || idx > _up._val)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
     assignTRId(&_array[idx], value, _trail);
+}
+-(void) set: (id) value at: (ORInt) idx inPost:(bool)inPost
+{
+   if (idx < _low || idx > _up._val)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
+    if (inPost) {
+        _array[idx] = makeTRId(_trail, [value retain]);
+    } else {
+        assignTRId(&_array[idx], value, _trail);
+    }
 }
 
 -(void) resize:(int)newSize

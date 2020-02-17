@@ -1113,9 +1113,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 // =====================================================================================================================
 
 @implementation ORFactory (Constraints)
-+(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specifications topDown:(bool)topDown
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specifications topDown:(bool)topDown usingArcs:(bool)usingArcs
 {
-    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x relaxed:relaxed size:relaxationSize specs:specifications];
+    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x relaxed:relaxed size:relaxationSize specs:specifications usingArcs:usingArcs];
     [model trackObject:o];
     return o;
 }

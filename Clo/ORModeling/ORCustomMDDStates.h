@@ -1,59 +1,9 @@
 #import <ORFoundation/ORTrailI.h>
 #import "ORMDDProperties.h"
 #import "ORConstraintI.h"
+#import "CPTopDownMDDNode.h"
 
 @class MDDStateValues;
-@interface Node : NSObject {
-@public
-    TRInt _layerIndex;
-    id<ORTrail> _trail;
-    
-    TRId* _children;
-    TRInt _numChildren;
-    int _minChildIndex;
-    int _maxChildIndex;
-    
-    ORTRIdArrayI* _uniqueParents;
-    ORTRIntArrayI* _parentCounts;
-    TRInt _numUniqueParents;
-    TRInt _maxNumUniqueParents;
-    
-    MDDStateValues* _state;
-    TRInt _isMergedNode;
-    bool _recalcRequired;
-}
--(id) initNode: (id<ORTrail>) trail hashWidth:(int)hashWidth;
--(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex state:(MDDStateValues*)state hashWidth:(int)hashWidth;
--(void) dealloc;
--(int) layerIndex;
--(void) setInitialLayerIndex:(int)index;
--(void) updateLayerIndex:(int)index;
--(TRId) getState;
--(bool) isMergedNode;
--(void) setIsMergedNode:(bool)isMergedNode;
--(bool) recalcRequired;
--(void) setRecalcRequired:(bool)recalcRequired;
--(bool) isChildless;
--(bool) isParentless;
--(TRId*) children;
--(int) numChildren;
--(void) addChild:(Node*)child at:(int)index inPost:(bool)inPost;
--(void) removeChildAt: (int) index;
--(void) removeChild:(Node*)child numTimes:(int)childCount updatingLVC:(TRInt*)variable_count;
--(void) replaceChild:(Node*)oldChild with:(Node*)newChild numTimes:(int)childCount;
--(bool) hasParents;
--(void) addFirstParent: (Node*) parent;
--(void) addParent: (Node*) parent;
--(bool) hasParent:(Node*)parent;
--(int) countForParent:(Node*)parent;
--(int) countForParentIndex:(int)parent_index;
--(int) findUniqueParentIndexFor:(Node*) parent addToHash:(bool)addToHash;
--(void) removeParentAt:(int)index;
--(void) removeParentOnce: (Node*) parent;
--(void) removeParentValue: (Node*) parent;
--(void) takeParentsFrom:(Node*)other;
-@end
-static inline id getState(Node* n) { return n->_state;}
 
 @interface CustomState : NSObject {
 @protected
@@ -71,29 +21,6 @@ static inline id getState(Node* n) { return n->_state;}
 -(int) stateDifferential:(CustomState*)other;
 -(bool) equivalentTo:(CustomState*)other;
 @end
-/*
-@interface MDDStateSpecification : CustomState {
-@protected
-    id* _state;
-    DDClosure _arcExists;
-    DDClosure* _transitionFunctions;
-    DDMergeClosure* _relaxationFunctions;
-    DDMergeClosure* _differentialFunctions;
-    int _stateSize;
-    id<ORTrail> _trail;
-}
--(id) initClassState:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions stateSize:(int)stateSize;
--(id) initClassState:(id*)stateValues arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions stateSize:(int)stateSize;
--(NSUInteger) hashWithWidth:(int)mddWidth numVariables:(NSUInteger)numVariables;
--(id*) state;
--(int) stateSize;
--(id<ORTrail>) trail;
--(DDClosure)arcExistsClosure;
--(DDClosure*)transitionFunctions;
--(DDMergeClosure*) relaxationFunctions;
--(DDMergeClosure*) differentialFunctions;
--(bool) equivalentTo:(CustomState *)other;
-@end*/
 
 @interface MDDStateSpecification : NSObject {
 @protected
@@ -108,6 +35,9 @@ static inline id getState(Node* n) { return n->_state;}
     
     bool** _stateValueIndicesForVariable; //Used to know which properties require transition function for a given variable assignment
     DDClosure* _arcExistsForVariable;
+    
+    DDClosure** _arcExistsListsForVariable;
+    int* _numArcExistsForVariable;
     
     int _numPropertiesAdded;
     int _numSpecsAdded;
@@ -184,21 +114,3 @@ static inline id getState(Node* n) { return n->_state;}
 -(NSMutableArray*) states;
 -(void) setVariables:(id<ORIntVarArray>)variables;
 @end
-
-/*
-@interface FlatJointState : CustomState {
-@protected
-    
-}
--(id) initRootState:(FlatJointState*)classState variableIndex:(int)variableIndex trail:(id<ORTrail>)trail;
--(id) initClassState;
--(void) addClassState:(MDDStateSpecification*)stateClass withVariables:(id<ORIntVarArray>)variables;
--(int) numStates;
--(NSMutableArray*) stateVars;
--(NSMutableSet**) statesForVariables;
--(id<ORIntVarArray>) vars;
--(CustomState*) firstState;
--(NSMutableArray*) states;
--(void) setVariables:(id<ORIntVarArray>)variables;
-@end
-*/

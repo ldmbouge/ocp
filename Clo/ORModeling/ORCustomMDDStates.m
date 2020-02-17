@@ -201,12 +201,20 @@ const short BytesPerMagic = 4;
     _numPropertiesAdded = 0;
     _numSpecsAdded = 0;
     _stateValueIndicesForVariable = malloc([vars count] * sizeof(bool*));
-    _stateValueIndicesForVariable -= _minVar;
-    for (int varIndex = _minVar; varIndex <= [vars up]; varIndex++) {
-        _stateValueIndicesForVariable[varIndex] = calloc(numProperties, sizeof(bool));
+    for (int i = 0; i < _numVars; i++) {
+        _stateValueIndicesForVariable[i] = calloc(numProperties, sizeof(bool));
     }
+    _stateValueIndicesForVariable -= _minVar;
     _arcExistsForVariable = calloc(_numVars, sizeof(DDClosure));
     _arcExistsForVariable -= _minVar;
+    
+    _arcExistsListsForVariable = calloc(_numVars, sizeof(DDClosure*));
+    for (int i = 0; i < _numVars; i++) {
+        _arcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDClosure));
+    }
+    _arcExistsListsForVariable -= _minVar;
+    _numArcExistsForVariable = calloc(_numVars, sizeof(int));
+    _numArcExistsForVariable -= _minVar;
     return self;
 }
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars stateDescriptor:(MDDStateDescriptor*)stateDescriptor {
@@ -223,21 +231,33 @@ const short BytesPerMagic = 4;
     _numPropertiesAdded = 0;
     _numSpecsAdded = 0;
     _stateValueIndicesForVariable = malloc([vars count] * sizeof(bool*));
-    _stateValueIndicesForVariable -= [vars low];
-    for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
-        _stateValueIndicesForVariable[varIndex] = calloc(numProperties, sizeof(bool));
+    for (int i = 0; i < _numVars; i++) {
+        _stateValueIndicesForVariable[i] = calloc(numProperties, sizeof(bool));
     }
+    _stateValueIndicesForVariable -= [vars low];
     _arcExistsForVariable = calloc(_numVars, sizeof(DDClosure));
     _arcExistsForVariable -= _minVar;
+    
+    _arcExistsListsForVariable = calloc(_numVars, sizeof(DDClosure*));
+    for (int i = 0; i < _numVars; i++) {
+        _arcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDClosure));
+    }
+    _arcExistsListsForVariable -= _minVar;
+    _numArcExistsForVariable = calloc(_numVars, sizeof(int));
+    _numArcExistsForVariable -= _minVar;
     return self;
 }
 -(void) dealloc {
     _stateValueIndicesForVariable += _minVar;
+    _arcExistsListsForVariable += _minVar;
     for (int i = 0; i < _numVars; i++) {
         free(_stateValueIndicesForVariable[i]);
+        free(_arcExistsListsForVariable[i]);
     }
     _arcExistsForVariable += _minVar;
     free(_arcExistsForVariable);
+    _numArcExistsForVariable += _minVar;
+    free(_numArcExistsForVariable);
     [_stateDescriptor release];
     [super dealloc];
 }
@@ -261,6 +281,8 @@ const short BytesPerMagic = 4;
                 return arcExists(state,variable,value) && oldClosure(state,variable,value);
             } copy];
         }
+        _arcExistsListsForVariable[mappedVarIndex][_numArcExistsForVariable[mappedVarIndex]] = arcExists;
+        _numArcExistsForVariable[mappedVarIndex] += 1;
     }
     _numSpecsAdded++;
 }
@@ -285,6 +307,8 @@ const short BytesPerMagic = 4;
                 return arcExists(state,variable,value) && oldClosure(state,variable,value);
             } copy];
         }
+        _arcExistsListsForVariable[mappedVarIndex][_numArcExistsForVariable[mappedVarIndex]] = arcExists;
+        _numArcExistsForVariable[mappedVarIndex] += 1;
     }
     _numSpecsAdded++;
 }
@@ -318,6 +342,8 @@ const short BytesPerMagic = 4;
                 return newArcExistsClosure(state,variable,value) && oldClosure(state,variable,value);
             } copy];
         }
+        _arcExistsListsForVariable[mappedVarIndex][_numArcExistsForVariable[mappedVarIndex]] = newArcExistsClosure;
+        _numArcExistsForVariable[mappedVarIndex] += 1;
     }
     
     _numSpecsAdded++;
@@ -402,15 +428,23 @@ const short BytesPerMagic = 4;
 -(bool) canCreateState:(char**)newStateProperties fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value {
     char* parState = [parentState state];
     
-    if (!_arcExistsForVariable[variable](parState,variable,value)) {
-        return false;
+    int numArcExists = _numArcExistsForVariable[variable];
+    DDClosure* arcExistsList = _arcExistsListsForVariable[variable];
+    for (int i = 0; i < numArcExists; i++) {
+        if (!arcExistsList[i](parState,variable,value)) {
+            return false;
+        }
     }
+    /*if (!_arcExistsForVariable[variable](parState,variable,value)) {
+        return false;
+    }*/
     
     *newStateProperties = malloc(_numBytes * sizeof(char));
     int newValue;
+    bool* propertyUsed = _stateValueIndicesForVariable[variable];
     for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
         //MDDPropertyDescriptor* property = _properties[propertyIndex];
-        if (_stateValueIndicesForVariable[variable][propertyIndex]) {
+        if (propertyUsed[propertyIndex]) {
             newValue = (int)_transitionFunctions[propertyIndex](parState, variable, value);
         } else {
             newValue = [_properties[propertyIndex] get:parState];

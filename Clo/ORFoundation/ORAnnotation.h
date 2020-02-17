@@ -24,7 +24,8 @@ typedef enum {
 
 typedef enum {
     DDWidth,
-    DDRelaxed
+    DDRelaxed,
+    DDWithArcs
 } GenericIndex;
 
 @protocol ORAnnotation <NSObject,NSCopying>
@@ -40,6 +41,7 @@ typedef enum {
 -(void) alldifferent: (ORCLevel) cl;
 -(void) ddWidth: (ORInt) width;
 -(void) ddRelaxed: (bool) relaxed;
+-(void) ddWithArcs: (bool) withArcs;
 
 -(ORInt) findGeneric:(GenericIndex) index;
 -(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr;

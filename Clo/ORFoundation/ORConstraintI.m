@@ -21,13 +21,15 @@
    bool _relaxed;
    ORInt _relaxationSize;
    id _specs;
+   bool _usingArcs;
 }
--(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs {
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs usingArcs:(bool)usingArcs {
    self = [super init];
    _x = x;
    _relaxed = relaxed;
    _relaxationSize = relaxationSize;
    _specs = [specs retain];
+   _usingArcs = usingArcs;
    return self;
 }
 -(void)dealloc
@@ -58,6 +60,7 @@
 {
    return _specs;
 }
+-(bool) usingArcs { return _usingArcs; }
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
@@ -706,6 +709,7 @@
 {
    _arcExistsClosure = [arcExists retain];
 }
+typedef int (*GetPropIMP)(id,SEL,char*);
 -(void)setAsAmongConstraint:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values {
    ORInt minDom = [range low];
    int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
@@ -721,21 +725,31 @@
    [values enumerateWithBlock:^(ORInt value) {
       valueInSetLookup[value - minDom] = true;
    }];
+   bool* offsetVISLookup = valueInSetLookup - minDom;
+   
+   SEL getSel = @selector(get:);
+   GetPropIMP getMinC = (GetPropIMP)[minCProp methodForSelector:getSel];
+   GetPropIMP getMaxC = (GetPropIMP)[maxCProp methodForSelector:getSel];
+   GetPropIMP getRem = (GetPropIMP)[remProp methodForSelector:getSel];
    
    _arcExistsClosure = [(id)^(char* state, ORInt variable, ORInt value) {
-      ORInt index = value - minDom;
-      int valueInSet = valueInSetLookup[index];
-      return ([minCProp get:state] + valueInSet <= ub) &&
-      (lb <= [maxCProp  get:state] + valueInSet + [remProp get:state] - 1);
+      int valueInSet = offsetVISLookup[value];
+      return (getMinC(minCProp,getSel,state) + valueInSet <= ub) &&
+      (lb <= getMaxC(maxCProp,getSel,state) + valueInSet + getRem(remProp,getSel,state) - 1);
+      //return ([minCProp get:state] + valueInSet <= ub) &&
+      //(lb <= [maxCProp  get:state] + valueInSet + [remProp get:state] - 1);
    } copy];
    _transitionClosures[0] = [(id)^(char* state,ORInt variable,ORInt value) {
-      return [minCProp get:state] + valueInSetLookup[value-minDom];
+      return getMinC(minCProp,getSel,state) + offsetVISLookup[value];
+      //return [minCProp get:state] + offsetVISLookup[value];
    } copy];
    _transitionClosures[1] = [(id)^(char* state,ORInt variable,ORInt value) {
-      return [maxCProp get:state] + valueInSetLookup[value-minDom];
+      return getMaxC(maxCProp,getSel,state) + offsetVISLookup[value];
+      //return [maxCProp get:state] + offsetVISLookup[value];
    } copy];
    _transitionClosures[2] = [(id)^(char* state,ORInt variable,ORInt value) {
-      return [remProp get:state] - 1;
+      return getRem(remProp,getSel,state) - 1;
+      //return [remProp get:state] - 1;
    } copy];
 }
 -(void)setAmongArc:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values {
