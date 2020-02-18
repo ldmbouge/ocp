@@ -17,8 +17,9 @@
 #import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORVisit.h>
+#import "ORMDDProperties.h"
 
-@interface ORExactMDDAllDifferent : ORConstraintI<ORExactMDDAllDifferent>
+/*@interface ORExactMDDAllDifferent : ORConstraintI<ORExactMDDAllDifferent>
 -(ORExactMDDAllDifferent*)initORExactMDDAllDifferent:(id<ORIntVarArray>)x reduced:(bool)reduced;
 -(id<ORIntVarArray>) vars;
 -(bool) reduced;
@@ -67,6 +68,14 @@
 -(bool**) adjacencyMatrix;
 -(id<ORIntArray>) weights;
 @end
+*/
+@interface ORMDDStateSpecification : ORConstraintI<ORMDDStateSpecification>
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs usingArcs:(bool)usingArcs;
+-(id<ORIntVarArray>) vars;
+-(ORInt) relaxationSize;
+-(id) specs;
+-(bool) usingArcs;
+@end
 
 /*
 @interface ORCustomAltMDD : ORConstraintI<ORCustomAltMDD>
@@ -74,7 +83,7 @@
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
-@end*/
+@end
 @interface ORCustomMDD : ORConstraintI<ORCustomMDD>
 -(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState;
 -(id<ORIntVarArray>) vars;
@@ -83,7 +92,7 @@
 -(id) classState;
 -(bool) usingClassState;
 @end
-/*
+
 @interface ORCustomMDDWithObjective : ORConstraintI<ORCustomMDD>
 -(ORCustomMDD*)initORCustomMDDWithObjective:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
 -(id<ORIntVarArray>) vars;
@@ -94,11 +103,12 @@
 -(Class) stateClass;
 @end*/
 
+
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize;
+-(ORMDDSpecs*)initORMDDSpecsUsingClosures:(id<ORIntVarArray>)x stateSize:(int)stateSize;
 -(id<ORIntVarArray>) vars;
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
--(void)addStateSet:(ORInt)lookup withDefaultValue:(NSSet<id>*)value;
 @end
 /*@interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
 -(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x;

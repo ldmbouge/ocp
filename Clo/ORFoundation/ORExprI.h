@@ -505,11 +505,24 @@
 -(id<ORTracker>) tracker;
 -(NSString *)description;
 @end
+@interface ORExprVariableIndexI : ORExprI<ORExpr, NSCoding> {
+    id<ORTracker> _t;
+    ORInt _index;
+}
+-(id<ORExpr>)initORExprVariableIndexI:(id<ORTracker>)t index:(ORInt)index;
+-(void) visit:(ORVisitor*) v;
+-(ORInt) index;
+-(id<ORTracker>) tracker;
+-(NSString *)description;
+@end
 @interface ORExprLayerVariableI : ORExprI<ORExpr, NSCoding> {
     id<ORTracker> _t;
+    int* _mapping;
 }
 -(id<ORExpr>)initORExprLayerVariableI:(id<ORTracker>)t;
+-(id<ORExpr>)initORExprLayerVariableI:(id<ORTracker>)t mapping:(int*)mapping;
 -(void) visit:(ORVisitor*) v;
+-(int*) mapping;
 -(id<ORTracker>) tracker;
 -(NSString *)description;
 @end
@@ -611,13 +624,15 @@
     @public int _lookup;
     @public int _stateIndex;
     @public id<ORInteger> _arrayIndex;
+    @public id _stateDescriptor;
 }
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup;
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup arrayIndex:(id<ORInteger>)arrayIndex;
 -(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index;
--(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index arrayIndex:(int)arrayIndex;
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index arrayIndex:(int)arrayIndex stateDescriptor:(id)stateDescriptor;
 -(int) lookup;
 -(int) index;
+-(id) stateDescriptor;
 -(int) arrayIndex;
 -(bool) isArray;
 -(void) visit:(ORVisitor*) v;
@@ -630,16 +645,18 @@
     id<ORExpr> _lookup;
 @public int _stateIndex;
     id<ORInteger> _arrayIndex;
-    NSDictionary* _mapping;
+    int* _mapping;
+    id _stateDescriptor;
 }
 -(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup;
 -(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup arrayIndex:(id<ORInteger>)arrayIndex;
 -(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup index:(int)index;
--(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup index:(int)index arrayIndex:(int)arrayIndex mapping:(NSDictionary*) mapping;
+-(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup index:(int)index arrayIndex:(int)arrayIndex mapping:(int*) mapping stateDescriptor:(id)_stateDescriptor;
 -(id<ORExpr>) lookup;
 -(int) index;
 -(int) arrayIndex;
--(NSDictionary*) mapping;
+-(int*) mapping;
+-(id) stateDescriptor;
 -(bool) isArray;
 -(void) visit:(ORVisitor*) v;
 -(id<ORTracker>) tracker;

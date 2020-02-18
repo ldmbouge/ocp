@@ -15,6 +15,58 @@
 #import "ORConstraintI.h"
 #import "ORParameterI.h"
 
+
+@implementation ORMDDStateSpecification {
+   id<ORIntVarArray> _x;
+   bool _relaxed;
+   ORInt _relaxationSize;
+   id _specs;
+   bool _usingArcs;
+}
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs usingArcs:(bool)usingArcs {
+   self = [super init];
+   _x = x;
+   _relaxed = relaxed;
+   _relaxationSize = relaxationSize;
+   _specs = [specs retain];
+   _usingArcs = usingArcs;
+   return self;
+}
+-(void)dealloc
+{
+   [_specs release];
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@)",[self class],self,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitMDDStateSpecification:self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _x;
+}
+-(bool) relaxed { return _relaxed; }
+-(ORInt) relaxationSize
+{
+   return _relaxationSize;
+}
+-(id) specs
+{
+   return _specs;
+}
+-(bool) usingArcs { return _usingArcs; }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
 /*@implementation ORExactMDDAllDifferent {
    id<ORIntVarArray> _x;
    bool _reduced;
@@ -383,7 +435,7 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
-@end*/
+@end
 @implementation ORCustomMDD {
    id<ORIntVarArray> _x;
    bool _relaxed;
@@ -444,7 +496,7 @@
 }
 @end
 
-/*@implementation ORCustomMDDWithObjective {
+@implementation ORCustomMDDWithObjective {
    id<ORIntVarArray> _x;
    id<ORIntVar> _objective;
    bool _relaxed;
@@ -514,83 +566,111 @@
 @implementation ORMDDSpecs {
    id<ORIntVarArray> _x;
    //ORInt* _stateValues;
-   id* _stateValues;
+   MDDPropertyDescriptor** _stateProperties;
+   bool _closuresDefined;
    id<ORExpr> _arcExists;
+   DDClosure _arcExistsClosure;
    id<ORExpr>* _transitionFunctions;
+   DDClosure* _transitionClosures;
    id<ORExpr>* _relaxationFunctions;
+   DDMergeClosure* _relaxationClosures;
    id<ORExpr>* _differentialFunctions;
-   int _stateSize;
+   DDMergeClosure* _differentialClosures;
+   MDDStateDescriptor* _stateDescriptor;
+   int _numProperties;
 }
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
    self = [super initORConstraintI];
    _x = x;
    
-   _stateValues = malloc(stateSize * sizeof(id));
+   _stateProperties = malloc(stateSize * sizeof(MDDPropertyDescriptor*));
    _transitionFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    _relaxationFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    _differentialFunctions = malloc(stateSize * sizeof(id<ORExpr>));
    for (int index = 0; index < stateSize; index++) {
       _differentialFunctions[index] = NULL;
    }
+   _closuresDefined = false;
    
-   _stateSize = stateSize;
+   _numProperties = stateSize;
 
    _arcExists = NULL;
+   _stateDescriptor = nil;
    
    return self;
 }
+-(ORMDDSpecs*)initORMDDSpecsUsingClosures:(id<ORIntVarArray>)x stateSize:(int)stateSize
+{
+   self = [super initORConstraintI];
+   _x = x;
+   
+   _transitionClosures = malloc(stateSize * sizeof(DDClosure));
+   _relaxationClosures = malloc(stateSize * sizeof(DDMergeClosure));
+   _differentialClosures = malloc(stateSize * sizeof(DDMergeClosure));
+   for (int index = 0; index < stateSize; index++) {
+      _differentialClosures[index] = NULL;
+   }
+   _closuresDefined = true;
+   
+   _numProperties = stateSize;
 
+   _arcExists = NULL;
+   _stateDescriptor = nil;
+   
+   return self;
+}
+-(id<MDDStateDescriptor>)stateDescriptor { return (id)_stateDescriptor; }
+-(void)setStateDescriptor:(id<MDDStateDescriptor>)stateDesc { _stateDescriptor = stateDesc; }
+-(void)addStateCounter:(ORInt)lookup withDefaultValue:(ORInt)value
+{
+   if (_closuresDefined) {
+      if ([_x count] < 32767) {
+         [_stateDescriptor addStateProperty:[[MDDPShort alloc] initMDDPShort:lookup initialValue:value]];
+      } else {
+         [_stateDescriptor addStateProperty:[[MDDPInt alloc] initMDDPInt:lookup initialValue:value]];
+      }
+   } else {
+      if ([_x count] < 32767) {
+         _stateProperties[lookup] = [[MDDPShort alloc] initMDDPShort:lookup initialValue:value];
+      } else {
+         _stateProperties[lookup] = [[MDDPInt alloc] initMDDPInt:lookup initialValue:value];
+      }
+   }
+}
 -(void)addStateInt:(ORInt)lookup withDefaultValue:(ORInt)value
 {
-   _stateValues[lookup] = [NSNumber numberWithInt: value];
-}
--(void)addStateIntArray:(int)lookup
-{
-   NSMutableArray* integerList = [[NSMutableArray alloc] init];
-   _stateValues[lookup] = integerList;
+   if (_closuresDefined) {
+      [_stateDescriptor addStateProperty:[[MDDPInt alloc] initMDDPInt:lookup initialValue:value]];
+   } else {
+      _stateProperties[lookup] = [[MDDPInt alloc] initMDDPInt:lookup initialValue:value];
+   }
 }
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value
 {
-   _stateValues[lookup] = [NSNumber numberWithBool: value];
-}
--(void)addStateSet:(ORInt)lookup withDefaultValue:(NSSet<id>*)value
-{
-   _stateValues[lookup] = [NSSet setWithSet:value];
-}
--(void)addStateBoolArrayDefaultFalse:(int)lookup withSize:(ORInt)size
-{
-   NSMutableArray* boolList = [[NSMutableArray alloc] init];
-   for (int i = 0; i < size; i++) {
-      [boolList addObject:[NSNumber numberWithBool:false]];
+   if (_closuresDefined) {
+      [_stateDescriptor addStateProperty:[[MDDPBit alloc] initMDDPBit:lookup initialValue:value]];
+   } else {
+      _stateProperties[lookup] = [[MDDPBit alloc] initMDDPBit:lookup initialValue:value];
    }
-   _stateValues[lookup] = boolList;
-}
--(void)addStateBoolArrayDefaultTrue:(int)lookup withSize:(ORInt)size
-{
-   NSMutableArray* boolList = [[NSMutableArray alloc] init];
-   for (int i = 0; i < size; i++) {
-      [boolList addObject:[NSNumber numberWithBool:true]];
-   }
-   _stateValues[lookup] = boolList;
 }
 -(void)addStates:(id*)states size:(int)size {
-   id* newStateValues = malloc((_stateSize + size) * sizeof(id));
-   id<ORExpr>* newTransitionFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
-   id<ORExpr>* newRelaxationFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
-   id<ORExpr>* newDifferentialFunctions = malloc((_stateSize + size) * sizeof(id<ORExpr>));
-   for (int stateIndex = 0; stateIndex < _stateSize; stateIndex++) {
-      newStateValues[stateIndex] = _stateValues[stateIndex];
+   MDDPropertyDescriptor** newStateValues = malloc((_numProperties + size) * sizeof(MDDPropertyDescriptor*));
+   id<ORExpr>* newTransitionFunctions = malloc((_numProperties + size) * sizeof(id<ORExpr>));
+   id<ORExpr>* newRelaxationFunctions = malloc((_numProperties + size) * sizeof(id<ORExpr>));
+   id<ORExpr>* newDifferentialFunctions = malloc((_numProperties + size) * sizeof(id<ORExpr>));
+   for (int stateIndex = 0; stateIndex < _numProperties; stateIndex++) {
+      newStateValues[stateIndex] = (id)_stateProperties[stateIndex];
       newTransitionFunctions[stateIndex] = _transitionFunctions[stateIndex];
       newRelaxationFunctions[stateIndex] = _relaxationFunctions[stateIndex];
       newDifferentialFunctions[stateIndex] = _differentialFunctions[stateIndex];
    }
    for (int otherStateIndex = 0; otherStateIndex < size; otherStateIndex++) {
-      newStateValues[_stateSize+otherStateIndex] = states[otherStateIndex];
+      newStateValues[_numProperties+otherStateIndex] = [states[otherStateIndex] retain];
    }
-   _stateSize += size;
-   free(_stateValues);
-   _stateValues = newStateValues;
+   _numProperties += size;
+   free(_stateProperties);
+   _stateProperties = (MDDPropertyDescriptor**)newStateValues;
    
    free(_transitionFunctions);
    _transitionFunctions = newTransitionFunctions;
@@ -601,25 +681,160 @@
    free(_differentialFunctions);
    _differentialFunctions = newDifferentialFunctions;
 }
+-(void)addStatesWithClosures:(int)size {
+   DDClosure* newTransitionClosures = malloc((_numProperties + size) * sizeof(DDClosure));
+   DDMergeClosure* newRelaxationClosures = malloc((_numProperties + size) * sizeof(DDMergeClosure));
+   DDMergeClosure* newDifferentialClosures = malloc((_numProperties + size) * sizeof(DDMergeClosure));
+   for (int stateIndex = 0; stateIndex < _numProperties; stateIndex++) {
+      newTransitionClosures[stateIndex] = _transitionClosures[stateIndex];
+      newRelaxationClosures[stateIndex] = _relaxationClosures[stateIndex];
+      newDifferentialClosures[stateIndex] = _differentialClosures[stateIndex];
+   }
+   _numProperties += size;
+   
+   free(_transitionClosures);
+   _transitionClosures = newTransitionClosures;
+   
+   free(_relaxationClosures);
+   _relaxationClosures = newRelaxationClosures;
+   
+   free(_differentialClosures);
+   _differentialClosures = newDifferentialClosures;
+}
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists
 {
    _arcExists = arcExists;
+}
+-(void)setArcExistsClosure:(DDClosure)arcExists
+{
+   _arcExistsClosure = [arcExists retain];
+}
+typedef int (*GetPropIMP)(id,SEL,char*);
+-(void)setAsAmongConstraint:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values {
+   ORInt minDom = [range low];
+   int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
+   int minCount = 0 + fpi,
+          maxCount = 1 + fpi,
+          rem = 2 + fpi;
+   MDDPropertyDescriptor** properties = [stateDesc properties];
+   MDDPropertyDescriptor* minCProp = properties[minCount];
+   MDDPropertyDescriptor* maxCProp = properties[maxCount];
+   MDDPropertyDescriptor* remProp = properties[rem];
+   
+   bool* valueInSetLookup = calloc([range size], sizeof(bool));
+   [values enumerateWithBlock:^(ORInt value) {
+      valueInSetLookup[value - minDom] = true;
+   }];
+   bool* offsetVISLookup = valueInSetLookup - minDom;
+   
+   SEL getSel = @selector(get:);
+   GetPropIMP getMinC = (GetPropIMP)[minCProp methodForSelector:getSel];
+   GetPropIMP getMaxC = (GetPropIMP)[maxCProp methodForSelector:getSel];
+   GetPropIMP getRem = (GetPropIMP)[remProp methodForSelector:getSel];
+   
+   _arcExistsClosure = [(id)^(char* state, ORInt variable, ORInt value) {
+      int valueInSet = offsetVISLookup[value];
+      return (getMinC(minCProp,getSel,state) + valueInSet <= ub) &&
+      (lb <= getMaxC(maxCProp,getSel,state) + valueInSet + getRem(remProp,getSel,state) - 1);
+      //return ([minCProp get:state] + valueInSet <= ub) &&
+      //(lb <= [maxCProp  get:state] + valueInSet + [remProp get:state] - 1);
+   } copy];
+   _transitionClosures[0] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return getMinC(minCProp,getSel,state) + offsetVISLookup[value];
+      //return [minCProp get:state] + offsetVISLookup[value];
+   } copy];
+   _transitionClosures[1] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return getMaxC(maxCProp,getSel,state) + offsetVISLookup[value];
+      //return [maxCProp get:state] + offsetVISLookup[value];
+   } copy];
+   _transitionClosures[2] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return getRem(remProp,getSel,state) - 1;
+      //return [remProp get:state] - 1;
+   } copy];
+}
+-(void)setAmongArc:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values {
+   ORInt minDom = [range low];
+   int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
+   int minCount = 0 + fpi,
+          maxCount = 1 + fpi,
+          rem = 2 + fpi;
+   MDDPropertyDescriptor** properties = [stateDesc properties];
+   MDDPropertyDescriptor* minCProp = properties[minCount];
+   MDDPropertyDescriptor* maxCProp = properties[maxCount];
+   MDDPropertyDescriptor* remProp = properties[rem];
+   
+   bool* valueInSetLookup = calloc([range size], sizeof(bool));
+   [values enumerateWithBlock:^(ORInt value) {
+      valueInSetLookup[value - minDom] = true;
+   }];
+   
+   _arcExistsClosure = [(id)^(char* state, ORInt variable, ORInt value) {
+      ORInt index = value - minDom;
+      int valueInSet = valueInSetLookup[index];
+      return ([minCProp get:state] + valueInSet <= ub) &&
+      (lb <= [maxCProp  get:state] + valueInSet + [remProp get:state] - 1);
+   } copy];
+}
+-(void)setAmongTransitions:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range values:(id<ORIntSet>)values {
+   ORInt minDom = [range low];
+   int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
+   int minCount = 0 + fpi,
+          maxCount = 1 + fpi,
+          rem = 2 + fpi;
+   bool* valueInSetLookup = calloc([range size], sizeof(bool));
+   [values enumerateWithBlock:^(ORInt value) {
+      valueInSetLookup[value - minDom] = true;
+   }];
+   MDDPropertyDescriptor** properties = [stateDesc properties];
+   MDDPropertyDescriptor* minCProp = properties[minCount];
+   MDDPropertyDescriptor* maxCProp = properties[maxCount];
+   MDDPropertyDescriptor* remProp = properties[rem];
+   
+   _transitionClosures[0] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [minCProp get:state] + valueInSetLookup[value-minDom];
+   } copy];
+   _transitionClosures[1] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [maxCProp get:state] + valueInSetLookup[value-minDom];
+   } copy];
+   _transitionClosures[2] = [(id)^(char* state,ORInt variable,ORInt value) {
+      return [remProp get:state] - 1;
+   } copy];
 }
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup
 {
    _transitionFunctions[lookup] = transitionFunction;
 }
+-(void)addTransitionClosure:(DDClosure)transitionClosure toStateValue:(int)lookup
+{
+   _transitionClosures[lookup] = [transitionClosure retain];
+}
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup
 {
    _relaxationFunctions[lookup] = relaxationFunction;
+}
+-(void)addRelaxationClosure:(DDMergeClosure)relaxationClosure toStateValue:(int)lookup
+{
+   _relaxationClosures[lookup] = [relaxationClosure copy];
 }
 -(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup
 {
    _differentialFunctions[lookup] = differentialFunction;
 }
+-(void)addStateDifferentialClosure:(DDMergeClosure)differentialClosure toStateValue:(int)lookup
+{
+   _differentialClosures[lookup] = [differentialClosure copy];
+}
 -(void)dealloc
 {
-   //NSLog(@"OREqualc::dealloc: %p",self);
+   free(_transitionFunctions);
+   free(_relaxationFunctions);
+   free(_differentialFunctions);
+   if (!_closuresDefined) {
+      for (int i = 0; i < _numProperties; i++) {
+         [_stateProperties[i] release];
+      }
+      free(_stateProperties);
+   }
    [super dealloc];
 }
 -(NSString*) description
@@ -637,12 +852,17 @@
    return _x;
 }
 
+-(bool)closuresDefined{ return _closuresDefined; }
 -(id<ORExpr>)arcExists { return _arcExists; }
+-(DDClosure)arcExistsClosure { return _arcExistsClosure; }
 -(id<ORExpr>*)transitionFunctions { return _transitionFunctions; }
+-(DDClosure*)transitionClosures { return _transitionClosures; }
 -(id<ORExpr>*)relaxationFunctions { return _relaxationFunctions; }
+-(DDMergeClosure*)relaxationClosures { return _relaxationClosures; }
 -(id<ORExpr>*)differentialFunctions { return _differentialFunctions; }
--(int)stateSize { return _stateSize; }
--(id*)stateValues { return _stateValues; }
+-(DDMergeClosure*)differentialClosures { return _differentialClosures; }
+-(int)numProperties { return _numProperties; }
+-(id*)stateProperties { return _stateProperties; }
 
 -(NSSet*)allVars
 {

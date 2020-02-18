@@ -291,7 +291,11 @@
 {
     [_currentString appendString:@"ValueAssignment"];
 }
--(void) visitExprLayerVariable:(ORExprLayerVariableI*)e
+-(void) visitExprVariableIndexI:(ORExprVariableIndexI*)e
+{
+    [_currentString appendFormat:@"VariableIndex(%d)",[e index]];
+}
+-(void) visitExprLayerVariableI:(ORExprLayerVariableI*)e
 {
     [_currentString appendString:@"LayerVariable"];
 }
@@ -394,11 +398,32 @@
 @end
 
 @implementation ORDDUpdatedSpecs
--(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(NSDictionary*)mapping
-{
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping {
     self = [super init];
-    _mapping = mapping;
+    _stateMapping = stateMapping;
+    _variableMapping = nil;
+    _stateDescriptor = nil;
     return self;
+}
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping stateSize:(int)stateSize variableMapping:(int*)variableMapping minVar:(int)minVar stateDescriptor:(MDDStateDescriptor *)stateDescriptor {
+    self = [super init];
+    _stateMapping = stateMapping;
+    _stateSize = stateSize;
+    _variableMapping = variableMapping;
+    _stateDescriptor = [stateDescriptor retain];
+    _minVar = minVar;
+    return self;
+}
+-(void) dealloc {
+    if (!_variableMappingUsed) {
+        _variableMapping += _minVar;
+        free(_variableMapping);
+    }
+    if (!_stateMappingUsed) {
+        free(_stateMapping);
+    }
+    [_stateDescriptor release];
+    [super dealloc];
 }
 -(id<ORExpr>) updatedSpecs:(id<ORExpr>)e
 {
@@ -420,16 +445,31 @@
 
 -(void) visitExprStateValueI:(ORExprStateValueI*)e
 {
-    int lookup = [[_mapping objectForKey:[[NSNumber alloc] initWithInt: [e lookup]]] intValue];
-    int index = [e index];
+    int index = [e index];  
     int arrayIndex = [e arrayIndex];
-    current = [[ORExprStateValueI alloc] initORExprStateValueI:[e tracker] lookup:lookup index:index arrayIndex:arrayIndex];
+    int lookup = [e lookup];
+    if (_stateMapping != NULL) {
+        lookup = _stateMapping[lookup];
+    }
+    current = [[ORExprStateValueI alloc] initORExprStateValueI:[e tracker] lookup:lookup index:index arrayIndex:arrayIndex stateDescriptor:(id)_stateDescriptor];
 }
 -(void) visitExprStateValueExprI:(ORExprStateValueExprI*)e
 {
     id<ORExpr> lookup = [self recursiveVisitor:[e lookup]];
-    
-    current = [[ORExprStateValueExprI alloc] initORExprStateValueExprI:[e tracker] lookup:lookup index:[e index] arrayIndex:[e arrayIndex] mapping:_mapping];
+    if (_stateMapping == NULL) {
+        current = [[ORExprStateValueExprI alloc] initORExprStateValueExprI:[e tracker] lookup:lookup index:[e index] arrayIndex:[e arrayIndex] mapping:[e mapping] stateDescriptor:(id)_stateDescriptor];
+    } else if ([e mapping] == NULL) {
+        current = [[ORExprStateValueExprI alloc] initORExprStateValueExprI:[e tracker] lookup:lookup index:[e index] arrayIndex:[e arrayIndex] mapping:_stateMapping stateDescriptor:(id)_stateDescriptor];
+        _stateMappingUsed = true;
+    } else {
+        //If there was already a mapping for the states and there's a new one, need to combine the two mappings
+        int* sumOfMappings = calloc(_stateSize, sizeof(int));
+        int* oldMapping = [e mapping];
+        for (int i = 0; i < _stateSize; i++) {
+            sumOfMappings[i] = _stateMapping[oldMapping[i]];
+        }
+        current = [[ORExprStateValueExprI alloc] initORExprStateValueExprI:[e tracker] lookup:lookup index:[e index] arrayIndex:[e arrayIndex] mapping:sumOfMappings stateDescriptor:(id)_stateDescriptor];
+    }
 }
 
 -(void) visitExprConjunctI:(ORExprBinaryI*)e
@@ -606,9 +646,22 @@
 {
     current = [ORFactory valueAssignment:[e tracker]];
 }
--(void) visitExprLayerVariableI:(id<ORExpr>)e
+-(void) visitExprVariableIndexI:(ORExprVariableIndexI*)e
 {
-    current = [ORFactory layerVariable:[e tracker]];
+    if (_variableMapping == NULL) {
+        current = [ORFactory variableIndex:[e tracker] index:[e index]];
+    } else {
+        current = [ORFactory variableIndex:[e tracker] index:_variableMapping[[e index]]];
+    }
+}
+-(void) visitExprLayerVariableI:(ORExprLayerVariableI*)e
+{
+    if (_variableMapping == NULL) {
+        current = [ORFactory layerVariable:[e tracker]];
+    } else {
+        current = [[ORExprLayerVariableI alloc] initORExprLayerVariableI:[e tracker] mapping:_variableMapping];
+        _variableMappingUsed = true;
+    }
 }
 -(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
 {
@@ -679,9 +732,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprSquareI: visit method not defined"];
 }
--(void) visitExprNegateI:(id<ORExpr>)e
+-(void) visitExprNegateI:(ORExprNegateI*)e
 {
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"];
+    id<ORExpr> inner = [self recursiveVisitor:[e operand]];
+    current = [ORFactory exprNegate:inner track:[e tracker]];
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {
@@ -724,17 +778,29 @@
 }
 -(DDClosure) computeClosureAsInteger:(id<ORExpr>)e
 {
-    DDClosure innerFunction = [self recursiveVisitor: e];
-    return [(id)^(id* state, ORInt variable, ORInt value) {
+    [e visit: self];
+    DDClosure innerFunction = current;
+    current = nil;
+    return [(id)^(char* state, ORInt variable, ORInt value) {
         return [NSNumber numberWithInt:(int)innerFunction(state, variable, value)];
     } copy];
+    //DDClosure innerFunction = [self recursiveVisitor: e];
+    //return [(id)^(char* state, ORInt variable, ORInt value) {
+    //    return [NSNumber numberWithInt:(int)innerFunction(state, variable, value)];
+    //} copy];
 }
 -(DDClosure) computeClosureAsBoolean:(id<ORExpr>)e
 {
-    DDClosure innerFunction = [self recursiveVisitor: e];
-    return [(id)^(id* state, ORInt variable, ORInt value) {
+    [e visit: self];
+    DDClosure innerFunction = current;
+    current = nil;
+    return [(id)^(char* state, ORInt variable, ORInt value) {
         return [NSNumber numberWithBool:(bool)innerFunction(state, variable, value)];
     } copy];
+    /*DDClosure innerFunction = [self recursiveVisitor: e];
+    return [(id)^(char* state, ORInt variable, ORInt value) {
+        return [NSNumber numberWithBool:(bool)innerFunction(state, variable, value)];
+    } copy];*/
 }
 
 -(DDClosure) recursiveVisitor:(id<ORExpr>)e
@@ -754,7 +820,7 @@
 
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-    current = [^(int* state, ORInt variable, ORInt value) {
+    current = [^(char* state, ORInt variable, ORInt value) {
         return [e value];
     } copy];
 }
@@ -774,7 +840,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) + right(state, variable, value);
     } copy];
 }
@@ -782,7 +848,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) - right(state, variable, value);
     } copy];
 }
@@ -790,7 +856,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) * right(state, variable, value);
     } copy];
 }
@@ -798,7 +864,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) / right(state, variable, value);
     } copy];
 }
@@ -806,7 +872,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) % right(state, variable, value);
     } copy];
 }
@@ -822,7 +888,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) == right(state, variable, value);
     } copy];
 }
@@ -830,7 +896,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) != right(state, variable, value);
     } copy];
 }
@@ -838,7 +904,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) <= right(state, variable, value);
     } copy];
 }
@@ -846,7 +912,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) >= right(state, variable, value);
     } copy];
 }
@@ -877,7 +943,7 @@
 -(void) visitExprNegateI:(ORExprNegateI*)e
 {
     DDClosure op = [self recursiveVisitor:[e operand]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return !op(state, variable, value);
     } copy];
 }
@@ -893,7 +959,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) || right(state, variable, value);
     } copy];
 }
@@ -901,7 +967,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) && right(state, variable, value);
     } copy];
 }
@@ -909,7 +975,7 @@
 {
     DDClosure left = [self recursiveVisitor:[e left]];
     DDClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state, ORInt variable, ORInt value) {
+    current = [(id)^(char* state, ORInt variable, ORInt value) {
         return !left(state, variable, value) || right(state, variable, value);
     } copy];
 }
@@ -932,64 +998,82 @@
 -(void) visitExprStateValueI:(ORExprStateValueI*)e
 {
     const int look = e->_lookup;
-    const int arrayIndex = [e->_arrayIndex value];
+    //const int arrayIndex = [e->_arrayIndex value];
     if ([e isArray]) {
-        current = [^(id* state, ORInt variable, ORInt value) {
-            return (long)[state[look][arrayIndex] intValue];
+        current = [^(char* state, ORInt variable, ORInt value) {
+            //Does not currently support the arrayIndexing
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)look forState:state];
         } copy];
     } else {
-        current = [^(id* state, ORInt variable, ORInt value) {
-            return (long)[state[look] intValue];
+        current = [^(char* state, ORInt variable, ORInt value) {
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)look forState:state];
         } copy];
     }
 }
 -(void) visitExprStateValueExprI:(ORExprStateValueExprI*)e
 {
     DDClosure lookup = [self recursiveVisitor:[e lookup]];
+    //const int arrayIndex = [e->_arrayIndex value];
+    const int* stateMapping = [e mapping];
     
-    if ([e isArray]) {
-        current = [^(id* state, ORInt variable, ORInt value) {
-            NSNumber* lookupValue = [NSNumber numberWithLong: lookup(state, variable, value)];
-            if ([e mapping] != nil) {
-                int mappedLookupValue = [[[e mapping] objectForKey:lookupValue] intValue];
-                return (long)[state[mappedLookupValue][[e arrayIndex]] intValue];
-            }
-            return (long)[state[[lookupValue intValue]][[e arrayIndex]] intValue];
+    if ([e isArray] && stateMapping != nil) {
+        current = [^(char* state, ORInt variable, ORInt value) {
+            long lookupValue = lookup(state, variable, value);
+            int mappedLookupValue = stateMapping[lookupValue];
+            //Does not currently support the arrayIndexing
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)mappedLookupValue forState:state];
+        } copy];
+    } else if ([e isArray]) {
+        current = [^(char* state, ORInt variable, ORInt value) {
+            long lookupValue = lookup(state, variable, value);
+            //Does not currently support the arrayIndexing
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)lookupValue forState:state];
+        } copy];
+    } else if (stateMapping != nil) {
+        current = [^(char* state, ORInt variable, ORInt value) {
+            long lookupValue = lookup(state, variable, value);
+            int mappedLookupValue = stateMapping[lookupValue];
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)mappedLookupValue forState:state];
         } copy];
     } else {
-        current = [^(id* state, ORInt variable, ORInt value) {
-            NSNumber* lookupValue = [NSNumber numberWithLong: lookup(state, variable, value)];
-            if ([e mapping] != nil) {
-                int mappedLookupValue = [[[e mapping] objectForKey:lookupValue] intValue];
-                return (long)[state[mappedLookupValue] intValue];
-            }
-            return (long)[state[[lookupValue longValue]] intValue];
+        current = [^(char* state, ORInt variable, ORInt value) {
+            long lookupValue = lookup(state, variable, value);
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)lookupValue forState:state];
         } copy];
     }
 }
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
 {
-    current = [^(id* state, ORInt variable, ORInt value) {
+    current = [^(char* state, ORInt variable, ORInt value) {
         return (long)value;
     } copy];
 }
--(void) visitExprLayerVariableI:(id<ORExpr>)e
+-(void) visitExprVariableIndexI:(ORExprVariableIndexI*)e
 {
-    current = [^(id* state, ORInt variable, ORInt value) {
-        return (long)variable;
+    current = [^(char* state, ORInt variable, ORInt value) {
+        return (long)[e index];
+    } copy];
+}
+-(void) visitExprLayerVariableI:(ORExprLayerVariableI*)e
+{
+    current = [^(char* state, ORInt variable, ORInt value) {
+        if ([e mapping] != nil) {
+            return (long)variable;
+        }
+        return (long)[e mapping][variable];
     } copy];
 }
 -(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
 {
     DDClosure array = [self recursiveVisitor:[e array]];
-    current = [^(id* state, ORInt variable, ORInt value) {
+    current = [^(char* state, ORInt variable, ORInt value) {
         return (long)[(id)array(state, variable, value) count];
     } copy];
 }
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
     DDClosure right = [self recursiveVisitor:[e value]];
-    current = [^(id* state, ORInt variable, ORInt value) {
+    current = [^(char* state, ORInt variable, ORInt value) {
         return (long)[[e set] member: (ORInt)right(state, variable, value)];
     } copy];
 }
@@ -1001,8 +1085,11 @@
 {
     NSDictionary* dict = [e dict];
     DDClosure key = [self recursiveVisitor:[e key]];
-    current = [^(id* state, ORInt variable, ORInt value) {
-        return [[dict objectForKey:[NSNumber numberWithLong: key(state,variable,value)]] longValue];
+    current = [^(char* state, ORInt variable, ORInt value) {
+        NSNumber* keyObj = [NSNumber numberWithLong:key(state,variable,value)];
+        long valueFromDict = [[dict objectForKey:keyObj] longValue];
+        [keyObj release];
+        return valueFromDict;
     } copy];
 }
 @end
@@ -1023,8 +1110,10 @@
 }
 -(DDMergeClosure) computeClosureAsInteger:(id<ORExpr>)e
 {
-    DDMergeClosure innerFunction = [self recursiveVisitor: e];
-    return [(id)^(id* state1, id* state2) {
+    [e visit: self];
+    DDMergeClosure innerFunction = current;
+    current = nil;
+    return [(id)^(char* state1, char* state2) {
         return [NSNumber numberWithInt:(int)innerFunction(state1, state2)];
     } copy];
 }
@@ -1066,7 +1155,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) + right(state1, state2);
     } copy];
 }
@@ -1074,7 +1163,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) - right(state1, state2);
     } copy];
 }
@@ -1082,7 +1171,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) * right(state1, state2);
     } copy];
 }
@@ -1090,7 +1179,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) / right(state1, state2);
     } copy];
 }
@@ -1098,7 +1187,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) % right(state1, state2);
     } copy];
 }
@@ -1106,7 +1195,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return min((ORInt)left(state1, state2), (ORInt)right(state1, state2));
     } copy];
 }
@@ -1114,7 +1203,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return max((ORInt)left(state1, state2), (ORInt)right(state1, state2));
     } copy];
 }
@@ -1122,7 +1211,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) == right(state1, state2);
     } copy];
 }
@@ -1130,7 +1219,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) != right(state1, state2);
     } copy];
 }
@@ -1138,7 +1227,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) <= right(state1, state2);
     } copy];
 }
@@ -1146,7 +1235,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) >= right(state1, state2);
     } copy];
 }
@@ -1169,7 +1258,7 @@
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
     DDMergeClosure inner = [self recursiveVisitor:[e operand]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return abs((ORInt)inner(state1, state2));
     } copy];
 }
@@ -1193,7 +1282,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) || right(state1, state2);
     } copy];
 }
@@ -1201,7 +1290,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return left(state1, state2) && right(state1, state2);
     } copy];
 }
@@ -1209,7 +1298,7 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(id* state1, id* state2) {
+    current = [(id)^(char* state1, char* state2) {
         return !left(state1, state2) || right(state1, state2);
     } copy];
 }
@@ -1234,12 +1323,12 @@
     const int idx = e->_stateIndex;
     const int look = e->_lookup;
     if (idx == 0)
-        current = [^(id* state1, id* state2) {
-                return (long)[state1[look] intValue];
+        current = [^(char* state1, char* state2) {
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)look forState:state1];
         } copy];
     else {
-        current = [^(id* state1, id* state2) {
-            return (long)[state2[look] intValue];
+        current = [^(char* state1, char* state2) {
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)look forState:state2];
         } copy];
     }
 }
@@ -1249,28 +1338,33 @@
     const int idx = e->_stateIndex;
     
     if (idx == 0)
-        current = [^(id* state1, id* state2) {
-            NSNumber* lookupValue = [NSNumber numberWithLong: lookup(state1, state2) ];
+        current = [^(char* state1, char* state2) {
+            long lookupValue = lookup(state1, state2);
             if ([e mapping] != nil) {
-                int mappedLookupValue = [[[e mapping] objectForKey:lookupValue] intValue];
-                return (long)[state1[mappedLookupValue][[e arrayIndex]] intValue];
+                int mappedLookupValue = [e mapping][lookupValue];
+                //Does not support array indexing
+                return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)mappedLookupValue forState:state1];
             }
-            return (long)[state1[[lookupValue intValue]][[e arrayIndex]] intValue];
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)lookupValue forState:state1];
         } copy];
     else {
-        current = [^(id* state1, id* state2) {
-            NSNumber* lookupValue = [NSNumber numberWithLong: lookup(state1, state2)];
+        current = [^(char* state1, char* state2) {
+            long lookupValue = lookup(state1, state2);
             if ([e mapping] != nil) {
-                int mappedLookupValue = [[[e mapping] objectForKey:lookupValue] intValue];
-                return (long)[state2[mappedLookupValue] intValue];
+                int mappedLookupValue = [e mapping][lookupValue];
+                return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)mappedLookupValue forState:state2];
             }
-            return (long)[state2[[lookupValue intValue]] intValue];
+            return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)lookupValue forState:state2];
         } copy];
     }
 }
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ExprValueAssignmentI: visit method not defined"];
+}
+-(void) visitExprVariableIndexI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprVariableIndexI: visit method not defined"];
 }
 -(void) visitExprLayerVariableI:(id<ORExpr>)e
 {
@@ -1279,14 +1373,14 @@
 -(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
 {
     DDMergeClosure array = [self recursiveVisitor:[e array]];
-    current = [^(id* state1, id* state2) {
+    current = [^(char* state1, char* state2) {
         return [(id)array(state1, state2) count];
     } copy];
 }
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
     DDMergeClosure right = [self recursiveVisitor:[e value]];
-    current = [^(id* state1, id* state2) {
+    current = [^(char* state1, char* state2) {
         return [[e set] member: (ORInt)right(state1, state2)];
     } copy];
 }

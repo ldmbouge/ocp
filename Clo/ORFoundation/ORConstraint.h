@@ -410,7 +410,7 @@ enum ORGroupType {
 -(ORInt) low;
 -(ORInt) up;
 @end
-
+/*
 @protocol ORExactMDDAllDifferent <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(bool) reduced;
@@ -452,6 +452,14 @@ enum ORGroupType {
 -(bool) reduced;
 -(bool**) adjacencyMatrix;
 -(id<ORIntArray>) weights;
+@end*/
+
+@protocol ORMDDStateSpecification <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(bool) relaxed;
+-(ORInt) relaxationSize;
+-(id) specs;
+-(bool) usingArcs;
 @end
 
 /*@protocol ORCustomAltMDD <ORConstraint>
@@ -459,15 +467,14 @@ enum ORGroupType {
 -(bool) relaxed;
 -(ORInt) relaxationSize;
 -(Class) stateClass;
-@end*/
+@end
 @protocol ORCustomMDD <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(bool) relaxed;
 -(ORInt) relaxationSize;
 -(id) classState;
 @end
-
-/*@protocol ORCustomMDDWithObjective <ORConstraint>
+@protocol ORCustomMDDWithObjective <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(id<ORIntVar>) objective;
 -(ORInt) relaxationSize;
@@ -477,25 +484,49 @@ enum ORGroupType {
 -(Class) stateClass;
 @end*/
 
+@protocol MDDStateDescriptor <NSObject>
+-(id) initMDDStateDescriptor;
+-(id) initMDDStateDescriptor:(int)numProperties;
+-(void) addNewProperties:(int)num;
+-(int) numProperties;
+-(void) initializeState:(char*)state;
+-(int) getProperty:(int)propertyIndex forState:(char*)state;
+-(void) setProperty:(int)propertyIndex to:(int)value forState:(char*)state;
+-(size_t) byteOffsetForProperty:(int)propertyIndex;
+-(size_t) numBytes;
+@end
+
 @protocol ORMDDSpecs <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value;
--(void)addStateSet:(int)lookup withDefaultValue:(NSSet<id>*)value;
--(void)addStateIntArray:(int)lookup;
+-(void)addStateCounter:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
--(void)addStateBoolArrayDefaultFalse:(int)lookup withSize:(ORInt)size;
--(void)addStateBoolArrayDefaultTrue:(int)lookup withSize:(ORInt)size;
--(void)addStates:(id*)states size:(int)size;
+-(void)setStateDescriptor:(id<MDDStateDescriptor>)stateDesc;
+-(id<MDDStateDescriptor>)stateDescriptor;
+-(bool)closuresDefined;
 -(id<ORExpr>)arcExists;
+-(DDClosure)arcExistsClosure;
 -(id<ORExpr>*)transitionFunctions;
+-(DDClosure*)transitionClosures;
 -(id<ORExpr>*)relaxationFunctions;
+-(DDMergeClosure*)relaxationClosures;
 -(id<ORExpr>*)differentialFunctions;
--(int)stateSize;
--(id*)stateValues;
+-(DDMergeClosure*)differentialClosures;
+-(int)numProperties;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
+-(void)setArcExistsClosure:(DDClosure)arcExists;
+-(void)setAsAmongConstraint:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void)setAmongArc:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void)setAmongTransitions:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range values:(id<ORIntSet>)values;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
+-(void)addTransitionClosure:(DDClosure)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;
+-(void)addRelaxationClosure:(DDMergeClosure)relaxationFunction toStateValue:(int)lookup;
 -(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup;
+-(void)addStateDifferentialClosure:(DDMergeClosure)differentialFunction toStateValue:(int)lookup;
+-(id*)stateProperties;
+-(void)addStates:(id*)states size:(int)size;
+-(void)addStatesWithClosures:(int)size;
 @end
 
 /*@protocol ORAltMDDSpecs <ORConstraint>

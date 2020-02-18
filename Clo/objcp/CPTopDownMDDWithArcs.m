@@ -10,13 +10,13 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPTopDownMDD.h"
+#import "CPTopDownMDDWithArcs.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 #import "ORMDDify.h"
 
-static inline id getState(OldNode* n) { return n->_state;}
-@implementation CPMDD
+static inline id getState(MDDNode* n) { return n->_state;}
+@implementation CPMDDWithArcs
 -(id) initCPMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x
 {
     self = [super initCPCoreConstraint: engine];
@@ -41,10 +41,9 @@ static inline id getState(OldNode* n) { return n->_state;}
     _layer_to_variable = malloc((_numVariables) * sizeof(int));
     _variable_to_layer = malloc((_numVariables) * sizeof(int));
     
-    _variable_to_layer -= min_variable_index;
+    _variable_to_layer -= [_x low];
     
-    _nextVariable = min_variable_index;
-    
+    _nextVariable = [_x low];
     
     _canCreateStateSel = @selector(canCreateState:fromParent:assigningVariable:toValue:);
     _hashValueSel = @selector(hashValueFor:);
@@ -59,6 +58,7 @@ static inline id getState(OldNode* n) { return n->_state;}
     _hashWidth = 100;
     [_spec finalizeSpec:_trail hashWidth:_hashWidth];
     _numBytes = [_spec numBytes];
+    
     _hashValueFor = (HashValueIMP)[_spec methodForSelector:_hashValueSel];
     _canCreateState = (CanCreateStateIMP)[_spec methodForSelector:_canCreateStateSel];
     return self;
@@ -89,20 +89,15 @@ static inline id getState(OldNode* n) { return n->_state;}
     SEL buildLayerSel = @selector(buildLayerByValue:);
     BuildLayerByValueIMP buildLayerByValue = (BuildLayerByValueIMP)[self methodForSelector:buildLayerSel];
     
-    
     _inPost = true;
     [self createRootAndSink];
     for (int layer = 1; layer < _numVariables; layer++) {
         assignVariableToLayer(self,assignVariableSel,layer);
         buildLayerByValue(self,buildLayerSel,layer);
-        //[self assignVariableToLayer:layer];
-        //[self buildLayerByValue:layer];
-        //[self buildLayer:layer];
         [self cleanLayer: layer];
     }
     [self buildLastLayer];
     //[self setLayerVariableCount];
-    //[self buildLayer:(int)_numVariables];
     [self addPropagationsAndTrimDomains];
     _inPost = false;
     return;
@@ -146,42 +141,23 @@ static inline id getState(OldNode* n) { return n->_state;}
 }
 -(void) createRootAndSink
 {
-    OldNode* sink = [[OldNode alloc] initNode: _trail hashWidth:_hashWidth];
+    MDDNode* sink = [[MDDNode alloc] initNode: _trail hashWidth:_hashWidth];
     [self addNode: sink toLayer:((int)_numVariables)];
     
     id state = [self generateRootState:_nextVariable];
     [self assignVariableToLayer:0];
-    OldNode* root = [[OldNode alloc] initNode: _trail
+    MDDNode* root = [[MDDNode alloc] initNode: _trail
                           minChildIndex:_min_domain_for_layer[0]
                           maxChildIndex:_max_domain_for_layer[0]
                                   state:state
                               hashWidth:_hashWidth];
     [self addNode:root toLayer:0];
     [state release];
+    [root release];
+    [sink release];
 }
 -(void) cleanLayer:(int)layer { return; }
 -(void) afterPropagation { return; }
-/*-(void) buildLayer:(int)layer
-{
-    int parentLayer = layer-1;
-    //NSMutableDictionary<MDDStateValues*,OldNode*> *stateToNodeDict = [[NSMutableDictionary alloc] init];
-    BetterNodeHashTable* nodeHashTable = [[BetterNodeHashTable alloc] initBetterNodeHashTable:_hashWidth];
-    ORTRIdArrayI* parentNodes = layers[parentLayer];
-    for (int parentNodeIndex = 0; parentNodeIndex < layer_size[parentLayer]._val; parentNodeIndex++) {
-        OldNode* parentNode = [parentNodes at: parentNodeIndex];
-        //[self createChildrenForNode:parentNode parentLayer:parentLayer stateToNodeDict:stateToNodeDict];
-        [self createChildrenForNode:parentNode parentLayer:parentLayer nodeHashTable:nodeHashTable];
-        if ([parentNode isNonVitalAndChildless]) {
-            [self removeChildlessNodeFromMDD:parentNode fromLayer:parentLayer inPost:true];
-            parentNodeIndex--;
-        }
-    }
-    if (!layer_size[layer]._val) {
-        failNow();
-    }
-    //[stateToNodeDict release];
-    [nodeHashTable release];
-}*/
 -(void) buildLastLayer {
     int parentLayer = (int)_numVariables-1;
     int minDomain = _min_domain_for_layer[parentLayer];
@@ -190,15 +166,14 @@ static inline id getState(OldNode* n) { return n->_state;}
     int parentLayerSize = layer_size[parentLayer]._val;
     id<CPIntVar> parentVariable = _x[parentVariableIndex];
     ORTRIdArrayI* parentNodes = layers[parentLayer];
-    OldNode* sink = [layers[_numVariables] at: 0];
+    MDDNode* sink = [layers[_numVariables] at: 0];
     for (int edgeValue = minDomain; edgeValue <= maxDomain; edgeValue++) {
         if ([parentVariable member: edgeValue]) {
             for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
-                OldNode* parentNode = [parentNodes at: parentNodeIndex];
+                MDDNode* parentNode = [parentNodes at: parentNodeIndex];
                 MDDStateValues* parentState = getState(parentNode);
                 if([_spec canChooseValue:edgeValue forVariable:parentVariableIndex withState:parentState]) {
-                    [sink addParent:parentNode inPost:_inPost];
-                    [parentNode addChild:sink at:edgeValue inPost:_inPost];
+                    [[MDDArc alloc] initArc:_trail from:parentNode to:sink value:edgeValue inPost:_inPost];
                     //initial_layer_variable_count[parentLayer][edgeValue] += 1;
                     assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
                 }
@@ -206,7 +181,7 @@ static inline id getState(OldNode* n) { return n->_state;}
         }
     }
     for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
-        OldNode* parentNode = [parentNodes at: parentNodeIndex];
+        MDDNode* parentNode = [parentNodes at: parentNodeIndex];
         if ([parentNode isChildless]) {
             [self removeChildlessNodeFromMDDAtIndex:parentNodeIndex fromLayer:parentLayer];
             parentNodeIndex--;
@@ -225,50 +200,41 @@ static inline id getState(OldNode* n) { return n->_state;}
     int childMaxDomain = _max_domain_for_layer[parentLayer+1];
     id<CPIntVar> parentVariable = _x[parentVariableIndex];
     BetterNodeHashTable* nodeHashTable = [[BetterNodeHashTable alloc] initBetterNodeHashTable:_hashWidth numBytes:_numBytes];
+    ORTRIdArrayI* parentNodes = layers[parentLayer];
     
     SEL hasNodeSel = @selector(hasNodeWithStateProperties:hash:node:);
     HasNodeIMP hasNode = (HasNodeIMP)[nodeHashTable methodForSelector:hasNodeSel];
     
-    //NSMapTable<MDDStateValues*,OldNode*> *stateToNodeMap = [[NSMapTable alloc] init];
-    ORTRIdArrayI* parentNodes = layers[parentLayer];
     for (int edgeValue = minDomain; edgeValue <= maxDomain; edgeValue++) {
         if ([parentVariable member: edgeValue]) {
             for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
-                OldNode* parentNode = [parentNodes at: parentNodeIndex];
+                MDDNode* parentNode = [parentNodes at: parentNodeIndex];
                 MDDStateValues* parentState = getState(parentNode);
                 char* newStateProperties;
-                if (_canCreateState(_spec, _canCreateStateSel, &newStateProperties, parentState, parentVariableIndex, edgeValue)) {
-                //if ([_spec canCreateState:&newStateProperties fromParent:parentState assigningVariable:parentVariableIndex toValue:edgeValue]) {
+                if (_canCreateState(_spec,_canCreateStateSel,&newStateProperties,parentState,parentVariableIndex,edgeValue)) {
                     NSUInteger hashValue = _hashValueFor(_spec,_hashValueSel,newStateProperties);
+                //if ([_spec canCreateState:&newStateProperties fromParent:parentState assigningVariable:parentVariableIndex toValue:edgeValue]) {
                     //NSUInteger hashValue = [_spec hashValueFor:newStateProperties];
-                    OldNode* childNode;
-                    bool nodeExists = hasNode(nodeHashTable,hasNodeSel,newStateProperties,hashValue,&childNode);
+                    MDDNode* childNode;
                     //bool nodeExists = [nodeHashTable hasNodeWithStateProperties:newStateProperties hash:hashValue node:&childNode];
-                    //childNode = [stateToNodeMap objectForKey:newState];
-                    if (!nodeExists) {
+                    if (!hasNode(nodeHashTable,hasNodeSel,newStateProperties,hashValue,&childNode)) {
                         MDDStateValues* newState = [[MDDStateValues alloc] initState:newStateProperties numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
                         //MDDStateValues* newState = [_spec createStateWith:newStateProperties];
-                        childNode = [[OldNode alloc] initNode: _trail
+                        childNode = [[MDDNode alloc] initNode: _trail
                                              minChildIndex:childMinDomain
                                              maxChildIndex:childMaxDomain
                                                      state:newState
                                                  hashWidth:hashWidth];
                         [self addNode:childNode toLayer:layer];
                         [nodeHashTable addState:newState];
-                        //[stateToNodeMap setObject:childNode forKey:newState];
-                        [childNode addFirstParent:parentNode];
-                        [parentNode addChild:childNode at:edgeValue inPost:_inPost];
-                        //initial_layer_variable_count[parentLayer][edgeValue] += 1;
-                        assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
                         [newState release];
-                        //[childNode release];
+                        [childNode release];
                     } else {
                         free(newStateProperties);
-                        [childNode addParent:parentNode inPost:_inPost];
-                        [parentNode addChild:childNode at:edgeValue inPost:_inPost];
-                        //initial_layer_variable_count[parentLayer][edgeValue] += 1;
-                        assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
                     }
+                    [[MDDArc alloc] initArc:_trail from:parentNode to:childNode value:edgeValue inPost:_inPost];
+                    //initial_layer_variable_count[parentLayer][edgeValue] += 1;
+                    assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
                 }
             }
         }
@@ -277,10 +243,9 @@ static inline id getState(OldNode* n) { return n->_state;}
         failNow();
     }
     [nodeHashTable release];
-    //[stateToNodeMap release];
     if (layer != 1) {
         for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
-            OldNode* parentNode = [parentNodes at: parentNodeIndex];
+            MDDNode* parentNode = [parentNodes at: parentNodeIndex];
             if ([parentNode isChildless]) {
                 [self removeChildlessNodeFromMDDAtIndex:parentNodeIndex fromLayer:parentLayer];
                 parentNodeIndex--;
@@ -289,51 +254,6 @@ static inline id getState(OldNode* n) { return n->_state;}
         }
     }
 }
-//-(void) createChildrenForNode:(OldNode*)parentNode parentLayer:(int)parentLayer stateToNodeDict:(NSMutableDictionary<MDDStateValues*,OldNode*>*)stateToNodeDict
-/*-(void) createChildrenForNode:(OldNode*)parentNode parentLayer:(int)parentLayer nodeHashTable:(BetterNodeHashTable*)nodeHashTable
-{
-    int minDomain = _min_domain_for_layer[parentLayer];
-    int maxDomain = _max_domain_for_layer[parentLayer];
-    int childMinDomain, childMaxDomain;
-    int parentValue = _layer_to_variable[parentLayer];
-    MDDStateValues* parentState = [parentNode getState];
-    bool lastLayer = (parentLayer == _numVariables-1);
-    if (!lastLayer) {
-        childMinDomain = _min_domain_for_layer[parentLayer+1];
-        childMaxDomain = _max_domain_for_layer[parentLayer+1];
-    }
-    for (int edgeValue = minDomain; edgeValue <= maxDomain; edgeValue++) {
-        if ([_x[parentValue] member: edgeValue]) {
-            MDDStateValues* newState;
-            bool canCreateState = [_spec canCreateState:&newState fromParent:parentState assigningVariable:parentValue toValue:edgeValue];
-            if (canCreateState) {
-                OldNode* childNode = nil;
-                if (!lastLayer) {
-                    //childNode = [stateToNodeDict objectForKey:newState];
-                    bool nodeExists = [nodeHashTable hasNodeWithState:newState node:&childNode];
-                    if (!nodeExists) {
-                        childNode = [[OldNode alloc] initNode: _trail
-                                             minChildIndex:childMinDomain
-                                             maxChildIndex:childMaxDomain
-                                                     value:[self variableIndexForLayer:parentLayer + 1]
-                                                     state:newState
-                                                 hashWidth:_hashWidth];
-                        [self addNode:childNode toLayer:parentLayer+1];
-                        //[stateToNodeDict setObject:childNode forKey:newState];
-                        [nodeHashTable addState:newState];
-                        [childNode release];
-                    }
-                } else {
-                    childNode = [layers[_numVariables] at: 0];
-                }
-                [newState release];
-                [parentNode addChild:childNode at:edgeValue];
-                [childNode addParent:parentNode];
-                assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
-            }
-        }
-    }
-}*/
 -(void) addPropagationsAndTrimDomains
 {
     for(ORInt layer = 0; layer < _numVariables; layer++) {
@@ -376,10 +296,7 @@ static inline id getState(OldNode* n) { return n->_state;}
                     }
                 }
                 [self afterPropagation];
-                
-                if (_lowestLayerChanged == _numVariables) {
-                    _lowestLayerChanged--;
-                }
+                _lowestLayerChanged = min(_lowestLayerChanged,(int)_numVariables-1);
                 for (int i = _highestLayerChanged; i <= _lowestLayerChanged; i++) {
                     [self trimDomainsFromLayer:i];
                 }
@@ -392,17 +309,17 @@ static inline id getState(OldNode* n) { return n->_state;}
 {
     return [_spec createRootState:variableValue];
 }
--(MDDStateValues*) generateStateFromParent:(OldNode*)parentNode assigningVariable:(int)variable withValue:(int)value
+-(MDDStateValues*) generateStateFromParent:(MDDNode*)parentNode assigningVariable:(int)variable withValue:(int)value
 {
     MDDStateValues* parentState = getState(parentNode);
     return [_spec createStateFrom:parentState assigningVariable:variable withValue:value];
 }
--(MDDStateValues*) generateTempStateFromParent:(OldNode*)parentNode assigningVariable:(int)variable withValue:(int)value
+-(MDDStateValues*) generateTempStateFromParent:(MDDNode*)parentNode assigningVariable:(int)variable withValue:(int)value
 {
     MDDStateValues* parentState = getState(parentNode);
     return [_spec createTempStateFrom:parentState assigningVariable:variable withValue:value];
 }
--(void) addNode:(OldNode*)node toLayer:(int)layer_index
+-(void) addNode:(MDDNode*)node toLayer:(int)layer_index
 {
     int layerSize = layer_size[layer_index]._val;
     if (max_layer_size[layer_index]._val == layerSize) {
@@ -413,7 +330,7 @@ static inline id getState(OldNode* n) { return n->_state;}
     [layers[layer_index] set:node at:layerSize inPost:_inPost];
     assignTRInt(&layer_size[layer_index], layerSize+1, _trail);
 }
--(void) removeNode:(OldNode*)node onLayer:(int)node_layer {
+-(void) removeNode:(MDDNode*)node onLayer:(int)node_layer {
     [self removeNodeAt:[node layerIndex] onLayer:node_layer];
 }
 -(void) removeNodeAt:(int)index onLayer:(int)node_layer {
@@ -421,7 +338,7 @@ static inline id getState(OldNode* n) { return n->_state;}
     
     int finalNodeIndex = layer_size[node_layer]._val-1;
     if (index != finalNodeIndex) {
-        OldNode* movedNode = [layer at:finalNodeIndex];
+        MDDNode* movedNode = [layer at:finalNodeIndex];
         [movedNode updateLayerIndex:index];
         [layer set:movedNode at:index inPost:_inPost];
     }
@@ -433,28 +350,28 @@ static inline id getState(OldNode* n) { return n->_state;}
     [self removeNodeAt: nodeIndex onLayer:layer];
     return highestLayerChanged;
 }
--(int) removeChildlessNodeFromMDD:(OldNode*)node fromLayer:(int)layer {
+-(int) removeChildlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer {
     if (layer == 0) { failNow(); }
     int highestLayerChanged = [self checkParentsOfChildlessNode:node parentLayer:layer-1];
     [self removeNode: node onLayer:layer];
     return highestLayerChanged;
 }
--(int) checkParentsOfChildlessNode:(OldNode*)node parentLayer:(int)layer {
-    int numUniqueParents = [node numParents];
-    ORTRIdArrayI* parents = [node parents];
+-(int) checkParentsOfChildlessNode:(MDDNode*)node parentLayer:(int)layer {
+    int numParents = [node numParents];
+    ORTRIdArrayI* parentArcs = [node parents];
     int highestLayerChanged = layer;
-    TRInt* variable_count = layer_variable_count[layer];
     //int* initial_variable_count = initial_layer_variable_count[layer];
-    for (int parentIndex = 0; parentIndex < numUniqueParents; parentIndex++) {
-        OldNode* parent = [parents at: parentIndex];
-        int countForParent = [node countForParentIndex:parentIndex];
-        [node removeParentAt:parentIndex inPost:_inPost];
-        parentIndex--;
-        numUniqueParents--;
+    TRInt* variable_count = layer_variable_count[layer];
+    
+    for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
+        MDDArc* arc = [parentArcs at: parentIndex];
+        MDDNode* parent = [arc parent];
+        int arcValue = [arc arcValue];
+        [parent removeChildAt:arcValue];
         //if (_inPost) {
-        //    [parent removeChild:node numTimes:countForParent updatingIVC:initial_variable_count];
+        //    initial_variable_count[arcValue] -= 1;
         //} else {
-            [parent removeChild:node numTimes:countForParent updatingLVC:variable_count];
+            assignTRInt(&variable_count[arcValue], variable_count[arcValue]._val-1, _trail);
         //}
         if ([parent isChildless]) {
             highestLayerChanged = min(highestLayerChanged,[self removeChildlessNodeFromMDD:parent fromLayer:layer]);
@@ -462,47 +379,51 @@ static inline id getState(OldNode* n) { return n->_state;}
     }
     return highestLayerChanged;
 }
--(void) removeParentlessNodeFromMDD:(OldNode*)node fromLayer:(int)layer {
-    //TODO: Improve this function (may be improved with using real edges?).  Ideally only iterate over actual children.  Currently has to iterate over all domain vals, then for each domain val with a child, need to iterate over all of that child's parents
+-(void) removeParentlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer {
     if (layer == _numVariables) { failNow(); }
-    OldNode* *children = [node children];
+    MDDArc* *childrenArcs = [node children];
     int childLayer = layer+1;
     int numChildren = [node numChildren];
+    TRInt* variable_count = layer_variable_count[layer];
+    
+    //Would it be better to have a collection of MDDArcs not indexed by domain value to improve this search?
     for (int child_index = _min_domain_for_layer[layer]; numChildren; child_index++) {
-        OldNode* childNode = children[child_index];
-        if (childNode != NULL) {
-            [node removeChildAt: child_index];
-            [childNode removeParentOnce: node inPost:_inPost];
-            assignTRInt(&layer_variable_count[layer][child_index], layer_variable_count[layer][child_index]._val-1, _trail);
-            if ([childNode isParentless]) {
-                _removeParentlessNode(self,_removeParentlessSel,childNode,childLayer);
+        MDDArc* childArc = childrenArcs[child_index];
+        if (childArc != nil) {
+            MDDNode* child = [childArc child];
+            assignTRInt(&variable_count[child_index], variable_count[child_index]._val-1, _trail);
+            if ([child numParents] == 1) {
+                _removeParentlessNode(self,_removeParentlessSel,child,childLayer);
             } else {
-                if ([childNode isMergedNode]) {
-                    [childNode setRecalcRequired:true];
+                [child removeParentArc:childArc inPost:_inPost];
+                if ([child isMergedNode]) {
+                    [child setRecalcRequired:true];
                 }
             }
             numChildren--;
         }
     }
+    [self removeNode: node onLayer:layer];
     if (_lowestLayerChanged < childLayer) {
         _lowestLayerChanged = childLayer;
     }
-    [self removeNode: node onLayer:layer];
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
     ORTRIdArrayI* layer = layers[layer_index];
     int numEdgesToDelete = layer_variable_count[layer_index][value]._val;
     int highestLayerChanged = layer_index;
-    int childLayer = layer_index + 1;
+    int childLayer = layer_index+1;
     for (int node_index = 0; numEdgesToDelete; node_index++) {
-        OldNode* node = [layer at: node_index];
-        OldNode* childNode = [node children][value];
-        if (childNode != NULL) {
+        MDDNode* node = [layer at: node_index];
+        MDDArc* childArc = [node children][value];
+        if (childArc != NULL) {
+            MDDNode* child = [childArc child];
             [node removeChildAt:value];
-            [childNode removeParentOnce:node inPost:_inPost];
-            if ([childNode isParentless]) {
-                _removeParentlessNode(self,_removeParentlessSel,childNode,childLayer);
+            [child removeParentArc:childArc inPost:_inPost];
+            if ([child isParentless]) {
+                _removeParentlessNode(self,_removeParentlessSel,child,childLayer);
+                //lowestLayerChanged = max(lowestLayerChanged, [self removeParentlessNodeFromMDD:child fromLayer:(layer_index+1)]);
             }
             if ([node isChildless]) {
                 highestLayerChanged = max(highestLayerChanged, [self removeChildlessNodeFromMDD:node fromLayer:layer_index]);
@@ -512,9 +433,6 @@ static inline id getState(OldNode* n) { return n->_state;}
         }
     }
     _highestLayerChanged = min(_highestLayerChanged,highestLayerChanged);
-    if (_lowestLayerChanged < childLayer) {
-        _lowestLayerChanged = childLayer;
-    }
     assignTRInt(&layer_variable_count[layer_index][value], 0, _trail);
 }
 -(void) dealloc {
@@ -549,10 +467,10 @@ static inline id getState(OldNode* n) { return n->_state;}
     
     for (int layer = 0; layer < _numVariables; layer++) {
         for (int node_index = 0; node_index < layer_size[layer]._val; node_index++) {
-            OldNode* node = [layers[layer] at: node_index];
+            MDDNode* node = [layers[layer] at: node_index];
             if (node != nil) {
                 for (int child_index = _min_domain_for_layer[layer]; child_index <= _max_domain_for_layer[layer]; child_index++) {
-                    OldNode* child = [node children][child_index];
+                    MDDNode* child = [node children][child_index];
                     if (child != nil) {
                         NSValue* nodePointerValue = [NSValue valueWithPointer:node];
                         NSValue* childPointerValue = [NSValue valueWithPointer:child];
@@ -585,19 +503,6 @@ static inline id getState(OldNode* n) { return n->_state;}
     [nodeNames release];
 }
 
--(void) DEBUGTestNodeLayerIndexCorrectness
-{
-    for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
-        ORTRIdArrayI* layer = layers[layer_index];
-        for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-            OldNode* node = [layer at:node_index];
-            int nodesLayerIndex = [node layerIndex];
-            if (node_index != nodesLayerIndex) {
-                int i =0;
-            }
-        }
-    }
-}
 -(void) DEBUGTestLayerVariableCountCorrectness
 {
     //DEBUG code:  Checks if layer_variable_count correctly represents the edges on the layer.
@@ -605,8 +510,8 @@ static inline id getState(OldNode* n) { return n->_state;}
         for (int domain_val = _min_domain_for_layer[layer_index]; domain_val <= _max_domain_for_layer[layer_index]; domain_val++) {
             int count = 0;
             for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-                OldNode* node = [layers[layer_index] at: node_index];
-                OldNode** children = [node children];
+                MDDNode* node = [layers[layer_index] at: node_index];
+                MDDNode** children = [node children];
                 
                 if (children[domain_val] != NULL) {
                     count++;
@@ -618,61 +523,9 @@ static inline id getState(OldNode* n) { return n->_state;}
         }
     }
 }
-
--(void) DEBUGTestParentChildParity
-{
-    //DEBUG code:  Checks if every node's parent-child connections are mirrored.  That is, if a parent has a child, the child has the parent, and vice-versa.
-    
-    
-    for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
-        for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-            NodeHashTable* nodeHashTable = [[NodeHashTable alloc] initNodeHashTable:_hashWidth];
-            OldNode* node = [layers[layer_index] at: node_index];
-            OldNode** children = [node children];
-            for (int child_index = _min_domain_for_layer[layer_index]; child_index <= _max_domain_for_layer[layer_index]; child_index++) {
-                bool added = false;
-                OldNode* child = children[child_index];
-                
-                if (child != NULL) {
-                    MDDStateValues* childState = [child getState];
-                    NSUInteger hashValue = [childState hash];
-                    NSMutableArray* bucket = [nodeHashTable findBucketForStateHash:hashValue];
-                    for (int bucket_index = 0; bucket_index < [bucket count]; bucket_index++) {
-                        NSMutableArray* nodeCountPair = bucket[bucket_index];
-                        OldNode* bucketNode = [nodeCountPair objectAtIndex:0];
-                        int bucketCount = [[nodeCountPair objectAtIndex:1] intValue];
-                        if ([bucketNode isEqual:child]) {
-                            [bucket setObject:[[NSMutableArray alloc] initWithObjects:bucketNode,[NSNumber numberWithInt:(bucketCount+1)], nil] atIndexedSubscript:bucket_index];
-                            added=true;
-                            break;
-                        }
-                    }
-                    if (!added) {
-                        NSArray* nodeCountPair = [[NSArray alloc] initWithObjects:child, [NSNumber numberWithInt:1], nil];
-                        [bucket addObject:nodeCountPair];
-                    }
-                }
-            }
-            
-            NSMutableArray** hashTable = [nodeHashTable hashTable];
-            for (int i = 0; i < _hashWidth; i++) {
-                NSArray* bucket = hashTable[i];
-                for (NSArray* nodeCountPair in bucket) {
-                    OldNode* bucketNode = [nodeCountPair objectAtIndex:0];
-                    int bucketCount = [[nodeCountPair objectAtIndex:1] intValue];
-                    
-                    if ([bucketNode countForParent:node] != bucketCount) {
-                        int i =0;
-                    }
-                }
-            }
-            [nodeHashTable release];
-        }
-    }
-}
 @end
 
-@implementation CPMDDRestriction
+@implementation CPMDDRestrictionWithArcs
 -(id) initCPMDDRestriction: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize
 {
     self = [super initCPMDD:engine over:x];
@@ -687,10 +540,10 @@ static inline id getState(OldNode* n) { return n->_state;}
 }
 -(void) removeANodeFromLayer:(int)layer
 {
-    OldNode* node = [self findNodeToRemove:layer];
+    MDDNode* node = [self findNodeToRemove:layer];
     [self removeChildlessNodeFromMDD:node fromLayer:layer];
 }
--(OldNode*) findNodeToRemove:(int)layer
+-(MDDNode*) findNodeToRemove:(int)layer
 {
     return [layers[layer] at: 0];
 }
@@ -700,9 +553,8 @@ static inline id getState(OldNode* n) { return n->_state;}
 }
 @end
 
-@implementation CPMDDRelaxation
--(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize
-{
+@implementation CPMDDRelaxationWithArcs
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize {
     self = [super initCPMDD:engine over:x];
     _relaxation_size = relaxationSize;
     return self;
@@ -714,6 +566,7 @@ static inline id getState(OldNode* n) { return n->_state;}
     _hashWidth = relaxationSize * 2;
     [_spec finalizeSpec:_trail hashWidth:_hashWidth];
     _numBytes = [_spec numBytes];
+    
     _hashValueFor = (HashValueIMP)[_spec methodForSelector:_hashValueSel];
     _canCreateState = (CanCreateStateIMP)[_spec methodForSelector:_canCreateStateSel];
     return self;
@@ -725,17 +578,17 @@ static inline id getState(OldNode* n) { return n->_state;}
     int highestLayerChanged = layer_index;
     int childLayer = layer_index + 1;
     for (int node_index = 0; numEdgesToDelete; node_index++) {
-        OldNode* node = [layer at: node_index];
-        OldNode* childNode = [node children][value];
-        if (childNode != NULL) {
-            [node removeChildAt: value];
-            [childNode removeParentOnce:node inPost:_inPost];
-            if ([childNode isParentless]) {
-                _removeParentlessNode(self,_removeParentlessSel,childNode,childLayer);
-            } else {
-                if ([childNode isMergedNode]) {
-                    [childNode setRecalcRequired:true];
-                }
+        MDDNode* node = [layer at: node_index];
+        MDDArc* childArc = [node children][value];
+        if (childArc != NULL) {
+            MDDNode* child = [childArc child];
+            [node removeChildAt:value];
+            [child removeParentArc:childArc inPost:_inPost];
+            if ([child isParentless]) {
+                _removeParentlessNode(self,_removeParentlessSel,child,childLayer);
+                //lowestLayerChanged = max(lowestLayerChanged, [self removeParentlessNodeFromMDD:child fromLayer:(layer_index+1)]);
+            } else if ([child isMergedNode]) {
+                    [child setRecalcRequired:true];
             }
             if ([node isChildless]) {
                 highestLayerChanged = min(highestLayerChanged, [self removeChildlessNodeFromMDD:node fromLayer:layer_index]);
@@ -756,108 +609,103 @@ static inline id getState(OldNode* n) { return n->_state;}
 -(void) rebuild
 {
     void(*mth)(id,SEL,int) = [self methodForSelector:@selector(splitNodesOnLayer:)];
-    if (_highestLayerChanged == 0) { _highestLayerChanged++; }
-    int finalLayerChanged;
     for (int layer = _highestLayerChanged; layer <=  min(_lowestLayerChanged+1,(int)_numVariables-1); layer++) {
         mth(self,@selector(splitNodesOnLayer:),layer);
         if (layer_size[layer+1]._val == 0) {
             failNow();
         }
-        finalLayerChanged = layer;
     }
     return;
 }
 -(void) splitNodesOnLayer:(int)layer
 {
+    //TODO:  Use BetterNodeHashTable if possible
     NodeHashTable* nodeHashTable = [[NodeHashTable alloc] initNodeHashTable:_hashWidth];
     int minDomain = _min_domain_for_layer[layer];
     int maxDomain = _max_domain_for_layer[layer];
     int initial_layer_size = layer_size[layer]._val;
     int variableIndex = [self variableIndexForLayer:layer];
+    TRInt* variable_count = layer_variable_count[layer];
+    int childLayer = layer + 1;
     bool addedNewNode,nodeHasChildren;
-    int childLayer = layer+1;
     for (int node_index = 0; node_index < initial_layer_size && layer_size[layer]._val < _relaxation_size; node_index++) {
-        OldNode* node = [layers[layer] at: node_index];
+        MDDNode* node = [layers[layer] at: node_index];
         if ([node isMergedNode]) { //Find a relaxed node to split
             addedNewNode = false;
-            OldNode** oldNodeChildren = [node children];
+            MDDArc** oldNodeChildren = [node children];
             ORTRIdArrayI* parents = [node parents];
-            while (layer_size[layer]._val < _relaxation_size && ![node isParentless]) {
-                //All edges going into this node should be examined.  To get these edges, look at the parents
-                OldNode* parent = [parents at:0];
-                OldNode** parentsChildren = [parent children];
-                for (int child_index = _min_domain_for_layer[layer-1]; child_index <= _max_domain_for_layer[layer-1] && ![node isParentless] && layer_size[layer]._val < _relaxation_size; child_index++) {
-                    OldNode* parentsChild = parentsChildren[child_index];
-                    if ([node isEqual:parentsChild]) { //Found an edge that was going into a relaxed node.  Recreate a node for it.
-                        MDDStateValues* state = [self generateStateFromParent:parent assigningVariable: variableIndex withValue:child_index];
-                        NSUInteger hashValue = [state hash];
-                        NSMutableArray* bucket = [nodeHashTable findBucketForStateHash:hashValue];
-                        OldNode* newNode = (OldNode*)[nodeHashTable nodeWithState:state inBucket:bucket];
-                        if (newNode == nil) {
-                            newNode = [[OldNode alloc] initNode: _trail
-                                               minChildIndex:minDomain
-                                               maxChildIndex:maxDomain
-                                                       state:state
-                                                   hashWidth:_hashWidth];
-                            
-                            nodeHasChildren = false;
-                            for (int domain_val = minDomain; domain_val <= maxDomain; domain_val++) {
-                                OldNode* oldNodeChild = oldNodeChildren[domain_val];
-                                if (oldNodeChild != NULL) {
-                                    if ([_spec canChooseValue:domain_val forVariable:[self variableIndexForLayer:layer] withState:state]) {
-                                        //Check if this arc should exist from the old state
-                                        [newNode addChild:oldNodeChild at:domain_val inPost:_inPost];
-                                        [oldNodeChild addParent: newNode inPost:_inPost];
-                                        assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val+1, _trail);
-                                        [oldNodeChild setRecalcRequired:true];
-                                        _lowestLayerChanged = max(_lowestLayerChanged, childLayer);
-                                        nodeHasChildren = true;
-                                    }
-                                }
+            while ([node numParents] && layer_size[layer]._val < _relaxation_size) {
+                MDDArc* parentArc = [parents at:0];
+                MDDNode* parent = [parentArc parent];
+                int arcValue = [parentArc arcValue];
+                MDDStateValues* state = [self generateStateFromParent:parent assigningVariable:variableIndex withValue:arcValue];
+                NSUInteger hashValue = [state hash];
+                NSMutableArray* bucket = [nodeHashTable findBucketForStateHash:hashValue];
+                MDDNode* newNode = (MDDNode*)[nodeHashTable nodeWithState:state inBucket:bucket];
+                if (newNode == nil) {
+                    newNode = [[MDDNode alloc] initNode: _trail
+                                          minChildIndex:minDomain
+                                          maxChildIndex:maxDomain
+                                                  state:state
+                                              hashWidth:_hashWidth];
+                    
+                    //New node copies children from node
+                    nodeHasChildren = false;
+                    for (int domain_val = minDomain; domain_val <= maxDomain; domain_val++) {
+                        MDDArc* oldNodeChildArc = oldNodeChildren[domain_val];
+                        if (oldNodeChildArc != nil) {
+                            //Check if this arc should exist for the new state
+                            if ([_spec canChooseValue:domain_val forVariable:variableIndex withState:state]) {
+                                MDDNode* child = [oldNodeChildArc child];
+                                [[MDDArc alloc] initArc:_trail from:newNode to:child value:domain_val inPost:_inPost];
+                                assignTRInt(&variable_count[domain_val], variable_count[domain_val]._val+1, _trail);
+                                [child setRecalcRequired:true];
+                                _lowestLayerChanged = max(_lowestLayerChanged, childLayer);
+                                nodeHasChildren = true;
                             }
-                            if (nodeHasChildren) {
-                                addedNewNode = true;
-                                [self addNode:newNode toLayer:layer];
-                                [parent addChild:newNode at:child_index inPost:_inPost];
-                                [newNode addParent:parent inPost:_inPost];
-                                //[_trail trailRelease:newNode];
-                                [bucket addObject:newNode];
-                            } else {
-                                assignTRInt(&layer_variable_count[layer-1][child_index], layer_variable_count[layer-1][child_index]._val-1, _trail);
-                                [parent removeChildAt:child_index];
-                                [newNode release];
-                            }
-                        } else {
-                            [parent addChild:newNode at:child_index inPost:_inPost];
-                            [newNode addParent:parent inPost:_inPost];
                         }
-                        [node removeParentOnce:parent inPost:_inPost];
-                        [state release];
                     }
+                    if (nodeHasChildren) {
+                        addedNewNode = true;
+                        [self addNode:newNode toLayer:layer];
+                        [[MDDArc alloc] initArc:_trail from:parent to:newNode value:arcValue inPost:_inPost];
+                        //[_trail trailRelease:newNode];
+                        [bucket addObject:newNode];
+                    } else {
+                        assignTRInt(&layer_variable_count[layer-1][arcValue], layer_variable_count[layer-1][arcValue]._val-1, _trail);
+                        [parent removeChildAt:arcValue];
+                        [newNode release];
+                    }
+                } else {
+                    [[MDDArc alloc] initArc:_trail from:parent to:newNode value:arcValue inPost:_inPost];
                 }
+                [node removeParentArc:parentArc inPost:_inPost];
+                [state release];
             }
             if (!addedNewNode) { //If the node was relaxed, but should be removed without any new nodes, need to decrement the for-loop counter
                 for (int domain_val = _min_domain_for_layer[layer]; domain_val <= _max_domain_for_layer[layer]; domain_val++) {
-                    OldNode* oldNodeChild = oldNodeChildren[domain_val];
-                    if (oldNodeChild != NULL) {
-                        assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val-1, _trail);
+                    MDDArc* oldNodeChildArc = oldNodeChildren[domain_val];
+                    if (oldNodeChildArc != nil) {
+                        MDDNode* child = [oldNodeChildArc child];
+                        assignTRInt(&variable_count[domain_val], variable_count[domain_val]._val-1, _trail);
                         [node removeChildAt:domain_val];
-                        [oldNodeChild removeParentOnce:node inPost:_inPost];
+                        [child removeParentArc:oldNodeChildArc inPost:_inPost];
                     }
                 }
-                [self removeNode:node onLayer:layer];
+                [self removeNodeAt:node_index onLayer:layer];
                 node_index--;
                 initial_layer_size--;
             } else if ([node isParentless]) {
                 for (int domain_val = _min_domain_for_layer[layer]; domain_val <= _max_domain_for_layer[layer]; domain_val++) {
-                    OldNode* oldNodeChild = oldNodeChildren[domain_val];
-                    if (oldNodeChild != NULL) {
-                        [node removeChildAt:domain_val];
-                        [oldNodeChild removeParentOnce:node inPost:_inPost];
-                        assignTRInt(&layer_variable_count[layer][domain_val], layer_variable_count[layer][domain_val]._val-1, _trail);
+                    MDDArc* oldNodeChildArc = oldNodeChildren[domain_val];
+                    if (oldNodeChildArc != NULL) {
+                        MDDNode* child = [oldNodeChildArc child];
+                        assignTRInt(&variable_count[domain_val], variable_count[domain_val]._val-1, _trail);
+                        //[node removeChildAt:domain_val];
+                        [child removeParentArc:oldNodeChildArc inPost:_inPost];
                     }
                 }
-                [self removeNode:node onLayer:layer];
+                [self removeNodeAt:node_index onLayer:layer];
             } else {
                 [node setRecalcRequired:true];
             }
@@ -866,9 +714,10 @@ static inline id getState(OldNode* n) { return n->_state;}
 
     //Does it actually have to check this so thoroughly each time?
     for (int node_index = 0; node_index < layer_size[childLayer]._val; node_index++) {
-        OldNode* node = [layers[childLayer] at: node_index];
+        MDDNode* node = [layers[childLayer] at: node_index];
         if ([node isParentless]) {
             _removeParentlessNode(self,_removeParentlessSel,node,childLayer);
+            //_lowestLayerChanged = max(_lowestLayerChanged,[self removeParentlessNodeFromMDD:node fromLayer:childLayer]);
             node_index--;
         }
     }
@@ -888,21 +737,17 @@ static inline id getState(OldNode* n) { return n->_state;}
 {
     ORInt variableIndex = [self variableIndexForLayer:layer_index];
     ORTRIdArrayI* layerArray = layers[layer_index];
-    int parent_layer = layer_index-1;
+    int parentLayer = layer_index-1;
     for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
-        OldNode* node = [layerArray at:node_index];
+        MDDNode* node = [layerArray at:node_index];
         if ([node recalcRequired]) {
             bool isMergedNode;
             MDDStateValues* oldState = getState(node);
-            MDDStateValues* newState = [self calculateStateFromParentsOf:node onLayer:parent_layer isMerged:&isMergedNode];
+            MDDStateValues* newState = [self calculateStateFromParentsOf:node onLayer:parentLayer isMerged:&isMergedNode];
             [node setIsMergedNode:isMergedNode];
             if (![oldState isEqual:newState]) {
                 [_spec replaceState:oldState with:newState];
                 [self reevaluateChildrenAfterParentStateChange:node onLayer:layer_index andVariable:variableIndex];
-                if ([node isChildless]) {
-                    [self removeChildlessNodeFromMDD:node fromLayer:layer_index];
-                    node_index--;
-                }
                 _lowestLayerChanged = max(_lowestLayerChanged, layer_index+1);
             }
             [node setRecalcRequired:false];
@@ -910,51 +755,48 @@ static inline id getState(OldNode* n) { return n->_state;}
         }
     }
 }
--(MDDStateValues*) calculateStateFromParentsOf:(OldNode*)node onLayer:(int)layer isMerged:(bool*)isMergedNode
+-(MDDStateValues*) calculateStateFromParentsOf:(MDDNode*)node onLayer:(int)layer isMerged:(bool*)isMergedNode
 {
     MDDStateValues* newState = nil;
     *isMergedNode = false;
     ORTRIdArrayI* parents = [node parents];
     int variableIndex = [self variableIndexForLayer:layer];
     for (int parent_index = 0; parent_index < [node numParents]; parent_index++) {
-        OldNode* parent = [parents at:parent_index];
-        TRId* children = [parent children];
-        int countForParent = [node countForParentIndex:parent_index];
-        for (int child_index = _min_domain_for_layer[layer]; countForParent > 0; child_index++) {
-            OldNode* child = children[child_index];
-            if ([child isEqual:node]) {
-                MDDStateValues* tempState = [self generateTempStateFromParent:parent assigningVariable:variableIndex withValue:child_index];
-                if (newState == nil) {
-                    newState = tempState;
-                } else {
-                    if (![newState isEqual:tempState]) {
-                        *isMergedNode = true;
-                        [_spec mergeState:newState with:tempState];
-                    }
-                    [tempState release];
-                }
-                countForParent--;
+        MDDArc* parentArc = [parents at:parent_index];
+        MDDNode* parent = [parentArc parent];
+        int arcValue = [parentArc arcValue];
+        MDDStateValues* tempState = [self generateTempStateFromParent:parent assigningVariable:variableIndex withValue:arcValue];
+        if (newState == nil) {
+            newState = tempState;
+        } else {
+            if (![newState isEqual:tempState]) {
+                *isMergedNode = true;
+                [_spec mergeState:newState with:tempState];
             }
+            [tempState release];
         }
     }
     return newState;
 }
--(void) reevaluateChildrenAfterParentStateChange:(OldNode*)node onLayer:(int)layer_index andVariable:(int)variableIndex
+-(void) reevaluateChildrenAfterParentStateChange:(MDDNode*)node onLayer:(int)layer_index andVariable:(int)variableIndex
 {
-    OldNode* *children = [node children];
+    MDDArc* *childrenArcs = [node children];
     MDDStateValues* nodeState = getState(node);
+    TRInt* variable_count = layer_variable_count[layer_index];
     int childLayer = layer_index+1;
     for (int child_index = _min_domain_for_layer[layer_index]; child_index <= _max_domain_for_layer[layer_index]; child_index++) {
-        OldNode* child = children[child_index];
-        if (child != NULL) {
+        MDDArc* childArc = childrenArcs[child_index];
+        if (childArc != NULL) {
+            MDDNode* child = [childArc child];
             if ([_spec canChooseValue:child_index forVariable:variableIndex withState:nodeState]) {
                 [child setRecalcRequired:true];
             } else {
                 [node removeChildAt:child_index];
-                [child removeParentOnce:node inPost:_inPost];
-                assignTRInt(&layer_variable_count[layer_index][child_index], layer_variable_count[layer_index][child_index]._val-1, _trail);
+                [child removeParentArc:childArc inPost:_inPost];
+                assignTRInt(&variable_count[child_index], variable_count[child_index]._val-1, _trail);
                 if ([child isParentless]) {
                     _removeParentlessNode(self,_removeParentlessSel,child,childLayer);
+                    //[self removeParentlessNodeFromMDD:child fromLayer:childLayer];
                 }
             }
         }
@@ -981,8 +823,8 @@ static inline id getState(OldNode* n) { return n->_state;}
                 }
             }
         }
-        OldNode* first_node = [layerNodes at: best_first_node_index];
-        OldNode* second_node = [layerNodes at: best_second_node_index];
+        MDDNode* first_node = [layerNodes at: best_first_node_index];
+        MDDNode* second_node = [layerNodes at: best_second_node_index];
         [_spec mergeState:getState(first_node) with:getState(second_node)];
         [first_node takeParentsFrom:second_node];
         [first_node setIsMergedNode:true];
@@ -1048,3 +890,4 @@ static inline id getState(OldNode* n) { return n->_state;}
     return [NSMutableString stringWithFormat:@"<CPMDDRelaxation:%02d %@>",_name,_x];
 }
 @end
+

@@ -111,9 +111,9 @@
 -(void) visitExactMDDMISP: (id<ORConstraint>) c;
 -(void) visitRestrictedMDDMISP: (id<ORConstraint>) c;
 -(void) visitRelaxedMDDMISP: (id<ORConstraint>) c;
--(void) visitCustomAltMDD: (id<ORConstraint>) c;*/
--(void) visitCustomMDD: (id<ORConstraint>) c;
-//-(void) visitCustomMDDWithObjective: (id<ORConstraint>) c;
+-(void) visitCustomAltMDD: (id<ORConstraint>) c;
+-(void) visitCustomMDDWithObjective: (id<ORConstraint>) c;*/
+-(void) visitMDDStateSpecification: (id<ORConstraint>) c;
 
 -(void) visitMDDSpecs: (id<ORMDDSpecs>)c;
 //-(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>)c;
@@ -212,6 +212,7 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
 -(void) visitExprValueAssignmentI:(id<ORExpr>)e;
+-(void) visitExprVariableIndexI:(id<ORExpr>)e;
 -(void) visitExprLayerVariableI:(id<ORExpr>)e;
 -(void) visitExprSizeOfArrayI:(id<ORExpr>)e;
 -(void) visitExprParentInformationI:(id<ORExpr>)e;

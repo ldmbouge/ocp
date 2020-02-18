@@ -17,7 +17,8 @@
 @interface ORMDDify : ORVisitor<ORModelTransformation>
 -(id) initORMDDify: (id<ORAddToModel>) target isTopDown:(bool)isTopDown;
 -(id<ORAddToModel>) target;
--(NSDictionary*) checkForStateEquivalences:(id<ORMDDSpecs>)mergeInto and:(id<ORMDDSpecs>)other;
+-(int) checkForStateEquivalences:(id<ORMDDSpecs>)mergeInto and:(id<ORMDDSpecs>)other returnedMapping:(int*)returnedMapping;
 -(bool) areEquivalent:(id<ORMDDSpecs>)mergeInto atIndex:(int)index1 and:(id<ORMDDSpecs>)other atIndex:(int)index2 withDependentMapping:(NSMutableDictionary*)dependentMappings andConfirmedMapping:(NSMutableDictionary*)confirmedMappings equivalenceVisitor:(ORDDExpressionEquivalenceChecker*)equivalenceChecker candidates:(int**)candidates;
 -(void) combineMDDSpecs:(id<ORModel>)m;
+-(int*) findVariableMappingFrom:(id<ORIntVarArray>)fromArray to:(id<ORIntVarArray>)toArray;
 @end

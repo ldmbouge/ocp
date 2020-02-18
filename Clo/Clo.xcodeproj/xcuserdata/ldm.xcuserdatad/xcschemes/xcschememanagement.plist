@@ -122,7 +122,7 @@
 		<key>GCCMDDSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>152</integer>
+			<integer>153</integer>
 		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
@@ -337,7 +337,7 @@
 		<key>allDiffMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>151</integer>
+			<integer>152</integer>
 		</dict>
 		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
@@ -352,7 +352,7 @@
 		<key>amongMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>147</integer>
+			<integer>149</integer>
 		</dict>
 		<key>amongSwift.xcscheme_^#shared#^_</key>
 		<dict>
@@ -847,7 +847,7 @@
 		<key>sequenceAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>149</integer>
+			<integer>151</integer>
 		</dict>
 		<key>sequenceMDD.xcscheme_^#shared#^_</key>
 		<dict>
@@ -963,6 +963,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>100</integer>
+		</dict>
+		<key>verhulstBB.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>147</integer>
 		</dict>
 		<key>verifSwift.xcscheme_^#shared#^_</key>
 		<dict>

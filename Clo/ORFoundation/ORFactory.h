@@ -134,6 +134,7 @@ PORTABLE_BEGIN
 +(id<ORExpr>) getRightStateValue:(id<ORTracker>)t lookup:(int)lookup;
 +(id<ORExpr>) getRightStateValue:(id<ORTracker>)t lookupExpr:(id<ORExpr>)lookup;
 +(id<ORExpr>) valueAssignment:(id<ORTracker>)t;
++(id<ORExpr>) variableIndex:(id<ORTracker>)t index:(ORInt)index;
 +(id<ORExpr>) layerVariable:(id<ORTracker>)t;
 +(id<ORExpr>) sizeOfArray:(id<ORExpr>)array track:(id<ORTracker>)t;
 +(id<ORExpr>) parentInformation:(id<ORTracker>)t;
@@ -289,10 +290,13 @@ PORTABLE_BEGIN
 //+(id<ORConstraint>) RestrictedMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:( bool* _Nonnull * _Nonnull)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
 //+(id<ORConstraint>) RelaxedMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:( bool* _Nonnull * _Nonnull)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
 //+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass topDown:(bool)topDown;
-+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState topDown:(bool)topDown;
+//+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState topDown:(bool)topDown;
 //+(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs topDown:(bool)topDown usingArcs:(bool)usingArcs;
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
++(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
++(id<MDDStateDescriptor>) MDDStateDescriptor;
 //+(id<ORAltMDDSpecs>) AltMDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x;
 
 

@@ -16,11 +16,10 @@
 #import <objcp/CPVar.h>
 #import "ORCustomMDDStates.h"
 
-@class Node;
+@class MDDNode;
 
-@interface CPMDD : CPCoreConstraint {
+@interface CPMDDWithArcs : CPCoreConstraint {
 @private
-    Class _stateClass;
     int _nextVariable;
 @protected
     id<CPIntVarArray> _x;
@@ -64,38 +63,34 @@
 -(void) cleanLayer:(int)layer;
 -(void) afterPropagation;
 -(void) buildLastLayer;
-//-(void) buildLayer:(int)layer;
 -(void) buildLayerByValue:(int)layer;
-//-(void) createChildrenForNode:(OldNode*)parentNode parentLayer:(int)parentLayer nodeHashTable:(BetterNodeHashTable*)nodeHashTable;
-//-(void) createChildrenForNode:(OldNode*)parentNode parentLayer:(int)parentLayer stateToNodeDict:(NSMutableDictionary<MDDStateValues*,OldNode*>*)stateToNodeDict;
 -(void) addPropagationsAndTrimDomains;
 -(void) trimDomainsFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
 -(id) generateRootState:(int)variableValue;
--(id) generateStateFromParent:(OldNode*)parentNode assigningVariable:(int)variable withValue:(int)value;
--(id) generateTempStateFromParent:(OldNode*)parentNode assigningVariable:(int)variable withValue:(int)value;
--(void) addNode:(OldNode*)node toLayer:(int)layer_index;
+-(id) generateStateFromParent:(MDDNode*)parentNode assigningVariable:(int)variable withValue:(int)value;
+-(id) generateTempStateFromParent:(MDDNode*)parentNode assigningVariable:(int)variable withValue:(int)value;
+-(void) addNode:(MDDNode*)node toLayer:(int)layer_index;
 -(void) removeNodeAt:(int)index onLayer:(int)node_layer;
--(void) removeNode: (OldNode*) node onLayer:(int)node_layer;
+-(void) removeNode: (MDDNode*) node onLayer:(int)node_layer;
 -(int) removeChildlessNodeFromMDDAtIndex:(int)nodeIndex fromLayer:(int)layer;
--(int) removeChildlessNodeFromMDD:(OldNode*)node fromLayer:(int)layer;
--(int) checkParentsOfChildlessNode:(OldNode*)node parentLayer:(int)layer;
--(void) removeParentlessNodeFromMDD:(OldNode*)node fromLayer:(int)layer;
+-(int) removeChildlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer;
+-(int) checkParentsOfChildlessNode:(MDDNode*)node parentLayer:(int)layer;
+-(void) removeParentlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
 -(void) DEBUGTestLayerVariableCountCorrectness;
--(void) DEBUGTestParentChildParity;
 -(ORInt) recommendationFor: (ORInt) variableIndex;
 -(void) printGraph;
 @end
-@interface CPMDDRestriction : CPMDD {
+@interface CPMDDRestrictionWithArcs : CPMDDWithArcs {
 @private
     int restricted_size;
 }
 -(id) initCPMDDRestriction: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize;
 -(void) removeANodeFromLayer:(int)layer;
--(OldNode*) findNodeToRemove:(int)layer;
+-(MDDNode*) findNodeToRemove:(int)layer;
 @end
-@interface CPMDDRelaxation : CPMDD {
+@interface CPMDDRelaxationWithArcs : CPMDDWithArcs {
 @private
     int _relaxation_size;
     TRInt _first_relaxed_layer;
@@ -106,8 +101,8 @@
 -(void) rebuild;
 -(void) splitNodesOnLayer:(int)layer;
 -(void) recalcNodesOnLayer:(int)layer_index;
--(MDDStateValues*) calculateStateFromParentsOf:(OldNode*)node onLayer:(int)layer isMerged:(bool*)isMerged;
--(void) reevaluateChildrenAfterParentStateChange:(OldNode*)node onLayer:(int)layer_index andVariable:(int)variableIndex;
+-(MDDStateValues*) calculateStateFromParentsOf:(MDDNode*)node onLayer:(int)layer isMerged:(bool*)isMerged;
+-(void) reevaluateChildrenAfterParentStateChange:(MDDNode*)node onLayer:(int)layer_index andVariable:(int)variableIndex;
 -(void) mergeNodesToWidthOnLayer:(int)layer;
 -(int**) findSimilarityMatrix:(int)layer;
 -(void) updateSimilarityMatrix:(int**)similarityMatrix afterMerging:(int)best_second_node_index into:(int)best_first_node_index onLayer:(int)layer;

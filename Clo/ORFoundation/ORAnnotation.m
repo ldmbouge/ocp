@@ -198,11 +198,15 @@
     GenericIndex index = DDWidth;
     [self genericConstraint: index value: width];
 }
-
 -(void) ddRelaxed: (bool) relaxed
 {
     GenericIndex index = DDRelaxed;
     [self genericConstraint: index value: relaxed];
+}
+-(void) ddWithArcs: (bool) withArcs
+{
+    GenericIndex index = DDWithArcs;
+    [self genericConstraint: index value: withArcs];
 }
 
 -(NSString*) description

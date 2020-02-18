@@ -8,9 +8,9 @@
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
  ***********************************************************************/
-
 import ORProgram
 autoreleasepool {
+<<<<<<< HEAD
    let start = ORRuntimeMonitor.cputime()
     let m  = ORFactory.createModel(),
     R0 = range(m, 1...200),
@@ -46,5 +46,55 @@ autoreleasepool {
             }
     }
     print("Solver status: \(end - start)\n")
+=======
+  let start = ORRuntimeMonitor.cputime()
+  let m = ORFactory.createModel(),
+  R0 = range(m, 1...200),
+  R1 = range(m,1...9),
+    notes = ORFactory.annotation()
+  let vars = ORFactory.intVarArray(m, range: R0, domain: R1)
+  let cv1 = ORFactory.intSet(m, set: [2]),
+    cv2 = ORFactory.intSet(m, set: [3]),
+    cv3 = ORFactory.intSet(m, set: [4]),
+    cv4 = ORFactory.intSet(m, set: [5])
+  
+  //m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv1))
+  //m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv2))
+  //m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv3))
+  //m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv4))
+  
+  
+  m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 5, values: cv1))
+  m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 5, values: cv2))
+  m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 5, values: cv3))
+  m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 5, values: cv4))
+  
+    
+  //let relaxationSize = Int32(CommandLine.arguments[1])
+  //notes.ddWidth(relaxationSize!)
+  //notes.ddRelaxed(relaxationSize! != 0)
+  notes.ddRelaxed(false)
+  let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
+  var end:ORLong = 0
+  var afterPropagation:ORLong = 0
+  cp.search {
+    Do(cp) {
+      end = ORRuntimeMonitor.cputime()
+    }
+    »
+    firstFail(cp, vars)
+      »
+      Do(cp) {
+        afterPropagation = ORRuntimeMonitor.cputime()
+        let qs = (1..<R0.up()+1).map { i in cp.intValue(vars[ORInt(i)]) }
+        print("sol is: \(qs)")
+        print("CP: \(cp)")
+      } 
+  }
+  print("Solver status: \(end - start)\n")
+  print("Post duration: \(end - start)")
+  print("Propagation duration: \(afterPropagation - end)")
+  print("Quitting: \(afterPropagation - start)\n")
+>>>>>>> b84924ab7832aa018502ec33aee3e839022e54af
 }
 

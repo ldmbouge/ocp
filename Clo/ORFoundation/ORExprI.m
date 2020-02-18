@@ -2840,6 +2840,24 @@
     return rv;
 }
 @end
+@implementation ORExprVariableIndexI
+-(id<ORExpr>) initORExprVariableIndexI:(id<ORTracker>)t index:(ORInt)index
+{
+    self = [super init];
+    _t = t;
+    _index = index;
+    return self;
+}
+-(id<ORTracker>) tracker { return _t;}
+-(ORInt) index { return _index; }
+-(void) visit:(ORVisitor*) v { [v visitExprVariableIndexI:self]; }
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"VariableIndex%d",_index];
+    return rv;
+}
+@end
 @implementation ORExprLayerVariableI
 -(id<ORExpr>) initORExprLayerVariableI:(id<ORTracker>)t
 {
@@ -2847,7 +2865,19 @@
     _t = t;
     return self;
 }
+-(id<ORExpr>) initORExprLayerVariableI:(id<ORTracker>)t mapping:(int*)mapping
+{
+    self = [super init];
+    _t = t;
+    _mapping = mapping;
+    return self;
+}
+-(void) dealloc {
+    free(_mapping);
+    [super dealloc];
+}
 -(id<ORTracker>) tracker { return _t;}
+-(int*) mapping { return _mapping;}
 -(void) visit:(ORVisitor*) v { [v visitExprLayerVariableI:self]; }
 -(NSString*) description
 {
@@ -3062,12 +3092,13 @@
     _stateIndex = index;
     return self;
 }
--(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index arrayIndex:(int)arrayIndex
+-(id<ORExpr>)initORExprStateValueI:(id<ORTracker>)t lookup:(int)lookup index:(int)index arrayIndex:(int)arrayIndex stateDescriptor:(id)stateDescriptor
 {
     self = [super init];
     _t = t;
     _stateIndex = index;
     _lookup = lookup;
+    _stateDescriptor = stateDescriptor;
     _arrayIndex = [ORFactory integer:t value:arrayIndex];
     return self;
 }
@@ -3076,6 +3107,7 @@
 -(int) index { return _stateIndex; }
 -(int) arrayIndex { return [_arrayIndex value]; }
 -(bool) isArray { return [_arrayIndex value] >= 0; }
+-(id) stateDescriptor { return _stateDescriptor; }
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueI:self]; }
 -(NSString*) description
 {
@@ -3109,20 +3141,26 @@
     _stateIndex = index;
     return self;
 }
--(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup index:(int)index arrayIndex:(int)arrayIndex mapping:(NSDictionary*) mapping {
+-(id<ORExpr>)initORExprStateValueExprI:(id<ORTracker>)t lookup:(id<ORExpr>)lookup index:(int)index arrayIndex:(int)arrayIndex mapping:(int*) mapping stateDescriptor:(id)stateDescriptor {
     self = [super init];
     _t = t;
     _lookup = lookup;
     _arrayIndex = [ORFactory integer:t value:arrayIndex];
     _stateIndex = index;
     _mapping = mapping;
+    _stateDescriptor = stateDescriptor;
     return self;
+}
+-(void) dealloc {
+    free(_mapping);
+    [super dealloc];
 }
 -(id<ORExpr>) lookup { return _lookup; }
 -(id<ORTracker>) tracker { return _t;}
 -(int) index { return _stateIndex; }
 -(int) arrayIndex { return [_arrayIndex value]; }
--(NSDictionary*) mapping { return _mapping; }
+-(int*) mapping { return _mapping; }
+-(id) stateDescriptor { return _stateDescriptor; }
 -(bool) isArray { return [_arrayIndex value] >= 0; }
 -(void) visit:(ORVisitor*) v { [v visitExprStateValueExprI:self]; }
 -(NSString*) description

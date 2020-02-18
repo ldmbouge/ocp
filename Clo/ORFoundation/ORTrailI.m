@@ -62,6 +62,15 @@
       _seg[_cSeg] = malloc(sizeof(struct Segment));
    _seg[_cSeg]->top = 0;
 }
+-(void)trailShort:(ORShort*)ptr
+{
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGShort;
+   s->shortVal = *ptr;
+   ++_seg[_cSeg]->top;
+}
 -(void)trailInt:(ORInt*)ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
@@ -201,7 +210,7 @@
       while (cs != target) {
          switch ((--cs)->code) {
             case TAGShort:
-               *((short*)cs->ptr) = cs->intVal;
+               *((short*)cs->ptr) = cs->shortVal;
                break;
             case TAGInt:
                *((int*)cs->ptr) = cs->intVal;
@@ -697,22 +706,29 @@ void freeTRIntArray(TRIntArray a)
 
 
 @implementation ORTRIntArrayI
--(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail range: (id<ORIntRange>) R
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail low:(ORInt)low up:(ORInt)up defaultValue:(int)defaultValue
 {
    self = [super init];
    _trail = trail;
-   _low = [R low];
-   _up = makeTRInt(_trail, [R up]);
+   _low = low;
+   _up = makeTRInt(_trail, up);
    _array = malloc((_up._val - _low + 1) * sizeof(TRInt));
    _array -= _low;
    for(ORInt i = _low; i <= _up._val; i++)
-      _array[i] = makeTRInt(_trail,0);
+      _array[i] = makeTRInt(_trail,defaultValue);
    return self;
+}
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail low:(ORInt)low up:(ORInt)up
+{
+    return [self initORTRIntArrayWithTrail:trail low:low up:up defaultValue:0];
+}
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail range: (id<ORIntRange>) R
+{
+   return [self initORTRIntArrayWithTrail:trail low:[R low] up:[R up]];
 }
 -(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R
 {
-   self = [self initORTRIntArrayWithTrail:(ORTrailI*)[engine trail] range:R];
-   return self;
+   return [self initORTRIntArrayWithTrail:(ORTrailI*)[engine trail] range:R];
 }
 -(void) dealloc
 {
@@ -804,14 +820,17 @@ void freeTRIntArray(TRIntArray a)
     _trail = trail;
    _low = low;
    _up = makeTRInt(_trail, _low + size - 1);
-   _array = malloc(size * sizeof(TRId));
+   _array = calloc(size, sizeof(TRId));
    _array -= _low;
-   for(ORInt i = _low; i <= _up._val; i++)
-      _array[i] = makeTRId(_trail,0);
+   //for(ORInt i = _low; i <= _up._val; i++)
+   //   _array[i] = makeTRId(_trail,0);
    return self;
 }
 -(void) dealloc
 {
+    for (int i = _low; i <= _up._val; i++) {
+        [_array[i] release];
+    }
    _array += _low;
    free(_array);
    [super dealloc];
@@ -829,6 +848,16 @@ void freeTRIntArray(TRIntArray a)
    if (idx < _low || idx > _up._val)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
     assignTRId(&_array[idx], value, _trail);
+}
+-(void) set: (id) value at: (ORInt) idx inPost:(bool)inPost
+{
+   if (idx < _low || idx > _up._val)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
+    if (inPost) {
+        _array[idx] = makeTRId(_trail, [value retain]);
+    } else {
+        assignTRId(&_array[idx], value, _trail);
+    }
 }
 
 -(void) resize:(int)newSize
@@ -853,6 +882,10 @@ void freeTRIntArray(TRIntArray a)
 -(ORInt) up
 {
    return _up._val;
+}
+-(TRId*)array
+{
+    return _array;
 }
 -(NSUInteger)count
 {

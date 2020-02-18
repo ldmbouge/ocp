@@ -41,6 +41,7 @@
       void*               ptr;
       unsigned short     code;
       union {
+         ORShort     shortVal;          // 2-bytes
          ORInt         intVal;          // 4-bytes
          ORUInt       uintVal;          // 4-bytes
          ORLong       longVal;          // 8-bytes
@@ -66,6 +67,7 @@
 -(ORInt) trailSize;
 -(void) resize;
 -(void) incMagic;
+-(void) trailShort:(ORShort*) ptr;
 -(void) trailInt:(ORInt*) ptr;
 -(void) trailUnsigned:(ORUInt*) ptr;
 -(void) trailLong:(ORLong*) ptr;
@@ -354,6 +356,8 @@ static inline V* get##T(T* v) { return v->_val;}
    TRInt        _up;
    ORInt        _nb;
 }
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail low:(ORInt)low up:(ORInt)up defaultValue:(int)defaultValue;
+-(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail low:(ORInt)low up:(ORInt)up;
 -(ORTRIntArrayI*) initORTRIntArrayWithTrail: (id<ORTrail>) trail range: (id<ORIntRange>) R;
 -(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
@@ -396,9 +400,11 @@ static inline V* get##T(T* v) { return v->_val;}
 -(void) dealloc;
 -(id) at: (ORInt) value;
 -(void) set: (id) value at: (ORInt) idx;
+-(void) set: (id) value at: (ORInt) idx inPost:(bool)inPost;
 -(ORInt) low;
 -(ORInt) up;
 -(void) resize:(int)newSize;
 -(NSUInteger) count;
+-(TRId*) array;
 -(NSString*) description;
 @end
