@@ -116,11 +116,11 @@ void sqroot_d(int search, int argc, const char * argv[]) {
                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
                
                [one setOne];
-               [xQ setInput:x with:[arrayError objectAtIndex:0]];
-               [aQ setConstant:a and:"1/2"];
-               [bQ setConstant:b and:"1/8"];
-               [cQ setConstant:c and:"1/16"];
-               [dQ setConstant:d and:"5/128"];
+               [xQ set_d:x];
+               [aQ set_d:a];
+               [bQ set_d:b];
+               [cQ set_d:c];
+               [dQ set_d:d];
                
                ORDouble z = ((((1.0 + (a * x)) - ((b * x) * x)) + (((c * x) * x) * x)) - ((((d * x) * x) * x) * x));
                
