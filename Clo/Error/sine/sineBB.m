@@ -18,7 +18,7 @@ void sine_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:-1.57079632679 up:1.57079632679 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:-1.57079632679 up:1.57079632679 elow:zero eup:zero name:@"x"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];

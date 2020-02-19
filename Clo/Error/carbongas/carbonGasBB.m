@@ -56,13 +56,13 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
+      id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:0.1 up:0.5 elow:zero eup:zero name:@"v"];
       id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
       id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
       id<ORDoubleVar> b = [ORFactory doubleVar:mdl name:@"b"];
       id<ORDoubleVar> t = [ORFactory doubleVar:mdl name:@"t"];
       id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
       id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
-      id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:0.1 up:0.5 elow:zero eup:zero name:@"v"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
       id<ORRationalVar> ulp_r = [ORFactory ulpVar:mdl of:r];
@@ -92,52 +92,52 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }
-                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-                ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-                ORDouble p = 3.5e7;
-                ORDouble a = 0.401;
-                ORDouble b = 42.7e-6;
-                ORDouble t = 300.0;
-                ORDouble n = 1000.0;
-                ORDouble k = 1.3806503e-23;
-                
-                id<ORRational> vQ = [[ORRational alloc] init];
-                id<ORRational> pQ = [[ORRational alloc] init];
-                id<ORRational> aQ = [[ORRational alloc] init];
-                id<ORRational> bQ = [[ORRational alloc] init];
-                id<ORRational> tQ = [[ORRational alloc] init];
-                id<ORRational> nQ = [[ORRational alloc] init];
-                id<ORRational> kQ = [[ORRational alloc] init];
-                id<ORRational> zQ = [[ORRational alloc] init];
-                id<ORRational> zF = [[ORRational alloc] init];
-                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-                
-                [vQ setInput:v with:[arrayError objectAtIndex:0]];
-                [pQ set_d:3.5e7];
+                              compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+               ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+               ORDouble p = 3.5e7;
+               ORDouble a = 0.401;
+               ORDouble b = 42.7e-6;
+               ORDouble t = 300.0;
+               ORDouble n = 1000.0;
+               ORDouble k = 1.3806503e-23;
+               
+               id<ORRational> vQ = [[ORRational alloc] init];
+               id<ORRational> pQ = [[ORRational alloc] init];
+               id<ORRational> aQ = [[ORRational alloc] init];
+               id<ORRational> bQ = [[ORRational alloc] init];
+               id<ORRational> tQ = [[ORRational alloc] init];
+               id<ORRational> nQ = [[ORRational alloc] init];
+               id<ORRational> kQ = [[ORRational alloc] init];
+               id<ORRational> zQ = [[ORRational alloc] init];
+               id<ORRational> zF = [[ORRational alloc] init];
+               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+               
+               [vQ set_d:v];
+               [pQ set_d:3.5e7];
                [aQ set_d:a];
                [bQ set_d:b];
-                [tQ set_d:300.0];
-                [nQ set_d:1000.0];
+               [tQ set_d:300.0];
+               [nQ set_d:1000.0];
                [kQ set_d:k];
-                
-                ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
-                [zF set_d:z];
-                
-                [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
-                
-                [ez set: [zQ sub: zF]];
-                
-                [vQ release];
-                [pQ release];
-                [aQ release];
-                [bQ release];
-                [tQ release];
-                [nQ release];
-                [kQ release];
-                [zQ release];
-                [zF release];
-                return ez;
-             }];
+               
+               ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
+               [zF set_d:z];
+               
+               [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
+               
+               [ez set: [zQ sub: zF]];
+               
+               [vQ release];
+               [pQ release];
+               [aQ release];
+               [bQ release];
+               [tQ release];
+               [nQ release];
+               [kQ release];
+               [zQ release];
+               [zF release];
+               return ez;
+            }];
       }];
    }
 }

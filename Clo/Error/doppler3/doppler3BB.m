@@ -63,9 +63,9 @@ void doppler3_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      id<ORDoubleVar> u = [ORFactory doubleVar:mdl low:-30.0 up:120.0 elow:zero eup:zero name:@"u"];
-      id<ORDoubleVar> v = [ORFactory doubleVar:mdl low:320.0 up:20300.0 elow:zero eup:zero name:@"u"];
-      id<ORDoubleVar> t = [ORFactory doubleVar:mdl low:-50.0 up:30.0 elow:zero eup:zero name:@"u"];
+      id<ORDoubleVar> u = [ORFactory doubleInputVar:mdl low:-30.0 up:120.0 elow:zero eup:zero name:@"u"];
+      id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:320.0 up:20300.0 elow:zero eup:zero name:@"u"];
+      id<ORDoubleVar> t = [ORFactory doubleInputVar:mdl low:-50.0 up:30.0 elow:zero eup:zero name:@"u"];
       id<ORDoubleVar> t1 = [ORFactory doubleVar:mdl name:@"t1"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
