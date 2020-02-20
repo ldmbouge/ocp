@@ -49,8 +49,8 @@
 
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp;
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp value:(ORDouble) v;
-+(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range;
-+(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range boundsError:(id<ORRationalRange>) rangeError;
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range inputVar:(ORBool)inputVar;
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range boundsError:(id<ORRationalRange>) rangeError inputVar:(ORBool)inputVar;
 +(id<CPLDoubleVar>) ldoubleVar:(id<CPEngine>)cp bounds:(id<ORLDoubleRange>) range;
 
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet;

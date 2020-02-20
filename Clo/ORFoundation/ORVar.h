@@ -91,6 +91,7 @@ PORTABLE_BEGIN
 @protocol ORDoubleVar <ORExprVar>
 -(id<ORDoubleRange>) domain;
 -(id<ORRationalRange>) domainError;
+-(ORBool) isInputVar;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;

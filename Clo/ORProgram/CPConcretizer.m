@@ -139,7 +139,7 @@
 -(void) visitDoubleVar: (id<ORDoubleVar>) v
 {
     if (!_gamma[v.getId])
-       _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain] boundsError: [v domainError]];
+       _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain] boundsError: [v domainError] inputVar: [v isInputVar]];
 }
 
 -(void) visitLDoubleVar: (id<ORLDoubleVar>) v
@@ -3205,7 +3205,7 @@
 -(void) visitDoubleVar: (id<ORDoubleVar>) v
 {
    if (!_gamma[v.getId])
-      _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain] boundsError: [v domainError]];
+      _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain] boundsError: [v domainError] inputVar: [v isInputVar]];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v
