@@ -1879,7 +1879,7 @@ onFailure: (ORInt2Void) onFailure
          break;
       } else {
          /* ********* GuessError ********* */
-         LOG(_level, 2, @"Starting GuessError");
+         //LOG(_level, 2, @"Starting GuessError");
          for(id<ORFloatVar> v in x){
             id<CPFloatVar> vC = _gamma[[v getId]];
             [arrayVarValueMin addObject:[NSNumber numberWithFloat:[vC min]]];
@@ -1956,7 +1956,7 @@ onFailure: (ORInt2Void) onFailure
             [_sPool addSolution:[tmp_solution get]];
          }
          
-         LOG(_level, 2, @"Ending GuessError");
+         //LOG(_level, 2, @"Ending GuessError");
          /******************************/
          
          /* When a new box is discarded, boundDiscardedBoxes is updated with the maximal error upper bound of all discarded boxes */
@@ -2073,7 +2073,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          break; // branch-and-bound stop exploring current box
       } else {
          /* ********* GuessError ********* */
-         LOG(_level, 2, @"Starting GuessError");
+         //LOG(_level, 2, @"Starting GuessError");
          
          ORInt iteration = 0;
          ORInt nbIteration = -1;
@@ -2133,7 +2133,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          [guess_error release];
          
          
-         LOG(_level, 2, @"Ending GuessError");
+         //LOG(_level, 2, @"Ending GuessError");
          /* ********* End GuessError ********* */
 
          /* When a new box is discarded, boundDiscardedBoxes is updated with the maximal error upper bound of all discarded boxes */
@@ -2226,7 +2226,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          break; // branch-and-bound stop exploring current box
       } else {
          /* ********* GuessError ********* */
-         LOG(_level, 2, @"Starting GuessError");
+         //LOG(_level, 2, @"Starting GuessError");
          
          ORInt iteration = 0;
          ORInt nbIteration = -1;
@@ -2268,18 +2268,6 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
                ORInt nvar = 0, nv, nbiter = 0;
                ORInt direction = 1;
                ORDouble old_value;
-               
-               /*
-                nv = 0;
-                for (id<ORDoubleVar> v in x) {
-                xc = _gamma[[v getId]];
-                if (([xc isInputVar]) && (![xc bound])) {
-                nvar = nv;
-                break;
-                }
-                nv++;
-                }
-                */
                
                while (nbiter < 200) {
                   nbiter++;
@@ -2350,7 +2338,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
             [arrayVarValue removeAllObjects];
             [arrayVarError removeAllObjects];
          }
-         LOG(_level, 2, @"Ending GuessError");
+         //LOG(_level, 2, @"Ending GuessError");
          /* ********* End GuessError ********* */
 
          /* Update Primal bound */
