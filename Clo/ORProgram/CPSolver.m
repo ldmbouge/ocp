@@ -2237,106 +2237,108 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          }
          
          ORDouble value;
-         while(iteration < nbIteration){
-            for(id<ORDoubleVar> v in x){
-               /* Compute an error directly from expression */
-               currentVar = _gamma[[v getId]];
-               if([currentVar isInputVar]){
-                  if(![currentVar bound]){
-                     value = randomValueD([currentVar min], [currentVar max]);
-                     [arrayVarValue addObject:[NSNumber numberWithDouble:value]];
-                  } else {
-                     [arrayVarValue addObject:[NSNumber numberWithDouble:[currentVar min]]];
-                  }
-                  [halfUlp set: halfUlpOfD(value)];
-                  [halfUlp set:((drand48() < 0.4) ? [halfUlp neg] : halfUlp)];
-                  if ([halfUlp lt: [currentVar minErr]])
-                     [halfUlp set: [currentVar minErr]];
-                  if ([halfUlp gt: [currentVar maxErr]])
-                     [halfUlp set: [currentVar maxErr]];
-                  [arrayVarError addObject:halfUlp];
-               }
-            }
-            
-            /* Compute Primal error: f(R) - f(F) */
-            [guess_error set: [errorComputed(arrayVarValue, arrayVarError) abs]];
-            
-            /* Try to improve computed error */
-            if (RUN_IMPROVE_GUESS) {
-               id<CPDoubleVar> xc;
-               ORBool improved_var = false;
-               ORInt nvar = 0, nv, nbiter = 0;
-               ORInt direction = 1;
-               ORDouble old_value;
-               
-               while (nbiter < 200) {
-                  nbiter++;
-                  nv = 0;
-                  for(id<ORDoubleVar> v in x){
-                     // Compute an error directly from expression
-                     currentVar = _gamma[[v getId]];
-                     if([currentVar isInputVar]){
-                        if(![currentVar bound]){
-                           if(nv == nvar){
-                              old_value = [[arrayVarValue objectAtIndex:nv] doubleValue];
-                              value = nextafter([[arrayVarValue objectAtIndex:nv] doubleValue], (direction == 1) ? (+INFINITY) : (-INFINITY));
-                              [arrayVarValue replaceObjectAtIndex:nv withObject:[NSNumber numberWithDouble:value]];
-                              
-                           }
-                        } /* else { //Brings values back to solver value -> wrong
-                           [arrayVarValue replaceObjectAtIndex:nv withObject:[NSNumber numberWithDouble:[currentVar min]]];
-                           } */
-                        if(nv == nvar){
-                           olderr = [arrayVarError objectAtIndex:nv];
-                           halfUlp = halfUlpOfD(value);
-                           [halfUlp set:((direction) ? [halfUlp neg] : halfUlp)];
-                           if ([halfUlp lt: [currentVar minErr]])
-                              [halfUlp set: [currentVar minErr]];
-                           if ([halfUlp gt: [currentVar maxErr]])
-                              [halfUlp set: [currentVar maxErr]];
-                           [arrayVarError replaceObjectAtIndex:nv withObject:halfUlp];
-                        }
-                     }
-                     nv++;
-                  }
-                  
-                  // Compute Primal error: f(R) - f(F)
-                  [tmp_error set: [errorComputed(arrayVarValue, arrayVarError) abs]];
-                  printf("  Improved Guess %d %d (var %d) -> %20.20e\n", iteration, direction, nvar, [tmp_error get_d]);
-                  
-                  
-                  if([tmp_error gt: guess_error]){
-                     [guess_error set:tmp_error];
-                     improved_var = true;
-                  } else {
-                     // We failed to improve => back to preivous value
-                     [arrayVarValue replaceObjectAtIndex:nvar withObject:[NSNumber numberWithDouble:old_value]];
-                     [arrayVarError replaceObjectAtIndex:nvar withObject:olderr];
-                     if((!improved_var) && (direction == 1)){
-                        direction = -1;
+         @autoreleasepool {
+            while(iteration < nbIteration){
+               for(id<ORDoubleVar> v in x){
+                  /* Compute an error directly from expression */
+                  currentVar = _gamma[[v getId]];
+                  if([currentVar isInputVar]){
+                     if(![currentVar bound]){
+                        value = randomValueD([currentVar min], [currentVar max]);
+                        [arrayVarValue addObject:[NSNumber numberWithDouble:value]];
                      } else {
-                        direction = 1;
-                        improved_var = false;
-                        nv = 0;
-                        ORInt nvarOld = nvar;
-                        for (id<ORDoubleVar> v in x) {
-                           xc = _gamma[[v getId]];
-                           if ((nv > nvar) && ([xc isInputVar]) && (![xc bound])) { // cpjm: restrict to input var (otherwise attempt to handle err)
-                              nvar = nv;
-                              break;
+                        [arrayVarValue addObject:[NSNumber numberWithDouble:[currentVar min]]];
+                     }
+                     halfUlp = halfUlpOfD(value);
+                     [halfUlp set:((drand48() < 0.4) ? [halfUlp neg] : halfUlp)];
+                     if ([halfUlp lt: [currentVar minErr]])
+                        [halfUlp set: [currentVar minErr]];
+                     if ([halfUlp gt: [currentVar maxErr]])
+                        [halfUlp set: [currentVar maxErr]];
+                     [arrayVarError addObject:halfUlp];
+                  }
+               }
+               
+               /* Compute Primal error: f(R) - f(F) */
+               [guess_error set: [errorComputed(arrayVarValue, arrayVarError) abs]];
+               
+               /* Try to improve computed error */
+               if (RUN_IMPROVE_GUESS) {
+                  id<CPDoubleVar> xc;
+                  ORBool improved_var = false;
+                  ORInt nvar = 0, nv, nbiter = 0;
+                  ORInt direction = 1;
+                  ORDouble old_value;
+                  
+                  while (nbiter < 200) {
+                     nbiter++;
+                     nv = 0;
+                     for(id<ORDoubleVar> v in x){
+                        // Compute an error directly from expression
+                        currentVar = _gamma[[v getId]];
+                        if([currentVar isInputVar]){
+                           if(![currentVar bound]){
+                              if(nv == nvar){
+                                 old_value = [[arrayVarValue objectAtIndex:nv] doubleValue];
+                                 value = nextafter([[arrayVarValue objectAtIndex:nv] doubleValue], (direction == 1) ? (+INFINITY) : (-INFINITY));
+                                 [arrayVarValue replaceObjectAtIndex:nv withObject:[NSNumber numberWithDouble:value]];
+                                 
+                              }
+                           } /* else { //Brings values back to solver value -> wrong
+                              [arrayVarValue replaceObjectAtIndex:nv withObject:[NSNumber numberWithDouble:[currentVar min]]];
+                              } */
+                           if(nv == nvar){
+                              olderr = [arrayVarError objectAtIndex:nv];
+                              halfUlp = halfUlpOfD(value);
+                              [halfUlp set:((direction) ? [halfUlp neg] : halfUlp)];
+                              if ([halfUlp lt: [currentVar minErr]])
+                                 [halfUlp set: [currentVar minErr]];
+                              if ([halfUlp gt: [currentVar maxErr]])
+                                 [halfUlp set: [currentVar maxErr]];
+                              [arrayVarError replaceObjectAtIndex:nv withObject:halfUlp];
                            }
-                           nv++;
                         }
-                        if (nvar == nvarOld)
-                           break;
+                        nv++;
+                     }
+                     
+                     // Compute Primal error: f(R) - f(F)
+                     [tmp_error set: [errorComputed(arrayVarValue, arrayVarError) abs]];
+                     printf("  Improved Guess %d %d (var %d) -> %20.20e\n", iteration, direction, nvar, [tmp_error get_d]);
+                     
+                     
+                     if([tmp_error gt: guess_error]){
+                        [guess_error set:tmp_error];
+                        improved_var = true;
+                     } else {
+                        // We failed to improve => back to preivous value
+                        [arrayVarValue replaceObjectAtIndex:nvar withObject:[NSNumber numberWithDouble:old_value]];
+                        [arrayVarError replaceObjectAtIndex:nvar withObject:olderr];
+                        if((!improved_var) && (direction == 1)){
+                           direction = -1;
+                        } else {
+                           direction = 1;
+                           improved_var = false;
+                           nv = 0;
+                           ORInt nvarOld = nvar;
+                           for (id<ORDoubleVar> v in x) {
+                              xc = _gamma[[v getId]];
+                              if ((nv > nvar) && ([xc isInputVar]) && (![xc bound])) { // cpjm: restrict to input var (otherwise attempt to handle err)
+                                 nvar = nv;
+                                 break;
+                              }
+                              nv++;
+                           }
+                           if (nvar == nvarOld)
+                              break;
+                        }
                      }
                   }
                }
+               /* End of improvement */
+               iteration++;
+               [arrayVarValue removeAllObjects];
+               [arrayVarError removeAllObjects];
             }
-            /* End of improvement */
-            iteration++;
-            [arrayVarValue removeAllObjects];
-            [arrayVarError removeAllObjects];
          }
          //LOG(_level, 2, @"Ending GuessError");
          /* ********* End GuessError ********* */

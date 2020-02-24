@@ -240,7 +240,7 @@ void turbine1_d_c(int search, int argc, const char * argv[]) {
 
 
 int main(int argc, const char * argv[]) {
-   turbine1_d(1, argc, argv);
-   //turbine1_d_c(1, argc, argv);
+   //turbine1_d(1, argc, argv);
+   turbine1_d_c(1, argc, argv);
    return 0;
 }
