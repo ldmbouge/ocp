@@ -149,13 +149,12 @@ void turbine2_d_c(int search, int argc, const char * argv[]) {
       id<ORDoubleVar> w = [ORFactory doubleInputVar:mdl low:0.4 up:0.9 name:@"w"];
       id<ORDoubleVar> r = [ORFactory doubleInputVar:mdl low:3.8 up:7.8 name:@"r"];
       id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.5 string:@"1/2" name:@"a"];
-      id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:2.5 string:@"5/2" name:@"b"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       
       /* Declaration of constraints */
-      [mdl add:[z set: [[[@(6.0) mul: v] sub: [[[a mul: v] mul: [[[w mul: w] mul: r] mul: r]] div: [@(1.0) sub: v]]] sub: b]]];
+      [mdl add:[z set: [[[@(6.0) mul: v] sub: [[[a mul: v] mul: [[[w mul: w] mul: r] mul: r]] div: [@(1.0) sub: v]]] sub: @(2.5)]]];
       
       /* Declaration of constraints over errors */
       [mdl add: [ezAbs eq: [ez abs]]];
@@ -181,41 +180,40 @@ void turbine2_d_c(int search, int argc, const char * argv[]) {
             ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
             ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
             ORDouble a = 0.5;
-            ORDouble b = 2.5;
             
             id<ORRational> one = [[ORRational alloc] init];
             id<ORRational> six = [[ORRational alloc] init];
+            id<ORRational> twoAndAHalf = [[ORRational alloc] init];
             id<ORRational> vQ = [[ORRational alloc] init];
             id<ORRational> wQ = [[ORRational alloc] init];
             id<ORRational> rQ = [[ORRational alloc] init];
             id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
             id<ORRational> zQ = [[ORRational alloc] init];
             id<ORRational> zF = [[ORRational alloc] init];
             id<ORRational> ez = [[[ORRational alloc] init] autorelease];
             
             [one setOne];
             [six set_d:6.0];
+            [twoAndAHalf set_d:2.5];
             [vQ setInput:v with:[arrayError objectAtIndex:0]];
             [wQ setInput:w with:[arrayError objectAtIndex:1]];
             [rQ setInput:r with:[arrayError objectAtIndex:2]];
             [aQ setConstant:a and:"1/2"];
-            [bQ setConstant:b and:"5/2"];
             
-            ORDouble z = (((6.0 * v) - (((a * v) * (((w * w) * r) * r)) / (1.0 - v))) - b);
+            ORDouble z = (((6.0 * v) - (((a * v) * (((w * w) * r) * r)) / (1.0 - v))) - 2.5);
             [zF set_d:z];
             
-            [zQ set:[[[six mul: vQ] sub: [[[aQ mul: vQ] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
+            [zQ set:[[[six mul: vQ] sub: [[[aQ mul: vQ] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: twoAndAHalf]];
             
             [ez set: [zQ sub: zF]];
             
             [one release];
             [six release];
+            [twoAndAHalf release];
             [vQ release];
             [wQ release];
             [rQ release];
             [aQ release];
-            [bQ release];
             [zQ release];
             [zF release];
             return ez;
@@ -226,7 +224,7 @@ void turbine2_d_c(int search, int argc, const char * argv[]) {
 
 
 int main(int argc, const char * argv[]) {
-   turbine2_d(1, argc, argv);
-   //turbine2_d_c(1, argc, argv);
+   //turbine2_d(1, argc, argv);
+   turbine2_d_c(1, argc, argv);
    return 0;
 }
