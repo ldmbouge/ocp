@@ -181,7 +181,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    CPDoubleEventNetwork      _net;
    ORBool _inputVar;
 }
--(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup
+-(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup inputVar:(ORBool)inputVar
 {
    self = [super init];
    _engine = engine;
@@ -195,13 +195,12 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
-      _inputVar = TRUE;
+   _inputVar = inputVar;
    
    return self;
 }
 
--(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup
+-(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup inputVar:(ORBool)inputVar
 {
    self = [super init];
    _engine = engine;
@@ -215,13 +214,12 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
-      _inputVar = TRUE;
+   _inputVar = inputVar;
    
    return self;
 }
 
--(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up
+-(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up inputVar:(ORBool)inputVar
 {
    self = [super init];
    _engine = engine;
@@ -238,8 +236,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
-      _inputVar = TRUE;
+   _inputVar = inputVar;
    
    return self;
 }
@@ -257,7 +254,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
-   _inputVar = FALSE;
+   _inputVar = false;
    
    return self;
 }

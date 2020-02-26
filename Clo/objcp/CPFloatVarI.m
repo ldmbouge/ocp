@@ -170,7 +170,7 @@ return rv;
    ORBool _inputVar;
 }
 
--(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup
+-(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup inputVar:(ORBool)inputVar
 {
     self = [super init];
     _engine = engine;
@@ -184,13 +184,12 @@ return rv;
     setUpNetwork(&_net, [engine trail]);
     [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
-      _inputVar = TRUE;
+   _inputVar = inputVar;
 
     return self;
 }
 
--(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup
+-(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup inputVar:(ORBool)inputVar
 {
     self = [super init];
     _engine = engine;
@@ -204,13 +203,12 @@ return rv;
     setUpNetwork(&_net, [engine trail]);
     [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
-      _inputVar = TRUE;
+   _inputVar = inputVar;
 
     return self;
 }
 
--(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up
+-(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up inputVar:(ORBool)inputVar
 {
     self = [super init];
     _engine = engine;
@@ -227,8 +225,7 @@ return rv;
     setUpNetwork(&_net, [engine trail]);
     [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
-      _inputVar = TRUE;
+   _inputVar = inputVar;
 
     return self;
 }
@@ -247,8 +244,7 @@ return rv;
     setUpNetwork(&_net, [engine trail]);
     [_engine trackVariable: self];
    
-   if([_dom min] != -INFINITY && [_dom max] != +INFINITY)
-      _inputVar = TRUE;
+   _inputVar = false;
 
     return self;
 }

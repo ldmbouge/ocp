@@ -740,7 +740,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
                                                   up:up
                                                 name:[NSString stringWithFormat:@"e%@",[f prettyname]]];
    id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
-   #warning [rg] find a way to suppress warning below (casting to id<ORModel> does not work)
    [mdl add: c];
    [low release];
    [up release];
@@ -768,7 +767,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORRational> posInf = [[ORRational alloc] init];
    [negInf setNegInf];
    [posInf setPosInf];
-   id<ORDoubleVar> x = [[ORDoubleVarI alloc]  init: tracker low: low up: up elow: negInf eup: posInf name:name];
+   id<ORDoubleVar> x = [[ORDoubleVarI alloc]  init: tracker low: low up: up elow: negInf eup: posInf name:name inputVar:true];
    id<ORRationalVar> ex = [ORFactory errorVar:tracker of:x];
    id<ORRationalVar> ulp = [ORFactory ulpVar:tracker of:x];
    [tracker add:[ex leq:ulp]];
@@ -780,7 +779,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORDoubleVar>) doubleInputVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name
 {
-   return [[ORDoubleVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name];
+   return [[ORDoubleVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name inputVar:true];
 }
 +(id<ORFloatVar>) floatConstantVar: (id<ORTracker>) tracker value:(ORFloat) v string:(NSString*) vs name:(NSString*) name
 {
@@ -804,7 +803,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORRational> posInf = [[ORRational alloc] init];
    [negInf setNegInf];
    [posInf setPosInf];
-   id<ORFloatVar> x = [[ORFloatVarI alloc]  init: tracker low: low up: up elow: negInf eup: posInf name:name];
+   id<ORFloatVar> x = [[ORFloatVarI alloc]  init: tracker low: low up: up elow: negInf eup: posInf name:name inputVar:true];
    id<ORRationalVar> ex = [ORFactory errorVar:tracker of:x];
    id<ORRationalVar> ulp = [ORFactory ulpVar:tracker of:x];
    [tracker add:[ex leq:ulp]];
@@ -816,7 +815,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORFloatVar>) floatInputVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name
 {
-   return [[ORFloatVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name];
+   return [[ORFloatVarI alloc]  init: tracker low: low up: up elow: elow eup: eup name:name inputVar:true];
 }
 +(id<ORRationalVar>) ulpVar: (id<ORTracker>) mdl of:(id<ORVar>)f
 {
@@ -827,7 +826,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
                                                   up:up
                                                 name:[NSString stringWithFormat:@"ulp(%@)",[f prettyname]]];
    id<ORConstraint> c = [ORFactory ulpOf:mdl var:f is:r];
-   #warning [rg] find a way to suppress warning below (casting to id<ORModel> does not work)
    [mdl add: c];
    [low release];
    [up release];

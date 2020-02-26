@@ -16,6 +16,7 @@
 #import <ORFoundation/ORSolver.h>
 
 #import "rationalUtilities.h"
+#import "branchAndBoundUtilities.h"
 
 PORTABLE_BEGIN
 
@@ -71,6 +72,7 @@ PORTABLE_BEGIN
 @protocol ORFloatVar <ORExprVar>
 -(id<ORFloatRange>) domain;
 -(id<ORRationalRange>) domainError;
+-(ORBool) isInputVar;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
@@ -90,6 +92,7 @@ PORTABLE_BEGIN
 @protocol ORDoubleVar <ORExprVar>
 -(id<ORDoubleRange>) domain;
 -(id<ORRationalRange>) domainError;
+-(ORBool) isInputVar;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;

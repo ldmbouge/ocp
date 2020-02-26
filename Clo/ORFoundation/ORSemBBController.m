@@ -113,6 +113,10 @@
          }
       }
    }];
+   /* Choose seed for random generation of numbers here - used to compute a random value
+      in domains of variables for GuessError procedure in branch-and-bound search
+    */
+   srand48(time(nil));
    return self;
 }
 - (void) dealloc
@@ -260,7 +264,7 @@ NSString * const ORStatus_toString_BB[] = {
          /* skip box if sup of error is less than primalBound */
          if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] &&
             ([[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]] ||
-             [boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]])){
+             (![boundDiscardedBoxes isNegInf] && [boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]]))){
             BBNode* nd = [_buf extractBest];
             
             ORStatus status = [of tightenDualBound:bestKey.bound];
@@ -285,7 +289,7 @@ NSString * const ORStatus_toString_BB[] = {
             NSLog(@"    primalBound <=               dualBound: %@ <= %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             NSLog(@"    primalBound <=        dualBoundNextBox: %@ <= %@", [[_engine objective] primalBound], [bestKey.bound rationalValue]);
             if(![boundDiscardedBoxes isNegInf])
-               NSLog(@"    primalBound <= dualBoundDiscardedBoxes: %@ >= %@", boundDiscardedBoxes, [[_engine objective] primalBound]);
+               NSLog(@"    primalBound <= dualBoundDiscardedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDiscardedBoxes);
             return;
          }
       } else {

@@ -72,11 +72,11 @@
    [_program try: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ try x > %16.16e",[[_program explorer] nbChoices],xi,mid);
       [_program floatGthen:(id<ORFloatVar>)_variable with:mid];//CPCommonProgram
-      nbBoxGenerated++;
+      boxCardinality = cardinalityV(xi.min, xi.max);
    } alt: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ alt x <= %16.16e",[[_program explorer] nbChoices],xi,mid);
       [_program floatLEqual:(id<ORFloatVar>)_variable with:mid];
-      nbBoxGenerated++;
+      boxCardinality = cardinalityV(xi.min, xi.max);
    }];
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
@@ -97,16 +97,12 @@
    [_program try: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ try x > %16.16e",[[_program explorer] nbChoices],xi,mid);
       [_program doubleGthen:(id<ORDoubleVar>)_variable with:mid];
-      nbBoxGenerated++;
       boxCardinality = cardinalityDV(xi.min, xi.max);
    } alt: ^{
       LOG([_program debugLevel],1,@"START #choices:%d %@ alt x <= %16.16e",[[_program explorer] nbChoices],xi,mid);
       [_program doubleLEqual:(id<ORDoubleVar>)_variable with:mid];
-      nbBoxGenerated++;
       boxCardinality = cardinalityDV(xi.min, xi.max);
    }];
-   branchAndBoundTime = [NSDate date];
-   //NSLog(@"%d/%d -- %.3fs", nbBoxDone, nbBoxGenerated, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
 }
 @end
 
@@ -165,7 +161,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt i) {
       LOG([_program debugLevel],1,@"(3split) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[_program explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [_program floatInterval:(id<ORFloatVar>)_variable low:ip[i].inf up:ip[i].sup];
-      nbBoxGenerated++;
    }];
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
@@ -196,7 +191,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt i) {
       LOG([_program debugLevel],1,@"(3split) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[_program explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[i].inf up:ip[i].sup];
-      nbBoxGenerated++;
    }];
 }
 @end
@@ -278,7 +272,6 @@
       //ORInt c = [[_program explorer] nbChoices];
       LOG([_program debugLevel],1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
-      nbBoxGenerated++;
    }];
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
@@ -328,7 +321,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
       LOG([_program debugLevel],1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
-      nbBoxGenerated++;
    }];
 }
 @end
@@ -433,7 +425,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
       LOG([_program debugLevel],1,@"(6split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
-      nbBoxGenerated++;
    }];
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
@@ -508,7 +499,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
       LOG([_program debugLevel],1,@"(6split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
-      nbBoxGenerated++;
    }];
 }
 @end
@@ -575,7 +565,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt i) {
       LOG([_program debugLevel],1,@"(Dsplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[_program explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [_program floatInterval:(id<ORFloatVar>)_variable low:ip[i].inf up:ip[i].sup];
-      nbBoxGenerated++;
    }];
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
@@ -612,7 +601,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt i) {
       LOG([_program debugLevel],1,@"(Dsplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[_program explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[i].inf up:ip[i].sup];
-      nbBoxGenerated++;
    }];
 }
 @end
@@ -690,7 +678,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt i) {
       LOG([_program debugLevel],1,@"(Esplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[_program explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [_program floatInterval:(id<ORFloatVar>)_variable low:ip[i].inf up:ip[i].sup];
-      nbBoxGenerated++;
    }];
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
@@ -738,7 +725,6 @@
    [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt i) {
       LOG([_program debugLevel],1,@"(Esplit) START #choices:%d %@ try x in [%16.16e,%16.16e]",[[_program explorer] nbChoices],xi,ip[i].inf,ip[i].sup);
       [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[i].inf up:ip[i].sup];
-      nbBoxGenerated++;
    }];
 }
 @end
@@ -834,16 +820,13 @@
       [_program tryall:RANGE(_program,0,length/2) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
          [_program floatIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
-         nbBoxGenerated++;
          [_program floatIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
-         nbBoxGenerated++;
       }];
    }else if (length_x > 0 && length_y == 0){
       float_interval* ip = interval_x;
       [_program tryall:RANGE(_program,0,length_x) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d  %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
          [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
-         nbBoxGenerated++;
       }];
    }
 }
@@ -911,16 +894,13 @@
       [_program tryall:RANGE(_program,0,length/2) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
          [_program doubleIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
-         nbBoxGenerated++;
          [_program doubleIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
-         nbBoxGenerated++;
       }];
    }else if (length_x > 0 && length_y == 0){
       double_interval* ip = interval_x;
       [_program tryall:RANGE(_program,0,length_x) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d  %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
          [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
-         nbBoxGenerated++;
       }];
    }
 }

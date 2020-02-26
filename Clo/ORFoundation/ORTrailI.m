@@ -18,9 +18,6 @@
 #import <ORFoundation/ORCommand.h>
 #import <assert.h>
 
-//#import "rationalUtilities.h"
-
-
 @class ORCommandList;
 
 @implementation ORTrailI
@@ -134,15 +131,24 @@
    ++_seg[_cSeg]->top;
 }
 
--(void)trailRational:(rational_t)ptr
+-(void)trailRational:(id<ORRational>)ptr
 {
-    /*if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
-    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
-    s->ptr = ptr;
-    s->code = TAGRational;
-    init_q(s->rationalVal);
-    set_q(s->rationalVal, ptr);
-    ++_seg[_cSeg]->top;*/
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = [ptr rational];
+   s->code = TAGRational;
+   init_q(s->rationalVal);
+   set_q(s->rationalVal, [ptr rational]);
+   ++_seg[_cSeg]->top;
+}
+-(void)trailRationalType:(id<ORRational>)ptr
+{
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = [ptr type_ptr];
+   s->code = TAGInt;
+   s->intVal = [ptr type];
+   ++_seg[_cSeg]->top;
 }
 
 -(void)trailDouble:(double*)ptr
@@ -486,10 +492,10 @@ void  updateMinR(TRRationalInterval* dom,id<ORRational> min, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
        dom->_mgc = [trail magic];
-       [dom->_low trailRational:trail];
-       [dom->_up trailRational:trail];
-       [dom->_low trailType:trail];
-       [dom->_up trailType:trail];
+       [trail trailRational:dom->_low];
+       [trail trailRational:dom->_up];
+       [trail trailRationalType:dom->_low];
+       [trail trailRationalType:dom->_up];
     }
    [dom->_low set: min];
 }
@@ -498,10 +504,10 @@ void  updateMaxR(TRRationalInterval* dom,id<ORRational> max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
        dom->_mgc = [trail magic];
-       [dom->_low trailRational:trail];
-       [dom->_up trailRational:trail];
-       [dom->_low trailType:trail];
-       [dom->_up trailType:trail];
+       [trail trailRational:dom->_low];
+       [trail trailRational:dom->_up];
+       [trail trailRationalType:dom->_low];
+       [trail trailRationalType:dom->_up];
     }
    [dom->_up set: max];
 }
@@ -521,10 +527,10 @@ void  updateTRRationalInterval(TRRationalInterval* dom,id<ORRational> min,id<ORR
 {
     if (dom->_mgc != [trail magic]) {
        dom->_mgc = [trail magic];
-       [dom->_low trailRational:trail];
-       [dom->_up trailRational:trail];
-       [dom->_low trailType:trail];
-       [dom->_up trailType:trail];
+       [trail trailRational:dom->_low];
+       [trail trailRational:dom->_up];
+       [trail trailRationalType:dom->_low];
+       [trail trailRationalType:dom->_up];
     }
    [dom->_low set: min];
    [dom->_up set: max];

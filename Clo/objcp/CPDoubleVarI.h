@@ -99,9 +99,9 @@
     //CPDoubleEventNetwork     _net;
     CPMultiCast*             _recv;
 }
--(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup;
--(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup;
--(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
+-(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup inputVar:(ORBool)inputVar;
+-(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup inputVar:(ORBool)inputVar;
+-(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up inputVar:(ORBool)inputVar;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(id<OROSet>) constraints;

@@ -96,21 +96,21 @@
     return [[CPRealParamI alloc] initCPRealParam: cp initialValue: v];
 }
 //--------------
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range inputVar:(ORBool)inputVar
 {
-   return [[CPFloatVarI alloc] init:cp low:range.low up:range.up];
+   return [[CPFloatVarI alloc] init:cp low:range.low up:range.up inputVar:inputVar];
 }
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range boundsError:(id<ORRationalRange>) rangeError
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range boundsError:(id<ORRationalRange>) rangeError inputVar:(ORBool)inputVar
 {
-   return [[CPFloatVarI alloc] init:cp low:range.low up:range.up errLow:rangeError.low errUp:rangeError.up];
+   return [[CPFloatVarI alloc] init:cp low:range.low up:range.up errLow:rangeError.low errUp:rangeError.up inputVar:inputVar];
 }
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp value:(ORFloat) v
 {
-    return [[CPFloatVarI alloc] init:cp low:v up:v];
+   return [[CPFloatVarI alloc] init:cp low:v up:v inputVar:false];
 }
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp
 {
-    return [[CPFloatVarI alloc] init:cp low:-INFINITY up:INFINITY];
+   return [[CPFloatVarI alloc] init:cp low:-INFINITY up:INFINITY inputVar:false];
 }
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
@@ -171,19 +171,19 @@
 //----------------------------------------
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp
 {
-   return [[CPDoubleVarI alloc] init:cp low:-INFINITY up:INFINITY];
+   return [[CPDoubleVarI alloc] init:cp low:-INFINITY up:INFINITY inputVar:false];
 }
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp value:(ORDouble) v
 {
-    return [[CPDoubleVarI alloc] init:cp low:v up:v];
+    return [[CPDoubleVarI alloc] init:cp low:v up:v inputVar:false];
 }
-+(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range inputVar:(ORBool)inputVar
 {
-    return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up];
+    return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up inputVar:inputVar];
 }
-+(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range boundsError:(id<ORRationalRange>) rangeError
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range boundsError:(id<ORRationalRange>) rangeError inputVar:(ORBool)inputVar
 {
-   return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up errLow:rangeError.low errUp:rangeError.up];
+   return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up errLow:rangeError.low errUp:rangeError.up inputVar:inputVar];
 }
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {

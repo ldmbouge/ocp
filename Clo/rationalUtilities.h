@@ -7,61 +7,19 @@
 //
 
 #include "gmp.h"
-#include <stdlib.h>
 #include <mpfr.h>
 #import <ORFoundation/ORObject.h>
 
 typedef mpq_t rational_t;
 typedef mpq_ptr rational_ptr;
 
-typedef struct {
-   int    _val;   // TRInt should be a 32-bit wide trailable signed integer
-   ORUInt _mgc;
-} TRInt;
-
-extern int RUN_IMPROVE_GUESS;
-extern int RUN_DISCARDED_BOX;
-extern int INSIDE_GUESS_ERROR;
-
-extern int nbBoxGenerated;
-extern int nbBoxExplored;
-extern int stoppingTime;
-extern NSDate *branchAndBoundStart;
-extern NSDate *branchAndBoundTime;
-extern double boxCardinality;
-extern TRInt limitCounter;
-extern int nbConstraint;
-extern int nbBoxDone;
-extern bool newBox;
-extern bool initLimitCounter;
-
-extern ORBool previousGuessFailed;
-extern ORBool repeatOnce;
-extern ORBool dirHalfUlp;
-extern ORInt indexCurrentVar;
-extern ORInt nbVarSet;
-extern NSMutableArray *arrayValue;
-extern NSMutableArray *arrayError;
-extern id<ORSolution> solution;
-
-
-
-extern void exitfunc(int sig);
-
-
-@protocol ORMemoryTrail;
-@protocol ORTrail;
-@protocol ORVisitor;
-
 @protocol ORRational<ORObject>
--(id)init:(id<ORMemoryTrail>) mt;
 -(id)init;
--(void) visit: (id<ORVisitor>) visitor;
 -(void)dealloc;  // call clear
 -(void)print;
 -(rational_ptr)rational;
 -(int)type;
--(id<ORMemoryTrail>)mt;
+-(int*)type_ptr;
 -(id)setNAN;
 -(id)setZero;
 -(id)setOne;
@@ -80,10 +38,10 @@ extern void exitfunc(int sig);
 -(void)setRational:(rational_t)rational;
 -(id)set:(id<ORRational>)r;
 -(id)set_str:(char*)str;
+-(id)setConstant:(double)d and:(char*)s;
+-(id)setInput:(double)d with:(id<ORRational>)e;
 -(id)set_q:(rational_t)r;
 -(id)set_t:(int)t;
--(void)trailRational:(id<ORTrail>)trail;
--(void)trailType:(id<ORTrail>)trail;
 +(id<ORRational>)rationalWith:(id<ORRational>)r;
 +(id<ORRational>)rationalWith_d:(double)d;
 -(id)set_d:(double)d;
@@ -115,7 +73,6 @@ extern void exitfunc(int sig);
 @end
 
 @protocol ORRationalInterval<ORObject>
--(id)init:(id<ORMemoryTrail>) mt;
 -(id)init;
 -(void)dealloc;  // call clear
 -(id<ORRational>)low;
@@ -163,16 +120,13 @@ extern void exitfunc(int sig);
     3   NaN
     */
    int _type;
-   id<ORMemoryTrail> _mt;
 }
--(id)init:(id<ORMemoryTrail>) mt;
 -(id)init;
--(void) visit: (id<ORVisitor>) visitor;
 -(void)dealloc;  // call clear
 -(void)print;
 -(rational_ptr)rational;
 -(int)type;
--(id<ORMemoryTrail>)mt;
+-(int*)type_ptr;
 -(id)setNAN;
 -(id)setZero;
 -(id)setOne;
@@ -192,12 +146,12 @@ extern void exitfunc(int sig);
 -(id)set:(id<ORRational>)r;
 -(id)set_q:(rational_t)r;
 -(id)set_t:(int)t;
--(void)trailRational:(id<ORTrail>)trail;
--(void)trailType:(id<ORTrail>)trail;
 +(id<ORRational>)rationalWith:(id<ORRational>)r;
 +(id<ORRational>)rationalWith_d:(double)d;
 -(id)set_d:(double)d;
 -(id)set:(long)num and:(long)den;
+-(id)setConstant:(double)d and:(char*)s;
+-(id)setInput:(double)d with:(id<ORRational>)e;
 -(id<ORRational>)get;
 -(char*)get_str;
 -(double)get_d;
@@ -229,7 +183,6 @@ extern void exitfunc(int sig);
    id<ORRational> _up;
    int _changed;
 }
--(id)init:(id<ORMemoryTrail>) mt;
 -(id)init;
 -(void)dealloc;  // call clear
 -(id<ORRational>)low;
@@ -271,72 +224,9 @@ static inline id<ORRational> maxQ(id<ORRational> a,id<ORRational> b) { return [a
 static inline void clear_q(rational_t r) { mpq_clear(r); }
 static inline void init_q(rational_t r) { mpq_init(r); }
 static inline void set_q(rational_t r, rational_t s) { mpq_set(r, s); }
-static inline ORFloat randomValue(ORFloat min, ORFloat max) {
-   return (max - min) * ((float)drand48()) + min;
-}
-static inline ORDouble randomValueD(ORDouble min, ORDouble max) {
-   return (max - min) * (drand48()) + min;
-}
-
-static inline ORDouble next_power_of_two(ORDouble value, ORInt next) {
-    ORInt exp;
-    frexp(value, &exp);
-    if(next){
-            return ldexp(1, exp);
-    } else {
-            return ldexp(1, exp-1);
-    }
-}
-
-extern id<ORRational> boundDiscardedBoxes;
-
 
 ///* START NEW GUESS */
-//if (RUN_IMPROVE_GUESS) {
-//   /* BEGIN: Attempt to improve the error */
-//   id<ORSolution> tmp_solution = [self captureSolution];
-//   bool improved = FALSE, improved_var = FALSE;
-//   int nvar = 0, nv, nbiter = 0;
-//   int direction = 1;
-//   ORStatus s;
-//   while (nbiter < 200) {
-//      [_tracer popNode];
-//      [_tracer pushNode];
-//      nbiter++; //printf("nb iter = %d\n", nbiter);
-//      if (nvar == 0) {
-//         nv = 0; for (id<ORDoubleVar> v in x) { xc = _gamma[v.getId]; nv++; if (! [xc bound]) { nvar = nv; break; }}
-//         if (nvar == 0) break;
-//      }
-//      nv = 0;
-//      for (id<ORVar> v in x) {
-//         xc = _gamma[v.getId]; nv++;
-//         if (! [xc bound]) {
-//            double value = [[tmp_solution value:v] doubleValue];
-//            if (nv == nvar) value = nextafter(value, (direction == 1)?(+INFINITY):(-INFINITY));
-//            s = [_engine enforce:^{ [xc bind:value];}];
-//            if (s == ORFailure) break;
-//         }
-//      }
-//      if ((s != ORFailure) && ([[[tmp_solution value:ez] rationalValue] lt: [ezi min]])) { // Better err
-//         tmp_solution = [self captureSolution];
-//         improved_var = TRUE;
-//         improved = TRUE;
-//      } else {
-//         if ((! improved_var) && (direction == 1)) {
-//            direction = -1;
-//         } else {
-//            direction = 1;
-//            improved_var = FALSE;
-//            nv = 0;
-//            int old_nvar = nvar;
-//            for (id<ORDoubleVar> v in x) {
-//               xc = _gamma[v.getId]; nv++;
-//               if ((nv > nvar) && (! [xc bound])) { nvar = nv; break; }
-//            }
-//            if (nvar == old_nvar) break;
-//         }
-//      }
-//   }
+
 //   /* END: Attempt to improve the error */
 //   if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) {
 //      // And as updatePrimalBound does test whether the value is actually better or not

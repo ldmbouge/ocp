@@ -487,19 +487,15 @@ void testUlp(int argc, const char * argv[]) {
       //[args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [[[ORRational alloc] init] setZero];
-         id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:-200000.0 up:200000.0 name:@"x"];
-         id<ORDoubleVar> y = [ORFactory doubleVar:mdl low:-200000.0 up:200000.0 elow:zero eup:zero name:@"y"];
+         id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:-200.0 up:200.0 name:@"x"];
+         id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:-200.0 up:200.0 name:@"y"];
          id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
          id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
-         id<ORRationalVar> ex = [ORFactory errorVar:mdl of:x];
-         id<ORRationalVar> ulp_x = [ORFactory ulpVar:mdl of:x];
          id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"|ez|"];
          [zero release];
          
          [mdl add:[z set: [x plus: y]]];
-         [mdl add: [z eq: @(0.0)]];
          
-         [mdl add: [ex leq: ulp_x]];
          [mdl add: [ezAbs eq: [ez abs]]];
          [mdl maximize:ezAbs];
          
@@ -540,7 +536,7 @@ void test_d_c(int search, int argc, const char * argv[]) {
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       
       /* Initialization of constants */
-      [mdl add:[k set: @(0.99)]];
+      [mdl add:[k set: @(1.5)]];
 
       /* Declaration of constraints */
       [mdl add:[z set: [k mul: x]]];

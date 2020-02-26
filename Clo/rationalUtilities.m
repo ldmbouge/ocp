@@ -7,9 +7,6 @@
 //
 
 #import "rationalUtilities.h"
-#import <ORFoundation/ORTrail.h>
-#import <ORFoundation/ORTrailI.h>
-#import <ORFoundation/ORVisit.h>
 
 #define R_IS_ZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?1:0)
 #define R_IS_NONZERO(Q) (((*(Q).rational->_mp_num._mp_size) == 0)?0:1)
@@ -18,57 +15,13 @@
 #define R_IS_STRICTLY_POSITIVE(Q) (( 0 < (*(Q).rational->_mp_num._mp_size))?1:0)
 #define R_IS_STRICTLY_NEGATIVE(Q) (((*(Q).rational->_mp_num._mp_size) < 0)?1:0)
 
-int RUN_IMPROVE_GUESS = 0;
-/* Discard box if half-ulp limit is reached on all constraints */
-int RUN_DISCARDED_BOX = 1;
-int INSIDE_GUESS_ERROR = 0;
-
-int nbBoxGenerated = 1;
-int nbBoxExplored = 0;
-int stoppingTime = 10;
-NSDate *branchAndBoundStart = nil;
-NSDate *branchAndBoundTime = nil;
-double boxCardinality = -1;
-TRInt limitCounter;
-int nbConstraint = 0;
-int nbBoxDone = 0;
-bool newBox = TRUE;
-bool initLimitCounter = TRUE;
-
-ORBool previousGuessFailed = FALSE;
-ORBool repeatOnce = TRUE;
-ORBool dirHalfUlp = FALSE;
-ORInt indexCurrentVar = 0;
-ORInt nbVarSet = 0;
-NSMutableArray *arrayValue = nil;
-NSMutableArray *arrayError = nil;
-id<ORSolution> solution = nil;
-
-void exitfunc(int sig)
-{
-   exit(sig);
-}
-
 @implementation ORRational
--(id)init:(id<ORMemoryTrail>) mt
-{
-   self = [super init];
-   mpq_init(_rational);
-   _type = 0;
-   _mt = mt;
-   [_mt track:self];
-   return self;
-}
 -(id)init
 {
    self = [super init];
    mpq_init(_rational);
    _type = 0;
    return self;
-}
--(void) visit: (ORVisitor*) visitor
-{
-   [visitor visitRationalI: self];
 }
 -(void)dealloc
 {
@@ -186,9 +139,9 @@ void exitfunc(int sig)
 {
    return _type;
 }
--(id<ORMemoryTrail>)mt
+-(int*)type_ptr
 {
-   return _mt;
+   return &_type;
 }
 -(void)setType:(int)type
 {
@@ -198,7 +151,7 @@ void exitfunc(int sig)
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    /* Show floating-point approximation form of rational */
-   [buf appendFormat:@"%1.2e",[self get_d]];
+   [buf appendFormat:@"%1.5e",[self get_d]];
    /* Show exact fraction form of rational */
    //[buf appendFormat:@"%s",[self get_str]];
    /* DEBUG only */
@@ -226,6 +179,26 @@ void exitfunc(int sig)
    }
    return self;
 }
+-(id)setConstant:(double)d and:(char*)s
+{
+   id<ORRational> q = [[ORRational alloc] init];
+   id<ORRational> f = [[ORRational alloc] init];
+   [q set_str:s];
+   [f set_d:d];
+   [self set:[f add: [q sub: f]]];
+   
+   [q release];
+   [f release];
+   
+   return self;
+}
+-(id)setInput:(double)d with:(id<ORRational>)e
+{
+   [self set_d:d];
+   [self set: [self add:e]];
+   
+   return self;
+}
 -(id)set_q:(rational_t)r
 {
    mpq_set(_rational, r);
@@ -245,25 +218,6 @@ void exitfunc(int sig)
 {
    _type = t;
    return self;
-}
--(void)trailRational:(ORTrailI*)trail
-{
-   if (trail->_seg[trail->_cSeg]->top >= NBSLOT-1) [trail resize];
-   struct Slot* s = trail->_seg[trail->_cSeg]->tab + trail->_seg[trail->_cSeg]->top;
-   s->ptr = &_rational;
-   s->code = TAGRational;
-   init_q(s->rationalVal);
-   set_q(s->rationalVal, _rational);
-   ++trail->_seg[trail->_cSeg]->top;
-}
--(void)trailType:(ORTrailI*)trail
-{
-   if (trail->_seg[trail->_cSeg]->top >= NBSLOT-1) [trail resize];
-   struct Slot* s = trail->_seg[trail->_cSeg]->tab + trail->_seg[trail->_cSeg]->top;
-   s->ptr = &_type;
-   s->code = TAGInt;
-   s->intVal = _type;
-   ++trail->_seg[trail->_cSeg]->top;
 }
 +(id<ORRational>)rationalWith:(id<ORRational>)r
 {
@@ -844,13 +798,6 @@ void exitfunc(int sig)
 @end
 
 @implementation ORRationalInterval
--(id)init:(id<ORMemoryTrail>) mt
-{
-   self = [super init];
-   _low = [[ORRational alloc] init: mt];
-   _up = [[ORRational alloc] init: mt];
-   return self;
-}
 -(id)init
 {
    self = [super init];
@@ -1290,5 +1237,3 @@ void exitfunc(int sig)
    return z;
 }
 @end
-
-id<ORRational> boundDiscardedBoxes = nil;

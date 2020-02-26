@@ -57,7 +57,7 @@ void verhulst_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      id<ORDoubleVar> x = [ORFactory doubleVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.1 up:0.3 elow:zero eup:zero name:@"x"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORDoubleVar> k = [ORFactory doubleVar:mdl name:@"k"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
@@ -80,6 +80,39 @@ void verhulst_d(int search, int argc, const char * argv[]) {
       [cp solve:^{
          [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
             [cp floatSplit:i withVars:x];
+         }
+                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+            ORDouble r = 4.0;
+            ORDouble k = 1.11;
+            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+            
+            id<ORRational> one = [[ORRational alloc] init];
+            id<ORRational> rQ = [[ORRational alloc] init];
+            id<ORRational> kQ = [[ORRational alloc] init];
+            id<ORRational> xQ = [[ORRational alloc] init];
+            id<ORRational> zQ = [[ORRational alloc] init];
+            id<ORRational> zF = [[ORRational alloc] init];
+            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+            
+            [one setOne];
+            [rQ set_d:4.0];
+            [kQ set_d:k];
+            [xQ setInput:x with:[arrayError objectAtIndex:0]];
+            
+            ORDouble z = ((r * x) / (1.0 + (x / k)));
+            [zF set_d:z];
+            
+            [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
+            
+            [ez set: [zQ sub: zF]];
+            
+            [one release];
+            [rQ release];
+            [kQ release];
+            [xQ release];
+            [zQ release];
+            [zF release];
+            return ez;
          }];
       }];
    }
@@ -161,7 +194,6 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
          /* Declaration of model variables */
          id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.1 up:0.3 name:@"x"];
          id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
-         id<ORDoubleVar> a = [ORFactory doubleVar:mdl name:@"a"];
          id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.11 string:@"111/100" name:@"k"];
          id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
          id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
@@ -169,11 +201,9 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
          
          /* Initialization of constants */
          [mdl add:[r set: @(4.0)]];
-         [mdl add:[a set: @(40000.0)]];
          
          /* Declaration of constraints */
          [mdl add:[z set:[[r mul: x] div: [@(1.0) plus: [x div: k]]]]];
-         [mdl add:[z leq: a]];
          
          /* Declaration of constraints over errors */
          [mdl add: [ezAbs eq: [ez abs]]];
@@ -183,7 +213,6 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
          [zero release];
          
          /* Display model */
-         
          NSLog(@"model: %@",mdl);
          
          /* Construction of solver */
@@ -197,6 +226,39 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                /* Split strategy */
                [cp floatSplit:i withVars:x];
+            }
+                              compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+               ORDouble r = 4.0;
+               ORDouble k = 1.11;
+               ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+               
+               id<ORRational> one = [[ORRational alloc] init];
+               id<ORRational> rQ = [[ORRational alloc] init];
+               id<ORRational> kQ = [[ORRational alloc] init];
+               id<ORRational> xQ = [[ORRational alloc] init];
+               id<ORRational> zQ = [[ORRational alloc] init];
+               id<ORRational> zF = [[ORRational alloc] init];
+               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+               
+               [one setOne];
+               [rQ set_d:4.0];
+               [kQ setConstant:k and:"111/100"];
+               [xQ setInput:x with:[arrayError objectAtIndex:0]];
+               
+               ORDouble z = ((r * x) / (1.0 + (x / k)));
+               [zF set_d:z];
+               
+               [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
+               
+               [ez set: [zQ sub: zF]];
+               
+               [one release];
+               [rQ release];
+               [kQ release];
+               [xQ release];
+               [zQ release];
+               [zF release];
+               return ez;
             }];
          }];
          struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
@@ -208,7 +270,7 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //verhulst_f(1, argc, argv);
-   //verhulst_d(1, argc, argv);
-   verhulst_d_c(1, argc, argv);
+   verhulst_d(1, argc, argv);
+   //verhulst_d_c(1, argc, argv);
    return 0;
 }

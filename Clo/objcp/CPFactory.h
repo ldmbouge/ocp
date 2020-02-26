@@ -34,8 +34,8 @@
 +(id<CPRealParam>) realParam:(id<CPEngine>)cp initialValue:(ORDouble)v;
 
 
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range;
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range boundsError:(id<ORRationalRange>) rangeError;
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range inputVar:(ORBool)inputVar;
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range boundsError:(id<ORRationalRange>) rangeError inputVar:(ORBool)inputVar;
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp value:(ORFloat) v;
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp;
 +(id<CPFloatVarArray>) floatVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
@@ -49,8 +49,8 @@
 
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp;
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp value:(ORDouble) v;
-+(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range;
-+(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range boundsError:(id<ORRationalRange>) rangeError;
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range inputVar:(ORBool)inputVar;
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range boundsError:(id<ORRationalRange>) rangeError inputVar:(ORBool)inputVar;
 +(id<CPLDoubleVar>) ldoubleVar:(id<CPEngine>)cp bounds:(id<ORLDoubleRange>) range;
 
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet;
