@@ -365,39 +365,39 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(void) propagate
 {
-      updateFloatInterval(&_xi,_x);
-      updateFloatInterval(&_yi,_y);
-      intersectionInterval inter;
-      id<ORRationalInterval> interError = [[ORRationalInterval alloc] init];
-      id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-      id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
-      [ex set_q:[_x minErr] and:[_x maxErr]];
-      [ey set_q:[_y minErr] and:[_y maxErr]];
-
-      float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
-      fpi_minusf(_precision,_rounding, &yTmp, &_xi);
-      inter = intersection(_y, _yi, yTmp, 0.0f);
-      interError = [ey proj_inter:[ex neg]];
-      if(inter.changed)
-         [_y updateInterval:inter.result.inf and:inter.result.sup];
-      if(interError.changed)
-         [_y updateIntervalError:interError.low and:interError.up];
-      
-      updateFloatInterval(&_yi,_y);
-      [ex set_q:[_x minErr] and:[_x maxErr]];
-      [ey set_q:[_y minErr] and:[_y maxErr]];
-      float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
-      fpi_minusf(_precision,_rounding, &xTmp, &_yi);
-      inter = intersection(_x, _xi, xTmp, 0.0f);
-      interError = [ex proj_inter:[ey neg]];
-      if(inter.changed)
-         [_x updateInterval:inter.result.inf and:inter.result.sup];
-      if(interError.changed)
-         [_x updateIntervalError:interError.low and:interError.up];
-      
-      [interError release];
-      [ex release];
-      [ey release];
+   updateFloatInterval(&_xi,_x);
+   updateFloatInterval(&_yi,_y);
+   intersectionInterval inter;
+   id<ORRationalInterval> interError = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
+   [ex set_q:[_x minErr] and:[_x maxErr]];
+   [ey set_q:[_y minErr] and:[_y maxErr]];
+   
+   float_interval yTmp = makeFloatInterval(_yi.inf, _yi.sup);
+   fpi_minusf(_precision,_rounding, &yTmp, &_xi);
+   inter = intersection(_y, _yi, yTmp, 0.0f);
+   interError = [ey proj_inter:[ex neg]];
+   if(inter.changed)
+      [_y updateInterval:inter.result.inf and:inter.result.sup];
+   if(interError.changed)
+      [_y updateIntervalError:interError.low and:interError.up];
+   
+   updateFloatInterval(&_yi,_y);
+   [ex set_q:[_x minErr] and:[_x maxErr]];
+   [ey set_q:[_y minErr] and:[_y maxErr]];
+   float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+   fpi_minusf(_precision,_rounding, &xTmp, &_yi);
+   inter = intersection(_x, _xi, xTmp, 0.0f);
+   interError = [ex proj_inter:[ey neg]];
+   if(inter.changed)
+      [_x updateInterval:inter.result.inf and:inter.result.sup];
+   if(interError.changed)
+      [_x updateIntervalError:interError.low and:interError.up];
+   
+   [interError release];
+   [ex release];
+   [ey release];
 }
 -(NSSet*)allVars
 {
@@ -1009,85 +1009,87 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
-   do {
-      changed = false;
-      zTemp = z;
-      fpi_addf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(_z, z, zTemp,_percent);
-      z = inter.result;
-      changed |= inter.changed;
-      
-      xTemp = x;
-      yTemp = y;
-      fpi_add_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(_x, x , xTemp,_percent);
-      x = inter.result;
-      changed |= inter.changed;
-      
-      inter = intersection(_y, y, yTemp,_percent);
-      y = inter.result;
-      changed |= inter.changed;
-      
-      xTemp = x;
-      fpi_addxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(_x, x , xTemp,_percent);
-      x = inter.result;
-      changed |= inter.changed;
-      
-      yTemp = y;
-      fpi_addyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(_y, y, yTemp,_percent);
-      y = inter.result;
-      changed |= inter.changed;
-      
-      /* ERROR PROPAG */
-      
-      [eoTemp set: compute_eo_add_f(x, y, z)];
-      [eo set: [eo proj_inter:eoTemp]];
-      changed |= eo.changed;
-      
-      if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
-         if(
-            ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
-            ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
-            ){
-            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
-            assignTRInt(&_limit, NO, _trail);
+   @autoreleasepool {
+      do {
+         changed = false;
+         zTemp = z;
+         fpi_addf(_precision, _rounding, &zTemp, &x, &y);
+         inter = intersection(_z, z, zTemp,_percent);
+         z = inter.result;
+         changed |= inter.changed;
+         
+         xTemp = x;
+         yTemp = y;
+         fpi_add_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
+         inter = intersection(_x, x , xTemp,_percent);
+         x = inter.result;
+         changed |= inter.changed;
+         
+         inter = intersection(_y, y, yTemp,_percent);
+         y = inter.result;
+         changed |= inter.changed;
+         
+         xTemp = x;
+         fpi_addxf_inv(_precision, _rounding, &xTemp, &z, &y);
+         inter = intersection(_x, x , xTemp,_percent);
+         x = inter.result;
+         changed |= inter.changed;
+         
+         yTemp = y;
+         fpi_addyf_inv(_precision, _rounding, &yTemp, &z, &x);
+         inter = intersection(_y, y, yTemp,_percent);
+         y = inter.result;
+         changed |= inter.changed;
+         
+         /* ERROR PROPAG */
+         
+         [eoTemp set: compute_eo_add_f(x, y, z)];
+         [eo set: [eo proj_inter:eoTemp]];
+         changed |= eo.changed;
+         
+         if(_limit._val && (z.inf <= z.sup)){
+            if(
+               ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
+               ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
+               ){
+               assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+               assignTRInt(&_limit, NO, _trail);
+            }
          }
-      }
-
-      // ============================== ez
-      // ex + ey + eo
-      [ezTemp set: [[ex add: ey] add: eo]];
-      
-      [ez set: [ez proj_inter: ezTemp]];
-      changed |= ez.changed;
-      
-      // ============================== eo
-      // ez - ex - ey
-      [eoTemp set: [[ez sub: ex] sub: ey]];
-      
-      [eo set: [eo proj_inter: eoTemp]];
-      changed |= eo.changed;
-      
-      // ============================== ex
-      // ez - ey - eo
-      [exTemp set: [[ez sub: ey] sub: eo]];
-      
-      [ex set: [ex proj_inter: exTemp]];
-      changed |= ex.changed;
-      
-      // ============================== ey
-      // ez - ex - eo
-      [eyTemp set: [[ez sub: ex] sub: eo]];
-      
-      [ey set: [ey proj_inter: eyTemp]];
-      changed |= ey.changed;
-      
-      /* END ERROR PROPAG */
-      
-      gchanged |= changed;
-   } while(changed);
+         
+         // ============================== ez
+         // ex + ey + eo
+         [ezTemp set: [[ex add: ey] add: eo]];
+         
+         [ez set: [ez proj_inter: ezTemp]];
+         changed |= ez.changed;
+         
+         // ============================== eo
+         // ez - ex - ey
+         [eoTemp set: [[ez sub: ex] sub: ey]];
+         
+         [eo set: [eo proj_inter: eoTemp]];
+         changed |= eo.changed;
+         
+         // ============================== ex
+         // ez - ey - eo
+         [exTemp set: [[ez sub: ey] sub: eo]];
+         
+         [ex set: [ex proj_inter: exTemp]];
+         changed |= ex.changed;
+         
+         // ============================== ey
+         // ez - ex - eo
+         [eyTemp set: [[ez sub: ex] sub: eo]];
+         
+         [ey set: [ey proj_inter: eyTemp]];
+         changed |= ey.changed;
+         
+         /* END ERROR PROPAG */
+         
+         gchanged |= changed;
+      } while(changed);
+   }
    
    if(gchanged){
       // Cause no propagation on eo is insured
@@ -1217,84 +1219,86 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
-   do {
-      changed = false;
-      zTemp = z;
-      fpi_subf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(_z, z, zTemp,_percent);
-      z = inter.result;
-      changed |= inter.changed;
-      
-      xTemp = x;
-      yTemp = y;
-      fpi_sub_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
-      inter = intersection(_x, x , xTemp,_percent);
-      x = inter.result;
-      changed |= inter.changed;
-      
-      inter = intersection(_y, y, yTemp,_percent);
-      y = inter.result;
-      changed |= inter.changed;
-      
-      xTemp = x;
-      fpi_subxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(_x, x , xTemp,_percent);
-      x = inter.result;
-      changed |= inter.changed;
-      
-      yTemp = y;
-      fpi_subyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(_y, y, yTemp,_percent);
-      y = inter.result;
-      changed |= inter.changed;
-      
-      /* ERROR PROPAG */
-      [eoTemp set: compute_eo_sub_f(x, y, z)];
-      [eo set: [eo proj_inter:eoTemp]];
-      changed |= eo.changed;
-      
-      if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
-         if(
-            ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
-            ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
-            ){
-            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
-            assignTRInt(&_limit, NO, _trail);
+   @autoreleasepool {
+      do {
+         changed = false;
+         zTemp = z;
+         fpi_subf(_precision, _rounding, &zTemp, &x, &y);
+         inter = intersection(_z, z, zTemp,_percent);
+         z = inter.result;
+         changed |= inter.changed;
+         
+         xTemp = x;
+         yTemp = y;
+         fpi_sub_invsub_boundsf(_precision, _rounding, &xTemp, &yTemp, &z);
+         inter = intersection(_x, x , xTemp,_percent);
+         x = inter.result;
+         changed |= inter.changed;
+         
+         inter = intersection(_y, y, yTemp,_percent);
+         y = inter.result;
+         changed |= inter.changed;
+         
+         xTemp = x;
+         fpi_subxf_inv(_precision, _rounding, &xTemp, &z, &y);
+         inter = intersection(_x, x , xTemp,_percent);
+         x = inter.result;
+         changed |= inter.changed;
+         
+         yTemp = y;
+         fpi_subyf_inv(_precision, _rounding, &yTemp, &z, &x);
+         inter = intersection(_y, y, yTemp,_percent);
+         y = inter.result;
+         changed |= inter.changed;
+         
+         /* ERROR PROPAG */
+         [eoTemp set: compute_eo_sub_f(x, y, z)];
+         [eo set: [eo proj_inter:eoTemp]];
+         changed |= eo.changed;
+         
+         if(_limit._val && (z.inf <= z.sup)){
+            if(
+               ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
+               ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
+               ){
+               assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+               assignTRInt(&_limit, NO, _trail);
+            }
          }
-      }
-      
-      // ============================== ez
-      // ex - ey + eo
-      [ezTemp set: [[ex sub: ey] add: eo]];
-      
-      [ez set: [ez proj_inter: ezTemp]];
-      changed |= ez.changed;
-      
-      // ============================== eo
-      // ez - (ex - ey)
-      [eoTemp set: [ez sub: [ex sub: ey]]];
-      
-      [eo set: [eo proj_inter: eoTemp]];
-      changed |= eo.changed;
-      
-      // ============================== ex
-      // ez + ey - eo
-      [exTemp set: [[ez add: ey] sub: eo]];
-      
-      [ex set: [ex proj_inter: exTemp]];
-      changed |= ex.changed;
-      
-      // ============================== ey
-      // ex - ez + eo
-      [eyTemp set: [[ex sub: ez] add: eo]];
-      
-      [ey set: [ey proj_inter: eyTemp]];
-      changed |= ey.changed;
-      
-      /* END ERROR PROPAG */
-      
-      gchanged |= changed;
-   } while(changed);
+         
+         // ============================== ez
+         // ex - ey + eo
+         [ezTemp set: [[ex sub: ey] add: eo]];
+         
+         [ez set: [ez proj_inter: ezTemp]];
+         changed |= ez.changed;
+         
+         // ============================== eo
+         // ez - (ex - ey)
+         [eoTemp set: [ez sub: [ex sub: ey]]];
+         
+         [eo set: [eo proj_inter: eoTemp]];
+         changed |= eo.changed;
+         
+         // ============================== ex
+         // ez + ey - eo
+         [exTemp set: [[ez add: ey] sub: eo]];
+         
+         [ex set: [ex proj_inter: exTemp]];
+         changed |= ex.changed;
+         
+         // ============================== ey
+         // ex - ez + eo
+         [eyTemp set: [[ex sub: ez] add: eo]];
+         
+         [ey set: [ey proj_inter: eyTemp]];
+         changed |= ey.changed;
+         
+         /* END ERROR PROPAG */
+         
+         gchanged |= changed;
+      } while(changed);
+   }
    
    if(gchanged){
       // Cause no propagation on eo is insured
@@ -1426,97 +1430,99 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
-   
-   do {
-      changed = false;
-      zTemp = z;
-      fpi_multf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(_z, z, zTemp,_percent);
-      z = inter.result;
-      changed |= inter.changed;
-      
-      xTemp = x;
-      fpi_multxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(_x, x , xTemp,_percent);
-      x = inter.result;
-      changed |= inter.changed;
-      
-      yTemp = y;
-      fpi_multyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(_y, y, yTemp,_percent);
-      y = inter.result;
-      changed |= inter.changed;
-      
-      /* ERROR PROPAG */
-      [xr set_d:x.inf and:x.sup];
-      [yr set_d:y.inf and:y.sup];
-      
-      [eoTemp set: compute_eo_mul_f(x, y, z)];
-      [eo set: [eo proj_inter:eoTemp]];
-      changed |= eo.changed;
-      
-      if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
-         if(
-            ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
-            ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
-            ){
-            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
-            assignTRInt(&_limit, NO, _trail);
+   @autoreleasepool {
+      do {
+         changed = false;
+         zTemp = z;
+         fpi_multf(_precision, _rounding, &zTemp, &x, &y);
+         inter = intersection(_z, z, zTemp,_percent);
+         z = inter.result;
+         changed |= inter.changed;
+         
+         xTemp = x;
+         fpi_multxf_inv(_precision, _rounding, &xTemp, &z, &y);
+         inter = intersection(_x, x , xTemp,_percent);
+         x = inter.result;
+         changed |= inter.changed;
+         
+         yTemp = y;
+         fpi_multyf_inv(_precision, _rounding, &yTemp, &z, &x);
+         inter = intersection(_y, y, yTemp,_percent);
+         y = inter.result;
+         changed |= inter.changed;
+         
+         /* ERROR PROPAG */
+         [xr set_d:x.inf and:x.sup];
+         [yr set_d:y.inf and:y.sup];
+         
+         [eoTemp set: compute_eo_mul_f(x, y, z)];
+         [eo set: [eo proj_inter:eoTemp]];
+         changed |= eo.changed;
+         
+         if(_limit._val && (z.inf <= z.sup)){
+            if(
+               ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
+               ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
+               ){
+               assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+               assignTRInt(&_limit, NO, _trail);
+            }
          }
-      }
-      // ============================== ez
-      // x*ey + y*ex + ex*ey + eo
-      [ezTemp set: [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo]];
-      
-      [ez set: [ez proj_inter: ezTemp]];
-      changed |= ez.changed;
-      
-      // ============================== eo
-      // ez - (x*ey + y*ex + ex*ey)
-      [eoTemp set: [ez sub: [[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]]]];
-      
-      [eo set: [eo proj_inter: eoTemp]];
-      changed |= eo.changed;
-      
-      // ============================== ex
-      // (ez - x*ey - eo)/(y + ey)
-      [exTemp set: [[[ez sub: [xr mul: ey]] sub: eo] div: [yr add: ey]]];
-      
-      [ex set: [ex proj_inter: exTemp]];
-      changed |= ex.changed;
-      
-      // ============================== ey
-      // (ez - y*ex - eo)/(x + ex)
-      [eyTemp set: [[[ez sub: [yr mul: ex]] sub: eo] div: [xr add: ex]]];
-      
-      [ey set: [ey proj_inter: eyTemp]];
-      changed |= ey.changed;
-      
-      // ============================== x
-      // (ez - y*ex - ex*ey - eo)/ey
-      [xrTemp set: [[[[ez sub: [yr mul: ex]] sub: [ex mul: ey]] sub: eo] div: ey]];
-      
-      [xr set: [xr proj_inter:xrTemp]];
-      changed |= xr.changed;
-      
-      x.inf = [[xr low] get_sup_d];
-      x.sup = [[xr up] get_inf_d];
-
-      
-      // ============================== y
-      // (ez - x*ey - ex*ey - eo)/ex
-      [yrTemp set: [[[[ez sub: [xr mul: ey]] sub: [ex mul: ey]] sub: eo] div: ex]];
-      
-      [yr set: [yr proj_inter:yrTemp]];
-      changed |= yr.changed;
-      
-      y.inf = [[yr low] get_sup_d];
-      y.sup = [[yr up] get_inf_d];
-      
-      /* END ERROR PROPAG */
-      
-      gchanged |= changed;
-   } while(changed);
+         // ============================== ez
+         // x*ey + y*ex + ex*ey + eo
+         [ezTemp set: [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo]];
+         
+         [ez set: [ez proj_inter: ezTemp]];
+         changed |= ez.changed;
+         
+         // ============================== eo
+         // ez - (x*ey + y*ex + ex*ey)
+         [eoTemp set: [ez sub: [[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]]]];
+         
+         [eo set: [eo proj_inter: eoTemp]];
+         changed |= eo.changed;
+         
+         // ============================== ex
+         // (ez - x*ey - eo)/(y + ey)
+         [exTemp set: [[[ez sub: [xr mul: ey]] sub: eo] div: [yr add: ey]]];
+         
+         [ex set: [ex proj_inter: exTemp]];
+         changed |= ex.changed;
+         
+         // ============================== ey
+         // (ez - y*ex - eo)/(x + ex)
+         [eyTemp set: [[[ez sub: [yr mul: ex]] sub: eo] div: [xr add: ex]]];
+         
+         [ey set: [ey proj_inter: eyTemp]];
+         changed |= ey.changed;
+         
+         // ============================== x
+         // (ez - y*ex - ex*ey - eo)/ey
+         [xrTemp set: [[[[ez sub: [yr mul: ex]] sub: [ex mul: ey]] sub: eo] div: ey]];
+         
+         [xr set: [xr proj_inter:xrTemp]];
+         changed |= xr.changed;
+         
+         x.inf = [[xr low] get_sup_d];
+         x.sup = [[xr up] get_inf_d];
+         
+         
+         // ============================== y
+         // (ez - x*ey - ex*ey - eo)/ex
+         [yrTemp set: [[[[ez sub: [xr mul: ey]] sub: [ex mul: ey]] sub: eo] div: ex]];
+         
+         [yr set: [yr proj_inter:yrTemp]];
+         changed |= yr.changed;
+         
+         y.inf = [[yr low] get_sup_d];
+         y.sup = [[yr up] get_inf_d];
+         
+         /* END ERROR PROPAG */
+         
+         gchanged |= changed;
+      } while(changed);
+   }
+   
    if(gchanged){
       // Cause no propagation on eo is insured
       [_eo updateMin:(eo.low) for:NULL];
@@ -1633,116 +1639,119 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [ez set_q:[_z minErr] and:[_z maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    
-   do {
-      changed = false;
-      zTemp = z;
-      fpi_divf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(_z, z, zTemp,_percent);
-      z = inter.result;
-      changed |= inter.changed;
-      
-      xTemp = x;
-      fpi_divxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(_x, x , xTemp,_percent);
-      x = inter.result;
-      changed |= inter.changed;
-      
-      yTemp = y;
-      fpi_divyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(_y, y, yTemp,_percent);
-      y = inter.result;
-      changed |= inter.changed;
-      
-      /* ERROR PROPAG */
-      [xr set_d:x.inf and:x.sup];
-      [yr set_d:y.inf and:y.sup];
-      
-      [eoTemp set: compute_eo_div_f(x, y, z)];
-      [eo set: [eo proj_inter:eoTemp]];
-      changed |= eo.changed;
-      
-      if(!IS_GUESS_ERROR_SOLVER && _limit._val && (z.inf <= z.sup)){
-         if(
-            ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
-            ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
-            ){
-            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
-            assignTRInt(&_limit, NO, _trail);
+   @autoreleasepool {
+      do {
+         changed = false;
+         zTemp = z;
+         fpi_divf(_precision, _rounding, &zTemp, &x, &y);
+         inter = intersection(_z, z, zTemp,_percent);
+         z = inter.result;
+         changed |= inter.changed;
+         
+         xTemp = x;
+         fpi_divxf_inv(_precision, _rounding, &xTemp, &z, &y);
+         inter = intersection(_x, x , xTemp,_percent);
+         x = inter.result;
+         changed |= inter.changed;
+         
+         yTemp = y;
+         fpi_divyf_inv(_precision, _rounding, &yTemp, &z, &x);
+         inter = intersection(_y, y, yTemp,_percent);
+         y = inter.result;
+         changed |= inter.changed;
+         
+         /* ERROR PROPAG */
+         [xr set_d:x.inf and:x.sup];
+         [yr set_d:y.inf and:y.sup];
+         
+         [eoTemp set: compute_eo_div_f(x, y, z)];
+         [eo set: [eo proj_inter:eoTemp]];
+         changed |= eo.changed;
+         
+         if(_limit._val && (z.inf <= z.sup)){
+            if(
+               ((z.inf >= 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent)) ||
+               ((z.sup < 0) && (((float_cast)(z.inf)).parts.exponent == ((float_cast)(z.sup)).parts.exponent))
+               ){
+               assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+               assignTRInt(&_limit, NO, _trail);
+            }
          }
-      }
-      // ============================== ez
-      // (y*ex - x*ey)/(y*(y + ey)) + eo
-      [ezTemp set: [[[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]] add: eo]];
-      
-      [ez set: [ez proj_inter: ezTemp]];
-      changed |= ez.changed;
-
-      // ============================== eo
-      // ez - (y*ex - x*ey)/(y*(y + ey))
-      [eoTemp set: [ez sub: [[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]]]];
-      
-      [eo set: [eo proj_inter: eoTemp]];
-      changed |= eo.changed;
-
-      // ============================== ex
-      // (ez - eo)*(y + ey) + (x*ey)/y
-      [exTemp set: [[[ez sub: eo] mul: [yr add: ey]] add: [[xr mul: ey] div: yr]]];
-      
-      [ex set: [ex proj_inter: exTemp]];
-      changed |= ex.changed;
-
-      // ============================== ey
-      // (ex - ez*y + eo*y)/(ez - eo + (x/y))
-      [eyTemp set: [[[ex sub: [ez mul: yr]] add: [eo mul: yr]] div: [[ez sub: eo] add: [xr div: yr]]]];
-      
-      [ey set: [ey proj_inter: eyTemp]];
-      changed |= ey.changed;
-
-      // ============================== x
-      // ((eo-ez) * y * (y+ey) + y*ex)/ey
-      [xrTemp set: [[[[[eo sub: ez] mul: yr] mul: [yr add:ey]] add: [yr mul: ex]] div: ey]];
-      
-      [xr set: [xr proj_inter:xrTemp]];
-      changed |= xr.changed;
-      
-      x.inf = [[xr low] get_sup_d];
-      x.sup = [[xr up] get_inf_d];
-
-      // ============================== y
-      // min(d1, d2), max(d1, d2)
-      // d1 = (ex - (ez - eo)*ey - sqrt(D))/(2*(ez - eo))
-      // d2 = (ex - (ez - eo)*ey + sqrt(D))/(2*(ez - eo))
-      // D = [0, +INF] inter ((ez - eo)*ey - ex)^2 + 4*(ez - eo)*ey*x
-      
-      //      [tmp set_d:4.0 and:4.0];
-      //      D = [[[[[ez sub: eo] mul: ey] sub: ex] mul: [[[ez sub: eo] mul: ey] sub: ex]] add: [[[tmp mul: [ez sub: eo]] mul: ey] mul: xr]];
-      //      [tmp set_d:0.0 and:+INFINITY];
-      //      D1 = [tmp proj_inter:D];
-      //      if(![D1 empty]){
-      //         tmp = [ex sub: [[ez sub: eo] mul: ey]];
-      //         fesetround(FE_DOWNWARD);
-      //         [D2.low set_d: sqrt([D1.low get_sup_d])];
-      //         fesetround(FE_UPWARD);
-      //         [D2.up set_d: sqrt([D1.up get_inf_d])];
-      //         fesetround(FE_TONEAREST);
-      //         d1 = [tmp sub: D2];
-      //         d2 = [tmp add: D2];
-      //         [tmp set_d:2.0 and:2.0];
-      //         tmp = [tmp mul: [ez sub: eo]];
-      //         d1 = [d1 div: tmp];
-      //         d2 = [d2 div: tmp];
-      //
-      //         [yrTemp set_q:minQ(d1.low, d2.low) and:maxQ(d1.up, d2.up)];
-      //         yr = [yr proj_inter:yrTemp];
-      //         changed |= yr.changed;
-      //
-      //         y.inf = [[yr low] get_sup_d];
-      //         y.sup = [[yr up] get_inf_d];
-      //      }
-      /* END ERROR PROPAG */
-      
-      gchanged |= changed;
-   } while(changed);
+         // ============================== ez
+         // (y*ex - x*ey)/(y*(y + ey)) + eo
+         [ezTemp set: [[[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]] add: eo]];
+         
+         [ez set: [ez proj_inter: ezTemp]];
+         changed |= ez.changed;
+         
+         // ============================== eo
+         // ez - (y*ex - x*ey)/(y*(y + ey))
+         [eoTemp set: [ez sub: [[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]]]];
+         
+         [eo set: [eo proj_inter: eoTemp]];
+         changed |= eo.changed;
+         
+         // ============================== ex
+         // (ez - eo)*(y + ey) + (x*ey)/y
+         [exTemp set: [[[ez sub: eo] mul: [yr add: ey]] add: [[xr mul: ey] div: yr]]];
+         
+         [ex set: [ex proj_inter: exTemp]];
+         changed |= ex.changed;
+         
+         // ============================== ey
+         // (ex - ez*y + eo*y)/(ez - eo + (x/y))
+         [eyTemp set: [[[ex sub: [ez mul: yr]] add: [eo mul: yr]] div: [[ez sub: eo] add: [xr div: yr]]]];
+         
+         [ey set: [ey proj_inter: eyTemp]];
+         changed |= ey.changed;
+         
+         // ============================== x
+         // ((eo-ez) * y * (y+ey) + y*ex)/ey
+         [xrTemp set: [[[[[eo sub: ez] mul: yr] mul: [yr add:ey]] add: [yr mul: ex]] div: ey]];
+         
+         [xr set: [xr proj_inter:xrTemp]];
+         changed |= xr.changed;
+         
+         x.inf = [[xr low] get_sup_d];
+         x.sup = [[xr up] get_inf_d];
+         
+         // ============================== y
+         // min(d1, d2), max(d1, d2)
+         // d1 = (ex - (ez - eo)*ey - sqrt(D))/(2*(ez - eo))
+         // d2 = (ex - (ez - eo)*ey + sqrt(D))/(2*(ez - eo))
+         // D = [0, +INF] inter ((ez - eo)*ey - ex)^2 + 4*(ez - eo)*ey*x
+         
+         //      [tmp set_d:4.0 and:4.0];
+         //      D = [[[[[ez sub: eo] mul: ey] sub: ex] mul: [[[ez sub: eo] mul: ey] sub: ex]] add: [[[tmp mul: [ez sub: eo]] mul: ey] mul: xr]];
+         //      [tmp set_d:0.0 and:+INFINITY];
+         //      D1 = [tmp proj_inter:D];
+         //      if(![D1 empty]){
+         //         tmp = [ex sub: [[ez sub: eo] mul: ey]];
+         //         fesetround(FE_DOWNWARD);
+         //         [D2.low set_d: sqrt([D1.low get_sup_d])];
+         //         fesetround(FE_UPWARD);
+         //         [D2.up set_d: sqrt([D1.up get_inf_d])];
+         //         fesetround(FE_TONEAREST);
+         //         d1 = [tmp sub: D2];
+         //         d2 = [tmp add: D2];
+         //         [tmp set_d:2.0 and:2.0];
+         //         tmp = [tmp mul: [ez sub: eo]];
+         //         d1 = [d1 div: tmp];
+         //         d2 = [d2 div: tmp];
+         //
+         //         [yrTemp set_q:minQ(d1.low, d2.low) and:maxQ(d1.up, d2.up)];
+         //         yr = [yr proj_inter:yrTemp];
+         //         changed |= yr.changed;
+         //
+         //         y.inf = [[yr low] get_sup_d];
+         //         y.sup = [[yr up] get_inf_d];
+         //      }
+         /* END ERROR PROPAG */
+         
+         gchanged |= changed;
+      } while(changed);
+   }
+   
    if(gchanged){
       // Cause no propagation on eo is insured
       [_eo updateMin:(eo.low) for:NULL];
@@ -2919,26 +2928,26 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    int gchanged,changed;
    changed = gchanged = false;
-//   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-//   id<ORRationalInterval> eres = [[ORRationalInterval alloc] init];
-//   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
-//   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
-//   id<ORRationalInterval> eresTemp = [[ORRationalInterval alloc] init];
-//   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
-//   id<ORRationalInterval> one = [[ORRationalInterval alloc] init];
-//   id<ORRationalInterval> two = [[ORRationalInterval alloc] init];
-//   id<ORRationalInterval> xq = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> eres = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> eresTemp = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> one = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> two = [[ORRationalInterval alloc] init];
+   //   id<ORRationalInterval> xq = [[ORRationalInterval alloc] init];
    
    updateFloatInterval(&_xi,_x);
    updateFloatInterval(&_resi,_res);
    
-//   [one.low setOne];
-//   [one.up setOne];
-//   [two set_d:2.0 and:2.0];
-//   [xq set_d:_xi.inf and:_xi.sup];
-//   [ex set_q:[_x minErr] and:[_x maxErr]];
-//   [eres set_q:[_res minErr] and:[_res maxErr]];
-//   [eo set_q:[_eo min] and:[_eo max]];
+   //   [one.low setOne];
+   //   [one.up setOne];
+   //   [two set_d:2.0 and:2.0];
+   //   [xq set_d:_xi.inf and:_xi.sup];
+   //   [ex set_q:[_x minErr] and:[_x maxErr]];
+   //   [eres set_q:[_res minErr] and:[_res maxErr]];
+   //   [eo set_q:[_eo min] and:[_eo max]];
    
    
    intersectionInterval inter;
@@ -2958,49 +2967,49 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       assignTRInt(&_active, NO, _trail);
    
    /* ERROR PROPAG */
-//   do {
-//      eo = compute_eo_sqrt(eo, _xi, _resi);
-//      changed |= eo.changed;
-//      // ============================== ez
-//      // sqrt(x) * (sqrt(1 + ex) - 1) + eo
-//      eresTemp = [[[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]] add: eo];
-//      eres = [eres proj_inter: eresTemp];
-//      changed |= eres.changed;
-//
-//      // ============================== eo
-//      // ez - sqrt(x) * (sqrt(1 + ex) - 1)
-//      eoTemp = [eres sub: [[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]]];
-//      eo = [eo proj_inter: eoTemp];
-//      changed |= eo.changed;
-//
-//      // ============================== ex
-//      // (eo^2 - 2*eo*ez + ez^2 - 2*eo*sqrt(x) + 2*ez*sqrt(x)) / x
-//      exTemp = [[[[[[eo mul: eo] sub: [[two mul: eo] mul: eres]] add: [eres mul: eres]] sub: [[two mul: eo] mul: [xq sqrt]]] add: [[two mul: eres] mul: [xq sqrt]]] div: xq];
-//      ex = [ex proj_inter: exTemp];
-//      changed |= ex.changed;
-//
-//      gchanged |= changed;
-//   } while(changed);
+   //   do {
+   //      eo = compute_eo_sqrt(eo, _xi, _resi);
+   //      changed |= eo.changed;
+   //      // ============================== ez
+   //      // sqrt(x) * (sqrt(1 + ex) - 1) + eo
+   //      eresTemp = [[[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]] add: eo];
+   //      eres = [eres proj_inter: eresTemp];
+   //      changed |= eres.changed;
+   //
+   //      // ============================== eo
+   //      // ez - sqrt(x) * (sqrt(1 + ex) - 1)
+   //      eoTemp = [eres sub: [[xq sqrt] mul: [[[ex add: one] sqrt] sub: one]]];
+   //      eo = [eo proj_inter: eoTemp];
+   //      changed |= eo.changed;
+   //
+   //      // ============================== ex
+   //      // (eo^2 - 2*eo*ez + ez^2 - 2*eo*sqrt(x) + 2*ez*sqrt(x)) / x
+   //      exTemp = [[[[[[eo mul: eo] sub: [[two mul: eo] mul: eres]] add: [eres mul: eres]] sub: [[two mul: eo] mul: [xq sqrt]]] add: [[two mul: eres] mul: [xq sqrt]]] div: xq];
+   //      ex = [ex proj_inter: exTemp];
+   //      changed |= ex.changed;
+   //
+   //      gchanged |= changed;
+   //   } while(changed);
    /* END ERROR PROPAG */
    //if(gchanged){
-      // Cause no propagation on eo is insured
-      //[_eo updateMin:(eo.low) for:NULL];
-      //[_eo updateMax:(eo.up) for:NULL];
-      
-      //[_x updateIntervalError:(ex.low) and:(ex.up)];
-      //[_res updateIntervalError:(eres.low) and:(eres.up)];
-//      if([_x bound] && [_res bound] && [_x boundError] && [_res boundError])
-//         assignTRInt(&_active, NO, _trail);
-//   }
-//   [ex release];
-//   [eres release];
-//   [eo release];
-//   [exTemp release];
-//   [eresTemp release];
-//   [eoTemp release];
-//   [one release];
-//   [two release];
-//   [xq release];
+   // Cause no propagation on eo is insured
+   //[_eo updateMin:(eo.low) for:NULL];
+   //[_eo updateMax:(eo.up) for:NULL];
+   
+   //[_x updateIntervalError:(ex.low) and:(ex.up)];
+   //[_res updateIntervalError:(eres.low) and:(eres.up)];
+   //      if([_x bound] && [_res bound] && [_x boundError] && [_res boundError])
+   //         assignTRInt(&_active, NO, _trail);
+   //   }
+   //   [ex release];
+   //   [eres release];
+   //   [eo release];
+   //   [exTemp release];
+   //   [eresTemp release];
+   //   [eoTemp release];
+   //   [one release];
+   //   [two release];
+   //   [xq release];
 }
 -(NSSet*)allVars
 {

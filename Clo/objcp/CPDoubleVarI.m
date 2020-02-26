@@ -254,7 +254,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    
-   _inputVar = FALSE;
+   _inputVar = false;
    
    return self;
 }

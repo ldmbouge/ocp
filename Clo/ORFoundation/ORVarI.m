@@ -385,6 +385,7 @@
    id<ORFloatRange> _domain;
    id<ORRationalRange> _domainError;
    BOOL             _hasBounds;
+   BOOL             _inputVar;
    NSString*        _prettyname;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track domain:(id<ORFloatRange>)dom
@@ -453,6 +454,13 @@
    _prettyname = [[NSString alloc] initWithString:name];
    return self;
 }
+-(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name inputVar:(ORBool)inputVar
+{
+   self = [self init:track domain:[ORFactory floatRange:track low:low up:up] domainError:[ORFactory rationalRange:track low:elow up:eup]];
+   _prettyname = [[NSString alloc] initWithString:name];
+   _inputVar = inputVar;
+   return self;
+}
 -(id<ORFloatRange>) domain
 {
    assert(_domain != NULL);
@@ -462,6 +470,10 @@
 {
    assert(_domainError != NULL);
    return _domainError;
+}
+-(ORBool) isInputVar
+{
+   return _inputVar;
 }
 -(void) dealloc
 {

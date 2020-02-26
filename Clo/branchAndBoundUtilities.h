@@ -72,7 +72,7 @@ static inline id<ORRational> halfUlpOf(ORFloat v)
    id<ORRational> hUlp = [[[ORRational alloc] init] autorelease];
    [vQ set_d: v];
    [vQNext set_d: nextafterf(v, +INFINITY)];
-   [two set_d: 2.0];
+   [two set_d: 2.0f];
    
    [hUlp set: [[vQNext sub: vQ] div: two]];
    

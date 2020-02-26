@@ -45,7 +45,7 @@
 @end
 
 /* Try to improve computed error in GuessError, once all variables are set */
-ORBool RUN_IMPROVE_GUESS = true;
+ORBool RUN_IMPROVE_GUESS = false;
 /* Discard box if half-ulp limit is reached on all constraints */
 ORBool RUN_DISCARDED_BOX = true;
 /* DO NOT CHANGE HERE - Disable solver output when in sub-solver for GuessError */

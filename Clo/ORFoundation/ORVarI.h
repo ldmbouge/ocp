@@ -79,6 +79,7 @@
 -(ORFloatVarI*) init: (id<ORTracker>) tracker up: (ORFloat) up name:(NSString*) name;
 -(ORFloatVarI*) init: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up name:(NSString*) name;
 -(ORFloatVarI*) init: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name;
+-(ORFloatVarI*) init: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name inputVar:(ORBool)inputVar;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
@@ -87,6 +88,7 @@
 -(NSString*) prettyname;
 -(id<ORFloatRange>) domain;
 -(id<ORRationalRange>) domainError;
+-(ORBool) isInputVar;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
 -(id) initWithCoder:(NSCoder *)aDecoder;
@@ -123,7 +125,7 @@
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up name:(NSString*) name;
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up name:(NSString*) name;
 -(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up  elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name;
--(ORDoubleVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name inputVar:(ORBool)inputVar;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name inputVar:(ORBool)inputVar;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;

@@ -127,7 +127,7 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
     if (!_gamma[v.getId])
-       _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain] boundsError: [v domainError]];
+       _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain] boundsError: [v domainError] inputVar: [v isInputVar]];
 }
 
 -(void) visitRationalVar: (id<ORRationalVar>) v
@@ -3199,7 +3199,7 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
    if (!_gamma[v.getId])
-      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain] boundsError: [v domainError]];
+      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain] boundsError: [v domainError] inputVar: [v isInputVar]];
 }
 
 -(void) visitDoubleVar: (id<ORDoubleVar>) v

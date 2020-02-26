@@ -100,9 +100,9 @@
 @public
    id<CPFloatDom>            _dom;
 }
--(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
--(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup;
--(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup;
+-(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up inputVar:(ORBool)inputVar;
+-(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup inputVar:(ORBool)inputVar;
+-(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup inputVar:(ORBool)inputVar;
 -(id)init:(id<CPEngine>)engine;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;

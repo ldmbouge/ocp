@@ -72,6 +72,7 @@ PORTABLE_BEGIN
 @protocol ORFloatVar <ORExprVar>
 -(id<ORFloatRange>) domain;
 -(id<ORRationalRange>) domainError;
+-(ORBool) isInputVar;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
