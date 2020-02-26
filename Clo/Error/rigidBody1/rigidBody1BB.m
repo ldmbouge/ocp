@@ -301,9 +301,9 @@ void rigidBody1_f(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   //rigidBody1_d(1, argc, argv);
+   rigidBody1_d(1, argc, argv);
    //rigidBody1_d_c(1, argc, argv);
-   rigidBody1_f_c(1, argc, argv);
+   //rigidBody1_f_c(1, argc, argv);
    //rigidBody1_f(1, argc, argv);
    return 0;
 }
