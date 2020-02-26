@@ -44,6 +44,11 @@
 			<key>orderHint</key>
 			<integer>118</integer>
 		</dict>
+		<key>AmongMDDSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>148</integer>
+		</dict>
 		<key>AtomicTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -122,7 +127,7 @@
 		<key>GCCMDDSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>153</integer>
+			<integer>155</integer>
 		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
@@ -337,7 +342,7 @@
 		<key>allDiffMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>152</integer>
+			<integer>154</integer>
 		</dict>
 		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
@@ -350,6 +355,11 @@
 			<integer>113</integer>
 		</dict>
 		<key>amongMDD.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>151</integer>
+		</dict>
+		<key>amongSwift 1.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>149</integer>
@@ -487,7 +497,7 @@
 		<key>dummy.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>148</integer>
+			<integer>150</integer>
 		</dict>
 		<key>dxAES.xcscheme</key>
 		<dict>
@@ -847,12 +857,12 @@
 		<key>sequenceAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>151</integer>
+			<integer>153</integer>
 		</dict>
 		<key>sequenceMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>150</integer>
+			<integer>152</integer>
 		</dict>
 		<key>shiploading.xcscheme_^#shared#^_</key>
 		<dict>

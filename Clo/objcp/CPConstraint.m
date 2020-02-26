@@ -127,7 +127,11 @@
     [values enumerateWithBlock:^(ORInt vk) {
         arr[at++] =occ[vk];
     }];
-    id<ORConstraint> c = [CPFactory sum:arr eq:0];
+   id<ORConstraint> c = nil;
+   //[engine add:[CPFactory sum:occ eq:x.count]];
+   if (arr.count == 2) {
+      c = [CPFactory equal:sumValue to:arr[1] plus:0];// annotation:DomainConsistency];
+   } else c = [CPFactory sum:arr eq:0];
     return c;
 }
 // cardinality

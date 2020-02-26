@@ -10,65 +10,32 @@
  ***********************************************************************/
 import ORProgram
 autoreleasepool {
-<<<<<<< HEAD
-   let start = ORRuntimeMonitor.cputime()
-    let m  = ORFactory.createModel(),
-    R0 = range(m, 1...200),
-    R1 = range(m,1...9),
-        notes = ORFactory.annotation()
-    let vars = ORFactory.intVarArray(m, range: R0, domain: R1)
-    let cv1 = ORFactory.intSet(m, set: [2]),
-        cv2 = ORFactory.intSet(m, set: [3]),
-        cv3 = ORFactory.intSet(m, set: [4]),
-        cv4 = ORFactory.intSet(m, set: [5])
-    m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv1))
-    m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv2))
-    m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv3))
-    m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv4))
-
-//    let vars = ORFactory.intVarArray(m, range: range(m,1...20), domain: range(m,1...20))
-//    m.add(allDiffMDD(vars))
-    notes.ddWidth(128)
-    notes.ddRelaxed(true)
-    let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
-   var end:ORLong = 0
-    cp.search {
-        Do(cp) {
-           end = ORRuntimeMonitor.cputime()
-        }
-        »
-        firstFail(cp, vars)
-            »
-            Do(cp) {
-                let qs = (1..<R0.up()).map { i in cp.intValue(vars[ORInt(i)]) }
-                print("sol is: \(qs)")
-                print("CP: \(cp)")
-            }
-    }
-    print("Solver status: \(end - start)\n")
-=======
   let start = ORRuntimeMonitor.cputime()
   let m = ORFactory.createModel(),
-  R0 = range(m, 1...200),
+  R0 = range(m, 1...12),
   R1 = range(m,1...9),
     notes = ORFactory.annotation()
   let vars = ORFactory.intVarArray(m, range: R0, domain: R1)
   let cv1 = ORFactory.intSet(m, set: [2]),
     cv2 = ORFactory.intSet(m, set: [3]),
     cv3 = ORFactory.intSet(m, set: [4]),
-    cv4 = ORFactory.intSet(m, set: [5])
+    cv4 = ORFactory.intSet(m, set: [5]),
+   low = ORFactory.intArray(m, array: [0,0,2,2,3,3,0,0,0,0]),
+   up = ORFactory.intArray(m,array:[0,200,5,5,5,5,200,200,200,200])
   
-  //m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv1))
-  //m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv2))
-  //m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv3))
-  //m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv4))
+  m.add(ORFactory.among(vars, values:cv1 , low: 2, up: 5))
+  m.add(ORFactory.among(vars, values: cv2, low: 2, up: 5))
+  m.add(ORFactory.among(vars, values: cv3, low: 3, up: 5))
+  m.add(ORFactory.among(vars, values: cv4, low: 3, up: 5))
   
-  
+  //m.add(ORFactory.cardinality(vars, low: low, up: up))
+   
+/*
   m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 5, values: cv1))
   m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 5, values: cv2))
   m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 5, values: cv3))
   m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 5, values: cv4))
-  
+  */
     
   //let relaxationSize = Int32(CommandLine.arguments[1])
   //notes.ddWidth(relaxationSize!)
@@ -80,9 +47,13 @@ autoreleasepool {
   cp.search {
     Do(cp) {
       end = ORRuntimeMonitor.cputime()
+      cp.add(vars[1] == 1)
+      cp.add(vars[2] == 1)
+      let cv = (1..<R0.up()+1).map { i in cp.concretize(vars[ORInt(i)])!}
+      print("CC: \(cv)")
     }
     »
-    firstFail(cp, vars)
+    labelArray(cp, vars)
       »
       Do(cp) {
         afterPropagation = ORRuntimeMonitor.cputime()
@@ -95,6 +66,5 @@ autoreleasepool {
   print("Post duration: \(end - start)")
   print("Propagation duration: \(afterPropagation - end)")
   print("Quitting: \(afterPropagation - start)\n")
->>>>>>> b84924ab7832aa018502ec33aee3e839022e54af
 }
 
