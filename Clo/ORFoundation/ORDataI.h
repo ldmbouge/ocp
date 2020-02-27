@@ -218,7 +218,7 @@ typedef struct timeval ORTimeval;
 +(ORLong) wctime;
 +(ORTimeval)now;
 +(ORTimeval)elapsedSince:(ORTimeval)tv;
-@end;
+@end
 
 @interface ORStreamManager : NSObject
 +(void) initialize;

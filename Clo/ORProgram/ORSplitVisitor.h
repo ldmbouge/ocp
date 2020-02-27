@@ -27,11 +27,11 @@
 @end
 
 @interface OR5WaySplitVisitor : CPVisitorI<CPVisitor>
--(OR5WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
+-(OR5WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle card:(ORBool) realM withPath:(NSMutableArray*) path;
 @end
 
 @interface OR6WaySplitVisitor : CPVisitorI<CPVisitor>
--(OR6WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v;
+-(OR6WaySplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle;
 @end
 
 @interface ORDeltaSplitVisitor : CPVisitorI<CPVisitor>
@@ -43,7 +43,7 @@
 @end
 
 @interface ORAbsSplitVisitor : CPVisitorI<CPVisitor>
--(ORAbsSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v other:(id<CPVar>)o;
+-(ORAbsSplitVisitor*) initWithProgram:(CPCoreSolver*) p variable:(id<ORVar>) v other:(id<ORVar>)o;
 @end
 
 @interface ORAbsVisitor : CPVisitorI<CPVisitor>
@@ -51,3 +51,10 @@
 -(ORDouble) rate;
 @end
 
+@interface CPDensityVisitor : CPVisitorI<CPVisitor>
+-(ORLDouble) result;
+@end
+
+@interface CPCardinalityVisitor : CPVisitorI<CPVisitor>
+-(ORDouble) result;
+@end

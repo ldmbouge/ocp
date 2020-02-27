@@ -217,8 +217,6 @@
                                              array:[self variables:model]
                                               coef:[self coefficients:model]
                                                set:-_indep]];
-   /*assert(NO);
-   return nil;*/
 }
 -(void) postMinimize: (id<ORAddToModel>) model
 {

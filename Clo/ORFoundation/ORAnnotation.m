@@ -26,6 +26,8 @@
    NSMutableDictionary* _cstr;
    NSMutableDictionary* _classCstr;
    ORDouble _kbpercent;
+   ORBool   _staticRewrite;
+   ORBool   _dynRewrite;
 }
 
 -(id) init
@@ -35,6 +37,8 @@
    _cstr = [[NSMutableDictionary alloc] initWithCapacity:16];
    _modelVariables = nil;
    _kbpercent = -1;
+   _staticRewrite = NO;
+   _dynRewrite = NO;
    return self;
 }
 
@@ -144,6 +148,26 @@
 -(ORBool) hasFilteringPercent
 {
    return _kbpercent != -1;
+}
+-(void) staticRewrite:(ORBool) forced
+{
+   _staticRewrite = forced;
+}
+-(void) dynRewrite:(ORBool) forced
+{
+   _dynRewrite = forced;
+}
+-(ORBool) staticRewrite
+{
+   return _staticRewrite;
+}
+-(ORBool) dynRewrite
+{
+   return _dynRewrite;
+}
+-(ORBool) rewrite
+{
+   return _dynRewrite || _staticRewrite;
 }
 -(ORDouble) kbpercent
 {
@@ -258,9 +282,7 @@
 @implementation ORAnnotationCopy
 -(id)initWith: (id<ORAnnotation>) src ovars:(NSMutableArray*)vars
 {
-   self = [super init];
-   _original = [src retain];
-   [super kbpercent:[_original kbpercent]];
+   self = [self initWith:src];
    _modelVariables = [vars retain];
    return self;
 }
@@ -269,6 +291,8 @@
    self = [super init];
    _original = [src retain];
    [super kbpercent:[_original kbpercent]];
+   [super staticRewrite:[_original staticRewrite]];
+   [super dynRewrite:[_original dynRewrite]];
    return self;
 }
 -(void) dealloc

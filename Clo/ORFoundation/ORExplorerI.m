@@ -174,6 +174,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [_controller startTryall];
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
    struct TAOutput nv;
+   //NSLog(@"ITE allocated: %p",ite);
    while (true) {
       nv = nextTAValue(ite, filter);
       if (!nv.found)
@@ -189,11 +190,12 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       }
       else {
          [k letgo];
-         [_controller trust];
-         [_controller startTryallOnFailure];
-         if (onFailure)
-            onFailure(nv.value);
-         [_controller exitTryallOnFailure];
+          if (onFailure) {
+              [_controller trust];
+              [_controller startTryallOnFailure];
+              onFailure(nv.value);
+              [_controller exitTryallOnFailure];
+          }
       }
    }
    [_controller exitTryall];
@@ -237,11 +239,15 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) probe: (ORClosure) cl
 {
-    //[self try:^{
+//    [_tracer pushNode];
+//    cl();
+//    [_tracer popNode];
+ 
+    [self try:^{
         cl();
-//    } alt:^{
-//        [self fail];
-//    }];
+    } alt:^{
+        [self fail];
+    }];    
 }
 
 -(void) once: (ORClosure) cl
@@ -477,7 +483,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if ([exit nbCalls]==0) {
       exit.admin = YES;
       [newCtrl setup];
-      [newCtrl addChoice: exit];
+      [_controller addChoice: exit];          // [LDM] FIX: BDS no longer working if we do newCtrl addChoice. 
       [self setController:newCtrl];           // install the new controller
       if (body) body();
       if (onSolution) onSolution();

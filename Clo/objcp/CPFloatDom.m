@@ -22,16 +22,19 @@
 
 -(id)initCPFloatDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up
 {
-    self = [super init];
-    _trail = trail;
-    _imin = low;
-    _imax = up;
-    _domain = makeTRFloatInterval(_trail, _imin, _imax);
-    return self;
+   self = [super init];
+   _trail = trail;
+   _imin = low;
+   _imax = up;
+   _domain = makeTRFloatInterval(_trail, _imin, _imax);
+   return self;
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[CPFloatDom allocWithZone:zone] initCPFloatDom:_trail low:_imin up:_imax];
+   CPFloatDom* res = [[CPFloatDom allocWithZone:zone] initCPFloatDom:_trail low:_domain._low up:_domain._up];
+   res->_imax = _imax;
+   res->_imin = _imin;
+   return res;
 }
 -(NSString*) description
 {
@@ -195,5 +198,9 @@
 {
    updateMin(&_domain, minFlt(_imin,d->_imin), _trail);
    updateMax(&_domain, maxFlt(_imax,d->_imax), _trail);
+}
+-(BOOL) isEqual:(CPFloatDom*)d
+{
+   return (is_eqf(_domain._low,d->_domain._low) && is_eqf(_domain._up,d->_domain._up));
 }
 @end

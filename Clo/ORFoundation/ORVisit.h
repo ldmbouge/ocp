@@ -140,6 +140,8 @@
 -(void) visitLEqualc: (id<ORConstraint>)c;
 -(void) visitGEqualc: (id<ORConstraint>)c;
 -(void) visitEqual: (id<ORConstraint>)c;
+-(void) visitFloatEqual: (id<ORConstraint>)c;
+-(void) visitDoubleEqual: (id<ORConstraint>)c;
 -(void) visitAffine: (id<ORConstraint>)c;
 -(void) visitNEqual: (id<ORConstraint>)c;
 -(void) visitSoftNEqual: (id<ORSoftNEqual>)c;
@@ -214,6 +216,7 @@
 -(void) visitFloatLinearGT: (id<ORConstraint>) c;
 -(void) visitFloatLinearLEQ: (id<ORFloatLinearLEQ>) c;
 -(void) visitFloatLinearGEQ: (id<ORFloatLinearGEQ>) c;
+-(void) visitFloatSquare: (id<ORConstraint>) c;
 -(void) visitFloatMult: (id<ORFloatMult>) c;
 -(void) visitFloatDiv: (id<ORFloatDiv>) c;
 -(void) visitFloatReifyEqualc: (id<ORConstraint>)c;
@@ -228,7 +231,19 @@
 -(void) visitFloatReifyGEqual: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThenc: (id<ORConstraint>)c;
 -(void) visitFloatReifyGThen: (id<ORConstraint>)c;
+-(void) visitFloatReifyAssignc: (id<ORConstraint>)c;
+-(void) visitFloatReifyAssign: (id<ORConstraint>)c;
 -(void) visitFloatCast: (id<ORConstraint>)c;
+-(void) visitFloatIsZero: (id<ORConstraint>)c;
+-(void) visitFloatIsPositive: (id<ORConstraint>)c;
+-(void) visitFloatIsInfinite: (id<ORConstraint>)c;
+-(void) visitFloatIsNormal: (id<ORConstraint>)c;
+-(void) visitFloatIsSubnormal: (id<ORConstraint>)c;
+-(void) visitDoubleIsSubnormal: (id<ORConstraint>)c;
+-(void) visitDoubleIsNormal: (id<ORConstraint>)c;
+-(void) visitDoubleIsInfinite: (id<ORConstraint>)c;
+-(void) visitDoubleIsPositive: (id<ORConstraint>)c;
+-(void) visitDoubleIsZero: (id<ORConstraint>)c;
 -(void) visitRationalUnaryMinus:  (id<ORConstraint>) c;
 -(void) visitRationalEqualc: (id<ORConstraint>)c;
 -(void) visitRationalErrorOf: (id<ORConstraint>)c;
@@ -276,10 +291,13 @@
 -(void) visitDoubleLinearGT: (id<ORConstraint>) c;
 -(void) visitDoubleLinearLEQ: (id<ORDoubleLinearLEQ>) c;
 -(void) visitDoubleLinearGEQ: (id<ORDoubleLinearGEQ>) c;
+-(void) visitDoubleSquare: (id<ORConstraint>) c;
 -(void) visitDoubleMult: (id<ORDoubleMult>) c;
 -(void) visitDoubleDiv: (id<ORDoubleDiv>) c;
 -(void) visitDoubleReifyEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleReifyEqual: (id<ORConstraint>)c;
+-(void) visitDoubleReifyAssignc: (id<ORConstraint>)c;
+-(void) visitDoubleReifyAssign: (id<ORConstraint>)c;
 -(void) visitDoubleReifyNEqualc: (id<ORConstraint>)c;
 -(void) visitDoubleReifyNEqual: (id<ORConstraint>)c;
 -(void) visitDoubleReifyLEqualc: (id<ORConstraint>)c;
@@ -326,6 +344,8 @@
 -(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
 -(void) visitExprSqrtI:(id<ORExpr>) e;
+-(void) visitExprToFloatI:(id<ORExpr>) e;
+-(void) visitExprToDoubleI:(id<ORExpr>) e;
 -(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
@@ -340,6 +360,12 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
 -(void) visitExprAssignI:(id<ORExpr>)e;
+-(void) visitExprIsZeroI:(id<ORExpr>)e;
+-(void) visitExprIsPositiveI:(id<ORExpr>)e;
+-(void) visitExprIsInfiniteI:(id<ORExpr>)e;
+-(void) visitExprIsNormalI:(id<ORExpr>)e;
+-(void) visitExprIsSubnormalI:(id<ORExpr>)e;
+
 
 // Bit
 -(void) visitBitEqBool:(id<ORConstraint>)c;

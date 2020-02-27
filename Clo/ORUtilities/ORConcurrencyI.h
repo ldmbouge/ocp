@@ -43,7 +43,7 @@
 -(void) main;
 @end
 
-@interface ORInformer : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer,ORDoubleInformer,
+@interface ORInformer : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer,ORIdxIdxBoolInformer,ORDoubleInformer,
     ORSolutionInformer, ORConstraintInformer, ORIntArrayInformer, ORDoubleArrayInformer, ORConstraintSetInformer> {
     NSLock* _lock;
     NSMutableArray* _whenList;
@@ -57,6 +57,7 @@
 -(void) notifyWith:(int)a0;
 -(void) notifyWithFloat:(double)a0;
 -(void) notifyWith:(id)a0 andInt:(ORInt)v;
+-(void) notifyWith:(id)a0 andId:(id)a1 isStatic:(ORBool) b;
 -(void) notifyWithSolution:(id<ORSolution>)s;
 @end
 

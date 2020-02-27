@@ -12,7 +12,9 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES)  \
 SRCS = smtlib2utils.c smtlib2termparser.c smtlib2stream.c \
 	smtlib2scanner.c smtlib2hashtable.c smtlib2flexlexer.c \
 	smtlib2charbuf.c smtlib2bisonparser.c smtlib2abstractparser.c \
-	smtlib2vector.c smtlib2objcp.m ExprSimplifier.m objcpgateway.m
+	smtlib2vector.c smtlib2objcp.m ExprSimplifier.m \
+	objcpUtils.m objcpgatewayI.m  objcpgatewayAux.m\
+	objcpProxy.m
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
@@ -23,6 +25,9 @@ all: $(LIBNAME)
 	then \
 	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
 	fi
+
+ExprSimplifier.m : $(LOC)ExprSimplifier.m
+	cp $< .
 
 $(LIBNAME): $(OFILES)
 	@echo "Linking..." $^

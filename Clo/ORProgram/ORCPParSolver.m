@@ -360,10 +360,6 @@
 {
     [[self worker] minMagnitudeSearch:x do:b];
 }
--(void)          maxAbsDensSearch: (id<ORDisabledVarArray>) x  default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   [[self worker] maxAbsDensSearch:x default:b];
-}
 -(void)          branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
    [[self worker] branchAndBoundSearch: x out: ez do: b];
@@ -412,21 +408,13 @@
 {
     [[self worker] maxAbsorptionSearch:x do:b];
 }
+-(void)          maxFullAbsorptionSearch:  (id<ORDisabledVarArray>) x
+{
+   [[self worker] maxFullAbsorptionSearch:x];
+}
 -(void)          minAbsorptionSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {
     [[self worker] minAbsorptionSearch:x do:b];
-}
--(void)          maxAbsorptionSearch: (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   [[self worker] maxAbsorptionSearch:x default:b];
-}
--(void)          maxCancellationSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-    [[self worker] maxCancellationSearch:x do:b];
-}
--(void)          minCancellationSearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-    [[self worker] minCancellationSearch:x do:b];
 }
 -(void) splitArray: (id<ORIntVarArray>) x
 {
@@ -556,9 +544,9 @@
 {
     [[self worker] floatStatic6WaySplit:i withVars:vars];
 }
--(void)          floatAbsSplit: (ORUInt) i by:(id<CPFloatVar>) y  withVars:(id<ORDisabledVarArray>) x  default:(void(^)(ORUInt,id<ORDisabledVarArray>))b
+-(void)          floatAbsSplit:(ORUInt)i by:(id<CPVar>) y vars:(id<ORDisabledVarArray>) x
 {
-   [[self worker] floatAbsSplit:i by:y  withVars:x default:b];
+   [[self worker] floatAbsSplit:i by:y vars:x];
 }
 -(void)          floatSplit: (ORUInt) i withVars:(id<ORDisabledVarArray>) vars
 {
@@ -685,10 +673,6 @@
 {
    return [[self worker] computeAbsorptionsQuantities: vars];
 }
--(ORDouble) computeAbsorptionRate:(id<ORVar>) x
-{
-   return [[self worker] computeAbsorptionRate:x];
-}
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
    return [[self worker] domsize:x];
@@ -709,17 +693,9 @@
 {
    return [[self worker] cardinality: x];
 }
--(ORDouble)  cancellationQuantity:(id<ORVar>) x
-{
-   return [[self worker] cancellationQuantity: x];
-}
 -(ORLDouble) density: (id<ORVar>) x
 {
    return [[self worker] density: x];
-}
--(ORUInt)  countMemberedConstraints:(id<ORVar>) x
-{
-   return [[self worker] countMemberedConstraints: x];
 }
 -(ORDouble) fdomwidth:(id<ORVar>) x
 {
@@ -1263,15 +1239,37 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
-- (NSArray *)collectAllVarWithAbs:(id<ORFloatVarArray>)vs {
+- (void)collectInputVar:(id<ORVarArray>)vs res:(NSMutableArray *)ar
+{
+   return [[self worker] collectInputVar:vs res:ar];
+}
+-(NSMutableArray*) collectInputVariables
+{
+    return [[self worker] collectInputVariables];
+}
+- (NSArray *)collectAllVarWithAbs:(id<ORVarArray>)vs
+{
    return [[self worker] collectAllVarWithAbs:vs];
 }
-- (NSArray *)collectAllVarWithAbs:(id<ORFloatVarArray>)vs withLimit:(ORDouble)limit {
+- (NSArray *)collectAllVarWithAbs:(id<ORVarArray>)vs withLimit:(ORDouble)limit
+{
    return [[self worker] collectAllVarWithAbs:vs withLimit:limit];
 }
 - (ORInt)debugLevel
 {
    return [[self worker] debugLevel];
+}
+- (void)maxLOccurencesSearch:(nonnull id<ORDisabledVarArray>)x do:(nonnull void (^)(ORUInt, id<ORDisabledVarArray> _Nonnull))b
+{
+   [[self worker] maxLOccurencesSearch:x do:b];
+}
+- (void)maxOccDensSearch:(nonnull id<ORDisabledVarArray>)x do:(nonnull void (^)(ORUInt, id<ORDisabledVarArray> _Nonnull))b
+{
+   [[self worker] maxOccDensSearch:x do:b];
+}
+- (void)maxOccTBDensSearch:(nonnull id<ORDisabledVarArray>)x do:(nonnull void (^)(ORUInt, id<ORDisabledVarArray> _Nonnull))b
+{
+   [[self worker] maxOccTBDensSearch:x do:b];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

@@ -14,13 +14,14 @@
 #import "ORExprI.h"
 #import "ORRealLinear.h"
 #import "ORFloatLinear.h"
-#import "ORRationalLinear.h"
 #import "ORDoubleLinear.h"
+#import "ORRationalLinear.h"
 #import "ORVarI.h"
 #import "ORRealDecompose.h"
 #import "ORFloatDecompose.h"
 #import "ORDoubleDecompose.h"
 #import "ORRationalDecompose.h"
+
 
 @interface ORIntNormalizer : ORVisitor<NSObject> {
    id<ORLinear>     _terms;
@@ -38,20 +39,20 @@
 -(id<ORFloatLinear>)terms;
 @end
 
-@interface ORRationalNormalizer :  ORVisitor<NSObject> {
-   id<ORLinear>  _terms;
-   id<ORAddToModel>   _model;
-}
--(id)init:(id<ORAddToModel>) model;
--(id<ORLinear>)terms;
-@end
-
 @interface ORDoubleNormalizer :  ORVisitor<NSObject> {
    id<ORDoubleLinear>  _terms;
    id<ORAddToModel>   _model;
 }
 -(id)init:(id<ORAddToModel>) model;
 -(id<ORDoubleLinear>)terms;
+@end
+
+@interface ORRationalNormalizer :  ORVisitor<NSObject> {
+   id<ORLinear>  _terms;
+   id<ORAddToModel>   _model;
+}
+-(id)init:(id<ORAddToModel>) model;
+-(id<ORLinear>)terms;
 @end
 
 @interface ORRealNormalizer : ORVisitor<NSObject> {
@@ -115,13 +116,6 @@
          ORDoubleNormalizer* v = [[ORDoubleNormalizer alloc] init:model];
          [rel visit:v];
          id<ORDoubleLinear> rv = [v terms];
-         [v release];
-         return rv;
-      }break;
-      case ORTRational: {
-         ORRationalNormalizer* v = [[ORRationalNormalizer alloc] init:model];
-         [rel visit:v];
-         id<ORLinear> rv = [v terms];
          [v release];
          return rv;
       }break;
@@ -294,16 +288,10 @@
    _terms = [recVisit visitExprEqualI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
--(void) visitExprErrorOfI:(ORExprErrorOfI*)e
+-(void) visitExprAssignI:(ORExprAssignI*)e
 {
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
-   _terms = [recVisit visitExprErrorOfI:_model left:[e left] right:[e right]];
-   [recVisit release];
-}
--(void) visitExprUlpOfI:(ORExprUlpOfI*)e
-{
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
-   _terms = [recVisit visitExprUlpOfI:_model left:[e left] right:[e right]];
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
+   _terms = [recVisit visitExprAssignI:_model left:[e left] right:[e right]];
    [recVisit release];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
@@ -408,81 +396,6 @@ struct CPVarPair {
 }
 @end
 
-
-// ========================================================================================================================
-// Rational Normalizer
-// ========================================================================================================================
-
-@implementation ORRationalNormalizer
--(id)init:(id<ORAddToModel>) model
-{
-   self = [super init];
-   _terms = nil;
-   _model = model;
-   return self;
-}
--(id<ORLinear>)terms
-{
-   return _terms;
-}
--(void) visitExprEqualI:(ORExprEqualI*)e
-{
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
-   _terms = [recVisit visitExprEqualI:_model left:[e left] right:[e right]];
-   [recVisit release];
-}
--(void) visitExprErrorOfI:(ORExprErrorOfI*)e
-{
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
-   _terms = [recVisit visitExprErrorOfI:_model left:[e left] right:[e right]];
-   [recVisit release];
-}
--(void) visitExprUlpOfI:(ORExprUlpOfI*)e
-{
-   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
-   _terms = [recVisit visitExprUlpOfI:_model left:[e left] right:[e right]];
-   [recVisit release];
-}
--(void) visitExprAssignI:(ORExprAssignI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[[e left] qmin] eq: [[e right] qmin]];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   } else if (lc || rc) {
-      id<ORRational> c = [[ORRational alloc] init];
-      [c set:lc ? [[e left] qmin] : [[e right] qmin]];
-      ORExprI* other = lc ? [e right] : [e left];
-      ORRationalLinear* lin  = [ORNormalizer rationalLinearFrom:other model:_model];
-      id<ORRationalVar> x = [ORNormalizer rationalVarIn:lin for:_model];
-      [_model addConstraint:[ORFactory rationalAssignC:_model var:x to:c]];
-      [c release];
-      [lin release];
-   } else {
-      bool lv = [[e left] isVariable];
-      bool rv = [[e right] isVariable];
-      if (lv || rv) {
-         id<ORRationalLinear> left  = [ORNormalizer rationalLinearFrom:[e left] model:_model];
-         ORRationalLinear* right  = [ORNormalizer rationalLinearFrom:[e right] model:_model];
-         id<ORRationalVar> x = [ORNormalizer rationalVarIn:left for:_model];
-         id<ORRationalVar> y = [ORNormalizer rationalVarIn:right for:_model];
-         [_model addConstraint:[ORFactory rationalAssign:_model var:x to:y]];
-         [right release];
-         [left release];
-      } else {
-         //should never append
-         ORRationalLinear* linLeft = [ORNormalizer rationalLinearFrom:[e left] model:_model ];
-         ORRationalLinearFlip* linRight = [[ORRationalLinearFlip alloc] initORRationalLinearFlip: linLeft];
-         [ORNormalizer addToRationalLinear:linRight from:[e right] model:_model];
-         [linRight release];
-         [linRight release];
-         _terms = linLeft;
-      }
-   }
-}
-@end
 // ========================================================================================================================
 // Real Normalizer
 // ========================================================================================================================
@@ -595,211 +508,12 @@ struct CPVarPair {
 {
    return _terms;
 }
--(void) visitExprEqualI:(ORExprEqualI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] fmin] == [[e right] fmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   } else if (lc || rc) {
-      ORFloat c = lc ? [[e left] fmin] : [[e right] fmin];
-      ORExprI* other = lc ? [e right] : [e left];
-      ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
-      [lin addIndependent: - c];
-      _terms = lin;
-   } else {
-      bool lv = [[e left] isVariable];
-      bool rv = [[e right] isVariable];
-      if (lv || rv) {
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         vars[1] = [ORNormalizer floatVarIn:right for:_model];
-         id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                                  range:RANGE(_model,0,1)
-                                                   with:^ORFloat(ORInt i) {
-                                                      return 1;
-                                                   }];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs eq:0.f]];
-         [right release];
-         [left release];
-      } else {
-         //TODO: fix order of sides.
-         ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model ];
-         ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
-         [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
-         [linRight release];
-         [linRight release];
-         _terms = linLeft;
-      }
-   }
-}
--(void) visitExprGThenI:(ORExprGThenI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] fmin] > [[e right] fmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-      return;
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^ORFloat(ORInt i) {
-                                                   return 1;
-                                                }];
-      if(lc){
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:right for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[[e left] fmin]]];
-         [right release];
-      }else if(rc){
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[[e right] fmin]]];
-         [left release];
-      }else{
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         vars[1] = [ORNormalizer floatVarIn:right for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:0.f]];
-         [left release];
-         [right release];
-      }
-   }
-}
--(void) visitExprLThenI:(ORExprLThenI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] fmin] < [[e right] fmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^ORFloat(ORInt i) {
-                                                   return 1;
-                                                }];
-      if(lc){
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:right for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs gt:[[e left] fmin]]];
-         [right release];
-      }else if(rc){
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:[[e right] fmin]]];
-         [left release];
-      }else{
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         vars[1] = [ORNormalizer floatVarIn:right for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs lt:0.f]];
-         [left release];
-         [right release];
-      }
-   }
-}
--(void) visitExprLEqualI:(ORExprLEqualI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] fmin] <= [[e right] fmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^ORFloat(ORInt i) {
-                                                   return 1;
-                                                }];
-      if(lc){
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:right for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[[e left] fmin]]];
-         [right release];
-      }else if(rc){
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[[e right] fmin]]];
-         [left release];
-      }else{
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         vars[1] = [ORNormalizer floatVarIn:right for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:0.f]];
-         [left release];
-         [right release];
-      }
-   }
-}
--(void) visitExprGEqualI:(ORExprGEqualI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] fmin] >= [[e right] fmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^ORFloat(ORInt i) {
-                                                   return 1;
-                                                }];
-      if(lc){
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:right for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs leq:[[e left] fmin]]];
-         [right release];
-      }else if(rc){
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:[[e right] fmin]]];
-         [left release];
-      }else{
-         id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
-         ORFloatLinear* right  = [ORNormalizer floatLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer floatVarIn:left for:_model];
-         vars[1] = [ORNormalizer floatVarIn:right for:_model];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs geq:0.f]];
-         [left release];
-         [right release];
-      }
-   }
-}
--(void) visitExprNEqualI:(ORExprNotEqualI*)e
-{
-   ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model];
-   ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
-   [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
-   [linRight release];
-   _terms = linLeft;
-}
 -(void) visitExprAssignI:(ORExprAssignI*)e
 {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] fmin] == [[e right] fmin];
+      bool isOk = is_eqf([[e left] fmin],[[e right] fmin]);
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
@@ -847,211 +561,12 @@ struct CPVarPair {
 {
    return _terms;
 }
--(void) visitExprEqualI:(ORExprEqualI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] dmin] == [[e right] dmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   } else if (lc || rc) {
-      ORDouble c = lc ? [[e left] dmin] : [[e right] dmin];
-      ORExprI* other = lc ? [e right] : [e left];
-      ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:other model:_model];
-      [lin addIndependent: - c];
-      _terms = lin;
-   } else {
-      bool lv = [[e left] isVariable];
-      bool rv = [[e right] isVariable];
-      if (lv || rv) {
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,1)];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                                    range:RANGE(_model,0,1)
-                                                     with:^ORDouble(ORInt i) {
-                                                        return 1;
-                                                     }];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs eq:0.0]];
-         [right release];
-         [left release];
-      } else {
-         //TODO: fix order of sides.
-         ORDoubleLinear* linLeft = [ORNormalizer doubleLinearFrom:[e left] model:_model ];
-         ORDoubleLinearFlip* linRight = [[ORDoubleLinearFlip alloc] initORDoubleLinearFlip: linLeft];
-         [ORNormalizer addToDoubleLinear:linRight from:[e right] model:_model];
-         [linRight release];
-         [linRight release];
-         _terms = linLeft;
-      }
-   }
-}
--(void) visitExprGThenI:(ORExprGThenI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] dmin] > [[e right] dmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-      return;
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                                 range:RANGE(_model,0,length - 1)
-                                                  with:^ORDouble(ORInt i) {
-                                                     return 1;
-                                                  }];
-      if(lc){
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:[[e left] dmin]]];
-         [right release];
-      }else if(rc){
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:[[e right] dmin]]];
-         [left release];
-      }else{
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:0.0]];
-         [left release];
-         [right release];
-      }
-   }
-}
--(void) visitExprLThenI:(ORExprLThenI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] dmin] < [[e right] dmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                                 range:RANGE(_model,0,length - 1)
-                                                  with:^ORDouble(ORInt i) {
-                                                     return 1;
-                                                  }];
-      if(lc){
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs gt:[[e left] dmin]]];
-         [right release];
-      }else if(rc){
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:[[e right] dmin]]];
-         [left release];
-      }else{
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs lt:0.0]];
-         [left release];
-         [right release];
-      }
-   }
-}
--(void) visitExprLEqualI:(ORExprLEqualI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] dmin] <= [[e right] dmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                                 range:RANGE(_model,0,length - 1)
-                                                  with:^ORDouble(ORInt i) {
-                                                     return 1;
-                                                  }];
-      if(lc){
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:[[e left] dmin]]];
-         [right release];
-      }else if(rc){
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:[[e right] dmin]]];
-         [left release];
-      }else{
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:0.0]];
-         [left release];
-         [right release];
-      }
-   }
-}
--(void) visitExprGEqualI:(ORExprGEqualI*)e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] dmin] >= [[e right] dmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                                 range:RANGE(_model,0,length - 1)
-                                                  with:^ORDouble(ORInt i) {
-                                                     return 1;
-                                                  }];
-      if(lc){
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs leq:[[e left] dmin]]];
-         [right release];
-      }else if(rc){
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:[[e right] dmin]]];
-         [left release];
-      }else{
-         id<ORDoubleLinear> left  = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-         ORDoubleLinear* right  = [ORNormalizer doubleLinearFrom:[e right] model:_model];
-         vars[0] = [ORNormalizer doubleVarIn:left for:_model];
-         vars[1] = [ORNormalizer doubleVarIn:right for:_model];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs geq:0.0]];
-         [left release];
-         [right release];
-      }
-   }
-}
--(void) visitExprNEqualI:(ORExprNotEqualI*)e
-{
-   ORDoubleLinear* linLeft = [ORNormalizer doubleLinearFrom:[e left] model:_model];
-   ORDoubleLinearFlip* linRight = [[ORDoubleLinearFlip alloc] initORDoubleLinearFlip: linLeft];
-   [ORNormalizer addToDoubleLinear:linRight from:[e right] model:_model];
-   [linRight release];
-   _terms = linLeft;
-}
 -(void) visitExprAssignI:(ORExprAssignI*)e
 {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] dmin] == [[e right] dmin];
+      bool isOk = is_eq([[e left] dmin],[[e right] dmin]);
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
@@ -1085,8 +600,80 @@ struct CPVarPair {
 }
 @end
 
+// ========================================================================================================================
+// Rational Normalizer
+// ========================================================================================================================
 
-
+@implementation ORRationalNormalizer
+-(id)init:(id<ORAddToModel>) model
+{
+   self = [super init];
+   _terms = nil;
+   _model = model;
+   return self;
+}
+-(id<ORLinear>)terms
+{
+   return _terms;
+}
+-(void) visitExprEqualI:(ORExprEqualI*)e
+{
+   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   _terms = [recVisit visitExprEqualI:_model left:[e left] right:[e right]];
+   [recVisit release];
+}
+-(void) visitExprErrorOfI:(ORExprErrorOfI*)e
+{
+   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   _terms = [recVisit visitExprErrorOfI:_model left:[e left] right:[e right]];
+   [recVisit release];
+}
+-(void) visitExprUlpOfI:(ORExprUlpOfI*)e
+{
+   id<TypeNormalizer> recVisit = vtype2Obj(e.left.vtype);
+   _terms = [recVisit visitExprUlpOfI:_model left:[e left] right:[e right]];
+   [recVisit release];
+}
+-(void) visitExprAssignI:(ORExprAssignI*)e
+{
+   bool lc = [[e left] isConstant];
+   bool rc = [[e right] isConstant];
+   if (lc && rc) {
+      bool isOk = [[[e left] qmin] eq: [[e right] qmin]];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      id<ORRational> c = [[ORRational alloc] init];
+      [c set:lc ? [[e left] qmin] : [[e right] qmin]];
+      ORExprI* other = lc ? [e right] : [e left];
+      ORRationalLinear* lin  = [ORNormalizer rationalLinearFrom:other model:_model];
+      id<ORRationalVar> x = [ORNormalizer rationalVarIn:lin for:_model];
+      [_model addConstraint:[ORFactory rationalAssignC:_model var:x to:c]];
+      [c release];
+      [lin release];
+   } else {
+      bool lv = [[e left] isVariable];
+      bool rv = [[e right] isVariable];
+      if (lv || rv) {
+         id<ORRationalLinear> left  = [ORNormalizer rationalLinearFrom:[e left] model:_model];
+         ORRationalLinear* right  = [ORNormalizer rationalLinearFrom:[e right] model:_model];
+         id<ORRationalVar> x = [ORNormalizer rationalVarIn:left for:_model];
+         id<ORRationalVar> y = [ORNormalizer rationalVarIn:right for:_model];
+         [_model addConstraint:[ORFactory rationalAssign:_model var:x to:y]];
+         [right release];
+         [left release];
+      } else {
+         //should never append
+         ORRationalLinear* linLeft = [ORNormalizer rationalLinearFrom:[e left] model:_model ];
+         ORRationalLinearFlip* linRight = [[ORRationalLinearFlip alloc] initORRationalLinearFlip: linLeft];
+         [ORNormalizer addToRationalLinear:linRight from:[e right] model:_model];
+         [linRight release];
+         [linRight release];
+         _terms = linLeft;
+      }
+   }
+}
+@end
 
 // ========================================================================================================================
 // Bool Linearizer
@@ -1291,6 +878,11 @@ struct CPVarPair {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprAssignI:(ORExprAssignI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
@@ -1378,6 +970,31 @@ struct CPVarPair {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprIsSubnormalI:(ORExprIsSubnormalI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprIsNormalI:(ORExprIsNormalI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprIsZeroI:(ORExprIsZeroI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprIsPositiveI:(ORExprIsPositiveI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprIsInfiniteI:(ORExprIsInfiniteI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
 @end
 
 // ========================================================================================================================
@@ -1443,10 +1060,6 @@ struct CPVarPair {
 -(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a Mutable Double"];
-}
--(void) visitExprAssignI:(ORExprAssignI*)e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer Assignement expression"];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
@@ -1640,7 +1253,15 @@ static inline ORLong maxSeq(ORLong v[4])  {
    if(_rv == nil) _rv = [ORFactory boolVar:_model];
    [recVisit reifyEQ:_model boolean:_rv left:left right:right];
    [recVisit release];
-   
+}
+-(void) visitExprAssignI:(ORExprAssignI*)e
+{
+   ORExprI* left = [e left];
+   ORExprI* right = [e right];
+   id<TypeNormalizer> recVisit = vtype2Obj(lookup_expr_table[e.left.vtype][e.right.vtype]);
+   if(_rv == nil) _rv = [ORFactory boolVar:_model];
+   [recVisit reifyAssign:_model boolean:_rv left:left right:right];
+   [recVisit release];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
@@ -1784,7 +1405,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
       // x = NEG(a0 OR ... OR an)
       // a0 OR ... OR an OR x   (to make sure that when x=0, a0 OR ... an must be satisfied (classic clause)
       // NOT(X) OR NOT(ai)      (to make sure that when x=1, ai=0 must be true (so that the expression be false)
-      // The second can be rewritten (for every i) as:  1 - x ≥ ai
+      // The second can be rewritten (for every i) as:  1 - x ≥ ai
       // Note that x=1  => 1-x = 0 =>  0 ≥ ai  and all the disjunct must be false.
       //           x=0  => 1-x = 1 =>  1 ≥ ai  no constraints on the ai
       //           ai=1 => 1-x ≥ 1 =>  x ≤ 0   and x must be zero. (ok, since the expression is true)
@@ -1885,6 +1506,238 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    [[e expr] visit:self];
 }
+-(void) visitExprIsSubnormalI:(ORExprIsSubnormalI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsSubnormal:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsSubnormal:_model boolean:_rv eq:v]];
+   }
+}
+-(void) visitExprIsNormalI:(ORExprIsNormalI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsNormal:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsNormal:_model boolean:_rv eq:v]];
+   }
+}
+-(void) visitExprIsZeroI:(ORExprIsZeroI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsZero:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsZero:_model boolean:_rv eq:v]];
+   }
+}
+-(void) visitExprIsPositiveI:(ORExprIsPositiveI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsPositive:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsPositive:_model boolean:_rv eq:v]];
+   }
+}
+-(void) visitExprIsInfiniteI:(ORExprIsInfiniteI*)e
+{
+   ORVType type = [[e operand] vtype];
+   if (_rv == nil)
+      _rv = [ORFactory boolVar:_model];
+   if(type == ORTFloat){
+      id<ORFloatLinear> lv = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+      id<ORFloatVar> v = [ORNormalizer floatVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory floatIsInfinite:_model boolean:_rv eq:v]];
+   }else{
+      id<ORDoubleLinear> lv = [ORNormalizer doubleLinearFrom:[e operand] model:_model];
+      id<ORDoubleVar> v = [ORNormalizer doubleVarIn:lv for:_model];
+      [_model addConstraint:[ORFactory doubleIsInfinite:_model boolean:_rv eq:v]];
+   }
+}
+@end
+
+
+
+@implementation ORNormalizer(Float)
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4 type:[e type]];
+   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model];
+   [e visit:v];
+   [v release];
+   return rv;
+}
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORFloatVar>)x
+{
+   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model equalTo:x];
+   [e visit:v];
+   [v release];
+   return rv;
+}
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model setTo:(id<ORFloatVar>)x
+{
+   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model setTo:x];
+   [e visit:v];
+   [v release];
+   return rv;
+}
++(id<ORFloatLinear>)addToFloatLinear:(id<ORFloatLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: terms model: model];
+   [e visit:v];
+   [v release];
+   return terms;
+}
++(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
+{
+   ORFloatSubst* subst = [[ORFloatSubst alloc] initORFloatSubst: model];
+   [expr visit:subst];
+   id<ORFloatVar> theVar = [subst result];
+   [subst release];
+   return theVar;
+}
++(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORFloatVar>)x
+{
+   ORFloatSubst* subst = [[ORFloatSubst alloc] initORFloatSubst: model by:x];
+   [expr visit:subst];
+   id<ORFloatVar> theVar = [subst result];
+   [subst release];
+   return theVar;
+}
++(id<ORFloatVar>) floatVarIn:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model
+{
+   id<ORFloatRange> r = [ORFactory floatRange:model low:[e fmin] up:[e fmax]];
+   if ([e size] == 0) {
+      id<ORFloatVar> xv = [ORFactory floatVar: model domain: r];
+      return xv;
+   } else if ([e size] == 1 && [e coef:0] == 1) {
+      return (id<ORFloatVar>)[e var:0];
+   } else {
+      id<ORFloatVar> xv = [ORFactory floatVar: model domain: r];
+      [e addTerm:xv by:-1];
+      [e postEQZ: model];
+      return xv;
+   }
+}
++(void)floatVar:(id<ORFloatVar>)var equal:(ORFloatLinear*)e for:(id<ORAddToModel>) model
+{
+   if (e.size == 0) {
+      [model addConstraint:[ORFactory floatEqualc:model var:var eqc:0.0f]];
+   } else if (e.size == 1) {
+      [e addTerm:var by:-1.f];
+      [e postEQZ:model];
+   } else {
+      [e addTerm:var by:-1.f];
+      [e postEQZ:model];
+   }
+}
+@end
+
+
+@implementation ORNormalizer(Double)
++(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+   ORDoubleLinear* rv = [[ORDoubleLinear alloc] initORDoubleLinear:4 type:[e type]];
+   ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: rv model: model];
+   [e visit:v];
+   [v release];
+   return rv;
+}
++(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORDoubleVar>)x
+{
+   ORDoubleLinear* rv = [[ORDoubleLinear alloc] initORDoubleLinear:4];
+   ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: rv model: model equalTo:x];
+   [e visit:v];
+   [v release];
+   return rv;
+}
++(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model setTo:(id<ORDoubleVar>)x
+{
+   ORDoubleLinear* rv = [[ORDoubleLinear alloc] initORDoubleLinear:4];
+   ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: rv model: model setTo:x];
+   [e visit:v];
+   [v release];
+   return rv;
+}
++(id<ORDoubleLinear>)addToDoubleLinear:(id<ORDoubleLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+   ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: terms model: model];
+   [e visit:v];
+   [v release];
+   return terms;
+}
++(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
+{
+   ORDoubleSubst* subst = [[ORDoubleSubst alloc] initORDoubleSubst: model];
+   [expr visit:subst];
+   id<ORDoubleVar> theVar = [subst result];
+   [subst release];
+   return theVar;
+}
++(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORDoubleVar>)x
+{
+   ORDoubleSubst* subst = [[ORDoubleSubst alloc] initORDoubleSubst: model by:x];
+   [expr visit:subst];
+   id<ORDoubleVar> theVar = [subst result];
+   [subst release];
+   return theVar;
+}
++(id<ORDoubleVar>) doubleVarIn:(id<ORDoubleLinear>)e for:(id<ORAddToModel>) model
+{
+   id<ORDoubleRange> r = [ORFactory doubleRange:model low:[e dmin] up:[e dmax]];
+   if ([e size] == 0) {
+      id<ORDoubleVar> xv = [ORFactory doubleVar: model domain: r];
+      return xv;
+   } else if ([e size] == 1 && [e coef:0] == 1) {
+      return (id<ORDoubleVar>)[e var:0];
+   } else {
+      id<ORDoubleVar> xv = [ORFactory doubleVar: model domain: r];
+      [e addTerm:xv by:-1];
+      [e postEQZ: model];
+      return xv;
+   }
+}
++(void)doubleVar:(id<ORDoubleVar>)var equal:(ORDoubleLinear*)e for:(id<ORAddToModel>) model
+{
+   if (e.size == 0) {
+      [model addConstraint:[ORFactory doubleEqualc:model var:var eqc:0.0f]];
+   } else if (e.size == 1) {
+      [e addTerm:var by:-1];
+      [e postEQZ:model];
+   } else {
+      [e addTerm:var by:-1];
+      [e postEQZ:model];
+   }
+}
 @end
 
 @implementation ORNormalizer(Rational)
@@ -1970,128 +1823,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 @end
 
-@implementation ORNormalizer(Float)
-+(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
-{
-   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4 type:[e type]];
-   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model];
-   [e visit:v];
-   [v release];
-   return rv;
-}
-+(id<ORFloatLinear>)addToFloatLinear:(id<ORFloatLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
-{
-   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: terms model: model];
-   [e visit:v];
-   [v release];
-   return terms;
-}
-+(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
-{
-   ORFloatSubst* subst = [[ORFloatSubst alloc] initORFloatSubst: model];
-   [expr visit:subst];
-   id<ORFloatVar> theVar = [subst result];
-   [subst release];
-   return theVar;
-}
-+(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORFloatVar>)x
-{
-   ORFloatSubst* subst = [[ORFloatSubst alloc] initORFloatSubst: model];
-   [expr visit:subst];
-   id<ORFloatVar> theVar = [subst result];
-   [subst release];
-   return theVar;
-}
-+(id<ORFloatVar>) floatVarIn:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model
-{
-   id<ORFloatRange> r = [ORFactory floatRange:model low:[e fmin] up:[e fmax]];
-   if ([e size] == 0) {
-      id<ORFloatVar> xv = [ORFactory floatVar: model domain: r];
-      return xv;
-   } else if ([e size] == 1 && [e coef:0] == 1) {
-      return (id<ORFloatVar>)[e var:0];
-   } else {
-      id<ORFloatVar> xv = [ORFactory floatVar: model domain: r];
-      [e addTerm:xv by:-1];
-      [e postEQZ: model];
-      return xv;
-   }
-}
-+(void)floatVar:(id<ORFloatVar>)var equal:(ORFloatLinear*)e for:(id<ORAddToModel>) model
-{
-   if (e.size == 0) {
-      [model addConstraint:[ORFactory floatEqualc:model var:var eqc:0.0f]];
-   } else if (e.size == 1) {
-      [e addTerm:var by:-1.f];
-      [e postEQZ:model];
-   } else {
-      [e addTerm:var by:-1.f];
-      [e postEQZ:model];
-   }
-}
-@end
-
-
-@implementation ORNormalizer(Double)
-+(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
-{
-   ORDoubleLinear* rv = [[ORDoubleLinear alloc] initORDoubleLinear:4 type:[e type]];
-   ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: rv model: model];
-   [e visit:v];
-   [v release];
-   return rv;
-}
-+(id<ORDoubleLinear>)addToDoubleLinear:(id<ORDoubleLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
-{
-   ORDoubleLinearizer* v = [[ORDoubleLinearizer alloc] init: terms model: model];
-   [e visit:v];
-   [v release];
-   return terms;
-}
-+(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
-{
-   ORDoubleSubst* subst = [[ORDoubleSubst alloc] initORDoubleSubst: model];
-   [expr visit:subst];
-   id<ORDoubleVar> theVar = [subst result];
-   [subst release];
-   return theVar;
-}
-+(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORDoubleVar>)x
-{
-   ORDoubleSubst* subst = [[ORDoubleSubst alloc] initORDoubleSubst: model];
-   [expr visit:subst];
-   id<ORDoubleVar> theVar = [subst result];
-   [subst release];
-   return theVar;
-}
-+(id<ORDoubleVar>) doubleVarIn:(id<ORDoubleLinear>)e for:(id<ORAddToModel>) model
-{
-   id<ORDoubleRange> r = [ORFactory doubleRange:model low:[e dmin] up:[e dmax]];
-   if ([e size] == 0) {
-      id<ORDoubleVar> xv = [ORFactory doubleVar: model domain: r];
-      return xv;
-   } else if ([e size] == 1 && [e coef:0] == 1) {
-      return (id<ORDoubleVar>)[e var:0];
-   } else {
-      id<ORDoubleVar> xv = [ORFactory doubleVar: model domain: r];
-      [e addTerm:xv by:-1];
-      [e postEQZ: model];
-      return xv;
-   }
-}
-+(void)doubleVar:(id<ORDoubleVar>)var equal:(ORDoubleLinear*)e for:(id<ORAddToModel>) model
-{
-   if (e.size == 0) {
-      [model addConstraint:[ORFactory doubleEqualc:model var:var eqc:0.0f]];
-   } else if (e.size == 1) {
-      [e addTerm:var by:-1];
-      [e postEQZ:model];
-   } else {
-      [e addTerm:var by:-1];
-      [e postEQZ:model];
-   }
-}
-@end
 
 @implementation ORVTypeHandler
 //hzi should be use only by child
@@ -2114,6 +1845,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
 {
    @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyEQ> with args : [%@] <=> [%@] == [%@]",rv,left,right]];
+}
+-(void) reifyAssign:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyAssign> with args : [%@] <=> [%@] <- [%@]",rv,left,right]];
 }
 -(void) reifyNEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right
 {
@@ -2138,6 +1873,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
    @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyEQc> with args : [%@] <=> [%@] == [%@]",rv,left,right]];
+}
+-(void) reifyAssignc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <reifyAssignc> with args : [%@] <=> [%@] <- [%@]",rv,left,right]];
 }
 -(void) reifyNEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)left constant:(ORExprI*)right
 {
@@ -2179,6 +1918,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprEqualI> with args : [%@] == [%@]",left,right]];
 }
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprAssignI> with args : [%@] <- [%@]",left,right]];
+}
+-(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+     @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprNEqualI> with args : [%@] != [%@]",left,right]];
+}
 -(id<ORLinear>) visitExprErrorOfI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprErrorOfI>"];
@@ -2186,10 +1933,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(id<ORLinear>) visitExprUlpOfI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORVTypeHandler : unrecognized selector <visitExprUlpOfI>"];
-}
--(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
-{
-     @throw [[ORExecutionError alloc] initORExecutionErrorString: [NSString stringWithFormat:@"ORVTypeHandler : unrecognized selector <visitExprNEqualI> with args : [%@] != [%@]",left,right]];
 }
 @end
 
@@ -2220,6 +1963,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          [ORFactory intVar:_model value:0];
    }
 #endif
+}
+-(void) reifyAssignc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
+{
+   [self reifyEQc:_model boolean:rv other:theOther constant:c];
 }
 -(void) reifyNEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
 {
@@ -2287,6 +2034,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyEQc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORIntLinear> linLeft   = [ORNormalizer intLinearFrom:left model:_model];
       id<ORIntLinear> linRight  = [ORNormalizer intLinearFrom:right model:_model];
       id<ORIntVar> varLeft  = [ORNormalizer intVarIn:linLeft for:_model];
@@ -2295,6 +2044,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       [linLeft release];
       [linRight release];
    }
+}
+-(void) reifyAssign:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
+{
+   [self reifyEQ:_model boolean:rv left:left right:right];
 }
 -(void) reifyNEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
 {
@@ -2380,6 +2133,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    }
    return lin;
 }
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   return [self visitExprEqualI:_model left:left right:right];
+}
 -(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
 {
    ORIntLinear* linLeft = [ORNormalizer intLinearFrom:left model:_model];
@@ -2399,138 +2156,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 @end
 
-@implementation ORTRationalHandler
--(id) init
-{
-   self = [super init:ORTInt];
-   return self;
-}
--(id<ORRationalLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
-{
-   ORRationalLinear* lin = nil;
-   bool lc = [left isConstant];
-   bool rc = [right isConstant];
-   if (lc && rc) {
-      bool isOk = [[left qmin] eq: [right qmin]];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   } else if (lc || rc) {
-      id<ORRational> c = [[ORRational alloc] init];
-      if(lc){
-         c = [left qmin];
-      } else {
-         c = [right qmin];
-      }
-      ORExprI* other = lc ? right : left;
-      lin  = [ORNormalizer rationalLinearFrom:other model:_model];
-      [lin addIndependent:[c neg]];
-      [c release];
-   } else {
-      bool lv = [left isVariable];
-      bool rv = [right isVariable];
-      if (lv || rv) {
-         ORExprI* other = lv ? right : left;
-         ORExprI* var   = lv ? left : right;
-         id<ORRationalVar> theVar = [ORNormalizer rationalVarIn:_model expr:var];
-         lin  = [ORNormalizer rationalLinearFrom:other model:_model];
-         [lin addTerm:theVar by:-1];
-      } else {
-         lin = [ORNormalizer rationalLinearFrom:left model:_model ];
-         ORRationalLinearFlip* linRight = [[ORRationalLinearFlip alloc] initORRationalLinearFlip: lin];
-         [ORNormalizer addToRationalLinear:linRight from:right model:_model];
-         [linRight release];
-      }
-   }
-   return lin;
-}
--(id<ORLinear>) visitExprLEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
-{
-   bool lc = [left isConstant];
-   bool rc = [right isConstant];
-   if (lc && rc) {
-      bool isOk = [left fmin] <= [right fmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   }else {
-      ORInt length = !lc + !rc;
-      id<ORVarArray> vars = [ORFactory rationalVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORRationalArray> coefs = [ORFactory rationalArray:_model
-                                               range:RANGE(_model,0,length - 1)
-                                                with:^id<ORRational>(ORInt i) {
-                                                      id<ORRational> coef = [ORRational rationalWith_d:1];
-                                                      [_model trackMutable:coef];
-                                                   return coef;
-                                                }];
-      if(lc){
-         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
-         vars[0] = [ORNormalizer rationalVarIn:linRight for:_model];
-         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:[left qmin]]];
-         [linRight release];
-      }else if(rc){
-         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
-         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
-         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs leq:[right qmin]]];
-         [linLeft release];
-      }else{
-         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
-         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
-         id<ORRational> zero = [[ORRational alloc] init];
-         [zero setZero];
-         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
-         vars[1] = [ORNormalizer rationalVarIn:linRight for:_model];
-
-         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs leq:zero]];
-         [zero release];
-         [linLeft release];
-         [linRight release];
-      }
-   }
-   return nil;
-}
--(id<ORLinear>) visitExprGEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
-{
-   bool lc = [left isConstant];
-   bool rc = [right isConstant];
-   if (lc && rc) {
-      bool isOk = [left fmin] >= [right fmin];
-      if (!isOk)
-         [_model addConstraint:[ORFactory fail:_model]];
-   }else {
-      ORInt length = !lc + !rc;  
-      id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
-      id<ORRationalArray> coefs = [ORFactory rationalArray:_model
-                                                  range:RANGE(_model,0,length - 1)
-                                                   with:^id<ORRational>(ORInt i) {
-                                                      id<ORRational> coef = [ORRational rationalWith_d:1];
-                                                      [_model trackMutable:coef];
-                                                      return coef;
-                                                }];
-      if(lc){
-         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
-         vars[0] = [ORNormalizer rationalVarIn:linRight for:_model];
-         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs leq:[left qmin]]];
-         [linRight release];
-      }else if(rc){
-         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
-         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
-         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:[right qmin]]];
-         [linLeft release];
-      }else{
-         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
-         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
-         id<ORRational> zero = [ORRational rationalWith_d:0];
-         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
-         vars[1] = [ORNormalizer rationalVarIn:linRight for:_model];
-         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:zero]];
-         [zero release];
-         [linLeft release];
-         [linRight release];
-      }
-   }
-   return nil;
-}
-@end
-
 
 @implementation ORTFloatHandler
 -(id) init
@@ -2545,6 +2170,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    id<ORFloatLinear> linOther  = [ORNormalizer floatLinearFrom:theOther model:_model];
    id<ORFloatVar> theVar = [ORNormalizer floatVarIn:linOther for:_model];
    [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:theVar eqi:c]];
+   [linOther release];
+}
+-(void) reifyAssignc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv other:(ORExprI*)theOther constant:(ORExprI*)ce
+{
+   ORFloat c = [ce fmin];
+   id<ORFloatLinear> linOther  = [ORNormalizer floatLinearFrom:theOther model:_model];
+   id<ORFloatVar> theVar = [ORNormalizer floatVarIn:linOther for:_model];
+   [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:theVar seti:c]];
    [linOther release];
 }
 -(void) reifyNEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv other:(ORExprI*)theOther constant:(ORExprI*)ce
@@ -2610,6 +2243,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyLTc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:0]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
@@ -2626,6 +2261,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyGTc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:0]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
@@ -2642,6 +2279,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyLEQc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
@@ -2659,10 +2298,31 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
    } else if ([newright isConstant]) {
       [self reifyLEQc:_model boolean:rv  other:newleft constant:newright];
-   } else
+   } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       [self reifyLEQ:_model boolean:rv  left:newleft right:newright];
+   }
 }
 
+-(void) reifyAssign:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
+{
+   if ([left isConstant]) {
+      [self reifyAssignc:_model boolean:rv other:right constant:left];
+   } else if ([right isConstant]) {
+      [self reifyAssignc:_model boolean:rv other:left constant:right];
+   } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
+      id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
+      id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
+      id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
+      id<ORFloatVar> varRight = [ORNormalizer floatVarIn:linRight for:_model];
+      [_model addConstraint: [ORFactory floatReify:_model boolean:rv with:varLeft set:varRight]];
+      [linLeft release];
+      [linRight release];
+   }
+}
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
 {
    if ([left isConstant]) {
@@ -2670,6 +2330,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyEQc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];
@@ -2867,29 +2529,49 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       bool lv = [left isVariable];
       bool rv = [right isVariable];
       if (lv || rv) {
-         id<ORVar> var = (id<ORVar>)((lv)?left:right);
+         id<ORExpr> var = (lv)?left:right;
          id<ORExpr> other = (lv)?right:left;
-         [_model addEqualityRelation:var with:other];
-         id<ORFloatLinear> linLeft  = [ORNormalizer floatLinearFrom:left model:_model];
-         ORFloatLinear* linRight  = [ORNormalizer floatLinearFrom:right model:_model];
-         id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,1)];
-         vars[0] = [ORNormalizer floatVarIn:linLeft for:_model];
-         vars[1] = [ORNormalizer floatVarIn:linRight for:_model];
-         id<ORFloatArray> coefs = [ORFactory floatArray:_model
-                                                  range:RANGE(_model,0,1)
-                                                   with:^ORFloat(ORInt i) {
-                                                      return 1;
-                                                   }];
-         [_model addConstraint:[ORFactory floatSum:_model array:vars coef:coefs eq:0.f]];
-         [linLeft release];
-         [linRight release];
+         id<ORFloatVar> theVar  = [ORNormalizer floatVarIn:_model expr:var];
+         [_model addEqualityRelation:theVar with:other];
+         ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:right model:_model equalTo:theVar];
+         [lin release];
       } else {
          //TODO: fix order of sides.
-         ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:left model:_model ];
+         ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:left model:_model];
          ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
          [ORNormalizer addToFloatLinear:linRight from:right model:_model];
          [linRight release];
          return linLeft;
+      }
+   }
+   return nil;
+}
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = is_eqf([left fmin],[right fmin]);
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      ORFloat c = lc ? [left fmin] : [right fmin];
+      ORExprI* other = lc ? right : left;
+      ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
+      [lin addIndependent: - c];
+      return lin;
+   } else {
+      bool lv = [left isVariable];
+      bool rv = [right isVariable];
+      if (lv || rv) {
+         id<ORExpr> var = (lv)?left:right;
+         id<ORExpr> other = (lv)?right:left;
+         id<ORFloatVar> theVar  = [ORNormalizer floatVarIn:_model expr:var];
+         [_model addEqualityRelation:theVar with:other];
+         ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:right model:_model setTo:theVar];
+         [lin release];
+      } else {
+         assert(NO);
       }
    }
    return nil;
@@ -2912,7 +2594,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    self = [super init:ORTDouble];
    return self;
 }
-
+-(void) reifyAssignc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv other:(ORExprI*)theOther constant:(ORExprI*)ce
+{
+   ORDouble c = [ce dmin];
+   id<ORDoubleLinear> linOther  = [ORNormalizer doubleLinearFrom:theOther model:_model];
+   id<ORDoubleVar> theVar = [ORNormalizer doubleVarIn:linOther for:_model];
+   [_model addConstraint: [ORFactory doubleReify:_model boolean:rv with:theVar seti:c]];
+   [linOther release];
+}
 -(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>) rv other:(ORExprI*)theOther constant:(ORExprI*)ce
 {
    ORDouble c = [ce dmin];
@@ -2984,6 +2673,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyLTc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:0]];
       id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
       id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
       id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
@@ -3000,6 +2691,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyGTc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:0]];
       id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
       id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
       id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
@@ -3016,6 +2709,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    } else if ([right isConstant]) {
       [self reifyLEQc:_model boolean:rv other:left constant:right];
    } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
       id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
       id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
@@ -3033,8 +2728,11 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       [self reifyGEQc:_model boolean:rv other:newright constant:newleft];
    } else if ([newright isConstant]) {
       [self reifyLEQc:_model boolean:rv  other:newleft constant:newright];
-   } else
+   } else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       [self reifyLEQ:_model boolean:rv  left:newleft right:newright];
+   }
 }
 
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
@@ -3043,12 +2741,32 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       [self reifyEQc:_model boolean:rv other:right constant:left];
    } else if ([right isConstant]) {
       [self reifyEQc:_model boolean:rv other:left constant:right];
-   } else{
+   }else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
       id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
       id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
       id<ORDoubleVar> varRight = [ORNormalizer doubleVarIn:linRight for:_model];
       [_model addConstraint: [ORFactory doubleReify:_model boolean:rv with:varLeft eq:varRight]];
+      [linLeft release];
+      [linRight release];
+   }
+}
+-(void) reifyAssign:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
+{
+   if ([left isConstant]) {
+      [self reifyAssignc:_model boolean:rv other:right constant:left];
+   } else if ([right isConstant]) {
+      [self reifyAssignc:_model boolean:rv other:left constant:right];
+   }else{
+      if ([left isVariable] && [right isVariable] && left.getId == right.getId)
+         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
+      id<ORDoubleLinear> linLeft   = [ORNormalizer doubleLinearFrom:left model:_model];
+      id<ORDoubleLinear> linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
+      id<ORDoubleVar> varLeft  = [ORNormalizer doubleVarIn:linLeft for:_model];
+      id<ORDoubleVar> varRight = [ORNormalizer doubleVarIn:linRight for:_model];
+      [_model addConstraint: [ORFactory doubleReify:_model boolean:rv with:varLeft set:varRight]];
       [linLeft release];
       [linRight release];
    }
@@ -3241,22 +2959,12 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       bool lv = [left isVariable];
       bool rv = [right isVariable];
       if (lv || rv) {
-         id<ORVar> var = (id<ORVar>)((lv)?left:right);
+         id<ORExpr> var = (lv)?left:right;
          id<ORExpr> other = (lv)?right:left;
-         [_model addEqualityRelation:var with:other];
-         id<ORDoubleLinear> linLeft  = [ORNormalizer doubleLinearFrom:left model:_model];
-         ORDoubleLinear* linRight  = [ORNormalizer doubleLinearFrom:right model:_model];
-         id<ORVarArray> vars = [ORFactory doubleVarArray:_model range:RANGE(_model,0,1)];
-         vars[0] = [ORNormalizer doubleVarIn:linLeft for:_model];
-         vars[1] = [ORNormalizer doubleVarIn:linRight for:_model];
-         id<ORDoubleArray> coefs = [ORFactory doubleArray:_model
-                                                    range:RANGE(_model,0,1)
-                                                     with:^ORDouble(ORInt i) {
-                                                        return 1;
-                                                     }];
-         [_model addConstraint:[ORFactory doubleSum:_model array:vars coef:coefs eq:0.0]];
-         [linLeft release];
-         [linRight release];
+         id<ORDoubleVar> theVar  = [ORNormalizer doubleVarIn:_model expr:var];
+         [_model addEqualityRelation:theVar with:other];
+         ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:right model:_model equalTo:theVar];
+         [lin release];
       } else {
          //TODO: fix order of sides.
          ORDoubleLinear* linLeft = [ORNormalizer doubleLinearFrom:left model:_model ];
@@ -3264,6 +2972,36 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          [ORNormalizer addToDoubleLinear:linRight from:right model:_model];
          [linRight release];
          return linLeft;
+      }
+   }
+   return nil;
+}
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = is_eq([left dmin],[right dmin]);
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      ORDouble c = lc ? [left dmin] : [right dmin];
+      ORExprI* other = lc ? right : left;
+      ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:other model:_model];
+      [lin addIndependent: - c];
+      return lin;
+   } else {
+      bool lv = [left isVariable];
+      bool rv = [right isVariable];
+      if (lv || rv) {
+         id<ORExpr> var = (lv)?left:right;
+         id<ORExpr> other = (lv)?right:left;
+         id<ORDoubleVar> theVar  = [ORNormalizer doubleVarIn:_model expr:var];
+         [_model addEqualityRelation:theVar with:other];
+         ORDoubleLinear* lin  = [ORNormalizer doubleLinearFrom:right model:_model setTo:theVar];
+         [lin release];
+      } else {
+         assert(NO);
       }
    }
    return nil;
@@ -3278,6 +3016,137 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 @end
 
+@implementation ORTRationalHandler
+-(id) init
+{
+   self = [super init:ORTInt];
+   return self;
+}
+-(id<ORRationalLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   ORRationalLinear* lin = nil;
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = [[left qmin] eq: [right qmin]];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      id<ORRational> c = [[ORRational alloc] init];
+      if(lc){
+         c = [left qmin];
+      } else {
+         c = [right qmin];
+      }
+      ORExprI* other = lc ? right : left;
+      lin  = [ORNormalizer rationalLinearFrom:other model:_model];
+      [lin addIndependent:[c neg]];
+      [c release];
+   } else {
+      bool lv = [left isVariable];
+      bool rv = [right isVariable];
+      if (lv || rv) {
+         ORExprI* other = lv ? right : left;
+         ORExprI* var   = lv ? left : right;
+         id<ORRationalVar> theVar = [ORNormalizer rationalVarIn:_model expr:var];
+         lin  = [ORNormalizer rationalLinearFrom:other model:_model];
+         [lin addTerm:theVar by:-1];
+      } else {
+         lin = [ORNormalizer rationalLinearFrom:left model:_model ];
+         ORRationalLinearFlip* linRight = [[ORRationalLinearFlip alloc] initORRationalLinearFlip: lin];
+         [ORNormalizer addToRationalLinear:linRight from:right model:_model];
+         [linRight release];
+      }
+   }
+   return lin;
+}
+-(id<ORLinear>) visitExprLEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = [left fmin] <= [right fmin];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   }else {
+      ORInt length = !lc + !rc;
+      id<ORVarArray> vars = [ORFactory rationalVarArray:_model range:RANGE(_model,0,length - 1)];
+      id<ORRationalArray> coefs = [ORFactory rationalArray:_model
+                                               range:RANGE(_model,0,length - 1)
+                                                with:^id<ORRational>(ORInt i) {
+                                                      id<ORRational> coef = [ORRational rationalWith_d:1];
+                                                      [_model trackMutable:coef];
+                                                   return coef;
+                                                }];
+      if(lc){
+         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
+         vars[0] = [ORNormalizer rationalVarIn:linRight for:_model];
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:[left qmin]]];
+         [linRight release];
+      }else if(rc){
+         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
+         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs leq:[right qmin]]];
+         [linLeft release];
+      }else{
+         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
+         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
+         id<ORRational> zero = [[ORRational alloc] init];
+         [zero setZero];
+         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
+         vars[1] = [ORNormalizer rationalVarIn:linRight for:_model];
+
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs leq:zero]];
+         [zero release];
+         [linLeft release];
+         [linRight release];
+      }
+   }
+   return nil;
+}
+-(id<ORLinear>) visitExprGEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = [left fmin] >= [right fmin];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   }else {
+      ORInt length = !lc + !rc;
+      id<ORVarArray> vars = [ORFactory floatVarArray:_model range:RANGE(_model,0,length - 1)];
+      id<ORRationalArray> coefs = [ORFactory rationalArray:_model
+                                                  range:RANGE(_model,0,length - 1)
+                                                   with:^id<ORRational>(ORInt i) {
+                                                      id<ORRational> coef = [ORRational rationalWith_d:1];
+                                                      [_model trackMutable:coef];
+                                                      return coef;
+                                                }];
+      if(lc){
+         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
+         vars[0] = [ORNormalizer rationalVarIn:linRight for:_model];
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs leq:[left qmin]]];
+         [linRight release];
+      }else if(rc){
+         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
+         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:[right qmin]]];
+         [linLeft release];
+      }else{
+         id<ORRationalLinear> linLeft  = [ORNormalizer rationalLinearFrom:left model:_model];
+         ORRationalLinear* linRight  = [ORNormalizer rationalLinearFrom:right model:_model];
+         id<ORRational> zero = [ORRational rationalWith_d:0];
+         vars[0] = [ORNormalizer rationalVarIn:linLeft for:_model];
+         vars[1] = [ORNormalizer rationalVarIn:linRight for:_model];
+         [_model addConstraint:[ORFactory rationalSum:_model array:vars coef:coefs geq:zero]];
+         [zero release];
+         [linLeft release];
+         [linRight release];
+      }
+   }
+   return nil;
+}
+@end
 
 
 
@@ -3287,13 +3156,20 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    self = [super init:ORTReal];
    return self;
 }
-
 -(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
 {
    ORDouble ce = [c dmin];
    id<ORRealLinear> linOther  = [ORNormalizer realLinearFrom:theOther model:_model];
    id<ORRealVar> theVar = [ORNormalizer realVarIn:linOther for:_model];
    [_model addConstraint: [ORFactory realReify:_model boolean:rv with:theVar eqi:ce]];
+   [linOther release];
+}
+-(void) reifyAssignc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
+{
+   ORDouble ce = [c dmin];
+   id<ORRealLinear> linOther  = [ORNormalizer realLinearFrom:theOther model:_model];
+   id<ORRealVar> theVar = [ORNormalizer realVarIn:linOther for:_model];
+   [_model addConstraint: [ORFactory realReify:_model boolean:rv with:theVar seti:ce]];
    [linOther release];
 }
 -(void) reifyGEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c
@@ -3332,6 +3208,22 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       id<ORRealVar> varLeft  = [ORNormalizer realVarIn:linLeft for:_model];
       id<ORRealVar> varRight = [ORNormalizer realVarIn:linRight for:_model];
       [_model addConstraint: [ORFactory realReify:_model boolean:rv with:varLeft eq:varRight]];
+      [linLeft release];
+      [linRight release];
+   }
+}
+-(void) reifyAssign:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*) right
+{
+   if ([left isConstant]) {
+      [self reifyEQc:_model boolean:rv other:right constant:left];
+   } else if ([right isConstant]) {
+      [self reifyEQc:_model boolean:rv other:left constant:right];
+   } else{
+      id<ORRealLinear> linLeft   = [ORNormalizer realLinearFrom:left model:_model];
+      id<ORRealLinear> linRight  = [ORNormalizer realLinearFrom:right model:_model];
+      id<ORRealVar> varLeft  = [ORNormalizer realVarIn:linLeft for:_model];
+      id<ORRealVar> varRight = [ORNormalizer realVarIn:linRight for:_model];
+      [_model addConstraint: [ORFactory realReify:_model boolean:rv with:varLeft set:varRight]];
       [linLeft release];
       [linRight release];
    }
@@ -3381,4 +3273,3 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 @end
 
 //------
-

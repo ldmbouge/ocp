@@ -180,7 +180,10 @@ static id<OROSet> collectConstraints(CPRealEventNetwork* net,id<OROSet> rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"domsize not supported on real var"];
 }
-
+-(ORLDouble) domwidth
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"domwidth not supported on real var"];
+}
 -(NSString*)description
 {
    ORIReady();
@@ -382,10 +385,6 @@ static id<OROSet> collectConstraints(CPRealEventNetwork* net,id<OROSet> rv)
 -(ORBool)sameDomain:(CPRealVarI*)x
 {
    return [_dom isEqual:x->_dom];
-}
--(ORDouble) domwidth
-{
-   return [_dom domwidth];
 }
 - (void)visit:(id<CPVisitor>)visitor
 {
@@ -649,7 +648,6 @@ static id<OROSet> collectConstraints(CPRealEventNetwork* net,id<OROSet> rv)
 {
    return [_theVar bound];
 }
-
 - (id<CPADom>)domain
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method domain not defined"];
@@ -667,11 +665,10 @@ static id<OROSet> collectConstraints(CPRealEventNetwork* net,id<OROSet> rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPRealViewOnIntVarI: method sameDomain not defined"];
 }
-
--(ORDouble) domwidth
+-(ORLDouble) domwidth
 {
    ORBounds b = [_theVar bounds];
-   return b.max - b.min;
+   return (ORLDouble) (b.max - b.min);
 }
 - (void)visit:(id<CPVisitor>)visitor
 {

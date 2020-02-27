@@ -55,6 +55,7 @@
 
 @protocol ORMutableInteger <ORObject,ORExpr>
 -(ORInt) initialValue;
+-(ORInt) setValue: (ORInt) value;
 -(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver;
 -(ORInt) incr: (id<ORGamma>) solver;
 -(ORInt) decr: (id<ORGamma>) solver;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1010"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -63,11 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order custom"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-t 1"
+            argument = "-var-order maxDens &#10;-val-order dynamic5Split -uniques 6 -percent 3 -variation 2 &#10;-cycle-detection&#xa0; -with-rewriting-eq "
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

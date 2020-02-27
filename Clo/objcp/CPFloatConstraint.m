@@ -271,8 +271,9 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    int _rounding;
    float_interval _resi;
    double_interval _initiali;
+   ORBool _rewrite;
 }
--(id) init:(CPFloatVarI*)res equals:(CPDoubleVarI*)initial
+-(id) init:(CPFloatVarI*)res equals:(CPDoubleVarI*)initial rewrite:(ORBool) rewrite
 {
    self = [super initCPCoreConstraint: [res engine]];
    _res = res;
@@ -281,6 +282,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _initiali = makeDoubleInterval(_initial.min, _initial.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
+   _rewrite = rewrite;
    return self;
 }
 -(void) post
@@ -288,6 +290,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [self propagate];
    if(![_res bound])        [_res whenChangeBoundsPropagate:self];
    if(![_initial bound])    [_initial whenChangeBoundsPropagate:self];
+   if(_rewrite){
+      [[[_res engine] mergedVar] notifyWith:_res andId:_initial isStatic:YES];
+      [[_res engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -337,6 +343,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    return [NSString stringWithFormat:@"<%@ castedTo %@>",_initial,_res];
 }
+- (id<CPVar>)result
+{
+   return _res;
+}
 @end
 
 //unary minus constraint
@@ -345,8 +355,9 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    int _rounding;
    float_interval _xi;
    float_interval _yi;
+   ORBool _rewrite;
 }
--(id) init:(CPFloatVarI*)x eqm:(CPFloatVarI*)y //x = -y
+-(id) init:(CPFloatVarI*)x eqm:(CPFloatVarI*)y rewrite:(ORBool) r
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -355,6 +366,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _yi = makeFloatInterval(y.min, y.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
+   _rewrite = r;
    return self;
 }
 -(void) post
@@ -362,6 +374,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [self propagate];
    if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
+   if(_rewrite){
+      [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:YES];
+      [[_x engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -415,14 +431,21 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    return [NSString stringWithFormat:@"<%@ == -%@>",_x,_y];
 }
+- (id<CPVar>)result
+{
+   return _x;
+}
 @end
 
-@implementation CPFloatEqual
--(id) init:(CPFloatVarI*)x equals:(CPFloatVarI*)y
+@implementation CPFloatEqual{
+   ORBool _rewrite;
+}
+-(id) init:(CPFloatVarI*)x equals:(CPFloatVarI*)y  rewrite:(ORBool) rewrite
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   _rewrite = rewrite;
    return self;
 }
 -(void) post
@@ -430,6 +453,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   if(_rewrite){
+      [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:[[_x engine] isPosting]];
+      [[_x engine] incNbRewrites:1];
+   }
 }
 -(void) propagate
 {
@@ -567,6 +594,9 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [ex release];
    [ey release];
    [interError release];
+
+   if([_x bound] && [_y bound])
+      assignTRInt(&_active, NO, _trail);
 }
 - (void)dealloc
 {
@@ -587,7 +617,11 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ = %@>",_x,_y];
+   return [NSString stringWithFormat:@"<%@ <- %@>",_x,_y];
+}
+- (id<CPVar>)result
+{
+   return _x;
 }
 @end
 
@@ -616,6 +650,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %16.16e>",_x,_c];
+}
+- (id<CPVar>)result
+{
+   return _x;
 }
 @end
 
@@ -650,14 +688,6 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
                [_y updateMax:fp_previous_float([_y max])];
                assignTRInt(&_active, NO, _trail);
             }
-            if([_x max] == [_y min]){
-               [_y updateMin:fp_next_float([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
-            if([_x max] == [_y max]) {
-               [_y updateMax:fp_previous_float([_y max])];
-               assignTRInt(&_active, NO, _trail);
-            }
          }
          return;
       }
@@ -666,15 +696,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
          [_x updateMin:fp_next_float([_x min])];
          assignTRInt(&_active, NO, _trail);
       }
-      if([_x min] == [_y max]) {
-         [_x updateMin:fp_next_float([_x min])];
-         assignTRInt(&_active, NO, _trail);
-      }
       if([_x max] == [_y min]){
-         [_x updateMax:fp_previous_float([_x max])];
-         assignTRInt(&_active, NO, _trail);
-      }
-      if([_x max] == [_y max]) {
          [_x updateMax:fp_previous_float([_x max])];
          assignTRInt(&_active, NO, _trail);
       }
@@ -705,6 +727,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _x = x;
    _c = c;
    return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
 }
 -(void) post
 {
@@ -957,12 +983,21 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 
 @implementation CPFloatTernaryAdd{
    TRInt _limit;
+   ORBool _rewrite;
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
 {
-   return [self init:z equals:x plus:y kbpercent:PERCENT];
+   return [self init:z equals:x plus:y kbpercent:PERCENT rewrite:NO];
 }
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p
+{
+   return [self init:z equals:x plus:y kbpercent:p rewrite:NO];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y rewrite:(ORBool)f
+{
+   return [self init:z equals:x plus:y kbpercent:PERCENT rewrite:f];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y kbpercent:(ORDouble)p rewrite:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -971,6 +1006,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
+   _rewrite = f;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
    if(!IS_GUESS_ERROR_SOLVER)
@@ -980,9 +1016,22 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(void) post
 {
    [self propagate];
-   if(![_x bound] || ![_x boundError]) [_x whenChangeBoundsPropagate:self];
-   if(![_y bound] || ![_y boundError]) [_y whenChangeBoundsPropagate:self];
-   if(![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
+   if (![_x bound] || ![_x boundError]) {
+      [_x whenChangeBoundsPropagate:self];
+      if(_rewrite)
+         [_x whenChangeBoundsDo:^{
+            [self propagateFixPoint];
+         } priority:LOWEST_PRIO onBehalf:self];
+   }
+   if (![_y bound] || ![_y boundError]) {
+      [_y whenChangeBoundsPropagate:self];
+      if(_rewrite)
+         [_y whenChangeBoundsDo:^{
+            [self propagateFixPoint];
+         } priority:LOWEST_PRIO onBehalf:self];
+   }
+   if (![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
+   
 }
 //hzi : _Temps variables are useless ? inter.result ? x is already changed ?
 -(void) propagate
@@ -1102,7 +1151,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [_x updateIntervalError:(ex.low) and:(ex.up)];
       [_y updateIntervalError:(ey.low) and:(ey.up)];
       [_z updateIntervalError:(ez.low) and:(ez.up)];
-      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
+      if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
    }
    
@@ -1118,6 +1167,20 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 - (void)dealloc {
    [super dealloc];
+}
+-(void) propagateFixPoint
+{
+   if([self nbUVars]){
+      if(absorb(_x,_y)){
+//         NSLog(@"Absorb rewriting %@",self);
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
+      }else if(absorb(_y,_x) ){
+//         NSLog(@"Absorb rewriting %@",self);
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
+      }
+   }
 }
 -(NSSet*)allVars
 {
@@ -1163,17 +1226,18 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
 }
+- (id<CPVar>)result
+{
+   return _z;
+}
 @end
 
 
 @implementation CPFloatTernarySub{
+   ORBool _rewrite;
    TRInt _limit;
 }
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
-{
-   return [self init:z equals:x minus:y kbpercent:PERCENT];
-}
--(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p rewrite:(ORBool) f
 {
    self = [super initCPCoreConstraint: [x engine]];
    _z = z;
@@ -1186,14 +1250,40 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    assignTRInt(&_limit, YES, _trail);
    if(!IS_GUESS_ERROR_SOLVER)
       nbConstraint++;
+   _rewrite = f;
    return self;
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y kbpercent:(ORDouble)p
+{
+   return [self init:z equals:x minus:y kbpercent:p rewrite:NO];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y rewrite:(ORBool)f
+{
+   return [self init:z equals:x minus:y kbpercent:PERCENT rewrite:f];
+}
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
+{
+   return [self init:z equals:x minus:y kbpercent:PERCENT rewrite:NO];
 }
 -(void) post
 {
    [self propagate];
-   if(![_x bound] || ![_x boundError])  [_x whenChangeBoundsPropagate:self];
-   if(![_y bound] || ![_y boundError])  [_y whenChangeBoundsPropagate:self];
+   if (![_x bound] || ![_x boundError]) {
+      [_x whenChangeBoundsPropagate:self];
+      if(_rewrite)
+         [_x whenChangeBoundsDo:^{
+            [self propagateFixPoint];
+         } priority:LOWEST_PRIO onBehalf:self];
+   }
+   if (![_y bound] || ![_y boundError]) {
+      [_y whenChangeBoundsPropagate:self];
+      if(_rewrite)
+         [_y whenChangeBoundsDo:^{
+            [self propagateFixPoint];
+         } priority:LOWEST_PRIO onBehalf:self];
+   }
    if (![_z bound] || ![_z boundError]) [_z whenChangeBoundsPropagate:self];
+   
 }
 -(void) propagate
 {
@@ -1311,7 +1401,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [_x updateIntervalError:(ex.low) and:(ex.up)];
       [_y updateIntervalError:(ey.low) and:(ey.up)];
       [_z updateIntervalError:(ez.low) and:(ez.up)];
-      if([_x bound] && [_y bound] && [_z bound] && [_x boundError] && [_y boundError] && [_z boundError])
+      if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
    }
    
@@ -1327,6 +1417,20 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 - (void)dealloc {
    [super dealloc];
+}
+-(void) propagateFixPoint
+{
+   if([self nbUVars]){
+      if(absorb(_x,_y)){
+//         NSLog(@"Absorb rewriting %@",self);
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
+      }else if(absorb(_y,_x) ){
+//         NSLog(@"Absorb rewriting %@",self);
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
+      }
+   }
 }
 -(NSSet*)allVars
 {
@@ -1370,6 +1474,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -1564,7 +1672,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    return [[[NSArray alloc] initWithObjects:_x,_y,_z,nil] autorelease];
 }
--(id<CPFloatVar>) result
+-(id<CPVar>) result
 {
    return _z;
 }
@@ -1804,6 +1912,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    return [NSString stringWithFormat:@"<%@ = %@ / %@>",_z, _x, _y];
 }
+- (id<CPVar>)result
+{
+   return _z;
+}
 @end
 
 @implementation CPFloatReifyNEqual
@@ -1826,16 +1938,15 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    if(![_y bound])
       [_y whenChangeBoundsPropagate:self];
 }
-
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
       if ([_x bound] || [_x min] == [_x max]){            // TRUE <=> (y != c)
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x max]]];         // Rewrite as x==y  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x max]] engine:[_b engine]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }else  if ([_y bound] || [_y min] == [_y max]) {     // TRUE <=> (x != c)
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y max]]];         // Rewrite as x==y  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:[_y max]] engine:[_b engine]];         // Rewrite as x==y  (addInternal can throw)
          assignTRInt(&_active, NO, _trail);
          return;
       }
@@ -1883,13 +1994,25 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 }
 @end
 
-@implementation CPFloatReifyEqual
--(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y
+@implementation CPFloatReifyEqual{
+   ORBool _notified;
+   ORBool _drewrite;
+   ORBool _srewrite;
+}
+-(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y dynRewrite:(ORBool) r staticRewrite:(ORBool) s
 {
    self = [super initCPCoreConstraint:[x engine]];
    _b = b;
    _x = x;
    _y = y;
+   _notified = NO;
+   _drewrite = r;
+   _srewrite = s;
+   return self;
+}
+-(id) initCPReifyEqual:(CPIntVar*)b when:(CPFloatVarI*)x eqi:(CPFloatVarI*)y
+{
+   self = [self initCPReifyEqual:b when:x eqi:y dynRewrite:NO staticRewrite:NO];
    return self;
 }
 -(void) post
@@ -1902,7 +2025,6 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    if(![_y bound])
       [_y whenChangeBoundsPropagate:self];
 }
-
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
@@ -1915,15 +2037,19 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
+         if(!_notified && ((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting]))){
+            [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
+            [[_x engine] incNbRewrites:1];
+            _notified = YES;
+         }
       }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
       if ([_x bound] || [_x min] == [_x max] )
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_y to:[_x min]]]; // Rewrite as min(x)!=y  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]] engine:[_b engine]];
       else if ([_y bound] || [_y min] == [_y max])
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:[_y min]]]; // Rewrite as min(y)!=x  (addInternal can throw)
-   }
-   else {                        // b is unknown
+         [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]] engine:[_b engine]];
+   }else {                        // b is unknown
       if (([_x bound] && [_y bound]) || ([_x min] == [_x max] &&  [_y min] == [_y max]))
          [_b bind: [_x min] == [_y min]];
       else if ([_x max] < [_y min] || [_y max] < [_x min])
@@ -1934,6 +2060,164 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(NSString*)description
 {
    return [NSMutableString stringWithFormat:@"<CPFloatReifyEqual:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_y,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] +  ![_y bound] + ![_b bound];
+}
+@end
+
+@implementation CPFloatReifyAssignc{
+   ORInt _precision;
+   ORInt _rounding;
+}
+-(id) initCPReify:(CPIntVar*)b when:(CPFloatVarI*)x set:(ORFloat)c
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _c = c;
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void)propagate
+{
+   if([_b bound]){
+      if(minDom(_b)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatAssignC:_x to:_c] engine:[_x engine]];
+      }else{
+         if ([_x bound]){
+            if(is_eqf([_x min],_c)) failNow();
+         }else{
+            if(is_eqf([_x min],_c)){
+               [_x updateMin:fp_next_float(_c)];
+               assignTRInt(&_active, NO, _trail);
+            }else if(is_eqf([_x max],_c)){
+               [_x updateMax:fp_previous_float(_c)];
+               assignTRInt(&_active, NO, _trail);
+            }
+         }
+      }
+   }else{
+      if ([_x bound]) {
+         [_b bind:is_eqf([_x min],_c)];
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         if([_x min] > _c || [_x max] < _c){
+            [_b bind:NO];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }
+   }
+   if([_b bound] && [_x bound]) assignTRInt(&_active, 0, _trail);
+}
+
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyAssignC:%02d %@ <=> (%@ <- %16.16e)>",_name,_b,_x,_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] +   ![_b bound];
+}
+@end
+
+@implementation CPFloatReifyAssign{
+   ORInt _precision;
+   ORInt _rounding;
+   float_interval _xi;
+   float_interval _yi;
+}
+-(id) initCPReify:(CPIntVar*)b when:(CPFloatVarI*)x set:(CPFloatVarI*)y
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _y = y;
+   _xi = makeFloatInterval(x.min, x.max);
+   _yi = makeFloatInterval(y.min, y.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])
+      [_y whenChangeBoundsPropagate:self];
+}
+-(void)propagate
+{
+   if([_b bound]){
+      if(minDom(_b)){
+         assignTRInt(&_active, NO, _trail);
+         [self addConstraint:[CPFactory floatAssign:_x to:_y] engine:[_x engine]];
+      }else{
+         if ([_x bound]) {
+            if([_y bound]){
+               if (is_eqf([_x min],[_y min]))
+                  failNow();
+            }else{
+                  if(is_eqf([_x min],[_y min])){
+                     [_y updateMin:fp_next_float([_y min])];
+                     assignTRInt(&_active, NO, _trail);
+                  }
+                  if(is_eqf([_x min],[_y max])) {
+                     [_y updateMax:fp_previous_float([_y max])];
+                     assignTRInt(&_active, NO, _trail);
+                  }
+               }
+         }else  if([_y bound]){
+            if(is_eqf([_x min],[_y min])){
+               [_x updateMin:fp_next_float([_x min])];
+               assignTRInt(&_active, NO, _trail);
+            }
+            if(is_eqf([_x max],[_y min])){
+               [_x updateMax:fp_previous_float([_x max])];
+               assignTRInt(&_active, NO, _trail);
+            }
+         }
+      }
+   }else{
+      if ([_x bound] && [_y bound])
+         [_b bind:is_eqf([_x min], [_y min])];
+   }
+   if([_b bound] && [_x bound] && [_y bound]) assignTRInt(&_active, 0, _trail);
+}
+
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPFloatReifyAssign:%02d %@ <=> (%@ <- %@)>",_name,_b,_x,_y];
 }
 -(NSSet*)allVars
 {
@@ -2224,7 +2508,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       if ([_b min] == true)
          [_x bind:_c];
       else
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];    // Rewrite as x!=c  (addInternal can throw)
    }
    else if ([_x bound])
       [_b bind:[_x min] == _c];
@@ -2232,11 +2516,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [_b bind:false];
    else {
       [_b setBindTrigger: ^ {
-         if ([_b min] == true) {
+         if ([_b min] == true)
             [_x bind:_c];
-         } else {
-            [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
-         }
+          else
+            [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
       } onBehalf:self];
       [_x whenChangeBoundsDo: ^ {
          if ([_x bound])
@@ -2388,7 +2671,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    if ([_b bound]) {
       if ([_b min] == true)
-         [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+         [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
       else
          [_x bind:_c];
    }
@@ -2399,7 +2682,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    else {
       [_b whenBindDo: ^void {
          if ([_b min]==true)
-            [[_b engine] addInternal: [CPFactory floatNEqualc:_x to:_c]];     // Rewrite as x!=c  (addInternal can throw)
+            [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
          else
             [_x bind:_c];
       } onBehalf:self];
@@ -2534,6 +2817,69 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_b bound];
+}
+@end
+
+@implementation CPFloatSquare{
+   int _precision;
+   int _rounding;
+   float_interval _xi;
+   float_interval _resi;
+}
+-(id) init:(CPFloatVarI*)res eq:(CPFloatVarI*)x //res = x^2
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _res = res;
+   _xi = makeFloatInterval(x.min, x.max);
+   _resi = makeFloatInterval(res.min, res.max);
+   _precision = 1;
+   _rounding = FE_TONEAREST;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   updateFloatInterval(&_xi,_x);
+   updateFloatInterval(&_resi,_res);
+   intersectionInterval inter;
+   float_interval resTmp = makeFloatInterval(_resi.inf, _resi.sup);
+   fpi_xxf(_precision, _rounding, &resTmp, &_xi);
+   inter = intersection(_res, _resi, resTmp, 0.0f);
+   if(inter.changed)
+      [_res updateInterval:inter.result.inf and:inter.result.sup];
+   
+   updateFloatInterval(&_xi,_x);
+   float_interval xTmp = makeFloatInterval(_xi.inf, _xi.sup);
+   fpi_xxf_inv(_precision,_rounding, &xTmp, &_resi);
+   inter = intersection(_x, _xi, xTmp, 0.0f);
+   if(inter.changed)
+      [_x updateInterval:inter.result.inf and:inter.result.sup];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_res bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == (%@^2)>",_res,_x];
+}
+- (id<CPVar>)result
+{
+   return _res;
 }
 @end
 
@@ -2898,6 +3244,10 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    return [NSString stringWithFormat:@"<%@ == |%@|>",_res,_x];
 }
+- (id<CPVar>)result
+{
+   return _res;
+}
 @end
 
 @implementation CPFloatSqrt{
@@ -3026,5 +3376,299 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == sqrt(%@)>",_res,_x];
+}
+- (id<CPVar>)result
+{
+   return _res;
+}
+@end
+
+@implementation CPFloatIsPositive
+-(id) init:(CPFloatVarI*) x isPositive:(CPIntVarI*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b))
+         [_x updateMin:+0.0f];
+      else
+         [_x updateMax:-0.0f];
+   } else {
+      if (is_positivef([_x min])) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if (is_negativef([_x max])) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isPositive(%@)>",_b,_x];
+}
+@end
+
+@implementation CPFloatIsZero
+-(id) init:(CPFloatVarI*) x isZero:(CPIntVarI*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b))
+         [_x updateInterval:-0.0f and:+0.0f];
+      else
+         [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
+   } else {
+      if([_x bound]){
+         bindDom(_b, [_x min] == 0.0f);
+         assignTRInt(&_active, NO, _trail);
+      }else if ([_x min] == 0.0f && [_x max] == 0.0f) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x min] > 0.0f && [_x max] < 0.0f) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isZero(%@)>",_b,_x];
+}
+@end
+
+@implementation CPFloatIsInfinite
+-(id) init:(CPFloatVarI*) x isInfinite:(CPIntVarI*) b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (minDom(_b)){
+         if([_x max] < +INFINITY) [_x bind:-INFINITY];
+         if([_x min] > -INFINITY) [_x bind:+INFINITY];
+      }else
+         [_x updateInterval:fp_next_float(-INFINITY) and:fp_previous_float(+INFINITY)];
+   } else {
+      if ([_x max] == -INFINITY || [_x min] == +INFINITY) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,YES);
+      } else if ([_x min] > -INFINITY && [_x max] < +INFINITY) {
+         assignTRInt(&_active, NO, _trail);
+         bindDom(_b,NO);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isInfinite(%@)>",_b,_x];
+}
+@end
+
+@implementation CPFloatIsNormal
+-(id) init:(CPFloatVarI*)x isNormal:(CPIntVarI*)b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)){
+         if([_x bound] && is_infinityf([_x min]))
+            failNow();
+         
+         if([_x min] >= -maxdenormalf() && [_x min] <= maxdenormalf()){
+            [_x updateMin:minnormalf()];
+            assignTRInt(&_active, NO, _trail);
+         }else if(is_infinityf([_x min]))
+            [_x updateMin:fp_next_float(-infinityf())];
+         
+         if([_x max] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
+            [_x updateMax:-minnormalf()];
+            assignTRInt(&_active, NO, _trail);
+         }else if(is_infinityf([_x max]))
+            [_x updateMax:fp_previous_float(infinityf())];
+         
+      }else{
+         [_x updateInterval:-maxdenormalf() and:maxdenormalf()];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }else{
+      if([_x min] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
+         [_b bind:0];
+         assignTRInt(&_active, NO, _trail);
+      }else if(([_x max] <= -minnormalf() || [_x min] >= minnormalf()) && !is_infinityf([_x max]) && !is_infinityf([_x min])){
+         [_b bind:1];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }
+}
+
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isNormal(%@)>",_b,_x];
+}
+@end
+
+@implementation CPFloatIsSubnormal
+-(id) init:(CPFloatVarI*)x isSubnormal:(CPIntVarI*)b
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _b = b;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_b bound])
+      [_b whenBindPropagate:self];
+   if(![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)){
+         [_x updateInterval:-maxdenormalf() and:maxdenormalf()];
+         [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
+         assignTRInt(&_active, NO, _trail);
+      }else{
+         [self addConstraint:[CPFactory floatNEqualc:_x to:0.0f] engine:[_x engine]];
+         if([_x min] >= -maxdenormalf() && [_x min] <= maxdenormalf()){
+            [_x updateMin:minnormalf()];
+            assignTRInt(&_active, NO, _trail);
+         }
+         if([_x max] >= -maxdenormalf() && [_x max] <= maxdenormalf()){
+            [_x updateMax:-minnormalf()];
+            assignTRInt(&_active, NO, _trail);
+         }
+      }
+   }else{
+      if(([_x min] >= -maxdenormalf() && [_x max] <= -mindenormalf()) || ([_x min] >= mindenormalf() && [_x max] <= maxdenormalf())){
+         [_b bind:1];
+         assignTRInt(&_active, NO, _trail);
+      }else if([_x max] <= -minnormalf() || [_x min] >= minnormalf() || ([_x min] == 0.0f && [_x min] == 0.0f)){
+         [_b bind:0];
+         assignTRInt(&_active, NO, _trail);
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_b,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ <=> isSubnormal(%@)>",_b,_x];
 }
 @end

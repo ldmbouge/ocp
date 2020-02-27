@@ -200,7 +200,7 @@
 -(NSUInteger) count;
 -(ORUInt) maxFixed;
 -(ORUInt) maxId;
--(void) setMaxFixed:(ORInt)nb;
+-(void) setMaxFixed:(ORInt)nb engine:(id<OREngine>)engine;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
 -(ORUInt) enableFirst;
@@ -209,6 +209,8 @@
 -(ORBool) isFullyDisabled;
 -(ORBool) hasDisabled;
 -(ORInt) indexLastDisabled;
+-(ORInt) parent:(ORInt) i;
+-(void) unionSet:(ORInt) i and:(ORInt) j;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end

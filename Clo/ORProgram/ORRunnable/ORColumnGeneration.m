@@ -13,6 +13,7 @@
 #import "ORConcurrencyI.h"
 #import "LPRunnable.h"
 #import <objmp/LPSolverI.h>
+#import <ORProgram/ORProgram.h>
 #import <ORProgram/ORSolution.h>
 
 @implementation ORColumnGeneration {
@@ -65,10 +66,11 @@
     NSArray* cstrs = [model constraints];
     id<LPRunnable> master = (id<LPRunnable>)_master;
     id<LPProgram> lp = [master solver];
-    [master run];
+   [master run];
     while(1) {
         id<LPSolution> sol = (id<LPSolution>)[[lp solutionPool] best];
         _bestSol = (id<ORSolution>)sol;
+       NSLog(@"master sol : %@",sol);
         id<ORDoubleArray> costs = [ORFactory doubleArray: model range: RANGE(model, 0, (int)[cstrs count]-1) with:^ORDouble(ORInt i) {
             return [sol dual: cstrs[i]];
         }];
@@ -84,6 +86,7 @@
         }
         [master injectColumn: lpcol];
         [master solver];
+//        [[master solver] printModelToFile:"/Users/zitoun/Desktop/master.lp"];
     }
 }
 

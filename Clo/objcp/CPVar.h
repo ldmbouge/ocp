@@ -50,6 +50,7 @@ enum CPVarClass {
 -(ORInt)degree;
 -(ORBool)vertical;
 -(ORInt) domsize;
+-(ORLDouble) domwidth;
 -(id<CPADom>) domain;
 -(void)subsumedBy:(id<CPVar>)x;
 -(void)subsumedByDomain:(id<CPADom>)dom;
@@ -179,7 +180,6 @@ enum CPVarClass {
 -(ORInterval) bounds;
 -(ORBool) member:(ORDouble)v;
 -(ORBool) bound;
--(ORDouble) domwidth;
 -(void) bind:(ORDouble) val;
 -(void) updateMin:(ORDouble) newMin;
 -(void) updateMax:(ORDouble) newMax;

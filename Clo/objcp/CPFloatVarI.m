@@ -958,7 +958,6 @@ return rv;
     @throw [[ORExecutionError alloc] initORExecutionError: "CPFloatVar: method domsize  not defined"];
     return 0;
 }
-
 - (id<CPADom>)domain
 {
     return [_theVar flatDomain];

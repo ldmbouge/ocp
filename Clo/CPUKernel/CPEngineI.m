@@ -279,7 +279,9 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 }
 @end
 
-@implementation CPEngineI
+@implementation CPEngineI{
+   ORInt _posting;
+}
 -(CPEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
 {
    self = [super init];
@@ -296,11 +298,13 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
       _closureQueue[i] = [[CPClosureQueue alloc] initClosureQueue:512];
    _valueClosureQueue = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
    _propagating = 0;
+   _posting = 0;
    _nbpropag = 0;
    _nbFailures = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
    _propagFail = nil;
    _propagDone = nil;
+   _mergedVar = nil;
    _br = RANGE(self, 0, 1);
    _iStat = makeTRInt(_trail,ORSuspend);
    return self;
@@ -320,6 +324,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    [_valueClosureQueue release];
    [_propagFail release];
    [_propagDone release];
+   [_mergedVar release];
    for(ORInt i=0;i<NBPRIORITIES;i++)
       [_closureQueue[i] release];
    [super dealloc];
@@ -359,6 +364,13 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _last = lastToFail;
    _nbFailures += 1;
 }
+-(void)incNbRewrites:(ORUInt)add
+{
+   if([self isPosting])
+      _nbSRewrite += add;
+   else
+      _nbDRewrite += add;
+}
 -(void)incNbPropagation:(ORUInt)add
 {
    _nbpropag += add;
@@ -366,6 +378,14 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 -(void)incNbFailures:(ORUInt)add
 {
    _nbFailures += add;
+}
+-(ORUInt) nbStaticRewrites
+{
+   return _nbSRewrite;
+}
+-(ORUInt) nbDynRewrites
+{
+   return _nbDRewrite;
 }
 -(ORUInt) nbFailures
 {
@@ -599,6 +619,10 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
    return _propagating > 0;
 }
+-(ORBool)isPosting
+{
+   return _posting > 0 || _nbpropag == 0;
+}
 -(ORStatus) propagate
 {
    return propagateFDM(self);
@@ -757,12 +781,14 @@ ORStatus propagateFDM(CPEngineI* fdm)
            _state = CPOpen;
         }];
         _propagating++;
+       _posting++;
         for(id<ORConstraint> c in _mStore) {
             if ([self post: c] == ORFailure) {
                 _propagating--;
                 return ORFailure;
             }
         }
+       _posting--;
         _propagating--;
         if (propagateFDM(self) == ORFailure)
             return ORFailure;
@@ -796,14 +822,20 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _propagFail = [ORConcurrency  intInformer];
    return _propagFail;
 }
-
 -(id<ORInformer>) propagateDone
 {
    if (_propagDone == nil)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
-- (id)initWithCoder:(NSCoder *)aDecoder;
+-(id<ORIdxIdxBoolInformer>) mergedVar
+{
+   if (_mergedVar == nil)
+      _mergedVar = [ORConcurrency idxIdxBoolInformer];
+   return _mergedVar;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];

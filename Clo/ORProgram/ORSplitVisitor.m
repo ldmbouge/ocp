@@ -12,7 +12,140 @@
 #import "ORSplitVisitor.h"
 #import <ORProgram/CPSolver.h>
 
-@implementation CPVisitorI
+@implementation CPVisitorI{
+   ORBool _middle;
+   ORBool _rmiddle;
+}
+
+-(CPVisitorI*) init
+{
+   self = [super init];
+   _middle = NO;
+   _rmiddle = NO;
+   return self;
+}
+
+-(CPVisitorI*) initWithMiddle:(ORBool) middle cardinalityMid:(ORBool) real
+{
+   self = [super init];
+   _middle = middle;
+   _rmiddle = real;
+   return self;
+}
+
+-(CPVisitorI*) initWithMiddle:(ORBool) middle
+{
+   self = [super init];
+   _middle = middle;
+   return self;
+}
+
+-(ORDouble) doubleMiddle:(CPDoubleVarI*) xi
+{
+   ORDouble theMax = xi.max;
+   ORDouble theMin = xi.min;
+   ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
+   ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
+   if(!_middle)
+      return tmpMin/2 + tmpMax/2;
+   ORDouble mid;
+   if ((theMin < 0.0) && (0.0 < theMax))// Cpjm
+      mid = 0.0;
+   else if ((theMin < 1.0) && (1.0 < theMax))
+      mid = 1.0;
+   else if ((theMin < -1.0) && (-1.0 < theMax))
+      mid = -1.0;
+   else if(_rmiddle)
+      mid = [self doubleRMid:xi];
+   else
+      mid = tmpMin/2 + tmpMax/2;
+   assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
+   return mid;
+}
+-(ORFloat) floatMiddle:(CPFloatVarI*) xi
+{
+   ORFloat theMax = xi.max;
+   ORFloat theMin = xi.min;
+   ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
+   ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
+   if(!_middle)
+      return tmpMin/2 + tmpMax/2;
+   ORFloat mid;
+   if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
+      mid = 0.0f;
+   else if ((theMin < 1.0f) && (1.0f < theMax))
+      mid = 1.0f;
+   else if ((theMin < -1.0f) && (-1.0f < theMax))
+      mid = -1.0f;
+   else if(_rmiddle)
+      mid = [self floatRMid:xi];
+   else
+      mid = tmpMin/2 + tmpMax/2;
+   assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
+   return mid;
+}
+//middle cardinality
+-(ORDouble) doubleRMid:(CPDoubleVarI*) xi
+{
+   uint64_t inf_i, sup_i, mid_i;
+   double inf = [xi min];
+   double sup = [xi max];
+   if (*((uint64_t *)&sup) & 0x8000000000000000) {
+      inf = -inf;
+      sup = -sup;
+      inf_i = *((uint64_t *)&inf);
+      sup_i = *((uint64_t *)&sup);
+      mid_i = (sup_i + inf_i)/2;
+      return -*((double *)&mid_i);
+   } else if (! (*((uint64_t *)&inf) & 0x8000000000000000)) {
+      inf_i = *((uint64_t *)&inf);
+      sup_i = *((uint64_t *)&sup);
+      mid_i = (sup_i + inf_i)/2;
+      return *((double *)&mid_i);
+   } else {
+      inf = -inf;
+      inf_i = *((uint64_t *)&inf);
+      sup_i = *((uint64_t *)&sup);
+      if (inf_i <= sup_i) {
+         mid_i = (sup_i - inf_i)/2;
+         return *((double *)&mid_i);
+      } else {
+         mid_i = (inf_i - sup_i)/2;
+         return -*((double *)&mid_i);
+      }
+   }
+}
+//middle cardinality
+-(ORFloat) floatRMid:(CPFloatVarI*) xi
+{
+   uint32_t inf_i, sup_i, mid_i;
+   float inf = [xi min];
+   float sup = [xi max];
+   if (*((uint32_t *)&sup) & 0x80000000) {
+      inf = -inf;
+      sup = -sup;
+      inf_i = *((uint32_t *)&inf);
+      sup_i = *((uint32_t *)&sup);
+      mid_i = (sup_i + inf_i)/2;
+      return -*((float *)&mid_i);
+   } else if (! (*((uint64_t *)&inf) & 0x80000000)) {
+      inf_i = *((uint32_t *)&inf);
+      sup_i = *((uint32_t *)&sup);
+      mid_i = (sup_i + inf_i)/2;
+      return *((float *)&mid_i);
+   } else {
+      inf = -inf;
+      inf_i = *((uint32_t *)&inf);
+      sup_i = *((uint32_t *)&sup);
+      if (inf_i <= sup_i) {
+         mid_i = (sup_i - inf_i)/2;
+         return *((float *)&mid_i);
+      } else {
+         mid_i = (inf_i - sup_i)/2;
+         return -*((float *)&mid_i);
+      }
+   }
+}
 
 -(void) applyIntVar:(id<CPVar>) var
 {
@@ -32,6 +165,7 @@
    CPCoreSolver*   _program;
    id<ORVar>           _variable;
 }
+
 
 -(ORSplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v
 {
@@ -195,18 +329,18 @@
 }
 @end
 
-
-
 @implementation OR5WaySplitVisitor{
    CPCoreSolver*       _program;
    id<ORVar>           _variable;
+   NSMutableArray*     _path;
 }
 
--(OR5WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v
+-(OR5WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v  middle:(ORBool) middle  card:(ORBool) realM withPath:(NSMutableArray *)path
 {
-   self = [super init];
+   self = [super initWithMiddle:middle cardinalityMid:realM];
    _program = p;
    _variable = v;
+   _path  = path;
    return self;
 }
 
@@ -239,40 +373,38 @@
       interval[2].inf = interval[2].sup = mid;
       length = 2;
    }else{
-      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-//      todo decomment when bugs are fixed
-      if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
-         mid = 0.0f;
-      else if ((theMin < 1.0f) && (1.0f < theMax))
-         mid = 1.0f;
-      else if ((theMin < -1.0f) && (-1.0f < theMax))
-         mid = -1.0f;
-      else
-         mid = tmpMin/2 + tmpMax/2;
-      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
+      ORFloat mid = [self floatMiddle:xi];
       //force the interval to right side
-      if(mid == fp_previous_float(theMax)){
-         mid = fp_previous_float(mid);
+      if(mid == fp_next_float(theMin)){
+         mid = fp_next_float(mid);
       }
       interval[2].inf = interval[2].sup = mid;
-//      if(mid == 0.0f)
-//         interval[2].inf = -0.0;
-      interval[3].inf = fp_next_float(mid);
-      interval[3].sup = fp_previous_float(theMax);
+      //            if(mid == 0.0f)
+      //               interval[2].inf = -0.0f;
+      interval[3].inf = fp_next_float(theMin);
+      interval[3].sup = fp_previous_float(mid);
       length = 3;
-      if(fp_next_float(theMin) != mid){
-         interval[4].inf = fp_next_float(theMin);
-         interval[4].sup = fp_previous_float(mid);
+      if(fp_previous_float(theMax) != mid){
+         interval[4].inf = fp_next_float(mid);
+         interval[4].sup = fp_previous_float(theMax);
          length++;
       }
    }
    float_interval* ip = interval;
-   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+   [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
       //ORInt c = [[_program explorer] nbChoices];
-      LOG([_program debugLevel],1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+      [_path addObject:[NSString stringWithFormat:@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup]];
+      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
+   } onFailure:^(ORInt index) {
+      [_path removeLastObject];
    }];
+   //   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+   //      ORInt c = [[_program explorer] nbChoices];
+   //      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+   //      [_program floatInterval:(id<ORFloatVar>)_variable low:ip[index].inf up:ip[index].sup];
+   //   }];
+   
 }
 -(void) applyDoubleVar :(CPDoubleVarI*) xi
 {
@@ -290,37 +422,33 @@
       interval[2].inf = interval[2].sup = mid;
       length = 2;
    }else{
-      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
-      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      if ((theMin < 0.0f) && (0.0f < theMax))// Cpjm
-         mid = 0.0f;
-      else if ((theMin < 1.0f) && (1.0f < theMax))
-         mid = 1.0f;
-      else if ((theMin < -1.0f) && (-1.0f < theMax))
-         mid = -1.0f;
-      else
-         mid = tmpMin/2 + tmpMax/2;
-      assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
+      ORDouble mid = [self doubleMiddle:xi];
       //force the interval to right side
-      if(mid == fp_previous_double(theMax)){
-         mid = fp_previous_double(mid);
+      if(mid == fp_next_double(theMin)){
+         mid = fp_next_double(mid);
       }
       interval[2].inf = interval[2].sup = mid;
-//      if(mid == 0.0)
-//         interval[2].inf = -0.0;
-      interval[3].inf = fp_next_double(mid);
-      interval[3].sup = fp_previous_double(theMax);
+      interval[3].inf = fp_next_double(theMin);
+      interval[3].sup = fp_previous_double(mid);
       length = 3;
-      if(fp_next_float(theMin) != mid){
-         interval[4].inf = fp_next_double(theMin);
-         interval[4].sup = fp_previous_double(mid);
+      if(fp_previous_double(theMax) != mid){
+         interval[4].inf = fp_next_double(mid);
+         interval[4].sup = fp_previous_double(theMax);
          length++;
       }
    }
    double_interval* ip = interval;
-   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
-      LOG([_program debugLevel],1,@"(5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+   //   [_program tryall:RANGE(_program,0,length) suchThat:nil do:^(ORInt index) {
+   //      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
+   //      [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
+   //   }];
+   
+   [_program tryall:RANGE(_program,0,length) suchThat:nil in:^(ORInt index) {
+      [_path addObject:[NSString stringWithFormat:@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup]];
+      LOG([_program debugLevel],1,@"#depth:%d alt:%d (5split) #choices:%d %@ in [%16.16e,%16.16e]",[[_program tracer] level],index,[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [xi getId]]:[_variable prettyname],ip[index].inf,ip[index].sup);
       [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[index].inf up:ip[index].sup];
+   } onFailure:^(ORInt index) {
+      [_path removeLastObject];
    }];
 }
 @end
@@ -332,9 +460,9 @@
    id<ORVar>           _variable;
 }
 
--(OR6WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v
+-(OR6WaySplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v middle:(ORBool)middle
 {
-   self = [super init];
+   self = [super initWithMiddle:middle];
    _program = p;
    _variable = v;
    return self;
@@ -359,25 +487,21 @@
    float_interval interval[6];
    ORFloat theMax = xi.max;
    ORFloat theMin = xi.min;
-   ORBool minIsInfinity = (theMin == -infinityf()) ;
-   ORBool maxIsInfinity = (theMax == infinityf()) ;
    ORBool only2float = (fp_next_float(theMin) == theMax);
    ORBool only3float = (fp_next_float(theMin) == fp_previous_float(theMax));
    interval[0].inf = interval[0].sup = theMax;
    ORInt length = 1;
    if(!(only2float || only3float)){
       //au moins 4 floatants
-      ORFloat tmpMax = (theMax == +infinityf()) ? maxnormalf() : theMax;
-      ORFloat tmpMin = (theMin == -infinityf()) ? -maxnormalf() : theMin;
-      ORFloat mid = tmpMin/2 + tmpMax/2;
+      ORFloat mid = [self floatMiddle:xi];
+      ORFloat midInf = fp_nextafterf(mid,-INFINITY);
+      ORFloat midSup = mid;
       
-      assert(!(is_infinityf(tmpMax) && is_infinityf(tmpMin)));
-      ORFloat midInf = -0.0f;
-      ORFloat midSup = +0.0f;
-      if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
-         midInf = fp_nextafterf(mid,-INFINITY);
-         midSup = mid;
+      if(midInf == theMin){
+         midSup = fp_next_float(mid);
+         midInf = mid;
       }
+      
       ORFloat midSupNext = nextafterf(midSup,+INFINITY);
       ORFloat supPrev = nextafterf(theMax,-INFINITY);
       ORFloat midInfPrev = nextafterf(midInf,-INFINITY);
@@ -398,24 +522,27 @@
          length++;
       }
    }else if(only2float){
-      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
+      if(is_eqf(theMax,+0.0f)){
+         interval[1].inf = interval[1].sup = -0.0f;
+         length++;
+      }else if(is_eqf(theMin,-0.0f)){
          interval[1].inf = interval[1].sup = +0.0f;
-         interval[2].inf = interval[2].sup = -0.0f;
-         length += 2;
+         length++;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
    }else{
       //forcement 3 floattants
-      if(is_eqf(theMax,+0.0f) || is_eqf(theMin,-0.0)){
-         interval[1].inf = interval[1].sup = +0.0f;
+      ORDouble mid  = nextafterf(theMin,+INFINITY);
+      interval[1].inf = interval[1].sup = mid;
+      length++;
+      
+      if(is_eq(theMax,+0.0f)){
          interval[2].inf = interval[2].sup = -0.0f;
-         length += 2;
-      }else{
-         ORFloat mid = nextafterf(theMin,+INFINITY);
-         interval[1].inf = interval[1].sup = mid;
          length++;
-         
+      }else if(is_eq(theMin,-0.0f)){
+         interval[2].inf = interval[2].sup = +0.0f;
+         length++;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
@@ -433,25 +560,21 @@
    double_interval interval[6];
    ORDouble theMax = xi.max;
    ORDouble theMin = xi.min;
-   ORBool minIsInfinity = (theMin == -infinity()) ;
-   ORBool maxIsInfinity = (theMax == infinity()) ;
    ORBool only2float = (fp_next_double(theMin) == theMax);
    ORBool only3float = (fp_next_double(theMin) == fp_previous_double(theMax));
    interval[0].inf = interval[0].sup = theMax;
    ORInt length = 1;
    if(!(only2float || only3float)){
       //au moins 4 floatants
-      ORDouble tmpMax = (theMax == +infinity()) ? maxnormal() : theMax;
-      ORDouble tmpMin = (theMin == -infinity()) ? -maxnormal() : theMin;
-      ORDouble mid = tmpMin/2 + tmpMax/2;
+      ORDouble mid = [self doubleMiddle:xi];
+      ORDouble midInf = fp_nextafter(mid,-INFINITY);
+      ORDouble midSup = mid;
       
-      assert(!(is_infinity(tmpMax) && is_infinity(tmpMin)));
-      ORDouble midInf = -0.0;
-      ORDouble midSup = +0.0;
-      if(!((minIsInfinity && maxIsInfinity) || (minIsInfinity && !mid) || (maxIsInfinity && ! mid))){
-         midInf = fp_nextafter(mid,-INFINITY);
-         midSup = mid;
+      if(midInf == theMin){
+         midSup = fp_next_double(mid);
+         midInf = mid;
       }
+      
       ORDouble midSupNext = nextafter(midSup,+INFINITY);
       ORDouble supPrev = nextafter(theMax,-INFINITY);
       ORDouble midInfPrev = nextafter(midInf,-INFINITY);
@@ -472,24 +595,27 @@
          length++;
       }
    }else if(only2float){
-      if(is_eq(theMax,+0.0) || is_eq(theMin,-0.0)){
+      if(is_eq(theMax,+0.0)){
+         interval[1].inf = interval[1].sup = -0.0;
+         length++;
+      }else if(is_eq(theMin,-0.0)){
          interval[1].inf = interval[1].sup = +0.0;
-         interval[2].inf = interval[2].sup = -0.0;
-         length += 2;
+         length++;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
    }else{
       //forcement 3 floattants
-      if(is_eq(theMax,+0.0) || is_eq(theMin,-0.0)){
-         interval[1].inf = interval[1].sup = +0.0;
+      ORDouble mid  = nextafter(theMin,+INFINITY);
+      interval[1].inf = interval[1].sup = mid;
+      length++;
+      
+      if(is_eq(theMax,+0.0)){
          interval[2].inf = interval[2].sup = -0.0;
-         length += 2;
-      }else{
-         ORDouble mid = nextafter(theMin,+INFINITY);
-         interval[1].inf = interval[1].sup = mid;
          length++;
-         
+      }else if(is_eq(theMin,-0.0)){
+         interval[2].inf = interval[2].sup = +0.0;
+         length++;
       }
       interval[length].inf = interval[length].sup = theMin;
       length++;
@@ -732,15 +858,17 @@
 @implementation ORAbsSplitVisitor{
    CPCoreSolver*           _program;
    id<ORVar>           _variable;
-   id<CPVar>           _other;
+   id<ORVar>           _other;
+   id<CPVar>           _otherC;
 }
 
--(ORAbsSplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v other:(id<CPVar>)other
+-(ORAbsSplitVisitor*) initWithProgram : (CPCoreSolver*) p variable:(id<ORVar>) v other:(id<ORVar>)other
 {
    self = [super init];
    _program = p;
    _variable = v;
    _other = other;
+   _otherC = [_program concretize:other];
    return self;
 }
 
@@ -765,8 +893,8 @@
    ORInt length_y = 0;
    float_interval ax = computeAbsorbingInterval(cx);
    float_interval ay = computeAbsordedInterval(cx);
-   CPFloatVarI* y = (CPFloatVarI*)_other;
-   if(! [_other bound]) {
+   CPFloatVarI* y = (CPFloatVarI*)_otherC;
+   if(! [_otherC bound]) {
       if(isIntersectingWithV(y.min,y.max,ay.inf,ay.sup)){
          ay.inf = maxFlt(ay.inf, y.min);
          ay.sup = minFlt(ay.sup, y.max);
@@ -819,8 +947,8 @@
       length--;
       [_program tryall:RANGE(_program,0,length/2) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
-         [_program floatIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
-         [_program floatIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
+         [_program floatInterval:(id<ORFloatVar>)_variable low:ip[2*index].inf up:ip[2*index].sup];
+         [_program floatInterval:(id<ORFloatVar>)_other low:ip[2*index+1].inf up:ip[2*index+1].sup];
       }];
    }else if (length_x > 0 && length_y == 0){
       float_interval* ip = interval_x;
@@ -839,8 +967,8 @@
    ORInt length_y = 0;
    double_interval ax = computeAbsorbingIntervalD(cx);
    double_interval ay = computeAbsordedIntervalD(cx);
-   CPDoubleVarI* y = (CPDoubleVarI*)_other;
-   if(! [_other bound]) {
+   CPDoubleVarI* y = (CPDoubleVarI*)_otherC;
+   if(! [_otherC bound]) {
       if(isIntersectingWithDV(y.min,y.max,ay.inf,ay.sup)){
          ay.inf = maxDbl(ay.inf, y.min);
          ay.sup = minDbl(ay.sup, y.max);
@@ -893,8 +1021,8 @@
       length--;
       [_program tryall:RANGE(_program,0,length/2) suchThat:nil do:^(ORInt index) {
          LOG([_program debugLevel],1,@"#choices:%d %@ in [%16.16e,%16.16e]\t %@ in [%16.16e,%16.16e]",[[_program explorer] nbChoices],([_variable prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [cx getId]]:[_variable prettyname],ip[2*index].inf,ip[2*index].sup,[NSString stringWithFormat:@"var<%d>", [y getId]],ip[2*index+1].inf,ip[2*index+1].sup);
-         [_program doubleIntervalImpl:cx low:ip[2*index].inf up:ip[2*index].sup];
-         [_program doubleIntervalImpl:y low:ip[2*index+1].inf up:ip[2*index+1].sup];
+         [_program doubleInterval:(id<ORDoubleVar>)_variable low:ip[2*index].inf up:ip[2*index].sup];
+         [_program doubleInterval:(id<ORDoubleVar>)_other low:ip[2*index+1].inf up:ip[2*index+1].sup];
       }];
    }else if (length_x > 0 && length_y == 0){
       double_interval* ip = interval_x;
@@ -941,5 +1069,65 @@
    }
 }
 
+@end
+
+
+@implementation CPDensityVisitor{
+   ORLDouble _result;
+}
+
+-(CPDensityVisitor*) init
+{
+   self = [super init];
+   _result = 0;
+   return self;
+}
+
+- (void)applyFloatVar:(CPFloatVarI*)cx
+{
+   ORDouble c = cardinality(cx);
+   ORDouble w = [cx domwidth];
+   _result = (ORLDouble) (c / w);
+}
+
+- (void)applyDoubleVar:(CPDoubleVarI*)cx
+{
+   ORLDouble c = cardinalityD(cx);
+   ORDouble w = [cx domwidth];
+   _result = (c / w);
+}
+
+-(ORLDouble) result
+{
+   return _result;
+}
+@end
+
+
+@implementation CPCardinalityVisitor{
+   ORDouble _result;
+}
+
+-(CPCardinalityVisitor*) init
+{
+   self = [super init];
+   _result = 0;
+   return self;
+}
+
+- (void)applyFloatVar:(CPFloatVarI*)cx
+{
+   _result = cardinality(cx);
+}
+
+- (void)applyDoubleVar:(CPDoubleVarI*)cx
+{
+   _result = (ORDouble) cardinalityD(cx);
+}
+
+-(ORDouble) result
+{
+   return _result;
+}
 @end
 

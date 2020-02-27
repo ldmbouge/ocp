@@ -13,6 +13,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
+#import "ExprSimplifier.h"
 
 enum Heuristic {
    FF = 0,
@@ -44,7 +45,10 @@ enum Heuristic {
    absDens = 30,
    custom = 31,
    customD = 32,
-   customWD = 33
+   customWD = 33,
+   maxLOcc  = 34,
+   occdens  = 35,
+   occTBdens = 36
 };
 enum ValHeuristic
 {
@@ -66,9 +70,16 @@ struct ORResult {
    ORInt nbFailures;
    ORInt nbChoices;
    ORInt nbPropagations;
+   ORInt nbSRewrites;
+   ORInt nbDRewrites;
+   NSUInteger nbVariables;
+   NSUInteger nbConstraints;
+   NSUInteger restrictVar;
 };
 
 #define REPORT(f,nbf,nbc,nbp) ((struct ORResult){(f),(nbf),(nbc),(nbp)})
+
+#define FULLREPORT(f,nbf,nbc,nbp,nbs,nbd,nbv,nbcst,rstSet) ((struct ORResult){(f),(nbf),(nbc),(nbp),(nbs),(nbd),(nbv),(nbcst),(rstSet)})
 
 @interface ORCmdLineArgs : NSObject
 @property (nonatomic,readonly) ORInt size;
@@ -86,6 +97,13 @@ struct ORResult {
 @property (nonatomic,readonly) ORInt searchNBFloats;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
+@property (nonatomic,readonly) ORBool    bds;
+@property (nonatomic,readonly) ORBool    cycleDetection;
+@property (nonatomic,readonly) ORBool    ldfs;
+@property (nonatomic,readonly) ORBool    withAux;
+@property (nonatomic,readonly) ORBool    withRewriting;
+@property (nonatomic,readonly) ORBool    withSRewriting;
+@property (nonatomic,readonly) ORBool    withDRewriting;
 @property (nonatomic,readonly) ORInt    level;
 @property (nonatomic,readonly) ORInt    choicesLimit;
 @property (nonatomic,readonly) NSString* fName;
@@ -99,15 +117,36 @@ struct ORResult {
 @property (nonatomic,readonly) ORInt splitTest;
 @property (nonatomic,readonly) ORBool specialSearch;
 @property (nonatomic,readonly) ABS_FUN absFunComputation;
+@property (nonatomic,readonly) ORBool occDetails;
+@property (nonatomic,readonly) ORBool restricted;
+@property (nonatomic,readonly) ORBool fullRestrict;
+@property (nonatomic,readonly) ORBool _restrictRequired;
+@property (nonatomic,readonly) ORBool middle;
+@property (nonatomic,readonly) ORBool cardMid;
+@property (nonatomic,readonly) ORBool paused;
+@property (nonatomic,readonly) ORBool printSolution;
+@property (nonatomic,readonly) ORBool printModel;
+@property (nonatomic,readonly) ORBool noSearch;
+
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
 -(void)measure:(struct ORResult(^)(void))block;
 -(void)measureTime:(void(^)(void))block;
+-(ORBool) checkAllbound:(id<ORModel>) model with:(id<CPProgram>) cp;
+-(void) printSolution:(id<ORModel>) model with:(id<CPProgram>) cp;
 -(id<ORGroup>)makeGroup:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model;
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
--(void) checkAbsorption:(id<ORFloatVarArray>)vars solver:(id<CPProgram>)p;
+-(id<CPProgram>) makeProgramWithSimplification:(id<ORModel>)model constraints:(NSArray*) toadd;
+-(id<ORDisabledVarArray>) makeDisabledArray:(id<CPProgram>)p from:(id<ORVarArray>)vs;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 -(void)launchHeuristic:(id<CPProgram>)cp restricted:(id<ORVarArray>)x;
+-(ORBool) isCycle:(id<ORModel>) model;
+-(void) printOccurences:(id<ORModel>) model with:(id<CPProgram>) cp restricted:(id<ORVarArray>) vars;
+-(void) printMaxGOccurences:(id<ORModel>) model with:(id<CPProgram>) cp n:(ORInt) n;
+-(void) printMaxLOccurences:(id<ORModel>) model with:(id<CPProgram>) cp n:(ORInt) n;
++(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp;
++(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restrict:(id<ORVarArray>) vars;
++(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restricted:(NSArray*) vars;
 @end

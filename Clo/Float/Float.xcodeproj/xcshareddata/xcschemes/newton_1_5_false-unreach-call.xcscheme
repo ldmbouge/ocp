@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0910"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -64,10 +64,14 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-var-order maxAbs -val-order splitAbs -default 6  -rate-model-limit 0.83 -grate-model-limit 0.83 -rate-other-limit 1.1 -unique"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-split-test 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-var-order maxDens"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

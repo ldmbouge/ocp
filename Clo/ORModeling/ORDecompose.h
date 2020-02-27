@@ -43,6 +43,8 @@
 
 @interface ORNormalizer(Float)
 +(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORFloatVar>)x;
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model setTo:(id<ORFloatVar>)x;
 +(id<ORFloatLinear>)addToFloatLinear:(id<ORFloatLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
 +(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
 +(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORFloatVar>)x;
@@ -63,6 +65,8 @@
 
 @interface ORNormalizer(Double)
 +(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
++(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORDoubleVar>)x;
++(id<ORDoubleLinear>)doubleLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model setTo:(id<ORDoubleVar>)x;
 +(id<ORDoubleLinear>)addToDoubleLinear:(id<ORDoubleLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
 +(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
 +(id<ORDoubleVar>) doubleVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORDoubleVar>)x;
@@ -74,12 +78,14 @@
 @protocol TypeNormalizer <NSObject>
 -(ORVType) value;
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyAssign:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyNEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv  left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyLEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyGEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyLT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyGT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(void) reifyAssignc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
 -(void) reifyNEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
 -(void) reifyLEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv  other:(ORExprI*)theOther constant:(ORExprI*)c;
 -(void) reifyGEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
@@ -90,6 +96,7 @@
 -(id<ORLinear>) visitExprGThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprLThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprErrorOfI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprUlpOfI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
@@ -102,12 +109,14 @@
 -(id) init:(ORVType)vtype;
 -(ORVType) value;
 -(void) reifyEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
+-(void) reifyAssign:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyNEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv  left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyLEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyGEQ:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyLT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyGT:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv left:(ORExprI*)left right:(ORExprI*)right;
 -(void) reifyEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
+-(void) reifyAssignc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
 -(void) reifyNEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
 -(void) reifyLEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv  other:(ORExprI*)theOther constant:(ORExprI*)c;
 -(void) reifyGEQc:(id<ORAddToModel>)_model boolean:(id<ORIntVar>)rv other:(ORExprI*)theOther constant:(ORExprI*)c;
@@ -118,6 +127,7 @@
 -(id<ORLinear>) visitExprGThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprLThenI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprErrorOfI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprUlpOfI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;
 -(id<ORLinear>) visitExprNEqualI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right;

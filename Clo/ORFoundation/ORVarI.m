@@ -1242,14 +1242,18 @@
 
 
 @implementation ORDisabledVarArrayI{
-   ORInt                  _maxId;
-   ORInt                  _nb;
-   id<ORTrailableInt>    _current;
-   id<ORTrailableInt>    _start;
-   id<ORVarArray>          _vars;
-   id<ORIntArray>          _initials;
-   id<ORTrailableIntArray>  _disabled;
-   id<ORTrailableIntArray>   _indexDisabled;
+   ORInt                      _maxId;
+   ORInt                      _nb;
+   id<ORTrailableInt>         _current;
+   id<ORTrailableInt>         _start;
+   id<ORVarArray>             _vars;
+   id<ORIntArray>             _initials;
+   id<ORTrailableIntArray>    _disabled;
+   id<ORTrailableIntArray>    _indexDisabled;
+   id<ORTrailableIntArray>    _parent;
+   NSMutableDictionary*       _parentConcrete;
+   id<ORSearchEngine>         _engine;
+   
 }
 -(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine
 {
@@ -1269,14 +1273,17 @@
 -(id<ORDisabledVarArray>) init:(id<ORVarArray>) vars engine:(id<ORSearchEngine>)engine initials:(id<ORIntArray>) ia nbFixed:(ORUInt) nb
 {
    self = [super init];
+   _engine = [engine retain];
    _vars = vars;
    _initials = ia;
    _maxId = 0;
    _nb = (nb > [vars count]) ? (ORInt)[vars count] : nb;
    _current = [ORFactory trailableInt:engine value:0];
    _start = [ORFactory trailableInt:engine value:0];
-   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:0];
-   _indexDisabled = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
+   _disabled = [ORFactory trailableIntArray:engine range:[vars range] value:-1];
+   _indexDisabled = [ORFactory trailableIntArray:engine range:vars.range value:-1];
+   _parent = [ORFactory trailableIntArray:engine range:_disabled.range value:-1];
+   _parentConcrete = [[NSMutableDictionary alloc] initWithCapacity:16];
    for(id<ORVar> v in _vars){
       _maxId = max(_maxId, v.getId);
    }
@@ -1284,6 +1291,8 @@
 }
 -(void) dealloc
 {
+   [_parentConcrete release];
+   [_engine release];
    [super dealloc];
 }
 -(id<ORVar>) at: (ORInt) value
@@ -1306,19 +1315,20 @@
 }
 -(void) disable:(ORUInt) index
 {
+   index = [self parent:index];
    if([self isEnabled:index]){
       if([self isFullyDisabled])
          @throw [[NSException alloc] initWithName:@"Internal Error"
-                                        reason:@"Array is already fully disabled"
-                                      userInfo:nil];
-      [_disabled[index] setValue:1];
+                                           reason:@"Array is already fully disabled"
+                                         userInfo:nil];
+      [_disabled[index] setValue:[_current value]];
       [_indexDisabled[[_current value]] setValue:index];
       [_current setValue:(([_current value] + 1) % _nb)];
    }
 }
 -(void) enable:(ORUInt) index
 {
-   [_disabled[index] setValue:0];
+   [_disabled[index] setValue:-1];
 }
 -(ORUInt) enableFirst
 {
@@ -1335,10 +1345,13 @@
 }
 -(ORBool) isEnabled:(ORUInt) index;
 {
-   return ![_disabled[index] value];
+   ORInt pi = [self parent:index];
+   return [_disabled[pi] value] == -1;
 }
-- (ORBool)isDisabled:(ORUInt)index {
-   return [_disabled[index] value];
+- (ORBool)isDisabled:(ORUInt)index
+{
+   ORInt pi = [self parent:index];
+   return [_disabled[pi] value] > -1;
 }
 -(id<ORIntRange>) range
 {
@@ -1364,13 +1377,15 @@
 {
    return _maxId;
 }
--(void) setMaxFixed:(ORInt)nb
+-(void) setMaxFixed:(ORInt)nb engine:(id<ORSearchEngine>) engine
 {
    _nb = min(nb,(ORInt)[_vars count]);
    for(ORInt i = 0; i < [_disabled count]; i++){
-      [_disabled[i] setValue:0];
+      [_disabled[i] setValue:-1];
       [_indexDisabled[i] setValue:-1];
    }
+//   [_indexDisabled release];
+//   _indexDisabled = [ORFactory trailableIntArray:engine range:RANGE(engine, 0, (_nb > 0) ? _nb - 1 : 0) value:-1];
    [_current setValue:0];
    [_start setValue:0];
 }
@@ -1382,7 +1397,7 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(v:%@,d:%@,index:%@,nb:%d,start:%@,cur:%@,i:%@)",_name,_vars,_disabled,_indexDisabled,_nb,_start,_current,_initials];
+   return [NSString stringWithFormat:@"DisabledFloatVarArray<OR>:%03d(\nvalue:%@,\nd:%@,\nindex:%@,\n parent:%@,\nnb:%d,\nstart:%@,\ncur:%@,i:%@\n)",_name,_vars,_disabled,_indexDisabled,_parent,_nb,_start,_current,_initials];
 }
 -(ORBool) contains:(id<ORVar>)v
 {
@@ -1412,37 +1427,111 @@
 }
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine
 {
-    ORInt cpt = 0;
-    for (ORUInt i = 0; i < [_vars count]; i++){
+   ORInt cpt = 0;
+   for (ORUInt i = 0; i < [_vars count]; i++){
       if([self isInitial:i])
-          cpt++;
+         cpt++;
    }
-    assert(cpt>0);
-    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
-    for (ORUInt i = 0; i < [_vars count]; i++){
-        if([self isInitial:i])
-            ovars[i] = _vars[i];
-    }
+   assert(cpt>0);
+   id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
+   for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i])
+         ovars[i] = _vars[i];
+   }
    id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:ovars engine:engine nbFixed:_nb];
-    [engine trackObject:r];
-    return r;
+   [engine trackObject:r];
+   return r;
 }
 
--(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb{
-    ORInt cpt = 0;
-    for (ORUInt i = 0; i < [_vars count]; i++){
-      if([self isInitial:i])
-          cpt++;
-   }
-    assert(cpt>0);
-    id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
+-(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb
+{
+   ORInt cpt = 0;
    for (ORUInt i = 0; i < [_vars count]; i++){
-        if([self isInitial:i])
-            ovars[i] = _vars[i];
-    }
+      if([self isInitial:i])
+         cpt++;
+   }
+   assert(cpt>0);
+   id<ORVarArray> ovars = [ORFactory floatVarArray:engine range:RANGE(engine, 0, cpt-1)];
+   for (ORUInt i = 0; i < [_vars count]; i++){
+      if([self isInitial:i])
+         ovars[i] = _vars[i];
+   }
    id<ORDisabledVarArray> r = [[ORDisabledVarArrayI alloc] init:ovars engine:engine nbFixed:nb];
-    [engine trackObject:r];
-    return r;
+   [engine trackObject:r];
+   return r;
+}
+-(ORInt) parent:(ORInt) i
+{
+   ORInt parent = [_parent[i] value];
+   if(parent == -1)
+      return i;
+   ORInt res = [self parent:parent];
+   // update of the current parent to speed up the next call
+   [_parent[i] setValue:res];
+   return res;
+}
+-(ORInt) parentConcrete:(id<CPVar>) i
+{
+   id pi = _parentConcrete[@(getId(i))];
+   if(pi == nil)
+      return -1;
+   ORInt piv = [(id<ORTrailableInt>)pi value];
+   ORInt res = [self parent:piv];
+   // update of the current parent to speed up the next call
+   if(piv != res)
+      [(id<ORTrailableInt>)pi setValue:res];
+   return res;
+}
+-(void) unionSet:(ORInt) j withConcrete:(id<CPVar>) cx
+{
+   ORInt ip = [self parentConcrete:cx];
+   ORInt jp = [self parent:j];
+   if(ip == -1){
+      _parentConcrete[@(getId(cx))] = [ORFactory trailableInt:_engine value:jp];
+      [[_engine trail] trailClosure:^{
+         [_parentConcrete removeObjectForKey:@(getId(cx))];
+      }];
+      ip = jp;
+   }
+   [self unionSet:ip and:jp];
+}
+-(void) unionSet:(ORInt) i and:(ORInt) j
+{
+   ORInt ip = [self parent:i];
+   ORInt jp = [self parent:j];
+   if(ip == jp) return;
+   if([self isDisabled:ip]){
+      if([self isDisabled:jp]){
+         ORInt mi = [_disabled[ip] value];
+         ORInt mj = [_disabled[jp] value];
+         ORInt mini = (mi < mj) ? ip : jp;
+         ORInt maxi = (mi < mj) ? jp : ip;
+         ORInt minv = [_disabled[mini] value];
+         ORInt maxv = [_disabled[maxi] value];
+         if([_start value] == minv){
+            [self enableFirst];
+            [_parent[mini] setValue:maxi];
+            return;
+         }else{
+            ORInt end = [_current value];
+            ORInt start = ([_start value] - end >= 0) ? maxv  : minv;
+            ORInt i;
+            [_disabled[[_indexDisabled[start] value]] setValue:-1];
+            for(i = start, j = (i+1)%_nb; j != end; i = j, j = (i+1)%_nb){
+               ORInt v = [_indexDisabled[j] value];
+               [_indexDisabled[i] setValue:v];
+               [_disabled[v] setValue:i];
+            }
+            [_indexDisabled[i] setValue:-1];
+            ORInt c = [_current value] - 1;
+            c = (c < 0) ? c + _nb : c;
+            [_current setValue:c];
+            jp = (start == maxv) ? maxi : mini;
+            ip = (start == maxv) ? mini : maxi;
+         }
+      }
+   }
+   [_parent[jp] setValue:ip];
 }
 @end
 

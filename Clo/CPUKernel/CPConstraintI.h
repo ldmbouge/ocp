@@ -14,7 +14,8 @@
 #import <CPUKernel/CPCstr.h>
 
 @class CPEngineI;
-@protocol CPGroup;
+@class CPGroup;
+@protocol CPEngine;
 
 typedef id (*SELPROTO)(id,SEL,...);
 
@@ -28,6 +29,7 @@ typedef id (*SELPROTO)(id,SEL,...);
    id<CPGroup>      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
+-(void) addConstraint:(id<CPConstraint>) c engine:(id<CPEngine>)engine;
 -(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
@@ -37,4 +39,14 @@ typedef id (*SELPROTO)(id,SEL,...);
 -(id<CPGroup>)group;
 -(void) toCheck;
 -(ORBool)entailed;
+@end
+
+
+@protocol CPABSConstraint
+-(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x;
+-(ORBool) canLeadToAnAbsorption;
+@end
+
+@protocol CPArithmConstraint
+-(id<CPVar>) result;
 @end

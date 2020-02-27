@@ -718,7 +718,7 @@ ORInt sumSet(id<ORIntIterable> s,ORInt(^term)(ORInt i))
     NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [rv appendFormat:@"[%ld]{",_sz];
     for(id<ORObject> x in self) {
-        [rv appendFormat:@"%p ",x];
+        [rv appendFormat:@"%@ ",x];
     }
     [rv appendFormat:@"}"];
     return rv;

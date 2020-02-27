@@ -366,6 +366,16 @@
 			<key>orderHint</key>
 			<integer>120</integer>
 		</dict>
+		<key>TASCA-Keeloq.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>157</integer>
+		</dict>
+		<key>TASCA-Keeloq.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>309</integer>
+		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>

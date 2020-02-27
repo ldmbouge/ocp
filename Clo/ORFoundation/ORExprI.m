@@ -15,6 +15,7 @@
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORFactory.h>
+#import "fpi.h"
 
 #if __clang_major__==3 && __clang_minor__==6
 #define _Nonnull 
@@ -167,6 +168,9 @@
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprSqrtI:(id<ORExpr>) e;
+-(void) visitExprToFloatI:(id<ORExpr>) e;
+-(void) visitExprToDoubleI:(id<ORExpr>) e;
 -(void) visitExprSquareI:(id<ORExpr>) e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
@@ -365,6 +369,22 @@
    [[e expr] visit:self];   
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprSqrtI:(ORExprSqrtI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprUnaryMinusI:(ORExprUnaryMinusI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprToFloatI:(ORExprToFloatI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprToDoubleI:(ORExprToDoubleI*) e
 {
    [[e operand] visit:self];
 }
@@ -736,9 +756,37 @@
 {
    return ORTNA;
 }
+-(id<ORExpr>) isZero
+{
+   return [ORFactory exprIsZero:self track:[self tracker]];
+}
+-(id<ORExpr>) isPositive
+{
+   return [ORFactory exprIsPositive:self track:[self tracker]];
+}
+-(id<ORExpr>) isInfinite
+{
+   return [ORFactory exprIsInfinite:self track:[self tracker]];
+}
+-(id<ORExpr>) isNormal
+{
+   return [ORFactory exprIsNormal:self track:[self tracker]];
+}
+-(id<ORExpr>) isSubnormal
+{
+   return [ORFactory exprIsSubnormal:self track:[self tracker]];
+}
 -(id<ORExpr>) sqrt
 {
    return [ORFactory exprSqrt:self track:[self tracker]];
+}
+-(id<ORExpr>) toFloat
+{
+   return [ORFactory exprToFloat:self track:[self tracker]];
+}
+-(id<ORExpr>) toDouble
+{
+   return [ORFactory exprToDouble:self track:[self tracker]];
 }
 -(id<ORExpr>) abs
 {
@@ -845,6 +893,14 @@
 -(id<ORExpr>) squareTrack:(id<ORTracker>)t
 {
    return [ORFactory exprSquare:self track:t];
+}
+-(id<ORExpr>) toFloatTrack:(id<ORTracker>)t
+{
+   return [ORFactory exprToFloat:self track:t];
+}
+-(id<ORExpr>) toDoubleTrack:(id<ORTracker>)t
+{
+   return [ORFactory exprToDouble:self track:t];
 }
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t
 {
@@ -1070,18 +1126,6 @@
             i++;
     }
     return i;
-}
--(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x
-{
-   return nil;
-}
--(ORBool) canLeadToAnAbsorption
-{
-   return false;
-}
--(ORDouble) leadToACancellation:(id<ORVar>)x
-{
-    return 0.0;
 }
 @end
 
@@ -1757,11 +1801,33 @@
 }
 -(ORInt) min
 {
-   return min([_left min],[_right min]);
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return is_eqf([_left fmin], [_right fmin]);
+      case ORTDouble:
+         return is_eqf([_left dmin], [_right dmin]);
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] == [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
-   return max([_left max],[_right max]);
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return is_eqf([_left fmax], [_right fmax]);
+      case ORTDouble:
+         return is_eqf([_left dmax], [_right dmax]);
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] == [_right max];
+         break;
+   }
 }
 -(ORFloat) fmin
 {
@@ -1791,18 +1857,14 @@
 {
    [visitor visitExprAssignI: self];
 }
--(enum ORVType) vtype
-{
-   return  lookup_expr_table[[_left vtype]][[_right vtype]];
-}
 -(enum ORRelationType)type
 {
-   return ORREq;
+   return ORRSet;
 }
 -(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [rv appendFormat:@"%@ = %@",[_left description],[_right description]];
+   [rv appendFormat:@"%@ <- %@",[_left description],[_right description]];
    return rv;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
@@ -1963,6 +2025,143 @@
 }
 @end
 
+@implementation ORExprToFloatI
+-(id<ORExpr>) initORExprToFloatI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprToFloatI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"to_float(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprToDoubleI
+-(id<ORExpr>) initORExprToDoubleI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTDouble;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprToDoubleI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"to_double(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
 
 @implementation ORExprSqrtI
 -(id<ORExpr>) initORExprSqrtI: (id<ORExpr>) right
@@ -2020,6 +2219,348 @@
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"sqrt(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprIsZeroI
+-(id<ORExpr>) initORExprIsZeroI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsZeroI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isZero(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprIsPositiveI
+-(id<ORExpr>) initORExprIsPositiveI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsPositiveI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isPositive(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+@implementation ORExprIsInfiniteI
+-(id<ORExpr>) initORExprIsInfiniteI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsInfiniteI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isInfinite(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+@implementation ORExprIsNormalI
+-(id<ORExpr>) initORExprIsNormalI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsNormalI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isNormal(%@)",[_op description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+@implementation ORExprIsSubnormalI
+-(id<ORExpr>) initORExprIsSubnormalI: (id<ORExpr>) right
+{
+   self = [super init];
+   _op = right;
+   _tracker = [right tracker];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return [_op min];
+}
+-(ORInt) max
+{
+   return [_op max];
+}
+-(ORFloat) fmin
+{
+   return [_op fmin];
+}
+-(ORFloat) fmax
+{
+   return [_op fmax];
+}
+-(ORDouble) dmin
+{
+   return [_op dmin];
+}
+-(ORDouble) dmax
+{
+   return [_op dmax];
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprIsSubnormalI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"isSubnormal(%@)",[_op description]];
    return rv;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
@@ -2375,12 +2916,32 @@
 -(ORInt) min 
 {
    assert([self isConstant]);
-   return [_left min] == [_right min];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] == [_right fmin];
+      case ORTDouble:
+         return [_left dmin] == [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] == [_right min];
+         break;
+   }
 }
 -(ORInt) max 
 {
    assert([self isConstant]);
-   return [_left max] == [_right max];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] == [_right fmax];
+      case ORTDouble:
+         return [_left dmax] == [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] == [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2526,12 +3087,32 @@
 -(ORInt) min
 {
    assert([self isConstant]);
-   return [_left min] != [_right min];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] != [_right fmin];
+      case ORTDouble:
+         return [_left dmin] != [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] != [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
    assert([self isConstant]);
-   return [_left max] != [_right max];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] != [_right fmax];
+      case ORTDouble:
+         return [_left dmax] != [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] != [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2571,12 +3152,32 @@
 -(ORInt) min
 {
    assert([self isConstant]);
-   return [_left min] <= [_right min];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] <= [_right fmin];
+      case ORTDouble:
+         return [_left dmin] <= [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] <= [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
    assert([self isConstant]);
-   return [_left max] <= [_right max];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] <= [_right fmax];
+      case ORTDouble:
+         return [_left dmax] <= [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] <= [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2616,12 +3217,32 @@
 -(ORInt) min
 {
    assert([self isConstant]);
-   return [_left min] >= [_right min];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] >= [_right fmin];
+      case ORTDouble:
+         return [_left dmin] >= [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] >= [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
    assert([self isConstant]);
-   return [_left max] >= [_right max];
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] >= [_right fmax];
+      case ORTDouble:
+         return [_left dmax] >= [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] >= [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2660,13 +3281,33 @@
 }
 -(ORInt) min
 {
-    assert([self isConstant]);
-    return [_left min] < [_right min];
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] < [_right fmin];
+      case ORTDouble:
+         return [_left dmin] < [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] < [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
-    assert([self isConstant]);
-    return [_left max] < [_right max];
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] < [_right fmax];
+      case ORTDouble:
+         return [_left dmax] < [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] < [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2705,13 +3346,33 @@
 }
 -(ORInt) min
 {
-    assert([self isConstant]);
-    return [_left min] > [_right min];
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmin] > [_right fmin];
+      case ORTDouble:
+         return [_left dmin] > [_right dmin];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left min] > [_right min];
+         break;
+   }
 }
 -(ORInt) max
 {
-    assert([self isConstant]);
-    return [_left max] > [_right max];
+   assert([self isConstant]);
+   switch ([_left vtype]) {
+      case ORTFloat:
+         return [_left fmax] > [_right fmax];
+      case ORTDouble:
+         return [_left dmax] > [_right dmax];
+      case ORTBool:
+      case ORTInt:
+      default:
+         return [_left max] > [_right max];
+         break;
+   }
 }
 -(void) visit: (ORVisitor*) visitor
 {

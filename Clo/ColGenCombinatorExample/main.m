@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
         [master add: [Sum(master, j, shelves, [cut[j] mul: @([columns at: j * shelfCount + i])]) geq: @([demand at: i])]];
     }
     [master minimize: Sum(master, i, shelves, cut[i])];
-    id<ORRunnable> lp = [ORFactory MIPRunnable: master];
+    id<ORRunnable> lp = [ORFactory LPRunnable: master];
     
     id<ORRunnable> r = [ORFactory columnGeneration: lp slave:^id<ORDoubleArray>(id<ORDoubleArray> cost) {
         id<ORModel> slave = [ORFactory createModel];
@@ -47,7 +47,7 @@ int main(int argc, const char * argv[])
         [ip solve];
         id<ORSolution> sol = [[ip solutionPool] best];
         ORDouble reducedCost = [[sol objectiveValue] doubleValue] + 1;
-        NSLog(@"reduced cost %f", reducedCost);
+       NSLog(@"reduced cost %f for sol : %@", reducedCost,sol);
         id<ORDoubleArray> col = nil;
         if(reducedCost < -0.00001) {
             col = [ORFactory doubleArray: slave range: [use range] with:^ORDouble(ORInt i) {

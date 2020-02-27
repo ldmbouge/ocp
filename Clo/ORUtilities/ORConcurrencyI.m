@@ -101,6 +101,7 @@ inline static id EvtdeQueue(OREventQueue* q)
 @end
 
 typedef void (^ORIdxInt2Void)(id,ORInt);
+typedef void (^ORIdxIdxBool2Void)(id,id,ORBool);
 
 @interface ORExecuteClosureEventI : NSObject<ORExecuteEventI> {
    ORClosure _closure;
@@ -217,6 +218,15 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
    ORIdxInt2Void tClo = (ORIdxInt2Void)_closure;
    ORClosure wrap = ^{
       tClo(a0,a1);
+   };
+   [_eventList addEvent:[wrap copy]];
+}
+
+-(void) dispatchWith:(id)a0 andId:(id)a1 isStatic:(ORBool) b
+{
+   ORIdxIdxBool2Void tClo = (ORIdxIdxBool2Void)_closure;
+   ORClosure wrap = ^{
+      tClo(a0,a1,b);
    };
    [_eventList addEvent:[wrap copy]];
 }
@@ -389,6 +399,20 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
    }
 }
 
+-(void) notifyWith:(id)a0 andId:(id)a1 isStatic:(ORBool) b
+{
+   @synchronized(self) {
+      for(id event in _whenList)
+         [event dispatchWith:a0 andId:a1 isStatic:b];
+      [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
+      for(id event in _wheneverList)
+         [event dispatchWith:a0 andId:a1 isStatic:b];
+      for(ORBarrier* barrier in _sleeperList)
+         [barrier join];
+      [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
+   }
+}
+
 -(void) notifyWithSolution:(id<ORSolution>)s
 {
     @synchronized(self) {
@@ -496,6 +520,10 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
    return [[ORInformer alloc] initORInformer];
 }
 +(id<ORIdxIntInformer>) idxIntInformer
+{
+   return [[ORInformer alloc] initORInformer];
+}
++(id<ORIdxIdxBoolInformer>) idxIdxBoolInformer
 {
    return [[ORInformer alloc] initORInformer];
 }

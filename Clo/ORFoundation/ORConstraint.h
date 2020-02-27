@@ -55,9 +55,6 @@
 -(NSArray*)allVarsArray;
 -(ORBool) memberVar:(id<ORVar>) x;
 -(ORUInt) nbOccurences:(id<ORVar>)x;
--(ORBool) canLeadToAnAbsorption;
--(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x;
--(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(void) close;
 @end
 
@@ -589,6 +586,18 @@ enum ORGroupType {
 -(id<ORFloatVar>) y;
 @end
 
+@protocol ORFloatReifyAssignc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(ORFloat)        cst;
+@end
+
+@protocol ORFloatReifyAssign <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
 @protocol ORFloatReifyNEqual <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORFloatVar>) x;
@@ -643,6 +652,30 @@ enum ORGroupType {
 -(ORFloat)        cst;
 @end
 
+@protocol ORIsZero <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
+
+@protocol ORIsPositive <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
+
+@protocol ORIsInfinite <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
+
+@protocol ORIsNormal <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
+
+@protocol ORIsSubnormal <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORVar>) x;
+@end
 //-----------
 @protocol ORRationalAssign <ORConstraint>
 -(id<ORRationalVar>) left;
@@ -842,6 +875,17 @@ enum ORGroupType {
 -(ORDouble)        cst;
 @end
 
+@protocol ORDoubleReifyAssignc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
+@end
+
+@protocol ORDoubleReifyAssign <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
 
 @protocol ORDoubleAssign <ORConstraint>
 -(id<ORDoubleVar>) left;

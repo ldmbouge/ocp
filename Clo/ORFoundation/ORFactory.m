@@ -1421,7 +1421,42 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprSqrtI alloc] initORExprSqrtI:op];
-   return [self validate:o onError:"No CP tracker in Abs Expression" track:t];
+   return [self validate:o onError:"No CP tracker in sqrt Expression" track:t];
+}
++(id<ORExpr>) exprIsZero: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsZeroI alloc] initORExprIsZeroI:op];
+   return [self validate:o onError:"No CP tracker in iszero Expression" track:t];
+}
++(id<ORExpr>) exprIsPositive: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsPositiveI alloc] initORExprIsPositiveI:op];
+   return [self validate:o onError:"No CP tracker in isPositive Expression" track:t];
+}
++(id<ORExpr>) exprIsInfinite: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsInfiniteI alloc] initORExprIsInfiniteI:op];
+   return [self validate:o onError:"No CP tracker in isInfinite Expression" track:t];
+}
++(id<ORExpr>) exprIsNormal: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsNormalI alloc] initORExprIsNormalI:op];
+   return [self validate:o onError:"No CP tracker in isNormal Expression" track:t];
+}
++(id<ORExpr>) exprIsSubnormal: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprIsSubnormalI alloc] initORExprIsSubnormalI:op];
+   return [self validate:o onError:"No CP tracker in isSubnormal Expression" track:t];
+}
++(id<ORExpr>) exprToFloat: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprToFloatI alloc] initORExprToFloatI:op];
+   return [self validate:o onError:"No CP tracker in to_float Expression" track:t];
+}
++(id<ORExpr>) exprToDouble: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprToDoubleI alloc] initORExprToDoubleI:op];
+   return [self validate:o onError:"No CP tracker in to_double Expression" track:t];
 }
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t
 {
@@ -2058,6 +2093,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORFloat)
++(id<ORConstraint>) floatEqual:(id<ORTracker>)model  var: (id<ORVar>) x to: (id<ORVar>) y
+{
+   id<ORConstraint> o = [[ORFloatEqual alloc] initOREqual:x eq:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var:(id<ORFloatVar>) x to:(ORFloat)c
 {
    id<ORConstraint> o = [[ORFloatAssignC alloc] initORFloatAssignC:x to:c];
@@ -2108,15 +2149,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
 {
-    id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
-    [model trackObject:o];
-    return o;
-}
-+(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  neq: (ORFloat) c
-{
-    id<ORConstraint> o = [[ORFloatLinearNEq alloc] initFloatLinearNEq: x coef: coef cst: c];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  set: (ORFloat) c
 {
@@ -2129,7 +2164,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       [model trackObject:o];
       return o;
    }else
-      assert(NO);
+   assert(NO);
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  neq: (ORFloat) c
+{
+    id<ORConstraint> o = [[ORFloatLinearNEq alloc] initFloatLinearNEq: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
 }
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  lt: (ORFloat) c
 {
@@ -2167,6 +2208,36 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) floatIsZero:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsZero alloc] init:x isZero:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatIsPositive:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsPositive alloc] init:x isPositive:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatIsInfinite:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsInfinite alloc] init:x isInfinite:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatIsNormal:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsNormal alloc] init:x isNormal:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatIsSubnormal:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORFloatIsSubnormal alloc] init:x isSubnormal:b];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) floatAbs:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y
 {
    id<ORConstraint> o = [[ORFloatAbs alloc] initORAbs:x eqAbs:y];
@@ -2175,15 +2246,20 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {
-    id<ORConstraint> o = [[ORFloatMult alloc] initORFloatMult:z eq:x times:y];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o;
+   if ([x getId] == [y getId]) {
+      o = [[ORFloatSquare alloc] init:z square:x];
+   } else {
+      o = [[ORFloatMult alloc] initORFloatMult:z eq:x times:y];
+   }
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {
-    id<ORConstraint> o = [[ORFloatDiv alloc] initORFloatDiv:z eq:x times:y];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o = [[ORFloatDiv alloc] initORFloatDiv:z eq:x times:y];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) phi:(id<ORTracker>)model on:(id<ORExpr>) c  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y or:(id<ORFloatVar>)z
 {
@@ -2202,9 +2278,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x eq: (id<ORFloatVar>) y
 {
-    id<ORConstraint> o = [[ORFloatReifyEqual alloc] initFloatReify: b equiv: x eq: y];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o = [[ORFloatReifyEqual alloc] initFloatReify: b equiv: x eq: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x set: (id<ORFloatVar>) y
+{
+   id<ORConstraint> o = [[ORFloatReifyAssign alloc] initFloatReify: b equiv: x set: y];
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x neq: (id<ORFloatVar>) y
 {
@@ -2239,6 +2321,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x eqi: (ORFloat) i
 {
    id<ORConstraint> o = [[ORFloatReifyEqualc alloc] initFloatReify: b equiv:x eqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x seti: (ORFloat) i
+{
+   id<ORConstraint> o = [[ORFloatReifyAssignc alloc] initFloatReify: b equiv:x set: i];
    [model trackObject:o];
    return o;
 }
@@ -2490,9 +2578,45 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORDouble)
++(id<ORConstraint>) doubleEqual:(id<ORTracker>)model  var: (id<ORVar>) x to: (id<ORVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleEqual alloc] initOREqual:x eq:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) doubleSqrt:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y
 {
    id<ORConstraint> o = [[ORDoubleSqrt alloc] initORSqrt:x eqSqrt:y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsZero:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsZero alloc] init:x isZero:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsPositive:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsPositive alloc] init:x isPositive:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsInfinite:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsInfinite alloc] init:x isInfinite:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsNormal:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsNormal alloc] init:x isNormal:b];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleIsSubnormal:(id<ORTracker>)model boolean:(id<ORIntVar>)b eq:(id<ORFloatVar>)x
+{
+   id<ORConstraint> o = [[ORDoubleIsSubnormal alloc] init:x isSubnormal:b];
    [model trackObject:o];
    return o;
 }
@@ -2613,9 +2737,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) doubleMult:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z
 {
-    id<ORConstraint> o = [[ORDoubleMult alloc] initORDoubleMult:z eq:x times:y];
-    [model trackObject:o];
-    return o;
+   id<ORConstraint> o;
+   if ([x getId] == [y getId]) {
+      o = [[ORDoubleSquare alloc] init:z square:x];
+   } else {
+      o = [[ORDoubleMult alloc] initORDoubleMult:z eq:x times:y];
+   }
+   [model trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) doubleDiv:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z
 {
@@ -2626,6 +2755,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eq: (id<ORDoubleVar>) y
 {
    id<ORConstraint> o = [[ORDoubleReifyEqual alloc] initDoubleReify: b equiv: x eq: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x set: (id<ORDoubleVar>) y
+{
+   id<ORConstraint> o = [[ORDoubleReifyAssign alloc] initDoubleReify: b equiv: x set: y];
    [model trackObject:o];
    return o;
 }
@@ -2662,6 +2797,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eqi: (ORDouble) i
 {
    id<ORConstraint> o = [[ORDoubleReifyEqualc alloc] initDoubleReify: b equiv:x eqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x seti: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORDoubleReifyAssignc alloc] initDoubleReify: b equiv:x seti: i];
    [model trackObject:o];
    return o;
 }

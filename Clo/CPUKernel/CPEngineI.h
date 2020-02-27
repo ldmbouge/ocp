@@ -39,6 +39,8 @@ enum CPEngineState {
    CPClosureQueue*          _closureQueue[NBPRIORITIES];
    CPValueClosureQueue*     _valueClosureQueue;
    ORInt                    _propagating;
+   ORUInt                   _nbSRewrite;
+   ORUInt                   _nbDRewrite;
    ORUInt                   _nbpropag;
    ORUInt                   _nbFailures;
    TRInt                    _iStat;
@@ -47,6 +49,7 @@ enum CPEngineState {
    @package
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
+   id<ORIdxIdxBoolInformer>      _mergedVar;
    ORFailException*         _fex;
    id<ORIntRange>           _br;
 }
@@ -64,7 +67,7 @@ enum CPEngineState {
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>)objective;
--(void)      addInternal:(id<ORConstraint>) c;
+-(void)      addInternal:(id<CPConstraint>) c;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  enforce:(ORClosure) cl;
@@ -80,6 +83,8 @@ enum CPEngineState {
 -(ORStatus)   close;
 -(ORBool)     closed;
 -(void)       open;
+-(ORUInt) nbStaticRewrites;
+-(ORUInt) nbDynRewrites;
 -(ORUInt) nbFailures;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
@@ -87,11 +92,14 @@ enum CPEngineState {
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+-(id<ORIdxIdxBoolInformer>) mergedVar;
 
 -(id<ORBasicModel>)model;
+-(void)incNbRewrites:(ORUInt)add;
 -(void)incNbPropagation:(ORUInt)add;
 -(void)incNbFailures:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 -(id<ORIntRange>)boolRange;
 -(ORBool)isPropagating;
+-(ORBool)isPosting;
 @end

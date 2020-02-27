@@ -20,7 +20,7 @@
 
 NSString* tab(int d);
 
-#define TESTTA 1
+#define TESTTA 0
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {

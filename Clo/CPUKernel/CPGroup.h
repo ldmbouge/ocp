@@ -28,12 +28,14 @@
 @interface CPGroup : CPCoreConstraint<CPGroup>
 -(id)   init: (id<CPEngine>) engine;
 -(ORStatus) add: (id<CPConstraint>) p;
+-(void) addInternal:(id<CPConstraint>) c;
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure: (id<CPClosureList>) evt;
 -(void) scheduleValueClosure: (id<CPValueEvent>) evt;
 -(void) enumerateWithBlock:(void(^)(ORInt,id<ORConstraint>))block;
 -(void) post;
+-(ORStatus) post: (id<ORConstraint>) c;
 -(void) propagate;
 -(ORInt) size;
 @end

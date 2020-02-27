@@ -138,9 +138,16 @@ static ORVType lookup_expr_table[][10] = {
 -(ORBool) isConstant;
 -(ORBool) isVariable;
 -(id<ORExpr>) sqrt;
+-(id<ORExpr>) isZero;
+-(id<ORExpr>) isPositive;
+-(id<ORExpr>) isInfinite;
+-(id<ORExpr>) isNormal;
+-(id<ORExpr>) isSubnormal;
 -(id<ORExpr>) abs;
 -(id<ORExpr>) square;
 -(id<ORExpr>) minus;
+-(id<ORExpr>) toFloat;
+-(id<ORExpr>) toDouble;
 -(id<ORRelation>) set: (id) e;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
@@ -163,6 +170,8 @@ static ORVType lookup_expr_table[][10] = {
 -(id<ORRelation>) imply:(id)e;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
+-(id<ORExpr>) toFloatTrack:(id<ORTracker>)t;
+-(id<ORExpr>) toDoubleTrack:(id<ORTracker>)t;
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) sub: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) mul: (id) e  track:(id<ORTracker>)t;

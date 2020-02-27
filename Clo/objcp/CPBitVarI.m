@@ -365,7 +365,11 @@ static id<OROSet> collectConstraints(CPBitEventNetwork* net,id<OROSet> rv)
 {
     return [_dom domsize];
 }
-
+-(ORLDouble) domwidth
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BITVAR: method domwidth  not defined"];
+   return 0;
+}
 - (void)subsumedBy:(id<CPVar>)x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPBitVarI: method subsumedBy not defined"];

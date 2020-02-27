@@ -16,6 +16,7 @@
 #import <ORModeling/ORModeling.h>
 #import <CPUKernel/CPUKernel.h>
 //#import <objcp/CPVar.h>
+@protocol CPABSConstraint;
 
 /***************************************************************************/
 /*                  This file should be private                            */
@@ -61,7 +62,12 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(void) setAbsComputationFunction:(ABS_FUN) f;
 -(void) setAbsLimitModelVars:(ORDouble)local total:(ORDouble)global;
 -(void) setAbsLimitAdditionalVars:(ORDouble)local total:(ORDouble)global;
+-(void) setLOcc:(id<ORIntArray>) occ;
 -(void) setLevel:(ORInt) level;
+-(void) setMiddle:(ORBool) b;
+-(void) setCardMiddle:(ORBool) b;
+-(void) setPause:(ORBool) b;
+-(void) setWithRewriting:(ORBool) p;
 -(void) setOccRate:(ORDouble) r;
 -(void) setAbsRate:(ORDouble) r;
 -(void) setVariation:(ORInt) variation;
@@ -150,6 +156,7 @@ typedef enum {MAX, MIN, AMEAN, GMEAN} ABS_FUN;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end
+
 
 @protocol ORAbsElement <ORObject>
 -(ORDouble) quantity;

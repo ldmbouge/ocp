@@ -30,7 +30,7 @@
 #include "smtlib2objcp.h"
 #include "gmp.h"
 
-OBJCPGateway* objcpgw;
+id<OBJCPGateway,OBJCPIntGateway,OBJCPBVGateway,OBJCPFloatGateway,OBJCPBoolGateway> objcpgw;
 
 static void smtlib2_objcp_parser_set_logic(smtlib2_parser_interface *p,
                                            const char *logic);
@@ -168,6 +168,12 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_neg);
 SMTLIB2_OBJCP_DECLHANDLER(fp_abs);
 SMTLIB2_OBJCP_DECLHANDLER(fp_sqrt);
 
+SMTLIB2_OBJCP_DECLHANDLER(isZero);
+SMTLIB2_OBJCP_DECLHANDLER(isPositive);
+SMTLIB2_OBJCP_DECLHANDLER(isInfinite);
+SMTLIB2_OBJCP_DECLHANDLER(isNormal);
+SMTLIB2_OBJCP_DECLHANDLER(isSubnormal);
+
 #define SMTLIB2_OBJCP_SETHANDLER(tp, s, name) \
 smtlib2_term_parser_set_handler(tp, s, smtlib2_objcp_parser_mk_ ## name)
 
@@ -197,7 +203,7 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    smtlib2_parser_interface *pi;
    smtlib2_term_parser *tp;
    
-   objcpgw = [OBJCPGateway initOBJCPGateway:[ORCmdLineArgs newWith:opt.argc argv:opt.argv]];
+   objcpgw = [OBJCPProxy initOBJCPGateway:[ORCmdLineArgs newWith:opt.argc argv:opt.argv]];
    
    ret->ctx_ = [objcpgw objcp_mk_context];
    smtlib2_abstract_parser_init((smtlib2_abstract_parser *)ret,
@@ -328,6 +334,12 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.abs", fp_abs);
    SMTLIB2_OBJCP_SETHANDLER(tp, "fp.sqrt", fp_sqrt);
    
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isZero", isZero);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isPositive", isPositive);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isInfinite", isInfinite);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isNormal", isNormal);
+   SMTLIB2_OBJCP_SETHANDLER(tp, "fp.isSubnormal", isSubnormal);
+   
    /* the built-in sorts */
    smtlib2_hashtable_set(ret->sorts_,
                          (intptr_t)smtlib2_objcp_parametric_sort_new(
@@ -344,6 +356,14 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    smtlib2_hashtable_set(ret->sorts_,
                          (intptr_t)smtlib2_objcp_parametric_sort_new("FloatingPoint", smtlib2_vector_new()),
                          (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withType:OR_FLOAT]);
+   
+   smtlib2_hashtable_set(ret->sorts_,
+                         (intptr_t)smtlib2_objcp_parametric_sort_new("Float32", smtlib2_vector_new()),
+                         (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withType:OR_FLOAT]);
+   
+   smtlib2_hashtable_set(ret->sorts_,
+                         (intptr_t)smtlib2_objcp_parametric_sort_new("Float64", smtlib2_vector_new()),
+                         (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withType:OR_DOUBLE]);
    
    return ret;
 }
@@ -508,7 +528,7 @@ static smtlib2_sort smtlib2_objcp_parser_make_sort(smtlib2_parser_interface *p,
    if (ap->response_ != SMTLIB2_RESPONSE_ERROR) {
       if (index != NULL) {
          objcp_type obj = NULL;
-         objcp_var_type type = [OBJCPGateway sortName2Type:sortname];
+         objcp_var_type type = [OBJCPProxy sortName2Type:sortname];
          int width,e,m;
          switch (smtlib2_vector_size(index)) {
             case 1:
@@ -533,9 +553,9 @@ static smtlib2_sort smtlib2_objcp_parser_make_sort(smtlib2_parser_interface *p,
          smtlib2_sort ret = NULL;
          smtlib2_objcp_parametric_sort tmp = { (char *)sortname, NULL };
          ap->response_ = SMTLIB2_RESPONSE_SUCCESS;
-         if(strcmp(sortname, "Bool") == 0 || strcmp(sortname, "Float32") == 0){
+         if(strcmp(sortname, "Bool") == 0 || strcmp(sortname, "Float32") == 0 || strcmp(sortname, "Float64") == 0){
             objcp_type obj = NULL;
-            objcp_var_type type = [OBJCPGateway sortName2Type:sortname];
+            objcp_var_type type = [OBJCPProxy sortName2Type:sortname];
             obj = [objcpgw objcp_mk_type:yp->ctx_ withType:type];
             return (smtlib2_sort)obj;
          }else if(strcmp(sortname, "RoundingMode") == 0){
@@ -1339,9 +1359,12 @@ SMTLIB2_OBJCP_DECLHANDLER(fp)  {
 SMTLIB2_OBJCP_DECLHANDLER(to_fp)  {
    ORInt e = (ORInt)smtlib2_vector_at(idx, 0);
    ORInt m = (ORInt)smtlib2_vector_at(idx, 1);
+   objcp_expr expr = (objcp_expr) smtlib2_vector_at(args, 0);
+   if(smtlib2_vector_size(args) > 1)
+      expr = (objcp_expr) smtlib2_vector_at(args, 1);
    if(e == 11 && m == 53)
-      return [objcpgw objcp_mk_to_fp:(objcp_expr)smtlib2_vector_at(args, 1) to:OR_DOUBLE];
-   return [objcpgw objcp_mk_to_fp:(objcp_expr)smtlib2_vector_at(args, 1) to:OR_FLOAT];
+      return [objcpgw objcp_mk_to_fp:expr to:OR_DOUBLE];
+   return [objcpgw objcp_mk_to_fp:expr to:OR_FLOAT];
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(RNE)
@@ -1359,8 +1382,8 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_inf)
 SMTLIB2_OBJCP_DECLHANDLER(zero)
 {
    if((int)smtlib2_vector_at(idx, 0) == 8)
-      return [[[ConstantWrapper alloc] initWithFloat:(strcmp(symbol, "+zero") == 0)?+INFINITY:-INFINITY] makeVariable];
-   return [[[ConstantWrapper alloc] initWithDouble:(strcmp(symbol, "+zero") == 0)?+INFINITY:-INFINITY] makeVariable];
+      return [[[ConstantWrapper alloc] initWithFloat:(strcmp(symbol, "+zero") == 0)?+0.0f:-0.0f] makeVariable];
+   return [[[ConstantWrapper alloc] initWithDouble:(strcmp(symbol, "+zero") == 0)?+0.0:-0.0] makeVariable];
 }
 
 SMTLIB2_OBJCP_DECLHANDLER(fp_eq)
@@ -1369,22 +1392,44 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_eq)
 }
 SMTLIB2_OBJCP_DECLHANDLER(fp_lt)
 {
-   return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) lt:(objcp_expr)smtlib2_vector_at(args, 1)];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr res = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) lt:(objcp_expr)smtlib2_vector_at(args, 1)];
+   for(ORInt i = 2; i < size; i++){
+      objcp_expr next = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, i-1) lt:(objcp_expr)smtlib2_vector_at(args,i)];
+      res = [objcpgw objcp_mk_and:YCTX(ctx) left:res right:next];
+   }
+   return res;
 }
 SMTLIB2_OBJCP_DECLHANDLER(fp_gt)
 {
-   return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) gt:(objcp_expr)smtlib2_vector_at(args, 1)];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr res = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) gt:(objcp_expr)smtlib2_vector_at(args, 1)];
+   for(ORInt i = 2; i < size; i++){
+      objcp_expr next = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, i-1) gt:(objcp_expr)smtlib2_vector_at(args,i)];
+      res = [objcpgw objcp_mk_and:YCTX(ctx) left:res right:next];
+   }
+   return res;
 }
 SMTLIB2_OBJCP_DECLHANDLER(fp_leq)
 {
-   return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) leq:(objcp_expr)smtlib2_vector_at(args, 1)];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr res = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) leq:(objcp_expr)smtlib2_vector_at(args, 1)];
+   for(ORInt i = 2; i < size; i++){
+      objcp_expr next = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, i-1) leq:(objcp_expr)smtlib2_vector_at(args,i)];
+      res = [objcpgw objcp_mk_and:YCTX(ctx) left:res right:next];
+   }
+   return res;
 }
-
 SMTLIB2_OBJCP_DECLHANDLER(fp_geq)
 {
-   return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) geq:(objcp_expr)smtlib2_vector_at(args, 1)];
+   int size = (int)smtlib2_vector_size(args);
+   objcp_expr res =  [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 0) geq:(objcp_expr)smtlib2_vector_at(args, 1)];
+   for(ORInt i = 2; i < size; i++){
+      objcp_expr next = [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, i-1) geq:(objcp_expr)smtlib2_vector_at(args,i)];
+      res = [objcpgw objcp_mk_and:YCTX(ctx) left:res right:next];
+   }
+   return res;
 }
-
 SMTLIB2_OBJCP_DECLHANDLER(fp_neg)
 {
    return [objcpgw objcp_mk_fp:YCTX(ctx) neg:(objcp_expr)smtlib2_vector_at(args, 0)];
@@ -1420,6 +1465,30 @@ SMTLIB2_OBJCP_DECLHANDLER(fp_mul)
    return [objcpgw objcp_mk_fp:YCTX(ctx) x:(objcp_expr)smtlib2_vector_at(args, 1) mul:(objcp_expr)smtlib2_vector_at(args, 2)];
 }
 
+SMTLIB2_OBJCP_DECLHANDLER(isZero)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isZero:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(isPositive)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isPositive:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(isInfinite)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isInfinite:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(isNormal)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isNormal:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
+
+SMTLIB2_OBJCP_DECLHANDLER(isSubnormal)
+{
+   return [objcpgw objcp_mk_fp:YCTX(ctx) isSubnormal:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
 /*----------------------------------------------------------------------------*/
 
 static smtlib2_objcp_parametric_sort *smtlib2_objcp_parametric_sort_new(

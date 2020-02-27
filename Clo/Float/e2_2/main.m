@@ -8,47 +8,29 @@
 //should be with double but error
 
 int main(int argc, const char * argv[]) {
-   @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
-         
-         id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVar> x = [ORFactory floatVar:model low:-1e20 up:1e20 name:@"x"];
-         
-         //         id<ORDoubleVar> y = [ORFactory doubleVar:model name:@"y"];
-         //         id<ORDoubleVar> p4 = [ORFactory doubleVar:model low:-1.0 up:1.0 name:@"p4"];
-         
-         id<ORGroup> g = [args makeGroup:model];
-         
-         
-         [g add:[x leq:@(p1)]];
-         [g add:[[x plus:@(p2)] gt: @(p3)]];
-         
-         [model add:g];
-         
-         //            [model add:[res lt:fc]];
-         
-         id<ORFloatVarArray> vars = [model floatVars];
-         id<CPProgram> cp = [args makeProgram:model];
-         NSLog(@"%@",[cp concretize:g]);
-         __block bool found = false;
-         [cp solveOn:^(id<CPCommonProgram> p) {
-            [args launchHeuristic:((id<CPProgram>)p) restricted:vars];
-            NSLog(@"Valeurs solutions : \n");
-            found=true;
-            for(id<ORFloatVar> v in vars){
-               found &= [p bound: v];
-               NSLog(@"%@ : %20.20e (%s) %@",v,[p floatValue:v],[p bound:v] ? "YES" : "NO",[p concretize:v]);
-            }
-         } withTimeLimit:[args timeOut]];
-         
-         struct ORResult r = REPORT(1, [[cp engine] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-         
-      }];
-      
-      
-   }
-   return 0;
+  @autoreleasepool {
+    ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+    
+    id<ORModel> model = [ORFactory createModel];
+    id<ORFloatVar> x = [ORFactory floatVar:model low:-1e20 up:1e20 name:@"x"];
+    
+    //         id<ORDoubleVar> y = [ORFactory doubleVar:model name:@"y"];
+    //         id<ORDoubleVar> p4 = [ORFactory doubleVar:model low:-1.0 up:1.0 name:@"p4"];
+    
+    NSMutableArray* toadd = [[NSMutableArray alloc] init];
+    
+    
+    [toadd addObject:[x leq:@(p1)]];
+    [toadd addObject:[[x plus:@(p2)] gt: @(p3)]];
+    
+    
+    
+    id<CPProgram> cp = [args makeProgramWithSimplification:model constraints:toadd];
+    
+    [ORCmdLineArgs defaultRunner:args model:model program:cp restricted:@[x]];
+    
+    
+  }
+  return 0;
 }
 

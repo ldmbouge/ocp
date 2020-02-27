@@ -160,17 +160,20 @@ PORTABLE_BEGIN
 -(NSUInteger) count;
 -(ORUInt) maxFixed;
 -(ORUInt) maxId;
--(void) setMaxFixed:(ORInt)nb;
+-(void) setMaxFixed:(ORInt)nb engine:(id<OREngine>) engine;
 -(void) disable:(ORUInt) index;
 -(void) enable:(ORUInt) index;
 -(ORUInt) enableFirst;
 -(ORBool) isEnabled:(ORUInt) index;
 -(ORBool) isDisabled:(ORUInt) index;
--(ORBool) contains:(id<ORFloatVar>) v;
+-(ORBool) contains:(id<ORVar>) v;
 -(ORBool) isInitial:(ORUInt) index;
 -(ORBool) isFullyDisabled;
 -(ORBool) hasDisabled;
 -(ORInt) indexLastDisabled;
+-(ORInt) parent:(ORInt) i;
+-(void) unionSet:(ORInt) i and:(ORInt) j;
+-(void) unionSet:(ORInt) i withConcrete:(id<CPVar>) j;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine;
 -(id<ORDisabledVarArray>) initialVars:(id<ORSearchEngine>)engine maxFixed:(ORInt) nb;
 @end

@@ -184,6 +184,10 @@
 {
     return [ORFactory solution: _model solver: self];
 }
+-(void) printModelToFile: (char*) fileName
+{
+   [_lpsolver printModelToFile:fileName];
+}
 @end
 
 

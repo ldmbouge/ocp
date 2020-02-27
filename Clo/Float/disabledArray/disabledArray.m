@@ -14,6 +14,7 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPFloatVarI.h>
 #import <ORProgram/CPSolver.h>
+#import <ORFoundation/ORVar.h>
 
 @interface disabledArray : XCTestCase
 
@@ -22,30 +23,30 @@
 @implementation disabledArray
 
 - (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+   // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+   // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
 - (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+   // This is an example of a functional test case.
+   // Use XCTAssert and related functions to verify your tests produce the correct results.
 }
 
 - (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+   // This is an example of a performance test case.
+   [self measureBlock:^{
+      // Put the code you want to measure the time of here.
+   }];
 }
 
 -(void) testArrayDisabled1{
    @autoreleasepool {
       NSLog(@"test");
       id<ORModel> model = [ORFactory createModel];
-      id<ORFloatVarArray> va = [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
+      [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
       id<CPProgram> cp =  [ORFactory createCPProgram:model];
       id<ORFloatVarArray> vs = [model floatVars];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
@@ -68,7 +69,7 @@
 -(void) testArrayDisabled2{
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
-      id<ORFloatVarArray> va = [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
+      [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
       id<CPProgram> cp =  [ORFactory createCPProgram:model];
       id<ORFloatVarArray> vs = [model floatVars];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:2];
@@ -112,7 +113,7 @@
 -(void) testArrayDisabled3{
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
-      id<ORFloatVarArray> va = [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
+      [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
       id<CPProgram> cp =  [ORFactory createCPProgram:model];
       id<ORFloatVarArray> vs = [model floatVars];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:10];
@@ -159,4 +160,125 @@
    }
 }
 
+-(void) testUnionFind{
+   @autoreleasepool {
+      id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVarArray> va = [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      id<ORFloatVarArray> vs = [model floatVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:2];
+      
+      for(ORUInt k = 0; k < [vars count]; k++){
+         XCTAssertEqual([vars parent:k],k);
+      }
+      
+      [vars unionSet:1 and:2];
+      ORInt p1 = [vars parent:1];
+      ORInt p2 = [vars parent:2];
+      XCTAssertEqual(p1,p2);
+      
+      for(ORUInt k = 0; k < [vars count]; k++){
+         if(k != 1 && k != 2)
+            XCTAssertEqual([vars parent:k],k);
+      }
+      
+      [vars disable:3];
+      [vars unionSet:1 and:3];
+      [vars unionSet:1 and:4];
+      [vars unionSet:1 and:5];
+      [vars unionSet:1 and:0];
+      
+      p1 = [vars parent:1];
+      
+      for(ORUInt k = 0; k < [vars count]; k++){
+         NSLog(@"%d, %d",[vars parent:k],p1);
+         XCTAssertEqual([vars parent:k],p1);
+      }
+   }
+}
+-(void) testUnionFindDiffPath{
+   @autoreleasepool {
+      id<ORModel> model = [ORFactory createModel];
+      [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      id<ORFloatVarArray> vs = [model floatVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:2];
+      
+      [vars unionSet:1 and:2];
+      
+      [vars disable:2];
+      [vars disable:4];
+      [vars unionSet:4 and:5];
+      
+      [vars unionSet:1 and:5];
+      
+      XCTAssertEqual([vars parent:1],[vars parent:2]);
+      XCTAssertEqual([vars parent:1],[vars parent:4]);
+      XCTAssertEqual([vars parent:1],[vars parent:5]);
+   }
+}
+
+-(void) testUnionFindDiffPath2{
+   @autoreleasepool {
+      id<ORModel> model = [ORFactory createModel];
+      [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      id<ORFloatVarArray> vs = [model floatVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:3];
+      
+      [vars disable:1];
+      [vars disable:2];
+      [vars unionSet:1 and:2];
+      ORInt parent = [vars parent : 1];
+      XCTAssertFalse([vars isEnabled:1]);
+      XCTAssertFalse([vars isEnabled:2]);
+      XCTAssertTrue([vars isDisabled:1]);
+      XCTAssertTrue([vars isDisabled:2]);
+      XCTAssertTrue(parent  == 1 || parent == 2);
+      
+      [vars disable:4];
+      [vars disable:5];
+      [vars unionSet:4 and:5];
+      parent = [vars parent : 4];
+      XCTAssertFalse([vars isEnabled:4]);
+      XCTAssertFalse([vars isEnabled:5]);
+      XCTAssertTrue([vars isDisabled:4]);
+      XCTAssertTrue([vars isDisabled:5]);
+      XCTAssertTrue(parent  == 4 || parent == 5);
+      
+      
+      [vars unionSet:1 and:5];
+      for(ORInt i = 1; i <= 5; i++){
+         NSLog(@"%d",i);
+         if(i != 3)
+            XCTAssertFalse([vars isEnabled:i]);
+         else
+            XCTAssertTrue([vars isEnabled:i]);
+      }
+      XCTAssertEqual([vars parent:1],[vars parent:2]);
+      XCTAssertEqual([vars parent:1],[vars parent:4]);
+      XCTAssertEqual([vars parent:1],[vars parent:5]);
+   }
+}
+
+-(void) testDisabled
+{
+   @autoreleasepool {
+      id<ORModel> model = [ORFactory createModel];
+      [ORFactory floatVarArray:model range:RANGE(model, 0, 5) names:@"v"];
+      id<CPProgram> cp =  [ORFactory createCPProgram:model];
+      id<ORFloatVarArray> vs = [model floatVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine] nbFixed:2];
+      
+      NSLog(@"%@",vars);
+      [vars disable:0];
+      NSLog(@"%@",vars);
+      [[cp explorer] fail];
+      [[cp explorer] fail];
+      NSLog(@"%@",vars);
+      [vars disable:5];
+      [vars enable:5];
+   }
+}
 @end
+

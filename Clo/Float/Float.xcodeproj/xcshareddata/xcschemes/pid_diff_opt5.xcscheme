@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0910"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -63,11 +63,19 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-var-order maxAbs -val-order splitAbs -unique -default 6  -variation 2  -rate-model-limit 0.3 -grate-model-limit 0.8 -rate-other-limit 0.91 -grate-other-limit 0.0"
-            isEnabled = "NO">
+            argument = "-var-order maxocc -val-order dynamic5Split -uniques 2  -percent 3"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-var-order maxOcc -val-order dynamic5Split -uniques 1 -percent 8"
+            argument = "-print-solution"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-restrict"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-bds"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

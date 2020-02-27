@@ -20,22 +20,22 @@
 @class CPDoubleVarI;
 
 
-@interface CPFloatCast : CPCoreConstraint {
+@interface CPFloatCast : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _res;
    CPDoubleVarI* _initial;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x equals:(id)y  rewrite:(ORBool) rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
 //unary minus constraint
-@interface CPFloatUnaryMinus : CPCoreConstraint {
+@interface CPFloatUnaryMinus : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    CPFloatVarI* _y;
 }
--(id) init:(id)x eqm:(id)y;
+-(id) init:(id)x eqm:(id)y  rewrite:(ORBool) rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -45,7 +45,7 @@
     CPFloatVarI* _x;
     CPFloatVarI* _y;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x equals:(id)y  rewrite:(ORBool) rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -61,7 +61,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatAssign : CPCoreConstraint {
+@interface CPFloatAssign : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    CPFloatVarI* _y;
 }
@@ -71,7 +71,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatAssignC : CPCoreConstraint {
+@interface CPFloatAssignC : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    ORFloat      _c;
 }
@@ -142,7 +142,8 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatTernaryAdd : CPCoreConstraint { // z = x + y
+
+@interface CPFloatTernaryAdd : CPCoreConstraint<CPABSConstraint,CPArithmConstraint> { // z = x + y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -153,7 +154,9 @@
     CPRationalDom* _eo;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
+-(id) init:(id)z equals:(id)x plus:(id)y rewrite:(ORBool)f;
 -(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
+-(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p rewrite:(ORBool) f;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -163,7 +166,7 @@
 @end
 
 
-@interface CPFloatTernarySub : CPCoreConstraint { // z = x - y
+@interface CPFloatTernarySub : CPCoreConstraint<CPABSConstraint,CPArithmConstraint> { // z = x - y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -174,7 +177,9 @@
     CPRationalDom* _eo;
 }
 -(id) init:(id)z equals:(id)x minus:(id)y;
+-(id) init:(id)z equals:(id)x minus:(id)y rewrite:(ORBool) f;
 -(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
+-(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble)p rewrite:(ORBool) f;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
@@ -183,7 +188,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatTernaryMult : CPCoreConstraint { // z = x * y
+@interface CPFloatTernaryMult : CPCoreConstraint<CPArithmConstraint> { // z = x * y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -201,7 +206,7 @@
 @end
 
 
-@interface CPFloatTernaryDiv : CPCoreConstraint { // z = x / y
+@interface CPFloatTernaryDiv : CPCoreConstraint<CPArithmConstraint> { // z = x / y
     CPFloatVarI* _z;
     CPFloatVarI* _x;
     CPFloatVarI* _y;
@@ -262,6 +267,19 @@
     CPFloatVarI* _y;
 }
 -(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(id<CPFloatVar>)c;
+-(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(id<CPFloatVar>)c dynRewrite:(ORBool) r staticRewrite:(ORBool) s;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatReifyAssign : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   CPFloatVarI* _y;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPFloatVar>)x set:(id<CPFloatVar>)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -293,9 +311,9 @@
 
 @interface CPFloatReifyEqualc : CPCoreConstraint {
 @private
-    CPIntVar* _b;
-    CPFloatVarI* _x;
-    ORFloat      _c;
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   ORFloat      _c;
 }
 -(id) initCPReifyEqualc:(id<CPIntVar>)b when:(id<CPFloatVar>)x eqi:(ORFloat)c;
 -(void) post;
@@ -303,7 +321,17 @@
 -(ORUInt)nbUVars;
 @end
 
-
+@interface CPFloatReifyAssignc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPFloatVarI* _x;
+   ORFloat      _c;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPFloatVar>)x set:(ORFloat)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPFloatReifyLEqualc : CPCoreConstraint {
 @private
@@ -366,6 +394,17 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatSquare : CPCoreConstraint<CPArithmConstraint> {
+@private
+   CPFloatVarI* _x;
+   CPFloatVarI* _res;
+}
+-(id) init:(id<CPFloatVar>)res eq:(id<CPFloatVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPFloatVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
 -(id) init: (id<CPFloatVar>) x;
 -(void) post;
@@ -386,7 +425,7 @@
 -(id<ORFloatVar>) var;
 @end
 
-@interface CPFloatAbs : CPCoreConstraint {
+@interface CPFloatAbs : CPCoreConstraint<CPArithmConstraint> {
 @private
    CPFloatVarI* _x;
    CPFloatVarI* _res;
@@ -398,13 +437,63 @@
 @end
 
 
-@interface CPFloatSqrt : CPCoreConstraint {
+@interface CPFloatSqrt : CPCoreConstraint<CPArithmConstraint> {
 @private
    CPFloatVarI* _x;
    CPFloatVarI* _res;
    CPRationalDom* _eo;
 }
 -(id) init:(id<CPFloatVar>)res eq:(id<CPFloatVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatIsPositive : CPCoreConstraint {
+   CPIntVarI*   _b;
+   CPFloatVarI* _x;
+}
+-(id) init:(id<CPFloatVar>)x isPositive:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatIsZero : CPCoreConstraint {
+   CPIntVarI*   _b;
+   CPFloatVarI* _x;
+}
+-(id) init:(id<CPFloatVar>)x isZero:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatIsInfinite : CPCoreConstraint {
+   CPIntVarI*   _b;
+   CPFloatVarI* _x;
+}
+-(id) init:(id<CPFloatVar>)x isInfinite:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatIsNormal : CPCoreConstraint {
+   CPIntVarI*   _b;
+   CPFloatVarI* _x;
+}
+-(id) init:(id<CPFloatVar>)x isNormal:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatIsSubnormal : CPCoreConstraint {
+   CPIntVarI*   _b;
+   CPFloatVarI* _x;
+}
+-(id) init:(id<CPFloatVar>)x isSubnormal:(id<CPIntVar>)x ;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

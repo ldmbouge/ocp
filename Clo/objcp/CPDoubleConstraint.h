@@ -20,21 +20,21 @@
 @class CPFloatVarI;
 
 //unary minus constraint
-@interface CPDoubleUnaryMinus : CPCoreConstraint {
+@interface CPDoubleUnaryMinus : CPCoreConstraint<CPArithmConstraint> {
    CPDoubleVarI* _x;
    CPDoubleVarI* _y;
 }
--(id) init:(id)x eqm:(id)y;
+-(id) init:(id)x eqm:(id)y  rewrite:(ORBool)rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPDoubleCast : CPCoreConstraint {
+@interface CPDoubleCast : CPCoreConstraint<CPArithmConstraint> {
    CPDoubleVarI* _res;
    CPFloatVarI* _initial;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x equals:(id)y  rewrite:(ORBool)rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -45,7 +45,7 @@
     CPDoubleVarI* _x;
     CPDoubleVarI* _y;
 }
--(id) init:(id)x equals:(id)y;
+-(id) init:(id)x equals:(id)y rewrite:(ORBool)rewrite;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -61,9 +61,9 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPDoubleAssign : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
+@interface CPDoubleAssign : CPCoreConstraint<CPArithmConstraint> {
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
 }
 -(id) init:(id)x set:(id)y;
 -(void) post;
@@ -71,9 +71,9 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPDoubleAssignC : CPCoreConstraint {
-    CPDoubleVarI* _x;
-    ORDouble      _c;
+@interface CPDoubleAssignC : CPCoreConstraint<CPArithmConstraint> {
+   CPDoubleVarI* _x;
+   ORDouble      _c;
 }
 -(id) init:(id)x set:(ORDouble)c;
 -(void) post;
@@ -143,56 +143,63 @@
 @end
 
 
-@interface CPDoubleTernaryAdd : CPCoreConstraint { // z = x + y
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
-    ORInt _precision;
-    ORDouble _percent;
-    ORInt _rounding;
+@interface CPDoubleTernaryAdd : CPCoreConstraint<CPABSConstraint,CPArithmConstraint> { // z = x + y
+   CPDoubleVarI* _z;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+   ORInt _precision;
+   ORDouble _percent;
+   ORBool _rewriting;
+   ORInt _rounding;
     // cpjm: Use a trailed object for eo to insure that its value is saved
     CPRationalDom* _eo;
+
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
+-(id) init:(id)z equals:(id)x plus:(id)y rewriting:(ORBool) f;
 -(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p;
+-(id) init:(id)z equals:(id)x plus:(id)y kbpercent:(ORDouble)p rewriting:(ORBool) f;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
 -(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x;
--(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 
 
-@interface CPDoubleTernarySub : CPCoreConstraint { // z = x - y
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
-    ORInt _precision;
-    ORDouble _percent;
-    ORInt _rounding;
+@interface CPDoubleTernarySub : CPCoreConstraint<CPABSConstraint,CPArithmConstraint> { // z = x - y
+   CPDoubleVarI* _z;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+   ORInt _precision;
+   ORDouble _percent;
+   ORBool _rewriting;
+   ORInt _rounding;
     // cpjm: Use a trailed object for eo to insure that its value is saved
     CPRationalDom* _eo;
+
 }
 -(id) init:(id)z equals:(id)x minus:(id)y;
+-(id) init:(id)z equals:(id)x minus:(id)y rewriting:(ORBool) f;
 -(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p;
+-(id) init:(id)z equals:(id)x minus:(id)y kbpercent:(ORDouble) p rewriting:(ORBool) f;
 -(void) post;
 -(NSSet*)allVars;
 -(ORBool) canLeadToAnAbsorption;
 -(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x;
--(ORDouble) leadToACancellation:(id<ORVar>)x;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPDoubleTernaryMult : CPCoreConstraint { // z = x * y
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
-    ORInt _precision;
-    ORDouble _percent;
-    ORInt _rounding;
+@interface CPDoubleTernaryMult : CPCoreConstraint<CPArithmConstraint> { // z = x * y
+   CPDoubleVarI* _z;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+   ORInt _precision;
+   ORDouble _percent;
+   ORInt _rounding;
     // cpjm: Use a trailed object for eo to insure that its value is saved
     CPRationalDom* _eo;
+
 }
 -(id) init:(id)z equals:(id)x mult:(id)y ;
 -(id) init:(id)z equals:(id)x mult:(id)y kbpercent:(ORDouble) p;
@@ -202,15 +209,15 @@
 @end
 
 
-@interface CPDoubleTernaryDiv : CPCoreConstraint { // z = x / y
-    CPDoubleVarI* _z;
-    CPDoubleVarI* _x;
-    CPDoubleVarI* _y;
-    ORInt _precision;
-    ORDouble _percent;
-    ORInt _rounding;
-    // cpjm: Use a trailed object for eo to insure that its value is saved
-    CPRationalDom* _eo;
+@interface CPDoubleTernaryDiv : CPCoreConstraint<CPArithmConstraint> { // z = x / y
+   CPDoubleVarI* _z;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+   ORInt _precision;
+   ORDouble _percent;
+   ORInt _rounding;
+   // cpjm: Use a trailed object for eo to insure that its value is saved
+   CPRationalDom* _eo;
 }
 -(id) init:(id)z equals:(id)x div:(id)y ;
 -(id) init:(id)z equals:(id)x div:(id)y kbpercent:(ORDouble) p;
@@ -262,7 +269,7 @@
     CPDoubleVarI* _x;
     CPDoubleVarI* _y;
 }
--(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(id<CPDoubleVar>)c;
+-(id) initCPReifyEqual:(id<CPIntVar>)b when:(id<CPDoubleVar>)x eqi:(id<CPDoubleVar>)c dynRewrite:(ORBool) r staticRewrite:(ORBool) s;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -304,7 +311,29 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPDoubleReifyAssignc : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   ORDouble      _c;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPDoubleVar>)x set:(ORDouble)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
+@interface CPDoubleReifyAssign : CPCoreConstraint {
+@private
+   CPIntVar* _b;
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _y;
+}
+-(id) initCPReify:(id<CPIntVar>)b when:(id<CPDoubleVar>)x set:(id<CPDoubleVar>)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPDoubleReifyLEqualc : CPCoreConstraint {
 @private
@@ -368,7 +397,7 @@
 @end
 
 
-@interface CPDoubleAbs : CPCoreConstraint {
+@interface CPDoubleAbs : CPCoreConstraint<CPArithmConstraint> {
 @private
    CPDoubleVarI* _x;
    CPDoubleVarI* _res;
@@ -379,13 +408,73 @@
 -(ORUInt)nbUVars;
 @end
 
-
-@interface CPDoubleSqrt : CPCoreConstraint {
+@interface CPDoubleSquare : CPCoreConstraint<CPArithmConstraint> {
 @private
    CPDoubleVarI* _x;
    CPDoubleVarI* _res;
 }
 -(id) init:(id<CPDoubleVar>)res eq:(id<CPDoubleVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleSqrt : CPCoreConstraint<CPArithmConstraint> {
+@private
+   CPDoubleVarI* _x;
+   CPDoubleVarI* _res;
+}
+-(id) init:(id<CPDoubleVar>)res eq:(id<CPDoubleVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsPositive : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isPositive:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsZero : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isZero:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsInfinite : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isInfinite:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsNormal : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isNormal:(id<CPIntVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPDoubleIsSubnormal : CPCoreConstraint {
+   CPIntVar*   _b;
+   CPDoubleVarI* _x;
+}
+-(id) init:(id<CPDoubleVar>)x isSubnormal:(id<CPIntVar>)x ;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORSemBDSController.h>
+@class CPEngineI;
 
 @interface BDSStack : NSObject {
    struct BDSNode {
@@ -25,6 +26,7 @@
 }
 -(id)initBDSStack:(ORInt)mx;
 -(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d ov:(id<ORObjectiveValue>)ov;
+-(void)push:(struct BDSNode)n;
 -(struct BDSNode)pop;
 -(struct BDSNode)steal;
 -(ORInt)size;
@@ -52,6 +54,7 @@
 }
 -(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d ov:(id<ORObjectiveValue>)ov
 {
+   //NSLog(@"push size: %d cp : %@",_sz,cp);
    if (_sz >= _mx) {
       _mx <<= 1;      
       _tab = realloc(_tab,sizeof(struct BDSNode)* _mx);
@@ -59,9 +62,39 @@
    _tab[_sz] = (struct BDSNode){k,cp,d,ov};
    ++_sz;
 }
+-(void)push:(struct BDSNode)n
+{
+    if (_sz >= _mx) {
+        _mx <<= 1;
+        _tab = realloc(_tab,sizeof(struct BDSNode)* _mx);
+    }
+    _tab[_sz++] = n;
+}
+
 -(struct BDSNode)pop
 {
-   return _tab[--_sz];
+   // we pick the first checkpoint + continuation
+   // the continuation should not be administrative one
+   // pack the tab again and return the node.
+/*   ORInt selection = -1;
+   for(ORInt i=0;i<_sz;i++) {
+      if (!_tab[i]._cont.admin) {
+         selection = i;
+         break;
+      }
+   }
+   if (selection != -1) {
+      struct BDSNode stolen = _tab[selection];
+      _sz--;
+      //NSLog(@"pop size: %d cp : %@",_sz,stolen._cp);
+      for(ORInt i=selection;i < _sz;i++)
+         _tab[i] = _tab[i+1];
+      return stolen;
+   } else {
+      struct BDSNode stolen = {nil,nil,0,nil};
+      return stolen;
+ } */
+    return _tab[--_sz];
 }
 -(struct BDSNode)steal
 {
@@ -148,9 +181,16 @@
    id<ORCheckpoint>   _atRoot;
    id<ORSearchEngine> _solver;
    id<ORPost>          _model;
+   ORInt               _nextD;
+   ORInt               _initD;
 }
 
 - (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
+{
+   return [self initTheController:tracer engine:engine posting:model];
+}
+
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model withDisc:(ORInt) nb incr:(ORInt) inc
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -159,7 +199,9 @@
    _tab  = [[BDSStack alloc] initBDSStack:32];
    _next = [[BDSStack alloc] initBDSStack:32];
    _nbDisc = 0;
-   _maxDisc = [[ORDiscrepancy alloc] init];
+   _maxDisc = [[ORDiscrepancy alloc] initWith:nb];
+   _nextD = inc;
+   _initD = inc;
    return self;
 }
 
@@ -172,13 +214,17 @@
    [_maxDisc release];
    [super dealloc];
 }
++(id<ORSearchController>)protoWithDisc:(ORInt) nb times:(ORInt) t
+{
+   return [[ORSemBDSController alloc] initTheController:nil engine:nil posting:nil withDisc:nb incr:t];
+}
 +(id<ORSearchController>)proto
 {
-   return [[ORSemBDSController alloc] initTheController:nil engine:nil posting:nil];
+   return [[ORSemBDSController alloc] initTheController:nil engine:nil posting:nil withDisc:0 incr:2];
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_solver posting:_model];
+   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_solver posting:_model withDisc:_initD incr:_nextD];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
@@ -186,7 +232,7 @@
 // Clone makes a shallow copy (takes a reference) to the bound on the maximum # of discrepancies. That's different from
 // copy makes a deep copy of the bound (good for thread separation). 
 {
-   ORSemBDSController* c = [[ORSemBDSController alloc] initTheController:_tracer engine:_solver posting:_model];
+   ORSemBDSController* c = [[ORSemBDSController alloc] initTheController:_tracer engine:_solver posting:_model withDisc:_initD incr:_nextD];
    c->_atRoot = [_atRoot grab];
    [c->_maxDisc release];
    c->_maxDisc = [_maxDisc retain];  // sharing accross instantiation of this proto.
@@ -224,12 +270,12 @@
 -(ORInt) addChoice: (NSCont*)k 
 {
    id<ORCheckpoint> snap = [_tracer captureCheckpoint];
-/*
-   if (_nbDisc + 1 < _maxDisc)
-      NSLog(@"adding snaphot to current wave: %@",snap);
-   else
-      NSLog(@"adding snaphot to next    wave: %@",snap);
-*/
+    
+//   if (_nbDisc + 1 < _maxDisc.bound)
+//      NSLog(@"adding snaphot to current wave: %d - %@ - %@",_nbDisc+1,_maxDisc,snap);
+//   else
+//      NSLog(@"adding snaphot to next    wave: %@",snap);
+
    id<ORObjectiveValue> ov = [[_solver objective] primalValue];
    if (_nbDisc + 1 < _maxDisc.bound)
       [_tab  pushCont:k cp:snap discrepancies:_nbDisc+1 ov:ov];
@@ -243,18 +289,23 @@
          return;  // Nothing left to process. Go back!
       else {
          if ([_tab empty]) {
-            NSLog(@"**************************** next wave: [%d]",[_next size]);
-            BDSStack* tmp = _tab;
+            NSLog(@"**************************** next wave: [%d] #failure [%d]",[_next size], [((CPEngineI*)_solver) nbFailures]);
+//            NSLog(@"**************************** next wave: [%d]",[_next size]);
+/*            BDSStack* tmp = _tab;
             _tab = _next;
             _next = tmp;
-            [_maxDisc setBound:_maxDisc.bound + 3];
+ */
+             while (_next.size > 0)
+                 [_tab push:_next.pop];
+            [_maxDisc setBound:_maxDisc.bound * 5];
          }
+//         NSLog(@"BDSStack -- fail call -- : %d %d",_tab.size,_next.size);
          struct BDSNode node = [_tab pop];
          _nbDisc = node._disc;
-         //NSLog(@"Restoring: %@", node._cp);
+//         NSLog(@"Restoring: %@", node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver model:_model];
          [node._cp letgo];
-         //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
+//         NSLog(@"BDS restoreCheckpoint status is: %d for thread %p admin? %d",status,[NSThread currentThread],node._cont.admin);
          if (node._cont &&  (node._cont.admin || status != ORFailure))
             [node._cont call];
          else

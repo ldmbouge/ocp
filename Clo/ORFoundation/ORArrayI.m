@@ -210,6 +210,14 @@
 {
    return _nb;
 }
+-(void) incrAt:(ORInt)index
+{
+   _array[index]++;
+}
+-(void) decrAt:(ORInt)index
+{
+   _array[index]--;
+}
 -(NSString*)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

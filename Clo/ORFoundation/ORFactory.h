@@ -272,6 +272,13 @@ PORTABLE_BEGIN
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSqrt: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsZero: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsPositive: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsInfinite: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsNormal: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprIsSubnormal: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprToFloat: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprToDouble: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (PNULLABLE ORInt2Bool) f of: (ORInt2Expr) e;
@@ -391,8 +398,15 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORFloat)
+
++(id<ORConstraint>) floatEqual:(id<ORTracker>)model  var: (id<ORVar>) x to: (id<ORVar>) y;
 +(id<ORConstraint>) floatAbs:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
 +(id<ORConstraint>) floatSqrt:(id<ORTracker>)model  var: (id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsZero:(id<ORTracker>)model      boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsPositive:(id<ORTracker>)model  boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsInfinite:(id<ORTracker>)model  boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsNormal:(id<ORTracker>)model    boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
++(id<ORConstraint>) floatIsSubnormal:(id<ORTracker>)model boolean: (id<ORIntVar>)x eq:(id<ORFloatVar>)y;
 +(id<ORConstraint>) floatUnaryMinus:(id<ORTracker>)model  var: (id<ORFloatVar>)x eqm:(id<ORFloatVar>)y;
 +(id<ORConstraint>) floatAssignC: (id<ORTracker>) model var: (id<ORFloatVar>)x to:(ORFloat)c;
 +(id<ORConstraint>) floatAssign: (id<ORTracker>) model var: (id<ORFloatVar>)x to: (id<ORFloatVar>)y;
@@ -415,7 +429,9 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) phi:(id<ORTracker>)model on_boolean:(id<ORIntVar>) b  var: (id<ORFloatVar>)x with:(id<ORFloatVar>)y or:(id<ORFloatVar>)z;
 
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x eqi: (ORFloat) i;
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x seti: (ORFloat) i;
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x eq: (id<ORFloatVar>) y;
++(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x set: (id<ORFloatVar>) y;
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x neq: (id<ORFloatVar>) y;
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x neqi: (ORFloat) i;
 +(id<ORConstraint>) floatReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORFloatVar>) x leqi: (ORFloat) i;
@@ -467,8 +483,14 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORDouble)
++(id<ORConstraint>) doubleEqual:(id<ORTracker>)model  var: (id<ORVar>) x to: (id<ORVar>) y;
 +(id<ORConstraint>) doubleAbs:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleSqrt:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsZero:(id<ORTracker>)model      boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsPositive:(id<ORTracker>)model  boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsInfinite:(id<ORTracker>)model  boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsNormal:(id<ORTracker>)model    boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
++(id<ORConstraint>) doubleIsSubnormal:(id<ORTracker>)model boolean: (id<ORIntVar>)x eq:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleCast:(id<ORTracker>)model from:(id<ORFloatVar>) x res:(id<ORDoubleVar>)var;
 +(id<ORConstraint>) doubleUnaryMinus:(id<ORTracker>)model  var: (id<ORDoubleVar>)x eqm:(id<ORDoubleVar>)y;
 +(id<ORConstraint>) doubleEqualc: (id<ORTracker>) model var: (id<ORDoubleVar>)x eqc:(ORDouble)c;
@@ -488,6 +510,8 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) doubleSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  geq: (ORDouble) c;
 +(id<ORConstraint>) doubleMult:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z;
 +(id<ORConstraint>) doubleDiv:(id<ORTracker>)model  var: (id<ORDoubleVar>)x by:(id<ORDoubleVar>)y equal:(id<ORDoubleVar>)z;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x seti: (ORDouble) i;
++(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x set: (id<ORDoubleVar>) y;
 +(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eqi: (ORDouble) i;
 +(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x eq: (id<ORDoubleVar>) y;
 +(id<ORConstraint>) doubleReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORDoubleVar>) x neq: (id<ORDoubleVar>) y;
@@ -569,6 +593,7 @@ PORTABLE_END
 #define And(track,P,R,E)      [ORFactory land:track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 
 #define LOG(ls,l,fmt, ...)    if(l<=ls) NSLog(fmt, ##__VA_ARGS__);
+#define LOGSTRICT(ls,l,fmt, ...)    if(l==ls) NSLog(fmt, ##__VA_ARGS__);
 #define ONLY_DEBUG(ls,l,B)    if(l<=ls) B;
 
 // [ldm] To check. Not clear why there is such a macro.

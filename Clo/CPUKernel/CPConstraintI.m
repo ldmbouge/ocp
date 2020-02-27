@@ -78,6 +78,11 @@
 {
    return _group;
 }
+-(void) addConstraint:(id<CPConstraint>) c engine:(id<CPEngine>)engine
+{
+   if(_group == nil)      [engine addInternal:c];
+   else [_group addInternal:c];
+}
 -(void) toCheck
 {
    _todo = CPTocheck;
@@ -108,18 +113,6 @@
       }
       return i;
    }
-}
--(ORBool) canLeadToAnAbsorption
-{
-   return false;
-}
--(id<CPVar>) varSubjectToAbsorption:(id<CPVar>)x
-{
-   return nil;
-}
--(ORDouble) leadToACancellation:(id<ORVar>)x
-{
-    return 0.0;
 }
 @end
 

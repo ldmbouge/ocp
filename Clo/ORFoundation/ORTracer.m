@@ -223,7 +223,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 }
 -(void)dealloc
 {
-   NSLog(@"dealloc checkpoint %p\n",self);
+   //NSLog(@"dealloc checkpoint %p\n",self);
    [_path release];
    [_mt release];
    [super dealloc];
@@ -457,14 +457,13 @@ static __thread id checkPointCache = NULL;
 }
 -(ORInt) pushNode
 {
-   //NSLog(@"IN: %d - %d", [_cmds size], [_trStack size]);
-   //assert([_cmds size] == [_trStack size]);
+//   assert([_cmds size] == [_trStack size]);
    [_trStack pushNode: _lastNode];
    [_cmds pushList: _lastNode memory:[_mt trailSize]];     // add a list of constraint
    [_trail incMagic];
    _lastNode++;
-   
-   //assert([_cmds size] == [_trStack size]);
+
+//   assert([_cmds size] == [_trStack size]);
    assignTRInt(&_level,_level._val+1,_trail);
    return _lastNode - 1;
 }
@@ -476,7 +475,7 @@ static __thread id checkPointCache = NULL;
    // Indeed, any change must be trailed in the parent node again
    // so the magic must increase.
    [_trail incMagic];
-   //assert([_cmds size] == [_trStack size]);
+//   assert([_cmds size] == [_trStack size]);
    return theList;
 }
 -(id) popToNode: (ORInt) n

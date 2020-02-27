@@ -203,6 +203,14 @@
 -(ORInt) cst;
 @end
 
+@interface ORFloatEqual : OREqual<OREqual>
+-(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y;
+@end
+
+@interface ORDoubleEqual : OREqual<OREqual>
+-(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y;
+@end
+
 @interface ORAffine :ORConstraintI<ORAffine>
 -(ORAffine*)initORAffine: (id<ORIntVar>) y eq:(ORInt)a times:(id<ORIntVar>) x plus: (ORInt) b;
 -(id<ORIntVar>) left;
@@ -254,6 +262,12 @@
 -(ORSquare*)init:(id<ORVar>)z square:(id<ORVar>)x;
 -(id<ORVar>)res;
 -(id<ORVar>)op;
+@end
+
+@interface ORFloatSquare : ORSquare
+@end
+
+@interface ORDoubleSquare : ORSquare
 @end
 
 @interface ORRealSquare : ORSquare
@@ -613,6 +627,66 @@
 -(id<ORVar>) right;
 @end
 
+@interface ORFloatIsZero : ORConstraintI <ORIsZero>
+-(ORFloatIsZero*) init:(id<ORVar>) x isZero:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORFloatIsPositive : ORConstraintI <ORIsPositive>
+-(ORFloatIsPositive*) init:(id<ORVar>) x isPositive:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORFloatIsInfinite : ORConstraintI <ORIsInfinite>
+-(ORFloatIsInfinite*) init:(id<ORVar>) x isInfinite:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORFloatIsNormal : ORConstraintI <ORIsNormal>
+-(ORFloatIsNormal*) init:(id<ORVar>) x isNormal:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORFloatIsSubnormal : ORConstraintI <ORIsSubnormal>
+-(ORFloatIsSubnormal*) init:(id<ORVar>) x isSubnormal:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsZero : ORConstraintI <ORIsZero>
+-(ORDoubleIsZero*) init:(id<ORVar>) x isZero:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsPositive : ORConstraintI <ORIsPositive>
+-(ORDoubleIsPositive*) init:(id<ORVar>) x isPositive:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsInfinite : ORConstraintI<ORIsInfinite>
+-(ORDoubleIsInfinite*) init:(id<ORVar>) x isInfinite:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsNormal : ORConstraintI<ORIsNormal>
+-(ORDoubleIsNormal*) init:(id<ORVar>) x isNormal:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
+@interface ORDoubleIsSubnormal : ORConstraintI <ORIsSubnormal>
+-(ORDoubleIsSubnormal*) init:(id<ORVar>) x isSubnormal:(id<ORVar>) b;
+-(id<ORVar>) b;
+-(id<ORVar>) x;
+@end
+
 @interface ORDoubleCast : ORConstraintI<ORCast>
 -(ORDoubleCast*)init:(id<ORVar>)x eq:(id<ORVar>)y;
 -(id<ORVar>) res;
@@ -629,6 +703,10 @@
 -(ORFloatReifyEqualc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x eqi:(ORFloat)c;
 @end
 
+@interface ORFloatReifyAssignc : ORConstraintI<ORFloatReifyAssignc>
+-(ORFloatReifyAssignc*)initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x set:(ORFloat)c;
+@end
+
 @interface ORFloatReifyNEqualc : ORConstraintI<ORFloatReifyNEqualc>
 -(ORFloatReifyNEqualc*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x neqi:(ORFloat)c;
 -(id<ORIntVar>) b;
@@ -638,6 +716,13 @@
 
 @interface ORFloatReifyEqual : ORConstraintI<ORFloatReifyEqual>
 -(ORFloatReifyEqual*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x eq:(id<ORFloatVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORFloatVar>) x;
+-(id<ORFloatVar>) y;
+@end
+
+@interface ORFloatReifyAssign : ORConstraintI<ORFloatReifyAssign>
+-(ORFloatReifyAssign*) initFloatReify:(id<ORIntVar>)b equiv:(id<ORFloatVar>)x set:(id<ORFloatVar>)y;
 -(id<ORIntVar>) b;
 -(id<ORFloatVar>) x;
 -(id<ORFloatVar>) y;
@@ -909,6 +994,20 @@
 -(id<ORIntVar>) b;
 -(id<ORDoubleVar>) x;
 -(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyAssign : ORConstraintI<ORDoubleReifyAssign>
+-(ORDoubleReifyAssign*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x set:(id<ORDoubleVar>)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(id<ORDoubleVar>) y;
+@end
+
+@interface ORDoubleReifyAssignc : ORConstraintI<ORDoubleReifyAssignc>
+-(ORDoubleReifyAssignc*) initDoubleReify:(id<ORIntVar>)b equiv:(id<ORDoubleVar>)x seti:(ORDouble)y;
+-(id<ORIntVar>) b;
+-(id<ORDoubleVar>) x;
+-(ORDouble)        cst;
 @end
 
 @interface ORDoubleReifyNEqual : ORConstraintI<ORDoubleReifyNEqual>

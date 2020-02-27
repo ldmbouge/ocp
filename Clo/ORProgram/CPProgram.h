@@ -82,18 +82,18 @@ PORTABLE_BEGIN
 -(void)          minMagnitudeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          maxDegreeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          minDegreeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
--(void) maxOccurencesRatesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
+-(void)          maxOccurencesRatesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          maxOccurencesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
+-(void)          maxLOccurencesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          minOccurencesSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          maxAbsorptionSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
+-(void)          maxOccDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
+-(void)          maxOccTBDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
+-(void)          maxFullAbsorptionSearch:  (id<ORDisabledVarArray>) x;
 -(void)          minAbsorptionSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
--(void)          maxAbsorptionSearch: (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          maxAbsorptionSearchAll: (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
--(void)          minCancellationSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
--(void)          maxCancellationSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          combinedAbsWithDensSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          combinedDensWithAbsSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
--(void)          maxAbsDensSearch:  (id<ORDisabledVarArray>) x default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          switchedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          lexicalOrderedSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
 -(void)          branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt, id<ORDisabledVarArray>))b;
@@ -103,7 +103,6 @@ PORTABLE_BEGIN
 
 
 
--(ORDouble)      computeAbsorptionRate:(id<ORVar>) x;
 -(id<ORIdArray>) computeAbsorptionsQuantities:(id<ORDisabledVarArray>) vars;
 -(void)          floatStaticSplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          floatStatic3WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
@@ -111,7 +110,7 @@ PORTABLE_BEGIN
 -(void)          floatStatic6WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          floatSplit: (ORUInt) x   withVars:(id<ORDisabledVarArray>) vars;
 -(void)          float3BSplit:(ORUInt) i call:(SEL)s  withVars:(id<ORDisabledVarArray>) x;
--(void)          floatAbsSplit: (ORUInt) x by:(id<CPVar>) y    withVars:(id<ORDisabledVarArray>) vars default:(void(^)(ORUInt,id<ORDisabledVarArray>))b;
+-(void)          floatAbsSplit:(ORUInt)i by:(id<CPVar>) y vars:(id<ORDisabledVarArray>) x;
 -(void)          float3WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          float5WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
 -(void)          float6WaySplit: (ORUInt) i   withVars:(id<ORDisabledVarArray>) x;
@@ -263,14 +262,14 @@ PORTABLE_BEGIN
 -(ORInt)  regret:(id<ORIntVar>)x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
--(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>)vs;
--(NSArray*)  collectAllVarWithAbs:(id<ORFloatVarArray>)vs withLimit:(ORDouble) limit;
+-(NSArray*)  collectAllVarWithAbs:(id<ORVarArray>)vs;
+-(NSArray*)  collectAllVarWithAbs:(id<ORVarArray>)vs withLimit:(ORDouble) limit;
+-(void)      collectInputVar:(id<ORVarArray>) vs res:(NSMutableArray*) ar;
+-(NSMutableArray*) collectInputVariables;
 -(ORUInt)  maxOccurences:(id<ORVar>) x;
 -(ORLDouble) density: (id<ORVar>) x;
 -(ORDouble) cardinality: (id<ORVar>) x;
--(ORUInt)  countMemberedConstraints:(id<ORVar>) x;
 -(ORDouble) fdomwidth:(id<ORVar>) x;
--(ORDouble)  cancellationQuantity:(id<ORVar>) x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
 -(ORDouble) domwidth: (id<ORRealVar>)x;
