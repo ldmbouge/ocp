@@ -1170,7 +1170,7 @@
 }
 -(id<ORRationalInterval>)proj_inter:(id<ORRationalInterval>)ri
 {
-   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z = [[[ORRationalInterval alloc] init] autorelease];
    [z set: self];
    z.changed = 0;
    
@@ -1197,14 +1197,12 @@
       [plow release];
       [epsilon release];
    }
-   
-   [z autorelease];
-   
+      
    return z;
 }
 -(id<ORRationalInterval>)proj_inter:(id<ORRational>)inf and:(id<ORRational>)sup
 {
-   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
+   id<ORRationalInterval> z = [[[ORRationalInterval alloc] init] autorelease];
    [z set: self];
    z.changed = 0;
    
@@ -1231,8 +1229,6 @@
       [plow release];
       [epsilon release];
    }
-
-   [z autorelease];
    
    return z;
 }

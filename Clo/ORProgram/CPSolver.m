@@ -2174,7 +2174,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
 -(void) branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b compute:(id<ORRational>(^)(NSMutableArray*,NSMutableArray*))errorComputed
 {
    /* Branch-and-bound variables */
-   TRInt _index;
+   //TRInt _index;
    id<ORRational> zero = [[[ORRational alloc] init] autorelease];
    [zero setZero];
    
@@ -2204,7 +2204,9 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
    }
                           ];
    
-   assignTRInt(&_index, [select min].index, _trail);
+   indexSplit = makeTRInt(_trail,[select min].index);
+   //assignTRInt(&indexSplit, 0, _trail);
+   //limitCounter = makeTRInt(_trail, 0);
    do {
       nbBoxExplored++;
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
@@ -2370,14 +2372,17 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          ORSelectorResult i = [select min]; // select variable minimizing criteria from defined in select
          ORSelectorResult I = [select max]; // select variable maximizing criteria from defined in select
          
-         b(_index._val, x);
+         // Temporary fix - change so that indexSplit do not backtrack after split
+         ORInt oldVal = indexSplit._val;
+         b(indexSplit._val, x);
+         indexSplit._val = oldVal;
          nbBoxGenerated += 2;
          
          /* update index of variable chosen for splitting */
-         if (_index._val + 1 > I.index)
-            assignTRInt(&_index, i.index, _trail);
+         if (indexSplit._val + 1 > I.index)
+            assignTRInt(&indexSplit, i.index, _trail);
          else
-            assignTRInt(&_index, _index._val+1, _trail);
+            assignTRInt(&indexSplit, indexSplit._val+1, _trail);
       }
    } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
 }
@@ -2385,7 +2390,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
 -(void) branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b compute:(id<ORRational>(^)(NSMutableArray*,NSMutableArray*))errorComputed
 {
    /* Branch-and-bound variables */
-   TRInt _index;
+   //TRInt _index;
    id<ORRational> zero = [[[ORRational alloc] init] autorelease];
    [zero setZero];
    
@@ -2415,7 +2420,8 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
    }
                           ];
    
-   assignTRInt(&_index, [select min].index, _trail);
+   //assignTRInt(&_index, [select min].index, _trail);
+   indexSplit = makeTRInt(_trail,[select min].index);
    do {
       nbBoxExplored++;
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
@@ -2491,7 +2497,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
                            if(![currentVar bound]){
                               if(nv == nvar){
                                  old_value = [[arrayVarValue objectAtIndex:nv] floatValue];
-                                 value = nextafter([[arrayVarValue objectAtIndex:nv] floatValue], (direction == 1) ? (+INFINITY) : (-INFINITY));
+                                 value = nextafterf([[arrayVarValue objectAtIndex:nv] floatValue], (direction == 1) ? (+INFINITY) : (-INFINITY));
                                  [arrayVarValue replaceObjectAtIndex:nv withObject:[NSNumber numberWithFloat:value]];
                                  
                               }
@@ -2519,7 +2525,7 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
                         [guess_error set:tmp_error];
                         improved_var = true;
                      } else {
-                        // We failed to improve => back to preivous value
+                        // We failed to improve => back to previous value
                         [arrayVarValue replaceObjectAtIndex:nvar withObject:[NSNumber numberWithFloat:old_value]];
                         [arrayVarError replaceObjectAtIndex:nvar withObject:olderr];
                         if((!improved_var) && (direction == 1)){
@@ -2579,14 +2585,17 @@ id<ORRational> verhulst_r(NSMutableArray* arrayValue)
          ORSelectorResult i = [select min]; // select variable minimizing criteria from defined in select
          ORSelectorResult I = [select max]; // select variable maximizing criteria from defined in select
          
-         b(_index._val, x);
+         // Temporary fix - change so that indexSplit do not backtrack after split
+         ORInt oldVal = indexSplit._val;
+         b(indexSplit._val, x);
+         indexSplit._val = oldVal;
          nbBoxGenerated += 2;
          
          /* update index of variable chosen for splitting */
-         if (_index._val + 1 > I.index)
-            assignTRInt(&_index, i.index, _trail);
+         if (indexSplit._val + 1 > I.index)
+            assignTRInt(&indexSplit, i.index, _trail);
          else
-            assignTRInt(&_index, _index._val+1, _trail);
+            assignTRInt(&indexSplit, indexSplit._val+1, _trail);
       }
    } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
 }

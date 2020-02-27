@@ -58,6 +58,7 @@ NSDate *branchAndBoundTime = nil;
 /* Global variables to compute when a box can be discarded */
 ORDouble boxCardinality = -1;
 TRInt limitCounter;
+TRInt indexSplit;
 ORInt nbConstraint = 0;
 
 ORInt nbBoxExplored = 0;

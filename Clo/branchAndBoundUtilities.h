@@ -31,6 +31,7 @@ extern NSDate *branchAndBoundStart;
 extern NSDate *branchAndBoundTime;
 extern ORDouble boxCardinality;
 extern TRInt limitCounter;
+extern TRInt indexSplit;
 extern ORInt nbConstraint;
 
 extern ORInt nbBoxExplored;
