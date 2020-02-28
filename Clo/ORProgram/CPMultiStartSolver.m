@@ -1066,10 +1066,11 @@
 {
    [[self worker] switchedSearch:x do:b];
 }
-- (ORUInt)countMemberedConstraints:(PNONNULL id<ORVar>)x
+// Not used right now, uncomment once implemented by hzi
+/*- (ORUInt)countMemberedConstraints:(PNONNULL id<ORVar>)x
 {
    return [[self worker] countMemberedConstraints:x];
-}
+}*/
 -(ORDouble) cardinality: (id<ORVar>) x
 {
    return [[self worker] cardinality: x];
