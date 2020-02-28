@@ -1472,7 +1472,7 @@
 }
 -(ORInt) parentConcrete:(id<CPVar>) i
 {
-   id pi = _parentConcrete[@(getId(i))];
+   id pi = _parentConcrete[@(getId((ORObject*)i))];
    if(pi == nil)
       return -1;
    ORInt piv = [(id<ORTrailableInt>)pi value];
@@ -1487,9 +1487,9 @@
    ORInt ip = [self parentConcrete:cx];
    ORInt jp = [self parent:j];
    if(ip == -1){
-      _parentConcrete[@(getId(cx))] = [ORFactory trailableInt:_engine value:jp];
+      _parentConcrete[@(getId((ORObject*)cx))] = [ORFactory trailableInt:_engine value:jp];
       [[_engine trail] trailClosure:^{
-         [_parentConcrete removeObjectForKey:@(getId(cx))];
+         [_parentConcrete removeObjectForKey:@(getId((ORObject*)cx))];
       }];
       ip = jp;
    }
