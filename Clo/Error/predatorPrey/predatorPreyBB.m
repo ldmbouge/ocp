@@ -277,6 +277,9 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
          if (search)
             [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
+            }
+                             compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+               return [[ORRational alloc] init];
             }];
       }];
    }
@@ -284,8 +287,8 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //predatorPrey_f(1, argc, argv);
-   predatorPrey_d(1, argc, argv);
-   //predatorPrey_d_c(1, argc, argv);
+   //predatorPrey_d(1, argc, argv);
+   predatorPrey_d_c(1, argc, argv);
    return 0;
 }
 

@@ -66,3 +66,4 @@ ORInt nbBoxGenerated = 1;
 
 
 id<ORRational> boundDiscardedBoxes = nil;
+id<ORRational> boundDegeneratedBoxes = nil;

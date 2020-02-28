@@ -360,14 +360,6 @@
 {
     [[self worker] minMagnitudeSearch:x do:b];
 }
--(void)          branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   [[self worker] branchAndBoundSearch: x out: ez do: b];
-}
--(void)          branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
-{
-   [[self worker] branchAndBoundSearchD: x out: ez do: b];
-}
 -(void)          branchAndBoundSearchD:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b compute:(id<ORRational>(^)(NSMutableArray*,NSMutableArray*))errorComputed
 {
    [[self worker] branchAndBoundSearchD: x out: ez do: b compute: errorComputed];

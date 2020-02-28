@@ -1420,7 +1420,7 @@
 {
    id<ORRational>bound = [[ORRational alloc] init];
    [bound set: [_x min]];
-   if ([bound gt: _dualBound] && [bound lt: boundDiscardedBoxes]){
+   if ([bound gt: _dualBound] && [bound lt: boundDiscardedBoxes] && [bound lt: boundDegeneratedBoxes]){
       nbDualUpdate++;
       [_dualBound set: bound];
       branchAndBoundTime = [NSDate date];
@@ -1442,7 +1442,7 @@
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
       id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes]){
+      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
          [b release];
          nbDualUpdate++;
@@ -1453,7 +1453,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
       id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes]){
+      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
          [b release];
          nbDualUpdate++;
@@ -1464,7 +1464,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
       id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes]){
+      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
          [b release];
          nbDualUpdate++;
@@ -1475,7 +1475,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
       id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes]){
+      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
          [b release];
          nbDualUpdate++;
@@ -1615,9 +1615,9 @@
 {
    id<ORRational>bound = [[ORRational alloc] init];
    [bound set: [_x max]];
-   if ([bound lt: _dualBound] && [bound gt: boundDiscardedBoxes]){
+   if ([bound lt: _dualBound] && [bound gt: boundDiscardedBoxes] && [bound gt: boundDegeneratedBoxes]){
       nbDualUpdate++;
-      [_dualBound set: bound];
+      [_dualBound set: maxQ(maxQ(bound, boundDegeneratedBoxes), boundDiscardedBoxes)];
       branchAndBoundTime = [NSDate date];
       NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
    }
@@ -1639,8 +1639,8 @@
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
       id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
-         [_dualBound set: b];
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
+         [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
          [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1650,8 +1650,8 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
       id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
-         [_dualBound set: b];
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
+         [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
          [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1661,8 +1661,8 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
       id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
-         [_dualBound set: b];
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
+         [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
          [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1672,8 +1672,8 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
       id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes]){
-         [_dualBound set: b];
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
+         [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
          [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
