@@ -2090,6 +2090,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
+// Method not implemented in zitoun2, empty declaration to remove warnings
++(id<ORConstraint>) realReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRealVar>) x seti: (ORDouble) i
+{
+   return nil;
+}
++(id<ORConstraint>) realReify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORRealVar>) x set: (id<ORRealVar>) y
+{
+   return nil;
+}
 @end
 
 @implementation ORFactory (ORFloat)
