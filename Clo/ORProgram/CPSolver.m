@@ -2136,10 +2136,9 @@ onFailure: (ORInt2Void) onFailure
             [[_engine objective] updatePrimalBound];
             [_sPool addSolution:[self captureSolution]]; // Keep it as a solution
             //[tmp_solution print:[_model variables] with:[_sPool objectAtIndexedSubscript:[_sPool count] - 1] for:@"Bounded Box"];
-            if([[[[_engine objective] dualValue] rationalValue] gt: boundDegeneratedBoxes])
-               [boundDegeneratedBoxes set:[[[_engine objective] dualValue] rationalValue]];
-
          }
+         if([[[[_engine objective] dualValue] rationalValue] gt: boundDegeneratedBoxes])
+            [boundDegeneratedBoxes set:[[[_engine objective] dualValue] rationalValue]];
          break; // branch-and-bound stop exploring current box
       } else {
          /* ********* GuessError ********* */
