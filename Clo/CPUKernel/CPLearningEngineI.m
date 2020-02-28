@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import "CPLearningEngineI.h"
-#import "CPBitVar.h"
 
 @implementation CPLearningEngineI
 -(CPLearningEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr
