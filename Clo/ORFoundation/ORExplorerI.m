@@ -434,13 +434,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller cleanup];
          [_controller release];
          _controller = nil;
-         if(!IS_GUESS_ERROR_SOLVER)
-            NSLog(@"top-level success");
+         NSLog(@"top-level success");
          //[exit letgo];
       }
       else {
-         if(!IS_GUESS_ERROR_SOLVER)
-            NSLog(@"top-level fail");
+         NSLog(@"top-level fail");
          [exit letgo];
       }
    }
@@ -518,7 +516,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self push: controller];
       [controller release];
       if (search) search();
-      if (!IS_GUESS_ERROR_SOLVER && [solver ground]) {
+      if ([solver ground]) {
          [obj updatePrimalBound];
          if (onSolution) onSolution();
       }

@@ -1009,8 +1009,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _rewrite = f;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
-   if(!IS_GUESS_ERROR_SOLVER)
-      nbConstraint++;
+   nbConstraint++;
    return self;
 }
 -(void) post
@@ -1248,8 +1247,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
-   if(!IS_GUESS_ERROR_SOLVER)
-      nbConstraint++;
+   nbConstraint++;
    _rewrite = f;
    return self;
 }
@@ -1499,8 +1497,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
-   if(!IS_GUESS_ERROR_SOLVER)
-      nbConstraint++;
+   nbConstraint++;
    return self;
 }
 -(void) post
@@ -1704,8 +1701,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    _rounding = FE_TONEAREST;
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
-   if(!IS_GUESS_ERROR_SOLVER)
-      nbConstraint++;
+   nbConstraint++;
    return self;
 }
 -(void) post

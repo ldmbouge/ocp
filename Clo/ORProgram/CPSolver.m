@@ -529,7 +529,6 @@
                       onExit: ^{ [self doOnExit];}
        ];
       branchAndBoundTime = [NSDate date];
-      //if(!IS_GUESS_ERROR_SOLVER){
       //SolWrapper* s = [[SolWrapper alloc] init:[_sPool objectAtIndexedSubscript:[_sPool count] - 1]];
       //[s print:[_model variables] for:@"Input Values:"];
       NSLog(@"Optimal Solution: %@ (%@) thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);

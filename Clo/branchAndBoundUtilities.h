@@ -23,7 +23,6 @@
 
 extern ORBool RUN_IMPROVE_GUESS;
 extern ORBool RUN_DISCARDED_BOX;
-extern ORBool IS_GUESS_ERROR_SOLVER;
 
 extern id<ORRational> boundDiscardedBoxes;
 extern id<ORRational> boundDegeneratedBoxes;
