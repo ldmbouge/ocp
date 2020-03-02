@@ -633,6 +633,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 - (void)dealloc
 {
    [zero release];
+   [super dealloc];
 }
 @end
 

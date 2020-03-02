@@ -113,12 +113,22 @@
 }
 @end
 
-@implementation CPRationalUlpOf
+@implementation CPRationalUlpOf{
+   id<ORRationalInterval> ulp;
+   id<ORRational> tmp0;
+   id<ORRational> tmp1;
+   id<ORRational> tmp2;
+}
 -(id) init:(CPFloatVarI*)x is:(CPRationalVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   ulp = [[ORRationalInterval alloc] init];
+   tmp0 = [[ORRational alloc] init];
+   tmp1 = [[ORRational alloc] init];
+   tmp2 = [[ORRational alloc] init];
+
    return self;
 }
 -(void) post
@@ -129,12 +139,7 @@
 }
 -(void) propagate
 {
-   id<ORRationalInterval> ulp = [[ORRationalInterval alloc] init];
    float_interval x = makeFloatInterval([_x min], [_x max]);
-   id<ORRational> tmp0 = [[ORRational alloc] init];
-   id<ORRational> tmp1 = [[ORRational alloc] init];
-   id<ORRational> tmp2 = [[ORRational alloc] init];
-   
    if([_x bound])
    {
       ORDouble inf, sup;
@@ -172,11 +177,6 @@
    }
    
    [_y updateInterval:ulp.low and:ulp.up];
-   
-   [tmp0 release];
-   [tmp1 release];
-   [tmp2 release];
-   [ulp release];
 }
 -(NSSet*)allVars
 {
@@ -194,14 +194,32 @@
 {
    return [NSString stringWithFormat:@"<%@ == ulp[%@]>",_y,_x];
 }
+-(void)dealloc
+{
+   [tmp0 release];
+   [tmp1 release];
+   [tmp2 release];
+   [ulp release];
+   [super dealloc];
+}
 @end
 
-@implementation CPRationalUlpOfD
+@implementation CPRationalUlpOfD{
+   id<ORRationalInterval> ulp;
+   id<ORRational> tmp0;
+   id<ORRational> tmp1;
+   id<ORRational> tmp2;
+}
 -(id) init:(CPDoubleVarI*)x is:(CPRationalVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   ulp = [[ORRationalInterval alloc] init];
+   tmp0 = [[ORRational alloc] init];
+   tmp1 = [[ORRational alloc] init];
+   tmp2 = [[ORRational alloc] init];
+
    return self;
 }
 -(void) post
@@ -212,11 +230,7 @@
 }
 -(void) propagate
 {
-   id<ORRationalInterval> ulp = [[ORRationalInterval alloc] init];
    double_interval x = makeDoubleInterval([_x min], [_x max]);
-   id<ORRational> tmp0 = [[ORRational alloc] init];
-   id<ORRational> tmp1 = [[ORRational alloc] init];
-   id<ORRational> tmp2 = [[ORRational alloc] init];
    
    if(x.inf == -INFINITY || x.sup == INFINITY){
       [tmp1 setNegInf];
@@ -243,10 +257,6 @@
    
    [_y updateInterval:ulp.low and:ulp.up];
    
-   [tmp0 release];
-   [tmp1 release];
-   [tmp2 release];
-   [ulp release];
 }
 -(NSSet*)allVars
 {
@@ -264,14 +274,29 @@
 {
    return [NSString stringWithFormat:@"<%@ == ulp[%@]>",_y,_x];
 }
+-(void)dealloc
+{
+   [tmp0 release];
+   [tmp1 release];
+   [tmp2 release];
+   [ulp release];
+   [super dealloc];
+}
 @end
 
-@implementation CPRationalChannel
+@implementation CPRationalChannel{
+   id<ORRational> tmp;
+   id<ORRational> xminRat;
+   id<ORRational> xmaxRat;
+}
 -(id) init:(CPFloatVarI*)x with:(CPRationalVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   tmp = [[ORRational alloc] init];
+   xminRat = [ORRational rationalWith_d:[_x min]];
+   xmaxRat = [ORRational rationalWith_d:[_x max]];
    return self;
 }
 -(void) post
@@ -282,27 +307,19 @@
 }
 -(void) propagate
 {
+   if(isDisjointWithQFC(_x,_y)){
+      failNow();
+   }
    if([_x bound]){
-      
-      id<ORRational> tmp = [ORRational rationalWith_d:[_x value]];
+      [tmp set_d:[_x value]];
       [_y bind:tmp];
-      [tmp release];
       assignTRInt(&_active, NO, _trail);
-      return;
    }else if([_y bound]){
       [_x bind:[[_y value] get_d]];
       assignTRInt(&_active, NO, _trail);
-      return;
-   }
-   if(isDisjointWithQFC(_x,_y)){
-      failNow();
    }else{
-      id<ORRational> xminRat = [ORRational rationalWith_d:[_x min]];
-      id<ORRational> xmaxRat = [ORRational rationalWith_d:[_x max]];
       [_x updateInterval:maxFlt([_x min], [[_y min] get_sup_f]) and:minFlt([_x max], [[_y max] get_inf_f])];
       [_y updateInterval:maxQ(xminRat, [_y min]) and:minQ(xmaxRat, [_y max])];
-      [xminRat release];
-      [xmaxRat release];
    }
 }
 -(NSSet*)allVars
@@ -321,14 +338,29 @@
 {
    return [NSString stringWithFormat:@"<F[%@] == Q[%@]>",[_x domain],_y];
 }
+-(void)dealloc
+{
+   [tmp dealloc];
+   [xminRat release];
+   [xmaxRat release];
+   [super dealloc];
+}
 @end
 
-@implementation CPRationalChannelD
+@implementation CPRationalChannelD{
+   id<ORRational> tmp;
+   id<ORRational> xminRat;
+   id<ORRational> xmaxRat;
+}
 -(id) init:(CPDoubleVarI*)x with:(CPRationalVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
+   tmp = [[ORRational alloc] init];
+   xminRat = [ORRational rationalWith_d:[_x min]];
+   xmaxRat = [ORRational rationalWith_d:[_x max]];
+
    return self;
 }
 -(void) post
@@ -339,27 +371,21 @@
 }
 -(void) propagate
 {
+   if(isDisjointWithQDC(_x,_y)){
+      failNow();
+   }
    if([_x bound]){
-      
-      id<ORRational> tmp = [ORRational rationalWith_d:[_x value]];
+      [tmp set_d:[_x value]];
       [_y bind:tmp];
-      [tmp release];
       assignTRInt(&_active, NO, _trail);
-      return;
    }else if([_y bound]){
       [_x bind:[[_y value] get_d]];
       assignTRInt(&_active, NO, _trail);
-      return;
-   }
-   if(isDisjointWithQDC(_x,_y)){
-      failNow();
-   }else{
+   } else{
       id<ORRational> xminRat = [ORRational rationalWith_d:[_x min]];
       id<ORRational> xmaxRat = [ORRational rationalWith_d:[_x max]];
       [_x updateInterval:maxDbl([_x min], [[_y min] get_sup_d]) and:minDbl([_x max], [[_y max] get_inf_d])];
       [_y updateInterval:maxQ(xminRat, [_y min]) and:minQ(xmaxRat, [_y max])];
-      [xminRat release];
-      [xmaxRat release];
    }
 }
 -(NSSet*)allVars
@@ -377,6 +403,13 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<F[%@] == Q[%@]>",[_x domain],_y];
+}
+-(void)dealloc
+{
+   [tmp dealloc];
+   [xminRat release];
+   [xmaxRat release];
+   [super dealloc];
 }
 @end
 
@@ -1344,6 +1377,8 @@
    CPRationalVarI*  _x;
    id<ORRational>       _primalBound;
    id<ORRational>       _dualBound;
+   id<ORRational>       bound;
+   id<ORRational>       b;
    ORInt nbPrimalUpdate;
    ORInt nbDualUpdate;
 }
@@ -1353,6 +1388,8 @@
    _x = x;
    _primalBound = [[ORRational alloc] init];
    _dualBound = [[ORRational alloc] init];
+   bound = [[ORRational alloc] init];
+   b = [[ORRational alloc] init];
    [_primalBound set: [_x max]];
    [_dualBound setNegInf];
    nbPrimalUpdate = 0;
@@ -1363,6 +1400,7 @@
 - (void)dealloc {
    [_primalBound release];
    [_dualBound release];
+   [bound release];
    [super dealloc];
 }
 -(id<CPRationalVar>)var
@@ -1406,7 +1444,6 @@
 }
 -(void) updatePrimalBound
 {
-   id<ORRational>bound = [[ORRational alloc] init];
    [bound set: [_x max]]; // cpjm: always set to min to avoid overestimation of Primal
    if ([bound lt: _primalBound]){
       nbPrimalUpdate++;
@@ -1414,11 +1451,9 @@
       branchAndBoundTime = [NSDate date];
       NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
-   [bound release];
 }
 -(void) updateDualBound
 {
-   id<ORRational>bound = [[ORRational alloc] init];
    [bound set: [_x min]];
    if ([bound gt: _dualBound] && [bound lt: boundDiscardedBoxes] && [bound lt: boundDegeneratedBoxes]){
       nbDualUpdate++;
@@ -1426,7 +1461,6 @@
       branchAndBoundTime = [NSDate date];
       NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
    }
-   [bound release];
 }
 -(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
 {
@@ -1440,44 +1474,40 @@
 -(ORStatus) tightenDualBound:(id<ORObjectiveValueRational>)newBound
 {
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
-      id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
+      [b set: [(id<ORObjectiveValueRational>) newBound value]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
       if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
-         [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
       return ok;
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
+      [b set_d:[(id<ORObjectiveValueInt>)newBound value]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
       if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
-         [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
       return ok;
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
+      [b set_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
       if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
-         [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
       return ok;
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
+      [b set_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
       if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
-         [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1489,24 +1519,20 @@
 {
    @synchronized(self) {
       if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
-         id<ORRational> b = [((id<ORObjectiveValueRational>) newBound) value];
+         [b set: [((id<ORObjectiveValueRational>) newBound) value]];
          [_x updateMin: b];
-         [b release];
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueInt>) newBound) value]];
+         [b set_d:[((id<ORObjectiveValueInt>) newBound) value]];
          [_x updateMin: b];
-         [b release];
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueFloat>) newBound) value]];
+         [b set_d:[((id<ORObjectiveValueFloat>) newBound) value]];
          [_x updateMin: b];
-         [b release];
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
-         id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueReal>) newBound) value]];
+         [b set_d:[((id<ORObjectiveValueReal>) newBound) value]];
          [_x updateMin: b];
-         [b release];
       }
    }
 }
@@ -1537,6 +1563,8 @@
    CPRationalVarI*  _x;
    id<ORRational>   _primalBound;
    id<ORRational>   _dualBound;
+   id<ORRational>       bound;
+   id<ORRational>       b;
    ORInt nbPrimalUpdate;
    ORInt nbDualUpdate;
 }
@@ -1547,6 +1575,8 @@
    _x = x;
    _primalBound = [[ORRational alloc] init];
    _dualBound = [[ORRational alloc] init];
+   bound = [[ORRational alloc] init];
+   b = [[ORRational alloc] init];
    [_primalBound setNegInf];
    [_dualBound set: [_x max]];
    nbPrimalUpdate = 0;
@@ -1601,7 +1631,6 @@
 }
 -(void) updatePrimalBound
 {
-   id<ORRational>bound = [[ORRational alloc] init];
    [bound set: [_x min]]; // cpjm: always set to min to avoid overestimation of Primal
    if ([bound gt: _primalBound]){
       nbPrimalUpdate++;
@@ -1609,11 +1638,9 @@
       branchAndBoundTime = [NSDate date];
       NSLog(@"PBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound,[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbPrimalUpdate);
    }
-   [bound release];
 }
 -(void) updateDualBound
 {
-   id<ORRational>bound = [[ORRational alloc] init];
    [bound set: [_x max]];
    if ([bound lt: _dualBound] && [bound gt: boundDiscardedBoxes] && [bound gt: boundDegeneratedBoxes]){
       nbDualUpdate++;
@@ -1621,7 +1648,6 @@
       branchAndBoundTime = [NSDate date];
       NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
    }
-   [bound release];
 }
 
 -(void) tightenPrimalBound: (id<ORObjectiveValueRational>) newBound
@@ -1637,44 +1663,40 @@
 -(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
 {
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
-      id<ORRational> b = [(id<ORObjectiveValueRational>) newBound value];
+      [b set: [(id<ORObjectiveValueRational>) newBound value]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
       if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
-         [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
       return ok;
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueInt>)newBound value]];
+      [b set_d: [(id<ORObjectiveValueInt>)newBound value]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
       if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
-         [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
       return ok;
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
+      [b set_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
       if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
-         [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
       }
       return ok;
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
+      [b set_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
       if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
-         [b release];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1686,24 +1708,20 @@
 -(void) tightenLocallyWithDualBound: (id) newBound
 {
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
-      id<ORRational> b = [((id<ORObjectiveValueRational>) newBound) value];
+      [b set: [((id<ORObjectiveValueRational>) newBound) value]];
       [_x updateMax: b];
-      [b release];
    }
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueInt>) newBound) value]];
+      [b set_d:[((id<ORObjectiveValueInt>) newBound) value]];
       [_x updateMax: b];
-      [b release];
    }
    else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueFloat>) newBound) value]];
+      [b set_d:[((id<ORObjectiveValueFloat>) newBound) value]];
       [_x updateMax: b];
-      [b release];
    }
    else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
-      id<ORRational> b = [ORRational rationalWith_d:[((id<ORObjectiveValueReal>) newBound) value]];
+      [b set_d:[((id<ORObjectiveValueReal>) newBound) value]];
       [_x updateMax: b];
-      [b release];
    }
 }
 
@@ -1734,6 +1752,9 @@
 @implementation CPRationalAbs{
    id<ORRationalInterval> _xi;
    id<ORRationalInterval> _resi;
+   id<ORRational> zero;
+   id<ORRationalInterval> resTmp;
+   id<ORRationalInterval> xTmp;
 }
 -(id) init:(CPRationalVarI*)res eq:(CPRationalVarI*)x //res = |x|
 {
@@ -1744,6 +1765,9 @@
    [_xi set_q:[x min] and:[x max]];
    _resi = [[ORRationalInterval alloc] init];
    [_resi set_q:[res min] and:[res max]];
+   zero = [[[ORRational alloc] init] setZero];
+   resTmp = [[ORRationalInterval alloc] init];
+   xTmp = [[ORRationalInterval alloc] init];
    return self;
 }
 -(void) post
@@ -1774,11 +1798,8 @@
          else
             failNow();
       }else {
-         id<ORRational> zero = [[ORRational alloc] init];
-         [zero setZero];
          [_xi set_q:[_x min] and:[_x max]];
          [_resi set_q:[_res min] and:[_res max]];
-         id<ORRationalInterval> resTmp = [[ORRationalInterval alloc] init];
          if([_x member: zero]){
             [resTmp.low set:zero];
          } else {
@@ -1790,7 +1811,6 @@
             [_res updateInterval:_resi.low and:_resi.up];
          
          [_xi set_q:[_x min] and:[_x max]];
-         id<ORRationalInterval> xTmp = [[ORRationalInterval alloc] init];
          if([_x member: zero]){
             [xTmp.low set: [_resi.up neg]];
             [xTmp.up set: _resi.up];
@@ -1804,15 +1824,15 @@
          [_xi set: [_xi proj_inter: xTmp]];
          if(_xi.changed)
             [_x updateInterval:_xi.low and:_xi.up];
-         [zero release];
-         [resTmp release];
-         [xTmp release];
       }
    }
 }
 - (void)dealloc {
    [_xi release];
    [_resi release];
+   [zero release];
+   [resTmp release];
+   [xTmp release];
    [super dealloc];
 }
 -(NSSet*)allVars
@@ -1838,6 +1858,7 @@
    int _rounding;
    id<ORRationalInterval> _xi;
    id<ORRationalInterval> _yi;
+   id<ORRationalInterval> inter;
 }
 -(id) init:(CPRationalVarI*)x eqm:(CPRationalVarI*)y
 {
@@ -1850,6 +1871,7 @@
    [_yi set_q:[y min] and:[y max]];
    _precision = 1;
    _rounding = FE_TONEAREST;
+   inter = [[ORRationalInterval alloc] init];
    return self;
 }
 -(void) post
@@ -1875,8 +1897,6 @@
       }else {
          [_xi set_q:[_x min] and:[_x max]];
          [_yi set_q:[_y min] and:[_y max]];
-         id<ORRationalInterval> inter = [[ORRationalInterval alloc] init];
-         
          
          [inter set: [_yi proj_inter:[_xi neg]]];
          if(inter.changed)
@@ -1886,8 +1906,6 @@
          [inter set: [_xi proj_inter:[_yi neg]]];
          if(inter.changed)
             [_x updateInterval:inter.low and:inter.up];
-         
-         [inter release];
       }
    }
 }
@@ -1896,6 +1914,7 @@
 {
    [_xi release];
    [_yi release];
+   [inter release];
    [super dealloc];
 }
 -(NSSet*)allVars
