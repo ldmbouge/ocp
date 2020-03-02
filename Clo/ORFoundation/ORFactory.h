@@ -292,7 +292,7 @@ PORTABLE_BEGIN
 //+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass topDown:(bool)topDown;
 //+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState topDown:(bool)topDown;
 //+(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
-+(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs topDown:(bool)topDown usingArcs:(bool)usingArcs;
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs topDown:(bool)topDown usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
 +(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;

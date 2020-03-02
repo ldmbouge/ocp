@@ -733,8 +733,8 @@
    return (id<ORSolution>) [[self worker] captureSolution];
 }
 
-- (ORInt)MDDRecommendationFor:(ORInt)variableIndex {
-    return [[self worker] MDDRecommendationFor:variableIndex];
+- (ORInt)MDDRecommendationFor:(id<CPIntVar>)x model:(id<ORModel>)model {
+    return [[self worker] MDDRecommendationFor:x model:model];
 }
 
 -(id<ORObject>) concretize: (id<ORObject>) o

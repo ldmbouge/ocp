@@ -47,20 +47,26 @@ const short BytesPerMagic = 4;
     [_state release];
     [_parents release];
     if (_children != nil) {
-        /*for (int i = _minChildIndex; i <= _maxChildIndex; i++) {
-            [_children[i] release];
-        }*/
+        for (int i = _minChildIndex; i <= _maxChildIndex; i++) {
+            if (_children[i] != nil) {
+                [_children[i] release];
+            }
+        }
         _children += _minChildIndex;
         free(_children);
     }
     [super dealloc];
 }
 
+-(void) addParent:(id) parent inPost:(bool)inPost {
+    @throw [[ORExecutionError alloc] initORExecutionError: "Node: Method addParent not implemented"];
+}
 -(void) addChild:(id)childArc at:(int)index inPost:(bool)inPost {
     if (inPost) {
-        assignTRInt(&_numChildren, _numChildren._val +1, _trail);
+        _numChildren = makeTRInt(_trail, _numChildren._val+1);
+        _children[index] = makeTRId(_trail, [childArc retain]);
+        //assignTRInt(&_numChildren, _numChildren._val +1, _trail);
         //assignTRId(&_children[index],childArc,_trail);
-        _children[index] = makeTRId(_trail, childArc);
     } else {
         if (_children[index] == NULL) {
             assignTRInt(&_numChildren, _numChildren._val +1, _trail);
@@ -68,9 +74,14 @@ const short BytesPerMagic = 4;
         assignTRId(&_children[index], childArc, _trail);
     }
 }
--(void) removeChildAt: (int) index {
-    assignTRId(&_children[index], NULL, _trail);
-    assignTRInt(&_numChildren, _numChildren._val -1, _trail);
+-(void) removeChildAt: (int) index inPost:(bool)inPost {
+    if (inPost) {
+        _children[index] = makeTRId(_trail, nil);
+        _numChildren = makeTRInt(_trail, _numChildren._val -1);
+    } else {
+        assignTRId(&_children[index], NULL, _trail);
+        assignTRInt(&_numChildren, _numChildren._val -1, _trail);
+    }
 }
 -(void) takeParentsFrom:(Node*)other {
     @throw [[ORExecutionError alloc] initORExecutionError: "Node: Method takeParentsFrom not implemented"];
@@ -109,36 +120,74 @@ const short BytesPerMagic = 4;
 -(ORTRIdArrayI*) parents {
     return _parents;
 }
--(bool) isMergedNode { return _isMergedNode._val; }
+-(bool) isMerged { return _isMergedNode._val; }
 -(void) setIsMergedNode:(bool)isMergedNode { assignTRInt(&_isMergedNode, isMergedNode, _trail); }
+
+-(NSString*) toString {
+    //Hard coded for among
+    
+    NSMutableString* printOut = [NSMutableString string];
+    char* state = [_state state];
+    short minC1, maxC1, rem1, minC2, maxC2, rem2, minC3, maxC3, rem3, minC4, maxC4, rem4;
+    minC1 = *(short*)&state[0];
+    maxC1 = *(short*)&state[2];
+    rem1 = *(short*)&state[4];
+    minC2 = *(short*)&state[6];
+    maxC2 = *(short*)&state[8];
+    rem2 = *(short*)&state[10];
+    minC3 = *(short*)&state[12];
+    maxC3 = *(short*)&state[14];
+    rem3 = *(short*)&state[16];
+    minC4 = *(short*)&state[18];
+    maxC4 = *(short*)&state[20];
+    rem4 = *(short*)&state[22];
+
+    [printOut appendString: @"  Constraint 1:\n"];
+    [printOut appendString: [NSString stringWithFormat: @"    minC: %d\n",minC1]];
+    [printOut appendString: [NSString stringWithFormat: @"    maxC: %d\n",maxC1]];
+    [printOut appendString: [NSString stringWithFormat: @"     rem: %d\n",rem1]];
+    [printOut appendString: @"  Constraint 2:\n"];
+    [printOut appendString: [NSString stringWithFormat: @"    minC: %d\n",minC2]];
+    [printOut appendString: [NSString stringWithFormat: @"    maxC: %d\n",maxC2]];
+    [printOut appendString: [NSString stringWithFormat: @"     rem: %d\n",rem2]];
+    [printOut appendString: @"  Constraint 3:\n"];
+    [printOut appendString: [NSString stringWithFormat: @"    minC: %d\n",minC3]];
+    [printOut appendString: [NSString stringWithFormat: @"    maxC: %d\n",maxC3]];
+    [printOut appendString: [NSString stringWithFormat: @"     rem: %d\n",rem3]];
+    [printOut appendString: @"  Constraint 4:\n"];
+    [printOut appendString: [NSString stringWithFormat: @"    minC: %d\n",minC4]];
+    [printOut appendString: [NSString stringWithFormat: @"    maxC: %d\n",maxC4]];
+    [printOut appendString: [NSString stringWithFormat: @"     rem: %d\n",rem4]];
+    return printOut;
+}
 @end
 
 @implementation OldNode
 -(id) initNode:(id<ORTrail>)trail hashWidth:(int)hashWidth {
     self = [super initNode:trail hashWidth:hashWidth];
     _parentCounts = [[ORTRIntArrayI alloc] initORTRIntArrayWithTrail:_trail low:0 up:_maxNumParents._val];
+    _lastAddedParentIndex = 0;
     return self;
 }
 -(id) initNode:(id<ORTrail>)trail minChildIndex:(int)minChildIndex maxChildIndex:(int)maxChildIndex state:(id)state hashWidth:(int)hashWidth {
     self = [super initNode:trail minChildIndex:minChildIndex maxChildIndex:maxChildIndex state:state hashWidth:hashWidth];
     _parentCounts = [[ORTRIntArrayI alloc] initORTRIntArrayWithTrail:_trail low:0 up:_maxNumParents._val];
+    _lastAddedParentIndex = 0;
     return self;
 }
--(void) removeChild:(Node*)child numTimes:(int)childCount updatingIVC:(int*)initial_variable_count {
-    assignTRInt(&_numChildren, _numChildren._val - childCount, _trail);
-    for (int child_index = _minChildIndex; childCount > 0; child_index++) {
-        if (_children[child_index] == child) {
-            _children[child_index] = makeTRId(_trail, nil);
-            initial_variable_count[child_index] -= 1;
-            childCount--;
-        }
+-(void) removeChild:(Node*)child numTimes:(int)childCount updatingLVC:(TRInt*)variable_count inPost:(bool)inPost {
+    if (inPost) {
+        _numChildren = makeTRInt(_trail, _numChildren._val - childCount);
+    } else {
+        assignTRInt(&_numChildren, _numChildren._val - childCount, _trail);
     }
-}
--(void) removeChild:(Node*)child numTimes:(int)childCount updatingLVC:(TRInt*)variable_count {
-    assignTRInt(&_numChildren, _numChildren._val - childCount, _trail);
     for (int child_index = _minChildIndex; childCount > 0; child_index++) {
         if (_children[child_index] == child) {
-            assignTRId(&_children[child_index], NULL, _trail);
+            if (inPost) {
+                _children[child_index] = makeTRId(_trail, nil);
+            } else {
+                assignTRId(&_children[child_index], NULL, _trail);
+            }
             assignTRInt(&variable_count[child_index],variable_count[child_index]._val-1,_trail);
             childCount--;
         }
@@ -147,52 +196,75 @@ const short BytesPerMagic = 4;
 -(ORTRIntArrayI*) parentCounts {
     return _parentCounts;
 }
--(void) addFirstParent:(Node*)parent {
-    [_parents set:parent at:0 inPost:true];
-    [_parentCounts set:1 at:0];
-    assignTRInt(&_numParents,1,_trail);
-}
 -(void) addParent: (OldNode*) parent inPost:(bool)inPost {
-    int parentIndex = [self findUniqueParentIndexFor:parent addToHash:true];
-    if (parentIndex >= 0) {
-        [_parentCounts set:([_parentCounts at:parentIndex] + 1) at:parentIndex];
+    int parentIndex;
+    int numParents = _numParents._val;
+    if (_lastAddedParentIndex < numParents &&  [_parents at:_lastAddedParentIndex] == parent) {
+        parentIndex = _lastAddedParentIndex;
     } else {
-        int numParents = _numParents._val;
+        parentIndex = [self findUniqueParentIndexFor:parent addToHash:true];
+    }
+    if (parentIndex >= 0) {
+        [_parentCounts set:([_parentCounts at:parentIndex] + 1) at:parentIndex inPost:inPost];
+    } else {
+        parentIndex = numParents;
         if (_maxNumParents._val == numParents) {
             int newMaxParents = _maxNumParents._val * 2;
-            assignTRInt(&_maxNumParents, newMaxParents, _trail);
-            [_parents resize:newMaxParents];
-            [_parentCounts resize:newMaxParents];
+            if (inPost) {
+                _maxNumParents = makeTRInt(_trail, newMaxParents);
+            } else {
+                assignTRInt(&_maxNumParents, newMaxParents, _trail);
+            }
+            [_parents resize:newMaxParents inPost:inPost];
+            [_parentCounts resize:newMaxParents inPost:inPost];
         }
-        [_parents set:parent at:numParents inPost:inPost];
-        [_parentCounts set:1 at:numParents];
-        assignTRInt(&_numParents,numParents+1,_trail);
+        [_parents set:parent at:parentIndex inPost:inPost];
+        [_parentCounts set:1 at:parentIndex inPost:inPost];
+        if (inPost) {
+            _numParents = makeTRInt(_trail, numParents+1);
+        } else {
+            assignTRInt(&_numParents,numParents+1,_trail);
+        }
     }
+    _lastAddedParentIndex = parentIndex;
 }
 -(void) addParent: (OldNode*) parent count:(int)count inPost:(bool)inPost {
     int parentIndex = [self findUniqueParentIndexFor:parent addToHash:true];
     if (parentIndex >= 0) {
-        [_parentCounts set:([_parentCounts at:parentIndex] + count) at:parentIndex];
+        [_parentCounts set:([_parentCounts at:parentIndex] + count) at:parentIndex inPost:inPost];
     } else {
         int numParents = _numParents._val;
         if (_maxNumParents._val == numParents) {
             int newMaxParents = _maxNumParents._val * 2;
-            assignTRInt(&_maxNumParents, newMaxParents, _trail);
-            [_parents resize:newMaxParents];
-            [_parentCounts resize:newMaxParents];
+            if (inPost) {
+                _maxNumParents = makeTRInt(_trail, newMaxParents);
+            } else {
+                assignTRInt(&_maxNumParents, newMaxParents, _trail);
+            }
+            [_parents resize:newMaxParents inPost:inPost];
+            [_parentCounts resize:newMaxParents inPost:inPost];
         }
-        [_parents set:parent at:numParents inPost:true];
-        [_parentCounts set:count at:numParents];
-        assignTRInt(&_numParents,numParents+1,_trail);
+        [_parents set:parent at:numParents inPost:inPost];
+        [_parentCounts set:count at:numParents inPost:inPost];
+        if (inPost) {
+            _numParents = makeTRInt(_trail, numParents+1);
+        } else {
+            assignTRInt(&_numParents,numParents+1,_trail);
+        }
     }
 }
 -(void) removeParentAt:(int)index inPost:(bool)inPost {
     int finalParentIndex = _numParents._val-1;
-    assignTRInt(&_numParents,finalParentIndex,_trail);
+    if (inPost) {
+        _numParents = makeTRInt(_trail, finalParentIndex);
+    } else {
+        assignTRInt(&_numParents,finalParentIndex,_trail);
+    }
     if (finalParentIndex != index) {
         [_parents set:[_parents at:finalParentIndex] at:index inPost:inPost];
-        [_parentCounts set:[_parentCounts at:finalParentIndex] at:index];
+        [_parentCounts set:[_parentCounts at:finalParentIndex] at:index inPost:inPost];
     }
+    [_parents set:nil at:finalParentIndex inPost:inPost];
 }
 -(void) removeParentOnce: (OldNode*) parent inPost:(bool)inPost {
     int parentIndex = [self findUniqueParentIndexFor:parent addToHash:false];
@@ -201,14 +273,31 @@ const short BytesPerMagic = 4;
         if (newCount == 0) {
             [self removeParentAt:parentIndex inPost:inPost];
         } else {
-            [_parentCounts set:newCount at:parentIndex];
+            [_parentCounts set:newCount at:parentIndex inPost:inPost];
         }
+    }
+}
+-(void) removeParentOnceAtIndex:(int)parentIndex inPost:(bool)inPost {
+    int newCount = [_parentCounts at:parentIndex]-1;
+    if (newCount == 0) {
+        [self removeParentAt:parentIndex inPost:inPost];
+    } else {
+        [_parentCounts set:newCount at:parentIndex inPost:inPost];
     }
 }
 -(void) removeParentValue: (OldNode*) parent inPost:(bool)inPost {
     int parentIndex = [self findUniqueParentIndexFor:parent addToHash:false];
     if (parentIndex >= 0) {
         [self removeParentAt:parentIndex inPost:inPost];
+    }
+}
+-(void) removeParent:(OldNode*)parent inPost:(bool)inPost {
+    int parentIndex = [self findUniqueParentIndexFor:parent addToHash:false];
+    int newCount = [_parentCounts at:parentIndex]-1;
+    if (newCount == 0) {
+        [self removeParentAt:parentIndex inPost:inPost];
+    } else {
+        [_parentCounts set:newCount at:parentIndex inPost:inPost];
     }
 }
 -(bool) hasParent:(OldNode*)parent {
@@ -237,7 +326,8 @@ const short BytesPerMagic = 4;
 -(void) replaceChild:(Node*)oldChild with:(Node*)newChild numTimes:(int)childCount {
     for (int child_index = _minChildIndex; childCount; child_index++) {
         if (_children[child_index] == oldChild) {
-            assignTRId(&_children[child_index], newChild, _trail);
+            _children[child_index] = makeTRId(_trail, [newChild retain]);
+            //assignTRId(&_children[child_index], newChild, _trail);
             childCount--;
         }
     }
@@ -250,6 +340,10 @@ const short BytesPerMagic = 4;
     }
     return -1;
 }
+-(void) dealloc {
+    [_parentCounts release];
+    [super dealloc];
+}
 @end
 
 @implementation MDDNode
@@ -257,54 +351,133 @@ const short BytesPerMagic = 4;
     int numParents = _numParents._val;
     if (_maxNumParents._val == numParents) {
         int newMaxParents = _maxNumParents._val * 2;
-        assignTRInt(&_maxNumParents, newMaxParents, _trail);
-        [_parents resize:newMaxParents];
+        if (inPost) {
+            _maxNumParents = makeTRInt(_trail, newMaxParents);
+        } else {
+            assignTRInt(&_maxNumParents, newMaxParents, _trail);
+        }
+        [_parents resize:newMaxParents inPost:inPost];
     }
     [_parents set:parentArc at:numParents inPost:inPost];
-    assignTRInt(&_numParents,numParents+1,_trail);
+    if (inPost) {
+        _numParents = makeTRInt(_trail, numParents+1);
+    } else {
+        assignTRInt(&_numParents,numParents+1,_trail);
+    }
 }
 -(void) removeParentArc:(MDDArc*)parentArc inPost:(bool)inPost {
     int parentArcIndex = [parentArc parentArcIndex];
     int finalParentIndex = _numParents._val-1;
-    assignTRInt(&_numParents,finalParentIndex,_trail);
+    if (inPost) {
+        _numParents = makeTRInt(_trail, finalParentIndex);
+    } else {
+        assignTRInt(&_numParents,finalParentIndex,_trail);
+    }
     if (finalParentIndex != parentArcIndex) {
         MDDArc* movedArc = [_parents at:finalParentIndex];
         [_parents set:movedArc at:parentArcIndex inPost:inPost];
-        [movedArc updateParentArcIndex:parentArcIndex];
+        [movedArc updateParentArcIndex:parentArcIndex inPost:inPost];
     }
+    [_parents set:nil at:finalParentIndex inPost:inPost];
 }
 -(void) takeParentsFrom:(MDDNode*)other {
     ORTRIdArrayI* otherParentArcs = [other parents];
     for (int parentIndex = 0; parentIndex < [other numParents]; parentIndex++) {
         MDDArc* parentArc = [otherParentArcs at:parentIndex];
-        [parentArc setChild:self];
-        [parentArc updateParentArcIndex:_numParents._val];
+        [parentArc setChild:self inPost:true];
+        [parentArc updateParentArcIndex:_numParents._val inPost:true];
         [self addParent:parentArc inPost:true];
     }
 }
 @end
 
 @implementation MDDArc
--(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost {
+-(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost {
     self = [super init];
     _trail = trail;
     _parent = parent;
-    _child = child;
+    _child = makeTRId(_trail, [child retain]);
     _arcValue = arcValue;
     _arcIndexForChild = makeTRInt(_trail, [_child numParents]);
     [_parent addChild:self at:arcValue inPost:inPost];
     [_child addParent:self inPost:inPost];
+    [self release];
+    return self;
+}
+-(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numBytes:(size_t)numBytes {
+    self = [super init];
+    _trail = trail;
+    _parent = parent;
+    _child = makeTRId(_trail, [child retain]);
+    _arcValue = arcValue;
+    _arcIndexForChild = makeTRInt(_trail, [_child numParents]);
+    [_parent addChild:self at:arcValue inPost:inPost];
+    [_child addParent:self inPost:inPost];
+    _passedState = state;
+    _numBytes = numBytes;
+    _magic = malloc(_numBytes/BytesPerMagic * sizeof(ORUInt));
+    for (int i = 0; i < (_numBytes/BytesPerMagic); i++) {
+        _magic[i] = [trail magic];
+    }
+    [self release];
     return self;
 }
 -(MDDNode*) parent { return _parent; }
 -(MDDNode*) child { return _child; }
--(void) setChild:(MDDNode*)child {
-    _child = child;
-    
+-(void) setChild:(MDDNode*)child inPost:(bool)inPost {
+    if (inPost) {
+        [_child release];
+        _child = makeTRId(_trail, [child retain]);
+    } else {
+        assignTRId(&_child, child, _trail);
+    }
 }
 -(int) arcValue { return _arcValue; }
 -(int) parentArcIndex { return _arcIndexForChild._val; }
--(void) updateParentArcIndex:(int)parentArcIndex { assignTRInt(&_arcIndexForChild, parentArcIndex, _trail); }
+-(void) updateParentArcIndex:(int)parentArcIndex inPost:(bool)inPost {
+    if (inPost) {
+        _arcIndexForChild = makeTRInt(_trail, parentArcIndex);
+    } else {
+        assignTRInt(&_arcIndexForChild, parentArcIndex, _trail);
+    }
+}
+-(char*) state { return _passedState; }
+-(void) trailByte:(size_t)byteOffset {
+    /*if (CFGetRetainCount(self) > 10) {
+        NSLog(@"Retain count: %ld", CFGetRetainCount(self));
+        int i=0;
+    }*/
+    ORUInt magic = [_trail magic];
+    size_t magicIndex = byteOffset/BytesPerMagic;
+    if (magic != _magic[magicIndex]) {
+        switch (BytesPerMagic) {
+            case 2:
+                [_trail trailShort:(short*)&_passedState[magicIndex*BytesPerMagic]];
+                break;
+            case 4:
+                [_trail trailInt:(int*)&_passedState[magicIndex*BytesPerMagic]];
+                break;
+            default:
+                @throw [[ORExecutionError alloc] initORExecutionError: "MDDArc: Method trailByte not implemented for given BytesPerMagic"];
+        }
+        _magic[magicIndex] = magic;
+    }
+}
+-(void) removeParent:(Node*)parentArc inPost:(bool)inPost {
+    [_child removeParentArc:self inPost:inPost];
+}
+-(bool) isParentless {
+    return [_child isParentless];
+}
+-(bool) isMerged {
+    return [_child isMerged];
+}
+-(void) setRecalcRequired:(bool)recalcRequired { [_child setRecalcRequired:recalcRequired]; }
+-(void) dealloc {
+    free(_magic);
+    free(_passedState);
+    [super dealloc];
+}
 @end
 
 @implementation BetterNodeHashTable
@@ -383,6 +556,15 @@ const short BytesPerMagic = 4;
     free(_numPerHash);
     free(_maxPerHash);
     [super dealloc];
+}
+@end
+
+@implementation NormNodePair
+-(id) initNormNodePair:(long)norm node:(Node *)node {
+    self = [super init];
+    self->norm = norm;
+    self->node = node;
+    return self;
 }
 @end
 

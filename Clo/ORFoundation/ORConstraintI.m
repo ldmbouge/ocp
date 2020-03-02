@@ -22,14 +22,20 @@
    ORInt _relaxationSize;
    id _specs;
    bool _usingArcs;
+   bool _equalBuckets;
+   bool _usingSlack;
+   MDDRecommendationStyle _recommendationStyle;
 }
--(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs usingArcs:(bool)usingArcs {
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle {
    self = [super init];
    _x = x;
    _relaxed = relaxed;
    _relaxationSize = relaxationSize;
    _specs = [specs retain];
    _usingArcs = usingArcs;
+   _equalBuckets = equalBuckets;
+   _usingSlack = usingSlack;
+   _recommendationStyle = recommendationStyle;
    return self;
 }
 -(void)dealloc
@@ -61,6 +67,9 @@
    return _specs;
 }
 -(bool) usingArcs { return _usingArcs; }
+-(bool) equalBuckets { return _equalBuckets; }
+-(bool) usingSlack { return _usingSlack; }
+-(MDDRecommendationStyle) recommendationStyle { return _recommendationStyle; }
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
@@ -578,6 +587,8 @@
    DDMergeClosure* _differentialClosures;
    MDDStateDescriptor* _stateDescriptor;
    int _numProperties;
+   
+   DDSlackClosure _slackClosure;
 }
 -(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
@@ -709,6 +720,10 @@
 {
    _arcExistsClosure = [arcExists retain];
 }
+-(void)setSlackClosure:(DDSlackClosure)slack
+{
+   _slackClosure = [slack retain];
+}
 typedef int (*GetPropIMP)(id,SEL,char*);
 -(void)setAsAmongConstraint:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values {
    ORInt minDom = [range low];
@@ -751,53 +766,19 @@ typedef int (*GetPropIMP)(id,SEL,char*);
       return getRem(remProp,getSel,state) - 1;
       //return [remProp get:state] - 1;
    } copy];
-}
--(void)setAmongArc:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values {
-   ORInt minDom = [range low];
-   int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
-   int minCount = 0 + fpi,
-          maxCount = 1 + fpi,
-          rem = 2 + fpi;
-   MDDPropertyDescriptor** properties = [stateDesc properties];
-   MDDPropertyDescriptor* minCProp = properties[minCount];
-   MDDPropertyDescriptor* maxCProp = properties[maxCount];
-   MDDPropertyDescriptor* remProp = properties[rem];
    
-   bool* valueInSetLookup = calloc([range size], sizeof(bool));
-   [values enumerateWithBlock:^(ORInt value) {
-      valueInSetLookup[value - minDom] = true;
-   }];
+   _relaxationClosures[0] = [(id)^(char* state1,char* state2) {
+      return min(getMinC(minCProp,getSel,state1), getMinC(minCProp,getSel,state2));
+   } copy];
+   _relaxationClosures[1] = [(id)^(char* state1,char* state2) {
+      return min(max(getMaxC(maxCProp,getSel,state1), getMaxC(maxCProp,getSel,state2)),ub+1);
+   } copy];
+   _relaxationClosures[2] = [(id)^(char* state1,char* state2) {
+      return getRem(remProp,getSel,state1);
+   } copy];
    
-   _arcExistsClosure = [(id)^(char* state, ORInt variable, ORInt value) {
-      ORInt index = value - minDom;
-      int valueInSet = valueInSetLookup[index];
-      return ([minCProp get:state] + valueInSet <= ub) &&
-      (lb <= [maxCProp  get:state] + valueInSet + [remProp get:state] - 1);
-   } copy];
-}
--(void)setAmongTransitions:(MDDStateDescriptor*)stateDesc domainRange:(id<ORIntRange>)range values:(id<ORIntSet>)values {
-   ORInt minDom = [range low];
-   int fpi = [stateDesc numProperties] - 3;   //first property index.  aka offset
-   int minCount = 0 + fpi,
-          maxCount = 1 + fpi,
-          rem = 2 + fpi;
-   bool* valueInSetLookup = calloc([range size], sizeof(bool));
-   [values enumerateWithBlock:^(ORInt value) {
-      valueInSetLookup[value - minDom] = true;
-   }];
-   MDDPropertyDescriptor** properties = [stateDesc properties];
-   MDDPropertyDescriptor* minCProp = properties[minCount];
-   MDDPropertyDescriptor* maxCProp = properties[maxCount];
-   MDDPropertyDescriptor* remProp = properties[rem];
-   
-   _transitionClosures[0] = [(id)^(char* state,ORInt variable,ORInt value) {
-      return [minCProp get:state] + valueInSetLookup[value-minDom];
-   } copy];
-   _transitionClosures[1] = [(id)^(char* state,ORInt variable,ORInt value) {
-      return [maxCProp get:state] + valueInSetLookup[value-minDom];
-   } copy];
-   _transitionClosures[2] = [(id)^(char* state,ORInt variable,ORInt value) {
-      return [remProp get:state] - 1;
+   _slackClosure = [(id)^(char* state) {
+      return max(getMaxC(maxCProp,getSel,state) + getRem(remProp,getSel,state) - ub, 0) + max(lb - getMinC(minCProp,getSel,state),0);
    } copy];
 }
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup
@@ -861,6 +842,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
 -(DDMergeClosure*)relaxationClosures { return _relaxationClosures; }
 -(id<ORExpr>*)differentialFunctions { return _differentialFunctions; }
 -(DDMergeClosure*)differentialClosures { return _differentialClosures; }
+-(DDSlackClosure)slackClosure { return _slackClosure; }
 -(int)numProperties { return _numProperties; }
 -(id*)stateProperties { return _stateProperties; }
 

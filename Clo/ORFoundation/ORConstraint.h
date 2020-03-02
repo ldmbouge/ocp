@@ -460,6 +460,9 @@ enum ORGroupType {
 -(ORInt) relaxationSize;
 -(id) specs;
 -(bool) usingArcs;
+-(bool) equalBuckets;
+-(bool) usingSlack;
+-(int) recommendationStyle;
 @end
 
 /*@protocol ORCustomAltMDD <ORConstraint>
@@ -512,12 +515,12 @@ enum ORGroupType {
 -(DDMergeClosure*)relaxationClosures;
 -(id<ORExpr>*)differentialFunctions;
 -(DDMergeClosure*)differentialClosures;
+-(DDSlackClosure)slackClosure;
 -(int)numProperties;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
 -(void)setArcExistsClosure:(DDClosure)arcExists;
+-(void)setSlackClosure:(DDSlackClosure)slack;
 -(void)setAsAmongConstraint:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
--(void)setAmongArc:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
--(void)setAmongTransitions:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range values:(id<ORIntSet>)values;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
 -(void)addTransitionClosure:(DDClosure)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;

@@ -1113,9 +1113,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 // =====================================================================================================================
 
 @implementation ORFactory (Constraints)
-+(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specifications topDown:(bool)topDown usingArcs:(bool)usingArcs
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specifications topDown:(bool)topDown usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle
 {
-    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x relaxed:relaxed size:relaxationSize specs:specifications usingArcs:usingArcs];
+    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x relaxed:relaxed size:relaxationSize specs:specifications usingArcs:usingArcs equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
     [model trackObject:o];
     return o;
 }

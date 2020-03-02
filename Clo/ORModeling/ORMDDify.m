@@ -134,6 +134,9 @@
     bool _topDown;
     int _width;
     bool _usingArcs;
+    bool _equalBuckets;
+    bool _usingSlack;
+    MDDRecommendationStyle _recommendationStyle;
     
     NSMutableArray* _mddSpecConstraints;
     MDDStateSpecification* _mddSpecification;
@@ -163,6 +166,9 @@
     _width = [_notes findGeneric: DDWidth];
     _relaxed = [_notes findGeneric: DDRelaxed];
     _usingArcs = [_notes findGeneric: DDWithArcs];
+    _equalBuckets = [_notes findGeneric: DDEqualBuckets];
+    _usingSlack = [_notes findGeneric: DDUsingSlack];
+    _recommendationStyle = [_notes findGeneric: DDRecommendationStyle];
     [m applyOnVar: ^(id<ORVar> x) {
         [_into addVariable:x];
     }
@@ -187,7 +193,7 @@
     
     if ([_mddSpecConstraints count] > 0) {
         [self combineMDDSpecs:m];
-        id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables relaxed:_relaxed size:_width specs:_mddSpecification topDown:_topDown usingArcs:_usingArcs];
+        id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables relaxed:_relaxed size:_width specs:_mddSpecification topDown:_topDown usingArcs:_usingArcs equalBuckets:_equalBuckets usingSlack:_usingSlack recommendationStyle:_recommendationStyle];
         /*if ([_jointState numStates] > 1) {
             mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width classState:_jointState topDown:_topDown];
         } else {    //If only one MDDSpec in JointState (meaning all MDDSpecs shared the same variable set), then can use the MDDSpec directly rather than a JointState
@@ -343,6 +349,13 @@
                         return arcExists(state,variable,value) && oldArcExists(state,variable,value);
                     } copy];
                     [existingMDDSpec setArcExistsClosure:newArcExists];
+                    
+                    DDSlackClosure oldSlackClosure = [existingMDDSpec slackClosure];
+                    DDSlackClosure slackClosure = [mddSpec slackClosure];
+                    DDSlackClosure newSlackClosure = [(id)^(char* state) {
+                        return oldSlackClosure(state) + slackClosure(state);
+                    } copy];
+                    [existingMDDSpec setSlackClosure:newSlackClosure];
                 }
             }
             if (!sharedVarList) {

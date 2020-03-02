@@ -1760,11 +1760,18 @@
 
 
 
--(ORInt)  MDDRecommendationFor:(ORInt) variableIndex
+-(ORInt)  MDDRecommendationFor:(id<CPIntVar>)x model:(id<ORModel>)m
 {
-   //return [ recommendationFor: variableIndex];
-   assert(false);
-   return 0;
+   for (id<ORConstraint> c in [m constraints]) {
+      if ([c isKindOfClass:[ORMDDStateSpecification class]]) {
+         id<CPIntVarArray> vars = (id<CPIntVarArray>)[[c allVars] anyObject];
+         if ([vars contains:x]) {
+            return [_gamma[c.getId] recommendationFor:x];
+         }
+      }
+   }
+   //If no MDD constraint is over variable x
+   return [x min];
 }
 
 

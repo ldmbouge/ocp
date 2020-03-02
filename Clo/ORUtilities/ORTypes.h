@@ -139,6 +139,7 @@ typedef id<ORRelation> (^ORInt2Relation)(ORInt);
 typedef ORStatus (^Void2ORStatus)(void);
 typedef long (^DDClosure)(char*,ORInt,ORInt);
 typedef long (^DDMergeClosure)(char*,char*);
+typedef long (^DDSlackClosure)(char*);
 typedef id (^AltMDDAddEdgeClosure)(id,ORInt,ORInt);
 typedef id (^AltMDDDeleteEdgeCheckClosure)(id,id,ORInt,ORInt);
 typedef id (^AltMDDMergeInfoClosure)(id,id,ORInt);

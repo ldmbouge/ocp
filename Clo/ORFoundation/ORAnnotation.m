@@ -208,6 +208,21 @@
     GenericIndex index = DDWithArcs;
     [self genericConstraint: index value: withArcs];
 }
+-(void) ddEqualBuckets: (bool) equalBuckets
+{
+    GenericIndex index = DDEqualBuckets;
+    [self genericConstraint: index value: equalBuckets];
+}
+-(void) ddUsingSlack: (bool) usingSlack
+{
+    GenericIndex index = DDUsingSlack;
+    [self genericConstraint: index value: usingSlack];
+}
+-(void) ddRecommendationStyle: (MDDRecommendationStyle) recommendationStyle
+{
+    GenericIndex index = DDRecommendationStyle;
+    [self genericConstraint: index value: recommendationStyle];
+}
 
 -(NSString*) description
 {

@@ -471,12 +471,6 @@ extension ORMDDSpecs {
     func setAsAmong(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
         self.setAsAmongConstraint(stateDesc,domainRange: domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
     }
-    func amongArc(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) -> Void {
-        self.setAmongArc(stateDesc, domainRange: domainRange, lb: Int32(lb), ub: Int32(ub), values: values)
-    }
-    func amongTransitions(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ values : ORIntSet!) -> Void {
-        self.setAmongTransitions(stateDesc, domainRange: domainRange, values: values)
-    }
     func transition<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
             self.addTransitionFunction(v as? ORExpr, toStateValue: Int32(k))
@@ -675,7 +669,6 @@ public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values :
     }
 }*/
 public func amongMDDClosures(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
-    let fpi = _stateDescriptor.numProperties()
     let minC = 0,maxC = 1,rem = 2
     let udom = arrayDomains(x)
     let mdd = ORFactory.mddSpecs(withClosures: m, variables: x, stateSize: 3)
@@ -686,11 +679,6 @@ public func amongMDDClosures(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,
     //Need this to be ordered so the properties are indexed correctly.
     
     mdd.setAsAmong(_stateDescriptor,udom,lb,ub,values)
-    mdd.addRelaxationAsMin(minC, Int(fpi))
-    mdd.addRelaxationAsMax(maxC, Int(fpi))
-    mdd.addRelaxationAsLeft(rem, Int(fpi))
-    mdd.addSimilarityAsDifference(minC, Int(fpi))
-    mdd.addSimilarityAsDifference(maxC, Int(fpi))
     return mdd
 }
 

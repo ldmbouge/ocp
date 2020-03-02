@@ -11,15 +11,16 @@
 
 #import "CPTopDownMDD.h"
 
-@interface CPMDDWithArcs : CPMDD
+@interface CPMDDWithoutArcs : CPMDD
+-(void) DEBUGTestParentChildParity;
 @end
-@interface CPMDDRestrictionWithArcs : CPMDDRestriction
+@interface CPMDDRestrictionWithoutArcs : CPMDDRestriction
+-(void) DEBUGTestParentChildParity;
 @end
-@interface CPMDDRelaxationWithArcs : CPMDDRelaxation {
-@protected
-    SEL _replaceArcStateSel;
-    ReplaceArcStateIMP _replaceArcState;
+@interface CPMDDRelaxationWithoutArcs : CPMDDRelaxation {
+@private
+    SEL _batchMergeStatesSel;
+    BatchMergeStatesIMP _batchMergeStates;
 }
--(void) recalcArc:(MDDArc*)arc parentPropertes:(char*)parentProperties variable:(int)variable;
--(void) DEBUGTestParentArcIndices;
+-(void) DEBUGTestParentChildParity;
 @end

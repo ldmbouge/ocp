@@ -19,17 +19,16 @@
 @class Node;
 
 @interface CPMDD : CPCoreConstraint {
-@private
-    Class _stateClass;
-    int _nextVariable;
 @protected
+    Class _nodeClass;
+    
+    int _nextVariable;
     id<CPIntVarArray> _x;
     NSUInteger _numVariables;
     int min_variable_index;
     MDDStateSpecification* _spec;
     
     ORTRIdArrayI* *layers;
-    //int** initial_layer_variable_count;
     TRInt **layer_variable_count;
     TRInt *layer_size;
     TRInt *max_layer_size;
@@ -42,6 +41,10 @@
     bool _inPost;
     int _hashWidth;
     size_t _numBytes;
+    MDDRecommendationStyle _recommendationStyle;
+    
+    TRInt** _valueNotMember;
+    TRInt* _layerBound;
     
     SEL _canCreateStateSel;
     CanCreateStateIMP _canCreateState;
@@ -49,6 +52,8 @@
     HashValueIMP _hashValueFor;
     SEL _removeParentlessSel;
     RemoveParentlessIMP _removeParentlessNode;
+    SEL _replaceStateSel;
+    ReplaceStateIMP _replaceState;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec;
@@ -57,34 +62,34 @@
 -(NSString*) description;
 -(id<CPIntVarArray>) x;
 -(void) post;
-//-(void) setLayerVariableCount;
+-(void) removeChild:(Node*)node fromParent:(id)parent parentLayer:(int)parentLayer;
 -(int) layerIndexForVariable:(int)variableIndex;
 -(int) variableIndexForLayer:(int)layer;
 -(void) createRootAndSink;
 -(void) cleanLayer:(int)layer;
 -(void) afterPropagation;
+-(void) connect:(Node*)parent to:(Node*)child value:(int)value;
 -(void) buildLastLayer;
-//-(void) buildLayer:(int)layer;
 -(void) buildLayerByValue:(int)layer;
-//-(void) createChildrenForNode:(OldNode*)parentNode parentLayer:(int)parentLayer nodeHashTable:(BetterNodeHashTable*)nodeHashTable;
-//-(void) createChildrenForNode:(OldNode*)parentNode parentLayer:(int)parentLayer stateToNodeDict:(NSMutableDictionary<MDDStateValues*,OldNode*>*)stateToNodeDict;
+-(void) buildLayerByNode:(int)layer;
 -(void) addPropagationsAndTrimDomains;
 -(void) trimDomainsFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
 -(id) generateRootState:(int)variableValue;
--(id) generateStateFromParent:(OldNode*)parentNode assigningVariable:(int)variable withValue:(int)value;
--(id) generateTempStateFromParent:(OldNode*)parentNode assigningVariable:(int)variable withValue:(int)value;
--(void) addNode:(OldNode*)node toLayer:(int)layer_index;
+-(id) generateStateFromParent:(Node*)parentNode assigningVariable:(int)variable withValue:(int)value;
+-(id) generateTempStateFromParent:(Node*)parentNode assigningVariable:(int)variable withValue:(int)value;
+-(void) addNode:(Node*)node toLayer:(int)layer_index;
 -(void) removeNodeAt:(int)index onLayer:(int)node_layer;
--(void) removeNode: (OldNode*) node onLayer:(int)node_layer;
+-(void) removeNode: (Node*) node onLayer:(int)node_layer;
 -(int) removeChildlessNodeFromMDDAtIndex:(int)nodeIndex fromLayer:(int)layer;
--(int) removeChildlessNodeFromMDD:(OldNode*)node fromLayer:(int)layer;
--(int) checkParentsOfChildlessNode:(OldNode*)node parentLayer:(int)layer;
--(void) removeParentlessNodeFromMDD:(OldNode*)node fromLayer:(int)layer;
+-(int) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer;
+-(int) checkParentsOfChildlessNode:(Node*)node parentLayer:(int)layer;
+-(void) removeParentlessFromMDD:(id)child fromLayer:(int)layer;
+-(int) removeChildlessFromMDD:(id)node fromLayer:(int)layer;
+-(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
 -(void) DEBUGTestLayerVariableCountCorrectness;
--(void) DEBUGTestParentChildParity;
--(ORInt) recommendationFor: (ORInt) variableIndex;
+-(ORInt) recommendationFor:(id<CPIntVar>)x;
 -(void) printGraph;
 @end
 @interface CPMDDRestriction : CPMDD {
@@ -93,22 +98,29 @@
 }
 -(id) initCPMDDRestriction: (id<CPEngine>) engine over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize;
 -(void) removeANodeFromLayer:(int)layer;
--(OldNode*) findNodeToRemove:(int)layer;
+-(Node*) findNodeToRemove:(int)layer;
 @end
 @interface CPMDDRelaxation : CPMDD {
 @private
-    int _relaxation_size;
     TRInt _first_relaxed_layer;
     TRInt _firstRelaxedLayer;
+    SEL _calculateStateFromParentsSel;
+    CalculateStateFromParentsIMP _calculateStateFromParents;
+@protected
+    int _relaxation_size;
+    bool _equalBuckets;
+    bool _usingSlack;
+    SEL _computeStateFromPropertiesSel, _splitNodesOnLayerSel;
+    ComputeStateFromPropertiesIMP _computeStateFromProperties;
+    SplitNodesOnLayerIMP _splitNodesOnLayer;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
--(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec;
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
 -(void) rebuild;
 -(void) splitNodesOnLayer:(int)layer;
+-(void) recalcNode:(Node*)node onLayer:(int)layer;
 -(void) recalcNodesOnLayer:(int)layer_index;
--(MDDStateValues*) calculateStateFromParentsOf:(OldNode*)node onLayer:(int)layer isMerged:(bool*)isMerged;
--(void) reevaluateChildrenAfterParentStateChange:(OldNode*)node onLayer:(int)layer_index andVariable:(int)variableIndex;
+-(char*) calculateStateFromParentsOf:(Node*)node onLayer:(int)layer isMerged:(bool*)isMerged;
+-(void) reevaluateChildrenAfterParentStateChange:(Node*)node onLayer:(int)layer_index andVariable:(int)variableIndex;
 -(void) mergeNodesToWidthOnLayer:(int)layer;
--(int**) findSimilarityMatrix:(int)layer;
--(void) updateSimilarityMatrix:(int**)similarityMatrix afterMerging:(int)best_second_node_index into:(int)best_first_node_index onLayer:(int)layer;
 @end

@@ -30,6 +30,7 @@
     DDClosure* _transitionFunctions;
     DDMergeClosure* _relaxationFunctions;
     DDMergeClosure* _differentialFunctions;
+    DDSlackClosure* _slackClosures;
     id<ORTrail> _trail;
     bool _relaxed;
     
@@ -59,14 +60,21 @@
 -(char*) computeStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
 -(char*) computeStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value;
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
+-(void) mergeTempStateProperties:(char*)leftState with:(char*)rightState;
+-(char*) batchMergeForStates:(char**)parentStates values:(int**)edgesUsedByParent numEdgesPerParent:(int*)numEdgesPerParent variable:(int)variableIndex isMerged:(bool*)isMerged numParents:(int)numParents totalEdges:(int)totalEdges;
 -(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right;
+-(void) replaceState:(MDDStateValues*)left withProperties:(char*)rightState;
+-(bool) replaceArcState:(MDDArc*)arcState withParentProperties:(char*)parentProperties variable:(int)variable;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state;
 -(bool) canCreateState:(char**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value;
+-(long) slack:(char*)stateProperties;
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(int) numProperties;
 -(size_t) numBytes;
 -(MDDStateDescriptor*) stateDescriptor;
+-(bool*) propertiesUsed:(int)variableIndex;
+-(DDClosure*) transitionFunctions;
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width;
 -(NSUInteger) hashValueFor:(char*)stateProperties;
 -(int) hashWidth;
