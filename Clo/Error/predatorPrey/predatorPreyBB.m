@@ -137,7 +137,7 @@ void predatorPrey_d_c(int search, int argc, const char * argv[]) {
       [zero setZero];
       
       /* Declaration of model variables */
-      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.1 up:0.3 name:@"x"];
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.3 up:nextafter(0.3,+INFINITY) name:@"x"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORDoubleVar> K = [ORFactory doubleConstantVar:mdl value:1.11 string:@"111/100" name:@"K"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];

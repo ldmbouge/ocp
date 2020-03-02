@@ -412,6 +412,8 @@
 @private
    CPDoubleVarI* _x;
    CPDoubleVarI* _res;
+   // cpjm: Use a trailed object for eo to insure that its value is saved
+   CPRationalDom* _eo;
 }
 -(id) init:(id<CPDoubleVar>)res eq:(id<CPDoubleVar>)x ;
 -(void) post;

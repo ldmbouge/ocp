@@ -8,7 +8,7 @@
 
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
-#import "ORCmdLineArgs.h"
+//#import "ORCmdLineArgs.h"
 #include <signal.h>
 #include <stdlib.h>
 
@@ -180,8 +180,8 @@ void verhulst_f(int search, int argc, const char * argv[]) {
 
 void verhulst_d_c(int search, int argc, const char * argv[]) {
    @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
+      //ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      //[args measure:^struct ORResult(){
          /* Creation of model */
          id<ORModel> mdl = [ORFactory createModel];
          
@@ -261,9 +261,9 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
                return ez;
             }];
          }];
-         struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return result;
-      }];
+         //struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         //return result;
+      //}];
    }
 }
 

@@ -958,6 +958,17 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    int _rounding;
    double_interval _xi;
    double_interval _resi;
+   TRInt _limit;
+   id<ORRationalInterval> ex;
+   id<ORRationalInterval> eres;
+   id<ORRationalInterval> eo;
+   id<ORRationalInterval> exTemp;
+   id<ORRationalInterval> eresTemp;
+   id<ORRationalInterval> eoTemp;
+   id<ORRationalInterval> xr;
+   id<ORRationalInterval> xrTemp;
+   id<ORRationalInterval> two;
+
 }
 -(id) init:(CPDoubleVarI*)res eq:(CPDoubleVarI*)x //res = x^2
 {
@@ -968,31 +979,123 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _resi = makeDoubleInterval(res.min, res.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
+   _eo = [[CPRationalDom alloc] initCPRationalDom:[[res engine] trail] lowF:-INFINITY upF:+INFINITY];
+   assignTRInt(&_limit, YES, _trail);
+   nbConstraint++;
+   
+   ex = [[ORRationalInterval alloc] init];
+   eres = [[ORRationalInterval alloc] init];
+   eo = [[ORRationalInterval alloc] init];
+   exTemp = [[ORRationalInterval alloc] init];
+   eresTemp = [[ORRationalInterval alloc] init];
+   eoTemp = [[ORRationalInterval alloc] init];
+   xr = [[ORRationalInterval alloc] init];
+   xrTemp = [[ORRationalInterval alloc] init];
+   two = [[ORRationalInterval alloc] init];
+
    return self;
 }
 -(void) post
 {
    [self propagate];
-   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
-   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+   if(![_x bound] || [_x boundError])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound] || [_res boundError])  [_res whenChangeBoundsPropagate:self];
 }
 -(void) propagate
 {
+   int gchanged, changed;
+   changed = gchanged = false;
    updateDoubleInterval(&_xi,_x);
    updateDoubleInterval(&_resi,_res);
    intersectionIntervalD inter;
    double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
-   fpi_xxd(_precision, _rounding, &resTmp, &_xi);
-   inter = intersectionD(_res, _resi, resTmp, 0.0);
-   if(inter.changed)
-      [_res updateInterval:inter.result.inf and:inter.result.sup];
+
+   [ex set_q:[_x minErr] and:[_x maxErr]];
+   [eres set_q:[_res minErr] and:[_res maxErr]];
+   [eo set_q:[_eo min] and:[_eo max]];
+   [two set_d:2.0 and:2.0];
+
+   @autoreleasepool {
+      fpi_xxd(_precision, _rounding, &resTmp, &_xi);
+      inter = intersectionD(_res, _resi, resTmp, 0.0);
+      if(inter.changed)
+         [_res updateInterval:inter.result.inf and:inter.result.sup];
+      
+      updateDoubleInterval(&_xi,_x);
+      double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
+      fpi_xxd_inv(_precision,_rounding, &xTmp, &_resi);
+      inter = intersectionD(_x, _xi, xTmp, 0.0);
+      
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
+      
+      updateDoubleInterval(&_xi,_x);
+      updateDoubleInterval(&_resi,_res);
+      
+      //do {
+      changed = false;
+      
+      /* ERROR PROPAG */
+      [xr set_d:_xi.inf and:_xi.sup];
+      
+      [eoTemp set: compute_eo_mul_d(_xi, _xi, _resi)];
+      [eo set: [eo proj_inter:eoTemp]];
+      changed |= eo.changed;
+      
+      if(_limit._val && (_resi.inf <= _resi.sup)){
+         if(
+            ((_resi.inf >= 0) && (((double_cast)(_resi.inf)).parts.exponent == ((double_cast)(_resi.sup)).parts.exponent)) ||
+            ((_resi.sup < 0) && (((double_cast)(_resi.inf)).parts.exponent == ((double_cast)(_resi.sup)).parts.exponent))
+            ){
+            assignTRInt(&limitCounter, limitCounter._val+1, _trail);
+            assignTRInt(&_limit, NO, _trail);
+         }
+      }
+      // ============================== eres
+      // eo + ex * (ex + 2 * x)
+      [eresTemp set: [eo add: [ex mul: [ex add: [two mul: xr]]]]];
+      
+      [eres set: [eres proj_inter: eresTemp]];
+      changed |= eres.changed;
+      
+      // ============================== eo
+      // eres - ex * (ex + 2 * x)
+      [eoTemp set: [eres sub: [ex mul: [ex add: [two mul: xr]]]] ];
+      
+      [eo set: [eo proj_inter: eoTemp]];
+      changed |= eo.changed;
+      
+      // ============================== ex
+      // (eres - x*ex - eo)/(x + ex)
+      [exTemp set: [[[eres sub: [xr mul: ex]] sub: eo] div: [xr add: ex]]];
+      
+      [ex set: [ex proj_inter: exTemp]];
+      changed |= ex.changed;
+      
+      // ============================== x
+      // (eres/ex) - x - ex - (eo/ex)
+      [xrTemp set: [[[[eres div: ex] sub: xr] sub: ex] sub: [eo div: ex]]];
+      
+      [xr set: [xr proj_inter:xrTemp]];
+      changed |= xr.changed;
+      
+      _xi.inf = [[xr low] get_sup_d];
+      _xi.sup = [[xr up] get_inf_d];
+      
+      /* END ERROR PROPAG */
+      gchanged |= changed;
+      //} while(changed);
+   }
    
-   updateDoubleInterval(&_xi,_x);
-   double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
-   fpi_xxd_inv(_precision,_rounding, &xTmp, &_resi);
-   inter = intersectionD(_x, _xi, xTmp, 0.0);
-   if(inter.changed)
-      [_x updateInterval:inter.result.inf and:inter.result.sup];
+   //if(gchanged){
+   // Cause no propagation on eo is insured
+   [_eo updateMin:(eo.low) for:NULL];
+   [_eo updateMax:(eo.up) for:NULL];
+   
+   [_x updateInterval:_xi.inf and:_xi.sup];
+   [_x updateIntervalError:(ex.low) and:(ex.up)];
+   [_res updateIntervalError:(eres.low) and:(eres.up)];
+   //}
 }
 -(NSSet*)allVars
 {
@@ -1013,6 +1116,19 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 - (id<CPVar>)result
 {
    return _res;
+}
+- (void) dealloc
+{
+   [ex release];
+   [eres release];
+   [eo release];
+   [xr release];
+   [exTemp release];
+   [eresTemp release];
+   [eoTemp release];
+   [xrTemp release];
+   [two release];
+   [super dealloc];
 }
 @end
 

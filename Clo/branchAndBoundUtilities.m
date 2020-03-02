@@ -45,9 +45,9 @@
 @end
 
 /* Try to improve computed error in GuessError, once all variables are set */
-ORBool RUN_IMPROVE_GUESS = false;
+ORBool RUN_IMPROVE_GUESS = true;
 /* Discard box if half-ulp limit is reached on all constraints */
-ORBool RUN_DISCARDED_BOX = false;
+ORBool RUN_DISCARDED_BOX = true;
 
 /* Global variables used to compute branch-and-bound running time */
 NSDate *branchAndBoundStart = nil;

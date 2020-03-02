@@ -316,7 +316,53 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
          if (search)
             [cp branchAndBoundSearch:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
-            }];
+            }
+                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+                ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+                ORDouble p = 3.5e7;
+                ORDouble a = 0.401;
+                ORDouble b = 42.7e-6;
+                ORDouble t = 300.0;
+                ORDouble n = 1000.0;
+                ORDouble k = 1.3806503e-23;
+                
+                id<ORRational> vQ = [[ORRational alloc] init];
+                id<ORRational> pQ = [[ORRational alloc] init];
+                id<ORRational> aQ = [[ORRational alloc] init];
+                id<ORRational> bQ = [[ORRational alloc] init];
+                id<ORRational> tQ = [[ORRational alloc] init];
+                id<ORRational> nQ = [[ORRational alloc] init];
+                id<ORRational> kQ = [[ORRational alloc] init];
+                id<ORRational> zQ = [[ORRational alloc] init];
+                id<ORRational> zF = [[ORRational alloc] init];
+                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+                
+                [vQ setInput:v with:[arrayError objectAtIndex:0]];
+                [pQ set_d:3.5e7];
+                [aQ setConstant:a and:"401/1000"];
+                [bQ setConstant:b and:"427/10000000"];
+                [tQ set_d:300.0];
+                [nQ set_d:1000.0];
+                [kQ setConstant:k and:"13806503/1000000000000000000000000000000"];
+                
+                ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
+                [zF set_d:z];
+                
+                [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
+                
+                [ez set: [zQ sub: zF]];
+                
+                [vQ release];
+                [pQ release];
+                [aQ release];
+                [bQ release];
+                [tQ release];
+                [nQ release];
+                [kQ release];
+                [zQ release];
+                [zF release];
+                return ez;
+             }];
          NSLog(@"%@",cp);
       }];
    }
