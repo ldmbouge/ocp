@@ -232,6 +232,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    double_interval _xi;
    double_interval _yi;
    ORBool _rewrite;
+   id<ORRationalInterval> interError;
+   id<ORRationalInterval> ex;
+   id<ORRationalInterval> ey;
+   
 }
 -(id) init:(CPDoubleVarI*)x eqm:(CPDoubleVarI*)y  rewrite:(ORBool)rewrite
 {
@@ -243,6 +247,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _precision = 1;
    _rounding = FE_TONEAREST;
    _rewrite = rewrite;
+   interError = [[ORRationalInterval alloc] init];
+   ex = [[ORRationalInterval alloc] init];
+   ey = [[ORRationalInterval alloc] init];
+   
    return self;
 }
 -(void) post
@@ -258,58 +266,35 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 -(void) propagate
 {
    @autoreleasepool {
-      /*if([_x bound]){
-         if([_y bound]){
-            if([_x value] != - [_y value]) failNow();
-            assignTRInt(&_active, NO, _trail);
-         } else{
-            [_y bind:-[_x value]];
-            //[_y bindError:[[_x errorValue] neg]];
-            [_y updateIntervalError:[[_x maxErr] neg] and:[[_x minErr] neg]];
-            assignTRInt(&_active, NO, _trail);
-         }
-      } else if([_y bound]){
-         [_x bind:-[_y value]];
-         //[_x bindError:[[_y errorValue] neg]];
-         [_x updateIntervalError:[[_y maxErr] neg] and:[[_y minErr] neg]];
-         assignTRInt(&_active, NO, _trail);
-      } else {*/
-         updateDoubleInterval(&_xi,_x);
-         updateDoubleInterval(&_yi,_y);
-         intersectionIntervalD inter;
-         id<ORRationalInterval> interError = [[ORRationalInterval alloc] init];
-         id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-         id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
-         [ex set_q:[_x minErr] and:[_x maxErr]];
-         [ey set_q:[_y minErr] and:[_y maxErr]];
-         
-         double_interval yTmp = makeDoubleInterval(_yi.inf, _yi.sup);
-         fpi_minusd(_precision,_rounding, &yTmp, &_xi);
-         inter = intersectionD(_y,_yi, yTmp, 0.0f);
-         [interError set: [ey proj_inter:[ex neg]]];
-         
-         if(inter.changed)
-            [_y updateInterval:inter.result.inf and:inter.result.sup];
-         if(interError.changed)
-            [_y updateIntervalError:interError.low and:interError.up];
-         
-         updateDoubleInterval(&_yi,_y);
-         [ex set_q:[_x minErr] and:[_x maxErr]];
-         [ey set_q:[_y minErr] and:[_y maxErr]];
-         double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
-         fpi_minusd(_precision,_rounding, &xTmp, &_yi);
-         inter = intersectionD(_x,_xi, xTmp, 0.0f);
-         [interError set: [ex proj_inter:[ey neg]]];
-         
-         if(inter.changed)
-            [_x updateInterval:inter.result.inf and:inter.result.sup];
-         if(interError.changed)
-            [_x updateIntervalError:interError.low and:interError.up];
-         
-         [interError release];
-         [ex release];
-         [ey release];
-      //}
+      updateDoubleInterval(&_xi,_x);
+      updateDoubleInterval(&_yi,_y);
+      intersectionIntervalD inter;
+      
+      [ex set_q:[_x minErr] and:[_x maxErr]];
+      [ey set_q:[_y minErr] and:[_y maxErr]];
+      
+      double_interval yTmp = makeDoubleInterval(_yi.inf, _yi.sup);
+      fpi_minusd(_precision,_rounding, &yTmp, &_xi);
+      inter = intersectionD(_y,_yi, yTmp, 0.0f);
+      [interError set: [ey proj_inter:[ex neg]]];
+      
+      if(inter.changed)
+         [_y updateInterval:inter.result.inf and:inter.result.sup];
+      if(interError.changed)
+         [_y updateIntervalError:interError.low and:interError.up];
+      
+      updateDoubleInterval(&_yi,_y);
+      [ex set_q:[_x minErr] and:[_x maxErr]];
+      [ey set_q:[_y minErr] and:[_y maxErr]];
+      double_interval xTmp = makeDoubleInterval(_xi.inf, _xi.sup);
+      fpi_minusd(_precision,_rounding, &xTmp, &_yi);
+      inter = intersectionD(_x,_xi, xTmp, 0.0f);
+      [interError set: [ex proj_inter:[ey neg]]];
+      
+      if(inter.changed)
+         [_x updateInterval:inter.result.inf and:inter.result.sup];
+      if(interError.changed)
+         [_x updateIntervalError:interError.low and:interError.up];
    }
 }
 -(NSSet*)allVars
@@ -331,6 +316,13 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 - (id<CPVar>)result
 {
    return _x;
+}
+- (void) dealloc
+{
+   [interError release];
+   [ex release];
+   [ey release];
+   [super dealloc];
 }
 @end
 
@@ -517,6 +509,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 @implementation CPDoubleAssign{
    int _precision;
    int _rounding;
+   id<ORRationalInterval> ex;
+   id<ORRationalInterval> ey;
+   id<ORRationalInterval> interError;
+   
 }
 -(id) init:(CPDoubleVarI*)x set:(CPDoubleVarI*)y
 {
@@ -525,6 +521,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _y = y;
    _precision = 1;
    _rounding = FE_TONEAREST;
+   ex = [[ORRationalInterval alloc] init];
+   ey = [[ORRationalInterval alloc] init];
+   interError = [[ORRationalInterval alloc] init];
+   
    return self;
 }
 -(void) post
@@ -536,45 +536,43 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 -(void) propagate
 {
    @autoreleasepool {
-   double_interval x, y;
-   intersectionIntervalD inter;
-   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> interError = [[ORRationalInterval alloc] init];
-   
-   x = makeDoubleInterval([_x min], [_x max]);
-   y = makeDoubleInterval([_y min], [_y max]);
-   
-   [ex set_q:[_x minErr] and:[_x maxErr]];
-   [ey set_q:[_y minErr] and:[_y maxErr]];
-   
-   if(isDisjointWithD(_x,_y)){
-      failNow();
-   } else if(isDisjointWithDR(_x,_y)){
-      failNow();
-   } else{
-      double_interval xTmp = makeDoubleInterval(x.inf, x.sup);
-      fpi_set(_precision, _rounding, &xTmp, &y);
+      double_interval x, y;
+      intersectionIntervalD inter;
       
-      inter = intersectionD(_x, x, xTmp, 0.0f);
-      [interError set: [ex proj_inter:ey]];
+      x = makeDoubleInterval([_x min], [_x max]);
+      y = makeDoubleInterval([_y min], [_y max]);
       
-      if(inter.changed)
-         [_x updateInterval:inter.result.inf and:inter.result.sup];
-      if(interError.changed)
-         [_x updateIntervalError:interError.low and:interError.up];
-      if ((y.inf != inter.result.inf) || (y.sup != inter.result.sup))
-         [_y updateInterval:inter.result.inf and:inter.result.sup];
-      if ([ey.low neq: interError.low] || [ey.up neq: interError.up])
-         [_y updateIntervalError:interError.low and:interError.up];
-   }
-   [ex release];
-   [ey release];
-   [interError release];
+      [ex set_q:[_x minErr] and:[_x maxErr]];
+      [ey set_q:[_y minErr] and:[_y maxErr]];
+      
+      if(isDisjointWithD(_x,_y)){
+         failNow();
+      } else if(isDisjointWithDR(_x,_y)){
+         failNow();
+      } else{
+         double_interval xTmp = makeDoubleInterval(x.inf, x.sup);
+         fpi_set(_precision, _rounding, &xTmp, &y);
+         
+         inter = intersectionD(_x, x, xTmp, 0.0f);
+         [interError set: [ex proj_inter:ey]];
+         
+         if(inter.changed)
+            [_x updateInterval:inter.result.inf and:inter.result.sup];
+         if(interError.changed)
+            [_x updateIntervalError:interError.low and:interError.up];
+         if ((y.inf != inter.result.inf) || (y.sup != inter.result.sup))
+            [_y updateInterval:inter.result.inf and:inter.result.sup];
+         if ([ey.low neq: interError.low] || [ey.up neq: interError.up])
+            [_y updateIntervalError:interError.low and:interError.up];
       }
+      
+   }
 }
 - (void)dealloc
 {
+   [ex release];
+   [ey release];
+   [interError release];
    [super dealloc];
 }
 -(NSSet*)allVars
@@ -599,22 +597,22 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 }
 @end
 
-@implementation CPDoubleAssignC
+@implementation CPDoubleAssignC {
+   id<ORRational> zero;
+}
 -(id) init:(CPDoubleVarI*)x set:(ORDouble)c
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _c = c;
+   zero = [[ORRational alloc] init];
    return self;
-   
 }
 -(void) post
 {
-   id<ORRational> zero = [[ORRational alloc] init];
    [zero setZero];
    [_x bind:_c];
    [_x bindError:zero];
-   [zero release];
 }
 -(NSSet*)allVars
 {
@@ -631,6 +629,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 - (id<CPVar>)result
 {
    return _x;
+}
+- (void)dealloc
+{
+   [zero release];
 }
 @end
 
@@ -968,7 +970,6 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    id<ORRationalInterval> xr;
    id<ORRationalInterval> xrTemp;
    id<ORRationalInterval> two;
-
 }
 -(id) init:(CPDoubleVarI*)res eq:(CPDoubleVarI*)x //res = x^2
 {
@@ -992,7 +993,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    xr = [[ORRationalInterval alloc] init];
    xrTemp = [[ORRationalInterval alloc] init];
    two = [[ORRationalInterval alloc] init];
-
+   
    return self;
 }
 -(void) post
@@ -1009,12 +1010,12 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    updateDoubleInterval(&_resi,_res);
    intersectionIntervalD inter;
    double_interval resTmp = makeDoubleInterval(_resi.inf, _resi.sup);
-
+   
    [ex set_q:[_x minErr] and:[_x maxErr]];
    [eres set_q:[_res minErr] and:[_res maxErr]];
    [eo set_q:[_eo min] and:[_eo max]];
    [two set_d:2.0 and:2.0];
-
+   
    @autoreleasepool {
       fpi_xxd(_precision, _rounding, &resTmp, &_xi);
       inter = intersectionD(_res, _resi, resTmp, 0.0);
@@ -1134,6 +1135,15 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 
 @implementation CPDoubleTernaryAdd {
    TRInt _limit;
+   id<ORRationalInterval> ex;
+   id<ORRationalInterval> ey;
+   id<ORRationalInterval> ez;
+   id<ORRationalInterval> eo;
+   id<ORRationalInterval> exTemp;
+   id<ORRationalInterval> eyTemp;
+   id<ORRationalInterval> ezTemp;
+   id<ORRationalInterval> eoTemp;
+   
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x plus:(CPDoubleVarI*)y
 {
@@ -1160,6 +1170,15 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
+   ex = [[ORRationalInterval alloc] init];
+   ey = [[ORRationalInterval alloc] init];
+   ez = [[ORRationalInterval alloc] init];
+   eo = [[ORRationalInterval alloc] init];
+   exTemp = [[ORRationalInterval alloc] init];
+   eyTemp = [[ORRationalInterval alloc] init];
+   ezTemp = [[ORRationalInterval alloc] init];
+   eoTemp = [[ORRationalInterval alloc] init];
+   
    return self;
 }
 -(void) post
@@ -1187,14 +1206,6 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    changed = gchanged = false;
    double_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionIntervalD inter;
-   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
    
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
@@ -1302,6 +1313,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    }
    
    fesetround(FE_TONEAREST);
+}
+- (void)dealloc {
    [ex release];
    [ey release];
    [ez release];
@@ -1310,8 +1323,6 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    [eyTemp release];
    [ezTemp release];
    [eoTemp release];
-}
-- (void)dealloc {
    [super dealloc];
 }
 -(void) propagateFixPoint
@@ -1365,6 +1376,15 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 
 @implementation CPDoubleTernarySub {
    TRInt _limit;
+   id<ORRationalInterval> ex;
+   id<ORRationalInterval> ey;
+   id<ORRationalInterval> ez;
+   id<ORRationalInterval> eo;
+   id<ORRationalInterval> exTemp;
+   id<ORRationalInterval> eyTemp;
+   id<ORRationalInterval> ezTemp;
+   id<ORRationalInterval> eoTemp;
+   
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y kbpercent:(ORDouble)p rewriting:(ORBool) f
 {
@@ -1379,6 +1399,15 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
+   ex = [[ORRationalInterval alloc] init];
+   ey = [[ORRationalInterval alloc] init];
+   ez = [[ORRationalInterval alloc] init];
+   eo = [[ORRationalInterval alloc] init];
+   exTemp = [[ORRationalInterval alloc] init];
+   eyTemp = [[ORRationalInterval alloc] init];
+   ezTemp = [[ORRationalInterval alloc] init];
+   eoTemp = [[ORRationalInterval alloc] init];
+   
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x minus:(CPDoubleVarI*)y kbpercent:(ORDouble)p
@@ -1419,14 +1448,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    changed = gchanged = false;
    double_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionIntervalD inter;
-   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
+   
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
    y = makeDoubleInterval([_y min],[_y max]);
@@ -1527,10 +1549,12 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
       [_x updateIntervalError:(ex.low) and:(ex.up)];
       [_y updateIntervalError:(ey.low) and:(ey.up)];
       [_z updateIntervalError:(ez.low) and:(ez.up)];
-	  if(![self nbUVars])
+      if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
    }
    fesetround(FE_TONEAREST);
+}
+- (void)dealloc {
    [ex release];
    [ey release];
    [ez release];
@@ -1539,8 +1563,6 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    [eyTemp release];
    [ezTemp release];
    [eoTemp release];
-}
-- (void)dealloc {
    [super dealloc];
 }
 -(void) propagateFixPoint
@@ -1593,6 +1615,18 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 
 @implementation CPDoubleTernaryMult{
    TRInt _limit;
+   id<ORRationalInterval> ex;
+   id<ORRationalInterval> ey;
+   id<ORRationalInterval> ez;
+   id<ORRationalInterval> eo;
+   id<ORRationalInterval> exTemp;
+   id<ORRationalInterval> eyTemp;
+   id<ORRationalInterval> ezTemp;
+   id<ORRationalInterval> eoTemp;
+   id<ORRationalInterval> xrTemp;
+   id<ORRationalInterval> yrTemp;
+   id<ORRationalInterval> xr;
+   id<ORRationalInterval> yr;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1606,6 +1640,18 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
+   ex = [[ORRationalInterval alloc] init];
+   ey = [[ORRationalInterval alloc] init];
+   ez = [[ORRationalInterval alloc] init];
+   eo = [[ORRationalInterval alloc] init];
+   exTemp = [[ORRationalInterval alloc] init];
+   eyTemp = [[ORRationalInterval alloc] init];
+   ezTemp = [[ORRationalInterval alloc] init];
+   eoTemp = [[ORRationalInterval alloc] init];
+   xrTemp = [[ORRationalInterval alloc] init];
+   yrTemp = [[ORRationalInterval alloc] init];
+   xr = [[ORRationalInterval alloc] init];
+   yr = [[ORRationalInterval alloc] init];
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y
@@ -1625,18 +1671,6 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    changed = gchanged = false;
    double_interval zTemp, yTemp, xTemp, z, x, y;
    intersectionIntervalD inter;
-   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xrTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> yrTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xr = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> yr = [[ORRationalInterval alloc] init];
    
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
@@ -1755,6 +1789,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    }
    
    fesetround(FE_TONEAREST);
+}
+- (void)dealloc {
    [ex release];
    [ey release];
    [ez release];
@@ -1767,8 +1803,6 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    [yrTemp release];
    [xr release];
    [yr release];
-}
-- (void)dealloc {
    [super dealloc];
 }
 -(NSSet*)allVars
@@ -1795,6 +1829,24 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 
 @implementation CPDoubleTernaryDiv {
    TRInt _limit;
+   id<ORRationalInterval> ex;
+   id<ORRationalInterval> ey;
+   id<ORRationalInterval> ez;
+   id<ORRationalInterval> eo;
+   id<ORRationalInterval> exTemp;
+   id<ORRationalInterval> eyTemp;
+   id<ORRationalInterval> ezTemp;
+   id<ORRationalInterval> eoTemp;
+   id<ORRationalInterval> xrTemp;
+   id<ORRationalInterval> yrTemp;
+   id<ORRationalInterval> xr;
+   id<ORRationalInterval> yr;
+   id<ORRationalInterval> D;
+   id<ORRationalInterval> D1;
+   id<ORRationalInterval> D2;
+   id<ORRationalInterval> d1;
+   id<ORRationalInterval> d2;
+   id<ORRationalInterval> tmp;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1808,6 +1860,24 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
+   ex = [[ORRationalInterval alloc] init];
+   ey = [[ORRationalInterval alloc] init];
+   ez = [[ORRationalInterval alloc] init];
+   eo = [[ORRationalInterval alloc] init];
+   exTemp = [[ORRationalInterval alloc] init];
+   eyTemp = [[ORRationalInterval alloc] init];
+   ezTemp = [[ORRationalInterval alloc] init];
+   eoTemp = [[ORRationalInterval alloc] init];
+   xrTemp = [[ORRationalInterval alloc] init];
+   yrTemp = [[ORRationalInterval alloc] init];
+   xr = [[ORRationalInterval alloc] init];
+   yr = [[ORRationalInterval alloc] init];
+   D = [[ORRationalInterval alloc] init];
+   D1 = [[ORRationalInterval alloc] init];
+   D2 = [[ORRationalInterval alloc] init];
+   d1 = [[ORRationalInterval alloc] init];
+   d2 = [[ORRationalInterval alloc] init];
+   tmp = [[ORRationalInterval alloc] init];
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x div:(CPDoubleVarI*)y
@@ -1827,24 +1897,6 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    changed = gchanged = false;
    double_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionIntervalD inter;
-   id<ORRationalInterval> ex = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ey = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ez = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eo = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> exTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eyTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> ezTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> eoTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xrTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> yrTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xr = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> yr = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> D = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> D1 = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> D2 = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> d1 = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> d2 = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> tmp = [[ORRationalInterval alloc] init];
    
    z = makeDoubleInterval([_z min],[_z max]);
    x = makeDoubleInterval([_x min],[_x max]);
@@ -1984,6 +2036,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    }
    
    fesetround(FE_TONEAREST);
+}
+- (void)dealloc {
    [ex release];
    [ey release];
    [ez release];
@@ -2002,8 +2056,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    [d1 release];
    [d2 release];
    [tmp release];
-}
-- (void)dealloc {
+   
    [super dealloc];
 }
 -(NSSet*)allVars
