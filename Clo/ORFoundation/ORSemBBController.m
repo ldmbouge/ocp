@@ -264,8 +264,11 @@ NSString * const ORStatus_toString_BB[] = {
          /* skip box if sup of error is less than primalBound */
          if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] &&
             ([[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]] ||
-             (![boundDiscardedBoxes isNegInf] && [boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]]))){
+             (![boundDiscardedBoxes isNegInf] && [boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]]
+              && ![boundDegeneratedBoxes isNegInf] && [boundDegeneratedBoxes geq: [[[_engine objective] primalBound] rationalValue]]
+              && ![boundTopOfQueue isNegInf] && [boundTopOfQueue geq:[[[_engine objective] primalBound] rationalValue]]))){
             BBNode* nd = [_buf extractBest];
+            [boundTopOfQueue set:[((BBKey*)[_buf peekAtKey]).bound rationalValue]];
             
             ORStatus status = [of tightenDualBound:bestKey.bound];
             if (status != ORFailure)
@@ -286,10 +289,16 @@ NSString * const ORStatus_toString_BB[] = {
             }
          } else {
             NSLog(@"EQUAL BOUND");
-            NSLog(@"    primalBound <=               dualBound: %@ <= %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
-            NSLog(@"    primalBound <=        dualBoundNextBox: %@ <= %@", [[_engine objective] primalBound], [bestKey.bound rationalValue]);
+            NSLog(@"    primalBound <=                 dualBound: %@ <= %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
+            NSLog(@"    primalBound <=          dualBoundNextBox: %@ <= %@", [[_engine objective] primalBound], [bestKey.bound rationalValue]);
             if(![boundDiscardedBoxes isNegInf])
-               NSLog(@"    primalBound <= dualBoundDiscardedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDiscardedBoxes);
+            NSLog(@"    primalBound <=   dualBoundDiscardedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDiscardedBoxes);
+            if(![boundDegeneratedBoxes isNegInf])
+            NSLog(@"    primalBound <= dualBoundDegeneratedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDegeneratedBoxes);
+            if(![boundTopOfQueue isNegInf])
+            NSLog(@"    primalBound <=       dualBoundTopOfQueue: %@ <= %@", [[_engine objective] primalBound], boundTopOfQueue);
+
+
             return;
          }
       } else {

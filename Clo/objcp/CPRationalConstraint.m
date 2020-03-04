@@ -1642,9 +1642,9 @@
 -(void) updateDualBound
 {
    [bound set: [_x max]];
-   if ([bound lt: _dualBound] && [bound gt: boundDiscardedBoxes] && [bound gt: boundDegeneratedBoxes]){
+   if ([bound lt: _dualBound] && [bound gt: boundDiscardedBoxes] && [bound gt: boundDegeneratedBoxes] && [bound gt: boundTopOfQueue]){
       nbDualUpdate++;
-      [_dualBound set: maxQ(maxQ(bound, boundDegeneratedBoxes), boundDiscardedBoxes)];
+      [_dualBound set: maxQ(maxQ(maxQ(bound, boundDegeneratedBoxes), boundDiscardedBoxes),boundTopOfQueue)];
       branchAndBoundTime = [NSDate date];
       NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
    }
@@ -1665,8 +1665,8 @@
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
       [b set: [(id<ORObjectiveValueRational>) newBound value]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
-         [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
+         [_dualBound set: maxQ(maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes),boundTopOfQueue)];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1675,8 +1675,8 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
       [b set_d: [(id<ORObjectiveValueInt>)newBound value]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
-         [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
+         [_dualBound set: maxQ(maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes),boundTopOfQueue)];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1685,8 +1685,8 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
       [b set_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
-         [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
+         [_dualBound set: maxQ(maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes),boundTopOfQueue)];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);
@@ -1695,8 +1695,8 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
       [b set_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
-         [_dualBound set: maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes)];
+      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
+         [_dualBound set: maxQ(maxQ(maxQ(b, boundDegeneratedBoxes), boundDiscardedBoxes),boundTopOfQueue)];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
          NSLog(@"DBOUND: [%@,%@] -- %.3fs (%d)", _primalBound, _dualBound, [branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart], nbDualUpdate);

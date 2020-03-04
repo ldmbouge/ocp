@@ -188,7 +188,7 @@ void kepler0_d_c(int search, int argc, const char * argv[]) {
 
 
 int main(int argc, const char * argv[]) {
-   kepler0_d(1, argc, argv);
-   //kepler0_d_c(1, argc, argv);
+   //kepler0_d(1, argc, argv);
+   kepler0_d_c(1, argc, argv);
    return 0;
 }

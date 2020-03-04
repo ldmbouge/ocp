@@ -173,7 +173,41 @@ void verhulst_f(int search, int argc, const char * argv[]) {
          if (search)
             [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
-            }];
+            }
+                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+                ORDouble r = 4.0;
+                ORDouble k = 1.11;
+                ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+                
+                id<ORRational> one = [[ORRational alloc] init];
+                id<ORRational> rQ = [[ORRational alloc] init];
+                id<ORRational> kQ = [[ORRational alloc] init];
+                id<ORRational> xQ = [[ORRational alloc] init];
+                id<ORRational> zQ = [[ORRational alloc] init];
+                id<ORRational> zF = [[ORRational alloc] init];
+                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+                
+                [one setOne];
+                [rQ set_d:4.0];
+                [kQ setConstant:k and:"111/100"];
+                [xQ setInput:x with:[arrayError objectAtIndex:0]];
+                
+                ORDouble z = ((r * x) / (1.0 + (x / k)));
+                [zF set_d:z];
+                
+                [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
+                
+                [ez set: [zQ sub: zF]];
+                
+                [one release];
+                [rQ release];
+                [kQ release];
+                [xQ release];
+                [zQ release];
+                [zF release];
+                return ez;
+             }];
+
       }];
    }
 }
@@ -270,7 +304,7 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //verhulst_f(1, argc, argv);
-   verhulst_d(1, argc, argv);
-   //verhulst_d_c(1, argc, argv);
+   //verhulst_d(1, argc, argv);
+   verhulst_d_c(1, argc, argv);
    return 0;
 }

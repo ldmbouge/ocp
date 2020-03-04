@@ -191,7 +191,7 @@ void sineOrder3_d_c(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   sineOrder3_d(1, argc, argv);
-   //sineOrder3_d_c(1, argc, argv);
+   //sineOrder3_d(1, argc, argv);
+   sineOrder3_d_c(1, argc, argv);
    return 0;
 }

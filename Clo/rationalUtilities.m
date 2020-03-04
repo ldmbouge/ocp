@@ -155,7 +155,7 @@
    /* Show exact fraction form of rational */
    //[buf appendFormat:@"%s",[self get_str]];
    /* DEBUG only */
-   //[buf appendFormat:@"(%20.20e - %d)",[self get_d], _type];
+   //[buf appendFormat:@"(%1.20e - %d)",[self get_d], _type];
    return buf;
 }
 -(id)set:(id<ORRational>)r

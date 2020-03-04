@@ -303,7 +303,7 @@ void doppler1_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //doppler1_f(1, argc, argv);
-   doppler1_d(1, argc, argv);
-   //doppler1_d_c(1, argc, argv);
+   //doppler1_d(1, argc, argv);
+   doppler1_d_c(1, argc, argv);
    return 0;
 }

@@ -7,7 +7,7 @@
 
 #import <ORProgram/ORProgram.h>
 #include "gmp.h"
-#import "ORCmdLineArgs.h"
+//#import "ORCmdLineArgs.h"
 #include <signal.h>
 #include <stdlib.h>
 #include <time.h>
@@ -147,8 +147,8 @@ void sqroot_d(int search, int argc, const char * argv[]) {
 
 void sqroot_d_c(int search, int argc, const char * argv[]) {
    @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
+      //ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      //[args measure:^struct ORResult(){
          /* Creation of model */
          id<ORModel> mdl = [ORFactory createModel];
          
@@ -228,16 +228,16 @@ void sqroot_d_c(int search, int argc, const char * argv[]) {
                return ez;
             }];
          }];
-         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-      }];
+//         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+//         return r;
+//      }];
    }
 }
 
 void sqroot_d_c_3B(int search, int argc, const char * argv[]) {
    @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
+//      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+//      [args measure:^struct ORResult(){
          /* Creation of model */
          id<ORModel> mdl = [ORFactory createModel];
          
@@ -319,9 +319,9 @@ void sqroot_d_c_3B(int search, int argc, const char * argv[]) {
                return ez;
             }];
          }];
-         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return r;
-      }];
+//         struct ORResult r = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+//         return r;
+//      }];
    }
 }
 
@@ -329,8 +329,8 @@ void sqroot_d_c_3B(int search, int argc, const char * argv[]) {
 void sqroot_f(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       //srand(time(NULL));
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult(){
+//      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+//      [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
          id<ORRational> zero = [ORRational rationalWith_d:0.0];
          id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.0f up:1.0f elow:zero eup:zero name:@"x"];
@@ -356,18 +356,60 @@ void sqroot_f(int search, int argc, const char * argv[]) {
             if (search)
                [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                   [cp float3WaySplit:i withVars:x];
-               }];
+               }
+                                  compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+                   ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+                   ORDouble a = 0.5;
+                   ORDouble b = 0.125;
+                   ORDouble c = 0.0625;
+                   ORDouble d = 0.0390625;
+                   
+                   id<ORRational> one = [[ORRational alloc] init];
+                   id<ORRational> xQ = [[ORRational alloc] init];
+                   id<ORRational> aQ = [[ORRational alloc] init];
+                   id<ORRational> bQ = [[ORRational alloc] init];
+                   id<ORRational> cQ = [[ORRational alloc] init];
+                   id<ORRational> dQ = [[ORRational alloc] init];
+                   id<ORRational> zQ = [[ORRational alloc] init];
+                   id<ORRational> zF = [[ORRational alloc] init];
+                   id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+                   
+                   [one setOne];
+                   [xQ setInput:x with:[arrayError objectAtIndex:0]];
+                   [aQ setConstant:a and:"1/2"];
+                   [bQ setConstant:b and:"1/8"];
+                   [cQ setConstant:c and:"1/16"];
+                   [dQ setConstant:d and:"5/128"];
+                   
+                   ORDouble z = ((((1.0 + (a * x)) - ((b * x) * x)) + (((c * x) * x) * x)) - ((((d * x) * x) * x) * x));
+                   
+                   [zF set_d:z];
+                   
+                   [zQ set:[[[[one add: [aQ mul: xQ]] sub: [[bQ mul: xQ] mul: xQ]] add: [[[cQ mul: xQ] mul: xQ] mul: xQ]] sub: [[[[dQ mul: xQ] mul: xQ] mul: xQ] mul: xQ]]];
+                   
+                   [ez set: [zQ sub: zF]];
+                   
+                   [one release];
+                   [xQ release];
+                   [aQ release];
+                   [bQ release];
+                   [cQ release];
+                   [dQ release];
+                   [zQ release];
+                   [zF release];
+                   return ez;
+                }];
          }];
-         struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         return result;
-      }];
+//         struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+//         return result;
+//      }];
    }
 }
 
 int main(int argc, const char * argv[]) {
    //sqroot_d(1, argc, argv);
-   //sqroot_d_c(1, argc, argv);
+   sqroot_d_c(1, argc, argv);
    //sqroot_f(1, argc, argv);
-   sqroot_d_c_3B(1, argc, argv);
+   //sqroot_d_c_3B(1, argc, argv);
    return 0;
 }

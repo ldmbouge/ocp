@@ -1870,6 +1870,7 @@ onFailure: (ORInt2Void) onFailure
    
    boundDiscardedBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
    boundDegeneratedBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
+   boundTopOfQueue = [[[[ORRational alloc] init] setNegInf] autorelease];
    branchAndBoundStart = [NSDate date];
    
    id<ORSelect> select = [ORFactory select: _engine // need to be out of inner loop to go through all possible variables
@@ -1940,7 +1941,7 @@ onFailure: (ORInt2Void) onFailure
                      if (![currentVar bound]) {
                         ORDouble value = randomValueD([currentVar min], [currentVar max]);
                         [arrayVarValue addObject:[NSNumber numberWithDouble:value]];
-                        id<ORRational> halfUlp = halfUlpOf(value);
+                        id<ORRational> halfUlp = halfUlpOfD(value);
                         [halfUlp set:((drand48() < 0.4) ? [halfUlp neg] : halfUlp)];
                         if ([halfUlp lt: [currentVar minErr]])
                            [halfUlp set: [currentVar minErr]];
@@ -1986,7 +1987,7 @@ onFailure: (ORInt2Void) onFailure
                      if (([currentVar min] <= value) && (value <= [currentVar max])) { // Keep it within box
                         [arrayVarValue replaceObjectAtIndex:nvar withObject:[NSNumber numberWithDouble:value]];
                         olderr = [arrayVarError objectAtIndex:nvar];
-                        id<ORRational> halfUlp = halfUlpOf(value);
+                        id<ORRational> halfUlp = halfUlpOfD(value);
                         [halfUlp set:((direction) ? [halfUlp neg] : halfUlp)];
                         if ([halfUlp lt: [currentVar minErr]]) [halfUlp set: [currentVar minErr]];
                         if ([halfUlp gt: [currentVar maxErr]]) [halfUlp set: [currentVar maxErr]];
@@ -2001,7 +2002,7 @@ onFailure: (ORInt2Void) onFailure
                            guess_error = tmp_error;
                            improved_var = true;
                         } else {
-                           // We failed to improve => back to preivous value
+                           // We failed to improve => back to previous value
                            [arrayVarValue replaceObjectAtIndex:nvar withObject:[NSNumber numberWithDouble:old_value]];
                            [arrayVarError replaceObjectAtIndex:nvar withObject:olderr];
                            if ((! improved_var) && (direction == 1)) {

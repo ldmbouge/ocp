@@ -26,6 +26,7 @@ extern ORBool RUN_DISCARDED_BOX;
 
 extern id<ORRational> boundDiscardedBoxes;
 extern id<ORRational> boundDegeneratedBoxes;
+extern id<ORRational> boundTopOfQueue;
 
 extern NSDate *branchAndBoundStart;
 extern NSDate *branchAndBoundTime;

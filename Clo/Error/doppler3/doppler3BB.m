@@ -226,7 +226,7 @@ void doppler3_d_c(int search, int argc, const char * argv[]) {
 }
 
 int main(int argc, const char * argv[]) {
-   doppler3_d(1, argc, argv);
-   //doppler3_d_c(1, argc, argv);
+   //doppler3_d(1, argc, argv);
+   doppler3_d_c(1, argc, argv);
    return 0;
 }
