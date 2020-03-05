@@ -138,7 +138,7 @@ void kepler0_d_c(int search, int argc, const char * argv[]) {
          /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
          [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
             /* Split strategy */
-            [cp float3WaySplit:i withVars:x];
+            [cp floatSplit:i withVars:x];
          }
                            compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
             ORDouble x1 = [[arrayValue objectAtIndex:0] doubleValue];

@@ -262,11 +262,13 @@ NSString * const ORStatus_toString_BB[] = {
       if (!isEmpty){
          BBKey* bestKey = [[_buf peekAtKey] retain];
          /* skip box if sup of error is less than primalBound */
-         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] &&
-            ([[bestKey.bound rationalValue] geq: [[[_engine objective] primalBound] rationalValue]] ||
-             (![boundDiscardedBoxes isNegInf] && [boundDiscardedBoxes geq: [[[_engine objective] primalBound] rationalValue]]
-              && ![boundDegeneratedBoxes isNegInf] && [boundDegeneratedBoxes geq: [[[_engine objective] primalBound] rationalValue]]
-              && ![boundTopOfQueue isNegInf] && [boundTopOfQueue geq:[[[_engine objective] primalBound] rationalValue]]))){
+         id<ORRational> primalBound = [[[_engine objective] primalBound] rationalValue];
+         id<ORRational> dualBound = [[[_engine objective] dualBound] rationalValue];
+         if([primalBound lt: dualBound] &&
+            ([[bestKey.bound rationalValue] geq: primalBound] ||
+             (![boundDiscardedBoxes isNegInf] && [boundDiscardedBoxes geq: primalBound]
+              && ![boundDegeneratedBoxes isNegInf] && [boundDegeneratedBoxes geq: primalBound]
+              ))){
             BBNode* nd = [_buf extractBest];
             [boundTopOfQueue set:[((BBKey*)[_buf peekAtKey]).bound rationalValue]];
             
