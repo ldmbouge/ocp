@@ -53,7 +53,6 @@ static inline id getState(Node* n) { return n->_state;}
     _hashValueSel = @selector(hashValueFor:);
     _removeParentlessSel = @selector(removeParentlessNodeFromMDD:fromLayer:);
     _removeParentlessNode = (RemoveParentlessIMP)[self methodForSelector:_removeParentlessSel];
-    _replaceStateSel = @selector(replaceState:withProperties:);
     
     return self;
 }
@@ -66,7 +65,6 @@ static inline id getState(Node* n) { return n->_state;}
     
     _hashValueFor = (HashValueIMP)[_spec methodForSelector:_hashValueSel];
     _canCreateState = (CanCreateStateIMP)[_spec methodForSelector:_canCreateStateSel];
-    _replaceState = (ReplaceStateIMP)[_spec methodForSelector:_replaceStateSel];
     return self;
 }
 -(NSSet*)allVars
@@ -419,7 +417,6 @@ static inline id getState(Node* n) { return n->_state;}
         [variable whenChangeDo:^() {
             _highestLayerChanged = (int)_numVariables+1;
             _lowestLayerChanged = 0;
-            
             bool layerChanged = false;
             for (int domain_val = _min_domain_for_layer[layer]; domain_val <= maxDomain; domain_val++) {
                 if (variable_count[domain_val]._val) {
@@ -473,16 +470,6 @@ static inline id getState(Node* n) { return n->_state;}
 {
     return [_spec createRootState:variableValue];
 }
--(MDDStateValues*) generateStateFromParent:(Node*)parentNode assigningVariable:(int)variable withValue:(int)value
-{
-    MDDStateValues* parentState = getState(parentNode);
-    return [_spec createStateFrom:parentState assigningVariable:variable withValue:value];
-}
--(MDDStateValues*) generateTempStateFromParent:(Node*)parentNode assigningVariable:(int)variable withValue:(int)value
-{
-    MDDStateValues* parentState = getState(parentNode);
-    return [_spec createTempStateFrom:parentState assigningVariable:variable withValue:value];
-}
 -(void) addNode:(Node*)node toLayer:(int)layer_index
 {
     int layerSize = layer_size[layer_index]._val;
@@ -519,7 +506,9 @@ static inline id getState(Node* n) { return n->_state;}
     return highestLayerChanged;
 }
 -(int) removeChildlessNodeFromMDD:(Node*)node fromLayer:(int)layer {
-    if (layer_size[layer]._val == 1) { failNow(); }
+    if (layer_size[layer]._val == 1) {
+        failNow();
+    }
     int highestLayerChanged = [self checkParentsOfChildlessNode:node parentLayer:layer-1];
     [self removeNode: node onLayer:layer];
     return highestLayerChanged;
@@ -604,8 +593,10 @@ static inline id getState(Node* n) { return n->_state;}
 -(void) dealloc {
     for (int i = 0; i < _numVariables; i++) {
         [layers[i] release];
-        layer_variable_count[i] += _min_domain_for_layer[i];
-        free(layer_variable_count[i]);
+        if (min_variable_index + i < _nextVariable) {
+            layer_variable_count[i] += _min_domain_for_layer[i];
+            free(layer_variable_count[i]);
+        }
     }
     [layers[_numVariables] release];
     free(layers);
@@ -613,8 +604,12 @@ static inline id getState(Node* n) { return n->_state;}
     free(max_layer_size);
     int maxVarIndex = min_variable_index + (int)_numVariables;
     for (int i = min_variable_index; i < maxVarIndex; i++) {
-        _valueNotMember[i] += _min_domain_for_layer[_variable_to_layer[i]];
-        free(_valueNotMember[i]);
+        if (i < _nextVariable) {
+            _valueNotMember[i] += _min_domain_for_layer[_variable_to_layer[i]];
+            free(_valueNotMember[i]);
+        } else {
+            break;
+        }
     }
     _valueNotMember += min_variable_index;
     free(_valueNotMember);
@@ -630,7 +625,14 @@ static inline id getState(Node* n) { return n->_state;}
 
 -(ORInt) recommendationFor:(id<CPIntVar>)x
 {
-    int variableId = [x getId] + 1;
+    //int variableId = [x getId] + min_variable_index;
+    int variableId = -1;
+    for (int i = min_variable_index; i < min_variable_index + _numVariables; i++) {
+        if (_x[i] == x) {
+            variableId = i;
+            break;
+        }
+    }
     int layer = _variable_to_layer[variableId];
     int minDomain = [x min];
     int maxDomain = [x max];
@@ -897,7 +899,6 @@ static inline id getState(Node* n) { return n->_state;}
     _computeStateFromProperties = (ComputeStateFromPropertiesIMP)[_spec methodForSelector:_computeStateFromPropertiesSel];
     _calculateStateFromParentsSel = @selector(calculateStateFromParentsOf:onLayer:isMerged:);
     _calculateStateFromParents = (CalculateStateFromParentsIMP)[self methodForSelector:_calculateStateFromParentsSel];
-    _replaceState = (ReplaceStateIMP)[_spec methodForSelector:_replaceStateSel];
     return self;
 }
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
@@ -957,7 +958,7 @@ static inline id getState(Node* n) { return n->_state;}
     char* newStateProperties = _calculateStateFromParents(self, _calculateStateFromParentsSel, node, layer-1, &isMergedNode);
     [node setIsMergedNode:isMergedNode];
     if (memcmp(oldStateProperties, newStateProperties, _numBytes) != 0) {
-        _replaceState(_spec, _replaceStateSel, nodeState, newStateProperties);
+        [nodeState replaceStateWith:newStateProperties trail:_trail];
         [self reevaluateChildrenAfterParentStateChange:node onLayer:layer andVariable:variableIndex];
         _lowestLayerChanged = max(_lowestLayerChanged, layer+1);
     }
@@ -1057,6 +1058,8 @@ static inline id getState(Node* n) { return n->_state;}
     int layerSize = layer_size[layer]._val;
     int minDomain = _min_domain_for_layer[layer];
     int maxDomain = _max_domain_for_layer[layer];
+    //srandom(100);
+    //int referenceIndex = random() % layerSize;
     int referenceIndex = arc4random_uniform(layerSize);
     Node* referenceNode = [layerNodes at:referenceIndex];
     MDDStateValues* referenceState = getState(referenceNode);
@@ -1074,13 +1077,16 @@ static inline id getState(Node* n) { return n->_state;}
         Node* node = [layerNodes at:nodeIndex];
         MDDStateValues* state = getState(node);
         char* stateProperties = [state state];
-        long innerProduct = 0;
+        unsigned long innerProduct = 0;
         if (_usingSlack) {
             innerProduct = [_spec slack:stateProperties];
         } else {
-            for(int k=0;k < _numBytes; k++) {
-                innerProduct *= 2;
-                innerProduct += (float)(referenceStateProperties[k] + 1) * (stateProperties[k] + 1);
+            for(int k=0;k < _numBytes; k+=4) {
+                innerProduct <<= 1;
+                innerProduct += __builtin_popcount(~(*(int*)&referenceStateProperties[k] ^ *(int*)&stateProperties[k]));
+                
+                //innerProduct *= 10;
+                //innerProduct += (float)(referenceStateProperties[k] + 1) * (stateProperties[k] + 1);
             }
         }
         normNodePairs[nodeIndex] = [[NormNodePair alloc] initNormNodePair:innerProduct node:node];

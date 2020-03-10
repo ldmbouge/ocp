@@ -188,12 +188,13 @@ const short BytesPerMagic = 4;
 
 @implementation MDDStateSpecification
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars {
+    self = [super init];
+    _vars = vars;
     _minVar = [vars low];
     _numVars = (int)[vars count];
     _relaxed = relaxed;
     _stateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor:numProperties];
-    _arcExists = malloc(numSpecs * sizeof(DDClosure));
-    _transitionFunctions = calloc(numProperties, sizeof(DDClosure));
+    _transitionFunctions = calloc(numProperties, sizeof(DDArcClosure));
     if (_relaxed) {
         _relaxationFunctions = calloc(numProperties, sizeof(DDMergeClosure));
         _differentialFunctions = calloc(numProperties, sizeof(DDMergeClosure));
@@ -205,69 +206,80 @@ const short BytesPerMagic = 4;
         _stateValueIndicesForVariable[i] = calloc(numProperties, sizeof(bool));
     }
     _stateValueIndicesForVariable -= _minVar;
-    _arcExistsForVariable = calloc(_numVars, sizeof(DDClosure));
+    _arcExistsForVariable = calloc(_numVars, sizeof(DDArcClosure));
     _arcExistsForVariable -= _minVar;
     
-    _arcExistsListsForVariable = calloc(_numVars, sizeof(DDClosure*));
+    _arcExistsListsForVariable = calloc(_numVars, sizeof(DDArcClosure*));
     for (int i = 0; i < _numVars; i++) {
-        _arcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDClosure));
+        _arcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDArcClosure));
     }
     _arcExistsListsForVariable -= _minVar;
     _numArcExistsForVariable = calloc(_numVars, sizeof(int));
     _numArcExistsForVariable -= _minVar;
     
     _slackClosures = malloc(numSpecs * sizeof(DDSlackClosure));
+    
+    singleState = false;
     return self;
 }
--(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars stateDescriptor:(MDDStateDescriptor*)stateDescriptor {
-    _minVar = [vars low];
-    _numVars = (int)[vars count];
+-(id) initMDDStateSpecification:(ORMDDSpecs*)MDDSpec relaxed:(bool)relaxed {
+    self = [super init];
+    _vars = [MDDSpec vars];
+    _minVar = [_vars low];
+    _numVars = (int)[_vars count];
     _relaxed = relaxed;
-    _stateDescriptor = stateDescriptor;
-    _arcExists = malloc(numSpecs * sizeof(DDClosure));
-    _transitionFunctions = calloc(numProperties, sizeof(DDClosure));
+    _numPropertiesAdded = [MDDSpec numProperties];
+    _arcExists = [MDDSpec arcExistsClosure];
+    _transitionFunctions = calloc(_numPropertiesAdded, sizeof(DDArcClosure));
+    DDNewStateClosure* transitionClosures = [MDDSpec transitionClosures];
+    _stateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor:_numPropertiesAdded];
+    MDDPropertyDescriptor** properties = [MDDSpec stateProperties];
+    for (int i = 0; i < _numPropertiesAdded; i++) {
+        [_stateDescriptor addStateProperty: properties[i]];
+        _transitionFunctions[i] = transitionClosures[i];
+    }
     if (_relaxed) {
-        _relaxationFunctions = calloc(numProperties, sizeof(DDMergeClosure));
-        _differentialFunctions = calloc(numProperties, sizeof(DDMergeClosure));
+        _relaxationFunctions = calloc(_numPropertiesAdded, sizeof(DDMergeClosure));
+        _differentialFunctions = calloc(_numPropertiesAdded, sizeof(DDMergeClosure));
+        DDMergeClosure* relaxationClosures = [MDDSpec relaxationClosures];
+        DDMergeClosure* differentialClosures = [MDDSpec differentialClosures];
+        for (int i = 0; i < _numPropertiesAdded; i++) {
+            _relaxationFunctions[i] = relaxationClosures[i];
+            _differentialFunctions[i] = differentialClosures[i];
+        }
     }
-    _numPropertiesAdded = 0;
-    _numSpecsAdded = 0;
-    _stateValueIndicesForVariable = malloc([vars count] * sizeof(bool*));
-    for (int i = 0; i < _numVars; i++) {
-        _stateValueIndicesForVariable[i] = calloc(numProperties, sizeof(bool));
-    }
-    _stateValueIndicesForVariable -= [vars low];
-    _arcExistsForVariable = calloc(_numVars, sizeof(DDClosure));
-    _arcExistsForVariable -= _minVar;
+    _numSpecsAdded = 1;
     
-    _arcExistsListsForVariable = calloc(_numVars, sizeof(DDClosure*));
-    for (int i = 0; i < _numVars; i++) {
-        _arcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDClosure));
-    }
-    _arcExistsListsForVariable -= _minVar;
-    _numArcExistsForVariable = calloc(_numVars, sizeof(int));
-    _numArcExistsForVariable -= _minVar;
+    _slackClosures = malloc(sizeof(DDSlackClosure));
+    _slackClosures[0] = [MDDSpec slackClosure];
     
-    _slackClosures = malloc(numSpecs * sizeof(DDSlackClosure));
+    singleState = true;
     return self;
 }
 -(void) dealloc {
-    _stateValueIndicesForVariable += _minVar;
-    _arcExistsListsForVariable += _minVar;
-    for (int i = 0; i < _numVars; i++) {
-        free(_stateValueIndicesForVariable[i]);
-        free(_arcExistsListsForVariable[i]);
+    if (!singleState) {
+        _stateValueIndicesForVariable += _minVar;
+        _arcExistsListsForVariable += _minVar;
+        for (int i = 0; i < _numVars; i++) {
+            free(_stateValueIndicesForVariable[i]);
+            free(_arcExistsListsForVariable[i]);
+        }
+        _arcExistsForVariable += _minVar;
+        free(_arcExistsForVariable);
+        _numArcExistsForVariable += _minVar;
+        free(_numArcExistsForVariable);
+        [_stateDescriptor release];
     }
-    _arcExistsForVariable += _minVar;
-    free(_arcExistsForVariable);
-    _numArcExistsForVariable += _minVar;
-    free(_numArcExistsForVariable);
-    [_stateDescriptor release];
+    free(_transitionFunctions);
+    if (_relaxed) {
+        free(_relaxationFunctions);
+        free(_differentialFunctions);
+    }
     free(_slackClosures);
     [super dealloc];
 }
 
--(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcClosure)arcExists transitionFunctions:(DDNewStateClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
     for (int i = 0; i < numProperties; i++) {
         [_stateDescriptor addStateProperty:stateProperties[i]];
         _transitionFunctions[_numPropertiesAdded] = transitionFunctions[i];
@@ -276,12 +288,15 @@ const short BytesPerMagic = 4;
         }
         _numPropertiesAdded++;
     }
+    if (!_numSpecsAdded) {
+        _arcExists = arcExists;
+    }
     for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
         int mappedVarIndex = mapping[varIndex];
         if (_arcExistsForVariable[mappedVarIndex] == nil) {
             _arcExistsForVariable[mappedVarIndex] = arcExists;
         } else {
-            DDClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
+            DDArcClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
             _arcExistsForVariable[mappedVarIndex] = [(id)^(char* state,ORInt variable, ORInt value) {
                 return arcExists(state,variable,value) && oldClosure(state,variable,value);
             } copy];
@@ -291,7 +306,7 @@ const short BytesPerMagic = 4;
     }
     _numSpecsAdded++;
 }
--(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcClosure)arcExists transitionFunctions:(DDNewStateClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
     for (int i = 0; i < numProperties; i++) {
         [_stateDescriptor addStateProperty:stateProperties[i]];
         _transitionFunctions[_numPropertiesAdded] = transitionFunctions[i];
@@ -302,12 +317,15 @@ const short BytesPerMagic = 4;
         }
         _numPropertiesAdded++;
     }
+    if (!_numSpecsAdded) {
+        _arcExists = arcExists;
+    }
     for (int varIndex = [vars low]; varIndex <= [vars up]; varIndex++) {
         int mappedVarIndex = mapping[varIndex];
         if (_arcExistsForVariable[mappedVarIndex] == nil) {
             _arcExistsForVariable[mappedVarIndex] = arcExists;
         } else {
-            DDClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
+            DDArcClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
             _arcExistsForVariable[mappedVarIndex] = [(id)^(char* state,ORInt variable, ORInt value) {
                 return arcExists(state,variable,value) && oldClosure(state,variable,value);
             } copy];
@@ -318,12 +336,14 @@ const short BytesPerMagic = 4;
     _numSpecsAdded++;
 }
 -(void) addMDDSpec:(ORMDDSpecs*)MDDSpec mapping:(int*)mapping {
-    DDClosure* newTransitionClosures = [MDDSpec transitionClosures];
+    MDDPropertyDescriptor** properties = [MDDSpec stateProperties];
+    DDNewStateClosure* newTransitionClosures = [MDDSpec transitionClosures];
     DDMergeClosure* newRelaxationClosures = [MDDSpec relaxationClosures];
     DDMergeClosure* newDifferentialClosures = [MDDSpec differentialClosures];
     int numNewProperties = [MDDSpec numProperties];
     id<ORIntVarArray> otherVars = [MDDSpec vars];
     for (int i = 0; i < numNewProperties; i++) {
+        [_stateDescriptor addStateProperty:properties[i]];
         _transitionFunctions[_numPropertiesAdded] = newTransitionClosures[i];
         if (_relaxed) {
             _relaxationFunctions[_numPropertiesAdded] = newRelaxationClosures[i];
@@ -334,15 +354,17 @@ const short BytesPerMagic = 4;
         }
         _numPropertiesAdded++;
     }
-    //_arcExists[_numSpecsAdded] = [MDDSpec arcExistsClosure];
+    if (!_numSpecsAdded) {
+        _arcExists = [MDDSpec arcExistsClosure];
+    }
     //NSNumber* arcExistsIndex = [NSNumber numberWithInt:_numSpecsAdded];
-    DDClosure newArcExistsClosure = [MDDSpec arcExistsClosure];
+    DDArcClosure newArcExistsClosure = [MDDSpec arcExistsClosure];
     for (int varIndex = [otherVars low]; varIndex <= [otherVars up]; varIndex++) {
         int mappedVarIndex = mapping[varIndex];
         if (_arcExistsForVariable[mappedVarIndex] == nil) {
             _arcExistsForVariable[mappedVarIndex] = newArcExistsClosure;
         } else {
-            DDClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
+            DDArcClosure oldClosure = [_arcExistsForVariable[mappedVarIndex] copy];
             _arcExistsForVariable[mappedVarIndex] = [(id)^(char* state,ORInt variable, ORInt value) {
                 return newArcExistsClosure(state,variable,value) && oldClosure(state,variable,value);
             } copy];
@@ -360,67 +382,40 @@ const short BytesPerMagic = 4;
     [_stateDescriptor initializeState:rootState];
     return [[MDDStateValues alloc] initState:rootState numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
 }
--(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
-    return [[MDDStateValues alloc] initState:[self computeStateFrom:parent assigningVariable:variable withValue:value] numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
-}
--(MDDStateValues*) createStateWith:(char*)stateProperties {
-    return [[MDDStateValues alloc] initState:stateProperties numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
-}
--(MDDStateValues*) createTempStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
-    return [[MDDStateValues alloc] initState:[self computeStateFrom:parent assigningVariable:variable withValue:value] numBytes:_numBytes];
-}
--(char*) computeStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value {
-    char* parentState = parent.state;
-    char* newState = malloc(_numBytes * sizeof(char));
-    int newValue;
-    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        MDDPropertyDescriptor* property = _properties[propertyIndex];
-        if (_stateValueIndicesForVariable[variable][propertyIndex]) {
-            newValue = (int)_transitionFunctions[propertyIndex](parentState, variable, value);
-        } else {
-            newValue = [property get:parentState];
-            //newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
-        }
-        [property set:newValue forState:newState];
-        //[_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
-    }
-    return newState;
-}
 -(char*) computeStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value {
     char* newState = malloc(_numBytes * sizeof(char));
-    int newValue;
-    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        //MDDPropertyDescriptor* property = _properties[propertyIndex];
-        if (_stateValueIndicesForVariable[variable][propertyIndex]) {
-            newValue = (int)_transitionFunctions[propertyIndex](parentState, variable, value);
-        } else {
-            newValue = [_properties[propertyIndex] get:parentState];
-            //newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
+    if (_numSpecsAdded == 1) {
+        for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+            _transitionFunctions[propertyIndex](newState, parentState, variable, value);
         }
-        [_properties[propertyIndex] set:newValue forState:newState];
-        //[_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
+        return newState;
+    }
+    memcpy(newState, parentState, _numBytes);
+    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+        if (_stateValueIndicesForVariable[variable][propertyIndex]) {
+            _transitionFunctions[propertyIndex](newState, parentState, variable, value);
+        }
     }
     return newState;
 }
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right {
     char* leftState = left.state;
     char* rightState = right.state;
+    char* newState = malloc(_numBytes * sizeof(char));
     for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        int mergedValue =(int)_relaxationFunctions[propertyIndex](leftState, rightState);
-        if ([_stateDescriptor getProperty:propertyIndex forState:leftState] != mergedValue) {
-            [left trailByte:[_stateDescriptor byteOffsetForProperty:propertyIndex] trail:_trail];
-            [_stateDescriptor setProperty:propertyIndex to:mergedValue forState:leftState];
-        }
+        _relaxationFunctions[propertyIndex](newState, leftState, rightState);
     }
+    [left replaceStateWith:newState trail:_trail];
+    free(newState);
     //[left recalcHash:_hashWidth trail:_trail];
 }
 -(void) mergeTempStateProperties:(char*)leftState with:(char*)rightState {
+    char* newState = malloc(_numBytes * sizeof(char));
     for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        int mergedValue =(int)_relaxationFunctions[propertyIndex](leftState, rightState);
-        if ([_stateDescriptor getProperty:propertyIndex forState:leftState] != mergedValue) {
-            [_stateDescriptor setProperty:propertyIndex to:mergedValue forState:leftState];
-        }
+        _relaxationFunctions[propertyIndex](newState, leftState, rightState);
     }
+    memcpy(leftState, newState, _numBytes);
+    free(newState);
 }
 typedef void (*SetPropIMP)(id,SEL,int,char*);
 typedef int (*GetPropIMP)(id,SEL,char*);
@@ -430,30 +425,62 @@ typedef int (*GetPropIMP)(id,SEL,char*);
         computedStates[i] = malloc(_numBytes * sizeof(char));
     }
     int numEdgesAdded;
+    if (_numSpecsAdded == 1) {
+        for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+            numEdgesAdded = 0;
+            DDNewStateClosure transitionFunction = _transitionFunctions[propertyIndex];
+            for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
+                char* parentState = parentStates[parentIndex];
+                int* edgesUsed = edgesUsedByParent[parentIndex];
+                int numEdges = numEdgesPerParent[parentIndex];
+                for (int valueIndex = 0; valueIndex < numEdges; valueIndex++) {
+                    transitionFunction(computedStates[numEdgesAdded++], parentState, variableIndex, edgesUsed[valueIndex]);
+                }
+            }
+        }
+        for (int i = 0; i < totalEdges-1; i++) {
+            char* state1 = computedStates[i];
+            for (int j = i+1; j < totalEdges; j++) {
+                if (memcmp(state1, computedStates[j], _numBytes) != 0) {
+                    *isMerged = true;
+                    break;
+                }
+            }
+            if (*isMerged) {
+                break;
+            }
+        }
+        char* mergedState = malloc(_numBytes * sizeof(char));
+        memcpy(mergedState, computedStates[0], _numBytes);
+        
+        if (*isMerged) {
+            for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+                for (int edgeIndex = 1; edgeIndex < totalEdges; edgeIndex++) {
+                    _relaxationFunctions[propertyIndex](mergedState, mergedState, computedStates[edgeIndex]);
+                }
+            }
+        }
+        for (int i = 0; i < totalEdges; i++) {
+            free(computedStates[i]);
+        }
+        return mergedState;
+    }
+    int counter = 0;
+    for (int i = 0; i < numParents; i++) {
+        for (int j = 0; j < numEdgesPerParent[i]; j++) {
+            memcpy(computedStates[counter++], parentStates[i], _numBytes);
+        }
+    }
     bool* propertyUsed = _stateValueIndicesForVariable[variableIndex];
-    SEL propertySetSel = @selector(set:forState:);
-    SEL propertyGetSel = @selector(get:);
     for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
         numEdgesAdded = 0;
-        MDDPropertyDescriptor* property = _properties[propertyIndex];
-        SetPropIMP setProperty = (SetPropIMP)[property methodForSelector:propertySetSel];
         if (propertyUsed[propertyIndex]) {
             for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
                 char* parentState = parentStates[parentIndex];
                 int* edgesUsed = edgesUsedByParent[parentIndex];
                 int numEdges = numEdgesPerParent[parentIndex];
                 for (int valueIndex = 0; valueIndex < numEdges; valueIndex++) {
-                    int newValue = (int)_transitionFunctions[propertyIndex](parentState, variableIndex, edgesUsed[valueIndex]);
-                    setProperty(property, propertySetSel, newValue, computedStates[numEdgesAdded++]);
-                }
-            }
-        } else {
-            for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
-                char* parentState = parentStates[parentIndex];
-                int newValue = [property get:parentState];
-                int numEdges = numEdgesPerParent[parentIndex];
-                for (int valueIndex = 0; valueIndex < numEdges; valueIndex++) {
-                    setProperty(property, propertySetSel, newValue, computedStates[numEdgesAdded++]);
+                    _transitionFunctions[propertyIndex](computedStates[numEdgesAdded++], parentState, variableIndex, edgesUsed[valueIndex]);
                 }
             }
         }
@@ -475,17 +502,8 @@ typedef int (*GetPropIMP)(id,SEL,char*);
     
     if (*isMerged) {
         for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-            MDDPropertyDescriptor* property = _properties[propertyIndex];
-            SetPropIMP setProperty = (SetPropIMP)[property methodForSelector:propertySetSel];
-            GetPropIMP getProperty = (GetPropIMP)[property methodForSelector:propertyGetSel];
-            int valueForProperty = getProperty(property,propertyGetSel,mergedState);
             for (int edgeIndex = 1; edgeIndex < totalEdges; edgeIndex++) {
-                char* addedState = computedStates[edgeIndex];
-                int mergedValue = (int)_relaxationFunctions[propertyIndex](mergedState, addedState);
-                if (valueForProperty != mergedValue) {
-                    setProperty(property,propertySetSel,mergedValue,mergedState);
-                    valueForProperty = mergedValue;
-                }
+                _relaxationFunctions[propertyIndex](mergedState, mergedState, computedStates[edgeIndex]);
             }
         }
     }
@@ -494,85 +512,86 @@ typedef int (*GetPropIMP)(id,SEL,char*);
     }
     return mergedState;
 }
--(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right {
-    char* leftState = left.state;
-    char* rightState = right.state;
-    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        int rightValue = [_stateDescriptor getProperty:propertyIndex forState:rightState];
-        if ([_stateDescriptor getProperty:propertyIndex forState:leftState] != rightValue) {
-            [left trailByte:[_stateDescriptor byteOffsetForProperty:propertyIndex] trail:_trail];
-            [_stateDescriptor setProperty:propertyIndex to:rightValue forState:leftState];
-        }
-    }
-    [left recalcHash:_hashWidth trail:_trail];
-}
--(void) replaceState:(MDDStateValues*)left withProperties:(char*)rightState {
-    char* leftState = left.state;
-    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        int rightValue = [_stateDescriptor getProperty:propertyIndex forState:rightState];
-        if ([_stateDescriptor getProperty:propertyIndex forState:leftState] != rightValue) {
-            [left trailByte:[_stateDescriptor byteOffsetForProperty:propertyIndex] trail:_trail];
-            [_stateDescriptor setProperty:propertyIndex to:rightValue forState:leftState];
-        }
-    }
-    [left recalcHash:_hashWidth trail:_trail];
-}
 -(bool) replaceArcState:(MDDArc*)arc withParentProperties:(char*)parentProperties variable:(int)variable {
     char* arcState = arc.state;
     int value = arc.arcValue;
     bool stateChanged = false;
-    bool* propertyUsed = _stateValueIndicesForVariable[variable];
-    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        if (propertyUsed[propertyIndex]) {
-            int newValue = (int)_transitionFunctions[propertyIndex](parentProperties, variable, value);
-            if ([_stateDescriptor getProperty:propertyIndex forState:arcState] != newValue) {
-                [arc trailByte:[_stateDescriptor byteOffsetForProperty:propertyIndex]];
-                [_stateDescriptor setProperty:propertyIndex to:newValue forState:arcState];
-                stateChanged = true;
+    char* newState = malloc(_numBytes * sizeof(char));
+    if (_numSpecsAdded == 1) {
+        for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+            _transitionFunctions[propertyIndex](newState, parentProperties, variable, value);
+        }
+    } else {
+        memcpy(newState, parentProperties, _numBytes);
+        bool* propertyUsed = _stateValueIndicesForVariable[variable];
+        for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+            if (propertyUsed[propertyIndex]) {
+                _transitionFunctions[propertyIndex](newState, parentProperties, variable, value);
             }
         }
     }
+    stateChanged = memcmp(arcState, newState, _numBytes) != 0;
+    [arc replaceStateWith:newState trail:_trail];
+    free(newState);
     return stateChanged;
 }
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues {
-    return _arcExistsForVariable[variable]([stateValues state],variable,value);
+    if (_numSpecsAdded == 1) {
+        return _arcExists([stateValues state],variable,value);
+    }
+    char* state = [stateValues state];
+    int numArcExists = _numArcExistsForVariable[variable];
+    DDArcClosure* arcExistsList = _arcExistsListsForVariable[variable];
+    for (int i = 0; i < numArcExists; i++) {
+        if (!arcExistsList[i](state,variable,value)) {
+            return false;
+        }
+    }
+    return true;
 }
 -(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state {
+    if (_numSpecsAdded == 1) {
+        return _arcExists(state,variable,value);
+    }
     return _arcExistsForVariable[variable](state,variable,value);
 }
 -(bool) canCreateState:(char**)newStateProperties fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value {
     char* parState = [parentState state];
     
-    int numArcExists = _numArcExistsForVariable[variable];
-    DDClosure* arcExistsList = _arcExistsListsForVariable[variable];
-    for (int i = 0; i < numArcExists; i++) {
-        if (!arcExistsList[i](parState,variable,value)) {
+    if (_numSpecsAdded == 1) {
+        if (!_arcExists(parState,variable,value)) {
             return false;
         }
+    } else {
+        int numArcExists = _numArcExistsForVariable[variable];
+        DDArcClosure* arcExistsList = _arcExistsListsForVariable[variable];
+        for (int i = 0; i < numArcExists; i++) {
+            if (!arcExistsList[i](parState,variable,value)) {
+                return false;
+            }
+        }
     }
-    /*if (!_arcExistsForVariable[variable](parState,variable,value)) {
-        return false;
-    }*/
     
     *newStateProperties = malloc(_numBytes * sizeof(char));
-    int newValue;
-    bool* propertyUsed = _stateValueIndicesForVariable[variable];
-    for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
-        //MDDPropertyDescriptor* property = _properties[propertyIndex];
-        if (propertyUsed[propertyIndex]) {
-            newValue = (int)_transitionFunctions[propertyIndex](parState, variable, value);
-        } else {
-            newValue = [_properties[propertyIndex] get:parState];
-            //newValue = [_stateDescriptor getProperty:propertyIndex forState:parentState];
+    if (_numSpecsAdded == 1) {
+        for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+            _transitionFunctions[propertyIndex](*newStateProperties, parState, variable, value);
         }
-        [_properties[propertyIndex] set:newValue forState:*newStateProperties];
-        //[_stateDescriptor setProperty:propertyIndex to:newValue forState:newState];
+    } else {
+        memcpy(*newStateProperties, parState, _numBytes);
+        bool* propertyUsed = _stateValueIndicesForVariable[variable];
+        for (int propertyIndex = 0; propertyIndex < _numPropertiesAdded; propertyIndex++) {
+            if (propertyUsed[propertyIndex]) {
+                _transitionFunctions[propertyIndex](*newStateProperties, parState, variable, value);
+            }
+        }
     }
     return true;
 }
 -(long) slack:(char*)stateProperties {
-    long slackValue = 0;
-    for (int i = 0; i < _numSpecsAdded; i++) {
+    long slackValue = _slackClosures[0](stateProperties);
+    for (int i = 1; i < _numSpecsAdded; i++) {
+        //What should this shear be?  Max slack value???
         slackValue = slackValue * 205 + _slackClosures[i](stateProperties);
     }
     return slackValue;
@@ -584,16 +603,18 @@ typedef int (*GetPropIMP)(id,SEL,char*);
     for (int stateIndex = 0; stateIndex < _numPropertiesAdded; stateIndex++) {
         DDMergeClosure differentialFunction = _differentialFunctions[stateIndex];
         if (differentialFunction != nil) {
-            differential += (int)differentialFunction(leftState,rightState);
+            differential += (int)differentialFunction(nil, leftState,rightState);
          }
     }
     return differential;
 }
 -(int) numProperties { return _numPropertiesAdded; }
 -(size_t) numBytes { return _numBytes; }
+-(int) numSpecs { return _numSpecsAdded; }
+-(id<ORIntVarArray>) vars { return _vars; }
 -(MDDStateDescriptor*) stateDescriptor { return _stateDescriptor; }
 -(bool*) propertiesUsed:(int)variableIndex { return _stateValueIndicesForVariable[variableIndex]; }
--(DDClosure*) transitionFunctions { return _transitionFunctions; }
+-(DDNewStateClosure*) transitionFunctions { return _transitionFunctions; }
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width {
     _trail = trail;
     _hashWidth = width;
@@ -657,22 +678,32 @@ typedef int (*GetPropIMP)(id,SEL,char*);
     }
     [super dealloc];
 }
--(void) trailByte:(size_t)byteOffset trail:(id<ORTrail>)trail {
-    if (!_tempState) {
-        ORUInt magic = [trail magic];
-        size_t magicIndex = byteOffset/BytesPerMagic;
-        if (magic != _magic[magicIndex]) {
-            switch (BytesPerMagic) {
-                case 2:
-                    [trail trailShort:(short*)&_state[magicIndex*BytesPerMagic]];
-                    break;
-                case 4:
-                    [trail trailInt:(int*)&_state[magicIndex*BytesPerMagic]];
-                    break;
-                default:
-                    @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateValues: Method trailState not implemented for given BytesPerMagic"];
-            }
-            _magic[magicIndex] = magic;
+-(void) replaceStateWith:(char *)newState trail:(id<ORTrail>)trail {
+    ORUInt magic = [trail magic];
+    for (int byteIndex = 0; byteIndex < _numBytes; byteIndex+=BytesPerMagic) {
+        size_t magicIndex = byteIndex/BytesPerMagic;
+        switch (BytesPerMagic) {
+            case 2:
+                if (*(short*)&_state[byteIndex] != *(short*)&newState[byteIndex]) {
+                    if (magic != _magic[magicIndex]) {
+                        [trail trailShort:(short*)&_state[magicIndex]];
+                        _magic[magicIndex] = magic;
+                    }
+                    *(short*)&_state[byteIndex] = *(short*)&newState[byteIndex];
+                }
+                break;
+            case 4:
+                if (*(int*)&_state[byteIndex] != *(int*)&newState[byteIndex]) {
+                    if (magic != _magic[magicIndex]) {
+                        [trail trailInt:(int*)&_state[magicIndex]];
+                        _magic[magicIndex] = magic;
+                    }
+                    *(int*)&_state[byteIndex] = *(int*)&newState[byteIndex];
+                }
+                break;
+            default:
+                @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateValues: Method replaceStateWith not implemented for given BytesPerMagic"];
+                break;
         }
     }
 }

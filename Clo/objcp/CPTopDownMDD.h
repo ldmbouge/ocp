@@ -52,8 +52,6 @@
     HashValueIMP _hashValueFor;
     SEL _removeParentlessSel;
     RemoveParentlessIMP _removeParentlessNode;
-    SEL _replaceStateSel;
-    ReplaceStateIMP _replaceState;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec;
@@ -76,8 +74,6 @@
 -(void) trimDomainsFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
 -(id) generateRootState:(int)variableValue;
--(id) generateStateFromParent:(Node*)parentNode assigningVariable:(int)variable withValue:(int)value;
--(id) generateTempStateFromParent:(Node*)parentNode assigningVariable:(int)variable withValue:(int)value;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
 -(void) removeNodeAt:(int)index onLayer:(int)node_layer;
 -(void) removeNode: (Node*) node onLayer:(int)node_layer;

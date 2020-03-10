@@ -32,6 +32,15 @@
 }
 -(id) initMDDPBit:(short)pId initialValue:(bool)initialValue;
 @end
+@interface MDDPBitSequence : MDDPropertyDescriptor {
+@protected
+    bool _initialValue;
+    int _numBytes;
+}
+-(id) initMDDPBitSequence:(short)pId initialValue:(bool)initialValue numBits:(int)numBits;
+-(char*) getBitSequence:(char*)state;
+-(void) setBitSequence:(char*)value forState:(char*)state;
+@end
 
 @interface MDDStateDescriptor : NSObject {
 @protected

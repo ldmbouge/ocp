@@ -1764,7 +1764,7 @@
 {
    for (id<ORConstraint> c in [m constraints]) {
       if ([c isKindOfClass:[ORMDDStateSpecification class]]) {
-         id<CPIntVarArray> vars = (id<CPIntVarArray>)[[c allVars] anyObject];
+         id<CPIntVarArray> vars = _gamma[((id<CPIntVarArray>)[[c allVars] anyObject]).getId];
          if ([vars contains:x]) {
             return [_gamma[c.getId] recommendationFor:x];
          }

@@ -203,7 +203,6 @@ static inline id getState(OldNode* n) { return n->_state;}
     int childLayer = layer+1;
     int parentLayer = layer-1;
     int parentMinDomain = _min_domain_for_layer[parentLayer];
-    int parentMaxDomain = _max_domain_for_layer[parentLayer];
     ORTRIdArrayI* layerNodes = layers[layer];
     TRInt* variableCount = layer_variable_count[layer];
     TRInt* parentVariableCount = layer_variable_count[parentLayer];

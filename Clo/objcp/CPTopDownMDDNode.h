@@ -89,7 +89,7 @@
 -(bool) isMerged;
 -(void) setRecalcRequired:(bool)recalcRequired;
 -(char*) state;
--(void) trailByte:(size_t)byteOffset;
+-(void) replaceStateWith:(char*)newState trail:(id<ORTrail>)trail;
 @end
 
 @interface NormNodePair : NSObject {

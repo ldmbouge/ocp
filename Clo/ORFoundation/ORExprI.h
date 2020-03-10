@@ -63,7 +63,7 @@
 -(void) encodeWithCoder:(NSCoder*) aCoder;
 -(id) initWithCoder:(NSCoder*) aDecoder;
 -(void) visit: (ORVisitor*)v;
--(DDClosure)visitClosure: (ORVisitor*)v;
+-(DDArcClosure)visitClosure: (ORVisitor*)v;
 -(ORRelationType) type;
 -(ORVType) vtype;
 -(NSSet*)allVars;

@@ -26,18 +26,19 @@
 @protected
     MDDStateDescriptor* _stateDescriptor;
     MDDPropertyDescriptor** _properties;
-    DDClosure* _arcExists;
-    DDClosure* _transitionFunctions;
+    DDArcClosure _arcExists;
+    DDNewStateClosure* _transitionFunctions;
     DDMergeClosure* _relaxationFunctions;
     DDMergeClosure* _differentialFunctions;
     DDSlackClosure* _slackClosures;
     id<ORTrail> _trail;
     bool _relaxed;
+    id<ORIntVarArray> _vars;
     
     bool** _stateValueIndicesForVariable; //Used to know which properties require transition function for a given variable assignment
-    DDClosure* _arcExistsForVariable;
+    DDArcClosure* _arcExistsForVariable;
     
-    DDClosure** _arcExistsListsForVariable;
+    DDArcClosure** _arcExistsListsForVariable;
     int* _numArcExistsForVariable;
     
     int _numPropertiesAdded;
@@ -47,23 +48,19 @@
     int _minVar;
     int _numVars;
     int _hashWidth;
+    
+    bool singleState;
 }
 -(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars;
--(id) initMDDStateSpecification:(int)numSpecs numProperties:(int)numProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars stateDescriptor:(MDDStateDescriptor*)stateDescriptor;
--(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
--(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDClosure)arcExists transitionFunctions:(DDClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
+-(id) initMDDStateSpecification:(ORMDDSpecs*)MDDSpec relaxed:(bool)relaxed;
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcClosure)arcExists transitionFunctions:(DDNewStateClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcClosure)arcExists transitionFunctions:(DDNewStateClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
 -(void) addMDDSpec:(ORMDDSpecs*)MDDSpec mapping:(int*)mapping;
 -(MDDStateValues*) createRootState:(int)variable;
--(MDDStateValues*) createStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
--(MDDStateValues*) createStateWith:(char*)stateProperties;
--(MDDStateValues*) createTempStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
--(char*) computeStateFrom:(MDDStateValues*)parent assigningVariable:(int)variable withValue:(int)value;
 -(char*) computeStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value;
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(void) mergeTempStateProperties:(char*)leftState with:(char*)rightState;
 -(char*) batchMergeForStates:(char**)parentStates values:(int**)edgesUsedByParent numEdgesPerParent:(int*)numEdgesPerParent variable:(int)variableIndex isMerged:(bool*)isMerged numParents:(int)numParents totalEdges:(int)totalEdges;
--(void) replaceState:(MDDStateValues*)left with:(MDDStateValues*)right;
--(void) replaceState:(MDDStateValues*)left withProperties:(char*)rightState;
 -(bool) replaceArcState:(MDDArc*)arcState withParentProperties:(char*)parentProperties variable:(int)variable;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state;
@@ -72,9 +69,11 @@
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(int) numProperties;
 -(size_t) numBytes;
+-(int) numSpecs;
+-(id<ORIntVarArray>) vars;
 -(MDDStateDescriptor*) stateDescriptor;
 -(bool*) propertiesUsed:(int)variableIndex;
--(DDClosure*) transitionFunctions;
+-(DDNewStateClosure*) transitionFunctions;
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width;
 -(NSUInteger) hashValueFor:(char*)stateProperties;
 -(int) hashWidth;
@@ -94,7 +93,7 @@
 -(id) initState:(char*)stateValues numBytes:(size_t)numBytes hashWidth:(int)width trail:(id<ORTrail>)trail;
 -(char*) state;
 -(BOOL) isEqual:(MDDStateValues*)other;
--(void) trailByte:(size_t)byteOffset trail:(id<ORTrail>)trail;
+-(void) replaceStateWith:(char*)newState trail:(id<ORTrail>)trail;
 -(BOOL) isEqualToStateProperties:(char*)other;
 -(BOOL) isEqualToMDDStateValues:(MDDStateValues*)other;
 -(int) calcHash:(int)width;

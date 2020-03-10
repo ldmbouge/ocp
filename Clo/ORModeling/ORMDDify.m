@@ -28,9 +28,9 @@
         j=last;
         
         while(i<j){
-            while([array objectAtIndex:i]<=[array objectAtIndex:pivot]&&i<last)
+            while([[array objectAtIndex:i] getId]<=[[array objectAtIndex:pivot] getId]&&i<last)
                 i++;
-            while([array objectAtIndex:j]>[array objectAtIndex:pivot])
+            while([[array objectAtIndex:j] getId]>[[array objectAtIndex:pivot] getId])
                 j--;
             if(i<j){
                 temp=[array objectAtIndex:i];
@@ -93,11 +93,11 @@
     ORInt xIndex = 0, yIndex = 0;
     
     while (xIndex < [x count] || yIndex < [y count]) {
-        if (xIndex < [x count] && (yIndex >= [y count] || sortedX[xIndex] < sortedY[yIndex])) {
+        if (xIndex < [x count] && (yIndex >= [y count] || [sortedX[xIndex] getId] < [sortedY[yIndex] getId])) {
             [mergedTemp setObject:[sortedX objectAtIndex:xIndex] atIndexedSubscript:size];
             xIndex++;
             size++;
-        } else if (xIndex >= [x count] || sortedX[xIndex] > sortedY[yIndex]) {
+        } else if (xIndex >= [x count] || [sortedX[xIndex] getId] > [sortedY[yIndex] getId]) {
             [mergedTemp setObject:[sortedY objectAtIndex:yIndex] atIndexedSubscript:size];
             yIndex++;
             size++;
@@ -137,6 +137,8 @@
     bool _equalBuckets;
     bool _usingSlack;
     MDDRecommendationStyle _recommendationStyle;
+    ORInt _variableOverlap;
+    ORInt _numSpecs;
     
     NSMutableArray* _mddSpecConstraints;
     MDDStateSpecification* _mddSpecification;
@@ -169,6 +171,7 @@
     _equalBuckets = [_notes findGeneric: DDEqualBuckets];
     _usingSlack = [_notes findGeneric: DDUsingSlack];
     _recommendationStyle = [_notes findGeneric: DDRecommendationStyle];
+    _variableOverlap = [_notes findGeneric: DDComposition];
     [m applyOnVar: ^(id<ORVar> x) {
         [_into addVariable:x];
     }
@@ -192,16 +195,20 @@
       }];
     
     if ([_mddSpecConstraints count] > 0) {
-        [self combineMDDSpecs:m];
-        id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables relaxed:_relaxed size:_width specs:_mddSpecification topDown:_topDown usingArcs:_usingArcs equalBuckets:_equalBuckets usingSlack:_usingSlack recommendationStyle:_recommendationStyle];
-        /*if ([_jointState numStates] > 1) {
-            mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width classState:_jointState topDown:_topDown];
-        } else {    //If only one MDDSpec in JointState (meaning all MDDSpecs shared the same variable set), then can use the MDDSpec directly rather than a JointState
-            CustomState* onlyState = [_jointState firstState];
-            mddConstraint = [ORFactory CustomMDD:m var:_variables relaxed:_relaxed size:_width classState:onlyState topDown:_topDown];
-        }*/
-        [_into trackConstraintInGroup: mddConstraint];
-        [_into addConstraint: mddConstraint];
+        if (_variableOverlap == 0) {
+            [self combineMDDSpecs:m];
+            id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables relaxed:_relaxed size:_width specs:_mddSpecification topDown:_topDown usingArcs:_usingArcs equalBuckets:_equalBuckets usingSlack:_usingSlack recommendationStyle:_recommendationStyle];
+            [_into trackConstraintInGroup: mddConstraint];
+            [_into addConstraint: mddConstraint];
+        } else {
+            MDDStateSpecification** specs = [self createMDDSpecs:m];
+            for (int i = 0; i < _numSpecs; i++) {
+                MDDStateSpecification* spec = specs[i];
+                id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:[spec vars] relaxed:_relaxed size:_width specs:spec topDown:_topDown usingArcs:_usingArcs equalBuckets:_equalBuckets usingSlack:_usingSlack recommendationStyle:_recommendationStyle];
+                [_into trackConstraintInGroup: mddConstraint];
+                [_into addConstraint: mddConstraint];
+            }
+        }
     }
 }
 
@@ -329,7 +336,7 @@
                     
                     int existingMDDNumProperties = [existingMDDSpec numProperties];
                     int numProperties = [mddSpec numProperties];
-                    DDClosure* transitionClosures = [mddSpec transitionClosures];
+                    DDNewStateClosure* transitionClosures = [mddSpec transitionClosures];
                     DDMergeClosure* relaxationClosures = [mddSpec relaxationClosures];
                     DDMergeClosure* differentialClosures = [mddSpec differentialClosures];
                     [existingMDDSpec addStatesWithClosures:numProperties];
@@ -343,9 +350,9 @@
                             [existingMDDSpec addStateDifferentialClosure:differentialClosures[i] toStateValue:(existingMDDNumProperties+i)];
                         }
                     }
-                    DDClosure oldArcExists = [existingMDDSpec arcExistsClosure];
-                    DDClosure arcExists = [mddSpec arcExistsClosure];
-                    DDClosure newArcExists = [^(char* state, ORInt variable, ORInt value) {
+                    DDArcClosure oldArcExists = [existingMDDSpec arcExistsClosure];
+                    DDArcClosure arcExists = [mddSpec arcExistsClosure];
+                    DDArcClosure newArcExists = [^(char* state, ORInt variable, ORInt value) {
                         return arcExists(state,variable,value) && oldArcExists(state,variable,value);
                     } copy];
                     [existingMDDSpec setArcExistsClosure:newArcExists];
@@ -367,8 +374,7 @@
             }
         }
         
-        MDDStateDescriptor* stateDescriptor = [firstSpec stateDescriptor];
-        MDDStateSpecification* finalMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[MDDSpecsByVariableSet count] numProperties:totalNumProperties relaxed:_relaxed vars:_variables stateDescriptor:stateDescriptor];
+        MDDStateSpecification* finalMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[MDDSpecsByVariableSet count] numProperties:totalNumProperties relaxed:_relaxed vars:_variables];
         for (ORMDDSpecs* mddSpec in MDDSpecsByVariableSet) {
             id<ORIntVarArray> vars = [mddSpec vars];
             int* variableMapping = [self findVariableMappingFrom:vars to:_variables];
@@ -388,6 +394,13 @@
         for (id<ORMDDSpecs> existingMDDSpec in MDDSpecsByVariableSet) {
             if ([existingMDDSpec vars] == vars) {
                 sharedVarList = true;
+                
+                
+                [MDDSpecsByVariableSet addObject:mddSpec];;
+                totalNumProperties += [mddSpec numProperties];
+                break;
+                
+                
                 int existingMDDNumProperties = [existingMDDSpec numProperties];
                 MDDPropertyDescriptor** stateProperties = (MDDPropertyDescriptor**)[mddSpec stateProperties];
                 int numProperties = [mddSpec numProperties];
@@ -479,11 +492,10 @@
             _variables = [ORFactory mergeIntVarArray:_variables with:vars tracker:_into];
             totalNumProperties += [mddSpec numProperties];
         } else {
-            [mddSpec release];
+            //[mddSpec release];
         }
     }
     
-    //TODO: Look into having multiple MDDStateSpecifications based on optimal variable overlapping to improve performance
     //Next, take the remaining MDDSpecs (each with a unique variable set) and combine into one MDDSpecification.
     MDDStateSpecification* finalMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[MDDSpecsByVariableSet count] numProperties:totalNumProperties relaxed:_relaxed vars:_variables];
     ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
@@ -501,16 +513,16 @@
 
         id<ORExpr> arcExists = [mddSpec arcExists];
         id<ORExpr> arcExistsUpdatedMappings = [updateMappings updatedSpecs:arcExists];
-        DDClosure arcExistsClosure = [closureVisitor computeClosure:arcExistsUpdatedMappings];
+        DDArcClosure arcExistsClosure = [closureVisitor computeClosure:arcExistsUpdatedMappings];
         MDDPropertyDescriptor** stateProperties = [mddSpec stateProperties];
         id<ORExpr>* transitionFunctions = [mddSpec transitionFunctions];
         id<ORExpr>* relaxationFunctions = [mddSpec relaxationFunctions];
         id<ORExpr>* differentialFunctions = [mddSpec differentialFunctions];
-        DDClosure* transitionFunctionClosures = malloc(numProperties * sizeof(DDClosure));
+        DDNewStateClosure* transitionFunctionClosures = malloc(numProperties * sizeof(DDArcClosure));
         DDMergeClosure* differentialFunctionClosures = malloc(numProperties * sizeof(DDMergeClosure));
         for (int tfi = 0; tfi < numProperties; tfi++) {
             id<ORExpr> transitionFunctionUpdatedMappings = [updateMappings updatedSpecs:transitionFunctions[tfi]];
-            transitionFunctionClosures[tfi] = [closureVisitor computeClosure: transitionFunctionUpdatedMappings];
+            //transitionFunctionClosures[tfi] = [closureVisitor computeClosure: transitionFunctionUpdatedMappings];
         }
         if (_relaxed) {
             DDMergeClosure* relaxationFunctionClosures = malloc(numProperties * sizeof(DDMergeClosure));
@@ -575,6 +587,119 @@
     [_jointState setVariables:_variables];  //If we change this to use multiple JointStates (either set by user OR based on heuristic that groups SpecStates toegether), then setVariables to the union of variables for that JointState
     */
 }
+
+-(MDDStateSpecification**) createMDDSpecs:(id<ORModel>)m {
+    int numSpecs = (int)[_mddSpecConstraints count];
+    MDDStateSpecification** stateSpecs = malloc(numSpecs * sizeof(MDDStateSpecification*));
+    int mddSpecIndex = 0;
+    bool* specUsed = calloc(numSpecs, sizeof(bool));
+    for (int i = 0; i < numSpecs; i++) {
+        if (specUsed[i]) continue;
+        specUsed[i] = true;
+        ORMDDSpecs* mddSpec = [_mddSpecConstraints objectAtIndex:i];
+        id<ORIntVarArray> initialVars = [mddSpec vars];
+        id<ORIntVarArray> totalVariables = initialVars;
+        int minInitialVarIndex = [initialVars low];
+        int maxInitialVarIndex = [initialVars up];
+        int numInitialVars = (int)[initialVars count];
+        int largestVarCount = numInitialVars;
+        int totalNumProperties = [mddSpec numProperties];
+        bool* notInIntersection = calloc(numInitialVars, sizeof(bool));
+        NSMutableArray* specsToCombine = [[NSMutableArray alloc] initWithObjects:mddSpec, nil];
+        for (int j = i+1; j < numSpecs; j++) {
+            if (specUsed[j]) continue;
+            ORMDDSpecs* otherMDDSpec = [_mddSpecConstraints objectAtIndex:j];
+            id<ORIntVarArray> otherVars = [otherMDDSpec vars];
+            int intersectionSize = 0;
+            for (int varIndex = minInitialVarIndex; varIndex <= maxInitialVarIndex; varIndex++) {
+                //If was already in the intersection
+                if (!notInIntersection[varIndex]) {
+                    //If still is, then increment intersectionSize.  Otherwise set it to not be in intersection
+                    if ([initialVars contains:initialVars[varIndex]]) {
+                        intersectionSize++;
+                    } else {
+                        //notInIntersection[varIndex] = true;
+                    }
+                }
+            }
+            //If at least composition% of variables are in the interesection, this spec should be merged.
+            if (intersectionSize * 100 /largestVarCount >=  _variableOverlap) {
+                specUsed[j] = true;
+                [specsToCombine addObject:otherMDDSpec];
+                totalNumProperties += [otherMDDSpec numProperties];
+                totalVariables = [ORFactory mergeIntVarArray:totalVariables with:otherVars tracker:_into];
+                largestVarCount = max(largestVarCount,(int)[otherVars count]);
+            }
+        }
+        free(notInIntersection);
+        if ([mddSpec closuresDefined]) {
+            MDDStateSpecification* combinedMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[specsToCombine count] numProperties:totalNumProperties relaxed:_relaxed vars:totalVariables];
+            for (ORMDDSpecs* newMDDSpec in specsToCombine) {
+                id<ORIntVarArray> vars = [newMDDSpec vars];
+                int* variableMapping = [self findVariableMappingFrom:vars to:totalVariables];
+                [combinedMDDSpec addMDDSpec:newMDDSpec mapping:variableMapping];
+                [newMDDSpec release];
+            }
+            stateSpecs[mddSpecIndex++] = combinedMDDSpec;
+            [specsToCombine release];
+        } else {
+            MDDStateSpecification* combinedMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[specsToCombine count] numProperties:totalNumProperties relaxed:_relaxed vars:totalVariables];
+            ORDDClosureGenerator *closureVisitor = [[ORDDClosureGenerator alloc] init];
+            ORDDMergeClosureGenerator *mergeClosureVisitor = [[ORDDMergeClosureGenerator alloc] init];
+            int numPropertiesAdded = 0;
+            MDDStateDescriptor* combinedStateDescriptor = [combinedMDDSpec stateDescriptor];
+            for (id<ORMDDSpecs> newMDDSpec in specsToCombine) {
+                id<ORIntVarArray> vars = [newMDDSpec vars];
+                int numProperties = [newMDDSpec numProperties];
+                int* variableMapping = [self findVariableMappingFrom:vars to:totalVariables];
+                int* stateMapping = calloc(numProperties, sizeof(int));
+                for (int stateIndex = 0; stateIndex < numProperties; stateIndex++) {
+                    stateMapping[stateIndex] = stateIndex + numPropertiesAdded;
+                }
+                ORDDUpdatedSpecs* updateMappings = [[ORDDUpdatedSpecs alloc] initORDDUpdatedSpecs:stateMapping stateSize:numProperties variableMapping:variableMapping minVar:[vars low] stateDescriptor:combinedStateDescriptor];
+
+                id<ORExpr> arcExists = [newMDDSpec arcExists];
+                id<ORExpr> arcExistsUpdatedMappings = [updateMappings updatedSpecs:arcExists];
+                DDArcClosure arcExistsClosure = [closureVisitor computeClosure:arcExistsUpdatedMappings];
+                MDDPropertyDescriptor** stateProperties = [newMDDSpec stateProperties];
+                id<ORExpr>* transitionFunctions = [newMDDSpec transitionFunctions];
+                id<ORExpr>* relaxationFunctions = [newMDDSpec relaxationFunctions];
+                id<ORExpr>* differentialFunctions = [newMDDSpec differentialFunctions];
+                DDNewStateClosure* transitionFunctionClosures = malloc(numProperties * sizeof(DDArcClosure));
+                DDMergeClosure* differentialFunctionClosures = malloc(numProperties * sizeof(DDMergeClosure));
+                for (int tfi = 0; tfi < numProperties; tfi++) {
+                    id<ORExpr> transitionFunctionUpdatedMappings = [updateMappings updatedSpecs:transitionFunctions[tfi]];
+                    //transitionFunctionClosures[tfi] = [closureVisitor computeClosure: transitionFunctionUpdatedMappings];
+                }
+                if (_relaxed) {
+                    DDMergeClosure* relaxationFunctionClosures = malloc(numProperties * sizeof(DDMergeClosure));
+                    for (int rfi = 0; rfi < numProperties; rfi++) {
+                        id<ORExpr> relaxationFunctionUpdatedMappings = [updateMappings updatedSpecs:relaxationFunctions[rfi]];
+                        relaxationFunctionClosures[rfi] = [mergeClosureVisitor computeClosure: relaxationFunctionUpdatedMappings];
+                        if (differentialFunctions[rfi] != NULL) {
+                            id<ORExpr> differentialFunctionUpdatedMappings = [updateMappings updatedSpecs:differentialFunctions[rfi]];
+                            differentialFunctionClosures[rfi] = [mergeClosureVisitor computeClosure: differentialFunctionUpdatedMappings];
+                        }
+                    }
+                    [combinedMDDSpec addMDDSpec:stateProperties arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures relaxationFunctions:relaxationFunctionClosures differentialFunctions:differentialFunctionClosures numProperties:numProperties variables:vars mapping:variableMapping];
+                } else {
+                    [combinedMDDSpec addMDDSpec:stateProperties arcExists:arcExistsClosure transitionFunctions:transitionFunctionClosures numProperties:numProperties variables:vars mapping:variableMapping];
+                }
+                numPropertiesAdded += numProperties;
+                [newMDDSpec release];
+                [updateMappings release];
+            }
+            [specsToCombine release];
+            [closureVisitor release];
+            [mergeClosureVisitor release];
+            stateSpecs[mddSpecIndex++] = combinedMDDSpec;
+        }
+    }
+    free(specUsed);
+    _numSpecs = mddSpecIndex;
+    return stateSpecs;
+}
+
 //Probably a better way to get this mapping (could keep track of mappings when the merged variable array is made and update them as you go - not sure if that'd be better or worse), but this should work fine for now
 -(int*) findVariableMappingFrom:(id<ORIntVarArray>)fromArray to:(id<ORIntVarArray>)toArray {
     int* mapping = calloc([fromArray count], sizeof(int));

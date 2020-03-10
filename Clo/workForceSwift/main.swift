@@ -61,7 +61,7 @@ func sweep(_ jobs : [Job]) -> Set<Set<Int>> {
         pt.append((jobs[j].start,true,j))
         pt.append((jobs[j].end,false,j))
     }
-    pt.sort { (arg0, arg1) -> Bool in return arg0.time < arg1.time }
+    pt.sort { (arg0, arg1) -> Bool in return arg0.time < arg1.time || (arg0.time == arg1.time && arg0.type && !arg1.type ) }
     var clique : Set<Int> = []
     var added = false
     for p in pt {
@@ -90,10 +90,10 @@ func all(_ t : ORTracker,_ over : Set<Int>,_ mf : (Int) -> ORIntVar) -> ORIntVar
 }
 
 autoreleasepool {
-    //let jobsFile = "/Users/rebeccagentzel/Downloads/workforce9-jobs.csv"
-    //let compatFile = "/Users/rebeccagentzel/Downloads/workforce9.csv"
-    let jobsFile = CommandLine.arguments[1]
-    let compatFile = CommandLine.arguments[2]
+    let jobsFile = "/Users/rebeccagentzel/Downloads/workforce100-jobs.csv"
+    let compatFile = "/Users/rebeccagentzel/Downloads/workforce100.csv"
+    //let jobsFile = CommandLine.arguments[1]
+    //let compatFile = CommandLine.arguments[2]
     var jbs = csv(filePath: jobsFile)
     jbs.removeFirst() // get rid of heading row
     let AJ = jbs.map { job in Job(job[0],job[1],job[2]) }
@@ -108,31 +108,69 @@ autoreleasepool {
         notes = ORFactory.annotation(),
         nbSol = ORFactory.mutable(m, value: 0)
     let t0    = ORRuntimeMonitor.cputime()
-
+    
+    var compatMatrix : [ORIntArray] = [];
+    for i in JR.low()...JR.up() {
+        compatMatrix.append(ORFactory.intArray(m, range: ER) { j in ORInt(compat[Int(i)][Int(j)]) })
+    }
     let emp = ORFactory.intVarArray(m, range: JR, domain: ER)
     
-    for i in 0..<AJ.count {
+    /*for i in 0..<AJ.count {
         for j in i+1 ..< AJ.count {
             if (overlap(AJ[i],AJ[j])) {
                 m.add(emp[i]  != emp[j]);
             }
         }
-    }
+    }*/
     for c in cliques {
         notes.dc(m.add(ORFactory.alldifferent(all(m,c) { i in emp[i] })))
     }
-    m.minimize(sum(m, R: JR) { i in
-        let t = ORFactory.intArray(m, range: ER) { j in ORInt(compat[Int(i)][Int(j)]) }
-        return t[emp[i]]
+    m.maximize(sum(m, R: JR) { i in
+        return compatMatrix[Int(i)][emp[i]]
     })
+    /*let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+    let documentsDirectory = paths[0]
+    let filePath = documentsDirectory + "/workforceClassicSearch2.txt"
+    FileManager.default.createFile(atPath: filePath, contents: nil, attributes: nil)*/
     let cp = ORFactory.createCPProgram(m, annotation: notes)
     cp.search {
-        firstFail(cp, emp)
-            »
+        whileDo(cp, {!cp.allBound(emp)}, {
+            var bestVarIndex = Int32.min
+            var bestDomSize = Int32.max
+            for varIndex in JR.low()...JR.up() {
+                let domSize = cp.domsize(emp[varIndex])
+                if (domSize > 1 && domSize < bestDomSize) {
+                    bestVarIndex = varIndex
+                    bestDomSize = domSize
+                }
+            }
+            return whileDo(cp,{!cp.bound(emp[ORInt(bestVarIndex)])}) {
+                var largest = Int32.min
+                var bestValue = Int32.min
+                let minVal = emp[bestVarIndex].min()
+                let maxVal = emp[bestVarIndex].max()
+                for value in minVal...maxVal {
+                    if (cp.member(value, in: emp[bestVarIndex]) == 0) { continue; }
+                    if (largest < compat[Int(bestVarIndex)][Int(value)]) {
+                        bestValue = value
+                        largest = ORInt(compat[Int(bestVarIndex)][Int(value)])
+                    }
+                }
+                /*let output = String(bestVarIndex) + " assigned to " + String(bestValue) + "\n"
+                let data = output.data(using: String.Encoding.utf8, allowLossyConversion: false)!
+                let fileHandle = FileHandle(forWritingAtPath: filePath)!
+                fileHandle.seekToEndOfFile()
+                fileHandle.write(data)
+                fileHandle.closeFile()*/
+                return equal(cp, emp[bestVarIndex], bestValue) | diff(cp, emp[bestVarIndex], bestValue)
+            }
+        })
+        »
             Do(cp) {
                 let qs = (0..<AJ.count).map { i in cp.intValue(emp[ORInt(i)]) },
                     f  = cp.objectiveValue()!
                 print("sol is: \(qs) f = \(f)")
+                print("Num fails so far: \(cp.nbFailures())")
                 nbSol.incr(cp)
             }
     }

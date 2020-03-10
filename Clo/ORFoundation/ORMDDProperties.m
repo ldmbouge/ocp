@@ -81,6 +81,29 @@
 -(int) initialValue { return _initialValue; }
 @end
 
+@implementation MDDPBitSequence
+-(id) initMDDPBitSequence:(short)pId initialValue:(bool)initialValue numBits:(int)numBits {
+   self = [super initMDDPropertyDescriptor:pId];
+   _initialValue = initialValue;
+    _numBytes = ceil(numBits/8.0);
+   return self;
+}
+-(size_t) storageSize { return _numBytes*8; }
+-(void) initializeState:(char*)state {
+    for (int i = 0; i < _numBytes; i++) {
+        state[_byteOffset + i] = _initialValue ? (0xFF) : (0x00);
+    }
+}
+-(char*) getBitSequence:(char*)state {
+    return state + _byteOffset;
+   //return (unsigned char)(state[_byteOffset] & _bitmask) == _bitmask;
+}
+-(void) setBitSequence:(char*)value forState:(char*)state {
+    memcpy(state + _byteOffset, value, _numBytes);
+}
+-(int) initialValue { return _initialValue; }
+@end
+
 @implementation MDDStateDescriptor
 -(id) initMDDStateDescriptor:(int)numProperties {
     self = [super init];

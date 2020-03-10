@@ -82,30 +82,28 @@ static inline id getState(MDDNode* n) { return n->_state;}
     char* arcState = arc.state;
     int value = arc.arcValue;
     bool stateChanged = false;
-    bool* propertyUsed = [_spec propertiesUsed:variable];
     int numProperties = [_spec numProperties];
-    DDClosure* transitionFunctions = [_spec transitionFunctions];
-    MDDStateDescriptor* stateDescriptor = [_spec stateDescriptor];
-    for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
-        if (propertyUsed[propertyIndex]) {
-            int newValue = (int)transitionFunctions[propertyIndex](parentProperties, variable, value);
-            if ([stateDescriptor getProperty:propertyIndex forState:arcState] != newValue) {
-                   [arc trailByte:[stateDescriptor byteOffsetForProperty:propertyIndex]];
-                   [stateDescriptor setProperty:propertyIndex to:newValue forState:arcState];
-                   stateChanged = true;
-               }
-           }
-       }
+    DDNewStateClosure* transitionFunctions = [_spec transitionFunctions];
+    char* newState = malloc(_numBytes * sizeof(char));
+    if ([_spec numSpecs] == 1) {
+        for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
+            transitionFunctions[propertyIndex](newState, parentProperties, variable, value);
+        }
+    } else {
+        memcpy(newState, parentProperties, _numBytes);
+        bool* propertyUsed = [_spec propertiesUsed:variable];
+        for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
+            if (propertyUsed[propertyIndex]) {
+                transitionFunctions[propertyIndex](newState, parentProperties, variable, value);
+            }
+        }
+    }
+    stateChanged = memcmp(arcState, newState, _numBytes) != 0;
+    [arc replaceStateWith:newState trail:_trail];
+    free(newState);
     if (stateChanged) {
         [[arc child] setRecalcRequired:true];
     }
-    
-    
-    
-    /*if (_replaceArcState(_spec, _replaceArcStateSel, arc, parentProperties, variable)) {
-        //Returns true when the state has changed
-        [[arc child] setRecalcRequired:true];
-    }*/
 }
 -(void) connect:(MDDNode*)parent to:(MDDNode*)child value:(int)value {
     //Note that this only works if child is a newly created, exact node

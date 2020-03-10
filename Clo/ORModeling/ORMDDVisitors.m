@@ -414,6 +414,11 @@
     _minVar = minVar;
     return self;
 }
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecsDesc:(MDDStateDescriptor*)stateDescriptor {
+    self = [super init];
+    _stateDescriptor = [stateDescriptor retain];
+    return self;
+}
 -(void) dealloc {
     if (!_variableMappingUsed) {
         _variableMapping += _minVar;
@@ -771,15 +776,15 @@
     return self;
 }
 
--(DDClosure) computeClosure:(id<ORExpr>)e
+-(DDArcClosure) computeClosure:(id<ORExpr>)e
 {
     [e visit: self];
     return current;
 }
--(DDClosure) computeClosureAsInteger:(id<ORExpr>)e
+-(DDArcClosure) computeClosureAsInteger:(id<ORExpr>)e
 {
     [e visit: self];
-    DDClosure innerFunction = current;
+    DDArcClosure innerFunction = current;
     current = nil;
     return [(id)^(char* state, ORInt variable, ORInt value) {
         return [NSNumber numberWithInt:(int)innerFunction(state, variable, value)];
@@ -789,10 +794,10 @@
     //    return [NSNumber numberWithInt:(int)innerFunction(state, variable, value)];
     //} copy];
 }
--(DDClosure) computeClosureAsBoolean:(id<ORExpr>)e
+-(DDArcClosure) computeClosureAsBoolean:(id<ORExpr>)e
 {
     [e visit: self];
-    DDClosure innerFunction = current;
+    DDArcClosure innerFunction = current;
     current = nil;
     return [(id)^(char* state, ORInt variable, ORInt value) {
         return [NSNumber numberWithBool:(bool)innerFunction(state, variable, value)];
@@ -803,12 +808,12 @@
     } copy];*/
 }
 
--(DDClosure) recursiveVisitor:(id<ORExpr>)e
+-(DDArcClosure) recursiveVisitor:(id<ORExpr>)e
 {
-    DDClosure old = current;
+    DDArcClosure old = current;
     current = nil;
     [e visit: self];
-    DDClosure returnedValue = current;
+    DDArcClosure returnedValue = current;
     current = old;
     return returnedValue;
 }
@@ -838,40 +843,40 @@
 }
 -(void) visitExprPlusI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) + right(state, variable, value);
     } copy];
 }
 -(void) visitExprMinusI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) - right(state, variable, value);
     } copy];
 }
 -(void) visitExprMulI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) * right(state, variable, value);
     } copy];
 }
 -(void) visitExprDivI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) / right(state, variable, value);
     } copy];
 }
 -(void) visitExprModI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) % right(state, variable, value);
     } copy];
@@ -886,32 +891,32 @@
 }
 -(void) visitExprEqualI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) == right(state, variable, value);
     } copy];
 }
 -(void) visitExprNEqualI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) != right(state, variable, value);
     } copy];
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) <= right(state, variable, value);
     } copy];
 }
 -(void) visitExprGEqualI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) >= right(state, variable, value);
     } copy];
@@ -942,7 +947,7 @@
 }
 -(void) visitExprNegateI:(ORExprNegateI*)e
 {
-    DDClosure op = [self recursiveVisitor:[e operand]];
+    DDArcClosure op = [self recursiveVisitor:[e operand]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return !op(state, variable, value);
     } copy];
@@ -957,24 +962,24 @@
 }
 -(void) visitExprDisjunctI:(ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) || right(state, variable, value);
     } copy];
 }
 -(void) visitExprConjunctI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return left(state, variable, value) && right(state, variable, value);
     } copy];
 }
 -(void) visitExprImplyI: (ORExprBinaryI*) e
 {
-    DDClosure left = [self recursiveVisitor:[e left]];
-    DDClosure right = [self recursiveVisitor:[e right]];
+    DDArcClosure left = [self recursiveVisitor:[e left]];
+    DDArcClosure right = [self recursiveVisitor:[e right]];
     current = [(id)^(char* state, ORInt variable, ORInt value) {
         return !left(state, variable, value) || right(state, variable, value);
     } copy];
@@ -1012,7 +1017,7 @@
 }
 -(void) visitExprStateValueExprI:(ORExprStateValueExprI*)e
 {
-    DDClosure lookup = [self recursiveVisitor:[e lookup]];
+    DDArcClosure lookup = [self recursiveVisitor:[e lookup]];
     //const int arrayIndex = [e->_arrayIndex value];
     const int* stateMapping = [e mapping];
     
@@ -1065,14 +1070,14 @@
 }
 -(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
 {
-    DDClosure array = [self recursiveVisitor:[e array]];
+    DDArcClosure array = [self recursiveVisitor:[e array]];
     current = [^(char* state, ORInt variable, ORInt value) {
         return (long)[(id)array(state, variable, value) count];
     } copy];
 }
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
-    DDClosure right = [self recursiveVisitor:[e value]];
+    DDArcClosure right = [self recursiveVisitor:[e value]];
     current = [^(char* state, ORInt variable, ORInt value) {
         return (long)[[e set] member: (ORInt)right(state, variable, value)];
     } copy];
@@ -1084,7 +1089,7 @@
 -(void) visitExprDictionaryValueI:(ORExprDictionaryValueI*)e
 {
     NSDictionary* dict = [e dict];
-    DDClosure key = [self recursiveVisitor:[e key]];
+    DDArcClosure key = [self recursiveVisitor:[e key]];
     current = [^(char* state, ORInt variable, ORInt value) {
         NSNumber* keyObj = [NSNumber numberWithLong:key(state,variable,value)];
         long valueFromDict = [[dict objectForKey:keyObj] longValue];
@@ -1113,8 +1118,8 @@
     [e visit: self];
     DDMergeClosure innerFunction = current;
     current = nil;
-    return [(id)^(char* state1, char* state2) {
-        return [NSNumber numberWithInt:(int)innerFunction(state1, state2)];
+    return [(id)^(char* newState, char* state1, char* state2) {
+        return [NSNumber numberWithInt:(int)innerFunction(newState, state1, state2)];
     } copy];
 }
 
@@ -1155,88 +1160,88 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) + right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) + right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprMinusI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) - right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) - right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprMulI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) * right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) * right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprDivI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) / right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) / right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprModI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) % right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) % right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprMinI: (ORExprMinI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return min((ORInt)left(state1, state2), (ORInt)right(state1, state2));
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return min((ORInt)left(newState, state1, state2), (ORInt)right(newState, state1, state2));
     } copy];
 }
 -(void) visitExprMaxI: (ORExprMaxI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return max((ORInt)left(state1, state2), (ORInt)right(state1, state2));
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return max((ORInt)left(newState, state1, state2), (ORInt)right(newState, state1, state2));
     } copy];
 }
 -(void) visitExprEqualI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) == right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) == right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprNEqualI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) != right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) != right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) <= right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) <= right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprGEqualI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) >= right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) >= right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprSumI: (id<ORExpr>) e
@@ -1258,8 +1263,8 @@
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
     DDMergeClosure inner = [self recursiveVisitor:[e operand]];
-    current = [(id)^(char* state1, char* state2) {
-        return abs((ORInt)inner(state1, state2));
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return abs((ORInt)inner(newState, state1, state2));
     } copy];
 }
 -(void) visitExprSquareI:(id<ORExpr>)e
@@ -1282,24 +1287,24 @@
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) || right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) || right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprConjunctI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return left(state1, state2) && right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return left(newState, state1, state2) && right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprImplyI: (ORExprBinaryI*) e
 {
     DDMergeClosure left = [self recursiveVisitor:[e left]];
     DDMergeClosure right = [self recursiveVisitor:[e right]];
-    current = [(id)^(char* state1, char* state2) {
-        return !left(state1, state2) || right(state1, state2);
+    current = [(id)^(char* newState, char* state1, char* state2) {
+        return !left(newState, state1, state2) || right(newState, state1, state2);
     } copy];
 }
 -(void) visitExprAggOrI: (id<ORExpr>) e
@@ -1338,8 +1343,8 @@
     const int idx = e->_stateIndex;
     
     if (idx == 0)
-        current = [^(char* state1, char* state2) {
-            long lookupValue = lookup(state1, state2);
+        current = [^(char* newState, char* state1, char* state2) {
+            long lookupValue = lookup(newState, state1, state2);
             if ([e mapping] != nil) {
                 int mappedLookupValue = [e mapping][lookupValue];
                 //Does not support array indexing
@@ -1348,8 +1353,8 @@
             return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)lookupValue forState:state1];
         } copy];
     else {
-        current = [^(char* state1, char* state2) {
-            long lookupValue = lookup(state1, state2);
+        current = [^(char* newState, char* state1, char* state2) {
+            long lookupValue = lookup(newState, state1, state2);
             if ([e mapping] != nil) {
                 int mappedLookupValue = [e mapping][lookupValue];
                 return (long)[(MDDStateDescriptor*)[e stateDescriptor] getProperty:(int)mappedLookupValue forState:state2];
@@ -1373,15 +1378,15 @@
 -(void) visitExprSizeOfArrayI:(ORExprSizeOfArrayI*)e
 {
     DDMergeClosure array = [self recursiveVisitor:[e array]];
-    current = [^(char* state1, char* state2) {
-        return [(id)array(state1, state2) count];
+    current = [^(char* newState, char* state1, char* state2) {
+        return [(id)array(newState, state1, state2) count];
     } copy];
 }
 -(void) visitExprSetContainsI:(ORExprSetContainsI*)e
 {
     DDMergeClosure right = [self recursiveVisitor:[e value]];
-    current = [^(char* state1, char* state2) {
-        return [[e set] member: (ORInt)right(state1, state2)];
+    current = [^(char* newState, char* state1, char* state2) {
+        return [[e set] member: (ORInt)right(newState, state1, state2)];
     } copy];
 }
 -(void) visitExprSetExprContainsI:(id<ORExpr>)e

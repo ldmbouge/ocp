@@ -28,7 +28,8 @@ typedef enum {
     DDWithArcs,
     DDEqualBuckets,
     DDUsingSlack,
-    DDRecommendationStyle
+    DDRecommendationStyle,
+    DDComposition
 } GenericIndex;
 
 typedef enum {
@@ -57,6 +58,7 @@ typedef enum {
 -(void) ddEqualBuckets:(bool)equalBuckets;
 -(void) ddUsingSlack:(bool)usingSlack;
 -(void) ddRecommendationStyle:(MDDRecommendationStyle)recommendationStyle;
+-(void) ddVariableOverlap:(ORInt)composition;
 
 -(ORInt) findGeneric:(GenericIndex) index;
 -(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr;

@@ -442,25 +442,33 @@ const short BytesPerMagic = 4;
     }
 }
 -(char*) state { return _passedState; }
--(void) trailByte:(size_t)byteOffset {
-    /*if (CFGetRetainCount(self) > 10) {
-        NSLog(@"Retain count: %ld", CFGetRetainCount(self));
-        int i=0;
-    }*/
-    ORUInt magic = [_trail magic];
-    size_t magicIndex = byteOffset/BytesPerMagic;
-    if (magic != _magic[magicIndex]) {
+-(void) replaceStateWith:(char *)newState trail:(id<ORTrail>)trail {
+    ORUInt magic = [trail magic];
+    for (int byteIndex = 0; byteIndex < _numBytes; byteIndex+=BytesPerMagic) {
+        size_t magicIndex = byteIndex/BytesPerMagic;
         switch (BytesPerMagic) {
             case 2:
-                [_trail trailShort:(short*)&_passedState[magicIndex*BytesPerMagic]];
+                if (*(short*)&_passedState[byteIndex] != *(short*)&newState[byteIndex]) {
+                    if (magic != _magic[magicIndex]) {
+                        [trail trailShort:(short*)&_passedState[magicIndex]];
+                        _magic[magicIndex] = magic;
+                    }
+                    *(short*)&_passedState[byteIndex] = *(short*)&newState[byteIndex];
+                }
                 break;
             case 4:
-                [_trail trailInt:(int*)&_passedState[magicIndex*BytesPerMagic]];
+                if (*(int*)&_passedState[byteIndex] != *(int*)&newState[byteIndex]) {
+                    if (magic != _magic[magicIndex]) {
+                        [trail trailInt:(int*)&_passedState[magicIndex]];
+                        _magic[magicIndex] = magic;
+                    }
+                    *(int*)&_passedState[byteIndex] = *(int*)&newState[byteIndex];
+                }
                 break;
             default:
-                @throw [[ORExecutionError alloc] initORExecutionError: "MDDArc: Method trailByte not implemented for given BytesPerMagic"];
+                @throw [[ORExecutionError alloc] initORExecutionError: "MDDArc: Method replaceStateWith not implemented for given BytesPerMagic"];
+                break;
         }
-        _magic[magicIndex] = magic;
     }
 }
 -(void) removeParent:(Node*)parentArc inPost:(bool)inPost {

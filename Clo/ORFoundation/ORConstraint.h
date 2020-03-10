@@ -500,17 +500,19 @@ enum ORGroupType {
 @end
 
 @protocol ORMDDSpecs <ORConstraint>
+-(void) initializeClosures;
 -(id<ORIntVarArray>) vars;
 -(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addStateCounter:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
+-(void)addStateBitSequence:(ORInt)lookup withDefaultValue:(bool)value size:(int)size;
 -(void)setStateDescriptor:(id<MDDStateDescriptor>)stateDesc;
 -(id<MDDStateDescriptor>)stateDescriptor;
 -(bool)closuresDefined;
 -(id<ORExpr>)arcExists;
--(DDClosure)arcExistsClosure;
+-(DDArcClosure)arcExistsClosure;
 -(id<ORExpr>*)transitionFunctions;
--(DDClosure*)transitionClosures;
+-(DDNewStateClosure*)transitionClosures;
 -(id<ORExpr>*)relaxationFunctions;
 -(DDMergeClosure*)relaxationClosures;
 -(id<ORExpr>*)differentialFunctions;
@@ -518,11 +520,14 @@ enum ORGroupType {
 -(DDSlackClosure)slackClosure;
 -(int)numProperties;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
--(void)setArcExistsClosure:(DDClosure)arcExists;
+-(void)setArcExistsClosure:(DDArcClosure)arcExists;
 -(void)setSlackClosure:(DDSlackClosure)slack;
--(void)setAsAmongConstraint:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void)setAsAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void) setAsSequenceConstraint:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void) setAsSequenceConstraintWithBitSequence:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void)setAsAllDifferent:(id<ORIntRange>)domain;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
--(void)addTransitionClosure:(DDClosure)transitionFunction toStateValue:(int)lookup;
+-(void)addTransitionClosure:(DDNewStateClosure)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;
 -(void)addRelaxationClosure:(DDMergeClosure)relaxationFunction toStateValue:(int)lookup;
 -(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup;

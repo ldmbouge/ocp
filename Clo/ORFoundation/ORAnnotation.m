@@ -223,6 +223,11 @@
     GenericIndex index = DDRecommendationStyle;
     [self genericConstraint: index value: recommendationStyle];
 }
+-(void) ddVariableOverlap:(ORInt)composition
+{
+    GenericIndex index = DDComposition;
+    [self genericConstraint: index value: composition];
+}
 
 -(NSString*) description
 {
