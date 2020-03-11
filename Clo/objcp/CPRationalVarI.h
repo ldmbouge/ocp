@@ -102,7 +102,7 @@
 
 static inline bool isDisjointWithVQ(id<ORRational> xmin, id<ORRational> xmax, id<ORRational> ymin, id<ORRational> ymax)
 {
-   return ([xmax leq: ymin]) || ([ymax leq: xmin]);
+   return ([xmax lt: ymin]) || ([ymax lt: xmin]);
 }
 static inline bool isDisjointWithQ(CPRationalVarI* x, CPRationalVarI* y)
 {

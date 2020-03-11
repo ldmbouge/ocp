@@ -1878,7 +1878,7 @@ onFailure: (ORInt2Void) onFailure
                                   suchThat: ^ORBool(ORInt i) {
       id<CPDoubleVar> v = _gamma[getId(x[i])];
       LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
-      return ![v bound];
+      return ![v bound] && [v isInputVar];
    }
                                  orderedBy:
                           ^ORDouble(ORInt i) {
@@ -2080,10 +2080,21 @@ onFailure: (ORInt2Void) onFailure
          ORSelectorResult i = [select min]; // select variable minimizing criteria from defined in select
          ORSelectorResult I = [select max]; // select variable maximizing criteria from defined in select
          
+         // Choose next variable if indexSplit variable is already bound.
+         if([_gamma[[x[indexSplit._val] getId]] bound]){
+            ORInt newIndexSplit = i.index;
+            while(newIndexSplit < I.index){
+               if(![_gamma[[x[newIndexSplit] getId]] bound]){
+                  assignTRInt(&indexSplit, newIndexSplit, _trail);
+                  break;
+               }
+               newIndexSplit++;
+            }
+         }
          // Temporary fix - change so that indexSplit do not backtrack after split
-         ORInt oldVal = indexSplit._val;
+         //ORInt oldVal = indexSplit._val;
          b(indexSplit._val, x);
-         indexSplit._val = oldVal;
+         //indexSplit._val = oldVal;
          nbBoxGenerated += 2;
          
          //* update index of variable chosen for splitting *

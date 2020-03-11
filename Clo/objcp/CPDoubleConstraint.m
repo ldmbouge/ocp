@@ -981,7 +981,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _resi = makeDoubleInterval(res.min, res.max);
    _precision = 1;
    _rounding = FE_TONEAREST;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[res engine] trail] lowF:-INFINITY upF:+INFINITY];
+   //_eo = [[CPRationalDom alloc] initCPRationalDom:[[res engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _eo = [[CPRationalVarI alloc] init:[res engine] low:[res minErr] up:[res maxErr]]; 
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
    
@@ -1091,8 +1092,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    
    //if(gchanged){
    // Cause no propagation on eo is insured
-   [_eo updateMin:(eo.low) for:NULL];
-   [_eo updateMax:(eo.up) for:NULL];
+   //[_eo updateMin:(eo.low) for:NULL];
+   //[_eo updateMax:(eo.up) for:NULL];
+   [_eo updateInterval:eo.low and:eo.up];
    
    [_x updateInterval:_xi.inf and:_xi.sup];
    [_x updateIntervalError:(ex.low) and:(ex.up)];
@@ -1110,6 +1112,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_res bound];
+}
+-(id<CPRationalVar>)getOperationError
+{
+   return _eo;
 }
 -(NSString*)description
 {
@@ -1168,7 +1174,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _percent = p;
    _rounding = FE_TONEAREST;
    _rewriting = f;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   //_eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _eo = [[CPRationalVarI alloc] init:[z engine] low:[z minErr] up:[z maxErr]];
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
    ex = [[ORRationalInterval alloc] init];
@@ -1300,8 +1307,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    
    if(gchanged){
       // Cause no propagation on eo is insured
-      [_eo updateMin:(eo.low) for:NULL];
-      [_eo updateMax:(eo.up) for:NULL];
+      //[_eo updateMin:(eo.low) for:NULL];
+      //[_eo updateMax:(eo.up) for:NULL];
+      [_eo updateInterval:eo.low and:eo.up];
       
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
@@ -1352,6 +1360,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 {
    return ![_x bound] + ![_y bound] + ![_z bound] + ![_x boundError] + ![_y boundError] + ![_z boundError];
 }
+-(id<CPRationalVar>)getOperationError
+{
+   return _eo;
+}
 -(id<CPVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x
 {
    if([x getId] == [_x getId])
@@ -1397,7 +1409,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _percent = p;
    _rounding = FE_TONEAREST;
    _rewriting = f;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   //_eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _eo = [[CPRationalVarI alloc] init:[z engine] low:[z minErr] up:[z maxErr]];
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
    ex = [[ORRationalInterval alloc] init];
@@ -1541,8 +1554,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    
    if(gchanged){
       // Cause no propagation on eo is insured
-      [_eo updateMin:(eo.low) for:NULL];
-      [_eo updateMax:(eo.up) for:NULL];
+      //[_eo updateMin:(eo.low) for:NULL];
+      //[_eo updateMax:(eo.up) for:NULL];
+      [_eo updateInterval:eo.low and:eo.up];
       
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
@@ -1592,6 +1606,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 {
    return ![_x bound] + ![_y bound] + ![_z bound] + ![_x boundError] + ![_y boundError] + ![_z boundError];
 }
+-(id<CPRationalVar>)getOperationError
+{
+   return _eo;
+}
 -(id<CPVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x
 {
    if([x getId] == [_x getId])
@@ -1638,7 +1656,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   //_eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _eo = [[CPRationalVarI alloc] init:[z engine] low:[z minErr] up:[z maxErr]];
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
    ex = [[ORRationalInterval alloc] init];
@@ -1776,8 +1795,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    
    if(gchanged){
       // Cause no propagation on eo is insured
-      [_eo updateMin:(eo.low) for:NULL];
-      [_eo updateMax:(eo.up) for:NULL];
+      //[_eo updateMin:(eo.low) for:NULL];
+      //[_eo updateMax:(eo.up) for:NULL];
+      [_eo updateInterval:eo.low and:eo.up];
       
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
@@ -1822,6 +1842,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 {
    return ![_x bound] + ![_y bound] + ![_z bound] + ![_x boundError] + ![_y boundError] + ![_z boundError];
 }
+-(id<CPRationalVar>)getOperationError
+{
+   return _eo;
+}
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ = %@ * %@>",_z, _x, _y];
@@ -1858,7 +1882,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _precision = 1;
    _percent = p;
    _rounding = FE_TONEAREST;
-   _eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   //_eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
+   _eo = [[CPRationalVarI alloc] init:[z engine] low:[z minErr] up:[z maxErr]];
    assignTRInt(&_limit, YES, _trail);
    nbConstraint++;
    ex = [[ORRationalInterval alloc] init];
@@ -2023,8 +2048,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    
    if(gchanged){
       // Cause no propagation on eo is insured
-      [_eo updateMin:(eo.low) for:NULL];
-      [_eo updateMax:(eo.up) for:NULL];
+      //[_eo updateMin:(eo.low) for:NULL];
+      //[_eo updateMax:(eo.up) for:NULL];
+      [_eo updateInterval:eo.low and:eo.up];
       
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
@@ -2071,6 +2097,10 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_z bound] + ![_x boundError] + ![_y boundError] + ![_z boundError];
+}
+-(id<CPRationalVar>)getOperationError
+{
+   return _eo;
 }
 -(NSString*)description
 {

@@ -15,6 +15,7 @@
 #import <objcp/CPVar.h>
 #import <objcp/CPDoubleDom.h>
 #import <objcp/CPRationalDom.h>
+#import <objcp/CPRationalVarI.h>
 
 @class CPDoubleVarI;
 @class CPFloatVarI;
@@ -151,9 +152,9 @@
    ORDouble _percent;
    ORBool _rewriting;
    ORInt _rounding;
-    // cpjm: Use a trailed object for eo to insure that its value is saved
-    CPRationalDom* _eo;
-
+   // cpjm: Use a trailed object for eo to insure that its value is saved
+   //CPRationalDom* _eo;
+   id<CPRationalVar> _eo;
 }
 -(id) init:(id)z equals:(id)x plus:(id)y ;
 -(id) init:(id)z equals:(id)x plus:(id)y rewriting:(ORBool) f;
@@ -164,6 +165,7 @@
 -(ORBool) canLeadToAnAbsorption;
 -(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x;
 -(ORUInt)nbUVars;
+-(id<CPRationalVar>)getOperationError;
 @end
 
 
@@ -175,9 +177,9 @@
    ORDouble _percent;
    ORBool _rewriting;
    ORInt _rounding;
-    // cpjm: Use a trailed object for eo to insure that its value is saved
-    CPRationalDom* _eo;
-
+   // cpjm: Use a trailed object for eo to insure that its value is saved
+   //CPRationalDom* _eo;
+   id<CPRationalVar> _eo;
 }
 -(id) init:(id)z equals:(id)x minus:(id)y;
 -(id) init:(id)z equals:(id)x minus:(id)y rewriting:(ORBool) f;
@@ -188,6 +190,7 @@
 -(ORBool) canLeadToAnAbsorption;
 -(id<CPDoubleVar>) varSubjectToAbsorption:(id<CPDoubleVar>)x;
 -(ORUInt)nbUVars;
+-(id<CPRationalVar>)getOperationError;
 @end
 
 @interface CPDoubleTernaryMult : CPCoreConstraint<CPArithmConstraint> { // z = x * y
@@ -197,15 +200,16 @@
    ORInt _precision;
    ORDouble _percent;
    ORInt _rounding;
-    // cpjm: Use a trailed object for eo to insure that its value is saved
-    CPRationalDom* _eo;
-
+   // cpjm: Use a trailed object for eo to insure that its value is saved
+   //CPRationalDom* _eo;
+   id<CPRationalVar> _eo;
 }
 -(id) init:(id)z equals:(id)x mult:(id)y ;
 -(id) init:(id)z equals:(id)x mult:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
+-(id<CPRationalVar>)getOperationError;
 @end
 
 
@@ -217,13 +221,16 @@
    ORDouble _percent;
    ORInt _rounding;
    // cpjm: Use a trailed object for eo to insure that its value is saved
-   CPRationalDom* _eo;
+   //CPRationalDom* _eo;
+   id<CPRationalVar> _eo;
+
 }
 -(id) init:(id)z equals:(id)x div:(id)y ;
 -(id) init:(id)z equals:(id)x div:(id)y kbpercent:(ORDouble) p;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
+-(id<CPRationalVar>)getOperationError;
 @end
 
 @interface CPDoubleReifyGEqual : CPCoreConstraint {
@@ -413,12 +420,14 @@
    CPDoubleVarI* _x;
    CPDoubleVarI* _res;
    // cpjm: Use a trailed object for eo to insure that its value is saved
-   CPRationalDom* _eo;
+   //CPRationalDom* _eo;
+   id<CPRationalVar> _eo;
 }
 -(id) init:(id<CPDoubleVar>)res eq:(id<CPDoubleVar>)x ;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
+-(id<CPRationalVar>)getOperationError;
 @end
 
 @interface CPDoubleSqrt : CPCoreConstraint<CPArithmConstraint> {

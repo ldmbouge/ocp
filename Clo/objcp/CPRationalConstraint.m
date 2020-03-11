@@ -1025,7 +1025,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
+   return [NSString stringWithFormat:@"Q:<%@ = %@ + %@>",_z, _x, _y];
 }
 @end
 
@@ -1139,7 +1139,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
+   return [NSString stringWithFormat:@"Q:<%@ = %@ - %@>",_z, _x, _y];
 }
 @end
 
@@ -1253,7 +1253,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
+   return [NSString stringWithFormat:@"Q:<%@ = %@ * %@>",_z, _x, _y];
 }
 @end
 
@@ -1367,7 +1367,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
+   return [NSString stringWithFormat:@"Q:<%@ = %@ / %@>",_z, _x, _y];
 }
 @end
 

@@ -1352,87 +1352,6 @@
       }
    }
 }
-/*+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs neqi:(ORRational)c annotation:(id<ORAnnotation>) notes
-{
-   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
-      return [self rationalNEqualc:x[x.low] to:c];
-   }
-   id<CPEngine> engine = [x[x.low] engine];
-   if([x count] == 2){ // x + y != c
-      if(c == 0) return [self rationalNEqual:x[x.low] to:x[1]];
-      id<CPRationalVar> res = [self rationalVar:engine];
-      if([coefs at:1] < 0)
-         [CPFactory rationalTernarySub:res equals:x[0] minus:x[1] annotation:notes];
-      else
-         [CPFactory rationalTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
-      return [self rationalNEqualc:res to:c];
-   }
-   assert([x count] <= 3);
-   id<CPRationalVar> tmp = [self rationalVar:engine];
-   id<CPRationalVar> res = [self rationalVar:engine];
-   if([coefs at:1] < 0)
-      [CPFactory rationalTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
-   else
-      [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
-   if([coefs at:2] < 0)
-      [CPFactory rationalTernarySub:res equals:tmp minus:x[2] annotation:notes];
-   else
-      [CPFactory rationalTernaryAdd:res equals:tmp plus:x[2] annotation:notes];
-   return [self rationalNEqualc:res to:c];
-}
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs lt:(ORRational)c annotation:(id<ORAnnotation>) notes
-{
-   id<CPEngine> engine = [x[x.low] engine];
-   id<CPRationalVar> vc = [self rationalVar:engine value:c];
-   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
-      return [self rationalLT:x[0] to:vc];
-   }else if([x count] == 2){
-      if(c == 0)
-         return [self rationalLT:x[0] to:x[1]];
-      id<CPRationalVar> res = [self rationalVar:engine];
-      if([coefs at:1] < 0)
-         [CPFactory rationalTernarySub:res equals:x[0] minus:x[1] annotation:notes];
-      else
-         [CPFactory rationalTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
-      return [self rationalGT:res to:vc];
-   }
-   //should never happen normalizer transform expression like x + y + z in auxiliary var wyz
-   assert([x count] <= 3);
-   id<CPRationalVar> tmp = [self rationalVar:engine];
-   id<CPRationalVar> res = [self rationalVar:engine];
-   if([coefs at:1] < 0)
-      [CPFactory rationalTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
-   else
-      [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
-   return [self rationalLT:res to:x[2]];
-   
-}
-// hzi : w + y > z is transformed by decompose in var : wy , z  and c : 0
-+(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs gt:(ORRational)c annotation:(id<ORAnnotation>) notes
-{
-   id<CPEngine> engine = [x[x.low] engine];
-   id<CPRationalVar> vc = [self rationalVar:engine value:c];
-   if([x count] == 1 && [coefs at:coefs.low] == 1.0){
-      return [self rationalGT:x[0] to:vc];
-   }else if([x count] == 2){
-      if(c == 0)
-         return [self rationalGT:x[0] to:x[1]];
-      id<CPRationalVar> res = [self rationalVar:engine];
-      if([coefs at:1] < 0)
-         [CPFactory rationalTernarySub:res equals:x[0] minus:x[1] annotation:notes];
-      else
-         [CPFactory rationalTernaryAdd:res equals:x[0] plus:x[1] annotation:notes];
-      return [self rationalGT:res to:vc];
-   }
-   assert([x count] <= 3);
-   id<CPRationalVar> tmp = [self rationalVar:engine];
-   id<CPRationalVar> res = [self rationalVar:engine];
-   if([coefs at:1] < 0)
-      [CPFactory rationalTernarySub:tmp equals:x[0] minus:x[1] annotation:notes];
-   else
-      [CPFactory rationalTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
-   return [self rationalGT:res to:x[2]];
-}*/
 +(id<CPConstraint>) rationalSum:(id<CPRationalVarArray>)x coef:(id<ORRationalArray>)coefs leq:(id<ORRational>)c annotation:(id<ORAnnotation>) notes
 {
    id<CPEngine> engine = [x[x.low] engine];
@@ -1502,6 +1421,44 @@
 {
    id<CPConstraint> o = [[CPDoubleSquare alloc] init:x eq:y];
    [[x tracker] trackMutable:o];
+   
+   if(RUN_3B_ERROR){
+      id<CPEngine> engine = [x engine];
+      id<ORRationalInterval> yFromF = [[ORRationalInterval alloc] init];
+      id<ORRational> twoQ = [[[ORRational alloc] init] set_d:2.0];
+      id<CPRationalVar> two = [[CPRationalVarI alloc] init:engine low:twoQ up:twoQ];
+      id<ORRationalInterval> inf = [[ORRationalInterval alloc] init];
+      [yFromF set_d:[y min] and:[y max]];
+      [[inf low] setNegInf];
+      [[inf up] setPosInf];
+      id<CPRationalVar> eo = [(CPDoubleTernaryMult*)o getOperationError];
+      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> yR = [[CPRationalVarI alloc] init:engine low:[yFromF low] up:[yFromF up]];
+      id<CPRationalVar> twoMy = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> eyPtwoMy = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> eyMeyPtwoMy = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      
+      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+      id<CPConstraint> channelY = [[CPRationalChannelD alloc] init:y with:yR];
+      id<CPConstraint> mul1 = [[CPRationalTernaryMult alloc] init:twoMy equals:two mult:yR];
+      id<CPConstraint> add1 = [[CPRationalTernaryAdd alloc] init:eyPtwoMy equals:ey plus:twoMy];
+      id<CPConstraint> add2 = [[CPRationalTernaryAdd alloc] init:eyMeyPtwoMy equals:ey plus:eyMeyPtwoMy];
+      id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ex equals:eo plus:eyMeyPtwoMy];
+      
+      [engine post:exC];
+      [engine post:eyC];
+      [engine post:channelY];
+      [engine post:mul1];
+      [engine post:add1];
+      [engine post:add2];
+      [engine post:addZ];
+      [yFromF release];
+      [two release];
+      [inf release];
+   }
+
    return o;
 }
 +(id<CPConstraint>) doubleAbs:(id<CPDoubleVar>) x eq:(id<CPDoubleVar>) y
@@ -1542,16 +1499,71 @@
 }
 +(id<CPConstraint>) doubleTernaryAdd:(id<CPDoubleVar>) x equals:(id<CPDoubleVar>) y plus:(id<CPDoubleVar>) z annotation:(id<ORAnnotation>) notes
 {
+   id<CPConstraint> o;
    if([notes hasFilteringPercent])
-      return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent] rewriting:[notes dynRewrite]];
-   return [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z  rewriting:[notes dynRewrite]];
+      o = [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z kbpercent:[notes kbpercent] rewriting:[notes dynRewrite]];
+   else
+      o = [[CPDoubleTernaryAdd alloc] init:x equals:y plus:z  rewriting:[notes dynRewrite]];
    
+   if(RUN_3B_ERROR){
+      id<CPEngine> engine = [z engine];
+      id<ORRationalInterval> inf = [[ORRationalInterval alloc] init];
+      [[inf low] setNegInf];
+      [[inf up] setPosInf];
+      id<CPRationalVar> ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
+      id<CPRationalVar> eo = [(CPDoubleTernaryAdd*)o getOperationError];
+      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> exPey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      
+      id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
+      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+      id<CPConstraint> addXY = [[CPRationalTernaryAdd alloc] init:exPey equals:ex plus:ey];
+      id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:exPey plus:eo];
+      
+      [engine post:ezC];
+      [engine post:exC];
+      [engine post:eyC];
+      [engine post:addXY];
+      [engine post:addZ];
+      [inf release];
+   }
+   return o;
 }
 +(id<CPConstraint>) doubleTernarySub:(id<CPDoubleVar>) x equals:(id<CPDoubleVar>) y minus:(id<CPDoubleVar>) z annotation:(id<ORAnnotation>) notes
 {
+   id<CPConstraint> o;
    if([notes hasFilteringPercent])
-      return [[CPDoubleTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent] rewriting:[notes dynRewrite]];
-   return [[CPDoubleTernarySub alloc] init:x equals:y minus:z rewriting:[notes dynRewrite]];
+      o = [[CPDoubleTernarySub alloc] init:x equals:y minus:z kbpercent:[notes kbpercent] rewriting:[notes dynRewrite]];
+   else
+      o = [[CPDoubleTernarySub alloc] init:x equals:y minus:z rewriting:[notes dynRewrite]];
+   
+   if(RUN_3B_ERROR){
+      id<CPEngine> engine = [z engine];
+      id<ORRationalInterval> inf = [[ORRationalInterval alloc] init];
+      [[inf low] setNegInf];
+      [[inf up] setPosInf];
+      id<CPRationalVar> ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
+      id<CPRationalVar> eo = [(CPDoubleTernarySub*)o getOperationError];
+      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> exPey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      
+      id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
+      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+      id<CPConstraint> subXY = [[CPRationalTernarySub alloc] init:exPey equals:ex minus:ey];
+      id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:exPey plus:eo];
+      
+      [engine post:ezC];
+      [engine post:exC];
+      [engine post:eyC];
+      [engine post:subXY];
+      [engine post:addZ];
+      [inf release];
+   }
+   return o;
 }
 +(id<CPConstraint>) doubleEqual: (id<CPDoubleVar>) x to:(id<CPDoubleVar>) y annotation:(id<ORAnnotation>) notes
 {
@@ -1800,6 +1812,55 @@
    else
       o = [[CPDoubleTernaryMult alloc] init:z equals:x mult:y];
    [[x tracker] trackMutable:o];
+   
+   if(RUN_3B_ERROR){
+      id<CPEngine> engine = [z engine];
+      id<ORRationalInterval> xFromF = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> yFromF = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> inf = [[ORRationalInterval alloc] init];
+      [xFromF set_d:[x min] and:[x max]];
+      [yFromF set_d:[y min] and:[y max]];
+      [[inf low] setNegInf];
+      [[inf up] setPosInf];
+      id<CPRationalVar> ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
+      id<CPRationalVar> eo = [(CPDoubleTernaryMult*)o getOperationError];
+      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> xR = [[CPRationalVarI alloc] init:engine low:[xFromF low] up:[xFromF up]];
+      id<CPRationalVar> yR = [[CPRationalVarI alloc] init:engine low:[yFromF low] up:[yFromF up]];
+      id<CPRationalVar> xMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> yMex = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> exMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> xMeyPyMex = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> xMeyPyMexPexMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      
+      id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
+      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+      id<CPConstraint> channelX = [[CPRationalChannelD alloc] init:x with:xR];
+      id<CPConstraint> channelY = [[CPRationalChannelD alloc] init:y with:yR];
+      id<CPConstraint> mul1 = [[CPRationalTernaryMult alloc] init:xMey equals:xR mult:ey];
+      id<CPConstraint> mul2 = [[CPRationalTernaryMult alloc] init:yMex equals:yR mult:ex];
+      id<CPConstraint> mul3 = [[CPRationalTernaryMult alloc] init:exMey equals:ex mult:ey];
+      id<CPConstraint> add1 = [[CPRationalTernaryAdd alloc] init:xMeyPyMex equals:xMey plus:yMex];
+      id<CPConstraint> add2 = [[CPRationalTernaryAdd alloc] init:xMeyPyMexPexMey equals:xMeyPyMex plus:exMey];
+      id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:xMeyPyMexPexMey plus:eo];
+      
+      [engine post:ezC];
+      [engine post:exC];
+      [engine post:eyC];
+      [engine post:channelX];
+      [engine post:channelY];
+      [engine post:mul1];
+      [engine post:mul2];
+      [engine post:mul3];
+      [engine post:add1];
+      [engine post:add2];
+      [engine post:addZ];
+      [xFromF release];
+      [yFromF release];
+      [inf release];
+   }
    return o;
 }
 +(id<CPConstraint>) doubleDiv: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z annotation:(id<ORAnnotation>) notes
@@ -1810,6 +1871,58 @@
    else
       o = [[CPDoubleTernaryDiv alloc] init:z equals:x div:y];
    [[x tracker] trackMutable:o];
+   
+   if(RUN_3B_ERROR){
+      id<CPEngine> engine = [z engine];
+      id<ORRationalInterval> xFromF = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> yFromF = [[ORRationalInterval alloc] init];
+      id<ORRationalInterval> inf = [[ORRationalInterval alloc] init];
+      [xFromF set_d:[x min] and:[x max]];
+      [yFromF set_d:[y min] and:[y max]];
+      [[inf low] setNegInf];
+      [[inf up] setPosInf];
+      id<CPRationalVar> ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
+      id<CPRationalVar> eo = [(CPDoubleTernaryMult*)o getOperationError];
+      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> xR = [[CPRationalVarI alloc] init:engine low:[xFromF low] up:[xFromF up]];
+      id<CPRationalVar> yR = [[CPRationalVarI alloc] init:engine low:[yFromF low] up:[yFromF up]];
+      id<CPRationalVar> xMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> yMex = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> yPey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> yMyPey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> yMexSxMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> yMexSxMeyDyMyPey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      
+      id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
+      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+      id<CPConstraint> channelX = [[CPRationalChannelD alloc] init:x with:xR];
+      id<CPConstraint> channelY = [[CPRationalChannelD alloc] init:y with:yR];
+      id<CPConstraint> mul1 = [[CPRationalTernaryMult alloc] init:xMey equals:xR mult:ey];
+      id<CPConstraint> mul2 = [[CPRationalTernaryMult alloc] init:yMex equals:yR mult:ex];
+      id<CPConstraint> sub1 = [[CPRationalTernarySub alloc] init:yMexSxMey equals:yMex minus:xMey];
+      id<CPConstraint> add1 = [[CPRationalTernaryAdd alloc] init:yPey equals:yR plus:ey];
+      id<CPConstraint> mul3 = [[CPRationalTernaryMult alloc] init:yMyPey equals:yR mult:yPey];
+      id<CPConstraint> div1 = [[CPRationalTernaryDiv alloc] init:yMexSxMeyDyMyPey equals:yMexSxMey div:yMyPey];
+      id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:yMexSxMeyDyMyPey plus:eo];
+      
+      [engine post:ezC];
+      [engine post:exC];
+      [engine post:eyC];
+      [engine post:channelX];
+      [engine post:channelY];
+      [engine post:mul1];
+      [engine post:mul2];
+      [engine post:sub1];
+      [engine post:add1];
+      [engine post:mul3];
+      [engine post:div1];
+      [engine post:addZ];
+      [xFromF release];
+      [yFromF release];
+      [inf release];
+   }
    return o;
 }
 

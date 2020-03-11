@@ -165,13 +165,16 @@ PORTABLE_BEGIN
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker name:(NSString*) name;
 +(id<ORRationalVar>) rationalVar: (id<ORTracker>) tracker from:(id<ORExpr>) f;
 +(id<ORRationalVar>) errorVar: (id<ORTracker>) tracker of:(id<ORExpr>)f;
++(id<ORRationalVar>) errorVar: (id<ORTracker>) tracker of:(id<ORExpr>)f in:(id<ORGroup>)g;
 +(id<ORDoubleVar>) doubleConstantVar: (id<ORTracker>) tracker value: (ORDouble) v string:(NSString*) vs name:(NSString*) name;
 +(id<ORDoubleVar>) doubleInputVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up name:(NSString*) name;
 +(id<ORDoubleVar>) doubleInputVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name;
++(id<ORDoubleVar>) doubleInputVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up name:(NSString*) name in:(id<ORGroup>)g;
 +(id<ORFloatVar>) floatConstantVar: (id<ORTracker>) tracker value: (ORFloat) v string:(NSString*) vs name:(NSString*) name;
 +(id<ORFloatVar>) floatInputVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up name:(NSString*) name;
 +(id<ORFloatVar>) floatInputVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up elow:(id<ORRational>) elow eup:(id<ORRational>) eup name:(NSString*) name;
 +(id<ORRationalVar>) ulpVar: (id<ORTracker>) tracker of:(id<ORExpr>)f;
++(id<ORRationalVar>) ulpVar: (id<ORTracker>) tracker of:(id<ORExpr>)f in:(id<ORGroup>)g;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
 +(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker;

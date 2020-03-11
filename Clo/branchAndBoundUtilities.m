@@ -49,6 +49,9 @@ ORBool RUN_IMPROVE_GUESS = true;
 /* Discard box if half-ulp limit is reached on all constraints */
 ORBool RUN_DISCARDED_BOX = true;
 
+/* Run 3B filtering over errors - state constraint over rational to compute error operation at the constraint level */
+ORBool RUN_3B_ERROR = true;
+
 /* Global variables used to compute branch-and-bound running time */
 NSDate *branchAndBoundStart = nil;
 NSDate *branchAndBoundTime = nil;

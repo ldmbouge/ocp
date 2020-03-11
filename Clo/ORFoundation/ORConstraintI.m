@@ -11152,11 +11152,11 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSComparisonResult) compare: (ORObjectiveValueRationalI*) other
 {
    if ([[self key] lt: [other key]])
-      return -1;
+      return NSOrderedAscending;
    else if ([[self key] eq: [other key]])
-      return 0;
+      return NSOrderedSame;
    else
-      return 1;
+      return NSOrderedDescending;
 }
 @end
 

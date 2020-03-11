@@ -368,9 +368,91 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
    }
 }
 
+void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of rational numbers */
+      id<ORRational> zero = [[ORRational alloc] init];
+      
+      /* Initialization of rational numbers */
+      [zero setZero];
+      
+      /* Declaration of model variables */
+      id<ORGroup> g = [ORFactory group:mdl type:Group3B];
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.1 up:0.5 name:@"x"];
+      id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:0.2 up:0.7 name:@"y"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
+      
+      /* Initialization of constants */
+      
+      /* Declaration of constraints */
+      [g add:[z set:[[x plus:y] mul:@(4.0)]]];
+      
+      /* Declaration of constraints over errors */
+      [g add: [ezAbs eq: [ez abs]]];
+      [mdl add:g];
+      [mdl maximize:ezAbs];
+      
+      /* Memory release of rational numbers */
+      [zero release];
+      
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      /* Solving */
+      [cp solve:^{
+         /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+         [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            /* Split strategy */
+            [cp floatSplit:i withVars:x];
+         }
+                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+            ORDouble y = [[arrayValue objectAtIndex:1] doubleValue];
+            
+            id<ORRational> xQ = [[ORRational alloc] init];
+            id<ORRational> yQ = [[ORRational alloc] init];
+            id<ORRational> zQ = [[ORRational alloc] init];
+            id<ORRational> zF = [[ORRational alloc] init];
+            id<ORRational> four = [[[ORRational alloc] init] set_d:4.0];
+            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+            
+            [xQ setInput:x with:[arrayError objectAtIndex:0]];
+            [yQ setInput:y with:[arrayError objectAtIndex:1]];
+            
+            ORDouble z = (x + y) * x;
+            [zF set_d:z];
+            
+            [zQ set: [[xQ add: yQ] mul: xQ]];
+            
+            [ez set: [zQ sub: zF]];
+            
+            [xQ release];
+            [yQ release];
+            [zQ release];
+            [zF release];
+            [four release];
+            return ez;
+         }];
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
    //carbonGas_f(1, argc, argv);
    //carbonGas_d(1, argc, argv);
    carbonGas_d_c(1, argc, argv);
+   //test_d_c_3B(1, argc, argv);
    return 0;
 }

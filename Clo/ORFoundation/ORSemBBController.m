@@ -171,6 +171,7 @@
    BBNode* node = [[BBNode alloc] init:k checkpoint:cp];
    BBKey* ov = [BBKey key:[[_engine objective] dualValue] withDepth:boxCardinality];
    [_buf insertObject:node withKey:ov];
+   [boundTopOfQueue set:[((BBKey*)[_buf peekAtKey]).bound rationalValue]];
    //NSLog(@"%@ -- %@", node, ov);
    //NSLog(@"BUF: %d", [_buf size]);
    //NSLog(@"_buf: %@", _buf);
@@ -243,8 +244,6 @@ NSString * const ORStatus_toString_BB[] = {
    [ORNoop   ] = @"noop"
 };
 
-//static long __nbPull = 0;
-
 -(void) fail
 {
    id<ORSearchObjectiveFunction> of = (id)_engine.objective;
@@ -264,43 +263,47 @@ NSString * const ORStatus_toString_BB[] = {
          /* skip box if sup of error is less than primalBound */
          id<ORRational> primalBound = [[[_engine objective] primalBound] rationalValue];
          id<ORRational> dualBound = [[[_engine objective] dualBound] rationalValue];
-         if([primalBound lt: dualBound] &&
-            ([[bestKey.bound rationalValue] geq: primalBound] ||
-             (![boundDiscardedBoxes isNegInf] && [boundDiscardedBoxes geq: primalBound]
-              && ![boundDegeneratedBoxes isNegInf] && [boundDegeneratedBoxes geq: primalBound]
-              ))){
-            BBNode* nd = [_buf extractBest];
-            [boundTopOfQueue set:[((BBKey*)[_buf peekAtKey]).bound rationalValue]];
-            
-            ORStatus status = [of tightenDualBound:bestKey.bound];
-            if (status != ORFailure)
-               status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
-            //if (__nbPull++ % 100 == 0)
-               //NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString_BB[status]);
-            [nd.cp letgo];
-            NSCont* k = nd.cont;
-            [nd release];
-            if (k &&  status != ORFailure) {
-               [bestKey release];
-               [k call];
+         if([primalBound lt: dualBound]){
+            if([[bestKey.bound rationalValue] gt: primalBound] && // Beskey -> dual de la boite sélectionné
+            [[bestKey.bound rationalValue] gt: boundDiscardedBoxes] &&
+            [[bestKey.bound rationalValue] gt: boundDegeneratedBoxes]){
+               BBNode* nd = [_buf extractBest];
+               [boundTopOfQueue set:[((BBKey*)[_buf peekAtKey]).bound rationalValue]];
+               
+               ORStatus status = [of tightenDualBound:bestKey.bound];
+               if (status != ORFailure)
+                  status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
+               [nd.cp letgo];
+               NSCont* k = nd.cont;
+               [nd release];
+               if (k &&  status != ORFailure) {
+                  [bestKey release];
+                  [k call];
+               } else {
+                  [bestKey release];
+                  if (k==nil)
+                     @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
+                  else [k letgo];
+               }
             } else {
+               BBNode* nd = [_buf extractBest];
+               [nd.cont letgo];
                [bestKey release];
-               if (k==nil)
-                  @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
-               else [k letgo];
+               [nd release];
             }
          } else {
             NSLog(@"EQUAL BOUND");
             NSLog(@"    primalBound <=                 dualBound: %@ <= %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             NSLog(@"    primalBound <=          dualBoundNextBox: %@ <= %@", [[_engine objective] primalBound], [bestKey.bound rationalValue]);
             if(![boundDiscardedBoxes isNegInf])
-            NSLog(@"    primalBound <=   dualBoundDiscardedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDiscardedBoxes);
+               NSLog(@"    primalBound <=   dualBoundDiscardedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDiscardedBoxes);
             if(![boundDegeneratedBoxes isNegInf])
-            NSLog(@"    primalBound <= dualBoundDegeneratedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDegeneratedBoxes);
+               NSLog(@"    primalBound <= dualBoundDegeneratedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDegeneratedBoxes);
             if(![boundTopOfQueue isNegInf])
-            NSLog(@"    primalBound <=       dualBoundTopOfQueue: %@ <= %@", [[_engine objective] primalBound], boundTopOfQueue);
-
-
+               NSLog(@"    primalBound <=       dualBoundTopOfQueue: %@ <= %@", [[_engine objective] primalBound], boundTopOfQueue);
+            
+            [bestKey release];
+            
             return;
          }
       } else {
