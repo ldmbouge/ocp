@@ -426,13 +426,12 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
 {
    [self updateInterval:[dom min] and:[dom max]];
 }
-
-- (void)visit:(ORVisitor *)visitor
-{}
-
+- (void)visit:(id<CPVisitor>)visitor
+{
+   [((id)visitor) applyRationalVar:self];
+}
 -(ORLDouble) domwidth
 {
     return -1.0;
 }
-
 @end

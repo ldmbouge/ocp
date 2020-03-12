@@ -1447,13 +1447,13 @@
       id<CPConstraint> add2 = [[CPRationalTernaryAdd alloc] init:eyMeyPtwoMy equals:ey plus:eyMeyPtwoMy];
       id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ex equals:eo plus:eyMeyPtwoMy];
       
-      [engine post:exC];
-      [engine post:eyC];
-      [engine post:channelY];
-      [engine post:mul1];
-      [engine post:add1];
-      [engine post:add2];
-      [engine post:addZ];
+      [errorGroup add:exC];
+      [errorGroup add:eyC];
+      [errorGroup add:channelY];
+      [errorGroup add:mul1];
+      [errorGroup add:add1];
+      [errorGroup add:add2];
+      [errorGroup add:addZ];
       [yFromF release];
       [two release];
       [inf release];
@@ -1522,11 +1522,11 @@
       id<CPConstraint> addXY = [[CPRationalTernaryAdd alloc] init:exPey equals:ex plus:ey];
       id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:exPey plus:eo];
       
-      [engine post:ezC];
-      [engine post:exC];
-      [engine post:eyC];
-      [engine post:addXY];
-      [engine post:addZ];
+      [errorGroup add:ezC];
+      [errorGroup add:exC];
+      [errorGroup add:eyC];
+      [errorGroup add:addXY];
+      [errorGroup add:addZ];
       [inf release];
    }
    return o;
@@ -1556,11 +1556,11 @@
       id<CPConstraint> subXY = [[CPRationalTernarySub alloc] init:exPey equals:ex minus:ey];
       id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:exPey plus:eo];
       
-      [engine post:ezC];
-      [engine post:exC];
-      [engine post:eyC];
-      [engine post:subXY];
-      [engine post:addZ];
+      [errorGroup add:ezC];
+      [errorGroup add:exC];
+      [errorGroup add:eyC];
+      [errorGroup add:subXY];
+      [errorGroup add:addZ];
       [inf release];
    }
    return o;
@@ -1846,17 +1846,17 @@
       id<CPConstraint> add2 = [[CPRationalTernaryAdd alloc] init:xMeyPyMexPexMey equals:xMeyPyMex plus:exMey];
       id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:xMeyPyMexPexMey plus:eo];
       
-      [engine post:ezC];
-      [engine post:exC];
-      [engine post:eyC];
-      [engine post:channelX];
-      [engine post:channelY];
-      [engine post:mul1];
-      [engine post:mul2];
-      [engine post:mul3];
-      [engine post:add1];
-      [engine post:add2];
-      [engine post:addZ];
+      [errorGroup add:ezC];
+      [errorGroup add:exC];
+      [errorGroup add:eyC];
+      [errorGroup add:channelX];
+      [errorGroup add:channelY];
+      [errorGroup add:mul1];
+      [errorGroup add:mul2];
+      [errorGroup add:mul3];
+      [errorGroup add:add1];
+      [errorGroup add:add2];
+      [errorGroup add:addZ];
       [xFromF release];
       [yFromF release];
       [inf release];
@@ -1907,18 +1907,18 @@
       id<CPConstraint> div1 = [[CPRationalTernaryDiv alloc] init:yMexSxMeyDyMyPey equals:yMexSxMey div:yMyPey];
       id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:yMexSxMeyDyMyPey plus:eo];
       
-      [engine post:ezC];
-      [engine post:exC];
-      [engine post:eyC];
-      [engine post:channelX];
-      [engine post:channelY];
-      [engine post:mul1];
-      [engine post:mul2];
-      [engine post:sub1];
-      [engine post:add1];
-      [engine post:mul3];
-      [engine post:div1];
-      [engine post:addZ];
+      [errorGroup add:ezC];
+      [errorGroup add:exC];
+      [errorGroup add:eyC];
+      [errorGroup add:channelX];
+      [errorGroup add:channelY];
+      [errorGroup add:mul1];
+      [errorGroup add:mul2];
+      [errorGroup add:sub1];
+      [errorGroup add:add1];
+      [errorGroup add:mul3];
+      [errorGroup add:div1];
+      [errorGroup add:addZ];
       [xFromF release];
       [yFromF release];
       [inf release];

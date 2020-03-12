@@ -27,6 +27,7 @@
    _engine = [_solver engine];
    _gamma = [solver gamma];
    _notes = notes;
+   errorGroup = _engine;
    return self;
 }
 -(void) dealloc
@@ -266,11 +267,14 @@
       }
       [_engine add:cg]; // We want to have the group posted before posting the constraints of the group.
       id<CPEngine> old = _engine;
+      id<CPEngine> oldErrorGroup = errorGroup;
       _engine = (id)cg;
+      errorGroup = (id)cg;
       [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
          [ck visit:self];
       }];
       _engine = old;
+      errorGroup = oldErrorGroup;
       _gamma[g.getId] = cg;
    }
 }

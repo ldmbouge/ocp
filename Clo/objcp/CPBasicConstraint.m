@@ -14,6 +14,7 @@
 #import "CPIntVarI.h"
 #import "CPFloatVarI.h"
 #import "CPDoubleVarI.h"
+#import "CPRationalVarI.h"
 #import "CPEngineI.h"
 #import <ORFoundation/fpi.h>
 
@@ -167,16 +168,16 @@
 
 -(void) propagate
 {
-  if (bound(_x)) {
+   if (bound(_x)) {
       bindDom(_y,minDom(_x) - _c);
       assignTRInt(&_active,NO,_trail);
    } else if (bound(_y)) {
-       bindDom(_x,minDom(_y) + _c);
+      bindDom(_x,minDom(_y) + _c);
       assignTRInt(&_active,NO,_trail);
    } else {
-       updateMinAndMaxOfDom(_x, minDom(_y)+_c, maxDom(_y)+_c);
-       updateMinAndMaxOfDom(_y, minDom(_x)-_c, maxDom(_x)-_c);
-    }
+      updateMinAndMaxOfDom(_x, minDom(_y)+_c, maxDom(_y)+_c);
+      updateMinAndMaxOfDom(_y, minDom(_x)-_c, maxDom(_x)-_c);
+   }
 }
 -(NSString*)description
 {
@@ -2830,22 +2831,24 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    ORDouble                 _percent;
    NSMutableSet*            _vars;
    NSSet*                  _avars; //abstract vars
+   ORInt                    _kb; // level of kb consistency
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p vars:(NSSet*) avars gamma:(id<ORGamma>) solver
 {
    self = [self init:engine tracer:tracer];
    _gamma = [solver gamma];
    _avars = [avars retain];
+   _kb = 3;
    return self;
 }
 
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer vars:(NSSet*) avars gamma:(id<ORGamma>) solver
 {
-   return [self init:engine tracer:tracer percent:5 vars:avars gamma:solver];
+   return [self init:engine tracer:tracer percent:5 vars:avars gamma:solver kb:3];
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer
 {
-   return [self init:engine tracer:tracer percent:3];
+   return [self init:engine tracer:tracer percent:3 kb:3];
 }
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p
 {
@@ -2854,6 +2857,34 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    _percent = p;
    _vars = [[NSMutableSet alloc] init];
    _avars = [[NSMutableSet alloc] init];
+   _kb = 3;
+   return self;
+}
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p vars:(NSSet*) avars gamma:(id<ORGamma>) solver kb:(ORInt)kb
+{
+   self = [self init:engine tracer:tracer];
+   _gamma = [solver gamma];
+   _avars = [avars retain];
+   _kb = kb;
+   return self;
+}
+
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer vars:(NSSet*) avars gamma:(id<ORGamma>) solver kb:(ORInt)kb
+{
+   return [self init:engine tracer:tracer percent:5 vars:avars gamma:solver kb:kb];
+}
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer kb:(ORInt)kb
+{
+   return [self init:engine tracer:tracer percent:3 kb:kb];
+}
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p kb:(ORInt)kb
+{
+   self = [super init:engine];
+   _tracer = tracer;
+   _percent = p;
+   _vars = [[NSMutableSet alloc] init];
+   _avars = [[NSMutableSet alloc] init];
+   _kb = kb;
    return self;
 }
 -(void)dealloc
@@ -2883,42 +2914,95 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(void) addVars:(NSSet *)vars
 {
    for(id<CPVar> v in vars)
-      if (![v bound] && ([v isKindOfClass:[CPFloatVarI class]] || [v isKindOfClass:[CPDoubleVarI class]]))
+      if (![v bound] &&
+          ([v isKindOfClass:[CPFloatVarI class]] || [v isKindOfClass:[CPDoubleVarI class]] || [v isKindOfClass:[CPRationalVarI class]]))
          [_vars addObject:v];
 }
 -(void) post
 {
    [super post];
-//   hzi : Test on 3B vars we sould reduce the number of vars involved in filtering
+   //   hzi : Test on 3B vars we sould reduce the number of vars involved in filtering
 }
 -(void) propagate
 {
+   [self propagate:_kb];
+}
+-(void) propagate:(ORInt)k
+{
    [super propagate];
-   [self propagateSplitting];
-   self->_todo = CPChecked;
+   if (k > 2) {
+      //[self propagateSplitting:k];
+      //[self propagateShaving:k];
+      [self propagateShaving2:k];
+      self->_todo = CPChecked;
+   }
 }
 -(void) propagate2B
 {
    [super propagate];
 }
+
 -(void) propagateShaving
 {
-   for(id<CPVar> v in _vars){
-      if([v bound]) continue;
-      CP3BShavingVisitor* visit = [[CP3BShavingVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent];
-      [v visit:visit];
+   [self propagateShaving:3];
+}
+
+-(void) propagateShaving:(ORInt)k
+{
+   if (k <= 2)
+      [self propagate2B];
+   else {
+      CP3BShavingVisitor* visit = [[CP3BShavingVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent level:k];
+      for(id<CPVar> v in _vars){
+         if([v bound]) continue;
+         [v visit:visit];
+      }
       [visit release];
+   }
+}
+
+-(void) propagateShaving2
+{
+   [self propagateShaving2:3];
+}
+
+-(void) propagateShaving2:(ORInt)k
+{
+   if (k <= 2)
+      [self propagate2B];
+   else {
+      CP3BShavingVisitor2* visit = [[CP3BShavingVisitor2 alloc] initWithGroup:self tracer:_tracer percent:_percent level:k];
+      for(id<CPVar> v in _vars){
+         if([v bound]) continue;
+         [v visit:visit];
+      }
+      [visit release];
+      
    }
 }
 
 -(void) propagateSplitting
 {
-   for(id<CPVar> v in _vars){
-      if([v bound]) continue;
-      CP3BVisitor* visit = [[CP3BVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent];
-      [v visit:visit];
+   [self propagateSplitting:3];
+}
+
+-(void) propagateSplitting:(ORInt)k
+{
+   if (k <= 2)
+      [self propagate2B];
+   else {
+      CP3BVisitor* visit = [[CP3BVisitor alloc] initWithGroup:self tracer:_tracer percent:_percent level:k];
+      for(id<CPVar> v in _vars){
+         if([v bound]) continue;
+         [v visit:visit];
+      }
       [visit release];
    }
+}
+
+- (void)setKbLevel:(ORInt)kb
+{
+   _kb = kb;
 }
 - (void)visit:(ORVisitor *)visitor
 {}
@@ -2927,10 +3011,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 @end
 
 @implementation CP3BVisitor{
-   @protected
+@protected
    ORDouble      _percent;
    CP3BGroup*    _group;
    id<ORTracer>  _tracer;
+   ORInt         _k;
 }
 -(CP3BVisitor*) initWithGroup:(CP3BGroup*) group tracer:(id<ORTracer>) tracer percent:(ORDouble) percent
 {
@@ -2938,12 +3023,24 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    _percent = percent;
    _tracer = tracer;
    _group = group;
+   _k = 3;
+   return self;
+}
+-(CP3BVisitor*) initWithGroup:(CP3BGroup*) group tracer:(id<ORTracer>) tracer percent:(ORDouble) percent level:(ORInt)k
+{
+   self = [super init];
+   _percent = percent;
+   _tracer = tracer;
+   _group = group;
+   _k = k;
    return self;
 }
 -(void) dealloc
 {
    [super dealloc];
 }
+
+
 -(void) applyFloatVar:(id<CPVar>)var
 {
    id<CPFloatVar> v = (id<CPFloatVar>)var;
@@ -2960,7 +3057,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [_tracer pushNode];
       s=tryfail(^ORStatus{
          [v updateMax:mid];
-         [_group propagate2B];
+         [_group propagate:(_k - 1)];
          return ORSuccess;
       }, ^ORStatus{
          min = fp_next_float(mid);
@@ -2986,7 +3083,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [_tracer pushNode];
       s=tryfail(^ORStatus{
          [v updateMin:mid];
-         [_group propagate2B];
+         [_group propagate:(_k - 1)];
          return ORSuccess;
       }, ^ORStatus{
          max = fp_previous_float(mid);
@@ -3000,7 +3097,6 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [_group propagate2B];
    }
 }
-
 
 -(void) applyDoubleVar:(id<CPVar>)var
 {
@@ -3018,7 +3114,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [_tracer pushNode];
       s=tryfail(^ORStatus{
          [v updateMax:mid];
-         [_group propagate2B];
+         [_group propagate:(_k - 1)];
          return ORSuccess;
       }, ^ORStatus{
          min = fp_next_double(mid);
@@ -3044,7 +3140,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [_tracer pushNode];
       s=tryfail(^ORStatus{
          [v updateMin:mid];
-         [_group propagate2B];
+         [_group propagate:(_k - 1)];
          return ORSuccess;
       }, ^ORStatus{
          max = fp_previous_double(mid);
@@ -3059,6 +3155,75 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    }
 }
 
+- (void)applyRationalVar:(id<CPVar>)var {
+   @autoreleasepool {
+      id<CPRationalVar> v = (id<CPRationalVar>)var;
+      
+      if ([v.min isNegInf] || [v.max isPosInf]) return; // Skip innfinities
+      
+      ORStatus s = ORSuccess;
+      id<ORRational> two = [[ORRational alloc] init]; [two set_d: 2.0];
+      id<ORRational> percent = [[ORRational alloc] init]; [percent set_d: (_percent/100.f)];
+      id<ORRational> epsilon = [[v.max sub: v.min] mul: percent];
+      __block id<ORRational> min, mid, max;
+      min = v.min;
+      max = v.max;
+      while (s==ORSuccess) {
+         /*
+          if ([min isNegInf]) {
+          if ([max isPosInf]) {
+          } else
+          }
+          }*/
+         mid = [[max add: min] div: two];
+         if ([mid leq: min] || [[mid sub: min] leq: epsilon])
+            break;
+         [_tracer pushNode];
+         s=tryfail(^ORStatus{
+            [v updateMax:mid];
+            [_group propagate:(_k - 1)];
+            return ORSuccess;
+         }, ^ORStatus{
+            min = mid;
+            return ORFailure;
+         });
+         max = mid;
+         [_tracer popNode];
+      }
+      if([min neq: v.min]){
+         [v updateMin:min];
+         [_group propagate2B];
+      }
+      
+      s = ORSuccess;
+      epsilon = [[v.max sub: v.min] mul: percent];
+      min = v.min;
+      max = v.max;
+      while (s==ORSuccess) {
+         mid = [[max add: min] div: two];
+         if ([mid geq: max] || [[max sub: mid] leq: epsilon])
+            break;
+         [_tracer pushNode];
+         s=tryfail(^ORStatus{
+            [v updateMin:mid];
+            [_group propagate:(_k - 1)];
+            return ORSuccess;
+         }, ^ORStatus{
+            max = mid;
+            return ORFailure;
+         });
+         min = mid;
+         [_tracer popNode];
+      }
+      if([max neq: v.max]){
+         [v updateMax:max];
+         [_group propagate2B];
+      }
+      [two release];
+      [percent release];
+   }
+}
+
 - (void)applyIntVar:(id<CPVar>)var {
 }
 
@@ -3067,6 +3232,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 
 @implementation CP3BShavingVisitor
+
 -(void) applyFloatVar:(id<CPVar>)var
 {
    id<CPFloatVar> v = (id<CPFloatVar>)var;
@@ -3085,7 +3251,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       max = (min + step < v.max) ? min+step : v.max;
       s=tryfail(^ORStatus{
          [v updateInterval:min and:max];
-         [_group propagate2B];
+         [_group propagate:(_k - 1)];
          return ORSuccess;
       }, ^ORStatus{
          last=max;
@@ -3110,7 +3276,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       min = (max - step > v.min) ? max-step : v.min;
       s=tryfail(^ORStatus{
          [v updateInterval:min and:max];
-         [_group propagate2B];
+         [_group propagate:(_k - 1)];
          return ORSuccess;
       }, ^ORStatus{
          last = min;
@@ -3144,7 +3310,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       max = (min + step < v.max) ? min+step : v.max;
       s=tryfail(^ORStatus{
          [v updateInterval:min and:max];
-         [_group propagate2B];
+         [_group propagate:(_k - 1)];
          return ORSuccess;
       }, ^ORStatus{
          last=max;
@@ -3169,7 +3335,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       min = (max - step > v.min) ? max-step : v.min;
       s=tryfail(^ORStatus{
          [v updateInterval:min and:max];
-         [_group propagate2B];
+         [_group propagate:(_k - 1)];
          return ORSuccess;
       }, ^ORStatus{
          last = min;
@@ -3182,6 +3348,239 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [v updateMax:last];
       [_group propagate2B];
    }
+}
+
+
+-(void) applyRationalVar:(id<CPVar>)var
+{
+   id<CPRationalVar> v = (id<CPRationalVar>)var;
+   
+   if ([v.min isNegInf] || [v.max isPosInf]) return; // Skip on infinities
+   
+   ORStatus s;
+   ORDouble percent;
+   __block id<ORRational> min,max,last,step;
+   s = ORFailure;
+   percent = _percent;
+   id<ORRational> hundred = [[ORRational alloc] init]; [hundred set_d:100.0];
+   id<ORRational> percentageQ = [[ORRational alloc] init];
+   last = max = min = v.min;
+   while (s==ORFailure) {
+      [_tracer pushNode];
+      [percentageQ set_d:percent/100.f];
+      step = [[v.max sub: v.min] mul: percentageQ];
+      min = max;
+      max = [min add: step];
+      if ([max gt: v.max]) max = v.max;
+      s=tryfail(^ORStatus{
+         [v updateInterval:min and:max];
+         [_group propagate:(_k - 1)];
+         return ORSuccess;
+      }, ^ORStatus{
+         last=max;
+         return ORFailure;
+      });
+      percent *= 2;
+      [_tracer popNode];
+   }
+   if([last neq: v.min]){
+      [v updateMin:last];
+      [_group propagate2B];
+   }
+   
+   s=ORFailure;
+   percent = _percent;
+   last = max = min = v.max;
+   while (s==ORFailure) {
+      [_tracer pushNode];
+      [percentageQ set_d:percent/100.f];
+      step = [[v.max sub: v.min] mul: percentageQ];
+      max = min;
+      min = [max sub: step];
+      if ([min lt: v.min]) min = v.min;
+      s=tryfail(^ORStatus{
+         [v updateInterval:min and:max];
+         [_group propagate:(_k - 1)];
+         return ORSuccess;
+      }, ^ORStatus{
+         last = min;
+         return ORFailure;
+      });
+      percent*=2;
+      [_tracer popNode];
+   }
+   if([last neq: v.max]){
+      [v updateMax:last];
+      [_group propagate2B];
+   }
+   [hundred release];
+   [percentageQ release];
+}
+
+@end
+
+
+@implementation CP3BShavingVisitor2
+
+
+-(void) applyFloatVar:(id<CPVar>)var {
+   id<CPFloatVar> v = (id<CPFloatVar>)var;
+   ORStatus s, smin, smax;
+   ORDouble percent;
+   ORFloat min, max, step, nmin, nmax;
+   
+   s = ORFailure;
+   percent = _percent;
+   
+   while ((s==ORFailure) && (percent < 50)) {
+      step = [v domwidth] * (percent/100.0);
+      
+      nmin = min = v.min;
+      max = ((min == -INFINITY)?(-maxnormal()):min) + step;
+      if (max > v.max) max = v.max;
+      [_tracer pushNode];
+      smin = tryfail(^ORStatus{
+         [v updateInterval:min and:max];
+         [_group propagate:(_k - 1)];
+         return ORSuccess;
+      }, ^ORStatus{
+         return ORFailure;
+      });
+      [_tracer popNode];
+      if (smin == ORFailure) nmin = max;
+      
+      nmax = max = v.max;
+      min = ((max == +INFINITY)?(+maxnormal()):max) - step;
+      if (min < nmin) min = nmin;
+      [_tracer pushNode];
+      smax = tryfail(^ORStatus{
+         [v updateInterval:min and:max];
+         [_group propagate:(_k - 1)];
+         return ORSuccess;
+      }, ^ORStatus{
+         return ORFailure;
+      });
+      [_tracer popNode];
+      if (smax == ORFailure) nmax = min;
+      
+      if((smin == ORFailure) || (smax == ORFailure)){
+         [v updateInterval:nmin and:nmax];
+         [_group propagate2B];
+         s = ORFailure;
+      } else
+         s = ORSuccess;
+      
+      percent *= 1.5;
+   }
+}
+
+-(void) applyDoubleVar:(id<CPVar>)var {
+   id<CPDoubleVar> v = (id<CPDoubleVar>)var;
+   ORStatus s, smin, smax;
+   ORDouble percent;
+   ORDouble min, max, step, nmin, nmax;
+   
+   s = ORFailure;
+   percent = _percent;
+   
+   while ((s==ORFailure) && (percent < 50)) {
+      step = [v domwidth] * (percent/100.0);
+      
+      nmin = min = v.min;
+      max = ((min == -INFINITY)?(-maxnormal()):min) + step;
+      if (max > v.max) max = v.max;
+      [_tracer pushNode];
+      smin = tryfail(^ORStatus{
+         [v updateInterval:min and:max];
+         [_group propagate:(_k - 1)];
+         return ORSuccess;
+      }, ^ORStatus{
+         return ORFailure;
+      });
+      [_tracer popNode];
+      if (smin == ORFailure) nmin = max;
+      
+      nmax = max = v.max;
+      min = ((max == +INFINITY)?(+maxnormal()):max) - step;
+      if (min < nmin) min = nmin;
+      [_tracer pushNode];
+      smax = tryfail(^ORStatus{
+         [v updateInterval:min and:max];
+         [_group propagate:(_k - 1)];
+         return ORSuccess;
+      }, ^ORStatus{
+         return ORFailure;
+      });
+      [_tracer popNode];
+      if (smax == ORFailure) nmax = min;
+      
+      if((smin == ORFailure) || (smax == ORFailure)){
+         [v updateInterval:nmin and:nmax];
+         [_group propagate2B];
+         s = ORFailure;
+      } else
+         s = ORSuccess;
+      
+      percent *= 1.5;
+   }
+}
+
+-(void) applyRationalVar:(id<CPVar>)var {
+   id<CPRationalVar> v = (id<CPRationalVar>)var;
+   
+   if ([v.min isNegInf] || [v.max isPosInf]) return; // Skip on infinities
+   
+   ORStatus s, smin, smax;
+   ORDouble percent;
+   id<ORRational> min, max, step, nmin, nmax;
+   id<ORRational> percentageQ = [[ORRational alloc] init];
+   
+   s = ORFailure;
+   percent = _percent;
+   
+   while ((s==ORFailure) && (percent < 50)) {
+      ORDouble percentage = percent/100.0;
+      [percentageQ set_d:percentage];
+      step = [[v.max sub: v.min] mul: percentageQ];
+      
+      nmin = min = v.min;
+      max = [v.min add: step];
+      if ([max gt: v.max]) max = v.max;
+      [_tracer pushNode];
+      smin = tryfail(^ORStatus{
+         [v updateInterval:min and:max];
+         [_group propagate:(_k - 1)];
+         return ORSuccess;
+      }, ^ORStatus{
+         return ORFailure;
+      });
+      [_tracer popNode];
+      if (smin == ORFailure) nmin = max;
+      
+      nmax = max = v.max;
+      min = [v.max sub: step];
+      if ([min lt: nmin]) min = nmin;
+      [_tracer pushNode];
+      smax = tryfail(^ORStatus{
+         [v updateInterval:min and:max];
+         [_group propagate:(_k - 1)];
+         return ORSuccess;
+      }, ^ORStatus{
+         return ORFailure;
+      });
+      [_tracer popNode];
+      if (smax == ORFailure) nmax = min;
+      
+      if((smin == ORFailure) || (smax == ORFailure)){
+         [v updateInterval:nmin and:nmax];
+         [_group propagate2B];
+         s = ORFailure;
+      } else
+         s = ORSuccess;
+      
+      percent *= 1.5;
+   }
+   [percentageQ release];
 }
 
 @end

@@ -159,6 +159,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"CPVisitor is an abstract class : applyDoubleVar"];
 }
+
+- (void)applyRationalVar:(id<CPVar>)var {
+   @throw [[ORExecutionError alloc] initORExecutionError:"CPVisitor is an abstract class : applyRationalVar"];
+}
+
 @end
 
 @implementation ORSplitVisitor{

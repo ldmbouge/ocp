@@ -8,8 +8,7 @@
 #import <ORFoundation/ORTrail.h>
 #import "rationalUtilities.h"
 
-@protocol ORModel;
-@protocol ORVar;
+@protocol CPEngine;
 
 @interface SolWrapper : NSObject {
    id<ORSolution> _sol;
@@ -24,6 +23,9 @@
 extern ORBool RUN_IMPROVE_GUESS;
 extern ORBool RUN_DISCARDED_BOX;
 extern ORBool RUN_3B_ERROR;
+
+
+extern id<CPEngine> errorGroup;
 
 
 extern id<ORRational> boundDiscardedBoxes;

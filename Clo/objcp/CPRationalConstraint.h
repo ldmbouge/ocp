@@ -26,7 +26,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalErrorOf : CPCoreConstraint {
+@interface CPRationalErrorOf : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    CPRationalVarI* _y;
 }
@@ -36,7 +36,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalErrorOfD : CPCoreConstraint {
+@interface CPRationalErrorOfD : CPCoreConstraint<CPArithmConstraint> {
    CPDoubleVarI* _x;
    CPRationalVarI* _y;
 }
@@ -46,7 +46,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalUlpOf : CPCoreConstraint {
+@interface CPRationalUlpOf : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    CPRationalVarI* _y;
 }
@@ -56,7 +56,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalUlpOfD : CPCoreConstraint {
+@interface CPRationalUlpOfD : CPCoreConstraint<CPArithmConstraint> {
    CPDoubleVarI* _x;
    CPRationalVarI* _y;
 }
@@ -66,7 +66,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalChannel : CPCoreConstraint {
+@interface CPRationalChannel : CPCoreConstraint<CPArithmConstraint> {
    CPFloatVarI* _x;
    CPRationalVarI* _y;
 }
@@ -76,7 +76,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalChannelD : CPCoreConstraint {
+@interface CPRationalChannelD : CPCoreConstraint<CPArithmConstraint> {
    CPDoubleVarI* _x;
    CPRationalVarI* _y;
 }
@@ -176,7 +176,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalTernaryAdd : CPCoreConstraint { // z = x + y
+@interface CPRationalTernaryAdd : CPCoreConstraint<CPArithmConstraint> { // z = x + y
    CPRationalVarI* _z;
    CPRationalVarI* _x;
    CPRationalVarI* _y;
@@ -187,7 +187,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalTernarySub : CPCoreConstraint { // z = x + y
+@interface CPRationalTernarySub : CPCoreConstraint<CPArithmConstraint> { // z = x + y
    CPRationalVarI* _z;
    CPRationalVarI* _x;
    CPRationalVarI* _y;
@@ -198,7 +198,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalTernaryMult : CPCoreConstraint { // z = x * y
+@interface CPRationalTernaryMult : CPCoreConstraint<CPArithmConstraint> { // z = x * y
    CPRationalVarI* _z;
    CPRationalVarI* _x;
    CPRationalVarI* _y;
@@ -209,7 +209,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalTernaryDiv : CPCoreConstraint { // z = x / y
+@interface CPRationalTernaryDiv : CPCoreConstraint<CPArithmConstraint> { // z = x / y
    CPRationalVarI* _z;
    CPRationalVarI* _x;
    CPRationalVarI* _y;
@@ -240,7 +240,7 @@
 -(id<ORRationalVar>) var;
 @end
 
-@interface CPRationalAbs : CPCoreConstraint {
+@interface CPRationalAbs : CPCoreConstraint<CPArithmConstraint> {
 @private
    CPRationalVarI* _x;
    CPRationalVarI* _res;
@@ -251,7 +251,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPRationalUnaryMinus : CPCoreConstraint {
+@interface CPRationalUnaryMinus : CPCoreConstraint<CPArithmConstraint> {
    CPRationalVarI* _x;
    CPRationalVarI* _y;
 }

@@ -61,6 +61,10 @@
 {
    return [NSString stringWithFormat:@"<%@ == error[%@]>", _y,_x];
 }
+- (id<CPVar>)result
+{
+   return _y;
+}
 @end
 
 @implementation CPRationalErrorOfD
@@ -111,6 +115,10 @@
 {
    return [NSString stringWithFormat:@"<%@ == error[%@]>", _y,_x];
 }
+- (id<CPVar>)result
+{
+   return _y;
+}
 @end
 
 @implementation CPRationalUlpOf{
@@ -128,7 +136,7 @@
    tmp0 = [[ORRational alloc] init];
    tmp1 = [[ORRational alloc] init];
    tmp2 = [[ORRational alloc] init];
-
+   
    return self;
 }
 -(void) post
@@ -194,6 +202,10 @@
 {
    return [NSString stringWithFormat:@"<%@ == ulp[%@]>",_y,_x];
 }
+- (id<CPVar>)result
+{
+   return _y;
+}
 -(void)dealloc
 {
    [tmp0 release];
@@ -219,7 +231,7 @@
    tmp0 = [[ORRational alloc] init];
    tmp1 = [[ORRational alloc] init];
    tmp2 = [[ORRational alloc] init];
-
+   
    return self;
 }
 -(void) post
@@ -273,6 +285,10 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == ulp[%@]>",_y,_x];
+}
+- (id<CPVar>)result
+{
+   return _y;
 }
 -(void)dealloc
 {
@@ -338,6 +354,10 @@
 {
    return [NSString stringWithFormat:@"<F[%@] == Q[%@]>",[_x domain],_y];
 }
+- (id<CPVar>)result
+{
+   return _y;
+}
 -(void)dealloc
 {
    [tmp dealloc];
@@ -360,7 +380,7 @@
    tmp = [[ORRational alloc] init];
    xminRat = [ORRational rationalWith_d:[_x min]];
    xmaxRat = [ORRational rationalWith_d:[_x max]];
-
+   
    return self;
 }
 -(void) post
@@ -403,6 +423,10 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<F[%@] == Q[%@]>",[_x domain],_y];
+}
+- (id<CPVar>)result
+{
+   return _y;
 }
 -(void)dealloc
 {
@@ -1025,7 +1049,11 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"Q:<%@ = %@ + %@>",_z, _x, _y];
+   return [NSString stringWithFormat:@"<%@ = %@ + %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -1139,7 +1167,11 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"Q:<%@ = %@ - %@>",_z, _x, _y];
+   return [NSString stringWithFormat:@"<%@ = %@ - %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -1253,7 +1285,11 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"Q:<%@ = %@ * %@>",_z, _x, _y];
+   return [NSString stringWithFormat:@"<%@ = %@ * %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -1367,7 +1403,11 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"Q:<%@ = %@ / %@>",_z, _x, _y];
+   return [NSString stringWithFormat:@"<%@ = %@ / %@>",_z, _x, _y];
+}
+- (id<CPVar>)result
+{
+   return _z;
 }
 @end
 
@@ -1851,6 +1891,10 @@
 {
    return [NSString stringWithFormat:@"<%@ == |%@|>",_res,_x];
 }
+- (id<CPVar>)result
+{
+   return _res;
+}
 @end
 
 @implementation CPRationalUnaryMinus{
@@ -1932,5 +1976,9 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<%@ == -%@>",_x,_y];
+}
+- (id<CPVar>)result
+{
+   return _x;
 }
 @end

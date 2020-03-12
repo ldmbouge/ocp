@@ -417,17 +417,26 @@ typedef int (^intgetter) (void) ;
 @interface CP3BGroup : CPGroup<CPGroup>
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer;
 -(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer percent:(ORDouble) p;
--(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer percent:(ORDouble)p vars:(NSSet*)avars gamma:(id<ORGamma>) solver;
--(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>) tracer vars:(NSSet*)avars gamma:(id<ORGamma>) solver;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer percent:(ORDouble)p vars:(NSSet*)avars gamma:(id<ORGamma>) solver;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer vars:(NSSet*)avars gamma:(id<ORGamma>) solver;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer kb:(ORInt)k;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer percent:(ORDouble) p kb:(ORInt)k;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer percent:(ORDouble)p vars:(NSSet*)avars gamma:(id<ORGamma>) solver kb:(ORInt)k;
+-(id)   init: (id<CPEngine>) engine tracer:(id<ORTracer>)tracer vars:(NSSet*)avars gamma:(id<ORGamma>) solver kb:(ORInt)k;
 -(ORStatus) add: (id<CPConstraint>) p;
 -(void) addVars:(NSSet*) v;
 -(void) post;
 -(void) propagate;
+-(void) setKbLevel:(ORInt)kb;
 @end
 
 @interface CP3BVisitor : NSObject<CPVisitor>
 -(CP3BVisitor*) initWithGroup:(CP3BGroup*) group tracer:(id<ORTracer>) tracer percent:(ORDouble) percent;
+-(CP3BVisitor*) initWithGroup:(CP3BGroup*) group tracer:(id<ORTracer>) tracer percent:(ORDouble) percent level:(ORInt)k;
 @end
 
 @interface CP3BShavingVisitor : CP3BVisitor
+@end
+
+@interface CP3BShavingVisitor2 : CP3BVisitor
 @end

@@ -39,6 +39,7 @@ enum CPVarClass {
 -(void) applyIntVar:(id<CPVar>) var;
 -(void) applyFloatVar:(id<CPVar>) var;
 -(void) applyDoubleVar:(id<CPVar>) var;
+-(void) applyRationalVar:(id<CPVar>) var;
 @end
 
 @protocol CPVar <NSObject>
