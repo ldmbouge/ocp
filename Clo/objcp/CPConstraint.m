@@ -1514,19 +1514,19 @@
       id<CPRationalVar> eo = [(CPDoubleTernaryAdd*)o getOperationError];
       id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
       id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
-      id<CPRationalVar> exPey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> eyPez = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       
       id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
       id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
       id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
-      id<CPConstraint> addXY = [[CPRationalTernaryAdd alloc] init:exPey equals:ex plus:ey];
-      id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:exPey plus:eo];
+      id<CPConstraint> addYZ = [[CPRationalTernaryAdd alloc] init:eyPez equals:ey plus:ez];
+      id<CPConstraint> addX = [[CPRationalTernaryAdd alloc] init:ex equals:eyPez plus:eo];
       
       [errorGroup add:ezC];
       [errorGroup add:exC];
       [errorGroup add:eyC];
-      [errorGroup add:addXY];
-      [errorGroup add:addZ];
+      [errorGroup add:addYZ];
+      [errorGroup add:addX];
       [inf release];
    }
    return o;
@@ -1548,19 +1548,19 @@
       id<CPRationalVar> eo = [(CPDoubleTernarySub*)o getOperationError];
       id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
       id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
-      id<CPRationalVar> exPey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+      id<CPRationalVar> eySez = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       
       id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
       id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
       id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
-      id<CPConstraint> subXY = [[CPRationalTernarySub alloc] init:exPey equals:ex minus:ey];
-      id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:exPey plus:eo];
+      id<CPConstraint> subYZ = [[CPRationalTernarySub alloc] init:eySez equals:ey minus:ez];
+      id<CPConstraint> addX = [[CPRationalTernaryAdd alloc] init:ex equals:eySez plus:eo];
       
       [errorGroup add:ezC];
       [errorGroup add:exC];
       [errorGroup add:eyC];
-      [errorGroup add:subXY];
-      [errorGroup add:addZ];
+      [errorGroup add:subYZ];
+      [errorGroup add:addX];
       [inf release];
    }
    return o;

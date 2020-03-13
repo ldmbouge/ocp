@@ -381,8 +381,8 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
       
       /* Declaration of model variables */
       id<ORGroup> g = [ORFactory group:mdl type:Group3B];
-      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.1 up:0.5 name:@"x"];
-      id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:0.2 up:0.7 name:@"y"];
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:1 up:2 name:@"x"];
+      id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:3 up:4 name:@"y"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
       id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
@@ -390,7 +390,7 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
       /* Initialization of constants */
       
       /* Declaration of constraints */
-      [g add:[z set:[[x plus:y] mul:@(4.0)]]];
+      [g add:[z set:[x plus:y]]];
       
       /* Declaration of constraints over errors */
       [g add: [ezAbs eq: [ez abs]]];
