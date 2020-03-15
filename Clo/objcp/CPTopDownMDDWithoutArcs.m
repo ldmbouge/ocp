@@ -15,7 +15,7 @@
 #import "CPEngineI.h"
 #import "ORMDDify.h"
 
-static inline id getState(OldNode* n) { return n->_state;}
+static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
 @implementation CPMDDWithoutArcs
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification *)spec {
     self = [super initCPMDD:engine over:x spec:spec];
@@ -37,6 +37,9 @@ static inline id getState(OldNode* n) { return n->_state;}
 }
 -(bool) parentIsChildless:(OldNode*)parent {
     return [parent isChildless];
+}
+-(char*) childState:(OldNode*) child {
+    return [(MDDStateValues*)[child getState] stateValues];
 }
 -(void) DEBUGTestParentChildParity
 {
@@ -112,6 +115,9 @@ static inline id getState(OldNode* n) { return n->_state;}
 }
 -(bool) parentIsChildless:(OldNode*)parent {
     return [parent isChildless];
+}
+-(char*) childState:(OldNode*) child {
+    return [(MDDStateValues*)[child getState] stateValues];
 }
 
 -(void) DEBUGTestParentChildParity
@@ -193,7 +199,7 @@ static inline id getState(OldNode* n) { return n->_state;}
     return [parent isChildless];
 }
 -(void) splitNodesOnLayer:(int)layer {
-    BetterNodeHashTable* nodeHashTable = [[BetterNodeHashTable alloc] initBetterNodeHashTable:_hashWidth numBytes:_numBytes];
+    BetterNodeHashTable* nodeHashTable = [[BetterNodeHashTable alloc] initBetterNodeHashTable:_hashWidth numBytes:_numTopDownBytes];
     SEL hasNodeSel = @selector(hasNodeWithStateProperties:hash:node:);
     HasNodeIMP hasNode = (HasNodeIMP)[nodeHashTable methodForSelector:hasNodeSel];
     int minDomain = _min_domain_for_layer[layer];
@@ -215,8 +221,8 @@ static inline id getState(OldNode* n) { return n->_state;}
             while ([node numParents] && layer_size[layer]._val < _relaxation_size) {
                 //[self DEBUGTestParentChildParity];
                 OldNode* parent = [parents at:0];
-                MDDStateValues* parentState = getState(parent);
-                char* parentProperties = [parentState state];
+                MDDStateValues* parentState = getTopDownState(parent);
+                char* parentProperties = [parentState stateValues];
                 int countForParent = [node countForParentIndex:0];
                 OldNode** parentChildren = [parent children];
                 for (int childIndex = parentMinDomain; countForParent && layer_size[layer]._val < _relaxation_size; childIndex++) {
@@ -230,14 +236,14 @@ static inline id getState(OldNode* n) { return n->_state;}
                         OldNode* newNode;
                         bool nodeExists = hasNode(nodeHashTable, hasNodeSel, newProperties, hashValue, &newNode);
                         if (!nodeExists) {
-                            MDDStateValues* newState = [[MDDStateValues alloc] initState:newProperties numBytes:_numBytes hashWidth:_hashWidth trail:_trail];
+                            MDDStateValues* newState = [[MDDStateValues alloc] initState:newProperties numBytes:_numTopDownBytes hashWidth:_hashWidth trail:_trail];
                             newNode = [[OldNode alloc] initNode:_trail minChildIndex:minDomain maxChildIndex:maxDomain state:newState hashWidth:_hashWidth];
                             
                             nodeHasChildren = false;
                             for (int domainVal = minDomain; domainVal <= maxDomain; domainVal++) {
                                 OldNode* oldNodeChild = existingNodeChildren[domainVal];
                                 if (oldNodeChild != nil) {
-                                    if ([_spec canChooseValue:domainVal forVariable:variableIndex withStateProperties:newProperties]) {
+                                    if ([_spec canChooseValue:domainVal forVariable:variableIndex fromParent:newProperties toChild:[(MDDStateValues*)getTopDownState(oldNodeChild) stateValues]]) {
                                         if (!nodeHasChildren) {
                                             [_trail trailRelease:newNode];
                                             [_trail trailRelease:newState];
@@ -246,7 +252,7 @@ static inline id getState(OldNode* n) { return n->_state;}
                                         [newNode addChild:oldNodeChild at:domainVal inPost:_inPost];
                                         [oldNodeChild addParent:newNode inPost:_inPost];
                                         assignTRInt(&variableCount[domainVal], variableCount[domainVal]._val+1, _trail);
-                                        [oldNodeChild setRecalcRequired:true];
+                                        [oldNodeChild setTopDownRecalcRequired:true];
                                         nodeHasChildren = true;
                                     }
                                 }
@@ -254,6 +260,7 @@ static inline id getState(OldNode* n) { return n->_state;}
                             if (nodeHasChildren) {
                                 _lowestLayerChanged = max(_lowestLayerChanged,childLayer);
                                 [self addNode:newNode toLayer:layer];
+                                [newNode setBottomUpRecalcRequired:true];
                                 [parent addChild:newNode at:childIndex inPost:_inPost];
                                 [newNode addParent:parent inPost:_inPost];
                                 [nodeHashTable addState:newState];
@@ -278,8 +285,8 @@ static inline id getState(OldNode* n) { return n->_state;}
                 int numParents = [node numParents];
                 for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
                     OldNode* parent = [parents at:parentIndex];
-                    MDDStateValues* parentState = getState(parent);
-                    char* parentProperties = [parentState state];
+                    MDDStateValues* parentState = getTopDownState(parent);
+                    char* parentProperties = [parentState stateValues];
                     OldNode** parentChildren = [parent children];
                     
                     int countForParent = [node countForParentIndex:parentIndex];
@@ -315,7 +322,8 @@ static inline id getState(OldNode* n) { return n->_state;}
                 nodeIndex--;
                 layerSize--;
             } else {
-                [node setRecalcRequired:true];
+                [node setTopDownRecalcRequired:true];
+                [node setBottomUpRecalcRequired:true];
             }
         }
     }
@@ -333,8 +341,8 @@ static inline id getState(OldNode* n) { return n->_state;}
     
     for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
         OldNode* parent = [parents at: parentIndex];
-        MDDStateValues* parentState = getState(parent);
-        char* parentProperties = [parentState state];
+        MDDStateValues* parentState = getTopDownState(parent);
+        char* parentProperties = [parentState stateValues];
         parentStates[parentIndex] = parentProperties;
         TRId* children = [parent children];
         int countForParent = [node countForParentIndex:parentIndex];
@@ -360,7 +368,10 @@ static inline id getState(OldNode* n) { return n->_state;}
     return newStateProperties;
 }
 -(void) recalcFor:(OldNode*)child parentProperties:(char*)nodeProperties variable:(int)variableIndex {
-    [child setRecalcRequired:true];
+    [child setTopDownRecalcRequired:true];
+}
+-(char*) childState:(OldNode*) child {
+    return [(MDDStateValues*)[child getState] stateValues];
 }
 
 -(void) DEBUGTestParentChildParity

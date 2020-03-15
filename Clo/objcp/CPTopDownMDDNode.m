@@ -4,7 +4,7 @@
 const short BytesPerMagic = 4;
 
 @implementation Node
--(id) initNode: (id<ORTrail>) trail hashWidth:(int)hashWidth
+-(id) initSinkNode: (id<ORTrail>) trail state:(MDDStateValues*)state hashWidth:(int)hashWidth
 {
     self = [super init];
     _trail = trail;
@@ -16,7 +16,9 @@ const short BytesPerMagic = 4;
     _parents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumParents._val];
     _numParents = makeTRInt(_trail, 0);
     _isMergedNode = makeTRInt(_trail, 0);
-    _recalcRequired = false;
+    _topDownRecalcRequired = false;
+    _bottomUpRecalcRequired = true;
+    _bottomUpState = [state retain];
     
     return self;
 }
@@ -32,19 +34,21 @@ const short BytesPerMagic = 4;
         _children[child] = makeTRId(_trail, nil);
     }
     
-    _state = [state retain];
+    _topDownState = [state retain];
     
     _numChildren = makeTRInt(_trail, 0);
     _maxNumParents = makeTRInt(_trail,(maxChildIndex-minChildIndex+1));
     _parents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumParents._val];
     _numParents = makeTRInt(_trail, 0);
     _isMergedNode = makeTRInt(_trail, 0);
-    _recalcRequired = false;
-    [_state setNode:self];
+    _topDownRecalcRequired = false;
+    _bottomUpRecalcRequired = true;
+    [_topDownState setNode:self];
     return self;
 }
 -(void) dealloc {
-    [_state release];
+    [_topDownState release];
+    [_bottomUpState release];
     [_parents release];
     if (_children != nil) {
         for (int i = _minChildIndex; i <= _maxChildIndex; i++) {
@@ -58,6 +62,12 @@ const short BytesPerMagic = 4;
     [super dealloc];
 }
 
+-(void) initializeBottomUpState:(MDDStateValues*)bottomUpState {
+    _bottomUpState = bottomUpState;
+}
+-(void) updateBottomUpState:(char*)bottomUpState {
+    [_bottomUpState replaceStateWith:bottomUpState trail:_trail];
+}
 -(void) addParent:(id) parent inPost:(bool)inPost {
     @throw [[ORExecutionError alloc] initORExecutionError: "Node: Method addParent not implemented"];
 }
@@ -94,7 +104,7 @@ const short BytesPerMagic = 4;
     assignTRInt(&_layerIndex,index,_trail);
 }
 -(TRId) getState {
-    return _state;
+    return _topDownState;
 }
 -(TRId*) children {
     return _children;
@@ -108,11 +118,17 @@ const short BytesPerMagic = 4;
 -(bool) isParentless {
     return !_numParents._val;
 }
--(bool) recalcRequired {
-    return _recalcRequired;
+-(bool) topDownRecalcRequired {
+    return _topDownRecalcRequired;
 }
--(void) setRecalcRequired:(bool)value {
-    _recalcRequired = value;
+-(void) setTopDownRecalcRequired:(bool)value {
+    _topDownRecalcRequired = value;
+}
+-(bool) bottomUpRecalcRequired {
+    return _bottomUpRecalcRequired;
+}
+-(void) setBottomUpRecalcRequired:(bool)value {
+    _bottomUpRecalcRequired = value;
 }
 -(int) numParents {
     return _numParents._val;
@@ -127,7 +143,7 @@ const short BytesPerMagic = 4;
     //Hard coded for among
     
     NSMutableString* printOut = [NSMutableString string];
-    char* state = [_state state];
+    char* state = [_topDownState stateValues];
     short minC1, maxC1, rem1, minC2, maxC2, rem2, minC3, maxC3, rem3, minC4, maxC4, rem4;
     minC1 = *(short*)&state[0];
     maxC1 = *(short*)&state[2];
@@ -163,8 +179,8 @@ const short BytesPerMagic = 4;
 @end
 
 @implementation OldNode
--(id) initNode:(id<ORTrail>)trail hashWidth:(int)hashWidth {
-    self = [super initNode:trail hashWidth:hashWidth];
+-(id) initSinkNode: (id<ORTrail>) trail state:(MDDStateValues*)state hashWidth:(int)hashWidth {
+    self = [super initSinkNode:trail state:state hashWidth:hashWidth];
     _parentCounts = [[ORTRIntArrayI alloc] initORTRIntArrayWithTrail:_trail low:0 up:_maxNumParents._val];
     _lastAddedParentIndex = 0;
     return self;
@@ -392,7 +408,7 @@ const short BytesPerMagic = 4;
 @end
 
 @implementation MDDArc
--(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost {
+-(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost numBottomUpBytes:(size_t)numBottomUpBytes {
     self = [super init];
     _trail = trail;
     _parent = parent;
@@ -401,10 +417,16 @@ const short BytesPerMagic = 4;
     _arcIndexForChild = makeTRInt(_trail, [_child numParents]);
     [_parent addChild:self at:arcValue inPost:inPost];
     [_child addParent:self inPost:inPost];
+    _numBottomUpBytes = numBottomUpBytes;
+    _passedBottomUpState = malloc(_numBottomUpBytes * sizeof(char));
+    _bottomUpMagic = malloc(_numBottomUpBytes/BytesPerMagic * sizeof(ORUInt));
+    for (int i = 0; i < (_numBottomUpBytes/BytesPerMagic); i++) {
+        _bottomUpMagic[i] = [trail magic];
+    }
     [self release];
     return self;
 }
--(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numBytes:(size_t)numBytes {
+-(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numTopDownBytes:(size_t)numTopDownBytes numBottomUpBytes:(size_t)numBottomUpBytes {
     self = [super init];
     _trail = trail;
     _parent = parent;
@@ -413,11 +435,17 @@ const short BytesPerMagic = 4;
     _arcIndexForChild = makeTRInt(_trail, [_child numParents]);
     [_parent addChild:self at:arcValue inPost:inPost];
     [_child addParent:self inPost:inPost];
-    _passedState = state;
-    _numBytes = numBytes;
-    _magic = malloc(_numBytes/BytesPerMagic * sizeof(ORUInt));
-    for (int i = 0; i < (_numBytes/BytesPerMagic); i++) {
-        _magic[i] = [trail magic];
+    _numTopDownBytes = numTopDownBytes;
+    _numBottomUpBytes = numBottomUpBytes;
+    _passedTopDownState = state;
+    _passedBottomUpState = malloc(_numBottomUpBytes * sizeof(char));
+    _topDownMagic = malloc(_numTopDownBytes/BytesPerMagic * sizeof(ORUInt));
+    _bottomUpMagic = malloc(_numBottomUpBytes/BytesPerMagic * sizeof(ORUInt));
+    for (int i = 0; i < (_numTopDownBytes/BytesPerMagic); i++) {
+        _topDownMagic[i] = [trail magic];
+    }
+    for (int i = 0; i < (_numBottomUpBytes/BytesPerMagic); i++) {
+        _bottomUpMagic[i] = [trail magic];
     }
     [self release];
     return self;
@@ -441,28 +469,58 @@ const short BytesPerMagic = 4;
         assignTRInt(&_arcIndexForChild, parentArcIndex, _trail);
     }
 }
--(char*) state { return _passedState; }
--(void) replaceStateWith:(char *)newState trail:(id<ORTrail>)trail {
+-(char*) topDownState { return _passedTopDownState; }
+-(char*) bottomUpState { return _passedBottomUpState; }
+-(void) replaceTopDownStateWith:(char *)newState trail:(id<ORTrail>)trail {
     ORUInt magic = [trail magic];
-    for (int byteIndex = 0; byteIndex < _numBytes; byteIndex+=BytesPerMagic) {
+    for (int byteIndex = 0; byteIndex < _numTopDownBytes; byteIndex+=BytesPerMagic) {
         size_t magicIndex = byteIndex/BytesPerMagic;
         switch (BytesPerMagic) {
             case 2:
-                if (*(short*)&_passedState[byteIndex] != *(short*)&newState[byteIndex]) {
-                    if (magic != _magic[magicIndex]) {
-                        [trail trailShort:(short*)&_passedState[magicIndex]];
-                        _magic[magicIndex] = magic;
+                if (*(short*)&_passedTopDownState[byteIndex] != *(short*)&newState[byteIndex]) {
+                    if (magic != _topDownMagic[magicIndex]) {
+                        [trail trailShort:(short*)&_passedTopDownState[byteIndex]];
+                        _topDownMagic[magicIndex] = magic;
                     }
-                    *(short*)&_passedState[byteIndex] = *(short*)&newState[byteIndex];
+                    *(short*)&_passedTopDownState[byteIndex] = *(short*)&newState[byteIndex];
                 }
                 break;
             case 4:
-                if (*(int*)&_passedState[byteIndex] != *(int*)&newState[byteIndex]) {
-                    if (magic != _magic[magicIndex]) {
-                        [trail trailInt:(int*)&_passedState[magicIndex]];
-                        _magic[magicIndex] = magic;
+                if (*(int*)&_passedTopDownState[byteIndex] != *(int*)&newState[byteIndex]) {
+                    if (magic != _topDownMagic[magicIndex]) {
+                        [trail trailInt:(int*)&_passedTopDownState[byteIndex]];
+                        _topDownMagic[magicIndex] = magic;
                     }
-                    *(int*)&_passedState[byteIndex] = *(int*)&newState[byteIndex];
+                    *(int*)&_passedTopDownState[byteIndex] = *(int*)&newState[byteIndex];
+                }
+                break;
+            default:
+                @throw [[ORExecutionError alloc] initORExecutionError: "MDDArc: Method replaceStateWith not implemented for given BytesPerMagic"];
+                break;
+        }
+    }
+}
+-(void) replaceBottomUpStateWith:(char*)newState trail:(id<ORTrail>)trail {
+    ORUInt magic = [trail magic];
+    for (int byteIndex = 0; byteIndex < _numBottomUpBytes; byteIndex+=BytesPerMagic) {
+        size_t magicIndex = byteIndex/BytesPerMagic;
+        switch (BytesPerMagic) {
+            case 2:
+                if (*(short*)&_passedBottomUpState[byteIndex] != *(short*)&newState[byteIndex]) {
+                    if (magic != _bottomUpMagic[magicIndex]) {
+                        [trail trailShort:(short*)&_passedBottomUpState[byteIndex]];
+                        _bottomUpMagic[magicIndex] = magic;
+                    }
+                    *(short*)&_passedBottomUpState[byteIndex] = *(short*)&newState[byteIndex];
+                }
+                break;
+            case 4:
+                if (*(int*)&_passedBottomUpState[byteIndex] != *(int*)&newState[byteIndex]) {
+                    if (magic != _bottomUpMagic[magicIndex]) {
+                        [trail trailInt:(int*)&_passedBottomUpState[byteIndex]];
+                        _bottomUpMagic[magicIndex] = magic;
+                    }
+                    *(int*)&_passedBottomUpState[byteIndex] = *(int*)&newState[byteIndex];
                 }
                 break;
             default:
@@ -480,10 +538,11 @@ const short BytesPerMagic = 4;
 -(bool) isMerged {
     return [_child isMerged];
 }
--(void) setRecalcRequired:(bool)recalcRequired { [_child setRecalcRequired:recalcRequired]; }
+-(void) setTopDownRecalcRequired:(bool)recalcRequired { [_child setTopDownRecalcRequired:recalcRequired]; }
+-(void) setBottomUpRecalcRequired:(bool)recalcRequired { [_parent setBottomUpRecalcRequired:recalcRequired]; }
 -(void) dealloc {
-    free(_magic);
-    free(_passedState);
+    free(_topDownMagic);
+    free(_passedTopDownState);
     [super dealloc];
 }
 @end
@@ -548,7 +607,7 @@ const short BytesPerMagic = 4;
         _statePropertiesLists[_lastCheckedHash] = newProperties;
     }
     _stateLists[_lastCheckedHash][numStates] = state;
-    _statePropertiesLists[_lastCheckedHash][numStates] = [state state];
+    _statePropertiesLists[_lastCheckedHash][numStates] = [state stateValues];
     _numPerHash[_lastCheckedHash] += 1;
     return;
 }

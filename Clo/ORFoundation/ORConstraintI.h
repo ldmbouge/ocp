@@ -108,10 +108,9 @@
 
 
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
--(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize;
--(ORMDDSpecs*)initORMDDSpecsUsingClosures:(id<ORIntVarArray>)x stateSize:(int)stateSize;
+-(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties;
+-(ORMDDSpecs*)initORMDDSpecsUsingClosures:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties;
 -(id<ORIntVarArray>) vars;
--(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
 @end
 /*@interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
 -(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x;

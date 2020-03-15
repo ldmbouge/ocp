@@ -1196,13 +1196,19 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
-    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x stateSize:(int)stateSize];
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x numTopDownProperties:stateSize numBottomUpProperties:0];
     [model trackObject:o];
     return o;
 }
 +(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
-    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecsUsingClosures:x stateSize:(int)stateSize];
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecsUsingClosures:x numTopDownProperties:stateSize numBottomUpProperties:0];
+    [model trackObject:o];
+    return o;
+}
++(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties
+{
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecsUsingClosures:x numTopDownProperties:numTopDownProperties numBottomUpProperties:numBottomUpProperties];
     [model trackObject:o];
     return o;
 }

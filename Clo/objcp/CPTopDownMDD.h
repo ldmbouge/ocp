@@ -40,7 +40,8 @@
     int _lowestLayerChanged;
     bool _inPost;
     int _hashWidth;
-    size_t _numBytes;
+    size_t _numTopDownBytes;
+    size_t _numBottomUpBytes;
     MDDRecommendationStyle _recommendationStyle;
     
     TRInt** _valueNotMember;
@@ -70,10 +71,10 @@
 -(void) buildLastLayer;
 -(void) buildLayerByValue:(int)layer;
 -(void) buildLayerByNode:(int)layer;
+-(void) performBottomUp;
 -(void) addPropagationsAndTrimDomains;
 -(void) trimDomainsFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
--(id) generateRootState:(int)variableValue;
 -(void) addNode:(Node*)node toLayer:(int)layer_index;
 -(void) removeNodeAt:(int)index onLayer:(int)node_layer;
 -(void) removeNode: (Node*) node onLayer:(int)node_layer;
@@ -85,7 +86,9 @@
 -(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
 -(void) DEBUGTestLayerVariableCountCorrectness;
+-(void) DEBUGTestArcExistenceAccuracy;
 -(ORInt) recommendationFor:(id<CPIntVar>)x;
+-(char*) childState:(id)child;
 -(void) printGraph;
 @end
 @interface CPMDDRestriction : CPMDD {
@@ -117,6 +120,7 @@
 -(void) recalcNode:(Node*)node onLayer:(int)layer;
 -(void) recalcNodesOnLayer:(int)layer_index;
 -(char*) calculateStateFromParentsOf:(Node*)node onLayer:(int)layer isMerged:(bool*)isMerged;
+-(char*) calculateStateFromChildrenOf:(Node*)node onLayer:(int)layer;
 -(void) reevaluateChildrenAfterParentStateChange:(Node*)node onLayer:(int)layer_index andVariable:(int)variableIndex;
 -(void) mergeNodesToWidthOnLayer:(int)layer;
 @end

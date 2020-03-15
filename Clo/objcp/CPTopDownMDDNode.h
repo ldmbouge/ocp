@@ -15,12 +15,16 @@
     TRInt _numParents;
     TRInt _maxNumParents;
     
-    MDDStateValues* _state;
+    MDDStateValues* _topDownState;
+    MDDStateValues* _bottomUpState;
     TRInt _isMergedNode;
-    bool _recalcRequired;
+    bool _topDownRecalcRequired;
+    bool _bottomUpRecalcRequired;
 }
--(id) initNode: (id<ORTrail>) trail hashWidth:(int)hashWidth;
+-(id) initSinkNode: (id<ORTrail>) trail state:(MDDStateValues*)state hashWidth:(int)hashWidth;
 -(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex state:(MDDStateValues*)state hashWidth:(int)hashWidth;
+-(void) initializeBottomUpState:(MDDStateValues*)bottomUpState;
+-(void) updateBottomUpState:(char*)bottomUpState;
 -(void) addChild:(id)child at:(int)index inPost:(bool)inPost;
 -(void) removeChildAt: (int) index inPost:(bool)inPost;
 -(void) addParent: (Node*) parent inPost:(bool)inPost;
@@ -31,8 +35,10 @@
 -(TRId) getState;
 -(bool) isMerged;
 -(void) setIsMergedNode:(bool)isMergedNode;
--(bool) recalcRequired;
--(void) setRecalcRequired:(bool)recalcRequired;
+-(bool) topDownRecalcRequired;
+-(void) setTopDownRecalcRequired:(bool)recalcRequired;
+-(bool) bottomUpRecalcRequired;
+-(void) setBottomUpRecalcRequired:(bool)recalcRequired;
 -(bool) isChildless;
 -(bool) isParentless;
 -(TRId*) children;
@@ -72,12 +78,15 @@
     MDDNode* _parent;
     TRId _child;
     TRInt _arcIndexForChild; //The index used by the child to get this arc
-    char* _passedState;
-    ORUInt* _magic;
-    size_t _numBytes;
+    char* _passedTopDownState;
+    char* _passedBottomUpState;
+    ORUInt* _topDownMagic;
+    ORUInt* _bottomUpMagic;
+    size_t _numTopDownBytes;
+    size_t _numBottomUpBytes;
 }
--(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost;
--(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numBytes:(size_t)numBytes;
+-(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost numBottomUpBytes:(size_t)numBottomUpBytes;
+-(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numTopDownBytes:(size_t)numTopDownBytes numBottomUpBytes:(size_t)numBottomUpBytes;
 -(MDDNode*) parent;
 -(MDDNode*) child;
 -(void) setChild:(MDDNode*)child inPost:(bool)inPost;
@@ -87,9 +96,11 @@
 -(void) removeParent:(Node*)parentArc inPost:(bool)inPost;
 -(bool) isParentless;
 -(bool) isMerged;
--(void) setRecalcRequired:(bool)recalcRequired;
--(char*) state;
--(void) replaceStateWith:(char*)newState trail:(id<ORTrail>)trail;
+-(void) setTopDownRecalcRequired:(bool)recalcRequired;
+-(char*) topDownState;
+-(char*) bottomUpState;
+-(void) replaceTopDownStateWith:(char*)newState trail:(id<ORTrail>)trail;
+-(void) replaceBottomUpStateWith:(char*)newState trail:(id<ORTrail>)trail;
 @end
 
 @interface NormNodePair : NSObject {

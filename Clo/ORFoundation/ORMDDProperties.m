@@ -2,6 +2,7 @@
 
 @implementation MDDPropertyDescriptor
 -(id) initMDDPropertyDescriptor:(short)pId {
+    self = [super init];
    _id = pId;
    _byteOffset = 0;
    return self;

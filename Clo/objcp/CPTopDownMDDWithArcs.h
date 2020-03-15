@@ -20,6 +20,7 @@
     SEL _replaceArcStateSel;
     ReplaceArcStateIMP _replaceArcState;
 }
--(void) recalcArc:(MDDArc*)arc parentPropertes:(char*)parentProperties variable:(int)variable;
+-(void) recalcArc:(MDDArc*)arc parentProperties:(char*)parentProperties variable:(int)variable;
+-(void) recalcArc:(MDDArc*)arc childProperties:(char*)childProperties variable:(int)variable;
 -(void) DEBUGTestParentArcIndices;
 @end

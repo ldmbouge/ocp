@@ -118,21 +118,13 @@ autoreleasepool {
     }
     let emp = ORFactory.intVarArray(m, range: JR, domain: ER)
     
-    for i in 0..<AJ.count {
-        for j in i+1 ..< AJ.count {
-            if (overlap(AJ[i],AJ[j])) {
-                //m.add(emp[i]  != emp[j]);
-            }
-        }
-    }
     for c in cliques {
-        print(c.sorted())
-        m.add(allDiffMDDWithSetsAndClosures(all(m,c) { i in emp[i]}))
+        m.add(allDiffDualDirectionalMDDWithSetsAndClosures(all(m,c) { i in emp[i]}))
     }
     m.maximize(sum(m, R: JR) { i in
         return compatMatrix[Int(i)][emp[i]]
     })
-    notes.ddWidth(1)
+    notes.ddWidth(4)
     notes.ddRelaxed(true)
     notes.ddEqualBuckets(true)
     notes.dd(withArcs: true)
@@ -173,12 +165,13 @@ autoreleasepool {
                         largest = ORInt(compat[Int(bestVarIndex)][Int(value)])
                     }
                 }
-                /*let output = String(bestVarIndex) + " assigned to " + String(bestValue) + "\n"
-                let data = output.data(using: String.Encoding.utf8, allowLossyConversion: false)!
-                let fileHandle = FileHandle(forWritingAtPath: filePath)!
-                fileHandle.seekToEndOfFile()
-                fileHandle.write(data)
-                fileHandle.closeFile()*/
+                //let output = "Variable " + String(bestVarIndex) + " assigned to " + String(bestValue) + "\n"
+                //print(output)
+                //let data = output.data(using: String.Encoding.utf8, allowLossyConversion: false)!
+                //let fileHandle = FileHandle(forWritingAtPath: filePath)!
+                //fileHandle.seekToEndOfFile()
+                //fileHandle.write(data)
+                //fileHandle.closeFile()
                 return equal(cp, emp[bestVarIndex], bestValue) | diff(cp, emp[bestVarIndex], bestValue)
             }
         })

@@ -37,13 +37,13 @@
 
 @interface ORDDClosureGenerator : ORNOopVisit {
 @protected
-    DDArcClosure current;
+    DDOldClosure current;
 }
 -(ORDDClosureGenerator*) initORDDClosureGenerator;
--(DDArcClosure) computeClosure:(id<ORExpr>)e;
--(DDArcClosure) computeClosureAsInteger:(id<ORExpr>)e;
--(DDArcClosure) computeClosureAsBoolean:(id<ORExpr>)e;
--(DDArcClosure) recursiveVisitor:(id<ORExpr>)e;
+-(DDOldClosure) computeClosure:(id<ORExpr>)e;
+-(DDOldClosure) computeClosureAsInteger:(id<ORExpr>)e;
+-(DDOldClosure) computeClosureAsBoolean:(id<ORExpr>)e;
+-(DDOldClosure) recursiveVisitor:(id<ORExpr>)e;
 @end
 
 @interface ORDDMergeClosureGenerator : ORNOopVisit {
