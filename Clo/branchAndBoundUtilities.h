@@ -9,6 +9,7 @@
 #import "rationalUtilities.h"
 
 @protocol CPEngine;
+@protocol CPRationalVar;
 
 @interface SolWrapper : NSObject {
    id<ORSolution> _sol;
@@ -20,12 +21,23 @@
 -(void)print:(NSArray*)variables with:(id<ORSolution>)s for:(NSString*)title;
 @end
 
+@interface ORGammaError : NSObject  {
+   NSMutableDictionary* _dic;
+}
+- (id)init;
+- (void) dealloc;
+- (id)concretizeError:(NSUInteger)index;
+- (id)saveError:(id<CPRationalVar>)error of:(NSUInteger)index;
+- (NSString*)description;
+@end
+
 extern ORBool RUN_IMPROVE_GUESS;
 extern ORBool RUN_DISCARDED_BOX;
 extern ORBool RUN_3B_ERROR;
 
 
 extern id<CPEngine> errorGroup;
+extern ORGammaError* _gammaE;
 
 
 extern id<ORRational> boundDiscardedBoxes;

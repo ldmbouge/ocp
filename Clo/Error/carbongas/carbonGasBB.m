@@ -390,7 +390,7 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
       /* Initialization of constants */
       
       /* Declaration of constraints */
-      [g add:[z set:[x plus:y]]];
+      [g add:[z set:[[x plus:y] mul: x]]];
       
       /* Declaration of constraints over errors */
       [g add: [ezAbs eq: [ez abs]]];
@@ -452,7 +452,7 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    //carbonGas_f(1, argc, argv);
    //carbonGas_d(1, argc, argv);
-   //carbonGas_d_c(1, argc, argv);
-   test_d_c_3B(1, argc, argv);
+   carbonGas_d_c(1, argc, argv);
+   //test_d_c_3B(1, argc, argv);
    return 0;
 }

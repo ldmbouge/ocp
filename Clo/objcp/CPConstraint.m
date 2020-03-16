@@ -1431,24 +1431,32 @@
       [yFromF set_d:[y min] and:[y max]];
       [[inf low] setNegInf];
       [[inf up] setPosInf];
-      id<CPRationalVar> eo = [(CPDoubleTernaryMult*)o getOperationError];
-      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
-      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> eo = [(CPDoubleSquare*)o getOperationError];
+      id<CPRationalVar> ex = [_gammaE concretizeError:[x getId]];
+      if(ex == nil) {
+         ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+         [_gammaE saveError:ex of:[x getId]];
+         id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+         [errorGroup add:exC];
+      }
+      id<CPRationalVar> ey = [_gammaE concretizeError:[y getId]];
+      if(ey == nil){
+         ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+         [_gammaE saveError:ey of:[y getId]];
+         id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+         [errorGroup add:eyC];
+      }
       id<CPRationalVar> yR = [[CPRationalVarI alloc] init:engine low:[yFromF low] up:[yFromF up]];
       id<CPRationalVar> twoMy = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       id<CPRationalVar> eyPtwoMy = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       id<CPRationalVar> eyMeyPtwoMy = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       
-      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
-      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
       id<CPConstraint> channelY = [[CPRationalChannelD alloc] init:y with:yR];
       id<CPConstraint> mul1 = [[CPRationalTernaryMult alloc] init:twoMy equals:two mult:yR];
       id<CPConstraint> add1 = [[CPRationalTernaryAdd alloc] init:eyPtwoMy equals:ey plus:twoMy];
       id<CPConstraint> add2 = [[CPRationalTernaryAdd alloc] init:eyMeyPtwoMy equals:ey plus:eyMeyPtwoMy];
       id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ex equals:eo plus:eyMeyPtwoMy];
       
-      [errorGroup add:exC];
-      [errorGroup add:eyC];
       [errorGroup add:channelY];
       [errorGroup add:mul1];
       [errorGroup add:add1];
@@ -1510,21 +1518,34 @@
       id<ORRationalInterval> inf = [[ORRationalInterval alloc] init];
       [[inf low] setNegInf];
       [[inf up] setPosInf];
-      id<CPRationalVar> ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
-      id<CPRationalVar> eo = [(CPDoubleTernaryAdd*)o getOperationError];
-      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
-      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
-      id<CPRationalVar> eyPez = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       
-      id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
-      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
-      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+      id<CPRationalVar> eo = [(CPDoubleTernaryAdd*)o getOperationError];
+      id<CPRationalVar> ez = [_gammaE concretizeError:[z getId]];
+      if(ez == nil){
+         ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
+         [_gammaE saveError:ez of:[z getId]];
+         id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
+         [errorGroup add:ezC];
+      }
+      id<CPRationalVar> ex = [_gammaE concretizeError:[x getId]];
+      if(ex == nil) {
+         ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+         [_gammaE saveError:ex of:[x getId]];
+         id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+         [errorGroup add:exC];
+      }
+      id<CPRationalVar> ey = [_gammaE concretizeError:[y getId]];
+      if(ey == nil){
+         ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+         [_gammaE saveError:ey of:[y getId]];
+         id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+         [errorGroup add:eyC];
+      }
+      id<CPRationalVar> eyPez = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
+   
       id<CPConstraint> addYZ = [[CPRationalTernaryAdd alloc] init:eyPez equals:ey plus:ez];
       id<CPConstraint> addX = [[CPRationalTernaryAdd alloc] init:ex equals:eyPez plus:eo];
       
-      [errorGroup add:ezC];
-      [errorGroup add:exC];
-      [errorGroup add:eyC];
       [errorGroup add:addYZ];
       [errorGroup add:addX];
       [inf release];
@@ -1544,21 +1565,33 @@
       id<ORRationalInterval> inf = [[ORRationalInterval alloc] init];
       [[inf low] setNegInf];
       [[inf up] setPosInf];
-      id<CPRationalVar> ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
       id<CPRationalVar> eo = [(CPDoubleTernarySub*)o getOperationError];
-      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
-      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> ez = [_gammaE concretizeError:[z getId]];
+      if(ez == nil){
+         ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
+         [_gammaE saveError:ez of:[z getId]];
+         id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
+         [errorGroup add:ezC];
+      }
+      id<CPRationalVar> ex = [_gammaE concretizeError:[x getId]];
+      if(ex == nil) {
+         ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+         [_gammaE saveError:ex of:[x getId]];
+         id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+         [errorGroup add:exC];
+      }
+      id<CPRationalVar> ey = [_gammaE concretizeError:[y getId]];
+      if(ey == nil){
+         ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+         [_gammaE saveError:ey of:[y getId]];
+         id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+         [errorGroup add:eyC];
+      }
       id<CPRationalVar> eySez = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       
-      id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
-      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
-      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
       id<CPConstraint> subYZ = [[CPRationalTernarySub alloc] init:eySez equals:ey minus:ez];
       id<CPConstraint> addX = [[CPRationalTernaryAdd alloc] init:ex equals:eySez plus:eo];
       
-      [errorGroup add:ezC];
-      [errorGroup add:exC];
-      [errorGroup add:eyC];
       [errorGroup add:subYZ];
       [errorGroup add:addX];
       [inf release];
@@ -1822,10 +1855,28 @@
       [yFromF set_d:[y min] and:[y max]];
       [[inf low] setNegInf];
       [[inf up] setPosInf];
-      id<CPRationalVar> ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
       id<CPRationalVar> eo = [(CPDoubleTernaryMult*)o getOperationError];
-      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
-      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> ez = [_gammaE concretizeError:[z getId]];
+      if(ez == nil){
+         ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
+         [_gammaE saveError:ez of:[z getId]];
+         id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
+         [errorGroup add:ezC];
+      }
+      id<CPRationalVar> ex = [_gammaE concretizeError:[x getId]];
+      if(ex == nil) {
+         ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+         [_gammaE saveError:ex of:[x getId]];
+         id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+         [errorGroup add:exC];
+      }
+      id<CPRationalVar> ey = [_gammaE concretizeError:[y getId]];
+      if(ey == nil){
+         ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+         [_gammaE saveError:ey of:[y getId]];
+         id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+         [errorGroup add:eyC];
+      }
       id<CPRationalVar> xR = [[CPRationalVarI alloc] init:engine low:[xFromF low] up:[xFromF up]];
       id<CPRationalVar> yR = [[CPRationalVarI alloc] init:engine low:[yFromF low] up:[yFromF up]];
       id<CPRationalVar> xMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
@@ -1834,9 +1885,6 @@
       id<CPRationalVar> xMeyPyMex = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       id<CPRationalVar> xMeyPyMexPexMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       
-      id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
-      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
-      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
       id<CPConstraint> channelX = [[CPRationalChannelD alloc] init:x with:xR];
       id<CPConstraint> channelY = [[CPRationalChannelD alloc] init:y with:yR];
       id<CPConstraint> mul1 = [[CPRationalTernaryMult alloc] init:xMey equals:xR mult:ey];
@@ -1846,9 +1894,6 @@
       id<CPConstraint> add2 = [[CPRationalTernaryAdd alloc] init:xMeyPyMexPexMey equals:xMeyPyMex plus:exMey];
       id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:xMeyPyMexPexMey plus:eo];
       
-      [errorGroup add:ezC];
-      [errorGroup add:exC];
-      [errorGroup add:eyC];
       [errorGroup add:channelX];
       [errorGroup add:channelY];
       [errorGroup add:mul1];
@@ -1881,10 +1926,28 @@
       [yFromF set_d:[y min] and:[y max]];
       [[inf low] setNegInf];
       [[inf up] setPosInf];
-      id<CPRationalVar> ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
-      id<CPRationalVar> eo = [(CPDoubleTernaryMult*)o getOperationError];
-      id<CPRationalVar> ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
-      id<CPRationalVar> ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+      id<CPRationalVar> eo = [(CPDoubleTernaryDiv*)o getOperationError];
+      id<CPRationalVar> ez = [_gammaE concretizeError:[z getId]];
+      if(ez == nil){
+         ez = [[CPRationalVarI alloc] init:engine low:[z minErr] up:[z maxErr]];
+         [_gammaE saveError:ez of:[z getId]];
+         id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
+         [errorGroup add:ezC];
+      }
+      id<CPRationalVar> ex = [_gammaE concretizeError:[x getId]];
+      if(ex == nil) {
+         ex = [[CPRationalVarI alloc] init:engine low:[x minErr] up:[x maxErr]];
+         [_gammaE saveError:ex of:[x getId]];
+         id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
+         [errorGroup add:exC];
+      }
+      id<CPRationalVar> ey = [_gammaE concretizeError:[y getId]];
+      if(ey == nil){
+         ey = [[CPRationalVarI alloc] init:engine low:[y minErr] up:[y maxErr]];
+         [_gammaE saveError:ey of:[y getId]];
+         id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
+         [errorGroup add:eyC];
+      }
       id<CPRationalVar> xR = [[CPRationalVarI alloc] init:engine low:[xFromF low] up:[xFromF up]];
       id<CPRationalVar> yR = [[CPRationalVarI alloc] init:engine low:[yFromF low] up:[yFromF up]];
       id<CPRationalVar> xMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
@@ -1894,9 +1957,6 @@
       id<CPRationalVar> yMexSxMey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       id<CPRationalVar> yMexSxMeyDyMyPey = [[CPRationalVarI alloc] init:engine low:[inf low] up:[inf up]];
       
-      id<CPConstraint> ezC = [[CPRationalErrorOfD alloc] init:z is:ez];
-      id<CPConstraint> exC = [[CPRationalErrorOfD alloc] init:x is:ex];
-      id<CPConstraint> eyC = [[CPRationalErrorOfD alloc] init:y is:ey];
       id<CPConstraint> channelX = [[CPRationalChannelD alloc] init:x with:xR];
       id<CPConstraint> channelY = [[CPRationalChannelD alloc] init:y with:yR];
       id<CPConstraint> mul1 = [[CPRationalTernaryMult alloc] init:xMey equals:xR mult:ey];
@@ -1907,9 +1967,6 @@
       id<CPConstraint> div1 = [[CPRationalTernaryDiv alloc] init:yMexSxMeyDyMyPey equals:yMexSxMey div:yMyPey];
       id<CPConstraint> addZ = [[CPRationalTernaryAdd alloc] init:ez equals:yMexSxMeyDyMyPey plus:eo];
       
-      [errorGroup add:ezC];
-      [errorGroup add:exC];
-      [errorGroup add:eyC];
       [errorGroup add:channelX];
       [errorGroup add:channelY];
       [errorGroup add:mul1];
