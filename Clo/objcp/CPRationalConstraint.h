@@ -198,6 +198,17 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPRationalSquare : CPCoreConstraint<CPArithmConstraint> {
+@private
+   CPRationalVarI* _x;
+   CPRationalVarI* _res;
+}
+-(id) init:(id<CPRationalVar>)res eq:(id<CPRationalVar>)x ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPRationalTernaryMult : CPCoreConstraint<CPArithmConstraint> { // z = x * y
    CPRationalVarI* _z;
    CPRationalVarI* _x;

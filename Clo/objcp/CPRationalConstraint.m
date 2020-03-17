@@ -631,48 +631,6 @@
 }
 -(void) propagate
 {
-   /*   if ([_x bound]) {
-    if([_y bound]){
-    if ([[_x min] eq: [_y min]])
-    failNow();
-    else{
-    if([_x min] == [_y min]){
-    [_y updateMin:fp_next_float([_y min])];
-    assignTRInt(&_active, NO, _trail);
-    }
-    if([_x min] == [_y max]) {
-    [_y updateMax:fp_previous_float([_y max])];
-    assignTRInt(&_active, NO, _trail);
-    }
-    if([_x max] == [_y min]){
-    [_y updateMin:fp_next_float([_y max])];
-    assignTRInt(&_active, NO, _trail);
-    }
-    if([_x max] == [_y max]) {
-    [_y updateMax:fp_previous_float([_y max])];
-    assignTRInt(&_active, NO, _trail);
-    }
-    }
-    return;
-    }
-    }else  if([_y bound]){
-    if([_x min] == [_y min]){
-    [_x updateMin:fp_next_float([_x min])];
-    assignTRInt(&_active, NO, _trail);
-    }
-    if([_x min] == [_y max]) {
-    [_x updateMin:fp_next_float([_x min])];
-    assignTRInt(&_active, NO, _trail);
-    }
-    if([_x max] == [_y min]){
-    [_x updateMax:fp_previous_float([_x max])];
-    assignTRInt(&_active, NO, _trail);
-    }
-    if([_x max] == [_y max]) {
-    [_x updateMax:fp_previous_float([_x max])];
-    assignTRInt(&_active, NO, _trail);
-    }
-    }*/
 }
 -(NSSet*)allVars
 {
@@ -713,19 +671,6 @@
 }
 -(void) propagate
 {
-   /*if ([_x bound]) {
-    if([_x min] == _c)
-    failNow();
-    }else{
-    if([_x min] == _c){
-    [_x updateMin:fp_next_float(_c)];
-    assignTRInt(&_active, NO, _trail);
-    }
-    if([_x max] == _c){
-    [_x updateMax:fp_previous_float(_c)];
-    assignTRInt(&_active, NO, _trail);
-    }
-    }*/
 }
 -(NSSet*)allVars
 {
@@ -942,14 +887,27 @@
 
 
 @implementation CPRationalTernaryAdd{
-   
+   id<ORRationalInterval> zTemp;
+   id<ORRationalInterval> yTemp;
+   id<ORRationalInterval> xTemp;
+   id<ORRationalInterval> z;
+   id<ORRationalInterval> x;
+   id<ORRationalInterval> y;
 }
--(id) init:(CPRationalVarI*)z equals:(CPRationalVarI*)x plus:(CPRationalVarI*)y
+-(id) init:(CPRationalVarI*)zv equals:(CPRationalVarI*)xv plus:(CPRationalVarI*)yv
 {
-   self = [super initCPCoreConstraint: [x engine]];
-   _z = z;
-   _x = x;
-   _y = y;
+   self = [super initCPCoreConstraint: [xv engine]];
+   _z = zv;
+   _x = xv;
+   _y = yv;
+   
+   zTemp = [[ORRationalInterval alloc] init];
+   yTemp = [[ORRationalInterval alloc] init];
+   xTemp = [[ORRationalInterval alloc] init];
+   z = [[ORRationalInterval alloc] init];
+   x = [[ORRationalInterval alloc] init];
+   y = [[ORRationalInterval alloc] init];
+
    return self;
 }
 -(void) post
@@ -963,12 +921,6 @@
 {
    int gchanged,changed;
    gchanged = false;
-   id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
    
    [x set_q: [_x min] and:[_x max]];
    [y set_q: [_y min] and:[_y max]];
@@ -1024,15 +976,14 @@
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
-   
+}
+- (void)dealloc {
    [x release];
    [y release];
    [z release];
    [xTemp release];
    [yTemp release];
    [zTemp release];
-}
-- (void)dealloc {
    [super dealloc];
 }
 -(NSSet*)allVars
@@ -1058,14 +1009,28 @@
 @end
 
 @implementation CPRationalTernarySub{
-   
+   id<ORRationalInterval> zTemp;
+   id<ORRationalInterval> yTemp;
+   id<ORRationalInterval> xTemp;
+   id<ORRationalInterval> z;
+   id<ORRationalInterval> x;
+   id<ORRationalInterval> y;
+
 }
--(id) init:(CPRationalVarI*)z equals:(CPRationalVarI*)x minus:(CPRationalVarI*)y
+-(id) init:(CPRationalVarI*)zv equals:(CPRationalVarI*)xv minus:(CPRationalVarI*)yv
 {
-   self = [super initCPCoreConstraint: [x engine]];
-   _z = z;
-   _x = x;
-   _y = y;
+   self = [super initCPCoreConstraint: [xv engine]];
+   _z = zv;
+   _x = xv;
+   _y = yv;
+   
+   zTemp = [[ORRationalInterval alloc] init];
+   yTemp = [[ORRationalInterval alloc] init];
+   xTemp = [[ORRationalInterval alloc] init];
+   z = [[ORRationalInterval alloc] init];
+   x = [[ORRationalInterval alloc] init];
+   y = [[ORRationalInterval alloc] init];
+
    return self;
 }
 -(void) post
@@ -1079,13 +1044,6 @@
 {
    int gchanged,changed;
    gchanged = false;
-   
-   id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
    
    [x set_q: [_x min] and:[_x max]];
    [y set_q: [_y min] and:[_y max]];
@@ -1143,14 +1101,14 @@
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
+}
+- (void)dealloc {
    [x release];
    [y release];
    [z release];
    [xTemp release];
    [yTemp release];
    [zTemp release];
-}
-- (void)dealloc {
    [super dealloc];
 }
 -(NSSet*)allVars
@@ -1175,15 +1133,131 @@
 }
 @end
 
-@implementation CPRationalTernaryMult{
-   
+@implementation CPRationalSquare{
+   id<ORRationalInterval> resTemp;
+   id<ORRationalInterval> xTemp;
+   id<ORRationalInterval> res;
+   id<ORRationalInterval> x;
 }
--(id) init:(CPRationalVarI*)z equals:(CPRationalVarI*)x mult:(CPRationalVarI*)y
+-(id) init:(CPRationalVarI*)resv eq:(CPRationalVarI*)xv //res = x^2
 {
-   self = [super initCPCoreConstraint: [x engine]];
-   _z = z;
-   _x = x;
-   _y = y;
+   self = [super initCPCoreConstraint: [xv engine]];
+   _res = resv;
+   _x = xv;
+   
+   resTemp = [[ORRationalInterval alloc] init];
+   xTemp = [[ORRationalInterval alloc] init];
+   res = [[ORRationalInterval alloc] init];
+   x = [[ORRationalInterval alloc] init];
+
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_res bound])  [_res whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+   int gchanged,changed;
+   gchanged = false;
+   
+   [x set_q: [_x min] and:[_x max]];
+   [res set_q: [_res min] and:[_res max]];
+   
+   @autoreleasepool {
+      do {
+         changed = false;
+         
+         // ============================== res
+         // x * y
+         [resTemp set: [x mul: x]];
+         
+         [res set: [res proj_inter: resTemp]];
+         changed |= res.changed;
+         
+         if([res empty]){
+            gchanged |= true;
+            break;
+         }
+         
+         // ============================== x
+         // res / x
+         [xTemp set: [res div: x]];
+         
+         [x set: [x proj_inter: xTemp]];
+         changed |= x.changed;
+         
+         if([x empty]){
+            gchanged |= true;
+            break;
+         }
+                  
+         gchanged |= changed;
+      } while(changed);
+   }
+   
+   if(gchanged){
+      [_x updateInterval:x.low and:x.up];
+      [_res updateInterval:res.low and:res.up];
+      if([_x bound] && [_res bound])
+         assignTRInt(&_active, NO, _trail);
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(NSArray*)allVarsArray
+{
+   return [[[NSArray alloc] initWithObjects:_x,_res,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_res bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<%@ == (%@^2)>",_res,_x];
+}
+- (id<CPVar>)result
+{
+   return _res;
+}
+- (void) dealloc
+{
+   [x release];
+   [res release];
+   [xTemp release];
+   [resTemp release];
+   [super dealloc];
+}
+@end
+
+
+@implementation CPRationalTernaryMult{
+   id<ORRationalInterval> zTemp;
+   id<ORRationalInterval> yTemp;
+   id<ORRationalInterval> xTemp;
+   id<ORRationalInterval> z;
+   id<ORRationalInterval> x;
+   id<ORRationalInterval> y;
+}
+-(id) init:(CPRationalVarI*)zv equals:(CPRationalVarI*)xv mult:(CPRationalVarI*)yv
+{
+   self = [super initCPCoreConstraint: [xv engine]];
+   _z = zv;
+   _x = xv;
+   _y = yv;
+   
+   zTemp = [[ORRationalInterval alloc] init];
+   yTemp = [[ORRationalInterval alloc] init];
+   xTemp = [[ORRationalInterval alloc] init];
+   z = [[ORRationalInterval alloc] init];
+   x = [[ORRationalInterval alloc] init];
+   y = [[ORRationalInterval alloc] init];
+
    return self;
 }
 -(void) post
@@ -1197,13 +1271,6 @@
 {
    int gchanged,changed;
    gchanged = false;
-   
-   id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
    
    [x set_q: [_x min] and:[_x max]];
    [y set_q: [_y min] and:[_y max]];
@@ -1261,14 +1328,14 @@
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
+}
+- (void)dealloc {
    [x release];
    [y release];
    [z release];
    [xTemp release];
    [yTemp release];
    [zTemp release];
-}
-- (void)dealloc {
    [super dealloc];
 }
 -(NSSet*)allVars
@@ -1294,14 +1361,27 @@
 @end
 
 @implementation CPRationalTernaryDiv{
-   
+   id<ORRationalInterval> zTemp;
+   id<ORRationalInterval> yTemp;
+   id<ORRationalInterval> xTemp;
+   id<ORRationalInterval> z;
+   id<ORRationalInterval> x;
+   id<ORRationalInterval> y;
 }
--(id) init:(CPRationalVarI*)z equals:(CPRationalVarI*)x div:(CPRationalVarI*)y
+-(id) init:(CPRationalVarI*)zv equals:(CPRationalVarI*)xv div:(CPRationalVarI*)yv
 {
-   self = [super initCPCoreConstraint: [x engine]];
-   _z = z;
-   _x = x;
-   _y = y;
+   self = [super initCPCoreConstraint: [xv engine]];
+   _z = zv;
+   _x = xv;
+   _y = yv;
+   
+   zTemp = [[ORRationalInterval alloc] init];
+   yTemp = [[ORRationalInterval alloc] init];
+   xTemp = [[ORRationalInterval alloc] init];
+   z = [[ORRationalInterval alloc] init];
+   x = [[ORRationalInterval alloc] init];
+   y = [[ORRationalInterval alloc] init];
+
    return self;
 }
 -(void) post
@@ -1315,14 +1395,7 @@
 {
    int gchanged,changed;
    gchanged = false;
-   
-   id<ORRationalInterval> zTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> yTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> xTemp = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
-   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
-   
+      
    [x set_q: [_x min] and:[_x max]];
    [y set_q: [_y min] and:[_y max]];
    [z set_q: [_z min] and:[_z max]];
@@ -1379,14 +1452,14 @@
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
+}
+- (void)dealloc {
    [x release];
    [y release];
    [z release];
    [xTemp release];
    [yTemp release];
    [zTemp release];
-}
-- (void)dealloc {
    [super dealloc];
 }
 -(NSSet*)allVars

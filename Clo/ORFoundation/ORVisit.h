@@ -260,6 +260,7 @@
 -(void) visitRationalLinearGT: (id<ORConstraint>) c;
 -(void) visitRationalLinearLEQ: (id<ORRationalLinearLEQ>) c;
 -(void) visitRationalLinearGEQ: (id<ORRationalLinearGEQ>) c;
+-(void) visitRationalSquare: (id<ORConstraint>) c;
 -(void) visitRationalMult: (id<ORRationalMult>) c;
 -(void) visitRationalDiv: (id<ORRationalDiv>) c;
 -(void) visitRationalAbs: (id<ORConstraint>)c;

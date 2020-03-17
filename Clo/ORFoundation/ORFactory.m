@@ -753,7 +753,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
                                                  low:low
                                                   up:up
                                                 name:[NSString stringWithFormat:@"e%@",[f prettyname]]];
-   id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r];
+   id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r in:g];
    [g add: c];
    [low release];
    [up release];
@@ -869,7 +869,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
                                                  low:low
                                                   up:up
                                                 name:[NSString stringWithFormat:@"ulp(%@)",[f prettyname]]];
-   id<ORConstraint> c = [ORFactory ulpOf:mdl var:f is:r];
+   id<ORConstraint> c = [ORFactory ulpOf:mdl var:f is:r in:g];
    [g add: c];
    [low release];
    [up release];
@@ -2447,10 +2447,22 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y in:(id<ORGroup>) g
+{
+   id<ORConstraint> o = [[ORRationalErrorOf alloc] initORRationalErrorOf:x is:y];
+   //[g trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) ulpOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y
 {
    id<ORConstraint> o = [[ORRationalUlpOf alloc] initORRationalUlpOf:x is:y];
    [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) ulpOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y in:(id<ORGroup>) g
+{
+   id<ORConstraint> o = [[ORRationalUlpOf alloc] initORRationalUlpOf:x is:y];
+   //[g trackObject:o];
    return o;
 }
 +(id<ORConstraint>) channel:(id<ORFloatVar>)x with:(id<ORRationalVar>)y
@@ -2540,7 +2552,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) rationalMult:(id<ORTracker>)model  var: (id<ORRationalVar>)x by:(id<ORRationalVar>)y equal:(id<ORRationalVar>)z
 {
-   id<ORConstraint> o = [[ORRationalMult alloc] initORRationalMult:z eq:x times:y];
+   id<ORConstraint> o;
+   if([x getId] == [y getId]) {
+      o = [[ORRationalSquare alloc] init:z square:x];
+   } else {
+      o = [[ORRationalMult alloc] initORRationalMult:z eq:x times:y];
+   }
    [model trackObject:o];
    return o;
 }

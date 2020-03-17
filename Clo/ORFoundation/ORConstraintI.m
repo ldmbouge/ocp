@@ -3007,6 +3007,13 @@
 }
 @end
 
+@implementation ORRationalSquare
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRationalSquare:self];
+}
+@end
+
 
 @implementation ORMod { // z = x MOD y
    id<ORIntVar> _x;

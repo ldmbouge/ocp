@@ -901,6 +901,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalLinearGEQ: visit method not defined"];
 }
+-(void) visitRationalSquare:(id<ORSquare>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalSquare: visit method not defined"];
+}
 -(void) visitRationalMult: (id<ORRationalMult>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ORRationalMult: visit method not defined"];
@@ -1433,6 +1437,7 @@
 -(void) visitRealSquare:(id<ORSquare>)c {}
 -(void) visitFloatSquare:(id<ORSquare>)c {}
 -(void) visitDoubleSquare:(id<ORSquare>)c {}
+-(void) visitRationalSquare:(id<ORSquare>)c {}
 -(void) visitExprToFloatI:(id<ORExpr>) e {};
 -(void) visitExprToDoubleI:(id<ORExpr>) e {};
 -(void) visitMod: (id<ORMod>)c {}

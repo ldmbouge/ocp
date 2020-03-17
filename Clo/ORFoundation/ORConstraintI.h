@@ -270,6 +270,9 @@
 @interface ORDoubleSquare : ORSquare
 @end
 
+@interface ORRationalSquare : ORSquare
+@end
+
 @interface ORRealSquare : ORSquare
 @end
 

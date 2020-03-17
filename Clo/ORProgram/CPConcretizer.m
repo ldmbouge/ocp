@@ -2039,6 +2039,20 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitRationalSquare: (id<ORSquare>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORRationalVar> res = (id<ORRationalVar>)[cstr res];
+      id<ORRationalVar> op = (id<ORRationalVar>)[cstr op];
+      [res visit: self];
+      [op visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory rationalSquare: _gamma[res.getId]
+                                                          eq:  _gamma[op.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitRationalMult:(id<ORRationalMult>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -2090,200 +2104,6 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
-/*-(void) visitRationalMult:(id<ORRationalMult>)cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORRationalVar> res = [cstr res];
-      id<ORRationalVar> left = [cstr left];
-      id<ORRationalVar> right = [cstr right];
-      [res visit: self];
-      [left visit: self];
-      [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalMult: (id<CPRationalVar>)_gamma[left.getId]
-                                                        by: (id<CPRationalVar>) _gamma[right.getId]
-                                                     equal: (id<CPRationalVar>) _gamma[res.getId]
-                                                annotation:_notes
-                                       ];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}*/
-/*-(void) visitRationalDiv:(id<ORRationalDiv>)cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORRationalVar> res = [cstr res];
-      id<ORRationalVar> left = [cstr left];
-      id<ORRationalVar> right = [cstr right];
-      [res visit: self];
-      [left visit: self];
-      [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalDiv: (id<CPRationalVar>) _gamma[left.getId]
-                                                       by: (id<CPRationalVar>) _gamma[right.getId]
-                                                    equal: (id<CPRationalVar>) _gamma[res.getId]
-                                               annotation:_notes
-                                       ];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}*/
-/*-(void) visitRationalReifyEqualc: (id<ORRationalReifyEqualc>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORRationalVar> x = [cstr x];
-      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
-      [b visit: self];
-      [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify:(id<CPIntVar>)_gamma[b.getId] with:(id<CPRationalVar>)_gamma[x.getId] eqi: cst];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-      [cst release];
-   }
-}*/
-/*-(void) visitRationalReifyEqual: (id<ORRationalReifyEqual>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORRationalVar> x = [cstr x];
-      id<ORRationalVar> y = [cstr y];
-      ORCLevel annotation = [_notes levelFor:cstr];
-      [b visit: self];
-      [x visit: self];
-      [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] eq: _gamma[y.getId] annotation: annotation];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}*/
-/*-(void) visitRationalReifyNEqualc: (id<ORRationalReifyNEqualc>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORRationalVar> x = [cstr x];
-      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
-      [b visit: self];
-      [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] neqi: cst];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-      [cst release];
-   }
-}*/
-/*-(void) visitRationalReifyNEqual: (id<ORRationalReifyNEqual>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORRationalVar> x = [cstr x];
-      id<ORRationalVar> y = [cstr y];
-      ORCLevel annotation = [_notes levelFor:cstr];
-      [b visit: self];
-      [x visit: self];
-      [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] neq: _gamma[y.getId] annotation: annotation];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}*/
-/*-(void) visitRationalReifyLEqualc: (id<ORRationalReifyLEqualc>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORRationalVar> x = [cstr x];
-      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
-      [b visit: self];
-      [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-      [cst release];
-   }
-}*/
-/*-(void) visitRationalReifyLThenc: (id<ORRationalReifyLThenc>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORRationalVar> x = [cstr x];
-      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
-      [b visit: self];
-      [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] lti: cst];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-      [cst release];
-   }
-}*/
-/*-(void) visitRationalReifyLEqual: (id<ORRationalReifyLEqual>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<CPIntVar> b = [self concreteVar:[cstr b]];
-      id<CPRationalVar> x = [self concreteVar:[cstr x]];
-      id<CPRationalVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: b with: x leq: y annotation: Default];
-      [_engine add:concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}*/
-/*-(void) visitRationalReifyGEqualc: (id<ORRationalReifyGEqualc>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORRationalVar> x = [cstr x];
-      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
-      [b visit: self];
-      [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] geqi: cst];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-      [cst release];
-   }
-}*/
-/*-(void) visitRationalReifyGThenc: (id<ORRationalReifyGThenc>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORRationalVar> x = [cstr x];
-      id<ORRational> cst = [ORRational rationalWith:[cstr cst]];
-      [b visit: self];
-      [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: _gamma[b.getId] with: _gamma[x.getId] gti: cst];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-      [cst release];
-   }
-}*/
-/*-(void) visitRationalReifyGEqual: (id<ORRationalReifyGEqual>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<CPIntVar> b = [self concreteVar:[cstr b]];
-      id<CPRationalVar> x = [self concreteVar:[cstr x]];
-      id<CPRationalVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: b with: y leq: x annotation: Default];
-      [_engine add:concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}*/
-/*-(void) visitRationalReifyLThen: (id<ORRationalReifyLThen>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<CPIntVar> b = [self concreteVar:[cstr b]];
-      id<CPRationalVar> x = [self concreteVar:[cstr x]];
-      id<CPRationalVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: b with: y lt: x annotation: Default];
-      [_engine add:concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}*/
-/*-(void) visitRationalReifyGThen: (id<ORRationalReifyGThen>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<CPIntVar> b = [self concreteVar:[cstr b]];
-      id<CPRationalVar> x = [self concreteVar:[cstr x]];
-      id<CPRationalVar> y = [self concreteVar:[cstr y]];
-      id<CPConstraint> concreteCstr = [CPFactory rationalReify: b with: y gt: x annotation: Default];
-      [_engine add:concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}*/
 //------
 
 -(void) visitDoubleAbs: (id<ORAbs>) cstr

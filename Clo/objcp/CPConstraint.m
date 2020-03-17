@@ -1278,6 +1278,12 @@
    id<CPRationalVar> cvar = [CPFactory rationalVar:[x engine] value:c];
    return [self rationalLEQ:x to:cvar];
 }
++(id<CPConstraint>) rationalSquare:(id<CPRationalVar>) x eq:(id<CPRationalVar>) y
+{
+   id<CPConstraint> o = [[CPRationalSquare alloc] init:x eq:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) rationalMult: (id<CPRationalVar>)x by:(id<CPRationalVar>)y equal:(id<CPRationalVar>)z annotation:(id<ORAnnotation>) notes
 {
    id<CPConstraint> o = nil;

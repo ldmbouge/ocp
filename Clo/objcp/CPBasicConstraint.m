@@ -3163,7 +3163,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       
       ORStatus s = ORSuccess;
       id<ORRational> two = [[ORRational alloc] init]; [two set_d: 2.0];
-      id<ORRational> percent = [[ORRational alloc] init]; [percent set_d: (_percent/100.f)];
+      id<ORRational> percent = [[ORRational alloc] init]; [percent set_d: (_percent/100.0)];
       id<ORRational> epsilon = [[v.max sub: v.min] mul: percent];
       __block id<ORRational> min, mid, max;
       min = v.min;
@@ -3367,7 +3367,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    last = max = min = v.min;
    while (s==ORFailure) {
       [_tracer pushNode];
-      [percentageQ set_d:percent/100.f];
+      [percentageQ set_d:percent/100.0];
       step = [[v.max sub: v.min] mul: percentageQ];
       min = max;
       max = [min add: step];
@@ -3393,7 +3393,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    last = max = min = v.max;
    while (s==ORFailure) {
       [_tracer pushNode];
-      [percentageQ set_d:percent/100.f];
+      [percentageQ set_d:percent/100.0];
       step = [[v.max sub: v.min] mul: percentageQ];
       max = min;
       min = [max sub: step];
