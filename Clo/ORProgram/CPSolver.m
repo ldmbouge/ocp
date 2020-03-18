@@ -29,8 +29,6 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 
-#import "CPTopDownMDD.h"
-
 #if defined(__linux__)
 #import <values.h>
 #endif

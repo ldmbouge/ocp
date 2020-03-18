@@ -1,9 +1,8 @@
 
-
-#import "ORCustomMDDStates.h"
+#import "CPTopDownMDDNode.h"
 
 const short BytesPerMagic = 4;
-
+/*
 @implementation CustomState
 -(id) initClassState {
     return self;
@@ -40,7 +39,7 @@ const short BytesPerMagic = 4;
 -(bool) equivalentTo:(CustomState*)other {
     return false;
 }
-@end
+@end*/
 
 @implementation MDDStateSpecification
 -(id) initMDDStateSpecification:(int)numSpecs numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars {
@@ -51,12 +50,12 @@ const short BytesPerMagic = 4;
     _relaxed = relaxed;
     _topDownStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: numTopDownProperties];
     _bottomUpStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: numBottomUpProperties];
-    _topDownTransitionFunctions = calloc(numTopDownProperties, sizeof(DDArcClosure));
-    _bottomUpTransitionFunctions = calloc(numBottomUpProperties, sizeof(DDArcClosure));
+    _topDownTransitionFunctions = calloc(numTopDownProperties, sizeof(DDArcTransitionClosure));
+    _bottomUpTransitionFunctions = calloc(numBottomUpProperties, sizeof(DDArcTransitionClosure));
     if (_relaxed) {
         _topDownRelaxationFunctions = calloc(numTopDownProperties, sizeof(DDMergeClosure));
         _bottomUpRelaxationFunctions = calloc(numBottomUpProperties, sizeof(DDMergeClosure));
-        _differentialFunctions = calloc(numTopDownProperties, sizeof(DDMergeClosure));
+        _differentialFunctions = calloc(numTopDownProperties, sizeof(DDOldMergeClosure));
     }
     _numTopDownPropertiesAdded = 0;
     _numBottomUpPropertiesAdded = 0;
@@ -70,11 +69,11 @@ const short BytesPerMagic = 4;
     _topDownPropertiesUsedPerVariable -= _minVar;
     _bottomUpPropertiesUsedPerVariable -= _minVar;
     
-    _topDownArcExistsListsForVariable = calloc(_numVars, sizeof(DDArcClosure*));
-    _bottomUpArcExistsListsForVariable = calloc(_numVars, sizeof(DDArcClosure*));
+    _topDownArcExistsListsForVariable = calloc(_numVars, sizeof(DDArcExistsClosure*));
+    _bottomUpArcExistsListsForVariable = calloc(_numVars, sizeof(DDArcExistsClosure*));
     for (int i = 0; i < _numVars; i++) {
-        _topDownArcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDArcClosure));
-        _bottomUpArcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDArcClosure));
+        _topDownArcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDArcExistsClosure));
+        _bottomUpArcExistsListsForVariable[i] = malloc(numSpecs * sizeof(DDArcExistsClosure));
     }
     _topDownArcExistsListsForVariable -= _minVar;
     _bottomUpArcExistsListsForVariable -= _minVar;
@@ -100,10 +99,10 @@ const short BytesPerMagic = 4;
     _numTopDownPropertiesAdded = [MDDSpec numBottomUpProperties];
     _topDownArcExists = [MDDSpec topDownArcExistsClosure];
     _bottomUpArcExists = [MDDSpec bottomUpArcExistsClosure];
-    _topDownTransitionFunctions = calloc(_numTopDownPropertiesAdded, sizeof(DDArcClosure));
-    _bottomUpTransitionFunctions = calloc(_numBottomUpPropertiesAdded, sizeof(DDArcClosure));
-    DDArcClosure* topDownTransitionClosures = [MDDSpec topDownTransitionClosures];
-    DDArcClosure* bottomUpTransitionClosures = [MDDSpec bottomUpTransitionClosures];
+    _topDownTransitionFunctions = calloc(_numTopDownPropertiesAdded, sizeof(DDArcTransitionClosure));
+    _bottomUpTransitionFunctions = calloc(_numBottomUpPropertiesAdded, sizeof(DDArcTransitionClosure));
+    DDArcTransitionClosure* topDownTransitionClosures = [MDDSpec topDownTransitionClosures];
+    DDArcTransitionClosure* bottomUpTransitionClosures = [MDDSpec bottomUpTransitionClosures];
     _topDownStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: _numTopDownPropertiesAdded];
     _bottomUpStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: _numBottomUpPropertiesAdded];
     MDDPropertyDescriptor** topDownProperties = [MDDSpec topDownStateProperties];
@@ -119,10 +118,10 @@ const short BytesPerMagic = 4;
     if (_relaxed) {
         _topDownRelaxationFunctions = calloc(_numTopDownPropertiesAdded, sizeof(DDMergeClosure));
         _bottomUpRelaxationFunctions = calloc(_numBottomUpPropertiesAdded, sizeof(DDMergeClosure));
-        _differentialFunctions = calloc(_numTopDownPropertiesAdded, sizeof(DDMergeClosure));
+        _differentialFunctions = calloc(_numTopDownPropertiesAdded, sizeof(DDOldMergeClosure));
         DDMergeClosure* topDownRelaxationClosures = [MDDSpec topDownRelaxationClosures];
         DDMergeClosure* bottomUpRelaxationClosures = [MDDSpec bottomUpRelaxationClosures];
-        DDMergeClosure* differentialClosures = [MDDSpec differentialClosures];
+        DDOldMergeClosure* differentialClosures = [MDDSpec differentialClosures];
         for (int i = 0; i < _numTopDownPropertiesAdded; i++) {
             _topDownRelaxationFunctions[i] = topDownRelaxationClosures[i];
             _differentialFunctions[i] = differentialClosures[i];
@@ -170,7 +169,7 @@ const short BytesPerMagic = 4;
     [super dealloc];
 }
 
--(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcClosure)arcExists transitionFunctions:(DDArcClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcExistsClosure)arcExists transitionFunctions:(DDArcTransitionClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
     for (int i = 0; i < numProperties; i++) {
         [_topDownStateDescriptor addStateProperty:stateProperties[i]];
         _topDownTransitionFunctions[_numTopDownPropertiesAdded] = transitionFunctions[i];
@@ -189,7 +188,7 @@ const short BytesPerMagic = 4;
     }
     _numSpecsAdded++;
 }
--(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcClosure)arcExists transitionFunctions:(DDArcClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
+-(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcExistsClosure)arcExists transitionFunctions:(DDArcTransitionClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDOldMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping {
     for (int i = 0; i < numProperties; i++) {
         [_topDownStateDescriptor addStateProperty:stateProperties[i]];
         _topDownTransitionFunctions[_numTopDownPropertiesAdded] = transitionFunctions[i];
@@ -212,11 +211,11 @@ const short BytesPerMagic = 4;
 -(void) addMDDSpec:(ORMDDSpecs*)MDDSpec mapping:(int*)mapping {
     MDDPropertyDescriptor** topDownProperties = [MDDSpec topDownStateProperties];
     MDDPropertyDescriptor** bottomUpProperties = [MDDSpec bottomUpStateProperties];
-    DDArcClosure* newTopDownTransitionClosures = [MDDSpec topDownTransitionClosures];
-    DDArcClosure* newBottomUpTransitionClosures = [MDDSpec bottomUpTransitionClosures];
+    DDArcTransitionClosure* newTopDownTransitionClosures = [MDDSpec topDownTransitionClosures];
+    DDArcTransitionClosure* newBottomUpTransitionClosures = [MDDSpec bottomUpTransitionClosures];
     DDMergeClosure* newTopDownRelaxationClosures = [MDDSpec topDownRelaxationClosures];
     DDMergeClosure* newBottomUpRelaxationClosures = [MDDSpec bottomUpRelaxationClosures];
-    DDMergeClosure* newDifferentialClosures = [MDDSpec differentialClosures];
+    DDOldMergeClosure* newDifferentialClosures = [MDDSpec differentialClosures];
     _dualDirectional |= [MDDSpec dualDirectional];
     int numNewTopDownProperties = [MDDSpec numTopDownProperties];
     int numNewBottomUpProperties = [MDDSpec numBottomUpProperties];
@@ -244,8 +243,8 @@ const short BytesPerMagic = 4;
         }
         _numBottomUpPropertiesAdded++;
     }
-    DDArcClosure newTopDownArcExistsClosure = [MDDSpec topDownArcExistsClosure];
-    DDArcClosure newBottomUpArcExistsClosure = [MDDSpec bottomUpArcExistsClosure];
+    DDArcExistsClosure newTopDownArcExistsClosure = [MDDSpec topDownArcExistsClosure];
+    DDArcExistsClosure newBottomUpArcExistsClosure = [MDDSpec bottomUpArcExistsClosure];
     if (!_numSpecsAdded) {
         _topDownArcExists = newTopDownArcExistsClosure;
         _bottomUpArcExists = newBottomUpArcExistsClosure;
@@ -346,7 +345,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
     if (_numSpecsAdded == 1) {
         for (int propertyIndex = 0; propertyIndex < _numTopDownPropertiesAdded; propertyIndex++) {
             numEdgesAdded = 0;
-            DDArcClosure transitionFunction = _topDownTransitionFunctions[propertyIndex];
+            DDArcTransitionClosure transitionFunction = _topDownTransitionFunctions[propertyIndex];
             for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
                 char* parentState = parentStates[parentIndex];
                 int* edgesUsed = edgesUsedByParent[parentIndex];
@@ -459,7 +458,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
     }
     char* state = [stateValues stateValues];
     int numArcExists = _numTopDownArcExistsForVariable[variable];
-    DDArcClosure* arcExistsList = _topDownArcExistsListsForVariable[variable];
+    DDArcExistsClosure* arcExistsList = _topDownArcExistsListsForVariable[variable];
     for (int i = 0; i < numArcExists; i++) {
         if (!arcExistsList[i](state,nil,variable,value)) {
             return false;
@@ -472,7 +471,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
         return _topDownArcExists(state,nil,variable,value);
     }
     int numArcExists = _numTopDownArcExistsForVariable[variable];
-    DDArcClosure* arcExistsList = _topDownArcExistsListsForVariable[variable];
+    DDArcExistsClosure* arcExistsList = _topDownArcExistsListsForVariable[variable];
     for (int i = 0; i < numArcExists; i++) {
         if (!arcExistsList[i](state,nil,variable,value)) {
             return false;
@@ -488,7 +487,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
             }
         } else {
             int numArcExists = _numBottomUpArcExistsForVariable[variable];
-            DDArcClosure* arcExistsList = _bottomUpArcExistsListsForVariable[variable];
+            DDArcExistsClosure* arcExistsList = _bottomUpArcExistsListsForVariable[variable];
             for (int i = 0; i < numArcExists; i++) {
                 if (!arcExistsList[i](parentState,childState,variable,value)) {
                     return false;
@@ -500,7 +499,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
         return _topDownArcExists(parentState,childState,variable,value);
     }
     int numArcExists = _numTopDownArcExistsForVariable[variable];
-    DDArcClosure* arcExistsList = _topDownArcExistsListsForVariable[variable];
+    DDArcExistsClosure* arcExistsList = _topDownArcExistsListsForVariable[variable];
     for (int i = 0; i < numArcExists; i++) {
         if (!arcExistsList[i](parentState,childState,variable,value)) {
             return false;
@@ -517,7 +516,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
         }
     } else {
         int numArcExists = _numTopDownArcExistsForVariable[variable];
-        DDArcClosure* arcExistsList = _topDownArcExistsListsForVariable[variable];
+        DDArcExistsClosure* arcExistsList = _topDownArcExistsListsForVariable[variable];
         for (int i = 0; i < numArcExists; i++) {
             if (!arcExistsList[i](parState,nil,variable,value)) {
                 return false;
@@ -554,7 +553,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
     char* leftState = left.stateValues;
     char* rightState = right.stateValues;
     for (int stateIndex = 0; stateIndex < _numTopDownPropertiesAdded; stateIndex++) {
-        DDMergeClosure differentialFunction = _differentialFunctions[stateIndex];
+        DDOldMergeClosure differentialFunction = _differentialFunctions[stateIndex];
         if (differentialFunction != nil) {
             differential += (int)differentialFunction(nil, leftState,rightState);
          }
@@ -570,8 +569,8 @@ typedef int (*GetPropIMP)(id,SEL,char*);
 -(MDDStateDescriptor*) stateDescriptor { return _topDownStateDescriptor; }
 -(bool*) topDownPropertiesUsed:(int)variableIndex { return _topDownPropertiesUsedPerVariable[variableIndex]; }
 -(bool*) bottomUpPropertiesUsed:(int)variableIndex { return _bottomUpPropertiesUsedPerVariable[variableIndex]; }
--(DDArcClosure*) topDownTransitionFunctions { return _topDownTransitionFunctions; }
--(DDArcClosure*) bottomUpTransitionFunctions { return _bottomUpTransitionFunctions; }
+-(DDArcTransitionClosure*) topDownTransitionFunctions { return _topDownTransitionFunctions; }
+-(DDArcTransitionClosure*) bottomUpTransitionFunctions { return _bottomUpTransitionFunctions; }
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width {
     _trail = trail;
     _hashWidth = width;

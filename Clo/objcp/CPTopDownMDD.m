@@ -13,7 +13,6 @@
 #import "CPTopDownMDD.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "ORMDDify.h"
 
 static inline id getTopDownState(Node* n) { return n->_topDownState;}
 @implementation CPMDD
@@ -53,6 +52,8 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     _hashValueSel = @selector(hashValueFor:);
     _removeParentlessSel = @selector(removeParentlessNodeFromMDD:fromLayer:);
     _removeParentlessNode = (RemoveParentlessIMP)[self methodForSelector:_removeParentlessSel];
+    _afterPropagationSel = @selector(afterPropagation);
+    _afterPropagation = (NoParametersVoidIMP)[self methodForSelector:_afterPropagationSel];
     
     return self;
 }
@@ -391,7 +392,8 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
                     }
                 }
                 
-                [self afterPropagation];
+                _afterPropagation(self,_afterPropagationSel);
+                
                 if (_lowestLayerChanged == _numVariables) {
                     _lowestLayerChanged--;
                 }
@@ -901,10 +903,7 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     _highestLayerChanged = min(_highestLayerChanged,highestLayerChanged);
     assignTRInt(&layer_variable_count[layer_index][value],0, _trail);
 }
--(void) afterPropagation {
-    [self rebuild];
-}
--(void) rebuild
+-(void) afterPropagation
 {
     for (int layer = max(_highestLayerChanged,1); layer <=  min(_lowestLayerChanged+1,(int)_numVariables-1); layer++) {
         [self recalcNodesOnLayer:layer];
@@ -1057,12 +1056,22 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
         if (_usingSlack) {
             innerProduct = [_spec slack:stateProperties];
         } else {
-            for(int k=0;k < _numTopDownBytes; k+=4) {
+            int k;
+            for(k = 0;k < _numTopDownBytes-4; k+=4) {
                 innerProduct <<= 1;
                 innerProduct += __builtin_popcount(~(*(int*)&referenceStateProperties[k] ^ *(int*)&stateProperties[k]));
                 
                 //innerProduct *= 10;
                 //innerProduct += (float)(referenceStateProperties[k] + 1) * (stateProperties[k] + 1);
+            }
+            for (; k < _numTopDownBytes; k++) {
+               unsigned char refWord = referenceStateProperties[k];
+               unsigned char word = stateProperties[k];
+               while (word || refWord) {
+                   innerProduct += ~((refWord & 0x1) ^ (word & 0x1));
+                   refWord >>= 1;
+                   word >>= 1;
+               }
             }
         }
         normNodePairs[nodeIndex] = [[NormNodePair alloc] initNormNodePair:innerProduct node:node];

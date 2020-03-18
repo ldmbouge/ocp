@@ -48,12 +48,12 @@
 
 @interface ORDDMergeClosureGenerator : ORNOopVisit {
 @protected
-    DDMergeClosure current;
+    DDOldMergeClosure current;
 }
 -(ORDDMergeClosureGenerator*) initORDDMergeClosureGenerator;
--(DDMergeClosure) computeClosure:(id<ORExpr>)e;
--(DDMergeClosure) computeClosureAsInteger:(id<ORExpr>)e;
--(DDMergeClosure) recursiveVisitor:(id<ORExpr>)e;
+-(DDOldMergeClosure) computeClosure:(id<ORExpr>)e;
+-(DDOldMergeClosure) computeClosureAsInteger:(id<ORExpr>)e;
+-(DDOldMergeClosure) recursiveVisitor:(id<ORExpr>)e;
 @end
 
 @interface ORAltMDDParentChildEdgeClosureGenerator : ORNOopVisit {

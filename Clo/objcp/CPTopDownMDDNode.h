@@ -1,5 +1,5 @@
 
-@class MDDStateValues;
+#import "ORCustomMDDStates.h"
 
 @interface Node : NSObject {
 @public
@@ -146,3 +146,4 @@ typedef char* (*BatchMergeStatesIMP)(id,SEL,char**,int**,int*,int,bool*,int,int)
 typedef void (*ReplaceStateIMP)(id,SEL,MDDStateValues*,char*);
 typedef bool (*ReplaceArcStateIMP)(id,SEL,MDDArc*,char*,int);
 typedef void (*SplitNodesOnLayerIMP)(id,SEL,int);
+typedef void (*NoParametersVoidIMP)(id,SEL);

@@ -343,7 +343,7 @@ public func intMatrix(_ t : ORTracker, r1 : ORIntRange,_ r2 : ORIntRange, body :
     return m
 }
 
-public func minClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
+/*public func minClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
     let minClosure : DDMergeClosure = { (newState, left,right) in
         return min(StateProp(left, p, fpi),StateProp(right, p, fpi))
     }
@@ -366,7 +366,7 @@ public func differenceClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
         return abs(StateProp(left, p, fpi) - StateProp(right, p, fpi))
     }
     return diffClosure
-}
+}*/
 
 extension Dictionary {
     subscript(t : ORTracker, i : ORExpr) -> ORExpr {
@@ -475,7 +475,7 @@ extension ORMDDSpecs {
     func arc(_ f : ORExpr) -> Void {
         self.setArcExistsFunction(f)
     }
-    func arc(_ f : @escaping DDArcClosure) -> Void {
+    func arc(_ f : @escaping DDArcExistsClosure) -> Void {
         self.setTopDownArcExistsClosure(f)
     }
     func setAsAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
@@ -494,7 +494,7 @@ extension ORMDDSpecs {
     }
     func transitionClosures<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
-            self.addTransitionClosure(v as? DDArcClosure, toStateValue: Int32(k))
+            self.addTransitionClosure(v as? DDArcTransitionClosure, toStateValue: Int32(k))
         }
     }
     func relaxation<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
@@ -507,7 +507,7 @@ extension ORMDDSpecs {
             self.addRelaxationClosure(v as? DDMergeClosure, toStateValue: Int32(k))
         }
     }
-    func addRelaxationAsMin(_ p : Int, _ fpi : Int) -> Void {
+    /*func addRelaxationAsMin(_ p : Int, _ fpi : Int) -> Void {
         self.addRelaxationClosure(minClosure(p,fpi), toStateValue: Int32(p))
     }
     func addRelaxationAsMax(_ p : Int, _ fpi : Int) -> Void {
@@ -515,7 +515,7 @@ extension ORMDDSpecs {
     }
     func addRelaxationAsLeft(_ p : Int, _ fpi : Int) -> Void {
         self.addRelaxationClosure(leftClosure(p,fpi), toStateValue: Int32(p))
-    }
+    }*/
     func similarity<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
             self.addStateDifferentialFunction(v as? ORExpr, toStateValue: Int32(k))
@@ -526,9 +526,9 @@ extension ORMDDSpecs {
             self.addStateDifferentialClosure(v as? DDMergeClosure, toStateValue: Int32(k))
         }
     }
-    func addSimilarityAsDifference(_ p : Int, _ fpi : Int) -> Void {
+    /*func addSimilarityAsDifference(_ p : Int, _ fpi : Int) -> Void {
         self.addStateDifferentialClosure(differenceClosure(p,fpi), toStateValue: Int32(p))
-    }
+    }*/
 }
 
 extension ORIntArray {

@@ -10,10 +10,9 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPTopDownMDDWithoutArcs.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "ORMDDify.h"
+#import "CPTopDownMDDWithoutArcs.h"
 
 static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
 @implementation CPMDDWithoutArcs

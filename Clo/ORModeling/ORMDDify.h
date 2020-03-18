@@ -12,7 +12,6 @@
 #import <ORFoundation/ORVisit.h>
 #import <ORModeling/ORModelTransformation.h>
 #import "ORMDDVisitors.h"
-#import "ORCustomMDDStates.h"
 
 @interface ORMDDify : ORVisitor<ORModelTransformation>
 -(id) initORMDDify: (id<ORAddToModel>) target isTopDown:(bool)isTopDown;

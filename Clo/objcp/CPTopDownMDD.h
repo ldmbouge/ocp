@@ -14,9 +14,7 @@
 #import <CPUKernel/CPGroup.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
-#import "ORCustomMDDStates.h"
-
-@class Node;
+#import "CPTopDownMDDNode.h"
 
 @interface CPMDD : CPCoreConstraint {
 @protected
@@ -53,6 +51,8 @@
     HashValueIMP _hashValueFor;
     SEL _removeParentlessSel;
     RemoveParentlessIMP _removeParentlessNode;
+    SEL _afterPropagationSel;
+    NoParametersVoidIMP _afterPropagation;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
 -(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec;
@@ -115,7 +115,6 @@
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
--(void) rebuild;
 -(void) splitNodesOnLayer:(int)layer;
 -(void) recalcNode:(Node*)node onLayer:(int)layer;
 -(void) recalcNodesOnLayer:(int)layer_index;

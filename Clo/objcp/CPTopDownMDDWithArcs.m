@@ -10,10 +10,9 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPTopDownMDDWithArcs.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "ORMDDify.h"
+#import "CPTopDownMDDWithArcs.h"
 
 static inline id getTopDownState(MDDNode* n) { return n->_topDownState;}
 static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
@@ -90,7 +89,7 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     int value = arc.arcValue;
     bool stateChanged = false;
     int numProperties = [_spec numTopDownProperties];
-    DDArcClosure* transitionFunctions = [_spec topDownTransitionFunctions];
+    DDArcTransitionClosure* transitionFunctions = [_spec topDownTransitionFunctions];
     char* newState = malloc(_numTopDownBytes * sizeof(char));
     if ([_spec numSpecs] == 1) {
         for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
@@ -117,7 +116,7 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     int value = arc.arcValue;
     bool stateChanged = false;
     int numProperties = [_spec numBottomUpProperties];
-    DDArcClosure* transitionFunctions = [_spec bottomUpTransitionFunctions];
+    DDArcTransitionClosure* transitionFunctions = [_spec bottomUpTransitionFunctions];
     char* newState = malloc(_numBottomUpBytes * sizeof(char));
     if ([_spec numSpecs] == 1) {
         for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
@@ -174,7 +173,6 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     int layerSize = layer_size[layer]._val;
     int childLayer = layer+1;
     int parentLayer = layer-1;
-    int parentVariableIndex = _layer_to_variable[parentLayer];
     int variableIndex = _layer_to_variable[layer];
     ORTRIdArrayI* layerNodes = layers[layer];
     TRInt* variableCount = layer_variable_count[layer];

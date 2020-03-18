@@ -579,16 +579,16 @@
    MDDPropertyDescriptor** _bottomUpStateProperties;
    bool _closuresDefined;
    id<ORExpr> _arcExists;
-   DDArcClosure _topDownArcExistsClosure;
-   DDArcClosure _bottomUpArcExistsClosure;
+   DDArcExistsClosure _topDownArcExistsClosure;
+   DDArcExistsClosure _bottomUpArcExistsClosure;
    id<ORExpr>* _transitionFunctions;
-   DDArcClosure* _topDownTransitionClosures;
-   DDArcClosure* _bottomUpTransitionClosures;
+   DDArcTransitionClosure* _topDownTransitionClosures;
+   DDArcTransitionClosure* _bottomUpTransitionClosures;
    id<ORExpr>* _relaxationFunctions;
    DDMergeClosure* _topDownRelaxationClosures;
    DDMergeClosure* _bottomUpRelaxationClosures;
    id<ORExpr>* _differentialFunctions;
-   DDMergeClosure* _differentialClosures;
+   DDOldMergeClosure* _differentialClosures;
    MDDStateDescriptor* _stateDescriptor;
    int _numTopDownProperties, _numBottomUpProperties;
    bool _dualDirectional;
@@ -627,8 +627,8 @@
    
    _topDownStateProperties = malloc(numTopDownProperties * sizeof(MDDPropertyDescriptor*));
    _bottomUpStateProperties = malloc(numBottomUpProperties * sizeof(MDDPropertyDescriptor*));
-   _topDownTransitionClosures = malloc(numTopDownProperties * sizeof(DDArcClosure));
-   _bottomUpTransitionClosures = malloc(numBottomUpProperties * sizeof(DDArcClosure));
+   _topDownTransitionClosures = malloc(numTopDownProperties * sizeof(DDArcTransitionClosure));
+   _bottomUpTransitionClosures = malloc(numBottomUpProperties * sizeof(DDArcTransitionClosure));
    _topDownRelaxationClosures = malloc(numTopDownProperties * sizeof(DDMergeClosure));
    _bottomUpRelaxationClosures = malloc(numBottomUpProperties * sizeof(DDMergeClosure));
    _differentialClosures = malloc(numTopDownProperties * sizeof(DDMergeClosure));
@@ -648,8 +648,8 @@
    return self;
 }
 -(void) initializeClosures {
-   _topDownTransitionClosures = malloc(_numTopDownProperties * sizeof(DDArcClosure));
-   _bottomUpTransitionClosures = malloc(_numBottomUpProperties * sizeof(DDArcClosure));
+   _topDownTransitionClosures = malloc(_numTopDownProperties * sizeof(DDArcTransitionClosure));
+   _bottomUpTransitionClosures = malloc(_numBottomUpProperties * sizeof(DDArcTransitionClosure));
    _topDownRelaxationClosures = malloc(_numTopDownProperties * sizeof(DDMergeClosure));
    _bottomUpRelaxationClosures = malloc(_numBottomUpProperties * sizeof(DDMergeClosure));
    _differentialClosures = malloc(_numTopDownProperties * sizeof(DDMergeClosure));
@@ -724,9 +724,9 @@
    _differentialFunctions = newDifferentialFunctions;
 }
 -(void)addStatesWithClosures:(int)size {
-   DDArcClosure* newTransitionClosures = malloc((_numTopDownProperties + size) * sizeof(DDArcClosure));
+   DDArcTransitionClosure* newTransitionClosures = malloc((_numTopDownProperties + size) * sizeof(DDArcTransitionClosure));
    DDMergeClosure* newRelaxationClosures = malloc((_numTopDownProperties + size) * sizeof(DDMergeClosure));
-   DDMergeClosure* newDifferentialClosures = malloc((_numTopDownProperties + size) * sizeof(DDMergeClosure));
+   DDOldMergeClosure* newDifferentialClosures = malloc((_numTopDownProperties + size) * sizeof(DDOldMergeClosure));
    for (int stateIndex = 0; stateIndex < _numTopDownProperties; stateIndex++) {
       newTransitionClosures[stateIndex] = _topDownTransitionClosures[stateIndex];
       newRelaxationClosures[stateIndex] = _topDownRelaxationClosures[stateIndex];
@@ -747,11 +747,11 @@
 {
    _arcExists = arcExists;
 }
--(void)setTopDownArcExistsClosure:(DDArcClosure)arcExists
+-(void)setTopDownArcExistsClosure:(DDArcExistsClosure)arcExists
 {
    _topDownArcExistsClosure = [arcExists retain];
 }
--(void)setBottomUpArcExistsClosure:(DDArcClosure)arcExists
+-(void)setBottomUpArcExistsClosure:(DDArcExistsClosure)arcExists
 {
    _bottomUpArcExistsClosure = [arcExists retain];
 }
@@ -783,35 +783,29 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
    GetPropIMP getMaxC = (GetPropIMP)[maxCProp methodForSelector:getSel];
    GetPropIMP getRem = (GetPropIMP)[remProp methodForSelector:getSel];
    
-   _topDownArcExistsClosure = [(id)^(char* parent, char* child, ORInt variable, ORInt value) {
+   _topDownArcExistsClosure = [^(char* parent, char* child, ORInt variable, ORInt value) {
       int valueInSet = offsetVISLookup[value];
       return (getMinC(minCProp,getSel,parent) + valueInSet <= ub) &&
       (lb <= getMaxC(maxCProp,getSel,parent) + valueInSet + getRem(remProp,getSel,parent) - 1);
    } copy];
-   _topDownTransitionClosures[0] = [(id)^(char* newState, char* state,ORInt variable,ORInt value) {
+   _topDownTransitionClosures[0] = [^(char* newState, char* state,ORInt variable,ORInt value) {
       [minCProp set:getMinC(minCProp,getSel,state) + offsetVISLookup[value] forState:newState];
-      return nil;
    } copy];
-   _topDownTransitionClosures[1] = [(id)^(char* newState, char* state,ORInt variable,ORInt value) {
+   _topDownTransitionClosures[1] = [^(char* newState, char* state,ORInt variable,ORInt value) {
       [maxCProp set:getMaxC(maxCProp,getSel,state) + offsetVISLookup[value] forState:newState];
-      return nil;
    } copy];
-   _topDownTransitionClosures[2] = [(id)^(char* newState, char* state,ORInt variable,ORInt value) {
+   _topDownTransitionClosures[2] = [^(char* newState, char* state,ORInt variable,ORInt value) {
       [remProp set:getRem(remProp,getSel,state) - 1 forState:newState];
-      return nil;
    } copy];
    
-   _topDownRelaxationClosures[0] = [(id)^(char* newState, char* state1,char* state2) {
+   _topDownRelaxationClosures[0] = [^(char* newState, char* state1,char* state2) {
       [minCProp set:min(getMinC(minCProp,getSel,state1), getMinC(minCProp,getSel,state2)) forState:newState];
-      return nil;
    } copy];
-   _topDownRelaxationClosures[1] = [(id)^(char* newState, char* state1,char* state2) {
+   _topDownRelaxationClosures[1] = [^(char* newState, char* state1,char* state2) {
       [maxCProp set:min(max(getMaxC(maxCProp,getSel,state1), getMaxC(maxCProp,getSel,state2)),ub+1) forState:newState];
-      return nil;
    } copy];
-   _topDownRelaxationClosures[2] = [(id)^(char* newState, char* state1,char* state2) {
+   _topDownRelaxationClosures[2] = [^(char* newState, char* state1,char* state2) {
       [remProp set:getRem(remProp,getSel,state1) forState:newState];
-      return nil;
    } copy];
    
    _slackClosure = [(id)^(char* state) {
@@ -839,7 +833,7 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
    GetPropIMP getMaxFIdx = (GetPropIMP)[maxFIdxProp methodForSelector:getSel];
    GetPropIMP getMaxLIdx = (GetPropIMP)[maxLIdxProp methodForSelector:getSel];
    
-   _topDownArcExistsClosure = [(id)^(char* parent, char* child, ORInt variable, ORInt value) {
+   _topDownArcExistsClosure = [^(char* parent, char* child, ORInt variable, ORInt value) {
       int minFirst = getMinFIdx(minFIdxProp, getSel, parent);
       int smallestSequenceSize = getMinLIdx(minLIdxProp, getSel, parent) + offsetVISLookup[value];
       if (minFirst >= 0) {
@@ -849,47 +843,39 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
              (smallestSequenceSize <= ub);
    } copy];
    int index = 0;
-   _topDownRelaxationClosures[index] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[index] = [^(char* newState, char* left, char* right) {
       [minFIdxProp set:min(getMinFIdx(minFIdxProp, getSel, left), getMinFIdx(minFIdxProp, getSel, right)) forState:newState];
-      return nil;
    } copy];
    while (index < length-1) {
       MDDPropertyDescriptor* currProperty = _topDownStateProperties[index];
       MDDPropertyDescriptor* nextProperty = _topDownStateProperties[index+1];
       GetPropIMP getNextProperty = (GetPropIMP)[nextProperty methodForSelector:getSel];
-      _topDownTransitionClosures[index++] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+      _topDownTransitionClosures[index++] = [^(char* newState, char* state, ORInt variable, ORInt value) {
          [currProperty set:getNextProperty(nextProperty, getSel, state) forState:newState];
-         return nil;
       } copy];
-      _topDownRelaxationClosures[index] = [(id)^(char* newState, char* left, char* right) {
+      _topDownRelaxationClosures[index] = [^(char* newState, char* left, char* right) {
          [nextProperty set:min(getNextProperty(nextProperty, getSel, left), getNextProperty(nextProperty, getSel, right)) forState:newState];
-         return nil;
       } copy];
    }
-   _topDownTransitionClosures[index++] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[index++] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       [minLIdxProp set:getMinLIdx(minLIdxProp, getSel, state) + offsetVISLookup[value] forState:newState];
-      return nil;
    } copy];
-   _topDownRelaxationClosures[index] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[index] = [^(char* newState, char* left, char* right) {
       [maxFIdxProp set:max(getMaxFIdx(maxFIdxProp, getSel, left), getMaxFIdx(maxFIdxProp, getSel, right)) forState:newState];
-      return nil;
    } copy];
    while (index < 2*length -1) {
       MDDPropertyDescriptor* currProperty = _topDownStateProperties[index];
       MDDPropertyDescriptor* nextProperty = _topDownStateProperties[index+1];
       GetPropIMP getNextProperty = (GetPropIMP)[nextProperty methodForSelector:getSel];
-      _topDownTransitionClosures[index++] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+      _topDownTransitionClosures[index++] = [^(char* newState, char* state, ORInt variable, ORInt value) {
          [currProperty set:getNextProperty(nextProperty, getSel, state) forState:newState];
-         return nil;
       } copy];
-      _topDownRelaxationClosures[index] = [(id)^(char* newState, char* left, char* right) {
+      _topDownRelaxationClosures[index] = [^(char* newState, char* left, char* right) {
          [nextProperty set:max(getNextProperty(nextProperty, getSel, left), getNextProperty(nextProperty, getSel, right)) forState:newState];
-         return nil;
       } copy];
    }
-   _topDownTransitionClosures[index] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[index] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       [maxLIdxProp set:getMaxLIdx(maxLIdxProp, getSel, state) + offsetVISLookup[value] forState:newState];
-      return nil;
    } copy];
    
    int numSubsections = min(length,2);
@@ -923,7 +909,7 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
    }];
    bool* offsetVISLookup = valueInSetLookup - minDom;
    
-   _topDownArcExistsClosure = [(id)^(char* parent, char* child, ORInt variable, ORInt value) {
+   _topDownArcExistsClosure = [^(char* parent, char* child, ORInt variable, ORInt value) {
       size_t minCountsOffset = [minCountsProp byteOffset];
       size_t minCountsLastOffset = minCountsOffset + (length-1)*2;
       size_t maxCountsOffset = [maxCountsProp byteOffset];
@@ -936,45 +922,39 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
       }
       return (*(unsigned short*)&parent[maxCountsLastOffset] - *(unsigned short*)&parent[minCountsOffset] + offsetVISLookup[value] >= lb);
    } copy];
-   _topDownTransitionClosures[minCounts] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[minCounts] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       size_t minCountsOffset = [minCountsProp byteOffset];
       size_t minCountsLastOffset = minCountsOffset + (length-1)*2;
       memcpy(newState + minCountsOffset, state + minCountsOffset + 2, (length-1)*2);
       *(unsigned short*)&newState[minCountsLastOffset] = *(unsigned short*)&state[minCountsLastOffset] + offsetVISLookup[value];
-      return nil;
    } copy];
-   _topDownTransitionClosures[maxCounts] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[maxCounts] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       size_t maxCountsOffset = [maxCountsProp byteOffset];
       size_t maxCountsLastOffset = maxCountsOffset + (length-1)*2;
       memcpy(newState + maxCountsOffset, state + maxCountsOffset + 2, (length-1)*2);
       unsigned short previousMaxCount = *(unsigned short*)&state[maxCountsLastOffset];
       *(unsigned short*)&newState[maxCountsLastOffset] = previousMaxCount + offsetVISLookup[value];
-      return nil;
    } copy];
-   _topDownTransitionClosures[numAssigned] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[numAssigned] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       [numAssignedProp set:[numAssignedProp get:state]+1 forState:newState];
-      return nil;
    } copy];
    
-   _topDownRelaxationClosures[minCounts] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[minCounts] = [^(char* newState, char* left, char* right) {
       size_t minCountsOffset = [minCountsProp byteOffset];
       size_t minCountsLastOffset = minCountsOffset + (length-1)*2;
       for (size_t numIndex = minCountsOffset; numIndex <= minCountsLastOffset; numIndex+=2) {
          *(unsigned short*)&newState[numIndex] = min(*(unsigned short*)&left[numIndex], *(unsigned short*)&right[numIndex]);
       }
-      return nil;
    } copy];
-   _topDownRelaxationClosures[maxCounts] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[maxCounts] = [^(char* newState, char* left, char* right) {
       size_t maxCountsOffset = [maxCountsProp byteOffset];
       size_t maxCountsLastOffset = maxCountsOffset + (length-1)*2;
       for (size_t numIndex = maxCountsOffset; numIndex <= maxCountsLastOffset; numIndex+=2) {
          *(unsigned short*)&newState[numIndex] = max(*(unsigned short*)&left[numIndex], *(unsigned short*)&right[numIndex]);
       }
-      return nil;
    } copy];
-   _topDownRelaxationClosures[numAssigned] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[numAssigned] = [^(char* newState, char* left, char* right) {
       [numAssignedProp set:[numAssignedProp get:left] forState:newState];
-      return nil;
    } copy];
    
    int numSubsections = min(length,2);
@@ -1017,7 +997,7 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
    GetPropIMP getNumAssigned = (GetPropIMP)[numAssignedProp methodForSelector:getSel];
    SetPropIMP setNumAssigned = (SetPropIMP)[numAssignedProp methodForSelector:setSel];
    
-   _topDownArcExistsClosure = [(id)^(char* parent, char* child, ORInt variable, ORInt value) {
+   _topDownArcExistsClosure = [^(char* parent, char* child, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
@@ -1043,47 +1023,41 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
       return arcExists;
    } copy];
    
-   _topDownTransitionClosures[someIndex] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[someIndex] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
       size_t firstByte = [someProp byteOffset];
       memcpy(newState + firstByte, state + firstByte, numBytes);
       newState[firstByte + byteIndex] |= bitMask;
-      return nil;
    } copy];
-   _topDownTransitionClosures[allIndex] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[allIndex] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
       size_t firstByte = [allProp byteOffset];
       memcpy(newState + firstByte, state + firstByte, numBytes);
       newState[firstByte + byteIndex] |= bitMask;
-      return nil;
    } copy];
-   _topDownTransitionClosures[numAssignedIndex] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[numAssignedIndex] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       setNumAssigned(numAssignedProp, setSel, getNumAssigned(numAssignedProp, getSel, state) + 1, newState);
-      return nil;
    } copy];
-   _topDownRelaxationClosures[someIndex] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[someIndex] = [^(char* newState, char* left, char* right) {
       int firstByte = (int)[someProp byteOffset];
       int lastByte = firstByte + numBytes;
       for (int i = firstByte; i < lastByte; i++) {
          newState[i] = left[i] | right[i];
       }
-      return nil;
    } copy];
-   _topDownRelaxationClosures[allIndex] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[allIndex] = [^(char* newState, char* left, char* right) {
       int firstByte = (int)[allProp byteOffset];
       int lastByte = firstByte + numBytes;
       for (int i = firstByte; i < lastByte; i++) {
          newState[i] = left[i] & right[i];
       }
-      return nil;
    } copy];
-   _topDownRelaxationClosures[numAssignedIndex] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[numAssignedIndex] = [^(char* newState, char* left, char* right) {
       setNumAssigned(numAssignedProp, setSel, getNumAssigned(numAssignedProp, getSel, left), newState);
-      return nil;
    } copy];
 }
 -(void) setAsDualDirectionalAllDifferent:(int)numVariables domain:(id<ORIntRange>)domain {
@@ -1111,7 +1085,7 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
    GetBitsPropIMP getSomeUp = (GetBitsPropIMP)[someUpProp methodForSelector:getBitSel];
    GetBitsPropIMP getAllUp = (GetBitsPropIMP)[allUpProp methodForSelector:getBitSel];
    
-   _topDownArcExistsClosure = [(id)^(char* parent, char* child, ORInt variable, ORInt value) {
+   _topDownArcExistsClosure = [^(char* parent, char* child, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
@@ -1136,7 +1110,7 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
                          (numInSome < getNumAssignedDown(numAssignedDownProp, getSel, parent)));
       return arcExists;
    } copy];
-   _bottomUpArcExistsClosure = [(id)^(char* parent, char* child, ORInt variable, ORInt value) {
+   _bottomUpArcExistsClosure = [^(char* parent, char* child, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
@@ -1180,88 +1154,78 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
       return arcExists;
    } copy];
    
-   _topDownTransitionClosures[someDownIndex] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[someDownIndex] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
       size_t firstByte = [someDownProp byteOffset];
       memcpy(newState + firstByte, state + firstByte, numBytes);
       newState[firstByte + byteIndex] |= bitMask;
-      return nil;
    } copy];
-   _topDownTransitionClosures[allDownIndex] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[allDownIndex] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
       size_t firstByte = [allDownProp byteOffset];
       memcpy(newState + firstByte, state + firstByte, numBytes);
       newState[firstByte + byteIndex] |= bitMask;
-      return nil;
    } copy];
-   _topDownTransitionClosures[numAssignedDownIndex] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _topDownTransitionClosures[numAssignedDownIndex] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       setNumAssignedDown(numAssignedDownProp, setSel, getNumAssignedDown(numAssignedDownProp, getSel, state) + 1, newState);
-      return nil;
    } copy];
-   _bottomUpTransitionClosures[someUpIndex] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _bottomUpTransitionClosures[someUpIndex] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
       size_t firstByte = [someUpProp byteOffset];
       memcpy(newState + firstByte, state + firstByte, numBytes);
       newState[firstByte + byteIndex] |= bitMask;
-      return nil;
    } copy];
-   _bottomUpTransitionClosures[allUpIndex] = [(id)^(char* newState, char* state, ORInt variable, ORInt value) {
+   _bottomUpTransitionClosures[allUpIndex] = [^(char* newState, char* state, ORInt variable, ORInt value) {
       int shiftedValue = value - minDom;
       int byteIndex = shiftedValue/8;
       char bitMask = 0x1 << (shiftedValue & 0x7);
       size_t firstByte = [allUpProp byteOffset];
       memcpy(newState + firstByte, state + firstByte, numBytes);
       newState[firstByte + byteIndex] |= bitMask;
-      return nil;
    } copy];
-   _topDownRelaxationClosures[someDownIndex] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[someDownIndex] = [^(char* newState, char* left, char* right) {
       int firstByte = (int)[someDownProp byteOffset];
       int lastByte = firstByte + numBytes;
       for (int i = firstByte; i < lastByte; i++) {
          newState[i] = left[i] | right[i];
       }
-      return nil;
    } copy];
-   _topDownRelaxationClosures[allDownIndex] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[allDownIndex] = [^(char* newState, char* left, char* right) {
       int firstByte = (int)[allDownProp byteOffset];
       int lastByte = firstByte + numBytes;
       for (int i = firstByte; i < lastByte; i++) {
          newState[i] = left[i] & right[i];
       }
-      return nil;
    } copy];
-   _topDownRelaxationClosures[numAssignedDownIndex] = [(id)^(char* newState, char* left, char* right) {
+   _topDownRelaxationClosures[numAssignedDownIndex] = [^(char* newState, char* left, char* right) {
       setNumAssignedDown(numAssignedDownProp, setSel, getNumAssignedDown(numAssignedDownProp, getSel, left), newState);
-      return nil;
    } copy];
-   _bottomUpRelaxationClosures[someUpIndex] = [(id)^(char* newState, char* left, char* right) {
+   _bottomUpRelaxationClosures[someUpIndex] = [^(char* newState, char* left, char* right) {
       int firstByte = (int)[someUpProp byteOffset];
       int lastByte = firstByte + numBytes;
       for (int i = firstByte; i < lastByte; i++) {
          newState[i] = left[i] | right[i];
       }
-      return nil;
    } copy];
-   _bottomUpRelaxationClosures[allUpIndex] = [(id)^(char* newState, char* left, char* right) {
+   _bottomUpRelaxationClosures[allUpIndex] = [^(char* newState, char* left, char* right) {
       int firstByte = (int)[allUpProp byteOffset];
       int lastByte = firstByte + numBytes;
       for (int i = firstByte; i < lastByte; i++) {
          newState[i] = left[i] & right[i];
       }
-      return nil;
    } copy];
 }
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup
 {
    _transitionFunctions[lookup] = transitionFunction;
 }
--(void)addTransitionClosure:(DDArcClosure)transitionClosure toStateValue:(int)lookup
+-(void)addTransitionClosure:(DDArcTransitionClosure)transitionClosure toStateValue:(int)lookup
 {
    _topDownTransitionClosures[lookup] = [transitionClosure retain];
 }
@@ -1309,16 +1273,16 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
 
 -(bool)closuresDefined{ return _closuresDefined; }
 -(id<ORExpr>)arcExists { return _arcExists; }
--(DDArcClosure)topDownArcExistsClosure { return _topDownArcExistsClosure; }
--(DDArcClosure)bottomUpArcExistsClosure { return _bottomUpArcExistsClosure; }
+-(DDArcExistsClosure)topDownArcExistsClosure { return _topDownArcExistsClosure; }
+-(DDArcExistsClosure)bottomUpArcExistsClosure { return _bottomUpArcExistsClosure; }
 -(id<ORExpr>*)transitionFunctions { return _transitionFunctions; }
--(DDArcClosure*)topDownTransitionClosures { return _topDownTransitionClosures; }
--(DDArcClosure*)bottomUpTransitionClosures { return _bottomUpTransitionClosures; }
+-(DDArcTransitionClosure*)topDownTransitionClosures { return _topDownTransitionClosures; }
+-(DDArcTransitionClosure*)bottomUpTransitionClosures { return _bottomUpTransitionClosures; }
 -(id<ORExpr>*)relaxationFunctions { return _relaxationFunctions; }
 -(DDMergeClosure*)topDownRelaxationClosures { return _topDownRelaxationClosures; }
 -(DDMergeClosure*)bottomUpRelaxationClosures { return _bottomUpRelaxationClosures; }
 -(id<ORExpr>*)differentialFunctions { return _differentialFunctions; }
--(DDMergeClosure*)differentialClosures { return _differentialClosures; }
+-(DDOldMergeClosure*)differentialClosures { return _differentialClosures; }
 -(DDSlackClosure)slackClosure { return _slackClosure; }
 -(int)numTopDownProperties { return _numTopDownProperties; }
 -(int)numBottomUpProperties { return _numBottomUpProperties; }
