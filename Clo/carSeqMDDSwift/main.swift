@@ -121,12 +121,15 @@ func buildPrefix(from : Int,to : Int,S : Set<Int>,NS : Set<Int>,cs : [Int],k : I
 
 autoreleasepool {
     let m  = ORFactory.createModel()
-    /*let fileName = CommandLine.arguments[1]
-    let relaxationSize = Int32(CommandLine.arguments[2])
-    let carI = readData(filePath: fileName)!
-    */
-    let relaxationSize = Int32(32)
-    let carI = readData(filePath: "/Users/ldm/Desktop/datao")!
+    
+    //let fileName = CommandLine.arguments[1]
+    //let relaxationSize = Int32(CommandLine.arguments[2])
+    //let usingArcs = Bool(CommandLine.arguments[2])
+    //let carI = readData(filePath: fileName)!
+    
+    //let relaxationSize = Int32(4)
+    let carI = readData(filePath: "/Users/rebeccagentzel/Downloads/carseq_small")!
+    
     let options = carI.options()
     let cars =  carI.cars(),
         CR = range(m, low: 0,up: cars.count - 1),
@@ -142,9 +145,21 @@ autoreleasepool {
     let line  = ORFactory.intVarArray(m, range: CR, domain: CF),
         setup = ORFactory.boolVarMatrix(m, range: OR, CR)
     
+    //let demandDict = Dictionary(uniqueKeysWithValues: zip(0...(carI.nbConf-1), carI.demand))
+    //m.add(gccMDD(line, ub: demandDict))
     m.add(ORFactory.cardinality(line, low: demand, up: demand))
     for o in 0 ..< carI.nbOpts {
-        m.add(seqMDD(all(m, CR) { i in setup[ORInt(o),i]}, len: carI.ub[o], lb: 0, ub: carI.lb[o], values: Set<Int>([1])))
+        var configurationsWithOption : [Int] = []
+        for conf in 0 ..< carI.nbConf {
+            if require[conf][o] == 1 {
+                configurationsWithOption.append(conf)
+            }
+        }
+        //m.add(seqMDD(line, len: carI.ub[o], lb: 0, ub: carI.lb[o], values: Set<Int>(configurationsWithOption)))
+        //m.add(seqMDDClosuresWithBitSequence(line, len: carI.ub[o], lb: 0, ub: carI.lb[o], values: Set<Int>(configurationsWithOption)))
+        
+        //m.add(seqMDD(all(m, CR) { i in setup[ORInt(o),i]}, len: carI.ub[o], lb: 0, ub: carI.lb[o], values: Set<Int>([1])))
+        m.add(seqMDDClosuresWithBitSequence(all(m, CR) { i in setup[ORInt(o),i]}, len: carI.ub[o], lb: 0, ub: carI.lb[o], values: Set<Int>([1])))
         //for s in 0 ... cars.count - carI.ub[o] {
             //let SR = range(m,low:s,up:s + carI.ub[o] - 1)
             //m.add(sum(m, R: SR, b: { j in setup[ORInt(o),j] }) ≤ carI.lb[o])
@@ -163,13 +178,28 @@ autoreleasepool {
         }
     }
     
-    notes.ddWidth(relaxationSize)
+    notes.ddWidth(4)
     notes.ddRelaxed(true)
+    notes.dd(withArcs: true)
+    notes.dd(usingSlack: false)
+    notes.ddEqualBuckets(true)
+    notes.ddRecommendationStyle(MinDomain)
+    notes.ddVariableOverlap(101)
+    //notes.ddWidth(relaxationSize!)
+    //notes.ddRelaxed(relaxationSize! != 0)
+    //notes.dd(withArcs: usingArcs!)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
+    var end:ORLong = 0
+    var afterPropagation:ORLong = 0
     cp.search {
-        labelArray(cp, line)
+        Do(cp) {
+            end = ORRuntimeMonitor.cputime()
+        }
+        »
+        firstFailMDD(cp, line)
             »
             Do(cp) {
+                afterPropagation = ORRuntimeMonitor.cputime()
                 let qs = (0 ..< cars.count).map { i in cp.intValue(line[ORInt(i)]) }
                 print("sol is: \(qs)")
                 for o in 0 ..< carI.nbOpts {
@@ -188,5 +218,7 @@ autoreleasepool {
     }
     let t1     = ORRuntimeMonitor.cputime()
     print("Solver status: \(cp)\n")
-    print("Quitting: \(t1 - t0)\n")
+    print("Post duration: \(end - t0)")
+    print("Propagation duration: \(afterPropagation - end)")
+    print("Quitting: \(afterPropagation - t0)\n")
 }

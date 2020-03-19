@@ -30,29 +30,30 @@
 }
 -(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping;
 -(ORDDUpdatedSpecs*) initORDDUpdatedSpecs:(int*)stateMapping stateSize:(int)stateSize variableMapping:(int*)variableMapping minVar:(int)minVar stateDescriptor:(MDDStateDescriptor*)stateDescriptor;
+-(ORDDUpdatedSpecs*) initORDDUpdatedSpecsDesc:(MDDStateDescriptor*)stateDescriptor;
 -(id<ORExpr>) updatedSpecs:(id<ORExpr>)e;
 -(id<ORExpr>) recursiveVisitor:(id<ORExpr>)e;
 @end
 
 @interface ORDDClosureGenerator : ORNOopVisit {
 @protected
-    DDClosure current;
+    DDOldClosure current;
 }
 -(ORDDClosureGenerator*) initORDDClosureGenerator;
--(DDClosure) computeClosure:(id<ORExpr>)e;
--(DDClosure) computeClosureAsInteger:(id<ORExpr>)e;
--(DDClosure) computeClosureAsBoolean:(id<ORExpr>)e;
--(DDClosure) recursiveVisitor:(id<ORExpr>)e;
+-(DDOldClosure) computeClosure:(id<ORExpr>)e;
+-(DDOldClosure) computeClosureAsInteger:(id<ORExpr>)e;
+-(DDOldClosure) computeClosureAsBoolean:(id<ORExpr>)e;
+-(DDOldClosure) recursiveVisitor:(id<ORExpr>)e;
 @end
 
 @interface ORDDMergeClosureGenerator : ORNOopVisit {
 @protected
-    DDMergeClosure current;
+    DDOldMergeClosure current;
 }
 -(ORDDMergeClosureGenerator*) initORDDMergeClosureGenerator;
--(DDMergeClosure) computeClosure:(id<ORExpr>)e;
--(DDMergeClosure) computeClosureAsInteger:(id<ORExpr>)e;
--(DDMergeClosure) recursiveVisitor:(id<ORExpr>)e;
+-(DDOldMergeClosure) computeClosure:(id<ORExpr>)e;
+-(DDOldMergeClosure) computeClosureAsInteger:(id<ORExpr>)e;
+-(DDOldMergeClosure) recursiveVisitor:(id<ORExpr>)e;
 @end
 
 @interface ORAltMDDParentChildEdgeClosureGenerator : ORNOopVisit {

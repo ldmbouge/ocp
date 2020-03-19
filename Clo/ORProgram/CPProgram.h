@@ -174,7 +174,7 @@ PORTABLE_BEGIN
 -(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;
 
 
--(ORInt) MDDRecommendationFor:(ORInt) variableIndex;
+-(ORInt) MDDRecommendationFor:(id<CPIntVar>) x model:(id<ORModel>)model;
 
 
 -(ORBool) boolValue: (id<ORIntVar>) x;

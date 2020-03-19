@@ -29,7 +29,7 @@
 #import "CPRealConstraint.h"
 #import "CPIntSetConstraint.h"
 
-#import "CPTopDownMDD.h"
+#import "CPTopDownMDDWithoutArcs.h"
 #import "CPTopDownMDDWithArcs.h"
 
 @implementation CPFactory (Constraint)
@@ -730,20 +730,20 @@
     return o;
 }*/
 
-+(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec usingArcs:(bool)usingArcs
++(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle
 {
     id<CPConstraint> o;
     if (relaxed) {
         if (usingArcs) {
-            o = [[CPMDDRelaxationWithArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec];
+            o = [[CPMDDRelaxationWithArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
         } else {
-            o = [[CPMDDRelaxation alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec];
+            o = [[CPMDDRelaxationWithoutArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
         }
     } else {
         if (usingArcs) {
             o = [[CPMDDWithArcs alloc] initCPMDD: cp over: x spec: spec];
         } else {
-            o = [[CPMDD alloc] initCPMDD: cp over: x spec: spec];
+            o = [[CPMDDWithoutArcs alloc] initCPMDD: cp over: x spec: spec];
         }
     }
     [[x tracker] trackMutable:o];

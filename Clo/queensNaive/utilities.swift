@@ -343,30 +343,30 @@ public func intMatrix(_ t : ORTracker, r1 : ORIntRange,_ r2 : ORIntRange, body :
     return m
 }
 
-public func minClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
-    let minClosure : DDMergeClosure = { (left,right) in
+/*public func minClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
+    let minClosure : DDMergeClosure = { (newState, left,right) in
         return min(StateProp(left, p, fpi),StateProp(right, p, fpi))
     }
     return minClosure
 }
 public func maxClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
-    let maxClosure : DDMergeClosure = { (left,right) in
+    let maxClosure : DDMergeClosure = { (newState, left,right) in
         return max(StateProp(left, p, fpi),StateProp(right, p, fpi))
     }
     return maxClosure
 }
 public func leftClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
-    let leftClosure : DDMergeClosure = { (left,right) in
+    let leftClosure : DDMergeClosure = { (newState, left,right) in
         return StateProp(left, p, fpi)
     }
     return leftClosure
 }
 public func differenceClosure(_ p : Int, _ fpi : Int) -> DDMergeClosure {
-    let diffClosure : DDMergeClosure = { (left,right) in
+    let diffClosure : DDMergeClosure = { (newState, left,right) in
         return abs(StateProp(left, p, fpi) - StateProp(right, p, fpi))
     }
     return diffClosure
-}
+}*/
 
 extension Dictionary {
     subscript(t : ORTracker, i : ORExpr) -> ORExpr {
@@ -433,22 +433,32 @@ public func ∈(_ e : ORExpr,_ set: ORIntSet) -> ORExpr {
 extension ORMDDSpecs {
     func state<Key,Value>(_ d : [(Key,Value)]) -> Void where Key : BinaryInteger,Value : BinaryInteger {
         for (k,v) in d {
-            self.addStateCounter(ORInt(k), withDefaultValue: ORInt(v))
+            self.addStateCounter(ORInt(k), withDefaultValue: ORInt(v), topDown: true)
         }
     }
     func state<Key,Value>(_ d : Dictionary<Key,Value>) -> Void where Key : BinaryInteger,Value : BinaryInteger {
         for (k,v) in d {
-            self.addStateCounter(ORInt(k), withDefaultValue: ORInt(v))
+            self.addStateCounter(ORInt(k), withDefaultValue: ORInt(v), topDown: true)
         }
     }
     func state<Key>(_ d : [(Key,Bool)]) -> Void where Key : BinaryInteger {
         for (k,v) in d {
-            self.addStateBool(ORInt(k), withDefaultValue: v)
+            self.addStateBool(ORInt(k), withDefaultValue: v, topDown: true)
         }
     }
     func state<Key>(_ d : Dictionary<Key,Bool>) -> Void where Key : BinaryInteger {
         for (k,v) in d {
-            self.addStateBool(ORInt(k), withDefaultValue: v)
+            self.addStateBool(ORInt(k), withDefaultValue: v, topDown: true)
+        }
+    }
+    func state<Key>(_ d : [(Key,Bool,Int)]) -> Void where Key : BinaryInteger {
+        for (key,value,size) in d {
+            self.addStateBitSequence(ORInt(key), withDefaultValue: value, size:Int32(size), topDown: true)
+        }
+    }
+    func bottomUpState<Key>(_ d : [(Key,Bool,Int)]) -> Void where Key : BinaryInteger {
+        for (key,value,size) in d {
+            self.addStateBitSequence(ORInt(key), withDefaultValue: value, size:Int32(size), topDown: false)
         }
     }
     /*func state<Key>(_ d : Dictionary<Key,Set<AnyHashable>?>) -> Void where Key : BinaryInteger {
@@ -458,24 +468,24 @@ extension ORMDDSpecs {
     }*/
     func state2<Key,Value>(_ d : Dictionary<Key,Value>) -> [Key] where Key : BinaryInteger {
         for (k,v) in d {
-            self.addStateCounter(k as! Int32, withDefaultValue: (ORInt)( v as! Int))
+            self.addStateCounter(k as! Int32, withDefaultValue: (ORInt)( v as! Int), topDown: true)
         }
         return Array(d.keys)
     }
     func arc(_ f : ORExpr) -> Void {
         self.setArcExistsFunction(f)
     }
-    func arc(_ f : @escaping DDClosure) -> Void {
-        self.setArcExistsClosure(f)
+    func arc(_ f : @escaping DDArcExistsClosure) -> Void {
+        self.setTopDownArcExistsClosure(f)
     }
-    func setAsAmong(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
-        self.setAsAmongConstraint(stateDesc,domainRange: domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
+    func setAsAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
+        self.setAsAmongConstraint(domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
     }
-    func amongArc(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) -> Void {
-        self.setAmongArc(stateDesc, domainRange: domainRange, lb: Int32(lb), ub: Int32(ub), values: values)
+    func setAsSequence(_ domainRange : ORIntRange!, _ length : Int, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
+        self.setAsSequenceConstraint(domainRange, length: Int32(length), lb: Int32(lb), ub: Int32(ub), values:values)
     }
-    func amongTransitions(_ stateDesc : MDDStateDescriptor!, _ domainRange : ORIntRange!, _ values : ORIntSet!) -> Void {
-        self.setAmongTransitions(stateDesc, domainRange: domainRange, values: values)
+    func setAsSequenceWithBitSequence(_ domainRange : ORIntRange!, _ length : Int, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
+        self.setAsSequenceConstraintWithBitSequence(domainRange, length: Int32(length), lb: Int32(lb), ub: Int32(ub), values:values)
     }
     func transition<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
@@ -484,7 +494,7 @@ extension ORMDDSpecs {
     }
     func transitionClosures<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
-            self.addTransitionClosure(v as? DDClosure, toStateValue: Int32(k))
+            self.addTransitionClosure(v as? DDArcTransitionClosure, toStateValue: Int32(k))
         }
     }
     func relaxation<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
@@ -497,7 +507,7 @@ extension ORMDDSpecs {
             self.addRelaxationClosure(v as? DDMergeClosure, toStateValue: Int32(k))
         }
     }
-    func addRelaxationAsMin(_ p : Int, _ fpi : Int) -> Void {
+    /*func addRelaxationAsMin(_ p : Int, _ fpi : Int) -> Void {
         self.addRelaxationClosure(minClosure(p,fpi), toStateValue: Int32(p))
     }
     func addRelaxationAsMax(_ p : Int, _ fpi : Int) -> Void {
@@ -505,7 +515,7 @@ extension ORMDDSpecs {
     }
     func addRelaxationAsLeft(_ p : Int, _ fpi : Int) -> Void {
         self.addRelaxationClosure(leftClosure(p,fpi), toStateValue: Int32(p))
-    }
+    }*/
     func similarity<K,V>(_ d : Dictionary<K,V>) -> Void where K : BinaryInteger {
         for (k,v) in d {
             self.addStateDifferentialFunction(v as? ORExpr, toStateValue: Int32(k))
@@ -516,9 +526,9 @@ extension ORMDDSpecs {
             self.addStateDifferentialClosure(v as? DDMergeClosure, toStateValue: Int32(k))
         }
     }
-    func addSimilarityAsDifference(_ p : Int, _ fpi : Int) -> Void {
+    /*func addSimilarityAsDifference(_ p : Int, _ fpi : Int) -> Void {
         self.addStateDifferentialClosure(differenceClosure(p,fpi), toStateValue: Int32(p))
-    }
+    }*/
 }
 
 extension ORIntArray {
@@ -675,22 +685,14 @@ public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values :
     }
 }*/
 public func amongMDDClosures(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
-    let fpi = _stateDescriptor.numProperties()
     let minC = 0,maxC = 1,rem = 2
     let udom = arrayDomains(x)
     let mdd = ORFactory.mddSpecs(withClosures: m, variables: x, stateSize: 3)
-    mdd.setStateDescriptor(_stateDescriptor)
-    _stateDescriptor.addNewProperties(3)
     mdd.state([(minC, 0),(maxC, 0)
         , (rem, x.size)])
     //Need this to be ordered so the properties are indexed correctly.
     
-    mdd.setAsAmong(_stateDescriptor,udom,lb,ub,values)
-    mdd.addRelaxationAsMin(minC, Int(fpi))
-    mdd.addRelaxationAsMax(maxC, Int(fpi))
-    mdd.addRelaxationAsLeft(rem, Int(fpi))
-    mdd.addSimilarityAsDifference(minC, Int(fpi))
-    mdd.addSimilarityAsDifference(maxC, Int(fpi))
+    mdd.setAsAmong(udom,lb,ub,values)
     return mdd
 }
 
@@ -736,6 +738,35 @@ public func allDiffMDDWithSets(_ vars : ORIntVarArray) -> ORMDDSpecs {
     mdd.relaxation(toDict(someFIdx,someLIdx+1) { i in (key:i,left(m,i) || right(m,i)) })
     mdd.addRelaxationFunction(left(m,numAssigned), toStateValue: Int32(numAssigned))
     mdd.similarity(toDict(allFIdx,someLIdx+1) { i in (key:i,value:left(m,i) + right(m,i)) })
+    return mdd
+}
+public func allDiffMDDWithSetsAndClosures(_ vars : ORIntVarArray) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        udom = arrayDomains(vars)
+    let domSize = Int(udom.size())
+    let some = 0,
+        all = 1,
+        numAssigned = 2
+        
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: vars, stateSize: 3)
+    mdd.state([(some, false, domSize),(all, false, domSize)])
+    mdd.state([(numAssigned,0)])
+    mdd.setAsAllDifferent(udom)
+    return mdd
+}
+public func allDiffDualDirectionalMDDWithSetsAndClosures(_ vars : ORIntVarArray) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        udom = arrayDomains(vars)
+    let domSize = Int(udom.size()),
+        numVars = Int32(vars.count())
+    let someDown = 0, allDown = 1, numAssignedDown = 2,
+        someUp = 0, allUp = 1
+        
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: vars, numTopDownProperties: 3, numBottomUpProperties: 2)
+    mdd.state([(someDown, false, domSize),(allDown, false, domSize)])
+    mdd.state([(numAssignedDown,0)])
+    mdd.bottomUpState([(someUp, false, domSize),(allUp, false, domSize)])
+    mdd.setAsDualDirectionalAllDifferent(numVars, domain: udom)
     return mdd
 }
 
@@ -793,6 +824,38 @@ public func seqMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : S
     mdd.relaxation(toDict(maxFIdx,maxLIdx+1) { i in return (key:i,max(left(m,i),right(m,i))) })
     // similarity
     mdd.similarity(toDict(minFIdx,maxLIdx+1) { i in return (key:i,value:abs(left(m,i)-right(m,i))) })
+    return mdd;
+}
+public func seqMDDClosures(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        minFIdx = 0,minLIdx = len-1,
+        maxFIdx = len,maxLIdx = len*2-1,
+        valueSet = ORFactory.intSet(m, set: values)
+    let udom = arrayDomains(vars)
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: vars, stateSize: len*2)
+    var sd : [(Int,Int)] = []
+    for i in minFIdx...minLIdx {
+        sd.append((i,i-minLIdx))
+    }
+    for i in maxFIdx...maxLIdx {
+        sd.append((i,i-maxLIdx))
+    }
+    mdd.state(sd)
+    mdd.setAsSequence(udom, len, lb, ub, valueSet)
+    return mdd;
+}
+public func seqMDDClosuresWithBitSequence(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        minCounts = 0,
+        maxCounts = 1,
+        numAssigned = 2,
+        valueSet = ORFactory.intSet(m, set: values)
+    let udom = arrayDomains(vars)
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: vars, stateSize: 3)
+    //Each bit sequence is a len*2 shorts
+    mdd.state([(minCounts, false, len * 16), (maxCounts, false, len * 16)])
+    mdd.state([numAssigned:0])
+    mdd.setAsSequenceWithBitSequence(udom, len, lb, ub, valueSet)
     return mdd;
 }
 

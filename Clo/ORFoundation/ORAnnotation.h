@@ -25,8 +25,21 @@ typedef enum {
 typedef enum {
     DDWidth,
     DDRelaxed,
-    DDWithArcs
+    DDWithArcs,
+    DDEqualBuckets,
+    DDUsingSlack,
+    DDRecommendationStyle,
+    DDComposition
 } GenericIndex;
+
+typedef enum {
+    MinDomain,
+    MostArcs,
+    FewestArcs,
+    MostArcsIntoNonMerged,
+    FewestArcsIntoMerged,
+    SmallestSlack
+} MDDRecommendationStyle;
 
 @protocol ORAnnotation <NSObject,NSCopying>
 -(ORCLevel) levelFor:(id<ORConstraint>)cstr;
@@ -42,6 +55,10 @@ typedef enum {
 -(void) ddWidth: (ORInt) width;
 -(void) ddRelaxed: (bool) relaxed;
 -(void) ddWithArcs: (bool) withArcs;
+-(void) ddEqualBuckets:(bool)equalBuckets;
+-(void) ddUsingSlack:(bool)usingSlack;
+-(void) ddRecommendationStyle:(MDDRecommendationStyle)recommendationStyle;
+-(void) ddVariableOverlap:(ORInt)composition;
 
 -(ORInt) findGeneric:(GenericIndex) index;
 -(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr;

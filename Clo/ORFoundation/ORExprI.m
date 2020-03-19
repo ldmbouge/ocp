@@ -911,7 +911,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
 }
--(DDClosure)visitClosure: (ORVisitor*)v
+-(DDOldClosure)visitClosure: (ORVisitor*)v
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
 }

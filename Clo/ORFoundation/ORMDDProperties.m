@@ -1,7 +1,8 @@
-#import "ORMDDProperties.h"
+#import <ORFoundation/ORMDDProperties.h>
 
 @implementation MDDPropertyDescriptor
 -(id) initMDDPropertyDescriptor:(short)pId {
+    self = [super init];
    _id = pId;
    _byteOffset = 0;
    return self;
@@ -77,6 +78,29 @@
 -(void) set:(int)value forState:(char*)state {
     state[_byteOffset] = value ? (state[_byteOffset] | _bitmask) : (state[_byteOffset] & !_bitmask);
     return;
+}
+-(int) initialValue { return _initialValue; }
+@end
+
+@implementation MDDPBitSequence
+-(id) initMDDPBitSequence:(short)pId initialValue:(bool)initialValue numBits:(int)numBits {
+   self = [super initMDDPropertyDescriptor:pId];
+   _initialValue = initialValue;
+    _numBytes = ceil(numBits/8.0);
+   return self;
+}
+-(size_t) storageSize { return _numBytes*8; }
+-(void) initializeState:(char*)state {
+    for (int i = 0; i < _numBytes; i++) {
+        state[_byteOffset + i] = _initialValue ? (0xFF) : (0x00);
+    }
+}
+-(char*) getBitSequence:(char*)state {
+    return state + _byteOffset;
+   //return (unsigned char)(state[_byteOffset] & _bitmask) == _bitmask;
+}
+-(void) setBitSequence:(char*)value forState:(char*)state {
+    memcpy(state + _byteOffset, value, _numBytes);
 }
 -(int) initialValue { return _initialValue; }
 @end

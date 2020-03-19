@@ -42,6 +42,18 @@
 -(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x;
 @end
 
+@interface ORSLabelMDDTask : ORObject<ORSTask> {
+   id<ORIntVarArray> _vars;
+   id<CPCommonProgram> _solver;
+}
+-(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x;
+@end
+@interface ORSFFMDDTask : ORObject<ORSTask> {
+   id<ORIntVarArray> _vars;
+   id<CPCommonProgram> _solver;
+}
+-(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x;
+@end
 
 @interface ORSDo : ORObject<ORSTask> {
    id<CPCommonProgram> _solver;
@@ -221,6 +233,87 @@
              [_solver label:_vars[sdk + low] with:xb.min];
           } alt:^{
              [_solver diff:_vars[sdk + low] with:xb.min];
+          }];
+          xb = [cx[sdk] bounds];
+       }
+   } while (true);
+}
+@end
+
+@implementation ORSFFMDDTask
+-(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x
+{
+   self = [super init];
+   _solver = solver;
+   _vars = x;
+   return self;
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
+}
+-(void)execute
+{
+   const ORInt sz  = _vars.range.size;
+   const ORInt low = _vars.range.low;
+   id<CPIntVar> cx[sz];
+   for(ORInt i=0;i < sz;i++)
+      cx[i]  = [_solver concretize:_vars[i + low]];
+   do {
+      ORInt sd = FDMAXINT,sdk = -1;
+      for(ORInt i=0;i < sz;i++) {
+         if ([cx[i] bound]) continue;
+         ORInt vids = [cx[i] domsize];
+         if (vids < sd) {
+            sd = vids;
+            sdk = i;
+         }
+      }
+      if (sd == FDMAXINT) break;
+      ORBounds xb = [cx[sdk] bounds];
+      while (xb.min != xb.max) {
+          int MDDRecommendation = [_solver MDDRecommendationFor:cx[sdk] model:[_solver source]];
+         [_solver try:^{
+            [_solver label:_vars[sdk + low] with:MDDRecommendation];
+         } alt:^{
+            [_solver diff:_vars[sdk + low] with:MDDRecommendation];
+         }];
+         xb = [cx[sdk] bounds];
+      }
+   } while (true);
+}
+@end
+
+@implementation ORSLabelMDDTask
+-(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x
+{
+   self = [super init];
+   _solver = solver;
+   _vars = x;
+   return self;
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
+}
+-(void)execute
+{
+   const ORInt sz  = _vars.range.size;
+   const ORInt low = _vars.range.low;
+   id<CPIntVar> cx[sz];
+   for(ORInt i=0;i < sz;i++)
+       cx[i]  = [_solver concretize:_vars[i + low]];
+   do {
+       ORInt sdk = 0;
+       while (sdk < sz &&  cx[sdk].bound) sdk++;
+       if (sdk >= sz) break;
+       ORBounds xb = [cx[sdk] bounds];
+       while (xb.min != xb.max) {
+           int MDDRecommendation = [_solver MDDRecommendationFor:cx[sdk] model:[_solver source]];
+          [_solver try:^{
+             [_solver label:_vars[sdk + low] with:MDDRecommendation];
+          } alt:^{
+             [_solver diff:_vars[sdk + low] with:MDDRecommendation];
           }];
           xb = [cx[sdk] bounds];
        }
@@ -410,6 +503,18 @@ void* firstFail(id<CPCommonProgram> solver,id<ORIntVarArray> x)
 void* labelArray(id<CPCommonProgram> solver,id<ORIntVarArray> x)
 {
     ORSLabelTask* task = [[ORSLabelTask alloc] initWith:solver vars:x];
+    [solver trackObject:task];
+    return task;
+}
+void* firstFailMDD(id<CPCommonProgram> solver,id<ORIntVarArray> x)
+{
+   ORSFFMDDTask* task = [[ORSFFMDDTask alloc] initWith:solver vars:x];
+   [solver trackObject:task];
+   return task;
+}
+void* labelArrayMDD(id<CPCommonProgram> solver,id<ORIntVarArray> x)
+{
+    ORSLabelMDDTask* task = [[ORSLabelMDDTask alloc] initWith:solver vars:x];
     [solver trackObject:task];
     return task;
 }

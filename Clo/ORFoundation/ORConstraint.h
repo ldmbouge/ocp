@@ -460,6 +460,9 @@ enum ORGroupType {
 -(ORInt) relaxationSize;
 -(id) specs;
 -(bool) usingArcs;
+-(bool) equalBuckets;
+-(bool) usingSlack;
+-(int) recommendationStyle;
 @end
 
 /*@protocol ORCustomAltMDD <ORConstraint>
@@ -497,34 +500,47 @@ enum ORGroupType {
 @end
 
 @protocol ORMDDSpecs <ORConstraint>
+-(void) initializeClosures;
+-(bool) dualDirectional;
 -(id<ORIntVarArray>) vars;
--(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value;
--(void)addStateCounter:(int)lookup withDefaultValue:(ORInt)value;
--(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
+-(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value topDown:(bool)topDown;
+-(void)addStateCounter:(int)lookup withDefaultValue:(ORInt)value topDown:(bool)topDown;
+-(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value topDown:(bool)topDown;
+-(void)addStateBitSequence:(ORInt)lookup withDefaultValue:(bool)value size:(int)size topDown:(bool)topDown;
 -(void)setStateDescriptor:(id<MDDStateDescriptor>)stateDesc;
 -(id<MDDStateDescriptor>)stateDescriptor;
 -(bool)closuresDefined;
 -(id<ORExpr>)arcExists;
--(DDClosure)arcExistsClosure;
+-(DDArcExistsClosure)topDownArcExistsClosure;
+-(DDArcExistsClosure)bottomUpArcExistsClosure;
 -(id<ORExpr>*)transitionFunctions;
--(DDClosure*)transitionClosures;
+-(DDArcTransitionClosure*)topDownTransitionClosures;
+-(DDArcTransitionClosure*)bottomUpTransitionClosures;
 -(id<ORExpr>*)relaxationFunctions;
--(DDMergeClosure*)relaxationClosures;
+-(DDMergeClosure*)topDownRelaxationClosures;
+-(DDMergeClosure*)bottomUpRelaxationClosures;
 -(id<ORExpr>*)differentialFunctions;
--(DDMergeClosure*)differentialClosures;
--(int)numProperties;
+-(DDOldMergeClosure*)differentialClosures;
+-(DDSlackClosure)slackClosure;
+-(int)numTopDownProperties;
+-(int)numBottomUpProperties;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
--(void)setArcExistsClosure:(DDClosure)arcExists;
--(void)setAsAmongConstraint:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
--(void)setAmongArc:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
--(void)setAmongTransitions:(id<MDDStateDescriptor>)stateDesc domainRange:(id<ORIntRange>)range values:(id<ORIntSet>)values;
+-(void)setTopDownArcExistsClosure:(DDArcExistsClosure)arcExists;
+-(void)setBottomUpArcExistsClosure:(DDArcExistsClosure)arcExists;
+-(void)setSlackClosure:(DDSlackClosure)slack;
+-(void)setAsAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void) setAsSequenceConstraint:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void) setAsSequenceConstraintWithBitSequence:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void)setAsAllDifferent:(id<ORIntRange>)domain;
+-(void) setAsDualDirectionalAllDifferent:(int)numVariables domain:(id<ORIntRange>)domain;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
--(void)addTransitionClosure:(DDClosure)transitionFunction toStateValue:(int)lookup;
+-(void)addTransitionClosure:(DDArcTransitionClosure)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;
 -(void)addRelaxationClosure:(DDMergeClosure)relaxationFunction toStateValue:(int)lookup;
 -(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup;
 -(void)addStateDifferentialClosure:(DDMergeClosure)differentialFunction toStateValue:(int)lookup;
--(id*)stateProperties;
+-(id*)topDownStateProperties;
+-(id*)bottomUpStateProperties;
 -(void)addStates:(id*)states size:(int)size;
 -(void)addStatesWithClosures:(int)size;
 @end

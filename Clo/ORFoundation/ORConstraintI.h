@@ -70,11 +70,14 @@
 @end
 */
 @interface ORMDDStateSpecification : ORConstraintI<ORMDDStateSpecification>
--(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs usingArcs:(bool)usingArcs;
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
 -(id) specs;
 -(bool) usingArcs;
+-(bool) equalBuckets;
+-(bool) usingSlack;
+-(MDDRecommendationStyle) recommendationStyle;
 @end
 
 /*
@@ -105,10 +108,9 @@
 
 
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
--(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x stateSize:(int)stateSize;
--(ORMDDSpecs*)initORMDDSpecsUsingClosures:(id<ORIntVarArray>)x stateSize:(int)stateSize;
+-(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties;
+-(ORMDDSpecs*)initORMDDSpecsUsingClosures:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties;
 -(id<ORIntVarArray>) vars;
--(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value;
 @end
 /*@interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
 -(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x;

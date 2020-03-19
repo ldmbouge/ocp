@@ -750,6 +750,16 @@ void freeTRIntArray(TRIntArray a)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIntArrayElement"];
    inline_assignTRInt(_array + idx,value,_trail);
 }
+-(void) set: (ORInt) value at: (ORInt) idx inPost:(bool)inPost
+{
+   if (idx < _low || idx > _up._val)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
+    if (inPost) {
+        _array[idx] = makeTRInt(_trail, value);
+    } else {
+        inline_assignTRInt(_array + idx,value,_trail);
+    }
+}
 
 -(ORInt) low
 {
@@ -775,6 +785,26 @@ void freeTRIntArray(TRIntArray a)
     [_trail trailFree:newArray];    // remember that we may have to delete newArray on backtrack
     [_trail trailPointer:(void**)&_array];  // remember where the original array was
     assignTRInt(&_up, _low + newSize - 1, _trail);
+    newArray -= _low;               // shift the base
+    _array = newArray;              // install newly minted _array in place.
+}
+-(void) resize:(int)newSize inPost:(bool)inPost
+{
+    const ORInt oldSize = _up._val - _low + 1;
+    _array += _low;
+    TRInt* newArray = malloc(sizeof(TRInt)*newSize);
+    for(int i = 0; i < oldSize; i++)
+       newArray[i] = makeTRInt(_trail,_array[i]._val); // copy the old entries
+    for (int i = oldSize; i < newSize; i++)
+       newArray[i] = makeTRInt(_trail,-1);      // init the new entries
+    if (inPost) {
+        free(_array);
+        _up = makeTRInt(_trail, _low + newSize - 1);
+    } else {
+    [_trail trailFree:newArray];    // remember that we may have to delete newArray on backtrack
+    [_trail trailPointer:(void**)&_array];  // remember where the original array was
+    assignTRInt(&_up, _low + newSize - 1, _trail);
+    }
     newArray -= _low;               // shift the base
     _array = newArray;              // install newly minted _array in place.
 }
@@ -829,7 +859,9 @@ void freeTRIntArray(TRIntArray a)
 -(void) dealloc
 {
     for (int i = _low; i <= _up._val; i++) {
-        [_array[i] release];
+        if (_array[i] != nil) {
+            [_array[i] release];
+        }
     }
    _array += _low;
    free(_array);
@@ -854,6 +886,9 @@ void freeTRIntArray(TRIntArray a)
    if (idx < _low || idx > _up._val)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
     if (inPost) {
+        if (_array[idx] != nil) {
+            [_array[idx] release];
+        }
         _array[idx] = makeTRId(_trail, [value retain]);
     } else {
         assignTRId(&_array[idx], value, _trail);
@@ -872,6 +907,26 @@ void freeTRIntArray(TRIntArray a)
     [_trail trailFree:newArray];    // remember that we may have to delete newArray on backtrack
     [_trail trailPointer:(void**)&_array];  // remember where the original array was
     assignTRInt(&_up, _low + newSize - 1, _trail);
+    newArray -= _low;               // shift the base
+    _array = newArray;              // install newly minted _array in place.
+}
+-(void) resize:(int)newSize inPost:(bool)inPost
+{
+    const ORInt oldSize = _up._val - _low + 1;
+    _array += _low;
+    TRId* newArray = malloc(sizeof(TRId)*newSize);
+    for(int i = 0; i < oldSize; i++)
+       newArray[i] = makeTRId(_trail,_array[i]); // copy the old entries
+    for (int i = oldSize; i < newSize; i++)
+       newArray[i] = makeTRId(_trail,NULL);      // init the new entries
+    if (inPost) {
+        free(_array);
+        _up = makeTRInt(_trail, _low + newSize - 1);
+    } else {
+    [_trail trailFree:newArray];    // remember that we may have to delete newArray on backtrack
+    [_trail trailPointer:(void**)&_array];  // remember where the original array was
+    assignTRInt(&_up, _low + newSize - 1, _trail);
+    }
     newArray -= _low;               // shift the base
     _array = newArray;              // install newly minted _array in place.
 }

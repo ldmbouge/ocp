@@ -19,31 +19,46 @@ autoreleasepool {
   let cv1 = ORFactory.intSet(m, set: [2]),
     cv2 = ORFactory.intSet(m, set: [3]),
     cv3 = ORFactory.intSet(m, set: [4]),
-    cv4 = ORFactory.intSet(m, set: [5]),
-   low = ORFactory.intArray(m, array: [0,0,2,2,3,3,0,0,0,0]),
-   up = ORFactory.intArray(m,array:[0,200,5,5,5,5,200,200,200,200])
+    cv4 = ORFactory.intSet(m, set: [5])
+    
+    /*let relaxationSize = Int32(CommandLine.arguments[1])
+    let usingArcs = Bool(CommandLine.arguments[2])
+    let usingClosures = Bool(CommandLine.arguments[3])
+    let usingFirstFail = Bool(CommandLine.arguments[4])
+    let equalBuckets = Bool(CommandLine.arguments[5])
+    let usingSlack = Bool(CommandLine.arguments[6])
+    let recommendationStyle = UInt32(CommandLine.arguments[7])
+    notes.ddWidth(relaxationSize!)
+    notes.ddRelaxed(relaxationSize! != 0)
+    notes.dd(withArcs: usingArcs!)
+    notes.ddEqualBuckets(equalBuckets!)
+    notes.dd(usingSlack: usingSlack!)
+    notes.ddRecommendationStyle((MDDRecommendationStyle)(recommendationStyle!))
   
-  m.add(ORFactory.among(vars, values:cv1 , low: 2, up: 5))
-  m.add(ORFactory.among(vars, values: cv2, low: 2, up: 5))
-  m.add(ORFactory.among(vars, values: cv3, low: 3, up: 5))
-  m.add(ORFactory.among(vars, values: cv4, low: 3, up: 5))
+    if (!usingClosures!) {
+  m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv1))
+  m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv2))
+  m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv3))
+  m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv4))
+    } else {
   
-  //m.add(ORFactory.cardinality(vars, low: low, up: up))
-   
-/*
+  */
   m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 5, values: cv1))
   m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 5, values: cv2))
   m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 5, values: cv3))
   m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 5, values: cv4))
-  */
-    
-  //let relaxationSize = Int32(CommandLine.arguments[1])
-  //notes.ddWidth(relaxationSize!)
-  //notes.ddRelaxed(relaxationSize! != 0)
-  notes.ddRelaxed(false)
+   // }
+  
+  notes.ddRelaxed(true)
+    notes.ddWidth(16)
+  notes.dd(withArcs:true)
+    notes.ddEqualBuckets(true)
+    notes.dd(usingSlack: false)
+    notes.ddRecommendationStyle(SmallestSlack)
   let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
   var end:ORLong = 0
   var afterPropagation:ORLong = 0
+  //  if (usingFirstFail!) {
   cp.search {
     Do(cp) {
       end = ORRuntimeMonitor.cputime()
@@ -53,7 +68,7 @@ autoreleasepool {
       print("CC: \(cv)")
     }
     »
-    labelArray(cp, vars)
+    labelArrayMDD(cp, vars)
       »
       Do(cp) {
         afterPropagation = ORRuntimeMonitor.cputime()
@@ -62,6 +77,22 @@ autoreleasepool {
         print("CP: \(cp)")
       } 
   }
+  /*  } else {
+        cp.search {
+          Do(cp) {
+            end = ORRuntimeMonitor.cputime()
+          }
+          »
+          labelArrayMDD(cp, vars)
+            »
+            Do(cp) {
+              afterPropagation = ORRuntimeMonitor.cputime()
+              let qs = (1..<R0.up()+1).map { i in cp.intValue(vars[ORInt(i)]) }
+              print("sol is: \(qs)")
+              print("CP: \(cp)")
+            }
+        }
+    }*/
   print("Solver status: \(end - start)\n")
   print("Post duration: \(end - start)")
   print("Propagation duration: \(afterPropagation - end)")

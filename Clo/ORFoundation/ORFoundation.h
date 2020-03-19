@@ -49,6 +49,8 @@
 #import <ORFoundation/ORSemBFSController.h>
 #import <ORFoundation/ORBackjumpingDFSController.h>
 
+#import <ORFoundation/ORMDDProperties.h>
+
 
 #if defined(__APPLE__)
 #import "TargetConditionals.h"

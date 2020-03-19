@@ -363,10 +363,12 @@ static inline V* get##T(T* v) { return v->_val;}
 -(void) dealloc;
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
+-(void) set: (ORInt) value at: (ORInt) idx inPost:(bool)inPost;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;
 -(void) resize:(int)newSize;
+-(void) resize:(int)newSize inPost:(bool)inPost;
 -(NSString*) description;
 - (void) encodeWithCoder:(NSCoder *) aCoder;
 - (id) initWithCoder:(NSCoder *) aDecoder;
@@ -404,6 +406,7 @@ static inline V* get##T(T* v) { return v->_val;}
 -(ORInt) low;
 -(ORInt) up;
 -(void) resize:(int)newSize;
+-(void) resize:(int)newSize inPost:(bool)inPost;
 -(NSUInteger) count;
 -(TRId*) array;
 -(NSString*) description;
