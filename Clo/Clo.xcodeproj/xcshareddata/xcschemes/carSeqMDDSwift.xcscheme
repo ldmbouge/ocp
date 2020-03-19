@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B0CED76B239440CD0005D3B9"
+               BlueprintIdentifier = "5B8A617123930F4E007BB33A"
                BuildableName = "carSeqMDDSwift"
                BlueprintName = "carSeqMDDSwift"
                ReferencedContainer = "container:Clo.xcodeproj">
@@ -44,7 +44,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B0CED76B239440CD0005D3B9"
+            BlueprintIdentifier = "5B8A617123930F4E007BB33A"
             BuildableName = "carSeqMDDSwift"
             BlueprintName = "carSeqMDDSwift"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -61,7 +61,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B0CED76B239440CD0005D3B9"
+            BlueprintIdentifier = "5B8A617123930F4E007BB33A"
             BuildableName = "carSeqMDDSwift"
             BlueprintName = "carSeqMDDSwift"
             ReferencedContainer = "container:Clo.xcodeproj">

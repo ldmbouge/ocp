@@ -40,9 +40,9 @@ autoreleasepool {
   m.add(amongMDD(m: m, x: vars, lb: 2, ub: 5, values: cv2))
   m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv3))
   m.add(amongMDD(m: m, x: vars, lb: 3, ub: 5, values: cv4))
-    } else {
+    } else {*/
   
-  */
+  
   m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 5, values: cv1))
   m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 5, values: cv2))
   m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 5, values: cv3))
@@ -51,11 +51,12 @@ autoreleasepool {
   
     
   notes.ddRelaxed(true)
-    notes.ddWidth(16)
+    notes.ddWidth(4)
   notes.dd(withArcs:true)
     notes.ddEqualBuckets(true)
     notes.dd(usingSlack: false)
-    notes.ddRecommendationStyle(SmallestSlack)
+    notes.ddRecommendationStyle(MinDomain)
+    notes.ddVariableOverlap(0)
   let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
   var end:ORLong = 0
   var afterPropagation:ORLong = 0
@@ -65,7 +66,7 @@ autoreleasepool {
       end = ORRuntimeMonitor.cputime()
     }
     »
-    labelArrayMDD(cp, vars)
+    firstFailMDD(cp, vars)
       »
       Do(cp) {
         afterPropagation = ORRuntimeMonitor.cputime()
