@@ -27,7 +27,7 @@ autoreleasepool {
 
     let cp = ORFactory.createCPProgram(m, annotation: notes)
     cp.search {
-        firstFail(cp, vars)
+        labelArray(cp, vars)
             »
             Do(cp) {
                 let qs = (1...50).map { i in cp.intValue(vars[ORInt(i)]) }

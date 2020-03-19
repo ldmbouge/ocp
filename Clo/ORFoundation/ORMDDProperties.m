@@ -1,4 +1,4 @@
-#import "ORMDDProperties.h"
+#import <ORFoundation/ORMDDProperties.h>
 
 @implementation MDDPropertyDescriptor
 -(id) initMDDPropertyDescriptor:(short)pId {

@@ -12,7 +12,7 @@ import ORProgram
 autoreleasepool {
   let start = ORRuntimeMonitor.cputime()
   let m = ORFactory.createModel(),
-  R0 = range(m, 1...200),
+  R0 = range(m, 1...12),
   R1 = range(m,1...9),
     notes = ORFactory.annotation()
   let vars = ORFactory.intVarArray(m, range: R0, domain: R1)
@@ -49,7 +49,6 @@ autoreleasepool {
   m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 5, values: cv4))
    // }
   
-    
   notes.ddRelaxed(true)
     notes.ddWidth(4)
   notes.dd(withArcs:true)
@@ -64,6 +63,10 @@ autoreleasepool {
   cp.search {
     Do(cp) {
       end = ORRuntimeMonitor.cputime()
+      cp.add(vars[1] == 1)
+      cp.add(vars[2] == 1)
+      let cv = (1..<R0.up()+1).map { i in cp.concretize(vars[ORInt(i)])!}
+      print("CC: \(cv)")
     }
     »
     firstFailMDD(cp, vars)
@@ -96,3 +99,4 @@ autoreleasepool {
   print("Propagation duration: \(afterPropagation - end)")
   print("Quitting: \(afterPropagation - start)\n")
 }
+
