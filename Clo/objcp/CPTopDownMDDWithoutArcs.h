@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "CPTopDownMDD.h"
+#import <objcp/CPTopDownMDD.h>
 
 @interface CPMDDWithoutArcs : CPMDD
 -(void) DEBUGTestParentChildParity;

@@ -105,7 +105,10 @@
 -(int) initialValue { return _initialValue; }
 @end
 
-@implementation MDDStateDescriptor
+@implementation MDDStateDescriptor {
+@protected
+    MDDPropertyDescriptor** _properties;
+}
 -(id) initMDDStateDescriptor:(int)numProperties {
     self = [super init];
     _properties = malloc(numProperties * sizeof(MDDPropertyDescriptor*));

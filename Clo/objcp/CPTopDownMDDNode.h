@@ -1,12 +1,10 @@
-
-#import "ORCustomMDDStates.h"
+#import <ORFoundation/ORFoundation.h>
 
 @interface Node : NSObject {
 @public
     TRInt _layerIndex;
     id<ORTrail> _trail;
     
-    TRId* _children;
     TRInt _numChildren;
     int _minChildIndex;
     int _maxChildIndex;
@@ -112,7 +110,6 @@
 @end
 
 @interface BetterNodeHashTable : NSObject {
-    MDDStateValues** *_stateLists;
     char** *_statePropertiesLists;
     int* _numPerHash;
     int* _maxPerHash;
@@ -125,7 +122,6 @@
 -(void) addState:(MDDStateValues*)state;
 @end
 @interface NodeHashTable : NSObject {
-    NSMutableArray** _nodeHashes;
     int _width;
 }
 -(id) initNodeHashTable:(int)width;

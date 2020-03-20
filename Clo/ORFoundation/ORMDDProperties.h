@@ -9,8 +9,6 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-
 @interface MDDPropertyDescriptor : NSObject {
 @protected
     short _id;
@@ -60,7 +58,6 @@
 
 @interface MDDStateDescriptor : NSObject {
 @protected
-    MDDPropertyDescriptor** _properties;
     int _currentPropertyIndex;
     int _numProperties;
     size_t _currentOffset;

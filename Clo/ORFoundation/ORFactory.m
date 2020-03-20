@@ -17,7 +17,6 @@
 #import "ORConstraintI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
-#import "ORCustomMDDStates.h"
 //#import <objcp/CPBitMacros.h>
 
 @interface OROrderedSweep : NSObject<OROrderedSweep> {

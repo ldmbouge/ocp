@@ -28,6 +28,7 @@
 #import <objcp/CPIntVarI.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
+#import <objcp/CPTopDownMDD.h>
 
 #if defined(__linux__)
 #import <values.h>
@@ -1761,7 +1762,7 @@
 -(ORInt)  MDDRecommendationFor:(id<CPIntVar>)x model:(id<ORModel>)m
 {
    for (id<ORConstraint> c in [m constraints]) {
-      if ([c isKindOfClass:[ORMDDStateSpecification class]]) {
+      if ([c conformsToProtocol:@protocol(ORMDDStateSpecification)]) {
          id<CPIntVarArray> vars = _gamma[((id<CPIntVarArray>)[[c allVars] anyObject]).getId];
          if ([vars contains:x]) {
             return [_gamma[c.getId] recommendationFor:x];

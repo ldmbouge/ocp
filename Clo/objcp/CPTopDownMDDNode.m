@@ -1,8 +1,11 @@
-#import "CPTopDownMDDNode.h"
+#import <objcp/CPTopDownMDDNode.h>
 
 const short BytesPerMagic = 4;
 
-@implementation Node
+@implementation Node {
+@public
+    TRId* _children;
+}
 -(id) initSinkNode: (id<ORTrail>) trail state:(MDDStateValues*)state hashWidth:(int)hashWidth
 {
     self = [super init];
@@ -546,7 +549,9 @@ const short BytesPerMagic = 4;
 }
 @end
 
-@implementation BetterNodeHashTable
+@implementation BetterNodeHashTable {
+    MDDStateValues** *_stateLists;
+}
 -(id) initBetterNodeHashTable:(int)width numBytes:(size_t)numBytes {
     self = [super init];
     _width = width;
@@ -634,7 +639,9 @@ const short BytesPerMagic = 4;
 }
 @end
 
-@implementation NodeHashTable
+@implementation NodeHashTable {
+    NSMutableArray** _nodeHashes;
+}
 -(id) initNodeHashTable:(int)width {
     [super init];
     _width = width;

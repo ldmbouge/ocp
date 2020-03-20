@@ -15,7 +15,7 @@
 #import "ORDecompose.h"
 #import "ORRealDecompose.h"
 #import "ORMDDVisitors.h"
-#import "ORCustomMDDStates.h"
+#import <ORFoundation/ORFoundation.h>
 
 @implementation ORFactory(MDD)
 +(void) sortIntVarArray:(NSMutableArray*)array first:(ORInt)first last:(ORInt)last {
@@ -378,7 +378,7 @@
         }
         
         MDDStateSpecification* finalMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[MDDSpecsByVariableSet count] numTopDownProperties:totalNumTopDownProperties numBottomUpProperties:totalNumBottomUpProperties relaxed:_relaxed vars:_variables];
-        for (ORMDDSpecs* mddSpec in MDDSpecsByVariableSet) {
+        for (id<ORMDDSpecs> mddSpec in MDDSpecsByVariableSet) {
             id<ORIntVarArray> vars = [mddSpec vars];
             int* variableMapping = [self findVariableMappingFrom:vars to:_variables];
             [finalMDDSpec addMDDSpec:mddSpec mapping:variableMapping];
@@ -602,7 +602,7 @@
     for (int i = 0; i < numSpecs; i++) {
         if (specUsed[i]) continue;
         specUsed[i] = true;
-        ORMDDSpecs* mddSpec = [_mddSpecConstraints objectAtIndex:i];
+        id<ORMDDSpecs> mddSpec = [_mddSpecConstraints objectAtIndex:i];
         id<ORIntVarArray> initialVars = [mddSpec vars];
         id<ORIntVarArray> totalVariables = initialVars;
         int minInitialVarIndex = [initialVars low];
@@ -615,7 +615,7 @@
         NSMutableArray* specsToCombine = [[NSMutableArray alloc] initWithObjects:mddSpec, nil];
         for (int j = i+1; j < numSpecs; j++) {
             if (specUsed[j]) continue;
-            ORMDDSpecs* otherMDDSpec = [_mddSpecConstraints objectAtIndex:j];
+            id<ORMDDSpecs> otherMDDSpec = [_mddSpecConstraints objectAtIndex:j];
             id<ORIntVarArray> otherVars = [otherMDDSpec vars];
             int intersectionSize = 0;
             for (int varIndex = minInitialVarIndex; varIndex <= maxInitialVarIndex; varIndex++) {
@@ -642,7 +642,7 @@
         free(notInIntersection);
         if ([mddSpec closuresDefined]) {
             MDDStateSpecification* combinedMDDSpec = [[MDDStateSpecification alloc] initMDDStateSpecification:(int)[specsToCombine count] numTopDownProperties:totalNumTopDownProperties numBottomUpProperties:totalNumBottomUpProperties relaxed:_relaxed vars:totalVariables];
-            for (ORMDDSpecs* newMDDSpec in specsToCombine) {
+            for (id<ORMDDSpecs> newMDDSpec in specsToCombine) {
                 id<ORIntVarArray> vars = [newMDDSpec vars];
                 int* variableMapping = [self findVariableMappingFrom:vars to:totalVariables];
                 [combinedMDDSpec addMDDSpec:newMDDSpec mapping:variableMapping];

@@ -1,5 +1,4 @@
-
-#import "CPTopDownMDDNode.h"
+#import <ORFoundation/ORCustomMDDStates.h>
 
 const short BytesPerMagic = 4;
 /*
@@ -41,7 +40,19 @@ const short BytesPerMagic = 4;
 }
 @end*/
 
-@implementation MDDStateSpecification
+@implementation MDDStateSpecification {
+@protected
+    MDDPropertyDescriptor** _topDownProperties;
+    MDDPropertyDescriptor** _bottomUpProperties;
+    DDArcTransitionClosure* _topDownTransitionFunctions;
+    DDArcTransitionClosure* _bottomUpTransitionFunctions;
+    DDMergeClosure* _topDownRelaxationFunctions;
+    DDMergeClosure* _bottomUpRelaxationFunctions;
+    DDOldMergeClosure* _differentialFunctions;
+    DDArcExistsClosure** _topDownArcExistsListsForVariable;
+    DDArcExistsClosure** _bottomUpArcExistsListsForVariable;
+    DDSlackClosure* _slackClosures;
+}
 -(id) initMDDStateSpecification:(int)numSpecs numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars {
     self = [super init];
     _vars = vars;
@@ -88,7 +99,7 @@ const short BytesPerMagic = 4;
     singleState = false;
     return self;
 }
--(id) initMDDStateSpecification:(ORMDDSpecs*)MDDSpec relaxed:(bool)relaxed {
+-(id) initMDDStateSpecification:(id<ORMDDSpecs>)MDDSpec relaxed:(bool)relaxed {
     self = [super init];
     _vars = [MDDSpec vars];
     _minVar = [_vars low];
@@ -208,7 +219,7 @@ const short BytesPerMagic = 4;
     }
     _numSpecsAdded++;
 }
--(void) addMDDSpec:(ORMDDSpecs*)MDDSpec mapping:(int*)mapping {
+-(void) addMDDSpec:(id<ORMDDSpecs>)MDDSpec mapping:(int*)mapping {
     MDDPropertyDescriptor** topDownProperties = [MDDSpec topDownStateProperties];
     MDDPropertyDescriptor** bottomUpProperties = [MDDSpec bottomUpStateProperties];
     DDArcTransitionClosure* newTopDownTransitionClosures = [MDDSpec topDownTransitionClosures];
@@ -428,29 +439,6 @@ typedef int (*GetPropIMP)(id,SEL,char*);
         free(computedStates[i]);
     }
     return mergedState;
-}
--(bool) replaceArcState:(MDDArc*)arc withParentProperties:(char*)parentProperties variable:(int)variable {
-    char* arcState = arc.topDownState;
-    int value = arc.arcValue;
-    bool stateChanged = false;
-    char* newState = malloc(_topDownNumBytes * sizeof(char));
-    memcpy(newState, arcState, _topDownNumBytes);
-    if (_numSpecsAdded == 1) {
-        for (int propertyIndex = 0; propertyIndex < _numTopDownPropertiesAdded; propertyIndex++) {
-            _topDownTransitionFunctions[propertyIndex](newState, parentProperties, variable, value);
-        }
-    } else {
-        bool* propertyUsed = _topDownPropertiesUsedPerVariable[variable];
-        for (int propertyIndex = 0; propertyIndex < _numTopDownPropertiesAdded; propertyIndex++) {
-            if (propertyUsed[propertyIndex]) {
-                _topDownTransitionFunctions[propertyIndex](newState, parentProperties, variable, value);
-            }
-        }
-    }
-    stateChanged = memcmp(arcState, newState, _topDownNumBytes) != 0;
-    [arc replaceTopDownStateWith:newState trail:_trail];
-    free(newState);
-    return stateChanged;
 }
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues {
     if (_numSpecsAdded == 1) {
@@ -701,6 +689,6 @@ typedef int (*GetPropIMP)(id,SEL,char*);
         assignTRInt(&_hashValue, [self calcHash:width], trail);
     }
 }
--(void) setNode:(Node*)node { _node = node; }
--(Node*) node { return _node; }
+-(void) setNode:(id)node { _node = node; }
+-(id) node { return _node; }
 @end

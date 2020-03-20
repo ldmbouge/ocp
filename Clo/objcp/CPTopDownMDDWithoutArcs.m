@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPIntVarI.h"
+#import <objcp/CPIntVarI.h>
 #import "CPEngineI.h"
 #import "CPTopDownMDDWithoutArcs.h"
 
@@ -48,7 +48,7 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
     for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
         for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
             NodeHashTable* nodeHashTable = [[NodeHashTable alloc] initNodeHashTable:_hashWidth];
-            OldNode* node = [layers[layer_index] at: node_index];
+            OldNode* node = [[self getLayer:layer_index] at: node_index];
             OldNode** children = [node children];
             for (int child_index = _min_domain_for_layer[layer_index]; child_index <= _max_domain_for_layer[layer_index]; child_index++) {
                 bool added = false;
@@ -127,7 +127,7 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
     for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
         for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
             NodeHashTable* nodeHashTable = [[NodeHashTable alloc] initNodeHashTable:_hashWidth];
-            OldNode* node = [layers[layer_index] at: node_index];
+            OldNode* node = [[self getLayer:layer_index] at: node_index];
             OldNode** children = [node children];
             for (int child_index = _min_domain_for_layer[layer_index]; child_index <= _max_domain_for_layer[layer_index]; child_index++) {
                 bool added = false;
@@ -208,7 +208,7 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
     int childLayer = layer+1;
     int parentLayer = layer-1;
     int parentMinDomain = _min_domain_for_layer[parentLayer];
-    ORTRIdArrayI* layerNodes = layers[layer];
+    ORTRIdArrayI* layerNodes = [self getLayer:layer];
     TRInt* variableCount = layer_variable_count[layer];
     TRInt* parentVariableCount = layer_variable_count[parentLayer];
     bool nodeHasChildren;
@@ -381,7 +381,7 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
     for (int layer_index = 0; layer_index < _numVariables; layer_index++) {
         for (int node_index = 0; node_index < layer_size[layer_index]._val; node_index++) {
             NodeHashTable* nodeHashTable = [[NodeHashTable alloc] initNodeHashTable:_hashWidth];
-            OldNode* node = [layers[layer_index] at: node_index];
+            OldNode* node = [[self getLayer:layer_index] at: node_index];
             OldNode** children = [node children];
             for (int child_index = _min_domain_for_layer[layer_index]; child_index <= _max_domain_for_layer[layer_index]; child_index++) {
                 bool added = false;

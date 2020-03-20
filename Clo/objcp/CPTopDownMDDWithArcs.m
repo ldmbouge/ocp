@@ -80,8 +80,6 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
 -(id) initCPMDDRelaxation:(id<CPEngine>)engine over:(id<CPIntVarArray>)x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification *)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle {
     self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
     _nodeClass = [MDDNode class];
-    _replaceArcStateSel = @selector(replaceArcState:withParentProperties:variable:);
-    _replaceArcState = (ReplaceArcStateIMP)[_spec methodForSelector:_replaceArcStateSel];
     return self;
 }
 -(void) recalcArc:(MDDArc*)arc parentProperties:(char*)parentProperties variable:(int)variable {
@@ -174,7 +172,7 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     int childLayer = layer+1;
     int parentLayer = layer-1;
     int variableIndex = _layer_to_variable[layer];
-    ORTRIdArrayI* layerNodes = layers[layer];
+    ORTRIdArrayI* layerNodes = [self getLayer:layer];
     TRInt* variableCount = layer_variable_count[layer];
     TRInt* parentVariableCount = layer_variable_count[parentLayer];
     bool nodeHasChildren;
@@ -331,7 +329,7 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
 }
 -(void) performBottomUp {
     for (int layer_index = (int)_numVariables-1; layer_index > 0; layer_index--) {
-        ORTRIdArrayI* layer = layers[layer_index];
+        ORTRIdArrayI* layer = [self getLayer:layer_index];
         int layerSize = layer_size[layer_index]._val;
         TRInt* variableCount = layer_variable_count[layer_index-1];
         int variableIndex = _layer_to_variable[layer_index-1];
@@ -402,7 +400,7 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
 
 -(void) DEBUGTestParentArcIndices {
     for (int layerIndex = 1; layerIndex <= (int)_numVariables; layerIndex++) {
-        ORTRIdArrayI* layer = layers[layerIndex];
+        ORTRIdArrayI* layer = [self getLayer:layerIndex];
         int layerSize = layer_size[layerIndex]._val;
         for (int nodeIndex = 0; nodeIndex < layerSize; nodeIndex++) {
             MDDNode* node = [layer at:nodeIndex];

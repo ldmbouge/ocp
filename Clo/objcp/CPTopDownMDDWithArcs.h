@@ -9,17 +9,13 @@
 
  ***********************************************************************/
 
-#import "CPTopDownMDD.h"
+#import <objcp/CPTopDownMDD.h>
 
 @interface CPMDDWithArcs : CPMDD
 @end
 @interface CPMDDRestrictionWithArcs : CPMDDRestriction
 @end
-@interface CPMDDRelaxationWithArcs : CPMDDRelaxation {
-@protected
-    SEL _replaceArcStateSel;
-    ReplaceArcStateIMP _replaceArcState;
-}
+@interface CPMDDRelaxationWithArcs : CPMDDRelaxation
 -(void) recalcArc:(MDDArc*)arc parentProperties:(char*)parentProperties variable:(int)variable;
 -(void) recalcArc:(MDDArc*)arc childProperties:(char*)childProperties variable:(int)variable;
 -(void) DEBUGTestParentArcIndices;

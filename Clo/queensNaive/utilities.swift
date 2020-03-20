@@ -11,8 +11,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import ORProgram
 
-let _stateDescriptor : MDDStateDescriptor = ORFactory.mddStateDescriptor()
-
 //infix operator ∨ { associativity left precedence 110 }
 infix operator ∨ : LogicalDisjunctionPrecedence
 infix operator ∋ : MultiplicationPrecedence
@@ -315,9 +313,6 @@ public func Prop(_ t : ORTracker,_ name : ORExpr) -> ORExpr {
 
 public func StateProp(_ s : Optional<UnsafeMutablePointer<Int8>>,_ p : Int,_ fpi : Int,_ stateDesc : MDDStateDescriptor) -> Int {
     return Int(stateDesc.getProperty(Int32(p + fpi), forState: s))
-}
-public func StateProp(_ s : Optional<UnsafeMutablePointer<Int8>>,_ p : Int,_ fpi : Int) -> Int {
-    return Int(_stateDescriptor.getProperty(Int32(p + fpi), forState: s))
 }
 
 public func SVA(_ t : ORTracker) -> ORExpr {

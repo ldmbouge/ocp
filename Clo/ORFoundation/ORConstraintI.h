@@ -17,7 +17,6 @@
 #import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORVisit.h>
-#import "ORMDDProperties.h"
 
 /*@interface ORExactMDDAllDifferent : ORConstraintI<ORExactMDDAllDifferent>
 -(ORExactMDDAllDifferent*)initORExactMDDAllDifferent:(id<ORIntVarArray>)x reduced:(bool)reduced;

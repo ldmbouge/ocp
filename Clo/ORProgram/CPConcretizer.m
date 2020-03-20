@@ -16,7 +16,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>
 #import <ORFoundation/ORVisit.h>
-#import "ORCustomMDDStates.h"
+#import <ORFoundation/ORCustomMDDStates.h>
 
 
 @implementation ORCPConcretizer

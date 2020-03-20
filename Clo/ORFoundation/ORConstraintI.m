@@ -14,6 +14,7 @@
 #import <ORFoundation/ORFactory.h>
 #import "ORConstraintI.h"
 #import "ORParameterI.h"
+#import <ORFoundation/ORMDDProperties.h>
 
 
 @implementation ORMDDStateSpecification {

@@ -32,3 +32,5 @@
 #import <objcp/CPRealVarI.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
+#import <objcp/CPTopDownMDDNode.h>
+#import <objcp/CPTopDownMDD.h>

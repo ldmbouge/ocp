@@ -9,12 +9,14 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/objcp.h>
+#import <objcp/CPTopDownMDDNode.h>
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <CPUKernel/CPGroup.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
-#import "CPTopDownMDDNode.h"
 
 @interface CPMDD : CPCoreConstraint {
 @protected
@@ -26,7 +28,6 @@
     int min_variable_index;
     MDDStateSpecification* _spec;
     
-    ORTRIdArrayI* *layers;
     TRInt **layer_variable_count;
     TRInt *layer_size;
     TRInt *max_layer_size;
@@ -85,6 +86,7 @@
 -(int) removeChildlessFromMDD:(id)node fromLayer:(int)layer;
 -(void) removeParentlessNodeFromMDD:(Node*)node fromLayer:(int)layer;
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value;
+-(ORTRIdArrayI*) getLayer:(ORInt)layerIndex;
 -(void) DEBUGTestLayerVariableCountCorrectness;
 -(void) DEBUGTestArcExistenceAccuracy;
 -(ORInt) recommendationFor:(id<CPIntVar>)x;

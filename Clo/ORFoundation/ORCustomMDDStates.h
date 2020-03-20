@@ -1,4 +1,5 @@
-#import "ORConstraintI.h"
+
+#import <ORFoundation/ORFoundation.h>
 
 @interface MDDStateValues : NSObject {
 @protected
@@ -25,16 +26,8 @@
 @protected
     MDDStateDescriptor* _topDownStateDescriptor;
     MDDStateDescriptor* _bottomUpStateDescriptor;
-    MDDPropertyDescriptor** _topDownProperties;
-    MDDPropertyDescriptor** _bottomUpProperties;
     DDArcExistsClosure _topDownArcExists;
     DDArcExistsClosure _bottomUpArcExists;
-    DDArcTransitionClosure* _topDownTransitionFunctions;
-    DDArcTransitionClosure* _bottomUpTransitionFunctions;
-    DDMergeClosure* _topDownRelaxationFunctions;
-    DDMergeClosure* _bottomUpRelaxationFunctions;
-    DDOldMergeClosure* _differentialFunctions;
-    DDSlackClosure* _slackClosures;
     id<ORTrail> _trail;
     bool _relaxed;
     id<ORIntVarArray> _vars;
@@ -42,8 +35,6 @@
     bool** _topDownPropertiesUsedPerVariable;
     bool** _bottomUpPropertiesUsedPerVariable;
     
-    DDArcExistsClosure** _topDownArcExistsListsForVariable;
-    DDArcExistsClosure** _bottomUpArcExistsListsForVariable;
     int* _numTopDownArcExistsForVariable;
     int* _numBottomUpArcExistsForVariable;
     
@@ -59,10 +50,10 @@
     bool singleState;
 }
 -(id) initMDDStateSpecification:(int)numSpecs numTopDownProperties:(int)topDownNumProperties numBottomUpProperties:(int)bottomUpNumProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars;
--(id) initMDDStateSpecification:(ORMDDSpecs*)MDDSpec relaxed:(bool)relaxed;
+-(id) initMDDStateSpecification:(id<ORMDDSpecs>)MDDSpec relaxed:(bool)relaxed;
 -(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcExistsClosure)arcExists transitionFunctions:(DDArcTransitionClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
 -(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcExistsClosure)arcExists transitionFunctions:(DDArcTransitionClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDOldMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
--(void) addMDDSpec:(ORMDDSpecs*)MDDSpec mapping:(int*)mapping;
+-(void) addMDDSpec:(id<ORMDDSpecs>)MDDSpec mapping:(int*)mapping;
 -(MDDStateValues*) createRootState;
 -(MDDStateValues*) createSinkState;
 -(char*) computeTopDownStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value;
@@ -71,7 +62,6 @@
 -(void) mergeTempStateProperties:(char*)leftState with:(char*)rightState;
 -(void) mergeTempBottomUpStateProperties:(char*)leftState with:(char*)rightState;
 -(char*) batchMergeForStates:(char**)parentStates values:(int**)edgesUsedByParent numEdgesPerParent:(int*)numEdgesPerParent variable:(int)variableIndex isMerged:(bool*)isMerged numParents:(int)numParents totalEdges:(int)totalEdges;
--(bool) replaceArcState:(id)arcState withParentProperties:(char*)parentProperties variable:(int)variable;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state;
 -(bool) canChooseValue:(int)value forVariable:(int)variable fromParent:(char*)parentState toChild:(char*)childState;

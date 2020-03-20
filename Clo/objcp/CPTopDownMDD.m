@@ -10,12 +10,15 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPTopDownMDD.h"
+#import <CPUKernel/CPEngineI.h>
+#import <objcp/CPTopDownMDD.h>
 #import "CPIntVarI.h"
-#import "CPEngineI.h"
 
 static inline id getTopDownState(Node* n) { return n->_topDownState;}
-@implementation CPMDD
+@implementation CPMDD {
+@protected
+    ORTRIdArrayI* *layers;
+}
 -(id) initCPMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x
 {
     self = [super initCPCoreConstraint: engine];
@@ -511,6 +514,9 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     }
     [self removeNode: node onLayer:layer];
 }
+
+-(ORTRIdArrayI*) getLayer:(ORInt)layerIndex { return layers[layerIndex]; }
+
 -(void) trimValueFromLayer: (ORInt) layer_index :(int) value
 {
     ORTRIdArrayI* layer = layers[layer_index];

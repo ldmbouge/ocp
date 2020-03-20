@@ -2,7 +2,7 @@
 #import <ORFoundation/ORVisit.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORVisit.h>
-#import "ORMDDProperties.h"
+#import <ORFoundation/ORMDDProperties.h>
 
 @interface ORDDExpressionEquivalenceChecker : ORNOopVisit {
 @protected
