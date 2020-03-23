@@ -2553,11 +2553,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) rationalMult:(id<ORTracker>)model  var: (id<ORRationalVar>)x by:(id<ORRationalVar>)y equal:(id<ORRationalVar>)z
 {
    id<ORConstraint> o;
-   if([x getId] == [y getId]) {
-      o = [[ORRationalSquare alloc] init:z square:x];
-   } else {
+//   if([x getId] == [y getId]) {
+//      o = [[ORRationalSquare alloc] init:z square:x];
+//   } else {
       o = [[ORRationalMult alloc] initORRationalMult:z eq:x times:y];
-   }
+   //}
    [model trackObject:o];
    return o;
 }

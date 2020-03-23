@@ -20,10 +20,9 @@
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
-   if(RUN_3B_ERROR){
-      // init _gammaE for concretizing errors from variable
+   // init _gammaE for concretizing errors from variable
+   if(RUN_3B_ERROR)
       _gammaE = [[ORGammaError alloc] init];
-   }
    return [[[ORModelI alloc] initORModelI] autorelease];
 }
 +(id<ORModel>) createModel: (ORUInt) nbo mappings: (id<ORModelMappings>) mappings

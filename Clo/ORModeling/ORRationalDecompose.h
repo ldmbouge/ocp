@@ -12,9 +12,11 @@
    id<ORRationalLinear>   _terms;
    id<ORAddToModel>  _model;
    id<ORRationalVar>       _eqto;
+   ORBool                _isSet;
 }
 -(id)init:(id<ORRationalLinear>)t model:(id<ORAddToModel>)model equalTo:(id<ORRationalVar>)x;
 -(id)init:(id<ORRationalLinear>)t model:(id<ORAddToModel>)model;
+-(id) init: (id<ORRationalLinear>) t model: (id<ORAddToModel>) model setTo:(id<ORRationalVar>)x;
 @end
 
 @interface ORRationalSubst   : ORVisitor<NSObject> {

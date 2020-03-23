@@ -18,6 +18,7 @@
    _terms = t;
    _model = model;
    _eqto  = x;
+   _isSet = NO;
    return self;
 }
 -(id)init:(id<ORRationalLinear>)t model:(id<ORAddToModel>)model
@@ -26,6 +27,16 @@
    _terms = t;
    _model = model;
    _eqto  = nil;
+   _isSet = NO;
+   return self;
+}
+-(id) init: (id<ORRationalLinear>) t model: (id<ORAddToModel>) model setTo:(id<ORRationalVar>)x
+{
+   self = [super init];
+   _terms = t;
+   _model = model;
+   _eqto  = x;
+   _isSet = YES;
    return self;
 }
 -(void) visitRationalVar: (id<ORRationalVar>) e
@@ -34,56 +45,10 @@
       [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
       [_terms addTerm:_eqto by:1];
       _eqto = nil;
+      _isSet = NO;
    } else
       [_terms addTerm:e by:1];
 }
-/*-(void) visitAffineVar:(ORIntVarAffineI*)e
-{
-   if (_eqto) {
-      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
-      [_terms addTerm:_eqto by:1];
-      _eqto = nil;
-   } else
-      [_terms addTerm:e by:1];
-}
--(void) visitIntVarLitEQView:(id<ORIntVar>)e
-{
-   if (_eqto) {
-      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
-      [_terms addTerm:_eqto by:1];
-      _eqto = nil;
-   } else
-      [_terms addTerm:e by:1];
-}
--(void) visitIntegerI: (id<ORInteger>) e
-{
-   if (_eqto) {
-      [_model addConstraint:[ORFactory equalc:_model var:_eqto to:[e value]]];
-      [_terms addIndependent:[e value]];
-      _eqto = nil;
-   } else
-      [_terms addIndependent:[e value]];
-}
--(void) visitMutableIntegerI: (id<ORMutableInteger>) e
-{
-   assert(NO);
-   if (_eqto) {
-      [_model addConstraint:[ORFactory equalc:_model var:_eqto to:[e initialValue]]];
-      [_terms addIndependent:[e initialValue]];
-      _eqto = nil;
-   } else
-      [_terms addIndependent:[e initialValue]];
-}
--(void) visitMutableDouble: (id<ORMutableInteger>) e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a MutableReal"];
-}
-
--(void) visitDouble: (id<ORDoubleNumber>) e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a DoubleNumber"];
-}*/
-
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
    if (_eqto) {

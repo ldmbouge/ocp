@@ -1773,6 +1773,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    [v release];
    return terms;
 }
++(id<ORRationalLinear>)rationalLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model setTo:(id<ORRationalVar>)x
+{
+   ORRationalLinear* rv = [[ORRationalLinear alloc] initORRationalLinear:4];
+   ORRationalLinearizer* v = [[ORRationalLinearizer alloc] init: rv model: model setTo:x];
+   [e visit:v];
+   [v release];
+   return rv;
+}
 +(id<ORRationalVar>) rationalVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
 {
    ORRationalSubst* subst = [[ORRationalSubst alloc] initORRationalSubst: model];
@@ -3146,6 +3154,37 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    }
    return nil;
 }
+-(id<ORLinear>) visitExprAssignI:(id<ORAddToModel>)_model left:(ORExprI*)left right:(ORExprI*)right
+{
+   bool lc = [left isConstant];
+   bool rc = [right isConstant];
+   if (lc && rc) {
+      bool isOk = is_eq([left dmin],[right dmin]);
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      id<ORRational> c = lc ? [left qmin] : [right qmin];
+      ORExprI* other = lc ? right : left;
+      ORRationalLinear* lin  = [ORNormalizer rationalLinearFrom:other model:_model];
+      [lin addIndependent: [c neg]];
+      return lin;
+   } else {
+      bool lv = [left isVariable];
+      bool rv = [right isVariable];
+      if (lv || rv) {
+         id<ORExpr> var = (lv)?left:right;
+         id<ORExpr> other = (lv)?right:left;
+         id<ORRationalVar> theVar  = [ORNormalizer rationalVarIn:_model expr:var];
+         [_model addEqualityRelation:theVar with:other];
+         ORRationalLinear* lin  = [ORNormalizer rationalLinearFrom:right model:_model setTo:theVar];
+         [lin release];
+      } else {
+         assert(NO);
+      }
+   }
+   return nil;
+}
+
 @end
 
 

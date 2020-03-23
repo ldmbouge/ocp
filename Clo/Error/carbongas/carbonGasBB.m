@@ -448,11 +448,70 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
    }
 }
 
+void test_Q_3B(bool continuous, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of rational numbers */
+      id<ORRational> zero = [[ORRational alloc] init];
+      id<ORRational> one = [[ORRational alloc] init];
+      id<ORRational> two = [[ORRational alloc] init];
+      id<ORRational> three = [[ORRational alloc] init];
+      id<ORRational> four = [[ORRational alloc] init];
+      
+      /* Initialization of rational numbers */
+      [zero setZero];
+      [one set_d:1];
+      [two set_d:2];
+      [three set_d:3.0];
+      [four set_d:4.0];
+      
+      /* Declaration of model variables */
+      id<ORGroup> g = [ORFactory group:mdl type:DefaultGroup];
+      id<ORRationalVar> x = [ORFactory rationalVar:mdl low:one up:two name:@"x"];
+      //id<ORRationalVar> y = [ORFactory rationalVar:mdl low:three up:four name:@"y"];
+      id<ORRationalVar> z = [ORFactory rationalVar:mdl name:@"z"];
+      
+      /* Initialization of constants */
+      
+      /* Declaration of constraints */
+      [g add:[z set:[x mul:x]]];
+      
+      /* Declaration of constraints over errors */
+      [mdl add:g];
+      
+      /* Memory release of rational numbers */
+      [zero release];
+      [one release];
+      [two release];
+      [three release];
+      [four release];
+      
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      
+      /* Solving */
+      [cp solve:^{
+         [cp labelRational:x];
+         NSLog(@"x : [%@;%@] (%s)",[cp minQ:x],[cp maxQ:x],[cp bound:x] ? "YES" : "NO");
+         //NSLog(@"y : [%@;%@] (%s)",[cp minQ:y],[cp maxQ:y],[cp bound:y] ? "YES" : "NO");
+         NSLog(@"z : [%@;%@] (%s)",[cp minQ:z],[cp maxQ:z],[cp bound:z] ? "YES" : "NO");
+      }];
+   }
+}
+
+
 
 int main(int argc, const char * argv[]) {
    //carbonGas_f(1, argc, argv);
    //carbonGas_d(1, argc, argv);
    //carbonGas_d_c(1, argc, argv);
-   test_d_c_3B(1, argc, argv);
+   //test_d_c_3B(1, argc, argv);
+   test_Q_3B(1, argc, argv);
    return 0;
 }
