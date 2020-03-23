@@ -1641,6 +1641,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    id<ORRationalInterval> exTemp;
    id<ORRationalInterval> eyTemp;
    id<ORRationalInterval> ezTemp;
+   id<ORRationalInterval> ezTemp1;
+   id<ORRationalInterval> ezTemp2;
+   id<ORRationalInterval> ezTemp3;
    id<ORRationalInterval> eoTemp;
    id<ORRationalInterval> xrTemp;
    id<ORRationalInterval> yrTemp;
@@ -1667,6 +1670,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    exTemp = [[ORRationalInterval alloc] init];
    eyTemp = [[ORRationalInterval alloc] init];
    ezTemp = [[ORRationalInterval alloc] init];
+   ezTemp1 = [[ORRationalInterval alloc] init];
+   ezTemp2 = [[ORRationalInterval alloc] init];
+   ezTemp3 = [[ORRationalInterval alloc] init];
    eoTemp = [[ORRationalInterval alloc] init];
    xrTemp = [[ORRationalInterval alloc] init];
    yrTemp = [[ORRationalInterval alloc] init];
@@ -1742,6 +1748,13 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          // ============================== ez
          // x*ey + y*ex + ex*ey + eo
          [ezTemp set: [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo]];
+         // x*ey + ex*(y+ey) + eo
+         //[ezTemp2 set: [[[xr mul: ey] add: [ex mul:[yr add: ey]]] add: eo]];
+         // ey*(x + ex) + y*ex + eo
+         //[ezTemp3 set: [[[ey mul: [xr add: ex]] add:[yr mul: ex]] add: eo]];
+         
+         //[ezTemp set: [ezTemp1 proj_inter: ezTemp2]];
+         //[ezTemp set: [ezTemp proj_inter:ezTemp3]];
          
          [ez set: [ez proj_inter: ezTemp]];
          changed |= ez.changed;
@@ -1819,6 +1832,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    [exTemp release];
    [eyTemp release];
    [ezTemp release];
+   [ezTemp1 release];
+   [ezTemp2 release];
+   [ezTemp3 release];
    [eoTemp release];
    [xrTemp release];
    [yrTemp release];
@@ -1861,6 +1877,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    id<ORRationalInterval> exTemp;
    id<ORRationalInterval> eyTemp;
    id<ORRationalInterval> ezTemp;
+   id<ORRationalInterval> ezTemp1;
+   id<ORRationalInterval> ezTemp2;
+   id<ORRationalInterval> ezTemp3;
    id<ORRationalInterval> eoTemp;
    id<ORRationalInterval> xrTemp;
    id<ORRationalInterval> yrTemp;
@@ -1893,6 +1912,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    exTemp = [[ORRationalInterval alloc] init];
    eyTemp = [[ORRationalInterval alloc] init];
    ezTemp = [[ORRationalInterval alloc] init];
+   ezTemp1 = [[ORRationalInterval alloc] init];
+   ezTemp2 = [[ORRationalInterval alloc] init];
+   ezTemp3 = [[ORRationalInterval alloc] init];
    eoTemp = [[ORRationalInterval alloc] init];
    xrTemp = [[ORRationalInterval alloc] init];
    yrTemp = [[ORRationalInterval alloc] init];
@@ -1974,7 +1996,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          // ============================== ez
          // (y*ex - x*ey)/(y*(y + ey)) + eo
          [ezTemp set: [[[[yr mul: ex] sub: [xr mul: ey]] div: [yr mul: [yr add: ey]]] add: eo]];
-         
+         //
          [ez set: [ez proj_inter: ezTemp]];
          changed |= ez.changed;
          
