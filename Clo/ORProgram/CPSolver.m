@@ -2092,9 +2092,10 @@ onFailure: (ORInt2Void) onFailure
             }
          }
          // Temporary fix - change so that indexSplit do not backtrack after split
-         //ORInt oldVal = indexSplit._val;
+         // exemple rigidBody1/2: indexSplit only take 0 or 1 (never 2) so solving do not end
+         ORInt oldVal = indexSplit._val;
          b(indexSplit._val, x);
-         //indexSplit._val = oldVal;
+         indexSplit._val = oldVal;
          nbBoxGenerated += 2;
          
          //* update index of variable chosen for splitting *
