@@ -408,8 +408,8 @@ void sqroot_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //sqroot_d(1, argc, argv);
-   sqroot_d_c(1, argc, argv);
+   //sqroot_d_c(1, argc, argv);
    //sqroot_f(1, argc, argv);
-   //sqroot_d_c_3B(1, argc, argv);
+   sqroot_d_c_3B(1, argc, argv);
    return 0;
 }

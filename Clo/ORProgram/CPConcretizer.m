@@ -1887,8 +1887,8 @@
       } else {
          concreteCstr = [CPFactory errorOfD:_gamma[left.getId] is:_gamma[right.getId]];
       }
-      if(RUN_3B_ERROR)
-         [_gammaE saveError:_gamma[right.getId] of:[_gamma[left.getId] getId]];
+      //if(RUN_3B_ERROR)
+         //[_gammaE saveError:_gamma[right.getId] of:[_gamma[left.getId] getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

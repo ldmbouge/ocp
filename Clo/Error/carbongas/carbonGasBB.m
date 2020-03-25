@@ -246,6 +246,113 @@ void carbonGas_d_c(bool continuous, int argc, const char * argv[]) {
    }
 }
 
+void carbonGas_d_c_3B(bool continuous, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of rational numbers */
+      id<ORRational> zero = [[ORRational alloc] init];
+      
+      /* Initialization of rational numbers */
+      [zero setZero];
+      
+      /* Declaration of model variables */
+      id<ORGroup> g = [ORFactory group:mdl type:Group3B];
+      id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:0.1 up:0.5 name:@"v"];
+      id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
+      id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.401 string:@"401/1000" name:@"a"];
+      id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:42.7e-6 string:@"427/10000000" name:@"b"];
+      id<ORDoubleVar> t = [ORFactory doubleVar:mdl name:@"t"];
+      id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
+      id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.3806503e-23 string:@"13806503/1000000000000000000000000000000" name:@"k"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
+      id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"erAbs"];
+      
+      /* Initialization of constants */
+      [g add:[p set: @(3.5e7)]];
+      [g add:[t set: @(300.0)]];
+      [g add:[n set: @(1000.0)]];
+      
+      /* Declaration of constraints */
+      [g add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
+      
+      /* Declaration of constraints over errors */
+      [g add: [erAbs eq: [er abs]]];
+      [mdl add:g];
+      [mdl maximize:erAbs];
+      
+      /* Memory release of rational numbers */
+      [zero release];
+      
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      /* Solving */
+      [cp solve:^{
+         /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+         [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            /* Split strategy */
+            [cp floatSplit:i withVars:x];
+         }
+                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+            ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+            ORDouble p = 3.5e7;
+            ORDouble a = 0.401;
+            ORDouble b = 42.7e-6;
+            ORDouble t = 300.0;
+            ORDouble n = 1000.0;
+            ORDouble k = 1.3806503e-23;
+            
+            id<ORRational> vQ = [[ORRational alloc] init];
+            id<ORRational> pQ = [[ORRational alloc] init];
+            id<ORRational> aQ = [[ORRational alloc] init];
+            id<ORRational> bQ = [[ORRational alloc] init];
+            id<ORRational> tQ = [[ORRational alloc] init];
+            id<ORRational> nQ = [[ORRational alloc] init];
+            id<ORRational> kQ = [[ORRational alloc] init];
+            id<ORRational> zQ = [[ORRational alloc] init];
+            id<ORRational> zF = [[ORRational alloc] init];
+            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+            
+            [vQ setInput:v with:[arrayError objectAtIndex:0]];
+            [pQ set_d:3.5e7];
+            [aQ setConstant:a and:"401/1000"];
+            [bQ setConstant:b and:"427/10000000"];
+            [tQ set_d:300.0];
+            [nQ set_d:1000.0];
+            [kQ setConstant:k and:"13806503/1000000000000000000000000000000"];
+            
+            ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
+            [zF set_d:z];
+            
+            [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
+            
+            [ez set: [zQ sub: zF]];
+            
+            [vQ release];
+            [pQ release];
+            [aQ release];
+            [bQ release];
+            [tQ release];
+            [nQ release];
+            [kQ release];
+            [zQ release];
+            [zF release];
+            return ez;
+         }];
+      }];
+   }
+}
+
+
 void check_it_f(float p, float a, float b, float t, float n, float k, float v, float r, id<ORRational> er) {
    float cr = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
    mpq_t pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1;
@@ -382,15 +489,15 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
       /* Declaration of model variables */
       id<ORGroup> g = [ORFactory group:mdl type:Group3B];
       id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:1 up:2 name:@"x"];
-      id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:3 up:4 name:@"y"];
+      //id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:3 up:4 name:@"y"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
-      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z in:g];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       
       /* Initialization of constants */
       
       /* Declaration of constraints */
-      [g add:[z set:[x mul:y]]];
+      [g add:[z set:[x mul:x]]];
       
       /* Declaration of constraints over errors */
       [g add: [ezAbs eq: [ez abs]]];
@@ -418,27 +525,27 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
          }
                            compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
             ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble y = [[arrayValue objectAtIndex:1] doubleValue];
+            //ORDouble y = [[arrayValue objectAtIndex:1] doubleValue];
             
             id<ORRational> xQ = [[ORRational alloc] init];
-            id<ORRational> yQ = [[ORRational alloc] init];
+            //id<ORRational> yQ = [[ORRational alloc] init];
             id<ORRational> zQ = [[ORRational alloc] init];
             id<ORRational> zF = [[ORRational alloc] init];
             id<ORRational> four = [[[ORRational alloc] init] set_d:4.0];
             id<ORRational> ez = [[[ORRational alloc] init] autorelease];
             
             [xQ setInput:x with:[arrayError objectAtIndex:0]];
-            [yQ setInput:y with:[arrayError objectAtIndex:1]];
+            //[yQ setInput:y with:[arrayError objectAtIndex:1]];
             
-            ORDouble z = (x * y);
+            ORDouble z = (x * x);
             [zF set_d:z];
             
-            [zQ set: [xQ mul: yQ]];
+            [zQ set: [xQ mul: xQ]];
             
             [ez set: [zQ sub: zF]];
             
             [xQ release];
-            [yQ release];
+            //[yQ release];
             [zQ release];
             [zF release];
             [four release];
@@ -510,7 +617,8 @@ void test_Q_3B(bool continuous, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    //carbonGas_f(1, argc, argv);
    //carbonGas_d(1, argc, argv);
-   carbonGas_d_c(1, argc, argv);
+   //carbonGas_d_c(1, argc, argv);
+   carbonGas_d_c_3B(1, argc, argv);
    //test_d_c_3B(1, argc, argv);
    //test_Q_3B(1, argc, argv);
    return 0;

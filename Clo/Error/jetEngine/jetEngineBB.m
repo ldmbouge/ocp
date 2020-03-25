@@ -36,7 +36,7 @@ void jetEngine_d_c(int search, int argc, const char * argv[]) {
                                                                                 )
                    );
 
-      [mdl add:[z set:
+      [mdl add:[z set: [[@(2.0) mul:x1] mul: [t div: [[x1 mul: x1] plus: @(1.0)]]]
                 
                 
                 
