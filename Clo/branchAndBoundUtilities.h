@@ -27,7 +27,9 @@
 - (id)init;
 - (void) dealloc;
 - (id)concretizeError:(NSUInteger)index;
+- (id)concretizeValue:(NSUInteger)index;
 - (id)saveError:(id<CPRationalVar>)error of:(NSUInteger)index;
+- (id)saveValue:(id<CPRationalVar>)value of:(NSUInteger)index;
 - (NSString*)description;
 @end
 

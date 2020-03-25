@@ -697,7 +697,7 @@
    }
    return z;
 }
--(BOOL)cmp:(id<ORRational>)r
+-(int)cmp:(id<ORRational>)r
 {
    if([self eq:r]){
       return 0;
@@ -707,7 +707,7 @@
       return -1;
    }
 }
--(BOOL)cmp:(long)num and:(long)den
+-(int)cmp:(long)num and:(long)den
 {
    return mpq_cmp_ui(_rational, num, den);
 }
@@ -1066,7 +1066,7 @@
    
    return z;
 }
--(BOOL)cmp:(id<ORRationalInterval>)ri
+-(int)cmp:(id<ORRationalInterval>)ri
 {
    if([self eq: ri]){
       return 0;

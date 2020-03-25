@@ -60,9 +60,18 @@
 {
    return [_dic objectForKey:[NSNumber numberWithLong:index]];
 }
+- (id)concretizeValue:(NSUInteger)index
+{
+   return [_dic objectForKey:[NSString stringWithFormat:@"%tu",index]];
+}
 - (id)saveError:(id<CPRationalVar>)error of:(NSUInteger)index
 {
    [_dic setObject:error forKey:[NSNumber numberWithLong:index]];
+   return self;
+}
+- (id)saveValue:(id<CPRationalVar>)value of:(NSUInteger)index
+{
+   [_dic setObject:value forKey:[NSString stringWithFormat:@"%tu",index]];
    return self;
 }
 - (NSString*)description
