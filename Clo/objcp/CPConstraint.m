@@ -1473,7 +1473,7 @@
       [errorGroup add:add1];
       [errorGroup add:add2];
       [errorGroup add:addZ];
-      [two release];
+      [twoQ release];
       [inf release];
    }
 
