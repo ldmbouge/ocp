@@ -1747,14 +1747,14 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          }
          // ============================== ez
          // x*ey + y*ex + ex*ey + eo
-         [ezTemp set: [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo]];
+         [ezTemp1 set: [[[[xr mul: ey] add: [yr mul: ex]] add: [ex mul: ey]] add: eo]];
          // x*ey + ex*(y+ey) + eo
-         //[ezTemp2 set: [[[xr mul: ey] add: [ex mul:[yr add: ey]]] add: eo]];
+         [ezTemp2 set: [[[xr mul: ey] add: [ex mul:[yr add: ey]]] add: eo]];
          // ey*(x + ex) + y*ex + eo
-         //[ezTemp3 set: [[[ey mul: [xr add: ex]] add:[yr mul: ex]] add: eo]];
+         [ezTemp3 set: [[[ey mul: [xr add: ex]] add:[yr mul: ex]] add: eo]];
          
-         //[ezTemp set: [ezTemp1 proj_inter: ezTemp2]];
-         //[ezTemp set: [ezTemp proj_inter:ezTemp3]];
+         [ezTemp set: [ezTemp1 proj_inter: ezTemp2]];
+         [ezTemp set: [ezTemp proj_inter:ezTemp3]];
          
          [ez set: [ez proj_inter: ezTemp]];
          changed |= ez.changed;
