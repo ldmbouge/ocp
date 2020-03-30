@@ -89,7 +89,7 @@
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPDoubleDom>)sender;
 @end
 
-@interface CPDoubleVarI : ORObject<CPDoubleVar,CPDoubleVarNotifier,CPFloatVarRatNotifier,CPDoubleVarExtendedItf> {
+@interface CPDoubleVarI : ORObject<CPDoubleVar,CPDoubleVarNotifier,CPErrorVarNotifier,CPDoubleVarExtendedItf> {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORDouble                 _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe

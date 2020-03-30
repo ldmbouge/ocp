@@ -21,26 +21,28 @@
     id<ORRational>            _imax;
     TRRationalInterval       _domain;
 }
-// Always gives to possiblity to use base type for precision (cpjm)
 -(id)initCPRationalDom:(id<ORTrail>)trail low:(id<ORRational>)low up:(id<ORRational>)up;
-// Not reason to use ORFloat here. Use ORDouble instead (cpjm)
 -(id)initCPRationalDom:(id<ORTrail>)trail lowF:(ORDouble)low upF:(ORDouble)up;
 -(id)initCPRationalDom:(id<ORTrail>)trail;
--(void) updateMin:(id<ORRational>)newMin for:(id<CPFloatVarRatNotifier>)x;
--(void) updateMax:(id<ORRational>)newMax for:(id<CPFloatVarRatNotifier>)x;
--(void) updateInterval:(id<ORRationalInterval>)v for:(id<CPFloatVarRatNotifier>)x;
--(void) bind:(id<ORRational>)val  for:(id<CPFloatVarRatNotifier>)x;
+-(void) updateMin:(id<ORRational>)newMin for:(id<CPErrorVarNotifier>)x;
+-(void) updateMax:(id<ORRational>)newMax for:(id<CPErrorVarNotifier>)x;
+-(void) updateInterval:(id<ORRationalInterval>)v for:(id<CPErrorVarNotifier>)x;
+-(void) bind:(id<ORRational>)val  for:(id<CPErrorVarNotifier>)x;
+-(void) updateMin:(id<ORRational>)newMin forQ:(id<CPRationalVarNotifier>)x;
+-(void) updateMax:(id<ORRational>)newMax forQ:(id<CPRationalVarNotifier>)x;
+-(void) updateInterval:(id<ORRationalInterval>)v forQ:(id<CPRationalVarNotifier>)x;
+-(void) bind:(id<ORRational>)val  forQ:(id<CPRationalVarNotifier>)x;
 -(id<ORRational>) min;
 -(id<ORRational>) max;
 -(id<ORRational>) imin;
 -(id<ORRational>) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
-//-(ORLDouble) domwidth;
 -(TRRationalInterval) domain;
 -(ORBool) member:(id<ORRational>)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPRationalDom>)toRestore;
--(void) restoreValue:(id<ORRational>)toRestore for:(id<CPFloatVarRatNotifier>)x;
+-(void) restoreValue:(id<ORRational>)toRestore for:(id<CPErrorVarNotifier>)x;
+-(void) restoreValue:(id<ORRational>)toRestore forQ:(id<CPRationalVarNotifier>)x;
 @end
 

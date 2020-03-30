@@ -5,7 +5,6 @@
 //  Created by remy on 05/04/2018.
 //
 //
-
 #include "gmp.h"
 #include <mpfr.h>
 #import <ORFoundation/ORObject.h>
@@ -224,26 +223,3 @@ static inline id<ORRational> maxQ(id<ORRational> a,id<ORRational> b) { return [a
 static inline void clear_q(rational_t r) { mpq_clear(r); }
 static inline void init_q(rational_t r) { mpq_init(r); }
 static inline void set_q(rational_t r, rational_t s) { mpq_set(r, s); }
-
-///* START NEW GUESS */
-
-//   /* END: Attempt to improve the error */
-//   if ([[[[_engine objective] primalBound] rationalValue] lt: [[tmp_solution value:ez] rationalValue]]) {
-//      // And as updatePrimalBound does test whether the value is actually better or not
-//      // testing it here is useless
-//      printf("*** nb iter = %d\n", nbiter);
-//      id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:[[tmp_solution value:ez] rationalValue] minimize:FALSE];
-//      [[_engine objective] tightenPrimalBound:objv];
-//      [objv release];
-//      solution = tmp_solution; // Keep it as a solution
-//      NSLog(@"#####");
-//      NSLog(@"[GuessError]");
-//      for (id<ORVar> v in [_model variables]) {
-//         if([v prettyname])
-//            NSLog(@"%@: %@", [v prettyname], [solution value:v]);
-//      }
-//      NSLog(@"#####");
-//      [_tracer popNode]; // need to restore initial state before going out of loop !
-//      break;
-//   }
-//   /* END: NEW GUESS */

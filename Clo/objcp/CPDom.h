@@ -91,32 +91,17 @@
 -(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
 @end
 
-@protocol CPFloatVarRatNotifier;
-@protocol CPRationalDom
--(void) updateMin:(id<ORRational>)newMin for:(id<CPFloatVarRatNotifier>)x;
--(void) updateMax:(id<ORRational>)newMax for:(id<CPFloatVarRatNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarRatNotifier>)x;
--(void) bind:(id<ORRational>)val  for:(id<CPFloatVarRatNotifier>)x;
--(id<ORRational>) min;
--(id<ORRational>) max;
--(id<ORRational>) imin;
--(id<ORRational>) imax;
--(ORBool) bound;
--(ORInterval) bounds;
--(TRRationalInterval) domain;
--(ORBool) member:(id<ORRational>)v;
--(NSString*)description;
--(id) copy;
--(void) restoreDomain:(id<CPRationalDom>)toRestore;
--(void) restoreValue:(id<ORRational>)toRestore for:(id<CPFloatVarRatNotifier>)x;
-@end
-
 @protocol CPRationalVarNotifier;
-@protocol CPRationalDomN
--(void) updateMin:(id<ORRational>)newMin for:(id<CPRationalVarNotifier>)x;
--(void) updateMax:(id<ORRational>)newMax for:(id<CPRationalVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRationalVarNotifier>)x;
--(void) bind:(id<ORRational>)val  for:(id<CPRationalVarNotifier>)x;
+@protocol CPErrorVarNotifier;
+@protocol CPRationalDom
+-(void) updateMin:(id<ORRational>)newMin for:(id<CPErrorVarNotifier>)x;
+-(void) updateMax:(id<ORRational>)newMax for:(id<CPErrorVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPErrorVarNotifier>)x;
+-(void) bind:(id<ORRational>)val  for:(id<CPErrorVarNotifier>)x;
+-(void) updateMin:(id<ORRational>)newMin forQ:(id<CPRationalVarNotifier>)x;
+-(void) updateMax:(id<ORRational>)newMax forQ:(id<CPRationalVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v forQ:(id<CPRationalVarNotifier>)x;
+-(void) bind:(id<ORRational>)val  forQ:(id<CPRationalVarNotifier>)x;
 -(id<ORRational>) min;
 -(id<ORRational>) max;
 -(id<ORRational>) imin;
@@ -128,11 +113,13 @@
 -(NSString*)description;
 -(id) copy;
 -(void) restoreDomain:(id<CPRationalDom>)toRestore;
--(void) restoreValue:(id<ORRational>)toRestore for:(id<CPRationalVarNotifier>)x;
+-(void) restoreValue:(id<ORRational>)toRestore for:(id<CPErrorVarNotifier>)x;
+-(void) restoreValue:(id<ORRational>)toRestore forQ:(id<CPRationalVarNotifier>)x;
 @end
 
-
-@protocol CPFloatVarRatNotifier <NSObject>
+// [rg] CPErrorVarNotifier is declared here because both CPFloatVarI and CPDoubleVarI use it.
+// This way, it would not cause a duplicate declaration of the notifier.
+@protocol CPErrorVarNotifier <NSObject>
 -(void) bindEvtErr:(id<CPRationalDom>)sender;
 -(void) changeMinEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;
 -(void) changeMaxEvtErr:(ORBool) bound sender:(id<CPRationalDom>)sender;

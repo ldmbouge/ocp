@@ -65,16 +65,16 @@
 @class CPRationalVarI;
 @protocol CPRationalVarNotifier <NSObject>
 -(CPRationalVarI*) findAffine: (id<ORRational>) scale shift: (id<ORRational>) shift;
--(void) bindEvt:(id<CPRationalDomN>)sender;
--(void) changeMinEvt:(ORBool) bound sender:(id<CPRationalDomN>)sender;
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPRationalDomN>)sender;
+-(void) bindEvt:(id<CPRationalDom>)sender;
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPRationalDom>)sender;
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPRationalDom>)sender;
 @end
 
 @interface CPRationalVarI : ORObject<CPRationalVar,CPRationalVarNotifier,CPRationalVarExtendedItf> {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
    id<ORRational>              _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-   id<CPRationalDomN>       _dom;
+   id<CPRationalDom>       _dom;
    //CPRationalEventNetwork   _net;
    CPMultiCast*             _recv;
 }

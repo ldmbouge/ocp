@@ -7,7 +7,7 @@
 
 #import "CPRationalVarI.h"
 #import <CPUKernel/CPUKernel.h>
-#import "CPRationalDomN.h"
+#import "CPRationalDom.h"
 
 /*****************************************************************************************/
 /*                        CPRationalVarSnapshot                                          */
@@ -141,7 +141,7 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
 {
    self = [super init];
    _engine = engine;
-   _dom = [[CPRationalDomN alloc] initCPRationalDom:[engine trail] low:low up:up];
+   _dom = [[CPRationalDom alloc] initCPRationalDom:[engine trail] low:low up:up];
    _recv = nil;
    _hasValue = false;
    _value = [[ORRational alloc] init];
@@ -155,7 +155,7 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
 {
    self = [super init];
    _engine = engine;
-   _dom = [[CPRationalDomN alloc] initCPRationalDom:[engine trail] lowF:-INFINITY upF:INFINITY];
+   _dom = [[CPRationalDom alloc] initCPRationalDom:[engine trail] lowF:-INFINITY upF:INFINITY];
    _recv = nil;
    _hasValue = false;
    [_value set_d: 0.0];
@@ -295,7 +295,7 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
 {
    [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) bindEvt:(id<CPRationalDomN>)sender
+-(void) bindEvt:(id<CPRationalDom>)sender
 {
    id<CPClosureList> mList[3];
    ORUInt k = 0;
@@ -306,7 +306,7 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
 }
--(void) changeMinEvt:(ORBool) bound sender:(id<CPRationalDomN>)sender
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPRationalDom>)sender
 {
    id<CPClosureList> mList[4];
    ORUInt k = 0;
@@ -320,7 +320,7 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
    scheduleClosures(_engine,mList);
 }
 
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPRationalDomN>)sender
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPRationalDom>)sender
 {
    id<CPClosureList> mList[4];
    ORUInt k = 0;
@@ -335,17 +335,17 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
 }
 -(void) bind:(id<ORRational>) val
 {
-   [_dom bind:val for:self];
+   [_dom bind:val forQ:self];
 }
 -(void) updateMin: (id<ORRational>) newMin
 {
    if([newMin gt: [self min]])
-      [_dom updateMin:newMin for:self];
+      [_dom updateMin:newMin forQ:self];
 }
 -(void) updateMax: (id<ORRational>) newMax
 {
    if([newMax lt: [self max]])
-      [_dom updateMax:newMax for:self];
+      [_dom updateMax:newMax forQ:self];
 }
 -(void) updateInterval: (id<ORRational>) newMin and:(id<ORRational>)newMax
 {
@@ -357,13 +357,13 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
 - (void)updateMaxF:(ORDouble)newMaxError {
    id<ORRational> mError = [[ORRational alloc ] init];
    [mError set_d: newMaxError];
-   [_dom updateMax:mError for:self];
+   [_dom updateMax:mError forQ:self];
    [mError release];
 }
 - (void)updateMinF:(ORDouble)newMinError {
    id<ORRational> mError = [[ORRational alloc ] init];
    [mError set_d: newMinError];
-   [_dom updateMin:mError for:self];
+   [_dom updateMin:mError forQ:self];
    [mError release];
 }
 -(id<ORRational>) min
@@ -386,7 +386,7 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
       return [_dom min];
    return _value;
 }
--(id<CPRationalDomN>) domain
+-(id<CPRationalDom>) domain
 {
    return _dom;
 }
@@ -422,7 +422,7 @@ static id<OROSet> collectConstraints(CPRationalEventNetwork* net,id<OROSet> rv)
 {
    [self updateInterval:[x min] and:[x max]];
 }
-- (void)subsumedByDomain:(id<CPRationalDomN>)dom
+- (void)subsumedByDomain:(id<CPRationalDom>)dom
 {
    [self updateInterval:[dom min] and:[dom max]];
 }

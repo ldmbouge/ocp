@@ -89,7 +89,7 @@
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFloatDom>)sender;
 @end
 
-@interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPFloatVarRatNotifier,CPFloatVarExtendedItf> {
+@interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPErrorVarNotifier,CPFloatVarExtendedItf> {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe

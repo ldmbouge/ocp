@@ -11,8 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import "CPRationalDom.h"
-//#import "CPEngineI.h"
-//#import "CPFloatVarI.h"
+#import "CPRationalVarI.h"
 
 @implementation CPRationalDom
 
@@ -43,6 +42,8 @@
 {
    [_imin release];
    [_imax release];
+   [_domain._low release];
+   [_domain._up release];
    [super dealloc];
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -60,11 +61,11 @@
     [buf appendFormat:@"(%@,%@)",_domain._low,_domain._up];
     return buf;
 }
--(void) updateMin:(id<ORRational>)newMin for:(id<CPFloatVarRatNotifier>)x
+-(void) updateMin:(id<ORRational>)newMin for:(id<CPErrorVarNotifier>)x
 {
    if([newMin gt: [self max]])
         failNow();
-    updateMinR(&_domain, newMin, _trail);
+    updateMinQ(&_domain, newMin, _trail);
    ORBool isBound = [_domain._up eq: _domain._low];
     // cpjm: so that eo can use this method without propagation
     if (x != NULL) {
@@ -73,11 +74,11 @@
             [x bindEvtErr:self];
     }
 }
--(void) updateMax:(id<ORRational>)newMax for:(id<CPFloatVarRatNotifier>)x
+-(void) updateMax:(id<ORRational>)newMax for:(id<CPErrorVarNotifier>)x
 {
    if([[self min] gt: newMax])
         failNow();
-    updateMaxR(&_domain, newMax, _trail);
+    updateMaxQ(&_domain, newMax, _trail);
    // cpjm: so that eo can use this method without propagation
    ORBool isBound = [_domain._up eq: _domain._low];
     if (x != NULL) {
@@ -86,13 +87,13 @@
             [x bindEvtErr:self];
     }
 }
--(void) updateInterval:(id<ORRationalInterval>)v for:(id<CPFloatVarRatNotifier>)x;
+-(void) updateInterval:(id<ORRationalInterval>)v for:(id<CPErrorVarNotifier>)x;
 {
    [self updateMin:v.low for:x];
    [self updateMax:v.up for:x];
 }
 
--(void) bind:(id<ORRational>)val  for:(id<CPFloatVarRatNotifier>)x
+-(void) bind:(id<ORRational>)val  for:(id<CPErrorVarNotifier>)x
 {
    if (([val gt: _domain._low] || [val eq: _domain._low]) && ([_domain._up gt: val] || [_domain._up eq:val])) {
         [x changeMinEvtErr:YES sender:self];
@@ -102,6 +103,48 @@
     }
     else
         failNow();
+}
+-(void) updateMin:(id<ORRational>)newMin forQ:(id<CPRationalVarNotifier>)x
+{
+   if([newMin gt: [self max]])
+      failNow();
+   updateMinQ(&_domain, newMin, _trail);
+   // cpjm: so that eo can use this method without propagation
+   ORBool isBound = [_domain._up eq: _domain._low];
+   if (x != NULL) {
+      [x changeMinEvt: isBound sender:self];
+      if (isBound)
+         [x bindEvt:self];
+   }
+}
+-(void) updateMax:(id<ORRational>)newMax forQ:(id<CPRationalVarNotifier>)x
+{
+   if([[self min] gt: newMax])
+      failNow();
+   updateMaxQ(&_domain, newMax, _trail);
+   // cpjm: so that eo can use this method without propagation
+   ORBool isBound = [_domain._up eq: _domain._low];
+   if (x != NULL) {
+      [x changeMaxEvt:isBound sender:self];
+      if (isBound)
+         [x bindEvt:self];
+   }
+}
+-(void) updateInterval:(id<ORRationalInterval>)v forQ:(id<CPRationalVarNotifier>)x;
+{
+   [self updateMin:v.low forQ:x];
+   [self updateMax:v.up forQ:x];
+}
+-(void) bind:(id<ORRational>)val  forQ:(id<CPRationalVarNotifier>)x
+{
+   if (([val gt: _domain._low] || [val eq: _domain._low]) && ([_domain._up gt: val] || [_domain._up eq:val])) {
+      [x changeMinEvt:YES sender:self];
+      [x changeMaxEvt:YES sender:self];
+      [x bindEvt:self];
+      updateTRRationalInterval(&_domain, val, val, _trail);
+   }
+   else
+      failNow();
 }
 -(id<ORRational>) min
 {
@@ -132,7 +175,6 @@
 {
     return _domain;
 }
-
 -(ORBool) member:(id<ORRational>)v
 {
    return [_domain._low leq: v] && [v leq: _domain._up];
@@ -143,16 +185,21 @@
 }
 -(void) restoreDomain:(id<CPRationalDom>)toRestore
 {
-    updateMinR(&_domain, toRestore.min, _trail);
-    updateMaxR(&_domain, toRestore.max, _trail);
+    updateMinQ(&_domain, toRestore.min, _trail);
+    updateMaxQ(&_domain, toRestore.max, _trail);
 }
--(void) restoreValue:(id<ORRational>)toRestore for:(id<CPFloatVarRatNotifier>)x
+-(void) restoreValue:(id<ORRational>)toRestore for:(id<CPErrorVarNotifier>)x
 {
-    updateMinR(&_domain, toRestore, _trail);
-    updateMaxR(&_domain, toRestore, _trail);
+    updateMinQ(&_domain, toRestore, _trail);
+    updateMaxQ(&_domain, toRestore, _trail);
     [x bindEvtErr:self];
 }
-
+-(void) restoreValue:(id<ORRational>)toRestore forQ:(id<CPRationalVarNotifier>)x
+{
+   updateMinQ(&_domain, toRestore, _trail);
+   updateMaxQ(&_domain, toRestore, _trail);
+   [x bindEvt:self];
+}
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
     [aCoder encodeValueOfObjCType:@encode(ORRational) at:&_domain._low];
@@ -175,8 +222,3 @@
    return self;
 }
 @end
-
-
-
-
-

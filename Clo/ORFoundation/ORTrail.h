@@ -152,8 +152,8 @@ TRLDoubleInterval makeTRLDoubleInterval(id<ORTrail> trail,long double min, long 
 
 void  updateMin(TRFloatInterval* dom,float min, id<ORTrail> trail);
 void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail);
-void  updateMinR(TRRationalInterval* dom,id<ORRational> min, id<ORTrail> trail);
-void  updateMaxR(TRRationalInterval* dom,id<ORRational> max, id<ORTrail> trail);
+void  updateMinQ(TRRationalInterval* dom,id<ORRational> min, id<ORTrail> trail);
+void  updateMaxQ(TRRationalInterval* dom,id<ORRational> max, id<ORTrail> trail);
 void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail> trail);
 void  updateTRRationalInterval(TRRationalInterval* dom,id<ORRational> min,id<ORRational> max, id<ORTrail> trail);
 void  updateMinD(TRDoubleInterval* dom,double min, id<ORTrail> trail);
