@@ -2072,11 +2072,11 @@ onFailure: (ORInt2Void) onFailure
                for(id<ORDoubleVar> v in x){
                   id<CPDoubleVar> currentVar = _gamma[[v getId]];
                   if([currentVar isInputVar] && ![currentVar bound]){
-                     NSLog(@"%@: %@%@", [v prettyname], [arraySolutionVarValue objectAtIndex:index], [arraySolutionVarError objectAtIndex:index]);
+                     NSLog(@"%@: %1.20e%@", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]);
                      index++;
                   }
                }
-               NSLog(@"output: %@%@", [arraySolutionVarValue lastObject], [arraySolutionVarError lastObject]);
+               NSLog(@"output: %1.20e%@", [[arraySolutionVarValue lastObject] doubleValue], [arraySolutionVarError lastObject]);
                // END print solution
             }
             [arraySolutionVarValue removeAllObjects];
