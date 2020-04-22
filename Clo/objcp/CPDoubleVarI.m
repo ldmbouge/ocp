@@ -114,8 +114,8 @@ typedef struct  {
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   //[buf appendFormat:@"Double(%d) : %f±%@",_name,_value,_valueError];
-   [buf appendFormat:@"%20.20e±%@",_value,_valueError];
+   //[buf appendFormat:@"Double(%d) : %f%@",_name,_value,_valueError];
+   [buf appendFormat:@"%20.20e%@",_value,_valueError];
    return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
@@ -295,7 +295,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"var<%d>=",_name];
    [buf appendString:[_dom description]];
-   [buf appendFormat:@"±%@", [_domError description]];
+   [buf appendFormat:@"%@", [_domError description]];
    return buf;
 }
 -(void)setDelegate:(id<CPDoubleVarNotifier>)delegate

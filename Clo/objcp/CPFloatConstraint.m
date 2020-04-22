@@ -594,7 +594,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
    [ex release];
    [ey release];
    [interError release];
-
+   
    if([_x bound] && [_y bound])
       assignTRInt(&_active, NO, _trail);
 }
@@ -1171,11 +1171,11 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    if([self nbUVars]){
       if(absorb(_x,_y)){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
       }else if(absorb(_y,_x) ){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
@@ -1420,11 +1420,11 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
 {
    if([self nbUVars]){
       if(absorb(_x,_y)){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
       }else if(absorb(_y,_x) ){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
@@ -2184,15 +2184,15 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
                if (is_eqf([_x min],[_y min]))
                   failNow();
             }else{
-                  if(is_eqf([_x min],[_y min])){
-                     [_y updateMin:fp_next_float([_y min])];
-                     assignTRInt(&_active, NO, _trail);
-                  }
-                  if(is_eqf([_x min],[_y max])) {
-                     [_y updateMax:fp_previous_float([_y max])];
-                     assignTRInt(&_active, NO, _trail);
-                  }
+               if(is_eqf([_x min],[_y min])){
+                  [_y updateMin:fp_next_float([_y min])];
+                  assignTRInt(&_active, NO, _trail);
                }
+               if(is_eqf([_x min],[_y max])) {
+                  [_y updateMax:fp_previous_float([_y max])];
+                  assignTRInt(&_active, NO, _trail);
+               }
+            }
          }else  if([_y bound]){
             if(is_eqf([_x min],[_y min])){
                [_x updateMin:fp_next_float([_x min])];
@@ -2514,7 +2514,7 @@ id<ORRationalInterval> compute_eo_sqrt(id<ORRationalInterval> eo, const float_in
       [_b setBindTrigger: ^ {
          if ([_b min] == true)
             [_x bind:_c];
-          else
+         else
             [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
       } onBehalf:self];
       [_x whenChangeBoundsDo: ^ {

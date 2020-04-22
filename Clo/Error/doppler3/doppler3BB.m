@@ -9,56 +9,55 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#define LOO_MEASURE_TIME(__message) \
-for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
-NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
-
-#define printFvar(name, var) NSLog(@""name" : [% 20.20e, % 20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 20.20e, % 20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
-#define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
-#define getFminErr(var) *[(id<CPFloatVar>)[cp concretize:var] minErr]
-
-#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 1.2e, % 1.2e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
-#define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
-#define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
-
-void check_it_doppler3_d(double u, double v, double t, double t1, double z, id<ORRational> ez) {
-   double ct1 = 331.4 + (0.6 * t);
-   double cz = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
+id<ORRational> (^doppler3Error)(NSMutableArray* arrayValue, NSMutableArray* arrayError) = ^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+   ORDouble u = [[arrayValue objectAtIndex:0] doubleValue];
+   ORDouble v = [[arrayValue objectAtIndex:1] doubleValue];
+   ORDouble t = [[arrayValue objectAtIndex:2] doubleValue];
+   ORDouble a = 331.4;
+   ORDouble b = 0.6;
    
-   if (ct1 != t1)
-      printf("WRONG: t1 = % 24.24e while ct1 = % 24.24e\n", t1, ct1);
+   id<ORRational> minusOne = [[ORRational alloc] init];
+   id<ORRational> uQ = [[ORRational alloc] init];
+   id<ORRational> vQ = [[ORRational alloc] init];
+   id<ORRational> tQ = [[ORRational alloc] init];
+   id<ORRational> aQ = [[ORRational alloc] init];
+   id<ORRational> bQ = [[ORRational alloc] init];
+   id<ORRational> t1Q = [[ORRational alloc] init];
+   id<ORRational> zQ = [[ORRational alloc] init];
+   id<ORRational> zF = [[ORRational alloc] init];
+   id<ORRational> ez = [[[ORRational alloc] init] autorelease];
    
-   if (cz != z)
-      printf("WRONG: z  = % 24.24e while cz  = % 24.24e\n", z, cz);
+   [minusOne setMinusOne];
+   [uQ setInput:u with:[arrayError objectAtIndex:0]];
+   [vQ setInput:v with:[arrayError objectAtIndex:1]];
+   [tQ setInput:t with:[arrayError objectAtIndex:2]];
+   [aQ setConstant:a and:"1657/5"];
+   [bQ setConstant:b and:"3/5"];
    
-   {
-      mpq_t uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2;
-      
-      mpq_inits(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
-      mpq_set_d(uq, u);
-      mpq_set_d(vq, v);
-      mpq_set_d(tq, t);
-      mpq_set_d(tmp0, 0.6);
-      mpq_mul(tmp1, tq, tmp0);
-      mpq_set_d(tmp0, 331.4);
-      mpq_add(t1q, tmp0, tmp1);
-      mpq_set_d(tmp0, -1.0);
-      mpq_mul(tmp1, tmp0, t1q);
-      mpq_mul(tmp0, tmp1, vq);
-      mpq_add(zq, t1q, uq);
-      mpq_mul(tmp1, zq, zq);
-      mpq_div(zq, tmp0, tmp1);
-      mpq_set_d(tmp0, z);
-      mpq_sub(tmp1, zq, tmp0);
-      if (mpq_cmp(tmp1, ez.rational) != 0){
-         NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
-         NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
-      }
-      mpq_clears(uq, vq, tq, t1q, zq, tmp0, tmp1, tmp2, NULL);
-   }
+   ORDouble t1 = 331.4 + (0.6 * t);
+   ORDouble z = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
+   [zF set_d:z];
    
-}
+   [t1Q set: [aQ add:[bQ mul: tQ]]];
+   [zQ set:[[[t1Q neg] mul: vQ] div: [[t1Q add: uQ] mul: [t1Q add: uQ]]]];
+   
+   [ez set: [zQ sub: zF]];
+   
+   [minusOne release];
+   [uQ release];
+   [vQ release];
+   [tQ release];
+   [aQ release];
+   [bQ release];
+   [t1Q release];
+   [zQ release];
+   [zF release];
+   
+   [arrayValue addObject:[NSNumber numberWithDouble:z]];
+   [arrayError addObject:ez];
 
+   return ez;
+};
 void doppler3_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
@@ -88,51 +87,7 @@ void doppler3_d(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }
-                              compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-               ORDouble u = [[arrayValue objectAtIndex:0] doubleValue];
-               ORDouble v = [[arrayValue objectAtIndex:1] doubleValue];
-               ORDouble t = [[arrayValue objectAtIndex:2] doubleValue];
-               ORDouble a = 331.4;
-               ORDouble b = 0.6;
-               
-               id<ORRational> minusOne = [[ORRational alloc] init];
-               id<ORRational> uQ = [[ORRational alloc] init];
-               id<ORRational> vQ = [[ORRational alloc] init];
-               id<ORRational> tQ = [[ORRational alloc] init];
-               id<ORRational> aQ = [[ORRational alloc] init];
-               id<ORRational> bQ = [[ORRational alloc] init];
-               id<ORRational> t1Q = [[ORRational alloc] init];
-               id<ORRational> zQ = [[ORRational alloc] init];
-               id<ORRational> zF = [[ORRational alloc] init];
-               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-               
-               [minusOne setMinusOne];
-               [uQ setInput:u with:[arrayError objectAtIndex:0]];
-               [vQ setInput:v with:[arrayError objectAtIndex:1]];
-               [tQ setInput:t with:[arrayError objectAtIndex:2]];
-               [aQ set_d:a];
-               [bQ set_d:b];
-               
-               ORDouble t1 = 331.4 + (0.6 * t);
-               ORDouble z = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
-               [zF set_d:z];
-               
-               [t1Q set: [aQ add:[bQ mul: tQ]]];
-               [zQ set:[[[t1Q neg] mul: vQ] div: [[t1Q add: uQ] mul: [t1Q add: uQ]]]];
-               
-               [ez set: [zQ sub: zF]];
-               
-               [minusOne release];
-               [uQ release];
-               [vQ release];
-               [tQ release];
-               [aQ release];
-               [bQ release];
-               [t1Q release];
-               [zQ release];
-               [zF release];
-               return ez;
-            }];
+                              compute:doppler3Error];
       }];
    }
 }
@@ -176,51 +131,7 @@ void doppler3_d_c(int search, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble u = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble v = [[arrayValue objectAtIndex:1] doubleValue];
-            ORDouble t = [[arrayValue objectAtIndex:2] doubleValue];
-            ORDouble a = 331.4;
-            ORDouble b = 0.6;
-            
-            id<ORRational> minusOne = [[ORRational alloc] init];
-            id<ORRational> uQ = [[ORRational alloc] init];
-            id<ORRational> vQ = [[ORRational alloc] init];
-            id<ORRational> tQ = [[ORRational alloc] init];
-            id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
-            id<ORRational> t1Q = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [minusOne setMinusOne];
-            [uQ setInput:u with:[arrayError objectAtIndex:0]];
-            [vQ setInput:v with:[arrayError objectAtIndex:1]];
-            [tQ setInput:t with:[arrayError objectAtIndex:2]];
-            [aQ setConstant:a and:"1657/5"];
-            [bQ setConstant:b and:"3/5"];
-            
-            ORDouble t1 = 331.4 + (0.6 * t);
-            ORDouble z = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
-            [zF set_d:z];
-            
-            [t1Q set: [aQ add:[bQ mul: tQ]]];
-            [zQ set:[[[t1Q neg] mul: vQ] div: [[t1Q add: uQ] mul: [t1Q add: uQ]]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [minusOne release];
-            [uQ release];
-            [vQ release];
-            [tQ release];
-            [aQ release];
-            [bQ release];
-            [t1Q release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:doppler3Error];
       }];
    }
 }
@@ -266,51 +177,7 @@ void doppler3_d_c_3B(int search, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble u = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble v = [[arrayValue objectAtIndex:1] doubleValue];
-            ORDouble t = [[arrayValue objectAtIndex:2] doubleValue];
-            ORDouble a = 331.4;
-            ORDouble b = 0.6;
-            
-            id<ORRational> minusOne = [[ORRational alloc] init];
-            id<ORRational> uQ = [[ORRational alloc] init];
-            id<ORRational> vQ = [[ORRational alloc] init];
-            id<ORRational> tQ = [[ORRational alloc] init];
-            id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
-            id<ORRational> t1Q = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [minusOne setMinusOne];
-            [uQ setInput:u with:[arrayError objectAtIndex:0]];
-            [vQ setInput:v with:[arrayError objectAtIndex:1]];
-            [tQ setInput:t with:[arrayError objectAtIndex:2]];
-            [aQ setConstant:a and:"1657/5"];
-            [bQ setConstant:b and:"3/5"];
-            
-            ORDouble t1 = 331.4 + (0.6 * t);
-            ORDouble z = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
-            [zF set_d:z];
-            
-            [t1Q set: [aQ add:[bQ mul: tQ]]];
-            [zQ set:[[[t1Q neg] mul: vQ] div: [[t1Q add: uQ] mul: [t1Q add: uQ]]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [minusOne release];
-            [uQ release];
-            [vQ release];
-            [tQ release];
-            [aQ release];
-            [bQ release];
-            [t1Q release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:doppler3Error];
       }];
    }
 }

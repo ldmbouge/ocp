@@ -9,17 +9,58 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#define LOO_MEASURE_TIME(__message) \
-for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
-NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
+id<ORRational> (^turbine3Error)(NSMutableArray* arrayValue, NSMutableArray* arrayError) = ^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+   ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+   ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
+   ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
+   ORDouble a = 0.125;
+   ORDouble b = 0.5;
+   
+   id<ORRational> one = [[ORRational alloc] init];
+   id<ORRational> two = [[ORRational alloc] init];
+   id<ORRational> three = [[ORRational alloc] init];
+   id<ORRational> vQ = [[ORRational alloc] init];
+   id<ORRational> wQ = [[ORRational alloc] init];
+   id<ORRational> rQ = [[ORRational alloc] init];
+   id<ORRational> aQ = [[ORRational alloc] init];
+   id<ORRational> bQ = [[ORRational alloc] init];
+   id<ORRational> zQ = [[ORRational alloc] init];
+   id<ORRational> zF = [[ORRational alloc] init];
+   id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+   
+   [one setOne];
+   [two set_d:2.0];
+   [three set_d:3.0];
+   [vQ setInput:v with:[arrayError objectAtIndex:0]];
+   [wQ setInput:w with:[arrayError objectAtIndex:1]];
+   [rQ setInput:r with:[arrayError objectAtIndex:2]];
+   [aQ setConstant:a and:"1/8"];
+   [bQ setConstant:b and:"1/2"];
+   
+   ORDouble z = 3 - 2/(r*r) - a * (1+2*v) * (w*w*r*r) / (1-v) - b;
+   
+   [zF set_d:z];
+   
+   [zQ set:[[[three sub: [two div: [rQ mul: rQ]]] sub: [[[aQ mul: [one add: [two mul: vQ]]] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
+   
+   [ez set: [zQ sub: zF]];
+   
+   [one release];
+   [two release];
+   [three release];
+   [vQ release];
+   [wQ release];
+   [rQ release];
+   [aQ release];
+   [bQ release];
+   [zQ release];
+   [zF release];
+   
+   [arrayValue addObject:[NSNumber numberWithDouble:z]];
+   [arrayError addObject:ez];
 
-#define printFvar(name, var) NSLog(@""name" : [% 20.20e, % 20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 20.20e, % 20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
-#define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
-#define getFminErr(var) *[(id<CPFloatVar>)[cp concretize:var] minErr]
-
-#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 1.2e, % 1.2e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
-#define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
-#define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
+   return ez;
+};
 
 void turbine3_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
@@ -48,54 +89,7 @@ void turbine3_d(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }
-                              compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-               ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-               ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
-               ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
-               ORDouble a = 0.125;
-               ORDouble b = 0.5;
-               
-               id<ORRational> one = [[ORRational alloc] init];
-               id<ORRational> two = [[ORRational alloc] init];
-               id<ORRational> three = [[ORRational alloc] init];
-               id<ORRational> vQ = [[ORRational alloc] init];
-               id<ORRational> wQ = [[ORRational alloc] init];
-               id<ORRational> rQ = [[ORRational alloc] init];
-               id<ORRational> aQ = [[ORRational alloc] init];
-               id<ORRational> bQ = [[ORRational alloc] init];
-               id<ORRational> zQ = [[ORRational alloc] init];
-               id<ORRational> zF = [[ORRational alloc] init];
-               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-               
-               [one setOne];
-               [two set_d:2.0];
-               [three set_d:3.0];
-               [vQ setInput:v with:[arrayError objectAtIndex:0]];
-               [wQ setInput:w with:[arrayError objectAtIndex:1]];
-               [rQ setInput:r with:[arrayError objectAtIndex:2]];
-               [aQ set_d:a];
-               [bQ set_d:b];
-               
-               ORDouble z = 3 - 2/(r*r) - a * (1+2*v) * (w*w*r*r) / (1-v) - b;
-               
-               [zF set_d:z];
-               
-               [zQ set:[[[three sub: [two div: [rQ mul: rQ]]] sub: [[[aQ mul: [one add: [two mul: vQ]]] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
-               
-               [ez set: [zQ sub: zF]];
-               
-               [one release];
-               [two release];
-               [three release];
-               [vQ release];
-               [wQ release];
-               [rQ release];
-               [aQ release];
-               [bQ release];
-               [zQ release];
-               [zF release];
-               return ez;
-            }];
+                              compute:turbine3Error];
          
       }];
    }
@@ -138,54 +132,7 @@ void turbine3_d_c(int search, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
-            ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
-            ORDouble a = 0.125;
-            ORDouble b = 0.5;
-            
-            id<ORRational> one = [[ORRational alloc] init];
-            id<ORRational> two = [[ORRational alloc] init];
-            id<ORRational> three = [[ORRational alloc] init];
-            id<ORRational> vQ = [[ORRational alloc] init];
-            id<ORRational> wQ = [[ORRational alloc] init];
-            id<ORRational> rQ = [[ORRational alloc] init];
-            id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [one setOne];
-            [two set_d:2.0];
-            [three set_d:3.0];
-            [vQ setInput:v with:[arrayError objectAtIndex:0]];
-            [wQ setInput:w with:[arrayError objectAtIndex:1]];
-            [rQ setInput:r with:[arrayError objectAtIndex:2]];
-            [aQ setConstant:a and:"1/8"];
-            [bQ setConstant:b and:"1/2"];
-            
-            ORDouble z = 3 - 2/(r*r) - a * (1+2*v) * (w*w*r*r) / (1-v) - b;
-            
-            [zF set_d:z];
-            
-            [zQ set:[[[three sub: [two div: [rQ mul: rQ]]] sub: [[[aQ mul: [one add: [two mul: vQ]]] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [one release];
-            [two release];
-            [three release];
-            [vQ release];
-            [wQ release];
-            [rQ release];
-            [aQ release];
-            [bQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:turbine3Error];
       }];
    }
 }
@@ -229,58 +176,10 @@ void turbine3_d_c_3B(int search, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble w = [[arrayValue objectAtIndex:1] doubleValue];
-            ORDouble r = [[arrayValue objectAtIndex:2] doubleValue];
-            ORDouble a = 0.125;
-            ORDouble b = 0.5;
-            
-            id<ORRational> one = [[ORRational alloc] init];
-            id<ORRational> two = [[ORRational alloc] init];
-            id<ORRational> three = [[ORRational alloc] init];
-            id<ORRational> vQ = [[ORRational alloc] init];
-            id<ORRational> wQ = [[ORRational alloc] init];
-            id<ORRational> rQ = [[ORRational alloc] init];
-            id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [one setOne];
-            [two set_d:2.0];
-            [three set_d:3.0];
-            [vQ setInput:v with:[arrayError objectAtIndex:0]];
-            [wQ setInput:w with:[arrayError objectAtIndex:1]];
-            [rQ setInput:r with:[arrayError objectAtIndex:2]];
-            [aQ setConstant:a and:"1/8"];
-            [bQ setConstant:b and:"1/2"];
-            
-            ORDouble z = 3 - 2/(r*r) - a * (1+2*v) * (w*w*r*r) / (1-v) - b;
-            
-            [zF set_d:z];
-            
-            [zQ set:[[[three sub: [two div: [rQ mul: rQ]]] sub: [[[aQ mul: [one add: [two mul: vQ]]] mul: [[[wQ mul: wQ] mul: rQ] mul: rQ]] div: [one sub: vQ]]] sub: bQ]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [one release];
-            [two release];
-            [three release];
-            [vQ release];
-            [wQ release];
-            [rQ release];
-            [aQ release];
-            [bQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:turbine3Error];
       }];
    }
 }
-
 
 int main(int argc, const char * argv[]) {
    //turbine3_d(1, argc, argv);

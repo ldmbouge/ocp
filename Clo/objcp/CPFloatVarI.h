@@ -68,18 +68,6 @@
 
 @end
 
-//typedef struct  {
-//   TRId           _bindEvt;
-//   TRId            _minEvt;
-//   TRId            _maxEvt;
-//   TRId         _boundsEvt;
-//   TRId        _bindEvtErr;
-//   TRId         _maxEvtErr;
-//   TRId         _minEvtErr;
-//   TRId      _boundsEvtErr;
-//} CPFloatEventNetwork;
-
-
 @class CPFloatVarI;
 
 @protocol CPFloatVarNotifier <NSObject>
@@ -95,7 +83,6 @@
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    id<ORRational>              _valueError;
    id<CPRationalDom>     _domError;
-   //CPFloatEventNetwork      _net;
    CPMultiCast*             _recv;
 @public
    id<CPFloatDom>            _dom;

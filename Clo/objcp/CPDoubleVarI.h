@@ -69,17 +69,6 @@
 -(void) bindError: (id<ORRational>) valError;
 @end
 
-//typedef struct  {
-//    TRId           _bindEvt;
-//    TRId            _minEvt;
-//    TRId            _maxEvt;
-//    TRId         _boundsEvt;
-//    TRId        _bindEvtErr;
-//    TRId         _maxEvtErr;
-//    TRId         _minEvtErr;
-//    TRId      _boundsEvtErr;
-//} CPDoubleEventNetwork;
-
 @class CPDoubleVarI;
 
 @protocol CPDoubleVarNotifier <NSObject>
@@ -93,12 +82,11 @@
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORDouble                 _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-    id<ORRational>               _valueError;
+    id<ORRational>           _valueError;
     id<CPRationalDom>        _domError;
-    //CPDoubleEventNetwork     _net;
     CPMultiCast*             _recv;
 @public
-   id<CPDoubleDom>            _dom;
+   id<CPDoubleDom>           _dom;
 }
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLow:(id<ORRational>)elow errUp:(id<ORRational>) eup inputVar:(ORBool)inputVar;
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up errLowF:(ORDouble)elow errUpF:(ORDouble) eup inputVar:(ORBool)inputVar;

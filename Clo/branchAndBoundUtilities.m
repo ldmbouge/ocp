@@ -86,7 +86,7 @@ ORBool RUN_IMPROVE_GUESS = true;
 ORBool RUN_DISCARDED_BOX = true;
 
 /* Run 3B filtering over errors - state constraint over rational to compute error operation at the constraint level */
-ORBool RUN_3B_ERROR = true;
+ORBool RUN_3B_ERROR = false;
 
 
 /* Emulate _gamma behaviour for error -> considering a CPFLoatVar/CPDoubleVar _gammaE return its error (as a CPRationalVar) if it exist or create it with concretizeError */

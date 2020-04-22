@@ -96,6 +96,14 @@
     return [[CPRealParamI alloc] initCPRealParam: cp initialValue: v];
 }
 //--------------
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp
+{
+   return [[CPFloatVarI alloc] init:cp low:-INFINITY up:INFINITY inputVar:false];
+}
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp value:(ORFloat) v
+{
+   return [[CPFloatVarI alloc] init:cp low:v up:v inputVar:false];
+}
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range inputVar:(ORBool)inputVar
 {
    return [[CPFloatVarI alloc] init:cp low:range.low up:range.up inputVar:inputVar];
@@ -103,14 +111,6 @@
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range boundsError:(id<ORRationalRange>) rangeError inputVar:(ORBool)inputVar
 {
    return [[CPFloatVarI alloc] init:cp low:range.low up:range.up errLow:rangeError.low errUp:rangeError.up inputVar:inputVar];
-}
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp value:(ORFloat) v
-{
-   return [[CPFloatVarI alloc] init:cp low:v up:v inputVar:false];
-}
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp
-{
-   return [[CPFloatVarI alloc] init:cp low:-INFINITY up:INFINITY inputVar:false];
 }
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {

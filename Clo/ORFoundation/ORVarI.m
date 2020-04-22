@@ -405,6 +405,7 @@
       [up release];
    }
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
+   _inputVar = false;
    [track trackVariable: self];
    return self;
 }
@@ -415,6 +416,7 @@
    _domain = dom;
    _domainError = domError;
    _hasBounds = ([dom low] != -INFINITY || [dom up] != INFINITY);
+   _inputVar = false;
    [track trackVariable: self];
    return self;
 }
@@ -452,6 +454,7 @@
 {
    self = [self init:track domain:[ORFactory floatRange:track low:low up:up] domainError:[ORFactory rationalRange:track low:elow up:eup]];
    _prettyname = [[NSString alloc] initWithString:name];
+   _inputVar = false;
    return self;
 }
 -(ORFloatVarI*) init: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up elow: (id<ORRational>) elow eup: (id<ORRational>) eup name:(NSString*) name inputVar:(ORBool)inputVar

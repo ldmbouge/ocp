@@ -12,46 +12,43 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#define LOO_MEASURE_TIME(__message) \
-for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
-NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
+id<ORRational> (^verhulstError)(NSMutableArray* arrayValue, NSMutableArray* arrayError) = ^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+   ORDouble r = 4.0;
+   ORDouble k = 1.11;
+   ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+   
+   id<ORRational> one = [[ORRational alloc] init];
+   id<ORRational> rQ = [[ORRational alloc] init];
+   id<ORRational> kQ = [[ORRational alloc] init];
+   id<ORRational> xQ = [[ORRational alloc] init];
+   id<ORRational> zQ = [[ORRational alloc] init];
+   id<ORRational> zF = [[ORRational alloc] init];
+   id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+   
+   [one setOne];
+   [rQ set_d:4.0];
+   [kQ setConstant:k and:"111/100"];
+   [xQ setInput:x with:[arrayError objectAtIndex:0]];
+   
+   ORDouble z = ((r * x) / (1.0 + (x / k)));
+   [zF set_d:z];
+   
+   [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
+   
+   [ez set: [zQ sub: zF]];
+   
+   [one release];
+   [rQ release];
+   [kQ release];
+   [xQ release];
+   [zQ release];
+   [zF release];
+   
+   [arrayValue addObject:[NSNumber numberWithDouble:z]];
+   [arrayError addObject:ez];
+   return ez;
 
-#define printFvar(name, var) NSLog(@""name" : [% 20.20e, % 20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 20.20e, % 20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
-#define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
-#define getFminErr(var) *[(id<CPFloatVar>)[cp concretize:var] minErr]
-
-#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 1.2e, % 1.2e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
-#define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
-#define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
-
-void check_it_d(double x, double r, double k, double z, id<ORRational> ez) {
-   double cz = (r*x)/(1+x/k);
-   mpq_t xq, rq, kq, zq, errq, tmp0, tmp1;
-   
-   if (cz != z)
-      printf("WRONG: z = % 20.20e while cz = % 20.20e\n", z, cz);
-   
-   mpq_inits(xq, rq, kq, zq, errq, tmp0, tmp1, NULL);
-   
-   mpq_set_d(xq, x);
-   mpq_set_d(rq, r);
-   mpq_set_d(kq, k);
-   
-   mpq_div(errq, xq, kq);
-   mpq_set_d(tmp1, 1.0f);
-   mpq_add(tmp0, errq, tmp1);
-   mpq_mul(tmp1, rq, xq);
-   mpq_div(zq, tmp1, tmp0);
-   
-   mpq_set_d(tmp0, cz);
-   mpq_sub(errq, zq, tmp0);
-   
-   if (mpq_cmp(errq, ez.rational) != 0){
-      NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
-      NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
-   }
-   mpq_clears(xq, rq, kq, zq, errq, tmp0, tmp1, NULL);
-}
+};
 
 void verhulst_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
@@ -81,68 +78,9 @@ void verhulst_d(int search, int argc, const char * argv[]) {
          [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble r = 4.0;
-            ORDouble k = 1.11;
-            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
-            
-            id<ORRational> one = [[ORRational alloc] init];
-            id<ORRational> rQ = [[ORRational alloc] init];
-            id<ORRational> kQ = [[ORRational alloc] init];
-            id<ORRational> xQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [one setOne];
-            [rQ set_d:4.0];
-            [kQ set_d:k];
-            [xQ setInput:x with:[arrayError objectAtIndex:0]];
-            
-            ORDouble z = ((r * x) / (1.0 + (x / k)));
-            [zF set_d:z];
-            
-            [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [one release];
-            [rQ release];
-            [kQ release];
-            [xQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:verhulstError];
       }];
    }
-}
-
-void check_it_f(float x, float r, float k, float z, id<ORRational> ez) {
-   float cz = (r*x)/(1+x/k);
-   mpq_t xq, rq, kq, zq, errq, tmp0, tmp1;
-   
-   if (cz != z)
-      printf("WRONG: z = % 20.20e while cz = % 20.20e\n", z, cz);
-   
-   mpq_inits(xq, rq, kq, zq, errq, tmp0, tmp1, NULL);
-   mpq_set_d(xq, x);
-   mpq_set_d(rq, r);
-   mpq_set_d(kq, k);
-   
-   mpq_div(errq, xq, kq);
-   mpq_set_d(tmp1, 1.0f);
-   mpq_add(tmp0, errq, tmp1);
-   mpq_mul(tmp1, rq, xq);
-   mpq_div(zq, tmp1, tmp0);
-   
-   mpq_set_d(tmp0, cz);
-   mpq_sub(errq, zq, tmp0);
-   
-   if (mpq_cmp(errq, ez.rational) != 0){
-      NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
-      NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
-   }    mpq_clears(xq, rq, kq, zq, errq, tmp0, tmp1, NULL);
 }
 
 void verhulst_f(int search, int argc, const char * argv[]) {
@@ -174,39 +112,7 @@ void verhulst_f(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearch:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }
-                             compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-               ORDouble r = 4.0;
-               ORDouble k = 1.11;
-               ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
-               
-               id<ORRational> one = [[ORRational alloc] init];
-               id<ORRational> rQ = [[ORRational alloc] init];
-               id<ORRational> kQ = [[ORRational alloc] init];
-               id<ORRational> xQ = [[ORRational alloc] init];
-               id<ORRational> zQ = [[ORRational alloc] init];
-               id<ORRational> zF = [[ORRational alloc] init];
-               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-               
-               [one setOne];
-               [rQ set_d:4.0];
-               [kQ setConstant:k and:"111/100"];
-               [xQ setInput:x with:[arrayError objectAtIndex:0]];
-               
-               ORDouble z = ((r * x) / (1.0 + (x / k)));
-               [zF set_d:z];
-               
-               [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
-               
-               [ez set: [zQ sub: zF]];
-               
-               [one release];
-               [rQ release];
-               [kQ release];
-               [xQ release];
-               [zQ release];
-               [zF release];
-               return ez;
-            }];
+                             compute:verhulstError];
          
       }];
    }
@@ -261,50 +167,13 @@ void verhulst_d_c(int search, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble r = 4.0;
-            ORDouble k = 1.11;
-            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
-            
-            id<ORRational> one = [[ORRational alloc] init];
-            id<ORRational> rQ = [[ORRational alloc] init];
-            id<ORRational> kQ = [[ORRational alloc] init];
-            id<ORRational> xQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [one setOne];
-            [rQ set_d:4.0];
-            [kQ setConstant:k and:"111/100"];
-            [xQ setInput:x with:[arrayError objectAtIndex:0]];
-            
-            ORDouble z = ((r * x) / (1.0 + (x / k)));
-            [zF set_d:z];
-            
-            [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [one release];
-            [rQ release];
-            [kQ release];
-            [xQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:verhulstError];
       }];
-      //struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-      //return result;
-      //}];
    }
 }
 
 void verhulst_d_c_3B(int search, int argc, const char * argv[]) {
    @autoreleasepool {
-      //ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      //[args measure:^struct ORResult(){
       /* Creation of model */
       id<ORModel> mdl = [ORFactory createModel];
       
@@ -352,52 +221,15 @@ void verhulst_d_c_3B(int search, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble r = 4.0;
-            ORDouble k = 1.11;
-            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
-            
-            id<ORRational> one = [[ORRational alloc] init];
-            id<ORRational> rQ = [[ORRational alloc] init];
-            id<ORRational> kQ = [[ORRational alloc] init];
-            id<ORRational> xQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [one setOne];
-            [rQ set_d:4.0];
-            [kQ setConstant:k and:"111/100"];
-            [xQ setInput:x with:[arrayError objectAtIndex:0]];
-            
-            ORDouble z = ((r * x) / (1.0 + (x / k)));
-            [zF set_d:z];
-            
-            [zQ set: [[rQ mul: xQ] div: [one add: [xQ div: kQ]]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [one release];
-            [rQ release];
-            [kQ release];
-            [xQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:verhulstError];
       }];
-      //struct ORResult result = REPORT(0, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-      //return result;
-      //}];
    }
 }
-
-
 
 int main(int argc, const char * argv[]) {
    //verhulst_f(1, argc, argv);
    //verhulst_d(1, argc, argv);
-   //verhulst_d_c(1, argc, argv);
-   verhulst_d_c_3B(1, argc, argv);
+   verhulst_d_c(1, argc, argv);
+   //verhulst_d_c_3B(1, argc, argv);
    return 0;
 }

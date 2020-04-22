@@ -1892,7 +1892,9 @@ onFailure: (ORInt2Void) onFailure
    
    NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
-   
+   NSMutableArray* arraySolutionVarValue = [[NSMutableArray alloc] initWithCapacity:0];
+   NSMutableArray* arraySolutionVarError = [[NSMutableArray alloc] initWithCapacity:0];
+
    do {
       nbBoxExplored++;
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
@@ -1958,6 +1960,11 @@ onFailure: (ORInt2Void) onFailure
                //* Compute Primal error: f(R) - f(F) *
                guess_error = [errorComputed(arrayVarValue, arrayVarError) abs];
                
+               // Save solution
+               arraySolutionVarValue = [arrayVarValue mutableCopy];
+               arraySolutionVarError = [arrayVarError mutableCopy];
+               
+
                //* Try to improve computed error *
                if (RUN_IMPROVE_GUESS) {
                   id<ORRational> olderr = NULL;
@@ -2000,6 +2007,11 @@ onFailure: (ORInt2Void) onFailure
                         
                         if([tmp_error gt: guess_error]){
                            guess_error = tmp_error;
+                           
+                           // save solution
+                           arraySolutionVarValue = [arrayVarValue mutableCopy];
+                           arraySolutionVarError = [arrayVarError mutableCopy];
+                           
                            improved_var = true;
                         } else {
                            // We failed to improve => back to previous value
@@ -2031,6 +2043,263 @@ onFailure: (ORInt2Void) onFailure
                            improved_var = false;
                            ORInt nv = 0, nvarOld = nvar;
                            for (id<ORDoubleVar> v in x) {
+                              currentVar = _gamma[[v getId]];
+                              if ((nv > nvar) && ([currentVar isInputVar]) && (! [currentVar bound])) {
+                                 // cpjm: restrict to input var (otherwise attempt to handle err)
+                                 nvar = nv;
+                                 break;
+                              }
+                              nv++;
+                           }
+                           if (nvar == nvarOld) break; // No more available variable
+                        }
+                     }
+                     nbiter++;
+                  }
+                  [arrayVarValue removeAllObjects];
+                  [arrayVarError removeAllObjects];
+                  //* End of improvement *
+               }
+               iteration++;
+            }
+            
+            //* Update Primal bound (iff we got guess error ...) *
+            if([[[[_engine objective] primalBound] rationalValue] lt: guess_error]){
+               id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:guess_error minimize:FALSE];
+               [[_engine objective] tightenPrimalBound:objv];
+               // START print solution
+               NSUInteger index = 0;
+               for(id<ORDoubleVar> v in x){
+                  id<CPDoubleVar> currentVar = _gamma[[v getId]];
+                  if([currentVar isInputVar] && ![currentVar bound]){
+                     NSLog(@"%@: %@%@", [v prettyname], [arraySolutionVarValue objectAtIndex:index], [arraySolutionVarError objectAtIndex:index]);
+                     index++;
+                  }
+               }
+               NSLog(@"output: %@%@", [arraySolutionVarValue lastObject], [arraySolutionVarError lastObject]);
+               // END print solution
+            }
+            [arraySolutionVarValue removeAllObjects];
+            [arraySolutionVarError removeAllObjects];
+         }
+         //LOG(_level, 2, @"Ending GuessError");
+         //* ********* End GuessError ********* *
+         
+         //* When a new box is discarded, boundDiscardedBoxes is updated with the maximal error upper bound of all discarded boxes *
+         if (RUN_DISCARDED_BOX) {
+            if (limitCounter._val >= nbConstraint) {
+               if ([[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes])
+                  [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
+               
+               break;
+            }
+         }
+         
+         //* Do not split current box if primalBound is greater than or equal to its local error upper bound or if local error upper bound is less than or equal to the maximal error upper bound of discarded boxes
+         if ([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualValue] rationalValue]])
+            break;
+         if (RUN_DISCARDED_BOX && [[[[_engine objective] dualValue] rationalValue] leq: boundDiscardedBoxes])
+            break;
+         
+         //* call b to use splitting strategy passed as parameter of branchAndBoundSearch *
+         ORSelectorResult i = [select min]; // select variable minimizing criteria from defined in select
+         ORSelectorResult I = [select max]; // select variable maximizing criteria from defined in select
+         
+         // Choose next variable if indexSplit variable is already bound.
+         if([_gamma[[x[indexSplit._val] getId]] bound]){
+            ORInt newIndexSplit = i.index;
+            while(newIndexSplit < I.index){
+               if(![_gamma[[x[newIndexSplit] getId]] bound]){
+                  assignTRInt(&indexSplit, newIndexSplit, _trail);
+                  break;
+               }
+               newIndexSplit++;
+            }
+         }
+         // Temporary fix - change so that indexSplit do not backtrack after split
+         // exemple rigidBody1/2: indexSplit only take 0 or 1 (never 2) so solving do not end
+         ORInt oldVal = indexSplit._val;
+         b(indexSplit._val, x);
+         indexSplit._val = oldVal;
+         nbBoxGenerated += 2;
+         
+         //* update index of variable chosen for splitting *
+         if (indexSplit._val + 1 > I.index)
+            assignTRInt(&indexSplit, i.index, _trail);
+         else
+            assignTRInt(&indexSplit, indexSplit._val+1, _trail);
+      }
+   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
+}
+
+-(void) branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b compute:(id<ORRational>(^)(NSMutableArray*,NSMutableArray*))errorComputed
+{
+   /* Branch-and-bound variables */
+   id<ORRational> zero = [[[[ORRational alloc] init] setZero] autorelease];
+
+   boundDiscardedBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
+   boundDegeneratedBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
+   boundTopOfQueue = [[[[ORRational alloc] init] setNegInf] autorelease];
+   branchAndBoundStart = [NSDate date];
+
+   id<ORSelect> select = [ORFactory select: _engine // need to be out of inner loop to go through all possible variables
+                                     range: RANGE(self,[x low],[x up])
+                                  suchThat: ^ORBool(ORInt i) {
+      id<CPFloatVar> v = _gamma[getId(x[i])];
+      LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
+      return ![v bound] && [v isInputVar];
+   }
+                                 orderedBy:
+                          ^ORDouble(ORInt i) {
+      return (ORDouble)i;
+   }
+                          ];
+
+   indexSplit = makeTRInt(_trail,[select min].index);
+   //assignTRInt(&indexSplit, 0, _trail);
+   //limitCounter = makeTRInt(_trail, 0);
+
+   NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
+   NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
+
+   do {
+      nbBoxExplored++;
+      [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
+      [[_engine objective] updateDualBound];
+      
+      // Only check that abstract floating point variables are bound
+      ORBool isBound = true;
+      for (id<ORFloatVar> v in x) {
+         id<CPFloatVar> xc = _gamma[v.getId]; //NSLog(@"%@ %@", v, xc);
+         isBound &= [xc bound];
+      }
+      
+      if(isBound){
+         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] primalValue] rationalValue]]){
+            [[_engine objective] updatePrimalBound];
+            [_sPool addSolution:[self captureSolution]]; // Keep it as a solution
+            //[tmp_solution print:[_model variables] with:[_sPool objectAtIndexedSubscript:[_sPool count] - 1] for:@"Bounded Box"];
+         }
+         if([[[[_engine objective] dualValue] rationalValue] gt: boundDegeneratedBoxes])
+            [boundDegeneratedBoxes set:[[[_engine objective] dualValue] rationalValue]];
+         break; // branch-and-bound stop exploring current box
+      } else {
+         // ********* GuessError *********
+         //LOG(_level, 2, @"Starting GuessError");
+         
+         // GuessError variables
+         id<ORRational> guess_error = NULL;
+         id<CPFloatVar> currentVar;
+         //NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
+         //NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
+         
+         ORInt iteration = 0;
+         ORInt nbIteration = -1;
+         if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: zero]){
+            nbIteration = 30;
+         } else {
+            nbIteration = 20;
+         }
+         
+         @autoreleasepool {
+            while (iteration < nbIteration) {
+               for (id<ORFloatVar> v in x) {
+                  /* Compute an error directly from expression */
+                  id<CPFloatVar> currentVar = _gamma[[v getId]];
+                  if ([currentVar isInputVar]) {
+                     if (![currentVar bound]) {
+                        ORFloat value = randomValue([currentVar min], [currentVar max]);
+                        [arrayVarValue addObject:[NSNumber numberWithFloat:value]];
+                        id<ORRational> halfUlp = halfUlpOf(value);
+                        [halfUlp set:((drand48() < 0.4) ? [halfUlp neg] : halfUlp)];
+                        if ([halfUlp lt: [currentVar minErr]])
+                           [halfUlp set: [currentVar minErr]];
+                        if ([halfUlp gt: [currentVar maxErr]])
+                           [halfUlp set: [currentVar maxErr]];
+                        [arrayVarError addObject:halfUlp];
+                     } else {
+                        [arrayVarValue addObject:[NSNumber numberWithFloat:[currentVar min]]];
+                        [arrayVarError addObject:[currentVar maxErr]]; // WARNING : Bounded input vars might have errors + what if the error is an interval
+                     }
+                  }
+               }
+               
+               //* Compute Primal error: f(R) - f(F) *
+               guess_error = [errorComputed(arrayVarValue, arrayVarError) abs];
+               
+               //* Try to improve computed error *
+               if (RUN_IMPROVE_GUESS) {
+                  id<ORRational> olderr = NULL;
+                  id<ORRational> tmp_error = NULL;
+                  ORBool improved_var = false;
+                  ORInt nvar = 0, nbiter = 0;
+                  ORInt direction = 1;
+                  ORFloat old_value;
+                  
+                  // Get next unbound input var (and there is at least one unbound input var (checked before entering guess error))
+                  // insure that nvar and currentVar stick to the correct input variable
+                  {
+                     ORInt nv = 0;
+                     for (id<ORFloatVar> v in x) {
+                        currentVar = _gamma[[v getId]];
+                        if ((nv >= nvar) && ([currentVar isInputVar]) && (! [currentVar bound])) {
+                           nvar = nv;
+                           break;
+                        }
+                        nv++;
+                     }
+                  }
+                  
+                  while (nbiter < 200) {
+                     old_value = [[arrayVarValue objectAtIndex:nvar] floatValue];
+                     ORFloat value = nextafter([[arrayVarValue objectAtIndex:nvar] floatValue], (direction == 1) ? (+INFINITY) : (-INFINITY));
+                     if (([currentVar min] <= value) && (value <= [currentVar max])) { // Keep it within box
+                        [arrayVarValue replaceObjectAtIndex:nvar withObject:[NSNumber numberWithFloat:value]];
+                        olderr = [arrayVarError objectAtIndex:nvar];
+                        id<ORRational> halfUlp = halfUlpOf(value);
+                        [halfUlp set:((direction) ? [halfUlp neg] : halfUlp)];
+                        if ([halfUlp lt: [currentVar minErr]]) [halfUlp set: [currentVar minErr]];
+                        if ([halfUlp gt: [currentVar maxErr]]) [halfUlp set: [currentVar maxErr]];
+                        [arrayVarError replaceObjectAtIndex:nvar withObject:halfUlp];
+                        
+                        // Compute Primal error: f(R) - f(F)
+                        tmp_error = [errorComputed(arrayVarValue, arrayVarError) abs];
+                        //printf("  Improved Guess %d %d (var %d) -> %20.20e\n", iteration, direction, nvar, [tmp_error get_d]);
+                        
+                        
+                        if([tmp_error gt: guess_error]){
+                           guess_error = tmp_error;
+                           improved_var = true;
+                        } else {
+                           // We failed to improve => back to previous value
+                           [arrayVarValue replaceObjectAtIndex:nvar withObject:[NSNumber numberWithFloat:old_value]];
+                           [arrayVarError replaceObjectAtIndex:nvar withObject:olderr];
+                           if ((! improved_var) && (direction == 1)) {
+                              direction = -1;
+                           } else {
+                              direction = 1;
+                              improved_var = false;
+                              ORInt nv = 0, nvarOld = nvar;
+                              for (id<ORFloatVar> v in x) {
+                                 currentVar = _gamma[[v getId]];
+                                 if ((nv > nvar) && ([currentVar isInputVar]) && (! [currentVar bound])) {
+                                    // cpjm: restrict to input var (otherwise attempt to handle err)
+                                    nvar = nv;
+                                    break;
+                                 }
+                                 nv++;
+                              }
+                              if (nvar == nvarOld) break; // No more available variable
+                           }
+                        }
+                     } else {
+                        if ((! improved_var) && (direction == 1)) {
+                           direction = -1;
+                        } else {
+                           direction = 1;
+                           improved_var = false;
+                           ORInt nv = 0, nvarOld = nvar;
+                           for (id<ORFloatVar> v in x) {
                               currentVar = _gamma[[v getId]];
                               if ((nv > nvar) && ([currentVar isInputVar]) && (! [currentVar bound])) {
                                  // cpjm: restrict to input var (otherwise attempt to handle err)
@@ -2106,225 +2375,6 @@ onFailure: (ORInt2Void) onFailure
       }
    } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
 }
-
--(void) branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b compute:(id<ORRational>(^)(NSMutableArray*,NSMutableArray*))errorComputed
-{
-   /* Branch-and-bound variables */
-   //TRInt _index;
-   id<ORRational> zero = [[[ORRational alloc] init] autorelease];
-   [zero setZero];
-   
-   /* GuessError variables */
-   id<ORRational> halfUlp = [[[ORRational alloc] init] autorelease];
-   id<ORRational> olderr = [[[ORRational alloc] init] autorelease];
-   id<ORRational> guess_error = [[[ORRational alloc] init] autorelease];
-   id<ORRational> tmp_error = [[[ORRational alloc] init] autorelease];
-   id<CPFloatVar> currentVar;
-   NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
-   NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
-   
-   
-   boundDiscardedBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
-   boundDegeneratedBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
-   branchAndBoundStart = [NSDate date];
-   
-   id<ORSelect> select = [ORFactory select: _engine // need to be out of inner loop to go through all possible variables
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^ORBool(ORInt i) {
-      id<CPFloatVar> v = _gamma[getId(x[i])];
-      LOG(_level,2,@"%@ (var<%d>) [%16.16e,%16.16e] bounded:%s ",([x[i] prettyname]==nil)?[NSString stringWithFormat:@"var<%d>", [v getId]]:[x[i] prettyname],[v getId],v.min,v.max,([v bound])?"YES":"NO");
-      return ![v bound];
-   }
-                                 orderedBy:
-                          ^ORDouble(ORInt i) {
-      return (ORDouble)i;
-   }
-                          ];
-   
-   //assignTRInt(&_index, [select min].index, _trail);
-   indexSplit = makeTRInt(_trail,[select min].index);
-   do {
-      nbBoxExplored++;
-      [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
-      [[_engine objective] updateDualBound];
-      
-      ORBool isBound = true;
-      id<CPFloatVar> xc;
-      for (id<ORFloatVar> v in x) { // Only check that abstract floating point variables are bound
-         xc = _gamma[v.getId];
-         isBound &= [xc bound];
-      }
-      
-      if(isBound){
-         if([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] primalValue] rationalValue]]){
-            [[_engine objective] updatePrimalBound];
-            [_sPool addSolution:[self captureSolution]]; // Keep it as a solution
-            //[tmp_solution print:[_model variables] with:[_sPool objectAtIndexedSubscript:[_sPool count] - 1] for:@"Bounded Box"];
-         }
-         if([[[[_engine objective] dualValue] rationalValue] gt: boundDegeneratedBoxes])
-            [boundDegeneratedBoxes set:[[[_engine objective] dualValue] rationalValue]];
-         break; // branch-and-bound stop exploring current box
-      } else {
-         /* ********* GuessError ********* */
-         //LOG(_level, 2, @"Starting GuessError");
-         
-         ORInt iteration = 0;
-         ORInt nbIteration = -1;
-         if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: zero]){
-            nbIteration = 30;
-         } else {
-            nbIteration = 20;
-         }
-         
-         ORFloat value;
-         @autoreleasepool {
-            while(iteration < nbIteration){
-               for(id<ORFloatVar> v in x){
-                  /* Compute an error directly from expression */
-                  currentVar = _gamma[[v getId]];
-                  if([currentVar isInputVar]){
-                     if(![currentVar bound]){
-                        value = randomValue([currentVar min], [currentVar max]);
-                        [arrayVarValue addObject:[NSNumber numberWithFloat:value]];
-                     } else {
-                        [arrayVarValue addObject:[NSNumber numberWithFloat:[currentVar min]]];
-                     }
-                     halfUlp = halfUlpOf(value);
-                     [halfUlp set:((drand48() < 0.4) ? [halfUlp neg] : halfUlp)];
-                     if ([halfUlp lt: [currentVar minErr]])
-                        [halfUlp set: [currentVar minErr]];
-                     if ([halfUlp gt: [currentVar maxErr]])
-                        [halfUlp set: [currentVar maxErr]];
-                     [arrayVarError addObject:halfUlp];
-                  }
-               }
-               
-               /* Compute Primal error: f(R) - f(F) */
-               [guess_error set: [errorComputed(arrayVarValue, arrayVarError) abs]];
-               
-               /* Try to improve computed error */
-               if (RUN_IMPROVE_GUESS) {
-                  id<CPFloatVar> xc;
-                  ORBool improved_var = false;
-                  ORInt nvar = 0, nv, nbiter = 0;
-                  ORInt direction = 1;
-                  ORFloat old_value;
-                  
-                  while (nbiter < 200) {
-                     nbiter++;
-                     nv = 0;
-                     for(id<ORFloatVar> v in x){
-                        // Compute an error directly from expression
-                        currentVar = _gamma[[v getId]];
-                        if([currentVar isInputVar]){
-                           if(![currentVar bound]){
-                              if(nv == nvar){
-                                 old_value = [[arrayVarValue objectAtIndex:nv] floatValue];
-                                 value = nextafterf([[arrayVarValue objectAtIndex:nv] floatValue], (direction == 1) ? (+INFINITY) : (-INFINITY));
-                                 [arrayVarValue replaceObjectAtIndex:nv withObject:[NSNumber numberWithFloat:value]];
-                                 
-                              }
-                           }
-                           if(nv == nvar){
-                              olderr = [arrayVarError objectAtIndex:nv];
-                              halfUlp = halfUlpOf(value);
-                              [halfUlp set:((direction) ? [halfUlp neg] : halfUlp)];
-                              if ([halfUlp lt: [currentVar minErr]])
-                                 [halfUlp set: [currentVar minErr]];
-                              if ([halfUlp gt: [currentVar maxErr]])
-                                 [halfUlp set: [currentVar maxErr]];
-                              [arrayVarError replaceObjectAtIndex:nv withObject:halfUlp];
-                           }
-                        }
-                        nv++;
-                     }
-                     
-                     // Compute Primal error: f(R) - f(F)
-                     [tmp_error set: [errorComputed(arrayVarValue, arrayVarError) abs]];
-                     printf("  Improved Guess %d %d (var %d) -> %20.20e\n", iteration, direction, nvar, [tmp_error get_d]);
-                     
-                     
-                     if([tmp_error gt: guess_error]){
-                        [guess_error set:tmp_error];
-                        improved_var = true;
-                     } else {
-                        // We failed to improve => back to previous value
-                        [arrayVarValue replaceObjectAtIndex:nvar withObject:[NSNumber numberWithFloat:old_value]];
-                        [arrayVarError replaceObjectAtIndex:nvar withObject:olderr];
-                        if((!improved_var) && (direction == 1)){
-                           direction = -1;
-                        } else {
-                           direction = 1;
-                           improved_var = false;
-                           nv = 0;
-                           ORInt nvarOld = nvar;
-                           for (id<ORFloatVar> v in x) {
-                              xc = _gamma[[v getId]];
-                              if ((nv > nvar) && ([xc isInputVar]) && (![xc bound])) { // cpjm: restrict to input var (otherwise attempt to handle err)
-                                 nvar = nv;
-                                 break;
-                              }
-                              nv++;
-                           }
-                           if (nvar == nvarOld)
-                              break;
-                        }
-                     }
-                  }
-               }
-               /* End of improvement */
-               iteration++;
-               [arrayVarValue removeAllObjects];
-               [arrayVarError removeAllObjects];
-            }
-         }
-         //LOG(_level, 2, @"Ending GuessError");
-         /* ********* End GuessError ********* */
-         
-         /* Update Primal bound */
-         if([[[[_engine objective] primalBound] rationalValue] lt: guess_error]){
-            id<ORObjectiveValue> objv = [ORFactory objectiveValueRational:guess_error minimize:FALSE];
-            [[_engine objective] tightenPrimalBound:objv];
-         }
-         
-         /* When a new box is discarded, boundDiscardedBoxes is updated with the maximal error upper bound of all discarded boxes */
-         if(RUN_DISCARDED_BOX){
-            if(limitCounter._val >= nbConstraint){
-               if([[[[_engine objective] dualValue] rationalValue] gt: boundDiscardedBoxes])
-                  [boundDiscardedBoxes set:[[[_engine objective] dualValue] rationalValue]];
-               
-               break;
-            }
-         }
-         
-         /* Do not split current box if primalBound is greater than or equal to its local error upper bound or if local error upper bound is less than or equal to the maximal error upper bound of discarded boxes
-          */
-         if ([[[[_engine objective] primalBound] rationalValue] geq: [[[_engine objective] dualValue] rationalValue]])
-            break;
-         if (RUN_DISCARDED_BOX && [[[[_engine objective] dualValue] rationalValue] leq: boundDiscardedBoxes])
-            break;
-         
-         /* call b to use splitting strategy passed as parameter of branchAndBoundSearch */
-         ORSelectorResult i = [select min]; // select variable minimizing criteria from defined in select
-         ORSelectorResult I = [select max]; // select variable maximizing criteria from defined in select
-         
-         // Temporary fix - change so that indexSplit do not backtrack after split
-         ORInt oldVal = indexSplit._val;
-         b(indexSplit._val, x);
-         indexSplit._val = oldVal;
-         nbBoxGenerated += 2;
-         
-         /* update index of variable chosen for splitting */
-         if (indexSplit._val + 1 > I.index)
-            assignTRInt(&indexSplit, i.index, _trail);
-         else
-            assignTRInt(&indexSplit, indexSplit._val+1, _trail);
-      }
-   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
-}
-
-
-
 //-------------------------------------------------
 -(void) maxDegreeSearch:  (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
 {

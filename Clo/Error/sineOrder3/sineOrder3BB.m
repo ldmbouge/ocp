@@ -10,49 +10,41 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#define LOO_MEASURE_TIME(__message) \
-for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
-NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
-
-#define printFvar(name, var) NSLog(@""name" : [% 20.20e, % 20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 20.20e, % 20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
-#define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
-#define getFminErr(var) *[(id<CPFloatVar>)[cp concretize:var] minErr]
-
-#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 1.2e, % 1.2e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
-#define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
-#define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
-
-void check_it_sineOrder3_d(double x, double z, id<ORRational> ez) {
-   double cz = ((0.954929658551372 * x) - (0.12900613773279798 * ((x * x) * x)));
+id<ORRational> (^sineOrder3Error)(NSMutableArray* arrayValue, NSMutableArray* arrayError) = ^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+   ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+   ORDouble a = 0.954929658551372;
+   ORDouble b = 0.12900613773279798;
    
-   if (cz != z)
-      printf("WRONG: z  = % 24.24e while cz  = % 24.24e\n", z, cz);
+   id<ORRational> xQ = [[ORRational alloc] init];
+   id<ORRational> aQ = [[ORRational alloc] init];
+   id<ORRational> bQ = [[ORRational alloc] init];
+   id<ORRational> zQ = [[ORRational alloc] init];
+   id<ORRational> zF = [[ORRational alloc] init];
+   id<ORRational> ez = [[[ORRational alloc] init] autorelease];
    
-   {
-      mpq_t xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
-      
-      mpq_inits(xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, NULL);
-      mpq_set_d(xq, x);
-      
-      mpq_set_d(tmp1, 0.954929658551372);
-      mpq_mul(tmp2, tmp1, xq);
-      mpq_set_d(tmp3, 0.12900613773279798);
-      mpq_mul(tmp4, xq, xq);
-      mpq_mul(tmp5, tmp4, xq);
-      mpq_mul(tmp6, tmp3, tmp5);
-      mpq_sub(tmp7, tmp2, tmp6);
-      mpq_set(zq, tmp7);
-      
-      mpq_set_d(tmp0, z);
-      mpq_sub(tmp1, zq, tmp0);
-      if (mpq_cmp(tmp1, ez.rational) != 0){
-         NSLog(@"%s != %@", mpq_get_str(NULL, 10, tmp1), ez);
-         NSLog(@"WRONG: Err found = % 24.24e\n != % 24.24e\n", mpq_get_d(tmp1), [ez get_d]);
-      }
-      mpq_clears(xq, zq, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, NULL);
-   }
+   [xQ setInput:x with:[arrayError objectAtIndex:0]];
+   [aQ setConstant:a and:"238732414637843/250000000000000"];
+   [bQ setConstant:b and:"6450306886639899/50000000000000000"];
    
-}
+   ORDouble z = a * x - b*(x*x*x);
+   
+   [zF set_d:z];
+   
+   [zQ set:[[aQ mul: xQ] sub: [bQ mul: [[xQ mul: xQ] mul: xQ]]]];
+   
+   [ez set: [zQ sub: zF]];
+   
+   [xQ release];
+   [aQ release];
+   [bQ release];
+   [zQ release];
+   [zF release];
+   
+   [arrayValue addObject:[NSNumber numberWithDouble:z]];
+   [arrayError addObject:ez];
+
+   return ez;
+};
 
 void sineOrder3_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
@@ -82,37 +74,7 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:ezAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }
-                              compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-               ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
-               ORDouble a = 0.954929658551372;
-               ORDouble b = 0.12900613773279798;
-               
-               id<ORRational> xQ = [[ORRational alloc] init];
-               id<ORRational> aQ = [[ORRational alloc] init];
-               id<ORRational> bQ = [[ORRational alloc] init];
-               id<ORRational> zQ = [[ORRational alloc] init];
-               id<ORRational> zF = [[ORRational alloc] init];
-               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-               
-               [xQ setInput:x with:[arrayError objectAtIndex:0]];
-               [aQ set_d:a];
-               [bQ set_d:b];
-               
-               ORDouble z = a * x - b*(x*x*x);
-               
-               [zF set_d:z];
-               
-               [zQ set:[[aQ mul: xQ] sub: [bQ mul: [[xQ mul: xQ] mul: xQ]]]];
-               
-               [ez set: [zQ sub: zF]];
-               
-               [xQ release];
-               [aQ release];
-               [bQ release];
-               [zQ release];
-               [zF release];
-               return ez;
-            }];
+                              compute:sineOrder3Error];
       }];
    }
 }
@@ -155,37 +117,7 @@ void sineOrder3_d_c(int search, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble a = 0.954929658551372;
-            ORDouble b = 0.12900613773279798;
-            
-            id<ORRational> xQ = [[ORRational alloc] init];
-            id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [xQ setInput:x with:[arrayError objectAtIndex:0]];
-            [aQ setConstant:a and:"238732414637843/250000000000000"];
-            [bQ setConstant:b and:"6450306886639899/50000000000000000"];
-            
-            ORDouble z = a * x - b*(x*x*x);
-            
-            [zF set_d:z];
-            
-            [zQ set:[[aQ mul: xQ] sub: [bQ mul: [[xQ mul: xQ] mul: xQ]]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [xQ release];
-            [aQ release];
-            [bQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:sineOrder3Error];
       }];
    }
 }
@@ -230,37 +162,7 @@ void sineOrder3_d_c_3B(int search, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble a = 0.954929658551372;
-            ORDouble b = 0.12900613773279798;
-            
-            id<ORRational> xQ = [[ORRational alloc] init];
-            id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [xQ setInput:x with:[arrayError objectAtIndex:0]];
-            [aQ setConstant:a and:"238732414637843/250000000000000"];
-            [bQ setConstant:b and:"6450306886639899/50000000000000000"];
-            
-            ORDouble z = a * x - b*(x*x*x);
-            
-            [zF set_d:z];
-            
-            [zQ set:[[aQ mul: xQ] sub: [bQ mul: [[xQ mul: xQ] mul: xQ]]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [xQ release];
-            [aQ release];
-            [bQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:sineOrder3Error];
       }];
    }
 }

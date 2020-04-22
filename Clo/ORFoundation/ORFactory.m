@@ -745,20 +745,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [up release];
    return r;
 }
-+(id<ORRationalVar>) errorVar: (id<ORTracker>) mdl of:(id<ORVar>)f in:(id<ORGroup>)g
-{
-   id<ORRational> low = [[[ORRational alloc] init] setNegInf];
-   id<ORRational> up =  [[[ORRational alloc] init] setPosInf];
-   ORRationalVarI* r = [[ORRationalVarI alloc] init: mdl
-                                                 low:low
-                                                  up:up
-                                                name:[NSString stringWithFormat:@"e%@",[f prettyname]]];
-   id<ORConstraint> c = [ORFactory errorOf:mdl var:f is:r in:g];
-   [g add: c];
-   [low release];
-   [up release];
-   return r;
-}
 +(id<ORDoubleVar>) doubleConstantVar: (id<ORTracker>) tracker value:(ORDouble) v string:(NSString*) vs name:(NSString*) name
 {
    id<ORRational> xQ = [[ORRational alloc] init];
@@ -786,22 +772,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORRationalVar> ulp = [ORFactory ulpVar:tracker of:x];
    [tracker add:[ex leq:ulp]];
    [tracker add:[ex geq:ulp]];
-   [negInf release];
-   [posInf release];
-   
-   return x;
-}
-+(id<ORDoubleVar>) doubleInputVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up name:(NSString*) name in:(id<ORGroup>)g
-{
-   id<ORRational> negInf = [[ORRational alloc] init];
-   id<ORRational> posInf = [[ORRational alloc] init];
-   [negInf setNegInf];
-   [posInf setPosInf];
-   id<ORDoubleVar> x = [[ORDoubleVarI alloc]  init: tracker low: low up: up elow: negInf eup: posInf name:name inputVar:true];
-   id<ORRationalVar> ex = [ORFactory errorVar:tracker of:x in:g];
-   id<ORRationalVar> ulp = [ORFactory ulpVar:tracker of:x in:g];
-   [g add:[ex leq:ulp]];
-   [g add:[ex geq:ulp]];
    [negInf release];
    [posInf release];
    
@@ -857,20 +827,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
                                                 name:[NSString stringWithFormat:@"ulp(%@)",[f prettyname]]];
    id<ORConstraint> c = [ORFactory ulpOf:mdl var:f is:r];
    [mdl add: c];
-   [low release];
-   [up release];
-   return r;
-}
-+(id<ORRationalVar>) ulpVar: (id<ORTracker>) mdl of:(id<ORVar>)f in:(id<ORGroup>)g
-{
-   id<ORRational> low = [[[ORRational alloc] init] setNegInf];
-   id<ORRational> up =  [[[ORRational alloc] init] setPosInf];
-   ORRationalVarI* r = [[ORRationalVarI alloc] init: mdl
-                                                 low:low
-                                                  up:up
-                                                name:[NSString stringWithFormat:@"ulp(%@)",[f prettyname]]];
-   id<ORConstraint> c = [ORFactory ulpOf:mdl var:f is:r in:g];
-   [g add: c];
    [low release];
    [up release];
    return r;
@@ -2447,22 +2403,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) errorOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y in:(id<ORGroup>) g
-{
-   id<ORConstraint> o = [[ORRationalErrorOf alloc] initORRationalErrorOf:x is:y];
-   //[g trackObject:o];
-   return o;
-}
 +(id<ORConstraint>) ulpOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y
 {
    id<ORConstraint> o = [[ORRationalUlpOf alloc] initORRationalUlpOf:x is:y];
    [model trackObject:o];
-   return o;
-}
-+(id<ORConstraint>) ulpOf:(id<ORTracker>)model  var:(id<ORVar>) x is: (id<ORRationalVar>) y in:(id<ORGroup>) g
-{
-   id<ORConstraint> o = [[ORRationalUlpOf alloc] initORRationalUlpOf:x is:y];
-   //[g trackObject:o];
    return o;
 }
 +(id<ORConstraint>) channel:(id<ORFloatVar>)x with:(id<ORRationalVar>)y

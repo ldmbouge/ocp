@@ -8,49 +8,57 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#define LOO_MEASURE_TIME(__message) \
-for (CFAbsoluteTime startTime##__LINE__ = CFAbsoluteTimeGetCurrent(), endTime##__LINE__ = 0.0; endTime##__LINE__ == 0.0; \
-NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCurrent()) - startTime##__LINE__))
-
-#define printFvar(name, var) NSLog(@""name" : [% 20.20e, % 20.20e]f (%s)",[(id<CPFloatVar>)[cp concretize:var] min],[(id<CPFloatVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 20.20e, % 20.20e]q",[(id<CPFloatVar>)[cp concretize:var] minErrF],[(id<CPFloatVar>)[cp concretize:var] maxErrF]);
-#define getFmin(var) [(id<CPFloatVar>)[cp concretize:var] min]
-#define getFminErr(var) *[(id<CPFloatVar>)[cp concretize:var] minErr]
-
-#define printDvar(name, var) NSLog(@""name" : [% 24.24e, % 24.24e]d (%s)",[(id<CPDoubleVar>)[cp concretize:var] min],[(id<CPDoubleVar>)[cp concretize:var] max],[cp bound:var] ? "YES" : "NO"); NSLog(@"e"name": [% 1.2e, % 1.2e]q",[(id<CPDoubleVar>)[cp concretize:var] minErrF],[(id<CPDoubleVar>)[cp concretize:var] maxErrF]);
-#define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
-#define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
-
-void check_it_d(double p, double a, double b, double t, double n, double k, double v, double r, id<ORRational> er) {
-   double cr = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
-   mpq_t pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1;
+id<ORRational> (^carbonGasError)(NSMutableArray* arrayValue, NSMutableArray* arrayError) = ^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+   ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+   ORDouble p = 3.5e7;
+   ORDouble a = 0.401;
+   ORDouble b = 42.7e-6;
+   ORDouble t = 300.0;
+   ORDouble n = 1000.0;
+   ORDouble k = 1.3806503e-23;
    
-   if (cr != r)
-      printf("WRONG: r = % 24.24e while cr = % 24.24e\n", r, cr);
+   id<ORRational> vQ = [[ORRational alloc] init];
+   id<ORRational> pQ = [[ORRational alloc] init];
+   id<ORRational> aQ = [[ORRational alloc] init];
+   id<ORRational> bQ = [[ORRational alloc] init];
+   id<ORRational> tQ = [[ORRational alloc] init];
+   id<ORRational> nQ = [[ORRational alloc] init];
+   id<ORRational> kQ = [[ORRational alloc] init];
+   id<ORRational> zQ = [[ORRational alloc] init];
+   id<ORRational> zF = [[ORRational alloc] init];
+   id<ORRational> ez = [[[ORRational alloc] init] autorelease];
    
-   mpq_inits(pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1, NULL);
-   mpq_set_d(pq, p);
-   mpq_set_d(aq, a);
-   mpq_set_d(bq, b);
-   mpq_set_d(tq, t);
-   mpq_set_d(nq, n);
-   mpq_set_d(kq, k);
-   mpq_set_d(vq, v);
-   mpq_div(tmp0, nq, vq);
-   mpq_mul(tmp1, tmp0, tmp0);
-   mpq_mul(rq, tmp1, aq);
-   mpq_add(rq, rq, pq);
-   mpq_mul(tmp0, nq, bq);
-   mpq_sub(tmp1, vq, tmp0);
-   mpq_mul(rq, rq, tmp1);
-   mpq_mul(tmp0, kq, nq);
-   mpq_mul(tmp1, tmp0, tq);
-   mpq_sub(rq, rq, tmp1);
-   mpq_set_d(tmp0, r);
-   mpq_sub(tmp1, rq, tmp0);
-   if (mpq_cmp(tmp1, er.rational) != 0)
-      printf("WRONG: er = % 20.20e while cer = % 20.20e\n", mpq_get_d(er.rational), mpq_get_d(tmp1));
-   mpq_clears(pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1, NULL);
-}
+   [vQ set_d:v];
+   [pQ set_d:3.5e7];
+   [aQ set_d:a];
+   [bQ set_d:b];
+   [tQ set_d:300.0];
+   [nQ set_d:1000.0];
+   [kQ set_d:k];
+   
+   ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
+   [zF set_d:z];
+   
+   [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
+   
+   [ez set: [zQ sub: zF]];
+   
+   [vQ release];
+   [pQ release];
+   [aQ release];
+   [bQ release];
+   [tQ release];
+   [nQ release];
+   [kQ release];
+   [zQ release];
+   [zF release];
+   
+   [arrayValue addObject:[NSNumber numberWithDouble:z]];
+   [arrayError addObject:ez];
+   
+   return ez;
+};
+
 
 void carbonGas_d(int search, int argc, const char * argv[]) {
    @autoreleasepool {
@@ -92,52 +100,7 @@ void carbonGas_d(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }
-                              compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-               ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-               ORDouble p = 3.5e7;
-               ORDouble a = 0.401;
-               ORDouble b = 42.7e-6;
-               ORDouble t = 300.0;
-               ORDouble n = 1000.0;
-               ORDouble k = 1.3806503e-23;
-               
-               id<ORRational> vQ = [[ORRational alloc] init];
-               id<ORRational> pQ = [[ORRational alloc] init];
-               id<ORRational> aQ = [[ORRational alloc] init];
-               id<ORRational> bQ = [[ORRational alloc] init];
-               id<ORRational> tQ = [[ORRational alloc] init];
-               id<ORRational> nQ = [[ORRational alloc] init];
-               id<ORRational> kQ = [[ORRational alloc] init];
-               id<ORRational> zQ = [[ORRational alloc] init];
-               id<ORRational> zF = [[ORRational alloc] init];
-               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-               
-               [vQ set_d:v];
-               [pQ set_d:3.5e7];
-               [aQ set_d:a];
-               [bQ set_d:b];
-               [tQ set_d:300.0];
-               [nQ set_d:1000.0];
-               [kQ set_d:k];
-               
-               ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
-               [zF set_d:z];
-               
-               [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
-               
-               [ez set: [zQ sub: zF]];
-               
-               [vQ release];
-               [pQ release];
-               [aQ release];
-               [bQ release];
-               [tQ release];
-               [nQ release];
-               [kQ release];
-               [zQ release];
-               [zF release];
-               return ez;
-            }];
+                              compute:carbonGasError];
       }];
    }
 }
@@ -196,52 +159,7 @@ void carbonGas_d_c(bool continuous, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble p = 3.5e7;
-            ORDouble a = 0.401;
-            ORDouble b = 42.7e-6;
-            ORDouble t = 300.0;
-            ORDouble n = 1000.0;
-            ORDouble k = 1.3806503e-23;
-            
-            id<ORRational> vQ = [[ORRational alloc] init];
-            id<ORRational> pQ = [[ORRational alloc] init];
-            id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
-            id<ORRational> tQ = [[ORRational alloc] init];
-            id<ORRational> nQ = [[ORRational alloc] init];
-            id<ORRational> kQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [vQ setInput:v with:[arrayError objectAtIndex:0]];
-            [pQ set_d:3.5e7];
-            [aQ setConstant:a and:"401/1000"];
-            [bQ setConstant:b and:"427/10000000"];
-            [tQ set_d:300.0];
-            [nQ set_d:1000.0];
-            [kQ setConstant:k and:"13806503/1000000000000000000000000000000"];
-            
-            ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
-            [zF set_d:z];
-            
-            [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [vQ release];
-            [pQ release];
-            [aQ release];
-            [bQ release];
-            [tQ release];
-            [nQ release];
-            [kQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:carbonGasError];
       }];
    }
 }
@@ -302,87 +220,9 @@ void carbonGas_d_c_3B(bool continuous, int argc, const char * argv[]) {
             /* Split strategy */
             [cp floatSplit:i withVars:x];
          }
-                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-            ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-            ORDouble p = 3.5e7;
-            ORDouble a = 0.401;
-            ORDouble b = 42.7e-6;
-            ORDouble t = 300.0;
-            ORDouble n = 1000.0;
-            ORDouble k = 1.3806503e-23;
-            
-            id<ORRational> vQ = [[ORRational alloc] init];
-            id<ORRational> pQ = [[ORRational alloc] init];
-            id<ORRational> aQ = [[ORRational alloc] init];
-            id<ORRational> bQ = [[ORRational alloc] init];
-            id<ORRational> tQ = [[ORRational alloc] init];
-            id<ORRational> nQ = [[ORRational alloc] init];
-            id<ORRational> kQ = [[ORRational alloc] init];
-            id<ORRational> zQ = [[ORRational alloc] init];
-            id<ORRational> zF = [[ORRational alloc] init];
-            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-            
-            [vQ setInput:v with:[arrayError objectAtIndex:0]];
-            [pQ set_d:3.5e7];
-            [aQ setConstant:a and:"401/1000"];
-            [bQ setConstant:b and:"427/10000000"];
-            [tQ set_d:300.0];
-            [nQ set_d:1000.0];
-            [kQ setConstant:k and:"13806503/1000000000000000000000000000000"];
-            
-            ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
-            [zF set_d:z];
-            
-            [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
-            
-            [ez set: [zQ sub: zF]];
-            
-            [vQ release];
-            [pQ release];
-            [aQ release];
-            [bQ release];
-            [tQ release];
-            [nQ release];
-            [kQ release];
-            [zQ release];
-            [zF release];
-            return ez;
-         }];
+                           compute:carbonGasError];
       }];
    }
-}
-
-
-void check_it_f(float p, float a, float b, float t, float n, float k, float v, float r, id<ORRational> er) {
-   float cr = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
-   mpq_t pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1;
-   
-   if (cr != r)
-      printf("WRONG: r = % 20.20e while cr = % 20.20e\n", r, cr);
-   
-   mpq_inits(pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1, NULL);
-   mpq_set_d(pq, p);
-   mpq_set_d(aq, a);
-   mpq_set_d(bq, b);
-   mpq_set_d(tq, t);
-   mpq_set_d(nq, n);
-   mpq_set_d(kq, k);
-   mpq_set_d(vq, v);
-   mpq_div(tmp0, nq, vq);
-   mpq_mul(tmp1, tmp0, tmp0);
-   mpq_mul(rq, tmp1, aq);
-   mpq_add(rq, rq, pq);
-   mpq_mul(tmp0, nq, bq);
-   mpq_sub(tmp1, vq, tmp0);
-   mpq_mul(rq, rq, tmp1);
-   mpq_mul(tmp0, kq, nq);
-   mpq_mul(tmp1, tmp0, tq);
-   mpq_sub(rq, rq, tmp1);
-   mpq_set_d(tmp0, r);
-   mpq_sub(tmp1, rq, tmp0);
-   if (mpq_cmp(tmp1, er.rational) != 0)
-      printf("WRONG: er = % 20.20e while cer = % 20.20e\n", mpq_get_d(er.rational), mpq_get_d(tmp1));
-   mpq_clears(pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1, NULL);
 }
 
 void carbonGas_f(int search, int argc, const char * argv[]) {
@@ -424,52 +264,52 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
             [cp branchAndBoundSearch:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
             }
-                               compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
-                ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
-                ORDouble p = 3.5e7;
-                ORDouble a = 0.401;
-                ORDouble b = 42.7e-6;
-                ORDouble t = 300.0;
-                ORDouble n = 1000.0;
-                ORDouble k = 1.3806503e-23;
-                
-                id<ORRational> vQ = [[ORRational alloc] init];
-                id<ORRational> pQ = [[ORRational alloc] init];
-                id<ORRational> aQ = [[ORRational alloc] init];
-                id<ORRational> bQ = [[ORRational alloc] init];
-                id<ORRational> tQ = [[ORRational alloc] init];
-                id<ORRational> nQ = [[ORRational alloc] init];
-                id<ORRational> kQ = [[ORRational alloc] init];
-                id<ORRational> zQ = [[ORRational alloc] init];
-                id<ORRational> zF = [[ORRational alloc] init];
-                id<ORRational> ez = [[[ORRational alloc] init] autorelease];
-                
-                [vQ setInput:v with:[arrayError objectAtIndex:0]];
-                [pQ set_d:3.5e7];
-                [aQ setConstant:a and:"401/1000"];
-                [bQ setConstant:b and:"427/10000000"];
-                [tQ set_d:300.0];
-                [nQ set_d:1000.0];
-                [kQ setConstant:k and:"13806503/1000000000000000000000000000000"];
-                
-                ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
-                [zF set_d:z];
-                
-                [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
-                
-                [ez set: [zQ sub: zF]];
-                
-                [vQ release];
-                [pQ release];
-                [aQ release];
-                [bQ release];
-                [tQ release];
-                [nQ release];
-                [kQ release];
-                [zQ release];
-                [zF release];
-                return ez;
-             }];
+                             compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+               ORDouble v = [[arrayValue objectAtIndex:0] doubleValue];
+               ORDouble p = 3.5e7;
+               ORDouble a = 0.401;
+               ORDouble b = 42.7e-6;
+               ORDouble t = 300.0;
+               ORDouble n = 1000.0;
+               ORDouble k = 1.3806503e-23;
+               
+               id<ORRational> vQ = [[ORRational alloc] init];
+               id<ORRational> pQ = [[ORRational alloc] init];
+               id<ORRational> aQ = [[ORRational alloc] init];
+               id<ORRational> bQ = [[ORRational alloc] init];
+               id<ORRational> tQ = [[ORRational alloc] init];
+               id<ORRational> nQ = [[ORRational alloc] init];
+               id<ORRational> kQ = [[ORRational alloc] init];
+               id<ORRational> zQ = [[ORRational alloc] init];
+               id<ORRational> zF = [[ORRational alloc] init];
+               id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+               
+               [vQ setInput:v with:[arrayError objectAtIndex:0]];
+               [pQ set_d:3.5e7];
+               [aQ setConstant:a and:"401/1000"];
+               [bQ setConstant:b and:"427/10000000"];
+               [tQ set_d:300.0];
+               [nQ set_d:1000.0];
+               [kQ setConstant:k and:"13806503/1000000000000000000000000000000"];
+               
+               ORDouble z = (((p + ((a * (n/v)) * (n/v))) * (v - (n * b))) - ((k * n) * t));
+               [zF set_d:z];
+               
+               [zQ set: [[[pQ add: [[aQ mul: [nQ div: vQ]] mul: [nQ div: vQ]]] mul: [vQ sub: [nQ mul: bQ]]] sub: [[kQ mul: nQ] mul: tQ]]];
+               
+               [ez set: [zQ sub: zF]];
+               
+               [vQ release];
+               [pQ release];
+               [aQ release];
+               [bQ release];
+               [tQ release];
+               [nQ release];
+               [kQ release];
+               [zQ release];
+               [zF release];
+               return ez;
+            }];
          NSLog(@"%@",cp);
       }];
    }
@@ -491,7 +331,7 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
       id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:1 up:2 name:@"x"];
       //id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:3 up:4 name:@"y"];
       id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
-      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z in:g];
+      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       id<ORRationalVar> ezAbs = [ORFactory rationalVar:mdl name:@"ezAbs"];
       
       /* Initialization of constants */
@@ -549,6 +389,10 @@ void test_d_c_3B(bool continuous, int argc, const char * argv[]) {
             [zQ release];
             [zF release];
             [four release];
+            
+            [arrayValue addObject:[NSNumber numberWithDouble:z]];
+            [arrayError addObject:ez];
+            
             return ez;
          }];
       }];
