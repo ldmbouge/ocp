@@ -461,8 +461,8 @@ void test_Q_3B(bool continuous, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    //carbonGas_f(1, argc, argv);
    //carbonGas_d(1, argc, argv);
-   //carbonGas_d_c(1, argc, argv);
-   carbonGas_d_c_3B(1, argc, argv);
+   carbonGas_d_c(1, argc, argv);
+   //carbonGas_d_c_3B(1, argc, argv);
    //test_d_c_3B(1, argc, argv);
    //test_Q_3B(1, argc, argv);
    return 0;

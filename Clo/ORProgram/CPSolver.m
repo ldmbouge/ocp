@@ -520,6 +520,8 @@
 }
 -(void) solve: (ORClosure) search
 {
+   #warning [rg] check limitCounter
+   limitCounter = makeTRInt(_trail,0);
    _objective = [_engine objective];
    [self doOnStartup];
    if (_objective != nil) {

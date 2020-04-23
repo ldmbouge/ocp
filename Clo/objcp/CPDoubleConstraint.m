@@ -38,35 +38,35 @@ id<ORRationalInterval> ulp_computation_d(const double_interval f){
       [ulp set_q:[tmp2 neg] and:tmp3];
    } else{
       ORDouble inf, sup;
-      id<ORRational> nextInf = [[ORRational alloc] init];
-      id<ORRational> nextSup = [[ORRational alloc] init];
-      id<ORRational> infQ = [[ORRational alloc] init];
-      id<ORRational> supQ = [[ORRational alloc] init];
+//      id<ORRational> nextInf = [[ORRational alloc] init];
+//      id<ORRational> nextSup = [[ORRational alloc] init];
+//      id<ORRational> infQ = [[ORRational alloc] init];
+//      id<ORRational> supQ = [[ORRational alloc] init];
       
 
       inf = minDbl(nextafter(f.inf, -INFINITY) - f.inf, nextafter(f.sup, -INFINITY) - f.sup);
       sup = maxDbl(nextafter(f.inf, +INFINITY) - f.inf, nextafter(f.sup, +INFINITY) - f.sup);
       
-      [infQ set_d:f.inf];
-      [supQ set_d:f.sup];
+//      [infQ set_d:f.inf];
+//      [supQ set_d:f.sup];
+//
+//      [nextInf set_d:nextafter(f.inf, -INFINITY)];
+//      [nextSup set_d:nextafter(f.sup, -INFINITY)];
+//      [tmp0 set: minQ([nextInf sub:infQ], [nextSup sub: supQ])];
+//
+//      [nextInf set_d:nextafter(f.inf, +INFINITY)];
+//      [nextSup set_d:nextafter(f.sup, +INFINITY)];
+//      [tmp3 set: maxQ([nextInf sub:infQ], [nextSup sub: supQ])];
+//
+//      [infQ release];
+//      [supQ release];
+//      [nextInf release];
+//      [nextSup release];
       
-      [nextInf set_d:nextafter(f.inf, -INFINITY)];
-      [nextSup set_d:nextafter(f.sup, -INFINITY)];
-      [tmp0 set: maxQ([nextInf sub:infQ], [nextSup sub: supQ])];
-      
-      [nextInf set_d:nextafter(f.inf, +INFINITY)];
-      [nextSup set_d:nextafter(f.sup, +INFINITY)];
-      [tmp3 set: maxQ([nextInf sub:infQ], [nextSup sub: supQ])];
-
-      [infQ release];
-      [supQ release];
-      [nextInf release];
-      [nextSup release];
-      
-      //[tmp0 set_d: inf];
+      [tmp0 set_d: inf];
       [tmp1 set_d: 2.0];
       [ulp.low set: [tmp0 div: tmp1]];
-      //[tmp3 set_d: sup];
+      [tmp3 set_d: sup];
       [ulp.up set: [tmp3 div: tmp1]];
    }
    
@@ -1005,7 +1005,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rounding = FE_TONEAREST;
    //_eo = [[CPRationalDom alloc] initCPRationalDom:[[res engine] trail] lowF:-INFINITY upF:+INFINITY];
    _eo = [[CPRationalVarI alloc] init:[res engine] low:[res minErr] up:[res maxErr]]; 
-   assignTRInt(&_limit, YES, _trail);
+   //assignTRInt(&_limit, YES, _trail);
+   _limit = makeTRInt(_trail,YES);
    nbConstraint++;
    
    ex = [[ORRationalInterval alloc] init];
@@ -1198,7 +1199,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rewriting = f;
    //_eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    _eo = [[CPRationalVarI alloc] init:[z engine] low:[z minErr] up:[z maxErr]];
-   assignTRInt(&_limit, YES, _trail);
+   //assignTRInt(&_limit, YES, _trail);
+   _limit = makeTRInt(_trail,YES);
    nbConstraint++;
    ex = [[ORRationalInterval alloc] init];
    ey = [[ORRationalInterval alloc] init];
@@ -1433,7 +1435,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rewriting = f;
    //_eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    _eo = [[CPRationalVarI alloc] init:[z engine] low:[z minErr] up:[z maxErr]];
-   assignTRInt(&_limit, YES, _trail);
+   //assignTRInt(&_limit, YES, _trail);
+   _limit = makeTRInt(_trail,YES);
    nbConstraint++;
    ex = [[ORRationalInterval alloc] init];
    ey = [[ORRationalInterval alloc] init];
@@ -1683,7 +1686,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rounding = FE_TONEAREST;
    //_eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    _eo = [[CPRationalVarI alloc] init:[z engine] low:[z minErr] up:[z maxErr]];
-   assignTRInt(&_limit, YES, _trail);
+   //assignTRInt(&_limit, YES, _trail);
+   _limit = makeTRInt(_trail,YES);
    nbConstraint++;
    ex = [[ORRationalInterval alloc] init];
    ey = [[ORRationalInterval alloc] init];
@@ -1925,7 +1929,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    _rounding = FE_TONEAREST;
    //_eo = [[CPRationalDom alloc] initCPRationalDom:[[z engine] trail] lowF:-INFINITY upF:+INFINITY];
    _eo = [[CPRationalVarI alloc] init:[z engine] low:[z minErr] up:[z maxErr]];
-   assignTRInt(&_limit, YES, _trail);
+   //assignTRInt(&_limit, YES, _trail);
+   _limit = makeTRInt(_trail,YES);
    nbConstraint++;
    ex = [[ORRationalInterval alloc] init];
    ey = [[ORRationalInterval alloc] init];

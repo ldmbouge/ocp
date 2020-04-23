@@ -172,7 +172,7 @@ void sine_d_c_3B(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //sine_d(1, argc, argv);
-   //sine_d_c(1, argc, argv);
-   sine_d_c_3B(1, argc, argv);
+   sine_d_c(1, argc, argv);
+   //sine_d_c_3B(1, argc, argv);
    return 0;
 }
