@@ -169,7 +169,7 @@ void rigidBody2_d_c_3B(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //rigidBody2_d(1, argc, argv);
-   //rigidBody2_d_c(1, argc, argv);
-   rigidBody2_d_c_3B(1, argc, argv);
+   rigidBody2_d_c(1, argc, argv);
+   //rigidBody2_d_c_3B(1, argc, argv);
    return 0;
 }

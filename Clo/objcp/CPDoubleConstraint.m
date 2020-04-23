@@ -38,13 +38,35 @@ id<ORRationalInterval> ulp_computation_d(const double_interval f){
       [ulp set_q:[tmp2 neg] and:tmp3];
    } else{
       ORDouble inf, sup;
+      id<ORRational> nextInf = [[ORRational alloc] init];
+      id<ORRational> nextSup = [[ORRational alloc] init];
+      id<ORRational> infQ = [[ORRational alloc] init];
+      id<ORRational> supQ = [[ORRational alloc] init];
+      
+
       inf = minDbl(nextafter(f.inf, -INFINITY) - f.inf, nextafter(f.sup, -INFINITY) - f.sup);
       sup = maxDbl(nextafter(f.inf, +INFINITY) - f.inf, nextafter(f.sup, +INFINITY) - f.sup);
       
-      [tmp0 set_d: inf];
+      [infQ set_d:f.inf];
+      [supQ set_d:f.sup];
+      
+      [nextInf set_d:nextafter(f.inf, -INFINITY)];
+      [nextSup set_d:nextafter(f.sup, -INFINITY)];
+      [tmp0 set: maxQ([nextInf sub:infQ], [nextSup sub: supQ])];
+      
+      [nextInf set_d:nextafter(f.inf, +INFINITY)];
+      [nextSup set_d:nextafter(f.sup, +INFINITY)];
+      [tmp3 set: maxQ([nextInf sub:infQ], [nextSup sub: supQ])];
+
+      [infQ release];
+      [supQ release];
+      [nextInf release];
+      [nextSup release];
+      
+      //[tmp0 set_d: inf];
       [tmp1 set_d: 2.0];
       [ulp.low set: [tmp0 div: tmp1]];
-      [tmp3 set_d: sup];
+      //[tmp3 set_d: sup];
       [ulp.up set: [tmp3 div: tmp1]];
    }
    

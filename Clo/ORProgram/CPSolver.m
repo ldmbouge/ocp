@@ -1887,8 +1887,6 @@ onFailure: (ORInt2Void) onFailure
                           ];
    
    indexSplit = makeTRInt(_trail,[select min].index);
-   //assignTRInt(&indexSplit, 0, _trail);
-   //limitCounter = makeTRInt(_trail, 0);
    
    NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
@@ -1923,8 +1921,6 @@ onFailure: (ORInt2Void) onFailure
          // GuessError variables
          id<ORRational> guess_error = NULL;
          id<CPDoubleVar> currentVar;
-         //NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
-         //NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
          
          ORInt iteration = 0;
          ORInt nbIteration = -1;
