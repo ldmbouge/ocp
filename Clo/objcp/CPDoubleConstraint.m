@@ -1428,7 +1428,7 @@
 
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPDoubleReifyAssignC:%02d %@ <=> (%@ <- %16.16e)>",_name,_b,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPDoubleReifyAssignC:%02d x[%d] <=> (%@ <- %16.16e)>",_name,[_b getId],_x,_c];
 }
 -(NSSet*)allVars
 {
@@ -1511,7 +1511,7 @@
 
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPDoubleReifyAssign:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPDoubleReifyAssign:%02d x[%d] <=> (%@ == %@)>",_name,[_b getId],_x,_y];
 }
 -(NSSet*)allVars
 {
